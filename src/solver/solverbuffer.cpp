@@ -608,6 +608,7 @@ void SolverMRP::solveSafetyStock(const Buffer* b, void* v)
         // Note that the supply created with the next line changes the
         // onhand value at all later dates!
         CommandManager::Bookmark* topcommand = data->getCommandManager()->setBookmark();
+        data->state->q_qty_min = 1.0;
         b->getProducingOperation()->solve(*this,v);
 
         if (data->state->a_qty > ROUNDING_ERROR)

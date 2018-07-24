@@ -309,7 +309,7 @@ void SolverMRP::solve(const Resource* res, void* v)
       if (HasOverload && newDate)
       {
         // Multiple operations could be executed in parallel
-        double parallelOps = allowSplits ?
+        double parallelOps = allowSplits && curMax ?
           ceil(curMax / data->state->q_loadplan->getQuantity() - ROUNDING_ERROR) : 1.0;
         // Move the operationplan to the new date
         data->state->q_operationplan->getOperation()->setOperationPlanParameters(

@@ -93,17 +93,23 @@ class CalendarBucketdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
 class LocationFilter(filters.FilterSet):
   class Meta:
     model = freppledb.input.models.Location
-    fields = {'name': ['exact', 'in', 'contains', ], 'description': ['exact', 'contains', ],
-              'category': ['exact', 'contains', ], 'subcategory': ['exact', 'contains', ],
-              'available': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ], 'source': ['exact', 'in', ],
-              'lastmodified': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ], }
-    filter_fields = ('name', 'description', 'category', 'subcategory', 'available', 'source', 'lastmodified')
+    fields = {
+      'name': ['exact', 'in', 'contains'],
+      'owner': ['exact', 'in'],
+      'description': ['exact', 'contains'],
+      'category': ['exact', 'contains'],
+      'subcategory': ['exact', 'contains'],
+      'available': ['exact', 'in', 'gt', 'gte', 'lt', 'lte'],
+      'source': ['exact', 'in'],
+      'lastmodified': ['exact', 'in', 'gt', 'gte', 'lt', 'lte'],
+      }
+    filter_fields = ('name', 'owner', 'description', 'category', 'subcategory', 'available', 'source', 'lastmodified')
 
 
 class LocationSerializer(BulkSerializerMixin, ModelSerializer):
     class Meta:
       model = freppledb.input.models.Location
-      fields = ('name', 'description', 'category', 'subcategory', 'available', 'source', 'lastmodified')
+      fields = ('name', 'owner', 'description', 'category', 'subcategory', 'available', 'source', 'lastmodified')
       list_serializer_class = BulkListSerializer
       update_lookup_field = 'name'
       partial = True
@@ -123,16 +129,22 @@ class LocationdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
 class CustomerFilter(filters.FilterSet):
   class Meta:
     model = freppledb.input.models.Customer
-    fields = {'name': ['exact', 'in', 'contains', ], 'description': ['exact', 'contains', ],
-              'category': ['exact', 'contains', ], 'subcategory': ['exact', 'contains', ],
-              'source': ['exact', 'in', ], 'lastmodified': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ], }
-    filter_fields = ('name', 'description', 'category', 'subcategory', 'available', 'source', 'lastmodified')
+    fields = {
+      'name': ['exact', 'in', 'contains'],
+      'owner': ['exact', 'in'],
+      'description': ['exact', 'contains'],
+      'category': ['exact', 'contains'],
+      'subcategory': ['exact', 'contains'],
+      'source': ['exact', 'in'],
+      'lastmodified': ['exact', 'in', 'gt', 'gte', 'lt', 'lte'],
+      }
+    filter_fields = ('name', 'owner', 'description', 'category', 'subcategory', 'available', 'source', 'lastmodified')
 
 
 class CustomerSerializer(BulkSerializerMixin, ModelSerializer):
     class Meta:
       model = freppledb.input.models.Customer
-      fields = ( 'name', 'description', 'category', 'subcategory', 'source', 'lastmodified')
+      fields = ( 'name', 'owner', 'description', 'category', 'subcategory', 'source', 'lastmodified')
       list_serializer_class = BulkListSerializer
       update_lookup_field = 'name'
       partial = True
@@ -152,9 +164,16 @@ class CustomerdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
 class ItemFilter(filters.FilterSet):
   class Meta:
     model = freppledb.input.models.Item
-    fields = {'name': ['exact', 'in', 'contains', ], 'owner': ['exact', 'in', ], 'description': ['exact', 'contains', ],
-              'category': ['exact', 'contains', ], 'subcategory': ['exact', 'contains', ], 'cost': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
-              'source': ['exact', 'in', ], 'lastmodified': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ], }
+    fields = {
+      'name': ['exact', 'in', 'contains'],
+      'owner': ['exact', 'in'],
+      'description': ['exact', 'contains'],
+      'category': ['exact', 'contains'],
+      'subcategory': ['exact', 'contains'],
+      'cost': ['exact', 'in', 'gt', 'gte', 'lt', 'lte'],
+      'source': ['exact', 'in'],
+      'lastmodified': ['exact', 'in', 'gt', 'gte', 'lt', 'lte'],
+      }
     filter_fields = ('name', 'owner', 'description', 'category', 'subcategory', 'cost', 'source', 'lastmodified')
 
 
@@ -181,9 +200,15 @@ class ItemdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
 class SupplierFilter(filters.FilterSet):
   class Meta:
     model = freppledb.input.models.Supplier
-    fields = {'name': ['exact', 'in', 'contains', ], 'owner': ['exact', 'in', ], 'description': ['exact', 'contains', ],
-              'category': ['exact', 'contains', ], 'subcategory': ['exact', 'contains', ],
-              'source': ['exact', 'in', ], 'lastmodified': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ], }
+    fields = {
+      'name': ['exact', 'in', 'contains'],
+      'owner': ['exact', 'in'],
+      'description': ['exact', 'contains'],
+      'category': ['exact', 'contains'],
+      'subcategory': ['exact', 'contains'],
+      'source': ['exact', 'in'],
+      'lastmodified': ['exact', 'in', 'gt', 'gte', 'lt', 'lte'],
+      }
     filter_fields = ('name', 'description', 'category', 'subcategory', 'available', 'source', 'lastmodified')
 
 
@@ -450,17 +475,23 @@ class SetupMatrixdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
 class SetupRuleFilter(filters.FilterSet):
   class Meta:
     model = freppledb.input.models.SetupRule
-    fields = {'id': ['exact', 'in', 'contains', ],
-              'setupmatrix': ['exact', 'in', ], 'fromsetup': ['exact', 'in', ], 'tosetup': ['exact', 'in', ],
-              'duration': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ], 'cost': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ], }
+    fields = {
+      'id': ['exact', 'in', 'contains', ],
+      'setupmatrix': ['exact', 'in', ],
+      'fromsetup': ['exact', 'in', ],
+      'tosetup': ['exact', 'in', ],
+      'priority': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+      'duration': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+      'cost': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+      }
 
-    filter_fields = ('id', 'setupmatrix', 'fromsetup', 'tosetup', 'duration', 'cost')
+    filter_fields = ('id', 'setupmatrix', 'fromsetup', 'tosetup', 'priority', 'duration', 'cost')
 
 
 class SetupRuleSerializer(BulkSerializerMixin, ModelSerializer):
   class Meta:
     model = freppledb.input.models.SetupRule
-    fields = ('id', 'setupmatrix', 'fromsetup', 'tosetup', 'duration', 'cost')
+    fields = ('id', 'setupmatrix', 'fromsetup', 'tosetup', 'priority', 'duration', 'cost')
     list_serializer_class = BulkListSerializer
     update_lookup_field = 'setupmatrix'
     partial = True

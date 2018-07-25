@@ -29,21 +29,24 @@ The parameters driving the stock rebalancing requests generation are the followi
 ================ ================= =================================================================================================================================
 Field            Type              Description
 ================ ================= =================================================================================================================================
+reference        string            | Unique identifier for the distribution order.
+                                   | This field will be empty for newly proposed distribution orders, but for approved or confirmed distribution orders that
+                                     already exist in the ERP system this field should be populated with the identifier the ERP generated.
+item             item              The item being transfered.
+origin           location          The model location where the item is transfered from.
+destination      location          The model location where the item will be received.
+quantity         number            The quantity delivered.
+shipping date    dateTime          The date when the distribution order is leaving the origin location.
+receipt date     dateTime          The date of the distribution order delivery.
+start date       dateTime          Deprecated alias for the shipping date.
+end date         datetime          Deprecated alias for the receipt date.
 status           non-empty string  | This field should have one of the following keywords :
                                    | proposed : The distribution order is proposed by frePPLe to meet the plan (optimization output).
                                    | approved : The distribution order is present in the ERP system but can still be rescheduled by frePPLe (optimization input).
                                    | confirmed : The distribution order is confirmed, it has been populated in your ERP system (optimization input).
                                    | closed : The distribution order has been delivered and the stock quantity increased.
-item             item              The item being transfered.
-origin           location          The model location where the item is transfered from.
-destination      location          The model location where the item will be received.
-quantity         number            The quantity delivered.
-shipping date    DateTime          The date when the distribution order is leaving the origin location.
-receipt date     DateTime          The date of the distribution order delivery.
-start date       DateTime          Deprecated alias for the shipping date.
-end date         Datetime          Deprecated alias for the receipt date.
 demands          demand            | The demand(s) (and quantity) pegged to the distribution order. This is a generated field.
-inventory status Number            | The inventory status is a calculated field that highlights the urgency of the purchase order.
+inventory status number            | The inventory status is a calculated field that highlights the urgency of the purchase order.
                                    | The cells have a background color that can be green, orange or red. Sorting 
                                    | the distribution orders using the Inventory Status column (red ones first) allows the planner to 
                                    | immediately focus on the distribution orders that should be treated first. 
@@ -53,7 +56,7 @@ criticality      number            | The criticality is a read-only field, calcu
                                    | Higher criticality values indicate a delay of the distribution order will not immediately impact the shipment of any demand.                                   
                                    | A criticality of 999 indicates a distribution order that isn’t used at all to meet any demand.
                                    | Note that the criticality is independent of whether the customer demand will be shipped on time or not.
-delay            Duration          | The delay is a read-only field, calculated by the planning engine.
+delay            duration          | The delay is a read-only field, calculated by the planning engine.
                                    | It compares the end data of the distribution order with the latest possible end date to ship all demands it feeds on time.
 ================ ================= =================================================================================================================================                            
                                   

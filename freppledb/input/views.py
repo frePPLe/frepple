@@ -1907,7 +1907,7 @@ class DeliveryOrderList(GridReport):
     GridFieldText('item', title=_('item'), field_name='item__name', formatter='detail', extra='"role":"input/item"'),
     GridFieldText('customer', title=_('customer'), field_name='demand__customer__name', formatter='detail', extra='"role":"input/customer"'),
     GridFieldText('location', title=_('location'), field_name='location__name', formatter='detail', extra='"role":"input/location"'),
-    GridFieldNumber('quantity', title=_('quantity'), editable=False),
+    GridFieldNumber('quantity', title=_('quantity')),
     GridFieldNumber('demand__quantity', title=_('demand quantity'), editable=False),
     GridFieldDateTime('startdate', title=_('start date')),
     GridFieldDateTime('enddate', title=_('end date'), extra=GridFieldDateTime.extra + ',"cellattr":enddatecellattr'),
@@ -2031,14 +2031,17 @@ class DeliveryOrderList(GridReport):
       # Adding custom item attributes
       for f in getAttributeFields(Item, related_name_prefix="item"):
         f.editable = False
+        f.initially_hidden = True
         reportclass.rows += (f,)
       # Adding custom location attributes
       for f in getAttributeFields(Location, related_name_prefix="location"):
         f.editable = False
+        f.initially_hidden = True
         reportclass.rows += (f,)
       # Adding custom customer attributes
       for f in getAttributeFields(Customer, related_name_prefix="demand__customer"):
         f.editable = False
+        f.initially_hidden = True
         reportclass.rows += (f,)
 
 

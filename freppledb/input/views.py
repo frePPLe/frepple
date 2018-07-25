@@ -1910,7 +1910,7 @@ class DeliveryOrderList(GridReport):
     GridFieldNumber('quantity', title=_('quantity'), editable=False),
     GridFieldNumber('demand__quantity', title=_('demand quantity'), editable=False),
     GridFieldDateTime('startdate', title=_('start date')),
-    GridFieldDateTime('enddate', title=_('end date'), extra='"cellattr":enddatecellattr'),
+    GridFieldDateTime('enddate', title=_('end date'), extra=GridFieldDateTime.extra + ',"cellattr":enddatecellattr'),
     GridFieldDateTime('due', field_name='due', title=_('due date'), editable=False),
     GridFieldChoice('status', title=_('status'), choices=OperationPlan.orderstatus, editable=not settings.ERP_CONNECTOR),
     GridFieldDuration('delay', title=_('delay'), editable=False, initially_hidden=True, extra='"formatoptions":{"defaultValue":""}, "summaryType":"max"'),

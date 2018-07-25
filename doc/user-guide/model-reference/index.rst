@@ -16,6 +16,7 @@ a high level overview of the model objects and their relationships.
    buffers
    calendars
    customers
+   delivery-orders
    distribution-orders
    forecast
    inventory-planning-parameters

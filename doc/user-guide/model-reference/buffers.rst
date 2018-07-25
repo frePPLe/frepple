@@ -108,4 +108,3 @@ cluster          integer           | The network of entities can be partitioned 
 hidden           boolean           Marks entities that are considered hidden and are normally not
                                    shown to the end user.
 ================ ================= ===========================================================
-

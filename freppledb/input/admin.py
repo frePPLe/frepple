@@ -22,7 +22,7 @@ from freppledb.input.models import Buffer, Customer, Demand, Item, OperationReso
 from freppledb.input.models import OperationMaterial, Skill, ResourceSkill, Supplier
 from freppledb.input.models import Calendar, CalendarBucket, ManufacturingOrder, SubOperation
 from freppledb.input.models import ItemSupplier, ItemDistribution, DistributionOrder
-from freppledb.input.models import PurchaseOrder
+from freppledb.input.models import PurchaseOrder, DeliveryOrder
 from freppledb.common.adminforms import MultiDBModelAdmin, MultiDBTabularInline
 
 from freppledb.admin import data_site
@@ -149,7 +149,8 @@ class Item_admin(MultiDBModelAdmin):
     {"name": 'supplypath', "label": _("supply path"), "view": "supplypath_item"},
     {"name": 'whereused', "label": _("where used"), "view": "whereused_item"},
     {"name": 'plan', "label": _("plan"), "view": "output_demand_plandetail"},
-    {"name": 'plandetail', "label": _("plan detail"), "view": "output_demandplan_plandetail"},
+    {"name": 'plandetail', "label": _("delivery orders"), "view": "input_deliveryorder_by_item"},
+    {"name": 'purchaseorders', "label": _("purchase orders"), "view": "input_purchaseorder_by_item"},
     {"name": 'comments', "label": _("comments"), "view": "admin:input_item_comment"},
     #. Translators: Translation included with Django
     {"name": 'history', "label": _("History"), "view": "admin:input_item_history"},
@@ -385,7 +386,14 @@ class ManufacturingOrder_admin(MultiDBModelAdmin):
   model = ManufacturingOrder
   raw_id_fields = ('operation', 'owner',)
   save_on_top = True
-  exclude = ('type', 'source', 'criticality', 'delay', 'origin', 'destination', 'item', 'supplier', 'location', 'demand', 'name', 'due')
+  fieldsets = (
+    (None, {
+      'fields': ('reference', 'operation', 'quantity', 'startdate', 'enddate', 'owner', 'status', )}),
+    )
+  exclude = (
+    'type', 'source', 'criticality', 'delay', 'origin', 'destination',
+    'item', 'supplier', 'location', 'demand', 'name', 'due', 'color'
+    )
   tabs = [
     {"name": 'edit', "label": _("edit"), "view": "admin:input_manufacturingorder_change", "permissions": "input.change_manufacturingorder"},
     ]
@@ -396,8 +404,12 @@ class DistributionOrder_admin(MultiDBModelAdmin):
   model = DistributionOrder
   raw_id_fields = ('item',)
   save_on_top = True
+  fieldsets = (
+    (None, {
+      'fields': ('reference', 'item', 'origin', 'destination', 'quantity', 'shipping_date', 'receipt_date', 'status', )}),
+    )
   exclude = (
-    'type', 'source', 'criticality', 'delay', 'operation', 'owner',
+    'type', 'source', 'criticality', 'delay', 'operation', 'owner', 'color',
     'supplier', 'location', 'demand', 'name', 'due', 'startdate', 'enddate'
     )
   tabs = [
@@ -408,16 +420,38 @@ data_site.register(DistributionOrder, DistributionOrder_admin)
 
 class PurchaseOrder_admin(MultiDBModelAdmin):
   model = PurchaseOrder
-  raw_id_fields = ('item', 'supplier',)
+  raw_id_fields = ('item', 'supplier',)  
   save_on_top = True
+  fieldsets = (
+    (None, {
+      'fields': ('reference', 'item', 'location', 'supplier', 'quantity', 'ordering_date', 'receipt_date', 'status', )}),
+    )
   exclude = (
-    'type', 'source', 'criticality', 'delay', 'operation', 'owner',
+    'type', 'source', 'criticality', 'delay', 'operation', 'owner', 'color',
     'origin', 'destination', 'demand', 'name', 'due', 'startdate', 'enddate'
     )
   tabs = [
     {"name": 'edit', "label": _("edit"), "view": "admin:input_purchaseorder_change", "permissions": "input.change_purchaseorder"},
     ]
 data_site.register(PurchaseOrder, PurchaseOrder_admin)
+
+
+class DeliveryOrder_admin(MultiDBModelAdmin):
+  model = DeliveryOrder
+  raw_id_fields = ('item', 'demand')
+  save_on_top = True
+  fieldsets = (
+    (None, {
+      'fields': ('reference', 'demand', 'item', 'location', 'quantity', 'status', )}),
+    )
+  exclude = (
+    'type', 'source', 'criticality', 'delay', 'operation', 'owner', 'color'
+    'origin', 'destination', 'name', 'due', 'startdate', 'enddate', 'supplier'
+    )
+  tabs = [
+    {"name": 'edit', "label": _("edit"), "view": "admin:input_deliveryorder_change", "permissions": "input.change_deliveryorder"},
+    ]
+data_site.register(DeliveryOrder, DeliveryOrder_admin)
 
 
 class Demand_admin(MultiDBModelAdmin):

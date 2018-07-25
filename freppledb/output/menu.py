@@ -15,7 +15,7 @@
 #
 
 from freppledb.menu import menu
-from freppledb.input.models import DeliveryOrder, OperationPlanMaterial, OperationPlanResource
+from freppledb.input.models import OperationPlanMaterial, OperationPlanResource
 from freppledb.input.models import Demand, Operation, Resource, DistributionOrder, PurchaseOrder
 from freppledb.input.models import ManufacturingOrder, ItemDistribution, ItemSupplier
 import freppledb.output.views.buffer
@@ -32,11 +32,6 @@ menu.addItem(
   "sales", "demand report", url="/demand/",
   report=freppledb.output.views.demand.OverviewReport, index=200,
   dependencies=[Demand]
-  )
-menu.addItem(
-  "sales", "demand detail report", url="/demandplan/",
-  report=freppledb.output.views.demand.DetailReport, index=300,
-  model=DeliveryOrder, dependencies=[Demand]
   )
 menu.addItem(
   "sales", "problem report", url="/problem/?entity=demand",

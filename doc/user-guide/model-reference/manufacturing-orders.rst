@@ -4,6 +4,10 @@ Manufacturing orders
 
 This table contains the manufacturing orders of your supply chain, either proposed by frePPLe or confirmed.
 
+This table is populated with new proposed manufacturing orders when frePPLe generates a plan.
+It is also possible to load manufacturing orders that are already approved or confirmed in your ERP
+system.
+
 **Fields**
 
 ================ ================= =================================================================================================================================
@@ -36,4 +40,3 @@ criticality      number            | The criticality is a read-only field, calcu
 delay            duration          | The delay is a read-only field, calculated by the planning engine.
                                    | It compares the end data of the manufacturing order with the latest possible end date to ship all demands it feeds on time.
 ================ ================= =================================================================================================================================                            
-                                  

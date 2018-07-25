@@ -129,7 +129,7 @@ function drawGraphs(jsondata)
 	          d3.select("#tooltip").style('display', 'none');
 	
 	          window.location = "{{ request.prefix }}"
-	            +"/demandplan/"
+	            +"/data/input/deliveryorder/item/"
 	            +admin_escape(d['item'])
 	            +"/?o=5a&enddate__gte="+timebuckets[d['bucket']]['startdate']
 	            +"&enddate__lt="+timebuckets[d['bucket']]['enddate'];
@@ -232,7 +232,7 @@ function crosses (cellvalue, options, rowdata)
     {
       case 0:
         if (cellvalue[cross_idx[i]] != 0.0)
-          result += cellvalue[cross_idx[i]] + '<a href="{{request.prefix}}/demandplan/' +
+          result += cellvalue[cross_idx[i]] + '<a href="{{request.prefix}}/data/input/deliveryorder/item/' +
             admin_escape(rowdata['item']) +
             '/?o=5a&amp;demand__due__gte=' + options['colModel']['startdate'] +
             '&amp;demand__due__lt=' + options['colModel']['enddate'] +
@@ -242,7 +242,7 @@ function crosses (cellvalue, options, rowdata)
         break;
       case 1:
         if (cellvalue[cross_idx[i]] != 0.0)
-          result += cellvalue[cross_idx[i]] + '<a href="{{request.prefix}}/demandplan/' +
+          result += cellvalue[cross_idx[i]] + '<a href="{{request.prefix}}/data/input/deliveryorder/item/' +
             admin_escape(rowdata['item']) +
             '/?o=5a&amp;enddate__gte=' + options['colModel']['startdate'] +
             '&amp;enddate__lt=' + options['colModel']['enddate'] +

@@ -37,7 +37,7 @@ class OverviewReport(GridPivot):
   title = _('Inventory report')
 
   @classmethod
-  def basequeryset(reportclass, request, args, kwargs):
+  def basequeryset(reportclass, request, *args, **kwargs):
     if len(args) and args[0]:
       return Buffer.objects.all()
     else:
@@ -321,7 +321,7 @@ class DetailReport(GridReport):
   help_url = 'user-guide/user-interface/plan-analysis/inventory-detail-report.html'
 
   @ classmethod
-  def basequeryset(reportclass, request, args, kwargs):
+  def basequeryset(reportclass, request, *args, **kwargs):
     if len(args) and args[0]:
       dlmtr = args[0].find(" @ ")
       base = OperationPlanMaterial.objects.filter(

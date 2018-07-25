@@ -659,7 +659,7 @@ class GridReport(View):
     fields = [ i.field_name for i in reportclass.rows if i.field_name and not i.hidden]
 
     if isinstance(reportclass.basequeryset, collections.Callable):
-      query = reportclass._apply_sort(request, reportclass.filter_items(request, reportclass.basequeryset(request, args, kwargs), False).using(request.database))
+      query = reportclass._apply_sort(request, reportclass.filter_items(request, reportclass.basequeryset(request, *args, **kwargs), False).using(request.database))
     else:
       query = reportclass._apply_sort(request, reportclass.filter_items(request, reportclass.basequeryset).using(request.database))
     for row in hasattr(reportclass, 'query') and reportclass.query(request, query) or query.values(*field_names):
@@ -720,7 +720,7 @@ class GridReport(View):
 
     # Write the report content
     if isinstance(reportclass.basequeryset, collections.Callable):
-      query = reportclass._apply_sort(request, reportclass.filter_items(request, reportclass.basequeryset(request, args, kwargs), False).using(request.database))
+      query = reportclass._apply_sort(request, reportclass.filter_items(request, reportclass.basequeryset(request, *args, **kwargs), False).using(request.database))
     else:
       query = reportclass._apply_sort(request, reportclass.filter_items(request, reportclass.basequeryset).using(request.database))
     for row in hasattr(reportclass, 'query') and reportclass.query(request, query) or query.values(*fields):
@@ -974,7 +974,7 @@ class GridReport(View):
     page = 'page' in request.GET and int(request.GET['page']) or 1
     request.prefs = request.user.getPreference(reportclass.getKey(), database=request.database)
     if isinstance(reportclass.basequeryset, collections.Callable):
-      query = reportclass.filter_items(request, reportclass.basequeryset(request, args, kwargs), False).using(request.database)
+      query = reportclass.filter_items(request, reportclass.basequeryset(request, *args, **kwargs), False).using(request.database)
     else:
       query = reportclass.filter_items(request, reportclass.basequeryset).using(request.database)
     recs = query.count()
@@ -1834,7 +1834,7 @@ class GridPivot(GridReport):
       if isinstance(reportclass.basequeryset, collections.Callable):
         query = reportclass.query(
           request,
-          reportclass.basequeryset(request, args, kwargs).filter(pk__exact=args[0]).using(request.database),
+          reportclass.basequeryset(request, *args, **kwargs).filter(pk__exact=args[0]).using(request.database),
           sortsql="1 asc"
           )
       else:
@@ -1846,7 +1846,7 @@ class GridPivot(GridReport):
     else:
       page = 'page' in request.GET and int(request.GET['page']) or 1
       if isinstance(reportclass.basequeryset, collections.Callable):
-        recs = reportclass.filter_items(request, reportclass.basequeryset(request, args, kwargs), False).using(request.database).count()
+        recs = reportclass.filter_items(request, reportclass.basequeryset(request, *args, **kwargs), False).using(request.database).count()
       else:
         recs = reportclass.filter_items(request, reportclass.basequeryset).using(request.database).count()
       total_pages = math.ceil(float(recs) / request.pagesize)
@@ -1858,7 +1858,7 @@ class GridPivot(GridReport):
       if isinstance(reportclass.basequeryset, collections.Callable):
         query = reportclass.query(
           request,
-          reportclass._apply_sort(request, reportclass.filter_items(request, reportclass.basequeryset(request, args, kwargs), False)).using(request.database)[cnt - 1:cnt + request.pagesize],
+          reportclass._apply_sort(request, reportclass.filter_items(request, reportclass.basequeryset(request, *args, **kwargs), False)).using(request.database)[cnt - 1:cnt + request.pagesize],
           sortsql=reportclass._apply_sort_index(request)
           )
       else:
@@ -1942,7 +1942,7 @@ class GridPivot(GridReport):
         )
     elif isinstance(reportclass.basequeryset, collections.Callable):
       query = reportclass.query(
-        request, reportclass.filter_items(request, reportclass.basequeryset(request, args, kwargs), False).using(request.database),
+        request, reportclass.filter_items(request, reportclass.basequeryset(request, *args, **kwargs), False).using(request.database),
         sortsql=reportclass._apply_sort_index(request)
         )
     else:
@@ -2111,7 +2111,7 @@ class GridPivot(GridReport):
     elif isinstance(reportclass.basequeryset, collections.Callable):
       query = reportclass.query(
         request,
-        reportclass.filter_items(request, reportclass.basequeryset(request, args, kwargs), False).using(request.database),
+        reportclass.filter_items(request, reportclass.basequeryset(request, *args, **kwargs), False).using(request.database),
         sortsql=reportclass._apply_sort_index(request)
         )
     else:

@@ -59,7 +59,7 @@ class ReportByDemand(GridReport):
 
 
   @ classmethod
-  def basequeryset(reportclass, request, args, kwargs):
+  def basequeryset(reportclass, request, *args, **kwargs):
     return Demand.objects.filter(name__exact=args[0]).values('name')
 
 

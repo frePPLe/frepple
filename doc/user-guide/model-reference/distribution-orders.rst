@@ -5,6 +5,10 @@ Distribution orders
 This table contains the distribution orders of your supply chain, either proposed by frePPLe or confirmed.
 A distribution order is a transfer order of some material from one location of your supply chain to another location of your supply chain.
 
+This table is populated with new proposed manufacturing orders when frePPLe generates a plan.
+It is also possible to load manufacturing orders that are already approved or confirmed in your ERP
+system.
+
 A distribution order will be proposed by frePPLe for a given item if a record has been defined in the item distribution table for that item
 (or for one of its parents in the hierarchy) from the origin location to the destination location.
 
@@ -59,4 +63,3 @@ criticality      number            | The criticality is a read-only field, calcu
 delay            duration          | The delay is a read-only field, calculated by the planning engine.
                                    | It compares the end data of the distribution order with the latest possible end date to ship all demands it feeds on time.
 ================ ================= =================================================================================================================================                            
-                                  

@@ -53,8 +53,6 @@ urlpatterns = [
   url(r'^constraintresource/(.+)/$', freppledb.output.views.constraint.ReportByResource.as_view(), name="output_constraint_resource"),
   url(r'^loadplan/(.+)/$', freppledb.output.views.resource.DetailReport.as_view(), name="output_loadplan_plandetail"),
   url(r'^loadplan/$', freppledb.output.views.resource.DetailReport.as_view(), name="output_loadplan_plan"),
-  url(r'^demandplan/(.+)/$', freppledb.output.views.demand.DetailReport.as_view(), name="output_demandplan_plandetail"),
-  url(r'^demandplan/$', freppledb.output.views.demand.DetailReport.as_view(), name="output_buffer_plan"),
   url(r'^kpi/$', freppledb.output.views.kpi.Report.as_view(), name="output_kpi"),
 
   ]

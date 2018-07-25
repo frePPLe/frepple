@@ -2,7 +2,12 @@
 Purchase orders
 ===============
 
-This table contains the purchase orders of your supply chain (replenishment you are purchasing from your suppliers), either proposed by frePPLe or confirmed.
+This table contains the purchase orders of your supply chain (replenishment you are purchasing from your 
+suppliers), either proposed by frePPLe or confirmed.
+
+This table is populated with new proposed purchase orders when frePPLe generates a plan.
+It is also possible to load purchase orders that are already approved or confirmed in your ERP
+system.
 
 **Fields**
 

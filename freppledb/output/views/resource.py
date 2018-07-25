@@ -230,7 +230,7 @@ class DetailReport(GridReport):
   help_url = 'user-guide/user-interface/plan-analysis/resource-detail-report.html'
 
   @ classmethod
-  def basequeryset(reportclass, request, args, kwargs):
+  def basequeryset(reportclass, request, *args, **kwargs):
     if args and args[0]:
       try:
         res = Resource.objects.using(request.database).get(name__exact=args[0])

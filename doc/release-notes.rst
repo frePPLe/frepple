@@ -40,6 +40,9 @@ Release notes
   The types 'fixed_end' and 'fixed_start' on `operation material <user-guide/model-reference/operation-materials.html>`_
   records are replaced with a field 'fixed_quantity'.
 
+- Renamed the "demand plan detail" report to `delivery orders <user-guide/model-reference/operation-materials.html>`_,
+  and enable uploading confirmed or approved shipments to customers as input data.
+
 .. rubric:: Inventory planning
 
 - The safety stock and ROQ minimum/maximum period of cover are now expressed in days. It was before entered

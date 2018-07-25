@@ -37,7 +37,7 @@ from django.views.decorators.csrf import csrf_exempt
 from freppledb.boot import getAttributeFields
 from freppledb.common.models import Parameter
 from freppledb.input.models import Resource, Operation, Location, SetupMatrix, SetupRule
-from freppledb.input.models import Skill, Buffer, Customer, Demand
+from freppledb.input.models import Skill, Buffer, Customer, Demand, DeliveryOrder
 from freppledb.input.models import Item, OperationResource, OperationMaterial
 from freppledb.input.models import Calendar, CalendarBucket, ManufacturingOrder, SubOperation
 from freppledb.input.models import ResourceSkill, Supplier, ItemSupplier, searchmode
@@ -127,7 +127,7 @@ class PathReport(GridReport):
 
 
   @ classmethod
-  def basequeryset(reportclass, request, args, kwargs):
+  def basequeryset(reportclass, request, *args, **kwargs):
     return reportclass.objecttype.objects.filter(name__exact=args[0]).values('name')
 
 
@@ -386,15 +386,12 @@ class PathReport(GridReport):
             upstr = Buffer(name="%s @ %s" % (curoperation.item.name, curoperation.origin.name), item=curoperation.item, location=curoperation.origin)
             root.extend( reportclass.findReplenishment(upstr, request.database, level + 2, curqty, realdepth + 1, True) )
         else:
-          curprodflow = None
           name = curoperation.name
           optype = curoperation.type
           duration = curoperation.duration
           duration_per = curoperation.duration_per
           buffers = [ ('%s @ %s' % (x.item.name, curoperation.location.name), float(x.quantity)) for x in curoperation.operationmaterials.only('item', 'quantity').using(request.database) ]
           resources = [ (x.resource.name, float(x.quantity)) for x in curoperation.operationresources.only('resource', 'quantity').using(request.database) ]
-          for x in curoperation.operationmaterials.filter(quantity__gt=0).only('quantity').using(request.database):
-            curprodflow = x
           curflows = curoperation.operationmaterials.filter(quantity__lt=0).only('item', 'quantity').using(request.database)
           for y in curflows:
             b = Buffer(
@@ -1677,6 +1674,13 @@ class PurchaseOrderList(GridReport):
           'title': force_text(Location._meta.verbose_name) + " " + args[0],
           'post_title': _('purchase orders')
           }
+      elif path == 'item':
+        return {
+          'active_tab': 'purchaseorders',
+          'model': Item,
+          'title': force_text(Item._meta.verbose_name) + " " + args[0],
+          'post_title': _('purchase orders')
+          }
     else:
       return {'active_tab': 'purchaseorders'}
 
@@ -1687,9 +1691,32 @@ class PurchaseOrderList(GridReport):
     if args and args[0]:
       path = request.path.split('/')[-3]
       if path == 'supplier':
-        q = q.filter(supplier=args[0])
+        try:
+          sup = Supplier.objects.all().using(request.database).get(name=args[0])
+          lft = sup.lft
+          rght = sup.rght
+        except Supplier.DoesNotExist:
+          lft = 1
+          rght = 1
+        q = q.filter(supplier__lft__gte=lft, supplier__rght__lte=rght)
       elif path == 'location':
-        q = q.filter(location=args[0])
+        try:
+          loc = Location.objects.all().using(request.database).get(name=args[0])
+          lft = loc.lft
+          rght = loc.rght
+        except Location.DoesNotExist:
+          lft = 1
+          rght = 1
+        q = q.filter(location__lft__gte=lft, location__rght__lte=rght)
+      elif path == 'item':
+        try:
+          itm = Item.objects.all().using(request.database).get(name=args[0])
+          lft = itm.lft
+          rght = itm.rght
+        except Item.DoesNotExist:
+          lft = 1
+          rght = 1
+        q = q.filter(item__lft__gte=lft, item__rght__lte=rght)
     return q.extra(
       select={
         'demand': '''coalesce(
@@ -1857,6 +1884,160 @@ class PurchaseOrderList(GridReport):
         reportclass.rows += (f,)
       # Adding custom supplier attributes
       for f in getAttributeFields(Supplier, related_name_prefix="supplier"):
+        f.editable = False
+        reportclass.rows += (f,)
+
+
+class DeliveryOrderList(GridReport):
+  '''
+  A list report to show delivery plans for demand.
+  '''
+  template = 'input/deliveryorder.html'
+  title = _("Delivery orders")
+  model = DeliveryOrder
+  frozenColumns = 0
+  editable = True
+  multiselect = True
+  help_url = 'user-guide/model-reference/delivery-orders.html'
+  rows = (
+    #. Translators: Translation included with Django
+    GridFieldInteger('id', title=_('identifier'), initially_hidden=True, key=True, formatter='detail', extra='role:"input/deliveryorder"'),
+    GridFieldText('reference', title=_('reference'), editable=not settings.ERP_CONNECTOR),
+    GridFieldText('demand', title=_('demand'), field_name="demand__name", formatter='detail', extra='"role":"input/demand"'),
+    GridFieldText('item', title=_('item'), field_name='item__name', formatter='detail', extra='"role":"input/item"'),
+    GridFieldText('customer', title=_('customer'), field_name='demand__customer__name', formatter='detail', extra='"role":"input/customer"'),
+    GridFieldText('location', title=_('location'), field_name='location__name', formatter='detail', extra='"role":"input/location"'),
+    GridFieldNumber('quantity', title=_('quantity'), editable=False),
+    GridFieldNumber('demand__quantity', title=_('demand quantity'), editable=False),
+    GridFieldDateTime('startdate', title=_('start date')),
+    GridFieldDateTime('enddate', title=_('end date'), extra='"cellattr":enddatecellattr'),
+    GridFieldDateTime('due', field_name='due', title=_('due date'), editable=False),
+    GridFieldChoice('status', title=_('status'), choices=OperationPlan.orderstatus, editable=not settings.ERP_CONNECTOR),
+    GridFieldDuration('delay', title=_('delay'), editable=False, initially_hidden=True, extra='"formatoptions":{"defaultValue":""}, "summaryType":"max"'),
+    # Optional fields referencing the item
+    GridFieldText(
+      'item__description', title=string_concat(_('item'), ' - ', _('description')),
+      initially_hidden=True, editable=False
+      ),
+    GridFieldText(
+      'item__category', title=string_concat(_('item'), ' - ', _('category')),
+      initially_hidden=True, editable=False
+      ),
+    GridFieldText(
+      'item__subcategory', title=string_concat(_('item'), ' - ', _('subcategory')),
+      initially_hidden=True, editable=False
+      ),
+    GridFieldText(
+      'item__owner', title=string_concat(_('item'), ' - ', _('owner')),
+      field_name='item__owner__name', initially_hidden=True, editable=False
+      ),
+    GridFieldText(
+      'item__source', title=string_concat(_('item'), ' - ', _('source')),
+      initially_hidden=True, editable=False
+      ),
+    GridFieldLastModified(
+      'item__lastmodified', title=string_concat(_('item'), ' - ', _('last modified')),
+      initially_hidden=True, editable=False
+      ),
+    # Optional fields referencing the location
+    GridFieldText(
+      'location__description', title=string_concat(_('location'), ' - ', _('description')),
+      initially_hidden=True, editable=False
+      ),
+    GridFieldText(
+      'location__category', title=string_concat(_('location'), ' - ', _('category')),
+      initially_hidden=True, editable=False
+      ),
+    GridFieldText(
+      'location__subcategory', title=string_concat(_('location'), ' - ', _('subcategory')),
+      initially_hidden=True, editable=False
+      ),
+    GridFieldText(
+      'location__available', title=string_concat(_('location'), ' - ', _('available')),
+      initially_hidden=True, field_name='location__available__name', formatter='detail',
+      extra='"role":"input/calendar"', editable=False
+      ),
+    GridFieldText(
+      'location__owner', title=string_concat(_('location'), ' - ', _('owner')),
+      initially_hidden=True, field_name='location__owner__name', formatter='detail',
+      extra='"role":"input/location"', editable=False
+      ),
+    GridFieldText(
+      'location__source', title=string_concat(_('location'), ' - ', _('source')),
+      initially_hidden=True, editable=False
+      ),
+    GridFieldLastModified(
+      'location__lastmodified', title=string_concat(_('location'), ' - ', _('last modified')),
+      initially_hidden=True, editable=False
+      ),
+    # Optional fields referencing the customer
+    GridFieldText(
+      'demand__customer__description', title=string_concat(_('customer'), ' - ', _('description')),
+      initially_hidden=True, editable=False
+      ),
+    GridFieldText(
+      'demand__customer__category', title=string_concat(_('customer'), ' - ', _('category')),
+      initially_hidden=True, editable=False
+      ),
+    GridFieldText(
+      'demand__customer__subcategory', title=string_concat(_('customer'), ' - ', _('subcategory')),
+      initially_hidden=True, editable=False
+      ),
+    GridFieldText(
+      'demand__customer__owner', title=string_concat(_('customer'), ' - ', _('owner')),
+      initially_hidden=True, field_name='supplier__owner__name', formatter='detail',
+      extra='"role":"input/supplier"', editable=False
+      ),
+    GridFieldText(
+      'demand__customer__source', title=string_concat(_('customer'), ' - ', _('source')),
+      initially_hidden=True, editable=False
+      ),
+    GridFieldLastModified(
+      'demand__customer__lastmodified', title=string_concat(_('customer'), ' - ', _('last modified')),
+      initially_hidden=True, editable=False
+      )
+    )
+
+  @ classmethod
+  def basequeryset(reportclass, request, *args, **kwargs):
+    if args and args[0]:
+      try:
+        itm = Item.objects.all().using(request.database).get(name=args[0])
+        lft = itm.lft
+        rght = itm.rght
+      except Item.DoesNotExist:
+        lft = 1
+        rght = 1
+      return DeliveryOrder.objects.all().filter(item__lft__gte=lft, item__rght__lte=rght)
+    else:
+      return DeliveryOrder.objects.all()
+
+  @classmethod
+  def extra_context(reportclass, request, *args, **kwargs):
+    if args and args[0]:
+      request.session['lasttab'] = 'plandetail'
+      return {
+        'active_tab': 'plandetail',
+        'title': force_text(Item._meta.verbose_name) + " " + args[0],
+        'post_title': _("Delivery orders")
+        }
+    else:
+      return {'active_tab': 'plandetail'}
+
+  @classmethod
+  def initialize(reportclass, request):
+    if reportclass._attributes_added != 2:
+      reportclass._attributes_added = 2
+      # Adding custom item attributes
+      for f in getAttributeFields(Item, related_name_prefix="item"):
+        f.editable = False
+        reportclass.rows += (f,)
+      # Adding custom location attributes
+      for f in getAttributeFields(Location, related_name_prefix="location"):
+        f.editable = False
+        reportclass.rows += (f,)
+      # Adding custom customer attributes
+      for f in getAttributeFields(Customer, related_name_prefix="demand__customer"):
         f.editable = False
         reportclass.rows += (f,)
 

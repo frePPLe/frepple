@@ -25,10 +25,8 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import force_text
 
 from freppledb.boot import getAttributeFields
-from freppledb.input.models import Demand, Item, PurchaseOrder, DistributionOrder
-from freppledb.input.models import DeliveryOrder, ManufacturingOrder
-from freppledb.common.report import GridReport, GridPivot, GridFieldText
-from freppledb.common.report import GridFieldNumber, GridFieldDateTime, GridFieldInteger
+from freppledb.common.report import GridPivot, GridFieldText
+from freppledb.input.models import Demand, Item, PurchaseOrder, DistributionOrder, ManufacturingOrder
 
 
 class OverviewReport(GridPivot):
@@ -177,14 +175,14 @@ class OverviewReport(GridPivot):
       if row[0] != previtem:
         backlog = startbacklogdict.get(row[0], 0)
         previtem = row[0]
-      backlog += float(row[numfields-2]) - float(row[numfields-1])
+      backlog += float(row[numfields - 2]) - float(row[numfields - 1])
       res = {
         'item': row[0],
-        'bucket': row[numfields-5],
-        'startdate': row[numfields-4].date(),
-        'enddate': row[numfields-3].date(),
-        'demand': round(row[numfields-2], 1),
-        'supply': round(row[numfields-1], 1),
+        'bucket': row[numfields - 5],
+        'startdate': row[numfields - 4].date(),
+        'enddate': row[numfields - 3].date(),
+        'demand': round(row[numfields - 2], 1),
+        'supply': round(row[numfields - 1], 1),
         'backlog': round(backlog, 1),
         }
       idx = 1
@@ -192,59 +190,6 @@ class OverviewReport(GridPivot):
         res[f.field_name] = row[idx]
         idx += 1
       yield res
-
-
-class DetailReport(GridReport):
-  '''
-  A list report to show delivery plans for demand.
-  '''
-  template = 'output/demandplan.html'
-  title = _("Demand plan detail")
-  model = DeliveryOrder
-  permissions = (("view_demand_report", "Can view demand report"),)
-  frozenColumns = 0
-  editable = False
-  multiselect = False
-  help_url = 'user-guide/user-interface/plan-analysis/demand-detail-report.html'
-  rows = (
-    #. Translators: Translation included with Django
-    GridFieldInteger('id', title=_('id'), key=True,editable=False, hidden=True),
-    GridFieldText('demand', title=_('demand'), field_name="demand__name", editable=False, formatter='detail', extra='"role":"input/demand"'),
-    GridFieldText('item', title=_('item'), field_name='item__name', editable=False, formatter='detail', extra='"role":"input/item"'),
-    GridFieldText('customer', title=_('customer'), field_name='demand__customer__name', editable=False, formatter='detail', extra='"role":"input/customer"'),
-    GridFieldText('location', title=_('location'), field_name='location__name', editable=False, formatter='detail', extra='"role":"input/location"'),
-    GridFieldNumber('quantity', title=_('quantity'), editable=False),
-    GridFieldNumber('demandquantity', title=_('demand quantity'), field_name='demand__quantity', editable=False),
-    GridFieldDateTime('startdate', title=_('start date'), editable=False),
-    GridFieldDateTime('enddate', title=_('end date'), editable=False),
-    GridFieldDateTime('due', field_name='due', title=_('due date'), editable=False),
-    )
-
-  @ classmethod
-  def basequeryset(reportclass, request, args, kwargs):
-    if args and args[0]:
-      try:
-        itm = Item.objects.all().using(request.database).get(name=args[0])
-        lft = itm.lft
-        rght = itm.rght
-      except Item.DoesNotExist:
-        lft = 1
-        rght = 1
-      return DeliveryOrder.objects.all().filter(item__lft__gte=lft, item__rght__lte=rght)
-    else:
-      return DeliveryOrder.objects.all()
-
-  @classmethod
-  def extra_context(reportclass, request, *args, **kwargs):
-    if args and args[0]:
-      request.session['lasttab'] = 'plandetail'
-      return {
-        'active_tab': 'plandetail',
-        'title': force_text(Item._meta.verbose_name) + " " + args[0],
-        'post_title': _("Demand plan detail")
-        }
-    else:
-      return {'active_tab': 'plandetail'}
 
 
 @staff_member_required

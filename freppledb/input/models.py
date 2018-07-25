@@ -1063,7 +1063,7 @@ class OperationPlan(AuditModel):
     ('MO', _('manufacturing order')),
     ('PO', _('purchase order')),
     ('DO', _('distribution order')),
-    ('DLVR', _('customer shipment')),
+    ('DLVR', _('delivery order')),
     )
 
   # Possible status
@@ -1399,5 +1399,5 @@ class DeliveryOrder(OperationPlan):
 
   class Meta:
     proxy = True
-    verbose_name = _('customer shipment')
-    verbose_name_plural = _('customer shipments')
+    verbose_name = _('delivery order')
+    verbose_name_plural = _('delivery orders')

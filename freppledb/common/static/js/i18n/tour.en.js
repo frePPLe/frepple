@@ -467,7 +467,7 @@ var tourdata = [
              position : 'top'
            },
            {
-             url: "/demandplan/",
+             url: "/data/input/deliveryorder/",
              element : 'h1 small',
              description : "This report shows the detailed list of all <strong>planned deliveries</strong> of each order.<br>" +
                "It can be used for more detailed analysis of delays or shortages.",

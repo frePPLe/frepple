@@ -6032,6 +6032,7 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand
     {
       setQuantity(quantity, false, true, true);
     }
+
     /** Updates the quantity of the flowplan by changing the quantity of the
       * operationplan owning this flowplan.<br>
       * The boolean parameter is used to control whether to round up (false)

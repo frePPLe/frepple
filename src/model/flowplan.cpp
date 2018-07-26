@@ -219,7 +219,7 @@ void FlowPlan::setItem(Item* newItem)
 }
 
 
-double FlowPlan::setQuantity(  // TODO Method to be updated
+double FlowPlan::setQuantity(
   double quantity, bool rounddown, bool update, bool execute, short mode
   )
 {
@@ -274,61 +274,61 @@ double FlowPlan::setQuantity(  // TODO Method to be updated
     }
     return 0.0;
   }
-  if (getFlow()->getQuantityFixed() != 0.0)
+
+  double opplan_quantity;
+  if (getFlow()->getQuantity() == 0.0 || fabs(quantity) < fabs(getFlow()->getQuantityFixed()) + ROUNDING_ERROR)
   {
     // Fixed quantity flows only allow resizing to 0
     if (quantity == 0.0 && oper->getQuantity() != 0.0)
     {
       if (mode == 2 || (mode == 0 && getFlow()->getType() == *FlowEnd::metadata))
-        return oper->getOperation()->setOperationPlanParameters(
-          oper, 0.0,
-          Date::infinitePast, oper->getEnd(),
+        opplan_quantity = oper->getOperation()->setOperationPlanParameters(
+          oper, 0.0, Date::infinitePast, oper->getEnd(),
           true, execute, rounddown
-          ).quantity ? getFlow()->getQuantityFixed() : 0.0;
+          ).quantity;
       else if (mode == 1 || (mode == 0 && getFlow()->getType() == *FlowStart::metadata))
-        return oper->getOperation()->setOperationPlanParameters(
-          oper, 0.0,
-          oper->getStart(), Date::infinitePast,
+        opplan_quantity = oper->getOperation()->setOperationPlanParameters(
+          oper, 0.0, oper->getStart(), Date::infinitePast,
           false, execute, rounddown
-          ).quantity ? getFlow()->getQuantityFixed() : 0.0;
+          ).quantity;
+      else
+        throw LogicException("Unreachable code reached");
     }
     else if (quantity != 0.0 && oper->getQuantity() == 0.0)
     {
       if (mode == 2 || (mode == 0 && getFlow()->getType() == *FlowEnd::metadata))
-        return oper->getOperation()->setOperationPlanParameters(
-          oper,
-          (oper->getOperation()->getSizeMinimum() <= 0) ? 0.001
-            : oper->getOperation()->getSizeMinimum(),
-          Date::infinitePast, oper->getEnd(),
+        opplan_quantity = oper->getOperation()->setOperationPlanParameters(
+          oper, 0.001, Date::infinitePast, oper->getEnd(),
           true, execute, rounddown
-          ).quantity ? getFlow()->getQuantityFixed() : 0.0;
+          ).quantity;
       else if (mode == 1 || (mode == 0 && getFlow()->getType() == *FlowStart::metadata))
-        return oper->getOperation()->setOperationPlanParameters(
-          oper,
-          (oper->getOperation()->getSizeMinimum() <= 0) ? 0.001
-          : oper->getOperation()->getSizeMinimum(),
-          oper->getStart(), Date::infinitePast,
+        opplan_quantity = oper->getOperation()->setOperationPlanParameters(
+          oper, 0.001, oper->getStart(), Date::infinitePast,
           false, execute, rounddown
-          ).quantity ? getFlow()->getQuantityFixed() : 0.0;
+          ).quantity;
+      else
+        throw LogicException("Unreachable code reached");
     }
   }
   else
   {
-    // Normal, proportional flows
+    // Normal flows with a proportional size
     if (mode == 2 || (mode == 0 && getFlow()->getType() == *FlowEnd::metadata))
-      return oper->getOperation()->setOperationPlanParameters(
-        oper, quantity / getFlow()->getQuantity(),
+      opplan_quantity = oper->getOperation()->setOperationPlanParameters(
+        oper, (quantity - getFlow()->getQuantityFixed()) / getFlow()->getQuantity(),
         Date::infinitePast, oper->getEnd(),
         true, execute, rounddown
-        ).quantity * getFlow()->getQuantity();
+        ).quantity;
     else if (mode == 1 || (mode == 0 && getFlow()->getType() == *FlowStart::metadata))
-      return oper->getOperation()->setOperationPlanParameters(
-        oper, quantity / getFlow()->getQuantity(),
+      opplan_quantity = oper->getOperation()->setOperationPlanParameters(
+        oper, (quantity - getFlow()->getQuantityFixed()) / getFlow()->getQuantity(),
         oper->getStart(), Date::infinitePast,
         false, execute, rounddown
-        ).quantity * getFlow()->getQuantity();
+        ).quantity;
+    else
+      throw LogicException("Unreachable code reached");
   }
-  throw LogicException("Unreachable code reached");
+  return opplan_quantity ? opplan_quantity * getFlow()->getQuantity() + getFlow()->getQuantityFixed() : 0.0;
 }
 
 

@@ -262,13 +262,15 @@ DateRange Operation::calculateOperationTime(
     Date selected = forward ? Date::infiniteFuture : Date::infinitePast;
     for (auto t = cals.begin(); t != cals.end(); ++t)
     {
-      if (forward && available && t->getValue() == 0)
-        available = false;      
       if (
         (forward && t->getDate() < selected)
         || (!forward && t->getDate() > selected)
         )
+      {
         selected = t->getDate();
+        if (forward && available && t->getValue() == 0)
+          available = false;
+      }
     }
     if (!forward)
     {

@@ -31,7 +31,7 @@ bool sortLoad(const Load* lhs, const Load* rhs)
 }
 
 
-void SolverMRP::chooseResource(const Load* l, void* v)   // @todo handle unconstrained plan!!!!
+void SolverCreate::chooseResource(const Load* l, void* v)   // @todo handle unconstrained plan!!!!
 {
   SolverMRPdata* data = static_cast<SolverMRPdata*>(v);
   if ((!l->getSkill() && !l->getResource()->isGroup()) || data->state->q_loadplan->isApproved())
@@ -267,10 +267,10 @@ void SolverMRP::chooseResource(const Load* l, void* v)   // @todo handle unconst
 }
 
 
-void SolverMRP::solve(const Load* l, void* v)
+void SolverCreate::solve(const Load* l, void* v)
 {
   // Note: This method is only called for decrease loadplans and for the leading
-  // load of an alternate group. See SolverMRP::checkOperation
+  // load of an alternate group. See SolverCreate::checkOperation
   SolverMRPdata* data = static_cast<SolverMRPdata*>(v);
 
   if ((!l->hasAlternates() && !l->getAlternate()) || data->state->q_loadplan->isApproved())

@@ -32,7 +32,7 @@ namespace frepple
   * Are there some situations where the operation solver doesn't know enough
   * on the buffer behavior???
   */
-void SolverMRP::solve(const Buffer* b, void* v)
+void SolverCreate::solve(const Buffer* b, void* v)
 {
   // Call the user exit
   SolverMRPdata* data = static_cast<SolverMRPdata*>(v);
@@ -559,7 +559,7 @@ void SolverMRP::solve(const Buffer* b, void* v)
 }
 
 
-void SolverMRP::solveSafetyStock(const Buffer* b, void* v)
+void SolverCreate::solveSafetyStock(const Buffer* b, void* v)
 {
   SolverMRPdata* data = static_cast<SolverMRPdata*>(v);
 
@@ -651,7 +651,7 @@ void SolverMRP::solveSafetyStock(const Buffer* b, void* v)
 }
 
 
-void SolverMRP::solve(const BufferInfinite* b, void* v)
+void SolverCreate::solve(const BufferInfinite* b, void* v)
 {
   SolverMRPdata* data = static_cast<SolverMRPdata*>(v);
 

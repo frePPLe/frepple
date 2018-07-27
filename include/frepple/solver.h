@@ -119,7 +119,7 @@ class OperatorDelete : public Solver
   * - 2: Show the complete ask&reply communication of the solver.
   * - 3: Trace the status of all entities.
   */
-class SolverMRP : public Solver
+class SolverCreate : public Solver
 {
   protected:
     /** This variable stores the constraint which the solver should respect.
@@ -312,14 +312,14 @@ class SolverMRP : public Solver
     void solve(void *v = nullptr);
 
     /** Constructor. */
-    SolverMRP() : commands(this)
+    SolverCreate() : commands(this)
     {
       initType(metadata);
       commands.setCommandManager(&mgr);
     }
 
     /** Destructor. */
-    virtual ~SolverMRP() {}
+    virtual ~SolverCreate() {}
 
     static int initialize();
     static PyObject* create(PyTypeObject*, PyObject*, PyObject*);
@@ -710,16 +710,16 @@ class SolverMRP : public Solver
     {
       m->addShortField<Cls>(Tags::constraints, &Cls::getConstraints, &Cls::setConstraints);
       m->addShortField<Cls>(Tags::plantype, &Cls::getPlanType, &Cls::setPlanType);
-      m->addDoubleField<Cls>(SolverMRP::tag_iterationthreshold, &Cls::getIterationThreshold, &Cls::setIterationThreshold);
-      m->addDoubleField<Cls>(SolverMRP::tag_iterationaccuracy, &Cls::getIterationAccuracy, &Cls::setIterationAccuracy);
-      m->addDurationField<Cls>(SolverMRP::tag_lazydelay, &Cls::getLazyDelay, &Cls::setLazyDelay);
-      m->addDurationField<Cls>(SolverMRP::tag_administrativeleadtime, &Cls::getAdministrativeLeadTime, &Cls::setAdministrativeLeadTime);
-      m->addDurationField<Cls>(SolverMRP::tag_minimumdelay, &Cls::getMinimumDelay, &Cls::setMinimumDelay);
-      m->addDurationField<Cls>(SolverMRP::tag_autofence, &Cls::getAutoFence, &Cls::setAutoFence);
-      m->addBoolField<Cls>(SolverMRP::tag_allowsplits, &Cls::getAllowSplits, &Cls::setAllowSplits);
-      m->addBoolField<Cls>(SolverMRP::tag_rotateresources, &Cls::getRotateResources, &Cls::setRotateResources);
-      m->addBoolField<Cls>(SolverMRP::tag_planSafetyStockFirst, &Cls::getPlanSafetyStockFirst, &Cls::setPlanSafetyStockFirst);
-      m->addUnsignedLongField<Cls>(SolverMRP::tag_iterationmax, &Cls::getIterationMax, &Cls::setIterationMax);
+      m->addDoubleField<Cls>(SolverCreate::tag_iterationthreshold, &Cls::getIterationThreshold, &Cls::setIterationThreshold);
+      m->addDoubleField<Cls>(SolverCreate::tag_iterationaccuracy, &Cls::getIterationAccuracy, &Cls::setIterationAccuracy);
+      m->addDurationField<Cls>(SolverCreate::tag_lazydelay, &Cls::getLazyDelay, &Cls::setLazyDelay);
+      m->addDurationField<Cls>(SolverCreate::tag_administrativeleadtime, &Cls::getAdministrativeLeadTime, &Cls::setAdministrativeLeadTime);
+      m->addDurationField<Cls>(SolverCreate::tag_minimumdelay, &Cls::getMinimumDelay, &Cls::setMinimumDelay);
+      m->addDurationField<Cls>(SolverCreate::tag_autofence, &Cls::getAutoFence, &Cls::setAutoFence);
+      m->addBoolField<Cls>(SolverCreate::tag_allowsplits, &Cls::getAllowSplits, &Cls::setAllowSplits);
+      m->addBoolField<Cls>(SolverCreate::tag_rotateresources, &Cls::getRotateResources, &Cls::setRotateResources);
+      m->addBoolField<Cls>(SolverCreate::tag_planSafetyStockFirst, &Cls::getPlanSafetyStockFirst, &Cls::setPlanSafetyStockFirst);
+      m->addUnsignedLongField<Cls>(SolverCreate::tag_iterationmax, &Cls::getIterationMax, &Cls::setIterationMax);
       m->addIntField<Cls>(Tags::cluster, &Cls::getCluster, &Cls::setCluster);
     }
 
@@ -901,32 +901,32 @@ class SolverMRP : public Solver
       double q_qty_min;
     };
 
-    /** @brief This class is a helper class of the SolverMRP class.
+    /** @brief This class is a helper class of the SolverCreate class.
       *
       * It stores the solver state maintained by each solver thread.
-      * @see SolverMRP
+      * @see SolverCreate
       */
     class SolverMRPdata
     {
-        friend class SolverMRP;
+        friend class SolverCreate;
       public:
         static void runme(void *args)
         {
           CommandManager mgr;
-          SolverMRP::SolverMRPdata* x = static_cast<SolverMRP::SolverMRPdata*>(args);
+          SolverCreate::SolverMRPdata* x = static_cast<SolverCreate::SolverMRPdata*>(args);
           x->setCommandManager(&mgr);
           x->commit();
           delete x;
         }
 
         /** Return the solver. */
-        SolverMRP* getSolver() const
+        SolverCreate* getSolver() const
         {
           return sol;
         }
 
         /** Constructor. */
-        SolverMRPdata(SolverMRP* s=nullptr, int c=0, deque<Demand*>* d=nullptr);
+        SolverMRPdata(SolverCreate* s=nullptr, int c=0, deque<Demand*>* d=nullptr);
 
         /** Destructor. */
         ~SolverMRPdata();
@@ -977,16 +977,16 @@ class SolverMRP : public Solver
         /** Auxilary method to replenish safety stock in all buffers of a
           * cluster. This method is only intended to be called from the
           * commit() method.
-          * @see SolverMRP::planSafetyStockFirst
-          * @see SolverMRP::SolverMRPdata::commit
+          * @see SolverCreate::planSafetyStockFirst
+          * @see SolverCreate::SolverMRPdata::commit
           */
-        void solveSafetyStock(SolverMRP*);
+        void solveSafetyStock(SolverCreate*);
 
         /** Pointer to the command manager. */
         CommandManager* mgr = nullptr;
 
         /** Points to the solver. */
-        SolverMRP* sol = nullptr;
+        SolverCreate* sol = nullptr;
 
         /** An identifier of the cluster being replanned. Note that it isn't
           * always the complete cluster that is being planned.

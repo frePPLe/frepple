@@ -24,8 +24,8 @@ namespace frepple
 {
 
 
-void SolverMRP::checkOperationCapacity
-  (OperationPlan* opplan, SolverMRP::SolverMRPdata& data)
+void SolverCreate::checkOperationCapacity
+  (OperationPlan* opplan, SolverCreate::SolverMRPdata& data)
 {
   unsigned short constrainedLoads = 0;
   for (OperationPlan::LoadPlanIterator h=opplan->beginLoadPlans();
@@ -114,8 +114,8 @@ void SolverMRP::checkOperationCapacity
 }
 
 
-bool SolverMRP::checkOperation
-(OperationPlan* opplan, SolverMRP::SolverMRPdata& data)
+bool SolverCreate::checkOperation
+(OperationPlan* opplan, SolverCreate::SolverMRPdata& data)
 {
   // The default answer...
   data.state->a_date = Date::infiniteFuture;
@@ -401,8 +401,8 @@ bool SolverMRP::checkOperation
 }
 
 
-bool SolverMRP::checkOperationLeadTime
-(OperationPlan* opplan, SolverMRP::SolverMRPdata& data, bool extra)
+bool SolverCreate::checkOperationLeadTime
+(OperationPlan* opplan, SolverCreate::SolverMRPdata& data, bool extra)
 {
   // No lead time constraints
   if (!data.constrainedPlanning || (!isFenceConstrained() && !isLeadTimeConstrained()))
@@ -570,7 +570,7 @@ bool SolverMRP::checkOperationLeadTime
 }
 
 
-void SolverMRP::solve(const Operation* oper, void* v)
+void SolverCreate::solve(const Operation* oper, void* v)
 {
   SolverMRPdata* data = static_cast<SolverMRPdata*>(v);
   OperationPlan *z = nullptr;
@@ -605,8 +605,8 @@ void SolverMRP::solve(const Operation* oper, void* v)
 }
 
 
-OperationPlan* SolverMRP::createOperation(
-  const Operation* oper, SolverMRP::SolverMRPdata* data, bool propagate, bool start_or_end
+OperationPlan* SolverCreate::createOperation(
+  const Operation* oper, SolverCreate::SolverMRPdata* data, bool propagate, bool start_or_end
   )
 {
   OperationPlan *z = nullptr;
@@ -873,7 +873,7 @@ OperationPlan* SolverMRP::createOperation(
 }
 
 
-void SolverMRP::solve(const OperationItemSupplier* o, void* v)
+void SolverCreate::solve(const OperationItemSupplier* o, void* v)
 {
   SolverMRPdata* data = static_cast<SolverMRPdata*>(v);
   if (v)
@@ -921,7 +921,7 @@ void SolverMRP::solve(const OperationItemSupplier* o, void* v)
 
 
 // No need to take post- and pre-operation times into account
-void SolverMRP::solve(const OperationRouting* oper, void* v)
+void SolverCreate::solve(const OperationRouting* oper, void* v)
 {
   SolverMRPdata* data = static_cast<SolverMRPdata*>(v);
 
@@ -1097,7 +1097,7 @@ void SolverMRP::solve(const OperationRouting* oper, void* v)
 
 // No need to take post- and pre-operation times into account
 // @todo This method should only be allowed to create 1 operationplan
-void SolverMRP::solve(const OperationAlternate* oper, void* v)
+void SolverCreate::solve(const OperationAlternate* oper, void* v)
 {
   SolverMRPdata *data = static_cast<SolverMRPdata*>(v);
   Date origQDate = data->state->q_date;
@@ -1593,7 +1593,7 @@ void SolverMRP::solve(const OperationAlternate* oper, void* v)
 }
 
 
-void SolverMRP::solve(const OperationSplit* oper, void* v)
+void SolverCreate::solve(const OperationSplit* oper, void* v)
 {
   SolverMRPdata *data = static_cast<SolverMRPdata*>(v);
   Date origQDate = data->state->q_date;

@@ -32,7 +32,7 @@ bool compare_location(const pair<Location*, double>& a, const pair<Location*, do
 }
 
 
-void SolverMRP::solve(const Demand* l, void* v)
+void SolverCreate::solve(const Demand* l, void* v)
 {
   typedef list<pair<Location* , double > > SortedLocation;
   // Set a bookmark at the current command
@@ -492,14 +492,14 @@ void SolverMRP::solve(const Demand* l, void* v)
 }
 
 
-void SolverMRP::scanExcess(CommandManager* mgr)
+void SolverCreate::scanExcess(CommandManager* mgr)
 {
   for(CommandManager::iterator i = mgr->begin(); i != mgr->end(); ++i)
     if (i->isActive()) scanExcess(&*i);
 }
 
 
-void SolverMRP::scanExcess(CommandList* l)
+void SolverCreate::scanExcess(CommandList* l)
 {
   // Loop over all newly created operationplans found in the command stack
   for(CommandList::iterator cmd = l->begin(); cmd != l->end(); ++cmd)
@@ -528,7 +528,7 @@ void SolverMRP::scanExcess(CommandList* l)
 }
 
 
-bool SolverMRP::hasOperationPlans(CommandManager* mgr)
+bool SolverCreate::hasOperationPlans(CommandManager* mgr)
 {
   for (CommandManager::iterator i = mgr->begin(); i != mgr->end(); ++i)
   {
@@ -542,7 +542,7 @@ bool SolverMRP::hasOperationPlans(CommandManager* mgr)
 }
 
 
-bool SolverMRP::hasOperationPlans(CommandList* l)
+bool SolverCreate::hasOperationPlans(CommandList* l)
 {
   // Loop over all newly created operationplans found in the command stack
   for (CommandList::iterator cmd = l->begin(); cmd != l->end(); ++cmd)

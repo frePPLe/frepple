@@ -54,6 +54,15 @@ Release notes
 
 - Bug fix when uploading data files using the Microsoft Edge browser.
 
+.. rubric:: Deprecation
+
+- | Operations of types alternate, routing and split should not load any resources, 
+    or consume or produce materials. The suboperations should model all material and capacity 
+    usage instead.
+  | Note that in the majority of models, the explicit modeling of alternate operations is no
+    longer needed. The planning engine detects situations where an item-location can be replenished
+    in multiple ways and automatically generates an alternate operation.
+
 4.3.4 (2018/06/08)
 ==================
 

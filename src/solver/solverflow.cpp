@@ -124,7 +124,7 @@ void SolverMRP::solve(const Flow* fl, void* v)  // @todo implement search mode
       curflow->getBuffer()->solve(*this,data);
 
       // 4d) A positive reply: exit the loop
-      if (data->state->a_qty > fabs(curflow->getQuantityFixed()) + ROUNDING_ERROR)
+      if (data->state->a_qty > ROUNDING_ERROR)
       {
         // Update the opplan, which is required to (1) update the flowplans
         // and to (2) take care of lot sizing constraints of this operation.
@@ -133,7 +133,7 @@ void SolverMRP::solve(const Flow* fl, void* v)  // @todo implement search mode
           flplan->setQuantity(-data->state->a_qty, true);
           data->state->a_qty = -flplan->getQuantity();
         }
-        if (data->state->a_qty > fabs(curflow->getQuantityFixed()) + ROUNDING_ERROR)
+        if (data->state->a_qty > ROUNDING_ERROR)
         {
           data->constrainedPlanning = originalPlanningMode;
           data->logConstraints = originalLogConstraints;

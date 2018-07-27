@@ -294,11 +294,9 @@ void OperatorDelete::solve(const Buffer* b, void* v)
       else
       {
         // Resize the consumer
-        newsize_flowplan = fp->setQuantity(fp->getQuantity() - cur_shortage, true, false, true, 0);
-        if (fp->getFlow()->getQuantity())
-          newsize_opplan = (newsize_flowplan - fp->getFlow()->getQuantityFixed()) / fp->getFlow()->getQuantity();
-        else
-          newsize_opplan = newsize_flowplan ? fp->getFlow()->getQuantityFixed() : 0.0;  // TODO Is this correct? Flowplan and opplan size aren't linked like this
+        auto tmp = fp->setQuantity(fp->getQuantity() - cur_shortage, true, false, true, 0);
+        newsize_flowplan = tmp.first;
+        newsize_opplan = tmp.second;
       }
       if (newsize_flowplan > -ROUNDING_ERROR)
       {
@@ -396,11 +394,9 @@ void OperatorDelete::solve(const Buffer* b, void* v)
       else
       {
         // Resize the consumer
-        newsize_flowplan = fp->setQuantity(fp->getQuantity() - cur_excess, false, false);
-        if (fp->getFlow()->getQuantity())
-          newsize_opplan = (newsize_flowplan - fp->getFlow()->getQuantityFixed()) / fp->getFlow()->getQuantity();
-        else
-          newsize_opplan = newsize_flowplan ? fp->getFlow()->getQuantityFixed() : 0.0; // TODO Is this correct? Flowplan and opplan size aren't linked like this
+        auto tmp = fp->setQuantity(fp->getQuantity() - cur_excess, false, false);
+        newsize_flowplan = tmp.first;
+        newsize_opplan = tmp.second;
       }
       if (newsize_flowplan < ROUNDING_ERROR)
       {

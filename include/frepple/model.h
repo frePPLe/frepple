@@ -6044,8 +6044,12 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand
       *  - 0: keep the flowplan at its current date during the resize
       *  - 1: keep the start date constant when resizing the flowplan
       *  - 2: keep the end date constant when resizing the flowplan
+      *
+      * The return value is a pair with:
+      *   1) flowplan quantity
+      *   2) operationplan quantity
       */
-    double setQuantity(
+    pair<double, double> setQuantity(
       double quantity, bool rounddown=false, bool update=true,
       bool execute=true, short mode = 2
       );

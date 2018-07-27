@@ -219,7 +219,7 @@ void FlowPlan::setItem(Item* newItem)
 }
 
 
-double FlowPlan::setQuantity(
+pair<double, double> FlowPlan::setQuantity(
   double quantity, bool rounddown, bool update, bool execute, short mode
   )
 {
@@ -242,7 +242,7 @@ double FlowPlan::setQuantity(
       fl->getBuffer()->setChanged();
       fl->getOperation()->setChanged();
     }
-    return qty;
+    return make_pair(quantity, oper->getQuantity());
   }
 
   if (!getFlow()->getEffective().within(getDate()))
@@ -272,7 +272,7 @@ double FlowPlan::setQuantity(
         );
       }
     }
-    return 0.0;
+    return make_pair(0.0, 0.0);
   }
 
   double opplan_quantity;
@@ -328,7 +328,10 @@ double FlowPlan::setQuantity(
     else
       throw LogicException("Unreachable code reached");
   }
-  return opplan_quantity ? opplan_quantity * getFlow()->getQuantity() + getFlow()->getQuantityFixed() : 0.0;
+  if (opplan_quantity)
+    return make_pair(opplan_quantity * getFlow()->getQuantity() + getFlow()->getQuantityFixed(), opplan_quantity);
+  else
+    return make_pair(0.0, 0.0);
 }
 
 

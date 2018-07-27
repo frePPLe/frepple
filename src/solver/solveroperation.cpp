@@ -572,9 +572,6 @@ bool SolverMRP::checkOperationLeadTime
 
 void SolverMRP::solve(const Operation* oper, void* v)
 {
-  // Make sure we have a valid operation
-  assert(oper);
-
   SolverMRPdata* data = static_cast<SolverMRPdata*>(v);
   OperationPlan *z = nullptr;
 
@@ -1118,21 +1115,15 @@ void SolverMRP::solve(const OperationAlternate* oper, void* v)
 
   // Find the flow into the requesting buffer for the quantity-per
   double top_flow_qty_per = 0.0;
-  bool top_flow_exists = false;
-  bool fixed_flow = false;
+  double top_flow_qty_fixed = 0.0;
   if (buf)
   {
     Flow* f = oper->findFlow(buf, data->state->q_date);
     if (f && f->isProducer())
     {
-      if (f->getQuantityFixed() != 0.0)
-      {
-        fixed_flow = true;
-        top_flow_qty_per = f->getQuantityFixed();
-      }
-      else
-        top_flow_qty_per = f->getQuantity();
-      top_flow_exists = true;
+      top_flow_qty_per = f->getQuantity();
+      top_flow_qty_fixed = f->getQuantityFixed();
+      logger << "Deprecation warning: alternate operations shouldn't produce material" << endl;
     }
   }
 
@@ -1157,13 +1148,15 @@ void SolverMRP::solve(const OperationAlternate* oper, void* v)
   Date ask_date;
   SubOperation *firstAlternate = nullptr;
   double firstFlowPer;
+  double firstFlowFixed;
   while (a_qty > 0)
   {
     // Evaluate all alternates
     double bestAlternateValue = DBL_MAX;
     double bestAlternateQuantity = 0;
     Operation* bestAlternateSelection = nullptr;
-    double bestFlowPer = 1.0;
+    double bestFlowPer = 0.0;
+    double bestFlowFixed = 0.0;
     Date bestQDate;
     for (Operation::Operationlist::const_iterator altIter
         = oper->getSubOperations().begin();
@@ -1200,21 +1193,15 @@ void SolverMRP::solve(const OperationAlternate* oper, void* v)
       // Find the flow into the requesting buffer. It may or may not exist, since
       // the flow could already exist on the top operationplan
       double sub_flow_qty_per = 0.0;
+      double sub_flow_qty_fixed = 0.0;
       if (buf)
       {
         // Flow quantity on the suboperation
         Flow* f = (*altIter)->getOperation()->findFlow(buf, ask_date);
         if (f && f->isProducer())
-        {          
-          bool f_is_fixed = f->getQuantityFixed() != 0.0;
-          if (f_is_fixed)
-            sub_flow_qty_per = f->getQuantityFixed();
-          else
-            sub_flow_qty_per = f->getQuantity();
-          if (top_flow_exists && fixed_flow != f_is_fixed)
-              throw DataException("Can't mix fixed and proportional quantity flows on operation '" + oper->getName()
-                + "' for buffer '" + data->state->curBuffer->getName() + "'");
-          fixed_flow = f_is_fixed;
+        {         
+          sub_flow_qty_per = f->getQuantity();
+          sub_flow_qty_fixed = f->getQuantityFixed();
         }
 
         // Flow quantity on the suboperations of a routing suboperation
@@ -1226,20 +1213,13 @@ void SolverMRP::solve(const OperationAlternate* oper, void* v)
             Flow *g = o->getOperation()->findFlow(buf, ask_date);
             if (g && g->isProducer())
             {              
-              bool g_is_fixed = (g->getQuantityFixed() != 0.0);
-              if (g_is_fixed)
-                sub_flow_qty_per += g->getQuantityFixed();
-              else
-                sub_flow_qty_per += g->getQuantity();
-              if ((top_flow_exists || f) && fixed_flow != g_is_fixed)
-                throw DataException("Can't mix fixed and proportional quantity flows on operation '" + oper->getName()
-                  + "' for buffer '" + data->state->curBuffer->getName() + "'");
-              fixed_flow = g_is_fixed;
+              sub_flow_qty_per += g->getQuantity();
+              sub_flow_qty_fixed += g->getQuantityFixed();
             }
           }
         }
 
-        if (!sub_flow_qty_per && !top_flow_exists)
+        if (!sub_flow_qty_fixed && !sub_flow_qty_per && !top_flow_qty_fixed && !top_flow_qty_per)
         {
           // Neither the top nor the sub operation have a flow in the buffer,
           // we're in trouble...
@@ -1258,6 +1238,7 @@ void SolverMRP::solve(const OperationAlternate* oper, void* v)
       {
         firstAlternate = *altIter;
         firstFlowPer = sub_flow_qty_per + top_flow_qty_per;
+        firstFlowFixed = sub_flow_qty_fixed + top_flow_qty_fixed;
       }
 
       // Constraint tracking
@@ -1290,10 +1271,13 @@ void SolverMRP::solve(const OperationAlternate* oper, void* v)
       data->state->curDemand = nullptr;
       data->state->curOwnerOpplan = a->getOperationPlan();
       data->state->curBuffer = nullptr;  // Because we already took care of it... @todo not correct if the suboperation is again a owning operation
-      if (fixed_flow)
-        data->state->q_qty = (oper->getSizeMinimum()<=0) ? 0.001 : oper->getSizeMinimum();
+      auto flow_per = sub_flow_qty_per + top_flow_qty_per;
+      auto flow_fixed = sub_flow_qty_fixed + top_flow_qty_fixed;
+      if (!flow_per || a_qty < flow_fixed + ROUNDING_ERROR)
+        // The minimum operation size will suffice
+        data->state->q_qty = 0.001;
       else
-        data->state->q_qty = a_qty / (sub_flow_qty_per + top_flow_qty_per);    // TODO revise
+        data->state->q_qty = (a_qty - flow_fixed) / flow_per;
 
       // Solve constraints on the sub operationplan
       double beforeCost = data->state->a_cost;
@@ -1337,7 +1321,11 @@ void SolverMRP::solve(const OperationAlternate* oper, void* v)
         }
         data->getSolver()->setLogLevel(loglevel);
       }
-      double deltaCost = data->state->a_cost - beforeCost;
+      double deltaCost;
+      if (data->state->a_qty > ROUNDING_ERROR)
+        deltaCost = data->state->a_cost - beforeCost;
+      else
+        deltaCost = 0.0;
       double deltaPenalty = data->state->a_penalty - beforePenalty;
       data->state->a_cost = beforeCost;
       data->state->a_penalty = beforePenalty;
@@ -1357,10 +1345,9 @@ void SolverMRP::solve(const OperationAlternate* oper, void* v)
         data->state->q_date_max = origQDate;
         data->state->curOwnerOpplan->createFlowLoads();
         data->getSolver()->checkOperation(data->state->curOwnerOpplan,*data);
-        if (fixed_flow)         // TODO revise this code for constant material consumption!
-          data->state->a_qty = (sub_flow_qty_per + top_flow_qty_per);
-        else
-          data->state->a_qty *= (sub_flow_qty_per + top_flow_qty_per);
+        data->state->a_qty = 
+          (sub_flow_qty_fixed + top_flow_qty_fixed)
+          +  data->state->a_qty * (sub_flow_qty_per + top_flow_qty_per);
 
         // Combine the reply date of the top-opplan with the alternate check: we
         // need to return the minimum next-date.
@@ -1385,7 +1372,8 @@ void SolverMRP::solve(const OperationAlternate* oper, void* v)
         a_qty -= data->state->a_qty;
 
         // As long as we get a positive reply we replan on this alternate
-        if (data->state->a_qty > 0) nextalternate = false;
+        if (data->state->a_qty > 0)
+          nextalternate = false;
 
         // Are we at the end already?
         if (a_qty < ROUNDING_ERROR)
@@ -1423,6 +1411,7 @@ void SolverMRP::solve(const OperationAlternate* oper, void* v)
           bestAlternateSelection = (*altIter)->getOperation();
           bestAlternateQuantity = data->state->a_qty;
           bestFlowPer = sub_flow_qty_per + top_flow_qty_per;
+          bestFlowFixed = sub_flow_qty_fixed + top_flow_qty_fixed;
           bestQDate = ask_date;
         }
         // This was only an evaluation
@@ -1461,10 +1450,10 @@ void SolverMRP::solve(const OperationAlternate* oper, void* v)
         data->getCommandManager()->add(a);
 
       // Recreate the ask
-      if (fixed_flow)
-        data->state->q_qty = (oper->getSizeMinimum()<=0) ? 0.001 : oper->getSizeMinimum();
+      if (!bestFlowPer || a_qty < bestFlowFixed + ROUNDING_ERROR)
+        data->state->q_qty = 0.001;
       else
-        data->state->q_qty = a_qty / bestFlowPer;
+        data->state->q_qty = (a_qty - bestFlowFixed) / bestFlowPer;
       data->state->q_date = bestQDate;
       data->state->q_date_max = bestQDate;
       data->state->curDemand = nullptr;
@@ -1480,14 +1469,14 @@ void SolverMRP::solve(const OperationAlternate* oper, void* v)
       data->state->q_date = origQDate;
       data->state->q_date_max = origQDate;
       data->state->curOwnerOpplan->createFlowLoads();
-      data->getSolver()->checkOperation(data->state->curOwnerOpplan,*data);
+      data->getSolver()->checkOperation(data->state->curOwnerOpplan, *data);
 
       // Multiply the operation reply with the flow quantity to obtain the
       // reply to return
-      if (fixed_flow)
-        data->state->q_qty = bestFlowPer;
+      if (data->state->a_qty < ROUNDING_ERROR)
+        data->state->a_qty = 0.0;
       else
-        data->state->a_qty *= bestFlowPer;
+        data->state->a_qty = bestFlowFixed + data->state->a_qty * bestFlowPer;
 
       // Combine the reply date of the top-opplan with the alternate check: we
       // need to return the minimum next-date.
@@ -1540,7 +1529,10 @@ void SolverMRP::solve(const OperationAlternate* oper, void* v)
       data->getCommandManager()->add(a);
 
     // Recreate the ask
-    data->state->q_qty = a_qty / firstFlowPer;
+    if (!firstFlowPer || a_qty < firstFlowFixed + ROUNDING_ERROR)
+      data->state->q_qty = 0.001;
+    else
+      data->state->q_qty = (a_qty - firstFlowFixed) / firstFlowPer;
     data->state->q_date = origQDate;
     data->state->q_date_max = origQDate;
     data->state->curDemand = nullptr;

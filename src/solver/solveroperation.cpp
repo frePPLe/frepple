@@ -574,15 +574,42 @@ void SolverMRP::solve(const Operation* oper, void* v)
 {
   SolverMRPdata* data = static_cast<SolverMRPdata*>(v);
   OperationPlan *z = nullptr;
+  data->state->a_date = Date::infiniteFuture;
 
   // Call the user exit
   if (userexit_operation)
     userexit_operation.call(oper, PythonData(data->constrainedPlanning));
 
   // Message
+  if (data->getSolver()->getLogLevel() > 1)
+    logger << indent(oper->getLevel()) << "   Operation '" << oper->getName()
+      << "' is asked: " << data->state->q_qty << "  " << data->state->q_date << endl;
+
+  // Scan for opportunities to plan this operation.
+  double best_batch_eval = DBL_MAX;
+  double best_batch_date = Date::infinitePast;
+  Problem* topConstraint = data->planningDemand ?
+    data->planningDemand->getConstraints().top() :
+    nullptr;
+
+  // Subtract the post-operation time.
+  data->state->q_date_max = data->state->q_date;
+  data->state->q_date -= oper->getPostTime();
+  createOperation(oper, data, true, true);
+
+  // Message
   if (data->getSolver()->getLogLevel()>1)
     logger << indent(oper->getLevel()) << "   Operation '" << oper->getName()
-    << "' is asked: " << data->state->q_qty << "  " << data->state->q_date << endl;
+    << "' answers: " << data->state->a_qty << "  " << data->state->a_date
+    << "  " << data->state->a_cost << "  " << data->state->a_penalty << endl;
+}
+
+
+OperationPlan* SolverMRP::createOperation(
+  const Operation* oper, SolverMRP::SolverMRPdata* data, bool propagate, bool start_or_end
+  )
+{
+  OperationPlan *z = nullptr;
 
   // Find the flow for the quantity-per. This can throw an exception if no
   // valid flow can be found.
@@ -631,7 +658,7 @@ void SolverMRP::solve(const Operation* oper, void* v)
           << "' answers: " << data->state->a_qty << "  " << data->state->a_date
           << "  " << data->state->a_cost << "  " << data->state->a_penalty << endl;
       }
-      return;
+      return nullptr;
     }
   }
   else
@@ -735,14 +762,7 @@ void SolverMRP::solve(const Operation* oper, void* v)
     data->planningDemand->getConstraints().top() :
     nullptr;
 
-  // Subtract the post-operation time.
-  // Note that we subtract it BEFORE we have snapped the requirement date
-  // to our calendar.
-  Date prev_q_date_max = data->state->q_date_max;
-  data->state->q_date_max = data->state->q_date;
-  data->state->q_date -= oper->getPostTime();
-
-  // Align the date to the specified calendar .
+  // Align the date to the specified calendar.
   // This alignment is a soft constraint: q_date_max is already set earlier and
   // remains unchanged at the true requirement date.
   Calendar* alignment_cal = Plan::instance().getCalendar();
@@ -766,19 +786,31 @@ void SolverMRP::solve(const Operation* oper, void* v)
     {
       // There is already an owner and thus also an owner command
       assert(!data->state->curDemand);
-      z = oper->createOperationPlan(
-        opplan_qty, Date::infinitePast, data->state->q_date, data->state->curDemand,
-        data->state->curOwnerOpplan, 0, true, false
-      );
+      if (start_or_end)
+        z = oper->createOperationPlan(
+          opplan_qty, Date::infinitePast, data->state->q_date, data->state->curDemand,
+          data->state->curOwnerOpplan, 0, true, false
+          );
+      else
+        z = oper->createOperationPlan(
+          opplan_qty, data->state->q_date, Date::infinitePast, data->state->curDemand,
+          data->state->curOwnerOpplan, 0, true, false
+        );
     }
     else
     {
       // There is no owner operationplan yet. We need a new command.
-      CommandCreateOperationPlan *a =
-        new CommandCreateOperationPlan(
+      CommandCreateOperationPlan *a;
+      if (start_or_end)
+        a = new CommandCreateOperationPlan(
           oper, opplan_qty, Date::infinitePast, data->state->q_date,
           data->state->curDemand, data->state->curOwnerOpplan, true, false
-        );
+          );
+      else
+        a = new CommandCreateOperationPlan(
+          oper, opplan_qty, data->state->q_date, Date::infinitePast,
+          data->state->curDemand, data->state->curOwnerOpplan, true, false
+          );
       data->state->curDemand = nullptr;
       z = a->getOperationPlan();
       data->getCommandManager()->add(a);
@@ -786,6 +818,9 @@ void SolverMRP::solve(const Operation* oper, void* v)
   }
   assert(z);
   double orig_q_qty = z->getQuantity();
+
+  if (!propagate)
+    return z;
 
   // Adjust the min quantity we expect the reply to cover
   double orig_q_qty_min = data->state->q_qty_min;
@@ -795,8 +830,7 @@ void SolverMRP::solve(const Operation* oper, void* v)
     data->state->q_qty_min = (data->state->q_qty_min - flow_qty_fixed) / flow_qty_per;
 
   // Check the constraints
-  data->getSolver()->checkOperation(z,*data);
-  data->state->q_date_max = prev_q_date_max;
+  data->getSolver()->checkOperation(z, *data);
   data->state->q_qty_min = orig_q_qty_min;
 
   // Multiply the operation reply with the flow quantity to get a final reply
@@ -835,11 +869,7 @@ void SolverMRP::solve(const Operation* oper, void* v)
     for (OperationPlan::iterator rr = oper->getOperationPlans(); rr != OperationPlan::end(); ++rr)
       data->state->a_penalty += rr->getQuantity();
 
-  // Message
-  if (data->getSolver()->getLogLevel()>1)
-    logger << indent(oper->getLevel()) << "   Operation '" << oper->getName()
-      << "' answers: " << data->state->a_qty << "  " << data->state->a_date
-      << "  " << data->state->a_cost << "  " << data->state->a_penalty << endl;
+  return z;
 }
 
 

@@ -1043,6 +1043,13 @@ class SolverMRP : public Solver
     /** Command manager used when autocommit is switched off. */
     CommandManager mgr;
 
+    /** An auxilary method that will create an extra operationplan to
+      * supply the requested quantity.
+      * It calls the checkOperation method to check the feasibility
+      * of the new operationplan.
+      */
+    OperationPlan* createOperation(const Operation*, SolverMRPdata*, bool propagate = true, bool start_or_end = true);
+
     /** This function will check all constraints for an operationplan
       * and propagate it upstream. The check does NOT check eventual
       * sub operationplans.<br>

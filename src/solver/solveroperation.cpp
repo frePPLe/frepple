@@ -576,7 +576,8 @@ void SolverMRP::solve(const Operation* oper, void* v)
   OperationPlan *z = nullptr;
 
   // Call the user exit
-  if (userexit_operation) userexit_operation.call(oper, PythonData(data->constrainedPlanning));
+  if (userexit_operation)
+    userexit_operation.call(oper, PythonData(data->constrainedPlanning));
 
   // Message
   if (data->getSolver()->getLogLevel()>1)
@@ -586,27 +587,18 @@ void SolverMRP::solve(const Operation* oper, void* v)
   // Find the flow for the quantity-per. This can throw an exception if no
   // valid flow can be found.
   Date orig_q_date = data->state->q_date;  
-  double flow_qty_per = 1.0;
+  double flow_qty_per = 0.0;
   double flow_qty_fixed = 0.0;
-  bool fixed_flow = false;
   bool transferbatch_flow = false;
   if (data->state->curBuffer)
   {
     Flow* f = oper->findFlow(data->state->curBuffer, data->state->q_date);
     if (f && f->isProducer())
     {
-      if (f->getQuantityFixed() != 0.0)
-      {
-        fixed_flow = true;
-        flow_qty_fixed = (oper->getSizeMinimum() <= 0 ? 0.001 : oper->getSizeMinimum());
-        flow_qty_per = f->getQuantityFixed();
-      }
-      else
-      {
-        if (&f->getType() == FlowTransferBatch::metadata)
-          transferbatch_flow = true;
-        flow_qty_per = f->getQuantity();
-      }
+      flow_qty_per += f->getQuantity();
+      flow_qty_fixed += f->getQuantityFixed();
+      if (&f->getType() == FlowTransferBatch::metadata)
+        transferbatch_flow = true;
     }
     else
     {
@@ -626,12 +618,12 @@ void SolverMRP::solve(const Operation* oper, void* v)
       }
       if (j == data->planningDemand->getConstraints().end())
         data->planningDemand->getConstraints().push(new ProblemInvalidData(
-          data->planningDemand, 
+          data->planningDemand,
           problemtext,
           "demand",
-          data->planningDemand->getDue(), data->planningDemand->getDue(), 
+          data->planningDemand->getDue(), data->planningDemand->getDue(),
           data->planningDemand->getQuantity(), false
-          ));
+        ));
       if (data->getSolver()->getLogLevel() > 1)
       {
         logger << indent(oper->getLevel()) << "   " << problemtext << endl;
@@ -642,7 +634,10 @@ void SolverMRP::solve(const Operation* oper, void* v)
       return;
     }
   }
-    
+  else
+    // Using this operation as a delivery operation for a demand
+    flow_qty_per = 1.0;
+
   // If transferbatch, then recompute the operation quantity and date here
   if (transferbatch_flow)
   {
@@ -663,15 +658,20 @@ void SolverMRP::solve(const Operation* oper, void* v)
       if (flpln->getDate() < data->state->q_date)
         break;
     }
-    max_short_qty /= - flow_qty_per;
 
     // Create an operationplan to solve for the maximum shortage at its date
+    double opplan_qty;
+    if (!flow_qty_per || - max_short_qty < flow_qty_fixed + ROUNDING_ERROR)
+      // Minimum size if sufficient
+      opplan_qty = 0.001;
+    else
+      opplan_qty = (- max_short_qty - flow_qty_fixed) / flow_qty_per;
     if (data->state->curOwnerOpplan)
     {
       // There is already an owner and thus also an owner command
       assert(!data->state->curDemand);
       z = oper->createOperationPlan(
-        max_short_qty, Date::infinitePast, max_short_date,
+        opplan_qty, Date::infinitePast, max_short_date,
         data->state->curDemand, data->state->curOwnerOpplan, 0, true, false
       );
     }
@@ -680,7 +680,7 @@ void SolverMRP::solve(const Operation* oper, void* v)
       // There is no owner operationplan yet. We need a new command.
       CommandCreateOperationPlan *a =
         new CommandCreateOperationPlan(
-          oper, max_short_qty, Date::infinitePast, max_short_date, 
+          oper, opplan_qty, Date::infinitePast, max_short_date,
           data->state->curDemand, data->state->curOwnerOpplan, true, false
         );
       data->state->curDemand = nullptr;
@@ -756,13 +756,18 @@ void SolverMRP::solve(const Operation* oper, void* v)
   // Create the operation plan.
   if (!z)
   {
+    double opplan_qty;
+    if (!flow_qty_per || data->state->q_qty < flow_qty_fixed + ROUNDING_ERROR)
+      // Minimum size if sufficient
+      opplan_qty = 0.001;
+    else
+      opplan_qty = (data->state->q_qty - flow_qty_fixed) / flow_qty_per;
     if (data->state->curOwnerOpplan)
     {
       // There is already an owner and thus also an owner command
       assert(!data->state->curDemand);
       z = oper->createOperationPlan(
-        fixed_flow ? flow_qty_fixed : data->state->q_qty / flow_qty_per,
-        Date::infinitePast, data->state->q_date, data->state->curDemand,
+        opplan_qty, Date::infinitePast, data->state->q_date, data->state->curDemand,
         data->state->curOwnerOpplan, 0, true, false
       );
     }
@@ -771,9 +776,8 @@ void SolverMRP::solve(const Operation* oper, void* v)
       // There is no owner operationplan yet. We need a new command.
       CommandCreateOperationPlan *a =
         new CommandCreateOperationPlan(
-          oper, fixed_flow ? flow_qty_fixed : data->state->q_qty / flow_qty_per,
-          Date::infinitePast, data->state->q_date, data->state->curDemand,
-          data->state->curOwnerOpplan, true, false
+          oper, opplan_qty, Date::infinitePast, data->state->q_date,
+          data->state->curDemand, data->state->curOwnerOpplan, true, false
         );
       data->state->curDemand = nullptr;
       z = a->getOperationPlan();
@@ -785,10 +789,10 @@ void SolverMRP::solve(const Operation* oper, void* v)
 
   // Adjust the min quantity we expect the reply to cover
   double orig_q_qty_min = data->state->q_qty_min;
-  if (fixed_flow)
-    data->state->q_qty_min = flow_qty_fixed;
+  if (!flow_qty_per || data->state->q_qty_min < flow_qty_fixed + ROUNDING_ERROR)
+    data->state->q_qty_min = 1.0;
   else
-    data->state->q_qty_min /= flow_qty_per;
+    data->state->q_qty_min = (data->state->q_qty_min - flow_qty_fixed) / flow_qty_per;
 
   // Check the constraints
   data->getSolver()->checkOperation(z,*data);
@@ -798,13 +802,10 @@ void SolverMRP::solve(const Operation* oper, void* v)
   // Multiply the operation reply with the flow quantity to get a final reply
   if (data->state->curBuffer)
   {
-    if (fixed_flow)
-    {
-      if (data->state->a_qty > 0.0)
-        data->state->a_qty = flow_qty_per;
-    }
+    if (data->state->a_qty == 0.0)
+      data->state->a_qty = 0;
     else
-      data->state->a_qty *= flow_qty_per;
+      data->state->a_qty = data->state->a_qty * flow_qty_per + flow_qty_fixed;
   }
 
   // Ignore any constraints if we get a complete reply.

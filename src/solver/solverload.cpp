@@ -102,6 +102,7 @@ void SolverCreate::chooseResource(const Load* l, void* v)   // @todo handle unco
 
     // Switch to this resource
     data->state->q_loadplan = lplan; // because q_loadplan can change!
+    lplan->getOperationPlan()->setStartEndAndQuantity(originalOpplan.start, originalOpplan.end, originalOpplan.quantity);
     lplan->setResource(res, false, false);
     lplan->getOperationPlan()->setEnd(originalOpplan.end);
     data->state->q_qty = lplan->getQuantity();

@@ -32,6 +32,8 @@ packages = [
   'logging', 'email', 'cherrypy.wsgiserver', 'sqlite3',
   # Added for PostgreSQL
   'psycopg2',
+  # Dependencies for openpyxl
+  'jdcal', 'et_xmlfile',
   # Added to be able to connect to SQL Server
   'adodbapi',
   # Required for REST API

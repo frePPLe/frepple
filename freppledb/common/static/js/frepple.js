@@ -617,7 +617,7 @@ var grid = {
       }
       for (var j in cross)
       {
-        if (cross_idx.indexOf(parseInt(j,10)) > -1) continue;
+        if (cross_idx.indexOf(parseInt(j,10)) > -1 || cross[j]['name'] == "") continue;
         val1a += '<li class="list-group-item" id="' + (100 + parseInt(j,10) ) + '" style="cursor: move;">' + cross[j]['name'] + '</li>';
       }
     }

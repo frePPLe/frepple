@@ -1190,6 +1190,7 @@ class OperationPlan(AuditModel):
         self.id += 1
       else:
         self.id = 1
+      kwargs['force_insert'] = True
 
     # Call the real save() method
     super(OperationPlan, self).save(*args, **kwargs)

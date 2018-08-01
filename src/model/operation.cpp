@@ -875,7 +875,7 @@ OperationPlanState OperationFixedTime::setOperationPlanParameters(
 }
 
 
-bool OperationFixedTime::extraInstantiate(OperationPlan* o, bool createsubopplans)
+bool OperationFixedTime::extraInstantiate(OperationPlan* o, bool createsubopplans, bool use_start)
 {
   // See if we can consolidate this operationplan with an existing one.
   // Merging is possible only when all the following conditions are met:
@@ -1477,20 +1477,20 @@ OperationPlanState OperationRouting::setOperationPlanParameters(
 }
 
 
-bool OperationRouting::extraInstantiate(OperationPlan* o, bool createsubopplans)
+bool OperationRouting::extraInstantiate(OperationPlan* o, bool createsubopplans, bool use_start)
 {
   // Create step suboperationplans if they don't exist yet.
   if (createsubopplans && !o->lastsubopplan)
   {
     Date d = o->getEnd();
     OperationPlan *p = nullptr;
-    // @todo not possible to initialize a routing oplan based on a start date
-    if (d != Date::infiniteFuture)
+    if (!use_start)
     {
       // Using the end date
-      for (Operation::Operationlist::const_reverse_iterator e =
-          getSubOperations().rbegin(); e != getSubOperations().rend(); ++e)
+      for (auto e = getSubOperations().rbegin(); e != getSubOperations().rend(); ++e)
       {
+        if (p)
+          d -= (*e)->getOperation()->getPostTime();
         p = (*e)->getOperation()->createOperationPlan(
           o->getQuantity(), Date::infinitePast, d, nullptr, o, 0, true
           );
@@ -1502,14 +1502,15 @@ bool OperationRouting::extraInstantiate(OperationPlan* o, bool createsubopplans)
       // Using the start date when there is no end date
       d = o->getStart();
       // Using the current date when both the start and end date are missing
-      if (!d) d = Plan::instance().getCurrent();
-      for (Operation::Operationlist::const_iterator e =
-          getSubOperations().begin(); e != getSubOperations().end(); ++e)
+      if (!d)
+        d = Plan::instance().getCurrent();
+      for (auto e = getSubOperations().begin(); e != getSubOperations().end(); ++e)
       {
         p = (*e)->getOperation()->createOperationPlan(
-          o->getQuantity(), d, Date::infinitePast, nullptr, o, 0, true
+          o->getQuantity(), d, Date::infinitePast, nullptr, nullptr, 0, true
           );
-        d = p->getEnd();
+        d = p->getEnd() + (*e)->getOperation()->getPostTime();
+        p->setOwner(o); // Required to get the correct ordering of the steps
       }
     }
   }
@@ -1569,7 +1570,7 @@ OperationAlternate::setOperationPlanParameters(
 }
 
 
-bool OperationAlternate::extraInstantiate(OperationPlan* o, bool createsubopplans)
+bool OperationAlternate::extraInstantiate(OperationPlan* o, bool createsubopplans, bool use_start)
 {
   // Create a suboperationplan if one doesn't exist yet.
   // We use the first effective alternate by default.
@@ -1621,7 +1622,7 @@ OperationSplit::setOperationPlanParameters(
 }
 
 
-bool OperationSplit::extraInstantiate(OperationPlan* o, bool createsubopplans)
+bool OperationSplit::extraInstantiate(OperationPlan* o, bool createsubopplans, bool use_start)
 {
   if (!createsubopplans || o->lastsubopplan)
     // Suboperationplans already exist. Nothing to do here.
@@ -1933,7 +1934,7 @@ void OperationRouting::addSubOperationPlan
           prevstep->prevsubopplan->setEnd(prevstep->getStart());
       }
       // Propagate forward to assure the timing of the subsequent routing steps
-      if (child->prevsubopplan && child->prevsubopplan->getEnd() < child->getStart() && !child->getConfirmed())
+      if (child->prevsubopplan && child->prevsubopplan->getEnd() > child->getStart() && !child->getConfirmed())
         child->setStart(child->prevsubopplan->getEnd());
     }
     else

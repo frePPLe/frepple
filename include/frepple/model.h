@@ -2385,7 +2385,7 @@ class OperationPlan
       * If the operationplan is invalid, it will be DELETED and the return value
       * is false.
       */
-    bool activate(bool createsubopplans=true);
+    bool activate(bool createsubopplans=true, bool use_start=false);
 
     /** Remove an operationplan from the list of officially registered ones.<br>
       * The operationplan will keep its loadplans and flowplans after unregistration.
@@ -2817,7 +2817,7 @@ class Operation : public HasName<Operation>,
       * When the function returns false the creation of the operationplan
       * is denied and it is deleted.
       */
-    virtual bool extraInstantiate(OperationPlan* o, bool createsubopplans=true)
+    virtual bool extraInstantiate(OperationPlan* o, bool createsubopplans = true, bool use_start = false)
     {
       return true;
     }
@@ -3745,7 +3745,7 @@ class OperationFixedTime : public Operation
       m->addDurationField<Cls>(Tags::duration, &Cls::getDuration, &Cls::setDuration);
     }
   protected:
-    virtual bool extraInstantiate(OperationPlan* o, bool createsubopplans = true);
+    virtual bool extraInstantiate(OperationPlan* o, bool createsubopplans = true, bool use_start = false);
 
   private:
     /** Stores the lengh of the Operation. */
@@ -3937,7 +3937,7 @@ class OperationRouting : public Operation
 
   protected:
     /** Extra logic to be used when instantiating an operationplan. */
-    virtual bool extraInstantiate(OperationPlan* o, bool createsubopplans = true);
+    virtual bool extraInstantiate(OperationPlan* o, bool createsubopplans = true, bool use_start = false);
 
   private:
     /** Stores a double linked list of all step suboperations. */
@@ -4056,7 +4056,7 @@ class OperationSplit : public Operation
 
   protected:
     /** Extra logic to be used when instantiating an operationplan. */
-    virtual bool extraInstantiate(OperationPlan* o, bool createsubopplans = true);
+    virtual bool extraInstantiate(OperationPlan* o, bool createsubopplans = true, bool use_start = false);
 
   private:
     /** List of all alternate operations. */
@@ -4160,7 +4160,7 @@ class OperationAlternate : public Operation
 
   protected:
     /** Extra logic to be used when instantiating an operationplan. */
-    virtual bool extraInstantiate(OperationPlan* o, bool createsubopplans = true);
+    virtual bool extraInstantiate(OperationPlan* o, bool createsubopplans = true, bool use_start = false);
 
   private:
     /** List of all alternate operations. */

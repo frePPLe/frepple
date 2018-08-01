@@ -686,7 +686,7 @@ Object* OperationPlan::createOperationPlan(
         quantity
         );
     }
-    if (!opplan->activate(create))
+    if (!opplan->activate(create, start))
       throw DataException("Can't create operationplan");
 
     // Report the operationplan creation to the manager
@@ -774,14 +774,14 @@ void OperationPlan::setOperation(Operation* o)
 }
 
 
-bool OperationPlan::activate(bool createsubopplans)
+bool OperationPlan::activate(bool createsubopplans, bool use_start)
 {
   // At least a valid operation pointer must exist
   if (!oper)
     throw LogicException("Initializing an invalid operationplan");
 
   // Avoid negative quantities, and call operation specific activation code
-  if (getQuantity() < 0.0 || !oper->extraInstantiate(this, createsubopplans))
+  if (getQuantity() < 0.0 || !oper->extraInstantiate(this, createsubopplans, use_start))
   {
     delete this;
     return false;

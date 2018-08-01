@@ -152,7 +152,7 @@
       <suboperations>
         <suboperation>
         <priority>1</priority>
-        <operation name="Oper3A" xsi:type="operation_fixed_time" duration="P1D">
+        <operation name="Oper3A" xsi:type="operation_fixed_time" duration="P1D" posttime="P1D">
           <location name="Loc"/>
           <flows>
             <flow xsi:type="flow_end">
@@ -177,7 +177,7 @@
         </suboperation>
         <suboperation>
         <priority>2</priority>
-        <operation name="Oper3B" xsi:type="operation_fixed_time" duration="P1D">
+        <operation name="Oper3B" xsi:type="operation_fixed_time" duration="P1D" posttime="P1D">
           <location name="Loc"/>
           <flows>
             <flow xsi:type="flow_end">
@@ -198,7 +198,7 @@
         </suboperation>
         <suboperation>
         <priority>3</priority>
-        <operation name="Oper3C" xsi:type="operation_fixed_time" duration="P1D">
+        <operation name="Oper3C" xsi:type="operation_fixed_time" duration="P1D" posttime="P1D">
           <location name="Loc"/>
           <flows>
             <flow xsi:type="flow_end">
@@ -371,17 +371,17 @@
     <operationplan id="3007" quantity="10" end="2014-04-05T00:00:00" status="approved">
       <operation name="Oper3"/>
     </operationplan>
-    <operationplan id="3008" quantity="10" start="2014-04-01T00:00:00" status="approved">
+    <operationplan id="3008" quantity="10" start="2014-03-30T00:00:00" status="approved">
       <owner id="3007"/>
       <operation name="Oper3B"/>
     </operationplan>
-    <operationplan id="3009" quantity="10" end="2014-06-05T00:00:00" status="approved">
+    <operationplan id="3009" quantity="10" start="2014-06-05T00:00:00" status="approved">
       <operation name="Oper3"/>
     </operationplan>
-    <operationplan id="3010" quantity="10" start="2014-06-06T00:00:00" status="approved">
+    <operationplan id="3010" quantity="10" start="2014-06-10T00:00:00" status="approved">
       <owner id="3009"/>
       <operation name="Oper3B"/>
-    </operationplan>    
+    </operationplan>   
     <!-- WIP on alternate operation -->
     <operationplan id="4005" quantity="10" start="2014-01-01T00:00:00" end="2014-01-05T00:00:00" status="confirmed">
       <operation name="Oper4"/>

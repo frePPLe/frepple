@@ -43,6 +43,11 @@ Release notes
 - Renamed the "demand plan detail" report to `delivery orders <user-guide/model-reference/operation-materials.html>`_,
   and enable uploading confirmed or approved shipments to customers as input data.
 
+- | When expanding a confirmed manufacturing order on a routing operation, the automatic creation of the
+    child manufacturing orders for each routing step now also considers the post-operation time.
+  | Note that such child manufacturing orders are only generated if they aren't provided in the input 
+    data yet.   
+
 .. rubric:: Inventory planning
 
 - The safety stock and ROQ minimum/maximum period of cover are now expressed in days. It was before entered

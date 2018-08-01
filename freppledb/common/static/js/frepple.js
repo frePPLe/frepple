@@ -182,7 +182,6 @@ var upload = {
     $("#grid").closest(".ui-jqgrid-bdiv").scrollTop(0);
     $('#save, #undo').addClass("btn-primary").removeClass("btn-danger").prop('disabled', true);
     $('#actions1').prop('disabled', true);
-
     $('#filter').prop('disabled', false);
     $(window).off('beforeunload', upload.warnUnsavedChanges);
   },
@@ -196,6 +195,14 @@ var upload = {
     $(window).on('beforeunload', upload.warnUnsavedChanges);
   },
 
+  selectedRows : [],
+  
+  restoreSelection : function() {
+    for (var r in upload.selectedRows)
+    	$("#grid").jqGrid('setSelection', upload.selectedRows[r], false);
+    upload.selectedRows = [];  	
+  },
+  
   save : function()
   {
     if ($('#save').hasClass("btn-primary")) return;
@@ -207,6 +214,10 @@ var upload = {
       var rows = getDirtyData();
     else
       var rows = $("#grid").getChangedCells('dirty');
+    
+    // Remember the selected rows, which will be restored in the loadcomplete event
+    upload.selectedRows = $("#grid").jqGrid("getGridParam", "selarrrow").slice();
+    
     if (rows != null && rows.length > 0)
       // Send the update to the server
       $.ajax({

@@ -26,7 +26,8 @@
       <flows>
         <flow xsi:type="flow_end">
           <item name="item 1" />
-          <quantity>1</quantity>
+          <quantity>2</quantity>
+          <quantity_fixed>1</quantity_fixed>
         </flow>
       </flows>
       <priority>0</priority><!-- disallow automatic supply generation -->
@@ -91,7 +92,7 @@
       <operation name="supply 1"/>
       <start>2009-01-01T00:00:00</start>
       <end>2009-01-01T00:00:00</end>
-      <quantity>25</quantity>
+      <quantity>12</quantity>
       <status>confirmed</status>
     </operationplan>
   </operationplans>

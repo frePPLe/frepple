@@ -282,7 +282,7 @@ pair<Date, double> Flow::getFlowplanDateQuantity(const FlowPlan* fl) const
   else
     return make_pair(
       fl->getOperationPlan()->getSetupEnd(),
-      getEffective().within(fl->getDate()) ?
+      getEffective().within(fl->getDate()) && fl->getOperationPlan()->getQuantity() ?
       getQuantityFixed() + fl->getOperationPlan()->getQuantity() * getQuantity() : 0.0
     );
 }
@@ -298,7 +298,7 @@ pair<Date, double> FlowEnd::getFlowplanDateQuantity(const FlowPlan* fl) const
   else
     return make_pair(
       fl->getOperationPlan()->getEnd(),
-      getEffective().within(fl->getDate()) ?
+      getEffective().within(fl->getDate()) && fl->getOperationPlan()->getQuantity() ?
       getQuantityFixed() + fl->getOperationPlan()->getQuantity() * getQuantity() : 0.0
     );
 }

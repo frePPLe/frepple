@@ -276,10 +276,11 @@ pair<double, double> FlowPlan::setQuantity(
   }
 
   double opplan_quantity;
-  if (getFlow()->getQuantity() == 0.0 || fabs(quantity) < fabs(getFlow()->getQuantityFixed()) + ROUNDING_ERROR)
+  bool less_than_fixed_qty = fabs(quantity) < fabs(getFlow()->getQuantityFixed()) + ROUNDING_ERROR;
+  if (getFlow()->getQuantity() == 0.0 || less_than_fixed_qty)
   {
     // Fixed quantity flows only allow resizing to 0
-    if (quantity == 0.0 && oper->getQuantity() != 0.0)
+    if (less_than_fixed_qty && oper->getQuantity() != 0.0)
     {
       if (mode == 2 || (mode == 0 && getFlow()->getType() == *FlowEnd::metadata))
         opplan_quantity = oper->getOperation()->setOperationPlanParameters(
@@ -294,7 +295,7 @@ pair<double, double> FlowPlan::setQuantity(
       else
         throw LogicException("Unreachable code reached");
     }
-    else if (quantity != 0.0 && oper->getQuantity() == 0.0)
+    else if (!less_than_fixed_qty && oper->getQuantity() == 0.0)
     {
       if (mode == 2 || (mode == 0 && getFlow()->getType() == *FlowEnd::metadata))
         opplan_quantity = oper->getOperation()->setOperationPlanParameters(

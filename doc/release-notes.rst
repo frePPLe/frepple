@@ -1,8 +1,11 @@
 Release notes
 -------------
 
-4.4 (Upcoming release)
-======================
+4.4.1 (Upcoming release)
+========================
+
+4.4.0 (2018/08/02)
+==================
 
 .. rubric:: Production planning
   
@@ -34,7 +37,7 @@ Release notes
     In a lead time constrained plan the results will be identical.  
 
 - Remove buffers of type procurement from the planning engine code. This buffer type was already long
-  reprecated and hasn't been accessible to users for quite some time now. 
+  deprecated and hasn't been accessible to users for quite some time now. 
   
 - Simpler and more generic modeling of fixed material consumption and production by operations. 
   The types 'fixed_end' and 'fixed_start' on `operation material <user-guide/model-reference/operation-materials.html>`_
@@ -47,11 +50,6 @@ Release notes
     child manufacturing orders for each routing step now also considers the post-operation time.
   | Note that such child manufacturing orders are only generated if they aren't provided in the input 
     data yet.   
-
-.. rubric:: Inventory planning
-
-- The safety stock and ROQ minimum/maximum period of cover are now expressed in days. It was before entered
-  as the number of period buckets, the period bucket being the value of the inventoryplanning.calendar parameter.
 
 .. rubric:: User interface
 

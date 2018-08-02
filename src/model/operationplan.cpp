@@ -1162,7 +1162,7 @@ void OperationPlan::setStart (Date d, bool force, bool preferEnd)
 
   if (!lastsubopplan)
     // No sub operationplans
-    oper->setOperationPlanParameters(this, quantity, d, Date::infinitePast, preferEnd);
+    oper->setOperationPlanParameters(this, quantity, d, Date::infinitePast, preferEnd, true, false);
   else
   {
     // Move all sub-operationplans in an orderly fashion
@@ -1198,7 +1198,7 @@ void OperationPlan::setEnd(Date d, bool force)
 
   if (!lastsubopplan)
     // No sub operationplans
-    oper->setOperationPlanParameters(this,quantity,Date::infinitePast,d);
+    oper->setOperationPlanParameters(this, quantity, Date::infinitePast, d, true, true, false);
   else
   {
     // Move all sub-operationplans in an orderly fashion

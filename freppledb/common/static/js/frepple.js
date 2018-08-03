@@ -2568,8 +2568,8 @@ function import_show(title,paragraph,multiple,fxhr)
     });
 
     // Empty the csv-file field
-    $("#csv_file").wrap('<form>').closest('form').get(0).reset();
-    $("#csv_file").unwrap();
+    //$("#csv_file").wrap('<form>').closest('form').get(0).reset();
+    //$("#csv_file").unwrap();
     
     // Prepare formdata
     filesdata = new FormData($("#uploadform")[0]);
@@ -2579,6 +2579,7 @@ function import_show(title,paragraph,multiple,fxhr)
       });
     }
     if (filesselected) {
+    	filesdata.delete('csv_file');
       $.each( filesselected, function(i, fdropped) {
         filesdata.append( fdropped.name, fdropped );
       });      

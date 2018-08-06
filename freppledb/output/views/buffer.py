@@ -134,6 +134,31 @@ class OverviewReport(GridPivot):
 
     # Execute the actual query
     query = '''
+      with opplanmat as (
+          %s
+        ),
+        ss_buckets as (
+          -- Buffer min cal entries
+          select
+            buffer.item_id, buffer.location_id, 2 priority_1, calendarbucket.priority priority_2,
+            calendarbucket.value ssvalue, coalesce(calendarbucket.startdate, '1971-01-01'::timestamp) startdate,
+            coalesce(calendarbucket.enddate, '2030-12-31'::timestamp) enddate
+          from buffer
+          inner join opplanmat
+            on buffer.item_id = opplanmat.item_id and buffer.location_id = opplanmat.location_id
+          inner join calendarbucket
+            on calendarbucket.calendar_id = buffer.minimum_calendar_id
+          union all
+          -- Buffer min cal default value + Buffer min
+          select
+            opplanmat.item_id, opplanmat.location_id, 2 priority_1, 99999999,
+            coalesce(calendar.defaultvalue, buffer.minimum), '1971-01-01'::timestamp, '2030-12-31'::timestamp
+          from buffer
+          inner join opplanmat
+            on buffer.item_id = opplanmat.item_id and buffer.location_id = opplanmat.location_id
+          left outer join calendar
+            on calendar.name = buffer.minimum_calendar_id
+        )
       select
         invplan.item_id || ' @ ' || invplan.location_id,
         invplan.item_id, invplan.location_id,
@@ -145,7 +170,7 @@ class OverviewReport(GridPivot):
         invplan.startoh + invplan.produced - invplan.consumed as endoh,
         coalesce((
         select
-        extract (epoch from case when initial_onhand = 0 then interval '0 day' else min(flowdate) -
+        extract (epoch from case when initial_onhand <= 0 then interval '0 day' else min(flowdate) -
                  greatest(invplan.startdate, %%s) end)/(3600*24) days_of_cover
         from
         (
@@ -162,32 +187,19 @@ class OverviewReport(GridPivot):
         ) t
         where total_consumed >= initial_onhand
         group by item_id, location_id, initial_onhand
-        ), case when invplan.startoh = 0 then 0 else 999 end)
+        ), case when invplan.startoh <= 0 then 0 else 999 end)
         startohdoc,
         invplan.bucket,
         invplan.startdate,
         invplan.enddate,
         (
-        select ssvalue from
-          (
-          select 1 priority, calendarbucket.value ssvalue from calendarbucket
-          where calendarbucket.calendar_id = 'SS for '||invplan.item_id||' @ '||invplan.location_id
-          and calendarbucket.startdate <= greatest(invplan.startdate, %%s)
-          and calendarbucket.enddate > greatest(invplan.startdate, %%s)
-          and not exists (select 1 from calendarbucket cb where calendar_id = calendarbucket.calendar_id
-                  and startdate <= greatest(invplan.startdate, %%s) and enddate > greatest(invplan.startdate, %%s)
-                    and priority < calendarbucket.priority)
-          union all
-          select 2, coalesce(calendarbucket.value, buffer.minimum) from buffer
-          left outer join calendarbucket on calendarbucket.calendar_id = buffer.minimum_calendar_id
-          and calendarbucket.startdate <= greatest(invplan.startdate, %%s)
-          and calendarbucket.enddate > greatest(invplan.startdate, %%s)
-          and not exists (select 1 from calendarbucket cb where calendar_id = calendarbucket.calendar_id
-                  and startdate <= greatest(invplan.startdate, %%s) and enddate > greatest(invplan.startdate, %%s)
-                    and priority < calendarbucket.priority)
-          where buffer.name = invplan.item_id||' @ '||invplan.location_id
-          ) t
-        where ssvalue is not null order by priority limit 1
+          select ssvalue
+          from ss_buckets
+          where ss_buckets.item_id = invplan.item_id
+            and ss_buckets.startdate <= greatest(invplan.startdate, %%s)
+            and ss_buckets.enddate > greatest(invplan.startdate, %%s)
+            and ssvalue is not null
+          order by ss_buckets.priority_1, ss_buckets.priority_2 limit 1
         ) safetystock,
         invplan.consumed,
         invplan.consumedMO,
@@ -210,7 +222,7 @@ class OverviewReport(GridPivot):
           coalesce(-sum(least(case when operationplan.type = 'DO' then operationplanmaterial.quantity else 0 end, 0)),0) as consumedDO,
           coalesce(-sum(least(case when operationplan.type = 'DLVR' then operationplanmaterial.quantity else 0 end, 0)),0) as consumedSO,
           coalesce(initial_on_hand.onhand,0) startoh
-        from (%s) opplanmat
+        from opplanmat
         -- Multiply with buckets
         cross join (
              select name as bucket, startdate, enddate
@@ -248,10 +260,12 @@ class OverviewReport(GridPivot):
         invplan.location_id = location.name
       order by %s, invplan.startdate
       ''' % (
-        reportclass.attr_sql, basesql, sortsql
+        basesql, reportclass.attr_sql, sortsql
       )
     cursor.execute(
-      query, (request.report_startdate,) * 10 + baseparams + (
+      query, baseparams + (
+        request.report_startdate, request.report_startdate,
+        request.report_startdate, request.report_startdate,
         request.report_bucket, request.report_startdate, request.report_enddate,
         request.report_startdate, request.report_startdate, request.report_startdate, request.report_enddate
         )

@@ -397,18 +397,21 @@ class User(AbstractUser):
               update_fields=update_fields2 if not newuser else None
               )
         except:
-          with transaction.atomic(using=db, savepoint=False):
-            newuser = True
-            self.is_active = False
-            self.is_superuser = False
-            super(User, self).save(
-              force_insert=force_insert,
-              force_update=force_update,
-              using=db
-              )
-            if settings.DEFAULT_USER_GROUP:
-                  grp = Group.objects.all().using(db).get_or_create(name=settings.DEFAULT_USER_GROUP)[0]
-                  self.groups.add(grp.id)
+          try:
+            with transaction.atomic(using=db, savepoint=False):
+              newuser = True
+              self.is_active = False
+              self.is_superuser = False
+              super(User, self).save(
+                force_insert=force_insert,
+                force_update=force_update,
+                using=db
+                )
+              if settings.DEFAULT_USER_GROUP:
+                grp = Group.objects.all().using(db).get_or_create(name=settings.DEFAULT_USER_GROUP)[0]
+                self.groups.add(grp.id)
+          except Exception as e:
+            logger.warn("Can't save user '%s' in scenario '%s': %s" % (self.username, db, e))
 
     # Continue with the regular save, as if nothing happened.
     self.is_active = tmp_is_active

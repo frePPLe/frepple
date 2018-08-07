@@ -1,12 +1,6 @@
 {% extends "admin/base_site_gridpivot.html" %}
 {% load i18n %}
 
-{% block extrahead %}{{block.super}}
-{% if mode == "graph" %}<script type="text/javascript">
-$(function(){ graph.header(); })
-</script>{% endif %}
-{% endblock %}
-
 {% block tools %}{% if args.0 %}{% tabs "input.buffer" %}{% endif %}{{block.super}}{% endblock %}
 
 {% block before_table %}{% if args.0 %}
@@ -45,7 +39,8 @@ function drawGraphs(jsondata)
     .domain(domain_x)
     .rangeRoundBands([0, width], .1);
   var x_width = x.rangeBand();
-
+  {% if mode == "graph" and not args.0 %}graph.header(margin.left, x);{% endif %}
+  
   // Define Y-axis
   var y = d3.scale.linear().rangeRound([height, 0]);
 

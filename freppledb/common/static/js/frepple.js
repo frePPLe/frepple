@@ -2703,29 +2703,28 @@ $.fn.bindFirst = function(name, fn) {
 
 var graph = {
 
-  header: function()
+  header: function(margin, scale)
   {
     var el = $("#grid_graph");
     el.html("");
-    var bucketwidth = (el.width() - 50) / numbuckets;
+    var scale_stops = scale.range();
+    var scale_width = scale.rangeBand();
     var svg = d3.select(el.get(0)).append("svg");
     svg.attr('height','15px');
-    svg.attr('width', el.width());
-    var w = 50 + bucketwidth / 2;
-    var wt = w;
+    svg.attr('width', el.width());    
+    var wt = 0;
     for (var i in timebuckets)
-    {
+    { 
+    	var w = margin + scale_stops[i] + scale_width / 2;
       if (wt <= w)
       {
         var t = svg.append('text')
           .attr('class','svgheadertext')
           .attr('x', w)
           .attr('y', '12')
-          .attr('class','graphheader')
           .text(timebuckets[i]['name']);
         wt = w + t.node().getComputedTextLength() + 12;
       }
-      w += bucketwidth;
     }
   },
 

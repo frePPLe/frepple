@@ -6391,6 +6391,11 @@ class PooledString
       return !ptr;
     }
 
+    bool operator < (const PooledString& other) const
+    {
+      return ptr->first < other.ptr->first;
+    }
+
     /* Debugging function. */
     static void print()
     {

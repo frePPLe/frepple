@@ -169,7 +169,7 @@ Section "Application" SecAppl
   File "bin\license.xml"
 
   ; Copy the django and python redistributables created by cx_freeze
-  File /r "contrib\installer\build\exe.win-amd64-3.5\*.*"
+  File /r "contrib\installer\build\exe.win-amd64-3.6\*.*"
 
   ; Copy djangosettings
   SetOutPath "$INSTDIR\bin\custom"

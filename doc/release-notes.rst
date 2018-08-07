@@ -4,6 +4,14 @@ Release notes
 4.4.1 (Upcoming release)
 ========================
 
+.. rubric:: Third party components
+
+- | Support for Ubuntu 18 LTS. 
+  | Ubuntu 16LTS remains fully supported.
+  
+- | Windows installer now uses Python 3.6.
+  | Python 3.5 remains fully supported.
+
 4.4.0 (2018/08/02)
 ==================
 

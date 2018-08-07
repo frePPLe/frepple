@@ -93,6 +93,16 @@ class OperatorDelete : public Solver
       */
     void pushBuffers(OperationPlan*, bool consuming, bool producing);
 
+    bool getConstrained() const
+    {
+      return constrained;
+    }
+
+    void setConstrained(bool b)
+    {
+      constrained = b;
+    }
+
   private:
 	  /** A list of buffers still to scan for excess. */
 	  vector<Buffer*> buffersToScan;   // TODO Use a different data structure to allow faster lookups and sorting?
@@ -101,6 +111,8 @@ class OperatorDelete : public Solver
 	    * rollback of all actions.
 	    */
 	  CommandManager* cmds;
+
+    bool constrained = true;
 };
 
 

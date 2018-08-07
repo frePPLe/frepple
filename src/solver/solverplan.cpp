@@ -356,6 +356,7 @@ void SolverCreate::SolverMRPdata::commit()
 void SolverCreate::SolverMRPdata::solveSafetyStock(SolverCreate* solver)
 {
   OperatorDelete cleanup(getCommandManager());
+  cleanup.setConstrained(solver->isMaterialConstrained());
   safety_stock_planning = true;
   if (getLogLevel() > 0)
     logger << "Start safety stock replenishment pass   " << solver->getConstraints() << endl;

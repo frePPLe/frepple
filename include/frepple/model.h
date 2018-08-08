@@ -7462,7 +7462,7 @@ class Demand
       QUOTE, INQUIRY, OPEN, CLOSED, CANCELED
     };
 
-    typedef slist<OperationPlan*> OperationPlanList;
+    typedef forward_list<OperationPlan*> OperationPlanList;
 
     class DeliveryIterator
     {
@@ -7500,7 +7500,8 @@ class Demand
     {
       size_t tmp = Object::getSize();
       // Add the memory for the list of deliveries: 2 pointers per delivery
-      tmp += deli.size() * 2 * sizeof(OperationPlan*);
+      for (auto iter = deli.begin(); iter != deli.end(); ++iter)
+        tmp += 2 * sizeof(OperationPlan*);
       return tmp;
     }
 
@@ -7900,7 +7901,10 @@ class Demand
     /** Minimum size for a delivery operation plan satisfying this demand. */
     double minShipment = -1.0;
 
-    /** A list of operation plans to deliver this demand. */
+    /** A list of operation plans to deliver this demand. 
+      * The list is sorted by the end date of the deliveries. The sorting is
+      * done lazily in the getDelivery() method.
+      */
     OperationPlanList deli;
 
     /** A list of constraints preventing this demand from being planned in

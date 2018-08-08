@@ -128,10 +128,11 @@ void Demand::deleteOperationPlans
 }
 
 
-void Demand::removeDelivery(OperationPlan * o)
+void Demand::removeDelivery(OperationPlan *o)
 {
   // Valid opplan check
-  if (!o) return;
+  if (!o)
+    return;
 
   // See if the demand field on the operationplan points to this demand
   if (o->dmd != this)
@@ -141,49 +142,20 @@ void Demand::removeDelivery(OperationPlan * o)
   o->dmd = nullptr;  // Required to avoid endless loop
   o->setDemand(nullptr);
 
-  // Find in the list of deliveries
-  OperationPlanList::iterator j = deli.begin();
-  while (j!=deli.end() && *j!=o) ++j;
-
-  // Check that the operation is found
-  // It is possible it is not found! This happens if e.g. an operationplan
-  // is created but destroyed again before it is initialized.
-  if (j!=deli.end())
-  {
-    // Remove from the list
-    deli.erase(j);
-    // Mark the demand as being changed, so the problems can be redetected
-    setChanged();
-  }
+  // Remove from the list
+  deli.remove(o);
+  setChanged();
 }
 
 
 const Demand::OperationPlanList& Demand::getDelivery() const
 {
-  // We need to check the sorting order of the list first! It could be disturbed
-  // when operationplans are being moved around.
-  // The sorting routine isn't very efficient, but should suffice since the
-  // list of delivery operationplans is short and isn't expected to be
-  // disturbed very often.
-  for (bool swapped(!deli.empty()); swapped; swapped=false)
-  {
-    OperationPlanList::iterator j = const_cast<Demand*>(this)->deli.begin();
-    ++j;
-    for (OperationPlanList::iterator i =
-        const_cast<Demand*>(this)->deli.begin();
-        j!=const_cast<Demand*>(this)->deli.end(); ++j)
-    {
-      if ((*i)->getEnd() < (*j)->getEnd())
-      {
-        // Oh yes, the ordering was disrupted indeed...
-        iter_swap(i,j);
-        swapped = true;
-        break;
+  // Sorting the deliveries by the end date
+  const_cast<Demand*>(this)->deli.sort(
+    [](OperationPlan*& lhs, OperationPlan*& rhs) {
+      return lhs->getEnd() > rhs->getEnd();
       }
-      ++i;
-    }
-  }
-
+    );
   return deli;
 }
 
@@ -208,25 +180,18 @@ OperationPlan* Demand::getEarliestDelivery() const
 void Demand::addDelivery (OperationPlan * o)
 {
   // Dummy call to this function
-  if (!o) return;
+  if (!o)
+    return;
 
   // Check if it is already in the list.
   // If it is, simply exit the function. No need to give a warning message
   // since it's harmless.
-  for (OperationPlanList::iterator i = deli.begin(); i != deli.end(); ++i)
-    if (*i == o) return;
+  for (auto i = deli.begin(); i != deli.end(); ++i)
+    if (*i == o)
+      return;
 
-  // Add to the list of delivery operationplans. The insertion is such
-  // that the delivery list is sorted in terms of descending end time.
-  // i.e. the opplan with the latest end date is on the front of the list.
-  // Note: We're forcing resorting the deliveries with the getDelivery()
-  // method. Operation plans dates could have changed, thus disturbing the
-  // original order.
-  getDelivery();
-  OperationPlanList::iterator j = deli.begin();
-  while (j != deli.end() && (*j)->getEnd() > o->getEnd())
-    ++j;
-  deli.insert(j, o);
+  // Add to the list of delivery operationplans.
+  deli.push_front(o);
 
   // Mark the demand as being changed, so the problems can be redetected
   setChanged();

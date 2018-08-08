@@ -95,28 +95,11 @@ typedef int Py_ssize_t;
 #endif
 #endif
 
-// We want to use singly linked lists, but these are not part of the C++
-// standard though. Sigh...
-#ifndef DOXYGEN
-#ifdef HAVE_EXT_SLIST
-// Singly linked lists as extension: gcc 3.x
-#include <ext/slist>
-using namespace gnu_cxx;
-#else
-#ifdef HAVE_SLIST
-// Singly linked lists available in std stl: gcc 2.95
-#include <slist>
-#else
-// Not available: use a double linked list instead
-#define slist list
-#endif
-#endif
-#endif
-
 // STL include files
 #ifndef DOXYGEN
 #include <string>
 #include <list>
+#include <forward_list>
 #include <map>
 #include <set>
 #include <unordered_map>

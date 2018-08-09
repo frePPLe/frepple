@@ -717,6 +717,11 @@ class Duration
       return lval;
     }
 
+    double getSeconds() const
+    {
+      return lval;
+    }
+
     /** Converts the date to a string, formatted according to ISO 8601. */
     operator string() const
     {

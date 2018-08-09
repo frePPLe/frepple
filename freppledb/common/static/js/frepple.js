@@ -38,6 +38,18 @@ function admin_escape(n)
 }
 
 
+// A function to unescape all special characters in a name.
+// We unescape all special characters in the EXACT same way as the django admin does.
+function admin_unescape(n)
+{
+  return n.replace(/_5F/g,'_').replace(/_22/g,'"')
+  .replace(/_3A/g,':').replace(/_2F/g,'/').replace(/_23/g,'#').replace(/_3F/g,'?')
+  .replace(/_3B/g,';').replace(/_40/g,'@').replace(/_26/g,'&').replace(/_3D/g,'=')
+  .replace(/_2B/g,'+').replace(/_24/g,'$').replace(/_2C/g,',')
+  .replace(/_3C/g,'<').replace(/_3E/g,'>').replace(/_25/g,'%').replace(/_5C/g,'\\');
+}
+
+
 /// <reference path="jquery.js" />
 /*
 jquery-resizable

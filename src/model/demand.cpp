@@ -153,7 +153,9 @@ const Demand::OperationPlanList& Demand::getDelivery() const
   // Sorting the deliveries by the end date
   const_cast<Demand*>(this)->deli.sort(
     [](OperationPlan*& lhs, OperationPlan*& rhs) {
-      return lhs->getEnd() > rhs->getEnd();
+      return lhs->getEnd() != rhs->getEnd() ?
+        lhs->getEnd() > rhs->getEnd() :
+        *lhs < *rhs;
       }
     );
   return deli;

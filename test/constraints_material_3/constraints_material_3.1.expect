@@ -38,11 +38,11 @@ BUFFER	constraint buffer 3	2009-01-15T00:00:00	1000	1000
 BUFFER	constraint buffer 3	2009-01-15T00:00:00	-192	808
 BUFFER	constraint buffer 4	2009-01-15T00:00:00	1000	1000
 BUFFER	constraint buffer 4	2009-01-15T00:00:00	-196	804
+DEMAND	order for item 1	2009-01-18T00:00:00	10
+DEMAND	order for item 1	2009-01-18T00:00:00	10
+DEMAND	order for item 1	2009-01-18T00:00:00	10
+DEMAND	order for item 1	2009-01-18T00:00:00	10
 DEMAND	order for item 1	2009-01-18T00:00:00	5
-DEMAND	order for item 1	2009-01-18T00:00:00	10
-DEMAND	order for item 1	2009-01-18T00:00:00	10
-DEMAND	order for item 1	2009-01-18T00:00:00	10
-DEMAND	order for item 1	2009-01-18T00:00:00	10
 DEMAND	order for item 1	2009-01-11T00:00:00	10
 DEMAND	order for item 1	2009-01-11T00:00:00	10
 DEMAND	order for item 1	2009-01-11T00:00:00	10

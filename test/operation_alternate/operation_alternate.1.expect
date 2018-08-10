@@ -3,10 +3,18 @@ BUFFER	inventory item 1	2009-01-04T00:00:00	-10	0
 BUFFER	inventory item 1	2009-01-10T00:00:00	16	16
 BUFFER	inventory item 1	2009-01-10T00:00:00	4	20
 BUFFER	inventory item 1	2009-01-10T00:00:00	-20	0
+BUFFER	item 2 @ warehouse	2009-01-10T00:00:00	10	10
+BUFFER	item 2 @ warehouse	2009-01-31T00:00:00	-10	0
+BUFFER	item 4 @ warehouse	2009-02-10T00:00:00	10	10
+BUFFER	item 4 @ warehouse	2009-02-10T00:00:00	-10	0
+DEMAND	item 2 SO1	2009-01-31T00:00:00	10
+DEMAND	item 4 SO1	2009-02-10T00:00:00	10
 DEMAND	order prio 1 for item 1	2009-01-11T00:00:00	20
 DEMAND	order prio 2 for item 1	2009-01-05T00:00:00	10
 RESOURCE	Resource 1 B	2009-01-01T00:00:00	1	1
 RESOURCE	Resource 1 B	2009-01-10T00:00:00	-1	0
+OPERATION	Purchase item 2 @ warehouse from MySupplier	2009-01-08T00:00:00	2009-01-10T00:00:00	10
+OPERATION	Purchase item 4 @ warehouse from MySupplier	2009-01-27T00:00:00	2009-02-10T00:00:00	10
 OPERATION	alternatives for making item 1	2009-01-01T00:00:00	2009-01-04T00:00:00	10
 OPERATION	alternatives for making item 1	2009-01-01T00:00:00	2009-01-10T00:00:00	4
 OPERATION	alternatives for making item 1	2009-01-03T00:00:00	2009-01-10T00:00:00	16
@@ -15,5 +23,10 @@ OPERATION	buy from supplier D	2009-01-01T00:00:00	2009-01-04T00:00:00	10
 OPERATION	delivery 1	2009-01-04T00:00:00	2009-01-05T00:00:00	10
 OPERATION	delivery 1	2009-01-10T00:00:00	2009-01-11T00:00:00	20
 OPERATION	make item 1 with routing B	2009-01-01T00:00:00	2009-01-10T00:00:00	4
+PROBLEM	material excess	Buffer 'item 2 @ warehouse' has material excess of 10	2009-01-10T00:00:00 / 2009-01-31T00:00:00
+PROBLEM	unplanned	Demand 'item 3 SO1' is not planned	2009-01-31T00:00:00 / 2009-01-31T00:00:00
+PROBLEM	late	10 units of demand 'item 4 SO1' planned up to 10.0 days after its due date	2009-01-31T00:00:00 / 2009-02-10T00:00:00
 PROBLEM	late	10 units of demand 'order prio 2 for item 1' planned up to 3.0 days after its due date	2009-01-02T00:00:00 / 2009-01-05T00:00:00
+DEMAND CONSTRAINT	item 3 SO1	Operation 'Purchase item 3 @ warehouse from MySupplier' planned in the past	2008-12-27T00:00:00 / 2009-01-10T00:00:00	
+DEMAND CONSTRAINT	item 4 SO1	Operation 'Purchase item 4 @ warehouse from MySupplier' planned before fence	2009-01-31T00:00:00 / 2009-02-10T00:00:00	
 DEMAND CONSTRAINT	order prio 2 for item 1	Operation 'make item 1 with routing A step 2' planned in the past	2008-12-17T00:00:00 / 2009-01-01T00:00:00	

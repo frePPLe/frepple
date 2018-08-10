@@ -1332,7 +1332,11 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v)
       if (data->state->a_qty > ROUNDING_ERROR)
         deltaCost = data->state->a_cost - beforeCost;
       else
+      {
         deltaCost = 0.0;
+        if (data->state->a_date > (*altIter)->getEffectiveEnd())
+          data->state->a_date = Date::infiniteFuture;
+      }
       double deltaPenalty = data->state->a_penalty - beforePenalty;
       data->state->a_cost = beforeCost;
       data->state->a_penalty = beforePenalty;
@@ -1524,6 +1528,16 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v)
     if (loglevel)
       logger << indent(oper->getLevel()) << "   Alternate operation '" << oper->getName()
         << "' plans unconstrained on alternate '" << firstAlternate->getOperation() << "' " << search << endl;
+
+    // Current behaviour: 
+    //   Unconstrained plan violates effective dates and generates a JIT material plan
+    // Functional variation:
+    //   Respect the effectivity dates in the unconstrained plan, which will distort the material 
+    //   plan from the JIT pattern
+    // if (origQDate > firstAlternate->getEffectiveEnd())
+    //  origQDate = firstAlternate->getEffectiveEnd();
+    // if (origQDate < firstAlternate->getEffectiveStart())
+    //  origQDate = firstAlternate->getEffectiveStart();
 
     // Create the top operationplan.
     // Note that both the top- and the sub-operation can have a flow in the

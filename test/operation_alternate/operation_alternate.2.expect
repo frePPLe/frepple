@@ -9,9 +9,11 @@ BUFFER	item 3 @ warehouse	2009-01-31T00:00:00	10	10
 BUFFER	item 3 @ warehouse	2009-01-31T00:00:00	-10	0
 BUFFER	item 4 @ warehouse	2009-01-31T00:00:00	10	10
 BUFFER	item 4 @ warehouse	2009-01-31T00:00:00	-10	0
+BUFFER	item 5 @ warehouse	2009-01-31T00:00:00	-10	-10
 DEMAND	item 2 SO1	2009-01-31T00:00:00	10
 DEMAND	item 3 SO1	2009-01-31T00:00:00	10
 DEMAND	item 4 SO1	2009-01-31T00:00:00	10
+DEMAND	item 5 SO1	2009-01-31T00:00:00	10
 DEMAND	order prio 1 for item 1	2009-01-11T00:00:00	20
 DEMAND	order prio 2 for item 1	2009-01-02T00:00:00	10
 RESOURCE	Resource 1 A	2008-12-17T00:00:00	1	1
@@ -32,6 +34,8 @@ OPERATION	make item 1 with routing A step 1	2008-12-14T00:00:00	2008-12-17T00:00
 OPERATION	make item 1 with routing A step 2	2008-12-17T00:00:00	2009-01-01T00:00:00	10
 OPERATION	make item 1 with routing B	2009-01-01T00:00:00	2009-01-10T00:00:00	4
 PROBLEM	material excess	Buffer 'item 2 @ warehouse' has material excess of 10	2009-01-10T00:00:00 / 2009-01-31T00:00:00
+PROBLEM	invalid data	No replenishment defined for 'item 5 @ warehouse'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	material shortage	Buffer 'item 5 @ warehouse' has material shortage of 10	2009-01-31T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	overload	Resource 'Resource 1 A' has capacity shortage of 1	2008-12-17T00:00:00 / 2009-01-01T00:00:00
 PROBLEM	before current	Operation 'make item 1 with routing A step 1' planned in the past	2008-12-14T00:00:00 / 2008-12-17T00:00:00
 PROBLEM	before current	Operation 'make item 1 with routing A step 2' planned in the past	2008-12-17T00:00:00 / 2009-01-01T00:00:00

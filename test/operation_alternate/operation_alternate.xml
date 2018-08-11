@@ -207,6 +207,31 @@
   </demands>
 
   <!--
+    Corner case of unplannable 0-priority alternate
+  -->
+  <items>
+    <item name="item 5" cost="1">
+	    <itemsuppliers>
+	      <itemsupplier>
+          <supplier name="MySupplier" />
+          <location name="warehouse" />
+          <leadtime>P14D</leadtime>
+          <priority>0</priority>
+        </itemsupplier>
+	    </itemsuppliers>
+    </item>
+  </items>
+  <demands>
+	  <demand name="item 5 SO1">
+	    <quantity>10</quantity>
+	    <due>2009-01-31T00:00:00</due>
+	    <priority>2</priority>
+	    <item name="item 5"/>
+      <location name="warehouse" />
+	  </demand>
+  </demands>
+
+  <!--
     Case: minimum cost choice.
     TODO
   -->

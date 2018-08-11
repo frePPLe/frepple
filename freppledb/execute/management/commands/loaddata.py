@@ -14,7 +14,7 @@ class Command(loaddata.Command):
     super(Command, self).handle(*args, **options)
     
     # if the fixture doesn't contain the 'demo' word, let's not apply loaddata post-treatments
-    if 'demo' not in (args[0]).lower():
+    if '_demo' not in (args[0]).lower():
       return
     
     # get the database object

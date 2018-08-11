@@ -764,7 +764,7 @@ class loadItemSuppliers(LoadTask):
             curitemsupplier.size_multiple = i[4]
           if i[5]:
             curitemsupplier.cost = i[5]
-          if i[6]:
+          if i[6] is not None:
             curitemsupplier.priority = i[6]
           if i[7]:
             curitemsupplier.effective_start = i[7]
@@ -828,7 +828,7 @@ class loadItemDistributions(LoadTask):
             curitemdistribution.size_multiple = i[4]
           if i[5]:
             curitemdistribution.cost = i[5]
-          if i[6]:
+          if i[6] is not None:
             curitemdistribution.priority = i[6]
           if i[7]:
             curitemdistribution.effective_start = i[7]

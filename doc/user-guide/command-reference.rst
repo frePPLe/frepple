@@ -110,6 +110,12 @@ A separate sheet in the workbook is used for each selected entity.
 
 The exported file can be imported back with the task described just below.
 
+Optionally, you can make your dataset anonymous during the export to hide
+sensitive company data. All entities then be renamed during the export. It remains
+ABSOLUTELY NECESSARY to carefully review the generated spreadsheet and to remove 
+any sensitive data that is still left, such as descriptions, categories, custom
+attributes.
+
 This command is available only in the user interface:
 
 * Execution screen:

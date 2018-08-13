@@ -2249,7 +2249,7 @@ def _localize(value, decimal_separator):
     return value
 
 
-def _getCellValue(data):
+def _getCellValue(data, field=None, exportConfig=None):
   if data is None:
     return ''
   elif isinstance(data, numericTypes) or isinstance(data, (date, datetime)):
@@ -2258,8 +2258,32 @@ def _getCellValue(data):
     return data.total_seconds()
   elif isinstance(data, time):
     return data.isoformat()
-  else:
+  elif not exportConfig or not exportConfig.get('anonymous', False):
     return str(data)
+  else:
+    if field.primary_key and not isinstance(field, AutoField):
+      model = field.model
+    elif isinstance(field, RelatedField):
+      model = field.related_model
+    else:
+      return str(data)
+    if model._meta.app_label == 'common':
+      return str(data)
+    modelname = model._meta.model_name
+    if modelname not in exportConfig:
+      # Build a map with anonymous names for this model
+      exportConfig[modelname] = {}
+      if issubclass(model, HierarchyModel):
+        keys = model.objects.only('pk').order_by('lvl', 'pk').values_list('pk', flat=True)
+      else:
+        keys = model.objects.only('pk').order_by('pk').values_list('pk', flat=True)
+      idx = 1
+      for key in keys:
+        exportConfig[modelname][key] = idx
+        idx += 1
+      del keys
+    # Return the mapped value
+    return "%s %07d" % (modelname, exportConfig[modelname].get(data, 0))
 
 
 def exportWorkbook(request):
@@ -2272,6 +2296,9 @@ def exportWorkbook(request):
   wb.add_named_style(headerstyle)
 
   # Loop over all selected entity types
+  exportConfig = {
+    'anonymous': request.POST.get('anonymous', False)
+    }
   ok = False
   for entity_name in request.POST.getlist('entities'):
     try:
@@ -2293,6 +2320,7 @@ def exportWorkbook(request):
 
       # Build a list of fields and properties
       fields = []
+      modelfields = []
       header = []
       source = False
       lastmodified = False
@@ -2305,11 +2333,12 @@ def exportWorkbook(request):
         if i.name in ['lft', 'rght', 'lvl']:
           continue  # Skip some fields of HierarchyModel
         elif i.name == 'source':
-          source = True  # Put the source field at the end
+          source = i  # Put the source field at the end
         elif i.name == 'lastmodified':
-          lastmodified = True  # Put the last-modified field at the very end
+          lastmodified = i  # Put the last-modified field at the very end
         elif not (exclude and i.name in exclude):
           fields.append(i.column)
+          modelfields.append(i)
           cell = WriteOnlyCell(ws, value=force_text(i.verbose_name).title())
           cell.style = 'headerstyle'
           header.append(cell)
@@ -2320,16 +2349,19 @@ def exportWorkbook(request):
             cell = WriteOnlyCell(ws, value=force_text(i.verbose_name).title())
             cell.style = 'headerstyle'
             header.append(cell)
+            modelfields.append(i)
       if source:
         fields.append("source")
         cell = WriteOnlyCell(ws, value=force_text(_("source")).title())
         cell.style = 'headerstyle'
         header.append(cell)
+        modelfields.append(source)
       if lastmodified:
         fields.append("lastmodified")
         cell = WriteOnlyCell(ws, value=force_text(_("last modified")).title())
         cell.style = 'headerstyle'
         header.append(cell)
+        modelfields.append(lastmodified)
 
       # Write a formatted header row
       ws.append(header)
@@ -2351,7 +2383,12 @@ def exportWorkbook(request):
 
       # Loop over all records
       for rec in query.values_list(*fields):
-        ws.append([ _getCellValue(f) for f in rec ])
+        cells = []
+        fld = 0
+        for f in rec:
+          cells.append(_getCellValue(f, modelfields[fld], exportConfig))
+          fld += 1
+        ws.append(cells)
     except Exception:
       pass  # Silently ignore the error and move on to the next entity.
 

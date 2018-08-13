@@ -46,8 +46,6 @@ language using the following URLs. The examples are using the excellent
 The following commands are available.
 
 * :ref:`runplan`
-* :ref:`exportworkbook`
-* :ref:`importworkbook`
 * :ref:`exporttofolder`
 * :ref:`importfromfolder`
 * :ref:`runwebservice`

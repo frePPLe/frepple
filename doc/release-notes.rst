@@ -4,6 +4,13 @@ Release notes
 4.4.1 (Upcoming release)
 ========================
 
+.. rubric:: User interface
+
+- Ability to make the data anonymous and obfuscated when 
+  `exporting an Excel workbook <user-guide/command-reference.html#exportworkbook>`_. 
+  The names of all entities are obfuscated in the resulting spreadsheet. You will still
+  need to carefully review the output to clean out any remaining sensitive data.  
+
 .. rubric:: Third party components
 
 - | Support for Ubuntu 18 LTS. 

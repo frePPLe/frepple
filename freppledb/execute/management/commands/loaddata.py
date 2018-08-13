@@ -49,16 +49,3 @@ class Command(loaddata.Command):
         update operationplan set startdate = startdate + %s * interval '1 day', enddate = enddate + %s * interval '1 day'
       ''', 2 * (offset,))
       
-    #run the workflow
-    print('Running workflow...')
-    active_modules = 'supply'
-    if 'invplan' in os.environ:
-      active_modules = 'invplan, balancing, ' + active_modules
-    if "fcst" in os.environ:
-       active_modules = 'fcst, ' + active_modules
-    
-    call_command(
-          'runplan',
-          database=database,
-          env=active_modules
-          )

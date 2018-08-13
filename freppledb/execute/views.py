@@ -228,6 +228,12 @@ def wrapTask(request, action):
       raise Exception('Missing execution privileges')
     task = Task(name='loaddata', submitted=now, status='Waiting', user=request.user, arguments=args['fixture'])
     task.save(using=request.database)
+    # Also run the workflow upon loading of manufacturing_demo or distribution_demo
+    if (args['regenerateplan'] == 'true'):
+      active_modules = 'supply'
+      task = Task(name='runplan', submitted=now, status='Waiting', user=request.user)
+      task.arguments = "--constraint=15 --plantype=1 --env=%s --background" % (active_modules,)
+      task.save(using=request.database)
   # E
   elif action in ('frepple_copy', 'scenario_copy'):
     worker_database = DEFAULT_DB_ALIAS

@@ -54,6 +54,9 @@ def getHTML(request):
           $("#entity").html($(this).text() + ' <span class="caret"></span>');
           $("#loaddatafile").val($(this).text());
         });
+        function checkbox_changed(checkbox) {
+          $("#regeneratevar").val(checkbox.checked);
+        };
   '''
   context = RequestContext(request, {'fixtures': fixtures, 'javascript': javascript})
 
@@ -80,9 +83,18 @@ def getHTML(request):
             </ul>
           </div>
         </td>
+        <td style="padding:15px">
+          <div>
+            <ul class="checkbox">
+              <li><input type="checkbox" id="cb1" onclick="checkbox_changed(this)" checked />
+              <label for="cb1">Execute plan after loading is done</label></li>
+            </ul>
+          </div>
+        </td>
       </tr>
     </table>
     <input type="hidden" name="fixture" id="loaddatafile" value="">
+    <input type="hidden" name="regenerateplan" id="regeneratevar" value="true">
     </form>
     <script>{{ javascript|safe }}</script>
     {% else %}

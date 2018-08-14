@@ -154,11 +154,11 @@ class OverviewReport(GridPivot):
        coalesce(initial_on_hand.onhand,0) startoh,       
        coalesce(initial_on_hand.onhand,0) - coalesce(-sum(least(operationplanmaterial.quantity, 0)),0) + coalesce(sum(greatest(operationplanmaterial.quantity, 0)),0) endoh,
        case when coalesce(initial_on_hand.onhand,0) = 0 then 0 else
-       extract( epoch from initial_on_hand.flowdate + initial_on_hand.periodofcover * interval '1 second' - greatest(d.startdate,%%s))/86400 end startohdoc,                                                
+       extract( epoch from initial_on_hand.flowdate + coalesce(initial_on_hand.periodofcover,0) * interval '1 second' - greatest(d.startdate,%%s))/86400 end startohdoc,                                                
        d.bucket,
        d.startdate,
        d.enddate,
-       initial_on_hand.minimum safetystock,
+       coalesce(initial_on_hand.minimum,0) safetystock,
        coalesce(-sum(least(operationplanmaterial.quantity, 0)),0) as consumed,
        coalesce(-sum(least(case when operationplan.type = 'MO' then operationplanmaterial.quantity else 0 end, 0)),0) as consumedMO,
        coalesce(-sum(least(case when operationplan.type = 'DO' then operationplanmaterial.quantity else 0 end, 0)),0) as consumedDO,

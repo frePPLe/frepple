@@ -112,7 +112,7 @@ class ShortOrdersWidget(Widget):
 
   query = '''
     select
-      out_problem.owner, demand.item_id, demand.customer_id, demand.location_id,
+      out_problem.owner, demand.item_id, demand.location_id, demand.customer_id,
       out_problem.startdate, out_problem.weight
     from out_problem
     left outer join demand

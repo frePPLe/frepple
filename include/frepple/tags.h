@@ -146,6 +146,7 @@ class Tags
     static const Keyword pegging_downstream;
     static const Keyword pegging_upstream;
     static const Keyword percent;
+    static const Keyword period_of_cover;
     static const Keyword plan;
     static const Keyword planned_quantity;
     static const Keyword plantype;

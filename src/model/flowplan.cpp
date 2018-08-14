@@ -407,4 +407,24 @@ Object* FlowPlan::reader(
 }
 
 
+Duration FlowPlan::getPeriodOfCover() const
+{
+  double left_for_consumption = getOnhand();
+  if (left_for_consumption < ROUNDING_ERROR)
+    return Duration(0L);
+  auto fpiter = getBuffer()->getFlowPlans().begin(this); 
+  ++fpiter;
+  while (fpiter != getBuffer()->getFlowPlans().end())
+  {    
+    if (fpiter->getQuantity() < 0.0)
+    {
+      left_for_consumption += fpiter->getQuantity();
+      if (left_for_consumption < ROUNDING_ERROR)
+        return fpiter->getDate() - getDate();
+    }
+    ++fpiter;
+  }
+  return Duration(999L * 86400L);
+}
+
 } // end namespace

@@ -6020,6 +6020,10 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand
 
     /** Update the status of the operationplanmaterial. */
     void setStatus(const string&);
+
+    /** Returns the duration before the current onhand will be completely consumed. */
+    Duration getPeriodOfCover() const;
+
     /** Destructor. */
     virtual ~FlowPlan()
     {
@@ -6093,6 +6097,7 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand
         throw DataException("Unhandled case: Cannot change a date of a proposed FlowPlan");
       }
     }
+
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
       m->addDateField<Cls>(Tags::date, &Cls::getDate, &Cls::setDate);
@@ -6100,6 +6105,7 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand
       m->addDoubleField<Cls>(Tags::onhand, &Cls::getOnhand, nullptr, -666);
       m->addDoubleField<Cls>(Tags::minimum, &Cls::getMin);
       m->addDoubleField<Cls>(Tags::maximum, &Cls::getMax);
+      m->addDurationField<Cls>(Tags::period_of_cover, &Cls::getPeriodOfCover, nullptr);
       m->addStringField<Cls>(Tags::status, &Cls::getStatus, &Cls::setStatus, "proposed");
       m->addPointerField<Cls, OperationPlan>(Tags::operationplan, &Cls::getOperationPlan, &Cls::setOperationPlan, BASE + WRITE_OBJECT + PARENT);
       m->addPointerField<Cls, Flow>(Tags::flow, &Cls::getFlow, &Cls::setFlow, DONT_SERIALIZE);

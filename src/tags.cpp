@@ -144,6 +144,7 @@ const Keyword Tags::pegging_demand("pegging_demand");
 const Keyword Tags::pegging_downstream("pegging_downstream");
 const Keyword Tags::pegging_upstream("pegging_upstream");
 const Keyword Tags::percent("percent");
+const Keyword Tags::period_of_cover("period_of_cover");
 const Keyword Tags::plan("plan");
 const Keyword Tags::planned_quantity("planned_quantity");
 const Keyword Tags::plantype("plantype");

@@ -18,12 +18,11 @@
 from datetime import datetime, timedelta
 from urllib.parse import urlencode
 
-from django.conf import settings
+from django.contrib.admin.utils import quote
 from django.db import DEFAULT_DB_ALIAS, connections
 from django.http import HttpResponse
 from django.utils.encoding import force_text
 from django.utils.html import escape
-from django.utils.http import urlquote
 from django.utils.text import capfirst
 from django.utils.translation import ugettext_lazy as _
 
@@ -87,7 +86,7 @@ class LateOrdersWidget(Widget):
         '<td class="alignleft">%s</td><td class="alignleft">%s</td>'
         '<td class="alignleft">%s</td><td class="alignleft">%s</td>'
         '<td class="aligncenter">%s</td><td class="aligncenter">%s</td></tr>' % (
-          alt and ' class="altRow"' or '', request.prefix, urlquote(rec[0]),
+          alt and ' class="altRow"' or '', request.prefix, quote(rec[0]),
           escape(rec[0]), escape(rec[1]), escape(rec[2]), escape(rec[3]),
           rec[4].date(), rec[5].date(), int(rec[6])
         ))
@@ -149,7 +148,7 @@ class ShortOrdersWidget(Widget):
         '<tr%s><td class="underline alignleft"><a href="%s/demandpegging/%s/">%s</a></td><td class="alignleft">%s</td>'
         '<td class="alignleft">%s</td><td class="alignleft">%s</td><td class="aligncenter">%s</td>'
         '<td class="aligncenter">%s</td></tr>' % (
-          alt and ' class="altRow"' or '', request.prefix, urlquote(rec[0]), escape(rec[0]),
+          alt and ' class="altRow"' or '', request.prefix, quote(rec[0]), escape(rec[0]),
           escape(rec[1]), escape(rec[2]), escape(rec[3]), rec[4].date(), int(rec[5])
         ))
       alt = not alt
@@ -1009,7 +1008,11 @@ class ResourceQueueWidget(Widget):
       db = DEFAULT_DB_ALIAS
     result = [
       '<div class="table-responsive"><table class="table table-condensed table-hover">',
-      '<thead><tr><th class="alignleft">%s</th><th>%s</th><th class="aligncenter">%s</th><th class="aligncenter">%s</th><th class="aligncenter">%s</th><th class="aligncenter">%s</th></tr></thead>' % (
+      '<thead><tr>'
+      '<th class="alignleft">%s</th>'
+      '<th>%s</th><th class="aligncenter">%s</th>'
+      '<th class="aligncenter">%s</th>'
+      '<th class="aligncenter">%s</th><th class="aligncenter">%s</th></tr></thead>' % (
         capfirst(force_text(_("resource"))), capfirst(force_text(_("operation"))),
         capfirst(force_text(_("startdate"))), capfirst(force_text(_("enddate"))),
         capfirst(force_text(_("quantity"))), capfirst(force_text(_("criticality")))
@@ -1018,7 +1021,7 @@ class ResourceQueueWidget(Widget):
     alt = False
     for ldplan in OperationPlanResource.objects.using(db).select_related().order_by('startdate')[:limit]:
       result.append('<tr%s><td class="underline"><a href="%s/loadplan/?resource=%s&sidx=startdate&sord=asc">%s</a></td><td>%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td></tr>' % (
-        alt and ' class="altRow"' or '', request.prefix, urlquote(ldplan.resource), escape(ldplan.resource), escape(ldplan.operationplan.operation), ldplan.startdate, ldplan.enddate, int(ldplan.operationplan.quantity), int(ldplan.operationplan.criticality)
+        alt and ' class="altRow"' or '', request.prefix, quote(ldplan.resource), escape(ldplan.resource), escape(ldplan.operationplan.operation), ldplan.startdate, ldplan.enddate, int(ldplan.operationplan.quantity), int(ldplan.operationplan.criticality)
         ))
       alt = not alt
     result.append('</table></div>')
@@ -1101,7 +1104,7 @@ class AlertsWidget(Widget):
     alt = False
     for res in cursor.fetchall():
       result.append('<tr%s><td class="underline"><a href="%s/problem/?name=%s">%s</a></td><td class="aligncenter">%d</td><td class="aligncenter">%d</td></tr>' % (
-        alt and ' class="altRow"' or '', request.prefix, urlquote(res[0]), res[0], res[1], res[2]
+        alt and ' class="altRow"' or '', request.prefix, quote(res[0]), res[0], res[1], res[2]
         ))
       alt = not alt
     result.append('</table></div>')
@@ -1227,7 +1230,7 @@ class ResourceLoadWidget(Widget):
     cursor.execute(query, (request.report_startdate, request.report_enddate, limit))
     for res in cursor.fetchall():
       result.append('<tr><td><a href="%s/resource/%s/">%s</a></td><td class="util">%.2f</td></tr>' % (
-        request.prefix, urlquote(res[0]), res[0], res[1]
+        request.prefix, quote(res[0]), res[0], res[1]
         ))
     result.append('</table>')
     result.append('<span id="resload_medium" style="display:none">%s</span>' % medium)

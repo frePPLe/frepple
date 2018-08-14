@@ -134,145 +134,107 @@ class OverviewReport(GridPivot):
 
     # Execute the actual query
     query = '''
-      with opplanmat as (
-          %s
-        ),
-        ss_buckets as (
-          -- Buffer min cal entries
-          select
-            buffer.item_id, buffer.location_id, 2 priority_1, calendarbucket.priority priority_2,
-            calendarbucket.value ssvalue, coalesce(calendarbucket.startdate, '1971-01-01'::timestamp) startdate,
-            coalesce(calendarbucket.enddate, '2030-12-31'::timestamp) enddate
-          from buffer
-          inner join opplanmat
-            on buffer.item_id = opplanmat.item_id and buffer.location_id = opplanmat.location_id
-          inner join calendarbucket
-            on calendarbucket.calendar_id = buffer.minimum_calendar_id
-          union all
-          -- Buffer min cal default value + Buffer min
-          select
-            opplanmat.item_id, opplanmat.location_id, 2 priority_1, 99999999,
-            coalesce(calendar.defaultvalue, buffer.minimum), '1971-01-01'::timestamp, '2030-12-31'::timestamp
-          from buffer
-          inner join opplanmat
-            on buffer.item_id = opplanmat.item_id and buffer.location_id = opplanmat.location_id
-          left outer join calendar
-            on calendar.name = buffer.minimum_calendar_id
-        )
-      select
-        invplan.item_id || ' @ ' || invplan.location_id,
-        invplan.item_id, invplan.location_id,
-        item.description, item.category, item.subcategory, item.owner_id,
-        item.source, item.lastmodified, location.description, location.category,
-        location.subcategory, location.available_id, location.owner_id,
-        location.source, location.lastmodified, %s
-        invplan.startoh,
-        invplan.startoh + invplan.produced - invplan.consumed as endoh,
-        coalesce((
-        select
-        extract (epoch from case when initial_onhand <= 0 then interval '0 day' else min(flowdate) -
-                 greatest(invplan.startdate, %%s) end)/(3600*24) days_of_cover
-        from
-        (
-        select
-        item_id,
-        location_id,
-        flowdate,
-        onhand - quantity onhand_before,
-        onhand onhand_after,
-        first_value(onhand - quantity) over(partition by item_id, location_id order by item_id, location_id, flowdate,id) initial_onhand,
-        sum(case when quantity < 0 then -quantity else 0 end) over(partition by item_id, location_id order by item_id, location_id, flowdate,id) total_consumed
-        from operationplanmaterial
-        where flowdate >= greatest(invplan.startdate, %%s) and item_id = invplan.item_id and location_id = invplan.location_id
-        ) t
-        where total_consumed >= initial_onhand
-        group by item_id, location_id, initial_onhand
-        ), case when invplan.startoh <= 0 then 0 else 999 end)
-        startohdoc,
-        invplan.bucket,
-        invplan.startdate,
-        invplan.enddate,
-        (
-          select ssvalue
-          from ss_buckets
-          where ss_buckets.item_id = invplan.item_id
-            and ss_buckets.startdate <= greatest(invplan.startdate, %%s)
-            and ss_buckets.enddate > greatest(invplan.startdate, %%s)
-            and ssvalue is not null
-          order by ss_buckets.priority_1, ss_buckets.priority_2 limit 1
-        ) safetystock,
-        invplan.consumed,
-        invplan.consumedMO,
-        invplan.consumedDO,
-        invplan.consumedSO,
-        invplan.produced,
-        invplan.producedMO,
-        invplan.producedDO,
-        invplan.producedPO
-      from (
-        select
-          opplanmat.item_id, opplanmat.location_id,
-          d.bucket as bucket, d.startdate as startdate, d.enddate as enddate,
-          coalesce(sum(greatest(operationplanmaterial.quantity, 0)),0) as produced,
-          coalesce(sum(greatest(case when operationplan.type = 'MO' then operationplanmaterial.quantity else 0 end, 0)),0) as producedMO,
-          coalesce(sum(greatest(case when operationplan.type = 'DO' then operationplanmaterial.quantity else 0 end, 0)),0) as producedDO,
-          coalesce(sum(greatest(case when operationplan.type = 'PO' then operationplanmaterial.quantity else 0 end, 0)),0) as producedPO,
-          coalesce(-sum(least(operationplanmaterial.quantity, 0)),0) as consumed,
-          coalesce(-sum(least(case when operationplan.type = 'MO' then operationplanmaterial.quantity else 0 end, 0)),0) as consumedMO,
-          coalesce(-sum(least(case when operationplan.type = 'DO' then operationplanmaterial.quantity else 0 end, 0)),0) as consumedDO,
-          coalesce(-sum(least(case when operationplan.type = 'DLVR' then operationplanmaterial.quantity else 0 end, 0)),0) as consumedSO,
-          coalesce(initial_on_hand.onhand,0) startoh
-        from opplanmat
-        -- Multiply with buckets
-        cross join (
-             select name as bucket, startdate, enddate
-             from common_bucketdetail
-             where bucket_id = %%s and enddate > %%s and startdate < %%s
-             ) d
-        -- Initial on hand
-        left join operationplanmaterial initial_on_hand
-            on initial_on_hand.item_id = opplanmat.item_id
-            and initial_on_hand.location_id = opplanmat.location_id
-            and initial_on_hand.flowdate < greatest(d.startdate,%%s)
-            and not exists (select 1 from operationplanmaterial opm where opm.item_id = initial_on_hand.item_id
-            and opm.location_id = initial_on_hand.location_id and opm.flowdate < greatest(d.startdate,%%s)
-            and opm.id > initial_on_hand.id)
-         -- Consumed and produced quantities
-        left join operationplanmaterial
+       select item.name||' @ '||location.name,
+       item.name item_id,
+       location.name location_id,
+       item.description, 
+       item.category, 
+       item.subcategory, 
+       item.owner_id,
+       item.source, 
+       item.lastmodified, 
+       location.description, 
+       location.category,
+       location.subcategory, 
+       location.available_id, 
+       location.owner_id,
+       location.source, 
+       location.lastmodified,
+       %s
+       coalesce(initial_on_hand.onhand,0) startoh,       
+       coalesce(initial_on_hand.onhand,0) - coalesce(-sum(least(operationplanmaterial.quantity, 0)),0) + coalesce(sum(greatest(operationplanmaterial.quantity, 0)),0) endoh,
+       case when coalesce(initial_on_hand.onhand,0) = 0 then 0 else
+       extract( epoch from initial_on_hand.flowdate + initial_on_hand.periodofcover * interval '1 second' - greatest(d.startdate,%%s))/86400 end startohdoc,                                                
+       d.bucket,
+       d.startdate,
+       d.enddate,
+       initial_on_hand.minimum safetystock,
+       coalesce(-sum(least(operationplanmaterial.quantity, 0)),0) as consumed,
+       coalesce(-sum(least(case when operationplan.type = 'MO' then operationplanmaterial.quantity else 0 end, 0)),0) as consumedMO,
+       coalesce(-sum(least(case when operationplan.type = 'DO' then operationplanmaterial.quantity else 0 end, 0)),0) as consumedDO,
+       coalesce(-sum(least(case when operationplan.type = 'DLVR' then operationplanmaterial.quantity else 0 end, 0)),0) as consumedSO,
+       coalesce(sum(greatest(operationplanmaterial.quantity, 0)),0) as produced,
+       coalesce(sum(greatest(case when operationplan.type = 'MO' then operationplanmaterial.quantity else 0 end, 0)),0) as producedMO,
+       coalesce(sum(greatest(case when operationplan.type = 'DO' then operationplanmaterial.quantity else 0 end, 0)),0) as producedDO,
+       coalesce(sum(greatest(case when operationplan.type = 'PO' then operationplanmaterial.quantity else 0 end, 0)),0) as producedPO
+       from 
+       (%s) opplanmat
+       inner join item on item.name = opplanmat.item_id
+       inner join location on location.name = opplanmat.location_id
+       -- Multiply with buckets
+      cross join (
+         select name as bucket, startdate, enddate
+         from common_bucketdetail
+         where bucket_id = %%s and enddate > %%s and startdate < %%s
+         ) d
+      -- Consumed and produced quantities
+      left join operationplanmaterial
         on opplanmat.item_id = operationplanmaterial.item_id
         and opplanmat.location_id = operationplanmaterial.location_id
         and d.startdate <= operationplanmaterial.flowdate
         and d.enddate > operationplanmaterial.flowdate
         and operationplanmaterial.flowdate >= greatest(d.startdate,%%s)
-        and operationplanmaterial.flowdate < %%s
-        left outer join operationplan on operationplan.id = operationplanmaterial.operationplan_id
-        -- Grouping and sorting
-        group by opplanmat.item_id,
-        opplanmat.location_id,
-        d.bucket,
-        d.startdate,
-        d.enddate,
-        coalesce(initial_on_hand.onhand,0)
-        ) invplan
-      left outer join item on
-        invplan.item_id = item.name
-      left outer join location on
-        invplan.location_id = location.name
-      order by %s, invplan.startdate
-      ''' % (
-        basesql, reportclass.attr_sql, sortsql
+        and operationplanmaterial.flowdate < d.enddate
+      left outer join operationplan on operationplan.id = operationplanmaterial.operationplan_id
+      -- Initial on hand
+      left join operationplanmaterial initial_on_hand
+        on initial_on_hand.item_id = opplanmat.item_id
+        and initial_on_hand.location_id = opplanmat.location_id
+        and initial_on_hand.flowdate < greatest(d.startdate,%%s)
+        and not exists (select 1 from operationplanmaterial opm where opm.item_id = initial_on_hand.item_id
+        and opm.location_id = initial_on_hand.location_id and opm.flowdate < greatest(d.startdate,%%s)
+        and opm.id > initial_on_hand.id)
+      group by
+       item.name,
+       location.name,
+       item.description, 
+       item.category, 
+       item.subcategory, 
+       item.owner_id,
+       item.source, 
+       item.lastmodified, 
+       location.description, 
+       location.category,
+       location.subcategory, 
+       location.available_id, 
+       location.owner_id,
+       location.source, 
+       location.lastmodified,
+       initial_on_hand.onhand,
+       initial_on_hand.onhand,
+       initial_on_hand.periodofcover,
+       initial_on_hand.flowdate,
+       d.bucket,
+       d.startdate,
+       d.enddate,
+       initial_on_hand.minimum
+       order by %s
+    ''' % (
+        reportclass.attr_sql, basesql, sortsql
       )
+    
     cursor.execute(
-      query, baseparams + (
-        request.report_startdate, request.report_startdate,
-        request.report_startdate, request.report_startdate,
-        request.report_bucket, request.report_startdate, request.report_enddate,
-        request.report_startdate, request.report_startdate, request.report_startdate, request.report_enddate
+      query,  (
+        request.report_startdate, # startohpoc
+        baseparams, # opplanmat
+        request.report_bucket, request.report_startdate, request.report_enddate, # bucket d
+        request.report_startdate, # operationplanmaterial
+        request.report_startdate, request.report_startdate, # initialonhand
         )
       )
+      
 
     # Build the python result
-    prevbuf = None
     for row in cursor.fetchall():
       numfields = len(row)
       

@@ -2219,6 +2219,10 @@ Duration OperationAlternate::getDecoupledLeadTime(double qty) const
       curPrio = (*sub)->getPriority();
     }
   }
+  
+  // Handle the case where no sub-operation is effective at all
+  if (!suboper)
+    return Duration(999L * 86400L);
 
   // Respect the size constraint of the child operation
   double qty2 = qty;

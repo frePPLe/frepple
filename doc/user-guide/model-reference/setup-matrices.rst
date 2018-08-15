@@ -65,7 +65,7 @@ rules        list of setup     A read-only list of rules in this matrix.
              matrix rules
 ============ ================= ===========================================================
 
-Setup Rule
+Setup rule
 ----------
 
 Within a setup matrix rules are used to define the changeover cost and duration.

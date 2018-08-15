@@ -501,17 +501,18 @@ class export:
             ''' % (round(j.onhand, 8), str(j.date), adapt(j.buffer.item.name),
                    adapt(j.buffer.location.name), j.operationplan.id ))
           else:
-            print(("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s" % (
+            print(("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s" % (
                j.operationplan.id, j.buffer.item.name, j.buffer.location.name,
                round(j.quantity, 8),
-               str(j.date), round(j.onhand, 8), j.status, currentTime
+               str(j.date), round(j.onhand, 8), round(j.minimum, 8), round(j.period_of_cover, 8), j.status, currentTime
                )), file=tmp)
 
       tmp.seek(0)
       cursor.copy_from(
         tmp,
         'operationplanmaterial',
-        columns=('operationplan_id', 'item_id', 'location_id', 'quantity', 'flowdate', 'onhand', 'status', 'lastmodified')
+        columns=('operationplan_id', 'item_id', 'location_id', 'quantity', 'flowdate', 'onhand', 
+                 'minimum', 'periodofcover', 'status', 'lastmodified')
         )
       tmp.close()
     if len(updates) > 0:

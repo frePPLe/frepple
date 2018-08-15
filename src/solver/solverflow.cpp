@@ -30,13 +30,13 @@ bool sortFlow(const Flow* lhs, const Flow* rhs)
 }
 
 
-void SolverMRP::solve(const Flow* fl, void* v)  // @todo implement search mode
+void SolverCreate::solve(const Flow* fl, void* v)  // @todo implement search mode
 {
   // Note: This method is only called for:
   // - consuming flows
   // - for the leading flow of an alternate group
   // - for the first transfer batch in a series
-  // See SolverMRP::checkOperation
+  // See SolverCreate::checkOperation
   SolverMRPdata* data = static_cast<SolverMRPdata*>(v);
 
   if (fl->hasAlternates())
@@ -117,10 +117,7 @@ void SolverMRP::solve(const Flow* fl, void* v)  // @todo implement search mode
 
       // 4c) Ask the buffer
       double orig_q_qty_min = data->state->q_qty_min;
-      if (curflow->getType() == *FlowFixedEnd::metadata || curflow->getType() == *FlowFixedStart::metadata)
-        data->state->q_qty_min = curflow->getQuantity();
-      else
-        data->state->q_qty_min = orig_q_qty_min * curflow->getQuantity();
+      data->state->q_qty_min = curflow->getQuantityFixed() + orig_q_qty_min * curflow->getQuantity();
       data->state->q_qty = ask_qty = - data->state->q_flowplan->getQuantity();
       data->state->q_date = data->state->q_flowplan->getDate();
       CommandManager::Bookmark* topcommand = data->getCommandManager()->setBookmark();
@@ -198,10 +195,7 @@ void SolverMRP::solve(const Flow* fl, void* v)  // @todo implement search mode
     // In this case, this method is passing control on to the buffer.
     double orig_q_qty_min = data->state->q_qty_min;
     data->state->q_qty = - data->state->q_flowplan->getQuantity();
-    if (fl->getType() == *FlowFixedEnd::metadata || fl->getType() == *FlowFixedStart::metadata)
-      data->state->q_qty_min = - fl->getQuantity();
-    else
-      data->state->q_qty_min *= - fl->getQuantity();
+    data->state->q_qty_min = - fl->getQuantityFixed() - data->state->q_qty_min * fl->getQuantity();
     data->state->q_date = data->state->q_flowplan->getDate();
     if (data->state->q_qty != 0.0)
     {

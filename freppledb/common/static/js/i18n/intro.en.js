@@ -24,7 +24,7 @@ var introdata = {
       position : 'right'
     }
   ],
-  "/demandplan/": [
+  "/data/input/deliveryorder/": [
       {
         element : 'h1 small',
         description : 'The report shows the details of the <strong>deliveries planned for each demand</strong>. ' +

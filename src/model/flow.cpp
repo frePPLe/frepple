@@ -26,8 +26,6 @@ namespace frepple
 const MetaCategory* Flow::metadata;
 const MetaClass* FlowStart::metadata;
 const MetaClass* FlowEnd::metadata;
-const MetaClass* FlowFixedStart::metadata;
-const MetaClass* FlowFixedEnd::metadata;
 const MetaClass* FlowTransferBatch::metadata;
 
 
@@ -45,12 +43,6 @@ int Flow::initialize()
     );
   FlowEnd::metadata = MetaClass::registerClass<FlowEnd>(
     "flow", "flow_end", Object::create<FlowEnd>
-    );
-  FlowFixedStart::metadata = MetaClass::registerClass<FlowFixedStart>(
-    "flow", "flow_fixed_start", Object::create<FlowFixedStart>
-    );
-  FlowFixedEnd::metadata = MetaClass::registerClass<FlowFixedEnd>(
-    "flow", "flow_fixed_end", Object::create<FlowFixedEnd>
     );
   FlowTransferBatch::metadata = MetaClass::registerClass<FlowTransferBatch>(
     "flow", "flow_transfer_batch", Object::create<FlowTransferBatch>
@@ -164,18 +156,6 @@ PyObject* Flow::create(PyTypeObject* pytype, PyObject* args, PyObject* kwds)
       PythonData d(t);
       if (d.getString() == "flow_end")
         l = new FlowEnd(
-          static_cast<Operation*>(oper),
-          static_cast<Buffer*>(buf),
-          q2
-        );
-      else if (d.getString() == "flow_fixed_end")
-        l = new FlowFixedEnd(
-          static_cast<Operation*>(oper),
-          static_cast<Buffer*>(buf),
-          q2
-        );
-      else if (d.getString() == "flow_fixed_start")
-        l = new FlowFixedStart(
           static_cast<Operation*>(oper),
           static_cast<Buffer*>(buf),
           q2
@@ -302,24 +282,9 @@ pair<Date, double> Flow::getFlowplanDateQuantity(const FlowPlan* fl) const
   else
     return make_pair(
       fl->getOperationPlan()->getSetupEnd(),
-      getEffective().within(fl->getDate()) ?
-      fl->getOperationPlan()->getQuantity() * getQuantity() : 0.0
+      getEffective().within(fl->getDate()) && fl->getOperationPlan()->getQuantity() ?
+      getQuantityFixed() + fl->getOperationPlan()->getQuantity() * getQuantity() : 0.0
     );
-}
-
-
-pair<Date, double> FlowFixedStart::getFlowplanDateQuantity(const FlowPlan* fl) const
-{
-  if (fl->isConfirmed())
-    return make_pair(
-      fl->getOperationPlan()->getSetupEnd(),
-      fl->getQuantity()
-    );
-  else
-    return make_pair(
-      fl->getOperationPlan()->getSetupEnd(),
-      getEffective().within(fl->getDate()) ? getQuantity() : 0.0
-      );
 }
 
 
@@ -333,24 +298,9 @@ pair<Date, double> FlowEnd::getFlowplanDateQuantity(const FlowPlan* fl) const
   else
     return make_pair(
       fl->getOperationPlan()->getEnd(),
-      getEffective().within(fl->getDate()) ?
-      fl->getOperationPlan()->getQuantity() * getQuantity() : 0.0
+      getEffective().within(fl->getDate()) && fl->getOperationPlan()->getQuantity() ?
+      getQuantityFixed() + fl->getOperationPlan()->getQuantity() * getQuantity() : 0.0
     );
-}
-
-
-pair<Date, double> FlowFixedEnd::getFlowplanDateQuantity(const FlowPlan* fl) const
-{
-  if (fl->isConfirmed())
-    return make_pair(
-      fl->getOperationPlan()->getEnd(),
-      fl->getQuantity()
-      );
-  else
-    return make_pair(
-      fl->getOperationPlan()->getEnd(),
-      getEffective().within(fl->getDate()) ? getQuantity() : 0.0
-      );
 }
 
 
@@ -360,12 +310,12 @@ pair<Date, double> FlowTransferBatch::getFlowplanDateQuantity(const FlowPlan* fl
   if (!batch_quantity || fl->getOperationPlan()->getSetupEnd() == fl->getOperationPlan()->getEnd())
     // Default to a simple flowplan at the start or end
     return make_pair(
-      getQuantity() < 0 ? fl->getOperationPlan()->getSetupEnd() : fl->getOperationPlan()->getEnd(),
-      getQuantity() * fl->getOperationPlan()->getQuantity()
+      (getQuantity() < 0 || getQuantityFixed() < 0) ? fl->getOperationPlan()->getSetupEnd() : fl->getOperationPlan()->getEnd(),
+      getQuantityFixed() + getQuantity() * fl->getOperationPlan()->getQuantity()
       );
   
   // Compute the number of batches
-  double total_quantity = fl->getOperationPlan()->getQuantity() * getQuantity();
+  double total_quantity = getQuantityFixed() + fl->getOperationPlan()->getQuantity() * getQuantity();
   double batches = ceil((getQuantity() > 0 ? total_quantity : -total_quantity) / getTransferBatch());
   if (!batches)
     batches = 1;
@@ -378,8 +328,8 @@ pair<Date, double> FlowTransferBatch::getFlowplanDateQuantity(const FlowPlan* fl
 
   // Count the index of this batch
   bool found = false;
-  unsigned int count = 0;
-  unsigned int totalcount = 0;
+  long count = 0;
+  long totalcount = 0;
   FlowPlan* cur_flpln = fl->getOperationPlan()->firstflowplan;
   FlowPlan* prev_flpln = nullptr;
   while (cur_flpln)
@@ -425,7 +375,7 @@ pair<Date, double> FlowTransferBatch::getFlowplanDateQuantity(const FlowPlan* fl
     }
   }
 
-  if (getQuantity() > 0)
+  if (getQuantity() > 0 || getQuantityFixed() > 0)
   {
     // Producing a batch
     op_delta = static_cast<long>(op_delta) / static_cast<long>(batches) * (count + 1);

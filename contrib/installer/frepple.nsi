@@ -25,7 +25,7 @@
 
 ; Main definitions
 !define PRODUCT_NAME "frePPLe"
-!define PRODUCT_VERSION "4.4.0"
+!define PRODUCT_VERSION "4.4.1"
 !define PRODUCT_PUBLISHER "frePPLe"
 !define PRODUCT_WEB_SITE "http://frepple.com"
 !define PRODUCT_DIR_REGKEY "Software\Microsoft\Windows\CurrentVersion\App Paths\frepple.exe"
@@ -92,8 +92,8 @@ Page custom FinishOpen FinishLeave
 !insertmacro MUI_LANGUAGE "TradChinese"
 
 ;Version Information
-VIProductVersion "4.4.0.0"
-VIAddVersionKey /LANG=${LANG_ENGLISH} FileVersion "4.4.0.0"
+VIProductVersion "4.4.1.0"
+VIAddVersionKey /LANG=${LANG_ENGLISH} FileVersion "4.4.1.0"
 VIAddVersionKey /LANG=${LANG_ENGLISH} ProductName "frePPLe community edition installer"
 VIAddVersionKey /LANG=${LANG_ENGLISH} Comments "frePPLe community edition installer"
 VIAddVersionKey /LANG=${LANG_ENGLISH} CompanyName "frePPLe"
@@ -169,7 +169,7 @@ Section "Application" SecAppl
   File "bin\license.xml"
 
   ; Copy the django and python redistributables created by cx_freeze
-  File /r "contrib\installer\build\exe.win-amd64-3.5\*.*"
+  File /r "contrib\installer\build\exe.win-amd64-3.6\*.*"
 
   ; Copy djangosettings
   SetOutPath "$INSTDIR\bin\custom"

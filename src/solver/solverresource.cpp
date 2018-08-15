@@ -26,7 +26,7 @@ namespace frepple
 
 
 /** @todo resource solver should be using a move command rather than direct move */
-void SolverMRP::solve(const Resource* res, void* v)
+void SolverCreate::solve(const Resource* res, void* v)
 {
   SolverMRPdata* data = static_cast<SolverMRPdata*>(v);
 
@@ -251,7 +251,11 @@ void SolverMRP::solve(const Resource* res, void* v)
       // in the supply path and we need to include these in our estimate of the
       // next date.
       double ignored = 0.0;
-      for (cur = res->getLoadPlans().begin(); cur!=res->getLoadPlans().begin(data->state->q_loadplan); ++cur)
+      for (
+        cur = res->getLoadPlans().begin();
+        cur != res->getLoadPlans().end() && cur != res->getLoadPlans().begin(data->state->q_loadplan);
+        ++cur
+        )
       {
         const LoadPlan* ldplan = nullptr;
         if (cur->getEventType() == 1)
@@ -305,7 +309,7 @@ void SolverMRP::solve(const Resource* res, void* v)
       if (HasOverload && newDate)
       {
         // Multiple operations could be executed in parallel
-        double parallelOps = allowSplits ?
+        double parallelOps = allowSplits && curMax ?
           ceil(curMax / data->state->q_loadplan->getQuantity() - ROUNDING_ERROR) : 1.0;
         // Move the operationplan to the new date
         data->state->q_operationplan->getOperation()->setOperationPlanParameters(
@@ -387,7 +391,7 @@ void SolverMRP::solve(const Resource* res, void* v)
 }
 
 
-void SolverMRP::solve(const ResourceInfinite* res, void* v)
+void SolverCreate::solve(const ResourceInfinite* res, void* v)
 {
   SolverMRPdata* data = static_cast<SolverMRPdata*>(v);
 
@@ -415,7 +419,7 @@ void SolverMRP::solve(const ResourceInfinite* res, void* v)
 }
 
 
-void SolverMRP::solve(const ResourceBuckets* res, void* v)
+void SolverCreate::solve(const ResourceBuckets* res, void* v)
 {
   SolverMRPdata* data = static_cast<SolverMRPdata*>(v);
 

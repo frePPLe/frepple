@@ -1,5 +1,5 @@
 ==============
-Item Suppliers
+Item suppliers
 ==============
 
 Defines an item that can be procured from a certain supplier.

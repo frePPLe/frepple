@@ -21,7 +21,7 @@ from django.db import models, DEFAULT_DB_ALIAS
 from django.db.models import Max
 from django.utils.translation import ugettext_lazy as _
 
-from freppledb.common.fields import JSONBField, AliasField
+from freppledb.common.fields import JSONBField, AliasDateTimeField
 from freppledb.common.models import HierarchyModel, AuditModel, MultiDBManager
 
 
@@ -507,12 +507,12 @@ class Resource(AuditModel, HierarchyModel):
     help_text=_('Size of the resource')
     )
   maximum_calendar = models.ForeignKey(
-    Calendar, verbose_name=_('maximum calendar'),
+    Calendar, verbose_name=_('maximum calendar'), related_name='+',
     null=True, blank=True, on_delete=models.CASCADE,
     help_text=_('Calendar defining the resource size varying over time')
     )
   available = models.ForeignKey(
-    Calendar, verbose_name=_('available'),  related_name='+',
+    Calendar, verbose_name=_('available'), related_name='+',
     null=True, blank=True, on_delete=models.CASCADE,
     help_text=_('Calendar defining the working hours and holidays')
     )
@@ -540,6 +540,11 @@ class Resource(AuditModel, HierarchyModel):
   efficiency = models.DecimalField(
     _('efficiency %'), null=True, blank=True, max_digits=20, decimal_places=8,
     help_text=_("Efficiency percentage of the resource")
+    )
+  efficiency_calendar = models.ForeignKey(
+    Calendar, verbose_name=_('efficiency % calendar'), related_name='+',
+    null=True, blank=True, on_delete=models.CASCADE,
+    help_text=_('Calendar defining the efficiency percentage of the resource varying over time')
     )
 
   # Methods
@@ -618,8 +623,6 @@ class OperationMaterial(AuditModel):
   types = (
     ('start', _('Start')),
     ('end', _('End')),
-    ('fixed_start', _('Fixed start')),
-    ('fixed_end', _('Fixed end')),
     ('transfer_batch', _('Batch transfer'))
   )
 
@@ -636,9 +639,14 @@ class OperationMaterial(AuditModel):
     blank=False, null=False, on_delete=models.CASCADE
     )
   quantity = models.DecimalField(
-    _('quantity'), default='1.00',
+    _('quantity'), default='1.00', blank=True, null=True,
     max_digits=20, decimal_places=8,
     help_text=_('Quantity to consume or produce per operationplan unit')
+    )
+  quantity_fixed = models.DecimalField(
+    _('fixed quantity'), blank=True, null=True,
+    max_digits=20, decimal_places=8,
+    help_text=_('Fixed quantity to consume or produce')
     )
   type = models.CharField(
     _('type'), max_length=20, null=True, blank=True, choices=types, default='start',
@@ -1055,7 +1063,7 @@ class OperationPlan(AuditModel):
     ('MO', _('manufacturing order')),
     ('PO', _('purchase order')),
     ('DO', _('distribution order')),
-    ('DLVR', _('customer shipment')),
+    ('DLVR', _('delivery order')),
     )
 
   # Possible status
@@ -1182,6 +1190,7 @@ class OperationPlan(AuditModel):
         self.id += 1
       else:
         self.id = 1
+      kwargs['force_insert'] = True
 
     # Call the real save() method
     super(OperationPlan, self).save(*args, **kwargs)
@@ -1264,7 +1273,9 @@ class OperationPlanMaterial(AuditModel):
     )
   quantity = models.DecimalField(_('quantity'), max_digits=20, decimal_places=8)
   flowdate = models.DateTimeField(_('date'), db_index=True)
-  onhand = models.DecimalField(_('onhand'), max_digits=20, decimal_places=8)
+  onhand = models.DecimalField(_('onhand'), max_digits=20, decimal_places=8, null=True, blank=True)
+  minimum = models.DecimalField(_('minimum'), max_digits=20, decimal_places=8, null=True, blank=True)
+  periodofcover = models.DecimalField(_('periodofcover'), max_digits=20, decimal_places=8, null=True, blank=True)
   status = models.CharField(
     _('status'), null=True, blank=True, max_length=20, choices=OPMstatus,
     help_text=_('Status of the OperationPlanMaterial')
@@ -1294,8 +1305,8 @@ class OperationPlanMaterial(AuditModel):
 
 class DistributionOrder(OperationPlan):
 
-  shipping_date = AliasField(db_column='startdate', verbose_name=_('shipping date'), null=True, blank=True)
-  receipt_date = AliasField(db_column='enddate', verbose_name=_('receipt date'), null=True, blank=True)
+  shipping_date = AliasDateTimeField(db_column='startdate', verbose_name=_('shipping date'), null=True, blank=True)
+  receipt_date = AliasDateTimeField(db_column='enddate', verbose_name=_('receipt date'), null=True, blank=True)
 
   class DistributionOrderManager(OperationPlan.Manager):
 
@@ -1319,8 +1330,8 @@ class DistributionOrder(OperationPlan):
 
 class PurchaseOrder(OperationPlan):
 
-  ordering_date = AliasField(db_column='startdate', verbose_name=_('ordering date'), null=True, blank=True)
-  receipt_date = AliasField(db_column='enddate', verbose_name=_('receipt date'), null=True, blank=True)
+  ordering_date = AliasDateTimeField(db_column='startdate', verbose_name=_('ordering date'), null=True, blank=True)
+  receipt_date = AliasDateTimeField(db_column='enddate', verbose_name=_('receipt date'), null=True, blank=True)
 
   class PurchaseOrderManager(OperationPlan.Manager):
 
@@ -1391,5 +1402,5 @@ class DeliveryOrder(OperationPlan):
 
   class Meta:
     proxy = True
-    verbose_name = _('customer shipment')
-    verbose_name_plural = _('customer shipments')
+    verbose_name = _('delivery order')
+    verbose_name_plural = _('delivery orders')

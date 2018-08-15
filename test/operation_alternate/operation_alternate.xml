@@ -135,15 +135,112 @@
 	</demands>
 
   <!--
-    Case 2: minimum cost choice.
+    Corner cases with date effective alternates
+  -->
+  <items>
+    <item name="item 2" cost="1">
+	    <itemsuppliers>
+	      <itemsupplier>
+          <supplier name="MySupplier" />
+          <location name="warehouse" />
+          <leadtime>P2D</leadtime>
+          <priority>1</priority>
+          <effective_end>2009-01-10T00:00:00</effective_end>
+        </itemsupplier>
+	    </itemsuppliers>
+    </item>
+  </items>
+  <demands>
+	  <demand name="item 2 SO1">
+	    <quantity>10</quantity>
+	    <due>2009-01-31T00:00:00</due>
+	    <priority>2</priority>
+	    <item name="item 2"/>
+      <location name="warehouse" />
+	  </demand>
+  </demands>
+
+  <items>
+    <item name="item 3" cost="1">
+	    <itemsuppliers>
+	      <itemsupplier>
+          <supplier name="MySupplier" />
+          <location name="warehouse" />
+          <leadtime>P14D</leadtime>
+          <priority>1</priority>
+          <effective_end>2009-01-10T00:00:00</effective_end>
+        </itemsupplier>
+	    </itemsuppliers>
+    </item>
+  </items>
+  <demands>
+	  <demand name="item 3 SO1">
+	    <quantity>10</quantity>
+	    <due>2009-01-31T00:00:00</due>
+	    <priority>2</priority>
+	    <item name="item 3"/>
+      <location name="warehouse" />
+	  </demand>
+  </demands>
+
+  <items>
+    <item name="item 4" cost="1">
+	    <itemsuppliers>
+	      <itemsupplier>
+          <supplier name="MySupplier" />
+          <location name="warehouse" />
+          <leadtime>P14D</leadtime>
+          <priority>1</priority>
+          <effective_start>2009-02-10T00:00:00</effective_start>
+        </itemsupplier>
+	    </itemsuppliers>
+    </item>
+  </items>
+  <demands>
+	  <demand name="item 4 SO1">
+	    <quantity>10</quantity>
+	    <due>2009-01-31T00:00:00</due>
+	    <priority>2</priority>
+	    <item name="item 4"/>
+      <location name="warehouse" />
+	  </demand>
+  </demands>
+
+  <!--
+    Corner case of unplannable 0-priority alternate
+  -->
+  <items>
+    <item name="item 5" cost="1">
+	    <itemsuppliers>
+	      <itemsupplier>
+          <supplier name="MySupplier" />
+          <location name="warehouse" />
+          <leadtime>P14D</leadtime>
+          <priority>0</priority>
+        </itemsupplier>
+	    </itemsuppliers>
+    </item>
+  </items>
+  <demands>
+	  <demand name="item 5 SO1">
+	    <quantity>10</quantity>
+	    <due>2009-01-31T00:00:00</due>
+	    <priority>2</priority>
+	    <item name="item 5"/>
+      <location name="warehouse" />
+	  </demand>
+  </demands>
+
+  <!--
+    Case: minimum cost choice.
     TODO
   -->
   <!--
-    Case 3: minimum penalty choice.
+    Case: minimum penalty choice.
     TODO
   -->
   <!--
-    Case 4: minimum cost+penalty choice.
+    Case: minimum cost+penalty choice.
     TODO
   -->
 

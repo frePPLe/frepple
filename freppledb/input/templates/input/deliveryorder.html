@@ -1,0 +1,20 @@
+{% extends "admin/base_site_grid.html" %}
+
+{% block before_table %}{% if args.0 %}{% tabs "input.item" %}{% endif %}{{block.super}}{% endblock %}
+
+{% block extrahead %}{{block.super}}
+<script type="text/javascript">
+
+function enddatecellattr(rowId, value, rowdata) {
+  var delay = parseFloat(rowdata.delay);
+  if (isNaN(delay) || rowdata.status == 'closed' || rowdata.status == 'canceled')
+  	return '';
+  if (delay <= 0)
+  	return 'style="background-color: #008000"';
+  else if (delay > 7)
+  	return 'style="background-color: #f00"';
+  else
+    return 'style="background-color: rgb(255,' + Math.round((1-delay/7)*255) + ',0)"';
+}
+</script>
+{% endblock %}

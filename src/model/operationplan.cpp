@@ -686,7 +686,7 @@ Object* OperationPlan::createOperationPlan(
         quantity
         );
     }
-    if (!opplan->activate(create))
+    if (!opplan->activate(create, start))
       throw DataException("Can't create operationplan");
 
     // Report the operationplan creation to the manager
@@ -774,14 +774,14 @@ void OperationPlan::setOperation(Operation* o)
 }
 
 
-bool OperationPlan::activate(bool createsubopplans)
+bool OperationPlan::activate(bool createsubopplans, bool use_start)
 {
   // At least a valid operation pointer must exist
   if (!oper)
     throw LogicException("Initializing an invalid operationplan");
 
   // Avoid negative quantities, and call operation specific activation code
-  if (getQuantity() < 0.0 || !oper->extraInstantiate(this, createsubopplans))
+  if (getQuantity() < 0.0 || !oper->extraInstantiate(this, createsubopplans, use_start))
   {
     delete this;
     return false;
@@ -1009,15 +1009,18 @@ bool OperationPlan::operator < (const OperationPlan& a) const
   if (fabs(quantity - a.quantity) > ROUNDING_ERROR)
     return quantity >= a.quantity;
 
-  
   if ((getRawIdentifier() && !a.getRawIdentifier())
     || (!getRawIdentifier() && a.getRawIdentifier()))
     // Keep uninitialized operationplans (whose id = 0) seperate
     return getRawIdentifier() > a.getRawIdentifier();
-  else
-    // Using a pointer comparison as tie breaker. This can give
-    // results that are not reproducible across platforms and runs.
-    return this < &a;
+  
+  if (getEnd() != a.getEnd())
+    // Use the end date
+    return getEnd() < a.getEnd();
+  
+  // Using a pointer comparison as tie breaker. This can give
+  // results that are not reproducible across platforms and runs.
+  return this < &a;
 }
 
 
@@ -1159,7 +1162,7 @@ void OperationPlan::setStart (Date d, bool force, bool preferEnd)
 
   if (!lastsubopplan)
     // No sub operationplans
-    oper->setOperationPlanParameters(this, quantity, d, Date::infinitePast, preferEnd);
+    oper->setOperationPlanParameters(this, quantity, d, Date::infinitePast, preferEnd, true, false);
   else
   {
     // Move all sub-operationplans in an orderly fashion
@@ -1167,7 +1170,7 @@ void OperationPlan::setStart (Date d, bool force, bool preferEnd)
     {
       if (i->getStart() < d)
       {
-        i->setStart(d);
+        i->setStart(d, force, preferEnd);
         d = i->getEnd();
       }
       else
@@ -1195,7 +1198,7 @@ void OperationPlan::setEnd(Date d, bool force)
 
   if (!lastsubopplan)
     // No sub operationplans
-    oper->setOperationPlanParameters(this,quantity,Date::infinitePast,d);
+    oper->setOperationPlanParameters(this, quantity, Date::infinitePast, d, true, true, false);
   else
   {
     // Move all sub-operationplans in an orderly fashion
@@ -1203,7 +1206,7 @@ void OperationPlan::setEnd(Date d, bool force)
     {
       if (!i->getEnd() || i->getEnd() > d)
       {
-        i->setEnd(d);
+        i->setEnd(d, force);
         d = i->getStart();
       }
       else
@@ -1957,6 +1960,54 @@ OperationPlan::InterruptionIterator* OperationPlan::InterruptionIterator::next()
       if (t->getDate() == selected)
         ++(*t);
   }
+}
+
+
+double OperationPlan::getEfficiency(Date d) const
+{
+  double best = DBL_MAX;
+  LoadPlanIterator e = beginLoadPlans();
+  if (e == endLoadPlans())
+  {
+    // Use the operation loads
+    for (auto h = getOperation()->getLoads().begin(); h != getOperation()->getLoads().end(); ++h)
+    {
+      double best_eff = 0.0;
+      for (Resource::memberRecursiveIterator mmbr(h->getResource()); !mmbr.empty(); ++mmbr)
+      {
+        if (
+          !mmbr->isGroup()
+          && (!h->getSkill() || mmbr->hasSkill(h->getSkill()))
+          )
+        {
+          auto my_eff = mmbr->getEfficiencyCalendar()
+            ? mmbr->getEfficiencyCalendar()->getValue(d ? d : getStart())
+            : mmbr->getEfficiency();
+          if (my_eff > best_eff)
+            best_eff = my_eff;
+        }
+      }
+      if (best_eff < best)
+        best = best_eff;
+    }
+  }
+  else
+  {
+    // Use the operationplan loadplans
+    while (e != endLoadPlans())
+    {
+      if (e->getQuantity() <= 0)
+      {
+        auto tmp = e->getResource()->getEfficiencyCalendar()
+          ? e->getResource()->getEfficiencyCalendar()->getValue(d ? d : getStart())
+          : e->getResource()->getEfficiency();
+        if (tmp < best)
+          best = tmp;
+      }
+      ++e;
+    }
+  }
+  return best == DBL_MAX ? 1.0 : best / 100.0;
 }
 
 

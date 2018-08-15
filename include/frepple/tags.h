@@ -77,6 +77,7 @@ class Tags
     static const Keyword duration;
     static const Keyword duration_per;
     static const Keyword efficiency;
+    static const Keyword efficiency_calendar;
     static const Keyword effective_start;
     static const Keyword effective_end;
     static const Keyword end;
@@ -145,6 +146,7 @@ class Tags
     static const Keyword pegging_downstream;
     static const Keyword pegging_upstream;
     static const Keyword percent;
+    static const Keyword period_of_cover;
     static const Keyword plan;
     static const Keyword planned_quantity;
     static const Keyword plantype;
@@ -158,6 +160,7 @@ class Tags
     static const Keyword property;
     static const Keyword proposed;
     static const Keyword quantity;
+    static const Keyword quantity_fixed;
     static const Keyword reference;
     static const Keyword resource;
     static const Keyword resources;

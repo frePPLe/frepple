@@ -2,6 +2,71 @@
 <plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <name>Test model for handling work in progress</name>
   <current>2014-01-01T00:00:00</current>
+  <items>
+    <item name="In1">
+      <itemsuppliers>
+        <itemsupplier>
+          <supplier name="Component supplier"/>
+        </itemsupplier>
+      </itemsuppliers>
+    </item>
+    <item name="In2">
+      <itemsuppliers>
+        <itemsupplier>
+          <supplier name="Component supplier"/>
+        </itemsupplier>
+      </itemsuppliers>
+    </item>
+    <item name="In3">
+      <itemsuppliers>
+        <itemsupplier>
+          <supplier name="Component supplier"/>
+        </itemsupplier>
+      </itemsuppliers>
+    </item>
+    <item name="In3A">
+      <itemsuppliers>
+        <itemsupplier>
+          <supplier name="Component supplier"/>
+        </itemsupplier>
+      </itemsuppliers>
+    </item>
+    <item name="In3B">
+      <itemsuppliers>
+        <itemsupplier>
+          <supplier name="Component supplier"/>
+        </itemsupplier>
+      </itemsuppliers>
+    </item>
+    <item name="In3C">
+      <itemsuppliers>
+        <itemsupplier>
+          <supplier name="Component supplier"/>
+        </itemsupplier>
+      </itemsuppliers>
+    </item>
+    <item name="In4">
+      <itemsuppliers>
+        <itemsupplier>
+          <supplier name="Component supplier"/>
+        </itemsupplier>
+      </itemsuppliers>
+    </item>
+    <item name="In4A">
+      <itemsuppliers>
+        <itemsupplier>
+          <supplier name="Component supplier"/>
+        </itemsupplier>
+      </itemsuppliers>
+    </item>
+    <item name="In4B">
+      <itemsuppliers>
+        <itemsupplier>
+          <supplier name="Component supplier"/>
+        </itemsupplier>
+      </itemsuppliers>
+    </item>
+  </items>    
   <buffers>
     <buffer name="Little inventory @ Loc">
       <item name="small item" />
@@ -12,78 +77,6 @@
       <item name="Negative inventory" />
       <location name="Loc"/>
       <onhand>-0.1</onhand>
-    </buffer>      
-    <buffer name="In1" xsi:type="buffer_procure">
-      <item name="In1" />
-      <location name="Loc"/>
-    </buffer>
-    <buffer name="In2" xsi:type="buffer_procure">
-      <item name="In2" />
-      <location name="Loc"/>
-    </buffer>
-    <buffer name="Out1">
-      <item name="Out1" />
-    </buffer>
-    <buffer name="Out2">
-      <item name="Out2" />
-      <location name="Loc"/>
-      <producing name="Oper1" xsi:type="operation_fixed_time" />
-    </buffer>
-    <buffer name="In3" xsi:type="buffer_procure">
-      <item name="In3" />
-      <location name="Loc"/>
-    </buffer>
-    <buffer name="In3A" xsi:type="buffer_procure">
-      <item name="In3A" />
-      <location name="Loc"/>
-    </buffer>
-    <buffer name="In3B" xsi:type="buffer_procure">
-      <item name="In3B" />
-      <location name="Loc"/>
-    </buffer>
-    <buffer name="In3C" xsi:type="buffer_procure">
-      <item name="In3C" />
-      <location name="Loc"/>
-    </buffer>
-    <buffer name="Out3">
-      <item name="Out3" />
-      <location name="Loc"/>
-    </buffer>
-    <buffer name="Out3A">
-      <item name="Out3A" />
-      <location name="Loc"/>
-    </buffer>
-    <buffer name="Out3B">
-      <item name="Out3B" />
-      <location name="Loc"/>
-    </buffer>
-    <buffer name="Out3C">
-      <item name="Out3C" />
-      <location name="Loc"/>
-    </buffer>
-    <buffer name="In4" xsi:type="buffer_procure">
-      <item name="In4" />
-      <location name="Loc"/>
-    </buffer>
-    <buffer name="In4A" xsi:type="buffer_procure">
-      <item name="In4A" />
-      <location name="Loc"/>
-    </buffer>
-    <buffer name="In4B" xsi:type="buffer_procure">
-      <item name="In4B" />
-      <location name="Loc"/>
-    </buffer>
-    <buffer name="Out4">
-      <item name="Out4" />
-      <location name="Loc"/>
-    </buffer>
-    <buffer name="Out4A">
-      <item name="Out3A" />
-      <location name="Loc"/>
-    </buffer>
-    <buffer name="Out4B">
-      <item name="Out4B" />
-      <location name="Loc"/>
     </buffer>
   </buffers>
   <resources>
@@ -117,12 +110,15 @@
   </resources>
   <operations>
     <operation name="Strange WIP sizes" xsi:type="operation_fixed_time">
+      <location name="Loc"/>
       <size_minimum>100</size_minimum>
       <size_minimum>1000</size_minimum>
       <size_multiple>50</size_multiple>
       <duration>P1D</duration>
     </operation>
-    <operation name="Oper1" xsi:type="operation_fixed_time">
+    <operation name="Oper1" xsi:type="operation_fixed_time">    
+      <item name="Out2" />
+      <location name="Loc"/>
       <loads>
         <load>
           <resource name="Res1" />
@@ -133,40 +129,42 @@
       </loads>
       <flows>
         <flow xsi:type="flow_end">
-          <buffer name="Out1" />
+          <item name="Out1" />
           <quantity>1</quantity>
         </flow>
         <flow xsi:type="flow_end">
-          <buffer name="Out2" />
+          <item name="Out2" />
           <quantity>2</quantity>
         </flow>
         <flow xsi:type="flow_start">
-          <buffer name="In1" />
+          <item name="In1" />
           <quantity>-1</quantity>
         </flow>
         <flow xsi:type="flow_start">
-          <buffer name="In2" />
+          <item name="In2" />
           <quantity>-2</quantity>
         </flow>
       </flows>
       <duration>P10D</duration>
     </operation>
     <operation name="Oper3" xsi:type="operation_routing">
+      <location name="Loc"/>
       <suboperations>
         <suboperation>
         <priority>1</priority>
-        <operation name="Oper3A" xsi:type="operation_fixed_time" duration="P1D">
+        <operation name="Oper3A" xsi:type="operation_fixed_time" duration="P1D" posttime="P1D">
+          <location name="Loc"/>
           <flows>
             <flow xsi:type="flow_end">
-              <buffer name="Out3A" />
+              <item name="Out3A" />
               <quantity>1</quantity>
             </flow>
             <flow xsi:type="flow_start">
-              <buffer name="In3A" />
+              <item name="In3A" />
               <quantity>-1</quantity>
             </flow>             
             <flow xsi:type="flow_start">
-              <buffer name="In3" />
+              <item name="In3" />
               <quantity>-1</quantity>
           </flow>
           </flows>
@@ -179,14 +177,15 @@
         </suboperation>
         <suboperation>
         <priority>2</priority>
-        <operation name="Oper3B" xsi:type="operation_fixed_time" duration="P1D">
+        <operation name="Oper3B" xsi:type="operation_fixed_time" duration="P1D" posttime="P1D">
+          <location name="Loc"/>
           <flows>
             <flow xsi:type="flow_end">
-              <buffer name="Out3B" />
+              <item name="Out3B" />
               <quantity>1</quantity>
             </flow>
             <flow xsi:type="flow_start">
-              <buffer name="In3B" />
+              <item name="In3B" />
               <quantity>-1</quantity>
             </flow>
           </flows>
@@ -199,18 +198,19 @@
         </suboperation>
         <suboperation>
         <priority>3</priority>
-        <operation name="Oper3C" xsi:type="operation_fixed_time" duration="P1D">
+        <operation name="Oper3C" xsi:type="operation_fixed_time" duration="P1D" posttime="P1D">
+          <location name="Loc"/>
           <flows>
             <flow xsi:type="flow_end">
-              <buffer name="Out3C" />
+              <item name="Out3C" />
               <quantity>1</quantity>
             </flow>
             <flow xsi:type="flow_start">
-              <buffer name="In3C" />
+              <item name="In3C" />
               <quantity>-1</quantity>
             </flow>
             <flow xsi:type="flow_end">
-              <buffer name="Out3" />
+              <item name="Out3" />
               <quantity>1</quantity>
             </flow>
           </flows>
@@ -224,13 +224,14 @@
       </suboperations>
     </operation>
     <operation name="Oper4" xsi:type="operation_alternate">
+      <location name="Loc"/>
       <flows>
         <flow xsi:type="flow_end">
-          <buffer name="Out4" />
+          <item name="Out4" />
           <quantity>1</quantity>
         </flow>
         <flow xsi:type="flow_start">
-          <buffer name="In4" />
+          <item name="In4" />
           <quantity>-1</quantity>
         </flow>
       </flows>
@@ -242,13 +243,14 @@
       <suboperations>
         <suboperation>
           <operation name="Oper4A" xsi:type="operation_fixed_time" duration="P1D">
+            <location name="Loc"/>
             <flows>
               <flow xsi:type="flow_end">
-                <buffer name="Out4A" />
+                <item name="Out4A" />
                 <quantity>1</quantity>
               </flow>
               <flow xsi:type="flow_start">
-                <buffer name="In4A" />
+                <item name="In4A" />
                 <quantity>-1</quantity>
               </flow>
             </flows>
@@ -262,13 +264,14 @@
         </suboperation>
         <suboperation>
           <operation name="Oper4B" xsi:type="operation_fixed_time" duration="P1D">
+            <location name="Loc"/>
             <flows>
               <flow xsi:type="flow_end">
-                <buffer name="Out4B" />
+                <item name="Out4B" />
                 <quantity>1</quantity>
               </flow>
               <flow xsi:type="flow_start">
-                <buffer name="In4B" />
+                <item name="In4B" />
                 <quantity>-1</quantity>
               </flow>
             </flows>
@@ -368,17 +371,17 @@
     <operationplan id="3007" quantity="10" end="2014-04-05T00:00:00" status="approved">
       <operation name="Oper3"/>
     </operationplan>
-    <operationplan id="3008" quantity="10" start="2014-04-01T00:00:00" status="approved">
+    <operationplan id="3008" quantity="10" start="2014-03-30T00:00:00" status="approved">
       <owner id="3007"/>
       <operation name="Oper3B"/>
     </operationplan>
-    <operationplan id="3009" quantity="10" end="2014-06-05T00:00:00" status="approved">
+    <operationplan id="3009" quantity="10" start="2014-06-05T00:00:00" status="approved">
       <operation name="Oper3"/>
     </operationplan>
-    <operationplan id="3010" quantity="10" start="2014-06-06T00:00:00" status="approved">
+    <operationplan id="3010" quantity="10" start="2014-06-10T00:00:00" status="approved">
       <owner id="3009"/>
       <operation name="Oper3B"/>
-    </operationplan>    
+    </operationplan>   
     <!-- WIP on alternate operation -->
     <operationplan id="4005" quantity="10" start="2014-01-01T00:00:00" end="2014-01-05T00:00:00" status="confirmed">
       <operation name="Oper4"/>

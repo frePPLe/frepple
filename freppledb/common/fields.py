@@ -113,3 +113,24 @@ class AliasField(models.Field):
 
   def __get__(self, instance, instance_type=None):
     return getattr(instance, self.db_column)
+
+
+class AliasDateTimeField(models.DateTimeField):
+  '''
+  This field is an alias for another database field
+
+  Sources:
+  https://shezadkhan.com/aliasing-fields-in-django/
+
+  Note: This uses some django functions that are being deprecated in django 2.0.
+  '''
+
+  def contribute_to_class(self, cls, name, private_only=False):
+    super().contribute_to_class(cls, name, private_only=True)
+    setattr(cls, name, self)
+
+  def __set__(self, instance, value):
+    setattr(instance, self.db_column, value)
+
+  def __get__(self, instance, instance_type=None):
+    return getattr(instance, self.db_column)

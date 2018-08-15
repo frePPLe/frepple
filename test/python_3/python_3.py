@@ -286,20 +286,18 @@ print("\nCreating some buffers")
 
 buf = frepple.buffer(name="end item", producing=choice, item=item)
 
-buf1 = frepple.buffer_procure(name="buffer1",
+buf1 = frepple.buffer(name="buffer1",
   description="My description",
   category="My category",
   location=locA,
   item=itemlist[1])
 print(buf1, buf1.__class__, buf1.location, isinstance(buf1, frepple.buffer), \
   isinstance(buf1, frepple.buffer_default), \
-  isinstance(buf1, frepple.buffer_procure), \
   isinstance(buf1, frepple.buffer_infinite))
 
 buf2 = frepple.buffer(name="buffer2", owner=buf1)
 print(buf2, buf2.__class__, buf2.location, isinstance(buf2, frepple.buffer), \
   isinstance(buf2, frepple.buffer_default), \
-  isinstance(buf2, frepple.buffer_procure), \
   isinstance(buf2, frepple.buffer_infinite))
 
 ###
@@ -330,7 +328,6 @@ order3 = frepple.demand(name="order 3", item=item, quantity=10, priority=3, \
 
 ###
 print("\nCreating a solver and running it")
-printModel("output.10.xml")
 frepple.solver_mrp(constraints=7, loglevel=0).solve()
 
 ###

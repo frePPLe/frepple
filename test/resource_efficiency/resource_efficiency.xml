@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <current>2018-01-01T00:00:00</current>
+  <resources>
+    <resource name="Resource 1">
+      <efficiency>90</efficiency>
+    </resource>
+    <resource name="Resource 2">
+      <efficiency>120</efficiency>
+    </resource>
+    <resource name="Resource 3A">
+      <efficiency>120</efficiency>
+      <owner name="Resource 3"/>
+      <cost>10</cost>
+    </resource>
+    <resource name="Resource 3B">
+      <efficiency>100</efficiency>
+      <owner name="Resource 3"/>
+      <cost>10</cost>
+    </resource>
+    <resource name="Resource 3C">
+      <efficiency>75</efficiency>
+      <owner name="Resource 3"/>
+      <cost>5</cost>
+    </resource>
+    <resource name="Resource 4A">
+      <efficiency_calendar name="efficiency 4A">
+        <default>50</default>
+      </efficiency_calendar>
+      <owner name="Resource 4"/>
+      <cost>10</cost>
+    </resource>
+    <resource name="Resource 4B">
+      <efficiency_calendar name="efficiency 4B">
+        <buckets>
+          <bucket end="2018-01-30T00:00:00" value="0" />
+          <bucket start="2018-01-30T00:00:00" value="100" />
+        </buckets>
+      </efficiency_calendar>
+      <owner name="Resource 4"/>
+      <cost>10</cost>
+    </resource>
+    <resource name="Resource 4C">
+      <efficiency_calendar name="efficiency 4C">
+        <default>100</default>
+        <buckets>
+          <bucket end="2017-01-30T00:00:00" value="0" />
+          <bucket start="2017-12-01T00:00:00" end="2018-01-31T00:00:00" value="50" />
+          <bucket start="2018-01-31T00:00:00" end="2018-04-30T00:00:00" value="80" />
+          <bucket start="2018-04-30T00:00:00" end="2020-01-01T00:00:00" value="100" />
+          <bucket start="2020-01-01T00:00:00" value="0" />
+        </buckets>
+      </efficiency_calendar>
+      <owner name="Resource 4"/>
+      <cost>5</cost>
+    </resource>    
+  </resources>  
+  <operations>
+    <operation name="make item 1" xsi:type="operation_fixed_time">
+      <item name="item 1"/>    
+      <location name="factory"/>
+      <loads>
+        <load>
+          <resource name="Resource 1"/>
+        </load>
+      </loads>
+      <flows>
+        <flow xsi:type="flow_end">
+          <item name="item 1"/>
+          <quantity>1</quantity>
+        </flow>
+      </flows>
+      <duration>P1D</duration>
+    </operation>
+    <operation name="make item 2" xsi:type="operation_time_per">
+      <item name="item 2"/>
+      <location name="factory"/>
+      <loads>
+        <load>
+          <resource name="Resource 2"/>
+        </load>
+      </loads>      
+      <flows>
+        <flow xsi:type="flow_end">
+          <item name="item 2"/>
+          <quantity>1</quantity>
+        </flow>
+      </flows>
+      <duration>P1D</duration>
+      <duration_per>P1D</duration_per>
+    </operation>
+    <operation name="make item 3" xsi:type="operation_time_per">
+      <item name="item 3"/>
+      <location name="factory"/>
+      <size_multiple>5</size_multiple>
+      <loads>
+        <load>
+          <resource name="Resource 3"/>
+          <search>MINCOSTPENALTY</search>
+        </load>
+      </loads>      
+      <flows>
+        <flow xsi:type="flow_end">
+          <item name="item 3"/>
+          <quantity>1</quantity>
+        </flow>
+      </flows>
+      <duration>P1D</duration>
+      <duration_per>P1D</duration_per>
+    </operation>
+    <operation name="make item 4" xsi:type="operation_time_per">
+      <item name="item 4"/>
+      <location name="factory"/>
+      <size_multiple>5</size_multiple>
+      <loads>
+        <load>
+          <resource name="Resource 4"/>
+          <search>MINCOSTPENALTY</search>
+        </load>
+      </loads>      
+      <flows>
+        <flow xsi:type="flow_end">
+          <item name="item 4"/>
+          <quantity>1</quantity>
+        </flow>
+      </flows>
+      <duration>P1D</duration>
+      <duration_per>P1D</duration_per>
+    </operation>    
+  </operations>
+  <demands>
+    <demand name="order 1">
+      <quantity>10</quantity>
+      <minshipment>10</minshipment>
+      <due>2018-01-01T00:00:00</due>
+      <item name="item 1" />
+      <location name="factory"/>
+    </demand>
+    <demand name="order 2">
+      <quantity>10</quantity>
+      <minshipment>10</minshipment>
+      <due>2018-01-01T00:00:00</due>
+      <item name="item 2" />
+      <location name="factory"/>
+    </demand>
+    <demand name="order 3">
+      <quantity>10</quantity>
+      <due>2018-01-01T00:00:00</due>
+      <item name="item 3" />
+      <location name="factory"/>
+    </demand>
+    <demand name="order 4">
+      <quantity>10</quantity>
+      <due>2018-01-01T00:00:00</due>
+      <item name="item 3" />
+      <location name="factory"/>
+    </demand>
+    <demand name="order 5">
+      <quantity>10</quantity>
+      <due>2018-01-01T00:00:00</due>
+      <item name="item 3" />
+      <location name="factory"/>
+    </demand>
+    <demand name="order 6">
+      <quantity>10</quantity>
+      <due>2018-01-01T00:00:00</due>
+      <item name="item 3" />
+      <location name="factory"/>
+    </demand>
+    <demand name="item 4 - order 1">
+      <quantity>10</quantity>
+      <due>2018-01-01T00:00:00</due>
+      <item name="item 4" />
+      <location name="factory"/>
+    </demand>
+    <demand name="item 4 - order 2">
+      <quantity>10</quantity>
+      <due>2018-02-01T00:00:00</due>
+      <item name="item 4" />
+      <location name="factory"/>
+    </demand>
+    <demand name="item 4 - order 3">
+      <quantity>10</quantity>
+      <due>2018-03-01T00:00:00</due>
+      <item name="item 4" />
+      <location name="factory"/>
+    </demand>       
+    <demand name="item 4 - order 4">
+      <quantity>10</quantity>
+      <due>2021-03-01T00:00:00</due>
+      <item name="item 4" />
+      <location name="factory"/>
+    </demand>
+    <demand name="item 4 - order 5">
+      <quantity>10</quantity>
+      <due>2017-01-01T00:00:00</due>
+      <item name="item 4" />
+      <location name="factory"/>
+    </demand>       
+  </demands>
+
+<?python
+print ("CREATING CONSTRAINED PLAN")
+frepple.solver_mrp(plantype=1, constraints=15, loglevel=2).solve()
+frepple.saveplan("output.1.xml")
+print ("CREATING UNCONSTRAINED PLAN")
+frepple.solver_mrp(plantype=2, constraints=15, loglevel=2).solve()
+frepple.saveplan("output.2.xml")
+?>
+
+</plan>

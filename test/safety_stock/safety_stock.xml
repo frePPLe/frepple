@@ -25,12 +25,23 @@
   <items>
     <item name="end item 1"/>
     <item name="end item 2"/>
+    <item name="end item 3 C">
+      <itemsuppliers>
+        <itemsupplier>
+          <supplier name="Component supplier"/>
+          <leadtime>P4D</leadtime>
+          <size_multiple>3</size_multiple>
+          <size_minimum>50</size_minimum>
+        </itemsupplier>
+      </itemsuppliers>
+    </item>      
   </items>
   <buffers>
-    <buffer name="end item 1">
+    <buffer name="end item 1 @ factory">
+      <item name="end item 1"/>
+      <location name="factory"/>
       <!-- Notice the calendar for the safety stock target... -->
-      <producing name="make end item 1" />
-      <item name="end item 1" />
+      <producing name="make end item 1"/>
       <minimum_calendar name="safety stock target">
 	      <buckets>
 	        <bucket start="2009-01-01T00:00:00">
@@ -45,63 +56,64 @@
 	      </buckets>
       </minimum_calendar>
     </buffer>
-    <buffer name="end item 2">
+    <buffer name="end item 2 @ factory">
+      <item name="end item 2"/>
+      <location name="factory"/>
       <!-- Notice the post-operation time... -->
       <producing name="make end item 2" posttime="P7D"/>
-      <item name="end item 2" />
     </buffer>
-    <buffer name="end item 3 A">
+    <buffer name="end item 3 A @ factory">
+      <item name="end item 3 A"/>
+      <location name="factory"/>
       <producing name="buy end item 3" xsi:type="operation_fixed_time" duration="P4D"/>
       <minimum>10</minimum>
-      <item name="end item 3" />
     </buffer>
-    <buffer name="end item 3 B">
+    <buffer name="end item 3 B @ factory">
+      <item name="end item 3 B"/>
+      <location name="factory"/>
       <producing name="end item 3 from A to B" xsi:type="operation_fixed_time" duration="P4D"/>
       <minimum>20</minimum>
-      <item name="end item 3" />
     </buffer>
-    <buffer name="end item 3 C" xsi:type="buffer_procure">
-      <item name="end item 3" />
-	    <leadtime>P4D</leadtime>
-	    <mininventory>20</mininventory>
-	    <maxinventory>70</maxinventory>
-	    <size_multiple>3</size_multiple>
+    <buffer name="end item 3 C @ factory">
+      <item name="end item 3 C"/>
+      <location name="factory"/>
+      <minimum>20</minimum>
 	  </buffer>
   </buffers>
   <flows>
     <flow xsi:type="flow_start">
-      <operation name="delivery end item 1" />
-      <buffer name="end item 1" />
+      <operation name="delivery end item 1"/>
+      <buffer name="end item 1 @ factory"/>
       <quantity>-1</quantity>
     </flow>
     <flow xsi:type="flow_end">
-      <operation name="make end item 1" />
-      <buffer name="end item 1" />
+      <operation name="make end item 1"/>
+      <buffer name="end item 1 @ factory"/>
       <quantity>1</quantity>
     </flow>
     <flow xsi:type="flow_start">
-      <operation name="delivery end item 2" />
-      <buffer name="end item 2" />
+      <operation name="delivery end item 2"/>
+      <buffer name="end item 2 @ factory"/>
       <quantity>-1</quantity>
     </flow>
     <flow xsi:type="flow_end">
-      <operation name="make end item 2" />
-      <buffer name="end item 2" />
+      <operation name="make end item 2"/>
+      <buffer name="end item 2 @ factory"/>
       <quantity>1</quantity>
     </flow>
     <flow xsi:type="flow_start">
-      <operation name="end item 3 from A to B" />
-      <buffer name="end item 3 A" />
+      <operation name="end item 3 from A to B"/>
+      <buffer name="end item 3 A @ factory"/>
       <quantity>-1</quantity>
     </flow>
     <flow xsi:type="flow_end">
-      <operation name="end item 3 from A to B" />
-      <buffer name="end item 3 B" />
+      <operation name="end item 3 from A to B"/>
+      <buffer name="end item 3 B @ factory"/>
       <quantity>1</quantity>
     </flow>
     <flow xsi:type="flow_end">
-      <operation name="buy end item 3" />
-      <buffer name="end item 3 A" />
+      <operation name="buy end item 3"/>
+      <buffer name="end item 3 A @ factory"/>
       <quantity>1</quantity>
     </flow>
   </flows>
@@ -110,7 +122,8 @@
       <quantity>10</quantity>
       <due>2009-01-02T00:00:00</due>
       <priority>1</priority>
-      <item name="end item 1" />
+      <item name="end item 1"/>
+      <location name="factory"/>
       <operation name="delivery end item 1" xsi:type="operation_fixed_time">
         <duration>P3D</duration>
       </operation>
@@ -119,21 +132,24 @@
       <quantity>10</quantity>
       <due>2009-02-15T00:00:00</due>
       <priority>2</priority>
-      <item name="end item 1" />
+      <item name="end item 1"/>
+      <location name="factory"/>
       <operation name="delivery end item 1"/>
     </demand>
     <demand name="order 3 - item 1">
       <quantity>10</quantity>
       <due>2009-03-15T00:00:00</due>
       <priority>3</priority>
-      <item name="end item 1" />
+      <item name="end item 1"/>
+      <location name="factory"/>
       <operation name="delivery end item 1"/>
     </demand>
     <demand name="order 1 - item 2">
       <quantity>10</quantity>
       <due>2009-01-02T00:00:00</due>
       <priority>1</priority>
-      <item name="end item 2" />
+      <item name="end item 2"/>
+      <location name="factory"/>
       <operation name="delivery end item 2" xsi:type="operation_fixed_time">
         <duration>P3D</duration>
       </operation>
@@ -142,15 +158,17 @@
       <quantity>10</quantity>
       <due>2009-02-15T00:00:00</due>
       <priority>2</priority>
-      <item name="end item 2" />
-      <operation name="delivery end item 2" />
+      <item name="end item 2"/>
+      <location name="factory"/>
+      <operation name="delivery end item 2"/>
     </demand>
     <demand name="order 3 - item 2">
       <quantity>10</quantity>
       <due>2009-03-15T00:00:00</due>
       <priority>3</priority>
-      <item name="end item 2" />
-      <operation name="delivery end item 2" />
+      <item name="end item 2"/>
+      <location name="factory"/>
+      <operation name="delivery end item 2"/>
     </demand>
   </demands>
 

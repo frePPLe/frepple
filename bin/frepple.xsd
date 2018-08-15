@@ -16,7 +16,7 @@
  License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <xsd:schema xmlns:xsd='http://www.w3.org/2001/XMLSchema'
-  elementFormDefault="unqualified" attributeFormDefault="unqualified" version="4.4.0">
+  elementFormDefault="unqualified" attributeFormDefault="unqualified" version="4.4.1">
 
   <!-- ACTION -->
   <xsd:simpleType name="action">
@@ -544,6 +544,7 @@
       <xsd:element name="maxearly" type="xsd:duration" />
       <xsd:element name="cost" type="positiveDouble" />
       <xsd:element name="efficiency" type="positiveDouble" />
+      <xsd:element name="efficiency_calendar" type="calendar" />
       <xsd:element name="owner" type="resource" />
       <xsd:element name="members">
         <xsd:complexType>
@@ -673,28 +674,6 @@
     </xsd:complexContent>
   </xsd:complexType>
 
-  <xsd:complexType name="buffer_procure">
-    <xsd:complexContent>
-      <xsd:extension base="buffer">
-        <xsd:choice minOccurs="0" maxOccurs="unbounded">
-          <xsd:element name="size_maximum" type="positiveDouble" />
-          <xsd:element name="size_minimum" type="positiveDouble" />
-          <xsd:element name="size_multiple" type="positiveDouble" />
-          <xsd:element name="mininventory" type="positiveDouble" />
-          <xsd:element name="maxinventory" type="positiveDouble" />
-          <xsd:element name="leadtime" type="xsd:duration" />
-          <xsd:element name="fence" type="xsd:duration" />
-        </xsd:choice>
-        <xsd:attribute name="size_maximum" type="positiveDouble" />
-        <xsd:attribute name="size_miniimum" type="positiveDouble" />
-        <xsd:attribute name="size_multiple" type="positiveDouble" />
-        <xsd:attribute name="mininventory" type="positiveDouble" />
-        <xsd:attribute name="maxinventory" type="positiveDouble" />
-        <xsd:attribute name="fence" type="xsd:duration" />
-      </xsd:extension>
-    </xsd:complexContent>
-  </xsd:complexType>
-
   <!-- FLOW -->
   <xsd:complexType name="flow">
     <xsd:annotation>
@@ -708,6 +687,7 @@
       <xsd:element name="buffer" type="buffer" />
       <xsd:element name="item" type="item" />
       <xsd:element name="quantity" type="xsd:double" />      
+      <xsd:element name="quantity_fixed" type="xsd:double" />      
       <xsd:element name="priority" type="xsd:integer" />
       <xsd:element name="effective_start" type="xsd:dateTime" />
       <xsd:element name="effective_end" type="xsd:dateTime" />
@@ -720,6 +700,7 @@
       <xsd:element name="source" type="xsd:normalizedString" />  
     </xsd:choice>
     <xsd:attribute name="quantity" type="xsd:double" />
+    <xsd:attribute name="quantity_fixed" type="xsd:double" />
     <xsd:attribute name="priority" type="xsd:integer" />
     <xsd:attribute name="effective_start" type="xsd:dateTime" />
     <xsd:attribute name="effective_end" type="xsd:dateTime" />
@@ -742,18 +723,6 @@
   </xsd:complexType>
 
   <xsd:complexType name="flow_start">
-    <xsd:complexContent>
-      <xsd:extension base="flow" />
-    </xsd:complexContent>
-  </xsd:complexType>
-
-  <xsd:complexType name="flow_fixed_end">
-    <xsd:complexContent>
-      <xsd:extension base="flow" />
-    </xsd:complexContent>
-  </xsd:complexType>
-
-  <xsd:complexType name="flow_fixed_start">
     <xsd:complexContent>
       <xsd:extension base="flow" />
     </xsd:complexContent>

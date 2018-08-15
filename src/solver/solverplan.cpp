@@ -23,17 +23,17 @@
 namespace frepple
 {
 
-const MetaClass* SolverMRP::metadata;
-const Keyword SolverMRP::tag_iterationthreshold("iterationthreshold");
-const Keyword SolverMRP::tag_iterationaccuracy("iterationaccuracy");
-const Keyword SolverMRP::tag_lazydelay("lazydelay");
-const Keyword SolverMRP::tag_administrativeleadtime("administrativeleadtime");
-const Keyword SolverMRP::tag_minimumdelay("minimumdelay");
-const Keyword SolverMRP::tag_allowsplits("allowsplits");
-const Keyword SolverMRP::tag_autofence("autofence");
-const Keyword SolverMRP::tag_rotateresources("rotateresources");
-const Keyword SolverMRP::tag_planSafetyStockFirst("plansafetystockfirst");
-const Keyword SolverMRP::tag_iterationmax("iterationmax");
+const MetaClass* SolverCreate::metadata;
+const Keyword SolverCreate::tag_iterationthreshold("iterationthreshold");
+const Keyword SolverCreate::tag_iterationaccuracy("iterationaccuracy");
+const Keyword SolverCreate::tag_lazydelay("lazydelay");
+const Keyword SolverCreate::tag_administrativeleadtime("administrativeleadtime");
+const Keyword SolverCreate::tag_minimumdelay("minimumdelay");
+const Keyword SolverCreate::tag_allowsplits("allowsplits");
+const Keyword SolverCreate::tag_autofence("autofence");
+const Keyword SolverCreate::tag_rotateresources("rotateresources");
+const Keyword SolverCreate::tag_planSafetyStockFirst("plansafetystockfirst");
+const Keyword SolverCreate::tag_iterationmax("iterationmax");
 
 
 void LibrarySolver::initialize()
@@ -50,22 +50,22 @@ void LibrarySolver::initialize()
 
   // Register all classes.
   int nok = 0;
-  nok += SolverMRP::initialize();
+  nok += SolverCreate::initialize();
   nok += OperatorDelete::initialize();
   if (nok) throw RuntimeException("Error registering new Python types");
 }
 
 
-int SolverMRP::initialize()
+int SolverCreate::initialize()
 {
   // Initialize the metadata
-  metadata = MetaClass::registerClass<SolverMRP>(
-    "solver", "solver_mrp", Object::create<SolverMRP>, true
+  metadata = MetaClass::registerClass<SolverCreate>(
+    "solver", "solver_mrp", Object::create<SolverCreate>, true
     );
-  registerFields<SolverMRP>(const_cast<MetaClass*>(metadata));
+  registerFields<SolverCreate>(const_cast<MetaClass*>(metadata));
 
   // Initialize the Python class
-  PythonType& x = FreppleClass<SolverMRP, Solver>::getPythonType();
+  PythonType& x = FreppleClass<SolverCreate, Solver>::getPythonType();
   x.setName("solver_mrp");
   x.setDoc("frePPLe solver_mrp");
   x.supportgetattro();
@@ -79,12 +79,12 @@ int SolverMRP::initialize()
 }
 
 
-PyObject* SolverMRP::create(PyTypeObject* pytype, PyObject* args, PyObject* kwds)
+PyObject* SolverCreate::create(PyTypeObject* pytype, PyObject* args, PyObject* kwds)
 {
   try
   {
     // Create the solver
-    SolverMRP *s = new SolverMRP();
+    SolverCreate *s = new SolverCreate();
 
     // Iterate over extra keywords, and set attributes.   @todo move this responsibility to the readers...
     if (kwds)
@@ -97,7 +97,7 @@ PyObject* SolverMRP::create(PyTypeObject* pytype, PyObject* args, PyObject* kwds
         PyObject* key_utf8 = PyUnicode_AsUTF8String(key);
         DataKeyword attr(PyBytes_AsString(key_utf8));
         Py_DECREF(key_utf8);
-        const MetaFieldBase* fmeta = SolverMRP::metadata->findField(attr.getHash());
+        const MetaFieldBase* fmeta = SolverCreate::metadata->findField(attr.getHash());
         if (!fmeta)
           fmeta = Solver::metadata->findField(attr.getHash());
         if (fmeta)
@@ -121,7 +121,7 @@ PyObject* SolverMRP::create(PyTypeObject* pytype, PyObject* args, PyObject* kwds
 }
 
 
-SolverMRP::SolverMRPdata::SolverMRPdata(SolverMRP* s, int c, deque<Demand*>* d)
+SolverCreate::SolverMRPdata::SolverMRPdata(SolverCreate* s, int c, deque<Demand*>* d)
   : sol(s), cluster(c), demands(d), constrainedPlanning(true),
   logConstraints(true), state(statestack), prevstate(statestack - 1)
 {
@@ -129,7 +129,7 @@ SolverMRP::SolverMRPdata::SolverMRPdata(SolverMRP* s, int c, deque<Demand*>* d)
 }
 
 
-void SolverMRP::SolverMRPdata::setCommandManager(CommandManager* a)
+void SolverCreate::SolverMRPdata::setCommandManager(CommandManager* a)
 {
   if (mgr == a)
     return;
@@ -139,13 +139,13 @@ void SolverMRP::SolverMRPdata::setCommandManager(CommandManager* a)
 }
 
 
-SolverMRP::SolverMRPdata::~SolverMRPdata()
+SolverCreate::SolverMRPdata::~SolverMRPdata()
 {
   delete operator_delete;
 };
 
 
-bool SolverMRP::demand_comparison(const Demand* l1, const Demand* l2)
+bool SolverCreate::demand_comparison(const Demand* l1, const Demand* l2)
 {
   if (l1->getPriority() != l2->getPriority())
     return l1->getPriority() < l2->getPriority();
@@ -156,7 +156,7 @@ bool SolverMRP::demand_comparison(const Demand* l1, const Demand* l2)
 }
 
 
-void SolverMRP::SolverMRPdata::push(double q, Date d, bool full)
+void SolverCreate::SolverMRPdata::push(double q, Date d, bool full)
 {
   if (state >= statestack + MAXSTATES)
     throw RuntimeException("Maximum recursion depth exceeded");
@@ -193,7 +193,7 @@ void SolverMRP::SolverMRPdata::push(double q, Date d, bool full)
 }
 
 
-void SolverMRP::SolverMRPdata::pop(bool copy_answer)
+void SolverCreate::SolverMRPdata::pop(bool copy_answer)
 {
   if (state < statestack)
     throw LogicException("State stack empty");
@@ -209,10 +209,10 @@ void SolverMRP::SolverMRPdata::pop(bool copy_answer)
 }
 
 
-void SolverMRP::SolverMRPdata::commit()
+void SolverCreate::SolverMRPdata::commit()
 {
   // Check
-  SolverMRP* solver = getSolver();
+  SolverCreate* solver = getSolver();
   if (!demands || !solver)
     throw LogicException("Missing demands or solver.");
 
@@ -353,18 +353,23 @@ void SolverMRP::SolverMRPdata::commit()
 }
 
 
-void SolverMRP::SolverMRPdata::solveSafetyStock(SolverMRP* solver)
+void SolverCreate::SolverMRPdata::solveSafetyStock(SolverCreate* solver)
 {
   OperatorDelete cleanup(getCommandManager());
+  cleanup.setConstrained(solver->isMaterialConstrained());
   safety_stock_planning = true;
   if (getLogLevel() > 0)
     logger << "Start safety stock replenishment pass   " << solver->getConstraints() << endl;
   vector< list<Buffer*> > bufs(HasLevel::getNumberOfLevels() + 1);
   for (Buffer::iterator buf = Buffer::begin(); buf != Buffer::end(); ++buf)
     if (buf->getCluster() == cluster
-      && buf->getType() != *BufferInfinite::metadata
-      && ( buf->getMinimum() || buf->getMinimumCalendar()
-        || buf->getType() == *BufferProcure::metadata )
+      && buf->getType() != *BufferInfinite::metadata      
+      && (buf->getProducingOperation() || !solver->isMaterialConstrained())
+      && (
+        buf->getMinimum() 
+        || buf->getMinimumCalendar() 
+        || buf->getFlowPlans().begin() != buf->getFlowPlans().end()
+        )
       )
       bufs[(buf->getLevel()>=0) ? buf->getLevel() : 0].push_back(&*buf);
   for (vector< list<Buffer*> >::iterator b_list = bufs.begin(); b_list != bufs.end(); ++b_list)
@@ -384,8 +389,7 @@ void SolverMRP::SolverMRPdata::solveSafetyStock(SolverMRP* solver)
         iteration_count = 0;
         (*b)->solve(*solver, this);
         // Check for excess
-        if ((*b)->getType() != *BufferProcure::metadata)
-          (*b)->solve(cleanup, this);
+        (*b)->solve(cleanup, this);
         getCommandManager()->commit();
       }
       catch(...)
@@ -399,7 +403,7 @@ void SolverMRP::SolverMRPdata::solveSafetyStock(SolverMRP* solver)
 }
 
 
-void SolverMRP::update_user_exits()
+void SolverCreate::update_user_exits()
 {
   setUserExitBuffer(getPyObjectProperty(Tags::userexit_buffer.getName()));
   setUserExitDemand(getPyObjectProperty(Tags::userexit_demand.getName()));
@@ -409,7 +413,7 @@ void SolverMRP::update_user_exits()
 }
 
 
-void SolverMRP::solve(void *v)
+void SolverCreate::solve(void *v)
 {
   // Configure user exits
   update_user_exits();
@@ -466,7 +470,7 @@ void SolverMRP::solve(void *v)
 }
 
 
-PyObject* SolverMRP::solve(PyObject *self, PyObject *args)
+PyObject* SolverCreate::solve(PyObject *self, PyObject *args)
 {
   // Parse the argument
   PyObject *dem = nullptr;
@@ -480,7 +484,7 @@ PyObject* SolverMRP::solve(PyObject *self, PyObject *args)
   Py_BEGIN_ALLOW_THREADS   // Free Python interpreter for other threads
   try
   {
-    SolverMRP* sol = static_cast<SolverMRP*>(self);
+    SolverCreate* sol = static_cast<SolverCreate*>(self);
     if (!dem)
     {
       // Complete replan
@@ -506,12 +510,12 @@ PyObject* SolverMRP::solve(PyObject *self, PyObject *args)
 }
 
 
-PyObject* SolverMRP::commit(PyObject *self, PyObject *args)
+PyObject* SolverCreate::commit(PyObject *self, PyObject *args)
 {
   Py_BEGIN_ALLOW_THREADS   // Free Python interpreter for other threads
   try
   {
-    SolverMRP * me = static_cast<SolverMRP*>(self);
+    SolverCreate * me = static_cast<SolverCreate*>(self);
     assert(me->commands.getCommandManager());
     me->scanExcess(me->commands.getCommandManager());
     me->commands.getCommandManager()->commit();
@@ -527,12 +531,12 @@ PyObject* SolverMRP::commit(PyObject *self, PyObject *args)
 }
 
 
-PyObject* SolverMRP::rollback(PyObject *self, PyObject *args)
+PyObject* SolverCreate::rollback(PyObject *self, PyObject *args)
 {
   Py_BEGIN_ALLOW_THREADS   // Free Python interpreter for other threads
   try
   {
-    SolverMRP * me = static_cast<SolverMRP*>(self);
+    SolverCreate * me = static_cast<SolverCreate*>(self);
     assert(me->commands.getCommandManager());
     me->commands.getCommandManager()->rollback();
   }

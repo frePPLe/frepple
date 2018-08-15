@@ -102,14 +102,6 @@ void CommandList::commit()
 }
 
 
-void CommandList::redo()
-{
-  // Redo the commands
-  for (Command* c = firstCommand; c; c = c->next)
-    c->redo();
-}
-
-
 CommandList::~CommandList()
 {
   if (firstCommand)
@@ -154,22 +146,6 @@ void CommandManager::undoBookmark(CommandManager::Bookmark* b)
     throw LogicException("Can't find bookmark to undo");
   i->undo();
   currentBookmark = b->parent;
-}
-
-
-void CommandManager::redoBookmark(CommandManager::Bookmark* b)
-{
-  if (!b) throw LogicException("Can't redo nullptr bookmark");
-
-  for (Bookmark* i = b; i; i = i->nextBookmark)
-  {
-    if (i->isChildOf(b) && i->active)
-    {
-      i->redo();
-      i->active = true;
-    }
-  }
-  currentBookmark = b;
 }
 
 
@@ -339,70 +315,6 @@ void CommandSetProperty::undo()
         break;
     }
     obj->deleteProperty(name);
-  }
-}
-
-
-void CommandSetProperty::redo()
-{
-  if (!obj || name.empty())
-    return;
-
-  if (old_exists)
-  {
-    switch (type)
-    {
-      case 1: // Boolean
-        {
-        bool tmp_bool = obj->getBoolProperty(name);
-        obj->setBoolProperty(name, old_bool);
-        old_bool = tmp_bool;
-        }
-        break;
-      case 2: // Date
-        {
-        Date tmp_date = obj->getDateProperty(name);
-        obj->setDateProperty(name, old_date);
-        old_date = tmp_date;
-        }
-        break;
-      case 3: // Double
-        {
-        double tmp_double = obj->getDateProperty(name);
-        obj->setDoubleProperty(name, old_double);
-        old_double = tmp_double;
-        }
-        break;
-      case 4:
-        {
-        string tmp_string = obj->getStringProperty(name);
-        obj->setStringProperty(name, old_string);
-        old_string = tmp_string;
-        }
-        break;
-      default:
-        break;
-    }
-  }
-  else
-  {
-    switch (type)
-    {
-      case 1: // Boolean
-        obj->setBoolProperty(name, old_bool);
-        break;
-      case 2: // Date
-        obj->setDateProperty(name, old_date);
-        break;
-      case 3: // Double
-        obj->setDoubleProperty(name, old_double);
-        break;
-      case 4: // String
-        obj->setStringProperty(name, old_string);
-        break;
-      default:
-        break;
-    }
   }
 }
 

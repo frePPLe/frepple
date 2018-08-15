@@ -43,6 +43,7 @@ urlpatterns = [
   url(r'^data/input/manufacturingorder/$', freppledb.input.views.ManufacturingOrderList.as_view(), name="input_manufacturingorder_changelist"),
   url(r'^data/input/manufacturingorder/location/(.+)/$', freppledb.input.views.ManufacturingOrderList.as_view(), name="input_manufacturingorder_by_location"),
   url(r'^data/input/purchaseorder/$', freppledb.input.views.PurchaseOrderList.as_view(), name="input_purchaseorder_changelist"),
+  url(r'^data/input/purchaseorder/item/(.+)/$', freppledb.input.views.PurchaseOrderList.as_view(), name="input_purchaseorder_by_item"),
   url(r'^data/input/purchaseorder/supplier/(.+)/$', freppledb.input.views.PurchaseOrderList.as_view(), name="input_purchaseorder_by_supplier"),
   url(r'^data/input/purchaseorder/location/(.+)/$', freppledb.input.views.PurchaseOrderList.as_view(), name="input_purchaseorder_by_location"),
   url(r'^data/input/distributionorder/$', freppledb.input.views.DistributionOrderList.as_view(), name="input_distributionorder_changelist"),
@@ -53,6 +54,8 @@ urlpatterns = [
   url(r'^data/input/supplier/$', freppledb.input.views.SupplierList.as_view(), name="input_supplier_changelist"),
   url(r'^data/input/itemsupplier/$', freppledb.input.views.ItemSupplierList.as_view(), name="input_itemsupplier_changelist"),
   url(r'^data/input/itemdistribution/$', freppledb.input.views.ItemDistributionList.as_view(), name="input_itemdistribution_changelist"),
+  url(r'^data/input/deliveryorder/item/(.+)/$', freppledb.input.views.DeliveryOrderList.as_view(), name="input_deliveryorder_by_item"),
+  url(r'^data/input/deliveryorder/$', freppledb.input.views.DeliveryOrderList.as_view(), name="input_deliveryorder_changelist"),
 
   # Special reports
   url(r'^supplypath/item/(.+)/$', freppledb.input.views.UpstreamItemPath.as_view(), name="supplypath_item"),

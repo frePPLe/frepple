@@ -21,6 +21,7 @@ from datetime import datetime
 
 from django.core.management.base import BaseCommand, CommandError
 from django.conf import settings
+from django.db import DEFAULT_DB_ALIAS
 from django.utils.translation import ugettext_lazy as _
 from django.template import Template, RequestContext
 
@@ -95,7 +96,7 @@ class Command(BaseCommand):
     # Initialize the task
     source = options['source']
     try:
-      sourcescenario = Scenario.objects.get(pk=source)
+      sourcescenario = Scenario.objects.using(DEFAULT_DB_ALIAS).get(pk=source)
     except:
       raise CommandError("No source database defined with name '%s'" % source)
     now = datetime.now()
@@ -124,7 +125,7 @@ class Command(BaseCommand):
         task.arguments += " --force"
       task.save(using=source)
       try:
-        destinationscenario = Scenario.objects.get(pk=destination)
+        destinationscenario = Scenario.objects.using(DEFAULT_DB_ALIAS).get(pk=destination)
       except:
         raise CommandError("No destination database defined with name '%s'" % destination)
       if source == destination:
@@ -138,7 +139,7 @@ class Command(BaseCommand):
 
       # Logging message - always logging in the default database
       destinationscenario.status = 'Busy'
-      destinationscenario.save()
+      destinationscenario.save(using=DEFAULT_DB_ALIAS)
 
       # Copying the data
       # Commenting the next line is a little more secure, but requires you to create a .pgpass file.
@@ -155,7 +156,7 @@ class Command(BaseCommand):
         test and settings.DATABASES[destination]['TEST']['NAME'] or settings.DATABASES[destination]['NAME'],
         )
 
-      ret = subprocess.call(commandline, shell=True, stdout=subprocess.DEVNULL , stderr=subprocess.STDOUT)
+      ret = subprocess.call(commandline, shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
 
       if ret:
         raise Exception('Exit code of the database copy command is %d' % ret)
@@ -165,7 +166,7 @@ class Command(BaseCommand):
       destinationscenario.lastrefresh = datetime.today()
       if 'description' in options:
         destinationscenario.description = options['description']
-      destinationscenario.save()
+      destinationscenario.save(using=DEFAULT_DB_ALIAS)
 
       # Give access to the destination scenario to:
       #  a) the user doing the copy
@@ -183,12 +184,12 @@ class Command(BaseCommand):
       task.message = "Scenario copied from %s" % source
       task.save(using=destination)
       task.message = "Scenario copied to %s" % destination
-      
+
       # Delete any waiting tasks in the new copy.
       # This is needed for situations where the same source is copied to
       # multiple destinations at the same moment.
       Task.objects.all().using(destination).filter(id__gt=task.id).delete()
-      
+
     except Exception as e:
       if task:
         task.status = 'Failed'
@@ -196,7 +197,7 @@ class Command(BaseCommand):
         task.finished = datetime.now()
       if destinationscenario and destinationscenario.status == 'Busy':
         destinationscenario.status = 'Free'
-        destinationscenario.save()
+        destinationscenario.save(using=DEFAULT_DB_ALIAS)
       raise e
 
     finally:
@@ -215,7 +216,7 @@ class Command(BaseCommand):
     # Synchronize the scenario table with the settings
     Scenario.syncWithSettings()
 
-    scenarios = Scenario.objects.all()
+    scenarios = Scenario.objects.all().using(DEFAULT_DB_ALIAS)
     if scenarios.count() > 1:
       javascript = '''
         $("#sourceul li a").click(function(){
@@ -243,7 +244,7 @@ class Command(BaseCommand):
                 </label>
               </td>
               <td  style="padding: 0px 15px;">{{j.status}}</td>
-              <td>{{j.description}}</td>
+              <td>{% if j.description %}{{j.description}}{% endif %}</td>
               <td>{{j.lastrefresh|date:"DATETIME_FORMAT"}}</td>
             </tr>
             {% endifnotequal %}{% endfor %}

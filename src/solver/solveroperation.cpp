@@ -24,8 +24,8 @@ namespace frepple
 {
 
 
-void SolverMRP::checkOperationCapacity
-  (OperationPlan* opplan, SolverMRP::SolverMRPdata& data)
+void SolverCreate::checkOperationCapacity
+  (OperationPlan* opplan, SolverCreate::SolverMRPdata& data)
 {
   unsigned short constrainedLoads = 0;
   for (OperationPlan::LoadPlanIterator h=opplan->beginLoadPlans();
@@ -114,8 +114,8 @@ void SolverMRP::checkOperationCapacity
 }
 
 
-bool SolverMRP::checkOperation
-(OperationPlan* opplan, SolverMRP::SolverMRPdata& data)
+bool SolverCreate::checkOperation
+(OperationPlan* opplan, SolverCreate::SolverMRPdata& data)
 {
   // The default answer...
   data.state->a_date = Date::infiniteFuture;
@@ -266,10 +266,10 @@ bool SolverMRP::checkOperation
               break;
             }
           }
-          else if (data.state->a_qty >+ q_qty_Flow + ROUNDING_ERROR)
+          else if (data.state->a_qty > q_qty_Flow + ROUNDING_ERROR)
             // Never answer more than asked.
             // The actual operationplan could be bigger because of lot sizing.
-            a_qty = - q_qty_Flow / g->getFlow()->getQuantity();
+            a_qty = - q_qty_Flow / g->getFlow()->getQuantity();   // TODO include fixed quantity here
         }
       }
     }
@@ -401,8 +401,8 @@ bool SolverMRP::checkOperation
 }
 
 
-bool SolverMRP::checkOperationLeadTime
-(OperationPlan* opplan, SolverMRP::SolverMRPdata& data, bool extra)
+bool SolverCreate::checkOperationLeadTime
+(OperationPlan* opplan, SolverCreate::SolverMRPdata& data, bool extra)
 {
   // No lead time constraints
   if (!data.constrainedPlanning || (!isFenceConstrained() && !isLeadTimeConstrained()))
@@ -469,11 +469,89 @@ bool SolverMRP::checkOperationLeadTime
       min_q = opplan->getOperation()->getSizeMinimum();
     if (opplan->getQuantity() + ROUNDING_ERROR < min_q)
       opplan->setQuantity(min_q, false);
-    // Move to the earliest start date
-    opplan->setStart(threshold);
-    // Pick up the earliest date we can reply back
-    data.state->a_date = opplan->getEnd();
-    // Set the quantity to 0 (to make sure the buffer doesn't see the supply).
+
+    // The earliest date may not be achieved on the current resource if the 
+    // operation loads a pool:
+    // - There can be more efficient resources in the pool
+    // - Other resources in the pool can have a lower setup time
+    LoadPlan* setuploadplan = nullptr;
+    if (extra)
+    {
+      // First, switch all pools to their most efficient resource
+      for (auto ldplan = opplan->beginLoadPlans(); ldplan != opplan->endLoadPlans(); ++ldplan)
+      {
+        if (ldplan->getQuantity() < 0.0 && ldplan->getLoad()->getResource()->isGroup())
+        {
+          auto most_efficient = ldplan->getLoad()->findPreferredResource(opplan->getStart());
+          if (!ldplan->getLoad()->getSetup().empty())
+            setuploadplan = &*ldplan;
+          else if (ldplan->getResource() != most_efficient)
+          {
+            logger << "switching to the most efficient resource " << most_efficient << endl;
+            ldplan->setResource(most_efficient, false, false);
+          }
+        }
+      }
+    }
+    if (setuploadplan)
+    {
+      // Try out resources in the pool if setups are involved
+      Date earliest_date = Date::infiniteFuture;
+
+      // Loop over all qualified possible resources
+      stack<Resource*> res_stack;
+      res_stack.push(setuploadplan->getLoad()->getResource());
+      while (!res_stack.empty())
+      {
+        // Pick next resource
+        Resource* res = res_stack.top();
+        res_stack.pop();
+
+        // If it's an aggregate, push it's members on the stack
+        if (res->isGroup())
+        {
+          for (Resource::memberIterator x = res->getMembers(); x != Resource::end(); ++x)
+            res_stack.push(&*x);
+          continue;
+        }
+
+        // Check if the resource has the right skill
+        if (
+          setuploadplan->getLoad()->getSkill()
+          && !res->hasSkill(setuploadplan->getLoad()->getSkill(), threshold, threshold)
+          )
+          continue;
+
+        // Efficiency must be higher than 0
+        auto my_eff = res->getEfficiencyCalendar()
+          ? res->getEfficiencyCalendar()->getValue(original.start)
+          : res->getEfficiency();
+        if (my_eff <= 0.0)
+          continue;
+
+        // Try this resource
+        if (setuploadplan->getResource() != res)
+        {
+          opplan->clearSetupEvent();
+          opplan->setStartEndAndQuantity(original.start, original.end, original.quantity);
+          setuploadplan->setResource(res, false, false);
+        }
+        opplan->setStart(threshold, false, false);
+        if (opplan->getEnd() < earliest_date)
+          earliest_date = opplan->getEnd();
+      }
+
+      // Pick up the earliest date of all qualified resources
+      data.state->a_date = earliest_date;
+    }
+    else
+    {
+      // No setup is involved
+      opplan->setStart(threshold);
+      data.state->a_date = opplan->getEnd();
+    }
+
+    // Set the quantity to 0 to make sure the buffer doesn't see any supply
     opplan->setQuantity(0.0);
 
     // Log the constraint
@@ -492,42 +570,62 @@ bool SolverMRP::checkOperationLeadTime
 }
 
 
-void SolverMRP::solve(const Operation* oper, void* v)
+void SolverCreate::solve(const Operation* oper, void* v)
 {
-  // Make sure we have a valid operation
-  assert(oper);
-
   SolverMRPdata* data = static_cast<SolverMRPdata*>(v);
   OperationPlan *z = nullptr;
+  data->state->a_date = Date::infiniteFuture;
 
   // Call the user exit
-  if (userexit_operation) userexit_operation.call(oper, PythonData(data->constrainedPlanning));
+  if (userexit_operation)
+    userexit_operation.call(oper, PythonData(data->constrainedPlanning));
+
+  // Message
+  if (data->getSolver()->getLogLevel() > 1)
+    logger << indent(oper->getLevel()) << "   Operation '" << oper->getName()
+      << "' is asked: " << data->state->q_qty << "  " << data->state->q_date << endl;
+
+  // Scan for opportunities to plan this operation.
+  double best_batch_eval = DBL_MAX;
+  double best_batch_date = Date::infinitePast;
+  Problem* topConstraint = data->planningDemand ?
+    data->planningDemand->getConstraints().top() :
+    nullptr;
+
+  // Subtract the post-operation time.
+  data->state->q_date_max = data->state->q_date;
+  data->state->q_date -= oper->getPostTime();
+  createOperation(oper, data, true, true);
 
   // Message
   if (data->getSolver()->getLogLevel()>1)
     logger << indent(oper->getLevel()) << "   Operation '" << oper->getName()
-    << "' is asked: " << data->state->q_qty << "  " << data->state->q_date << endl;
+    << "' answers: " << data->state->a_qty << "  " << data->state->a_date
+    << "  " << data->state->a_cost << "  " << data->state->a_penalty << endl;
+}
+
+
+OperationPlan* SolverCreate::createOperation(
+  const Operation* oper, SolverCreate::SolverMRPdata* data, bool propagate, bool start_or_end
+  )
+{
+  OperationPlan *z = nullptr;
 
   // Find the flow for the quantity-per. This can throw an exception if no
   // valid flow can be found.
   Date orig_q_date = data->state->q_date;  
-  double flow_qty_per = 1.0;
+  double flow_qty_per = 0.0;
   double flow_qty_fixed = 0.0;
-  bool fixed_flow = false;
   bool transferbatch_flow = false;
   if (data->state->curBuffer)
   {
     Flow* f = oper->findFlow(data->state->curBuffer, data->state->q_date);
-    if (f && f->getQuantity() > 0.0)
+    if (f && f->isProducer())
     {
-      if (f->getType() == *FlowFixedEnd::metadata || f->getType() == *FlowFixedStart::metadata)
-      {
-        fixed_flow = true;
-        flow_qty_fixed = (oper->getSizeMinimum() <= 0 ? 0.001 : oper->getSizeMinimum());
-      }
-      else if (&f->getType() == FlowTransferBatch::metadata)
+      flow_qty_per += f->getQuantity();
+      flow_qty_fixed += f->getQuantityFixed();
+      if (&f->getType() == FlowTransferBatch::metadata)
         transferbatch_flow = true;
-      flow_qty_per = f->getQuantity();
     }
     else
     {
@@ -547,12 +645,12 @@ void SolverMRP::solve(const Operation* oper, void* v)
       }
       if (j == data->planningDemand->getConstraints().end())
         data->planningDemand->getConstraints().push(new ProblemInvalidData(
-          data->planningDemand, 
+          data->planningDemand,
           problemtext,
           "demand",
-          data->planningDemand->getDue(), data->planningDemand->getDue(), 
+          data->planningDemand->getDue(), data->planningDemand->getDue(),
           data->planningDemand->getQuantity(), false
-          ));
+        ));
       if (data->getSolver()->getLogLevel() > 1)
       {
         logger << indent(oper->getLevel()) << "   " << problemtext << endl;
@@ -560,10 +658,13 @@ void SolverMRP::solve(const Operation* oper, void* v)
           << "' answers: " << data->state->a_qty << "  " << data->state->a_date
           << "  " << data->state->a_cost << "  " << data->state->a_penalty << endl;
       }
-      return;
+      return nullptr;
     }
   }
-    
+  else
+    // Using this operation as a delivery operation for a demand
+    flow_qty_per = 1.0;
+
   // If transferbatch, then recompute the operation quantity and date here
   if (transferbatch_flow)
   {
@@ -584,15 +685,20 @@ void SolverMRP::solve(const Operation* oper, void* v)
       if (flpln->getDate() < data->state->q_date)
         break;
     }
-    max_short_qty /= - flow_qty_per;
 
     // Create an operationplan to solve for the maximum shortage at its date
+    double opplan_qty;
+    if (!flow_qty_per || - max_short_qty < flow_qty_fixed + ROUNDING_ERROR)
+      // Minimum size if sufficient
+      opplan_qty = 0.001;
+    else
+      opplan_qty = (- max_short_qty - flow_qty_fixed) / flow_qty_per;
     if (data->state->curOwnerOpplan)
     {
       // There is already an owner and thus also an owner command
       assert(!data->state->curDemand);
       z = oper->createOperationPlan(
-        max_short_qty, Date::infinitePast, max_short_date,
+        opplan_qty, Date::infinitePast, max_short_date,
         data->state->curDemand, data->state->curOwnerOpplan, 0, true, false
       );
     }
@@ -601,7 +707,7 @@ void SolverMRP::solve(const Operation* oper, void* v)
       // There is no owner operationplan yet. We need a new command.
       CommandCreateOperationPlan *a =
         new CommandCreateOperationPlan(
-          oper, max_short_qty, Date::infinitePast, max_short_date, 
+          oper, opplan_qty, Date::infinitePast, max_short_date,
           data->state->curDemand, data->state->curOwnerOpplan, true, false
         );
       data->state->curDemand = nullptr;
@@ -656,14 +762,7 @@ void SolverMRP::solve(const Operation* oper, void* v)
     data->planningDemand->getConstraints().top() :
     nullptr;
 
-  // Subtract the post-operation time.
-  // Note that we subtract it BEFORE we have snapped the requirement date
-  // to our calendar.
-  Date prev_q_date_max = data->state->q_date_max;
-  data->state->q_date_max = data->state->q_date;
-  data->state->q_date -= oper->getPostTime();
-
-  // Align the date to the specified calendar .
+  // Align the date to the specified calendar.
   // This alignment is a soft constraint: q_date_max is already set earlier and
   // remains unchanged at the true requirement date.
   Calendar* alignment_cal = Plan::instance().getCalendar();
@@ -677,25 +776,41 @@ void SolverMRP::solve(const Operation* oper, void* v)
   // Create the operation plan.
   if (!z)
   {
+    double opplan_qty;
+    if (!flow_qty_per || data->state->q_qty < flow_qty_fixed + ROUNDING_ERROR)
+      // Minimum size if sufficient
+      opplan_qty = 0.001;
+    else
+      opplan_qty = (data->state->q_qty - flow_qty_fixed) / flow_qty_per;
     if (data->state->curOwnerOpplan)
     {
       // There is already an owner and thus also an owner command
       assert(!data->state->curDemand);
-      z = oper->createOperationPlan(
-        fixed_flow ? flow_qty_fixed : data->state->q_qty / flow_qty_per,
-        Date::infinitePast, data->state->q_date, data->state->curDemand,
-        data->state->curOwnerOpplan, 0, true, false
-      );
+      if (start_or_end)
+        z = oper->createOperationPlan(
+          opplan_qty, Date::infinitePast, data->state->q_date, data->state->curDemand,
+          data->state->curOwnerOpplan, 0, true, false
+          );
+      else
+        z = oper->createOperationPlan(
+          opplan_qty, data->state->q_date, Date::infinitePast, data->state->curDemand,
+          data->state->curOwnerOpplan, 0, true, false
+        );
     }
     else
     {
       // There is no owner operationplan yet. We need a new command.
-      CommandCreateOperationPlan *a =
-        new CommandCreateOperationPlan(
-          oper, fixed_flow ? flow_qty_fixed : data->state->q_qty / flow_qty_per,
-          Date::infinitePast, data->state->q_date, data->state->curDemand,
-          data->state->curOwnerOpplan, true, false
-        );
+      CommandCreateOperationPlan *a;
+      if (start_or_end)
+        a = new CommandCreateOperationPlan(
+          oper, opplan_qty, Date::infinitePast, data->state->q_date,
+          data->state->curDemand, data->state->curOwnerOpplan, true, false
+          );
+      else
+        a = new CommandCreateOperationPlan(
+          oper, opplan_qty, data->state->q_date, Date::infinitePast,
+          data->state->curDemand, data->state->curOwnerOpplan, true, false
+          );
       data->state->curDemand = nullptr;
       z = a->getOperationPlan();
       data->getCommandManager()->add(a);
@@ -704,28 +819,27 @@ void SolverMRP::solve(const Operation* oper, void* v)
   assert(z);
   double orig_q_qty = z->getQuantity();
 
+  if (!propagate)
+    return z;
+
   // Adjust the min quantity we expect the reply to cover
   double orig_q_qty_min = data->state->q_qty_min;
-  if (fixed_flow)
-    data->state->q_qty_min = flow_qty_fixed;
+  if (!flow_qty_per || data->state->q_qty_min < flow_qty_fixed + ROUNDING_ERROR)
+    data->state->q_qty_min = 1.0;
   else
-    data->state->q_qty_min /= flow_qty_per;
+    data->state->q_qty_min = (data->state->q_qty_min - flow_qty_fixed) / flow_qty_per;
 
   // Check the constraints
-  data->getSolver()->checkOperation(z,*data);
-  data->state->q_date_max = prev_q_date_max;
+  data->getSolver()->checkOperation(z, *data);
   data->state->q_qty_min = orig_q_qty_min;
 
   // Multiply the operation reply with the flow quantity to get a final reply
   if (data->state->curBuffer)
   {
-    if (fixed_flow)
-    {
-      if (data->state->a_qty > 0.0)
-        data->state->a_qty = flow_qty_per;
-    }
+    if (data->state->a_qty == 0.0)
+      data->state->a_qty = 0;
     else
-      data->state->a_qty *= flow_qty_per;
+      data->state->a_qty = data->state->a_qty * flow_qty_per + flow_qty_fixed;
   }
 
   // Ignore any constraints if we get a complete reply.
@@ -755,15 +869,11 @@ void SolverMRP::solve(const Operation* oper, void* v)
     for (OperationPlan::iterator rr = oper->getOperationPlans(); rr != OperationPlan::end(); ++rr)
       data->state->a_penalty += rr->getQuantity();
 
-  // Message
-  if (data->getSolver()->getLogLevel()>1)
-    logger << indent(oper->getLevel()) << "   Operation '" << oper->getName()
-      << "' answers: " << data->state->a_qty << "  " << data->state->a_date
-      << "  " << data->state->a_cost << "  " << data->state->a_penalty << endl;
+  return z;
 }
 
 
-void SolverMRP::solve(const OperationItemSupplier* o, void* v)
+void SolverCreate::solve(const OperationItemSupplier* o, void* v)
 {
   SolverMRPdata* data = static_cast<SolverMRPdata*>(v);
   if (v)
@@ -811,7 +921,7 @@ void SolverMRP::solve(const OperationItemSupplier* o, void* v)
 
 
 // No need to take post- and pre-operation times into account
-void SolverMRP::solve(const OperationRouting* oper, void* v)
+void SolverCreate::solve(const OperationRouting* oper, void* v)
 {
   SolverMRPdata* data = static_cast<SolverMRPdata*>(v);
 
@@ -825,26 +935,18 @@ void SolverMRP::solve(const OperationRouting* oper, void* v)
 
   // Find the total quantity to flow into the buffer.
   // Multiple suboperations can all produce into the buffer.
-  double flow_qty = 1.0;
+  double flow_qty_per = 0.0;
   double flow_qty_fixed = 0.0;
-  short fixed_flow = -1;
   if (data->state->curBuffer)
-  {
-    flow_qty = 0.0;
+  {    
     Flow *f = oper->findFlow(data->state->curBuffer, data->state->q_date);
-    if (f)
+    if (f && f->isProducer())
     {
       // Flow on routing operation
-      if (f->getType() == *FlowFixedEnd::metadata || f->getType() == *FlowFixedStart::metadata)
-      {
-        fixed_flow = 1;
-        flow_qty_fixed = f->getQuantity();
-      }
-      else
-      {
-        fixed_flow = 0;
-        flow_qty += f->getQuantity();
-      }
+      flow_qty_per += f->getQuantity();
+      flow_qty_fixed += f->getQuantityFixed();
+      logger << "Deprecation warning: routing operation '"
+        << oper << "' shouldn't produce material" << endl;
     }
     for (Operation::Operationlist::const_iterator
         e = oper->getSubOperations().begin();
@@ -852,39 +954,28 @@ void SolverMRP::solve(const OperationRouting* oper, void* v)
         ++e)
     {
       f = (*e)->getOperation()->findFlow(data->state->curBuffer, data->state->q_date);
-      if (f)
+      if (f && f->isProducer())
       {
         // Flow on routing steps
-        if (f->getType() == *FlowFixedEnd::metadata || f->getType() == *FlowFixedStart::metadata)
-        {
-          if (fixed_flow == 0)
-            throw DataException("Can't mix fixed and proportional quantity flows on operation '" + oper->getName()
-                + "' for buffer '" + data->state->curBuffer->getName() + "'");
-          fixed_flow = 1;
-          flow_qty_fixed += f->getQuantity();
-        }
-        else
-        {
-          if (fixed_flow == 1)
-            throw DataException("Can't mix fixed and proportional quantity flows on operation '" + oper->getName()
-                + "' for buffer '" + data->state->curBuffer->getName() + "'");
-          fixed_flow = 0;
-          flow_qty += f->getQuantity();
-        }
+        flow_qty_per += f->getQuantity();
+        flow_qty_fixed += f->getQuantityFixed();
       }
     }
-    if ((fixed_flow == 0 && flow_qty <= 0.0) || (fixed_flow == 1 && flow_qty_fixed <= 0.0) || (fixed_flow == -1))
+    if (!flow_qty_fixed && !flow_qty_per)
       throw DataException("Invalid producing operation '" + oper->getName()
           + "' for buffer '" + data->state->curBuffer->getName() + "'");
   }
+  else
+    // Using the routing as the delivery operation of a demand
+    flow_qty_per = 1.0;
+
   // Because we already took care of it... @todo not correct if the suboperation is again a owning operation
   data->state->curBuffer = nullptr;
   double a_qty;
-  if (fixed_flow == -1) fixed_flow = 0;
-  if (fixed_flow)
-    a_qty = (oper->getSizeMinimum()<=0) ? 0.001 : oper->getSizeMinimum();
+  if (!flow_qty_per || data->state->q_qty < flow_qty_fixed + ROUNDING_ERROR)
+    a_qty = 0.001;
   else
-    a_qty = data->state->q_qty / flow_qty;
+    a_qty = (data->state->q_qty - flow_qty_fixed) / flow_qty_per;
 
   // Create the top operationplan
   CommandCreateOperationPlan *a = new CommandCreateOperationPlan(
@@ -918,12 +1009,12 @@ void SolverMRP::solve(const OperationRouting* oper, void* v)
     data->state->q_date = data->state->curOwnerOpplan->getStart();
     Buffer *tmpBuf = data->state->curBuffer;
     q_date = data->state->q_date;
-    (*e)->getOperation()->solve(*this,v);  // @todo if the step itself has child operations, the curOwnerOpplan field is changed here!!!
+    (*e)->getOperation()->solve(*this, v);  // @todo if the step itself has child operations, the curOwnerOpplan field is changed here!!!
     a_qty = data->state->a_qty;
     data->state->curBuffer = tmpBuf;
 
     // Update the top operationplan
-    data->state->curOwnerOpplan->setQuantity(a_qty,true);
+    data->state->curOwnerOpplan->setQuantity(a_qty, true);
 
     // Maximum for the next date
     if (data->state->a_date != Date::infiniteFuture)
@@ -968,16 +1059,10 @@ void SolverMRP::solve(const OperationRouting* oper, void* v)
   }
   data->state->a_date = (max_Date ? max_Date : Date::infiniteFuture);
 
-  if (fixed_flow)
-  {
-    // Final reply of fixed quantity flow
-    if (data->state->a_qty > 0.0)
-      data->state->a_qty = flow_qty_fixed;
-  }
+  if (data->state->a_qty > 0.0)
+    data->state->a_qty = flow_qty_fixed + a_qty * flow_qty_per;
   else
-    // Multiply the operationplan quantity with the flow quantity to get the
-    // final reply quantity
-    data->state->a_qty = a_qty * flow_qty;
+    data->state->a_qty = 0.0;
 
   // Add to the list (even if zero-quantity!)
   if (!prev_owner_opplan)
@@ -991,7 +1076,7 @@ void SolverMRP::solve(const OperationRouting* oper, void* v)
   // We restore the previous owner, which could be nullptr.
   data->state->curOwnerOpplan = prev_owner_opplan;
 
-  if (data->state->a_qty == 0 && data->state->a_date <= top_q_date)
+  if (data->state->a_qty == 0.0 && data->state->a_date <= top_q_date)
   {
     // At least one of the steps is late, but the reply date at the overall routing level is not late.
     // This situation is possible when capacity or material constraints of routing steps create
@@ -1012,7 +1097,7 @@ void SolverMRP::solve(const OperationRouting* oper, void* v)
 
 // No need to take post- and pre-operation times into account
 // @todo This method should only be allowed to create 1 operationplan
-void SolverMRP::solve(const OperationAlternate* oper, void* v)
+void SolverCreate::solve(const OperationAlternate* oper, void* v)
 {
   SolverMRPdata *data = static_cast<SolverMRPdata*>(v);
   Date origQDate = data->state->q_date;
@@ -1036,17 +1121,16 @@ void SolverMRP::solve(const OperationAlternate* oper, void* v)
 
   // Find the flow into the requesting buffer for the quantity-per
   double top_flow_qty_per = 0.0;
-  bool top_flow_exists = false;
-  bool fixed_flow = false;
+  double top_flow_qty_fixed = 0.0;
   if (buf)
   {
     Flow* f = oper->findFlow(buf, data->state->q_date);
-    if (f && f->getQuantity() > 0.0)
+    if (f && f->isProducer())
     {
-      if (f->getType() == *FlowFixedEnd::metadata || f->getType() == *FlowFixedStart::metadata)
-        fixed_flow = true;
-      top_flow_qty_per = f->getQuantity();
-      top_flow_exists = true;
+      top_flow_qty_per += f->getQuantity();
+      top_flow_qty_fixed += f->getQuantityFixed();
+      logger << "Deprecation warning: alternate operation '"
+        << oper << "' shouldn't produce material" << endl;
     }
   }
 
@@ -1071,13 +1155,15 @@ void SolverMRP::solve(const OperationAlternate* oper, void* v)
   Date ask_date;
   SubOperation *firstAlternate = nullptr;
   double firstFlowPer;
+  double firstFlowFixed;
   while (a_qty > 0)
   {
     // Evaluate all alternates
     double bestAlternateValue = DBL_MAX;
     double bestAlternateQuantity = 0;
     Operation* bestAlternateSelection = nullptr;
-    double bestFlowPer = 1.0;
+    double bestFlowPer = 0.0;
+    double bestFlowFixed = 0.0;
     Date bestQDate;
     for (Operation::Operationlist::const_iterator altIter
         = oper->getSubOperations().begin();
@@ -1114,18 +1200,15 @@ void SolverMRP::solve(const OperationAlternate* oper, void* v)
       // Find the flow into the requesting buffer. It may or may not exist, since
       // the flow could already exist on the top operationplan
       double sub_flow_qty_per = 0.0;
+      double sub_flow_qty_fixed = 0.0;
       if (buf)
       {
         // Flow quantity on the suboperation
         Flow* f = (*altIter)->getOperation()->findFlow(buf, ask_date);
-        if (f && f->getQuantity() > 0.0)
-        {
+        if (f && f->isProducer())
+        {         
           sub_flow_qty_per = f->getQuantity();
-          bool f_is_fixed = f->getType() == *FlowFixedEnd::metadata || f->getType() == *FlowFixedStart::metadata;
-          if (top_flow_exists && fixed_flow != f_is_fixed)
-              throw DataException("Can't mix fixed and proportional quantity flows on operation '" + oper->getName()
-                + "' for buffer '" + data->state->curBuffer->getName() + "'");
-          fixed_flow = f_is_fixed;
+          sub_flow_qty_fixed = f->getQuantityFixed();
         }
 
         // Flow quantity on the suboperations of a routing suboperation
@@ -1135,19 +1218,15 @@ void SolverMRP::solve(const OperationAlternate* oper, void* v)
           while (SubOperation *o = subiter.next())
           {
             Flow *g = o->getOperation()->findFlow(buf, ask_date);
-            if (g && g->getQuantity() > 0.0)
-            {
+            if (g && g->isProducer())
+            {              
               sub_flow_qty_per += g->getQuantity();
-              bool g_is_fixed = g->getType() == *FlowFixedEnd::metadata || g->getType() == *FlowFixedStart::metadata;
-              if ((top_flow_exists || f) && fixed_flow != g_is_fixed)
-                throw DataException("Can't mix fixed and proportional quantity flows on operation '" + oper->getName()
-                  + "' for buffer '" + data->state->curBuffer->getName() + "'");
-              fixed_flow = g_is_fixed;
+              sub_flow_qty_fixed += g->getQuantityFixed();
             }
           }
         }
 
-        if (!sub_flow_qty_per && !top_flow_exists)
+        if (!sub_flow_qty_fixed && !sub_flow_qty_per && !top_flow_qty_fixed && !top_flow_qty_per)
         {
           // Neither the top nor the sub operation have a flow in the buffer,
           // we're in trouble...
@@ -1158,7 +1237,7 @@ void SolverMRP::solve(const OperationAlternate* oper, void* v)
         }
       }
       else
-        // Default value is 1.0, if no matching flow is required
+        // We have a alternate operation as the delivery operation of a demand
         sub_flow_qty_per = 1.0;
 
       // Remember the first alternate
@@ -1166,6 +1245,7 @@ void SolverMRP::solve(const OperationAlternate* oper, void* v)
       {
         firstAlternate = *altIter;
         firstFlowPer = sub_flow_qty_per + top_flow_qty_per;
+        firstFlowFixed = sub_flow_qty_fixed + top_flow_qty_fixed;
       }
 
       // Constraint tracking
@@ -1198,10 +1278,13 @@ void SolverMRP::solve(const OperationAlternate* oper, void* v)
       data->state->curDemand = nullptr;
       data->state->curOwnerOpplan = a->getOperationPlan();
       data->state->curBuffer = nullptr;  // Because we already took care of it... @todo not correct if the suboperation is again a owning operation
-      if (fixed_flow)
-        data->state->q_qty = (oper->getSizeMinimum()<=0) ? 0.001 : oper->getSizeMinimum();
+      auto flow_per = sub_flow_qty_per + top_flow_qty_per;
+      auto flow_fixed = sub_flow_qty_fixed + top_flow_qty_fixed;
+      if (!flow_per || a_qty < flow_fixed + ROUNDING_ERROR)
+        // The minimum operation size will suffice
+        data->state->q_qty = 0.001;
       else
-        data->state->q_qty = a_qty / (sub_flow_qty_per + top_flow_qty_per);
+        data->state->q_qty = (a_qty - flow_fixed) / flow_per;
 
       // Solve constraints on the sub operationplan
       double beforeCost = data->state->a_cost;
@@ -1245,7 +1328,15 @@ void SolverMRP::solve(const OperationAlternate* oper, void* v)
         }
         data->getSolver()->setLogLevel(loglevel);
       }
-      double deltaCost = data->state->a_cost - beforeCost;
+      double deltaCost;
+      if (data->state->a_qty > ROUNDING_ERROR)
+        deltaCost = data->state->a_cost - beforeCost;
+      else
+      {
+        deltaCost = 0.0;
+        if (data->state->a_date > (*altIter)->getEffectiveEnd())
+          data->state->a_date = Date::infiniteFuture;
+      }
       double deltaPenalty = data->state->a_penalty - beforePenalty;
       data->state->a_cost = beforeCost;
       data->state->a_penalty = beforePenalty;
@@ -1265,10 +1356,9 @@ void SolverMRP::solve(const OperationAlternate* oper, void* v)
         data->state->q_date_max = origQDate;
         data->state->curOwnerOpplan->createFlowLoads();
         data->getSolver()->checkOperation(data->state->curOwnerOpplan,*data);
-        if (fixed_flow)
-          data->state->a_qty = (sub_flow_qty_per + top_flow_qty_per);
-        else
-          data->state->a_qty *= (sub_flow_qty_per + top_flow_qty_per);
+        data->state->a_qty = 
+          (sub_flow_qty_fixed + top_flow_qty_fixed)
+          +  data->state->a_qty * (sub_flow_qty_per + top_flow_qty_per);
 
         // Combine the reply date of the top-opplan with the alternate check: we
         // need to return the minimum next-date.
@@ -1293,7 +1383,8 @@ void SolverMRP::solve(const OperationAlternate* oper, void* v)
         a_qty -= data->state->a_qty;
 
         // As long as we get a positive reply we replan on this alternate
-        if (data->state->a_qty > 0) nextalternate = false;
+        if (data->state->a_qty > 0)
+          nextalternate = false;
 
         // Are we at the end already?
         if (a_qty < ROUNDING_ERROR)
@@ -1331,6 +1422,7 @@ void SolverMRP::solve(const OperationAlternate* oper, void* v)
           bestAlternateSelection = (*altIter)->getOperation();
           bestAlternateQuantity = data->state->a_qty;
           bestFlowPer = sub_flow_qty_per + top_flow_qty_per;
+          bestFlowFixed = sub_flow_qty_fixed + top_flow_qty_fixed;
           bestQDate = ask_date;
         }
         // This was only an evaluation
@@ -1369,10 +1461,10 @@ void SolverMRP::solve(const OperationAlternate* oper, void* v)
         data->getCommandManager()->add(a);
 
       // Recreate the ask
-      if (fixed_flow)
-        data->state->q_qty = (oper->getSizeMinimum()<=0) ? 0.001 : oper->getSizeMinimum();
+      if (!bestFlowPer || a_qty < bestFlowFixed + ROUNDING_ERROR)
+        data->state->q_qty = 0.001;
       else
-        data->state->q_qty = a_qty / bestFlowPer;
+        data->state->q_qty = (a_qty - bestFlowFixed) / bestFlowPer;
       data->state->q_date = bestQDate;
       data->state->q_date_max = bestQDate;
       data->state->curDemand = nullptr;
@@ -1388,14 +1480,14 @@ void SolverMRP::solve(const OperationAlternate* oper, void* v)
       data->state->q_date = origQDate;
       data->state->q_date_max = origQDate;
       data->state->curOwnerOpplan->createFlowLoads();
-      data->getSolver()->checkOperation(data->state->curOwnerOpplan,*data);
+      data->getSolver()->checkOperation(data->state->curOwnerOpplan, *data);
 
       // Multiply the operation reply with the flow quantity to obtain the
       // reply to return
-      if (fixed_flow)
-        data->state->q_qty = bestFlowPer;
+      if (data->state->a_qty < ROUNDING_ERROR)
+        data->state->a_qty = 0.0;
       else
-        data->state->a_qty *= bestFlowPer;
+        data->state->a_qty = bestFlowFixed + data->state->a_qty * bestFlowPer;
 
       // Combine the reply date of the top-opplan with the alternate check: we
       // need to return the minimum next-date.
@@ -1437,6 +1529,16 @@ void SolverMRP::solve(const OperationAlternate* oper, void* v)
       logger << indent(oper->getLevel()) << "   Alternate operation '" << oper->getName()
         << "' plans unconstrained on alternate '" << firstAlternate->getOperation() << "' " << search << endl;
 
+    // Current behaviour: 
+    //   Unconstrained plan violates effective dates and generates a JIT material plan
+    // Functional variation:
+    //   Respect the effectivity dates in the unconstrained plan, which will distort the material 
+    //   plan from the JIT pattern
+    // if (origQDate > firstAlternate->getEffectiveEnd())
+    //  origQDate = firstAlternate->getEffectiveEnd();
+    // if (origQDate < firstAlternate->getEffectiveStart())
+    //  origQDate = firstAlternate->getEffectiveStart();
+
     // Create the top operationplan.
     // Note that both the top- and the sub-operation can have a flow in the
     // requested buffer
@@ -1448,7 +1550,10 @@ void SolverMRP::solve(const OperationAlternate* oper, void* v)
       data->getCommandManager()->add(a);
 
     // Recreate the ask
-    data->state->q_qty = a_qty / firstFlowPer;
+    if (!firstFlowPer || a_qty < firstFlowFixed + ROUNDING_ERROR)
+      data->state->q_qty = 0.001;
+    else
+      data->state->q_qty = (a_qty - firstFlowFixed) / firstFlowPer;
     data->state->q_date = origQDate;
     data->state->q_date_max = origQDate;
     data->state->curDemand = nullptr;
@@ -1502,18 +1607,18 @@ void SolverMRP::solve(const OperationAlternate* oper, void* v)
 }
 
 
-void SolverMRP::solve(const OperationSplit* oper, void* v)
+void SolverCreate::solve(const OperationSplit* oper, void* v)
 {
   SolverMRPdata *data = static_cast<SolverMRPdata*>(v);
   Date origQDate = data->state->q_date;
   double origQqty = data->state->q_qty;
   Buffer *buf = data->state->curBuffer;
   Demand *dmd = data->state->curDemand;
+  short loglevel = data->getSolver()->getLogLevel();
 
   // Call the user exit
-  if (userexit_operation) userexit_operation.call(oper, PythonData(data->constrainedPlanning));
-
-  short loglevel = data->getSolver()->getLogLevel();
+  if (userexit_operation)
+    userexit_operation.call(oper, PythonData(data->constrainedPlanning));
 
   // Message
   if (loglevel>1)
@@ -1528,18 +1633,20 @@ void SolverMRP::solve(const OperationSplit* oper, void* v)
   {
     // Find the flow into the requesting buffer for the quantity-per
     Flow* f = oper->findFlow(buf, data->state->q_date);
-    if (f && f->getQuantity() > 0.0)
+    if (f && f->isProducer())
     {
-      if (f->getType() == *FlowFixedEnd::metadata || f->getType() == *FlowFixedStart::metadata)
-        throw DataException("Fixed flows on a split operation are not supported");
-      top_flow_qty_per = f->getQuantity();
+      top_flow_qty_per += f->getQuantity();
+      if (f->getQuantityFixed())
+        logger << "Ignoring fixed operationmaterial production on a split operation" << endl;
+      logger << "Deprecation warning: split operation '"
+        << oper << "' shouldn't produce material" << endl;
     }
   }
   else
-    // We have a split operation as the delivery operation of a demand.
+    // We have a split operation as the delivery operation of a demand
     top_flow_qty_per = 1.0;
 
-  // Compute the sum of all effective percentages.
+  // Compute the sum of all effective percentages
   int sum_percent = 0;
   for (Operation::Operationlist::const_iterator iter = oper->getSubOperations().begin();
     iter != oper->getSubOperations().end();
@@ -1587,26 +1694,30 @@ void SolverMRP::solve(const OperationSplit* oper, void* v)
           << "' asks alternate '" << (*iter)->getOperation() << "' " << endl;
 
       // Find the flow
-      Flow* f = (*iter)->getOperation()->findFlow(buf, data->state->q_date);
-      double flow_qty_per = 0.0;
-      if (f && f->getQuantity()>0.0)
+      double flow_qty_per = 0.0; 
+      if (buf)
       {
-        if (top_flow_qty_per)
-          throw DataException("Split operation must have producing flow on the parent opration OR the child operations");
-        if (f->getType() == *FlowFixedEnd::metadata || f->getType() == *FlowFixedStart::metadata)
-          throw DataException("Fixed flows on a split operation are not supported");
-        flow_qty_per = f->getQuantity();
+        Flow* f = (*iter)->getOperation()->findFlow(buf, data->state->q_date);
+        if (f && f->isProducer())
+        {
+          flow_qty_per += f->getQuantity();
+          if (f->getQuantityFixed())
+            logger << "Ignoring fixed operationmaterial production on a split suboperation" << endl;
+        }
       }
-      else if (!top_flow_qty_per)
-        // The producing operation doesn't have a valid flow into the current
-        // buffer. Either it is missing or it is producing a negative quantity.
+      auto flow_per = flow_qty_per + top_flow_qty_per;
+      if (!flow_per)
+      {
+        // Neither the top nor the sub operation have a flow in the buffer,
+        // we're in trouble...
         throw DataException("Invalid producing operation '" + oper->getName()
-            + "' for buffer '" + data->state->curBuffer->getName() + "'");
+          + "' for buffer '" + data->state->curBuffer->getName() + "'");
+      }
 
       // Plan along this alternate
       double asked = (loop_qty - planned_quantity)
         * (*iter)->getPriority() / (sum_percent - planned_percentages)
-        / (flow_qty_per + top_flow_qty_per);
+        / flow_per;
       if (asked > 0)
       {
         // Due to minimum, maximum and multiple size constraints alternates can
@@ -1648,7 +1759,7 @@ void SolverMRP::solve(const OperationSplit* oper, void* v)
       else
       {
         // Successfully planned along this alternate.
-        planned_quantity += data->state->a_qty * (flow_qty_per + top_flow_qty_per);
+        planned_quantity += data->state->a_qty * flow_per;
         planned_percentages += (*iter)->getPriority();
       }
     }

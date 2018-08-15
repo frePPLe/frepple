@@ -1,5 +1,5 @@
 ===============
-Purchase Orders
+Purchase orders
 ===============
 
 This table contains the open purchase orders with your suppliers.

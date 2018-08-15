@@ -33,7 +33,7 @@
 	<priority>1</priority>
 	<maxlateness>P0D</maxlateness>
 </demand>
-<buffer xsi:type="buffer_procure">
+<buffer>
 	<name>buffer1</name>
 	<category>My category</category>
 	<description>My description</description>

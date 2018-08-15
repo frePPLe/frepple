@@ -100,7 +100,7 @@ class Command(BaseCommand):
   #     os.environ['LD_LIBRARY_PATH'] = settings.FREPPLE_HOME
   #     if 'DJANGO_SETTINGS_MODULE' not in os.environ:
   #       os.environ['DJANGO_SETTINGS_MODULE'] = 'freppledb.settings'
-  #     if os.path.exists(os.path.join(os.environ['FREPPLE_HOME'], 'python35.zip')):
+  #     if os.path.exists(os.path.join(os.environ['FREPPLE_HOME'], 'python36.zip')):
   #       # For the py2exe executable
   #       os.environ['PYTHONPATH'] = os.path.join(
   #         os.environ['FREPPLE_HOME'],
@@ -168,7 +168,9 @@ class Command(BaseCommand):
           </td>
           <td style="padding: 15px;">
            <p>
-            {% trans "Download all input data in a single spreadsheet." %}
+            {% blocktrans %}Download all input data in a single spreadsheet.<br>Optionally, you can make the data anonymous during the export to hide sensitive company data{% endblocktrans %}
+            &nbsp;<input style="margin: 0; display:inline-block; vertical-align: middle" type="checkbox" name="anonymous" value="0"></strong>
+            <br>
            </p>
             {% getMenu as menu %}
             <p>
@@ -209,5 +211,6 @@ class Command(BaseCommand):
     # A list of translation strings from the above
     translated = (
       _("export"), _("Download all input data in a single spreadsheet."),
-      _("data tables"), _("admin tables")
+      _("data tables"), _("admin tables"),
+      _("Download all input data in a single spreadsheet.<br>Optionally, you can make the data anonymous during the export to hide sensitive company data")
       )

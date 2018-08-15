@@ -37,7 +37,7 @@ class OverviewReport(GridPivot):
   title = _('Inventory report')
 
   @classmethod
-  def basequeryset(reportclass, request, args, kwargs):
+  def basequeryset(reportclass, request, *args, **kwargs):
     if len(args) and args[0]:
       return Buffer.objects.all()
     else:
@@ -89,8 +89,16 @@ class OverviewReport(GridPivot):
 
   crosses = (
     ('startoh', {'title': _('start inventory')}),
-    ('produced', {'title': _('produced')}),
-    ('consumed', {'title': _('consumed')}),
+    ('startohdoc', {'title': _('start inventory days of cover')}),
+    ('safetystock', {'title': _('safety stock')}),    
+    ('consumed', {'title': _('total consumed')}),
+    ('consumedMO', {'title': _('consumed by MO')}),
+    ('consumedDO', {'title': _('consumed by DO')}),
+    ('consumedSO', {'title': _('consumed by SO')}),
+    ('produced', {'title': _('total produced')}),
+    ('producedMO', {'title': _('produced by MO')}),
+    ('producedDO', {'title': _('produced by DO')}),
+    ('producedPO', {'title': _('produced by PO')}),
     ('endoh', {'title': _('end inventory')}),
     )
 
@@ -124,94 +132,112 @@ class OverviewReport(GridPivot):
     cursor = connections[request.database].cursor()
     basesql, baseparams = basequery.query.get_compiler(basequery.db).as_sql(with_col_aliases=False)
 
-    # Execute a query  to get the onhand value at the start of our horizon
-    startohdict = {}
-    query = '''
-      select opplanmat.item_id, opplanmat.location_id, sum(oh.onhand)
-      from (%s) opplanmat
-      inner join (
-        select operationplanmaterial.item_id,
-          operationplanmaterial.location_id,
-          operationplanmaterial.onhand as onhand
-        from operationplanmaterial,
-          (select item_id, location_id, max(id) as id
-           from operationplanmaterial
-           where flowdate < '%s'
-           group by item_id, location_id
-          ) maxid
-        where maxid.item_id = operationplanmaterial.item_id
-          and maxid.location_id = operationplanmaterial.location_id
-        and maxid.id = operationplanmaterial.id
-      ) oh
-      on oh.item_id = opplanmat.item_id
-      and oh.location_id = opplanmat.location_id
-      group by opplanmat.item_id, opplanmat.location_id
-      ''' % (basesql, request.report_startdate)
-    cursor.execute(query, baseparams)
-    for row in cursor.fetchall():
-      startohdict[ "%s @ %s" % (row[0], row[1]) ] = float(row[2])
-
     # Execute the actual query
     query = '''
-      select
-        invplan.item_id || ' @ ' || invplan.location_id,
-        invplan.item_id, invplan.location_id, 
-        item.description, item.category, item.subcategory, item.owner_id,
-        item.source, item.lastmodified, location.description, location.category,
-        location.subcategory, location.available_id, location.owner_id, 
-        location.source, location.lastmodified, %s
-        invplan.bucket, invplan.startdate, invplan.enddate,
-        invplan.consumed, invplan.produced
-      from (
-        select
-          opplanmat.item_id, opplanmat.location_id,
-          d.bucket as bucket, d.startdate as startdate, d.enddate as enddate,
-          coalesce(sum(greatest(operationplanmaterial.quantity, 0)),0) as consumed,
-          coalesce(-sum(least(operationplanmaterial.quantity, 0)),0) as produced
-        from (%s) opplanmat
-        -- Multiply with buckets
-        cross join (
-             select name as bucket, startdate, enddate
-             from common_bucketdetail
-             where bucket_id = %%s and enddate > %%s and startdate < %%s
-             ) d
-        -- Consumed and produced quantities
-        left join operationplanmaterial
+       select item.name||' @ '||location.name,
+       item.name item_id,
+       location.name location_id,
+       item.description, 
+       item.category, 
+       item.subcategory, 
+       item.owner_id,
+       item.source, 
+       item.lastmodified, 
+       location.description, 
+       location.category,
+       location.subcategory, 
+       location.available_id, 
+       location.owner_id,
+       location.source, 
+       location.lastmodified,
+       %s
+       coalesce(initial_on_hand.onhand,0) startoh,       
+       coalesce(initial_on_hand.onhand,0) - coalesce(-sum(least(operationplanmaterial.quantity, 0)),0) + coalesce(sum(greatest(operationplanmaterial.quantity, 0)),0) endoh,
+       case when coalesce(initial_on_hand.onhand,0) = 0 then 0 else
+       extract( epoch from initial_on_hand.flowdate + coalesce(initial_on_hand.periodofcover,0) * interval '1 second' - greatest(d.startdate,%%s))/86400 end startohdoc,                                                
+       d.bucket,
+       d.startdate,
+       d.enddate,
+       coalesce(initial_on_hand.minimum,0) safetystock,
+       coalesce(-sum(least(operationplanmaterial.quantity, 0)),0) as consumed,
+       coalesce(-sum(least(case when operationplan.type = 'MO' then operationplanmaterial.quantity else 0 end, 0)),0) as consumedMO,
+       coalesce(-sum(least(case when operationplan.type = 'DO' then operationplanmaterial.quantity else 0 end, 0)),0) as consumedDO,
+       coalesce(-sum(least(case when operationplan.type = 'DLVR' then operationplanmaterial.quantity else 0 end, 0)),0) as consumedSO,
+       coalesce(sum(greatest(operationplanmaterial.quantity, 0)),0) as produced,
+       coalesce(sum(greatest(case when operationplan.type = 'MO' then operationplanmaterial.quantity else 0 end, 0)),0) as producedMO,
+       coalesce(sum(greatest(case when operationplan.type = 'DO' then operationplanmaterial.quantity else 0 end, 0)),0) as producedDO,
+       coalesce(sum(greatest(case when operationplan.type = 'PO' then operationplanmaterial.quantity else 0 end, 0)),0) as producedPO
+       from 
+       (%s) opplanmat
+       inner join item on item.name = opplanmat.item_id
+       inner join location on location.name = opplanmat.location_id
+       -- Multiply with buckets
+      cross join (
+         select name as bucket, startdate, enddate
+         from common_bucketdetail
+         where bucket_id = %%s and enddate > %%s and startdate < %%s
+         ) d
+      -- Consumed and produced quantities
+      left join operationplanmaterial
         on opplanmat.item_id = operationplanmaterial.item_id
         and opplanmat.location_id = operationplanmaterial.location_id
         and d.startdate <= operationplanmaterial.flowdate
         and d.enddate > operationplanmaterial.flowdate
-        and operationplanmaterial.flowdate >= %%s
-        and operationplanmaterial.flowdate < %%s
-        -- Grouping and sorting
-        group by opplanmat.item_id, opplanmat.location_id, d.bucket, d.startdate, d.enddate
-        ) invplan
-      left outer join item on
-        invplan.item_id = item.name
-      left outer join location on
-        invplan.location_id = location.name
-      order by %s, invplan.startdate
-      ''' % (
+        and operationplanmaterial.flowdate >= greatest(d.startdate,%%s)
+        and operationplanmaterial.flowdate < d.enddate
+      left outer join operationplan on operationplan.id = operationplanmaterial.operationplan_id
+      -- Initial on hand
+      left join operationplanmaterial initial_on_hand
+        on initial_on_hand.item_id = opplanmat.item_id
+        and initial_on_hand.location_id = opplanmat.location_id
+        and initial_on_hand.flowdate < greatest(d.startdate,%%s)
+        and not exists (select 1 from operationplanmaterial opm where opm.item_id = initial_on_hand.item_id
+        and opm.location_id = initial_on_hand.location_id and opm.flowdate < greatest(d.startdate,%%s)
+        and opm.id > initial_on_hand.id)
+      group by
+       item.name,
+       location.name,
+       item.description, 
+       item.category, 
+       item.subcategory, 
+       item.owner_id,
+       item.source, 
+       item.lastmodified, 
+       location.description, 
+       location.category,
+       location.subcategory, 
+       location.available_id, 
+       location.owner_id,
+       location.source, 
+       location.lastmodified,
+       initial_on_hand.onhand,
+       initial_on_hand.onhand,
+       initial_on_hand.periodofcover,
+       initial_on_hand.flowdate,
+       d.bucket,
+       d.startdate,
+       d.enddate,
+       initial_on_hand.minimum
+       order by %s
+    ''' % (
         reportclass.attr_sql, basesql, sortsql
       )
+    
     cursor.execute(
-      query, baseparams + (
-        request.report_bucket, request.report_startdate,
-        request.report_enddate, request.report_startdate, request.report_enddate
+      query,  (
+        request.report_startdate, # startohpoc
+        baseparams, # opplanmat
+        request.report_bucket, request.report_startdate, request.report_enddate, # bucket d
+        request.report_startdate, # operationplanmaterial
+        request.report_startdate, request.report_startdate, # initialonhand
         )
       )
+      
 
     # Build the python result
-    prevbuf = None
     for row in cursor.fetchall():
       numfields = len(row)
-      if row[0] != prevbuf:
-        prevbuf = row[0]
-        startoh = startohdict.get(prevbuf, 0)
-        endoh = startoh + float(row[numfields - 2] - row[numfields - 1])
-      else:
-        startoh = endoh
-        endoh += float(row[numfields - 2] - row[numfields - 1])
+      
       res = {
         'buffer': row[0],
         'item': row[1],
@@ -229,13 +255,21 @@ class OverviewReport(GridPivot):
         'location__owner_id': row[13],
         'location__source': row[14],
         'location__lastmodified': row[15],
-        'bucket': row[numfields - 5],
-        'startdate': row[numfields - 4].date(),
-        'enddate': row[numfields - 3].date(),
-        'startoh': round(startoh, 1),
-        'produced': round(row[numfields - 2], 1),
-        'consumed': round(row[numfields - 1], 1),
-        'endoh': round(endoh, 1),
+        'startoh': round(row[numfields - 15], 1),
+        'endoh': round(row[numfields - 14], 1),
+        'startohdoc': int(row[numfields - 13]),
+        'bucket': row[numfields - 12],
+        'startdate': row[numfields - 11].date(),
+        'enddate': row[numfields - 10].date(),
+        'safetystock': round(row[numfields - 9] or 0, 1),
+        'consumed': round(row[numfields - 8], 1),
+        'consumedMO': round(row[numfields - 7], 1),
+        'consumedDO': round(row[numfields - 6], 1),
+        'consumedSO': round(row[numfields - 5], 1),
+        'produced': round(row[numfields - 4], 1),
+        'producedMO': round(row[numfields - 3], 1),
+        'producedDO': round(row[numfields - 2], 1),
+        'producedPO': round(row[numfields - 1], 1),
         }
       # Add attribute fields
       idx = 16
@@ -263,7 +297,7 @@ class DetailReport(GridReport):
   help_url = 'user-guide/user-interface/plan-analysis/inventory-detail-report.html'
 
   @ classmethod
-  def basequeryset(reportclass, request, args, kwargs):
+  def basequeryset(reportclass, request, *args, **kwargs):
     if len(args) and args[0]:
       dlmtr = args[0].find(" @ ")
       base = OperationPlanMaterial.objects.filter(

@@ -46,13 +46,16 @@ int LoadPlan::initialize()
 
 LoadPlan::LoadPlan(OperationPlan *o, const Load *r)
 {
+  // Initialize the Python type
+  initType(metadata);
+
   assert(o);
   ld = const_cast<Load*>(r);
   oper = o;
   start_or_end = START;
 
   // Update the resource field
-  res = r->getResource();
+  res = r->findPreferredResource(o->getSetupEnd());
 
   // Add to the operationplan
   nextLoadPlan = nullptr;
@@ -73,9 +76,6 @@ LoadPlan::LoadPlan(OperationPlan *o, const Load *r)
     ld->getLoadplanQuantity(this),
     ld->getLoadplanDate(this)
   );
-
-  // Initialize the Python type
-  initType(metadata);
 
   // For continuous resources, create a loadplan to mark
   // the end of the operationplan.
@@ -126,7 +126,8 @@ LoadPlan::LoadPlan(OperationPlan *o, const Load *r, LoadPlan *lp)
 void LoadPlan::setResource(Resource* newres, bool check, bool use_start)
 {
   // Nothing to do
-  if (res == newres) return;
+  if (res == newres)
+    return;
 
   // Validate the argument
   if (!newres)
@@ -158,8 +159,10 @@ void LoadPlan::setResource(Resource* newres, bool check, bool use_start)
 
   // Mark entities as changed
   Resource* oldRes = res;
-  if (oper) oper->getOperation()->setChanged();
-  if (res && res!=newres) res->setChanged();
+  if (oper)
+    oper->getOperation()->setChanged();
+  if (res && res!=newres)
+    res->setChanged();
   newres->setChanged();
 
   // Change this loadplan and its brother
@@ -183,11 +186,14 @@ void LoadPlan::setResource(Resource* newres, bool check, bool use_start)
     );
 
     // Repeat for the brother loadplan or exit
-    if (ldplan != this) ldplan = this;
-    else break;
+    if (ldplan != this)
+      ldplan = this;
+    else
+      break;
   }
 
-  // Force recalculation of the setup in the next step
+  // Clear the setup event
+  oper->setStartEndAndQuantity(oper->getSetupEnd(), oper->getEnd(), oper->getQuantity());
   oper->clearSetupEvent();
 
   // The new resource may have a different availability calendar,
@@ -387,13 +393,19 @@ LoadPlan::AlternateIterator::AlternateIterator(const LoadPlan* o) : ldplan(o)
 {
   if (ldplan->getLoad() && ldplan->getLoad()->getResource()->isGroup())
   {
-    for (auto i = ldplan->getLoad()->getResource()->getMembers(); i != Resource::end(); ++i)
+    for (Resource::memberRecursiveIterator i(ldplan->getLoad()->getResource()); !i.empty(); ++i)
     {
       if (ldplan->getResource() == &*i)
         continue;
-     Skill* sk = ldplan->getLoad()->getSkill();
-     if (!sk || i->hasSkill(sk, ldplan->getDate(), ldplan->getDate()))
-       resources.push_back(&*i);
+      Skill* sk = ldplan->getLoad()->getSkill();
+      if (!sk || i->hasSkill(sk, ldplan->getDate(), ldplan->getDate()))
+      {
+        auto my_eff = i->getEfficiencyCalendar()
+          ? i->getEfficiencyCalendar()->getValue(ldplan->getOperationPlan()->getStart())
+          : i->getEfficiency();
+        if (my_eff > 0)
+          resources.push_back(&*i);
+      }
     }
   }
   resIter = resources.begin();

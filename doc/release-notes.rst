@@ -1,10 +1,31 @@
 Release notes
 -------------
 
-4.4 (Upcoming release)
-======================
+4.4.1 (Upcoming release)
+========================
+
+.. rubric:: User interface
+
+- Ability to make the data anonymous and obfuscated when 
+  `exporting an Excel workbook <user-guide/command-reference.html#exportworkbook>`_. 
+  The names of all entities are obfuscated in the resulting spreadsheet. You will still
+  need to carefully review the output to clean out any remaining sensitive data.  
+
+.. rubric:: Third party components
+
+- | Support for Ubuntu 18 LTS. 
+  | Ubuntu 16LTS remains fully supported.
+  
+- | Windows installer now uses Python 3.6.
+  | Python 3.5 remains fully supported.
+
+4.4.0 (2018/08/02)
+==================
 
 .. rubric:: Production planning
+  
+- Resources can now have an `efficiency percentage <user-guide/model-reference/resources.html>`_. This allows
+  the resource to perform an operation faster or slower than the standard operation time.
 
 - The `resource report <user-guide/user-interface/plan-analysis/resource-report.html>`_ now displays the 
   available capacity as a line, replacing the green bar in previous releases to show the free capacity.
@@ -16,18 +37,49 @@ Release notes
 
 - Resource build-ahead penalty calculation now also working for 0-cost resources.
 
-- New rows to `purchase order summary <user-guide/user-interface/plan-analysis/purchase-order-summary.html>`_ 
+- New rows to the `purchase order summary <user-guide/user-interface/plan-analysis/purchase-order-summary.html>`_ 
   and `distribution order summary <user-guide/user-interface/plan-analysis/distribution-order-summary.html>`_
   reports to show the quantity on order or in transit.
+
+- New rows to the `inventory report <user-guide/user-interface/plan-analysis/inventory-report.html>`_
+  to show 1) days of cover of the starting inventory, 2) the safety stock and 3) more details
+  on the supply and consumption type.
+
+- | The minimum field on the buffer defines a safety stock. In previous releases this safety stock was
+    effective from the horizon start in 1971. Now this safety stock is effective from the current
+    date of the plan onwards.
+  | This change will give a different result for safety stock replenishments in an unconstrained plan.
+    In a lead time constrained plan the results will be identical.  
+
+- Remove buffers of type procurement from the planning engine code. This buffer type was already long
+  deprecated and hasn't been accessible to users for quite some time now. 
   
-- Resources can now have an `efficiency percentage <user-guide/model-reference/resources.html>`_. This allows
-  the resource to perform an operation faster or slower than the standard operation time.
+- Simpler and more generic modeling of fixed material consumption and production by operations. 
+  The types 'fixed_end' and 'fixed_start' on `operation material <user-guide/model-reference/operation-materials.html>`_
+  records are replaced with a field 'fixed_quantity'.
 
-.. rubric:: Inventory planning
+- Renamed the "demand plan detail" report to `delivery orders <user-guide/model-reference/operation-materials.html>`_,
+  and enable uploading confirmed or approved shipments to customers as input data.
 
-- The safety stock and ROQ minimum/maximum period of cover are now expressed in days. It was before entered
-  as the number of period buckets, the period bucket being the value of the inventoryplanning.calendar parameter.
+- | When expanding a confirmed manufacturing order on a routing operation, the automatic creation of the
+    child manufacturing orders for each routing step now also considers the post-operation time.
+  | Note that such child manufacturing orders are only generated if they aren't provided in the input 
+    data yet.   
 
+.. rubric:: User interface
+
+- Bug fix when copying a what-if scenario into another what-if scenario. 
+
+- Bug fix when uploading data files using the Microsoft Edge browser.
+
+.. rubric:: Deprecation
+
+- | Operations of types alternate, routing and split should not load any resources, 
+    or consume or produce materials. The suboperations should model all material and capacity 
+    usage instead.
+  | Note that in the majority of models, the explicit modeling of alternate operations is no
+    longer needed. The planning engine detects situations where an item-location can be replenished
+    in multiple ways and automatically generates an alternate operation.
 
 4.3.4 (2018/06/08)
 ==================

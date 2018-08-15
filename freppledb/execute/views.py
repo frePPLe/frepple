@@ -24,7 +24,6 @@ from subprocess import Popen
 from importlib import import_module
 import operator
 
-from django.apps import apps
 from django.conf import settings
 from django.views import static
 from django.views.decorators.cache import never_cache
@@ -40,7 +39,6 @@ from django.utils.encoding import force_text
 from django.utils.text import capfirst
 from django.core.management import get_commands
 
-from freppledb.common.commands import PlanTaskRegistry
 from freppledb.execute.models import Task
 from freppledb.common.auth import basicauthentication
 from freppledb.common.models import Scenario
@@ -230,6 +228,12 @@ def wrapTask(request, action):
       raise Exception('Missing execution privileges')
     task = Task(name='loaddata', submitted=now, status='Waiting', user=request.user, arguments=args['fixture'])
     task.save(using=request.database)
+    # Also run the workflow upon loading of manufacturing_demo or distribution_demo
+    if (args['regenerateplan'] == 'true'):
+      active_modules = 'supply'
+      task = Task(name='runplan', submitted=now, status='Waiting', user=request.user)
+      task.arguments = "--constraint=15 --plantype=1 --env=%s --background" % (active_modules,)
+      task.save(using=request.database)
   # E
   elif action in ('frepple_copy', 'scenario_copy'):
     worker_database = DEFAULT_DB_ALIAS
@@ -251,11 +255,11 @@ def wrapTask(request, action):
       # Note: release is immediate and synchronous.
       if not request.user.has_perm('auth.release_scenario'):
         raise Exception('Missing execution privileges')
-      for sc in Scenario.objects.all():
+      for sc in Scenario.objects.all().using(DEFAULT_DB_ALIAS):
         if args.get(sc.name, 'off') == 'on' and sc.status != 'Free':
           sc.status = 'Free'
           sc.lastrefresh = now
-          sc.save()
+          sc.save(using=DEFAULT_DB_ALIAS)
           if request.database == sc.name:
             # Erasing the database that is currently selected.
             request.prefix = ''
@@ -263,10 +267,10 @@ def wrapTask(request, action):
       # Note: update is immediate and synchronous.
       if not request.user.has_perm('auth.release_scenario'):
         raise Exception('Missing execution privileges')
-      for sc in Scenario.objects.all():
+      for sc in Scenario.objects.all().using(DEFAULT_DB_ALIAS):
         if args.get(sc.name, 'off') == 'on':
           sc.description = args.get('description', None)
-          sc.save()
+          sc.save(using=DEFAULT_DB_ALIAS)
     else:
       raise Exception('Invalid scenario task')
   # G

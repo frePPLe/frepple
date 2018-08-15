@@ -38,6 +38,18 @@ function admin_escape(n)
 }
 
 
+// A function to unescape all special characters in a name.
+// We unescape all special characters in the EXACT same way as the django admin does.
+function admin_unescape(n)
+{
+  return n.replace(/_5F/g,'_').replace(/_22/g,'"')
+  .replace(/_3A/g,':').replace(/_2F/g,'/').replace(/_23/g,'#').replace(/_3F/g,'?')
+  .replace(/_3B/g,';').replace(/_40/g,'@').replace(/_26/g,'&').replace(/_3D/g,'=')
+  .replace(/_2B/g,'+').replace(/_24/g,'$').replace(/_2C/g,',')
+  .replace(/_3C/g,'<').replace(/_3E/g,'>').replace(/_25/g,'%').replace(/_5C/g,'\\');
+}
+
+
 /// <reference path="jquery.js" />
 /*
 jquery-resizable
@@ -182,7 +194,6 @@ var upload = {
     $("#grid").closest(".ui-jqgrid-bdiv").scrollTop(0);
     $('#save, #undo').addClass("btn-primary").removeClass("btn-danger").prop('disabled', true);
     $('#actions1').prop('disabled', true);
-
     $('#filter').prop('disabled', false);
     $(window).off('beforeunload', upload.warnUnsavedChanges);
   },
@@ -196,6 +207,14 @@ var upload = {
     $(window).on('beforeunload', upload.warnUnsavedChanges);
   },
 
+  selectedRows : [],
+  
+  restoreSelection : function() {
+    for (var r in upload.selectedRows)
+    	$("#grid").jqGrid('setSelection', upload.selectedRows[r], false);
+    upload.selectedRows = [];  	
+  },
+  
   save : function()
   {
     if ($('#save').hasClass("btn-primary")) return;
@@ -207,6 +226,10 @@ var upload = {
       var rows = getDirtyData();
     else
       var rows = $("#grid").getChangedCells('dirty');
+    
+    // Remember the selected rows, which will be restored in the loadcomplete event
+    upload.selectedRows = $("#grid").jqGrid("getGridParam", "selarrrow").slice();
+    
     if (rows != null && rows.length > 0)
       // Send the update to the server
       $.ajax({
@@ -617,7 +640,7 @@ var grid = {
       }
       for (var j in cross)
       {
-        if (cross_idx.indexOf(parseInt(j,10)) > -1) continue;
+        if (cross_idx.indexOf(parseInt(j,10)) > -1 || cross[j]['name'] == "") continue;
         val1a += '<li class="list-group-item" id="' + (100 + parseInt(j,10) ) + '" style="cursor: move;">' + cross[j]['name'] + '</li>';
       }
     }
@@ -1448,7 +1471,7 @@ var wizard = {
     "Resources": {"lock": "lock8", "rctg": "resources", "cup":"", "anchor":"resourcesurl", "docanchor":"resourcesdoc", "url_doc": "/user-guide/modeling-wizard/manufacturing-capacity/resources.html", "url_internaldoc": "/data/input/resource/"},
     "Operation Resources": {"lock": "lock9", "rctg": "operationresources", "cup":"", "anchor":"operationresourcesurl", "docanchor":"operationresourcesdoc", "url_doc": "/user-guide/modeling-wizard/manufacturing-capacity/operation-resources.html", "url_internaldoc": "/data/input/operationresource/"},
     "Plan generation": {"lock": "", "rctg": "generateplan", "cup":"", "anchor":"generateplanurl", "docanchor":"generateplandoc", "url_doc": "/user-guide/modeling-wizard/generate-plan.html", "url_internaldoc": ""},
-    "Distribution orders": {"lock": "", "rctg": "plan_do", "cup":"cup2", "anchor":"plan_dourl", "docanchor":"plan_dodoc", "url_doc": "/user-guide/modeling-wizard/purchasing/purchase-orders.html", "url_internaldoc": "/data/input/distributionorder/"},
+    "Distribution orders": {"lock": "", "rctg": "plan_do", "cup":"cup2", "anchor":"plan_dourl", "docanchor":"plan_dodoc", "url_doc": "/user-guide/modeling-wizard/distribution/distribution-orders.html", "url_internaldoc": "/data/input/distributionorder/"},
     "Purchase orders": {"lock": "", "rctg": "plan_po", "cup":"cup3", "anchor":"plan_pourl", "docanchor":"plan_podoc", "url_doc": "/user-guide/modeling-wizard/purchasing/purchase-orders.html", "url_internaldoc": "/data/input/purchaseorder/"},
     "Manufacturing orders": {"lock": "", "rctg": "plan_mo", "cup": "cup4", "anchor":"plan_mourl", "docanchor":"plan_modoc", "url_doc": "/user-guide/modeling-wizard/manufacturing-bom/manufacturing-orders.html", "url_internaldoc": "/data/input/manufacturingorder/"}
   },
@@ -2556,7 +2579,11 @@ function import_show(title,paragraph,multiple,fxhr)
       $('#copytoclipboard').show();
     });
 
-
+    // Empty the csv-file field
+    //$("#csv_file").wrap('<form>').closest('form').get(0).reset();
+    //$("#csv_file").unwrap();
+    
+    // Prepare formdata
     filesdata = new FormData($("#uploadform")[0]);
     if (filesdropped) {
       $.each( filesdropped, function(i, fdropped) {
@@ -2564,12 +2591,13 @@ function import_show(title,paragraph,multiple,fxhr)
       });
     }
     if (filesselected) {
-      filesdata.delete('csv_file');
+    	filesdata.delete('csv_file');
       $.each( filesselected, function(i, fdropped) {
         filesdata.append( fdropped.name, fdropped );
-      });
+      });      
     }
-
+    
+    // Upload the files
     xhr = $.ajax(
       Object.assign({
         type: 'post',
@@ -2687,29 +2715,28 @@ $.fn.bindFirst = function(name, fn) {
 
 var graph = {
 
-  header: function()
+  header: function(margin, scale)
   {
     var el = $("#grid_graph");
     el.html("");
-    var bucketwidth = (el.width() - 50) / numbuckets;
+    var scale_stops = scale.range();
+    var scale_width = scale.rangeBand();
     var svg = d3.select(el.get(0)).append("svg");
     svg.attr('height','15px');
-    svg.attr('width', el.width());
-    var w = 50 + bucketwidth / 2;
-    var wt = w;
+    svg.attr('width', el.width());    
+    var wt = 0;
     for (var i in timebuckets)
-    {
+    { 
+    	var w = margin + scale_stops[i] + scale_width / 2;
       if (wt <= w)
       {
         var t = svg.append('text')
           .attr('class','svgheadertext')
           .attr('x', w)
           .attr('y', '12')
-          .attr('class','graphheader')
           .text(timebuckets[i]['name']);
         wt = w + t.node().getComputedTextLength() + 12;
       }
-      w += bucketwidth;
     }
   },
 

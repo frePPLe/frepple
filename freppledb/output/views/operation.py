@@ -166,7 +166,7 @@ class OverviewReport(GridPivot):
 
 
   @staticmethod
-  def basequeryset(request, args, kwargs):
+  def basequeryset(request, *args, **kwargs):
     if args and args[0]:
       request.session['lasttab'] = 'plan'
       return Operation.objects.all()
@@ -447,7 +447,7 @@ class PurchaseReport(GridPivot):
 
 
   @staticmethod
-  def basequeryset(request, args, kwargs):
+  def basequeryset(request, *args, **kwargs):
     current, start, end = getHorizon(request)
     return PurchaseOrder.objects.all() \
       .filter(startdate__lte=end, enddate__gte=start) \
@@ -676,7 +676,7 @@ class DistributionReport(GridPivot):
 
 
   @staticmethod
-  def basequeryset(request, args, kwargs):
+  def basequeryset(request, *args, **kwargs):
     current, start, end = getHorizon(request)
     return DistributionOrder.objects.all() \
       .filter(startdate__lte=end, enddate__gte=start) \

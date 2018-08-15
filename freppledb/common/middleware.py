@@ -26,6 +26,7 @@ from django.contrib.auth.models import AnonymousUser
 from django.middleware.locale import LocaleMiddleware as DjangoLocaleMiddleware
 from django.utils import translation
 from django.db import DEFAULT_DB_ALIAS
+from django.db.models import Q
 from django.http import HttpResponseNotFound
 from django.http.response import HttpResponseForbidden
 
@@ -153,7 +154,8 @@ class MultiDBMiddleware(object):
     - is_superuser
   """
   def process_request(self, request):
-    request.user = auth.get_user(request)
+    if not hasattr(request, 'user'):
+      request.user = auth.get_user(request)
     if not hasattr(request.user, 'scenarios'):
       # A scenario list is not available on the request
       for i in settings.DATABASES:
@@ -173,7 +175,7 @@ class MultiDBMiddleware(object):
       request.database = DEFAULT_DB_ALIAS
     else:
       # A list of scenarios is already available
-      if not request.user or request.user.is_anonymous():
+      if request.user.is_anonymous():
         return
       default_scenario = None
       for i in request.user.scenarios:
@@ -205,10 +207,29 @@ class AutoLoginAsAdminUser(object):
   This can be handy during development or for demo models.
   """
   def process_request(self, request):
+    if not hasattr(request, 'user'):
+      request.user = auth.get_user(request)
     if not request.user.is_authenticated():
       try:
         user = User.objects.get(username="admin")
         user.backend = settings.AUTHENTICATION_BACKENDS[0]
         login(request, user)
+        request.user.scenarios = []
+        for db in Scenario.objects.filter(Q(status='In use') | Q(name=DEFAULT_DB_ALIAS)):
+          if not db.description:
+            db.description = db.name
+          if db.name == DEFAULT_DB_ALIAS:
+            if request.user.is_active:
+              db.is_superuser = request.user.is_superuser
+              request.user.scenarios.append(db)
+          else:
+            try:
+              user2 = User.objects.using(db.name).get(username=request.user.username)
+              if user2.is_active:
+                db.is_superuser = user2.is_superuser
+                request.user.scenarios.append(db)
+            except:
+              # Silently ignore errors. Eg user doesn't exist in scenario
+              pass
       except User.DoesNotExist:
         pass

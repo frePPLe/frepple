@@ -103,13 +103,13 @@ def getHorizon(request, future_only=False):
     current = current.replace(microsecond=0)
 
   horizontype = request.GET.get('horizontype', request.user.horizontype)
+  horizonunit = request.GET.get('horizonunit', request.user.horizonunit)
+  try:
+    horizonlength = int(request.GET.get('horizonlength'))
+  except:
+    horizonlength = request.user.horizonlength
   if horizontype:
     # First type: Horizon relative to the current date
-    horizonunit = request.GET.get('horizonunit', request.user.horizonunit)
-    try:
-      horizonlength = int(request.GET.get('horizonlength'))
-    except:
-      horizonlength = request.user.horizonlength
     start = current.replace(hour=0, minute=0, second=0, microsecond=0)
     if horizonunit == 'day':
       end = start + timedelta(days=horizonlength or 60)
@@ -155,7 +155,7 @@ def getHorizon(request, future_only=False):
     else:
       if horizonunit == 'day':
         end = start + timedelta(days=horizonlength or 60)
-      elif request.user.horizonunit == 'week':
+      elif horizonunit == 'week':
         end = start + timedelta(weeks=horizonlength or 8)
       else:
         end = start + timedelta(weeks=horizonlength or 8)
@@ -659,7 +659,7 @@ class GridReport(View):
     fields = [ i.field_name for i in reportclass.rows if i.field_name and not i.hidden]
 
     if isinstance(reportclass.basequeryset, collections.Callable):
-      query = reportclass._apply_sort(request, reportclass.filter_items(request, reportclass.basequeryset(request, args, kwargs), False).using(request.database))
+      query = reportclass._apply_sort(request, reportclass.filter_items(request, reportclass.basequeryset(request, *args, **kwargs), False).using(request.database))
     else:
       query = reportclass._apply_sort(request, reportclass.filter_items(request, reportclass.basequeryset).using(request.database))
     for row in hasattr(reportclass, 'query') and reportclass.query(request, query) or query.values(*field_names):
@@ -720,7 +720,7 @@ class GridReport(View):
 
     # Write the report content
     if isinstance(reportclass.basequeryset, collections.Callable):
-      query = reportclass._apply_sort(request, reportclass.filter_items(request, reportclass.basequeryset(request, args, kwargs), False).using(request.database))
+      query = reportclass._apply_sort(request, reportclass.filter_items(request, reportclass.basequeryset(request, *args, **kwargs), False).using(request.database))
     else:
       query = reportclass._apply_sort(request, reportclass.filter_items(request, reportclass.basequeryset).using(request.database))
     for row in hasattr(reportclass, 'query') and reportclass.query(request, query) or query.values(*fields):
@@ -974,7 +974,7 @@ class GridReport(View):
     page = 'page' in request.GET and int(request.GET['page']) or 1
     request.prefs = request.user.getPreference(reportclass.getKey(), database=request.database)
     if isinstance(reportclass.basequeryset, collections.Callable):
-      query = reportclass.filter_items(request, reportclass.basequeryset(request, args, kwargs), False).using(request.database)
+      query = reportclass.filter_items(request, reportclass.basequeryset(request, *args, **kwargs), False).using(request.database)
     else:
       query = reportclass.filter_items(request, reportclass.basequeryset).using(request.database)
     recs = query.count()
@@ -1250,6 +1250,7 @@ class GridReport(View):
               resp.write('<br>')
         else:
           # Editing records
+          pk = rec['id']
           sid = transaction.savepoint(using=request.database)
           try:
             obj = reportclass.model.objects.using(request.database).get(pk=rec['id'])
@@ -1279,13 +1280,13 @@ class GridReport(View):
           except reportclass.model.DoesNotExist:
             transaction.savepoint_rollback(sid)
             ok = False
-            resp.write(escape(_("Can't find %s" % rec['id'])))
+            resp.write(escape(_("Can't find %s" % pk)))
             resp.write('<br>')
           except (ValidationError, ValueError):
             transaction.savepoint_rollback(sid)
             ok = False
             for error in form.non_field_errors():
-              resp.write(escape('%s: %s' % (rec['id'], error)))
+              resp.write(escape('%s: %s' % (pk, error)))
               resp.write('<br>')
             for field in form:
               for error in field.errors:
@@ -1751,7 +1752,7 @@ class GridPivot(GridReport):
       else:
         e = False
       result.append(
-        "{name:'%s',editable:%s}" % (title(t), 'true' if e else 'false')
+        "{name:'%s',editable:%s}" % (capfirst(t), 'true' if e else 'false')
         )
     return ',\n'.join(result)
 
@@ -1833,7 +1834,7 @@ class GridPivot(GridReport):
       if isinstance(reportclass.basequeryset, collections.Callable):
         query = reportclass.query(
           request,
-          reportclass.basequeryset(request, args, kwargs).filter(pk__exact=args[0]).using(request.database),
+          reportclass.basequeryset(request, *args, **kwargs).filter(pk__exact=args[0]).using(request.database),
           sortsql="1 asc"
           )
       else:
@@ -1845,7 +1846,7 @@ class GridPivot(GridReport):
     else:
       page = 'page' in request.GET and int(request.GET['page']) or 1
       if isinstance(reportclass.basequeryset, collections.Callable):
-        recs = reportclass.filter_items(request, reportclass.basequeryset(request, args, kwargs), False).using(request.database).count()
+        recs = reportclass.filter_items(request, reportclass.basequeryset(request, *args, **kwargs), False).using(request.database).count()
       else:
         recs = reportclass.filter_items(request, reportclass.basequeryset).using(request.database).count()
       total_pages = math.ceil(float(recs) / request.pagesize)
@@ -1857,7 +1858,7 @@ class GridPivot(GridReport):
       if isinstance(reportclass.basequeryset, collections.Callable):
         query = reportclass.query(
           request,
-          reportclass._apply_sort(request, reportclass.filter_items(request, reportclass.basequeryset(request, args, kwargs), False)).using(request.database)[cnt - 1:cnt + request.pagesize],
+          reportclass._apply_sort(request, reportclass.filter_items(request, reportclass.basequeryset(request, *args, **kwargs), False)).using(request.database)[cnt - 1:cnt + request.pagesize],
           sortsql=reportclass._apply_sort_index(request)
           )
       else:
@@ -1941,7 +1942,7 @@ class GridPivot(GridReport):
         )
     elif isinstance(reportclass.basequeryset, collections.Callable):
       query = reportclass.query(
-        request, reportclass.filter_items(request, reportclass.basequeryset(request, args, kwargs), False).using(request.database),
+        request, reportclass.filter_items(request, reportclass.basequeryset(request, *args, **kwargs), False).using(request.database),
         sortsql=reportclass._apply_sort_index(request)
         )
     else:
@@ -2110,7 +2111,7 @@ class GridPivot(GridReport):
     elif isinstance(reportclass.basequeryset, collections.Callable):
       query = reportclass.query(
         request,
-        reportclass.filter_items(request, reportclass.basequeryset(request, args, kwargs), False).using(request.database),
+        reportclass.filter_items(request, reportclass.basequeryset(request, *args, **kwargs), False).using(request.database),
         sortsql=reportclass._apply_sort_index(request)
         )
     else:
@@ -2248,7 +2249,7 @@ def _localize(value, decimal_separator):
     return value
 
 
-def _getCellValue(data):
+def _getCellValue(data, field=None, exportConfig=None):
   if data is None:
     return ''
   elif isinstance(data, numericTypes) or isinstance(data, (date, datetime)):
@@ -2257,8 +2258,32 @@ def _getCellValue(data):
     return data.total_seconds()
   elif isinstance(data, time):
     return data.isoformat()
-  else:
+  elif not exportConfig or not exportConfig.get('anonymous', False):
     return str(data)
+  else:
+    if field.primary_key and not isinstance(field, AutoField):
+      model = field.model
+    elif isinstance(field, RelatedField):
+      model = field.related_model
+    else:
+      return str(data)
+    if model._meta.app_label == 'common':
+      return str(data)
+    modelname = model._meta.model_name
+    if modelname not in exportConfig:
+      # Build a map with anonymous names for this model
+      exportConfig[modelname] = {}
+      if issubclass(model, HierarchyModel):
+        keys = model.objects.only('pk').order_by('lvl', 'pk').values_list('pk', flat=True)
+      else:
+        keys = model.objects.only('pk').order_by('pk').values_list('pk', flat=True)
+      idx = 1
+      for key in keys:
+        exportConfig[modelname][key] = idx
+        idx += 1
+      del keys
+    # Return the mapped value
+    return "%s %07d" % (modelname, exportConfig[modelname].get(data, 0))
 
 
 def exportWorkbook(request):
@@ -2271,6 +2296,9 @@ def exportWorkbook(request):
   wb.add_named_style(headerstyle)
 
   # Loop over all selected entity types
+  exportConfig = {
+    'anonymous': request.POST.get('anonymous', False)
+    }
   ok = False
   for entity_name in request.POST.getlist('entities'):
     try:
@@ -2292,6 +2320,7 @@ def exportWorkbook(request):
 
       # Build a list of fields and properties
       fields = []
+      modelfields = []
       header = []
       source = False
       lastmodified = False
@@ -2304,11 +2333,12 @@ def exportWorkbook(request):
         if i.name in ['lft', 'rght', 'lvl']:
           continue  # Skip some fields of HierarchyModel
         elif i.name == 'source':
-          source = True  # Put the source field at the end
+          source = i  # Put the source field at the end
         elif i.name == 'lastmodified':
-          lastmodified = True  # Put the last-modified field at the very end
+          lastmodified = i  # Put the last-modified field at the very end
         elif not (exclude and i.name in exclude):
           fields.append(i.column)
+          modelfields.append(i)
           cell = WriteOnlyCell(ws, value=force_text(i.verbose_name).title())
           cell.style = 'headerstyle'
           header.append(cell)
@@ -2319,16 +2349,19 @@ def exportWorkbook(request):
             cell = WriteOnlyCell(ws, value=force_text(i.verbose_name).title())
             cell.style = 'headerstyle'
             header.append(cell)
+            modelfields.append(i)
       if source:
         fields.append("source")
         cell = WriteOnlyCell(ws, value=force_text(_("source")).title())
         cell.style = 'headerstyle'
         header.append(cell)
+        modelfields.append(source)
       if lastmodified:
         fields.append("lastmodified")
         cell = WriteOnlyCell(ws, value=force_text(_("last modified")).title())
         cell.style = 'headerstyle'
         header.append(cell)
+        modelfields.append(lastmodified)
 
       # Write a formatted header row
       ws.append(header)
@@ -2350,7 +2383,12 @@ def exportWorkbook(request):
 
       # Loop over all records
       for rec in query.values_list(*fields):
-        ws.append([ _getCellValue(f) for f in rec ])
+        cells = []
+        fld = 0
+        for f in rec:
+          cells.append(_getCellValue(f, modelfields[fld], exportConfig))
+          fld += 1
+        ws.append(cells)
     except Exception:
       pass  # Silently ignore the error and move on to the next entity.
 

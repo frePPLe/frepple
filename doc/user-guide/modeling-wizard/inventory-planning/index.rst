@@ -1,5 +1,5 @@
 ==================
-Inventory Planning
+Inventory planning
 ==================
 
 .. Important::

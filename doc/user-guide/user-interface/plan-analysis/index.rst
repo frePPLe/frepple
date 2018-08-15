@@ -22,7 +22,6 @@ This series of screens is used to review the planning results.
    distribution-order-summary
    operation-detail-report
    demand-report
-   demand-detail-report
    demand-gantt-report
    forecast-report
    performance-indicator-report

@@ -1,5 +1,5 @@
 ===================
-Operation Resources
+Operation resources
 ===================
 
 Operation resources are used to model the capacity consumption of an operation.

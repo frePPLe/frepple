@@ -239,110 +239,111 @@ void OperatorDelete::solve(const Buffer* b, void* v)
 
   // STEP 1: Remove shortages from the buffer
   // Delete the earliest unlocked consumer(s) after the start of a material shortage.
-  double unresolvable = 0.0;
-  while (fiter != fend)
+  if (getConstrained())
   {
-    if (fiter->getQuantity() >= 0
-      || !(fiter->getOnhand() < -ROUNDING_ERROR + unresolvable && fiter->isLastOnDate())
-      )
-    {
-      // Not a consumer or no shortage start
-      ++fiter;
-      continue;
-    }
+    double unresolvable = 0.0;
 
-    // Recurse backward to find consumers we can resize
-    double cur_shortage = fiter->getOnhand() + unresolvable;
-    Buffer::flowplanlist::const_iterator fiter2 = fiter;
-    OperationPlan* curopplan = fiter->getOperationPlan();
-    do
-      ++fiter; // increment to an event after the shortage start, because the iterator
-               // can get invalidated in the next loop
-    while (fiter != fend && curopplan && fiter->getOperationPlan() == curopplan);  // A loop is required to handle transfer batches
-    while (cur_shortage <= -ROUNDING_ERROR && fiter2 != fend)
+    while (fiter != fend)
     {
-      if (fiter2->getQuantity() >= 0 || fiter2->getEventType() != 1)
-      {
-        // Not a consuming flowplan
-        --fiter2;
-        continue;
-      }
-      FlowPlan* fp = const_cast<FlowPlan*>(static_cast<const FlowPlan*>(&*fiter2));
-      if (!fp->getOperationPlan()->getProposed())
-      {
-        // This consumer is locked
-        --fiter2;
-        continue;
-      }
-
-      // Decrement the iterator here, because it can get invalidated later on
-      while (
-        fiter2 != fend
-        && fiter2->getEventType() == 1
-        && fiter2->getOperationPlan()->getTopOwner() == fp->getOperationPlan()->getTopOwner()
+      if (fiter->getQuantity() >= 0
+        || !(fiter->getOnhand() < -ROUNDING_ERROR + unresolvable && fiter->isLastOnDate())
         )
-        --fiter2;
+      {
+        // Not a consumer or no shortage start
+        ++fiter;
+        continue;
+      }
 
-      // Resize or delete the candidate operationplan
-      double newsize_opplan;
-      double newsize_flowplan;
-      if (cur_shortage < fp->getQuantity() + ROUNDING_ERROR)
+      // Recurse backward to find consumers we can resize
+      double cur_shortage = fiter->getOnhand() + unresolvable;
+      Buffer::flowplanlist::const_iterator fiter2 = fiter;
+      OperationPlan* curopplan = fiter->getOperationPlan();
+      do
+        ++fiter; // increment to an event after the shortage start, because the iterator
+                 // can get invalidated in the next loop
+      while (fiter != fend && curopplan && fiter->getOperationPlan() == curopplan);  // A loop is required to handle transfer batches
+      while (cur_shortage <= -ROUNDING_ERROR && fiter2 != fend)
       {
-        // Completely delete the consumer
-        newsize_opplan = newsize_flowplan = 0.0;
-      }
-      else
-      {
-        // Resize the consumer
-        newsize_flowplan = fp->setQuantity(fp->getQuantity() - cur_shortage, true, false, true, 0);
-        if (fp->getFlow()->getType() == *FlowFixedEnd::metadata
-          || fp->getFlow()->getType() == *FlowFixedStart::metadata)
-          newsize_opplan = newsize_flowplan ? fp->getFlow()->getQuantity() : 0.0;
+        if (fiter2->getQuantity() >= 0 || fiter2->getEventType() != 1)
+        {
+          // Not a consuming flowplan
+          --fiter2;
+          continue;
+        }
+        FlowPlan* fp = const_cast<FlowPlan*>(static_cast<const FlowPlan*>(&*fiter2));
+        if (!fp->getOperationPlan()->getProposed())
+        {
+          // This consumer is locked
+          --fiter2;
+          continue;
+        }
+
+        // Decrement the iterator here, because it can get invalidated later on
+        while (
+          fiter2 != fend
+          && fiter2->getEventType() == 1
+          && fiter2->getOperationPlan()->getTopOwner() == fp->getOperationPlan()->getTopOwner()
+          )
+          --fiter2;
+
+        // Resize or delete the candidate operationplan
+        double newsize_opplan;
+        double newsize_flowplan;
+        if (cur_shortage < fp->getQuantity() + ROUNDING_ERROR)
+        {
+          // Completely delete the consumer
+          newsize_opplan = newsize_flowplan = 0.0;
+        }
         else
-          newsize_opplan = newsize_flowplan / fp->getFlow()->getQuantity();
-      }
-      if (newsize_flowplan > -ROUNDING_ERROR)
-      {
-        // The complete operationplan is shortage.
-        cur_shortage -= fp->getQuantity();
-        // Add downstream buffers to the stack
-        pushBuffers(fp->getOperationPlan(), false, true);
-        // Log message
-        if (getLogLevel() > 0)
-          logger << "Removing shortage operationplan: " << fp->getOperationPlan() << endl;
-        // Delete operationplan
-        if (cmds)
-          cmds->add(new CommandDeleteOperationPlan(fp->getOperationPlan()));
+        {
+          // Resize the consumer
+          auto tmp = fp->setQuantity(fp->getQuantity() - cur_shortage, true, false, true, 0);
+          newsize_flowplan = tmp.first;
+          newsize_opplan = tmp.second;
+        }
+        if (newsize_flowplan > -ROUNDING_ERROR)
+        {
+          // The complete operationplan is shortage.
+          cur_shortage -= fp->getQuantity();
+          // Add downstream buffers to the stack
+          pushBuffers(fp->getOperationPlan(), false, true);
+          // Log message
+          if (getLogLevel() > 0)
+            logger << "Removing shortage operationplan: " << fp->getOperationPlan() << endl;
+          // Delete operationplan
+          if (cmds)
+            cmds->add(new CommandDeleteOperationPlan(fp->getOperationPlan()));
+          else
+            delete fp->getOperationPlan();
+        }
         else
-          delete fp->getOperationPlan();
-      }
-      else
-      {
-        // Reduce the operationplan
-        // Add downstream buffers to the stack
-        pushBuffers(fp->getOperationPlan(), false, true);
-        // Reduce the shortage
-        cur_shortage -= fp->getQuantity() - newsize_flowplan;
-        if (getLogLevel() > 0)
-          logger << "Resizing shortage operationplan to " << newsize_opplan << ": "
+        {
+          // Reduce the operationplan
+          // Add downstream buffers to the stack
+          pushBuffers(fp->getOperationPlan(), false, true);
+          // Reduce the shortage
+          cur_shortage -= fp->getQuantity() - newsize_flowplan;
+          if (getLogLevel() > 0)
+            logger << "Resizing shortage operationplan to " << newsize_opplan << ": "
             << fp->getOperationPlan() << endl;
-        // Resize operationplan
-        if (cmds)
-          // TODO Incorrect - need to resize the flowplan intead of the the operationplan!
-          cmds->add(new CommandMoveOperationPlan(
-            fp->getOperationPlan(), fp->getOperationPlan()->getStart(),
-            Date::infinitePast, newsize_opplan
-          ));
-        else
-          fp->getOperationPlan()->setQuantity(newsize_opplan);
+          // Resize operationplan
+          if (cmds)
+            // TODO Incorrect - need to resize the flowplan intead of the the operationplan!
+            cmds->add(new CommandMoveOperationPlan(
+              fp->getOperationPlan(), fp->getOperationPlan()->getStart(),
+              Date::infinitePast, newsize_opplan
+            ));
+          else
+            fp->getOperationPlan()->setQuantity(newsize_opplan);
+        }
       }
-    }
 
-    // Damn... We can't resolve it
-    if (fiter2 == fend && cur_shortage <= -ROUNDING_ERROR)
-    {
-      unresolvable += cur_shortage;
-      logger << "Can't resolve shortage problem in buffer " << b << endl;
+      // Damn... We can't resolve it
+      if (fiter2 == fend && cur_shortage <= -ROUNDING_ERROR)
+      {
+        unresolvable += cur_shortage;
+        logger << "Can't resolve shortage problem in buffer " << b << endl;
+      }
     }
   }
 
@@ -397,12 +398,9 @@ void OperatorDelete::solve(const Buffer* b, void* v)
       else
       {
         // Resize the consumer
-        newsize_flowplan = fp->setQuantity(fp->getQuantity() - cur_excess, false, false);
-        if (fp->getFlow()->getType() == *FlowFixedEnd::metadata
-          || fp->getFlow()->getType() == *FlowFixedStart::metadata)
-          newsize_opplan = newsize_flowplan ? fp->getFlow()->getQuantity() : 0.0;
-        else
-          newsize_opplan = newsize_flowplan / fp->getFlow()->getQuantity();
+        auto tmp = fp->setQuantity(fp->getQuantity() - cur_excess, false, false);
+        newsize_flowplan = tmp.first;
+        newsize_opplan = tmp.second;
       }
       if (newsize_flowplan < ROUNDING_ERROR)
       {

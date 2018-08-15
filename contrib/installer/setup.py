@@ -32,10 +32,10 @@ packages = [
   'logging', 'email', 'cherrypy.wsgiserver', 'sqlite3',
   # Added for PostgreSQL
   'psycopg2',
+  # Dependencies for openpyxl
+  'jdcal', 'et_xmlfile',
   # Added to be able to connect to SQL Server
   'adodbapi',
-  # Required for reading and writing spreadsheets
-  'openpyxl',
   # Required for REST API
   'rest_framework_bulk', 'rest_framework_filters', 'markdown',
   # Added to package a more complete python library with frePPLe
@@ -64,6 +64,7 @@ import freppledb
 import rest_framework
 import pytz
 import requests
+import openpyxl
 from distutils.sysconfig import get_python_lib
 data_files = [
   ('freppleservice.py', 'freppleservice.py'),
@@ -72,7 +73,7 @@ data_files = [
   (os.path.join(get_python_lib(), 'win32', 'lib', 'win32serviceutil.py'), 'win32serviceutil.py'),
   (os.path.join(get_python_lib(), 'pythoncom.py'), 'pythoncom.py')
   ]
-for mod in [bootstrap3, certifi, django, django_admin_bootstrapped, freppledb, rest_framework, pytz, requests]:
+for mod in [bootstrap3, certifi, django, django_admin_bootstrapped, freppledb, rest_framework, pytz, requests, openpyxl]:
   srcdir = mod.__path__[0]
   targetdir = os.path.join('custom', mod.__name__)
   root_path_length = len(srcdir) + 1

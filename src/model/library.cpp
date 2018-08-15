@@ -85,7 +85,6 @@ void LibraryModel::initialize()
   nok += Buffer::initialize();
   nok += BufferDefault::initialize();
   nok += BufferInfinite::initialize();
-  nok += BufferProcure::initialize();
   nok += Demand::initialize();
   nok += DemandDefault::initialize();
   nok += Item::initialize();

@@ -53,21 +53,26 @@ void Demand::updateProblems()
     else
     {
       // Loop through the deliveries
-      for (OperationPlanList::iterator i = deli.begin(); i != deli.end(); ++i)
+      for (auto i = deli.begin(); i != deli.end(); ++i)
       {
-        // Check for ProblemLate problem
+        
         long d(getDue() - (*i)->getEnd());
-        if (d < 0L) needsLate = true;
-        // Check for ProblemEarly problem
-        else if (d > 0L) needsEarly = true;
+        if (d < 0L)
+          // Check for ProblemLate problem
+          needsLate = true;
+        else if (d > 0L)
+          // Check for ProblemEarly problem
+          needsEarly = true;
       }
 
       // Check for ProblemShort problem
       double plannedqty = getPlannedQuantity();
-      if (plannedqty + ROUNDING_ERROR < qty) needsShort = true;
+      if (plannedqty + ROUNDING_ERROR < qty)
+        needsShort = true;
 
       // Check for ProblemExcess Problem
-      if (plannedqty - ROUNDING_ERROR > qty) needsExcess = true;
+      if (plannedqty - ROUNDING_ERROR > qty)
+        needsExcess = true;
     }
   }
 

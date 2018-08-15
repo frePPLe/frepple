@@ -41,8 +41,6 @@ namespace frepple
 class Flow;
 class FlowStart;
 class FlowEnd;
-class FlowFixedStart;
-class FlowFixedEnd;
 class FlowTransferBatch;
 class FlowPlan;
 class LoadPlan;
@@ -68,7 +66,6 @@ class OperationItemDistribution;
 class SubOperation;
 class Buffer;
 class BufferInfinite;
-class BufferProcure;
 class Plan;
 class Plannable;
 class Calendar;
@@ -1010,11 +1007,6 @@ class Solver : public Object
       solve(reinterpret_cast<const Buffer*>(b),v);
     }
 
-    virtual void solve(const BufferProcure* b, void* v = nullptr)
-    {
-      solve(reinterpret_cast<const Buffer*>(b),v);
-    }
-
     virtual void solve(const Load* b, void* v = nullptr)
     {
       throw LogicException("Called undefined solve(Load*) method");
@@ -1051,16 +1043,6 @@ class Solver : public Object
     }
 
     virtual void solve(const FlowEnd* b, void* v = nullptr)
-    {
-      solve(reinterpret_cast<const Flow*>(b),v);
-    }
-
-    virtual void solve(const FlowFixedStart* b, void* v = nullptr)
-    {
-      solve(reinterpret_cast<const Flow*>(b),v);
-    }
-
-    virtual void solve(const FlowFixedEnd* b, void* v = nullptr)
     {
       solve(reinterpret_cast<const Flow*>(b),v);
     }
@@ -2365,11 +2347,15 @@ class OperationPlan
       setStart(d, false, true);
     }
 
-
     void setStartForce(Date d)
     {
       setStart(d, true, true);
     }
+
+    /** Return the efficiency factor of the operationplan.
+      * It's computed as the most inefficient of all resources loaded by the operationplan.
+      */
+    double getEfficiency(Date = Date::infinitePast) const;
 
     static int initialize();
 
@@ -2399,7 +2385,7 @@ class OperationPlan
       * If the operationplan is invalid, it will be DELETED and the return value
       * is false.
       */
-    bool activate(bool createsubopplans=true);
+    bool activate(bool createsubopplans=true, bool use_start=false);
 
     /** Remove an operationplan from the list of officially registered ones.<br>
       * The operationplan will keep its loadplans and flowplans after unregistration.
@@ -2831,7 +2817,7 @@ class Operation : public HasName<Operation>,
       * When the function returns false the creation of the operationplan
       * is denied and it is deleted.
       */
-    virtual bool extraInstantiate(OperationPlan* o, bool createsubopplans=true)
+    virtual bool extraInstantiate(OperationPlan* o, bool createsubopplans = true, bool use_start = false)
     {
       return true;
     }
@@ -3759,7 +3745,7 @@ class OperationFixedTime : public Operation
       m->addDurationField<Cls>(Tags::duration, &Cls::getDuration, &Cls::setDuration);
     }
   protected:
-    virtual bool extraInstantiate(OperationPlan* o, bool createsubopplans = true);
+    virtual bool extraInstantiate(OperationPlan* o, bool createsubopplans = true, bool use_start = false);
 
   private:
     /** Stores the lengh of the Operation. */
@@ -3951,7 +3937,7 @@ class OperationRouting : public Operation
 
   protected:
     /** Extra logic to be used when instantiating an operationplan. */
-    virtual bool extraInstantiate(OperationPlan* o, bool createsubopplans = true);
+    virtual bool extraInstantiate(OperationPlan* o, bool createsubopplans = true, bool use_start = false);
 
   private:
     /** Stores a double linked list of all step suboperations. */
@@ -4070,7 +4056,7 @@ class OperationSplit : public Operation
 
   protected:
     /** Extra logic to be used when instantiating an operationplan. */
-    virtual bool extraInstantiate(OperationPlan* o, bool createsubopplans = true);
+    virtual bool extraInstantiate(OperationPlan* o, bool createsubopplans = true, bool use_start = false);
 
   private:
     /** List of all alternate operations. */
@@ -4174,7 +4160,7 @@ class OperationAlternate : public Operation
 
   protected:
     /** Extra logic to be used when instantiating an operationplan. */
-    virtual bool extraInstantiate(OperationPlan* o, bool createsubopplans = true);
+    virtual bool extraInstantiate(OperationPlan* o, bool createsubopplans = true, bool use_start = false);
 
   private:
     /** List of all alternate operations. */
@@ -5282,7 +5268,7 @@ class Buffer : public HasHierarchy<Buffer>, public HasLevel,
       m->addPointerField<Cls, Calendar>(Tags::minimum_calendar, &Cls::getMinimumCalendar, &Cls::setMinimumCalendar);
       m->addDoubleField<Cls>(Tags::maximum, &Cls::getMaximum, &Cls::setMaximum, default_max);
       m->addPointerField<Cls, Calendar>(Tags::maximum_calendar, &Cls::getMaximumCalendar, &Cls::setMaximumCalendar);
-      m->addDurationField<Cls>(Tags::mininterval, &Cls::getMinimumInterval, &Cls::setMinimumInterval, -1);
+      m->addDurationField<Cls>(Tags::mininterval, &Cls::getMinimumInterval, &Cls::setMinimumInterval, -1L);
       m->addDurationField<Cls>(Tags::maxinterval, &Cls::getMaximumInterval, &Cls::setMaximumInterval);
       m->addIteratorField<Cls, flowlist::const_iterator, Flow>(Tags::flows, Tags::flow, &Cls::getFlowIterator, DETAIL);
       m->addBoolField<Cls>(Tags::tool, &Cls::getTool, &Cls::setTool, BOOL_FALSE);
@@ -5350,7 +5336,7 @@ class Buffer : public HasHierarchy<Buffer>, public HasLevel,
     Calendar *max_cal = nullptr;
 
     /** Minimum time interval between purchasing operations. */
-    Duration min_interval = -1;
+    Duration min_interval = -1L;
 
     /** Maximum time interval between purchasing operations. */
     Duration max_interval;
@@ -5574,261 +5560,6 @@ class BufferInfinite : public Buffer
 };
 
 
-/** @brief This class models a buffer that is replenish by an external supplier
-  * using a reorder-point policy.
-  *
-  * It represents a material buffer where a replenishment is triggered
-  * whenever the inventory drops below the minimum level. The buffer is then
-  * replenished to the maximum inventory level.<br>
-  * A leadtime is taken into account for the replenishments.<br>
-  * The following parameters control this replenishment:
-  *  - <b>MinimumInventory</b>:<br>
-  *    Inventory level triggering a new replenishment.<br>
-  *    The actual inventory can drop below this value.
-  *  - <b>MaximumInventory</b>:<br>
-  *    Inventory level to which we try to replenish.<br>
-  *    The actual inventory can exceed this value.
-  *  - <b>LeadTime</b>:<br>
-  *    Time taken between placing the purchase order with the supplier and the
-  *    delivery of the material.
-  *
-  * Using the additional parameters described below the replenishments can be
-  * controlled in more detail. The resulting inventory profile can end up
-  * to be completely different from the classical saw-tooth pattern!
-  *
-  * The timing of the replenishments can be constrained by the following
-  * parameters:
-  *  - <b>MinimumInterval</b>:<br>
-  *    Minimum time between replenishments.<br>
-  *    The order quantity will be increased such that it covers at least
-  *    the demand in the minimum interval period. The actual inventory can
-  *    exceed the target set by the MinimumInventory parameter.
-  *  - <b>MaximumInterval</b>:<br>
-  *    Maximum time between replenishments.<br>
-  *    The order quantity will replenish to an inventory value less than the
-  *    maximum when this maximum interval is reached.
-  * When the minimum and maximum interval are equal we basically define a fixed
-  * schedule replenishment policy.
-  *
-  * The quantity of the replenishments can be constrained by the following
-  * parameters:
-  *  - <b>MinimumQuantity</b>:<br>
-  *    Minimum quantity for a replenishment.<br>
-  *    This parameter can cause the actual inventory to exceed the target set
-  *    by the MinimumInventory parameter.
-  *  - <b>MaximumQuantity</b>:<br>
-  *    Maximum quantity for a replenishment.<br>
-  *    This parameter can cause the maximum inventory target never to be
-  *    reached.
-  *  - <b>MultipleQuantity</b>:<br>
-  *    All replenishments are rounded up to a multiple of this value.
-  * When the minimum and maximum quantity are equal we basically define a fixed
-  * quantity replenishment policy.
-  */
-class BufferProcure : public Buffer
-{
-  public:
-    virtual void solve(Solver &s, void* v = nullptr) const {s.solve(this,v);}
-    virtual const MetaClass& getType() const {return *metadata;}
-    static int initialize();
-
-    /** Default constructor. */
-    explicit BufferProcure()
-    {
-      initType(metadata);
-    }
-
-    static const MetaClass* metadata;
-
-    /** Return the purchasing leadtime. */
-    Duration getLeadTime() const
-    {
-      return leadtime;
-    }
-
-    /** Update the procurement leadtime. */
-    void setLeadTime(Duration p)
-    {
-      if (p<0L)
-        throw DataException("Procurement buffer can't have a negative lead time");
-      if (!getProducingOperation())
-        static_cast<OperationFixedTime*>(getOperation())->setDuration(p);
-      leadtime = p;
-    }
-
-    /** Return the release time fence. */
-    Duration getFence() const
-    {
-      return fence;
-    }
-
-    /** Update the release time fence. */
-    void setFence(Duration p)
-    {
-      if (!getProducingOperation())
-        getOperation()->setFence(p);
-      fence = p;
-    }
-
-    /** Return the inventory level that will trigger creation of a
-      * purchasing.
-      */
-    double getMinimumInventory() const
-    {
-      return getFlowPlans().getMin(Date::infiniteFuture);
-    }
-
-    /** Update the inventory level that will trigger the creation of a
-      * replenishment.<br>
-      * Because of the replenishment leadtime, the actual inventory will drop
-      * below this value. It is up to the user to set an appropriate minimum
-      * value.
-      */
-    void setMinimumInventory(double f)
-    {
-      if (f<0)
-        throw DataException("Procurement buffer can't have a negative minimum inventory");
-      flowplanlist::EventMinQuantity* min = getFlowPlans().getMinEvent(Date::infiniteFuture);
-      if (min)
-        min->setMin(f);
-      else
-      {
-        // Create and insert a new minimum event
-        min = new flowplanlist::EventMinQuantity(Date::infinitePast, &getFlowPlans(), f);
-        getFlowPlans().insert(min);
-      }
-      // The minimum is increased over the maximum: auto-increase the maximum.
-      if (getFlowPlans().getMax(Date::infiniteFuture) < f)
-        setMaximumInventory(f);
-    }
-
-    /** Return the maximum inventory level to which we wish to replenish. */
-    double getMaximumInventory() const
-    {
-      return getFlowPlans().getMax(Date::infiniteFuture);
-    }
-
-    /** Update the maximum inventory level to which we plan to replenish.<br>
-      * This is not a hard limit - other parameters can make that the actual
-      * inventory either never reaches this value or always exceeds it.
-      */
-    void setMaximumInventory(double f)
-    {
-      if (f<0)
-        throw DataException("Procurement buffer can't have a negative maximum inventory");
-      flowplanlist::EventMaxQuantity* max = getFlowPlans().getMaxEvent(Date::infiniteFuture);
-      if (max)
-        max->setMax(f);
-      else
-      {
-        // Create and insert a new maximum event
-        max = new flowplanlist::EventMaxQuantity(Date::infinitePast, &getFlowPlans(), f);
-        getFlowPlans().insert(max);
-      }
-      // The maximum is lowered below the minimum: auto-decrease the minimum
-      if (f < getFlowPlans().getMin(Date::infiniteFuture))
-        setMinimumInventory(f);
-    }
-
-    /** Return the minimum quantity of a purchasing operation. */
-    double getSizeMinimum() const
-    {
-      return size_minimum;
-    }
-
-    /** Update the minimum replenishment quantity. */
-    void setSizeMinimum(double f)
-    {
-      if (f<0)
-        throw DataException("Procurement buffer can't have a negative minimum size");
-      size_minimum = f;
-      if (!getProducingOperation())
-        getOperation()->setSizeMinimum(f);
-      // minimum is increased over the maximum: auto-increase the maximum
-      if (size_maximum < size_minimum) size_maximum = size_minimum;
-    }
-
-    /** Return the maximum quantity of a purchasing operation. */
-    double getSizeMaximum() const
-    {
-      return size_maximum;
-    }
-
-    /** Update the maximum replenishment quantity. */
-    void setSizeMaximum(double f)
-    {
-      if (f<0)
-        throw DataException("Procurement buffer can't have a negative maximum size");
-      size_maximum = f;
-      if (!getProducingOperation())
-        getOperation()->setSizeMaximum(f);
-      // maximum is lowered below the minimum: auto-decrease the minimum
-      if (size_maximum < size_minimum) size_minimum = size_maximum;
-    }
-
-    /** Return the multiple quantity of a purchasing operation. */
-    double getSizeMultiple() const
-    {
-      return size_multiple;
-    }
-
-    /** Update the multiple quantity. */
-    void setSizeMultiple(double f)
-    {
-      if (f<0)
-        throw DataException("Procurement buffer can't have a negative multiple size");
-      size_multiple = f;
-      if (!getProducingOperation())
-        getOperation()->setSizeMultiple(f);
-    }
-
-    /** Returns the operation that is automatically created to represent the
-      * procurements.
-      */
-    Operation* getOperation() const;
-
-    template<class Cls> static inline void registerFields(MetaClass* m)
-    {
-      m->addDurationField<Cls>(Tags::leadtime, &Cls::getLeadTime, &Cls::setLeadTime);
-      m->addDurationField<Cls>(Tags::fence, &Cls::getFence, &Cls::setFence);
-      m->addDoubleField<Cls>(Tags::size_maximum, &Cls::getSizeMaximum, &Cls::setSizeMaximum, DBL_MAX);
-      m->addDoubleField<Cls>(Tags::size_minimum, &Cls::getSizeMinimum, &Cls::setSizeMinimum);
-      m->addDoubleField<Cls>(Tags::size_multiple, &Cls::getSizeMultiple, &Cls::setSizeMultiple);
-      m->addDoubleField<Cls>(Tags::mininventory, &Cls::getMinimumInventory, &Cls::setMinimumInventory);
-      m->addDoubleField<Cls>(Tags::maxinventory, &Cls::getMaximumInventory, &Cls::setMaximumInventory);
-    }
-
-  private:
-    /** Purchasing leadtime.<br>
-      * Within this leadtime fence no additional purchase orders can be generated.
-      * TODO The lead time should be a property of the operation, not the buffer.
-      */
-    Duration leadtime;
-
-    /** Time window from the current date in which all procurements are expected
-      * to be released.
-      * TODO The fence should be a property of the operation, not the buffer.
-      */
-    Duration fence;
-
-    /** Minimum purchasing quantity. */
-    double size_minimum = 0.0;
-
-    /** Maximum purchasing quantity.<br>
-      * The default value is 0, meaning no maximum limit.
-      */
-    double size_maximum = DBL_MAX;
-
-    /** Purchases are always rounded up to a multiple of this quantity.<br>
-      * The default value is 0, meaning no multiple needs to be applied.
-      */
-    double size_multiple = 0.0;
-
-    /** A pointer to the procurement operation. */
-    Operation* oper = nullptr;
-};
-
-
 /** @brief This class defines a material flow to/from a buffer, linked with an
   * operation. This default implementation plans the material flow at the
   * start of the operation, after the setup time has been completed.
@@ -5880,13 +5611,13 @@ class Flow : public Object, public Association<Operation,Buffer,Flow>::Node,
     /** Returns true if this flow consumes material from the buffer. */
     bool isConsumer() const
     {
-      return quantity < 0;
+      return quantity < 0 || quantity_fixed < 0;
     }
 
     /** Returns true if this flow produces material into the buffer. */
     bool isProducer() const
     {
-      return quantity >= 0;
+      return quantity > 0 || quantity_fixed > 0 || (quantity == 0 && quantity_fixed == 0);
     }
 
     /** Returns the material flow PER UNIT of the operationplan. */
@@ -5903,6 +5634,28 @@ class Flow : public Object, public Association<Operation,Buffer,Flow>::Node,
     void setQuantity(double f)
     {
       quantity = f;
+      if ((quantity > 0.0 && quantity_fixed < 0)
+        || (quantity < 0.0 && quantity_fixed > 0))
+        throw DataException("Quantity and quantity_fixed must have equal sign");
+    }
+
+    /** Returns the CONSTANT material flow PER UNIT of the operationplan. */
+    double getQuantityFixed() const
+    {
+      return quantity_fixed;
+    }
+
+    /** Updates the CONSTANT material flow of the operationplan. Existing
+      * flowplans are NOT updated to take the new quantity in effect. Only new
+      * operationplans and updates to existing ones will use the new quantity
+      * value.
+      */
+    void setQuantityFixed(double f)
+    {
+      quantity_fixed = f;
+      if ((quantity > 0.0 && quantity_fixed < 0)
+        || (quantity < 0.0 && quantity_fixed > 0))
+        throw DataException("Quantity and quantity_fixed must have equal sign");
     }
 
     /** Returns the buffer. */
@@ -6012,6 +5765,7 @@ class Flow : public Object, public Association<Operation,Buffer,Flow>::Node,
       m->addPointerField<Cls, Item>(Tags::item, &Cls::getItem, &Cls::setItem, MANDATORY + PARENT);
       m->addPointerField<Cls, Buffer>(Tags::buffer, &Cls::getBuffer, &Cls::setBuffer, DONT_SERIALIZE + PARENT);
       m->addDoubleField<Cls>(Tags::quantity, &Cls::getQuantity, &Cls::setQuantity);
+      m->addDoubleField<Cls>(Tags::quantity_fixed, &Cls::getQuantityFixed, &Cls::setQuantityFixed);
       m->addIntField<Cls>(Tags::priority, &Cls::getPriority, &Cls::setPriority, 1);
       m->addStringField<Cls>(Tags::name, &Cls::getName, &Cls::setName);
       m->addEnumField<Cls, SearchMode>(Tags::search, &Cls::getSearch, &Cls::setSearch, PRIORITY);
@@ -6038,8 +5792,11 @@ class Flow : public Object, public Association<Operation,Buffer,Flow>::Node,
       */
     Item *item = nullptr;
 
-    /** Quantity of the flow. */
+    /** Variable quantity of the material consumption/production. */
     double quantity = 0.0;
+
+    /** Constant quantity of the material consumption/production. */
+    double quantity_fixed = 0.0;
 
     /** Mode to select the preferred alternates. */
     SearchMode search = PRIORITY;
@@ -6079,48 +5836,6 @@ class FlowEnd : public Flow
 
     /** This constructor is called from the plan begin_element function. */
     explicit FlowEnd() {}
-
-    /** This method holds the logic the compute the date and quantity of a flowplan. */
-    virtual pair<Date, double> getFlowplanDateQuantity(const FlowPlan*) const;
-
-    virtual void solve(Solver &s, void* v = nullptr) const {s.solve(this,v);}
-
-    virtual const MetaClass& getType() const {return *metadata;}
-    static const MetaClass* metadata;
-};
-
-
-/** @brief This class represents a flow at end date of the
-  * operation and with a fiwed quantity.
-  */
-class FlowFixedEnd : public FlowEnd
-{
-  public:
-    /** Constructor. */
-    explicit FlowFixedEnd(Operation* o, Buffer* b, double q) : FlowEnd(o,b,q) {}
-
-    /** This constructor is called from the plan begin_element function. */
-    explicit FlowFixedEnd() {}
-
-    /** This method holds the logic the compute the date and quantity of a flowplan. */
-    virtual pair<Date, double> getFlowplanDateQuantity(const FlowPlan*) const;
-
-    virtual const MetaClass& getType() const {return *metadata;}
-    static const MetaClass* metadata;
-};
-
-
-/** @brief This class represents a flow at start date of the operation
-  * (after the setup time has been completed) and with a fixed quantity.
-  */
-class FlowFixedStart : public FlowStart
-{
-  public:
-    /** Constructor. */
-    explicit FlowFixedStart(Operation* o, Buffer* b, double q) : FlowStart(o,b,q) {}
-
-    /** This constructor is called from the plan begin_element function. */
-    explicit FlowFixedStart() {}
 
     /** This method holds the logic the compute the date and quantity of a flowplan. */
     virtual pair<Date, double> getFlowplanDateQuantity(const FlowPlan*) const;
@@ -6305,6 +6020,10 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand
 
     /** Update the status of the operationplanmaterial. */
     void setStatus(const string&);
+
+    /** Returns the duration before the current onhand will be completely consumed. */
+    Duration getPeriodOfCover() const;
+
     /** Destructor. */
     virtual ~FlowPlan()
     {
@@ -6317,6 +6036,7 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand
     {
       setQuantity(quantity, false, true, true);
     }
+
     /** Updates the quantity of the flowplan by changing the quantity of the
       * operationplan owning this flowplan.<br>
       * The boolean parameter is used to control whether to round up (false)
@@ -6328,8 +6048,12 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand
       *  - 0: keep the flowplan at its current date during the resize
       *  - 1: keep the start date constant when resizing the flowplan
       *  - 2: keep the end date constant when resizing the flowplan
+      *
+      * The return value is a pair with:
+      *   1) flowplan quantity
+      *   2) operationplan quantity
       */
-    double setQuantity(
+    pair<double, double> setQuantity(
       double quantity, bool rounddown=false, bool update=true,
       bool execute=true, short mode = 2
       );
@@ -6373,6 +6097,7 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand
         throw DataException("Unhandled case: Cannot change a date of a proposed FlowPlan");
       }
     }
+
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
       m->addDateField<Cls>(Tags::date, &Cls::getDate, &Cls::setDate);
@@ -6380,6 +6105,7 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand
       m->addDoubleField<Cls>(Tags::onhand, &Cls::getOnhand, nullptr, -666);
       m->addDoubleField<Cls>(Tags::minimum, &Cls::getMin);
       m->addDoubleField<Cls>(Tags::maximum, &Cls::getMax);
+      m->addDurationField<Cls>(Tags::period_of_cover, &Cls::getPeriodOfCover, nullptr);
       m->addStringField<Cls>(Tags::status, &Cls::getStatus, &Cls::setStatus, "proposed");
       m->addPointerField<Cls, OperationPlan>(Tags::operationplan, &Cls::getOperationPlan, &Cls::setOperationPlan, BASE + WRITE_OBJECT + PARENT);
       m->addPointerField<Cls, Flow>(Tags::flow, &Cls::getFlow, &Cls::setFlow, DONT_SERIALIZE);
@@ -6847,6 +6573,16 @@ class Resource : public HasHierarchy<Resource>,
         throw DataException("Resource efficiency must be positive");
     }
 
+    Calendar* getEfficiencyCalendar() const
+    {
+      return efficiency_calendar;
+    }
+
+    void setEfficiencyCalendar(Calendar* c)
+    {
+      efficiency_calendar = c;
+    }
+
     /** Returns the cost of using 1 unit of this resource for 1 hour.<br>
       * The default value is 0.0.
       */
@@ -7014,7 +6750,10 @@ class Resource : public HasHierarchy<Resource>,
         // Updated existing event
         setup->setSetup(s);
       else
+      {
         setup = new SetupEvent(getLoadPlans(), Date::infinitePast, s);
+        getLoadPlans().insert(setup);
+      }
     }
 
     /** Return the setup of the resource on a specific date. 
@@ -7034,6 +6773,7 @@ class Resource : public HasHierarchy<Resource>,
       m->addDurationField<Cls>(Tags::maxearly, &Cls::getMaxEarly, &Cls::setMaxEarly, defaultMaxEarly);
       m->addDoubleField<Cls>(Tags::cost, &Cls::getCost, &Cls::setCost);
       m->addDoubleField<Cls>(Tags::efficiency, &Cls::getEfficiency, &Cls::setEfficiency, 100.0);
+      m->addPointerField<Cls, Calendar>(Tags::efficiency_calendar, &Cls::getEfficiencyCalendar, &Cls::setEfficiencyCalendar);
       m->addPointerField<Cls, Location>(Tags::location, &Cls::getLocation, &Cls::setLocation);
       m->addStringField<Cls>(Tags::setup, &Cls::getSetupString, &Cls::setSetup);
       m->addPointerField<Cls, SetupMatrix>(Tags::setupmatrix, &Cls::getSetupMatrix, &Cls::setSetupMatrix);
@@ -7075,6 +6815,9 @@ class Resource : public HasHierarchy<Resource>,
 
     /** The efficiency percentage of this resource. */
     double efficiency = 100.0;
+
+    /** Time phased efficiency percentage. */
+    Calendar* efficiency_calendar = nullptr;
 
     /** Maximum inventory buildup allowed in case of capacity shortages. */
     Duration maxearly = defaultMaxEarly;
@@ -7427,6 +7170,11 @@ class Load
       return skill;
     }
 
+    /** Find the preferred resource in a resource pool to assign a load to. 
+      * This method is only useful when the loadplan is not created yet.
+      */
+    Resource* findPreferredResource(Date d) const;
+
     /** This method holds the logic the compute the date of a loadplan. */
     virtual Date getLoadplanDate(const LoadPlan*) const;
 
@@ -7720,7 +7468,7 @@ class Demand
       QUOTE, INQUIRY, OPEN, CLOSED, CANCELED
     };
 
-    typedef slist<OperationPlan*> OperationPlanList;
+    typedef forward_list<OperationPlan*> OperationPlanList;
 
     class DeliveryIterator
     {
@@ -7758,7 +7506,8 @@ class Demand
     {
       size_t tmp = Object::getSize();
       // Add the memory for the list of deliveries: 2 pointers per delivery
-      tmp += deli.size() * 2 * sizeof(OperationPlan*);
+      for (auto iter = deli.begin(); iter != deli.end(); ++iter)
+        tmp += 2 * sizeof(OperationPlan*);
       return tmp;
     }
 
@@ -8158,7 +7907,10 @@ class Demand
     /** Minimum size for a delivery operation plan satisfying this demand. */
     double minShipment = -1.0;
 
-    /** A list of operation plans to deliver this demand. */
+    /** A list of operation plans to deliver this demand. 
+      * The list is sorted by the end date of the deliveries. The sorting is
+      * done lazily in the getDelivery() method.
+      */
     OperationPlanList deli;
 
     /** A list of constraints preventing this demand from being planned in
@@ -9932,11 +9684,6 @@ class CommandCreateOperationPlan : public Command
       if (opplan) opplan->deleteFlowLoads();
     }
 
-    virtual void redo()
-    {
-      if (opplan) opplan->createFlowLoads();
-    }
-
     virtual ~CommandCreateOperationPlan()
     {
       if (opplan) delete opplan;
@@ -9983,23 +9730,11 @@ class CommandDeleteOperationPlan : public Command
       OperationPlan::iterator x(opplan);
       while (OperationPlan* i = x.next())
       {
+        // TODO the recreation of the flows and loads can recreate them on a different 
+        // resource from the pool. This results in a different resource loading, setup time
+        // and duration.
         i->createFlowLoads();
         i->insertInOperationplanList();
-      }
-    }
-
-    virtual void redo()
-    {
-      if (!opplan) return;
-      opplan->deleteFlowLoads();
-      opplan->removeFromOperationplanList();
-      if (opplan->getDemand())
-        opplan->getDemand()->removeDelivery(opplan);
-      OperationPlan::iterator x(opplan);
-      while (OperationPlan* i = x.next())
-      {
-        i->deleteFlowLoads();
-        i->removeFromOperationplanList();
       }
     }
 
@@ -10067,8 +9802,6 @@ class CommandMoveOperationPlan : public Command
     {
       restore(false);
     }
-
-    virtual void redo();
 
     /** Undo the changes.<br>
       * When the argument is true, subcommands for suboperationplans are deleted. */

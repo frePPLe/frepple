@@ -3,7 +3,7 @@ rem Build frePPLe with Microsoft Visual C++ 2015 (aka vc14.0)
 setlocal
 
 rem EDIT THIS SECTION TO MATCH YOUR INSTALLATION
-set PYTHON=C:\develop\python35
+set PYTHON=C:\develop\python36
 set XERCES=C:\develop\xerces-c-3.1.3-x86_64-windows-vc14.0
 set MSBUILD=C:\Program Files (x86)\MSBuild\14.0
 

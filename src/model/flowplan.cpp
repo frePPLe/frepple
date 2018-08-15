@@ -219,7 +219,7 @@ void FlowPlan::setItem(Item* newItem)
 }
 
 
-double FlowPlan::setQuantity(
+pair<double, double> FlowPlan::setQuantity(
   double quantity, bool rounddown, bool update, bool execute, short mode
   )
 {
@@ -242,7 +242,7 @@ double FlowPlan::setQuantity(
       fl->getBuffer()->setChanged();
       fl->getOperation()->setChanged();
     }
-    return qty;
+    return make_pair(quantity, oper->getQuantity());
   }
 
   if (!getFlow()->getEffective().within(getDate()))
@@ -252,7 +252,6 @@ double FlowPlan::setQuantity(
       if (
         mode == 2 
         || (mode == 0 && getFlow()->getType() == *FlowEnd::metadata)
-        || (mode == 0 && getFlow()->getType() == *FlowFixedEnd::metadata)
         )
       {
         oper->getOperation()->setOperationPlanParameters(
@@ -264,7 +263,6 @@ double FlowPlan::setQuantity(
       else if (
         mode == 1 
         || (mode == 0 && getFlow()->getType() == *FlowStart::metadata)
-        || (mode == 0 && getFlow()->getType() == *FlowFixedStart::metadata)
         )
       {
         oper->getOperation()->setOperationPlanParameters(
@@ -274,64 +272,67 @@ double FlowPlan::setQuantity(
         );
       }
     }
-    return 0.0;
+    return make_pair(0.0, 0.0);
   }
-  if (getFlow()->getType() == *FlowFixedEnd::metadata
-    || getFlow()->getType() == *FlowFixedStart::metadata)
+
+  double opplan_quantity;
+  bool less_than_fixed_qty = fabs(quantity) < fabs(getFlow()->getQuantityFixed()) + ROUNDING_ERROR;
+  if (getFlow()->getQuantity() == 0.0 || less_than_fixed_qty)
   {
     // Fixed quantity flows only allow resizing to 0
-    if (quantity == 0.0 && oper->getQuantity() != 0.0)
+    if (less_than_fixed_qty && oper->getQuantity() != 0.0)
     {
-      if (mode == 2 || (mode == 0 && getFlow()->getType() == *FlowFixedEnd::metadata))
-        return oper->getOperation()->setOperationPlanParameters(
-          oper, 0.0,
-          Date::infinitePast, oper->getEnd(),
+      if (mode == 2 || (mode == 0 && getFlow()->getType() == *FlowEnd::metadata))
+        opplan_quantity = oper->getOperation()->setOperationPlanParameters(
+          oper, 0.0, Date::infinitePast, oper->getEnd(),
           true, execute, rounddown
-          ).quantity ? getFlow()->getQuantity() : 0.0;
-      else if (mode == 1 || (mode == 0 && getFlow()->getType() == *FlowFixedStart::metadata))
-        return oper->getOperation()->setOperationPlanParameters(
-          oper, 0.0,
-          oper->getStart(), Date::infinitePast,
+          ).quantity;
+      else if (mode == 1 || (mode == 0 && getFlow()->getType() == *FlowStart::metadata))
+        opplan_quantity = oper->getOperation()->setOperationPlanParameters(
+          oper, 0.0, oper->getStart(), Date::infinitePast,
           false, execute, rounddown
-          ).quantity ? getFlow()->getQuantity() : 0.0;
+          ).quantity;
+      else
+        throw LogicException("Unreachable code reached");
     }
-    else if (quantity != 0.0 && oper->getQuantity() == 0.0)
+    else if (!less_than_fixed_qty && oper->getQuantity() == 0.0)
     {
-      if (mode == 2 || (mode == 0 && getFlow()->getType() == *FlowFixedEnd::metadata))
-        return oper->getOperation()->setOperationPlanParameters(
-          oper,
-          (oper->getOperation()->getSizeMinimum() <= 0) ? 0.001
-            : oper->getOperation()->getSizeMinimum(),
-          Date::infinitePast, oper->getEnd(),
+      if (mode == 2 || (mode == 0 && getFlow()->getType() == *FlowEnd::metadata))
+        opplan_quantity = oper->getOperation()->setOperationPlanParameters(
+          oper, 0.001, Date::infinitePast, oper->getEnd(),
           true, execute, rounddown
-          ).quantity ? getFlow()->getQuantity() : 0.0;
-      else if (mode == 1 || (mode == 0 && getFlow()->getType() == *FlowFixedStart::metadata))
-        return oper->getOperation()->setOperationPlanParameters(
-          oper,
-          (oper->getOperation()->getSizeMinimum() <= 0) ? 0.001
-          : oper->getOperation()->getSizeMinimum(),
-          oper->getStart(), Date::infinitePast,
+          ).quantity;
+      else if (mode == 1 || (mode == 0 && getFlow()->getType() == *FlowStart::metadata))
+        opplan_quantity = oper->getOperation()->setOperationPlanParameters(
+          oper, 0.001, oper->getStart(), Date::infinitePast,
           false, execute, rounddown
-          ).quantity ? getFlow()->getQuantity() : 0.0;
+          ).quantity;
+      else
+        throw LogicException("Unreachable code reached");
     }
   }
   else
   {
-    // Normal, proportional flows
+    // Normal flows with a proportional size
     if (mode == 2 || (mode == 0 && getFlow()->getType() == *FlowEnd::metadata))
-      return oper->getOperation()->setOperationPlanParameters(
-        oper, quantity / getFlow()->getQuantity(),
+      opplan_quantity = oper->getOperation()->setOperationPlanParameters(
+        oper, (quantity - getFlow()->getQuantityFixed()) / getFlow()->getQuantity(),
         Date::infinitePast, oper->getEnd(),
         true, execute, rounddown
-        ).quantity * getFlow()->getQuantity();
+        ).quantity;
     else if (mode == 1 || (mode == 0 && getFlow()->getType() == *FlowStart::metadata))
-      return oper->getOperation()->setOperationPlanParameters(
-        oper, quantity / getFlow()->getQuantity(),
+      opplan_quantity = oper->getOperation()->setOperationPlanParameters(
+        oper, (quantity - getFlow()->getQuantityFixed()) / getFlow()->getQuantity(),
         oper->getStart(), Date::infinitePast,
         false, execute, rounddown
-        ).quantity * getFlow()->getQuantity();
+        ).quantity;
+    else
+      throw LogicException("Unreachable code reached");
   }
-  throw LogicException("Unreachable code reached");
+  if (opplan_quantity)
+    return make_pair(opplan_quantity * getFlow()->getQuantity() + getFlow()->getQuantityFixed(), opplan_quantity);
+  else
+    return make_pair(0.0, 0.0);
 }
 
 
@@ -405,5 +406,25 @@ Object* FlowPlan::reader(
   return nullptr;
 }
 
+
+Duration FlowPlan::getPeriodOfCover() const
+{
+  double left_for_consumption = getOnhand();
+  if (left_for_consumption < ROUNDING_ERROR)
+    return Duration(0L);
+  auto fpiter = getBuffer()->getFlowPlans().begin(this); 
+  ++fpiter;
+  while (fpiter != getBuffer()->getFlowPlans().end())
+  {    
+    if (fpiter->getQuantity() < 0.0)
+    {
+      left_for_consumption += fpiter->getQuantity();
+      if (left_for_consumption < ROUNDING_ERROR)
+        return fpiter->getDate() - getDate();
+    }
+    ++fpiter;
+  }
+  return Duration(999L * 86400L);
+}
 
 } // end namespace

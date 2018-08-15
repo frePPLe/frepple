@@ -113,7 +113,7 @@ class ReportByDemand(BaseReport):
   detail_post_title = _('why short or late?')
 
   @ classmethod
-  def basequeryset(reportclass, request, args, kwargs):
+  def basequeryset(reportclass, request, *args, **kwargs):
     if args and args[0]:
       request.session['lasttab'] = 'constraint'
       return Constraint.objects.all().filter(demand__exact=args[0])
@@ -128,7 +128,7 @@ class ReportByBuffer(BaseReport):
   detailmodel = Buffer
 
   @ classmethod
-  def basequeryset(reportclass, request, args, kwargs):
+  def basequeryset(reportclass, request, *args, **kwargs):
     if args and args[0]:
       request.session['lasttab'] = 'constraint'
       return Constraint.objects.all().filter(owner__exact=args[0], entity__exact='material')
@@ -143,7 +143,7 @@ class ReportByOperation(BaseReport):
   detailmodel = Operation
 
   @ classmethod
-  def basequeryset(reportclass, request, args, kwargs):
+  def basequeryset(reportclass, request, *args, **kwargs):
     if args and args[0]:
       request.session['lasttab'] = 'constraint'
       return Constraint.objects.all().filter(owner__exact=args[0], entity__exact='operation')
@@ -158,7 +158,7 @@ class ReportByResource(BaseReport):
   detailmodel = Resource
 
   @ classmethod
-  def basequeryset(reportclass, request, args, kwargs):
+  def basequeryset(reportclass, request, *args, **kwargs):
     if args and args[0]:
       request.session['lasttab'] = 'constraint'
       return Constraint.objects.all().filter(owner__exact=args[0], entity__exact='capacity')

@@ -16,11 +16,11 @@
 #
 import os
 import logging
-import uuid 
+import uuid
 from time import time
 from datetime import datetime
 
-#uncomment below line to use checkCycles 
+#uncomment below line to use checkCycles
 #import networkx
 
 
@@ -127,7 +127,7 @@ class checkBuckets(CheckTask):
 
 
 @PlanTaskRegistry.register
-# Warning: Deactivated by default. Requires the installation of networkx package 
+# Warning: Deactivated by default. Requires the installation of networkx package
 class checkCycles(CheckTask):
   description = "Checking for cycles"
   sequence = 85
@@ -135,40 +135,39 @@ class checkCycles(CheckTask):
   @classmethod
   def getWeight(cls, database=DEFAULT_DB_ALIAS, **kwargs):
     return -1
-  
+
   @classmethod
   def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
     import frepple
 
     with connections[database].cursor() as cursor:      
-      
+
       # Create Directed Graph
       G=networkx.DiGraph()
-      
+
       # Let's try to be a bit smart here.
       # There are two kinds of possible cycles, cycles within a single location
       # and cycles across multiple locations
       # For cycles across multiple locations, this can only happen if the locations
       # in itemdistribution (without taking the items into consideration) present a cycle
-      
+
       cursor.execute('select distinct origin_id, location_id from itemdistribution')
       # Adding edges to the directed graph
       G.add_edges_from(cursor.fetchall())
-      
+
       locationCycles = list(networkx.simple_cycles(G))
       foundLocationCycle = (len(locationCycles)) > 0
-      
 
       if foundLocationCycle:
         # No luck, there are cycles found in the itemdistribution locations
         # Let's shoot for the full query
         # but limited to the locations that present a cycle
         # This can be a bit optimized but let's start simple
-        
+
         locationList = []
         for i in locationCycles:
-          locationList.extend(i)  
-          
+          locationList.extend(i)
+
         cursor.execute('''
          select item.name||' @ '||origin_id, item.name||' @ '||location_id from itemdistribution
          inner join item do_item on do_item.name = itemdistribution.item_id
@@ -180,60 +179,61 @@ class checkCycles(CheckTask):
          from operation
          inner join operationmaterial frm_om on frm_om.operation_id = operation.name and frm_om.quantity < 0
          inner join operationmaterial to_om on to_om.operation_id = operation.name and to_om.quantity > 0
-         where operation.location_id in (%s)     
+         where operation.location_id in (%s)
          union
          select all_op.item_id||' @ '||operation.location_id, last_op.item_id||' @ '||operation.location_id from operation
-         inner join suboperation all_subop 
-           on all_subop.operation_id = operation.name 
-         inner join suboperation last_subop 
-           on last_subop.operation_id = operation.name 
+         inner join suboperation all_subop
+           on all_subop.operation_id = operation.name
+         inner join suboperation last_subop
+           on last_subop.operation_id = operation.name
            and not exists (select 1 from suboperation where operation_id = operation.name and priority > last_subop.priority )
          inner join operationmaterial all_op on all_op.operation_id = all_subop.suboperation_id and all_op.quantity < 0
          inner join operationmaterial last_op on last_op.operation_id = last_subop.suboperation_id and last_op.quantity > 0
          where operation.type = 'routing' and operation.location_id in (%s)
-         ''' % (', '.join(['%s']*len(locationList)),
-                ', '.join(['%s']*len(locationList)),
-                ', '.join(['%s']*len(locationList)),
-                ', '.join(['%s']*len(locationList)))
-                , locationList + locationList + locationList + locationList)        
+         ''' % (
+           ', '.join(['%s'] * len(locationList)),
+           ', '.join(['%s'] * len(locationList)),
+           ', '.join(['%s'] * len(locationList)),
+           ', '.join(['%s'] * len(locationList))),
+           locationList + locationList + locationList + locationList
+           )
         G.clear()
         G.add_edges_from(cursor.fetchall())
         foundCycles = False
         for i in list(networkx.simple_cycles(G)):
-         print("Found a cycle : %s" % i  )
-         foundCycles = True
-         
+          print("Found a cycle : %s" % i  )
+          foundCycles = True
+
         if (foundCycles):
           raise ValueError("Stopping execution because of cycles found in the model (see log file)")
-      
+
       # Second cycle possibility, within a single location and we need operations for this to happen
       cursor.execute('''
         select frm_om.item_id||' @ '||operation.location_id, to_om.item_id||' @ '||operation.location_id
         from operation
         inner join operationmaterial frm_om on frm_om.operation_id = operation.name and frm_om.quantity < 0
-        inner join operationmaterial to_om on to_om.operation_id = operation.name and to_om.quantity > 0        
+        inner join operationmaterial to_om on to_om.operation_id = operation.name and to_om.quantity > 0
         union
         select all_op.item_id||' @ '||operation.location_id, last_op.item_id||' @ '||operation.location_id from operation
-        inner join suboperation all_subop 
-          on all_subop.operation_id = operation.name 
-        inner join suboperation last_subop 
-          on last_subop.operation_id = operation.name 
+        inner join suboperation all_subop
+          on all_subop.operation_id = operation.name
+        inner join suboperation last_subop
+          on last_subop.operation_id = operation.name
           and not exists (select 1 from suboperation where operation_id = operation.name and priority > last_subop.priority )
         inner join operationmaterial all_op on all_op.operation_id = all_subop.suboperation_id and all_op.quantity < 0
         inner join operationmaterial last_op on last_op.operation_id = last_subop.suboperation_id and last_op.quantity > 0
-        where operation.type = 'routing' 
+        where operation.type = 'routing'
       ''')
-      
+
       G.clear()
       G.add_edges_from(cursor.fetchall())
       foundCycles = False
       for i in list(networkx.simple_cycles(G)):
         print("Found a cycle : %s" % i  )
         foundCycles = True
-      
+
       if (foundCycles):
         raise ValueError("Stopping execution because of cycles found in the model (see log file)")
-        
 
 
 @PlanTaskRegistry.register
@@ -279,10 +279,8 @@ class loadLocations(LoadTask):
     import frepple
 
     if cls.filter:
-      filter_and = "and %s " % cls.filter
       filter_where = "where %s " % cls.filter
     else:
-      filter_and = ""
       filter_where = ""
 
     with connections[database].chunked_cursor() as cursor:
@@ -316,10 +314,8 @@ class loadCalendars(LoadTask):
     import frepple
 
     if cls.filter:
-      filter_and = "and %s " % cls.filter
       filter_where = "where %s " % cls.filter
     else:
-      filter_and = ""
       filter_where = ""
 
     with connections[database].chunked_cursor() as cursor:
@@ -355,10 +351,8 @@ class loadCalendarBuckets(LoadTask):
     import frepple
 
     if cls.filter:
-      filter_and = "and %s " % cls.filter
       filter_where = "where %s " % cls.filter
     else:
-      filter_and = ""
       filter_where = ""
 
     with connections[database].chunked_cursor() as cursor:
@@ -423,10 +417,8 @@ class loadCustomers(LoadTask):
     import frepple
 
     if cls.filter:
-      filter_and = "and %s " % cls.filter
       filter_where = "where %s " % cls.filter
     else:
-      filter_and = ""
       filter_where = ""
 
     with connections[database].chunked_cursor() as cursor:
@@ -459,10 +451,8 @@ class loadSuppliers(LoadTask):
     import frepple
 
     if cls.filter:
-      filter_and = "and %s " % cls.filter
       filter_where = "where %s " % cls.filter
     else:
-      filter_and = ""
       filter_where = ""
 
     with connections[database].chunked_cursor() as cursor:
@@ -495,10 +485,8 @@ class loadOperations(LoadTask):
     import frepple
 
     if cls.filter:
-      filter_and = "and %s " % cls.filter
       filter_where = "where %s " % cls.filter
     else:
-      filter_and = ""
       filter_where = ""
 
     with connections[database].cursor() as cursor:
@@ -643,10 +631,8 @@ class loadSuboperations(LoadTask):
 
     if cls.filter:
       filter_and = "and %s " % cls.filter
-      filter_where = "where %s " % cls.filter
     else:
       filter_and = ""
-      filter_where = ""
 
     with connections[database].chunked_cursor() as cursor:
       cnt = 0
@@ -692,10 +678,8 @@ class loadItems(LoadTask):
     import frepple
 
     if cls.filter:
-      filter_and = "and %s " % cls.filter
       filter_where = "where %s " % cls.filter
     else:
-      filter_and = ""
       filter_where = ""
 
     with connections[database].chunked_cursor() as cursor:
@@ -740,10 +724,8 @@ class loadItemSuppliers(LoadTask):
     import frepple
 
     if cls.filter:
-      filter_and = "and %s " % cls.filter
       filter_where = "where %s " % cls.filter
     else:
-      filter_and = ""
       filter_where = ""
 
     with connections[database].chunked_cursor() as cursor:
@@ -782,7 +764,7 @@ class loadItemSuppliers(LoadTask):
             curitemsupplier.size_multiple = i[4]
           if i[5]:
             curitemsupplier.cost = i[5]
-          if i[6]:
+          if i[6] is not None:
             curitemsupplier.priority = i[6]
           if i[7]:
             curitemsupplier.effective_start = i[7]
@@ -806,10 +788,8 @@ class loadItemDistributions(LoadTask):
     import frepple
 
     if cls.filter:
-      filter_and = "and %s " % cls.filter
       filter_where = "where %s " % cls.filter
     else:
-      filter_and = ""
       filter_where = ""
 
     with connections[database].chunked_cursor() as cursor:
@@ -848,7 +828,7 @@ class loadItemDistributions(LoadTask):
             curitemdistribution.size_multiple = i[4]
           if i[5]:
             curitemdistribution.cost = i[5]
-          if i[6]:
+          if i[6] is not None:
             curitemdistribution.priority = i[6]
           if i[7]:
             curitemdistribution.effective_start = i[7]
@@ -872,10 +852,8 @@ class loadBuffers(LoadTask):
     import frepple
 
     if cls.filter:
-      filter_and = "and %s " % cls.filter
       filter_where = "where %s " % cls.filter
     else:
-      filter_and = ""
       filter_where = ""
 
     with connections[database].chunked_cursor() as cursor:
@@ -925,10 +903,8 @@ class loadSetupMatrices(LoadTask):
     import frepple
 
     if cls.filter:
-      filter_and = "and %s " % cls.filter
       filter_where = "where %s " % cls.filter
     else:
-      filter_and = ""
       filter_where = ""
 
     with connections[database].chunked_cursor() as cursor:
@@ -984,10 +960,8 @@ class loadResources(LoadTask):
     import frepple
 
     if cls.filter:
-      filter_and = "and %s " % cls.filter
       filter_where = "where %s " % cls.filter
     else:
-      filter_and = ""
       filter_where = ""
 
     with connections[database].chunked_cursor() as cursor:
@@ -998,7 +972,7 @@ class loadResources(LoadTask):
         SELECT
           name, description, maximum, maximum_calendar_id, location_id, type,
           cost, maxearly, setup, setupmatrix_id, category, subcategory,
-          owner_id, source, available_id, efficiency
+          owner_id, source, available_id, efficiency, efficiency_calendar_id
         FROM %s %s
         ORDER BY lvl ASC, name
         ''' % (connections[cursor.db.alias].ops.quote_name('resource'), filter_where) )
@@ -1013,22 +987,20 @@ class loadResources(LoadTask):
             x = frepple.resource_buckets(
               name=i[0], description=i[1], category=i[10], subcategory=i[11], source=i[13]
               )
-            if i[3]:
-              x.maximum_calendar = frepple.calendar(name=i[3])
             if i[7] is not None:
               x.maxearly = i[7]
           elif not i[5] or i[5] == "default":
             x = frepple.resource_default(
               name=i[0], description=i[1], category=i[10], subcategory=i[11], source=i[13]
               )
-            if i[3]:
-              x.maximum_calendar = frepple.calendar(name=i[3])
             if i[7] is not None:
               x.maxearly = i[7].total_seconds()
             if i[2] is not None:
               x.maximum = i[2]
           else:
             raise ValueError("Resource type '%s' not recognized" % i[5])
+          if i[3]:
+            x.maximum_calendar = frepple.calendar(name=i[3])
           if i[4]:
             x.location = frepple.location(name=i[4])
           if i[6]:
@@ -1043,6 +1015,8 @@ class loadResources(LoadTask):
             x.available = frepple.calendar(name=i[14])
           if i[15] is not None:
             x.efficiency = i[15]
+          if i[16]:
+            x.efficiency_calendar = frepple.calendar(name=i[16])
         except Exception as e:
           logger.error("**** %s ****" % e)
       logger.info('Loaded %d resources in %.2f seconds' % (cnt, time() - starttime))
@@ -1059,10 +1033,8 @@ class loadResourceSkills(LoadTask):
     import frepple
 
     if cls.filter:
-      filter_and = "and %s " % cls.filter
       filter_where = "where %s " % cls.filter
     else:
-      filter_and = ""
       filter_where = ""
 
     with connections[database].chunked_cursor() as cursor:
@@ -1101,10 +1073,8 @@ class loadOperationMaterials(LoadTask):
     import frepple
 
     if cls.filter:
-      filter_and = "and %s " % cls.filter
       filter_where = "where %s " % cls.filter
     else:
-      filter_and = ""
       filter_where = ""
 
     with connections[database].chunked_cursor() as cursor:
@@ -1115,7 +1085,7 @@ class loadOperationMaterials(LoadTask):
       cursor.execute('''
         SELECT
           operation_id, item_id, quantity, type, effective_start,
-          effective_end, name, priority, search, source, transferbatch
+          effective_end, name, priority, search, source, transferbatch, quantity_fixed
         FROM operationmaterial %s
         ORDER BY operation_id, item_id
         ''' % filter_where)
@@ -1126,6 +1096,7 @@ class loadOperationMaterials(LoadTask):
             operation=frepple.operation(name=i[0]),
             item=frepple.item(name=i[1]),
             quantity=i[2],
+            quantity_fixed=i[11],
             type="flow_%s" % i[3],
             source=i[9]
             )
@@ -1181,10 +1152,8 @@ class loadOperationResources(LoadTask):
     import frepple
 
     if cls.filter:
-      filter_and = "and %s " % cls.filter
       filter_where = "where %s " % cls.filter
     else:
-      filter_and = ""
       filter_where = ""
 
     with connections[database].chunked_cursor() as cursor:
@@ -1239,10 +1208,8 @@ class loadDemand(LoadTask):
 
     if cls.filter:
       filter_and = "and %s " % cls.filter
-      filter_where = "where %s " % cls.filter
     else:
       filter_and = ""
-      filter_where = ""
 
     with connections[database].chunked_cursor() as cursor:
       cnt = 0
@@ -1292,10 +1259,8 @@ class loadOperationPlans(LoadTask):
 
     if cls.filter:
       filter_and = "and %s " % cls.filter
-      filter_where = "where %s " % cls.filter
     else:
       filter_and = ""
-      filter_where = ""
 
     with connections[database].chunked_cursor() as cursor:
       if 'supply' in os.environ:

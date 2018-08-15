@@ -17,7 +17,7 @@ PREREQUISITES
 -------------
 
 1. Install Visual Studio 2015 (aka vc14)
-2. Install xerces-c 3.1.3*
+2. Install xerces-c 3.1.3
    Compile the project before compiling frePPLe.
 3. Install Python 3.5 or higher
 
@@ -29,8 +29,7 @@ A convenience build script is provided to compile frePPle.
 
 1. Edit the file build.bat
    The following variables need to be edited:
-     - DOTNET: Installation directory of the Microsoft .NET framework
-     - VC: Installation directory of Visual Studio C++ 2010
+     - MSBUILD: Installation directory of Visual Studio C++ 2015
      - PYTHON: Installation directory of the Python language
      - XERCES: Installation directory of the Xerces-C library
 

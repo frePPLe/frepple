@@ -350,12 +350,6 @@ CommandMoveOperationPlan::CommandMoveOperationPlan
 }
 
 
-void CommandMoveOperationPlan::redo()
-{
-  throw LogicException("Not implemented");
-}
-
-
 void CommandMoveOperationPlan::restore(bool del)
 {
   // Restore all suboperationplans and (optionally) delete the subcommands
@@ -379,11 +373,11 @@ void CommandMoveOperationPlan::restore(bool del)
 // DELETE OPERATIONPLAN
 //
 
-CommandDeleteOperationPlan::CommandDeleteOperationPlan
-(OperationPlan* o) : opplan(o)
+CommandDeleteOperationPlan::CommandDeleteOperationPlan(OperationPlan* o) : opplan(o)
 {
   // Validate input
-  if (!o) return;
+  if (!o)
+    return;
 
   // Avoid deleting locked operationplans
   if (!o->getProposed())
@@ -396,7 +390,16 @@ CommandDeleteOperationPlan::CommandDeleteOperationPlan
   opplan = opplan->getTopOwner();
 
   // Delete all flowplans and loadplans, and unregister from operationplan list
-  redo();
+  opplan->deleteFlowLoads();
+  opplan->removeFromOperationplanList();
+  if (opplan->getDemand())
+    opplan->getDemand()->removeDelivery(opplan);
+  OperationPlan::iterator x(opplan);
+  while (OperationPlan* i = x.next())
+  {
+    i->deleteFlowLoads();
+    i->removeFromOperationplanList();
+  }
 }
 
 

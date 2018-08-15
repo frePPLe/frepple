@@ -1,5 +1,5 @@
 ==================
-Item Distributions
+Item distributions
 ==================
 
 Defines an item that can be shipped from an origin location to a destination location.

@@ -124,14 +124,14 @@ Calendar::~Calendar()
   }
 
   // Remove all references from locations
-  for (Location::iterator l = Location::begin(); l != Location::end(); ++l)
+  for (auto l = Location::begin(); l != Location::end(); ++l)
   {
     if (l->getAvailable() == this)
       l->setAvailable(nullptr);
   }
 
   // Remove reference from buffers
-  for (Buffer::iterator b = Buffer::begin(); b != Buffer::end(); ++b)
+  for (auto b = Buffer::begin(); b != Buffer::end(); ++b)
   {
     if (b->getMaximumCalendar() == this)
       b->setMaximumCalendar(nullptr);
@@ -140,11 +140,28 @@ Calendar::~Calendar()
   }
 
   // Remove references from resources
-  for (Resource::iterator r = Resource::begin(); r != Resource::end(); ++r)
+  for (auto r = Resource::begin(); r != Resource::end(); ++r)
   {
     if (r->getMaximumCalendar() == this)
       r->setMaximumCalendar(nullptr);
+    if (r->getEfficiencyCalendar() == this)
+      r->setEfficiencyCalendar(nullptr);
+    if (r->getAvailable() == this)
+      r->setAvailable(nullptr);
   }
+
+  // Remove references from operations
+  for (auto o = Operation::begin(); o != Operation::end(); ++o)
+  {
+    if (o->getAvailable() == this)
+      o->setAvailable(nullptr);
+    if (o->getSizeMinimumCalendar() == this)
+      o->setSizeMinimumCalendar(nullptr);
+  }
+
+  // Remove reference on plan
+  if (Plan::instance().getCalendar() == this)
+    Plan::instance().setCalendar(nullptr);
 }
 
 
@@ -332,7 +349,7 @@ CalendarBucket* Calendar::findBucket(Date d, bool fwd) const
           struct tm datedetail;
           d.getInfo(&datedetail);
           date_weekday = datedetail.tm_wday; // 0: sunday, 6: saturday
-          date_time = datedetail.tm_sec + datedetail.tm_min * 60 + datedetail.tm_hour * 3600;
+          date_time = long(datedetail.tm_sec + datedetail.tm_min * 60 + datedetail.tm_hour * 3600);
           if (!date_time && !fwd)
           {
             date_time = Duration(86400L);
@@ -596,12 +613,12 @@ void Calendar::buildEventList(Date includedate)
   // Default start and end
   Date curDate;
   if (eventlist.empty())
-    curDate = Plan::instance().getCurrent() - Duration(86400 * 365);
+    curDate = Plan::instance().getCurrent() - Duration(86400L * 365L);
   else
     curDate = eventlist.begin()->first;
   Date maxDate;
   if (eventlist.empty())
-    maxDate = Plan::instance().getCurrent() + Duration(86400 * 365);
+    maxDate = Plan::instance().getCurrent() + Duration(86400L * 365L);
   else
     maxDate = eventlist.rbegin()->first;
 
@@ -609,11 +626,11 @@ void Calendar::buildEventList(Date includedate)
   if (includedate == Date::infinitePast)
     curDate = Date::infinitePast;
   else if (includedate <= curDate)
-    curDate = includedate - Duration(86400 * 365);
+    curDate = includedate - Duration(86400L * 365L);
   if (includedate == Date::infiniteFuture)
     maxDate = Date::infiniteFuture;
   else if (includedate >= maxDate)
-    maxDate = includedate + Duration(86400 * 365);
+    maxDate = includedate + Duration(86400L * 365L);
   
   // Collect all event dates
   const CalendarBucket* curBucket = findBucket(curDate, true);
@@ -678,7 +695,7 @@ void Calendar::buildEventList(Date includedate)
         tmp = b->startdate;
       tmp.getInfo(&datedetail);
       int ref_weekday = datedetail.tm_wday; // 0: sunday, 6: saturday
-      Duration ref_time = datedetail.tm_sec + datedetail.tm_min * 60 + datedetail.tm_hour * 3600;
+      Duration ref_time = long(datedetail.tm_sec + datedetail.tm_min * 60 + datedetail.tm_hour * 3600);
       if (
         refDate < b->startdate && ref_time >= b->starttime
         && ref_time < b->endtime && (b->days & (1 << ref_weekday))
@@ -729,12 +746,14 @@ void Calendar::buildEventList(Date includedate)
             ref_weekday = 0;
           tmp += Duration(86400L);
         }
-        while (!(b->days & (1 << ref_weekday)) && tmp != Date::infiniteFuture)
+        while (!(b->days & (1 << ref_weekday)) && tmp != Date::infiniteFuture && tmp <= b->enddate)
         {
           if (++ref_weekday > 6)
             ref_weekday = 0;
           tmp += Duration(86400L);
         }
+        if (tmp < b->startdate)
+          tmp = b->startdate;
         if (tmp >= b->enddate)
           continue;
 

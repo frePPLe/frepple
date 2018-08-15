@@ -66,8 +66,8 @@ class OutputTest(TestCase):
     self.assertEqual(response.status_code, 200)
     self.assertTrue(response.__getitem__('Content-Type').startswith('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'))
 
-  # Operation
-  def test_output_operation(self):
+  # Manufacturing orders
+  def test_output_manufacturing_orders(self):
     response = self.client.get('/operation/?format=json')
     self.assertEqual(response.status_code, 200)
     self.assertContains(response, '"records":3,')
@@ -75,6 +75,30 @@ class OutputTest(TestCase):
     self.assertEqual(response.status_code, 200)
     self.assertTrue(response.__getitem__('Content-Type').startswith('text/csv; charset='))
     response = self.client.get('/operation/?format=spreadsheetlist')
+    self.assertEqual(response.status_code, 200)
+    self.assertTrue(response.__getitem__('Content-Type').startswith('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'))
+
+  # Purchase orders
+  def test_output_purchase_orders(self):
+    response = self.client.get('/purchase/?format=json')
+    self.assertEqual(response.status_code, 200)
+    self.assertContains(response, '"records":4,')
+    response = self.client.get('/purchase/?format=csvtable')
+    self.assertEqual(response.status_code, 200)
+    self.assertTrue(response.__getitem__('Content-Type').startswith('text/csv; charset='))
+    response = self.client.get('/purchase/?format=spreadsheetlist')
+    self.assertEqual(response.status_code, 200)
+    self.assertTrue(response.__getitem__('Content-Type').startswith('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'))
+
+  # Distribution orders
+  def test_output_distribution_orders(self):
+    response = self.client.get('/distribution/?format=json')
+    self.assertEqual(response.status_code, 200)
+    self.assertContains(response, '"records":1,')
+    response = self.client.get('/distribution/?format=csvtable')
+    self.assertEqual(response.status_code, 200)
+    self.assertTrue(response.__getitem__('Content-Type').startswith('text/csv; charset='))
+    response = self.client.get('/distribution/?format=spreadsheetlist')
     self.assertEqual(response.status_code, 200)
     self.assertTrue(response.__getitem__('Content-Type').startswith('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'))
 

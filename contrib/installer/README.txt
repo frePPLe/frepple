@@ -36,11 +36,7 @@ The following steps are required:
    language (with its libraries and extensions) and the frePPLe user
    interface.
 
-8) Update the file <python>/Lib/site-packages/openpyxl/__init__.py as
-   described on this page: https://stackoverflow.com/questions/25121356/python-importerror-cannot-import-name-version
-   The json file where the standard package keeps the version info isn't included correctly by cx_freeze.
-
-9) Download the PostgreSQL binaries for 64-bit windows from:
+8) Download the PostgreSQL binaries for 64-bit windows from:
      http://www.enterprisedb.com/products-services-training/pgbindownload
    Unzip the zip-file in the folder pgsql before running the installer.
 

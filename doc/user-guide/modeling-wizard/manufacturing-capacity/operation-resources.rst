@@ -1,5 +1,5 @@
 ===================
-Operation Resources
+Operation resources
 ===================
 
 The operation resources table is associating a resource to an operation.

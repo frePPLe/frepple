@@ -36,7 +36,6 @@ template<class Buffer> Tree<string> utils::HasName<Buffer>::st;
 const MetaCategory* Buffer::metadata;
 const MetaClass* BufferDefault::metadata,
                *BufferInfinite::metadata,
-               *BufferProcure::metadata,
                *OperationInventory::metadata,
                *OperationDelivery::metadata;
 const double Buffer::default_max = 1e37;
@@ -88,20 +87,6 @@ int BufferInfinite::initialize()
 
   // Initialize the Python class
   return FreppleClass<BufferInfinite,Buffer>::initialize();
-}
-
-
-int BufferProcure::initialize()
-{
-  // Initialize the metadata
-  metadata = MetaClass::registerClass<BufferProcure>(
-    "buffer",
-    "buffer_procure",
-    Object::create<BufferProcure>);
-  registerFields<BufferProcure>(const_cast<MetaClass*>(metadata));
-
-  // Initialize the Python class
-  return FreppleClass<BufferProcure,Buffer>::initialize();
 }
 
 
@@ -449,9 +434,10 @@ void Buffer::setMinimum(double m)
       static_cast<flowplanlist::EventMinQuantity *>(&*oo)->setMin(min_val);
       return;
     }
+
   // Create new event
   flowplanlist::EventMinQuantity *newEvent =
-    new flowplanlist::EventMinQuantity(Date::infinitePast, &flowplans, min_val);
+    new flowplanlist::EventMinQuantity(Plan::instance().getCurrent(), &flowplans, min_val);
   flowplans.insert(newEvent);
 }
 
@@ -783,34 +769,6 @@ void Buffer::followPegging
       }
     }
   }
-}
-
-
-Operation* BufferProcure::getOperation() const
-{
-  if (!oper)
-  {
-    Operation *o = Operation::find(PURCHASE_OPERATION);
-    if (!o)
-    {
-      // Create a new purchase operation
-      o = new OperationFixedTime();
-      o->setName(PURCHASE_OPERATION);
-      static_cast<OperationFixedTime*>(o)->setDuration(leadtime);
-      new FlowEnd(o, const_cast<BufferProcure*>(this), 1);
-    }
-    // Copy procurement parameters to the existing operation
-    if (o->getType() == *OperationFixedTime::metadata)
-      static_cast<OperationFixedTime*>(o)->setDuration(leadtime);
-    const_cast<BufferProcure*>(this)->oper = o;
-    o->setFence(getFence());
-    o->setSizeMaximum(getSizeMaximum());
-    o->setSizeMinimum(getSizeMinimum());
-    o->setSizeMultiple(getSizeMultiple());
-    if (!o->getLocation()) o->setLocation(getLocation());
-    o->setSource(getSource());
-  }
-  return oper;
 }
 
 

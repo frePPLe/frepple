@@ -19,34 +19,95 @@
 			<name>factory</name>
 		</location>
 	</locations>
+	<suppliers>
+		<supplier>
+			<name>Component supplier</name>
+		</supplier>
+	</suppliers>
 	<items>
 		<item>
 			<name>component A</name>
+			<itemsuppliers>
+				<itemsupplier>
+					<supplier>
+						<name>Component supplier</name>
+					</supplier>
+					<leadtime>P7D</leadtime>
+				</itemsupplier>
+			</itemsuppliers>
 		</item>
 		<item>
 			<name>component B</name>
+			<itemsuppliers>
+				<itemsupplier>
+					<supplier>
+						<name>Component supplier</name>
+					</supplier>
+					<leadtime>P5D</leadtime>
+				</itemsupplier>
+			</itemsuppliers>
 		</item>
 		<item>
 			<name>component C</name>
+			<itemsuppliers>
+				<itemsupplier>
+					<supplier>
+						<name>Component supplier</name>
+					</supplier>
+					<leadtime>P7D</leadtime>
+				</itemsupplier>
+			</itemsuppliers>
 		</item>
 		<item>
 			<name>component D</name>
+			<itemsuppliers>
+				<itemsupplier>
+					<supplier>
+						<name>Component supplier</name>
+					</supplier>
+					<leadtime>P7D</leadtime>
+				</itemsupplier>
+			</itemsuppliers>
 		</item>
 		<item>
 			<name>component E</name>
+			<itemsuppliers>
+				<itemsupplier>
+					<supplier>
+						<name>Component supplier</name>
+					</supplier>
+					<leadtime>P7D</leadtime>
+				</itemsupplier>
+			</itemsuppliers>
 		</item>
 		<item>
 			<name>component F</name>
+			<itemsuppliers>
+				<itemsupplier>
+					<supplier>
+						<name>Component supplier</name>
+					</supplier>
+					<leadtime>P7D</leadtime>
+				</itemsupplier>
+			</itemsuppliers>
 		</item>
 		<item>
 			<name>component G</name>
+			<itemsuppliers>
+				<itemsupplier>
+					<supplier>
+						<name>Component supplier</name>
+					</supplier>
+					<leadtime>P5D</leadtime>
+				</itemsupplier>
+			</itemsuppliers>
 		</item>
 		<item>
 			<name>product</name>
 		</item>
 	</items>
 	<buffers>
-		<buffer xsi:type="buffer_procure">
+		<buffer>
 			<name>component A @ factory</name>
 			<item>
 				<name>component A</name>
@@ -55,11 +116,8 @@
 				<name>factory</name>
 			</location>
 			<onhand>1</onhand>
-			<leadtime>P7D</leadtime>
-			<mininventory>20</mininventory>
-			<maxinventory>70</maxinventory>
 		</buffer>
-		<buffer xsi:type="buffer_procure">
+		<buffer>
 			<name>component B @ factory</name>
 			<item>
 				<name>component B</name>
@@ -68,11 +126,8 @@
 				<name>factory</name>
 			</location>
 			<onhand>4</onhand>
-			<leadtime>P5D</leadtime>
-			<mininventory>20</mininventory>
-			<maxinventory>70</maxinventory>
 		</buffer>
-		<buffer xsi:type="buffer_procure">
+		<buffer>
 			<name>component C @ factory</name>
 			<item>
 				<name>component C</name>
@@ -81,11 +136,8 @@
 				<name>factory</name>
 			</location>
 			<onhand>5</onhand>
-			<leadtime>P7D</leadtime>
-			<mininventory>20</mininventory>
-			<maxinventory>70</maxinventory>
 		</buffer>
-		<buffer xsi:type="buffer_procure">
+		<buffer>
 			<name>component D @ factory</name>
 			<item>
 				<name>component D</name>
@@ -93,11 +145,8 @@
 			<location>
 				<name>factory</name>
 			</location>
-			<leadtime>P7D</leadtime>
-			<mininventory>20</mininventory>
-			<maxinventory>70</maxinventory>
 		</buffer>
-		<buffer xsi:type="buffer_procure">
+		<buffer>
 			<name>component E @ factory</name>
 			<item>
 				<name>component E</name>
@@ -105,11 +154,8 @@
 			<location>
 				<name>factory</name>
 			</location>
-			<leadtime>P7D</leadtime>
-			<mininventory>20</mininventory>
-			<maxinventory>70</maxinventory>
 		</buffer>
-		<buffer xsi:type="buffer_procure">
+		<buffer>
 			<name>component F @ factory</name>
 			<item>
 				<name>component F</name>
@@ -118,11 +164,8 @@
 				<name>factory</name>
 			</location>
 			<onhand>5</onhand>
-			<leadtime>P7D</leadtime>
-			<mininventory>20</mininventory>
-			<maxinventory>70</maxinventory>
 		</buffer>
-		<buffer xsi:type="buffer_procure">
+		<buffer>
 			<name>component G @ factory</name>
 			<item>
 				<name>component G</name>
@@ -131,9 +174,6 @@
 				<name>factory</name>
 			</location>
 			<onhand>5</onhand>
-			<leadtime>P5D</leadtime>
-			<mininventory>20</mininventory>
-			<maxinventory>70</maxinventory>
 		</buffer>
 		<buffer>
 			<name>product @ factory</name>
@@ -149,118 +189,6 @@
 		</buffer>
 	</buffers>
 	<operations>
-		<operation>
-			<name>Purchase component A @ factory</name>
-			<size_minimum>0</size_minimum>
-			<location>
-				<name>factory</name>
-			</location>
-			<flows>
-				<flow xsi:type="flow_end">
-					<item>
-						<name>component A</name>
-					</item>
-					<quantity>1</quantity>
-				</flow>
-			</flows>
-			<duration>P7D</duration>
-		</operation>
-		<operation>
-			<name>Purchase component B @ factory</name>
-			<size_minimum>0</size_minimum>
-			<location>
-				<name>factory</name>
-			</location>
-			<flows>
-				<flow xsi:type="flow_end">
-					<item>
-						<name>component B</name>
-					</item>
-					<quantity>1</quantity>
-				</flow>
-			</flows>
-			<duration>P5D</duration>
-		</operation>
-		<operation>
-			<name>Purchase component C @ factory</name>
-			<size_minimum>0</size_minimum>
-			<location>
-				<name>factory</name>
-			</location>
-			<flows>
-				<flow xsi:type="flow_end">
-					<item>
-						<name>component C</name>
-					</item>
-					<quantity>1</quantity>
-				</flow>
-			</flows>
-			<duration>P7D</duration>
-		</operation>
-		<operation>
-			<name>Purchase component D @ factory</name>
-			<size_minimum>0</size_minimum>
-			<location>
-				<name>factory</name>
-			</location>
-			<flows>
-				<flow xsi:type="flow_end">
-					<item>
-						<name>component D</name>
-					</item>
-					<quantity>1</quantity>
-				</flow>
-			</flows>
-			<duration>P7D</duration>
-		</operation>
-		<operation>
-			<name>Purchase component E @ factory</name>
-			<size_minimum>0</size_minimum>
-			<location>
-				<name>factory</name>
-			</location>
-			<flows>
-				<flow xsi:type="flow_end">
-					<item>
-						<name>component E</name>
-					</item>
-					<quantity>1</quantity>
-				</flow>
-			</flows>
-			<duration>P7D</duration>
-		</operation>
-		<operation>
-			<name>Purchase component F @ factory</name>
-			<size_minimum>0</size_minimum>
-			<location>
-				<name>factory</name>
-			</location>
-			<flows>
-				<flow xsi:type="flow_end">
-					<item>
-						<name>component F</name>
-					</item>
-					<quantity>1</quantity>
-				</flow>
-			</flows>
-			<duration>P7D</duration>
-		</operation>
-		<operation>
-			<name>Purchase component G @ factory</name>
-			<size_minimum>0</size_minimum>
-			<location>
-				<name>factory</name>
-			</location>
-			<flows>
-				<flow xsi:type="flow_end">
-					<item>
-						<name>component G</name>
-					</item>
-					<quantity>1</quantity>
-				</flow>
-			</flows>
-			<duration>P5D</duration>
-		</operation>
 		<operation xsi:type="operation_time_per">
 			<name>assembly</name>
 			<item>
@@ -351,69 +279,101 @@
 	<operationplans>
 		<operationplan>
 			<id>2</id>
-			<operation>
-				<name>Purchase component A @ factory</name>
+			<operation xsi:type="operation_itemsupplier">
+				<name>Purchase component A @ factory from Component supplier</name>
 			</operation>
-			<start>1971-01-01T00:00:00</start>
-			<end>1971-01-01T00:00:00</end>
-			<quantity>69</quantity>
+			<start>2008-12-22T00:00:00</start>
+			<end>2008-12-29T00:00:00</end>
+			<quantity>4</quantity>
+			<ordertype>PO</ordertype>
+			<item>
+				<name>component A</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+			<supplier>
+				<name>Component supplier</name>
+			</supplier>
 		</operationplan>
 		<operationplan>
 			<id>3</id>
-			<operation>
-				<name>Purchase component B @ factory</name>
+			<operation xsi:type="operation_itemsupplier">
+				<name>Purchase component A @ factory from Component supplier</name>
 			</operation>
-			<start>1971-01-01T00:00:00</start>
-			<end>1971-01-01T00:00:00</end>
-			<quantity>66</quantity>
+			<start>2008-12-25T00:00:00</start>
+			<end>2009-01-01T00:00:00</end>
+			<quantity>2</quantity>
+			<ordertype>PO</ordertype>
+			<item>
+				<name>component A</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+			<supplier>
+				<name>Component supplier</name>
+			</supplier>
 		</operationplan>
 		<operationplan>
 			<id>4</id>
-			<operation>
-				<name>Purchase component C @ factory</name>
+			<operation xsi:type="operation_itemsupplier">
+				<name>Purchase component A @ factory from Component supplier</name>
 			</operation>
-			<start>1971-01-01T00:00:00</start>
-			<end>1971-01-01T00:00:00</end>
-			<quantity>65</quantity>
+			<start>2008-12-26T00:00:00</start>
+			<end>2009-01-02T00:00:00</end>
+			<quantity>1</quantity>
+			<ordertype>PO</ordertype>
+			<item>
+				<name>component A</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+			<supplier>
+				<name>Component supplier</name>
+			</supplier>
 		</operationplan>
 		<operationplan>
 			<id>5</id>
-			<operation>
-				<name>Purchase component D @ factory</name>
+			<operation xsi:type="operation_itemsupplier">
+				<name>Purchase component C @ factory from Component supplier</name>
 			</operation>
-			<start>1971-01-01T00:00:00</start>
-			<end>1971-01-01T00:00:00</end>
-			<quantity>70</quantity>
+			<start>2008-12-25T00:00:00</start>
+			<end>2009-01-01T00:00:00</end>
+			<quantity>4</quantity>
+			<ordertype>PO</ordertype>
+			<item>
+				<name>component C</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+			<supplier>
+				<name>Component supplier</name>
+			</supplier>
 		</operationplan>
 		<operationplan>
 			<id>6</id>
-			<operation>
-				<name>Purchase component E @ factory</name>
+			<operation xsi:type="operation_itemsupplier">
+				<name>Purchase component C @ factory from Component supplier</name>
 			</operation>
-			<start>1971-01-01T00:00:00</start>
-			<end>1971-01-01T00:00:00</end>
-			<quantity>70</quantity>
+			<start>2008-12-26T00:00:00</start>
+			<end>2009-01-02T00:00:00</end>
+			<quantity>1</quantity>
+			<ordertype>PO</ordertype>
+			<item>
+				<name>component C</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+			<supplier>
+				<name>Component supplier</name>
+			</supplier>
 		</operationplan>
 		<operationplan>
 			<id>7</id>
-			<operation>
-				<name>Purchase component F @ factory</name>
-			</operation>
-			<start>1971-01-01T00:00:00</start>
-			<end>1971-01-01T00:00:00</end>
-			<quantity>65</quantity>
-		</operationplan>
-		<operationplan>
-			<id>8</id>
-			<operation>
-				<name>Purchase component G @ factory</name>
-			</operation>
-			<start>1971-01-01T00:00:00</start>
-			<end>1971-01-01T00:00:00</end>
-			<quantity>65</quantity>
-		</operationplan>
-		<operationplan>
-			<id>9</id>
 			<operation xsi:type="operation_delivery">
 				<name>Ship product @ factory</name>
 				<buffer>
@@ -435,7 +395,7 @@
 			</location>
 		</operationplan>
 		<operationplan>
-			<id>10</id>
+			<id>8</id>
 			<operation xsi:type="operation_time_per">
 				<name>assembly</name>
 			</operation>
@@ -444,25 +404,25 @@
 			<quantity>5</quantity>
 		</operationplan>
 		<operationplan>
+			<id>9</id>
+			<operation xsi:type="operation_time_per">
+				<name>assembly</name>
+			</operation>
+			<start>2009-01-01T00:00:00</start>
+			<end>2009-01-04T00:00:00</end>
+			<quantity>2</quantity>
+		</operationplan>
+		<operationplan>
+			<id>10</id>
+			<operation xsi:type="operation_time_per">
+				<name>assembly</name>
+			</operation>
+			<start>2009-01-01T00:00:00</start>
+			<end>2009-01-04T00:00:00</end>
+			<quantity>2</quantity>
+		</operationplan>
+		<operationplan>
 			<id>11</id>
-			<operation xsi:type="operation_time_per">
-				<name>assembly</name>
-			</operation>
-			<start>2009-01-01T00:00:00</start>
-			<end>2009-01-04T00:00:00</end>
-			<quantity>2</quantity>
-		</operationplan>
-		<operationplan>
-			<id>12</id>
-			<operation xsi:type="operation_time_per">
-				<name>assembly</name>
-			</operation>
-			<start>2009-01-01T00:00:00</start>
-			<end>2009-01-04T00:00:00</end>
-			<quantity>2</quantity>
-		</operationplan>
-		<operationplan>
-			<id>13</id>
 			<operation xsi:type="operation_time_per">
 				<name>assembly</name>
 			</operation>

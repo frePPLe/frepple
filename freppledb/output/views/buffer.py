@@ -225,9 +225,9 @@ class OverviewReport(GridPivot):
     
     cursor.execute(
       query,  (
-        request.report_startdate, # startohpoc
-        baseparams, # opplanmat
-        request.report_bucket, request.report_startdate, request.report_enddate, # bucket d
+        request.report_startdate,) # startohpoc
+        + baseparams + # opplanmat
+        (request.report_bucket, request.report_startdate, request.report_enddate, # bucket d
         request.report_startdate, # operationplanmaterial
         request.report_startdate, request.report_startdate, # initialonhand
         )

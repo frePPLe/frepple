@@ -4,6 +4,12 @@ Release notes
 4.4.1 (Upcoming release)
 ========================
 
+.. rubric:: Production planning
+
+- Bug fix in the calculation of the lateness/earliness of a manufacturing
+  order, purchase order or distribution order. The calculation was incorrectly
+  based on the start date rather the end date of the operation in question. 
+
 .. rubric:: User interface
 
 - Ability to make the data anonymous and obfuscated when 
@@ -105,7 +111,6 @@ Release notes
 - The `remote web commands API <integration-guide/remote-commands.html>`_ now 
   supports user authentication with `JSON Web Tokens <https://jwt.io/>`_ to launch tasks,
   download data and upload data. 
-
 
 4.3.3 (2018/05/03)
 ==================

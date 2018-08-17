@@ -1803,7 +1803,8 @@ Duration OperationPlan::getDelay() const
         if (opplans[i]->getOwner())
           // Don't count operation times on child operationplans
           continue;
-        mydelay -= opplans[i]->getDates().getDuration();
+        if (opplans[i] != this)
+          mydelay -= opplans[i]->getDates().getDuration();
       }
       if (mydelay > maxdelay)
         maxdelay = mydelay;

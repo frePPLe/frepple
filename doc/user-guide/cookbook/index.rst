@@ -14,3 +14,4 @@ This section of the documentation illustrates a number of common modelling situa
    buffer/index
    segment/index
    rebalancing-requests/index
+   supplier/index

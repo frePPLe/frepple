@@ -953,7 +953,7 @@ class loadSetupMatrices(LoadTask):
 class loadResources(LoadTask):
 
   description = "Importing resources"
-  sequence = 103
+  sequence = 94.5
 
   @classmethod
   def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):

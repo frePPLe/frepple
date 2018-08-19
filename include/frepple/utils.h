@@ -7950,7 +7950,7 @@ template <class Cls> class MetaFieldDuration : public MetaFieldBase
     MetaFieldDuration(const Keyword& n,
         getFunction getfunc,
         setFunction setfunc = nullptr,
-        Duration d = 0,
+        Duration d = 0L,
         unsigned int c = BASE
         ) : MetaFieldBase(n, c), getf(getfunc), setf(setfunc), def(d)
     {

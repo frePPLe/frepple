@@ -121,7 +121,7 @@ class OverviewReport(GridPivot):
     if args and args[0]:
       request.session['lasttab'] = 'plan'
       return {
-        'title': force_text(Item._meta.verbose_name) + " " + args[0],
+        'title': force_text(Buffer._meta.verbose_name) + " " + args[0],
         'post_title': _('plan')
         }
     else:
@@ -222,7 +222,7 @@ class OverviewReport(GridPivot):
     ''' % (
         reportclass.attr_sql, basesql, sortsql
       )
-    
+
     cursor.execute(
       query,  (
         request.report_startdate,) # startohpoc
@@ -232,12 +232,10 @@ class OverviewReport(GridPivot):
         request.report_startdate, request.report_startdate, # initialonhand
         )
       )
-      
 
     # Build the python result
     for row in cursor.fetchall():
       numfields = len(row)
-      
       res = {
         'buffer': row[0],
         'item': row[1],

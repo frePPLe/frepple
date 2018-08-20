@@ -370,7 +370,7 @@ void OperatorDelete::solve(const Buffer* b, void* v)
         fp = const_cast<FlowPlan*>(static_cast<const FlowPlan*>(&*fiter));
       double cur_excess = b->getFlowPlans().getExcess(&*fiter);
       if (
-        !fp || !fp->getOperationPlan()->getProposed() || 
+        !fp || !fp->getOperationPlan()->getProposed() || fp->getOperationPlan()->getDemand() ||
         cur_excess < ROUNDING_ERROR || fp->getFlow()->getType() == *FlowTransferBatch::metadata
         )
       {

@@ -1134,7 +1134,7 @@ class GridReport(View):
         'haschangeperm': reportclass.editable and reportclass.model and request.user.has_perm('%s.%s' % (reportclass.model._meta.app_label, get_permission_codename('change', reportclass.model._meta))),
         'active_tab': 'plan',
         'mode': mode,
-        'actions': reportclass.actions
+        'actions': reportclass.actions,
         }
       for k, v in reportclass.extra_context(request, *args, **kwargs).items():
         context[k] = v
@@ -1935,11 +1935,18 @@ class GridPivot(GridReport):
     if not hasattr(request, 'prefs'):
       request.prefs = request.user.getPreference(reportclass.getKey(), database=request.database)
     if args and args[0]:
-      query = reportclass.query(
-        request,
-        reportclass.basequeryset.filter(pk__exact=args[0]).using(request.database),
-        sortsql="1 asc"
-        )
+      if isinstance(reportclass.basequeryset, collections.Callable):
+        query = reportclass.query(
+          request,
+          reportclass.basequeryset(request, *args, **kwargs).filter(pk__exact=args[0]).using(request.database),
+          sortsql="1 asc"
+          )
+      else:
+        query = reportclass.query(
+          request,
+          reportclass.basequeryset.filter(pk__exact=args[0]).using(request.database),
+          sortsql="1 asc"
+          )
     elif isinstance(reportclass.basequeryset, collections.Callable):
       query = reportclass.query(
         request, reportclass.filter_items(request, reportclass.basequeryset(request, *args, **kwargs), False).using(request.database),
@@ -2103,11 +2110,18 @@ class GridPivot(GridReport):
       request.prefs = request.user.getPreference(reportclass.getKey(), database=request.database)
     listformat = (request.GET.get('format', 'spreadsheetlist') == 'spreadsheetlist')
     if args and args[0]:
-      query = reportclass.query(
-        request,
-        reportclass.basequeryset.filter(pk__exact=args[0]).using(request.database),
-        sortsql="1 asc"
-        )
+      if isinstance(reportclass.basequeryset, collections.Callable):
+        query = reportclass.query(
+          request,
+          reportclass.basequeryset(request, *args, **kwargs).filter(pk__exact=args[0]).using(request.database),
+          sortsql="1 asc"
+          )
+      else:
+        query = reportclass.query(
+          request,
+          reportclass.basequeryset.filter(pk__exact=args[0]).using(request.database),
+          sortsql="1 asc"
+          )
     elif isinstance(reportclass.basequeryset, collections.Callable):
       query = reportclass.query(
         request,

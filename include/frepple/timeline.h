@@ -617,7 +617,7 @@ template <class type> class TimeLine
           // New minimum value
           cur_min = cur->getMin();
         cur_excess = cur->getOnhand() - cur_min;
-        if (cur_excess < excess)
+        if (cur_excess < excess && cur->isLastOnDate())
           // New minimum excess value
           excess = cur_excess;
       }

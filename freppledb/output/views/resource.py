@@ -19,10 +19,10 @@ from django.db import connections
 from django.utils.encoding import force_text
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import string_concat
-from django.utils.text import capfirst
 
 from freppledb.boot import getAttributeFields
 from freppledb.input.models import Resource, Location, OperationPlanResource, Operation
+from freppledb.input.views import OperationPlanMixin
 from freppledb.common.models import Parameter
 from freppledb.common.report import GridReport, GridPivot, GridFieldCurrency
 from freppledb.common.report import GridFieldLastModified, GridFieldDuration
@@ -215,7 +215,7 @@ class OverviewReport(GridPivot):
       yield result
 
 
-class DetailReport(GridReport):
+class DetailReport(OperationPlanMixin, GridReport):
   '''
   A list report to show OperationPlanResources.
   '''
@@ -239,8 +239,8 @@ class DetailReport(GridReport):
         base = OperationPlanResource.objects.filter(resource__exact=args[0])
     else:
       base = OperationPlanResource.objects
+    base = reportclass.operationplanExtraBasequery(base, request)
     return base.select_related().extra(select={
-      'pegging': "(select string_agg(value || ' : ' || key, ', ') from (select key, value from jsonb_each_text(plan->'pegging') order by key desc) peg)",
       'opplan_duration': "(operationplan.enddate - operationplan.startdate)",
       'setup_end': "(operationplan.plan->>'setupend')",
       'setup_duration': "(operationplan.plan->>'setup')"
@@ -306,7 +306,7 @@ class DetailReport(GridReport):
     GridFieldText('operationplan__status', title=_('status'), editable=False),
     GridFieldNumber('operationplan__criticality', title=_('criticality'), editable=False, extra='"formatoptions":{"defaultValue":""}, "summaryType":"min"'),
     GridFieldDuration('operationplan__delay', title=_('delay'), editable=False, extra='"formatoptions":{"defaultValue":""}, "summaryType":"max"'),
-    GridFieldText('pegging', title=_('demands'), formatter='demanddetail', extra='"role":"input/demand"', width=300, editable=False, sortable=False),
+    GridFieldText('demand', title=_('demands'), formatter='demanddetail', extra='"role":"input/demand"', width=300, editable=False, sortable=False),
     GridFieldText('operationplan__type', title=_('type'), field_name='operationplan__type', editable=False),
     GridFieldNumber('quantity', title=_('load quantity'), editable=False, extra='"formatoptions":{"defaultValue":""}, "summaryType":"sum"'),
     GridFieldText('setup', title=_('setup'), editable=False, initially_hidden=True),

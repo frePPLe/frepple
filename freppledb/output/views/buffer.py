@@ -24,6 +24,7 @@ from django.utils.translation import string_concat
 
 from freppledb.boot import getAttributeFields
 from freppledb.input.models import Buffer, Item, Location, OperationPlanMaterial
+from freppledb.input.views import OperationPlanMixin
 from freppledb.common.report import GridReport, GridPivot, GridFieldText, GridFieldNumber
 from freppledb.common.report import GridFieldDateTime, GridFieldInteger, GridFieldDuration
 from freppledb.common.report import GridFieldCurrency, GridFieldLastModified
@@ -280,7 +281,7 @@ class OverviewReport(GridPivot):
       yield res
 
 
-class DetailReport(GridReport):
+class DetailReport(OperationPlanMixin, GridReport):
   '''
   A list report to show OperationPlanMaterial.
   '''
@@ -303,9 +304,8 @@ class DetailReport(GridReport):
         )
     else:
       base = OperationPlanMaterial.objects
-    return base.select_related().extra(select={
-      'pegging': "(select string_agg(value || ' : ' || key, ', ') from (select key, value from jsonb_each_text(plan->'pegging') order by key desc) peg)"
-      })
+    base = reportclass.operationplanExtraBasequery(base, request)
+    return base.select_related()
 
   @classmethod
   def extra_context(reportclass, request, *args, **kwargs):
@@ -355,7 +355,7 @@ class DetailReport(GridReport):
     GridFieldNumber('operationplan__criticality', title=_('criticality'), field_name='operationplan__criticality', editable=False, extra='"formatoptions":{"defaultValue":""}, "summaryType":"min"'),
     GridFieldDuration('operationplan__delay', title=_('delay'), editable=False, extra='"formatoptions":{"defaultValue":""}, "summaryType":"max"'),
     GridFieldNumber('operationplan__quantity', title=_('operationplan quantity'), editable=False, extra='"formatoptions":{"defaultValue":""}, "summaryType":"sum"'),
-    GridFieldText('pegging', title=_('demands'), formatter='demanddetail', extra='"role":"input/demand"', width=300, editable=False, sortable=False),
+    GridFieldText('demand', title=_('demands'), formatter='demanddetail', extra='"role":"input/demand"', width=300, editable=False, sortable=False),
     # Optional fields referencing the item
     GridFieldText('item__description', title=string_concat(_('item'), ' - ', _('description')),
       initially_hidden=True, editable=False),

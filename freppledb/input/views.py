@@ -1522,7 +1522,74 @@ class SubOperationList(GridReport):
     )
 
 
-class ManufacturingOrderList(GridReport):
+class OperationPlanMixin:
+
+  if 'freppledb.inventoryplanning' in settings.INSTALLED_APPS:
+    segmentlist = Segment.segmentList
+
+  @classmethod
+  def operationplanExtraBasequery(cls, query, request):
+    if 'freppledb.inventoryplanning' in settings.INSTALLED_APPS:
+      segmentname = request.prefs.get('segment', None) if request.prefs else None
+      if segmentname:
+        try:
+          segment = Segment.objects.all().using(request.database).get(pk=segmentname)
+          query = query.extra(
+            where=["exists ( %s and operationplan.item_id = item.name and operationplan.destination_id = location.name)" % segment.getQuery()]
+          )
+        except Segment.DoesNotExist:
+          pass
+    if 'freppledb.forecast' in settings.INSTALLED_APPS:
+      return query.extra(select={
+        'demand': '''
+          select json_agg(json_build_array(value, key, tp))
+          from (
+            select
+              key, value,
+              case when demand.name is not null then 'D' when forecast.name is not null then 'F' end as tp
+            from jsonb_each_text(operationplan.plan->'pegging')
+            left outer join demand on key = demand.name
+            left outer join forecast on substring(key from 0 for position(' - ' in key)) = forecast.name
+            where demand.name is not null or forecast.name is not null
+            order by value desc, key desc
+            limit 10
+          ) peg''',
+        'end_items': '''
+          select json_agg(json_build_array(key, val))
+          from (
+            select coalesce(demand.item_id, forecast.item_id) as key, sum(value::numeric) as val
+            from jsonb_each_text(operationplan.plan->'pegging')
+            left outer join demand on key = demand.name
+            left outer join forecast on substring(key from 0 for position(' - ' in key)) = forecast.name
+            group by coalesce(demand.item_id, forecast.item_id)
+            order by 2 desc
+            limit 10
+            ) peg_items'''
+        })
+    else:
+      return query.extra(select={
+        'demand': '''
+          select json_agg(json_build_array(value, key))
+          from (
+            select key, value
+            from jsonb_each_text(operationplan.plan->'pegging')
+            order by value desc, key desc
+            limit 10
+            ) peg''',
+        'end_items': '''
+          select json_agg(json_build_array(key, val))
+          from (
+            select demand.item_id as key, sum(value::numeric) as val
+            from jsonb_each_text(operationplan.plan->'pegging')
+            inner join demand on key = demand.name
+            group by demand.item_id
+            order by 2 desc
+            limit 10
+            ) peg_items'''
+        })
+
+
+class ManufacturingOrderList(OperationPlanMixin, GridReport):
   '''
   A list report to show manufacturing orders.
   '''
@@ -1555,20 +1622,10 @@ class ManufacturingOrderList(GridReport):
     q = ManufacturingOrder.objects.all()
     if args and args[0]:
       q = q.filter(location=args[0])
+    q = reportclass.operationplanExtraBasequery(q, request)
     return q.extra(select={
-      'demand': '''coalesce(
-        (select string_agg(value || ' : ' || key, ', ') from (select key, value from jsonb_each_text(operationplan.plan->'pegging') order by value desc, key desc limit 10) peg)
-        , '')''',
-      'end_items': '''coalesce(
-        (select string_agg(key || ' : ' || val, ', ') from (
-        select demand.item_id as key, sum(value::numeric) as val from jsonb_each_text(operationplan.plan->'pegging')
-        inner join demand on key = demand.name
-        group by demand.item_id
-        order by 2 desc
-        limit 10) peg_items)
-        , '')''',
-      'material': "(select string_agg(item_id || ' : ' || quantity, ', ') from (select item_id, round(quantity,2) quantity from operationplanmaterial where operationplan_id = operationplan.id order by quantity limit 10) mat)",
-      'resource': "(select string_agg(resource_id || ' : ' || quantity, ', ') from (select resource_id, round(quantity,2) quantity from operationplanresource where operationplan_id = operationplan.id order by quantity desc limit 10) res)",
+      'material': "(select json_agg(json_build_array(item_id, quantity)) from (select item_id, round(quantity,2) quantity from operationplanmaterial where operationplan_id = operationplan.id order by quantity limit 10) mat)",
+      'resource': "(select json_agg(json_build_array(resource_id, quantity)) from (select resource_id, round(quantity,2) quantity from operationplanresource where operationplan_id = operationplan.id order by quantity desc limit 10) res)",
       'setup_duration': "(operationplan.plan->'setup')",
       'setup_end': "(operationplan.plan->>'setupend')",
     })
@@ -1719,7 +1776,7 @@ class ManufacturingOrderList(GridReport):
         reportclass.rows += (f,)
 
 
-class DistributionOrderList(GridReport):
+class DistributionOrderList(OperationPlanMixin, GridReport):
   '''
   A list report to show distribution orders.
   '''
@@ -1733,7 +1790,6 @@ class DistributionOrderList(GridReport):
   editable = True
   height = 250
   help_url = 'user-guide/modeling-wizard/distribution/distribution-orders.html'
-
 
   @classmethod
   def extra_context(reportclass, request, *args, **kwargs):
@@ -1769,18 +1825,8 @@ class DistributionOrderList(GridReport):
         q = q.filter(destination_id=args[0])
       else:
         q = q.filter(location=args[0])
+    q = reportclass.operationplanExtraBasequery(q, request)
     return q.extra(select={
-      'demand': '''coalesce(
-        (select string_agg(value || ' : ' || key, ', ') from (select key, value from jsonb_each_text(operationplan.plan->'pegging') order by value desc, key desc limit 10) peg)
-        , '')''',
-      'end_items': '''coalesce(
-        (select string_agg(key || ' : ' || val, ', ') from (
-        select demand.item_id as key, sum(value::numeric) as val from jsonb_each_text(operationplan.plan->'pegging')
-        inner join demand on key = demand.name
-        group by demand.item_id
-        order by 2 desc
-        limit 10) peg_items)
-        , '')''',
       'total_cost': "cost*quantity",
       })
 
@@ -1947,7 +1993,7 @@ class DistributionOrderList(GridReport):
         reportclass.rows += (f,)
 
 
-class PurchaseOrderList(GridReport):
+class PurchaseOrderList(OperationPlanMixin, GridReport):
   '''
   A list report to show purchase orders.
   '''
@@ -2023,21 +2069,10 @@ class PurchaseOrderList(GridReport):
           lft = 1
           rght = 1
         q = q.filter(item__lft__gte=lft, item__rght__lte=rght)
-    return q.extra(
-      select={
-        'demand': '''coalesce(
-          (select string_agg(value || ' : ' || key, ', ')
-          from (select key, value from jsonb_each_text(operationplan.plan->'pegging')
-          order by value desc, key asc limit 10) peg), '')''',
-        'end_items': '''coalesce(
-          (select string_agg(key || ' : ' || val, ', ') from (
-          select demand.item_id as key, sum(value::numeric) as val from jsonb_each_text(operationplan.plan->'pegging')
-          inner join demand on key = demand.name
-          group by demand.item_id
-          order by 2 desc
-          limit 10) peg_items), '')''',
-        'total_cost': "coalesce((select max(cost) from itemsupplier where itemsupplier.item_id = operationplan.item_id and itemsupplier.location_id = operationplan.location_id and itemsupplier.supplier_id = operationplan.supplier_id), (select cost from item where item.name = operationplan.item_id)) * quantity",
-        'unit_cost': "coalesce((select max(cost) from itemsupplier where itemsupplier.item_id = operationplan.item_id and itemsupplier.location_id = operationplan.location_id and itemsupplier.supplier_id = operationplan.supplier_id), (select cost from item where item.name = operationplan.item_id))",
+    q = reportclass.operationplanExtraBasequery(q, request)
+    return q.extra(select={
+      'total_cost': "cost*quantity",
+      'unit_cost': "coalesce((select max(cost) from itemsupplier where itemsupplier.item_id = operationplan.item_id and itemsupplier.location_id = operationplan.location_id and itemsupplier.supplier_id = operationplan.supplier_id), (select cost from item where item.name = operationplan.item_id))",
       })
 
   rows = (

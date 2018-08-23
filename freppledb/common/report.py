@@ -2263,6 +2263,25 @@ def _localize(value, decimal_separator):
     return value
 
 
+def _buildMaskedNames(model, exportConfig):
+  '''
+  Build a map with anonymous names for a model, and store it in the exportConfiguration.
+  '''
+  modelname = model._meta.model_name
+  if modelname in exportConfig:
+    return
+  exportConfig[modelname] = {}
+  if issubclass(model, HierarchyModel):
+    keys = model.objects.only('pk').order_by('lvl', 'pk').values_list('pk', flat=True)
+  else:
+    keys = model.objects.only('pk').order_by('pk').values_list('pk', flat=True)
+  idx = 1
+  for key in keys:
+    exportConfig[modelname][key] = "%s %07d" % (modelname, idx)
+    idx += 1
+  del keys
+
+
 def _getCellValue(data, field=None, exportConfig=None):
   if data is None:
     return ''
@@ -2285,19 +2304,9 @@ def _getCellValue(data, field=None, exportConfig=None):
       return str(data)
     modelname = model._meta.model_name
     if modelname not in exportConfig:
-      # Build a map with anonymous names for this model
-      exportConfig[modelname] = {}
-      if issubclass(model, HierarchyModel):
-        keys = model.objects.only('pk').order_by('lvl', 'pk').values_list('pk', flat=True)
-      else:
-        keys = model.objects.only('pk').order_by('pk').values_list('pk', flat=True)
-      idx = 1
-      for key in keys:
-        exportConfig[modelname][key] = idx
-        idx += 1
-      del keys
+      _buildMaskedNames(model, exportConfig)
     # Return the mapped value
-    return "%s %07d" % (modelname, exportConfig[modelname].get(data, 0))
+    return exportConfig[modelname].get(data, "unknown")
 
 
 def exportWorkbook(request):

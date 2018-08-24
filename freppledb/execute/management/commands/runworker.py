@@ -173,7 +173,7 @@ class Command(BaseCommand):
           if task.arguments:
             for i in shlex.split(task.arguments):
               key, val = i.split('=')
-              args[key[2:]] = val
+              args[key.strip("--").replace('-', '_')] = val
           management.call_command('createbuckets', database=database, task=task.id, **args)
         else:
           # Verify the command exists

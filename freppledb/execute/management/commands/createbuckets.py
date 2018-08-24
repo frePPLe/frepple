@@ -189,7 +189,7 @@ class Command(BaseCommand):
             prev_year = year
             BucketDetail(
               bucket=y,
-              name=self.formatDate(curdate, options['format-year']),
+              name=self.formatDate(curdate, options['format_year']),
               startdate=year_start,
               enddate=year_end
               ).save(using=database)
@@ -197,7 +197,7 @@ class Command(BaseCommand):
             prev_quarter = quarter
             BucketDetail(
               bucket=q,
-              name=self.formatDate(curdate, options['format-quarter']),
+              name=self.formatDate(curdate, options['format_quarter']),
               startdate=date(year, quarter * 3 - 2, 1),
               enddate=date(year + quarter // 4, quarter * 3 + 1 - 12 * (quarter // 4), 1)
               ).save(using=database)
@@ -205,7 +205,7 @@ class Command(BaseCommand):
             prev_month = month
             BucketDetail(
               bucket=m,
-              name=self.formatDate(curdate, options['format-month']),
+              name=self.formatDate(curdate, options['format_month']),
               startdate=date(year, month, 1),
               enddate=date(year + month // 12, month + 1 - 12 * (month // 12), 1),
               ).save(using=database)
@@ -218,14 +218,14 @@ class Command(BaseCommand):
               bucket=w,
               name=self.formatDate(
                 week_start + timedelta(days=(7 - week_start.weekday()) % 7),
-                options['format-week']
+                options['format_week']
                 ),
               startdate=week_start,
               enddate=week_end,
               ).save(using=database)
           BucketDetail(
             bucket=d,
-            name=self.formatDate(curdate.date(), options['format-day']),
+            name=self.formatDate(curdate.date(), options['format_day']),
             startdate=curdate,
             enddate=curdate + timedelta(1),
             ).save(using=database)

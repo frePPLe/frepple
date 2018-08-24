@@ -399,9 +399,52 @@ This command is available in the user interface, the command line and the web AP
 Generate time buckets
 ---------------------
 
-A number of output reports are displaying the plan results aggregated into time
+Many output reports are displaying the plan results aggregated into time
 buckets. These time buckets are defined with the tables dates and bucket dates.
-This tasks allows you to populate these tables in an easy way.
+
+This tasks allows you to populate these tables in an easy way with buckets
+with daily, weekly, monthly, quarterly and yearly granularity. Existing bucket
+definitions for these granularities will be overwritten.
+
+The following arguments are used:
+
+* | Start date, end date:
+  | Definition of the horizon to generate buckets for.
+
+* Week start: Defines the first date of a week.
+
+* | Day name, week name, month name, quarter name, year name:
+  | Template used to generate a name for the buckets.  
+  
+  Any character can be used in the names and the following format codes can be used:
+  
+  - %a: Weekday as locale's abbreviated name. Eg: Sun, Mon, ...
+  
+  - %A: Weekday as locale's full name. Eg: Sunday, Monday, ...
+  
+  - %w: Weekday as a decimal number, where 0 is Sunday and 6 is Saturday.
+  
+  - %d: Day of the month as a zero-padded decimal number. Eg: 01, 02, ..., 31
+  
+  - %b: Month as locale's abbreviated name. Eg: Jan, Feb, ...
+  
+  - %B: Month as locale's full name. Eg: January, February, ...
+  
+  - %m: Month as a zero-padded decimal number. Eg: 01, 02, ..., 12   
+
+  - %q: Quarter as a decimal number. Eg: 1, 2, 3, 4
+
+  - %y: Year without century as a zero-padded decimal number. Eg: 00, 01, ..., 99
+     
+  - %Y: Year with century as a decimal number. Eg: 2018, 2019, ...
+  
+  - %j: Day of the year as a zero-padded decimal number. Eg: 001, 002, ..., 366
+     
+  - %U: Week number of the year as a zero padded decimal number. Eg: 00, 01, ...
+
+  - %W: Week number of the year as a decimal number. Eg: 0, 1, ...
+
+  - %%: A literal '%' character.  
 
 This command is available in the user interface, the command line and the web API:
 

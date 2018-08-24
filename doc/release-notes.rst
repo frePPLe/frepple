@@ -17,6 +17,11 @@ Release notes
   The names of all entities are obfuscated in the resulting spreadsheet. You will still
   need to carefully review the output to clean out any remaining sensitive data.  
 
+- Ability to customize the names for the time buckets used in the reports.
+  The `time bucket generation command <user-guide/command-reference.html#createbuckets>`_
+  now has extra attributes for setting the name of the daily, weekly, monthly, quarterly
+  and yearly buckets.
+ 
 .. rubric:: Third party components
 
 - | Support for Ubuntu 18 LTS. 

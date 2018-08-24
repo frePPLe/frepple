@@ -288,6 +288,21 @@ def wrapTask(request, action):
     weekstart = args.get('weekstart', None)
     if weekstart:
       arguments.append("--weekstart=%s" % weekstart)
+    format_day = args.get('format-day', None)
+    if format_day:
+      arguments.append("--format-day='%s'" % format_day)
+    format_week = args.get('format-week', None)
+    if format_week:
+      arguments.append("--format-week='%s'" % format_week)
+    format_month = args.get('format-month', None)
+    if format_month:
+      arguments.append("--format-month='%s'" % format_month)
+    format_quarter = args.get('format-quarter', None)
+    if format_quarter:
+      arguments.append("--format-quarter='%s'" % format_quarter)
+    format_year = args.get('format-year', None)
+    if format_year:
+      arguments.append("--format-year='%s'" % format_year)
     if arguments:
       task.arguments = " ".join(arguments)
     task.save(using=request.database)

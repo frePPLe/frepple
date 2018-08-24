@@ -18,6 +18,7 @@
 from datetime import datetime, timedelta
 import logging
 import os
+import shlex
 import time
 import operator
 from threading import Thread
@@ -141,7 +142,7 @@ class Command(BaseCommand):
         if task.name in ('frepple_run', 'runplan'):
           kwargs = {}
           if task.arguments:
-            for i in task.arguments.split():
+            for i in shlex.split(task.arguments):
               j = i.split('=')
               if len(j) > 1:
                 kwargs[j[0][2:]] = j[1]
@@ -155,22 +156,22 @@ class Command(BaseCommand):
           # Erase the database contents
           kwargs = {}
           if task.arguments:
-            for i in task.arguments.split():
+            for i in shlex.split(task.arguments):
               key, val = i.split('=')
               kwargs[key[2:]] = val
           management.call_command('empty', database=database, task=task.id, **kwargs)
         # D
         elif task.name == 'loaddata':
-          args = task.arguments.split()
+          args = shlex.split(task.arguments)
           management.call_command('loaddata', *args, verbosity=0, database=database, task=task.id)
         # E
         elif task.name in ('frepple_copy', 'scenario_copy'):
-          args = task.arguments.split()
+          args = shlex.split(task.arguments)
           management.call_command('scenario_copy', *args, task=task.id)
         elif task.name in ('frepple_createbuckets', 'createbuckets'):
           args = {}
           if task.arguments:
-            for i in task.arguments.split():
+            for i in shlex.split(task.arguments):
               key, val = i.split('=')
               args[key[2:]] = val
           management.call_command('createbuckets', database=database, task=task.id, **args)
@@ -188,7 +189,7 @@ class Command(BaseCommand):
           else:
             kwargs = {}
             if task.arguments:
-              for i in task.arguments.split():
+              for i in shlex.split(task.arguments):
                 key, val = i.split('=')
                 kwargs[key[2:]] = val
             management.call_command(task.name, database=database, task=task.id, **kwargs)

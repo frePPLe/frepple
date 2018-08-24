@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: 4.4.1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-06-14 15:16+0200\n"
-"PO-Revision-Date: 2017-12-26 22:18+0100\n"
+"PO-Revision-Date: 2018-08-24 09:56+0200\n"
 "Last-Translator: Joao Ranita <jranita@frepple.com>\n"
 "Language-Team: frepple\n"
 "Language: pt_BR\n"
@@ -22,7 +22,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Poedit 1.8.7.1\n"
+"X-Generator: Poedit 2.1.1\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 
 #: common/static/js/frepple.js:175 common/static/js/frepple.min.js:11
@@ -199,12 +199,12 @@ msgstr "exportar"
 
 #: common/static/js/frepple.js:1660 common/static/js/frepple.min.js:12
 msgid "export selected records"
-msgstr ""
+msgstr "exportar registos seleccionados"
 
 #: common/static/js/frepple.js:1670 common/static/js/frepple.js:1837
 #: common/static/js/frepple.min.js:12
 msgid "connecting"
-msgstr ""
+msgstr "conectando"
 
 #: common/static/js/frepple.js:1679 common/static/js/frepple.js:1844
 #: common/static/js/frepple.min.js:12
@@ -295,20 +295,19 @@ msgstr "A primeira linha deve conter os nomes dos campos."
 
 #: common/static/js/frepple.js:2449 common/static/js/frepple.min.js:11
 msgid "First delete all existing records AND ALL RELATED TABLES"
-msgstr ""
-"Primeiro apague todos os registos existentes E TODAS AS TABELAS RELACIONADAS"
+msgstr "Primeiro apague todos os registos existentes E TODAS AS TABELAS RELACIONADAS"
 
 #: common/static/js/frepple.js:2456 common/static/js/frepple.min.js:11
 msgid "files selected"
-msgstr ""
+msgstr "ficheiros seleccionados"
 
 #: common/static/js/frepple.js:2459 common/static/js/frepple.min.js:11
 msgid "Select files"
-msgstr ""
+msgstr "Seleccionar ficheiros"
 
 #: common/static/js/frepple.js:2462 common/static/js/frepple.min.js:11
 msgid "or drop them here"
-msgstr ""
+msgstr "ou arrastar para aqui"
 
 #: common/static/js/frepple.js:2471 common/static/js/frepple.min.js:11
 msgid "Data file"

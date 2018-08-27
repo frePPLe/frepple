@@ -305,13 +305,14 @@ var upload = {
 //----------------------------------------------------------------------------
 
 function opendetail(event) {
-  var curlink = $(event.target).parent().attr('href');
-  var objectid = $(event.target).parent().parent().text().trim();
-  objectid = admin_escape(objectid);
-
+	var el = $(event.target).parent();
+  var curlink = el.attr('href');
+  var objectid = el.attr('objectid');
+  if (objectid === undefined || objectid == false)
+  	objectid = el.parent().text().trim();
   event.preventDefault();
   event.stopImmediatePropagation();
-  window.location.href = url_prefix + curlink.replace('key', objectid);
+  window.location.href = url_prefix + curlink.replace('key', admin_escape(objectid));
 }
 
 
@@ -406,31 +407,37 @@ jQuery.extend($.fn.fmatter, {
   },
 
   demanddetail : function(cellvalue, options, rowdata) {
-    // TODO This function is not very generic. Sending a json string from the backend would be more robust
-    if (cellvalue === undefined || cellvalue === '') return '';
-    if (options['colModel']['popup']) return cellvalue;
+    if (cellvalue === undefined || cellvalue === '')
+    	return '';
+    if (options['colModel']['popup'])
+    	return cellvalue;
     var result = '';
-    var dmds = cellvalue.split(", ");
-    for (var i in dmds)
+    var count = cellvalue.length;
+    for (var i = 0; i < count; i++)
     {
-      var detail = dmds[i].split(" : ");
-      if (result != '') result += ', ';
-      result += detail[0] + " : <span>" + detail[1] + "<a href='/detail/input/demand/key/' onclick='opendetail(event)'><span class='leftpadding fa fa-caret-right' role='" + options.colModel.role + "'></span></a></span>"
+      if (result != '')
+      	result += ', ';
+      result += cellvalue[i][0] + " : <span>" + cellvalue[i][1] 
+        + "<a href='/detail/input/demand/key/' onclick='opendetail(event)'>"
+        + "<span class='leftpadding fa fa-caret-right' role='input/demand'></span></a></span>";
     }
     return result;
   },
 
   listdetail : function(cellvalue, options, rowdata) {
-    // TODO This function is not very generic. Sending a json string from the backend would be more robust
-    if (cellvalue === undefined || cellvalue === '') return '';
-    if (options['colModel']['popup']) return cellvalue;
+    if (cellvalue === undefined || cellvalue === '')
+    	return '';
+    if (options['colModel']['popup'])
+    	return cellvalue;
     var result = '';
-    var dmds = cellvalue.split(", ");
-    for (var i in dmds)
+    var count = cellvalue.length;
+    for (var i = 0; i < count; i++)
     {
-      var detail = dmds[i].split(" : ");
-      if (result != '') result += ', ';
-      result += "<span>" + detail[0] + "<a href='/detail/" + options.colModel.role + "/key/' onclick='opendetail(event)'><span class='leftpadding fa fa-caret-right' role='" + options.colModel.role + "'></span></a></span>&nbsp;" + detail[1];
+      if (result != '')
+      	result += ', ';
+      result += "<span>" + cellvalue[i][0] + "<a href='/detail/" + options.colModel.role 
+        + "/key/' onclick='opendetail(event)'><span class='leftpadding fa fa-caret-right' role='" 
+        + options.colModel.role + "'></span></a></span>&nbsp;" + cellvalue[i][1];
     }
     return result;
   },

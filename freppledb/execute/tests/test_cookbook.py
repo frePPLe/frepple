@@ -135,3 +135,8 @@ class cookbooktest(TransactionTestCase):
     self.loadExcel(settings.FREPPLE_HOME, "..", "doc", "user-guide", "cookbook", "buffer", "transfer-batch.xlsx")
     management.call_command('runplan', plantype=1, constraint=15, env='supply')
     self.assertOperationplans(settings.FREPPLE_HOME, "..", "doc", "user-guide", "cookbook", "buffer", "transfer-batch.expect")
+
+  def test_supplier_capacity(self):
+    self.loadExcel(settings.FREPPLE_HOME, "..", "doc", "user-guide", "cookbook", "supplier", "supplier-capacity.xlsx")
+    management.call_command('runplan', plantype=1, constraint=15, env='supply')
+    self.assertOperationplans(settings.FREPPLE_HOME, "..", "doc", "user-guide", "cookbook", "supplier", "supplier-capacity.expect")

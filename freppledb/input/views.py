@@ -618,6 +618,62 @@ class BufferList(GridReport):
     GridFieldText('minimum_calendar', title=_('minimum calendar'), field_name='minimum_calendar__name', formatter='detail', extra='"role":"input/calendar"', initially_hidden=True),
     GridFieldText('source', title=_('source')),
     GridFieldLastModified('lastmodified'),
+    # Optional fields referencing the item
+    GridFieldText(
+      'item__description', title=string_concat(_('item'), ' - ', _('description')),
+      initially_hidden=True, editable=False
+      ),
+    GridFieldText(
+      'item__category', title=string_concat(_('item'), ' - ', _('category')),
+      initially_hidden=True, editable=False
+      ),
+    GridFieldText(
+      'item__subcategory', title=string_concat(_('item'), ' - ', _('subcategory')),
+      initially_hidden=True, editable=False
+      ),
+    GridFieldText(
+      'item__owner', title=string_concat(_('item'), ' - ', _('owner')),
+      field_name='item__owner__name', initially_hidden=True, editable=False
+      ),
+    GridFieldText(
+      'item__source', title=string_concat(_('item'), ' - ', _('source')),
+      initially_hidden=True, editable=False
+      ),
+    GridFieldLastModified(
+      'item__lastmodified', title=string_concat(_('item'), ' - ', _('last modified')),
+      initially_hidden=True, editable=False
+      ),
+    # Optional fields referencing the location
+    GridFieldText(
+      'location__description', title=string_concat(_('location'), ' - ', _('description')),
+      initially_hidden=True, editable=False
+      ),
+    GridFieldText(
+      'location__category', title=string_concat(_('location'), ' - ', _('category')),
+      initially_hidden=True, editable=False
+      ),
+    GridFieldText(
+      'location__subcategory', title=string_concat(_('location'), ' - ', _('subcategory')),
+      initially_hidden=True, editable=False
+      ),
+    GridFieldText(
+      'location__available', title=string_concat(_('location'), ' - ', _('available')),
+      initially_hidden=True, field_name='location__available__name', formatter='detail',
+      extra='"role":"input/calendar"', editable=False
+      ),
+    GridFieldText(
+      'location__owner', title=string_concat(_('location'), ' - ', _('owner')),
+      initially_hidden=True, field_name='location__owner__name', formatter='detail',
+      extra='"role":"input/location"', editable=False
+      ),
+    GridFieldText(
+      'location__source', title=string_concat(_('location'), ' - ', _('source')),
+      initially_hidden=True, editable=False
+      ),
+    GridFieldLastModified(
+      'location__lastmodified', title=string_concat(_('location'), ' - ', _('last modified')),
+      initially_hidden=True, editable=False
+      ),
     )
 
 
@@ -693,6 +749,37 @@ class ResourceList(GridReport):
     GridFieldText(
       'efficiency_calendar', title=_('efficiency % calendar'), initially_hidden=True,
       field_name='efficiency_calendar__name', formatter='detail', extra='"role":"input/calendar"'
+      ),
+    # Optional fields referencing the location
+    GridFieldText(
+      'location__description', title=string_concat(_('location'), ' - ', _('description')),
+      initially_hidden=True, editable=False
+      ),
+    GridFieldText(
+      'location__category', title=string_concat(_('location'), ' - ', _('category')),
+      initially_hidden=True, editable=False
+      ),
+    GridFieldText(
+      'location__subcategory', title=string_concat(_('location'), ' - ', _('subcategory')),
+      initially_hidden=True, editable=False
+      ),
+    GridFieldText(
+      'location__available', title=string_concat(_('location'), ' - ', _('available')),
+      initially_hidden=True, field_name='location__available__name', formatter='detail',
+      extra='"role":"input/calendar"', editable=False
+      ),
+    GridFieldText(
+      'location__owner', title=string_concat(_('location'), ' - ', _('owner')),
+      initially_hidden=True, field_name='location__owner__name', formatter='detail',
+      extra='"role":"input/location"', editable=False
+      ),
+    GridFieldText(
+      'location__source', title=string_concat(_('location'), ' - ', _('source')),
+      initially_hidden=True, editable=False
+      ),
+    GridFieldLastModified(
+      'location__lastmodified', title=string_concat(_('location'), ' - ', _('last modified')),
+      initially_hidden=True, editable=False
       ),
     )
 
@@ -791,6 +878,62 @@ class ItemSupplierList(GridReport):
     GridFieldNumber('resource_qty', title=_('resource quantity'), initially_hidden=True),
     GridFieldText('source', title=_('source')),
     GridFieldLastModified('lastmodified'),
+    # Optional fields referencing the item
+    GridFieldText(
+      'item__description', title=string_concat(_('item'), ' - ', _('description')),
+      initially_hidden=True, editable=False
+      ),
+    GridFieldText(
+      'item__category', title=string_concat(_('item'), ' - ', _('category')),
+      initially_hidden=True, editable=False
+      ),
+    GridFieldText(
+      'item__subcategory', title=string_concat(_('item'), ' - ', _('subcategory')),
+      initially_hidden=True, editable=False
+      ),
+    GridFieldText(
+      'item__owner', title=string_concat(_('item'), ' - ', _('owner')),
+      field_name='item__owner__name', initially_hidden=True, editable=False
+      ),
+    GridFieldText(
+      'item__source', title=string_concat(_('item'), ' - ', _('source')),
+      initially_hidden=True, editable=False
+      ),
+    GridFieldLastModified(
+      'item__lastmodified', title=string_concat(_('item'), ' - ', _('last modified')),
+      initially_hidden=True, editable=False
+      ),
+    # Optional fields referencing the location
+    GridFieldText(
+      'location__description', title=string_concat(_('location'), ' - ', _('description')),
+      initially_hidden=True, editable=False
+      ),
+    GridFieldText(
+      'location__category', title=string_concat(_('location'), ' - ', _('category')),
+      initially_hidden=True, editable=False
+      ),
+    GridFieldText(
+      'location__subcategory', title=string_concat(_('location'), ' - ', _('subcategory')),
+      initially_hidden=True, editable=False
+      ),
+    GridFieldText(
+      'location__available', title=string_concat(_('location'), ' - ', _('available')),
+      initially_hidden=True, field_name='location__available__name', formatter='detail',
+      extra='"role":"input/calendar"', editable=False
+      ),
+    GridFieldText(
+      'location__owner', title=string_concat(_('location'), ' - ', _('owner')),
+      initially_hidden=True, field_name='location__owner__name', formatter='detail',
+      extra='"role":"input/location"', editable=False
+      ),
+    GridFieldText(
+      'location__source', title=string_concat(_('location'), ' - ', _('source')),
+      initially_hidden=True, editable=False
+      ),
+    GridFieldLastModified(
+      'location__lastmodified', title=string_concat(_('location'), ' - ', _('last modified')),
+      initially_hidden=True, editable=False
+      ),
     )
 
 
@@ -821,6 +964,93 @@ class ItemDistributionList(GridReport):
     GridFieldNumber('resource_qty', title=_('resource quantity'), initially_hidden=True),
     GridFieldText('source', title=_('source')),
     GridFieldLastModified('lastmodified'),
+    # Optional fields referencing the item
+    GridFieldText(
+      'item__description', title=string_concat(_('item'), ' - ', _('description')),
+      initially_hidden=True, editable=False
+      ),
+    GridFieldText(
+      'item__category', title=string_concat(_('item'), ' - ', _('category')),
+      initially_hidden=True, editable=False
+      ),
+    GridFieldText(
+      'item__subcategory', title=string_concat(_('item'), ' - ', _('subcategory')),
+      initially_hidden=True, editable=False
+      ),
+    GridFieldText(
+      'item__owner', title=string_concat(_('item'), ' - ', _('owner')),
+      field_name='item__owner__name', initially_hidden=True, editable=False
+      ),
+    GridFieldText(
+      'item__source', title=string_concat(_('item'), ' - ', _('source')),
+      initially_hidden=True, editable=False
+      ),
+    GridFieldLastModified(
+      'item__lastmodified', title=string_concat(_('item'), ' - ', _('last modified')),
+      initially_hidden=True, editable=False
+      ),
+    # Optional fields referencing the location
+    GridFieldText(
+      'location__description', title=string_concat(_('location'), ' - ', _('description')),
+      initially_hidden=True, editable=False
+      ),
+    GridFieldText(
+      'location__category', title=string_concat(_('location'), ' - ', _('category')),
+      initially_hidden=True, editable=False
+      ),
+    GridFieldText(
+      'location__subcategory', title=string_concat(_('location'), ' - ', _('subcategory')),
+      initially_hidden=True, editable=False
+      ),
+    GridFieldText(
+      'location__available', title=string_concat(_('location'), ' - ', _('available')),
+      initially_hidden=True, field_name='location__available__name', formatter='detail',
+      extra='"role":"input/calendar"', editable=False
+      ),
+    GridFieldText(
+      'location__owner', title=string_concat(_('location'), ' - ', _('owner')),
+      initially_hidden=True, field_name='location__owner__name', formatter='detail',
+      extra='"role":"input/location"', editable=False
+      ),
+    GridFieldText(
+      'location__source', title=string_concat(_('location'), ' - ', _('source')),
+      initially_hidden=True, editable=False
+      ),
+    GridFieldLastModified(
+      'location__lastmodified', title=string_concat(_('location'), ' - ', _('last modified')),
+      initially_hidden=True, editable=False
+      ),
+    # Optional fields referencing the origin location
+    GridFieldText(
+      'origin__description', title=string_concat(_('origin'), ' - ', _('description')),
+      initially_hidden=True, editable=False
+      ),
+    GridFieldText(
+      'origin__category', title=string_concat(_('origin'), ' - ', _('category')),
+      initially_hidden=True, editable=False
+      ),
+    GridFieldText(
+      'origin__subcategory', title=string_concat(_('origin'), ' - ', _('subcategory')),
+      initially_hidden=True, editable=False
+      ),
+    GridFieldText(
+      'origin__available', title=string_concat(_('origin'), ' - ', _('available')),
+      initially_hidden=True, field_name='origin__available__name', formatter='detail',
+      extra='"role":"input/calendar"', editable=False
+      ),
+    GridFieldText(
+      'origin__owner', title=string_concat(_('origin'), ' - ', _('owner')),
+      initially_hidden=True, field_name='origin__owner__name', formatter='detail',
+      extra='"role":"input/location"', editable=False
+      ),
+    GridFieldText(
+      'origin__source', title=string_concat(_('origin'), ' - ', _('source')),
+      initially_hidden=True, editable=False
+      ),
+    GridFieldLastModified(
+      'origin__lastmodified', title=string_concat(_('origin'), ' - ', _('last modified')),
+      initially_hidden=True, editable=False
+      ),
     )
 
 
@@ -913,6 +1143,25 @@ class OperationResourceList(GridReport):
     GridFieldChoice('search', title=_('search mode'), choices=searchmode, initially_hidden=True),
     GridFieldText('source', title=_('source')),
     GridFieldLastModified('lastmodified'),
+    # Operation fields
+    GridFieldText('operation__description', title=string_concat(_('operation'), ' - ', _('description')), initially_hidden=True, editable=False),
+    GridFieldText('operation__category', title=string_concat(_('operation'), ' - ', _('category')), initially_hidden=True, editable=False),
+    GridFieldText('operation__subcategory', title=string_concat(_('operation'), ' - ', _('subcategory')), initially_hidden=True, editable=False),
+    GridFieldChoice('operation__type', title=string_concat(_('operation'), ' - ', _('type')), choices=Operation.types, initially_hidden=True, editable=False),
+    GridFieldDuration('operation__duration', title=string_concat(_('operation'), ' - ', _('duration')), initially_hidden=True, editable=False),
+    GridFieldDuration('operation__duration_per', title=string_concat(_('operation'), ' - ', _('duration per unit')), initially_hidden=True, editable=False),
+    GridFieldDuration('operation__fence', title=string_concat(_('operation'), ' - ', _('release fence')), initially_hidden=True, editable=False),
+    GridFieldDuration('operation__posttime', title=string_concat(_('operation'), ' - ', _('post-op time')), initially_hidden=True, editable=False),
+    GridFieldNumber('operation__sizeminimum', title=string_concat(_('operation'), ' - ', _('size minimum')), initially_hidden=True, editable=False),
+    GridFieldNumber('operation__sizemultiple', title=string_concat(_('operation'), ' - ', _('size multiple')), initially_hidden=True, editable=False),
+    GridFieldNumber('operation__sizemaximum', title=string_concat(_('operation'), ' - ', _('size maximum')), initially_hidden=True, editable=False),
+    GridFieldInteger('operation__priority', title=string_concat(_('operation'), ' - ', _('priority')), initially_hidden=True, editable=False),
+    GridFieldDateTime('operation__effective_start', title=string_concat(_('operation'), ' - ', _('effective start')), initially_hidden=True, editable=False),
+    GridFieldDateTime('operation__effective_end', title=string_concat(_('operation'), ' - ', _('effective end')), initially_hidden=True, editable=False),
+    GridFieldCurrency('operation__cost', title=string_concat(_('operation'), ' - ', _('cost')), initially_hidden=True, editable=False),
+    GridFieldChoice('operation__search', title=string_concat(_('operation'), ' - ', _('search mode')), choices=searchmode, initially_hidden=True, editable=False),
+    GridFieldText('operation__source', title=string_concat(_('operation'), ' - ', _('source')), initially_hidden=True, editable=False),
+    GridFieldLastModified('operation__lastmodified', title=string_concat(_('operation'), ' - ', _('last modified')), initially_hidden=True, editable=False),
     )
 
 
@@ -942,6 +1191,25 @@ class OperationMaterialList(GridReport):
     GridFieldLastModified('lastmodified'),
     GridFieldNumber('transferbatch', title=_('transfer batch quantity'), initially_hidden=True),
     GridFieldNumber('quantity_fixed', title=_('quantity fixed')),
+    # Operation fields
+    GridFieldText('operation__description', title=string_concat(_('operation'), ' - ', _('description')), initially_hidden=True, editable=False),
+    GridFieldText('operation__category', title=string_concat(_('operation'), ' - ', _('category')), initially_hidden=True, editable=False),
+    GridFieldText('operation__subcategory', title=string_concat(_('operation'), ' - ', _('subcategory')), initially_hidden=True, editable=False),
+    GridFieldChoice('operation__type', title=string_concat(_('operation'), ' - ', _('type')), choices=Operation.types, initially_hidden=True, editable=False),
+    GridFieldDuration('operation__duration', title=string_concat(_('operation'), ' - ', _('duration')), initially_hidden=True, editable=False),
+    GridFieldDuration('operation__duration_per', title=string_concat(_('operation'), ' - ', _('duration per unit')), initially_hidden=True, editable=False),
+    GridFieldDuration('operation__fence', title=string_concat(_('operation'), ' - ', _('release fence')), initially_hidden=True, editable=False),
+    GridFieldDuration('operation__posttime', title=string_concat(_('operation'), ' - ', _('post-op time')), initially_hidden=True, editable=False),
+    GridFieldNumber('operation__sizeminimum', title=string_concat(_('operation'), ' - ', _('size minimum')), initially_hidden=True, editable=False),
+    GridFieldNumber('operation__sizemultiple', title=string_concat(_('operation'), ' - ', _('size multiple')), initially_hidden=True, editable=False),
+    GridFieldNumber('operation__sizemaximum', title=string_concat(_('operation'), ' - ', _('size maximum')), initially_hidden=True, editable=False),
+    GridFieldInteger('operation__priority', title=string_concat(_('operation'), ' - ', _('priority')), initially_hidden=True, editable=False),
+    GridFieldDateTime('operation__effective_start', title=string_concat(_('operation'), ' - ', _('effective start')), initially_hidden=True, editable=False),
+    GridFieldDateTime('operation__effective_end', title=string_concat(_('operation'), ' - ', _('effective end')), initially_hidden=True, editable=False),
+    GridFieldCurrency('operation__cost', title=string_concat(_('operation'), ' - ', _('cost')), initially_hidden=True, editable=False),
+    GridFieldChoice('operation__search', title=string_concat(_('operation'), ' - ', _('search mode')), choices=searchmode, initially_hidden=True, editable=False),
+    GridFieldText('operation__source', title=string_concat(_('operation'), ' - ', _('source')), initially_hidden=True, editable=False),
+    GridFieldLastModified('operation__lastmodified', title=string_concat(_('operation'), ' - ', _('last modified')), initially_hidden=True, editable=False),
     )
 
 
@@ -1213,10 +1481,115 @@ class SubOperationList(GridReport):
     GridFieldDateTime('effective_end', title=_('effective end'), initially_hidden=True),
     GridFieldText('source', title=_('source')),
     GridFieldLastModified('lastmodified'),
+    # Operation fields
+    GridFieldText('operation__description', title=string_concat(_('operation'), ' - ', _('description')), initially_hidden=True, editable=False),
+    GridFieldText('operation__category', title=string_concat(_('operation'), ' - ', _('category')), initially_hidden=True, editable=False),
+    GridFieldText('operation__subcategory', title=string_concat(_('operation'), ' - ', _('subcategory')), initially_hidden=True, editable=False),
+    GridFieldChoice('operation__type', title=string_concat(_('operation'), ' - ', _('type')), choices=Operation.types, initially_hidden=True, editable=False),
+    GridFieldDuration('operation__duration', title=string_concat(_('operation'), ' - ', _('duration')), initially_hidden=True, editable=False),
+    GridFieldDuration('operation__duration_per', title=string_concat(_('operation'), ' - ', _('duration per unit')), initially_hidden=True, editable=False),
+    GridFieldDuration('operation__fence', title=string_concat(_('operation'), ' - ', _('release fence')), initially_hidden=True, editable=False),
+    GridFieldDuration('operation__posttime', title=string_concat(_('operation'), ' - ', _('post-op time')), initially_hidden=True, editable=False),
+    GridFieldNumber('operation__sizeminimum', title=string_concat(_('operation'), ' - ', _('size minimum')), initially_hidden=True, editable=False),
+    GridFieldNumber('operation__sizemultiple', title=string_concat(_('operation'), ' - ', _('size multiple')), initially_hidden=True, editable=False),
+    GridFieldNumber('operation__sizemaximum', title=string_concat(_('operation'), ' - ', _('size maximum')), initially_hidden=True, editable=False),
+    GridFieldInteger('operation__priority', title=string_concat(_('operation'), ' - ', _('priority')), initially_hidden=True, editable=False),
+    GridFieldDateTime('operation__effective_start', title=string_concat(_('operation'), ' - ', _('effective start')), initially_hidden=True, editable=False),
+    GridFieldDateTime('operation__effective_end', title=string_concat(_('operation'), ' - ', _('effective end')), initially_hidden=True, editable=False),
+    GridFieldCurrency('operation__cost', title=string_concat(_('operation'), ' - ', _('cost')), initially_hidden=True, editable=False),
+    GridFieldChoice('operation__search', title=string_concat(_('operation'), ' - ', _('search mode')), choices=searchmode, initially_hidden=True, editable=False),
+    GridFieldText('operation__source', title=string_concat(_('operation'), ' - ', _('source')), initially_hidden=True, editable=False),
+    GridFieldLastModified('operation__lastmodified', title=string_concat(_('operation'), ' - ', _('last modified')), initially_hidden=True, editable=False),
+    # Suboperation fields
+    GridFieldText('suboperation__description', title=string_concat(_('suboperation'), ' - ', _('description')), initially_hidden=True, editable=False),
+    GridFieldText('suboperation__category', title=string_concat(_('suboperation'), ' - ', _('category')), initially_hidden=True, editable=False),
+    GridFieldText('suboperation__subcategory', title=string_concat(_('suboperation'), ' - ', _('subcategory')), initially_hidden=True, editable=False),
+    GridFieldChoice('suboperation__type', title=string_concat(_('suboperation'), ' - ', _('type')), choices=Operation.types, initially_hidden=True, editable=False),
+    GridFieldDuration('suboperation__duration', title=string_concat(_('suboperation'), ' - ', _('duration')), initially_hidden=True, editable=False),
+    GridFieldDuration('suboperation__duration_per', title=string_concat(_('suboperation'), ' - ', _('duration per unit')), initially_hidden=True, editable=False),
+    GridFieldDuration('suboperation__fence', title=string_concat(_('suboperation'), ' - ', _('release fence')), initially_hidden=True, editable=False),
+    GridFieldDuration('suboperation__posttime', title=string_concat(_('suboperation'), ' - ', _('post-op time')), initially_hidden=True, editable=False),
+    GridFieldNumber('suboperation__sizeminimum', title=string_concat(_('suboperation'), ' - ', _('size minimum')), initially_hidden=True, editable=False),
+    GridFieldNumber('suboperation__sizemultiple', title=string_concat(_('suboperation'), ' - ', _('size multiple')), initially_hidden=True, editable=False),
+    GridFieldNumber('suboperation__sizemaximum', title=string_concat(_('suboperation'), ' - ', _('size maximum')), initially_hidden=True, editable=False),
+    GridFieldInteger('suboperation__priority', title=string_concat(_('suboperation'), ' - ', _('priority')), initially_hidden=True, editable=False),
+    GridFieldDateTime('suboperation__effective_start', title=string_concat(_('suboperation'), ' - ', _('effective start')), initially_hidden=True, editable=False),
+    GridFieldDateTime('suboperation__effective_end', title=string_concat(_('suboperation'), ' - ', _('effective end')), initially_hidden=True, editable=False),
+    GridFieldCurrency('suboperation__cost', title=string_concat(_('suboperation'), ' - ', _('cost')), initially_hidden=True, editable=False),
+    GridFieldChoice('suboperation__search', title=string_concat(_('suboperation'), ' - ', _('search mode')), choices=searchmode, initially_hidden=True, editable=False),
+    GridFieldText('suboperation__source', title=string_concat(_('suboperation'), ' - ', _('source')), initially_hidden=True, editable=False),
+    GridFieldLastModified('suboperation__lastmodified', title=string_concat(_('suboperation'), ' - ', _('last modified')), initially_hidden=True, editable=False),
     )
 
 
-class ManufacturingOrderList(GridReport):
+class OperationPlanMixin:
+
+  if 'freppledb.inventoryplanning' in settings.INSTALLED_APPS:
+    segmentlist = Segment.segmentList
+
+  @classmethod
+  def operationplanExtraBasequery(cls, query, request):
+    if 'freppledb.inventoryplanning' in settings.INSTALLED_APPS:
+      segmentname = request.prefs.get('segment', None) if request.prefs else None
+      if segmentname:
+        try:
+          segment = Segment.objects.all().using(request.database).get(pk=segmentname)
+          query = query.extra(
+            where=["exists ( %s and operationplan.item_id = item.name and operationplan.destination_id = location.name)" % segment.getQuery()]
+          )
+        except Segment.DoesNotExist:
+          pass
+    if 'freppledb.forecast' in settings.INSTALLED_APPS:
+      return query.extra(select={
+        'demand': '''
+          select json_agg(json_build_array(value, key, tp))
+          from (
+            select
+              key, value,
+              case when demand.name is not null then 'D' when forecast.name is not null then 'F' end as tp
+            from jsonb_each_text(operationplan.plan->'pegging')
+            left outer join demand on key = demand.name
+            left outer join forecast on substring(key from 0 for position(' - ' in key)) = forecast.name
+            where demand.name is not null or forecast.name is not null
+            order by value desc, key desc
+            limit 10
+          ) peg''',
+        'end_items': '''
+          select json_agg(json_build_array(key, val))
+          from (
+            select coalesce(demand.item_id, forecast.item_id) as key, sum(value::numeric) as val
+            from jsonb_each_text(operationplan.plan->'pegging')
+            left outer join demand on key = demand.name
+            left outer join forecast on substring(key from 0 for position(' - ' in key)) = forecast.name
+            group by coalesce(demand.item_id, forecast.item_id)
+            order by 2 desc
+            limit 10
+            ) peg_items'''
+        })
+    else:
+      return query.extra(select={
+        'demand': '''
+          select json_agg(json_build_array(value, key))
+          from (
+            select key, value
+            from jsonb_each_text(operationplan.plan->'pegging')
+            order by value desc, key desc
+            limit 10
+            ) peg''',
+        'end_items': '''
+          select json_agg(json_build_array(key, val))
+          from (
+            select demand.item_id as key, sum(value::numeric) as val
+            from jsonb_each_text(operationplan.plan->'pegging')
+            inner join demand on key = demand.name
+            group by demand.item_id
+            order by 2 desc
+            limit 10
+            ) peg_items'''
+        })
+
+
+class ManufacturingOrderList(OperationPlanMixin, GridReport):
   '''
   A list report to show manufacturing orders.
   '''
@@ -1249,20 +1622,10 @@ class ManufacturingOrderList(GridReport):
     q = ManufacturingOrder.objects.all()
     if args and args[0]:
       q = q.filter(location=args[0])
+    q = reportclass.operationplanExtraBasequery(q, request)
     return q.extra(select={
-      'demand': '''coalesce(
-        (select string_agg(value || ' : ' || key, ', ') from (select key, value from jsonb_each_text(operationplan.plan->'pegging') order by value desc, key desc limit 10) peg)
-        , '')''',
-      'end_items': '''coalesce(
-        (select string_agg(key || ' : ' || val, ', ') from (
-        select demand.item_id as key, sum(value::numeric) as val from jsonb_each_text(operationplan.plan->'pegging')
-        inner join demand on key = demand.name
-        group by demand.item_id
-        order by 2 desc
-        limit 10) peg_items)
-        , '')''',
-      'material': "(select string_agg(item_id || ' : ' || quantity, ', ') from (select item_id, round(quantity,2) quantity from operationplanmaterial where operationplan_id = operationplan.id order by quantity limit 10) mat)",
-      'resource': "(select string_agg(resource_id || ' : ' || quantity, ', ') from (select resource_id, round(quantity,2) quantity from operationplanresource where operationplan_id = operationplan.id order by quantity desc limit 10) res)",
+      'material': "(select json_agg(json_build_array(item_id, quantity)) from (select item_id, round(quantity,2) quantity from operationplanmaterial where operationplan_id = operationplan.id order by quantity limit 10) mat)",
+      'resource': "(select json_agg(json_build_array(resource_id, quantity)) from (select resource_id, round(quantity,2) quantity from operationplanresource where operationplan_id = operationplan.id order by quantity desc limit 10) res)",
       'setup_duration': "(operationplan.plan->'setup')",
       'setup_end': "(operationplan.plan->>'setupend')",
     })
@@ -1413,7 +1776,7 @@ class ManufacturingOrderList(GridReport):
         reportclass.rows += (f,)
 
 
-class DistributionOrderList(GridReport):
+class DistributionOrderList(OperationPlanMixin, GridReport):
   '''
   A list report to show distribution orders.
   '''
@@ -1427,7 +1790,6 @@ class DistributionOrderList(GridReport):
   editable = True
   height = 250
   help_url = 'user-guide/modeling-wizard/distribution/distribution-orders.html'
-
 
   @classmethod
   def extra_context(reportclass, request, *args, **kwargs):
@@ -1463,18 +1825,8 @@ class DistributionOrderList(GridReport):
         q = q.filter(destination_id=args[0])
       else:
         q = q.filter(location=args[0])
+    q = reportclass.operationplanExtraBasequery(q, request)
     return q.extra(select={
-      'demand': '''coalesce(
-        (select string_agg(value || ' : ' || key, ', ') from (select key, value from jsonb_each_text(operationplan.plan->'pegging') order by value desc, key desc limit 10) peg)
-        , '')''',
-      'end_items': '''coalesce(
-        (select string_agg(key || ' : ' || val, ', ') from (
-        select demand.item_id as key, sum(value::numeric) as val from jsonb_each_text(operationplan.plan->'pegging')
-        inner join demand on key = demand.name
-        group by demand.item_id
-        order by 2 desc
-        limit 10) peg_items)
-        , '')''',
       'total_cost': "cost*quantity",
       })
 
@@ -1641,7 +1993,7 @@ class DistributionOrderList(GridReport):
         reportclass.rows += (f,)
 
 
-class PurchaseOrderList(GridReport):
+class PurchaseOrderList(OperationPlanMixin, GridReport):
   '''
   A list report to show purchase orders.
   '''
@@ -1717,21 +2069,10 @@ class PurchaseOrderList(GridReport):
           lft = 1
           rght = 1
         q = q.filter(item__lft__gte=lft, item__rght__lte=rght)
-    return q.extra(
-      select={
-        'demand': '''coalesce(
-          (select string_agg(value || ' : ' || key, ', ')
-          from (select key, value from jsonb_each_text(operationplan.plan->'pegging')
-          order by value desc, key asc limit 10) peg), '')''',
-        'end_items': '''coalesce(
-          (select string_agg(key || ' : ' || val, ', ') from (
-          select demand.item_id as key, sum(value::numeric) as val from jsonb_each_text(operationplan.plan->'pegging')
-          inner join demand on key = demand.name
-          group by demand.item_id
-          order by 2 desc
-          limit 10) peg_items), '')''',
-        'total_cost': "coalesce((select max(cost) from itemsupplier where itemsupplier.item_id = operationplan.item_id and itemsupplier.location_id = operationplan.location_id and itemsupplier.supplier_id = operationplan.supplier_id), (select cost from item where item.name = operationplan.item_id)) * quantity",
-        'unit_cost': "coalesce((select max(cost) from itemsupplier where itemsupplier.item_id = operationplan.item_id and itemsupplier.location_id = operationplan.location_id and itemsupplier.supplier_id = operationplan.supplier_id), (select cost from item where item.name = operationplan.item_id))",
+    q = reportclass.operationplanExtraBasequery(q, request)
+    return q.extra(select={
+      'total_cost': "cost*quantity",
+      'unit_cost': "coalesce((select max(cost) from itemsupplier where itemsupplier.item_id = operationplan.item_id and itemsupplier.location_id = operationplan.location_id and itemsupplier.supplier_id = operationplan.supplier_id), (select cost from item where item.name = operationplan.item_id))",
       })
 
   rows = (

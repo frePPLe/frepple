@@ -1,5 +1,5 @@
 
-EXTRA_DIST = frepple.doxyfile frepple.1 frepplectl.1 frepple.py conf.py *.rst
+EXTRA_DIST = frepple.doxyfile frepple.1 frepplectl.1 frepple.py conf.py build.bat *.rst
 EXTRA_DIST += _templates installation-guide developer-guide user-guide
 
 man_MANS = frepple.1 frepplectl.1

@@ -256,14 +256,19 @@ OperationItemSupplier::OperationItemSupplier(
   setDuration(i->getLeadTime());
   setSizeMultiple(i->getSizeMultiple());
   setSizeMinimum(i->getSizeMinimum());
-  // TODO set this to a location representing the supplier availability calendar
-  // setLocation(b->getLocation());
+
   setSource(i->getSource());
   setCost(i->getCost());
   setFence(i->getFence());
   setHidden(true);
   new FlowEnd(this, b, 1);
   initType(metadata);
+
+  // Optionally, link with a supplier location and related availability calendar.
+  // A location must exist with the same name as the supplier.
+  auto supplierLocation = Location::find(i->getSupplier()->getName());
+  if (supplierLocation)
+    setLocation(supplierLocation);
 
   // Optionally, create a load
   if (i->getResource())

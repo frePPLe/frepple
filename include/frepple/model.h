@@ -3178,7 +3178,9 @@ class Operation : public HasName<Operation>,
       return size_maximum;
     }
 
-    /** Return the decoupled lead time of this operation. */
+    /** Return the decoupled lead time of this operation.
+      * TODO the decoupled lead time could vary over time, wich we don't handle now
+      */
     virtual Duration getDecoupledLeadTime(double qty) const = 0;
 
     static PyObject* getDecoupledLeadTimePython(PyObject *self, PyObject *args);

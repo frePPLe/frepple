@@ -1,0 +1,20 @@
+Purchase product X @ MyWarehouse from supplier 1,2019-01-04 00:00:00,2019-01-07 00:00:00,100.0
+Purchase product X @ MyWarehouse from supplier 1,2019-01-07 00:00:00,2019-01-10 00:00:00,100.0
+Purchase product X @ MyWarehouse from supplier 1,2019-01-14 00:00:00,2019-01-17 00:00:00,100.0
+Purchase product X @ MyWarehouse from supplier 1,2019-01-21 00:00:00,2019-01-24 00:00:00,70.0
+Purchase product X @ MyWarehouse from supplier 1,2019-06-28 23:59:59,2019-08-01 23:59:59,40.0
+Purchase product X @ MyWarehouse from supplier 1,2019-08-02 23:59:59,2019-08-05 23:59:59,100.0
+Purchase product X @ MyWarehouse from supplier 1,2019-08-05 00:00:00,2019-08-08 00:00:00,100.0
+Purchase product Y @ MyWarehouse from supplier 1,2019-01-21 00:00:00,2019-01-24 00:00:00,15.0
+Purchase product Y @ MyWarehouse from supplier 1,2019-01-28 00:00:00,2019-01-31 00:00:00,5.0
+Purchase product Z @ MyWarehouse from supplier 1,2019-01-28 00:00:00,2019-01-31 00:00:00,90.0
+Purchase product Z @ MyWarehouse from supplier 1,2019-02-04 00:00:00,2019-02-07 00:00:00,50.0
+Ship product X @ MyWarehouse,2019-01-07 00:00:00,2019-01-07 00:00:00,100.0
+Ship product X @ MyWarehouse,2019-01-10 00:00:00,2019-01-10 00:00:00,100.0
+Ship product X @ MyWarehouse,2019-01-17 00:00:00,2019-01-17 00:00:00,100.0
+Ship product X @ MyWarehouse,2019-01-24 00:00:00,2019-01-24 00:00:00,70.0
+Ship product X @ MyWarehouse,2019-08-08 00:00:00,2019-08-08 00:00:00,240.0
+Ship product Y @ MyWarehouse,2019-01-24 00:00:00,2019-01-24 00:00:00,15.0
+Ship product Y @ MyWarehouse,2019-01-31 00:00:00,2019-01-31 00:00:00,5.0
+Ship product Z @ MyWarehouse,2019-01-31 00:00:00,2019-01-31 00:00:00,90.0
+Ship product Z @ MyWarehouse,2019-02-07 00:00:00,2019-02-07 00:00:00,50.0

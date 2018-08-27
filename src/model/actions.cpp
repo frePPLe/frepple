@@ -386,19 +386,25 @@ CommandDeleteOperationPlan::CommandDeleteOperationPlan(OperationPlan* o) : oppla
     throw DataException("Can't delete a locked operationplan");
   }
 
-  // Deletion always should apply to a top level operationplan
-  opplan = opplan->getTopOwner();
-
-  // Delete all flowplans and loadplans, and unregister from operationplan list
-  opplan->deleteFlowLoads();
-  opplan->removeFromOperationplanList();
-  if (opplan->getDemand())
-    opplan->getDemand()->removeDelivery(opplan);
-  OperationPlan::iterator x(opplan);
-  while (OperationPlan* i = x.next())
+  // Deletion of all suboperationplans in this 
+  stack<OperationPlan*> to_delete;
+  to_delete.push(opplan->getTopOwner());
+  while (!to_delete.empty())
   {
-    i->deleteFlowLoads();
-    i->removeFromOperationplanList();
+    // Pick up the top of the stack
+    auto tmp = to_delete.top();
+    to_delete.pop();
+
+    // Delete all flowplans and loadplans, and unregister from operationplan list
+    tmp->deleteFlowLoads();
+    tmp->removeFromOperationplanList();
+    if (tmp->getDemand())
+      tmp->getDemand()->removeDelivery(opplan);
+
+    // Push child operationplans on the stack
+    OperationPlan::iterator x(tmp);
+    while (OperationPlan* i = x.next())
+      to_delete.push(i);
   }
 }
 

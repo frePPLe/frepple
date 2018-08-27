@@ -45,17 +45,37 @@ class Command(BaseCommand):
 
   def add_arguments(self, parser):
     parser.add_argument(
-      '--start', default='2011-1-1',
+      '--start', default='2014-1-1',
       help='Start date in YYYY-MM-DD format'
       )
     parser.add_argument(
-      '--end', default='2019-1-1',
+      '--end', default='2021-1-1',
       help='End date in YYYY-MM-DD format'
       )
     parser.add_argument(
       '--weekstart', type=int, default=1,
       choices=[0, 1, 2, 3, 4, 5, 6],
       help='First day of a week: 0=sunday, 1=monday (default), 2=tuesday, 3=wednesday, 4=thursday, 5=friday, 6=saturday'
+      ),
+    parser.add_argument(
+      '--format-day', default='%Y-%m-%d',
+      help='Format template for a daily bucket'
+      ),
+    parser.add_argument(
+      '--format-week', default='%y W%W',
+      help='Format template for a weekly bucket'
+      ),
+    parser.add_argument(
+      '--format-month', default='%b %y',
+      help='Format template for a monthly bucket'
+      ),
+    parser.add_argument(
+      '--format-quarter', default='%y Q%q',
+      help='Format template for a quarterly bucket'
+      ),
+    parser.add_argument(
+      '--format-year', default='%Y',
+      help='Format template for a yearly bucket'
       ),
     parser.add_argument(
       '--user',
@@ -69,6 +89,15 @@ class Command(BaseCommand):
       '--task', type=int,
       help='Task identifier (generated automatically if not provided)'
       )
+
+
+  def formatDate(self, curdate, template):
+    fmt = template
+    if "%q" in fmt:
+      month = int(curdate.strftime("%m"))  # an integer in the range 1 - 12
+      quarter = (month - 1) // 3 + 1       # an integer in the range 1 - 4
+      fmt = fmt.replace("%q", str(quarter))
+    return curdate.strftime(fmt)
 
 
   def handle(self, **options):
@@ -120,12 +149,13 @@ class Command(BaseCommand):
 
       with transaction.atomic(using=database, savepoint=False):
         # Delete previous contents
-        connections[database].cursor().execute(
-          "delete from common_bucketdetail where bucket_id in ('year','quarter','month','week','day')"
-          )
-        connections[database].cursor().execute(
-          "delete from common_bucket where name in ('year','quarter','month','week','day')"
-          )
+        with connections[database].cursor() as cursor:
+          cursor.execute(
+            "delete from common_bucketdetail where bucket_id in ('year','quarter','month','week','day')"
+            )
+          cursor.execute(
+            "delete from common_bucket where name in ('year','quarter','month','week','day')"
+            )
 
         # Create buckets
         y = Bucket(name='year', description='Yearly time buckets', level=1)
@@ -159,7 +189,7 @@ class Command(BaseCommand):
             prev_year = year
             BucketDetail(
               bucket=y,
-              name=str(year),
+              name=self.formatDate(curdate, options['format_year']),
               startdate=year_start,
               enddate=year_end
               ).save(using=database)
@@ -167,7 +197,7 @@ class Command(BaseCommand):
             prev_quarter = quarter
             BucketDetail(
               bucket=q,
-              name="%02d Q%s" % (year - 2000, quarter),
+              name=self.formatDate(curdate, options['format_quarter']),
               startdate=date(year, quarter * 3 - 2, 1),
               enddate=date(year + quarter // 4, quarter * 3 + 1 - 12 * (quarter // 4), 1)
               ).save(using=database)
@@ -175,7 +205,7 @@ class Command(BaseCommand):
             prev_month = month
             BucketDetail(
               bucket=m,
-              name=curdate.strftime("%b %y"),
+              name=self.formatDate(curdate, options['format_month']),
               startdate=date(year, month, 1),
               enddate=date(year + month // 12, month + 1 - 12 * (month // 12), 1),
               ).save(using=database)
@@ -186,13 +216,16 @@ class Command(BaseCommand):
             # included in that week
             BucketDetail(
               bucket=w,
-              name=(week_start+timedelta(days=(7-week_start.weekday()) % 7)).strftime("%y W%W"),
+              name=self.formatDate(
+                week_start + timedelta(days=(7 - week_start.weekday()) % 7),
+                options['format_week']
+                ),
               startdate=week_start,
               enddate=week_end,
               ).save(using=database)
           BucketDetail(
             bucket=d,
-            name=str(curdate.date()),
+            name=self.formatDate(curdate.date(), options['format_day']),
             startdate=curdate,
             enddate=curdate + timedelta(1),
             ).save(using=database)
@@ -253,37 +286,82 @@ class Command(BaseCommand):
 
       template = Template('''
         {%% load i18n %%}
-        <form role="form" method="post" action="{{request.prefix}}/execute/launch/createbuckets/">{%% csrf_token %%}
+        <form class="form-horizontal" role="form" method="post" action="{{request.prefix}}/execute/launch/createbuckets/">{%% csrf_token %%}
         <input type="hidden" name="weekstart" id="weekstart" value="1">
         <table>
           <tr>
             <td style="vertical-align:top; padding: 15px">
-              <button  class="btn btn-primary" type="submit" value="{%% trans "launch"|capfirst %%}">{%% trans "launch"|capfirst %%}</button>
+              <button class="btn btn-primary" type="submit" value="{%% trans "launch"|capfirst %%}">{%% trans "launch"|capfirst %%}</button>
             </td>
-            <td  style="padding: 15px">
-            <p>%s</td>
+            <td style="padding: 15px; width:99%%">
+            %s
+            </td>
           </tr>
         </table>
         </form>
         <script>{{ javascript|safe }}</script>
       ''' % (
-        force_text(_('''Create time buckets for reporting.</p>
-              <label class="control-label">Start date: <input class="vDateField form-control" id="start" name="start" type="text" size="12"/></label>
-              <label class="control-label">End date: <input class="vDateField form-control" id="end" name="end" type="text" size="12"/></label><br>
-             <label class="control-label" for="weekstart1">Week starts on:</label>
-             <div class="dropdown dropdown-submit-input">
-                     <button class="btn btn-default dropdown-toggle form-control"  id="weekstart1" value="1" type="button" data-toggle="dropdown">Monday&nbsp;&nbsp;<span class="caret"></span>
-                     </button>
-                     <ul class="dropdown-menu col-xs-12" aria-labelledby="weekstart1" id="weekstartul">
-                        <li><a>Sunday</a></li>
-                        <li><a>Monday</a></li>
-                        <li><a>Tuesday</a></li>
-                        <li><a>Wednesday</a></li>
-                        <li><a>Thursday</a></li>
-                        <li><a>Friday</a></li>
-                        <li><a>Saturday</a></li>
-                     </ul>
-             </div>'''))
+        force_text(_('''<p>Create time buckets for reporting.</p>
+          <div class="form-group">
+          <label class="col-sm-3 control-label">Start date</label>
+          <div class="col-sm-9">
+          <input class="vDateField form-control" id="start" name="start" type="text" size="12"/>
+          </div>
+          </div>
+          <div class="form-group">
+          <label class="col-sm-3 control-label">End date</label>
+          <div class="col-sm-9">
+          <input class="vDateField form-control" id="end" name="end" type="text" size="12"/>
+          </div>
+          </div>
+          <div class="form-group">
+          <label class="col-sm-3 control-label" for="weekstart1">Week starts on</label>
+          <div class="col-sm-9">
+          <div class="dropdown dropdown-submit-input">
+            <button class="btn btn-default dropdown-toggle form-control"  id="weekstart1" value="1" type="button" data-toggle="dropdown">Monday&nbsp;&nbsp;<span class="caret"></span></button>
+            <ul class="dropdown-menu col-xs-12" aria-labelledby="weekstart1" id="weekstartul">
+              <li><a>Sunday</a></li>
+              <li><a>Monday</a></li>
+              <li><a>Tuesday</a></li>
+              <li><a>Wednesday</a></li>
+              <li><a>Thursday</a></li>
+              <li><a>Friday</a></li>
+              <li><a>Saturday</a></li>
+            </ul>
+          </div>
+          </div>
+          </div>
+          <div class="form-group">
+          <label class="col-sm-3 control-label">Day name</label>
+          <div class="col-sm-9">
+          <input class="form-control" name="format-day" type="text" size="12" value="%Y-%m-%d"/>
+          </div>
+          </div>
+          <div class="form-group">
+          <label class="col-sm-3 control-label">Week name</label>
+          <div class="col-sm-9">
+          <input class="form-control" name="format-week" type="text" size="12" value="%y W%W"/>
+          </div>
+          </div>
+          <div class="form-group">
+          <label class="col-sm-3 control-label">Month name</label>
+          <div class="col-sm-9">
+          <input class="form-control" name="format-month" type="text" size="12" value="%b %y"/>
+          </div>
+          </div>
+          <div class="form-group">
+          <label class="col-sm-3 control-label">Quarter format</label>
+          <div class="col-sm-9">
+          <input class="form-control" name="format-quarter" type="text" size="12" value="%y Q%q"/>
+          </div>
+          </div>
+          <div class="form-group">
+          <label class="col-sm-3 control-label">Year format</label>
+          <div class="col-sm-9">
+          <input class="form-control" name="format-year" type="text" size="12" value="%Y"/>
+          </div>
+          </div>
+          '''))
         ))
       return template.render(context)
       # A list of translation strings from the above

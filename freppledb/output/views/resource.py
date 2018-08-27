@@ -50,6 +50,7 @@ class OverviewReport(GridPivot):
     GridFieldText('type', title=_('type'), editable=False, field_name='type', initially_hidden=True),
     GridFieldNumber('maximum', title=_('maximum'), editable=False, field_name='maximum', initially_hidden=True),
     GridFieldText('maximum_calendar', title=_('maximum calendar'), editable=False, field_name='maximum_calendar__name', formatter='detail', extra='"role":"input/calendar"', initially_hidden=True),
+    GridFieldText('available_calendar', title=_('available calendar'), editable=False, field_name='available__name', formatter='detail', extra='"role":"input/calendar"', initially_hidden=True),
     GridFieldCurrency('cost', title=_('cost'), editable=False, field_name='cost', initially_hidden=True),
     GridFieldDuration('maxearly', title=_('maxearly'), editable=False, field_name='maxearly', initially_hidden=True),
     GridFieldText('setupmatrix', title=_('setupmatrix'), editable=False, field_name='setupmatrix__name', formatter='detail', extra='"role":"input/setupmatrix"', initially_hidden=True),
@@ -129,7 +130,7 @@ class OverviewReport(GridPivot):
         res.type, res.maximum, res.maximum_calendar_id, res.cost, res.maxearly,
         res.setupmatrix_id, res.setup, location.name, location.description,
         location.category, location.subcategory, location.available_id,
-        coalesce(max(plan_summary.avg_util),0) as avgutil,
+        coalesce(max(plan_summary.avg_util),0) as avgutil, res.available_id available_calendar, 
         %s
         d.bucket as col1, d.startdate as col2,
         coalesce(sum(out_resourceplan.available),0) * (case when res.type = 'buckets' then 1 else %f end) as available,
@@ -166,7 +167,7 @@ class OverviewReport(GridPivot):
       on res.name = plan_summary.resource
       -- Grouping and sorting
       group by res.name, res.description, res.category, res.subcategory,
-        res.type, res.maximum, res.maximum_calendar_id, res.cost, res.maxearly,
+        res.type, res.maximum, res.maximum_calendar_id, res.available_id, res.cost, res.maxearly,
         res.setupmatrix_id, res.setup, location.name, location.description,
         location.category, location.subcategory, location.available_id,
         %s d.bucket, d.startdate
@@ -197,6 +198,7 @@ class OverviewReport(GridPivot):
         'location__category': row[13], 'location__subcategory': row[14],
         'location__available': row[15],
         'avgutil': round(row[16], 2),
+        'available_calendar': row[17],
         'bucket': row[numfields-6],
         'startdate': row[numfields-5].date(),
         'available': round(row[numfields-4], 1),

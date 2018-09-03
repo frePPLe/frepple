@@ -138,24 +138,24 @@ class OverviewReport(GridPivot):
        select item.name||' @ '||location.name,
        item.name item_id,
        location.name location_id,
-       item.description, 
-       item.category, 
-       item.subcategory, 
+       item.description,
+       item.category,
+       item.subcategory,
        item.owner_id,
-       item.source, 
-       item.lastmodified, 
-       location.description, 
+       item.source,
+       item.lastmodified,
+       location.description,
        location.category,
-       location.subcategory, 
-       location.available_id, 
+       location.subcategory,
+       location.available_id,
        location.owner_id,
-       location.source, 
+       location.source,
        location.lastmodified,
        %s
-       coalesce(initial_on_hand.onhand,0) startoh,       
+       coalesce(initial_on_hand.onhand,0) startoh,
        coalesce(initial_on_hand.onhand,0) - coalesce(-sum(least(operationplanmaterial.quantity, 0)),0) + coalesce(sum(greatest(operationplanmaterial.quantity, 0)),0) endoh,
        case when coalesce(initial_on_hand.onhand,0) = 0 then 0 else
-       extract( epoch from initial_on_hand.flowdate + coalesce(initial_on_hand.periodofcover,0) * interval '1 second' - greatest(d.startdate,%%s))/86400 end startohdoc,                                                
+       extract( epoch from initial_on_hand.flowdate + coalesce(initial_on_hand.periodofcover,0) * interval '1 second' - greatest(d.startdate,%%s))/86400 end startohdoc,
        d.bucket,
        d.startdate,
        d.enddate,
@@ -168,7 +168,7 @@ class OverviewReport(GridPivot):
        coalesce(sum(greatest(case when operationplan.type = 'MO' then operationplanmaterial.quantity else 0 end, 0)),0) as producedMO,
        coalesce(sum(greatest(case when operationplan.type = 'DO' then operationplanmaterial.quantity else 0 end, 0)),0) as producedDO,
        coalesce(sum(greatest(case when operationplan.type = 'PO' then operationplanmaterial.quantity else 0 end, 0)),0) as producedPO
-       from 
+       from
        (%s) opplanmat
        inner join item on item.name = opplanmat.item_id
        inner join location on location.name = opplanmat.location_id
@@ -219,7 +219,7 @@ class OverviewReport(GridPivot):
        d.startdate,
        d.enddate,
        initial_on_hand.minimum
-       order by %s
+       order by %s, d.startdate
     ''' % (
         reportclass.attr_sql, basesql, sortsql
       )

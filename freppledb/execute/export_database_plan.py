@@ -87,6 +87,8 @@ class export:
         for i in opplan.interruptions
         ] if unavail else [],
       }
+    if not opplan.feasible:
+      pln['feasible'] = False
     if opplan.setupend != opplan.start:
       pln["setup"] = opplan.setup
       pln["setupend"] = opplan.setupend.strftime("%Y-%m-%d %H:%M:%S")

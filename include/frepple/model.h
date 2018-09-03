@@ -2020,6 +2020,11 @@ class OperationPlan
       return (flags & (STATUS_CONFIRMED + STATUS_APPROVED)) == 0;
     }
 
+    bool getFeasible() const
+    {
+      return !(flags & FEASIBLE);
+    }
+
     /** Returns true is this operationplan is allowed to consume material.
       * This field only has an impact for locked operationplans.
       */
@@ -2086,6 +2091,14 @@ class OperationPlan
       else
         flags |= CONSUME_CAPACITY;
       resizeFlowLoadPlans();
+    }
+
+    void setFeasible(bool b)
+    {
+      if (b)
+        flags &= ~FEASIBLE;
+      else
+        flags |= FEASIBLE;
     }
 
     /** Returns a pointer to the operation being instantiated. */
@@ -2528,6 +2541,7 @@ class OperationPlan
       m->addBoolField<Cls>(Tags::consume_material, &Cls::getConsumeMaterial, &Cls::setConsumeMaterial, BOOL_TRUE);
       m->addBoolField<Cls>(Tags::produce_material, &Cls::getProduceMaterial, &Cls::setProduceMaterial, BOOL_TRUE);
       m->addBoolField<Cls>(Tags::consume_capacity, &Cls::getConsumeCapacity, &Cls::setConsumeCapacity, BOOL_TRUE);
+      m->addBoolField<Cls>(Tags::feasible, &Cls::getFeasible, &Cls::setFeasible, BOOL_TRUE);
       HasSource::registerFields<Cls>(m);
       m->addPointerField<Cls, OperationPlan>(Tags::owner, &Cls::getOwner, &Cls::setOwner);
       m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, &Cls::setHidden, BOOL_FALSE, DONT_SERIALIZE);
@@ -2632,16 +2646,17 @@ class OperationPlan
       initType(metadata);
     }
 
-    static const short STATUS_APPROVED = 1;
-    static const short STATUS_CONFIRMED = 2;
+    static const unsigned short STATUS_APPROVED = 1;
+    static const unsigned short STATUS_CONFIRMED = 2;
     // TODO Conceptually this may not ideal: Rather than a
     // quantity-based distinction (between CONSUME_MATERIAL and
     // PRODUCE_MATERIAL) having a time-based distinction may be more
     // appropriate (between PROCESS_MATERIAL_AT_START and
     // PROCESS_MATERIAL_AT_END).
-    static const short CONSUME_MATERIAL = 4;
-    static const short PRODUCE_MATERIAL = 8;
-    static const short CONSUME_CAPACITY = 16;
+    static const unsigned short CONSUME_MATERIAL = 4;
+    static const unsigned short PRODUCE_MATERIAL = 8;
+    static const unsigned short CONSUME_CAPACITY = 16;
+    static const unsigned short FEASIBLE = 32;
 
     /** Counter of OperationPlans, which is used to automatically assign a
       * unique identifier for each operationplan.<br>
@@ -2709,9 +2724,8 @@ class OperationPlan
     /** Quantity. */
     double quantity = 0.0;
 
-    /** Is this operationplan locked? A locked operationplan doesn't accept
-      * any changes. This field is only relevant for top-operationplans. */
-    short flags = 0;
+    /** Flags on the operationplan: status, consumematerial, consumecapacity, infeasible. */
+    unsigned short flags = 0;
 
     /** Hidden, static field to store the location during import. */
     static Location* loc;

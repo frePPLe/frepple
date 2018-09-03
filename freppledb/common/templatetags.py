@@ -401,7 +401,7 @@ class MenuNode(Node):
               false, true, ''
               ) as xml_count
           from information_schema.tables
-          where table_schema = 'public'
+          where table_schema = 'public' and table_type = 'BASE TABLE'
           ) s
         where xml_count is document
         ''')

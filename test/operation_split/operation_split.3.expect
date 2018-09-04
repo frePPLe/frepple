@@ -1005,6 +1005,7 @@
 			<start>2013-12-17T00:00:00</start>
 			<end>2013-12-24T00:00:00</end>
 			<quantity>15</quantity>
+			<feasible>false</feasible>
 			<ordertype>PO</ordertype>
 			<item>
 				<name>component 1 for option A</name>
@@ -1024,6 +1025,7 @@
 			<start>2013-12-25T00:00:00</start>
 			<end>2013-12-27T00:00:00</end>
 			<quantity>35</quantity>
+			<feasible>false</feasible>
 			<ordertype>PO</ordertype>
 			<item>
 				<name>component 1 for option B</name>
@@ -1043,6 +1045,7 @@
 			<start>2013-12-21T00:00:00</start>
 			<end>2013-12-22T00:00:00</end>
 			<quantity>7</quantity>
+			<feasible>false</feasible>
 			<ordertype>PO</ordertype>
 			<item>
 				<name>component 1 for option C</name>
@@ -1062,6 +1065,7 @@
 			<start>2013-12-17T00:00:00</start>
 			<end>2013-12-24T00:00:00</end>
 			<quantity>30</quantity>
+			<feasible>false</feasible>
 			<ordertype>PO</ordertype>
 			<item>
 				<name>component 2 for option A</name>
@@ -1081,6 +1085,7 @@
 			<start>2013-12-25T00:00:00</start>
 			<end>2013-12-27T00:00:00</end>
 			<quantity>35</quantity>
+			<feasible>false</feasible>
 			<ordertype>PO</ordertype>
 			<item>
 				<name>component 2 for option B</name>
@@ -1100,6 +1105,7 @@
 			<start>2013-12-21T00:00:00</start>
 			<end>2013-12-22T00:00:00</end>
 			<quantity>35</quantity>
+			<feasible>false</feasible>
 			<ordertype>PO</ordertype>
 			<item>
 				<name>component 2 for option C</name>
@@ -1328,6 +1334,7 @@
 			<start>2013-12-17T00:00:00</start>
 			<end>2013-12-24T00:00:00</end>
 			<quantity>20</quantity>
+			<feasible>false</feasible>
 			<ordertype>PO</ordertype>
 			<item>
 				<name>component 4 for option A</name>
@@ -1347,6 +1354,7 @@
 			<start>2013-12-25T00:00:00</start>
 			<end>2013-12-27T00:00:00</end>
 			<quantity>40</quantity>
+			<feasible>false</feasible>
 			<ordertype>PO</ordertype>
 			<item>
 				<name>component 4 for option B</name>
@@ -1366,6 +1374,7 @@
 			<start>2013-12-21T00:00:00</start>
 			<end>2013-12-22T00:00:00</end>
 			<quantity>40</quantity>
+			<feasible>false</feasible>
 			<ordertype>PO</ordertype>
 			<item>
 				<name>component 4 for option C</name>
@@ -1570,6 +1579,7 @@
 			<start>2013-12-24T00:00:00</start>
 			<end>2013-12-27T00:00:00</end>
 			<quantity>15</quantity>
+			<feasible>false</feasible>
 			<owner>
 				<id>30</id>
 			</owner>
@@ -1582,6 +1592,7 @@
 			<start>2013-12-27T00:00:00</start>
 			<end>2014-01-01T00:00:00</end>
 			<quantity>35</quantity>
+			<feasible>false</feasible>
 			<owner>
 				<id>30</id>
 			</owner>
@@ -1594,6 +1605,7 @@
 			<start>2013-12-22T00:00:00</start>
 			<end>2014-01-01T00:00:00</end>
 			<quantity>7</quantity>
+			<feasible>false</feasible>
 			<owner>
 				<id>30</id>
 			</owner>
@@ -1615,6 +1627,7 @@
 			<start>2013-12-24T00:00:00</start>
 			<end>2013-12-27T00:00:00</end>
 			<quantity>30</quantity>
+			<feasible>false</feasible>
 			<owner>
 				<id>34</id>
 			</owner>
@@ -1627,6 +1640,7 @@
 			<start>2013-12-27T00:00:00</start>
 			<end>2014-01-01T00:00:00</end>
 			<quantity>35</quantity>
+			<feasible>false</feasible>
 			<owner>
 				<id>34</id>
 			</owner>
@@ -1639,6 +1653,7 @@
 			<start>2013-12-22T00:00:00</start>
 			<end>2014-01-01T00:00:00</end>
 			<quantity>35</quantity>
+			<feasible>false</feasible>
 			<owner>
 				<id>34</id>
 			</owner>
@@ -1837,6 +1852,7 @@
 			<start>2013-12-24T00:00:00</start>
 			<end>2013-12-27T00:00:00</end>
 			<quantity>20</quantity>
+			<feasible>false</feasible>
 			<owner>
 				<id>54</id>
 			</owner>
@@ -1849,6 +1865,7 @@
 			<start>2013-12-27T00:00:00</start>
 			<end>2014-01-01T00:00:00</end>
 			<quantity>40</quantity>
+			<feasible>false</feasible>
 			<owner>
 				<id>54</id>
 			</owner>
@@ -1861,6 +1878,7 @@
 			<start>2013-12-22T00:00:00</start>
 			<end>2014-01-01T00:00:00</end>
 			<quantity>40</quantity>
+			<feasible>false</feasible>
 			<owner>
 				<id>54</id>
 			</owner>

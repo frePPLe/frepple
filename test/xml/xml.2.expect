@@ -122,6 +122,7 @@
 			<start>2009-01-13T00:00:00</start>
 			<end>2009-01-20T00:00:00</end>
 			<quantity>12</quantity>
+			<feasible>false</feasible>
 			<owner>
 				<id>2</id>
 			</owner>

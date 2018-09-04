@@ -802,6 +802,7 @@
 			<end>2014-02-05T00:00:00</end>
 			<quantity>2</quantity>
 			<status>confirmed</status>
+			<feasible>false</feasible>
 			<owner>
 				<id>3005</id>
 			</owner>
@@ -951,6 +952,7 @@
 			<start>2013-12-31T00:00:00</start>
 			<end>2013-12-31T00:00:00</end>
 			<quantity>5</quantity>
+			<feasible>false</feasible>
 			<ordertype>PO</ordertype>
 			<item>
 				<name>In1</name>
@@ -1027,6 +1029,7 @@
 			<start>2013-12-31T00:00:00</start>
 			<end>2013-12-31T00:00:00</end>
 			<quantity>8</quantity>
+			<feasible>false</feasible>
 			<ordertype>PO</ordertype>
 			<item>
 				<name>In2</name>

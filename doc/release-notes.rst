@@ -10,6 +10,24 @@ Release notes
   order, purchase order or distribution order. The calculation was incorrectly
   based on the start date rather the end date of the operation in question. 
 
+- A new field "feasible" is now added to the
+  `inventory detail report <user-guide/user-interface/plan-analysis/inventory-detail-report.html>`_,
+  `resource detail report <user-guide/user-interface/plan-analysis/resource-detail-report.html>`_,
+  `operation detail report <user-guide/user-interface/plan-analysis/operation-detail-report.html>`_,
+  `purchase order screen <user-guide/model-reference/purchase-orders.html>`_,
+  `distribution order screen <user-guide/model-reference/distribution-orders.html>`_ and
+  `manufacturing order screen <user-guide/model-reference/manufacturing-orders.html>`_.
+  The read-only boolean field indicates whether the order is violating any material, lead time or capacity
+  constraints. This is useful in interpreting the results of an unconstrained plan.
+  
+- | The criterion for `before current problems <user-guide/user-interface/plan-analysis/problem-report.html>`_
+    is updated for confirmed orders. The change should result in less problems that are 
+    also more meaningful to the users.
+  | For orders in the status approved or proposed a before-current problem is created when
+    the start date is in the past.
+  | For orders in the status confirmed the criterion the problem is now created when the
+    end date is in the past, i.e. the order is overdue and should have been finished by now.
+
 .. rubric:: User interface
 
 - Ability to make the data anonymous and obfuscated when 

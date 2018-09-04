@@ -54,6 +54,9 @@ inventory status number            | The inventory status is a calculated field 
                                    | The cells have a background color that can be green, orange or red. Sorting 
                                    | the distribution orders using the Inventory Status column (red ones first) allows the planner to 
                                    | immediately focus on the distribution orders that should be treated first. 
+feasible         boolean           | Read-only boolean flag indicating whether the operationplan is violating any
+                                     material, lead time or capacity constraints.
+                                   | This is very handy in interpreting unconstrained plans.                                     
 criticality      number            | The criticality is a read-only field, calculated by the planning engine. 
                                    | It represents an indication of the slack time in the usage of the distribution order.
                                    | A criticality of 0 indicates that the distribution order is on the critical path of one or more demands.

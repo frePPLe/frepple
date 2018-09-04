@@ -285,6 +285,7 @@
 			<start>2008-12-22T00:00:00</start>
 			<end>2008-12-29T00:00:00</end>
 			<quantity>4</quantity>
+			<feasible>false</feasible>
 			<ordertype>PO</ordertype>
 			<item>
 				<name>component A</name>
@@ -304,6 +305,7 @@
 			<start>2008-12-25T00:00:00</start>
 			<end>2009-01-01T00:00:00</end>
 			<quantity>2</quantity>
+			<feasible>false</feasible>
 			<ordertype>PO</ordertype>
 			<item>
 				<name>component A</name>
@@ -323,6 +325,7 @@
 			<start>2008-12-26T00:00:00</start>
 			<end>2009-01-02T00:00:00</end>
 			<quantity>1</quantity>
+			<feasible>false</feasible>
 			<ordertype>PO</ordertype>
 			<item>
 				<name>component A</name>
@@ -342,6 +345,7 @@
 			<start>2008-12-25T00:00:00</start>
 			<end>2009-01-01T00:00:00</end>
 			<quantity>4</quantity>
+			<feasible>false</feasible>
 			<ordertype>PO</ordertype>
 			<item>
 				<name>component C</name>
@@ -361,6 +365,7 @@
 			<start>2008-12-26T00:00:00</start>
 			<end>2009-01-02T00:00:00</end>
 			<quantity>1</quantity>
+			<feasible>false</feasible>
 			<ordertype>PO</ordertype>
 			<item>
 				<name>component C</name>
@@ -402,6 +407,7 @@
 			<start>2008-12-29T00:00:00</start>
 			<end>2009-01-04T00:00:00</end>
 			<quantity>5</quantity>
+			<feasible>false</feasible>
 		</operationplan>
 		<operationplan>
 			<id>9</id>

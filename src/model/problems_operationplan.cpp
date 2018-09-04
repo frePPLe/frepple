@@ -47,15 +47,21 @@ void OperationPlan::updateProblems()
   if (!firstsubopplan)
   {
     // Avoid duplicating problems on child and owner operationplans
-    // Check if a BeforeCurrent problem is required.
-    if (dates.getStart() < Plan::instance().getCurrent())
-      needsBeforeCurrent = true;
-
-    // Check if a BeforeFence problem is required.
+    // Check if a BeforeCurrent or BeforeFence problem is required.
     // Note that we either detect of beforeCurrent or a beforeFence problem,
     // never both simultaneously.
-    else if (dates.getStart() < Plan::instance().getCurrent() + oper->getFence() && getProposed())
-      needsBeforeFence = true;
+    if (getConfirmed())
+    {
+      if (dates.getEnd() < Plan::instance().getCurrent())
+        needsBeforeCurrent = true;
+    }
+    else
+    {
+      if (dates.getStart() < Plan::instance().getCurrent())
+        needsBeforeCurrent = true;
+      else if (dates.getStart() < Plan::instance().getCurrent() + oper->getFence() && getProposed())
+        needsBeforeFence = true;
+    }
   }
   if (nextsubopplan
     && getEnd() > nextsubopplan->getStart()
@@ -78,27 +84,34 @@ void OperationPlan::updateProblems()
     // is acceptable.
     if (typeid(curprob) == typeid(ProblemBeforeCurrent))
     {
-      // if: problem needed and it exists already
-      if (needsBeforeCurrent) needsBeforeCurrent = false;
-      // else: problem not needed but it exists already
-      else delete &curprob;
+      if (needsBeforeCurrent)
+        needsBeforeCurrent = false;
+      else
+        delete &curprob;
     }
     else if (typeid(curprob) == typeid(ProblemBeforeFence))
     {
-      if (needsBeforeFence) needsBeforeFence = false;
-      else delete &curprob;
+      if (needsBeforeFence)
+        needsBeforeFence = false;
+      else
+        delete &curprob;
     }
     else if (typeid(curprob) == typeid(ProblemPrecedence))
     {
-      if (needsPrecedence) needsPrecedence = false;
-      else delete &curprob;
+      if (needsPrecedence)
+        needsPrecedence = false;
+      else
+        delete &curprob;
     }
   }
 
   // Create the problems that are required but aren't existing yet.
-  if (needsBeforeCurrent) new ProblemBeforeCurrent(this);
-  if (needsBeforeFence) new ProblemBeforeFence(this);
-  if (needsPrecedence) new ProblemPrecedence(this);
+  if (needsBeforeCurrent)
+    new ProblemBeforeCurrent(this);
+  if (needsBeforeFence)
+    new ProblemBeforeFence(this);
+  if (needsPrecedence)
+    new ProblemPrecedence(this);
 }
 
 

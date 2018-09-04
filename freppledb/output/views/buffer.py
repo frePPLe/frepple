@@ -27,7 +27,7 @@ from freppledb.input.models import Buffer, Item, Location, OperationPlanMaterial
 from freppledb.input.views import OperationPlanMixin
 from freppledb.common.report import GridReport, GridPivot, GridFieldText, GridFieldNumber
 from freppledb.common.report import GridFieldDateTime, GridFieldInteger, GridFieldDuration
-from freppledb.common.report import GridFieldCurrency, GridFieldLastModified
+from freppledb.common.report import GridFieldCurrency, GridFieldLastModified, GridFieldBool
 
 
 class OverviewReport(GridPivot):
@@ -305,7 +305,9 @@ class DetailReport(OperationPlanMixin, GridReport):
     else:
       base = OperationPlanMaterial.objects
     base = reportclass.operationplanExtraBasequery(base, request)
-    return base.select_related()
+    return base.select_related().extra(select={
+      'feasible': "coalesce((operationplan.plan->>'feasible')::boolean, true)",
+      })
 
   @classmethod
   def extra_context(reportclass, request, *args, **kwargs):
@@ -356,6 +358,7 @@ class DetailReport(OperationPlanMixin, GridReport):
     GridFieldDuration('operationplan__delay', title=_('delay'), editable=False, extra='"formatoptions":{"defaultValue":""}, "summaryType":"max"'),
     GridFieldNumber('operationplan__quantity', title=_('operationplan quantity'), editable=False, extra='"formatoptions":{"defaultValue":""}, "summaryType":"sum"'),
     GridFieldText('demand', title=_('demands'), formatter='demanddetail', extra='"role":"input/demand"', width=300, editable=False, sortable=False),
+    GridFieldBool('feasible', title=_('feasible'), editable=False, initially_hidden=True, search=False),
     # Optional fields referencing the item
     GridFieldText('item__description', title=string_concat(_('item'), ' - ', _('description')),
       initially_hidden=True, editable=False),
@@ -386,4 +389,5 @@ class DetailReport(OperationPlanMixin, GridReport):
       initially_hidden=True, editable=False),
     GridFieldLastModified('location__lastmodified', title=string_concat(_('location'), ' - ', _('last modified')),
       initially_hidden=True, editable=False),
+    GridFieldBool('feasible', title=_('feasible'), editable=False, initially_hidden=True, search=False),
     )

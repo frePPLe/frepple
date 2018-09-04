@@ -27,7 +27,7 @@ from freppledb.common.models import Parameter
 from freppledb.common.report import GridReport, GridPivot, GridFieldCurrency
 from freppledb.common.report import GridFieldLastModified, GridFieldDuration
 from freppledb.common.report import GridFieldDateTime, GridFieldInteger
-from freppledb.common.report import GridFieldNumber, GridFieldText
+from freppledb.common.report import GridFieldNumber, GridFieldText, GridFieldBool
 
 
 class OverviewReport(GridPivot):
@@ -245,7 +245,8 @@ class DetailReport(OperationPlanMixin, GridReport):
     return base.select_related().extra(select={
       'opplan_duration': "(operationplan.enddate - operationplan.startdate)",
       'setup_end': "(operationplan.plan->>'setupend')",
-      'setup_duration': "(operationplan.plan->>'setup')"
+      'setup_duration': "(operationplan.plan->>'setup')",
+      'feasible': "coalesce((operationplan.plan->>'feasible')::boolean, true)"
       })
 
   @classmethod
@@ -314,6 +315,7 @@ class DetailReport(OperationPlanMixin, GridReport):
     GridFieldText('setup', title=_('setup'), editable=False, initially_hidden=True),
     GridFieldDateTime('setup_end', title=_('setup end date'), editable=False, initially_hidden=True),
     GridFieldDuration('setup_duration', title=_('setup duration'), editable=False, initially_hidden=True),
+    GridFieldBool('feasible', title=_('feasible'), editable=False, initially_hidden=True, search=False),
     # Optional fields referencing the item
     GridFieldText(
       'operationplan__operation__item__description', initially_hidden=True, editable=False,

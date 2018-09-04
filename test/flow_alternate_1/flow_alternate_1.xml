@@ -193,7 +193,6 @@
   </demands>
 
 <?python
-frepple.saveXMLfile("output.0.xml")
 print("CREATING CONSTRAINED PLAN")
 frepple.solver_mrp(plantype=1, constraints=15, loglevel=2).solve()
 frepple.saveplan("output.1.xml")

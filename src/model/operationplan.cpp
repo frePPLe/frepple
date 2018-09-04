@@ -829,6 +829,9 @@ bool OperationPlan::activate(bool createsubopplans, bool use_start)
   // created yet. We do it now...
   createFlowLoads();
 
+  // Update the feasibility flag.
+  computeFeasibility();
+
   // Mark the operation to detect its problems
   // Note that a single operationplan thus retriggers the problem computation
   // for all operationplans of this operation. For models with 1) a large
@@ -2108,6 +2111,120 @@ int SetupEvent::initialize()
   x.supportsetattro();
   const_cast<MetaCategory*>(metadata)->pythonClass = x.type_object();
   return x.typeReady();
+}
+
+
+void OperationPlan::computeFeasibility()
+{
+  // The implementation of this method isn't really cleanly object oriented. It uses
+  // logic which only the different resource and buffer implementation classes should be
+  // aware.
+  if (!firstsubopplan)
+  {
+    if (getConfirmed())
+    {
+      if (dates.getEnd() < Plan::instance().getCurrent())
+      {
+        // Before current violation
+        setFeasible(false);
+        return;
+      }
+    }
+    else
+    {
+      if (dates.getStart() < Plan::instance().getCurrent())
+      {
+        // Before current violation
+        setFeasible(false);
+        return;
+      }
+      else if (dates.getStart() < Plan::instance().getCurrent() + oper->getFence() && getProposed())
+      {
+        // Before fence violation
+        setFeasible(false);
+        return;
+      }
+    }
+  }
+  if (nextsubopplan
+    && getEnd() > nextsubopplan->getStart()
+    && !nextsubopplan->getConfirmed()
+    && owner && owner->getOperation()->getType() != *OperationSplit::metadata
+    )
+  {
+    // Precedence violation
+    setFeasible(false);
+    return;
+  }
+
+  // Verify the capacity constraints
+  for (auto ldplan = getLoadPlans(); ldplan != endLoadPlans(); ++ldplan)
+  {
+    if (ldplan->getResource()->getType() == *ResourceDefault::metadata && ldplan->getQuantity() > 0)
+    {
+      auto curMax = ldplan->getMax();
+      for (
+        auto cur = ldplan->getResource()->getLoadPlans().begin(&*ldplan);
+        cur != ldplan->getResource()->getLoadPlans().end();
+        ++cur
+        )
+      {
+        if (cur->getEventType() == 4)
+          curMax = cur->getMax(false);
+        if (cur->getOperationPlan() == ldplan->getOperationPlan() && ldplan->getQuantity() < 0)
+          break;
+        if (
+          cur->getEventType() != 5
+          && cur->isLastOnDate()
+          && cur->getOnhand() > curMax + ROUNDING_ERROR
+          )
+        {
+          // Overload on default resource
+          setFeasible(false);
+          return;
+        }
+      }
+    }
+    else if (ldplan->getResource()->getType() == *ResourceBuckets::metadata)
+    {
+      for (
+        auto cur = ldplan->getResource()->getLoadPlans().begin(&*ldplan);
+        cur != ldplan->getResource()->getLoadPlans().end() && cur->getEventType() != 2;
+        ++cur
+        )
+      {
+        if (cur->getOnhand() < -ROUNDING_ERROR)
+        {
+          // Overloaded capacity on bucketized resource
+          setFeasible(false);
+          return;
+        }
+      }
+    }
+  }
+
+  // Verify the material constraints
+  for (auto flplan = beginFlowPlans(); flplan != endFlowPlans(); ++flplan)
+  {
+    if (
+      !flplan->getFlow()->isConsumer()
+      || flplan->getBuffer()->getType() != *BufferInfinite::metadata
+      )
+      continue;
+    auto flplaniter = flplan->getBuffer()->getFlowPlans();
+    for (auto cur = flplaniter.begin(&*flplan); cur != flplaniter.end(); ++cur)
+    {
+      if (cur->getOnhand() < -ROUNDING_ERROR && cur->isLastOnDate())
+      {
+        // Material shortage
+        setFeasible(false);
+        return;
+      }
+    }
+  }
+
+  // After all checks, it turns out to be feasible
+  setFeasible(true);
 }
 
 } // end namespace

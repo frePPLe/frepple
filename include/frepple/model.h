@@ -2429,6 +2429,9 @@ class OperationPlan
       */
     void createFlowLoads();
 
+    /** A function to compute whether an operationplan is feasible or not. */
+    void computeFeasibility();
+
     /** This function is used to delete the loadplans, flowplans and
       * setup operationplans.
       */
@@ -8853,10 +8856,15 @@ class ProblemBeforeCurrent : public Problem
       if (oper)
         return DateRange(start, end);
       OperationPlan *o = static_cast<OperationPlan*>(getOwner());
-      if (o->getEnd() > Plan::instance().getCurrent())
-        return DateRange(o->getStart(), Plan::instance().getCurrent());
+      if (o->getConfirmed())
+        return DateRange(o->getEnd(), Plan::instance().getCurrent());
       else
-        return o->getDates();
+      {
+        if (o->getEnd() > Plan::instance().getCurrent())
+          return DateRange(o->getStart(), Plan::instance().getCurrent());
+        else
+          return o->getDates();
+      }
     }
 
     /** Return a reference to the metadata structure. */

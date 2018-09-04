@@ -17,6 +17,9 @@ End date          | End date of the operationplan.
                     end date can be bigger than the specified duration of the operation. For
                     instance, if the weekends are modelled as unavailable time, an operation
                     with a duration of 1 day can start on friday 7AM and end on monday 7AM.
+Feasible          | Boolean field indicating whether the operationplan is violating any
+                    material, lead time or capacity constraints.
+                  | This is very handy in interpreting unconstrained plans.
 Criticality       | Indication of the urgency of the operationplan.
                   | A criticality of 0 indicates that the operationplan is on the critical
                     path of one or more demands.

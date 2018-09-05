@@ -152,14 +152,29 @@ class OverviewReport(GridPivot):
        location.source,
        location.lastmodified,
        %s
-       coalesce(initial_on_hand.onhand,0) startoh,
-       coalesce(initial_on_hand.onhand,0) - coalesce(-sum(least(operationplanmaterial.quantity, 0)),0) + coalesce(sum(greatest(operationplanmaterial.quantity, 0)),0) endoh,
-       case when coalesce(initial_on_hand.onhand,0) = 0 then 0 else
-       extract( epoch from initial_on_hand.flowdate + coalesce(initial_on_hand.periodofcover,0) * interval '1 second' - greatest(d.startdate,%%s))/86400 end startohdoc,
+       coalesce((select onhand from operationplanmaterial where item_id = item.name and
+       location_id = location.name and flowdate < greatest(d.startdate,%%s)
+       order by flowdate desc, id desc limit 1),0) startoh,
+       coalesce((select onhand from operationplanmaterial where item_id = item.name and location_id = location.name
+       and flowdate < greatest(d.startdate,%%s)
+       order by flowdate desc, id desc limit 1),0) - coalesce(-sum(least(operationplanmaterial.quantity, 0)),0)
+       + coalesce(sum(greatest(operationplanmaterial.quantity, 0)),0) endoh,
+       case when coalesce((select onhand from operationplanmaterial where item_id = item.name and
+       location_id = location.name and flowdate < greatest(d.startdate,%%s)
+       order by flowdate desc, id desc limit 1),0) = 0 then 0 else
+       extract( epoch from (select flowdate from operationplanmaterial where item_id = item.name and
+       location_id = location.name and flowdate < greatest(d.startdate,%%s)
+       order by flowdate desc, id desc limit 1)
+       + coalesce((select periodofcover from operationplanmaterial where item_id = item.name and
+       location_id = location.name and flowdate < greatest(d.startdate,%%s)
+       order by flowdate desc, id desc limit 1),0) * interval '1 second'
+       - greatest(d.startdate,%%s))/86400 end startohdoc,
        d.bucket,
        d.startdate,
        d.enddate,
-       coalesce(initial_on_hand.minimum,0) safetystock,
+       coalesce((select minimum from operationplanmaterial where item_id = item.name and
+       location_id = location.name and flowdate < greatest(d.startdate,%%s)
+       order by flowdate desc, id desc limit 1),0) safetystock,
        coalesce(-sum(least(operationplanmaterial.quantity, 0)),0) as consumed,
        coalesce(-sum(least(case when operationplan.type = 'MO' then operationplanmaterial.quantity else 0 end, 0)),0) as consumedMO,
        coalesce(-sum(least(case when operationplan.type = 'DO' then operationplanmaterial.quantity else 0 end, 0)),0) as consumedDO,
@@ -187,14 +202,6 @@ class OverviewReport(GridPivot):
         and operationplanmaterial.flowdate >= greatest(d.startdate,%%s)
         and operationplanmaterial.flowdate < d.enddate
       left outer join operationplan on operationplan.id = operationplanmaterial.operationplan_id
-      -- Initial on hand
-      left join operationplanmaterial initial_on_hand
-        on initial_on_hand.item_id = opplanmat.item_id
-        and initial_on_hand.location_id = opplanmat.location_id
-        and initial_on_hand.flowdate < greatest(d.startdate,%%s)
-        and not exists (select 1 from operationplanmaterial opm where opm.item_id = initial_on_hand.item_id
-        and opm.location_id = initial_on_hand.location_id and opm.flowdate < greatest(d.startdate,%%s)
-        and opm.id > initial_on_hand.id)
       group by
        item.name,
        location.name,
@@ -211,26 +218,26 @@ class OverviewReport(GridPivot):
        location.owner_id,
        location.source, 
        location.lastmodified,
-       initial_on_hand.onhand,
-       initial_on_hand.onhand,
-       initial_on_hand.periodofcover,
-       initial_on_hand.flowdate,
        d.bucket,
        d.startdate,
-       d.enddate,
-       initial_on_hand.minimum
+       d.enddate
        order by %s, d.startdate
     ''' % (
         reportclass.attr_sql, basesql, sortsql
       )
 
     cursor.execute(
-      query,  (
-        request.report_startdate,) # startohpoc
-        + baseparams + # opplanmat
-        (request.report_bucket, request.report_startdate, request.report_enddate, # bucket d
-        request.report_startdate, # operationplanmaterial
-        request.report_startdate, request.report_startdate, # initialonhand
+      query, (
+        request.report_startdate,  # startoh
+        request.report_startdate,  # endoh
+        request.report_startdate,  # startohdoc
+        request.report_startdate,  # startohdoc
+        request.report_startdate,  # startohdoc
+        request.report_startdate,  # startohdoc
+        request.report_startdate,)  # safetystock
+        + baseparams +   # opplanmat
+        (request.report_bucket, request.report_startdate, request.report_enddate,  # bucket d
+        request.report_startdate,  # operationplanmaterial
         )
       )
 

@@ -1648,7 +1648,7 @@ class ManufacturingOrderList(OperationPlanMixin, GridReport):
     GridFieldText('demand', title=_('demands'), editable=False, search=False, sortable=False, formatter='demanddetail', extra='"role":"input/demand"'),
     GridFieldText('material', title=_('materials'), editable=False, search=False, sortable=False, initially_hidden=True, formatter='listdetail', extra='"role":"input/item"'),
     GridFieldText('resource', title=_('resources'), editable=False, search=False, sortable=False, initially_hidden=True, formatter='listdetail', extra='"role":"input/resource"'),
-    GridFieldInteger('owner', title=_('owner'), extra='"formatoptions":{"defaultValue":""}', initially_hidden=True),
+    GridFieldInteger('owner', title=_('owner'), field_name='owner__id', extra='"formatoptions":{"defaultValue":""}', initially_hidden=True),
     GridFieldText('source', title=_('source')),
     GridFieldLastModified('lastmodified'),
     GridFieldText('operation__description', title=string_concat(_('operation'), ' - ', _('description')), initially_hidden=True),

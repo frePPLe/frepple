@@ -50,7 +50,6 @@ class OverviewReport(GridPivot):
     GridFieldText('type', title=_('type'), editable=False, field_name='type', initially_hidden=True),
     GridFieldNumber('maximum', title=_('maximum'), editable=False, field_name='maximum', initially_hidden=True),
     GridFieldText('maximum_calendar', title=_('maximum calendar'), editable=False, field_name='maximum_calendar__name', formatter='detail', extra='"role":"input/calendar"', initially_hidden=True),
-    GridFieldText('available_calendar', title=_('available calendar'), editable=False, field_name='available__name', formatter='detail', extra='"role":"input/calendar"', initially_hidden=True),
     GridFieldCurrency('cost', title=_('cost'), editable=False, field_name='cost', initially_hidden=True),
     GridFieldDuration('maxearly', title=_('maxearly'), editable=False, field_name='maxearly', initially_hidden=True),
     GridFieldText('setupmatrix', title=_('setupmatrix'), editable=False, field_name='setupmatrix__name', formatter='detail', extra='"role":"input/setupmatrix"', initially_hidden=True),
@@ -61,6 +60,7 @@ class OverviewReport(GridPivot):
     GridFieldText('location__subcategory', title=string_concat(_('location'), ' - ', _('subcategory')), editable=False, initially_hidden=True),
     GridFieldText('location__available', title=string_concat(_('location'), ' - ', _('available')), editable=False, field_name='location__available__name', formatter='detail', extra='"role":"input/calendar"', initially_hidden=True),
     GridFieldText('avgutil', title=_('utilization %'), field_name='util', formatter='percentage', editable=False, width=100, align='center', search=False),
+    GridFieldText('available_calendar', title=_('available calendar'), editable=False, field_name='available__name', formatter='detail', extra='"role":"input/calendar"', initially_hidden=True),
     )
   crosses = (
     ('available', {

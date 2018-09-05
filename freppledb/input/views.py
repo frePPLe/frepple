@@ -2460,12 +2460,19 @@ class OperationPlanDetail(View):
         if opplan.plan and 'pegging' in opplan.plan:
           res["pegging_demand"] = []
           for d, q in opplan.plan['pegging'].items():
+            try:
+              obj = Demand.objects.all().using(request.database).only("name", "item", "due").get(name=d)
+              dmd = obj.name
+              due = obj.due.strftime("%Y-%m-%dT%H:%M:%S")
+              item = obj.item.name
+            except Demand.DoesNotExist:
+              # Looks like this demand was deleted since the plan was generated
+              continue
             res["pegging_demand"].append({
-              "demand": {"name": d},
-              "quantity": q,
-              "due": Demand.objects.all().using(request.database).get(name=d).due.strftime("%Y-%m-%dT%H:%M:%S")
+              "demand": {"name": dmd, "item": {"name": item}, "due": due},
+              "quantity": q
               })
-          res["pegging_demand"].sort(key=lambda f: (f['demand']['name'], f['due']))
+          res["pegging_demand"].sort(key=lambda f: (f['demand']['name'], f['demand']['due']))
         if opplan.operation:
           res['operation'] = {
             "name": opplan.operation.name,

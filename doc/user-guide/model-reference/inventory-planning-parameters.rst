@@ -32,8 +32,8 @@ demand deviation                       number            The demand standard dev
                                                          left empty.
 do not stock                           boolean           | Indicates whether this buffer should be stocked.
                                                          | Possible values are : 
-                                                         | "TRUE" : Default ROQ of 1 and safety stock of 0 will be used.
-                                                         | "FALSE" : ROQ and safety stock will be calculated.
+                                                         | "TRUE" : Default reorder quantity of 1 and safety stock of 0 will be used.
+                                                         | "FALSE" : Reorder quantity and safety stock will be calculated.
 segment\_\*                             number           This values in these columns are not editible by the user. They represent the 
                                                          parameter values computed by the system based on the business rules.
                                                          

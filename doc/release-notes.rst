@@ -28,6 +28,10 @@ Release notes
   | For orders in the status confirmed the criterion the problem is now created when the
     end date is in the past, i.e. the order is overdue and should have been finished by now.
 
+- The natural key in the `suboperation table <user-guide/model-reference/suboperations.html>`_
+  is changed from operation + suboperation + operation to operation + suboperation +
+  effective start date.
+
 .. rubric:: User interface
 
 - Ability to make the data anonymous and obfuscated when 

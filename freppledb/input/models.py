@@ -315,11 +315,11 @@ class SubOperation(AuditModel):
     )
 
   class Manager(MultiDBManager):
-    def get_by_natural_key(self, operation, priority, suboperation):
-      return self.get(operation=operation, priority=priority, suboperation=suboperation)
+    def get_by_natural_key(self, operation, suboperation, effective_start):
+      return self.get(operation=operation, suboperation=suboperation, effective_start=effective_start)
 
   def natural_key(self):
-    return (self.operation, self.priority, self.suboperation)
+    return (self.operation, self.suboperation, self.effective_start)
 
   objects = Manager()
 

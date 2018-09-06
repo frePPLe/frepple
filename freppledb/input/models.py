@@ -335,7 +335,7 @@ class SubOperation(AuditModel):
     ordering = ['operation', 'priority', 'suboperation']
     verbose_name = _('suboperation')
     verbose_name_plural = _('suboperations')
-    unique_together = (('operation', 'priority', 'suboperation'),)
+    unique_together = (('operation', 'suboperation', 'effective_start'),)
 
 
 class Buffer(AuditModel):

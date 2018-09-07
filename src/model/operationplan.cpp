@@ -2114,20 +2114,33 @@ int SetupEvent::initialize()
 }
 
 
-void OperationPlan::computeFeasibility()
+bool OperationPlan::computeFeasibility()
 {
   // The implementation of this method isn't really cleanly object oriented. It uses
   // logic which only the different resource and buffer implementation classes should be
   // aware.
-  if (!firstsubopplan)
+  if (firstsubopplan)
   {
+    // Check feasibility of child operationplans
+    for (OperationPlan *i = firstsubopplan; i; i = i->nextsubopplan)
+    {
+      if (!i->computeFeasibility())
+      {
+        setFeasible(false);
+        return false;
+      }
+    }
+  }
+  else
+  {
+    // Before current and before fence problems are only detected on child operationplans
     if (getConfirmed())
     {
       if (dates.getEnd() < Plan::instance().getCurrent())
       {
         // Before current violation
         setFeasible(false);
-        return;
+        return false;
       }
     }
     else
@@ -2136,25 +2149,26 @@ void OperationPlan::computeFeasibility()
       {
         // Before current violation
         setFeasible(false);
-        return;
+        return false;
       }
       else if (dates.getStart() < Plan::instance().getCurrent() + oper->getFence() && getProposed())
       {
         // Before fence violation
         setFeasible(false);
-        return;
+        return false;
       }
     }
   }
   if (nextsubopplan
-    && getEnd() > nextsubopplan->getStart()
+    && getEnd() > nextsubopplan->getStart() + Duration(1L)
     && !nextsubopplan->getConfirmed()
     && owner && owner->getOperation()->getType() != *OperationSplit::metadata
     )
   {
     // Precedence violation
+    // Note: 1 second grace period for precedence problems to avoid rounding issues
     setFeasible(false);
-    return;
+    return false;
   }
 
   // Verify the capacity constraints
@@ -2169,10 +2183,10 @@ void OperationPlan::computeFeasibility()
         ++cur
         )
       {
+        if (cur->getOperationPlan() == this && cur->getQuantity() < 0)
+          break;
         if (cur->getEventType() == 4)
           curMax = cur->getMax(false);
-        if (cur->getOperationPlan() == ldplan->getOperationPlan() && ldplan->getQuantity() < 0)
-          break;
         if (
           cur->getEventType() != 5
           && cur->isLastOnDate()
@@ -2181,7 +2195,7 @@ void OperationPlan::computeFeasibility()
         {
           // Overload on default resource
           setFeasible(false);
-          return;
+          return false;
         }
       }
     }
@@ -2197,7 +2211,7 @@ void OperationPlan::computeFeasibility()
         {
           // Overloaded capacity on bucketized resource
           setFeasible(false);
-          return;
+          return false;
         }
       }
     }
@@ -2208,7 +2222,7 @@ void OperationPlan::computeFeasibility()
   {
     if (
       !flplan->getFlow()->isConsumer()
-      || flplan->getBuffer()->getType() != *BufferInfinite::metadata
+      || flplan->getBuffer()->getType() == *BufferInfinite::metadata
       )
       continue;
     auto flplaniter = flplan->getBuffer()->getFlowPlans();
@@ -2218,13 +2232,14 @@ void OperationPlan::computeFeasibility()
       {
         // Material shortage
         setFeasible(false);
-        return;
+        return false;
       }
     }
   }
 
   // After all checks, it turns out to be feasible
   setFeasible(true);
+  return true;
 }
 
 } // end namespace

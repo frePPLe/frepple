@@ -266,6 +266,7 @@
 			<end>2015-06-06T00:00:00</end>
 			<quantity>100</quantity>
 			<status>confirmed</status>
+			<feasible>false</feasible>
 			<ordertype>DO</ordertype>
 			<item>
 				<name>product A</name>

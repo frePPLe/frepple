@@ -2430,7 +2430,7 @@ class OperationPlan
     void createFlowLoads();
 
     /** A function to compute whether an operationplan is feasible or not. */
-    void computeFeasibility();
+    bool computeFeasibility();
 
     /** This function is used to delete the loadplans, flowplans and
       * setup operationplans.

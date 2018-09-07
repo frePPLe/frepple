@@ -63,8 +63,9 @@ void OperationPlan::updateProblems()
         needsBeforeFence = true;
     }
   }
+  // Note: 1 second grace period for precedence problems to avoid rounding issues
   if (nextsubopplan
-    && getEnd() > nextsubopplan->getStart()
+    && getEnd() > nextsubopplan->getStart() + Duration(1L)
     && !nextsubopplan->getConfirmed()
     && owner && owner->getOperation()->getType() != *OperationSplit::metadata
     )

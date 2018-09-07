@@ -1263,6 +1263,10 @@ class DemandList(GridReport):
       'item__owner', title=string_concat(_('item'), ' - ', _('owner')),
       field_name='item__owner__name', initially_hidden=True, editable=False
       ),
+    GridFieldCurrency(
+      'item__cost', title=string_concat(_('item'), ' - ', _('cost')),
+      initially_hidden=True, editable=False
+      ),
     GridFieldText(
       'item__source', title=string_concat(_('item'), ' - ', _('source')),
       initially_hidden=True, editable=False

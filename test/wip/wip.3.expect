@@ -693,6 +693,7 @@
 			<end>2014-01-05T00:00:00</end>
 			<quantity>10</quantity>
 			<status>confirmed</status>
+			<feasible>false</feasible>
 		</operationplan>
 		<operationplan>
 			<id>1002</id>
@@ -703,6 +704,7 @@
 			<end>2014-02-05T00:00:00</end>
 			<quantity>10</quantity>
 			<status>confirmed</status>
+			<feasible>false</feasible>
 		</operationplan>
 		<operationplan>
 			<id>1003</id>
@@ -713,6 +715,7 @@
 			<end>2014-03-05T00:00:00</end>
 			<quantity>10</quantity>
 			<status>confirmed</status>
+			<feasible>false</feasible>
 		</operationplan>
 		<operationplan>
 			<id>1004</id>
@@ -723,6 +726,7 @@
 			<end>2014-04-05T00:00:00</end>
 			<quantity>10</quantity>
 			<status>confirmed</status>
+			<feasible>false</feasible>
 		</operationplan>
 		<operationplan>
 			<id>3005</id>
@@ -733,6 +737,7 @@
 			<end>2014-02-05T00:00:00</end>
 			<quantity>10</quantity>
 			<status>confirmed</status>
+			<feasible>false</feasible>
 		</operationplan>
 		<operationplan>
 			<id>3007</id>
@@ -743,6 +748,7 @@
 			<end>2014-04-05T00:00:00</end>
 			<quantity>10</quantity>
 			<status>approved</status>
+			<feasible>false</feasible>
 		</operationplan>
 		<operationplan>
 			<id>3009</id>
@@ -753,6 +759,7 @@
 			<end>2014-06-12T00:00:00</end>
 			<quantity>10</quantity>
 			<status>approved</status>
+			<feasible>false</feasible>
 		</operationplan>
 		<operationplan>
 			<id>4011</id>
@@ -763,6 +770,7 @@
 			<end>2014-02-01T00:00:00</end>
 			<quantity>10</quantity>
 			<status>confirmed</status>
+			<feasible>false</feasible>
 			<owner>
 				<id>3005</id>
 			</owner>
@@ -776,6 +784,7 @@
 			<end>2014-03-30T00:00:00</end>
 			<quantity>10</quantity>
 			<status>approved</status>
+			<feasible>false</feasible>
 			<owner>
 				<id>3007</id>
 			</owner>
@@ -789,6 +798,7 @@
 			<end>2014-06-06T00:00:00</end>
 			<quantity>10</quantity>
 			<status>approved</status>
+			<feasible>false</feasible>
 			<owner>
 				<id>3009</id>
 			</owner>
@@ -816,6 +826,7 @@
 			<end>2014-03-31T00:00:00</end>
 			<quantity>10</quantity>
 			<status>approved</status>
+			<feasible>false</feasible>
 			<owner>
 				<id>3007</id>
 			</owner>
@@ -829,6 +840,7 @@
 			<end>2014-06-11T00:00:00</end>
 			<quantity>10</quantity>
 			<status>approved</status>
+			<feasible>false</feasible>
 			<owner>
 				<id>3009</id>
 			</owner>
@@ -842,6 +854,7 @@
 			<end>2014-02-05T00:00:00</end>
 			<quantity>10</quantity>
 			<status>confirmed</status>
+			<feasible>false</feasible>
 			<owner>
 				<id>3005</id>
 			</owner>
@@ -855,6 +868,7 @@
 			<end>2014-04-05T00:00:00</end>
 			<quantity>10</quantity>
 			<status>approved</status>
+			<feasible>false</feasible>
 			<owner>
 				<id>3007</id>
 			</owner>
@@ -868,6 +882,7 @@
 			<end>2014-06-12T00:00:00</end>
 			<quantity>10</quantity>
 			<status>approved</status>
+			<feasible>false</feasible>
 			<owner>
 				<id>3009</id>
 			</owner>
@@ -881,6 +896,7 @@
 			<end>2014-01-05T00:00:00</end>
 			<quantity>10</quantity>
 			<status>confirmed</status>
+			<feasible>false</feasible>
 			<ordertype>ALT</ordertype>
 		</operationplan>
 		<operationplan>
@@ -892,6 +908,7 @@
 			<end>2014-02-05T00:00:00</end>
 			<quantity>10</quantity>
 			<status>confirmed</status>
+			<feasible>false</feasible>
 			<ordertype>ALT</ordertype>
 		</operationplan>
 		<operationplan>
@@ -903,6 +920,7 @@
 			<end>2014-03-05T00:00:00</end>
 			<quantity>10</quantity>
 			<status>confirmed</status>
+			<feasible>false</feasible>
 			<ordertype>ALT</ordertype>
 		</operationplan>
 		<operationplan>
@@ -914,6 +932,7 @@
 			<end>2014-01-05T00:00:00</end>
 			<quantity>10</quantity>
 			<status>confirmed</status>
+			<feasible>false</feasible>
 			<owner>
 				<id>4005</id>
 			</owner>
@@ -927,6 +946,7 @@
 			<end>2014-03-05T00:00:00</end>
 			<quantity>10</quantity>
 			<status>confirmed</status>
+			<feasible>false</feasible>
 			<owner>
 				<id>4008</id>
 			</owner>
@@ -940,6 +960,7 @@
 			<end>2014-02-05T00:00:00</end>
 			<quantity>10</quantity>
 			<status>confirmed</status>
+			<feasible>false</feasible>
 			<owner>
 				<id>4006</id>
 			</owner>

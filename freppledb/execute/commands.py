@@ -15,8 +15,7 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-
-from datetime import datetime, timedelta
+from datetime import datetime
 import os
 import logging
 
@@ -27,6 +26,40 @@ from freppledb.common.commands import PlanTaskRegistry, PlanTask
 from freppledb.common.models import Parameter
 
 logger = logging.getLogger(__name__)
+
+
+@PlanTaskRegistry.register
+class MakePlanFeasible(PlanTask):
+
+  description = "Initial plan problems"
+  sequence = 199
+
+  @classmethod
+  def getWeight(cls, database=DEFAULT_DB_ALIAS, **kwargs):
+    if 'supply' in os.environ:
+      return 1
+    else:
+      return -1
+
+  @classmethod
+  def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
+    import frepple
+
+    # Update the feasibility flag of all operationplans
+    for oper in frepple.operations():
+      for opplan in oper.operationplans:
+        opplan.updateFeasible()
+
+    # Report the result
+    print ("Initial problems:")
+    probs = {}
+    for i in frepple.problems():
+      if i.name in probs:
+        probs[i.name] += 1
+      else:
+        probs[i.name] = 1
+    for i in sorted(probs.keys()):
+      print("     %s: %s" % (i, probs[i]))
 
 
 @PlanTaskRegistry.register

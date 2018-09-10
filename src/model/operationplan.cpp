@@ -65,6 +65,10 @@ int OperationPlan::initialize()
     "calculateOperationTime", &calculateOperationTimePython, METH_VARARGS,
     "add or subtract a duration of operation hours from a date"
     );
+  x.addMethod(
+    "updateFeasible", &updateFeasiblePython, METH_NOARGS,
+    "updates the flag whether this operationplan is feasible or not"
+  );
   const_cast<MetaClass*>(metadata)->pythonClass = x.type_object();
   return x.typeReady();
 }
@@ -830,7 +834,7 @@ bool OperationPlan::activate(bool createsubopplans, bool use_start)
   createFlowLoads();
 
   // Update the feasibility flag.
-  computeFeasibility();
+  updateFeasible();
 
   // Mark the operation to detect its problems
   // Note that a single operationplan thus retriggers the problem computation
@@ -2111,135 +2115,6 @@ int SetupEvent::initialize()
   x.supportsetattro();
   const_cast<MetaCategory*>(metadata)->pythonClass = x.type_object();
   return x.typeReady();
-}
-
-
-bool OperationPlan::computeFeasibility()
-{
-  // The implementation of this method isn't really cleanly object oriented. It uses
-  // logic which only the different resource and buffer implementation classes should be
-  // aware.
-  if (firstsubopplan)
-  {
-    // Check feasibility of child operationplans
-    for (OperationPlan *i = firstsubopplan; i; i = i->nextsubopplan)
-    {
-      if (!i->computeFeasibility())
-      {
-        setFeasible(false);
-        return false;
-      }
-    }
-  }
-  else
-  {
-    // Before current and before fence problems are only detected on child operationplans
-    if (getConfirmed())
-    {
-      if (dates.getEnd() < Plan::instance().getCurrent())
-      {
-        // Before current violation
-        setFeasible(false);
-        return false;
-      }
-    }
-    else
-    {
-      if (dates.getStart() < Plan::instance().getCurrent())
-      {
-        // Before current violation
-        setFeasible(false);
-        return false;
-      }
-      else if (dates.getStart() < Plan::instance().getCurrent() + oper->getFence() && getProposed())
-      {
-        // Before fence violation
-        setFeasible(false);
-        return false;
-      }
-    }
-  }
-  if (nextsubopplan
-    && getEnd() > nextsubopplan->getStart() + Duration(1L)
-    && !nextsubopplan->getConfirmed()
-    && owner && owner->getOperation()->getType() != *OperationSplit::metadata
-    )
-  {
-    // Precedence violation
-    // Note: 1 second grace period for precedence problems to avoid rounding issues
-    setFeasible(false);
-    return false;
-  }
-
-  // Verify the capacity constraints
-  for (auto ldplan = getLoadPlans(); ldplan != endLoadPlans(); ++ldplan)
-  {
-    if (ldplan->getResource()->getType() == *ResourceDefault::metadata && ldplan->getQuantity() > 0)
-    {
-      auto curMax = ldplan->getMax();
-      for (
-        auto cur = ldplan->getResource()->getLoadPlans().begin(&*ldplan);
-        cur != ldplan->getResource()->getLoadPlans().end();
-        ++cur
-        )
-      {
-        if (cur->getOperationPlan() == this && cur->getQuantity() < 0)
-          break;
-        if (cur->getEventType() == 4)
-          curMax = cur->getMax(false);
-        if (
-          cur->getEventType() != 5
-          && cur->isLastOnDate()
-          && cur->getOnhand() > curMax + ROUNDING_ERROR
-          )
-        {
-          // Overload on default resource
-          setFeasible(false);
-          return false;
-        }
-      }
-    }
-    else if (ldplan->getResource()->getType() == *ResourceBuckets::metadata)
-    {
-      for (
-        auto cur = ldplan->getResource()->getLoadPlans().begin(&*ldplan);
-        cur != ldplan->getResource()->getLoadPlans().end() && cur->getEventType() != 2;
-        ++cur
-        )
-      {
-        if (cur->getOnhand() < -ROUNDING_ERROR)
-        {
-          // Overloaded capacity on bucketized resource
-          setFeasible(false);
-          return false;
-        }
-      }
-    }
-  }
-
-  // Verify the material constraints
-  for (auto flplan = beginFlowPlans(); flplan != endFlowPlans(); ++flplan)
-  {
-    if (
-      !flplan->getFlow()->isConsumer()
-      || flplan->getBuffer()->getType() == *BufferInfinite::metadata
-      )
-      continue;
-    auto flplaniter = flplan->getBuffer()->getFlowPlans();
-    for (auto cur = flplaniter.begin(&*flplan); cur != flplaniter.end(); ++cur)
-    {
-      if (cur->getOnhand() < -ROUNDING_ERROR && cur->isLastOnDate())
-      {
-        // Material shortage
-        setFeasible(false);
-        return false;
-      }
-    }
-  }
-
-  // After all checks, it turns out to be feasible
-  setFeasible(true);
-  return true;
 }
 
 } // end namespace

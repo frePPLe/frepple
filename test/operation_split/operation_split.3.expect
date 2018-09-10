@@ -1845,6 +1845,7 @@
 			<start>2013-12-22T00:00:00</start>
 			<end>2014-01-01T00:00:00</end>
 			<quantity>100</quantity>
+			<feasible>false</feasible>
 		</operationplan>
 		<operationplan>
 			<id>55</id>

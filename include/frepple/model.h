@@ -2430,7 +2430,10 @@ class OperationPlan
     void createFlowLoads();
 
     /** A function to compute whether an operationplan is feasible or not. */
-    bool computeFeasibility();
+    bool updateFeasible();
+
+    /** Python API for the above method. */
+    static PyObject* updateFeasiblePython(PyObject*, PyObject*);
 
     /** This function is used to delete the loadplans, flowplans and
       * setup operationplans.

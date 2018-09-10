@@ -113,6 +113,7 @@
 			<start>2009-01-13T00:00:00</start>
 			<end>2009-01-27T00:00:00</end>
 			<quantity>12</quantity>
+			<feasible>false</feasible>
 		</operationplan>
 		<operationplan>
 			<id>3</id>

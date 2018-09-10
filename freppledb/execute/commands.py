@@ -89,7 +89,7 @@ class SupplyPlanning(PlanTask):
       rotateresources=(Parameter.getValue('plan.rotateResources', database, 'true').lower() == "true"),
       plansafetystockfirst=(Parameter.getValue('plan.planSafetyStockFirst', database, 'false').lower() != "false"),
       iterationmax=int(Parameter.getValue('plan.iterationmax', database, '0')),
-      administrativeleadtime=86400*float(Parameter.getValue('plan.administrativeLeadtime', database, '0')),
+      administrativeleadtime=86400 * float(Parameter.getValue('plan.administrativeLeadtime', database, '0')),
       autofence=86400 * float(Parameter.getValue("plan.autoFenceOperations", database, '0'))
       )
     if hasattr(cls, 'debugResource'):

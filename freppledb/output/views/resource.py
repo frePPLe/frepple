@@ -244,6 +244,7 @@ class DetailReport(OperationPlanMixin, GridReport):
     base = reportclass.operationplanExtraBasequery(base, request)
     return base.select_related().extra(select={
       'opplan_duration': "(operationplan.enddate - operationplan.startdate)",
+      'opplan_net_duration': "(operationplan.enddate - operationplan.startdate - coalesce((operationplan.plan->>'unavailable')::int * interval '1 second', interval '0 second'))",
       'setup_end': "(operationplan.plan->>'setupend')",
       'setup_duration': "(operationplan.plan->>'setup')",
       'feasible': "coalesce((operationplan.plan->>'feasible')::boolean, true)"
@@ -305,6 +306,7 @@ class DetailReport(OperationPlanMixin, GridReport):
     GridFieldDateTime('operationplan__startdate', title=_('start date'), editable=False, extra='"formatoptions":{"srcformat":"Y-m-d H:i:s","newformat":"Y-m-d H:i:s", "defaultValue":""}, "summaryType":"min"'),
     GridFieldDateTime('operationplan__enddate', title=_('end date'), editable=False, extra='"formatoptions":{"srcformat":"Y-m-d H:i:s","newformat":"Y-m-d H:i:s", "defaultValue":""}, "summaryType":"max"'),
     GridFieldDuration('opplan_duration', title=_('duration'), editable=False, extra='"formatoptions":{"defaultValue":""}, "summaryType":"sum"'),
+    GridFieldDuration('opplan_net_duration', title=_('net duration'), editable=False, extra='"formatoptions":{"defaultValue":""}, "summaryType":"sum"'),
     GridFieldNumber('operationplan__quantity', title=_('quantity'), editable=False, extra='"formatoptions":{"defaultValue":""}, "summaryType":"sum"'),
     GridFieldText('operationplan__status', title=_('status'), editable=False),
     GridFieldNumber('operationplan__criticality', title=_('criticality'), editable=False, extra='"formatoptions":{"defaultValue":""}, "summaryType":"min"'),

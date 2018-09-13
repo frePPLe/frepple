@@ -1472,7 +1472,16 @@ void OperationPlan::deleteOperationPlans(Operation* o, bool deleteLockedOpplans)
   for (OperationPlan *opplan = o->first_opplan; opplan; )
   {
     OperationPlan *tmp = opplan;
+    
+    // Advance to the next operation plan
     opplan = opplan->next;
+    if (tmp->getOwner())
+      // Deleting a child operationplan will delete the parent.
+      // It is possible that also the next operationplan in the list gets deleted by the 
+      // delete statement that follows.
+      while (opplan && tmp->getOwner() == opplan->getOwner())
+        opplan = opplan->next;
+
     // Note that the deletion of the operationplan also updates the opplan list
     if (deleteLockedOpplans || tmp->getProposed())
       delete tmp;

@@ -24,10 +24,14 @@ from win32process import DETACHED_PROCESS, CREATE_NO_WINDOW
 os.environ.setdefault('FREPPLE_HOME', sys.path[0])
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', "freppledb.settings")
 os.environ.setdefault('FREPPLE_APP', os.path.join(sys.path[0],'custom'))
+os.environ.setdefault('PYTHONPATH',
+  os.path.join(sys.path[0], 'lib', 'library.zip')
+  + os.pathsep +
+  os.path.join(sys.path[0], 'lib') 
+  )
 
-# Sys.path contains the zip file with all packages. We need to put the
-# application directory into the path as well.
-sys.path += [ os.environ['FREPPLE_APP'] ]
+# Add the custom directory to the Python path.
+sys.path += [ os.environ['FREPPLE_APP'], ]
 
 # Initialize django
 import django

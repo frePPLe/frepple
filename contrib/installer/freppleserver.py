@@ -293,6 +293,10 @@ def non_string_iterable(obj):
 os.environ['DJANGO_SETTINGS_MODULE'] = 'freppledb.settings'
 os.environ['FREPPLE_APP'] = os.path.join(sys.path[0], 'custom')
 os.environ['FREPPLE_HOME'] = os.path.abspath(os.path.dirname(sys.argv[0]))
+os.environ['PYTHONPATH'] = \
+  os.path.join(sys.path[0], 'lib', 'library.zip') \
+  + os.pathsep + \
+  os.path.join(sys.path[0], 'lib') 
 
 # Add the custom directory to the Python path.
 sys.path += [ os.environ['FREPPLE_APP'] ]

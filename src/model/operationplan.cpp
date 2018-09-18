@@ -119,7 +119,7 @@ void OperationPlan::setChanged(bool b)
 
 void OperationPlan::restore(const OperationPlanState& x)
 {
-  getOperation()->setOperationPlanParameters(this, x.quantity, x.start, x.end, true);
+  setStartEndAndQuantity(x.start, x.end, x.quantity);
   if (quantity != x.quantity) quantity = x.quantity;
   //assert(dates.getStart() == x.start || x.start != x.end);
   //assert(dates.getEnd() == x.end || x.start != x.end);
@@ -1312,6 +1312,97 @@ OperationPlan::OperationPlan(const OperationPlan& src,
   // Clone the suboperationplans
   for (OperationPlan::iterator x(&src); x != end(); ++x)
     new OperationPlan(*x, this);
+}
+
+
+bool OperationPlan::mergeIfPossible()
+{
+  // Verify a merge with another operationplan.
+  // TODO The logic duplicates much of OperationFixedTime::extraInstantiate. Combine as single code.
+  // See if we can consolidate this operationplan with an existing one.
+  // Merging is possible only when all the following conditions are met:
+  //   - it is a subclass of a fixedtime operation
+  //   - it doesn't load any resources of type default
+  //   - both operationplans are proposed
+  //   - both operationplans have no owner
+  //     or both have an owner of the same operation and is of type operation_alternate
+  //   - start and end date of both operationplans are exactly the same
+  //   - demand of both operationplans are the same
+  //   - maximum operation size is not exceeded
+  //   - alternate flowplans need to be on the same alternate
+  if (!getProposed())
+    return false;
+
+  if (oper->getType() != *OperationFixedTime::metadata
+    && oper->getType() != *OperationItemDistribution::metadata
+    && oper->getType() != *OperationItemSupplier::metadata
+    )
+    return false;
+
+  // Verify we load no resources of type "default".
+  // It's ok to merge operationplans which load "infinite" or "buckets" resources.
+  for (Operation::loadlist::const_iterator i = oper->getLoads().begin(); i != oper->getLoads().end(); ++i)
+    if (i->getResource()->getType() == *ResourceDefault::metadata)
+      return false;
+
+  // Loop through candidates
+  for (OperationPlan::iterator x(oper); x != OperationPlan::end(); ++x)
+  {
+    if (x->getStart() > getStart())
+      // No candidates will be found in what follows
+      return false;
+    if (x->getDates() != getDates() || &*x == this)
+      continue;
+    if (x->getDemand() != getDemand())
+      continue;
+    if (!x->getProposed())
+      continue;
+    if (x->getQuantity() + getQuantity() > oper->getSizeMaximum() + ROUNDING_ERROR)
+      continue;
+    if (getOwner())
+    {
+      // Both must have the same owner operation of type alternate
+      if (!x->getOwner())
+        continue;
+      else if (getOwner()->getOperation() != x->getOwner()->getOperation())
+        continue;
+      else if (getOwner()->getOperation()->getType() != *OperationAlternate::metadata)
+        continue;
+      else if (getOwner()->getDemand() != x->getOwner()->getDemand())
+        continue;
+    }
+
+    // Check that the flowplans are on identical alternates and not of type fixed
+    OperationPlan::FlowPlanIterator fp1 = beginFlowPlans();
+    OperationPlan::FlowPlanIterator fp2 = x->beginFlowPlans();
+    if (fp1 == endFlowPlans() || fp2 == endFlowPlans())
+      // Operationplan without flows are already deleted. Leave them alone.
+      continue;
+    bool ok = true;
+    while (fp1 != endFlowPlans())
+    {
+      if (fp1->getBuffer() != fp2->getBuffer()
+        || fp1->getFlow()->getQuantityFixed()
+        || fp2->getFlow()->getQuantityFixed())
+        // No merge possible
+      {
+        ok = false;
+        break;
+      }
+      ++fp1;
+      ++fp2;
+    }
+    if (!ok)
+      continue;
+
+    // All checks passed, we can merge!
+    x->setQuantity(x->getQuantity() + getQuantity());
+    if (getOwner())
+      setOwner(nullptr);
+    delete this;
+    return true;
+  }
+  return false;
 }
 
 

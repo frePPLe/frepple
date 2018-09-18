@@ -186,51 +186,43 @@ PyObject* savePlan(PyObject* self, PyObject* args)
     for (Buffer::iterator gbuf = Buffer::begin();
         gbuf != Buffer::end(); ++gbuf)
     {
-      if (!gbuf->getHidden())
-        for (Buffer::flowplanlist::const_iterator
-            oo=gbuf->getFlowPlans().begin();
-            oo!=gbuf->getFlowPlans().end();
-            ++oo)
-          if (oo->getEventType() == 1 && oo->getQuantity() != 0.0)
-          {
-            textoutput << "BUFFER\t" << *gbuf << '\t'
-                << oo->getDate() << '\t'
-                << oo->getQuantity() << '\t'
-                << (round(oo->getOnhand() * 1000) / 1000) << endl;
-          }
+      if (gbuf->getHidden())
+        continue;
+      for (auto oo=gbuf->getFlowPlans().begin(); oo!=gbuf->getFlowPlans().end(); ++oo)
+        if (oo->getEventType() == 1 && oo->getQuantity() != 0.0)
+        {
+          textoutput << "BUFFER\t" << *gbuf << '\t'
+              << oo->getDate() << '\t'
+              << oo->getQuantity() << '\t'
+              << (round(oo->getOnhand() * 1000) / 1000) << endl;
+        }
     }
 
     // Write the demand summary
     for (Demand::iterator gdem = Demand::begin();
         gdem != Demand::end(); ++gdem)
     {
-      if (!gdem->getHidden())
-      {
-        const Demand::OperationPlanList &deli = gdem->getDelivery();
-        for (Demand::OperationPlanList::const_iterator pp = deli.begin();
-            pp != deli.end(); ++pp)
-          textoutput << "DEMAND\t" << (*gdem) << '\t'
-              << (*pp)->getEnd() << '\t'
-              << (*pp)->getQuantity() << endl;
-      }
+      const Demand::OperationPlanList &deli = gdem->getDelivery();
+      for (auto pp = deli.begin(); pp != deli.end(); ++pp)
+        textoutput << "DEMAND\t" << (*gdem) << '\t'
+            << (*pp)->getEnd() << '\t'
+            << (*pp)->getQuantity() << endl;
     }
 
     // Write the resource summary
     for (Resource::iterator gres = Resource::begin();
         gres != Resource::end(); ++gres)
     {
-      if (!gres->getHidden())
-        for (Resource::loadplanlist::const_iterator
-            qq=gres->getLoadPlans().begin();
-            qq!=gres->getLoadPlans().end();
-            ++qq)
-          if (qq->getEventType() == 1 && qq->getQuantity() != 0.0)
-          {
-            textoutput << "RESOURCE\t" << *gres << '\t'
-                << qq->getDate() << '\t'
-                << qq->getQuantity() << '\t'
-                << (round(qq->getOnhand() * 1000) / 1000) << endl;
-          }
+      if (gres->getHidden())
+        continue;
+      for (auto qq=gres->getLoadPlans().begin(); qq!=gres->getLoadPlans().end(); ++qq)
+        if (qq->getEventType() == 1 && qq->getQuantity() != 0.0)
+        {
+          textoutput << "RESOURCE\t" << *gres << '\t'
+              << qq->getDate() << '\t'
+              << qq->getQuantity() << '\t'
+              << (round(qq->getOnhand() * 1000) / 1000) << endl;
+        }
     }
 
     // Write the operationplan summary.
@@ -266,18 +258,14 @@ PyObject* savePlan(PyObject* self, PyObject* args)
     }
 
     // Write the constraint summary
-    for (Demand::iterator gdem = Demand::begin();
-        gdem != Demand::end(); ++gdem)
+    for (auto gdem = Demand::begin(); gdem != Demand::end(); ++gdem)
     {
-      if (!gdem->getHidden())
+      Problem::iterator i = gdem->getConstraints().begin();
+      while (Problem *prob = i.next())
       {
-        Problem::iterator i = gdem->getConstraints().begin();
-        while (Problem *prob = i.next())
-        {
-          textoutput << "DEMAND CONSTRAINT\t" << (*gdem) << '\t'
-              << prob->getDescription() << '\t'
-              << prob->getDates() << '\t' << endl;
-        }
+        textoutput << "DEMAND CONSTRAINT\t" << (*gdem) << '\t'
+            << prob->getDescription() << '\t'
+            << prob->getDates() << '\t' << endl;
       }
     }
 

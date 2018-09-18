@@ -1923,6 +1923,12 @@ class OperationPlan
       */
     Duration getDelay() const;
 
+    /** Merge this operationplan with another one if possible. 
+      * The return value is true when a merge was done. 
+      * Careful: When a merge is done this pointer object is deleted! 
+      */
+    bool mergeIfPossible();
+
     friend class iterator;
 
     /** This is a factory method that creates an operationplan pointer based
@@ -8158,7 +8164,7 @@ class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand
     }
 
     /** Returns the current setup of the resource.<br>
-      * When the argument is true (= default) the current setup is returned.<br>
+      * When the argument is true the setup of this loadplan is returned.
       * When the argument is false the setup just before the loadplan is returned.
       */
     SetupEvent* getSetup(bool) const;
@@ -9815,6 +9821,7 @@ class CommandMoveOperationPlan : public Command
     /** Commit the changes. */
     virtual void commit()
     {
+      opplan->mergeIfPossible();
       opplan = nullptr;
     }
 

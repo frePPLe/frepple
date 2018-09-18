@@ -32,7 +32,8 @@ namespace frepple
 {
 
 
-/** @brief A lightweight solver class to remove excess material.
+
+/** @brief A solver class to remove excess material.
   *
   * The class works in a single thread only.
   */

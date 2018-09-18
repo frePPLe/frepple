@@ -161,7 +161,10 @@ class OverviewReport(GridPivot):
        + coalesce(sum(greatest(operationplanmaterial.quantity, 0)),0) endoh,
        case when coalesce((select onhand from operationplanmaterial where item_id = item.name and
        location_id = location.name and flowdate < greatest(d.startdate,%%s)
-       order by flowdate desc, id desc limit 1),0) = 0 then 0 else
+       order by flowdate desc, id desc limit 1),0) = 0 then 0 
+       when (select to_char(flowdate,'YYYY-MM-DD')||' '||round(periodofcover/86400) from operationplanmaterial where item_id = item.name and
+       location_id = location.name and flowdate < greatest(d.startdate,%%s)
+       order by flowdate desc, id desc limit 1) = '1971-01-01 999' then 999 else
        extract( epoch from (select flowdate from operationplanmaterial where item_id = item.name and
        location_id = location.name and flowdate < greatest(d.startdate,%%s)
        order by flowdate desc, id desc limit 1)
@@ -230,6 +233,7 @@ class OverviewReport(GridPivot):
       query, (
         request.report_startdate,  # startoh
         request.report_startdate,  # endoh
+        request.report_startdate,  # startohdoc
         request.report_startdate,  # startohdoc
         request.report_startdate,  # startohdoc
         request.report_startdate,  # startohdoc

@@ -282,6 +282,12 @@ bool SolverCreate::checkOperation
       // The reply is 0, but the next-date is still less than the maximum
       // ask date. In this case we will violate the post-operation -soft-
       // constraint.
+      if (matnext.getEnd() < orig_q_date + data.getSolver()->getMinimumDelay())
+      {
+        matnext.setEnd(orig_q_date + data.getSolver()->getMinimumDelay());
+        if (matnext.getEnd() > orig_q_date_max)
+          matnext.setEnd(orig_q_date_max);
+      }
       data.state->q_date = matnext.getEnd();
       orig_q_date = data.state->q_date;
       data.state->q_qty = orig_opplan_qty;
@@ -294,7 +300,7 @@ bool SolverCreate::checkOperation
       // Pop actions from the command "stack" in the command list
       data.getCommandManager()->rollback(topcommand);
       // Echo a message
-      if (data.getSolver()->getLogLevel()>1)
+      if (data.getSolver()->getLogLevel() > 1)
         logger << indent(opplan->getOperation()->getLevel())
           << "   Retrying new date." << endl;
     }

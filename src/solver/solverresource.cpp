@@ -28,7 +28,7 @@ namespace frepple
 /** @todo resource solver should be using a move command rather than direct move */
 void SolverCreate::solve(const Resource* res, void* v)
 {
-  SolverMRPdata* data = static_cast<SolverMRPdata*>(v);
+  SolverData* data = static_cast<SolverData*>(v);
 
   // Call the user exit
   if (userexit_resource) userexit_resource.call(res, PythonData(data->constrainedPlanning));
@@ -393,7 +393,7 @@ void SolverCreate::solve(const Resource* res, void* v)
 
 void SolverCreate::solve(const ResourceInfinite* res, void* v)
 {
-  SolverMRPdata* data = static_cast<SolverMRPdata*>(v);
+  SolverData* data = static_cast<SolverData*>(v);
 
   // Call the user exit
   if (userexit_resource) userexit_resource.call(res, PythonData(data->constrainedPlanning));
@@ -421,7 +421,7 @@ void SolverCreate::solve(const ResourceInfinite* res, void* v)
 
 void SolverCreate::solve(const ResourceBuckets* res, void* v)
 {
-  SolverMRPdata* data = static_cast<SolverMRPdata*>(v);
+  SolverData* data = static_cast<SolverData*>(v);
 
   // Call the user exit
   if (userexit_resource) userexit_resource.call(res, PythonData(data->constrainedPlanning));

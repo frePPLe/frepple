@@ -35,7 +35,7 @@ namespace frepple
 void SolverCreate::solve(const Buffer* b, void* v)
 {
   // Call the user exit
-  SolverMRPdata* data = static_cast<SolverMRPdata*>(v);
+  SolverData* data = static_cast<SolverData*>(v);
   if (userexit_buffer) userexit_buffer.call(b, PythonData(data->constrainedPlanning));
 
   // Verify the iteration limit isn't exceeded.
@@ -561,7 +561,7 @@ void SolverCreate::solve(const Buffer* b, void* v)
 
 void SolverCreate::solveSafetyStock(const Buffer* b, void* v)
 {
-  SolverMRPdata* data = static_cast<SolverMRPdata*>(v);
+  SolverData* data = static_cast<SolverData*>(v);
 
   // Message
   if (data->getSolver()->getLogLevel()>1)
@@ -653,7 +653,7 @@ void SolverCreate::solveSafetyStock(const Buffer* b, void* v)
 
 void SolverCreate::solve(const BufferInfinite* b, void* v)
 {
-  SolverMRPdata* data = static_cast<SolverMRPdata*>(v);
+  SolverData* data = static_cast<SolverData*>(v);
 
   // Call the user exit
   if (userexit_buffer) userexit_buffer.call(b, PythonData(data->constrainedPlanning));

@@ -37,7 +37,7 @@ void SolverCreate::solve(const Flow* fl, void* v)  // @todo implement search mod
   // - for the leading flow of an alternate group
   // - for the first transfer batch in a series
   // See SolverCreate::checkOperation
-  SolverMRPdata* data = static_cast<SolverMRPdata*>(v);
+  SolverData* data = static_cast<SolverData*>(v);
 
   if (fl->hasAlternates())
   {

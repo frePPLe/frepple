@@ -12,6 +12,4 @@ This section of the documentation illustrates a number of common modelling situa
    demand/index
    operation/index
    buffer/index
-   segment/index
-   rebalancing-requests/index
    supplier/index

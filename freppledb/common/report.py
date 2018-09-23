@@ -1315,6 +1315,13 @@ class GridReport(View):
 
   @staticmethod
   def sort_models(models):
+    # Inject additional dependencies that are not reflected in database constraints
+    for m in models:
+      for e in getattr(m[1], 'extra_dependencies', []):
+        for m2 in models:
+          if m2[1] == e:
+            m2[3].update([m[1]])
+
     # Sort the list of models, based on dependencies between models
     cnt = len(models)
     ok = False

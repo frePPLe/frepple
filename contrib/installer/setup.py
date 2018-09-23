@@ -40,7 +40,7 @@ packages = [
   'rest_framework_bulk', 'rest_framework_filters', 'markdown',
   # Added to package a more complete python library with frePPLe
   'urllib', 'multiprocessing', 'asyncio', 'pip', 'html.parser', 'csv',
-  'poplib', 'imaplib', 'telnetlib',
+  'poplib', 'imaplib', 'telnetlib', 'colorsys',
   # Added for unicode and internationalization
   'encodings',
   # Added for cx_freeze binaries

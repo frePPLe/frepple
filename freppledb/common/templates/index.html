@@ -4,16 +4,20 @@
 {% block title %}frePPLe{% endblock %}
 {% block content_title %}
 <div class="row">
-	<div class="col-xs-12">
-	  <h1 style="float: left; cursor: move;">
-	   {% trans "cockpit"|capfirst %}
-	  </h1>
-	  <h1 style="float: right;">
-		  <button class="btn btn-xs btn-primary"  onclick="grid.showBucket()" data-toggle="tooltip" data-placement="top" data-original-title="{% trans 'Configure time buckets'|escape %}">
-		    <span class="fa fa-clock-o"></span>
-		  </button>
-	  </h1>
-	</div>
+  <div class="col-xs-12">
+    <h1 style="float: left">{% trans "cockpit"|capfirst %}</h1>
+    <h1 style="float: right;">
+      <button class="btn btn-xs btn-primary" onclick="grid.showBucket()" data-toggle="tooltip" 
+        data-placement="top" data-original-title="{% trans 'Configure time buckets'|capfirst|force_escape %}">
+        <span class="fa fa-clock-o"></span>
+      </button>
+      <button class="btn btn-xs btn-primary"
+        onclick="window.open('https://frepple.com/docs/{% version_short %}/user-guide/user-interface/cockpit.html');"
+        data-toggle="tooltip" data-placement="top" data-original-title="{% trans 'help'|capfirst|force_escape %}">
+        <span class="fa fa-question"></span>
+      </button>
+    </h1>
+  </div>
 </div>
 {% endblock %}
 

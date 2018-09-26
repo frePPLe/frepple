@@ -254,7 +254,7 @@
 		<operationplan>
 			<id>2</id>
 			<operation xsi:type="operation_itemdistribution">
-				<name>Ship product A from product A @ Central WH to product A @ Local DC 2b</name>
+				<name>Ship product A from Central WH to Local DC 2b</name>
 				<origin>
 					<name>product A @ Central WH</name>
 				</origin>

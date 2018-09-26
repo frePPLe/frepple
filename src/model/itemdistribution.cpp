@@ -247,7 +247,9 @@ OperationItemDistribution::OperationItemDistribution(
       "a ItemDistribution, a source buffer and a destination buffer"
       );
   stringstream o;
-  o << "Ship " << dest->getItem()->getName() << " from " << src->getName() << " to " << dest->getName();
+  o << "Ship " << dest->getItem()->getName() 
+    << " from " << src->getLocation()->getName()
+    << " to " << dest->getLocation()->getName();
   setName(o.str());
   setDuration(i->getLeadTime());
   setSizeMultiple(i->getSizeMultiple());

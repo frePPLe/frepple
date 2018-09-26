@@ -30,7 +30,9 @@ Criticality                 | Indication of the urgency of the operationplan.
                               not immediately impact the delivery of any demand.
                             | A criticality of 999 indicates an operationplan that isn't used at all to
                               meet any demand.
-Inventory Status            The Inventory Status of the operationplan.           
+Net duration                Actual duration of the operation, which doesn't include any unavailable time
+                            between the start and end date.                     
+Inventory Status            The Inventory Status of the operationplan.          
 Status                      Status of the operationplan:
 
                             - proposed: newly proposed by the planning tool

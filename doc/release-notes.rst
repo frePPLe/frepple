@@ -4,6 +4,23 @@ Release notes
 4.4.2 (Upcoming release)
 ========================
 
+.. rubric:: Production planning
+
+- Performance optimization for models with post-operation times by avoiding
+  ineffecient search loops.
+
+- The naming convention for distribution operations is changed from
+  'Ship ITEM from ITEM @ SOURCE to ITEM @ DESTINATION' to
+  the simpler and shorter 'Ship ITEM from SOURCE to DESTINATION'.
+
+.. rubric:: User interface
+
+- Added field net duration to the
+  `resource detail report <user-guide/user-interface/plan-analysis/resource-detail-report.html>`_
+  
+- Bug fix: Deleting an object from the edit form in a scenario was incorrectly
+  deleting the object in the production instead.
+
 4.4.1 (2018/09/10)
 ==================
 

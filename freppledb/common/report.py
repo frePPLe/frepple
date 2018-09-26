@@ -38,6 +38,7 @@ from logging import ERROR, WARNING, DEBUG
 import math
 import operator
 import json
+import re
 from io import StringIO, BytesIO
 import urllib
 from openpyxl import load_workbook, Workbook
@@ -89,6 +90,30 @@ logger = logging.getLogger(__name__)
 # A list of models with some special, administrative purpose.
 # They should be excluded from bulk import, export and erasing actions.
 EXCLUDE_FROM_BULK_OPERATIONS = (Group, User, Comment)
+
+
+separatorpattern = re.compile(r'[\s\-_]+')
+
+
+def matchesModelName(name, model):
+  '''
+  Returns true if the first argument is a valid name for the model passed as second argument.
+  The string must match either:
+    - the model name
+    - the verbose name
+    - the pural verbose name
+  The comparison is case insensitive and also ignores whitespace, dashes and underscores.
+  The comparison is language sensitive, and depends on the active language.
+  '''
+  checkstring = re.sub(separatorpattern, '', name.lower())
+  if checkstring == re.sub(separatorpattern, '', model._meta.model_name.lower()):
+    return True
+  elif checkstring == re.sub(separatorpattern, '', model._meta.verbose_name.lower()):
+    return True
+  elif checkstring == re.sub(separatorpattern, '', model._meta.verbose_name_plural.lower()):
+    return True
+  else:
+    return False
 
 
 def getHorizon(request, future_only=False):
@@ -2459,13 +2484,13 @@ def importWorkbook(request):
           contenttype_id = None
           for m, ct in all_models:
             # Try with translated model names
-            if ws_name.lower() in (m._meta.model_name.lower(), m._meta.verbose_name.lower(), m._meta.verbose_name_plural.lower()):
+            if matchesModelName(ws_name, m):
               model = m
               contenttype_id = ct
               break
             # Try with English model names
             with translation.override('en'):
-              if ws_name.lower() in (m._meta.model_name.lower(), m._meta.verbose_name.lower(), m._meta.verbose_name_plural.lower()):
+              if matchesModelName(ws_name, m):
                 model = m
                 contenttype_id = ct
                 break

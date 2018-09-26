@@ -43,7 +43,7 @@ from django.http import HttpRequest
 from freppledb import VERSION
 from freppledb.common.middleware import _thread_locals
 from freppledb.common.models import User, Comment
-from freppledb.common.report import importWorkbook, GridReport
+from freppledb.common.report import importWorkbook, GridReport, matchesModelName
 from freppledb.common.dataload import parseExcelWorksheet
 from freppledb.execute.models import Task
 
@@ -134,13 +134,13 @@ class Command(BaseCommand):
               contenttype_id = None
               for m, ct in all_models:
                 # Try with translated model names
-                if ws_name.lower() in (m._meta.model_name.lower(), m._meta.verbose_name.lower(), m._meta.verbose_name_plural.lower()):
+                if matchesModelName(ws_name, m):
                   model = m
                   contenttype_id = ct
                   break
                 # Try with English model names
                 with translation.override('en'):
-                  if ws_name.lower() in (m._meta.model_name.lower(), m._meta.verbose_name.lower(), m._meta.verbose_name_plural.lower()):
+                  if matchesModelName(ws_name, m):
                     model = m
                     contenttype_id = ct
                     break

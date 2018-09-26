@@ -20,6 +20,13 @@ Release notes
   
 - Bug fix: Deleting an object from the edit form in a scenario was incorrectly
   deleting the object in the production instead.
+  
+- | The `import data files from folder <user-guide/command-reference.html#importfromfolder>`_
+    and `import a spreadsheet <user-guide/command-reference.html#importworkbook>`_ functionalities
+    now ignores spaces, dashes and underscores in the recognition of the content type from the 
+    file or worksheet name.
+  | So far, only a worksheet called 'sales order' was recognized as containing sales order data.
+    Now "sales-order", "sales_order" and "salesorder" will also be recognized.
 
 4.4.1 (2018/09/10)
 ==================

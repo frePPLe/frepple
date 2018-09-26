@@ -103,9 +103,10 @@ def matchesModelName(name, model):
     - the verbose name
     - the pural verbose name
   The comparison is case insensitive and also ignores whitespace, dashes and underscores.
-  The comparison is language sensitive, and depends on the active language.
+  The comparison tries to find a match using the current active language, as well as in English.
   '''
   checkstring = re.sub(separatorpattern, '', name.lower())
+  # Try with the localized model names
   if checkstring == re.sub(separatorpattern, '', model._meta.model_name.lower()):
     return True
   elif checkstring == re.sub(separatorpattern, '', model._meta.verbose_name.lower()):
@@ -113,7 +114,16 @@ def matchesModelName(name, model):
   elif checkstring == re.sub(separatorpattern, '', model._meta.verbose_name_plural.lower()):
     return True
   else:
-    return False
+    # Try with English model names
+    with translation.override('en'):
+      if checkstring == re.sub(separatorpattern, '', model._meta.model_name.lower()):
+        return True
+      elif checkstring == re.sub(separatorpattern, '', model._meta.verbose_name.lower()):
+        return True
+      elif checkstring == re.sub(separatorpattern, '', model._meta.verbose_name_plural.lower()):
+        return True
+      else:
+        return False
 
 
 def getHorizon(request, future_only=False):
@@ -2483,17 +2493,10 @@ def importWorkbook(request):
           model = None
           contenttype_id = None
           for m, ct in all_models:
-            # Try with translated model names
             if matchesModelName(ws_name, m):
               model = m
               contenttype_id = ct
               break
-            # Try with English model names
-            with translation.override('en'):
-              if matchesModelName(ws_name, m):
-                model = m
-                contenttype_id = ct
-                break
           if not model or model in EXCLUDE_FROM_BULK_OPERATIONS:
             yield '<div class="alert alert-warning">' + force_text(_("Ignoring data in worksheet: %s") % ws_name) + '</div>'
           elif not request.user.has_perm('%s.%s' % (model._meta.app_label, get_permission_codename('add', model._meta))):

@@ -133,17 +133,10 @@ class Command(BaseCommand):
               model = None
               contenttype_id = None
               for m, ct in all_models:
-                # Try with translated model names
                 if matchesModelName(ws_name, m):
                   model = m
                   contenttype_id = ct
                   break
-                # Try with English model names
-                with translation.override('en'):
-                  if matchesModelName(ws_name, m):
-                    model = m
-                    contenttype_id = ct
-                    break
               if not model or model in EXCLUDE_FROM_BULK_OPERATIONS:
                 print(force_text(_("Ignoring data in worksheet: %s") % ws_name))
                 # yield '<div class="alert alert-warning">' + force_text(_("Ignoring data in worksheet: %s") % ws_name) + '</div>'

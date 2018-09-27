@@ -237,6 +237,29 @@ int OperationItemDistribution::initialize()
 }
 
 
+Operation* OperationItemDistribution::findOrCreate(ItemDistribution* itemdist, Buffer* src, Buffer* dest)
+{
+  if (!itemdist || !src || !dest)
+    throw LogicException(
+      "An OperationItemDistribution always needs to point to "
+      "a ItemDistribution, a source buffer and a destination buffer"
+    );
+  stringstream o;
+  o << "Ship " << dest->getItem()->getName() 
+    << " from " << src->getLocation()->getName() 
+    << " to " << dest->getLocation()->getName();
+  auto oper = Operation::find(o.str());
+  if (oper)
+  {
+    if (oper->getType() != *OperationItemDistribution::metadata)
+      throw DataException("Name clash on operation " + o.str());
+    return oper;
+  }
+  else
+    return new OperationItemDistribution(itemdist, src, dest);
+}
+
+
 OperationItemDistribution::OperationItemDistribution(
   ItemDistribution* i, Buffer *src, Buffer* dest
   ) : itemdist(i)

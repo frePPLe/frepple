@@ -4905,6 +4905,8 @@ class OperationItemDistribution : public OperationFixedTime
 
     Buffer* getDestination() const;
 
+    static Operation* findOrCreate(ItemDistribution*, Buffer*, Buffer*);
+
     /** Constructor. */
     explicit OperationItemDistribution(ItemDistribution*, Buffer*, Buffer*);
 

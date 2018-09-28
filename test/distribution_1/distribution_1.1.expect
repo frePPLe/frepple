@@ -85,19 +85,28 @@
 			<itemdistributions>
 				<itemdistribution>
 					<origin>
-						<name>Regional DC 2</name>
+						<name>Central WH</name>
 					</origin>
 					<destination>
-						<name>Local DC 2b</name>
+						<name>Regional DC 1</name>
 					</destination>
-					<leadtime>P3D</leadtime>
+					<leadtime>P10D</leadtime>
 				</itemdistribution>
 				<itemdistribution>
 					<origin>
-						<name>Regional DC 2</name>
+						<name>Central WH</name>
 					</origin>
 					<destination>
-						<name>Local DC 2a</name>
+						<name>Regional DC 2</name>
+					</destination>
+					<leadtime>P12D</leadtime>
+				</itemdistribution>
+				<itemdistribution>
+					<origin>
+						<name>Regional DC 1</name>
+					</origin>
+					<destination>
+						<name>Local DC 1a</name>
 					</destination>
 					<leadtime>P3D</leadtime>
 				</itemdistribution>
@@ -112,30 +121,21 @@
 				</itemdistribution>
 				<itemdistribution>
 					<origin>
-						<name>Regional DC 1</name>
+						<name>Regional DC 2</name>
 					</origin>
 					<destination>
-						<name>Local DC 1a</name>
+						<name>Local DC 2a</name>
 					</destination>
 					<leadtime>P3D</leadtime>
 				</itemdistribution>
 				<itemdistribution>
 					<origin>
-						<name>Central WH</name>
-					</origin>
-					<destination>
 						<name>Regional DC 2</name>
-					</destination>
-					<leadtime>P12D</leadtime>
-				</itemdistribution>
-				<itemdistribution>
-					<origin>
-						<name>Central WH</name>
 					</origin>
 					<destination>
-						<name>Regional DC 1</name>
+						<name>Local DC 2b</name>
 					</destination>
-					<leadtime>P10D</leadtime>
+					<leadtime>P3D</leadtime>
 				</itemdistribution>
 			</itemdistributions>
 		</item>

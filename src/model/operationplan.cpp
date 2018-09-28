@@ -583,7 +583,7 @@ Object* OperationPlan::createOperationPlan(
       // Make sure no problem is reported when item distribution priority is 0 (Rebalancing)
       // Checking that no item distribution in reverse mode exists
       bool found = false;
-      Item::distributionIterator itemdist_iter = (static_cast<Item*>(itemval))->getDistributionIterator();
+      auto itemdist_iter = (static_cast<Item*>(itemval))->getDistributionIterator();
       while (ItemDistribution *i = itemdist_iter.next())
       {
         if (i->getOrigin() == static_cast<ItemDistribution*>(itemdistributionval)->getDestination()

@@ -63,10 +63,6 @@ Item::~Item()
     if (l->getItem() == this)
       l->setItem(nullptr);
 
-  // Remove all item distributions referencing this item
-  while (firstItemDistribution)
-    delete firstItemDistribution;
-
   // Remove all item operations referencing this item
   while (firstOperation)
     delete firstOperation;

@@ -301,7 +301,7 @@ Resource::~Resource()
     while (ItemSupplier* itmsup = itmsup_iter.next())
       if (itmsup->getResource() == this)
         itmsup->setResource(nullptr);
-    Item::distributionIterator  itmdist_iter = itm_iter->getDistributionIterator();
+    Item::distributionlist::const_iterator itmdist_iter = itm_iter->getDistributionIterator();
     while (ItemDistribution* itmdist = itmdist_iter.next())
       if (itmdist->getResource() == this)
         itmdist->setResource(nullptr);

@@ -495,8 +495,8 @@ PyObject* printModelSize(PyObject* self, PyObject* args)
     for (Location::iterator l = Location::begin(); l != Location::end(); ++l)
     {
       memsize += l->getSize();
-      for (Location::distributionoriginlist::const_iterator rs = l->getDistributionOrigins().begin();
-        rs != l->getDistributionOrigins().end(); ++rs)
+      for (Location::distributionlist::const_iterator rs = l->getDistributions().begin();
+        rs != l->getDistributions().end(); ++rs)
       {
         ++countItemDistributions;
         memItemDistributions += rs->getSize();

@@ -924,10 +924,9 @@ void Buffer::buildProducingOperation()
     } // End loop over itemsuppliers
 
     // Loop over all item distributions to replenish this item+location combination
-    Item::distributionIterator itemdist_iter = item->getDistributionIterator();
+    auto itemdist_iter = item->getDistributionIterator();
     while (ItemDistribution *itemdist = itemdist_iter.next())
     {
-
       if (itemdist->getPriority() == 0)
         continue;
 

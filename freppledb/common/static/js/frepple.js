@@ -365,7 +365,7 @@ function formatDuration(cellvalue, options, rowdata) {
   seconds = seconds - (days * 86400) - (hours * 3600) - (minutes * 60);
 
   if (rowdata.criticality > 998)
-    return 'N/A'
+    return 'N/A';
   if (days > 0)
     return (sign*days).toString() + " " + ((hours < 10) ? "0" : "") + hours + ((minutes < 10) ? ":0" : ":") + minutes + ((seconds < 10) ? ":0" : ":") + (seconds).toFixed((seconds === Math.floor(seconds))?0:3);
   else
@@ -795,17 +795,15 @@ var grid = {
       });
 
       var numfrozen = 0;
-      if (pivot)
-      {
+      if (pivot){
         var firstnonfrozen = 0;
         for (var i in colModel)
           if ("counter" in colModel[i])
             numfrozen = i+1;
           else
             perm.push(parseInt(i,10));
-      }
-      else
-        numfrozen = parseInt($("#frozen").val())
+      } else
+        numfrozen = parseInt($("#frozen").val());
       for (var i in hiddenrows)
         perm.push(hiddenrows[i]);
       $("#grid").jqGrid("remapColumns", perm, true);
@@ -2648,7 +2646,7 @@ function import_show(title,paragraph,multiple,fxhr)
     );
    }
   )
-}
+};
 
 
 //----------------------------------------------------------------------------
@@ -3283,7 +3281,7 @@ var tour = {
     .on('shown.bs.popover', function () {
       var postop = $('.tourpopover').css('top').replace('px','');
       if (postop < window.pageYOffset || postop > window.pageYOffset+window.innerHeight/2) window.scrollTo(0,postop-window.innerHeight/2);
-    })
+    });
 
     // Update tour dialog
     if (tour.intro == null) {
@@ -3477,7 +3475,7 @@ function Gauge(placeholderName, configuration)
                   .attr("d", pointerLine)
                   .style("fill", "#dc3912")
                   .style("stroke", "#c63310")
-                  .style("fill-opacity", 0.7)
+                  .style("fill-opacity", 0.7);
 
     pointerContainer.append("svg:circle")
               .attr("cx", this.config.cx)

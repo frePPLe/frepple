@@ -365,7 +365,7 @@ function formatDuration(cellvalue, options, rowdata) {
   seconds = seconds - (days * 86400) - (hours * 3600) - (minutes * 60);
 
   if (rowdata.criticality > 998)
-    return 'N/A'
+    return 'N/A';
   if (days > 0)
     return (sign*days).toString() + " " + ((hours < 10) ? "0" : "") + hours + ((minutes < 10) ? ":0" : ":") + minutes + ((seconds < 10) ? ":0" : ":") + (seconds).toFixed((seconds === Math.floor(seconds))?0:3);
   else
@@ -795,8 +795,7 @@ var grid = {
       });
 
       var numfrozen = 0;
-      if (pivot)
-      {
+      if (pivot) {
         var firstnonfrozen = 0;
         for (var i in colModel)
           if ("counter" in colModel[i])
@@ -2666,7 +2665,7 @@ function getURLparameters()
     params[p[0]] = params[p[0]]?((params[p[0]] instanceof Array)?(params[p[0]].push(p[1]),params[p[0]]):[params[p[0]],p[1]]):p[1];
   });
   return params;
-}
+};
 
 
 //----------------------------------------------------------------------------
@@ -2692,7 +2691,7 @@ function selectDatabase()
     window.location.href = window.location.href.replace("/"+database+"/", "/");
   else
     window.location.href = window.location.href.replace("/"+database+"/", "/" + db + "/");
-}
+};
 
 
 //----------------------------------------------------------------------------
@@ -3477,7 +3476,7 @@ function Gauge(placeholderName, configuration)
                   .attr("d", pointerLine)
                   .style("fill", "#dc3912")
                   .style("stroke", "#c63310")
-                  .style("fill-opacity", 0.7)
+                  .style("fill-opacity", 0.7);
 
     pointerContainer.append("svg:circle")
               .attr("cx", this.config.cx)

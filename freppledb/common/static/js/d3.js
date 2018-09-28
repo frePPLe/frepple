@@ -153,6 +153,7 @@ d3 = function() {
     return pairs;
   };
   d3.zip = function() {
+    var n = 0;
     if (!(n = arguments.length)) return [];
     for (var i = -1, m = d3.min(arguments, d3_zipLength), zips = new Array(m); ++i < m; ) {
       for (var j = -1, n, zip = zips[i] = new Array(n); ++j < n; ) {
@@ -640,8 +641,8 @@ d3 = function() {
   function d3_selection_classedName(name) {
     var re = d3_selection_classedRe(name);
     return function(node, value) {
-      if (c = node.classList) return value ? c.add(name) : c.remove(name);
       var c = node.getAttribute("class") || "";
+      if (c = node.classList) return value ? c.add(name) : c.remove(name);
       if (value) {
         re.lastIndex = 0;
         if (!re.test(c)) node.setAttribute("class", d3_collapse(c + " " + name));
@@ -2622,8 +2623,8 @@ d3 = function() {
   function d3_geo_clipPolygon(segments, compare, clipStartInside, interpolate, listener) {
     var subject = [], clip = [];
     segments.forEach(function(segment) {
-      if ((n = segment.length - 1) <= 0) return;
       var n, p0 = segment[0], p1 = segment[n];
+      if ((n = segment.length - 1) <= 0) return;
       if (d3_geo_sphericalEqual(p0, p1)) {
         listener.lineStart();
         for (var i = 0; i < n; ++i) listener.point((p0 = segment[i])[0], p0[1]);
@@ -2679,8 +2680,8 @@ d3 = function() {
     }
   }
   function d3_geo_clipPolygonLinkCircular(array) {
-    if (!(n = array.length)) return;
     var n, i = 0, a = array[0], b;
+    if (!(n = array.length)) return;
     while (++i < n) {
       a.n = b = array[i];
       b.p = a;
@@ -5806,11 +5807,11 @@ d3 = function() {
       if (typeof charge === "function") for (i = 0; i < n; ++i) charges[i] = +charge.call(this, nodes[i], i); else for (i = 0; i < n; ++i) charges[i] = charge;
       function position(dimension, size) {
         if (!neighbors) {
-          neighbors = new Array(n);
-          for (j = 0; j < n; ++j) {
+          var neighbors = new Array(n);
+          for (var j = 0; j < n; ++j) {
             neighbors[j] = [];
           }
-          for (j = 0; j < m; ++j) {
+          for (var j = 0; j < m; ++j) {
             var o = links[j];
             neighbors[o.source.index].push(o.target);
             neighbors[o.target.index].push(o.source);
@@ -5886,8 +5887,8 @@ d3 = function() {
       var childs = children.call(hierarchy, node, depth);
       node.depth = depth;
       nodes.push(node);
+      var i = -1, n, c = node.children = new Array(n), v = 0, j = depth + 1, d;
       if (childs && (n = childs.length)) {
-        var i = -1, n, c = node.children = new Array(n), v = 0, j = depth + 1, d;
         while (++i < n) {
           d = c[i] = recurse(childs[i], j, nodes);
           d.parent = node;
@@ -5905,8 +5906,8 @@ d3 = function() {
     }
     function revalue(node, depth) {
       var children = node.children, v = 0;
+      var i = -1, n, j = depth + 1;
       if (children && (n = children.length)) {
-        var i = -1, n, j = depth + 1;
         while (++i < n) v += revalue(children[i], j);
       } else if (value) {
         v = +value.call(hierarchy, node, depth) || 0;
@@ -5973,8 +5974,8 @@ d3 = function() {
       node.y = node.depth * dy;
       node.dx = dx;
       node.dy = dy;
+      var i = -1, n, c, d;
       if (children && (n = children.length)) {
-        var i = -1, n, c, d;
         dx = node.value ? dx / node.value : 0;
         while (++i < n) {
           position(c = children[i], x, d = c.value * dx, dy);
@@ -5984,8 +5985,8 @@ d3 = function() {
     }
     function depth(node) {
       var children = node.children, d = 0;
+      var i = -1, n;
       if (children && (n = children.length)) {
-        var i = -1, n;
         while (++i < n) d = Math.max(d, depth(children[i]));
       }
       return 1 + d;
@@ -6267,8 +6268,8 @@ d3 = function() {
       var nodes = hierarchy.call(this, d, i), root = nodes[0];
       function firstWalk(node, previousSibling) {
         var children = node.children, layout = node._tree;
+        var n, firstChild = children[0], previousChild, ancestor = firstChild, child, i = -1;
         if (children && (n = children.length)) {
-          var n, firstChild = children[0], previousChild, ancestor = firstChild, child, i = -1;
           while (++i < n) {
             child = children[i];
             firstWalk(child, previousChild);
@@ -6292,8 +6293,8 @@ d3 = function() {
       function secondWalk(node, x) {
         node.x = node._tree.prelim + x;
         var children = node.children;
+        var i = -1, n;
         if (children && (n = children.length)) {
-          var i = -1, n;
           x += node._tree.mod;
           while (++i < n) {
             secondWalk(children[i], x);
@@ -6384,8 +6385,8 @@ d3 = function() {
   }
   function d3_layout_treeSearch(node, compare) {
     var children = node.children;
+    var child, n, i = -1;
     if (children && (n = children.length)) {
-      var child, n, i = -1;
       while (++i < n) {
         if (compare(child = d3_layout_treeSearch(children[i], compare), node) > 0) {
           node = child;
@@ -6406,8 +6407,8 @@ d3 = function() {
   function d3_layout_treeVisitAfter(node, callback) {
     function visit(node, previousSibling) {
       var children = node.children;
+      var child, previousChild = null, i = -1, n;
       if (children && (n = children.length)) {
-        var child, previousChild = null, i = -1, n;
         while (++i < n) {
           child = children[i];
           visit(child, previousChild);
@@ -6500,8 +6501,8 @@ d3 = function() {
     return .999 * dr * dr > dx * dx + dy * dy;
   }
   function d3_layout_packSiblings(node) {
-    if (!(nodes = node.children) || !(n = nodes.length)) return;
     var nodes, xMin = Infinity, xMax = -Infinity, yMin = Infinity, yMax = -Infinity, a, b, c, i, j, k, n;
+    if (!(nodes = node.children) || !(n = nodes.length)) return;
     function bound(node) {
       xMin = Math.min(node.x - node.r, xMin);
       xMax = Math.max(node.x + node.r, xMax);
@@ -7052,9 +7053,9 @@ d3 = function() {
       return ticks;
     };
     scale.tickFormat = function(n, format) {
+      var k = Math.max(.1, n / scale.ticks().length), f = positive ? (e = 1e-12, Math.ceil) : (e = -1e-12, 
       if (!arguments.length) return d3_scale_logFormat;
       if (arguments.length < 2) format = d3_scale_logFormat; else if (typeof format !== "function") format = d3.format(format);
-      var k = Math.max(.1, n / scale.ticks().length), f = positive ? (e = 1e-12, Math.ceil) : (e = -1e-12, 
       Math.floor), e;
       return function(d) {
         return d / pow(f(log(d) + e)) <= k ? format(d) : "";

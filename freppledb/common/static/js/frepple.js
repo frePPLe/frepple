@@ -540,7 +540,7 @@ var grid = {
    setStatus : function(newstatus)
    {
     var sel = jQuery("#grid").jqGrid('getGridParam','selarrrow');
-    for ( i in sel ) {
+    for (var i in sel ) {
       jQuery("#grid").jqGrid("setCell", sel[i], "status", newstatus, "dirty-cell");
       jQuery("#grid").jqGrid("setRowData", sel[i], false, "edited");
     };
@@ -553,7 +553,7 @@ var grid = {
   pivotcolumns : function  (cellvalue, options, rowdata)
   {
     var result = '';
-    for (i in cross_idx)
+    for (var i in cross_idx)
     {
       if (result != '') result += '<br>';
       if (cross[cross_idx[i]]['editable'])
@@ -590,8 +590,8 @@ var grid = {
       '</div>' +
     '</div>';
 
-    row1= "";
-    row2= "";
+    var row1= "";
+    var row2= "";
 
     var val0s = ""; //selected columns
     var val0a = ""; //available columns
@@ -767,7 +767,7 @@ var grid = {
         $("#grid").jqGrid('destroyFrozenColumns');
 
       $('#Rows li').each(function() {
-        val = parseInt(this.id,10);
+        var val = parseInt(this.id,10);
         if (val < 100)
         {
             $("#grid").jqGrid("showCol", colModel[val].name);
@@ -776,7 +776,7 @@ var grid = {
       });
 
       $('#DroppointRows li').each(function() {
-        val = parseInt(this.id,10);
+        var val = parseInt(this.id,10);
         if (val < 100)
         {
           hiddenrows.push(val);
@@ -787,7 +787,7 @@ var grid = {
       });
 
       $('#Crosses li').each(function() {
-        val = parseInt(this.id,10);
+        var val = parseInt(this.id,10);
         if (val >= 100)
         {
           cross_idx.push(val-100);
@@ -932,7 +932,7 @@ var grid = {
   afterEditCell: function (rowid, cellname, value, iRow, iCol)
   {
   var colmodel = $(this).jqGrid('getGridParam', 'colModel')[iCol];
-  iconslist = {
+  var iconslist = {
       time: 'fa fa-clock-o',
       date: 'fa fa-calendar',
       up: 'fa fa-chevron-up',
@@ -1207,12 +1207,12 @@ var grid = {
       $.jgrid.hideModal("#searchmodfbox_grid");
       var tableheadercontent = '';
       var tablebodycontent = '';
-      for (i = 0; i<data.labels.length; i++) {
+      for (var i = 0; i<data.labels.length; i++) {
 	    tableheadercontent += '<th>'+gettext(data.labels[i])+'</th>';
           };
-      for (i = 0; i<data.values.length; i++) {
+      for (var i = 0; i<data.values.length; i++) {
 	  tablebodycontent += '<tr><td><input id="cb_modaltable-'+i+'" class="cbox" type="checkbox" aria-checked="false"></td>';
-	  for (j = 0; j<data.values[i].length; j++) {
+	  for (var j = 0; j<data.values[i].length; j++) {
 	        tablebodycontent += '<td>'+gettext(data.values[i][j])+'</td>';
 	      };
           tablebodycontent += '</tr>';
@@ -1513,7 +1513,7 @@ var wizard = {
 			return null;
 		}
     var anchorlink = document.getElementById(wizelem.anchor).getAttribute('href');
-		result = $("#nav-menu a[href='"+ anchorlink +"']").attr('data-populated');
+		var result = $("#nav-menu a[href='"+ anchorlink +"']").attr('data-populated');
 		return (typeof result === 'undefined')? null : result === 'True';
 	},
 
@@ -1649,23 +1649,22 @@ var wizard = {
 //----------------------------------------------------------------------------
 
 var ERPconnection = {
-    IncrementalExport: function(grid, transactiontype) {
-      // Collect all selected rows in the status 'proposed'
-      var sel = grid.jqGrid('getGridParam','selarrrow');
-      if (sel === null || sel.length == 0)
-        return;
-      var data = [];
+  IncrementalExport: function (grid, transactiontype) {
+    // Collect all selected rows in the status 'proposed'
+    var sel = grid.jqGrid('getGridParam', 'selarrrow');
+    if (sel === null || sel.length == 0)
+      return;
+    var data = [];
 
-      for (var i in sel)
-      {
-        var r = grid.jqGrid('getRowData', sel[i]);
-        if (r.type === undefined)
-          r.type = transactiontype;
-        if (r.status == 'proposed')
-          data.push(r);
-      }
-      if (data == [])
-        return;
+    for (var i in sel) {
+      var r = grid.jqGrid('getRowData', sel[i]);
+      if (r.type === undefined)
+        r.type = transactiontype;
+      if (r.status == 'proposed')
+        data.push(r);
+    }
+    if (data == [])
+      return;
 
       // Send to the server for upload into openbravo
       $('#timebuckets').modal('hide');
@@ -1719,7 +1718,7 @@ var ERPconnection = {
 
           },
           error: function (result, stat, errorThrown) {
-            fmts = ngettext("Error during export");
+            var fmts = ngettext("Error during export");
             $('#popup .modal-title').addClass('alert alert-danger').html(gettext("Error during export"));
             $('#popup .modal-body p').html(gettext("Error during export") + ':' + result.responseText);
             $('#button_export').text(gettext('retry'));
@@ -1796,25 +1795,25 @@ var ERPconnection = {
               '</table>'+
           '</div>');
 
-          labels = ["id","type","item","value","quantity","location","origin","startdate","enddate","criticality"];
+          var labels = ["id","type","item","value","quantity","location","origin","startdate","enddate","criticality"];
 
           var bodycontent='';
           if (transactiontype == 'SO') {
             var tableheadercontent = $('<tr/>');
 
             tableheadercontent.append($('<th/>').html('<input id="cb_modaltableall" class="cbox" type="checkbox" aria-checked="false">'));
-            for (i = 0; i<labels.length; i++) {
+            for (var i = 0; i<labels.length; i++) {
               tableheadercontent.append( $('<th/>').addClass('text-capitalize').text(gettext(labels[i])) );
             };
 
             var tablebodycontent = $('<tbody/>');
-            for (i = 0; i<data.length; i++) {
+            for (var i = 0; i<data.length; i++) {
               var row = $('<tr/>');
               var td = $('<td/>');
 
               td.append( $('<input/>').attr({'id':"cb_modaltable-"+i, 'class':"cbox", 'type':"checkbox", 'aria-checked':"false"}));
               row.append(td);
-              for (j = 0; j<labels.length; j++) {
+              for (var j = 0; j<labels.length; j++) {
                 row.append( $('<td/>').text(data[i][labels[j]]) );
               };
               tablebodycontent.append( row );
@@ -1872,7 +1871,7 @@ var ERPconnection = {
                 };
               },
               error: function (result, stat, errorThrown) {
-                fmts = ngettext("Error during export");
+                var fmts = ngettext("Error during export");
                 $('#popup .modal-title').addClass('alert alert-danger').html(gettext("Error during export"));
                 $('#popup .modal-body').css({'overflow-y':'auto'}).html('<div style="overflow-y:auto; height: 300px; resize: vertical">' + result.responseText + '</div>');
                 $('#button_export').val(gettext('Retry'));
@@ -1903,7 +1902,7 @@ var ERPconnection = {
           $("#actions1").html($("#actionsul").children().first().text() + '  <span class="caret"></span>');
         },
         error: function (result, stat, errorThrown) {
-          fmts = gettext("Error getting data");
+          var fmts = gettext("Error getting data");
           $('#popup .modal-title').addClass('alert alert-danger').html(fmts);
           $('#popup .modal-body').css({'overflow-y':'auto'}).html('<div style="overflow-y:auto; height: 300px; resize: vertical">' + result.responseText + '</div>');
           $('#button_export').val(gettext('Retry'));

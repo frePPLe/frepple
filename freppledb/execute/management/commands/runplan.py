@@ -160,6 +160,26 @@ class Command(BaseCommand):
       import freppledb.common.commands
       cmd = freppledb.common.commands.__file__
 
+      def setlimits():
+        import resource
+        if settings.MAXMEMORYSIZE:
+          resource.setrlimit(
+            resource.RLIMIT_AS,
+            (settings.MAXMEMORYSIZE * 1024 * 1024, (settings.MAXMEMORYSIZE + 10) * 1024 * 1024)
+            )
+        if settings.MAXCPUTIME:
+          resource.setrlimit(
+            resource.RLIMIT_CPU,
+            (settings.MAXCPUTIME, settings.MAXCPUTIME + 5)
+            )
+        # Limiting the file size is a bit tricky as this limit not only applies to the log
+        # file, but also to temp files during the export
+        # if settings.MAXTOTALLOGFILESIZE:
+        #  resource.setrlimit(
+        #    resource.RLIMIT_FSIZE,
+        #   (settings.MAXTOTALLOGFILESIZE * 1024 * 1024, (settings.MAXTOTALLOGFILESIZE + 1) * 1024 * 1024)
+        #   )
+
       # Prepare environment
       os.environ['FREPPLE_PLANTYPE'] = str(plantype)
       os.environ['FREPPLE_CONSTRAINT'] = str(constraint)
@@ -185,10 +205,14 @@ class Command(BaseCommand):
           subprocess.Popen(['frepple', cmd], creationflags=0x08000000)
         else:
           # Execute as background process on Linux
-          subprocess.Popen(['frepple', cmd])
+          subprocess.Popen(['frepple', cmd], preexec_fn=setlimits)
       else:
-        # Execute in foreground
-        ret = subprocess.call(['frepple', cmd])
+        if os.name == 'nt':
+          # Execute in foreground on Windows
+          ret = subprocess.call(['frepple', cmd])
+        else:
+          # Execute in foreground on Linux
+          ret = subprocess.call(['frepple', cmd], preexec_fn=setlimits)
         if ret != 0 and ret != 2:
           # Return code 0 is a successful run
           # Return code is 2 is a run cancelled by a user. That's shown in the status field.

@@ -641,22 +641,28 @@ OperationPlan* SolverCreate::createOperation(
       data->state->a_date = Date::infiniteFuture;
       string problemtext = string("Invalid producing operation '") + oper->getName()
         + "' for buffer '" + data->state->curBuffer->getName() + "'";
-      auto j = data->planningDemand->getConstraints().begin();
-      while (j != data->planningDemand->getConstraints().end())
+      auto dmd = data->planningDemand;
+      if (dmd)
       {
-        if (&(j->getType()) == ProblemInvalidData::metadata
-          && j->getDescription() == problemtext)
-          break;
-        ++j;
+        auto j = dmd->getConstraints().begin();
+        while (j != dmd->getConstraints().end())
+        {
+          if (&(j->getType()) == ProblemInvalidData::metadata
+            && j->getDescription() == problemtext)
+            break;
+          ++j;
+        }
+        if (j == dmd->getConstraints().end())
+        {
+          if (problemtext == "Invalid producing operation '11. make subassembly' for buffer '11. component @ plant'")
+            logger << " bonanza" << endl;
+          dmd->getConstraints().push(new ProblemInvalidData(
+            dmd, problemtext, "demand",
+            dmd->getDue(), dmd->getDue(),
+            dmd->getQuantity(), false
+          ));
+        }
       }
-      if (j == data->planningDemand->getConstraints().end())
-        data->planningDemand->getConstraints().push(new ProblemInvalidData(
-          data->planningDemand,
-          problemtext,
-          "demand",
-          data->planningDemand->getDue(), data->planningDemand->getDue(),
-          data->planningDemand->getQuantity(), false
-        ));
       if (data->getSolver()->getLogLevel() > 1)
       {
         logger << indent(oper->getLevel()) << "   " << problemtext << endl;

@@ -57,7 +57,7 @@ How to get started?
 <li><span class="underline"><a href="https://frepple.com/contact/" target="_blank" rel="noopener">Contact us</a></span></li>
 </ol>
 ''') % {
-  'docurl': "https://frepple.com/docs/%s.%s/" % (versionnumber[0], versionnumber[1]),
+  'docurl': "%s/docs/%s.%s/" % (settings.DOCUMENTATION_URL, versionnumber[0], versionnumber[1]),
   'prefix': prefix
   }
 

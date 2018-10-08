@@ -1551,11 +1551,11 @@ var wizard = {
         document.getElementById(wizard.wizdict[key].anchor).setAttribute('href', url_prefix + wizard.wizdict[key].url_internaldoc);
       }
       if (wizard.wizdict[key].docanchor !== "" && wizard.wizdict[key].url_doc !== null) {
-        document.getElementById(wizard.wizdict[key].docanchor).setAttribute('href', 'https://frepple.com/docs/' + version.replace(".beta","") + wizard.wizdict[key].url_doc);
+        document.getElementById(wizard.wizdict[key].docanchor).setAttribute('href', website + '/docs/' + version + wizard.wizdict[key].url_doc);
       }
       if (key === 'Sales orders') {
         document.getElementById(wizard.wizdict['Sales orders history'].anchor).setAttribute('href', url_prefix + wizard.wizdict[key].url_internaldoc);
-        document.getElementById(wizard.wizdict['Sales orders history'].docanchor).setAttribute('href', 'https://frepple.com/docs/' + version.replace(".beta","") + wizard.wizdict[key].url_doc);
+        document.getElementById(wizard.wizdict['Sales orders history'].docanchor).setAttribute('href', website + '/docs/' + version + wizard.wizdict[key].url_doc);
       }
     }
 
@@ -2400,6 +2400,7 @@ function about_show()
       $.jgrid.hideModal("#searchmodfbox_grid");
       $('#popup').modal({keyboard: false, backdrop:'static'});
       var version = data.version.split(".");
+      var website = data.website;
       var content = '<div class="modal-dialog" style="width: 450px;">'+
          '<div class="modal-content">'+
            '<div class="modal-header">'+
@@ -2409,9 +2410,9 @@ function about_show()
            '<div class="modal-body">'+
              '<div class="row">';
       content += '<div class="col-sm-5"><br><br>' +
-         '<p><a target="_blank" href="https://frepple.com/"><strong>frePPLe website &nbsp;<span class="fa fa-caret-right"></span></strong></a></p><br>' +
-         '<p><a target="_blank" href="https://frepple.com/docs/' + version[0] + '.' + version[1] + '/license.html"><strong>License information &nbsp;<span class="fa fa-caret-right"></span></strong></a></p><br>' +
-         '<p><a target="_blank" href="https://frepple.com/docs/' + version[0] + '.' + version[1] + '/index.html"><strong>Documentation &nbsp;<span class="fa fa-caret-right"></span></strong></a></p>' +
+         '<p><a target="_blank" href="' + website + '"><strong>frePPLe website &nbsp;<span class="fa fa-caret-right"></span></strong></a></p><br>' +
+         '<p><a target="_blank" href="' + website + '/docs/' + version[0] + '.' + version[1] + '/license.html"><strong>License information &nbsp;<span class="fa fa-caret-right"></span></strong></a></p><br>' +
+         '<p><a target="_blank" href="' + website + '/docs/' + version[0] + '.' + version[1] + '/index.html"><strong>Documentation &nbsp;<span class="fa fa-caret-right"></span></strong></a></p>' +
          '</div>' +
          '<div class="col-sm-7"><strong>' + gettext("Installed apps") + ":</strong>";
       for (var i in data.apps)

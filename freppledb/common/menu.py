@@ -14,6 +14,7 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 
 import freppledb.common.views
@@ -57,7 +58,7 @@ menu.addItem("help", "hints", label=_('Show hints'), index=90, identifier="showH
 menu.addItem("help", "tour", javascript="tour.start('0,0,0')", label=_('Guided tour'), index=100)
 menu.addItem("help", "wizard", url="/wizard/", window=True, prefix=True, label=_('Path to unlock features'), index=200)
 versionnumber = VERSION.split('.', 2)
-docurl = "https://frepple.com/docs/%s.%s/" % (versionnumber[0], versionnumber[1])
+docurl = "%s/docs/%s.%s/" % (settings.DOCUMENTATION_URL, versionnumber[0], versionnumber[1])
 #. Translators: Translation included with Django
 menu.addItem("help", "documentation", url=docurl, label=_('Documentation'), window=True, prefix=False, index=300)
 menu.addItem("help", "API", url="/api/", label=_('REST API help'), window=True, prefix=True, index=400)

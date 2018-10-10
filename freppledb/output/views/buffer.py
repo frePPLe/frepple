@@ -175,8 +175,13 @@ class OverviewReport(GridPivot):
        d.bucket,
        d.startdate,
        d.enddate,
-       coalesce((select minimum from operationplanmaterial where item_id = item.name and
-       location_id = location.name and flowdate < greatest(d.startdate,%%s)
+       coalesce((select greatest(minimum) from (select id, flowdate, minimum from operationplanmaterial 
+                                                where item_id = item.name and
+                                                      location_id = location.name 
+                                                union all 
+                                                select 0, startdate, value from calendarbucket 
+                                                where calendar_id = 'SS for '||item.name||' @ '||location.name) t
+       where t.flowdate <= greatest(d.startdate,%%s)
        order by flowdate desc, id desc limit 1),0) safetystock,
        coalesce(-sum(least(operationplanmaterial.quantity, 0)),0) as consumed,
        coalesce(-sum(least(case when operationplan.type = 'MO' then operationplanmaterial.quantity else 0 end, 0)),0) as consumedMO,

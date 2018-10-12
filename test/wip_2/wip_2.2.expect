@@ -1,0 +1,12 @@
+BUFFER	consumed item @ prod	2017-12-01T00:00:00	777	777
+BUFFER	consumed item @ prod	2017-12-01T00:00:00	-777	0
+BUFFER	consumed item @ store	2017-11-28T00:00:00	777	777
+BUFFER	consumed item @ store	2017-11-28T00:00:00	-777	0
+BUFFER	produced item @ prod	2017-12-08T00:00:00	1	1
+OPERATION	Purchase consumed item @ store from my supplier	2017-09-29T00:00:00	2017-11-28T00:00:00	777
+OPERATION	Ship consumed item from store to prod	2017-11-28T00:00:00	2017-12-01T00:00:00	777
+OPERATION	prod	2017-12-01T00:00:00	2017-12-08T00:00:00	1	confirmed
+PROBLEM	material excess	Buffer 'produced item @ prod' has material excess of 1	2017-12-08T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	before current	Operation 'Purchase consumed item @ store from my supplier' planned in the past	2017-09-29T00:00:00 / 2017-11-28T00:00:00
+PROBLEM	before current	Operation 'Ship consumed item from store to prod' planned in the past	2017-11-28T00:00:00 / 2017-12-01T00:00:00
+PROBLEM	before current	Operation 'prod' planned in the past	2017-12-08T00:00:00 / 2019-01-01T00:00:00

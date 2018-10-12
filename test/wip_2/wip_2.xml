@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<current>2019-01-01T00:00:00</current>
+	<locations>
+		<location name="prod"/>
+    <location name="store"/>
+	</locations>
+	<items>
+		<item name="consumed item">
+			<itemsuppliers>
+				<itemsupplier>
+					<supplier name="my supplier"/>
+					<location name="store"/>
+					<leadtime>P60D</leadtime>
+				</itemsupplier>
+			</itemsuppliers>
+			<itemdistributions>
+				<itemdistribution>
+					<origin name="store"/>
+					<destination name="prod"/>
+					<leadtime>P3D</leadtime>
+				</itemdistribution>
+			</itemdistributions>
+		</item>
+		<item name="produced item"/>
+	</items>
+  <operations>
+    <operation name="prod">
+      <item name="produced item"/>
+      <location name="prod"/>
+      <flows>
+        <flow>
+          <item name="consumed item"/>
+          <quantity>-777</quantity>
+        </flow>
+        <flow xsi:type="flow_end">
+          <item name="produced item"/>
+          <quantity>1</quantity>
+        </flow>
+      </flows>
+      <duration>P7D</duration>
+    </operation>
+  </operations>  
+	<operationplans>
+		<operationplan>
+			<reference>MO 1</reference>
+			<operation name="prod"/>
+			<start>2017-12-01T00:00:00</start>
+			<quantity>1</quantity>
+			<status>confirmed</status>
+		</operationplan>
+	</operationplans>
+
+<?python
+print("CREATING CONSTRAINED PLAN")
+frepple.solver_mrp(plantype=1, constraints=15, loglevel=2).solve()
+frepple.saveplan("output.1.xml")
+print("CREATING UNCONSTRAINED PLAN")
+frepple.solver_mrp(plantype=2, constraints=15, loglevel=2).solve()
+frepple.saveplan("output.2.xml")
+print("SAVING TO XML FILE")
+frepple.saveXMLfile("output.3.xml")
+?>
+
+</plan>

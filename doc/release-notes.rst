@@ -13,6 +13,9 @@ Release notes
   'Ship ITEM from ITEM @ SOURCE to ITEM @ DESTINATION' to
   the simpler and shorter 'Ship ITEM from SOURCE to DESTINATION'.
 
+- Bug fix for a specific corner case where material requirements for work in progress
+  aren't propagated at all.
+ 
 .. rubric:: User interface
 
 - Added field net duration to the

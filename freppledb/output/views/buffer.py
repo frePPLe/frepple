@@ -178,14 +178,23 @@ class OverviewReport(GridPivot):
        d.bucket,
        d.startdate,
        d.enddate,
-       coalesce((select greatest(minimum) from (select id, flowdate, minimum from operationplanmaterial 
-                                                where item_id = item.name and
-                                                      location_id = location.name 
-                                                union all 
-                                                select 0, startdate, value from calendarbucket 
-                                                where calendar_id = 'SS for '||item.name||' @ '||location.name) t
-       where t.flowdate <= greatest(d.startdate,%%s)
-       order by flowdate desc, id desc limit 1),0) safetystock,
+       (select safetystock from
+        (
+        select 1 as priority, coalesce((select value from calendarbucket 
+        where calendar_id = 'SS for '||item.name||' @ '||location.name
+        and greatest(d.startdate,%%s) >= startdate and greatest(d.startdate,%%s) < enddate
+        order by priority limit 1), (select defaultvalue from calendar where name = 'SS for '||item.name||' @ '||location.name)) as safetystock
+        union all
+        select 2 as priority, coalesce((select value from calendarbucket 
+        where calendar_id = (select minimum_calendar_id from buffer where name = item.name||' @ '||location.name)
+        and greatest(d.startdate,%%s) >= startdate and greatest(d.startdate,%%s) < enddate
+        order by priority limit 1), (select defaultvalue from calendar where name = (select minimum_calendar_id from buffer where name = item.name||' @ '||location.name))) as safetystock
+        union all
+        select 3 as priority, minimum as safetystock from buffer where name = item.name||' @ '||location.name
+        ) t
+        where t.safetystock is not null
+        order by priority
+        limit 1) safetystock,
        coalesce(-sum(least(operationplanmaterial.quantity, 0)),0) as consumed,
        coalesce(-sum(least(case when operationplan.type = 'MO' then operationplanmaterial.quantity else 0 end, 0)),0) as consumedMO,
        coalesce(-sum(least(case when operationplan.type = 'DO' then operationplanmaterial.quantity else 0 end, 0)),0) as consumedDO,
@@ -247,7 +256,7 @@ class OverviewReport(GridPivot):
         request.report_startdate,  # startohdoc
         request.report_startdate,  # startohdoc
         request.report_startdate,  # startohdoc
-        request.report_startdate,)  # safetystock
+        request.report_startdate, request.report_startdate, request.report_startdate, request.report_startdate,)  # safetystock
         + baseparams +   # opplanmat
         (request.report_bucket, request.report_startdate, request.report_enddate,  # bucket d
         request.report_startdate,  # operationplanmaterial

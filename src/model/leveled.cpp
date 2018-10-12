@@ -139,7 +139,8 @@ void HasLevel::computeLevels()
         // Does the operation itself have producing flows?
         for (auto fl = g->getFlows().begin();
             fl != g->getFlows().end() && search_level; ++fl)
-          if (fl->isProducer()) search_level = false;
+          if (fl->isProducer() && fl->getBuffer()->hasConsumingFlows())
+            search_level = false;
         if (search_level)
         {
           // Do suboperations have a producing flow?
@@ -149,7 +150,8 @@ void HasLevel::computeLevels()
             for (auto fl = (*i)->getOperation()->getFlows().begin();
                 fl != (*i)->getOperation()->getFlows().end() && search_level;
                 ++fl)
-              if (fl->isProducer()) search_level = false;
+              if (fl->isProducer() && fl->getBuffer()->hasConsumingFlows())
+                search_level = false;          
         }
       }
 

@@ -799,6 +799,15 @@ Buffer* Buffer::findOrCreate(Item* itm, Location* loc)
 }
 
 
+bool Buffer::hasConsumingFlows() const
+{
+  for (auto fl = getFlows().begin(); fl != getFlows().end(); ++fl)
+    if (fl->isConsumer())
+      return true;
+  return false;
+}
+
+
 void Buffer::buildProducingOperation()
 {
   if (producing_operation

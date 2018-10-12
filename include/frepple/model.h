@@ -5010,6 +5010,8 @@ class Buffer : public HasHierarchy<Buffer>, public HasLevel,
       */
     void buildProducingOperation();
 
+    bool hasConsumingFlows() const;
+
     /** Return the decoupled lead time of this buffer. */
     virtual Duration getDecoupledLeadTime(double qty, bool recurse_ip_buffers = true) const;
 

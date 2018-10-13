@@ -11,4 +11,5 @@ openpyxl == 2.4.11
 lxml == 3.7.3
 PyJWT == 1.5.2
 requests == 2.9.1
+psycopg2 == 2.7.5
 https://github.com/frePPLe/django/tarball/frepple_4.3

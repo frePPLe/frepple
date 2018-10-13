@@ -1,7 +1,28 @@
+#
+# Copyright (C) 2007-2018 by frePPLe bvba
+#
+# This library is free software; you can redistribute it and/or modify it
+# under the terms of the GNU Affero General Public License as published
+# by the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero
+# General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public
+# License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+# IMPORTANT NOTE!!!!
+# frePPLe requires a custom install of django and also some python modules.
+# These need to be installed using "pip3 install -r requirements.txt" BEFORE building frePPLe.
+# Building in an environment where you can't run pip (such as "mock") is not supported.
+#
 Source: frepple
 Section: science
 Priority: optional
-Maintainer: Johan De Taeye <jdetaeye@frepple.com>
+Maintainer: frePPLe team <info@frepple.com>
 Build-Depends: debhelper (>= 8), cdbs (>= 0.4.90), autotools-dev, python3-dev (>= 3.4), libxerces-c-dev, libtool, python3-sphinx
 Standards-Version: 3.8.4
 Homepage: http://frepple.com
@@ -12,7 +33,7 @@ X-Python3-Version: >= 3.2
 
 Package: frepple
 Architecture: any
-Depends: ${shlibs:Depends}, ${python:Depends}, ${misc:Depends}, adduser, libxerces-c3.2 | libxerces-c3.1, apache2, libapache2-mod-wsgi-py3, python3-psycopg2
+Depends: ${shlibs:Depends}, ${python:Depends}, ${misc:Depends}, adduser, libxerces-c3.2 | libxerces-c3.1, apache2, libapache2-mod-wsgi-py3
 Description: open source Production PLanning
  FrePPLe is an open source production planning and scheduling application.
 

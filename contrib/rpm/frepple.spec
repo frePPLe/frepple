@@ -14,6 +14,12 @@
 # You should have received a copy of the GNU Affero General Public
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
+# IMPORTANT NOTE!!!!
+# frePPLe requires a custom install of django and also some python modules.
+# These need to be installed using "pip3 install -r requirements.txt" BEFORE building frePPLe.
+# Building in an environment where you can't run pip (such as "mock") is not supported.
+#
+
 Summary: Free Production PLanning
 Name: frepple
 Version: 4.4.2
@@ -27,12 +33,6 @@ BuildRoot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-XXXXXX)
 Requires: xerces-c, openssl, httpd, python3-mod_wsgi, python3
 Requires(pre): shadow-utils
 BuildRequires: python3-devel, automake, autoconf, libtool, xerces-c-devel, python3-sphinx
-# Note: frePPLe requires a custom install of django and also some
-# additional python modules. Users install all these using the python packager "pip3"
-# BEFORE compiling frePPLe.
-# The next line list the minimal set of python packages required to build
-# in an environment where you can't install these upfront. Eg when using "mock".
-#BuildRequires: python3-django, python3-django-rest-framework, python3-psycopg2
 
 %description
 FrePPLe stands for "Free Production PLanning". It is an application for

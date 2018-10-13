@@ -14,6 +14,7 @@
 # You should have received a copy of the GNU Affero General Public
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
+from datetime import timedelta, datetime
 
 from django.db import connections
 from django.db.models import Value
@@ -42,10 +43,9 @@ class OverviewReport(GridPivot):
     if len(args) and args[0]:
       return Buffer.objects.all()
     else:
-      return OperationPlanMaterial.objects.all() \
+      return OperationPlanMaterial.objects.values('item','location') \
         .order_by('item_id', 'location_id') \
-        .distinct('item_id', 'location_id') \
-        .annotate(buffer=Concat('item', Value(' @ '), 'location'))
+        .distinct() \
 
   model = OperationPlanMaterial
   default_sort = (1, 'asc', 2, 'asc')
@@ -103,7 +103,12 @@ class OverviewReport(GridPivot):
     ('producedDO', {'title': _('produced by DO')}),
     ('producedPO', {'title': _('produced by PO')}),
     ('endoh', {'title': _('end inventory')}),
+    ('total_in_progress', {'title': _('Total in Progress')}),
+    ('work_in_progress_mo', {'title': _('Work in Progress MO')}),
+    ('on_order_po', {'title': _('On Order PO')}),
+    ('in_transit_do', {'title': _('In Transit DO')}),
     )
+
 
   @classmethod
   def initialize(reportclass, request):
@@ -155,26 +160,10 @@ class OverviewReport(GridPivot):
        location.source,
        location.lastmodified,
        %s
-       coalesce((select onhand from operationplanmaterial where item_id = item.name and
+       (select jsonb_build_object('onhand', onhand, 'flowdate', to_char(flowdate,'YYYY-MM-DD HH24:MI:SS'), 'periodofcover', periodofcover) 
+       from operationplanmaterial where item_id = item.name and
        location_id = location.name and flowdate < greatest(d.startdate,%%s)
-       order by flowdate desc, id desc limit 1),0) startoh,
-       coalesce((select onhand from operationplanmaterial where item_id = item.name and location_id = location.name
-       and flowdate < greatest(d.startdate,%%s)
-       order by flowdate desc, id desc limit 1),0) - coalesce(-sum(least(operationplanmaterial.quantity, 0)),0)
-       + coalesce(sum(greatest(operationplanmaterial.quantity, 0)),0) endoh,
-       case when coalesce((select onhand from operationplanmaterial where item_id = item.name and
-       location_id = location.name and flowdate < greatest(d.startdate,%%s)
-       order by flowdate desc, id desc limit 1),0) = 0 then 0 
-       when (select to_char(flowdate,'YYYY-MM-DD')||' '||round(periodofcover/86400) from operationplanmaterial where item_id = item.name and
-       location_id = location.name and flowdate < greatest(d.startdate,%%s)
-       order by flowdate desc, id desc limit 1) = '1971-01-01 999' then 999 else
-       extract( epoch from (select flowdate from operationplanmaterial where item_id = item.name and
-       location_id = location.name and flowdate < greatest(d.startdate,%%s)
-       order by flowdate desc, id desc limit 1)
-       + coalesce((select periodofcover from operationplanmaterial where item_id = item.name and
-       location_id = location.name and flowdate < greatest(d.startdate,%%s)
-       order by flowdate desc, id desc limit 1),0) * interval '1 second'
-       - greatest(d.startdate,%%s))/86400 end startohdoc,
+       order by flowdate desc, id desc limit 1) startoh,
        d.bucket,
        d.startdate,
        d.enddate,
@@ -195,14 +184,25 @@ class OverviewReport(GridPivot):
         where t.safetystock is not null
         order by priority
         limit 1) safetystock,
-       coalesce(-sum(least(operationplanmaterial.quantity, 0)),0) as consumed,
-       coalesce(-sum(least(case when operationplan.type = 'MO' then operationplanmaterial.quantity else 0 end, 0)),0) as consumedMO,
-       coalesce(-sum(least(case when operationplan.type = 'DO' then operationplanmaterial.quantity else 0 end, 0)),0) as consumedDO,
-       coalesce(-sum(least(case when operationplan.type = 'DLVR' then operationplanmaterial.quantity else 0 end, 0)),0) as consumedSO,
-       coalesce(sum(greatest(operationplanmaterial.quantity, 0)),0) as produced,
-       coalesce(sum(greatest(case when operationplan.type = 'MO' then operationplanmaterial.quantity else 0 end, 0)),0) as producedMO,
-       coalesce(sum(greatest(case when operationplan.type = 'DO' then operationplanmaterial.quantity else 0 end, 0)),0) as producedDO,
-       coalesce(sum(greatest(case when operationplan.type = 'PO' then operationplanmaterial.quantity else 0 end, 0)),0) as producedPO
+       (select jsonb_build_object(
+      'work_in_progress_mo', sum(case when (startdate <= greatest(d.startdate,%%s) and enddate >= d.enddate) and opm.quantity > 0 and operationplan.type = 'MO' then opm.quantity else 0 end),
+      'on_order_po', sum(case when (startdate <= greatest(d.startdate,%%s) and enddate >= d.enddate) and opm.quantity > 0 and operationplan.type = 'PO' then opm.quantity else 0 end),
+      'in_transit_do', sum(case when (startdate <= greatest(d.startdate,%%s) and enddate >= d.enddate) and opm.quantity > 0 and operationplan.type = 'DO' then opm.quantity else 0 end),
+      'total_in_progress', sum(case when (startdate <= greatest(d.startdate,%%s) and enddate >= d.enddate) and opm.quantity > 0 then opm.quantity else 0 end),
+      'consumed', sum(case when (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity < 0 then -opm.quantity else 0 end),
+      'consumedMO', sum(case when operationplan.type = 'MO' and (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity < 0 then -opm.quantity else 0 end),
+      'consumedDO', sum(case when operationplan.type = 'DO' and (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity < 0 then -opm.quantity else 0 end),
+      'consumedSO', sum(case when operationplan.type = 'DLVR' and (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity < 0 then -opm.quantity else 0 end),
+      'produced', sum(case when (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity > 0 then opm.quantity else 0 end),
+      'producedMO', sum(case when operationplan.type = 'MO' and (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity > 0 then opm.quantity else 0 end),
+      'producedDO', sum(case when operationplan.type = 'DO' and (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity > 0 then opm.quantity else 0 end),
+      'producedPO', sum(case when operationplan.type = 'PO' and (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity > 0 then opm.quantity else 0 end)
+      )
+      from operationplanmaterial opm
+      inner join operationplan on operationplan.id = opm.operationplan_id 
+      and ((startdate <= greatest(d.startdate,%%s) and enddate >= d.enddate) 
+            or (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate))
+      where opm.item_id = item.name and opm.location_id = location.name) ongoing
        from
        (%s) opplanmat
        inner join item on item.name = opplanmat.item_id
@@ -213,15 +213,6 @@ class OverviewReport(GridPivot):
          from common_bucketdetail
          where bucket_id = %%s and enddate > %%s and startdate < %%s
          ) d
-      -- Consumed and produced quantities
-      left join operationplanmaterial
-        on opplanmat.item_id = operationplanmaterial.item_id
-        and opplanmat.location_id = operationplanmaterial.location_id
-        and d.startdate <= operationplanmaterial.flowdate
-        and d.enddate > operationplanmaterial.flowdate
-        and operationplanmaterial.flowdate >= greatest(d.startdate,%%s)
-        and operationplanmaterial.flowdate < d.enddate
-      left outer join operationplan on operationplan.id = operationplanmaterial.operationplan_id
       group by
        item.name,
        location.name,
@@ -250,16 +241,10 @@ class OverviewReport(GridPivot):
     cursor.execute(
       query, (
         request.report_startdate,  # startoh
-        request.report_startdate,  # endoh
-        request.report_startdate,  # startohdoc
-        request.report_startdate,  # startohdoc
-        request.report_startdate,  # startohdoc
-        request.report_startdate,  # startohdoc
-        request.report_startdate,  # startohdoc
-        request.report_startdate, request.report_startdate, request.report_startdate, request.report_startdate,)  # safetystock
+        request.report_startdate, request.report_startdate, request.report_startdate, request.report_startdate,) # safetystock
+        + (request.report_startdate, ) * 14 # ongoing
         + baseparams +   # opplanmat
         (request.report_bucket, request.report_startdate, request.report_enddate,  # bucket d
-        request.report_startdate,  # operationplanmaterial
         )
       )
 
@@ -283,21 +268,27 @@ class OverviewReport(GridPivot):
         'location__owner_id': row[14],
         'location__source': row[15],
         'location__lastmodified': row[16],
-        'startoh': round(row[numfields - 15], 1),
-        'endoh': round(row[numfields - 14], 1),
-        'startohdoc': int(row[numfields - 13]),
-        'bucket': row[numfields - 12],
-        'startdate': row[numfields - 11].date(),
-        'enddate': row[numfields - 10].date(),
-        'safetystock': round(row[numfields - 9] or 0, 1),
-        'consumed': round(row[numfields - 8], 1),
-        'consumedMO': round(row[numfields - 7], 1),
-        'consumedDO': round(row[numfields - 6], 1),
-        'consumedSO': round(row[numfields - 5], 1),
-        'produced': round(row[numfields - 4], 1),
-        'producedMO': round(row[numfields - 3], 1),
-        'producedDO': round(row[numfields - 2], 1),
-        'producedPO': round(row[numfields - 1], 1),
+        'startoh': round(row[numfields - 6]['onhand'] if row[numfields - 6] else 0, 1),
+        'startohdoc': 0 if (row[numfields - 6]['onhand']  if row[numfields - 6] else 0) == 0\
+                        else (999 if row[numfields - 6]['periodofcover'] == 86313600\
+                                  else (datetime.strptime(row[numfields - 6]['flowdate'],'%Y-%m-%d %H:%M:%S') + timedelta(seconds=row[numfields - 6]['periodofcover']) - row[numfields - 4]).days),
+        'bucket': row[numfields - 5],
+        'startdate': row[numfields - 4].date(),
+        'enddate': row[numfields - 3].date(),
+        'safetystock': round(row[numfields - 2] or 0, 1),
+        'consumed': round(row[numfields - 1]['consumed'] or 0, 1),
+        'consumedMO': round(row[numfields - 1]['consumedMO'] or 0, 1),
+        'consumedDO': round(row[numfields - 1]['consumedDO'] or 0, 1),
+        'consumedSO': round(row[numfields - 1]['consumedSO'] or 0, 1),
+        'produced': round(row[numfields - 1]['produced'] or 0, 1),
+        'producedMO': round(row[numfields - 1]['producedMO'] or 0, 1),
+        'producedDO': round(row[numfields - 1]['producedDO'] or 0, 1),
+        'producedPO': round(row[numfields - 1]['producedPO'] or 0, 1),
+        'total_in_progress': round(row[numfields - 1]['total_in_progress'] or 0, 1),
+        'work_in_progress_mo': round(row[numfields - 1]['work_in_progress_mo'] or 0, 1),
+        'on_order_po': round(row[numfields - 1]['on_order_po'] or 0, 1),
+        'in_transit_do': round(row[numfields - 1]['in_transit_do'] or 0, 1),
+        'endoh': round(float(round(row[numfields - 6]['onhand'] if row[numfields - 6] else 0, 1)) + float(round(row[numfields - 1]['produced'] or 0, 1)) - float(round(row[numfields - 1]['consumed'] or 0, 1)), 1),
         }
       # Add attribute fields
       idx = 16

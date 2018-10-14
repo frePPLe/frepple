@@ -164,14 +164,12 @@ Buffer* OperationDelivery::getBuffer() const
 void Buffer::inspect(const string msg) const
 {
   logger << "Inspecting buffer " << getName() << ": ";
-  if (!msg.empty()) logger  << msg;
+  if (!msg.empty())
+    logger  << msg;
   logger << endl;
 
-  OperationPlan *opplan = nullptr;
   double curmin = 0.0;
-  for (flowplanlist::const_iterator oo = getFlowPlans().begin();
-    oo != getFlowPlans().end();
-    ++oo)
+  for (auto oo = getFlowPlans().begin(); oo != getFlowPlans().end(); ++oo)
   {
     if (oo->getEventType() == 3)
       curmin = oo->getMin();
@@ -192,7 +190,6 @@ void Buffer::inspect(const string msg) const
         break;
       case 4:
         logger << ", update maximum to " << oo->getMax() << endl;
-        break;
     }
   }
 }

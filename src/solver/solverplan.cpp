@@ -34,6 +34,7 @@ const Keyword SolverCreate::tag_autofence("autofence");
 const Keyword SolverCreate::tag_rotateresources("rotateresources");
 const Keyword SolverCreate::tag_planSafetyStockFirst("plansafetystockfirst");
 const Keyword SolverCreate::tag_iterationmax("iterationmax");
+const Keyword SolverCreate::tag_resourceiterationmax("resourceiterationmax");
 
 
 void LibrarySolver::initialize()

@@ -331,10 +331,10 @@ void SolverCreate::solve(const Resource* res, void* v)
       ++iterations;
     }
     while (HasOverload && newDate && iterations < getResourceIterationMax());
-	if (iterations >= getResourceIterationMax()) {
-		logger << indent(res->getLevel()) << "   Warning: no free capacity slot found on " << res
-			<< " after " << getResourceIterationMax() << " iterations. Last date: " << newDate <<  endl;
-	}
+    if (iterations >= getResourceIterationMax()) {
+      logger << indent(res->getLevel()) << "   Warning: no free capacity slot found on " << res
+        << " after " << getResourceIterationMax() << " iterations. Last date: " << newDate <<  endl;
+    }
     data->state->q_loadplan = old_q_loadplan;
 
     // Set the date where a next trial date can happen

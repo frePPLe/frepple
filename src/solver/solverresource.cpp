@@ -232,7 +232,7 @@ void SolverCreate::solve(const Resource* res, void* v)
 
     // Loop to find a later date where the operationplan will fit
     Date newDate;
-    auto iterations = 0;
+    unsigned long iterations = 0;
     do
     {
       // Search for a date where we go below the maximum load.

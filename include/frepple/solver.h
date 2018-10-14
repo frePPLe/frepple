@@ -371,9 +371,6 @@ class SolverCreate : public Solver
       */
     static const short FENCE = 8;
 
-    /** Used internally to avoid inefficient loops. */
-    static const unsigned short MAX_LOOP = 500;
-
     int getCluster() const
     {
       return cluster;
@@ -818,10 +815,10 @@ class SolverCreate : public Solver
     unsigned long iteration_max = 0;
 
     /** Maximum number of tries allowed to look for LATER
-    * resource capacity. If can't find a capacity within this limit, we
-    * consider it unplannable.
-    */
-    unsigned long resource_iteration_max = 0;
+      * resource capacity. If can't find a capacity within this limit, we
+      * consider it unplannable.
+      */
+    unsigned long resource_iteration_max = 500;
 
     /** A Python callback function that is called for each alternate
       * flow. If the callback function returns false, that alternate

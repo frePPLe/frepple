@@ -15,6 +15,9 @@ Release notes
 
 - Bug fix for a specific corner case where material requirements for work in progress
   aren't propagated at all.
+  
+- New parameter plan.resourceiterationmax allows user control over the number of searches
+  for a free capacity slot on a resource. Contributed by Mateusz Knapik.
  
 .. rubric:: User interface
 
@@ -30,7 +33,12 @@ Release notes
     file or worksheet name.
   | So far, only a worksheet called 'sales order' was recognized as containing sales order data.
     Now "sales-order", "sales_order" and "salesorder" will also be recognized.
+    
+.. rubric:: Third party components
 
+- | The Ubuntu binaries will be compiled on Ubuntu 18 LTS from now onwards. 
+  | Compiling for Ubuntu 16 LTS remains fully supported, but we recommend to upgrade Ubuntu.
+  
 4.4.1 (2018/09/10)
 ==================
 

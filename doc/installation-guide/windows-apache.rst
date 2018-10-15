@@ -42,6 +42,13 @@ are required:
 
    The download URL is http://www.python.org/download/releases/3.5/
 
+#. **Install Psycopg2**
+
+   The Python database driver for PostgreSQLcan be downloaded from
+   http://stickpeople.com/projects/python/win-psycopg/
+
+   Pick the executable that matches the Python version. 
+
 #. **Install PyWin32**
 
    The Python Windows extensions can be downloaded from

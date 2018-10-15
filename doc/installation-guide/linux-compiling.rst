@@ -132,7 +132,7 @@ need the following steps:
       # PIP and PIP requirements
       sudo python3 -m ensurepip
       sudo pip3 install -r ~/frepple-$RELEASE/requirements.txt
-      sudo pip3 install Sphinx
+      sudo pip3 install psycopg2 Sphinx
 
       # FREPPLE
       cd ~/frepple-$RELEASE

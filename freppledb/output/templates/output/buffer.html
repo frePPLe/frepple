@@ -396,7 +396,7 @@ function crosses (cellvalue, options, rowdata)
            result += cellvalue[12] + "<a href='{{request.prefix}}/flowplan/" +
               admin_escape(rowdata['buffer']) +
               "/?operationplan__startdate__lte=" + options['colModel']['startdate'] +
-              "&amp;operationplan__enddate__gt=" + options['colModel']['enddate'] +
+              "&amp;operationplan__enddate__gte=" + options['colModel']['enddate'] +
               "&amp;quantity__gte=0'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
           result += '0.0<br>';
@@ -406,7 +406,7 @@ function crosses (cellvalue, options, rowdata)
            result += cellvalue[13] + "<a href='{{request.prefix}}/flowplan/" +
               admin_escape(rowdata['buffer']) +
               "/?operationplan__startdate__lte=" + options['colModel']['startdate'] +
-              "&amp;operationplan__enddate__gt=" + options['colModel']['enddate'] +
+              "&amp;operationplan__enddate__gte=" + options['colModel']['enddate'] +
               "&amp;operationplan__type=MO" + 
               "&amp;quantity__gte=0'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
@@ -417,7 +417,7 @@ function crosses (cellvalue, options, rowdata)
            result += cellvalue[14] + "<a href='{{request.prefix}}/flowplan/" +
               admin_escape(rowdata['buffer']) +
               "/?operationplan__startdate__lte=" + options['colModel']['startdate'] +
-              "&amp;operationplan__enddate__gt=" + options['colModel']['enddate'] +
+              "&amp;operationplan__enddate__gte=" + options['colModel']['enddate'] +
               "&amp;operationplan__type=PO" + 
               "&amp;quantity__gte=0'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
@@ -428,7 +428,7 @@ function crosses (cellvalue, options, rowdata)
            result += cellvalue[15] + "<a href='{{request.prefix}}/flowplan/" +
               admin_escape(rowdata['buffer']) +
               "/?operationplan__startdate__lte=" + options['colModel']['startdate'] +
-              "&amp;operationplan__enddate__gt=" + options['colModel']['enddate'] +
+              "&amp;operationplan__enddate__gte=" + options['colModel']['enddate'] +
               "&amp;operationplan__type=DO" + 
               "&amp;quantity__gte=0'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else

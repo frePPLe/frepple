@@ -164,14 +164,12 @@ Buffer* OperationDelivery::getBuffer() const
 void Buffer::inspect(const string msg) const
 {
   logger << "Inspecting buffer " << getName() << ": ";
-  if (!msg.empty()) logger  << msg;
+  if (!msg.empty())
+    logger  << msg;
   logger << endl;
 
-  OperationPlan *opplan = nullptr;
   double curmin = 0.0;
-  for (flowplanlist::const_iterator oo = getFlowPlans().begin();
-    oo != getFlowPlans().end();
-    ++oo)
+  for (auto oo = getFlowPlans().begin(); oo != getFlowPlans().end(); ++oo)
   {
     if (oo->getEventType() == 3)
       curmin = oo->getMin();
@@ -192,7 +190,6 @@ void Buffer::inspect(const string msg) const
         break;
       case 4:
         logger << ", update maximum to " << oo->getMax() << endl;
-        break;
     }
   }
 }
@@ -1060,101 +1057,104 @@ void Buffer::buildProducingOperation()
   }
 
   // Loop over all item operations to replenish this item+location combination
-  Item::operationIterator itemoper_iter = getItem()->getOperationIterator();
-  while (Operation *itemoper = itemoper_iter.next())
+  if (getItem())
   {
-    if (itemoper->getPriority() == 0)
-      continue;
-
-    // Verify whether the operation is applicable to the buffer
-    if (itemoper->getLocation() && itemoper->getLocation() != getLocation())
-      continue;
-
-    // Check if there is already a producing operation referencing this operation
-    if (producing_operation && producing_operation != uninitializedProducing)
+    Item::operationIterator itemoper_iter = getItem()->getOperationIterator();
+    while (Operation *itemoper = itemoper_iter.next())
     {
-      if (producing_operation->getType() != *OperationAlternate::metadata)
+      if (itemoper->getPriority() == 0)
+        continue;
+
+      // Verify whether the operation is applicable to the buffer
+      if (itemoper->getLocation() && itemoper->getLocation() != getLocation())
+        continue;
+
+      // Check if there is already a producing operation referencing this operation
+      if (producing_operation && producing_operation != uninitializedProducing)
       {
-        if (producing_operation == itemoper)
-          // Already exists
-          continue;
-      }
-      else
-      {
-        SubOperation::iterator subiter(producing_operation->getSubOperations());
-        while (SubOperation *o = subiter.next())
-          if (o->getOperation() == itemoper)
+        if (producing_operation->getType() != *OperationAlternate::metadata)
+        {
+          if (producing_operation == itemoper)
             // Already exists
             continue;
-      }
-    }
-
-    // Merge the new operation in an alternate operation if required
-    if (producing_operation && producing_operation != uninitializedProducing)
-    {
-      // We're not the first
-      SubOperation* subop = new SubOperation();
-      subop->setOperation(itemoper);
-      subop->setPriority(itemoper->getPriority());
-      subop->setEffective(itemoper->getEffective());
-      if (producing_operation->getType() != *OperationAlternate::metadata)
-      {
-        // We are the second: create an alternate and add 2 suboperations
-        OperationAlternate *superop = new OperationAlternate();
-        stringstream o;
-        o << "Replenish " << getName();
-        superop->setName(o.str());
-        superop->setHidden(true);
-        superop->setSearch("PRIORITY");
-        SubOperation* subop2 = new SubOperation();
-        subop2->setOperation(producing_operation);
-        // Note that priority and effectivity are at default values.
-        // If not, the alternate would already have been created.
-        subop2->setOwner(superop);
-        producing_operation = superop;
-        subop->setOwner(producing_operation);
-      }
-      else
-      {
-        // We are third or later: just add a suboperation
-        if (producing_operation->getSubOperations().size() > 100)
-        {
-          new ProblemInvalidData(
-            this,
-            string("Excessive replenishments defined for '") + getName() + "'",
-            "material", Date::infinitePast, Date::infiniteFuture, 1
-            );
-          return;
         }
         else
-          subop->setOwner(producing_operation);
+        {
+          SubOperation::iterator subiter(producing_operation->getSubOperations());
+          while (SubOperation *o = subiter.next())
+            if (o->getOperation() == itemoper)
+              // Already exists
+              continue;
+        }
       }
-    }
-    else
-    {
-      // We are the first
-      if (itemoper->getEffective() == DateRange() && itemoper->getPriority() == 1)
-        // Use a single operation. If an alternate is required
-        // later on, we know it has the default priority and effectivity.
-        producing_operation = itemoper;
-      else
+
+      // Merge the new operation in an alternate operation if required
+      if (producing_operation && producing_operation != uninitializedProducing)
       {
-        // Already create an alternate now
-        OperationAlternate *superop = new OperationAlternate();
-        producing_operation = superop;
-        stringstream o;
-        o << "Replenish " << getName();
-        superop->setName(o.str());
-        superop->setHidden(true);
-        superop->setSearch("PRIORITY");
+        // We're not the first
         SubOperation* subop = new SubOperation();
         subop->setOperation(itemoper);
         subop->setPriority(itemoper->getPriority());
         subop->setEffective(itemoper->getEffective());
-        subop->setOwner(superop);
+        if (producing_operation->getType() != *OperationAlternate::metadata)
+        {
+          // We are the second: create an alternate and add 2 suboperations
+          OperationAlternate *superop = new OperationAlternate();
+          stringstream o;
+          o << "Replenish " << getName();
+          superop->setName(o.str());
+          superop->setHidden(true);
+          superop->setSearch("PRIORITY");
+          SubOperation* subop2 = new SubOperation();
+          subop2->setOperation(producing_operation);
+          // Note that priority and effectivity are at default values.
+          // If not, the alternate would already have been created.
+          subop2->setOwner(superop);
+          producing_operation = superop;
+          subop->setOwner(producing_operation);
+        }
+        else
+        {
+          // We are third or later: just add a suboperation
+          if (producing_operation->getSubOperations().size() > 100)
+          {
+            new ProblemInvalidData(
+              this,
+              string("Excessive replenishments defined for '") + getName() + "'",
+              "material", Date::infinitePast, Date::infiniteFuture, 1
+              );
+            return;
+          }
+          else
+            subop->setOwner(producing_operation);
+        }
       }
-    }
-  } // End loop over operations
+      else
+      {
+        // We are the first
+        if (itemoper->getEffective() == DateRange() && itemoper->getPriority() == 1)
+          // Use a single operation. If an alternate is required
+          // later on, we know it has the default priority and effectivity.
+          producing_operation = itemoper;
+        else
+        {
+          // Already create an alternate now
+          OperationAlternate *superop = new OperationAlternate();
+          producing_operation = superop;
+          stringstream o;
+          o << "Replenish " << getName();
+          superop->setName(o.str());
+          superop->setHidden(true);
+          superop->setSearch("PRIORITY");
+          SubOperation* subop = new SubOperation();
+          subop->setOperation(itemoper);
+          subop->setPriority(itemoper->getPriority());
+          subop->setEffective(itemoper->getEffective());
+          subop->setOwner(superop);
+        }
+      }
+    } // End loop over operations
+  }
 
   // Last resort: check if there are already operations producing in this buffer.
   // If there exists only 1 we use that operation. Inventory operation or operations

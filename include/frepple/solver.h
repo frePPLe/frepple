@@ -371,9 +371,6 @@ class SolverCreate : public Solver
       */
     static const short FENCE = 8;
 
-    /** Used internally to avoid inefficient loops. */
-    static const unsigned short MAX_LOOP = 500;
-
     int getCluster() const
     {
       return cluster;
@@ -579,6 +576,24 @@ class SolverCreate : public Solver
       iteration_max = d;
     }
 
+    /** Return the maximum number of tries allowed to look for LATER
+    * resource capacity. If can't find a capacity within this limit, we
+    * consider it unplannable.
+    */
+    unsigned long getResourceIterationMax() const
+    {
+      return resource_iteration_max;
+    }
+
+    /** Update the maximum number of tries allowed to look for LATER
+    * resource capacity. If can't find a capacity within this limit, we
+    * consider it unplannable.
+    */
+    void setResourceIterationMax(unsigned long d)
+    {
+      resource_iteration_max = d;
+    }
+
     /** Specify a Python function that is called before solving a flow. */
     void setUserExitFlow(PythonFunction n)
     {
@@ -733,6 +748,7 @@ class SolverCreate : public Solver
       m->addBoolField<Cls>(SolverCreate::tag_rotateresources, &Cls::getRotateResources, &Cls::setRotateResources);
       m->addBoolField<Cls>(SolverCreate::tag_planSafetyStockFirst, &Cls::getPlanSafetyStockFirst, &Cls::setPlanSafetyStockFirst);
       m->addUnsignedLongField<Cls>(SolverCreate::tag_iterationmax, &Cls::getIterationMax, &Cls::setIterationMax);
+      m->addUnsignedLongField<Cls>(SolverCreate::tag_resourceiterationmax, &Cls::getResourceIterationMax, &Cls::setResourceIterationMax);
       m->addIntField<Cls>(Tags::cluster, &Cls::getCluster, &Cls::setCluster);
     }
 
@@ -751,6 +767,7 @@ class SolverCreate : public Solver
     static const Keyword tag_planSafetyStockFirst;
     static const Keyword tag_administrativeleadtime;
     static const Keyword tag_iterationmax;
+    static const Keyword tag_resourceiterationmax;
 
     /** Type of plan to be created. */
     short plantype = 1;
@@ -796,6 +813,12 @@ class SolverCreate : public Solver
       * unplannable.
       */
     unsigned long iteration_max = 0;
+
+    /** Maximum number of tries allowed to look for LATER
+      * resource capacity. If can't find a capacity within this limit, we
+      * consider it unplannable.
+      */
+    unsigned long resource_iteration_max = 500;
 
     /** A Python callback function that is called for each alternate
       * flow. If the callback function returns false, that alternate

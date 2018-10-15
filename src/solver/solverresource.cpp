@@ -232,7 +232,7 @@ void SolverCreate::solve(const Resource* res, void* v)
 
     // Loop to find a later date where the operationplan will fit
     Date newDate;
-    auto iterations = 0;
+    unsigned long iterations = 0;
     do
     {
       // Search for a date where we go below the maximum load.
@@ -330,10 +330,11 @@ void SolverCreate::solve(const Resource* res, void* v)
       }
       ++iterations;
     }
-    while (HasOverload && newDate && iterations < MAX_LOOP);
-    if (iterations >= MAX_LOOP)
+    while (HasOverload && newDate && iterations < getResourceIterationMax());
+    if (iterations >= getResourceIterationMax()) {
       logger << indent(res->getLevel()) << "   Warning: no free capacity slot found on " << res
-        << " after " << MAX_LOOP << " iterations" << endl;
+        << " after " << getResourceIterationMax() << " iterations. Last date: " << newDate <<  endl;
+    }
     data->state->q_loadplan = old_q_loadplan;
 
     // Set the date where a next trial date can happen

@@ -39,7 +39,6 @@ void SolverCreate::checkOperationCapacity
     return; // Stop here if no resource is loaded
 
   DateRange orig;
-  Date minimumEndDate = opplan->getEnd();
   bool backuplogconstraints = data.logConstraints;
   bool backupForceLate = data.state->forceLate;
   bool recheck, first;
@@ -579,7 +578,6 @@ bool SolverCreate::checkOperationLeadTime
 void SolverCreate::solve(const Operation* oper, void* v)
 {
   SolverData* data = static_cast<SolverData*>(v);
-  OperationPlan *z = nullptr;
   data->state->a_date = Date::infiniteFuture;
 
   // Call the user exit
@@ -590,13 +588,6 @@ void SolverCreate::solve(const Operation* oper, void* v)
   if (data->getSolver()->getLogLevel() > 1)
     logger << indent(oper->getLevel()) << "   Operation '" << oper->getName()
       << "' is asked: " << data->state->q_qty << "  " << data->state->q_date << endl;
-
-  // Scan for opportunities to plan this operation.
-  double best_batch_eval = DBL_MAX;
-  double best_batch_date = Date::infinitePast;
-  Problem* topConstraint = data->planningDemand ?
-    data->planningDemand->getConstraints().top() :
-    nullptr;
 
   // Subtract the post-operation time.
   data->state->q_date_max = data->state->q_date;

@@ -24,6 +24,9 @@ Release notes
 - Added field net duration to the
   `resource detail report <user-guide/user-interface/plan-analysis/resource-detail-report.html>`_
   
+- Added fields total in progress, work in progress MO, on order PO, in transit DO to the
+  `inventory report <user-guide/user-interface/plan-analysis/inventory-report.html>`_
+  
 - Bug fix: Deleting an object from the edit form in a scenario was incorrectly
   deleting the object in the production instead.
   

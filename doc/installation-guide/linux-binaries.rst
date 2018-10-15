@@ -373,9 +373,11 @@ You can use it as a guideline and inspiration for your own deployments.
 
   # Note: frePPLe requires packages that may not be present in the basic Suse Enterprise Server repositories so you may need to add these repositories and install:
   sudo zypper addrepo http://download.opensuse.org/repositories/Apache:Modules/SLE_12_SP1/Apache:Modules.repo
-  sudo zypper addrepo http://download.opensuse.org/repositories/devel:languages:python3/SLE_12_SP1/devel:languages:python3.repo
   sudo zypper refresh
   sudo zypper install apache2-mod_wsgi-python3
+  sudo zypper addrepo http://download.opensuse.org/repositories/devel:languages:python3/SLE_12_SP1/devel:languages:python3.repo
+  sudo zypper refresh
+  sudo zypper install python3-psycopg2
 
   # Create user, create databases, configure access
   sudo su

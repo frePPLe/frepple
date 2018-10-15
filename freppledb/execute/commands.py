@@ -103,6 +103,13 @@ class SupplyPlanning(PlanTask):
   def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
     import frepple
 
+    # Determine log level
+    loglevel = int(Parameter.getValue('plan.loglevel', database, 0))
+    if cls.task and cls.task.user:
+      maxloglevel = cls.task.user.getMaxLoglevel(database)
+      if loglevel > maxloglevel:
+        loglevel = maxloglevel
+
     # Create a solver where the plan type are defined by an environment variable
     try:
       plantype = int(os.environ['FREPPLE_PLANTYPE'])
@@ -115,7 +122,7 @@ class SupplyPlanning(PlanTask):
     cls.solver = frepple.solver_mrp(
       constraints=constraint,
       plantype=plantype,
-      loglevel=int(Parameter.getValue('plan.loglevel', database, 0)),
+      loglevel=loglevel,
       lazydelay=int(Parameter.getValue('lazydelay', database, '86400')),
       allowsplits=(Parameter.getValue('allowsplits', database, 'true').lower() == "true"),
       minimumdelay=int(Parameter.getValue('plan.minimumdelay', database, '0')),

@@ -24,9 +24,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.AddField(
-            model_name='task',
-            name='logfile',
-            field=models.TextField(editable=False, max_length=200, null=True, verbose_name='logfile'),
-        ),
+      # Empty migration. History was rewritten to add the logfile field already earlier.
     ]

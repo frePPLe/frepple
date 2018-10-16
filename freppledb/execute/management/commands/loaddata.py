@@ -129,7 +129,7 @@ class Command(loaddata.Command):
       )
 
 
-  def handle(self, *args, **options):
+  def handle(self, *fixture_labels, **options):
 
     # get the database object
     database = options['database']
@@ -149,6 +149,7 @@ class Command(loaddata.Command):
           raise CommandError("Invalid task identifier")
         task.status = '0%'
         task.started = now
+        task.save(using=database, update_fields=['started', 'status'])
       else:
         if options['user']:
           try:
@@ -157,14 +158,19 @@ class Command(loaddata.Command):
             raise CommandError("User '%s' not found" % options['user'] )
         else:
           user = None
-        task = Task(name='loaddata', submitted=now, started=now, status='0%', user=user)
-      task.save(using=database)
+        task = Task(
+          name='loaddata', submitted=now, started=now, status='0%',
+          user=user, arguments=' '.join(fixture_labels)
+          )
+        task.save(using=database)
 
-      super(Command, self).handle(*args, **options)
+      # Excecute the standard django command
+      super(Command, self).handle(*fixture_labels, **options)
 
       # if the fixture doesn't contain the 'demo' word, let's not apply loaddata post-treatments
-      if '_demo' not in (args[0]).lower():
-        return
+      for f in fixture_labels:
+        if '_demo' not in f.lower():
+          return
 
       with transaction.atomic(using=database, savepoint=False):
         print('updating fixture to current date')
@@ -195,12 +201,12 @@ class Command(loaddata.Command):
         # Task update
         task.status = 'Done'
         task.finished = datetime.now()
-        task.save(using=database)
+        task.save(using=database, update_fields=['status', 'finished'])
 
     except Exception as e:
       if task:
         task.status = 'Failed'
         task.message = '%s' % e
         task.finished = datetime.now()
-        task.save(using=database)
+        task.save(using=database, update_fields=['status', 'finished', 'message'])
       raise CommandError('%s' % e)

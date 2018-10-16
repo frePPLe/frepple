@@ -1301,6 +1301,9 @@ class OperationPlanMaterial(AuditModel):
     ordering = ['item', 'location', 'flowdate']
     verbose_name = _('operationplan material')
     verbose_name_plural = _('operationplan materials')
+    indexes = [
+      models.Index(fields=['item', 'location']),
+      ]
 
 
 class DistributionOrder(OperationPlan):

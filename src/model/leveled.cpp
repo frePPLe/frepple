@@ -296,8 +296,15 @@ void HasLevel::computeLevels()
                 buffl != cur_buf->getFlows().end();
                 ++buffl)
             {
-              // Check level recursion
-              if (cur_Flow->isConsumer() && search_level)
+              // Check level recursion          
+              if (
+                cur_Flow->isConsumer() 
+                && search_level
+                && (
+                  cur_Flow->getOperation()->getType() != *OperationItemDistribution::metadata
+                  || static_cast<OperationItemDistribution*>(cur_Flow->getOperation())->getPriority()
+                  )
+                )
               {
                 if (buffl->getOperation()->lvl < cur_level+1
                     && &*buffl != cur_Flow && buffl->isProducer())

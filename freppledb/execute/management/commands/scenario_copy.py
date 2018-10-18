@@ -145,7 +145,7 @@ class Command(BaseCommand):
       # Commenting the next line is a little more secure, but requires you to create a .pgpass file.
       if settings.DATABASES[source]['PASSWORD']:
         os.environ['PGPASSWORD'] = settings.DATABASES[source]['PASSWORD']
-      commandline = "pg_dump -Fc %s%s%s%s | pg_restore -Fc -c %s%s%s -d %s" % (
+      commandline = "pg_dump -Fc %s%s%s%s | pg_restore -n public -Fc -c %s%s%s -d %s" % (
         settings.DATABASES[source]['USER'] and ("-U %s " % settings.DATABASES[source]['USER']) or '',
         settings.DATABASES[source]['HOST'] and ("-h %s " % settings.DATABASES[source]['HOST']) or '',
         settings.DATABASES[source]['PORT'] and ("-p %s " % settings.DATABASES[source]['PORT']) or '',

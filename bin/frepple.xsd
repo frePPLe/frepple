@@ -16,7 +16,7 @@
  License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <xsd:schema xmlns:xsd='http://www.w3.org/2001/XMLSchema'
-  elementFormDefault="unqualified" attributeFormDefault="unqualified" version="4.4.2">
+  elementFormDefault="unqualified" attributeFormDefault="unqualified" version="4.4.3">
 
   <!-- ACTION -->
   <xsd:simpleType name="action">

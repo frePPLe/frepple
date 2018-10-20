@@ -143,10 +143,10 @@ astyle:
 #  * The third argument can be empty. Or it can be a string starting with a '.'/dot.
 old1 = 4
 old2 = 4
-old3 = 1
+old3 = 2
 new1 = 4
 new2 = 4
-new3 = 2
+new3 = 3
 set_release:
 	for i in "configure.ac" "include/frepple/utils.h" "contrib/rpm/frepple.spec" "freppledb/__init__.py" "freppledb/locale/nl/LC_MESSAGES/django.po" "freppledb/locale/nl/LC_MESSAGES/djangojs.po" "freppledb/locale/zh_TW/LC_MESSAGES/django.po" "freppledb/locale/zh_TW/LC_MESSAGES/djangojs.po" "freppledb/locale/it/LC_MESSAGES/django.po" "freppledb/locale/it/LC_MESSAGES/djangojs.po" "freppledb/locale/fr/LC_MESSAGES/django.po" "freppledb/locale/fr/LC_MESSAGES/djangojs.po" "freppledb/locale/ja/LC_MESSAGES/django.po" "freppledb/locale/ja/LC_MESSAGES/djangojs.po" "freppledb/locale/zh_CN/LC_MESSAGES/djangojs.po" "freppledb/locale/zh_CN/LC_MESSAGES/django.po"  "freppledb/locale/es/LC_MESSAGES/djangojs.po" "freppledb/locale/es/LC_MESSAGES/django.po" "freppledb/locale/pt_PT/LC_MESSAGES/djangojs.po" "freppledb/locale/pt_PT/LC_MESSAGES/django.po" "freppledb/locale/pt_BR/LC_MESSAGES/djangojs.po" "freppledb/locale/pt_BR/LC_MESSAGES/django.po"  "bin/frepple.xsd" "contrib/debian/changelog" "doc/conf.py"; do \
 		sed 's/$(old1)\.$(old2)\.$(old3)/$(new1).$(new2).$(new3)/g' $$i >out.tmp; \

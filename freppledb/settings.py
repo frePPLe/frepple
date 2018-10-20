@@ -233,7 +233,7 @@ THEMES = [
 # - The DOCUMENTATION_URL is used as the main URL for the about box
 # - The documentation is expected to be found in 'DOCUMENTATION_URL/docs/MAJOR_VERSION.MINOR_VERSION"
 # - The URL shouldn't have an ending slash
-DOCUMENTATION_URL = "https://freppleTEST.com"
+DOCUMENTATION_URL = "https://frepple.com"
 
 # A default user-group to which new users are automatically added
 DEFAULT_USER_GROUP = None

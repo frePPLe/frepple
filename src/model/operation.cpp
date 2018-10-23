@@ -280,17 +280,26 @@ DateRange Operation::calculateOperationTime(
           available = false;
       }
     }
-    if (!duration && !available)
+    if (!duration)
     {
       // A special case for 0-time operations.
-      available = true;
-      for (auto t = cals.begin(); t != cals.end() && available; ++t)
-        available = (t->getCalendar()->getValue(selected, !forward) != 0);
-      if (available)
+      if (available && forward)
       {
         result.setEnd(curdate);
         result.setStart(curdate);
         return result;
+      }
+      else if (!available)
+      {
+        available = true;
+        for (auto t = cals.begin(); t != cals.end() && available; ++t)
+          available = (t->getCalendar()->getValue(selected, !forward) != 0);
+        if (available)
+        {
+          result.setEnd(curdate);
+          result.setStart(curdate);
+          return result;
+        }
       }
     }
     curdate = selected;

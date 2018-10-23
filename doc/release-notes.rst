@@ -4,6 +4,10 @@ Release notes
 4.4.3 (Upcoming release)
 ========================
 
+.. rubric:: Production planning
+
+- Bug fix: calculation of operation time for 0-duration operations was wrong in some situations.
+
 4.4.2 (2018/10/20)
 ==================
 

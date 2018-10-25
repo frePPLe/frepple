@@ -61,6 +61,7 @@ class OverviewReport(GridPivot):
     GridFieldText('location__available', title=string_concat(_('location'), ' - ', _('available')), editable=False, field_name='location__available__name', formatter='detail', extra='"role":"input/calendar"', initially_hidden=True),
     GridFieldText('avgutil', title=_('utilization %'), field_name='util', formatter='percentage', editable=False, width=100, align='center', search=False),
     GridFieldText('available_calendar', title=_('available calendar'), editable=False, field_name='available__name', formatter='detail', extra='"role":"input/calendar"', initially_hidden=True),
+    GridFieldText('owner', title=_('owner'), editable=False, field_name='owner__name', formatter='detail', extra='"role":"input/resource"', initially_hidden=True),
     )
   crosses = (
     ('available', {
@@ -130,7 +131,7 @@ class OverviewReport(GridPivot):
         res.type, res.maximum, res.maximum_calendar_id, res.cost, res.maxearly,
         res.setupmatrix_id, res.setup, location.name, location.description,
         location.category, location.subcategory, location.available_id,
-        coalesce(max(plan_summary.avg_util),0) as avgutil, res.available_id available_calendar, 
+        coalesce(max(plan_summary.avg_util),0) as avgutil, res.available_id available_calendar, res.owner_id,
         %s
         d.bucket as col1, d.startdate as col2,
         coalesce(sum(out_resourceplan.available),0) * (case when res.type = 'buckets' then 1 else %f end) as available,
@@ -169,7 +170,7 @@ class OverviewReport(GridPivot):
       group by res.name, res.description, res.category, res.subcategory,
         res.type, res.maximum, res.maximum_calendar_id, res.available_id, res.cost, res.maxearly,
         res.setupmatrix_id, res.setup, location.name, location.description,
-        location.category, location.subcategory, location.available_id,
+        location.category, location.subcategory, location.available_id, res.owner_id,
         %s d.bucket, d.startdate
       order by %s, d.startdate
       ''' % (
@@ -199,6 +200,7 @@ class OverviewReport(GridPivot):
         'location__available': row[15],
         'avgutil': round(row[16], 2),
         'available_calendar': row[17],
+        'owner': row[18],
         'bucket': row[numfields-6],
         'startdate': row[numfields-5].date(),
         'available': round(row[numfields-4], 1),

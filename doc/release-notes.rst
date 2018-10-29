@@ -8,6 +8,9 @@ Release notes
 
 - Bug fix: calculation of operation time for 0-duration operations was wrong in some situations.
 
+- Bug fix: incorrect operation duration when different resources in an aggregate pool resource 
+  have different working hours.
+
 4.4.2 (2018/10/20)
 ==================
 

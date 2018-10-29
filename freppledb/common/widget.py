@@ -48,7 +48,7 @@ class WelcomeWidget(Widget):
         prefix = "/%s" % _thread_locals.request.database
     except:
       prefix = ''
-    return _('''Welcome to frePPLe, the world's leading open source production planning tool!<br><br>
+    return _('''Welcome to the world's leading open source production planning tool!<br><br>
 How to get started?
 <ol><li>Start the <span class="underline"><a href="javascript:void(0);" onclick="tour.start('0,0,0'); return false;">guided tour</a></span></li>
 <li>Check out the <span class="underline"><a href="%(docurl)s" target="_blank" rel="noopener">documentation</a></span></li>

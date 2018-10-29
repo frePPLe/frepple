@@ -299,9 +299,7 @@ class Command(BaseCommand):
           </table>
         </form>
       ''' % (
-        force_text(_('Load frePPLe from the database and live data sources...<br>'
-          'and create a plan in frePPLe...<br>'
-          'and export results.')),
+        force_text(_('Load all input data, run the planning algorithm, and export the results.')),
         force_text(_("optional planning steps")),
         force_text(_("Plan type")),
         force_text(_('<span data-toggle="tooltip" data-placement="top" data-html="true" data-original-title="Generate a supply plan that respects all constraints.<br>In case of shortages the demand is planned late or short.">Constrained plan</span>')),

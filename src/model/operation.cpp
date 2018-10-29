@@ -675,12 +675,12 @@ void Operation::initOperationPlan (
   if (ow)
     opplan->setOwner(ow, true);
 
-  // Setting the dates and quantity
-  setOperationPlanParameters(opplan, q, s, e, true, true, roundDown);
-
   // Create the loadplans and flowplans, if allowed
   if (makeflowsloads)
     opplan->createFlowLoads();
+
+  // Setting the dates and quantity
+  setOperationPlanParameters(opplan, q, s, e, true, true, roundDown);
 
   // Update flow and loadplans, and mark for problem detection
   opplan->update();

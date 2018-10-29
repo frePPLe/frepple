@@ -170,7 +170,7 @@ class Menu:
       if self._groups[i][0] == group:
         # Found the group
         for j in range(len(self._groups[i][3])):
-          if self._groups[i][3][j][0] == name:
+          if self._groups[i][3][j].name == name:
             # Update existing item
             del self._groups[i][3][j]
             return

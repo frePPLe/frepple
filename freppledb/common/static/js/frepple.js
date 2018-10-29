@@ -365,7 +365,7 @@ function formatDuration(cellvalue, options, rowdata) {
   seconds = seconds - (days * 86400) - (hours * 3600) - (minutes * 60);
 
   if (rowdata.criticality > 998)
-    return 'N/A'
+    return 'N/A';
   if (days > 0)
     return (sign*days).toString() + " " + ((hours < 10) ? "0" : "") + hours + ((minutes < 10) ? ":0" : ":") + minutes + ((seconds < 10) ? ":0" : ":") + (seconds).toFixed((seconds === Math.floor(seconds))?0:3);
   else
@@ -795,8 +795,7 @@ var grid = {
       });
 
       var numfrozen = 0;
-      if (pivot)
-      {
+      if (pivot) {
         var firstnonfrozen = 0;
         for (var i in colModel)
           if ("counter" in colModel[i])
@@ -1552,11 +1551,11 @@ var wizard = {
         document.getElementById(wizard.wizdict[key].anchor).setAttribute('href', url_prefix + wizard.wizdict[key].url_internaldoc);
       }
       if (wizard.wizdict[key].docanchor !== "" && wizard.wizdict[key].url_doc !== null) {
-        document.getElementById(wizard.wizdict[key].docanchor).setAttribute('href', 'https://frepple.com/docs/' + version.replace(".beta","") + wizard.wizdict[key].url_doc);
+        document.getElementById(wizard.wizdict[key].docanchor).setAttribute('href', website + '/docs/' + version + wizard.wizdict[key].url_doc);
       }
       if (key === 'Sales orders') {
         document.getElementById(wizard.wizdict['Sales orders history'].anchor).setAttribute('href', url_prefix + wizard.wizdict[key].url_internaldoc);
-        document.getElementById(wizard.wizdict['Sales orders history'].docanchor).setAttribute('href', 'https://frepple.com/docs/' + version.replace(".beta","") + wizard.wizdict[key].url_doc);
+        document.getElementById(wizard.wizdict['Sales orders history'].docanchor).setAttribute('href', website + '/docs/' + version + wizard.wizdict[key].url_doc);
       }
     }
 
@@ -2401,6 +2400,7 @@ function about_show()
       $.jgrid.hideModal("#searchmodfbox_grid");
       $('#popup').modal({keyboard: false, backdrop:'static'});
       var version = data.version.split(".");
+      var website = data.website;
       var content = '<div class="modal-dialog" style="width: 450px;">'+
          '<div class="modal-content">'+
            '<div class="modal-header">'+
@@ -2410,9 +2410,9 @@ function about_show()
            '<div class="modal-body">'+
              '<div class="row">';
       content += '<div class="col-sm-5"><br><br>' +
-         '<p><a target="_blank" href="https://frepple.com/"><strong>frePPLe website &nbsp;<span class="fa fa-caret-right"></span></strong></a></p><br>' +
-         '<p><a target="_blank" href="https://frepple.com/docs/' + version[0] + '.' + version[1] + '/license.html"><strong>License information &nbsp;<span class="fa fa-caret-right"></span></strong></a></p><br>' +
-         '<p><a target="_blank" href="https://frepple.com/docs/' + version[0] + '.' + version[1] + '/index.html"><strong>Documentation &nbsp;<span class="fa fa-caret-right"></span></strong></a></p>' +
+         '<p><a target="_blank" href="' + website + '"><strong>frePPLe website &nbsp;<span class="fa fa-caret-right"></span></strong></a></p><br>' +
+         '<p><a target="_blank" href="' + website + '/docs/' + version[0] + '.' + version[1] + '/license.html"><strong>License information &nbsp;<span class="fa fa-caret-right"></span></strong></a></p><br>' +
+         '<p><a target="_blank" href="' + website + '/docs/' + version[0] + '.' + version[1] + '/index.html"><strong>Documentation &nbsp;<span class="fa fa-caret-right"></span></strong></a></p>' +
          '</div>' +
          '<div class="col-sm-7"><strong>' + gettext("Installed apps") + ":</strong>";
       for (var i in data.apps)
@@ -2666,7 +2666,7 @@ function getURLparameters()
     params[p[0]] = params[p[0]]?((params[p[0]] instanceof Array)?(params[p[0]].push(p[1]),params[p[0]]):[params[p[0]],p[1]]):p[1];
   });
   return params;
-}
+};
 
 
 //----------------------------------------------------------------------------
@@ -2692,7 +2692,7 @@ function selectDatabase()
     window.location.href = window.location.href.replace("/"+database+"/", "/");
   else
     window.location.href = window.location.href.replace("/"+database+"/", "/" + db + "/");
-}
+};
 
 
 //----------------------------------------------------------------------------
@@ -3477,7 +3477,7 @@ function Gauge(placeholderName, configuration)
                   .attr("d", pointerLine)
                   .style("fill", "#dc3912")
                   .style("stroke", "#c63310")
-                  .style("fill-opacity", 0.7)
+                  .style("fill-opacity", 0.7);
 
     pointerContainer.append("svg:circle")
               .attr("cx", this.config.cx)

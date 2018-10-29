@@ -15,7 +15,7 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-import datetime
+from datetime import datetime
 import os
 
 from django.apps import apps
@@ -25,6 +25,9 @@ from django.core.management.commands import loaddata
 from django.db import connections, transaction
 from django.template import Template, RequestContext
 from django.utils.translation import ugettext_lazy as _
+
+from freppledb.common.models import User
+from freppledb.execute.models import Task
 
 
 class Command(loaddata.Command):
@@ -113,40 +116,97 @@ class Command(loaddata.Command):
   index = 1800
   help_url = 'user-guide/command-reference.html#loaddata'
 
-  def handle(self, *args, **options):
-    super(Command, self).handle(*args, **options)
 
-    # if the fixture doesn't contain the 'demo' word, let's not apply loaddata post-treatments
-    if '_demo' not in (args[0]).lower():
-      return
+  def add_arguments(self, parser):
+    super().add_arguments(parser)
+    parser.add_argument(
+      '--task', dest='task', type=int,
+      help='Task identifier (generated automatically if not provided)'
+      )
+    parser.add_argument(
+      '--user', dest='user',
+      help='User running the command'
+      )
+
+
+  def handle(self, *fixture_labels, **options):
 
     # get the database object
     database = options['database']
     if database not in settings.DATABASES:
       raise CommandError("No database settings known for '%s'" % database )
 
-    with transaction.atomic(using=database, savepoint=False):
-      print('updating fixture to current date')
+    now = datetime.now()
+    task = None
+    try:
+      # Initialize the task
+      if options['task']:
+        try:
+          task = Task.objects.all().using(database).get(pk=options['task'])
+        except:
+          raise CommandError("Task identifier not found")
+        if task.started or task.finished or task.status != "Waiting" or task.name != 'loaddata':
+          raise CommandError("Invalid task identifier")
+        task.status = '0%'
+        task.started = now
+        task.save(using=database, update_fields=['started', 'status'])
+      else:
+        if options['user']:
+          try:
+            user = User.objects.all().using(database).get(username=options['user'])
+          except:
+            raise CommandError("User '%s' not found" % options['user'] )
+        else:
+          user = None
+        task = Task(
+          name='loaddata', submitted=now, started=now, status='0%',
+          user=user, arguments=' '.join(fixture_labels)
+          )
+        task.save(using=database)
 
-      cursor = connections[database].cursor()
-      cursor.execute('''
-        select to_timestamp(value,'YYYY-MM-DD hh24:mi:ss') from common_parameter where name = 'currentdate'
-      ''')
-      currentDate = cursor.fetchone()[0]
-      now = datetime.datetime.now()
-      offset = (now - currentDate).days
+      # Excecute the standard django command
+      super(Command, self).handle(*fixture_labels, **options)
 
-      #update currentdate to now
-      cursor.execute('''
-        update common_parameter set value = 'now' where name = 'currentdate'
-      ''')
+      # if the fixture doesn't contain the 'demo' word, let's not apply loaddata post-treatments
+      for f in fixture_labels:
+        if '_demo' not in f.lower():
+          return
 
-      #update demand due dates
-      cursor.execute('''
-        update demand set due = due + %s * interval '1 day'
-      ''', (offset,))
+      with transaction.atomic(using=database, savepoint=False):
+        print('updating fixture to current date')
 
-      #update PO/DO/MO due dates
-      cursor.execute('''
-        update operationplan set startdate = startdate + %s * interval '1 day', enddate = enddate + %s * interval '1 day'
-      ''', 2 * (offset,))
+        cursor = connections[database].cursor()
+        cursor.execute('''
+          select to_timestamp(value,'YYYY-MM-DD hh24:mi:ss') from common_parameter where name = 'currentdate'
+        ''')
+        currentDate = cursor.fetchone()[0]
+        now = datetime.now()
+        offset = (now - currentDate).days
+
+        #update currentdate to now
+        cursor.execute('''
+          update common_parameter set value = 'now' where name = 'currentdate'
+        ''')
+
+        #update demand due dates
+        cursor.execute('''
+          update demand set due = due + %s * interval '1 day'
+        ''', (offset,))
+
+        #update PO/DO/MO due dates
+        cursor.execute('''
+          update operationplan set startdate = startdate + %s * interval '1 day', enddate = enddate + %s * interval '1 day'
+        ''', 2 * (offset,))
+
+        # Task update
+        task.status = 'Done'
+        task.finished = datetime.now()
+        task.save(using=database, update_fields=['status', 'finished'])
+
+    except Exception as e:
+      if task:
+        task.status = 'Failed'
+        task.message = '%s' % e
+        task.finished = datetime.now()
+        task.save(using=database, update_fields=['status', 'finished', 'message'])
+      raise CommandError('%s' % e)

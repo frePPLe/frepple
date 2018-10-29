@@ -28,7 +28,7 @@ namespace frepple
 /** @todo resource solver should be using a move command rather than direct move */
 void SolverCreate::solve(const Resource* res, void* v)
 {
-  SolverMRPdata* data = static_cast<SolverMRPdata*>(v);
+  SolverData* data = static_cast<SolverData*>(v);
 
   // Call the user exit
   if (userexit_resource) userexit_resource.call(res, PythonData(data->constrainedPlanning));
@@ -232,7 +232,7 @@ void SolverCreate::solve(const Resource* res, void* v)
 
     // Loop to find a later date where the operationplan will fit
     Date newDate;
-    auto iterations = 0;
+    unsigned long iterations = 0;
     do
     {
       // Search for a date where we go below the maximum load.
@@ -322,7 +322,7 @@ void SolverCreate::solve(const Resource* res, void* v)
             false
             );
         HasOverload = true;
-        if (data->state->q_operationplan->getStart() < newDate)
+        if (data->state->q_operationplan->getStart() < newDate || !data->state->q_operationplan->getQuantity())
           // Moving to the new date turns out to be infeasible! Give it up.
           // For instance, this can happen when the location calendar doesn't
           // have any up-time after the specified date.
@@ -330,10 +330,11 @@ void SolverCreate::solve(const Resource* res, void* v)
       }
       ++iterations;
     }
-    while (HasOverload && newDate && iterations < MAX_LOOP);
-    if (iterations >= MAX_LOOP)
+    while (HasOverload && newDate && iterations < getResourceIterationMax());
+    if (iterations >= getResourceIterationMax()) {
       logger << indent(res->getLevel()) << "   Warning: no free capacity slot found on " << res
-        << " after " << MAX_LOOP << " iterations" << endl;
+        << " after " << getResourceIterationMax() << " iterations. Last date: " << newDate <<  endl;
+    }
     data->state->q_loadplan = old_q_loadplan;
 
     // Set the date where a next trial date can happen
@@ -393,7 +394,7 @@ void SolverCreate::solve(const Resource* res, void* v)
 
 void SolverCreate::solve(const ResourceInfinite* res, void* v)
 {
-  SolverMRPdata* data = static_cast<SolverMRPdata*>(v);
+  SolverData* data = static_cast<SolverData*>(v);
 
   // Call the user exit
   if (userexit_resource) userexit_resource.call(res, PythonData(data->constrainedPlanning));
@@ -421,7 +422,7 @@ void SolverCreate::solve(const ResourceInfinite* res, void* v)
 
 void SolverCreate::solve(const ResourceBuckets* res, void* v)
 {
-  SolverMRPdata* data = static_cast<SolverMRPdata*>(v);
+  SolverData* data = static_cast<SolverData*>(v);
 
   // Call the user exit
   if (userexit_resource) userexit_resource.call(res, PythonData(data->constrainedPlanning));

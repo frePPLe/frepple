@@ -43,7 +43,7 @@ The following steps are required to configure a multi-model setup.
 
      DATABASES = {
      'default': {
-       'ENGINE': 'django.db.backends.postgresql_psycopg2',
+       'ENGINE': 'django.db.backends.postgresql',
        'NAME': 'frepple',
        'USER': '',
        'PASSWORD': '',
@@ -52,7 +52,7 @@ The following steps are required to configure a multi-model setup.
        'PORT': '',
        },
      'scenario1': {
-       'ENGINE': 'django.db.backends.postgresql_psycopg2',
+       'ENGINE': 'django.db.backends.postgresql',
        'NAME': 'scenario1',
        'USER': '',
        'PASSWORD': '',

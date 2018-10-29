@@ -79,6 +79,9 @@ class cookbooktest(TransactionTestCase):
             self.fail("Less output rows than expected")
         row += 1
     if row != maxrow:
+      print("Got:")
+      for i in opplans:
+        print("  ", i.strip())
       self.fail("More output rows than expected")
 
   def test_calendar_working_hours(self):

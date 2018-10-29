@@ -33,7 +33,7 @@ bool sortLoad(const Load* lhs, const Load* rhs)
 
 void SolverCreate::chooseResource(const Load* l, void* v)   // @todo handle unconstrained plan!!!!
 {
-  SolverMRPdata* data = static_cast<SolverMRPdata*>(v);
+  SolverData* data = static_cast<SolverData*>(v);
   if ((!l->getSkill() && !l->getResource()->isGroup()) || data->state->q_loadplan->isApproved())
   {
     // CASE 1: No skill involved, and no aggregate resource either
@@ -271,7 +271,7 @@ void SolverCreate::solve(const Load* l, void* v)
 {
   // Note: This method is only called for decrease loadplans and for the leading
   // load of an alternate group. See SolverCreate::checkOperation
-  SolverMRPdata* data = static_cast<SolverMRPdata*>(v);
+  SolverData* data = static_cast<SolverData*>(v);
 
   if ((!l->hasAlternates() && !l->getAlternate()) || data->state->q_loadplan->isApproved())
   {

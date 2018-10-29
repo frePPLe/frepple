@@ -25,7 +25,7 @@ namespace frepple
 
 
 void SolverCreate::checkOperationCapacity
-  (OperationPlan* opplan, SolverCreate::SolverMRPdata& data)
+  (OperationPlan* opplan, SolverCreate::SolverData& data)
 {
   unsigned short constrainedLoads = 0;
   for (OperationPlan::LoadPlanIterator h=opplan->beginLoadPlans();
@@ -39,7 +39,6 @@ void SolverCreate::checkOperationCapacity
     return; // Stop here if no resource is loaded
 
   DateRange orig;
-  Date minimumEndDate = opplan->getEnd();
   bool backuplogconstraints = data.logConstraints;
   bool backupForceLate = data.state->forceLate;
   bool recheck, first;
@@ -115,7 +114,7 @@ void SolverCreate::checkOperationCapacity
 
 
 bool SolverCreate::checkOperation
-(OperationPlan* opplan, SolverCreate::SolverMRPdata& data)
+(OperationPlan* opplan, SolverCreate::SolverData& data)
 {
   // The default answer...
   data.state->a_date = Date::infiniteFuture;
@@ -282,6 +281,12 @@ bool SolverCreate::checkOperation
       // The reply is 0, but the next-date is still less than the maximum
       // ask date. In this case we will violate the post-operation -soft-
       // constraint.
+      if (matnext.getEnd() < orig_q_date + data.getSolver()->getMinimumDelay())
+      {
+        matnext.setEnd(orig_q_date + data.getSolver()->getMinimumDelay());
+        if (matnext.getEnd() > orig_q_date_max)
+          matnext.setEnd(orig_q_date_max);
+      }
       data.state->q_date = matnext.getEnd();
       orig_q_date = data.state->q_date;
       data.state->q_qty = orig_opplan_qty;
@@ -294,7 +299,7 @@ bool SolverCreate::checkOperation
       // Pop actions from the command "stack" in the command list
       data.getCommandManager()->rollback(topcommand);
       // Echo a message
-      if (data.getSolver()->getLogLevel()>1)
+      if (data.getSolver()->getLogLevel() > 1)
         logger << indent(opplan->getOperation()->getLevel())
           << "   Retrying new date." << endl;
     }
@@ -402,7 +407,7 @@ bool SolverCreate::checkOperation
 
 
 bool SolverCreate::checkOperationLeadTime
-(OperationPlan* opplan, SolverCreate::SolverMRPdata& data, bool extra)
+(OperationPlan* opplan, SolverCreate::SolverData& data, bool extra)
 {
   // No lead time constraints
   if (!data.constrainedPlanning || (!isFenceConstrained() && !isLeadTimeConstrained()))
@@ -572,8 +577,7 @@ bool SolverCreate::checkOperationLeadTime
 
 void SolverCreate::solve(const Operation* oper, void* v)
 {
-  SolverMRPdata* data = static_cast<SolverMRPdata*>(v);
-  OperationPlan *z = nullptr;
+  SolverData* data = static_cast<SolverData*>(v);
   data->state->a_date = Date::infiniteFuture;
 
   // Call the user exit
@@ -584,13 +588,6 @@ void SolverCreate::solve(const Operation* oper, void* v)
   if (data->getSolver()->getLogLevel() > 1)
     logger << indent(oper->getLevel()) << "   Operation '" << oper->getName()
       << "' is asked: " << data->state->q_qty << "  " << data->state->q_date << endl;
-
-  // Scan for opportunities to plan this operation.
-  double best_batch_eval = DBL_MAX;
-  double best_batch_date = Date::infinitePast;
-  Problem* topConstraint = data->planningDemand ?
-    data->planningDemand->getConstraints().top() :
-    nullptr;
 
   // Subtract the post-operation time.
   data->state->q_date_max = data->state->q_date;
@@ -606,7 +603,7 @@ void SolverCreate::solve(const Operation* oper, void* v)
 
 
 OperationPlan* SolverCreate::createOperation(
-  const Operation* oper, SolverCreate::SolverMRPdata* data, bool propagate, bool start_or_end
+  const Operation* oper, SolverCreate::SolverData* data, bool propagate, bool start_or_end
   )
 {
   OperationPlan *z = nullptr;
@@ -635,22 +632,28 @@ OperationPlan* SolverCreate::createOperation(
       data->state->a_date = Date::infiniteFuture;
       string problemtext = string("Invalid producing operation '") + oper->getName()
         + "' for buffer '" + data->state->curBuffer->getName() + "'";
-      auto j = data->planningDemand->getConstraints().begin();
-      while (j != data->planningDemand->getConstraints().end())
+      auto dmd = data->planningDemand;
+      if (dmd)
       {
-        if (&(j->getType()) == ProblemInvalidData::metadata
-          && j->getDescription() == problemtext)
-          break;
-        ++j;
+        auto j = dmd->getConstraints().begin();
+        while (j != dmd->getConstraints().end())
+        {
+          if (&(j->getType()) == ProblemInvalidData::metadata
+            && j->getDescription() == problemtext)
+            break;
+          ++j;
+        }
+        if (j == dmd->getConstraints().end())
+        {
+          if (problemtext == "Invalid producing operation '11. make subassembly' for buffer '11. component @ plant'")
+            logger << " bonanza" << endl;
+          dmd->getConstraints().push(new ProblemInvalidData(
+            dmd, problemtext, "demand",
+            dmd->getDue(), dmd->getDue(),
+            dmd->getQuantity(), false
+          ));
+        }
       }
-      if (j == data->planningDemand->getConstraints().end())
-        data->planningDemand->getConstraints().push(new ProblemInvalidData(
-          data->planningDemand,
-          problemtext,
-          "demand",
-          data->planningDemand->getDue(), data->planningDemand->getDue(),
-          data->planningDemand->getQuantity(), false
-        ));
       if (data->getSolver()->getLogLevel() > 1)
       {
         logger << indent(oper->getLevel()) << "   " << problemtext << endl;
@@ -875,7 +878,7 @@ OperationPlan* SolverCreate::createOperation(
 
 void SolverCreate::solve(const OperationItemSupplier* o, void* v)
 {
-  SolverMRPdata* data = static_cast<SolverMRPdata*>(v);
+  SolverData* data = static_cast<SolverData*>(v);
   if (v)
     data->purchase_operations.insert(o);
 
@@ -923,7 +926,7 @@ void SolverCreate::solve(const OperationItemSupplier* o, void* v)
 // No need to take post- and pre-operation times into account
 void SolverCreate::solve(const OperationRouting* oper, void* v)
 {
-  SolverMRPdata* data = static_cast<SolverMRPdata*>(v);
+  SolverData* data = static_cast<SolverData*>(v);
 
   // Call the user exit
   if (userexit_operation) userexit_operation.call(oper, PythonData(data->constrainedPlanning));
@@ -1099,7 +1102,7 @@ void SolverCreate::solve(const OperationRouting* oper, void* v)
 // @todo This method should only be allowed to create 1 operationplan
 void SolverCreate::solve(const OperationAlternate* oper, void* v)
 {
-  SolverMRPdata *data = static_cast<SolverMRPdata*>(v);
+  SolverData *data = static_cast<SolverData*>(v);
   Date origQDate = data->state->q_date;
   double origQqty = data->state->q_qty;
   Buffer *buf = data->state->curBuffer;
@@ -1609,7 +1612,7 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v)
 
 void SolverCreate::solve(const OperationSplit* oper, void* v)
 {
-  SolverMRPdata *data = static_cast<SolverMRPdata*>(v);
+  SolverData *data = static_cast<SolverData*>(v);
   Date origQDate = data->state->q_date;
   double origQqty = data->state->q_qty;
   Buffer *buf = data->state->curBuffer;

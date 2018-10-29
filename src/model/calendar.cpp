@@ -654,6 +654,10 @@ void Calendar::buildEventList(Date includedate)
 
     // Go over all entries and ask them to update the iterator
     Date refDate = curDate;
+    struct tm datedetail_refdate;
+    refDate.getInfo(&datedetail_refdate);
+    struct tm datedetail_startdata;
+    struct tm *datedetail;
     curDate = Date::infiniteFuture;
     for (const CalendarBucket *b = firstBucket; b; b = b->nextBucket)
     {
@@ -689,13 +693,17 @@ void Calendar::buildEventList(Date includedate)
 
       // Find details on the reference date
       bool effectiveAtStart = false;
-      Date tmp = refDate;
-      struct tm datedetail;
+      Date tmp = refDate;      
       if (refDate < b->startdate)
+      {
         tmp = b->startdate;
-      tmp.getInfo(&datedetail);
-      int ref_weekday = datedetail.tm_wday; // 0: sunday, 6: saturday
-      Duration ref_time = long(datedetail.tm_sec + datedetail.tm_min * 60 + datedetail.tm_hour * 3600);
+        tmp.getInfo(&datedetail_startdata);
+        datedetail = &datedetail_startdata;
+      }
+      else
+        datedetail = &datedetail_refdate;
+      int ref_weekday = datedetail->tm_wday; // 0: sunday, 6: saturday
+      Duration ref_time = long(datedetail->tm_sec + datedetail->tm_min * 60 + datedetail->tm_hour * 3600);
       if (
         refDate < b->startdate && ref_time >= b->starttime
         && ref_time < b->endtime && (b->days & (1 << ref_weekday))

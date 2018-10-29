@@ -119,6 +119,7 @@ class PlanTaskRegistry:
     task_weights = 0
     task_list = []
     for i in cls.reg:
+      i.task = cls.task
       i.weight = i.getWeight(database=database, **kwargs)
       if i.weight is not None and i.weight >= 0:
         task_weights += i.weight

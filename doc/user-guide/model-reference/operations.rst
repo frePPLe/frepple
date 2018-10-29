@@ -221,24 +221,24 @@ search           string            Defines the order of preference among the alt
 
                                    The valid choices are:
 
-                                    * | PRIORITY
-                                      | Select the alternate with the lowest priority number.
-                                      | This is the default.
+                                   * | PRIORITY
+                                     | Select the alternate with the lowest priority number.
+                                     | This is the default.
 
-                                    * | MINCOST
-                                      | Select the alternate which gives the lowest cost.
-                                      | The cost includes the cost of all upstream operations,
+                                   * | MINCOST
+                                     | Select the alternate which gives the lowest cost.
+                                     | The cost includes the cost of all upstream operations,
                                         resources and buffers.
 
-                                    * | MINPENALTY
-                                      | Select the alternate which gives the lowest penalty.
-                                      | The penalty includes the penalty of all penalties
-                                        incurred in the upstream plan.
+                                   * | MINPENALTY
+                                     | Select the alternate which gives the lowest penalty.
+                                     | The penalty includes the penalty of all penalties
+                                       incurred in the upstream plan.
 
-                                    * | MINCOSTPENALTY
-                                      | Select the alternate which gives the lowest sum of
-                                        the cost and penalty.
-                                      | The sum is computed for the complete upstream path.
+                                   * | MINCOSTPENALTY
+                                     | Select the alternate which gives the lowest sum of
+                                       the cost and penalty.
+                                     | The sum is computed for the complete upstream path.
 suboperations    List of           | List of alternate sub-operations.
                  suboperation      | See :doc:`suboperations`
 ================ ================= ===========================================================

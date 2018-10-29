@@ -16,7 +16,7 @@
  License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <xsd:schema xmlns:xsd='http://www.w3.org/2001/XMLSchema'
-  elementFormDefault="unqualified" attributeFormDefault="unqualified" version="4.4.1">
+  elementFormDefault="unqualified" attributeFormDefault="unqualified" version="4.4.3">
 
   <!-- ACTION -->
   <xsd:simpleType name="action">
@@ -999,6 +999,7 @@
       <xsd:element name="quantity" type="positiveDouble" />
       <xsd:element name="status" type="xsd:normalizedString" />
       <xsd:element name="owner" type="operationplan" />
+      <xsd:element name="feasible" type="xsd:boolean" />
       <xsd:element name="criticality" type="xsd:double" />
       <xsd:element name="consume_material" type="xsd:boolean" />
       <xsd:element name="consume_capacity" type="xsd:boolean" />
@@ -1020,6 +1021,7 @@
     <xsd:attribute name="start" type="xsd:dateTime" />
     <xsd:attribute name="end" type="xsd:dateTime" />
     <xsd:attribute name="quantity" type="positiveDouble" />
+    <xsd:attribute name="feasible" type="xsd:boolean" />
     <xsd:attribute name="criticality" type="xsd:double" />
     <xsd:attribute name="status" type="xsd:normalizedString" />
     <xsd:attribute name="consume_material" type="xsd:boolean" />

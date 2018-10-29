@@ -52,15 +52,20 @@ logger = logging.getLogger(__name__)
 @staff_member_required
 def AboutView(request):
   return HttpResponse(
-     content=json.dumps({'version': VERSION, 'apps': settings.INSTALLED_APPS }),
+     content=json.dumps({
+       'version': VERSION,
+       'apps': settings.INSTALLED_APPS,
+       'website': settings.DOCUMENTATION_URL
+       }),
      content_type='application/json; charset=%s' % settings.DEFAULT_CHARSET
      )
 
 
 @staff_member_required
 def cockpit(request):
-  return render(request, 'index.html',
-    context= {
+  return render(
+    request, 'index.html',
+    context={
       'title': _('cockpit'),
       'bucketnames': Bucket.objects.order_by('-level').values_list('name', flat=True),
       'currency': json.dumps(getCurrency())

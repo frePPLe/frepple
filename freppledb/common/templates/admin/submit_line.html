@@ -14,7 +14,7 @@
     {% if show_delete_link %}
         {% url opts|admin_urlname:'delete' original.pk|admin_urlquote as delete_url %}
         {% comment %}Translators: Translation included with Django {% endcomment %}
-        <a class="btn btn-danger deletelink" href="{% add_preserved_filters delete_url %}">{% trans "Delete" %}</a>
+        <a class="btn btn-danger deletelink" href="{{request.prefix}}{% add_preserved_filters delete_url %}">{% trans "Delete" %}</a>
     {% endif %}
 </div></div>
 </div>

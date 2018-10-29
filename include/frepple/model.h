@@ -1362,8 +1362,7 @@ class Location : public HasHierarchy<Location>, public HasDescription
 {
   friend class ItemDistribution;
   public:
-    typedef Association<Location,Location,ItemDistribution>::ListA distributionoriginlist;
-    typedef Association<Location,Location,ItemDistribution>::ListB distributiondestinationlist;
+    typedef Association<Location, Item, ItemDistribution>::ListA distributionlist;
 
     /** Default constructor. */
     explicit Location()
@@ -1391,30 +1390,16 @@ class Location : public HasHierarchy<Location>, public HasDescription
 
     /** Returns a constant reference to the item distributions pointing to
       * this location as origin. */
-    const distributionoriginlist& getDistributionOrigins() const
+    const distributionlist& getDistributions() const
     {
-      return origins;
+      return distributions;
     }
 
     /** Returns an iterator over the list of item distributions pointing to
       * this location as origin. */
-    distributionoriginlist::const_iterator getDistributionOriginIterator() const
+    distributionlist::const_iterator getDistributionIterator() const
     {
-      return origins.begin();
-    }
-
-    /** Returns a constant reference to the item distributions pointing to
-      * this location as origin. */
-    const distributiondestinationlist& getDistributionDestinations() const
-    {
-      return destinations;
-    }
-
-    /** Returns an iterator over the list of item distributions pointing to
-      * this location as origin. */
-    distributiondestinationlist::const_iterator getDistributionDestinationIterator() const
-    {
-      return destinations.begin();
+      return distributions.begin();
     }
 
     virtual const MetaClass& getType() const {return *metadata;}
@@ -1436,14 +1421,9 @@ class Location : public HasHierarchy<Location>, public HasDescription
     Calendar* available = nullptr;
 
     /** This is a list of item distributions pointing to this location as
-      * origin.
-      */
-    distributionoriginlist origins;
-
-    /** This is a list of item distributions pointing to this location as
       * destination.
       */
-    distributiondestinationlist destinations;
+    distributionlist distributions;
 };
 
 
@@ -1923,6 +1903,12 @@ class OperationPlan
       */
     Duration getDelay() const;
 
+    /** Merge this operationplan with another one if possible. 
+      * The return value is true when a merge was done. 
+      * Careful: When a merge is done this pointer object is deleted! 
+      */
+    bool mergeIfPossible();
+
     friend class iterator;
 
     /** This is a factory method that creates an operationplan pointer based
@@ -2020,6 +2006,11 @@ class OperationPlan
       return (flags & (STATUS_CONFIRMED + STATUS_APPROVED)) == 0;
     }
 
+    bool getFeasible() const
+    {
+      return !(flags & FEASIBLE);
+    }
+
     /** Returns true is this operationplan is allowed to consume material.
       * This field only has an impact for locked operationplans.
       */
@@ -2086,6 +2077,14 @@ class OperationPlan
       else
         flags |= CONSUME_CAPACITY;
       resizeFlowLoadPlans();
+    }
+
+    void setFeasible(bool b)
+    {
+      if (b)
+        flags &= ~FEASIBLE;
+      else
+        flags |= FEASIBLE;
     }
 
     /** Returns a pointer to the operation being instantiated. */
@@ -2416,6 +2415,12 @@ class OperationPlan
       */
     void createFlowLoads();
 
+    /** A function to compute whether an operationplan is feasible or not. */
+    bool updateFeasible();
+
+    /** Python API for the above method. */
+    static PyObject* updateFeasiblePython(PyObject*, PyObject*);
+
     /** This function is used to delete the loadplans, flowplans and
       * setup operationplans.
       */
@@ -2528,6 +2533,7 @@ class OperationPlan
       m->addBoolField<Cls>(Tags::consume_material, &Cls::getConsumeMaterial, &Cls::setConsumeMaterial, BOOL_TRUE);
       m->addBoolField<Cls>(Tags::produce_material, &Cls::getProduceMaterial, &Cls::setProduceMaterial, BOOL_TRUE);
       m->addBoolField<Cls>(Tags::consume_capacity, &Cls::getConsumeCapacity, &Cls::setConsumeCapacity, BOOL_TRUE);
+      m->addBoolField<Cls>(Tags::feasible, &Cls::getFeasible, &Cls::setFeasible, BOOL_TRUE);
       HasSource::registerFields<Cls>(m);
       m->addPointerField<Cls, OperationPlan>(Tags::owner, &Cls::getOwner, &Cls::setOwner);
       m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, &Cls::setHidden, BOOL_FALSE, DONT_SERIALIZE);
@@ -2632,16 +2638,17 @@ class OperationPlan
       initType(metadata);
     }
 
-    static const short STATUS_APPROVED = 1;
-    static const short STATUS_CONFIRMED = 2;
+    static const unsigned short STATUS_APPROVED = 1;
+    static const unsigned short STATUS_CONFIRMED = 2;
     // TODO Conceptually this may not ideal: Rather than a
     // quantity-based distinction (between CONSUME_MATERIAL and
     // PRODUCE_MATERIAL) having a time-based distinction may be more
     // appropriate (between PROCESS_MATERIAL_AT_START and
     // PROCESS_MATERIAL_AT_END).
-    static const short CONSUME_MATERIAL = 4;
-    static const short PRODUCE_MATERIAL = 8;
-    static const short CONSUME_CAPACITY = 16;
+    static const unsigned short CONSUME_MATERIAL = 4;
+    static const unsigned short PRODUCE_MATERIAL = 8;
+    static const unsigned short CONSUME_CAPACITY = 16;
+    static const unsigned short FEASIBLE = 32;
 
     /** Counter of OperationPlans, which is used to automatically assign a
       * unique identifier for each operationplan.<br>
@@ -2709,9 +2716,8 @@ class OperationPlan
     /** Quantity. */
     double quantity = 0.0;
 
-    /** Is this operationplan locked? A locked operationplan doesn't accept
-      * any changes. This field is only relevant for top-operationplans. */
-    short flags = 0;
+    /** Flags on the operationplan: status, consumematerial, consumecapacity, infeasible. */
+    unsigned short flags = 0;
 
     /** Hidden, static field to store the location during import. */
     static Location* loc;
@@ -4204,7 +4210,7 @@ inline OperationPlan::AlternateIterator OperationPlan::getAlternates() const
 
 /** @brief This class holds the definition of distribution replenishments. */
 class ItemDistribution : public Object,
-  public Association<Location,Location,ItemDistribution>::Node, public HasSource
+  public Association<Location,Item,ItemDistribution>::Node, public HasSource
 {
   friend class OperationItemDistribution;
   friend class Item;
@@ -4249,7 +4255,7 @@ class ItemDistribution : public Object,
     /** Returns the item. */
     Item* getItem() const
     {
-      return it;
+      return getPtrB();
     }
 
     /** Update the item. */
@@ -4258,28 +4264,28 @@ class ItemDistribution : public Object,
     /** Returns the origin location. */
     Location* getOrigin() const
     {
-      return getPtrA();
+      return orig;
     }
 
     /** Returns the destination location. */
     Location* getDestination() const
     {
-      return getPtrB();
+      return getPtrA();
     }
 
     /** Updates the origin Location. This method can only be called once on each instance. */
     void setOrigin(Location* s)
     {
-      if (s)
-        setPtrA(s, s->getDistributionOrigins());
+      if (!s) return;
+      orig = s;
       HasLevel::triggerLazyRecomputation();
     }
 
     /** Updates the destination location. This method can only be called once on each instance. */
     void setDestination(Location* i)
     {
-      if (i)
-        setPtrB(i, i->getDistributionDestinations());
+      if (!i) return;
+      setPtrA(i, i->getDistributions());
       HasLevel::triggerLazyRecomputation();
     }
 
@@ -4287,6 +4293,7 @@ class ItemDistribution : public Object,
     void setResource(Resource* r)
     {
       res = r;
+      HasLevel::triggerLazyRecomputation();
     }
 
     /** Return the resource representing the distribution capacity. */
@@ -4409,8 +4416,8 @@ class ItemDistribution : public Object,
     }
 
   private:
-    /** Item being distributed. */
-    Item* it = nullptr;
+    /** Source location. */
+    Location* orig = nullptr;
 
     /** Shipping lead time. */
     Duration leadtime;
@@ -4426,9 +4433,6 @@ class ItemDistribution : public Object,
 
     /** Pointer to the head of the auto-generated shipping operation list.*/
     OperationItemDistribution* firstOperation = nullptr;
-
-    /** Pointer to the next ItemDistribution for the same item. */
-    ItemDistribution* next = nullptr;
 
     /** Resource to model distribution capacity. */
     Resource *res = nullptr;
@@ -4461,7 +4465,8 @@ class Item : public HasHierarchy<Item>, public HasDescription
     class demandIterator;
     friend class demandIterator;
 
-    typedef Association<Supplier,Item,ItemSupplier>::ListB supplierlist;
+    typedef Association<Supplier, Item, ItemSupplier>::ListB supplierlist;
+    typedef Association<Location, Item, ItemDistribution>::ListB distributionlist;
 
     /** Default constructor. */
     explicit Item() {}
@@ -4495,32 +4500,14 @@ class Item : public HasHierarchy<Item>, public HasDescription
       return suppliers.begin();
     }
 
-    /** Nested class to iterate of ItemDistribution objects of this item. */
-    class distributionIterator
+    const distributionlist& getDistributions() const
     {
-      private:
-        ItemDistribution* cur;
+      return distributions;
+    }
 
-      public:
-        /** Constructor. */
-        distributionIterator(const Item *c)
-        {
-          cur = c ? c->firstItemDistribution : nullptr;
-        }
-
-        /** Return current value and advance the iterator. */
-        ItemDistribution* next()
-        {
-          ItemDistribution* tmp = cur;
-          if (cur)
-            cur = cur->next;
-          return tmp;
-        }
-    };
-
-    distributionIterator getDistributionIterator() const
+    distributionlist::const_iterator getDistributionIterator() const
     {
-      return this;
+      return distributions.begin();
     }
 
     /** Nested class to iterate of Operation objects producing this item. */
@@ -4575,7 +4562,7 @@ class Item : public HasHierarchy<Item>, public HasDescription
       m->addDoubleField<Cls>(Tags::cost, &Cls::getCost, &Cls::setCost, 0);
       m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, &Cls::setHidden, BOOL_FALSE, DONT_SERIALIZE);
       m->addIteratorField<Cls, supplierlist::const_iterator, ItemSupplier>(Tags::itemsuppliers, Tags::itemsupplier, &Cls::getSupplierIterator, BASE + WRITE_OBJECT);
-      m->addIteratorField<Cls, distributionIterator, ItemDistribution>(Tags::itemdistributions, Tags::itemdistribution, &Cls::getDistributionIterator, BASE + WRITE_OBJECT);
+      m->addIteratorField<Cls, distributionlist::const_iterator, ItemDistribution>(Tags::itemdistributions, Tags::itemdistribution, &Cls::getDistributionIterator, BASE + WRITE_OBJECT);
       m->addIteratorField<Cls, operationIterator, Operation>(Tags::operations, Tags::operation, &Cls::getOperationIterator, DONT_SERIALIZE);
       m->addIteratorField<Cls, bufferIterator, Buffer>(Tags::buffers, Tags::buffer, &Cls::getBufferIterator, DONT_SERIALIZE);
       m->addIteratorField<Cls, demandIterator, Demand>(Tags::demands, Tags::demand, &Cls::getDemandIterator, DONT_SERIALIZE);
@@ -4594,8 +4581,8 @@ class Item : public HasHierarchy<Item>, public HasDescription
     /** This is a list of suppliers this item has. */
     supplierlist suppliers;
 
-    /** Maintain a list of ItemDistributions. */
-    ItemDistribution *firstItemDistribution = nullptr;
+    /** This is the list of itemdistributions of this item. */
+    distributionlist distributions;
 
     /** Maintain a list of buffers. */
     Buffer *firstItemBuffer = nullptr;
@@ -4743,6 +4730,7 @@ class ItemSupplier : public Object,
     void setResource(Resource* r)
     {
       res = r;
+      HasLevel::triggerLazyRecomputation();
     }
 
     /** Return the resource representing the supplier capacity. */
@@ -4878,6 +4866,8 @@ class OperationItemDistribution : public OperationFixedTime
     Buffer* getOrigin() const;
 
     Buffer* getDestination() const;
+
+    static Operation* findOrCreate(ItemDistribution*, Buffer*, Buffer*);
 
     /** Constructor. */
     explicit OperationItemDistribution(ItemDistribution*, Buffer*, Buffer*);
@@ -5019,6 +5009,8 @@ class Buffer : public HasHierarchy<Buffer>, public HasLevel,
       *   - This method can be incrementally build up the producing operation.
       */
     void buildProducingOperation();
+
+    bool hasConsumingFlows() const;
 
     /** Return the decoupled lead time of this buffer. */
     virtual Duration getDecoupledLeadTime(double qty, bool recurse_ip_buffers = true) const;
@@ -8138,7 +8130,7 @@ class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand
     }
 
     /** Returns the current setup of the resource.<br>
-      * When the argument is true (= default) the current setup is returned.<br>
+      * When the argument is true the setup of this loadplan is returned.
       * When the argument is false the setup just before the loadplan is returned.
       */
     SetupEvent* getSetup(bool) const;
@@ -8779,7 +8771,7 @@ class Plan : public Plannable, public Object
       m->addIteratorField<Plan, Operation::loadlist::iterator, Load>(Tags::loads, Tags::load); // Only for XML import
       m->addIteratorField<Plan, Operation::flowlist::iterator, Flow>(Tags::flows, Tags::flow); // Only for XML import
       m->addIteratorField<Plan, Item::supplierlist::iterator, ItemSupplier>(Tags::itemsuppliers, Tags::itemsupplier); // Only for XML import
-      m->addIteratorField<Plan, Location::distributionoriginlist::iterator, ItemDistribution>(Tags::itemdistributions, Tags::itemdistribution); // Only for XML import
+      m->addIteratorField<Plan, Location::distributionlist::iterator, ItemDistribution>(Tags::itemdistributions, Tags::itemdistribution); // Only for XML import
       m->addIteratorField<Cls, OperationPlan::iterator, OperationPlan>(Tags::operationplans, Tags::operationplan, &Plan::getOperationPlans, BASE + WRITE_OBJECT);
     }
 };
@@ -8839,10 +8831,15 @@ class ProblemBeforeCurrent : public Problem
       if (oper)
         return DateRange(start, end);
       OperationPlan *o = static_cast<OperationPlan*>(getOwner());
-      if (o->getEnd() > Plan::instance().getCurrent())
-        return DateRange(o->getStart(), Plan::instance().getCurrent());
+      if (o->getConfirmed())
+        return DateRange(o->getEnd(), Plan::instance().getCurrent());
       else
-        return o->getDates();
+      {
+        if (o->getEnd() > Plan::instance().getCurrent())
+          return DateRange(o->getStart(), Plan::instance().getCurrent());
+        else
+          return o->getDates();
+      }
     }
 
     /** Return a reference to the metadata structure. */
@@ -9790,6 +9787,7 @@ class CommandMoveOperationPlan : public Command
     /** Commit the changes. */
     virtual void commit()
     {
+      opplan->mergeIfPossible();
       opplan = nullptr;
     }
 

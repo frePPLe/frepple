@@ -496,6 +496,13 @@ class User(AbstractUser):
         pref.save(update_fields=['value'], using=database)
 
 
+  def getMaxLoglevel(self, database=DEFAULT_DB_ALIAS):
+    '''
+    Return the maximum log level of the planning engine this user can activate.
+    '''
+    return 999
+
+
 class UserPreference(models.Model):
 
   class UserPreferenceManager(models.Manager):

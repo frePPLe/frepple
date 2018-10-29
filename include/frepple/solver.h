@@ -32,7 +32,8 @@ namespace frepple
 {
 
 
-/** @brief A lightweight solver class to remove excess material.
+
+/** @brief A solver class to remove excess material.
   *
   * The class works in a single thread only.
   */
@@ -370,9 +371,6 @@ class SolverCreate : public Solver
       */
     static const short FENCE = 8;
 
-    /** Used internally to avoid inefficient loops. */
-    static const unsigned short MAX_LOOP = 500;
-
     int getCluster() const
     {
       return cluster;
@@ -578,6 +576,24 @@ class SolverCreate : public Solver
       iteration_max = d;
     }
 
+    /** Return the maximum number of tries allowed to look for LATER
+    * resource capacity. If can't find a capacity within this limit, we
+    * consider it unplannable.
+    */
+    unsigned long getResourceIterationMax() const
+    {
+      return resource_iteration_max;
+    }
+
+    /** Update the maximum number of tries allowed to look for LATER
+    * resource capacity. If can't find a capacity within this limit, we
+    * consider it unplannable.
+    */
+    void setResourceIterationMax(unsigned long d)
+    {
+      resource_iteration_max = d;
+    }
+
     /** Specify a Python function that is called before solving a flow. */
     void setUserExitFlow(PythonFunction n)
     {
@@ -732,6 +748,7 @@ class SolverCreate : public Solver
       m->addBoolField<Cls>(SolverCreate::tag_rotateresources, &Cls::getRotateResources, &Cls::setRotateResources);
       m->addBoolField<Cls>(SolverCreate::tag_planSafetyStockFirst, &Cls::getPlanSafetyStockFirst, &Cls::setPlanSafetyStockFirst);
       m->addUnsignedLongField<Cls>(SolverCreate::tag_iterationmax, &Cls::getIterationMax, &Cls::setIterationMax);
+      m->addUnsignedLongField<Cls>(SolverCreate::tag_resourceiterationmax, &Cls::getResourceIterationMax, &Cls::setResourceIterationMax);
       m->addIntField<Cls>(Tags::cluster, &Cls::getCluster, &Cls::setCluster);
     }
 
@@ -750,6 +767,7 @@ class SolverCreate : public Solver
     static const Keyword tag_planSafetyStockFirst;
     static const Keyword tag_administrativeleadtime;
     static const Keyword tag_iterationmax;
+    static const Keyword tag_resourceiterationmax;
 
     /** Type of plan to be created. */
     short plantype = 1;
@@ -795,6 +813,12 @@ class SolverCreate : public Solver
       * unplannable.
       */
     unsigned long iteration_max = 0;
+
+    /** Maximum number of tries allowed to look for LATER
+      * resource capacity. If can't find a capacity within this limit, we
+      * consider it unplannable.
+      */
+    unsigned long resource_iteration_max = 500;
 
     /** A Python callback function that is called for each alternate
       * flow. If the callback function returns false, that alternate
@@ -918,14 +942,14 @@ class SolverCreate : public Solver
       * It stores the solver state maintained by each solver thread.
       * @see SolverCreate
       */
-    class SolverMRPdata
+    class SolverData
     {
         friend class SolverCreate;
       public:
         static void runme(void *args)
         {
           CommandManager mgr;
-          SolverCreate::SolverMRPdata* x = static_cast<SolverCreate::SolverMRPdata*>(args);
+          SolverCreate::SolverData* x = static_cast<SolverCreate::SolverData*>(args);
           x->setCommandManager(&mgr);
           x->commit();
           delete x;
@@ -938,10 +962,10 @@ class SolverCreate : public Solver
         }
 
         /** Constructor. */
-        SolverMRPdata(SolverCreate* s=nullptr, int c=0, deque<Demand*>* d=nullptr);
+        SolverData(SolverCreate* s=nullptr, int c=0, deque<Demand*>* d=nullptr);
 
         /** Destructor. */
-        ~SolverMRPdata();
+        ~SolverData();
 
         /** Verbose mode is inherited from the solver. */
         unsigned short getLogLevel() const
@@ -974,7 +998,7 @@ class SolverCreate : public Solver
 
         bool getVerbose() const
         {
-          throw LogicException("Use the method SolverMRPdata::getLogLevel() instead of SolverMRPdata::getVerbose()");
+          throw LogicException("Use the method SolverData::getLogLevel() instead of SolverData::getVerbose()");
         }
 
         /** Add a new state to the status stack. */
@@ -990,7 +1014,7 @@ class SolverCreate : public Solver
           * cluster. This method is only intended to be called from the
           * commit() method.
           * @see SolverCreate::planSafetyStockFirst
-          * @see SolverCreate::SolverMRPdata::commit
+          * @see SolverCreate::SolverData::commit
           */
         void solveSafetyStock(SolverCreate*);
 
@@ -1050,7 +1074,7 @@ class SolverCreate : public Solver
     /** When autocommit is switched off, this command structure will contain
       * all plan changes.
       */
-    SolverMRPdata commands;
+    SolverData commands;
 
     /** Command manager used when autocommit is switched off. */
     CommandManager mgr;
@@ -1060,7 +1084,7 @@ class SolverCreate : public Solver
       * It calls the checkOperation method to check the feasibility
       * of the new operationplan.
       */
-    OperationPlan* createOperation(const Operation*, SolverMRPdata*, bool propagate = true, bool start_or_end = true);
+    OperationPlan* createOperation(const Operation*, SolverData*, bool propagate = true, bool start_or_end = true);
 
     /** This function will check all constraints for an operationplan
       * and propagate it upstream. The check does NOT check eventual
@@ -1068,17 +1092,17 @@ class SolverCreate : public Solver
       * The return value is a flag whether the operationplan is
       * acceptable (sometimes in reduced quantity) or not.
       */
-    bool checkOperation(OperationPlan*, SolverMRPdata& data);
+    bool checkOperation(OperationPlan*, SolverData& data);
 
     /** Verifies whether this operationplan violates the leadtime
       * constraints. */
-    bool checkOperationLeadTime(OperationPlan*, SolverMRPdata&, bool);
+    bool checkOperationLeadTime(OperationPlan*, SolverData&, bool);
 
     /** Verifies whether this operationplan violates the capacity constraint.<br>
       * In case it does the operationplan is moved to an earlier or later
       * feasible date.
       */
-    void checkOperationCapacity(OperationPlan*, SolverMRPdata&);
+    void checkOperationCapacity(OperationPlan*, SolverData&);
 
   public:
     /** Scan the operationplans that are about to be committed to verify that
@@ -1102,7 +1126,7 @@ class SolverCreate : public Solver
     bool hasOperationPlans(CommandList*);
 
     /** Get a reference to the command list. */
-    SolverMRPdata& getCommands()
+    SolverData& getCommands()
     {
       return commands;
     }

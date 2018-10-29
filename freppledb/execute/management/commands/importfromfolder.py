@@ -37,7 +37,7 @@ from django.template import Template, RequestContext
 
 from freppledb.execute.models import Task
 from freppledb.common.middleware import _thread_locals
-from freppledb.common.report import GridReport
+from freppledb.common.report import GridReport, matchesModelName
 from freppledb import VERSION
 from freppledb.common.dataload import parseCSVdata, parseExcelWorksheet
 from freppledb.common.models import User
@@ -143,19 +143,11 @@ class Command(BaseCommand):
           model = None
           contenttype_id = None
           for m, ct in all_models:
-            # Try with translated model names
-            if filename0.lower() in (m._meta.model_name.lower(), m._meta.verbose_name.lower(), m._meta.verbose_name_plural.lower()):
+            if matchesModelName(filename0, m):
               model = m
               contenttype_id = ct
               logger.info("%s Matched a model to file: %s" % (datetime.now().replace(microsecond=0), ifile))
               break
-            # Try with English model names
-            with translation.override('en'):
-              if filename0.lower() in (m._meta.model_name.lower(), m._meta.verbose_name.lower(), m._meta.verbose_name_plural.lower()):
-                model = m
-                contenttype_id = ct
-                logger.info("%s Matched a model to file: %s" % (datetime.now().replace(microsecond=0), ifile))
-                break
 
           if not model or model in EXCLUDE_FROM_BULK_OPERATIONS:
             logger.info("%s Ignoring data in file: %s" % (datetime.now().replace(microsecond=0), ifile))

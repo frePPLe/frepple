@@ -166,7 +166,7 @@ Here are the steps to get a fully working environment.
 
         DATABASES = {
           'default': {
-            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'ENGINE': 'django.db.backends.postgresql',
             'NAME': 'frepple',
             'USER': 'frepple',     # Role name when using md5 authentication.
                                    # Leave as an empty string when using peer or

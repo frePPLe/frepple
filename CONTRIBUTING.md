@@ -19,7 +19,7 @@
 
 #### **Do you want to update translations or add a new language?**
 
-* This process is documented [here](https://frepple.com/docs/4.2/developer-guide/user-interface/translating-the-user-interface.html)
+* This process is documented [here](https://frepple.com/docs/4.4/developer-guide/user-interface/translating-the-user-interface.html)
 
 #### **Any other questions?**
 

@@ -1263,6 +1263,10 @@ class DemandList(GridReport):
       'item__owner', title=string_concat(_('item'), ' - ', _('owner')),
       field_name='item__owner__name', initially_hidden=True, editable=False
       ),
+    GridFieldCurrency(
+      'item__cost', title=string_concat(_('item'), ' - ', _('cost')),
+      initially_hidden=True, editable=False
+      ),
     GridFieldText(
       'item__source', title=string_concat(_('item'), ' - ', _('source')),
       initially_hidden=True, editable=False
@@ -1628,6 +1632,7 @@ class ManufacturingOrderList(OperationPlanMixin, GridReport):
       'resource': "(select json_agg(json_build_array(resource_id, quantity)) from (select resource_id, round(quantity,2) quantity from operationplanresource where operationplan_id = operationplan.id order by quantity desc limit 10) res)",
       'setup_duration': "(operationplan.plan->'setup')",
       'setup_end': "(operationplan.plan->>'setupend')",
+      'feasible': "coalesce((operationplan.plan->>'feasible')::boolean, true)",
     })
 
 
@@ -1647,7 +1652,7 @@ class ManufacturingOrderList(OperationPlanMixin, GridReport):
     GridFieldText('demand', title=_('demands'), editable=False, search=False, sortable=False, formatter='demanddetail', extra='"role":"input/demand"'),
     GridFieldText('material', title=_('materials'), editable=False, search=False, sortable=False, initially_hidden=True, formatter='listdetail', extra='"role":"input/item"'),
     GridFieldText('resource', title=_('resources'), editable=False, search=False, sortable=False, initially_hidden=True, formatter='listdetail', extra='"role":"input/resource"'),
-    GridFieldInteger('owner', title=_('owner'), extra='"formatoptions":{"defaultValue":""}', initially_hidden=True),
+    GridFieldInteger('owner', title=_('owner'), field_name='owner__id', extra='"formatoptions":{"defaultValue":""}', initially_hidden=True),
     GridFieldText('source', title=_('source')),
     GridFieldLastModified('lastmodified'),
     GridFieldText('operation__description', title=string_concat(_('operation'), ' - ', _('description')), initially_hidden=True),
@@ -1668,8 +1673,9 @@ class ManufacturingOrderList(OperationPlanMixin, GridReport):
     GridFieldChoice('operation__search', title=string_concat(_('operation'), ' - ', _('search mode')), choices=searchmode, initially_hidden=True),
     GridFieldText('operation__source', title=string_concat(_('operation'), ' - ', _('source')), initially_hidden=True),
     GridFieldLastModified('operation__lastmodified', title=string_concat(_('operation'), ' - ', _('last modified')), initially_hidden=True),
-    GridFieldDuration('setup_duration', title=_('setup time'), initially_hidden=True),
-    GridFieldDateTime('setup_end', title=_('setup end date'), initially_hidden=True),
+    GridFieldDuration('setup_duration', title=_('setup time'), initially_hidden=True, search=False),
+    GridFieldDateTime('setup_end', title=_('setup end date'), initially_hidden=True, search=False),
+    GridFieldBool('feasible', title=_('feasible'), editable=False, initially_hidden=True, search=False),
     # Optional fields referencing the item
     GridFieldText(
       'operation__item__description', title=string_concat(_('item'), ' - ', _('description')),
@@ -1828,6 +1834,7 @@ class DistributionOrderList(OperationPlanMixin, GridReport):
     q = reportclass.operationplanExtraBasequery(q, request)
     return q.extra(select={
       'total_cost': "cost*quantity",
+      'feasible': "coalesce((operationplan.plan->>'feasible')::boolean, true)",
       })
 
   rows = (
@@ -1851,6 +1858,7 @@ class DistributionOrderList(OperationPlanMixin, GridReport):
     GridFieldText('demand', title=_('demands'), editable=False, search=False, sortable=False, formatter='demanddetail', extra='"role":"input/demand"'),
     GridFieldText('source', title=_('source')),
     GridFieldLastModified('lastmodified'),
+    GridFieldBool('feasible', title=_('feasible'), editable=False, initially_hidden=True, search=False),
     # Optional fields referencing the item
     GridFieldText(
       'item__description', title=string_concat(_('item'), ' - ', _('description')),
@@ -2073,6 +2081,7 @@ class PurchaseOrderList(OperationPlanMixin, GridReport):
     return q.extra(select={
       'total_cost': "cost*quantity",
       'unit_cost': "coalesce((select max(cost) from itemsupplier where itemsupplier.item_id = operationplan.item_id and itemsupplier.location_id = operationplan.location_id and itemsupplier.supplier_id = operationplan.supplier_id), (select cost from item where item.name = operationplan.item_id))",
+      'feasible': "coalesce((operationplan.plan->>'feasible')::boolean, true)",
       })
 
   rows = (
@@ -2092,6 +2101,7 @@ class PurchaseOrderList(OperationPlanMixin, GridReport):
     GridFieldDuration('delay', title=_('delay'), editable=False, initially_hidden=True, extra='"formatoptions":{"defaultValue":""}, "summaryType":"max"'),
     GridFieldText('demand', title=_('demands'), editable=False, search=False, sortable=False, formatter='demanddetail', extra='"role":"input/demand"'),
     GridFieldText('source', title=_('source')),
+    GridFieldBool('feasible', title=_('feasible'), editable=False, initially_hidden=True, search=False),
     GridFieldLastModified('lastmodified'),
     # Optional fields referencing the item
     GridFieldText(
@@ -2454,12 +2464,19 @@ class OperationPlanDetail(View):
         if opplan.plan and 'pegging' in opplan.plan:
           res["pegging_demand"] = []
           for d, q in opplan.plan['pegging'].items():
+            try:
+              obj = Demand.objects.all().using(request.database).only("name", "item", "due").get(name=d)
+              dmd = obj.name
+              due = obj.due.strftime("%Y-%m-%dT%H:%M:%S")
+              item = obj.item.name
+            except Demand.DoesNotExist:
+              # Looks like this demand was deleted since the plan was generated
+              continue
             res["pegging_demand"].append({
-              "demand": {"name": d},
-              "quantity": q,
-              "due": Demand.objects.all().using(request.database).get(name=d).due.strftime("%Y-%m-%dT%H:%M:%S")
+              "demand": {"name": dmd, "item": {"name": item}, "due": due},
+              "quantity": q
               })
-          res["pegging_demand"].sort(key=lambda f: (f['demand']['name'], f['due']))
+          res["pegging_demand"].sort(key=lambda f: (f['demand']['name'], f['demand']['due']))
         if opplan.operation:
           res['operation'] = {
             "name": opplan.operation.name,

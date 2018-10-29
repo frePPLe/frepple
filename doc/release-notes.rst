@@ -1,14 +1,84 @@
 Release notes
 -------------
 
-4.4.1 (Upcoming release)
+4.4.3 (Upcoming release)
 ========================
+
+.. rubric:: Production planning
+
+- Bug fix: calculation of operation time for 0-duration operations was wrong in some situations.
+
+4.4.2 (2018/10/20)
+==================
+
+.. rubric:: Production planning
+
+- Performance optimization for models with post-operation times by avoiding
+  ineffecient search loops.
+
+- The naming convention for distribution operations is changed from
+  'Ship ITEM from ITEM @ SOURCE to ITEM @ DESTINATION' to
+  the simpler and shorter 'Ship ITEM from SOURCE to DESTINATION'.
+
+- Bug fix for a specific corner case where material requirements for work in progress
+  aren't propagated at all.
+  
+- New parameter plan.resourceiterationmax allows user control over the number of searches
+  for a free capacity slot on a resource. Contributed by Mateusz Knapik.
+ 
+.. rubric:: User interface
+
+- Added field net duration to the
+  `resource detail report <user-guide/user-interface/plan-analysis/resource-detail-report.html>`_
+  
+- Added fields total in progress, work in progress MO, on order PO, in transit DO to the
+  `inventory report <user-guide/user-interface/plan-analysis/inventory-report.html>`_
+  
+- Bug fix: Deleting an object from the edit form in a scenario was incorrectly
+  deleting the object in the production instead.
+  
+- | The `import data files from folder <user-guide/command-reference.html#importfromfolder>`_
+    and `import a spreadsheet <user-guide/command-reference.html#importworkbook>`_ functionalities
+    now ignores spaces, dashes and underscores in the recognition of the content type from the 
+    file or worksheet name.
+  | So far, only a worksheet called 'sales order' was recognized as containing sales order data.
+    Now "sales-order", "sales_order" and "salesorder" will also be recognized.
+    
+.. rubric:: Third party components
+
+- | The Ubuntu binaries will be compiled on Ubuntu 18 LTS from now onwards. 
+  | Compiling for Ubuntu 16 LTS remains fully supported, but we recommend to upgrade Ubuntu.
+  
+4.4.1 (2018/09/10)
+==================
 
 .. rubric:: Production planning
 
 - Bug fix in the calculation of the lateness/earliness of a manufacturing
   order, purchase order or distribution order. The calculation was incorrectly
   based on the start date rather the end date of the operation in question. 
+
+- A new field "feasible" is now added to the
+  `inventory detail report <user-guide/user-interface/plan-analysis/inventory-detail-report.html>`_,
+  `resource detail report <user-guide/user-interface/plan-analysis/resource-detail-report.html>`_,
+  `operation detail report <user-guide/user-interface/plan-analysis/operation-detail-report.html>`_,
+  `purchase order screen <user-guide/model-reference/purchase-orders.html>`_,
+  `distribution order screen <user-guide/model-reference/distribution-orders.html>`_ and
+  `manufacturing order screen <user-guide/model-reference/manufacturing-orders.html>`_.
+  The read-only boolean field indicates whether the order is violating any material, lead time or capacity
+  constraints. This is useful in interpreting the results of an unconstrained plan.
+  
+- | The criterion for `before current problems <user-guide/user-interface/plan-analysis/problem-report.html>`_
+    is updated for confirmed orders. The change should result in less problems that are 
+    also more meaningful to the users.
+  | For orders in the status approved or proposed a before-current problem is created when
+    the start date is in the past.
+  | For orders in the status confirmed the criterion the problem is now created when the
+    end date is in the past, i.e. the order is overdue and should have been finished by now.
+
+- The natural key in the `suboperation table <user-guide/model-reference/suboperations.html>`_
+  is changed from operation + suboperation + operation to operation + suboperation +
+  effective start date.
 
 .. rubric:: User interface
 
@@ -25,13 +95,15 @@ Release notes
 .. rubric:: Third party components
 
 - | Support for Ubuntu 18 LTS. 
-  | Ubuntu 16LTS remains fully supported.
+  | Ubuntu 16 LTS remains fully supported.
   
 - | Windows installer now uses Python 3.6.
   | Python 3.5 remains fully supported.
 
 4.4.0 (2018/08/02)
 ==================
+
+The Windows installer of this version isn't working correctly due to some packaging mistakes.
 
 .. rubric:: Production planning
   

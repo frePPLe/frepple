@@ -313,7 +313,9 @@ pair<double, double> FlowPlan::setQuantity(
   }
   else
   {
-    // Normal flows with a proportional size
+    // Proportional or transfer batch flows
+    // For transfer batch flowplans the argument quantity is expected to be the
+    // total quantity of all batches.
     if (mode == 2 || (mode == 0 && getFlow()->getType() == *FlowEnd::metadata))
       opplan_quantity = oper->getOperation()->setOperationPlanParameters(
         oper, (quantity - getFlow()->getQuantityFixed()) / getFlow()->getQuantity(),

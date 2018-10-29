@@ -65,6 +65,10 @@ int OperationPlan::initialize()
     "calculateOperationTime", &calculateOperationTimePython, METH_VARARGS,
     "add or subtract a duration of operation hours from a date"
     );
+  x.addMethod(
+    "updateFeasible", &updateFeasiblePython, METH_NOARGS,
+    "updates the flag whether this operationplan is feasible or not"
+  );
   const_cast<MetaClass*>(metadata)->pythonClass = x.type_object();
   return x.typeReady();
 }
@@ -115,7 +119,7 @@ void OperationPlan::setChanged(bool b)
 
 void OperationPlan::restore(const OperationPlanState& x)
 {
-  getOperation()->setOperationPlanParameters(this, x.quantity, x.start, x.end, true);
+  setStartEndAndQuantity(x.start, x.end, x.quantity);
   if (quantity != x.quantity) quantity = x.quantity;
   //assert(dates.getStart() == x.start || x.start != x.end);
   //assert(dates.getEnd() == x.end || x.start != x.end);
@@ -579,7 +583,7 @@ Object* OperationPlan::createOperationPlan(
       // Make sure no problem is reported when item distribution priority is 0 (Rebalancing)
       // Checking that no item distribution in reverse mode exists
       bool found = false;
-      Item::distributionIterator itemdist_iter = (static_cast<Item*>(itemval))->getDistributionIterator();
+      auto itemdist_iter = (static_cast<Item*>(itemval))->getDistributionIterator();
       while (ItemDistribution *i = itemdist_iter.next())
       {
         if (i->getOrigin() == static_cast<ItemDistribution*>(itemdistributionval)->getDestination()
@@ -828,6 +832,9 @@ bool OperationPlan::activate(bool createsubopplans, bool use_start)
   // If we used the lazy creator, the flow- and loadplans have not been
   // created yet. We do it now...
   createFlowLoads();
+
+  // Update the feasibility flag.
+  updateFeasible();
 
   // Mark the operation to detect its problems
   // Note that a single operationplan thus retriggers the problem computation
@@ -1308,6 +1315,97 @@ OperationPlan::OperationPlan(const OperationPlan& src,
 }
 
 
+bool OperationPlan::mergeIfPossible()
+{
+  // Verify a merge with another operationplan.
+  // TODO The logic duplicates much of OperationFixedTime::extraInstantiate. Combine as single code.
+  // See if we can consolidate this operationplan with an existing one.
+  // Merging is possible only when all the following conditions are met:
+  //   - it is a subclass of a fixedtime operation
+  //   - it doesn't load any resources of type default
+  //   - both operationplans are proposed
+  //   - both operationplans have no owner
+  //     or both have an owner of the same operation and is of type operation_alternate
+  //   - start and end date of both operationplans are exactly the same
+  //   - demand of both operationplans are the same
+  //   - maximum operation size is not exceeded
+  //   - alternate flowplans need to be on the same alternate
+  if (!getProposed())
+    return false;
+
+  if (oper->getType() != *OperationFixedTime::metadata
+    && oper->getType() != *OperationItemDistribution::metadata
+    && oper->getType() != *OperationItemSupplier::metadata
+    )
+    return false;
+
+  // Verify we load no resources of type "default".
+  // It's ok to merge operationplans which load "infinite" or "buckets" resources.
+  for (Operation::loadlist::const_iterator i = oper->getLoads().begin(); i != oper->getLoads().end(); ++i)
+    if (i->getResource()->getType() == *ResourceDefault::metadata)
+      return false;
+
+  // Loop through candidates
+  for (OperationPlan::iterator x(oper); x != OperationPlan::end(); ++x)
+  {
+    if (x->getStart() > getStart())
+      // No candidates will be found in what follows
+      return false;
+    if (x->getDates() != getDates() || &*x == this)
+      continue;
+    if (x->getDemand() != getDemand())
+      continue;
+    if (!x->getProposed())
+      continue;
+    if (x->getQuantity() + getQuantity() > oper->getSizeMaximum() + ROUNDING_ERROR)
+      continue;
+    if (getOwner())
+    {
+      // Both must have the same owner operation of type alternate
+      if (!x->getOwner())
+        continue;
+      else if (getOwner()->getOperation() != x->getOwner()->getOperation())
+        continue;
+      else if (getOwner()->getOperation()->getType() != *OperationAlternate::metadata)
+        continue;
+      else if (getOwner()->getDemand() != x->getOwner()->getDemand())
+        continue;
+    }
+
+    // Check that the flowplans are on identical alternates and not of type fixed
+    OperationPlan::FlowPlanIterator fp1 = beginFlowPlans();
+    OperationPlan::FlowPlanIterator fp2 = x->beginFlowPlans();
+    if (fp1 == endFlowPlans() || fp2 == endFlowPlans())
+      // Operationplan without flows are already deleted. Leave them alone.
+      continue;
+    bool ok = true;
+    while (fp1 != endFlowPlans())
+    {
+      if (fp1->getBuffer() != fp2->getBuffer()
+        || fp1->getFlow()->getQuantityFixed()
+        || fp2->getFlow()->getQuantityFixed())
+        // No merge possible
+      {
+        ok = false;
+        break;
+      }
+      ++fp1;
+      ++fp2;
+    }
+    if (!ok)
+      continue;
+
+    // All checks passed, we can merge!
+    x->setQuantity(x->getQuantity() + getQuantity());
+    if (getOwner())
+      setOwner(nullptr);
+    delete this;
+    return true;
+  }
+  return false;
+}
+
+
 void OperationPlan::scanSetupTimes()
 {
   for (auto ldplan = beginLoadPlans(); ldplan != endLoadPlans(); ++ldplan)
@@ -1465,7 +1563,16 @@ void OperationPlan::deleteOperationPlans(Operation* o, bool deleteLockedOpplans)
   for (OperationPlan *opplan = o->first_opplan; opplan; )
   {
     OperationPlan *tmp = opplan;
+    
+    // Advance to the next operation plan
     opplan = opplan->next;
+    if (tmp->getOwner())
+      // Deleting a child operationplan will delete the parent.
+      // It is possible that also the next operationplan in the list gets deleted by the 
+      // delete statement that follows.
+      while (opplan && tmp->getOwner() == opplan->getOwner())
+        opplan = opplan->next;
+
     // Note that the deletion of the operationplan also updates the opplan list
     if (deleteLockedOpplans || tmp->getProposed())
       delete tmp;

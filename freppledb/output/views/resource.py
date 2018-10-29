@@ -27,7 +27,7 @@ from freppledb.common.models import Parameter
 from freppledb.common.report import GridReport, GridPivot, GridFieldCurrency
 from freppledb.common.report import GridFieldLastModified, GridFieldDuration
 from freppledb.common.report import GridFieldDateTime, GridFieldInteger
-from freppledb.common.report import GridFieldNumber, GridFieldText
+from freppledb.common.report import GridFieldNumber, GridFieldText, GridFieldBool
 
 
 class OverviewReport(GridPivot):
@@ -60,6 +60,8 @@ class OverviewReport(GridPivot):
     GridFieldText('location__subcategory', title=string_concat(_('location'), ' - ', _('subcategory')), editable=False, initially_hidden=True),
     GridFieldText('location__available', title=string_concat(_('location'), ' - ', _('available')), editable=False, field_name='location__available__name', formatter='detail', extra='"role":"input/calendar"', initially_hidden=True),
     GridFieldText('avgutil', title=_('utilization %'), field_name='util', formatter='percentage', editable=False, width=100, align='center', search=False),
+    GridFieldText('available_calendar', title=_('available calendar'), editable=False, field_name='available__name', formatter='detail', extra='"role":"input/calendar"', initially_hidden=True),
+    GridFieldText('owner', title=_('owner'), editable=False, field_name='owner__name', formatter='detail', extra='"role":"input/resource"', initially_hidden=True),
     )
   crosses = (
     ('available', {
@@ -129,7 +131,7 @@ class OverviewReport(GridPivot):
         res.type, res.maximum, res.maximum_calendar_id, res.cost, res.maxearly,
         res.setupmatrix_id, res.setup, location.name, location.description,
         location.category, location.subcategory, location.available_id,
-        coalesce(max(plan_summary.avg_util),0) as avgutil,
+        coalesce(max(plan_summary.avg_util),0) as avgutil, res.available_id available_calendar, res.owner_id,
         %s
         d.bucket as col1, d.startdate as col2,
         coalesce(sum(out_resourceplan.available),0) * (case when res.type = 'buckets' then 1 else %f end) as available,
@@ -166,9 +168,9 @@ class OverviewReport(GridPivot):
       on res.name = plan_summary.resource
       -- Grouping and sorting
       group by res.name, res.description, res.category, res.subcategory,
-        res.type, res.maximum, res.maximum_calendar_id, res.cost, res.maxearly,
+        res.type, res.maximum, res.maximum_calendar_id, res.available_id, res.cost, res.maxearly,
         res.setupmatrix_id, res.setup, location.name, location.description,
-        location.category, location.subcategory, location.available_id,
+        location.category, location.subcategory, location.available_id, res.owner_id,
         %s d.bucket, d.startdate
       order by %s, d.startdate
       ''' % (
@@ -197,6 +199,8 @@ class OverviewReport(GridPivot):
         'location__category': row[13], 'location__subcategory': row[14],
         'location__available': row[15],
         'avgutil': round(row[16], 2),
+        'available_calendar': row[17],
+        'owner': row[18],
         'bucket': row[numfields-6],
         'startdate': row[numfields-5].date(),
         'available': round(row[numfields-4], 1),
@@ -242,8 +246,10 @@ class DetailReport(OperationPlanMixin, GridReport):
     base = reportclass.operationplanExtraBasequery(base, request)
     return base.select_related().extra(select={
       'opplan_duration': "(operationplan.enddate - operationplan.startdate)",
+      'opplan_net_duration': "(operationplan.enddate - operationplan.startdate - coalesce((operationplan.plan->>'unavailable')::int * interval '1 second', interval '0 second'))",
       'setup_end': "(operationplan.plan->>'setupend')",
-      'setup_duration': "(operationplan.plan->>'setup')"
+      'setup_duration': "(operationplan.plan->>'setup')",
+      'feasible': "coalesce((operationplan.plan->>'feasible')::boolean, true)"
       })
 
   @classmethod
@@ -302,6 +308,7 @@ class DetailReport(OperationPlanMixin, GridReport):
     GridFieldDateTime('operationplan__startdate', title=_('start date'), editable=False, extra='"formatoptions":{"srcformat":"Y-m-d H:i:s","newformat":"Y-m-d H:i:s", "defaultValue":""}, "summaryType":"min"'),
     GridFieldDateTime('operationplan__enddate', title=_('end date'), editable=False, extra='"formatoptions":{"srcformat":"Y-m-d H:i:s","newformat":"Y-m-d H:i:s", "defaultValue":""}, "summaryType":"max"'),
     GridFieldDuration('opplan_duration', title=_('duration'), editable=False, extra='"formatoptions":{"defaultValue":""}, "summaryType":"sum"'),
+    GridFieldDuration('opplan_net_duration', title=_('net duration'), editable=False, extra='"formatoptions":{"defaultValue":""}, "summaryType":"sum"'),
     GridFieldNumber('operationplan__quantity', title=_('quantity'), editable=False, extra='"formatoptions":{"defaultValue":""}, "summaryType":"sum"'),
     GridFieldText('operationplan__status', title=_('status'), editable=False),
     GridFieldNumber('operationplan__criticality', title=_('criticality'), editable=False, extra='"formatoptions":{"defaultValue":""}, "summaryType":"min"'),
@@ -312,6 +319,7 @@ class DetailReport(OperationPlanMixin, GridReport):
     GridFieldText('setup', title=_('setup'), editable=False, initially_hidden=True),
     GridFieldDateTime('setup_end', title=_('setup end date'), editable=False, initially_hidden=True),
     GridFieldDuration('setup_duration', title=_('setup duration'), editable=False, initially_hidden=True),
+    GridFieldBool('feasible', title=_('feasible'), editable=False, initially_hidden=True, search=False),
     # Optional fields referencing the item
     GridFieldText(
       'operationplan__operation__item__description', initially_hidden=True, editable=False,

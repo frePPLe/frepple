@@ -44,7 +44,7 @@ are considered during plan creation.
 The forecast calculated by the forecast solver is displayed in the forecast report
 and in the forecast editor.
 
-The ROQ and safety stock values calculated by the inventory planning solver can be 
+The reorder quantity and safety stock values calculated by the inventory planning solver can be 
 found in the Inventory Planning screen under Inventory/Inventory Planning menu.
 
 The generated distribution orders (when applicable) can be found under the Inventory/Distribution Orders menu.

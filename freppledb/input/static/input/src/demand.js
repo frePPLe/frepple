@@ -202,7 +202,7 @@ function DemandFactory ($http, getURLprefix, Location, Item, Customer) {
         if (debug)
           console.log("Demand quote '" + dmd.name + "': ", response.data);
         dmd.extend(response.data.demands[0]);
-        //return dmd;
+        return dmd;
         });
   };
 

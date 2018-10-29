@@ -36,7 +36,7 @@ void SolverCreate::solve(const Demand* l, void* v)
 {
   typedef list<pair<Location* , double > > SortedLocation;
   // Set a bookmark at the current command
-  SolverMRPdata* data = static_cast<SolverMRPdata*>(v);
+  SolverData* data = static_cast<SolverData*>(v);
   CommandManager::Bookmark* topcommand = data->getCommandManager()->setBookmark();
 
   // Create a state stack

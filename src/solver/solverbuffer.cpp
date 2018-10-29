@@ -35,7 +35,7 @@ namespace frepple
 void SolverCreate::solve(const Buffer* b, void* v)
 {
   // Call the user exit
-  SolverMRPdata* data = static_cast<SolverMRPdata*>(v);
+  SolverData* data = static_cast<SolverData*>(v);
   if (userexit_buffer) userexit_buffer.call(b, PythonData(data->constrainedPlanning));
 
   // Verify the iteration limit isn't exceeded.
@@ -561,7 +561,7 @@ void SolverCreate::solve(const Buffer* b, void* v)
 
 void SolverCreate::solveSafetyStock(const Buffer* b, void* v)
 {
-  SolverMRPdata* data = static_cast<SolverMRPdata*>(v);
+  SolverData* data = static_cast<SolverData*>(v);
 
   // Message
   if (data->getSolver()->getLogLevel()>1)
@@ -608,6 +608,7 @@ void SolverCreate::solveSafetyStock(const Buffer* b, void* v)
         // Note that the supply created with the next line changes the
         // onhand value at all later dates!
         CommandManager::Bookmark* topcommand = data->getCommandManager()->setBookmark();
+        auto cur_q_date = data->state->q_date;
         data->state->q_qty_min = 1.0;
         b->getProducingOperation()->solve(*this,v);
 
@@ -618,9 +619,14 @@ void SolverCreate::solveSafetyStock(const Buffer* b, void* v)
         else
         {
           data->getCommandManager()->rollback(topcommand);
-          if ( (cur != b->getFlowPlans().end() && data->state->a_date < cur->getDate())
-            || (cur == b->getFlowPlans().end() && data->state->a_date < Date::infiniteFuture) )
+          if ((cur != b->getFlowPlans().end() && data->state->a_date < cur->getDate())
+            || (cur == b->getFlowPlans().end() && data->state->a_date < Date::infiniteFuture))
+          {
+            if (data->state->a_date > cur_q_date)
               nextAskDate = data->state->a_date;
+            else
+              loop = false;
+          }
           else
               loop = false;
         }
@@ -653,7 +659,7 @@ void SolverCreate::solveSafetyStock(const Buffer* b, void* v)
 
 void SolverCreate::solve(const BufferInfinite* b, void* v)
 {
-  SolverMRPdata* data = static_cast<SolverMRPdata*>(v);
+  SolverData* data = static_cast<SolverData*>(v);
 
   // Call the user exit
   if (userexit_buffer) userexit_buffer.call(b, PythonData(data->constrainedPlanning));

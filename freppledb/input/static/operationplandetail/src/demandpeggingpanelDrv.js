@@ -56,9 +56,9 @@ function showoperationpeggingpanelDrv($window, gettextCatalog) {
           rows='';
           angular.forEach(scope.operationplan.pegging_demand, function(thedemand) {
             rows += '<tr><td>' + thedemand.demand.name +
-              '</td><td>' + scope.operationplan.item +
-              '</td><td>' + thedemand.due +
-              '</td><td>'+thedemand.quantity+'</td></tr>';
+              '</td><td>' + thedemand.demand.item.name +
+              '</td><td>' + thedemand.demand.due +
+              '</td><td>' + thedemand.quantity + '</td></tr>';
           });
         }
       }

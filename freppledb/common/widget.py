@@ -38,15 +38,28 @@ class WelcomeWidget(Widget):
   asynchronous = False
 
   def render(self, request=None):
+    from freppledb.common.middleware import _thread_locals
     versionnumber = VERSION.split('.', 2)
+    try:
+      db = _thread_locals.request.database
+      if not db or db == DEFAULT_DB_ALIAS:
+        prefix = ''
+      else:
+        prefix = "/%s" % _thread_locals.request.database
+    except:
+      prefix = ''
     return _('''Welcome to frePPLe, the world's leading open source production planning tool!<br><br>
 How to get started?
 <ol><li>Start the <span class="underline"><a href="javascript:void(0);" onclick="tour.start('0,0,0'); return false;">guided tour</a></span></li>
 <li>Check out the <span class="underline"><a href="%(docurl)s" target="_blank" rel="noopener">documentation</a></span></li>
+<li>Start building your own model using the <span class="underline"><a href="%(prefix)s/wizard/" target="_blank" rel="noopener">wizard</a></span></li>
 <li>Visit and join the <span class="underline"><a href="http://groups.google.com/group/frepple-users" target="_blank" rel="noopener">user community</a></span></li>
 <li><span class="underline"><a href="https://frepple.com/contact/" target="_blank" rel="noopener">Contact us</a></span></li>
 </ol>
-''') % {'docurl': "https://frepple.com/docs/%s.%s/" % (versionnumber[0], versionnumber[1])}
+''') % {
+  'docurl': "%s/docs/%s.%s/" % (settings.DOCUMENTATION_URL, versionnumber[0], versionnumber[1]),
+  'prefix': prefix
+  }
 
 Dashboard.register(WelcomeWidget)
 

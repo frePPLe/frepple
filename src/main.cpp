@@ -57,10 +57,81 @@ void usage()
 
 void handler(int sig)
 {
-  ostringstream o;   
-  o << "Planning engine terminated with signal " << sig << endl;
+  ostringstream o;
+  o << "Planning engine terminating due to ";
+  switch (sig)
+  {
+#ifdef SIGHUP
+  case SIGHUP:
+    o << "hangup signal";
+    break;
+#endif
+#ifdef SIGINT
+  case SIGINT:
+    o << "interrupt signal";
+    break;
+#endif
+#ifdef SIGQUIT
+  case SIGQUIT:
+    o << "quit signal";
+    break;
+#endif
+#ifdef SIGILL
+  case SIGILL:
+    o << "illegal instruction";
+    break;
+#endif
+#ifdef SIGABRT
+  case SIGABRT:
+    o << "abort signal";
+    break;
+#endif
+#ifdef SIGBUS
+  case SIGBUS:
+    o << "bad memory access";
+    break;
+#endif
+#ifdef SIGFPE
+  case SIGFPE:
+    o << "floating-point exception";
+    break;
+#endif
+#ifdef SIGKILL
+  case SIGKILL:
+    o << "kill signal";
+    break;
+#endif
+#ifdef SIGSEGV
+  case SIGSEGV:
+    o << "segmentation violation";
+    break;
+#endif
+#ifdef SIGTERM
+  case SIGTERM:
+    o << "termination signal";
+    break;
+#endif
+#ifdef SIGSTKFLT
+  case SIGSTKFLT:
+    o << "stack fault on coprocressor";
+    break;
+#endif
+#ifdef SIGXCPU
+  case SIGXCPU:
+    o << "CPU limit reached";
+    break;
+#endif
+#ifdef SIGXFSZ
+  case SIGXFSZ:
+    o << "file size limit reached";
+    break;
+#endif
+  default:
+    o << "signal " << sig;
+  }
+  o << endl;
   FreppleLog(o.str().c_str());
-  exit(1);
+  exit(sig);
 }
 
 
@@ -70,12 +141,45 @@ int main (int argc, char *argv[])
   // In a debug build we don't do it, to allow debuggers to handle the
   // signal themselves.
 #if !defined(DEBUG)
-  signal(SIGABRT, handler);
-  signal(SIGFPE, handler);
-  signal(SIGILL, handler);
+#ifdef SIGHUP
+  signal(SIGHUP, handler);
+#endif
+#ifdef SIGINT
   signal(SIGINT, handler);
+#endif
+#ifdef SIGQUIT
+  signal(SIGQUIT, handler);
+#endif
+#ifdef SIGILL
+  signal(SIGILL, handler);
+#endif
+#ifdef SIGABRT
+  signal(SIGABRT, handler);
+#endif
+#ifdef SIGBUS
+  signal(SIGBUS, handler);
+#endif
+#ifdef SIGFPE
+  signal(SIGFPE, handler);
+#endif
+#ifdef SIGKILL
+  signal(SIGKILL, handler);
+#endif
+#ifdef SIGSEGV
   signal(SIGSEGV, handler);
+#endif
+#ifdef SIGTERM
   signal(SIGTERM, handler);
+#endif
+#ifdef SIGSTKFLT
+  signal(SIGSTKFLT, handler);
+#endif
+#ifdef SIGXCPU
+  signal(SIGXCPU, handler);
+#endif
+#ifdef SIGXFSZ
+  signal(SIGXFSZ, handler);
+#endif
 #endif
 
   // Storing the chosen options...
@@ -145,3 +249,4 @@ int main (int argc, char *argv[])
   }
   return EXIT_SUCCESS;
 }
+

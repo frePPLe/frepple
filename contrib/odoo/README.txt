@@ -36,7 +36,7 @@ The module adds the following functionality in Odoo:
 
 Full documentation on the installation, configuration and data mapping is 
 available at:
-  https://frepple.com/docs/4.2/integration-guide/odoo-connector.html
+  https://frepple.com/docs/4.4/integration-guide/odoo-connector.html
 
 Here's the list of open issues for the connector (the list is not 
 necessarily complete...):

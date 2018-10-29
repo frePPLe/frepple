@@ -14,44 +14,45 @@ It allows easy navigation across the item, location and time hierarchies.
 
 The panel is split in two areas:
 
-  - | The top section of the screen allows to select a
-      specific forecast.
-    | The buttons to the right let you choose if you want to see in quantity
-      or in value. You can also select your time buckets (ie weeks, months, quarters or years).
-    | The order of the top panels define the hierarchy of the selection.
-      There is a dropdown menu where you can choose this order.
-    | When you click on a line in a panel this line will be selected and expand if there
-      are other records inside it (or collapse if it is already expanded), then the panels
-      to the right will reset their selections.
+- | The top section of the screen allows to select a
+    specific forecast.
+  | The buttons to the right let you choose if you want to see in quantity
+    or in value. You can also select your time buckets (ie weeks, months, quarters or years).
+  | The order of the top panels define the hierarchy of the selection.
+    There is a dropdown menu where you can choose this order.
+  | When you click on a line in a panel this line will be selected and expand if there
+    are other records inside it (or collapse if it is already expanded), then the panels
+    to the right will reset their selections.
 
-    .. image:: ../_images/forecast-editor-top.png
-       :alt: Forecast editor selection panels
+  .. image:: ../_images/forecast-editor-top.png
+     :alt: Forecast editor selection panels
 
-  - | The bottom of the screen has 4 tabs.
-    | The Attributes tab will present addicional information about the current selections of
-      the top panels.
-    | The Forecast tab displays the graphic of the selected forecast, a table where forecasts can be tunned (fields are
-      described bellow), and a dropdown where the forecast method can be selected.
-      After changes are made the Recalculate button will be active. By pressing recalculate a simulation of the forecast will be performed.
-      Only after pressing Save will the changes be stored on the database.
-    | The Comments tab allows comments to be added for the currently selected Item, or Location, or Customer
-      or Item-Location.
-    | The History tab shows the changes that were made to the current selections.
+- | The bottom of the screen has 4 tabs.
+  | The Attributes tab will present addicional information about the current selections of
+    the top panels.
+  | The Forecast tab displays the graphic of the selected forecast, a table where forecasts can be tunned (fields are
+    described bellow), and a dropdown where the forecast method can be selected.
+    After changes are made the Recalculate button will be active. By pressing recalculate a simulation of the forecast will be performed.
+    Only after pressing Save will the changes be stored on the database.
+  | The Comments tab allows comments to be added for the currently selected Item, or Location, or Customer
+    or Item-Location.
+  | The History tab shows the changes that were made to the current selections.
 
-    .. image:: ../_images/forecast-editor-tabAttributes.png
-       :alt: Attributes of selections
+  .. image:: ../_images/forecast-editor-tabAttributes.png
+     :alt: Attributes of selections
 
-    .. image:: ../_images/forecast-editor-tabForecast.png
-       :alt: Forecast graph and table
+  .. image:: ../_images/forecast-editor-tabForecast.png
+     :alt: Forecast graph and table
 
-    .. image:: ../_images/forecast-editor-tabComments.png
-       :alt: Comments for selections
+  .. image:: ../_images/forecast-editor-tabComments.png
+     :alt: Comments for selections
 
-    .. image:: ../_images/ forecast-editor-tabHistory.png
-       :alt: History of changes in selection
+  .. image:: ../_images/ forecast-editor-tabHistory.png
+     :alt: History of changes in selection
 
-The table in the Forecast tab is for forecast tunning. Adjustments can be made and will have an immediate impact on the graph above the table.
-Here a description of the forecast table fields can be found:
+The table in the forecast tab is for forecast tunning. Adjustments can be made and will have an immediate impact on the graph above the table.
+
+Here is a description of the fields on the forecast table:
 
 ==================== ==============================================================================
 Field                Description

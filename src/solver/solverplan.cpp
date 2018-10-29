@@ -34,6 +34,7 @@ const Keyword SolverCreate::tag_autofence("autofence");
 const Keyword SolverCreate::tag_rotateresources("rotateresources");
 const Keyword SolverCreate::tag_planSafetyStockFirst("plansafetystockfirst");
 const Keyword SolverCreate::tag_iterationmax("iterationmax");
+const Keyword SolverCreate::tag_resourceiterationmax("resourceiterationmax");
 
 
 void LibrarySolver::initialize()
@@ -121,7 +122,7 @@ PyObject* SolverCreate::create(PyTypeObject* pytype, PyObject* args, PyObject* k
 }
 
 
-SolverCreate::SolverMRPdata::SolverMRPdata(SolverCreate* s, int c, deque<Demand*>* d)
+SolverCreate::SolverData::SolverData(SolverCreate* s, int c, deque<Demand*>* d)
   : sol(s), cluster(c), demands(d), constrainedPlanning(true),
   logConstraints(true), state(statestack), prevstate(statestack - 1)
 {
@@ -129,7 +130,7 @@ SolverCreate::SolverMRPdata::SolverMRPdata(SolverCreate* s, int c, deque<Demand*
 }
 
 
-void SolverCreate::SolverMRPdata::setCommandManager(CommandManager* a)
+void SolverCreate::SolverData::setCommandManager(CommandManager* a)
 {
   if (mgr == a)
     return;
@@ -139,7 +140,7 @@ void SolverCreate::SolverMRPdata::setCommandManager(CommandManager* a)
 }
 
 
-SolverCreate::SolverMRPdata::~SolverMRPdata()
+SolverCreate::SolverData::~SolverData()
 {
   delete operator_delete;
 };
@@ -156,7 +157,7 @@ bool SolverCreate::demand_comparison(const Demand* l1, const Demand* l2)
 }
 
 
-void SolverCreate::SolverMRPdata::push(double q, Date d, bool full)
+void SolverCreate::SolverData::push(double q, Date d, bool full)
 {
   if (state >= statestack + MAXSTATES)
     throw RuntimeException("Maximum recursion depth exceeded");
@@ -193,7 +194,7 @@ void SolverCreate::SolverMRPdata::push(double q, Date d, bool full)
 }
 
 
-void SolverCreate::SolverMRPdata::pop(bool copy_answer)
+void SolverCreate::SolverData::pop(bool copy_answer)
 {
   if (state < statestack)
     throw LogicException("State stack empty");
@@ -209,7 +210,7 @@ void SolverCreate::SolverMRPdata::pop(bool copy_answer)
 }
 
 
-void SolverCreate::SolverMRPdata::commit()
+void SolverCreate::SolverData::commit()
 {
   // Check
   SolverCreate* solver = getSolver();
@@ -353,7 +354,7 @@ void SolverCreate::SolverMRPdata::commit()
 }
 
 
-void SolverCreate::SolverMRPdata::solveSafetyStock(SolverCreate* solver)
+void SolverCreate::SolverData::solveSafetyStock(SolverCreate* solver)
 {
   OperatorDelete cleanup(getCommandManager());
   cleanup.setConstrained(solver->isMaterialConstrained());
@@ -461,8 +462,8 @@ void SolverCreate::solve(void *v)
   // Register all clusters to be solved
   for (int j = 0; j < cl; ++j)
     threads.add(
-      SolverMRPdata::runme,
-      new SolverMRPdata(this, (cluster == -1) ? j :  cluster, &(demands_per_cluster[j]))
+      SolverData::runme,
+      new SolverData(this, (cluster == -1) ? j :  cluster, &(demands_per_cluster[j]))
       );
 
   // Run the planning command threads and wait for them to exit

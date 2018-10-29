@@ -190,4 +190,3 @@ PROBLEM	material excess	Buffer 'Out3C @ Loc' has material excess of 30	2014-02-0
 PROBLEM	material excess	Buffer 'Out4 @ Loc' has material excess of 30	2014-01-05T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	material excess	Buffer 'Out4A @ Loc' has material excess of 20	2014-01-05T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	material excess	Buffer 'Out4B @ Loc' has material excess of 10	2014-02-05T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	before current	Operation 'Oper1' planned in the past	2013-12-31T00:00:00 / 2014-01-01T00:00:00

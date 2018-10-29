@@ -77,6 +77,7 @@ class LocaleMiddleware(DjangoLocaleMiddleware):
         user = User.objects.get(username=decoded['user'])
         user.backend = settings.AUTHENTICATION_BACKENDS[0]
         login(request, user)
+        request.user = user
         request.session['navbar'] = decoded.get('navbar', True)
         request.session['xframe_options_exempt'] = True
       except jwt.exceptions.InvalidTokenError as e:
@@ -161,7 +162,7 @@ class MultiDBMiddleware(object):
       for i in settings.DATABASES:
         try:
           if settings.DATABASES[i]['regexp'].match(request.path):
-            scenario = Scenario.objects.get(name=i)
+            scenario = Scenario.objects.using(DEFAULT_DB_ALIAS).get(name=i)
             if scenario.status != 'In use':
               return HttpResponseNotFound('Scenario not in use')
             request.prefix = '/%s' % i

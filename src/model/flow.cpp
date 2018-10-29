@@ -89,10 +89,13 @@ Flow::~Flow()
     // Loop over operationplans
     for(OperationPlan::iterator i(getOperation()); i != OperationPlan::end(); ++i)
       // Loop over flowplans
-      for(OperationPlan::FlowPlanIterator j = i->beginFlowPlans(); j != i->endFlowPlans(); )
+      for (auto j = i->beginFlowPlans(); j != i->endFlowPlans(); )
+      {
         if (j->getFlow() == this)
           j.deleteFlowPlan();
-        else ++j;
+        else
+          ++j;
+      }
   }
 
   // Delete the flow from the operation and the buffer

@@ -210,6 +210,8 @@ INTERNAL_IPS = ('127.0.0.1',)
 # manually specified.
 DEFAULT_CHARSET = 'utf-8'
 
+BRANDING = "frePPLe"
+
 # Default characterset for writing and reading CSV files.
 # We are assuming here that the default encoding of clients is the same as the server.
 # If the server is on Linux and the clients are using Windows, this guess will not be good.
@@ -226,6 +228,12 @@ CSV_CHARSET = 'utf-8' # locale.getdefaultlocale()[1]
 THEMES = [
   'earth', 'grass', 'lemon', 'odoo', 'openbravo', 'orange', 'snow', 'strawberry', 'water'
   ]
+
+# Website where all documentation is available.
+# - The DOCUMENTATION_URL is used as the main URL for the about box
+# - The documentation is expected to be found in 'DOCUMENTATION_URL/docs/MAJOR_VERSION.MINOR_VERSION"
+# - The URL shouldn't have an ending slash
+DOCUMENTATION_URL = "https://frepple.com"
 
 # A default user-group to which new users are automatically added
 DEFAULT_USER_GROUP = None
@@ -296,6 +304,12 @@ DEFAULT_DASHBOARD = [
 ]
 
 GLOBAL_PREFERENCES = {}
+
+# Maximum allowed memory size for the planning engine. Only used on Linux!
+MAXMEMORYSIZE = None     # limit in MB, minimum around 230, use None for unlimited
+
+# Maximum allowed memory size for the planning engine. Only used on Linux!
+MAXCPUTIME = None        # limit in seconds, use None for unlimited
 
 # Max total log files size in MB, if the limit is reached deletes the oldest.
 MAXTOTALLOGFILESIZE = 200

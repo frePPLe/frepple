@@ -15,8 +15,7 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-
-from datetime import datetime, timedelta
+from datetime import datetime
 import os
 import logging
 
@@ -27,6 +26,40 @@ from freppledb.common.commands import PlanTaskRegistry, PlanTask
 from freppledb.common.models import Parameter
 
 logger = logging.getLogger(__name__)
+
+
+@PlanTaskRegistry.register
+class MakePlanFeasible(PlanTask):
+
+  description = "Initial plan problems"
+  sequence = 199
+
+  @classmethod
+  def getWeight(cls, database=DEFAULT_DB_ALIAS, **kwargs):
+    if 'supply' in os.environ:
+      return 1
+    else:
+      return -1
+
+  @classmethod
+  def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
+    import frepple
+
+    # Update the feasibility flag of all operationplans
+    for oper in frepple.operations():
+      for opplan in oper.operationplans:
+        opplan.updateFeasible()
+
+    # Report the result
+    print ("Initial problems:")
+    probs = {}
+    for i in frepple.problems():
+      if i.name in probs:
+        probs[i.name] += 1
+      else:
+        probs[i.name] = 1
+    for i in sorted(probs.keys()):
+      print("     %s: %s" % (i, probs[i]))
 
 
 @PlanTaskRegistry.register
@@ -70,6 +103,13 @@ class SupplyPlanning(PlanTask):
   def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
     import frepple
 
+    # Determine log level
+    loglevel = int(Parameter.getValue('plan.loglevel', database, 0))
+    if cls.task and cls.task.user:
+      maxloglevel = cls.task.user.getMaxLoglevel(database)
+      if loglevel > maxloglevel:
+        loglevel = maxloglevel
+
     # Create a solver where the plan type are defined by an environment variable
     try:
       plantype = int(os.environ['FREPPLE_PLANTYPE'])
@@ -82,14 +122,15 @@ class SupplyPlanning(PlanTask):
     cls.solver = frepple.solver_mrp(
       constraints=constraint,
       plantype=plantype,
-      loglevel=int(Parameter.getValue('plan.loglevel', database, 0)),
+      loglevel=loglevel,
       lazydelay=int(Parameter.getValue('lazydelay', database, '86400')),
       allowsplits=(Parameter.getValue('allowsplits', database, 'true').lower() == "true"),
       minimumdelay=int(Parameter.getValue('plan.minimumdelay', database, '0')),
       rotateresources=(Parameter.getValue('plan.rotateResources', database, 'true').lower() == "true"),
       plansafetystockfirst=(Parameter.getValue('plan.planSafetyStockFirst', database, 'false').lower() != "false"),
       iterationmax=int(Parameter.getValue('plan.iterationmax', database, '0')),
-      administrativeleadtime=86400*float(Parameter.getValue('plan.administrativeLeadtime', database, '0')),
+      resourceiterationmax=int(Parameter.getValue('plan.resourceiterationmax', database, '500')),
+      administrativeleadtime=86400 * float(Parameter.getValue('plan.administrativeLeadtime', database, '0')),
       autofence=86400 * float(Parameter.getValue("plan.autoFenceOperations", database, '0'))
       )
     if hasattr(cls, 'debugResource'):

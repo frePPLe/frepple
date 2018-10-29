@@ -280,17 +280,26 @@ DateRange Operation::calculateOperationTime(
           available = false;
       }
     }
-    if (!duration && !available)
+    if (!duration)
     {
       // A special case for 0-time operations.
-      available = true;
-      for (auto t = cals.begin(); t != cals.end() && available; ++t)
-        available = (t->getCalendar()->getValue(selected, !forward) != 0);
-      if (available)
+      if (available && forward)
       {
         result.setEnd(curdate);
         result.setStart(curdate);
         return result;
+      }
+      else if (!available)
+      {
+        available = true;
+        for (auto t = cals.begin(); t != cals.end() && available; ++t)
+          available = (t->getCalendar()->getValue(selected, !forward) != 0);
+        if (available)
+        {
+          result.setEnd(curdate);
+          result.setStart(curdate);
+          return result;
+        }
       }
     }
     curdate = selected;
@@ -2522,22 +2531,21 @@ Operation* Operation::findFromName(string nm)
       if (item && origin && destination)
       {
         // Find itemdistribution
-        ItemDistribution* item_dist = nullptr;
-        for (Item* it = item; it && !item_dist; it = it->getOwner())
+        const ItemDistribution* item_dist = nullptr;
+        for (auto dist = item->getDistributions().begin(); dist != item->getDistributions().end(); ++dist)
         {
-          Item::distributionIterator itemdist_iter = it->getDistributionIterator();
-          while (ItemDistribution *i = itemdist_iter.next())
+          if (origin == dist->getOrigin() && (
+            !dist->getDestination() || destination == dist->getDestination()
+            ))
           {
-            if (origin == i->getOrigin() && (
-              !i->getDestination() || destination == i->getDestination()
-              ))
-              item_dist = i;
+            item_dist = &*dist;
+            break;
           }
         }
-        if (item_dist)
+        if (!item_dist)
           // Create the operation
           return new OperationItemDistribution(
-            item_dist,
+            const_cast<ItemDistribution*>(item_dist),
             Buffer::findOrCreate(item, origin),
             Buffer::findOrCreate(item, destination)
             );

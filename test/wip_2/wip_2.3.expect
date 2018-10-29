@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<current>2019-01-01T00:00:00</current>
+	<locations>
+		<location>
+			<name>prod</name>
+		</location>
+		<location>
+			<name>store</name>
+		</location>
+	</locations>
+	<suppliers>
+		<supplier>
+			<name>my supplier</name>
+		</supplier>
+	</suppliers>
+	<items>
+		<item>
+			<name>consumed item</name>
+			<itemsuppliers>
+				<itemsupplier>
+					<supplier>
+						<name>my supplier</name>
+					</supplier>
+					<location>
+						<name>store</name>
+					</location>
+					<leadtime>P60D</leadtime>
+				</itemsupplier>
+			</itemsuppliers>
+			<itemdistributions>
+				<itemdistribution>
+					<origin>
+						<name>store</name>
+					</origin>
+					<destination>
+						<name>prod</name>
+					</destination>
+					<leadtime>P3D</leadtime>
+				</itemdistribution>
+			</itemdistributions>
+		</item>
+		<item>
+			<name>produced item</name>
+		</item>
+	</items>
+	<buffers>
+		<buffer>
+			<name>consumed item @ prod</name>
+			<item>
+				<name>consumed item</name>
+			</item>
+			<location>
+				<name>prod</name>
+			</location>
+		</buffer>
+		<buffer>
+			<name>consumed item @ store</name>
+			<item>
+				<name>consumed item</name>
+			</item>
+			<location>
+				<name>store</name>
+			</location>
+		</buffer>
+		<buffer>
+			<name>produced item @ prod</name>
+			<producing>
+				<name>prod</name>
+			</producing>
+			<item>
+				<name>produced item</name>
+			</item>
+			<location>
+				<name>prod</name>
+			</location>
+		</buffer>
+	</buffers>
+	<operations>
+		<operation>
+			<name>prod</name>
+			<item>
+				<name>produced item</name>
+			</item>
+			<location>
+				<name>prod</name>
+			</location>
+			<flows>
+				<flow>
+					<item>
+						<name>consumed item</name>
+					</item>
+					<quantity>-777</quantity>
+				</flow>
+				<flow xsi:type="flow_end">
+					<item>
+						<name>produced item</name>
+					</item>
+					<quantity>1</quantity>
+				</flow>
+			</flows>
+			<duration>P7D</duration>
+		</operation>
+	</operations>
+	<operationplans>
+		<operationplan>
+			<id>2</id>
+			<operation xsi:type="operation_itemsupplier">
+				<name>Purchase consumed item @ store from my supplier</name>
+			</operation>
+			<start>2017-09-29T00:00:00</start>
+			<end>2017-11-28T00:00:00</end>
+			<quantity>777</quantity>
+			<feasible>false</feasible>
+			<ordertype>PO</ordertype>
+			<item>
+				<name>consumed item</name>
+			</item>
+			<location>
+				<name>store</name>
+			</location>
+			<supplier>
+				<name>my supplier</name>
+			</supplier>
+		</operationplan>
+		<operationplan>
+			<id>3</id>
+			<operation xsi:type="operation_itemdistribution">
+				<name>Ship consumed item from store to prod</name>
+				<origin>
+					<name>consumed item @ store</name>
+				</origin>
+				<destination>
+					<name>consumed item @ prod</name>
+				</destination>
+			</operation>
+			<start>2017-11-28T00:00:00</start>
+			<end>2017-12-01T00:00:00</end>
+			<quantity>777</quantity>
+			<feasible>false</feasible>
+			<ordertype>DO</ordertype>
+			<item>
+				<name>consumed item</name>
+			</item>
+			<location>
+				<name>prod</name>
+			</location>
+			<origin>
+				<name>store</name>
+			</origin>
+		</operationplan>
+		<operationplan>
+			<id>4</id>
+			<reference>MO 1</reference>
+			<operation>
+				<name>prod</name>
+			</operation>
+			<start>2017-12-01T00:00:00</start>
+			<end>2017-12-08T00:00:00</end>
+			<quantity>1</quantity>
+			<status>confirmed</status>
+			<feasible>false</feasible>
+		</operationplan>
+	</operationplans>
+</plan>

@@ -55,7 +55,7 @@ menu.addItem(
 menu.addItem(
   "inventory", "inventory report", url="/buffer/",
   report=freppledb.output.views.buffer.OverviewReport, index=100,
-  dependencies=[Demand]
+  dependencies=[OperationPlanMaterial]
   )
 menu.addItem(
   "inventory", "inventory detail report", url="/flowplan/",

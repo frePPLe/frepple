@@ -14,12 +14,12 @@
  * License along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-function themeconfig(themename) {
+function themeconfig(themefolder, themename) {
   // Auxilary function to generate the task configuration for a single theme.
   var cfg = {
     options: {
       paths: [
-        'freppledb/common/static/css/' + themename, // frePPLe theme folder
+        themefolder + '/static/css/' + themename, // frePPLe theme folder
         'freppledb/common/static/css', // frePPLe folder
         'node_modules/bootstrap/less' // bootstrap folder
         ],
@@ -35,9 +35,9 @@ function themeconfig(themename) {
     },
     files: {}
   }
-  cfg.files['freppledb/common/static/css/' + themename + '/bootstrap.min.css'] = [
+  cfg.files[themefolder + '/static/css/' + themename + '/bootstrap.min.css'] = [
     'freppledb/common/static/css/frepple.less', // Generic frePPLe styles
-    'freppledb/common/static/css/' + themename + '/frepple.less' // Theme specific styles
+    themefolder + '/static/css/' + themename + '/frepple.less' // Theme specific styles
     ]
   return cfg;
 }
@@ -48,15 +48,15 @@ module.exports = function (grunt) {
     pkg: grunt.file.readJSON('package.json'),
     // Less compilation
     less: {
-      odoo: themeconfig('odoo'),
-      grass: themeconfig('grass'),
-      earth: themeconfig('earth'),
-      lemon: themeconfig('lemon'),
-      snow: themeconfig('snow'),
-      strawberry: themeconfig('strawberry'),
-      water: themeconfig('water'),
-      orange: themeconfig('orange'),
-      openbravo: themeconfig('openbravo')
+      odoo: themeconfig('freppledb/common', 'odoo'),
+      grass: themeconfig('freppledb/common', 'grass'),
+      earth: themeconfig('freppledb/common', 'earth'),
+      lemon: themeconfig('freppledb/common', 'lemon'),
+      snow: themeconfig('freppledb/common', 'snow'),
+      strawberry: themeconfig('freppledb/common', 'strawberry'),
+      water: themeconfig('freppledb/common', 'water'),
+      orange: themeconfig('freppledb/common', 'orange'),
+      openbravo: themeconfig('freppledb/common', 'openbravo'),
     },
     // When any .less file changes we automatically run the "less"-task.
     watch: {

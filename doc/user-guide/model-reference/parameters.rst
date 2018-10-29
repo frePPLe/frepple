@@ -129,8 +129,8 @@ forecast.Skip                                        Specifies the number of tim
                                                      the forecasting method. The forecast error in these bucket isn't counted.
 forecast.SmapeAlfa                                   Specifies how the sMAPE forecast error is weighted for different
                                                      time buckets.
-inventoryplanning.average_window_duration            The number of days used to average the demand to limit ROQ and safety stock variability
-                                                     over periods. Default value : 180
+inventoryplanning.average_window_duration            The number of days used to average the demand to limit reorder quantity
+                                                     and safety stock variability over periods. Default value : 180
 inventoryplanning.calendar                           Name of a calendar model to define the granularity of the time buckets
                                                      for inventory planning.
 inventoryplanning.fixed_order_cost                   Holding cost percentage to compute economic reorder quantity.

@@ -66,70 +66,14 @@ ItemDistribution::ItemDistribution()
 ItemDistribution::~ItemDistribution()
 {
   // Delete the association from the related objects
-  if (getOrigin())
-    getOrigin()->origins.erase(this);
+  if (getItem())
+    getItem()->distributions.erase(this);
   if (getDestination())
-    getDestination()->destinations.erase(this);
+    getDestination()->distributions.erase(this);
 
   // Delete all owned distribution operations
   while (firstOperation)
     delete firstOperation;
-
-  // Unlink from item
-  if (it)
-  {
-    if (it->firstItemDistribution == this)
-      // Remove from head
-      it->firstItemDistribution = next;
-    else
-    {
-      // Remove from middle
-      ItemDistribution *j = it->firstItemDistribution;
-      while (j->next && j->next != this)
-        j = j->next;
-      if (j)
-        j->next = next;
-      else
-        logger << "Error: Corrupted ItemDistribution list" << endl;
-    }
-  }
-
-  // Trigger level and cluster recomputation
-  HasLevel::triggerLazyRecomputation();
-}
-
-
-void ItemDistribution::setItem(Item* i)
-{
-  // Unlink from previous item
-  if (it)
-  {
-    if (it->firstItemDistribution == this)
-      // Remove from head
-      it->firstItemDistribution = next;
-    else
-    {
-      // Remove from middle
-      ItemDistribution *j = it->firstItemDistribution;
-      while (j->next && j->next != this)
-        j = j->next;
-      if (j)
-        j->next = next;
-      else
-        throw LogicException("Corrupted ItemDistribution list");
-    }
-  }
-
-  // Update item
-  it = i;
-
-  // Link at the new owner.
-  // We insert ourself at the head of the list.
-  if (it)
-  {
-    next = it->firstItemDistribution;
-    it->firstItemDistribution = this;
-  }
 
   // Trigger level and cluster recomputation
   HasLevel::triggerLazyRecomputation();
@@ -210,6 +154,14 @@ PyObject* ItemDistribution::create(PyTypeObject* pytype, PyObject* args, PyObjec
 }
 
 
+void ItemDistribution::setItem(Item* i)
+{
+  if (!i) return;
+  setPtrB(i, i->getDistributions());
+  HasLevel::triggerLazyRecomputation();
+}
+
+
 void ItemDistribution::deleteOperationPlans(bool b)
 {
   for (OperationItemDistribution* i = firstOperation; i; i = i->nextOperation)
@@ -237,6 +189,31 @@ int OperationItemDistribution::initialize()
 }
 
 
+Operation* OperationItemDistribution::findOrCreate(
+  ItemDistribution* itemdist, Buffer* src, Buffer* dest
+  )
+{
+  if (!itemdist || !src || !dest)
+    throw LogicException(
+      "An OperationItemDistribution always needs to point to "
+      "a ItemDistribution, a source buffer and a destination buffer"
+    );
+  stringstream o;
+  o << "Ship " << dest->getItem()->getName() 
+    << " from " << src->getLocation()->getName() 
+    << " to " << dest->getLocation()->getName();
+  auto oper = Operation::find(o.str());
+  if (oper)
+  {
+    if (oper->getType() != *OperationItemDistribution::metadata)
+      throw DataException("Name clash on operation " + o.str());
+    return oper;
+  }
+  else
+    return new OperationItemDistribution(itemdist, src, dest);
+}
+
+
 OperationItemDistribution::OperationItemDistribution(
   ItemDistribution* i, Buffer *src, Buffer* dest
   ) : itemdist(i)
@@ -247,7 +224,9 @@ OperationItemDistribution::OperationItemDistribution(
       "a ItemDistribution, a source buffer and a destination buffer"
       );
   stringstream o;
-  o << "Ship " << dest->getItem()->getName() << " from " << src->getName() << " to " << dest->getName();
+  o << "Ship " << dest->getItem()->getName() 
+    << " from " << src->getLocation()->getName()
+    << " to " << dest->getLocation()->getName();
   setName(o.str());
   setDuration(i->getLeadTime());
   setSizeMultiple(i->getSizeMultiple());
@@ -268,7 +247,7 @@ OperationItemDistribution::OperationItemDistribution(
   // Insert in the list of ItemDistribution operations.
   // The list is not sorted (for performance reasons).
   nextOperation = i->firstOperation;
-  i->firstOperation = this;
+  const_cast<ItemDistribution*>(i)->firstOperation = this;
 }
 
 
@@ -349,7 +328,7 @@ Object* ItemDistribution::finder(const DataValueDict& d)
   int priority = 0;
   if (hasPriority)
     priority = hasPriority->getInt();
-  Item::distributionIterator itemdist_iter = item->getDistributionIterator();
+  auto itemdist_iter = item->getDistributionIterator();
   while (ItemDistribution *i = itemdist_iter.next())
   {
     if (i->getOrigin() != origin)

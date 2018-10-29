@@ -14,6 +14,7 @@
 # You should have received a copy of the GNU Affero General Public
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
+from datetime import timedelta, datetime
 
 from django.db import connections
 from django.db.models import Value
@@ -27,7 +28,7 @@ from freppledb.input.models import Buffer, Item, Location, OperationPlanMaterial
 from freppledb.input.views import OperationPlanMixin
 from freppledb.common.report import GridReport, GridPivot, GridFieldText, GridFieldNumber
 from freppledb.common.report import GridFieldDateTime, GridFieldInteger, GridFieldDuration
-from freppledb.common.report import GridFieldCurrency, GridFieldLastModified
+from freppledb.common.report import GridFieldCurrency, GridFieldLastModified, GridFieldBool
 
 
 class OverviewReport(GridPivot):
@@ -42,10 +43,9 @@ class OverviewReport(GridPivot):
     if len(args) and args[0]:
       return Buffer.objects.all()
     else:
-      return OperationPlanMaterial.objects.all() \
+      return OperationPlanMaterial.objects.values('item','location') \
         .order_by('item_id', 'location_id') \
-        .distinct('item_id', 'location_id') \
-        .annotate(buffer=Concat('item', Value(' @ '), 'location'))
+        .distinct() \
 
   model = OperationPlanMaterial
   default_sort = (1, 'asc', 2, 'asc')
@@ -62,6 +62,8 @@ class OverviewReport(GridPivot):
     GridFieldText('item__category', title=string_concat(_('item'), ' - ', _('category')),
       initially_hidden=True, editable=False),
     GridFieldText('item__subcategory', title=string_concat(_('item'), ' - ', _('subcategory')),
+      initially_hidden=True, editable=False),
+    GridFieldNumber('item__cost', title=string_concat(_('item'), ' - ', _('cost')),
       initially_hidden=True, editable=False),
     GridFieldText('item__owner', title=string_concat(_('item'), ' - ', _('owner')),
       field_name='item__owner__name', initially_hidden=True, editable=False),
@@ -101,7 +103,12 @@ class OverviewReport(GridPivot):
     ('producedDO', {'title': _('produced by DO')}),
     ('producedPO', {'title': _('produced by PO')}),
     ('endoh', {'title': _('end inventory')}),
+    ('total_in_progress', {'title': _('Total in Progress')}),
+    ('work_in_progress_mo', {'title': _('Work in Progress MO')}),
+    ('on_order_po', {'title': _('On Order PO')}),
+    ('in_transit_do', {'title': _('In Transit DO')}),
     )
+
 
   @classmethod
   def initialize(reportclass, request):
@@ -138,37 +145,65 @@ class OverviewReport(GridPivot):
        select item.name||' @ '||location.name,
        item.name item_id,
        location.name location_id,
-       item.description, 
-       item.category, 
-       item.subcategory, 
+       item.description,
+       item.category,
+       item.subcategory,
+       item.cost,
        item.owner_id,
-       item.source, 
-       item.lastmodified, 
-       location.description, 
+       item.source,
+       item.lastmodified,
+       location.description,
        location.category,
-       location.subcategory, 
-       location.available_id, 
+       location.subcategory,
+       location.available_id,
        location.owner_id,
-       location.source, 
+       location.source,
        location.lastmodified,
        %s
-       coalesce(initial_on_hand.onhand,0) startoh,       
-       coalesce(initial_on_hand.onhand,0) - coalesce(-sum(least(operationplanmaterial.quantity, 0)),0) + coalesce(sum(greatest(operationplanmaterial.quantity, 0)),0) endoh,
-       case when coalesce(initial_on_hand.onhand,0) = 0 then 0 else
-       extract( epoch from initial_on_hand.flowdate + coalesce(initial_on_hand.periodofcover,0) * interval '1 second' - greatest(d.startdate,%%s))/86400 end startohdoc,                                                
+       (select jsonb_build_object('onhand', onhand, 'flowdate', to_char(flowdate,'YYYY-MM-DD HH24:MI:SS'), 'periodofcover', periodofcover) 
+       from operationplanmaterial where item_id = item.name and
+       location_id = location.name and flowdate < greatest(d.startdate,%%s)
+       order by flowdate desc, id desc limit 1) startoh,
        d.bucket,
        d.startdate,
        d.enddate,
-       coalesce(initial_on_hand.minimum,0) safetystock,
-       coalesce(-sum(least(operationplanmaterial.quantity, 0)),0) as consumed,
-       coalesce(-sum(least(case when operationplan.type = 'MO' then operationplanmaterial.quantity else 0 end, 0)),0) as consumedMO,
-       coalesce(-sum(least(case when operationplan.type = 'DO' then operationplanmaterial.quantity else 0 end, 0)),0) as consumedDO,
-       coalesce(-sum(least(case when operationplan.type = 'DLVR' then operationplanmaterial.quantity else 0 end, 0)),0) as consumedSO,
-       coalesce(sum(greatest(operationplanmaterial.quantity, 0)),0) as produced,
-       coalesce(sum(greatest(case when operationplan.type = 'MO' then operationplanmaterial.quantity else 0 end, 0)),0) as producedMO,
-       coalesce(sum(greatest(case when operationplan.type = 'DO' then operationplanmaterial.quantity else 0 end, 0)),0) as producedDO,
-       coalesce(sum(greatest(case when operationplan.type = 'PO' then operationplanmaterial.quantity else 0 end, 0)),0) as producedPO
-       from 
+       (select safetystock from
+        (
+        select 1 as priority, coalesce((select value from calendarbucket 
+        where calendar_id = 'SS for '||item.name||' @ '||location.name
+        and greatest(d.startdate,%%s) >= startdate and greatest(d.startdate,%%s) < enddate
+        order by priority limit 1), (select defaultvalue from calendar where name = 'SS for '||item.name||' @ '||location.name)) as safetystock
+        union all
+        select 2 as priority, coalesce((select value from calendarbucket 
+        where calendar_id = (select minimum_calendar_id from buffer where name = item.name||' @ '||location.name)
+        and greatest(d.startdate,%%s) >= startdate and greatest(d.startdate,%%s) < enddate
+        order by priority limit 1), (select defaultvalue from calendar where name = (select minimum_calendar_id from buffer where name = item.name||' @ '||location.name))) as safetystock
+        union all
+        select 3 as priority, minimum as safetystock from buffer where name = item.name||' @ '||location.name
+        ) t
+        where t.safetystock is not null
+        order by priority
+        limit 1) safetystock,
+       (select jsonb_build_object(
+      'work_in_progress_mo', sum(case when (startdate <= greatest(d.startdate,%%s) and enddate >= d.enddate) and opm.quantity > 0 and operationplan.type = 'MO' then opm.quantity else 0 end),
+      'on_order_po', sum(case when (startdate <= greatest(d.startdate,%%s) and enddate >= d.enddate) and opm.quantity > 0 and operationplan.type = 'PO' then opm.quantity else 0 end),
+      'in_transit_do', sum(case when (startdate <= greatest(d.startdate,%%s) and enddate >= d.enddate) and opm.quantity > 0 and operationplan.type = 'DO' then opm.quantity else 0 end),
+      'total_in_progress', sum(case when (startdate <= greatest(d.startdate,%%s) and enddate >= d.enddate) and opm.quantity > 0 then opm.quantity else 0 end),
+      'consumed', sum(case when (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity < 0 then -opm.quantity else 0 end),
+      'consumedMO', sum(case when operationplan.type = 'MO' and (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity < 0 then -opm.quantity else 0 end),
+      'consumedDO', sum(case when operationplan.type = 'DO' and (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity < 0 then -opm.quantity else 0 end),
+      'consumedSO', sum(case when operationplan.type = 'DLVR' and (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity < 0 then -opm.quantity else 0 end),
+      'produced', sum(case when (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity > 0 then opm.quantity else 0 end),
+      'producedMO', sum(case when operationplan.type = 'MO' and (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity > 0 then opm.quantity else 0 end),
+      'producedDO', sum(case when operationplan.type = 'DO' and (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity > 0 then opm.quantity else 0 end),
+      'producedPO', sum(case when operationplan.type = 'PO' and (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity > 0 then opm.quantity else 0 end)
+      )
+      from operationplanmaterial opm
+      inner join operationplan on operationplan.id = opm.operationplan_id 
+      and ((startdate <= greatest(d.startdate,%%s) and enddate >= d.enddate) 
+            or (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate))
+      where opm.item_id = item.name and opm.location_id = location.name) ongoing
+       from
        (%s) opplanmat
        inner join item on item.name = opplanmat.item_id
        inner join location on location.name = opplanmat.location_id
@@ -178,29 +213,13 @@ class OverviewReport(GridPivot):
          from common_bucketdetail
          where bucket_id = %%s and enddate > %%s and startdate < %%s
          ) d
-      -- Consumed and produced quantities
-      left join operationplanmaterial
-        on opplanmat.item_id = operationplanmaterial.item_id
-        and opplanmat.location_id = operationplanmaterial.location_id
-        and d.startdate <= operationplanmaterial.flowdate
-        and d.enddate > operationplanmaterial.flowdate
-        and operationplanmaterial.flowdate >= greatest(d.startdate,%%s)
-        and operationplanmaterial.flowdate < d.enddate
-      left outer join operationplan on operationplan.id = operationplanmaterial.operationplan_id
-      -- Initial on hand
-      left join operationplanmaterial initial_on_hand
-        on initial_on_hand.item_id = opplanmat.item_id
-        and initial_on_hand.location_id = opplanmat.location_id
-        and initial_on_hand.flowdate < greatest(d.startdate,%%s)
-        and not exists (select 1 from operationplanmaterial opm where opm.item_id = initial_on_hand.item_id
-        and opm.location_id = initial_on_hand.location_id and opm.flowdate < greatest(d.startdate,%%s)
-        and opm.id > initial_on_hand.id)
       group by
        item.name,
        location.name,
        item.description, 
        item.category, 
-       item.subcategory, 
+       item.subcategory,
+       item.cost,
        item.owner_id,
        item.source, 
        item.lastmodified, 
@@ -211,26 +230,21 @@ class OverviewReport(GridPivot):
        location.owner_id,
        location.source, 
        location.lastmodified,
-       initial_on_hand.onhand,
-       initial_on_hand.onhand,
-       initial_on_hand.periodofcover,
-       initial_on_hand.flowdate,
        d.bucket,
        d.startdate,
-       d.enddate,
-       initial_on_hand.minimum
-       order by %s
+       d.enddate
+       order by %s, d.startdate
     ''' % (
         reportclass.attr_sql, basesql, sortsql
       )
 
     cursor.execute(
-      query,  (
-        request.report_startdate,) # startohpoc
-        + baseparams + # opplanmat
-        (request.report_bucket, request.report_startdate, request.report_enddate, # bucket d
-        request.report_startdate, # operationplanmaterial
-        request.report_startdate, request.report_startdate, # initialonhand
+      query, (
+        request.report_startdate,  # startoh
+        request.report_startdate, request.report_startdate, request.report_startdate, request.report_startdate,) # safetystock
+        + (request.report_startdate, ) * 14 # ongoing
+        + baseparams +   # opplanmat
+        (request.report_bucket, request.report_startdate, request.report_enddate,  # bucket d
         )
       )
 
@@ -243,32 +257,39 @@ class OverviewReport(GridPivot):
         'location': row[2],
         'item__description': row[3],
         'item__category': row[4],
-        'item__subcategory': row[5],
-        'item__owner': row[6],
-        'item__source': row[7],
-        'item__lastmodified': row[8],
-        'location__description': row[9],
-        'location__category': row[10],
-        'location__subcategory': row[11],
-        'location__available_id': row[12],
-        'location__owner_id': row[13],
-        'location__source': row[14],
-        'location__lastmodified': row[15],
-        'startoh': round(row[numfields - 15], 1),
-        'endoh': round(row[numfields - 14], 1),
-        'startohdoc': int(row[numfields - 13]),
-        'bucket': row[numfields - 12],
-        'startdate': row[numfields - 11].date(),
-        'enddate': row[numfields - 10].date(),
-        'safetystock': round(row[numfields - 9] or 0, 1),
-        'consumed': round(row[numfields - 8], 1),
-        'consumedMO': round(row[numfields - 7], 1),
-        'consumedDO': round(row[numfields - 6], 1),
-        'consumedSO': round(row[numfields - 5], 1),
-        'produced': round(row[numfields - 4], 1),
-        'producedMO': round(row[numfields - 3], 1),
-        'producedDO': round(row[numfields - 2], 1),
-        'producedPO': round(row[numfields - 1], 1),
+        'item__cost': row[6],
+        'item__owner': row[7],
+        'item__source': row[8],
+        'item__lastmodified': row[9],
+        'location__description': row[10],
+        'location__category': row[11],
+        'location__subcategory': row[12],
+        'location__available_id': row[13],
+        'location__owner_id': row[14],
+        'location__source': row[15],
+        'location__lastmodified': row[16],
+        'startoh': round(row[numfields - 6]['onhand'] if row[numfields - 6] else 0, 1),
+        'startohdoc': 0 if (row[numfields - 6]['onhand']  if row[numfields - 6] else 0) <= 0\
+                        else (999 if row[numfields - 6]['periodofcover'] == 86313600\
+                                  else (datetime.strptime(row[numfields - 6]['flowdate'],'%Y-%m-%d %H:%M:%S') +\
+                                        timedelta(seconds=row[numfields - 6]['periodofcover']) - row[numfields - 4]).days if row[numfields - 6]['periodofcover'] else 999),
+        'bucket': row[numfields - 5],
+        'startdate': row[numfields - 4].date(),
+        'enddate': row[numfields - 3].date(),
+        'safetystock': round(row[numfields - 2] or 0, 1),
+        'consumed': round(row[numfields - 1]['consumed'] or 0, 1),
+        'consumedMO': round(row[numfields - 1]['consumedMO'] or 0, 1),
+        'consumedDO': round(row[numfields - 1]['consumedDO'] or 0, 1),
+        'consumedSO': round(row[numfields - 1]['consumedSO'] or 0, 1),
+        'produced': round(row[numfields - 1]['produced'] or 0, 1),
+        'producedMO': round(row[numfields - 1]['producedMO'] or 0, 1),
+        'producedDO': round(row[numfields - 1]['producedDO'] or 0, 1),
+        'producedPO': round(row[numfields - 1]['producedPO'] or 0, 1),
+        'total_in_progress': round(row[numfields - 1]['total_in_progress'] or 0, 1),
+        'work_in_progress_mo': round(row[numfields - 1]['work_in_progress_mo'] or 0, 1),
+        'on_order_po': round(row[numfields - 1]['on_order_po'] or 0, 1),
+        'in_transit_do': round(row[numfields - 1]['in_transit_do'] or 0, 1),
+        'endoh': round(float(round(row[numfields - 6]['onhand'] if row[numfields - 6] else 0, 1)) + float(round(row[numfields - 1]['produced'] or 0, 1)) - float(round(row[numfields - 1]['consumed'] or 0, 1)), 1),
         }
       # Add attribute fields
       idx = 16
@@ -305,7 +326,9 @@ class DetailReport(OperationPlanMixin, GridReport):
     else:
       base = OperationPlanMaterial.objects
     base = reportclass.operationplanExtraBasequery(base, request)
-    return base.select_related()
+    return base.select_related().extra(select={
+      'feasible': "coalesce((operationplan.plan->>'feasible')::boolean, true)",
+      })
 
   @classmethod
   def extra_context(reportclass, request, *args, **kwargs):
@@ -356,12 +379,15 @@ class DetailReport(OperationPlanMixin, GridReport):
     GridFieldDuration('operationplan__delay', title=_('delay'), editable=False, extra='"formatoptions":{"defaultValue":""}, "summaryType":"max"'),
     GridFieldNumber('operationplan__quantity', title=_('operationplan quantity'), editable=False, extra='"formatoptions":{"defaultValue":""}, "summaryType":"sum"'),
     GridFieldText('demand', title=_('demands'), formatter='demanddetail', extra='"role":"input/demand"', width=300, editable=False, sortable=False),
+    GridFieldBool('feasible', title=_('feasible'), editable=False, initially_hidden=True, search=False),
     # Optional fields referencing the item
     GridFieldText('item__description', title=string_concat(_('item'), ' - ', _('description')),
       initially_hidden=True, editable=False),
     GridFieldText('item__category', title=string_concat(_('item'), ' - ', _('category')),
       initially_hidden=True, editable=False),
     GridFieldText('item__subcategory', title=string_concat(_('item'), ' - ', _('subcategory')),
+      initially_hidden=True, editable=False),
+    GridFieldNumber('item__cost', title=string_concat(_('item'), ' - ', _('cost')),
       initially_hidden=True, editable=False),
     GridFieldText('item__owner', title=string_concat(_('item'), ' - ', _('owner')),
       field_name='item__owner__name', initially_hidden=True, editable=False),
@@ -386,4 +412,5 @@ class DetailReport(OperationPlanMixin, GridReport):
       initially_hidden=True, editable=False),
     GridFieldLastModified('location__lastmodified', title=string_concat(_('location'), ' - ', _('last modified')),
       initially_hidden=True, editable=False),
+    GridFieldBool('feasible', title=_('feasible'), editable=False, initially_hidden=True, search=False),
     )

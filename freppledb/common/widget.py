@@ -72,18 +72,22 @@ class WizardWidget(Widget):
   url = '/wizard/'
 
   def render(self, request=None):
-    return '\n'.join(['<div id="content-main">',
+    return '\n'.join([
+      '<div id="content-main">',
       '<div id="wizardsvg" style="max-width: 1220px; display: block;">',
       render_to_string("common/wizard.svg", {
         'hasForecast': 'freppledb.forecast' in settings.INSTALLED_APPS,
         'hasIP': 'freppledb.inventoryplanning' in settings.INSTALLED_APPS,
-        }),'</div></div>'])
+        }),
+      '</div></div>'
+      ])
 
   javascript = '''
+    var website = "%s";
     $(function() {
        wizard.updateWizard();
     });
-    '''
+    ''' % settings.DOCUMENTATION_URL
 
 Dashboard.register(WizardWidget)
 

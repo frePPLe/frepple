@@ -83,7 +83,15 @@ available              calendar          A calendar specifying the working hours
                                                                                                                               
 effective_start        dateTime          Date when the operation becomes valid.
 
-effective_end          dateTime          Date when the operation becomes valid.
+                                         The value of this field is only used when the item field is
+                                         populated on the operation. Only then is the operation registered
+                                         as a replenishment method for the item at this location.
+
+effective_end          dateTime          Date after which the operation becomes invalid.
+
+                                         The value of this field is only used when the item field is
+                                         populated on the operation. Only then is the operation registered
+                                         as a replenishment method for the item at this location.
 
 priority               integer           Priority of this operation to produce the specified item.
                                          
@@ -91,6 +99,10 @@ priority               integer           Priority of this operation to produce t
                                          producing the same item-location, or the same item-location
                                          can also be replenished with :doc:`purchase orders<item-suppliers>`
                                          and/or :doc:`distribution orders<item-distributions>`.
+
+                                         The value of this field is only used when the item field is
+                                         populated on the operation. Only then is the operation registered
+                                         as a replenishment method for the item at this location.
                                          
                                          When the priority is 0, the operation is not actively used
                                          during planning.

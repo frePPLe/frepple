@@ -1,15 +1,21 @@
 Release notes
 -------------
 
-4.4.3 (Upcoming release)
+4.5.0 (Upcoming release)
 ========================
 
 .. rubric:: Production planning
+
+- The default allowed delivery delay of sales orders and forecasts is changed from indefinite 
+  to 5 years. This improves the performance of the algorithms in case there are unplannable
+  orders.
 
 - Bug fix: calculation of operation time for 0-duration operations was wrong in some situations.
 
 - Bug fix: incorrect operation duration when different resources in an aggregate pool resource 
   have different working hours.
+
+- Bug fix: corrected corner cases where the solver got into an infinite loop.  
 
 4.4.2 (2018/10/20)
 ==================

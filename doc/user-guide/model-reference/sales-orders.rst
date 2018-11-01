@@ -43,7 +43,7 @@ status         string            Status of the demand.
                                  and "quote".
 maxlateness    duration          | The maximum delay that can be accepted to satisfy this
                                    demand.
-                                 | The default value allows an infinite delay.
+                                 | The default value allows a delay of 5 years.
                                  | Use a value of 0 in businesses where the customer will
                                    not accept a late delivery and cancel his order in such
                                    a case. 

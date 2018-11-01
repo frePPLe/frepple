@@ -7852,7 +7852,7 @@ class Demand
       Plannable::registerFields<Cls>(m);
       m->addDateField<Cls>(Tags::due, &Cls::getDue, &Cls::setDue);
       m->addIntField<Cls>(Tags::priority, &Cls::getPriority, &Cls::setPriority);
-      m->addDurationField<Cls>(Tags::maxlateness, &Cls::getMaxLateness, &Cls::setMaxLateness, Duration::MAX, BASE + PLAN);
+      m->addDurationField<Cls>(Tags::maxlateness, &Cls::getMaxLateness, &Cls::setMaxLateness, Duration(5L * 365L * 86400L), BASE + PLAN);
       m->addStringField<Cls>(Tags::status, &Cls::getStatusString, &Cls::setStatusString, "open");
       m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, &Cls::setHidden, BOOL_FALSE, DONT_SERIALIZE);
       m->addIteratorField<Cls, PeggingIterator, PeggingIterator>(Tags::pegging, Tags::pegging, &Cls::getPegging, PLAN + WRITE_OBJECT);
@@ -7894,9 +7894,9 @@ class Demand
     Date dueDate;
 
     /** Maximum lateness allowed when planning this demand.<br>
-      * The default value is Duration::MAX.
+      * The default value is 5 years.
       */
-    Duration maxLateness = Duration::MAX;
+    Duration maxLateness = Duration(5L * 365L * 86400L);
 
     /** Minimum size for a delivery operation plan satisfying this demand. */
     double minShipment = -1.0;

@@ -322,7 +322,9 @@ void SolverCreate::solve(const Resource* res, void* v)
             false
             );
         HasOverload = true;
-        if (data->state->q_operationplan->getStart() < newDate || !data->state->q_operationplan->getQuantity())
+        if (data->state->q_operationplan->getStart() < newDate
+          || !data->state->q_operationplan->getQuantity()
+          || data->state->q_operationplan->getEnd() == Date::infiniteFuture)
           // Moving to the new date turns out to be infeasible! Give it up.
           // For instance, this can happen when the location calendar doesn't
           // have any up-time after the specified date.

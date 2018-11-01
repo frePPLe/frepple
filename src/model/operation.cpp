@@ -1358,38 +1358,50 @@ OperationTimePer::setOperationPlanParameters(
     {
       // Resize the quantity to be feasible
       double max_q = duration_per ?
-          static_cast<double>(production_duration - duration) / duration_per :
-          q;
+        static_cast<double>(production_duration - duration) / duration_per * efficiency :
+        q;
       q = opplan->setQuantity(q < max_q ? q : max_q, roundDown, false, execute);
-      production_wanted_duration = (double(duration) + duration_per * q) / efficiency;
-      production_dates = calculateOperationTime(
-        opplan, setup_dates.getEnd(), production_wanted_duration, true, &production_duration
-        );
-      if (!execute)
+      if (!q)
       {
-        if (get<0>(setuptime_required))
+        // Not feasible
+        if (!execute)
+          return OperationPlanState(production_dates, 0.0);
+        opplan->setQuantity(0, true, false);
+        opplan->clearSetupEvent();
+        opplan->setStartAndEnd(d, d);
+      }
+      else
+      {
+        production_wanted_duration = (double(duration) + duration_per * q) / efficiency;
+        production_dates = calculateOperationTime(
+          opplan, setup_dates.getEnd(), production_wanted_duration, true, &production_duration
+          );
+        if (!execute)
         {
-          SetupEvent tmp(
-            get<0>(setuptime_required)->getLoadPlans(),
+          if (get<0>(setuptime_required))
+          {
+            SetupEvent tmp(
+              get<0>(setuptime_required)->getLoadPlans(),
+              setup_dates.getEnd(),
+              get<2>(setuptime_required),
+              get<1>(setuptime_required)
+            );
+            return OperationPlanState(setup_dates.getStart(), production_dates.getEnd(), q, &tmp);
+          }
+          else
+            return OperationPlanState(production_dates, q);
+        }
+        if (get<0>(setuptime_required))
+          opplan->setSetupEvent(
+            get<0>(setuptime_required),
             setup_dates.getEnd(),
             get<2>(setuptime_required),
             get<1>(setuptime_required)
           );
-          return OperationPlanState(setup_dates.getStart(), production_dates.getEnd(), q, &tmp);
-        }
         else
-          return OperationPlanState(production_dates, q);
+          opplan->clearSetupEvent();
+        opplan->setStartAndEnd(production_dates.getStart(), production_dates.getEnd());
       }
-      if (get<0>(setuptime_required))
-        opplan->setSetupEvent(
-          get<0>(setuptime_required),
-          setup_dates.getEnd(),
-          get<2>(setuptime_required),
-          get<1>(setuptime_required)
-          );
-      else
-        opplan->clearSetupEvent();
-      opplan->setStartAndEnd(production_dates.getStart(), production_dates.getEnd());
     }
     if (preferEnd && opplan->getStart() < s && s != Date::infiniteFuture && d != Date::infiniteFuture)
     {

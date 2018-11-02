@@ -645,8 +645,6 @@ OperationPlan* SolverCreate::createOperation(
         }
         if (j == dmd->getConstraints().end())
         {
-          if (problemtext == "Invalid producing operation '11. make subassembly' for buffer '11. component @ plant'")
-            logger << " bonanza" << endl;
           dmd->getConstraints().push(new ProblemInvalidData(
             dmd, problemtext, "demand",
             dmd->getDue(), dmd->getDue(),

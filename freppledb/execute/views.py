@@ -42,7 +42,7 @@ from django.core.management import get_commands
 from freppledb.execute.models import Task
 from freppledb.common.auth import basicauthentication
 from freppledb.common.models import Scenario
-from freppledb.common.report import exportWorkbook, importWorkbook
+from freppledb.common.report import exportWorkbook, importWorkbook, GridFieldDuration
 from freppledb.common.report import GridReport, GridFieldDateTime, GridFieldText, GridFieldInteger
 from freppledb.execute.management.commands.runworker import checkActive
 
@@ -56,7 +56,9 @@ class TaskReport(GridReport):
   '''
   template = 'execute/execute.html'
   title = _('Task status')
-  basequeryset = Task.objects.all()
+  basequeryset = Task.objects.all().extra(select={
+    'duration': "case when status in ('Done', '100%%') then finished::timestamp(0) - started::timestamp(0) end"
+      })
   model = Task
   frozenColumns = 0
   multiselect = False
@@ -78,6 +80,7 @@ class TaskReport(GridReport):
     GridFieldText('arguments', title=_('arguments'), editable=False),
     #. Translators: Translation included with Django
     GridFieldText('user', title=_('user'), field_name='user__username', editable=False, align='center'),
+    GridFieldDuration('duration', title=_('duration'), search=False, editable=False, align='center'),
     )
 
 
@@ -114,7 +117,8 @@ class TaskReport(GridReport):
         'logfile': rec.logfile if rec.logfile in logfileslist else None,
         'message': rec.message,
         'arguments': rec.arguments,
-        'user__username': rec.user.username if rec.user else None
+        'user__username': rec.user.username if rec.user else None,
+        'duration': rec.duration
         }
 
 

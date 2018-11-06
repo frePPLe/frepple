@@ -149,7 +149,8 @@ class Item_admin(MultiDBModelAdmin):
     {"name": 'supplypath', "label": _("supply path"), "view": "supplypath_item"},
     {"name": 'whereused', "label": _("where used"), "view": "whereused_item"},
     {"name": 'plan', "label": _("plan"), "view": "output_demand_plandetail"},
-    {"name": 'plandetail', "label": _("delivery orders"), "view": "input_deliveryorder_by_item"},
+    {"name": 'deliveryorders', "label": _("delivery orders"), "view": "input_deliveryorder_by_item"},
+    {"name": 'manufacturingorders', "label": _("manufacturing orders"), "view": "input_manufacturingorder_by_item"},
     {"name": 'purchaseorders', "label": _("purchase orders"), "view": "input_purchaseorder_by_item"},
     {"name": 'comments', "label": _("comments"), "view": "admin:input_item_comment"},
     #. Translators: Translation included with Django
@@ -219,14 +220,14 @@ class Operation_admin(MultiDBModelAdmin):
   tabs = [
     {"name": 'edit', "label": _("edit"), "view": "admin:input_operation_change", "permissions": "input.change_operation"},
     {"name": 'supplypath', "label": _("supply path"), "view": "supplypath_operation"},
-    {"name": 'whereused', "label": _("where used"),"view": "whereused_operation"},
+    {"name": 'whereused', "label": _("where used"), "view": "whereused_operation"},
     {"name": 'plan', "label": _("plan"), "view": "output_operation_plandetail"},
-    # {"name": 'plandetail', "label": _("plan detail"), "view": "output_operationplan_plandetail"},
+    {"name": 'plandetail', "label": _("plan detail"), "view": "input_manufacturingorder_by_operation"},
     {"name": 'constraint', "label": _("constrained demand"), "view": "output_constraint_operation"},
     {"name": 'comments', "label": _("comments"), "view": "admin:input_operation_comment"},
     #. Translators: Translation included with Django
     {"name": 'history', "label": _("History"), "view": "admin:input_operation_history"},
-  ]
+    ]
 data_site.register(Operation, Operation_admin)
 
 

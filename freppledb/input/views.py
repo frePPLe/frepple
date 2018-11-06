@@ -1611,12 +1611,30 @@ class ManufacturingOrderList(OperationPlanMixin, GridReport):
   def extra_context(reportclass, request, *args, **kwargs):
     if args and args[0]:
       request.session['lasttab'] = 'manufacturingorders'
-      return {
-        'active_tab': 'manufacturingorders',
-        'model': Location,
-        'title': force_text(Location._meta.verbose_name) + " " + args[0],
-        'post_title': _('manufacturing orders')
-      }
+      path = request.path.split('/')[-3]
+      if path == 'location':
+        return {
+          'active_tab': 'manufacturingorders',
+          'model': Location,
+          'title': force_text(Location._meta.verbose_name) + " " + args[0],
+          'post_title': _('manufacturing orders')
+          }
+      elif path == 'operation':
+        return {
+          'active_tab': 'manufacturingorders',
+          'model': Operation,
+          'title': force_text(Operation._meta.verbose_name) + " " + args[0],
+          'post_title': _('manufacturing orders')
+          }
+      elif path == 'item':
+        return {
+          'active_tab': 'manufacturingorders',
+          'model': Item,
+          'title': force_text(Item._meta.verbose_name) + " " + args[0],
+          'post_title': _('manufacturing orders')
+          }
+      else:
+        return {'active_tab': 'manufacturingorders'}
     else:
       return {'active_tab': 'manufacturingorders'}
 
@@ -1625,7 +1643,13 @@ class ManufacturingOrderList(OperationPlanMixin, GridReport):
   def basequeryset(reportclass, request, *args, **kwargs):
     q = ManufacturingOrder.objects.all()
     if args and args[0]:
-      q = q.filter(location=args[0])
+      path = request.path.split('/')[-3]
+      if path == 'location':
+        q = q.filter(location=args[0])
+      elif path == 'operation':
+        q = q.filter(operation=args[0])
+      elif path == 'item':
+        q = q.filter(item=args[0])
     q = reportclass.operationplanExtraBasequery(q, request)
     return q.extra(select={
       'material': "(select json_agg(json_build_array(item_id, quantity)) from (select item_id, round(quantity,2) quantity from operationplanmaterial where operationplan_id = operationplan.id order by quantity limit 10) mat)",
@@ -2041,6 +2065,8 @@ class PurchaseOrderList(OperationPlanMixin, GridReport):
           'title': force_text(Item._meta.verbose_name) + " " + args[0],
           'post_title': _('purchase orders')
           }
+      else:
+        return {'active_tab': 'purchaseorders'}
     else:
       return {'active_tab': 'purchaseorders'}
 

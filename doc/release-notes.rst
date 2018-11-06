@@ -17,6 +17,13 @@ Release notes
 
 - Bug fix: corrected corner cases where the solver got into an infinite loop.  
 
+.. rubric:: User interface
+
+- Added field duration to the
+  `execution screen <user-guide/user-interface/execute.html>`_
+
+- Added tabs to see the manufacturing orders for a specific item, location or operation.
+
 4.4.2 (2018/10/20)
 ==================
 

@@ -186,6 +186,7 @@ class Command(BaseCommand):
       os.environ['FREPPLE_TASKID'] = str(task.id)
       os.environ['FREPPLE_DATABASE'] = database
       os.environ['FREPPLE_LOGFILE'] = logfile
+      os.environ['FREPPLE_PROCESSNAME'] = settings.DATABASES[database]['NAME'].replace('demo', '')
       os.environ['PATH'] = settings.FREPPLE_HOME + os.pathsep + os.environ['PATH'] + os.pathsep + settings.FREPPLE_APP
       if os.path.isfile(os.path.join(settings.FREPPLE_HOME, 'libfrepple.so')):
         os.environ['LD_LIBRARY_PATH'] = settings.FREPPLE_HOME

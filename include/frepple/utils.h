@@ -3340,7 +3340,11 @@ class Environment
     static void setLogFile(const string& x);
 
     /** Type for storing parameters passed to a module that is loaded. */
-    typedef map<string,XMLData> ParameterList;
+    typedef map<string, XMLData> ParameterList;
+
+    /** Updates the process name on Linux when the environment variable
+      * FREPPLE_PROCESSNAME is set. Maximum 7 characters are used. */
+    static void setProcessName();
 
     /** @brief Function to dynamically load a shared library in frePPLe.
       *

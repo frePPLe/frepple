@@ -133,14 +133,14 @@ AC_CHECK_PROG(HAVE_DOT, dot, [YES], [NO])
 # Checks for header files.
 AC_HEADER_DIRENT
 AC_HEADER_STDC
-AC_CHECK_HEADERS([fcntl.h stdlib.h unistd.h python.h pthread.h])
+AC_CHECK_HEADERS([fcntl.h stdlib.h unistd.h python.h pthread.h sys/prctl.h])
 
 # Checks for library functions.
 AC_FUNC_MALLOC
 AC_FUNC_MKTIME
 AC_FUNC_STAT
 AC_FUNC_STRFTIME
-AC_CHECK_FUNCS([dup2 memset strncasecmp strnicmp strptime putenv _putenv localtime_r])
+AC_CHECK_FUNCS([dup2 memset strncasecmp strnicmp strptime putenv _putenv localtime_r prctl])
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_CHECK_HEADERS([ext/slist slist vector map set stack tuple])

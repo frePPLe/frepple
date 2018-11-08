@@ -31,9 +31,9 @@ from freppledb import VERSION
 class Command(BaseCommand):
 
   help = '''
-    This command creates a database dump of the frePPLe database.
+    This command restores a database dump of the frePPLe database.
 
-    The psql command needs to be in the path, otherwise this command
+    The pg_restore command needs to be in the path, otherwise this command
     will fail.
     '''
 
@@ -94,25 +94,27 @@ class Command(BaseCommand):
       task.save(using=database)
 
       # Validate options
-      if not os.path.isfile(os.path.join(settings.FREPPLE_LOGDIR, options['dump'])):
+      dumpfile = os.path.abspath(os.path.join(settings.FREPPLE_LOGDIR, options['dump']))
+      if not os.path.isfile(dumpfile):
         raise CommandError("Dump file not found")
 
       # Run the restore command
       # Commenting the next line is a little more secure, but requires you to create a .pgpass file.
       if settings.DATABASES[database]['PASSWORD']:
         os.environ['PGPASSWORD'] = settings.DATABASES[database]['PASSWORD']
-      cmd = [ "psql", ]
+      cmd = [ "pg_restore", "-n", "public", "-Fc", "-c", "--if-exists" ]
       if settings.DATABASES[database]['USER']:
         cmd.append("--username=%s" % settings.DATABASES[database]['USER'])
       if settings.DATABASES[database]['HOST']:
         cmd.append("--host=%s" % settings.DATABASES[database]['HOST'])
       if settings.DATABASES[database]['PORT']:
         cmd.append("--port=%s " % settings.DATABASES[database]['PORT'])
+      cmd.append("-d")
       cmd.append(settings.DATABASES[database]['NAME'])
-      cmd.append('<%s' % os.path.abspath(os.path.join(settings.FREPPLE_LOGDIR, options['dump'])))
+      cmd.append('<%s' % dumpfile)
       ret = subprocess.call(cmd, shell=True)  # Shell needs to be True in order to interpret the < character
       if ret:
-        raise Exception("Run of psql failed")
+        raise Exception("Database restoration failed")
 
       # Task update
       # We need to recreate a new task record, since the previous one is lost during the restoration.

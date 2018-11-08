@@ -302,10 +302,13 @@ This command is available in the user interface, the command line and the web AP
 Back up database
 ----------------
 
-This task dumps the contents of the current database schema to a flat file.
-
+This task dumps the contents of the current database schema to a backup file.
 The file is created in the log folder configured in the configuration files
 djangosettings.py.
+
+It also removes dumps older than a month to limit the disk space usage. If you
+want to keep dumps for a longer period of time, you'll need to copy the backup files
+to a different location.
 
 This option is not active for cloud users. We automatically manage the
 data backups for cloud users.

@@ -26,6 +26,12 @@ Release notes
 
 - Added tabs to see the manufacturing orders for a specific item, location or operation.
 
+.. rubric:: API
+
+- The `database backup command <user-guide/command-reference.html#backup>`_ and
+  `database restore command <user-guide/command-reference.html#restore>`_ now use the 
+  faster and smaller compressed binary backup format of PostgreSQL. 
+
 4.4.2 (2018/10/20)
 ==================
 

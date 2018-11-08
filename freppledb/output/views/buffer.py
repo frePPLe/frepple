@@ -238,68 +238,69 @@ class OverviewReport(GridPivot):
         reportclass.attr_sql, basesql, sortsql
       )
 
-    cursor.execute(
-      query, (
-        request.report_startdate,  # startoh
-        request.report_startdate, request.report_startdate, request.report_startdate, request.report_startdate,) # safetystock
-        + (request.report_startdate, ) * 14 # ongoing
-        + baseparams +   # opplanmat
-        (request.report_bucket, request.report_startdate, request.report_enddate,  # bucket d
-        )
-      )
-
     # Build the python result
-    for row in cursor.fetchall():
-      numfields = len(row)
-      res = {
-        'buffer': row[0],
-        'item': row[1],
-        'location': row[2],
-        'item__description': row[3],
-        'item__category': row[4],
-        'item__cost': row[6],
-        'item__owner': row[7],
-        'item__source': row[8],
-        'item__lastmodified': row[9],
-        'location__description': row[10],
-        'location__category': row[11],
-        'location__subcategory': row[12],
-        'location__available_id': row[13],
-        'location__owner_id': row[14],
-        'location__source': row[15],
-        'location__lastmodified': row[16],
-        'startoh': round(row[numfields - 6]['onhand'] if row[numfields - 6] else 0, 1),
-        'startohdoc': 0 if (row[numfields - 6]['onhand']  if row[numfields - 6] else 0) <= 0\
-                        else (999 if row[numfields - 6]['periodofcover'] == 86313600\
-                                  else (datetime.strptime(row[numfields - 6]['flowdate'],'%Y-%m-%d %H:%M:%S') +\
-                                        timedelta(seconds=row[numfields - 6]['periodofcover']) - row[numfields - 4]).days if row[numfields - 6]['periodofcover'] else 999),
-        'bucket': row[numfields - 5],
-        'startdate': row[numfields - 4].date(),
-        'enddate': row[numfields - 3].date(),
-        'safetystock': round(row[numfields - 2] or 0, 1),
-        'consumed': round(row[numfields - 1]['consumed'] or 0, 1),
-        'consumedMO': round(row[numfields - 1]['consumedMO'] or 0, 1),
-        'consumedDO': round(row[numfields - 1]['consumedDO'] or 0, 1),
-        'consumedSO': round(row[numfields - 1]['consumedSO'] or 0, 1),
-        'produced': round(row[numfields - 1]['produced'] or 0, 1),
-        'producedMO': round(row[numfields - 1]['producedMO'] or 0, 1),
-        'producedDO': round(row[numfields - 1]['producedDO'] or 0, 1),
-        'producedPO': round(row[numfields - 1]['producedPO'] or 0, 1),
-        'total_in_progress': round(row[numfields - 1]['total_in_progress'] or 0, 1),
-        'work_in_progress_mo': round(row[numfields - 1]['work_in_progress_mo'] or 0, 1),
-        'on_order_po': round(row[numfields - 1]['on_order_po'] or 0, 1),
-        'in_transit_do': round(row[numfields - 1]['in_transit_do'] or 0, 1),
-        'endoh': round(float(round(row[numfields - 6]['onhand'] if row[numfields - 6] else 0, 1)) + float(round(row[numfields - 1]['produced'] or 0, 1)) - float(round(row[numfields - 1]['consumed'] or 0, 1)), 1),
-        }
-      # Add attribute fields
-      idx = 16
-      for f in getAttributeFields(Item, related_name_prefix="item"):
-        res[f.field_name] = row[idx]
-        idx += 1
-      for f in getAttributeFields(Location, related_name_prefix="location"):
-        res[f.field_name] = row[idx]
-        idx += 1
-      yield res
+    with connections[request.database].chunked_cursor() as cursor_chunked:
+      cursor_chunked.execute(
+        query,
+        (
+          request.report_startdate,  # startoh
+          request.report_startdate, request.report_startdate, request.report_startdate, request.report_startdate,  # safetystock
+        ) +
+        (request.report_startdate, ) * 14 +  # ongoing
+        baseparams +  # opplanmat
+        (request.report_bucket, request.report_startdate, request.report_enddate),  # bucket d
+        )
+      for row in cursor_chunked:
+        numfields = len(row)
+        res = {
+          'buffer': row[0],
+          'item': row[1],
+          'location': row[2],
+          'item__description': row[3],
+          'item__category': row[4],
+          'item__cost': row[6],
+          'item__owner': row[7],
+          'item__source': row[8],
+          'item__lastmodified': row[9],
+          'location__description': row[10],
+          'location__category': row[11],
+          'location__subcategory': row[12],
+          'location__available_id': row[13],
+          'location__owner_id': row[14],
+          'location__source': row[15],
+          'location__lastmodified': row[16],
+          'startoh': round(row[numfields - 6]['onhand'] if row[numfields - 6] else 0, 1),
+          'startohdoc': 0 if (row[numfields - 6]['onhand']  if row[numfields - 6] else 0) <= 0\
+                          else (999 if row[numfields - 6]['periodofcover'] == 86313600\
+                                    else (datetime.strptime(row[numfields - 6]['flowdate'],'%Y-%m-%d %H:%M:%S') +\
+                                          timedelta(seconds=row[numfields - 6]['periodofcover']) - row[numfields - 4]).days if row[numfields - 6]['periodofcover'] else 999),
+          'bucket': row[numfields - 5],
+          'startdate': row[numfields - 4].date(),
+          'enddate': row[numfields - 3].date(),
+          'safetystock': round(row[numfields - 2] or 0, 1),
+          'consumed': round(row[numfields - 1]['consumed'] or 0, 1),
+          'consumedMO': round(row[numfields - 1]['consumedMO'] or 0, 1),
+          'consumedDO': round(row[numfields - 1]['consumedDO'] or 0, 1),
+          'consumedSO': round(row[numfields - 1]['consumedSO'] or 0, 1),
+          'produced': round(row[numfields - 1]['produced'] or 0, 1),
+          'producedMO': round(row[numfields - 1]['producedMO'] or 0, 1),
+          'producedDO': round(row[numfields - 1]['producedDO'] or 0, 1),
+          'producedPO': round(row[numfields - 1]['producedPO'] or 0, 1),
+          'total_in_progress': round(row[numfields - 1]['total_in_progress'] or 0, 1),
+          'work_in_progress_mo': round(row[numfields - 1]['work_in_progress_mo'] or 0, 1),
+          'on_order_po': round(row[numfields - 1]['on_order_po'] or 0, 1),
+          'in_transit_do': round(row[numfields - 1]['in_transit_do'] or 0, 1),
+          'endoh': round(float(round(row[numfields - 6]['onhand'] if row[numfields - 6] else 0, 1)) + float(round(row[numfields - 1]['produced'] or 0, 1)) - float(round(row[numfields - 1]['consumed'] or 0, 1)), 1),
+          }
+        # Add attribute fields
+        idx = 16
+        for f in getAttributeFields(Item, related_name_prefix="item"):
+          res[f.field_name] = row[idx]
+          idx += 1
+        for f in getAttributeFields(Location, related_name_prefix="location"):
+          res[f.field_name] = row[idx]
+          idx += 1
+        yield res
 
 
 class DetailReport(OperationPlanMixin, GridReport):

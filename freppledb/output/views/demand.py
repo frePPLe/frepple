@@ -71,7 +71,6 @@ class OverviewReport(GridPivot):
   @classmethod
   def query(reportclass, request, basequery, sortsql='1 asc'):
     basesql, baseparams = basequery.query.get_compiler(basequery.db).as_sql(with_col_aliases=False)
-    cursor = connections[request.database].cursor()
 
     # Assure the item hierarchy is up to date
     Item.rebuildHierarchy(database=basequery.db)
@@ -103,10 +102,11 @@ class OverviewReport(GridPivot):
         ) pln
       on pln.name = items.name
       ''' % basesql
-    cursor.execute(query, baseparams + (request.report_startdate, request.report_startdate))
-    for row in cursor.fetchall():
-      if row[0]:
-        startbacklogdict[row[0]] = float(row[1])
+    with connections[request.database].chunked_cursor() as cursor_chunked:
+      cursor_chunked.execute(query, baseparams + (request.report_startdate, request.report_startdate))
+      for row in cursor_chunked:
+        if row[0]:
+          startbacklogdict[row[0]] = float(row[1])
 
     # Execute the query
     query = '''
@@ -161,35 +161,36 @@ class OverviewReport(GridPivot):
         group by %s y.name, y.lft, y.rght, y.bucket, y.startdate, y.enddate
         order by %s, y.startdate
        ''' % (reportclass.attr_sql, basesql, reportclass.attr_sql, sortsql)
-    cursor.execute(query, baseparams + (
-      request.report_bucket, request.report_startdate,
-      request.report_enddate, request.report_startdate,
-      request.report_enddate, request.report_startdate,
-      request.report_enddate
-      ))
 
     # Build the python result
-    previtem = None
-    for row in cursor.fetchall():
-      numfields = len(row)
-      if row[0] != previtem:
-        backlog = startbacklogdict.get(row[0], 0)
-        previtem = row[0]
-      backlog += float(row[numfields - 2]) - float(row[numfields - 1])
-      res = {
-        'item': row[0],
-        'bucket': row[numfields - 5],
-        'startdate': row[numfields - 4].date(),
-        'enddate': row[numfields - 3].date(),
-        'demand': round(row[numfields - 2], 1),
-        'supply': round(row[numfields - 1], 1),
-        'backlog': round(backlog, 1),
-        }
-      idx = 1
-      for f in getAttributeFields(Item):
-        res[f.field_name] = row[idx]
-        idx += 1
-      yield res
+    with connections[request.database].chunked_cursor() as cursor_chunked:
+      cursor_chunked.execute(query, baseparams + (
+        request.report_bucket, request.report_startdate,
+        request.report_enddate, request.report_startdate,
+        request.report_enddate, request.report_startdate,
+        request.report_enddate
+        ))
+      previtem = None
+      for row in cursor_chunked:
+        numfields = len(row)
+        if row[0] != previtem:
+          backlog = startbacklogdict.get(row[0], 0)
+          previtem = row[0]
+        backlog += float(row[numfields-2]) - float(row[numfields-1])
+        res = {
+          'item': row[0],
+          'bucket': row[numfields-5],
+          'startdate': row[numfields-4].date(),
+          'enddate': row[numfields-3].date(),
+          'demand': round(row[numfields-2], 1),
+          'supply': round(row[numfields-1], 1),
+          'backlog': round(backlog, 1),
+          }
+        idx = 1
+        for f in getAttributeFields(Item):
+          res[f.field_name] = row[idx]
+          idx += 1
+        yield res
 
 
 @staff_member_required

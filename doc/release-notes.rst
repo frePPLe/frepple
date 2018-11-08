@@ -19,6 +19,8 @@ Release notes
 
 .. rubric:: User interface
 
+- Improved performance and reduced memory footprint when downloading and exporting big reports.
+ 
 - Added field duration to the
   `execution screen <user-guide/user-interface/execute.html>`_
 

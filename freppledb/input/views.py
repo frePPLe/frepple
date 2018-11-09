@@ -99,7 +99,7 @@ class PathReport(GridReport):
   editable = False
   default_sort = None
   multiselect = False
-  help_url = 'user-guide/user-interface/supply-path-where-used.html'
+  help_url = 'user-guide/user-interface/plan-analysis/supply-path-where-used.html'
 
   rows = (
     GridFieldText('depth', title=_('depth'), editable=False, sortable=False),

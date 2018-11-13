@@ -185,10 +185,10 @@ class OverviewReport(GridPivot):
         order by priority
         limit 1) safetystock,
        (select jsonb_build_object(
-      'work_in_progress_mo', sum(case when (startdate <= greatest(d.startdate,%%s) and enddate >= d.enddate) and opm.quantity > 0 and operationplan.type = 'MO' then opm.quantity else 0 end),
-      'on_order_po', sum(case when (startdate <= greatest(d.startdate,%%s) and enddate >= d.enddate) and opm.quantity > 0 and operationplan.type = 'PO' then opm.quantity else 0 end),
-      'in_transit_do', sum(case when (startdate <= greatest(d.startdate,%%s) and enddate >= d.enddate) and opm.quantity > 0 and operationplan.type = 'DO' then opm.quantity else 0 end),
-      'total_in_progress', sum(case when (startdate <= greatest(d.startdate,%%s) and enddate >= d.enddate) and opm.quantity > 0 then opm.quantity else 0 end),
+      'work_in_progress_mo', sum(case when (startdate < d.enddate and enddate >= d.enddate) and opm.quantity > 0 and operationplan.type = 'MO' then opm.quantity else 0 end),
+      'on_order_po', sum(case when (startdate < d.enddate and enddate >= d.enddate) and opm.quantity > 0 and operationplan.type = 'PO' then opm.quantity else 0 end),
+      'in_transit_do', sum(case when (startdate < d.enddate and enddate >= d.enddate) and opm.quantity > 0 and operationplan.type = 'DO' then opm.quantity else 0 end),
+      'total_in_progress', sum(case when (startdate < d.enddate and enddate >= d.enddate) and opm.quantity > 0 then opm.quantity else 0 end),
       'consumed', sum(case when (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity < 0 then -opm.quantity else 0 end),
       'consumedMO', sum(case when operationplan.type = 'MO' and (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity < 0 then -opm.quantity else 0 end),
       'consumedDO', sum(case when operationplan.type = 'DO' and (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity < 0 then -opm.quantity else 0 end),
@@ -200,7 +200,7 @@ class OverviewReport(GridPivot):
       )
       from operationplanmaterial opm
       inner join operationplan on operationplan.id = opm.operationplan_id 
-      and ((startdate <= greatest(d.startdate,%%s) and enddate >= d.enddate) 
+      and ((startdate < d.enddate and enddate >= d.enddate) 
             or (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate))
       where opm.item_id = item.name and opm.location_id = location.name) ongoing
        from
@@ -246,7 +246,7 @@ class OverviewReport(GridPivot):
           request.report_startdate,  # startoh
           request.report_startdate, request.report_startdate, request.report_startdate, request.report_startdate,  # safetystock
         ) +
-        (request.report_startdate, ) * 14 +  # ongoing
+        (request.report_startdate, ) * 9 +  # ongoing
         baseparams +  # opplanmat
         (request.report_bucket, request.report_startdate, request.report_enddate),  # bucket d
         )

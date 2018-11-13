@@ -396,8 +396,8 @@ function crosses (cellvalue, options, rowdata)
            result += cellvalue[13] + "<a href='{{request.prefix}}/data/input/manufacturingorder/" +
               "?operation__item__name=" + admin_escape(rowdata['item']) +
               "&amp;operation__location__name=" + admin_escape(rowdata['location']) +
-              "&amp;startdate__lte=" + options['colModel']['startdate'] +
-              "&amp;enddate__gt=" + options['colModel']['startdate'] +
+              "&amp;startdate__lt=" + options['colModel']['enddate'] +
+              "&amp;enddate__gte=" + options['colModel']['enddate'] +
               "'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
           result += '0.0<br>';
@@ -407,8 +407,8 @@ function crosses (cellvalue, options, rowdata)
            result += cellvalue[14] + "<a href='{{request.prefix}}/data/input/purchaseorder/" +
               "?item__name=" + admin_escape(rowdata['item']) +
               "&amp;location__name=" + admin_escape(rowdata['location']) +
-              "&amp;startdate__lte=" + options['colModel']['startdate'] +
-              "&amp;enddate__gt=" + options['colModel']['startdate'] +
+              "&amp;startdate__lt=" + options['colModel']['enddate'] +
+              "&amp;enddate__gte=" + options['colModel']['enddate'] +
               "'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
           result += '0.0<br>';
@@ -418,8 +418,8 @@ function crosses (cellvalue, options, rowdata)
            result += cellvalue[15] + "<a href='{{request.prefix}}/data/input/distributionorder/" +
               "?item__name=" + admin_escape(rowdata['item']) +
               "&amp;location__name=" + admin_escape(rowdata['location']) +
-              "&amp;startdate__lte=" + options['colModel']['startdate'] +
-              "&amp;enddate__gt=" + options['colModel']['startdate'] +
+              "&amp;startdate__lt=" + options['colModel']['enddate'] +
+              "&amp;enddate__gte=" + options['colModel']['enddate'] +
               "'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
           result += '0.0<br>';

@@ -50,7 +50,7 @@ Consumed by DO                 Displays the quantity consumed by distribution or
 Consumed by SO                 Displays the quantity consumed by sales orders.
 
 Total in progress              | Sum of the manufacturing/purchase/distribution order quantities in progress.
-                               | The shipping/starting date of the order must be before the start date
+                               | The shipping/starting date of the order must be before the end date
                                | of the time bucket and the receiving/enddate of the order must be after
                                  the end date of the time bucket to be considered in progress.
 

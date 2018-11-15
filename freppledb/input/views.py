@@ -22,6 +22,7 @@ from django.conf import settings
 from django.contrib.admin.views.decorators import staff_member_required
 from django.db import connections
 from django.db.models import Q
+from django.db.models.expressions import RawSQL
 from django.db.models.fields import CharField
 from django.http import HttpResponse, Http404
 from django.http.response import StreamingHttpResponse, HttpResponseServerError
@@ -1650,6 +1651,15 @@ class ManufacturingOrderList(OperationPlanMixin, GridReport):
         q = q.filter(operation=args[0])
       elif path == 'item':
         q = q.filter(item=args[0])
+      elif path == 'operationplanmaterial':
+        q = q.filter(id__in=RawSQL('''
+        select operationplan_id from operationplan 
+        inner join operationplanmaterial on operationplanmaterial.operationplan_id = operationplan.id
+        and operationplanmaterial.item_id = %s and operationplanmaterial.location_id = %s
+        and operationplan.startdate < %s and operationplan.enddate >= %s
+        where operationplan.type = 'MO'
+        ''' , (args[0], args[1], args[2], args[3])))
+
     q = reportclass.operationplanExtraBasequery(q, request)
     return q.extra(select={
       'material': "(select json_agg(json_build_array(item_id, quantity)) from (select item_id, round(quantity,2) quantity from operationplanmaterial where operationplan_id = operationplan.id order by quantity limit 10) mat)",
@@ -1848,13 +1858,22 @@ class DistributionOrderList(OperationPlanMixin, GridReport):
   def basequeryset(reportclass, request, *args, **kwargs):
     q = DistributionOrder.objects.all()
     if args and args[0]:
-      path = request.path.split('/')[-2]
-      if path == 'out':
-        q = q.filter(origin_id=args[0])
-      elif path == 'in':
-        q = q.filter(destination_id=args[0])
+      if request.path.split('/')[-3] == 'operationplanmaterial':
+        q = q.filter(id__in=RawSQL('''
+        select operationplan_id from operationplan 
+        inner join operationplanmaterial on operationplanmaterial.operationplan_id = operationplan.id
+        and operationplanmaterial.item_id = %s and operationplanmaterial.location_id = %s
+        and operationplan.startdate < %s and operationplan.enddate >= %s
+        where operationplan.type = 'DO'
+        ''' , (args[0], args[1], args[2], args[3])))
       else:
-        q = q.filter(location=args[0])
+        path = request.path.split('/')[-2]
+        if path == 'out':
+          q = q.filter(origin_id=args[0])
+        elif path == 'in':
+          q = q.filter(destination_id=args[0])
+        else:
+          q = q.filter(location=args[0])
     q = reportclass.operationplanExtraBasequery(q, request)
     return q.extra(select={
       'total_cost': "cost*quantity",
@@ -2103,6 +2122,14 @@ class PurchaseOrderList(OperationPlanMixin, GridReport):
           lft = 1
           rght = 1
         q = q.filter(item__lft__gte=lft, item__rght__lte=rght)
+      elif path == 'operationplanmaterial':
+        q = q.filter(id__in=RawSQL('''
+        select operationplan_id from operationplan 
+        inner join operationplanmaterial on operationplanmaterial.operationplan_id = operationplan.id
+        and operationplanmaterial.item_id = %s and operationplanmaterial.location_id = %s
+        and operationplan.startdate < %s and operationplan.enddate >= %s
+        where operationplan.type = 'PO'
+        ''' , (args[0], args[1], args[2], args[3])))
     q = reportclass.operationplanExtraBasequery(q, request)
     return q.extra(select={
       'total_cost': "cost*quantity",

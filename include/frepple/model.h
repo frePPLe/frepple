@@ -7117,14 +7117,14 @@ class Load
 
     double getQuantityFixed() const
     {
-      return qty_fixed;
+      return qtyfixed;
     }
 
     void setQuantityFixed(double f)
     {
       if (f < 0)
         throw DataException("OperationResource quantity_fixed can't be negative");
-      qty_fixed = f;
+      qtyfixed = f;
     }
 
     /** Return the leading load of this group.

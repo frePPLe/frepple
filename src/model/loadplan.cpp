@@ -352,6 +352,30 @@ Object* LoadPlan::reader(
 }
 
 
+double Load::getLoadplanQuantity(const LoadPlan* lp) const
+{
+  if (!lp->getOperationPlan()->getProposed() && !lp->getOperationPlan()->getConsumeCapacity())
+    // No capacity consumption required
+    return 0.0;
+  if (!lp->getOperationPlan()->getQuantity())
+    // Operationplan has zero size, and so should the capacity it needs
+    return 0.0;
+  if (!lp->getOperationPlan()->getDates().overlap(getEffective())
+    && (lp->getOperationPlan()->getDates().getDuration()
+      || !getEffective().within(lp->getOperationPlan()->getStart())))
+    // Load is not effective during this time.
+    // The extra check is required to make sure that zero duration operationplans
+    // operationplans don't get resized to 0
+    return 0.0;
+  if (getResource()->getType() == *ResourceBuckets::metadata)
+    // Bucketized resource
+    return - (getQuantityFixed() + getQuantity() * lp->getOperationPlan()->getQuantity()) / lp->getOperationPlan()->getEfficiency();
+  else
+    // Continuous resource
+    return lp->isStart() ? getQuantity() : -getQuantity();
+}
+
+
 int LoadPlanIterator::initialize()
 {
   // Initialize the type

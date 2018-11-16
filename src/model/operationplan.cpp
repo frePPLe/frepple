@@ -2115,7 +2115,11 @@ double OperationPlan::getEfficiency(Date d) const
       ++e;
     }
   }
-  return best == DBL_MAX ? 1.0 : best / 100.0;
+  if (best < 0.1)
+    // Avoid division by 0 by assuming the minimum efficiency is 0.1%
+    return 0.001;
+  else
+    return best == DBL_MAX ? 1.0 : best / 100.0;
 }
 
 

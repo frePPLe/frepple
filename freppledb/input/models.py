@@ -730,6 +730,10 @@ class OperationResource(AuditModel):
     _('quantity'), default='1.00',
     max_digits=20, decimal_places=8
     )
+  quantity_fixed = models.DecimalField(
+    _('quantity fixed'), null=True, blank=True,
+    max_digits=20, decimal_places=8
+    )
   effective_start = models.DateTimeField(
     _('effective start'), null=True, blank=True,
     help_text=_('Validity start date')

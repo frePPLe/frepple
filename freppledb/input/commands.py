@@ -1164,7 +1164,7 @@ class loadOperationResources(LoadTask):
       cursor.execute('''
         SELECT
           operation_id, resource_id, quantity, effective_start, effective_end, name,
-          priority, setup, search, skill_id, source
+          priority, setup, search, skill_id, source, quantity_fixed
         FROM operationresource %s
         ORDER BY operation_id, resource_id
         ''' % filter_where)
@@ -1191,6 +1191,8 @@ class loadOperationResources(LoadTask):
             curload.search = i[8]
           if i[9]:
             curload.skill = frepple.skill(name=i[9])
+          if i[11]:
+            curload.quantity_fixed = i[11]
         except Exception as e:
           logger.error("**** %s ****" % e)
       logger.info('Loaded %d resource loads in %.2f seconds' % (cnt, time() - starttime))

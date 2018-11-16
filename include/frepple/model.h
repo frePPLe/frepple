@@ -7101,13 +7101,24 @@ class Load
       return qty;
     }
 
-    /** Updates the quantity of the load.
-      * @exception DataException When a negative number is passed.
-      */
+    /** Updates the quantity of the load. */
     void setQuantity(double f)
     {
-      if (f < 0) throw DataException("Load quantity can't be negative");
+      if (f < 0)
+        throw DataException("OperationResource quantity can't be negative");
       qty = f;
+    }
+
+    double getQuantityFixed() const
+    {
+      return qty_fixed;
+    }
+
+    void setQuantityFixed(double f)
+    {
+      if (f < 0)
+        throw DataException("OperationResource quantity_fixed can't be negative");
+      qty_fixed = f;
     }
 
     /** Return the leading load of this group.
@@ -7216,6 +7227,7 @@ class Load
       m->addPointerField<Cls, Operation>(Tags::operation, &Cls::getOperation, &Cls::setOperation, MANDATORY + PARENT);
       m->addPointerField<Cls, Resource>(Tags::resource, &Cls::getResource, &Cls::setResource, MANDATORY + PARENT);
       m->addDoubleField<Cls>(Tags::quantity, &Cls::getQuantity, &Cls::setQuantity, 1.0);
+      m->addDoubleField<Cls>(Tags::quantity_fixed, &Cls::getQuantityFixed, &Cls::setQuantityFixed, 0.0);
       m->addIntField<Cls>(Tags::priority, &Cls::getPriority, &Cls::setPriority, 1);
       m->addStringField<Cls>(Tags::name, &Cls::getName, &Cls::setName);
       m->addEnumField<Cls, SearchMode>(Tags::search, &Cls::getSearch, &Cls::setSearch, PRIORITY);
@@ -7231,6 +7243,9 @@ class Load
     /** Stores how much capacity is consumed during the duration of an
       * operationplan. */
     double qty = 1.0;
+
+    /** Constant capacity consumption for bucketized resources only. */
+    double qtyfixed = 0.0;
 
     /** Required setup. */
     PooledString setup;

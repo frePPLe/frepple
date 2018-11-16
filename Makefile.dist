@@ -123,12 +123,11 @@ stats:
 		`find . -name '*.xsd'` \
 		`find . -name '*.nsi'` \
 		`find . -name '*.am'` \
-		`find . -name '*.ac'` \
-		`find modules -name '*.h'` | sort -n
+		`find . -name '*.ac'` | sort -n
 	wc -l `find . -name '*.py'` | sort -n
 	wc -l `find freppledb -name '*.html'` \
-		freppledb/common/static/js/frepple.js \
-		freppledb/common/static/css/frepple.css | sort -n
+		`find freppledb -name '*.js'` \
+		`find freppledb -name '*.css'` | sort -n
 
 # A simple way to list the todo items
 todo:

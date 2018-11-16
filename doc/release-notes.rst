@@ -10,6 +10,9 @@ Release notes
   to 5 years. This improves the performance of the algorithms in case there are unplannable
   orders.
 
+- The capacity consumption from a bucketized resource now also has a constant component
+  and considers the resource efficiency.
+
 - Bug fix: calculation of operation time for 0-duration operations was wrong in some situations.
 
 - Bug fix: incorrect operation duration when different resources in an aggregate pool resource 

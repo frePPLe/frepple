@@ -17,6 +17,9 @@ skill           skill             | Skill required of the resource.
                                   | This field is optional.
 quantity        double            | Load factor of the resource.
                                   | The default value is 1.0.
+quantity_fixed  double            | For a resource of type bucket the total capacity 
+                                    consumption is set to 
+                                  | The default value is 0.0.
 effective_start dateTime          | Date after which the resource load is valid.
                                   | Before this date the planned quantity is always 0.
 effective_end   dateTime          | Date at which the resource load becomes invalid.

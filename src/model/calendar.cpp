@@ -532,7 +532,7 @@ Calendar::EventIterator::EventIterator
     if (cacheiter == theCalendar->eventlist.end())
       curValue = theCalendar->getDefault();
     else
-      curValue = cacheiter->second;
+      curValue = cacheiter->second;    
   }
   else
   {
@@ -544,6 +544,7 @@ Calendar::EventIterator::EventIterator
     else
       curValue = cacheiter->second;
   }
+  prevValue = curValue;
 }
 
 
@@ -564,6 +565,7 @@ Calendar::EventIterator& Calendar::EventIterator::operator++()
       }
     }
   }
+  prevValue = curValue;
   if (cacheiter == theCalendar->eventlist.end())
   {
     curDate = Date::infiniteFuture;
@@ -580,6 +582,7 @@ Calendar::EventIterator& Calendar::EventIterator::operator++()
 
 Calendar::EventIterator& Calendar::EventIterator::operator--()
 {
+  prevValue = curValue;
   if (cacheiter == theCalendar->eventlist.end())
   {
     curValue = theCalendar->getDefault();

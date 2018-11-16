@@ -484,13 +484,14 @@ class Calendar : public HasName<Calendar>, public HasSource
         Calendar* theCalendar = nullptr;
         Date curDate;
         double curValue = 0.0;
+        double prevValue = 0.0;
       public:
         const Date& getDate() const
         { 
           return curDate;
         }
 
-        double getValue()
+        double getValue() const
         {
           return curValue;
         }
@@ -498,6 +499,11 @@ class Calendar : public HasName<Calendar>, public HasSource
         const Calendar* getCalendar() const
         {
           return theCalendar;
+        }
+
+        double getPrevValue() const
+        {
+          return prevValue;
         }
 
         EventIterator(

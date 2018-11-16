@@ -256,9 +256,8 @@ DateRange Operation::calculateOperationTime(
   bool status = false;
   Duration curduration = duration;
   while (true)
-  {
-    // Check whether all calendars are available
-    bool available = true;
+  {    
+    // Find the closest event date
     Date selected = forward ? Date::infiniteFuture : Date::infinitePast;
     for (auto t = cals.begin(); t != cals.end(); ++t)
     {
@@ -266,17 +265,26 @@ DateRange Operation::calculateOperationTime(
         (forward && t->getDate() < selected)
         || (!forward && t->getDate() > selected)
         )
-      {
         selected = t->getDate();
-        if (forward && available && t->getValue() == 0)
+    }
+
+    // Check whether all calendars are available at the next event date
+    bool available = true;
+    if (forward)
+    {
+      for (auto t = cals.begin(); t != cals.end() && available; ++t)
+      {     
+        if (t->getDate() == selected && t->getValue() == 0)
+          available = false;
+        else if (t->getDate() != selected && t->getPrevValue() == 0)
           available = false;
       }
     }
-    if (!forward)
+    else
     {
-      for (auto t = cals.begin(); t != cals.end(); ++t)
+      for (auto t = cals.begin(); t != cals.end() && available; ++t)
       {
-        if (available && t->getCalendar()->getValue(selected, forward) == 0)
+        if (t->getCalendar()->getValue(selected, forward) == 0)
           available = false;
       }
     }
@@ -390,7 +398,6 @@ DateRange Operation::calculateOperationTime(
           --(*t);
     }
   }
-
   return result;
 }
 

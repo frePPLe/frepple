@@ -29,6 +29,8 @@ Release notes
 - Update of the "in progress" fields of the inventory report. Are considered in progress for a given bucket
   all orders startting before the end date of that bucket and ending after the end date of that bucket. 
 
+- Improved display of very small durations. All digits up to 1 microsecond are now visible.
+
 .. rubric:: API
 
 - The `database backup command <user-guide/command-reference.html#backup>`_ and

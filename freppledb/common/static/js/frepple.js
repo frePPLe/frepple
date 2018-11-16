@@ -367,10 +367,16 @@ function formatDuration(cellvalue, options, rowdata) {
   if (rowdata.criticality > 998)
     return 'N/A';
   if (days > 0)
-    return (sign*days).toString() + " " + ((hours < 10) ? "0" : "") + hours + ((minutes < 10) ? ":0" : ":") + minutes + ((seconds < 10) ? ":0" : ":") + (seconds).toFixed((seconds === Math.floor(seconds))?0:3);
+    return (sign*days).toString() 
+      + " " + ((hours < 10) ? "0" : "") + hours + ((minutes < 10) ? ":0" : ":") 
+      + minutes + ((seconds < 10) ? ":0" : ":") 
+      + Number((seconds).toFixed((seconds === Math.floor(seconds))?0:6));
   else
-    return ((sign<0)?"-":"")+((hours < 10) ? "0" : "") + hours + ((minutes < 10) ? ":0" : ":") + minutes + ((seconds < 10) ? ":0" : ":") + (seconds).toFixed((seconds === Math.floor(seconds))?0:3);
-  return (sign*seconds).toFixed((seconds === Math.floor(seconds))?0:3);
+    return ((sign<0)?"-":"") + ((hours < 10) ? "0" : "") + hours 
+      + ((minutes < 10) ? ":0" : ":") + minutes 
+      + ((seconds < 10) ? ":0" : ":") 
+      + Number((seconds).toFixed((seconds === Math.floor(seconds))?0:6));
+  return Number((sign*seconds).toFixed((seconds === Math.floor(seconds))?0:6));
 }
 
 jQuery.extend($.fn.fmatter, {

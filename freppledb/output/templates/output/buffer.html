@@ -394,30 +394,27 @@ function crosses (cellvalue, options, rowdata)
       case 13:
         if (cellvalue[13] != 0.0)
            result += cellvalue[13] + "<a href='{{request.prefix}}/data/input/manufacturingorder/operationplanmaterial/" +
-              admin_escape(rowdata['item']) + "&" + admin_escape(rowdata['location']) +
-              "&" + options['colModel']['enddate'] +
-              "&" + options['colModel']['enddate'] + "/" +
-              "'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
+              admin_escape(rowdata['item']) + "/" + admin_escape(rowdata['location']) +
+              "/" + options['colModel']['enddate'] +
+              "/'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
           result += '0.0<br>';
         break;
       case 14:
         if (cellvalue[14] != 0.0)
            result += cellvalue[14] + "<a href='{{request.prefix}}/data/input/purchaseorder/operationplanmaterial/" +
-              admin_escape(rowdata['item']) + "&" + admin_escape(rowdata['location']) +
-              "&" + options['colModel']['enddate'] +
-              "&" + options['colModel']['enddate'] + "/" +
-              "'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
+              admin_escape(rowdata['item']) + "/" + admin_escape(rowdata['location']) +
+              "/" + options['colModel']['enddate'] +
+              "/'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
           result += '0.0<br>';
         break;
       case 15:
         if (cellvalue[15] != 0.0)
            result += cellvalue[15] + "<a href='{{request.prefix}}/data/input/distributionorder/operationplanmaterial/" +
-              admin_escape(rowdata['item']) + "&" + admin_escape(rowdata['location']) +
-              "&" + options['colModel']['enddate'] +
-              "&" + options['colModel']['enddate'] + "/" +
-              "'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
+              admin_escape(rowdata['item']) + "/" + admin_escape(rowdata['location']) +
+              "/" + options['colModel']['enddate'] +
+              "/'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
           result += '0.0<br>';
         break;

@@ -64,6 +64,7 @@ class OverviewReport(GridPivot):
       request.session['lasttab'] = 'plan'
       return {
         'title': force_text(Item._meta.verbose_name) + " " + args[0],
+        'post_title': _('plan')
         }
     else:
       return {}

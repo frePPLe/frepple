@@ -1612,7 +1612,8 @@ class ManufacturingOrderList(OperationPlanMixin, GridReport):
   def extra_context(reportclass, request, *args, **kwargs):
     if args and args[0]:
       request.session['lasttab'] = 'manufacturingorders'
-      path = request.path.split('/')[-3]
+      paths = request.path.split('/')
+      path = paths[-3]
       if path == 'location':
         return {
           'active_tab': 'manufacturingorders',
@@ -1634,6 +1635,17 @@ class ManufacturingOrderList(OperationPlanMixin, GridReport):
           'title': force_text(Item._meta.verbose_name) + " " + args[0],
           'post_title': _('manufacturing orders')
           }
+      elif paths[3] == 'manufacturingorder':
+        return {
+          'active_tab': 'manufacturingorders',
+          'model': Item,
+          'title': force_text(Item._meta.verbose_name) + " " + args[0],
+          'post_title': force_text(
+            _("work in progress in %(loc)s at %(date)s") % {
+              'loc': args[1], 'date': args[2]
+              }
+            )
+          }
       else:
         return {'active_tab': 'manufacturingorders'}
     else:
@@ -1644,7 +1656,7 @@ class ManufacturingOrderList(OperationPlanMixin, GridReport):
   def basequeryset(reportclass, request, *args, **kwargs):
     q = ManufacturingOrder.objects.all()
     if args and args[0]:
-      path = request.path.split('/')[-3]
+      path = request.path.split('/')[4]
       if path == 'location':
         q = q.filter(location=args[0])
       elif path == 'operation':
@@ -1653,12 +1665,13 @@ class ManufacturingOrderList(OperationPlanMixin, GridReport):
         q = q.filter(item=args[0])
       elif path == 'operationplanmaterial':
         q = q.filter(id__in=RawSQL('''
-        select operationplan_id from operationplan 
-        inner join operationplanmaterial on operationplanmaterial.operationplan_id = operationplan.id
-        and operationplanmaterial.item_id = %s and operationplanmaterial.location_id = %s
-        and operationplan.startdate < %s and operationplan.enddate >= %s
-        where operationplan.type = 'MO'
-        ''' , (args[0], args[1], args[2], args[3])))
+          select operationplan_id from operationplan
+          inner join operationplanmaterial on operationplanmaterial.operationplan_id = operationplan.id
+          and operationplanmaterial.item_id = %s and operationplanmaterial.location_id = %s
+          and operationplan.startdate < %s and operationplan.enddate >= %s
+          where operationplan.type = 'MO'
+          ''', (args[0], args[1], args[2], args[2])
+          ))
 
     q = reportclass.operationplanExtraBasequery(q, request)
     return q.extra(select={
@@ -1839,14 +1852,14 @@ class DistributionOrderList(OperationPlanMixin, GridReport):
         return {
           'active_tab': 'inboundorders',
           'model': Location,
-          'title': force_text(DistributionOrder._meta.verbose_name) + " " + args[0],
+          'title': force_text(Location._meta.verbose_name) + " " + args[0],
           'post_title': _('inbound distribution')
           }
       elif path == 'out':
         return {
           'active_tab': 'outboundorders',
           'model': Location,
-          'title': force_text(DistributionOrder._meta.verbose_name) + " " + args[0],
+          'title': force_text(Location._meta.verbose_name) + " " + args[0],
           'post_title': _('outbound distribution')
           }
       else:
@@ -1860,12 +1873,13 @@ class DistributionOrderList(OperationPlanMixin, GridReport):
     if args and args[0]:
       if request.path.split('/')[-3] == 'operationplanmaterial':
         q = q.filter(id__in=RawSQL('''
-        select operationplan_id from operationplan 
-        inner join operationplanmaterial on operationplanmaterial.operationplan_id = operationplan.id
-        and operationplanmaterial.item_id = %s and operationplanmaterial.location_id = %s
-        and operationplan.startdate < %s and operationplan.enddate >= %s
-        where operationplan.type = 'DO'
-        ''' , (args[0], args[1], args[2], args[3])))
+          select operationplan_id from operationplan
+          inner join operationplanmaterial on operationplanmaterial.operationplan_id = operationplan.id
+          and operationplanmaterial.item_id = %s and operationplanmaterial.location_id = %s
+          and operationplan.startdate < %s and operationplan.enddate >= %s
+          where operationplan.type = 'DO'
+          ''', (args[0], args[1], args[2], args[2])
+          ))
       else:
         path = request.path.split('/')[-2]
         if path == 'out':
@@ -2062,7 +2076,7 @@ class PurchaseOrderList(OperationPlanMixin, GridReport):
   def extra_context(reportclass, request, *args, **kwargs):
     if args and args[0]:
       request.session['lasttab'] = 'purchaseorders'
-      path = request.path.split('/')[-3]
+      path = request.path.split('/')[4]
       if path == 'supplier':
         return {
           'active_tab': 'purchaseorders',
@@ -2124,12 +2138,13 @@ class PurchaseOrderList(OperationPlanMixin, GridReport):
         q = q.filter(item__lft__gte=lft, item__rght__lte=rght)
       elif path == 'operationplanmaterial':
         q = q.filter(id__in=RawSQL('''
-        select operationplan_id from operationplan 
-        inner join operationplanmaterial on operationplanmaterial.operationplan_id = operationplan.id
-        and operationplanmaterial.item_id = %s and operationplanmaterial.location_id = %s
-        and operationplan.startdate < %s and operationplan.enddate >= %s
-        where operationplan.type = 'PO'
-        ''' , (args[0], args[1], args[2], args[3])))
+          select operationplan_id from operationplan
+          inner join operationplanmaterial on operationplanmaterial.operationplan_id = operationplan.id
+          and operationplanmaterial.item_id = %s and operationplanmaterial.location_id = %s
+          and operationplan.startdate < %s and operationplan.enddate >= %s
+          where operationplan.type = 'PO'
+          ''', (args[0], args[1], args[2], args[2])
+          ))
     q = reportclass.operationplanExtraBasequery(q, request)
     return q.extra(select={
       'total_cost': "cost*quantity",
@@ -2419,14 +2434,14 @@ class DeliveryOrderList(GridReport):
   @classmethod
   def extra_context(reportclass, request, *args, **kwargs):
     if args and args[0]:
-      request.session['lasttab'] = 'plandetail'
+      request.session['lasttab'] = 'deliveryorders'
       return {
-        'active_tab': 'plandetail',
+        'active_tab': 'deliveryorders',
         'title': force_text(Item._meta.verbose_name) + " " + args[0],
         'post_title': _("Delivery orders")
         }
     else:
-      return {'active_tab': 'plandetail'}
+      return {'active_tab': 'deliveryorders'}
 
   @classmethod
   def initialize(reportclass, request):

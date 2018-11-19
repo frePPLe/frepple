@@ -527,8 +527,7 @@ DateRange Operation::calculateOperationTime(
   bool status = false;
   while (true)
   {
-    // Check whether all calendars are available
-    bool available = true;
+    // Find the closest event date
     Date selected = Date::infiniteFuture;
     for (auto t = cals.begin(); t != cals.end(); ++t)
     {
@@ -536,9 +535,16 @@ DateRange Operation::calculateOperationTime(
         selected = t->getDate();
     }
     curdate = selected;
+
+    // Check whether all calendars are available at the next event date
+    bool available = true;
     for (auto t = cals.begin(); t != cals.end() && available; ++t)
-      // TODO next line does a pretty expensive lookup in the calendar, which we might be available to avoid
-      available = (t->getCalendar()->getValue(selected) != 0);
+    {
+      if (t->getDate() == selected && t->getValue() == 0)
+        available = false;
+      else if (t->getDate() != selected && t->getPrevValue() == 0)
+        available = false;
+    }
     
     if (available && !status)
     {

@@ -15,11 +15,27 @@ resource        resource          | Resource being loaded.
                                   | This is a required field.
 skill           skill             | Skill required of the resource.
                                   | This field is optional.
-quantity        double            | Load factor of the resource.
+quantity        double            | Required quantity of the resource.
                                   | The default value is 1.0.
+                                  | The use of the value is different per resource type:
+                                    
+                                  * | Type 'default':
+                                    | The resource is used during the complete duration of the
+                                      manufacturing order. 
+                                    | If the resource has a size of 1 and the 
+                                      operationresource record has a quantity of 1, then only
+                                      1 operation can be planned in parallel.
+                                  
+                                  * | Type 'bucket':
+                                    | The total capacity consumed by a manufacturing order
+                                      from the resource is equal to the (quantity_fixed + 
+                                      quantity * manufacturing order quantity) / efficiency.
+                                    | This quantity is consumed from the capacity bucket where
+                                      the manufacturing order starts.
+                                     
 quantity_fixed  double            | For a resource of type bucket the total capacity 
                                     consumption is set to 
-                                  | The default value is 0.0.
+                                  | The default value is 0.0.             
 effective_start dateTime          | Date after which the resource load is valid.
                                   | Before this date the planned quantity is always 0.
 effective_end   dateTime          | Date at which the resource load becomes invalid.

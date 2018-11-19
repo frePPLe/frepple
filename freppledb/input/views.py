@@ -1135,6 +1135,7 @@ class OperationResourceList(GridReport):
     GridFieldText('resource', title=_('resource'), field_name='resource__name', formatter='detail', extra='"role":"input/resource"'),
     GridFieldText('skill', title=_('skill'), field_name='skill__name', formatter='detail', extra='"role":"input/skill"', initially_hidden=True),
     GridFieldNumber('quantity', title=_('quantity')),
+    GridFieldNumber('quantity_fixed', title=_('quantity_fixed'), initially_hidden=True),
     GridFieldDateTime('effective_start', title=_('effective start'), initially_hidden=True),
     GridFieldDateTime('effective_end', title=_('effective end'), initially_hidden=True),
     #. Translators: Translation included with Django

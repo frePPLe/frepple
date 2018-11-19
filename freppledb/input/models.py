@@ -727,12 +727,13 @@ class OperationResource(AuditModel):
     null=True, blank=True, db_index=True, on_delete=models.CASCADE
     )
   quantity = models.DecimalField(
-    _('quantity'), default='1.00',
-    max_digits=20, decimal_places=8
+    _('quantity'), default='1.00', max_digits=20, decimal_places=8,
+    help_text=_('Required quantity of the resource')
     )
   quantity_fixed = models.DecimalField(
     _('quantity fixed'), null=True, blank=True,
-    max_digits=20, decimal_places=8
+    max_digits=20, decimal_places=8,
+    help_text=_('constant part of the capacity consumption (bucketized resources only)')
     )
   effective_start = models.DateTimeField(
     _('effective start'), null=True, blank=True,

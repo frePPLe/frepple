@@ -512,17 +512,28 @@ class ResourceFilter(filters.FilterSet):
   class Meta:
     model = freppledb.input.models.Resource
     fields = {
-      'name': ['exact', 'in', 'contains', ], 'description': ['exact', 'contains', ],
-      'category': ['exact', 'contains', ], 'subcategory': ['exact', 'contains', ],
-      'type': ['exact', 'in', ], 'maximum': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
-      'maximum_calendar': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ], 'location': ['exact', 'in', ],
-      'cost': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ], 'maxearly': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
-      'setupmatrix': ['exact', 'in', ], 'setupmatrix': ['exact', 'in', ],
-      'source': ['exact', 'in', ], 'lastmodified': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+      'name': ['exact', 'in', 'contains', ],
+      'description': ['exact', 'contains', ],
+      'category': ['exact', 'contains', ],
+      'subcategory': ['exact', 'contains', ],
+      'type': ['exact', 'in', ],
+      'maximum': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+      'maximum_calendar': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+      'location': ['exact', 'in', ],
+      'cost': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+      'maxearly': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+      'setupmatrix': ['exact', 'in', ],
+      'efficiency': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+      'efficiency_calendar': ['exact', 'in', ],
+      'source': ['exact', 'in', ],
+      'lastmodified': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
       }
 
-    filter_fields = ('name', 'description', 'category', 'subcategory', 'type', 'maximum', 'maximum_calendar',
-                     'location', 'cost', 'maxearly', 'setupmatrix', 'setup', 'source', 'lastmodified')
+    filter_fields = (
+      'name', 'description', 'category', 'subcategory', 'type', 'maximum', 'maximum_calendar',
+      'location', 'cost', 'maxearly', 'setupmatrix', 'setup', 'efficiency', 'efficiency_calendar',
+      'source', 'lastmodified'
+      )
 
 
 class ResourceSerializer(BulkSerializerMixin, ModelSerializer):
@@ -531,7 +542,7 @@ class ResourceSerializer(BulkSerializerMixin, ModelSerializer):
     fields = (
       'name', 'description', 'category', 'subcategory', 'type', 'maximum',
       'maximum_calendar', 'location', 'cost', 'maxearly', 'setupmatrix',
-      'setup', 'efficiency', 'source', 'lastmodified'
+      'setup', 'efficiency', 'efficiency_calendar', 'source', 'lastmodified'
       )
     list_serializer_class = BulkListSerializer
     update_lookup_field = 'name'
@@ -670,12 +681,19 @@ class OperationResourceFilter(filters.FilterSet):
   class Meta:
     model = freppledb.input.models.OperationResource
     fields = {
-      'id': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ], 'operation': ['exact', 'in', ],
-      'resource': ['exact', 'in', ], 'skill': ['exact', 'in', ], 'quantity': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
-      'effective_start': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ], 'effective_end': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
-      'name': ['exact', 'in', 'contains', ], 'priority': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+      'id': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+      'operation': ['exact', 'in', ],
+      'resource': ['exact', 'in', ],
+      'skill': ['exact', 'in', ],
+      'quantity': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+      'quantity_fixed': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+      'effective_start': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+      'effective_end': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+      'name': ['exact', 'in', 'contains', ],
+      'priority': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
       'search': ['exact', 'contains', ],
-      'source': ['exact', 'in', ], 'lastmodified': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+      'source': ['exact', 'in', ],
+      'lastmodified': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
       }
 
     filter_fields = (
@@ -687,8 +705,11 @@ class OperationResourceFilter(filters.FilterSet):
 class OperationResourceSerializer(BulkSerializerMixin, ModelSerializer):
     class Meta:
       model = freppledb.input.models.OperationResource
-      fields = ('id', 'operation', 'resource', 'skill', 'quantity', 'effective_start', 'effective_end',
-                'name', 'priority', 'setup', 'search', 'source', 'lastmodified')
+      fields = (
+        'id', 'operation', 'resource', 'skill', 'quantity', 'quantity_fixed',
+        'effective_start', 'effective_end', 'name', 'priority', 'setup',
+        'search', 'source', 'lastmodified'
+        )
       list_serializer_class = BulkListSerializer
       update_lookup_field = 'id'
       partial = True

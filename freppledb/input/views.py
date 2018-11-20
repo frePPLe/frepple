@@ -1614,7 +1614,8 @@ class ManufacturingOrderList(OperationPlanMixin, GridReport):
     if args and args[0]:
       request.session['lasttab'] = 'manufacturingorders'
       paths = request.path.split('/')
-      path = paths[-3]
+      path = paths[4]
+      print("***path***=%s" % path)
       if path == 'location':
         return {
           'active_tab': 'manufacturingorders',
@@ -1636,7 +1637,7 @@ class ManufacturingOrderList(OperationPlanMixin, GridReport):
           'title': force_text(Item._meta.verbose_name) + " " + args[0],
           'post_title': _('manufacturing orders')
           }
-      elif paths[3] == 'manufacturingorder':
+      elif path == 'operationplanmaterial':
         return {
           'active_tab': 'manufacturingorders',
           'model': Item,
@@ -1647,8 +1648,33 @@ class ManufacturingOrderList(OperationPlanMixin, GridReport):
               }
             )
           }
+      elif path == 'produced':
+        return {
+          'active_tab': 'manufacturingorders',
+          'model': Item,
+          'title': force_text(Item._meta.verbose_name) + " " + args[0],
+          'post_title': force_text(
+            _("produced in %(loc)s between %(date1)s and %(date2)s") % {
+              'loc': args[1], 'date1': args[2], 'date2': args[3]
+              }
+            )
+          }
+      elif path == 'consumed':
+        return {
+          'active_tab': 'manufacturingorders',
+          'model': Item,
+          'title': force_text(Item._meta.verbose_name) + " " + args[0],
+          'post_title': force_text(
+            _("consumed in %(loc)s between %(date1)s and %(date2)s") % {
+              'loc': args[1], 'date1': args[2], 'date2': args[3]
+              }
+            )
+          }
       else:
-        return {'active_tab': 'manufacturingorders'}
+        return {
+          'active_tab': 'edit',
+          'model': Item,
+          }
     else:
       return {'active_tab': 'manufacturingorders'}
 
@@ -1673,6 +1699,27 @@ class ManufacturingOrderList(OperationPlanMixin, GridReport):
           where operationplan.type = 'MO'
           ''', (args[0], args[1], args[2], args[2])
           ))
+      elif path == 'produced':
+        q = q.filter(id__in=RawSQL('''
+          select operationplan_id from operationplan
+          inner join operationplanmaterial on operationplanmaterial.operationplan_id = operationplan.id
+          and operationplanmaterial.item_id = %s and operationplanmaterial.location_id = %s
+          and operationplanmaterial.flowdate >= %s and operationplanmaterial.flowdate < %s
+          and operationplanmaterial.quantity > 0
+          where operationplan.type = 'MO'
+          ''', (args[0], args[1], args[2], args[3])
+          ))
+      elif path == 'consumed':
+        q = q.filter(id__in=RawSQL('''
+          select operationplan_id from operationplan
+          inner join operationplanmaterial on operationplanmaterial.operationplan_id = operationplan.id
+          and operationplanmaterial.item_id = %s and operationplanmaterial.location_id = %s
+          and operationplanmaterial.flowdate >= %s and operationplanmaterial.flowdate < %s
+          and operationplanmaterial.quantity < 0
+          where operationplan.type = 'MO'
+          ''', (args[0], args[1], args[2], args[3])
+          ))
+      
 
     q = reportclass.operationplanExtraBasequery(q, request)
     return q.extra(select={
@@ -1848,7 +1895,7 @@ class DistributionOrderList(OperationPlanMixin, GridReport):
   @classmethod
   def extra_context(reportclass, request, *args, **kwargs):
     if args and args[0]:
-      if request.path.split('/')[-5] == 'operationplanmaterial':
+      if request.path.split('/')[4] == 'operationplanmaterial':
         return {
           'active_tab': 'distributionorders',
           'model': Item,
@@ -1859,14 +1906,36 @@ class DistributionOrderList(OperationPlanMixin, GridReport):
               }
             )
           }
-      elif request.path.split('/')[-3] == 'item':
+      elif request.path.split('/')[4] == 'produced':
+        return {
+          'active_tab': 'distributionorders',
+          'model': Item,
+          'title': force_text(Item._meta.verbose_name) + " " + args[0],
+          'post_title': force_text(
+            _("Received in %(loc)s between %(date1)s and %(date2)s") % {
+              'loc': args[1], 'date1': args[2], 'date2': args[3]
+              }
+            )
+          }
+      elif request.path.split('/')[4] == 'consumed':
+        return {
+          'active_tab': 'distributionorders',
+          'model': Item,
+          'title': force_text(Item._meta.verbose_name) + " " + args[0],
+          'post_title': force_text(
+            _("Shipped to %(loc)s between %(date1)s and %(date2)s") % {
+              'loc': args[1], 'date1': args[2], 'date2': args[3]
+              }
+            )
+          }
+      elif request.path.split('/')[4] == 'item':
         return {
           'active_tab': 'distributionorders',
           'model': Item,
           'title': force_text(Item._meta.verbose_name) + " " + args[0],
           'post_title': _('distribution orders')
           }
-      else:
+      elif request.path.split('/')[4] == 'location':
         path = request.path.split('/')[-2]
         if path == 'in':
           return {
@@ -1882,8 +1951,11 @@ class DistributionOrderList(OperationPlanMixin, GridReport):
             'title': force_text(Location._meta.verbose_name) + " " + args[0],
             'post_title': _('outbound distribution')
             }
-        else:
-          return {'active_tab': 'edit'}
+      else:
+        return {
+          'active_tab': 'edit',
+          'model': Item,
+          }
     else:
       return {'active_tab': 'edit'}
 
@@ -1891,19 +1963,21 @@ class DistributionOrderList(OperationPlanMixin, GridReport):
   def basequeryset(reportclass, request, *args, **kwargs):
     q = DistributionOrder.objects.all()
     if args and args[0]:
-      if request.path.split('/')[-5] == 'operationplanmaterial':
+      if request.path.split('/')[4] == 'operationplanmaterial':
         q = q.filter(Q(origin=args[1]) | Q(destination=args[1]))\
              .filter(item__name=args[0], startdate__lt=args[2], enddate__gte=args[2])
-      elif request.path.split('/')[-3] == 'item':
+      elif request.path.split('/')[4] == 'item':
         q = q.filter(item__name=args[0])
-      else:
+      elif request.path.split('/')[4] == 'produced':
+        q = q.filter(destination__name=args[1], item__name=args[0], enddate__gte=args[2], enddate__lt=args[3])
+      elif request.path.split('/')[4] == 'consumed':
+        q = q.filter(origin__name=args[1], item__name=args[0], startdate__gte=args[2], startdate__lt=args[3])
+      elif request.path.split('/')[4] == 'location':
         path = request.path.split('/')[-2]
         if path == 'out':
           q = q.filter(origin_id=args[0])
         elif path == 'in':
           q = q.filter(destination_id=args[0])
-        else:
-          q = q.filter(location=args[0])
     q = reportclass.operationplanExtraBasequery(q, request)
     return q.extra(select={
       'total_cost': "cost*quantity",
@@ -2125,8 +2199,22 @@ class PurchaseOrderList(OperationPlanMixin, GridReport):
               }
             )
           }
+      elif path == 'produced':
+        return {
+          'active_tab': 'purchaseorders',
+          'model': Item,
+          'title': force_text(Item._meta.verbose_name) + " " + args[0],
+          'post_title': force_text(
+            _("On order in %(loc)s between %(date1)s and %(date2)s") % {
+              'loc': args[1], 'date1': args[2], 'date2': args[3]
+              }
+            )
+          }
       else:
-        return {'active_tab': 'purchaseorders'}
+        return {
+          'active_tab': 'edit',
+          'model': Item,
+          }
     else:
       return {'active_tab': 'purchaseorders'}
 
@@ -2135,37 +2223,38 @@ class PurchaseOrderList(OperationPlanMixin, GridReport):
   def basequeryset(reportclass, request, *args, **kwargs):
     q = PurchaseOrder.objects.all()
     if args and args[0]:
-      if request.path.split('/')[-5] == 'operationplanmaterial':
+      path = request.path.split('/')[4]
+      if request.path.split('/')[4] == 'operationplanmaterial':
         q = q.filter(location__name=args[1], item__name=args[0], startdate__lt=args[2], enddate__gte=args[2])
-      else:
-        path = request.path.split('/')[-3]
-        if path == 'supplier':
-          try:
-            sup = Supplier.objects.all().using(request.database).get(name=args[0])
-            lft = sup.lft
-            rght = sup.rght
-          except Supplier.DoesNotExist:
-            lft = 1
-            rght = 1
-          q = q.filter(supplier__lft__gte=lft, supplier__rght__lte=rght)
-        elif path == 'location':
-          try:
-            loc = Location.objects.all().using(request.database).get(name=args[0])
-            lft = loc.lft
-            rght = loc.rght
-          except Location.DoesNotExist:
-            lft = 1
-            rght = 1
-          q = q.filter(location__lft__gte=lft, location__rght__lte=rght)
-        elif path == 'item':
-          try:
-            itm = Item.objects.all().using(request.database).get(name=args[0])
-            lft = itm.lft
-            rght = itm.rght
-          except Item.DoesNotExist:
-            lft = 1
-            rght = 1
-          q = q.filter(item__lft__gte=lft, item__rght__lte=rght)
+      elif path == 'produced':
+        q = q.filter(location__name=args[1], item__name=args[0], enddate__gte=args[2], enddate__lt=args[3])
+      elif path == 'supplier':
+        try:
+          sup = Supplier.objects.all().using(request.database).get(name=args[0])
+          lft = sup.lft
+          rght = sup.rght
+        except Supplier.DoesNotExist:
+          lft = 1
+          rght = 1
+        q = q.filter(supplier__lft__gte=lft, supplier__rght__lte=rght)
+      elif path == 'location':
+        try:
+          loc = Location.objects.all().using(request.database).get(name=args[0])
+          lft = loc.lft
+          rght = loc.rght
+        except Location.DoesNotExist:
+          lft = 1
+          rght = 1
+        q = q.filter(location__lft__gte=lft, location__rght__lte=rght)
+      elif path == 'item':
+        try:
+          itm = Item.objects.all().using(request.database).get(name=args[0])
+          lft = itm.lft
+          rght = itm.rght
+        except Item.DoesNotExist:
+          lft = 1
+          rght = 1
+        q = q.filter(item__lft__gte=lft, item__rght__lte=rght)
         
     q = reportclass.operationplanExtraBasequery(q, request)
     return q.extra(select={
@@ -2442,14 +2531,18 @@ class DeliveryOrderList(GridReport):
   @ classmethod
   def basequeryset(reportclass, request, *args, **kwargs):
     if args and args[0]:
-      try:
-        itm = Item.objects.all().using(request.database).get(name=args[0])
-        lft = itm.lft
-        rght = itm.rght
-      except Item.DoesNotExist:
-        lft = 1
-        rght = 1
-      return DeliveryOrder.objects.all().filter(item__lft__gte=lft, item__rght__lte=rght)
+      path = request.path.split('/')[4]
+      if path == 'consumed':
+        return DeliveryOrder.objects.filter(item__name=args[0], location__name=args[1], enddate__gte=args[2], enddate__lt=args[3])
+      else:
+        try:
+          itm = Item.objects.all().using(request.database).get(name=args[0])
+          lft = itm.lft
+          rght = itm.rght
+        except Item.DoesNotExist:
+          lft = 1
+          rght = 1
+        return DeliveryOrder.objects.all().filter(item__lft__gte=lft, item__rght__lte=rght)
     else:
       return DeliveryOrder.objects.all()
 
@@ -2457,11 +2550,24 @@ class DeliveryOrderList(GridReport):
   def extra_context(reportclass, request, *args, **kwargs):
     if args and args[0]:
       request.session['lasttab'] = 'deliveryorders'
-      return {
-        'active_tab': 'deliveryorders',
-        'title': force_text(Item._meta.verbose_name) + " " + args[0],
-        'post_title': _("Delivery orders")
-        }
+      path = request.path.split('/')[4]
+      if path == 'consumed':
+        return {
+          'active_tab': 'deliveryorders',
+          'model': Item,
+          'title': force_text(Item._meta.verbose_name) + " " + args[0],
+          'post_title': force_text(
+            _("Delivered from %(loc)s between %(date1)s and %(date2)s") % {
+              'loc': args[1], 'date1': args[2], 'date2': args[3]
+              }
+            )
+          }
+      else:
+        return {
+          'active_tab': 'deliveryorders',
+          'title': force_text(Item._meta.verbose_name) + " " + args[0],
+          'post_title': _("Delivery orders")
+          }
     else:
       return {'active_tab': 'deliveryorders'}
 

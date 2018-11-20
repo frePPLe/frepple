@@ -89,7 +89,11 @@ int ResourceBuckets::initialize()
     Object::create<ResourceBuckets>);
 
   // Initialize the Python class
-  return FreppleClass<ResourceBuckets,Resource>::initialize();
+  FreppleClass<ResourceBuckets, Resource>::getPythonType().addMethod(
+    "computeAvailability", ResourceBuckets::computeBucketAvailability, METH_VARARGS,
+    "Convert the maximum and availability calendar into quantities available per capacity bucket"
+    );
+  return FreppleClass<ResourceBuckets, Resource>::initialize();
 }
 
 
@@ -236,13 +240,14 @@ void Resource::setMaximumCalendar(Calendar* c)
 void ResourceBuckets::setMaximumCalendar(Calendar* c)
 {
   // Resetting the same calendar
-  if (size_max_cal == c) return;
+  if (size_max_cal == c)
+    return;
 
   // Mark as changed
   setChanged();
 
   // Remove the current set-onhand events.
-  for (loadplanlist::iterator oo = loadplans.begin(); oo != loadplans.end(); )
+  for (auto oo = loadplans.begin(); oo != loadplans.end(); )
   {
     loadplanlist::Event *tmp = &*oo;
     ++oo;
@@ -708,6 +713,64 @@ void Resource::updateSetupTime() const
     while (changed);
   }
   OperationPlan::setPropagateSetups(tmp);
+}
+
+
+extern "C" PyObject* ResourceBuckets::computeBucketAvailability(PyObject *self, PyObject *args)
+{
+  // Get the resource model
+  ResourceBuckets* res = static_cast<ResourceBuckets*>(self);
+
+  // Parse the Python arguments
+  PyObject* pycal = nullptr;
+  int ok = PyArg_ParseTuple(args, "O:computeAvailability", &pycal);
+  if (!ok)
+    return nullptr;
+  if (!PyObject_TypeCheck(pycal, CalendarDefault::metadata->pythonClass))
+  {
+    PyErr_SetString(PythonDataException, "argument must be of type calendar");
+    return nullptr;
+  }
+  Calendar* cal = static_cast<Calendar*>(pycal);
+
+  // Mark as changed
+  res->setChanged();
+
+  // Remove the current set-onhand events.
+  for (auto oo = res->loadplans.begin(); oo != res->loadplans.end(); )
+  {
+    loadplanlist::Event *tmp = &*oo;
+    ++oo;
+    if (tmp->getEventType() == 2)
+    {
+      res->loadplans.erase(tmp);
+      delete tmp;
+    }
+  }
+
+  // Create timeline structures for every bucket.
+  // - create availability calendar event iterator
+  // - create location calendar event iterator
+  // - create max calendar event iterator
+  Date bucketstart;
+  for (CalendarDefault::EventIterator bckt(cal); bckt.getDate() < Date::infiniteFuture; ++bckt)
+  {
+    // Advance availability and max calendars till we hit the end of the bucket
+    double available = 0.0;
+    // ... TODO
+
+    // Create an event for this bucket in the timeline
+    loadplanlist::EventSetOnhand *newBucket =
+      new loadplanlist::EventSetOnhand(bucketstart, available);
+    res->loadplans.insert(newBucket);
+
+    // Remember the bucket start
+    bucketstart = bckt.getDate();
+  }
+  cal->clearEventList();
+
+  // None return value
+  return Py_BuildValue("");
 }
 
 }

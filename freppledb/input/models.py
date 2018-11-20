@@ -20,6 +20,7 @@ from datetime import datetime, time
 from django.db import models, DEFAULT_DB_ALIAS
 from django.db.models import Max
 from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import string_concat
 
 from freppledb.common.fields import JSONBField, AliasDateTimeField
 from freppledb.common.models import HierarchyModel, AuditModel, MultiDBManager
@@ -481,10 +482,16 @@ class SetupRule(AuditModel):
 
 
 class Resource(AuditModel, HierarchyModel):
-  # Types of resources
+  # Types of resources.
+  # The predefined buckets-size entries are unfortunately hardcoded. A database
+  # query to read the allowed values would be better, but is a performance
+  # killer during mass import.
   types = (
     ('default', _('default')),
     ('buckets', _('buckets')),
+    ('buckets_day', string_concat(_('buckets'), '_', _('day'))),
+    ('buckets_week', string_concat(_('buckets'), '_', _('week'))),
+    ('buckets_month', string_concat(_('buckets'), '_', _('month'))),
     ('infinite', _('infinite')),
   )
 

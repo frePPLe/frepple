@@ -364,6 +364,12 @@ class loadCalendarBuckets(LoadTask):
           sunday, monday, tuesday, wednesday, thursday, friday, saturday,
           starttime, endtime, source
         FROM calendarbucket %s
+        UNION
+        SELECT
+          bucket_id calendar_id, startdate, enddate, 10 priority , 0 as value,
+          't' sunday,'t' monday,'t' tuesday,'t' wednesday,'t' thurday,'t' friday,'t' saturday,
+          time '00:00:00' starttime, time '23:59:59' endtime, 'common_bucketdetail' source
+        FROM common_bucketdetail
         ORDER BY calendar_id, startdate desc
         ''' % filter_where)
       prevcal = None
@@ -983,12 +989,15 @@ class loadResources(LoadTask):
             x = frepple.resource_infinite(
               name=i[0], description=i[1], category=i[10], subcategory=i[11], source=i[13]
               )
-          elif i[5] == "buckets":
+          elif i[5].startswith("buckets"):
             x = frepple.resource_buckets(
               name=i[0], description=i[1], category=i[10], subcategory=i[11], source=i[13]
               )
             if i[7] is not None:
-              x.maxearly = i[7]
+              x.maxearly = i[7].total_seconds()
+            convert2cal = i[5][8:]
+            if convert2cal:
+              x.computeAvailability(frepple.calendar(name=convert2cal))
           elif not i[5] or i[5] == "default":
             x = frepple.resource_default(
               name=i[0], description=i[1], category=i[10], subcategory=i[11], source=i[13]

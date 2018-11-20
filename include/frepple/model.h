@@ -6957,6 +6957,9 @@ class ResourceBuckets : public Resource
 
     /** Updates the time buckets and the quantity per time bucket. */
     virtual void setMaximumCalendar(Calendar*);
+
+    /** Compute the availability of the resource per bucket. */
+    static PyObject* computeBucketAvailability(PyObject*, PyObject*);
 };
 
 

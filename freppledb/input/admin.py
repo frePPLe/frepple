@@ -152,6 +152,7 @@ class Item_admin(MultiDBModelAdmin):
     {"name": 'deliveryorders', "label": _("delivery orders"), "view": "input_deliveryorder_by_item"},
     {"name": 'manufacturingorders', "label": _("manufacturing orders"), "view": "input_manufacturingorder_by_item"},
     {"name": 'purchaseorders', "label": _("purchase orders"), "view": "input_purchaseorder_by_item"},
+    {"name": 'distributionorders', "label": _("distribution orders"), "view": "input_distributionorder_by_item"},
     {"name": 'comments', "label": _("comments"), "view": "admin:input_item_comment"},
     #. Translators: Translation included with Django
     {"name": 'history', "label": _("History"), "view": "admin:input_item_history"},

@@ -51,6 +51,7 @@ urlpatterns = [
   url(r'^data/input/purchaseorder/location/(.+)/$', freppledb.input.views.PurchaseOrderList.as_view(), name="input_purchaseorder_by_location"),
   url(r'^data/input/purchaseorder/operationplanmaterial/([^/]+)/([^/]+)/(.+)/$', freppledb.input.views.PurchaseOrderList.as_view(), name="input_purchaseorder_by_opm"),
   url(r'^data/input/distributionorder/$', freppledb.input.views.DistributionOrderList.as_view(), name="input_distributionorder_changelist"),
+  url(r'^data/input/distributionorder/item/(.+)/$', freppledb.input.views.DistributionOrderList.as_view(), name="input_distributionorder_by_item"),
   url(r'^data/input/distributionorder/location/(.+)/in/$', freppledb.input.views.DistributionOrderList.as_view(), name="input_distributionorder_in_by_location"),
   url(r'^data/input/distributionorder/location/(.+)/out/$', freppledb.input.views.DistributionOrderList.as_view(), name="input_distributionorder_out_by_location"),
   url(r'^data/input/distributionorder/operationplanmaterial/([^/]+)/([^/]+)/(.+)/$', freppledb.input.views.DistributionOrderList.as_view(), name="input_distributionorder_by_opm"),  

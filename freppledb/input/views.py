@@ -1848,23 +1848,42 @@ class DistributionOrderList(OperationPlanMixin, GridReport):
   @classmethod
   def extra_context(reportclass, request, *args, **kwargs):
     if args and args[0]:
-      path = request.path.split('/')[-2]
-      if path == 'in':
+      if request.path.split('/')[-5] == 'operationplanmaterial':
         return {
-          'active_tab': 'inboundorders',
-          'model': Location,
-          'title': force_text(Location._meta.verbose_name) + " " + args[0],
-          'post_title': _('inbound distribution')
+          'active_tab': 'distributionorders',
+          'model': Item,
+          'title': force_text(Item._meta.verbose_name) + " " + args[0],
+          'post_title': force_text(
+            _("In transit in %(loc)s at %(date)s") % {
+              'loc': args[1], 'date': args[2]
+              }
+            )
           }
-      elif path == 'out':
+      elif request.path.split('/')[-3] == 'item':
         return {
-          'active_tab': 'outboundorders',
-          'model': Location,
-          'title': force_text(Location._meta.verbose_name) + " " + args[0],
-          'post_title': _('outbound distribution')
+          'active_tab': 'distributionorders',
+          'model': Item,
+          'title': force_text(Item._meta.verbose_name) + " " + args[0],
+          'post_title': _('distribution orders')
           }
       else:
-        return {'active_tab': 'edit'}
+        path = request.path.split('/')[-2]
+        if path == 'in':
+          return {
+            'active_tab': 'inboundorders',
+            'model': Location,
+            'title': force_text(Location._meta.verbose_name) + " " + args[0],
+            'post_title': _('inbound distribution')
+            }
+        elif path == 'out':
+          return {
+            'active_tab': 'outboundorders',
+            'model': Location,
+            'title': force_text(Location._meta.verbose_name) + " " + args[0],
+            'post_title': _('outbound distribution')
+            }
+        else:
+          return {'active_tab': 'edit'}
     else:
       return {'active_tab': 'edit'}
 
@@ -1872,15 +1891,11 @@ class DistributionOrderList(OperationPlanMixin, GridReport):
   def basequeryset(reportclass, request, *args, **kwargs):
     q = DistributionOrder.objects.all()
     if args and args[0]:
-      if request.path.split('/')[-3] == 'operationplanmaterial':
-        q = q.filter(id__in=RawSQL('''
-          select operationplan_id from operationplan
-          inner join operationplanmaterial on operationplanmaterial.operationplan_id = operationplan.id
-          and operationplanmaterial.item_id = %s and operationplanmaterial.location_id = %s
-          and operationplan.startdate < %s and operationplan.enddate >= %s
-          where operationplan.type = 'DO'
-          ''', (args[0], args[1], args[2], args[2])
-          ))
+      if request.path.split('/')[-5] == 'operationplanmaterial':
+        q = q.filter(Q(origin=args[1]) | Q(destination=args[1]))\
+             .filter(item__name=args[0], startdate__lt=args[2], enddate__gte=args[2])
+      elif request.path.split('/')[-3] == 'item':
+        q = q.filter(item__name=args[0])
       else:
         path = request.path.split('/')[-2]
         if path == 'out':
@@ -2099,6 +2114,17 @@ class PurchaseOrderList(OperationPlanMixin, GridReport):
           'title': force_text(Item._meta.verbose_name) + " " + args[0],
           'post_title': _('purchase orders')
           }
+      elif path == 'operationplanmaterial':
+        return {
+          'active_tab': 'purchaseorders',
+          'model': Item,
+          'title': force_text(Item._meta.verbose_name) + " " + args[0],
+          'post_title': force_text(
+            _("On order in %(loc)s at %(date)s") % {
+              'loc': args[1], 'date': args[2]
+              }
+            )
+          }
       else:
         return {'active_tab': 'purchaseorders'}
     else:
@@ -2109,43 +2135,38 @@ class PurchaseOrderList(OperationPlanMixin, GridReport):
   def basequeryset(reportclass, request, *args, **kwargs):
     q = PurchaseOrder.objects.all()
     if args and args[0]:
-      path = request.path.split('/')[-3]
-      if path == 'supplier':
-        try:
-          sup = Supplier.objects.all().using(request.database).get(name=args[0])
-          lft = sup.lft
-          rght = sup.rght
-        except Supplier.DoesNotExist:
-          lft = 1
-          rght = 1
-        q = q.filter(supplier__lft__gte=lft, supplier__rght__lte=rght)
-      elif path == 'location':
-        try:
-          loc = Location.objects.all().using(request.database).get(name=args[0])
-          lft = loc.lft
-          rght = loc.rght
-        except Location.DoesNotExist:
-          lft = 1
-          rght = 1
-        q = q.filter(location__lft__gte=lft, location__rght__lte=rght)
-      elif path == 'item':
-        try:
-          itm = Item.objects.all().using(request.database).get(name=args[0])
-          lft = itm.lft
-          rght = itm.rght
-        except Item.DoesNotExist:
-          lft = 1
-          rght = 1
-        q = q.filter(item__lft__gte=lft, item__rght__lte=rght)
-      elif path == 'operationplanmaterial':
-        q = q.filter(id__in=RawSQL('''
-          select operationplan_id from operationplan
-          inner join operationplanmaterial on operationplanmaterial.operationplan_id = operationplan.id
-          and operationplanmaterial.item_id = %s and operationplanmaterial.location_id = %s
-          and operationplan.startdate < %s and operationplan.enddate >= %s
-          where operationplan.type = 'PO'
-          ''', (args[0], args[1], args[2], args[2])
-          ))
+      if request.path.split('/')[-5] == 'operationplanmaterial':
+        q = q.filter(location__name=args[1], item__name=args[0], startdate__lt=args[2], enddate__gte=args[2])
+      else:
+        path = request.path.split('/')[-3]
+        if path == 'supplier':
+          try:
+            sup = Supplier.objects.all().using(request.database).get(name=args[0])
+            lft = sup.lft
+            rght = sup.rght
+          except Supplier.DoesNotExist:
+            lft = 1
+            rght = 1
+          q = q.filter(supplier__lft__gte=lft, supplier__rght__lte=rght)
+        elif path == 'location':
+          try:
+            loc = Location.objects.all().using(request.database).get(name=args[0])
+            lft = loc.lft
+            rght = loc.rght
+          except Location.DoesNotExist:
+            lft = 1
+            rght = 1
+          q = q.filter(location__lft__gte=lft, location__rght__lte=rght)
+        elif path == 'item':
+          try:
+            itm = Item.objects.all().using(request.database).get(name=args[0])
+            lft = itm.lft
+            rght = itm.rght
+          except Item.DoesNotExist:
+            lft = 1
+            rght = 1
+          q = q.filter(item__lft__gte=lft, item__rght__lte=rght)
+        
     q = reportclass.operationplanExtraBasequery(q, request)
     return q.extra(select={
       'total_cost': "cost*quantity",

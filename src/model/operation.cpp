@@ -781,8 +781,8 @@ OperationPlanState OperationFixedTime::setOperationPlanParameters(
       else
       {
         // Dummy changeover
-        setup_dates = DateRange(d, d);
         production_dates = calculateOperationTime(opplan, d, production_wanted_duration, true, &production_duration);
+        setup_dates = DateRange(production_dates.getStart(), production_dates.getStart());
       }
     }
     else
@@ -1329,6 +1329,13 @@ OperationTimePer::setOperationPlanParameters(
     production_dates = calculateOperationTime(
       opplan, setup_dates.getEnd(), production_wanted_duration, true, &production_duration
       );
+    if (production_dates.getStart() != setup_dates.getEnd())
+    {
+      // If the start dates fails in an unavailable period
+      if (setup_dates.getStart() == setup_dates.getEnd())
+        setup_dates.setStart(production_dates.getStart());
+      setup_dates.setEnd(production_dates.getStart());
+    }
     if (production_duration == production_wanted_duration)
     {
       // Size is as desired

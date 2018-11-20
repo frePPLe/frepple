@@ -333,10 +333,9 @@ void SolverCreate::solve(const Resource* res, void* v)
       ++iterations;
     }
     while (HasOverload && newDate && iterations < getResourceIterationMax());
-    if (iterations >= getResourceIterationMax()) {
+    if (iterations >= getResourceIterationMax())
       logger << indent(res->getLevel()) << "   Warning: no free capacity slot found on " << res
         << " after " << getResourceIterationMax() << " iterations. Last date: " << newDate <<  endl;
-    }
     data->state->q_loadplan = old_q_loadplan;
 
     // Set the date where a next trial date can happen
@@ -446,11 +445,38 @@ void SolverCreate::solve(const ResourceBuckets* res, void* v)
   data->state->a_date = data->state->q_date;
   data->state->a_qty = orig_q_qty;
 
-  // Compute the minimum free capacity we need in a bucket
-  double min_free_quantity =
-    data->state->q_operationplan->getOperation()->setOperationPlanQuantity(
-      data->state->q_operationplan, 0.01, false, false, false, Date::infinitePast
-      ) * data->state->q_loadplan->getLoad()->getQuantity();
+  // Compute the minimum free capacity we need in a bucket 
+  // -> not fully correct if efficiency and effectivity come into the picture
+  // -> replace with a move to each bucket
+  bool date_effective = false;
+  double efficiency = DBL_MAX;
+  if (data->state->q_operationplan->getOperation()->getSizeMinimumCalendar())
+    date_effective = true;
+  else
+  {
+    for (auto h = data->state->q_operationplan->beginLoadPlans();
+      h != data->state->q_operationplan->endLoadPlans() && !date_effective; ++h)
+    {
+      if (h->getResource()->getEfficiencyCalendar())
+        date_effective = true;
+      if (h->getResource()->getEfficiency() < efficiency)
+        efficiency = h->getResource()->getEfficiency();
+    }
+  }
+  double min_free_quantity;
+  if (date_effective)
+    // As the load can change by bucket we need to check each bucket
+    min_free_quantity = ROUNDING_ERROR;
+  else
+  {
+    min_free_quantity =
+      data->state->q_operationplan->getOperation()->setOperationPlanQuantity(
+        data->state->q_operationplan, 0.01, false, false, false, Date::infinitePast
+      ) * data->state->q_loadplan->getLoad()->getQuantity()
+      + data->state->q_loadplan->getLoad()->getQuantityFixed();
+    if (efficiency != DBL_MAX)
+      min_free_quantity /= efficiency * 100.0;
+  }
 
   // Loop for a valid location by using EARLIER capacity
   if (!data->state->forceLate)
@@ -537,7 +563,7 @@ void SolverCreate::solve(const ResourceBuckets* res, void* v)
       }
 
       // Try solving the overload by moving the operationplan to an earlier date
-      if (overloadQty < 0)
+      if (overloadQty < -ROUNDING_ERROR)
       {
         // Search backward in time for a bucket that still has capacity left
         Date bucketEnd;
@@ -591,9 +617,9 @@ void SolverCreate::solve(const ResourceBuckets* res, void* v)
           data->state->q_operationplan->setStart(tmp);
 
           // Verify the move is successfull
-          if (data->state->q_loadplan->getDate() != newStart.getStart())
-            // Not sure if there are cases where this will fail, but just
-            // in case...
+          if (data->state->q_loadplan->getDate() > newStart.getStart())
+            // The new loadplan is expected to be at the requested date or earlier (eg in 
+            // the presence of availability calendars)
             data->state->a_qty = 0.0;
           else if (data->constrainedPlanning && (isLeadTimeConstrained() || isFenceConstrained()))
             // Check the leadtime constraints after the move
@@ -606,12 +632,12 @@ void SolverCreate::solve(const ResourceBuckets* res, void* v)
           data->state->a_qty = 0.0;
       }  // End of if-statement, solve by moving earlier
     }
-    while (overloadQty < 0 && data->state->a_qty!=0.0);
+    while (overloadQty < -ROUNDING_ERROR && data->state->a_qty != 0.0);
 
-  // Loop for a valid location by using LATER capacity
-  // If the answered quantity is 0, the operationplan is moved into the past.
-  // Or, the solver may be forced to produce a late reply.
-  // In these cases we need to search for capacity at later dates.
+    // Loop for a valid location by using LATER capacity
+    // If the answered quantity is 0, the operationplan is moved into the past.
+    // Or, the solver may be forced to produce a late reply.
+    // In these cases we need to search for capacity at later dates.
     if (data->constrainedPlanning && (data->state->a_qty == 0.0 || data->state->forceLate))
     {
       bool firstBucket = true;
@@ -624,14 +650,14 @@ void SolverCreate::solve(const ResourceBuckets* res, void* v)
       // Search for a bucket with available capacity.
       Date newDate;
       Date prevStart = data->state->q_loadplan->getDate();
-      overloadQty = 0.0;
+      double availableQty = 0.0;
       for (cur = res->getLoadPlans().begin(data->state->q_loadplan);
         cur != res->getLoadPlans().end(); ++cur)
       {
         if (cur->getEventType() != 2)
           // Not a new bucket
-          overloadQty = cur->getOnhand();
-        else if (overloadQty > min_free_quantity)
+          availableQty = cur->getOnhand();
+        else if (availableQty > ROUNDING_ERROR)
         {
           if (firstBucket)
           {
@@ -658,14 +684,14 @@ void SolverCreate::solve(const ResourceBuckets* res, void* v)
           {
             // New bucket starts
             prevStart = cur->getDate();
-            overloadQty = cur->getOnhand();
+            availableQty = cur->getOnhand();
           }
         }
         else
         {
           // New bucket starts
           prevStart = cur->getDate();
-          overloadQty = cur->getOnhand();
+          availableQty = cur->getOnhand();
         }
       }
 

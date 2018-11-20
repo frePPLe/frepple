@@ -368,8 +368,14 @@ double Load::getLoadplanQuantity(const LoadPlan* lp) const
     // operationplans don't get resized to 0
     return 0.0;
   if (getResource()->getType() == *ResourceBuckets::metadata)
+  {
     // Bucketized resource
-    return - (getQuantityFixed() + getQuantity() * lp->getOperationPlan()->getQuantity()) / lp->getOperationPlan()->getEfficiency();
+    auto efficiency = lp->getOperationPlan()->getEfficiency();
+    if (efficiency > 0.0)
+      return -(getQuantityFixed() + getQuantity() * lp->getOperationPlan()->getQuantity()) / efficiency;
+    else
+      return DBL_MIN;
+  }
   else
     // Continuous resource
     return lp->isStart() ? getQuantity() : -getQuantity();
@@ -426,7 +432,7 @@ LoadPlan::AlternateIterator::AlternateIterator(const LoadPlan* o) : ldplan(o)
         auto my_eff = i->getEfficiencyCalendar()
           ? i->getEfficiencyCalendar()->getValue(ldplan->getOperationPlan()->getStart())
           : i->getEfficiency();
-        if (my_eff > 0)
+        if (my_eff > 0.0)
           resources.push_back(&*i);
       }
     }

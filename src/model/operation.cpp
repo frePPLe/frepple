@@ -757,7 +757,9 @@ OperationPlanState OperationFixedTime::setOperationPlanParameters(
   Date d = s;
 
   bool repeat;
-  Duration production_wanted_duration = double(duration) / efficiency;
+  Duration production_wanted_duration = efficiency > 0.0
+    ? Duration(double(duration) / efficiency)
+    : Duration::MAX;
   Duration setup_wanted_duration;
   do
   {
@@ -767,7 +769,7 @@ OperationPlanState OperationFixedTime::setOperationPlanParameters(
     setuptime_required = calculateSetup(opplan, d, opplan->getSetupEvent());
     if (get<0>(setuptime_required))
     {
-      if (get<1>(setuptime_required))
+      if (get<1>(setuptime_required) && efficiency > 0.0)
       {
         // Apply a setup matrix rule
         setup_wanted_duration = double(get<1>(setuptime_required)->getDuration()) / efficiency;
@@ -1057,7 +1059,7 @@ OperationTimePer::setOperationPlanParameters(
     // Case 1: Both the start and end date are specified: Compute the quantity.
     // Calculate the available time between those dates
     setuptime_required = calculateSetup(opplan, s);
-    if (get<1>(setuptime_required))
+    if (get<1>(setuptime_required) && efficiency > 0.0)
     {
       setup_wanted_duration = double(get<1>(setuptime_required)->getDuration()) / efficiency;
       setup_dates = calculateOperationTime(opplan, s, setup_wanted_duration, true, &setup_duration);
@@ -1082,7 +1084,7 @@ OperationTimePer::setOperationPlanParameters(
       setup_dates = DateRange(production_dates.getStart(), production_dates.getStart());
     }
 
-    if (production_duration < Duration(double(duration) / efficiency))
+    if (efficiency <= 0 || production_duration < Duration(double(duration) / efficiency))
     {
       // Start and end aren't far enough from each other to fit the constant
       // part of the operation duration and/or the setup time.
@@ -1163,7 +1165,10 @@ OperationTimePer::setOperationPlanParameters(
     // existing end date of the operationplan.
     q = opplan->setQuantity(q, roundDown, false, execute);
     // Round and size the quantity
-    production_wanted_duration = (double(duration) + duration_per * q) / efficiency;
+    if (efficiency > 0)
+      production_wanted_duration = (double(duration) + duration_per * q) / efficiency;
+    else
+      production_wanted_duration = Duration::MAX;
     production_dates = calculateOperationTime(opplan, e, production_wanted_duration, false, &production_duration);
     if (production_duration == production_wanted_duration)
     {
@@ -1212,7 +1217,7 @@ OperationTimePer::setOperationPlanParameters(
         opplan->clearSetupEvent();
       opplan->setStartAndEnd(setup_dates.getStart(), production_dates.getEnd());
     }
-    else if (production_duration < Duration(double(duration) / efficiency))
+    else if (efficiency <= 0.0 || production_duration < Duration(double(duration) / efficiency))
     {
       // Not feasible
       if (!execute)
@@ -1298,15 +1303,17 @@ OperationTimePer::setOperationPlanParameters(
     // Case 3: Only a start date is specified. Respect the quantity and
     // compute the end date
     q = opplan->setQuantity(q, roundDown, false, execute);
-    // Round and size the quantity
-    production_wanted_duration = (double(duration) + duration_per * q) / efficiency;
-
+    // Round and size the quantity    
+    if (efficiency > 0)
+      production_wanted_duration = (double(duration) + duration_per * q) / efficiency;
+    else
+      production_wanted_duration = Duration::MAX;
     bool repeat;
     do
     {
     // Compute the setup time
     setuptime_required = calculateSetup(opplan, d, nullptr);
-    if (get<0>(setuptime_required) && get<1>(setuptime_required))
+    if (efficiency > 0 && get<0>(setuptime_required) && get<1>(setuptime_required))
     {
       setup_wanted_duration = double(get<1>(setuptime_required)->getDuration()) / efficiency;
       setup_dates = calculateOperationTime(opplan, d, setup_wanted_duration, true, &setup_duration);
@@ -1365,7 +1372,7 @@ OperationTimePer::setOperationPlanParameters(
         opplan->clearSetupEvent();
       opplan->setStartAndEnd(setup_dates.getStart(), production_dates.getEnd());
     }
-    else if (production_duration < Duration(double(duration) / efficiency))
+    else if (efficiency <= 0.0 || production_duration < Duration(double(duration) / efficiency))
     {
       // Not feasible
       if (!execute)

@@ -1615,22 +1615,21 @@ class ManufacturingOrderList(OperationPlanMixin, GridReport):
       request.session['lasttab'] = 'manufacturingorders'
       paths = request.path.split('/')
       path = paths[4]
-      print("***path***=%s" % path)
-      if path == 'location':
+      if path == 'location' or request.path.startswith('/detail/input/location/'):
         return {
           'active_tab': 'manufacturingorders',
           'model': Location,
           'title': force_text(Location._meta.verbose_name) + " " + args[0],
           'post_title': _('manufacturing orders')
           }
-      elif path == 'operation':
+      elif path == 'operation' or request.path.startswith('/detail/input/operation/'):
         return {
           'active_tab': 'manufacturingorders',
           'model': Operation,
           'title': force_text(Operation._meta.verbose_name) + " " + args[0],
           'post_title': _('manufacturing orders')
           }
-      elif path == 'item':
+      elif path == 'item' or request.path.startswith('/detail/input/item/'):
         return {
           'active_tab': 'manufacturingorders',
           'model': Item,

@@ -507,7 +507,7 @@ class Calendar : public HasName<Calendar>, public HasSource
         }
 
         EventIterator(
-          Calendar* c = nullptr,Date d = Date::infinitePast, bool forward = true
+          Calendar* c = nullptr, Date d = Date::infinitePast, bool forward = true
           );
 
         EventIterator& operator++();

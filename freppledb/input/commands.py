@@ -989,25 +989,23 @@ class loadResources(LoadTask):
             x = frepple.resource_infinite(
               name=i[0], description=i[1], category=i[10], subcategory=i[11], source=i[13]
               )
+            convert2cal = None
           elif i[5].startswith("buckets"):
             x = frepple.resource_buckets(
               name=i[0], description=i[1], category=i[10], subcategory=i[11], source=i[13]
               )
-            if i[7] is not None:
-              x.maxearly = i[7].total_seconds()
             convert2cal = i[5][8:]
-            if convert2cal:
-              x.computeAvailability(frepple.calendar(name=convert2cal))
           elif not i[5] or i[5] == "default":
             x = frepple.resource_default(
               name=i[0], description=i[1], category=i[10], subcategory=i[11], source=i[13]
               )
-            if i[7] is not None:
-              x.maxearly = i[7].total_seconds()
-            if i[2] is not None:
-              x.maximum = i[2]
+            convert2cal = None
           else:
             raise ValueError("Resource type '%s' not recognized" % i[5])
+          if i[7] is not None:
+            x.maxearly = i[7].total_seconds()
+          if i[2] is not None:
+            x.maximum = i[2]
           if i[3]:
             x.maximum_calendar = frepple.calendar(name=i[3])
           if i[4]:
@@ -1026,6 +1024,11 @@ class loadResources(LoadTask):
             x.efficiency = i[15]
           if i[16]:
             x.efficiency_calendar = frepple.calendar(name=i[16])
+          if convert2cal:
+            x.computeAvailability(
+              frepple.calendar(name=convert2cal, action='C'),
+              False  # Debug flag
+              )
         except Exception as e:
           logger.error("**** %s ****" % e)
       logger.info('Loaded %d resources in %.2f seconds' % (cnt, time() - starttime))

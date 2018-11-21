@@ -723,7 +723,8 @@ extern "C" PyObject* ResourceBuckets::computeBucketAvailability(PyObject *self, 
 
   // Parse the Python arguments
   PyObject* pycal = nullptr;
-  int ok = PyArg_ParseTuple(args, "O:computeAvailability", &pycal);
+  int debug = false;
+  int ok = PyArg_ParseTuple(args, "O|p:computeAvailability", &pycal, &debug);
   if (!ok)
     return nullptr;
   if (!PyObject_TypeCheck(pycal, CalendarDefault::metadata->pythonClass))
@@ -749,20 +750,78 @@ extern "C" PyObject* ResourceBuckets::computeBucketAvailability(PyObject *self, 
   }
 
   // Create timeline structures for every bucket.
-  // - create availability calendar event iterator
-  // - create location calendar event iterator
-  // - create max calendar event iterator
+  if (debug)
+  {
+    logger << "Computing availability for resource '" << res << "' with buckets from calendar '" << cal << "'" << endl;
+    logger << "   Size calendar: " << res->getMaximumCalendar() << endl;
+    logger << "   Availability calendar: " << res->getAvailable() << endl;
+    logger << "   Location availability calendar: " << (res->getLocation() ? res->getLocation()->getAvailable() : nullptr) << endl;
+  }
+  CalendarDefault::EventIterator res_max(res->getMaximumCalendar());
+  CalendarDefault::EventIterator avail_res(res->getAvailable());
+  CalendarDefault::EventIterator avail_loc(res->getLocation() ? res->getLocation()->getAvailable() : nullptr);
   Date bucketstart;
+  double cur_size = res->getMaximumCalendar() ? res->getMaximumCalendar()->getDefault() : res->getMaximum();
+  bool cur_available = true;
   for (CalendarDefault::EventIterator bckt(cal); bckt.getDate() < Date::infiniteFuture; ++bckt)
   {
     // Advance availability and max calendars till we hit the end of the bucket
     double available = 0.0;
-    // ... TODO
+    Date prev_evt = bucketstart;
+    do
+    {
+      // Find the next event date
+      Date evt = bckt.getDate();
+      if (avail_res.getDate() < evt)
+        evt = avail_res.getDate();
+      if (avail_loc.getDate() < evt)
+        evt = avail_loc.getDate();
+      if (res_max.getDate() < evt)
+        evt = res_max.getDate();
+
+      // Add availability between the previous and current event
+      if (cur_available && cur_size > 0.0)
+        available += cur_size * (evt - prev_evt).getSeconds();
+
+      // Update availability and size at the event date
+      cur_available = true;
+      if (res->getAvailable())
+      {
+        if (avail_res.getDate() == evt && avail_res.getValue() == 0)
+          cur_available = false;
+        else if (res->getAvailable() && avail_res.getDate() != evt && avail_res.getPrevValue() == 0)
+          cur_available = false;
+      }
+      if (cur_available && res->getLocation() && res->getLocation()->getAvailable())
+      {
+        if (avail_loc.getDate() == evt && avail_loc.getValue() == 0)
+          cur_available = false;
+        else if (avail_loc.getDate() != evt && avail_loc.getPrevValue() == 0)
+          cur_available = false;
+      }
+      if (res->getMaximumCalendar() && res_max.getDate() == evt)
+        cur_size = res_max.getValue();
+
+      // Advance to the next event
+      if (avail_res.getDate() == evt)
+        ++avail_res;
+      if (avail_loc.getDate() == evt)
+        ++avail_loc;
+      if (res_max.getDate() == evt)
+        ++res_max;
+      prev_evt = evt;
+    } 
+    while (avail_res.getDate() <= bckt.getDate() || avail_loc.getDate() <= bckt.getDate() || res_max.getDate() <= bckt.getDate());
 
     // Create an event for this bucket in the timeline
-    loadplanlist::EventSetOnhand *newBucket =
-      new loadplanlist::EventSetOnhand(bucketstart, available);
-    res->loadplans.insert(newBucket);
+    if (bucketstart)
+    {
+      loadplanlist::EventSetOnhand *newBucket =
+        new loadplanlist::EventSetOnhand(bucketstart, available);
+      res->loadplans.insert(newBucket);
+      if (debug)
+        logger << "   => Bucket from " << bucketstart << " till " << bckt.getDate() << ": " << available << endl;
+    }
 
     // Remember the bucket start
     bucketstart = bckt.getDate();

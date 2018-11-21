@@ -1683,11 +1683,11 @@ class ManufacturingOrderList(OperationPlanMixin, GridReport):
     q = ManufacturingOrder.objects.all()
     if args and args[0]:
       path = request.path.split('/')[4]
-      if path == 'location':
+      if path == 'location' or request.path.startswith('/detail/input/location/'):
         q = q.filter(location=args[0])
-      elif path == 'operation':
+      elif path == 'operation' or request.path.startswith('/detail/input/operation/'):
         q = q.filter(operation=args[0])
-      elif path == 'item':
+      elif path == 'item' or request.path.startswith('/detail/input/item/'):
         q = q.filter(item=args[0])
       elif path == 'operationplanmaterial':
         q = q.filter(id__in=RawSQL('''
@@ -1718,7 +1718,6 @@ class ManufacturingOrderList(OperationPlanMixin, GridReport):
           where operationplan.type = 'MO'
           ''', (args[0], args[1], args[2], args[3])
           ))
-      
 
     q = reportclass.operationplanExtraBasequery(q, request)
     return q.extra(select={
@@ -1894,7 +1893,8 @@ class DistributionOrderList(OperationPlanMixin, GridReport):
   @classmethod
   def extra_context(reportclass, request, *args, **kwargs):
     if args and args[0]:
-      if request.path.split('/')[4] == 'operationplanmaterial':
+      paths = request.path.split('/')
+      if paths[4] == 'operationplanmaterial':
         return {
           'active_tab': 'distributionorders',
           'model': Item,
@@ -1905,7 +1905,7 @@ class DistributionOrderList(OperationPlanMixin, GridReport):
               }
             )
           }
-      elif request.path.split('/')[4] == 'produced':
+      elif paths[4] == 'produced':
         return {
           'active_tab': 'distributionorders',
           'model': Item,
@@ -1916,7 +1916,7 @@ class DistributionOrderList(OperationPlanMixin, GridReport):
               }
             )
           }
-      elif request.path.split('/')[4] == 'consumed':
+      elif paths[4] == 'consumed':
         return {
           'active_tab': 'distributionorders',
           'model': Item,
@@ -1927,15 +1927,15 @@ class DistributionOrderList(OperationPlanMixin, GridReport):
               }
             )
           }
-      elif request.path.split('/')[4] == 'item':
+      elif paths[4] == 'item':
         return {
           'active_tab': 'distributionorders',
           'model': Item,
           'title': force_text(Item._meta.verbose_name) + " " + args[0],
           'post_title': _('distribution orders')
           }
-      elif request.path.split('/')[4] == 'location':
-        path = request.path.split('/')[-2]
+      elif paths[4] == 'location':
+        path = paths[-2]
         if path == 'in':
           return {
             'active_tab': 'inboundorders',
@@ -1962,17 +1962,18 @@ class DistributionOrderList(OperationPlanMixin, GridReport):
   def basequeryset(reportclass, request, *args, **kwargs):
     q = DistributionOrder.objects.all()
     if args and args[0]:
-      if request.path.split('/')[4] == 'operationplanmaterial':
+      paths = request.path.split('/')
+      if paths[4] == 'operationplanmaterial':
         q = q.filter(Q(origin=args[1]) | Q(destination=args[1]))\
              .filter(item__name=args[0], startdate__lt=args[2], enddate__gte=args[2])
-      elif request.path.split('/')[4] == 'item':
+      elif paths[4] == 'item':
         q = q.filter(item__name=args[0])
-      elif request.path.split('/')[4] == 'produced':
+      elif paths[4] == 'produced':
         q = q.filter(destination__name=args[1], item__name=args[0], enddate__gte=args[2], enddate__lt=args[3])
-      elif request.path.split('/')[4] == 'consumed':
+      elif paths[4] == 'consumed':
         q = q.filter(origin__name=args[1], item__name=args[0], startdate__gte=args[2], startdate__lt=args[3])
-      elif request.path.split('/')[4] == 'location':
-        path = request.path.split('/')[-2]
+      elif paths[4] == 'location':
+        path = paths[-2]
         if path == 'out':
           q = q.filter(origin_id=args[0])
         elif path == 'in':
@@ -2165,22 +2166,23 @@ class PurchaseOrderList(OperationPlanMixin, GridReport):
   def extra_context(reportclass, request, *args, **kwargs):
     if args and args[0]:
       request.session['lasttab'] = 'purchaseorders'
-      path = request.path.split('/')[4]
-      if path == 'supplier':
+      paths = request.path.split('/')
+      path = paths[4]
+      if path == 'supplier' or request.path.startswith('/detail/input/supplier/'):
         return {
           'active_tab': 'purchaseorders',
           'model': Supplier,
           'title': force_text(Supplier._meta.verbose_name) + " " + args[0],
           'post_title': _('purchase orders')
           }
-      elif path == 'location':
+      elif path == 'location' or request.path.startswith('/detail/input/location/'):
         return {
           'active_tab': 'purchaseorders',
           'model': Location,
           'title': force_text(Location._meta.verbose_name) + " " + args[0],
           'post_title': _('purchase orders')
           }
-      elif path == 'item':
+      elif path == 'item' or request.path.startswith('/detail/input/item/'):
         return {
           'active_tab': 'purchaseorders',
           'model': Item,
@@ -2222,13 +2224,15 @@ class PurchaseOrderList(OperationPlanMixin, GridReport):
   def basequeryset(reportclass, request, *args, **kwargs):
     q = PurchaseOrder.objects.all()
     if args and args[0]:
-      path = request.path.split('/')[4]
-      if request.path.split('/')[4] == 'operationplanmaterial':
+      paths = request.path.split('/')
+      path = paths[4]
+      if paths[4] == 'operationplanmaterial':
         q = q.filter(location__name=args[1], item__name=args[0], startdate__lt=args[2], enddate__gte=args[2])
       elif path == 'produced':
         q = q.filter(location__name=args[1], item__name=args[0], enddate__gte=args[2], enddate__lt=args[3])
-      elif path == 'supplier':
+      elif path == 'supplier' or request.path.startswith('/detail/input/supplier/'):
         try:
+          Supplier.rebuildHierarchy(database=request.database)
           sup = Supplier.objects.all().using(request.database).get(name=args[0])
           lft = sup.lft
           rght = sup.rght
@@ -2236,8 +2240,9 @@ class PurchaseOrderList(OperationPlanMixin, GridReport):
           lft = 1
           rght = 1
         q = q.filter(supplier__lft__gte=lft, supplier__rght__lte=rght)
-      elif path == 'location':
+      elif path == 'location' or request.path.startswith('/detail/input/location/'):
         try:
+          Location.rebuildHierarchy(database=request.database)
           loc = Location.objects.all().using(request.database).get(name=args[0])
           lft = loc.lft
           rght = loc.rght
@@ -2245,8 +2250,9 @@ class PurchaseOrderList(OperationPlanMixin, GridReport):
           lft = 1
           rght = 1
         q = q.filter(location__lft__gte=lft, location__rght__lte=rght)
-      elif path == 'item':
+      elif path == 'item' or request.path.startswith('/detail/input/item/'):
         try:
+          Item.rebuildHierarchy(database=request.database)
           itm = Item.objects.all().using(request.database).get(name=args[0])
           lft = itm.lft
           rght = itm.rght
@@ -2254,7 +2260,7 @@ class PurchaseOrderList(OperationPlanMixin, GridReport):
           lft = 1
           rght = 1
         q = q.filter(item__lft__gte=lft, item__rght__lte=rght)
-        
+
     q = reportclass.operationplanExtraBasequery(q, request)
     return q.extra(select={
       'total_cost': "cost*quantity",

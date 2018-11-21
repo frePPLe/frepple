@@ -223,7 +223,7 @@ class Operation_admin(MultiDBModelAdmin):
     {"name": 'supplypath', "label": _("supply path"), "view": "supplypath_operation"},
     {"name": 'whereused', "label": _("where used"), "view": "whereused_operation"},
     {"name": 'plan', "label": _("plan"), "view": "output_operation_plandetail"},
-    {"name": 'plandetail', "label": _("plan detail"), "view": "input_manufacturingorder_by_operation"},
+    {"name": 'plandetail', "label": _("manufacturing orders"), "view": "input_manufacturingorder_by_operation"},
     {"name": 'constraint', "label": _("constrained demand"), "view": "output_constraint_operation"},
     {"name": 'comments', "label": _("comments"), "view": "admin:input_operation_comment"},
     #. Translators: Translation included with Django

@@ -66,6 +66,7 @@ class ReportByDemand(GridReport):
   @classmethod
   def extra_context(reportclass, request, *args, **kwargs):
     if args and args[0]:
+      request.session['lasttab'] = 'plan'
       return {
         'active_tab': 'plan',
         'title': force_text(Demand._meta.verbose_name) + " " + args[0],

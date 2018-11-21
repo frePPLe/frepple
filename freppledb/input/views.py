@@ -1688,7 +1688,13 @@ class ManufacturingOrderList(OperationPlanMixin, GridReport):
       elif path == 'operation' or request.path.startswith('/detail/input/operation/'):
         q = q.filter(operation=args[0])
       elif path == 'item' or request.path.startswith('/detail/input/item/'):
-        q = q.filter(item=args[0])
+        q = q.filter(id__in=RawSQL('''
+          select operationplan_id from operationplan
+          inner join operationplanmaterial on operationplanmaterial.operationplan_id = operationplan.id
+          and operationplanmaterial.item_id = %s
+          and operationplanmaterial.quantity > 0
+          where operationplan.type = 'MO'
+          ''', (args[0],)))
       elif path == 'operationplanmaterial':
         q = q.filter(id__in=RawSQL('''
           select operationplan_id from operationplan

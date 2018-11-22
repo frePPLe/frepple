@@ -6705,6 +6705,14 @@ class Resource : public HasHierarchy<Resource>,
     virtual const MetaClass& getType() const {return *metadata;}
     static const MetaCategory* metadata;
 
+    /** Returns true when this resource capacity represents time.
+      * This is used by the resourceplan export.
+      */
+    virtual bool isTime() 
+    { 
+      return true;
+    }
+
     /** Returns the maximum inventory buildup allowed in case of capacity
       * shortages. */
     Duration getMaxEarly() const
@@ -6955,11 +6963,19 @@ class ResourceBuckets : public Resource
 
     virtual void updateProblems();
 
+    virtual bool isTime()
+    {
+      return computedFromCalendars;
+    }
+
     /** Updates the time buckets and the quantity per time bucket. */
     virtual void setMaximumCalendar(Calendar*);
 
     /** Compute the availability of the resource per bucket. */
     static PyObject* computeBucketAvailability(PyObject*, PyObject*);
+
+  private:
+    bool computedFromCalendars = false;
 };
 
 

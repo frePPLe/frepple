@@ -10,6 +10,9 @@ Release notes
   to 5 years. This improves the performance of the algorithms in case there are unplannable
   orders.
 
+- A new resource type `time buckets <user-guide/model-reference/resources.html#>`_is introduced that represents capacity as the number of hours of 
+  availability per time bucket.
+  
 - The capacity consumption from a bucketized resource now also has a constant component
   and considers the resource efficiency.
 

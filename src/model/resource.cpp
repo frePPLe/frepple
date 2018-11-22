@@ -556,7 +556,10 @@ PyObject* Resource::PlanIterator::iternext()
         {
           // At this point ldplaniter points to a bucket start event in the
           // current reporting bucket
-          bucket_available += i->ldplaniter->getOnhand();
+          if (i->res->isTime())
+            bucket_available += i->ldplaniter->getOnhand() / 3600;
+          else
+            bucket_available += i->ldplaniter->getOnhand();
 
           // Advance the loadplan iterator to the start of the next bucket
           ++(i->ldplaniter);
@@ -566,7 +569,12 @@ PyObject* Resource::PlanIterator::iternext()
             )
           {
             if (i->ldplaniter->getEventType() == 1)
-              bucket_load -= i->ldplaniter->getQuantity();
+            {
+              if (i->res->isTime())
+                bucket_load -= i->ldplaniter->getQuantity() / 3600;
+              else
+                bucket_load -= i->ldplaniter->getQuantity();
+            }
             ++(i->ldplaniter);
           }
         }
@@ -738,13 +746,13 @@ extern "C" PyObject* ResourceBuckets::computeBucketAvailability(PyObject *self, 
   res->setChanged();
 
   // Remove the current set-onhand events.
-  for (auto oo = res->loadplans.begin(); oo != res->loadplans.end(); )
+  for (auto oo = res->getLoadPlans().begin(); oo != res->getLoadPlans().end(); )
   {
     loadplanlist::Event *tmp = &*oo;
     ++oo;
     if (tmp->getEventType() == 2)
     {
-      res->loadplans.erase(tmp);
+      res->getLoadPlans().erase(tmp);
       delete tmp;
     }
   }
@@ -812,13 +820,15 @@ extern "C" PyObject* ResourceBuckets::computeBucketAvailability(PyObject *self, 
       prev_evt = evt;
     } 
     while (avail_res.getDate() <= bckt.getDate() || avail_loc.getDate() <= bckt.getDate() || res_max.getDate() <= bckt.getDate());
+    if (bckt.getDate() > prev_evt && cur_available && cur_size > 0.0)
+      available += cur_size * (bckt.getDate() - prev_evt).getSeconds();
 
     // Create an event for this bucket in the timeline
     if (bucketstart)
     {
       loadplanlist::EventSetOnhand *newBucket =
         new loadplanlist::EventSetOnhand(bucketstart, available);
-      res->loadplans.insert(newBucket);
+      res->getLoadPlans().insert(newBucket);
       if (debug)
         logger << "   => Bucket from " << bucketstart << " till " << bckt.getDate() << ": " << available << endl;
     }
@@ -827,6 +837,9 @@ extern "C" PyObject* ResourceBuckets::computeBucketAvailability(PyObject *self, 
     bucketstart = bckt.getDate();
   }
   cal->clearEventList();
+
+  // Set a flag that this resource's calendar represents machine-time from now onwards
+  res->computedFromCalendars = true;
 
   // None return value
   return Py_BuildValue("");

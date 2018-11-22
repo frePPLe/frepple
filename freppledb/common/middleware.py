@@ -119,6 +119,8 @@ class LocaleMiddleware(DjangoLocaleMiddleware):
       and not getattr(response, 'xframe_options_exempt', False) \
       and not request.session.get('xframe_options_exempt', False):
         response['X-Frame-Options'] = getattr(settings, 'X_FRAME_OPTIONS', 'SAMEORIGIN').upper()
+    if request.is_secure:
+      response['strict-transport-security'] = 'max-age=864000'
 
     if not response.streaming:
       setattr(_thread_locals, 'request', None)

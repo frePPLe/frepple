@@ -20,7 +20,7 @@ Different types of resources exist:
      :alt: Continuous resource
 
 * | `Time buckets <#time-buckets-resource>`_:
-  | A bucketized resource is constrained with a maximum load quantity per
+  | A bucketized resource is constrained by the amount of resource-hours per
     time bucket. The detailed scheduling of the resource within this bucket
     isn't considered.
     
@@ -157,11 +157,10 @@ No fields are defined in addition to the ones listed above.
 Time buckets resource
 ---------------------
 
-A resource of this type is constrained by its available time per time
-bucket. E.g. A resource that has 40 hours available per week.
+A resource of this type is constrained by the amount of resource-hours
+per time bucket. E.g. A resource that has 40 hours available per week.
 
-The available time per capacity per time capacity bucket is computed 
-using:
+The available time per capacity bucket is computed using:
 
 * its size, as specified by the maximum or the maximum_calendar field.
 
@@ -172,7 +171,7 @@ A manufacturing order will consume the required capacity in the capacity
 bucket where it starts.
 
 For master planning and rough cut capacity planning this is most suitable
-resource type. Detailed scheduling of the operations within the capacity
+resource type. Detailed scheduling of the operations within the time
 bucket isn't considered useful in this type of plan.
 
 Quantity buckets resource
@@ -182,11 +181,11 @@ A resource of this type is constrained by a maximum quantity per time
 bucket. E.g. A resource that can produce 1000 units per week
 
 For master planning and rough cut capacity planning this is most suitable
-resource type. Detailed scheduling of the operations within the capacity
+resource type. Detailed scheduling of the operations within the time
 bucket isn't considered useful.
 
-No fields are defined in addition to the ones listed above, but the
-maximum_calendar field must is be specified.
+The maximum_calendar field defines the time buckets, as well as the
+available quantity per time bucket.
 
 A number of specialized operationresource subclasses exist to select 
 in which bucket the capacity needs to be consumed: at the start of the

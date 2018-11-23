@@ -2434,7 +2434,7 @@ class DeliveryOrderList(GridReport):
   A list report to show delivery plans for demand.
   '''
   template = 'input/deliveryorder.html'
-  title = _("Delivery orders")
+  title = _("delivery orders")
   model = DeliveryOrder
   frozenColumns = 0
   editable = True
@@ -2577,7 +2577,7 @@ class DeliveryOrderList(GridReport):
         return {
           'active_tab': 'deliveryorders',
           'title': force_text(Item._meta.verbose_name) + " " + args[0],
-          'post_title': _("Delivery orders")
+          'post_title': _("delivery orders")
           }
     else:
       return {'active_tab': 'deliveryorders'}

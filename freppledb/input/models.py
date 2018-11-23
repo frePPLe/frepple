@@ -1287,10 +1287,10 @@ class OperationPlanMaterial(AuditModel):
   flowdate = models.DateTimeField(_('date'), db_index=True)
   onhand = models.DecimalField(_('onhand'), max_digits=20, decimal_places=8, null=True, blank=True)
   minimum = models.DecimalField(_('minimum'), max_digits=20, decimal_places=8, null=True, blank=True)
-  periodofcover = models.DecimalField(_('periodofcover'), max_digits=20, decimal_places=8, null=True, blank=True)
+  periodofcover = models.DecimalField(_('period of cover'), max_digits=20, decimal_places=8, null=True, blank=True)
   status = models.CharField(
     _('status'), null=True, blank=True, max_length=20, choices=OPMstatus,
-    help_text=_('Status of the OperationPlanMaterial')
+    help_text=_('status of the material production or consumption')
     )
 
   class Manager(MultiDBManager):

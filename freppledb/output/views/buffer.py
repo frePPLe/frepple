@@ -93,7 +93,7 @@ class OverviewReport(GridPivot):
   crosses = (
     ('startoh', {'title': _('start inventory')}),
     ('startohdoc', {'title': _('start inventory days of cover')}),
-    ('safetystock', {'title': _('safety stock')}),    
+    ('safetystock', {'title': _('safety stock')}),
     ('consumed', {'title': _('total consumed')}),
     ('consumedMO', {'title': _('consumed by MO')}),
     ('consumedDO', {'title': _('consumed by DO')}),
@@ -103,10 +103,10 @@ class OverviewReport(GridPivot):
     ('producedDO', {'title': _('produced by DO')}),
     ('producedPO', {'title': _('produced by PO')}),
     ('endoh', {'title': _('end inventory')}),
-    ('total_in_progress', {'title': _('Total in Progress')}),
-    ('work_in_progress_mo', {'title': _('Work in Progress MO')}),
-    ('on_order_po', {'title': _('On Order PO')}),
-    ('in_transit_do', {'title': _('In Transit DO')}),
+    ('total_in_progress', {'title': _('total in progress')}),
+    ('work_in_progress_mo', {'title': _('work in progress MO')}),
+    ('on_order_po', {'title': _('on order PO')}),
+    ('in_transit_do', {'title': _('in transit DO')}),
     )
 
 

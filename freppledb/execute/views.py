@@ -50,6 +50,25 @@ import logging
 logger = logging.getLogger(__name__)
 
 
+def sendStaticFile(request, filename, folder):
+  '''
+  Serving log and data files can be handled either:
+  - by Django's Python code
+  - by the apache web server if the module xsendfile is installed
+  '''
+  if getattr(settings, 'APACHE_XSENDFILE', False):
+    # Forward to Apache
+    # Code inspired on https://github.com/johnsensible/django-sendfile/
+    response = HttpResponse(request)
+    response['X-Sendfile'] = os.path.join(folder, filename)
+  else:
+    # Django's static file server
+    response = static.serve(request, filename, document_root=folder)
+  response['Content-Disposition'] = 'inline; filename="%s"' % filename
+  response['Content-Type'] = 'application/octet-stream'
+  return response
+
+
 class TaskReport(GridReport):
   '''
   A list report to review the history of actions.
@@ -431,14 +450,7 @@ def DownloadLogFile(request, taskid):
   filename = Task.objects.using(request.database).get(id=taskid).logfile
   if not filename.lower().endswith('.log'):
     return HttpResponseNotFound(force_text(_('Error downloading file')))
-
-  response = static.serve(
-    request, filename,
-    document_root=settings.FREPPLE_LOGDIR
-    )
-  response['Content-Disposition'] = 'inline; filename="%s"' % filename
-  response['Content-Type'] = 'application/octet-stream'
-  return response
+  return sendStaticFile(request, filename, settings.FREPPLE_LOGDIR)
 
 
 @staff_member_required
@@ -595,12 +607,7 @@ class FileManager:
 
     try:
       clean_filename = filename.split('/')[0]
-      response = static.serve(
-        request, clean_filename, document_root=folder
-        )
-      response['Content-Disposition'] = 'inline; filename="%s"' % filename
-      response['Content-Type'] = 'application/octet-stream'
-      return response
+      return sendStaticFile(request, clean_filename, folder)
     except Exception as e:
       logger.error("Failed file download: %s" % e)
       return HttpResponseNotFound(force_text(_('Error downloading file')))

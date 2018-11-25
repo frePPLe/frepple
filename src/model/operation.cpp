@@ -240,11 +240,11 @@ DateRange Operation::calculateOperationTime(
     *actualduration = duration;
 
   // Step 1: Create an iterator over all involved calendars
-  vector<Calendar::EventIterator> cals;
-  collectCalendars(cals, thedate, opplan, forward);
+  Calendar::EventIterator cals[10];
+  auto numCalendars = collectCalendars(cals, thedate, opplan, forward);
 
   // Special case: no calendars at all
-  if (cals.empty())
+  if (!numCalendars)
     return forward ?
       DateRange(thedate, thedate+duration) :
       DateRange(thedate-duration, thedate);
@@ -259,32 +259,32 @@ DateRange Operation::calculateOperationTime(
   {    
     // Find the closest event date
     Date selected = forward ? Date::infiniteFuture : Date::infinitePast;
-    for (auto t = cals.begin(); t != cals.end(); ++t)
+    for (unsigned short t = 0; t < numCalendars; ++t)
     {
       if (
-        (forward && t->getDate() < selected)
-        || (!forward && t->getDate() > selected)
+        (forward && cals[t].getDate() < selected)
+        || (!forward && cals[t].getDate() > selected)
         )
-        selected = t->getDate();
+        selected = cals[t].getDate();
     }
 
     // Check whether all calendars are available at the next event date
     bool available = true;
     if (forward)
     {
-      for (auto t = cals.begin(); t != cals.end() && available; ++t)
+      for (unsigned short t = 0; t < numCalendars && available; ++t)
       {     
-        if (t->getDate() == selected && t->getValue() == 0)
+        if (cals[t].getDate() == selected && cals[t].getValue() == 0)
           available = false;
-        else if (t->getDate() != selected && t->getPrevValue() == 0)
+        else if (cals[t].getDate() != selected && cals[t].getPrevValue() == 0)
           available = false;
       }
     }
     else
     {
-      for (auto t = cals.begin(); t != cals.end() && available; ++t)
+      for (unsigned short t = 0; t < numCalendars && available; ++t)
       {
-        if (t->getCalendar()->getValue(selected, forward) == 0)
+        if (cals[t].getCalendar()->getValue(selected, forward) == 0)
           available = false;
       }
     }
@@ -300,8 +300,8 @@ DateRange Operation::calculateOperationTime(
       else if (!available)
       {
         available = true;
-        for (auto t = cals.begin(); t != cals.end() && available; ++t)
-          available = (t->getCalendar()->getValue(selected, !forward) != 0);
+        for (unsigned short t = 0; t < numCalendars && available; ++t)
+          available = (cals[t].getCalendar()->getValue(selected, !forward) != 0);
         if (available)
         {
           result.setEnd(curdate);
@@ -387,35 +387,36 @@ DateRange Operation::calculateOperationTime(
     // Advance to the next event
     if (forward)
     {
-      for (auto t = cals.begin(); t != cals.end(); ++t)
-        if (t->getDate() == selected)
-          ++(*t);
+      for (unsigned short t = 0; t < numCalendars; ++t)
+        if (cals[t].getDate() == selected)
+          ++cals[t];
     }
     else
     {
-      for (auto t = cals.begin(); t != cals.end(); ++t)
-        if (t->getDate() == selected)
-          --(*t);
+      for (unsigned short t = 0; t < numCalendars; ++t)
+        if (cals[t].getDate() == selected)
+          --cals[t];
     }
   }
   return result;
 }
 
 
-void Operation::collectCalendars(
-  vector<Calendar::EventIterator>& cals, Date start, const OperationPlan* opplan, bool forward
+unsigned short Operation::collectCalendars(
+  Calendar::EventIterator cals[], Date start, const OperationPlan* opplan, bool forward
 ) const
 {
+  unsigned short calcount = 0;
   // a) operation
   if (available)
-    cals.push_back(Calendar::EventIterator(available, start, forward));
+    cals[calcount++] = Calendar::EventIterator(available, start, forward);
   // b) operation location
   if (loc && loc->getAvailable() && getAvailable() != loc->getAvailable())
-    cals.push_back(Calendar::EventIterator(loc->getAvailable(), start, forward));
+    cals[calcount++] = Calendar::EventIterator(loc->getAvailable(), start, forward);
 
   if (opplan && opplan->getLoadPlans() != opplan->endLoadPlans())
   {
-    // Iterate over loads
+    // Iterate over loadplans
     for (auto g = opplan->getLoadPlans(); g != opplan->endLoadPlans(); ++g)
     {
       Resource* res = g->getResource();
@@ -423,31 +424,39 @@ void Operation::collectCalendars(
       {
         // c) resource
         bool exists = false;
-        for (auto t = cals.begin(); t != cals.end(); ++t)
+        for (unsigned short t = 0; t < calcount; ++t)
         {
-          if (t->getCalendar() == res->getAvailable())
+          if (cals[t].getCalendar() == res->getAvailable())
           {
             exists = true;
             break;
           }
         }
         if (!exists)
-          cals.push_back(Calendar::EventIterator(res->getAvailable(), start, forward));
+        {
+          cals[calcount++] = Calendar::EventIterator(res->getAvailable(), start, forward);
+          if (calcount > 9)
+            throw DataException("Excessive number of calendars on operation '" + getName() + "'");
+        }
       }
       if (res->getLocation() && res->getLocation()->getAvailable())
       {
         bool exists = false;
-        for (auto t = cals.begin(); t != cals.end(); ++t)
+        for (unsigned short t = 0; t < calcount; ++t)
         {
           // d) resource location
-          if (t->getCalendar() == res->getLocation()->getAvailable())
+          if (cals[t].getCalendar() == res->getLocation()->getAvailable())
           {
             exists = true;
             break;
           }
         }
         if (!exists)
-          cals.push_back(Calendar::EventIterator(res->getLocation()->getAvailable(), start, forward));
+        {
+          cals[calcount++] = Calendar::EventIterator(res->getLocation()->getAvailable(), start, forward);
+          if (calcount > 9)
+            throw DataException("Excessive number of calendars on operation '" + getName() + "'");
+        }
       }
     }
   }
@@ -461,34 +470,43 @@ void Operation::collectCalendars(
       {
         // c) resource
         bool exists = false;
-        for (auto t = cals.begin(); t != cals.end(); ++t)
+        for (unsigned short t = 0; t < calcount; ++t)
         {
-          if (t->getCalendar() == res->getAvailable())
+          if (cals[t].getCalendar() == res->getAvailable())
           {
             exists = true;
             break;
           }
         }
         if (!exists)
-          cals.push_back(Calendar::EventIterator(res->getAvailable(), start, forward));
+        {
+          cals[calcount++] = Calendar::EventIterator(res->getAvailable(), start, forward);
+          if (calcount > 9)
+            throw DataException("Excessive number of calendars on operation '" + getName() + "'");
+        }
       }
       if (res->getLocation() && res->getLocation()->getAvailable())
       {
         bool exists = false;
-        for (auto t = cals.begin(); t != cals.end(); ++t)
+        for (unsigned short t = 0; t < calcount; ++t)
         {
           // d) resource location
-          if (t->getCalendar() == res->getLocation()->getAvailable())
+          if (cals[t].getCalendar() == res->getLocation()->getAvailable())
           {
             exists = true;
             break;
           }
         }
         if (!exists)
-          cals.push_back(Calendar::EventIterator(res->getLocation()->getAvailable(), start, forward));
+        {
+          cals[calcount++] = Calendar::EventIterator(res->getLocation()->getAvailable(), start, forward);
+          if (calcount > 9)
+            throw DataException("Excessive number of calendars on operation '" + getName() + "'");
+        }
       }
     }
   }
+  return calcount;
 }
 
 
@@ -509,11 +527,11 @@ DateRange Operation::calculateOperationTime(
     *actualduration = 0L;
 
   // Step 1: Create an iterator over all involved calendars
-  vector<Calendar::EventIterator> cals;
-  collectCalendars(cals, start, opplan);
+  Calendar::EventIterator cals[10];
+  auto numCalendars = collectCalendars(cals, start, opplan);
 
   // Special case: no calendars at all
-  if (!cals.size())
+  if (!numCalendars)
   {
     if (actualduration)
       *actualduration = end - start;
@@ -529,20 +547,20 @@ DateRange Operation::calculateOperationTime(
   {
     // Find the closest event date
     Date selected = Date::infiniteFuture;
-    for (auto t = cals.begin(); t != cals.end(); ++t)
+    for (unsigned short t = 0; t < numCalendars; ++t)
     {
-      if (t->getDate() < selected)
-        selected = t->getDate();
+      if (cals[t].getDate() < selected)
+        selected = cals[t].getDate();
     }
     curdate = selected;
 
     // Check whether all calendars are available at the next event date
     bool available = true;
-    for (auto t = cals.begin(); t != cals.end() && available; ++t)
+    for (unsigned short t = 0; t < numCalendars && available; ++t)
     {
-      if (t->getDate() == selected && t->getValue() == 0)
+      if (cals[t].getDate() == selected && cals[t].getValue() == 0)
         available = false;
-      else if (t->getDate() != selected && t->getPrevValue() == 0)
+      else if (cals[t].getDate() != selected && cals[t].getPrevValue() == 0)
         available = false;
     }
     
@@ -593,9 +611,9 @@ DateRange Operation::calculateOperationTime(
     }
 
     // Advance to the next event
-    for (auto t = cals.begin(); t != cals.end(); ++t)
-      if (t->getDate() == selected)
-        ++(*t);
+    for (unsigned short t = 0; t < numCalendars; ++t)
+      if (cals[t].getDate() == selected)
+        ++cals[t];
   }
   return result;
 }

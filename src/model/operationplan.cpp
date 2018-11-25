@@ -2034,15 +2034,15 @@ OperationPlan::InterruptionIterator* OperationPlan::InterruptionIterator::next()
     // Check whether all calendars are available
     bool available = true;
     Date selected = Date::infiniteFuture;
-    for (auto t = cals.begin(); t != cals.end(); ++t)
+    for (unsigned short t = 0; t < numCalendars; ++t)
     {
-      if (t->getDate() < selected)
-        selected = t->getDate();
+      if (cals[t].getDate() < selected)
+        selected = cals[t].getDate();
     }
     curdate = selected;
-    for (auto t = cals.begin(); t != cals.end() && available; ++t)
+    for (unsigned short t = 0; t < numCalendars && available; ++t)
       // TODO next line does a pretty expensive lookup in the calendar, which we might be available to avoid
-      available = (t->getCalendar()->getValue(selected) != 0);
+      available = (cals[t].getCalendar()->getValue(selected) != 0);
 
     if (available && !status)
     {
@@ -2064,9 +2064,9 @@ OperationPlan::InterruptionIterator* OperationPlan::InterruptionIterator::next()
       return nullptr;
 
     // Advance to the next event
-    for (auto t = cals.begin(); t != cals.end(); ++t)
-      if (t->getDate() == selected)
-        ++(*t);
+    for (unsigned short t = 0; t < numCalendars; ++t)
+      if (cals[t].getDate() == selected)
+        ++cals[t];
   }
 }
 

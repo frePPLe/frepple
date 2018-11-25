@@ -3215,8 +3215,8 @@ class Operation : public HasName<Operation>,
     /** Auxilary method to initialize an vector of availability calendar
       * iterators related to an operation.
       */
-    void collectCalendars(
-      vector<Calendar::EventIterator>&, Date, const OperationPlan*, bool forward = true
+    unsigned short collectCalendars(
+      Calendar::EventIterator[], Date, const OperationPlan*, bool forward = true
     ) const;
     
     virtual void solve(Solver &s, void* v = nullptr) const
@@ -10285,7 +10285,8 @@ inline int OperationPlan::sizeLoadPlans() const
 class OperationPlan::InterruptionIterator : public Object
 {
   private:
-    vector<Calendar::EventIterator> cals;
+    Calendar::EventIterator cals[10];
+    unsigned short numCalendars;
     Date curdate;
     const OperationPlan* opplan;
     Date start;
@@ -10297,7 +10298,7 @@ class OperationPlan::InterruptionIterator : public Object
     {
       if (!opplan || !opplan->getOperation())
         throw LogicException("Can't initialize an iterator over an uninitialized operationplan");
-      opplan->getOperation()->collectCalendars(cals, opplan->getStart(), opplan);
+      numCalendars = opplan->getOperation()->collectCalendars(cals, opplan->getStart(), opplan);
       curdate = opplan->getStart();
       start = curdate;
       initType(metadata);

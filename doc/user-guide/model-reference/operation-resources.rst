@@ -26,15 +26,17 @@ quantity        double            | Required quantity of the resource.
                                       operationresource record has a quantity of 1, then only
                                       1 operation can be planned in parallel.
                                   
-                                  * | Type 'bucket':
+                                  * | Type 'time buckets' and 'quantity buckets':
                                     | The total capacity consumed by a manufacturing order
-                                      from the resource is equal to the (quantity_fixed + 
-                                      quantity * manufacturing order quantity) / efficiency.
+                                      is equal to the (quantity_fixed + quantity * manufacturing7
+                                      order quantity) / efficiency.
                                     | This quantity is consumed from the capacity bucket where
                                       the manufacturing order starts.
                                      
-quantity_fixed  double            | For a resource of type bucket the total capacity 
-                                    consumption is set to 
+quantity_fixed  double            | For a resource of type 'time buckets' or 'quantity buckets'
+                                    the total capacity consumed by a manufacturing order
+                                    is equal to the (quantity_fixed + quantity * manufacturing 
+                                    order quantity) / efficiency.
                                   | The default value is 0.0.             
 effective_start dateTime          | Date after which the resource load is valid.
                                   | Before this date the planned quantity is always 0.

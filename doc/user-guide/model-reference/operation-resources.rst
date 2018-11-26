@@ -28,7 +28,7 @@ quantity        double            | Required quantity of the resource.
                                   
                                   * | Type 'time buckets' and 'quantity buckets':
                                     | The total capacity consumed by a manufacturing order
-                                      is equal to the (quantity_fixed + quantity * manufacturing7
+                                      is equal to the (quantity_fixed + quantity * manufacturing
                                       order quantity) / efficiency.
                                     | This quantity is consumed from the capacity bucket where
                                       the manufacturing order starts.

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-06-14 15:16+0200\n"
+"POT-Creation-Date: 2018-11-23 16:29+0100\n"
 "PO-Revision-Date: 2018-01-22 10:24+0300\n"
 "Last-Translator: \n"
 "Language-Team: Michael Nasonov <info@ivc-inform.ru>\n"
@@ -19,336 +19,337 @@ msgstr ""
 "%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 "X-Generator: Poedit 1.8.11\n"
 
-#: common/static/js/frepple.js:175 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:187 common/static/js/frepple.min.js:11
 msgid "There are unsaved changes on this page."
 msgstr "На этой странице есть несохраненные изменения."
 
-#: common/static/js/frepple.js:227 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:250 common/static/js/frepple.min.js:11
 msgid "Error saving data"
 msgstr "Ошибка при сохранении данных"
 
-#: common/static/js/frepple.js:233 common/static/js/frepple.js:647
-#: common/static/js/frepple.js:1680 common/static/js/frepple.js:1845
-#: common/static/js/frepple.js:2482 common/static/js/frepple.js:2594
+#: common/static/js/frepple.js:256 common/static/js/frepple.js:690
+#: common/static/js/frepple.js:1722 common/static/js/frepple.js:1887
+#: common/static/js/frepple.js:2525 common/static/js/frepple.js:2642
 #: common/static/js/frepple.min.js:11 common/static/js/frepple.min.js:12
 msgid "Close"
 msgstr "Закрыть"
 
-#: common/static/js/frepple.js:255 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:278 common/static/js/frepple.min.js:11
 msgid "Save or cancel your changes first"
 msgstr "Сохранить или отменить изменения"
 
-#: common/static/js/frepple.js:261 common/static/js/frepple.js:2101
+#: common/static/js/frepple.js:284 common/static/js/frepple.js:2143
 #: common/static/js/frepple.min.js:11 common/static/js/frepple.min.js:13
 msgid "Save"
 msgstr "Сохранить"
 
-#: common/static/js/frepple.js:262 common/static/js/frepple.js:659
-#: common/static/js/frepple.js:962 common/static/js/frepple.js:985
-#: common/static/js/frepple.js:1095 common/static/js/frepple.js:1143
-#: common/static/js/frepple.js:1223 common/static/js/frepple.js:1664
-#: common/static/js/frepple.js:1749 common/static/js/frepple.js:2103
+#: common/static/js/frepple.js:285 common/static/js/frepple.js:702
+#: common/static/js/frepple.js:1004 common/static/js/frepple.js:1027
+#: common/static/js/frepple.js:1137 common/static/js/frepple.js:1185
+#: common/static/js/frepple.js:1265 common/static/js/frepple.js:1706
+#: common/static/js/frepple.js:1791 common/static/js/frepple.js:2145
 #: common/static/js/frepple.min.js:11 common/static/js/frepple.min.js:12
 #: common/static/js/frepple.min.js:13
 msgid "Cancel"
 msgstr "Отмена"
 
-#: common/static/js/frepple.js:453 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:496 common/static/js/frepple.min.js:11
 msgid "days early"
 msgstr "Дней раньше"
 
-#: common/static/js/frepple.js:455 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:498 common/static/js/frepple.min.js:11
 msgid "on time"
 msgstr "Вовремя"
 
-#: common/static/js/frepple.js:458 common/static/js/frepple.js:460
-#: common/static/js/frepple.js:462 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:501 common/static/js/frepple.js:503
+#: common/static/js/frepple.js:505 common/static/js/frepple.min.js:11
 msgid "days late"
 msgstr "Дней позже"
 
-#: common/static/js/frepple.js:505 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:548 common/static/js/frepple.min.js:11
 msgid "Click to select record"
 msgstr "Нажмите, чтобы выбрать запись"
 
-#: common/static/js/frepple.js:551 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:594 common/static/js/frepple.min.js:11
 msgid "Selected options"
 msgstr "Выбранные опции"
 
-#: common/static/js/frepple.js:558 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:601 common/static/js/frepple.min.js:11
 msgid "Available options"
 msgstr "Доступные опции"
 
-#: common/static/js/frepple.js:599 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:642 common/static/js/frepple.min.js:11
 msgid "Selected Cross"
 msgstr "Выбранный кросс"
 
-#: common/static/js/frepple.js:609 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:652 common/static/js/frepple.min.js:11
 msgid "Available Cross"
 msgstr "Доступный кросс"
 
-#: common/static/js/frepple.js:631 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:674 common/static/js/frepple.min.js:11
 msgid "Frozen columns"
 msgstr "Замороженные столбцы"
 
-#: common/static/js/frepple.js:650 common/static/js/frepple.js:2199
+#: common/static/js/frepple.js:693 common/static/js/frepple.js:2241
 #: common/static/js/frepple.min.js:11 common/static/js/frepple.min.js:13
 msgid "Customize"
 msgstr "Настроить"
 
-#: common/static/js/frepple.js:658 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:701 common/static/js/frepple.min.js:11
 msgid "OK"
 msgstr "OK"
 
-#: common/static/js/frepple.js:660 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:703 common/static/js/frepple.min.js:11
 msgid "Reset"
 msgstr "Сброс"
 
-#: common/static/js/frepple.js:720 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:763 common/static/js/frepple.min.js:11
 msgid "Error retrieving data"
 msgstr "Ошибка при получении данных"
 
-#: common/static/js/frepple.js:890 common/static/js/frepple.js:1998
+#: common/static/js/frepple.js:932 common/static/js/frepple.js:2040
 #: common/static/js/frepple.min.js:12 common/static/js/frepple.min.js:13
 msgid "Error saving report settings"
 msgstr "Ошибка сохранения настроек отчета"
 
-#: common/static/js/frepple.js:950 common/static/js/frepple.js:971
+#: common/static/js/frepple.js:992 common/static/js/frepple.js:1013
 #: common/static/js/frepple.min.js:12
 msgid "Export CSV or Excel file"
 msgstr "Экспорт в CSV или Excel"
 
-#: common/static/js/frepple.js:953 common/static/js/frepple.js:974
+#: common/static/js/frepple.js:995 common/static/js/frepple.js:1016
 #: common/static/js/frepple.min.js:12
 msgid "Export format"
 msgstr "Формат экспорта"
 
-#: common/static/js/frepple.js:955 common/static/js/frepple.js:977
+#: common/static/js/frepple.js:997 common/static/js/frepple.js:1019
 #: common/static/js/frepple.min.js:12
 msgid "Spreadsheet list"
 msgstr "Список электронных таблиц"
 
-#: common/static/js/frepple.js:956 common/static/js/frepple.js:979
+#: common/static/js/frepple.js:998 common/static/js/frepple.js:1021
 #: common/static/js/frepple.min.js:12
 msgid "CSV list"
 msgstr "Список CSV"
 
-#: common/static/js/frepple.js:961 common/static/js/frepple.js:984
-#: common/static/js/frepple.js:1222 common/static/js/frepple.min.js:12
+#: common/static/js/frepple.js:1003 common/static/js/frepple.js:1026
+#: common/static/js/frepple.js:1264 common/static/js/frepple.min.js:12
 msgid "Export"
 msgstr "Экспорт"
 
-#: common/static/js/frepple.js:976 common/static/js/frepple.min.js:12
+#: common/static/js/frepple.js:1018 common/static/js/frepple.min.js:12
 msgid "Spreadsheet table"
 msgstr "Электронная таблица"
 
-#: common/static/js/frepple.js:978 common/static/js/frepple.min.js:12
+#: common/static/js/frepple.js:1020 common/static/js/frepple.min.js:12
 msgid "CSV table"
 msgstr "таблица CSV"
 
-#: common/static/js/frepple.js:1088 common/static/js/frepple.min.js:12
+#: common/static/js/frepple.js:1130 common/static/js/frepple.min.js:12
 msgid "Delete data"
 msgstr "Удаление данных"
 
-#: common/static/js/frepple.js:1091 common/static/js/frepple.min.js:12
+#: common/static/js/frepple.js:1133 common/static/js/frepple.min.js:12
 #, javascript-format
 msgid "You are about to delete %s objects AND ALL RELATED RECORDS!"
 msgstr "Вы собираетесь удалить объекты %s и ВСЕ СВЯЗАННЫЕ ЗАПИСИ!"
 
-#: common/static/js/frepple.js:1094 common/static/js/frepple.js:1142
-#: common/static/js/frepple.js:1663 common/static/js/frepple.js:1748
+#: common/static/js/frepple.js:1136 common/static/js/frepple.js:1184
+#: common/static/js/frepple.js:1705 common/static/js/frepple.js:1790
 #: common/static/js/frepple.min.js:12
 msgid "Confirm"
 msgstr "Выполнить"
 
-#: common/static/js/frepple.js:1116 common/static/js/frepple.min.js:12
+#: common/static/js/frepple.js:1158 common/static/js/frepple.min.js:12
 msgid "Error deleting data"
 msgstr "Ошибка удаления данных"
 
-#: common/static/js/frepple.js:1136 common/static/js/frepple.min.js:12
+#: common/static/js/frepple.js:1178 common/static/js/frepple.min.js:12
 msgid "Copy data"
 msgstr "Копировать данные"
 
-#: common/static/js/frepple.js:1139 common/static/js/frepple.min.js:12
+#: common/static/js/frepple.js:1181 common/static/js/frepple.min.js:12
 #, javascript-format
 msgid "You are about to duplicate %s objects"
 msgstr "Вы собираетесь дублировать объекты %s"
 
-#: common/static/js/frepple.js:1164 common/static/js/frepple.min.js:12
+#: common/static/js/frepple.js:1206 common/static/js/frepple.min.js:12
 msgid "Error copying data"
 msgstr "Ошибка копирования данных"
 
-#: common/static/js/frepple.js:1200 common/static/js/frepple.min.js:12
+#: common/static/js/frepple.js:1242 common/static/js/frepple.min.js:12
 msgid "Export Plan"
 msgstr "Экспорт плана"
 
-#: common/static/js/frepple.js:1269 common/static/js/frepple.js:1282
+#: common/static/js/frepple.js:1311 common/static/js/frepple.js:1324
 #: common/static/js/frepple.min.js:12
 msgid "Filtered where"
 msgstr "фильтр по"
 
-#: common/static/js/frepple.js:1657 common/static/js/frepple.js:1742
+#: common/static/js/frepple.js:1699 common/static/js/frepple.js:1784
 #: common/static/js/frepple.min.js:12
 msgid "export"
 msgstr "экспорт"
 
-#: common/static/js/frepple.js:1660 common/static/js/frepple.min.js:12
+#: common/static/js/frepple.js:1702 common/static/js/frepple.min.js:12
 msgid "export selected records"
 msgstr "экспортировать выбранные записи"
 
-#: common/static/js/frepple.js:1670 common/static/js/frepple.js:1837
+#: common/static/js/frepple.js:1712 common/static/js/frepple.js:1879
 #: common/static/js/frepple.min.js:12
 msgid "connecting"
 msgstr "подключение"
 
-#: common/static/js/frepple.js:1679 common/static/js/frepple.js:1844
+#: common/static/js/frepple.js:1721 common/static/js/frepple.js:1886
 #: common/static/js/frepple.min.js:12
 msgid "Export successful"
 msgstr "Экспорт выполнен"
 
-#: common/static/js/frepple.js:1702 common/static/js/frepple.js:1703
-#: common/static/js/frepple.js:1856 common/static/js/frepple.min.js:12
+#: common/static/js/frepple.js:1744 common/static/js/frepple.js:1745
+#: common/static/js/frepple.js:1898 common/static/js/frepple.min.js:12
+#: common/static/js/frepple.min.js:13
 msgid "Error during export"
 msgstr "Ошибка при экспорте"
 
-#: common/static/js/frepple.js:1704 common/static/js/frepple.min.js:12
+#: common/static/js/frepple.js:1746 common/static/js/frepple.min.js:12
 msgid "retry"
 msgstr "Повторить попытку"
 
-#: common/static/js/frepple.js:1858 common/static/js/frepple.js:1890
-#: common/static/js/frepple.min.js:12 common/static/js/frepple.min.js:13
+#: common/static/js/frepple.js:1900 common/static/js/frepple.js:1932
+#: common/static/js/frepple.min.js:13
 msgid "Retry"
 msgstr "Повторить"
 
-#: common/static/js/frepple.js:1887 common/static/js/frepple.min.js:13
+#: common/static/js/frepple.js:1929 common/static/js/frepple.min.js:13
 msgid "Error getting data"
 msgstr "Ошибка при получении данных"
 
-#: common/static/js/frepple.js:2046 common/static/js/frepple.min.js:13
+#: common/static/js/frepple.js:2088 common/static/js/frepple.min.js:13
 msgid "Customize a dashboard row"
 msgstr "Настройка строки панели инструментов"
 
-#: common/static/js/frepple.js:2052 common/static/js/frepple.min.js:13
+#: common/static/js/frepple.js:2094 common/static/js/frepple.min.js:13
 msgid "Name"
 msgstr "Наименование"
 
-#: common/static/js/frepple.js:2058 common/static/js/frepple.min.js:13
+#: common/static/js/frepple.js:2100 common/static/js/frepple.min.js:13
 msgid "Layout"
 msgstr "Макет"
 
-#: common/static/js/frepple.js:2064 common/static/js/frepple.min.js:13
+#: common/static/js/frepple.js:2106 common/static/js/frepple.min.js:13
 msgid "Single column"
 msgstr "Отдельный столбец"
 
-#: common/static/js/frepple.js:2067 common/static/js/frepple.min.js:13
+#: common/static/js/frepple.js:2109 common/static/js/frepple.min.js:13
 msgid "Two columns"
 msgstr "Два столбца"
 
-#: common/static/js/frepple.js:2074 common/static/js/frepple.min.js:13
+#: common/static/js/frepple.js:2116 common/static/js/frepple.min.js:13
 msgid "Three columns"
 msgstr "Три столбца"
 
-#: common/static/js/frepple.js:2078 common/static/js/frepple.min.js:13
+#: common/static/js/frepple.js:2120 common/static/js/frepple.min.js:13
 msgid "Four columns"
 msgstr "Четыре столбца"
 
-#: common/static/js/frepple.js:2084 common/static/js/frepple.min.js:13
+#: common/static/js/frepple.js:2126 common/static/js/frepple.min.js:13
 msgid "Add widget"
 msgstr "Добавить виджет"
 
-#: common/static/js/frepple.js:2102 common/static/js/frepple.min.js:13
+#: common/static/js/frepple.js:2144 common/static/js/frepple.min.js:13
 msgid "Delete"
 msgstr "Удалить"
 
-#: common/static/js/frepple.js:2104 common/static/js/frepple.min.js:13
+#: common/static/js/frepple.js:2146 common/static/js/frepple.min.js:13
 msgid "Add new below"
 msgstr "Добавить ниже"
 
-#: common/static/js/frepple.js:2105 common/static/js/frepple.min.js:13
+#: common/static/js/frepple.js:2147 common/static/js/frepple.min.js:13
 msgid "Add new above"
 msgstr "Добавить выше"
 
-#: common/static/js/frepple.js:2396 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2439 common/static/js/frepple.min.js:11
 msgid "Installed apps"
 msgstr "Установленные приложения"
 
-#: common/static/js/frepple.js:2416 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2459 common/static/js/frepple.min.js:11
 msgid "Error reading version information"
 msgstr "Ошибка чтения информации о версии"
 
-#: common/static/js/frepple.js:2440 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2483 common/static/js/frepple.min.js:11
 msgid "Import CSV or Excel file"
 msgstr "импорт из CSV или Excel"
 
-#: common/static/js/frepple.js:2446 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2489 common/static/js/frepple.min.js:11
 msgid "Load an Excel file or a CSV-formatted text file."
 msgstr "Загрузите файл Excel или текстовый файл в формате CSV."
 
-#: common/static/js/frepple.js:2447 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2490 common/static/js/frepple.min.js:11
 msgid "The first row should contain the field names."
 msgstr "Первая строка должна содержать имена полей."
 
-#: common/static/js/frepple.js:2449 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2492 common/static/js/frepple.min.js:11
 msgid "First delete all existing records AND ALL RELATED TABLES"
 msgstr "Сначала удалите все существующие записи и ВСЕ СООТВЕТСТВУЮЩИЕ ТАБЛИЦЫ"
 
-#: common/static/js/frepple.js:2456 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2499 common/static/js/frepple.min.js:11
 msgid "files selected"
 msgstr "выбранные файлы"
 
-#: common/static/js/frepple.js:2459 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2502 common/static/js/frepple.min.js:11
 msgid "Select files"
 msgstr "Выбрать файлы"
 
-#: common/static/js/frepple.js:2462 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2505 common/static/js/frepple.min.js:11
 msgid "or drop them here"
 msgstr "или удалить здесь"
 
-#: common/static/js/frepple.js:2471 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2514 common/static/js/frepple.min.js:11
 msgid "Data file"
 msgstr "файл данных"
 
-#: common/static/js/frepple.js:2480 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2523 common/static/js/frepple.min.js:11
 msgid "Import"
 msgstr "импорт"
 
-#: common/static/js/frepple.js:2481 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2524 common/static/js/frepple.min.js:11
 msgid "Cancel Import"
 msgstr "Отменить импорт"
 
-#: common/static/js/frepple.js:2483 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2526 common/static/js/frepple.min.js:11
 msgid "Copy to Clipboard"
 msgstr "копировать в буфер обмена"
 
-#: common/static/js/frepple.js:2540 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2583 common/static/js/frepple.min.js:11
 msgid "Importing..."
 msgstr "импорт ..."
 
-#: common/static/js/frepple.js:2559 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2602 common/static/js/frepple.min.js:11
 msgid "Canceled"
 msgstr "отменено"
 
-#: common/static/js/frepple.js:3051 common/static/js/frepple.min.js:13
+#: common/static/js/frepple.js:3098 common/static/js/frepple.min.js:13
 msgid "Show hints"
 msgstr "показать подсказки"
 
-#: common/static/js/frepple.js:3141 common/static/js/frepple.min.js:13
+#: common/static/js/frepple.js:3188 common/static/js/frepple.min.js:13
 msgid "Guided tour"
 msgstr "Помошник"
 
-#: common/static/js/frepple.js:3148 common/static/js/frepple.min.js:13
+#: common/static/js/frepple.js:3195 common/static/js/frepple.min.js:13
 msgid "Previous"
 msgstr "предыдущий"
 
-#: common/static/js/frepple.js:3149 common/static/js/frepple.js:3290
+#: common/static/js/frepple.js:3196 common/static/js/frepple.js:3337
 #: common/static/js/frepple.min.js:13
 msgid "Play"
 msgstr "пуск"
 
-#: common/static/js/frepple.js:3150 common/static/js/frepple.min.js:13
+#: common/static/js/frepple.js:3197 common/static/js/frepple.min.js:13
 msgid "Next"
 msgstr "следующий"
 
-#: common/static/js/frepple.js:3297 common/static/js/frepple.min.js:13
+#: common/static/js/frepple.js:3344 common/static/js/frepple.min.js:13
 msgid "Pause"
 msgstr "пауза"
 

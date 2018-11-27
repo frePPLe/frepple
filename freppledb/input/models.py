@@ -549,7 +549,7 @@ class Resource(AuditModel, HierarchyModel):
     help_text=_("Efficiency percentage of the resource")
     )
   efficiency_calendar = models.ForeignKey(
-    Calendar, verbose_name=_('efficiency % calendar'), related_name='+',
+    Calendar, verbose_name=_('efficiency %% calendar'), related_name='+',
     null=True, blank=True, on_delete=models.CASCADE,
     help_text=_('Calendar defining the efficiency percentage of the resource varying over time')
     )

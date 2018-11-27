@@ -748,7 +748,7 @@ class ResourceList(GridReport):
     GridFieldLastModified('lastmodified'),
     GridFieldNumber('efficiency', title=_('efficiency %'), initially_hidden=True, formatter='currency', extra='"formatoptions":{"suffix":" %","defaultValue":"100.00"}'),
     GridFieldText(
-      'efficiency_calendar', title=_('efficiency % calendar'), initially_hidden=True,
+      'efficiency_calendar', title=_('efficiency %% calendar'), initially_hidden=True,
       field_name='efficiency_calendar__name', formatter='detail', extra='"role":"input/calendar"'
       ),
     # Optional fields referencing the location
@@ -1135,7 +1135,7 @@ class OperationResourceList(GridReport):
     GridFieldText('resource', title=_('resource'), field_name='resource__name', formatter='detail', extra='"role":"input/resource"'),
     GridFieldText('skill', title=_('skill'), field_name='skill__name', formatter='detail', extra='"role":"input/skill"', initially_hidden=True),
     GridFieldNumber('quantity', title=_('quantity')),
-    GridFieldNumber('quantity_fixed', title=_('quantity_fixed'), initially_hidden=True),
+    GridFieldNumber('quantity_fixed', title=_('fixed quantity'), initially_hidden=True),
     GridFieldDateTime('effective_start', title=_('effective start'), initially_hidden=True),
     GridFieldDateTime('effective_end', title=_('effective end'), initially_hidden=True),
     #. Translators: Translation included with Django
@@ -1192,7 +1192,7 @@ class OperationMaterialList(GridReport):
     GridFieldText('source', title=_('source')),
     GridFieldLastModified('lastmodified'),
     GridFieldNumber('transferbatch', title=_('transfer batch quantity'), initially_hidden=True),
-    GridFieldNumber('quantity_fixed', title=_('quantity fixed')),
+    GridFieldNumber('quantity_fixed', title=_('fixed quantity')),
     # Operation fields
     GridFieldText('operation__description', title=string_concat(_('operation'), ' - ', _('description')), initially_hidden=True, editable=False),
     GridFieldText('operation__category', title=string_concat(_('operation'), ' - ', _('category')), initially_hidden=True, editable=False),
@@ -1906,7 +1906,7 @@ class DistributionOrderList(OperationPlanMixin, GridReport):
           'model': Item,
           'title': force_text(Item._meta.verbose_name) + " " + args[0],
           'post_title': force_text(
-            _("In transit in %(loc)s at %(date)s") % {
+            _("in transit in %(loc)s at %(date)s") % {
               'loc': args[1], 'date': args[2]
               }
             )
@@ -1917,7 +1917,7 @@ class DistributionOrderList(OperationPlanMixin, GridReport):
           'model': Item,
           'title': force_text(Item._meta.verbose_name) + " " + args[0],
           'post_title': force_text(
-            _("Received in %(loc)s between %(date1)s and %(date2)s") % {
+            _("received in %(loc)s between %(date1)s and %(date2)s") % {
               'loc': args[1], 'date1': args[2], 'date2': args[3]
               }
             )
@@ -1928,7 +1928,7 @@ class DistributionOrderList(OperationPlanMixin, GridReport):
           'model': Item,
           'title': force_text(Item._meta.verbose_name) + " " + args[0],
           'post_title': force_text(
-            _("Shipped to %(loc)s between %(date1)s and %(date2)s") % {
+            _("shipped to %(loc)s between %(date1)s and %(date2)s") % {
               'loc': args[1], 'date1': args[2], 'date2': args[3]
               }
             )
@@ -2201,7 +2201,7 @@ class PurchaseOrderList(OperationPlanMixin, GridReport):
           'model': Item,
           'title': force_text(Item._meta.verbose_name) + " " + args[0],
           'post_title': force_text(
-            _("On order in %(loc)s at %(date)s") % {
+            _("on order in %(loc)s at %(date)s") % {
               'loc': args[1], 'date': args[2]
               }
             )
@@ -2212,7 +2212,7 @@ class PurchaseOrderList(OperationPlanMixin, GridReport):
           'model': Item,
           'title': force_text(Item._meta.verbose_name) + " " + args[0],
           'post_title': force_text(
-            _("On order in %(loc)s between %(date1)s and %(date2)s") % {
+            _("on order in %(loc)s between %(date1)s and %(date2)s") % {
               'loc': args[1], 'date1': args[2], 'date2': args[3]
               }
             )
@@ -2568,7 +2568,7 @@ class DeliveryOrderList(GridReport):
           'model': Item,
           'title': force_text(Item._meta.verbose_name) + " " + args[0],
           'post_title': force_text(
-            _("Delivered from %(loc)s between %(date1)s and %(date2)s") % {
+            _("delivered from %(loc)s between %(date1)s and %(date2)s") % {
               'loc': args[1], 'date1': args[2], 'date2': args[3]
               }
             )

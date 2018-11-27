@@ -927,7 +927,7 @@ class Solver : public Object
 {
   public:
     /** Constructor. */
-    explicit Solver() : loglevel(0) {}
+    explicit Solver() {}
 
     /** Destructor. */
     virtual ~Solver() {}
@@ -1110,7 +1110,7 @@ class Solver : public Object
 
   private:
     /** Controls the amount of tracing and debugging messages. */
-    short loglevel;
+    short loglevel = 0;
 
     /** Automatically commit any plan changes or not. */
     bool autocommit = true;

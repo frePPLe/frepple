@@ -356,7 +356,7 @@ class Command(BaseCommand):
           </div>
           </div>
           <div class="form-group">
-          <label class="col-sm-3 control-label">Year naam</label>
+          <label class="col-sm-3 control-label">Year name</label>
           <div class="col-sm-9">
           <input class="form-control" name="format-year" type="text" size="12" value="%Y"/>
           </div>

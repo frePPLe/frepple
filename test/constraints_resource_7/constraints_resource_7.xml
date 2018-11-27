@@ -41,20 +41,20 @@
 		    <location name="1. factory" />
 		    <maximum_calendar name="Capacity"/>
 		    <efficiency>50</efficiency>
+		    <maxearly>P100D</maxearly>
           </resource>
           <quantity>1</quantity>
           <quantity_fixed>1</quantity_fixed>
         </load>
       </loads>
       <duration>P10D</duration>
-      <!-- BOOM duration_per>P10D</duration_per-->
+      <duration_per>P10D</duration_per>
     </operation>
   </operations>
   <demands>
     <demand name="1. order 1">
       <quantity>2</quantity>
-      <minshipment>2</minshipment>
-      <due>2019-06-01T00:00:00</due>
+      <due>2019-07-15T00:00:00</due>
       <priority>1</priority>
       <item name="1. end item" />
       <location name="1. factory" />
@@ -69,6 +69,62 @@
     </demand>    
   </demands>
 
+  <!--
+  TEST 2: Same as 1, but with extra availability calendar that restricts
+  the position of the operationplan within the bucket.
+  -->
+  <operations>
+    <operation name="2. make end item" xsi:type="operation_time_per">
+      <size_multiple>1</size_multiple>
+      <item name="2. end item" />
+      <location name="2. factory">
+        <available name="2. factory availability">
+          <default>0</default>
+          <buckets>
+            <!-- 4 + 8 + 16 = 28 = effective tuesday through thursday -->
+            <bucket  days="28" value="1" />
+          </buckets>
+        </available>
+      </location>
+      <flows>
+        <flow xsi:type="flow_end">
+          <item name="2. end item" />
+          <quantity>1</quantity>
+        </flow>
+      </flows>
+      <loads>
+        <load>
+		  <resource name="2. Resource" xsi:type="resource_buckets">
+		    <location name="2. factory" />
+		    <maximum_calendar name="Capacity"/>
+		    <efficiency>50</efficiency>
+		    <maxearly>P100D</maxearly>
+          </resource>
+          <quantity>1</quantity>
+          <quantity_fixed>1</quantity_fixed>
+        </load>
+      </loads>
+      <duration>P5D</duration>
+      <duration_per>P5D</duration_per>
+    </operation>
+  </operations>
+  <demands>
+    <demand name="2. order 1">
+      <quantity>2</quantity>
+      <due>2019-07-15T00:00:00</due>
+      <priority>1</priority>
+      <item name="2. end item" />
+      <location name="2. factory" />
+    </demand>
+    <demand name="2. order 2">
+      <quantity>2</quantity>
+      <minshipment>2</minshipment>
+      <due>2018-11-11T00:00:00</due>
+      <priority>1</priority>
+      <item name="2. end item" />
+      <location name="2. factory" />
+    </demand>    
+  </demands>
 <?python
 print("CREATING CONSTRAINED PLAN")
 frepple.solver_mrp(plantype=1, constraints=15, loglevel=2).solve()

@@ -474,7 +474,7 @@ void SolverCreate::solve(const ResourceBuckets* res, void* v)
         data->state->q_operationplan, 0.01, false, false, false, Date::infinitePast
       ) * data->state->q_loadplan->getLoad()->getQuantity()
       + data->state->q_loadplan->getLoad()->getQuantityFixed();
-    if (efficiency != DBL_MAX)
+    if (efficiency != DBL_MAX && efficiency != 100.0)
       min_free_quantity /= efficiency * 100.0;
   }
 
@@ -512,7 +512,9 @@ void SolverCreate::solve(const ResourceBuckets* res, void* v)
       {
         Date oldEnd = data->state->q_operationplan->getEnd();
         double oldQty = data->state->q_operationplan->getQuantity();
-        double newQty = oldQty + overloadQty / data->state->q_loadplan->getLoad()->getQuantity();
+        double newQty = oldQty 
+          + overloadQty / data->state->q_loadplan->getLoad()->getQuantity()
+            * (efficiency != DBL_MAX ? efficiency / 100.0 : 1.0);
         if (newQty > ROUNDING_ERROR)
         {
           data->state->q_operationplan->getOperation()->setOperationPlanParameters(
@@ -696,7 +698,7 @@ void SolverCreate::solve(const ResourceBuckets* res, void* v)
       }
 
       Date effective_end = data->state->q_loadplan->getLoad()->getEffective().getEnd();
-      if (!newDate || newDate > effective_end)
+      if ((!newDate || newDate > effective_end) && effective_end != Date::infiniteFuture)
       {
         // The load has effectivity, and when it expires we can return a positive reply
         if (effective_end > currentOpplan.end)
@@ -709,7 +711,7 @@ void SolverCreate::solve(const ResourceBuckets* res, void* v)
       data->state->a_date = data->state->q_date;
       data->state->a_qty = orig_q_qty;
     }
-    else if (newDate)
+    else if (newDate || newDate == Date::infiniteFuture)
     {
       // Move the operationplan to the new bucket and resize to the minimum.
       // Set the date where a next trial date can happen.
@@ -721,15 +723,15 @@ void SolverCreate::solve(const ResourceBuckets* res, void* v)
         if (q < curmin)
           q = curmin;
       }
-      data->state->q_operationplan->setQuantity(q);
+      if (q < data->state->q_qty_min)
+        q = data->state->q_qty_min;
+      data->state->q_operationplan->setQuantity(q);      
       Date tmp = data->state->q_loadplan->getLoad()->getOperationPlanDate(
         data->state->q_loadplan, newDate, true
         );
       data->state->q_operationplan->getOperation()->setOperationPlanParameters(
-        data->state->q_operationplan,
-        data->state->q_operationplan->getOperation()->getSizeMinimum(),
-        tmp,
-        Date::infinitePast
+        data->state->q_operationplan, q,
+        tmp, Date::infinitePast
         );
 
       data->state->a_date = data->state->q_operationplan->getEnd();

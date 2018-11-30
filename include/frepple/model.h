@@ -2102,6 +2102,11 @@ class OperationPlan
     /** Update the operation of an operationplan. */
     void setOperation(Operation* o);
 
+    inline OperationPlanState setOperationPlanParameters(
+      double qty, Date startdate, Date enddate,
+      bool preferEnd = true, bool execute = true, bool roundDown = true
+      );
+
     /** Fixes the start and end date of an operationplan. Note that this
       * overrules the standard duration given on the operation, i.e. no logic
       * kicks in to verify the data makes sense. This is up to the user to
@@ -3698,6 +3703,17 @@ class OperationPlanState  // @todo should also be able to remember and restore s
       return *this;
     }
 };
+
+
+inline OperationPlanState OperationPlan::setOperationPlanParameters(
+  double qty, Date startdate, Date enddate,
+  bool preferEnd, bool execute, bool roundDown
+)
+{
+  return getOperation()->setOperationPlanParameters(
+    this, qty, startdate, enddate, preferEnd, execute, roundDown
+  );
+}
 
 
 /** @brief Models an operation that takes a fixed amount of time, independent
@@ -8208,6 +8224,16 @@ class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand
       */
     LoadPlan* getOtherLoadPlan() const;
 
+    /** Auxilary method for bucketized resources.
+      * Returns the date and onhand at the end of this bucket.
+      */
+    pair<Date, double> getBucketEnd() const;
+
+    /** Auxilary method for bucketized resources.
+      * Returns starting date and quantity of this bucket.
+      */
+    pair<Date, double> getBucketStart() const;
+
     inline AlternateIterator getAlternates() const;
 
     static int initialize();
@@ -9848,7 +9874,7 @@ class CommandMoveOperationPlan : public Command
     {
       assert(opplan->getOperation());
       if (opplan)
-        opplan->getOperation()->setOperationPlanParameters(opplan, q, s, e, b, true, roundDown);
+        opplan->setOperationPlanParameters(q, s, e, b, true, roundDown);
     }
 
     /** Set another start date for the operationplan. */

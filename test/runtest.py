@@ -132,7 +132,7 @@ def runTestSuite():
         # These test verify other aspects of the application or broken, unsupported features.
         excluded = [
           "xml_remote", "scalability_1", "scalability_2", "scalability_3",
-          "jobshop", "multithreading"
+          "load_bucketized", "jobshop", "multithreading"
           ]
         break
     for o, a in opts:

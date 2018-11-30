@@ -254,9 +254,8 @@ pair<double, double> FlowPlan::setQuantity(
         || (mode == 0 && getFlow()->getType() == *FlowEnd::metadata)
         )
       {
-        oper->getOperation()->setOperationPlanParameters(
-          oper, 0.0,
-          Date::infinitePast, oper->getEnd(),
+        oper->setOperationPlanParameters(
+          0.0, Date::infinitePast, oper->getEnd(),
           true, execute, rounddown
         );
       }
@@ -265,9 +264,8 @@ pair<double, double> FlowPlan::setQuantity(
         || (mode == 0 && getFlow()->getType() == *FlowStart::metadata)
         )
       {
-        oper->getOperation()->setOperationPlanParameters(
-          oper, 0.0,
-          oper->getStart(), Date::infinitePast,
+        oper->setOperationPlanParameters(
+          0.0, oper->getStart(), Date::infinitePast,
           false, execute, rounddown
         );
       }
@@ -283,13 +281,13 @@ pair<double, double> FlowPlan::setQuantity(
     if (less_than_fixed_qty && oper->getQuantity() != 0.0)
     {
       if (mode == 2 || (mode == 0 && getFlow()->getType() == *FlowEnd::metadata))
-        opplan_quantity = oper->getOperation()->setOperationPlanParameters(
-          oper, 0.0, Date::infinitePast, oper->getEnd(),
+        opplan_quantity = oper->setOperationPlanParameters(
+          0.0, Date::infinitePast, oper->getEnd(),
           true, execute, rounddown
           ).quantity;
       else if (mode == 1 || (mode == 0 && getFlow()->getType() == *FlowStart::metadata))
-        opplan_quantity = oper->getOperation()->setOperationPlanParameters(
-          oper, 0.0, oper->getStart(), Date::infinitePast,
+        opplan_quantity = oper->setOperationPlanParameters(
+          0.0, oper->getStart(), Date::infinitePast,
           false, execute, rounddown
           ).quantity;
       else
@@ -298,13 +296,13 @@ pair<double, double> FlowPlan::setQuantity(
     else if (!less_than_fixed_qty && oper->getQuantity() == 0.0)
     {
       if (mode == 2 || (mode == 0 && getFlow()->getType() == *FlowEnd::metadata))
-        opplan_quantity = oper->getOperation()->setOperationPlanParameters(
-          oper, 0.001, Date::infinitePast, oper->getEnd(),
+        opplan_quantity = oper->setOperationPlanParameters(
+          0.001, Date::infinitePast, oper->getEnd(),
           true, execute, rounddown
           ).quantity;
       else if (mode == 1 || (mode == 0 && getFlow()->getType() == *FlowStart::metadata))
-        opplan_quantity = oper->getOperation()->setOperationPlanParameters(
-          oper, 0.001, oper->getStart(), Date::infinitePast,
+        opplan_quantity = oper->setOperationPlanParameters(
+          0.001, oper->getStart(), Date::infinitePast,
           false, execute, rounddown
           ).quantity;
       else
@@ -317,14 +315,14 @@ pair<double, double> FlowPlan::setQuantity(
     // For transfer batch flowplans the argument quantity is expected to be the
     // total quantity of all batches.
     if (mode == 2 || (mode == 0 && getFlow()->getType() == *FlowEnd::metadata))
-      opplan_quantity = oper->getOperation()->setOperationPlanParameters(
-        oper, (quantity - getFlow()->getQuantityFixed()) / getFlow()->getQuantity(),
+      opplan_quantity = oper->setOperationPlanParameters(
+        (quantity - getFlow()->getQuantityFixed()) / getFlow()->getQuantity(),
         Date::infinitePast, oper->getEnd(),
         true, execute, rounddown
         ).quantity;
     else if (mode == 1 || (mode == 0 && getFlow()->getType() == *FlowStart::metadata))
-      opplan_quantity = oper->getOperation()->setOperationPlanParameters(
-        oper, (quantity - getFlow()->getQuantityFixed()) / getFlow()->getQuantity(),
+      opplan_quantity = oper->setOperationPlanParameters(
+        (quantity - getFlow()->getQuantityFixed()) / getFlow()->getQuantity(),
         oper->getStart(), Date::infinitePast,
         false, execute, rounddown
         ).quantity;

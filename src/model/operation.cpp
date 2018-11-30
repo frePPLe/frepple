@@ -1507,8 +1507,8 @@ OperationPlanState OperationRouting::setOperationPlanParameters(
     // Case 1: an end date is specified
     for (OperationPlan* i = opplan->lastsubopplan; i; i = i->prevsubopplan)
     {
-      x = i->getOperation()->setOperationPlanParameters(
-        i, q, Date::infinitePast, e, preferEnd, execute, roundDown
+      x = i->setOperationPlanParameters(
+        q, Date::infinitePast, e, preferEnd, execute, roundDown
         );
       e = x.start;
       if (realfirst)
@@ -1524,8 +1524,8 @@ OperationPlanState OperationRouting::setOperationPlanParameters(
     // Case 2: a start date is specified
     for (OperationPlan *i = opplan->firstsubopplan; i; i = i->nextsubopplan)
     {
-      x = i->getOperation()->setOperationPlanParameters(
-        i, q, s, Date::infinitePast, preferEnd, execute, roundDown
+      x = i->setOperationPlanParameters(
+        q, s, Date::infinitePast, preferEnd, execute, roundDown
         );
       s = x.end;
       if (realfirst)
@@ -1630,8 +1630,8 @@ OperationAlternate::setOperationPlanParameters(
   }
   else
     // Pass the call to the sub-operation
-    return x->getOperation()->setOperationPlanParameters(
-      x, q, s, e, preferEnd, execute, roundDown
+    return x->setOperationPlanParameters(
+      q, s, e, preferEnd, execute, roundDown
       );
 }
 

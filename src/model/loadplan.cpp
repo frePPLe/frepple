@@ -382,6 +382,38 @@ double Load::getLoadplanQuantity(const LoadPlan* lp) const
 }
 
 
+pair<Date, double> LoadPlan::getBucketEnd() const
+{
+  assert(getResource()->getType() == *ResourceBuckets::metadata);
+  double available = 0.0;
+  auto cur = res->getLoadPlans().begin(this);
+  while (cur != res->getLoadPlans().end())
+  {
+    if (cur->getEventType() == 2)
+      return make_pair(cur->getDate(), available);
+    if (cur->getOnhand() < available)
+      available = cur->getOnhand();
+    ++cur;
+  }
+  return make_pair(Date::infiniteFuture, available);
+}
+
+
+pair<Date, double> LoadPlan::getBucketStart() const
+{
+  assert(getResource()->getType() == *ResourceBuckets::metadata);
+  auto cur = res->getLoadPlans().begin(this);
+  while (cur != res->getLoadPlans().end())
+  {
+    if (cur->getEventType() == 2)
+      return make_pair(cur->getDate(), cur->getQuantity());
+    else
+      --cur;
+  }
+  return make_pair(Date::infinitePast, 0.0);
+}
+
+
 int LoadPlanIterator::initialize()
 {
   // Initialize the type

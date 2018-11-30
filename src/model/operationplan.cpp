@@ -377,8 +377,8 @@ Object* OperationPlan::createOperationPlan(
       // Change the operation
       opplan->setOperation(static_cast<Operation*>(oper));
     if (quantityfld || startfld || endfld)
-      opplan->getOperation()->setOperationPlanParameters(
-        opplan, quantityfld ? quantity : opplan->getQuantity(),
+      opplan->setOperationPlanParameters(
+        quantityfld ? quantity : opplan->getQuantity(),
         start, end
       );
     return opplan;

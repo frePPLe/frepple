@@ -6721,7 +6721,7 @@ template <class T> class HasHierarchy : public HasName<T>
     /** Return true if an object is part of the children of a second object. */
     bool isMemberOf(T* p) const
     {
-      for (const HasHierarchy* tmp = this; tmp; tmp = tmp->getOwner())
+      for (auto tmp = this; tmp; tmp = tmp->parent)
         if (tmp == p)
           // Yes, we find the argument in the parent hierarchy
           return true;
@@ -6771,17 +6771,10 @@ template <class T> class HasHierarchy : public HasName<T>
     }
 
   private:
-    /** A pointer to the parent object. */
+    /** Children are linked as a single linked list. */
     T *parent = nullptr;
-
-    /** A pointer to the first child object. */
     T *first_child = nullptr;
-
-    /** A pointer to the next brother object, ie an object having the
-      * same parent.<br>
-      * The brothers are all linked as a single linked list, with the
-      * first_child pointer on the parent being the root pointer of the list.
-      */
+    T *last_child = nullptr;
     T *next_brother = nullptr;
 };
 

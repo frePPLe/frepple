@@ -106,13 +106,13 @@ gdb:
 	export FREPPLE_LOGFILE=frepple.log; \
 	libtool --mode=execute gdb --args $(CURDIR)/src/frepple $(CURDIR)/freppledb/common/commands.py
 
-profiling_run: profile
+profiling_run:
 	export FREPPLE_HOME=$(CURDIR)/bin; \
 	export PYTHONPATH=$(CURDIR); \
 	export DJANGO_SETTINGS_MODULE=freppledb.settings; \
-	export LD_LIBRARY_PATH=$ROOT/src/.libs; \
+	export LD_LIBRARY_PATH=$(CURDIR)/src/.libs; \
 	export FREPPLE_LOGFILE=frepple.log; \
-	valgrind --tool=callgrind --dsymutil=yes $ROOT/src/.libs/frepple $ROOT/freppledb/common/commands.py
+	valgrind --tool=callgrind --dsymutil=yes $(CURDIR)/src/.libs/frepple $(CURDIR)/freppledb/common/commands.py
 
 # A simple way to get some code metrics
 stats:

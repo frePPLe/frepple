@@ -8227,12 +8227,12 @@ class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand
     /** Auxilary method for bucketized resources.
       * Returns the date and onhand at the end of this bucket.
       */
-    pair<Date, double> getBucketEnd() const;
+    tuple<double, Date, double> getBucketEnd() const;
 
     /** Auxilary method for bucketized resources.
       * Returns starting date and quantity of this bucket.
       */
-    pair<Date, double> getBucketStart() const;
+    tuple<double, Date, double> getBucketStart() const;
 
     inline AlternateIterator getAlternates() const;
 

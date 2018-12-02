@@ -382,35 +382,41 @@ double Load::getLoadplanQuantity(const LoadPlan* lp) const
 }
 
 
-pair<Date, double> LoadPlan::getBucketEnd() const
+tuple<double, Date, double> LoadPlan::getBucketEnd() const
 {
   assert(getResource()->getType() == *ResourceBuckets::metadata);
-  double available = 0.0;
-  auto cur = res->getLoadPlans().begin(this);
-  while (cur != res->getLoadPlans().end())
+  double available_before = getOnhand();
+  for (
+    auto cur = res->getLoadPlans().begin(this); 
+    cur != res->getLoadPlans().end(); ++cur
+    )
   {
     if (cur->getEventType() == 2)
-      return make_pair(cur->getDate(), available);
-    if (cur->getOnhand() < available)
-      available = cur->getOnhand();
-    ++cur;
+      return make_tuple(available_before, cur->getDate(), cur->getOnhand());
+    available_before = cur->getOnhand();
   }
-  return make_pair(Date::infiniteFuture, available);
+  return make_tuple(available_before, Date::infiniteFuture, 0);
 }
 
 
-pair<Date, double> LoadPlan::getBucketStart() const
+tuple<double, Date, double> LoadPlan::getBucketStart() const
 {
   assert(getResource()->getType() == *ResourceBuckets::metadata);
-  auto cur = res->getLoadPlans().begin(this);
-  while (cur != res->getLoadPlans().end())
+  double available_after = getOnhand();
+  for (
+    auto cur = res->getLoadPlans().begin(this);
+    cur != res->getLoadPlans().end(); --cur
+    )
   {
+    available_after = cur->getQuantity();
     if (cur->getEventType() == 2)
-      return make_pair(cur->getDate(), cur->getQuantity());
-    else
+    {
+      auto tmp = cur->getDate();
       --cur;
+      return make_tuple(cur != res->getLoadPlans().end() ? cur->getOnhand() : 0.0, tmp, available_after);
+    }
   }
-  return make_pair(Date::infinitePast, 0.0);
+  return make_tuple(0.0, Date::infinitePast, available_after);
 }
 
 

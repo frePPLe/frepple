@@ -142,18 +142,16 @@ void ResourceBuckets::updateProblems()
     else
     {
       // Evaluate previous bucket
-      if (load < 0.0)
-        new ProblemCapacityOverload(this, startdate,
-          iter->getDate(), -load);
+      if (load < - ROUNDING_ERROR)
+        new ProblemCapacityOverload(this, startdate, iter->getDate(), -load);
       // Reset evaluation for the new bucket
       startdate = iter->getDate();
       load = 0.0;
     }
   }
   // Evaluate the final bucket
-  if (load < 0.0)
-    new ProblemCapacityOverload(this, startdate,
-      Date::infiniteFuture, -load);
+  if (load < - ROUNDING_ERROR)
+    new ProblemCapacityOverload(this, startdate, Date::infiniteFuture, -load);
 }
 
 

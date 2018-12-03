@@ -1882,9 +1882,12 @@ class OperationPlan
       * Criticality is currently implemented as the slack in the downstream
       * path. If the criticality is 2, it means the operationplan can be
       * delayed by 2 days without impacting the delivery of any demand.
-      * TODO should criticality also include priority of demand and critical quantity?
       */
     double getCriticality() const;
+
+    /** Return the quantity of this operationplan that is due within a 
+      * certain time window. */
+    double getCriticalQuantity(Duration = 0L) const;
 
     /** Returns the difference between:
       *  a) the end date of the this operationplan

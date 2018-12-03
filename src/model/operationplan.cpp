@@ -1876,6 +1876,59 @@ double OperationPlan::getCriticality() const
 }
 
 
+double OperationPlan::getCriticalQuantity(Duration window) const
+{
+  // Operationplan hasn't been set up yet
+  if (!oper)
+    return 0;
+
+  // Child operationplans have the same criticality as the parent
+  // TODO: Slack between routing sub operationplans isn't recognized.
+  if (getOwner() && getOwner()->getOperation()->getType() != *OperationSplit::metadata)
+    return getOwner()->getCriticalQuantity();
+
+  // Handle demand delivery operationplans
+  if (getTopOwner()->getDemand())
+  {
+    return getTopOwner()->getDemand()->getDue() - getEnd() < window ?
+      getQuantity() : 0.0;
+  }
+
+  // Handle an upstream operationplan
+  double criticalqty = 0.0;
+  vector<const OperationPlan*> opplans(HasLevel::getNumberOfLevels() + 5);
+  for (PeggingIterator p(const_cast<OperationPlan*>(this)); p; ++p)
+  {
+    unsigned int lvl = p.getLevel();
+    if (lvl >= opplans.size())
+      opplans.resize(lvl + 5);
+    opplans[lvl] = p.getOperationPlan();
+    const OperationPlan* m = p.getOperationPlan();
+    if (m && m->getTopOwner()->getDemand())
+    {
+      // Reached a demand. Get the total slack now.
+      Duration myslack = m->getTopOwner()->getDemand()->getDue() - m->getEnd();
+      for (unsigned int i = 1; i <= lvl; i++)
+      {
+        if (opplans[i - 1]->getOwner() == opplans[i] 
+          || opplans[i - 1] == opplans[i]->getOwner())
+            // Times between parent and child opplans isn't slack
+            continue;
+        Date st = opplans[i - 1]->getEnd();
+        if (!st) st = Plan::instance().getCurrent();
+        Date nd = opplans[i]->getStart();
+        if (!nd) nd = Plan::instance().getCurrent();
+        if (nd > st)
+          myslack += nd - st;
+      }
+      if (myslack < window)
+        criticalqty += p.getQuantity();
+    }
+  }
+  return criticalqty;
+}
+
+
 Duration OperationPlan::getDelay() const
 {
   // Operationplan hasn't been set up yet. On time by default.

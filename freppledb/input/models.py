@@ -845,6 +845,11 @@ class ItemSupplier(AuditModel):
     max_digits=20, decimal_places=8,
     help_text=_("A multiple purchasing quantity")
     )
+  sizemaximum = models.DecimalField(
+    _('size maximum'), null=True, blank=True,
+    max_digits=20, decimal_places=8,
+    help_text=_("A maximum purchasing quantity")
+    )
   cost = models.DecimalField(
     _('cost'), null=True, blank=True,
     max_digits=20, decimal_places=8,
@@ -930,6 +935,11 @@ class ItemDistribution(AuditModel):
     _('size multiple'), null=True, blank=True,
     max_digits=20, decimal_places=8,
     help_text=_("A multiple shipping quantity")
+    )
+  sizemaximum = models.DecimalField(
+    _('size maximum'), null=True, blank=True,
+    max_digits=20, decimal_places=8,
+    help_text=_("A maximum shipping quantity")
     )
   cost = models.DecimalField(
     _('cost'), null=True, blank=True,

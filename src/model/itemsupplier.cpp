@@ -256,7 +256,7 @@ OperationItemSupplier::OperationItemSupplier(
   setDuration(i->getLeadTime());
   setSizeMultiple(i->getSizeMultiple());
   setSizeMinimum(i->getSizeMinimum());
-
+  setSizeMaximum(i->getSizeMaximum());
   setSource(i->getSource());
   setCost(i->getCost());
   setFence(i->getFence());

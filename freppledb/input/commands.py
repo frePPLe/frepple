@@ -739,7 +739,7 @@ class loadItemSuppliers(LoadTask):
       starttime = time()
       cursor.execute('''
         SELECT
-          supplier_id, item_id, location_id, sizeminimum, sizemultiple,
+          supplier_id, item_id, location_id, sizeminimum, sizemultiple, sizemaximum,
           cost, priority, effective_start, effective_end, source, leadtime,
           resource_id, resource_qty, fence
         FROM itemsupplier %s
@@ -758,9 +758,9 @@ class loadItemSuppliers(LoadTask):
             curitem = frepple.item(name=curitemname)
           curitemsupplier = frepple.itemsupplier(
             supplier=cursupplier, item=curitem, source=i[9],
-            leadtime=i[10].total_seconds() if i[10] else 0,
-            fence=i[13].total_seconds() if i[13] else 0,
-            resource_qty=i[12]
+            leadtime=i[11].total_seconds() if i[11] else 0,
+            fence=i[14].total_seconds() if i[14] else 0,
+            resource_qty=i[13]
             )
           if i[2]:
             curitemsupplier.location = frepple.location(name=i[2])
@@ -769,15 +769,17 @@ class loadItemSuppliers(LoadTask):
           if i[4]:
             curitemsupplier.size_multiple = i[4]
           if i[5]:
-            curitemsupplier.cost = i[5]
-          if i[6] is not None:
-            curitemsupplier.priority = i[6]
-          if i[7]:
-            curitemsupplier.effective_start = i[7]
+            curitemsupplier.size_maximum = i[5]
+          if i[6]:
+            curitemsupplier.cost = i[6]
+          if i[7] is not None:
+            curitemsupplier.priority = i[7]
           if i[8]:
-            curitemsupplier.effective_end = i[8]
-          if i[11]:
-            curitemsupplier.resource = frepple.resource(name=i[11])
+            curitemsupplier.effective_start = i[8]
+          if i[9]:
+            curitemsupplier.effective_end = i[9]
+          if i[12]:
+            curitemsupplier.resource = frepple.resource(name=i[12])
         except Exception as e:
           logger.error("**** %s ****" % e)
       logger.info('Loaded %d item suppliers in %.2f seconds' % (cnt, time() - starttime))
@@ -803,7 +805,7 @@ class loadItemDistributions(LoadTask):
       starttime = time()
       cursor.execute('''
         SELECT
-          origin_id, item_id, location_id, sizeminimum, sizemultiple,
+          origin_id, item_id, location_id, sizeminimum, sizemultiple, sizemaximum,
           cost, priority, effective_start, effective_end, source,
           leadtime, resource_id, resource_qty, fence
         FROM itemdistribution %s
@@ -821,10 +823,10 @@ class loadItemDistributions(LoadTask):
             curitemname = i[1]
             curitem = frepple.item(name=curitemname)
           curitemdistribution = frepple.itemdistribution(
-            origin=curorigin, item=curitem, source=i[9],
-            leadtime=i[10].total_seconds() if i[10] else 0,
-            fence=i[13].total_seconds() if i[13] else 0,
-            resource_qty=i[12]
+            origin=curorigin, item=curitem, source=i[10],
+            leadtime=i[11].total_seconds() if i[11] else 0,
+            fence=i[14].total_seconds() if i[14] else 0,
+            resource_qty=i[13]
             )
           if i[2]:
             curitemdistribution.destination = frepple.location(name=i[2])
@@ -832,16 +834,16 @@ class loadItemDistributions(LoadTask):
             curitemdistribution.size_minimum = i[3]
           if i[4]:
             curitemdistribution.size_multiple = i[4]
-          if i[5]:
-            curitemdistribution.cost = i[5]
-          if i[6] is not None:
-            curitemdistribution.priority = i[6]
-          if i[7]:
-            curitemdistribution.effective_start = i[7]
+          if i[6]:
+            curitemdistribution.cost = i[6]
+          if i[7] is not None:
+            curitemdistribution.priority = i[7]
           if i[8]:
-            curitemdistribution.effective_end = i[8]
-          if i[11]:
-            curitemdistribution.resource = frepple.resource(name=i[11])
+            curitemdistribution.effective_start = i[8]
+          if i[9]:
+            curitemdistribution.effective_end = i[9]
+          if i[12]:
+            curitemdistribution.resource = frepple.resource(name=i[12])
         except Exception as e:
           logger.error("**** %s ****" % e)
       logger.info('Loaded %d item distributions in %.2f seconds' % (cnt, time() - starttime))

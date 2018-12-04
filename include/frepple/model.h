@@ -4388,6 +4388,20 @@ class ItemDistribution : public Object,
       return size_multiple;
     }
 
+    /** Sets the maximum size for shipments. */
+    void setSizeMaximum(double f)
+    {
+      if (f<0)
+        throw DataException("ItemDistribution can't have a negative maximum size");
+      size_maximum = f;
+    }
+
+    /** Returns the mutiple size for shipments. */
+    double getSizeMaximum() const
+    {
+      return size_maximum;
+    }
+
     /** Returns the cost of shipping 1 unit of this item.<br>
       * The default value is 0.0.
       */
@@ -4428,6 +4442,7 @@ class ItemDistribution : public Object,
       m->addDurationField<Cls>(Tags::leadtime, &Cls::getLeadTime, &Cls::setLeadTime);
       m->addDoubleField<Cls>(Tags::size_minimum, &Cls::getSizeMinimum, &Cls::setSizeMinimum, 1.0);
       m->addDoubleField<Cls>(Tags::size_multiple, &Cls::getSizeMultiple, &Cls::setSizeMultiple, 1.0);
+      m->addDoubleField<Cls>(Tags::size_maximum, &Cls::getSizeMaximum, &Cls::setSizeMaximum, DBL_MAX);
       m->addDoubleField<Cls>(Tags::cost, &Cls::getCost, &Cls::setCost);
       m->addIntField<Cls>(Tags::priority, &Cls::getPriority, &Cls::setPriority, 1);
       m->addDateField<Cls>(Tags::effective_start, &Cls::getEffectiveStart, &Cls::setEffectiveStart);
@@ -4452,6 +4467,9 @@ class ItemDistribution : public Object,
 
     /** Procurement multiple quantity. */
     double size_multiple = 1.0;
+
+    /** Procurement maximum quantity. */
+    double size_maximum = DBL_MAX;
 
     /** Procurement cost. */
     double cost = 0.0;
@@ -4719,6 +4737,20 @@ class ItemSupplier : public Object,
       return size_multiple;
     }
 
+    /** Sets the maximum size for procurements. */
+    void setSizeMaximum(double f)
+    {
+      if (f<0)
+        throw DataException("ItemSupplier can't have a negative maximum size");
+      size_maximum = f;
+    }
+
+    /** Returns the maximum size for procurements. */
+    double getSizeMaximum() const
+    {
+      return size_maximum;
+    }
+
     /** Returns the cost of purchasing 1 unit of this item from this supplier.<br>
       * The default value is 0.0.
       */
@@ -4820,6 +4852,7 @@ class ItemSupplier : public Object,
       m->addDurationField<Cls>(Tags::leadtime, &Cls::getLeadTime, &Cls::setLeadTime);
       m->addDoubleField<Cls>(Tags::size_minimum, &Cls::getSizeMinimum, &Cls::setSizeMinimum, 1.0);
       m->addDoubleField<Cls>(Tags::size_multiple, &Cls::getSizeMultiple, &Cls::setSizeMultiple, 1.0);
+      m->addDoubleField<Cls>(Tags::size_maximum, &Cls::getSizeMaximum, &Cls::setSizeMaximum, DBL_MAX);
       m->addDoubleField<Cls>(Tags::cost, &Cls::getCost, &Cls::setCost);
       m->addIntField<Cls>(Tags::priority, &Cls::getPriority, &Cls::setPriority, 1);
       m->addDateField<Cls>(Tags::effective_start, &Cls::getEffectiveStart, &Cls::setEffectiveStart);
@@ -4846,6 +4879,9 @@ class ItemSupplier : public Object,
 
     /** Procurement multiple quantity. */
     double size_multiple = 1.0;
+
+    /** Procurement multiple quantity. */
+    double size_maximum = DBL_MAX;
 
     /** Procurement cost. */
     double cost = 0.0;

@@ -15,6 +15,8 @@ Release notes
   
 - The capacity consumption from a bucketized resource now also has a constant component
   and considers the resource efficiency.
+  
+- Addition of the field size maximum to the item supplier and item distribution tables.
 
 - Bug fix: calculation of operation time for 0-duration operations was wrong in some situations.
 

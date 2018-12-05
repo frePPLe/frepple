@@ -236,23 +236,38 @@ class SupplierdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
 class ItemSupplierFilter(filters.FilterSet):
   class Meta:
     model = freppledb.input.models.ItemSupplier
-    fields = {'id': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ], 'item': ['exact', 'in', ],
-              'location': ['exact', 'in', ], 'supplier': ['exact', 'in', ],
-              'leadtime': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ], 'sizeminimum': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
-              'sizemultiple': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ], 'cost': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
-              'priority': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ], 'effective_start': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
-              'effective_end': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
-              'source': ['exact', 'in', ], 'lastmodified': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ], }
+    fields = {
+      'id': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+      'item': ['exact', 'in', ],
+      'location': ['exact', 'in', ],
+      'supplier': ['exact', 'in', ],
+      'leadtime': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+      'sizeminimum': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+      'sizemultiple': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+      'sizemaximum': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+      'cost': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+      'priority': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+      'effective_start': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+      'effective_end': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+      'source': ['exact', 'in', ],
+      'lastmodified': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ]
+      }
 
-    filter_fields = ('id', 'item', 'location', 'supplier', 'leadtime', 'sizeminimum', 'sizemultiple',
-                     'cost', 'priority', 'effective_start', 'effective_end', 'source', 'lastmodified')
+    filter_fields = (
+      'id', 'item', 'location', 'supplier', 'leadtime', 'sizeminimum',
+      'sizemultiple', 'sizemaximum', 'cost', 'priority', 'effective_start',
+      'effective_end', 'source', 'lastmodified'
+      )
 
 
 class ItemSupplierSerializer(BulkSerializerMixin, ModelSerializer):
     class Meta:
       model = freppledb.input.models.ItemSupplier
-      fields = ('id', 'item', 'location', 'supplier', 'leadtime', 'sizeminimum', 'sizemultiple',
-                'cost', 'priority', 'effective_start', 'effective_end', 'source', 'lastmodified')
+      fields = (
+        'id', 'item', 'location', 'supplier', 'leadtime', 'sizeminimum',
+        'sizemultiple', 'sizemaximum', 'cost', 'priority', 'effective_start',
+        'effective_end', 'source', 'lastmodified'
+        )
       list_serializer_class = BulkListSerializer
       update_lookup_field = 'id'
       partial = True
@@ -272,24 +287,37 @@ class ItemSupplierdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
 class ItemDistributionFilter(filters.FilterSet):
   class Meta:
     model = freppledb.input.models.ItemDistribution
-    fields = {'id': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ], 'item': ['exact', 'in', ],
-              'location': ['exact', 'in', ], 'origin': ['exact', 'in', ],
-              'leadtime': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ], 'sizeminimum': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
-              'sizemultiple': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ], 'cost': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
-              'priority': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ], 'effective_start': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
-              'effective_end': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
-              'source': ['exact', 'in', ], 'lastmodified': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ], }
+    fields = {
+      'id': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+      'item': ['exact', 'in', ],
+      'location': ['exact', 'in', ],
+      'origin': ['exact', 'in', ],
+      'leadtime': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+      'sizeminimum': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+      'sizemultiple': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+      'sizemaximum': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+      'cost': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+      'priority': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+      'effective_start': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+      'effective_end': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+      'source': ['exact', 'in', ],
+      'lastmodified': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+      }
 
-    filter_fields = ('id', 'item', 'location', 'origin', 'leadtime', 'sizeminimum', 'sizemultiple',
-                     'cost', 'priority', 'effective_start', 'effective_end', 'source', 'lastmodified')
+    filter_fields = (
+      'id', 'item', 'location', 'origin', 'leadtime', 'sizeminimum',
+      'sizemultiple', 'sizemaximum', 'cost', 'priority', 'effective_start',
+      'effective_end', 'source', 'lastmodified'
+      )
 
 
 class ItemDistributionSerializer(BulkSerializerMixin, ModelSerializer):
     class Meta:
       model = freppledb.input.models.ItemDistribution
       fields = (
-        'id', 'item', 'location', 'origin', 'leadtime', 'sizeminimum', 'sizemultiple',
-        'cost', 'priority', 'effective_start', 'effective_end', 'source', 'lastmodified'
+        'id', 'item', 'location', 'origin', 'leadtime', 'sizeminimum',
+        'sizemultiple', 'sizemaximum', 'cost', 'priority', 'effective_start',
+        'effective_end', 'source', 'lastmodified'
         )
       list_serializer_class = BulkListSerializer
       update_lookup_field = 'id'

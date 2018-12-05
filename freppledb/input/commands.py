@@ -834,6 +834,8 @@ class loadItemDistributions(LoadTask):
             curitemdistribution.size_minimum = i[3]
           if i[4]:
             curitemdistribution.size_multiple = i[4]
+          if i[5]:
+            curitemdistribution.size_maximum = i[5]
           if i[6]:
             curitemdistribution.cost = i[6]
           if i[7] is not None:

@@ -1191,11 +1191,9 @@ class OperationPlan(AuditModel):
       return self.get(reference=reference)
 
   def natural_key(self):
-    return (self.reference)
+    return (self.reference,)
 
   objects = Manager()
-
-  natural_key = ('reference',)
 
   def __str__(self):
     return str(self.id)

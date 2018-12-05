@@ -75,8 +75,14 @@ void SolverCreate::checkOperationCapacity
         if (data.state->a_qty == 0)
         {
           if (data.state->a_date == Date::infiniteFuture)
+          {
             // Game over
-            break;
+            data.logConstraints = backuplogconstraints; // restore the original value
+            data.state->forceLate = backupForceLate;
+            if (opplan->getQuantity() > 0.0)
+              opplan->setQuantity(0.0);
+            return;
+          }
           // One of the resources is late. We want to prevent that other resources
           // are trying to pull in the operationplan again. It can only be delayed
           // from now on in this loop.

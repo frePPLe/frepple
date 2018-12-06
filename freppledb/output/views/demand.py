@@ -111,65 +111,39 @@ class OverviewReport(GridPivot):
 
     # Execute the query
     query = '''
-        select y.name, %s
-               y.bucket, y.startdate, y.enddate,
-               min(y.orders),
-               min(y.planned)
-        from (
-          select x.name as name, x.lft as lft, x.rght as rght,
-               x.bucket as bucket, x.startdate as startdate, x.enddate as enddate,
-               coalesce(sum(demand.quantity),0) as orders,
-               min(x.planned) as planned
-          from (
-          select items.name as name, items.lft as lft, items.rght as rght,
-                 d.bucket as bucket, d.startdate as startdate, d.enddate as enddate,
-                 coalesce(sum(operationplan.quantity),0) as planned
-          from (%s) items
-          -- Multiply with buckets
-          cross join (
-             select name as bucket, startdate, enddate
-             from common_bucketdetail
-             where bucket_id = %%s and enddate > %%s and startdate < %%s
-             ) d
-          -- Include hierarchical children
-          inner join item
-          on item.lft between items.lft and items.rght
-          -- Planned quantity
-          left outer join operationplan
-          on operationplan.type = 'DLVR'
-          and operationplan.item_id = item.name
-          and d.startdate <= operationplan.enddate
-          and d.enddate > operationplan.enddate
-          and operationplan.enddate >= %%s
-          and operationplan.enddate < %%s
-          -- Grouping
-          group by items.name, items.lft, items.rght, d.bucket, d.startdate, d.enddate
-        ) x
-        -- Requested quantity
-        inner join item
-        on item.lft between x.lft and x.rght
-        left join demand
-        on item.name = demand.item_id
-        and x.startdate <= demand.due
-        and x.enddate > demand.due
-        and demand.due >= %%s
-        and demand.due < %%s
-        and demand.status in ('open', 'quote')
-        -- Grouping
-        group by x.name, x.lft, x.rght, x.bucket, x.startdate, x.enddate
-        ) y
-        -- Ordering and grouping
-        group by %s y.name, y.lft, y.rght, y.bucket, y.startdate, y.enddate
-        order by %s, y.startdate
-       ''' % (reportclass.attr_sql, basesql, reportclass.attr_sql, sortsql)
+      select 
+      parent.name, %s
+      d.bucket,
+      d.startdate,
+      d.enddate,
+      sum(coalesce((select sum(quantity) from demand
+       where demand.item_id = child.name and status in ('open','quote') and due >= greatest(%%s,d.startdate) and due < d.enddate),0)) orders,
+      sum(coalesce((select sum(-operationplanmaterial.quantity) from operationplanmaterial
+      inner join operationplan on operationplan.id = operationplanmaterial.operationplan_id and operationplan.type = 'DLVR'
+      where operationplanmaterial.item_id = child.name 
+      and operationplanmaterial.flowdate >= greatest(%%s,d.startdate) 
+      and operationplanmaterial.flowdate < d.enddate),0)) planned    
+      from (%s) parent
+      inner join item child on child.lft between parent.lft and parent.rght
+      cross join (
+                   select name as bucket, startdate, enddate
+                   from common_bucketdetail
+                   where bucket_id = %%s and enddate > %%s and startdate < %%s
+                   ) d
+      group by 
+      parent.name, %s
+      d.bucket,
+      d.startdate,
+      d.enddate
+      order by %s, d.startdate
+    ''' % (reportclass.attr_sql, basesql, reportclass.attr_sql, sortsql)
 
     # Build the python result
     with connections[request.database].chunked_cursor() as cursor_chunked:
       cursor_chunked.execute(query, baseparams + (
-        request.report_bucket, request.report_startdate,
-        request.report_enddate, request.report_startdate,
-        request.report_enddate, request.report_startdate,
-        request.report_enddate
+        request.report_startdate, #orders
+        request.report_startdate, #planned
+        request.report_bucket, request.report_startdate, request.report_enddate #buckets
         ))
       previtem = None
       for row in cursor_chunked:

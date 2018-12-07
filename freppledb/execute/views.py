@@ -267,7 +267,7 @@ def wrapTask(request, action):
       worker_database = source
       destination = args.getlist('destination')
       force = args.get('force', False)
-      for sc in Scenario.objects.all():
+      for sc in Scenario.objects.using(DEFAULT_DB_ALIAS):
         arguments = "%s %s" % (source, sc.name)
         if force:
           arguments += ' --force'
@@ -278,7 +278,7 @@ def wrapTask(request, action):
       # Note: release is immediate and synchronous.
       if not request.user.has_perm('auth.release_scenario'):
         raise Exception('Missing execution privileges')
-      for sc in Scenario.objects.all().using(DEFAULT_DB_ALIAS):
+      for sc in Scenario.objects.using(DEFAULT_DB_ALIAS):
         if args.get(sc.name, 'off') == 'on' and sc.status != 'Free':
           sc.status = 'Free'
           sc.lastrefresh = now
@@ -290,7 +290,7 @@ def wrapTask(request, action):
       # Note: update is immediate and synchronous.
       if not request.user.has_perm('auth.release_scenario'):
         raise Exception('Missing execution privileges')
-      for sc in Scenario.objects.all().using(DEFAULT_DB_ALIAS):
+      for sc in Scenario.objects.using(DEFAULT_DB_ALIAS):
         if args.get(sc.name, 'off') == 'on':
           sc.description = args.get('description', None)
           sc.save(using=DEFAULT_DB_ALIAS)

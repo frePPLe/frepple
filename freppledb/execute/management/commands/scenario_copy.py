@@ -221,7 +221,7 @@ class Command(BaseCommand):
     # Synchronize the scenario table with the settings
     Scenario.syncWithSettings()
 
-    scenarios = Scenario.objects.all().using(DEFAULT_DB_ALIAS)
+    scenarios = Scenario.objects.using(DEFAULT_DB_ALIAS)
     if scenarios.count() > 1:
       javascript = '''
         $("#sourceul li a").click(function(){

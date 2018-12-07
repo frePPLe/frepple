@@ -218,7 +218,7 @@ class AutoLoginAsAdminUser(object):
         user.backend = settings.AUTHENTICATION_BACKENDS[0]
         login(request, user)
         request.user.scenarios = []
-        for db in Scenario.objects.filter(Q(status='In use') | Q(name=DEFAULT_DB_ALIAS)):
+        for db in Scenario.objects.using(DEFAULT_DB_ALIAS).filter(Q(status='In use') | Q(name=DEFAULT_DB_ALIAS)):
           if not db.description:
             db.description = db.name
           if db.name == DEFAULT_DB_ALIAS:

@@ -1195,6 +1195,8 @@ class OperationPlan(AuditModel):
 
   objects = Manager()
 
+  natural_key = ('reference',)
+  
   def __str__(self):
     return str(self.id)
 

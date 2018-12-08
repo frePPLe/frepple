@@ -61,7 +61,8 @@
     <tr>
       <td><b style="text-transform: capitalize" ng-if="operationplan.type == 'MO'">{{'start date'|translate}}</b>
         <b style="text-transform: capitalize" ng-if="operationplan.type == 'PO'">{{'ordering date'|translate}}</b>
-        <b style="text-transform: capitalize" ng-if="operationplan.type == 'DO'">{{'shipping date'|translate}}</b>&nbsp;
+        <b style="text-transform: capitalize" ng-if="operationplan.type == 'DO'">{{'shipping date'|translate}}</b>
+        <b style="text-transform: capitalize" ng-if="operationplan.colmodel.startdate">{{operationplan.colmodel.startdate.label|translate}}</b>&nbsp;
         <small data-ng-if="operationplan.colmodel.startdate">({{ operationplan.colmodel.startdate.type|translate }})</small>
       </td>
       <td id="startrow">
@@ -71,7 +72,8 @@
     <tr>
       <td><b style="text-transform: capitalize;" ng-if="operationplan.type == 'MO'">{{'end date'|translate}}</b>
         <b style="text-transform: capitalize;" ng-if="operationplan.type == 'PO'">{{'receipt date'|translate}}</b>
-        <b style="text-transform: capitalize;" ng-if="operationplan.type == 'DO'">{{'receipt date'|translate}}</b>&nbsp;
+        <b style="text-transform: capitalize;" ng-if="operationplan.type == 'DO'">{{'receipt date'|translate}}</b>
+        <b style="text-transform: capitalize" ng-if="operationplan.colmodel.enddate">{{operationplan.colmodel.enddate.label|translate}}</b>&nbsp;
         <small data-ng-if="operationplan.colmodel.enddate">({{ operationplan.colmodel.enddate.type|translate }})</small>
       </td>
       <td id="endrow">

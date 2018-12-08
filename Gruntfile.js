@@ -197,8 +197,8 @@ module.exports = function (grunt) {
 
   // Tanslations process
   // 1) Extract django strings: make international
-  // 2) Extract angular strings: grunt ngettext_extract
-  // 3) Merge .pot file from the previous step into the .po files:  grunt merge_pot_template
+  // 2) Extract angular strings: grunt nggettext_extract
+  // 3) For the angular translations: Merge .pot file into the .po file in poedit "update from POT file"
   // 4) Translate all strings in the angular and django .po files. The real work!
   // 5) Process the angular .po files into a javascript file: grunt nggettext_compile
   grunt.registerTask('international_1', ['exec:extractDjangoStrings', 'nggettext_extract', 'exec:merge_pot_template']);

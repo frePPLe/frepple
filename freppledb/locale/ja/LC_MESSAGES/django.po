@@ -14,8 +14,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 4.5.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-11-23 16:29+0100\n"
-"PO-Revision-Date: 2018-06-14 15:43+0200\n"
+"POT-Creation-Date: 2018-12-08 16:28+0100\n"
+"PO-Revision-Date: 2018-12-08 16:16+0100\n"
 "Last-Translator: Keiichiro Yamamoto <k.yanmar@gmail.com>\n"
 "Language-Team: frepple\n"
 "Language: ja\n"
@@ -23,8 +23,8 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Poedit 1.8.7.1\n"
-"X-Poedit-Basepath: /home/frepple/workspace/frepple/contrib/django/freppledb\n"
+"X-Generator: Poedit 2.2\n"
+"X-Poedit-Basepath: ../../..\n"
 
 #: common/admin.py:37
 msgid "Permissions in this scenario"
@@ -107,12 +107,12 @@ msgstr "frePPLe ウェブサイト"
 msgid "About frePPLe"
 msgstr "frePPLeについて"
 
-#: common/models.py:40 input/models.py:349 input/models.py:571
+#: common/models.py:40 input/models.py:347 input/models.py:569
 msgid "Unique identifier"
 msgstr "識別子"
 
 #: common/models.py:41 forecast/views.py:124 forecast/views.py:158
-#: forecast/views.py:184 input/models.py:1139 input/views.py:673
+#: forecast/views.py:184 input/models.py:1137 input/views.py:673
 #: input/views.py:703 input/views.py:775 input/views.py:810 input/views.py:842
 #: input/views.py:864 input/views.py:886 input/views.py:933 input/views.py:963
 #: input/views.py:1020 input/views.py:1050 input/views.py:1081
@@ -134,7 +134,7 @@ msgstr "識別子"
 msgid "owner"
 msgstr "所有者"
 
-#: common/models.py:42 input/models.py:1140
+#: common/models.py:42 input/models.py:1138
 msgid "Hierarchical parent"
 msgstr "階層上の親"
 
@@ -196,7 +196,7 @@ msgstr "最終変更日"
 
 #: common/models.py:243 common/report.py:1473 common/report.py:1571
 #: common/report.py:2549 common/views.py:338
-#: execute/management/commands/importworkbook.py:166 input/models.py:77
+#: execute/management/commands/importworkbook.py:166 input/models.py:75
 #: input/views.py:1449 inventoryplanning/models.py:268
 #: inventoryplanning/templates/inventoryplanning/drp.html:1852
 #: inventoryplanning/views.py:106 output/views/kpi.py:27
@@ -207,10 +207,10 @@ msgstr "値"
 #: common/views.py:339 common/views.py:382 forecast/models.py:42
 #: forecast/views.py:68 forecast/views.py:112 forecast/views.py:141
 #: forecast/views.py:172 forecast/views.py:1298 forecast/views.py:1307
-#: forecast/views.py:1315 input/models.py:36 input/models.py:124
-#: input/models.py:151 input/models.py:172 input/models.py:205
-#: input/models.py:351 input/models.py:498 input/models.py:801
-#: input/models.py:1003 input/views.py:648 input/views.py:661
+#: forecast/views.py:1315 input/models.py:36 input/models.py:122
+#: input/models.py:149 input/models.py:170 input/models.py:203
+#: input/models.py:349 input/models.py:496 input/models.py:799
+#: input/models.py:1001 input/views.py:648 input/views.py:661
 #: input/views.py:686 input/views.py:771 input/views.py:793 input/views.py:838
 #: input/views.py:861 input/views.py:883 input/views.py:921 input/views.py:946
 #: input/views.py:1008 input/views.py:1033 input/views.py:1064
@@ -225,7 +225,7 @@ msgstr "値"
 #: inventoryplanning/models.py:264 inventoryplanning/views.py:83
 #: inventoryplanning/views.py:107 inventoryplanning/views.py:160
 #: inventoryplanning/views.py:189 inventoryplanning/views.py:265
-#: inventoryplanning/views.py:965 inventoryplanning/views.py:987
+#: inventoryplanning/views.py:942 inventoryplanning/views.py:964
 #: output/models.py:21 output/models.py:43 output/views/buffer.py:53
 #: output/views/buffer.py:68 output/views/buffer.py:351
 #: output/views/buffer.py:380 output/views/buffer.py:395
@@ -263,9 +263,9 @@ msgstr "使用中"
 msgid "busy"
 msgstr "ビジー"
 
-#: common/models.py:274 execute/models.py:37 execute/views.py:70
-#: input/models.py:1024 input/models.py:1098 input/models.py:1240
-#: input/models.py:1294 input/views.py:1273 input/views.py:1788
+#: common/models.py:274 execute/models.py:37 execute/views.py:89
+#: input/models.py:1022 input/models.py:1096 input/models.py:1238
+#: input/models.py:1292 input/views.py:1273 input/views.py:1788
 #: input/views.py:2059 input/views.py:2350 input/views.py:2521
 #: inventoryplanning/templates/inventoryplanning/drp.html:1844
 #: output/views/buffer.py:372 output/views/resource.py:306 quoting/views.py:58
@@ -305,15 +305,15 @@ msgstr "ページサイズ"
 msgid "comment"
 msgstr "コメント"
 
-#: common/models.py:604 input/models.py:490
+#: common/models.py:604 input/models.py:488
 msgid "day"
 msgstr "日"
 
-#: common/models.py:604 input/models.py:491
+#: common/models.py:604 input/models.py:489
 msgid "week"
 msgstr "週"
 
-#: common/models.py:604 input/models.py:492
+#: common/models.py:604 input/models.py:490
 msgid "month"
 msgstr "月"
 
@@ -338,13 +338,13 @@ msgstr "高い値はより細かいタイムバケットを示します"
 msgid "bucket"
 msgstr "バケット"
 
-#: common/models.py:617 common/views.py:374 input/models.py:489
-#: input/models.py:490 input/models.py:491 input/models.py:492
+#: common/models.py:617 common/views.py:374 input/models.py:487
+#: input/models.py:488 input/models.py:489 input/models.py:490
 msgid "buckets"
 msgstr "バケット"
 
 #: common/models.py:629 common/views.py:402 forecast/models.py:1007
-#: input/models.py:74 input/models.py:1118 input/views.py:1447
+#: input/models.py:72 input/models.py:1116 input/views.py:1447
 #: input/views.py:1785 input/views.py:2518
 #: inventoryplanning/templates/inventoryplanning/drp.html:1849
 #: output/models.py:22 output/models.py:44 output/views/constraint.py:82
@@ -354,7 +354,7 @@ msgid "start date"
 msgstr "開始日"
 
 #: common/models.py:630 common/views.py:403 forecast/models.py:1008
-#: input/models.py:75 input/models.py:1122 input/views.py:1448
+#: input/models.py:73 input/models.py:1120 input/views.py:1448
 #: input/views.py:1786 input/views.py:2519
 #: inventoryplanning/templates/inventoryplanning/drp.html:1850
 #: output/models.py:23 output/models.py:45 output/views/constraint.py:83
@@ -395,7 +395,7 @@ msgstr "%s からコピーしました"
 #: inventoryplanning/templates/inventoryplanning/drp.html:2363
 #: inventoryplanning/templates/inventoryplanning/drp.html:2398
 #: inventoryplanning/templates/inventoryplanning/drp.html:2414
-#: inventoryplanning/views.py:1550
+#: inventoryplanning/views.py:1542
 msgid "and"
 msgstr "と"
 
@@ -605,10 +605,6 @@ msgid "Forgot your password?"
 msgstr ""
 
 #: common/templates/admin/login.html:123
-#, fuzzy
-#| msgid ""
-#| "The user \"admin\" has password \"admin\".<br/>\n"
-#| "We suggest changing this password."
 msgid ""
 "The user \"admin\" has password \"admin\".<br>\n"
 "We suggest changing this password."
@@ -666,7 +662,7 @@ msgstr "月"
 msgid "after plan current date"
 msgstr "現在日時より後の計画"
 
-#: common/templates/admin/subtemplate_timebuckets.html:67 execute/views.py:574
+#: common/templates/admin/subtemplate_timebuckets.html:67 execute/views.py:586
 msgid "OK"
 msgstr "OK"
 
@@ -1082,14 +1078,14 @@ msgid ""
 "          </div>\n"
 "          </div>\n"
 "          <div class=\"form-group\">\n"
-"          <label class=\"col-sm-3 control-label\">Quarter format</label>\n"
+"          <label class=\"col-sm-3 control-label\">Quarter name</label>\n"
 "          <div class=\"col-sm-9\">\n"
 "          <input class=\"form-control\" name=\"format-quarter\" type=\"text"
 "\" size=\"12\" value=\"%y Q%q\"/>\n"
 "          </div>\n"
 "          </div>\n"
 "          <div class=\"form-group\">\n"
-"          <label class=\"col-sm-3 control-label\">Year format</label>\n"
+"          <label class=\"col-sm-3 control-label\">Year name</label>\n"
 "          <div class=\"col-sm-9\">\n"
 "          <input class=\"form-control\" name=\"format-year\" type=\"text\" "
 "size=\"12\" value=\"%Y\"/>\n"
@@ -1125,27 +1121,27 @@ msgstr ""
 
 #: execute/management/commands/exporttofolder.py:530
 #: execute/management/commands/exportworkbook.py:206
-#: execute/management/commands/importfromfolder.py:572
+#: execute/management/commands/importfromfolder.py:598
 msgid "export"
 msgstr "エクスポート"
 
 #: execute/management/commands/exporttofolder.py:530
-#: execute/management/commands/importfromfolder.py:572
+#: execute/management/commands/importfromfolder.py:598
 msgid "file name"
 msgstr ""
 
 #: execute/management/commands/exporttofolder.py:530
-#: execute/management/commands/importfromfolder.py:572
+#: execute/management/commands/importfromfolder.py:598
 msgid "size"
 msgstr "サイズ"
 
 #: execute/management/commands/exporttofolder.py:530
-#: execute/management/commands/importfromfolder.py:572
+#: execute/management/commands/importfromfolder.py:598
 msgid "changed"
 msgstr ""
 
 #: execute/management/commands/exporttofolder.py:530
-#: execute/management/commands/importfromfolder.py:572
+#: execute/management/commands/importfromfolder.py:598
 msgid "Delete all files"
 msgstr ""
 
@@ -1158,46 +1154,46 @@ msgstr ""
 "スポートする"
 
 #: execute/management/commands/exporttofolder.py:532
-#: execute/management/commands/importfromfolder.py:575
+#: execute/management/commands/importfromfolder.py:601
 #, python-format
 msgid "File %s was not deleted"
 msgstr ""
 
 #: execute/management/commands/exporttofolder.py:532
-#: execute/management/commands/importfromfolder.py:575
+#: execute/management/commands/importfromfolder.py:601
 msgid "Close"
 msgstr ""
 
 #: execute/management/commands/exporttofolder.py:532
-#: execute/management/commands/importfromfolder.py:575
+#: execute/management/commands/importfromfolder.py:601
 #, python-format
 msgid "File %s was deleted"
 msgstr ""
 
 #: execute/management/commands/exporttofolder.py:532
-#: execute/management/commands/importfromfolder.py:575
+#: execute/management/commands/importfromfolder.py:601
 msgid "All data files were deleted"
 msgstr ""
 
 #: execute/management/commands/exporttofolder.py:533
-#: execute/management/commands/importfromfolder.py:576
+#: execute/management/commands/importfromfolder.py:602
 msgid "You are about to delete all files"
 msgstr ""
 
 #: execute/management/commands/exporttofolder.py:533
-#: execute/management/commands/importfromfolder.py:576
+#: execute/management/commands/importfromfolder.py:602
 #, python-format
 msgid "You are about to delete file %s"
 msgstr ""
 
 #: execute/management/commands/exporttofolder.py:534
-#: execute/management/commands/importfromfolder.py:573
-#: execute/management/commands/importfromfolder.py:577
+#: execute/management/commands/importfromfolder.py:599
+#: execute/management/commands/importfromfolder.py:603
 msgid "Delete file"
 msgstr ""
 
 #: execute/management/commands/exporttofolder.py:534
-#: execute/management/commands/importfromfolder.py:577
+#: execute/management/commands/importfromfolder.py:603
 msgid "Confirm"
 msgstr ""
 
@@ -1212,22 +1208,22 @@ msgstr "単一の表計算シートで入力データをダウンロードする
 #: execute/management/commands/exportworkbook.py:208
 msgid ""
 "Download all input data in a single spreadsheet.<br>Optionally, you can make "
-"the data anonymous during the export to hide sensitive company data"
+"the data anonymous during the export to hide sensitive company data."
 msgstr ""
 
-#: execute/management/commands/importfromfolder.py:379
+#: execute/management/commands/importfromfolder.py:405
 msgid "Import data files from folder"
 msgstr ""
 
-#: execute/management/commands/importfromfolder.py:573
+#: execute/management/commands/importfromfolder.py:599
 msgid "Upload data files"
 msgstr ""
 
-#: execute/management/commands/importfromfolder.py:573
+#: execute/management/commands/importfromfolder.py:599
 msgid "Download file"
 msgstr ""
 
-#: execute/management/commands/importfromfolder.py:574
+#: execute/management/commands/importfromfolder.py:600
 msgid ""
 "Import CSV or Excel files from the data folder. The file names must match "
 "the names of data objects and the first line in the file must contain the "
@@ -1369,23 +1365,23 @@ msgstr "選択したシナリオの記述をアップデート"
 msgid "Execute"
 msgstr "実行"
 
-#: execute/models.py:33 execute/models.py:35 execute/views.py:67
+#: execute/models.py:33 execute/models.py:35 execute/views.py:86
 msgid "submitted"
 msgstr "送信済み"
 
-#: execute/models.py:34 execute/views.py:68
+#: execute/models.py:34 execute/views.py:87
 msgid "started"
 msgstr "開始済み"
 
-#: execute/models.py:36 execute/views.py:73
+#: execute/models.py:36 execute/views.py:92
 msgid "arguments"
 msgstr "引数"
 
-#: execute/models.py:38 execute/views.py:72
+#: execute/models.py:38 execute/views.py:91
 msgid "message"
 msgstr "メッセージ"
 
-#: execute/models.py:39 execute/views.py:71 execute/views.py:514
+#: execute/models.py:39 execute/views.py:90 execute/views.py:526
 msgid "log file"
 msgstr "ログファイル"
 
@@ -1401,7 +1397,7 @@ msgstr "タスク"
 msgid "done"
 msgstr "完了"
 
-#: execute/templates/execute/execute.html:51 input/models.py:998
+#: execute/templates/execute/execute.html:51 input/models.py:996
 #: input/views.py:1406
 msgid "canceled"
 msgstr "キャンセル"
@@ -1422,15 +1418,15 @@ msgstr "新しいタスクを起動"
 msgid "download complete log file"
 msgstr "完全なログファイルをダウンロード"
 
-#: execute/views.py:51
+#: execute/views.py:70
 msgid "Task status"
 msgstr "タスクの状態"
 
-#: execute/views.py:69 execute/views.py:579
+#: execute/views.py:88 execute/views.py:591
 msgid "finished"
 msgstr "完了"
 
-#: execute/views.py:76 input/models.py:258 input/models.py:451
+#: execute/views.py:95 input/models.py:256 input/models.py:449
 #: input/views.py:148 input/views.py:752 input/views.py:1191
 #: input/views.py:1239 input/views.py:1491 input/views.py:1534
 #: input/views.py:1553 input/views.py:1803 output/views/buffer.py:355
@@ -1439,29 +1435,29 @@ msgstr "完了"
 msgid "duration"
 msgstr "かかる時間"
 
-#: execute/views.py:181
+#: execute/views.py:200
 #, python-format
 msgid "Failure launching action: %(msg)s"
 msgstr "アクション起動に失敗: %(msg)s"
 
-#: execute/views.py:471 execute/views.py:492 execute/views.py:649
+#: execute/views.py:490 execute/views.py:504 execute/views.py:656
 msgid "Error downloading file"
 msgstr ""
 
-#: execute/views.py:505
+#: execute/views.py:517
 msgid "Displaying only the last 50K from the log file"
 msgstr "ログファイルの最終50キロバイト分のみ表示しています"
 
-#: execute/views.py:565
+#: execute/views.py:577
 #, python-format
 msgid "Filename extension must be among %(ext)s"
 msgstr ""
 
-#: execute/views.py:577
+#: execute/views.py:589
 msgid "Upload failed"
 msgstr ""
 
-#: execute/views.py:599
+#: execute/views.py:611
 msgid "Error deleting file"
 msgstr ""
 
@@ -1567,9 +1563,9 @@ msgstr "集約"
 #: forecast/models.py:43 forecast/views.py:69 forecast/views.py:116
 #: forecast/views.py:145 forecast/views.py:176 forecast/views.py:1299
 #: forecast/views.py:1308 forecast/views.py:1316 input/models.py:40
-#: input/models.py:127 input/models.py:154 input/models.py:173
-#: input/models.py:206 input/models.py:354 input/models.py:501
-#: input/models.py:802 input/models.py:1006 input/views.py:649
+#: input/models.py:125 input/models.py:152 input/models.py:171
+#: input/models.py:204 input/models.py:352 input/models.py:499
+#: input/models.py:800 input/models.py:1004 input/views.py:649
 #: input/views.py:665 input/views.py:690 input/views.py:772 input/views.py:797
 #: input/views.py:839 input/views.py:862 input/views.py:884 input/views.py:925
 #: input/views.py:950 input/views.py:1012 input/views.py:1037
@@ -1582,8 +1578,8 @@ msgstr "集約"
 #: input/views.py:2367 input/views.py:2392 input/views.py:2423
 #: input/views.py:2529 input/views.py:2554 input/views.py:2585
 #: inventoryplanning/views.py:164 inventoryplanning/views.py:193
-#: inventoryplanning/views.py:266 inventoryplanning/views.py:969
-#: inventoryplanning/views.py:991 inventoryplanning/views.py:1004
+#: inventoryplanning/views.py:266 inventoryplanning/views.py:946
+#: inventoryplanning/views.py:968 inventoryplanning/views.py:981
 #: output/views/buffer.py:55 output/views/buffer.py:70
 #: output/views/buffer.py:352 output/views/buffer.py:382
 #: output/views/buffer.py:397 output/views/kpi.py:24
@@ -1602,9 +1598,9 @@ msgstr "カテゴリ"
 #: forecast/models.py:44 forecast/views.py:70 forecast/views.py:120
 #: forecast/views.py:149 forecast/views.py:180 forecast/views.py:1300
 #: forecast/views.py:1309 forecast/views.py:1317 input/models.py:44
-#: input/models.py:130 input/models.py:157 input/models.py:174
-#: input/models.py:207 input/models.py:357 input/models.py:504
-#: input/models.py:803 input/models.py:1009 input/views.py:650
+#: input/models.py:128 input/models.py:155 input/models.py:172
+#: input/models.py:205 input/models.py:355 input/models.py:502
+#: input/models.py:801 input/models.py:1007 input/views.py:650
 #: input/views.py:669 input/views.py:694 input/views.py:773 input/views.py:801
 #: input/views.py:840 input/views.py:863 input/views.py:885 input/views.py:929
 #: input/views.py:954 input/views.py:1016 input/views.py:1041
@@ -1617,8 +1613,8 @@ msgstr "カテゴリ"
 #: input/views.py:2371 input/views.py:2396 input/views.py:2427
 #: input/views.py:2533 input/views.py:2558 input/views.py:2589
 #: inventoryplanning/views.py:168 inventoryplanning/views.py:197
-#: inventoryplanning/views.py:267 inventoryplanning/views.py:973
-#: inventoryplanning/views.py:995 inventoryplanning/views.py:1008
+#: inventoryplanning/views.py:267 inventoryplanning/views.py:950
+#: inventoryplanning/views.py:972 inventoryplanning/views.py:985
 #: output/views/buffer.py:57 output/views/buffer.py:72
 #: output/views/buffer.py:353 output/views/buffer.py:384
 #: output/views/buffer.py:399 output/views/operation.py:53
@@ -1636,8 +1632,8 @@ msgstr "サブカテゴリ"
 #: forecast/models.py:45 forecast/models.py:1006 forecast/views.py:67
 #: forecast/views.py:106 forecast/views.py:172 forecast/views.py:176
 #: forecast/views.py:180 forecast/views.py:184 forecast/views.py:189
-#: forecast/views.py:193 forecast/widget.py:385 input/models.py:165
-#: input/models.py:1012 input/views.py:1272 input/views.py:1351
+#: forecast/views.py:193 forecast/widget.py:385 input/models.py:163
+#: input/models.py:1010 input/views.py:1272 input/views.py:1351
 #: input/views.py:1355 input/views.py:1359 input/views.py:1363
 #: input/views.py:1368 input/views.py:1372 input/views.py:2514
 #: input/views.py:2581 input/views.py:2585 input/views.py:2589
@@ -1651,9 +1647,9 @@ msgstr "顧客"
 #: forecast/views.py:105 forecast/views.py:112 forecast/views.py:116
 #: forecast/views.py:120 forecast/views.py:124 forecast/views.py:128
 #: forecast/views.py:132 forecast/views.py:136 forecast/widget.py:384
-#: input/models.py:186 input/models.py:209 input/models.py:368
-#: input/models.py:642 input/models.py:819 input/models.py:905
-#: input/models.py:1016 input/models.py:1145 input/models.py:1276
+#: input/models.py:184 input/models.py:207 input/models.py:366
+#: input/models.py:640 input/models.py:817 input/models.py:903
+#: input/models.py:1014 input/models.py:1143 input/models.py:1274
 #: input/views.py:652 input/views.py:661 input/views.py:665 input/views.py:669
 #: input/views.py:673 input/views.py:677 input/views.py:681 input/views.py:904
 #: input/views.py:921 input/views.py:925 input/views.py:929 input/views.py:933
@@ -1715,9 +1711,9 @@ msgstr "商品"
 #: forecast/views.py:107 forecast/views.py:141 forecast/views.py:145
 #: forecast/views.py:149 forecast/views.py:153 forecast/views.py:158
 #: forecast/views.py:163 forecast/views.py:167 forecast/widget.py:384
-#: input/models.py:143 input/models.py:214 input/models.py:364
-#: input/models.py:525 input/models.py:824 input/models.py:910
-#: input/models.py:1019 input/models.py:1163 input/models.py:1280
+#: input/models.py:141 input/models.py:212 input/models.py:362
+#: input/models.py:523 input/models.py:822 input/models.py:908
+#: input/models.py:1017 input/models.py:1161 input/models.py:1278
 #: input/views.py:146 input/views.py:651 input/views.py:686 input/views.py:690
 #: input/views.py:694 input/views.py:698 input/views.py:703 input/views.py:708
 #: input/views.py:712 input/views.py:774 input/views.py:793 input/views.py:797
@@ -1785,10 +1781,10 @@ msgid "Method used to generate a base forecast"
 msgstr "基本予測を生成した基本方式"
 
 #: forecast/models.py:54 forecast/views.py:72 input/models.py:24
-#: input/models.py:80 input/models.py:218 input/models.py:299
-#: input/models.py:441 input/models.py:605 input/models.py:674
-#: input/models.py:757 input/models.py:852 input/models.py:938
-#: input/models.py:1038 input/views.py:749 input/views.py:911
+#: input/models.py:78 input/models.py:216 input/models.py:297
+#: input/models.py:439 input/models.py:603 input/models.py:672
+#: input/models.py:755 input/models.py:850 input/models.py:936
+#: input/models.py:1036 input/views.py:749 input/views.py:911
 #: input/views.py:997 input/views.py:1154 input/views.py:1181
 #: input/views.py:1198 input/views.py:1228 input/views.py:1246
 #: input/views.py:1283 input/views.py:1450 input/views.py:1499
@@ -1801,25 +1797,25 @@ msgstr "基本予測を生成した基本方式"
 msgid "priority"
 msgstr "優先順位"
 
-#: forecast/models.py:55 input/models.py:1039
+#: forecast/models.py:55 input/models.py:1037
 msgid "Priority of the demand (lower numbers indicate more important demands)"
 msgstr "需要の優先度 (数値が小さい方がより重要な需要)"
 
-#: forecast/models.py:58 forecast/views.py:74 input/models.py:1042
+#: forecast/models.py:58 forecast/views.py:74 input/models.py:1040
 #: input/views.py:1286 quoting/views.py:57
 msgid "minimum shipment"
 msgstr "最小出荷量"
 
-#: forecast/models.py:60 input/models.py:1044
+#: forecast/models.py:60 input/models.py:1042
 msgid "Minimum shipment quantity when planning this demand"
 msgstr "需要を計画する際の最小出荷量"
 
-#: forecast/models.py:62 forecast/views.py:73 input/models.py:1047
+#: forecast/models.py:62 forecast/views.py:73 input/models.py:1045
 #: input/views.py:1285 quoting/views.py:56
 msgid "maximum lateness"
 msgstr "最大遅延"
 
-#: forecast/models.py:63 input/models.py:1048
+#: forecast/models.py:63 input/models.py:1046
 msgid "Maximum lateness allowed when planning this demand"
 msgstr "需要を計画する際に許容される最大遅延"
 
@@ -2027,16 +2023,16 @@ msgstr "予測レポート"
 msgid "selected forecast method"
 msgstr "選択された予測方式"
 
-#: forecast/views.py:128 forecast/views.py:1301 input/models.py:176
-#: input/models.py:253 input/models.py:455 input/models.py:529
-#: input/models.py:847 input/models.py:933 input/views.py:753
+#: forecast/views.py:128 forecast/views.py:1301 input/models.py:174
+#: input/models.py:251 input/models.py:453 input/models.py:527
+#: input/models.py:845 input/models.py:931 input/views.py:753
 #: input/views.py:780 input/views.py:910 input/views.py:996 input/views.py:1114
 #: input/views.py:1201 input/views.py:1249 input/views.py:1307
 #: input/views.py:1502 input/views.py:1544 input/views.py:1563
 #: input/views.py:1813 input/views.py:2061 input/views.py:2351
 #: inventoryplanning/templates/inventoryplanning/drp.html:1687
 #: inventoryplanning/views.py:176 inventoryplanning/views.py:252
-#: inventoryplanning/views.py:976 output/views/buffer.py:59
+#: inventoryplanning/views.py:953 output/views/buffer.py:59
 #: output/views/buffer.py:365 output/views/buffer.py:386
 #: output/views/operation.py:89 output/views/operation.py:359
 #: output/views/operation.py:591 output/views/resource.py:46
@@ -2044,8 +2040,8 @@ msgstr "選択された予測方式"
 msgid "cost"
 msgstr "コスト"
 
-#: forecast/views.py:153 input/models.py:133 input/models.py:271
-#: input/models.py:520 input/views.py:698 input/views.py:779 input/views.py:805
+#: forecast/views.py:153 input/models.py:131 input/models.py:269
+#: input/models.py:518 input/views.py:698 input/views.py:779 input/views.py:805
 #: input/views.py:841 input/views.py:958 input/views.py:1045
 #: input/views.py:1076 input/views.py:1332 input/views.py:1498
 #: input/views.py:1859 input/views.py:2112 input/views.py:2143
@@ -2111,12 +2107,10 @@ msgid "total supply"
 msgstr "総供給"
 
 #: forecast/views.py:247
-#, fuzzy
-#| msgid "total supply"
 msgid "total supply value"
-msgstr "総供給"
+msgstr ""
 
-#: forecast/views.py:626 forecast/views.py:633 input/models.py:1069
+#: forecast/views.py:626 forecast/views.py:633 input/models.py:1067
 #: input/views.py:1261
 #: inventoryplanning/templates/inventoryplanning/drp.html:1714
 msgid "sales orders"
@@ -2142,15 +2136,15 @@ msgstr ""
 msgid "Displays outliers detected in the demand history"
 msgstr ""
 
-#: forecast/widget.py:385 input/models.py:1289
+#: forecast/widget.py:385 input/models.py:1287
 #: inventoryplanning/templates/inventoryplanning/drp.html:1841
 #: output/views/buffer.py:369
 msgid "date"
 msgstr "日時"
 
-#: forecast/widget.py:386 input/models.py:647 input/models.py:735
-#: input/models.py:1035 input/models.py:1110 input/models.py:1235
-#: input/models.py:1288 input/views.py:145 input/views.py:1175
+#: forecast/widget.py:386 input/models.py:645 input/models.py:733
+#: input/models.py:1033 input/models.py:1108 input/models.py:1233
+#: input/models.py:1286 input/views.py:145 input/views.py:1175
 #: input/views.py:1223 input/views.py:1274 input/views.py:1787
 #: input/views.py:2058 input/views.py:2349 input/views.py:2516
 #: inventoryplanning/models.py:33
@@ -2176,7 +2170,7 @@ msgstr ""
 msgid "outbound distribution"
 msgstr ""
 
-#: input/admin.py:73 input/admin.py:147 input/admin.py:220 input/models.py:1397
+#: input/admin.py:73 input/admin.py:147 input/admin.py:220 input/models.py:1395
 #: input/views.py:1629 input/views.py:1652 input/views.py:1659
 #: input/views.py:1666
 #: inventoryplanning/templates/inventoryplanning/drp.html:1712
@@ -2184,7 +2178,7 @@ msgstr ""
 msgid "manufacturing orders"
 msgstr "製造オーダー"
 
-#: input/admin.py:74 input/admin.py:111 input/admin.py:148 input/models.py:1371
+#: input/admin.py:74 input/admin.py:111 input/admin.py:148 input/models.py:1369
 #: input/views.py:2220 input/views.py:2243 input/views.py:2250
 #: input/views.py:2257
 #: inventoryplanning/templates/inventoryplanning/drp.html:1710
@@ -2197,14 +2191,12 @@ msgstr "購入オーダー"
 msgid "where used"
 msgstr "使用場所"
 
-#: input/admin.py:146 input/models.py:1429 input/views.py:2502
+#: input/admin.py:146 input/models.py:1427 input/views.py:2502
 #: input/views.py:2676
-#, fuzzy
-#| msgid "delivery date"
 msgid "delivery orders"
-msgstr "配達作業"
+msgstr ""
 
-#: input/admin.py:149 input/models.py:1345 input/views.py:1931
+#: input/admin.py:149 input/models.py:1343 input/views.py:1931
 #: input/views.py:1986
 #: inventoryplanning/templates/inventoryplanning/drp.html:1711
 #: output/widget.py:433
@@ -2220,7 +2212,7 @@ msgstr "計画パラメーター"
 msgid "constrained demand"
 msgstr "条件つき要求"
 
-#: input/admin.py:242 input/models.py:1076 menu.py:24
+#: input/admin.py:242 input/models.py:1074 menu.py:24
 msgid "inventory"
 msgstr "在庫"
 
@@ -2253,64 +2245,72 @@ msgstr "デフォルト値"
 msgid "Value to be used when no entry is effective"
 msgstr "どのエントリも有効でない時に使用される値"
 
-#: input/models.py:96 input/views.py:1465
+#: input/models.py:58 input/models.py:69 input/views.py:1446
+msgid "calendar"
+msgstr ""
+
+#: input/models.py:59 input/views.py:1416
+msgid "calendars"
+msgstr ""
+
+#: input/models.py:94 input/views.py:1465
 msgid "start time"
 msgstr "開始時間"
 
-#: input/models.py:97 input/views.py:1466
+#: input/models.py:95 input/views.py:1466
 msgid "end time"
 msgstr "終了時間"
 
-#: input/models.py:116
+#: input/models.py:114
 msgid "calendar bucket"
 msgstr "カレンダーバケット"
 
-#: input/models.py:117 input/views.py:1438
+#: input/models.py:115 input/views.py:1438
 msgid "calendar buckets"
 msgstr "カレンダーバケット"
 
-#: input/models.py:135 input/models.py:273 input/models.py:522
+#: input/models.py:133 input/models.py:271 input/models.py:520
 msgid "Calendar defining the working hours and holidays"
 msgstr ""
 
-#: input/models.py:144 input/views.py:829
+#: input/models.py:142 input/views.py:829
 msgid "locations"
 msgstr "地域"
 
-#: input/models.py:166 input/views.py:852
+#: input/models.py:164 input/views.py:852
 msgid "customers"
 msgstr "顧客"
 
-#: input/models.py:178
+#: input/models.py:176
 msgid "Cost of the item"
 msgstr ""
 
-#: input/models.py:187 input/views.py:1100
+#: input/models.py:185 input/views.py:1100
 msgid "items"
 msgstr "商品"
 
-#: input/models.py:194
+#: input/models.py:192
 msgid "fixed_time"
 msgstr "固定時間"
 
-#: input/models.py:195
+#: input/models.py:193
 msgid "time_per"
 msgstr "ごとの時間"
 
-#: input/models.py:196
+#: input/models.py:194
 msgid "routing"
 msgstr "経路"
 
-#: input/models.py:197
+#: input/models.py:195
 msgid "alternate"
 msgstr "代替"
 
-#: input/models.py:198
+#: input/models.py:196
 msgid "split"
 msgstr "分割"
 
-#: input/models.py:204 input/models.py:360 input/models.py:507
-#: input/models.py:657 input/models.py:1102 input/views.py:147
+#: input/models.py:202 input/models.py:358 input/models.py:505
+#: input/models.py:655 input/models.py:1100 input/views.py:147
 #: input/views.py:654 input/views.py:776 input/views.py:1190
 #: input/views.py:1222 input/views.py:1238 input/views.py:1488
 #: input/views.py:1533 input/views.py:1552 input/views.py:1802
@@ -2324,13 +2324,13 @@ msgstr "分割"
 msgid "type"
 msgstr "種類"
 
-#: input/models.py:219 input/models.py:853 input/models.py:939
+#: input/models.py:217 input/models.py:851 input/models.py:937
 msgid "Priority among all alternates"
 msgstr "すべての代理間の優先順位"
 
-#: input/models.py:222 input/models.py:308 input/models.py:597
-#: input/models.py:661 input/models.py:744 input/models.py:856
-#: input/models.py:946 input/views.py:913 input/views.py:1000
+#: input/models.py:220 input/models.py:306 input/models.py:595
+#: input/models.py:659 input/models.py:742 input/models.py:854
+#: input/models.py:944 input/views.py:913 input/views.py:1000
 #: input/views.py:1152 input/views.py:1177 input/views.py:1199
 #: input/views.py:1224 input/views.py:1247 input/views.py:1500
 #: input/views.py:1525 input/views.py:1542 input/views.py:1561
@@ -2341,15 +2341,15 @@ msgstr "すべての代理間の優先順位"
 msgid "effective start"
 msgstr "有効な開始"
 
-#: input/models.py:223 input/models.py:309 input/models.py:598
-#: input/models.py:662 input/models.py:745 input/models.py:857
-#: input/models.py:947
+#: input/models.py:221 input/models.py:307 input/models.py:596
+#: input/models.py:660 input/models.py:743 input/models.py:855
+#: input/models.py:945
 msgid "Validity start date"
 msgstr "有効な開始日"
 
-#: input/models.py:226 input/models.py:312 input/models.py:601
-#: input/models.py:665 input/models.py:748 input/models.py:860
-#: input/models.py:950 input/views.py:914 input/views.py:1001
+#: input/models.py:224 input/models.py:310 input/models.py:599
+#: input/models.py:663 input/models.py:746 input/models.py:858
+#: input/models.py:948 input/views.py:914 input/views.py:1001
 #: input/views.py:1153 input/views.py:1178 input/views.py:1200
 #: input/views.py:1225 input/views.py:1248 input/views.py:1501
 #: input/views.py:1526 input/views.py:1543 input/views.py:1562
@@ -2360,38 +2360,38 @@ msgstr "有効な開始日"
 msgid "effective end"
 msgstr "有効な終了"
 
-#: input/models.py:227 input/models.py:313 input/models.py:602
-#: input/models.py:666 input/models.py:749 input/models.py:861
-#: input/models.py:951
+#: input/models.py:225 input/models.py:311 input/models.py:600
+#: input/models.py:664 input/models.py:747 input/models.py:859
+#: input/models.py:949
 msgid "Validity end date"
 msgstr "有効な終了日"
 
-#: input/models.py:230 input/views.py:1193 input/views.py:1241
+#: input/models.py:228 input/views.py:1193 input/views.py:1241
 #: input/views.py:1493 input/views.py:1536 input/views.py:1555
 #: input/views.py:1805 output/views/buffer.py:357 output/views/operation.py:65
 #: output/views/resource.py:289
 msgid "release fence"
 msgstr "フェンスを解放"
 
-#: input/models.py:231
+#: input/models.py:229
 msgid ""
 "Operationplans within this time window from the current day are expected to "
 "be released to production ERP"
 msgstr "現在日時からこの時間枠内の作業計画は商用ERPに公開される"
 
-#: input/models.py:234 input/views.py:1194 input/views.py:1242
+#: input/models.py:232 input/views.py:1194 input/views.py:1242
 #: input/views.py:1494 input/views.py:1537 input/views.py:1556
 #: input/views.py:1806 output/views/buffer.py:358 output/views/operation.py:68
 #: output/views/resource.py:290
 msgid "post-op time"
 msgstr "作業後時間"
 
-#: input/models.py:235
+#: input/models.py:233
 msgid ""
 "A delay time to be respected as a soft constraint after ending the operation"
 msgstr "作業を終了した後に緩やかな制約として考慮される遅延時間"
 
-#: input/models.py:238 input/models.py:837 input/models.py:923
+#: input/models.py:236 input/models.py:835 input/models.py:921
 #: input/views.py:908 input/views.py:994 input/views.py:1195
 #: input/views.py:1243 input/views.py:1495 input/views.py:1538
 #: input/views.py:1557 input/views.py:1807
@@ -2401,11 +2401,11 @@ msgstr "作業を終了した後に緩やかな制約として考慮される遅
 msgid "size minimum"
 msgstr "最小サイズ"
 
-#: input/models.py:240
+#: input/models.py:238
 msgid "A minimum quantity for operationplans"
 msgstr "作業計画に対する最小数量"
 
-#: input/models.py:243 input/models.py:842 input/models.py:928
+#: input/models.py:241 input/models.py:840 input/models.py:926
 #: input/views.py:909 input/views.py:995 input/views.py:1196
 #: input/views.py:1244 input/views.py:1496 input/views.py:1539
 #: input/views.py:1558 input/views.py:1808
@@ -2415,41 +2415,41 @@ msgstr "作業計画に対する最小数量"
 msgid "size multiple"
 msgstr "サイズ倍数"
 
-#: input/models.py:245
+#: input/models.py:243
 msgid "A multiple quantity for operationplans"
 msgstr "作業計画の倍数量"
 
-#: input/models.py:248 input/views.py:1197 input/views.py:1245
+#: input/models.py:246 input/views.py:1197 input/views.py:1245
 #: input/views.py:1497 input/views.py:1540 input/views.py:1559
 #: input/views.py:1809 output/views/buffer.py:361 output/views/operation.py:77
 #: output/views/resource.py:293
 msgid "size maximum"
 msgstr "最大サイズ"
 
-#: input/models.py:250
+#: input/models.py:248
 msgid "A maximum quantity for operationplans"
 msgstr "作業計画に対する最大数量"
 
-#: input/models.py:255
+#: input/models.py:253
 msgid "Cost per operationplan unit"
 msgstr "作業計画単位のコスト"
 
-#: input/models.py:259
+#: input/models.py:257
 msgid "A fixed duration for the operation"
 msgstr "作業に対して固定でかかる時間"
 
-#: input/models.py:262 input/views.py:149 input/views.py:1192
+#: input/models.py:260 input/views.py:149 input/views.py:1192
 #: input/views.py:1240 input/views.py:1492 input/views.py:1535
 #: input/views.py:1554 input/views.py:1804 output/views/buffer.py:356
 #: output/views/operation.py:62 output/views/resource.py:288
 msgid "duration per unit"
 msgstr "単位ごとにかかる時間"
 
-#: input/models.py:263
+#: input/models.py:261
 msgid "A variable duration for the operation"
 msgstr "作業に対して変動してかかる時間"
 
-#: input/models.py:266 input/models.py:678 input/models.py:765
+#: input/models.py:264 input/models.py:676 input/models.py:763
 #: input/views.py:1183 input/views.py:1202 input/views.py:1229
 #: input/views.py:1250 input/views.py:1503 input/views.py:1545
 #: input/views.py:1564 input/views.py:1814 output/views/buffer.py:366
@@ -2457,22 +2457,22 @@ msgstr "作業に対して変動してかかる時間"
 msgid "search mode"
 msgstr "検索モード"
 
-#: input/models.py:268 input/models.py:680 input/models.py:767
+#: input/models.py:266 input/models.py:678 input/models.py:765
 msgid "Method to select preferred alternate"
 msgstr "代わりを選択する方式"
 
-#: input/models.py:276 input/views.py:1506
+#: input/models.py:274 input/views.py:1506
 msgid "batching window"
 msgstr ""
 
-#: input/models.py:277
+#: input/models.py:275
 msgid ""
 "The solver algorithm will scan for opportunities to create batches within "
 "this time window before and after the requirement date"
 msgstr ""
 
-#: input/models.py:285 input/models.py:294 input/models.py:637
-#: input/models.py:721 input/models.py:1135 input/views.py:144
+#: input/models.py:283 input/models.py:292 input/models.py:635
+#: input/models.py:719 input/models.py:1133 input/views.py:144
 #: input/views.py:1172 input/views.py:1187 input/views.py:1188
 #: input/views.py:1189 input/views.py:1190 input/views.py:1191
 #: input/views.py:1192 input/views.py:1193 input/views.py:1194
@@ -2522,21 +2522,21 @@ msgstr ""
 msgid "operation"
 msgstr "作業"
 
-#: input/models.py:286 input/views.py:1476
+#: input/models.py:284 input/views.py:1476
 msgid "operations"
 msgstr "作業"
 
-#: input/models.py:295
+#: input/models.py:293
 msgid "Parent operation"
 msgstr "親作業"
 
-#: input/models.py:300
+#: input/models.py:298
 msgid ""
 "Sequence of this operation among the suboperations. Negative values are "
 "ignored."
 msgstr "子作業間におけるこの作業の順序 (負数は無視されます)"
 
-#: input/models.py:303 input/models.py:335 input/views.py:1523
+#: input/models.py:301 input/models.py:333 input/views.py:1523
 #: input/views.py:1549 input/views.py:1550 input/views.py:1551
 #: input/views.py:1552 input/views.py:1553 input/views.py:1554
 #: input/views.py:1555 input/views.py:1556 input/views.py:1557
@@ -2546,43 +2546,43 @@ msgstr "子作業間におけるこの作業の順序 (負数は無視されま�
 msgid "suboperation"
 msgstr "子作業"
 
-#: input/models.py:304
+#: input/models.py:302
 msgid "Child operation"
 msgstr "子作業"
 
-#: input/models.py:336 input/views.py:1514
+#: input/models.py:334 input/views.py:1514
 msgid "suboperations"
 msgstr "子作業"
 
-#: input/models.py:343 input/models.py:488
+#: input/models.py:341 input/models.py:486
 #: inventoryplanning/templates/inventoryplanning/drp.html:1471
 #: inventoryplanning/templates/inventoryplanning/drp.html:1482
-#: inventoryplanning/templates/inventoryplanning/drp.html:2436
 #: inventoryplanning/templates/inventoryplanning/drp.html:2439
-#: inventoryplanning/templates/inventoryplanning/drp.html:2452
-#: inventoryplanning/templates/inventoryplanning/drp.html:2455
+#: inventoryplanning/templates/inventoryplanning/drp.html:2442
+#: inventoryplanning/templates/inventoryplanning/drp.html:2458
+#: inventoryplanning/templates/inventoryplanning/drp.html:2461
 msgid "default"
 msgstr "デフォルト"
 
-#: input/models.py:344 input/models.py:493
+#: input/models.py:342 input/models.py:491
 msgid "infinite"
 msgstr "無限"
 
-#: input/models.py:372 input/models.py:1290 input/views.py:653
+#: input/models.py:370 input/models.py:1288 input/views.py:653
 #: inventoryplanning/models.py:331
 #: inventoryplanning/templates/inventoryplanning/drp.html:1709
 msgid "onhand"
 msgstr "利用可能"
 
-#: input/models.py:374
+#: input/models.py:372
 msgid "current inventory"
 msgstr "現在の在庫"
 
-#: input/models.py:377 input/models.py:1291 input/views.py:655
+#: input/models.py:375 input/models.py:1289 input/views.py:655
 msgid "minimum"
 msgstr "最小"
 
-#: input/models.py:379 inventoryplanning/models.py:325
+#: input/models.py:377 inventoryplanning/models.py:325
 #: inventoryplanning/templates/inventoryplanning/drp.html:704
 #: inventoryplanning/templates/inventoryplanning/drp.html:718
 #: inventoryplanning/templates/inventoryplanning/drp.html:1051
@@ -2593,108 +2593,108 @@ msgstr "最小"
 msgid "safety stock"
 msgstr "安全在庫"
 
-#: input/models.py:382 input/views.py:656
+#: input/models.py:380 input/views.py:656
 msgid "minimum calendar"
 msgstr "最小カレンダー"
 
-#: input/models.py:384
+#: input/models.py:382
 msgid "Calendar storing a time-dependent safety stock profile"
 msgstr "時間依存の適正在庫プロファイルを保存しているカレンダー"
 
-#: input/models.py:387
+#: input/models.py:385
 msgid "min_interval"
 msgstr "最小インターバル"
 
-#: input/models.py:388
+#: input/models.py:386
 msgid "Batching window for grouping replenishments in batches"
 msgstr "バッチ処理で補充をグループ化するためのウインドウ"
 
-#: input/models.py:410
+#: input/models.py:408
 #: inventoryplanning/templates/inventoryplanning/drp.html:1430
 #: output/views/buffer.py:49
 msgid "buffer"
 msgstr "バッファ"
 
-#: input/models.py:411 input/views.py:639
+#: input/models.py:409 input/views.py:639
 msgid "buffers"
 msgstr "バッファ"
 
-#: input/models.py:426 input/models.py:438 input/models.py:537
+#: input/models.py:424 input/models.py:436 input/models.py:535
 #: input/views.py:748 input/views.py:782
 msgid "setup matrix"
 msgstr "マトリックスをセットアップ"
 
-#: input/models.py:427 input/views.py:722
+#: input/models.py:425 input/views.py:722
 msgid "setup matrices"
 msgstr "マトリックスをセットアップ"
 
-#: input/models.py:443 input/views.py:750
+#: input/models.py:441 input/views.py:750
 msgid "from setup"
 msgstr "セットアップから"
 
-#: input/models.py:444
+#: input/models.py:442
 msgid "Name of the old setup (wildcard characters are supported)"
 msgstr "古いセットアップ名 (ワイルドカード文字がサポートされます)"
 
-#: input/models.py:447 input/views.py:751
+#: input/models.py:445 input/views.py:751
 msgid "to setup"
 msgstr "セットアップする"
 
-#: input/models.py:448
+#: input/models.py:446
 msgid "Name of the new setup (wildcard characters are supported)"
 msgstr "新セットアップ名(ワイルドカード文字がサポートされています)"
 
-#: input/models.py:452
+#: input/models.py:450
 msgid "Duration of the changeover"
 msgstr "切り替え時間"
 
-#: input/models.py:456
+#: input/models.py:454
 msgid "Cost of the conversion"
 msgstr "変換コスト"
 
-#: input/models.py:478
+#: input/models.py:476
 msgid "setup matrix rule"
 msgstr "マトリックスルールをセットアップ"
 
-#: input/models.py:479
+#: input/models.py:477
 msgid "setup matrix rules"
 msgstr "マトリックスルールをセットアップ"
 
-#: input/models.py:510 input/views.py:777 output/views/resource.py:44
+#: input/models.py:508 input/views.py:777 output/views/resource.py:44
 #: output/views/resource.py:397
 msgid "maximum"
 msgstr "最大"
 
-#: input/models.py:512
+#: input/models.py:510
 msgid "Size of the resource"
 msgstr "リソースのサイズ"
 
-#: input/models.py:515 input/views.py:778 output/views/resource.py:45
+#: input/models.py:513 input/views.py:778 output/views/resource.py:45
 #: output/views/resource.py:401
 msgid "maximum calendar"
 msgstr "最大カレンダー"
 
-#: input/models.py:517
+#: input/models.py:515
 msgid "Calendar defining the resource size varying over time"
 msgstr "時間で変化するリソースサイズを定義したカレンダー"
 
-#: input/models.py:531
+#: input/models.py:529
 msgid "Cost for using 1 unit of the resource for 1 hour"
 msgstr "1単位のリソースを1時間利用する際のコスト"
 
-#: input/models.py:533
+#: input/models.py:531
 msgid "max early"
 msgstr "最大早期"
 
-#: input/models.py:534
+#: input/models.py:532
 msgid "Time window before the ask date where we look for available capacity"
 msgstr "空き能力を探す場所を"
 
-#: input/models.py:539
+#: input/models.py:537
 msgid "Setup matrix defining the conversion time and cost"
 msgstr "変換時間とコストを定義するマトリックスをセットアップする"
 
-#: input/models.py:542 input/models.py:761 input/models.py:1238
+#: input/models.py:540 input/models.py:759 input/models.py:1236
 #: input/views.py:783 input/views.py:1182 output/models.py:63
 #: output/templates/output/resource.html:211
 #: output/templates/output/resource.html:266 output/views/resource.py:49
@@ -2703,34 +2703,30 @@ msgstr "変換時間とコストを定義するマトリックスをセットア
 msgid "setup"
 msgstr "セットアップ"
 
-#: input/models.py:543
+#: input/models.py:541
 msgid "Setup of the resource at the start of the plan"
 msgstr "計画の最初にリソースをセットアップする"
 
-#: input/models.py:546 input/views.py:786
+#: input/models.py:544 input/views.py:786
 msgid "efficiency %"
 msgstr ""
 
-#: input/models.py:547
-#, fuzzy
-#| msgid "Size of the resource"
+#: input/models.py:545
 msgid "Efficiency percentage of the resource"
-msgstr "リソースのサイズ"
-
-#: input/models.py:550 input/views.py:788
-#, python-format
-msgid "efficiency % calendar"
 msgstr ""
 
-#: input/models.py:552
-#, fuzzy
-#| msgid "Calendar defining the resource size varying over time"
+#: input/models.py:548 input/views.py:788
+#, python-format
+msgid "efficiency %% calendar"
+msgstr ""
+
+#: input/models.py:550
 msgid ""
 "Calendar defining the efficiency percentage of the resource varying over time"
-msgstr "時間で変化するリソースサイズを定義したカレンダー"
+msgstr ""
 
-#: input/models.py:561 input/models.py:589 input/models.py:726
-#: input/models.py:864 input/models.py:954 input/models.py:1228
+#: input/models.py:559 input/models.py:587 input/models.py:724
+#: input/models.py:862 input/models.py:952 input/models.py:1226
 #: input/views.py:915 input/views.py:1002 input/views.py:1150
 #: input/views.py:1173 output/models.py:59 output/views/pegging.py:42
 #: output/views/resource.py:39 output/views/resource.py:276
@@ -2747,124 +2743,116 @@ msgstr "時間で変化するリソースサイズを定義したカレンダー
 msgid "resource"
 msgstr "リソース"
 
-#: input/models.py:562 input/views.py:762 input/views.py:1793
+#: input/models.py:560 input/views.py:762 input/views.py:1793
 msgid "resources"
 msgstr "リソース"
 
-#: input/models.py:580 input/models.py:593 input/models.py:731
+#: input/models.py:578 input/models.py:591 input/models.py:729
 #: input/views.py:1151 input/views.py:1174
 msgid "skill"
 msgstr "スキル"
 
-#: input/models.py:581 input/views.py:1124
+#: input/models.py:579 input/views.py:1124
 msgid "skills"
 msgstr "スキル"
 
-#: input/models.py:606
+#: input/models.py:604
 msgid "Priority of this skill in a group of alternates"
 msgstr "代替グループ中でこのスキルの優先順位"
 
-#: input/models.py:621
+#: input/models.py:619
 msgid "resource skill"
 msgstr "リソーススキル"
 
-#: input/models.py:622 input/views.py:1142
+#: input/models.py:620 input/views.py:1142
 msgid "resource skills"
 msgstr "リソーススキル"
 
-#: input/models.py:629
+#: input/models.py:627
 msgid "Start"
 msgstr "開始"
 
-#: input/models.py:630
+#: input/models.py:628
 msgid "End"
 msgstr "終了"
 
-#: input/models.py:631
+#: input/models.py:629
 msgid "Batch transfer"
 msgstr ""
 
-#: input/models.py:649
+#: input/models.py:647
 msgid "Quantity to consume or produce per operationplan unit"
 msgstr "生産計画単位ごとに消費/生産する数量"
 
-#: input/models.py:652
-#, fuzzy
-#| msgid "demand quantity"
+#: input/models.py:650 input/views.py:1176 input/views.py:1233
 msgid "fixed quantity"
-msgstr "要求数量"
+msgstr ""
 
-#: input/models.py:654
-#, fuzzy
-#| msgid "Quantity to consume or produce per operationplan unit"
+#: input/models.py:652
 msgid "Fixed quantity to consume or produce"
-msgstr "生産計画単位ごとに消費/生産する数量"
+msgstr ""
 
-#: input/models.py:658
+#: input/models.py:656
 msgid "Consume/produce material at the start or the end of the operationplan"
 msgstr "作業計画の最初または最後で材料を消費/生産する"
 
-#: input/models.py:671
+#: input/models.py:669
 msgid "Optional name of this operation material"
 msgstr "この作業材料の補助名"
 
-#: input/models.py:675
+#: input/models.py:673
 msgid "Priority of this operation material in a group of alternates"
 msgstr "代替グループ内の作業材料優先度"
 
-#: input/models.py:683 input/views.py:1232
+#: input/models.py:681 input/views.py:1232
 msgid "transfer batch quantity"
 msgstr ""
 
-#: input/models.py:685
+#: input/models.py:683
 msgid "Batch size by in which material is produced or consumed"
 msgstr ""
 
-#: input/models.py:713
+#: input/models.py:711
 msgid "operation material"
 msgstr "作業材料"
 
-#: input/models.py:714 input/views.py:1212
+#: input/models.py:712 input/views.py:1212
 msgid "operation materials"
 msgstr "作業材料"
 
-#: input/models.py:736
-#, fuzzy
-#| msgid "Size of the resource"
+#: input/models.py:734
 msgid "Required quantity of the resource"
-msgstr "リソースのサイズ"
+msgstr ""
 
-#: input/models.py:739 input/views.py:1233
-#, fuzzy
-#| msgid "quantity demand"
+#: input/models.py:737
 msgid "quantity fixed"
-msgstr "要求量"
+msgstr ""
 
-#: input/models.py:741
+#: input/models.py:739
 msgid "constant part of the capacity consumption (bucketized resources only)"
 msgstr ""
 
-#: input/models.py:754
+#: input/models.py:752
 msgid "Optional name of this load"
 msgstr "この負荷の任意の名前"
 
-#: input/models.py:758
+#: input/models.py:756
 msgid "Priority of this load in a group of alternates"
 msgstr "この負荷の代替グループ内での優先度"
 
-#: input/models.py:762
+#: input/models.py:760
 msgid "Setup required on the resource for this operation"
 msgstr "この作業に必要なリソースのセットアップ"
 
-#: input/models.py:795
+#: input/models.py:793
 msgid "operation resource"
 msgstr "作業リソース"
 
-#: input/models.py:796 input/views.py:1164
+#: input/models.py:794 input/views.py:1164
 msgid "operation resources"
 msgstr "作業リソース"
 
-#: input/models.py:810 input/models.py:828 input/models.py:1159
+#: input/models.py:808 input/models.py:826 input/models.py:1157
 #: input/views.py:906 input/views.py:2346 input/views.py:2419
 #: input/views.py:2423 input/views.py:2427 input/views.py:2431
 #: input/views.py:2436 input/views.py:2440 output/views/operation.py:402
@@ -2875,64 +2863,64 @@ msgstr "作業リソース"
 msgid "supplier"
 msgstr "供給者"
 
-#: input/models.py:811 input/views.py:874
+#: input/models.py:809 input/views.py:874
 msgid "suppliers"
 msgstr "供給者"
 
-#: input/models.py:833 input/models.py:919 input/models.py:920
+#: input/models.py:831 input/models.py:917 input/models.py:918
 #: input/views.py:907 input/views.py:993 inventoryplanning/models.py:318
 #: inventoryplanning/templates/inventoryplanning/drp.html:1686
 #: inventoryplanning/views.py:251
 msgid "lead time"
 msgstr "リードタイム"
 
-#: input/models.py:834
+#: input/models.py:832
 msgid "Purchasing lead time"
 msgstr "購入リードタイム"
 
-#: input/models.py:839
+#: input/models.py:837
 msgid "A minimum purchasing quantity"
 msgstr "最小購入量"
 
-#: input/models.py:844
+#: input/models.py:842
 msgid "A multiple purchasing quantity"
 msgstr "購入倍数量"
 
-#: input/models.py:849
+#: input/models.py:847
 msgid "Purchasing cost per unit"
 msgstr "単位当たりの購入コスト"
 
-#: input/models.py:866
+#: input/models.py:864
 msgid "Resource to model the supplier capacity"
 msgstr "供給者の能力を作成するリソース"
 
-#: input/models.py:869 input/models.py:959 input/views.py:916
+#: input/models.py:867 input/models.py:957 input/views.py:916
 #: input/views.py:1003
 msgid "resource quantity"
 msgstr "リソース数量"
 
-#: input/models.py:871
+#: input/models.py:869
 msgid "Resource capacity consumed per purchased unit"
 msgstr "購入単位ごとに消費されるリソース許容量"
 
-#: input/models.py:874 input/models.py:964 input/views.py:912
+#: input/models.py:872 input/models.py:962 input/views.py:912
 #: input/views.py:999
 msgid "fence"
 msgstr "フェンス"
 
-#: input/models.py:875
+#: input/models.py:873
 msgid "Frozen fence for creating new procurements"
 msgstr "新しい調達を作成する凍結フェンス"
 
-#: input/models.py:897
+#: input/models.py:895
 msgid "item supplier"
 msgstr "商品供給者"
 
-#: input/models.py:898 input/views.py:896
+#: input/models.py:896 input/views.py:896
 msgid "item suppliers"
 msgstr "商品供給者"
 
-#: input/models.py:915 input/models.py:1150 input/views.py:992
+#: input/models.py:913 input/models.py:1148 input/views.py:992
 #: input/views.py:1064 input/views.py:1068 input/views.py:1072
 #: input/views.py:1076 input/views.py:1081 input/views.py:1086
 #: input/views.py:1090 input/views.py:2054 input/views.py:2100
@@ -2947,178 +2935,174 @@ msgstr "商品供給者"
 msgid "origin"
 msgstr "起源"
 
-#: input/models.py:925
+#: input/models.py:923
 msgid "A minimum shipping quantity"
 msgstr "最小出荷量"
 
-#: input/models.py:930
+#: input/models.py:928
 msgid "A multiple shipping quantity"
 msgstr "複数出荷回数"
 
-#: input/models.py:935
+#: input/models.py:933
 msgid "Shipping cost per unit"
 msgstr "単位当たりの出荷コスト"
 
-#: input/models.py:942 input/views.py:998
-#, fuzzy
-#| msgid "priority"
+#: input/models.py:940 input/views.py:998
 msgid "push priority"
-msgstr "優先順位"
+msgstr ""
 
-#: input/models.py:943
+#: input/models.py:941
 msgid "Priority for the push mode"
 msgstr ""
 
-#: input/models.py:956
+#: input/models.py:954
 msgid "Resource to model the distribution capacity"
 msgstr "流通許容量を作成するリソース"
 
-#: input/models.py:961
+#: input/models.py:959
 msgid "Resource capacity consumed per distributed unit"
 msgstr "流通単位当たりに消費するリソース許容量"
 
-#: input/models.py:965
+#: input/models.py:963
 msgid "Frozen fence for creating new shipments"
 msgstr "新しい出荷を作成する凍結フェンス"
 
-#: input/models.py:987
+#: input/models.py:985
 msgid "item distribution"
 msgstr "商品流通"
 
-#: input/models.py:988 input/views.py:982
+#: input/models.py:986 input/views.py:982
 msgid "item distributions"
 msgstr "商品流通"
 
-#: input/models.py:994 input/views.py:1387
+#: input/models.py:992 input/views.py:1387
 msgid "inquiry"
 msgstr "照会"
 
-#: input/models.py:995 input/views.py:1392
+#: input/models.py:993 input/views.py:1392
 msgid "quote"
 msgstr "引用"
 
-#: input/models.py:996 input/views.py:1397
+#: input/models.py:994 input/views.py:1397
 msgid "open"
 msgstr "オープン"
 
-#: input/models.py:997 input/models.py:1088 input/views.py:1402
+#: input/models.py:995 input/models.py:1086 input/views.py:1402
 #: input/views.py:1907 input/views.py:2192 input/views.py:2474
 #: inventoryplanning/templates/inventoryplanning/drp.html:2131
 msgid "closed"
 msgstr "クローズ"
 
-#: input/models.py:1022 input/models.py:1172 input/views.py:1275
+#: input/models.py:1020 input/models.py:1170 input/views.py:1275
 #: output/widget.py:70 output/widget.py:134 quoting/views.py:51
 msgid "due"
 msgstr "納期"
 
-#: input/models.py:1022
+#: input/models.py:1020
 msgid "Due date of the demand"
 msgstr "需要の納期"
 
-#: input/models.py:1026
+#: input/models.py:1024
 msgid "Status of the demand. Only \"open\" demands are planned"
 msgstr "需要の状態。\"オープン\" 需要のみが計画されています。"
 
-#: input/models.py:1030 input/views.py:1282 quoting/views.py:53
+#: input/models.py:1028 input/views.py:1282 quoting/views.py:53
 msgid "delivery operation"
 msgstr "配達作業"
 
-#: input/models.py:1032
+#: input/models.py:1030
 msgid "Operation used to satisfy this demand"
 msgstr "需要を満たす作業"
 
-#: input/models.py:1051 input/models.py:1130 input/views.py:1276
+#: input/models.py:1049 input/models.py:1128 input/views.py:1276
 #: input/views.py:1790 input/views.py:2066 input/views.py:2354
 #: input/views.py:2522 output/views/buffer.py:374 output/views/resource.py:308
 #: output/widget.py:71
 msgid "delay"
 msgstr "遅れ"
 
-#: input/models.py:1054 input/views.py:1277
+#: input/models.py:1052 input/views.py:1277
 msgid "planned quantity"
 msgstr "計画数量"
 
-#: input/models.py:1055
+#: input/models.py:1053
 msgid "Quantity planned for delivery"
 msgstr "計画済みオーダー"
 
-#: input/models.py:1058 input/views.py:1278
+#: input/models.py:1056 input/views.py:1278
 msgid "delivery date"
 msgstr "配達作業"
 
-#: input/models.py:1058
+#: input/models.py:1056
 msgid "Delivery date of the demand"
 msgstr "需要の納期"
 
-#: input/models.py:1068
+#: input/models.py:1066
 msgid "sales order"
 msgstr "販売オーダー"
 
-#: input/models.py:1077 input/models.py:1396
+#: input/models.py:1075 input/models.py:1394
 msgid "manufacturing order"
 msgstr "製造オーダー"
 
-#: input/models.py:1078 input/models.py:1370
+#: input/models.py:1076 input/models.py:1368
 msgid "purchase order"
 msgstr "購入注文"
 
-#: input/models.py:1079 input/models.py:1344
+#: input/models.py:1077 input/models.py:1342
 msgid "distribution order"
 msgstr "配信順序"
 
-#: input/models.py:1080 input/models.py:1428
-#, fuzzy
-#| msgid "delivery date"
+#: input/models.py:1078 input/models.py:1426
 msgid "delivery order"
-msgstr "配達作業"
+msgstr ""
 
-#: input/models.py:1085 input/models.py:1222 input/models.py:1270
+#: input/models.py:1083 input/models.py:1220 input/models.py:1268
 #: input/views.py:1892 input/views.py:2177 input/views.py:2459
 #: inventoryplanning/templates/inventoryplanning/drp.html:2129
 msgid "proposed"
 msgstr "提案済み"
 
-#: input/models.py:1086 input/views.py:1897 input/views.py:2182
+#: input/models.py:1084 input/views.py:1897 input/views.py:2182
 #: input/views.py:2464
 #: inventoryplanning/templates/inventoryplanning/drp.html:2128
 msgid "approved"
 msgstr "承認済み"
 
-#: input/models.py:1087 input/models.py:1223 input/models.py:1271
+#: input/models.py:1085 input/models.py:1221 input/models.py:1269
 #: input/views.py:1902 input/views.py:2187 input/views.py:2469
 #: inventoryplanning/templates/inventoryplanning/drp.html:2130
 msgid "confirmed"
 msgstr "確認済み"
 
-#: input/models.py:1095
+#: input/models.py:1093
 msgid "Unique identifier of an operationplan"
 msgstr "作業計画の識別子"
 
-#: input/models.py:1099
+#: input/models.py:1097
 msgid "Status of the order"
 msgstr "オーダーの状態"
 
-#: input/models.py:1103
+#: input/models.py:1101
 msgid "Order type"
 msgstr "オーダータイプ"
 
-#: input/models.py:1106 input/views.py:1780 input/views.py:2051
+#: input/models.py:1104 input/views.py:1780 input/views.py:2051
 #: input/views.py:2342 input/views.py:2511
 #: inventoryplanning/templates/inventoryplanning/drp.html:1843
 #: output/views/buffer.py:347 output/views/resource.py:278
 msgid "reference"
 msgstr "参照"
 
-#: input/models.py:1107
+#: input/models.py:1105
 msgid "External reference of this order"
 msgstr "このオーダーの外部参照"
 
-#: input/models.py:1114 inventoryplanning/models.py:333
+#: input/models.py:1112 inventoryplanning/models.py:333
 msgid "color"
 msgstr "色"
 
-#: input/models.py:1126 input/views.py:1789 input/views.py:2065
+#: input/models.py:1124 input/views.py:1789 input/views.py:2065
 #: input/views.py:2353
 #: inventoryplanning/templates/inventoryplanning/drp.html:1853
 #: output/views/buffer.py:373 output/views/resource.py:307
@@ -3127,7 +3111,7 @@ msgstr "色"
 msgid "criticality"
 msgstr "緊急度"
 
-#: input/models.py:1154 input/views.py:2055 input/views.py:2131
+#: input/models.py:1152 input/views.py:2055 input/views.py:2131
 #: input/views.py:2135 input/views.py:2139 input/views.py:2143
 #: input/views.py:2148 input/views.py:2153 input/views.py:2157
 #: output/views/operation.py:634 output/views/operation.py:639
@@ -3137,87 +3121,79 @@ msgstr "緊急度"
 msgid "destination"
 msgstr "宛先"
 
-#: input/models.py:1168 input/views.py:2512 output/models.py:38
+#: input/models.py:1166 input/views.py:2512 output/models.py:38
 #: output/templates/output/demand.html:139
 #: output/templates/output/demand.html:194
 #: output/templates/output/demand_forecast.html:113
 #: output/templates/output/demand_forecast.html:189
 #: output/views/constraint.py:22 output/views/constraint.py:76
 #: output/views/demand.py:42
-#, fuzzy
-#| msgid "demands"
 msgid "demand"
-msgstr "需要"
+msgstr ""
 
-#: input/models.py:1172
+#: input/models.py:1170
 msgid "Due date of the demand/forecast"
 msgstr "需要/予測の納期"
 
-#: input/models.py:1214 input/models.py:1232 input/models.py:1285
+#: input/models.py:1212 input/models.py:1230 input/models.py:1283
 msgid "operationplan"
 msgstr "作業計画"
 
-#: input/models.py:1215
+#: input/models.py:1213
 msgid "operationplans"
 msgstr "作業計画"
 
-#: input/models.py:1236 output/models.py:60 output/widget.py:1155
+#: input/models.py:1234 output/models.py:60 output/widget.py:1155
 msgid "startdate"
 msgstr "開始日時"
 
-#: input/models.py:1237 output/widget.py:1030 output/widget.py:1070
+#: input/models.py:1235 output/widget.py:1030 output/widget.py:1070
 #: output/widget.py:1155 output/widget.py:1191
 msgid "enddate"
 msgstr "終了日時"
 
-#: input/models.py:1241
+#: input/models.py:1239
 msgid "Status of the OperationPlanResource"
 msgstr ""
 
-#: input/models.py:1262
+#: input/models.py:1260
 msgid "operationplan resource"
 msgstr "作業計画リソース"
 
-#: input/models.py:1263
+#: input/models.py:1261
 msgid "operationplan resources"
 msgstr "作業計画リソース"
 
-#: input/models.py:1292 inventoryplanning/models.py:34
+#: input/models.py:1290 inventoryplanning/models.py:34
 #: inventoryplanning/templates/inventoryplanning/drp.html:2357
 #: inventoryplanning/templates/inventoryplanning/drp.html:2408
 msgid "period of cover"
 msgstr "カバー期間"
 
-#: input/models.py:1295
+#: input/models.py:1293
 msgid "status of the material production or consumption"
 msgstr ""
 
-#: input/models.py:1316
+#: input/models.py:1314
 msgid "operationplan material"
 msgstr "作業計画材料"
 
-#: input/models.py:1317
+#: input/models.py:1315
 msgid "operationplan materials"
 msgstr "作業計画材料"
 
-#: input/models.py:1325 input/views.py:2056
-#, fuzzy
-#| msgid "shipping queue"
+#: input/models.py:1323 input/views.py:2056
 msgid "shipping date"
-msgstr "出荷キュー"
+msgstr ""
 
-#: input/models.py:1326 input/models.py:1351 input/views.py:2057
+#: input/models.py:1324 input/models.py:1349 input/views.py:2057
 #: input/views.py:2348
-#, fuzzy
-#| msgid "bucket date"
 msgid "receipt date"
-msgstr "バケット日"
+msgstr ""
 
-#: input/models.py:1350 input/views.py:2347
-#, fuzzy
-#| msgid "producing date"
+#: input/models.py:1348 input/views.py:2347
 msgid "ordering date"
-msgstr "生産日時"
+msgstr ""
 
 #: input/templates/input/path.html:244
 msgid "Too many objects to display"
@@ -3244,12 +3220,6 @@ msgstr "マトリックスルールをセットアップ"
 #: input/views.py:781 output/views/resource.py:47 output/views/resource.py:411
 msgid "maxearly"
 msgstr "最速"
-
-#: input/views.py:1176
-#, fuzzy
-#| msgid "quantity demand"
-msgid "quantity_fixed"
-msgstr "要求量"
 
 #: input/views.py:1387 input/views.py:1392 input/views.py:1397
 #: input/views.py:1402 input/views.py:1406 input/views.py:1892
@@ -3321,17 +3291,17 @@ msgstr ""
 
 #: input/views.py:1954
 #, python-format
-msgid "In transit in %(loc)s at %(date)s"
+msgid "in transit in %(loc)s at %(date)s"
 msgstr ""
 
 #: input/views.py:1965
 #, python-format
-msgid "Received in %(loc)s between %(date1)s and %(date2)s"
+msgid "received in %(loc)s between %(date1)s and %(date2)s"
 msgstr ""
 
 #: input/views.py:1976
 #, python-format
-msgid "Shipped to %(loc)s between %(date1)s and %(date2)s"
+msgid "shipped to %(loc)s between %(date1)s and %(date2)s"
 msgstr ""
 
 #: input/views.py:2064 input/views.py:2352
@@ -3340,12 +3310,12 @@ msgstr ""
 
 #: input/views.py:2265
 #, python-format
-msgid "On order in %(loc)s at %(date)s"
+msgid "on order in %(loc)s at %(date)s"
 msgstr ""
 
 #: input/views.py:2276
 #, python-format
-msgid "On order in %(loc)s between %(date1)s and %(date2)s"
+msgid "on order in %(loc)s between %(date1)s and %(date2)s"
 msgstr ""
 
 #: input/views.py:2517
@@ -3358,7 +3328,7 @@ msgstr "期日"
 
 #: input/views.py:2667
 #, python-format
-msgid "Delivered from %(loc)s between %(date1)s and %(date2)s"
+msgid "delivered from %(loc)s between %(date1)s and %(date2)s"
 msgstr ""
 
 #: inventoryplanning/admin.py:32 inventoryplanning/models.py:326
@@ -3379,11 +3349,11 @@ msgstr "安全在庫数量"
 msgid "Successor part"
 msgstr ""
 
-#: inventoryplanning/commands.py:464
+#: inventoryplanning/commands.py:483
 msgid "Compute inventory parameters"
 msgstr "在庫パラメーターを計算"
 
-#: inventoryplanning/commands.py:957
+#: inventoryplanning/commands.py:976
 msgid "Generate inventory rebalancing requests"
 msgstr ""
 
@@ -3479,13 +3449,11 @@ msgstr "安全在庫を0に強制して1数量を再オーダーする"
 #: inventoryplanning/models.py:89 inventoryplanning/models.py:129
 #: inventoryplanning/models.py:251 inventoryplanning/views.py:144
 #: inventoryplanning/views.py:155
-#, fuzzy
-#| msgid "search mode"
 msgid "Push mode"
-msgstr "検索モード"
+msgstr ""
 
 #: inventoryplanning/models.py:90 inventoryplanning/models.py:130
-msgid "Enforces a push policy for this item-location combination"
+msgid "Activate stock push mode which moves all inventory downstream"
 msgstr ""
 
 #: inventoryplanning/models.py:93 inventoryplanning/models.py:97
@@ -3724,10 +3692,8 @@ msgstr "棚卸の開始"
 #: inventoryplanning/templates/inventoryplanning/drp.html:707
 #: inventoryplanning/templates/inventoryplanning/drp.html:721
 #: output/templates/output/buffer.html:149 output/views/buffer.py:88
-#, fuzzy
-#| msgid "start inventory"
 msgid "start inventory days of cover"
-msgstr "棚卸の開始"
+msgstr ""
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:708
 #: inventoryplanning/templates/inventoryplanning/drp.html:722
@@ -3921,24 +3887,29 @@ msgstr "計算された経済的に発注された数量"
 msgid "Stocking policy"
 msgstr ""
 
-#: inventoryplanning/templates/inventoryplanning/drp.html:2432
-#, fuzzy
-#| msgid "Sets safety stock to 0 and reorder quantity to 1"
-msgid "Do not stock: sets safety stock to 0 and reorder quantity to 1"
-msgstr "安全在庫を0に強制して1数量を再オーダーする"
+#: inventoryplanning/templates/inventoryplanning/drp.html:2433
+msgid ""
+"<span data-toggle=\"tooltip\" data-placement=\"left\" data-html=\"true\" "
+"data-original-title=\"Sets safety stock to 0 and reorder quantity to 1."
+"<br>This item-location will be planned with replenishments matching 1-to-1 "
+"with the demand.\" >Do not stock</span>"
+msgstr ""
 
-#: inventoryplanning/templates/inventoryplanning/drp.html:2440
-#: inventoryplanning/templates/inventoryplanning/drp.html:2456
+#: inventoryplanning/templates/inventoryplanning/drp.html:2443
+#: inventoryplanning/templates/inventoryplanning/drp.html:2462
 msgid "true"
 msgstr "真"
 
-#: inventoryplanning/templates/inventoryplanning/drp.html:2441
-#: inventoryplanning/templates/inventoryplanning/drp.html:2457
+#: inventoryplanning/templates/inventoryplanning/drp.html:2444
+#: inventoryplanning/templates/inventoryplanning/drp.html:2463
 msgid "false"
 msgstr "偽"
 
-#: inventoryplanning/templates/inventoryplanning/drp.html:2448
-msgid "Activates push mode"
+#: inventoryplanning/templates/inventoryplanning/drp.html:2452
+msgid ""
+"<span data-toggle=\"tooltip\" data-placement=\"left\" data-html=\"true\" "
+"data-original-title=\"In push mode, any excess inventory will be distributed "
+"downstream to child locations.\">Activates push mode</span>"
 msgstr ""
 
 #: inventoryplanning/views.py:76
@@ -3961,25 +3932,25 @@ msgstr ""
 msgid "on hand"
 msgstr "利用可能"
 
-#: inventoryplanning/views.py:1026
+#: inventoryplanning/views.py:1003
 msgid "Buy"
 msgstr "購入"
 
-#: inventoryplanning/views.py:1042
+#: inventoryplanning/views.py:1019
 msgid "Transport"
 msgstr "譲渡"
 
-#: inventoryplanning/views.py:1068
+#: inventoryplanning/views.py:1045
 msgid "Manufacture"
 msgstr "製造"
 
-#: inventoryplanning/views.py:1598 inventoryplanning/views.py:1640
-#: inventoryplanning/views.py:1685 inventoryplanning/views.py:1708
-#: inventoryplanning/views.py:1731 inventoryplanning/views.py:1754
+#: inventoryplanning/views.py:1590 inventoryplanning/views.py:1632
+#: inventoryplanning/views.py:1677 inventoryplanning/views.py:1700
+#: inventoryplanning/views.py:1723 inventoryplanning/views.py:1746
 msgid "Invalid number"
 msgstr "不正な入力フィールド"
 
-#: inventoryplanning/views.py:1658
+#: inventoryplanning/views.py:1650
 msgid "No forecast found"
 msgstr "予測がありません"
 
@@ -4089,51 +4060,39 @@ msgid "load"
 msgstr "負荷"
 
 #: output/templates/output/buffer.html:154 output/views/buffer.py:95
-#, fuzzy
-#| msgid "produced"
 msgid "produced by MO"
-msgstr "生産された"
+msgstr ""
 
 #: output/templates/output/buffer.html:157 output/views/buffer.py:96
-#, fuzzy
-#| msgid "produced"
 msgid "produced by DO"
-msgstr "生産された"
+msgstr ""
 
 #: output/templates/output/buffer.html:160 output/views/buffer.py:91
-#, fuzzy
-#| msgid "consumed"
 msgid "consumed by MO"
-msgstr "消費された"
+msgstr ""
 
 #: output/templates/output/buffer.html:163 output/views/buffer.py:93
-#, fuzzy
-#| msgid "consumed"
 msgid "consumed by SO"
-msgstr "消費された"
+msgstr ""
 
 #: output/templates/output/buffer.html:166 output/views/buffer.py:92
-#, fuzzy
-#| msgid "consumed"
 msgid "consumed by DO"
-msgstr "消費された"
-
-#: output/templates/output/buffer.html:174
-#, fuzzy
-#| msgid "overall progress"
-msgid "Total in Progress"
-msgstr "全体の進捗"
-
-#: output/templates/output/buffer.html:177
-msgid "Work in Progress MO"
 msgstr ""
 
-#: output/templates/output/buffer.html:180
-msgid "On Order PO"
+#: output/templates/output/buffer.html:174 output/views/buffer.py:99
+msgid "total in progress"
 msgstr ""
 
-#: output/templates/output/buffer.html:183
-msgid "In Transit DO"
+#: output/templates/output/buffer.html:177 output/views/buffer.py:100
+msgid "work in progress MO"
+msgstr ""
+
+#: output/templates/output/buffer.html:180 output/views/buffer.py:101
+msgid "on order PO"
+msgstr ""
+
+#: output/templates/output/buffer.html:183 output/views/buffer.py:102
+msgid "in transit DO"
 msgstr ""
 
 #: output/templates/output/demand.html:141
@@ -4167,17 +4126,13 @@ msgstr ""
 
 #: output/templates/output/distribution_order_summary.html:222
 #: output/views/operation.py:666
-#, fuzzy
-#| msgid "proposed transfers"
 msgid "proposed in transit"
-msgstr "提案された譲渡"
+msgstr ""
 
 #: output/templates/output/distribution_order_summary.html:224
 #: output/views/operation.py:667
-#, fuzzy
-#| msgid "total forecast"
 msgid "total in transit"
-msgstr "総予測"
+msgstr ""
 
 #: output/templates/output/operation.html:281
 #: output/templates/output/operation.html:331 output/views/operation.py:152
@@ -4253,17 +4208,13 @@ msgstr ""
 
 #: output/templates/output/purchase_order_summary.html:222
 #: output/views/operation.py:437
-#, fuzzy
-#| msgid "proposed ends"
 msgid "proposed on order"
-msgstr "提案された終了日"
+msgstr ""
 
 #: output/templates/output/purchase_order_summary.html:224
 #: output/views/operation.py:438
-#, fuzzy
-#| msgid "total orders"
 msgid "total on order"
-msgstr "注文の合計"
+msgstr ""
 
 #: output/templates/output/resource.html:269 output/views/constraint.py:29
 msgid "overload"
@@ -4274,46 +4225,16 @@ msgid "Inventory report"
 msgstr "棚卸レポート"
 
 #: output/views/buffer.py:90
-#, fuzzy
-#| msgid "consumed"
 msgid "total consumed"
-msgstr "消費された"
+msgstr ""
 
 #: output/views/buffer.py:94
-#, fuzzy
-#| msgid "produced"
 msgid "total produced"
-msgstr "生産された"
+msgstr ""
 
 #: output/views/buffer.py:97
-#, fuzzy
-#| msgid "produced"
 msgid "produced by PO"
-msgstr "生産された"
-
-#: output/views/buffer.py:99
-#, fuzzy
-#| msgid "overall progress"
-msgid "total in progress"
-msgstr "全体の進捗"
-
-#: output/views/buffer.py:100
-#, fuzzy
-#| msgid "overall progress"
-msgid "work in progress MO"
-msgstr "全体の進捗"
-
-#: output/views/buffer.py:101
-#, fuzzy
-#| msgid "open orders"
-msgid "on order PO"
-msgstr "注文を開く"
-
-#: output/views/buffer.py:102
-#, fuzzy
-#| msgid "total forecast"
-msgid "in transit DO"
-msgstr "総予測"
+msgstr ""
 
 #: output/views/buffer.py:304
 msgid "Inventory detail report"
@@ -4432,10 +4353,8 @@ msgid "utilization %"
 msgstr "稼働率 %"
 
 #: output/views/resource.py:56
-#, fuzzy
-#| msgid "No availability calendar found"
 msgid "available calendar"
-msgstr "空き時間カレンダーが見つかりません"
+msgstr ""
 
 #: output/views/resource.py:102
 msgid "hours"
@@ -4446,10 +4365,8 @@ msgid "Resource detail report"
 msgstr "資源の詳細レポート"
 
 #: output/views/resource.py:304
-#, fuzzy
-#| msgid "setup duration"
 msgid "net duration"
-msgstr "かかる時間"
+msgstr ""
 
 #: output/views/resource.py:311
 msgid "load quantity"
@@ -4608,6 +4525,21 @@ msgstr ""
 #: quoting/views.py:33
 msgid "quotes"
 msgstr "引用"
+
+#, fuzzy
+#~| msgid "overall progress"
+#~ msgid "Total in Progress"
+#~ msgstr "全体の進捗"
+
+#, fuzzy
+#~| msgid "quantity demand"
+#~ msgid "quantity_fixed"
+#~ msgstr "要求量"
+
+#, fuzzy
+#~| msgid "Sets safety stock to 0 and reorder quantity to 1"
+#~ msgid "Do not stock: sets safety stock to 0 and reorder quantity to 1"
+#~ msgstr "安全在庫を0に強制して1数量を再オーダーする"
 
 #, fuzzy
 #~| msgid "priority"

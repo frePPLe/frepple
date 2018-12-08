@@ -61,9 +61,7 @@ class Calendar(AuditModel):
 
   class Meta(AuditModel.Meta):
     db_table = 'calendar'
-    #. Translators: Translation included with Django
     verbose_name = _('calendar')
-    #. Translators: Translation included with Django
     verbose_name_plural = _('calendars')
     ordering = ['name']
 

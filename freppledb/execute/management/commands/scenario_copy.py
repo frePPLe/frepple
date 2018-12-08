@@ -239,8 +239,8 @@ class Command(BaseCommand):
               {% comment %}Translators: Translation included with Django {% endcomment %}
               <th style="padding: 0px 15px;">{% trans 'scenario'|capfirst %}</th>
               <th style="padding: 0px 15px;">{% trans 'status'|capfirst %}</th>
-              <th>{% trans 'label'|capfirst %}</th>
-              <th>{% trans 'last refresh'|capfirst %}</th>
+              <th>{% trans 'description'|capfirst %}</th>
+              <th>{% trans 'last modified'|capfirst %}</th>
             </tr>
             {% for j in scenarios %}{% ifnotequal j.name 'default' %}
             <tr>
@@ -248,7 +248,9 @@ class Command(BaseCommand):
                 <label for="sc{{j.name}}">&nbsp;<strong>{{j.name|capfirst}}</strong>
                 </label>
               </td>
-              <td  style="padding: 0px 15px;">{{j.status}}</td>
+              {% with mystatus=j.status|lower %}
+              <td style="padding: 0px 15px;">{% trans mystatus|capfirst %}</td>
+              {% endwith %}
               <td>{% if j.description %}{{j.description}}{% endif %}</td>
               <td>{{j.lastrefresh|date:"DATETIME_FORMAT"}}</td>
             </tr>

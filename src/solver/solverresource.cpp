@@ -695,6 +695,7 @@ void SolverCreate::solve(const ResourceBuckets* res, void* v)
           && newStart.getStart() >= originalOpplan.end - res->getMaxEarly()
           )
         {
+          bool moved = true;
           if (time_per_logic)
           {
             // Resize the operationplan to the maximum quantity that is feasible in this bucket
@@ -720,7 +721,9 @@ void SolverCreate::solve(const ResourceBuckets* res, void* v)
               double newQty = oldQty
                 + overload / data->state->q_loadplan->getLoad()->getQuantity()
                 * efficiency / 100.0;
-              if (newQty > ROUNDING_ERROR)
+              if (newQty < ROUNDING_ERROR)
+                moved = false;
+              else
               {
                 opplan->setOperationPlanParameters(
                   newQty,
@@ -756,7 +759,7 @@ void SolverCreate::solve(const ResourceBuckets* res, void* v)
           }
 
           // Verify the move is successfull
-          if (data->state->q_loadplan->getDate() > newStart.getStart())
+          if (!moved || data->state->q_loadplan->getDate() > newStart.getStart())
             // The new loadplan is expected to be at the requested date or earlier (eg in 
             // the presence of availability calendars)
             data->state->a_qty = 0.0;

@@ -181,16 +181,14 @@
       <item name="3. end item" />
       <location name="3. factory" />
     </demand>
-    <!--
     <demand name="3. order 3">
-      <quantity>20</quantity>
+      <quantity>10</quantity>
       <minshipment>5</minshipment>
       <due>2018-11-11T00:00:00</due>
       <priority>1</priority>
       <item name="3. end item" />
       <location name="3. factory" />
     </demand>
-    -->
   </demands>
 
 <?python

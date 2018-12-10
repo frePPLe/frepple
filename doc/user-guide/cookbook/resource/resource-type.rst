@@ -32,7 +32,7 @@ FrePPLe has different resource types:
      :alt: Quantity bucket resource
 
 * There is also a **times buckets** resource model where capacity is expressed
-  as a total availabel resource-hours per capacity bucket.
+  as a total available resource-hours per capacity bucket.
 
   The available hours per capacity bucket are computed using the resource
   size and its availabile working hours.

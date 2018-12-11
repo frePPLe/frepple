@@ -4391,7 +4391,9 @@ class ItemDistribution : public Object,
     /** Sets the maximum size for shipments. */
     void setSizeMaximum(double f)
     {
-      if (f<0)
+      if (f < size_minimum)
+        throw DataException("ItemDistribution maximum size must be higher than the minimum size");
+      if (f < 0)
         throw DataException("ItemDistribution can't have a negative maximum size");
       size_maximum = f;
     }
@@ -4740,7 +4742,9 @@ class ItemSupplier : public Object,
     /** Sets the maximum size for procurements. */
     void setSizeMaximum(double f)
     {
-      if (f<0)
+      if (f < size_minimum)
+        throw DataException("ItemSupplier maximum size must be higher than the minimum size");
+      if (f < 0)
         throw DataException("ItemSupplier can't have a negative maximum size");
       size_maximum = f;
     }

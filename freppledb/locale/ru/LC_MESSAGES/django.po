@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-12-08 16:28+0100\n"
-"PO-Revision-Date: 2018-12-08 16:54+0100\n"
+"PO-Revision-Date: 2018-12-11 12:03+0100\n"
 "Last-Translator: \n"
 "Language-Team: Michael Nasonov <info@ivc-inform.ru>\n"
 "Language: ru\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
 "%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
-"X-Generator: Poedit 2.2\n"
+"X-Generator: Poedit 2.0.1\n"
 
 #: common/admin.py:37
 msgid "Permissions in this scenario"
@@ -246,15 +246,15 @@ msgstr "параметры"
 #: common/models.py:264 output/models.py:65
 #: output/templates/output/resource.html:268
 msgid "free"
-msgstr "свободно"
+msgstr "свободный"
 
 #: common/models.py:265
 msgid "in use"
-msgstr "в использовании"
+msgstr "используется"
 
 #: common/models.py:266
 msgid "busy"
-msgstr "занято"
+msgstr "занятый"
 
 #: common/models.py:274 execute/models.py:37 execute/views.py:89
 #: input/models.py:1022 input/models.py:1096 input/models.py:1238
@@ -275,7 +275,7 @@ msgstr "сценарии"
 
 #: common/models.py:318
 msgid "scenario"
-msgstr "сценарии"
+msgstr "сценарий"
 
 #: common/models.py:323
 msgid "Detect automatically"
@@ -446,17 +446,17 @@ msgstr "Экспортировать нечего"
 #: common/report.py:2520 execute/management/commands/importworkbook.py:134
 #, python-format
 msgid "Ignoring data in worksheet: %s"
-msgstr "Игнорирование данных на листе:% s"
+msgstr "Игнорирование данных на листе: % s"
 
 #: common/report.py:2523 execute/management/commands/importworkbook.py:138
 #, python-format
 msgid "You don't permissions to add: %s"
-msgstr "У вас нет разрешения на добавление:%s"
+msgstr "У вас нет разрешения на добавление: %s"
 
 #: common/report.py:2534 execute/management/commands/importworkbook.py:150
 #, python-format
 msgid "Processing data in worksheet: %s"
-msgstr "Обработка данных в листе:%s"
+msgstr "Обработка данных в листе: %s"
 
 #: common/report.py:2583 execute/management/commands/importworkbook.py:229
 #: execute/management/commands/importworkbook.py:245
@@ -466,7 +466,7 @@ msgstr "Готово"
 #: common/templates/admin/base_site_grid.html:23
 #: common/templates/admin/base_site_gridpivot.html:32
 msgid "Error: Missing time buckets or bucket dates"
-msgstr "Ошибка: Отсутствует время периода или дата периода"
+msgstr "Ошибка: Отсутствует время или дата периода"
 
 #: common/templates/admin/base_site_grid.html:83
 #: common/templates/admin/base_site_gridpivot.html:85
@@ -582,11 +582,11 @@ msgstr "настройки"
 #: common/templates/admin/base_site_nav.html:85 common/templates/index.html:8
 #: common/templatetags.py:78 common/views.py:63
 msgid "cockpit"
-msgstr "Окно диспетчера"
+msgstr "Монитор диспетчера"
 
 #: common/templates/admin/base_site_nav.html:94
 msgid "Choose a what-if scenario"
-msgstr ""
+msgstr "Выберите сценарий «что, если»"
 
 #: common/templates/admin/edit_inline/tabular.html:86
 #, python-format
@@ -608,11 +608,11 @@ msgstr ""
 #: common/templates/admin/subtemplate_inventorystatus.html:127
 #: inventoryplanning/models.py:332
 msgid "onhand at lead time"
-msgstr "наличие вовремя"
+msgstr "наличие во время"
 
 #: common/templates/admin/subtemplate_inventorystatus.html:160
 msgid "current onhand"
-msgstr "текущее наличие"
+msgstr "наличие сейчас"
 
 #: common/templates/admin/subtemplate_timebuckets.html:8
 msgid "time buckets"
@@ -892,48 +892,7 @@ msgid "Some links to get started"
 msgstr "Ознакомление - быстрый старт"
 
 #: common/widget.py:138
-#, fuzzy, python-format
-#| msgid ""
-#| "Welcome to frePPLe, the world's leading open source production planning "
-#| "tool!<br/><br/>\n"
-#| "How to get started?\n"
-#| "<ol><li>Start the <span class=\"underline\"><a href=\"javascript:void(0);"
-#| "\" onclick=\"tour.start('0,0,0'); return false;\">guided tour</a></span></"
-#| "li>\n"
-#| "<li>Start building your own model using the <span class=\"underline\"><a "
-#| "href=\"%(prefix)s/wizard/\" target=\"_blank\" rel=\"noopener\">wizard</"
-#| "a></span></li>\n"
-#| "<li>Or learn <span class=\"underline\"><a href=\"https://frepple.com/"
-#| "company/services/#modellingservice\" target=\"_blank\" rel=\"noopener"
-#| "\">here</a></span> how our service team can build a model from your data</"
-#| "li>\n"
-#| "</ol>\n"
-#| "Or simply dive into one of the main interactive planning screens:"
-#| "<br><br>\n"
-#| "<div style=\"float:left; margin-left:10px; width:30%%; max-width:130px; "
-#| "text-align: center\">\n"
-#| "<a href=\"%(prefix)s/forecast/editor/\">\n"
-#| "  <img src=\"/static/img/forecast-editor-thumbnail.png\" style=\"width: "
-#| "100%%\" alt=\"Forecast Editor\"><br>\n"
-#| "  <b>Forecast Editor</b>\n"
-#| "</a>\n"
-#| "</div>\n"
-#| "<div style=\"float:left; margin-left:10px; width:30%%; max-width:130px; "
-#| "text-align: center\">\n"
-#| "<a href=\"%(prefix)s/inventoryplanning/drp/\">\n"
-#| "  <img src=\"/static/img/inventory-planning-thumbnail.png\" style="
-#| "\"width: 100%%\" alt=\"Inventory Planning\"><br>\n"
-#| "  <b>Inventory Planning</b>\n"
-#| "</a>\n"
-#| "</div>\n"
-#| "<div style=\"float:left; margin-left:10px; width:30%%; max-width:130px; "
-#| "text-align: center\">\n"
-#| "<a href=\"%(prefix)s/planningboard/\">\n"
-#| "  <img src=\"/static/img/plan-editor-thumbnail.png\" style=\"width: 100%%"
-#| "\" alt=\"Plan Editor\"><br>\n"
-#| "  <b>Plan Editor</b>\n"
-#| "</a>\n"
-#| "</div>\n"
+#, python-format
 msgid ""
 "Welcome to the world's leading open source production planning tool!"
 "<br><br>\n"
@@ -972,25 +931,25 @@ msgid ""
 "</a>\n"
 "</div>\n"
 msgstr ""
-"Добро пожаловать в  frePPLe, ведущий мировой разработчик программного "
-"обеспечения для планирования с открытым исходным кодом!<br/><br/>\n"
+"Вы сделали правильный выбор - это ведущий в мире инструмент для планирования "
+"производства с открытым исходным кодом!<br><br>\n"
 "С чего начать?\n"
-"<ol><li>Запустите<span class=\"underline\"><a href=\"javascript:void(0);\" "
-"onclick=\"tour.start('0,0,0'); return false;\">экскурсовод</a></span></li>\n"
-"<li>Начните создавать свою собственную модель с помощью мастера<span class="
-"\"underline\"><a href=\"%(prefix)s/wizard/\" target=\"_blank\">wizard</a></"
+"<ol><li>Начните с <span class=\"underline\"><a href=\"javascript:void(0);\" "
+"onclick=\"tour.start('0,0,0'); return false;\">экскурсии по системе</a></"
 "span></li>\n"
-"<li>Или изучите <span class=\"underline\"><a href=\"https://frepple.com/"
-"company/services/#modellingservice\" target=\"_blank\">here</a></span> как "
-"наша сервисная команда может построить модель из ваших данных </li>\n"
+"<li>Посмотрите <span class=\"underline\"><a href=\"%(docurl)s\" target="
+"\"_blank\" rel=\"noopener\">документацию</a></span></li>\n"
+"<li>Начните строить свою собственную модель, используя<span class=\"underline"
+"\"><a href=\"%(prefix)s/wizard/\" target=\"_blank\" rel=\"noopener\">мастер "
+"конфигурирования</a></span></li>\n"
 "</ol>\n"
-"Или просто погрузитесь в один из основных экранов интерактивного "
-"планирования:<br><br>\n"
+"Или просто погрузитесь в один из основных интерактивных экранов планирования:"
+"<br><br>\n"
 "<div style=\"float:left; margin-left:10px; width:30%%; max-width:130px; text-"
 "align: center\">\n"
 "<a href=\"%(prefix)s/forecast/editor/\">\n"
 "  <img src=\"/static/img/forecast-editor-thumbnail.png\" style=\"width: 100%%"
-"\" alt=\"Редактор прогноза\"><br>\n"
+"\" alt=\"Forecast Editor\"><br>\n"
 "  <b>Редактор прогнозов</b>\n"
 "</a>\n"
 "</div>\n"
@@ -998,16 +957,16 @@ msgstr ""
 "align: center\">\n"
 "<a href=\"%(prefix)s/inventoryplanning/drp/\">\n"
 "  <img src=\"/static/img/inventory-planning-thumbnail.png\" style=\"width: "
-"100%%\" alt=\" Планирование запасов\"><br>\n"
-"  <b> Планирование запасов</b>\n"
+"100%%\" alt=\"Inventory Planning\"><br>\n"
+"  <b>Планирование запасов</b>\n"
 "</a>\n"
 "</div>\n"
 "<div style=\"float:left; margin-left:10px; width:30%%; max-width:130px; text-"
 "align: center\">\n"
 "<a href=\"%(prefix)s/planningboard/\">\n"
 "  <img src=\"/static/img/plan-editor-thumbnail.png\" style=\"width: 100%%\" "
-"alt=\"Редактор планов\"><br>\n"
-"  <b>Редактор планов</b>\n"
+"alt=\"Plan Editor\"><br>\n"
+"  <b>Планирование производства</b>\n"
 "</a>\n"
 "</div>\n"
 
@@ -1025,7 +984,7 @@ msgstr "Показать последние новости с сайта frePPLe
 
 #: common/widget.py:213
 msgid "My Actions"
-msgstr "Мои действия"
+msgstr "история действий"
 
 #: common/widget.py:214
 msgid "Display a list of the entities you recently changed"
@@ -1166,6 +1125,78 @@ msgid ""
 "          </div>\n"
 "          "
 msgstr ""
+"<p>Сгенерировать периоды времени.</p>\n"
+"          <div class=\"form-group\">\n"
+"          <label class=\"col-sm-3 control-label\">Дата начала</label>\n"
+"          <div class=\"col-sm-9\">\n"
+"          <input class=\"vDateField form-control\" id=\"start\" name=\"start"
+"\" type=\"text\" size=\"12\"/>\n"
+"          </div>\n"
+"          </div>\n"
+"          <div class=\"form-group\">\n"
+"          <label class=\"col-sm-3 control-label\">Дата окончания</label>\n"
+"          <div class=\"col-sm-9\">\n"
+"          <input class=\"vDateField form-control\" id=\"end\" name=\"end\" "
+"type=\"text\" size=\"12\"/>\n"
+"          </div>\n"
+"          </div>\n"
+"          <div class=\"form-group\">\n"
+"          <label class=\"col-sm-3 control-label\" for=\"weekstart1\">Неделя "
+"начинается с</label>\n"
+"          <div class=\"col-sm-9\">\n"
+"          <div class=\"dropdown dropdown-submit-input\">\n"
+"            <button class=\"btn btn-default dropdown-toggle form-control\"  "
+"id=\"weekstart1\" value=\"1\" type=\"button\" data-toggle=\"dropdown"
+"\">Monday&nbsp;&nbsp;<span class=\"caret\"></span></button>\n"
+"            <ul class=\"dropdown-menu col-xs-12\" aria-labelledby="
+"\"weekstart1\" id=\"weekstartul\">\n"
+"              <li><a>Воскресенье</a></li>\n"
+"              <li><a>Понедельник</a></li>\n"
+"              <li><a>Вторник</a></li>\n"
+"              <li><a>Среда</a></li>\n"
+"              <li><a>Четверг</a></li>\n"
+"              <li><a>Пятница</a></li>\n"
+"              <li><a>Суббота</a></li>\n"
+"            </ul>\n"
+"          </div>\n"
+"          </div>\n"
+"          </div>\n"
+"          <div class=\"form-group\">\n"
+"          <label class=\"col-sm-3 control-label\">день недели</label>\n"
+"          <div class=\"col-sm-9\">\n"
+"          <input class=\"form-control\" name=\"format-day\" type=\"text\" "
+"size=\"12\" value=\"%Y-%m-%d\"/>\n"
+"          </div>\n"
+"          </div>\n"
+"          <div class=\"form-group\">\n"
+"          <label class=\"col-sm-3 control-label\">неделя</label>\n"
+"          <div class=\"col-sm-9\">\n"
+"          <input class=\"form-control\" name=\"format-week\" type=\"text\" "
+"size=\"12\" value=\"%y W%W\"/>\n"
+"          </div>\n"
+"          </div>\n"
+"          <div class=\"form-group\">\n"
+"          <label class=\"col-sm-3 control-label\">Название месяца</label>\n"
+"          <div class=\"col-sm-9\">\n"
+"          <input class=\"form-control\" name=\"format-month\" type=\"text\" "
+"size=\"12\" value=\"%b %y\"/>\n"
+"          </div>\n"
+"          </div>\n"
+"          <div class=\"form-group\">\n"
+"          <label class=\"col-sm-3 control-label\">Название квартала</label>\n"
+"          <div class=\"col-sm-9\">\n"
+"          <input class=\"form-control\" name=\"format-quarter\" type=\"text"
+"\" size=\"12\" value=\"%y Q%q\"/>\n"
+"          </div>\n"
+"          </div>\n"
+"          <div class=\"form-group\">\n"
+"          <label class=\"col-sm-3 control-label\">год</label>\n"
+"          <div class=\"col-sm-9\">\n"
+"          <input class=\"form-control\" name=\"format-year\" type=\"text\" "
+"size=\"12\" value=\"%Y\"/>\n"
+"          </div>\n"
+"          </div>\n"
+"          "
 
 #: execute/management/commands/createbuckets.py:362
 #: execute/management/commands/empty.py:341
@@ -1283,6 +1314,9 @@ msgid ""
 "Download all input data in a single spreadsheet.<br>Optionally, you can make "
 "the data anonymous during the export to hide sensitive company data."
 msgstr ""
+"Загрузите все входные данные в одну электронную таблицу.<br>При желании вы "
+"можете сделать данные анонимными во время экспорта, чтобы скрыть "
+"конфиденциальные данные компании."
 
 #: execute/management/commands/importfromfolder.py:405
 msgid "Import data files from folder"
@@ -1334,7 +1368,7 @@ msgstr "не достаточно прав для выполнения..."
 
 #: execute/management/commands/loaddata.py:112
 msgid "Execute plan after loading is done"
-msgstr ""
+msgstr "Сформировать план после загрузки"
 
 #: execute/management/commands/loaddata.py:115
 msgid "Load a dataset"
@@ -1348,6 +1382,8 @@ msgstr "Создать план"
 msgid ""
 "Load all input data, run the planning algorithm, and export the results."
 msgstr ""
+"Загрузите все исходные данные, запустите алгоритм планирования и "
+"экспортируйте результаты."
 
 #: execute/management/commands/runplan.py:297
 msgid "optional planning steps"
@@ -1418,7 +1454,7 @@ msgstr "копия"
 #: execute/management/commands/scenario_copy.py:288
 #: openbravo/management/commands/openbravo_import.py:2652
 msgid "release"
-msgstr "высвобождение"
+msgstr "сброс"
 
 #: execute/management/commands/scenario_copy.py:288
 msgid "release selected scenarios"
@@ -1458,7 +1494,7 @@ msgstr "сообщение"
 
 #: execute/models.py:39 execute/views.py:90 execute/views.py:526
 msgid "log file"
-msgstr "Лог-файл"
+msgstr "лог-файл"
 
 #: execute/models.py:51
 msgid "tasks"
@@ -1577,11 +1613,11 @@ msgstr "шаблон спроса"
 
 #: forecast/attributes.py:22
 msgid "adi"
-msgstr "ADI"
+msgstr "Значение ADI"
 
 #: forecast/attributes.py:23
 msgid "cv2"
-msgstr "К.в.2 "
+msgstr "Коэф. cv2"
 
 #: forecast/commands.py:674 forecast/commands.py:699 forecast/commands.py:755
 msgid "Generate forecast"
@@ -1922,7 +1958,7 @@ msgstr "планируемый"
 
 #: forecast/models.py:82
 msgid "Specifies whether this forecast record should be planned"
-msgstr "Указывает, должна ли планироваться эта запись прогноза"
+msgstr "Указывает, следует ли планировать эту запись прогноза"
 
 #: forecast/models.py:92
 msgid "forecasts"
@@ -2023,23 +2059,23 @@ msgstr "стоимость плановых заказов"
 
 #: forecast/models.py:1029 forecast/views.py:210
 msgid "forecast baseline value"
-msgstr "базовый прогноз"
+msgstr "стоимсоть в базовом прогнозе"
 
 #: forecast/models.py:1030 forecast/models.py:1438 forecast/views.py:213
 msgid "forecast override value"
-msgstr "переопределение прогноза"
+msgstr "стоимсоть переопределения прогноза"
 
 #: forecast/models.py:1031 forecast/views.py:217
 msgid "forecast total value"
-msgstr "общий прогноз"
+msgstr "стоимость общего прогноза"
 
 #: forecast/models.py:1032 forecast/views.py:220
 msgid "forecast net value"
-msgstr "чистый прогноз"
+msgstr "стоимость чистого прогноза"
 
 #: forecast/models.py:1033 forecast/views.py:223
 msgid "forecast consumed value"
-msgstr "прогнозируемая  стоимость потребления"
+msgstr "стоимость потребления прогноза"
 
 #: forecast/models.py:1034
 msgid "planned forecast value"
@@ -2134,7 +2170,7 @@ msgstr "доступно"
 
 #: forecast/views.py:229
 msgid "planned net forecast value"
-msgstr "плановая величина чистого прогноза"
+msgstr "стоимость в чистом прогнозе"
 
 #: forecast/views.py:235
 msgid "order backlog"
@@ -2142,7 +2178,7 @@ msgstr "отставание заказов"
 
 #: forecast/views.py:235
 msgid "order backlog value"
-msgstr "значение отставания заказа"
+msgstr "стоимость отставания заказов"
 
 #: forecast/views.py:238
 msgid "forecast backlog"
@@ -2150,7 +2186,7 @@ msgstr "прогнозируемое отставание"
 
 #: forecast/views.py:238
 msgid "forecast backlog value"
-msgstr "прогнозируемое отставание"
+msgstr "стоимость прогнозируемого отставания"
 
 #: forecast/views.py:241 output/templates/output/demand.html:143
 #: output/templates/output/demand.html:196
@@ -2162,7 +2198,7 @@ msgstr "отставание"
 
 #: forecast/views.py:241
 msgid "backlog value"
-msgstr "значение отставания"
+msgstr "стоимость отставания"
 
 #: forecast/views.py:244 inventoryplanning/models.py:349
 #: inventoryplanning/templates/inventoryplanning/drp.html:710
@@ -2183,10 +2219,8 @@ msgid "total supply"
 msgstr "общая поставка"
 
 #: forecast/views.py:247
-#, fuzzy
-#| msgid "total supply"
 msgid "total supply value"
-msgstr "общая поставка"
+msgstr "стоимость общей поставки"
 
 #: forecast/views.py:626 forecast/views.py:633 input/models.py:1067
 #: input/views.py:1261
@@ -2262,7 +2296,7 @@ msgstr "заказы в производство"
 #: inventoryplanning/templates/inventoryplanning/drp.html:1710
 #: output/widget.py:707
 msgid "purchase orders"
-msgstr "Показывает заказы на поставку по дате заказа"
+msgstr "заказы на закупку"
 
 #: input/admin.py:144 input/admin.py:218 input/admin.py:253 input/admin.py:334
 #: input/views.py:180
@@ -2272,7 +2306,7 @@ msgstr "где используется"
 #: input/admin.py:146 input/models.py:1427 input/views.py:2502
 #: input/views.py:2676
 msgid "delivery orders"
-msgstr "операция доставки"
+msgstr "заказы на доставку"
 
 #: input/admin.py:149 input/models.py:1343 input/views.py:1931
 #: input/views.py:1986
@@ -2297,7 +2331,7 @@ msgstr "запасы"
 #: input/admin.py:255 input/admin.py:336 output/views/buffer.py:336
 #: output/views/resource.py:269
 msgid "plan detail"
-msgstr "состав плана"
+msgstr "подробности плана"
 
 #: input/admin.py:352 input/admin.py:370
 msgid "alternates"
@@ -2458,8 +2492,8 @@ msgid ""
 "Operationplans within this time window from the current day are expected to "
 "be released to production ERP"
 msgstr ""
-"в план-график будут планироваться операции между текущей датой и указанной "
-"датой "
+"Ожидается, что планы работ в течение текущего периода с текущего дня будут "
+"переданы в производственную ERP."
 
 #: input/models.py:232 input/views.py:1194 input/views.py:1242
 #: input/views.py:1494 input/views.py:1537 input/views.py:1556
@@ -2488,7 +2522,7 @@ msgstr "размер мин."
 
 #: input/models.py:238
 msgid "A minimum quantity for operationplans"
-msgstr "минимальное количество для план-графика"
+msgstr "минимальное количество для плана операций"
 
 #: input/models.py:241 input/models.py:840 input/models.py:926
 #: input/views.py:909 input/views.py:995 input/views.py:1196
@@ -2502,7 +2536,7 @@ msgstr "размер партии"
 
 #: input/models.py:243
 msgid "A multiple quantity for operationplans"
-msgstr "количество в партии для план-графика"
+msgstr "количество в партии для плана операций"
 
 #: input/models.py:246 input/views.py:1197 input/views.py:1245
 #: input/views.py:1497 input/views.py:1540 input/views.py:1559
@@ -2513,7 +2547,7 @@ msgstr "размер макс."
 
 #: input/models.py:248
 msgid "A maximum quantity for operationplans"
-msgstr "максимальное  количество для план-графика"
+msgstr "максимальное  количество для плана операций"
 
 #: input/models.py:253
 msgid "Cost per operationplan unit"
@@ -2540,7 +2574,7 @@ msgstr "переменная длительность операции (Т шт.
 #: input/views.py:1564 input/views.py:1814 output/views/buffer.py:366
 #: output/views/operation.py:92 output/views/resource.py:298
 msgid "search mode"
-msgstr "критерий оптимизации"
+msgstr "режим поиска"
 
 #: input/models.py:266 input/models.py:678 input/models.py:765
 msgid "Method to select preferred alternate"
@@ -2723,7 +2757,7 @@ msgstr "из наладки"
 
 #: input/models.py:442
 msgid "Name of the old setup (wildcard characters are supported)"
-msgstr "Текущее название наладки (групповые символы принимаются)"
+msgstr "Текущее название наладки (групповые символы можно использоать)"
 
 #: input/models.py:445 input/views.py:751
 msgid "to setup"
@@ -2731,7 +2765,7 @@ msgstr "в наладку"
 
 #: input/models.py:446
 msgid "Name of the new setup (wildcard characters are supported)"
-msgstr "Имя новой наладки (групповые символы принимаются)"
+msgstr "Имя новой наладки (групповые символы можно использовать)"
 
 #: input/models.py:450
 msgid "Duration of the changeover"
@@ -2798,25 +2832,23 @@ msgstr "Наладка ресурса в начале плана"
 
 #: input/models.py:544 input/views.py:786
 msgid "efficiency %"
-msgstr ""
+msgstr "эффективность %"
 
 #: input/models.py:545
-#, fuzzy
-#| msgid "Size of the resource"
 msgid "Efficiency percentage of the resource"
-msgstr "Размер ресурса"
+msgstr "Процент эффективности ресурса"
 
 #: input/models.py:548 input/views.py:788
 #, python-format
 msgid "efficiency %% calendar"
-msgstr ""
+msgstr "эффективность %% календарь"
 
 #: input/models.py:550
-#, fuzzy
-#| msgid "Calendar defining the resource size varying over time"
 msgid ""
 "Calendar defining the efficiency percentage of the resource varying over time"
-msgstr "Календарь, определяющий размер ресурса, изменяющийся во времени"
+msgstr ""
+"Календарь, определяющий процент эффективности ресурса, изменяющийся со "
+"временем"
 
 #: input/models.py:559 input/models.py:587 input/models.py:724
 #: input/models.py:862 input/models.py:952 input/models.py:1226
@@ -2875,19 +2907,15 @@ msgstr "Партия переноса"
 
 #: input/models.py:647
 msgid "Quantity to consume or produce per operationplan unit"
-msgstr "количество потребляемых или производимых позиций в план-графике"
+msgstr "количество потребляемых или производимых позиций в плане операций"
 
 #: input/models.py:650 input/views.py:1176 input/views.py:1233
-#, fuzzy
-#| msgid "demand quantity"
 msgid "fixed quantity"
-msgstr "количество спроса"
+msgstr "фикс. количество"
 
 #: input/models.py:652
-#, fuzzy
-#| msgid "Quantity to consume or produce per operationplan unit"
 msgid "Fixed quantity to consume or produce"
-msgstr "количество потребляемых или производимых позиций в план-графике"
+msgstr "Фиксированное количество для потребления или производства"
 
 #: input/models.py:656
 msgid "Consume/produce material at the start or the end of the operationplan"
@@ -2920,20 +2948,16 @@ msgid "operation materials"
 msgstr "материалы операции"
 
 #: input/models.py:734
-#, fuzzy
-#| msgid "Size of the resource"
 msgid "Required quantity of the resource"
-msgstr "Размер ресурса"
+msgstr "Требуемое количество ресурса"
 
 #: input/models.py:737
-#, fuzzy
-#| msgid "quantity"
 msgid "quantity fixed"
-msgstr "колич."
+msgstr "фикс.колич."
 
 #: input/models.py:739
 msgid "constant part of the capacity consumption (bucketized resources only)"
-msgstr ""
+msgstr "постоянная часть потребляемой мощности (только в виде ресурсов)"
 
 #: input/models.py:752
 msgid "Optional name of this load"
@@ -3051,14 +3075,12 @@ msgid "Shipping cost per unit"
 msgstr "Стоимость доставки на единицу"
 
 #: input/models.py:940 input/views.py:998
-#, fuzzy
-#| msgid "priority"
 msgid "push priority"
-msgstr "приоритет"
+msgstr "push-приоритет"
 
 #: input/models.py:941
 msgid "Priority for the push mode"
-msgstr ""
+msgstr "Приоритет для push-режима"
 
 #: input/models.py:954
 msgid "Resource to model the distribution capacity"
@@ -3233,10 +3255,8 @@ msgstr "получатель"
 #: output/templates/output/demand_forecast.html:189
 #: output/views/constraint.py:22 output/views/constraint.py:76
 #: output/views/demand.py:42
-#, fuzzy
-#| msgid "demands"
 msgid "demand"
-msgstr "спрос"
+msgstr "потребность"
 
 #: input/models.py:1170
 msgid "Due date of the demand/forecast"
@@ -3278,10 +3298,8 @@ msgid "period of cover"
 msgstr "период покрытия"
 
 #: input/models.py:1293
-#, fuzzy
-#| msgid "Batch size by in which material is produced or consumed"
 msgid "status of the material production or consumption"
-msgstr "Размер партии, при котором материал производится или потребляется"
+msgstr "состояние производства или потребления материала"
 
 #: input/models.py:1314
 msgid "operationplan material"
@@ -3293,7 +3311,7 @@ msgstr "материалы в плане операций"
 
 #: input/models.py:1323 input/views.py:2056
 msgid "shipping date"
-msgstr "Стоимость доставки на единицу"
+msgstr "Дата отгрузки"
 
 #: input/models.py:1324 input/models.py:1349 input/views.py:2057
 #: input/views.py:2348
@@ -3304,7 +3322,7 @@ msgstr "срок"
 #: input/models.py:1348 input/views.py:2347
 #| msgid "end date"
 msgid "ordering date"
-msgstr ""
+msgstr "дата заказа"
 
 #: input/templates/input/path.html:244
 msgid "Too many objects to display"
@@ -3347,17 +3365,17 @@ msgstr "изменить состояние на {status}"
 #: input/views.py:1674
 #, python-format
 msgid "work in progress in %(loc)s at %(date)s"
-msgstr ""
+msgstr "НЗП в %(loc)s на %(date)s"
 
 #: input/views.py:1685
 #, python-format
 msgid "produced in %(loc)s between %(date1)s and %(date2)s"
-msgstr ""
+msgstr "производится в %(loc)s между %(date1)s и %(date2)s"
 
 #: input/views.py:1696
 #, python-format
 msgid "consumed in %(loc)s between %(date1)s and %(date2)s"
-msgstr ""
+msgstr "потребляется в %(loc)s между %(date1)s и %(date2)s"
 
 #: input/views.py:1781 input/views.py:2052 input/views.py:2343
 #: inventoryplanning/templates/inventoryplanning/drp.html:1845
@@ -3396,26 +3414,26 @@ msgstr "дата завершения наладки"
 #: output/views/buffer.py:378 output/views/buffer.py:411
 #: output/views/resource.py:315
 msgid "feasible"
-msgstr ""
+msgstr "выполнимый"
 
 #: input/views.py:1877 input/views.py:2161 input/views.py:2444
 msgid "end items"
-msgstr "головная позиция"
+msgstr "изделие"
 
 #: input/views.py:1954
 #, python-format
 msgid "in transit in %(loc)s at %(date)s"
-msgstr ""
+msgstr "в пути в %(loc)s на %(date)s"
 
 #: input/views.py:1965
 #, python-format
 msgid "received in %(loc)s between %(date1)s and %(date2)s"
-msgstr ""
+msgstr "полученно в %(loc)s между %(date1)s и %(date2)s"
 
 #: input/views.py:1976
 #, python-format
 msgid "shipped to %(loc)s between %(date1)s and %(date2)s"
-msgstr ""
+msgstr "отправлено в %(loc)s между %(date1)s и %(date2)s"
 
 #: input/views.py:2064 input/views.py:2352
 msgid "total cost"
@@ -3424,16 +3442,16 @@ msgstr "стоимость"
 #: input/views.py:2265
 #, python-format
 msgid "on order in %(loc)s at %(date)s"
-msgstr ""
+msgstr "заказано в %(loc)s на %(date)s"
 
 #: input/views.py:2276
 #, python-format
 msgid "on order in %(loc)s between %(date1)s and %(date2)s"
-msgstr ""
+msgstr "заказано в %(loc)s между %(date1)s и %(date2)s"
 
 #: input/views.py:2517
 msgid "demand quantity"
-msgstr "количество спроса"
+msgstr "потребность"
 
 #: input/views.py:2520
 msgid "due date"
@@ -3442,7 +3460,7 @@ msgstr "срок"
 #: input/views.py:2667
 #, python-format
 msgid "delivered from %(loc)s between %(date1)s and %(date2)s"
-msgstr ""
+msgstr "доставлено из %(loc)s между %(date1)s и %(date2)s"
 
 #: inventoryplanning/admin.py:32 inventoryplanning/models.py:326
 #: inventoryplanning/templates/inventoryplanning/drp.html:702
@@ -3452,7 +3470,7 @@ msgstr ""
 #: inventoryplanning/templates/inventoryplanning/drp.html:2377
 #: inventoryplanning/views.py:257
 msgid "reorder quantity"
-msgstr "перезаказ ROQ"
+msgstr "кол. перезаказа ROQ"
 
 #: inventoryplanning/admin.py:38
 msgid "Safety stock quantity"
@@ -3553,7 +3571,7 @@ msgstr "страх. запас макс. пер. покрытия"
 #: inventoryplanning/models.py:250 inventoryplanning/views.py:143
 #: inventoryplanning/views.py:154
 msgid "Do not stock"
-msgstr "нет на складе"
+msgstr "без запаса"
 
 #: inventoryplanning/models.py:86 inventoryplanning/models.py:126
 msgid "Enforces a safety stock of 0 and a reorder quantity of 1"
@@ -3564,11 +3582,11 @@ msgstr "для страхового запаса установить 0, для 
 #: inventoryplanning/views.py:155
 #| msgid "search mode"
 msgid "Push mode"
-msgstr ""
+msgstr "Push-режим"
 
 #: inventoryplanning/models.py:90 inventoryplanning/models.py:130
 msgid "Activate stock push mode which moves all inventory downstream"
-msgstr ""
+msgstr "Активировать push-режим для расчета движения запасов"
 
 #: inventoryplanning/models.py:93 inventoryplanning/models.py:97
 #: inventoryplanning/models.py:101 inventoryplanning/models.py:104
@@ -3808,7 +3826,7 @@ msgstr "начальный запас"
 #: output/templates/output/buffer.html:149 output/views/buffer.py:88
 #| msgid "start inventory"
 msgid "start inventory days of cover"
-msgstr ""
+msgstr "начальный запас для покрытия в днях"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:708
 #: inventoryplanning/templates/inventoryplanning/drp.html:722
@@ -3866,12 +3884,12 @@ msgstr "без группировки"
 #: inventoryplanning/templates/inventoryplanning/drp.html:2058
 #: inventoryplanning/templates/inventoryplanning/drp.html:2065
 msgid "group by item"
-msgstr "группировка по товарам"
+msgstr "по товарам"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2059
 #: inventoryplanning/templates/inventoryplanning/drp.html:2066
 msgid "group by location"
-msgstr "группировка по местоположениям"
+msgstr "по местоположениям"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2108
 msgid "detail"
@@ -3900,7 +3918,7 @@ msgstr "экспорт данных в %(erp)s"
 #: inventoryplanning/templates/inventoryplanning/drp.html:2131
 #, python-format
 msgid "change status to %(status)s"
-msgstr "изменение состояния на %(status)s"
+msgstr "изменить состояние на %(status)s"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2141
 msgid "attributes"
@@ -4000,25 +4018,19 @@ msgstr "оптим. ROQ"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2428
 msgid "Stocking policy"
-msgstr ""
+msgstr "Политика хранения"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2433
-#, fuzzy
-#| msgid ""
-#| "<span data-toggle=\"tooltip\" data-placement=\"top\" data-html=\"true\" "
-#| "data-original-title=\"Generate a supply plan that respects all "
-#| "constraints.<br>In case of shortages the demand is planned late or short."
-#| "\">Constrained plan</span>"
 msgid ""
 "<span data-toggle=\"tooltip\" data-placement=\"left\" data-html=\"true\" "
 "data-original-title=\"Sets safety stock to 0 and reorder quantity to 1."
 "<br>This item-location will be planned with replenishments matching 1-to-1 "
 "with the demand.\" >Do not stock</span>"
 msgstr ""
-"<span data-toggle=\"tooltip\" data-placement=\"top\" data-html=\"true\" data-"
-"original-title=\"Сформировать план поставок, который отвечает всем "
-"ограничениям<br>В случае недостаточного количества спрос планируется с "
-"опозданием или частично.\">План с ограничениями</span>"
+"<span data-toggle=\"tooltip\" data-placement=\"left\" data-html=\"true\" "
+"data-original-title=\"Устанавливает страховой запас на 0 и количество заказа "
+"на 1<br>Это местоположение объекта будет спланировано с пополнениями, "
+"соответствующими 1-к-1 потребности.\">Без запаса</span>"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2443
 #: inventoryplanning/templates/inventoryplanning/drp.html:2462
@@ -4031,21 +4043,15 @@ msgid "false"
 msgstr "ложь"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2452
-#, fuzzy
-#| msgid ""
-#| "<span data-toggle=\"tooltip\" data-placement=\"top\" data-html=\"true\" "
-#| "data-original-title=\"Generate a supply plan that respects all "
-#| "constraints.<br>In case of shortages the demand is planned late or short."
-#| "\">Constrained plan</span>"
 msgid ""
 "<span data-toggle=\"tooltip\" data-placement=\"left\" data-html=\"true\" "
 "data-original-title=\"In push mode, any excess inventory will be distributed "
 "downstream to child locations.\">Activates push mode</span>"
 msgstr ""
-"<span data-toggle=\"tooltip\" data-placement=\"top\" data-html=\"true\" data-"
-"original-title=\"Сформировать план поставок, который отвечает всем "
-"ограничениям<br>В случае недостаточного количества спрос планируется с "
-"опозданием или частично.\">План с ограничениями</span>"
+"<span data-toggle=\"tooltip\" data-placement=\"left\" data-html=\"true\" "
+"data-original-title=\"В push-режиме, любой избыточный запас будет "
+"распределяться внути сети между дочерними местоположениями\">Активизировать "
+"push-режим</span>"
 
 #: inventoryplanning/views.py:76
 msgid "segments"
@@ -4197,46 +4203,46 @@ msgstr "нагрузка"
 #: output/templates/output/buffer.html:154 output/views/buffer.py:95
 #| msgid "produced"
 msgid "produced by MO"
-msgstr ""
+msgstr "произведено MO"
 
 #: output/templates/output/buffer.html:157 output/views/buffer.py:96
 #| msgid "produced"
 msgid "produced by DO"
-msgstr ""
+msgstr "распределено DO"
 
 #: output/templates/output/buffer.html:160 output/views/buffer.py:91
 #| msgid "consumed"
 msgid "consumed by MO"
-msgstr ""
+msgstr "потребляется MO"
 
 #: output/templates/output/buffer.html:163 output/views/buffer.py:93
 #| msgid "consumed"
 msgid "consumed by SO"
-msgstr ""
+msgstr "исполняется SO"
 
 #: output/templates/output/buffer.html:166 output/views/buffer.py:92
 #| msgid "consumed"
 msgid "consumed by DO"
-msgstr ""
+msgstr "распределяется DO"
 
 #: output/templates/output/buffer.html:174 output/views/buffer.py:99
 #| msgid "overall progress"
 msgid "total in progress"
-msgstr ""
+msgstr "всего в процессе"
 
 #: output/templates/output/buffer.html:177 output/views/buffer.py:100
 #| msgid "overall progress"
 msgid "work in progress MO"
-msgstr ""
+msgstr "незавершенные  MO"
 
 #: output/templates/output/buffer.html:180 output/views/buffer.py:101
 #| msgid "open orders"
 msgid "on order PO"
-msgstr ""
+msgstr "заказано PO"
 
 #: output/templates/output/buffer.html:183 output/views/buffer.py:102
 msgid "in transit DO"
-msgstr ""
+msgstr "в пути DO"
 
 #: output/templates/output/demand.html:141
 #: output/templates/output/demand.html:195
@@ -4271,40 +4277,40 @@ msgstr "общее получение"
 #: output/views/operation.py:666
 #| msgid "proposed transfers"
 msgid "proposed in transit"
-msgstr ""
+msgstr "предлагается отправить"
 
 #: output/templates/output/distribution_order_summary.html:224
 #: output/views/operation.py:667
 #| msgid "total forecast"
 msgid "total in transit"
-msgstr ""
+msgstr "всего в пути"
 
 #: output/templates/output/operation.html:281
 #: output/templates/output/operation.html:331 output/views/operation.py:152
 msgid "proposed starts"
-msgstr "запуск"
+msgstr "предлагаемый запуск"
 
 #: output/templates/output/operation.html:283 output/views/operation.py:153
 msgid "total starts"
-msgstr "всего запущено"
+msgstr "общий запуск"
 
 #: output/templates/output/operation.html:285
 #: output/templates/output/operation.html:333 output/views/operation.py:154
 msgid "proposed ends"
-msgstr "выпуск"
+msgstr "предлагаемый выпуск"
 
 #: output/templates/output/operation.html:287 output/views/operation.py:155
 msgid "total ends"
-msgstr "всего выпущено"
+msgstr "общий выпуск"
 
 #: output/templates/output/operation.html:289
 #: output/templates/output/operation.html:335 output/views/operation.py:156
 msgid "proposed production"
-msgstr "предложено изготовить"
+msgstr "предагается в производство"
 
 #: output/templates/output/operation.html:291 output/views/operation.py:157
 msgid "total production"
-msgstr "всего изготовлено"
+msgstr "всего в производство"
 
 #: output/templates/output/operation.html:330
 msgid "approved and confirmed starts"
@@ -4316,7 +4322,7 @@ msgstr "утвержденные и подтвержденные выпуски"
 
 #: output/templates/output/operation.html:334
 msgid "approved and confirmed production"
-msgstr "утверждено и подтверждено изготовить"
+msgstr "утверждено и подтверждено в производство"
 
 #: output/templates/output/pegging.html:114
 msgid "zoom in"
@@ -4355,13 +4361,13 @@ msgstr "общий заказ"
 #: output/views/operation.py:437
 #| msgid "proposed ordering"
 msgid "proposed on order"
-msgstr ""
+msgstr "предлагается заказать"
 
 #: output/templates/output/purchase_order_summary.html:224
 #: output/views/operation.py:438
 #| msgid "total orders"
 msgid "total on order"
-msgstr ""
+msgstr "всегов заказе"
 
 #: output/templates/output/resource.html:269 output/views/constraint.py:29
 msgid "overload"
@@ -4374,17 +4380,17 @@ msgstr "План запасов"
 #: output/views/buffer.py:90
 #| msgid "total cost"
 msgid "total consumed"
-msgstr ""
+msgstr "всего потреблено"
 
 #: output/views/buffer.py:94
 #| msgid "total production"
 msgid "total produced"
-msgstr ""
+msgstr "всего выпущено"
 
 #: output/views/buffer.py:97
 #| msgid "produced"
 msgid "produced by PO"
-msgstr ""
+msgstr "закуплено PO"
 
 #: output/views/buffer.py:304
 msgid "Inventory detail report"
@@ -4503,10 +4509,8 @@ msgid "utilization %"
 msgstr "использование %"
 
 #: output/views/resource.py:56
-#, fuzzy
-#| msgid "available"
 msgid "available calendar"
-msgstr "доступно"
+msgstr "доступный календарь"
 
 #: output/views/resource.py:102
 msgid "hours"
@@ -4517,10 +4521,8 @@ msgid "Resource detail report"
 msgstr "План ресурсов"
 
 #: output/views/resource.py:304
-#, fuzzy
-#| msgid "setup duration"
 msgid "net duration"
-msgstr "длит.наладки"
+msgstr "нетто-длит."
 
 #: output/views/resource.py:311
 msgid "load quantity"
@@ -4580,7 +4582,7 @@ msgstr "Отображение заказов на поставку по дат�
 
 #: output/widget.py:1008
 msgid "purchase queue"
-msgstr "очередь на закупку"
+msgstr "очередь закупок"
 
 #: output/widget.py:1009
 msgid "Display a list of new purchase orders"

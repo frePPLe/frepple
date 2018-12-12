@@ -100,7 +100,7 @@ def Upload(request):
             '<operationplan ordertype="PO" id="%s" item=%s location=%s supplier=%s start="%s" end="%s" quantity="%s" location_id=%s item_id=%s criticality="%d"/>' % (
             po.id, quoteattr(po.item.name), quoteattr(po.location.name), 
             quoteattr(po.supplier.name), po.startdate, po.enddate, po.quantity,
-            quoteattr(po.location.subcategory), quoteattr(po.item.subcategory),
+            quoteattr(po.location.subcategory or ""), quoteattr(po.item.subcategory or ""),
             int(po.criticality)
             ))
         elif rec['type'] == 'DO':
@@ -113,7 +113,7 @@ def Upload(request):
             '<operationplan ordertype="DO" id="%s" item=%s origin=%s location=%s start="%s" end="%s" quantity="%s" location_id=%s item_id=%s criticality="%d"/>' % (
             do.id, quoteattr(do.item.name), quoteattr(do.origin.name), 
             quoteattr(do.location.name), do.startdate, do.enddate, do.quantity,
-            quoteattr(do.location.subcategory), quoteattr(do.item.subcategory),
+            quoteattr(do.location.subcategory or ""), quoteattr(do.item.subcategory or ""),
             int(do.criticality)
             ))
         else:
@@ -127,7 +127,7 @@ def Upload(request):
               op.id, quoteattr(op.operation.item.name),
               quoteattr(op.operation.location.name), quoteattr(op.operation.name),
               op.startdate, op.enddate, op.quantity,
-              quoteattr(op.operation.location.subcategory), quoteattr(op.operation.item.subcategory),
+              quoteattr(op.operation.location.subcategory or ""), quoteattr(op.operation.item.subcategory or ""),
               int(op.criticality)
             ))
       except:

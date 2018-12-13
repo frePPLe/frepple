@@ -118,7 +118,7 @@ def Upload(request):
             ))
         else:
           op = OperationPlan.objects.using(request.database).get(id=rec['id'])
-          if not op.operation.source or op.status != 'proposed':
+          if not op.operation.source or op.status != 'proposed' or not op.operation.item:
             continue
           data_ok = True
           obj.append(op)

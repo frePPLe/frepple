@@ -218,27 +218,35 @@ OperationItemDistribution::OperationItemDistribution(
   ItemDistribution* i, Buffer *src, Buffer* dest
   ) : itemdist(i)
 {
-  if (!i || !src || !dest)
+  if (!i)
     throw LogicException(
-      "An OperationItemDistribution always needs to point to "
-      "a ItemDistribution, a source buffer and a destination buffer"
+      "An OperationItemDistribution always needs to point to an ItemDistribution"
+      );
+  if (!dest && !src)
+    throw LogicException(
+      "An OperationItemDistribution always needs to point to a destination and/or a source buffer"
       );
   stringstream o;
-  o << "Ship " << dest->getItem()->getName() 
-    << " from " << src->getLocation()->getName()
-    << " to " << dest->getLocation()->getName();
+  auto item = dest ? dest->getItem() : src->getItem();
+  o << "Ship " << item->getName();
+  if (src && src->getLocation())
+    o << " from " << src->getLocation()->getName();
+  if (dest && dest->getLocation())
+    o << " to " << dest->getLocation()->getName();
   setName(o.str());
   setDuration(i->getLeadTime());
   setSizeMultiple(i->getSizeMultiple());
   setSizeMinimum(i->getSizeMinimum());
   setSizeMaximum(i->getSizeMaximum());
-  setLocation(dest->getLocation());
+  setLocation(dest ? dest->getLocation() : src->getLocation());
   setSource(i->getSource());
   setCost(i->getCost());
   setFence(i->getFence());
   setHidden(true);
-  new FlowEnd(this, dest, 1);
-  new FlowStart(this, src, -1);
+  if (dest)
+    new FlowEnd(this, dest, 1);
+  if (src)
+    new FlowStart(this, src, -1);
   initType(metadata);
 
   // Optionally, create a load
@@ -282,7 +290,7 @@ Buffer* OperationItemDistribution::getOrigin() const
   for (flowlist::const_iterator i = getFlows().begin(); i != getFlows().end(); ++i)
     if (i->getQuantity() < 0.0)
       return i->getBuffer();
-  throw LogicException("Transfer operation doesn't consume material");
+  return nullptr;
 }
 
 
@@ -291,7 +299,7 @@ Buffer* OperationItemDistribution::getDestination() const
   for (flowlist::const_iterator i = getFlows().begin(); i != getFlows().end(); ++i)
     if (i->getQuantity() > 0.0)
       return i->getBuffer();
-  throw LogicException("Transfer operation doesn't produce material");
+  return nullptr;
 }
 
 
@@ -307,7 +315,7 @@ Object* ItemDistribution::finder(const DataValueDict& d)
   tmp = d.get(Tags::origin);
   if (!tmp)
     return nullptr;
-  Location* origin = static_cast<Location*>(tmp->getObject());
+  Location* origin = tmp ? static_cast<Location*>(tmp->getObject()) : nullptr;
 
   // Check destination field
   tmp = d.get(Tags::destination);

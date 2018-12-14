@@ -203,13 +203,11 @@ Object* OperationPlan::createOperationPlan(
     else
     {
       val = in.get(Tags::origin);
-      if (!val && action == ADD)
-        throw DataException("Missing origin field");
       if (val)
       {
         orival = val->getObject();
         if (orival && orival->getType().category != Location::metadata)
-          throw DataException("Origin field on operationplan must be of type location");
+          throw DataException("Origin field on a distribution order must be of type location");
       }
       val = in.get(Tags::item);
       if (!val && action == ADD)
@@ -218,7 +216,7 @@ Object* OperationPlan::createOperationPlan(
       {
         itemval = val->getObject();
         if (itemval && itemval->getType().category != Item::metadata)
-          throw DataException("Item field on operationplan must be of type item");
+          throw DataException("Item field on distribution order must be of type item");
       }
       val = in.get(Tags::location);
       if (!val && action == ADD)
@@ -227,7 +225,7 @@ Object* OperationPlan::createOperationPlan(
       {
         locval = val->getObject();
         if (locval && locval->getType().category != Location::metadata)
-          throw DataException("Location field on operationplan must be of type location");
+          throw DataException("Location field on distribution order must be of type location");
       }
     }
   }
@@ -462,13 +460,6 @@ Object* OperationPlan::createOperationPlan(
     // Set operationplan fields
     if (id)
       opplan->setRawIdentifier(id);  // We can use this fast method because we call activate later
-    if (statusfld)
-      opplan->setStatus(statusfld->getString());
-    // Reset quantity after the status update to assure that
-    // also non-valid quantities are getting accepted.
-    opplan->setQuantity(quantity);
-    if (!opplan->activate(create))
-      throw DataException("Can't create operationplan");
   }
   else if (ordtype == "DO")
   {
@@ -481,84 +472,101 @@ Object* OperationPlan::createOperationPlan(
     }
     if (!itemval)
       throw DataException("Missing item field");
-    if (!locval)
-      throw DataException("Missing location field");
+    if (!locval && !orival)
+      throw DataException("Missing both origin and location field");
     Buffer* destbuffer = nullptr;
-    Item::bufferIterator buf_iter(static_cast<Item*>(itemval));
-    while (Buffer* tmpbuf = buf_iter.next())
+    if (locval)
     {
-      if (tmpbuf->getLocation() == static_cast<Location*>(locval))
+      // Use the destination location
+      Item::bufferIterator buf_iter(static_cast<Item*>(itemval));
+      while (Buffer* tmpbuf = buf_iter.next())
       {
-        if (destbuffer)
+        if (tmpbuf->getLocation() == static_cast<Location*>(locval))
         {
-          stringstream o;
-          o << "Multiple buffers found for item '" << static_cast<Item*>(itemval) << "' and location '" << static_cast<Location*>(locval) << "'";
-          throw DataException(o.str());
+          if (destbuffer)
+          {
+            stringstream o;
+            o << "Multiple buffers found for item '" << static_cast<Item*>(itemval) 
+              << "' and location '" << static_cast<Location*>(locval) << "'";
+            throw DataException(o.str());
+          }
+          destbuffer = tmpbuf;
         }
-        destbuffer = tmpbuf;
+      }
+      if (!destbuffer)
+        // Create the destination buffer
+        destbuffer = Buffer::findOrCreate(static_cast<Item*>(itemval), static_cast<Location*>(locval));
+
+      // Build the producing operation for this buffer.
+      destbuffer->getProducingOperation();
+
+      // Look for a matching operation replenishing this buffer.
+      for (Buffer::flowlist::const_iterator flowiter = destbuffer->getFlows().begin();
+        flowiter != destbuffer->getFlows().end() && !oper; ++flowiter)
+      {
+        if (flowiter->getOperation()->getType() != *OperationItemDistribution::metadata
+          || flowiter->getQuantity() <= 0)
+          continue;
+        OperationItemDistribution* opitemdist = static_cast<OperationItemDistribution*>(flowiter->getOperation());
+        // Origin must match as well
+        if (orival)
+        {
+          for (Operation::flowlist::const_iterator fl = opitemdist->getFlows().begin();
+            fl != opitemdist->getFlows().end(); ++fl)
+          {
+            if (fl->getQuantity() < 0 && fl->getBuffer()->getLocation()->isMemberOf(static_cast<Location*>(orival)))
+              oper = opitemdist;
+          }
+        }
+        else if (!opitemdist->getOrigin())
+          oper = opitemdist;
       }
     }
-    if (!destbuffer)
-      // Create the destination buffer
-      destbuffer = Buffer::findOrCreate(static_cast<Item*>(itemval), static_cast<Location*>(locval));
-
-    // Build the producing operation for this buffer.
-    destbuffer->getProducingOperation();
-
-    // Look for a matching operation replenishing this buffer.
-    for (Buffer::flowlist::const_iterator flowiter = destbuffer->getFlows().begin();
-      flowiter != destbuffer->getFlows().end() && !oper; ++flowiter)
+    else
     {
-      if (flowiter->getOperation()->getType() != *OperationItemDistribution::metadata
-        || flowiter->getQuantity() <= 0)
-        continue;
-      OperationItemDistribution* opitemdist = static_cast<OperationItemDistribution*>(flowiter->getOperation());
-      if (orival)
-      {
-        // Origin must match as well
-        for (Operation::flowlist::const_iterator fl = opitemdist->getFlows().begin();
-          fl != opitemdist->getFlows().end(); ++fl)
-        {
-          if (fl->getQuantity() < 0 && fl->getBuffer()->getLocation()->isMemberOf(static_cast<Location*>(orival)))
-            oper = opitemdist;
-        }
-      }
-      else
-        oper = opitemdist;
+      // Use only the source location to find an operation
+      stringstream o;
+      o << "Ship " << static_cast<Item*>(itemval)->getName()
+        << " from " << static_cast<Location*>(orival)->getName();
+      oper = Operation::find(o.str());
     }
 
     // No matching operation is found.
     if (!oper)
     {
-      // We'll create one now, but that requires that we have an origin defined.
-      if (!orival)
-        throw DataException("Origin location is needed on this distribution order");
+      // We'll create one now if an origin is defined
       Buffer* originbuffer = nullptr;
-      Item::bufferIterator bufiter = static_cast<Item*>(itemval)->getBufferIterator();
-      while (Buffer* tmpbuf = bufiter.next())
+      if (orival)
       {
-        if (tmpbuf->getLocation() == static_cast<Location*>(orival))
+        Item::bufferIterator bufiter = static_cast<Item*>(itemval)->getBufferIterator();
+        while (Buffer* tmpbuf = bufiter.next())
         {
-          if (originbuffer)
+          if (tmpbuf->getLocation() == static_cast<Location*>(orival))
           {
-            stringstream o;
-            o << "Multiple buffers found for item '" << static_cast<Item*>(itemval) << "' and location '" << static_cast<Location*>(orival) << "'";
-            throw DataException(o.str());
+            if (originbuffer)
+            {
+              stringstream o;
+              o << "Multiple buffers found for item '" << static_cast<Item*>(itemval) 
+                << "' and location '" << static_cast<Location*>(orival) << "'";
+              throw DataException(o.str());
+            }
+            originbuffer = tmpbuf;
           }
-          originbuffer = tmpbuf;
         }
+        if (!originbuffer)
+          // Create the origin buffer
+          originbuffer = Buffer::findOrCreate(static_cast<Item*>(itemval), static_cast<Location*>(orival));
       }
-      if (!originbuffer)
-        // Create the origin buffer
-        originbuffer = Buffer::findOrCreate(static_cast<Item*>(itemval), static_cast<Location*>(orival));
 
       // Create itemdistribution when not provided
       if (!itemdistributionval)
       {
         itemdistributionval = new ItemDistribution();
-        static_cast<ItemDistribution*>(itemdistributionval)->setOrigin(static_cast<Location*>(orival));
+        if (orival)
+          static_cast<ItemDistribution*>(itemdistributionval)->setOrigin(static_cast<Location*>(orival));
         static_cast<ItemDistribution*>(itemdistributionval)->setItem(static_cast<Item*>(itemval));
-        static_cast<ItemDistribution*>(itemdistributionval)->setDestination(static_cast<Location*>(locval));
+        if (locval)
+          static_cast<ItemDistribution*>(itemdistributionval)->setDestination(static_cast<Location*>(locval));
         static_cast<ItemDistribution*>(itemdistributionval)->setPriority(0);
       }
 
@@ -579,7 +587,10 @@ Object* OperationPlan::createOperationPlan(
           );
 
       // Create operation plan
-      opplan = static_cast<Operation*>(oper)->createOperationPlan(quantity, start, end, nullptr, nullptr, 0, false);
+      opplan = static_cast<Operation*>(oper)->createOperationPlan(
+        quantity, start, end, nullptr, nullptr, 0, false
+        );
+
       // Make sure no problem is reported when item distribution priority is 0 (Rebalancing)
       // Checking that no item distribution in reverse mode exists
       bool found = false;
@@ -594,7 +605,7 @@ Object* OperationPlan::createOperationPlan(
         }
       }
       if (!found)
-        new ProblemInvalidData(opplan, "Distribution orders on unauthorized lanes", "operationplan",
+        new ProblemInvalidData(opplan, "Distribution order on unknown item distribution", "operationplan",
           start, end, quantity);
     }
     else
@@ -604,13 +615,6 @@ Object* OperationPlan::createOperationPlan(
     // Set operationplan fields
     if (id)
       opplan->setRawIdentifier(id);  // We can use this fast method because we call activate later
-    if (statusfld)
-      opplan->setStatus(statusfld->getString());
-    // Reset quantity after the status update to assure that
-    // also non-valid quantities are getting accepted.
-    opplan->setQuantity(quantity);
-    if (!opplan->activate(create))
-      throw DataException("Can't create operationplan");
   }
   else if (ordtype == "DLVR")
   {
@@ -653,13 +657,6 @@ Object* OperationPlan::createOperationPlan(
     // Set operationplan fields
     if (id)
       opplan->setRawIdentifier(id);  // We can use this fast method because we call activate later
-    if (statusfld)
-      opplan->setStatus(statusfld->getString());
-    // Reset quantity after the status update to assure that
-    // also non-valid quantities are getting accepted.
-    opplan->setQuantity(quantity);
-    if (!opplan->activate(create))
-      throw DataException("Can't activate operationplan");
   }
   else
   {
@@ -676,27 +673,28 @@ Object* OperationPlan::createOperationPlan(
       delete opplan;
       throw DataException("Can't create operationplan");
     }
-
-    // Special case: if the operation plan is locked, we need to
-    // process the start and end date before locking it.
-    // Subsequent calls won't affect the operationplan any longer.
-    if (statusfld && statusfld->getString() != "proposed")
-    {
-      string status = statusfld->getString();
-      opplan->setStatus(status);
-      opplan->freezeStatus(
-        start ? start : opplan->getStart(), 
-        end ? end : opplan->getEnd(),
-        quantity
-        );
-    }
-    if (!opplan->activate(create, start))
-      throw DataException("Can't create operationplan");
-
-    // Report the operationplan creation to the manager
-    if (mgr)
-        mgr->add(new CommandCreateObject(opplan));
   }
+
+  // Special case: if the operation plan is locked, we need to
+  // process the start and end date before locking it.
+  // Subsequent calls won't affect the operationplan any longer.
+  if (statusfld && statusfld->getString() != "proposed")
+  {
+    string status = statusfld->getString();
+    opplan->setStatus(status);
+    opplan->freezeStatus(
+      start ? start : opplan->getStart(), 
+      end ? end : opplan->getEnd(),
+      quantity
+      );
+  }
+  if (!opplan->activate(create, start))
+    throw DataException("Can't create operationplan");
+
+  // Report the operationplan creation to the manager
+  if (mgr)
+      mgr->add(new CommandCreateObject(opplan));
+
   return opplan;
 }
 

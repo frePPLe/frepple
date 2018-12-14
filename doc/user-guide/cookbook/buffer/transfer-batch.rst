@@ -26,7 +26,7 @@ The model contains 2 examples. The rows in the above screenshot show for each ex
 
 | The first example models a case where subassemblies are produced in batches of
   100 pieces. The assembly operation consumes these in batches of 100 pieces.    
-| Notice how both operations run at the same time, and how material is transfered
+| Notice how both operations run at the same time, and how material is transferred
   between both operations in a just-in-time manner.
 
 | The second example is more complex. The production rate of the subassembly and assembly

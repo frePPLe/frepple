@@ -540,6 +540,7 @@ void Problem::List::clear(Problem *c)
     Problem *del = cur;
     cur = cur->nextProblem;
     del->owner = nullptr;
+    Py_DECREF(del);
     delete del;
   }
 

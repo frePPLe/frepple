@@ -168,7 +168,7 @@ class Command(BaseCommand):
           </td>
           <td style="padding: 15px;">
            <p>
-            {% blocktrans %}Download all input data in a single spreadsheet.<br>Optionally, you can make the data anonymous during the export to hide sensitive company data{% endblocktrans %}
+            {% blocktrans %}Download all input data in a single spreadsheet.<br>Optionally, you can make the data anonymous during the export to hide sensitive company data.{% endblocktrans %}
             &nbsp;<input style="margin: 0; display:inline-block; vertical-align: middle" type="checkbox" name="anonymous" value="0"></strong>
             <br>
            </p>
@@ -212,5 +212,5 @@ class Command(BaseCommand):
     translated = (
       _("export"), _("Download all input data in a single spreadsheet."),
       _("data tables"), _("admin tables"),
-      _("Download all input data in a single spreadsheet.<br>Optionally, you can make the data anonymous during the export to hide sensitive company data")
+      _("Download all input data in a single spreadsheet.<br>Optionally, you can make the data anonymous during the export to hide sensitive company data.")
       )

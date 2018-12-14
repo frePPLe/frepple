@@ -231,6 +231,7 @@ OperationItemDistribution::OperationItemDistribution(
   setDuration(i->getLeadTime());
   setSizeMultiple(i->getSizeMultiple());
   setSizeMinimum(i->getSizeMinimum());
+  setSizeMaximum(i->getSizeMaximum());
   setLocation(dest->getLocation());
   setSource(i->getSource());
   setCost(i->getCost());

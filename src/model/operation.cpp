@@ -240,11 +240,11 @@ DateRange Operation::calculateOperationTime(
     *actualduration = duration;
 
   // Step 1: Create an iterator over all involved calendars
-  vector<Calendar::EventIterator> cals;
-  collectCalendars(cals, thedate, opplan, forward);
+  Calendar::EventIterator cals[10];
+  auto numCalendars = collectCalendars(cals, thedate, opplan, forward);
 
   // Special case: no calendars at all
-  if (cals.empty())
+  if (!numCalendars)
     return forward ?
       DateRange(thedate, thedate+duration) :
       DateRange(thedate-duration, thedate);
@@ -256,27 +256,35 @@ DateRange Operation::calculateOperationTime(
   bool status = false;
   Duration curduration = duration;
   while (true)
-  {
-    // Check whether all calendars are available
-    bool available = true;
+  {    
+    // Find the closest event date
     Date selected = forward ? Date::infiniteFuture : Date::infinitePast;
-    for (auto t = cals.begin(); t != cals.end(); ++t)
+    for (unsigned short t = 0; t < numCalendars; ++t)
     {
       if (
-        (forward && t->getDate() < selected)
-        || (!forward && t->getDate() > selected)
+        (forward && cals[t].getDate() < selected)
+        || (!forward && cals[t].getDate() > selected)
         )
-      {
-        selected = t->getDate();
-        if (forward && available && t->getValue() == 0)
+        selected = cals[t].getDate();
+    }
+
+    // Check whether all calendars are available at the next event date
+    bool available = true;
+    if (forward)
+    {
+      for (unsigned short t = 0; t < numCalendars && available; ++t)
+      {     
+        if (cals[t].getDate() == selected && cals[t].getValue() == 0)
+          available = false;
+        else if (cals[t].getDate() != selected && cals[t].getPrevValue() == 0)
           available = false;
       }
     }
-    if (!forward)
+    else
     {
-      for (auto t = cals.begin(); t != cals.end(); ++t)
+      for (unsigned short t = 0; t < numCalendars && available; ++t)
       {
-        if (available && t->getCalendar()->getValue(selected, forward) == 0)
+        if (cals[t].getCalendar()->getValue(selected, forward) == 0)
           available = false;
       }
     }
@@ -292,8 +300,8 @@ DateRange Operation::calculateOperationTime(
       else if (!available)
       {
         available = true;
-        for (auto t = cals.begin(); t != cals.end() && available; ++t)
-          available = (t->getCalendar()->getValue(selected, !forward) != 0);
+        for (unsigned short t = 0; t < numCalendars && available; ++t)
+          available = (cals[t].getCalendar()->getValue(selected, !forward) != 0);
         if (available)
         {
           result.setEnd(curdate);
@@ -379,36 +387,36 @@ DateRange Operation::calculateOperationTime(
     // Advance to the next event
     if (forward)
     {
-      for (auto t = cals.begin(); t != cals.end(); ++t)
-        if (t->getDate() == selected)
-          ++(*t);
+      for (unsigned short t = 0; t < numCalendars; ++t)
+        if (cals[t].getDate() == selected)
+          ++cals[t];
     }
     else
     {
-      for (auto t = cals.begin(); t != cals.end(); ++t)
-        if (t->getDate() == selected)
-          --(*t);
+      for (unsigned short t = 0; t < numCalendars; ++t)
+        if (cals[t].getDate() == selected)
+          --cals[t];
     }
   }
-
   return result;
 }
 
 
-void Operation::collectCalendars(
-  vector<Calendar::EventIterator>& cals, Date start, const OperationPlan* opplan, bool forward
+unsigned short Operation::collectCalendars(
+  Calendar::EventIterator cals[], Date start, const OperationPlan* opplan, bool forward
 ) const
 {
+  unsigned short calcount = 0;
   // a) operation
   if (available)
-    cals.push_back(Calendar::EventIterator(available, start, forward));
+    cals[calcount++] = Calendar::EventIterator(available, start, forward);
   // b) operation location
   if (loc && loc->getAvailable() && getAvailable() != loc->getAvailable())
-    cals.push_back(Calendar::EventIterator(loc->getAvailable(), start, forward));
+    cals[calcount++] = Calendar::EventIterator(loc->getAvailable(), start, forward);
 
   if (opplan && opplan->getLoadPlans() != opplan->endLoadPlans())
   {
-    // Iterate over loads
+    // Iterate over loadplans
     for (auto g = opplan->getLoadPlans(); g != opplan->endLoadPlans(); ++g)
     {
       Resource* res = g->getResource();
@@ -416,31 +424,39 @@ void Operation::collectCalendars(
       {
         // c) resource
         bool exists = false;
-        for (auto t = cals.begin(); t != cals.end(); ++t)
+        for (unsigned short t = 0; t < calcount; ++t)
         {
-          if (t->getCalendar() == res->getAvailable())
+          if (cals[t].getCalendar() == res->getAvailable())
           {
             exists = true;
             break;
           }
         }
         if (!exists)
-          cals.push_back(Calendar::EventIterator(res->getAvailable(), start, forward));
+        {
+          cals[calcount++] = Calendar::EventIterator(res->getAvailable(), start, forward);
+          if (calcount > 9)
+            throw DataException("Excessive number of calendars on operation '" + getName() + "'");
+        }
       }
       if (res->getLocation() && res->getLocation()->getAvailable())
       {
         bool exists = false;
-        for (auto t = cals.begin(); t != cals.end(); ++t)
+        for (unsigned short t = 0; t < calcount; ++t)
         {
           // d) resource location
-          if (t->getCalendar() == res->getLocation()->getAvailable())
+          if (cals[t].getCalendar() == res->getLocation()->getAvailable())
           {
             exists = true;
             break;
           }
         }
         if (!exists)
-          cals.push_back(Calendar::EventIterator(res->getLocation()->getAvailable(), start, forward));
+        {
+          cals[calcount++] = Calendar::EventIterator(res->getLocation()->getAvailable(), start, forward);
+          if (calcount > 9)
+            throw DataException("Excessive number of calendars on operation '" + getName() + "'");
+        }
       }
     }
   }
@@ -454,34 +470,43 @@ void Operation::collectCalendars(
       {
         // c) resource
         bool exists = false;
-        for (auto t = cals.begin(); t != cals.end(); ++t)
+        for (unsigned short t = 0; t < calcount; ++t)
         {
-          if (t->getCalendar() == res->getAvailable())
+          if (cals[t].getCalendar() == res->getAvailable())
           {
             exists = true;
             break;
           }
         }
         if (!exists)
-          cals.push_back(Calendar::EventIterator(res->getAvailable(), start, forward));
+        {
+          cals[calcount++] = Calendar::EventIterator(res->getAvailable(), start, forward);
+          if (calcount > 9)
+            throw DataException("Excessive number of calendars on operation '" + getName() + "'");
+        }
       }
       if (res->getLocation() && res->getLocation()->getAvailable())
       {
         bool exists = false;
-        for (auto t = cals.begin(); t != cals.end(); ++t)
+        for (unsigned short t = 0; t < calcount; ++t)
         {
           // d) resource location
-          if (t->getCalendar() == res->getLocation()->getAvailable())
+          if (cals[t].getCalendar() == res->getLocation()->getAvailable())
           {
             exists = true;
             break;
           }
         }
         if (!exists)
-          cals.push_back(Calendar::EventIterator(res->getLocation()->getAvailable(), start, forward));
+        {
+          cals[calcount++] = Calendar::EventIterator(res->getLocation()->getAvailable(), start, forward);
+          if (calcount > 9)
+            throw DataException("Excessive number of calendars on operation '" + getName() + "'");
+        }
       }
     }
   }
+  return calcount;
 }
 
 
@@ -502,11 +527,11 @@ DateRange Operation::calculateOperationTime(
     *actualduration = 0L;
 
   // Step 1: Create an iterator over all involved calendars
-  vector<Calendar::EventIterator> cals;
-  collectCalendars(cals, start, opplan);
+  Calendar::EventIterator cals[10];
+  auto numCalendars = collectCalendars(cals, start, opplan);
 
   // Special case: no calendars at all
-  if (!cals.size())
+  if (!numCalendars)
   {
     if (actualduration)
       *actualduration = end - start;
@@ -520,18 +545,24 @@ DateRange Operation::calculateOperationTime(
   bool status = false;
   while (true)
   {
-    // Check whether all calendars are available
-    bool available = true;
+    // Find the closest event date
     Date selected = Date::infiniteFuture;
-    for (auto t = cals.begin(); t != cals.end(); ++t)
+    for (unsigned short t = 0; t < numCalendars; ++t)
     {
-      if (t->getDate() < selected)
-        selected = t->getDate();
+      if (cals[t].getDate() < selected)
+        selected = cals[t].getDate();
     }
     curdate = selected;
-    for (auto t = cals.begin(); t != cals.end() && available; ++t)
-      // TODO next line does a pretty expensive lookup in the calendar, which we might be available to avoid
-      available = (t->getCalendar()->getValue(selected) != 0);
+
+    // Check whether all calendars are available at the next event date
+    bool available = true;
+    for (unsigned short t = 0; t < numCalendars && available; ++t)
+    {
+      if (cals[t].getDate() == selected && cals[t].getValue() == 0)
+        available = false;
+      else if (cals[t].getDate() != selected && cals[t].getPrevValue() == 0)
+        available = false;
+    }
     
     if (available && !status)
     {
@@ -580,9 +611,9 @@ DateRange Operation::calculateOperationTime(
     }
 
     // Advance to the next event
-    for (auto t = cals.begin(); t != cals.end(); ++t)
-      if (t->getDate() == selected)
-        ++(*t);
+    for (unsigned short t = 0; t < numCalendars; ++t)
+      if (cals[t].getDate() == selected)
+        ++cals[t];
   }
   return result;
 }
@@ -675,12 +706,12 @@ void Operation::initOperationPlan (
   if (ow)
     opplan->setOwner(ow, true);
 
-  // Setting the dates and quantity
-  setOperationPlanParameters(opplan, q, s, e, true, true, roundDown);
-
   // Create the loadplans and flowplans, if allowed
   if (makeflowsloads)
     opplan->createFlowLoads();
+
+  // Setting the dates and quantity
+  setOperationPlanParameters(opplan, q, s, e, true, true, roundDown);
 
   // Update flow and loadplans, and mark for problem detection
   opplan->update();
@@ -744,7 +775,9 @@ OperationPlanState OperationFixedTime::setOperationPlanParameters(
   Date d = s;
 
   bool repeat;
-  Duration production_wanted_duration = double(duration) / efficiency;
+  Duration production_wanted_duration = efficiency > 0.0
+    ? Duration(double(duration) / efficiency)
+    : Duration::MAX;
   Duration setup_wanted_duration;
   do
   {
@@ -754,7 +787,7 @@ OperationPlanState OperationFixedTime::setOperationPlanParameters(
     setuptime_required = calculateSetup(opplan, d, opplan->getSetupEvent());
     if (get<0>(setuptime_required))
     {
-      if (get<1>(setuptime_required))
+      if (get<1>(setuptime_required) && efficiency > 0.0)
       {
         // Apply a setup matrix rule
         setup_wanted_duration = double(get<1>(setuptime_required)->getDuration()) / efficiency;
@@ -768,8 +801,8 @@ OperationPlanState OperationFixedTime::setOperationPlanParameters(
       else
       {
         // Dummy changeover
-        setup_dates = DateRange(d, d);
         production_dates = calculateOperationTime(opplan, d, production_wanted_duration, true, &production_duration);
+        setup_dates = DateRange(production_dates.getStart(), production_dates.getStart());
       }
     }
     else
@@ -1044,7 +1077,7 @@ OperationTimePer::setOperationPlanParameters(
     // Case 1: Both the start and end date are specified: Compute the quantity.
     // Calculate the available time between those dates
     setuptime_required = calculateSetup(opplan, s);
-    if (get<1>(setuptime_required))
+    if (get<1>(setuptime_required) && efficiency > 0.0)
     {
       setup_wanted_duration = double(get<1>(setuptime_required)->getDuration()) / efficiency;
       setup_dates = calculateOperationTime(opplan, s, setup_wanted_duration, true, &setup_duration);
@@ -1069,7 +1102,7 @@ OperationTimePer::setOperationPlanParameters(
       setup_dates = DateRange(production_dates.getStart(), production_dates.getStart());
     }
 
-    if (production_duration < Duration(double(duration) / efficiency))
+    if (efficiency <= 0 || production_duration < Duration(double(duration) / efficiency))
     {
       // Start and end aren't far enough from each other to fit the constant
       // part of the operation duration and/or the setup time.
@@ -1150,7 +1183,10 @@ OperationTimePer::setOperationPlanParameters(
     // existing end date of the operationplan.
     q = opplan->setQuantity(q, roundDown, false, execute);
     // Round and size the quantity
-    production_wanted_duration = (double(duration) + duration_per * q) / efficiency;
+    if (efficiency > 0)
+      production_wanted_duration = (double(duration) + duration_per * q) / efficiency;
+    else
+      production_wanted_duration = Duration::MAX;
     production_dates = calculateOperationTime(opplan, e, production_wanted_duration, false, &production_duration);
     if (production_duration == production_wanted_duration)
     {
@@ -1199,7 +1235,7 @@ OperationTimePer::setOperationPlanParameters(
         opplan->clearSetupEvent();
       opplan->setStartAndEnd(setup_dates.getStart(), production_dates.getEnd());
     }
-    else if (production_duration < Duration(double(duration) / efficiency))
+    else if (efficiency <= 0.0 || production_duration < Duration(double(duration) / efficiency))
     {
       // Not feasible
       if (!execute)
@@ -1285,15 +1321,17 @@ OperationTimePer::setOperationPlanParameters(
     // Case 3: Only a start date is specified. Respect the quantity and
     // compute the end date
     q = opplan->setQuantity(q, roundDown, false, execute);
-    // Round and size the quantity
-    production_wanted_duration = (double(duration) + duration_per * q) / efficiency;
-
+    // Round and size the quantity    
+    if (efficiency > 0)
+      production_wanted_duration = (double(duration) + duration_per * q) / efficiency;
+    else
+      production_wanted_duration = Duration::MAX;
     bool repeat;
     do
     {
     // Compute the setup time
     setuptime_required = calculateSetup(opplan, d, nullptr);
-    if (get<0>(setuptime_required) && get<1>(setuptime_required))
+    if (efficiency > 0 && get<0>(setuptime_required) && get<1>(setuptime_required))
     {
       setup_wanted_duration = double(get<1>(setuptime_required)->getDuration()) / efficiency;
       setup_dates = calculateOperationTime(opplan, d, setup_wanted_duration, true, &setup_duration);
@@ -1316,6 +1354,13 @@ OperationTimePer::setOperationPlanParameters(
     production_dates = calculateOperationTime(
       opplan, setup_dates.getEnd(), production_wanted_duration, true, &production_duration
       );
+    if (production_dates.getStart() != setup_dates.getEnd())
+    {
+      // If the start dates fails in an unavailable period
+      if (setup_dates.getStart() == setup_dates.getEnd())
+        setup_dates.setStart(production_dates.getStart());
+      setup_dates.setEnd(production_dates.getStart());
+    }
     if (production_duration == production_wanted_duration)
     {
       // Size is as desired
@@ -1345,7 +1390,7 @@ OperationTimePer::setOperationPlanParameters(
         opplan->clearSetupEvent();
       opplan->setStartAndEnd(setup_dates.getStart(), production_dates.getEnd());
     }
-    else if (production_duration < Duration(double(duration) / efficiency))
+    else if (efficiency <= 0.0 || production_duration < Duration(double(duration) / efficiency))
     {
       // Not feasible
       if (!execute)
@@ -1358,38 +1403,50 @@ OperationTimePer::setOperationPlanParameters(
     {
       // Resize the quantity to be feasible
       double max_q = duration_per ?
-          static_cast<double>(production_duration - duration) / duration_per :
-          q;
+        static_cast<double>(production_duration - duration) / duration_per * efficiency :
+        q;
       q = opplan->setQuantity(q < max_q ? q : max_q, roundDown, false, execute);
-      production_wanted_duration = (double(duration) + duration_per * q) / efficiency;
-      production_dates = calculateOperationTime(
-        opplan, setup_dates.getEnd(), production_wanted_duration, true, &production_duration
-        );
-      if (!execute)
+      if (!q)
       {
-        if (get<0>(setuptime_required))
+        // Not feasible
+        if (!execute)
+          return OperationPlanState(production_dates, 0.0);
+        opplan->setQuantity(0, true, false);
+        opplan->clearSetupEvent();
+        opplan->setStartAndEnd(d, d);
+      }
+      else
+      {
+        production_wanted_duration = (double(duration) + duration_per * q) / efficiency;
+        production_dates = calculateOperationTime(
+          opplan, setup_dates.getEnd(), production_wanted_duration, true, &production_duration
+          );
+        if (!execute)
         {
-          SetupEvent tmp(
-            get<0>(setuptime_required)->getLoadPlans(),
+          if (get<0>(setuptime_required))
+          {
+            SetupEvent tmp(
+              get<0>(setuptime_required)->getLoadPlans(),
+              setup_dates.getEnd(),
+              get<2>(setuptime_required),
+              get<1>(setuptime_required)
+            );
+            return OperationPlanState(setup_dates.getStart(), production_dates.getEnd(), q, &tmp);
+          }
+          else
+            return OperationPlanState(production_dates, q);
+        }
+        if (get<0>(setuptime_required))
+          opplan->setSetupEvent(
+            get<0>(setuptime_required),
             setup_dates.getEnd(),
             get<2>(setuptime_required),
             get<1>(setuptime_required)
           );
-          return OperationPlanState(setup_dates.getStart(), production_dates.getEnd(), q, &tmp);
-        }
         else
-          return OperationPlanState(production_dates, q);
+          opplan->clearSetupEvent();
+        opplan->setStartAndEnd(production_dates.getStart(), production_dates.getEnd());
       }
-      if (get<0>(setuptime_required))
-        opplan->setSetupEvent(
-          get<0>(setuptime_required),
-          setup_dates.getEnd(),
-          get<2>(setuptime_required),
-          get<1>(setuptime_required)
-          );
-      else
-        opplan->clearSetupEvent();
-      opplan->setStartAndEnd(production_dates.getStart(), production_dates.getEnd());
     }
     if (preferEnd && opplan->getStart() < s && s != Date::infiniteFuture && d != Date::infiniteFuture)
     {
@@ -1450,8 +1507,8 @@ OperationPlanState OperationRouting::setOperationPlanParameters(
     // Case 1: an end date is specified
     for (OperationPlan* i = opplan->lastsubopplan; i; i = i->prevsubopplan)
     {
-      x = i->getOperation()->setOperationPlanParameters(
-        i, q, Date::infinitePast, e, preferEnd, execute, roundDown
+      x = i->setOperationPlanParameters(
+        q, Date::infinitePast, e, preferEnd, execute, roundDown
         );
       e = x.start;
       if (realfirst)
@@ -1467,8 +1524,8 @@ OperationPlanState OperationRouting::setOperationPlanParameters(
     // Case 2: a start date is specified
     for (OperationPlan *i = opplan->firstsubopplan; i; i = i->nextsubopplan)
     {
-      x = i->getOperation()->setOperationPlanParameters(
-        i, q, s, Date::infinitePast, preferEnd, execute, roundDown
+      x = i->setOperationPlanParameters(
+        q, s, Date::infinitePast, preferEnd, execute, roundDown
         );
       s = x.end;
       if (realfirst)
@@ -1573,8 +1630,8 @@ OperationAlternate::setOperationPlanParameters(
   }
   else
     // Pass the call to the sub-operation
-    return x->getOperation()->setOperationPlanParameters(
-      x, q, s, e, preferEnd, execute, roundDown
+    return x->setOperationPlanParameters(
+      q, s, e, preferEnd, execute, roundDown
       );
 }
 

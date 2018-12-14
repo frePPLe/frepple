@@ -89,7 +89,11 @@ int ResourceBuckets::initialize()
     Object::create<ResourceBuckets>);
 
   // Initialize the Python class
-  return FreppleClass<ResourceBuckets,Resource>::initialize();
+  FreppleClass<ResourceBuckets, Resource>::getPythonType().addMethod(
+    "computeAvailability", ResourceBuckets::computeBucketAvailability, METH_VARARGS,
+    "Convert the maximum and availability calendar into quantities available per capacity bucket"
+    );
+  return FreppleClass<ResourceBuckets, Resource>::initialize();
 }
 
 
@@ -236,13 +240,14 @@ void Resource::setMaximumCalendar(Calendar* c)
 void ResourceBuckets::setMaximumCalendar(Calendar* c)
 {
   // Resetting the same calendar
-  if (size_max_cal == c) return;
+  if (size_max_cal == c)
+    return;
 
   // Mark as changed
   setChanged();
 
   // Remove the current set-onhand events.
-  for (loadplanlist::iterator oo = loadplans.begin(); oo != loadplans.end(); )
+  for (auto oo = loadplans.begin(); oo != loadplans.end(); )
   {
     loadplanlist::Event *tmp = &*oo;
     ++oo;
@@ -551,7 +556,10 @@ PyObject* Resource::PlanIterator::iternext()
         {
           // At this point ldplaniter points to a bucket start event in the
           // current reporting bucket
-          bucket_available += i->ldplaniter->getOnhand();
+          if (i->res->isTime())
+            bucket_available += i->ldplaniter->getOnhand() / 3600;
+          else
+            bucket_available += i->ldplaniter->getOnhand();
 
           // Advance the loadplan iterator to the start of the next bucket
           ++(i->ldplaniter);
@@ -561,7 +569,12 @@ PyObject* Resource::PlanIterator::iternext()
             )
           {
             if (i->ldplaniter->getEventType() == 1)
-              bucket_load -= i->ldplaniter->getQuantity();
+            {
+              if (i->res->isTime())
+                bucket_load -= i->ldplaniter->getQuantity() / 3600;
+              else
+                bucket_load -= i->ldplaniter->getQuantity();
+            }
             ++(i->ldplaniter);
           }
         }
@@ -708,6 +721,128 @@ void Resource::updateSetupTime() const
     while (changed);
   }
   OperationPlan::setPropagateSetups(tmp);
+}
+
+
+extern "C" PyObject* ResourceBuckets::computeBucketAvailability(PyObject *self, PyObject *args)
+{
+  // Get the resource model
+  ResourceBuckets* res = static_cast<ResourceBuckets*>(self);
+
+  // Parse the Python arguments
+  PyObject* pycal = nullptr;
+  int debug = false;
+  int ok = PyArg_ParseTuple(args, "O|p:computeAvailability", &pycal, &debug);
+  if (!ok)
+    return nullptr;
+  if (!PyObject_TypeCheck(pycal, CalendarDefault::metadata->pythonClass))
+  {
+    PyErr_SetString(PythonDataException, "argument must be of type calendar");
+    return nullptr;
+  }
+  Calendar* cal = static_cast<Calendar*>(pycal);
+
+  // Mark as changed
+  res->setChanged();
+
+  // Remove the current set-onhand events.
+  for (auto oo = res->getLoadPlans().begin(); oo != res->getLoadPlans().end(); )
+  {
+    loadplanlist::Event *tmp = &*oo;
+    ++oo;
+    if (tmp->getEventType() == 2)
+    {
+      res->getLoadPlans().erase(tmp);
+      delete tmp;
+    }
+  }
+
+  // Create timeline structures for every bucket.
+  if (debug)
+  {
+    logger << "Computing availability for resource '" << res << "' with buckets from calendar '" << cal << "'" << endl;
+    logger << "   Size calendar: " << res->getMaximumCalendar() << endl;
+    logger << "   Availability calendar: " << res->getAvailable() << endl;
+    logger << "   Location availability calendar: " << (res->getLocation() ? res->getLocation()->getAvailable() : nullptr) << endl;
+  }
+  CalendarDefault::EventIterator res_max(res->getMaximumCalendar());
+  CalendarDefault::EventIterator avail_res(res->getAvailable());
+  CalendarDefault::EventIterator avail_loc(res->getLocation() ? res->getLocation()->getAvailable() : nullptr);
+  Date bucketstart;
+  double cur_size = res->getMaximumCalendar() ? res->getMaximumCalendar()->getDefault() : res->getMaximum();
+  bool cur_available = true;
+  for (CalendarDefault::EventIterator bckt(cal); bckt.getDate() < Date::infiniteFuture; ++bckt)
+  {
+    // Advance availability and max calendars till we hit the end of the bucket
+    double available = 0.0;
+    Date prev_evt = bucketstart;
+    do
+    {
+      // Find the next event date
+      Date evt = bckt.getDate();
+      if (avail_res.getDate() < evt)
+        evt = avail_res.getDate();
+      if (avail_loc.getDate() < evt)
+        evt = avail_loc.getDate();
+      if (res_max.getDate() < evt)
+        evt = res_max.getDate();
+
+      // Add availability between the previous and current event
+      if (cur_available && cur_size > 0.0)
+        available += cur_size * (evt - prev_evt).getSeconds();
+
+      // Update availability and size at the event date
+      cur_available = true;
+      if (res->getAvailable())
+      {
+        if (avail_res.getDate() == evt && avail_res.getValue() == 0)
+          cur_available = false;
+        else if (res->getAvailable() && avail_res.getDate() != evt && avail_res.getPrevValue() == 0)
+          cur_available = false;
+      }
+      if (cur_available && res->getLocation() && res->getLocation()->getAvailable())
+      {
+        if (avail_loc.getDate() == evt && avail_loc.getValue() == 0)
+          cur_available = false;
+        else if (avail_loc.getDate() != evt && avail_loc.getPrevValue() == 0)
+          cur_available = false;
+      }
+      if (res->getMaximumCalendar() && res_max.getDate() == evt)
+        cur_size = res_max.getValue();
+
+      // Advance to the next event
+      if (avail_res.getDate() == evt)
+        ++avail_res;
+      if (avail_loc.getDate() == evt)
+        ++avail_loc;
+      if (res_max.getDate() == evt)
+        ++res_max;
+      prev_evt = evt;
+    } 
+    while (avail_res.getDate() <= bckt.getDate() || avail_loc.getDate() <= bckt.getDate() || res_max.getDate() <= bckt.getDate());
+    if (bckt.getDate() > prev_evt && cur_available && cur_size > 0.0)
+      available += cur_size * (bckt.getDate() - prev_evt).getSeconds();
+
+    // Create an event for this bucket in the timeline
+    if (bucketstart)
+    {
+      loadplanlist::EventSetOnhand *newBucket =
+        new loadplanlist::EventSetOnhand(bucketstart, available);
+      res->getLoadPlans().insert(newBucket);
+      if (debug)
+        logger << "   => Bucket from " << bucketstart << " till " << bckt.getDate() << ": " << available << endl;
+    }
+
+    // Remember the bucket start
+    bucketstart = bckt.getDate();
+  }
+  cal->clearEventList();
+
+  // Set a flag that this resource's calendar represents machine-time from now onwards
+  res->computedFromCalendars = true;
+
+  // None return value
+  return Py_BuildValue("");
 }
 
 }

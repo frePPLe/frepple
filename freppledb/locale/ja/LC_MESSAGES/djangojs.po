@@ -11,9 +11,9 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 msgid ""
 msgstr ""
-"Project-Id-Version: 4.4.3\n"
+"Project-Id-Version: 4.5.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-06-14 15:16+0200\n"
+"POT-Creation-Date: 2018-12-08 16:28+0100\n"
 "PO-Revision-Date: 2017-12-26 22:18+0100\n"
 "Last-Translator: Joao Ranita <jranita@frepple.com>\n"
 "Language-Team: frepple\n"
@@ -24,336 +24,337 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Generator: Poedit 1.8.7.1\n"
 
-#: common/static/js/frepple.js:175 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:187 common/static/js/frepple.min.js:11
 msgid "There are unsaved changes on this page."
 msgstr "ページに未保存の変更があります"
 
-#: common/static/js/frepple.js:227 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:250 common/static/js/frepple.min.js:11
 msgid "Error saving data"
 msgstr "データの保存に失敗しました"
 
-#: common/static/js/frepple.js:233 common/static/js/frepple.js:647
-#: common/static/js/frepple.js:1680 common/static/js/frepple.js:1845
-#: common/static/js/frepple.js:2482 common/static/js/frepple.js:2594
+#: common/static/js/frepple.js:256 common/static/js/frepple.js:690
+#: common/static/js/frepple.js:1722 common/static/js/frepple.js:1887
+#: common/static/js/frepple.js:2525 common/static/js/frepple.js:2642
 #: common/static/js/frepple.min.js:11 common/static/js/frepple.min.js:12
 msgid "Close"
 msgstr "閉じる"
 
-#: common/static/js/frepple.js:255 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:278 common/static/js/frepple.min.js:11
 msgid "Save or cancel your changes first"
 msgstr "変更を保存またはキャンセルしてください"
 
-#: common/static/js/frepple.js:261 common/static/js/frepple.js:2101
+#: common/static/js/frepple.js:284 common/static/js/frepple.js:2143
 #: common/static/js/frepple.min.js:11 common/static/js/frepple.min.js:13
 msgid "Save"
 msgstr "保存"
 
-#: common/static/js/frepple.js:262 common/static/js/frepple.js:659
-#: common/static/js/frepple.js:962 common/static/js/frepple.js:985
-#: common/static/js/frepple.js:1095 common/static/js/frepple.js:1143
-#: common/static/js/frepple.js:1223 common/static/js/frepple.js:1664
-#: common/static/js/frepple.js:1749 common/static/js/frepple.js:2103
+#: common/static/js/frepple.js:285 common/static/js/frepple.js:702
+#: common/static/js/frepple.js:1004 common/static/js/frepple.js:1027
+#: common/static/js/frepple.js:1137 common/static/js/frepple.js:1185
+#: common/static/js/frepple.js:1265 common/static/js/frepple.js:1706
+#: common/static/js/frepple.js:1791 common/static/js/frepple.js:2145
 #: common/static/js/frepple.min.js:11 common/static/js/frepple.min.js:12
 #: common/static/js/frepple.min.js:13
 msgid "Cancel"
 msgstr "キャンセル"
 
-#: common/static/js/frepple.js:453 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:496 common/static/js/frepple.min.js:11
 msgid "days early"
 msgstr ""
 
-#: common/static/js/frepple.js:455 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:498 common/static/js/frepple.min.js:11
 msgid "on time"
 msgstr ""
 
-#: common/static/js/frepple.js:458 common/static/js/frepple.js:460
-#: common/static/js/frepple.js:462 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:501 common/static/js/frepple.js:503
+#: common/static/js/frepple.js:505 common/static/js/frepple.min.js:11
 msgid "days late"
 msgstr ""
 
-#: common/static/js/frepple.js:505 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:548 common/static/js/frepple.min.js:11
 msgid "Click to select record"
 msgstr "レコードを選択するにはクリックしてください"
 
-#: common/static/js/frepple.js:551 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:594 common/static/js/frepple.min.js:11
 msgid "Selected options"
 msgstr "選択されたオプション"
 
-#: common/static/js/frepple.js:558 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:601 common/static/js/frepple.min.js:11
 msgid "Available options"
 msgstr "選択可能なオプション"
 
-#: common/static/js/frepple.js:599 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:642 common/static/js/frepple.min.js:11
 msgid "Selected Cross"
 msgstr "選択されたクロス"
 
-#: common/static/js/frepple.js:609 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:652 common/static/js/frepple.min.js:11
 msgid "Available Cross"
 msgstr "選択可能なクロス"
 
-#: common/static/js/frepple.js:631 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:674 common/static/js/frepple.min.js:11
 msgid "Frozen columns"
 msgstr "凍結されたカラム"
 
-#: common/static/js/frepple.js:650 common/static/js/frepple.js:2199
+#: common/static/js/frepple.js:693 common/static/js/frepple.js:2241
 #: common/static/js/frepple.min.js:11 common/static/js/frepple.min.js:13
 msgid "Customize"
 msgstr "カスタマイズ"
 
-#: common/static/js/frepple.js:658 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:701 common/static/js/frepple.min.js:11
 msgid "OK"
 msgstr "OK"
 
-#: common/static/js/frepple.js:660 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:703 common/static/js/frepple.min.js:11
 msgid "Reset"
 msgstr "リセット"
 
-#: common/static/js/frepple.js:720 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:763 common/static/js/frepple.min.js:11
 msgid "Error retrieving data"
 msgstr ""
 
-#: common/static/js/frepple.js:890 common/static/js/frepple.js:1998
+#: common/static/js/frepple.js:932 common/static/js/frepple.js:2040
 #: common/static/js/frepple.min.js:12 common/static/js/frepple.min.js:13
 msgid "Error saving report settings"
 msgstr "レポート設定の保存でエラー"
 
-#: common/static/js/frepple.js:950 common/static/js/frepple.js:971
+#: common/static/js/frepple.js:992 common/static/js/frepple.js:1013
 #: common/static/js/frepple.min.js:12
 msgid "Export CSV or Excel file"
 msgstr "CSVまたはExcelファイルにエクスポート"
 
-#: common/static/js/frepple.js:953 common/static/js/frepple.js:974
+#: common/static/js/frepple.js:995 common/static/js/frepple.js:1016
 #: common/static/js/frepple.min.js:12
 msgid "Export format"
 msgstr "フォーマットをエクスポート"
 
-#: common/static/js/frepple.js:955 common/static/js/frepple.js:977
+#: common/static/js/frepple.js:997 common/static/js/frepple.js:1019
 #: common/static/js/frepple.min.js:12
 msgid "Spreadsheet list"
 msgstr "表計算リスト"
 
-#: common/static/js/frepple.js:956 common/static/js/frepple.js:979
+#: common/static/js/frepple.js:998 common/static/js/frepple.js:1021
 #: common/static/js/frepple.min.js:12
 msgid "CSV list"
 msgstr "CSVリスト"
 
-#: common/static/js/frepple.js:961 common/static/js/frepple.js:984
-#: common/static/js/frepple.js:1222 common/static/js/frepple.min.js:12
+#: common/static/js/frepple.js:1003 common/static/js/frepple.js:1026
+#: common/static/js/frepple.js:1264 common/static/js/frepple.min.js:12
 msgid "Export"
 msgstr "エクスポート"
 
-#: common/static/js/frepple.js:976 common/static/js/frepple.min.js:12
+#: common/static/js/frepple.js:1018 common/static/js/frepple.min.js:12
 msgid "Spreadsheet table"
 msgstr "表計算テーブル"
 
-#: common/static/js/frepple.js:978 common/static/js/frepple.min.js:12
+#: common/static/js/frepple.js:1020 common/static/js/frepple.min.js:12
 msgid "CSV table"
 msgstr "CSVテーブル"
 
-#: common/static/js/frepple.js:1088 common/static/js/frepple.min.js:12
+#: common/static/js/frepple.js:1130 common/static/js/frepple.min.js:12
 msgid "Delete data"
 msgstr "データを削除"
 
-#: common/static/js/frepple.js:1091 common/static/js/frepple.min.js:12
+#: common/static/js/frepple.js:1133 common/static/js/frepple.min.js:12
 #, javascript-format
 msgid "You are about to delete %s objects AND ALL RELATED RECORDS!"
 msgstr "%s のオブジェクトと関連データが削除されます！"
 
-#: common/static/js/frepple.js:1094 common/static/js/frepple.js:1142
-#: common/static/js/frepple.js:1663 common/static/js/frepple.js:1748
+#: common/static/js/frepple.js:1136 common/static/js/frepple.js:1184
+#: common/static/js/frepple.js:1705 common/static/js/frepple.js:1790
 #: common/static/js/frepple.min.js:12
 msgid "Confirm"
 msgstr "確認"
 
-#: common/static/js/frepple.js:1116 common/static/js/frepple.min.js:12
+#: common/static/js/frepple.js:1158 common/static/js/frepple.min.js:12
 msgid "Error deleting data"
 msgstr "データ削除エラー"
 
-#: common/static/js/frepple.js:1136 common/static/js/frepple.min.js:12
+#: common/static/js/frepple.js:1178 common/static/js/frepple.min.js:12
 msgid "Copy data"
 msgstr "データをコピー"
 
-#: common/static/js/frepple.js:1139 common/static/js/frepple.min.js:12
+#: common/static/js/frepple.js:1181 common/static/js/frepple.min.js:12
 #, javascript-format
 msgid "You are about to duplicate %s objects"
 msgstr "%s オブジェクトが重複してしまいます"
 
-#: common/static/js/frepple.js:1164 common/static/js/frepple.min.js:12
+#: common/static/js/frepple.js:1206 common/static/js/frepple.min.js:12
 msgid "Error copying data"
 msgstr "データのコピー中にエラー発生"
 
-#: common/static/js/frepple.js:1200 common/static/js/frepple.min.js:12
+#: common/static/js/frepple.js:1242 common/static/js/frepple.min.js:12
 msgid "Export Plan"
 msgstr "計画をエクスポート"
 
-#: common/static/js/frepple.js:1269 common/static/js/frepple.js:1282
+#: common/static/js/frepple.js:1311 common/static/js/frepple.js:1324
 #: common/static/js/frepple.min.js:12
 msgid "Filtered where"
 msgstr "場所でフィルタ"
 
-#: common/static/js/frepple.js:1657 common/static/js/frepple.js:1742
+#: common/static/js/frepple.js:1699 common/static/js/frepple.js:1784
 #: common/static/js/frepple.min.js:12
 msgid "export"
 msgstr "エクスポート"
 
-#: common/static/js/frepple.js:1660 common/static/js/frepple.min.js:12
+#: common/static/js/frepple.js:1702 common/static/js/frepple.min.js:12
 msgid "export selected records"
 msgstr ""
 
-#: common/static/js/frepple.js:1670 common/static/js/frepple.js:1837
+#: common/static/js/frepple.js:1712 common/static/js/frepple.js:1879
 #: common/static/js/frepple.min.js:12
 msgid "connecting"
 msgstr ""
 
-#: common/static/js/frepple.js:1679 common/static/js/frepple.js:1844
+#: common/static/js/frepple.js:1721 common/static/js/frepple.js:1886
 #: common/static/js/frepple.min.js:12
 msgid "Export successful"
 msgstr "エクスポート成功"
 
-#: common/static/js/frepple.js:1702 common/static/js/frepple.js:1703
-#: common/static/js/frepple.js:1856 common/static/js/frepple.min.js:12
+#: common/static/js/frepple.js:1744 common/static/js/frepple.js:1745
+#: common/static/js/frepple.js:1898 common/static/js/frepple.min.js:12
+#: common/static/js/frepple.min.js:13
 msgid "Error during export"
 msgstr "エクスポート中にエラー発生"
 
-#: common/static/js/frepple.js:1704 common/static/js/frepple.min.js:12
+#: common/static/js/frepple.js:1746 common/static/js/frepple.min.js:12
 msgid "retry"
 msgstr "リトライ"
 
-#: common/static/js/frepple.js:1858 common/static/js/frepple.js:1890
-#: common/static/js/frepple.min.js:12 common/static/js/frepple.min.js:13
+#: common/static/js/frepple.js:1900 common/static/js/frepple.js:1932
+#: common/static/js/frepple.min.js:13
 msgid "Retry"
 msgstr "リトライ"
 
-#: common/static/js/frepple.js:1887 common/static/js/frepple.min.js:13
+#: common/static/js/frepple.js:1929 common/static/js/frepple.min.js:13
 msgid "Error getting data"
 msgstr "データ取得中にエラー発生"
 
-#: common/static/js/frepple.js:2046 common/static/js/frepple.min.js:13
+#: common/static/js/frepple.js:2088 common/static/js/frepple.min.js:13
 msgid "Customize a dashboard row"
 msgstr "ダッシュボードをカスタマイズしています"
 
-#: common/static/js/frepple.js:2052 common/static/js/frepple.min.js:13
+#: common/static/js/frepple.js:2094 common/static/js/frepple.min.js:13
 msgid "Name"
 msgstr "名前"
 
-#: common/static/js/frepple.js:2058 common/static/js/frepple.min.js:13
+#: common/static/js/frepple.js:2100 common/static/js/frepple.min.js:13
 msgid "Layout"
 msgstr "レイアウト"
 
-#: common/static/js/frepple.js:2064 common/static/js/frepple.min.js:13
+#: common/static/js/frepple.js:2106 common/static/js/frepple.min.js:13
 msgid "Single column"
 msgstr "1カラム"
 
-#: common/static/js/frepple.js:2067 common/static/js/frepple.min.js:13
+#: common/static/js/frepple.js:2109 common/static/js/frepple.min.js:13
 msgid "Two columns"
 msgstr "2カラム"
 
-#: common/static/js/frepple.js:2074 common/static/js/frepple.min.js:13
+#: common/static/js/frepple.js:2116 common/static/js/frepple.min.js:13
 msgid "Three columns"
 msgstr "3カラム"
 
-#: common/static/js/frepple.js:2078 common/static/js/frepple.min.js:13
+#: common/static/js/frepple.js:2120 common/static/js/frepple.min.js:13
 msgid "Four columns"
 msgstr "4カラム"
 
-#: common/static/js/frepple.js:2084 common/static/js/frepple.min.js:13
+#: common/static/js/frepple.js:2126 common/static/js/frepple.min.js:13
 msgid "Add widget"
 msgstr "ウィジェットを追加"
 
-#: common/static/js/frepple.js:2102 common/static/js/frepple.min.js:13
+#: common/static/js/frepple.js:2144 common/static/js/frepple.min.js:13
 msgid "Delete"
 msgstr "削除"
 
-#: common/static/js/frepple.js:2104 common/static/js/frepple.min.js:13
+#: common/static/js/frepple.js:2146 common/static/js/frepple.min.js:13
 msgid "Add new below"
 msgstr "下部に新規追加"
 
-#: common/static/js/frepple.js:2105 common/static/js/frepple.min.js:13
+#: common/static/js/frepple.js:2147 common/static/js/frepple.min.js:13
 msgid "Add new above"
 msgstr "上部に新規追加"
 
-#: common/static/js/frepple.js:2396 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2439 common/static/js/frepple.min.js:11
 msgid "Installed apps"
 msgstr "インストール済みアプリ"
 
-#: common/static/js/frepple.js:2416 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2459 common/static/js/frepple.min.js:11
 msgid "Error reading version information"
 msgstr "バージョン情報読み込み中のエラー"
 
-#: common/static/js/frepple.js:2440 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2483 common/static/js/frepple.min.js:11
 msgid "Import CSV or Excel file"
 msgstr "CSVまたはExcelファイルのインポート"
 
-#: common/static/js/frepple.js:2446 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2489 common/static/js/frepple.min.js:11
 msgid "Load an Excel file or a CSV-formatted text file."
 msgstr "ExcelファイルまたはCSV形式のテキストファイルを読み込み"
 
-#: common/static/js/frepple.js:2447 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2490 common/static/js/frepple.min.js:11
 msgid "The first row should contain the field names."
 msgstr "最初の行はフィールド名でなければなりません"
 
-#: common/static/js/frepple.js:2449 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2492 common/static/js/frepple.min.js:11
 msgid "First delete all existing records AND ALL RELATED TABLES"
 msgstr "最初にすべての既存レコードと関連テーブル全部を削除します"
 
-#: common/static/js/frepple.js:2456 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2499 common/static/js/frepple.min.js:11
 msgid "files selected"
 msgstr ""
 
-#: common/static/js/frepple.js:2459 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2502 common/static/js/frepple.min.js:11
 msgid "Select files"
 msgstr ""
 
-#: common/static/js/frepple.js:2462 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2505 common/static/js/frepple.min.js:11
 msgid "or drop them here"
 msgstr ""
 
-#: common/static/js/frepple.js:2471 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2514 common/static/js/frepple.min.js:11
 msgid "Data file"
 msgstr "データファイル"
 
-#: common/static/js/frepple.js:2480 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2523 common/static/js/frepple.min.js:11
 msgid "Import"
 msgstr "インポート"
 
-#: common/static/js/frepple.js:2481 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2524 common/static/js/frepple.min.js:11
 msgid "Cancel Import"
 msgstr ""
 
-#: common/static/js/frepple.js:2483 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2526 common/static/js/frepple.min.js:11
 msgid "Copy to Clipboard"
 msgstr ""
 
-#: common/static/js/frepple.js:2540 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2583 common/static/js/frepple.min.js:11
 msgid "Importing..."
 msgstr ""
 
-#: common/static/js/frepple.js:2559 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2602 common/static/js/frepple.min.js:11
 msgid "Canceled"
 msgstr ""
 
-#: common/static/js/frepple.js:3051 common/static/js/frepple.min.js:13
+#: common/static/js/frepple.js:3098 common/static/js/frepple.min.js:13
 msgid "Show hints"
 msgstr "ヒントを表示"
 
-#: common/static/js/frepple.js:3141 common/static/js/frepple.min.js:13
+#: common/static/js/frepple.js:3188 common/static/js/frepple.min.js:13
 msgid "Guided tour"
 msgstr "ガイド付きツアー"
 
-#: common/static/js/frepple.js:3148 common/static/js/frepple.min.js:13
+#: common/static/js/frepple.js:3195 common/static/js/frepple.min.js:13
 msgid "Previous"
 msgstr "前へ"
 
-#: common/static/js/frepple.js:3149 common/static/js/frepple.js:3290
+#: common/static/js/frepple.js:3196 common/static/js/frepple.js:3337
 #: common/static/js/frepple.min.js:13
 msgid "Play"
 msgstr "再生"
 
-#: common/static/js/frepple.js:3150 common/static/js/frepple.min.js:13
+#: common/static/js/frepple.js:3197 common/static/js/frepple.min.js:13
 msgid "Next"
 msgstr "次へ"
 
-#: common/static/js/frepple.js:3297 common/static/js/frepple.min.js:13
+#: common/static/js/frepple.js:3344 common/static/js/frepple.min.js:13
 msgid "Pause"
 msgstr "一時停止"
 

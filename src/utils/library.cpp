@@ -22,6 +22,9 @@
 #include "frepple/utils.h"
 #include "frepple/xml.h"
 #include <sys/stat.h>
+#ifdef HAVE_SYS_PRCTL_H
+#include <sys/prctl.h>
+#endif
 
 // These headers are required for the loading of dynamic libraries and the
 // detection of the number of cores.
@@ -84,6 +87,9 @@ void LibraryUtils::initialize()
     return;
   }
   init = true;
+
+  // Set the process name
+  Environment::setProcessName();
 
   // Initialize Xerces parser
   xercesc::XMLPlatformUtils::Initialize();
@@ -223,6 +229,20 @@ void Environment::setLogFile(const string& x)
   // Print a nice header
   logger << "Start logging frePPLe " << PACKAGE_VERSION << " ("
       << __DATE__ << ") at " << Date::now() << endl;
+}
+
+
+void Environment::setProcessName()
+{
+#ifdef HAVE_PRCTL
+  char *envvar = getenv("FREPPLE_PROCESSNAME");
+  if (envvar)
+  {
+    string nm = "frepple ";
+    nm += envvar;
+    prctl(PR_SET_NAME, nm.c_str());
+  }
+#endif
 }
 
 

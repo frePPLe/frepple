@@ -20,6 +20,7 @@ from datetime import datetime, time
 from django.db import models, DEFAULT_DB_ALIAS
 from django.db.models import Max
 from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import string_concat
 
 from freppledb.common.fields import JSONBField, AliasDateTimeField
 from freppledb.common.models import HierarchyModel, AuditModel, MultiDBManager
@@ -60,9 +61,7 @@ class Calendar(AuditModel):
 
   class Meta(AuditModel.Meta):
     db_table = 'calendar'
-    #. Translators: Translation included with Django
     verbose_name = _('calendar')
-    #. Translators: Translation included with Django
     verbose_name_plural = _('calendars')
     ordering = ['name']
 
@@ -481,10 +480,16 @@ class SetupRule(AuditModel):
 
 
 class Resource(AuditModel, HierarchyModel):
-  # Types of resources
+  # Types of resources.
+  # The predefined buckets-size entries are unfortunately hardcoded. A database
+  # query to read the allowed values would be better, but is a performance
+  # killer during mass import.
   types = (
     ('default', _('default')),
     ('buckets', _('buckets')),
+    ('buckets_day', string_concat(_('buckets'), '_', _('day'))),
+    ('buckets_week', string_concat(_('buckets'), '_', _('week'))),
+    ('buckets_month', string_concat(_('buckets'), '_', _('month'))),
     ('infinite', _('infinite')),
   )
 
@@ -542,7 +547,7 @@ class Resource(AuditModel, HierarchyModel):
     help_text=_("Efficiency percentage of the resource")
     )
   efficiency_calendar = models.ForeignKey(
-    Calendar, verbose_name=_('efficiency % calendar'), related_name='+',
+    Calendar, verbose_name=_('efficiency %% calendar'), related_name='+',
     null=True, blank=True, on_delete=models.CASCADE,
     help_text=_('Calendar defining the efficiency percentage of the resource varying over time')
     )
@@ -727,8 +732,13 @@ class OperationResource(AuditModel):
     null=True, blank=True, db_index=True, on_delete=models.CASCADE
     )
   quantity = models.DecimalField(
-    _('quantity'), default='1.00',
-    max_digits=20, decimal_places=8
+    _('quantity'), default='1.00', max_digits=20, decimal_places=8,
+    help_text=_('Required quantity of the resource')
+    )
+  quantity_fixed = models.DecimalField(
+    _('quantity fixed'), null=True, blank=True,
+    max_digits=20, decimal_places=8,
+    help_text=_('constant part of the capacity consumption (bucketized resources only)')
     )
   effective_start = models.DateTimeField(
     _('effective start'), null=True, blank=True,
@@ -833,6 +843,11 @@ class ItemSupplier(AuditModel):
     max_digits=20, decimal_places=8,
     help_text=_("A multiple purchasing quantity")
     )
+  sizemaximum = models.DecimalField(
+    _('size maximum'), null=True, blank=True,
+    max_digits=20, decimal_places=8,
+    help_text=_("A maximum purchasing quantity")
+    )
   cost = models.DecimalField(
     _('cost'), null=True, blank=True,
     max_digits=20, decimal_places=8,
@@ -918,6 +933,11 @@ class ItemDistribution(AuditModel):
     _('size multiple'), null=True, blank=True,
     max_digits=20, decimal_places=8,
     help_text=_("A multiple shipping quantity")
+    )
+  sizemaximum = models.DecimalField(
+    _('size maximum'), null=True, blank=True,
+    max_digits=20, decimal_places=8,
+    help_text=_("A maximum shipping quantity")
     )
   cost = models.DecimalField(
     _('cost'), null=True, blank=True,
@@ -1169,12 +1189,12 @@ class OperationPlan(AuditModel):
       return self.get(reference=reference)
 
   def natural_key(self):
-    return (self.reference)
+    return (self.reference,)
 
   objects = Manager()
 
   natural_key = ('reference',)
-
+  
   def __str__(self):
     return str(self.id)
 
@@ -1275,10 +1295,10 @@ class OperationPlanMaterial(AuditModel):
   flowdate = models.DateTimeField(_('date'), db_index=True)
   onhand = models.DecimalField(_('onhand'), max_digits=20, decimal_places=8, null=True, blank=True)
   minimum = models.DecimalField(_('minimum'), max_digits=20, decimal_places=8, null=True, blank=True)
-  periodofcover = models.DecimalField(_('periodofcover'), max_digits=20, decimal_places=8, null=True, blank=True)
+  periodofcover = models.DecimalField(_('period of cover'), max_digits=20, decimal_places=8, null=True, blank=True)
   status = models.CharField(
     _('status'), null=True, blank=True, max_length=20, choices=OPMstatus,
-    help_text=_('Status of the OperationPlanMaterial')
+    help_text=_('status of the material production or consumption')
     )
 
   class Manager(MultiDBManager):

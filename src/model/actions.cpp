@@ -318,8 +318,8 @@ CommandMoveOperationPlan::CommandMoveOperationPlan
 
   // Update the settings
   assert(opplan->getOperation());
-  opplan->getOperation()->setOperationPlanParameters(
-    opplan, newQty == -1.0 ? opplan->getQuantity() : newQty, 
+  opplan->setOperationPlanParameters(
+    newQty == -1.0 ? opplan->getQuantity() : newQty, 
     newstart, newend, true, true, false
   );
 

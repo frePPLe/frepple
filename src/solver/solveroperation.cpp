@@ -75,8 +75,14 @@ void SolverCreate::checkOperationCapacity
         if (data.state->a_qty == 0)
         {
           if (data.state->a_date == Date::infiniteFuture)
+          {
             // Game over
-            break;
+            data.logConstraints = backuplogconstraints; // restore the original value
+            data.state->forceLate = backupForceLate;
+            if (opplan->getQuantity() > 0.0)
+              opplan->setQuantity(0.0);
+            return;
+          }
           // One of the resources is late. We want to prevent that other resources
           // are trying to pull in the operationplan again. It can only be delayed
           // from now on in this loop.
@@ -182,16 +188,16 @@ bool SolverCreate::checkOperation
       {
         // Try a new date, until we are above the acceptable date
         Date prev = data.state->a_date;
-        opplan->getOperation()->setOperationPlanParameters(
-          opplan, orig_opplan_qty, Date::infinitePast, data.state->a_date, true, true, false
+        opplan->setOperationPlanParameters(
+          orig_opplan_qty, Date::infinitePast, data.state->a_date, true, true, false
           );
         checkOperationCapacity(opplan,data);
         if (data.state->a_date <= prev && data.state->a_qty == 0.0)
         {
           // Tough luck
-          opplan->getOperation()->setOperationPlanParameters(
-            opplan, orig_opplan_qty, orig_q_date_max, Date::infinitePast, false, true, false
-          );
+          opplan->setOperationPlanParameters(
+            orig_opplan_qty, orig_q_date_max, Date::infinitePast, false, true, false
+            );
           data.state->forceLate = true;
           checkOperationCapacity(opplan, data);
         }
@@ -243,8 +249,7 @@ bool SolverCreate::checkOperation
             // for capacity constraints, this is not included.
             if (data.state->a_date < Date::infiniteFuture)
             {
-              OperationPlanState at = opplan->getOperation()->setOperationPlanParameters(                  
-                opplan, 
+              OperationPlanState at = opplan->setOperationPlanParameters( 
                 getAllowSplits() ? 0.01 : orig_opplan_qty, 
                 data.state->a_date, Date::infinitePast, false, false, false
                 );
@@ -292,8 +297,8 @@ bool SolverCreate::checkOperation
       data.state->q_qty = orig_opplan_qty;
       data.state->a_date = Date::infiniteFuture;
       data.state->a_qty = data.state->q_qty;
-      opplan->getOperation()->setOperationPlanParameters(
-        opplan, orig_opplan_qty, Date::infinitePast, matnext.getEnd(), true, true, false
+      opplan->setOperationPlanParameters(
+        orig_opplan_qty, Date::infinitePast, matnext.getEnd(), true, true, false
         );
       okay = false;
       // Pop actions from the command "stack" in the command list
@@ -313,8 +318,8 @@ bool SolverCreate::checkOperation
       // If the operationplan would fit in a smaller timeframe we can potentially
       // create a non-zero reply...
       // Resize the operationplan
-      opplan->getOperation()->setOperationPlanParameters(
-        opplan, orig_opplan_qty, matnext.getStart(),
+      opplan->setOperationPlanParameters(
+        orig_opplan_qty, matnext.getStart(),
         a_date
         );
       if (opplan->getStart() >= matnext.getStart()
@@ -365,8 +370,8 @@ bool SolverCreate::checkOperation
                << "   Recheck capacity" << endl;
 
       // Move the operationplan to the next date where the material is feasible
-      opplan->getOperation()->setOperationPlanParameters(
-        opplan, orig_opplan_qty,
+      opplan->setOperationPlanParameters(
+        orig_opplan_qty,
         matnext.getStart()>orig_dates.getStart() ? matnext.getStart() : orig_dates.getStart(),
         Date::infinitePast, true, true, false
         );
@@ -378,10 +383,9 @@ bool SolverCreate::checkOperation
       // Reply isn't late enough
       if (opplan->getEnd() <= orig_q_date_max)
       {
-        opplan->getOperation()->setOperationPlanParameters
-          (opplan, orig_opplan_qty,
-           Date::infinitePast,
-           orig_q_date_max);
+        opplan->setOperationPlanParameters(
+          orig_opplan_qty, Date::infinitePast, orig_q_date_max
+          );
         data.state->forceLate = true;
         checkOperationCapacity(opplan,data);
       }
@@ -436,17 +440,15 @@ bool SolverCreate::checkOperationLeadTime
   {
     if (extra)
       // Lead time check during operation resolver
-      opplan->getOperation()->setOperationPlanParameters(
-        opplan, opplan->getQuantity(),
-        threshold,
+      opplan->setOperationPlanParameters(
+        opplan->getQuantity(), threshold,
         original.end + opplan->getOperation()->getPostTime(),
         false
         );
     else
       // Lead time check during capacity resolver
-      opplan->getOperation()->setOperationPlanParameters(
-        opplan, opplan->getQuantity(),
-        threshold,
+      opplan->setOperationPlanParameters(
+        opplan->getQuantity(), threshold,
         original.end,
         true
       );
@@ -645,8 +647,6 @@ OperationPlan* SolverCreate::createOperation(
         }
         if (j == dmd->getConstraints().end())
         {
-          if (problemtext == "Invalid producing operation '11. make subassembly' for buffer '11. component @ plant'")
-            logger << " bonanza" << endl;
           dmd->getConstraints().push(new ProblemInvalidData(
             dmd, problemtext, "demand",
             dmd->getDue(), dmd->getDue(),
@@ -1024,9 +1024,8 @@ void SolverCreate::solve(const OperationRouting* oper, void* v)
     {
       if (delay < data->state->a_date - q_date)
         delay = data->state->a_date - q_date;
-      OperationPlanState at = data->state->curOwnerOpplan->getOperation()->setOperationPlanParameters(
-        data->state->curOwnerOpplan, 0.01,
-        data->state->a_date, Date::infinitePast, false, false
+      OperationPlanState at = data->state->curOwnerOpplan->setOperationPlanParameters(
+        0.01, data->state->a_date, Date::infinitePast, false, false
         );
       if (at.end < top_q_date + (data->state->a_date - q_date))
         // Minimum routing delay is assumed to be equal to the delay of the step.

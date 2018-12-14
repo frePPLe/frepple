@@ -26,6 +26,8 @@ size_minimum    positive double   | Minimum size for shipments.
                                   | The default is 1.
 size_multiple   positive double   | All shipments must be a multiple of this quantity.
                                   | The default is 0, i.e. no multiple to be considered.
+size_maximum    positive double   | Maximum size for shipments.
+                                  | The default is infinite, i.e. no maximum to be considered.     
 effective_start dateTime          Date when the record becomes valid.
 effective_end   dateTime          Date when the record becomes valid.
 priority        integer           | Priority of this shipment among all other methods to

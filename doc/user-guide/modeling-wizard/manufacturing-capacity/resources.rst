@@ -2,11 +2,27 @@
 Resources
 =========
 
-| This table contains all the resources you wish to introduce in your supply chain.
-| There are three types of resources in frepple: continuous resources, bucketized 
-  resources and infinite resources.
-| This page will only consider continuous resources, please refer to the advanced 
-  topics for details about other resource types.
+Resources represent capacity. They represent a machine, a group of machines,
+an operator, a group of operators, or some logical capacity constraint.
+
+There are four types of resources:
+
+* | Default resources:
+  | Have a continuous timeline to represent the resource.
+
+* | Time bucket resources:
+  | Represent capacity as a number of hours per daily, weekly 
+    or monthly time bucket.
+
+* | Quantity bucket resources:
+  | Represent capacity as a number of units per daily, weekly or
+    monthly time bucket.
+
+* | Infinite resources:
+  | Have no capacity constraint.
+
+This page will only consider the default continuous resource type. Check out to the
+links at the bottom of this page for information on the other types.
 
 By default, frepple will create for an operation as many work orders as needed to 
 meet the demand. You might not this to happen if an operation is modeling a machine
@@ -26,8 +42,15 @@ Field        Type              Description
 ============ ================= ===========================================================
 name         non-empty string  Unique name of the resource.
 location     location          The resource location.
-type         non-empty string  | Possible values are : "Default", "Buckets", "Infinite"
-                               | For continuous resources, the Default type should be used.
+type         non-empty string  Possible values are:
+                               
+                               * default
+                               * buckets
+                               * buckets_day
+                               * buckets_week
+                               * buckets_month
+                               * infinite
+                               
 maximum      number            The resource capacity.
 ============ ================= ===========================================================
 

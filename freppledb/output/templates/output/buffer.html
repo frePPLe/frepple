@@ -171,16 +171,16 @@ function drawGraphs(jsondata)
 	          tiptext += '</td></tr><tr><td>{{_('safety stock')|capfirst}}</td><td style="text-align:right">'
 	            + (Math.round(d['safetystock']*10)/10);
 	        if (d['total_in_progress'])
-	          tiptext += '</td></tr><tr><td>{{_('Total in Progress')|capfirst}}</td><td style="text-align:right">'
+	          tiptext += '</td></tr><tr><td>{{_('total in progress')|capfirst}}</td><td style="text-align:right">'
 	            + (Math.round(d['total_in_progress']*10)/10);
 	        if (d['work_in_progress_mo'])
-	          tiptext += '</td></tr><tr><td>{{_('Work in Progress MO')|capfirst}}</td><td style="text-align:right">'
+	          tiptext += '</td></tr><tr><td>{{_('work in progress MO')|capfirst}}</td><td style="text-align:right">'
 	            + (Math.round(d['work_in_progress_mo']*10)/10);
 	        if (d['on_order_po'])
-	          tiptext += '</td></tr><tr><td>{{_('On Order PO')|capfirst}}</td><td style="text-align:right">'
+	          tiptext += '</td></tr><tr><td>{{_('on order PO')|capfirst}}</td><td style="text-align:right">'
 	            + (Math.round(d['on_order_po']*10)/10);
 	        if (d['in_transit_do'])
-	          tiptext += '</td></tr><tr><td>{{_('In Transit DO')|capfirst}}</td><td style="text-align:right">'
+	          tiptext += '</td></tr><tr><td>{{_('in transit DO')|capfirst}}</td><td style="text-align:right">'
 	            + (Math.round(d['in_transit_do']*10)/10);
 	        tiptext += '</td></tr></table>'          
 	        graph.showTooltip(tiptext);
@@ -317,34 +317,34 @@ function crosses (cellvalue, options, rowdata)
         break;
       case 4:
         if (cellvalue[4] != 0.0)
-           result += cellvalue[4] + "<a href='{{request.prefix}}/flowplan/" +
-              admin_escape(rowdata['buffer']) +
-              "/?flowdate__gte=" + options['colModel']['startdate'] +
-              "&amp;flowdate__lt=" + options['colModel']['enddate'] +
-              "&amp;operationplan__type=MO" + 
-              "&amp;quantity__lt=0'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
+           result += cellvalue[4] + "<a href='{{request.prefix}}/data/input/manufacturingorder/consumed/" +
+              admin_escape(rowdata['item']) + "/" +
+              admin_escape(rowdata['location']) + "/" +
+              options['colModel']['startdate'] + "/" +
+              options['colModel']['enddate'] + "/" +
+              "'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
           result += '0.0<br>';
         break;
       case 5:
         if (cellvalue[5] != 0.0)
-           result += cellvalue[5] + "<a href='{{request.prefix}}/flowplan/" +
-              admin_escape(rowdata['buffer']) +
-              "/?flowdate__gte=" + options['colModel']['startdate'] +
-              "&amp;flowdate__lt=" + options['colModel']['enddate'] +
-              "&amp;operationplan__type=DO" + 
-              "&amp;quantity__lt=0'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
+           result += cellvalue[5] + "<a href='{{request.prefix}}/data/input/distributionorder/consumed/" +
+              admin_escape(rowdata['item']) + "/" +
+              admin_escape(rowdata['location']) + "/" +
+              options['colModel']['startdate'] + "/" +
+              options['colModel']['enddate'] + "/" +
+              "'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
           result += '0.0<br>';
         break;
       case 6:
         if (cellvalue[6] != 0.0)
-           result += cellvalue[6] + "<a href='{{request.prefix}}/flowplan/" +
-              admin_escape(rowdata['buffer']) +
-              "/?flowdate__gte=" + options['colModel']['startdate'] +
-              "&amp;flowdate__lt=" + options['colModel']['enddate'] +
-              "&amp;operationplan__type=DLVR" + 
-              "&amp;quantity__lt=0'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
+           result += cellvalue[6] + "<a href='{{request.prefix}}/data/input/deliveryorder/consumed/" +
+              admin_escape(rowdata['item']) + "/" +
+              admin_escape(rowdata['location']) + "/" +
+              options['colModel']['startdate'] + "/" +
+              options['colModel']['enddate'] + "/" +
+              "'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
           result += '0.0<br>';
         break;
@@ -360,67 +360,61 @@ function crosses (cellvalue, options, rowdata)
         break;
       case 8:
         if (cellvalue[8] != 0.0)
-           result += cellvalue[8] + "<a href='{{request.prefix}}/flowplan/" +
-              admin_escape(rowdata['buffer']) +
-              "/?flowdate__gte=" + options['colModel']['startdate'] +
-              "&amp;flowdate__lt=" + options['colModel']['enddate'] +
-              "&amp;operationplan__type=MO" + 
-              "&amp;quantity__gte=0'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
+           result += cellvalue[8] + "<a href='{{request.prefix}}/data/input/manufacturingorder/produced/" +
+              admin_escape(rowdata['item']) + "/" +
+              admin_escape(rowdata['location']) + "/" +
+              options['colModel']['startdate'] + "/" +
+              options['colModel']['enddate'] + "/" +
+              "'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
           result += '0.0<br>';
         break;
       case 9:
         if (cellvalue[9] != 0.0)
-           result += cellvalue[9] + "<a href='{{request.prefix}}/flowplan/" +
-              admin_escape(rowdata['buffer']) +
-              "/?flowdate__gte=" + options['colModel']['startdate'] +
-              "&amp;flowdate__lt=" + options['colModel']['enddate'] +
-              "&amp;operationplan__type=DO" + 
-              "&amp;quantity__gte=0'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
+           result += cellvalue[9] + "<a href='{{request.prefix}}/data/input/distributionorder/produced/" +
+              admin_escape(rowdata['item']) + "/" +
+              admin_escape(rowdata['location']) + "/" +
+              options['colModel']['startdate'] + "/" +
+              options['colModel']['enddate'] + "/" +
+              "'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
           result += '0.0<br>';
         break;
       case 10:
         if (cellvalue[10] != 0.0)
-           result += cellvalue[10] + "<a href='{{request.prefix}}/flowplan/" +
-              admin_escape(rowdata['buffer']) +
-              "/?flowdate__gte=" + options['colModel']['startdate'] +
-              "&amp;flowdate__lt=" + options['colModel']['enddate'] +
-              "&amp;operationplan__type=PO" + 
-              "&amp;quantity__gte=0'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
+           result += cellvalue[10] + "<a href='{{request.prefix}}/data/input/purchaseorder/produced/" +
+              admin_escape(rowdata['item']) + "/" +
+              admin_escape(rowdata['location']) + "/" +
+              options['colModel']['startdate'] + "/" +
+              options['colModel']['enddate'] + "/" +
+              "'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
           result += '0.0<br>';
         break;
       case 13:
         if (cellvalue[13] != 0.0)
-           result += cellvalue[13] + "<a href='{{request.prefix}}/data/input/manufacturingorder/" +
-              "?operation__item__name=" + admin_escape(rowdata['item']) +
-              "&amp;operation__location__name=" + admin_escape(rowdata['location']) +
-              "&amp;startdate__lte=" + options['colModel']['startdate'] +
-              "&amp;enddate__gt=" + options['colModel']['startdate'] +
-              "'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
+           result += cellvalue[13] + "<a href='{{request.prefix}}/data/input/manufacturingorder/operationplanmaterial/" +
+              admin_escape(rowdata['item']) + "/" + admin_escape(rowdata['location']) +
+              "/" + options['colModel']['enddate'] +
+              "/'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
           result += '0.0<br>';
         break;
       case 14:
         if (cellvalue[14] != 0.0)
-           result += cellvalue[14] + "<a href='{{request.prefix}}/data/input/purchaseorder/" +
-              "?item__name=" + admin_escape(rowdata['item']) +
-              "&amp;location__name=" + admin_escape(rowdata['location']) +
-              "&amp;startdate__lte=" + options['colModel']['startdate'] +
-              "&amp;enddate__gt=" + options['colModel']['startdate'] +
-              "'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
+           result += cellvalue[14] + "<a href='{{request.prefix}}/data/input/purchaseorder/operationplanmaterial/" +
+              admin_escape(rowdata['item']) + "/" + admin_escape(rowdata['location']) +
+              "/" + options['colModel']['enddate'] +
+              "/'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
           result += '0.0<br>';
         break;
       case 15:
         if (cellvalue[15] != 0.0)
-           result += cellvalue[15] + "<a href='{{request.prefix}}/data/input/distributionorder/" +
-              "?item__name=" + admin_escape(rowdata['item']) +
-              "&amp;location__name=" + admin_escape(rowdata['location']) +
-              "&amp;startdate__lte=" + options['colModel']['startdate'] +
-              "&amp;enddate__gt=" + options['colModel']['startdate'] +
-              "'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
+           result += cellvalue[15] + "<a href='{{request.prefix}}/data/input/distributionorder/operationplanmaterial/" +
+              admin_escape(rowdata['item']) + "/" + admin_escape(rowdata['location']) +
+              "/" + options['colModel']['enddate'] +
+              "/'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
           result += '0.0<br>';
         break;

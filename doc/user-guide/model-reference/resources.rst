@@ -2,28 +2,45 @@
 Resources
 =========
 
-Resources represent capacity. They represent a machine, a worker or
-a group of workers, or some logical limits.
+Resources represent capacity. They represent a machine, a group of machines,
+an operator, a group of operators, or some logical capacity constraint.
 
-Operations will consume capacity using loads.
+`Operations <operations>`_ will consume capacity using `operation resources <operation-resources>`_.
 
 Different types of resources exist:
 
-* | `Resource_default`_:
+* | `Default <#default-resource>`_:
   | A default resource is constrained with a maximum load size. The resource
     size defines how many operations that can use the resource in parallel.
-  | For detailed planning and scheduling this is the most suitable resource
-    type.
-  | E.g. A resource that can run 2 jobs at the same time.
+    
+  E.g. A resource that can run 1 job at a time.
+  
+  .. image:: _images/resource-default.png
+     :width: 50%
+     :alt: Continuous resource
 
-* | `Resource_buckets`_:
+* | `Time buckets <#time-buckets-resource>`_:
+  | A bucketized resource is constrained by the amount of resource-hours per
+    time bucket. The detailed scheduling of the resource within this bucket
+    isn't considered.
+    
+  E.g. A resource that has 40 hours available per week.
+  
+  .. image:: _images/resource-time-buckets.png
+     :width: 50%
+     :alt: Time bucket resource
+
+* | `Quantity buckets <#quantity-buckets-resource>`_:
   | A bucketized resource is constrained with a maximum load quantity per
     time bucket.
-  | For master planning and rough cut capacity planning this is most suitable
-    resource type.
-  | E.g. A resource that can produce 1000 units per week.
+  
+  E.g. A resource that can produce 1000 units per week.
+  
+  .. image:: _images/resource-quantity-buckets.png
+     :width: 50%
+     :alt: Quantity bucket resource
 
-* | `Resource_infinite`_:
+* | `Infinite resource <#infinite-resource>`_:
   | An infinite resource has no capacity limit.
 
 **Fields**
@@ -61,15 +78,12 @@ maximum_calendar     calendar          | Refers to a calendar storing the availa
                                        | This field is ignored on resources of type infinite.
 available            calendar          A calendar specifying the working hours for the resource.
                                    
-                                       The working hours and holidays for the operation are
+                                       The working hours and holidays for a resource are
                                        calculated as the intersection of:
                                    
-                                         - the availability calendar of the operation.
-                                         - the availability calendar of the operation's location.
-                                         - the availability calendar of all resources loaded by the 
-                                           operation.
-                                         - the availability calendar of the location of all resources
-                                           loaded by the operation.
+                                       * its availability calendar.
+
+                                       * the availability calendar of its location.
                                    
                                        Default is null.
                                    
@@ -129,7 +143,7 @@ hidden               boolean           Marks entities that are considered hidden
                                        not shown to the end user.
 ==================== ================= ===========================================================
 
-Resource_default
+Default resource
 ----------------
 
 A default resource is constrained with a maximum load size. The resource size
@@ -140,24 +154,45 @@ E.g. A resource that can run 2 jobs at the same time.
 
 No fields are defined in addition to the ones listed above.
 
-Resource_buckets
-----------------
+Time buckets resource
+---------------------
 
-A bucketized resource is constrained with a maximum load quantity per time
-bucket.
+A resource of this type is constrained by the amount of resource-hours
+per time bucket. E.g. A resource that has 40 hours available per week.
+
+The available time per capacity bucket is computed using:
+
+* its size, as specified by the maximum or the maximum_calendar field.
+
+* its working hours, as specfied by its available calendar field and its
+  location's available calendar field
+
+A manufacturing order will consume the required capacity in the capacity
+bucket where it starts.
 
 For master planning and rough cut capacity planning this is most suitable
-resource type. E.g. A resource that can produce 1000 units per week
+resource type. Detailed scheduling of the operations within the time
+bucket isn't considered useful in this type of plan.
 
-No fields are defined in addition to the ones listed above, but the
-maximum_calendar field must is be specified.
+Quantity buckets resource
+-------------------------
+
+A resource of this type is constrained by a maximum quantity per time
+bucket. E.g. A resource that can produce 1000 units per week
+
+For master planning and rough cut capacity planning this is most suitable
+resource type. Detailed scheduling of the operations within the time
+bucket isn't considered useful.
+
+The maximum_calendar field defines the time buckets, as well as the
+available quantity per time bucket.
 
 A number of specialized operationresource subclasses exist to select 
 in which bucket the capacity needs to be consumed: at the start of the
 operationplan, at the end of the operationplan or somewhere between
 the start and end.
 
-Resource_infinite
+Infinite resource
 -----------------
 
 An infinite resource has no capacity limit. It is useful to monitor the

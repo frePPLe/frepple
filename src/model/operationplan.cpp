@@ -377,8 +377,8 @@ Object* OperationPlan::createOperationPlan(
       // Change the operation
       opplan->setOperation(static_cast<Operation*>(oper));
     if (quantityfld || startfld || endfld)
-      opplan->getOperation()->setOperationPlanParameters(
-        opplan, quantityfld ? quantity : opplan->getQuantity(),
+      opplan->setOperationPlanParameters(
+        quantityfld ? quantity : opplan->getQuantity(),
         start, end
       );
     return opplan;
@@ -1876,6 +1876,59 @@ double OperationPlan::getCriticality() const
 }
 
 
+double OperationPlan::getCriticalQuantity(Duration window) const
+{
+  // Operationplan hasn't been set up yet
+  if (!oper)
+    return 0;
+
+  // Child operationplans have the same criticality as the parent
+  // TODO: Slack between routing sub operationplans isn't recognized.
+  if (getOwner() && getOwner()->getOperation()->getType() != *OperationSplit::metadata)
+    return getOwner()->getCriticalQuantity();
+
+  // Handle demand delivery operationplans
+  if (getTopOwner()->getDemand())
+  {
+    return getTopOwner()->getDemand()->getDue() - getEnd() < window ?
+      getQuantity() : 0.0;
+  }
+
+  // Handle an upstream operationplan
+  double criticalqty = 0.0;
+  vector<const OperationPlan*> opplans(HasLevel::getNumberOfLevels() + 5);
+  for (PeggingIterator p(const_cast<OperationPlan*>(this)); p; ++p)
+  {
+    unsigned int lvl = p.getLevel();
+    if (lvl >= opplans.size())
+      opplans.resize(lvl + 5);
+    opplans[lvl] = p.getOperationPlan();
+    const OperationPlan* m = p.getOperationPlan();
+    if (m && m->getTopOwner()->getDemand())
+    {
+      // Reached a demand. Get the total slack now.
+      Duration myslack = m->getTopOwner()->getDemand()->getDue() - m->getEnd();
+      for (unsigned int i = 1; i <= lvl; i++)
+      {
+        if (opplans[i - 1]->getOwner() == opplans[i] 
+          || opplans[i - 1] == opplans[i]->getOwner())
+            // Times between parent and child opplans isn't slack
+            continue;
+        Date st = opplans[i - 1]->getEnd();
+        if (!st) st = Plan::instance().getCurrent();
+        Date nd = opplans[i]->getStart();
+        if (!nd) nd = Plan::instance().getCurrent();
+        if (nd > st)
+          myslack += nd - st;
+      }
+      if (myslack < window)
+        criticalqty += p.getQuantity();
+    }
+  }
+  return criticalqty;
+}
+
+
 Duration OperationPlan::getDelay() const
 {
   // Operationplan hasn't been set up yet. On time by default.
@@ -2034,15 +2087,15 @@ OperationPlan::InterruptionIterator* OperationPlan::InterruptionIterator::next()
     // Check whether all calendars are available
     bool available = true;
     Date selected = Date::infiniteFuture;
-    for (auto t = cals.begin(); t != cals.end(); ++t)
+    for (unsigned short t = 0; t < numCalendars; ++t)
     {
-      if (t->getDate() < selected)
-        selected = t->getDate();
+      if (cals[t].getDate() < selected)
+        selected = cals[t].getDate();
     }
     curdate = selected;
-    for (auto t = cals.begin(); t != cals.end() && available; ++t)
+    for (unsigned short t = 0; t < numCalendars && available; ++t)
       // TODO next line does a pretty expensive lookup in the calendar, which we might be available to avoid
-      available = (t->getCalendar()->getValue(selected) != 0);
+      available = (cals[t].getCalendar()->getValue(selected) != 0);
 
     if (available && !status)
     {
@@ -2064,9 +2117,9 @@ OperationPlan::InterruptionIterator* OperationPlan::InterruptionIterator::next()
       return nullptr;
 
     // Advance to the next event
-    for (auto t = cals.begin(); t != cals.end(); ++t)
-      if (t->getDate() == selected)
-        ++(*t);
+    for (unsigned short t = 0; t < numCalendars; ++t)
+      if (cals[t].getDate() == selected)
+        ++cals[t];
   }
 }
 
@@ -2115,7 +2168,12 @@ double OperationPlan::getEfficiency(Date d) const
       ++e;
     }
   }
-  return best == DBL_MAX ? 1.0 : best / 100.0;
+  if (best == DBL_MAX)
+    return 1.0;
+  else if (best > 0.0)
+    return best / 100.0;
+  else
+    return 0.0;
 }
 
 

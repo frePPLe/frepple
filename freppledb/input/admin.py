@@ -133,7 +133,7 @@ class OperationMaterial_inline(MultiDBTabularInline):
 class OperationResource_inline(MultiDBTabularInline):
   model = OperationResource
   raw_id_fields = ('operation', 'resource', 'skill')
-  fields = ('resource', 'operation', 'quantity', 'effective_start', 'effective_end', 'skill', 'setup', 'search')
+  fields = ('resource', 'operation', 'quantity', 'quantity_fixed', 'effective_start', 'effective_end', 'skill', 'setup', 'search')
   extra = 0
   exclude = ('source',)
 
@@ -149,8 +149,10 @@ class Item_admin(MultiDBModelAdmin):
     {"name": 'supplypath', "label": _("supply path"), "view": "supplypath_item"},
     {"name": 'whereused', "label": _("where used"), "view": "whereused_item"},
     {"name": 'plan', "label": _("plan"), "view": "output_demand_plandetail"},
-    {"name": 'plandetail', "label": _("delivery orders"), "view": "input_deliveryorder_by_item"},
+    {"name": 'deliveryorders', "label": _("delivery orders"), "view": "input_deliveryorder_by_item"},
+    {"name": 'manufacturingorders', "label": _("manufacturing orders"), "view": "input_manufacturingorder_by_item"},
     {"name": 'purchaseorders', "label": _("purchase orders"), "view": "input_purchaseorder_by_item"},
+    {"name": 'distributionorders', "label": _("distribution orders"), "view": "input_distributionorder_by_item"},
     {"name": 'comments', "label": _("comments"), "view": "admin:input_item_comment"},
     #. Translators: Translation included with Django
     {"name": 'history', "label": _("History"), "view": "admin:input_item_history"},
@@ -219,14 +221,14 @@ class Operation_admin(MultiDBModelAdmin):
   tabs = [
     {"name": 'edit', "label": _("edit"), "view": "admin:input_operation_change", "permissions": "input.change_operation"},
     {"name": 'supplypath', "label": _("supply path"), "view": "supplypath_operation"},
-    {"name": 'whereused', "label": _("where used"),"view": "whereused_operation"},
+    {"name": 'whereused', "label": _("where used"), "view": "whereused_operation"},
     {"name": 'plan', "label": _("plan"), "view": "output_operation_plandetail"},
-    # {"name": 'plandetail', "label": _("plan detail"), "view": "output_operationplan_plandetail"},
+    {"name": 'plandetail', "label": _("manufacturing orders"), "view": "input_manufacturingorder_by_operation"},
     {"name": 'constraint', "label": _("constrained demand"), "view": "output_constraint_operation"},
     {"name": 'comments', "label": _("comments"), "view": "admin:input_operation_comment"},
     #. Translators: Translation included with Django
     {"name": 'history', "label": _("History"), "view": "admin:input_operation_history"},
-  ]
+    ]
 data_site.register(Operation, Operation_admin)
 
 
@@ -370,7 +372,7 @@ class OperationResource_admin(MultiDBModelAdmin):
   save_on_top = True
   exclude = ('id',)
   fieldsets = (
-    (None, {'fields': ('resource', 'operation', 'quantity', 'skill', 'setup', ('effective_start', 'effective_end'))}),
+    (None, {'fields': ('resource', 'operation', 'quantity', 'quantity_fixed', 'skill', 'setup', ('effective_start', 'effective_end'))}),
     (_('alternates'), {'fields': ('name', 'priority', 'search'), }),
     )
   tabs = [

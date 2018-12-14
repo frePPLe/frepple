@@ -117,7 +117,7 @@ class MultiDBBackend(ModelBackend):
       # Populate a dictionary with scenarios in which the user is active, and
       # whether he's a superuser in them.
       user.scenarios = []
-      for db in Scenario.objects.filter(Q(status='In use') | Q(name=DEFAULT_DB_ALIAS)):
+      for db in Scenario.objects.using(DEFAULT_DB_ALIAS).filter(Q(status='In use') | Q(name=DEFAULT_DB_ALIAS)):
         if not db.description:
           db.description = db.name
         if db.name == DEFAULT_DB_ALIAS:

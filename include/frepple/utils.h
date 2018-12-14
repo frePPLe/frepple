@@ -122,7 +122,7 @@ using namespace std;
 #include <config.h>
 #else
 // Define the version for (windows) compilers that don't use autoconf
-#define PACKAGE_VERSION "4.4.3"
+#define PACKAGE_VERSION "4.5.0"
 #endif
 
 // Header for multithreading
@@ -3340,7 +3340,11 @@ class Environment
     static void setLogFile(const string& x);
 
     /** Type for storing parameters passed to a module that is loaded. */
-    typedef map<string,XMLData> ParameterList;
+    typedef map<string, XMLData> ParameterList;
+
+    /** Updates the process name on Linux when the environment variable
+      * FREPPLE_PROCESSNAME is set. Maximum 7 characters are used. */
+    static void setProcessName();
 
     /** @brief Function to dynamically load a shared library in frePPLe.
       *
@@ -6717,7 +6721,7 @@ template <class T> class HasHierarchy : public HasName<T>
     /** Return true if an object is part of the children of a second object. */
     bool isMemberOf(T* p) const
     {
-      for (const HasHierarchy* tmp = this; tmp; tmp = tmp->getOwner())
+      for (auto tmp = this; tmp; tmp = tmp->parent)
         if (tmp == p)
           // Yes, we find the argument in the parent hierarchy
           return true;
@@ -6767,17 +6771,10 @@ template <class T> class HasHierarchy : public HasName<T>
     }
 
   private:
-    /** A pointer to the parent object. */
+    /** Children are linked as a single linked list. */
     T *parent = nullptr;
-
-    /** A pointer to the first child object. */
     T *first_child = nullptr;
-
-    /** A pointer to the next brother object, ie an object having the
-      * same parent.<br>
-      * The brothers are all linked as a single linked list, with the
-      * first_child pointer on the parent being the root pointer of the list.
-      */
+    T *last_child = nullptr;
     T *next_brother = nullptr;
 };
 

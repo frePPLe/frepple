@@ -34,7 +34,8 @@ template <class T> inline ostream& operator << (ostream &o, const HasName<T> *n)
 template <class T> void HasHierarchy<T>::setOwner (T* fam)
 {
   // Check if already set to the same entity
-  if (parent == fam) return;
+  if (parent == fam)
+    return;
 
   // Avoid loops in the hierarchy. For instance, HasHierarchy A points to B
   // as its owner, and B points to A.
@@ -47,14 +48,22 @@ template <class T> void HasHierarchy<T>::setOwner (T* fam)
   if (parent)
   {
     if (parent->first_child == this)
+    {
       // We are the first child of our parent
       parent->first_child = next_brother;
+      if (parent->last_child == this)
+        parent->last_child = nullptr;
+    }
     else
     {
       // Removed somewhere in the middle of the list of children
       T *i = parent->first_child;
-      while (i && i->next_brother!=this) i = i->next_brother;
-      if (!i) throw LogicException("Invalid hierarchy data");
+      while (i && i->next_brother != this)
+        i = i->next_brother;
+      if (!i)
+        throw LogicException("Invalid hierarchy data");
+      if (parent->last_child == this)
+        parent->last_child = i;
       i->next_brother = next_brother;
     }
     next_brother = NULL;
@@ -66,16 +75,13 @@ template <class T> void HasHierarchy<T>::setOwner (T* fam)
   // Register the new member at the owner
   if (fam)
   {
-    if (fam->first_child)
-    {
+    if (fam->last_child)
       // We append it at the end of the list, preserving the insert order.
-      T *i = fam->first_child;
-      while (i->next_brother) i = i->next_brother;
-      i->next_brother = static_cast<T*>(this);
-    }
+      fam->last_child->next_brother = static_cast<T*>(this);
     else
       // I am the first child of my parent
       fam->first_child = static_cast<T*>(this);
+    fam->last_child = static_cast<T*>(this);
   }
 }
 

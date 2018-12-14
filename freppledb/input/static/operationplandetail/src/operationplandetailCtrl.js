@@ -49,13 +49,9 @@ function operationplanCtrl($scope, OperationPlan) {
         if (typeof oldValue[4] !== 'undefined' && typeof newValue[4] !== 'undefined' && oldValue[4] !== newValue[4]) {
 
           if (actions.hasOwnProperty($scope.operationplan.status)) {
-            //console.log('actions have status');
             $scope.displayongrid($scope.operationplan.id,"status",$scope.operationplan.status);
           } else if (!actions.hasOwnProperty($scope.operationplan.status) && oldValue[4] === 'proposed') {
-            //console.log('will export to OB');
             actions[Object.keys(actions)[0]]();
-          } else {
-            //console.log('doing nothing');
           }
         }
       }
@@ -64,8 +60,6 @@ function operationplanCtrl($scope, OperationPlan) {
   }
 
   function processAggregatedInfo(selectionData, colModel) {
-    //console.log(selectionData);
-    //console.log(colModel);
     var aggColModel = [];
     var aggregatedopplan = {};
     aggregatedopplan.colmodel = {};
@@ -77,10 +71,9 @@ function operationplanCtrl($scope, OperationPlan) {
         aggregatedopplan.colmodel[value.name] = {'type': value.summaryType, 'label': value.label};
       }
     });
-    //console.log(aggColModel);
     angular.forEach (selectionData, function(opplan) {
       angular.forEach (aggColModel, function(field) {
-        if (field[2] === 'sum') {// console.log(field[1],parseFloat(opplan[field[1]]));
+        if (field[2] === 'sum') {
           if (!isNaN(parseFloat(opplan[field[1]]))) {
             if (aggregatedopplan[field[1]] === null) {
               aggregatedopplan[field[1]] = parseFloat(opplan[field[1]]);
@@ -90,18 +83,18 @@ function operationplanCtrl($scope, OperationPlan) {
           }
         } else if (field[2] === 'max') {
 
-          if ( ['color','number','currency'].indexOf(field[3]) !== -1 && opplan[field[1]] !== "") { //console.log(opplan[field[1]]);
+          if ( ['color','number','currency'].indexOf(field[3]) !== -1 && opplan[field[1]] !== "") {
             if (parseFloat(opplan[field[1]])) {
-              if (aggregatedopplan[field[1]] === null) { //console.log(opplan[field[1]]);
+              if (aggregatedopplan[field[1]] === null) {
                 aggregatedopplan[field[1]] = parseFloat(opplan[field[1]]);
               } else {
                 aggregatedopplan[field[1]] = Math.max(aggregatedopplan[field[1]], parseFloat(opplan[field[1]]));
               }
             }
-          } else if (field[3] === 'duration') { //console.log(field[1],opplan[field[1]],field[3]);
+          } else if (field[3] === 'duration') {
             temp = new moment.duration(opplan[field[1]]).asSeconds();
             if (temp._d !== 'Invalid Date') {
-              if (aggregatedopplan[field[1]] === null) { //console.log(opplan[field[1]]);
+              if (aggregatedopplan[field[1]] === null) {
                 aggregatedopplan[field[1]] = temp;
               } else {
                 aggregatedopplan[field[1]] = Math.max(aggregatedopplan[field[1]], temp);
@@ -110,7 +103,7 @@ function operationplanCtrl($scope, OperationPlan) {
           } else if (field[3] === 'date') {
             temp = new moment(opplan[field[1]]);
             if (temp._d !== 'Invalid Date') {
-              if (aggregatedopplan[field[1]] === null) { //console.log(opplan[field[1]]);
+              if (aggregatedopplan[field[1]] === null) {
                 aggregatedopplan[field[1]] = temp;
               } else {
                 aggregatedopplan[field[1]] = moment.max(aggregatedopplan[field[1]], temp);
@@ -118,23 +111,21 @@ function operationplanCtrl($scope, OperationPlan) {
             }
           }
 
-        } else if (field[2] === 'min') { //console.log(field[1],opplan[field[1]],field[3]);
+        } else if (field[2] === 'min') {
 
           if ( ['color','number'].indexOf(field[3]) !== -1 && opplan[field[1]] !== "") {
-            //console.log(field[1],opplan[field[1]],field[3]);
             temp = parseFloat(opplan[field[1]]);
             if (!isNaN(temp)) {
-              if (aggregatedopplan[field[1]] === null) { //console.log(opplan[field[1]]);
+              if (aggregatedopplan[field[1]] === null) {
                 aggregatedopplan[field[1]] = temp;
               } else {
                 aggregatedopplan[field[1]] = Math.min(aggregatedopplan[field[1]], temp);
               }
-              //console.log( Math.min(aggregatedopplan[field[1]], temp));
             }
-          }  else if (field[3] === 'duration') { //console.log(field[1],opplan[field[1]],field[3]);
+          }  else if (field[3] === 'duration') {
             temp = new moment.duration(opplan[field[1]]).asSeconds();
             if (temp._d !== 'Invalid Date') {
-              if (aggregatedopplan[field[1]] === null) { //console.log(opplan[field[1]]);
+              if (aggregatedopplan[field[1]] === null) {
                 aggregatedopplan[field[1]] = temp;
               } else {
                 aggregatedopplan[field[1]] = Math.min(aggregatedopplan[field[1]], temp);
@@ -143,7 +134,7 @@ function operationplanCtrl($scope, OperationPlan) {
           } else if (field[3] === 'date') {
             temp = new moment(opplan[field[1]]);
             if (temp._d !== 'Invalid Date') {
-              if (aggregatedopplan[field[1]] === null) { //console.log(opplan[field[1]]);
+              if (aggregatedopplan[field[1]] === null) {
                 aggregatedopplan[field[1]] = temp;
               } else {
                 aggregatedopplan[field[1]] = moment.min(aggregatedopplan[field[1]], temp);
@@ -160,8 +151,6 @@ function operationplanCtrl($scope, OperationPlan) {
     aggregatedopplan.id = -1;
     aggregatedopplan.type = selectionData[0].type;
     $scope.$apply(function(){ $scope.operationplan.extend(aggregatedopplan); });
-
-    //console.log($scope.operationplan);
   }
   $scope.processAggregatedInfo = processAggregatedInfo;
 

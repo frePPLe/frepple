@@ -484,13 +484,14 @@ class Calendar : public HasName<Calendar>, public HasSource
         Calendar* theCalendar = nullptr;
         Date curDate;
         double curValue = 0.0;
+        double prevValue = 0.0;
       public:
         const Date& getDate() const
         { 
           return curDate;
         }
 
-        double getValue()
+        double getValue() const
         {
           return curValue;
         }
@@ -500,8 +501,13 @@ class Calendar : public HasName<Calendar>, public HasSource
           return theCalendar;
         }
 
+        double getPrevValue() const
+        {
+          return prevValue;
+        }
+
         EventIterator(
-          Calendar* c = nullptr,Date d = Date::infinitePast, bool forward = true
+          Calendar* c = nullptr, Date d = Date::infinitePast, bool forward = true
           );
 
         EventIterator& operator++();
@@ -921,7 +927,7 @@ class Solver : public Object
 {
   public:
     /** Constructor. */
-    explicit Solver() : loglevel(0) {}
+    explicit Solver() {}
 
     /** Destructor. */
     virtual ~Solver() {}
@@ -1104,7 +1110,7 @@ class Solver : public Object
 
   private:
     /** Controls the amount of tracing and debugging messages. */
-    short loglevel;
+    short loglevel = 0;
 
     /** Automatically commit any plan changes or not. */
     bool autocommit = true;
@@ -1876,9 +1882,12 @@ class OperationPlan
       * Criticality is currently implemented as the slack in the downstream
       * path. If the criticality is 2, it means the operationplan can be
       * delayed by 2 days without impacting the delivery of any demand.
-      * TODO should criticality also include priority of demand and critical quantity?
       */
     double getCriticality() const;
+
+    /** Return the quantity of this operationplan that is due within a 
+      * certain time window. */
+    double getCriticalQuantity(Duration = 0L) const;
 
     /** Returns the difference between:
       *  a) the end date of the this operationplan
@@ -2095,6 +2104,11 @@ class OperationPlan
 
     /** Update the operation of an operationplan. */
     void setOperation(Operation* o);
+
+    inline OperationPlanState setOperationPlanParameters(
+      double qty, Date startdate, Date enddate,
+      bool preferEnd = true, bool execute = true, bool roundDown = true
+      );
 
     /** Fixes the start and end date of an operationplan. Note that this
       * overrules the standard duration given on the operation, i.e. no logic
@@ -3209,8 +3223,8 @@ class Operation : public HasName<Operation>,
     /** Auxilary method to initialize an vector of availability calendar
       * iterators related to an operation.
       */
-    void collectCalendars(
-      vector<Calendar::EventIterator>&, Date, const OperationPlan*, bool forward = true
+    unsigned short collectCalendars(
+      Calendar::EventIterator[], Date, const OperationPlan*, bool forward = true
     ) const;
     
     virtual void solve(Solver &s, void* v = nullptr) const
@@ -3692,6 +3706,17 @@ class OperationPlanState  // @todo should also be able to remember and restore s
       return *this;
     }
 };
+
+
+inline OperationPlanState OperationPlan::setOperationPlanParameters(
+  double qty, Date startdate, Date enddate,
+  bool preferEnd, bool execute, bool roundDown
+)
+{
+  return getOperation()->setOperationPlanParameters(
+    this, qty, startdate, enddate, preferEnd, execute, roundDown
+  );
+}
 
 
 /** @brief Models an operation that takes a fixed amount of time, independent
@@ -4363,6 +4388,22 @@ class ItemDistribution : public Object,
       return size_multiple;
     }
 
+    /** Sets the maximum size for shipments. */
+    void setSizeMaximum(double f)
+    {
+      if (f < size_minimum)
+        throw DataException("ItemDistribution maximum size must be higher than the minimum size");
+      if (f < 0)
+        throw DataException("ItemDistribution can't have a negative maximum size");
+      size_maximum = f;
+    }
+
+    /** Returns the mutiple size for shipments. */
+    double getSizeMaximum() const
+    {
+      return size_maximum;
+    }
+
     /** Returns the cost of shipping 1 unit of this item.<br>
       * The default value is 0.0.
       */
@@ -4403,6 +4444,7 @@ class ItemDistribution : public Object,
       m->addDurationField<Cls>(Tags::leadtime, &Cls::getLeadTime, &Cls::setLeadTime);
       m->addDoubleField<Cls>(Tags::size_minimum, &Cls::getSizeMinimum, &Cls::setSizeMinimum, 1.0);
       m->addDoubleField<Cls>(Tags::size_multiple, &Cls::getSizeMultiple, &Cls::setSizeMultiple, 1.0);
+      m->addDoubleField<Cls>(Tags::size_maximum, &Cls::getSizeMaximum, &Cls::setSizeMaximum, DBL_MAX);
       m->addDoubleField<Cls>(Tags::cost, &Cls::getCost, &Cls::setCost);
       m->addIntField<Cls>(Tags::priority, &Cls::getPriority, &Cls::setPriority, 1);
       m->addDateField<Cls>(Tags::effective_start, &Cls::getEffectiveStart, &Cls::setEffectiveStart);
@@ -4427,6 +4469,9 @@ class ItemDistribution : public Object,
 
     /** Procurement multiple quantity. */
     double size_multiple = 1.0;
+
+    /** Procurement maximum quantity. */
+    double size_maximum = DBL_MAX;
 
     /** Procurement cost. */
     double cost = 0.0;
@@ -4694,6 +4739,22 @@ class ItemSupplier : public Object,
       return size_multiple;
     }
 
+    /** Sets the maximum size for procurements. */
+    void setSizeMaximum(double f)
+    {
+      if (f < size_minimum)
+        throw DataException("ItemSupplier maximum size must be higher than the minimum size");
+      if (f < 0)
+        throw DataException("ItemSupplier can't have a negative maximum size");
+      size_maximum = f;
+    }
+
+    /** Returns the maximum size for procurements. */
+    double getSizeMaximum() const
+    {
+      return size_maximum;
+    }
+
     /** Returns the cost of purchasing 1 unit of this item from this supplier.<br>
       * The default value is 0.0.
       */
@@ -4795,6 +4856,7 @@ class ItemSupplier : public Object,
       m->addDurationField<Cls>(Tags::leadtime, &Cls::getLeadTime, &Cls::setLeadTime);
       m->addDoubleField<Cls>(Tags::size_minimum, &Cls::getSizeMinimum, &Cls::setSizeMinimum, 1.0);
       m->addDoubleField<Cls>(Tags::size_multiple, &Cls::getSizeMultiple, &Cls::setSizeMultiple, 1.0);
+      m->addDoubleField<Cls>(Tags::size_maximum, &Cls::getSizeMaximum, &Cls::setSizeMaximum, DBL_MAX);
       m->addDoubleField<Cls>(Tags::cost, &Cls::getCost, &Cls::setCost);
       m->addIntField<Cls>(Tags::priority, &Cls::getPriority, &Cls::setPriority, 1);
       m->addDateField<Cls>(Tags::effective_start, &Cls::getEffectiveStart, &Cls::setEffectiveStart);
@@ -4821,6 +4883,9 @@ class ItemSupplier : public Object,
 
     /** Procurement multiple quantity. */
     double size_multiple = 1.0;
+
+    /** Procurement multiple quantity. */
+    double size_maximum = DBL_MAX;
 
     /** Procurement cost. */
     double cost = 0.0;
@@ -6699,6 +6764,14 @@ class Resource : public HasHierarchy<Resource>,
     virtual const MetaClass& getType() const {return *metadata;}
     static const MetaCategory* metadata;
 
+    /** Returns true when this resource capacity represents time.
+      * This is used by the resourceplan export.
+      */
+    virtual bool isTime() 
+    { 
+      return true;
+    }
+
     /** Returns the maximum inventory buildup allowed in case of capacity
       * shortages. */
     Duration getMaxEarly() const
@@ -6949,8 +7022,19 @@ class ResourceBuckets : public Resource
 
     virtual void updateProblems();
 
+    virtual bool isTime()
+    {
+      return computedFromCalendars;
+    }
+
     /** Updates the time buckets and the quantity per time bucket. */
     virtual void setMaximumCalendar(Calendar*);
+
+    /** Compute the availability of the resource per bucket. */
+    static PyObject* computeBucketAvailability(PyObject*, PyObject*);
+
+  private:
+    bool computedFromCalendars = false;
 };
 
 
@@ -7101,13 +7185,24 @@ class Load
       return qty;
     }
 
-    /** Updates the quantity of the load.
-      * @exception DataException When a negative number is passed.
-      */
+    /** Updates the quantity of the load. */
     void setQuantity(double f)
     {
-      if (f < 0) throw DataException("Load quantity can't be negative");
+      if (f < 0)
+        throw DataException("OperationResource quantity can't be negative");
       qty = f;
+    }
+
+    double getQuantityFixed() const
+    {
+      return qtyfixed;
+    }
+
+    void setQuantityFixed(double f)
+    {
+      if (f < 0)
+        throw DataException("OperationResource quantity_fixed can't be negative");
+      qtyfixed = f;
     }
 
     /** Return the leading load of this group.
@@ -7216,6 +7311,7 @@ class Load
       m->addPointerField<Cls, Operation>(Tags::operation, &Cls::getOperation, &Cls::setOperation, MANDATORY + PARENT);
       m->addPointerField<Cls, Resource>(Tags::resource, &Cls::getResource, &Cls::setResource, MANDATORY + PARENT);
       m->addDoubleField<Cls>(Tags::quantity, &Cls::getQuantity, &Cls::setQuantity, 1.0);
+      m->addDoubleField<Cls>(Tags::quantity_fixed, &Cls::getQuantityFixed, &Cls::setQuantityFixed, 0.0);
       m->addIntField<Cls>(Tags::priority, &Cls::getPriority, &Cls::setPriority, 1);
       m->addStringField<Cls>(Tags::name, &Cls::getName, &Cls::setName);
       m->addEnumField<Cls, SearchMode>(Tags::search, &Cls::getSearch, &Cls::setSearch, PRIORITY);
@@ -7231,6 +7327,9 @@ class Load
     /** Stores how much capacity is consumed during the duration of an
       * operationplan. */
     double qty = 1.0;
+
+    /** Constant capacity consumption for bucketized resources only. */
+    double qtyfixed = 0.0;
 
     /** Required setup. */
     PooledString setup;
@@ -7852,7 +7951,7 @@ class Demand
       Plannable::registerFields<Cls>(m);
       m->addDateField<Cls>(Tags::due, &Cls::getDue, &Cls::setDue);
       m->addIntField<Cls>(Tags::priority, &Cls::getPriority, &Cls::setPriority);
-      m->addDurationField<Cls>(Tags::maxlateness, &Cls::getMaxLateness, &Cls::setMaxLateness, Duration::MAX, BASE + PLAN);
+      m->addDurationField<Cls>(Tags::maxlateness, &Cls::getMaxLateness, &Cls::setMaxLateness, Duration(5L * 365L * 86400L), BASE + PLAN);
       m->addStringField<Cls>(Tags::status, &Cls::getStatusString, &Cls::setStatusString, "open");
       m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, &Cls::setHidden, BOOL_FALSE, DONT_SERIALIZE);
       m->addIteratorField<Cls, PeggingIterator, PeggingIterator>(Tags::pegging, Tags::pegging, &Cls::getPegging, PLAN + WRITE_OBJECT);
@@ -7894,9 +7993,9 @@ class Demand
     Date dueDate;
 
     /** Maximum lateness allowed when planning this demand.<br>
-      * The default value is Duration::MAX.
+      * The default value is 5 years.
       */
-    Duration maxLateness = Duration::MAX;
+    Duration maxLateness = Duration(5L * 365L * 86400L);
 
     /** Minimum size for a delivery operation plan satisfying this demand. */
     double minShipment = -1.0;
@@ -8168,6 +8267,16 @@ class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand
       */
     LoadPlan* getOtherLoadPlan() const;
 
+    /** Auxilary method for bucketized resources.
+      * Returns the date and onhand at the end of this bucket.
+      */
+    tuple<double, Date, double> getBucketEnd() const;
+
+    /** Auxilary method for bucketized resources.
+      * Returns starting date and quantity of this bucket.
+      */
+    tuple<double, Date, double> getBucketStart() const;
+
     inline AlternateIterator getAlternates() const;
 
     static int initialize();
@@ -8288,30 +8397,6 @@ class LoadPlan::AlternateIterator
 inline LoadPlan::AlternateIterator LoadPlan::getAlternates() const
 {
   return LoadPlan::AlternateIterator(this);
-}
-
-
-inline double Load::getLoadplanQuantity(const LoadPlan* lp) const
-{
-  if (!lp->getOperationPlan()->getProposed() && !lp->getOperationPlan()->getConsumeCapacity())
-    // No capacity consumption required
-    return 0.0;
-  if (!lp->getOperationPlan()->getQuantity())
-    // Operationplan has zero size, and so should the capacity it needs
-    return 0.0;
-  if (!lp->getOperationPlan()->getDates().overlap(getEffective())
-      && (lp->getOperationPlan()->getDates().getDuration()
-          || !getEffective().within(lp->getOperationPlan()->getStart())))
-    // Load is not effective during this time.
-    // The extra check is required to make sure that zero duration operationplans
-    // operationplans don't get resized to 0
-    return 0.0;
-  if (getResource()->getType() == *ResourceBuckets::metadata)
-    // Bucketized resource
-    return - getQuantity() * lp->getOperationPlan()->getQuantity();
-  else
-    // Continuous resource
-    return lp->isStart() ? getQuantity() : -getQuantity();
 }
 
 
@@ -9832,7 +9917,7 @@ class CommandMoveOperationPlan : public Command
     {
       assert(opplan->getOperation());
       if (opplan)
-        opplan->getOperation()->setOperationPlanParameters(opplan, q, s, e, b, true, roundDown);
+        opplan->setOperationPlanParameters(q, s, e, b, true, roundDown);
     }
 
     /** Set another start date for the operationplan. */
@@ -10269,7 +10354,8 @@ inline int OperationPlan::sizeLoadPlans() const
 class OperationPlan::InterruptionIterator : public Object
 {
   private:
-    vector<Calendar::EventIterator> cals;
+    Calendar::EventIterator cals[10];
+    unsigned short numCalendars;
     Date curdate;
     const OperationPlan* opplan;
     Date start;
@@ -10281,7 +10367,7 @@ class OperationPlan::InterruptionIterator : public Object
     {
       if (!opplan || !opplan->getOperation())
         throw LogicException("Can't initialize an iterator over an uninitialized operationplan");
-      opplan->getOperation()->collectCalendars(cals, opplan->getStart(), opplan);
+      numCalendars = opplan->getOperation()->collectCalendars(cals, opplan->getStart(), opplan);
       curdate = opplan->getStart();
       start = curdate;
       initType(metadata);

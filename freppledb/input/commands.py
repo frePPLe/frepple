@@ -364,6 +364,12 @@ class loadCalendarBuckets(LoadTask):
           sunday, monday, tuesday, wednesday, thursday, friday, saturday,
           starttime, endtime, source
         FROM calendarbucket %s
+        UNION
+        SELECT
+          bucket_id calendar_id, startdate, enddate, 10 priority , 0 as value,
+          't' sunday,'t' monday,'t' tuesday,'t' wednesday,'t' thurday,'t' friday,'t' saturday,
+          time '00:00:00' starttime, time '23:59:59' endtime, 'common_bucketdetail' source
+        FROM common_bucketdetail
         ORDER BY calendar_id, startdate desc
         ''' % filter_where)
       prevcal = None
@@ -733,7 +739,7 @@ class loadItemSuppliers(LoadTask):
       starttime = time()
       cursor.execute('''
         SELECT
-          supplier_id, item_id, location_id, sizeminimum, sizemultiple,
+          supplier_id, item_id, location_id, sizeminimum, sizemultiple, sizemaximum,
           cost, priority, effective_start, effective_end, source, leadtime,
           resource_id, resource_qty, fence
         FROM itemsupplier %s
@@ -752,9 +758,9 @@ class loadItemSuppliers(LoadTask):
             curitem = frepple.item(name=curitemname)
           curitemsupplier = frepple.itemsupplier(
             supplier=cursupplier, item=curitem, source=i[9],
-            leadtime=i[10].total_seconds() if i[10] else 0,
-            fence=i[13].total_seconds() if i[13] else 0,
-            resource_qty=i[12]
+            leadtime=i[11].total_seconds() if i[11] else 0,
+            fence=i[14].total_seconds() if i[14] else 0,
+            resource_qty=i[13]
             )
           if i[2]:
             curitemsupplier.location = frepple.location(name=i[2])
@@ -763,15 +769,17 @@ class loadItemSuppliers(LoadTask):
           if i[4]:
             curitemsupplier.size_multiple = i[4]
           if i[5]:
-            curitemsupplier.cost = i[5]
-          if i[6] is not None:
-            curitemsupplier.priority = i[6]
-          if i[7]:
-            curitemsupplier.effective_start = i[7]
+            curitemsupplier.size_maximum = i[5]
+          if i[6]:
+            curitemsupplier.cost = i[6]
+          if i[7] is not None:
+            curitemsupplier.priority = i[7]
           if i[8]:
-            curitemsupplier.effective_end = i[8]
-          if i[11]:
-            curitemsupplier.resource = frepple.resource(name=i[11])
+            curitemsupplier.effective_start = i[8]
+          if i[9]:
+            curitemsupplier.effective_end = i[9]
+          if i[12]:
+            curitemsupplier.resource = frepple.resource(name=i[12])
         except Exception as e:
           logger.error("**** %s ****" % e)
       logger.info('Loaded %d item suppliers in %.2f seconds' % (cnt, time() - starttime))
@@ -797,7 +805,7 @@ class loadItemDistributions(LoadTask):
       starttime = time()
       cursor.execute('''
         SELECT
-          origin_id, item_id, location_id, sizeminimum, sizemultiple,
+          origin_id, item_id, location_id, sizeminimum, sizemultiple, sizemaximum,
           cost, priority, effective_start, effective_end, source,
           leadtime, resource_id, resource_qty, fence
         FROM itemdistribution %s
@@ -815,10 +823,10 @@ class loadItemDistributions(LoadTask):
             curitemname = i[1]
             curitem = frepple.item(name=curitemname)
           curitemdistribution = frepple.itemdistribution(
-            origin=curorigin, item=curitem, source=i[9],
-            leadtime=i[10].total_seconds() if i[10] else 0,
-            fence=i[13].total_seconds() if i[13] else 0,
-            resource_qty=i[12]
+            origin=curorigin, item=curitem, source=i[10],
+            leadtime=i[11].total_seconds() if i[11] else 0,
+            fence=i[14].total_seconds() if i[14] else 0,
+            resource_qty=i[13]
             )
           if i[2]:
             curitemdistribution.destination = frepple.location(name=i[2])
@@ -827,15 +835,17 @@ class loadItemDistributions(LoadTask):
           if i[4]:
             curitemdistribution.size_multiple = i[4]
           if i[5]:
-            curitemdistribution.cost = i[5]
-          if i[6] is not None:
-            curitemdistribution.priority = i[6]
-          if i[7]:
-            curitemdistribution.effective_start = i[7]
+            curitemdistribution.size_maximum = i[5]
+          if i[6]:
+            curitemdistribution.cost = i[6]
+          if i[7] is not None:
+            curitemdistribution.priority = i[7]
           if i[8]:
-            curitemdistribution.effective_end = i[8]
-          if i[11]:
-            curitemdistribution.resource = frepple.resource(name=i[11])
+            curitemdistribution.effective_start = i[8]
+          if i[9]:
+            curitemdistribution.effective_end = i[9]
+          if i[12]:
+            curitemdistribution.resource = frepple.resource(name=i[12])
         except Exception as e:
           logger.error("**** %s ****" % e)
       logger.info('Loaded %d item distributions in %.2f seconds' % (cnt, time() - starttime))
@@ -983,22 +993,23 @@ class loadResources(LoadTask):
             x = frepple.resource_infinite(
               name=i[0], description=i[1], category=i[10], subcategory=i[11], source=i[13]
               )
-          elif i[5] == "buckets":
+            convert2cal = None
+          elif i[5].startswith("buckets"):
             x = frepple.resource_buckets(
               name=i[0], description=i[1], category=i[10], subcategory=i[11], source=i[13]
               )
-            if i[7] is not None:
-              x.maxearly = i[7]
+            convert2cal = i[5][8:]
           elif not i[5] or i[5] == "default":
             x = frepple.resource_default(
               name=i[0], description=i[1], category=i[10], subcategory=i[11], source=i[13]
               )
-            if i[7] is not None:
-              x.maxearly = i[7].total_seconds()
-            if i[2] is not None:
-              x.maximum = i[2]
+            convert2cal = None
           else:
             raise ValueError("Resource type '%s' not recognized" % i[5])
+          if i[7] is not None:
+            x.maxearly = i[7].total_seconds()
+          if i[2] is not None:
+            x.maximum = i[2]
           if i[3]:
             x.maximum_calendar = frepple.calendar(name=i[3])
           if i[4]:
@@ -1017,6 +1028,11 @@ class loadResources(LoadTask):
             x.efficiency = i[15]
           if i[16]:
             x.efficiency_calendar = frepple.calendar(name=i[16])
+          if convert2cal:
+            x.computeAvailability(
+              frepple.calendar(name=convert2cal, action='C'),
+              False  # Debug flag
+              )
         except Exception as e:
           logger.error("**** %s ****" % e)
       logger.info('Loaded %d resources in %.2f seconds' % (cnt, time() - starttime))
@@ -1164,7 +1180,7 @@ class loadOperationResources(LoadTask):
       cursor.execute('''
         SELECT
           operation_id, resource_id, quantity, effective_start, effective_end, name,
-          priority, setup, search, skill_id, source
+          priority, setup, search, skill_id, source, quantity_fixed
         FROM operationresource %s
         ORDER BY operation_id, resource_id
         ''' % filter_where)
@@ -1191,6 +1207,8 @@ class loadOperationResources(LoadTask):
             curload.search = i[8]
           if i[9]:
             curload.skill = frepple.skill(name=i[9])
+          if i[11]:
+            curload.quantity_fixed = i[11]
         except Exception as e:
           logger.error("**** %s ****" % e)
       logger.info('Loaded %d resource loads in %.2f seconds' % (cnt, time() - starttime))

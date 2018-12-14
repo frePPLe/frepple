@@ -42,12 +42,31 @@ from django.core.management import get_commands
 from freppledb.execute.models import Task
 from freppledb.common.auth import basicauthentication
 from freppledb.common.models import Scenario
-from freppledb.common.report import exportWorkbook, importWorkbook
+from freppledb.common.report import exportWorkbook, importWorkbook, GridFieldDuration
 from freppledb.common.report import GridReport, GridFieldDateTime, GridFieldText, GridFieldInteger
 from freppledb.execute.management.commands.runworker import checkActive
 
 import logging
 logger = logging.getLogger(__name__)
+
+
+def sendStaticFile(request, filename, folder):
+  '''
+  Serving log and data files can be handled either:
+  - by Django's Python code
+  - by the apache web server if the module xsendfile is installed
+  '''
+  if getattr(settings, 'APACHE_XSENDFILE', False):
+    # Forward to Apache
+    # Code inspired on https://github.com/johnsensible/django-sendfile/
+    response = HttpResponse(request)
+    response['X-Sendfile'] = os.path.join(folder, filename)
+  else:
+    # Django's static file server
+    response = static.serve(request, filename, document_root=folder)
+  response['Content-Disposition'] = 'inline; filename="%s"' % filename
+  response['Content-Type'] = 'application/octet-stream'
+  return response
 
 
 class TaskReport(GridReport):
@@ -56,7 +75,9 @@ class TaskReport(GridReport):
   '''
   template = 'execute/execute.html'
   title = _('Task status')
-  basequeryset = Task.objects.all()
+  basequeryset = Task.objects.all().extra(select={
+    'duration': "case when status in ('Done', '100%%') then finished::timestamp(0) - started::timestamp(0) end"
+      })
   model = Task
   frozenColumns = 0
   multiselect = False
@@ -78,6 +99,7 @@ class TaskReport(GridReport):
     GridFieldText('arguments', title=_('arguments'), editable=False),
     #. Translators: Translation included with Django
     GridFieldText('user', title=_('user'), field_name='user__username', editable=False, align='center'),
+    GridFieldDuration('duration', title=_('duration'), search=False, editable=False, align='center'),
     )
 
 
@@ -114,7 +136,8 @@ class TaskReport(GridReport):
         'logfile': rec.logfile if rec.logfile in logfileslist else None,
         'message': rec.message,
         'arguments': rec.arguments,
-        'user__username': rec.user.username if rec.user else None
+        'user__username': rec.user.username if rec.user else None,
+        'duration': rec.duration
         }
 
 
@@ -244,7 +267,7 @@ def wrapTask(request, action):
       worker_database = source
       destination = args.getlist('destination')
       force = args.get('force', False)
-      for sc in Scenario.objects.all():
+      for sc in Scenario.objects.using(DEFAULT_DB_ALIAS):
         arguments = "%s %s" % (source, sc.name)
         if force:
           arguments += ' --force'
@@ -255,7 +278,7 @@ def wrapTask(request, action):
       # Note: release is immediate and synchronous.
       if not request.user.has_perm('auth.release_scenario'):
         raise Exception('Missing execution privileges')
-      for sc in Scenario.objects.all().using(DEFAULT_DB_ALIAS):
+      for sc in Scenario.objects.using(DEFAULT_DB_ALIAS):
         if args.get(sc.name, 'off') == 'on' and sc.status != 'Free':
           sc.status = 'Free'
           sc.lastrefresh = now
@@ -267,7 +290,7 @@ def wrapTask(request, action):
       # Note: update is immediate and synchronous.
       if not request.user.has_perm('auth.release_scenario'):
         raise Exception('Missing execution privileges')
-      for sc in Scenario.objects.all().using(DEFAULT_DB_ALIAS):
+      for sc in Scenario.objects.using(DEFAULT_DB_ALIAS):
         if args.get(sc.name, 'off') == 'on':
           sc.description = args.get('description', None)
           sc.save(using=DEFAULT_DB_ALIAS)
@@ -427,14 +450,7 @@ def DownloadLogFile(request, taskid):
   filename = Task.objects.using(request.database).get(id=taskid).logfile
   if not filename.lower().endswith('.log'):
     return HttpResponseNotFound(force_text(_('Error downloading file')))
-
-  response = static.serve(
-    request, filename,
-    document_root=settings.FREPPLE_LOGDIR
-    )
-  response['Content-Disposition'] = 'inline; filename="%s"' % filename
-  response['Content-Type'] = 'application/octet-stream'
-  return response
+  return sendStaticFile(request, filename, settings.FREPPLE_LOGDIR)
 
 
 @staff_member_required
@@ -591,12 +607,7 @@ class FileManager:
 
     try:
       clean_filename = filename.split('/')[0]
-      response = static.serve(
-        request, clean_filename, document_root=folder
-        )
-      response['Content-Disposition'] = 'inline; filename="%s"' % filename
-      response['Content-Type'] = 'application/octet-stream'
-      return response
+      return sendStaticFile(request, clean_filename, folder)
     except Exception as e:
       logger.error("Failed file download: %s" % e)
       return HttpResponseNotFound(force_text(_('Error downloading file')))

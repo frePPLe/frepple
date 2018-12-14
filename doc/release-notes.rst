@@ -1,12 +1,49 @@
 Release notes
 -------------
 
-4.4.3 (Upcoming release)
+4.5.0 (Upcoming release)
 ========================
 
 .. rubric:: Production planning
 
+- The default allowed delivery delay of sales orders and forecasts is changed from indefinite 
+  to 5 years. This improves the performance of the algorithms in case there are unplannable
+  orders.
+
+- A new resource type `time buckets <user-guide/model-reference/resources.html#>`_is introduced that represents capacity as the number of hours of 
+  availability per time bucket.
+  
+- The capacity consumption from a bucketized resource now also has a constant component
+  and considers the resource efficiency.
+  
+- Addition of the field size maximum to the item supplier and item distribution tables.
+
 - Bug fix: calculation of operation time for 0-duration operations was wrong in some situations.
+
+- Bug fix: incorrect operation duration when different resources in an aggregate pool resource 
+  have different working hours.
+
+- Bug fix: corrected corner cases where the solver got into an infinite loop.  
+
+.. rubric:: User interface
+
+- Improved performance and reduced memory footprint when downloading and exporting big reports.
+ 
+- Added field duration to the
+  `execution screen <user-guide/user-interface/execute.html>`_
+
+- Added tabs to see the manufacturing orders for a specific item, location or operation.
+
+- Update of the "in progress" fields of the inventory report. Are considered in progress for a given bucket
+  all orders startting before the end date of that bucket and ending after the end date of that bucket. 
+
+- Improved display of very small durations. All digits up to 1 microsecond are now visible.
+
+.. rubric:: API
+
+- The `database backup command <user-guide/command-reference.html#backup>`_ and
+  `database restore command <user-guide/command-reference.html#restore>`_ now use the 
+  faster and smaller compressed binary backup format of PostgreSQL. 
 
 4.4.2 (2018/10/20)
 ==================

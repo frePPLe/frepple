@@ -145,7 +145,12 @@ class Command(BaseCommand):
       # Commenting the next line is a little more secure, but requires you to create a .pgpass file.
       if settings.DATABASES[source]['PASSWORD']:
         os.environ['PGPASSWORD'] = settings.DATABASES[source]['PASSWORD']
-      commandline = "pg_dump -Fc %s%s%s%s | pg_restore -n public -Fc -c --if-exists %s%s%s -d %s" % (
+      if os.name == 'nt':
+        # On windows restoring with pg_restore over a pipe is broken :-(
+        cmd = "pg_dump -c -Fp %s%s%s%s | psql %s%s%s%s"
+      else:
+        cmd = "pg_dump -Fc %s%s%s%s | pg_restore -n public -Fc -c --if-exists %s%s%s -d %s"
+      commandline = cmd % (
         settings.DATABASES[source]['USER'] and ("-U %s " % settings.DATABASES[source]['USER']) or '',
         settings.DATABASES[source]['HOST'] and ("-h %s " % settings.DATABASES[source]['HOST']) or '',
         settings.DATABASES[source]['PORT'] and ("-p %s " % settings.DATABASES[source]['PORT']) or '',
@@ -216,7 +221,7 @@ class Command(BaseCommand):
     # Synchronize the scenario table with the settings
     Scenario.syncWithSettings()
 
-    scenarios = Scenario.objects.all().using(DEFAULT_DB_ALIAS)
+    scenarios = Scenario.objects.using(DEFAULT_DB_ALIAS)
     if scenarios.count() > 1:
       javascript = '''
         $("#sourceul li a").click(function(){
@@ -234,8 +239,8 @@ class Command(BaseCommand):
               {% comment %}Translators: Translation included with Django {% endcomment %}
               <th style="padding: 0px 15px;">{% trans 'scenario'|capfirst %}</th>
               <th style="padding: 0px 15px;">{% trans 'status'|capfirst %}</th>
-              <th>{% trans 'label'|capfirst %}</th>
-              <th>{% trans 'last refresh'|capfirst %}</th>
+              <th>{% trans 'description'|capfirst %}</th>
+              <th>{% trans 'last modified'|capfirst %}</th>
             </tr>
             {% for j in scenarios %}{% ifnotequal j.name 'default' %}
             <tr>
@@ -243,7 +248,9 @@ class Command(BaseCommand):
                 <label for="sc{{j.name}}">&nbsp;<strong>{{j.name|capfirst}}</strong>
                 </label>
               </td>
-              <td  style="padding: 0px 15px;">{{j.status}}</td>
+              {% with mystatus=j.status|lower %}
+              <td style="padding: 0px 15px;">{% trans mystatus|capfirst %}</td>
+              {% endwith %}
               <td>{% if j.description %}{{j.description}}{% endif %}</td>
               <td>{{j.lastrefresh|date:"DATETIME_FORMAT"}}</td>
             </tr>

@@ -352,6 +352,74 @@ Object* LoadPlan::reader(
 }
 
 
+double Load::getLoadplanQuantity(const LoadPlan* lp) const
+{
+  if (!lp->getOperationPlan()->getProposed() && !lp->getOperationPlan()->getConsumeCapacity())
+    // No capacity consumption required
+    return 0.0;
+  if (!lp->getOperationPlan()->getQuantity())
+    // Operationplan has zero size, and so should the capacity it needs
+    return 0.0;
+  if (!lp->getOperationPlan()->getDates().overlap(getEffective())
+    && (lp->getOperationPlan()->getDates().getDuration()
+      || !getEffective().within(lp->getOperationPlan()->getStart())))
+    // Load is not effective during this time.
+    // The extra check is required to make sure that zero duration operationplans
+    // operationplans don't get resized to 0
+    return 0.0;
+  if (getResource()->getType() == *ResourceBuckets::metadata)
+  {
+    // Bucketized resource
+    auto efficiency = lp->getOperationPlan()->getEfficiency();
+    if (efficiency > 0.0)
+      return -(getQuantityFixed() + getQuantity() * lp->getOperationPlan()->getQuantity()) / efficiency;
+    else
+      return DBL_MIN;
+  }
+  else
+    // Continuous resource
+    return lp->isStart() ? getQuantity() : -getQuantity();
+}
+
+
+tuple<double, Date, double> LoadPlan::getBucketEnd() const
+{
+  assert(getResource()->getType() == *ResourceBuckets::metadata);
+  double available_before = getOnhand();
+  for (
+    auto cur = res->getLoadPlans().begin(this); 
+    cur != res->getLoadPlans().end(); ++cur
+    )
+  {
+    if (cur->getEventType() == 2)
+      return make_tuple(available_before, cur->getDate(), cur->getOnhand());
+    available_before = cur->getOnhand();
+  }
+  return make_tuple(available_before, Date::infiniteFuture, 0);
+}
+
+
+tuple<double, Date, double> LoadPlan::getBucketStart() const
+{
+  assert(getResource()->getType() == *ResourceBuckets::metadata);
+  double available_after = getOnhand();
+  for (
+    auto cur = res->getLoadPlans().begin(this);
+    cur != res->getLoadPlans().end(); --cur
+    )
+  {
+    available_after = cur->getQuantity();
+    if (cur->getEventType() == 2)
+    {
+      auto tmp = cur->getDate();
+      --cur;
+      return make_tuple(cur != res->getLoadPlans().end() ? cur->getOnhand() : 0.0, tmp, available_after);
+    }
+  }
+  return make_tuple(0.0, Date::infinitePast, available_after);
+}
+
+
 int LoadPlanIterator::initialize()
 {
   // Initialize the type
@@ -402,7 +470,7 @@ LoadPlan::AlternateIterator::AlternateIterator(const LoadPlan* o) : ldplan(o)
         auto my_eff = i->getEfficiencyCalendar()
           ? i->getEfficiencyCalendar()->getValue(ldplan->getOperationPlan()->getStart())
           : i->getEfficiency();
-        if (my_eff > 0)
+        if (my_eff > 0.0)
           resources.push_back(&*i);
       }
     }

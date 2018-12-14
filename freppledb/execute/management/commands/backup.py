@@ -105,7 +105,7 @@ class Command(BaseCommand):
       os.environ['PGPASSWORD'] = settings.DATABASES[database]['PASSWORD']
       args = [
         "pg_dump",
-        "-b", "-w",
+        "-Fc", "-w",
         '--username=%s' % settings.DATABASES[database]['USER'],
         '--file=%s' % os.path.abspath(os.path.join(settings.FREPPLE_LOGDIR, backupfile))
         ]

@@ -103,11 +103,16 @@ gdb:
 	export PYTHONPATH=$(CURDIR); \
 	export DJANGO_SETTINGS_MODULE=freppledb.settings; \
 	export LD_LIBRARY_PATH=$ROOT/src/.libs; \
-	export webservice=1; \
+	export FREPPLE_LOGFILE=frepple.log; \
 	libtool --mode=execute gdb --args $(CURDIR)/src/frepple $(CURDIR)/freppledb/common/commands.py
-#	valgrind --leak-check=yes $ROOT/src/.libs/frepple $ROOT/freppledb/common/commands.py
-#	valgrind --tool=callgrind --dsymutil=yes $ROOT/src/.libs/frepple $ROOT/freppledb/common/commands.py
 
+profiling_run:
+	export FREPPLE_HOME=$(CURDIR)/bin; \
+	export PYTHONPATH=$(CURDIR); \
+	export DJANGO_SETTINGS_MODULE=freppledb.settings; \
+	export LD_LIBRARY_PATH=$(CURDIR)/src/.libs; \
+	export FREPPLE_LOGFILE=frepple.log; \
+	valgrind --tool=callgrind --dsymutil=yes $(CURDIR)/src/.libs/frepple $(CURDIR)/freppledb/common/commands.py
 
 # A simple way to get some code metrics
 stats:
@@ -118,12 +123,11 @@ stats:
 		`find . -name '*.xsd'` \
 		`find . -name '*.nsi'` \
 		`find . -name '*.am'` \
-		`find . -name '*.ac'` \
-		`find modules -name '*.h'` | sort -n
+		`find . -name '*.ac'` | sort -n
 	wc -l `find . -name '*.py'` | sort -n
 	wc -l `find freppledb -name '*.html'` \
-		freppledb/common/static/js/frepple.js \
-		freppledb/common/static/css/frepple.css | sort -n
+		`find freppledb -name '*.js'` \
+		`find freppledb -name '*.css'` | sort -n
 
 # A simple way to list the todo items
 todo:
@@ -143,10 +147,10 @@ astyle:
 #  * The third argument can be empty. Or it can be a string starting with a '.'/dot.
 old1 = 4
 old2 = 4
-old3 = 2
+old3 = 3
 new1 = 4
-new2 = 4
-new3 = 3
+new2 = 5
+new3 = 0
 set_release:
 	for i in "configure.ac" "include/frepple/utils.h" "contrib/rpm/frepple.spec" "freppledb/__init__.py" "freppledb/locale/nl/LC_MESSAGES/django.po" "freppledb/locale/nl/LC_MESSAGES/djangojs.po" "freppledb/locale/zh_TW/LC_MESSAGES/django.po" "freppledb/locale/zh_TW/LC_MESSAGES/djangojs.po" "freppledb/locale/it/LC_MESSAGES/django.po" "freppledb/locale/it/LC_MESSAGES/djangojs.po" "freppledb/locale/fr/LC_MESSAGES/django.po" "freppledb/locale/fr/LC_MESSAGES/djangojs.po" "freppledb/locale/ja/LC_MESSAGES/django.po" "freppledb/locale/ja/LC_MESSAGES/djangojs.po" "freppledb/locale/zh_CN/LC_MESSAGES/djangojs.po" "freppledb/locale/zh_CN/LC_MESSAGES/django.po"  "freppledb/locale/es/LC_MESSAGES/djangojs.po" "freppledb/locale/es/LC_MESSAGES/django.po" "freppledb/locale/pt_PT/LC_MESSAGES/djangojs.po" "freppledb/locale/pt_PT/LC_MESSAGES/django.po" "freppledb/locale/pt_BR/LC_MESSAGES/djangojs.po" "freppledb/locale/pt_BR/LC_MESSAGES/django.po"  "bin/frepple.xsd" "contrib/debian/changelog" "doc/conf.py"; do \
 		sed 's/$(old1)\.$(old2)\.$(old3)/$(new1).$(new2).$(new3)/g' $$i >out.tmp; \

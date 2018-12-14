@@ -125,7 +125,6 @@ class OverviewReport(GridPivot):
     Resource.rebuildHierarchy(database=basequery.db)
 
     # Execute the query
-    cursor = connections[request.database].cursor()
     query = '''
       select res.name, res.description, res.category, res.subcategory,
         res.type, res.maximum, res.maximum_calendar_id, res.cost, res.maxearly,
@@ -181,42 +180,43 @@ class OverviewReport(GridPivot):
         request.report_startdate, request.report_enddate,
         reportclass.attr_sql, sortsql
       )
-    cursor.execute(query, baseparams)
 
     # Build the python result
-    for row in cursor.fetchall():
-      numfields = len(row)
-      if row[numfields-4] != 0:
-        util = row[numfields-2] * 100 / row[numfields-4]
-      else:
-        util = 0
-      result = {
-        'resource': row[0], 'description': row[1], 'category': row[2],
-        'subcategory': row[3], 'type': row[4], 'maximum': row[5],
-        'maximum_calendar': row[6], 'cost': row[7], 'maxearly': row[8],
-        'setupmatrix': row[9], 'setup': row[10],
-        'location__name': row[11], 'location__description': row[12],
-        'location__category': row[13], 'location__subcategory': row[14],
-        'location__available': row[15],
-        'avgutil': round(row[16], 2),
-        'available_calendar': row[17],
-        'owner': row[18],
-        'bucket': row[numfields-6],
-        'startdate': row[numfields-5].date(),
-        'available': round(row[numfields-4], 1),
-        'unavailable': round(row[numfields-3], 1),
-        'load': round(row[numfields-2], 1),
-        'setup': round(row[numfields-1], 1),
-        'utilization': round(util, 2)
-        }
-      idx = 17
-      for f in getAttributeFields(Resource):
-        result[f.field_name] = row[idx]
-        idx += 1
-      for f in getAttributeFields(Location):
-        result[f.field_name] = row[idx]
-        idx += 1
-      yield result
+    with connections[request.database].chunked_cursor() as cursor_chunked:
+      cursor_chunked.execute(query, baseparams)
+      for row in cursor_chunked:
+        numfields = len(row)
+        if row[numfields-4] != 0:
+          util = row[numfields-2] * 100 / row[numfields-4]
+        else:
+          util = 0
+        result = {
+          'resource': row[0], 'description': row[1], 'category': row[2],
+          'subcategory': row[3], 'type': row[4], 'maximum': row[5],
+          'maximum_calendar': row[6], 'cost': row[7], 'maxearly': row[8],
+          'setupmatrix': row[9], 'setup': row[10],
+          'location__name': row[11], 'location__description': row[12],
+          'location__category': row[13], 'location__subcategory': row[14],
+          'location__available': row[15],
+          'avgutil': round(row[16], 2),
+          'available_calendar': row[17],
+          'owner': row[18],
+          'bucket': row[numfields-6],
+          'startdate': row[numfields-5].date(),
+          'available': round(row[numfields-4], 1),
+          'unavailable': round(row[numfields-3], 1),
+          'load': round(row[numfields-2], 1),
+          'setup': round(row[numfields-1], 1),
+          'utilization': round(util, 2)
+          }
+        idx = 17
+        for f in getAttributeFields(Resource):
+          result[f.field_name] = row[idx]
+          idx += 1
+        for f in getAttributeFields(Location):
+          result[f.field_name] = row[idx]
+          idx += 1
+        yield result
 
 
 class DetailReport(OperationPlanMixin, GridReport):

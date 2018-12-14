@@ -299,7 +299,7 @@ class OdooWritePlan(PlanTask):
           yield '<operationplan id="%s" ordertype="PO" item=%s location=%s supplier=%s start="%s" end="%s" quantity="%s" location_id=%s item_id=%s criticality="%d"/>' % (
             i.id, quoteattr(i.item.name), quoteattr(i.location.name),
             quoteattr(i.supplier.name), i.start, i.end, i.quantity,
-            quoteattr(i.location.subcategory), quoteattr(i.item.subcategory),
+            quoteattr(i.location.subcategory or ""), quoteattr(i.item.subcategory or ""),
             int(i.criticality)
             )
         elif i.ordertype == "MO":
@@ -309,7 +309,7 @@ class OdooWritePlan(PlanTask):
           yield '<operationplan id="%s" ordertype="MO" item=%s location=%s operation=%s start="%s" end="%s" quantity="%s" location_id=%s item_id=%s criticality="%d"/>' % (
             i.id, quoteattr(i.operation.item.name), quoteattr(i.operation.location.name),
             quoteattr(i.operation.name), i.start, i.end, i.quantity,
-            quoteattr(i.operation.location.subcategory), quoteattr(i.operation.item.subcategory),
+            quoteattr(i.operation.location.subcategory or ""), quoteattr(i.operation.item.subcategory or ""),
             int(i.criticality)
             )
       yield '</operationplans>'

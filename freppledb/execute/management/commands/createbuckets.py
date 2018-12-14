@@ -350,13 +350,13 @@ class Command(BaseCommand):
           </div>
           </div>
           <div class="form-group">
-          <label class="col-sm-3 control-label">Quarter format</label>
+          <label class="col-sm-3 control-label">Quarter name</label>
           <div class="col-sm-9">
           <input class="form-control" name="format-quarter" type="text" size="12" value="%y Q%q"/>
           </div>
           </div>
           <div class="form-group">
-          <label class="col-sm-3 control-label">Year format</label>
+          <label class="col-sm-3 control-label">Year name</label>
           <div class="col-sm-9">
           <input class="form-control" name="format-year" type="text" size="12" value="%Y"/>
           </div>

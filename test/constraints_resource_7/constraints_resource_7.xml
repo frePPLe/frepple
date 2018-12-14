@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <name>Test model for effective operations</name>
+  <description>
+  In this test the various aspects of bucketized resources.
+    - constant part of the capacity consumption
+    - variable part of the capacity consumption
+    - efficiency
+    - time_per operations
+  </description>
+  <current>2019-01-01T00:00:00</current>
+  <calendars>
+    <calendar name="Capacity">
+      <default>0</default>
+      <buckets>
+        <!-- 2 + 4 + 8 + 16 + 32 = 62 = effective monday through friday -->
+        <bucket start="2019-02-01T00:00:00" end="2019-04-30T00:00:00" days="62" value="20" />
+      </buckets>
+    </calendar>
+  </calendars>
+
+  <!--
+  TEST 1: A simple case with efficiency.
+  The operation is a time_per, which complicates things are the bucket
+  where capacity is needed changes as the requirement quantity changes.
+  -->
+  <operations>
+    <operation name="1. make end item" xsi:type="operation_time_per">
+      <size_multiple>1</size_multiple>
+      <item name="1. end item" />
+      <location name="1. factory" />
+      <flows>
+        <flow xsi:type="flow_end">
+          <item name="1. end item" />
+          <quantity>1</quantity>
+        </flow>
+      </flows>
+      <loads>
+        <load>
+		  <resource name="1. Resource" xsi:type="resource_buckets">
+		    <location name="1. factory" />
+		    <maximum_calendar name="Capacity"/>
+		    <efficiency>50</efficiency>
+		    <maxearly>P100D</maxearly>
+          </resource>
+          <quantity>1</quantity>
+          <quantity_fixed>1</quantity_fixed>
+        </load>
+      </loads>
+      <duration>P10D</duration>
+      <duration_per>P10D</duration_per>
+    </operation>
+  </operations>
+  <demands>
+    <demand name="1. order 1">
+      <quantity>2</quantity>
+      <due>2019-07-15T00:00:00</due>
+      <priority>1</priority>
+      <item name="1. end item" />
+      <location name="1. factory" />
+    </demand>
+    <demand name="1. order 2">
+      <quantity>2</quantity>
+      <minshipment>2</minshipment>
+      <due>2018-11-11T00:00:00</due>
+      <priority>1</priority>
+      <item name="1. end item" />
+      <location name="1. factory" />
+    </demand>
+  </demands>
+
+  <!--
+  TEST 2: Same as 1, but with extra availability calendar that restricts
+  the position of the operationplan within the bucket.
+  -->
+  <operations>
+    <operation name="2. make end item" xsi:type="operation_time_per">
+      <size_multiple>1</size_multiple>
+      <item name="2. end item" />
+      <location name="2. factory">
+        <available name="2. factory availability">
+          <default>0</default>
+          <buckets>
+            <!-- 4 + 8 + 16 = 28 = effective tuesday through thursday -->
+            <bucket  days="28" value="1" />
+          </buckets>
+        </available>
+      </location>
+      <flows>
+        <flow xsi:type="flow_end">
+          <item name="2. end item" />
+          <quantity>1</quantity>
+        </flow>
+      </flows>
+      <loads>
+        <load>
+		  <resource name="2. Resource" xsi:type="resource_buckets">
+		    <location name="2. factory" />
+		    <maximum_calendar name="Capacity"/>
+		    <efficiency>50</efficiency>
+		    <maxearly>P100D</maxearly>
+          </resource>
+          <quantity>1</quantity>
+          <quantity_fixed>1</quantity_fixed>
+        </load>
+      </loads>
+      <duration>P5D</duration>
+      <duration_per>P5D</duration_per>
+    </operation>
+  </operations>
+  <demands>
+    <demand name="2. order 1">
+      <quantity>2</quantity>
+      <due>2019-07-15T00:00:00</due>
+      <priority>1</priority>
+      <item name="2. end item" />
+      <location name="2. factory" />
+    </demand>
+    <demand name="2. order 2">
+      <quantity>2</quantity>
+      <minshipment>2</minshipment>
+      <due>2018-11-11T00:00:00</due>
+      <priority>1</priority>
+      <item name="2. end item" />
+      <location name="2. factory" />
+    </demand>
+  </demands>
+
+  <!--
+  TEST 3: Same as 2, but with now production split over multiple buckets.
+  -->
+  <operations>
+    <operation name="3. make end item" xsi:type="operation_time_per">
+      <size_multiple>1</size_multiple>
+      <item name="3. end item" />
+      <location name="3. factory">
+        <available name="3. factory availability">
+          <default>0</default>
+          <buckets>
+            <!-- 4 + 8 + 16 = 28 = effective tuesday through thursday -->
+            <bucket  days="28" value="1" />
+          </buckets>
+        </available>
+      </location>
+      <flows>
+        <flow xsi:type="flow_end">
+          <item name="3. end item" />
+          <quantity>1</quantity>
+        </flow>
+      </flows>
+      <loads>
+        <load>
+		  <resource name="3. Resource" xsi:type="resource_buckets">
+		    <location name="3. factory" />
+		    <maximum_calendar name="Capacity"/>
+		    <efficiency>50</efficiency>
+		    <maxearly>P100D</maxearly>
+          </resource>
+          <quantity>1</quantity>
+          <quantity_fixed>1</quantity_fixed>
+        </load>
+      </loads>
+      <duration>PT12H</duration>
+      <duration_per>PT12H</duration_per>
+    </operation>
+  </operations>
+  <demands>
+    <demand name="3. order 1">
+      <quantity>20</quantity>
+      <minshipment>10</minshipment>
+      <due>2019-07-15T00:00:00</due>
+      <priority>1</priority>
+      <item name="3. end item" />
+      <location name="3. factory" />
+    </demand>
+    <demand name="3. order 2">
+      <quantity>1</quantity>
+      <minshipment>1</minshipment>
+      <due>2019-04-01T00:00:00</due>
+      <priority>1</priority>
+      <item name="3. end item" />
+      <location name="3. factory" />
+    </demand>
+    <demand name="3. order 3">
+      <quantity>10</quantity>
+      <minshipment>5</minshipment>
+      <due>2018-11-11T00:00:00</due>
+      <priority>1</priority>
+      <item name="3. end item" />
+      <location name="3. factory" />
+    </demand>
+  </demands>
+
+<?python
+print("CREATING CONSTRAINED PLAN")
+frepple.solver_mrp(plantype=1, constraints=15, loglevel=2).solve()
+frepple.saveplan("output.1.xml")
+print("CREATING UNCONSTRAINED PLAN")
+frepple.solver_mrp(plantype=2, constraints=15, loglevel=2).solve()
+frepple.saveplan("output.2.xml")
+?>
+
+</plan>

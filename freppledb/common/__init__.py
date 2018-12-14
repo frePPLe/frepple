@@ -17,14 +17,20 @@
 
 r'''
 An reusable application that contains common functionality of different
-frePPLe data models.
+frePPLe extension apps.
 
 The common functionality handles:
-  - user preferences: reporting buckets, report start and end dates, language, csv delimiter
-  - breadcrumbs
-  - login using the e-mail address
+  - custom fields: json, jsonb and alias
+  - user model
+  - user preferences
+  - authentication using the e-mail address
+  - basic authentication
+  - JWT authentication
+  - navigation menu and breadcrumbs
   - generic report framework
-  - database utility functions, mainly to handle SQL dates in a portable way
+  - generic data export and import framework
+  - generic dashboard widget framework
   - date and time bucket definition
-  - middleware allowing users to set their preferred language
+  - middleware allowing users to set their preferred language and work with multiple databases
+  - middelware to automatically log in
 '''

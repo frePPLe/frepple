@@ -954,9 +954,9 @@ class exporter(object):
         '''
         yield '<!-- inventory -->\n'
         yield '<buffers>\n'
-        self.env.cr.execute('SELECT product_id, location_id, sum(qty) '
+        self.env.cr.execute('SELECT product_id, location_id, sum(quantity) '
                    'FROM stock_quant '
-                   'WHERE qty > 0 '
+                   'WHERE quantity > 0 '
                    'GROUP BY product_id, location_id '
                    'ORDER BY location_id ASC')
         inventory = {}

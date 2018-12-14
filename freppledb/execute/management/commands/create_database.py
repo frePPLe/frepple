@@ -99,6 +99,7 @@ class Command(BaseCommand):
                 )
               if confirm != 'yes':
                 print("Skipping drop and create of database %s" % database_name)
+                continue
 
             # Close current connections
             try:

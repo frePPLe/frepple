@@ -23,7 +23,7 @@
 # Initialization
 #
 AC_PREREQ(2.60)
-AC_INIT([frepple], [4.4.3])
+AC_INIT([frepple], [4.5.0])
 AC_CONFIG_SRCDIR([src/main.cpp])
 AC_CONFIG_HEADER([config.h])
 AM_INIT_AUTOMAKE([tar-ustar foreign])
@@ -133,14 +133,14 @@ AC_CHECK_PROG(HAVE_DOT, dot, [YES], [NO])
 # Checks for header files.
 AC_HEADER_DIRENT
 AC_HEADER_STDC
-AC_CHECK_HEADERS([fcntl.h stdlib.h unistd.h python.h pthread.h])
+AC_CHECK_HEADERS([fcntl.h stdlib.h unistd.h python.h pthread.h sys/prctl.h])
 
 # Checks for library functions.
 AC_FUNC_MALLOC
 AC_FUNC_MKTIME
 AC_FUNC_STAT
 AC_FUNC_STRFTIME
-AC_CHECK_FUNCS([dup2 memset strncasecmp strnicmp strptime putenv _putenv localtime_r])
+AC_CHECK_FUNCS([dup2 memset strncasecmp strnicmp strptime putenv _putenv localtime_r prctl])
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_CHECK_HEADERS([ext/slist slist vector map set stack tuple])
@@ -270,7 +270,7 @@ AC_CONFIG_FILES([ Makefile bin/Makefile doc/Makefile ])
 AC_CONFIG_FILES([ include/Makefile include/frepple/Makefile ])
 AC_CONFIG_FILES([ src/Makefile src/model/Makefile src/solver/Makefile src/utils/Makefile ])
 AC_CONFIG_FILES([ contrib/Makefile contrib/vc/Makefile contrib/installer/Makefile contrib/rpm/Makefile contrib/debian/Makefile contrib/odoo/Makefile contrib/docker/Makefile ])
-AC_CONFIG_FILES([ test/Makefile test/buffer_batch/Makefile test/cluster/Makefile test/custom_fields/Makefile test/calendar/Makefile test/constraints_combined_1/Makefile test/constraints_combined_2/Makefile test/constraints_leadtime_1/Makefile test/constraints_leadtime_2/Makefile test/constraints_material_1/Makefile test/constraints_material_2/Makefile test/constraints_material_3/Makefile test/constraints_material_4/Makefile test/datetime/Makefile test/distribution_1/Makefile test/flow_alternate_1/Makefile test/flow_alternate_2/Makefile test/flow_fixed/Makefile test/flow_transferbatch/Makefile test/scalability_1/Makefile test/scalability_2/Makefile test/scalability_3/Makefile test/jobshop/Makefile test/xml/Makefile test/xml_remote/Makefile  test/constraints_resource_1/Makefile test/constraints_resource_2/Makefile test/constraints_resource_3/Makefile test/constraints_resource_4/Makefile test/constraints_resource_5/Makefile test/constraints_resource_6/Makefile test/criticality/Makefile test/problems/Makefile test/deletion/Makefile test/demand_policy/Makefile test/operation_alternate/Makefile test/operation_available/Makefile test/operation_effective/Makefile test/operation_pre_post/Makefile test/operation_routing/Makefile test/operation_split/Makefile test/multithreading/Makefile test/name/Makefile test/python_1/Makefile test/python_2/Makefile test/python_3/Makefile test/callback/Makefile test/pegging/Makefile test/safety_stock/Makefile test/flow_effective/Makefile test/load_alternate/Makefile test/load_bucketized/Makefile test/load_effective/Makefile test/setup_1/Makefile test/setup_2/Makefile test/setup_3/Makefile test/skills/Makefile test/supplier/Makefile test/wip_1/Makefile test/wip_2/Makefile test/global_purchase/Makefile test/resource_efficiency/Makefile ])
+AC_CONFIG_FILES([ test/Makefile test/buffer_batch/Makefile test/cluster/Makefile test/custom_fields/Makefile test/calendar/Makefile test/constraints_combined_1/Makefile test/constraints_combined_2/Makefile test/constraints_leadtime_1/Makefile test/constraints_leadtime_2/Makefile test/constraints_material_1/Makefile test/constraints_material_2/Makefile test/constraints_material_3/Makefile test/constraints_material_4/Makefile test/datetime/Makefile test/distribution_1/Makefile test/flow_alternate_1/Makefile test/flow_alternate_2/Makefile test/flow_fixed/Makefile test/flow_transferbatch/Makefile test/scalability_1/Makefile test/scalability_2/Makefile test/scalability_3/Makefile test/jobshop/Makefile test/xml/Makefile test/xml_remote/Makefile  test/constraints_resource_1/Makefile test/constraints_resource_2/Makefile test/constraints_resource_3/Makefile test/constraints_resource_4/Makefile test/constraints_resource_5/Makefile test/constraints_resource_6/Makefile test/constraints_resource_7/Makefile test/criticality/Makefile test/problems/Makefile test/deletion/Makefile test/demand_policy/Makefile test/operation_alternate/Makefile test/operation_available/Makefile test/operation_effective/Makefile test/operation_pre_post/Makefile test/operation_routing/Makefile test/operation_split/Makefile test/multithreading/Makefile test/name/Makefile test/python_1/Makefile test/python_2/Makefile test/python_3/Makefile test/callback/Makefile test/pegging/Makefile test/safety_stock/Makefile test/flow_effective/Makefile test/load_alternate/Makefile test/load_bucketized/Makefile test/load_effective/Makefile test/setup_1/Makefile test/setup_2/Makefile test/setup_3/Makefile test/skills/Makefile test/supplier/Makefile test/wip_1/Makefile test/wip_2/Makefile test/global_purchase/Makefile test/resource_buckets/Makefile test/resource_efficiency/Makefile ])
 
 # Generate all make files
 AC_OUTPUT

@@ -267,10 +267,10 @@ class Scenario(models.Model):
       # Bring the scenario table in sync with settings.databases
       with transaction.atomic(savepoint=False):
         dbs = [ i for i, j in settings.DATABASES.items() if j['NAME'] ]
-        for sc in Scenario.objects.all():
+        for sc in Scenario.objects.using(DEFAULT_DB_ALIAS):
           if sc.name not in dbs:
             sc.delete()
-        scs = [sc.name for sc in Scenario.objects.all()]
+        scs = [sc.name for sc in Scenario.objects.using(DEFAULT_DB_ALIAS)]
         for db in dbs:
           if db not in scs:
             if db == DEFAULT_DB_ALIAS:
@@ -342,7 +342,7 @@ class User(AbstractUser):
 
     scenarios = [
       i['name']
-      for i in Scenario.objects.filter(status='In use').values('name')
+      for i in Scenario.objects.using(DEFAULT_DB_ALIAS).filter(status='In use').values('name')
       if i['name'] in settings.DATABASES
       ]
 

@@ -994,16 +994,16 @@ class loadResources(LoadTask):
               name=i[0], description=i[1], category=i[10], subcategory=i[11], source=i[13]
               )
             convert2cal = None
-          elif i[5].startswith("buckets"):
-            x = frepple.resource_buckets(
-              name=i[0], description=i[1], category=i[10], subcategory=i[11], source=i[13]
-              )
-            convert2cal = i[5][8:]
           elif not i[5] or i[5] == "default":
             x = frepple.resource_default(
               name=i[0], description=i[1], category=i[10], subcategory=i[11], source=i[13]
               )
             convert2cal = None
+          elif i[5].startswith("buckets"):
+            x = frepple.resource_buckets(
+              name=i[0], description=i[1], category=i[10], subcategory=i[11], source=i[13]
+              )
+            convert2cal = i[5][8:]
           else:
             raise ValueError("Resource type '%s' not recognized" % i[5])
           if i[7] is not None:

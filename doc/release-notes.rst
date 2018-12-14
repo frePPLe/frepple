@@ -18,6 +18,12 @@ Release notes
   
 - Addition of the field size maximum to the item supplier and item distribution tables.
 
+- | More detailed modeling of in transit material.
+  | By leaving the origin location empty, no inventory will be consumed at the origin location.
+    We assume the material has already left the origin location and is in transit.
+  | By leaving the destination location, the distribution order doesn't produce any stock.
+    This represents a material transfer outside of our supply chain.
+
 - Bug fix: calculation of operation time for 0-duration operations was wrong in some situations.
 
 - Bug fix: incorrect operation duration when different resources in an aggregate pool resource 

@@ -10,6 +10,9 @@
 			<name>Central WH</name>
 		</location>
 		<location>
+			<name>Destination</name>
+		</location>
+		<location>
 			<name>Local DC 1a</name>
 			<owner>
 				<name>Region 1</name>
@@ -44,6 +47,9 @@
 		</location>
 		<location>
 			<name>Regional DC 2</name>
+		</location>
+		<location>
+			<name>Source</name>
 		</location>
 	</locations>
 	<suppliers>
@@ -140,6 +146,32 @@
 			</itemdistributions>
 		</item>
 		<item>
+			<name>In transit product</name>
+			<itemdistributions>
+				<itemdistribution>
+					<origin>
+						<name>Source</name>
+					</origin>
+					<destination>
+						<name>Destination</name>
+					</destination>
+					<priority>0</priority>
+				</itemdistribution>
+				<itemdistribution>
+					<destination>
+						<name>Destination</name>
+					</destination>
+					<priority>0</priority>
+				</itemdistribution>
+				<itemdistribution>
+					<origin>
+						<name>Source</name>
+					</origin>
+					<priority>0</priority>
+				</itemdistribution>
+			</itemdistributions>
+		</item>
+		<item>
 			<name>product A</name>
 			<owner>
 				<name>All products</name>
@@ -159,6 +191,24 @@
 		</item>
 	</items>
 	<buffers>
+		<buffer>
+			<name>In transit product @ Destination</name>
+			<item>
+				<name>In transit product</name>
+			</item>
+			<location>
+				<name>Destination</name>
+			</location>
+		</buffer>
+		<buffer>
+			<name>In transit product @ Source</name>
+			<item>
+				<name>In transit product</name>
+			</item>
+			<location>
+				<name>Source</name>
+			</location>
+		</buffer>
 		<buffer>
 			<name>product A @ Central WH</name>
 			<item>
@@ -253,6 +303,77 @@
 	<operationplans>
 		<operationplan>
 			<id>2</id>
+			<operation xsi:type="operation_itemdistribution">
+				<name>Ship In transit product from Source</name>
+				<origin>
+					<name>In transit product @ Source</name>
+				</origin>
+			</operation>
+			<start>2015-06-07T00:00:00</start>
+			<end>2015-06-07T00:00:00</end>
+			<quantity>100</quantity>
+			<status>confirmed</status>
+			<feasible>false</feasible>
+			<ordertype>DO</ordertype>
+			<item>
+				<name>In transit product</name>
+			</item>
+			<location>
+				<name>Source</name>
+			</location>
+			<origin>
+				<name>Source</name>
+			</origin>
+		</operationplan>
+		<operationplan>
+			<id>3</id>
+			<operation xsi:type="operation_itemdistribution">
+				<name>Ship In transit product from Source to Destination</name>
+				<origin>
+					<name>In transit product @ Source</name>
+				</origin>
+				<destination>
+					<name>In transit product @ Destination</name>
+				</destination>
+			</operation>
+			<start>2015-06-05T00:00:00</start>
+			<end>2015-06-05T00:00:00</end>
+			<quantity>100</quantity>
+			<status>confirmed</status>
+			<feasible>false</feasible>
+			<ordertype>DO</ordertype>
+			<item>
+				<name>In transit product</name>
+			</item>
+			<location>
+				<name>Destination</name>
+			</location>
+			<origin>
+				<name>Source</name>
+			</origin>
+		</operationplan>
+		<operationplan>
+			<id>4</id>
+			<operation xsi:type="operation_itemdistribution">
+				<name>Ship In transit product to Destination</name>
+				<destination>
+					<name>In transit product @ Destination</name>
+				</destination>
+			</operation>
+			<start>2015-06-06T00:00:00</start>
+			<end>2015-06-06T00:00:00</end>
+			<quantity>100</quantity>
+			<status>confirmed</status>
+			<ordertype>DO</ordertype>
+			<item>
+				<name>In transit product</name>
+			</item>
+			<location>
+				<name>Destination</name>
+			</location>
+		</operationplan>
+		<operationplan>
+			<id>5</id>
 			<operation xsi:type="operation_itemdistribution">
 				<name>Ship product A from Central WH to Local DC 2b</name>
 				<origin>

@@ -5489,7 +5489,9 @@ inline Location* OperationPlan::getLocation() const
   else if (oper->getType() == *OperationItemSupplier::metadata)
     return static_cast<OperationItemSupplier*>(oper)->getBuffer()->getLocation();
   else if (oper->getType() == *OperationItemDistribution::metadata)
-    return static_cast<OperationItemDistribution*>(oper)->getDestination()->getLocation();
+    return static_cast<OperationItemDistribution*>(oper)->getDestination() ?
+      static_cast<OperationItemDistribution*>(oper)->getDestination()->getLocation() :
+      static_cast<OperationItemDistribution*>(oper)->getOrigin()->getLocation();
   else if (oper->getType() == *OperationInventory::metadata)
     return static_cast<OperationInventory*>(oper)->getBuffer()->getLocation();
   else if (oper->getType() == *OperationDelivery::metadata)
@@ -5506,7 +5508,9 @@ Item* OperationPlan::getItem() const
   else if (oper->getType() == *OperationItemSupplier::metadata)
     return static_cast<OperationItemSupplier*>(oper)->getBuffer()->getItem();
   else if (oper->getType() == *OperationItemDistribution::metadata)
-    return static_cast<OperationItemDistribution*>(oper)->getDestination()->getItem();
+    return static_cast<OperationItemDistribution*>(oper)->getDestination() ?
+      static_cast<OperationItemDistribution*>(oper)->getDestination()->getItem() :
+      static_cast<OperationItemDistribution*>(oper)->getOrigin()->getItem();  
   else if (oper->getType() == *OperationInventory::metadata)
     return static_cast<OperationInventory*>(oper)->getBuffer()->getItem();
   else if (oper->getType() == *OperationDelivery::metadata)

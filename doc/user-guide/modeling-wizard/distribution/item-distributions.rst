@@ -10,9 +10,10 @@ This table allows you to authorize the transfer of an item from one location to 
 Field            Type              Description
 ================ ================= ===========================================================
 item             item              The item to transfer.
-location         location          The destination location where the item can be transfered.
+location         location          The destination location where the item can be transferred.
 origin           location          The origin location where the item is transfered from.
-leadtime         duration          Transfer lead time, should be expressed in seconds. E.g : 604800 represents 7 days.
+leadtime         duration          Transfer lead time, should be expressed in seconds.
+                                   E.g : 604800 represents 7 days.
 ================ ================= ===========================================================                              
                                   
 .. rubric:: Advanced topics

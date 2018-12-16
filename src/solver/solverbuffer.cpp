@@ -62,6 +62,33 @@ void SolverCreate::solve(const Buffer* b, void* v)
     logger << indent(b->getLevel()) << "  Buffer '" << b->getName()
       << "' is asked: " << data->state->q_qty << "  " << data->state->q_date << endl;
 
+  // Detect loops in the supply chain
+  auto tmp_recent_buffers = data->recent_buffers;
+  if (data->recent_buffers.contains(b))
+  {
+    stringstream o;
+    o << "Loop detected in the supply path: ";
+    data->recent_buffers.echoSince(o, b);
+    data->state->a_qty = 0.0;
+    data->state->a_date = Date::infiniteFuture;
+    if (data->logConstraints && data->planningDemand)
+      data->planningDemand->getConstraints().push(new ProblemInvalidData(
+        const_cast<Buffer*>(b), o.str(), "material",
+        Date::infinitePast, Date::infiniteFuture,
+        data->state->q_qty, false
+        ));
+    if (data->getSolver()->getLogLevel() > 1)
+    {
+      logger << indent(b->getLevel()) << "     Warning: " << o.str() << endl;
+      logger << indent(b->getLevel()) << "  Buffer '" << b->getName()
+        << "' answers: " << data->state->a_qty << "  " << data->state->a_date << "  "
+        << data->state->a_cost << "  " << data->state->a_penalty << endl;
+    }
+    return;
+  }
+  else
+    data->recent_buffers.push(b);
+
   // Store the last command in the list, in order to undo the following
   // commands if required.
   CommandManager::Bookmark* topcommand = data->getCommandManager()->setBookmark();
@@ -199,6 +226,7 @@ void SolverCreate::solve(const Buffer* b, void* v)
               batchdate + b->getProducingOperation()->getPostTime();
             data->state->curOwnerOpplan = nullptr;
             b->getProducingOperation()->solve(*this, v);
+            data->recent_buffers = tmp_recent_buffers;
           }
           catch (...)
           {
@@ -303,6 +331,7 @@ void SolverCreate::solve(const Buffer* b, void* v)
             data->state->q_date = theDate;
             data->state->curOwnerOpplan = nullptr;
             b->getProducingOperation()->solve(*this, v);
+            data->recent_buffers = tmp_recent_buffers;
           }
           catch (...)
           {
@@ -379,6 +408,7 @@ void SolverCreate::solve(const Buffer* b, void* v)
           // Note that the supply created with the next line changes the
           // onhand value at all later dates!
           b->getProducingOperation()->solve(*this,v);
+          data->recent_buffers = tmp_recent_buffers;
 
           // Evaluate the reply date. The variable extraSupplyDate will store
           // the date when the producing operation tells us it can get extra
@@ -490,6 +520,7 @@ void SolverCreate::solve(const Buffer* b, void* v)
     if (requested_qty - shortage < ROUNDING_ERROR)
       data->getCommandManager()->rollback(topcommand);
     b->getProducingOperation()->solve(*this,v);
+    data->recent_buffers = tmp_recent_buffers;
     // Evaluate the reply
     if (data->state->a_date < extraSupplyDate
         && data->state->a_date > requested_date)
@@ -533,6 +564,7 @@ void SolverCreate::solve(const Buffer* b, void* v)
 
   // Restore the owning operationplan.
   data->state->curOwnerOpplan = prev_owner_opplan;
+  data->recent_buffers = tmp_recent_buffers;
 
   // Reply quantity must be greater than 0
   assert( data->state->a_qty >= 0 );
@@ -610,6 +642,8 @@ void SolverCreate::solveSafetyStock(const Buffer* b, void* v)
         CommandManager::Bookmark* topcommand = data->getCommandManager()->setBookmark();
         auto cur_q_date = data->state->q_date;
         data->state->q_qty_min = 1.0;
+        data->recent_buffers.clear();
+        data->recent_buffers.push(b);
         b->getProducingOperation()->solve(*this,v);
 
         if (data->state->a_qty > ROUNDING_ERROR)

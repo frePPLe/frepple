@@ -182,6 +182,7 @@ void SolverCreate::solve(const Demand* l, void* v)
         data->planningDemand = const_cast<Demand*>(l);
         data->state->curDemand = const_cast<Demand*>(l);
         data->state->curOwnerOpplan = nullptr;
+        data->recent_buffers.clear();
         deliveryoper->solve(*this, v);
         Date next_date = data->state->a_date;
 
@@ -203,6 +204,7 @@ void SolverCreate::solve(const Demand* l, void* v)
             data->state->q_qty = l->getMinShipment();
             data->state->q_date = plan_date;
             data->state->curDemand = const_cast<Demand*>(l);
+            data->recent_buffers.clear();
             deliveryoper->solve(*this, v);
             if (data->state->a_date < next_date)
               next_date = data->state->a_date;
@@ -231,6 +233,7 @@ void SolverCreate::solve(const Demand* l, void* v)
                 data->state->q_qty = new_qty;
                 data->state->q_date = plan_date;
                 data->state->curDemand = const_cast<Demand*>(l);
+                data->recent_buffers.clear();
                 deliveryoper->solve(*this, v);
                 if (data->state->a_date < next_date)
                   next_date = data->state->a_date;
@@ -253,6 +256,7 @@ void SolverCreate::solve(const Demand* l, void* v)
                 data->state->q_qty = min_qty;
                 data->state->q_date = plan_date;
                 data->state->curDemand = const_cast<Demand*>(l);
+                data->recent_buffers.clear();
                 deliveryoper->solve(*this, v);
               }
             }
@@ -372,6 +376,7 @@ void SolverCreate::solve(const Demand* l, void* v)
                 data->state->q_date = copy_plan_date;
                 data->state->curDemand = const_cast<Demand*>(l);
                 data->state->curBuffer = nullptr;
+                data->recent_buffers.clear();
                 deliveryoper->solve(*this, v);
                 if (data->state->a_qty < ROUNDING_ERROR)
                 {
@@ -457,6 +462,7 @@ void SolverCreate::solve(const Demand* l, void* v)
           data->state->q_date = best_q_date;
           data->state->curDemand = const_cast<Demand*>(l);
           data->state->curBuffer = nullptr;
+          data->recent_buffers.clear();
           deliveryoper->solve(*this,v);
           if (data->state->a_qty < ROUNDING_ERROR)
           {

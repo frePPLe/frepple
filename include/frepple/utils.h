@@ -8484,6 +8484,84 @@ class FreppleClass  : public PythonExtension< FreppleClass<ME,BASE> >
     }
 };
 
+
+/** A class to remember the last N objects, and verify whether a certain
+  * object is part of that list. 
+  * Internally we use a circular array data structure to store the recent entries.
+  */
+template <class OBJ, int N> class RecentlyUsed
+{
+  private:
+    OBJ entries[N];
+    int head = 0;
+
+  public:
+    RecentlyUsed() {}
+    
+    RecentlyUsed(const RecentlyUsed& o) : head(o.head)
+    {
+      for (int i = 0; i < head && i < N; ++i)
+        entries[i] = o.entries[i];
+    }
+
+    RecentlyUsed& operator = (const RecentlyUsed& o)
+    {
+      head = o.head;
+      for (int i = 0; i < head && i < N; ++i)
+        entries[i] = o.entries[i];
+      return *this;
+    }
+
+    /** Add a new entry to the list. */
+    void push(const OBJ& o)
+    {
+      entries[head >= N ? head - N : head] = o;
+      if (++head > 2 * N)
+        head = N;
+    }
+
+    bool contains(const OBJ& o) const
+    {
+      for (int i = 0; i < head; ++i)
+        if (entries[i] == o)
+          return true;
+      return false;
+    }
+
+    int size() const
+    {
+      return head > N ? N : head;
+    }
+
+    void clear()
+    {
+      head = 0;
+    }
+
+    void echoSince(ostream& out, const OBJ& o) const
+    {
+      bool first = true;
+      for (int i = (head > N) ? (head - N - 1) : (head - 1); i >= 0; --i)
+      {
+       if (first)
+          first = false;
+        else
+          out << ", ";
+        out << entries[i];
+        if (entries[i] == o)
+          return;
+      }
+      if (head > N)
+        for (int i = N - 1; i >= head - N; --i)
+        {
+          out << ", " << entries[i];
+          if (entries[i] == o)
+            return;
+        }
+    }
+};
+
+
 } // end namespace
 } // end namespace
 

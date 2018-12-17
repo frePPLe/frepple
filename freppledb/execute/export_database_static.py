@@ -1038,7 +1038,11 @@ class exportStaticModel(object):
 
       # Cleanup unused records
       if self.source:
-        cursor.execute("delete from operationmaterial where source = %s and lastmodified <> %s", (self.source, self.timestamp))
+        cursor.execute('''
+          delete from operationmaterial
+          where (source = %s and lastmodified <> %s)
+          or operation_id in (select name from operation where operation.source = %s and operation.lastmodified <> %s)
+          ''', (self.source, self.timestamp, self.source, self.timestamp))
         cursor.execute("delete from buffer where source = %s and lastmodified <> %s", (self.source, self.timestamp))
         cursor.execute('''
           delete from operationplanmaterial
@@ -1062,20 +1066,35 @@ class exportStaticModel(object):
           where operationplan_id in (
             select operationplan.id
             from operationplan
-            where operationplan.source = %s and operationplan.lastmodified <> %s
+            where (operationplan.source = %s and operationplan.lastmodified <> %s)
+            or operation_id in (select name from operation where operation.source = %s and operation.lastmodified <> %s)
             )
-          ''', (self.source, self.timestamp))
+          ''', (self.source, self.timestamp, self.source, self.timestamp))
         cursor.execute('''
           delete from operationplanresource
           where operationplan_id in (
             select operationplan.id
             from operationplan
-            where operationplan.source = %s and operationplan.lastmodified <> %s
+            where (operationplan.source = %s and operationplan.lastmodified <> %s)
+            or operation_id in (select name from operation where operation.source = %s and operation.lastmodified <> %s)
             )
-          ''', (self.source, self.timestamp))
-        cursor.execute("delete from operationplan where source = %s and lastmodified <> %s", (self.source, self.timestamp))
-        cursor.execute("delete from suboperation where source = %s and lastmodified <> %s", (self.source, self.timestamp))
-        cursor.execute("delete from operationresource where source = %s and lastmodified <> %s", (self.source, self.timestamp))
+          ''', (self.source, self.timestamp, self.source, self.timestamp))
+        cursor.execute('''
+          delete from operationplan 
+          where (source = %s and lastmodified <> %s)
+          or operation_id in (select name from operation where operation.source = %s and operation.lastmodified <> %s)
+          ''', (self.source, self.timestamp, self.source, self.timestamp))
+        cursor.execute('''
+          delete from suboperation 
+          where (source = %s and lastmodified <> %s)
+          or operation_id in (select name from operation where operation.source = %s and operation.lastmodified <> %s)
+          or suboperation_id in (select name from operation where operation.source = %s and operation.lastmodified <> %s)
+          ''', (self.source, self.timestamp, self.source, self.timestamp, self.source, self.timestamp))
+        cursor.execute('''
+          delete from operationresource
+          where (source = %s and lastmodified <> %s)
+          or operation_id in (select name from operation where operation.source = %s and operation.lastmodified <> %s)
+          ''', (self.source, self.timestamp, self.source, self.timestamp))
         cursor.execute("delete from resourceskill where source = %s and lastmodified <> %s", (self.source, self.timestamp))
         cursor.execute("delete from operation where source = %s and lastmodified <> %s", (self.source, self.timestamp))
         cursor.execute("delete from suboperation where source = %s and lastmodified <> %s", (self.source, self.timestamp))

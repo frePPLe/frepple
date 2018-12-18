@@ -277,9 +277,9 @@ Object* Flow::finder(const DataValueDict& d)
 
 pair<Date, double> Flow::getFlowplanDateQuantity(const FlowPlan* fl) const
 {
-  if (fl->getFlow()->isConsumer() && !fl->getOperationPlan()->getConsumeMaterial())
+  if (isConsumer() && !fl->getOperationPlan()->getConsumeMaterial())
     return make_pair(fl->getOperationPlan()->getSetupEnd(), 0.0);
-  else if (fl->getFlow()->isProducer() && !fl->getOperationPlan()->getProduceMaterial())
+  else if (isProducer() && !fl->getOperationPlan()->getProduceMaterial())
     return make_pair(fl->getOperationPlan()->getSetupEnd(), 0.0);
   else if (fl->isConfirmed())
     return make_pair(
@@ -297,9 +297,9 @@ pair<Date, double> Flow::getFlowplanDateQuantity(const FlowPlan* fl) const
 
 pair<Date, double> FlowEnd::getFlowplanDateQuantity(const FlowPlan* fl) const
 {
-  if (fl->getFlow()->isConsumer() && !fl->getOperationPlan()->getConsumeMaterial())
+  if (isConsumer() && !fl->getOperationPlan()->getConsumeMaterial())
     return make_pair(fl->getOperationPlan()->getEnd(), 0.0);
-  else if (fl->getFlow()->isProducer() && !fl->getOperationPlan()->getProduceMaterial())
+  else if (isProducer() && !fl->getOperationPlan()->getProduceMaterial())
     return make_pair(fl->getOperationPlan()->getEnd(), 0.0);
   else if (fl->isConfirmed())
     return make_pair(

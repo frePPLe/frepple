@@ -1281,6 +1281,8 @@ class loadOperationPlans(LoadTask):
       filter_and = ""
 
     with connections[database].chunked_cursor() as cursor:
+      consume_material = (Parameter.getValue('WIP.consume_material', database, 'true').lower() == 'true')
+      consume_capacity = (Parameter.getValue('WIP.consume_capacity', database, 'true').lower() == 'true')
       if 'supply' in os.environ:
         confirmed_filter = " and operationplan.status in ('confirmed', 'approved')"
         create_flag = True
@@ -1318,7 +1320,9 @@ class loadOperationPlans(LoadTask):
             opplan = frepple.operationplan(
               operation=frepple.operation(name=i[0]), id=i[1],
               quantity=i[2], source=i[6], start=i[3], end=i[4],
-              status=i[5], reference=i[13], create=create_flag
+              status=i[5], reference=i[13], create=create_flag,
+              consume_material=(consume_material if i[5] == 'confirmed' else True),
+              consume_capacity=(consume_capacity if i[5] == 'confirmed' else True)
               )
           elif i[7] == 'PO':
             cnt_po += 1
@@ -1328,7 +1332,9 @@ class loadOperationPlans(LoadTask):
               item=frepple.item(name=i[11]) if i[11] else None,
               supplier=frepple.supplier(name=i[10]) if i[10] else None,
               quantity=i[2], start=i[3], end=i[4],
-              status=i[5], source=i[6], create=create_flag
+              status=i[5], source=i[6], create=create_flag,
+              consume_material=(consume_material if i[5] == 'confirmed' else True),
+              consume_capacity=(consume_capacity if i[5] == 'confirmed' else True)
               )
           elif i[7] == 'DO':
             cnt_do += 1
@@ -1338,7 +1344,9 @@ class loadOperationPlans(LoadTask):
               item=frepple.item(name=i[11]) if i[11] else None,
               origin=frepple.location(name=i[8]) if i[8] else None,
               quantity=i[2], start=i[3], end=i[4],
-              status=i[5], source=i[6], create=create_flag
+              status=i[5], source=i[6], create=create_flag,
+              consume_material=(consume_material if i[5] == 'confirmed' else True),
+              consume_capacity=(consume_capacity if i[5] == 'confirmed' else True)
               )
           elif i[7] == 'DLVR':
             cnt_dlvr += 1
@@ -1349,7 +1357,9 @@ class loadOperationPlans(LoadTask):
               origin=frepple.location(name=i[8]) if i[8] else None,
               demand=frepple.demand(name=i[14]) if i[14] else None,
               quantity=i[2], start=i[3], end=i[4],
-              status=i[5], source=i[6], create=create_flag
+              status=i[5], source=i[6], create=create_flag,
+              consume_material=(consume_capacity if i[5] == 'confirmed' else True),
+              consume_capacity=(consume_capacity if i[5] == 'confirmed' else True)
               )
             opplan = None
           else:
@@ -1386,7 +1396,9 @@ class loadOperationPlans(LoadTask):
         opplan = frepple.operationplan(
           operation=frepple.operation(name=i[0]),
           id=i[1], quantity=i[2], source=i[7],
-          start=i[3], end=i[4], status=i[5], reference=i[8]
+          start=i[3], end=i[4], status=i[5], reference=i[8],
+          consume_material=(consume_capacity if i[5] == 'confirmed' else True),
+          consume_capacity=(consume_capacity if i[5] == 'confirmed' else True)
           )
         if i[6] and opplan:
           try:

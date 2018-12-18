@@ -2066,6 +2066,9 @@ class OperationPlan
       else
         flags |= CONSUME_MATERIAL;
       resizeFlowLoadPlans();
+      for (auto *i = firstsubopplan; i; i = i->nextsubopplan)
+        if (!i->getConfirmed())
+          i->setConsumeMaterial(b);
     }
 
     /** Update flag which allow/disallows material production. */
@@ -2076,6 +2079,9 @@ class OperationPlan
       else
         flags |= PRODUCE_MATERIAL;
       resizeFlowLoadPlans();
+      for (auto *i = firstsubopplan; i; i = i->nextsubopplan)
+        if (!i->getConfirmed())
+          i->setProduceMaterial(b);
     }
 
     /** Update flag which allow/disallows capacity consumption. */
@@ -2086,6 +2092,9 @@ class OperationPlan
       else
         flags |= CONSUME_CAPACITY;
       resizeFlowLoadPlans();
+      for (auto *i = firstsubopplan; i; i = i->nextsubopplan)
+        if (!i->getConfirmed())
+          i->setConsumeCapacity(b);
     }
 
     void setFeasible(bool b)

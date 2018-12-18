@@ -18,6 +18,10 @@ Release notes
   
 - Addition of the field size maximum to the item supplier and item distribution tables.
 
+- | More detailed modeling of work in progress.
+  | The parameters WIP.consume_material and WIP.consume_capacity control whether a confirmed
+    manufacturing order, purchase order or distribution order consume material and capacity.
+
 - | More detailed modeling of in transit material.
   | By leaving the origin location empty, no inventory will be consumed at the origin location.
     We assume the material has already left the origin location and is in transit.

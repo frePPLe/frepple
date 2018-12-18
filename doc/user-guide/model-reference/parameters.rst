@@ -2,27 +2,16 @@
 Parameter
 =========
 
-Global settings and parameters are stored in a specific table.
+Global settings and parameters are stored here.
 
 Some of these parameters are used by the planning algorithm, others are used
 by the web application. Extension modules also add additional configuration
 parameters to this table.
 
-**Fields**
-
-================ ================= ===========================================================
-Field            Type              Description
-================ ================= ===========================================================
-name             string            Unique name of the parameter.
-value            string            Value of the parameter.
-description      string            Description of the parameter.
-================ ================= ===========================================================
-
 **Standard parameters**
 
 The table below shows the parameters that are recognized by the standard
 application.
-
 
 =========================== =======================================================================
 Parameter                   Description
@@ -31,7 +20,7 @@ currentdate                 | Current date of the plan, formatted as YYYY-MM-DD 
                               If the parameter is missing or empty the system time is used as current date.
 currency                    | Currency symbol.
                             | This parameter may be only set on the default database and will be
-                             globally applied, including in all the scenarios.
+                              globally applied, including in all the scenarios.
                             | If the parameter is missing or empty the currency symbol will be the $.
                             | By default the symbol will show after the value, i.e. **123 $**.
                             | For the symbol to show before the value a **,** should be added after the
@@ -57,15 +46,18 @@ plan.planSafetyStockFirst   | Controls whether safety stock is planned before or
 plan.rotateResources        | When set to true, the algorithm will better distribute
                              the demand across alternate suboperations instead of using
                              the preferred operation.
-plan.webservice             | Specifies whether to use the web service or not.
-                            | Accepted values are false (default) and true.
+plan.webservice             | Specifies whether we keep the plan in memory as a web service for
+                              quick incremental planning. This functionality is only available in
+                              the Enterprise and Cloud Editions. 
+                            | Accepted values are false and true (default).
 
 =========================== =======================================================================
 
-**Extension modules parameters**
+**Demand forecasting parameters** 
 
-The table below shows the parameters that are regognized by all the extension modules and therefore only available on the Enterprise edition.
-By convention, these parameters are formatted module.name to clearly state to which module they apply.
+The recommended default parameters for the demand forecasting module are different for weekly and
+monthly time buckets. The datasets parameters_month_forecast and parameters_week_forecast allow
+you to reset the defaults values applicable to your configuration.
 
 ==================================================== ===========================================================================
 Parameter                                            Description
@@ -86,8 +78,8 @@ forecast.DoubleExponential_maxAlfa                   Maximum smoothing constant.
 forecast.DoubleExponential_maxGamma                  Maximum trend smoothing constant.
 forecast.DoubleExponential_minAlfa                   Minimum smoothing constant.
 forecast.DoubleExponential_minGamma                  Minimum trend smoothing constant.
-forecast.DueWithinBucket                             Specifies whether forecasted demand is due at the 'start', 'middle' or
-                                                     'end' of the bucket.
+forecast.DueWithinBucket                             Specifies whether forecasted demand is due at the 'start', 'middle'
+                                                     (default value) or 'end' of the bucket.
 forecast.Horizon_future                              Specifies the number of days in the future we generate a forecast for.
 forecast.Horizon_history                             Specifies the number of days in the past we use to compute
                                                      a statistical forecast.
@@ -105,9 +97,9 @@ forecast.Net_NetEarly                                Defines how much time (expr
 forecast.Net_NetLate                                 Defines how much time (expressed in days) after the due date of an order
                                                      we are allowed to search for a forecast bucket to net from.
 forecast.Outlier_maxDeviation                        Multiple of the standard deviation used to detect outliers
-forecast.populateForecastTable                       Populates automatically the forecast table based on the item/location
-                                                     combinations found in the demand table using parent customer when available.
-                                                     Default : true
+forecast.populateForecastTable                       | Populates automatically the forecast table based on the item/location
+                                                       combinations found in the demand table using parent customer when available.
+                                                     | Default : true
 forecast.Seasonal_dampenTrend                        Dampening factor applied to the trend in future periods.
 forecast.Seasonal_gamma                              Value of the seasonal parameter
 forecast.Seasonal_initialAlfa                        Initial value for the constant parameter
@@ -129,28 +121,50 @@ forecast.Skip                                        Specifies the number of tim
                                                      the forecasting method. The forecast error in these bucket isn't counted.
 forecast.SmapeAlfa                                   Specifies how the sMAPE forecast error is weighted for different
                                                      time buckets.
-inventoryplanning.average_window_duration            The number of days used to average the demand to limit reorder quantity
-                                                     and safety stock variability over periods. Default value : 180
+==================================================== ===========================================================================
+                                      
+**Inventory planning parameters** 
+
+==================================================== ===========================================================================
+Parameter                                            Description
+==================================================== ===========================================================================    
+inventoryplanning.average_window_duration            | The number of days used to average the demand to limit reorder quantity
+                                                       and safety stock variability over periods.
+                                                     | Default value : 180
 inventoryplanning.calendar                           Name of a calendar model to define the granularity of the time buckets
                                                      for inventory planning.
-inventoryplanning.fixed_order_cost                   Holding cost percentage to compute economic reorder quantity.
-                                                     Default value: 20
-inventoryplanning.holding_cost                       Fixed order cost to compute the economic reorder quantity.
-                                                     Default value: 0.05
-inventoryplanning.horizon_end                        Specifies the number of days in the future for which we generate safety
-                                                     stock and reorder quantity values. Default: 365
+inventoryplanning.fixed_order_cost                   | Holding cost percentage to compute economic reorder quantity.
+                                                     | Default value: 20
+inventoryplanning.holding_cost                       | Fixed order cost to compute the economic reorder quantity.
+                                                     | Default value: 0.05
+inventoryplanning.horizon_end                        | Specifies the number of days in the future for which we generate safety
+                                                       stock and reorder quantity values.
+                                                     | Default: 365
 inventoryplanning.horizon_start                      Specifies the number of days in the past for which we generate safety
                                                      stock and reorder quantity values. Default: 0
-inventoryplanning.loglevel                           Controls the verbosity of the inventory planning solver.
-                                                     Accepted values are 0(silent - default), 1 and 2 (verbose)
-inventoryplanning.rebalancing_burnout_threshold      The minimum time to burn up excess inventory (compared to forecast) that can be rebalanced (in periods).
-                                                     If the burn out period (Excess Quantity/Forecast) is less than the threshold, the rebalancing will not occur.
-                                                     Default value: 0
-inventoryplanning.rebalancing_part_cost_threshold    The minimum part cost threshold used to trigger a rebalancing. Parts with cost below the threshold will not be rebalanced.
-                                                     Default value: 0
-inventoryplanning.rebalancing_total_cost_threshold   The minimum total cost threshold to trigger a rebalancing (equals to rebalanced qty multiplied by item cost).
-                                                     Rebalancing requests with total cost below the threshold will not be created. Default value: 0
-inventoryplanning.service_level_on_average_inventory Flag whether the service level is computed based on the expected average
-                                                     inventory. When set to false the service level estimation is based only
-                                                     on the safety stock. Default value: false
+inventoryplanning.loglevel                           | Controls the verbosity of the inventory planning solver.
+                                                     | Accepted values are 0(silent - default), 1 and 2 (verbose)
+inventoryplanning.service_level_on_average_inventory | Flag whether the service level is computed based on the expected average
+                                                       inventory. When set to false the service level estimation is based only
+                                                       on the safety stock.
+                                                     | Default value: false
 ==================================================== ===========================================================================
+                                      
+**Inventory rebalancing parameters** 
+
+==================================================== ===========================================================================
+Parameter                                            Description
+==================================================== ===========================================================================    
+inventoryplanning.rebalancing_burnout_threshold      | The minimum time to burn up excess inventory (compared to forecast) that
+                                                       can be rebalanced (in days). If the burn out period (Excess Quantity / 
+                                                       Forecast) is less than the threshold, the rebalancing will not occur.
+                                                     | Default value: 60
+inventoryplanning.rebalancing_part_cost_threshold    | The minimum part cost threshold used to trigger a rebalancing. Parts with
+                                                       a cost below the threshold will not be rebalanced.
+                                                     | Default value: 100000
+inventoryplanning.rebalancing_total_cost_threshold   | The minimum total cost threshold to trigger a rebalancing (equals to 
+                                                       rebalanced qty multiplied by item cost). Rebalancing requests with total
+                                                       cost below the threshold will not be created.
+                                                     | Default value: 1000000
+==================================================== ===========================================================================
+                                                     

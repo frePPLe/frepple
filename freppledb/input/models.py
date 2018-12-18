@@ -1193,8 +1193,6 @@ class OperationPlan(AuditModel):
 
   objects = Manager()
 
-  natural_key = ('reference',)
-  
   def __str__(self):
     return str(self.id)
 
@@ -1260,8 +1258,6 @@ class OperationPlanResource(AuditModel):
   def __str__(self):
       return "%s %s %s %s" % (self.resource, self.startdate, self.enddate, self.status)
 
-  natural_key = ('operationplan', 'resource')
-
   class Meta:
     db_table = 'operationplanresource'
     ordering = ['resource', 'startdate']
@@ -1313,8 +1309,6 @@ class OperationPlanMaterial(AuditModel):
 
   def __str__(self):
     return "%s @ %s %s %s %s" % (self.item_id, self.location_id, self.flowdate, self.quantity, self.status)
-
-  natural_key = ('operationplan', 'item', 'location')
 
   class Meta:
     db_table = 'operationplanmaterial'

@@ -339,7 +339,7 @@ def _parseData(model, data, rowmapper, user, database, ping):
       if hasattr(model.objects, 'get_by_natural_key'):
         if model._meta.unique_together:
           natural_key = model._meta.unique_together[0]
-        elif hasattr(model, 'natural_key'):
+        elif hasattr(model, 'natural_key') and isinstance(model.natural_key, tuple):
           natural_key = model.natural_key
 
     # Case 2: Skip empty rows

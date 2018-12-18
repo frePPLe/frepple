@@ -42,7 +42,7 @@ class ModelSerializer(DefaultModelSerializer):
     if hasattr(self.Meta.model.objects, 'get_by_natural_key'):
       if self.Meta.model._meta.unique_together:
         self.natural_key = self.Meta.model._meta.unique_together[0]
-      elif hasattr(self.Meta.model, 'natural_key'):
+      elif hasattr(self.Meta.model, 'natural_key') and isinstance(self.Meta.model.natural_key, tuple):
         self.natural_key = self.Meta.model.natural_key
       else:
         self.natural_key = None

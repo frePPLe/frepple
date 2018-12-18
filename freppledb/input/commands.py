@@ -1325,7 +1325,7 @@ class loadOperationPlans(LoadTask):
             opplan = frepple.operationplan(
               operation=frepple.operation(name=i[0]), id=i[1],
               quantity=i[2], source=i[6], start=i[3], end=i[4],
-              status=i[5], reference=i[13], create=create_flag,
+              status=i[5], reference=i[13], create=create_flag
               )
             if opplan and i[5] == 'confirmed':
               if not consume_material:
@@ -1340,7 +1340,7 @@ class loadOperationPlans(LoadTask):
               item=frepple.item(name=i[11]) if i[11] else None,
               supplier=frepple.supplier(name=i[10]) if i[10] else None,
               quantity=i[2], start=i[3], end=i[4],
-              status=i[5], source=i[6], create=create_flag,
+              status=i[5], source=i[6], create=create_flag
               )
             if opplan and i[5] == 'confirmed':
               if not consume_capacity:
@@ -1353,7 +1353,7 @@ class loadOperationPlans(LoadTask):
               item=frepple.item(name=i[11]) if i[11] else None,
               origin=frepple.location(name=i[8]) if i[8] else None,
               quantity=i[2], start=i[3], end=i[4],
-              status=i[5], source=i[6], create=create_flag,
+              status=i[5], source=i[6], create=create_flag
               )
             if opplan and i[5] == 'confirmed':
               if not consume_material:
@@ -1369,7 +1369,7 @@ class loadOperationPlans(LoadTask):
               origin=frepple.location(name=i[8]) if i[8] else None,
               demand=dmd,
               quantity=i[2], start=i[3], end=i[4],
-              status=i[5], source=i[6], create=create_flag,
+              status=i[5], source=i[6], create=create_flag
               )
             if opplan and i[5] == 'confirmed':
               if not consume_material:
@@ -1380,7 +1380,7 @@ class loadOperationPlans(LoadTask):
           else:
             logger.warning("Warning: unhandled operationplan type '%s'" % i[7])
             continue
-          if i[14] and opplan:
+          if dmd and opplan:
             opplan.demand = dmd
         except Exception as e:
           logger.error("**** %s ****" % e)

@@ -190,7 +190,7 @@ def parseCSVdata(model, data, user=None, database=DEFAULT_DB_ALIAS, ping=False):
           # Argh... bool('0') returns True.
           return False
         else:
-          return val
+          return val if val != "" else None
       except KeyError as e:
         raise e
 

@@ -24,7 +24,7 @@ class Migration(migrations.Migration):
       insert into common_parameter (name, value, lastmodified, description)
       values (
         'WIP.consume_material', 'true', now(),
-        'Determines whether confirmed manufacturing orders and distribution orders consume material or not. Default is true.'
+        'Determines whether confirmed manufacturing orders consume material or not. Default is true.'
         )
       on conflict (name) do nothing
       ''',

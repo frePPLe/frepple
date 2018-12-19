@@ -1356,8 +1356,6 @@ class loadOperationPlans(LoadTask):
               status=i[5], source=i[6], create=create_flag
               )
             if opplan and i[5] == 'confirmed':
-              if not consume_material:
-                opplan.consume_material = False
               if not consume_capacity:
                 opplan.consume_capacity = False
           elif i[7] == 'DLVR':
@@ -1372,8 +1370,6 @@ class loadOperationPlans(LoadTask):
               status=i[5], source=i[6], create=create_flag
               )
             if opplan and i[5] == 'confirmed':
-              if not consume_material:
-                opplan.consume_material = False
               if not consume_capacity:
                 opplan.consume_capacity = False
             opplan = None

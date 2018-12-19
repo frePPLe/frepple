@@ -37,10 +37,10 @@ plan.calendar               | Name of a calendar to align new operationplans wit
                             | When this parameter is used, the plan results are effectively grouped
                              in the time buckets defined in this calendar.
                             | This feature is typically used for medium and long term plans.
-                            | Such plans are reviewed in monthly or weekly buckets rather than at individual dates.
+                            | Such plans are reviewed in monthly or weekly buckets rather than at
+                              individual dates.
 plan.loglevel               | Controls the verbosity of the planning log file.
-                            | Accepted values are 0 (silent – default), 1 (minimal)
-                            | and 2 (verbose).
+                            | Accepted values are 0 (silent – default), 1 (minimal) and 2 (verbose).
 plan.planSafetyStockFirst   | Controls whether safety stock is planned before or after the demand.
                             | Accepted values are false (default) and true.
 plan.rotateResources        | When set to true, the algorithm will better distribute
@@ -50,7 +50,12 @@ plan.webservice             | Specifies whether we keep the plan in memory as a 
                               quick incremental planning. This functionality is only available in
                               the Enterprise and Cloud Editions. 
                             | Accepted values are false and true (default).
-
+WIP.consume_material        | Determines whether confirmed manufacturing orders consume material 
+                              or not.
+                            | Default is true.
+WIP.consume_capacity        | Determines whether confirmed manufacturing orders, purchase orders 
+                              and distribution orders consume capacity or not.
+                            | Default is true.
 =========================== =======================================================================
 
 **Demand forecasting parameters** 

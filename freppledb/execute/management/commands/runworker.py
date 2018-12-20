@@ -111,7 +111,9 @@ class Command(BaseCommand):
 
     # Process the queue
     if 'FREPPLE_TEST' not in os.environ:
-      logger.info("Worker starting to process jobs in the queue")
+      logger.info("Worker %s for database '%s' starting to process jobs" % (
+        os.getpid(), settings.DATABASES[database]['NAME']
+        ))      
     idle_loop_done = False
     setattr(_thread_locals, 'database', database)
     while True:
@@ -135,7 +137,9 @@ class Command(BaseCommand):
             continue
       try:
         if 'FREPPLE_TEST' not in os.environ:
-          logger.info("starting task %d at %s" % (task.id, datetime.now()))
+          logger.info("Worker %s for database '%s' starting task %d at %s" % (
+            os.getpid(), settings.DATABASES[database]['NAME'], task.id, datetime.now()
+            ))
         background = False
         task.started = datetime.now()
         # A
@@ -207,7 +211,9 @@ class Command(BaseCommand):
               task.status = 'Done'
           task.save(using=database)
         if 'FREPPLE_TEST' not in os.environ:
-          logger.info("finished task %d at %s: success" % (task.id, datetime.now()))
+          logger.info("Worker %s for database '%s' finished task %d at %s: success" % (
+            os.getpid(), settings.DATABASES[database]['NAME'], task.id, datetime.now()
+            ))          
       except Exception as e:
         # Read the task again from the database and update.
         task = Task.objects.all().using(database).get(pk=task.id)
@@ -219,7 +225,9 @@ class Command(BaseCommand):
         task.message = str(e)
         task.save(using=database)
         if 'FREPPLE_TEST' not in os.environ:
-          logger.info("finished task %d at %s: failed" % (task.id, datetime.now()))
+          logger.info("Worker %s for database '%s' finished task %d at %s: failed" % (
+            os.getpid(), settings.DATABASES[database]['NAME'], task.id, datetime.now()
+            ))
     # Remove the parameter again
     try:
       Parameter.objects.all().using(database).get(pk='Worker alive').delete()
@@ -255,4 +263,6 @@ class Command(BaseCommand):
 
     # Exit
     if 'FREPPLE_TEST' not in os.environ:
-      logger.info("Worker finished all jobs in the queue and exits")
+      logger.info("Worker %s for database '%s' finished all jobs in the queue and exits" % (
+        os.getpid(), settings.DATABASES[database]['NAME']
+        ))

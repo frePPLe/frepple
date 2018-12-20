@@ -27,6 +27,7 @@ from django.template import Template, RequestContext
 from django.utils.translation import ugettext_lazy as _
 
 from freppledb.common.models import User
+from freppledb.common.middleware import _thread_locals
 from freppledb.execute.models import Task
 
 
@@ -139,6 +140,7 @@ class Command(loaddata.Command):
     now = datetime.now()
     task = None
     try:
+      setattr(_thread_locals, 'database', database)
       # Initialize the task
       if options['task']:
         try:
@@ -210,3 +212,6 @@ class Command(loaddata.Command):
         task.finished = datetime.now()
         task.save(using=database, update_fields=['status', 'finished', 'message'])
       raise CommandError('%s' % e)
+
+    finally:
+      setattr(_thread_locals, 'database', None)

@@ -199,7 +199,8 @@ if __name__ == "__main__":
   settings.DEBUG = False
 
   # Send the output to a logfile
-  frepple.settings.logfile = os.path.join(settings.FREPPLE_LOGDIR, os.environ.get('FREPPLE_LOGFILE', 'frepple.log'))
+  if 'FREPPLE_LOGFILE' in os.environ:
+    frepple.settings.logfile = os.path.join(settings.FREPPLE_LOGDIR, os.environ['FREPPLE_LOGFILE'])
 
   # Welcome message
   print("FrePPLe with processid %s on %s using database '%s'" % (

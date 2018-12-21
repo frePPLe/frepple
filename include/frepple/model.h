@@ -6762,6 +6762,8 @@ class Resource : public HasHierarchy<Resource>,
     /** Update the setup time of all operationplans on the resource. */
     void updateSetupTime() const;
 
+    void setOwner(Resource*);
+
     void setHidden(bool b)
     {
       if (hidden!=b)

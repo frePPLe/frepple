@@ -16,6 +16,7 @@
 #
 
 from datetime import datetime
+import os
 
 from django.core.management.base import BaseCommand, CommandError
 from django.conf import settings
@@ -115,6 +116,7 @@ class Command(BaseCommand):
     else:
       now = datetime.now()
       self.task = Task(name='frepple2erp', submitted=now, started=now, status='0%', user=self.user)
+    self.task.processid = os.getpid()
     self.task.save(using=self.database)
 
     try:
@@ -134,7 +136,7 @@ class Command(BaseCommand):
           self.extractManufacturingOrders()
           self.task.status = '100%'
           self.task.save(using=self.database)
-          
+
           # Optional extra planning output the ERP might be interested in:
           #  - planned delivery date of sales orders
           #  - safety stock (Enterprise Edition only)
@@ -147,6 +149,7 @@ class Command(BaseCommand):
       self.task.status = 'Failed'
       self.task.message = 'Failed: %s' % e
     self.task.finished = datetime.now()
+    self.task.processid = None
     self.task.save(using=self.database)
     self.cursor_frepple.close()
 

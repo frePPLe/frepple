@@ -154,6 +154,7 @@ class Command(BaseCommand):
         task.arguments += " --background"
 
       # Log task
+      # Different from the other tasks the frepple engine will write the processid
       task.save(using=database)
 
       # Locate commands.py
@@ -232,6 +233,7 @@ class Command(BaseCommand):
 
     finally:
       if task:
+        task.processid = None
         task.save(using=database)
 
 

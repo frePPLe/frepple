@@ -151,7 +151,8 @@ class Command(loaddata.Command):
           raise CommandError("Invalid task identifier")
         task.status = '0%'
         task.started = now
-        task.save(using=database, update_fields=['started', 'status'])
+        task.processid = os.getpid()
+        task.save(using=database, update_fields=['started', 'status', 'processid'])
       else:
         if options['user']:
           try:
@@ -164,6 +165,7 @@ class Command(loaddata.Command):
           name='loaddata', submitted=now, started=now, status='0%',
           user=user, arguments=' '.join(fixture_labels)
           )
+        task.processid = os.getpid()
         task.save(using=database)
 
       # Excecute the standard django command
@@ -203,6 +205,7 @@ class Command(loaddata.Command):
         # Task update
         task.status = 'Done'
         task.finished = datetime.now()
+        task.processid = None
         task.save(using=database, update_fields=['status', 'finished'])
 
     except Exception as e:
@@ -210,6 +213,7 @@ class Command(loaddata.Command):
         task.status = 'Failed'
         task.message = '%s' % e
         task.finished = datetime.now()
+        task.processid = None
         task.save(using=database, update_fields=['status', 'finished', 'message'])
       raise CommandError('%s' % e)
 

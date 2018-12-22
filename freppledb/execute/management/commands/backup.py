@@ -97,7 +97,6 @@ class Command(BaseCommand):
       # Choose the backup file name
       backupfile = now.strftime("database.%s.%%Y%%m%%d.%%H%%M%%S.dump" % database)
       task.message = 'Backup to file %s' % backupfile
-      task.save(using=database)
 
       # Run the backup command
       # Commenting the next line is a little more secure, but requires you to
@@ -114,11 +113,18 @@ class Command(BaseCommand):
       if settings.DATABASES[database]['PORT']:
         args.append("--port=%s " % settings.DATABASES[database]['PORT'])
       args.append(settings.DATABASES[database]['NAME'])
-      ret = subprocess.call(args)
-      if ret:
-        raise Exception("Run of run pg_dump failed")
+      with subprocess.Popen(args) as p:
+        try:
+          task.processid = p.pid
+          task.save(using=database)
+          p.wait()
+        except:
+          p.kill()
+          p.wait()
+          raise Exception("Run of run pg_dump failed")
 
       # Task update
+      task.processid = None
       task.status = '99%'
       task.save(using=database)
 
@@ -137,12 +143,14 @@ class Command(BaseCommand):
       # Task update
       task.status = 'Done'
       task.finished = datetime.now()
+      task.processid = None
 
     except Exception as e:
       if task:
         task.status = 'Failed'
         task.message = '%s' % e
         task.finished = datetime.now()
+        task.processid = None
       raise e
 
     finally:

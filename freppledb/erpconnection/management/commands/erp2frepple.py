@@ -121,6 +121,7 @@ class Command(BaseCommand):
     else:
       now = datetime.now()
       self.task = Task(name='erp2frepple', submitted=now, started=now, status='0%', user=self.user)
+    self.task.processid = os.getpid()
     self.task.save(using=self.database)
 
     # Set the destination folder
@@ -211,6 +212,7 @@ class Command(BaseCommand):
         self.task.message = 'Failed: %s' % e
 
       finally:
+        self.task.processid = None
         self.task.finished = datetime.now()
         self.task.save(using=self.database)
 

@@ -21,6 +21,7 @@ import os
 import shlex
 import time
 import operator
+from multiprocessing import Process
 from threading import Thread
 
 from django.conf import settings
@@ -29,7 +30,7 @@ from django.core.management import get_commands
 from django.core.management.base import BaseCommand, CommandError
 from django.db import DEFAULT_DB_ALIAS, connections
 
-from freppledb import VERSION
+from freppledb import VERSION, runCommand
 from freppledb.common.models import Parameter
 from freppledb.common.middleware import _thread_locals
 from freppledb.execute.models import Task
@@ -103,7 +104,7 @@ class Command(BaseCommand):
     # Check if a worker already exists
     if checkActive(database):
       if 'FREPPLE_TEST' not in os.environ:
-        logger.info("Worker process already active")
+        logger.info("Worker for database '%s' already active" % settings.DATABASES[database]['NAME'])
       return
 
     # Spawn a worker-alive thread
@@ -113,7 +114,7 @@ class Command(BaseCommand):
     if 'FREPPLE_TEST' not in os.environ:
       logger.info("Worker %s for database '%s' starting to process jobs" % (
         os.getpid(), settings.DATABASES[database]['NAME']
-        ))      
+        ))
     idle_loop_done = False
     setattr(_thread_locals, 'database', database)
     while True:
@@ -128,7 +129,7 @@ class Command(BaseCommand):
         else:
           # Special case: we need to permit a single idle loop before shutting down
           # the worker. If we shut down immediately, a newly launched task could think
-          # that a work is already running - while it just shut down.
+          # that a worker is already running - while it just shut down.
           if idle_loop_done:
             break
           else:
@@ -142,78 +143,68 @@ class Command(BaseCommand):
             ))
         background = False
         task.started = datetime.now()
-        # A
-        if task.name in ('frepple_run', 'runplan'):
-          kwargs = {}
-          if task.arguments:
-            for i in shlex.split(task.arguments):
-              j = i.split('=')
-              if len(j) > 1:
-                kwargs[j[0][2:]] = j[1]
-              else:
-                kwargs[j[0][2:]] = True
-          if 'background' in kwargs:
-            background = True
-          management.call_command('runplan', database=database, task=task.id, **kwargs)
-        # C
-        elif task.name in ('frepple_flush', 'empty'):
-          # Erase the database contents
-          kwargs = {}
-          if task.arguments:
-            for i in shlex.split(task.arguments):
-              key, val = i.split('=')
-              kwargs[key[2:]] = val
-          management.call_command('empty', database=database, task=task.id, **kwargs)
-        # D
-        elif task.name == 'loaddata':
-          args = shlex.split(task.arguments)
-          management.call_command('loaddata', *args, verbosity=0, database=database, task=task.id)
-        # E
-        elif task.name in ('frepple_copy', 'scenario_copy'):
-          args = shlex.split(task.arguments)
-          management.call_command('scenario_copy', *args, task=task.id)
-        elif task.name in ('frepple_createbuckets', 'createbuckets'):
-          args = {}
-          if task.arguments:
-            for i in shlex.split(task.arguments):
-              key, val = i.split('=')
-              args[key.strip("--").replace('-', '_')] = val
-          management.call_command('createbuckets', database=database, task=task.id, **args)
-        else:
-          # Verify the command exists
-          exists = False
-          for commandname in get_commands():
-            if commandname == task.name:
-              exists = True
-              break
+        # Verify the command exists
+        exists = False
+        for commandname in get_commands():
+          if commandname == task.name:
+            exists = True
+            break
 
-          # Execute the command
-          if not exists:
-            logger.error('Task %s not recognized' % task.name)
-          else:
-            kwargs = {}
-            if task.arguments:
-              for i in shlex.split(task.arguments):
-                key, val = i.split('=')
-                kwargs[key[2:]] = val
-            management.call_command(task.name, database=database, task=task.id, **kwargs)
-
-        # Read the task again from the database and update.
-        task = Task.objects.all().using(database).get(pk=task.id)
-        if task.status not in ('Done', 'Failed') or not task.finished or not task.started:
-          now = datetime.now()
-          if not task.started:
-            task.started = now
-          if not background:
-            if not task.finished:
-              task.finished = now
-            if task.status not in ('Done', 'Failed'):
-              task.status = 'Done'
+        if not exists:
+          # No such task exists
+          logger.error('Task %s not recognized' % task.name)
+          task.status = 'Failed'
+          task.processid = None
           task.save(using=database)
-        if 'FREPPLE_TEST' not in os.environ:
-          logger.info("Worker %s for database '%s' finished task %d at %s: success" % (
-            os.getpid(), settings.DATABASES[database]['NAME'], task.id, datetime.now()
-            ))          
+        else:
+          # Spawn a new command process
+          args = []
+          kwargs = {
+            'database': database,
+            'task': task.id,
+            'verbosity': 0
+            }
+          if task.arguments:
+            for i in shlex.split(task.arguments):
+              if '=' in i:
+                key, val = i.split('=')
+                kwargs[key.strip("--").replace('-', '_')] = val
+              else:
+                args.append(i)
+          child = Process(
+            target=runCommand,
+            args=(task.name, *args),
+            kwargs=kwargs,
+            name="frepplectl %s" % task.name
+            )
+          child.start()
+          background = 'background' in kwargs
+
+          # Normally, the child will update the processid.
+          # Just to make sure, we do it also here.
+          task.processid = child.pid
+          task.save(update_fields=['processid'], using=database)
+
+          # Wait for the child to finish
+          child.join()
+
+          # Read the task again from the database and update it
+          task = Task.objects.all().using(database).get(pk=task.id)
+          task.processid = None
+          if task.status not in ('Done', 'Failed') or not task.finished or not task.started:
+            now = datetime.now()
+            if not task.started:
+              task.started = now
+            if not background:
+              if not task.finished:
+                task.finished = now
+              if task.status not in ('Done', 'Failed'):
+                task.status = 'Done'
+            task.save(using=database)
+          if 'FREPPLE_TEST' not in os.environ:
+            logger.info("Worker %s for database '%s' finished task %d at %s: success" % (
+              os.getpid(), settings.DATABASES[database]['NAME'], task.id, datetime.now()
+              ))
       except Exception as e:
         # Read the task again from the database and update.
         task = Task.objects.all().using(database).get(pk=task.id)

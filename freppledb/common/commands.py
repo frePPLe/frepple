@@ -203,11 +203,18 @@ if __name__ == "__main__":
     frepple.settings.logfile = os.path.join(settings.FREPPLE_LOGDIR, os.environ['FREPPLE_LOGFILE'])
 
   # Welcome message
-  print("FrePPLe with processid %s on %s using database '%s'" % (
-    os.getpid(),
-    sys.platform,
-    database
-    ))
+  print("FrePPLe on %s using database '%s'" % (sys.platform, database))
+
+  # Update the task with my processid
+  if 'FREPPLE_TASKID' in os.environ:
+    try:
+      task = Task.objects.all().using(database).get(pk=os.environ['FREPPLE_TASKID'])
+      task.processid = os.getpid()
+      task.save(update_fields=['processid'], using=database)
+    except Task.DoesNotExist:
+      task = None
+  else:
+    task = None
 
   # Find all planning steps and execute them
   from freppledb.common.commands import PlanTaskRegistry as register
@@ -217,3 +224,8 @@ if __name__ == "__main__":
   except Exception as e:
     print("Error during planning: %s" % e)
     raise
+  finally:
+    # Clear the processid
+    if task:
+      task.processid = None
+      task.save(update_fields=['processid', 'status'], using=database)

@@ -37,6 +37,9 @@ Release notes
 
 .. rubric:: User interface
 
+- Ability to cancel any running task on the execution screen. Until now only the plan generation
+  could be canceled while it was running.
+ 
 - Improved performance and reduced memory footprint when downloading and exporting big reports.
  
 - Added field duration to the

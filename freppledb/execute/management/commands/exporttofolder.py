@@ -213,6 +213,7 @@ class Command(BaseCommand):
       else:
         task = Task(name='exporttofolder', submitted=now, started=now, status='0%', user=self.user, logfile=logfile)
       task.arguments = ' '.join(['"%s"' % i for i in args])
+      task.processid = os.getpid()
       task.save(using=self.database)
 
       # Execute
@@ -350,6 +351,7 @@ class Command(BaseCommand):
           task.status = 'Failed'
           #  task.message = "Exported %s data files, %s failed" % (cnt-errors, errors)
         task.finished = datetime.now()
+        task.processid = None
         task.save(using=self.database)
 
   # accordion template

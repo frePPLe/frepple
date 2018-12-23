@@ -27,7 +27,6 @@ import freppledb.input
 
 
 class cookbooktest(TransactionTestCase):
-  reset_sequences = True
 
   def setUp(self):
     # Make sure the test database is used

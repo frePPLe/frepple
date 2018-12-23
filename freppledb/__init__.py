@@ -42,4 +42,5 @@ def runCommand(taskname, *args, **kwargs):
         task.started = now
       task.finished = now
       task.message = str(e)
+      task.processid = None
       task.save(using=database)

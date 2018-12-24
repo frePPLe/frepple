@@ -27,7 +27,8 @@ def loadParameters(apps, schema_editor):
 
 class Migration(migrations.Migration):
   dependencies = [
-      ('common', '0001_initial'),
+    ('common', '0001_initial'),
+    ('execute', '0004_task_processid'),
   ]
 
   operations = [

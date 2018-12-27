@@ -20,11 +20,15 @@ def runCommand(taskname, *args, **kwargs):
   import django
   django.setup()
 
-  # Be sure to use the correct default database
-  from django.db import DEFAULT_DB_ALIAS
+  # Be sure to use the correct database
+  from django.db import DEFAULT_DB_ALIAS, connections
   from freppledb.common.middleware import _thread_locals
   database = kwargs.get("database", DEFAULT_DB_ALIAS)
   setattr(_thread_locals, 'database', database)
+  if 'FREPPLE_TEST' in os.environ:
+    from django.conf import settings
+    connections[database].close()
+    settings.DATABASES[database]['NAME'] = settings.DATABASES[database]['TEST']['NAME']
 
   # Run the command
   try:

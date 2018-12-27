@@ -47,9 +47,9 @@ class WorkerAlive(Thread):
 
   def run(self):
     while True:
-      p = Parameter.objects.all().using(self.database).get_or_create(pk='Worker alive')[0]
-      p.value = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
       try:
+        p = Parameter.objects.all().using(self.database).get_or_create(pk='Worker alive')[0]
+        p.value = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         p.save(update_fields=['value'])
       except:
         pass
@@ -157,6 +157,9 @@ class Command(BaseCommand):
           task.processid = None
           task.save(using=database)
         else:
+          # Close all database connections to assure the parent and child
+          # process don't share them.
+          connections.close_all()
           # Spawn a new command process
           args = []
           kwargs = {

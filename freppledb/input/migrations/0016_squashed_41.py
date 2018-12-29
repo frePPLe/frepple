@@ -23,8 +23,9 @@ import freppledb.common.fields
 
 
 def loadParameters(apps, schema_editor):
+  from django.core.management.commands.loaddata import Command
   call_command(
-    'loaddata', "parameters.json", app_label="input",
+    Command(), "parameters.json", app_label="input",
     verbosity=0, database=schema_editor.connection.alias
     )
 
@@ -34,10 +35,9 @@ class Migration(migrations.Migration):
     replaces = [('input', '0001_initial'), ('input', '0002_resource_for_po_and_do'), ('input', '0003_fence_for_po_and_do'), ('input', '0004_non_nullable_fields'), ('input', '0005_new_data_model'), ('input', '0006_new_data_model_2'), ('input', '0007_wizard'), ('input', '0008_number_precision'), ('input', '0009_operationplan_mat_res'), ('input', '0010_unique_together'), ('input', '0011_demand_priority'), ('input', '0012_rename_price_to_cost'), ('input', '0013_operationplanmaterial'), ('input', '0014_operationplan_color'), ('input', '0015_demand_delay_delivery')]
 
     dependencies = [
-	  ('common', '0008_squashed_41'),
-	  ('admin', '0001_initial'),
-	  ('execute', '0004_task_processid')
-    ]
+      ('common', '0008_squashed_41'),
+      ('admin', '0001_initial')
+      ]
 
     operations = [
         migrations.CreateModel(

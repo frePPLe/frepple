@@ -424,9 +424,26 @@ def CancelTask(request, taskid):
     task.status = 'Canceled'
     task.save(using=request.database)
     return HttpResponse(content="OK")
+  except ProcessLookupError:
+    # Already dead, just clean up from task table
+    task.message = 'Canceled process'
+    task.processid = None
+    task.status = 'Canceled'
+    task.save(using=request.database)
+    return HttpResponse(content="OK")
+  except PermissionError:
+    return HttpResponseServerError("No permission to kill this task")
   except Exception as e:
-    logger.error("Error canceling task: %s" % e)
-    return HttpResponseServerError('Error canceling task')
+    if os.name == 'nt':
+      # Windows doesn't report us why it failed. We just clean things up.
+      task.message = 'Canceled process'
+      task.processid = None
+      task.status = 'Canceled'
+      task.save(using=request.database)
+      return HttpResponse(content="OK")
+    else:
+      logger.error("Error canceling task: %s" % e)
+      return HttpResponseServerError('Error canceling task')
 
 
 @staff_member_required

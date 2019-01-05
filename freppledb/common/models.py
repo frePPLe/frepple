@@ -478,7 +478,6 @@ class User(AbstractUser):
         if val_global and self.is_superuser:
           # A superuser can save global preferences for this property
           recs = UserPreference.objects.all().using(database).filter(user__isnull=True, property=prop).update(value=val_global)
-          print(recs)
           if not recs:
             pref = UserPreference(user=None, property=prop, value=val_global)
             pref.save(using=database)

@@ -2553,7 +2553,7 @@ function import_show(title, paragraph, multiple, fxhr, initialDropped)
       filesselected = [e.target.files[0]];
     $("#uploadlabel").text(filesselected.length > 1 ? ($("#csv_file").attr('data-multiple-caption') || '').replace( '{count}', filesselected.length ) : filesselected[ 0 ].name);
     });
-  if (initialDropped !== null) {
+  if (initialDropped !== null && typeof initialDropped !== 'undefined') {
     if (multiple)
       filesdropped = initialDropped;
     else

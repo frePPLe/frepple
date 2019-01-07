@@ -27,6 +27,7 @@ from datetime import datetime
 from django.db import connections, DEFAULT_DB_ALIAS
 
 from freppledb.boot import getAttributes
+from freppledb.common.models import Parameter
 from freppledb.common.commands import PlanTaskRegistry, PlanTask
 from freppledb.input.models import Resource, Item
 
@@ -994,16 +995,16 @@ class loadResources(LoadTask):
               name=i[0], description=i[1], category=i[10], subcategory=i[11], source=i[13]
               )
             convert2cal = None
-          elif i[5].startswith("buckets"):
-            x = frepple.resource_buckets(
-              name=i[0], description=i[1], category=i[10], subcategory=i[11], source=i[13]
-              )
-            convert2cal = i[5][8:]
           elif not i[5] or i[5] == "default":
             x = frepple.resource_default(
               name=i[0], description=i[1], category=i[10], subcategory=i[11], source=i[13]
               )
             convert2cal = None
+          elif i[5].startswith("buckets"):
+            x = frepple.resource_buckets(
+              name=i[0], description=i[1], category=i[10], subcategory=i[11], source=i[13]
+              )
+            convert2cal = i[5][8:]
           else:
             raise ValueError("Resource type '%s' not recognized" % i[5])
           if i[7] is not None:
@@ -1281,6 +1282,8 @@ class loadOperationPlans(LoadTask):
       filter_and = ""
 
     with connections[database].chunked_cursor() as cursor:
+      consume_material = (Parameter.getValue('WIP.consume_material', database, 'true').lower() == 'true')
+      consume_capacity = (Parameter.getValue('WIP.consume_capacity', database, 'true').lower() == 'true')
       if 'supply' in os.environ:
         confirmed_filter = " and operationplan.status in ('confirmed', 'approved')"
         create_flag = True
@@ -1313,6 +1316,10 @@ class loadOperationPlans(LoadTask):
         ''' % (filter_and, confirmed_filter))
       for i in cursor:
         try:
+          if i[14]:
+            dmd = frepple.demand(name=i[14])
+          else:
+            dmd = None
           if i[7] == 'MO':
             cnt_mo += 1
             opplan = frepple.operationplan(
@@ -1320,6 +1327,11 @@ class loadOperationPlans(LoadTask):
               quantity=i[2], source=i[6], start=i[3], end=i[4],
               status=i[5], reference=i[13], create=create_flag
               )
+            if opplan and i[5] == 'confirmed':
+              if not consume_material:
+                opplan.consume_material = False
+              if not consume_capacity:
+                opplan.consume_capacity = False
           elif i[7] == 'PO':
             cnt_po += 1
             opplan = frepple.operationplan(
@@ -1330,6 +1342,9 @@ class loadOperationPlans(LoadTask):
               quantity=i[2], start=i[3], end=i[4],
               status=i[5], source=i[6], create=create_flag
               )
+            if opplan and i[5] == 'confirmed':
+              if not consume_capacity:
+                opplan.consume_capacity = False
           elif i[7] == 'DO':
             cnt_do += 1
             opplan = frepple.operationplan(
@@ -1340,6 +1355,9 @@ class loadOperationPlans(LoadTask):
               quantity=i[2], start=i[3], end=i[4],
               status=i[5], source=i[6], create=create_flag
               )
+            if opplan and i[5] == 'confirmed':
+              if not consume_capacity:
+                opplan.consume_capacity = False
           elif i[7] == 'DLVR':
             cnt_dlvr += 1
             opplan = frepple.operationplan(
@@ -1347,16 +1365,19 @@ class loadOperationPlans(LoadTask):
               id=i[1], reference=i[13], ordertype=i[7],
               item=frepple.item(name=i[11]) if i[11] else None,
               origin=frepple.location(name=i[8]) if i[8] else None,
-              demand=frepple.demand(name=i[14]) if i[14] else None,
+              demand=dmd,
               quantity=i[2], start=i[3], end=i[4],
               status=i[5], source=i[6], create=create_flag
               )
+            if opplan and i[5] == 'confirmed':
+              if not consume_capacity:
+                opplan.consume_capacity = False
             opplan = None
           else:
             logger.warning("Warning: unhandled operationplan type '%s'" % i[7])
             continue
-          if i[14] and opplan:
-            opplan.demand = frepple.demand(name=i[14])
+          if dmd and opplan:
+            opplan.demand = dmd
         except Exception as e:
           logger.error("**** %s ****" % e)
     with connections[database].chunked_cursor() as cursor:
@@ -1388,13 +1409,19 @@ class loadOperationPlans(LoadTask):
           id=i[1], quantity=i[2], source=i[7],
           start=i[3], end=i[4], status=i[5], reference=i[8]
           )
+        if opplan and i[5] == 'confirmed':
+          if not consume_material:
+            opplan.consume_material = False
+          if not consume_capacity:
+            opplan.consume_capacity = False
         if i[6] and opplan:
           try:
             opplan.owner = frepple.operationplan(id=i[6])
           except:
             pass
-        if i[9] and opplan:
-          opplan.demand = frepple.demand(name=i[9])
+        if opplan:
+          if i[9]:
+            opplan.demand = frepple.demand(name=i[9])
       logger.info('Loaded %d manufacturing orders, %d purchase orders, %d distribution orders and %s deliveries in %.2f seconds' % (cnt_mo, cnt_po, cnt_do, cnt_dlvr, time() - starttime))
 
     with connections[database].cursor() as cursor:

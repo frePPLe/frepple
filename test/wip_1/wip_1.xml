@@ -285,6 +285,25 @@
         </suboperation>
       </suboperations>
     </operation>
+    <operation name="Oper5" xsi:type="operation_fixed_time">
+      <location name="Loc"/>
+      <duration>P1D</duration>
+      <flows>
+        <flow xsi:type="flow_end">
+          <item name="Out5" />
+          <quantity>1</quantity>
+        </flow>
+        <flow xsi:type="flow_start">
+          <item name="In5" />
+          <quantity>-1</quantity>
+        </flow>
+      </flows>      
+      <loads>
+         <load>
+           <resource name="Res5" />
+         </load>
+       </loads>
+    </operation>
   </operations>
   <operationplans>
     <!-- WIP with funky quantities and duration -->
@@ -451,6 +470,23 @@
           <date>2014-03-02T00:00:00</date>
         </flowplan>
       </flowplans>
+    </operationplan>
+    <!-- WIP with material and capacity flags -->
+    <operationplan id="5001" quantity="10" start="2019-01-01T00:00:00" status="confirmed">
+      <operation name="Oper5"/>
+    </operationplan>
+    <operationplan id="5002" quantity="10" start="2019-02-01T00:00:00" status="confirmed" consume_material="false">
+      <operation name="Oper5"/>
+    </operationplan>
+    <operationplan id="5003" quantity="10" start="2019-03-01T00:00:00" status="confirmed" produce_material="false">
+      <operation name="Oper5"/>
+    </operationplan>
+    <operationplan id="5004" quantity="10" start="2019-04-01T00:00:00" status="confirmed" consume_capacity="false">
+      <operation name="Oper5"/>
+    </operationplan>
+    <operationplan id="5005" quantity="10" start="2019-05-01T00:00:00" status="confirmed" 
+      consume_material="false" produce_material="false" consume_capacity="false">
+      <operation name="Oper5"/>
     </operationplan>
   </operationplans>
 

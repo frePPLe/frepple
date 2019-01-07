@@ -20,19 +20,14 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('input', '0033_lastmodified_default'),
-    ]
+  dependencies = [
+    ('execute', '0003_Task_name_size_up'),
+  ]
 
-    operations = [
-        migrations.AddField(
-            model_name='itemdistribution',
-            name='sizemaximum',
-            field=models.DecimalField(blank=True, decimal_places=8, help_text='A maximum shipping quantity', max_digits=20, null=True, verbose_name='size maximum'),
-        ),
-        migrations.AddField(
-            model_name='itemsupplier',
-            name='sizemaximum',
-            field=models.DecimalField(blank=True, decimal_places=8, help_text='A maximum purchasing quantity', max_digits=20, null=True, verbose_name='size maximum'),
-        ),
-    ]
+  operations = [
+    migrations.AddField(
+      model_name='task',
+      name='processid',
+      field=models.IntegerField(editable=False, null=True, verbose_name='processid'),
+    ),
+  ]

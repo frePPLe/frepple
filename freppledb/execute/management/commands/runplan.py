@@ -154,6 +154,7 @@ class Command(BaseCommand):
         task.arguments += " --background"
 
       # Log task
+      # Different from the other tasks the frepple engine will write the processid
       task.save(using=database)
 
       # Locate commands.py
@@ -219,20 +220,22 @@ class Command(BaseCommand):
           # Return code is 2 is a run cancelled by a user. That's shown in the status field.
           raise Exception('Failed with exit code %d' % ret)
 
-        # Task update
-        task.status = 'Done'
-        task.finished = datetime.now()
+      # Reread the task from the database and update it
+      task = Task.objects.all().using(database).get(pk=task.id)
+      task.processid = None
+      task.status = 'Done'
+      task.finished = datetime.now()
+      task.save(using=database)
 
     except Exception as e:
       if task:
+        task = Task.objects.all().using(database).get(pk=task.id)
         task.status = 'Failed'
         task.message = '%s' % e
         task.finished = datetime.now()
-      raise e
-
-    finally:
-      if task:
+        task.processid = None
         task.save(using=database)
+      raise e
 
 
   # accordion template

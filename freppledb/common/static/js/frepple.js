@@ -2452,7 +2452,7 @@ function about_show()
 // Display import dialog for CSV-files
 //----------------------------------------------------------------------------
 
-function import_show(title,paragraph,multiple,fxhr)
+function import_show(title, paragraph, multiple, fxhr, initialDropped)
 {
   var xhr = {abort: function () {}};
 
@@ -2539,24 +2539,31 @@ function import_show(title,paragraph,multiple,fxhr)
       $('.box').removeClass('bg-warning');
     })
     .on('drop', function(e) {
-      if (multiple) {
+      if (multiple)
         filesdropped = e.originalEvent.dataTransfer.files;
-      } else {
+      else
         filesdropped = [e.originalEvent.dataTransfer.files[0]];
-      }
       $("#uploadlabel").text(filesdropped.length > 1 ? ($("#csv_file").attr('data-multiple-caption') || '').replace( '{count}', filesdropped.length ) : filesdropped[ 0 ].name);
     });
   }
   $("#csv_file").on('change', function(e) {
-    if (multiple) {
+    if (multiple)
       filesselected = e.target.files;
-    } else {
+    else
       filesselected = [e.target.files[0]];
-    }
-
     $("#uploadlabel").text(filesselected.length > 1 ? ($("#csv_file").attr('data-multiple-caption') || '').replace( '{count}', filesselected.length ) : filesselected[ 0 ].name);
-  });
-
+    });
+  if (initialDropped !== null && typeof initialDropped !== 'undefined') {
+    if (multiple)
+      filesdropped = initialDropped;
+    else
+      filesdropped = [initialDropped[0]];  	
+  	$("#uploadlabel").text(
+      filesdropped.length > 1 ?
+      ($("#csv_file").attr('data-multiple-caption') || '').replace( '{count}', filesdropped.length ) : 
+      filesdropped[0].name
+      );
+  };
   $('#importbutton').on('click', function() {
     if ($("#csv_file").val() === "" && !filesdropped) {
       return;
@@ -2650,7 +2657,7 @@ function import_show(title,paragraph,multiple,fxhr)
         },
         processData: false,
         contentType: false
-      },fxhr)
+      }, fxhr)
     );
    }
   )

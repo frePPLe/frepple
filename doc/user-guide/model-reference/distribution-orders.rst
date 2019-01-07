@@ -36,9 +36,18 @@ Field            Type              Description
 reference        string            | Unique identifier for the distribution order.
                                    | This field will be empty for newly proposed distribution orders, but for approved or confirmed distribution orders that
                                      already exist in the ERP system this field should be populated with the identifier the ERP generated.
-item             item              The item being transfered.
-origin           location          The model location where the item is transfered from.
-destination      location          The model location where the item will be received.
+item             item              The item being transferred.
+origin           location          | The model location where the item is transferred from.
+                                   | When specified, the inventory at this origin location will be decremented
+                                     with the specified quantity.
+                                   | When left empty, the stock in the source location isn't decremented. We 
+                                     assume that this has already been done and the material is currently in transit
+                                     between the origin and destination locations.
+destination      location          | The model location where the item will be received.
+                                   | When specified, the inventory at this destination location will be incremented
+                                     with the specified quantity.
+                                   | When left empty, the stock in the destionation location isn't decremented. We 
+                                     assume that the material is being shipped outside of our supply chain.
 quantity         number            The quantity delivered.
 shipping date    dateTime          The date when the distribution order is leaving the origin location.
 receipt date     dateTime          The date of the distribution order delivery.

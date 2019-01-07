@@ -38,6 +38,8 @@ The installer is 64-bit and has been tested on Windows 7, Windows 8 and Windows 
    The Enterprise Edition requires a license file to be activated. You get the
    license file when you register your copy on the support section of the website.
 
+   The license file contains the customer name, validity date and licensed modules.
+
    .. image:: _images/wininstall4.png
      :scale: 50 %
 
@@ -50,16 +52,14 @@ The installer is 64-bit and has been tested on Windows 7, Windows 8 and Windows 
 
    - **Install and configure the PostgreSQL database.**
 
-     PostgreSQL 9.5 or higher is required by frePPLe.
-     You can:
-
-     * either use the postgreSQL included with frePPLe
-
-     * either install and configure PostgreSQL yourself (advanced users only)
+     PostgreSQL 10 or higher is required by frePPLe. You can choose to 
+     use either 1) the postgreSQL included with frePPLe, or 2) install and configure
+     PostgreSQL yourself (advanced users only).
 
      If you choose to download and install PostgreSQL manually please follow these instructions:
 
-     #. Cancel frePPLe installer.
+     #. Cancel the frePPLe installer and restart it again after the postgreSQL
+        installation is done.
 
      #. Download and run the postgreSQL installer.
 
@@ -82,11 +82,11 @@ The installer is 64-bit and has been tested on Windows 7, Windows 8 and Windows 
      | Advanced administrators can further fine-tune the database instance.
      | For a simple trial installation, you want to skip this.
 
-        - | FrePPLe assumes that the database uses UTF-8 encoding.
-          | FrePPLe needs the following settings for its database connections. If these
-            values are configured as default for the database (in the file postgresql.conf)
-            or the database role (using the 'alter role' command), a small performance
-            optimization is achieved:
+     - | FrePPLe assumes that the database uses UTF-8 encoding.
+       | FrePPLe needs the following settings for its database connections. If these
+         values are configured as default for the database (in the file postgresql.conf)
+         or the database role (using the 'alter role' command), a small performance
+         optimization is achieved:
 
         ::
 
@@ -94,13 +94,10 @@ The installer is 64-bit and has been tested on Windows 7, Windows 8 and Windows 
             default_transaction_isolation: 'read committed',
             timezone: 'UTC' when USE_TZ is True, value of TIME_ZONE otherwise.
 
-        - | The default configuration of PostgreSQL is not configured right for
-            intensive use.
-          | We highly recommend using the pgtune utility (or its online
-            version at http://pgtune.leopard.in.ua/) to optimize the configuration
-            for your hardware.
-
-     6. Restart frePPLe installer without PostgreSQL option.
+     - | The default configuration of PostgreSQL is not configured right for
+         intensive use.
+       | We highly recommend using the pgtune http://pgtune.leopard.in.ua/ to 
+         optimize the configuration for your hardware.
 
 #. **Select the installation parameters**
 

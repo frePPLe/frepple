@@ -67,6 +67,9 @@
 				<name>Loc</name>
 			</location>
 		</resource>
+		<resource>
+			<name>Res5</name>
+		</resource>
 	</resources>
 	<items>
 		<item>
@@ -160,6 +163,9 @@
 			</itemsuppliers>
 		</item>
 		<item>
+			<name>In5</name>
+		</item>
+		<item>
 			<name>Negative inventory</name>
 		</item>
 		<item>
@@ -188,6 +194,9 @@
 		</item>
 		<item>
 			<name>Out4B</name>
+		</item>
+		<item>
+			<name>Out5</name>
 		</item>
 		<item>
 			<name>small item</name>
@@ -270,6 +279,15 @@
 			<name>In4B @ Loc</name>
 			<item>
 				<name>In4B</name>
+			</item>
+			<location>
+				<name>Loc</name>
+			</location>
+		</buffer>
+		<buffer>
+			<name>In5 @ Loc</name>
+			<item>
+				<name>In5</name>
 			</item>
 			<location>
 				<name>Loc</name>
@@ -398,6 +416,18 @@
 			</producing>
 			<item>
 				<name>Out4B</name>
+			</item>
+			<location>
+				<name>Loc</name>
+			</location>
+		</buffer>
+		<buffer>
+			<name>Out5 @ Loc</name>
+			<producing>
+				<name>Oper5</name>
+			</producing>
+			<item>
+				<name>Out5</name>
 			</item>
 			<location>
 				<name>Loc</name>
@@ -674,6 +704,34 @@
 			<duration>P1D</duration>
 		</operation>
 		<operation>
+			<name>Oper5</name>
+			<location>
+				<name>Loc</name>
+			</location>
+			<loads>
+				<load>
+					<resource>
+						<name>Res5</name>
+					</resource>
+				</load>
+			</loads>
+			<flows>
+				<flow xsi:type="flow_end">
+					<item>
+						<name>Out5</name>
+					</item>
+					<quantity>1</quantity>
+				</flow>
+				<flow>
+					<item>
+						<name>In5</name>
+					</item>
+					<quantity>-1</quantity>
+				</flow>
+			</flows>
+			<duration>P1D</duration>
+		</operation>
+		<operation>
 			<name>Strange WIP sizes</name>
 			<size_minimum>1000</size_minimum>
 			<size_multiple>50</size_multiple>
@@ -762,7 +820,7 @@
 			<feasible>false</feasible>
 		</operationplan>
 		<operationplan>
-			<id>4011</id>
+			<id>5006</id>
 			<operation>
 				<name>Oper3A</name>
 			</operation>
@@ -776,7 +834,7 @@
 			</owner>
 		</operationplan>
 		<operationplan>
-			<id>4012</id>
+			<id>5007</id>
 			<operation>
 				<name>Oper3A</name>
 			</operation>
@@ -790,7 +848,7 @@
 			</owner>
 		</operationplan>
 		<operationplan>
-			<id>4013</id>
+			<id>5008</id>
 			<operation>
 				<name>Oper3A</name>
 			</operation>
@@ -846,7 +904,7 @@
 			</owner>
 		</operationplan>
 		<operationplan>
-			<id>4014</id>
+			<id>5009</id>
 			<operation>
 				<name>Oper3C</name>
 			</operation>
@@ -860,7 +918,7 @@
 			</owner>
 		</operationplan>
 		<operationplan>
-			<id>4015</id>
+			<id>5010</id>
 			<operation>
 				<name>Oper3C</name>
 			</operation>
@@ -874,7 +932,7 @@
 			</owner>
 		</operationplan>
 		<operationplan>
-			<id>4016</id>
+			<id>5011</id>
 			<operation>
 				<name>Oper3C</name>
 			</operation>
@@ -924,7 +982,7 @@
 			<ordertype>ALT</ordertype>
 		</operationplan>
 		<operationplan>
-			<id>4017</id>
+			<id>5012</id>
 			<operation>
 				<name>Oper4A</name>
 			</operation>
@@ -966,7 +1024,68 @@
 			</owner>
 		</operationplan>
 		<operationplan>
-			<id>4018</id>
+			<id>5001</id>
+			<operation>
+				<name>Oper5</name>
+			</operation>
+			<start>2019-01-01T00:00:00</start>
+			<end>2019-01-02T00:00:00</end>
+			<quantity>10</quantity>
+			<status>confirmed</status>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<id>5002</id>
+			<operation>
+				<name>Oper5</name>
+			</operation>
+			<start>2019-02-01T00:00:00</start>
+			<end>2019-02-02T00:00:00</end>
+			<quantity>10</quantity>
+			<status>confirmed</status>
+			<consume_material>false</consume_material>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<id>5003</id>
+			<operation>
+				<name>Oper5</name>
+			</operation>
+			<start>2019-03-01T00:00:00</start>
+			<end>2019-03-02T00:00:00</end>
+			<quantity>10</quantity>
+			<status>confirmed</status>
+			<produce_material>false</produce_material>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<id>5004</id>
+			<operation>
+				<name>Oper5</name>
+			</operation>
+			<start>2019-04-01T00:00:00</start>
+			<end>2019-04-02T00:00:00</end>
+			<quantity>10</quantity>
+			<status>confirmed</status>
+			<consume_capacity>false</consume_capacity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<id>5005</id>
+			<operation>
+				<name>Oper5</name>
+			</operation>
+			<start>2019-05-01T00:00:00</start>
+			<end>2019-05-02T00:00:00</end>
+			<quantity>10</quantity>
+			<status>confirmed</status>
+			<consume_material>false</consume_material>
+			<produce_material>false</produce_material>
+			<consume_capacity>false</consume_capacity>
+			<feasible>false</feasible>
+		</operationplan>
+		<operationplan>
+			<id>5013</id>
 			<operation xsi:type="operation_itemsupplier">
 				<name>Purchase In1 @ Loc from Component supplier</name>
 			</operation>
@@ -986,7 +1105,7 @@
 			</supplier>
 		</operationplan>
 		<operationplan>
-			<id>4019</id>
+			<id>5014</id>
 			<operation xsi:type="operation_itemsupplier">
 				<name>Purchase In1 @ Loc from Component supplier</name>
 			</operation>
@@ -1005,7 +1124,7 @@
 			</supplier>
 		</operationplan>
 		<operationplan>
-			<id>4020</id>
+			<id>5015</id>
 			<operation xsi:type="operation_itemsupplier">
 				<name>Purchase In1 @ Loc from Component supplier</name>
 			</operation>
@@ -1024,7 +1143,7 @@
 			</supplier>
 		</operationplan>
 		<operationplan>
-			<id>4021</id>
+			<id>5016</id>
 			<operation xsi:type="operation_itemsupplier">
 				<name>Purchase In1 @ Loc from Component supplier</name>
 			</operation>
@@ -1043,7 +1162,7 @@
 			</supplier>
 		</operationplan>
 		<operationplan>
-			<id>4022</id>
+			<id>5017</id>
 			<operation xsi:type="operation_itemsupplier">
 				<name>Purchase In2 @ Loc from Component supplier</name>
 			</operation>
@@ -1063,7 +1182,7 @@
 			</supplier>
 		</operationplan>
 		<operationplan>
-			<id>4023</id>
+			<id>5018</id>
 			<operation xsi:type="operation_itemsupplier">
 				<name>Purchase In2 @ Loc from Component supplier</name>
 			</operation>
@@ -1082,7 +1201,7 @@
 			</supplier>
 		</operationplan>
 		<operationplan>
-			<id>4024</id>
+			<id>5019</id>
 			<operation xsi:type="operation_itemsupplier">
 				<name>Purchase In2 @ Loc from Component supplier</name>
 			</operation>
@@ -1101,7 +1220,7 @@
 			</supplier>
 		</operationplan>
 		<operationplan>
-			<id>4025</id>
+			<id>5020</id>
 			<operation xsi:type="operation_itemsupplier">
 				<name>Purchase In2 @ Loc from Component supplier</name>
 			</operation>
@@ -1120,7 +1239,7 @@
 			</supplier>
 		</operationplan>
 		<operationplan>
-			<id>4026</id>
+			<id>5021</id>
 			<operation xsi:type="operation_itemsupplier">
 				<name>Purchase In3 @ Loc from Component supplier</name>
 			</operation>
@@ -1139,7 +1258,7 @@
 			</supplier>
 		</operationplan>
 		<operationplan>
-			<id>4027</id>
+			<id>5022</id>
 			<operation xsi:type="operation_itemsupplier">
 				<name>Purchase In3 @ Loc from Component supplier</name>
 			</operation>
@@ -1158,7 +1277,7 @@
 			</supplier>
 		</operationplan>
 		<operationplan>
-			<id>4028</id>
+			<id>5023</id>
 			<operation xsi:type="operation_itemsupplier">
 				<name>Purchase In3 @ Loc from Component supplier</name>
 			</operation>
@@ -1177,7 +1296,7 @@
 			</supplier>
 		</operationplan>
 		<operationplan>
-			<id>4029</id>
+			<id>5024</id>
 			<operation xsi:type="operation_itemsupplier">
 				<name>Purchase In3A @ Loc from Component supplier</name>
 			</operation>
@@ -1196,7 +1315,7 @@
 			</supplier>
 		</operationplan>
 		<operationplan>
-			<id>4030</id>
+			<id>5025</id>
 			<operation xsi:type="operation_itemsupplier">
 				<name>Purchase In3A @ Loc from Component supplier</name>
 			</operation>
@@ -1215,7 +1334,7 @@
 			</supplier>
 		</operationplan>
 		<operationplan>
-			<id>4031</id>
+			<id>5026</id>
 			<operation xsi:type="operation_itemsupplier">
 				<name>Purchase In3A @ Loc from Component supplier</name>
 			</operation>
@@ -1234,7 +1353,7 @@
 			</supplier>
 		</operationplan>
 		<operationplan>
-			<id>4032</id>
+			<id>5027</id>
 			<operation xsi:type="operation_itemsupplier">
 				<name>Purchase In3B @ Loc from Component supplier</name>
 			</operation>
@@ -1253,7 +1372,7 @@
 			</supplier>
 		</operationplan>
 		<operationplan>
-			<id>4033</id>
+			<id>5028</id>
 			<operation xsi:type="operation_itemsupplier">
 				<name>Purchase In3B @ Loc from Component supplier</name>
 			</operation>
@@ -1272,7 +1391,7 @@
 			</supplier>
 		</operationplan>
 		<operationplan>
-			<id>4034</id>
+			<id>5029</id>
 			<operation xsi:type="operation_itemsupplier">
 				<name>Purchase In3B @ Loc from Component supplier</name>
 			</operation>
@@ -1291,7 +1410,7 @@
 			</supplier>
 		</operationplan>
 		<operationplan>
-			<id>4035</id>
+			<id>5030</id>
 			<operation xsi:type="operation_itemsupplier">
 				<name>Purchase In3C @ Loc from Component supplier</name>
 			</operation>
@@ -1310,7 +1429,7 @@
 			</supplier>
 		</operationplan>
 		<operationplan>
-			<id>4036</id>
+			<id>5031</id>
 			<operation xsi:type="operation_itemsupplier">
 				<name>Purchase In3C @ Loc from Component supplier</name>
 			</operation>
@@ -1329,7 +1448,7 @@
 			</supplier>
 		</operationplan>
 		<operationplan>
-			<id>4037</id>
+			<id>5032</id>
 			<operation xsi:type="operation_itemsupplier">
 				<name>Purchase In3C @ Loc from Component supplier</name>
 			</operation>
@@ -1348,7 +1467,7 @@
 			</supplier>
 		</operationplan>
 		<operationplan>
-			<id>4038</id>
+			<id>5033</id>
 			<operation xsi:type="operation_itemsupplier">
 				<name>Purchase In4 @ Loc from Component supplier</name>
 			</operation>
@@ -1367,7 +1486,7 @@
 			</supplier>
 		</operationplan>
 		<operationplan>
-			<id>4039</id>
+			<id>5034</id>
 			<operation xsi:type="operation_itemsupplier">
 				<name>Purchase In4 @ Loc from Component supplier</name>
 			</operation>
@@ -1386,7 +1505,7 @@
 			</supplier>
 		</operationplan>
 		<operationplan>
-			<id>4040</id>
+			<id>5035</id>
 			<operation xsi:type="operation_itemsupplier">
 				<name>Purchase In4 @ Loc from Component supplier</name>
 			</operation>
@@ -1405,7 +1524,7 @@
 			</supplier>
 		</operationplan>
 		<operationplan>
-			<id>4041</id>
+			<id>5036</id>
 			<operation xsi:type="operation_itemsupplier">
 				<name>Purchase In4A @ Loc from Component supplier</name>
 			</operation>
@@ -1424,7 +1543,7 @@
 			</supplier>
 		</operationplan>
 		<operationplan>
-			<id>4042</id>
+			<id>5037</id>
 			<operation xsi:type="operation_itemsupplier">
 				<name>Purchase In4A @ Loc from Component supplier</name>
 			</operation>
@@ -1443,7 +1562,7 @@
 			</supplier>
 		</operationplan>
 		<operationplan>
-			<id>4043</id>
+			<id>5038</id>
 			<operation xsi:type="operation_itemsupplier">
 				<name>Purchase In4B @ Loc from Component supplier</name>
 			</operation>
@@ -1462,7 +1581,7 @@
 			</supplier>
 		</operationplan>
 		<operationplan>
-			<id>4044</id>
+			<id>5039</id>
 			<reference>MO1</reference>
 			<operation>
 				<name>Strange WIP sizes</name>
@@ -1473,7 +1592,7 @@
 			<status>confirmed</status>
 		</operationplan>
 		<operationplan>
-			<id>4045</id>
+			<id>5040</id>
 			<reference>MO2</reference>
 			<operation>
 				<name>Strange WIP sizes</name>
@@ -1484,7 +1603,7 @@
 			<status>confirmed</status>
 		</operationplan>
 		<operationplan>
-			<id>4046</id>
+			<id>5041</id>
 			<reference>MO3</reference>
 			<operation>
 				<name>Strange WIP sizes</name>

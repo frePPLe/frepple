@@ -5,6 +5,10 @@ Item  All products :
       Regional DC 1 Local DC 1b 259200 1
       Regional DC 2 Local DC 2a 259200 1
       Regional DC 2 Local DC 2b 259200 1
+Item  In transit product :
+      Source Destination 0 0
+       Destination 0 0
+      Source  0 0
 Item  Y :
       X Z 0 1
 Item  product A :

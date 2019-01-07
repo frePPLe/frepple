@@ -42,7 +42,7 @@ from django.core.management import get_commands
 from freppledb.execute.models import Task
 from freppledb.common.auth import basicauthentication
 from freppledb.common.models import Scenario
-from freppledb.common.report import exportWorkbook, importWorkbook, GridFieldDuration
+from freppledb.common.report import exportWorkbook, importWorkbook, GridFieldDuration, GridFieldBool
 from freppledb.common.report import GridReport, GridFieldDateTime, GridFieldText, GridFieldInteger
 from freppledb.execute.management.commands.runworker import checkActive
 
@@ -100,6 +100,7 @@ class TaskReport(GridReport):
     #. Translators: Translation included with Django
     GridFieldText('user', title=_('user'), field_name='user__username', editable=False, align='center'),
     GridFieldDuration('duration', title=_('duration'), search=False, editable=False, align='center'),
+    GridFieldBool('cancelable', title="cancelable", hidden=True)
     )
 
 
@@ -137,7 +138,8 @@ class TaskReport(GridReport):
         'message': rec.message,
         'arguments': rec.arguments,
         'user__username': rec.user.username if rec.user else None,
-        'duration': rec.duration
+        'duration': rec.duration,
+        'cancelable': rec.processid is not None or rec.status == 'Waiting'
         }
 
 
@@ -412,32 +414,44 @@ def CancelTask(request, taskid):
     raise Http404('Only ajax post requests allowed')
   try:
     task = Task.objects.all().using(request.database).get(pk=taskid)
-    if task.name in ('frepple_run', 'runplan') and task.status.endswith("%"):
-      fname = os.path.join(settings.FREPPLE_LOGDIR, task.logfile)
-      try:
-        # The second line in the log file has the id of the frePPLe process
-        with open(fname, 'r') as f:
-          t = 0
-          for line in f:
-            if t >= 1:
-              t = line.split()
-              break
-            else:
-              t += 1
-          if t[0] == 'FrePPLe' and t[1] == 'with' and t[2] == 'processid':
-            # Kill the process with signal 9
-            os.kill(int(t[3]), 9)
-            task.message = 'Killed process'
-      except Exception as e:
-        return HttpResponseServerError('Error canceling task')
+    if task.processid:
+      # Kill the process with signal 9
+      os.kill(task.processid, 9)
+      task.message = 'Canceled process'
+      task.processid = None
     elif task.status != 'Waiting':
-      raise Exception('Task is not in waiting status')
+      return HttpResponseServerError("Task isn't running or waiting to run")
     task.status = 'Canceled'
     task.save(using=request.database)
     return HttpResponse(content="OK")
+  except ProcessLookupError:
+    # Already dead, just clean up from task table
+    task.message = 'Canceled process'
+    task.processid = None
+    task.status = 'Canceled'
+    task.save(using=request.database)
+    return HttpResponse(content="OK")
+  except PermissionError:
+    if os.name == 'nt':
+      # Windows doesn't report us why it failed. We just clean things up.
+      task.message = 'Canceled process'
+      task.processid = None
+      task.status = 'Canceled'
+      task.save(using=request.database)
+      return HttpResponse(content="OK")
+    else:
+      return HttpResponseServerError("No permission to kill this task")
   except Exception as e:
-    logger.error("Error saving report settings: %s" % e)
-    return HttpResponseServerError('Error canceling task')
+    if os.name == 'nt':
+      # Windows doesn't report us why it failed. We just clean things up.
+      task.message = 'Canceled process'
+      task.processid = None
+      task.status = 'Canceled'
+      task.save(using=request.database)
+      return HttpResponse(content="OK")
+    else:
+      logger.error("Error canceling task: %s" % e)
+      return HttpResponseServerError('Error canceling task')
 
 
 @staff_member_required

@@ -17,7 +17,7 @@ at a specific location.
 There are three different ways to replenishing a buffer:
 
 1. The item can be purchased from a supplier
-2. The item can be transfered from another location
+2. The item can be transferred from another location
 3. The item can be manufactured
 
 It is possible to define multiple replenishment methods for a buffer: for 

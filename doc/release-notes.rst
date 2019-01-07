@@ -18,6 +18,16 @@ Release notes
   
 - Addition of the field size maximum to the item supplier and item distribution tables.
 
+- | More detailed modeling of work in progress.
+  | The parameters WIP.consume_material and WIP.consume_capacity control whether a confirmed
+    manufacturing order, purchase order or distribution order consume material and capacity.
+
+- | More detailed modeling of in transit material.
+  | By leaving the origin location empty, no inventory will be consumed at the origin location.
+    We assume the material has already left the origin location and is in transit.
+  | By leaving the destination location, the distribution order doesn't produce any stock.
+    This represents a material transfer outside of our supply chain.
+
 - Bug fix: calculation of operation time for 0-duration operations was wrong in some situations.
 
 - Bug fix: incorrect operation duration when different resources in an aggregate pool resource 
@@ -27,6 +37,9 @@ Release notes
 
 .. rubric:: User interface
 
+- Ability to cancel any running task on the execution screen. Until now only the plan generation
+  could be canceled while it was running.
+ 
 - Improved performance and reduced memory footprint when downloading and exporting big reports.
  
 - Added field duration to the

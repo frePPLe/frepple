@@ -15,6 +15,7 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+import os
 from datetime import datetime
 
 from django.apps import apps
@@ -103,6 +104,7 @@ class Command(BaseCommand):
         task.started = now
       else:
         task = Task(name='empty', submitted=now, started=now, status='0%', user=user)
+      task.processid = os.getpid()
       task.save(using=database)
 
       # Create a database connection
@@ -255,6 +257,7 @@ class Command(BaseCommand):
       # Task update
       task.status = 'Done'
       task.finished = datetime.now()
+      task.processid = None
       task.save(using=database)
 
     except Exception as e:
@@ -262,6 +265,7 @@ class Command(BaseCommand):
         task.status = 'Failed'
         task.message = '%s' % e
         task.finished = datetime.now()
+        task.processid = None
         task.save(using=database)
       raise CommandError('%s' % e)
 

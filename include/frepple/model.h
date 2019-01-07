@@ -2066,6 +2066,9 @@ class OperationPlan
       else
         flags |= CONSUME_MATERIAL;
       resizeFlowLoadPlans();
+      for (auto *i = firstsubopplan; i; i = i->nextsubopplan)
+        if (!i->getConfirmed())
+          i->setConsumeMaterial(b);
     }
 
     /** Update flag which allow/disallows material production. */
@@ -2076,6 +2079,9 @@ class OperationPlan
       else
         flags |= PRODUCE_MATERIAL;
       resizeFlowLoadPlans();
+      for (auto *i = firstsubopplan; i; i = i->nextsubopplan)
+        if (!i->getConfirmed())
+          i->setProduceMaterial(b);
     }
 
     /** Update flag which allow/disallows capacity consumption. */
@@ -2086,6 +2092,9 @@ class OperationPlan
       else
         flags |= CONSUME_CAPACITY;
       resizeFlowLoadPlans();
+      for (auto *i = firstsubopplan; i; i = i->nextsubopplan)
+        if (!i->getConfirmed())
+          i->setConsumeCapacity(b);
     }
 
     void setFeasible(bool b)
@@ -5489,7 +5498,9 @@ inline Location* OperationPlan::getLocation() const
   else if (oper->getType() == *OperationItemSupplier::metadata)
     return static_cast<OperationItemSupplier*>(oper)->getBuffer()->getLocation();
   else if (oper->getType() == *OperationItemDistribution::metadata)
-    return static_cast<OperationItemDistribution*>(oper)->getDestination()->getLocation();
+    return static_cast<OperationItemDistribution*>(oper)->getDestination() ?
+      static_cast<OperationItemDistribution*>(oper)->getDestination()->getLocation() :
+      static_cast<OperationItemDistribution*>(oper)->getOrigin()->getLocation();
   else if (oper->getType() == *OperationInventory::metadata)
     return static_cast<OperationInventory*>(oper)->getBuffer()->getLocation();
   else if (oper->getType() == *OperationDelivery::metadata)
@@ -5506,7 +5517,9 @@ Item* OperationPlan::getItem() const
   else if (oper->getType() == *OperationItemSupplier::metadata)
     return static_cast<OperationItemSupplier*>(oper)->getBuffer()->getItem();
   else if (oper->getType() == *OperationItemDistribution::metadata)
-    return static_cast<OperationItemDistribution*>(oper)->getDestination()->getItem();
+    return static_cast<OperationItemDistribution*>(oper)->getDestination() ?
+      static_cast<OperationItemDistribution*>(oper)->getDestination()->getItem() :
+      static_cast<OperationItemDistribution*>(oper)->getOrigin()->getItem();  
   else if (oper->getType() == *OperationInventory::metadata)
     return static_cast<OperationInventory*>(oper)->getBuffer()->getItem();
   else if (oper->getType() == *OperationDelivery::metadata)
@@ -6748,6 +6761,8 @@ class Resource : public HasHierarchy<Resource>,
 
     /** Update the setup time of all operationplans on the resource. */
     void updateSetupTime() const;
+
+    void setOwner(Resource*);
 
     void setHidden(bool b)
     {

@@ -91,6 +91,7 @@ class Command(BaseCommand):
       else:
         task = Task(name='restore', submitted=now, started=now, status='0%', user=user)
       task.arguments = options['dump']
+      task.processid = os.getpid()
       task.save(using=database)
 
       # Validate options
@@ -112,9 +113,16 @@ class Command(BaseCommand):
       cmd.append("-d")
       cmd.append(settings.DATABASES[database]['NAME'])
       cmd.append('<%s' % dumpfile)
-      ret = subprocess.call(cmd, shell=True)  # Shell needs to be True in order to interpret the < character
-      if ret:
-        raise Exception("Database restoration failed")
+      # Shell needs to be True in order to interpret the < character
+      with subprocess.Popen(cmd, shell=True) as p:
+        try:
+          task.processid = p.pid
+          task.save(using=database)
+          p.wait()
+        except:
+          p.kill()
+          p.wait()
+          raise Exception("Database restoration failed")
 
       # Task update
       # We need to recreate a new task record, since the previous one is lost during the restoration.
@@ -134,4 +142,5 @@ class Command(BaseCommand):
     finally:
       # Commit it all, even in case of exceptions
       if task:
+        task.processid = None
         task.save(using=database)

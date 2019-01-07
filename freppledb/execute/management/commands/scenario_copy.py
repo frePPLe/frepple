@@ -112,6 +112,7 @@ class Command(BaseCommand):
       task.started = now
     else:
       task = Task(name='scenario_copy', submitted=now, started=now, status='0%', user=user)
+    task.processid = os.getpid()
     task.save(using=source)
 
     # Validate the arguments
@@ -160,11 +161,19 @@ class Command(BaseCommand):
         settings.DATABASES[destination]['PORT'] and ("-p %s " % settings.DATABASES[destination]['PORT']) or '',
         test and settings.DATABASES[destination]['TEST']['NAME'] or settings.DATABASES[destination]['NAME'],
         )
-
-      ret = subprocess.call(commandline, shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
-
-      if ret:
-        raise Exception('Exit code of the database copy command is %d' % ret)
+      with subprocess.Popen(commandline, shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT) as p:
+        try:
+          task.processid = p.pid
+          task.save(using=source)
+          p.wait()
+        except:
+          p.kill()
+          p.wait()
+          # Consider the destination database free again
+          destinationscenario.status = 'Free'
+          destinationscenario.lastrefresh = datetime.today()
+          destinationscenario.save(using=DEFAULT_DB_ALIAS)
+          raise Exception("Database copy failed")
 
       # Update the scenario table
       destinationscenario.status = 'In use'
@@ -182,6 +191,7 @@ class Command(BaseCommand):
         User.objects.using(destination).filter(username=user.username).update(is_active=True)
 
       # Logging message
+      task.processid = None
       task.status = 'Done'
       task.finished = datetime.now()
 
@@ -207,6 +217,7 @@ class Command(BaseCommand):
 
     finally:
       if task:
+        task.processid = None
         task.save(using=source)
       settings.DEBUG = tmp_debug
 

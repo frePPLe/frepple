@@ -120,6 +120,7 @@ class Command(BaseCommand):
         task.logfile = logfile
       else:
         task = Task(name='importfromfolder', submitted=now, started=now, status='0%', user=self.user, logfile=logfile)
+      task.processid = os.getpid()
       task.save(using=self.database)
 
       # Choose the right self.delimiter and language
@@ -220,10 +221,10 @@ class Command(BaseCommand):
           task.status = 'Done'
         else:
           task.status = 'Failed'
-      task.finished = datetime.now()
-      task.save(using=self.database)
+        task.processid = None
+        task.finished = datetime.now()
+        task.save(using=self.database)
       logger.info('%s End of importfromfolder\n' % datetime.now().replace(microsecond=0))
-
 
 
   def loadCSVfile(self, model, file):

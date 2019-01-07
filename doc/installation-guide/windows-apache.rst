@@ -2,19 +2,18 @@
 Deployment on Windows with Apache web server
 ============================================
 
+.. warning:: This deployment method is deprecated. Installing on Linux
+             is the right option to give the best scalability and performance
+             in more demanding deployments.
+
 The windows installer installs a Python based web server. For environments
-with a few concurrent users or for a trial installation this will suffice,
-and it is the recommended configuration.
+with a few concurrent users or for a trial installation this will suffice.
 
 If the number of concurrent users is higher or when more complex configurations
 are required on the network (such as HTTPS encryption, additional web pages
 to be served from the same web server, access from the internet as well as
 from the intranet, using external authentication instead, configure compression
 and caching, etc…), you can deploy frePPLe with an Apache web server.
-
-Note that scalability of the web application on Linux is significantly better
-on Linux than on Windows. Environments with more than 20 concurrent users
-should prefer Linux.
 
 To configure frePPLe on Windows with an Apache web server, the following steps
 are required:

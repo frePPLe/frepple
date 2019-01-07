@@ -1053,6 +1053,9 @@ class SolverCreate : public Solver
         /** Internal flag that is set to true when solving for safety stock. */
         bool safety_stock_planning;
 
+        /** A list of recent buffers to detect loops in the supply path. */
+        RecentlyUsed<const Buffer*, 10> recent_buffers;
+
         /** Collect all purchase operations. */
         struct order_operationitemsuppliers
         {

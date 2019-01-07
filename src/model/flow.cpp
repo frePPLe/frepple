@@ -277,7 +277,11 @@ Object* Flow::finder(const DataValueDict& d)
 
 pair<Date, double> Flow::getFlowplanDateQuantity(const FlowPlan* fl) const
 {
-  if (fl->isConfirmed())
+  if (isConsumer() && !fl->getOperationPlan()->getConsumeMaterial())
+    return make_pair(fl->getOperationPlan()->getSetupEnd(), 0.0);
+  else if (isProducer() && !fl->getOperationPlan()->getProduceMaterial())
+    return make_pair(fl->getOperationPlan()->getSetupEnd(), 0.0);
+  else if (fl->isConfirmed())
     return make_pair(
       fl->getOperationPlan()->getSetupEnd(),
       fl->getQuantity()
@@ -293,7 +297,11 @@ pair<Date, double> Flow::getFlowplanDateQuantity(const FlowPlan* fl) const
 
 pair<Date, double> FlowEnd::getFlowplanDateQuantity(const FlowPlan* fl) const
 {
-  if (fl->isConfirmed())
+  if (isConsumer() && !fl->getOperationPlan()->getConsumeMaterial())
+    return make_pair(fl->getOperationPlan()->getEnd(), 0.0);
+  else if (isProducer() && !fl->getOperationPlan()->getProduceMaterial())
+    return make_pair(fl->getOperationPlan()->getEnd(), 0.0);
+  else if (fl->isConfirmed())
     return make_pair(
       fl->getOperationPlan()->getEnd(),
       fl->getQuantity()
@@ -313,12 +321,16 @@ pair<Date, double> FlowTransferBatch::getFlowplanDateQuantity(const FlowPlan* fl
   if (!batch_quantity || fl->getOperationPlan()->getSetupEnd() == fl->getOperationPlan()->getEnd())
     // Default to a simple flowplan at the start or end
     return make_pair(
-      (getQuantity() < 0 || getQuantityFixed() < 0) ? fl->getOperationPlan()->getSetupEnd() : fl->getOperationPlan()->getEnd(),
+      isConsumer() ? fl->getOperationPlan()->getSetupEnd() : fl->getOperationPlan()->getEnd(),
       getQuantityFixed() + getQuantity() * fl->getOperationPlan()->getQuantity()
       );
   
   // Compute the number of batches
   double total_quantity = getQuantityFixed() + fl->getOperationPlan()->getQuantity() * getQuantity();
+  if (isConsumer() && !fl->getOperationPlan()->getConsumeMaterial())
+    total_quantity = 0.0;
+  else if (isProducer() && !fl->getOperationPlan()->getProduceMaterial())
+    total_quantity = 0.0;
   double batches = ceil((getQuantity() > 0 ? total_quantity : -total_quantity) / getTransferBatch());
   if (!batches)
     batches = 1;

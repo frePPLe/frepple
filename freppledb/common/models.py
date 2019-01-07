@@ -468,32 +468,31 @@ class User(AbstractUser):
     if val is None:
       if prop in settings.GLOBAL_PREFERENCES and self.is_superuser:
         # Delete global preferences
-        UserPreference.objects.all().using(database).get_or_create(user__isnull=True,property=prop).delete()
+        UserPreference.objects.all().using(database).filter(user__isnull=True, property=prop).delete()
       # Delete user preferences
-      try:
-        self.preferences.using(database).get(property=prop).delete()
-      except UserPreference.DoesNotExist:
-        # No such preferences exists now
-        pass
+      self.preferences.using(database).filter(user=self, property=prop).delete()
     else:
       if prop in settings.GLOBAL_PREFERENCES:
         val_global = { k: v for k, v in val.items() if k in settings.GLOBAL_PREFERENCES[prop] }
-        val_user = { k: v for k, v in val.items() if not k in settings.GLOBAL_PREFERENCES[prop] }
+        val_user = { k: v for k, v in val.items() if k not in settings.GLOBAL_PREFERENCES[prop] }
         if val_global and self.is_superuser:
           # A superuser can save global preferences for this property
-          pref = UserPreference.objects.all().using(database).get_or_create(user__isnull=True, property=prop)[0]
-          pref.value = val_global
-          pref.save(update_fields=['value'], using=database)
+          recs = UserPreference.objects.all().using(database).filter(user__isnull=True, property=prop).update(value=val_global)
+          if not recs:
+            pref = UserPreference(user=None, property=prop, value=val_global)
+            pref.save(using=database)
         if val_user:
           # Everyone can save his personal preferences for this property
-          pref = UserPreference.objects.all().using(database).get_or_create(user=self, property=prop)[0]
-          pref.value = val_user
-          pref.save(update_fields=['value'], using=database)
+          recs = UserPreference.objects.all().using(database).filter(user=self, property=prop).update(value=val_user)
+          if not recs:
+            pref = UserPreference(user=self, property=prop, value=val_user)
+            pref.save(using=database)
       else:
         # No global preferences configured for this property
-        pref = UserPreference.objects.all().using(database).get_or_create(user=self, property=prop)[0]
-        pref.value = val
-        pref.save(update_fields=['value'], using=database)
+        recs = UserPreference.objects.all().using(database).filter(user=self, property=prop).update(value=val)
+        if not recs:
+          pref = UserPreference(user=self, property=prop, value=val)
+          pref.save(using=database)
 
 
   def getMaxLoglevel(self, database=DEFAULT_DB_ALIAS):

@@ -55,9 +55,9 @@ class exporter(object):
         # Check if we manage by work orders or manufacturing orders.
         self.manage_work_orders = False
         m = self.env['ir.model']
-        recs = m.search([('name', '=', 'mrp_operations.operation')])
+        recs = m.search([('model', '=', 'mrp.workorder')])
         for rec in recs:
-            self.manage_work_orders = True
+          self.manage_work_orders = True
 
         # Load some auxiliary data in memory
         self.load_company()
@@ -209,7 +209,6 @@ class exporter(object):
             fields = ['dayofweek', 'date_from', 'hour_from', 'hour_to']
             buckets = []
             for i in rec['attendance_ids'].read(fields):
-                print ("koko", i)
                 strt = datetime.strptime(i['date_from'] or "2000-01-01", '%Y-%m-%d')
                 buckets.append((strt,
                                 '<bucket start="%sT00:00:00" value="1" days="%s" priority="%%s" starttime="%s" endtime="%s"/>\n' % (
@@ -427,10 +426,10 @@ class exporter(object):
         mfg_route = None
         for i in recs.read(fields):
             stock_location_routes[i['id']] = i
-            if i['name'] == 'Buy':
+            if i['name'] and i['name'].lower().startswith('buy'):
               # Recognize items that can be purchased
               buy_route = i['id']
-            if i['name'] == 'Manufacture':
+            if i['name'] and i['name'].lower().startswith('manufacture'):
               mfg_route = i['id']
 
         # Read the products
@@ -618,11 +617,9 @@ class exporter(object):
                 # CASE 2: A routing operation is created with a suboperation for each
                 # routing step.
                 #
-                yield '<operation name=%s size_multiple="1" posttime="P%dD"%s%s xsi:type="operation_routing">' \
+                yield '<operation name=%s size_multiple="1" posttime="P%dD" xsi:type="operation_routing">' \
                   '<item name=%s/><location name=%s/>\n' % (
                     quoteattr(operation), self.manufacturing_lead,
-                    (' effective_start="%s"' % i['date_start']) if i['date_start'] else '',
-                    (' effective_end="%s"' % i['date_stop']) if i['date_stop'] else '',
                     quoteattr(product_buf['name']), quoteattr(location)
                 )
 
@@ -640,10 +637,8 @@ class exporter(object):
                             )
                     if step[2] == steplist[-1][2]:
                         # Add producing flows on the last routing step
-                        yield '<flows>\n<flow xsi:type="flow_end" quantity="%f"%s%s><item name=%s/></flow>\n' % (
-                            i['product_qty'] * i['product_efficiency'] * uom_factor,
-                            i['date_start'] and (' effective_start="%s"' % i['date_start']) or "",
-                            i['date_stop'] and (' effective_end="%s"' % i['date_stop']) or "",
+                        yield '<flows>\n<flow xsi:type="flow_end" quantity="%f"><item name=%s/></flow>\n' % (
+                            i['product_qty'] * getattr(i, 'product_efficiency', 1.0) * uom_factor,
                             quoteattr(product_buf['name'])
                             )
                         # Add byproduct flows
@@ -676,13 +671,11 @@ class exporter(object):
                         for j in fl:
                             product = self.product_product[j]
                             qty = sum(
-                                self.convert_qty_uom(k['product_qty'], k['product_uom'][0], k['product_id'][0])
+                                self.convert_qty_uom(k['product_qty'], k['product_uom_id'][0], k['product_id'][0])
                                 for k in fl[j]
                             )
-                            yield '<flow xsi:type="flow_start" quantity="-%f"%s%s><item name=%s/></flow>\n' % (
-                                qty, fl[j][0]['date_start'] and (' effective_start="%s"' % fl[j][0]['date_start']) or "",
-                                fl[j][0]['date_stop'] and (' effective_end="%s"' % fl[j][0]['date_stop']) or "",
-                                quoteattr(product['name'])
+                            yield '<flow xsi:type="flow_start" quantity="-%f"><item name=%s/></flow>\n' % (
+                                qty, quoteattr(product['name'])
                             )
                         yield '</flows>\n'
                     yield '</operation></suboperation>\n'

@@ -49,6 +49,7 @@ class Task(models.Model):
     User, verbose_name=_('user'), blank=True, null=True,
     editable=False, on_delete=models.CASCADE
     )
+  processid = models.IntegerField('processid', editable=False, null=True)
 
   def __str__(self):
     return "%s - %s - %s" % (self.id, self.name, self.status)

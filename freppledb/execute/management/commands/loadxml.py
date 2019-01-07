@@ -86,6 +86,7 @@ class Command(BaseCommand):
       else:
         task = Task(name='loadxml', submitted=now, started=now, status='0%', user=user)
       task.arguments = ' '.join(options['file'])
+      task.processid = os.getpid()
       task.save(using=database)
 
       # Execute
@@ -126,4 +127,5 @@ class Command(BaseCommand):
 
     finally:
       if task:
+        task.processid = None
         task.save(using=database)

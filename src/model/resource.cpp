@@ -314,6 +314,24 @@ Resource::~Resource()
 }
 
 
+void Resource::setOwner(Resource* o)
+{
+  // Assure that all child resources are of the same type
+  if (o)
+  {
+    auto firstchild = o->getFirstChild();
+    if (firstchild)
+    {
+      bool parent_bucketized = (firstchild->getType() == *ResourceBuckets::metadata);
+      bool me_bucketized = (getType() == *ResourceBuckets::metadata);
+      if (parent_bucketized != me_bucketized)
+        throw DataException("Aggregate resources can't mix bucketized resources with other types");
+    }
+  }
+  HasHierarchy<Resource>::setOwner(o);
+}
+
+
 extern "C" PyObject* Resource::plan(PyObject *self, PyObject *args)
 {
   // Get the resource model
@@ -382,7 +400,7 @@ Resource::PlanIterator::PlanIterator(Resource* r, PyObject* o) : bucketiterator(
   for (auto i = res_list.begin(); i != res_list.end(); ++i)
   {
     i->ldplaniter = Resource::loadplanlist::iterator(i->res->getLoadPlans().begin());
-    i->bucketized = (r->getType() == *ResourceBuckets::metadata);
+    i->bucketized = (i->res->getType() == *ResourceBuckets::metadata);
     i->cur_date = PythonData(end_date).getDate();
     i->setup_loadplan = nullptr;
     i->prev_date = i->cur_date;
@@ -621,7 +639,7 @@ PyObject* Resource::PlanIterator::iternext()
       }
 
       // Measure setup
-      if (i->res->getSetupMatrix())
+      if (i->res->getSetupMatrix() && !i->bucketized)
       {
         DateRange bckt(cpp_start_date, cpp_end_date);
         for (auto j = i->res->getLoadPlans().begin(); j != i->res->getLoadPlans().end(); ++j)

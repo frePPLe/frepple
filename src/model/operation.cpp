@@ -1752,10 +1752,12 @@ void Operation::addSubOperationPlan(
     throw LogicException("Expected suboperationplan list to be empty");
 
   // Adding a suboperationplan that was already added
-  if (child->owner == parent)  return;
+  if (child->owner == parent)
+    return;
 
   // Clear the previous owner, if there is one
-  if (child->owner) child->owner->eraseSubOperationPlan(child);
+  if (child->owner)
+    child->owner->eraseSubOperationPlan(child);
 
   // Set as only child operationplan
   parent->firstsubopplan = child;
@@ -1778,7 +1780,8 @@ void OperationSplit::addSubOperationPlan(
     throw DataException("Adding null suboperationplan");
 
   // Adding a suboperationplan that was already added
-  if (child->owner == parent)  return;
+  if (child->owner == parent)
+    return;
 
   if (!fast)
   {
@@ -1811,7 +1814,8 @@ void OperationSplit::addSubOperationPlan(
   }
 
   // Update the owner
-  if (child->owner) child->owner->eraseSubOperationPlan(child);
+  if (child->owner)
+    child->owner->eraseSubOperationPlan(child);
   child->owner = parent;
 
   // Update the flow and loadplans

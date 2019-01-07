@@ -157,6 +157,24 @@
       <location name="Local DC 2b"/>
       <origin name="Central WH"/>
     </operationplan>
+	
+	<!-- Testing intransit with blank source or destination location. -->
+	<operationplan ordertype="DO" end="2015-06-05T00:00:00"
+      quantity="100" status="confirmed">
+      <item name="In transit product"/>
+      <location name="Destination"/>
+      <origin name="Source"/>
+    </operationplan>
+	<operationplan ordertype="DO" end="2015-06-06T00:00:00"
+      quantity="100" status="confirmed">
+      <item name="In transit product"/>
+      <location name="Destination"/>
+    </operationplan>
+	<operationplan ordertype="DO" start="2015-06-07T00:00:00"
+      quantity="100" status="confirmed">
+      <item name="In transit product"/>
+      <origin name="Source"/>
+    </operationplan>	
   </operationplans>
 
 <?python

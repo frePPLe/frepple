@@ -15,6 +15,7 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+import os
 from datetime import timedelta, datetime, date
 
 from django.core.management.base import BaseCommand, CommandError
@@ -130,7 +131,7 @@ class Command(BaseCommand):
       if options['task']:
         try:
           task = Task.objects.all().using(database).get(pk=options['task'])
-        except:
+        except Task.DoesNotExist:
           raise CommandError("Task identifier not found")
         if task.started or task.finished or task.status != "Waiting" or task.name not in ('frepple_createbuckets', 'createbuckets'):
           raise CommandError("Invalid task identifier")
@@ -138,6 +139,7 @@ class Command(BaseCommand):
         task.started = now
       else:
         task = Task(name='createbuckets', submitted=now, started=now, status='0%', user=user, arguments="--start=%s --end=%s --weekstart=%s" % (start, end, weekstart))
+      task.processid = os.getpid()
       task.save(using=database)
 
       # Validate the date arguments
@@ -246,6 +248,7 @@ class Command(BaseCommand):
 
     finally:
       if task:
+        task.processid = None
         task.save(using=database)
       settings.DEBUG = tmp_debug
 

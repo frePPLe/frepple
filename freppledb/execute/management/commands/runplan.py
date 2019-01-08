@@ -221,11 +221,12 @@ class Command(BaseCommand):
           raise Exception('Failed with exit code %d' % ret)
 
       # Reread the task from the database and update it
-      task = Task.objects.all().using(database).get(pk=task.id)
-      task.processid = None
-      task.status = 'Done'
-      task.finished = datetime.now()
-      task.save(using=database)
+      if not options['background']:
+        task = Task.objects.all().using(database).get(pk=task.id)
+        task.processid = None
+        task.status = 'Done'
+        task.finished = datetime.now()
+        task.save(using=database)
 
     except Exception as e:
       if task:

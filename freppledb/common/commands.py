@@ -221,8 +221,10 @@ if __name__ == "__main__":
   register.autodiscover()
   try:
     register.run(database=database)
+    task.status = 'Done'
   except Exception as e:
     print("Error during planning: %s" % e)
+    task.status = 'Failed'
     raise
   finally:
     # Clear the processid

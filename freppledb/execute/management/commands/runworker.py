@@ -181,7 +181,7 @@ class Command(BaseCommand):
             name="frepplectl %s" % task.name
             )
           child.start()
-          background = 'background' in kwargs
+          background = 'background' in kwargs or '--background' in kwargs
 
           # Normally, the child will update the processid.
           # Just to make sure, we do it also here.

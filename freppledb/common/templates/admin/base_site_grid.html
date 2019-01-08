@@ -198,19 +198,25 @@ $(function() {
   {% if reportclass.editable and reportclass.multiselect and not is_popup and hasaddperm %}
   if (isDragnDropUploadCapable()) {
     $("#content-main").on('dragover', function(e) {
-      $("#content-main").addClass("dropfile");
-      e.stopPropagation();
-      e.preventDefault();
-      });
+      if (e.originalEvent.dataTransfer.types) {
+        for (var i = 0; i < e.originalEvent.dataTransfer.types.length; i++) {
+          if (e.originalEvent.dataTransfer.types[i] == "Files") {
+            $("#content-main").addClass("dropfile");
+            e.stopPropagation();
+            e.preventDefault();
+            }
+        }
+      }});
     $("#content-main").on('dragleave', function(e) {
   	  $("#content-main").removeClass("dropfile");
   	  e.stopPropagation();
   	  e.preventDefault();
-      });  
+      });
     $("#content-main").on('drop', function(e) {
-      import_show('', null, false, null, e.originalEvent.dataTransfer.files);
-  	  e.preventDefault();
-	  });
+      if (e.originalEvent.dataTransfer.files.length > 0) {
+        import_show('', null, false, null, e.originalEvent.dataTransfer.files);
+  	    e.preventDefault();
+      }});
   }
   {% endif %}
   });

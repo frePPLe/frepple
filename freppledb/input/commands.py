@@ -102,12 +102,26 @@ class checkBuckets(CheckTask):
       for rec in cursor:
         empty = False
         if rec[3] is False:
+          if not errors:
+            logger.error('Your reporting time buckets are invalid.')
+            logger.error(
+              'Time buckets cannot leave time gaps: the end date of one bucket '
+              'must be equal to the start date of the next one.'
+              )
           errors += 1
           logger.error('%s %s %s %s' % (rec[0], rec[1], rec[2], rec[4]))
       if empty:
-        raise ValueError("No Calendar Buckets available")
+        logger.error('No reporting time buckets have been defined.')
+        logger.error('You can define such buckets in different ways:')
+        logger.error(' 1) Load the standard reporting buckets in the "admin/execute" screen.')
+        logger.error('    Use the "load a dataset" option and choose the "dates" dataset.')
+        logger.error(' 2) Use the "generate buckets" task in the "admin/execute" screen.')
+        logger.error('    You can choose the start and end date, and the name for each bucket.')
+        logger.error(' 3) For ultimate flexibility you can upload your own bucket definitions')
+        logger.error('    in the "admin/buckets" and "admin/bucket dates" tables.')
+        raise ValueError("No reporting time buckets have been defined")
       if errors > 0:
-        raise ValueError("Invalid Bucket dates")
+        raise ValueError("Invalid reporting time buckets")
 
       # Check if partial indexes exist
       cursor.execute('''

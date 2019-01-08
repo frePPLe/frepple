@@ -233,11 +233,7 @@ def wrapTask(request, action):
       env.append(value)
     if env:
       task.arguments = "%s --env=%s" % (task.arguments, ','.join(env))
-    request.session['env'] = env
     task.save(using=request.database)
-    # Update the session object
-    request.session['plantype'] = args.get('plantype')
-    request.session['constraint'] = constraint
   # C
   elif action in ('frepple_flush', 'empty'):
     if not request.user.has_perm('auth.run_db'):

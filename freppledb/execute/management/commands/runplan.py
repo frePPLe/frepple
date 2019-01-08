@@ -17,6 +17,7 @@
 
 import os
 from datetime import datetime
+import shlex
 import subprocess
 
 from django.core.management.base import BaseCommand, CommandError
@@ -252,12 +253,31 @@ class Command(BaseCommand):
       # Collect optional tasks
       PlanTaskRegistry.autodiscover()
       planning_options = PlanTaskRegistry.getLabels()
-      current_options = request.session.get('env', [ i[0] for i in planning_options ])
 
-      try:
-        constraint = int(request.session['constraint'])
-      except:
-        constraint = 15
+      plantype = '2'
+      constraint = 15
+      current_options = [ i[0] for i in planning_options ]
+      lastrun = Task.objects.all().using(request.database) \
+        .filter(name="runplan", user=request.user) \
+        .order_by("-id").only("arguments").first()
+      if lastrun and lastrun.arguments:
+        # Copy all settings from the previous run by this user
+        for i in shlex.split(lastrun.arguments):
+          if '=' in i:
+            key, val = i.split('=')
+            key = key.strip('--')
+            if key == 'constraint':
+              try:
+                constraint = int(val)
+              except:
+                pass
+            elif key == 'plantype':
+              plantype = val
+            elif key == 'env':
+              try:
+                current_options = val.split(',')
+              except:
+                pass
 
       context = RequestContext(request, {
         'planning_options': planning_options,
@@ -265,7 +285,8 @@ class Command(BaseCommand):
         'capacityconstrained': constraint & 4,
         'materialconstrained': constraint & 2,
         'leadtimeconstrained': constraint & 1,
-        'fenceconstrained': constraint & 8
+        'fenceconstrained': constraint & 8,
+        'plantype': plantype
         })
 
       template = Template('''
@@ -285,10 +306,10 @@ class Command(BaseCommand):
           </p>
           {%% endif %%}
           <p><b>%s</b><br>
-          <input type="radio" id="plantype1" name="plantype" {%% ifnotequal request.session.plantype '2' %%}checked {%% endifnotequal %%}value="1"/>
+          <input type="radio" id="plantype1" name="plantype" {%% ifnotequal plantype '2' %%}checked {%% endifnotequal %%}value="1"/>
           <label for="plantype1">%s
           <span class="fa fa-question-circle" style="display:inline-block;"></span></label><br>
-          <input type="radio" id="plantype2" name="plantype" {%% ifequal  request.session.plantype '2' %%}checked {%% endifequal %%}value="2"/>
+          <input type="radio" id="plantype2" name="plantype" {%% ifequal plantype '2' %%}checked {%% endifequal %%}value="2"/>
           <label for="plantype2">%s
               <span class="fa fa-question-circle" style="display:inline-block;"></span></label><br>
               </p>

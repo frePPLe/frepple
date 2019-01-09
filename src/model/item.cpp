@@ -110,4 +110,26 @@ void Demand::setItem(Item *i)
   setChanged();
 }
 
+
+Date Item::findEarliestPurchaseOrder() const
+{
+  Date earliest = Date::infiniteFuture;
+  bufferIterator buf_iter(this);
+  while (Buffer* buf = buf_iter.next())
+  {
+    for (auto flpln = buf->getFlowPlans().begin(); flpln != buf->getFlowPlans().end(); ++flpln)
+    {
+      if (flpln->getDate() >= earliest)
+        break;
+      auto opplan = flpln->getOperationPlan();
+      if (opplan && opplan->getOperation()->getType() == *OperationItemSupplier::metadata && opplan->getProposed())
+      {
+        earliest = flpln->getDate();
+        break;
+      }
+    }
+  }
+  return earliest;
+}
+
 } // end namespace

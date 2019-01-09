@@ -129,13 +129,20 @@ void SolverCreate::solve(const Demand* l, void* v)
     bool globalPurchase = l->getItem() ?
       l->getItem()->getBoolProperty("global_purchase", false) && data->constrainedPlanning :
       false;
-    if (globalPurchase) {
+    if (globalPurchase && l->getDue() >= l->getItem()->findEarliestPurchaseOrder())
+      // Global purchasing is only active until the receipt of the first 
+      // proposed purchase order of this item. Beyond that date the initial excess
+      // is burnt off / redistributed, and every location buys for its local needs again.
+      globalPurchase = false;
+    if (globalPurchase)
+    {
       // iterate over locations and store them using the excess as a priority
       // excess being onhand minus safety stock
       Item* item = l->getItem();
       Item::bufferIterator iter(item);
 
-      while (Buffer *buffer = iter.next()) {
+      while (Buffer *buffer = iter.next())
+      {
         // Make sure we don't pick original location
         if (buffer->getLocation() == originalLocation)
           continue;
@@ -143,14 +150,14 @@ void SolverCreate::solve(const Demand* l, void* v)
         // We need to calculate the excess
         Calendar* ss_calendar = buffer->getMinimumCalendar();
         double excess = 0;
-        if (ss_calendar) {
+        if (ss_calendar) 
+        {
           CalendarBucket* calendarBucket = ss_calendar->findBucket(data->state->q_date, true);
           if (calendarBucket)
             excess = buffer->getOnHand(l->getDue()) - calendarBucket->getValue();
         }
-        else {
+        else
           excess = buffer->getOnHand(l->getDue()) - buffer->getMinimum();
-        }
         sortedLocation.push_front(pair<Location*, double> (buffer->getLocation(), excess));
 
       }

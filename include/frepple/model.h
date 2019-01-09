@@ -4600,6 +4600,12 @@ class Item : public HasHierarchy<Item>, public HasDescription
 
     static int initialize();
 
+    /** Return the receipt date of the earliest proposed purchase
+      * order for this item. 
+      * When none is found, the function returns Date::InfiniteFuture
+      */
+    Date findEarliestPurchaseOrder() const;
+
     /** Return the cluster of this item. */
     int getCluster() const;
 

@@ -764,7 +764,21 @@ void OperationPlan::setOperation(Operation* o)
     // Switching operations
     deleteFlowLoads();
     removeFromOperationplanList();
-    oper = o;
+    
+    // Delete existing sub operationplans
+    auto x = firstsubopplan;
+    while (x)
+    {
+      auto *y = x->nextsubopplan;
+      x->owner = nullptr; // Need to clear before destroying the suboperationplan
+      delete x;
+      x = y;
+    }
+    firstsubopplan = nullptr;
+    lastsubopplan = nullptr;
+
+    // Apply the change
+    oper = o;    
     oper->setOperationPlanParameters(
       this, quantity, dates.getStart(), dates.getEnd(), false, true
     );

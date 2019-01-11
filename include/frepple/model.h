@@ -31,6 +31,8 @@
   * @brief Core namespace
   */
 
+#include <regex>
+
 #include "frepple/utils.h"
 #include "frepple/xml.h"
 using namespace frepple::utils;
@@ -6245,6 +6247,7 @@ class SetupMatrixRule : public Object
     void setFromSetup(const string& f)
     {
       from = f;
+      updateExpression();
     }
 
     /** Return the from setup. */
@@ -6262,6 +6265,7 @@ class SetupMatrixRule : public Object
     void setToSetup(const string& f)
     {
       to = f;
+      updateExpression();
     }
 
     /** Return the to setup. */
@@ -6309,6 +6313,9 @@ class SetupMatrixRule : public Object
       m->addPointerField<Cls, SetupMatrix>(Tags::setupmatrix, &Cls::getSetupMatrix, &Cls::setSetupMatrix, DONT_SERIALIZE + PARENT);
     }
 
+    /** Returns true if this rule matches with the from-setup and to-setup being passed. */
+    bool matches(PooledString f, PooledString t) const;
+
   private:
     /** Pointer to the owning matrix. */
     SetupMatrix *matrix = nullptr;
@@ -6338,6 +6345,10 @@ class SetupMatrixRule : public Object
     int priority = 0;
 
     void updateSort();
+
+    void updateExpression();
+
+    regex expression;
 
   public:
     /** @brief An iterator class to go through all rules of a setup matrix. */
@@ -6484,8 +6495,6 @@ class SetupMatrix : public HasName<SetupMatrix>, public HasSource
       *    If the fromsetup field is empty, it is considered a match.
       *  - The new setup Y must match with the tosetup of the rule.<br>
       *    If the tosetup field is empty, it is considered a match.
-      * The wildcard characters * and ? can be used in the fromsetup and
-      * tosetup fields.<br>
       * As soon as a matching rule is found, it is applied and subsequent
       * rules are not evaluated.<br>
       * If no matching rule is found, the changeover is not allowed: a pointer 

@@ -286,6 +286,27 @@ void SetupMatrixRule::setPriority(const int n)
 }
 
 
+void SetupMatrixRule::updateExpression()
+{
+  string tmp = getFromSetupString();
+  if (tmp.empty())
+    tmp = ".* to ";
+  else
+    tmp.append(" to ");
+  tmp.append(getToSetup().empty() ? string(".*") : getToSetupString());
+  expression = regex(tmp, regex::ECMAScript | regex::optimize);
+}
+
+
+bool SetupMatrixRule::matches(PooledString f, PooledString t) const
+{
+  string tmp = string(f);
+  tmp.append(" to ");
+  tmp.append(string(t));
+  return regex_match(tmp, expression);
+}
+
+
 SetupMatrixRule* SetupMatrix::calculateSetup
 (PooledString oldsetup, PooledString newsetup, Resource* res) const
 {
@@ -294,19 +315,9 @@ SetupMatrixRule* SetupMatrix::calculateSetup
     return nullptr;
   
   // Loop through all rules
-  for (SetupMatrixRule *curRule = firstRule; curRule; curRule = curRule->nextRule)
-  {
-    // Need a match on the fromsetup
-    if (!curRule->getFromSetup().empty()
-        && !matchWildcard(curRule->getFromSetup(), oldsetup))
-      continue;
-    // Need a match on the tosetup
-    if (!curRule->getToSetup().empty()
-        && !matchWildcard(curRule->getToSetup(), newsetup))
-      continue;
-    // Found a match
-    return curRule;
-  }
+  for (auto curRule = firstRule; curRule; curRule = curRule->nextRule)
+    if (curRule->matches(oldsetup, newsetup))
+      return curRule;
 
   // No matching rule was found - create a invalid-data problem
   stringstream o;

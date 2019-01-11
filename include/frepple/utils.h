@@ -591,18 +591,6 @@ class PythonInterpreter
 };
 
 
-/** A utility function to do wildcard matching in strings.<br>
-  * The function recognizes two wildcard characaters:
-  *   - ?: matches any single character
-  *   - *: matches any sequence of characters
-  *
-  * The code is written by Jack Handy (jakkhandy@hotmail.com) and published
-  * on http://www.codeproject.com/KB/string/wildcmp.aspx. No specific license
-  * constraints apply on using the code.
-  */
-bool matchWildcard(const char*, const char*);
-
-
 //
 // UTILITY CLASSES "DATE", "DATE_RANGE" AND "TIME".
 //

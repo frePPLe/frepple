@@ -288,21 +288,24 @@ void SetupMatrixRule::setPriority(const int n)
 
 void SetupMatrixRule::updateExpression()
 {
-  string tmp = getFromSetupString();
+  string tmp(from);
   if (tmp.empty())
     tmp = ".* to ";
   else
     tmp.append(" to ");
-  tmp.append(getToSetup().empty() ? string(".*") : getToSetupString());
+  if (to.empty())
+    tmp.append(".*");
+  else
+    tmp.append(to);
   expression = regex(tmp, regex::ECMAScript | regex::optimize);
 }
 
 
 bool SetupMatrixRule::matches(PooledString f, PooledString t) const
 {
-  string tmp = string(f);
+  string tmp(f);
   tmp.append(" to ");
-  tmp.append(string(t));
+  tmp.append(t);
   return regex_match(tmp, expression);
 }
 

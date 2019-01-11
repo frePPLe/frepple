@@ -6359,16 +6359,15 @@ class PooledString
       return ptr ? ptr->first : nullstring;
     }
 
-    /** Conversion to a constant str. */
-    operator const char*()
-    {
-      return (ptr ? ptr->first : nullstring).c_str();
-    }
-
     /* Return true if the string is empty. */
     inline bool empty() const
     {
       return !ptr;
+    }
+
+    inline string getString() const
+    {
+      return ptr ? ptr->first : nullstring;
     }
 
     bool operator < (const PooledString& other) const

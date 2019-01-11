@@ -19,40 +19,55 @@ Within a setup matrix rules are used to define the changeover cost and
 duration.
 
 To compute the time of a changeover the algorithm will evaluate all rules in
-sequence (in order of priority). For a rule to match the changeover between
-theoriginal setup X to a new setup Y, two conditions need to be fulfilled:
+sequence (in order of priority). As soon as a matching rule is found, it is
+applied and subsequent rules are not evaluated. If no matching rule is found,
+that changeover is not allowed.
 
-* | The original setup X must match with the fromsetup of the rule.
-  | If the fromsetup field is empty, it is considered a match.
-* | The new setup Y must match with the tosetup of the rule.
-  | If the tosetup field is empty, it is considered a match.
+For a rule to match a changeover between we construct a regular expression
+'<rule from> to <rule to>'. This rule is applicable a changeover 'A to B' if this
+string matches the regular expression of that rule.
+See https://www.debuggex.com/cheatsheet/regex/javascript for a quick cheat sheet
+with all regular expression capabilities. FrePPLe uses the javascript / ecmascript
+grammar for regular expressions.
 
-The wildcard characters \* and ? can be used in the fromsetup and tosetup
-fields. As soon as a matching rule is found, it is applied and subsequent
-rules are not evaluated. If no matching rule is found, the changeover is
-not allowed.
+Here is a example setup matrix to illustrate the matching:
 
-For instance, consider a setup matrix with the following rules:
-
-========== ======= ======= ==========  =====
-Priority   From    To      Duration    Cost
-========== ======= ======= ==========  =====
-1          \*green \*green 0           10
-2          \*red   \*red   0           10
-3          \*green \*red   1 day       50
-4          \*green         2 day       50
-5                          3 day       50
-========== ======= ======= ==========  =====
+========== =============== ============== ==========  =====
+Priority   From            To             Duration    Cost
+========== =============== ============== ==========  =====
+1          light(.*)       \\1            0           10
+2          .\*red          .\*red         0           10
+3          .\*green        .\*red         1 day       50
+4          .\*green                       2 day       50
+5          [yellow|blue]   black          2 day       50
+6          .*              .*             3 day       50
+========== =============== ============== ==========  =====
 
 Based on this matrix:
 
-- A change from 'lightgreen' to 'darkgreen' takes no time, but costs 10.
-  Rule 1 applies.
+- | A change from 'lightgreen' to 'green' takes no time, but costs 10.
+  | Rule 1 applies: \\1 in the to-setup references the (.*) capturing
+    group.
+ 
+- | A change from 'lightgreen' to 'red' takes 1 day and costs 50.
+  | Rule 3 applies.
+  | Rule 1 doesn't apply because the (.*) capturing group doesn't match
+    the reference \\1.
 
-- A change from 'green' to 'black' takes 2 days and costs 50. Rule 4 applies.
+- | A change from 'green' to 'black' takes 2 days and costs 50.
+  | Rule 4 applies.
 
-- | A change from 'red' to 'black' takes 3 days and costs 50. Rule 5 applies.
-  | Without rule 5 this changeover would not be allowed.
+- | A change from 'blue' to 'black' takes 2 days and costs 50.
+  | Rule 5 applies.
+
+- | A change from 'red' to 'black' takes 3 days and costs 50.
+  | Rule 5 applies.
+  | Without rule 6 this changeover would not be allowed.
+  
+- | A change from 'red' to 'red' takes 0 time and costs nothing.
+  | When the from and to setup are identical we simply don't evaluate any
+    of the rules.
+
 
 **Fields**
 
@@ -80,15 +95,9 @@ priority     integer           | The priority of the rule.
 fromsetup    string            | The previous setup.
                                | If the field is empty the rules applies to any previous
                                  setup value.
-
-                               Wildcard characters are allowed in this string: \* matches
-                               a sequence of characters, and ? matches a single character.
-
 tosetup      string            | The new setup.
                                | If the field is empty the rules applies to any new
                                  setup value.
-                               | Wildcard characters are allowed in this string, similar
-                                 as in the fromsetup field.
 duration     timeperiod        Duration of the changeover.
 cost         double            Cost of the changeover.
 ============ ================= ===========================================================

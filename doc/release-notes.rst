@@ -10,8 +10,8 @@ Release notes
   to 5 years. This improves the performance of the algorithms in case there are unplannable
   orders.
 
-- A new resource type `time buckets <user-guide/model-reference/resources.html#>`_is introduced that represents capacity as the number of hours of 
-  availability per time bucket.
+- A new resource type `time buckets <user-guide/model-reference/resources.html#>`_ is introduced 
+  that represents capacity as the number of hours of availability per time bucket.
   
 - The capacity consumption from a bucketized resource now also has a constant component
   and considers the resource efficiency.
@@ -20,13 +20,16 @@ Release notes
 
 - | More detailed modeling of work in progress.
   | The parameters WIP.consume_material and WIP.consume_capacity control whether a confirmed
-    manufacturing order, purchase order or distribution order consume material and capacity.
+    manufacturing order consumes material and capacity.
 
 - | More detailed modeling of in transit material.
   | By leaving the origin location empty, no inventory will be consumed at the origin location.
     We assume the material has already left the origin location and is in transit.
   | By leaving the destination location, the distribution order doesn't produce any stock.
     This represents a material transfer outside of our supply chain.
+
+- Ability to use powerful regular expressions in the definition of 
+  `setup matrices rules <user-guide/model-reference/setup-matrices.html#>`_ .
 
 - Bug fix: calculation of operation time for 0-duration operations was wrong in some situations.
 

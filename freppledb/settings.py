@@ -314,7 +314,9 @@ MAXCPUTIME = None        # limit in seconds, use None for unlimited
 # Max total log files size in MB, if the limit is reached deletes the oldest.
 MAXTOTALLOGFILESIZE = 200
 
-# Port number for the CherryPy web server
+# Adress and port number for the runwebserver command, the Windows system tray
+# executable and the Windows service
+ADDRESS = '0.0.0.0'
 PORT = 8000
 
 REST_FRAMEWORK = {

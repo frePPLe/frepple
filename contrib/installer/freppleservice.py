@@ -121,7 +121,7 @@ class ServiceHandler(object):
             }
           })
         self.server = CherryPyWSGIServer(
-          ('127.0.0.1', settings.PORT),
+          (settings.ADDRESS, settings.PORT),
           StaticFilesHandler(WSGIHandler())
           )
 
@@ -131,8 +131,8 @@ class ServiceHandler(object):
 
         # Infinite loop serving requests
         # The loop gets interrupted when the service gets ordered to shut down.
-        print("%s\tfrePPLe web server listening on http://localhost:%d" % (
-          datetime.now().strftime("%Y-%m-%d %H:%M:%S"), settings.PORT
+        print("%s\tfrePPLe web server listening on http://%s:%d" % (
+          datetime.now().strftime("%Y-%m-%d %H:%M:%S"), settings.ADDRESS, settings.PORT
           ), flush=True)
         self.server.start()
         print("%s\tStopping service" % datetime.now().strftime("%Y-%m-%d %H:%M:%S"), flush=True)
@@ -151,7 +151,7 @@ class ServiceHandler(object):
             creationflags=CREATE_NO_WINDOW
             )
           if not status:
-            print("%s\tShutting down the database", datetime.now().strftime("%Y-%m-%d %H:%M:%S"), flush=True)
+            print("%s\tShutting down the database" % datetime.now().strftime("%Y-%m-%d %H:%M:%S"), flush=True)
             call([
               os.path.join(settings.FREPPLE_HOME, '..', 'pgsql', 'bin', 'pg_ctl.exe'),
               "--pgdata", os.path.join(settings.FREPPLE_LOGDIR, 'database'),

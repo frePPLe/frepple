@@ -364,7 +364,7 @@ port = options.port or settings.PORT
 # Determine the IP-address to listen on:
 # - either as command line argument
 # - either 0.0.0.0 by default, which means all active IPv4 interfaces
-address = options.address or '0.0.0.0'
+address = options.address or settings.ADDRESS
 
 # Redirect all output
 logfile = os.path.join(settings.FREPPLE_LOGDIR, 'server.log')

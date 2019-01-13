@@ -18,12 +18,19 @@ if exist "C:\Program Files\Microsoft Visual Studio 14.0\VC" (
   exit /B
 )) 
 
-rem PROCESS COMMAND LINE ARGUMENTS "-r (rebuild)" and "-d (debug)"
+rem PROCESS COMMAND LINE ARGUMENTS
+rem   -r or /r -> rebuild
+rem   -d or /d  -> debug
 set conf=Release
 set build=
-:CheckOpts
-if "%1"=="-r" (set build="/t:rebuild") & shift & goto CheckOpts
-if "%1"=="-d" (set conf=Debug) & shift & goto CheckOpts
+:optionloop
+if [%1]==[] (goto optionend)
+if "%1"=="-r" (set build="/t:rebuild") & shift & goto optionloop
+if "%1"=="/r" (set build="/t:rebuild") & shift & goto optionloop
+if "%1"=="-d" (set conf=Debug) & shift & goto optionloop
+if "%1"=="/d" (set conf=Debug) & shift & goto optionloop
+echo "unknown option %1" & shift & goto optionloop
+:optionend
 
 rem BUILD THE PROJECT
 call "%VC%\vcvarsall" x86_amd64

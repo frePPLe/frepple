@@ -16,6 +16,13 @@ application.
 =========================== =======================================================================
 Parameter                   Description
 =========================== =======================================================================
+allowsplits                 | When set to true (default value), a sales order or forecast is
+                              allowed to be planned in multiple manufacturing orders. An order of
+                              eg 100 pieces can be planned with 2 manufacturing of 50 pieces.
+                            | When the parameter is set to false, this splitting is disabled. This
+                              will result in a plan with less manufacturing orders. The plan 
+                              generation will be considerably faster, but can have additional 
+                              delivery delays of the customer orders and forecasts.
 currentdate                 | Current date of the plan, formatted as YYYY-MM-DD HH:MM:SS.
                               If the parameter is missing or empty the system time is used as current date.
 currency                    | Currency symbol.

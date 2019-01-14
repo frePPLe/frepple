@@ -1,4 +1,5 @@
 [
+{"pk": "allowsplits", "model":"common.parameter","fields": {"value": "true", "description": "Controls whether a sales order or forecast can be split across multiple manufacturing orders during planning. Default: true"}},
 {"pk": "currentdate", "model": "common.parameter", "fields": {"value": "2014-01-01 00:00:00", "description": "Current date of the plan, formatted as YYYY-MM-DD HH-MM-SS"}},
 {"pk": "loading_time_units", "model": "common.parameter", "fields": {"value": "days", "description": "Time units to be used for the resourceloading report: hours, days, weeks"}},
 {"pk": "plan.calendar", "model": "common.parameter", "fields": {"value": "", "description": "Specifies a calendar with dates to which the plan is aligned"}},

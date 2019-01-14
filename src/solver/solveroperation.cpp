@@ -196,7 +196,7 @@ bool SolverCreate::checkOperation
         {
           // Tough luck
           opplan->setOperationPlanParameters(
-            orig_opplan_qty, orig_q_date_max, Date::infinitePast, false, true, false
+            orig_opplan_qty, orig_q_date_max, Date::infinitePast, true, true, false
             );
           data.state->forceLate = true;
           checkOperationCapacity(opplan, data);

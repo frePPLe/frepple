@@ -3,24 +3,24 @@ Operation materials
 ===================
 
 Operation materials are used to model the consumption and production of 
-material from buffers by operations.
+material by operations.
 
 Different types are available:
 
 * | **start**:
-  | Consume (or produce) material at the start of an operationplan, right
+  | Consume (or produce) material at the start of a manufacturing order, right
     after any setup time on the loaded resource has been completed.
   | The quantity consumed or produced is proportional to the quantity of the
-    operationplan.
+    manufacturing order.
 
 * | **end**:
-  | Produce (or consume) material at the end of an operationplan.
+  | Produce (or consume) material at the end of a manufacturing order.
   | The quantity consumed or produced is proportional to the quantity of the
-    operationplan.
+    manufacturing order.
     
 * | **transfer_batch**:
   | Consume (or produce) material in a number of batches of fixed size
-    at various moments during the total duration of the operationplan
+    at various moments during the total duration of the manufacturing order
     (not including the setup time on the loaded resource).
 
 **Fields**
@@ -28,8 +28,7 @@ Different types are available:
 =============== ================= ===========================================================
 Field           Type              Description
 =============== ================= ===========================================================
-buffer          buffer            | Buffer from which material will be moved or transferred
-                                    into.
+item            item              | Material being consumed or produced.
                                   | This is a required field.
 operation       operation         | Operation to which the material flow is associated.
                                   | This is a required field.
@@ -48,7 +47,7 @@ transferbatch   double            | Batch size by in which material is produced 
                                     consume at the start when the quantity is negative.
                                   | To protect against a big impact on performance and 
                                     memory footprint we limit the number of material transfer
-                                    batches to 50 per operationplan.                            
+                                    batches to 50 per manufacturing order.                            
 effective_start dateTime          | Date after which the material consumption is valid.
                                   | Before this date the planned quantity is always 0.
 effective_end   dateTime          | Date at which the material consumption becomes invalid.

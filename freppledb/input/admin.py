@@ -109,7 +109,7 @@ class ItemSupplier_inline(MultiDBTabularInline):
 
 class Supplier_admin(MultiDBModelAdmin):
   model = Supplier
-  raw_id_fields = ('owner',)
+  raw_id_fields = ('available', 'owner',)
   save_on_top = True
   exclude = ('source',)
   tabs = [

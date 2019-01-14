@@ -206,6 +206,7 @@ class SupplierFilter(filters.FilterSet):
       'description': ['exact', 'contains'],
       'category': ['exact', 'contains'],
       'subcategory': ['exact', 'contains'],
+      'available': ['exact', 'in', 'gt', 'gte', 'lt', 'lte'],
       'source': ['exact', 'in'],
       'lastmodified': ['exact', 'in', 'gt', 'gte', 'lt', 'lte'],
       }
@@ -215,7 +216,7 @@ class SupplierFilter(filters.FilterSet):
 class SupplierSerializer(BulkSerializerMixin, ModelSerializer):
     class Meta:
       model = freppledb.input.models.Supplier
-      fields = ('name', 'owner', 'description', 'category', 'subcategory', 'source', 'lastmodified')
+      fields = ('name', 'owner', 'description', 'category', 'subcategory', 'available', 'source', 'lastmodified')
       list_serializer_class = BulkListSerializer
       update_lookup_field = 'name'
       partial = True
@@ -224,7 +225,7 @@ class SupplierSerializer(BulkSerializerMixin, ModelSerializer):
 class SupplierAPI(frePPleListCreateAPIView):
     queryset = freppledb.input.models.Supplier.objects.all()
     serializer_class = SupplierSerializer
-    filter_fields = ('name', 'owner', 'description', 'category', 'subcategory', 'source', 'lastmodified')
+    filter_fields = ('name', 'owner', 'description', 'category', 'subcategory', 'available', 'source', 'lastmodified')
     filter_class = SupplierFilter
 
 

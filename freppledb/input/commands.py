@@ -481,7 +481,7 @@ class loadSuppliers(LoadTask):
       starttime = time()
       cursor.execute('''
         SELECT
-          name, description, owner_id, category, subcategory, source
+          name, description, owner_id, category, subcategory, source, available_id
         FROM supplier %s
         ''' % filter_where)
       for i in cursor:
@@ -490,6 +490,8 @@ class loadSuppliers(LoadTask):
           x = frepple.supplier(name=i[0], description=i[1], category=i[3], subcategory=i[4], source=i[5])
           if i[2]:
             x.owner = frepple.supplier(name=i[2])
+          if i[6]:
+            frepple.location(name=i[0]).available = frepple.calendar(name=i[6])
         except Exception as e:
           logger.error("**** %s ****" % e)
       logger.info('Loaded %d suppliers in %.2f seconds' % (cnt, time() - starttime))

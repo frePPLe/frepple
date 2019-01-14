@@ -849,6 +849,7 @@ class SupplierList(GridReport):
     GridFieldText('owner', title=_('owner'), field_name='owner__name', formatter='detail', extra='"role":"input/supplier"', initially_hidden=True),
     GridFieldText('source', title=_('source')),
     GridFieldLastModified('lastmodified'),
+    GridFieldText('available', title=_('available'), field_name='available__name', formatter='detail', extra='"role":"input/calendar"', initially_hidden=True),
     )
 
 

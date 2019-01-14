@@ -135,7 +135,7 @@ class Location(AuditModel, HierarchyModel):
     )
   available = models.ForeignKey(
     Calendar, verbose_name=_('available'),
-    null=True, blank=True, on_delete=models.CASCADE,
+    null=True, blank=True, on_delete=models.SET_NULL,
     help_text=_('Calendar defining the working hours and holidays')
     )
 
@@ -273,7 +273,7 @@ class Operation(AuditModel):
     )
   available = models.ForeignKey(
     Calendar, verbose_name=_('available'),
-    null=True, blank=True, on_delete=models.CASCADE,
+    null=True, blank=True, on_delete=models.SET_NULL,
     help_text=_('Calendar defining the working hours and holidays')
     )
 
@@ -380,7 +380,7 @@ class Buffer(AuditModel):
     )
   minimum_calendar = models.ForeignKey(
     Calendar, verbose_name=_('minimum calendar'),
-    null=True, blank=True, on_delete=models.CASCADE,
+    null=True, blank=True, on_delete=models.SET_NULL,
     help_text=_('Calendar storing a time-dependent safety stock profile')
     )
   min_interval = models.DurationField(
@@ -513,12 +513,12 @@ class Resource(AuditModel, HierarchyModel):
     )
   maximum_calendar = models.ForeignKey(
     Calendar, verbose_name=_('maximum calendar'), related_name='+',
-    null=True, blank=True, on_delete=models.CASCADE,
+    null=True, blank=True, on_delete=models.SET_NULL,
     help_text=_('Calendar defining the resource size varying over time')
     )
   available = models.ForeignKey(
     Calendar, verbose_name=_('available'), related_name='+',
-    null=True, blank=True, on_delete=models.CASCADE,
+    null=True, blank=True, on_delete=models.SET_NULL,
     help_text=_('Calendar defining the working hours and holidays')
     )
   location = models.ForeignKey(
@@ -548,7 +548,7 @@ class Resource(AuditModel, HierarchyModel):
     )
   efficiency_calendar = models.ForeignKey(
     Calendar, verbose_name=_('efficiency %% calendar'), related_name='+',
-    null=True, blank=True, on_delete=models.CASCADE,
+    null=True, blank=True, on_delete=models.SET_NULL,
     help_text=_('Calendar defining the efficiency percentage of the resource varying over time')
     )
 
@@ -801,6 +801,11 @@ class Supplier(AuditModel, HierarchyModel):
   description = models.CharField(_('description'), max_length=500, null=True, blank=True)
   category = models.CharField(_('category'), max_length=300, null=True, blank=True, db_index=True)
   subcategory = models.CharField(_('subcategory'), max_length=300, null=True, blank=True, db_index=True)
+  available = models.ForeignKey(
+    Calendar, verbose_name=_('available'),
+    null=True, blank=True, on_delete=models.SET_NULL,
+    help_text=_('Calendar defining the working hours and holidays')
+    )
 
   def __str__(self):
     return self.name

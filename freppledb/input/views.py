@@ -1166,6 +1166,57 @@ class OperationResourceList(GridReport):
     GridFieldChoice('operation__search', title=string_concat(_('operation'), ' - ', _('search mode')), choices=searchmode, initially_hidden=True, editable=False),
     GridFieldText('operation__source', title=string_concat(_('operation'), ' - ', _('source')), initially_hidden=True, editable=False),
     GridFieldLastModified('operation__lastmodified', title=string_concat(_('operation'), ' - ', _('last modified')), initially_hidden=True, editable=False),
+    # Optional fields referencing the resource
+    GridFieldText(
+      'resource__description', editable=False, initially_hidden=True,
+      title=string_concat(_('resource'), ' - ', _('description'))
+      ),
+    GridFieldText(
+      'resource__category', editable=False, initially_hidden=True,
+      title=string_concat(_('resource'), ' - ', _('category'))
+      ),
+    GridFieldText(
+      'resource__subcategory', editable=False, initially_hidden=True,
+      title=string_concat(_('resource'), ' - ', _('subcategory'))
+      ),
+    GridFieldText(
+      'resource__type', editable=False, initially_hidden=True,
+      title=string_concat(_('resource'), ' - ', _('type'))
+      ),
+    GridFieldNumber(
+      'resource__maximum', editable=False, initially_hidden=True,
+      title=string_concat(_('resource'), ' - ', _('maximum'))
+      ),
+    GridFieldText(
+      'resource__maximum_calendar', editable=False, initially_hidden=True,
+      title=string_concat(_('resource'), ' - ', _('maximum calendar')),
+      field_name='resource__maximum_calendar__name',
+      formatter='detail', extra='"role":"input/calendar"'
+      ),
+    GridFieldCurrency(
+      'resource__cost', editable=False, initially_hidden=True,
+      title=string_concat(_('resource'), ' - ', _('cost'))
+      ),
+    GridFieldDuration(
+      'resource__maxearly', editable=False, initially_hidden=True,
+      title=string_concat(_('resource'), ' - ', _('maxearly'))
+      ),
+    GridFieldText(
+      'resource__setupmatrix', editable=False, initially_hidden=True,
+      title=string_concat(_('resource'), ' - ', _('setupmatrix')),
+      field_name='resource__setupmatrix__name',
+      formatter='detail', extra='"role":"input/setupmatrix"'
+      ),
+    GridFieldText(
+      'resource__setup', editable=False, initially_hidden=True,
+      title=string_concat(_('resource'), ' - ', _('setup'))
+      ),
+    GridFieldText(
+      'resource__location', editable=False, initially_hidden=True,
+      title=string_concat(_('resource'), ' - ', _('location')),
+      field_name='resource__location__name',
+      formatter='detail', extra='"role":"input/location"'
+      ),
     )
 
 
@@ -1214,6 +1265,35 @@ class OperationMaterialList(GridReport):
     GridFieldChoice('operation__search', title=string_concat(_('operation'), ' - ', _('search mode')), choices=searchmode, initially_hidden=True, editable=False),
     GridFieldText('operation__source', title=string_concat(_('operation'), ' - ', _('source')), initially_hidden=True, editable=False),
     GridFieldLastModified('operation__lastmodified', title=string_concat(_('operation'), ' - ', _('last modified')), initially_hidden=True, editable=False),
+    # Optional fields referencing the item
+    GridFieldText(
+      'item__description', title=string_concat(_('item'), ' - ', _('description')),
+      initially_hidden=True, editable=False
+      ),
+    GridFieldText(
+      'item__category', title=string_concat(_('item'), ' - ', _('category')),
+      initially_hidden=True, editable=False
+      ),
+    GridFieldText(
+      'item__subcategory', title=string_concat(_('item'), ' - ', _('subcategory')),
+      initially_hidden=True, editable=False
+      ),
+    GridFieldText(
+      'item__owner', title=string_concat(_('item'), ' - ', _('owner')),
+      field_name='item__owner__name', initially_hidden=True, editable=False
+      ),
+    GridFieldCurrency(
+      'item__cost', title=string_concat(_('item'), ' - ', _('cost')),
+      initially_hidden=True, editable=False
+      ),
+    GridFieldText(
+      'item__source', title=string_concat(_('item'), ' - ', _('source')),
+      initially_hidden=True, editable=False
+      ),
+    GridFieldLastModified(
+      'item__lastmodified', title=string_concat(_('item'), ' - ', _('last modified')),
+      initially_hidden=True, editable=False
+      ),
     )
 
 

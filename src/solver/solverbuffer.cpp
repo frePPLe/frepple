@@ -622,7 +622,8 @@ void SolverCreate::solveSafetyStock(const Buffer* b, void* v)
       // Evaluate the situation at the last flowplan before the date change.
       // Is there a shortage at that date?
       Date nextAskDate;
-      while (theDelta < -ROUNDING_ERROR && b->getProducingOperation() && loop)
+      unsigned short loopcounter = 0;   // Performance protection
+      while (theDelta < -ROUNDING_ERROR && b->getProducingOperation() && loop && ++loopcounter < 20)
       {
         // Create supply
         data->state->curBuffer = const_cast<Buffer*>(b);

@@ -1484,7 +1484,7 @@ class CalendarBucketList(GridReport):
   basequeryset = CalendarBucket.objects.all()
   model = CalendarBucket
   frozenColumns = 3
-  help_url = 'user-guide/model-reference/calendars.html'
+  help_url = 'user-guide/model-reference/calendar-buckets.html'
 
   rows = (
     GridFieldInteger('id', title=_('identifier'), formatter='detail', extra='"role":"input/calendarbucket"', initially_hidden=True),

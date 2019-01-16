@@ -400,7 +400,7 @@ class BucketDetailList(GridReport):
   basequeryset = BucketDetail.objects.all()
   model = BucketDetail
   frozenColumns = 2
-  help_url = 'user-guide/model-reference/buckets.html'
+  help_url = 'user-guide/model-reference/bucket-dates.html'
   default_sort = (2, 'asc', 1, 'asc')
   rows = (
     GridFieldInteger('id', title=_('identifier'), key=True, hidden=True),

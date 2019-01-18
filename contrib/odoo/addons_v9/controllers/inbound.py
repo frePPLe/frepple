@@ -108,8 +108,7 @@ class importer(object):
             # Create manufacturing order
             mfg_order.create({
               'product_qty': elem.get("quantity"),
-              'date_planned_start': elem.get("start"),
-              'date_planned_finished': elem.get("end"),
+              'date_planned': elem.get("start"),
               'product_id': int(item_id),
               'company_id': self.company.id,
               'product_uom': int(uom_id),

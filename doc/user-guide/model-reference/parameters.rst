@@ -35,7 +35,10 @@ currency                    | Currency symbol.
 loading_time_units          | Time units to be used for the resource report.
                             | Accepted values are: hours, days, weeks.
 plan.administrativeLeadtime | Specifies an administrative lead time in days.
-                            | FrePPLe will plan the sales orders one administrative lead time ahead of the due date.
+                            | FrePPLe will plan the sales orders this amount of time ahead of their 
+                              due date. This creates extra safety in the delivery schedule and also
+                              moves all material and capacity needs early.
+                            | Default value: 0 days
                             | Accepted values : Any positive decimal number.
 plan.autoFenceOperations    | The number of days the solver should wait for a confirmed 
                               replenishment before generating a proposed order. 

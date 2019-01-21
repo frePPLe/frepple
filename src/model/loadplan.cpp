@@ -166,7 +166,9 @@ void LoadPlan::setResource(Resource* newres, bool check, bool use_start)
   newres->setChanged();
 
   // Change this loadplan and its brother
-  for (LoadPlan *ldplan = this; ldplan; )
+  LoadPlan *ldplan =
+    getResource()->getType() == *ResourceBuckets::metadata ? this : getOtherLoadPlan();
+  while (ldplan)
   {
     // Remove from the old resource, if there is one
     if (res)
@@ -186,8 +188,8 @@ void LoadPlan::setResource(Resource* newres, bool check, bool use_start)
     );
 
     // Repeat for the brother loadplan or exit
-    if (ldplan == this)
-      ldplan = getOtherLoadPlan();
+    if (ldplan != this)
+      ldplan = this;
     else
       break;
   }

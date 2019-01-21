@@ -166,7 +166,7 @@ void LoadPlan::setResource(Resource* newres, bool check, bool use_start)
   newres->setChanged();
 
   // Change this loadplan and its brother
-  for (LoadPlan *ldplan = getOtherLoadPlan(); true; )
+  for (LoadPlan *ldplan = this; ldplan; )
   {
     // Remove from the old resource, if there is one
     if (res)
@@ -186,8 +186,8 @@ void LoadPlan::setResource(Resource* newres, bool check, bool use_start)
     );
 
     // Repeat for the brother loadplan or exit
-    if (ldplan != this)
-      ldplan = this;
+    if (ldplan == this)
+      ldplan = getOtherLoadPlan();
     else
       break;
   }
@@ -214,6 +214,8 @@ void LoadPlan::setResource(Resource* newres, bool check, bool use_start)
 
 LoadPlan* LoadPlan::getOtherLoadPlan() const
 {
+  if (getResource()->getType() == *ResourceBuckets::metadata)
+    return nullptr;
   for (LoadPlan *i = oper->firstloadplan; i; i = i->nextLoadPlan)
     if (i->ld == ld && i != this && i->getEventType() == 1)
       return i;
@@ -367,7 +369,7 @@ double Load::getLoadplanQuantity(const LoadPlan* lp) const
     // The extra check is required to make sure that zero duration operationplans
     // operationplans don't get resized to 0
     return 0.0;
-  if (getResource()->getType() == *ResourceBuckets::metadata)
+  if (lp->getResource()->getType() == *ResourceBuckets::metadata)
   {
     // Bucketized resource
     auto efficiency = lp->getOperationPlan()->getEfficiency();

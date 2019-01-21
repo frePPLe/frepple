@@ -462,11 +462,11 @@ void SolverCreate::solve(const ResourceBuckets* res, void* v)
   data->state->a_date = data->state->q_date;
   data->state->a_qty = orig_q_qty;
 
-  if (time_per_logic && !data->state->forceLate)
+  if (time_per_logic)
   {
     auto bucketend = data->state->q_loadplan->getBucketEnd();
     overloadQty = get<0>(bucketend);
-    if (data->getSolver()->getAllowSplits())
+    if (data->getSolver()->getAllowSplits() && !data->state->forceLate)
     {
       // TODO if the original bucket fits, we don't try the buckets in between
       // This keeps the number of operationplans minimal and performance optimal, but 
@@ -779,7 +779,10 @@ void SolverCreate::solve(const ResourceBuckets* res, void* v)
   // If the answered quantity is 0, the operationplan is moved into the past.
   // Or, the solver may be forced to produce a late reply.
   // In these cases we need to search for capacity at later dates.
-  if (data->constrainedPlanning && (data->state->a_qty == 0.0 || data->state->forceLate))
+  if (
+    data->constrainedPlanning 
+    && (data->state->a_qty == 0.0 || (data->state->forceLate && overloadQty < -ROUNDING_ERROR))
+    )
   {
     bool firstBucket = true;
     bool hasOverloadInFirstBucket = true;

@@ -69,7 +69,7 @@ void SolverCreate::checkOperationCapacity
       data.state->q_loadplan = &*h;
       data.state->q_qty = h->getQuantity();
       data.state->q_date = h->getDate();
-      h->getLoad()->solve(*this,&data);
+      h->getLoad()->solve(*this, &data);
       if (opplan->getDates() != orig || data.state->a_qty == 0)
       {
         if (data.state->a_qty == 0)

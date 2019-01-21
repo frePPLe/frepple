@@ -167,6 +167,7 @@ class Command(BaseCommand):
             'task': task.id,
             'verbosity': 0
             }
+          background = 'background' in task.arguments
           if task.arguments:
             for i in shlex.split(task.arguments):
               if '=' in i:
@@ -181,7 +182,6 @@ class Command(BaseCommand):
             name="frepplectl %s" % task.name
             )
           child.start()
-          background = 'background' in kwargs or '--background' in kwargs
 
           # Normally, the child will update the processid.
           # Just to make sure, we do it also here.

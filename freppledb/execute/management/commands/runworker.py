@@ -167,7 +167,7 @@ class Command(BaseCommand):
             'task': task.id,
             'verbosity': 0
             }
-          background = 'background' in task.arguments
+          background = 'background' in task.arguments if task.arguments else False
           if task.arguments:
             for i in shlex.split(task.arguments):
               if '=' in i:

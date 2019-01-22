@@ -591,10 +591,13 @@ class export:
       enddate = date(2030, 12, 30)
 
     # Build a list of horizon buckets
-    buckets = []
-    while startdate < enddate:
-      buckets.append(startdate)
-      startdate += timedelta(days=1)
+    cursor.execute('''
+      select startdate
+      from common_bucketdetail
+      where startdate between %s and %s
+        and bucket_id = (select name from common_bucket order by level desc limit 1)
+      ''', (startdate, enddate))
+    buckets = [ rec[0] for rec in cursor.fetchall() ]
 
     # Loop over all reporting buckets of all resources
     with tempfile.TemporaryFile(mode="w+t", encoding='utf-8') as tmp:

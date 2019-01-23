@@ -405,7 +405,10 @@ void OperatorDelete::solve(const Buffer* b, void* v)
       else
       {
         // Resize the producer
-        auto tmp = fp->setQuantity(fp->getQuantity() - cur_excess, false, false);
+        // We need to keep the operationplan start date constant during the
+        // resize to avoid that a capacity consumption from a bucketized resource
+        // moves to a different bucket.
+        auto tmp = fp->setQuantity(fp->getQuantity() - cur_excess, false, false, true, 1);
         newsize_flowplan = tmp.first;
         newsize_opplan = tmp.second;
       }

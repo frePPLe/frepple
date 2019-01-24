@@ -61,13 +61,6 @@ maximum_calendar calendar          | Refers to a calendar storing the maximum in
                                    | Use this field when the maximum inventory level is varying
                                      over time. Otherwise use the maximum field. If both fields
                                      are specified, the maximum field is ignored.
-mininterval      duration          | Replenishment batching window.
-                                   | When multiple replenishments for the buffer are planned
-                                     closer than the time window specified in this field, the
-                                     solver algorithm will try to combine them into a single
-                                     larger replenishment.
-                                   | The default value of the batching window is -1, which keeps
-                                     the batching logic deactivated.
 producing        operation         | This operation will be instantiated by the solver to
                                      replenish the buffer with additional material.
                                    | You can specify this operation explicitly.

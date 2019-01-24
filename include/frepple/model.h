@@ -5296,41 +5296,6 @@ class Buffer : public HasHierarchy<Buffer>, public HasLevel,
     void followPegging
       (PeggingIterator&, FlowPlan*, double, double, short);
 
-    /** Return the minimum interval between purchasing operations.<br>
-      * This parameter doesn't control the timing of the first purchasing
-      * operation, but only to the subsequent ones.
-      */
-    Duration getMinimumInterval() const
-    {
-      return min_interval;
-    }
-
-    /** Update the minimum time between replenishments. */
-    void setMinimumInterval(Duration p)
-    {
-      min_interval = p;
-      // Minimum is increased over the maximum: auto-increase the maximum
-      if (max_interval && max_interval < min_interval)
-        max_interval = min_interval;
-    }
-
-    /** Return the maximum time interval between sytem-generated replenishment
-      * operations.
-      */
-    Duration getMaximumInterval() const
-    {
-      return max_interval;
-    }
-
-    /** Update the minimum time between replenishments. */
-    void setMaximumInterval(Duration p)
-    {
-      max_interval = p;
-      // Maximum is lowered below the minimum: auto-decrease the minimum
-      if (min_interval && max_interval < min_interval)
-        min_interval = max_interval;
-    }
-
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
       HasHierarchy<Cls>:: template registerFields<Cls>(m);
@@ -5344,8 +5309,6 @@ class Buffer : public HasHierarchy<Buffer>, public HasLevel,
       m->addPointerField<Cls, Calendar>(Tags::minimum_calendar, &Cls::getMinimumCalendar, &Cls::setMinimumCalendar);
       m->addDoubleField<Cls>(Tags::maximum, &Cls::getMaximum, &Cls::setMaximum, default_max);
       m->addPointerField<Cls, Calendar>(Tags::maximum_calendar, &Cls::getMaximumCalendar, &Cls::setMaximumCalendar);
-      m->addDurationField<Cls>(Tags::mininterval, &Cls::getMinimumInterval, &Cls::setMinimumInterval, -1L);
-      m->addDurationField<Cls>(Tags::maxinterval, &Cls::getMaximumInterval, &Cls::setMaximumInterval);
       m->addIteratorField<Cls, flowlist::const_iterator, Flow>(Tags::flows, Tags::flow, &Cls::getFlowIterator, DETAIL);
       m->addBoolField<Cls>(Tags::tool, &Cls::getTool, &Cls::setTool, BOOL_FALSE);
       m->addIteratorField<Cls, flowplanlist::const_iterator, FlowPlan>(Tags::flowplans, Tags::flowplan, &Cls::getFlowPlanIterator, PLAN + WRITE_OBJECT + WRITE_HIDDEN);
@@ -5410,12 +5373,6 @@ class Buffer : public HasHierarchy<Buffer>, public HasLevel,
       * inventory problems.
       */
     Calendar *max_cal = nullptr;
-
-    /** Minimum time interval between purchasing operations. */
-    Duration min_interval = -1L;
-
-    /** Maximum time interval between purchasing operations. */
-    Duration max_interval;
 
     /** Maintain a linked list of buffers per item. */
     Buffer *nextItemBuffer = nullptr;

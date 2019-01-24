@@ -644,8 +644,6 @@
       <xsd:element name="maximum" type="xsd:double" />
       <xsd:element name="minimum_calendar" type="calendar" />
       <xsd:element name="maximum_calendar" type="calendar" />
-      <xsd:element name="mininterval" type="xsd:duration" />
-      <xsd:element name="maxinterval" type="xsd:duration" />
       <xsd:element name="producing" type="operation" />
       <xsd:element name="detectproblems" type="xsd:boolean" />
       <xsd:element name="flows" type="flowlist" />
@@ -656,8 +654,6 @@
     <xsd:attribute name="onhand" type="xsd:double" />
     <xsd:attribute name="minimum" type="xsd:double" />
     <xsd:attribute name="maximum" type="xsd:double" />
-    <xsd:attribute name="mininterval" type="xsd:duration" />
-    <xsd:attribute name="maxinterval" type="xsd:duration" />
     <xsd:attribute name="detectproblems" type="xsd:boolean" />
     <xsd:attribute name="tool" type="xsd:boolean" />
   </xsd:complexType>

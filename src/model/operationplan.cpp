@@ -1681,6 +1681,7 @@ void OperationPlan::setConfirmed(bool b)
     flags &= ~STATUS_CONFIRMED;
     flags |= STATUS_APPROVED;
   }
+  flags &= ~STATUS_CLOSED;
   for (OperationPlan *x = firstsubopplan; x; x = x->nextsubopplan)
     x->setConfirmed(b);
   update();
@@ -1699,6 +1700,7 @@ void OperationPlan::setApproved(bool b)
     flags &= ~STATUS_CONFIRMED;
     flags |= STATUS_APPROVED;
   }
+  flags &= ~STATUS_CLOSED;
   for (OperationPlan *x = firstsubopplan; x; x = x->nextsubopplan)
     x->setApproved(b);
   update();
@@ -1717,16 +1719,39 @@ void OperationPlan::setProposed(bool b)
     flags &= ~STATUS_CONFIRMED;
     flags |= STATUS_APPROVED;
   }
+  flags &= ~STATUS_CLOSED;
   for (OperationPlan *x = firstsubopplan; x; x = x->nextsubopplan)
     x->setProposed(b);
   update();
 }
 
 
+
+void OperationPlan::setClosed(bool b)
+{
+  if (b)
+  {
+    flags |= STATUS_CONFIRMED;
+    flags &= ~STATUS_APPROVED;
+    flags |= STATUS_CLOSED;
+  }
+  else
+  {
+    flags &= ~STATUS_CONFIRMED;
+    flags |= STATUS_APPROVED;
+    flags &= ~STATUS_CLOSED;
+  }  
+  for (OperationPlan *x = firstsubopplan; x; x = x->nextsubopplan)
+    x->setClosed(b);
+  update();
+}
+
 string OperationPlan::getStatus() const
 {
   if (flags & STATUS_APPROVED)
     return "approved";
+  else if (flags & STATUS_CLOSED)
+    return "closed";
   else if (flags & STATUS_CONFIRMED)
     return "confirmed";
   else
@@ -1740,16 +1765,25 @@ void OperationPlan::setStatus(const string& s)
   {
     flags |= STATUS_APPROVED;
     flags &= ~STATUS_CONFIRMED;
+    flags &= ~STATUS_CLOSED;
   }
   else if (s == "confirmed")
   {
     flags |= STATUS_CONFIRMED;
     flags &= ~STATUS_APPROVED;
+    flags &= ~STATUS_CLOSED;
   }
   else if (s == "proposed")
   {
     flags &= ~STATUS_APPROVED;
     flags &= ~STATUS_CONFIRMED;
+    flags &= ~STATUS_CLOSED;
+  }
+  else if (s == "closed")
+  {
+    flags &= ~STATUS_APPROVED;
+    flags |= STATUS_CONFIRMED;
+    flags |= STATUS_CLOSED;
   }
   else
     throw DataException("invalid operationplan status:" + s);

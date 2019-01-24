@@ -20,11 +20,19 @@ operation        operation         The operation to perform.
 start date       DateTime          The date when the operation is starting.
 end date         DateTime          The date when the operation is ending.
 quantity         number            The manufactured quantity.
-status           non-empty string  | This field should have one of the following keywords :
-                                   | proposed : The manufacturing order is proposed by frePPLe to meet the plan (optimization output).
-                                   | approved : The manufacturing order is present in the ERP system but can still be rescheduled by frePPLe (optimization input).
-                                   | confirmed : The manufacturing order is confirmed, it has been populated in your ERP system (optimization input).
-                                   | closed : The manufacturing order has been completed.
+status           non-empty string  This field should have one of the following values:
+
+                                   * | proposed:
+                                     | The manufacturing order is proposed by frePPLe to meet the plan (optimization output).
+
+                                   * | approved:
+                                     | The manufacturing order is present in the ERP system but can still be rescheduled by frePPLe (optimization input).
+
+                                   * | confirmed:
+                                     | The manufacturing order is confirmed, it has been populated in your ERP system (optimization input).
+                                     
+                                   * | closed : The manufacturing order has been completed. It is ignored for planning.
+
 demands          demand            The demand(s) (and quantity) pegged to the manufacturing order. This is a generated field.
 owner            number            In the case of a suboperation, the identifier of the operation calling this suboperation.
 inventory status number            | The Inventory Status is a calculated field that highlights the urgency of the manufacturing order.

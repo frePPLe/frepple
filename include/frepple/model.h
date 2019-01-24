@@ -1986,6 +1986,7 @@ class OperationPlan
       *   - proposed
       *   - approved
       *   - confirmed
+      *   - closed, pretty much an alias for confirmed
       */
     string getStatus() const;
 
@@ -2014,7 +2015,12 @@ class OperationPlan
 
     bool getProposed() const
     {
-      return (flags & (STATUS_CONFIRMED + STATUS_APPROVED)) == 0;
+      return (flags & (STATUS_CONFIRMED + STATUS_APPROVED + STATUS_CLOSED)) == 0;
+    }
+
+    bool getClosed() const
+    {
+      return (flags & STATUS_CLOSED) != 0;
     }
 
     bool getFeasible() const
@@ -2059,6 +2065,9 @@ class OperationPlan
 
     /** Update the status to PROPOSED, or back to APPROVED. */
     virtual void setProposed(bool b);
+
+    /** Update the status to PROPOSED, or back to APPROVED. */
+    virtual void setClosed(bool b);
 
     /** Update flag which allow/disallows material consumption. */
     void setConsumeMaterial(bool b)
@@ -2665,15 +2674,16 @@ class OperationPlan
 
     static const unsigned short STATUS_APPROVED = 1;
     static const unsigned short STATUS_CONFIRMED = 2;
+    static const unsigned short STATUS_CLOSED = 4;
     // TODO Conceptually this may not ideal: Rather than a
     // quantity-based distinction (between CONSUME_MATERIAL and
     // PRODUCE_MATERIAL) having a time-based distinction may be more
     // appropriate (between PROCESS_MATERIAL_AT_START and
     // PROCESS_MATERIAL_AT_END).
-    static const unsigned short CONSUME_MATERIAL = 4;
-    static const unsigned short PRODUCE_MATERIAL = 8;
-    static const unsigned short CONSUME_CAPACITY = 16;
-    static const unsigned short FEASIBLE = 32;
+    static const unsigned short CONSUME_MATERIAL = 8;
+    static const unsigned short PRODUCE_MATERIAL = 16;
+    static const unsigned short CONSUME_CAPACITY = 32;
+    static const unsigned short FEASIBLE = 64;
 
     /** Counter of OperationPlans, which is used to automatically assign a
       * unique identifier for each operationplan.<br>

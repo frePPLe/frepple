@@ -122,7 +122,7 @@ using namespace std;
 #include <config.h>
 #else
 // Define the version for (windows) compilers that don't use autoconf
-#define PACKAGE_VERSION "4.5.0"
+#define PACKAGE_VERSION "5.0.0"
 #endif
 
 // Header for multithreading

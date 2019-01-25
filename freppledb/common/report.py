@@ -2564,3 +2564,6 @@ def importWorkbook(request):
         yield '<div><strong>%s</strong></div>' % _("Done")
   except GeneratorExit:
     logger.warning('Connection Aborted')
+  except Exception as e:
+    yield 'Import aborted: %s' % e
+    logger.error("Exception importing workbook: %s" % e)

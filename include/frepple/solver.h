@@ -143,6 +143,10 @@ class SolverCreate : public Solver
 
     bool rotateResources = true;
 
+    /** Used to force the buffer safety stock solver method to resolve
+      * only the material shortages. */
+    bool shortagesonly = false;
+
     /** When set to false we solve only for the entity being called. This is
       * used when you want to control manual the sequence of the planning
       * loop.
@@ -499,6 +503,17 @@ class SolverCreate : public Solver
       minimumdelay = l;
     }
 
+    bool getShortagesOnly() const
+    {
+      return shortagesonly;
+    }
+
+    bool setShortagesOnly(bool b)
+    {
+      auto old = shortagesonly;
+      shortagesonly = b;
+      return old;
+    }
 
     /** Return the time we wait for existing confirmed supply before 
       * triggering a new replenishment.

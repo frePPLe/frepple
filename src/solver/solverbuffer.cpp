@@ -385,11 +385,12 @@ void SolverCreate::solve(const Buffer* b, void* v)
 void SolverCreate::solveSafetyStock(const Buffer* b, void* v)
 {
   SolverData* data = static_cast<SolverData*>(v);
+  auto shortagesonly = data->getSolver()->getShortagesOnly();
 
   // Message
-  if (data->getSolver()->getLogLevel()>1)
+  if (data->getSolver()->getLogLevel() > 1)
     logger << indent(b->getLevel()) << "  Buffer '" << b->getName()
-        << "' replenishes for safety stock" << endl;
+      << "' solves for " << (shortagesonly ? "shortages" : "safety stock") << endl;
 
   // Scan the complete horizon
   Date currentDate;
@@ -468,7 +469,8 @@ void SolverCreate::solveSafetyStock(const Buffer* b, void* v)
     // Note that these limits can be updated only after the processing of the
     // date change in the statement above. Otherwise the code above would
     // already use the new value before the intended date.
-    if (cur->getEventType() == 3) current_minimum = cur->getMin();
+    if (cur->getEventType() == 3 && !shortagesonly)
+      current_minimum = cur->getMin();
 
     // Update the pointer to the previous flowplan.
     prev = &*cur;
@@ -477,9 +479,9 @@ void SolverCreate::solveSafetyStock(const Buffer* b, void* v)
   }
 
   // Message
-  if (data->getSolver()->getLogLevel()>1)
+  if (data->getSolver()->getLogLevel() > 1)
     logger << indent(b->getLevel()) << "  Buffer '" << b->getName()
-        << "' solved for safety stock" << endl;
+        << "' solved for " << (shortagesonly ? "shortages" : "safety stock") << endl;
 }
 
 

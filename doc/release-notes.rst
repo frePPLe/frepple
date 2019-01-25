@@ -1,8 +1,8 @@
 Release notes
 -------------
 
-4.5.0 (Upcoming release)
-========================
+4.5.0 (2019/01/25)
+==================
 
 .. rubric:: Production planning
 
@@ -51,7 +51,7 @@ Release notes
 - Added tabs to see the manufacturing orders for a specific item, location or operation.
 
 - Update of the "in progress" fields of the inventory report. Are considered in progress for a given bucket
-  all orders startting before the end date of that bucket and ending after the end date of that bucket. 
+  all orders starting before the end date of that bucket and ending after the end date of that bucket. 
 
 - Improved display of very small durations. All digits up to 1 microsecond are now visible.
 

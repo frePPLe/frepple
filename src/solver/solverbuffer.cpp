@@ -260,7 +260,9 @@ void SolverCreate::solve(const Buffer* b, void* v)
     // If the flag getPlanSafetyStockFirst is set, then we need to replenish
     // up to the minimum quantity. If it is not set (which is the default) then
     // we only replenish up to 0.
-    if (cur->getEventType() == 3 && (getPlanSafetyStockFirst() || data->safety_stock_planning))
+    if (cur->getEventType() == 3 
+      && (getPlanSafetyStockFirst() || data->safety_stock_planning)
+      && !getShortagesOnly())
       current_minimum = cur->getMin();
 
     // Update the pointer to the previous flowplan.

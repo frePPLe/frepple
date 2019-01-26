@@ -2113,8 +2113,10 @@ double Operation::setOperationPlanQuantity
     }
     if (f != 0.0 && getSizeMultiple() > 0.0)
     {
-      int mult = static_cast<int> (f / getSizeMultiple()
-          + (roundDown ? 0.0 : 0.99999999));
+      double mult = floor(
+        f / getSizeMultiple()
+        + (roundDown ? 0.0 : 0.99999999)
+        );
       double q = mult * getSizeMultiple();
       if (q < curmin)
       {

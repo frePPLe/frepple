@@ -6800,6 +6800,7 @@ template <class A, class B, class C> class Association
         friend class Node;
       public:
         C* first = nullptr;
+        C* last = nullptr;
 
       public:
         List() {};
@@ -6942,7 +6943,7 @@ template <class A, class B, class C> class Association
         ~ListA()
         {
           C* next;
-          for (C* p=this->first; p; p=next)
+          for (C* p = this->first; p; p = next)
           {
             next = p->nextA;
             delete p;
@@ -6952,14 +6953,21 @@ template <class A, class B, class C> class Association
         /** Remove an association. */
         void erase(const C* n)
         {
-          if (!n) return;
-          if (n==this->first)
+          if (!n)
+            return;
+          if (n == this->first)
+          {
             this->first = n->nextA;
+            if (this->last == n)
+              this->last = nullptr;
+          }
           else
-            for (C* p=this->first; p; p=p->nextA)
+            for (C* p = this->first; p; p = p->nextA)
               if(p->nextA == n)
               {
                 p->nextA = n->nextA;
+                if (this->last == n)
+                  this->last = p;
                 return;
               }
         }
@@ -6968,49 +6976,27 @@ template <class A, class B, class C> class Association
         size_t size() const
         {
           size_t i(0);
-          for (C* p = this->first; p; p=p->nextA) ++i;
+          for (C* p = this->first; p; p = p->nextA)
+            ++i;
           return i;
         }
 
         /** Search for the association effective at a certain date. */
         C* find(const B* b, Date d = Date::infinitePast) const
         {
-          for (C* p=this->first; p; p=p->nextA)
-            if (p->ptrB == b && p->effectivity.within(d)) return p;
+          for (C* p = this->first; p; p = p->nextA)
+            if (p->ptrB == b && p->effectivity.within(d))
+              return p;
           return nullptr;
         }
 
         /** Search for the association with a certain name. */
         C* find(const string& n) const
         {
-          for (C* p=this->first; p; p=p->nextA)
-            if (p->name == n) return p;
+          for (C* p = this->first; p; p = p->nextA)
+            if (p->name == n)
+              return p;
           return nullptr;
-        }
-
-        /** Move an association a position up in the list of associations. */
-        void promote(C* p)
-        {
-          // Already at the head
-          if (p == this->first) return;
-
-          // Scan the list
-          C* prev = nullptr;
-          for (C* ptr = this->first; ptr; ptr = ptr->nextA)
-          {
-            if (ptr->nextA == p)
-            {
-              if (prev)
-                prev->nextA = p;
-              else
-                this->first = p;
-              ptr->nextA = p->nextA;
-              p->nextA = ptr;
-              return;
-            }
-            prev = ptr;
-          }
-          throw LogicException("Association not found in the list");
         }
     };
 
@@ -7155,14 +7141,21 @@ template <class A, class B, class C> class Association
         /** Remove an association. */
         void erase(const C* n)
         {
-          if (!n) return;
-          if (n==this->first)
+          if (!n)
+            return;
+          if (n == this->first)
+          {
             this->first = n->nextB;
+            if (this->last == n)
+              this->last = nullptr;
+          }
           else
-            for (C* p=this->first; p; p=p->nextB)
-              if(p->nextB == n)
+            for (C* p = this->first; p; p = p->nextB)
+              if (p->nextB == n)
               {
                 p->nextB = n->nextB;
+                if (this->last == n)
+                  this->last = p;
                 return;
               }
         }
@@ -7171,7 +7164,7 @@ template <class A, class B, class C> class Association
         size_t size() const
         {
           size_t i(0);
-          for (C* p=this->first; p; p=p->nextB) ++i;
+          for (C* p = this->first; p; p = p->nextB) ++i;
           return i;
         }
 
@@ -7179,7 +7172,8 @@ template <class A, class B, class C> class Association
         C* find(const A* b, Date d = Date::infinitePast) const
         {
           for (C* p = this->first; p; p = p->nextB)
-            if (p->ptrA == b && p->effectivity.within(d)) return p;
+            if (p->ptrA == b && p->effectivity.within(d))
+              return p;
           return nullptr;
         }
 
@@ -7187,33 +7181,9 @@ template <class A, class B, class C> class Association
         C* find(const string& n) const
         {
           for (C* p = this->first; p; p = p->nextB)
-            if (p->name == n) return p;
+            if (p->name == n)
+              return p;
           return nullptr;
-        }
-
-        /** Move an association a position up in the list of associations. */
-        void promote(C* p)
-        {
-          // Already at the head
-          if (p == this->first) return;
-
-          // Scan the list
-          C* prev = nullptr;
-          for (C* ptr = this->first; ptr; ptr = ptr->nextB)
-          {
-            if (ptr->nextB == p)
-            {
-              if (prev)
-                prev->nextB = p;
-              else
-                this->first = p;
-              ptr->nextB = p->nextB;
-              p->nextB = ptr;
-              return;
-            }
-            prev = ptr;
-          }
-          throw LogicException("Association not found in the list");
         }
     };
 
@@ -7237,60 +7207,50 @@ template <class A, class B, class C> class Association
         /** Constructor. */
         Node(A* a, B* b, const ListA& al, const ListB& bl) : ptrA(a), ptrB(b)
         {
-          if (al.first)
-          {
+          if (al.last)
             // Append at the end of the A-list
-            C* x = al.first;
-            while (x->nextA) x = x->nextA;
-            x->nextA = static_cast<C*>(this);
-          }
+            al.last->nextA = static_cast<C*>(this);
           else
-            // New start of the A-list
+            // First on the A-list
             const_cast<ListA&>(al).first = static_cast<C*>(this);
-          if (bl.first)
-          {
+          const_cast<ListA&>(al).last = static_cast<C*>(this);
+          if (bl.last)
             // Append at the end of the B-list
-            C* x = bl.first;
-            while (x->nextB) x = x->nextB;
-            x->nextB = static_cast<C*>(this);
-          }
+            bl.last->nextB = static_cast<C*>(this);
           else
-            // New start of the B-list
+            // First on the B-list
             const_cast<ListB&>(bl).first = static_cast<C*>(this);
+          const_cast<ListB&>(bl).last = static_cast<C*>(this);
         }
 
         void setPtrA(A* a, const ListA& al)
         {
           // Don't allow updating an already valid link
-          if (ptrA) throw DataException("Can't update existing entity");
+          if (ptrA)
+            throw DataException("Can't reassign existing association");
           ptrA = a;
-          if (al.first)
-          {
+          if (al.last)
             // Append at the end of the A-list
-            C* x = al.first;
-            while (x->nextA) x = x->nextA;
-            x->nextA = static_cast<C*>(this);
-          }
+            al.last->nextA = static_cast<C*>(this);
           else
-            // New start of the A-list
+            // First on the A-list
             const_cast<ListA&>(al).first = static_cast<C*>(this);
+          const_cast<ListA&>(al).last = static_cast<C*>(this);
         }
 
         void setPtrB(B* b, const ListB& bl)
         {
           // Don't allow updating an already valid link
-          if (ptrB) throw DataException("Can't update existing entity");
+          if (ptrB)
+            throw DataException("Can't reassign existing association");
           ptrB = b;
-          if (bl.first)
-          {
+          if (bl.last)
             // Append at the end of the B-list
-            C* x = bl.first;
-            while (x->nextB) x = x->nextB;
-            x->nextB = static_cast<C*>(this);
-          }
+            bl.last->nextB = static_cast<C*>(this);
           else
-            // New start of the B-list
+            // First on the B-list
             const_cast<ListB&>(bl).first = static_cast<C*>(this);
+          const_cast<ListB&>(bl).last = static_cast<C*>(this);
         }
 
         void setPtrAB(A* a, B* b, const ListA& al, const ListB& bl)

@@ -797,7 +797,11 @@ bool OperationPlan::activate(bool createsubopplans, bool use_start)
     throw LogicException("Initializing an invalid operationplan");
 
   // Avoid negative quantities, and call operation specific activation code
-  if (getQuantity() < 0.0 || !oper->extraInstantiate(this, createsubopplans, use_start))
+  if (
+    getQuantity() < 0.0 || 
+    !oper->extraInstantiate(this, createsubopplans, use_start) ||
+    (getQuantity() == 0.0 && getProposed() && !getOwner())
+    )
   {
     delete this;
     return false;

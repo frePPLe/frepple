@@ -18,6 +18,7 @@ import argparse
 import cx_Logging
 from cherrypy.wsgiserver import CherryPyWSGIServer
 from datetime import datetime
+from multiprocessing import freeze_support
 import os
 import socket
 from subprocess import call, DEVNULL
@@ -288,133 +289,136 @@ def non_string_iterable(obj):
         return not isinstance(obj, str)
 
 
-# Environment settings (which are used in the Django settings file and need
-# to be updated BEFORE importing the settings)
-os.environ['DJANGO_SETTINGS_MODULE'] = 'freppledb.settings'
-os.environ['FREPPLE_APP'] = os.path.join(sys.path[0], 'custom')
-os.environ['FREPPLE_HOME'] = os.path.abspath(os.path.dirname(sys.argv[0]))
-os.environ['PYTHONPATH'] = \
-  os.path.join(sys.path[0], 'lib', 'library.zip') \
-  + os.pathsep + \
-  os.path.join(sys.path[0], 'lib') 
+if __name__ == '__main__':
+  # Support multiprocessing module
+  freeze_support()
 
-# Add the custom directory to the Python path.
-sys.path += [ os.environ['FREPPLE_APP'] ]
+  # Environment settings (which are used in the Django settings file and need
+  # to be updated BEFORE importing the settings)
+  os.environ['DJANGO_SETTINGS_MODULE'] = 'freppledb.settings'
+  os.environ['FREPPLE_APP'] = os.path.join(sys.path[0], 'custom')
+  os.environ['FREPPLE_HOME'] = os.path.abspath(os.path.dirname(sys.argv[0]))
+  os.environ['PYTHONPATH'] = \
+    os.path.join(sys.path[0], 'lib', 'library.zip') \
+    + os.pathsep + \
+    os.path.join(sys.path[0], 'lib') 
 
-# Initialize django
-import django
-django.setup()
-from django.conf import settings
+  # Add the custom directory to the Python path.
+  sys.path += [ os.environ['FREPPLE_APP'] ]
 
-# Initialize logging
-cx_Logging.StartLogging(
-  os.path.join(settings.FREPPLE_LOGDIR, "systemtray.log"),
-  level=cx_Logging.INFO,
-  maxFiles=1,
-  prefix="%t"
-  )
+  # Initialize django
+  import django
+  django.setup()
+  from django.conf import settings
 
-# Parse command line
-parser = argparse.ArgumentParser(
-  description='Runs a web server for frePPLe.'
-  )
-parser.add_argument('--port', type=int, help="Port number of the server.")
-parser.add_argument('--address', help="IP address to listen on.")
-options = parser.parse_args()
-
-# Using the included postgres database?
-if os.path.exists(os.path.join(settings.FREPPLE_HOME, '..', 'pgsql', 'bin', 'pg_ctl.exe')):
-  # Check if the database is running. If not, start it.
-  status = call([
-    os.path.join(settings.FREPPLE_HOME, '..', 'pgsql', 'bin', 'pg_ctl.exe'),
-    "--pgdata", os.path.join(settings.FREPPLE_LOGDIR, 'database'),
-    "--silent",
-    "status"
-    ],
-    stdin=DEVNULL, stdout=DEVNULL, stderr=DEVNULL,
-    creationflags=CREATE_NO_WINDOW
+  # Initialize logging
+  cx_Logging.StartLogging(
+    os.path.join(settings.FREPPLE_LOGDIR, "systemtray.log"),
+    level=cx_Logging.INFO,
+    maxFiles=1,
+    prefix="%t"
     )
-  if status:
-    cx_Logging.Info("Starting the PostgreSQL database")
-    call([
+
+  # Parse command line
+  parser = argparse.ArgumentParser(
+    description='Runs a web server for frePPLe.'
+    )
+  parser.add_argument('--port', type=int, help="Port number of the server.")
+  parser.add_argument('--address', help="IP address to listen on.")
+  options = parser.parse_args()
+
+  # Using the included postgres database?
+  if os.path.exists(os.path.join(settings.FREPPLE_HOME, '..', 'pgsql', 'bin', 'pg_ctl.exe')):
+    # Check if the database is running. If not, start it.
+    status = call([
       os.path.join(settings.FREPPLE_HOME, '..', 'pgsql', 'bin', 'pg_ctl.exe'),
       "--pgdata", os.path.join(settings.FREPPLE_LOGDIR, 'database'),
-      "--log", os.path.join(settings.FREPPLE_LOGDIR, 'database', 'server.log'),
-      "-w",   # Wait till it's up
-      "start"
+      "--silent",
+      "status"
       ],
       stdin=DEVNULL, stdout=DEVNULL, stderr=DEVNULL,
       creationflags=CREATE_NO_WINDOW
       )
+    if status:
+      cx_Logging.Info("Starting the PostgreSQL database")
+      call([
+        os.path.join(settings.FREPPLE_HOME, '..', 'pgsql', 'bin', 'pg_ctl.exe'),
+        "--pgdata", os.path.join(settings.FREPPLE_LOGDIR, 'database'),
+        "--log", os.path.join(settings.FREPPLE_LOGDIR, 'database', 'server.log'),
+        "-w",   # Wait till it's up
+        "start"
+        ],
+        stdin=DEVNULL, stdout=DEVNULL, stderr=DEVNULL,
+        creationflags=CREATE_NO_WINDOW
+        )
 
-cx_Logging.Info("Starting the web server")
+  cx_Logging.Info("Starting the web server")
 
-# Synchronize the scenario table with the settings
-from freppledb.common.models import Scenario
-Scenario.syncWithSettings()
+  # Synchronize the scenario table with the settings
+  from freppledb.common.models import Scenario
+  Scenario.syncWithSettings()
 
-# Import modules
-from django.core.handlers.wsgi import WSGIHandler
-from django.contrib.staticfiles.handlers import StaticFilesHandler
-from django.db import DEFAULT_DB_ALIAS
+  # Import modules
+  from django.core.handlers.wsgi import WSGIHandler
+  from django.contrib.staticfiles.handlers import StaticFilesHandler
+  from django.db import DEFAULT_DB_ALIAS
 
-# Determine the port number
-port = options.port or settings.PORT
+  # Determine the port number
+  port = options.port or settings.PORT
 
-# Determine the IP-address to listen on:
-# - either as command line argument
-# - either 0.0.0.0 by default, which means all active IPv4 interfaces
-address = options.address or settings.ADDRESS
+  # Determine the IP-address to listen on:
+  # - either as command line argument
+  # - either 0.0.0.0 by default, which means all active IPv4 interfaces
+  address = options.address or settings.ADDRESS
 
-# Redirect all output
-logfile = os.path.join(settings.FREPPLE_LOGDIR, 'server.log')
-try:
-  sys.stdout = open(logfile, 'a', 0)
-except:
-  print("Can't open log file", logfile)
+  # Redirect all output
+  logfile = os.path.join(settings.FREPPLE_LOGDIR, 'server.log')
+  try:
+    sys.stdout = open(logfile, 'a', 0)
+  except:
+    print("Can't open log file", logfile)
 
-# Validate the address and port number
-try:
-  s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-  s.bind( (address, port) )
-  s.close()
-except socket.error as e:
-  raise Exception("Invalid address '%s' and/or port '%s': %s" % (address, port, e))
+  # Validate the address and port number
+  try:
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    s.bind( (address, port) )
+    s.close()
+  except socket.error as e:
+    raise Exception("Invalid address '%s' and/or port '%s': %s" % (address, port, e))
 
-# Print a header message
-hostname = socket.getfqdn()
-msg = ['Starting frePPLe web server on URLs:', ]
-if address == '0.0.0.0':
-  msg.append(' http://%s:%s/' % (hostname, port))
-  for ip in socket.gethostbyname_ex(socket.gethostname())[2]:
-    msg.append(' http://%s:%s/' % (ip, port))
-else:
-  msg.append(' http://%s:%s/' % (address, port))
-log(''.join(msg))
-log("frePPLe using %s database '%s' as '%s' on '%s:%s'" % (
-  settings.DATABASES[DEFAULT_DB_ALIAS].get('ENGINE', '').split('.')[-1],
-  settings.DATABASES[DEFAULT_DB_ALIAS].get('NAME', ''),
-  settings.DATABASES[DEFAULT_DB_ALIAS].get('USER', ''),
-  settings.DATABASES[DEFAULT_DB_ALIAS].get('HOST', ''),
-  settings.DATABASES[DEFAULT_DB_ALIAS].get('PORT', '')
-  ))
+  # Print a header message
+  hostname = socket.getfqdn()
+  msg = ['Starting frePPLe web server on URLs:', ]
+  if address == '0.0.0.0':
+    msg.append(' http://%s:%s/' % (hostname, port))
+    for ip in socket.gethostbyname_ex(socket.gethostname())[2]:
+      msg.append(' http://%s:%s/' % (ip, port))
+  else:
+    msg.append(' http://%s:%s/' % (address, port))
+  log(''.join(msg))
+  log("frePPLe using %s database '%s' as '%s' on '%s:%s'" % (
+    settings.DATABASES[DEFAULT_DB_ALIAS].get('ENGINE', '').split('.')[-1],
+    settings.DATABASES[DEFAULT_DB_ALIAS].get('NAME', ''),
+    settings.DATABASES[DEFAULT_DB_ALIAS].get('USER', ''),
+    settings.DATABASES[DEFAULT_DB_ALIAS].get('HOST', ''),
+    settings.DATABASES[DEFAULT_DB_ALIAS].get('PORT', '')
+    ))
 
+  # Run the WSGI server in a new thread
+  wsgi = RunWSGIServer(address, port)
+  wsgi.start()
 
-# Run the WSGI server in a new thread
-wsgi = RunWSGIServer(address, port)
-wsgi.start()
-
-# Run an icon in the system tray
-SysTrayIcon(
-  1,   # Icon. If integer it is loaded from the executable, otherwise loaded from file.
-  'frePPLe server on port %s' % port,   # Text displayed when hovering over the icon
-  (    # Menu_options
-    ('Open browser', None, OpenBrowser),
-    ('Show log directory', None, ShowLogDirectory),
-    ('Show configuration directory', None, ShowConfigDirectory),
-    ('Open command window', None, OpenCommandWindow),
-  ),
-  on_quit=on_quit,       # Method called when quitting the application
-  default_menu_index=0,  # Double clicking on icon opens this menu option
-  window_class_name="frePPLe server"
-  )
+  # Run an icon in the system tray
+  SysTrayIcon(
+    1,   # Icon. If integer it is loaded from the executable, otherwise loaded from file.
+    'frePPLe server on port %s' % port,   # Text displayed when hovering over the icon
+    (    # Menu_options
+      ('Open browser', None, OpenBrowser),
+      ('Show log directory', None, ShowLogDirectory),
+      ('Show configuration directory', None, ShowConfigDirectory),
+      ('Open command window', None, OpenCommandWindow),
+    ),
+    on_quit=on_quit,       # Method called when quitting the application
+    default_menu_index=0,  # Double clicking on icon opens this menu option
+    window_class_name="frePPLe server"
+    )

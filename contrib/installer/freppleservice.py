@@ -16,6 +16,7 @@
 #
 
 from datetime import datetime
+from multiprocessing import freeze_support
 import os
 import sys
 import threading
@@ -40,6 +41,9 @@ class ServiceHandler(object):
 
   # Called when the service is starting
   def Initialize(self, configFileName):
+    # Support multiprocessing module
+    freeze_support()
+
     # Environment settings (which are used in the Django settings file and need
     # to be updated BEFORE importing the settings)
     os.environ['DJANGO_SETTINGS_MODULE'] = 'freppledb.settings'
@@ -180,3 +184,8 @@ class ServiceHandler(object):
 
     # Wait till stopped
     self.stopEvent.wait()
+
+
+if __name__ == '__main__':
+  # Support multiprocessing module
+  freeze_support()

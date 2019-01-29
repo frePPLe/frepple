@@ -871,25 +871,29 @@ class GridReport(View):
       # on related models.
       sortargs = []
       for s in sortname.split(","):
-        if not s.strip():
+        stripped = s.strip()
+        if not stripped:
           continue
-        sortfield, dir = s.strip().split(" ", 1)
-        sortBasefield = sortfield.split('__')[0].strip()
-        added = False
-        if reportclass.model is not None:
-          for field in reportclass.model._meta.get_fields():
-            if field.name == sortBasefield:
-              sortargs.append(sortfield if dir.strip() != "desc" else ('-%s' % sortfield))
-              added = True
+        sortfield, direction = stripped.split(" ", 1)
+        try:
+          query.order_by(sortfield).query.__str__()
+          if direction.strip() != "desc":
+            sortargs.append(sortfield)
+          else:
+            sortargs.append('-%s' % sortfield)
+        except:
+          for r in reportclass.rows:
+            if r.name == sortfield:
+              try:
+                query.order_by(r.field_name).query.__str__()
+                if direction.strip() != "desc":
+                  sortargs.append(r.field_name)
+                else:
+                  sortargs.append('-%s' % r.field_name)
+              except:
+                # Can't sort on this field
+                pass
               break
-          if reportclass.model.__base__ and reportclass.model.__base__ != models.Model and not added:
-            for field in reportclass.model.__base__._meta.get_fields():
-              if field.name == sortBasefield:
-                sortargs.append(sortfield if dir.strip() != "desc" else ('-%s' % sortfield))
-                added = True
-                break
-        if sortfield.strip() in query.query.extra_select and not added:
-          sortargs.append(sortfield if dir.strip() != "desc" else ('-%s' % sortfield))
       if sortargs:
         return query.order_by(*sortargs)
       else:
@@ -1831,38 +1835,6 @@ class GridPivot(GridReport):
         '"formatter":grid.pivotcolumns,"search":false,"frozen":true,"title":false }'
         )
     return ',\n'.join(result)
-
-
-  @classmethod
-  def _apply_sort(reportclass, request, query):
-    '''
-    Applies a sort to the query.
-    '''
-    asc = True
-    sort = None
-    if 'sidx' in request.GET:
-      sort = request.GET['sidx']
-      if 'sord' in request.GET and request.GET['sord'] == 'desc':
-        asc = False
-    if not sort:
-      if request.prefs and 'sidx' in request.prefs:
-        sort = request.prefs['sidx']
-        if 'sord' in request.prefs and request.prefs['sord'] == 'desc':
-          asc = False
-      if not sort and reportclass.default_sort:
-        sort = reportclass.rows[reportclass.default_sort[0]].name
-        if reportclass.default_sort[1] == 'desc':
-          asc = False
-      else:
-        # No sorting
-        return query
-    if sort:
-      # Validate the field does exist.
-      for i in reportclass.rows:
-        if i.name == sort and i.search:
-          return query.order_by(asc and i.field_name or ('-%s' % i.field_name))
-    # Sorting by a non-existent field name: ignore the filter
-    return query
 
 
   @classmethod

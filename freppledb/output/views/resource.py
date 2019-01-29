@@ -16,6 +16,7 @@
 #
 
 from django.db import connections
+from django.db.models.expressions import RawSQL
 from django.utils.encoding import force_text
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import string_concat
@@ -59,7 +60,7 @@ class OverviewReport(GridPivot):
     GridFieldText('location__category', title=string_concat(_('location'), ' - ', _('category')), editable=False, initially_hidden=True),
     GridFieldText('location__subcategory', title=string_concat(_('location'), ' - ', _('subcategory')), editable=False, initially_hidden=True),
     GridFieldText('location__available', title=string_concat(_('location'), ' - ', _('available')), editable=False, field_name='location__available__name', formatter='detail', extra='"role":"input/calendar"', initially_hidden=True),
-    GridFieldText('avgutil', title=_('utilization %'), field_name='util', formatter='percentage', editable=False, width=100, align='center', search=False),
+    GridFieldText('avgutil', title=_('utilization %'), formatter='percentage', editable=False, width=100, align='center'),
     GridFieldText('available_calendar', title=_('available calendar'), editable=False, field_name='available__name', formatter='detail', extra='"role":"input/calendar"', initially_hidden=True),
     GridFieldText('owner', title=_('owner'), editable=False, field_name='owner__name', formatter='detail', extra='"role":"input/resource"', initially_hidden=True),
     )
@@ -102,6 +103,20 @@ class OverviewReport(GridPivot):
       return {'units': reportclass.getUnits(request)}
 
   @classmethod
+  def basequeryset(reportclass, request, *args, **kwargs):
+    return Resource.objects.all().annotate(
+      avgutil=RawSQL('''
+          select ( coalesce(sum(out_resourceplan.load),0) + coalesce(sum(out_resourceplan.setup),0) )
+             * 100.0 / coalesce(greatest(sum(out_resourceplan.available), 0.0001),1) as avg_util
+          from out_resourceplan
+          where out_resourceplan.startdate >= %s
+          and out_resourceplan.startdate < %s
+          and out_resourceplan.resource = resource.name
+          ''', (request.report_startdate, request.report_enddate)
+         )
+      )
+
+  @classmethod
   def getUnits(reportclass, request):
     try:
       units = Parameter.objects.using(request.database).get(name="loading_time_units")
@@ -130,7 +145,7 @@ class OverviewReport(GridPivot):
         res.type, res.maximum, res.maximum_calendar_id, res.cost, res.maxearly,
         res.setupmatrix_id, res.setup, location.name, location.description,
         location.category, location.subcategory, location.available_id,
-        coalesce(max(plan_summary.avg_util),0) as avgutil, res.available_id available_calendar, res.owner_id,
+        res.avgutil, res.available_id available_calendar, res.owner_id,
         %s
         d.bucket as col1, d.startdate as col2,
         coalesce(sum(out_resourceplan.available),0) * (case when res.type = 'buckets' then 1 else %f end) as available,
@@ -153,30 +168,17 @@ class OverviewReport(GridPivot):
       and d.enddate > out_resourceplan.startdate
       and out_resourceplan.startdate >= '%s'
       and out_resourceplan.startdate < '%s'
-      -- Average utilization info
-      left join (
-          select
-            resource,
-            ( coalesce(sum(out_resourceplan.load),0) + coalesce(sum(out_resourceplan.setup),0) )
-             * 100.0 / coalesce(greatest(sum(out_resourceplan.available), 0.0001),1) as avg_util
-          from out_resourceplan
-          where out_resourceplan.startdate >= '%s'
-          and out_resourceplan.startdate < '%s'
-          group by resource
-          ) plan_summary
-      on res.name = plan_summary.resource
       -- Grouping and sorting
       group by res.name, res.description, res.category, res.subcategory,
         res.type, res.maximum, res.maximum_calendar_id, res.available_id, res.cost, res.maxearly,
         res.setupmatrix_id, res.setup, location.name, location.description,
-        location.category, location.subcategory, location.available_id, res.owner_id,
+        location.category, location.subcategory, location.available_id, res.avgutil, res.owner_id,
         %s d.bucket, d.startdate
       order by %s, d.startdate
       ''' % (
         reportclass.attr_sql, units[0], units[0], units[0], units[0],
         basesql, request.report_bucket, request.report_startdate,
         request.report_enddate,
-        request.report_startdate, request.report_enddate,
         request.report_startdate, request.report_enddate,
         reportclass.attr_sql, sortsql
       )

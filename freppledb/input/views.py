@@ -349,7 +349,7 @@ class PathReport(GridReport):
               downstr = Buffer.objects.using(request.database).get(name="%s @ %s" % (x.item.name, location))
               root.extend( reportclass.findUsage(downstr, request.database, level - 1, curqty, realdepth - 1, True) )
             except Buffer.DoesNotExist:
-              downstr = Buffer(name="%s @ %s" % (curoperation.item.name, location), item=x.item, location=curlocation)
+              downstr = Buffer(name="%s @ %s" % (x.item.name, location), item=x.item, location=curlocation)
               root.extend( reportclass.findUsage(downstr, request.database, level - 1, curqty, realdepth - 1, True) )
           for x in curoperation.suboperations.using(request.database).only('suboperation').order_by("-priority"):
             subcount += curoperation.type == "routing" and 1 or -1

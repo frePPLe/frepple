@@ -838,30 +838,30 @@ class GridReport(View):
         return query
       elif len(reportclass.default_sort) > 6:
         return query.order_by(
-          reportclass.rows[reportclass.default_sort[0]].name
+          reportclass.rows[reportclass.default_sort[0]].field_name
           if reportclass.default_sort[1] == "asc"
-          else ("-%s" % reportclass.rows[reportclass.default_sort[0]].name),
-          reportclass.rows[reportclass.default_sort[2]].name
+          else ("-%s" % reportclass.rows[reportclass.default_sort[0]].field_name),
+          reportclass.rows[reportclass.default_sort[2]].field_name
           if reportclass.default_sort[3] == "asc"
-          else ("-%s" % reportclass.rows[reportclass.default_sort[2]].name),
-          reportclass.rows[reportclass.default_sort[4]].name
+          else ("-%s" % reportclass.rows[reportclass.default_sort[2]].field_name),
+          reportclass.rows[reportclass.default_sort[4]].field_name
           if reportclass.default_sort[5] == "asc"
-          else ("-%s" % reportclass.rows[reportclass.default_sort[4]].name)
+          else ("-%s" % reportclass.rows[reportclass.default_sort[4]].field_name)
           )
       elif len(reportclass.default_sort) >= 4:
         return query.order_by(
-          reportclass.rows[reportclass.default_sort[0]].name
+          reportclass.rows[reportclass.default_sort[0]].field_name
           if reportclass.default_sort[1] == "asc"
-          else ("-%s" % reportclass.rows[reportclass.default_sort[0]].name),
-          reportclass.rows[reportclass.default_sort[2]].name
+          else ("-%s" % reportclass.rows[reportclass.default_sort[0]].field_name),
+          reportclass.rows[reportclass.default_sort[2]].field_name
           if reportclass.default_sort[3] == "asc"
-          else ("-%s" % reportclass.rows[reportclass.default_sort[2]].name)
+          else ("-%s" % reportclass.rows[reportclass.default_sort[2]].field_name)
           )
       elif len(reportclass.default_sort) >= 2:
         return query.order_by(
-          reportclass.rows[reportclass.default_sort[0]].name
+          reportclass.rows[reportclass.default_sort[0]].field_name
           if reportclass.default_sort[1] == "asc"
-          else ("-%s" % reportclass.rows[reportclass.default_sort[0]].name)
+          else ("-%s" % reportclass.rows[reportclass.default_sort[0]].field_name)
           )
       else:
         return query

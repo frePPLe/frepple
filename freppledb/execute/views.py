@@ -77,7 +77,7 @@ class TaskReport(GridReport):
   title = _('Task status')
   basequeryset = Task.objects.all().extra(select={
     'duration': "case when status in ('Done', '100%%') then finished::timestamp(0) - started::timestamp(0) end"
-      })
+      }).select_related("user")
   model = Task
   frozenColumns = 0
   multiselect = False

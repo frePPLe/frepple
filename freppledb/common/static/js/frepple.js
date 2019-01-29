@@ -487,10 +487,8 @@ jQuery.extend($.fn.fmatter, {
       } else if (thedelay === 0) {
         return '<div class="invStatus" style="text-align: center; background-color: #008000; color: #151515;">'+gettext("on time")+'</div>';
       } else if (thedelay > 0) {
-        if (thenumber > 100) {
+        if (thenumber > 100 || thenumber < 0) {
           return '<div class="invStatus" style="text-align: center; background-color: #f00; color: #151515;">'+thedelay+' '+gettext("days late")+'</div>';
-        } else if (thenumber < 0) {
-          return '<div class="invStatus" style="text-align: center; background-color: #008000; color: #151515;">'+thedelay+' '+gettext("days late")+'</div>';
         } else {
           return '<div class="invStatus" style="text-align: center; background-color: rgb('+255+','+Math.round(thenumber/100*255)+','+0+'); color: #151515;">'+thedelay+' '+gettext("days late")+'</div>';
         }

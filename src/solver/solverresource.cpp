@@ -702,7 +702,7 @@ void SolverCreate::solve(const ResourceBuckets* res, void* v)
             opplan->setOperationPlanParameters(
               originalOpplan.quantity,
               newStart.getStart(), originalOpplan.end, false, true, true
-              );
+            );
             auto overload = get<0>(data->state->q_loadplan->getBucketEnd());
             if (overload > -ROUNDING_ERROR)
             {
@@ -729,7 +729,7 @@ void SolverCreate::solve(const ResourceBuckets* res, void* v)
                   newQty,
                   newStart.getStart(), Date::infiniteFuture,
                   false, true, true
-                  );
+                );
                 if (opplan->getQuantity() > 0
                   && opplan->getQuantity() <= newQty + ROUNDING_ERROR
                   && opplan->getEnd() <= originalOpplan.end)
@@ -780,74 +780,85 @@ void SolverCreate::solve(const ResourceBuckets* res, void* v)
   // Or, the solver may be forced to produce a late reply.
   // In these cases we need to search for capacity at later dates.
   if (
-    data->constrainedPlanning 
-    && (data->state->a_qty == 0.0 || (data->state->forceLate && overloadQty < -ROUNDING_ERROR))
+    data->state->a_qty == 0.0 ||
+    (data->state->forceLate && overloadQty < -ROUNDING_ERROR)
     )
   {
-    bool firstBucket = true;
-    bool hasOverloadInFirstBucket = true;
-
-    // Put the operationplan back at its original end date
-    if (time_per_logic)
-      opplan->setOperationPlanParameters(
-        data->getSolver()->getAllowSplits() ? data->state->q_qty_min : originalOpplan.quantity,
-        Date::infinitePast, originalOpplan.end, true, true, false
-        );
-    else if (!noRestore)
-      opplan->restore(originalOpplan);
-
-    // Search for a bucket with available capacity.
-    Date newDate;
-    Date prevStart = data->state->q_loadplan->getDate();
-    double availableQty = 0.0;
-    for (cur = res->getLoadPlans().begin(data->state->q_loadplan);
-      cur != res->getLoadPlans().end(); ++cur)
+    if (!data->constrainedPlanning)
+      data->state->a_qty = 0.0;
+    else
     {
-      if (cur->getEventType() != 2)
-        // Not a new bucket
-        availableQty = cur->getOnhand();
-      else if (availableQty > ROUNDING_ERROR)
+      bool firstBucket = true;
+      bool hasOverloadInFirstBucket = true;
+
+      // Put the operationplan back at its original end date
+      if (time_per_logic)
+        opplan->setOperationPlanParameters(
+          data->getSolver()->getAllowSplits() ? data->state->q_qty_min : originalOpplan.quantity,
+          Date::infinitePast, originalOpplan.end, true, true, false
+        );
+      else if (!noRestore)
+        opplan->restore(originalOpplan);
+
+      // Search for a bucket with available capacity.
+      Date newDate;
+      Date prevStart = data->state->q_loadplan->getDate();
+      double availableQty = 0.0;
+      for (cur = res->getLoadPlans().begin(data->state->q_loadplan);
+        cur != res->getLoadPlans().end(); ++cur)
       {
-        if (firstBucket)
+        if (cur->getEventType() != 2)
+          // Not a new bucket
+          availableQty = cur->getOnhand();
+        else if (availableQty > ROUNDING_ERROR)
         {
-          if (data->state->a_qty && noRestore)
+          if (firstBucket)
           {
-            // Not a real overload
-            hasOverloadInFirstBucket = false;
-          }
-          firstBucket = false;
-        }
-        if (time_per_logic)
-        {          
-          // Move to the new bucket          
-          opplan->setOperationPlanParameters(
-            data->getSolver()->getAllowSplits() ? 0.01 : originalOpplan.quantity,
-            prevStart, Date::infinitePast, true, true, false
-            );
-          if (data->state->q_loadplan->getDate() < cur->getDate())
-          {            
-            auto bucketend = data->state->q_loadplan->getBucketEnd();
-            if (get<0>(bucketend) > ROUNDING_ERROR)
+            if (data->state->a_qty && noRestore)
             {
-              // Valid new bucket found: has available time and capacity
-              newDate = opplan->getStart();
-              // Increase the size to use all available capacity in the bucket
-              double newQty;
-              if (data->getSolver()->getAllowSplits())
+              // Not a real overload
+              hasOverloadInFirstBucket = false;
+            }
+            firstBucket = false;
+          }
+          if (time_per_logic)
+          {
+            // Move to the new bucket          
+            opplan->setOperationPlanParameters(
+              data->getSolver()->getAllowSplits() ? 0.01 : originalOpplan.quantity,
+              prevStart, Date::infinitePast, true, true, false
+            );
+            if (data->state->q_loadplan->getDate() < cur->getDate())
+            {
+              auto bucketend = data->state->q_loadplan->getBucketEnd();
+              if (get<0>(bucketend) > ROUNDING_ERROR)
               {
-                newQty = opplan->getQuantity()
-                  + get<0>(bucketend) / data->state->q_loadplan->getLoad()->getQuantity()
-                  * efficiency / 100.0; // TODO tricky when the efficiency varies over time
-                if (newQty > originalOpplan.quantity)
-                  newQty = originalOpplan.quantity;   
+                // Valid new bucket found: has available time and capacity
+                newDate = opplan->getStart();
+                // Increase the size to use all available capacity in the bucket
+                double newQty;
+                if (data->getSolver()->getAllowSplits())
+                {
+                  newQty = opplan->getQuantity()
+                    + get<0>(bucketend) / data->state->q_loadplan->getLoad()->getQuantity()
+                    * efficiency / 100.0; // TODO tricky when the efficiency varies over time
+                  if (newQty > originalOpplan.quantity)
+                    newQty = originalOpplan.quantity;
+                }
+                else
+                  newQty = originalOpplan.quantity;
+                opplan->setOperationPlanParameters(
+                  newQty, opplan->getStart(), Date::infinitePast,
+                  true, true, true
+                );
+                break;
               }
               else
-                newQty = originalOpplan.quantity;       
-              opplan->setOperationPlanParameters(
-                newQty, opplan->getStart(), Date::infinitePast,
-                true, true, true
-                );
-              break;
+              {
+                // New bucket starts
+                prevStart = cur->getDate();
+                availableQty = cur->getOnhand();
+              }
             }
             else
             {
@@ -858,87 +869,81 @@ void SolverCreate::solve(const ResourceBuckets* res, void* v)
           }
           else
           {
-            // New bucket starts
-            prevStart = cur->getDate();
-            availableQty = cur->getOnhand();
+            // Find a suitable start date in this bucket
+            Duration tmp;
+            DateRange newStart = opplan->getOperation()->calculateOperationTime(
+              opplan, prevStart, Duration(1L), true, &tmp
+            );
+            if (newStart.getStart() < cur->getDate())
+            {
+              // If the new start date is within this bucket we just left, then
+              // we have found a bucket with available capacity left
+              newDate = newStart.getStart();
+              break;
+            }
+            else
+            {
+              // New bucket starts
+              prevStart = cur->getDate();
+              availableQty = cur->getOnhand();
+            }
           }
         }
         else
         {
-          // Find a suitable start date in this bucket
-          Duration tmp;          
-          DateRange newStart = opplan->getOperation()->calculateOperationTime(
-            opplan, prevStart, Duration(1L), true, &tmp
-          );
-          if (newStart.getStart() < cur->getDate())
-          {
-            // If the new start date is within this bucket we just left, then
-            // we have found a bucket with available capacity left
-            newDate = newStart.getStart();
-            break;
-          }
-          else
-          {
-            // New bucket starts
-            prevStart = cur->getDate();
-            availableQty = cur->getOnhand();
-          }
+          // New bucket starts
+          prevStart = cur->getDate();
+          availableQty = cur->getOnhand();
         }
+      }
+
+      Date effective_end = data->state->q_loadplan->getLoad()->getEffective().getEnd();
+      if ((!newDate || newDate > effective_end) && effective_end != Date::infiniteFuture)
+      {
+        // The load has effectivity, and when it expires we can return a positive reply
+        if (effective_end > originalOpplan.end)
+          newDate = effective_end;
+      }
+
+      if (!hasOverloadInFirstBucket)
+      {
+        // Actually, there was no problem
+        data->state->a_date = data->state->q_date;
+        data->state->a_qty = orig_q_qty;
+      }
+      else if (newDate || newDate == Date::infiniteFuture)
+      {
+        if (!time_per_logic)
+        {
+          // Move the operationplan to the new bucket and resize to the minimum.
+          // Set the date where a next trial date can happen.
+          double q = opplan->getOperation()->getSizeMinimum();
+          if (opplan->getOperation()->getSizeMinimumCalendar())
+          {
+            // Minimum size varies over time
+            double curmin = opplan->getOperation()->getSizeMinimumCalendar()->getValue(newDate);
+            if (q < curmin)
+              q = curmin;
+          }
+          if (q < data->state->q_qty_min)
+            q = data->state->q_qty_min;
+          opplan->setQuantity(q);
+          Date tmp = data->state->q_loadplan->getLoad()->getOperationPlanDate(
+            data->state->q_loadplan, newDate, true
+          );
+          opplan->setOperationPlanParameters(
+            q, tmp, Date::infinitePast
+          );
+        }
+        data->state->a_date = opplan->getEnd();
+        data->state->a_qty = 0.0;
       }
       else
       {
-        // New bucket starts
-        prevStart = cur->getDate();
-        availableQty = cur->getOnhand();
+        // No available capacity found anywhere in the horizon
+        data->state->a_date = Date::infiniteFuture;
+        data->state->a_qty = 0.0;
       }
-    }
-
-    Date effective_end = data->state->q_loadplan->getLoad()->getEffective().getEnd();
-    if ((!newDate || newDate > effective_end) && effective_end != Date::infiniteFuture)
-    {
-      // The load has effectivity, and when it expires we can return a positive reply
-      if (effective_end > originalOpplan.end)
-        newDate = effective_end;
-    }
-
-    if (!hasOverloadInFirstBucket)
-    {
-      // Actually, there was no problem
-      data->state->a_date = data->state->q_date;
-      data->state->a_qty = orig_q_qty;
-    }
-    else if (newDate || newDate == Date::infiniteFuture)
-    {
-      if (!time_per_logic)
-      {
-        // Move the operationplan to the new bucket and resize to the minimum.
-        // Set the date where a next trial date can happen.
-        double q = opplan->getOperation()->getSizeMinimum();
-        if (opplan->getOperation()->getSizeMinimumCalendar())
-        {
-          // Minimum size varies over time
-          double curmin = opplan->getOperation()->getSizeMinimumCalendar()->getValue(newDate);
-          if (q < curmin)
-            q = curmin;
-        }
-        if (q < data->state->q_qty_min)
-          q = data->state->q_qty_min;
-        opplan->setQuantity(q);
-        Date tmp = data->state->q_loadplan->getLoad()->getOperationPlanDate(
-          data->state->q_loadplan, newDate, true
-          );
-        opplan->setOperationPlanParameters(
-          q, tmp, Date::infinitePast
-          );
-      }
-      data->state->a_date = opplan->getEnd();
-      data->state->a_qty = 0.0;
-    }
-    else
-    {
-      // No available capacity found anywhere in the horizon
-      data->state->a_date = Date::infiniteFuture;
-      data->state->a_qty = 0.0;
     }
   }
 

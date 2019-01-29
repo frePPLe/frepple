@@ -28,8 +28,7 @@ void SolverCreate::checkOperationCapacity
   (OperationPlan* opplan, SolverCreate::SolverData& data)
 {
   unsigned short constrainedLoads = 0;
-  for (OperationPlan::LoadPlanIterator h=opplan->beginLoadPlans();
-    h!=opplan->endLoadPlans(); ++h)
+  for (auto h=opplan->beginLoadPlans(); h!=opplan->endLoadPlans(); ++h)
     if (h->getResource()->getType() != *(ResourceInfinite::metadata)
       && h->isStart() && h->getLoad()->getQuantity() != 0.0)
     {
@@ -50,7 +49,7 @@ void SolverCreate::checkOperationCapacity
     orig = opplan->getDates();
     recheck = false;
     first = true;
-    for (OperationPlan::LoadPlanIterator h = opplan->beginLoadPlans();
+    for (auto h = opplan->beginLoadPlans();
       h != opplan->endLoadPlans() && opplan->getDates() == orig; ++h)
     {
       if (h->getLoad()->getQuantity() == 0.0 || h->getQuantity() == 0.0)
@@ -217,7 +216,7 @@ bool SolverCreate::checkOperation
     matnext.setEnd(Date::infiniteFuture);
 
     // Loop through all flowplans, if propagation is required  // @todo need some kind of coordination run here!!! see test alternate_flow_1
-    if (data.getSolver()->getPropagate())
+    if (data.getSolver()->getPropagate() && a_qty)
     {
       for (auto g=opplan->beginFlowPlans(); g!=opplan->endFlowPlans(); ++g)
       {

@@ -988,7 +988,7 @@
     </xsd:annotation>
     <xsd:choice minOccurs="0" maxOccurs="unbounded">
       <xsd:element name="ordertype" type="ordertype" />
-      <xsd:element name="id" type="xsd:unsignedLong" />
+      <xsd:element name="id" type="xsd:normalizedString" /> <!-- Deprecated. Id is now an alias for reference -->
       <xsd:element name="reference" type="xsd:normalizedString" />
       <xsd:element name="operation" type="operation" />
       <xsd:element name="demand" type="demand" />
@@ -1014,7 +1014,7 @@
       <xsd:element name="flowplans" type="flowplanlist" />
     </xsd:choice>
     <xsd:attribute name="ordertype" type="ordertype" />
-    <xsd:attribute name="id" type="xsd:unsignedLong" />
+    <xsd:attribute name="id" type="xsd:normalizedString" /> <!-- Deprecated. Id is now an alias for reference -->
     <xsd:attribute name="reference" type="xsd:normalizedString" />
     <xsd:attribute name="start" type="xsd:dateTime" />
     <xsd:attribute name="end" type="xsd:dateTime" />

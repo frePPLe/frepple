@@ -24,13 +24,14 @@
 namespace frepple
 {
 
-Tree<unsigned long> OperationPlan::st;
+Tree OperationPlan::st;
 
 const MetaClass* OperationPlan::metadata;
 const MetaCategory* OperationPlan::metacategory;
 const MetaClass* OperationPlan::InterruptionIterator::metadata;
 const MetaCategory* OperationPlan::InterruptionIterator::metacategory;
-unsigned long OperationPlan::counterMin = 2;
+unsigned long OperationPlan::counterMin = 1;
+string OperationPlan::referenceMax;
 bool OperationPlan::propagatesetups = true;
 
 
@@ -270,25 +271,25 @@ Object* OperationPlan::createOperationPlan(
     return nullptr;
 
   // Decode the operationplan identifier
-  unsigned long id = 0;
-  const DataValue* idfier = in.get(Tags::id);
-  if (idfier)
-    id = idfier->getUnsignedLong();
-  if (!id && (action==CHANGE || action==REMOVE))
+  string id;
+  const DataValue* ref = in.get(Tags::reference);
+  if (ref)
+    id = ref->getString();
+  if (id.empty())
+  {
+    const DataValue* idfier = in.get(Tags::id);
+    if (idfier)
+      id = idfier->getString();
+  }
+  if (id.empty() && (action==CHANGE || action==REMOVE))
     // Identifier is required
-    throw DataException("Missing identifier field");
+    throw DataException("Missing reference or identifier field");
 
   // If an identifier is specified, we look up this operation plan
   OperationPlan* opplan = nullptr;
-  if (id)
+  if (!id.empty())
   {
-    if (id == ULONG_MAX)
-    {
-      ostringstream ch;
-      ch << "Operationplan id can't be equal to " << ULONG_MAX;
-      throw DataException(ch.str());
-    }
-    opplan = OperationPlan::findId(id);
+    opplan = OperationPlan::findReference(id);
     if (opplan)
     {
       // Check whether previous and current operations match.
@@ -318,14 +319,14 @@ Object* OperationPlan::createOperationPlan(
         {
           // The callbacks disallowed the deletion!
           ostringstream ch;
-          ch << "Can't delete operationplan with identifier " << id;
+          ch << "Can't delete operationplan with reference " << id;
           throw DataException(ch.str());
         }
       }
       else
       {
         ostringstream ch;
-        ch << "Operationplan with identifier " << id << " doesn't exist";
+        ch << "Operationplan with reference " << id << " doesn't exist";
         throw DataException(ch.str());
       }
       return nullptr;
@@ -333,7 +334,7 @@ Object* OperationPlan::createOperationPlan(
       if (opplan)
       {
         ostringstream ch;
-        ch << "Operationplan with identifier " << id
+        ch << "Operationplan with reference " << id
             << " already exists and can't be added again";
         throw DataException(ch.str());
       }
@@ -342,7 +343,7 @@ Object* OperationPlan::createOperationPlan(
       if (!opplan)
       {
         ostringstream ch;
-        ch << "Operationplan with identifier " << id << " doesn't exist";
+        ch << "Operationplan with reference " << id << " doesn't exist";
         throw DataException(ch.str());
       }
       break;
@@ -458,8 +459,8 @@ Object* OperationPlan::createOperationPlan(
       opplan = static_cast<Operation*>(oper)->createOperationPlan(quantity, start, end);
 
     // Set operationplan fields
-    if (id)
-      opplan->setRawIdentifier(id);  // We can use this fast method because we call activate later
+    if (!id.empty())
+      opplan->setRawReference(id);  // We can use this fast method because we call activate later
   }
   else if (ordtype == "DO")
   {
@@ -613,8 +614,8 @@ Object* OperationPlan::createOperationPlan(
       opplan = static_cast<Operation*>(oper)->createOperationPlan(quantity, start, end, nullptr, nullptr, 0, false);
 
     // Set operationplan fields
-    if (id)
-      opplan->setRawIdentifier(id);  // We can use this fast method because we call activate later
+    if (!id.empty())
+      opplan->setRawReference(id);  // We can use this fast method because we call activate later
   }
   else if (ordtype == "DLVR")
   {
@@ -655,8 +656,8 @@ Object* OperationPlan::createOperationPlan(
     static_cast<Demand*>(dmdval)->addDelivery(opplan);
 
     // Set operationplan fields
-    if (id)
-      opplan->setRawIdentifier(id);  // We can use this fast method because we call activate later
+    if (!id.empty())
+      opplan->setRawReference(id);  // We can use this fast method because we call activate later
   }
   else
   {
@@ -666,8 +667,10 @@ Object* OperationPlan::createOperationPlan(
 
     // Create an operationplan
     opplan = static_cast<Operation*>(oper)->createOperationPlan(
-      quantity, start, end, nullptr, nullptr, id, false
+      quantity, start, end, nullptr, nullptr, false
       );
+    if (!id.empty())
+      opplan->setReference(id);
     if (!opplan->getType().raiseEvent(opplan, SIG_ADD))
     {
       delete opplan;
@@ -699,31 +702,44 @@ Object* OperationPlan::createOperationPlan(
 }
 
 
-OperationPlan* OperationPlan::findId(unsigned long l)
+OperationPlan* OperationPlan::findReference(string const& l)
 {
-  if (l >= counterMin)
-    // We are garantueed that there are no operationplans that have an id equal
-    // or higher than the current counter. This is garantueed by the
-    // instantiate() method.
-    return nullptr;
-  else
+  bool guarantueed = false;
+
+  // Compare with the max reference string
+  if (referenceMax < l)
+    guarantueed = true;
+
+  // Compare with the max counter
+  try
   {
-    auto tmp = st.find(l);
-    // Look up in the tree structure
-    return tmp == st.end() ? nullptr : static_cast<OperationPlan*>(tmp);
+    unsigned long idx = stoul(l);
+    if (idx > counterMin)
+      guarantueed = true;
+    else
+      guarantueed = false;
   }
+  catch (...) { /* The reference isn't a numeric value */ }
+  
+  // We are sure not to find it
+  if (guarantueed)
+    return nullptr;
+
+  // Look up in the tree
+  auto tmp = st.find(l);
+  return tmp == st.end() ? nullptr : static_cast<OperationPlan*>(tmp);
 }
 
 
-bool OperationPlan::assignIdentifier()
+bool OperationPlan::assignReference()
 {
   // Need to assure that ids are unique!
   static mutex onlyOne;
-  if (getName() && getName() != ULONG_MAX)
+  if (!getName().empty())
   {
     // An identifier was read in from input
     lock_guard<mutex> l(onlyOne);
-    if (getName() < counterMin)
+    if (getName() < referenceMax)
     {
       // The assigned id potentially clashes with an existing operationplan.
       // Check whether it clashes with existing operationplans
@@ -731,22 +747,31 @@ bool OperationPlan::assignIdentifier()
       if (opplan != st.end() && opplan->getOperation() != oper)
         return false;
     }
-    // The new operationplan definitely doesn't clash with existing id's.
-    // The counter need updating to garantuee that counter is always
-    // a safe starting point for tagging new operationplans.
     else
-      counterMin = getName() + 1;
+      // The new operationplan definitely doesn't clash with existing id's.
+      // The counter need updating to garantuee that counter is always
+      // a safe starting point for tagging new operationplans.
+      referenceMax = getName();
+    try
+    {
+      unsigned long idx = stoul(getName());
+      if (idx >= counterMin)
+      {
+        if (idx >= ULONG_MAX)
+          throw RuntimeException("Exhausted the range of available operationplan references");
+        counterMin = idx + 1;
+      }
+    }
+    catch(...) { /* The reference isn't a numeric value */ }
   }
   else 
   {
     // Fresh operationplan with blank id
     lock_guard<mutex> l(onlyOne);  // Need to assure that ids are unique!
-    setName(counterMin++);
+    setName(to_string(counterMin++));
+    if (counterMin >= ULONG_MAX)
+      throw RuntimeException("Exhausted the range of available operationplan references");
   }
-
-  // Check whether the counter is still okay
-  if (counterMin >= ULONG_MAX)
-    throw RuntimeException("Exhausted the range of available operationplan identifiers");
 
   // Insert in the tree of operationplans
   st.insert(this);
@@ -824,10 +849,11 @@ bool OperationPlan::activate(bool createsubopplans, bool use_start)
   }
 
   // Mark as activated by assigning a unique identifier.
-  if (getName() && getName() != ULONG_MAX)
+  setActivated(true);
+  if (!getName().empty())
   {
     // Validate the user provided id.
-    if (!assignIdentifier())
+    if (!assignReference())
     {
       ostringstream ch;
       ch << "Operationplan id " << getName() << " assigned multiple times";
@@ -835,12 +861,6 @@ bool OperationPlan::activate(bool createsubopplans, bool use_start)
       throw DataException(ch.str());
     }
   }
-  else
-    // The id given at this point is only a temporary one. The final id is
-    // created lazily when the getIdentifier method is called.
-    // In this way, 1) we avoid clashes between auto-generated and
-    // user-provided in the input and 2) we keep performance high.
-    setName(ULONG_MAX);
 
   // Insert into the doubly linked list of operationplans.
   insertInOperationplanList();
@@ -1032,10 +1052,9 @@ bool OperationPlan::operator < (const OperationPlan& a) const
   if (fabs(quantity - a.quantity) > ROUNDING_ERROR)
     return quantity >= a.quantity;
 
-  if ((getRawIdentifier() && !a.getRawIdentifier())
-    || (!getRawIdentifier() && a.getRawIdentifier()))
-    // Keep uninitialized operationplans (whose id = 0) seperate
-    return getRawIdentifier() > a.getRawIdentifier();
+  if (getActivated() != a.getActivated())
+    // Keep unactivated operationplans seperate
+    return getActivated() > a.getActivated();
   
   if (getEnd() != a.getEnd())
     // Use the end date
@@ -1265,7 +1284,7 @@ void OperationPlan::resizeFlowLoadPlans()
 }
 
 
-OperationPlan::OperationPlan(const OperationPlan& src, bool init) : Tree<unsigned long>::TreeNode(0)
+OperationPlan::OperationPlan(const OperationPlan& src, bool init)
 {
   if (src.owner)
     throw LogicException("Can't copy suboperationplans. Copy the owner instead.");
@@ -1299,7 +1318,7 @@ OperationPlan::OperationPlan(const OperationPlan& src, bool init) : Tree<unsigne
 
 
 OperationPlan::OperationPlan(const OperationPlan& src,
-    OperationPlan* newOwner) : Tree<unsigned long>::TreeNode(0)
+    OperationPlan* newOwner)
 {
   if (!newOwner)
     throw LogicException("No new owner passed in private copy constructor.");
@@ -1666,9 +1685,11 @@ Duration OperationPlan::getUnavailable() const
 
 Object* OperationPlan::finder(const DataValueDict& key)
 {
-  const DataValue* val = key.get(Tags::id);
+  auto val = key.get(Tags::reference);
+  if (!val)
+    val = key.get(Tags::id);
   return val ?
-    OperationPlan::findId(val->getUnsignedLong()) :
+    OperationPlan::findReference(val->getString()) :
     nullptr;
 }
 
@@ -1847,9 +1868,10 @@ PyObject* OperationPlan::create(PyTypeObject* pytype, PyObject* args, PyObject* 
         DataKeyword attr(PyBytes_AsString(key_utf8));
         Py_DECREF(key_utf8);
         if (!attr.isA(Tags::operation) && !attr.isA(Tags::id)
-          && !attr.isA(Tags::action) && !attr.isA(Tags::type)
-          && !attr.isA(Tags::start) && !attr.isA(Tags::end)
-          && !attr.isA(Tags::quantity) && !attr.isA(Tags::create))
+          && !attr.isA(Tags::reference) && !attr.isA(Tags::action)
+          && !attr.isA(Tags::type) && !attr.isA(Tags::start)
+          && !attr.isA(Tags::end) && !attr.isA(Tags::quantity)
+          && !attr.isA(Tags::create))
         {
           const MetaFieldBase* fmeta = x->getType().findField(attr.getHash());
           if (!fmeta && x->getType().category)

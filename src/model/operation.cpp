@@ -24,7 +24,7 @@
 namespace frepple
 {
 
-template<class Operation> Tree<string> utils::HasName<Operation>::st;
+template<class Operation> Tree utils::HasName<Operation>::st;
 const MetaCategory* Operation::metadata;
 const MetaClass* OperationFixedTime::metadata,
                *OperationTimePer::metadata,
@@ -222,11 +222,10 @@ OperationPlan::iterator Operation::getOperationPlans() const
 
 
 OperationPlan* Operation::createOperationPlan (double q, Date s, Date e,
-    Demand* l, OperationPlan* ow, unsigned long i,
-    bool makeflowsloads, bool roundDown) const
+  Demand* l, OperationPlan* ow, bool makeflowsloads, bool roundDown) const
 {
   OperationPlan *opplan = new OperationPlan();
-  initOperationPlan(opplan, q, s, e, l, ow, i, makeflowsloads, roundDown);
+  initOperationPlan(opplan, q, s, e, l, ow, makeflowsloads, roundDown);
   return opplan;
 }
 
@@ -693,13 +692,12 @@ Operation::SetupInfo Operation::calculateSetup(
 
 void Operation::initOperationPlan (
   OperationPlan* opplan, double q, const Date& s, const Date& e, Demand* l,
-  OperationPlan* ow, unsigned long i, bool makeflowsloads, bool roundDown
+  OperationPlan* ow, bool makeflowsloads, bool roundDown
   ) const
 {
   opplan->oper = const_cast<Operation*>(this);
   if (l)
     opplan->setDemand(l);
-  opplan->setName(i);
 
   // Setting the owner first. Note that the order is important here!
   // For alternates & routings the quantity needs to be set through the owner.
@@ -932,7 +930,7 @@ bool OperationFixedTime::extraInstantiate(OperationPlan* o, bool createsubopplan
   //   - demand of both operationplans are the same
   //   - maximum operation size is not exceeded
   //   - alternate flowplans need to be on the same alternate
-  if (!o->getRawIdentifier() && o->getProposed())
+  if (!o->getActivated() && o->getProposed())
   {
     // Verify we load no resources of type "default".
     // It's ok to merge operationplans which load "infinite" or "buckets" resources.
@@ -946,7 +944,7 @@ bool OperationFixedTime::extraInstantiate(OperationPlan* o, bool createsubopplan
     for (; x != OperationPlan::end() && *x < *o; ++x)
       y = &*x;
     if (y && y->getDates() == o->getDates()
-        && y->getDemand() == o->getDemand() && y->getProposed() && y->getRawIdentifier()
+        && y->getDemand() == o->getDemand() && y->getProposed() && y->getActivated()
         && y->getQuantity() + o->getQuantity() < getSizeMaximum())
     {
       if (o->getOwner())
@@ -985,7 +983,7 @@ bool OperationFixedTime::extraInstantiate(OperationPlan* o, bool createsubopplan
       return false;
     }
     if (x!= OperationPlan::end() && x->getDates() == o->getDates()
-        && x->getDemand() == o->getDemand() && x->getProposed() && x->getRawIdentifier()
+        && x->getDemand() == o->getDemand() && x->getProposed() && x->getActivated()
         && x->getQuantity() + o->getQuantity() < getSizeMaximum())
     {
       if (o->getOwner())

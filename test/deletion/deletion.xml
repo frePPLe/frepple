@@ -207,7 +207,7 @@ frepple.saveXMLfile("output.6.xml")
 frepple.readXMLdata(r'''
       <plan>
         <operationplans>
-          <operationplan id="11" action="R"/>
+          <operationplan reference="10" action="R"/>
         </operationplans>
       </plan>''')
 # Now we delete a setup matrix.

@@ -103,7 +103,7 @@
 	</demands>
 	<operationplans>
 		<operationplan>
-			<id>2</id>
+			<reference>1</reference>
 			<operation xsi:type="operation_routing">
 				<name>operation 1</name>
 			</operation>
@@ -116,7 +116,7 @@
 			<feasible>false</feasible>
 		</operationplan>
 		<operationplan>
-			<id>3</id>
+			<reference>2</reference>
 			<operation>
 				<name>operation 1 step1</name>
 			</operation>
@@ -125,11 +125,11 @@
 			<quantity>12</quantity>
 			<feasible>false</feasible>
 			<owner>
-				<id>2</id>
+				<reference>1</reference>
 			</owner>
 		</operationplan>
 		<operationplan>
-			<id>4</id>
+			<reference>3</reference>
 			<operation>
 				<name>operation 1 step2</name>
 			</operation>
@@ -137,7 +137,7 @@
 			<end>2009-01-27T00:00:00</end>
 			<quantity>12</quantity>
 			<owner>
-				<id>2</id>
+				<reference>1</reference>
 			</owner>
 		</operationplan>
 	</operationplans>

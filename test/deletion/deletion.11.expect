@@ -176,7 +176,7 @@
 	</demands>
 	<operationplans>
 		<operationplan>
-			<id>17</id>
+			<reference>16</reference>
 			<operation>
 				<name>delivery 1</name>
 			</operation>
@@ -189,7 +189,7 @@
 			<feasible>false</feasible>
 		</operationplan>
 		<operationplan>
-			<id>18</id>
+			<reference>17</reference>
 			<operation>
 				<name>delivery 1</name>
 			</operation>
@@ -202,7 +202,7 @@
 			<feasible>false</feasible>
 		</operationplan>
 		<operationplan>
-			<id>19</id>
+			<reference>18</reference>
 			<operation>
 				<name>delivery 1</name>
 			</operation>

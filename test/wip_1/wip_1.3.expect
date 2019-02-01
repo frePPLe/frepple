@@ -743,7 +743,7 @@
 	</operations>
 	<operationplans>
 		<operationplan>
-			<id>1001</id>
+			<reference>1001</reference>
 			<operation>
 				<name>Oper1</name>
 			</operation>
@@ -754,7 +754,7 @@
 			<feasible>false</feasible>
 		</operationplan>
 		<operationplan>
-			<id>1002</id>
+			<reference>1002</reference>
 			<operation>
 				<name>Oper1</name>
 			</operation>
@@ -765,7 +765,7 @@
 			<feasible>false</feasible>
 		</operationplan>
 		<operationplan>
-			<id>1003</id>
+			<reference>1003</reference>
 			<operation>
 				<name>Oper1</name>
 			</operation>
@@ -776,7 +776,7 @@
 			<feasible>false</feasible>
 		</operationplan>
 		<operationplan>
-			<id>1004</id>
+			<reference>1004</reference>
 			<operation>
 				<name>Oper1</name>
 			</operation>
@@ -787,7 +787,7 @@
 			<feasible>false</feasible>
 		</operationplan>
 		<operationplan>
-			<id>3005</id>
+			<reference>3005</reference>
 			<operation xsi:type="operation_routing">
 				<name>Oper3</name>
 			</operation>
@@ -798,7 +798,7 @@
 			<feasible>false</feasible>
 		</operationplan>
 		<operationplan>
-			<id>3007</id>
+			<reference>3007</reference>
 			<operation xsi:type="operation_routing">
 				<name>Oper3</name>
 			</operation>
@@ -809,7 +809,7 @@
 			<feasible>false</feasible>
 		</operationplan>
 		<operationplan>
-			<id>3009</id>
+			<reference>3009</reference>
 			<operation xsi:type="operation_routing">
 				<name>Oper3</name>
 			</operation>
@@ -820,7 +820,7 @@
 			<feasible>false</feasible>
 		</operationplan>
 		<operationplan>
-			<id>5006</id>
+			<reference>5006</reference>
 			<operation>
 				<name>Oper3A</name>
 			</operation>
@@ -830,11 +830,11 @@
 			<status>confirmed</status>
 			<feasible>false</feasible>
 			<owner>
-				<id>3005</id>
+				<reference>3005</reference>
 			</owner>
 		</operationplan>
 		<operationplan>
-			<id>5007</id>
+			<reference>5007</reference>
 			<operation>
 				<name>Oper3A</name>
 			</operation>
@@ -844,11 +844,11 @@
 			<status>approved</status>
 			<feasible>false</feasible>
 			<owner>
-				<id>3007</id>
+				<reference>3007</reference>
 			</owner>
 		</operationplan>
 		<operationplan>
-			<id>5008</id>
+			<reference>5008</reference>
 			<operation>
 				<name>Oper3A</name>
 			</operation>
@@ -858,11 +858,11 @@
 			<status>approved</status>
 			<feasible>false</feasible>
 			<owner>
-				<id>3009</id>
+				<reference>3009</reference>
 			</owner>
 		</operationplan>
 		<operationplan>
-			<id>3006</id>
+			<reference>3006</reference>
 			<operation>
 				<name>Oper3B</name>
 			</operation>
@@ -872,11 +872,11 @@
 			<status>confirmed</status>
 			<feasible>false</feasible>
 			<owner>
-				<id>3005</id>
+				<reference>3005</reference>
 			</owner>
 		</operationplan>
 		<operationplan>
-			<id>3008</id>
+			<reference>3008</reference>
 			<operation>
 				<name>Oper3B</name>
 			</operation>
@@ -886,11 +886,11 @@
 			<status>approved</status>
 			<feasible>false</feasible>
 			<owner>
-				<id>3007</id>
+				<reference>3007</reference>
 			</owner>
 		</operationplan>
 		<operationplan>
-			<id>3010</id>
+			<reference>3010</reference>
 			<operation>
 				<name>Oper3B</name>
 			</operation>
@@ -900,11 +900,11 @@
 			<status>approved</status>
 			<feasible>false</feasible>
 			<owner>
-				<id>3009</id>
+				<reference>3009</reference>
 			</owner>
 		</operationplan>
 		<operationplan>
-			<id>5009</id>
+			<reference>5009</reference>
 			<operation>
 				<name>Oper3C</name>
 			</operation>
@@ -914,11 +914,11 @@
 			<status>confirmed</status>
 			<feasible>false</feasible>
 			<owner>
-				<id>3005</id>
+				<reference>3005</reference>
 			</owner>
 		</operationplan>
 		<operationplan>
-			<id>5010</id>
+			<reference>5010</reference>
 			<operation>
 				<name>Oper3C</name>
 			</operation>
@@ -928,11 +928,11 @@
 			<status>approved</status>
 			<feasible>false</feasible>
 			<owner>
-				<id>3007</id>
+				<reference>3007</reference>
 			</owner>
 		</operationplan>
 		<operationplan>
-			<id>5011</id>
+			<reference>5011</reference>
 			<operation>
 				<name>Oper3C</name>
 			</operation>
@@ -942,11 +942,11 @@
 			<status>approved</status>
 			<feasible>false</feasible>
 			<owner>
-				<id>3009</id>
+				<reference>3009</reference>
 			</owner>
 		</operationplan>
 		<operationplan>
-			<id>4005</id>
+			<reference>4005</reference>
 			<operation xsi:type="operation_alternate">
 				<name>Oper4</name>
 			</operation>
@@ -958,7 +958,7 @@
 			<ordertype>ALT</ordertype>
 		</operationplan>
 		<operationplan>
-			<id>4006</id>
+			<reference>4006</reference>
 			<operation xsi:type="operation_alternate">
 				<name>Oper4</name>
 			</operation>
@@ -970,7 +970,7 @@
 			<ordertype>ALT</ordertype>
 		</operationplan>
 		<operationplan>
-			<id>4008</id>
+			<reference>4008</reference>
 			<operation xsi:type="operation_alternate">
 				<name>Oper4</name>
 			</operation>
@@ -982,7 +982,7 @@
 			<ordertype>ALT</ordertype>
 		</operationplan>
 		<operationplan>
-			<id>5012</id>
+			<reference>5012</reference>
 			<operation>
 				<name>Oper4A</name>
 			</operation>
@@ -992,11 +992,11 @@
 			<status>confirmed</status>
 			<feasible>false</feasible>
 			<owner>
-				<id>4005</id>
+				<reference>4005</reference>
 			</owner>
 		</operationplan>
 		<operationplan>
-			<id>4010</id>
+			<reference>4010</reference>
 			<operation>
 				<name>Oper4A</name>
 			</operation>
@@ -1006,11 +1006,11 @@
 			<status>confirmed</status>
 			<feasible>false</feasible>
 			<owner>
-				<id>4008</id>
+				<reference>4008</reference>
 			</owner>
 		</operationplan>
 		<operationplan>
-			<id>4007</id>
+			<reference>4007</reference>
 			<operation>
 				<name>Oper4B</name>
 			</operation>
@@ -1020,11 +1020,11 @@
 			<status>confirmed</status>
 			<feasible>false</feasible>
 			<owner>
-				<id>4006</id>
+				<reference>4006</reference>
 			</owner>
 		</operationplan>
 		<operationplan>
-			<id>5001</id>
+			<reference>5001</reference>
 			<operation>
 				<name>Oper5</name>
 			</operation>
@@ -1035,7 +1035,7 @@
 			<feasible>false</feasible>
 		</operationplan>
 		<operationplan>
-			<id>5002</id>
+			<reference>5002</reference>
 			<operation>
 				<name>Oper5</name>
 			</operation>
@@ -1047,7 +1047,7 @@
 			<feasible>false</feasible>
 		</operationplan>
 		<operationplan>
-			<id>5003</id>
+			<reference>5003</reference>
 			<operation>
 				<name>Oper5</name>
 			</operation>
@@ -1059,7 +1059,7 @@
 			<feasible>false</feasible>
 		</operationplan>
 		<operationplan>
-			<id>5004</id>
+			<reference>5004</reference>
 			<operation>
 				<name>Oper5</name>
 			</operation>
@@ -1071,7 +1071,7 @@
 			<feasible>false</feasible>
 		</operationplan>
 		<operationplan>
-			<id>5005</id>
+			<reference>5005</reference>
 			<operation>
 				<name>Oper5</name>
 			</operation>
@@ -1085,7 +1085,7 @@
 			<feasible>false</feasible>
 		</operationplan>
 		<operationplan>
-			<id>5013</id>
+			<reference>5013</reference>
 			<operation xsi:type="operation_itemsupplier">
 				<name>Purchase In1 @ Loc from Component supplier</name>
 			</operation>
@@ -1105,7 +1105,7 @@
 			</supplier>
 		</operationplan>
 		<operationplan>
-			<id>5014</id>
+			<reference>5014</reference>
 			<operation xsi:type="operation_itemsupplier">
 				<name>Purchase In1 @ Loc from Component supplier</name>
 			</operation>
@@ -1124,7 +1124,7 @@
 			</supplier>
 		</operationplan>
 		<operationplan>
-			<id>5015</id>
+			<reference>5015</reference>
 			<operation xsi:type="operation_itemsupplier">
 				<name>Purchase In1 @ Loc from Component supplier</name>
 			</operation>
@@ -1143,7 +1143,7 @@
 			</supplier>
 		</operationplan>
 		<operationplan>
-			<id>5016</id>
+			<reference>5016</reference>
 			<operation xsi:type="operation_itemsupplier">
 				<name>Purchase In1 @ Loc from Component supplier</name>
 			</operation>
@@ -1162,7 +1162,7 @@
 			</supplier>
 		</operationplan>
 		<operationplan>
-			<id>5017</id>
+			<reference>5017</reference>
 			<operation xsi:type="operation_itemsupplier">
 				<name>Purchase In2 @ Loc from Component supplier</name>
 			</operation>
@@ -1182,7 +1182,7 @@
 			</supplier>
 		</operationplan>
 		<operationplan>
-			<id>5018</id>
+			<reference>5018</reference>
 			<operation xsi:type="operation_itemsupplier">
 				<name>Purchase In2 @ Loc from Component supplier</name>
 			</operation>
@@ -1201,7 +1201,7 @@
 			</supplier>
 		</operationplan>
 		<operationplan>
-			<id>5019</id>
+			<reference>5019</reference>
 			<operation xsi:type="operation_itemsupplier">
 				<name>Purchase In2 @ Loc from Component supplier</name>
 			</operation>
@@ -1220,7 +1220,7 @@
 			</supplier>
 		</operationplan>
 		<operationplan>
-			<id>5020</id>
+			<reference>5020</reference>
 			<operation xsi:type="operation_itemsupplier">
 				<name>Purchase In2 @ Loc from Component supplier</name>
 			</operation>
@@ -1239,7 +1239,7 @@
 			</supplier>
 		</operationplan>
 		<operationplan>
-			<id>5021</id>
+			<reference>5021</reference>
 			<operation xsi:type="operation_itemsupplier">
 				<name>Purchase In3 @ Loc from Component supplier</name>
 			</operation>
@@ -1258,7 +1258,7 @@
 			</supplier>
 		</operationplan>
 		<operationplan>
-			<id>5022</id>
+			<reference>5022</reference>
 			<operation xsi:type="operation_itemsupplier">
 				<name>Purchase In3 @ Loc from Component supplier</name>
 			</operation>
@@ -1277,7 +1277,7 @@
 			</supplier>
 		</operationplan>
 		<operationplan>
-			<id>5023</id>
+			<reference>5023</reference>
 			<operation xsi:type="operation_itemsupplier">
 				<name>Purchase In3 @ Loc from Component supplier</name>
 			</operation>
@@ -1296,7 +1296,7 @@
 			</supplier>
 		</operationplan>
 		<operationplan>
-			<id>5024</id>
+			<reference>5024</reference>
 			<operation xsi:type="operation_itemsupplier">
 				<name>Purchase In3A @ Loc from Component supplier</name>
 			</operation>
@@ -1315,7 +1315,7 @@
 			</supplier>
 		</operationplan>
 		<operationplan>
-			<id>5025</id>
+			<reference>5025</reference>
 			<operation xsi:type="operation_itemsupplier">
 				<name>Purchase In3A @ Loc from Component supplier</name>
 			</operation>
@@ -1334,7 +1334,7 @@
 			</supplier>
 		</operationplan>
 		<operationplan>
-			<id>5026</id>
+			<reference>5026</reference>
 			<operation xsi:type="operation_itemsupplier">
 				<name>Purchase In3A @ Loc from Component supplier</name>
 			</operation>
@@ -1353,7 +1353,7 @@
 			</supplier>
 		</operationplan>
 		<operationplan>
-			<id>5027</id>
+			<reference>5027</reference>
 			<operation xsi:type="operation_itemsupplier">
 				<name>Purchase In3B @ Loc from Component supplier</name>
 			</operation>
@@ -1372,7 +1372,7 @@
 			</supplier>
 		</operationplan>
 		<operationplan>
-			<id>5028</id>
+			<reference>5028</reference>
 			<operation xsi:type="operation_itemsupplier">
 				<name>Purchase In3B @ Loc from Component supplier</name>
 			</operation>
@@ -1391,7 +1391,7 @@
 			</supplier>
 		</operationplan>
 		<operationplan>
-			<id>5029</id>
+			<reference>5029</reference>
 			<operation xsi:type="operation_itemsupplier">
 				<name>Purchase In3B @ Loc from Component supplier</name>
 			</operation>
@@ -1410,7 +1410,7 @@
 			</supplier>
 		</operationplan>
 		<operationplan>
-			<id>5030</id>
+			<reference>5030</reference>
 			<operation xsi:type="operation_itemsupplier">
 				<name>Purchase In3C @ Loc from Component supplier</name>
 			</operation>
@@ -1429,7 +1429,7 @@
 			</supplier>
 		</operationplan>
 		<operationplan>
-			<id>5031</id>
+			<reference>5031</reference>
 			<operation xsi:type="operation_itemsupplier">
 				<name>Purchase In3C @ Loc from Component supplier</name>
 			</operation>
@@ -1448,7 +1448,7 @@
 			</supplier>
 		</operationplan>
 		<operationplan>
-			<id>5032</id>
+			<reference>5032</reference>
 			<operation xsi:type="operation_itemsupplier">
 				<name>Purchase In3C @ Loc from Component supplier</name>
 			</operation>
@@ -1467,7 +1467,7 @@
 			</supplier>
 		</operationplan>
 		<operationplan>
-			<id>5033</id>
+			<reference>5033</reference>
 			<operation xsi:type="operation_itemsupplier">
 				<name>Purchase In4 @ Loc from Component supplier</name>
 			</operation>
@@ -1486,7 +1486,7 @@
 			</supplier>
 		</operationplan>
 		<operationplan>
-			<id>5034</id>
+			<reference>5034</reference>
 			<operation xsi:type="operation_itemsupplier">
 				<name>Purchase In4 @ Loc from Component supplier</name>
 			</operation>
@@ -1505,7 +1505,7 @@
 			</supplier>
 		</operationplan>
 		<operationplan>
-			<id>5035</id>
+			<reference>5035</reference>
 			<operation xsi:type="operation_itemsupplier">
 				<name>Purchase In4 @ Loc from Component supplier</name>
 			</operation>
@@ -1524,7 +1524,7 @@
 			</supplier>
 		</operationplan>
 		<operationplan>
-			<id>5036</id>
+			<reference>5036</reference>
 			<operation xsi:type="operation_itemsupplier">
 				<name>Purchase In4A @ Loc from Component supplier</name>
 			</operation>
@@ -1543,7 +1543,7 @@
 			</supplier>
 		</operationplan>
 		<operationplan>
-			<id>5037</id>
+			<reference>5037</reference>
 			<operation xsi:type="operation_itemsupplier">
 				<name>Purchase In4A @ Loc from Component supplier</name>
 			</operation>
@@ -1562,7 +1562,7 @@
 			</supplier>
 		</operationplan>
 		<operationplan>
-			<id>5038</id>
+			<reference>5038</reference>
 			<operation xsi:type="operation_itemsupplier">
 				<name>Purchase In4B @ Loc from Component supplier</name>
 			</operation>
@@ -1581,7 +1581,6 @@
 			</supplier>
 		</operationplan>
 		<operationplan>
-			<id>5039</id>
 			<reference>MO1</reference>
 			<operation>
 				<name>Strange WIP sizes</name>
@@ -1592,7 +1591,6 @@
 			<status>confirmed</status>
 		</operationplan>
 		<operationplan>
-			<id>5040</id>
 			<reference>MO2</reference>
 			<operation>
 				<name>Strange WIP sizes</name>
@@ -1603,7 +1601,6 @@
 			<status>confirmed</status>
 		</operationplan>
 		<operationplan>
-			<id>5041</id>
 			<reference>MO3</reference>
 			<operation>
 				<name>Strange WIP sizes</name>

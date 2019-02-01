@@ -302,7 +302,7 @@
 	</demands>
 	<operationplans>
 		<operationplan>
-			<id>2</id>
+			<reference>1</reference>
 			<operation xsi:type="operation_itemdistribution">
 				<name>Ship In transit product from Source</name>
 				<origin>
@@ -326,7 +326,7 @@
 			</origin>
 		</operationplan>
 		<operationplan>
-			<id>3</id>
+			<reference>2</reference>
 			<operation xsi:type="operation_itemdistribution">
 				<name>Ship In transit product from Source to Destination</name>
 				<origin>
@@ -353,7 +353,7 @@
 			</origin>
 		</operationplan>
 		<operationplan>
-			<id>4</id>
+			<reference>3</reference>
 			<operation xsi:type="operation_itemdistribution">
 				<name>Ship In transit product to Destination</name>
 				<destination>
@@ -373,7 +373,7 @@
 			</location>
 		</operationplan>
 		<operationplan>
-			<id>5</id>
+			<reference>4</reference>
 			<operation xsi:type="operation_itemdistribution">
 				<name>Ship product A from Central WH to Local DC 2b</name>
 				<origin>

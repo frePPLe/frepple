@@ -1831,7 +1831,7 @@ class SetupEvent : public TimeLine<LoadPlan>::Event
   *    the operation hierarchies they belong to.
   */
 class OperationPlan
-  : public Object, public HasProblems, public HasSource, private Tree<unsigned long>::TreeNode
+  : public Object, public HasProblems, public HasSource, private Tree::TreeNode
 {
     friend class FlowPlan;
     friend class LoadPlan;
@@ -2003,6 +2003,11 @@ class OperationPlan
     /** Return the list of problems of this operationplan. */
     inline OperationPlan::ProblemIterator getProblems() const;
 
+    bool getActivated() const
+    {
+      return (flags & ACTIVATED) != 0;
+    }
+
     bool getConfirmed() const
     {
       return (flags & STATUS_CONFIRMED) != 0;
@@ -2058,16 +2063,24 @@ class OperationPlan
     static void deleteOperationPlans(Operation* o, bool deleteLocked=false);
 
     /** Update the status to CONFIRMED, or back to PROPOSED. */
-    virtual void setConfirmed(bool b);
+    void setConfirmed(bool b);
 
     /** Update the status to APPROVED, or back to PROPOSED. */
-    virtual void setApproved(bool b);
+    void setApproved(bool b);
 
     /** Update the status to PROPOSED, or back to APPROVED. */
-    virtual void setProposed(bool b);
+    void setProposed(bool b);
 
     /** Update the status to PROPOSED, or back to APPROVED. */
-    virtual void setClosed(bool b);
+    void setClosed(bool b);
+
+    void setActivated(bool b)
+    {
+      if (b)
+        flags |= ACTIVATED;
+      else
+        flags &= ~ACTIVATED;
+    }
 
     /** Update flag which allow/disallows material consumption. */
     void setConsumeMaterial(bool b)
@@ -2284,28 +2297,28 @@ class OperationPlan
       * This method is declared as constant. But actually, it can still update
       * the identifier field if it is wasn't set before.
       */
-    unsigned long getIdentifier() const
+      /** Return the external identifier. */
+    string getReference() const
     {
-      if (getName() == ULONG_MAX)
-        const_cast<OperationPlan*>(this)->assignIdentifier(); // Lazy generation
+      if (getName().empty())
+      {
+        const_cast<OperationPlan*>(this)->assignReference(); // Lazy generation
+        const_cast<OperationPlan*>(this)->setActivated(true);
+      }
       return getName();
     }
 
-    void setIdentifier(unsigned long i)
+    /** Update the external identifier. */
+    void setReference(const string& s)
     {
-      setName(i);
-      assignIdentifier();
+      setName(s);
+      assignReference();
+      setActivated(true);
     }
 
-    void setRawIdentifier(unsigned long i)
+    void setRawReference(const string& s)
     {
-      setName(i);
-    }
-
-    /** Return the identifier. This method can return the lazy identifiers 0 or U_LONGMAX. */
-    unsigned long getRawIdentifier() const
-    {
-      return getName();
+      setName(s);
     }
 
     /** Update the next-id number.
@@ -2321,18 +2334,6 @@ class OperationPlan
     static unsigned long getIDCounter()
     {
       return counterMin;
-    }
-
-    /** Return the external identifier. */
-    string getReference() const
-    {
-      return ref;
-    }
-
-    /** Update the external identifier. */
-    void setReference(const string& s)
-    {
-      ref = s;
     }
 
     /** Return the end date. */
@@ -2472,7 +2473,7 @@ class OperationPlan
       * The method is O(1), i.e. constant time regardless of the model size,
       * when the parameter passed is bigger than the operationplan counter.
       */
-    static OperationPlan* findId(unsigned long l);
+    static OperationPlan* findReference(string const& l);
 
     /** Problem detection is actually done by the Operation class. That class
       * actually "delegates" the responsability to this class, for efficiency.
@@ -2543,8 +2544,8 @@ class OperationPlan
 
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
-      m->addUnsignedLongField<Cls>(Tags::id, &Cls::getIdentifier, &Cls::setIdentifier, 0, MANDATORY);
-      m->addStringField<Cls>(Tags::reference, &Cls::getReference, &Cls::setReference);
+      m->addStringField<Cls>(Tags::reference, &Cls::getReference, &Cls::setReference, "", MANDATORY);
+      m->addStringField<Cls>(Tags::id, &Cls::getReference, &Cls::setReference, "", DONT_SERIALIZE);
       m->addPointerField<Cls, Operation>(
         Tags::operation, &Cls::getOperation, &Cls::setOperation, 
         BASE + PLAN + WRITE_REFERENCE_DFT + WRITE_OBJECT_SVC + WRITE_HIDDEN
@@ -2605,7 +2606,7 @@ class OperationPlan
 
   private:
     /** A tree structure with all operationplans to allow a fast lookup by id. */
-    static Tree<unsigned long> st;
+    static Tree st;
 
     /** Private copy constructor.<br>
       * It is used in the public copy constructor to make a deep clone of suboperationplans.
@@ -2627,7 +2628,7 @@ class OperationPlan
       * A unique value for each operationplan is created lazily when the
       * method getIdentifier() is called.
       */
-    bool assignIdentifier();
+    bool assignReference();
 
     /** Recursive auxilary function for getTotalFlow.
       * @ see getTotalFlow
@@ -2667,7 +2668,7 @@ class OperationPlan
       * own override of the createOperationPlan method.
       * @see Operation::createOperationPlan
       */
-    OperationPlan() : Tree<unsigned long>::TreeNode(0)
+    OperationPlan()
     {
       initType(metadata);
     }
@@ -2684,6 +2685,7 @@ class OperationPlan
     static const unsigned short PRODUCE_MATERIAL = 16;
     static const unsigned short CONSUME_CAPACITY = 32;
     static const unsigned short FEASIBLE = 64;
+    static const unsigned short ACTIVATED = 128;
 
     /** Counter of OperationPlans, which is used to automatically assign a
       * unique identifier for each operationplan.<br>
@@ -2693,6 +2695,7 @@ class OperationPlan
       * @see assignIdentifier()
       */
     static unsigned long counterMin;
+    static string referenceMax;
 
     /** Flag controlling where setup time verification should be performed. */
     static bool propagatesetups;
@@ -2929,7 +2932,7 @@ class Operation : public HasName<Operation>,
     /** This is the factory method which creates all operationplans of the
       * operation. */
     OperationPlan* createOperationPlan(double, Date,
-        Date, Demand* = nullptr, OperationPlan* = nullptr, unsigned long = 0,
+        Date, Demand* = nullptr, OperationPlan* = nullptr,
         bool makeflowsloads=true, bool roundDown=true) const;
 
     /** Returns true for operation types that own suboperations. */
@@ -3360,15 +3363,15 @@ class Operation : public HasName<Operation>,
       return tmp;
     }
 
-    /** Empty list of operations.<br>
-    * For operation types which have no suboperations this list is
-    * used as the list of suboperations.
-    */
+    /** Empty list of operations.
+      * For operation types which have no suboperations this list is
+      * used as the list of suboperations.
+      */
     static Operationlist nosubOperations;
 
   protected:
     void initOperationPlan(OperationPlan*, double,
-        const Date&, const Date&, Demand*, OperationPlan*, unsigned long,
+        const Date&, const Date&, Demand*, OperationPlan*,
         bool = true, bool=true) const;
 
     typedef tuple<Resource*, SetupMatrixRule*, PooledString> SetupInfo;
@@ -3471,6 +3474,8 @@ inline ostream & operator << (ostream & os, const OperationPlan* o)
       os << ", approved)";
     else if (o->getConfirmed())
       os << ", confirmed)";
+    else if (o->getClosed())
+      os << ", closed)";
     else
       os << ")";
   }
@@ -9741,7 +9746,7 @@ class CommandCreateOperationPlan : public Command
      OperationPlan* ow=nullptr, bool makeflowsloads=true, bool roundDown=true)
     {
       opplan = o ?
-          o->createOperationPlan(q, d1, d2, l, ow, 0, makeflowsloads, roundDown)
+          o->createOperationPlan(q, d1, d2, l, ow, makeflowsloads, roundDown)
           : nullptr;
     }
 

@@ -5,7 +5,7 @@
 	<name>locA</name>
 </location>
 <operationplan>
-	<id>19</id>
+	<reference>18</reference>
 	<operation xsi:type="operation_routing">
 		<name>make item</name>
 	</operation>

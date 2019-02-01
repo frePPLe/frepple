@@ -199,7 +199,7 @@
 	</demands>
 	<operationplans>
 		<operationplan>
-			<id>2</id>
+			<reference>1</reference>
 			<operation>
 				<name>delivery end item</name>
 			</operation>
@@ -211,7 +211,7 @@
 			<quantity>10</quantity>
 		</operationplan>
 		<operationplan>
-			<id>3</id>
+			<reference>2</reference>
 			<operation>
 				<name>delivery end item</name>
 			</operation>
@@ -223,7 +223,7 @@
 			<quantity>10</quantity>
 		</operationplan>
 		<operationplan>
-			<id>4</id>
+			<reference>3</reference>
 			<operation>
 				<name>make end item</name>
 			</operation>
@@ -232,7 +232,7 @@
 			<quantity>10</quantity>
 		</operationplan>
 		<operationplan>
-			<id>5</id>
+			<reference>4</reference>
 			<operation>
 				<name>make end item</name>
 			</operation>

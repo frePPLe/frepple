@@ -265,7 +265,7 @@
 	</demands>
 	<operationplans>
 		<operationplan>
-			<id>12</id>
+			<reference>11</reference>
 			<operation>
 				<name>delivery end item</name>
 			</operation>
@@ -277,7 +277,7 @@
 			<quantity>10</quantity>
 		</operationplan>
 		<operationplan>
-			<id>14</id>
+			<reference>13</reference>
 			<operation>
 				<name>delivery end item</name>
 			</operation>
@@ -289,7 +289,7 @@
 			<quantity>10</quantity>
 		</operationplan>
 		<operationplan>
-			<id>15</id>
+			<reference>14</reference>
 			<operation>
 				<name>delivery end item</name>
 			</operation>
@@ -301,7 +301,7 @@
 			<quantity>10</quantity>
 		</operationplan>
 		<operationplan>
-			<id>16</id>
+			<reference>15</reference>
 			<operation xsi:type="operation_routing">
 				<name>make item</name>
 			</operation>
@@ -309,11 +309,11 @@
 			<end>2009-02-15T09:00:00</end>
 			<quantity>10</quantity>
 			<owner>
-				<id>10</id>
+				<reference>9</reference>
 			</owner>
 		</operationplan>
 		<operationplan>
-			<id>17</id>
+			<reference>16</reference>
 			<operation xsi:type="operation_routing">
 				<name>make item</name>
 			</operation>
@@ -321,11 +321,11 @@
 			<end>2009-02-22T09:00:00</end>
 			<quantity>10</quantity>
 			<owner>
-				<id>11</id>
+				<reference>10</reference>
 			</owner>
 		</operationplan>
 		<operationplan>
-			<id>18</id>
+			<reference>17</reference>
 			<operation xsi:type="operation_routing">
 				<name>make item</name>
 			</operation>
@@ -333,11 +333,11 @@
 			<end>2009-03-01T09:00:00</end>
 			<quantity>10</quantity>
 			<owner>
-				<id>13</id>
+				<reference>12</reference>
 			</owner>
 		</operationplan>
 		<operationplan>
-			<id>19</id>
+			<reference>18</reference>
 			<operation xsi:type="operation_routing">
 				<name>make item</name>
 			</operation>
@@ -347,7 +347,7 @@
 			<status>confirmed</status>
 		</operationplan>
 		<operationplan>
-			<id>2</id>
+			<reference>1</reference>
 			<operation>
 				<name>make item - step 1</name>
 			</operation>
@@ -355,11 +355,11 @@
 			<end>2009-02-12T09:00:00</end>
 			<quantity>10</quantity>
 			<owner>
-				<id>16</id>
+				<reference>15</reference>
 			</owner>
 		</operationplan>
 		<operationplan>
-			<id>4</id>
+			<reference>3</reference>
 			<operation>
 				<name>make item - step 1</name>
 			</operation>
@@ -367,11 +367,11 @@
 			<end>2009-02-19T09:00:00</end>
 			<quantity>10</quantity>
 			<owner>
-				<id>17</id>
+				<reference>16</reference>
 			</owner>
 		</operationplan>
 		<operationplan>
-			<id>6</id>
+			<reference>5</reference>
 			<operation>
 				<name>make item - step 1</name>
 			</operation>
@@ -379,11 +379,11 @@
 			<end>2009-02-26T09:00:00</end>
 			<quantity>10</quantity>
 			<owner>
-				<id>18</id>
+				<reference>17</reference>
 			</owner>
 		</operationplan>
 		<operationplan>
-			<id>8</id>
+			<reference>7</reference>
 			<operation>
 				<name>make item - step 1</name>
 			</operation>
@@ -392,11 +392,11 @@
 			<quantity>9</quantity>
 			<status>confirmed</status>
 			<owner>
-				<id>19</id>
+				<reference>18</reference>
 			</owner>
 		</operationplan>
 		<operationplan>
-			<id>3</id>
+			<reference>2</reference>
 			<operation>
 				<name>make item - step 2</name>
 			</operation>
@@ -404,11 +404,11 @@
 			<end>2009-02-15T09:00:00</end>
 			<quantity>10</quantity>
 			<owner>
-				<id>16</id>
+				<reference>15</reference>
 			</owner>
 		</operationplan>
 		<operationplan>
-			<id>5</id>
+			<reference>4</reference>
 			<operation>
 				<name>make item - step 2</name>
 			</operation>
@@ -416,11 +416,11 @@
 			<end>2009-02-22T09:00:00</end>
 			<quantity>10</quantity>
 			<owner>
-				<id>17</id>
+				<reference>16</reference>
 			</owner>
 		</operationplan>
 		<operationplan>
-			<id>7</id>
+			<reference>6</reference>
 			<operation>
 				<name>make item - step 2</name>
 			</operation>
@@ -428,11 +428,11 @@
 			<end>2009-03-01T09:00:00</end>
 			<quantity>10</quantity>
 			<owner>
-				<id>18</id>
+				<reference>17</reference>
 			</owner>
 		</operationplan>
 		<operationplan>
-			<id>9</id>
+			<reference>8</reference>
 			<operation>
 				<name>make item - step 2</name>
 			</operation>
@@ -441,11 +441,11 @@
 			<quantity>9</quantity>
 			<status>confirmed</status>
 			<owner>
-				<id>19</id>
+				<reference>18</reference>
 			</owner>
 		</operationplan>
 		<operationplan>
-			<id>10</id>
+			<reference>9</reference>
 			<operation xsi:type="operation_alternate">
 				<name>make or buy item</name>
 			</operation>
@@ -455,7 +455,7 @@
 			<ordertype>ALT</ordertype>
 		</operationplan>
 		<operationplan>
-			<id>11</id>
+			<reference>10</reference>
 			<operation xsi:type="operation_alternate">
 				<name>make or buy item</name>
 			</operation>
@@ -465,7 +465,7 @@
 			<ordertype>ALT</ordertype>
 		</operationplan>
 		<operationplan>
-			<id>13</id>
+			<reference>12</reference>
 			<operation xsi:type="operation_alternate">
 				<name>make or buy item</name>
 			</operation>

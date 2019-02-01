@@ -4400,7 +4400,7 @@ class ThreadGroup : public NonCopyable
   * with intrusive tree nodes.
   * @see HasName
   */
-template <class T> class Tree : public NonCopyable
+class Tree : public NonCopyable
 {
   public:
     /** The algorithm assigns a color to each node in the tree. The color is
@@ -4425,12 +4425,12 @@ template <class T> class Tree : public NonCopyable
 
         /** Returns the name of this node. This name is used to sort the
           * nodes. */
-        inline T getName() const
+        inline string getName() const
         {
           return nm;
         }
 
-        inline void setName(const T& i)
+        inline void setName(const string& i)
         {
           nm = i;
         }
@@ -4451,9 +4451,6 @@ template <class T> class Tree : public NonCopyable
 
         /** Default constructor. */
         TreeNode() {}
-
-        /** Default constructor. */
-        TreeNode(T d) : nm(d) {}
 
         /** Return a pointer to the node following this one. */
         TreeNode* increment() const
@@ -4504,7 +4501,7 @@ template <class T> class Tree : public NonCopyable
 
       private:
         /** Name. */
-        T nm;
+        string nm;
 
         /** Pointer to the parent node. */
         TreeNode* parent = nullptr;
@@ -4563,18 +4560,18 @@ template <class T> class Tree : public NonCopyable
       return header.parent == nullptr;
     }
 
-    static inline int compare(const T& a, const T& b)
+    static inline int compare(const string& a, const string& b)
     {
-      throw LogicException("Use a template specialization to implement this method");
+      return a.compare(b);
     }
 
-    static inline bool isnull(const T& a)
+    static inline bool isnull(const string& a)
     {
-      throw LogicException("Use a template specialization to implement this method");
+      return a.empty();
     }
 
     /** Renames an existing node, and adjusts its position in the tree. */
-    void rename(TreeNode* obj, const T& newname, TreeNode* hint = nullptr)
+    void rename(TreeNode* obj, const string& newname, TreeNode* hint = nullptr)
     {
       if (obj->nm == newname)
         return;
@@ -4833,10 +4830,10 @@ template <class T> class Tree : public NonCopyable
       * time (mainly because of the string comparisons), and has been
       * optimized as much as possible.
       */
-    TreeNode* find(const T& k) const
+    TreeNode* find(const string& k) const
     {
       int comp;
-      for (TreeNode* x = header.parent; x; x = comp<0 ? x->left : x->right)
+      for (auto x = header.parent; x; x = comp<0 ? x->left : x->right)
       {
         comp = compare(k, x->nm);
         if (!comp)
@@ -4851,22 +4848,29 @@ template <class T> class Tree : public NonCopyable
       * The second argument is a boolean that is set to true when the
       * element is found in the list.
       */
-    TreeNode* findLowerBound(const T& k, bool* f) const
+    TreeNode* findLowerBound(const string& k, bool* f) const
     {
-      TreeNode* lower = end();
+      auto lower = end();
       for (TreeNode* x = header.parent; x;)
       {
         int comp = compare(k, x->nm);
         if (!comp)
         {
           // Found
-          if (f) *f = true;
+          if (f)
+            *f = true;
           return x;
         }
-        if (comp<0) x = x->left;
-        else lower = x, x = x->right;
+        if (comp<0)
+          x = x->left;
+        else
+        {
+          lower = x;
+          x = x->right;
+        }
       }
-      if (f) *f = false;
+      if (f)
+        *f = false;
       return lower;
     }
 
@@ -5099,30 +5103,6 @@ template <class T> class Tree : public NonCopyable
       */
     bool clearOnDestruct;
 };
-
-
-template<> inline int Tree<string>::compare(const string& a, const string& b)
-{
-  return a.compare(b);
-}
-
-
-template<> inline bool Tree<string>::isnull(const string& a)
-{
-  return a.empty();
-}
-
-
-template<> inline int Tree<unsigned long>::compare(const unsigned long& a, const unsigned long& b)
-{
-  return a - b;
-}
-
-
-template<> inline bool Tree<unsigned long>::isnull(const unsigned long& a)
-{
-  return a == 0;
-}
 
 
 //
@@ -5900,12 +5880,12 @@ class DataInput
   *   - A hashtable (keyed on the name) is maintained as a container with
   *     all active instances.
   */
-template <class T> class HasName : public NonCopyable, public Tree<string>::TreeNode, public Object
+template <class T> class HasName : public NonCopyable, public Tree::TreeNode, public Object
 {
   private:
     /** Maintains a global list of all created entities. The list is keyed
       * by the name. */
-    static Tree<string> st;
+    static Tree st;
     typedef T* type;
 
   public:
@@ -5918,7 +5898,7 @@ template <class T> class HasName : public NonCopyable, public Tree<string>::Tree
     {
       public:
         /** Constructor. */
-        iterator(Tree<string>::TreeNode* x) : node(x) {}
+        iterator(Tree::TreeNode* x) : node(x) {}
 
         /** Copy constructor. */
         iterator(const iterator& it)
@@ -5941,7 +5921,7 @@ template <class T> class HasName : public NonCopyable, public Tree<string>::Tree
         /** Return current value and advance the iterator. */
         T* next()
         {
-          if (node->getColor() == Tree<string>::head)
+          if (node->getColor() == Tree::head)
             return nullptr;
           T* tmp = static_cast<T*>(node);
           node = node->increment();
@@ -5960,7 +5940,7 @@ template <class T> class HasName : public NonCopyable, public Tree<string>::Tree
           * element. */
         iterator operator++(int)
         {
-          Tree<string>::TreeNode* tmp = node;
+          Tree::TreeNode* tmp = node;
           node = node->increment();
           return tmp;
         }
@@ -5977,7 +5957,7 @@ template <class T> class HasName : public NonCopyable, public Tree<string>::Tree
           * element. */
         iterator operator--(int)
         {
-          Tree<string>::TreeNode* tmp = node;
+          Tree::TreeNode* tmp = node;
           node = node->decrement();
           return tmp;
         }
@@ -5995,7 +5975,7 @@ template <class T> class HasName : public NonCopyable, public Tree<string>::Tree
         }
 
       private:
-        Tree<string>::TreeNode* node;
+        Tree::TreeNode* node;
     };
 
     /** Returns a STL-like iterator to the end of the entity list. */
@@ -6081,7 +6061,7 @@ template <class T> class HasName : public NonCopyable, public Tree<string>::Tree
       * pointer is returned. */
     static T* find(const string& k)
     {
-      Tree<string>::TreeNode *i = st.find(k);
+      Tree::TreeNode *i = st.find(k);
       return (i!=st.end() ? static_cast<T*>(i) : nullptr);
     }
 
@@ -6092,7 +6072,7 @@ template <class T> class HasName : public NonCopyable, public Tree<string>::Tree
       */
     static T* findLowerBound(const string& k, bool *f = nullptr)
     {
-      Tree<string>::TreeNode *i = st.findLowerBound(k, f);
+      Tree::TreeNode *i = st.findLowerBound(k, f);
       return (i!=st.end() ? static_cast<T*>(i) : nullptr);
     }
 
@@ -6226,7 +6206,7 @@ template <class T> class HasName : public NonCopyable, public Tree<string>::Tree
       const DataValue* val = k.get(Tags::name);
       if (!val)
         return nullptr;
-      Tree<string>::TreeNode *i = st.find(val->getString());
+      Tree::TreeNode *i = st.find(val->getString());
       return (i!=st.end() ? static_cast<Object*>(static_cast<T*>(i)) : nullptr);
     }
 };

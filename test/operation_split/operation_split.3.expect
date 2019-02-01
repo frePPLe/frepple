@@ -998,7 +998,7 @@
 	</demands>
 	<operationplans>
 		<operationplan>
-			<id>2</id>
+			<reference>1</reference>
 			<operation xsi:type="operation_itemsupplier">
 				<name>Purchase component 1 for option A @ location 1 from My supplier</name>
 			</operation>
@@ -1018,7 +1018,7 @@
 			</supplier>
 		</operationplan>
 		<operationplan>
-			<id>3</id>
+			<reference>2</reference>
 			<operation xsi:type="operation_itemsupplier">
 				<name>Purchase component 1 for option B @ location 1 from My supplier</name>
 			</operation>
@@ -1038,7 +1038,7 @@
 			</supplier>
 		</operationplan>
 		<operationplan>
-			<id>4</id>
+			<reference>3</reference>
 			<operation xsi:type="operation_itemsupplier">
 				<name>Purchase component 1 for option C @ location 1 from My supplier</name>
 			</operation>
@@ -1058,7 +1058,7 @@
 			</supplier>
 		</operationplan>
 		<operationplan>
-			<id>5</id>
+			<reference>4</reference>
 			<operation xsi:type="operation_itemsupplier">
 				<name>Purchase component 2 for option A @ location 2 from My supplier</name>
 			</operation>
@@ -1078,7 +1078,7 @@
 			</supplier>
 		</operationplan>
 		<operationplan>
-			<id>6</id>
+			<reference>5</reference>
 			<operation xsi:type="operation_itemsupplier">
 				<name>Purchase component 2 for option B @ location 2 from My supplier</name>
 			</operation>
@@ -1098,7 +1098,7 @@
 			</supplier>
 		</operationplan>
 		<operationplan>
-			<id>7</id>
+			<reference>6</reference>
 			<operation xsi:type="operation_itemsupplier">
 				<name>Purchase component 2 for option C @ location 2 from My supplier</name>
 			</operation>
@@ -1118,7 +1118,7 @@
 			</supplier>
 		</operationplan>
 		<operationplan>
-			<id>8</id>
+			<reference>7</reference>
 			<operation xsi:type="operation_itemsupplier">
 				<name>Purchase component 3 for option A @ location 3 from My supplier</name>
 			</operation>
@@ -1137,7 +1137,7 @@
 			</supplier>
 		</operationplan>
 		<operationplan>
-			<id>9</id>
+			<reference>8</reference>
 			<operation xsi:type="operation_itemsupplier">
 				<name>Purchase component 3 for option B @ location 3 from My supplier</name>
 			</operation>
@@ -1156,7 +1156,7 @@
 			</supplier>
 		</operationplan>
 		<operationplan>
-			<id>10</id>
+			<reference>9</reference>
 			<operation xsi:type="operation_itemsupplier">
 				<name>Purchase component 3 for option B @ location 3 from My supplier</name>
 			</operation>
@@ -1175,7 +1175,7 @@
 			</supplier>
 		</operationplan>
 		<operationplan>
-			<id>11</id>
+			<reference>10</reference>
 			<operation xsi:type="operation_itemsupplier">
 				<name>Purchase component 3 for option B @ location 3 from My supplier</name>
 			</operation>
@@ -1194,7 +1194,7 @@
 			</supplier>
 		</operationplan>
 		<operationplan>
-			<id>12</id>
+			<reference>11</reference>
 			<operation xsi:type="operation_itemsupplier">
 				<name>Purchase component 3 for option B @ location 3 from My supplier</name>
 			</operation>
@@ -1213,7 +1213,7 @@
 			</supplier>
 		</operationplan>
 		<operationplan>
-			<id>13</id>
+			<reference>12</reference>
 			<operation xsi:type="operation_itemsupplier">
 				<name>Purchase component 3 for option B @ location 3 from My supplier</name>
 			</operation>
@@ -1232,7 +1232,7 @@
 			</supplier>
 		</operationplan>
 		<operationplan>
-			<id>14</id>
+			<reference>13</reference>
 			<operation xsi:type="operation_itemsupplier">
 				<name>Purchase component 3 for option C @ location 3 from My supplier</name>
 			</operation>
@@ -1251,7 +1251,7 @@
 			</supplier>
 		</operationplan>
 		<operationplan>
-			<id>15</id>
+			<reference>14</reference>
 			<operation xsi:type="operation_itemsupplier">
 				<name>Purchase component 3 for option C @ location 3 from My supplier</name>
 			</operation>
@@ -1270,7 +1270,7 @@
 			</supplier>
 		</operationplan>
 		<operationplan>
-			<id>16</id>
+			<reference>15</reference>
 			<operation xsi:type="operation_itemsupplier">
 				<name>Purchase component 3 for option C @ location 3 from My supplier</name>
 			</operation>
@@ -1289,7 +1289,7 @@
 			</supplier>
 		</operationplan>
 		<operationplan>
-			<id>17</id>
+			<reference>16</reference>
 			<operation xsi:type="operation_itemsupplier">
 				<name>Purchase component 3 for option C @ location 3 from My supplier</name>
 			</operation>
@@ -1308,7 +1308,7 @@
 			</supplier>
 		</operationplan>
 		<operationplan>
-			<id>18</id>
+			<reference>17</reference>
 			<operation xsi:type="operation_itemsupplier">
 				<name>Purchase component 3 for option C @ location 3 from My supplier</name>
 			</operation>
@@ -1327,7 +1327,7 @@
 			</supplier>
 		</operationplan>
 		<operationplan>
-			<id>19</id>
+			<reference>18</reference>
 			<operation xsi:type="operation_itemsupplier">
 				<name>Purchase component 4 for option A @ location 4 from My supplier</name>
 			</operation>
@@ -1347,7 +1347,7 @@
 			</supplier>
 		</operationplan>
 		<operationplan>
-			<id>20</id>
+			<reference>19</reference>
 			<operation xsi:type="operation_itemsupplier">
 				<name>Purchase component 4 for option B @ location 4 from My supplier</name>
 			</operation>
@@ -1367,7 +1367,7 @@
 			</supplier>
 		</operationplan>
 		<operationplan>
-			<id>21</id>
+			<reference>20</reference>
 			<operation xsi:type="operation_itemsupplier">
 				<name>Purchase component 4 for option C @ location 4 from My supplier</name>
 			</operation>
@@ -1387,7 +1387,7 @@
 			</supplier>
 		</operationplan>
 		<operationplan>
-			<id>22</id>
+			<reference>21</reference>
 			<operation xsi:type="operation_delivery">
 				<name>Ship item 1 @ location 1</name>
 				<buffer>
@@ -1409,7 +1409,7 @@
 			</location>
 		</operationplan>
 		<operationplan>
-			<id>23</id>
+			<reference>22</reference>
 			<operation xsi:type="operation_delivery">
 				<name>Ship item 2 @ location 2</name>
 				<buffer>
@@ -1431,7 +1431,7 @@
 			</location>
 		</operationplan>
 		<operationplan>
-			<id>24</id>
+			<reference>23</reference>
 			<operation xsi:type="operation_delivery">
 				<name>Ship item 3 @ location 3</name>
 				<buffer>
@@ -1453,7 +1453,7 @@
 			</location>
 		</operationplan>
 		<operationplan>
-			<id>25</id>
+			<reference>24</reference>
 			<operation xsi:type="operation_delivery">
 				<name>Ship item 3 @ location 3</name>
 				<buffer>
@@ -1475,7 +1475,7 @@
 			</location>
 		</operationplan>
 		<operationplan>
-			<id>26</id>
+			<reference>25</reference>
 			<operation xsi:type="operation_delivery">
 				<name>Ship item 3 @ location 3</name>
 				<buffer>
@@ -1497,7 +1497,7 @@
 			</location>
 		</operationplan>
 		<operationplan>
-			<id>27</id>
+			<reference>26</reference>
 			<operation xsi:type="operation_delivery">
 				<name>Ship item 3 @ location 3</name>
 				<buffer>
@@ -1519,7 +1519,7 @@
 			</location>
 		</operationplan>
 		<operationplan>
-			<id>28</id>
+			<reference>27</reference>
 			<operation xsi:type="operation_delivery">
 				<name>Ship item 3 @ location 3</name>
 				<buffer>
@@ -1541,7 +1541,7 @@
 			</location>
 		</operationplan>
 		<operationplan>
-			<id>29</id>
+			<reference>28</reference>
 			<operation xsi:type="operation_delivery">
 				<name>Ship item 4 @ location 4</name>
 				<buffer>
@@ -1563,7 +1563,7 @@
 			</location>
 		</operationplan>
 		<operationplan>
-			<id>30</id>
+			<reference>29</reference>
 			<operation xsi:type="operation_split">
 				<name>make item 1</name>
 			</operation>
@@ -1573,7 +1573,7 @@
 			<feasible>false</feasible>
 		</operationplan>
 		<operationplan>
-			<id>31</id>
+			<reference>30</reference>
 			<operation>
 				<name>make item 1 option A</name>
 			</operation>
@@ -1582,11 +1582,11 @@
 			<quantity>15</quantity>
 			<feasible>false</feasible>
 			<owner>
-				<id>30</id>
+				<reference>29</reference>
 			</owner>
 		</operationplan>
 		<operationplan>
-			<id>32</id>
+			<reference>31</reference>
 			<operation>
 				<name>make item 1 option B</name>
 			</operation>
@@ -1595,11 +1595,11 @@
 			<quantity>35</quantity>
 			<feasible>false</feasible>
 			<owner>
-				<id>30</id>
+				<reference>29</reference>
 			</owner>
 		</operationplan>
 		<operationplan>
-			<id>33</id>
+			<reference>32</reference>
 			<operation>
 				<name>make item 1 option C</name>
 			</operation>
@@ -1608,11 +1608,11 @@
 			<quantity>7</quantity>
 			<feasible>false</feasible>
 			<owner>
-				<id>30</id>
+				<reference>29</reference>
 			</owner>
 		</operationplan>
 		<operationplan>
-			<id>34</id>
+			<reference>33</reference>
 			<operation xsi:type="operation_split">
 				<name>make item 2</name>
 			</operation>
@@ -1622,7 +1622,7 @@
 			<feasible>false</feasible>
 		</operationplan>
 		<operationplan>
-			<id>35</id>
+			<reference>34</reference>
 			<operation>
 				<name>make item 2 option A</name>
 			</operation>
@@ -1631,11 +1631,11 @@
 			<quantity>30</quantity>
 			<feasible>false</feasible>
 			<owner>
-				<id>34</id>
+				<reference>33</reference>
 			</owner>
 		</operationplan>
 		<operationplan>
-			<id>36</id>
+			<reference>35</reference>
 			<operation>
 				<name>make item 2 option B</name>
 			</operation>
@@ -1644,11 +1644,11 @@
 			<quantity>35</quantity>
 			<feasible>false</feasible>
 			<owner>
-				<id>34</id>
+				<reference>33</reference>
 			</owner>
 		</operationplan>
 		<operationplan>
-			<id>37</id>
+			<reference>36</reference>
 			<operation>
 				<name>make item 2 option C</name>
 			</operation>
@@ -1657,11 +1657,11 @@
 			<quantity>35</quantity>
 			<feasible>false</feasible>
 			<owner>
-				<id>34</id>
+				<reference>33</reference>
 			</owner>
 		</operationplan>
 		<operationplan>
-			<id>38</id>
+			<reference>37</reference>
 			<operation xsi:type="operation_split">
 				<name>make item 3</name>
 			</operation>
@@ -1670,7 +1670,7 @@
 			<quantity>100</quantity>
 		</operationplan>
 		<operationplan>
-			<id>39</id>
+			<reference>38</reference>
 			<operation xsi:type="operation_split">
 				<name>make item 3</name>
 			</operation>
@@ -1679,7 +1679,7 @@
 			<quantity>100</quantity>
 		</operationplan>
 		<operationplan>
-			<id>40</id>
+			<reference>39</reference>
 			<operation xsi:type="operation_split">
 				<name>make item 3</name>
 			</operation>
@@ -1688,7 +1688,7 @@
 			<quantity>100</quantity>
 		</operationplan>
 		<operationplan>
-			<id>41</id>
+			<reference>40</reference>
 			<operation xsi:type="operation_split">
 				<name>make item 3</name>
 			</operation>
@@ -1697,7 +1697,7 @@
 			<quantity>100</quantity>
 		</operationplan>
 		<operationplan>
-			<id>42</id>
+			<reference>41</reference>
 			<operation xsi:type="operation_split">
 				<name>make item 3</name>
 			</operation>
@@ -1706,7 +1706,7 @@
 			<quantity>100</quantity>
 		</operationplan>
 		<operationplan>
-			<id>43</id>
+			<reference>42</reference>
 			<operation>
 				<name>make item 3 option A</name>
 			</operation>
@@ -1714,11 +1714,11 @@
 			<end>2014-06-26T00:00:00</end>
 			<quantity>30</quantity>
 			<owner>
-				<id>38</id>
+				<reference>37</reference>
 			</owner>
 		</operationplan>
 		<operationplan>
-			<id>44</id>
+			<reference>43</reference>
 			<operation>
 				<name>make item 3 option B</name>
 			</operation>
@@ -1726,11 +1726,11 @@
 			<end>2014-07-01T00:00:00</end>
 			<quantity>35</quantity>
 			<owner>
-				<id>38</id>
+				<reference>37</reference>
 			</owner>
 		</operationplan>
 		<operationplan>
-			<id>45</id>
+			<reference>44</reference>
 			<operation>
 				<name>make item 3 option B</name>
 			</operation>
@@ -1738,11 +1738,11 @@
 			<end>2014-08-01T00:00:00</end>
 			<quantity>50</quantity>
 			<owner>
-				<id>39</id>
+				<reference>38</reference>
 			</owner>
 		</operationplan>
 		<operationplan>
-			<id>46</id>
+			<reference>45</reference>
 			<operation>
 				<name>make item 3 option B</name>
 			</operation>
@@ -1750,11 +1750,11 @@
 			<end>2014-09-01T00:00:00</end>
 			<quantity>25</quantity>
 			<owner>
-				<id>40</id>
+				<reference>39</reference>
 			</owner>
 		</operationplan>
 		<operationplan>
-			<id>47</id>
+			<reference>46</reference>
 			<operation>
 				<name>make item 3 option B</name>
 			</operation>
@@ -1762,11 +1762,11 @@
 			<end>2014-10-01T00:00:00</end>
 			<quantity>20</quantity>
 			<owner>
-				<id>41</id>
+				<reference>40</reference>
 			</owner>
 		</operationplan>
 		<operationplan>
-			<id>48</id>
+			<reference>47</reference>
 			<operation>
 				<name>make item 3 option B</name>
 			</operation>
@@ -1774,11 +1774,11 @@
 			<end>2014-11-01T00:00:00</end>
 			<quantity>20</quantity>
 			<owner>
-				<id>42</id>
+				<reference>41</reference>
 			</owner>
 		</operationplan>
 		<operationplan>
-			<id>49</id>
+			<reference>48</reference>
 			<operation>
 				<name>make item 3 option C</name>
 			</operation>
@@ -1786,11 +1786,11 @@
 			<end>2014-07-01T00:00:00</end>
 			<quantity>35</quantity>
 			<owner>
-				<id>38</id>
+				<reference>37</reference>
 			</owner>
 		</operationplan>
 		<operationplan>
-			<id>50</id>
+			<reference>49</reference>
 			<operation>
 				<name>make item 3 option C</name>
 			</operation>
@@ -1798,11 +1798,11 @@
 			<end>2014-08-01T00:00:00</end>
 			<quantity>50</quantity>
 			<owner>
-				<id>39</id>
+				<reference>38</reference>
 			</owner>
 		</operationplan>
 		<operationplan>
-			<id>51</id>
+			<reference>50</reference>
 			<operation>
 				<name>make item 3 option C</name>
 			</operation>
@@ -1810,11 +1810,11 @@
 			<end>2014-09-01T00:00:00</end>
 			<quantity>75</quantity>
 			<owner>
-				<id>40</id>
+				<reference>39</reference>
 			</owner>
 		</operationplan>
 		<operationplan>
-			<id>52</id>
+			<reference>51</reference>
 			<operation>
 				<name>make item 3 option C</name>
 			</operation>
@@ -1822,11 +1822,11 @@
 			<end>2014-10-01T00:00:00</end>
 			<quantity>80</quantity>
 			<owner>
-				<id>41</id>
+				<reference>40</reference>
 			</owner>
 		</operationplan>
 		<operationplan>
-			<id>53</id>
+			<reference>52</reference>
 			<operation>
 				<name>make item 3 option C</name>
 			</operation>
@@ -1834,11 +1834,11 @@
 			<end>2014-11-01T00:00:00</end>
 			<quantity>80</quantity>
 			<owner>
-				<id>42</id>
+				<reference>41</reference>
 			</owner>
 		</operationplan>
 		<operationplan>
-			<id>54</id>
+			<reference>53</reference>
 			<operation xsi:type="operation_split">
 				<name>make item 4</name>
 			</operation>
@@ -1848,7 +1848,7 @@
 			<feasible>false</feasible>
 		</operationplan>
 		<operationplan>
-			<id>55</id>
+			<reference>54</reference>
 			<operation>
 				<name>make item 4 option A</name>
 			</operation>
@@ -1857,11 +1857,11 @@
 			<quantity>20</quantity>
 			<feasible>false</feasible>
 			<owner>
-				<id>54</id>
+				<reference>53</reference>
 			</owner>
 		</operationplan>
 		<operationplan>
-			<id>56</id>
+			<reference>55</reference>
 			<operation>
 				<name>make item 4 option B</name>
 			</operation>
@@ -1870,11 +1870,11 @@
 			<quantity>40</quantity>
 			<feasible>false</feasible>
 			<owner>
-				<id>54</id>
+				<reference>53</reference>
 			</owner>
 		</operationplan>
 		<operationplan>
-			<id>57</id>
+			<reference>56</reference>
 			<operation>
 				<name>make item 4 option C</name>
 			</operation>
@@ -1883,7 +1883,7 @@
 			<quantity>40</quantity>
 			<feasible>false</feasible>
 			<owner>
-				<id>54</id>
+				<reference>53</reference>
 			</owner>
 		</operationplan>
 	</operationplans>

@@ -701,7 +701,7 @@ OperationPlan* SolverCreate::createOperation(
       assert(!data->state->curDemand);
       z = oper->createOperationPlan(
         opplan_qty, Date::infinitePast, max_short_date,
-        data->state->curDemand, data->state->curOwnerOpplan, 0, true, false
+        data->state->curDemand, data->state->curOwnerOpplan, true, false
       );
     }
     else
@@ -791,12 +791,12 @@ OperationPlan* SolverCreate::createOperation(
       if (start_or_end)
         z = oper->createOperationPlan(
           opplan_qty, Date::infinitePast, data->state->q_date, data->state->curDemand,
-          data->state->curOwnerOpplan, 0, true, false
+          data->state->curOwnerOpplan, true, false
           );
       else
         z = oper->createOperationPlan(
           opplan_qty, data->state->q_date, Date::infinitePast, data->state->curDemand,
-          data->state->curOwnerOpplan, 0, true, false
+          data->state->curOwnerOpplan, true, false
         );
     }
     else

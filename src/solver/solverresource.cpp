@@ -258,7 +258,7 @@ void SolverCreate::solve(const Resource* res, void* v)
         const LoadPlan* ldplan = nullptr;
         if (cur->getEventType() == 1)
           ldplan = static_cast<const LoadPlan*>(&*cur);
-        if (ldplan && !ldplan->getOperationPlan()->getRawIdentifier()
+        if (ldplan && !ldplan->getOperationPlan()->getActivated()
           && ldplan->getOperationPlan()->getOperation()!=data->state->q_operationplan->getOperation() )
           ignored += ldplan->getQuantity();
       }
@@ -272,7 +272,7 @@ void SolverCreate::solve(const Resource* res, void* v)
         const LoadPlan* ldplan = nullptr;
         if (cur->getEventType() == 1)
           ldplan = static_cast<const LoadPlan*>(&*cur);
-        if (ldplan && !ldplan->getOperationPlan()->getRawIdentifier()
+        if (ldplan && !ldplan->getOperationPlan()->getActivated()
           && ldplan->getOperationPlan()->getOperation()!=data->state->q_operationplan->getOperation())
           ignored += ldplan->getQuantity();
 

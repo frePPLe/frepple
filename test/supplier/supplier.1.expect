@@ -238,7 +238,7 @@
 	</demands>
 	<operationplans>
 		<operationplan>
-			<id>2</id>
+			<reference>1</reference>
 			<operation xsi:type="operation_itemsupplier">
 				<name>Purchase Component C @ warehouse from Supplier of component B</name>
 			</operation>

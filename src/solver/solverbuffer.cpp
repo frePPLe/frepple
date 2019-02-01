@@ -114,7 +114,7 @@ void SolverCreate::solve(const Buffer* b, void* v)
     if(&*cur && cur->getEventType() == 1)
     {
       const FlowPlan* fplan = static_cast<const FlowPlan*>(&*cur);
-      if (!fplan->getOperationPlan()->getRawIdentifier()
+      if (!fplan->getOperationPlan()->getActivated()
         && fplan->getQuantity()>0
         && fplan->getOperationPlan()->getOperation() != b->getProducingOperation())
           unconfirmed_supply += fplan->getQuantity();

@@ -278,7 +278,7 @@
 	</demands>
 	<operationplans>
 		<operationplan>
-			<id>2</id>
+			<reference>1</reference>
 			<operation xsi:type="operation_itemsupplier">
 				<name>Purchase component A @ factory from Component supplier</name>
 			</operation>
@@ -298,7 +298,7 @@
 			</supplier>
 		</operationplan>
 		<operationplan>
-			<id>3</id>
+			<reference>2</reference>
 			<operation xsi:type="operation_itemsupplier">
 				<name>Purchase component A @ factory from Component supplier</name>
 			</operation>
@@ -318,7 +318,7 @@
 			</supplier>
 		</operationplan>
 		<operationplan>
-			<id>4</id>
+			<reference>3</reference>
 			<operation xsi:type="operation_itemsupplier">
 				<name>Purchase component A @ factory from Component supplier</name>
 			</operation>
@@ -338,7 +338,7 @@
 			</supplier>
 		</operationplan>
 		<operationplan>
-			<id>5</id>
+			<reference>4</reference>
 			<operation xsi:type="operation_itemsupplier">
 				<name>Purchase component C @ factory from Component supplier</name>
 			</operation>
@@ -358,7 +358,7 @@
 			</supplier>
 		</operationplan>
 		<operationplan>
-			<id>6</id>
+			<reference>5</reference>
 			<operation xsi:type="operation_itemsupplier">
 				<name>Purchase component C @ factory from Component supplier</name>
 			</operation>
@@ -378,7 +378,7 @@
 			</supplier>
 		</operationplan>
 		<operationplan>
-			<id>7</id>
+			<reference>6</reference>
 			<operation xsi:type="operation_delivery">
 				<name>Ship product @ factory</name>
 				<buffer>
@@ -400,7 +400,7 @@
 			</location>
 		</operationplan>
 		<operationplan>
-			<id>8</id>
+			<reference>7</reference>
 			<operation xsi:type="operation_time_per">
 				<name>assembly</name>
 			</operation>
@@ -410,7 +410,7 @@
 			<feasible>false</feasible>
 		</operationplan>
 		<operationplan>
-			<id>9</id>
+			<reference>8</reference>
 			<operation xsi:type="operation_time_per">
 				<name>assembly</name>
 			</operation>
@@ -419,7 +419,7 @@
 			<quantity>2</quantity>
 		</operationplan>
 		<operationplan>
-			<id>10</id>
+			<reference>9</reference>
 			<operation xsi:type="operation_time_per">
 				<name>assembly</name>
 			</operation>
@@ -428,7 +428,7 @@
 			<quantity>2</quantity>
 		</operationplan>
 		<operationplan>
-			<id>11</id>
+			<reference>10</reference>
 			<operation xsi:type="operation_time_per">
 				<name>assembly</name>
 			</operation>

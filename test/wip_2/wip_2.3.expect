@@ -104,7 +104,7 @@
 	</operations>
 	<operationplans>
 		<operationplan>
-			<id>2</id>
+			<reference>1</reference>
 			<operation xsi:type="operation_itemsupplier">
 				<name>Purchase consumed item @ store from my supplier</name>
 			</operation>
@@ -124,7 +124,7 @@
 			</supplier>
 		</operationplan>
 		<operationplan>
-			<id>3</id>
+			<reference>2</reference>
 			<operation xsi:type="operation_itemdistribution">
 				<name>Ship consumed item from store to prod</name>
 				<origin>
@@ -150,7 +150,6 @@
 			</origin>
 		</operationplan>
 		<operationplan>
-			<id>4</id>
 			<reference>MO 1</reference>
 			<operation>
 				<name>prod</name>

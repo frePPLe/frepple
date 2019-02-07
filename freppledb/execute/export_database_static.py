@@ -1064,7 +1064,7 @@ class exportStaticModel(object):
         cursor.execute('''
           delete from operationplanmaterial
           where operationplan_id in (
-            select operationplan.id
+            select operationplan.reference
             from operationplan
             where (operationplan.source = %s and operationplan.lastmodified <> %s)
             or operation_id in (select name from operation where operation.source = %s and operation.lastmodified <> %s)
@@ -1073,7 +1073,7 @@ class exportStaticModel(object):
         cursor.execute('''
           delete from operationplanresource
           where operationplan_id in (
-            select operationplan.id
+            select operationplan.reference
             from operationplan
             where (operationplan.source = %s and operationplan.lastmodified <> %s)
             or operation_id in (select name from operation where operation.source = %s and operation.lastmodified <> %s)

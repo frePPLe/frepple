@@ -112,14 +112,14 @@ class export:
           and exists (
             select 1
             from operationplan op2
-            where op2.id = operationplan.owner_id
+            where op2.reference = operationplan.owner_id
             and (op2.status is null or op2.status = 'proposed')
             )
         ''')
       cursor.execute('''
         delete from operationplanmaterial
         using operationplan
-        where operationplanmaterial.operationplan_id = operationplan.id
+        where operationplanmaterial.operationplan_id = operationplan.reference
         and ((operationplan.status='proposed' or operationplan.status is null)
              or operationplan.type = 'STCK'
              or operationplanmaterial.status = 'proposed'
@@ -128,7 +128,7 @@ class export:
       cursor.execute('''
         delete from operationplanresource
         using operationplan
-        where operationplanresource.operationplan_id = operationplan.id
+        where operationplanresource.operationplan_id = operationplan.reference
         and ((operationplan.status='proposed' or operationplan.status is null)
              or operationplan.type = 'STCK'
              or operationplanresource.status = 'proposed'
@@ -149,11 +149,11 @@ class export:
         delete from operationplanmaterial
         using cluster_keys
         where operationplan_id in (
-          select id from operationplan
+          select reference from operationplan
           inner join cluster_keys on cluster_keys.name = operationplan.item_id
           union
-          select id from operationplan where owner_id in (
-            select id from operationplan parent_opplan
+          select reference from operationplan where owner_id in (
+            select reference from operationplan parent_opplan
             inner join cluster_keys on cluster_keys.name = parent_opplan.item_id
           )
         )
@@ -172,11 +172,11 @@ class export:
       cursor.execute('''
         delete from operationplanresource
         where operationplan_id in (
-          select id from operationplan
+          select reference from operationplan
           inner join cluster_keys on cluster_keys.name = operationplan.item_id
           union
-          select id from operationplan where owner_id in (
-            select id from operationplan parent_opplan
+          select reference from operationplan where owner_id in (
+            select reference from operationplan parent_opplan
             inner join cluster_keys on cluster_keys.name = parent_opplan.item_id
           )
         )
@@ -185,7 +185,7 @@ class export:
         delete from operationplan
         using cluster_keys
         where owner_id in (
-          select oplan_parent.id
+          select oplan_parent.reference
           from operationplan as oplan_parent
           where (oplan_parent.status='proposed' or oplan_parent.status is null or oplan_parent.type='STCK')
           and oplan_parent.item_id = cluster_keys.name
@@ -236,7 +236,7 @@ class export:
            i.entity, i.name, owner.name,
            i.description, str(i.start), str(i.end),
            round(i.weight, 8)
-        )),file=tmp)
+        )), file=tmp)
       tmp.seek(0)
       cursor.copy_from(
       tmp,
@@ -288,19 +288,19 @@ class export:
           if isinstance(i, frepple.operation_inventory):
             # Export inventory
             yield (
-              i.name, 'STCK', j.status, j.reference or '\\N', round(j.quantity, 8),
+              i.name, 'STCK', j.status, round(j.quantity, 8),
               str(j.start), str(j.end), round(j.criticality, 8), j.delay,
               self.getPegging(j), j.source or '\\N', self.timestamp,
               '\\N', j.owner.id if j.owner and not j.owner.operation.hidden else '\\N',
               j.operation.buffer.item.name, j.operation.buffer.location.name, '\\N', '\\N', '\\N',
               j.demand.name if j.demand else j.owner.demand.name if j.owner and j.owner.demand else '\\N',
               j.demand.due if j.demand else j.owner.demand.due if j.owner and j.owner.demand else '\\N',
-              color, j.id
+              color, j.reference
               )
           elif isinstance(i, frepple.operation_itemdistribution):
             # Export DO
             yield (
-              i.name, 'DO', j.status, j.reference or '\\N', round(j.quantity, 8),
+              i.name, 'DO', j.status, round(j.quantity, 8),
               str(j.start), str(j.end), round(j.criticality, 8), j.delay,
               self.getPegging(j), j.source or '\\N', self.timestamp,
               '\\N', j.owner.id if j.owner and not j.owner.operation.hidden else '\\N',
@@ -310,12 +310,12 @@ class export:
               '\\N', '\\N',
               j.demand.name if j.demand else j.owner.demand.name if j.owner and j.owner.demand else '\\N',
               j.demand.due if j.demand else j.owner.demand.due if j.owner and j.owner.demand else '\\N',
-              color, j.id
+              color, j.reference
               )
           elif isinstance(i, frepple.operation_itemsupplier):
             # Export PO
             yield (
-              i.name, 'PO', j.status, j.reference or '\\N', round(j.quantity, 8),
+              i.name, 'PO', j.status, round(j.quantity, 8),
               str(j.start), str(j.end), round(j.criticality, 8), j.delay,
               self.getPegging(j), j.source or '\\N', self.timestamp,
               '\\N', j.owner.id if j.owner and not j.owner.operation.hidden else '\\N',
@@ -323,12 +323,12 @@ class export:
               j.operation.buffer.location.name, j.operation.itemsupplier.supplier.name,
               j.demand.name if j.demand else j.owner.demand.name if j.owner and j.owner.demand else '\\N',
               j.demand.due if j.demand else j.owner.demand.due if j.owner and j.owner.demand else '\\N',
-              color, j.id
+              color, j.reference
               )
           elif not i.hidden:
             # Export MO
             yield (
-              i.name, 'MO', j.status, j.reference or '\\N', round(j.quantity, 8),
+              i.name, 'MO', j.status, round(j.quantity, 8),
               str(j.start), str(j.end), round(j.criticality, 8), j.delay,
               self.getPegging(j), j.source or '\\N', self.timestamp,
               i.name, j.owner.id if j.owner and not j.owner.operation.hidden else '\\N',
@@ -336,19 +336,19 @@ class export:
               i.location.name if i.location else '\\N', '\\N',
               j.demand.name if j.demand else j.owner.demand.name if j.owner and j.owner.demand else '\\N',
               j.demand.due if j.demand else j.owner.demand.due if j.owner and j.owner.demand else '\\N',
-              color, j.id
+              color, j.reference
               )
           elif j.demand or (j.owner and j.owner.demand):
             # Export shipments (with automatically created delivery operations)
             yield (
-              i.name, 'DLVR', j.status, j.reference or '\\N', round(j.quantity, 8),
+              i.name, 'DLVR', j.status, round(j.quantity, 8),
               str(j.start), str(j.end), round(j.criticality, 8), j.delay,
               self.getPegging(j), j.source or '\\N', self.timestamp,
-              '\\N', j.owner.id if j.owner and not j.owner.operation.hidden else '\\N',
+              '\\N', j.owner.reference if j.owner and not j.owner.operation.hidden else '\\N',
               j.operation.buffer.item.name, '\\N', '\\N', j.operation.buffer.location.name, '\\N',
               j.demand.name if j.demand else j.owner.demand.name if j.owner and j.owner.demand else '\\N',
               j.demand.due if j.demand else j.owner.demand.due if j.owner and j.owner.demand else '\\N',
-              color, j.id
+              color, j.reference
               )
 
     if self.verbosity:
@@ -362,7 +362,6 @@ class export:
         name character varying(1000),
         type character varying(5) NOT NULL,
         status character varying(20),
-        reference character varying(300),
         quantity numeric(20,8) NOT NULL,
         startdate timestamp with time zone,
         enddate timestamp with time zone,
@@ -381,14 +380,14 @@ class export:
         demand_id character varying(300),
         due timestamp with time zone,
         color numeric(20,8),
-        id integer NOT NULL
+        reference character varying(300) NOT NULL
       );
       ''')
-    with tempfile.TemporaryFile(mode="w+t",encoding='utf-8') as tmp:
+    with tempfile.TemporaryFile(mode="w+t", encoding='utf-8') as tmp:
       for p in getOperationPlans():
-        print("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s" % p, file=tmp)
+        print("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s" % p, file=tmp)
       tmp.seek(0)
-      cursor.copy_from(file=tmp,table='tmp_operationplan')
+      cursor.copy_from(file=tmp, table='tmp_operationplan')
       tmp.close()
 
     # Merge temp table into the actual table
@@ -403,46 +402,46 @@ class export:
         location_id=tmp.location_id, supplier_id=tmp.supplier_id, demand_id=tmp.demand_id,
         due=tmp.due, color=tmp.color
       from tmp_operationplan as tmp
-      where operationplan.id = tmp.id;
+      where operationplan.reference = tmp.reference;
       ''')
     cursor.execute('''
-      with cte as (select id from operationplan where status in ('confirmed','approved') and type = 'MO' and
-      not exists (select 1 from tmp_operationplan where id = operationplan.id))
-      delete from operationplanmaterial where exists (select 1 from cte where cte.id = operationplan_id)
+      with cte as (select reference from operationplan where status in ('confirmed','approved') and type = 'MO' and
+      not exists (select 1 from tmp_operationplan where reference = operationplan.reference))
+      delete from operationplanmaterial where exists (select 1 from cte where cte.reference = operationplan_id)
     ''')
     cursor.execute('''
-      with cte as (select id from operationplan where status in ('confirmed','approved') and type = 'MO' and
-      not exists (select 1 from tmp_operationplan where id = operationplan.id))
-      delete from operationplanresource where exists (select 1 from cte where cte.id = operationplan_id)
+      with cte as (select reference from operationplan where status in ('confirmed','approved') and type = 'MO' and
+      not exists (select 1 from tmp_operationplan where reference = operationplan.reference))
+      delete from operationplanresource where exists (select 1 from cte where cte.reference = operationplan_id)
     ''')
     cursor.execute('''
       delete from operationplan where status in ('confirmed','approved') and type = 'MO' and
-      not exists (select 1 from tmp_operationplan where id = operationplan.id)
+      not exists (select 1 from tmp_operationplan where reference = operationplan.reference)
     ''')
 
     cursor.execute('''
       insert into operationplan
-        (name,type,status,reference,quantity,startdate,enddate,
+        (name,type,status,quantity,startdate,enddate,
         criticality,delay,plan,source,lastmodified,
         operation_id,owner_id,
         item_id,destination_id,origin_id,
         location_id,supplier_id,
-        demand_id,due,color,id)
-      select name,type,status,reference,quantity,startdate,enddate,
+        demand_id,due,color,reference)
+      select name,type,status,quantity,startdate,enddate,
         criticality,delay * interval '1 second',plan,source,lastmodified,
         operation_id,owner_id,
         item_id,destination_id,origin_id,
         location_id,supplier_id,
-        demand_id,due,color,id
+        demand_id,due,color,reference
       from tmp_operationplan
       where not exists (
         select 1
         from operationplan
-        where operationplan.id = tmp_operationplan.id
+        where operationplan.reference = tmp_operationplan.reference
         );
       ''')
 
-    #update demand table specific fields
+    # update demand table specific fields
     cursor.execute('''
         with cte as (
           select demand_id, sum(quantity) plannedquantity, max(enddate) deliverydate, max(enddate)-due as delay
@@ -490,7 +489,7 @@ class export:
           continue
         for j in i.flowplans:
           #if the record is confirmed, it is already in the table.
-          if not j.operationplan.id:
+          if not j.operationplan.reference:
             print(
               "Warning: skip exporting uninitialized operationplan",
               j.operationplan.operation.name, j.operationplan.quantity, j.operationplan.start, j.operationplan.end
@@ -502,7 +501,7 @@ class export:
             where status = 'confirmed' and item_id = %s
               and location_id = %s and operationplan_id = %s;
             ''' % (round(j.onhand, 8), str(j.date), adapt(j.buffer.item.name),
-                   adapt(j.buffer.location.name), j.operationplan.id ))
+                   adapt(j.buffer.location.name), j.operationplan.reference ))
           else:
             print(("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s" % (
                j.operationplan.id, j.buffer.item.name, j.buffer.location.name,
@@ -514,8 +513,10 @@ class export:
       cursor.copy_from(
         tmp,
         'operationplanmaterial',
-        columns=('operationplan_id', 'item_id', 'location_id', 'quantity', 'flowdate', 'onhand', 
-                 'minimum', 'periodofcover', 'status', 'lastmodified')
+        columns=(
+          'operationplan_id', 'item_id', 'location_id', 'quantity', 'flowdate',
+          'onhand', 'minimum', 'periodofcover', 'status', 'lastmodified'
+          )
         )
       tmp.close()
     if len(updates) > 0:
@@ -537,14 +538,14 @@ class export:
         for j in i.loadplans:
           if j.quantity >= 0:
             continue
-          if not j.operationplan.id:
+          if not j.operationplan.reference:
             print(
               "Warning: skip exporting uninitialized operationplan: ",
               j.operationplan.operation.name, j.operationplan.quantity, j.operationplan.start, j.operationplan.end
               )
           else:
             print(("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s" % (
-              j.operationplan.id, j.resource.name,
+              j.operationplan.reference, j.resource.name,
               round(-j.quantity, 8),
               str(j.startdate), str(j.enddate),
               j.setup and j.setup or "\\N", j.status, currentTime
@@ -637,7 +638,7 @@ class export:
         for j in i.pegging:
           peg.append({
             'level': j.level,
-            'opplan': j.operationplan.id,
+            'opplan': j.operationplan.reference,
             'quantity': j.quantity
             })
         yield (json.dumps({'pegging': peg}), i.name)

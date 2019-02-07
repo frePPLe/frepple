@@ -1101,9 +1101,9 @@ class OperationPlan(AuditModel):
 
   # Database fields
   # Common fields
-  id = models.AutoField(
-    _('identifier'), primary_key=True,
-    help_text=_('Unique identifier of an operationplan')
+  reference = models.CharField(
+    _('reference'), max_length=300, primary_key=True,
+    help_text=_('Unique identifier')
     )
   status = models.CharField(
     _('status'), null=True, blank=True, max_length=20, choices=orderstatus,
@@ -1112,10 +1112,6 @@ class OperationPlan(AuditModel):
   type = models.CharField(
     _('type'), max_length=5, choices=types, default='MO',
     help_text=_('Order type'), db_index=True
-    )
-  reference = models.CharField(
-    _('reference'), max_length=300, null=True, blank=True,
-    help_text=_('External reference of this order')
     )
   quantity = models.DecimalField(
     _('quantity'), max_digits=20,
@@ -1189,40 +1185,16 @@ class OperationPlan(AuditModel):
     )
 
   class Manager(MultiDBManager):
-    def get_by_natural_key(self, reference):
-      # Note: we are not enforcing the uniqueness of this natural key in the database
-      return self.get(reference=reference)
-
-  def natural_key(self):
-    return (self.reference,)
-
-  objects = Manager()
+    pass
 
   def __str__(self):
-    return str(self.id)
-
-  def save(self, *args, **kwargs):
-    if not self.id:
-      if 'using' in kwargs:
-        db = kwargs['using']
-      else:
-        state = getattr(self, '_state', None)
-        db = state.db if state else DEFAULT_DB_ALIAS
-      self.id = OperationPlan.objects.all().using(db).aggregate(Max('id'))['id__max']
-      if self.id:
-        self.id += 1
-      else:
-        self.id = 1
-      kwargs['force_insert'] = True
-
-    # Call the real save() method
-    super(OperationPlan, self).save(*args, **kwargs)
+    return str(self.reference)
 
   class Meta(AuditModel.Meta):
     db_table = 'operationplan'
     verbose_name = _('operationplan')
     verbose_name_plural = _('operationplans')
-    ordering = ['id']
+    ordering = ['reference']
 
 
 class OperationPlanResource(AuditModel):
@@ -1230,6 +1202,7 @@ class OperationPlanResource(AuditModel):
   OPRstatus = (
     ('proposed', _('proposed')),
     ('confirmed', _('confirmed')),
+    ('closed', _('closed')),
   )
 
   # Database fields
@@ -1276,6 +1249,7 @@ class OperationPlanMaterial(AuditModel):
   OPMstatus = (
     ('proposed', _('proposed')),
     ('confirmed', _('confirmed')),
+    ('closed', _('closed')),
   )
 
   # Database fields
@@ -1321,7 +1295,7 @@ class OperationPlanMaterial(AuditModel):
     verbose_name = _('operationplan material')
     verbose_name_plural = _('operationplan materials')
     indexes = [
-      models.Index(fields=['item', 'location']),
+      models.Index(fields=['item', 'location'], name="opplanmat_itemloc"),
       ]
 
 

@@ -79,7 +79,7 @@ def printModel(filename):
       for l in b.loads:
         print("    Load:", l.operation.name, l.quantity, l.effective_start, l.effective_end, file=output)
       for l in b.loadplans:
-        print("    Loadplan:", l.operationplan.id, l.operationplan.operation.name, l.quantity, l.startdate, l.enddate, file=output)
+        print("    Loadplan:", l.operationplan.reference, l.operationplan.operation.name, l.quantity, l.startdate, l.enddate, file=output)
 
     # Buffers
     print("\nEchoing buffers:", file=output)
@@ -88,7 +88,7 @@ def printModel(filename):
       for l in b.flows:
         print("    Flow:", l.operation.name, l.quantity, l.effective_start, l.effective_end, file=output)
       for l in b.flowplans:
-        print("    Flowplan:", l.operationplan.id, l.operationplan.operation.name, l.quantity, l.date, file=output)
+        print("    Flowplan:", l.operationplan.reference, l.operationplan.operation.name, l.quantity, l.date, file=output)
 
     # Operations
     print("\nEchoing operations:", file=output)

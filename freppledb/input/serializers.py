@@ -758,25 +758,36 @@ class OperationResourcedetailAPI(frePPleRetrieveUpdateDestroyAPIView):
 class ManufacturingOrderFilter(filters.FilterSet):
   class Meta:
     model = freppledb.input.models.ManufacturingOrder
-    fields = {'id': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ], 'status': ['exact', 'in', ],
-              'reference': ['exact', 'in', 'contains', ], 'operation': ['exact', 'in', ],
-              'quantity': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
-              'startdate': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ], 'enddate': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
-              'criticality': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ], 'delay': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
-              'plan': ['exact', 'in', 'contains', ], 'owner': ['exact', 'in'],
-              'source': ['exact', 'in', ], 'lastmodified': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ], }
+    fields = {
+      'reference': ['exact', 'in', 'contains', ],
+      'status': ['exact', 'in', ],
+      'operation': ['exact', 'in', ],
+      'quantity': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+      'startdate': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+      'enddate': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+      'criticality': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+      'delay': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+      'plan': ['exact', 'in', 'contains', ],
+      'owner': ['exact', 'in'],
+      'source': ['exact', 'in', ],
+      'lastmodified': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ]
+      }
 
-    filter_fields = ('id', 'status', 'reference', 'operation', 'quantity', 'startdate', 'enddate',
-                     'criticality', 'delay', 'plan', 'owner', 'source', 'lastmodified')
+    filter_fields = (
+      'status', 'reference', 'operation', 'quantity', 'startdate', 'enddate',
+      'criticality', 'delay', 'plan', 'owner', 'source', 'lastmodified'
+      )
 
 
 class ManufacturingOrderSerializer(BulkSerializerMixin, ModelSerializer):
     class Meta:
       model = freppledb.input.models.ManufacturingOrder
-      fields = ('id', 'status', 'reference', 'operation', 'quantity', 'startdate', 'enddate',
-                'criticality', 'delay', 'plan', 'owner', 'source', 'lastmodified')
+      fields = (
+        'reference', 'status', 'operation', 'quantity', 'startdate', 'enddate',
+        'criticality', 'delay', 'plan', 'owner', 'source', 'lastmodified'
+        )
       list_serializer_class = BulkListSerializer
-      update_lookup_field = 'id'
+      update_lookup_field = 'reference'
       partial = True
 
 
@@ -794,26 +805,36 @@ class ManufacturingOrderdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
 class DistributionOrderFilter(filters.FilterSet):
   class Meta:
     model = freppledb.input.models.DistributionOrder
-    fields = {'id': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ], 'status': ['exact', 'in', ],
-              'reference': ['exact', 'in', 'contains', ], 'item': ['exact', 'in', ],
-              'origin': ['exact', 'in', ], 'destination': ['exact', 'in', ],
-              'quantity': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
-              'startdate': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ], 'enddate': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
-              'criticality': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ], 'delay': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
-              'plan': ['exact', 'in', 'contains', ],
-              'source': ['exact', 'in', ], 'lastmodified': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ], }
-
-    filter_fields = ('id', 'status', 'reference', 'item', 'origin', 'destination', 'quantity',
-                     'startdate', 'enddate', 'criticality', 'delay', 'plan', 'source', 'lastmodified')
+    fields = {
+      'status': ['exact', 'in', ],
+      'reference': ['exact', 'in', 'contains', ],
+      'item': ['exact', 'in', ],
+      'origin': ['exact', 'in', ],
+      'destination': ['exact', 'in', ],
+      'quantity': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+      'startdate': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+      'enddate': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+      'criticality': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+      'delay': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+      'plan': ['exact', 'in', 'contains', ],
+      'source': ['exact', 'in', ],
+      'lastmodified': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+      }
+    filter_fields = (
+      'reference', 'status', 'item', 'origin', 'destination', 'quantity',
+      'startdate', 'enddate', 'criticality', 'delay', 'plan', 'source', 'lastmodified'
+      )
 
 
 class DistributionOrderSerializer(BulkSerializerMixin, ModelSerializer):
     class Meta:
       model = freppledb.input.models.DistributionOrder
-      fields = ('id', 'reference', 'status', 'item', 'origin', 'destination', 'quantity',
-                'startdate', 'enddate', 'criticality', 'delay', 'plan', 'source', 'lastmodified')
+      fields = (
+        'reference', 'status', 'item', 'origin', 'destination', 'quantity',
+        'startdate', 'enddate', 'criticality', 'delay', 'plan', 'source', 'lastmodified'
+        )
       list_serializer_class = BulkListSerializer
-      update_lookup_field = 'id'
+      update_lookup_field = 'reference'
       partial = True
 
 
@@ -831,26 +852,37 @@ class DistributionOrderdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
 class PurchaseOrderFilter(filters.FilterSet):
   class Meta:
     model = freppledb.input.models.PurchaseOrder
-    fields = {'id': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ], 'status': ['exact', 'in', ],
-              'reference': ['exact', 'in', 'contains', ], 'item': ['exact', 'in', ],
-              'supplier': ['exact', 'in', ], 'location': ['exact', 'in', ],
-              'quantity': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
-              'startdate': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ], 'enddate': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
-              'criticality': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ], 'delay': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
-              'plan': ['exact', 'in', 'contains', ],
-              'source': ['exact', 'in', ], 'lastmodified': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ], }
-
-    filter_fields = ('id', 'reference', 'status', 'item', 'supplier', 'location', 'quantity',
-                     'startdate', 'enddate', 'criticality', 'delay', 'plan', 'source', 'lastmodified')
+    fields = {
+      'reference': ['exact', 'in', 'contains', ],
+      'status': ['exact', 'in', ],
+      'item': ['exact', 'in', ],
+      'supplier': ['exact', 'in', ],
+      'location': ['exact', 'in', ],
+      'quantity': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+      'startdate': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+      'enddate': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+      'criticality': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+      'delay': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+      'plan': ['exact', 'in', 'contains', ],
+      'source': ['exact', 'in', ],
+      'lastmodified': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+      }
+    filter_fields = (
+      'reference', 'status', 'item', 'supplier', 'location', 'quantity',
+      'startdate', 'enddate', 'criticality', 'delay', 'plan', 'source',
+      'lastmodified'
+      )
 
 
 class PurchaseOrderSerializer(BulkSerializerMixin, ModelSerializer):
     class Meta:
       model = freppledb.input.models.PurchaseOrder
-      fields = ('id', 'reference', 'status', 'item', 'supplier', 'location', 'quantity',
-                'startdate', 'enddate', 'criticality', 'delay', 'plan', 'source', 'lastmodified')
+      fields = (
+        'reference', 'status', 'item', 'supplier', 'location', 'quantity',
+        'startdate', 'enddate', 'criticality', 'delay', 'plan', 'source', 'lastmodified'
+        )
       list_serializer_class = BulkListSerializer
-      update_lookup_field = 'id'
+      update_lookup_field = 'reference'
       partial = True
 
 
@@ -868,26 +900,36 @@ class PurchaseOrderdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
 class DeliveryOrderFilter(filters.FilterSet):
   class Meta:
     model = freppledb.input.models.DeliveryOrder
-    fields = {'id': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ], 'status': ['exact', 'in', ],
-              'reference': ['exact', 'in', 'contains', ], 'item': ['exact', 'in', ],
-              'demand': ['exact', 'in', ], 'location': ['exact', 'in', ],
-              'quantity': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
-              'startdate': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ], 'enddate': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
-              'delay': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
-              'plan': ['exact', 'in', 'contains', ],
-              'source': ['exact', 'in', ], 'lastmodified': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ], }
+    fields = {
+      'reference': ['exact', 'in', 'contains', ],
+      'status': ['exact', 'in', ],
+      'item': ['exact', 'in', ],
+      'demand': ['exact', 'in', ],
+      'location': ['exact', 'in', ],
+      'quantity': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+      'startdate': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+      'enddate': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+      'delay': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+      'plan': ['exact', 'in', 'contains', ],
+      'source': ['exact', 'in', ],
+      'lastmodified': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+      }
 
-    filter_fields = ('id', 'reference', 'status', 'demand', 'item', 'location', 'quantity',
-                     'startdate', 'enddate', 'due', 'delay', 'plan', 'source', 'lastmodified')
+    filter_fields = (
+      'reference', 'status', 'demand', 'item', 'location', 'quantity',
+      'startdate', 'enddate', 'due', 'delay', 'plan', 'source', 'lastmodified'
+      )
 
 
 class DeliveryOrderSerializer(BulkSerializerMixin, ModelSerializer):
     class Meta:
       model = freppledb.input.models.DeliveryOrder
-      fields = ('id', 'reference', 'status', 'demand', 'item', 'location', 'quantity',
-                'startdate', 'enddate', 'due', 'delay', 'plan', 'source', 'lastmodified')
+      fields = (
+        'reference', 'status', 'demand', 'item', 'location', 'quantity',
+        'startdate', 'enddate', 'due', 'delay', 'plan', 'source', 'lastmodified'
+        )
       list_serializer_class = BulkListSerializer
-      update_lookup_field = 'id'
+      update_lookup_field = 'reference'
       partial = True
 
 

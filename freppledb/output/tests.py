@@ -30,7 +30,7 @@ class OutputTest(TestCase):
   def test_output_buffer(self):
     response = self.client.get('/buffer/?format=json')
     self.assertEqual(response.status_code, 200)
-    self.assertContains(response, '"records":8,')
+    self.assertContains(response, '"records":0,')
     response = self.client.get('/buffer/?format=csvtable')
     self.assertEqual(response.status_code, 200)
     self.assertTrue(response.__getitem__('Content-Type').startswith('text/csv; charset='))
@@ -40,7 +40,8 @@ class OutputTest(TestCase):
     response = self.client.get('/buffer/?format=spreadsheettable')
     self.assertEqual(response.status_code, 200)
     self.assertTrue(response.__getitem__('Content-Type').startswith('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'))
-
+    response = self.client.get('/flowplan/?format=json')
+    self.assertEqual(response.status_code, 200)
 
   # Resource
   def test_output_resource(self):
@@ -53,6 +54,8 @@ class OutputTest(TestCase):
     response = self.client.get('/resource/?format=spreadsheetlist')
     self.assertEqual(response.status_code, 200)
     self.assertTrue(response.__getitem__('Content-Type').startswith('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'))
+    response = self.client.get('/loadplan/?format=json')
+    self.assertEqual(response.status_code, 200)
 
   # Demand
   def test_output_demand(self):
@@ -70,7 +73,7 @@ class OutputTest(TestCase):
   def test_output_manufacturing_orders(self):
     response = self.client.get('/operation/?format=json')
     self.assertEqual(response.status_code, 200)
-    self.assertContains(response, '"records":3,')
+    self.assertContains(response, '"records":0,')
     response = self.client.get('/operation/?format=csvtable')
     self.assertEqual(response.status_code, 200)
     self.assertTrue(response.__getitem__('Content-Type').startswith('text/csv; charset='))
@@ -94,7 +97,7 @@ class OutputTest(TestCase):
   def test_output_distribution_orders(self):
     response = self.client.get('/distribution/?format=json')
     self.assertEqual(response.status_code, 200)
-    self.assertContains(response, '"records":1,')
+    self.assertContains(response, '"records":0,')
     response = self.client.get('/distribution/?format=csvtable')
     self.assertEqual(response.status_code, 200)
     self.assertTrue(response.__getitem__('Content-Type').startswith('text/csv; charset='))
@@ -106,7 +109,7 @@ class OutputTest(TestCase):
   def test_output_problem(self):
     response = self.client.get('/problem/?format=json')
     self.assertEqual(response.status_code, 200)
-    self.assertContains(response, '"records":25,')  # specific for community
+    self.assertContains(response, '"records":0,')  # specific for community
     response = self.client.get('/problem/?format=csvlist')
     self.assertEqual(response.status_code, 200)
     self.assertTrue(response.__getitem__('Content-Type').startswith('text/csv; charset='))

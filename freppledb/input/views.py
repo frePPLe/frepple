@@ -1684,9 +1684,9 @@ class ManufacturingOrderList(OperationPlanMixin, GridReport):
   '''
   template = 'input/operationplanreport.html'
   title = _("manufacturing orders")
-  default_sort = (2, 'desc')
+  default_sort = (1, 'desc')
   model = ManufacturingOrder
-  frozenColumns = 2
+  frozenColumns = 1
   multiselect = True
   editable = True
   height = 250
@@ -1771,26 +1771,26 @@ class ManufacturingOrderList(OperationPlanMixin, GridReport):
       elif path == 'operation' or request.path.startswith('/detail/input/operation/'):
         q = q.filter(operation=args[0])
       elif path == 'item' or request.path.startswith('/detail/input/item/'):
-        q = q.filter(id__in=RawSQL('''
+        q = q.filter(reference__in=RawSQL('''
           select operationplan_id from operationplan
-          inner join operationplanmaterial on operationplanmaterial.operationplan_id = operationplan.id
+          inner join operationplanmaterial on operationplanmaterial.operationplan_id = operationplan.reference
           and operationplanmaterial.item_id = %s
           and operationplanmaterial.quantity > 0
           where operationplan.type = 'MO'
           ''', (args[0],)))
       elif path == 'operationplanmaterial':
-        q = q.filter(id__in=RawSQL('''
+        q = q.filter(reference__in=RawSQL('''
           select operationplan_id from operationplan
-          inner join operationplanmaterial on operationplanmaterial.operationplan_id = operationplan.id
+          inner join operationplanmaterial on operationplanmaterial.operationplan_id = operationplan.reference
           and operationplanmaterial.item_id = %s and operationplanmaterial.location_id = %s
           and operationplan.startdate < %s and operationplan.enddate >= %s
           where operationplan.type = 'MO'
           ''', (args[0], args[1], args[2], args[2])
           ))
       elif path == 'produced':
-        q = q.filter(id__in=RawSQL('''
+        q = q.filter(reference__in=RawSQL('''
           select operationplan_id from operationplan
-          inner join operationplanmaterial on operationplanmaterial.operationplan_id = operationplan.id
+          inner join operationplanmaterial on operationplanmaterial.operationplan_id = operationplan.reference
           and operationplanmaterial.item_id = %s and operationplanmaterial.location_id = %s
           and operationplanmaterial.flowdate >= %s and operationplanmaterial.flowdate < %s
           and operationplanmaterial.quantity > 0
@@ -1798,9 +1798,9 @@ class ManufacturingOrderList(OperationPlanMixin, GridReport):
           ''', (args[0], args[1], args[2], args[3])
           ))
       elif path == 'consumed':
-        q = q.filter(id__in=RawSQL('''
+        q = q.filter(reference__in=RawSQL('''
           select operationplan_id from operationplan
-          inner join operationplanmaterial on operationplanmaterial.operationplan_id = operationplan.id
+          inner join operationplanmaterial on operationplanmaterial.operationplan_id = operationplan.reference
           and operationplanmaterial.item_id = %s and operationplanmaterial.location_id = %s
           and operationplanmaterial.flowdate >= %s and operationplanmaterial.flowdate < %s
           and operationplanmaterial.quantity < 0
@@ -1810,8 +1810,8 @@ class ManufacturingOrderList(OperationPlanMixin, GridReport):
 
     q = reportclass.operationplanExtraBasequery(q, request)
     return q.extra(select={
-      'material': "(select json_agg(json_build_array(item_id, quantity)) from (select item_id, round(quantity,2) quantity from operationplanmaterial where operationplan_id = operationplan.id order by quantity limit 10) mat)",
-      'resource': "(select json_agg(json_build_array(resource_id, quantity)) from (select resource_id, round(quantity,2) quantity from operationplanresource where operationplan_id = operationplan.id order by quantity desc limit 10) res)",
+      'material': "(select json_agg(json_build_array(item_id, quantity)) from (select item_id, round(quantity,2) quantity from operationplanmaterial where operationplan.reference = operationplanmaterial.operationplan_id  order by quantity limit 10) mat)",
+      'resource': "(select json_agg(json_build_array(resource_id, quantity)) from (select resource_id, round(quantity,2) quantity from operationplanresource where operationplan.reference = operationplanresource.operationplan_id  order by quantity desc limit 10) res)",
       'setup_duration': "(operationplan.plan->'setup')",
       'setup_end': "(operationplan.plan->>'setupend')",
       'feasible': "coalesce((operationplan.plan->>'feasible')::boolean, true)",
@@ -1819,8 +1819,7 @@ class ManufacturingOrderList(OperationPlanMixin, GridReport):
 
 
   rows = (
-    GridFieldInteger('id', title=_('identifier'), key=True, formatter='detail', extra="role:'input/manufacturingorder'", initially_hidden=True),
-    GridFieldText('reference', title=_('reference'), editable=not settings.ERP_CONNECTOR),
+    GridFieldText('reference', title=_('reference'), key=True, formatter='detail', extra="role:'input/manufacturingorder'", editable=not settings.ERP_CONNECTOR),
     GridFieldNumber('color', title=_('inventory status'), formatter='color', width='125', editable=False, extra='"formatoptions":{"defaultValue":""}, "summaryType":"min"'),
     GridFieldText('operation__item__name', title=_('item'), formatter='detail', extra='"role":"input/item"'),
     GridFieldText('operation__location__name', title=_('location'), formatter='detail', extra='"role":"input/location"'),
@@ -1834,7 +1833,7 @@ class ManufacturingOrderList(OperationPlanMixin, GridReport):
     GridFieldText('demand', title=_('demands'), editable=False, search=False, sortable=False, formatter='demanddetail', extra='"role":"input/demand"'),
     GridFieldText('material', title=_('materials'), editable=False, search=False, sortable=False, initially_hidden=True, formatter='listdetail', extra='"role":"input/item"'),
     GridFieldText('resource', title=_('resources'), editable=False, search=False, sortable=False, initially_hidden=True, formatter='listdetail', extra='"role":"input/resource"'),
-    GridFieldInteger('owner', title=_('owner'), field_name='owner__id', extra='"formatoptions":{"defaultValue":""}', initially_hidden=True),
+    GridFieldInteger('owner', title=_('owner'), field_name='owner__reference', extra='"formatoptions":{"defaultValue":""}', initially_hidden=True),
     GridFieldText('source', title=_('source')),
     GridFieldLastModified('lastmodified'),
     GridFieldText('operation__description', title=string_concat(_('operation'), ' - ', _('description')), initially_hidden=True),
@@ -1970,10 +1969,10 @@ class DistributionOrderList(OperationPlanMixin, GridReport):
   '''
   template = 'input/operationplanreport.html'
   title = _("distribution orders")
-  default_sort = (2, 'desc')
+  default_sort = (1, 'desc')
   basequeryset = DistributionOrder.objects.all()
   model = DistributionOrder
-  frozenColumns = 2
+  frozenColumns = 1
   multiselect = True
   editable = True
   height = 250
@@ -2074,8 +2073,7 @@ class DistributionOrderList(OperationPlanMixin, GridReport):
       })
 
   rows = (
-    GridFieldInteger('id', title=_('identifier'), key=True, formatter='detail', extra='role:"input/distributionorder"'),
-    GridFieldText('reference', title=_('reference'), editable=not settings.ERP_CONNECTOR),
+    GridFieldText('reference', title=_('reference'), key=True, formatter='detail', extra='role:"input/distributionorder"', editable=not settings.ERP_CONNECTOR),
     GridFieldNumber('color', title=_('inventory status'), formatter='color', width='125', editable=False, extra='"formatoptions":{"defaultValue":""}, "summaryType":"min"'),
     GridFieldText('item', title=_('item'), field_name='item__name', formatter='detail', extra='"role":"input/item"'),
     GridFieldText('origin', title=_('origin'), field_name='origin__name', formatter='detail', extra='"role":"input/location"'),
@@ -2244,8 +2242,8 @@ class PurchaseOrderList(OperationPlanMixin, GridReport):
   template = 'input/operationplanreport.html'
   title = _("purchase orders")
   model = PurchaseOrder
-  default_sort = (2, 'desc')
-  frozenColumns = 2
+  default_sort = (1, 'desc')
+  frozenColumns = 1
   multiselect = True
   editable = True
   height = 250
@@ -2358,8 +2356,7 @@ class PurchaseOrderList(OperationPlanMixin, GridReport):
       })
 
   rows = (
-    GridFieldInteger('id', title=_('identifier'), key=True, formatter='detail', extra='role:"input/purchaseorder"'),
-    GridFieldText('reference', title=_('reference'), editable=not settings.ERP_CONNECTOR),
+    GridFieldText('reference', title=_('reference'), key=True, formatter='detail', extra='role:"input/purchaseorder"', editable=not settings.ERP_CONNECTOR),
     GridFieldNumber('color', title=_('inventory status'), formatter='color', width='125', editable=False, extra='"formatoptions":{"defaultValue":""}, "summaryType":"min"'),
     GridFieldText('item', title=_('item'), field_name='item__name', formatter='detail', extra='"role":"input/item"'),
     GridFieldText('location', title=_('location'), field_name='location__name', formatter='detail', extra='"role":"input/location"'),
@@ -2525,8 +2522,7 @@ class DeliveryOrderList(GridReport):
   help_url = 'user-guide/model-reference/delivery-orders.html'
   rows = (
     #. Translators: Translation included with Django
-    GridFieldInteger('id', title=_('identifier'), initially_hidden=True, key=True, formatter='detail', extra='role:"input/deliveryorder"'),
-    GridFieldText('reference', title=_('reference'), editable=not settings.ERP_CONNECTOR),
+    GridFieldText('reference', title=_('reference'), key=True, formatter='detail', extra='role:"input/deliveryorder"', editable=not settings.ERP_CONNECTOR),
     GridFieldText('demand', title=_('demand'), field_name="demand__name", formatter='detail', extra='"role":"input/demand"'),
     GridFieldText('item', title=_('item'), field_name='item__name', formatter='detail', extra='"role":"input/item"'),
     GridFieldText('customer', title=_('customer'), field_name='demand__customer__name', formatter='detail', extra='"role":"input/customer"'),
@@ -2700,15 +2696,15 @@ class OperationPlanDetail(View):
     cursor = connections[request.database].cursor()
 
     # Read the results from the database
-    ids = request.GET.getlist('id')
+    ids = request.GET.getlist('reference')
     first = True
     if not ids:
       yield "[]"
       raise StopIteration
     try:
-      opplans = [ x for x in OperationPlan.objects.all().using(request.database).filter(id__in=ids).select_related("operation") ]
-      opplanmats = [ x for x in OperationPlanMaterial.objects.all().using(request.database).filter(operationplan__id__in=ids).values() ]
-      opplanrscs = [ x for x in OperationPlanResource.objects.all().using(request.database).filter(operationplan__id__in=ids).values() ]
+      opplans = [ x for x in OperationPlan.objects.all().using(request.database).filter(reference__in=ids).select_related("operation") ]
+      opplanmats = [ x for x in OperationPlanMaterial.objects.all().using(request.database).filter(operationplan__reference__in=ids).values() ]
+      opplanrscs = [ x for x in OperationPlanResource.objects.all().using(request.database).filter(operationplan__reference__in=ids).values() ]
     except Exception as e:
       logger.error("Error retrieving operationplan data: %s" % e)
       yield "[]"
@@ -2734,14 +2730,13 @@ class OperationPlanDetail(View):
       try:
         # Base information
         res = {
-           "id": opplan.id,
+           "reference": opplan.reference,
            "start": opplan.startdate.strftime("%Y-%m-%dT%H:%M:%S") if opplan.startdate else None,
            "end": opplan.enddate.strftime("%Y-%m-%dT%H:%M:%S") if opplan.enddate else None,
            "quantity": float(opplan.quantity),
            "criticality": float(opplan.criticality) if opplan.criticality else '',
            "delay": opplan.delay.total_seconds() if opplan.delay else '',
            "status": opplan.status,
-           "reference": opplan.reference,
            "type": opplan.type,
            "name": opplan.name,
            "destination": opplan.destination_id,
@@ -2927,7 +2922,7 @@ class OperationPlanDetail(View):
     for opplan_data in data:
       try:
         # Read the object from the database
-        opplan = OperationPlan.objects.all().using(request.database).get(id=opplan_data.get('id', None))
+        opplan = OperationPlan.objects.all().using(request.database).get(reference=opplan_data.get('id', None))
 
         # Check permissions
         if opplan.type == "DO" and not update_DO:

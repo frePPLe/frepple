@@ -46,9 +46,9 @@ class execute_with_commands(TransactionTestCase):
 
 
   def test_exportimportfromfolder(self):
-    self.assertTrue(ManufacturingOrder.objects.count() > 30)
-    self.assertTrue(PurchaseOrder.objects.count() > 20)
-    self.assertTrue(DistributionOrder.objects.count() > 0)
+    self.assertEqual(ManufacturingOrder.objects.count(), 0)
+    self.assertEqual(PurchaseOrder.objects.count(), 4)
+    self.assertEqual(DistributionOrder.objects.count(), 0)
 
     # The exporttofolder filters by status so the count must also filter
     countMO = ManufacturingOrder.objects.filter(status='proposed').count()

@@ -182,14 +182,14 @@ class Command(BaseCommand):
             cursor.execute('''
               delete from operationplanresource
               where operationplan_id in (
-                select operationplan.id from operationplan
+                select operationplan.reference from operationplan
                 where type = 'PO'
                 )
               ''')
             cursor.execute('''
               delete from operationplanmaterial
               where operationplan_id in (
-                select operationplan.id from operationplan
+                select operationplan.reference from operationplan
                 where type = 'PO'
                 )
               ''')
@@ -200,14 +200,14 @@ class Command(BaseCommand):
             cursor.execute('''
               delete from operationplanresource
               where operationplan_id in (
-                select operationplan.id from operationplan
+                select operationplan.reference from operationplan
                 where type = 'DO'
                 )
               ''')
             cursor.execute('''
               delete from operationplanmaterial
               where operationplan_id in (
-                select operationplan.id from operationplan
+                select operationplan.reference from operationplan
                 where type = 'DO'
                 )
               ''')
@@ -218,14 +218,14 @@ class Command(BaseCommand):
             cursor.execute('''
               delete from operationplanmaterial
               where operationplan_id in (
-                select operationplan.id from operationplan
+                select operationplan.reference from operationplan
                 where type = 'MO'
                 )
               ''')
             cursor.execute('''
               delete from operationplanresource
               where operationplan_id in (
-                select operationplan.id from operationplan
+                select operationplan.reference from operationplan
                 where type = 'MO'
                 )
               ''')
@@ -236,14 +236,14 @@ class Command(BaseCommand):
             cursor.execute('''
               delete from operationplanmaterial
               where operationplan_id in (
-                select operationplan.id from operationplan
+                select operationplan.reference from operationplan
                 where type = 'DLVR'
                 )
               ''')
             cursor.execute('''
               delete from operationplanresource
               where operationplan_id in (
-                select operationplan.id from operationplan
+                select operationplan.reference from operationplan
                 where type = 'DLVR'
                 )
               ''')

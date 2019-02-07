@@ -2322,18 +2322,18 @@ class OperationPlan
     }
 
     /** Update the next-id number.
-      * Only increases are allowed to avoid duplicate id assignments.
+      * Only increases are allowed to avoid duplicate reference assignments.
       */
-    static void setIDCounter(unsigned long l)
+    static void setReferenceMax(string const& l)
     {
-      if (l > counterMin)
-        counterMin = l;
+      if (referenceMax < l)
+        referenceMax = l;
     }
 
     /** Return the next-id number. */
-    static unsigned long getIDCounter()
+    static string getReferenceMax()
     {
-      return counterMin;
+      return referenceMax;
     }
 
     /** Return the end date. */
@@ -8820,14 +8820,14 @@ class Plan : public Plannable, public Object
       return OperationPlan::iterator();
     }
 
-    unsigned long getOperationPlanID() const
+    string getOperationPlanReference() const
     {
-      return OperationPlan::getIDCounter();
+      return OperationPlan::getReferenceMax();
     }
 
-    void setOperationPlanID(unsigned long l)
+    void setOperationPlanReference(const string& l)
     {
-      OperationPlan::setIDCounter(l);
+      OperationPlan::setReferenceMax(l);
     }
 
     const MetaClass& getType() const {return *metadata;}
@@ -8840,7 +8840,7 @@ class Plan : public Plannable, public Object
       m->addStringField<Plan>(Tags::description, &Plan::getDescription, &Plan::setDescription);
       m->addDateField<Plan>(Tags::current, &Plan::getCurrent, &Plan::setCurrent);
       m->addStringField<Plan>(Tags::logfile, &Plan::getLogFile, &Plan::setLogFile, "", DONT_SERIALIZE);
-      m->addUnsignedLongField(Tags::id, &Plan::getOperationPlanID, &Plan::setOperationPlanID, 0, DONT_SERIALIZE);
+      m->addStringField(Tags::id, &Plan::getOperationPlanReference, &Plan::setOperationPlanReference, "", DONT_SERIALIZE);
       m->addPointerField<Cls, Calendar>(Tags::calendar, &Cls::getCalendar, &Cls::setCalendar, DONT_SERIALIZE);
       Plannable::registerFields<Plan>(m);
       m->addIteratorField<Plan, Location::iterator, Location>(Tags::locations, Tags::location, &Plan::getLocations, BASE + WRITE_OBJECT);

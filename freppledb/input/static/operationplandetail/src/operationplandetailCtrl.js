@@ -155,7 +155,7 @@ function operationplanCtrl($scope, OperationPlan) {
   $scope.processAggregatedInfo = processAggregatedInfo;
 
   function displayInfo(row) {
-    var rowid=(typeof row === 'undefined')?undefined:row.id;
+    var rowid = (typeof row === 'undefined') ? undefined : row.reference;
     $scope.operationplan = new OperationPlan();
 
     if (typeof row !== 'undefined') {

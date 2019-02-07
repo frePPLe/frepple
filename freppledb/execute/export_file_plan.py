@@ -93,7 +93,7 @@ def exportFlowplans():
   for i in frepple.buffers():
     for j in i.flowplans:
       writer.writerow((
-       j.operationplan.id, j.buffer.item.name, j.buffer.location.name,
+       j.operationplan.reference, j.buffer.item.name, j.buffer.location.name,
        j.quantity, j.date, j.onhand
        ))
   print('Exported flowplans in %.2f seconds' % (time() - starttime))
@@ -110,7 +110,7 @@ def exportLoadplans():
     for j in i.loadplans:
       if j.quantity < 0:
         writer.writerow((
-          j.operationplan.id, j.resource.name,
+          j.operationplan.reference, j.resource.name,
           -j.quantity, j.startdate, j.enddate, j.setup and j.setup or None
           ))
   print('Exported loadplans in %.2f seconds' % (time() - starttime))
@@ -223,7 +223,7 @@ def exportPegging():
     # Export pegging
     for j in i.pegging:
       writer.writerow((
-        n, j.level, j.operationplan.id, j.quantity
+        n, j.level, j.operationplan.reference, j.quantity
        ))
   print('Exported pegging in %.2f seconds' % (time() - starttime))
 

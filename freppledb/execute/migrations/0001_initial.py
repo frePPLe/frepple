@@ -37,7 +37,7 @@ class Migration(migrations.Migration):
                 ('status', models.CharField(editable=False, verbose_name='status', max_length=20)),
                 ('message', models.TextField(null=True, editable=False, verbose_name='message', max_length=200)),
                 ('user', models.ForeignKey(verbose_name='user', null=True, editable=False, blank=True, to=settings.AUTH_USER_MODEL)),
-                ('logfile', models.TextField(editable=False, max_length=200, null=True, verbose_name='logfile'))
+                ('logfile', models.TextField(editable=False, max_length=200, null=True, verbose_name='log file'))
             ],
             options={
                 'db_table': 'execute_log',

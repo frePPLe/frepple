@@ -201,7 +201,7 @@ class OverviewReport(GridPivot):
       'producedPO', sum(case when operationplan.type = 'PO' and (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity > 0 then opm.quantity else 0 end)
       )
       from operationplanmaterial opm
-      inner join operationplan on operationplan.id = opm.operationplan_id 
+      inner join operationplan on operationplan.reference = opm.operationplan_id 
       and ((startdate < d.enddate and enddate >= d.enddate) 
             or (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate))
       where opm.item_id = item.name and opm.location_id = location.name) ongoing
@@ -351,7 +351,6 @@ class DetailReport(OperationPlanMixin, GridReport):
     GridFieldInteger('id', title=_('internal id'), key=True, editable=False, hidden=True),
     GridFieldText('item', title=_('item'), field_name='item__name', editable=False, formatter='detail', extra='"role":"input/item"'),
     GridFieldText('location', title=_('location'), field_name='location__name', editable=False, formatter='detail', extra='"role":"input/location"'),
-    GridFieldInteger('operationplan__id', title=_('identifier'), editable=False),
     GridFieldText('operationplan__reference', title=_('reference'), editable=False),
     GridFieldText('operationplan__color', title=_('inventory status'), formatter='color', width='125', editable=False, extra='"formatoptions":{"defaultValue":""}, "summaryType":"min"'),
     GridFieldText('operationplan__type', title=_('type'), field_name='operationplan__type', editable=False),

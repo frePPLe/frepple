@@ -62,7 +62,7 @@ function OperationPlanFactory($http, getURLprefix, Operation, Location, Item) {
       return operplan;
     } else {
       return $http
-        .get(getURLprefix() + '/operationplan/?id=' + encodeURIComponent(operplan.id))
+        .get(getURLprefix() + '/operationplan/?reference=' + encodeURIComponent(operplan.id))
         .then(
           function (response) {
             if (debug) {
@@ -83,7 +83,7 @@ function OperationPlanFactory($http, getURLprefix, Operation, Location, Item) {
   function save() {
     var operplan = this;
     return $http
-      .put(getURLprefix() + '/api/input/operationplan/?id=' + encodeURIComponent(operplan.name), operplan)
+      .put(getURLprefix() + '/api/input/operationplan/?reference=' + encodeURIComponent(operplan.name), operplan)
       .then(
         function (response) {
           if (debug)  {
@@ -99,7 +99,7 @@ function OperationPlanFactory($http, getURLprefix, Operation, Location, Item) {
   function remove() {
     var operplan = this;
     return $http
-      .delete(getURLprefix() + '/api/input/operationplan/?id=' + encodeURIComponent(operplan.name))
+      .delete(getURLprefix() + '/api/input/operationplan/?reference=' + encodeURIComponent(operplan.name))
       .then(
         function (response) {
           if (debug) {

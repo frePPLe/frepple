@@ -46,8 +46,8 @@ class Migration(migrations.Migration):
                 ('is_staff', models.BooleanField(verbose_name='staff status', default=False, help_text='Designates whether the user can log into this admin site.')),
                 ('is_active', models.BooleanField(verbose_name='active', default=True, help_text='Designates whether this user should be treated as active. Unselect this instead of deleting accounts.')),
                 ('date_joined', models.DateTimeField(verbose_name='date joined', default=django.utils.timezone.now)),
-                ('language', models.CharField(choices=[('auto', 'Detect automatically'), ('en', 'English'), ('es', 'Spanish'), ('fr', 'French'), ('it', 'Italian'), ('ja', 'Japanese'), ('nl', 'Dutch'), ('pt', 'Portuguese'), ('pt-br', 'Brazilian Portuguese'), ('zh-cn', 'Simplified Chinese'), ('zh-tw', 'Traditional Chinese')], verbose_name='language', default='auto', max_length=10)),
-                ('theme', models.CharField(max_length=20, choices=[('grass', 'Grass'), ('lemon', 'Lemon'), ('water', 'Water'), ('snow', 'Snow'), ('strawberry', 'Strawberry'), ('earth', 'Earth')], verbose_name='theme', default='grass')),
+                ('language', models.CharField(choices=[('auto', 'Detect automatically'), ('en', 'English'), ('fr', 'French'), ('de', 'German'), ('it', 'Italian'), ('ja', 'Japanese'), ('nl', 'Dutch'), ('pt', 'Portuguese'), ('pt-br', 'Brazilian Portuguese'), ('ru', 'Russian'), ('es', 'Spanish'), ('zh-cn', 'Simplified Chinese'), ('zh-tw', 'Traditional Chinese')], verbose_name='language', default='auto', max_length=10)),
+                ('theme', models.CharField(max_length=20, choices=[('earth', 'Earth'), ('grass', 'Grass'), ('lemon', 'Lemon'), ('odoo', 'Odoo'), ('openbravo', 'Openbravo'), ('orange', 'Orange'), ('snow', 'Snow'), ('strawberry', 'Strawberry'), ('water', 'Water')], verbose_name='theme', default='earth')),
                 ('pagesize', models.PositiveIntegerField(verbose_name='page size', default=100)),
                 ('horizonbuckets', models.CharField(null=True, blank=True, max_length=300)),
                 ('horizonstart', models.DateTimeField(null=True, blank=True)),
@@ -105,7 +105,7 @@ class Migration(migrations.Migration):
             name='Comment',
             fields=[
                 ('id', models.AutoField(primary_key=True, verbose_name='identifier', serialize=False)),
-                ('object_pk', models.TextField(verbose_name='object ID')),
+                ('object_pk', models.TextField(verbose_name='object id')),
                 ('comment', models.TextField(verbose_name='comment', max_length=3000)),
                 ('lastmodified', models.DateTimeField(editable=False, verbose_name='last modified', default=django.utils.timezone.now)),
                 ('content_type', models.ForeignKey(related_name='content_type_set_for_comment', verbose_name='content type', to='contenttypes.ContentType')),
@@ -139,7 +139,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('name', models.CharField(primary_key=True, verbose_name='name', serialize=False, max_length=300)),
                 ('description', models.CharField(null=True, verbose_name='description', blank=True, max_length=500)),
-                ('status', models.CharField(choices=[('free', 'Free'), ('in use', 'In use'), ('busy', 'Busy')], verbose_name='status', max_length=10)),
+                ('status', models.CharField(choices=[('free', 'free'), ('in use', 'in use'), ('busy', 'busy')], verbose_name='status', max_length=10)),
                 ('lastrefresh', models.DateTimeField(null=True, editable=False, verbose_name='last refreshed')),
             ],
             options={

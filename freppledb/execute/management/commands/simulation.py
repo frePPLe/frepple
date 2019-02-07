@@ -324,10 +324,14 @@ class Simulator(object):
     self.database = database
     self.verbosity = verbosity
     self.demand_number = Demand.objects.all().using(self.database).count()
-    self.mo_number = ManufacturingOrder.objects.all().using(self.database).aggregate(Max('id'))['id__max']
+    self.mo_number = int(
+      ManufacturingOrder.objects.all().using(self.database)
+        .extra(where=["reference ~ '^[0-9]*$'"])
+        .aggregate(Max('reference'))['reference__max']
+      )
     if not self.mo_number:
       self.mo_number = 0
-    self.mo_number += 10000 # A bit of a trick to avoid duplicate IDs with POs and DOs
+    self.mo_number += 10000  # A bit of a trick to avoid duplicate references with POs and DOs
 
     # Metrics for on-time delivery
     self.demand_shipped = 0

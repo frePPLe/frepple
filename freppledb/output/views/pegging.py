@@ -84,14 +84,14 @@ class ReportByDemand(GridReport):
       with dmd as (
         select
           due,
-          cast(jsonb_array_elements(plan->'pegging')->>'opplan' as integer) opplan
+          cast(jsonb_array_elements(plan->'pegging')->>'opplan' as varchar) opplan
         from demand
         where name = %s
         )
       select min(dmd.due), min(startdate), max(enddate)
       from dmd
       inner join operationplan
-      on dmd.opplan = operationplan.id
+      on dmd.opplan = operationplan.reference
       and type <> 'STCK'
       ''', (args[0]))
     x = cursor.fetchone()
@@ -146,13 +146,13 @@ class ReportByDemand(GridReport):
           row_number() over () as rownum, opplan, due, lvl, quantity
         from (select
           due,
-          cast(jsonb_array_elements(plan->'pegging')->>'opplan' as integer) as opplan,
+          cast(jsonb_array_elements(plan->'pegging')->>'opplan' as varchar) as opplan,
           cast(jsonb_array_elements(plan->'pegging')->>'level' as integer) as lvl,
           cast(jsonb_array_elements(plan->'pegging')->>'quantity' as numeric) as quantity
           from demand
           where name = %s
           ) d1
-          )d2
+          ) d2
         group by opplan
         )
       select
@@ -162,14 +162,14 @@ class ReportByDemand(GridReport):
         case when operationplan.operation_id is not null then 1 else 0 end as show
       from pegging
       inner join operationplan
-        on operationplan.id = pegging.opplan
+        on operationplan.reference = pegging.opplan
       inner join (
         select name,
           min(rownum) as rownum,
           sum(pegging.quantity) as pegged
         from pegging
         inner join operationplan
-          on pegging.opplan = operationplan.id
+          on pegging.opplan = operationplan.reference
         group by operationplan.name
         ) ops
       on operationplan.name = ops.name

@@ -102,7 +102,7 @@ gdb:
 	export FREPPLE_HOME=$(CURDIR)/bin; \
 	export PYTHONPATH=$(CURDIR); \
 	export DJANGO_SETTINGS_MODULE=freppledb.settings; \
-	export LD_LIBRARY_PATH=$ROOT/src/.libs; \
+	export LD_LIBRARY_PATH=$(CURDIR)/src/.libs; \
 	export FREPPLE_LOGFILE=frepple.log; \
 	libtool --mode=execute gdb --args $(CURDIR)/src/frepple $(CURDIR)/freppledb/common/commands.py
 

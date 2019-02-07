@@ -296,17 +296,24 @@ void SetupMatrixRule::updateExpression()
   if (to.empty())
     tmp.append(".*");
   else
-    tmp.append(to);
-  expression = regex(tmp, regex::ECMAScript | regex::optimize);
+    tmp.append(to);  
+  matchall = (tmp == ".* to .*");
+  if (!matchall)
+    expression = regex(tmp, regex::ECMAScript | regex::optimize);
 }
 
 
 bool SetupMatrixRule::matches(PooledString f, PooledString t) const
 {
-  string tmp(f);
-  tmp.append(" to ");
-  tmp.append(t);
-  return regex_match(tmp, expression);
+  if (matchall)
+    return true;
+  else
+  {
+    string tmp(f);
+    tmp.append(" to ");
+    tmp.append(t);
+    return regex_match(tmp, expression);
+  }
 }
 
 

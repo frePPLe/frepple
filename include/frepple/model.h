@@ -6321,6 +6321,7 @@ class SetupMatrixRule : public Object
     void updateExpression();
 
     regex expression;
+    bool matchall = false;
 
   public:
     /** @brief An iterator class to go through all rules of a setup matrix. */

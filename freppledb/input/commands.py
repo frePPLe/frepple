@@ -1419,25 +1419,28 @@ class loadOperationPlans(LoadTask):
         ORDER BY operationplan.reference ASC
         ''' % (filter_and, confirmed_filter))
       for i in cursor:
-        cnt_mo += 1
-        opplan = frepple.operationplan(
-          operation=frepple.operation(name=i[0]),
-          reference=i[1], quantity=i[2], source=i[7],
-          start=i[3], end=i[4], status=i[5]
-          )
-        if opplan and i[5] == 'confirmed':
-          if not consume_material:
-            opplan.consume_material = False
-          if not consume_capacity:
-            opplan.consume_capacity = False
-        if i[6] and opplan:
-          try:
-            opplan.owner = frepple.operationplan(id=i[6])
-          except:
-            pass
-        if opplan:
-          if i[8]:
-            opplan.demand = frepple.demand(name=i[8])
+        try:
+          cnt_mo += 1
+          opplan = frepple.operationplan(
+            operation=frepple.operation(name=i[0]),
+            reference=i[1], quantity=i[2], source=i[7],
+            start=i[3], end=i[4], status=i[5]
+            )
+          if opplan and i[5] == 'confirmed':
+            if not consume_material:
+              opplan.consume_material = False
+            if not consume_capacity:
+              opplan.consume_capacity = False
+          if i[6] and opplan:
+            try:
+              opplan.owner = frepple.operationplan(id=i[6])
+            except:
+              pass
+          if opplan:
+            if i[8]:
+              opplan.demand = frepple.demand(name=i[8])
+        except Exception as e:
+          logger.error("**** %s ****" % e)
       logger.info('Loaded %d manufacturing orders, %d purchase orders, %d distribution orders and %s deliveries in %.2f seconds' % (cnt_mo, cnt_po, cnt_do, cnt_dlvr, time() - starttime))
 
     with connections[database].cursor() as cursor:

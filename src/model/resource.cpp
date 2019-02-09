@@ -709,7 +709,17 @@ void Resource::setSetupMatrix(SetupMatrix *s)
 
 SetupEvent* Resource::getSetupAt(Date d, OperationPlan* opplan)
 {
-  auto tmp = getLoadPlans().rbegin();
+  LoadPlan* ldplan = nullptr;
+  if (opplan)
+  {
+    for (auto l = opplan->getLoadPlans(); l != opplan->endLoadPlans(); ++l)
+      if (l->getResource() == this && l->getQuantity() < 0.0)
+      {
+        ldplan = &*l;
+        break;
+      }
+  }
+  auto tmp = ldplan ? getLoadPlans().begin(ldplan) : getLoadPlans().rbegin();
   while (tmp != getLoadPlans().end())
   {
     if (tmp->getEventType() == 5 && (!opplan || opplan != tmp->getOperationPlan()) && (

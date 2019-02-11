@@ -16,6 +16,7 @@
 #
 
 from django.db import connections
+from django.db.models.expressions import RawSQL
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import string_concat
 from django.utils.encoding import force_text
@@ -451,8 +452,88 @@ class PurchaseReport(GridPivot):
     current, start, end = getHorizon(request)
     return PurchaseOrder.objects.all() \
       .filter(startdate__lte=end, enddate__gte=start) \
-      .distinct('item', 'supplier', 'location') \
+      .annotate(key=RawSQL("coalesce(item_id,'') || coalesce(location_id,'') || coalesce(supplier_id,'')", ())) \
+      .distinct('key') \
       .order_by()   # Ordering isn't compatible with the distinct
+
+  @classmethod
+  def _apply_sort(reportclass, request, query):
+    '''
+    Applies a sort to the query.
+    '''
+    sortname = None
+    if request.GET.get('sidx', ''):
+      # 1) Sorting order specified on the request
+      sortname = "%s %s" % (request.GET['sidx'], request.GET.get('sord', 'asc'))
+    elif request.prefs:
+      # 2) Sorting order from the preferences
+      sortname = "%s %s" % (request.prefs.get('sidx', ''), request.GET.get('sord', 'asc'))
+    if not sortname or sortname == " asc":
+      # 3) Default sort order
+      if not reportclass.default_sort:
+        return query
+      elif len(reportclass.default_sort) > 6:
+        return query.order_by(
+          reportclass.rows[reportclass.default_sort[0]].field_name
+          if reportclass.default_sort[1] == "asc"
+          else ("-%s" % reportclass.rows[reportclass.default_sort[0]].field_name),
+          reportclass.rows[reportclass.default_sort[2]].field_name
+          if reportclass.default_sort[3] == "asc"
+          else ("-%s" % reportclass.rows[reportclass.default_sort[2]].field_name),
+          reportclass.rows[reportclass.default_sort[4]].field_name
+          if reportclass.default_sort[5] == "asc"
+          else ("-%s" % reportclass.rows[reportclass.default_sort[4]].field_name)
+          )
+      elif len(reportclass.default_sort) >= 4:
+        return query.order_by(
+          reportclass.rows[reportclass.default_sort[0]].field_name
+          if reportclass.default_sort[1] == "asc"
+          else ("-%s" % reportclass.rows[reportclass.default_sort[0]].field_name),
+          reportclass.rows[reportclass.default_sort[2]].field_name
+          if reportclass.default_sort[3] == "asc"
+          else ("-%s" % reportclass.rows[reportclass.default_sort[2]].field_name)
+          )
+      elif len(reportclass.default_sort) >= 2:
+        return query.order_by(
+          reportclass.rows[reportclass.default_sort[0]].field_name
+          if reportclass.default_sort[1] == "asc"
+          else ("-%s" % reportclass.rows[reportclass.default_sort[0]].field_name)
+          )
+      else:
+        return query
+    else:
+      # Validate the field does exist.
+      # We only validate the first level field, and not the fields
+      # on related models.
+      sortargs = []
+      for s in sortname.split(","):
+        stripped = s.strip()
+        if not stripped:
+          continue
+        sortfield, direction = stripped.split(" ", 1)
+        try:
+          query.order_by(sortfield).query.__str__()
+          if direction.strip() != "desc":
+            sortargs.append(sortfield)
+          else:
+            sortargs.append('-%s' % sortfield)
+        except:
+          for r in reportclass.rows:
+            if r.name == sortfield:
+              try:
+                query.order_by(r.field_name).query.__str__()
+                if direction.strip() != "desc":
+                  sortargs.append(r.field_name)
+                else:
+                  sortargs.append('-%s' % r.field_name)
+              except:
+                # Can't sort on this field
+                pass
+              break
+      if sortargs:
+        return query.order_by('key', *sortargs)    # The extra ordering by the 'key' is only change with the default method
+      else:
+        return query.order_by('key')    # The extra ordering by the 'key' is only change with the default method
 
 
   @staticmethod
@@ -465,7 +546,7 @@ class PurchaseReport(GridPivot):
       from (
       select
         -- Key field
-        combinations.item_id || combinations.location_id || combinations.supplier_id as key,
+        combinations.key as key,
         -- Attribute fields of item, location and supplier
         combinations.item_id as item,
         item.description as item__description,
@@ -680,8 +761,89 @@ class DistributionReport(GridPivot):
     current, start, end = getHorizon(request)
     return DistributionOrder.objects.all() \
       .filter(startdate__lte=end, enddate__gte=start) \
-      .distinct('item', 'origin', 'destination') \
+      .annotate(key=RawSQL("coalesce(item_id,'') || coalesce(origin_id,'') || coalesce(destination_id,'')", ())) \
+      .distinct('key') \
       .order_by()   # Ordering isn't compatible with the distinct
+
+
+  @classmethod
+  def _apply_sort(reportclass, request, query):
+    '''
+    Applies a sort to the query.
+    '''
+    sortname = None
+    if request.GET.get('sidx', ''):
+      # 1) Sorting order specified on the request
+      sortname = "%s %s" % (request.GET['sidx'], request.GET.get('sord', 'asc'))
+    elif request.prefs:
+      # 2) Sorting order from the preferences
+      sortname = "%s %s" % (request.prefs.get('sidx', ''), request.GET.get('sord', 'asc'))
+    if not sortname or sortname == " asc":
+      # 3) Default sort order
+      if not reportclass.default_sort:
+        return query
+      elif len(reportclass.default_sort) > 6:
+        return query.order_by(
+          reportclass.rows[reportclass.default_sort[0]].field_name
+          if reportclass.default_sort[1] == "asc"
+          else ("-%s" % reportclass.rows[reportclass.default_sort[0]].field_name),
+          reportclass.rows[reportclass.default_sort[2]].field_name
+          if reportclass.default_sort[3] == "asc"
+          else ("-%s" % reportclass.rows[reportclass.default_sort[2]].field_name),
+          reportclass.rows[reportclass.default_sort[4]].field_name
+          if reportclass.default_sort[5] == "asc"
+          else ("-%s" % reportclass.rows[reportclass.default_sort[4]].field_name)
+          )
+      elif len(reportclass.default_sort) >= 4:
+        return query.order_by(
+          reportclass.rows[reportclass.default_sort[0]].field_name
+          if reportclass.default_sort[1] == "asc"
+          else ("-%s" % reportclass.rows[reportclass.default_sort[0]].field_name),
+          reportclass.rows[reportclass.default_sort[2]].field_name
+          if reportclass.default_sort[3] == "asc"
+          else ("-%s" % reportclass.rows[reportclass.default_sort[2]].field_name)
+          )
+      elif len(reportclass.default_sort) >= 2:
+        return query.order_by(
+          reportclass.rows[reportclass.default_sort[0]].field_name
+          if reportclass.default_sort[1] == "asc"
+          else ("-%s" % reportclass.rows[reportclass.default_sort[0]].field_name)
+          )
+      else:
+        return query
+    else:
+      # Validate the field does exist.
+      # We only validate the first level field, and not the fields
+      # on related models.
+      sortargs = []
+      for s in sortname.split(","):
+        stripped = s.strip()
+        if not stripped:
+          continue
+        sortfield, direction = stripped.split(" ", 1)
+        try:
+          query.order_by(sortfield).query.__str__()
+          if direction.strip() != "desc":
+            sortargs.append(sortfield)
+          else:
+            sortargs.append('-%s' % sortfield)
+        except:
+          for r in reportclass.rows:
+            if r.name == sortfield:
+              try:
+                query.order_by(r.field_name).query.__str__()
+                if direction.strip() != "desc":
+                  sortargs.append(r.field_name)
+                else:
+                  sortargs.append('-%s' % r.field_name)
+              except:
+                # Can't sort on this field
+                pass
+              break
+      if sortargs:
+        return query.order_by('key', *sortargs)    # The extra ordering by the 'key' is only change with the default method
+      else:
+        return query.order_by('key')    # The extra ordering by the 'key' is only change with the default method
 
 
   @staticmethod
@@ -694,7 +856,7 @@ class DistributionReport(GridPivot):
       from (
       select
         -- Key field
-        combinations.item_id || combinations.origin_id || combinations.destination_id as key,
+        combinations.key as key,
         -- Attribute fields of item, location and supplier
         combinations.item_id as item,
         item.description as item__description,

@@ -470,37 +470,7 @@ class PurchaseReport(GridPivot):
       sortname = "%s %s" % (request.prefs.get('sidx', ''), request.GET.get('sord', 'asc'))
     if not sortname or sortname == " asc":
       # 3) Default sort order
-      if not reportclass.default_sort:
-        return query
-      elif len(reportclass.default_sort) > 6:
-        return query.order_by(
-          reportclass.rows[reportclass.default_sort[0]].field_name
-          if reportclass.default_sort[1] == "asc"
-          else ("-%s" % reportclass.rows[reportclass.default_sort[0]].field_name),
-          reportclass.rows[reportclass.default_sort[2]].field_name
-          if reportclass.default_sort[3] == "asc"
-          else ("-%s" % reportclass.rows[reportclass.default_sort[2]].field_name),
-          reportclass.rows[reportclass.default_sort[4]].field_name
-          if reportclass.default_sort[5] == "asc"
-          else ("-%s" % reportclass.rows[reportclass.default_sort[4]].field_name)
-          )
-      elif len(reportclass.default_sort) >= 4:
-        return query.order_by(
-          reportclass.rows[reportclass.default_sort[0]].field_name
-          if reportclass.default_sort[1] == "asc"
-          else ("-%s" % reportclass.rows[reportclass.default_sort[0]].field_name),
-          reportclass.rows[reportclass.default_sort[2]].field_name
-          if reportclass.default_sort[3] == "asc"
-          else ("-%s" % reportclass.rows[reportclass.default_sort[2]].field_name)
-          )
-      elif len(reportclass.default_sort) >= 2:
-        return query.order_by(
-          reportclass.rows[reportclass.default_sort[0]].field_name
-          if reportclass.default_sort[1] == "asc"
-          else ("-%s" % reportclass.rows[reportclass.default_sort[0]].field_name)
-          )
-      else:
-        return query
+      return query.order_by('key')
     else:
       # Validate the field does exist.
       # We only validate the first level field, and not the fields
@@ -780,37 +750,7 @@ class DistributionReport(GridPivot):
       sortname = "%s %s" % (request.prefs.get('sidx', ''), request.GET.get('sord', 'asc'))
     if not sortname or sortname == " asc":
       # 3) Default sort order
-      if not reportclass.default_sort:
-        return query
-      elif len(reportclass.default_sort) > 6:
-        return query.order_by(
-          reportclass.rows[reportclass.default_sort[0]].field_name
-          if reportclass.default_sort[1] == "asc"
-          else ("-%s" % reportclass.rows[reportclass.default_sort[0]].field_name),
-          reportclass.rows[reportclass.default_sort[2]].field_name
-          if reportclass.default_sort[3] == "asc"
-          else ("-%s" % reportclass.rows[reportclass.default_sort[2]].field_name),
-          reportclass.rows[reportclass.default_sort[4]].field_name
-          if reportclass.default_sort[5] == "asc"
-          else ("-%s" % reportclass.rows[reportclass.default_sort[4]].field_name)
-          )
-      elif len(reportclass.default_sort) >= 4:
-        return query.order_by(
-          reportclass.rows[reportclass.default_sort[0]].field_name
-          if reportclass.default_sort[1] == "asc"
-          else ("-%s" % reportclass.rows[reportclass.default_sort[0]].field_name),
-          reportclass.rows[reportclass.default_sort[2]].field_name
-          if reportclass.default_sort[3] == "asc"
-          else ("-%s" % reportclass.rows[reportclass.default_sort[2]].field_name)
-          )
-      elif len(reportclass.default_sort) >= 2:
-        return query.order_by(
-          reportclass.rows[reportclass.default_sort[0]].field_name
-          if reportclass.default_sort[1] == "asc"
-          else ("-%s" % reportclass.rows[reportclass.default_sort[0]].field_name)
-          )
-      else:
-        return query
+      return query.order_by('key')
     else:
       # Validate the field does exist.
       # We only validate the first level field, and not the fields

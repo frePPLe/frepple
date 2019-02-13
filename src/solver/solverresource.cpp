@@ -764,10 +764,24 @@ void SolverCreate::solve(const ResourceBuckets* res, void* v)
             // the presence of availability calendars)
             data->state->a_qty = 0.0;
           else if (data->constrainedPlanning && (isLeadTimeConstrained() || isFenceConstrained()))
+          {
             // Check the leadtime constraints after the move
             // Note that the check function can update the answered date
             // and quantity
             checkOperationLeadTime(opplan, *data, false);
+            if (data->state->a_qty)
+            {
+              if (opplan->getStart() >= newStart.getStart())
+                // The lead time check moved the operationplan to a later bucket again
+                data->state->a_qty = 0.0;
+              else
+              {
+                // Doublecheck whether there are overloads
+                auto bckt = data->state->q_loadplan->getBucketEnd();
+                overloadQty = get<0>(bckt);
+              }
+            }
+          }
         }
         else
           // No earlier capacity found: get out of the loop

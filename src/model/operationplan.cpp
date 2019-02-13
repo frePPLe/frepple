@@ -1696,14 +1696,14 @@ void OperationPlan::setConfirmed(bool b)
   if (b)
   {
     flags |= STATUS_CONFIRMED;
-    flags &= ~STATUS_APPROVED;
+    flags &= ~(STATUS_APPROVED + STATUS_COMPLETED + STATUS_CLOSED);
   }
   else
   {
-    flags &= ~STATUS_CONFIRMED;
+    // Change to proposed
+    flags &= ~(STATUS_CONFIRMED + STATUS_COMPLETED + STATUS_CLOSED);
     flags |= STATUS_APPROVED;
   }
-  flags &= ~STATUS_CLOSED;
   for (OperationPlan *x = firstsubopplan; x; x = x->nextsubopplan)
     x->setConfirmed(b);
   update();
@@ -1714,15 +1714,12 @@ void OperationPlan::setApproved(bool b)
 {
   if (b)
   {
-    flags |= STATUS_CONFIRMED;
-    flags &= ~STATUS_APPROVED;
+    flags |= STATUS_APPROVED;
+    flags &= ~(STATUS_CONFIRMED + STATUS_COMPLETED + STATUS_CLOSED);
   }
   else
-  {
-    flags &= ~STATUS_CONFIRMED;
-    flags |= STATUS_APPROVED;
-  }
-  flags &= ~STATUS_CLOSED;
+    // Change to proposed
+    flags &= ~(STATUS_APPROVED + STATUS_CONFIRMED + STATUS_COMPLETED + STATUS_CLOSED);
   for (OperationPlan *x = firstsubopplan; x; x = x->nextsubopplan)
     x->setApproved(b);
   update();
@@ -1732,41 +1729,56 @@ void OperationPlan::setApproved(bool b)
 void OperationPlan::setProposed(bool b)
 {
   if (b)
-  {
-    flags &= ~STATUS_CONFIRMED;
-    flags &= ~STATUS_APPROVED;
-  }
+    flags &= ~(STATUS_APPROVED + STATUS_CONFIRMED + STATUS_COMPLETED + STATUS_CLOSED);
   else
   {
-    flags &= ~STATUS_CONFIRMED;
+    // Change to approved
+    flags &= ~(STATUS_CONFIRMED + STATUS_COMPLETED + STATUS_CLOSED);
     flags |= STATUS_APPROVED;
   }
-  flags &= ~STATUS_CLOSED;
   for (OperationPlan *x = firstsubopplan; x; x = x->nextsubopplan)
     x->setProposed(b);
   update();
 }
 
 
+void OperationPlan::setCompleted(bool b)
+{
+  if (b)
+  {
+    flags |= STATUS_CONFIRMED + STATUS_COMPLETED;
+    flags &= ~(STATUS_APPROVED + STATUS_CLOSED);
+  }
+  else
+  {
+    // Change to approved
+    flags &= ~(STATUS_CONFIRMED + STATUS_COMPLETED + STATUS_CLOSED);
+    flags |= STATUS_APPROVED;
+  }
+  for (OperationPlan *x = firstsubopplan; x; x = x->nextsubopplan)
+    x->setClosed(b);
+  update();
+}
+
 
 void OperationPlan::setClosed(bool b)
 {
   if (b)
   {
-    flags |= STATUS_CONFIRMED;
-    flags &= ~STATUS_APPROVED;
-    flags |= STATUS_CLOSED;
+    flags |= STATUS_CONFIRMED + STATUS_CLOSED;
+    flags &= ~(STATUS_APPROVED + STATUS_COMPLETED);
   }
   else
   {
-    flags &= ~STATUS_CONFIRMED;
+    // Change to approved
+    flags &= ~(STATUS_CONFIRMED + STATUS_COMPLETED + STATUS_CLOSED);
     flags |= STATUS_APPROVED;
-    flags &= ~STATUS_CLOSED;
   }  
   for (OperationPlan *x = firstsubopplan; x; x = x->nextsubopplan)
     x->setClosed(b);
   update();
 }
+
 
 string OperationPlan::getStatus() const
 {
@@ -1776,6 +1788,8 @@ string OperationPlan::getStatus() const
     return "closed";
   else if (flags & STATUS_CONFIRMED)
     return "confirmed";
+  else if (flags & STATUS_COMPLETED)
+    return "completed";
   else
     return "proposed";
 }
@@ -1786,26 +1800,24 @@ void OperationPlan::setStatus(const string& s)
   if (s == "approved")
   {
     flags |= STATUS_APPROVED;
-    flags &= ~STATUS_CONFIRMED;
-    flags &= ~STATUS_CLOSED;
+    flags &= ~(STATUS_CONFIRMED + STATUS_COMPLETED + STATUS_CLOSED);
   }
   else if (s == "confirmed")
   {
     flags |= STATUS_CONFIRMED;
-    flags &= ~STATUS_APPROVED;
-    flags &= ~STATUS_CLOSED;
+    flags &= ~(STATUS_APPROVED + STATUS_COMPLETED + STATUS_CLOSED);
   }
   else if (s == "proposed")
+    flags &= ~(STATUS_APPROVED + STATUS_CONFIRMED + STATUS_COMPLETED + STATUS_CLOSED);
+  else if (s == "completed")
   {
-    flags &= ~STATUS_APPROVED;
-    flags &= ~STATUS_CONFIRMED;
-    flags &= ~STATUS_CLOSED;
+    flags &= ~(STATUS_APPROVED + STATUS_CLOSED);
+    flags |= STATUS_CONFIRMED + STATUS_COMPLETED;
   }
   else if (s == "closed")
   {
-    flags &= ~STATUS_APPROVED;
-    flags |= STATUS_CONFIRMED;
-    flags |= STATUS_CLOSED;
+    flags &= ~(STATUS_APPROVED + STATUS_COMPLETED);
+    flags |= STATUS_CONFIRMED + STATUS_CLOSED;
   }
   else
     throw DataException("invalid operationplan status:" + s);

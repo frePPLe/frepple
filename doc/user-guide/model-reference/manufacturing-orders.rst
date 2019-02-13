@@ -30,6 +30,9 @@ status           non-empty string  This field should have one of the following v
 
                                    * | confirmed:
                                      | The manufacturing order is confirmed, it has been populated in your ERP system (optimization input).
+
+                                   * | completed:
+                                     | The manufacturing order has been executed, but the stock hasn't been increased yet (optimization input).
                                      
                                    * | closed : The manufacturing order has been completed. It is ignored for planning.
 

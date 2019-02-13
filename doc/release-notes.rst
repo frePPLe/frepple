@@ -1,6 +1,21 @@
 Release notes
 -------------
 
+5.0.0 (upcoming release)
+========================
+
+.. rubric:: Production planning
+
+- | The identifier of `purchase orders <user-guide/model-reference/purchase-orders.html>`_,
+    `distribution orders <user-guide/model-reference/purchase-orders.html>`_ and
+    `manufacturing orders <user-guide/model-reference/purchase-orders.html>`_, has been removed. 
+  | The reference field is now the primary key, and a required input field.
+  | The required reference fields is an API-breaking change.
+  
+- | A new status "completed" is added on purchase orders, distribution orders and 
+    manufacturing orders. It models a status where the order has already completed, but the
+    ERP hasn't reflected this yet in its inventory status.
+
 4.5.0 (2019/01/25)
 ==================
 

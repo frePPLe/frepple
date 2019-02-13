@@ -2008,6 +2008,11 @@ class OperationPlan
       return (flags & ACTIVATED) != 0;
     }
 
+    bool getCompleted() const
+    {
+      return (flags & STATUS_COMPLETED) != 0;
+    }
+
     bool getConfirmed() const
     {
       return (flags & STATUS_CONFIRMED) != 0;
@@ -2020,7 +2025,7 @@ class OperationPlan
 
     bool getProposed() const
     {
-      return (flags & (STATUS_CONFIRMED + STATUS_APPROVED + STATUS_CLOSED)) == 0;
+      return (flags & (STATUS_CONFIRMED + STATUS_COMPLETED + STATUS_APPROVED + STATUS_CLOSED)) == 0;
     }
 
     bool getClosed() const
@@ -2071,7 +2076,10 @@ class OperationPlan
     /** Update the status to PROPOSED, or back to APPROVED. */
     void setProposed(bool b);
 
-    /** Update the status to PROPOSED, or back to APPROVED. */
+    /** Update the status to COMPLETED, or back to APPROVED. */
+    void setCompleted(bool b);
+
+    /** Update the status to CLOSED, or back to APPROVED. */
     void setClosed(bool b);
 
     void setActivated(bool b)
@@ -2565,6 +2573,8 @@ class OperationPlan
       m->addBoolField<Cls>(Tags::approved, &Cls::getApproved, &Cls::setApproved, BOOL_FALSE, DONT_SERIALIZE);
       m->addBoolField<Cls>(Tags::proposed, &Cls::getProposed, &Cls::setProposed, BOOL_FALSE, DONT_SERIALIZE);
       m->addBoolField<Cls>(Tags::confirmed, &Cls::getConfirmed, &Cls::setConfirmed, BOOL_FALSE, DONT_SERIALIZE);
+      m->addBoolField<Cls>(Tags::closed, &Cls::getClosed, &Cls::setClosed, BOOL_FALSE, DONT_SERIALIZE);
+      m->addBoolField<Cls>(Tags::completed, &Cls::getCompleted, &Cls::setCompleted, BOOL_FALSE, DONT_SERIALIZE);
       m->addBoolField<Cls>(Tags::consume_material, &Cls::getConsumeMaterial, &Cls::setConsumeMaterial, BOOL_TRUE);
       m->addBoolField<Cls>(Tags::produce_material, &Cls::getProduceMaterial, &Cls::setProduceMaterial, BOOL_TRUE);
       m->addBoolField<Cls>(Tags::consume_capacity, &Cls::getConsumeCapacity, &Cls::setConsumeCapacity, BOOL_TRUE);
@@ -2675,17 +2685,18 @@ class OperationPlan
 
     static const unsigned short STATUS_APPROVED = 1;
     static const unsigned short STATUS_CONFIRMED = 2;
-    static const unsigned short STATUS_CLOSED = 4;
+    static const unsigned short STATUS_COMPLETED = 4;
+    static const unsigned short STATUS_CLOSED = 8;
     // TODO Conceptually this may not ideal: Rather than a
     // quantity-based distinction (between CONSUME_MATERIAL and
     // PRODUCE_MATERIAL) having a time-based distinction may be more
     // appropriate (between PROCESS_MATERIAL_AT_START and
     // PROCESS_MATERIAL_AT_END).
-    static const unsigned short CONSUME_MATERIAL = 8;
-    static const unsigned short PRODUCE_MATERIAL = 16;
-    static const unsigned short CONSUME_CAPACITY = 32;
-    static const unsigned short FEASIBLE = 64;
-    static const unsigned short ACTIVATED = 128;
+    static const unsigned short CONSUME_MATERIAL = 16;
+    static const unsigned short PRODUCE_MATERIAL = 32;
+    static const unsigned short CONSUME_CAPACITY = 64;
+    static const unsigned short FEASIBLE = 128;
+    static const unsigned short ACTIVATED = 256;
 
     /** Counter of OperationPlans, which is used to automatically assign a
       * unique identifier for each operationplan.<br>

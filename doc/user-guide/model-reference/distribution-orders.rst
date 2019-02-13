@@ -53,11 +53,23 @@ shipping date    dateTime          The date when the distribution order is leavi
 receipt date     dateTime          The date of the distribution order delivery.
 start date       dateTime          Deprecated alias for the shipping date.
 end date         datetime          Deprecated alias for the receipt date.
-status           non-empty string  | This field should have one of the following keywords :
-                                   | proposed : The distribution order is proposed by frePPLe to meet the plan (optimization output).
-                                   | approved : The distribution order is present in the ERP system but can still be rescheduled by frePPLe (optimization input).
-                                   | confirmed : The distribution order is confirmed, it has been populated in your ERP system (optimization input).
-                                   | closed : The distribution order has been delivered and the stock quantity increased.
+status           string            This field should have one of the following keywords:
+                                   
+                                   * | proposed:
+                                     | The distribution order is proposed by frePPLe to meet the demand (optimization output).
+                                   
+                                   * | approved: 
+                                     | The distribution order is present in the ERP system but can still be rescheduled by frePPLe (optimization input).
+
+                                   * | confirmed:
+                                     | The distribution order is confirmed, it has been populated in your ERP system (optimization input).
+                                   
+                                   * | completed:
+                                     | The distribution order has been executed, but the stock hasn't been increased yet (optimization input).
+                                     
+                                   * | closed :
+                                     | The distribution order has been delivered and the stock has been increased.
+                                     
 demands          demand            | The demand(s) (and quantity) pegged to the distribution order. This is a generated field.
 inventory status number            | The inventory status is a calculated field that highlights the urgency of the purchase order.
                                    | The cells have a background color that can be green, orange or red. Sorting 

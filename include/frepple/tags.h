@@ -43,7 +43,9 @@ class Tags
     static const Keyword calendar;
     static const Keyword calendars;
     static const Keyword category;
+    static const Keyword closed;
     static const Keyword cluster;
+    static const Keyword completed;
     static const Keyword confirmed;
     static const Keyword constraints;
     static const Keyword consume_material;

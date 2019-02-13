@@ -1096,6 +1096,7 @@ class OperationPlan(AuditModel):
     ('proposed', _('proposed')),
     ('approved', _('approved')),
     ('confirmed', _('confirmed')),
+    ('completed', _('completed')),
     ('closed', _('closed')),
   )
 

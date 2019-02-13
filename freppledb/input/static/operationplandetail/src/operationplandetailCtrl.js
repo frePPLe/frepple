@@ -167,7 +167,7 @@ function operationplanCtrl($scope, OperationPlan) {
       }
     }
 
-    $scope.operationplan.id = (typeof rowid === 'undefined')?undefined:parseInt(rowid);
+    $scope.operationplan.id = (typeof rowid === 'undefined') ? undefined : rowid;
     function callback(opplan) {
       if (row === undefined) {
         return opplan;

@@ -2772,7 +2772,7 @@ class OperationPlanDetail(View):
         if view_OpplanMaterial:
           firstmat = True
           for m in opplanmats:
-            if m['operationplan_id'] != opplan.id:
+            if m['operationplan_id'] != opplan.reference:
               continue
             if firstmat:
               firstmat = False
@@ -2790,7 +2790,7 @@ class OperationPlanDetail(View):
         if view_OpplanResource:
           firstres = True
           for m in opplanrscs:
-            if m['operationplan_id'] != opplan.id:
+            if m['operationplan_id'] != opplan.reference:
               continue
             if firstres:
               firstres = False

@@ -14,7 +14,9 @@ As a consequence, some demand records might be delivered late.
 ================ ================= ===========================================================
 Field            Type              Description
 ================ ================= ===========================================================
-status           non-empty string  For confirmed distribution orders, the status should be "confirmed".
+reference        string            Unique identifier of the distribution order.
+status           string            For confirmed or ongoing distribution orders, the status 
+                                   should be "confirmed".
 item             item              The item being transferred.
 origin           location          The location where the item is transferred from.
 destination      location          The location where the item will be received.

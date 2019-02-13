@@ -44,12 +44,20 @@ class Migration(migrations.Migration):
       name='reference',
       field=models.CharField(help_text='Unique identifier', max_length=300, primary_key=True, serialize=False, verbose_name='reference'),
     ),
-    migrations.AlterField(
+    migrations.RemoveField(
+      model_name='operationplanmaterial',
+      name='operationplan',
+    ),
+    migrations.RemoveField(
+      model_name='operationplanresource',
+      name='operationplan',
+    ),
+    migrations.AddField(
       model_name='operationplanmaterial',
       name='operationplan',
       field=models.ForeignKey(verbose_name='operationplan', related_name='materials', to='input.OperationPlan')
     ),
-    migrations.AlterField(
+    migrations.AddField(
       model_name='operationplanresource',
       name='operationplan',
       field=models.ForeignKey(verbose_name='operationplan', related_name='resources', to='input.OperationPlan')

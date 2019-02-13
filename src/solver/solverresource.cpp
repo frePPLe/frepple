@@ -685,10 +685,11 @@ void SolverCreate::solve(const ResourceBuckets* res, void* v)
           }
         }
 
-        // We found a date where the load goes below the maximum
-        // At this point newStart.getStart() is a date in a bucket where
-        // capacity is still available.
+        // We found a date where the load goes below the maximum.
+        // newStart.getStart() is the last available date in a bucket
+        // where capacity is still available.
         // cur.getDate points to the start date of that bucket.
+        // bucketEnd points to the end date of that bucket.
         if (
           (bucketEnd || !data->state->q_loadplan->getLoad()->getEffective().within(newStart.getStart()))
           && found
@@ -769,9 +770,9 @@ void SolverCreate::solve(const ResourceBuckets* res, void* v)
             // Note that the check function can update the answered date
             // and quantity
             checkOperationLeadTime(opplan, *data, false);
-            if (data->state->a_qty)
+            if (data->state->a_qty && time_per_logic)
             {
-              if (opplan->getStart() >= newStart.getStart())
+              if (opplan->getStart() >= bucketEnd)
                 // The lead time check moved the operationplan to a later bucket again
                 data->state->a_qty = 0.0;
               else

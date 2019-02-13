@@ -103,13 +103,22 @@ void SolverCreate::solve(const Buffer* b, void* v)
   double shortage(0.0);
   Date extraSupplyDate(Date::infiniteFuture);
   Date extraInventoryDate(Date::infiniteFuture);
+  Date noSupplyBefore(Date::infinitePast);
   double cumproduced = (b->getFlowPlans().rbegin() == b->getFlowPlans().end())
     ? 0
     : b->getFlowPlans().rbegin()->getCumulativeProduced();
   double current_minimum(0.0);
   double unconfirmed_supply(0.0);
-  for (Buffer::flowplanlist::const_iterator cur=b->getFlowPlans().begin();
-      ; ++cur)
+
+  bool hasTransferbatching = false;
+  for (auto fl = b->getFlows().begin(); fl != b->getFlows().end(); ++fl)
+    if (fl->getType() == *FlowTransferBatch::metadata)
+    {
+      hasTransferbatching = true;
+      break;
+    }
+
+  for (auto cur=b->getFlowPlans().begin(); ; ++cur)
   {
     if(&*cur && cur->getEventType() == 1)
     {
@@ -177,7 +186,11 @@ void SolverCreate::solve(const Buffer* b, void* v)
         // and we want our flowplan to try to repair the previous problems
         // if it can...
         bool loop = true;
-        while (b->getProducingOperation() && theDate >= requested_date && loop)
+        while (
+          b->getProducingOperation() 
+          && theDate >= requested_date && loop 
+          && (theDate >= noSupplyBefore || hasTransferbatching)
+          )
         {
           // Create supply
           data->state->curBuffer = const_cast<Buffer*>(b);
@@ -208,6 +221,10 @@ void SolverCreate::solve(const Buffer* b, void* v)
               && data->state->a_date > requested_date)
             extraSupplyDate = data->state->a_date;
 
+          // Prevent asking again at a time which we already know to be infeasible
+          noSupplyBefore = data->state->a_qty > ROUNDING_ERROR ? Date::infinitePast : data->state->a_date;
+
+          //&& theDate >= noSupplyBefore
           // If we got some extra supply, we retry to get some more supply.
           // Only when no extra material is obtained, we give up.
           // When solving for safety stock or when the parameter allowsplit is

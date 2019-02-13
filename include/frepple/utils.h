@@ -1449,6 +1449,13 @@ class DateRange  // TODO REMOVE THIS CLASS, because it is not a native data form
       return d>=start && d<end;
     }
 
+    bool almostEqual(const DateRange& dr) const
+    {
+      return
+        (start == dr.start || start == dr.start - Duration(1L) || start == dr.start + Duration(1L))
+        && (end == dr.end || start == dr.end - Duration(1L) || end == dr.end + Duration(1L));
+    }
+
     /** Convert the daterange to a string. */
     operator string() const;
 

@@ -112,7 +112,7 @@ void SolverCreate::solve(const Buffer* b, void* v)
 
   bool hasTransferbatching = false;
   for (auto fl = b->getFlows().begin(); fl != b->getFlows().end(); ++fl)
-    if (fl->getType() == *FlowTransferBatch::metadata)
+    if (fl->hasType<FlowTransferBatch>())
     {
       hasTransferbatching = true;
       break;

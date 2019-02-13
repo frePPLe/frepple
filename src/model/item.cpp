@@ -122,7 +122,7 @@ Date Item::findEarliestPurchaseOrder() const
       if (flpln->getDate() >= earliest)
         break;
       auto opplan = flpln->getOperationPlan();
-      if (opplan && opplan->getOperation()->getType() == *OperationItemSupplier::metadata && opplan->getProposed())
+      if (opplan && opplan->getOperation()->hasType<OperationItemSupplier>() && opplan->getProposed())
       {
         earliest = flpln->getDate();
         break;

@@ -364,7 +364,7 @@ void SolverCreate::SolverData::solveSafetyStock(SolverCreate* solver)
   vector< list<Buffer*> > bufs(HasLevel::getNumberOfLevels() + 1);
   for (Buffer::iterator buf = Buffer::begin(); buf != Buffer::end(); ++buf)
     if (buf->getCluster() == cluster
-      && buf->getType() != *BufferInfinite::metadata      
+      && !buf->hasType<BufferInfinite>()
       && (buf->getProducingOperation() || !solver->isMaterialConstrained())
       && (
         buf->getMinimum() 

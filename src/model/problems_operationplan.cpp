@@ -68,7 +68,7 @@ void OperationPlan::updateProblems()
   if (nextsubopplan
     && getEnd() > nextsubopplan->getStart() + Duration(1L)
     && !nextsubopplan->getConfirmed()
-    && owner && owner->getOperation()->getType() != *OperationSplit::metadata
+    && owner && !owner->getOperation()->hasType<OperationSplit>()
     )
     needsPrecedence = true;
 
@@ -215,7 +215,7 @@ bool OperationPlan::updateFeasible()
   if (nextsubopplan
     && getEnd() > nextsubopplan->getStart() + Duration(1L)
     && !nextsubopplan->getConfirmed()
-    && owner && owner->getOperation()->getType() != *OperationSplit::metadata
+    && owner && !owner->getOperation()->hasType<OperationSplit>()
     )
   {
     // Precedence violation
@@ -227,7 +227,7 @@ bool OperationPlan::updateFeasible()
   // Verify the capacity constraints
   for (auto ldplan = getLoadPlans(); ldplan != endLoadPlans(); ++ldplan)
   {
-    if (ldplan->getResource()->getType() == *ResourceDefault::metadata && ldplan->getQuantity() > 0)
+    if (ldplan->getResource()->hasType<ResourceDefault>() && ldplan->getQuantity() > 0)
     {
       auto curMax = ldplan->getMax();
       for (
@@ -252,7 +252,7 @@ bool OperationPlan::updateFeasible()
         }
       }
     }
-    else if (ldplan->getResource()->getType() == *ResourceBuckets::metadata)
+    else if (ldplan->getResource()->hasType<ResourceBuckets>())
     {
       for (
         auto cur = ldplan->getResource()->getLoadPlans().begin(&*ldplan);
@@ -275,7 +275,7 @@ bool OperationPlan::updateFeasible()
   {
     if (
       !flplan->getFlow()->isConsumer()
-      || flplan->getBuffer()->getType() == *BufferInfinite::metadata
+      || flplan->getBuffer()->hasType<BufferInfinite>()
       )
       continue;
     auto flplaniter = flplan->getBuffer()->getFlowPlans();

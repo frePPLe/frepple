@@ -230,7 +230,7 @@ OperationItemSupplier* OperationItemSupplier::findOrCreate(
   if (oper)
   {
     // Reuse existing operation
-    if (oper->getType() == *OperationItemSupplier::metadata)
+    if (oper->hasType<OperationItemSupplier>())
       return static_cast<OperationItemSupplier*>(oper);
     else
       throw DataException("Unexpected operation type for item supplier operation");

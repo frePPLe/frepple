@@ -434,9 +434,9 @@ void SolverCreate::solve(const ResourceBuckets* res, void* v)
   
   // Initialize some variables
   bool time_per_logic =
-    opplan->getOperation()->getType() == *OperationTimePer::metadata
+    opplan->getOperation()->hasType<OperationTimePer>()
     && static_cast<OperationTimePer*>(opplan->getOperation())->getDurationPer()
-    && data->state->q_loadplan->getLoad()->getType() == *LoadDefault::metadata;
+    && data->state->q_loadplan->getLoad()->hasType<LoadDefault>();
   double orig_q_qty = - data->state->q_qty;
   OperationPlanState originalOpplan(opplan);
   Resource::loadplanlist::const_iterator cur = res->getLoadPlans().end();

@@ -154,7 +154,7 @@ void FlowPlan::setFlow(Flow* newfl)
   if (newfl->getType() != fl->getType())
     throw DataException("Flowplans can only switch to flows of the same type");
 
-  if (&newfl->getType() != FlowTransferBatch::metadata || !fl)
+  if (!newfl->hasType<FlowTransferBatch>() || !fl)
   {
     // Remove from the old buffer, if there is one
     if (fl)
@@ -251,7 +251,7 @@ pair<double, double> FlowPlan::setQuantity(
     {
       if (
         mode == 2 
-        || (mode == 0 && getFlow()->getType() == *FlowEnd::metadata)
+        || (mode == 0 && getFlow()->hasType<FlowEnd>())
         )
       {
         oper->setOperationPlanParameters(
@@ -261,7 +261,7 @@ pair<double, double> FlowPlan::setQuantity(
       }
       else if (
         mode == 1 
-        || (mode == 0 && getFlow()->getType() == *FlowStart::metadata)
+        || (mode == 0 && getFlow()->hasType<FlowStart>())
         )
       {
         oper->setOperationPlanParameters(
@@ -280,12 +280,12 @@ pair<double, double> FlowPlan::setQuantity(
     // Fixed quantity flows only allow resizing to 0
     if (less_than_fixed_qty && oper->getQuantity() != 0.0)
     {
-      if (mode == 2 || (mode == 0 && getFlow()->getType() == *FlowEnd::metadata))
+      if (mode == 2 || (mode == 0 && getFlow()->hasType<FlowEnd>()))
         opplan_quantity = oper->setOperationPlanParameters(
           0.0, Date::infinitePast, oper->getEnd(),
           true, execute, rounddown
           ).quantity;
-      else if (mode == 1 || (mode == 0 && getFlow()->getType() == *FlowStart::metadata))
+      else if (mode == 1 || (mode == 0 && getFlow()->hasType<FlowStart>()))
         opplan_quantity = oper->setOperationPlanParameters(
           0.0, oper->getStart(), Date::infinitePast,
           false, execute, rounddown
@@ -295,12 +295,12 @@ pair<double, double> FlowPlan::setQuantity(
     }
     else if (!less_than_fixed_qty && oper->getQuantity() == 0.0)
     {
-      if (mode == 2 || (mode == 0 && getFlow()->getType() == *FlowEnd::metadata))
+      if (mode == 2 || (mode == 0 && getFlow()->hasType<FlowEnd>()))
         opplan_quantity = oper->setOperationPlanParameters(
           0.001, Date::infinitePast, oper->getEnd(),
           true, execute, rounddown
           ).quantity;
-      else if (mode == 1 || (mode == 0 && getFlow()->getType() == *FlowStart::metadata))
+      else if (mode == 1 || (mode == 0 && getFlow()->hasType<FlowStart>()))
         opplan_quantity = oper->setOperationPlanParameters(
           0.001, oper->getStart(), Date::infinitePast,
           false, execute, rounddown
@@ -314,13 +314,13 @@ pair<double, double> FlowPlan::setQuantity(
     // Proportional or transfer batch flows
     // For transfer batch flowplans the argument quantity is expected to be the
     // total quantity of all batches.
-    if (mode == 2 || (mode == 0 && getFlow()->getType() == *FlowEnd::metadata))
+    if (mode == 2 || (mode == 0 && getFlow()->hasType<FlowEnd>()))
       opplan_quantity = oper->setOperationPlanParameters(
         (quantity - getFlow()->getQuantityFixed()) / getFlow()->getQuantity(),
         Date::infinitePast, oper->getEnd(),
         true, execute, rounddown
         ).quantity;
-    else if (mode == 1 || (mode == 0 && getFlow()->getType() == *FlowStart::metadata))
+    else if (mode == 1 || (mode == 0 && getFlow()->hasType<FlowStart>()))
       opplan_quantity = oper->setOperationPlanParameters(
         (quantity - getFlow()->getQuantityFixed()) / getFlow()->getQuantity(),
         oper->getStart(), Date::infinitePast,
@@ -380,7 +380,7 @@ Object* FlowPlan::reader(
   if (!opplanElement)
     throw DataException("Missing operationplan field");
   Object* opplanobject = opplanElement->getObject();
-  if (!opplanobject || opplanobject->getType() != *OperationPlan::metadata)
+  if (!opplanobject || !opplanobject->hasType<OperationPlan>())
     throw DataException("Invalid operationplan field");
   OperationPlan* opplan = static_cast<OperationPlan*>(opplanobject);
 

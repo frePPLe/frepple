@@ -419,7 +419,7 @@ Object* OperationPlan::createOperationPlan(
     for (Buffer::flowlist::const_iterator flowiter = destbuffer->getFlows().begin();
       flowiter != destbuffer->getFlows().end() && !oper; ++flowiter)
     {
-      if (flowiter->getOperation()->getType() != *OperationItemSupplier::metadata)
+      if (!flowiter->getOperation()->hasType<OperationItemSupplier>())
         continue;
       OperationItemSupplier* opitemsupplier = static_cast<OperationItemSupplier*>(flowiter->getOperation());
       if (supval)
@@ -505,7 +505,7 @@ Object* OperationPlan::createOperationPlan(
       for (Buffer::flowlist::const_iterator flowiter = destbuffer->getFlows().begin();
         flowiter != destbuffer->getFlows().end() && !oper; ++flowiter)
       {
-        if (flowiter->getOperation()->getType() != *OperationItemDistribution::metadata
+        if (!flowiter->getOperation()->hasType<OperationItemDistribution>()
           || flowiter->getQuantity() <= 0)
           continue;
         OperationItemDistribution* opitemdist = static_cast<OperationItemDistribution*>(flowiter->getOperation());
@@ -1368,16 +1368,13 @@ bool OperationPlan::mergeIfPossible()
   if (!getProposed())
     return false;
 
-  if (oper->getType() != *OperationFixedTime::metadata
-    && oper->getType() != *OperationItemDistribution::metadata
-    && oper->getType() != *OperationItemSupplier::metadata
-    )
+  if (!oper->hasType<OperationFixedTime, OperationItemDistribution, OperationItemSupplier>())
     return false;
 
   // Verify we load no resources of type "default".
   // It's ok to merge operationplans which load "infinite" or "buckets" resources.
   for (Operation::loadlist::const_iterator i = oper->getLoads().begin(); i != oper->getLoads().end(); ++i)
-    if (i->getResource()->getType() == *ResourceDefault::metadata)
+    if (i->getResource()->hasType<ResourceDefault>())
       return false;
 
   // Loop through candidates
@@ -1401,7 +1398,7 @@ bool OperationPlan::mergeIfPossible()
         continue;
       else if (getOwner()->getOperation() != x->getOwner()->getOperation())
         continue;
-      else if (getOwner()->getOperation()->getType() != *OperationAlternate::metadata)
+      else if (!getOwner()->getOperation()->hasType<OperationAlternate>())
         continue;
       else if (getOwner()->getDemand() != x->getOwner()->getDemand())
         continue;
@@ -1902,7 +1899,7 @@ double OperationPlan::getCriticality() const
 
   // Child operationplans have the same criticality as the parent
   // TODO: Slack between routing sub operationplans isn't recognized.
-  if (getOwner() && getOwner()->getOperation()->getType() != *OperationSplit::metadata)
+  if (getOwner() && !getOwner()->getOperation()->hasType<OperationSplit>())
     return getOwner()->getCriticality();
 
   // Handle demand delivery operationplans
@@ -1956,7 +1953,7 @@ double OperationPlan::getCriticalQuantity(Duration window) const
 
   // Child operationplans have the same criticality as the parent
   // TODO: Slack between routing sub operationplans isn't recognized.
-  if (getOwner() && getOwner()->getOperation()->getType() != *OperationSplit::metadata)
+  if (getOwner() && !getOwner()->getOperation()->hasType<OperationSplit>())
     return getOwner()->getCriticalQuantity();
 
   // Handle demand delivery operationplans
@@ -2009,7 +2006,7 @@ Duration OperationPlan::getDelay() const
 
   // Child operationplans have the same delay as the parent
   // TODO for routing steps this is not really as accurrate as we could do it
-  if (getOwner() && getOwner()->getOperation()->getType() != *OperationSplit::metadata)
+  if (getOwner() && !getOwner()->getOperation()->hasType<OperationSplit>())
     return getOwner()->getDelay();
 
   // Handle demand delivery operationplans
@@ -2110,7 +2107,7 @@ OperationPlan::AlternateIterator::AlternateIterator(const OperationPlan* o) : op
 {  
   if (!o)
     return;
-  if (o->getOwner() && o->getOwner()->getOperation()->getType() == *OperationAlternate::metadata)
+  if (o->getOwner() && o->getOwner()->getOperation()->hasType<OperationAlternate>())
   {
     auto subs = o->getOwner()->getOperation()->getSubOperationIterator();
     while (SubOperation* sub = subs.next())
@@ -2127,7 +2124,7 @@ OperationPlan::AlternateIterator::AlternateIterator(const OperationPlan* o) : op
       ++super
       )
     {
-      if ((*super)->getType() != *OperationAlternate::metadata)
+      if (!(*super)->hasType<OperationAlternate>())
         return;
       auto subs = (*super)->getSubOperationIterator();
       while (SubOperation* sub = subs.next())

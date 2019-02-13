@@ -29,7 +29,7 @@ void SolverCreate::checkOperationCapacity
 {
   unsigned short constrainedLoads = 0;
   for (auto h=opplan->beginLoadPlans(); h!=opplan->endLoadPlans(); ++h)
-    if (h->getResource()->getType() != *(ResourceInfinite::metadata)
+    if (!h->getResource()->hasType<ResourceInfinite>()
       && h->isStart() && h->getLoad()->getQuantity() != 0.0)
     {
       if (++constrainedLoads > 1) break;
@@ -622,7 +622,7 @@ OperationPlan* SolverCreate::createOperation(
     {
       flow_qty_per += f->getQuantity();
       flow_qty_fixed += f->getQuantityFixed();
-      if (&f->getType() == FlowTransferBatch::metadata)
+      if (f->hasType<FlowTransferBatch>())
         transferbatch_flow = true;
     }
     else
@@ -1215,7 +1215,7 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v)
         }
 
         // Flow quantity on the suboperations of a routing suboperation
-        if ((*altIter)->getOperation()->getType() == *OperationRouting::metadata)
+        if ((*altIter)->getOperation()->hasType<OperationRouting>())
         {
           SubOperation::iterator subiter((*altIter)->getOperation()->getSubOperations());
           while (SubOperation *o = subiter.next())

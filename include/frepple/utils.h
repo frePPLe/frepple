@@ -3985,6 +3985,24 @@ class Object : public PyObject
       return new T();
     }
 
+    template <class T> inline bool hasType() const
+    {
+      return this->getType() == *T::metadata;
+    }
+
+    template <class T, class U> inline bool hasType() const
+    {
+      return this->getType() == *T::metadata
+        || this->getType() == *U::metadata;
+    }
+
+    template <class T, class U, class V> inline bool hasType() const
+    {
+      return this->getType() == *T::metadata
+        || this->getType() == *U::metadata
+        || this->getType() == *V::metadata;
+    }
+
     /** Free the memory.<br>
       * Our extensions don't use the usual Python heap allocator. They are
       * created and initialized with the regular C++ new and delete. A special

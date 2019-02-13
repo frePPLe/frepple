@@ -79,7 +79,7 @@ LoadPlan::LoadPlan(OperationPlan *o, const Load *r)
 
   // For continuous resources, create a loadplan to mark
   // the end of the operationplan.
-  if (getResource()->getType() != *ResourceBuckets::metadata)
+  if (!getResource()->hasType<ResourceBuckets>())
     new LoadPlan(o, r, this);
 
   // Mark the operation and resource as being changed. This will trigger
@@ -167,7 +167,7 @@ void LoadPlan::setResource(Resource* newres, bool check, bool use_start)
 
   // Change this loadplan and its brother
   LoadPlan *ldplan =
-    getResource()->getType() == *ResourceBuckets::metadata ? this : getOtherLoadPlan();
+    getResource()->hasType<ResourceBuckets>() ? this : getOtherLoadPlan();
   while (ldplan)
   {
     // Remove from the old resource, if there is one
@@ -216,7 +216,7 @@ void LoadPlan::setResource(Resource* newres, bool check, bool use_start)
 
 LoadPlan* LoadPlan::getOtherLoadPlan() const
 {
-  if (getResource()->getType() == *ResourceBuckets::metadata)
+  if (getResource()->hasType<ResourceBuckets>())
     return nullptr;
   for (LoadPlan *i = oper->firstloadplan; i; i = i->nextLoadPlan)
     if (i->ld == ld && i != this && i->getEventType() == 1)
@@ -329,7 +329,7 @@ Object* LoadPlan::reader(
   if (!opplanElement)
     throw DataException("Missing operationplan field");
   Object* opplanobject = opplanElement->getObject();
-  if (!opplanobject || opplanobject->getType() != *OperationPlan::metadata)
+  if (!opplanobject || !opplanobject->hasType<OperationPlan>())
     throw DataException("Invalid operationplan field");
   OperationPlan* opplan = static_cast<OperationPlan*>(opplanobject);
 
@@ -371,7 +371,7 @@ double Load::getLoadplanQuantity(const LoadPlan* lp) const
     // The extra check is required to make sure that zero duration operationplans
     // operationplans don't get resized to 0
     return 0.0;
-  if (lp->getResource()->getType() == *ResourceBuckets::metadata)
+  if (lp->getResource()->hasType<ResourceBuckets>())
   {
     // Bucketized resource
     auto efficiency = lp->getOperationPlan()->getEfficiency();
@@ -388,7 +388,7 @@ double Load::getLoadplanQuantity(const LoadPlan* lp) const
 
 tuple<double, Date, double> LoadPlan::getBucketEnd() const
 {
-  assert(getResource()->getType() == *ResourceBuckets::metadata);
+  assert(getResource()->hasType<ResourceBuckets>());
   double available_before = getOnhand();
   for (
     auto cur = res->getLoadPlans().begin(this); 
@@ -405,7 +405,7 @@ tuple<double, Date, double> LoadPlan::getBucketEnd() const
 
 tuple<double, Date, double> LoadPlan::getBucketStart() const
 {
-  assert(getResource()->getType() == *ResourceBuckets::metadata);
+  assert(getResource()->hasType<ResourceBuckets>());
   double available_after = getOnhand();
   for (
     auto cur = res->getLoadPlans().begin(this);

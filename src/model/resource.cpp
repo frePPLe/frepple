@@ -322,8 +322,8 @@ void Resource::setOwner(Resource* o)
     auto firstchild = o->getFirstChild();
     if (firstchild)
     {
-      bool parent_bucketized = (firstchild->getType() == *ResourceBuckets::metadata);
-      bool me_bucketized = (getType() == *ResourceBuckets::metadata);
+      bool parent_bucketized = firstchild->hasType<ResourceBuckets>();
+      bool me_bucketized = hasType<ResourceBuckets>();
       if (parent_bucketized != me_bucketized)
         throw DataException("Aggregate resources can't mix bucketized resources with other types");
     }
@@ -400,7 +400,7 @@ Resource::PlanIterator::PlanIterator(Resource* r, PyObject* o) : bucketiterator(
   for (auto i = res_list.begin(); i != res_list.end(); ++i)
   {
     i->ldplaniter = Resource::loadplanlist::iterator(i->res->getLoadPlans().begin());
-    i->bucketized = (i->res->getType() == *ResourceBuckets::metadata);
+    i->bucketized = i->res->hasType<ResourceBuckets>();
     i->cur_date = PythonData(end_date).getDate();
     i->setup_loadplan = nullptr;
     i->prev_date = i->cur_date;
@@ -701,7 +701,7 @@ bool Resource::hasSkill(Skill* s, Date st, Date nd, ResourceSkill** resSkill) co
 
 void Resource::setSetupMatrix(SetupMatrix *s)
 {
-  if (getType() == *ResourceBuckets::metadata)
+  if (hasType<ResourceBuckets>())
     throw DataException("No setup calendar can be defined on bucketized resources");
   setupmatrix = s;
 }

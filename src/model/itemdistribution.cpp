@@ -205,7 +205,7 @@ Operation* OperationItemDistribution::findOrCreate(
   auto oper = Operation::find(o.str());
   if (oper)
   {
-    if (oper->getType() != *OperationItemDistribution::metadata)
+    if (!oper->hasType<OperationItemDistribution>())
       throw DataException("Name clash on operation " + o.str());
     return oper;
   }

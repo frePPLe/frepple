@@ -639,7 +639,7 @@ void Buffer::followPegging
             newqty -= f->getCumulativeProduced() - endQty;
           OperationPlan *opplan = dynamic_cast<const FlowPlan*>(&(*f))->getOperationPlan();
           OperationPlan *topopplan = opplan->getTopOwner();
-          if (topopplan->getOperation()->getType() == *OperationSplit::metadata)
+          if (topopplan->getOperation()->hasType<OperationSplit>())
             topopplan = opplan;
           iter.updateStack(
             topopplan,
@@ -673,7 +673,7 @@ void Buffer::followPegging
             newqty -= f->getCumulativeProduced() - endQty;
           OperationPlan *opplan = dynamic_cast<FlowPlan*>(&(*f))->getOperationPlan();
           OperationPlan *topopplan = opplan->getTopOwner();
-          if (topopplan->getOperation()->getType() == *OperationSplit::metadata)
+          if (topopplan->getOperation()->hasType<OperationSplit>())
             topopplan = opplan;
           iter.updateStack(
             topopplan,
@@ -723,7 +723,7 @@ void Buffer::followPegging
             newqty -= f->getCumulativeConsumed() - endQty;
           OperationPlan *opplan = dynamic_cast<FlowPlan*>(&(*f))->getOperationPlan();
           OperationPlan *topopplan = opplan->getTopOwner();
-          if (topopplan->getOperation()->getType() == *OperationSplit::metadata)
+          if (topopplan->getOperation()->hasType<OperationSplit>())
             topopplan = opplan;
           iter.updateStack(
             topopplan,
@@ -753,7 +753,7 @@ void Buffer::followPegging
             newqty -= f->getCumulativeConsumed() - endQty;
           OperationPlan *opplan = dynamic_cast<FlowPlan*>(&(*f))->getOperationPlan();
           OperationPlan *topopplan = opplan->getTopOwner();
-          if (topopplan->getOperation()->getType() == *OperationSplit::metadata)
+          if (topopplan->getOperation()->hasType<OperationSplit>())
             topopplan = opplan;
           iter.updateStack(
             topopplan,
@@ -838,7 +838,7 @@ void Buffer::buildProducingOperation()
       // Check if there is already a producing operation referencing this ItemSupplier
       if (producing_operation && producing_operation != uninitializedProducing)
       {
-        if (producing_operation->getType() == *OperationItemSupplier::metadata)
+        if (producing_operation->hasType<OperationItemSupplier>())
         {
           OperationItemSupplier* o = static_cast<OperationItemSupplier*>(producing_operation);
           if (o->getItemSupplier() == supitem)
@@ -849,7 +849,7 @@ void Buffer::buildProducingOperation()
         {
           SubOperation::iterator subiter(producing_operation->getSubOperations());
           while (SubOperation *o = subiter.next())
-            if (o->getOperation()->getType() == *OperationItemSupplier::metadata)
+            if (o->getOperation()->hasType<OperationItemSupplier>())
             {
               OperationItemSupplier* s = static_cast<OperationItemSupplier*>(o->getOperation());
               if (s->getItemSupplier() == supitem)
@@ -870,7 +870,7 @@ void Buffer::buildProducingOperation()
         subop->setOperation(oper);
         subop->setPriority(supitem->getPriority());
         subop->setEffective(supitem->getEffective());
-        if (producing_operation->getType() != *OperationAlternate::metadata)
+        if (!producing_operation->hasType<OperationAlternate>())
         {
           // We are the second: create an alternate and add 2 suboperations
           OperationAlternate *superop = new OperationAlternate();
@@ -954,7 +954,7 @@ void Buffer::buildProducingOperation()
       // Check if there is already a producing operation referencing this ItemDistribution
       if (producing_operation && producing_operation != uninitializedProducing)
       {
-        if (producing_operation->getType() == *OperationItemDistribution::metadata)
+        if (producing_operation->hasType<OperationItemDistribution>())
         {
           OperationItemDistribution* o = static_cast<OperationItemDistribution*>(producing_operation);
           if (o->getItemDistribution() == itemdist)
@@ -965,7 +965,7 @@ void Buffer::buildProducingOperation()
         {
           SubOperation::iterator subiter(producing_operation->getSubOperations());
           while (SubOperation *o = subiter.next())
-            if (o->getOperation()->getType() == *OperationItemDistribution::metadata)
+            if (o->getOperation()->hasType<OperationItemDistribution>())
             {
               OperationItemDistribution* s = static_cast<OperationItemDistribution*>(o->getOperation());
               if (s->getItemDistribution() == itemdist)
@@ -991,7 +991,7 @@ void Buffer::buildProducingOperation()
           subop->setOperation(oper);
           subop->setPriority(itemdist->getPriority());
           subop->setEffective(itemdist->getEffective());
-          if (producing_operation->getType() != *OperationAlternate::metadata)
+          if (!producing_operation->hasType<OperationAlternate>())
           {
             // We are the second: create an alternate and add 2 suboperations
             OperationAlternate *superop = new OperationAlternate();
@@ -1072,7 +1072,7 @@ void Buffer::buildProducingOperation()
       // Check if there is already a producing operation referencing this operation
       if (producing_operation && producing_operation != uninitializedProducing)
       {
-        if (producing_operation->getType() != *OperationAlternate::metadata)
+        if (!producing_operation->hasType<OperationAlternate>())
         {
           if (producing_operation == itemoper)
             // Already exists
@@ -1096,7 +1096,7 @@ void Buffer::buildProducingOperation()
         subop->setOperation(itemoper);
         subop->setPriority(itemoper->getPriority());
         subop->setEffective(itemoper->getEffective());
-        if (producing_operation->getType() != *OperationAlternate::metadata)
+        if (!producing_operation->hasType<OperationAlternate>())
         {
           // We are the second: create an alternate and add 2 suboperations
           OperationAlternate *superop = new OperationAlternate();
@@ -1165,7 +1165,7 @@ void Buffer::buildProducingOperation()
     for (auto tmp = getFlows().begin(); tmp != getFlows().end(); ++tmp)
     {
       if (tmp->getQuantity() > 0
-        && tmp->getOperation()->getType() != *OperationInventory::metadata
+        && !tmp->getOperation()->hasType<OperationInventory>()
         && tmp->getOperation()->getPriority() )
       {
         if (found)

@@ -122,7 +122,7 @@ PeggingIterator::PeggingIterator(const OperationPlan* opplan, bool b)
 {
   initType(metadata);
   if (!opplan) return;
-  if (opplan->getTopOwner()->getOperation()->getType() == *OperationSplit::metadata)
+  if (opplan->getTopOwner()->getOperation()->hasType<OperationSplit>())
     updateStack(
       opplan,
       opplan->getQuantity(),

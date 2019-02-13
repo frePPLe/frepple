@@ -935,7 +935,7 @@ bool OperationFixedTime::extraInstantiate(OperationPlan* o, bool createsubopplan
     // Verify we load no resources of type "default".
     // It's ok to merge operationplans which load "infinite" or "buckets" resources.
     for (Operation::loadlist::const_iterator i = getLoads().begin(); i != getLoads().end(); ++i)
-      if (i->getResource()->getType() == *ResourceDefault::metadata)
+      if (i->getResource()->hasType<ResourceDefault>())
         return true;
 
     // Loop through candidates
@@ -954,7 +954,7 @@ bool OperationFixedTime::extraInstantiate(OperationPlan* o, bool createsubopplan
           return true;
         else if (o->getOwner()->getOperation() != y->getOwner()->getOperation())
           return true;
-        else if (o->getOwner()->getOperation()->getType() != *OperationAlternate::metadata)
+        else if (!o->getOwner()->getOperation()->hasType<OperationAlternate>())
           return true;
         else if (o->getOwner()->getDemand() != y->getOwner()->getDemand())
           return true;
@@ -993,7 +993,7 @@ bool OperationFixedTime::extraInstantiate(OperationPlan* o, bool createsubopplan
           return true;
         else if (o->getOwner()->getOperation() != x->getOwner()->getOperation())
           return true;
-        else if (o->getOwner()->getOperation()->getType() != *OperationAlternate::metadata)
+        else if (!o->getOwner()->getOperation()->hasType<OperationAlternate>())
           return true;
       }
 
@@ -2045,12 +2045,14 @@ double Operation::setOperationPlanQuantity
   // Setting a quantity is only allowed on a top operationplan.
   // Two exceptions: on alternate and split operations the sizing on the
   // sub-operations is respected.
-  if (oplan->owner && oplan->owner->getOperation()->getType() != *OperationAlternate::metadata
-    && oplan->owner->getOperation()->getType() != *OperationSplit::metadata)
-    return oplan->owner->setQuantity(f, roundDown, upd, execute, end);
+  if (
+    oplan->owner
+    && !oplan->owner->getOperation()->hasType<OperationAlternate, OperationSplit>()
+    )
+      return oplan->owner->setQuantity(f, roundDown, upd, execute, end);
 
   // Compute the correct size for the operationplan
-  if (oplan->getOperation()->getType() == *OperationSplit::metadata)
+  if (oplan->getOperation()->hasType<OperationSplit>())
   {
     // A split operation doesn't respect any size constraints at the parent level
     if (execute)
@@ -2090,7 +2092,7 @@ double Operation::setOperationPlanQuantity
         if (upd)
           oplan->update();
         // Update the parent of an alternate operationplan
-        if (oplan->owner && oplan->owner->getOperation()->getType() == *OperationAlternate::metadata)
+        if (oplan->owner && oplan->owner->getOperation()->hasType<OperationAlternate>())
         {
           oplan->owner->quantity = 0.0;
           if (upd)
@@ -2128,7 +2130,7 @@ double Operation::setOperationPlanQuantity
           if (upd)
             oplan->update();
           // Update the parent of an alternate operationplan
-          if (oplan->owner && oplan->owner->getOperation()->getType() == *OperationAlternate::metadata)
+          if (oplan->owner && oplan->owner->getOperation()->hasType<OperationAlternate>())
           {
             oplan->owner->quantity = 0.0;
             if (upd)
@@ -2163,7 +2165,7 @@ double Operation::setOperationPlanQuantity
 
   // Update the parent of an alternate operationplan
   if (execute && oplan->owner
-      && oplan->owner->getOperation()->getType() == *OperationAlternate::metadata)
+      && oplan->owner->getOperation()->hasType<OperationAlternate>())
   {
     oplan->owner->quantity = oplan->quantity;
     if (upd)
@@ -2325,23 +2327,20 @@ Duration OperationAlternate::getDecoupledLeadTime(double qty) const
   }
 
   // Add the operation's own duration
-  if (
-    suboper->getType() == *OperationFixedTime::metadata
-    || suboper->getType() == *OperationItemDistribution::metadata
-    || suboper->getType() == *OperationItemSupplier::metadata
-    )
+  if (suboper->hasType<OperationFixedTime, OperationItemDistribution, OperationItemSupplier>())
   {
     // Fixed duration operation types
     OperationFixedTime* op = static_cast<OperationFixedTime*>(suboper);
     leadtime += op->getDuration();
   }
-  else if (suboper->getType() == *OperationTimePer::metadata)
+  else if (suboper->hasType<OperationTimePer>())
   {
     // Variable duration operation types
     OperationTimePer* op = static_cast<OperationTimePer*>(suboper);
     leadtime += op->getDuration() + static_cast<long>(op->getDurationPer() * qty2);
   }
   else
+    // TODO We don't handle routing operations here?
     logger << "Warning: suboperation of unsupported type for an alternate operation" << endl;
   return leadtime;
 }
@@ -2393,17 +2392,13 @@ Duration OperationSplit::getDecoupledLeadTime(double qty) const
     }
 
     // Add the operation's own duration
-    if (
-      suboper->getType() == *OperationFixedTime::metadata
-      || suboper->getType() == *OperationItemDistribution::metadata
-      || suboper->getType() == *OperationItemSupplier::metadata
-      )
+    if (suboper->hasType<OperationFixedTime, OperationItemDistribution, OperationItemSupplier>())
     {
       // Fixed duration operation types
       OperationFixedTime* op = static_cast<OperationFixedTime*>(suboper);
       maxSub += op->getDuration();
     }
-    else if (suboper->getType() == *OperationTimePer::metadata)
+    else if (suboper->hasType<OperationTimePer>())
     {
       // Variable duration operation types
       OperationTimePer* op = static_cast<OperationTimePer*>(suboper);
@@ -2460,17 +2455,13 @@ Duration OperationRouting::getDecoupledLeadTime(double qty) const
 
     // Add the operation's own duration to the duration of all
     // routing steps
-    if (
-      suboper->getType() == *OperationFixedTime::metadata
-      || suboper->getType() == *OperationItemDistribution::metadata
-      || suboper->getType() == *OperationItemSupplier::metadata
-      )
+    if (suboper->hasType<OperationFixedTime, OperationItemDistribution, OperationItemSupplier>())
     {
       // Fixed duration operation types
       OperationFixedTime* op = static_cast<OperationFixedTime*>(suboper);
       nextStepsDuration += op->getDuration();
     }
-    else if (suboper->getType() == *OperationTimePer::metadata)
+    else if (suboper->hasType<OperationTimePer>())
     {
       // Variable duration operation types
       OperationTimePer* op = static_cast<OperationTimePer*>(suboper);

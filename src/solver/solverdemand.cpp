@@ -572,7 +572,7 @@ bool SolverCreate::hasOperationPlans(CommandList* l)
         auto opplan = static_cast<CommandCreateOperationPlan*>(&*cmd)->getOperationPlan();
         if (opplan->getQuantity() > 0.0 
           && !opplan->getDemand()
-          && opplan->getOperation()->getType() != *OperationItemDistribution::metadata
+          && !opplan->getOperation()->hasType<OperationItemDistribution>()
           )
             // Return ok when we find an operation that is producing material (and not 
             // only consuming or moving inventory)

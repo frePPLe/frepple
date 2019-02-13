@@ -231,8 +231,7 @@ PyObject* savePlan(PyObject* self, PyObject* args)
     {
       // TODO if-condition here isn't very clean and generic
       if (rr->getOperation()->getHidden()
-        && rr->getOperation()->getType() != *OperationItemSupplier::metadata
-        && rr->getOperation()->getType() != *OperationItemDistribution::metadata)
+        && !rr->getOperation()->hasType<OperationItemSupplier, OperationItemDistribution>())
           continue;
       textoutput << "OPERATION\t" << rr->getOperation() << '\t'
         << rr->getStart() << '\t'

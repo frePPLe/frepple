@@ -301,7 +301,7 @@ void HasLevel::computeLevels()
                 cur_Flow->isConsumer() 
                 && search_level
                 && (
-                  cur_Flow->getOperation()->getType() != *OperationItemDistribution::metadata
+                  !cur_Flow->getOperation()->hasType<OperationItemDistribution>()
                   || static_cast<OperationItemDistribution*>(cur_Flow->getOperation())->getPriority()
                   )
                 )

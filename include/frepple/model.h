@@ -5058,7 +5058,7 @@ class OperationItemSupplier : public OperationFixedTime
 
 inline Location* OperationPlan::getOrigin() const
 {
-  if (!oper || oper->getType() != *OperationItemDistribution::metadata)
+  if (!oper || !oper->hasType<OperationItemDistribution>())
     return nullptr;
   return static_cast<OperationItemDistribution*>(oper)->getItemDistribution()->getOrigin();
 }
@@ -5066,7 +5066,7 @@ inline Location* OperationPlan::getOrigin() const
 
 Supplier* OperationPlan::getSupplier() const
 {
-  if (!oper || oper->getType() != *OperationItemSupplier::metadata)
+  if (!oper || !oper->hasType<OperationItemSupplier>())
     return nullptr;
   return static_cast<OperationItemSupplier*>(oper)->getItemSupplier()->getSupplier();
 }
@@ -5464,7 +5464,7 @@ class OperationDelivery : public OperationFixedTime
 
 inline bool OperationPlan::getHidden() const
 {
-  if (getOperation() && getOperation()->getType() == *OperationInventory::metadata)
+  if (getOperation() && getOperation()->hasType<OperationInventory>())
     return true;
   else
     return false;
@@ -5475,15 +5475,15 @@ inline Location* OperationPlan::getLocation() const
 {
   if (!oper)
     return nullptr;
-  else if (oper->getType() == *OperationItemSupplier::metadata)
+  else if (oper->hasType<OperationItemSupplier>())
     return static_cast<OperationItemSupplier*>(oper)->getBuffer()->getLocation();
-  else if (oper->getType() == *OperationItemDistribution::metadata)
+  else if (oper->hasType<OperationItemDistribution>())
     return static_cast<OperationItemDistribution*>(oper)->getDestination() ?
       static_cast<OperationItemDistribution*>(oper)->getDestination()->getLocation() :
       static_cast<OperationItemDistribution*>(oper)->getOrigin()->getLocation();
-  else if (oper->getType() == *OperationInventory::metadata)
+  else if (oper->hasType<OperationInventory>())
     return static_cast<OperationInventory*>(oper)->getBuffer()->getLocation();
-  else if (oper->getType() == *OperationDelivery::metadata)
+  else if (oper->hasType<OperationDelivery>())
     return static_cast<OperationDelivery*>(oper)->getBuffer()->getLocation();
   else
     return nullptr;
@@ -5494,15 +5494,15 @@ Item* OperationPlan::getItem() const
 {
   if (!oper)
     return nullptr;
-  else if (oper->getType() == *OperationItemSupplier::metadata)
+  else if (oper->hasType<OperationItemSupplier>())
     return static_cast<OperationItemSupplier*>(oper)->getBuffer()->getItem();
-  else if (oper->getType() == *OperationItemDistribution::metadata)
+  else if (oper->hasType<OperationItemDistribution>())
     return static_cast<OperationItemDistribution*>(oper)->getDestination() ?
       static_cast<OperationItemDistribution*>(oper)->getDestination()->getItem() :
       static_cast<OperationItemDistribution*>(oper)->getOrigin()->getItem();  
-  else if (oper->getType() == *OperationInventory::metadata)
+  else if (oper->hasType<OperationInventory>())
     return static_cast<OperationInventory*>(oper)->getBuffer()->getItem();
-  else if (oper->getType() == *OperationDelivery::metadata)
+  else if (oper->hasType<OperationDelivery>())
     return static_cast<OperationDelivery*>(oper)->getBuffer()->getItem();
   else
     return nullptr;
@@ -7390,7 +7390,7 @@ class LoadBucketizedPercentage : public Load
 
     void setResource(Resource* r)
     {
-      if (r && r->getType() != *ResourceBuckets::metadata)
+      if (r && !r->hasType<ResourceBuckets>())
         throw DataException("LoadBucketizedPercentage can only be associated with ResourceBuckets");
       Load::setResource(r);
     }
@@ -7451,7 +7451,7 @@ class LoadBucketizedFromStart : public Load
 
     void setResource(Resource* r)
     {
-      if (r && r->getType() != *ResourceBuckets::metadata)
+      if (r && !r->hasType<ResourceBuckets>())
         throw DataException("LoadBucketizedFromStart can only be associated with ResourceBuckets");
       Load::setResource(r);
     }
@@ -7512,7 +7512,7 @@ class LoadBucketizedFromEnd : public Load
 
     void setResource(Resource* r)
     {
-      if (r && r->getType() != *ResourceBuckets::metadata)
+      if (r && !r->hasType<ResourceBuckets>())
         throw DataException("LoadBucketizedFromEnd can only be associated with ResourceBuckets");
       Load::setResource(r);
     }

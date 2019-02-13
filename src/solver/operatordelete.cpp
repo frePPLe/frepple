@@ -371,7 +371,7 @@ void OperatorDelete::solve(const Buffer* b, void* v)
       if (
         !fp || !fp->getOperationPlan()->getProposed() 
         || fp->getOperationPlan()->getDemand()
-        || fp->getFlow()->getType() == *FlowTransferBatch::metadata
+        || fp->getFlow()->hasType<FlowTransferBatch>()
         )
       {
         // It's locked or a delivery operationplan

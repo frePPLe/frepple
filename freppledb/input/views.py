@@ -1943,6 +1943,11 @@ class ManufacturingOrderList(OperationPlanMixin, GridReport):
         "function": "grid.setStatus('confirmed')"
       },
       {
+        "name": 'completed',
+        "label": format_lazy(_("change status to {status}"), status=_("completed")),
+        "function": "grid.setStatus('completed')"
+      },
+      {
         "name": 'closed',
         "label": format_lazy(_("change status to {status}"), status=_("closed")),
         "function": "grid.setStatus('closed')"
@@ -2209,6 +2214,11 @@ class DistributionOrderList(OperationPlanMixin, GridReport):
         "name": 'confirmed',
         "label": format_lazy(_("change status to {status}"), status=_("confirmed")),
         "function": "grid.setStatus('confirmed')"
+      },
+      {
+        "name": 'completed',
+        "label": format_lazy(_("change status to {status}"), status=_("completed")),
+        "function": "grid.setStatus('completed')"
       },
       {
         "name": 'closed',
@@ -2483,6 +2493,11 @@ class PurchaseOrderList(OperationPlanMixin, GridReport):
         "name": 'confirmed',
         "label": format_lazy(_("change status to {status}"), status=_("confirmed")),
         "function": "grid.setStatus('confirmed')"
+      },
+      {
+        "name": 'completed',
+        "label": format_lazy(_("change status to {status}"), status=_("completed")),
+        "function": "grid.setStatus('completed')"
       },
       {
         "name": 'closed',

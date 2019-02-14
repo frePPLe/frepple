@@ -216,7 +216,7 @@ function displayongrid(id, columnid, value) {
     $("#undo").removeClass("btn-primary btn-danger").addClass("btn-danger").prop("disabled", false);
   }
   if (columnid === "status") {
-    if (['proposed','approved','confirmed','closed'].indexOf(value) > -1) {
+    if (['proposed', 'approved', 'confirmed', 'completed', 'closed'].indexOf(value) > -1) {
       jQuery("#grid").jqGrid("setCell", id, "status", value, "dirty-cell");
       $("#save").removeClass("btn-primary btn-danger").addClass("btn-danger").prop("disabled", false);
       $("#undo").removeClass("btn-primary btn-danger").addClass("btn-danger").prop("disabled", false);

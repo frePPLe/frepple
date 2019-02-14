@@ -33,6 +33,7 @@ function showoperationplanDrv($window, gettextCatalog) {
   return directive;
 
   function linkfunc(scope, elem, attrs) {
+    scope.actions = actions;  	
     scope.opptype={ //just a translation
       'MO': gettextCatalog.getString('Manufacturing Order'),
       'PO': gettextCatalog.getString('Purchase Order'),
@@ -44,12 +45,8 @@ function showoperationplanDrv($window, gettextCatalog) {
     scope.$watchGroup(['operationplan.id','operationplan.start','operationplan.end','operationplan.quantity','operationplan.criticality','operationplan.delay','operationplan.status'], function (newValue,oldValue) {
       if (typeof scope.operationplan.id !== 'undefined' && !isNaN(scope.operationplan.id)) {
 
-        if(typeof actions === 'undefined') {
-          var actions = {};
-        }
-
         angular.element(elem).find('input[disabled]').attr('disabled',false);
-        if (actions.hasOwnProperty('proposed')) {
+        if (typeof actions !== 'undefined' && actions.hasOwnProperty('proposed')) {
           angular.element(elem).find('button[disabled]').attr('disabled',false);
         }
         angular.element(elem).find('#statusrow .btn').removeClass('active');

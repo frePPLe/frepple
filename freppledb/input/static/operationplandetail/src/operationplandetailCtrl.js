@@ -48,11 +48,10 @@ function operationplanCtrl($scope, OperationPlan) {
         }
         if (typeof oldValue[4] !== 'undefined' && typeof newValue[4] !== 'undefined' && oldValue[4] !== newValue[4]) {
 
-          if (actions.hasOwnProperty($scope.operationplan.status)) {
+          if (actions.hasOwnProperty($scope.operationplan.status))
             $scope.displayongrid($scope.operationplan.id,"status",$scope.operationplan.status);
-          } else if (!actions.hasOwnProperty($scope.operationplan.status) && oldValue[4] === 'proposed') {
+          else
             actions[Object.keys(actions)[0]]();
-          }
         }
       }
       oldValue[0] = newValue[0];

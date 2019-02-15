@@ -16,9 +16,9 @@
 #
 
 from datetime import datetime, time
+from decimal import Decimal
 
 from django.db import models, DEFAULT_DB_ALIAS
-from django.db.models import Max
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import string_concat
 
@@ -1190,6 +1190,116 @@ class OperationPlan(AuditModel):
 
   def __str__(self):
     return str(self.reference)
+
+
+  def propagateStatus(self):
+    if self.type == "STCK":
+      return
+    state = getattr(self, '_state', None)
+    db = state.db if state else DEFAULT_DB_ALIAS
+
+    # Assure that all child operationplans also get the same status
+    if self.type not in ("DO", "PO"):
+      for subop in self.xchildren.all().using(db):
+        if subop.status != self.status:
+          subop.status = self.status
+          subop.save(update_fields=["status"])
+
+    if self.status not in ('completed', 'closed'):
+      return
+
+    # Assure the start and end are in the past
+    saveme = False
+    now = datetime.now()
+    if self.enddate > now:
+      self.enddate = now
+      saveme = True
+    if self.startdate > now:
+      self.startdate = now
+      saveme = True
+    if saveme:
+      super(OperationPlan, self).save(using=db, update_fields=["startdate", "enddate"])
+
+    # Assure that previous routing steps are also marked closed or completed
+    if self.type == "MO" and self.owner and self.owner.operation.type == "routing":
+      steps = {
+        z.suboperation: z.priority
+        for z
+        in self.owner.operation.suboperations.all().using(db).only("suboperation", "priority")
+        }
+      myprio = steps.get(self.operation, 0)
+      for subop in self.owner.xchildren.all().using(db):
+        if subop.status != self.status and steps.get(subop.operation, 0) < myprio:
+          subop.status = self.status
+          subop.save(update_fields=["status"])
+
+    # Remove all capacity consumption of closed and completed
+    self.resources.all().using(db).delete()
+
+    for opplanmat in self.materials.all().using(db):
+      # Record the correct date
+      if opplanmat.flowdate > now:
+        opplanmat.flowdate = now
+        opplanmat.save(using=db)
+      # Check that upstream buffers have enough supply in the closed status
+      if opplanmat.quantity < 0:
+        # check the inventory + consumed
+        flplns = [
+          i for i in OperationPlanMaterial.objects.all().using(db).filter(
+            item=opplanmat.item.name,
+            location=opplanmat.location.name
+            ).order_by("flowdate", "-quantity").select_related("operationplan")
+          ]
+        closed_supply = Decimal()
+        closed_demand = Decimal(-0.00001)   # Leaving some room for rounding errors
+        for f in flplns:
+          if f.operationplan.type == 'STCK':
+            closed_supply += f.quantity
+          if f.operationplan.status in ['closed', 'completed']:
+            if f.quantity > 0:
+              closed_supply += f.quantity
+            else:
+              closed_demand -= f.quantity
+        if closed_supply < closed_demand:
+          # Things don't add up here.
+          # We'll close some upstream supply to make things match up
+          # First, try changing the status of confirmed supply
+          for f in flplns:
+            if f.quantity > 0 \
+              and f.operationplan.status == 'confirmed' \
+              and f.operationplan.type != 'STCK':
+                f.operationplan.status = self.status
+                f.operationplan.save(update_fields=["status"])
+                closed_supply += f.quantity
+                if closed_supply >= closed_demand:
+                  break
+          if closed_supply < closed_demand:
+            # Second, try changing the status of approved supply
+            for f in flplns:
+              if f.quantity > 0 \
+                and f.operationplan.status == 'approved':
+                  f.operationplan.status = self.status
+                  f.operationplan.save(update_fields=["status"])
+                  closed_supply += f.quantity
+                  if closed_supply >= closed_demand:
+                    break
+            if closed_supply < closed_demand:
+              # Finally, try changing the status of proposed supply
+              for f in flplns:
+                if f.quantity > 0 \
+                  and f.operationplan.status == 'proposed':
+                    f.operationplan.status = self.status
+                    f.operationplan.save(update_fields=["status"])
+                    closed_supply += f.quantity
+                    if closed_supply >= closed_demand:
+                      break
+
+
+  def save(self, *args, **kwargs):
+    self.propagateStatus()
+    # Call the real save() method
+    super(OperationPlan, self).save(*args, **kwargs)
+
 
   class Meta(AuditModel.Meta):
     db_table = 'operationplan'

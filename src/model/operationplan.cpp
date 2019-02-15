@@ -1787,19 +1787,21 @@ void OperationPlan::setClosed(bool b)
 
 void OperationPlan::propagateStatus()
 {
-  if (getOperation()->hasType<OperationInventory, OperationItemSupplier>())
+  if (getOperation()->hasType<OperationInventory>())
     return;
 
   // Assure that all child operationplans also get the same status
   auto mystatus = getStatus();
-  {
-    for (auto subopplan = firstsubopplan; subopplan; subopplan = subopplan->nextsubopplan)
-      if (subopplan->getStatus() != mystatus)
-        subopplan->setStatus(mystatus);
-  }
+  for (auto subopplan = firstsubopplan; subopplan; subopplan = subopplan->nextsubopplan)
+    if (subopplan->getStatus() != mystatus)
+      subopplan->setStatus(mystatus);
 
   if (mystatus != "completed" && mystatus != "closed")
     return;
+
+  // Assure the start and end date are in the past
+  if (getEnd() > Plan::instance().getCurrent())
+    setOperationPlanParameters(quantity, Date::infinitePast, Plan::instance().getCurrent(), false);
 
   // Assure that previous routing steps are also marked closed or completed
   if (getOwner() && getOwner()->getOperation()->hasType<OperationRouting>())

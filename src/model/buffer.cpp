@@ -293,15 +293,15 @@ void Buffer::setOnHand(double f)
     // No operationplan exists yet
     OperationPlan *opplan = o->createOperationPlan(
         fabs(f), Date::infinitePast, Date::infinitePast);
-    opplan->setConfirmed(true);
+    opplan->setClosed(true);
     opplan->activate();
   }
   else
   {
     // Update the existing operationplan
-    i->setConfirmed(false);
+    i->setClosed(false);
     i->setQuantity(fabs(f));
-    i->setConfirmed(true);
+    i->setClosed(true);
   }
   setChanged();
 }

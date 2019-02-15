@@ -2270,6 +2270,9 @@ class OperationPlan
     /** Update the setup information. */
     void setSetupEvent(Resource*, Date, PooledString, SetupMatrixRule* = nullptr);
 
+    /** Make sure that a status change is also reflected on related operationplans. */
+    void propagateStatus();
+
     /** Remove the setup event. */
     void clearSetupEvent()
     {

@@ -233,19 +233,18 @@ void PeggingIterator::followPegging
 (const OperationPlan* op, double qty, double offset, short lvl)
 {
   // Zero quantity operationplans don't have further pegging
-  if (!op->getQuantity()) return;
+  if (!op->getQuantity())
+    return;
 
   // For each flowplan ask the buffer to find the pegged operationplans.
   if (downstream)
-    for (OperationPlan::FlowPlanIterator i = op->beginFlowPlans();
-        i != op->endFlowPlans(); ++i)
+    for (auto i = op->beginFlowPlans(); i != op->endFlowPlans(); ++i)
     {
       if (i->getQuantity() > ROUNDING_ERROR) // Producing flowplan
         i->getFlow()->getBuffer()->followPegging(*this, &*i, qty, offset, lvl+1);
     }
   else
-    for (OperationPlan::FlowPlanIterator i = op->beginFlowPlans();
-        i != op->endFlowPlans(); ++i)
+    for (auto i = op->beginFlowPlans(); i != op->endFlowPlans(); ++i)
     {
       if (i->getQuantity() < -ROUNDING_ERROR) // Consuming flowplan
         i->getFlow()->getBuffer()->followPegging(*this, &*i, qty, offset, lvl+1);

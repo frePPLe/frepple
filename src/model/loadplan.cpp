@@ -358,11 +358,13 @@ Object* LoadPlan::reader(
 
 double Load::getLoadplanQuantity(const LoadPlan* lp) const
 {
-  if (!lp->getOperationPlan()->getProposed() && !lp->getOperationPlan()->getConsumeCapacity())
+  if (
+    (!lp->getOperationPlan()->getProposed() && !lp->getOperationPlan()->getConsumeCapacity())
+    || !lp->getOperationPlan()->getQuantity()
+    || lp->getOperationPlan()->getClosed()
+    || lp->getOperationPlan()->getCompleted()
+    )
     // No capacity consumption required
-    return 0.0;
-  if (!lp->getOperationPlan()->getQuantity())
-    // Operationplan has zero size, and so should the capacity it needs
     return 0.0;
   if (!lp->getOperationPlan()->getDates().overlap(getEffective())
     && (lp->getOperationPlan()->getDates().getDuration()

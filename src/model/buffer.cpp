@@ -161,7 +161,7 @@ Buffer* OperationDelivery::getBuffer() const
 }
 
 
-void Buffer::inspect(const string msg) const
+void Buffer::inspect(const string& msg) const
 {
   logger << "Inspecting buffer " << getName() << ": ";
   if (!msg.empty())

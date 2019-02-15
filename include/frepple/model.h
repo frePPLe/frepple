@@ -5179,17 +5179,20 @@ class Buffer : public HasHierarchy<Buffer>, public HasLevel,
     /** Return true if this buffer represents a tool. */
     bool getTool() const
     {
-      return tool;
+      return (flags & TOOL) != 0;
     }
 
-    /** Marks the buffer a tool. */
+    /** Marks the buffer as a tool. */
     void setTool(bool b)
     {
-      tool = b;
+      if (b)
+        flags |= TOOL;
+      else
+        flags &= ~TOOL;
     }
 
     /** Debugging function. */
-    void inspect(string msg = "") const;
+    void inspect(const string& = "") const;
 
     static PyObject* inspectPython(PyObject*, PyObject*);
 
@@ -5407,7 +5410,8 @@ class Buffer : public HasHierarchy<Buffer>, public HasLevel,
     Buffer *nextItemBuffer = nullptr;
 
     /** A flag that marks whether this buffer represents a tool or not. */
-    bool tool = false;
+    static const unsigned short TOOL = 1;
+    unsigned short flags = 0;
 };
 
 
@@ -6708,7 +6712,7 @@ class Resource : public HasHierarchy<Resource>,
     }
 
     /** Debugging function. */
-    void inspect(string msg = "") const;
+    void inspect(const string& = "") const;
     
     static PyObject* inspectPython(PyObject*, PyObject*);
 

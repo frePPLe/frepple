@@ -5839,7 +5839,7 @@ class DataInput
     /** Update the source field that will be populated on each object created
       * or updated from the XML data.
       */
-    void setSource(string s)
+    void setSource(const string& s)
     {
       source = s;
     }

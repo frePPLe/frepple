@@ -97,7 +97,7 @@ int ResourceBuckets::initialize()
 }
 
 
-void Resource::inspect(const string msg) const
+void Resource::inspect(const string& msg) const
 {
   logger << "Inspecting resource " << getName() << ": ";
   if (!msg.empty()) logger  << msg;

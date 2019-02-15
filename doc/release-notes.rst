@@ -15,6 +15,9 @@ Release notes
 - | A new status "completed" is added on purchase orders, distribution orders and 
     manufacturing orders. It models a status where the order has already completed, but the
     ERP hasn't reflected this yet in its inventory status.
+  | When changing the status of a manufacturing order to completed, there is also logic to assure
+    that sufficient upstream material is available. If required the status of feeding purchase orders, 
+    distribution orders and manufacturing orders is changed to completed.
 
 4.5.0 (2019/01/25)
 ==================

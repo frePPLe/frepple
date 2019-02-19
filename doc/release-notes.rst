@@ -19,6 +19,12 @@ Release notes
     that sufficient upstream material is available. If required the status of feeding purchase orders, 
     distribution orders and manufacturing orders is changed to completed.
 
+- | The default of the parameter `plan.autoFenceOperations <user-guide/model-reference/parameters.html>`_
+    is changed from 0 to 999.
+  | By default, the planning algorithm now waits for any existing confirmed supply before proposing
+    a new replenishment.
+  | The new default avoids unnecessary duplicate replenishments and results in more intuitive plans. 
+
 4.5.0 (2019/01/25)
 ==================
 

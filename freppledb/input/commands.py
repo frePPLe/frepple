@@ -847,9 +847,9 @@ class loadItemDistributions(LoadTask):
             )
           if i[2]:
             curitemdistribution.destination = frepple.location(name=i[2])
-          if i[3]:
+          if i[3] is not None:
             curitemdistribution.size_minimum = i[3]
-          if i[4]:
+          if i[4] is not None:
             curitemdistribution.size_multiple = i[4]
           if i[5]:
             curitemdistribution.size_maximum = i[5]

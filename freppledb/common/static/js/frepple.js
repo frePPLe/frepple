@@ -548,7 +548,7 @@ var grid = {
       jQuery("#grid").jqGrid("setCell", sel[i], "status", newstatus, "dirty-cell");
       jQuery("#grid").jqGrid("setRowData", sel[i], false, "edited");
     };
-    $("#actions1").html($("#actionsul").children().first().text() + '  <span class="caret"></span>');
+    $("#actions1").html(gettext("Select action") + '&nbsp;&nbsp;<span class="caret"></span>');
     $('#save').removeClass("btn-primary").addClass("btn-danger").prop("disabled",false);
     $('#undo').removeClass("btn-primary").addClass("btn-danger").prop("disabled",false);
    },

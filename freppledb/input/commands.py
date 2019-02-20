@@ -781,9 +781,9 @@ class loadItemSuppliers(LoadTask):
             )
           if i[2]:
             curitemsupplier.location = frepple.location(name=i[2])
-          if i[3]:
+          if i[3] is not None:
             curitemsupplier.size_minimum = i[3]
-          if i[4]:
+          if i[4] is not None:
             curitemsupplier.size_multiple = i[4]
           if i[5]:
             curitemsupplier.size_maximum = i[5]

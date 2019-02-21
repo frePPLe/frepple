@@ -1200,7 +1200,7 @@ OperationTimePer::setOperationPlanParameters(
             return OperationPlanState(production_dates, 0.0);
           opplan->setQuantity(0, true, false);
           opplan->clearSetupEvent();
-          opplan->setStartAndEnd(e, e);
+          opplan->setStartAndEnd(Date::infinitePast, e);
         }
       }
       else
@@ -1239,7 +1239,7 @@ OperationTimePer::setOperationPlanParameters(
         return OperationPlanState(production_dates, 0);
       opplan->setQuantity(0, true, false);
       opplan->clearSetupEvent();
-      opplan->setStartAndEnd(e, e);
+      opplan->setStartAndEnd(Date::infinitePast, e);
     }
     else
     {

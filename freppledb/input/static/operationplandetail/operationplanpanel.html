@@ -13,68 +13,73 @@
 }
 </style>
 <div class="panel-heading">
-  <strong style="text-transform: capitalize;">
-    &nbsp;{{opptype[operationplan.type]}}
-  </strong>
+  <h4 class="panel-title">
+  <span data-ng-if="operationplan.type" style="text-transform: capitalize">{{ opptype[operationplan.type] }}</span>
+  <span data-ng-if="!operationplan.id" style="text-transform: capitalize">{{ 'no selection'|translate }}</span>
+  <span data-ng-if="operationplan.id == -1" style="text-transform: capitalize">{{ 'multiple selected'|translate }}</span>
+  </h4>
 </div>
 <table class="table table-condensed table-hover" id="opplan-attributes-drvtable">
-  <thead>
+  <thead data-ng-if="operationplan.operation.name || operationplan.name">
     <tr>
       <td style="min-width: 250px; width:30%">
-        <b id="thead1" style="text-transform: capitalize;">{{ 'name'|translate }}&nbsp;</b>
+        <b id="thead1" style="text-transform: capitalize">{{ 'name'|translate }}&nbsp;</b>
       </td>
       <td>
-        <b style="text-transform: capitalize;" data-ng-if="operationplan.hasOwnProperty('operation')">{{operationplan.operation.name}}</b>
-        <b style="text-transform: capitalize;" data-ng-if="!operationplan.hasOwnProperty('operation')">{{operationplan.name}}</b>
+        <b style="text-transform: capitalize" data-ng-if="operationplan.hasOwnProperty('operation')">{{operationplan.operation.name}}</b>
+        <b style="text-transform: capitalize" data-ng-if="!operationplan.hasOwnProperty('operation')">{{operationplan.name}}</b>
       </td>
     </tr>
   </thead>
-  <tbody>
-    <tr data-ng-if="!operationplan.id === -1">
-      <td><b style="text-transform: capitalize;">{{'identifier'|translate}}</b></td>
-      <td id="idrow">{{(operationplan.hasOwnProperty('id') && operationplan.id > -1)?operationplan.id:''}}</td>
-    </tr>
-    <tr data-ng-if="!operationplan.id === -1">
-      <td><b style="text-transform: capitalize;">{{'reference'|translate}}</b></td>
+  <tbody data-ng-if="operationplan.id">
+    <tr data-ng-if="operationplan.id !== -1 && operationplan.type !== 'STCK'">
+      <td><b style="text-transform: capitalize">{{'reference'|translate}}</b></td>
       <td id="referencerow">{{operationplan.reference}}</td>
     </tr>
-    <tr data-ng-if="operationplan.item  !== null && operationplan.id !== -1">
-      <td><b style="text-transform: capitalize;" translate>item</b></td>
+    <tr data-ng-if="operationplan.item !== null && operationplan.id !== -1">
+      <td><b style="text-transform: capitalize" translate>item</b></td>
       <td id="itemrow">{{operationplan.item}}</td>
     </tr>
     <tr ng-if="operationplan.supplier !== null && operationplan.id !== undefined && operationplan.id !== -1">
-      <td><b style="text-transform: capitalize;">{{'supplier'|translate}}</b></td>
+      <td><b style="text-transform: capitalize">{{'supplier'|translate}}</b></td>
       <td id="supplierrow">{{operationplan.supplier}}</td>
     </tr>
     <tr ng-if="operationplan.location !== null && operationplan.id !== -1">
-      <td><b style="text-transform: capitalize;">{{'location'|translate}}</b></td>
+      <td><b style="text-transform: capitalize">{{'location'|translate}}</b></td>
       <td id="locationrow">{{operationplan.location}}</td>
     </tr>
     <tr ng-if="operationplan.origin !== null && operationplan.id !== undefined && operationplan.id !== -1">
-      <td><b style="text-transform: capitalize;">{{'origin'|translate}}</b></td>
+      <td><b style="text-transform: capitalize">{{'origin'|translate}}</b></td>
       <td id="originrow">{{operationplan.origin}}</td>
     </tr>
     <tr ng-if="operationplan.destination !== null && operationplan.id !== undefined && operationplan.id !== -1">
-      <td><b style="text-transform: capitalize;">{{'destination'|translate}}</b></td>
+      <td>
+      <b data-ng-if="operationplan.type !== 'STCK'" style="text-transform: capitalize;">{{'destination'|translate}}</b>
+      <b data-ng-if="operationplan.type === 'STCK'" style="text-transform: capitalize;">{{'location'|translate}}</b>
+      </td>
       <td id="destinationrow">{{operationplan.destination}}</td>
     </tr>
-    <tr>
-      <td><b style="text-transform: capitalize" ng-if="operationplan.type == 'MO'">{{'start date'|translate}}</b>
-        <b style="text-transform: capitalize" ng-if="operationplan.type == 'PO'">{{'ordering date'|translate}}</b>
-        <b style="text-transform: capitalize" ng-if="operationplan.type == 'DO'">{{'shipping date'|translate}}</b>
-        <b style="text-transform: capitalize" ng-if="operationplan.colmodel.startdate">{{operationplan.colmodel.startdate.label|translate}}</b>&nbsp;
+    <tr data-ng-if="operationplan.type !== 'STCK'">
+      <td><b style="text-transform: capitalize" data-ng-if="operationplan.type == 'MO'">{{'start date'|translate}}</b>
+        <b style="text-transform: capitalize" data-ng-if="operationplan.type == 'PO'">{{'ordering date'|translate}}</b>
+        <b style="text-transform: capitalize" data-ng-if="operationplan.type == 'DO'">{{'shipping date'|translate}}</b>
+        <b style="text-transform: capitalize" data-ng-if="operationplan.colmodel.startdate">{{operationplan.colmodel.startdate.label|translate}}</b>
+        <b style="text-transform: capitalize" data-ng-if="operationplan.colmodel.operationplan__startdate">{{operationplan.colmodel.operationplan__startdate.label|translate}}</b>&nbsp;
         <small data-ng-if="operationplan.colmodel.startdate">({{ operationplan.colmodel.startdate.type|translate }})</small>
+        <small data-ng-if="operationplan.colmodel.operationplan__startdate">({{ operationplan.colmodel.operationplan__startdate.type|translate }})</small>
       </td>
       <td id="startrow">
         <input id="setStart" type="text" size="9" class="vDateField form-control" value="{{operationplan.start|formatdate}}" disabled>
       </td>
     </tr>
-    <tr>
+    <tr data-ng-if="operationplan.type !== 'STCK'">
       <td><b style="text-transform: capitalize;" ng-if="operationplan.type == 'MO'">{{'end date'|translate}}</b>
         <b style="text-transform: capitalize;" ng-if="operationplan.type == 'PO'">{{'receipt date'|translate}}</b>
         <b style="text-transform: capitalize;" ng-if="operationplan.type == 'DO'">{{'receipt date'|translate}}</b>
-        <b style="text-transform: capitalize" ng-if="operationplan.colmodel.enddate">{{operationplan.colmodel.enddate.label|translate}}</b>&nbsp;
+        <b style="text-transform: capitalize" ng-if="operationplan.colmodel.enddate">{{operationplan.colmodel.enddate.label|translate}}</b>
+        <b style="text-transform: capitalize" ng-if="operationplan.colmodel.operationplan__enddate">{{operationplan.colmodel.operationplan__enddate.label|translate}}</b>&nbsp;
         <small data-ng-if="operationplan.colmodel.enddate">({{ operationplan.colmodel.enddate.type|translate }})</small>
+        <small data-ng-if="operationplan.colmodel.operationplan__enddate">({{ operationplan.colmodel.operationplan__enddate.type|translate }})</small>
       </td>
       <td id="endrow">
         <input id="setEnd" type="text" size="9" class="vDateField form-control" value="{{operationplan.end|formatdate}}" disabled>
@@ -88,15 +93,17 @@
         <input id="setQuantity" class="form-control" type="number" ng-model="operationplan.quantity" ng-model-options="{debounce: 300}" disabled>
       </td>
     </tr>
-    <tr>
+    <tr data-ng-if="operationplan.type !== 'STCK'">
       <td><b style="text-transform: capitalize;">{{'criticality'|translate}}</b>&nbsp;
         <small data-ng-if="operationplan.colmodel.criticality">({{ operationplan.colmodel.criticality.type|translate }})</small>
+        <small data-ng-if="operationplan.colmodel.operationplan__criticality">({{ operationplan.colmodel.operationplan__criticality.type|translate }})</small>
       </td>
       <td id="criticalityrow">{{operationplan.criticality}}</td>
     </tr>
-    <tr>
+    <tr data-ng-if="operationplan.type !== 'STCK'">
       <td><b style="text-transform: capitalize;">{{'delay'|translate}}</b>&nbsp;
         <small data-ng-if="operationplan.colmodel.delay">({{ operationplan.colmodel.delay.type|translate }})</small>
+        <small data-ng-if="operationplan.colmodel.operationplan__delay">({{ operationplan.colmodel.operationplan.colmodel.operationplan__delay.type|translate }})</small>
       </td>
       <td id="delayrow">{{(operationplan.delay / 86400)|number:0}}</td>
     </tr>
@@ -107,9 +114,9 @@
       </td>
       <td>{{(operationplan[key])|number:0}}</td>
     </tr>
-    <tr>
+    <tr id="statusrow" data-ng-if="operationplan.type !== 'STCK'">
       <td><b style="text-transform: capitalize;">{{'status'|translate}}</b></td>
-      <td id="statusrow">
+      <td>
         <div class="btn-group" role="group">
           <button id="proposedBtn" data-ng-if="actions.hasOwnProperty('proposed')" type="button" class="btn btn-primary" ng-click="operationplan.status = 'proposed'" style="text-transform: capitalize;" disabled="disabled">{{'proposed'|translate}}</button>
           <button id="approvedBtn" data-ng-if="actions.hasOwnProperty('approved')" type="button" class="btn btn-primary" ng-click="operationplan.status = 'approved'" style="text-transform: capitalize;" disabled="disabled">{{'approved'|translate}}</button>

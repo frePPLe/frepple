@@ -22,7 +22,8 @@ from freppledb.input.models import Buffer, Customer, Demand, Item, OperationReso
 from freppledb.input.models import OperationMaterial, Skill, ResourceSkill, Supplier
 from freppledb.input.models import Calendar, CalendarBucket, ManufacturingOrder, SubOperation
 from freppledb.input.models import ItemSupplier, ItemDistribution, DistributionOrder
-from freppledb.input.models import PurchaseOrder, DeliveryOrder
+from freppledb.input.models import PurchaseOrder, DeliveryOrder, OperationPlanResource
+from freppledb.input.models import OperationPlanMaterial
 from freppledb.common.adminforms import MultiDBModelAdmin, MultiDBTabularInline
 
 from freppledb.admin import data_site
@@ -258,7 +259,7 @@ class Buffer_admin(MultiDBModelAdmin):
     {"name": 'supplypath', "label": _("supply path"), "view": "supplypath_buffer"},
     {"name": 'whereused', "label": _("where used"),"view": "whereused_buffer"},
     {"name": 'plan', "label": _("plan"), "view": "output_buffer_plandetail"},
-    {"name": 'plandetail', "label": _("plan detail"), "view": "output_flowplan_plandetail"},
+    {"name": 'plandetail', "label": _("plan detail"), "view": "input_flowplan_plandetail"},
     {"name": 'constraint', "label": _("constrained demand"), "view": "output_constraint_buffer"},
     {"name": 'comments', "label": _("comments"), "view": "admin:input_buffer_comment"},
     #. Translators: Translation included with Django
@@ -339,7 +340,7 @@ class Resource_admin(MultiDBModelAdmin):
     {"name": 'supplypath', "label": _("supply path"), "view": "supplypath_resource"},
     {"name": 'whereused', "label": _("where used"), "view": "whereused_resource"},
     {"name": 'plan', "label": _("plan"), "view": "output_resource_plandetail"},
-    {"name": 'plandetail', "label": _("plan detail"), "view": "output_loadplan_plandetail"},
+    {"name": 'plandetail', "label": _("plan detail"), "view": "input_loadplan_plandetail"},
     {"name": 'constraint', "label": _("constrained demand"), "view": "output_constraint_resource"},
     {"name": 'comments', "label": _("comments"), "view": "admin:input_resource_comment"},
     #. Translators: Translation included with Django
@@ -479,3 +480,30 @@ class Demand_admin(MultiDBModelAdmin):
     {"name": 'history', "label": _("History"), "view": "admin:input_demand_history"},
     ]
 data_site.register(Demand, Demand_admin)
+
+
+class OperationPlanResource_admin(MultiDBModelAdmin):
+  model = OperationPlanResource
+  raw_id_fields = ('operationplan',)  # TODO a foreign key to OperationPlan doesn't work because it's an abstract class without admin
+  save_on_top = True
+  fieldsets = (
+    (None, {'fields': ('operationplan', 'resource', 'status')}),
+    (_('computed fields'), {'fields': ('quantity', 'startdate', 'enddate')}),
+    )
+  tabs = [
+    {"name": 'edit', "label": _("edit"), "view": "admin:input_operationplanresource_change", "permissions": "input.change_operationplanresource"},
+    ]
+data_site.register(OperationPlanResource, OperationPlanResource_admin)
+
+
+class OperationPlanMaterial_admin(MultiDBModelAdmin):
+  model = OperationPlanMaterial
+  raw_id_fields = ('operationplan', 'item')  # TODO a foreign key to OperationPlan doesn't work because it's an abstract class without admin
+  save_on_top = True
+  fieldsets = (
+    (None, {'fields': ('operationplan', 'item', 'location', 'status', 'quantity', 'flowdate')}),
+    )
+  tabs = [
+    {"name": 'edit', "label": _("edit"), "view": "admin:input_operationplanmaterial_change", "permissions": "input.change_operationplanmaterial"},
+    ]
+data_site.register(OperationPlanMaterial, OperationPlanMaterial_admin)

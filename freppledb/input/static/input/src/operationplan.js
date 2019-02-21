@@ -25,9 +25,8 @@ function OperationPlanFactory($http, getURLprefix, Operation, Location, Item) {
   var debug = false;
 
   function OperationPlan(data) {
-    if (data) {
+    if (data)
       this.extend(data);
-    }
   }
 
   function extend(data) {
@@ -58,9 +57,9 @@ function OperationPlanFactory($http, getURLprefix, Operation, Location, Item) {
   //REST API GET
   function get(callback) {
     var operplan = this;
-    if (operplan.id === undefined) {
+    if (operplan.id === undefined)
       return operplan;
-    } else {
+    else {
       return $http
         .get(getURLprefix() + '/operationplan/?reference=' + encodeURIComponent(operplan.id))
         .then(
@@ -102,9 +101,8 @@ function OperationPlanFactory($http, getURLprefix, Operation, Location, Item) {
       .delete(getURLprefix() + '/api/input/operationplan/?reference=' + encodeURIComponent(operplan.name))
       .then(
         function (response) {
-          if (debug) {
+          if (debug)
             console.log("OperationPlan delete '" + operplan.name + "': ", response.data);
-          }
           return operplan;
           }
         );

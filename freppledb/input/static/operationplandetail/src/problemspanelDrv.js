@@ -33,9 +33,9 @@ function showproblemspanelDrv($window, gettextCatalog) {
 
   function linkfunc(scope, elem, attrs) {
     var rows='';
-    var template =  '<div class="panel-heading"><strong style="text-transform: capitalize;">'+
+    var template =  '<div class="panel-heading"><h4 class="panel-title" style="text-transform: capitalize">'+
                       gettextCatalog.getString("problems")+
-                    '</strong></div>'+
+                    '</h4></div>'+
                     '<table class="table table-condensed table-hover"><thead><tr><td>' +
                       '<b style="text-transform: capitalize;">'+gettextCatalog.getString("name")+'</b>' +
                     '</td><td>' +

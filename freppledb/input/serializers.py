@@ -706,6 +706,50 @@ class OperationMaterialdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
     serializer_class = OperationMaterialSerializer
 
 
+class OperationPlanMaterialFilter(filters.FilterSet):
+  class Meta:
+    model = freppledb.input.models.OperationPlanMaterial
+    fields = {
+      'id': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+      'operationplan': ['exact', 'in', ],
+      'item': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+      'location': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+      'quantity': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+      'flowdate': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+      'status': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+      'source': ['exact', 'in', ],
+      'lastmodified': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+      }
+
+    filter_fields = (
+      'id', 'operationplan', 'item', 'location', 'quantity', 'flowdate',
+      'status', 'source', 'lastmodified'
+      )
+
+
+class OperationPlanMaterialSerializer(BulkSerializerMixin, ModelSerializer):
+    class Meta:
+      model = freppledb.input.models.OperationPlanMaterial
+      fields = (
+        'id', 'operationplan', 'item', 'location', 'quantity', 'flowdate',
+        'status', 'source', 'lastmodified'
+        )
+      list_serializer_class = BulkListSerializer
+      update_lookup_field = 'id'
+      partial = True
+
+
+class OperationPlanMaterialAPI(frePPleListCreateAPIView):
+    queryset = freppledb.input.models.OperationPlanMaterial.objects.all()
+    serializer_class = OperationPlanMaterialSerializer
+    filter_class = OperationPlanMaterialFilter
+
+
+class OperationPlanMaterialdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
+    queryset = freppledb.input.models.OperationPlanMaterial.objects.all()
+    serializer_class = OperationPlanMaterialSerializer
+
+
 class OperationResourceFilter(filters.FilterSet):
   class Meta:
     model = freppledb.input.models.OperationResource
@@ -753,6 +797,51 @@ class OperationResourceAPI(frePPleListCreateAPIView):
 class OperationResourcedetailAPI(frePPleRetrieveUpdateDestroyAPIView):
     queryset = freppledb.input.models.OperationResource.objects.all()
     serializer_class = OperationResourceSerializer
+
+
+class OperationPlanResourceFilter(filters.FilterSet):
+  class Meta:
+    model = freppledb.input.models.OperationPlanResource
+    fields = {
+      'id': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+      'operationplan': ['exact', 'in', ],
+      'resource': ['exact', 'in', ],
+      'quantity': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+      'startdate': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+      'enddate': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+      'status': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+      'setup': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+      'source': ['exact', 'in', ],
+      'lastmodified': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
+      }
+
+    filter_fields = (
+      'id', 'operationplan', 'resource', 'quantity', 'startdate', 'enddate',
+      'status', 'setup', 'source', 'lastmodified'
+      )
+
+
+class OperationPlanResourceSerializer(BulkSerializerMixin, ModelSerializer):
+    class Meta:
+      model = freppledb.input.models.OperationPlanResource
+      fields = (
+        'id', 'operationplan', 'resource', 'quantity', 'startdate', 'enddate',
+        'status', 'setup', 'source', 'lastmodified'
+        )
+      list_serializer_class = BulkListSerializer
+      update_lookup_field = 'id'
+      partial = True
+
+
+class OperationPlanResourceAPI(frePPleListCreateAPIView):
+    queryset = freppledb.input.models.OperationPlanResource.objects.all()
+    serializer_class = OperationPlanResourceSerializer
+    filter_class = OperationPlanResourceFilter
+
+
+class OperationPlanResourcedetailAPI(frePPleRetrieveUpdateDestroyAPIView):
+    queryset = freppledb.input.models.OperationPlanResource.objects.all()
+    serializer_class = OperationPlanResourceSerializer
 
 
 class ManufacturingOrderFilter(filters.FilterSet):

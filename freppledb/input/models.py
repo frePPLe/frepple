@@ -1317,21 +1317,22 @@ class OperationPlanResource(AuditModel):
   )
 
   # Database fields
+  id = models.AutoField(_('identifier'), primary_key=True)
   resource = models.ForeignKey(
     Resource, verbose_name=_('resource'), db_index=True,
     related_name="operationplanresources", on_delete=models.CASCADE
     )
   operationplan = models.ForeignKey(
-    OperationPlan, verbose_name=_('operationplan'), db_index=True,
+    OperationPlan, verbose_name=_('reference'), db_index=True,
     related_name="resources", on_delete=models.CASCADE
     )
-  quantity = models.DecimalField(_('quantity'), max_digits=20, decimal_places=8)
-  startdate = models.DateTimeField(_('startdate'), db_index=True)
-  enddate = models.DateTimeField(_('enddate'), db_index=True)
-  setup = models.CharField(_('setup'), max_length=300, null=True)
+  quantity = models.DecimalField(_('quantity'), max_digits=20, decimal_places=8, default=1.0, blank=True, null=True)
+  startdate = models.DateTimeField(_('start date'), db_index=True, null=True, blank=True)
+  enddate = models.DateTimeField(_('end date'), db_index=True, null=True, blank=True)
+  setup = models.CharField(_('setup'), max_length=300, null=True, blank=True)
   status = models.CharField(
     _('status'), null=True, blank=True, max_length=20, choices=OPRstatus,
-    help_text=_('Status of the OperationPlanResource')
+    help_text=_('Status of the resource assignment')
     )
 
   class Manager(MultiDBManager):
@@ -1350,9 +1351,8 @@ class OperationPlanResource(AuditModel):
   class Meta:
     db_table = 'operationplanresource'
     ordering = ['resource', 'startdate']
-    verbose_name = _('operationplan resource')
-    verbose_name_plural = _('operationplan resources')
-
+    verbose_name = _('resource detail')
+    verbose_name_plural = _('resource detail')
 
 
 class OperationPlanMaterial(AuditModel):
@@ -1364,17 +1364,17 @@ class OperationPlanMaterial(AuditModel):
   )
 
   # Database fields
+  id = models.AutoField(_('identifier'), primary_key=True)
   item = models.ForeignKey(
     Item, verbose_name=_('item'), related_name='operationplanmaterials',
-    null=True, blank=True, db_index=True, on_delete=models.CASCADE
+    db_index=True, on_delete=models.CASCADE
     )
   location = models.ForeignKey(
-    Location, verbose_name=_('location'), null=True, blank=True,
-    related_name='operationplanmaterials', db_index=True,
-    on_delete=models.CASCADE
+    Location, verbose_name=_('location'), related_name='operationplanmaterials',
+    db_index=True, on_delete=models.CASCADE
     )
   operationplan = models.ForeignKey(
-    OperationPlan, verbose_name=_('operationplan'), db_index=True,
+    OperationPlan, verbose_name=_('reference'), db_index=True,
     related_name="materials", on_delete=models.CASCADE
     )
   quantity = models.DecimalField(_('quantity'), max_digits=20, decimal_places=8)
@@ -1403,8 +1403,8 @@ class OperationPlanMaterial(AuditModel):
   class Meta:
     db_table = 'operationplanmaterial'
     ordering = ['item', 'location', 'flowdate']
-    verbose_name = _('operationplan material')
-    verbose_name_plural = _('operationplan materials')
+    verbose_name = _('inventory detail')
+    verbose_name_plural = _('inventory detail')
     indexes = [
       models.Index(fields=['item', 'location'], name="opplanmat_itemloc"),
       ]

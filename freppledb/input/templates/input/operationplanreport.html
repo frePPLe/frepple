@@ -91,14 +91,13 @@
 onSelectAll: function(aRowids,status){
   var selection = $(this).jqGrid('getGridParam','selarrrow');
   var selectiondata = [];
-  jQuery.each(selection , function(index,item){
+  jQuery.each(selection , function(index,item) {
     selectiondata.push(jQuery("#grid").getRowData(item));
   });
-  if (status === true) {
+  if (status === true)
     angular.element('#controller').scope().processAggregatedInfo(selectiondata, jQuery("#grid").jqGrid ('getGridParam', 'colModel'));
-  } else {
+  else
     angular.element('#controller').scope().displayInfo(undefined);
-  }
 },
 beforeSaveCell: function(rowid, cellname, value, iRow, iCol) {
   var selection = $(this).jqGrid('getGridParam','selarrrow');
@@ -130,11 +129,10 @@ beforeSaveCell: function(rowid, cellname, value, iRow, iCol) {
     }
   });
 
-  if (selection.length > 1) {
+  if (selection.length > 1)
     angular.element('#controller').scope().processAggregatedInfo(selectiondata, jQuery("#grid").jqGrid ('getGridParam', 'colModel'));
-  } else {
+  else
     angular.element('#controller').scope().displayonpanel(rowid, cellname, value);
-  }
 },
 onSelectRow: function(rowid, status, e) {
   var selection = [];
@@ -149,14 +147,15 @@ onSelectRow: function(rowid, status, e) {
   var rowdata={};
   var colname = "";
   var editedval = "";
-  jQuery.each(selection , function(index,item){
+  jQuery.each(selection , function(index,item) {
     rowdata = jQuery("#grid").getRowData(item);
-    editedval = $("#" + item +" input").attr('cm','[Object Object]').not('.cbox').val();
-    if ( typeof $("#" + item +" input").attr('cm','[Object Object]').not('.cbox').val() !== 'undefined' ) {
-      if (typeof $("#" + item +" input").attr('cm','[Object Object]').not('.cbox').attr("id") !== 'undefined') {
-        colname=$("#" + item +" input").attr('cm','[Object Object]').not('.cbox').attr("id").split("_")[1];
+    var elem = $("#" + item +" input");
+    editedval = elem.attr('cm','[Object Object]').not('.cbox').val();
+    if ( typeof elem.attr('cm','[Object Object]').not('.cbox').val() !== 'undefined' ) {
+      if (typeof elem.attr('cm','[Object Object]').not('.cbox').attr("id") !== 'undefined') {
+        colname=elem.attr('cm','[Object Object]').not('.cbox').attr("id").split("_")[1];
         if (typeof colname !== 'undefined') {
-          rowdata[colname] = $("#" + item +" input").attr('cm','[Object Object]').not('.cbox').val();
+          rowdata[colname] = elem.attr('cm','[Object Object]').not('.cbox').val();
         }
       }
     }

@@ -43,16 +43,12 @@ urlpatterns = [
   url(r'^purchase/$', freppledb.output.views.operation.PurchaseReport.as_view(), name="output_purchase"),
   url(r'^distribution/$', freppledb.output.views.operation.DistributionReport.as_view(), name="output_distribution"),
   url(r'^demandpegging/(.+)/$', freppledb.output.views.pegging.ReportByDemand.as_view(), name="output_demand_pegging"),
-  url(r'^flowplan/(.+)/$', freppledb.output.views.buffer.DetailReport.as_view(), name="output_flowplan_plandetail"),
-  url(r'^flowplan/$', freppledb.output.views.buffer.DetailReport.as_view(), name="output_flowplan_plan"),
   url(r'^problem/$', freppledb.output.views.problem.Report.as_view(), name="output_problem"),
   url(r'^constraint/$', freppledb.output.views.constraint.BaseReport.as_view(), name="output_constraint"),
   url(r'^constraintoperation/(.+)/$', freppledb.output.views.constraint.ReportByOperation.as_view(), name="output_constraint_operation"),
   url(r'^constraintdemand/(.+)/$', freppledb.output.views.constraint.ReportByDemand.as_view(), name="output_constraint_demand"),
   url(r'^constraintbuffer/(.+)/$', freppledb.output.views.constraint.ReportByBuffer.as_view(), name="output_constraint_buffer"),
   url(r'^constraintresource/(.+)/$', freppledb.output.views.constraint.ReportByResource.as_view(), name="output_constraint_resource"),
-  url(r'^loadplan/(.+)/$', freppledb.output.views.resource.DetailReport.as_view(), name="output_loadplan_plandetail"),
-  url(r'^loadplan/$', freppledb.output.views.resource.DetailReport.as_view(), name="output_loadplan_plan"),
   url(r'^kpi/$', freppledb.output.views.kpi.Report.as_view(), name="output_kpi"),
 
   ]

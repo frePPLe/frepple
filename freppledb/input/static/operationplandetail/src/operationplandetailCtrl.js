@@ -154,44 +154,43 @@ function operationplanCtrl($scope, OperationPlan) {
   $scope.processAggregatedInfo = processAggregatedInfo;
 
   function displayInfo(row) {
-    var rowid = (typeof row === 'undefined') ? undefined : row.reference;
-    $scope.operationplan = new OperationPlan();
-
+    var rowid = undefined;
     if (typeof row !== 'undefined') {
-      if (row.hasOwnProperty('operationplan__id')) {
-        rowid = row.operationplan__id;
-        $scope.operationplan.editable = false;
-      } else {
-        $scope.operationplan.editable = true;
-      }
+    	if (row.hasOwnProperty('operationplan__reference'))
+    		rowid = row.operationplan__reference;
+    	else
+    		rowid = row.reference;
     }
-
-    $scope.operationplan.id = (typeof rowid === 'undefined') ? undefined : rowid;
+    $scope.operationplan = new OperationPlan();    
+    $scope.operationplan.id = rowid;
+    
     function callback(opplan) {
-      if (row === undefined) {
+      if (row === undefined)
         return opplan;
-      }
+
       // load previous changes from grid
-      if (row.startdate !== undefined && row.startdate !== '') {
+      if (row.operationplan__startdate !== undefined && row.operationplan__startdate !== '')
+        opplan.start = row.operationplan__startdate;
+      else if (row.startdate !== undefined && row.startdate !== '')
         opplan.start = row.startdate;
-      }
-      if (row.enddate !== undefined && row.enddate !== '') {
+      if (row.operationplan__enddate !== undefined && row.operationplan__enddate !== '')
+        opplan.end = row.operationplan__enddate;
+      else if (row.enddate !== undefined && row.enddate !== '')
         opplan.end = row.enddate;
-      }
-      if (row.quantity !== undefined && row.quantity !== '') {
-        opplan.quantity = parseInt(row.quantity);
-      }
-
-      if (row.status !== undefined && row.status !== '') {
+      if (row.operationplan__quantity !== undefined && row.operationplan__quantity !== '')
+        opplan.quantity = parseFloat(row.operationplan__quantity);
+      else if (row.quantity !== undefined && row.quantity !== '')
+        opplan.quantity = parseFloat(row.quantity);
+      if (row.operationplan__status !== undefined && row.operationplan__status !== '')
+        opplan.status = row.operationplan__status;
+      else if (row.status !== undefined && row.status !== '')
         opplan.status = row.status;
-      }
     }
-
-    if (typeof $scope.operationplan.id === 'undefined') {
-      $scope.$apply(function(){$scope.operationplan = new OperationPlan();});
-    } else {
+    
+    if (typeof $scope.operationplan.id === 'undefined')
+      $scope.$apply(function(){ $scope.operationplan = new OperationPlan(); });
+    else
       $scope.operationplan.get(callback);
-    }
   }
   $scope.displayInfo = displayInfo;
 
@@ -205,14 +204,14 @@ function operationplanCtrl($scope, OperationPlan) {
   function displayonpanel(rowid,columnid,value) {
     angular.element(document).find("#" + $scope.operationplan.id).removeClass("edited").addClass("edited");
     if (typeof $scope.operationplan.id !== 'undefined' && rowid === $scope.operationplan.id.toString()) {
-      if (columnid === "startdate") {
+      if (columnid === "startdate" || columnid === "operationplan__startdate") {
         $scope.$apply(function() {$scope.operationplan.start = value;});
       }
-      if (columnid === "enddate") {
+      if (columnid === "enddate" || columnid === "operationplan__enddate") {
         $scope.$apply(function() {$scope.operationplan.end = value;});
       }
       if (columnid === "quantity") {
-        $scope.$apply(function() {$scope.operationplan.quantity = parseInt(value);});
+        $scope.$apply(function() {$scope.operationplan.quantity = parseFloat(value);});
       }
       if (columnid === "status") {
         $scope.refreshstatus(value);

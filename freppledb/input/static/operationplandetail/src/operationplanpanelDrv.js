@@ -43,35 +43,39 @@ function showoperationplanDrv($window, gettextCatalog) {
     }
     //need to watch all of these because a webservice may change them on the fly
     scope.$watchGroup(['operationplan.id','operationplan.start','operationplan.end','operationplan.quantity','operationplan.criticality','operationplan.delay','operationplan.status'], function (newValue,oldValue) {
-      if (typeof scope.operationplan.id !== 'undefined' && !isNaN(scope.operationplan.id)) {
-
+      if (scope.operationplan.id == -1 || scope.operationplan.type === 'STCK') {
+      	// Multiple operationplans selected 
+        angular.element(elem).find('input').attr('disabled','disabled');
+        angular.element(elem).find('#statusrow .btn').removeClass('active').attr('disabled','disabled');
+      }
+      else if (typeof scope.operationplan.id !== 'undefined') {
+      	// Single operationplan selected
         angular.element(elem).find('input[disabled]').attr('disabled',false);
         if (typeof actions !== 'undefined' && actions.hasOwnProperty('proposed')) {
           angular.element(elem).find('button[disabled]').attr('disabled',false);
         }
         angular.element(elem).find('#statusrow .btn').removeClass('active');
 
-        if (scope.operationplan.hasOwnProperty('start')) {
+        if (scope.operationplan.hasOwnProperty('start'))
           angular.element(elem).find("#setStart").val(moment(scope.operationplan.start).format('YYYY-MM-DD HH:mm:ss'));
-        }
-        if (scope.operationplan.hasOwnProperty('end')) {
+        if (scope.operationplan.hasOwnProperty('end'))
           angular.element(elem).find("#setEnd").val(moment(scope.operationplan.end).format('YYYY-MM-DD HH:mm:ss'));
-        }
 
         if (scope.operationplan.hasOwnProperty('status')) {
           angular.element(elem).find('#statusrow .btn').removeClass('active');
-          angular.element(elem).find('#'+scope.operationplan.status+'Btn').addClass('active');
+          angular.element(elem).find('#' + scope.operationplan.status + 'Btn').addClass('active');
         }
-      } else { //what to show when there is no operationplan
+      } 
+      else { 
+      	// No operationplan selected
         angular.element(elem).find('input').attr('disabled','disabled');
         angular.element(elem).find('#statusrow .btn').removeClass('active').attr('disabled','disabled');
         angular.element(elem).find("#setStart").val('');
         angular.element(elem).find("#setEnd").val('');
       }
-      if (!scope.operationplan.editable) {
-        angular.element(elem).find('input').attr('disabled','disabled').css('cursor', 'default');
-        angular.element(elem).find('#statusrow .btn').attr('disabled','disabled');
-      }
+      angular.element(elem).find("#statusrow").css(
+      	"display", (scope.operationplan.status && scope.operationplan.type !== 'STCK') ? "table-row" : "none"
+        );
     }); //watch end
 
     angular.element(elem).find(".vDateField").datetimepicker({

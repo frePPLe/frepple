@@ -58,11 +58,6 @@ menu.addItem(
   dependencies=[OperationPlanMaterial]
   )
 menu.addItem(
-  "inventory", "inventory detail report", url="/flowplan/",
-  report=freppledb.output.views.buffer.DetailReport, index=200,
-  dependencies=[OperationPlanMaterial]
-  )
-menu.addItem(
   "inventory", "problem report", url="/problem/?entity=material",
   report=freppledb.output.views.problem.Report, index=300,
   dependencies=[OperationPlanMaterial]
@@ -72,10 +67,6 @@ menu.addItem(
   report=freppledb.output.views.resource.OverviewReport, index=100,
   dependencies=[OperationPlanResource]
   )
-menu.addItem(
-  "capacity", "resource detail report", url="/loadplan/",
-  report=freppledb.output.views.resource.DetailReport, index=200,
-  dependencies=[OperationPlanResource])
 menu.addItem(
   "capacity", "problem report", url="/problem/?entity=capacity",
   report=freppledb.output.views.problem.Report, index=300,

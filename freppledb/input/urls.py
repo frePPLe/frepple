@@ -68,6 +68,10 @@ urlpatterns = [
   url(r'^data/input/deliveryorder/item/(.+)/$', freppledb.input.views.DeliveryOrderList.as_view(), name="input_deliveryorder_by_item"),
   url(r'^data/input/deliveryorder/consumed/([^/]+)/([^/]+)/([^/]+)/(.+)/$', freppledb.input.views.DeliveryOrderList.as_view(), name="input_deliveryorder_by_consumed"),
   url(r'^data/input/deliveryorder/$', freppledb.input.views.DeliveryOrderList.as_view(), name="input_deliveryorder_changelist"),
+  url(r'^flowplan/(.+)/$', freppledb.input.views.InventoryDetail.as_view(), name="input_flowplan_plandetail"),
+  url(r'^flowplan/$', freppledb.input.views.InventoryDetail.as_view(), name="input_flowplan_plan"),
+  url(r'^loadplan/(.+)/$', freppledb.input.views.ResourceDetail.as_view(), name="input_loadplan_plandetail"),
+  url(r'^loadplan/$', freppledb.input.views.ResourceDetail.as_view(), name="input_loadplan_plan"),
 
   # Special reports
   url(r'^supplypath/item/(.+)/$', freppledb.input.views.UpstreamItemPath.as_view(), name="supplypath_item"),
@@ -91,6 +95,8 @@ urlpatterns = [
   url(r'^api/input/item/$', freppledb.input.serializers.ItemAPI.as_view()),
   url(r'^api/input/operationresource/$', freppledb.input.serializers.OperationResourceAPI.as_view()),
   url(r'^api/input/operationmaterial/$', freppledb.input.serializers.OperationMaterialAPI.as_view()),
+  url(r'^api/input/operationplanresource/$', freppledb.input.serializers.OperationPlanResourceAPI.as_view()),
+  url(r'^api/input/operationplanmaterial/$', freppledb.input.serializers.OperationPlanMaterialAPI.as_view()),
   url(r'^api/input/calendar/$', freppledb.input.serializers.CalendarAPI.as_view()),
   url(r'^api/input/calendarbucket/$', freppledb.input.serializers.CalendarBucketAPI.as_view()),
   url(r'^api/input/operation/$', freppledb.input.serializers.OperationAPI.as_view()),
@@ -115,6 +121,8 @@ urlpatterns = [
   url(r'^api/input/item/(?P<pk>(.+))/$', freppledb.input.serializers.ItemdetailAPI.as_view()),
   url(r'^api/input/operationresource/(?P<pk>(.+))/$', freppledb.input.serializers.OperationResourcedetailAPI.as_view()),
   url(r'^api/input/operationmaterial/(?P<pk>(.+))/$', freppledb.input.serializers.OperationMaterialdetailAPI.as_view()),
+  url(r'^api/input/operationplanresource/(?P<pk>(.+))/$', freppledb.input.serializers.OperationPlanResourcedetailAPI.as_view()),
+  url(r'^api/input/operationplanmaterial/(?P<pk>(.+))/$', freppledb.input.serializers.OperationPlanMaterialdetailAPI.as_view()),
   url(r'^api/input/calendar/(?P<pk>(.+))/$', freppledb.input.serializers.CalendardetailAPI.as_view()),
   url(r'^api/input/calendarbucket/(?P<pk>(.+))/$', freppledb.input.serializers.CalendarBucketdetailAPI.as_view()),
   url(r'^api/input/operation/(?P<pk>(.+))/$', freppledb.input.serializers.OperationdetailAPI.as_view()),

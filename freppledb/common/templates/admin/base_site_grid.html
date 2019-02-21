@@ -14,9 +14,9 @@ var currency = "";
 {% if reportclass.hasTimeBuckets %}var numbuckets = {{request.report_bucketlist|length}};
 {% endif %}
 
-{% if actions %}var actions = {   {% for i in actions %}
+var actions = { {% for i in actions %}
    "{{ i.name|escape }}": function() { {{ i.function|safe }} }{% if not forloop.last %},{% endif %}{% endfor %}
-   };{% endif %}
+   };
 
 $(function() {
   {% if reportclass.hasTimeBuckets and not bucketnames %}

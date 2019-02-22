@@ -31,13 +31,12 @@ $(function() {
 	        <span class="icon-bar"></span>
 	        <span class="icon-bar"></span>
 	      </button>
-	      
-	      {% if not request.session.navbar %}
+
+          {% if not request.session.navbar %}
 	      <a class="navbar-brand" style="padding-top:5px; padding-bottom: 5px">
-	      {% block branding %}{{ block.super }}{% endblock %}
-	      </a>
-	      {% endif %}
-	      
+          {% block branding %}{{ block.super }}{% endblock %}
+          </a>
+          {% endif %}
 	  </div>
 
 		<div id="nav-menu" class="collapse navbar-collapse">

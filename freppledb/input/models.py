@@ -1199,18 +1199,21 @@ class OperationPlan(AuditModel):
     db = state.db if state else DEFAULT_DB_ALIAS
 
     # Assure that all child operationplans also get the same status
+    now = datetime.now()
     if self.type not in ("DO", "PO"):
       for subop in self.xchildren.all().using(db):
         if subop.status != self.status:
+          if subop.enddate > now:
+            subop.enddate = now
+          if subop.startdate > now:
+            subop.startdate = now
           subop.status = self.status
-          subop.save(update_fields=["status"])
+          subop.save(update_fields=["status", "startdate", "enddate"])
 
     if self.status not in ('completed', 'closed'):
       return
 
     # Assure the start and end are in the past
-    saveme = False
-    now = datetime.now()
     if self.enddate > now:
       self.enddate = now
       saveme = True
@@ -1220,18 +1223,54 @@ class OperationPlan(AuditModel):
     if saveme:
       super(OperationPlan, self).save(using=db, update_fields=["startdate", "enddate"])
 
-    # Assure that previous routing steps are also marked closed or completed
     if self.type == "MO" and self.owner and self.owner.operation.type == "routing":
+      # Assure that previous routing steps are also marked closed or completed
+      subopplans = [ i for i in self.owner.xchildren.all().using(db) ]
+      for subop in subopplans:
+        if subop.reference == self.reference:
+          subop.status = self.status
       steps = {
         z.suboperation: z.priority
         for z
         in self.owner.operation.suboperations.all().using(db).only("suboperation", "priority")
         }
       myprio = steps.get(self.operation, 0)
-      for subop in self.owner.xchildren.all().using(db):
+      for subop in subopplans:
         if subop.status != self.status and steps.get(subop.operation, 0) < myprio:
           subop.status = self.status
-          subop.save(update_fields=["status"])
+          if subop.enddate > now:
+            subop.enddate = now
+          if subop.startdate > now:
+            subop.startdate = now
+          subop.save(update_fields=["status", "startdate", "enddate"])
+
+      # Assure that the parent is at least approved
+      all_steps_completed = True
+      all_steps_closed = True
+      for subop in subopplans:
+        if subop.status not in ('closed', 'completed'):
+          all_steps_completed = False
+        if subop.status != 'closed':
+          all_steps_closed = False
+      if all_steps_closed and self.owner.status != 'closed':
+        self.owner.status = 'closed'
+        if self.owner.enddate > now:
+          self.owner.enddate = now
+        if self.owner.startdate > now:
+          self.owner.startdate = now
+        self.owner.save(update_fields=["status", "startdate", "enddate"], using=db)
+      elif all_steps_completed and self.owner.status != 'completed':
+        self.owner.status = 'completed'
+        if self.owner.enddate > now:
+          self.owner.enddate = now
+        if self.owner.startdate > now:
+          self.owner.startdate = now
+        self.owner.save(update_fields=["status", "startdate", "enddate"], using=db)
+      elif self.owner.status == 'proposed':
+        self.owner.status = 'approved'
+        if self.owner.startdate > now:
+          self.owner.startdate = now
+        self.owner.save(update_fields=["status", "startdate"], using=db)
 
     # Remove all capacity consumption of closed and completed
     self.resources.all().using(db).delete()
@@ -1250,17 +1289,13 @@ class OperationPlan(AuditModel):
             location=opplanmat.location.name
             ).order_by("flowdate", "-quantity").select_related("operationplan")
           ]
-        closed_supply = Decimal()
-        closed_demand = Decimal(-0.00001)   # Leaving some room for rounding errors
+        closed_balance = Decimal(0.00001)   # Leaving some room for rounding errors
         for f in flplns:
-          if f.operationplan.type == 'STCK':
-            closed_supply += f.quantity
-          if f.operationplan.status in ['closed', 'completed']:
-            if f.quantity > 0:
-              closed_supply += f.quantity
-            else:
-              closed_demand -= f.quantity
-        if closed_supply < closed_demand:
+          if f.operationplan.type == 'STCK' \
+            or f.operationplan.status in ['closed', 'completed'] \
+            or f.operationplan.reference == self.reference:
+              closed_balance += f.quantity
+        if closed_balance < 0:
           # Things don't add up here.
           # We'll close some upstream supply to make things match up
           # First, try changing the status of confirmed supply
@@ -1270,28 +1305,28 @@ class OperationPlan(AuditModel):
               and f.operationplan.type != 'STCK':
                 f.operationplan.status = self.status
                 f.operationplan.save(update_fields=["status"])
-                closed_supply += f.quantity
-                if closed_supply >= closed_demand:
+                closed_balance += f.quantity
+                if closed_balance >= 0:
                   break
-          if closed_supply < closed_demand:
+          if closed_balance < 0:
             # Second, try changing the status of approved supply
             for f in flplns:
               if f.quantity > 0 \
                 and f.operationplan.status == 'approved':
                   f.operationplan.status = self.status
                   f.operationplan.save(update_fields=["status"])
-                  closed_supply += f.quantity
-                  if closed_supply >= closed_demand:
+                  closed_balance += f.quantity
+                  if closed_balance >= 0:
                     break
-            if closed_supply < closed_demand:
+            if closed_balance < 0:
               # Finally, try changing the status of proposed supply
               for f in flplns:
                 if f.quantity > 0 \
                   and f.operationplan.status == 'proposed':
                     f.operationplan.status = self.status
                     f.operationplan.save(update_fields=["status"])
-                    closed_supply += f.quantity
-                    if closed_supply >= closed_demand:
+                    closed_balance += f.quantity
+                    if closed_balance >= 0:
                       break
 
 

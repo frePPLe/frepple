@@ -1794,7 +1794,10 @@ void OperationPlan::propagateStatus()
   auto mystatus = getStatus();
   for (auto subopplan = firstsubopplan; subopplan; subopplan = subopplan->nextsubopplan)
     if (subopplan->getStatus() != mystatus)
+    {
       subopplan->setStatus(mystatus);
+      subopplan->propagateStatus();
+    }
 
   if (mystatus != "completed" && mystatus != "closed")
     return;
@@ -1803,26 +1806,48 @@ void OperationPlan::propagateStatus()
   if (getEnd() > Plan::instance().getCurrent())
     setOperationPlanParameters(quantity, Date::infinitePast, Plan::instance().getCurrent(), false);
 
-  // Assure that previous routing steps are also marked closed or completed
   if (getOwner() && getOwner()->getOperation()->hasType<OperationRouting>())
   {
+    // Assure that previous routing steps are also marked closed or completed
     for (auto prev = prevsubopplan; prev; prev = prev->prevsubopplan)
       if (prev->getStatus() != mystatus)
         prev->setStatus(mystatus);
+    // Assure that the parent routing gets at least the status approved
+    bool all_steps_completed = true;
+    bool all_steps_closed = true;
+    for (auto subopplan = getOwner()->firstsubopplan; subopplan; subopplan = subopplan->nextsubopplan)
+    {
+      if (!subopplan->getCompleted())
+        all_steps_completed = false;
+      if (!subopplan->getClosed())
+        all_steps_closed = false;
+    }
+    if (all_steps_closed)
+      getOwner()->setClosed(true);
+    else if (all_steps_completed)
+      getOwner()->setCompleted(true);
+    else if (getOwner()->getProposed())
+    {
+      for (auto subopplan = getOwner()->firstsubopplan; subopplan; subopplan = subopplan->nextsubopplan)
+        if (subopplan->getProposed())
+          subopplan->setApproved(true);
+      getOwner()->flags |= STATUS_APPROVED;
+      getOwner()->flags &= ~(STATUS_CONFIRMED + STATUS_COMPLETED + STATUS_CLOSED);
+    }
   }
 
   // Check that upstream buffers have enough supply in the closed or completed status
   for (auto myflpln = beginFlowPlans(); myflpln != endFlowPlans(); ++myflpln)
   {
-    if (getQuantity() >= 0)
+    if (myflpln->getQuantity() >= 0)
       continue;
 
     // Get current status
     double closed_balance = ROUNDING_ERROR;
     auto tmline = myflpln->getBuffer()->getFlowPlans();
     for (auto flpln = tmline.begin(); flpln != tmline.end(); ++flpln)
-      if (getClosed() || getCompleted())
-        closed_balance += getQuantity();
+      if (flpln->getOperationPlan()->getClosed() || flpln->getOperationPlan()->getCompleted())
+        closed_balance += flpln->getQuantity();
     
     if (closed_balance < 0.0)
     {
@@ -1830,33 +1855,38 @@ void OperationPlan::propagateStatus()
       // We'll close some upstream supply to make things match up
       // First, try changing the status of confirmed supply
       for (auto flpln = tmline.begin(); flpln != tmline.end(); ++flpln)
-        if (flpln->getQuantity() > 0.0 && getConfirmed() && !getClosed() && !getCompleted())
+        if (flpln->getQuantity() > 0.0
+          && flpln->getOperationPlan()->getConfirmed()
+          && !flpln->getOperationPlan()->getClosed()
+          && !flpln->getOperationPlan()->getCompleted())
         {
           flpln->getOperationPlan()->setStatus(mystatus);
           closed_balance += flpln->getQuantity();
-          if (closed_balance > 0.0)
+          if (closed_balance >= 0.0)
             break;
         }
       if (closed_balance < 0.0)
       {
         // Second, try changing the status of approved supply
         for (auto flpln = tmline.begin(); flpln != tmline.end(); ++flpln)
-          if (flpln->getQuantity() > 0.0 && getApproved())
+          if (flpln->getQuantity() > 0.0 
+            && flpln->getOperationPlan()->getApproved())
           {
             flpln->getOperationPlan()->setStatus(mystatus);
             closed_balance += flpln->getQuantity();
-            if (closed_balance > 0.0)
+            if (closed_balance >= 0.0)
               break;
           }
         if (closed_balance < 0.0)
         {
           // Finally, try changing the status of proposed supply
           for (auto flpln = tmline.begin(); flpln != tmline.end(); ++flpln)
-            if (flpln->getQuantity() > 0.0 && getProposed())
+            if (flpln->getQuantity() > 0.0 
+              && flpln->getOperationPlan()->getProposed())
             {
               flpln->getOperationPlan()->setStatus(mystatus);
               closed_balance += flpln->getQuantity();
-              if (closed_balance > 0.0)
+              if (closed_balance >= 0.0)
                 break;
             }
         }
@@ -1910,6 +1940,7 @@ void OperationPlan::setStatus(const string& s)
   update();
   for (OperationPlan *x = firstsubopplan; x; x = x->nextsubopplan)
     x->setStatus(s);
+  propagateStatus();
 }
 
 

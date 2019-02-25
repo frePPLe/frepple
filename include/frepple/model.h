@@ -2270,7 +2270,11 @@ class OperationPlan
     /** Update the setup information. */
     void setSetupEvent(Resource*, Date, PooledString, SetupMatrixRule* = nullptr);
 
-    /** Make sure that a status change is also reflected on related operationplans. */
+    /** Make sure that a status change is also reflected on related operationplans. 
+      * Note that the propagation of a status change is not undoable: eg after
+      * changing the status from proposed to closed, we can't go back to the 
+      * previous situation any more.
+      */
     void propagateStatus();
 
     /** Remove the setup event. */

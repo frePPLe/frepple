@@ -1431,12 +1431,12 @@ class loadOperationPlans(LoadTask):
               opplan.consume_material = False
             if not consume_capacity:
               opplan.consume_capacity = False
-          if i[6] and opplan:
-            try:
-              opplan.owner = frepple.operationplan(id=i[6])
-            except:
-              pass
           if opplan:
+            if i[5]:
+              try:
+                opplan.owner = frepple.operationplan(reference=i[5])
+              except:
+                pass
             if i[8]:
               opplan.demand = frepple.demand(name=i[8])
         except Exception as e:

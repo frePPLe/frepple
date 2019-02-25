@@ -902,8 +902,10 @@ class exporter(object):
         yield '<!-- manufacturing orders in progress -->\n'
         yield '<operationplans>\n'
         m = self.req.session.model('mrp.production')
-        ids = m.search(['|', ('state', '=', 'in_production'), ('state', '=', 'confirmed')],
-                       context=self.req.session.context)
+        ids = m.search(
+          [('state', 'in', ['in_production', 'ready', 'confirmed'])],
+          context=self.req.session.context
+          )
         fields = ['bom_id', 'date_start', 'date_planned', 'name', 'state', 'product_qty', 'product_uom',
                   'location_dest_id', 'product_id', 'product_tmpl_id']
         for i in m.read(ids, fields, self.req.session.context):

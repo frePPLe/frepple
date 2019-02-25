@@ -1216,12 +1216,8 @@ class OperationPlan(AuditModel):
     # Assure the start and end are in the past
     if self.enddate > now:
       self.enddate = now
-      saveme = True
     if self.startdate > now:
       self.startdate = now
-      saveme = True
-    if saveme:
-      super(OperationPlan, self).save(using=db, update_fields=["startdate", "enddate"])
 
     if self.type == "MO" and self.owner and self.owner.operation.type == "routing":
       # Assure that previous routing steps are also marked closed or completed
@@ -1276,7 +1272,8 @@ class OperationPlan(AuditModel):
     self.resources.all().using(db).delete()
 
     for opplanmat in self.materials.all().using(db):
-      # Record the correct date
+      # Assure the material production and consumption are in the past
+      # We are not correcting the expected onhand. The next plan generation will do that.
       if opplanmat.flowdate > now:
         opplanmat.flowdate = now
         opplanmat.save(using=db)

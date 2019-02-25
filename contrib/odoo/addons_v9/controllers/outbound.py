@@ -705,7 +705,7 @@ class exporter(object):
                             )
                         yield '</flows>\n'
                     # Comment the next line when modeling bucketized resources
-                    yield '<duration_per>PT%dH<duration_per>' % int(step[1])
+                    yield '<duration_per>PT%dH</duration_per>' % int(step[1])
                     yield '</operation></suboperation>\n'
                 yield '</suboperations>\n'
             yield '</operation>\n'

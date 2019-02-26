@@ -111,7 +111,7 @@ class OverviewReport(GridPivot):
 
     # Execute the query
     query = '''
-      select 
+      select
       parent.name, %s
       d.bucket,
       d.startdate,
@@ -120,7 +120,7 @@ class OverviewReport(GridPivot):
        where demand.item_id = child.name and status in ('open','quote') and due >= greatest(%%s,d.startdate) and due < d.enddate),0)) orders,
       sum(coalesce((select sum(-operationplanmaterial.quantity) from operationplanmaterial
       inner join operationplan on operationplan.reference = operationplanmaterial.operationplan_id and operationplan.type = 'DLVR'
-      where operationplanmaterial.item_id = child.name 
+      where operationplanmaterial.item_id = child.name
       and operationplanmaterial.flowdate >= greatest(%%s,d.startdate)
       and operationplanmaterial.flowdate < d.enddate),0)) planned
       from (%s) parent
@@ -130,7 +130,7 @@ class OverviewReport(GridPivot):
                    from common_bucketdetail
                    where bucket_id = %%s and enddate > %%s and startdate < %%s
                    ) d
-      group by 
+      group by
       parent.name, %s
       d.bucket,
       d.startdate,
@@ -140,25 +140,26 @@ class OverviewReport(GridPivot):
 
     # Build the python result
     with connections[request.database].chunked_cursor() as cursor_chunked:
-      cursor_chunked.execute(query, baseparams + (
-        request.report_startdate, #orders
-        request.report_startdate, #planned
-        request.report_bucket, request.report_startdate, request.report_enddate #buckets
-        ))
+      cursor_chunked.execute(
+        query,
+        (request.report_startdate, request.report_startdate) +  # orders planned
+        baseparams +
+        (request.report_bucket, request.report_startdate, request.report_enddate)  # buckets
+        )
       previtem = None
       for row in cursor_chunked:
         numfields = len(row)
         if row[0] != previtem:
           backlog = startbacklogdict.get(row[0], 0)
           previtem = row[0]
-        backlog += float(row[numfields-2]) - float(row[numfields-1])
+        backlog += float(row[numfields - 2]) - float(row[numfields - 1])
         res = {
           'item': row[0],
-          'bucket': row[numfields-5],
-          'startdate': row[numfields-4].date(),
-          'enddate': row[numfields-3].date(),
-          'demand': round(row[numfields-2], 1),
-          'supply': round(row[numfields-1], 1),
+          'bucket': row[numfields - 5],
+          'startdate': row[numfields - 4].date(),
+          'enddate': row[numfields - 3].date(),
+          'demand': round(row[numfields - 2], 1),
+          'supply': round(row[numfields - 1], 1),
           'backlog': round(backlog, 1),
           }
         idx = 1

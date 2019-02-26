@@ -622,18 +622,25 @@ class GridReport(View):
       rows = [ (i, cls.rows[i].initially_hidden, cls.rows[i].width) for i in range(len(cls.rows)) ]
     else:
       frozencolumns = prefs.get('frozen', cls.frozenColumns)
-      rows = prefs.get('rows')
-      if not rows:
+      prefrows = prefs.get('rows')
+      if not prefrows:
         rows = [ (i, cls.rows[i].hidden or cls.rows[i].initially_hidden, cls.rows[i].width) for i in range(len(cls.rows)) ]
-      elif len(rows) < len(cls.rows):
-        # Verify all fields are present in the list. When adding a new
-        # attribute, the stored preference would only have a partial list.
-        # When an attribute is removed, the preferences will go out of sync,
-        # but we have no way to correct that easily.
-        idx = len(rows)
-        for i in cls.rows[len(rows):]:
-          rows.append( (idx, True, cls.rows[idx].width) )
-          idx += 1
+      else:
+        # Validate the preferences to 1) map from name to index, 2) assure all rows
+        # are included, 3) ignore non-existing fields
+        defaultrows = { cls.rows[i].name: i for i in range(len(cls.rows)) }
+        rows = []
+        for r in prefrows:
+          try:
+            idx = int(r[0])
+            del defaultrows[cls.rows[idx].name]
+            rows.append(r)
+          except (ValueError, IndexError):
+            if r[0] in defaultrows:
+              rows.append( (defaultrows[r[0]], r[1], r[2]) )
+              del defaultrows[r[0]]
+        for r, idx in defaultrows.items():
+          rows.append( (idx, cls.rows[idx].hidden or cls.rows[idx].initially_hidden, cls.rows[idx].width) )
     result = []
     if is_popup:
       result.append('{"name":"select","label":gettext("Select"),"width":75,"align":"center","sortable":false,"search":false}')
@@ -1806,8 +1813,24 @@ class GridPivot(GridReport):
   @classmethod
   def _render_colmodel(cls, is_popup=False, prefs=None, mode="graph"):
     if prefs and 'rows' in prefs:
-      rows = prefs['rows']
+      # Validate the preferences to 1) map from name to index, 2) assure all rows
+      # are included, 3) ignore non-existing fields
+      prefrows = prefs['rows']
+      defaultrows = { cls.rows[i].name: i for i in range(len(cls.rows)) }
+      rows = []
+      for r in prefrows:
+        try:
+          idx = int(r[0])
+          del defaultrows[cls.rows[idx].name]
+          rows.append(r)
+        except (ValueError, IndexError):
+          if r[0] in defaultrows:
+            rows.append( (defaultrows[r[0]], r[1], r[2]) )
+            del defaultrows[r[0]]
+      for r, idx in defaultrows.items():
+        rows.append( (idx, cls.rows[idx].hidden or cls.rows[idx].initially_hidden, cls.rows[idx].width) )
     else:
+      # Default configuration
       rows = [ (i, cls.rows[i].initially_hidden or cls.rows[i].hidden, cls.rows[i].width) for i in range(len(cls.rows)) ]
 
     result = []

@@ -147,7 +147,7 @@ module.exports = function (grunt) {
       options: {
         sourceMap: true,
         banner: '/* frePPLe <%= pkg.version %> <%= grunt.template.today("yyyy-mm-dd") %>\n' +
-          'Copyright (C) 2010-2017 by frePPLe bvba\n\n' +
+          'Copyright (C) 2010-2019 by frePPLe bvba\n\n' +
           'This library is free software; you can redistribute it and/or modify it\n' +
           'under the terms of the GNU Affero General Public License as published\n' +
           'by the Free Software Foundation; either version 3 of the License, or\n' +

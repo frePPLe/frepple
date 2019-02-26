@@ -861,7 +861,7 @@ var grid = {
     {
       if (colModel[i].name != "rn" && colModel[i].name != "cb" && "counter" in colModel[i] && !('alwayshidden' in colModel[i]))
       {
-        colArray.push([colModel[i].counter, colModel[i].hidden, colModel[i].width]);
+        colArray.push([colModel[i].name, colModel[i].hidden, colModel[i].width]);
         if (colModel[i].frozen) maxfrozen = parseInt(i) + 1 - skipped;
       }
       else if (colModel[i].name == 'columns' || colModel[i].name == 'graph')

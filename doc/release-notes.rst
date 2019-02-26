@@ -25,6 +25,13 @@ Release notes
     a new replenishment.
   | The new default avoids unnecessary duplicate replenishments and results in more intuitive plans. 
 
+- Performance optimizations for various corner cases.
+
+.. rubric:: Odoo connector
+
+- Bug fix: Manufacturing orders in the state "ready to produce" were not being sent to
+  frePPLe as work-in-progress.
+
 4.5.0 (2019/01/25)
 ==================
 

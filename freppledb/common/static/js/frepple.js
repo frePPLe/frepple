@@ -889,8 +889,11 @@ var grid = {
       result[reportkey]['sidx'] = sidx;
       result[reportkey]['sord'] = $('#grid').getGridParam('sortorder');
     }
-    if (pivot)
-      result[reportkey]['crosses'] = cross_idx;
+    if (pivot) {
+      result[reportkey]['crosses'] = [];
+      for (var i in cross_idx)
+      	result[reportkey]['crosses'].push(cross[cross_idx[i]].key);
+    }
     else
       result[reportkey]['frozen'] = maxfrozen;
     if(typeof extraPreference == 'function')

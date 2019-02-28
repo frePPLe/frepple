@@ -1139,7 +1139,16 @@ class GridReport(View):
         cross_idx = None
         cross_list = None
       elif request.prefs and 'crosses' in request.prefs:
-        cross_idx = ','.join([str(i) for i in request.prefs['crosses']])
+        cross_idx = []
+        for i in request.prefs['crosses']:
+          try:
+            num = int(i)
+            cross_idx.append(str(num))
+          except ValueError:
+            for j in range(len(reportclass.crosses)):
+              if reportclass.crosses[j][0] == i:
+                cross_idx.append(str(j))
+        cross_idx = ','.join(cross_idx)
         cross_list = reportclass._render_cross(request)
       else:
         cross_idx = ','.join([str(i) for i in range(len(reportclass.crosses)) if reportclass.crosses[i][1].get('visible', True)])
@@ -1805,7 +1814,7 @@ class GridPivot(GridReport):
       else:
         e = False
       result.append(
-        "{name:'%s',editable:%s}" % (capfirst(t), 'true' if e else 'false')
+        "{key:'%s',name:'%s',editable:%s}" % (i[0], capfirst(t), 'true' if e else 'false')
         )
     return ',\n'.join(result)
 

@@ -23,13 +23,11 @@ The code in this file is executed NOT by the Django web application, but by the
 embedded Python interpreter from the frePPLe engine.
 '''
 from datetime import timedelta, datetime, date
-import io
 import json
 import os
 import logging
 from psycopg2.extensions import adapt
 from subprocess import Popen, PIPE
-import sys
 import tempfile
 from time import time
 from threading import Thread
@@ -120,19 +118,23 @@ class export:
         delete from operationplanmaterial
         using operationplan
         where operationplanmaterial.operationplan_id = operationplan.reference
-        and ((operationplan.status='proposed' or operationplan.status is null)
-             or operationplan.type = 'STCK'
-             or operationplanmaterial.status = 'proposed'
-             or operationplanmaterial.status is null)
+        and (
+          operationplan.status='proposed'
+          or operationplan.status is null
+          or operationplanmaterial.status = 'proposed'
+          or operationplanmaterial.status is null
+          )
         ''')
       cursor.execute('''
         delete from operationplanresource
         using operationplan
         where operationplanresource.operationplan_id = operationplan.reference
-        and ((operationplan.status='proposed' or operationplan.status is null)
-             or operationplan.type = 'STCK'
-             or operationplanresource.status = 'proposed'
-             or operationplanresource.status is null)
+        and (
+          (operationplan.status='proposed' or operationplan.status is null)
+          or operationplan.type = 'STCK'
+          or operationplanresource.status = 'proposed'
+          or operationplanresource.status is null
+          )
         ''')
       cursor.execute('''
         delete from operationplan
@@ -155,8 +157,9 @@ class export:
           select reference from operationplan where owner_id in (
             select reference from operationplan parent_opplan
             inner join cluster_keys on cluster_keys.name = parent_opplan.item_id
+            )
           )
-        )
+        and operationplanmaterial.status = 'proposed'
         ''')
       cursor.execute('''
         delete from out_problem
@@ -172,14 +175,19 @@ class export:
       cursor.execute('''
         delete from operationplanresource
         where operationplan_id in (
-          select reference from operationplan
+          select reference
+          from operationplan
           inner join cluster_keys on cluster_keys.name = operationplan.item_id
+          where status = 'proposed' or status is null or oplan_parent.type='STCK'
           union
           select reference from operationplan where owner_id in (
-            select reference from operationplan parent_opplan
+            select reference
+            from operationplan parent_opplan
             inner join cluster_keys on cluster_keys.name = parent_opplan.item_id
+            )
+          where status = 'proposed' or status is null
           )
-        )
+        and operationplanresource.status = 'proposed'
         ''')
       cursor.execute('''
         delete from operationplan
@@ -494,14 +502,6 @@ class export:
               "Warning: skip exporting uninitialized operationplan",
               j.operationplan.operation.name, j.operationplan.quantity, j.operationplan.start, j.operationplan.end
               )
-          elif j.status == 'confirmed':
-            updates.append('''
-            update operationplanmaterial
-            set onhand=%s, flowdate='%s'
-            where status = 'confirmed' and item_id = %s
-              and location_id = %s and operationplan_id = %s;
-            ''' % (round(j.onhand, 8), str(j.date), adapt(j.buffer.item.name),
-                   adapt(j.buffer.location.name), j.operationplan.reference ))
           else:
             print(("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s" % (
                j.operationplan.id, j.buffer.item.name, j.buffer.location.name,

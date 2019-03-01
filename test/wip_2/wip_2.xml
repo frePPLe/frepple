@@ -1,29 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-	<current>2019-01-01T00:00:00</current>
-	<locations>
-		<location name="prod"/>
+  <current>2019-01-01T00:00:00</current>
+  <locations>
+    <location name="prod"/>
     <location name="store"/>
-	</locations>
-	<items>
-		<item name="consumed item">
-			<itemsuppliers>
-				<itemsupplier>
-					<supplier name="my supplier"/>
-					<location name="store"/>
-					<leadtime>P60D</leadtime>
-				</itemsupplier>
-			</itemsuppliers>
-			<itemdistributions>
-				<itemdistribution>
-					<origin name="store"/>
-					<destination name="prod"/>
-					<leadtime>P3D</leadtime>
-				</itemdistribution>
-			</itemdistributions>
-		</item>
-		<item name="produced item"/>
-	</items>
+  </locations>
+  <resources>
+    <resource name="operators">
+      <members>
+        <resource name="X"/>
+        <resource name="Y"/>
+        <resource name="Z"/>
+      </members>
+    </resource>
+  </resources>
+  <items>
+    <item name="consumed item">
+      <itemsuppliers>
+        <itemsupplier>
+          <supplier name="my supplier"/>
+          <location name="store"/>
+          <leadtime>P60D</leadtime>
+        </itemsupplier>
+      </itemsuppliers>
+      <itemdistributions>
+        <itemdistribution>
+          <origin name="store"/>
+          <destination name="prod"/>
+          <leadtime>P3D</leadtime>
+        </itemdistribution>
+      </itemdistributions>
+    </item>
+    <item name="produced item"/>
+  </items>
   <operations>
     <operation name="prod">
       <item name="produced item"/>
@@ -39,17 +48,30 @@
         </flow>
       </flows>
       <duration>P7D</duration>
+      <loads>
+        <load>
+          <resource name="operators"/>
+          <quantity>1</quantity>
+        </load>
+      </loads>
     </operation>
   </operations>  
-	<operationplans>
-		<operationplan>
-			<reference>MO 1</reference>
-			<operation name="prod"/>
-			<start>2017-12-01T00:00:00</start>
-			<quantity>1</quantity>
-			<status>confirmed</status>
-		</operationplan>
-	</operationplans>
+  <operationplans>
+    <operationplan>
+      <reference>MO 1</reference>
+      <operation name="prod"/>
+      <start>2017-12-01T00:00:00</start>
+      <quantity>1</quantity>
+      <status>confirmed</status>
+      <loadplans>
+        <loadplan>
+          <resource name="Z"/>
+          <quantity>0.2</quantity>
+          <status>confirmed</status>
+        </loadplan>
+      </loadplans>
+    </operationplan>
+  </operationplans>
 
 <?python
 print("CREATING CONSTRAINED PLAN")

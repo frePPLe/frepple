@@ -5982,10 +5982,6 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand
     friend class OperationPlan;
     friend class FlowTransferBatch;
   private:
-    // Static constants
-    static const short STATUS_CONFIRMED = 1;
-    static const short FOLLOWING_BATCH = 2;
-
     /** Points to the flow instantiated by this flowplan. */
     Flow *fl = nullptr;
 
@@ -6001,7 +5997,11 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand
     /** Is this operationplanmaterial locked?
         LEAVE THIS VARIABLE DECLARATION BELOW THE OTHERS
     */
-    short flags = 0;
+    // Flag bits
+    static const unsigned short STATUS_CONFIRMED = 1;
+    static const unsigned short STATUS_CLOSED = 2;
+    static const unsigned short FOLLOWING_BATCH = 4;
+    unsigned short flags = 0;
 
   public:
 
@@ -6015,11 +6015,6 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand
 
     /** Constructor. */
     explicit FlowPlan(OperationPlan*, const Flow*, Date, double);
-
-    bool isConfirmed() const
-    {
-      return (flags & STATUS_CONFIRMED) != 0;
-    }
 
     bool isFollowingBatch() const
     {
@@ -6086,14 +6081,69 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand
     }
 
     /** Return the status of the operationplanmaterial.
-    * The status string is one of the following:
-    *   - proposed
-    *   - confirmed
-    */
+      * The status string is one of the following:
+      * - proposed
+      * - confirmed
+      * - closed
+      */
     string getStatus() const;
 
     /** Update the status of the operationplanmaterial. */
     void setStatus(const string&);
+
+    bool getProposed() const
+    {
+      return (flags & (STATUS_CONFIRMED + STATUS_CLOSED)) == 0;
+    }
+
+    void setProposed(bool b)
+    {
+      if (b)
+        flags &= ~(STATUS_CLOSED + STATUS_CONFIRMED);
+      else
+      {
+        flags |= STATUS_CONFIRMED;
+        flags &= ~STATUS_CLOSED;
+      }
+    }
+
+    bool getConfirmed() const
+    {
+      return (flags & STATUS_CONFIRMED) != 0;
+    }
+
+    void setConfirmed(bool b)
+    {
+      if (b)
+      {
+        flags |= STATUS_CONFIRMED;
+        flags &= ~STATUS_CLOSED;
+      }
+      else
+      {
+        flags &= ~STATUS_CONFIRMED;
+        flags &= ~STATUS_CLOSED;
+      }
+    }
+
+    bool getClosed() const
+    {
+      return (flags & STATUS_CLOSED) != 0;
+    }
+
+    void setClosed(bool b)
+    {
+      if (b)
+      {
+        flags &= ~STATUS_CONFIRMED;
+        flags |= STATUS_CLOSED;
+      }
+      else
+      {
+        flags |= ~STATUS_CONFIRMED;
+        flags &= ~STATUS_CLOSED;
+      }
+    }
 
     /** Returns the duration before the current onhand will be completely consumed. */
     Duration getPeriodOfCover() const;
@@ -6153,7 +6203,7 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand
 
     void setDate(Date d)
     {
-      if (isConfirmed())
+      if (getConfirmed())
       {
         // Update the timeline data structure
         getFlow()->getBuffer()->flowplans.update(
@@ -8213,13 +8263,13 @@ class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand
     /** Return true when this loadplan marks the start of an operationplan. */
     bool isStart() const
     {
-      return start_or_end == START;
+      return (flags & TYPE_END) == 0;
     }
 
     /** Return the status of the operationplanresource.
       * The status string is one of the following:
-      *   - proposed
-      *   - confirmed
+      *   - proposed: when the owning operationplan has the status proposed
+      *   - confirmed: for all other situations
       */
     string getStatus() const;
 
@@ -8272,7 +8322,12 @@ class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand
       */
     void setQuantity(double quantity)
     {
-      qty = quantity;
+      if (getProposed())
+        return;
+      getResource()->getLoadPlans().update(this, quantity, getDate());
+      auto t = getOtherLoadPlan();
+      if (t)
+        getResource()->getLoadPlans().update(t, -quantity, t->getDate());
     }
 
     void setOperationPlan(OperationPlan* o)
@@ -8305,7 +8360,8 @@ class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand
     inline AlternateIterator getAlternates() const;
 
     static int initialize();
-    static const MetaCategory* metadata;
+    static const MetaCategory* metacategory;
+    static const MetaClass* metadata;
     virtual const MetaClass& getType() const { return *metadata; }
 
     template<class Cls> static inline void registerFields(MetaClass* m)
@@ -8335,7 +8391,23 @@ class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand
     /** Finds the loadplan on the operationplan when we read data. */
     static Object* reader(const MetaClass*, const DataValueDict&, CommandManager*);
 
-    bool isConfirmed() const
+    bool getProposed() const
+    {
+      return (flags & (STATUS_CONFIRMED + STATUS_CLOSED)) == 0;
+    }
+
+    void setProposed(bool b)
+    {
+      if (b)
+        flags &= ~(STATUS_CLOSED + STATUS_CONFIRMED);
+      else
+      {
+        flags |= STATUS_CONFIRMED;
+        flags &= ~STATUS_CLOSED;
+      }
+    }
+
+    bool getConfirmed() const
     {
       return (flags & STATUS_CONFIRMED) != 0;
     }
@@ -8343,22 +8415,34 @@ class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand
     void setConfirmed(bool b)
     {
       if (b)
+      {
         flags |= STATUS_CONFIRMED;
+        flags &= ~STATUS_CLOSED;
+      }
       else
+      {
         flags &= ~STATUS_CONFIRMED;
+        flags &= ~STATUS_CLOSED;
+      }
     }
 
-    bool isApproved() const
+    bool getClosed() const
     {
-      return (flags & STATUS_APPROVED) != 0;
+      return (flags & STATUS_CLOSED) != 0;
     }
 
-    void setApproved(bool b)
+    void setClosed(bool b)
     {
       if (b)
-        flags |= STATUS_APPROVED;
+      {
+        flags &= ~STATUS_CONFIRMED;
+        flags |= STATUS_CLOSED;
+      }
       else
-        flags &= ~STATUS_APPROVED;
+      {
+        flags |= ~STATUS_CONFIRMED;
+        flags &= ~STATUS_CLOSED;
+      }
     }
 
   private:
@@ -8382,17 +8466,12 @@ class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand
 
     /** Points to the next loadplan owned by the same operationplan. */
     LoadPlan *nextLoadPlan;
-    static const short STATUS_CONFIRMED = 1;
-    static const short STATUS_APPROVED = 2;
 
-    /** Is this operationplanmaterial locked? */
-    short flags = 0;
-    /** This type is used to differentiate loadplans aligned with the START date
-      * or the END date of operationplan. */
-    enum type {START, END};
-
-    /** Is this loadplan a starting one or an ending one. */
-    type start_or_end;
+    /** flag bits. */
+    static const unsigned short STATUS_CONFIRMED = 1;
+    static const unsigned short STATUS_CLOSED = 2;
+    static const unsigned short TYPE_END = 4;
+    unsigned short flags = 0;
 };
 
 

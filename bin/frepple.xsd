@@ -812,14 +812,22 @@
   </xsd:complexType>
 
   <xsd:complexType name="loadplan">
-    <xsd:sequence>
+    <xsd:choice minOccurs="0" maxOccurs="unbounded">
       <xsd:element name="date" type="xsd:dateTime" />
       <xsd:element name="quantity" type="xsd:double" />
       <xsd:element name="onhand" type="xsd:double" />
       <xsd:element name="minimum" type="xsd:double" />
       <xsd:element name="maximum" type="xsd:double" />
       <xsd:element name="operationplan" type="operationplan" />
-    </xsd:sequence>
+      <xsd:element name="resource" type="resource" />
+      <xsd:element name="status" type="xsd:string" />
+    </xsd:choice>    
+    <xsd:attribute name="date" type="xsd:dateTime" />
+    <xsd:attribute name="quantity" type="xsd:double" />
+    <xsd:attribute name="onhand" type="xsd:double" />
+    <xsd:attribute name="minimum" type="xsd:double" />
+    <xsd:attribute name="maximum" type="xsd:double" />
+    <xsd:attribute name="status" type="xsd:string" />
   </xsd:complexType>
 
   <xsd:complexType name="loadplanlist">
@@ -1012,6 +1020,7 @@
       <xsd:element name="doubleproperty" type="doubleproperty" />
       <xsd:element name="dateproperty" type="dateproperty" />
       <xsd:element name="flowplans" type="flowplanlist" />
+      <xsd:element name="loadplans" type="loadplanlist" />
     </xsd:choice>
     <xsd:attribute name="ordertype" type="ordertype" />
     <xsd:attribute name="id" type="xsd:normalizedString" /> <!-- Deprecated. Id is now an alias for reference -->

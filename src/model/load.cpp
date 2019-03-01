@@ -268,20 +268,19 @@ Object* Load::finder(const DataValueDict& d)
   string name;
   if (hasName)
     name = hasName->getString();
-  for (Operation::loadlist::const_iterator fl = oper->getLoads().begin();
-    fl != oper->getLoads().end(); ++fl)
+  for (auto ld = oper->getLoads().begin(); ld != oper->getLoads().end(); ++ld)
   {
-    if (fl->getResource() != res)
+    if (ld->getResource() != res)
       continue;
-    if (hasEffectiveStart && fl->getEffectiveStart() != effective_start)
+    if (hasEffectiveStart && ld->getEffectiveStart() != effective_start)
       continue;
-    if (hasEffectiveEnd && fl->getEffectiveEnd() != effective_end)
+    if (hasEffectiveEnd && ld->getEffectiveEnd() != effective_end)
       continue;
-    if (hasPriority && fl->getPriority() != priority)
+    if (hasPriority && ld->getPriority() != priority)
       continue;
-    if (hasName && fl->getName() != name)
+    if (hasName && ld->getName() != name)
       continue;
-    return const_cast<Load*>(&*fl);
+    return const_cast<Load*>(&*ld);
   }
   return nullptr;
 }

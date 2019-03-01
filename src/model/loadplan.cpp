@@ -24,14 +24,18 @@
 namespace frepple
 {
 
-const MetaCategory* LoadPlan::metadata;
+const MetaCategory* LoadPlan::metacategory;
+const MetaClass* LoadPlan::metadata;
 
 
 int LoadPlan::initialize()
 {
   // Initialize the metadata
-  metadata = MetaCategory::registerCategory<LoadPlan>("loadplan", "loadplans", reader);
-  registerFields<LoadPlan>(const_cast<MetaCategory*>(metadata));
+  metacategory = MetaCategory::registerCategory<LoadPlan>("loadplan", "loadplans", reader);
+  registerFields<LoadPlan>(const_cast<MetaCategory*>(metacategory));
+  metadata = MetaClass::registerClass<LoadPlan>(
+    "loadplan", "loadplan"
+    );
 
   // Initialize the Python type
   PythonType& x = FreppleCategory<LoadPlan>::getPythonType();
@@ -39,7 +43,7 @@ int LoadPlan::initialize()
   x.setDoc("frePPLe loadplan");
   x.supportgetattro();
   x.supportsetattro();
-  const_cast<MetaCategory*>(metadata)->pythonClass = x.type_object();
+  const_cast<MetaClass*>(metadata)->pythonClass = x.type_object();
   return x.typeReady();
 }
 
@@ -52,7 +56,6 @@ LoadPlan::LoadPlan(OperationPlan *o, const Load *r)
   assert(o);
   ld = const_cast<Load*>(r);
   oper = o;
-  start_or_end = START;
 
   // Update the resource field
   res = r->findPreferredResource(o->getSetupEnd());
@@ -63,7 +66,8 @@ LoadPlan::LoadPlan(OperationPlan *o, const Load *r)
   {
     // Append to the end
     LoadPlan *c = o->firstloadplan;
-    while (c->nextLoadPlan) c = c->nextLoadPlan;
+    while (c->nextLoadPlan)
+      c = c->nextLoadPlan;
     c->nextLoadPlan = this;
   }
   else
@@ -93,7 +97,7 @@ LoadPlan::LoadPlan(OperationPlan *o, const Load *r, LoadPlan *lp)
 {
   ld = const_cast<Load*>(r);
   oper = o;
-  start_or_end = END;
+  flags |= TYPE_END;
 
   // Update the resource field
   res = lp->getResource();
@@ -104,7 +108,8 @@ LoadPlan::LoadPlan(OperationPlan *o, const Load *r, LoadPlan *lp)
   {
     // Append to the end
     LoadPlan *c = o->firstloadplan;
-    while (c->nextLoadPlan) c = c->nextLoadPlan;
+    while (c->nextLoadPlan)
+      c = c->nextLoadPlan;
     c->nextLoadPlan = this;
   }
   else
@@ -229,21 +234,29 @@ string LoadPlan::getStatus() const
 {
   if (flags & STATUS_CONFIRMED)
     return "confirmed";
-  else if (flags & STATUS_APPROVED)
-    return "approved";
+  else if (flags & STATUS_CLOSED)
+    return "closed";
   else
     return "proposed";
 }
 
 
 void LoadPlan::setStatus(const string& s)
-{
-  if (getOperationPlan()->getProposed() && s == "confirmed")
-    throw DataException("OperationPlanResource locked while OperationPlan is not");
+{  
   if (s == "confirmed")
-    flags |= STATUS_CONFIRMED;
+  {
+    if (getOperationPlan()->getProposed())
+      throw DataException("OperationPlanResource status change to confirmed while OperationPlan is proposed");
+    setConfirmed(true);
+  }
   else if (s == "proposed")
-    flags &= ~STATUS_CONFIRMED;
+    setProposed(true);
+  else if (s == "closed")
+  {
+    if (getOperationPlan()->getProposed())
+      throw DataException("OperationPlanResource status change to closed while OperationPlan is proposed");
+    setClosed(true);
+  }
   else
     throw DataException("invalid operationplanresource status:" + s);
 }
@@ -339,18 +352,24 @@ Object* LoadPlan::reader(
     throw DataException("Resource must be provided");
   Object* resourceobject = resourceElement->getObject();
   if (!resourceobject || resourceobject->getType().category != Resource::metadata)
-    throw DataException("Invalid item field");
+    throw DataException("Invalid resource field");
   Resource* res = static_cast<Resource*>(resourceobject);
 
-  // Find the load for this resource on the operationplan.
+  // Find the load on the operationplan that has the same top resource.
   // If multiple exist, we pick up the first one.
   // If none is found, we throw a data error.
-  auto flplniter = opplan->getLoadPlans();
-  LoadPlan* flpln;
-  while ((flpln = flplniter.next()))
+  auto ldplniter = opplan->getLoadPlans();
+  LoadPlan* ldpln;
+  while ((ldpln = ldplniter.next()))
   {
-    if (flpln->getResource() == res)
-      return flpln;
+    if (ldpln->getResource()->getTop() == res->getTop())
+    {
+      ldpln->setResource(res);
+      const DataValue* statusElement = in.get(Tags::status);
+      if (statusElement)
+        ldpln->setStatus(statusElement->getString());
+      return ldpln;
+    }
   }
   return nullptr;
 }

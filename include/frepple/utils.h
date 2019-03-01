@@ -6720,6 +6720,14 @@ template <class T> class HasHierarchy : public HasName<T>
       return false;
     }
 
+    T* getTop()
+    {
+      auto tmp = static_cast<T*>(this);
+      while (tmp->parent)
+        tmp = tmp->parent;
+      return tmp;
+    }
+
     /** Returns true if this entity belongs to a higher hierarchical level.<br>
       * An entity can have only a single owner, and can't belong to multiple
       * hierarchies.

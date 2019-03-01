@@ -14,6 +14,29 @@
 			<name>my supplier</name>
 		</supplier>
 	</suppliers>
+	<resources>
+		<resource>
+			<name>X</name>
+			<owner>
+				<name>operators</name>
+			</owner>
+		</resource>
+		<resource>
+			<name>Y</name>
+			<owner>
+				<name>operators</name>
+			</owner>
+		</resource>
+		<resource>
+			<name>Z</name>
+			<owner>
+				<name>operators</name>
+			</owner>
+		</resource>
+		<resource>
+			<name>operators</name>
+		</resource>
+	</resources>
 	<items>
 		<item>
 			<name>consumed item</name>
@@ -85,6 +108,13 @@
 			<location>
 				<name>prod</name>
 			</location>
+			<loads>
+				<load>
+					<resource>
+						<name>operators</name>
+					</resource>
+				</load>
+			</loads>
 			<flows>
 				<flow>
 					<item>

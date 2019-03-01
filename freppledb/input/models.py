@@ -1363,7 +1363,7 @@ class OperationPlanResource(AuditModel):
   enddate = models.DateTimeField(_('end date'), db_index=True, null=True, blank=True)
   setup = models.CharField(_('setup'), max_length=300, null=True, blank=True)
   status = models.CharField(
-    _('status'), null=True, blank=True, max_length=20, choices=OPRstatus,
+    _('load status'), null=True, blank=True, max_length=20, choices=OPRstatus,
     help_text=_('Status of the resource assignment')
     )
 
@@ -1415,13 +1415,14 @@ class OperationPlanMaterial(AuditModel):
   minimum = models.DecimalField(_('minimum'), max_digits=20, decimal_places=8, null=True, blank=True)
   periodofcover = models.DecimalField(_('period of cover'), max_digits=20, decimal_places=8, null=True, blank=True)
   status = models.CharField(
-    _('status'), null=True, blank=True, max_length=20, choices=OPMstatus,
+    _('material status'), null=True, blank=True, max_length=20, choices=OPMstatus,
     help_text=_('status of the material production or consumption')
     )
 
   class Manager(MultiDBManager):
     def get_by_natural_key(self, operationplan, item, location):
       # Note: we are not enforcing the uniqueness of this natural key in the database
+      # (eg when using transfer batching there can be multiple records for the same key)
       return self.get(operationplan=operationplan, item=item, location=location)
 
   def natural_key(self):

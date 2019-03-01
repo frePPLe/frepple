@@ -60,7 +60,8 @@ FlowPlan::FlowPlan (OperationPlan *opplan, const Flow *f)
   {
     // Append to the end
     FlowPlan *c = opplan->firstflowplan;
-    while (c->nextFlowPlan) c = c->nextFlowPlan;
+    while (c->nextFlowPlan)
+      c = c->nextFlowPlan;
     c->nextFlowPlan = this;
   }
   else
@@ -91,7 +92,8 @@ FlowPlan::FlowPlan(OperationPlan *opplan, const Flow *f, Date d, double q)
   {
     // Append to the end
     FlowPlan *c = opplan->firstflowplan;
-    while (c->nextFlowPlan) c = c->nextFlowPlan;
+    while (c->nextFlowPlan)
+      c = c->nextFlowPlan;
     c->nextFlowPlan = this;
   }
   else
@@ -224,7 +226,7 @@ pair<double, double> FlowPlan::setQuantity(
   )
 {
   // TODO argument "update" isn't used
-  if (isConfirmed())
+  if (getConfirmed())
   {
     // Confirmed flowplans take any quantity, regardless of the
     // quantity of the owning operationplan.
@@ -396,6 +398,7 @@ Object* FlowPlan::reader(
   // Find the flow for this item on the operationplan.
   // If multiple exist, we pick up the first one.
   // If none is found, we throw a data error.
+  // TODO detect situations where the flowplan is on an alternate material
   auto flplniter = opplan->getFlowPlans();
   FlowPlan* flpln;
   while ((flpln = flplniter.next() ))

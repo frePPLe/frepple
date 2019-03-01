@@ -2,24 +2,32 @@
 Operationplan materials
 =======================
 
-This table models the material consumption or production associated with an operationplan.
+This table models the material consumption or production. The material movements are associated with 
+on hand inventory, purchase orders, distribution orders, manufacturing orders or delivery orders to customers. 
 
 **Fields**
 
 ================ ================= =================================================================================
 Field            Type              Description
 ================ ================= =================================================================================
-operationplan    operationplan     The operationplan consuming the resource
+operationplan    operationplan     A reference to the operationplan consuming or producing the material.
 item             item              The item being produced or consumed.
 location         location          The item where material is produced or consumed.
 quantity         double            Size of the material consumption or production.
 flowdate         dateTime          Date of material consumption or production.
-onhand           double            | Inventory in the buffer after the execution of this
-                                     operationplan.
+onhand           double            | Inventory in the buffer after the execution of this operationplan.
                                    | This is field is export only.
-status           non-empty string  | This field should have one of the following keywords :
-                                   | proposed : Planned consumption computed by frePPLe.
-                                   | approved : Approved consumption from the ERP which can still be rescheduled.
-                                   | confirmed : Frozen consumption from the ERP that is completely locked.
-                                   | closed : Consumption has happened.
+status           string            This field should have one of the following keywords:
+
+                                   - | proposed:
+                                     | Planned consumption computed by frePPLe.
+                                     | These records are output of the planning algorithm.
+                                     
+                                   - | confirmed:
+                                     | Frozen consumption from the ERP that is completely locked.
+                                     | These records are input to the planning algorithm.
+
+                                   - | closed:
+                                     | Consumption has happened.
+                                     | These records are input to the planning algorithm.
 ================ ================= =================================================================================

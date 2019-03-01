@@ -1073,10 +1073,10 @@ void OperationPlan::createFlowLoads()
     return;
 
   // Create setup suboperationplans and loadplans
-  for (Operation::loadlist::const_iterator g=oper->getLoads().begin();
-      g!=oper->getLoads().end(); ++g)
-    if (!g->getAlternate())
-      new LoadPlan(this, &*g);
+  if (getConsumeCapacity())
+    for (auto g=oper->getLoads().begin(); g!=oper->getLoads().end(); ++g)
+      if (!g->getAlternate())
+        new LoadPlan(this, &*g);
 
   // Create flowplans for flows
   for (Operation::flowlist::const_iterator h=oper->getFlows().begin();
@@ -1270,8 +1270,16 @@ void OperationPlan::resizeFlowLoadPlans()
     flpln->update();
 
   // Update all loadplans
-  for (LoadPlanIterator e = beginLoadPlans(); e != endLoadPlans(); ++e)
-    e->update();
+  if (getConsumeCapacity())
+    for (LoadPlanIterator e = beginLoadPlans(); e != endLoadPlans(); ++e)
+      e->update();
+  else
+  {
+    LoadPlanIterator f = beginLoadPlans();
+    firstloadplan = nullptr;  // Important to do this before the delete!
+    while (f != endLoadPlans())
+      delete &*(f++);
+  }
 
   // Allow the operation length to be changed now that the quantity has changed
   // Note that we assume that the end date remains fixed. This assumption makes

@@ -1472,23 +1472,28 @@ class loadOperationPlanMaterials(LoadTask):
       starttime = time()
       cursor.execute('''
         select
-          quantity, flowdate, operationplan_id, item_id, location_id, status
-        from operationplanmaterial
-        where status <> 'proposed'
-      ''')
+          operationplan_id, opplanmat.item_id, opplanmat.location_id,
+          coalesce(opplanmat.status, 'confirmed'), opplanmat.quantity,
+          opplanmat.flowdate
+        from operationplanmaterial as opplanmat
+        inner join operationplan
+          on operationplan.reference = opplanmat.operationplan_id
+        where
+          operationplan.status in ('approved', 'confirmed', 'completed')
+          and operationplan.type = 'MO'
+          and (opplanmat.status in ('confirmed', 'closed') or opplanmat.status is null)
+        order by operationplan_id
+        ''')
       for i in cursor:
         cnt += 1
         try:
-          opplan = frepple.operationplan(id=i[2])
-          if opplan.status not in ("confirmed", "approved"):
-            pass
+          opplan = frepple.operationplan(id=i[0])
+          # Logic doesn't allow switching to an alternate material
           for fl in opplan.flowplans:
-            if fl.buffer.item and fl.buffer.item.name == i[3] \
-              and fl.buffer.location and fl.buffer.location.name == i[4]:
-                fl.status = "confirmed"
-                if i[1]:
-                  fl.date = i[1]
-                fl.quantity = i[0]
+            if fl.buffer.item and fl.buffer.item.name == i[1] \
+              and fl.buffer.location and fl.buffer.location.name == i[2]:
+                fl.status = i[3]
+                fl.quantity = i[4]
                 break
         except Exception as e:
           logger.error("**** %s ****" % e)
@@ -1509,20 +1514,25 @@ class loadOperationPlanResources(LoadTask):
       cnt = 0
       starttime = time()
       cursor.execute('''
-        select resource_id, quantity, operationplan_id
-        from operationplanresource
-        where status <> 'proposed'
+        select
+          operationplan_id, opplanres.resource_id, opplanres.quantity, coalesce(opplanres.status, 'confirmed')
+        from operationplanresource as opplanres
+        inner join operationplan
+          on operationplan.reference = opplanres.operationplan_id
+        where
+          operationplan.status in ('approved', 'confirmed', 'completed')
+          and operationplan.type = 'MO'
+          and (opplanres.status in ('confirmed', 'closed') or opplanres.status is null)
+        order by resource_id
       ''')
+      res = None
       for i in cursor:
         cnt += 1
         try:
-          opplan = frepple.operationplan(id=i[2])
-          if opplan.status not in ("confirmed", "approved", "closed"):
-            pass
-          for lo in opplan.loadplans:
-            if lo.resource.name == i[0]:
-              lo.status = "confirmed"
-              lo.quantity = i[1]
+          opplan = frepple.operationplan(id=i[0])
+          if not res or res.name != i[1]:
+            res = frepple.resource(name=i[1])
+          frepple.loadplan(operationplan=opplan, resource=res, quantity=i[2], status=i[3])
         except Exception as e:
           logger.error("**** %s ****" % e)
       logger.info('Loaded %d operationplanresources in %.2f seconds' % (cnt, time() - starttime))

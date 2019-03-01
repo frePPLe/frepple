@@ -34,7 +34,7 @@ bool sortLoad(const Load* lhs, const Load* rhs)
 void SolverCreate::chooseResource(const Load* l, void* v)   // @todo handle unconstrained plan!!!!
 {
   SolverData* data = static_cast<SolverData*>(v);
-  if ((!l->getSkill() && !l->getResource()->isGroup()) || data->state->q_loadplan->isApproved())
+  if ((!l->getSkill() && !l->getResource()->isGroup()) || data->state->q_loadplan->getConfirmed())
   {
     // CASE 1: No skill involved, and no aggregate resource either
     data->state->q_loadplan->getResource()->solve(*this, v);
@@ -273,7 +273,7 @@ void SolverCreate::solve(const Load* l, void* v)
   // load of an alternate group. See SolverCreate::checkOperation
   SolverData* data = static_cast<SolverData*>(v);
 
-  if ((!l->hasAlternates() && !l->getAlternate()) || data->state->q_loadplan->isApproved())
+  if ((!l->hasAlternates() && !l->getAlternate()) || data->state->q_loadplan->getConfirmed())
   {
     // CASE I: It is not an alternate load.
     // Delegate the answer immediately to the resource

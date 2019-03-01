@@ -281,7 +281,7 @@ pair<Date, double> Flow::getFlowplanDateQuantity(const FlowPlan* fl) const
     return make_pair(fl->getOperationPlan()->getSetupEnd(), 0.0);
   else if (isProducer() && !fl->getOperationPlan()->getProduceMaterial())
     return make_pair(fl->getOperationPlan()->getSetupEnd(), 0.0);
-  else if (fl->isConfirmed())
+  else if (fl->getConfirmed())
     return make_pair(
       fl->getOperationPlan()->getSetupEnd(),
       fl->getQuantity()
@@ -301,7 +301,7 @@ pair<Date, double> FlowEnd::getFlowplanDateQuantity(const FlowPlan* fl) const
     return make_pair(fl->getOperationPlan()->getEnd(), 0.0);
   else if (isProducer() && !fl->getOperationPlan()->getProduceMaterial())
     return make_pair(fl->getOperationPlan()->getEnd(), 0.0);
-  else if (fl->isConfirmed())
+  else if (fl->getConfirmed())
     return make_pair(
       fl->getOperationPlan()->getEnd(),
       fl->getQuantity()

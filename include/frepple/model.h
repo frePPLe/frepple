@@ -1756,7 +1756,7 @@ class SetupEvent : public TimeLine<LoadPlan>::Event
 
     /** Constructor. */
     SetupEvent(TimeLine<LoadPlan>* t, Date d, const PooledString& s, SetupMatrixRule* r=nullptr, OperationPlan* o=nullptr)
-      : TimeLine<LoadPlan>::Event(5), setup(s), tmline(&t), opplan(o)
+      : TimeLine<LoadPlan>::Event(5), setup(s), tmline(t), opplan(o)
     {
       initType(metadata);
       dt = d;

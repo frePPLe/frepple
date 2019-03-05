@@ -350,9 +350,8 @@ void CommandMoveOperationPlan::restore(bool del)
   }
 
   // Restore the original dates
-  if (!opplan)
-    return;
-  opplan->restore(state);
+  if (opplan)
+    opplan->restore(state);
 }
 
 

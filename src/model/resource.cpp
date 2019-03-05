@@ -261,8 +261,12 @@ void ResourceBuckets::setMaximumCalendar(Calendar* c)
   // Create timeline structures for every bucket.
   size_max_cal = c;
   double v = 0.0;
-  for (CalendarDefault::EventIterator x(size_max_cal); x.getDate()<Date::infiniteFuture; ++x)
-    if (v != x.getValue())
+  // Only create events in the time window from 3 years before current
+  // till 6 years after the current date
+  Date minEventDate = Plan::instance().getCurrent() - Duration(3L * 365L * 86400L);
+  Date maxEventDate = Plan::instance().getCurrent() + Duration(6L * 365L * 86400L);
+  for (CalendarDefault::EventIterator x(size_max_cal); x.getDate() < maxEventDate; ++x)
+    if (v != x.getValue() && x.getDate() >= minEventDate)
     {
       v = x.getValue();
       loadplanlist::EventSetOnhand *newBucket =
@@ -799,7 +803,11 @@ extern "C" PyObject* ResourceBuckets::computeBucketAvailability(PyObject *self, 
   Date bucketstart;
   double cur_size = res->getMaximumCalendar() ? res->getMaximumCalendar()->getDefault() : res->getMaximum();
   bool cur_available = true;
-  for (CalendarDefault::EventIterator bckt(cal); bckt.getDate() < Date::infiniteFuture; ++bckt)
+  // Only create events in the time window from 3 years before current
+  // till 6 years after the current date
+  Date minEventDate = Plan::instance().getCurrent() - Duration(3L * 365L * 86400L);
+  Date maxEventDate = Plan::instance().getCurrent() + Duration(6L * 365L * 86400L);
+  for (CalendarDefault::EventIterator bckt(cal); bckt.getDate() < maxEventDate; ++bckt)
   {
     // Advance availability and max calendars till we hit the end of the bucket
     double available = 0.0;
@@ -852,7 +860,7 @@ extern "C" PyObject* ResourceBuckets::computeBucketAvailability(PyObject *self, 
       available += cur_size * (bckt.getDate() - prev_evt).getSeconds();
 
     // Create an event for this bucket in the timeline
-    if (bucketstart)
+    if (bucketstart > minEventDate)
     {
       loadplanlist::EventSetOnhand *newBucket =
         new loadplanlist::EventSetOnhand(bucketstart, available);

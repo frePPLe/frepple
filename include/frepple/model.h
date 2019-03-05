@@ -1755,12 +1755,12 @@ class SetupEvent : public TimeLine<LoadPlan>::Event
     }
 
     /** Constructor. */
-    SetupEvent(TimeLine<LoadPlan>& t, Date d, PooledString s, SetupMatrixRule* r=nullptr, OperationPlan* o=nullptr)
+    SetupEvent(TimeLine<LoadPlan>* t, Date d, const PooledString& s, SetupMatrixRule* r=nullptr, OperationPlan* o=nullptr)
       : TimeLine<LoadPlan>::Event(5), setup(s), tmline(&t), opplan(o)
     {
       initType(metadata);
       dt = d;
-      if (opplan)
+      if (opplan && tmline)
         tmline->insert(this);
     }
 
@@ -1796,7 +1796,7 @@ class SetupEvent : public TimeLine<LoadPlan>::Event
 
     SetupEvent* getSetupBefore() const;
 
-    void update(Resource*, Date, PooledString, SetupMatrixRule*);
+    void update(TimeLine<LoadPlan>*, Date, const PooledString&, SetupMatrixRule*);
 
     static int initialize();
 
@@ -2162,9 +2162,6 @@ class OperationPlan
     {
       dates.setStartAndEnd(st, nd);
       update();
-      //assert(getStart() <= getSetupEnd() && getSetupEnd() <= getEnd());
-      if (getStart() > getSetupEnd() || getSetupEnd() > getEnd())
-        logger << "Warning: strange dates on " << this << ": " << getStart() << " - " << getSetupEnd() << " - " << getEnd() << endl;
     }
 
     /** Fixes the start date, end date and quantity of an operationplan. Note that this
@@ -2268,7 +2265,9 @@ class OperationPlan
     double getSetupCost() const;
 
     /** Update the setup information. */
-    void setSetupEvent(Resource*, Date, PooledString, SetupMatrixRule* = nullptr);
+    void setSetupEvent(TimeLine<LoadPlan>*, Date, const PooledString&, SetupMatrixRule* = nullptr);
+
+    void setSetupEvent(Resource* r, Date d, const PooledString& s, SetupMatrixRule* m = nullptr);
 
     /** Make sure that a status change is also reflected on related operationplans. 
       * Note that the propagation of a status change is not undoable: eg after
@@ -3701,13 +3700,14 @@ inline OperationPlan::iterator OperationPlan::getSubOperationPlans() const
 /** A simple class to easily remember the date, quantity, setup and owner
   * of an operationplan.
   */
-class OperationPlanState  // @todo should also be able to remember and restore suboperationplans!!!
+class OperationPlanState  // @todo should also be able to remember and restore suboperationplans, loadplans and flowplans!!!
 {
   public:
     Date start;
     Date end;
     SetupEvent setup;
-    double quantity;
+    TimeLine<LoadPlan>* tmline = nullptr;
+    double quantity = 0.0;
 
     /** Default constructor. */
     OperationPlanState() : quantity(0.0) {}
@@ -3716,37 +3716,42 @@ class OperationPlanState  // @todo should also be able to remember and restore s
     OperationPlanState(const OperationPlan* x) : setup(x->getSetupEvent())
     {
       if (!x)
-      {
-        quantity = 0.0;
         return;
-      }
-      else
-      {
-        start = x->getStart();
-        end = x->getEnd();
-        quantity = x->getQuantity();
-      }
+      start = x->getStart();
+      end = x->getEnd();
+      quantity = x->getQuantity();
+      tmline = x->getSetupEvent() ? x->getSetupEvent()->getTimeLine() : nullptr;
     }
 
     /** Copy constructor. */
     OperationPlanState(const OperationPlanState& x)
-      : start(x.start), end(x.end), setup(x.setup), quantity(x.quantity) {}
+      : start(x.start), end(x.end), setup(x.setup),
+        quantity(x.quantity), tmline(x.tmline) {}
 
     /** Constructor. */
     OperationPlanState(const Date x, const Date y, double q, SetupEvent* z = nullptr)
-      : start(x), end(y), setup(z), quantity(q) {}
+      : start(x), end(y), setup(z), quantity(q)
+    {
+      if (z)
+        tmline = z->getTimeLine();
+    }
 
     /** Constructor. */
     OperationPlanState(const DateRange& x, double q, SetupEvent* z = nullptr)
-      : start(x.getStart()), end(x.getEnd()), setup(z), quantity(q) {}
+      : start(x.getStart()), end(x.getEnd()), setup(z), quantity(q)
+    {
+      if (z)
+        tmline = z->getTimeLine();
+    }
 
     /* Assignment operator. */
-    OperationPlanState& operator =(const OperationPlanState & other)
+    OperationPlanState& operator =(const OperationPlanState& other)
     {
       start = other.start;
       end = other.end;
       setup = other.setup;
       quantity = other.quantity;
+      tmline = other.tmline;
       return *this;
     }
 };
@@ -6893,7 +6898,7 @@ class Resource : public HasHierarchy<Resource>,
         setup->setSetup(s);
       else
       {
-        setup = new SetupEvent(getLoadPlans(), Date::infinitePast, s);
+        setup = new SetupEvent(&getLoadPlans(), Date::infinitePast, s);
         getLoadPlans().insert(setup);
       }
     }
@@ -6979,6 +6984,12 @@ class Resource : public HasHierarchy<Resource>,
     /** Python method that returns an iterator over the resource plan. */
     static PyObject* plan(PyObject*, PyObject*);
 };
+
+
+inline void OperationPlan::setSetupEvent(Resource* r, Date d, const PooledString& s, SetupMatrixRule* m)
+{
+  setSetupEvent(&(r->getLoadPlans()), d, s, m);
+}
 
 
 /** @brief This class provides an efficient way to iterate over

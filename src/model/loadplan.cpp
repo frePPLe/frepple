@@ -321,15 +321,17 @@ void LoadPlan::setLoad(Load* newld)
   if (newld == ld) return;
 
   // Verify the data
-  if (!newld) throw DataException("Can't switch to nullptr load");
+  if (!newld)
+    throw DataException("Can't switch to nullptr load");
   if (ld && ld->getOperation() != newld->getOperation())
     throw DataException("Only switching to a load on the same operation is allowed");
 
   // Update the load and resource fields
   LoadPlan* o = getOtherLoadPlan();
-  if (o) o->ld = newld;
+  if (o)
+    o->ld = newld;
   ld = newld;
-  setResource(newld->getResource());
+  setResource(newld->getResource(), false, false);
 }
 
 

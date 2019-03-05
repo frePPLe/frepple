@@ -874,7 +874,7 @@ OperationPlanState OperationFixedTime::setOperationPlanParameters(
     if (get<1>(setuptime_required))
     {
       SetupEvent tmp(
-        get<0>(setuptime_required)->getLoadPlans(),
+        &(get<0>(setuptime_required)->getLoadPlans()),
         setup_dates.getEnd(),
         get<2>(setuptime_required),
         get<1>(setuptime_required)
@@ -1150,7 +1150,7 @@ OperationTimePer::setOperationPlanParameters(
         if (get<0>(setuptime_required))
         {
           SetupEvent tmp(
-            get<0>(setuptime_required)->getLoadPlans(),
+            &(get<0>(setuptime_required)->getLoadPlans()),
             setup_dates.getEnd(),
             get<2>(setuptime_required),
             get<1>(setuptime_required)
@@ -1211,7 +1211,7 @@ OperationTimePer::setOperationPlanParameters(
         if (get<0>(setuptime_required))
         {
           SetupEvent tmp(
-            get<0>(setuptime_required)->getLoadPlans(),
+            &(get<0>(setuptime_required)->getLoadPlans()),
             setup_dates.getEnd(),
             get<2>(setuptime_required),
             get<1>(setuptime_required)
@@ -1289,7 +1289,7 @@ OperationTimePer::setOperationPlanParameters(
         if (get<0>(setuptime_required))
         {
           SetupEvent tmp(
-            get<0>(setuptime_required)->getLoadPlans(),
+            &(get<0>(setuptime_required)->getLoadPlans()),
             setup_dates.getEnd(),
             get<2>(setuptime_required),
             get<1>(setuptime_required)
@@ -1366,7 +1366,7 @@ OperationTimePer::setOperationPlanParameters(
         if (get<0>(setuptime_required))
         {
           SetupEvent tmp(
-            get<0>(setuptime_required)->getLoadPlans(),
+            &(get<0>(setuptime_required)->getLoadPlans()),
             setup_dates.getEnd(),
             get<2>(setuptime_required),
             get<1>(setuptime_required)
@@ -1423,7 +1423,7 @@ OperationTimePer::setOperationPlanParameters(
           if (get<0>(setuptime_required))
           {
             SetupEvent tmp(
-              get<0>(setuptime_required)->getLoadPlans(),
+              &(get<0>(setuptime_required)->getLoadPlans()),
               setup_dates.getEnd(),
               get<2>(setuptime_required),
               get<1>(setuptime_required)

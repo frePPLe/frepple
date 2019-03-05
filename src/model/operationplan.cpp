@@ -120,10 +120,10 @@ void OperationPlan::setChanged(bool b)
 
 void OperationPlan::restore(const OperationPlanState& x)
 {
+  setSetupEvent(x.tmline, x.setup.getDate(), x.setup.getSetup(), x.setup.getRule());
   setStartEndAndQuantity(x.start, x.end, x.quantity);
-  if (quantity != x.quantity) quantity = x.quantity;
-  //assert(dates.getStart() == x.start || x.start != x.end);
-  //assert(dates.getEnd() == x.end || x.start != x.end);
+  if (quantity != x.quantity)
+    quantity = x.quantity;
   if (!SetupMatrix::empty())
     scanSetupTimes();
 }
@@ -1450,7 +1450,11 @@ void OperationPlan::scanSetupTimes()
 {
   for (auto ldplan = beginLoadPlans(); ldplan != endLoadPlans(); ++ldplan)
   {
-    if (!ldplan->isStart() && !ldplan->getLoad()->getSetup().empty() && ldplan->getResource()->getSetupMatrix())
+    if (
+      !ldplan->isStart() 
+      && !ldplan->getLoad()->getSetup().empty()
+      && ldplan->getResource()->getSetupMatrix()
+      )
     {
       // Not a starting loadplan or there is no setup on this loadplan
       ldplan->getResource()->updateSetupTime();
@@ -2403,12 +2407,20 @@ Duration OperationPlan::getSetup() const
 }
 
 
-void OperationPlan::setSetupEvent(Resource* res, Date d, PooledString s, SetupMatrixRule* r)
+void OperationPlan::setSetupEvent(TimeLine<LoadPlan>* res, Date d, const PooledString& s, SetupMatrixRule* r)
 {
-  if (setupevent)
+  if (!res)
+  {
+    if (setupevent)
+    {
+      delete setupevent;
+      setupevent = nullptr;
+    }
+  }
+  else if (setupevent)
     setupevent->update(res, d, s, r);
   else
-    setupevent = new SetupEvent(res->getLoadPlans(), d, s, r, this);
+    setupevent = new SetupEvent(res, d, s, r, this);
 }
 
 
@@ -2428,21 +2440,21 @@ SetupEvent::~SetupEvent()
 }
 
 
-void SetupEvent::update(Resource* res, Date d, PooledString s, SetupMatrixRule* r)
+void SetupEvent::update(TimeLine<LoadPlan>* res, Date d, const PooledString& s, SetupMatrixRule* r)
 {
   setup = s;
   rule = r;
   if (!tmline)
   {
     // First insert
-    tmline = &res->getLoadPlans();
+    tmline = res;
     tmline->insert(this);
   }
-  else if (&res->getLoadPlans() != tmline)
+  else if (res != tmline)
   {
     // Reinsert at another resource
     tmline->erase(this);
-    tmline = &res->getLoadPlans();
+    tmline = res;
     tmline->insert(this);
   }
   else

@@ -199,8 +199,6 @@ function drawGraphs(jsondata)
 	               "&operationplan__startdate__gte=" : 
 	               "&operationplan__enddate__gt=")
 	            + timebuckets[d['bucket']]['startdate'];
-	
-	          var coord = d3.mouse(document.body);
 	          d3.event.stopPropagation();
 	        })
 	      .on("mouseenter", function(d) {

@@ -73,12 +73,12 @@ def exportOperationplans():
   starttime = time()
   writer = csv.writer(open("operations.csv", "w", newline="", encoding="utf-8"), quoting=csv.QUOTE_ALL)
   writer.writerow((
-    '#id', 'operation', 'quantity', 'start date', 'end date', 'locked'
+    '#reference', 'operation', 'quantity', 'start date', 'end date', 'status', 'unavailable', 'owner'
     ))
   for i in frepple.operationplans():
     writer.writerow((
-       i.id, i.operation.name, i.quantity, i.start, i.end,
-       i.locked, i.unavailable, i.owner and i.owner.id or None
+       i.reference, i.operation.name, i.quantity, i.start, i.end,
+       i.status, i.unavailable, i.owner and i.owner.id or None
      ))
   print('Exported operationplans in %.2f seconds' % (time() - starttime))
 
@@ -88,7 +88,7 @@ def exportFlowplans():
   starttime = time()
   writer = csv.writer(open("flowplans.csv", "w", newline="", encoding="utf-8"), quoting=csv.QUOTE_ALL)
   writer.writerow((
-    '#operationplan id', 'item', 'location', 'quantity', 'date', 'on hand'
+    '#operationplan', 'item', 'location', 'quantity', 'date', 'on hand'
     ))
   for i in frepple.buffers():
     for j in i.flowplans:
@@ -104,7 +104,7 @@ def exportLoadplans():
   starttime = time()
   writer = csv.writer(open("loadplans.csv", "w", newline="", encoding="utf-8"), quoting=csv.QUOTE_ALL)
   writer.writerow((
-    '#operationplan id', 'resource_id', 'quantity', 'start date', 'end date', 'setup'
+    '#operationplan', 'resource', 'quantity', 'start date', 'end date', 'setup'
     ))
   for i in frepple.resources():
     for j in i.loadplans:
@@ -197,7 +197,7 @@ def exportDemand():
   writer = csv.writer(open("demands.csv", "w", newline="", encoding="utf-8"), quoting=csv.QUOTE_ALL)
   writer.writerow((
     '#demand', 'item', 'customer', 'due date', 'requested quantity',
-    'plan date', 'plan quantity', 'operationplan id'
+    'plan date', 'plan quantity', 'operationplan'
     ))
   for i in frepple.demands():
     if i.quantity == 0:

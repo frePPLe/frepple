@@ -178,14 +178,16 @@ class export:
           select reference
           from operationplan
           inner join cluster_keys on cluster_keys.name = operationplan.item_id
-          where status = 'proposed' or status is null or oplan_parent.type='STCK'
+          where status = 'proposed' or status is null or type='STCK'
           union
-          select reference from operationplan where owner_id in (
+          select reference
+          from operationplan
+          where owner_id in (
             select reference
             from operationplan parent_opplan
             inner join cluster_keys on cluster_keys.name = parent_opplan.item_id
             )
-          where status = 'proposed' or status is null
+          and (status = 'proposed' or status is null)
           )
         and operationplanresource.status = 'proposed'
         ''')

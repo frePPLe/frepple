@@ -1255,7 +1255,7 @@ class loadDemand(LoadTask):
           operation_id, customer_id, owner_id, minshipment, maxlateness,
           category, subcategory, source, location_id, status
         FROM demand
-        WHERE (status IS NULL OR status in ('open', 'quote') %s
+        WHERE (status IS NULL OR status in ('open', 'quote')) %s
         ''' % filter_and
         )
       for i in cursor:

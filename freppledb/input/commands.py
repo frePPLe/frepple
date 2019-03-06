@@ -1255,8 +1255,9 @@ class loadDemand(LoadTask):
           operation_id, customer_id, owner_id, minshipment, maxlateness,
           category, subcategory, source, location_id, status
         FROM demand
-        WHERE (status IS NULL OR status ='open' OR status = 'quote') %s
-        ''' % filter_and)
+        WHERE (status IS NULL OR status in ('open', 'quote') %s
+        ''' % filter_and
+        )
       for i in cursor:
         cnt += 1
         try:
@@ -1301,7 +1302,7 @@ class loadOperationPlans(LoadTask):
       consume_material = (Parameter.getValue('WIP.consume_material', database, 'true').lower() == 'true')
       consume_capacity = (Parameter.getValue('WIP.consume_capacity', database, 'true').lower() == 'true')
       if 'supply' in os.environ:
-        confirmed_filter = " and operationplan.status in ('confirmed', 'approved')"
+        confirmed_filter = " and operationplan.status in ('confirmed', 'approved', 'completed')"
         create_flag = True
       else:
         confirmed_filter = ""
@@ -1320,7 +1321,7 @@ class loadOperationPlans(LoadTask):
           coalesce(dmd.name, null)
         FROM operationplan
         LEFT OUTER JOIN (select name from demand
-          where demand.status = 'open'
+          where demand.status is null or demand.status in ('open', 'quote')
           ) dmd
         on dmd.name = operationplan.demand_id
         WHERE operationplan.owner_id IS NULL
@@ -1409,7 +1410,7 @@ class loadOperationPlans(LoadTask):
           ) opplan_parent
         on operationplan.owner_id = opplan_parent.reference
         LEFT OUTER JOIN (select name from demand
-          where demand.status = 'open'
+          where demand.status is null or demand.status in ('open', 'quote')
           ) dmd
         on dmd.name = operationplan.demand_id
         WHERE operationplan.quantity >= 0 and operationplan.status <> 'closed'
@@ -1432,9 +1433,9 @@ class loadOperationPlans(LoadTask):
             if not consume_capacity:
               opplan.consume_capacity = False
           if opplan:
-            if i[5]:
+            if i[6]:
               try:
-                opplan.owner = frepple.operationplan(reference=i[5])
+                opplan.owner = frepple.operationplan(reference=i[6])
               except:
                 pass
             if i[8]:
@@ -1529,7 +1530,7 @@ class loadOperationPlanResources(LoadTask):
       for i in cursor:
         cnt += 1
         try:
-          opplan = frepple.operationplan(id=i[0])
+          opplan = frepple.operationplan(reference=i[0])
           if not res or res.name != i[1]:
             res = frepple.resource(name=i[1])
           frepple.loadplan(operationplan=opplan, resource=res, quantity=i[2], status=i[3])

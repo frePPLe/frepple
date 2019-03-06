@@ -247,10 +247,10 @@ class export:
         )), file=tmp)
       tmp.seek(0)
       cursor.copy_from(
-      tmp,
-      'out_problem',
-      columns=('entity','name','owner', 'description', 'startdate', 'enddate', 'weight')
-      )
+        tmp,
+        'out_problem',
+        columns=('entity', 'name', 'owner', 'description', 'startdate', 'enddate', 'weight')
+        )
       tmp.close()
     if self.verbosity:
       logger.info('Exported problems in %.2f seconds' % (time() - starttime))
@@ -413,17 +413,17 @@ class export:
       where operationplan.reference = tmp.reference;
       ''')
     cursor.execute('''
-      with cte as (select reference from operationplan where status in ('confirmed','approved') and type = 'MO' and
+      with cte as (select reference from operationplan where status in ('confirmed','approved','completed') and type = 'MO' and
       not exists (select 1 from tmp_operationplan where reference = operationplan.reference))
       delete from operationplanmaterial where exists (select 1 from cte where cte.reference = operationplan_id)
     ''')
     cursor.execute('''
-      with cte as (select reference from operationplan where status in ('confirmed','approved') and type = 'MO' and
+      with cte as (select reference from operationplan where status in ('confirmed','approved','completed') and type = 'MO' and
       not exists (select 1 from tmp_operationplan where reference = operationplan.reference))
       delete from operationplanresource where exists (select 1 from cte where cte.reference = operationplan_id)
     ''')
     cursor.execute('''
-      delete from operationplan where status in ('confirmed','approved') and type = 'MO' and
+      delete from operationplan where status in ('confirmed','approved','completed') and type = 'MO' and
       not exists (select 1 from tmp_operationplan where reference = operationplan.reference)
     ''')
 

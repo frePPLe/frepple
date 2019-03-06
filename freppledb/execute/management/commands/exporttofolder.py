@@ -47,7 +47,7 @@ class Command(BaseCommand):
   requires_system_checks = False
 
   #Any sql statements that should be executed before the export
-  pre_sql_statements = ("update operationplan set reference = id where status <> 'confirmed' and reference is null and type in ('MO','PO','DO')",)
+  pre_sql_statements = ()
 
   # Any SQL statements that should be executed before the export
   post_sql_statements = ()
@@ -57,7 +57,7 @@ class Command(BaseCommand):
         'filename': "purchaseorder.csv",
         'folder': "export",
         'sql': '''COPY
-          (select source, lastmodified, id, status , reference, quantity,
+          (select source, lastmodified, reference, status , reference, quantity,
           to_char(startdate,'YYYY-MM-DD HH24:MI:SS') as "ordering date",
           to_char(enddate,'YYYY-MM-DD HH24:MI:SS') as "receipt date",
           criticality, EXTRACT(EPOCH FROM delay) as delay,
@@ -69,7 +69,7 @@ class Command(BaseCommand):
         'filename': "distributionorder.csv",
         'folder': "export",
         'sql': '''COPY
-          (select source, lastmodified, id, status, reference, quantity,
+          (select source, lastmodified, reference, status, reference, quantity,
           to_char(startdate,'YYYY-MM-DD HH24:MI:SS') as "ordering date",
           to_char(enddate,'YYYY-MM-DD HH24:MI:SS') as "receipt date",
           criticality, EXTRACT(EPOCH FROM delay) as delay,
@@ -81,7 +81,7 @@ class Command(BaseCommand):
         'filename': "manufacturingorder.csv",
         'folder': "export",
         'sql': '''COPY
-          (select source, lastmodified, id , status ,reference ,quantity,
+          (select source, lastmodified, reference, status ,reference ,quantity,
           to_char(startdate,'YYYY-MM-DD HH24:MI:SS') as startdate,
           to_char(enddate,'YYYY-MM-DD HH24:MI:SS') as enddate,
           criticality, EXTRACT(EPOCH FROM delay) as delay,
@@ -242,6 +242,7 @@ class Command(BaseCommand):
             cursor.execute(stmt)
             logger.info("%s record(s) modified" % cursor.rowcount)
           except:
+            errors += 1
             logger.error("An error occurred when executing statement '%s'" % stmt)
 
         for cfg in self.statements:
@@ -327,6 +328,7 @@ class Command(BaseCommand):
             cursor.execute(stmt)
             logger.info("%s record(s) modified" % cursor.rowcount)
           except:
+            errors += 1
             logger.error("An error occured when executing statement '%s'" % stmt)
 
       else:

@@ -1448,11 +1448,13 @@ class loadOperationPlans(LoadTask):
       # Assure the operationplan ids will be unique.
       # We call this method only at the end, as calling it earlier gives a slower
       # performance to load operationplans
+      # By limiting the number of digits in the query we enforce reusing numbers at some point.
       cursor.execute('''
-        select coalesce(max(reference::integer), 0) as max_reference
+        select coalesce(max(reference::bigint), 0) as max_reference
         from operationplan
         where status <> 'proposed'
         and reference ~ '^[0-9]*$'
+        and char_length(reference) <= 9
         ''')
       d = cursor.fetchone()
       frepple.settings.id = d[0]

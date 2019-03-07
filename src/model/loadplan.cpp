@@ -43,6 +43,7 @@ int LoadPlan::initialize()
   x.setDoc("frePPLe loadplan");
   x.supportgetattro();
   x.supportsetattro();
+  x.supportcreate(create);
   const_cast<MetaClass*>(metadata)->pythonClass = x.type_object();
   return x.typeReady();
 }
@@ -351,7 +352,7 @@ Object* LoadPlan::reader(
   // Pick up the resource.
   const DataValue* resourceElement = in.get(Tags::resource);
   if (!resourceElement)
-    throw DataException("Resource must be provided");
+    throw DataException("Missing resource field");
   Object* resourceobject = resourceElement->getObject();
   if (!resourceobject || resourceobject->getType().category != Resource::metadata)
     throw DataException("Invalid resource field");
@@ -374,6 +375,84 @@ Object* LoadPlan::reader(
     }
   }
   return nullptr;
+}
+
+
+PyObject* LoadPlan::create(PyTypeObject* pytype, PyObject* args, PyObject* kwds)
+{
+  try
+  {
+    // Pick up the operationplan attribute. An error is reported if it's missing.
+    PyObject* opplanobject = PyDict_GetItemString(kwds, "operationplan");
+    if (!opplanobject)
+      throw DataException("Missing operationplan field");
+    if (!PyObject_TypeCheck(opplanobject, OperationPlan::metadata->pythonClass))
+      throw DataException("Invalid operationplan field");
+    OperationPlan* opplan = static_cast<OperationPlan*>(opplanobject);
+
+    // Pick up the resource.
+    PyObject* resobject = PyDict_GetItemString(kwds, "resource");
+    if (!resobject)
+      throw DataException("Missing resource field");
+    if (!PyObject_TypeCheck(resobject, Resource::metadata->pythonClass))
+      throw DataException("Invalid resource field");
+    Resource* res = static_cast<Resource*>(resobject);
+
+    // Find the load on the operationplan that has the same top resource.
+    // If multiple exist, we pick up the first one.
+    // If none is found, we throw a data error.
+    auto ldplniter = opplan->getLoadPlans();
+    LoadPlan* ldpln;
+    while ((ldpln = ldplniter.next()))
+    {
+      if (ldpln->getResource()->getTop() == res->getTop())
+      {
+        ldpln->setResource(res);
+        PyObject* statusobject = PyDict_GetItemString(kwds, "status");
+        if (statusobject)
+        {
+          PythonData status(statusobject);
+          ldpln->setStatus(status.getString());
+        }
+        break;
+      }
+    }
+
+    // Iterate over extra keywords, and set attributes.
+    if (ldpln)
+    {
+      PyObject *key, *value;
+      Py_ssize_t pos = 0;
+      while (PyDict_Next(kwds, &pos, &key, &value))
+      {
+        PythonData field(value);
+        PyObject* key_utf8 = PyUnicode_AsUTF8String(key);
+        DataKeyword attr(PyBytes_AsString(key_utf8));
+        Py_DECREF(key_utf8);
+        if (!attr.isA(Tags::operationplan) && !attr.isA(Tags::resource)
+          && !attr.isA(Tags::action) && !attr.isA(Tags::status))
+        {
+          const MetaFieldBase* fmeta = ldpln->getType().findField(attr.getHash());
+          if (!fmeta && ldpln->getType().category)
+            fmeta = ldpln->getType().category->findField(attr.getHash());
+          if (fmeta)
+            // Update the attribute
+            fmeta->setField(ldpln, field);
+          else
+            ldpln->setProperty(attr.getName(), value);;
+        }
+      };
+    }
+
+    // Return the object
+    Py_INCREF(ldpln);
+    return static_cast<PyObject*>(ldpln);
+  }
+  catch (...)
+  {
+    PythonType::evalException();
+    return nullptr;
+  }
 }
 
 

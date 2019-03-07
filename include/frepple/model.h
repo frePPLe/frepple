@@ -8485,6 +8485,9 @@ class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand
     static const unsigned short STATUS_CLOSED = 2;
     static const unsigned short TYPE_END = 4;
     unsigned short flags = 0;
+
+    /* Factory method. */
+    static PyObject* create(PyTypeObject*, PyObject*, PyObject*);
 };
 
 

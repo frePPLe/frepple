@@ -2484,7 +2484,7 @@ int SetupEvent::initialize()
   registerFields<SetupEvent>(const_cast<MetaCategory*>(metadata));
 
   // Initialize the Python type
-  PythonType& x = FreppleCategory<LoadPlan>::getPythonType();
+  PythonType& x = FreppleCategory<SetupEvent>::getPythonType();
   x.setName("setupeven");
   x.setDoc("frePPLe setup event");
   x.supportgetattro();

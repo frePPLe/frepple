@@ -616,31 +616,40 @@ class GridReport(View):
 
 
   @classmethod
+  def _validate_rows(cls, prefs):
+    if not prefs:
+      return [
+        (i, cls.rows[i].hidden or cls.rows[i].initially_hidden, cls.rows[i].width)
+        for i in range(len(cls.rows))
+        ]
+    else:
+      # Validate the preferences to 1) map from name to index, 2) assure all rows
+      # are included, 3) ignore non-existing fields
+      defaultrows = { cls.rows[i].name: i for i in range(len(cls.rows)) }
+      rows = []
+      for r in prefs:
+        try:
+          idx = int(r[0])
+          if idx < len(cls.rows):
+            del defaultrows[cls.rows[idx].name]
+            rows.append(r)
+        except (ValueError, IndexError):
+          if r[0] in defaultrows:
+            rows.append( (defaultrows[r[0]], r[1], r[2]) )
+            del defaultrows[r[0]]
+      for r, idx in defaultrows.items():
+        rows.append( (idx, cls.rows[idx].hidden or cls.rows[idx].initially_hidden, cls.rows[idx].width) )
+      return rows
+
+
+  @classmethod
   def _render_colmodel(cls, is_popup=False, prefs=None, mode="graph"):
     if not prefs:
       frozencolumns = cls.frozenColumns
       rows = [ (i, cls.rows[i].initially_hidden, cls.rows[i].width) for i in range(len(cls.rows)) ]
     else:
       frozencolumns = prefs.get('frozen', cls.frozenColumns)
-      prefrows = prefs.get('rows')
-      if not prefrows:
-        rows = [ (i, cls.rows[i].hidden or cls.rows[i].initially_hidden, cls.rows[i].width) for i in range(len(cls.rows)) ]
-      else:
-        # Validate the preferences to 1) map from name to index, 2) assure all rows
-        # are included, 3) ignore non-existing fields
-        defaultrows = { cls.rows[i].name: i for i in range(len(cls.rows)) }
-        rows = []
-        for r in prefrows:
-          try:
-            idx = int(r[0])
-            del defaultrows[cls.rows[idx].name]
-            rows.append(r)
-          except (ValueError, IndexError):
-            if r[0] in defaultrows:
-              rows.append( (defaultrows[r[0]], r[1], r[2]) )
-              del defaultrows[r[0]]
-        for r, idx in defaultrows.items():
-          rows.append( (idx, cls.rows[idx].hidden or cls.rows[idx].initially_hidden, cls.rows[idx].width) )
+      rows = cls._validate_rows(prefs.get('rows'))
     result = []
     if is_popup:
       result.append('{"name":"select","label":gettext("Select"),"width":75,"align":"center","sortable":false,"search":false}')
@@ -678,8 +687,8 @@ class GridReport(View):
       # Customized settings
       fields = [
         reportclass.rows[f[0]]
-        for f in request.prefs['rows']
-        if not f[1] and f[0] < len(reportclass.rows) and not reportclass.rows[f[0]].hidden
+        for f in reportclass._validate_rows(request.prefs['rows'])
+        if not f[1] and not reportclass.rows[f[0]].hidden
         ]
     else:
       # Default settings
@@ -734,15 +743,16 @@ class GridReport(View):
       request.prefs = request.user.getPreference(reportclass.getKey(), database=request.database)
     if request.prefs and request.prefs.get('rows', None):
       # Customized settings
+      custrows = reportclass._validate_rows(request.prefs['rows'])
       writer.writerow([
         force_text(reportclass.rows[f[0]].title, encoding=encoding, errors="ignore").title()
-        for f in request.prefs['rows']
-        if not f[1] and f[0] < len(reportclass.rows) and not reportclass.rows[f[0]].hidden
+        for f in custrows
+        if not f[1] and not reportclass.rows[f[0]].hidden
         ])
       fields = [
         reportclass.rows[f[0]].field_name
-        for f in request.prefs['rows']
-        if not f[1] and f[0] < len(reportclass.rows) and not reportclass.rows[f[0]].hidden
+        for f in custrows
+        if not f[1] and not reportclass.rows[f[0]].hidden
         ]
     else:
       # Default settings
@@ -1107,6 +1117,21 @@ class GridReport(View):
 
 
   @classmethod
+  def _validate_crosses(cls, prefs):
+    cross_idx = []
+    for i in prefs:
+      try:
+        num = int(i)
+        if num < len(cls.crosses) and cls.crosses[num][1].get('visible', True):
+          cross_idx.append(num)
+      except ValueError:
+        for j in range(len(cls.crosses)):
+          if cls.crosses[j][0] == i and cls.crosses[j][1].get('visible', True):
+            cross_idx.append(j)
+    return cross_idx
+
+
+  @classmethod
   def get(reportclass, request, *args, **kwargs):
 
     # Pick up the list of time buckets
@@ -1139,16 +1164,7 @@ class GridReport(View):
         cross_idx = None
         cross_list = None
       elif request.prefs and 'crosses' in request.prefs:
-        cross_idx = []
-        for i in request.prefs['crosses']:
-          try:
-            num = int(i)
-            cross_idx.append(str(num))
-          except ValueError:
-            for j in range(len(reportclass.crosses)):
-              if reportclass.crosses[j][0] == i:
-                cross_idx.append(str(j))
-        cross_idx = ','.join(cross_idx)
+        cross_idx = str(reportclass._validate_crosses(request.prefs['crosses']))
         cross_list = reportclass._render_cross(request)
       else:
         cross_idx = ','.join([str(i) for i in range(len(reportclass.crosses)) if reportclass.crosses[i][1].get('visible', True)])
@@ -2013,16 +2029,15 @@ class GridPivot(GridReport):
     if request.prefs and 'rows' in request.prefs:
       myrows = [
         reportclass.rows[f[0]]
-        for f in request.prefs['rows']
-        if not f[1] and f[0] < len(reportclass.rows)
+        for f in reportclass._validate_rows(request.prefs['rows'])
+        if not f[1]
         ]
     else:
       myrows = [ f for f in reportclass.rows if f.name and not f.hidden and not f.initially_hidden ]
     if request.prefs and 'crosses' in request.prefs:
       mycrosses = [
         reportclass.crosses[f]
-        for f in request.prefs['crosses']
-        if f < len(reportclass.crosses) and reportclass.crosses[f][1].get('visible', True)
+        for f in reportclass._validate_crosses(request.prefs['crosses'])
         ]
     else:
       mycrosses = [ f for f in reportclass.crosses if f[1].get('visible', True) ]
@@ -2185,16 +2200,15 @@ class GridPivot(GridReport):
     if request.prefs and 'rows' in request.prefs:
       myrows = [
         reportclass.rows[f[0]]
-        for f in request.prefs['rows']
-        if not f[1] and f[0] < len(reportclass.rows)
+        for f in reportclass._validate_rows(request.prefs['rows'])
+        if not f[1]
         ]
     else:
       myrows = [ f for f in reportclass.rows if f.name and not f.initially_hidden and not f.hidden ]
     if request.prefs and 'crosses' in request.prefs:
       mycrosses = [
         reportclass.crosses[f]
-        for f in request.prefs['crosses']
-        if f < len(reportclass.crosses) and reportclass.crosses[f][1].get('visible', True)
+        for f in reportclass._validate_crosses(request.prefs['crosses'])
         ]
     else:
       mycrosses = [ f for f in reportclass.crosses if f[1].get('visible', True) ]

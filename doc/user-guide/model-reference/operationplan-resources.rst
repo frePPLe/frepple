@@ -19,18 +19,5 @@ setup            string            | Setup of the resource when executing this l
                                    | This can be either the setup required by this particular
                                      load, or the setup left by any previous loadplans on the
                                      resource.
-                                   | This is an export-only field.
-status           string            This field should have one of the following keywords:
-
-                                   - | proposed:
-                                     | Planned consumption computed by frePPLe.
-                                     | These records are output of the planning algorithm.
-                                     
-                                   - | confirmed:
-                                     | Frozen consumption from the ERP that is completely locked.
-                                     | These records are input to the planning algorithm.
-
-                                   - | closed:
-                                     | Consumption has happened.
-                                     | These records are input to the planning algorithm.                            
+                                   | This is an export-only field.                        
 ================ ================= ===========================================================

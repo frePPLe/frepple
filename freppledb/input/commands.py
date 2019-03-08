@@ -1481,12 +1481,12 @@ class loadOperationPlanMaterials(LoadTask):
         from operationplanmaterial as opplanmat
         inner join operationplan
           on operationplan.reference = opplanmat.operationplan_id
-        where
-          operationplan.status in ('approved', 'confirmed', 'completed')
-          and operationplan.type = 'MO'
+        where operationplan.type = 'MO'
           and (opplanmat.status in ('confirmed', 'closed') or opplanmat.status is null)
+          %s
         order by operationplan_id
-        ''')
+        ''' % ("and operationplan.status in ('approved', 'confirmed', 'completed')" if 'supply' in os.environ else '')
+        )
       for i in cursor:
         cnt += 1
         try:
@@ -1496,7 +1496,8 @@ class loadOperationPlanMaterials(LoadTask):
             if fl.buffer.item and fl.buffer.item.name == i[1] \
               and fl.buffer.location and fl.buffer.location.name == i[2]:
                 fl.status = i[3]
-                fl.quantity = i[4]
+                if i[3] == 'confirmed':
+                  fl.quantity = i[4]
                 break
         except Exception as e:
           logger.error("**** %s ****" % e)
@@ -1518,16 +1519,15 @@ class loadOperationPlanResources(LoadTask):
       starttime = time()
       cursor.execute('''
         select
-          operationplan_id, opplanres.resource_id, opplanres.quantity, coalesce(opplanres.status, 'confirmed')
+          operationplan_id, opplanres.resource_id, coalesce(opplanres.status, 'confirmed'), opplanres.source
         from operationplanresource as opplanres
         inner join operationplan
           on operationplan.reference = opplanres.operationplan_id
-        where
-          operationplan.status in ('approved', 'confirmed', 'completed')
-          and operationplan.type = 'MO'
-          and (opplanres.status in ('confirmed', 'closed') or opplanres.status is null)
+        where operationplan.type = 'MO'
+          %s
         order by resource_id
-      ''')
+        ''' % ("and operationplan.status in ('approved', 'confirmed', 'completed')" if 'supply' in os.environ else '')
+        )
       res = None
       for i in cursor:
         cnt += 1
@@ -1535,7 +1535,8 @@ class loadOperationPlanResources(LoadTask):
           opplan = frepple.operationplan(reference=i[0])
           if not res or res.name != i[1]:
             res = frepple.resource(name=i[1])
-          frepple.loadplan(operationplan=opplan, resource=res, quantity=i[2], status=i[3])
+          # Note we don't restore the date or quantity from the operationplanresource table
+          frepple.loadplan(operationplan=opplan, resource=res, status=i[2], source=i[3])
         except Exception as e:
           logger.error("**** %s ****" % e)
       logger.info('Loaded %d operationplanresources in %.2f seconds' % (cnt, time() - starttime))

@@ -1351,7 +1351,7 @@ class OperationPlanResource(AuditModel):
   # Database fields
   id = models.AutoField(_('identifier'), primary_key=True)
   resource = models.ForeignKey(
-    Resource, verbose_name=_('resource'), db_index=True,
+    Resource, verbose_name=_('resource'),
     related_name="operationplanresources", on_delete=models.CASCADE
     )
   operationplan = models.ForeignKey(
@@ -1368,12 +1368,12 @@ class OperationPlanResource(AuditModel):
     )
 
   class Manager(MultiDBManager):
-    def get_by_natural_key(self, operationplan, resource):
+    def get_by_natural_key(self, resource, operationplan):
       # Note: we are not enforcing the uniqueness of this natural key in the database
       return self.get(operationplan=operationplan, resource=resource)
 
   def natural_key(self):
-    return (self.operationplan, self.resource)
+    return (self.resource, self.operationplan)
 
   objects = Manager()
 
@@ -1382,6 +1382,7 @@ class OperationPlanResource(AuditModel):
 
   class Meta:
     db_table = 'operationplanresource'
+    unique_together = (("resource", "operationplan"),)
     ordering = ['resource', 'startdate']
     verbose_name = _('resource detail')
     verbose_name_plural = _('resource detail')

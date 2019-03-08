@@ -35,4 +35,22 @@ class Migration(migrations.Migration):
     migrations.RunSQL('''
       truncate table operationplanmaterial, operationplanresource
       '''),
+    # The hack of 0021_operationplanresource needs to be reverted first.
+    # Django's migrations otherwise are confused on the nature of the field.
+    migrations.RunSQL(
+      'alter table operationplanresource rename column resource_id to resource'
+    ),
+    migrations.RemoveField(
+      model_name='operationplanresource',
+      name='resource',
+    ),
+    migrations.AddField(
+      model_name='operationplanresource',
+      name='resource',
+      field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='operationplanresources', to='input.Resource', verbose_name='resource'),
+    ),
+    migrations.AlterUniqueTogether(
+      name='operationplanresource',
+      unique_together=set([('resource', 'operationplan')]),
+    ),
   ]

@@ -2903,7 +2903,7 @@ class ResourceDetail(OperationPlanMixin, GridReport):
 
   rows = (
     GridFieldInteger('id', title='identifier', key=True, editable=False, formatter='detail', extra='"role":"input/operationplanresource"', initially_hidden=True),
-    GridFieldText('resource', title=_('resource'), field_name='resource__name', editable=False, formatter='detail', extra='"role":"input/resource"'),
+    GridFieldText('resource', title=_('resource'), field_name='resource__name', formatter='detail', extra='"role":"input/resource"'),
     GridFieldText('operationplan__reference', title=_('reference'), editable=False),
     GridFieldText('operationplan__color', title=_('inventory status'), formatter='color', width='125', editable=False, extra='"formatoptions":{"defaultValue":""}, "summaryType":"min"'),
     GridFieldText('operationplan__operation__item', title=_('item'), editable=False, formatter='detail', extra='"role":"input/item"'),
@@ -3083,7 +3083,8 @@ class ResourceDetail(OperationPlanMixin, GridReport):
       'resource__location__source', initially_hidden=True, editable=False,
       title=string_concat(_('resource'), ' - ', _('location'), ' - ', _('source'))
       ),
-    GridFieldChoice('status', title=_('load status'), choices=OperationPlanResource.OPRstatus),
+    # Status field currently not used
+    # GridFieldChoice('status', title=_('load status'), choices=OperationPlanResource.OPRstatus),
     GridFieldLastModified('lastmodified', initially_hidden=True),
     )
 
@@ -3194,6 +3195,28 @@ class OperationPlanDetail(View):
 
         # Information on resources
         if view_OpplanResource:
+          # Retrieve information about eventual alternates
+          alts = {}
+          if opplan.operation:
+            cursor.execute('''
+              with req as (
+                select resource_id, resource.lft, resource.rght, skill_id
+                from operationresource
+                inner join resource on resource.name = operationresource.resource_id
+                where operation_id = %s
+                )
+              select req.resource_id, resource.name from req
+              inner join resource on resource.lft between req.lft and req.rght and resource.rght = resource.lft + 1
+              where (req.skill_id is null or exists (
+                select 1 from resourceskill
+                where resourceskill.resource_id = resource.name
+                  and resourceskill.skill_id = req.skill_id
+                ))
+              ''', (opplan.operation.name,))
+            for i in cursor.fetchall():
+              if i[0] not in alts:
+                alts[i[0]] = set()
+              alts[i[0]].add(i[1])
           firstres = True
           for m in opplanrscs:
             if m['operationplan_id'] != opplan.reference:
@@ -3201,13 +3224,21 @@ class OperationPlanDetail(View):
             if firstres:
               firstres = False
               res['loadplans'] = []
-            res['loadplans'].append({
+            ldplan = {
               "date": m['startdate'].strftime("%Y-%m-%dT%H:%M:%S"),
               "quantity": float(m['quantity']),
               "resource": {
                 "name": m['resource_id']
-                }
-              })
+                },
+              }
+            # List matching alternates
+            for a in alts.values():
+              if m['resource_id'] in a:
+                t = [ {'name': i} for i in a if i != m['resource_id']]
+                if t:
+                  ldplan['alternates'] = t
+                break
+            res['loadplans'].append(ldplan)
 
         # Retrieve network status
         if opplan.item_id:

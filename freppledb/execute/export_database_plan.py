@@ -126,15 +126,7 @@ class export:
           )
         ''')
       cursor.execute('''
-        delete from operationplanresource
-        using operationplan
-        where operationplanresource.operationplan_id = operationplan.reference
-        and (
-          (operationplan.status='proposed' or operationplan.status is null)
-          or operationplan.type = 'STCK'
-          or operationplanresource.status = 'proposed'
-          or operationplanresource.status is null
-          )
+        truncate operationplanresource
         ''')
       cursor.execute('''
         delete from operationplan
@@ -189,7 +181,6 @@ class export:
             )
           and (status = 'proposed' or status is null)
           )
-        and operationplanresource.status = 'proposed'
         ''')
       cursor.execute('''
         delete from operationplan

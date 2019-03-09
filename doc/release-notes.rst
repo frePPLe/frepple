@@ -38,6 +38,8 @@ Release notes
 
 .. rubric:: Odoo connector
 
+- Workcenters assigned manufacturing orders are now also imported.
+
 - Bug fix: Manufacturing orders in the state "ready to produce" were not being sent to
   frePPLe as work-in-progress.
 

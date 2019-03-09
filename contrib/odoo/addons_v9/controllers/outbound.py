@@ -654,8 +654,8 @@ class exporter(object):
                           '<loads><load quantity="1"><resource name=%s/></load></loads>\n' % (
                             step[2],
                             quoteattr("%s - %s" % (operation, step[2])),
-                            quoteattr(location),
-                            step[1], quoteattr(step[0])
+                            step[1], quoteattr(location),
+                            quoteattr(step[0])
                             )
                     if step[2] == steplist[-1][2]:
                         # Add producing flows on the last routing step
@@ -902,13 +902,16 @@ class exporter(object):
         yield '<!-- manufacturing orders in progress -->\n'
         yield '<operationplans>\n'
         m = self.req.session.model('mrp.production')
+        w = self.req.session.model('mrp.production.workcenter.line')
+        w_fields = ['workcenter_id', ]
         ids = m.search(
           [('state', 'in', ['in_production', 'ready', 'confirmed'])],
           context=self.req.session.context
           )
         fields = ['bom_id', 'date_start', 'date_planned', 'name', 'state', 'product_qty', 'product_uom',
-                  'location_dest_id', 'product_id', 'product_tmpl_id']
+                  'location_dest_id', 'product_id', 'product_tmpl_id', 'workcenter_lines']
         for i in m.read(ids, fields, self.req.session.context):
+            logger.warn("PPPPPP  %s" % i)
             if i['state'] in ('in_production', 'confirmed', 'ready') and i['bom_id']:
                 # Open orders
                 location = self.map_locations.get(i['location_dest_id'][0], None)
@@ -916,14 +919,18 @@ class exporter(object):
                 operation = u'%d %s @ %s' % (i['bom_id'][0], product_buf['name'], location)
                 try:
                     startdate = datetime.strptime(i['date_start'] or i['date_planned'], '%Y-%m-%d %H:%M:%S')
-                except Exception as e:
+                except Exception:
                     continue
                 if not location or not operation in self.operations:
                     continue
                 qty = self.convert_qty_uom(i['product_qty'], i['product_uom'][0], i['product_id'][0])
-                yield '<operationplan reference=%s start="%s" end="%s" quantity="%s" status="confirmed"><operation name=%s/></operationplan>\n' % (
+                yield '<operationplan reference=%s start="%s" end="%s" quantity="%s" status="confirmed"><operation name=%s/><loadplans>\n' % (
                     quoteattr(i['name']), startdate, startdate, qty, quoteattr(operation)
                 )
+                for j in w.read(i['workcenter_lines'], w_fields, self.req.session.context):
+                  if j['workcenter_id'][0] in self.map_workcenters:
+                    yield '<loadplan status="confirmed"><resource name=%s/></loadplan>' % quoteattr(self.map_workcenters[j['workcenter_id'][0]])
+                yield '</loadplans></operationplan>'
         yield '</operationplans>\n'
 
 

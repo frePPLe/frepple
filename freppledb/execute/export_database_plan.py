@@ -292,7 +292,7 @@ class export:
               i.name, 'STCK', j.status, round(j.quantity, 8),
               str(j.start), str(j.end), round(j.criticality, 8), j.delay,
               self.getPegging(j), j.source or '\\N', self.timestamp,
-              '\\N', j.owner.id if j.owner and not j.owner.operation.hidden else '\\N',
+              '\\N', j.owner.reference if j.owner and not j.owner.operation.hidden else '\\N',
               j.operation.buffer.item.name, j.operation.buffer.location.name, '\\N', '\\N', '\\N',
               j.demand.name if j.demand else j.owner.demand.name if j.owner and j.owner.demand else '\\N',
               j.demand.due if j.demand else j.owner.demand.due if j.owner and j.owner.demand else '\\N',
@@ -304,7 +304,7 @@ class export:
               i.name, 'DO', j.status, round(j.quantity, 8),
               str(j.start), str(j.end), round(j.criticality, 8), j.delay,
               self.getPegging(j), j.source or '\\N', self.timestamp,
-              '\\N', j.owner.id if j.owner and not j.owner.operation.hidden else '\\N',
+              '\\N', j.owner.reference if j.owner and not j.owner.operation.hidden else '\\N',
               j.operation.destination.item.name if j.operation.destination else j.operation.origin.item.name,
               j.operation.destination.location.name if j.operation.destination else '\\N',
               j.operation.origin.location.name if j.operation.origin else '\\N',
@@ -319,7 +319,7 @@ class export:
               i.name, 'PO', j.status, round(j.quantity, 8),
               str(j.start), str(j.end), round(j.criticality, 8), j.delay,
               self.getPegging(j), j.source or '\\N', self.timestamp,
-              '\\N', j.owner.id if j.owner and not j.owner.operation.hidden else '\\N',
+              '\\N', j.owner.reference if j.owner and not j.owner.operation.hidden else '\\N',
               j.operation.buffer.item.name, '\\N', '\\N',
               j.operation.buffer.location.name, j.operation.itemsupplier.supplier.name,
               j.demand.name if j.demand else j.owner.demand.name if j.owner and j.owner.demand else '\\N',
@@ -332,7 +332,7 @@ class export:
               i.name, 'MO', j.status, round(j.quantity, 8),
               str(j.start), str(j.end), round(j.criticality, 8), j.delay,
               self.getPegging(j), j.source or '\\N', self.timestamp,
-              i.name, j.owner.id if j.owner and not j.owner.operation.hidden else '\\N',
+              i.name, j.owner.reference if j.owner and not j.owner.operation.hidden else '\\N',
               i.item.name if i.item else '\\N', '\\N', '\\N',
               i.location.name if i.location else '\\N', '\\N',
               j.demand.name if j.demand else j.owner.demand.name if j.owner and j.owner.demand else '\\N',
@@ -372,7 +372,7 @@ class export:
         source character varying(300),
         lastmodified timestamp with time zone NOT NULL,
         operation_id character varying(300),
-        owner_id integer,
+        owner_id character varying(300),
         item_id character varying(300),
         destination_id character varying(300),
         origin_id character varying(300),
@@ -394,7 +394,7 @@ class export:
     # Merge temp table into the actual table
     cursor.execute('''
       update operationplan
-        set name=tmp.name, type=tmp.type, status=tmp.status, reference=tmp.reference,
+        set name=tmp.name, type=tmp.type, status=tmp.status,
         quantity=tmp.quantity, startdate=tmp.startdate, enddate=tmp.enddate,
         criticality=tmp.criticality, delay=tmp.delay * interval '1 second',
         plan=tmp.plan, source=tmp.source,
@@ -406,18 +406,62 @@ class export:
       where operationplan.reference = tmp.reference;
       ''')
     cursor.execute('''
-      with cte as (select reference from operationplan where status in ('confirmed','approved','completed') and type = 'MO' and
-      not exists (select 1 from tmp_operationplan where reference = operationplan.reference))
-      delete from operationplanmaterial where exists (select 1 from cte where cte.reference = operationplan_id)
+      with cte as (
+        select reference
+        from operationplan
+        where status in ('confirmed','approved','completed')
+        and type = 'MO'
+        and not exists (select 1 from tmp_operationplan where reference = operationplan.reference)
+        )
+      delete from operationplanmaterial
+      where exists (select 1 from cte where cte.reference = operationplan_id)
+      ''')
+    cursor.execute('''
+      with cte as (
+        select reference
+        from operationplan
+        where status in ('confirmed','approved','completed')
+        and type = 'MO'
+        and not exists (select 1 from tmp_operationplan where reference = operationplan.reference)
+        )
+      delete from operationplanresource
+      where exists (select 1 from cte where cte.reference = operationplan_id)
+      ''')
+    cursor.execute('''
+      delete from operationplan
+      where status in ('confirmed','approved','completed')
+      and type = 'MO'
+      and not exists (select 1 from tmp_operationplan where reference = operationplan.reference)
+      ''')
+
+    cursor.execute('''
+      with cte as (
+        select reference
+        from operationplan
+        where status in ('confirmed','approved','completed')
+        and type = 'MO'
+        and not exists (select 1 from tmp_operationplan where reference = operationplan.reference)
+        )
+      delete from operationplanmaterial
+      where exists (select 1 from cte where cte.reference = operationplan_id)
     ''')
     cursor.execute('''
-      with cte as (select reference from operationplan where status in ('confirmed','approved','completed') and type = 'MO' and
-      not exists (select 1 from tmp_operationplan where reference = operationplan.reference))
-      delete from operationplanresource where exists (select 1 from cte where cte.reference = operationplan_id)
+      with cte as (
+        select reference
+        from operationplan
+        where status in ('confirmed','approved','completed')
+        and type = 'MO'
+        and not exists (select 1 from tmp_operationplan where reference = operationplan.reference)
+        )
+      delete from operationplanresource
+      where exists (select 1 from cte where cte.reference = operationplan_id)
     ''')
     cursor.execute('''
-      delete from operationplan where status in ('confirmed','approved','completed') and type = 'MO' and
-      not exists (select 1 from tmp_operationplan where reference = operationplan.reference)
+      delete
+      from operationplan
+      where status in ('confirmed','approved','completed')
+      and type = 'MO'
+      and not exists (select 1 from tmp_operationplan where reference = operationplan.reference)
     ''')
 
     cursor.execute('''

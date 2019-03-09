@@ -410,16 +410,16 @@ class exportStaticModel(object):
       cursor.executemany(
         "insert into buffer \
         (name,description,location_id,item_id,onhand,minimum,minimum_calendar_id, \
-        type,min_interval,category,subcategory,source,lastmodified) \
-        values(%s,%s,%s,%s,%s,%s,%s,%s,%s * interval '1 second',%s,%s,%s,%s)",
+        type,category,subcategory,source,lastmodified) \
+        values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)",
         [
           (
             i.name, i.description, i.location and i.location.name or None,
             i.item and i.item.name or None,
             round(i.onhand, 8), round(i.minimum, 8),
             i.minimum_calendar and i.minimum_calendar.name or None,
-            i.__class__.__name__[7:], i.mininterval,
-            i.category, i.subcategory, i.source, self.timestamp
+            i.__class__.__name__[7:], i.category, i.subcategory,
+            i.source, self.timestamp
           )
           for i in frepple.buffers()
           if i.name not in primary_keys and not i.hidden and (not self.source or self.source == i.source)
@@ -428,8 +428,7 @@ class exportStaticModel(object):
         "update buffer \
          set description=%s, location_id=%s, item_id=%s, onhand=%s, \
          minimum=%s, minimum_calendar_id=%s, type=%s, \
-         min_interval=%s * interval '1 second', category=%s, \
-         subcategory=%s, source=%s, lastmodified=%s \
+         category=%s, subcategory=%s, source=%s, lastmodified=%s \
          where name=%s",
         [
           (
@@ -437,7 +436,6 @@ class exportStaticModel(object):
             round(i.onhand, 8), round(i.minimum, 8),
             i.minimum_calendar and i.minimum_calendar.name or None,
             i.__class__.__name__[7:],
-            (i.mininterval!=-1) and i.mininterval or None,
             i.category, i.subcategory, i.source, self.timestamp, i.name
           )
           for i in frepple.buffers()
@@ -1046,16 +1044,17 @@ class exportStaticModel(object):
         cursor.execute("delete from buffer where source = %s and lastmodified <> %s", (self.source, self.timestamp))
         cursor.execute('''
           delete from operationplanmaterial
-          where operationplan_id in (select id from operationplan
-                inner join demand on operationplan.demand_id = demand.name
-                where demand.source = %s and demand.lastmodified <> %s
-                )''', (self.source, self.timestamp))
+          where operationplan_id in (select reference from operationplan
+            inner join demand on operationplan.demand_id = demand.name
+            where demand.source = %s and demand.lastmodified <> %s
+            )''', (self.source, self.timestamp))
         cursor.execute('''
           delete from operationplanresource
-          where operationplan_id in (select id from operationplan
-                inner join demand on operationplan.demand_id = demand.name
-                where demand.source = %s and demand.lastmodified <> %s
-                )''', (self.source, self.timestamp))
+          where operationplan_id in (
+            select reference from operationplan
+            inner join demand on operationplan.demand_id = demand.name
+            where demand.source = %s and demand.lastmodified <> %s
+            )''', (self.source, self.timestamp))
         cursor.execute("delete from operationplan where demand_id in (select name from demand where source = %s and lastmodified <> %s)", (self.source, self.timestamp))
         cursor.execute("delete from demand where source = %s and lastmodified <> %s", (self.source, self.timestamp))
         cursor.execute("delete from itemsupplier where source = %s and lastmodified <> %s", (self.source, self.timestamp))

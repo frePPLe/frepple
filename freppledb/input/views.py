@@ -94,7 +94,7 @@ class PathReport(GridReport):
   a specific item.
   '''
   template = 'input/path.html'
-  title = ''
+  title = _('supply path')
   filterable = False
   frozenColumns = 0
   editable = False
@@ -573,26 +573,31 @@ class UpstreamOperationPath(PathReport):
 class DownstreamItemPath(UpstreamItemPath):
   downstream = True
   objecttype = Item
+  title = _("where used")
 
 
 class DownstreamDemandPath(UpstreamDemandPath):
   downstream = True
   objecttype = Demand
+  title = _("where used")
 
 
 class DownstreamBufferPath(UpstreamBufferPath):
   downstream = True
   objecttype = Buffer
+  title = _("where used")
 
 
 class DownstreamResourcePath(UpstreamResourcePath):
   downstream = True
   objecttype = Resource
+  title = _("where used")
 
 
 class DownstreamOperationPath(UpstreamOperationPath):
   downstream = True
   objecttype = Operation
+  title = _("where used")
 
 
 class BufferList(GridReport):

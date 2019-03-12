@@ -25,8 +25,10 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import force_text
 
 from freppledb.boot import getAttributeFields
+from freppledb.input.models import Demand, Item
+from freppledb.input.models import ManufacturingOrder, PurchaseOrder, DistributionOrder
 from freppledb.common.report import GridPivot, GridFieldText
-from freppledb.input.models import Demand, Item, PurchaseOrder, DistributionOrder, ManufacturingOrder
+from freppledb.common.report import GridFieldCurrency, GridFieldLastModified
 
 
 class OverviewReport(GridPivot):
@@ -41,6 +43,13 @@ class OverviewReport(GridPivot):
   permissions = (("view_demand_report", "Can view demand report"),)
   rows = (
     GridFieldText('item', title=_('item'), key=True, editable=False, field_name='name', formatter='detail', extra='"role":"input/item"'),
+    GridFieldText('description', title=_('description'), initially_hidden=True),
+    GridFieldText('category', title=_('category'), initially_hidden=True),
+    GridFieldText('subcategory', title=_('subcategory'), initially_hidden=True),
+    GridFieldText('owner', title=_('owner'), field_name='owner__name', formatter='detail', extra='"role":"input/item"', initially_hidden=True),
+    GridFieldCurrency('cost', title=_('cost'), initially_hidden=True),
+    GridFieldText('source', title=_('source'), initially_hidden=True),
+    GridFieldLastModified('lastmodified', initially_hidden=True)
     )
   crosses = (
     ('demand', {'title': _('demand')}),
@@ -56,7 +65,7 @@ class OverviewReport(GridPivot):
       reportclass.attr_sql = ''
       # Adding custom item attributes
       for f in getAttributeFields(Item, initially_hidden=True):
-        reportclass.attr_sql += 'item.%s, ' % f.name.split('__')[-1]
+        reportclass.attr_sql += 'parent.%s, ' % f.name.split('__')[-1]
 
   @classmethod
   def extra_context(reportclass, request, *args, **kwargs):
@@ -112,7 +121,9 @@ class OverviewReport(GridPivot):
     # Execute the query
     query = '''
       select
-      parent.name, %s
+      parent.name, parent.description, parent.category, parent.subcategory,
+      parent.owner_id, parent.cost, parent.source, parent.lastmodified,
+      %s
       d.bucket,
       d.startdate,
       d.enddate,
@@ -131,10 +142,10 @@ class OverviewReport(GridPivot):
                    where bucket_id = %%s and enddate > %%s and startdate < %%s
                    ) d
       group by
-      parent.name, %s
-      d.bucket,
-      d.startdate,
-      d.enddate
+        parent.name, parent.description, parent.category, parent.subcategory,
+        parent.owner_id, parent.cost, parent.source, parent.lastmodified,
+        %s
+        d.bucket, d.startdate, d.enddate
       order by %s, d.startdate
     ''' % (reportclass.attr_sql, basesql, reportclass.attr_sql, sortsql)
 
@@ -155,6 +166,13 @@ class OverviewReport(GridPivot):
         backlog += float(row[numfields - 2]) - float(row[numfields - 1])
         res = {
           'item': row[0],
+          'description': row[1],
+          'category': row[2],
+          'subcategory': row[3],
+          'owner': row[4],
+          'cost': row[5],
+          'source': row[6],
+          'lastmodified': row[7],          
           'bucket': row[numfields - 5],
           'startdate': row[numfields - 4].date(),
           'enddate': row[numfields - 3].date(),

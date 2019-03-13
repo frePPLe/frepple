@@ -32,7 +32,20 @@ Release notes
     is changed from 0 to 999.
   | By default, the planning algorithm now waits for any existing confirmed supply before proposing
     a new replenishment.
-  | The new default avoids unnecessary duplicate replenishments and results in more intuitive plans. 
+  | The new default avoids unnecessary duplicate replenishments and results in more intuitive plans.
+
+- The item table gets some read-only fields which capture some key metrics:
+  - number of late demands
+  - quantity of late demands
+  - value of late demands
+  - number of unplanned demands
+  - quantity of unplanned demands
+  - value of unplanned demands
+  
+- The resource table gets a read-only field to store the number of overloads on the resource.
+  
+- The weight field for problems of type 'late' is now indicating the quantity being planned late.
+  In earlier releases it represented the delivery delay.
 
 - Performance optimizations for various corner cases.
 

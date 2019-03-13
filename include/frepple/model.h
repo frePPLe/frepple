@@ -9278,16 +9278,16 @@ class ProblemLate : public Problem
       return true;
     }
 
-    /** The weight is equal to the delay, expressed in days.<br>
-      * The quantity being delayed is not included.
+    /** The weight is quantity that is delivered late. 
+      * It doesn't matter how much it is delayed.
       */
     double getWeight() const
     {
-      assert(getDemand() && !getDemand()->getDelivery().empty());
-      return static_cast<double>(DateRange(
-          getDemand()->getDue(),
-          getDemand()->getLatestDelivery()->getEnd()
-          ).getDuration()) / 86400;
+      double tmp = getDemand()->getQuantity();
+      for (auto dlvr = getDemand()->getDelivery().begin(); dlvr != getDemand()->getDelivery().end(); ++dlvr)
+        if ((*dlvr)->getEnd() <= getDemand()->getDue())
+          tmp -= (*dlvr)->getQuantity();
+      return tmp;
     }
 
     /** Constructor. */

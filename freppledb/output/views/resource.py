@@ -211,7 +211,7 @@ class OverviewReport(GridPivot):
           'setup': round(row[numfields - 1], 1),
           'utilization': round(util, 2)
           }
-        idx = 17
+        idx = 19
         for f in getAttributeFields(Resource):
           result[f.field_name] = row[idx]
           idx += 1

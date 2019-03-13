@@ -37,7 +37,7 @@ _register = {}
 
 def add_extra_model_fields(sender, **kwargs):
   model_path = "%s.%s" % (sender.__module__, sender.__name__)
-  for field_name, label, fieldtype, editable in _register.get(model_path, []):
+  for field_name, label, fieldtype, editable, initially_hidden in _register.get(model_path, []):
     if fieldtype == 'string':
       field = models.CharField(label, max_length=300, null=True, blank=True, db_index=True, editable=editable)
     elif fieldtype == 'boolean':
@@ -71,7 +71,9 @@ def registerAttribute(model, attrlist):
     if len(attr) < 3:
       raise Exception("Invalid attribute definition: %s" % attr)
     elif len(attr) == 3:
-      _register[model].append(attr + (True,))
+      _register[model].append(attr + (True, False))
+    elif len(attr) == 4:
+      _register[model].append(attr + (False,))
     else:
       _register[model].append(attr)
 
@@ -91,28 +93,28 @@ def getAttributeFields(model, related_name_prefix=None, initially_hidden=False):
   from freppledb.common.report import GridFieldInteger, GridFieldDate, GridFieldDateTime
   from freppledb.common.report import GridFieldDuration, GridFieldTime
   result = []
-  for field_name, label, fieldtype, editable in _register.get("%s.%s" % (model.__module__, model.__name__), []):
+  for field_name, label, fieldtype, editable, hidden in _register.get("%s.%s" % (model.__module__, model.__name__), []):
     if related_name_prefix:
       field_name = "%s__%s" % (related_name_prefix, field_name)
       label = "%s - %s" % (related_name_prefix.split('__')[-1], label)
     else:
       label = "%s - %s" % (model.__name__, label)
     if fieldtype == 'string':
-      result.append( GridFieldText(field_name, title=label, initially_hidden=initially_hidden, editable=editable) )
+      result.append( GridFieldText(field_name, title=label, initially_hidden=hidden or initially_hidden, editable=editable) )
     elif fieldtype == 'boolean':
-      result.append( GridFieldBool(field_name, title=label, initially_hidden=initially_hidden, editable=editable) )
+      result.append( GridFieldBool(field_name, title=label, initially_hidden=hidden or initially_hidden, editable=editable) )
     elif fieldtype == 'number':
-      result.append( GridFieldNumber(field_name, title=label, initially_hidden=initially_hidden, editable=editable) )
+      result.append( GridFieldNumber(field_name, title=label, initially_hidden=hidden or initially_hidden, editable=editable) )
     elif fieldtype == 'integer':
-      result.append( GridFieldInteger(field_name, title=label, initially_hidden=initially_hidden, editable=editable) )
+      result.append( GridFieldInteger(field_name, title=label, initially_hidden=hidden or initially_hidden, editable=editable) )
     elif fieldtype == 'date':
-      result.append( GridFieldDate(field_name, title=label, initially_hidden=initially_hidden, editable=editable) )
+      result.append( GridFieldDate(field_name, title=label, initially_hidden=hidden or initially_hidden, editable=editable) )
     elif fieldtype == 'datetime':
-      result.append( GridFieldDateTime(field_name, title=label, initially_hidden=initially_hidden, editable=editable) )
+      result.append( GridFieldDateTime(field_name, title=label, initially_hidden=hidden or initially_hidden, editable=editable) )
     elif fieldtype == 'duration':
-      result.append( GridFieldDuration(field_name, title=label, initially_hidden=initially_hidden, editable=editable) )
+      result.append( GridFieldDuration(field_name, title=label, initially_hidden=hidden or initially_hidden, editable=editable) )
     elif fieldtype == 'time':
-      result.append( GridFieldTime(field_name, title=label, initially_hidden=initially_hidden, editable=editable) )
+      result.append( GridFieldTime(field_name, title=label, initially_hidden=hidden or initially_hidden, editable=editable) )
     else:
       raise Exception("Invalid attribute type '%s'." % fieldtype)
   return result

@@ -65,6 +65,8 @@ class OverviewReport(GridPivot):
       reportclass.attr_sql = ''
       # Adding custom item attributes
       for f in getAttributeFields(Item, initially_hidden=True):
+        f.editable = False
+        reportclass.rows += (f,)
         reportclass.attr_sql += 'parent.%s, ' % f.name.split('__')[-1]
 
   @classmethod
@@ -172,7 +174,7 @@ class OverviewReport(GridPivot):
           'owner': row[4],
           'cost': row[5],
           'source': row[6],
-          'lastmodified': row[7],          
+          'lastmodified': row[7],
           'bucket': row[numfields - 5],
           'startdate': row[numfields - 4].date(),
           'enddate': row[numfields - 3].date(),
@@ -180,7 +182,7 @@ class OverviewReport(GridPivot):
           'supply': round(row[numfields - 1], 1),
           'backlog': round(backlog, 1),
           }
-        idx = 1
+        idx = 8
         for f in getAttributeFields(Item):
           res[f.field_name] = row[idx]
           idx += 1

@@ -2411,12 +2411,7 @@ class OperationPlan
 
     static PyObject* calculateOperationTimePython(PyObject*, PyObject*);
 
-    PyObject* str() const
-    {
-      ostringstream ch;
-      ch << getName();
-      return PythonData(ch.str());
-    }
+    PyObject* str() const;
 
     /** Python factory method. */
     static PyObject* create(PyTypeObject*, PyObject*, PyObject*);

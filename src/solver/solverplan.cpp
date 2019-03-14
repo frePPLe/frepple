@@ -373,6 +373,7 @@ void SolverCreate::SolverData::solveSafetyStock(SolverCreate* solver)
         )
       )
       bufs[(buf->getLevel()>=0) ? buf->getLevel() : 0].push_back(&*buf);
+  State* mystate = state;
   for (vector< list<Buffer*> >::iterator b_list = bufs.begin(); b_list != bufs.end(); ++b_list)
     for (list<Buffer*>::iterator b = b_list->begin(); b != b_list->end(); ++b)
       try
@@ -393,8 +394,22 @@ void SolverCreate::SolverData::solveSafetyStock(SolverCreate* solver)
         (*b)->solve(cleanup, this);
         getCommandManager()->commit();
       }
-      catch(...)
+      catch (const bad_exception&)
       {
+        logger << "Error: bad exception solving safety stock for " << *b << endl;
+        while (state > mystate) pop();
+        getCommandManager()->rollback();
+      }
+      catch (const exception& e)
+      {
+        logger << "Error: exception solving safety stock for " << *b << ": " << e.what() << endl;
+        while (state > mystate) pop();
+        getCommandManager()->rollback();
+      }
+      catch (...)
+      {
+        logger << "Error: unknown exception solving safety stock for " << *b << endl;
+        while (state > mystate) pop();
         getCommandManager()->rollback();
       }
 

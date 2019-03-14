@@ -75,6 +75,14 @@ int OperationPlan::initialize()
 }
 
 
+PyObject* OperationPlan::str() const
+{
+  ostringstream ch;
+  ch << this;
+  return PythonData(ch.str());
+}
+
+
 PyObject* OperationPlan::calculateOperationTimePython(PyObject *self, PyObject *args)
 {
   // Pick up the argument

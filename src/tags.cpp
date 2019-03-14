@@ -124,6 +124,7 @@ const Keyword Tags::maximum("maximum");
 const Keyword Tags::maximum_calendar("maximum_calendar");
 const Keyword Tags::maxinventory("maxinventory");
 const Keyword Tags::maxlateness("maxlateness");
+const Keyword Tags::maxbucketcapacity("maxbucketcapacity");
 const Keyword Tags::members("members");
 const Keyword Tags::minimum("minimum");
 const Keyword Tags::minimum_calendar("minimum_calendar");

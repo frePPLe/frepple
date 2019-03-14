@@ -7115,6 +7115,13 @@ class ResourceBuckets : public Resource
       return computedFromCalendars;
     }
 
+    template<class Cls> static inline void registerFields(MetaClass* m)
+    {
+      m->addDoubleField<Cls>(Tags::maxbucketcapacity, &Cls::getMaxBucketCapacity, nullptr, 0.0, DONT_SERIALIZE);
+    }
+
+    double getMaxBucketCapacity() const;
+
     /** Updates the time buckets and the quantity per time bucket. */
     virtual void setMaximumCalendar(Calendar*);
 

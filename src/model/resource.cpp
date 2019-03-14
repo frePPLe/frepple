@@ -87,6 +87,7 @@ int ResourceBuckets::initialize()
     "resource",
     "resource_buckets",
     Object::create<ResourceBuckets>);
+  registerFields<ResourceBuckets>(const_cast<MetaClass*>(metadata));
 
   // Initialize the Python class
   FreppleClass<ResourceBuckets, Resource>::getPythonType().addMethod(
@@ -274,6 +275,16 @@ void ResourceBuckets::setMaximumCalendar(Calendar* c)
       loadplans.insert(newBucket);
     }
   size_max_cal->clearEventList();
+}
+
+
+double ResourceBuckets::getMaxBucketCapacity() const
+{
+  double tmp = 0.0;
+  for (auto oo = loadplans.begin(); oo != loadplans.end(); ++oo)
+    if (oo->getEventType() == 2 && oo->getOnhand() > tmp)
+      tmp = oo->getOnhand();
+  return tmp;
 }
 
 

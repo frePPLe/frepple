@@ -125,12 +125,12 @@ class Tags
     static const Keyword maximum_calendar;
     static const Keyword maxinventory;
     static const Keyword maxlateness;
+    static const Keyword maxbucketcapacity;
     static const Keyword members;
     static const Keyword minimum;
     static const Keyword minimum_calendar;
     static const Keyword mininventory;
     static const Keyword minshipment;
-    static const Keyword motive;
     static const Keyword name;
     static const Keyword offset;
     static const Keyword onhand;

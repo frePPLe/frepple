@@ -34,6 +34,12 @@ Release notes
     a new replenishment.
   | The new default avoids unnecessary duplicate replenishments and results in more intuitive plans.
 
+- | The search mode to choose among different alternate replenishments can now be controlled by the user.
+  | In previous releases this could only be controlled on operations of type 'alternate', and automatically
+    generated alternates always used priority as the selection mode. 
+  | From this release onwards the field 'operation.search mode' can be used to specify the selection
+    mode from among 'priority', 'minimum cost', 'minimum penalty' and 'minimum cost + penalty'.
+
 - The item table gets some read-only fields which capture some key metrics:
   - number of late demands
   - quantity of late demands

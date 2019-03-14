@@ -2857,6 +2857,41 @@ template <class type> bool TimeLine<type>::Event::operator < (const Event& fl2) 
   }
 }
 
+
+/** This type defines what mode used to search the alternates. */
+enum SearchMode
+{
+  /** Select the alternate with the lowest priority number.<br>
+    * This is the default.
+    */
+  PRIORITY = 0,
+  /** Select the alternate which gives the lowest cost. */
+  MINCOST = 1,
+  /** Select the alternate which gives the lowest penalty. */
+  MINPENALTY = 2,
+  /** Select the alternate which gives the lowest sum of the cost and
+    * penalty. */
+  MINCOSTPENALTY = 3
+};
+
+
+/** Writes a search mode to an output stream. */
+inline ostream & operator << (ostream & os, const SearchMode & d)
+{
+  switch (d)
+  {
+  case PRIORITY: os << "PRIORITY"; return os;
+  case MINCOST: os << "MINCOST"; return os;
+  case MINPENALTY: os << "MINPENALTY"; return os;
+  case MINCOSTPENALTY: os << "MINCOSTPENALTY"; return os;
+  default: assert(false); return os;
+  }
+}
+
+
+/** Translate a string to a search mode value. */
+SearchMode decodeSearchMode(const string& c);
+
 		
 /** @brief An operation represents an activity: these consume and produce material,
   * take time and also require capacity.
@@ -3330,6 +3365,24 @@ class Operation : public HasName<Operation>,
       fence=t;
     }
 
+    /** Return the search mode. */
+    SearchMode getSearch() const
+    {
+      return search;
+    }
+
+    /** Update the search mode. */
+    void setSearch(const string a)
+    {
+      search = decodeSearchMode(a);
+    }
+
+    /** Update the search mode. */
+    void setSearch(SearchMode a)
+    {
+      search = a;
+    }
+
     virtual void updateProblems();
 
     void setHidden(bool b)
@@ -3370,6 +3423,7 @@ class Operation : public HasName<Operation>,
       m->addIteratorField<Cls, flowlist::const_iterator, Flow>(Tags::flows, Tags::flow, &Cls::getFlowIterator, BASE + WRITE_OBJECT);
       m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, &Cls::setHidden, BOOL_FALSE, DONT_SERIALIZE);
       m->addBoolField<Cls>(Tags::hasSuperOperations, &Cls::hasSuperOperations, nullptr, BOOL_FALSE, DONT_SERIALIZE);
+      m->addEnumField<Cls, SearchMode>(Tags::search, &Cls::getSearch, &Cls::setSearch, PRIORITY);
       HasLevel::registerFields<Cls>(m);
     }
 
@@ -3471,6 +3525,9 @@ class Operation : public HasName<Operation>,
 
     /** Does the operation require serialization or not. */
     bool hidden = false;
+
+    /** Mode to select the preferred alternates. */
+    SearchMode search = PRIORITY;
 };
 
 
@@ -4029,41 +4086,6 @@ class OperationRouting : public Operation
 };
 
 
-/** This type defines what mode used to search the alternates. */
-enum SearchMode
-{
-  /** Select the alternate with the lowest priority number.<br>
-    * This is the default.
-    */
-  PRIORITY = 0,
-  /** Select the alternate which gives the lowest cost. */
-  MINCOST = 1,
-  /** Select the alternate which gives the lowest penalty. */
-  MINPENALTY = 2,
-  /** Select the alternate which gives the lowest sum of the cost and
-    * penalty. */
-  MINCOSTPENALTY = 3
-};
-
-
-/** Writes a search mode to an output stream. */
-inline ostream & operator << (ostream & os, const SearchMode & d)
-{
-  switch (d)
-  {
-    case PRIORITY: os << "PRIORITY"; return os;
-    case MINCOST: os << "MINCOST"; return os;
-    case MINPENALTY: os << "MINPENALTY"; return os;
-    case MINCOSTPENALTY: os << "MINCOSTPENALTY"; return os;
-    default: assert(false); return os;
-  }
-}
-
-
-/** Translate a string to a search mode value. */
-SearchMode decodeSearchMode(const string& c);
-
-
 /** @brief This class represents a split between multiple operations. */
 class OperationSplit : public Operation
 {
@@ -4155,7 +4177,7 @@ class OperationAlternate : public Operation
 {
   public:
     /** Default constructor. */
-    explicit OperationAlternate() : search(PRIORITY)
+    explicit OperationAlternate()
     {
       initType(metadata);
     }
@@ -4166,18 +4188,6 @@ class OperationAlternate : public Operation
     virtual bool hasSubOperations() const
     {
       return true;
-    }
-
-    /** Return the search mode. */
-    SearchMode getSearch() const
-    {
-      return search;
-    }
-
-    /** Update the search mode. */
-    void setSearch(const string a)
-    {
-      search = decodeSearchMode(a);
     }
 
     virtual string getOrderType() const
@@ -4229,7 +4239,6 @@ class OperationAlternate : public Operation
 
     template<class Cls> static inline void registerFields(MetaClass* m)
     {
-      m->addEnumField<Cls, SearchMode>(Tags::search, &Cls::getSearch, &Cls::setSearch, PRIORITY);
       m->addIteratorField<Cls, SubOperation::iterator, SubOperation>(Tags::suboperations, Tags::suboperation, &Cls::getSubOperationIterator, BASE + WRITE_OBJECT);
     }
 
@@ -4249,9 +4258,6 @@ class OperationAlternate : public Operation
   private:
     /** List of all alternate operations. */
     Operationlist alternates;
-
-    /** Mode to select the preferred alternates. */
-    SearchMode search;
 };
 
 

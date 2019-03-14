@@ -878,7 +878,8 @@ void Buffer::buildProducingOperation()
           o << "Replenish " << getName();
           superop->setName(o.str());
           superop->setHidden(true);
-          superop->setSearch("PRIORITY");
+          if (oper->getSearch() != PRIORITY)
+            superop->setSearch(oper->getSearch());
           SubOperation* subop2 = new SubOperation();
           subop2->setOperation(producing_operation);
           // Note that priority and effectivity are at default values.
@@ -900,15 +901,19 @@ void Buffer::buildProducingOperation()
             return;
           }
           else
+          {
             subop->setOwner(producing_operation);
+            if (oper->getSearch() != PRIORITY)
+              producing_operation->setSearch(oper->getSearch());
+          }
         }
       }
       else
       {
         // We are the first: only create an operationItemSupplier instance
-        if (supitem->getEffective() == DateRange() && supitem->getPriority() == 1)
-          // Use a single operation. If an alternate is required
-          // later on, we know it has the default priority and effectivity.
+        if (supitem->getEffective() == DateRange() && supitem->getPriority() == 1 && oper->getSearch() == PRIORITY)
+          // Use a single operation. If an alternate is required later on
+          // we know it has the default priority, serach mode and effectivity.
           producing_operation = oper;
         else
         {
@@ -919,7 +924,8 @@ void Buffer::buildProducingOperation()
           o << "Replenish " << getName();
           superop->setName(o.str());
           superop->setHidden(true);
-          superop->setSearch("PRIORITY");
+          if (oper->getSearch() != PRIORITY)
+            superop->setSearch(oper->getSearch());
           SubOperation* subop = new SubOperation();
           subop->setOperation(oper);
           subop->setPriority(supitem->getPriority());
@@ -999,7 +1005,8 @@ void Buffer::buildProducingOperation()
             o << "Replenish " << getName();
             superop->setName(o.str());
             superop->setHidden(true);
-            superop->setSearch("PRIORITY");
+            if (oper->getSearch() != PRIORITY)
+              superop->setSearch(oper->getSearch());
             SubOperation* subop2 = new SubOperation();
             subop2->setOperation(producing_operation);
             // Note that priority and effectivity are at default values.
@@ -1021,15 +1028,19 @@ void Buffer::buildProducingOperation()
               return;
             }
             else
+            {
               subop->setOwner(producing_operation);
+              if (oper->getSearch() != PRIORITY)
+                producing_operation->setSearch(oper->getSearch());
+            }
           }
         }
         else
         {
           // We are the first: only create an operationItemSupplier instance
-          if (itemdist->getEffective() == DateRange() && itemdist->getPriority() == 1)
-            // Use a single operation. If an alternate is required
-            // later on, we know it has the default priority and effectivity.
+          if (itemdist->getEffective() == DateRange() && itemdist->getPriority() == 1 && oper->getSearch() == PRIORITY)
+            // Use a single operation. If an alternate is required later on
+            // we know it has the default priority, search mode and effectivity.
             producing_operation = oper;
           else
           {
@@ -1040,7 +1051,8 @@ void Buffer::buildProducingOperation()
             o << "Replenish " << getName();
             superop->setName(o.str());
             superop->setHidden(true);
-            superop->setSearch("PRIORITY");
+            if (oper->getSearch() != PRIORITY)
+              superop->setSearch(oper->getSearch());
             SubOperation* subop = new SubOperation();
             subop->setOperation(oper);
             subop->setPriority(itemdist->getPriority());
@@ -1104,7 +1116,8 @@ void Buffer::buildProducingOperation()
           o << "Replenish " << getName();
           superop->setName(o.str());
           superop->setHidden(true);
-          superop->setSearch("PRIORITY");
+          if (itemoper->getSearch() != PRIORITY)
+            superop->setSearch(itemoper->getSearch());
           SubOperation* subop2 = new SubOperation();
           subop2->setOperation(producing_operation);
           // Note that priority and effectivity are at default values.
@@ -1126,15 +1139,19 @@ void Buffer::buildProducingOperation()
             return;
           }
           else
+          {
             subop->setOwner(producing_operation);
+            if (itemoper->getSearch() != PRIORITY)
+              producing_operation->setSearch(itemoper->getSearch());
+          }
         }
       }
       else
       {
         // We are the first
-        if (itemoper->getEffective() == DateRange() && itemoper->getPriority() == 1)
-          // Use a single operation. If an alternate is required
-          // later on, we know it has the default priority and effectivity.
+        if (itemoper->getEffective() == DateRange() && itemoper->getPriority() == 1 && itemoper->getSearch() == PRIORITY)
+          // Use a single operation. If an alternate is required later on
+          // we know it has the default priority, search mode and effectivity.
           producing_operation = itemoper;
         else
         {
@@ -1145,7 +1162,8 @@ void Buffer::buildProducingOperation()
           o << "Replenish " << getName();
           superop->setName(o.str());
           superop->setHidden(true);
-          superop->setSearch("PRIORITY");
+          if (itemoper->getSearch() != PRIORITY)
+            superop->setSearch(itemoper->getSearch());
           SubOperation* subop = new SubOperation();
           subop->setOperation(itemoper);
           subop->setPriority(itemoper->getPriority());

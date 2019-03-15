@@ -2493,7 +2493,7 @@ int SetupEvent::initialize()
 
   // Initialize the Python type
   PythonType& x = FreppleCategory<SetupEvent>::getPythonType();
-  x.setName("setupeven");
+  x.setName("setupevent");
   x.setDoc("frePPLe setup event");
   x.supportgetattro();
   x.supportsetattro();

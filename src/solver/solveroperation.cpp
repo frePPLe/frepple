@@ -184,6 +184,7 @@ bool SolverCreate::checkOperation
       // Verify the capacity. This can move the operationplan early or late.
       checkOperationCapacity(opplan,data);
       while (data.state->a_date <= orig_q_date_max && data.state->a_qty == 0.0)
+      while (data.state->a_date <= orig_q_date_max && data.state->a_qty == 0.0 && opplan->getEnd() < Date::infiniteFuture)
       {
         // Try a new date, until we are above the acceptable date
         Date prev = data.state->a_date;

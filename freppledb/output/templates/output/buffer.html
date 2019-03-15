@@ -150,6 +150,9 @@ function drawGraphs(jsondata)
 	          + (Math.round(d['startohdoc']*10)/10) + " {{_('days')}}"
 	          + '</td></tr><tr><td>{{_('start inventory')|capfirst}}</td><td style="text-align:right">'
 	          + (Math.round(d['startinv']*10)/10);
+	        if (d['producedPO'])
+	          tiptext += '</td></tr><tr><td>{{_('produced by PO')|capfirst}}</td><td style="text-align:right">+ '
+	            + (Math.round(d['producedPO']*10)/10);
 	        if (d['producedMO'])
 	          tiptext += '</td></tr><tr><td>{{_('produced by MO')|capfirst}}</td><td style="text-align:right">+ '
 	            + (Math.round(d['producedMO']*10)/10);

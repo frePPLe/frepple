@@ -1596,7 +1596,12 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v)
 
   // Increment the cost
   if (data->state->a_qty > 0.0)
-    data->state->a_cost += data->state->curOwnerOpplan->getQuantity() * oper->getCost();
+  {
+    auto opplan = data->state->curOwnerOpplan;
+    data->state->a_cost += opplan->getQuantity() * oper->getCost();
+    auto subopplan = opplan->getSubOperationPlans();
+    data->state->a_cost += subopplan->getQuantity() * subopplan->getOperation()->getCost();
+  }
 
   // Make sure other operationplans don't take this one as owner any more.
   // We restore the previous owner, which could be nullptr.

@@ -1341,8 +1341,11 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v)
           data->state->a_date = Date::infiniteFuture;
       }
       double deltaPenalty = data->state->a_penalty - beforePenalty;
-      data->state->a_cost = beforeCost;
-      data->state->a_penalty = beforePenalty;
+      if (search != PRIORITY)
+      {
+        data->state->a_cost = beforeCost;
+        data->state->a_penalty = beforePenalty;
+      }
 
       // Keep the lowest of all next-date answers on the effective alternates
       if (data->state->a_date < a_date && data->state->a_date > ask_date)
@@ -1599,8 +1602,6 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v)
   {
     auto opplan = data->state->curOwnerOpplan;
     data->state->a_cost += opplan->getQuantity() * oper->getCost();
-    auto subopplan = opplan->getSubOperationPlans();
-    data->state->a_cost += subopplan->getQuantity() * subopplan->getOperation()->getCost();
   }
 
   // Make sure other operationplans don't take this one as owner any more.

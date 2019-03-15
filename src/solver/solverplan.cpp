@@ -293,8 +293,9 @@ void SolverCreate::SolverData::commit()
       o != purchase_operations.end(); ++o
       )
     {
-      // TODO This code assumes the buffer is ONLY replenished through these purchases.
-      // When it is replenished through an alternate, it will not give the results we expect.
+      // Only process buffers replenished from a single supplier
+      if ((*o)->getBuffer()->getProducingOperation() != *o)
+        continue;
 
       // Erase existing proposed purchases
       const_cast<OperationItemSupplier*>(*o)->deleteOperationPlans(false);

@@ -201,6 +201,7 @@ INSTALLED_APPS = (
     #'freppledb.erpconnection',
     'freppledb.input',
     'freppledb.output',
+    'freppledb.metrics',
     'freppledb.execute',
     'freppledb.common',
     'django_filters',

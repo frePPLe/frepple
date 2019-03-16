@@ -27,7 +27,15 @@ class Migration(migrations.Migration):
 
   operations = [
     migrations.RunSQL('''
-      update operationplan set reference = id where reference is null
+      update operationplan
+      set reference = id
+      where reference is null
+        or reference in (
+          select opplan2.reference
+          from operationplan as opplan2
+          group by opplan2.reference
+          having count(reference) > 1
+          )
       '''),
     migrations.RunSQL('''
       delete from operationplan where owner_id is not null

@@ -47,11 +47,11 @@ class GetPlanMetrics(PlanTask):
             select
               item.name as item,
               coalesce(sum(case when out_problem.name = 'late' then 1 else 0 end),0) latedemandcount,
-              coalesce(sum(case when out_problem.name = 'late' then weight else 0 end),0) latedemandquantity,
-              coalesce(sum(case when out_problem.name = 'late' then weight * item.cost else 0 end),0) latedemandvalue,
+              coalesce(sum(case when out_problem.name = 'late' then out_problem.weight else 0 end),0) latedemandquantity,
+              coalesce(sum(case when out_problem.name = 'late' then out_problem.weight * item.cost else 0 end),0) latedemandvalue,
               coalesce(sum(case when out_problem.name = 'unplanned' then 1 else 0 end),0) unplanneddemandcount,
-              coalesce(sum(case when out_problem.name = 'unplanned' then weight else 0 end),0) unplanneddemandquantity,
-              coalesce(sum(case when out_problem.name = 'unplanned' then weight * item.cost else 0 end),0) unplanneddemandvalue
+              coalesce(sum(case when out_problem.name = 'unplanned' then out_problem.weight else 0 end),0) unplanneddemandquantity,
+              coalesce(sum(case when out_problem.name = 'unplanned' then out_problem.weight * item.cost else 0 end),0) unplanneddemandvalue
             from out_problem
             inner join demand
               on out_problem.owner = demand.name and out_problem.name in ('unplanned', 'late')

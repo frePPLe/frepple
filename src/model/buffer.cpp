@@ -1149,7 +1149,10 @@ void Buffer::buildProducingOperation()
       else
       {
         // We are the first
-        if (itemoper->getEffective() == DateRange() && itemoper->getPriority() == 1 && itemoper->getSearch() == PRIORITY)
+        if (
+          itemoper->getEffective() == DateRange() && itemoper->getPriority() == 1 
+          && (itemoper->getSearch() == PRIORITY || itemoper->hasType<OperationAlternate>())
+          )
           // Use a single operation. If an alternate is required later on
           // we know it has the default priority, search mode and effectivity.
           producing_operation = itemoper;

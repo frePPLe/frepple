@@ -18,11 +18,11 @@ the operation.
 
 The model contains 2 examples. The rows in the above screenshot show for each example:
 
-   - the loading of the assembly resource
+- the loading of the assembly resource
    
-   - the loading of the subassembly resource
+- the loading of the subassembly resource
    
-   - the inventory between the assembly and subassembly operations
+- the inventory between the assembly and subassembly operations
 
 | The first example models a case where subassemblies are produced in batches of
   100 pieces. The assembly operation consumes these in batches of 100 pieces.    

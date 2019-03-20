@@ -557,8 +557,8 @@ register.tag('getDashboard', getDashboard)
 #
 
 @register.simple_tag
-def setting(key):
-  return mark_safe(getattr(settings, key))
+def setting(key, default=None):
+  return getattr(settings, key, default)
 
 
 @register.simple_tag

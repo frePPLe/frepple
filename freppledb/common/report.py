@@ -631,12 +631,12 @@ class GridReport(View):
         try:
           idx = int(r[0])
           if idx < len(cls.rows):
-            del defaultrows[cls.rows[idx].name]
+            defaultrows.pop(cls.rows[idx].name, None)
             rows.append(r)
         except (ValueError, IndexError):
           if r[0] in defaultrows:
             rows.append( (defaultrows[r[0]], r[1], r[2]) )
-            del defaultrows[r[0]]
+            defaultrows.pop(r[0], None)
       for r, idx in defaultrows.items():
         rows.append( (idx, cls.rows[idx].hidden or cls.rows[idx].initially_hidden, cls.rows[idx].width) )
       return rows
@@ -1846,12 +1846,12 @@ class GridPivot(GridReport):
       for r in prefrows:
         try:
           idx = int(r[0])
-          del defaultrows[cls.rows[idx].name]
+          defaultrows.pop(cls.rows[idx].name, None)
           rows.append(r)
         except (ValueError, IndexError):
           if r[0] in defaultrows:
             rows.append( (defaultrows[r[0]], r[1], r[2]) )
-            del defaultrows[r[0]]
+            defaultrows.pop(r[0], None)
       for r, idx in defaultrows.items():
         rows.append( (idx, cls.rows[idx].hidden or cls.rows[idx].initially_hidden, cls.rows[idx].width) )
     else:

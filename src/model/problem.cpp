@@ -274,11 +274,17 @@ HasProblems::EntityIterator::EntityIterator() : type(0)
   delete operIter;
   type = 3;
   demIter = new Demand::iterator(Demand::begin());
+  if (*demIter != Demand::end()) return;
+
+  // Move on to operations if there are no demands either
+  delete demIter;
+  type = 4;
+  opIter = new Operation::iterator(Operation::begin());
   if (*demIter == Demand::end())
   {
     // There is nothing at all in this model
-    delete demIter;
-    type = 4;
+    delete opIter;
+    type = 5;
   }
 }
 
@@ -318,10 +324,19 @@ HasProblems::EntityIterator& HasProblems::EntityIterator::operator++()
       // Demand
       if (*demIter != Demand::end())
         if (++(*demIter) != Demand::end()) return *this;
-      // Ended recursing of all entities
       ++type;
       delete demIter;
-      demIter = nullptr;
+      opIter = new Operation::iterator(Operation::begin());
+      if (*opIter != Operation::end()) return *this;
+      // Note: no break statement
+    case 4:
+      // Operation
+      if (*opIter != Operation::end())
+        if (++(*opIter) != Operation::end()) return *this;
+      // Ended recursing of all entities
+      ++type;
+      delete opIter;
+      opIter = nullptr;
       return *this;
   }
   throw LogicException("Unreachable code reached");
@@ -332,21 +347,20 @@ HasProblems::EntityIterator::~EntityIterator()
 {
   switch (type)
   {
-      // Buffer
     case 0:
       delete bufIter;
       return;
-      // Resource
     case 1:
       delete resIter;
       return;
-      // Operation
     case 2:
       delete operIter;
       return;
-      // Demand
     case 3:
       delete demIter;
+      return;
+    case 4:
+      delete opIter;
       return;
   }
 }
@@ -364,8 +378,10 @@ HasProblems::EntityIterator::EntityIterator(const EntityIterator& o)
     resIter = new Resource::iterator(*(o.resIter));
   else if (type==2)
     operIter = new OperationPlan::iterator(*(o.operIter));
-  else if (type==3)
+  else if (type == 3)
     demIter = new Demand::iterator(*(o.demIter));
+  else if (type == 4)
+    opIter = new Operation::iterator(*(o.opIter));
 }
 
 
@@ -384,8 +400,10 @@ HasProblems::EntityIterator::operator=(const EntityIterator& o)
     resIter = new Resource::iterator(*(o.resIter));
   else if (type==2)
     operIter = new OperationPlan::iterator(*(o.operIter));
-  else if (type==3)
+  else if (type == 3)
     demIter = new Demand::iterator(*(o.demIter));
+  else if (type == 4)
+    opIter = new Operation::iterator(*(o.opIter));
   return *this;
 }
 
@@ -400,17 +418,15 @@ HasProblems::EntityIterator::operator != (const EntityIterator& t) const
   switch (type)
   {
     case 0:
-      // Buffer
       return *bufIter != *(t.bufIter);
     case 1:
-      // Resource
       return *resIter != *(t.resIter);
     case 2:
-      // Operation
       return *operIter != *(t.operIter);
     case 3:
-      // Demand
       return *demIter != *(t.demIter);
+    case 4:
+      return *opIter != *(t.opIter);
     default:
       // Always return true for higher type numbers. This should happen only
       // when comparing with the end of list element.
@@ -424,17 +440,15 @@ HasProblems& HasProblems::EntityIterator::operator*() const
   switch (type)
   {
     case 0:
-      // Buffer
       return **bufIter;
     case 1:
-      // Resource
       return **resIter;
     case 2:
-      // Operation
       return **operIter;
     case 3:
-      // Demand
       return **demIter;
+    case 4:
+      return **opIter;
     default:
       throw LogicException("Unknown problem entity found");
   }
@@ -446,17 +460,15 @@ HasProblems* HasProblems::EntityIterator::operator->() const
   switch (type)
   {
     case 0:
-      // Buffer
       return &**bufIter;
     case 1:
-      // Resource
       return &**resIter;
     case 2:
-      // Operation
       return &**operIter;
     case 3:
-      // Demand
       return &**demIter;
+    case 4:
+      return &**opIter;
     default:
       throw LogicException("Unknown problem entity found");
   }
@@ -471,9 +483,9 @@ HasProblems::EntityIterator HasProblems::beginEntity()
 
 HasProblems::EntityIterator HasProblems::endEntity()
 {
-  // Note that we give call a constructor with type 4, in order to allow
+  // Note that we give call a constructor with type 5, in order to allow
   // a fast comparison.
-  return EntityIterator(4);
+  return EntityIterator(5);
 }
 
 

@@ -140,9 +140,41 @@ bool SolverCreate::checkOperation
     opplan->setStart(Plan::instance().getCurrent());
     // No availability found anywhere in the horizon - data error
     if (opplan->getEnd() == Date::infiniteFuture)
-      throw DataException(
-        "No available time found on operation '" + opplan->getOperation()->getName() + "'"
-        );
+    {
+      string msg = "No available time found on operation '" + opplan->getOperation()->getName() + "'";
+      if (data.logConstraints && data.planningDemand)
+      {
+        auto j = data.planningDemand->getConstraints().begin();
+        while (j != data.planningDemand->getConstraints().end())
+        {
+          if (&(j->getType()) == ProblemInvalidData::metadata
+            && j->getDescription() == msg)
+            break;
+          ++j;
+        }
+        if (j == data.planningDemand->getConstraints().end())
+          data.planningDemand->getConstraints().push(new ProblemInvalidData(
+            opplan->getOperation(), msg, "operation",
+            Plan::instance().getCurrent(), Date::infiniteFuture,
+            data.state->q_qty, false
+          ));
+      }
+      bool problem_already_exists = false;
+      auto probiter = Problem::iterator(opplan->getOperation());
+      while (Problem* prob = probiter.next())
+      {
+        if (typeid(*prob) == typeid(ProblemInvalidData) && prob->getDescription() == msg)
+        {
+          problem_already_exists = true;
+          break;
+        }
+      }
+      if (!problem_already_exists)
+        new ProblemInvalidData(
+          opplan->getOperation(), msg, "operation",
+          Date::infinitePast, Date::infiniteFuture, 1.0
+          );
+    }
     // Pick up the earliest date we can reply back
     data.state->a_date = opplan->getEnd();
     data.state->a_qty = 0.0;
@@ -967,8 +999,41 @@ void SolverCreate::solve(const OperationRouting* oper, void* v)
       }
     }
     if (!flow_qty_fixed && !flow_qty_per)
-      throw DataException("Invalid producing operation '" + oper->getName()
-          + "' for buffer '" + data->state->curBuffer->getName() + "'");
+    {
+      string msg = "Operation doesn't produce into " + data->state->curBuffer->getName();
+      if (data->logConstraints && data->planningDemand)
+      {
+        auto j = data->planningDemand->getConstraints().begin();
+        while (j != data->planningDemand->getConstraints().end())
+        {
+          if (&(j->getType()) == ProblemInvalidData::metadata
+            && j->getDescription() == msg)
+            break;
+          ++j;
+        }
+        if (j == data->planningDemand->getConstraints().end())
+          data->planningDemand->getConstraints().push(new ProblemInvalidData(
+            const_cast<OperationRouting*>(oper), msg, "operation",
+            Plan::instance().getCurrent(), Date::infiniteFuture,
+            1.0, false
+            ));
+      }
+      bool problem_already_exists = false;
+      auto probiter = Problem::iterator(oper);
+      while (Problem* prob = probiter.next())
+      {
+        if (typeid(*prob) == typeid(ProblemInvalidData) && prob->getDescription() == msg)
+        {
+          problem_already_exists = true;
+          break;
+        }
+      }
+      if (!problem_already_exists)
+        new ProblemInvalidData(
+          const_cast<OperationRouting*>(oper), msg, "operation",
+          Date::infinitePast, Date::infiniteFuture, 1.0
+        );
+    }
   }
   else
     // Using the routing as the delivery operation of a demand
@@ -1236,8 +1301,39 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v)
           // we're in trouble...
           // Restore the planning mode
           data->constrainedPlanning = originalPlanningMode;
-          throw DataException("Invalid producing operation '" + oper->getName()
-              + "' for buffer '" + buf->getName() + "'");
+          string msg = "Operation doesn't produce into " + buf->getName();
+          if (data->logConstraints && data->planningDemand)
+          {
+            auto j = data->planningDemand->getConstraints().begin();
+            while (j != data->planningDemand->getConstraints().end())
+            {
+              if (&(j->getType()) == ProblemInvalidData::metadata
+                && j->getDescription() == msg)
+                break;
+              ++j;
+            }
+            if (j == data->planningDemand->getConstraints().end())
+              data->planningDemand->getConstraints().push(new ProblemInvalidData(
+                const_cast<OperationAlternate*>(oper), msg, "operation",
+                Plan::instance().getCurrent(), Date::infiniteFuture,
+                1.0, false
+              ));
+          }
+          bool problem_already_exists = false;
+          auto probiter = Problem::iterator(oper);
+          while (Problem* prob = probiter.next())
+          {
+            if (typeid(*prob) == typeid(ProblemInvalidData) && prob->getDescription() == msg)
+            {
+              problem_already_exists = true;
+              break;
+            }
+          }
+          if (!problem_already_exists)
+            new ProblemInvalidData(
+              const_cast<OperationAlternate*>(oper), msg, "operation",
+              Date::infinitePast, Date::infiniteFuture, 1.0
+            );
         }
       }
       else
@@ -1720,8 +1816,39 @@ void SolverCreate::solve(const OperationSplit* oper, void* v)
       {
         // Neither the top nor the sub operation have a flow in the buffer,
         // we're in trouble...
-        throw DataException("Invalid producing operation '" + oper->getName()
-          + "' for buffer '" + data->state->curBuffer->getName() + "'");
+        string msg = "Operation doesn't produce into " + data->state->curBuffer->getName();
+        if (data->logConstraints && data->planningDemand)
+        {
+          auto j = data->planningDemand->getConstraints().begin();
+          while (j != data->planningDemand->getConstraints().end())
+          {
+            if (&(j->getType()) == ProblemInvalidData::metadata
+              && j->getDescription() == msg)
+              break;
+            ++j;
+          }
+          if (j == data->planningDemand->getConstraints().end())
+            data->planningDemand->getConstraints().push(new ProblemInvalidData(
+              const_cast<OperationSplit*>(oper), msg, "operation",
+              Plan::instance().getCurrent(), Date::infiniteFuture,
+              1.0, false
+            ));
+        }
+        bool problem_already_exists = false;
+        auto probiter = Problem::iterator(oper);
+        while (Problem* prob = probiter.next())
+        {
+          if (typeid(*prob) == typeid(ProblemInvalidData) && prob->getDescription() == msg)
+          {
+            problem_already_exists = true;
+            break;
+          }
+        }
+        if (!problem_already_exists)
+          new ProblemInvalidData(
+            const_cast<OperationSplit*>(oper), msg, "operation",
+            Date::infinitePast, Date::infiniteFuture, 1.0
+          );
       }
 
       // Plan along this alternate

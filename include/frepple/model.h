@@ -8557,10 +8557,10 @@ inline Resource::OperationPlanIterator Resource::getOperationPlans() const
 /** @brief This class models a iterator that walks over all available
   * HasProblem entities.
   *
-  * This list is containing hard-coding the classes that are implementing
-  * this class. It's not ideal, but we don't have an explicit container
-  * of the objects (and we don't want one either) and this allows us also
-  * to re-use the sorting used for the container classes.
+  * This class hard-codes the subclasses that are implementing HasProblems. 
+  * It's not ideal, but we don't have an explicit container of the objects 
+  * (and we don't want one either) and this allows us also to re-use the
+  * sorting used for the container classes.
   */
 class HasProblems::EntityIterator
 {
@@ -8575,6 +8575,7 @@ class HasProblems::EntityIterator
       Resource::iterator *resIter;
       OperationPlan::iterator *operIter;
       Demand::iterator *demIter;
+      Operation::iterator *opIter;
     };
 
     /** This type indicates which type of entity we are currently recursing
@@ -8583,6 +8584,7 @@ class HasProblems::EntityIterator
       *  - 1: resources
       *  - 2: operationplans
       *  - 3: demands
+      *  - 4: operations
       */
     unsigned short type;
 
@@ -8644,7 +8646,7 @@ class Problem::iterator
     /** A pointer to the current problem. If this pointer is nullptr, we are
       * at the end of the list. */
     Problem* iter = nullptr;
-    HasProblems* owner = nullptr;
+    const HasProblems* owner = nullptr;
     HasProblems::EntityIterator *eiter = nullptr;
 
   public:
@@ -8653,7 +8655,7 @@ class Problem::iterator
       * This constructor is also used to create a end-iterator, when passed
       * a nullptr pointer as argument.
       */
-    explicit iterator(HasProblems* o) : iter(o ? o->firstProblem : nullptr),
+    explicit iterator(const HasProblems* o) : iter(o ? o->firstProblem : nullptr),
       owner(o) {}
 
     /** Creates an iterator that will loop through the constraints of

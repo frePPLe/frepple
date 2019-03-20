@@ -342,7 +342,8 @@ void OperatorDelete::solve(const Buffer* b, void* v)
       if (fiter2 == fend && cur_shortage <= -ROUNDING_ERROR)
       {
         unresolvable += cur_shortage;
-        logger << "Can't resolve shortage problem in buffer " << b << endl;
+        if (getLogLevel() > 0)
+          logger << "Can't resolve shortage problem in buffer " << b << endl;
       }
     }
   }

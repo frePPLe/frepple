@@ -1866,8 +1866,11 @@ void OperationPlan::propagateStatus()
     double closed_balance = ROUNDING_ERROR;
     auto tmline = myflpln->getBuffer()->getFlowPlans();
     for (auto flpln = tmline.begin(); flpln != tmline.end(); ++flpln)
-      if (flpln->getOperationPlan()->getClosed() || flpln->getOperationPlan()->getCompleted())
-        closed_balance += flpln->getQuantity();
+      if (
+        flpln->getOperationPlan() && 
+        (flpln->getOperationPlan()->getClosed() || flpln->getOperationPlan()->getCompleted())
+        )
+          closed_balance += flpln->getQuantity();
     
     if (closed_balance < 0.0)
     {
@@ -1876,6 +1879,7 @@ void OperationPlan::propagateStatus()
       // First, try changing the status of confirmed supply
       for (auto flpln = tmline.begin(); flpln != tmline.end(); ++flpln)
         if (flpln->getQuantity() > 0.0
+          && flpln->getOperationPlan()
           && flpln->getOperationPlan()->getConfirmed()
           && !flpln->getOperationPlan()->getClosed()
           && !flpln->getOperationPlan()->getCompleted())
@@ -1889,8 +1893,11 @@ void OperationPlan::propagateStatus()
       {
         // Second, try changing the status of approved supply
         for (auto flpln = tmline.begin(); flpln != tmline.end(); ++flpln)
-          if (flpln->getQuantity() > 0.0 
-            && flpln->getOperationPlan()->getApproved())
+          if (
+            flpln->getQuantity() > 0.0
+            && flpln->getOperationPlan()
+            && flpln->getOperationPlan()->getApproved()
+            )
           {
             flpln->getOperationPlan()->setStatus(mystatus);
             closed_balance += flpln->getQuantity();
@@ -1901,8 +1908,11 @@ void OperationPlan::propagateStatus()
         {
           // Finally, try changing the status of proposed supply
           for (auto flpln = tmline.begin(); flpln != tmline.end(); ++flpln)
-            if (flpln->getQuantity() > 0.0 
-              && flpln->getOperationPlan()->getProposed())
+            if (
+              flpln->getQuantity() > 0.0
+              && flpln->getOperationPlan()
+              && flpln->getOperationPlan()->getProposed()
+              )
             {
               flpln->getOperationPlan()->setStatus(mystatus);
               closed_balance += flpln->getQuantity();

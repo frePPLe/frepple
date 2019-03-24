@@ -31,7 +31,7 @@ try:
   import winxpgui as win32gui
 except ImportError:
   import win32gui
-from win32process import DETACHED_PROCESS, CREATE_NO_WINDOW
+from win32process import CREATE_NO_WINDOW
 
 
 def log(msg):
@@ -319,6 +319,10 @@ if __name__ == '__main__':
     prefix="%t"
     )
 
+  # Redirect all output
+  logfile = os.path.join(settings.FREPPLE_LOGDIR, 'server.log')
+  sys.stdout = sys.stderr = open(logfile, 'w')
+
   # Parse command line
   parser = argparse.ArgumentParser(
     description='Runs a web server for frePPLe.'
@@ -370,13 +374,6 @@ if __name__ == '__main__':
   # - either as command line argument
   # - either 0.0.0.0 by default, which means all active IPv4 interfaces
   address = options.address or settings.ADDRESS
-
-  # Redirect all output
-  logfile = os.path.join(settings.FREPPLE_LOGDIR, 'server.log')
-  try:
-    sys.stdout = open(logfile, 'a', 0)
-  except:
-    print("Can't open log file", logfile)
 
   # Validate the address and port number
   try:

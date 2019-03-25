@@ -4,6 +4,10 @@ Release notes
 5.1.0 (upcoming release)
 ========================
 
+.. rubric:: Production planning
+
+- Bug fix and improvements in the way that completed and closed manufacturing order status
+  is propagated to upstream materials.
 
 5.0.0 (2019/03/16)
 ==================

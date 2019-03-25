@@ -1991,7 +1991,17 @@ class OperationPlan
     string getStatus() const;
 
     /** Update the status of the operationplan. */
-    void setStatus(const string&);
+    void setStatus(const string&, bool propagate);
+
+    void setStatusNoPropagation(const string& s)
+    {
+      setStatus(s, false);
+    }
+
+    void setStatus(const string& s)
+    {
+      setStatus(s, true);
+    }
 
     /** Enforce a specific start date, end date and quantity. There is
       * no validation whether the values are consistent with the operation
@@ -2573,6 +2583,7 @@ class OperationPlan
       // Default of -999 to enforce serializing the value if it is 0
       m->addDoubleField<Cls>(Tags::criticality, &Cls::getCriticality, nullptr, -999, PLAN);
       m->addStringField<Cls>(Tags::status, &Cls::getStatus, &Cls::setStatus, "proposed");
+      m->addStringField<Cls>(Tags::statusNoPropagation, &Cls::getStatus, &Cls::setStatusNoPropagation, "proposed", DONT_SERIALIZE);
       m->addBoolField<Cls>(Tags::approved, &Cls::getApproved, &Cls::setApproved, BOOL_FALSE, DONT_SERIALIZE);
       m->addBoolField<Cls>(Tags::proposed, &Cls::getProposed, &Cls::setProposed, BOOL_FALSE, DONT_SERIALIZE);
       m->addBoolField<Cls>(Tags::confirmed, &Cls::getConfirmed, &Cls::setConfirmed, BOOL_FALSE, DONT_SERIALIZE);

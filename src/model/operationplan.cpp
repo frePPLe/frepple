@@ -376,6 +376,8 @@ Object* OperationPlan::createOperationPlan(
   const DataValue* quantityfld = in.get(Tags::quantity);
   double quantity = quantityfld ? quantityfld->getDouble() : 0.0;
   const DataValue* statusfld = in.get(Tags::status);
+  if (!statusfld)
+    statusfld = in.get(Tags::statusNoPropagation);
 
   // Return the existing operationplan
   if (opplan)
@@ -1868,7 +1870,8 @@ void OperationPlan::propagateStatus()
     for (auto flpln = tmline.begin(); flpln != tmline.end(); ++flpln)
       if (
         flpln->getOperationPlan() && 
-        (flpln->getOperationPlan()->getClosed() || flpln->getOperationPlan()->getCompleted())
+        (flpln->getOperationPlan()->getClosed() || flpln->getOperationPlan()->getCompleted()) &&
+        flpln->getDate() <= myflpln->getDate()
         )
           closed_balance += flpln->getQuantity();
     
@@ -1876,28 +1879,35 @@ void OperationPlan::propagateStatus()
     {
       // Things don't add up here.
       // We'll close some upstream supply to make things match up
-      // First, try changing the status of confirmed supply
+
+      // 1) Correct the date of existing completed supply
       for (auto flpln = tmline.begin(); flpln != tmline.end(); ++flpln)
-        if (flpln->getQuantity() > 0.0
-          && flpln->getOperationPlan()
-          && flpln->getOperationPlan()->getConfirmed()
-          && !flpln->getOperationPlan()->getClosed()
-          && !flpln->getOperationPlan()->getCompleted())
+        if (
+          flpln->getQuantity() > 0.0 &&
+          flpln->getOperationPlan() &&
+          (flpln->getOperationPlan()->getClosed() || flpln->getOperationPlan()->getCompleted()) &&
+          flpln->getDate() > myflpln->getDate()
+          )
         {
-          flpln->getOperationPlan()->setStatus(mystatus);
+          flpln->getOperationPlan()->setStartAndEnd(
+            flpln->getOperationPlan()->getStart() < myflpln->getDate()
+            ? flpln->getOperationPlan()->getStart()
+            : myflpln->getDate(),
+            myflpln->getDate()
+          );
           closed_balance += flpln->getQuantity();
           if (closed_balance >= 0.0)
             break;
         }
       if (closed_balance < 0.0)
       {
-        // Second, try changing the status of approved supply
+        // 2) try changing the status of confirmed supply
         for (auto flpln = tmline.begin(); flpln != tmline.end(); ++flpln)
-          if (
-            flpln->getQuantity() > 0.0
+          if (flpln->getQuantity() > 0.0
             && flpln->getOperationPlan()
-            && flpln->getOperationPlan()->getApproved()
-            )
+            && flpln->getOperationPlan()->getConfirmed()
+            && !flpln->getOperationPlan()->getClosed()
+            && !flpln->getOperationPlan()->getCompleted())
           {
             flpln->getOperationPlan()->setStatus(mystatus);
             closed_balance += flpln->getQuantity();
@@ -1906,12 +1916,12 @@ void OperationPlan::propagateStatus()
           }
         if (closed_balance < 0.0)
         {
-          // Finally, try changing the status of proposed supply
+          // 3) try changing the status of approved supply
           for (auto flpln = tmline.begin(); flpln != tmline.end(); ++flpln)
             if (
               flpln->getQuantity() > 0.0
               && flpln->getOperationPlan()
-              && flpln->getOperationPlan()->getProposed()
+              && flpln->getOperationPlan()->getApproved()
               )
             {
               flpln->getOperationPlan()->setStatus(mystatus);
@@ -1919,6 +1929,25 @@ void OperationPlan::propagateStatus()
               if (closed_balance >= 0.0)
                 break;
             }
+          if (closed_balance < 0.0)
+          {
+            // 4) Try changing the status of proposed supply
+            for (auto flpln = tmline.begin(); flpln != tmline.end(); ++flpln)
+              if (
+                flpln->getQuantity() > 0.0
+                && flpln->getOperationPlan()
+                && flpln->getOperationPlan()->getProposed()
+                )
+              {
+                flpln->getOperationPlan()->setStatus(mystatus);
+                closed_balance += flpln->getQuantity();
+                if (closed_balance >= 0.0)
+                  break;
+              }
+            // 5) Finally, update the initial inventory
+            if (closed_balance < 0)
+              myflpln->getBuffer()->setOnHand(myflpln->getBuffer()->getOnHand() - closed_balance);
+          }
         }
       }
     }
@@ -1941,7 +1970,7 @@ string OperationPlan::getStatus() const
 }
 
 
-void OperationPlan::setStatus(const string& s)
+void OperationPlan::setStatus(const string& s, bool propagate)
 {
   if (s == "approved")
   {
@@ -1970,7 +1999,8 @@ void OperationPlan::setStatus(const string& s)
   update();
   for (OperationPlan *x = firstsubopplan; x; x = x->nextsubopplan)
     x->setStatus(s);
-  propagateStatus();
+  if (propagate)
+    propagateStatus();
 }
 
 

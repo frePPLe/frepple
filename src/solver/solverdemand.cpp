@@ -425,6 +425,12 @@ void SolverCreate::solve(const Demand* l, void* v)
           || (data->getSolver()->getPlanType() == 2 && data->constrainedPlanning && plan_date == l->getDue())
           ));
 
+      if (l->getLatestDelivery() 
+        && l->getLatestDelivery()->getEnd() <= l->getDue() 
+        && l->getPlannedQuantity() >= l->getQuantity() - ROUNDING_ERROR
+        )
+          const_cast<Demand*>(l)->getConstraints().clear();
+
       if (globalPurchase)
       {
         if (sortedLocation.empty() || (l->getPlannedQuantity() + ROUNDING_ERROR >= l->getQuantity()))

@@ -23,6 +23,7 @@
 namespace frepple
 {
 
+const MetaClass* SolverPropagateStatus::metadata;
 const MetaClass* SolverCreate::metadata;
 const Keyword SolverCreate::tag_iterationthreshold("iterationthreshold");
 const Keyword SolverCreate::tag_iterationaccuracy("iterationaccuracy");
@@ -53,7 +54,9 @@ void LibrarySolver::initialize()
   int nok = 0;
   nok += SolverCreate::initialize();
   nok += OperatorDelete::initialize();
-  if (nok) throw RuntimeException("Error registering new Python types");
+  nok += SolverPropagateStatus::initialize();
+  if (nok)
+    throw RuntimeException("Error registering new Python types");
 }
 
 
@@ -565,6 +568,118 @@ PyObject* SolverCreate::rollback(PyObject *self, PyObject *args)
   }
   Py_END_ALLOW_THREADS   // Reclaim Python interpreter
   return Py_BuildValue("");
+}
+
+
+int SolverPropagateStatus::initialize()
+{
+  // Initialize the metadata
+  metadata = MetaClass::registerClass<SolverPropagateStatus>(
+    "solver", "solver_propagateStatus", Object::create<SolverPropagateStatus>, false
+    );
+  registerFields<SolverPropagateStatus>(const_cast<MetaClass*>(metadata));
+
+  // Initialize the Python class
+  PythonType& x = FreppleClass<SolverPropagateStatus, Solver>::getPythonType();
+  x.setName("solver_propagateStatus");
+  x.setDoc("frePPLe solver_propagateStatus");
+  x.supportgetattro();
+  x.supportsetattro();
+  x.supportcreate(create);
+  x.addMethod("solve", solve, METH_NOARGS, "run the solver");
+  const_cast<MetaClass*>(metadata)->pythonClass = x.type_object();
+  return x.typeReady();
+}
+
+
+PyObject* SolverPropagateStatus::create(PyTypeObject* pytype, PyObject* args, PyObject* kwds)
+{
+  try
+  {
+    // Create the solver
+    SolverPropagateStatus *s = new SolverPropagateStatus();
+
+    // Iterate over extra keywords, and set attributes.   @todo move this responsibility to the readers...
+    if (kwds)
+    {
+      PyObject *key, *value;
+      Py_ssize_t pos = 0;
+      while (PyDict_Next(kwds, &pos, &key, &value))
+      {
+        PythonData field(value);
+        PyObject* key_utf8 = PyUnicode_AsUTF8String(key);
+        DataKeyword attr(PyBytes_AsString(key_utf8));
+        Py_DECREF(key_utf8);
+        const MetaFieldBase* fmeta = SolverCreate::metadata->findField(attr.getHash());
+        if (!fmeta)
+          fmeta = Solver::metadata->findField(attr.getHash());
+        if (fmeta)
+          // Update the attribute
+          fmeta->setField(s, field);
+        else
+          s->setProperty(attr.getName(), value);
+      };
+    }
+
+    // Return the object. The reference count doesn't need to be increased
+    // as we do with other objects, because we want this object to be available
+    // for the garbage collector of Python.
+    return static_cast<PyObject*>(s);
+  }
+  catch (...)
+  {
+    PythonType::evalException();
+    return nullptr;
+  }
+}
+
+
+PyObject* SolverPropagateStatus::solve(PyObject *self, PyObject *args)
+{
+  Py_BEGIN_ALLOW_THREADS   // Free Python interpreter for other threads
+  try
+  {
+    static_cast<SolverPropagateStatus*>(self)->solve();
+  }
+  catch (...)
+  {
+    Py_BLOCK_THREADS;
+    PythonType::evalException();
+    return nullptr;
+  }
+  Py_END_ALLOW_THREADS   // Reclaim Python interpreter
+  return Py_BuildValue("");
+}
+
+
+void SolverPropagateStatus::solve(void* v)
+{
+  short lvl = 0;
+  bool operationsfound;
+  do
+  {
+    operationsfound = false;
+    for (auto oper = Operation::begin(); oper != Operation::end(); ++oper)
+    {
+      if (oper->getLevel() != lvl)
+        continue;
+      operationsfound = true;
+      for (auto opplan = oper->getOperationPlans(); opplan != OperationPlan::end(); ++opplan)
+      {
+        if (
+          opplan->getSubOperationPlans() == OperationPlan::end()
+          && (opplan->getClosed() || opplan->getCompleted())
+          )
+        {
+          if (getLogLevel() > 0)
+            logger << " propagating " << &*opplan << endl;
+          opplan->propagateStatus();
+        }
+      }
+    }
+    lvl += 1;
+  } 
+  while (operationsfound);
 }
 
 } // end namespace

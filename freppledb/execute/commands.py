@@ -45,6 +45,58 @@ class MakePlanFeasible(PlanTask):
   def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
     import frepple
 
+    # Erase previous plan
+    if 'supply' in os.environ:
+      logger.info("Erasing existing proposed plan")
+      frepple.erase(False)
+
+    # Determine log level
+    loglevel = int(Parameter.getValue('plan.loglevel', database, 0))
+    if cls.task and cls.task.user:
+      maxloglevel = cls.task.user.getMaxLoglevel(database)
+      if loglevel > maxloglevel:
+        loglevel = maxloglevel
+
+    # Propagate the operationplan status
+    frepple.solver_propagateStatus(
+      loglevel=loglevel
+      ).solve()
+
+    # Create solver
+    try:
+      plantype = int(os.environ['FREPPLE_PLANTYPE'])
+    except:
+      plantype = 1  # Default is a constrained plan
+    try:
+      constraint = int(os.environ['FREPPLE_CONSTRAINT'])
+    except:
+      constraint = 15  # Default is with all constraints enabled
+    createsolver = frepple.solver_mrp(
+      constraints=constraint,
+      plantype=plantype,
+      loglevel=loglevel,
+      lazydelay=int(Parameter.getValue('lazydelay', database, '86400')),
+      allowsplits=(Parameter.getValue('allowsplits', database, 'true').lower() == "true"),
+      minimumdelay=int(Parameter.getValue('plan.minimumdelay', database, '0')),
+      rotateresources=(Parameter.getValue('plan.rotateResources', database, 'true').lower() == "true"),
+      plansafetystockfirst=(Parameter.getValue('plan.planSafetyStockFirst', database, 'false').lower() != "false"),
+      iterationmax=int(Parameter.getValue('plan.iterationmax', database, '0')),
+      resourceiterationmax=int(Parameter.getValue('plan.resourceiterationmax', database, '500')),
+      administrativeleadtime=86400 * float(Parameter.getValue('plan.administrativeLeadtime', database, '0')),
+      autofence=86400 * float(Parameter.getValue("plan.autoFenceOperations", database, '0')),
+      erasePreviousFirst=False  # The previous plan has already been erased in the previous step
+      )
+
+    # Make the initial plan feasible
+    logger.info("Resolving current infeasibilities")
+    wip_sweep_solver = frepple.solver_moveout(
+      constraints=15,
+      acceptTabuCandidate=True,
+      loglevel=loglevel,
+      createsolver=createsolver
+      )
+    wip_sweep_solver.solve()
+
     # Update the feasibility flag of all operationplans
     for oper in frepple.operations():
       for opplan in oper.operationplans:

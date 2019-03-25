@@ -115,18 +115,7 @@ class export:
             )
         ''')
       cursor.execute('''
-        delete from operationplanmaterial
-        using operationplan
-        where operationplanmaterial.operationplan_id = operationplan.reference
-        and (
-          operationplan.status='proposed'
-          or operationplan.status is null
-          or operationplanmaterial.status = 'proposed'
-          or operationplanmaterial.status is null
-          )
-        ''')
-      cursor.execute('''
-        truncate operationplanresource
+        truncate operationplanmaterial, operationplanresource
         ''')
       cursor.execute('''
         delete from operationplan
@@ -151,7 +140,6 @@ class export:
             inner join cluster_keys on cluster_keys.name = parent_opplan.item_id
             )
           )
-        and operationplanmaterial.status = 'proposed'
         ''')
       cursor.execute('''
         delete from out_problem

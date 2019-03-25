@@ -1152,6 +1152,27 @@ class SolverCreate : public Solver
 };
 
 
+class SolverPropagateStatus : public Solver
+{
+  public:
+    SolverPropagateStatus()
+    {
+      initType(metadata);
+    }
+
+    /** Python method for running the solver. */
+    static PyObject* solve(PyObject*, PyObject*);
+
+    /** Solve all infeasibilities by delaying operationplans. */
+    virtual void solve(void *v = nullptr);
+
+    static int initialize();
+    static PyObject* create(PyTypeObject*, PyObject*, PyObject*);
+    virtual const MetaClass& getType() const { return *metadata; }
+    static const MetaClass* metadata;
+};
+
+
 /** @brief This class holds functions that used for maintenance of the solver
   * code.
   */

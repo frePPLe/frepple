@@ -189,6 +189,7 @@ class Tags
     static const Keyword startdate;
     static const Keyword starttime;
     static const Keyword status;
+    static const Keyword statusNoPropagation;
     static const Keyword stringproperty;
     static const Keyword subcategory;
     static const Keyword suboperation;

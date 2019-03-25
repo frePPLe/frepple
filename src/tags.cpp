@@ -187,6 +187,7 @@ const Keyword Tags::startorend("startorend");
 const Keyword Tags::startdate("startdate");
 const Keyword Tags::starttime("starttime");
 const Keyword Tags::status("status");
+const Keyword Tags::statusNoPropagation("statusNoPropagation");
 const Keyword Tags::stringproperty("stringproperty");
 const Keyword Tags::subcategory("subcategory");
 const Keyword Tags::suboperation("suboperation");

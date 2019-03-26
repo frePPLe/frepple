@@ -584,13 +584,19 @@ class FileManager:
     errorcount = 0
     filelist = list()
     if files == 'AllFiles':
-      for filename in os.listdir(folder):
-        clean_filename = re.split(r'/|:|\\', filename)[-1]
-        if clean_filename.lower().endswith(extensions) and not clean_filename.lower().endswith('.log'):
-          filelist.append(clean_filename)
+      if os.path.isdir(folder):
+        for filename in os.listdir(folder):
+          clean_filename = re.split(r'/|:|\\', filename)[-1]
+          if clean_filename.lower().endswith(extensions) and not clean_filename.lower().endswith('.log'):
+            filelist.append(clean_filename)
     else:
       clean_filename = re.split(r'/|:|\\', files)[-1]
-      filelist.append(clean_filename)
+      if os.path.isdir(folder):
+        filelist.append(clean_filename)
+      else:
+        logger.error("Failed file deletion: folder does not exist")
+        errorcount += 1
+        fileerrors = fileerrors + ' / ' + clean_filename
 
     for clean_filename in filelist:
       try:

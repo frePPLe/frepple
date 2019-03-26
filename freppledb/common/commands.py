@@ -219,17 +219,17 @@ if __name__ == "__main__":
   # Find all planning steps and execute them
   from freppledb.common.commands import PlanTaskRegistry as register
   register.autodiscover()
+  newstatus = 'Done'
   try:
     register.run(database=database)
-    if task:
-      task.status = 'Done'
   except Exception as e:
     print("Error during planning: %s" % e)
-    if task:
-      task.status = 'Failed'
+    newstatus = 'Failed'
     raise
   finally:
     # Clear the processid
     if task:
+      task = Task.objects.all().using(database).get(pk=task.id)
       task.processid = None
+      task.status = newstatus
       task.save(update_fields=['processid', 'status'], using=database)

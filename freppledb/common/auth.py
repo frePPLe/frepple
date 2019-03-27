@@ -46,11 +46,11 @@ class MultiDBBackend(ModelBackend):
   This authentication backend relies on the MultiDBMiddleware class
   to assure that the user object refers to the correct database.
   '''
-  def authenticate(self, username=None, password=None):
+  def authenticate(self, request, username=None, password=None):
     try:
       validate_email(username)
       # The user name looks like an email address
-      user = User.objects.get(email=username)
+      user = User.objects.get(email__iexact=username)
       if user.check_password(password):
         return user
     except User.DoesNotExist:
@@ -61,7 +61,7 @@ class MultiDBBackend(ModelBackend):
     except (ValidationError, User.MultipleObjectsReturned):
       # The user name isn't an email address
       try:
-        user = User.objects.get(username=username)
+        user = User.objects.get(username__iexact=username)
         if user.check_password(password):
           return user
       except User.DoesNotExist:

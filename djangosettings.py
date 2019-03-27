@@ -174,6 +174,12 @@ LANGUAGES = (
   ('zh-tw', ugettext('Traditional Chinese')),
 )
 
+# The remember-me checkbox on the login page allows to keep a session cookie
+# active in your browser. The session will expire after the age configured
+# in the setting below (epxressed in seconds).
+# Set the value to 0 to force users to log in for every browser session.
+SESSION_COOKIE_AGE = 3600 * 24 * 3    # 3 days
+
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',

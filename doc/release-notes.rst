@@ -8,6 +8,19 @@ Release notes
 
 - Bug fix and improvements in the way that completed and closed manufacturing order status
   is propagated to upstream materials.
+  
+.. rubric:: User interface
+
+- When logging in, the user names and email address are now evaluated case-insensitively.
+
+- | The login form now offers the option to remember me the login credentials. This avoids that
+    a user has to login every time a browser session on frePPLe is started.
+  | The user session information is persisted in a cookie in your browser. The session cookie will
+    expire after a period of inactivity (configurable with the setting SESSION_COOKIE_AGE), after
+    which the user has to log in again.
+  | Security sensitive deployments should set this setting equal to 0, which forces users
+    to log in for every browser session.
+     
 
 5.0.0 (2019/03/16)
 ==================

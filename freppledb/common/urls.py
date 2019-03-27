@@ -50,6 +50,7 @@ urlpatterns = [
   url(r'^widget/(.+)/', freppledb.common.dashboard.Dashboard.dispatch, name="dashboard"),
 
   # Model list reports, which override standard admin screens
+  url(r'^data/login/$', freppledb.common.views.login),
   url(r'^data/auth/group/$', freppledb.common.views.GroupList.as_view(), name="auth_group_changelist"),
   url(r'^data/common/user/$', freppledb.common.views.UserList.as_view(), name="common_user_changelist"),
   url(r'^data/common/bucket/$', freppledb.common.views.BucketList.as_view(), name="common_bucket_changelist"),

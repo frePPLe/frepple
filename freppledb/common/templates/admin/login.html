@@ -109,6 +109,12 @@ $(function() {
 		    {% comment %}Translators: Translation included with Django {% endcomment %}
 		    <input type="submit" class="btn btn-lg btn-primary" value="{% trans 'Log in' %}"/>
 		  </div>
+	  {% setting "SESSION_COOKIE_AGE" as persistent_cookie %}
+	  {% if persistent_cookie %}
+      <div style="text-align: center; margin-bottom: 10px">		  
+		  <input type="checkbox" name="remember_me" value="false">&nbsp;{% trans "Remember Me" %}</input>
+      </div>
+      {% endif %}
       <div style="text-align: center; margin-bottom: 10px">
         <a href="/reset_password/"><u>{% trans "Forgot your password?" %}</u></a>
       </div>

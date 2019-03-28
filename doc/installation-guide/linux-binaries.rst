@@ -121,11 +121,11 @@ Here are the steps to get a fully working environment.
 
    The python3 modules used by frePPLe are listed in the dependency file "requirements.txt". You can
    install these with a pip3 command. Make sure to run it as root user or use sudo (otherwise
-   the packages will be installed locally for that user instead of system-wide), and to replace 4.4.2
+   the packages will be installed locally for that user instead of system-wide), and to replace 5.0.0
    with the appropriate version number.
    ::
 
-      pip3 install -r https://raw.githubusercontent.com/frepple/frepple/4.4.2/requirements.txt
+      sudo -H pip3 install -r https://raw.githubusercontent.com/frepple/frepple/5.0.0/requirements.txt
       
 
 #. **Install the frepple binary package**
@@ -288,7 +288,7 @@ inspiration for your own deployments.
 
   # Install python3 and required python modules
   sudo apt-get -y install python3 python3-pip
-  sudo -H pip3 install -r requirements.txt
+  sudo -H pip3 install -r https://raw.githubusercontent.com/frepple/frepple/5.0.0/requirements.txt
 
   # Install the frePPLe binary .deb package and the necessary dependencies.
   # There are frepple, frepple-doc and frepple-dev debian package files.
@@ -342,7 +342,7 @@ inspiration for your own deployments.
 
   # Install python3 and required python modules
   sudo dnf install python3 python3-pip
-  sudo pip3 install -r requirements.txt
+  sudo -H pip3 install -r https://raw.githubusercontent.com/frepple/frepple/5.0.0/requirements.txt
 
   # Install the frePPLe binary RPM package and the necessary dependencies.
   # There are frepple, frepple-doc and frepple-dev package files.
@@ -403,7 +403,7 @@ You can use it as a guideline and inspiration for your own deployments.
   # Install python3 and required python modules
   sudo zypper install python3 python3-pip
   sudo python3 -m ensure pip
-  sudo pip3 install -r requirements.txt
+  sudo -H pip3 install -r https://raw.githubusercontent.com/frepple/frepple/5.0.0/requirements.txt
 
   #install Apache2 modules:
   sudo a2enmod mod_access_compat mod_deflate

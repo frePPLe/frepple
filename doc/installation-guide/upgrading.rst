@@ -40,14 +40,13 @@ Generic instructions
    Minor releases (ie the third number in the release number changes) never require
    new dependencies, and you can skip this step.
    
-   The following commands will bring these to the right level as required for the
+   The following command will bring these to the right level as required for the
    new release. Make sure to run it as root user or use sudo (otherwise the packages
-   will be installed locally for that user instead of system-wide), and to replace 4.3
-   with the appropriate major release number
-   (if you are installing 4.3.5 for instance then the URL should only contain 4.3).
+   will be installed locally for that user instead of system-wide), and to replace 5.0.0
+   with the appropriate release number.
    ::
    
-      pip3 install --force-reinstall -r https://raw.githubusercontent.com/frePPLe/frepple/4.3/requirements.txt
+      sudo -H pip3 install --force-reinstall -r https://raw.githubusercontent.com/frePPLe/frepple/5.0.0/requirements.txt
 
 
 #. **Install the new frePPLe release.**
@@ -99,7 +98,7 @@ a Debian/Ubuntu Linux server.
   
   # Upgrade of the PostgreSQL database isn't covered in these commands.
   
-  sudo pip3 install --force-reinstall -r https://raw.githubusercontent.com/frePPLe/frepple/4.3/requirements.txt
+  sudo -H pip3 install --force-reinstall -r https://raw.githubusercontent.com/frePPLe/frepple/5.0.0/requirements.txt
   
   # Download the debian package of the new release here.
   

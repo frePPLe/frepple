@@ -15,12 +15,12 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+from datetime import datetime
 import json
 import os
+from subprocess import Popen
 import sys
 import re
-from datetime import datetime
-from subprocess import Popen
 from importlib import import_module
 import operator
 
@@ -541,26 +541,37 @@ class FileManager:
     errorcount = 0
     response = HttpResponse()
     folder, extensions = FileManager.getFolderInfo(request, foldercode)
-    for filename, content in request.FILES.items():
+
+    # Try to create the upload if doesn't exist yet
+    if not os.path.isdir(settings.DATABASES[request.database]['FILEUPLOADFOLDER']):
       try:
-        # Validate file name
-        clean_filename = re.split(r'/|:|\\', filename)[-1]
-        if not extensions or not clean_filename.lower().endswith(extensions):
-          response.write('%s: %s\n' % (clean_filename, _("Filename extension must be among %(ext)s") % {"ext": ", ".join(extensions)}))
-          errorcount += 1
-          continue
-
-        # Write to a file
-        with open(os.path.join(folder, clean_filename), 'wb') as thetarget:
-          for chunk in content.chunks():
-            thetarget.write(chunk)
-
-        response.write(force_text('%s: %s\n' % (clean_filename, _('OK'))))
-      except Exception as e:
-        logger.error("Failed file upload: %s" % e)
-        response.write('%s: %s\n' % (clean_filename, _("Upload failed") ))
+        os.makedirs(settings.DATABASES[request.database]['FILEUPLOADFOLDER'])
+      except:
         errorcount += 1
-    response.write(force_text('%s' % capfirst(_('finished'))))
+        response.write("Upload folder doesn't exist")
+
+    if not errorcount:
+      # Directory exists and we can upload files into it
+      for filename, content in request.FILES.items():
+        try:
+          # Validate file name
+          clean_filename = re.split(r'/|:|\\', filename)[-1]
+          if not extensions or not clean_filename.lower().endswith(extensions):
+            response.write('%s: %s\n' % (clean_filename, _("Filename extension must be among %(ext)s") % {"ext": ", ".join(extensions)}))
+            errorcount += 1
+            continue
+
+          # Write to a file
+          with open(os.path.join(folder, clean_filename), 'wb') as thetarget:
+            for chunk in content.chunks():
+              thetarget.write(chunk)
+
+          response.write(force_text('%s: %s\n' % (clean_filename, _('OK'))))
+        except Exception as e:
+          logger.error("Failed file upload: %s" % e)
+          response.write('%s: %s\n' % (clean_filename, _("Upload failed") ))
+          errorcount += 1
+      response.write(force_text('%s' % capfirst(_('finished'))))
     if errorcount:
       response.status_code = 400
       response.reason_phrase = '%s files failed to upload correctly' % errorcount

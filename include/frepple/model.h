@@ -1887,10 +1887,6 @@ class OperationPlan
       */
     double getCriticality() const;
 
-    /** Return the quantity of this operationplan that is due within a 
-      * certain time window. */
-    double getCriticalQuantity(Duration = 0L) const;
-
     /** Returns the difference between:
       *  a) the end date of the this operationplan
       * and

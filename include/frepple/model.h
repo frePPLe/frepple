@@ -6191,6 +6191,8 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand
       * The return value is a pair with:
       *   1) flowplan quantity
       *   2) operationplan quantity
+      *
+      * @TODO: update parameter is not used any longer. Anybody calling this method with update=false isn't getting what he expects.
       */
     pair<double, double> setQuantity(
       double quantity, bool rounddown=false, bool update=true,

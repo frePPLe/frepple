@@ -287,6 +287,7 @@ void OperatorDelete::solve(const Buffer* b, void* v)
           --fiter2;
 
         // Resize or delete the candidate operationplan
+        double oldsize_flowplan = fp->getQuantity();
         double newsize_opplan;
         double newsize_flowplan;
         if (cur_shortage < fp->getQuantity() + ROUNDING_ERROR)
@@ -304,7 +305,7 @@ void OperatorDelete::solve(const Buffer* b, void* v)
         if (newsize_flowplan > -ROUNDING_ERROR)
         {
           // The complete operationplan is shortage.
-          cur_shortage -= fp->getQuantity();
+          cur_shortage -= oldsize_flowplan;
           // Add downstream buffers to the stack
           pushBuffers(fp->getOperationPlan(), false, true);
           // Log message
@@ -322,7 +323,7 @@ void OperatorDelete::solve(const Buffer* b, void* v)
           // Add downstream buffers to the stack
           pushBuffers(fp->getOperationPlan(), false, true);
           // Reduce the shortage
-          cur_shortage -= fp->getQuantity() - newsize_flowplan;
+          cur_shortage -= oldsize_flowplan - newsize_flowplan;
           if (getLogLevel() > 0)
             logger << "Resizing shortage operationplan to " << newsize_opplan << ": "
             << fp->getOperationPlan() << endl;

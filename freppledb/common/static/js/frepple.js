@@ -1341,6 +1341,12 @@ var grid = {
     }
     if (col == undefined) return "";
 
+    // Special case for the "within N days" operator
+    if (rule.op == "win") {
+    	var fmts = ngettext("within %s days", "within %s days", 1);
+    	return col.label + ' ' + interpolate(fmts, [rule.data]);
+    }
+    
     // Find operator
     for (var firstKey in $.jgrid.locales)
       var operands = $.jgrid.locales[firstKey].search.odata;

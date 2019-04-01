@@ -235,6 +235,8 @@ class GridField(object):
       o.append(',"searchrules":{%s}' % self.searchrules)
     if self.hidden:
       o.append(',"alwayshidden":true, "hidden":true')
+    if self.searchoptions:
+      o.append(',"searchoptions":%s' % self.searchoptions)
     if self.extra:
       if isinstance(self.extra, collections.Callable):
         o.append(",%s" % force_text(self.extra()))
@@ -257,11 +259,13 @@ class GridField(object):
   searchrules = None
   hidden = False            # NEVER display this field
   initially_hidden = False  # Hide the field by default, but allow the user to add it
+  searchoptions = '{"searchhidden": true}'
 
 
 class GridFieldDateTime(GridField):
   formatter = 'date'
   extra = '"formatoptions":{"srcformat":"Y-m-d H:i:s","newformat":"Y-m-d H:i:s"}'
+  searchoptions = '{"sopt":["cn","em","nm","in","ni","eq","bw","ew","bn","nc","en","win"],"searchhidden": true}'
   width = 140
 
 
@@ -274,6 +278,7 @@ class GridFieldTime(GridField):
 class GridFieldDate(GridField):
   formatter = 'date'
   extra = '"formatoptions":{"srcformat":"Y-m-d","newformat":"Y-m-d"}'
+  searchoptions = '{"sopt":["cn","em","nm","in","ni","eq","bw","ew","bn","nc","en","win"],"searchhidden": true}'
   width = 140
 
 
@@ -657,7 +662,7 @@ class GridReport(View):
     for (index, hidden, width) in rows:
       count += 1
       try:
-        result.append('{%s,"width":%s,"counter":%d%s%s%s,"searchoptions":{"searchhidden": true}}' % (
+        result.append('{%s,"width":%s,"counter":%d%s%s%s}' % (
            cls.rows[index], width, index,
            count < frozencolumns and ',"frozen":true' or '',
            is_popup and ',"popup":true' or '',
@@ -1655,41 +1660,103 @@ class GridReport(View):
           reportclass._rowsByName[i.field_name] = i
     return reportclass._rowsByName[name]
 
+  @staticmethod
+  def _filter_ne(query, reportrow, data):
+    return ~models.Q(**{'%s__iexact' % reportrow.field_name: smart_str(data)})
+
+  @staticmethod
+  def _filter_bn(query, reportrow, data):
+    return ~models.Q(**{'%s__istartswith' % reportrow.field_name: smart_str(data)})
+
+  @staticmethod
+  def _filter_en(query, reportrow, data):
+    return ~models.Q(**{'%s__iendswith' % reportrow.field_name: smart_str(data)})
+
+  @staticmethod
+  def _filter_nc(query, reportrow, data):
+    return ~models.Q(**{'%s__icontains' % reportrow.field_name: smart_str(data)})
+
+  @staticmethod
+  def _filter_ni(query, reportrow, data):
+    return ~models.Q(**{'%s__in' % reportrow.field_name: smart_str(data).split(',')})
+
+  @staticmethod
+  def _filter_in(query, reportrow, data):
+    return models.Q(**{'%s__in' % reportrow.field_name: smart_str(data).split(',')})
+
+  @staticmethod
+  def _filter_eq(query, reportrow, data):
+    return models.Q(**{'%s__iexact' % reportrow.field_name: smart_str(data)})
+
+  @staticmethod
+  def _filter_bw(query, reportrow, data):
+    return models.Q(**{'%s__istartswith' % reportrow.field_name: smart_str(data)})
+
+  @staticmethod
+  def _filter_gt(query, reportrow, data):
+    return models.Q(**{'%s__gt' % reportrow.field_name: smart_str(data)})
+
+  @staticmethod
+  def _filter_gte(query, reportrow, data):
+    return models.Q(**{'%s__gte' % reportrow.field_name: smart_str(data)})
+
+  @staticmethod
+  def _filter_lt(query, reportrow, data):
+    return models.Q(**{'%s__lt' % reportrow.field_name: smart_str(data)})
+
+  @staticmethod
+  def _filter_lte(query, reportrow, data):
+    return models.Q({'%s__lte' % reportrow.field_name: smart_str(data)})
+
+  @staticmethod
+  def _filter_ew(query, reportrow, data):
+    return models.Q(**{'%s__iendswith' % reportrow.field_name: smart_str(data)})
+
+  @staticmethod
+  def _filter_cn(query, reportrow, data):
+    return models.Q(**{'%s__icontains' % reportrow.field_name: smart_str(data)})
+
+  @staticmethod
+  def _filter_win(query, reportrow, data):
+    limit = date.today() + timedelta(int(float(smart_str(data))))
+    return models.Q(**{'%s__lte' % reportrow.field_name: limit})
 
   _filter_map_jqgrid_django = {
-      # jqgrid op: (django_lookup, use_exclude)
-      'ne': ('%(field)s__iexact', True),
-      'bn': ('%(field)s__istartswith', True),
-      'en': ('%(field)s__iendswith', True),
-      'nc': ('%(field)s__icontains', True),
-      'ni': ('%(field)s__in', True),
-      'in': ('%(field)s__in', False),
-      'eq': ('%(field)s__iexact', False),
-      'bw': ('%(field)s__istartswith', False),
-      'gt': ('%(field)s__gt', False),
-      'ge': ('%(field)s__gte', False),
-      'lt': ('%(field)s__lt', False),
-      'le': ('%(field)s__lte', False),
-      'ew': ('%(field)s__iendswith', False),
-      'cn': ('%(field)s__icontains', False)
+    # jqgrid op: (django_lookup, use_exclude, use_extra_where)
+    'ne': _filter_ne.__func__,
+    'bn': _filter_bn.__func__,
+    'en': _filter_en.__func__,
+    'nc': _filter_nc.__func__,
+    'ni': _filter_ni.__func__,
+    'in': _filter_in.__func__,
+    'eq': _filter_eq.__func__,
+    'bw': _filter_bw.__func__,
+    'gt': _filter_gt.__func__,
+    'ge': _filter_gte.__func__,
+    'lt': _filter_lt.__func__,
+    'le': _filter_lte.__func__,
+    'ew': _filter_ew.__func__,
+    'cn': _filter_cn.__func__,
+    'win': _filter_win.__func__
   }
 
 
   _filter_map_django_jqgrid = {
-      # django lookup: jqgrid op
-      'in': 'in',
-      'exact': 'eq',
-      'startswith': 'bw',
-      'iexact': 'eq',
-      'istartswith': 'bw',
-      'gt': 'gt',
-      'gte': 'ge',
-      'lt': 'lt',
-      'lte': 'le',
-      'endswith': 'ew',
-      'contains': 'cn',
-      'iendswith': 'ew',
-      'icontains': 'cn'
+    # django lookup: jqgrid op
+    'in': 'in',
+    'exact': 'eq',
+    'startswith': 'bw',
+    'iexact': 'eq',
+    'istartswith': 'bw',
+    'gt': 'gt',
+    'gte': 'ge',
+    'lt': 'lt',
+    'lte': 'le',
+    'endswith': 'ew',
+    'contains': 'cn',
+    'iendswith': 'ew',
+    'icontains': 'cn'
+    # 'win' exist in jqgrid, but not in django
   }
 
 
@@ -1705,7 +1772,9 @@ class GridReport(View):
           try:
             filters.append(
               '{"field":"%s","op":"%s","data":"%s"},' % (
-              r.field_name, reportclass._filter_map_django_jqgrid[operator], unquote(j).replace('"', '\\"')
+                r.field_name,
+                reportclass._filter_map_django_jqgrid[operator],
+                unquote(j).replace('"', '\\"')
               ))
             filtered = True
           except:
@@ -1722,20 +1791,13 @@ class GridReport(View):
     for rule in filterdata['rules']:
       try:
         op, field, data = rule['op'], rule['field'], rule['data']
-        filter_fmt, exclude = reportclass._filter_map_jqgrid_django[op]
         reportrow = reportclass._getRowByName(field)
         if data == '' and not isinstance(reportrow, (GridFieldText, GridFieldChoice)):
           # Filter value specified, which makes the filter invalid
           continue
-        filter_str = smart_str(filter_fmt % {'field': reportrow.field_name})
-        if filter_fmt.endswith('__in'):
-          filter_kwargs = {filter_str: data.split(',')}
-        else:
-          filter_kwargs = {filter_str: smart_str(data)}
-        if exclude:
-          q_filters.append(~models.Q(**filter_kwargs))
-        else:
-          q_filters.append(models.Q(**filter_kwargs))
+        q_filters.append(
+          reportclass._filter_map_jqgrid_django[op](q_filters, reportrow, data)
+          )
       except:
         pass  # Silently ignore invalid filters
     if 'groups' in filterdata:
@@ -1864,7 +1926,7 @@ class GridPivot(GridReport):
     count = -1
     for (index, hidden, width) in rows:
       try:
-        result.append('{%s,"width":%s,"counter":%d,"frozen":true%s,"hidden":%s,"searchoptions":{"searchhidden": true},"fixed":true}' % (
+        result.append('{%s,"width":%s,"counter":%d,"frozen":true%s,"hidden":%s,"fixed":true}' % (
           cls.rows[index], width, index,
           is_popup and ',"popup":true' or '',
           hidden and 'true' or 'false'

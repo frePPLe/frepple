@@ -11,6 +11,11 @@ Release notes
   
 .. rubric:: User interface
 
+- | A new filter type is introduced for date fields. You can now easily filter records 
+    with a date within a specified time window from today.
+  | In earlier versions you had to explicitly change the date argument for the filter every
+    day. Which was quite boring, error-prone and not very user friendly. 
+
 - When logging in, the user names and email address are now evaluated case-insensitively.
 
 - | The login form now offers the option to remember me the login credentials. This avoids that

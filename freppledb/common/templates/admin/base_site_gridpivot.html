@@ -91,7 +91,19 @@ $(function() {
     postData: {filters: JSON.stringify(initialfilter)},
     search : true,{% endif %}
     {% block extra_grid %}{% endblock %}
-	  height: {% if reportclass.height %}{{reportclass.height}}{% else %}$(window).height() - $("#grid").offset().top - {{reportclass.heightmargin}}{% endif %}
+    customSortOperations: {
+      win: {
+        operand: "within",
+        text: "within days",
+        filter: function (options) {
+          var v = options.item[options.cmName];
+          if (v === undefined || v === null || v === "") {
+            return true;
+          }
+        }
+      }
+    },
+	height: {% if reportclass.height %}{{reportclass.height}}{% else %}$(window).height() - $("#grid").offset().top - {{reportclass.heightmargin}}{% endif %}
     });
   {% if mode == "table" %}jQuery("#grid").jqGrid('setFrozenColumns');
   {% endif %}{% if filters %}var f = grid.getFilterGroup(initialfilter, true);

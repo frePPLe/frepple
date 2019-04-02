@@ -36,14 +36,14 @@ void SolverCreate::solve(const Buffer* b, void* v)
 {
   // Call the user exit
   SolverData* data = static_cast<SolverData*>(v);
-  if (userexit_buffer) userexit_buffer.call(b, PythonData(data->constrainedPlanning));
+  if (userexit_buffer)
+    userexit_buffer.call(b, PythonData(data->constrainedPlanning));
 
   // Verify the iteration limit isn't exceeded.
-  if (data->getSolver()->getIterationMax()
-    && ++data->iteration_count > data->getSolver()->getIterationMax())
+  if (getIterationMax() && ++data->iteration_count > getIterationMax())
   {
     ostringstream ch;
-    ch << "Maximum iteration count " << data->getSolver()->getIterationMax() << " exceeded";
+    ch << "Maximum iteration count " << getIterationMax() << " exceeded";
     throw RuntimeException(ch.str());
   }
 
@@ -72,11 +72,22 @@ void SolverCreate::solve(const Buffer* b, void* v)
     data->state->a_qty = 0.0;
     data->state->a_date = Date::infiniteFuture;
     if (data->logConstraints && data->planningDemand)
-      data->planningDemand->getConstraints().push(new ProblemInvalidData(
-        const_cast<Buffer*>(b), o.str(), "material",
-        Date::infinitePast, Date::infiniteFuture,
-        data->state->q_qty, false
-        ));
+    {
+      bool already_logged = false;
+      for (auto t = data->planningDemand->getConstraints().begin();
+        t != data->planningDemand->getConstraints().end(); ++t)
+        if (t->getDescription() == o.str())
+        {
+          already_logged = true;
+          break;
+        }
+      if (!already_logged)
+        data->planningDemand->getConstraints().push(new ProblemInvalidData(
+          const_cast<Buffer*>(b), o.str(), "material",
+          Date::infinitePast, Date::infiniteFuture,
+          data->state->q_qty, false
+          ));
+    }
     if (data->getSolver()->getLogLevel() > 1)
     {
       logger << indent(b->getLevel()) << "     Warning: " << o.str() << endl;
@@ -97,7 +108,7 @@ void SolverCreate::solve(const Buffer* b, void* v)
   // Evaluate the buffer profile and solve shortages by asking more material.
   // The loop goes from the requested date till the very end. Whenever the
   // event date changes, we evaluate if a shortage exists.
-  Duration autofence = data->getSolver()->getAutoFence();
+  Duration autofence = getAutoFence();
   Date currentDate;
   const TimeLine<FlowPlan>::Event *prev = nullptr;
   double shortage(0.0);
@@ -176,8 +187,7 @@ void SolverCreate::solve(const Buffer* b, void* v)
       }
 
       // Solution one: create supply at the shortage date itself
-      if (theDelta < -ROUNDING_ERROR
-        && !supply_exists_already)
+      if (theDelta < -ROUNDING_ERROR && !supply_exists_already)
       {
         // Can we get extra supply to solve the problem, or part of it?
         // If the shortage already starts before the requested date, it
@@ -199,7 +209,8 @@ void SolverCreate::solve(const Buffer* b, void* v)
 
           // Check whether this date doesn't match with the requested date.
           // See a bit further why this is required.
-          if (data->state->q_date == requested_date) tried_requested_date = true;
+          if (data->state->q_date == requested_date)
+            tried_requested_date = true;
 
           // Make sure the new operationplans don't inherit an owner.
           // When an operation calls the solve method of suboperations, this field is
@@ -231,7 +242,7 @@ void SolverCreate::solve(const Buffer* b, void* v)
           // set to false we need to get a single replenishing operationplan.
           if (data->state->a_qty > ROUNDING_ERROR
               && data->state->a_qty < -theDelta - ROUNDING_ERROR
-              && ((data->getSolver()->getAllowSplits() && !data->safety_stock_planning)
+              && ((getAllowSplits() && !data->safety_stock_planning)
                || data->state->a_qty == b->getProducingOperation()->getSizeMaximum())
              )
             theDelta += data->state->a_qty;

@@ -1637,16 +1637,17 @@ void OperationPlan::deleteOperationPlans(Operation* o, bool deleteLockedOpplans)
 bool OperationPlan::isExcess(bool strict) const
 {
   // Delivery operationplans aren't excess
-  if (getDemand()) return false;
+  if (getDemand())
+    return false;
 
   // Recursive call for suboperationplans
   for (OperationPlan* subopplan = firstsubopplan; subopplan; subopplan = subopplan->nextsubopplan)
-    if (!subopplan->isExcess()) return false;
+    if (!subopplan->isExcess())
+      return false;
 
   // Loop over all producing flowplans
   bool hasFlowplans = false;
-  for (OperationPlan::FlowPlanIterator i = beginFlowPlans();
-      i != endFlowPlans(); ++i)
+  for (auto i = beginFlowPlans(); i != endFlowPlans(); ++i)
   {
     hasFlowplans = true;
     // Skip consuming flowplans
@@ -1959,12 +1960,12 @@ string OperationPlan::getStatus() const
 {
   if (flags & STATUS_APPROVED)
     return "approved";
+  else if (flags & STATUS_COMPLETED)
+    return "completed";
   else if (flags & STATUS_CLOSED)
     return "closed";
   else if (flags & STATUS_CONFIRMED)
     return "confirmed";
-  else if (flags & STATUS_COMPLETED)
-    return "completed";
   else
     return "proposed";
 }

@@ -45,8 +45,8 @@ class importer(object):
   def run(self):
     msg = []
 
-    proc_order = self.req.session.model('purchase.order')
-    proc_orderline = self.req.session.model('purchase.order.line')
+    purch_order = self.req.session.model('purchase.order')
+    purch_orderline = self.req.session.model('purchase.order.line')
     mfg_order = self.req.session.model('mrp.production')
     if self.mode == 1:
       # Cancel previous draft purchase quotations
@@ -56,15 +56,15 @@ class importer(object):
         context=self.req.session.context
         )
       m.unlink(ids, self.req.session.context)
-      msg.append("Removed %s old draft purchase purchase orders" % len(ids))
+      msg.append("Removed %s old draft purchase orders" % len(ids))
 
       # Cancel previous draft procurement orders
-      ids = proc_order.search(
+      ids = purch_order.search(
         ['|', ('state', '=', 'draft'), ('state', '=', 'cancel'), ('origin', '=', 'frePPLe')],
         context=self.req.session.context
         )
-      proc_order.unlink(ids, self.req.session.context)
-      msg.append("Removed %s old draft procurement orders" % len(ids))
+      purch_order.unlink(ids, self.req.session.context)
+      msg.append("Removed %s old draft purchase orders" % len(ids))
 
       # Cancel previous draft manufacturing orders
       ids = mfg_order.search(
@@ -75,7 +75,7 @@ class importer(object):
       msg.append("Removed %s old draft manufacturing orders" % len(ids))
 
     # Parsing the XML data file
-    countproc = 0
+    countpurch = 0
     countmfg = 0
     for event, elem in iterparse(self.datafile, events=('start', 'end')):
       if event == 'end' and elem.tag == 'operationplan':
@@ -84,7 +84,7 @@ class importer(object):
           ordertype = elem.get('ordertype')
           if ordertype == 'PO':
             # Create purchase order
-            po = proc_order.create({
+            po = purch_order.create({
               'company_id': self.company.id,
               'partner_id': int(elem.get('supplier').split(" ", 1)[0]),
               # TODO Odoo has no place to store the location and criticality
@@ -92,7 +92,7 @@ class importer(object):
               #elem.get('criticality'),
               'origin': 'frePPLe'
               })
-            po_line = proc_orderline.create({
+            po_line = purch_orderline.create({
               'order_id': po,
               'product_id': int(item_id),
               'product_qty': elem.get("quantity"),
@@ -101,7 +101,7 @@ class importer(object):
               'price_unit': 0,
               'name': elem.get('item')
               })
-            countproc += 1
+            countpurch += 1
           # TODO Create a distribution order
           # elif ????:
           else:
@@ -124,6 +124,7 @@ class importer(object):
         except Exception as e:
           logger.error("Exception %s" % e)
           msg.append(str(e))
+          raise e
         # Remove the element now to keep the DOM tree small
         root.clear()
       elif event == 'start' and elem.tag == 'operationplans':
@@ -131,6 +132,6 @@ class importer(object):
         root = elem
 
     # Be polite, and reply to the post
-    msg.append("Processed %s uploaded procurement orders" % countproc)
+    msg.append("Processed %s uploaded purchase orders" % countpurch)
     msg.append("Processed %s uploaded manufacturing orders" % countmfg)
     return '\n'.join(msg)

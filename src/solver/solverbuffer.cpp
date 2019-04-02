@@ -452,6 +452,32 @@ void SolverCreate::solveSafetyStock(const Buffer* b, void* v)
         data->state->q_qty = -theDelta;
         data->state->q_date = nextAskDate ? nextAskDate : prev->getDate();
 
+        // Validate whether confirmed/approved supply exists within the autofence window
+        if (getAutoFence())
+        {
+          bool exists = false;
+          for (auto f = b->getFlowPlans().begin(); f != b->getFlowPlans().end(); ++f)
+          {
+            if (f->getQuantity() <= 0 || f->getDate() < data->state->q_date)
+              continue;
+            if (f->getDate() > data->state->q_date + getAutoFence())
+              break;
+            auto tmp = f->getOperationPlan();
+            if (tmp && (tmp->getConfirmed() || tmp->getApproved())
+              && f->getDate() > data->state->q_date)
+            {
+              exists = true;
+              break;
+            }
+          }
+          if (exists)
+          {
+            // Not allowed to create extra supply at this moment
+            loop = false;
+            continue;
+          }
+        }
+
         // Make sure the new operationplans don't inherit an owner.
         // When an operation calls the solve method of suboperations, this field is
         // used to pass the information about the owner operationplan down. When

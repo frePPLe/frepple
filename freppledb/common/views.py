@@ -19,7 +19,6 @@ import json
 
 from django.shortcuts import render
 from django.contrib import messages
-from freppledb.admin import data_site
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.password_validation import validate_password, get_password_validators, password_validators_help_text_html
 from django.contrib.auth.decorators import login_required
@@ -35,7 +34,6 @@ from django.contrib.auth.models import Group
 from django.utils import translation
 from django.conf import settings
 from django.http import Http404, HttpResponseRedirect, HttpResponse, HttpResponseServerError, HttpResponseNotFound
-from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.debug import sensitive_variables
 

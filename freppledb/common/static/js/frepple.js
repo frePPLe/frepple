@@ -441,9 +441,9 @@ jQuery.extend($.fn.fmatter, {
     {
       if (result != '')
       	result += ', ';
-      result += "<span>" + cellvalue[i][0] + "<a href='/detail/" + options.colModel.role 
+      result += '<span><span class="listdetailkey">' + cellvalue[i][0] + "</span><a href='/detail/" + options.colModel.role 
         + "/key/' onclick='opendetail(event)'><span class='leftpadding fa fa-caret-right' role='" 
-        + options.colModel.role + "'></span></a></span>&nbsp;" + cellvalue[i][1];
+        + options.colModel.role + "'></span></a></span>&nbsp;<span>" + cellvalue[i][1] + "</span>";
     }
     return result;
   },
@@ -497,10 +497,21 @@ jQuery.extend($.fn.fmatter, {
     return '';
   }
 });
+
 jQuery.extend($.fn.fmatter.percentage, {
     unformat : function(cellvalue, options, cell) {
       return cellvalue;
       }
+});
+
+jQuery.extend($.fn.fmatter.listdetail, {
+	unformat: function(cellvalue, options, cell) {
+		var o = [];
+		$('.listdetailkey', $(cell)).each(function(idx, val) {
+			o.push([$(val).text(), $(val).parent().next("span").text()]);
+		});
+    return o;		
+	}
 });
 
 

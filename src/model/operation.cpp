@@ -755,7 +755,6 @@ DateRange Operation::calculateOperationTime(
   }
 
   // Third case: more than 1 calendar
-  unsigned int cnt = 0;
   while (true)
   {
     // Find the closest event date

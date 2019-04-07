@@ -728,7 +728,7 @@ void SolverCreate::solve(const ResourceBuckets* res, void* v)
               {
                 opplan->setOperationPlanParameters(
                   newQty,
-                  newStart.getStart(), Date::infiniteFuture,
+                  newStart.getStart(), Date::infinitePast,
                   false, true, true
                 );
                 if (opplan->getQuantity() > 0

@@ -309,7 +309,7 @@ CommandMoveOperationPlan::CommandMoveOperationPlan(OperationPlan* o) : opplan(o)
 
 
 CommandMoveOperationPlan::CommandMoveOperationPlan
-(OperationPlan* o, Date newstart, Date newend, double newQty)
+(OperationPlan* o, Date newstart, Date newend, double newQty) // TODO no control over rounding up or down
   : opplan(o), state(o), firstCommand(nullptr)
 {
   if (!opplan)

@@ -238,22 +238,164 @@ DateRange Operation::calculateOperationTime(
   if (actualduration)
     *actualduration = duration;
 
-  // Step 1: Create an iterator over all involved calendars
+  // Collect calendars
   Calendar::EventIterator cals[10];
   auto numCalendars = collectCalendars(cals, thedate, opplan, forward);
 
-  // Special case: no calendars at all
+  // First case: no calendars at all
   if (!numCalendars)
     return forward ?
       DateRange(thedate, thedate+duration) :
       DateRange(thedate-duration, thedate);
 
-  // Step 2: Iterate over the calendar dates to find periods where all
-  // calendars are simultaneously effective.
   DateRange result;
   Date curdate = thedate;
+  Date selected;
   bool status = false;
   Duration curduration = duration;
+  bool available;
+
+  // Second case: a single calendar only.
+  // We handle it seperate for performance reasons.
+  if (numCalendars == 1)
+  {
+    while (true)
+    {
+      // Find the closest event date
+      selected = forward ? Date::infiniteFuture : Date::infinitePast;
+      if (
+        (forward && cals[0].getDate() < selected)
+        || (!forward && cals[0].getDate() > selected)
+        )
+         selected = cals[0].getDate();
+
+      // Check whether all calendars are available at the next event date      
+      if (forward)
+      {
+        if (cals[0].getDate() == selected && cals[0].getValue() == 0)
+          available = false;
+        else if (cals[0].getDate() != selected && cals[0].getPrevValue() == 0)
+          available = false;
+        else
+          available = true;
+      }
+      else
+      {
+        if (cals[0].getCalendar()->getValue(selected, forward) == 0)
+          available = false;
+        else
+          available = true;
+      }
+      if (!duration)
+      {
+        // A special case for 0-time operations.
+        if (available && forward)
+        {
+          result.setEnd(curdate);
+          result.setStart(curdate);
+          return result;
+        }
+        else if (!available)
+        {
+          available = (cals[0].getCalendar()->getValue(selected, !forward) != 0);
+          if (available)
+          {
+            result.setEnd(curdate);
+            result.setStart(curdate);
+            return result;
+          }
+        }
+      }
+      curdate = selected;
+
+      if (available && !status)
+      {
+        // Becoming available after unavailable period
+        thedate = curdate;
+        status = true;
+        if (forward && result.getStart() == Date::infinitePast)
+          // First available time - make operation start at this time
+          result.setStart(curdate);
+        else if (!forward && result.getEnd() == Date::infiniteFuture)
+          // First available time - make operation end at this time
+          result.setEnd(curdate);
+      }
+      else if (!available && status)
+      {
+        // Becoming unavailable after available period
+        status = false;
+        if (forward)
+        {
+          // Forward
+          Duration delta = curdate - thedate;
+          if (delta >= curduration)
+          {
+            result.setEnd(thedate + curduration);
+            return result;
+          }
+          else
+            curduration -= delta;
+        }
+        else
+        {
+          // Backward
+          Duration delta = thedate - curdate;
+          if (delta >= curduration)
+          {
+            result.setStart(thedate - curduration);
+            return result;
+          }
+          else
+            curduration -= delta;
+        }
+      }
+      else if (forward && curdate == Date::infiniteFuture)
+      {
+        // End of forward iteration
+        if (available)
+        {
+          Duration delta = curdate - thedate;
+          if (delta >= curduration)
+            result.setEnd(thedate + curduration);
+          else if (actualduration)
+            *actualduration = duration - curduration;
+        }
+        else  if (actualduration)
+          *actualduration = duration - curduration;
+        return result;
+      }
+      else if (!forward && curdate == Date::infinitePast)
+      {
+        // End of backward iteration
+        if (available)
+        {
+          Duration delta = thedate - curdate;
+          if (delta >= curduration)
+            result.setStart(thedate - curduration);
+          else if (actualduration)
+            *actualduration = duration - curduration;
+        }
+        else if (actualduration)
+          *actualduration = duration - curduration;
+        return result;
+      }
+
+      // Advance to the next event
+      if (forward)
+      {
+        if (cals[0].getDate() == selected)
+          ++cals[0];
+      }
+      else
+      {
+        if (cals[0].getDate() == selected)
+          --cals[0];
+      }
+    }
+    return result;
+  }
+
+  // Third case: more than 1 calendar
   while (true)
   {    
     // Find the closest event date
@@ -268,7 +410,7 @@ DateRange Operation::calculateOperationTime(
     }
 
     // Check whether all calendars are available at the next event date
-    bool available = true;
+    available = true;
     if (forward)
     {
       for (unsigned short t = 0; t < numCalendars && available; ++t)
@@ -525,11 +667,11 @@ DateRange Operation::calculateOperationTime(
   if (actualduration)
     *actualduration = 0L;
 
-  // Step 1: Create an iterator over all involved calendars
+  // Build a list of involved calendars
   Calendar::EventIterator cals[10];
   auto numCalendars = collectCalendars(cals, start, opplan);
 
-  // Special case: no calendars at all
+  // First case: no calendars at all
   if (!numCalendars)
   {
     if (actualduration)
@@ -537,15 +679,87 @@ DateRange Operation::calculateOperationTime(
     return DateRange(start, end);
   }
 
-  // Step 2: Iterate over the calendar dates to find periods where all
-  // calendars are simultaneously effective.
   DateRange result;
   Date curdate = start;
+  Date selected;
   bool status = false;
+  bool available;
+
+  // Second case: only a single calendar.
+  // We handle it seperate for performance reasons.
+  if (numCalendars == 1)
+  {
+    while (true)
+    {
+      // Find the closest event date
+      selected = cals[0].getDate();
+      curdate = selected;
+
+      // Check whether the calendar is available at the next event date      
+      if (cals[0].getDate() == selected && cals[0].getValue() == 0)
+        available = false;
+      else if (cals[0].getDate() != selected && cals[0].getPrevValue() == 0)
+        available = false;
+      else
+        available = true;
+
+      if (available && !status)
+      {
+        // Becoming available after unavailable period
+        if (curdate >= end)
+        {
+          // Leaving the desired date range
+          result.setEnd(start);
+          return result;
+        }
+        start = curdate;
+        status = true;
+        if (result.getStart() == Date::infinitePast)
+          // First available time - make operation start at this time
+          result.setStart(curdate);
+      }
+      else if (!available && status)
+      {
+        // Becoming unavailable after available period
+        if (curdate >= end)
+        {
+          // Leaving the desired date range
+          if (actualduration)
+            *actualduration += end - start;
+          result.setEnd(end);
+          return result;
+        }
+        status = false;
+        if (actualduration)
+          *actualduration += curdate - start;
+        start = curdate;
+      }
+      else if (curdate >= end)
+      {
+        // Leaving the desired date range
+        if (available)
+        {
+          if (actualduration)
+            *actualduration += end - start;
+          result.setEnd(end);
+          return result;
+        }
+        else
+          result.setEnd(start);
+        return result;
+      }
+
+      // Advance to the next event
+      ++cals[0];
+    }
+  }
+
+  // Third case: more than 1 calendar
+  unsigned int cnt = 0;
   while (true)
   {
     // Find the closest event date
-    Date selected = Date::infiniteFuture;
+    selected = Date::infiniteFuture;
     for (unsigned short t = 0; t < numCalendars; ++t)
     {
       if (cals[t].getDate() < selected)
@@ -554,7 +768,7 @@ DateRange Operation::calculateOperationTime(
     curdate = selected;
 
     // Check whether all calendars are available at the next event date
-    bool available = true;
+    available = true;
     for (unsigned short t = 0; t < numCalendars && available; ++t)
     {
       if (cals[t].getDate() == selected && cals[t].getValue() == 0)
@@ -570,7 +784,7 @@ DateRange Operation::calculateOperationTime(
       {
         // Leaving the desired date range
         result.setEnd(start);
-        break;
+        return result;
       }
       start = curdate;
       status = true;
@@ -587,7 +801,7 @@ DateRange Operation::calculateOperationTime(
         if (actualduration)
           *actualduration += end - start;
         result.setEnd(end);
-        break;
+        return result;
       }
       status = false;
       if (actualduration)
@@ -602,11 +816,10 @@ DateRange Operation::calculateOperationTime(
         if (actualduration)
           *actualduration += end - start;
         result.setEnd(end);
-        break;
       }
       else
         result.setEnd(start);
-      break;
+      return result;
     }
 
     // Advance to the next event

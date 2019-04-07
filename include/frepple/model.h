@@ -488,7 +488,7 @@ class Calendar : public HasName<Calendar>, public HasSource
         double curValue = 0.0;
         double prevValue = 0.0;
       public:
-        const Date& getDate() const
+        Date getDate() const
         { 
           return curDate;
         }
@@ -508,8 +508,10 @@ class Calendar : public HasName<Calendar>, public HasSource
           return prevValue;
         }
 
+        EventIterator() {}
+
         EventIterator(
-          Calendar* c = nullptr, Date d = Date::infinitePast, bool forward = true
+          Calendar* c, Date d = Date::infinitePast, bool forward = true
           );
 
         EventIterator& operator++();
@@ -3771,7 +3773,7 @@ class OperationPlanState  // @todo should also be able to remember and restore s
     double quantity = 0.0;
 
     /** Default constructor. */
-    OperationPlanState() : quantity(0.0) {}
+    OperationPlanState() {}
 
     /** Constructor. */
     OperationPlanState(const OperationPlan* x) : setup(x->getSetupEvent())
@@ -3787,7 +3789,7 @@ class OperationPlanState  // @todo should also be able to remember and restore s
     /** Copy constructor. */
     OperationPlanState(const OperationPlanState& x)
       : start(x.start), end(x.end), setup(x.setup),
-        quantity(x.quantity), tmline(x.tmline) {}
+        tmline(x.tmline), quantity(x.quantity)  {}
 
     /** Constructor. */
     OperationPlanState(const Date x, const Date y, double q, SetupEvent* z = nullptr)

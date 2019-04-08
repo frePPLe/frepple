@@ -91,40 +91,40 @@ def Upload(request):
     for rec in data:
       try:
         if rec['type'] == 'PO':
-          po = PurchaseOrder.objects.using(request.database).get(id=rec['id'])
+          po = PurchaseOrder.objects.using(request.database).get(reference=rec['reference'])
           if not po.supplier.source or po.status != 'proposed' or not po.item.source:
             continue
           data_ok = True
           obj.append(po)
           data_odoo.append(
             '<operationplan ordertype="PO" id="%s" item=%s location=%s supplier=%s start="%s" end="%s" quantity="%s" location_id=%s item_id=%s criticality="%d"/>' % (
-            po.id, quoteattr(po.item.name), quoteattr(po.location.name), 
+            po.reference, quoteattr(po.item.name), quoteattr(po.location.name), 
             quoteattr(po.supplier.name), po.startdate, po.enddate, po.quantity,
             quoteattr(po.location.subcategory or ""), quoteattr(po.item.subcategory or ""),
             int(po.criticality)
             ))
         elif rec['type'] == 'DO':
-          do = DistributionOrder.objects.using(request.database).get(id=rec['id'])
+          do = DistributionOrder.objects.using(request.database).get(reference=rec['reference'])
           if not do.origin.source or do.status != 'proposed' or not do.item.source:
             continue
           data_ok = True
           obj.append(do)
           data_odoo.append(
             '<operationplan ordertype="DO" id="%s" item=%s origin=%s location=%s start="%s" end="%s" quantity="%s" location_id=%s item_id=%s criticality="%d"/>' % (
-            do.id, quoteattr(do.item.name), quoteattr(do.origin.name), 
+            do.reference, quoteattr(do.item.name), quoteattr(do.origin.name), 
             quoteattr(do.location.name), do.startdate, do.enddate, do.quantity,
             quoteattr(do.location.subcategory or ""), quoteattr(do.item.subcategory or ""),
             int(do.criticality)
             ))
         else:
-          op = OperationPlan.objects.using(request.database).get(id=rec['id'])
+          op = OperationPlan.objects.using(request.database).get(reference=rec['reference'])
           if not op.operation.source or op.status != 'proposed' or not op.operation.item:
             continue
           data_ok = True
           obj.append(op)
           data_odoo.append(
             '<operationplan ordertype="MO" id="%s" item=%s location=%s operation=%s start="%s" end="%s" quantity="%s" location_id=%s item_id=%s criticality="%d"/>' % (
-              op.id, quoteattr(op.operation.item.name),
+              op.reference, quoteattr(op.operation.item.name),
               quoteattr(op.operation.location.name), quoteattr(op.operation.name),
               op.startdate, op.enddate, op.quantity,
               quoteattr(op.operation.location.subcategory or ""), quoteattr(op.operation.item.subcategory or ""),

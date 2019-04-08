@@ -6,9 +6,11 @@ Release notes
 
 .. rubric:: Production planning
 
+- Performance improvements for the bucketized resource solver. 
+
 - Bug fix and improvements in the way that completed and closed manufacturing order status
   is propagated to upstream materials.
-  
+
 .. rubric:: User interface
 
 - | A new filter type is introduced for date fields. You can now easily filter records 

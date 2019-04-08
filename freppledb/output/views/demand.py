@@ -90,32 +90,26 @@ class OverviewReport(GridPivot):
     # Execute a query to get the backlog at the start of the horizon
     startbacklogdict = {}
     query = '''
-      select items.name, coalesce(req.qty, 0) - coalesce(pln.qty, 0)
-      from (%s) items
-      left outer join (
-        select parent.name, sum(quantity) qty
-        from demand
-        inner join item on demand.item_id = item.name
+      select name, sum(qty) from
+        (
+        select parent.name, sum(demand.quantity) qty from (%s) item
         inner join item parent on item.lft between parent.lft and parent.rght
-        where status in ('open', 'quote')
-        and due < %%s
+        inner join demand on demand.item_id = item.name and demand.status in ('open','quote') and due < %%s
         group by parent.name
-        ) req
-      on req.name = items.name
-      left outer join (
-        select parent.name, sum(operationplan.quantity) qty
-        from operationplan
-        inner join demand on operationplan.demand_id = demand.name
-          and operationplan.owner_id is null
+        union all
+        select parent.name, sum(operationplanmaterial.quantity) qty
+        from operationplanmaterial
+        inner join operationplan on operationplan.reference = operationplanmaterial.operationplan_id
+          and operationplan.type = 'DLVR'
           and operationplan.enddate < %%s
-        inner join item on demand.item_id = item.name
+        inner join (%s) item on operationplanmaterial.item_id = item.name
         inner join item parent on item.lft between parent.lft and parent.rght
         group by parent.name
-        ) pln
-      on pln.name = items.name
-      ''' % basesql
+        ) t
+        group by name
+      ''' % (basesql, basesql)
     with connections[request.database].chunked_cursor() as cursor_chunked:
-      cursor_chunked.execute(query, baseparams + (request.report_startdate, request.report_startdate))
+      cursor_chunked.execute(query, baseparams + (request.report_startdate, request.report_startdate) + baseparams)
       for row in cursor_chunked:
         if row[0]:
           startbacklogdict[row[0]] = float(row[1])

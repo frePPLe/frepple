@@ -189,6 +189,9 @@ def parseCSVdata(model, data, user=None, database=DEFAULT_DB_ALIAS, ping=False):
         if isinstance(idx[1], BooleanField) and val == '0':
           # Argh... bool('0') returns True.
           return False
+        elif isinstance(idx[1], DecimalField):
+          # Automatically round to 8 digits rather than giving an error message
+          return round(float(val), 8) if val != "" else None
         else:
           return val if val != "" else None
       except KeyError as e:

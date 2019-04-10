@@ -278,20 +278,22 @@ class GridFieldTime(GridField):
 class GridFieldDate(GridField):
   formatter = 'date'
   extra = '"formatoptions":{"srcformat":"Y-m-d","newformat":"Y-m-d"}'
-  searchoptions = '{"sopt":["cn","em","nm","in","ni","eq","bw","ew","bn","nc","en","win"],"searchhidden": true}'
+  searchoptions = '{"sopt":["cn","em","nm","in","ni","eq","bw","ew","bn","nc","en","win"],"searchhidden":true}'
   width = 140
 
 
 class GridFieldInteger(GridField):
   formatter = 'integer'
   extra = '"formatoptions":{"defaultValue": ""}'
+  searchoptions = '{sopt:["eq","ne","in","ni","lt","le","gt","ge"],"searchhidden":true}'
   width = 70
   searchrules = '"integer":true'
 
 
 class GridFieldNumber(GridField):
   formatter = 'number'
-  extra = '"formatoptions":{"defaultValue": ""}'
+  extra = '"formatoptions":{"defaultValue":"","decimalPlaces":"auto"}'
+  searchoptions = '{sopt:["eq","ne","in","ni","lt","le","gt","ge"],"searchhidden":true}'
   width = 70
   searchrules = '"number":true'
 
@@ -304,6 +306,7 @@ class GridFieldBool(GridField):
 class GridFieldLastModified(GridField):
   formatter = 'date'
   extra = '"formatoptions":{"srcformat":"Y-m-d H:i:s","newformat":"Y-m-d H:i:s"}'
+  searchoptions = '{"sopt":["cn","em","nm","in","ni","eq","bw","ew","bn","nc","en","win"],"searchhidden":true}'
   title = _('last modified')
   editable = False
   width = 140
@@ -360,6 +363,7 @@ def getCurrency():
 
 class GridFieldCurrency(GridField):
   formatter = 'currency'
+  searchoptions = '{sopt:["eq","ne","in","ni","lt","le","gt","ge"],"searchhidden":true}'
   def extra(self):
     cur = getCurrency()
     return '"formatoptions":%s' % json.dumps({
@@ -373,6 +377,7 @@ class GridFieldCurrency(GridField):
 class GridFieldDuration(GridField):
   formatter = 'duration'
   width = 80
+  searchoptions = '{sopt:["eq","ne","in","ni","lt","le","gt","ge"],"searchhidden":true}'
 
 
 def getBOM(encoding):

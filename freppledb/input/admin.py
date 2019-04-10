@@ -462,8 +462,8 @@ class Demand_admin(MultiDBModelAdmin):
   raw_id_fields = ('customer', 'item', 'operation', 'owner',)
   fieldsets = (
     (None, {'fields': (
-      'name', 'item', 'location', 'customer', 'description', 'category',
-      'subcategory', 'due', 'quantity', 'priority', 'status', 'owner'
+      'name', 'item', 'location', 'customer', 'due', 'quantity', 'priority',
+      'status', 'description', 'category', 'subcategory', 'owner'
       )}),
     (_('planning parameters'), {'fields': (
       'operation', 'minshipment', 'maxlateness'

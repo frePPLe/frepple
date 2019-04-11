@@ -205,15 +205,15 @@ function drawGraphs(jsondata)
 	         graph.showTooltip(
 	           '<div class="panel-heading" style="text-align:center; font-weight:bold">'
 	           + timebuckets[d['bucket']]['name'] + "&nbsp;"
-	           + (Math.round(d['perc']*10)/10) + '%</div>'
+	           + d['perc'] + '%</div>'
 	           + '<table><tr><td>{{_('available')|capfirst}}</td><td style="text-align:center">'
-	           + (Math.round(d['available']*10)/10)
+	           + grid.formatNumber(d['available'])
 	           + '</td></tr><tr><td>{{_('unavailable')|capfirst}}</td><td style="text-align:center">'
-	           + (Math.round(d['unavailable']*10)/10)
+	           + grid.formatNumber(d['unavailable'])
 	           + '</td></tr><tr><td>{{_('setup')|capfirst}}</td><td style="text-align:center">'
-	           + (Math.round(d['setup']*10)/10)
+	           + grid.formatNumber(d['setup'])
 	           + '</td></tr><tr><td>{{_('load')|capfirst}}</td><td style="text-align:center">'
-	           + (Math.round(d['load']*10)/10)
+	           + grid.formatNumber(d['load'])
 	           + '</td></tr></table>'
 	           );
 	        })
@@ -304,15 +304,16 @@ function crosses (cellvalue, options, rowdata)
     {
       case 3:
         if (cellvalue[3] != 0.0)
-          result += cellvalue[3] + '<a href="{{request.prefix}}/loadplan/' +
-                                             admin_escape(rowdata['resource']) +
-                                             '/?operationplan__startdate__lt=' + options['colModel']['enddate'] +
-                                             (typeof rowdata['type'] !== 'undefined' && rowdata['type'].includes('bucket') ?
-                                             '&amp;operationplan__startdate__gte=' : '&amp;operationplan__enddate__gt=') +
-                                             options['colModel']['startdate'] +
-                                             '">&nbsp;<span class="context cross fa fa-caret-right"></span></a><br>';
+          result += grid.formatNumber(cellvalue[3]) +
+            '<a href="{{request.prefix}}/loadplan/' +
+            admin_escape(rowdata['resource']) +
+            '/?operationplan__startdate__lt=' + options['colModel']['enddate'] +
+            (typeof rowdata['type'] !== 'undefined' && rowdata['type'].includes('bucket') ?
+            '&amp;operationplan__startdate__gte=' : '&amp;operationplan__enddate__gt=') +
+            options['colModel']['startdate'] +
+            '">&nbsp;<span class="context cross fa fa-caret-right"></span></a><br>';
         else
-          result += '0.0<br>';
+          result += '0<br>';
         break;
       case 4:
         if (cellvalue[4] > 95)
@@ -321,7 +322,7 @@ function crosses (cellvalue, options, rowdata)
           result += cellvalue[4] + '%<br>';
         break;
       default:
-        result += cellvalue[cross_idx[i]] + '<br>';
+        result += grid.formatNumber(cellvalue[cross_idx[i]]) + '<br>';
     }
   return result;
 };

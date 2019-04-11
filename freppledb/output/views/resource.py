@@ -22,13 +22,10 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import string_concat
 
 from freppledb.boot import getAttributeFields
-from freppledb.input.models import Resource, Location, OperationPlanResource, Operation
-from freppledb.input.views import OperationPlanMixin
+from freppledb.input.models import Resource, Location
 from freppledb.common.models import Parameter
-from freppledb.common.report import GridReport, GridPivot, GridFieldCurrency
-from freppledb.common.report import GridFieldLastModified, GridFieldDuration
-from freppledb.common.report import GridFieldDateTime, GridFieldInteger
-from freppledb.common.report import GridFieldNumber, GridFieldText, GridFieldBool
+from freppledb.common.report import GridPivot, GridFieldCurrency, GridFieldDuration
+from freppledb.common.report import GridFieldNumber, GridFieldText
 
 
 class OverviewReport(GridPivot):
@@ -123,11 +120,11 @@ class OverviewReport(GridPivot):
       if units.value == 'hours':
         return (1.0, _('hours'))
       elif units.value == 'weeks':
-        return (1.0 / 168.0, _('weeks'))
+        return (168, _('weeks'))
       else:
-        return (1.0 / 24.0, _('days'))
+        return (24, _('days'))
     except Exception:
-      return (1.0 / 24.0, _('days'))
+      return (24, _('days'))
 
   @classmethod
   def query(reportclass, request, basequery, sortsql='1 asc'):
@@ -148,10 +145,10 @@ class OverviewReport(GridPivot):
         res.avgutil, res.available_id available_calendar, res.owner_id,
         %s
         d.bucket as col1, d.startdate as col2,
-        coalesce(sum(out_resourceplan.available),0) * (case when res.type = 'buckets' then 1 else %f end) as available,
-        coalesce(sum(out_resourceplan.unavailable),0) * (case when res.type = 'buckets' then 1 else %f end) as unavailable,
-        coalesce(sum(out_resourceplan.load),0) * (case when res.type = 'buckets' then 1 else %f end) as loading,
-        coalesce(sum(out_resourceplan.setup),0) * (case when res.type = 'buckets' then 1 else %f end) as setup
+        coalesce(sum(out_resourceplan.available),0) / (case when res.type = 'buckets' then 1 else %f end) as available,
+        coalesce(sum(out_resourceplan.unavailable),0) / (case when res.type = 'buckets' then 1 else %f end) as unavailable,
+        coalesce(sum(out_resourceplan.load),0) / (case when res.type = 'buckets' then 1 else %f end) as loading,
+        coalesce(sum(out_resourceplan.setup),0) / (case when res.type = 'buckets' then 1 else %f end) as setup
       from (%s) res
       left outer join location
         on res.location_id = location.name
@@ -188,8 +185,8 @@ class OverviewReport(GridPivot):
       cursor_chunked.execute(query, baseparams)
       for row in cursor_chunked:
         numfields = len(row)
-        if row[numfields-4] != 0:
-          util = row[numfields-2] * 100 / row[numfields-4]
+        if row[numfields - 4] != 0:
+          util = round(row[numfields - 2] * 100 / row[numfields - 4], 2)
         else:
           util = 0
         result = {
@@ -205,11 +202,11 @@ class OverviewReport(GridPivot):
           'owner': row[18],
           'bucket': row[numfields - 6],
           'startdate': row[numfields - 5].date(),
-          'available': round(row[numfields - 4], 1),
-          'unavailable': round(row[numfields - 3], 1),
-          'load': round(row[numfields - 2], 1),
-          'setup': round(row[numfields - 1], 1),
-          'utilization': round(util, 2)
+          'available': row[numfields - 4],
+          'unavailable': row[numfields - 3],
+          'load': row[numfields - 2],
+          'setup': row[numfields - 1],
+          'utilization': util
           }
         idx = 19
         for f in getAttributeFields(Resource):

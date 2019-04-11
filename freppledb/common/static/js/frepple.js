@@ -527,6 +527,75 @@ var grid = {
    // popup is closed and the selected id is passed to the calling page.
    selected: undefined,
 
+   formatNumber: function(nData) {
+  	 // Number formatting function copied from free-jqgrid.
+  	 // Adapted to show a max number of decimal places.  	 
+  	 var isNumber = $.fmatter.isNumber;
+			if (!isNumber(nData)) {
+				nData *= 1;
+			}
+			if (isNumber(nData)) {				
+				var bNegative = (nData < 0);				
+				var sOutput;
+				if (nData > 100000)
+				  // Big numbers: Show max 1 digits after the comma, without trailing zeros
+					sOutput = String(parseFloat(nData.toFixed(1)));
+				else
+					// Small numbers: Show 10 significant digits (before or after the comma), without trailing zeros
+					sOutput = String(parseFloat(nData.toPrecision(8)));
+				var sDecimalSeparator = jQuery("#grid").jqGrid("getGridRes", "formatter.number.decimalSeparator");
+				if (sDecimalSeparator !== ".") 
+					// Replace the "."
+					sOutput = sOutput.replace(".", sDecimalSeparator);
+				/*   Replaced jqgrid logic with the above logic on our own
+				var sOutput = String(nData);
+				var sDecimalSeparator = jQuery("#grid").jqGrid("getGridRes", "formatter.number.decimalSeparator");				
+				//if (isNumber(decimalPlaces)) {
+					// Round to the correct decimal place
+					var nDecimalPlaces = 4;  // Hardcoded to get max 4 decimals
+					var nDecimal = 10000;    // Hardcoded to get max 4 decimals
+					sOutput = String(Math.round(nData * nDecimal) / nDecimal);
+					nDotIndex = sOutput.lastIndexOf(".");
+					if (nDecimalPlaces > 0) {
+						// Add the decimal separator
+						if (nDotIndex < 0) {
+              // Commented out from the standard JQGrid function
+							//sOutput += sDecimalSeparator;
+							//nDotIndex = sOutput.length - 1;
+						} else if (sDecimalSeparator !== ".") { // Replace the "."
+							sOutput = sOutput.replace(".", sDecimalSeparator);
+						};
+						// Commented out from the standard JQGrid function
+						// Add missing zeros
+						//while ((sOutput.length - 1 - nDotIndex) < nDecimalPlaces) {
+						//	sOutput += "0";
+						//}
+					}
+				// }
+				*/
+				var sThousandsSeparator = jQuery("#grid").jqGrid("getGridRes", "formatter.number.thousandsSeparator");
+				if (sThousandsSeparator) {
+					var nDotIndex = sOutput.lastIndexOf(sDecimalSeparator);
+					nDotIndex = (nDotIndex > -1) ? nDotIndex : sOutput.length;
+					// we cut the part after the point for integer numbers
+					// it will prevent storing/restoring of wrong numbers during inline editing
+					var sNewOutput = sDecimalSeparator === undefined ? "" : sOutput.substring(nDotIndex);
+					var nCount = -1, i;
+					for (i = nDotIndex; i > 0; i--) {
+						nCount++;
+						if ((nCount % 3 === 0) && (i !== nDotIndex) && (!bNegative || (i > 1))) {
+							sNewOutput = sThousandsSeparator + sNewOutput;
+						}
+						sNewOutput = sOutput.charAt(i - 1) + sNewOutput;
+					}
+					sOutput = sNewOutput;
+				}
+				return sOutput;
+
+			}
+			return nData;
+   },
+   
    // Function used to summarize by returning the last value
    summary_last: function(val, name, record)
    {

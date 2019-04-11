@@ -147,44 +147,44 @@ function drawGraphs(jsondata)
 	        tiptext = '<div class="panel-heading" style="text-align:center; font-weight:bold">'
 	          + timebuckets[d['bucket']]['name'] + '</div>'
 	          + '<table><tr><td>{{_('start inventory days of cover')|capfirst}}</td><td style="text-align:right">'
-	          + (Math.round(d['startohdoc']*10)/10) + " {{_('days')}}"
+	          + d['startohdoc'] + " {{_('days')}}"
 	          + '</td></tr><tr><td>{{_('start inventory')|capfirst}}</td><td style="text-align:right">'
-	          + (Math.round(d['startinv']*10)/10);
+	          + grid.formatNumber(d['startinv']);
 	        if (d['producedPO'])
 	          tiptext += '</td></tr><tr><td>{{_('produced by PO')|capfirst}}</td><td style="text-align:right">+ '
-	            + (Math.round(d['producedPO']*10)/10);
+	            + grid.formatNumber(d['producedPO']);
 	        if (d['producedMO'])
 	          tiptext += '</td></tr><tr><td>{{_('produced by MO')|capfirst}}</td><td style="text-align:right">+ '
-	            + (Math.round(d['producedMO']*10)/10);
+	            + grid.formatNumber(d['producedMO']);
 	        if (d['producedDO'])
 	          tiptext += '</td></tr><tr><td>{{_('produced by DO')|capfirst}}</td><td style="text-align:right">+ '
-	            + (Math.round(d['producedDO']*10)/10);
+	            + grid.formatNumber(d['producedDO']);
 	        if (d['consumedMO'])
 	          tiptext += '</td></tr><tr><td>{{_('consumed by MO')|capfirst}}</td><td style="text-align:right">- '
-	            + (Math.round(d['consumedMO']*10)/10);
+	            + grid.formatNumber(d['consumedMO']);
 	        if (d['consumedSO'])
 	          tiptext += '</td></tr><tr><td>{{_('consumed by SO')|capfirst}}</td><td style="text-align:right">- '
-	            + (Math.round(d['consumedSO']*10)/10);
+	            + grid.formatNumber(d['consumedSO']);
 	        if (d['consumedDO'])
 	          tiptext += '</td></tr><tr><td>{{_('consumed by DO')|capfirst}}</td><td style="text-align:right">- '
-	            + (Math.round(d['consumedDO']*10)/10);
+	            + grid.formatNumber(d['consumedDO']);
 	        tiptext += '</td></tr><tr><td>{{_('end inventory')|capfirst}}</td><td style="text-align:right">= '
-	          + (Math.round((d['startinv']+d['produced']-d['consumed'])*10)/10);
+	          + grid.formatNumber(d['startinv']+d['produced']-d['consumed']);
 	        if (d['safetystock'])
 	          tiptext += '</td></tr><tr><td>{{_('safety stock')|capfirst}}</td><td style="text-align:right">'
-	            + (Math.round(d['safetystock']*10)/10);
+	            + grid.formatNumber(d['safetystock']);
 	        if (d['total_in_progress'])
 	          tiptext += '</td></tr><tr><td>{{_('total in progress')|capfirst}}</td><td style="text-align:right">'
-	            + (Math.round(d['total_in_progress']*10)/10);
+	            + grid.formatNumber(d['total_in_progress']);
 	        if (d['work_in_progress_mo'])
 	          tiptext += '</td></tr><tr><td>{{_('work in progress MO')|capfirst}}</td><td style="text-align:right">'
-	            + (Math.round(d['work_in_progress_mo']*10)/10);
+	            + grid.formatNumber(d['work_in_progress_mo']);
 	        if (d['on_order_po'])
 	          tiptext += '</td></tr><tr><td>{{_('on order PO')|capfirst}}</td><td style="text-align:right">'
-	            + (Math.round(d['on_order_po']*10)/10);
+	            + grid.formatNumber(d['on_order_po']);
 	        if (d['in_transit_do'])
 	          tiptext += '</td></tr><tr><td>{{_('in transit DO')|capfirst}}</td><td style="text-align:right">'
-	            + (Math.round(d['in_transit_do']*10)/10);
+	            + grid.formatNumber(d['in_transit_do']);
 	        tiptext += '</td></tr></table>'          
 	        graph.showTooltip(tiptext);
 	        })
@@ -308,121 +308,123 @@ function crosses (cellvalue, options, rowdata)
   for (var i in cross_idx)
     switch(cross_idx[i])
     {
+      case 1:
+        result += cellvalue[cross_idx[i]] + '<br>';
       case 3:
         if (cellvalue[3] != 0.0)
-           result += cellvalue[3] + "<a href='{{request.prefix}}/flowplan/" +
+           result += grid.formatNumber(cellvalue[3]) + "<a href='{{request.prefix}}/flowplan/" +
               admin_escape(rowdata['buffer']) +
               "/?flowdate__gte=" + options['colModel']['startdate'] +
               "&amp;flowdate__lt=" + options['colModel']['enddate'] +
               "&amp;quantity__lt=0'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
-          result += '0.0<br>';
+          result += '0<br>';
         break;
       case 4:
         if (cellvalue[4] != 0.0)
-           result += cellvalue[4] + "<a href='{{request.prefix}}/data/input/manufacturingorder/consumed/" +
+           result += grid.formatNumber(cellvalue[4]) + "<a href='{{request.prefix}}/data/input/manufacturingorder/consumed/" +
               admin_escape(rowdata['item']) + "/" +
               admin_escape(rowdata['location']) + "/" +
               options['colModel']['startdate'] + "/" +
               options['colModel']['enddate'] + "/" +
               "'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
-          result += '0.0<br>';
+          result += '0<br>';
         break;
       case 5:
         if (cellvalue[5] != 0.0)
-           result += cellvalue[5] + "<a href='{{request.prefix}}/data/input/distributionorder/consumed/" +
+           result += grid.formatNumber(cellvalue[5]) + "<a href='{{request.prefix}}/data/input/distributionorder/consumed/" +
               admin_escape(rowdata['item']) + "/" +
               admin_escape(rowdata['location']) + "/" +
               options['colModel']['startdate'] + "/" +
               options['colModel']['enddate'] + "/" +
               "'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
-          result += '0.0<br>';
+          result += '0<br>';
         break;
       case 6:
         if (cellvalue[6] != 0.0)
-           result += cellvalue[6] + "<a href='{{request.prefix}}/data/input/deliveryorder/consumed/" +
+           result += grid.formatNumber(cellvalue[6]) + "<a href='{{request.prefix}}/data/input/deliveryorder/consumed/" +
               admin_escape(rowdata['item']) + "/" +
               admin_escape(rowdata['location']) + "/" +
               options['colModel']['startdate'] + "/" +
               options['colModel']['enddate'] + "/" +
               "'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
-          result += '0.0<br>';
+          result += '0<br>';
         break;
       case 7:
         if (cellvalue[7] != 0.0)
-           result += cellvalue[7] + "<a href='{{request.prefix}}/flowplan/" +
+           result += grid.formatNumber(cellvalue[7]) + "<a href='{{request.prefix}}/flowplan/" +
               admin_escape(rowdata['buffer']) +
               "/?flowdate__gte=" + options['colModel']['startdate'] +
               "&amp;flowdate__lt=" + options['colModel']['enddate'] +
               "&amp;quantity__gte=0'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
-          result += '0.0<br>';
+          result += '0<br>';
         break;
       case 8:
         if (cellvalue[8] != 0.0)
-           result += cellvalue[8] + "<a href='{{request.prefix}}/data/input/manufacturingorder/produced/" +
+           result += grid.formatNumber(cellvalue[8]) + "<a href='{{request.prefix}}/data/input/manufacturingorder/produced/" +
               admin_escape(rowdata['item']) + "/" +
               admin_escape(rowdata['location']) + "/" +
               options['colModel']['startdate'] + "/" +
               options['colModel']['enddate'] + "/" +
               "'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
-          result += '0.0<br>';
+          result += '0<br>';
         break;
       case 9:
         if (cellvalue[9] != 0.0)
-           result += cellvalue[9] + "<a href='{{request.prefix}}/data/input/distributionorder/produced/" +
+           result += grid.formatNumber(cellvalue[9]) + "<a href='{{request.prefix}}/data/input/distributionorder/produced/" +
               admin_escape(rowdata['item']) + "/" +
               admin_escape(rowdata['location']) + "/" +
               options['colModel']['startdate'] + "/" +
               options['colModel']['enddate'] + "/" +
               "'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
-          result += '0.0<br>';
+          result += '0<br>';
         break;
       case 10:
         if (cellvalue[10] != 0.0)
-           result += cellvalue[10] + "<a href='{{request.prefix}}/data/input/purchaseorder/produced/" +
+           result += grid.formatNumber(cellvalue[10]) + "<a href='{{request.prefix}}/data/input/purchaseorder/produced/" +
               admin_escape(rowdata['item']) + "/" +
               admin_escape(rowdata['location']) + "/" +
               options['colModel']['startdate'] + "/" +
               options['colModel']['enddate'] + "/" +
               "'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
-          result += '0.0<br>';
+          result += '0<br>';
         break;
       case 13:
         if (cellvalue[13] != 0.0)
-           result += cellvalue[13] + "<a href='{{request.prefix}}/data/input/manufacturingorder/operationplanmaterial/" +
+           result += grid.formatNumber(cellvalue[13]) + "<a href='{{request.prefix}}/data/input/manufacturingorder/operationplanmaterial/" +
               admin_escape(rowdata['item']) + "/" + admin_escape(rowdata['location']) +
               "/" + options['colModel']['enddate'] +
               "/'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
-          result += '0.0<br>';
+          result += '0<br>';
         break;
       case 14:
         if (cellvalue[14] != 0.0)
-           result += cellvalue[14] + "<a href='{{request.prefix}}/data/input/purchaseorder/operationplanmaterial/" +
+           result += grid.formatNumber(cellvalue[14]) + "<a href='{{request.prefix}}/data/input/purchaseorder/operationplanmaterial/" +
               admin_escape(rowdata['item']) + "/" + admin_escape(rowdata['location']) +
               "/" + options['colModel']['enddate'] +
               "/'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
-          result += '0.0<br>';
+          result += '0<br>';
         break;
       case 15:
         if (cellvalue[15] != 0.0)
-           result += cellvalue[15] + "<a href='{{request.prefix}}/data/input/distributionorder/operationplanmaterial/" +
+           result += grid.formatNumber(cellvalue[15]) + "<a href='{{request.prefix}}/data/input/distributionorder/operationplanmaterial/" +
               admin_escape(rowdata['item']) + "/" + admin_escape(rowdata['location']) +
               "/" + options['colModel']['enddate'] +
               "/'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
-          result += '0.0<br>';
+          result += '0<br>';
         break;
       default:
-        result += cellvalue[cross_idx[i]] + '<br>';
+        result += grid.formatNumber(cellvalue[cross_idx[i]]) + '<br>';
     }
   return result;
 };

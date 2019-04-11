@@ -268,7 +268,7 @@ class OverviewReport(GridPivot):
           'location__owner_id': row[14],
           'location__source': row[15],
           'location__lastmodified': row[16],
-          'startoh': round(row[numfields - 6]['onhand'] if row[numfields - 6] else 0, 1),
+          'startoh': row[numfields - 6]['onhand'] if row[numfields - 6] else 0,
           'startohdoc': 0 if (row[numfields - 6]['onhand']  if row[numfields - 6] else 0) <= 0\
                           else (999 if row[numfields - 6]['periodofcover'] == 86313600\
                                     else (datetime.strptime(row[numfields - 6]['flowdate'],'%Y-%m-%d %H:%M:%S') +\
@@ -276,20 +276,20 @@ class OverviewReport(GridPivot):
           'bucket': row[numfields - 5],
           'startdate': row[numfields - 4].date(),
           'enddate': row[numfields - 3].date(),
-          'safetystock': round(row[numfields - 2] or 0, 1),
-          'consumed': round(row[numfields - 1]['consumed'] or 0, 1),
-          'consumedMO': round(row[numfields - 1]['consumedMO'] or 0, 1),
-          'consumedDO': round(row[numfields - 1]['consumedDO'] or 0, 1),
-          'consumedSO': round(row[numfields - 1]['consumedSO'] or 0, 1),
-          'produced': round(row[numfields - 1]['produced'] or 0, 1),
-          'producedMO': round(row[numfields - 1]['producedMO'] or 0, 1),
-          'producedDO': round(row[numfields - 1]['producedDO'] or 0, 1),
-          'producedPO': round(row[numfields - 1]['producedPO'] or 0, 1),
-          'total_in_progress': round(row[numfields - 1]['total_in_progress'] or 0, 1),
-          'work_in_progress_mo': round(row[numfields - 1]['work_in_progress_mo'] or 0, 1),
-          'on_order_po': round(row[numfields - 1]['on_order_po'] or 0, 1),
-          'in_transit_do': round(row[numfields - 1]['in_transit_do'] or 0, 1),
-          'endoh': round(float(round(row[numfields - 6]['onhand'] if row[numfields - 6] else 0, 1)) + float(round(row[numfields - 1]['produced'] or 0, 1)) - float(round(row[numfields - 1]['consumed'] or 0, 1)), 1),
+          'safetystock': row[numfields - 2] or 0,
+          'consumed': row[numfields - 1]['consumed'] or 0,
+          'consumedMO': row[numfields - 1]['consumedMO'] or 0,
+          'consumedDO': row[numfields - 1]['consumedDO'] or 0,
+          'consumedSO': row[numfields - 1]['consumedSO'] or 0,
+          'produced': row[numfields - 1]['produced'] or 0,
+          'producedMO': row[numfields - 1]['producedMO'] or 0,
+          'producedDO': row[numfields - 1]['producedDO'] or 0,
+          'producedPO': row[numfields - 1]['producedPO'] or 0,
+          'total_in_progress': row[numfields - 1]['total_in_progress'] or 0,
+          'work_in_progress_mo': row[numfields - 1]['work_in_progress_mo'] or 0,
+          'on_order_po': row[numfields - 1]['on_order_po'] or 0,
+          'in_transit_do': row[numfields - 1]['in_transit_do'] or 0,
+          'endoh': float(row[numfields - 6]['onhand'] if row[numfields - 6] else 0) + float(row[numfields - 1]['produced'] or 0) - float(row[numfields - 1]['consumed'] or 0),
           }
         # Add attribute fields
         idx = 16

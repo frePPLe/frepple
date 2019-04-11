@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: 5.1.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-12-08 16:28+0100\n"
-"PO-Revision-Date: 2018-12-08 16:08+0100\n"
+"PO-Revision-Date: 2019-04-11 11:34+0200\n"
 "Last-Translator: Joao Ranita <jranita@frepple.com>\n"
 "Language-Team: frepple\n"
 "Language: fr\n"
@@ -22,7 +22,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Poedit 2.2\n"
+"X-Generator: Poedit 2.0.1\n"
 "X-Poedit-Basepath: /home/frepple/workspace/frepple/contrib/django/freppledb\n"
 
 #: common/admin.py:37
@@ -4222,7 +4222,7 @@ msgstr "progression totale"
 
 #: output/templates/output/buffer.html:177 output/views/buffer.py:100
 msgid "work in progress MO"
-msgstr "OF fabrication en cours"
+msgstr "OF en cours"
 
 #: output/templates/output/buffer.html:180 output/views/buffer.py:101
 msgid "on order PO"

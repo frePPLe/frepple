@@ -1410,7 +1410,7 @@ msgstr ""
 "<span data-toggle=\"tooltip\" data-placement=\"top\" data-html=\"true\" data-"
 "original-title=\"Générer un plan d'approvisionnement qui respecte toutes les "
 "contraintes.<br>Dans le cas de quantités insuffisantes la demande sera "
-"planifiée soit en retard soit partiellement.\">ontraintes su plan</span>"
+"planifiée soit en retard soit partiellement.\">Contraintes sur plan</span>"
 
 #: execute/management/commands/runplan.py:300
 msgid ""

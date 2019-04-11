@@ -146,7 +146,7 @@ module.exports = function (grunt) {
     uglify: {
       options: {
         sourceMap: true,
-        banner: '/* frePPLe <%= pkg.version %> <%= grunt.template.today("yyyy-mm-dd") %>\n' +
+        banner: '/* frePPLe <%= pkg.version %>\n' +
           'Copyright (C) 2010-2019 by frePPLe bvba\n\n' +
           'This library is free software; you can redistribute it and/or modify it\n' +
           'under the terms of the GNU Affero General Public License as published\n' +

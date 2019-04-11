@@ -1060,7 +1060,7 @@ var grid = {
           '<div class="modal-content">'+
             '<div class="modal-header">'+
               '<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>'+
-              '<h4 class="modal-title">'+gettext("Export CSV or Excel file")+'</h4>'+
+              '<h4 class="modal-title text-capitalize-first">'+gettext("Export CSV or Excel file")+'</h4>'+
             '</div>'+
             '<div class="modal-body">'+
               '<label class="control-label">' + gettext("Export format") +
@@ -1198,7 +1198,7 @@ var grid = {
              '<div class="modal-content">'+
                '<div class="modal-header">'+
                  '<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true" class="fa fa-times"></span></button>'+
-                 '<h4 class="modal-title">'+gettext('Delete data')+'</h4>'+
+                 '<h4 class="modal-title text-capitalize-first">'+gettext('Delete data')+'</h4>'+
                '</div>'+
                '<div class="modal-body">'+
                  '<p>'+interpolate(gettext('You are about to delete %s objects AND ALL RELATED RECORDS!'), [sel.length], false)+'</p>'+
@@ -1246,7 +1246,7 @@ var grid = {
              '<div class="modal-content">'+
                '<div class="modal-header">'+
                  '<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true" class="fa fa-times"></span></button>'+
-                 '<h4 class="modal-title">'+gettext("Copy data")+'</h4>'+
+                 '<h4 class="modal-title text-capitalize-first">'+gettext("Copy data")+'</h4>'+
                  '</div>'+
                  '<div class="modal-body">'+
                    '<p>'+interpolate(gettext('You are about to duplicate %s objects'), [sel.length], false)+'</p>'+
@@ -1284,13 +1284,6 @@ var grid = {
 
   showPlanExportModal: function ()
   {
-      //test purposes
-      var data = {
-	  'labels': ['name', 'type', 'quantity', 'value', 'startdate', 'enddate', 'criticality'],
-	  'values': [['somename0', 'atype', '1000', '1000000', '2015-02-31', '2016-04-31', '1'],['some very long name that almost has no end', 'atype', '1000', '1000000', '2015-02-31', '2016-04-31', '1']]
-        };
-      //end test
-
       $('#timebuckets').modal('hide');
       $.jgrid.hideModal("#searchmodfbox_grid");
       var tableheadercontent = '';
@@ -1310,7 +1303,7 @@ var grid = {
         '<div class="modal-content">'+
           '<div class="modal-header">'+
             '<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true" class="fa fa-times"></span></button>'+
-            '<h4 class="modal-title">'+gettext("Export Plan")+'</h4>'+
+            '<h4 class="modal-title text-capitalize-first">'+gettext("Export Plan")+'</h4>'+
           '</div>'+
           '<div class="modal-body">'+
             '<div class="table-responsive">'+
@@ -1769,10 +1762,10 @@ var ERPconnection = {
           '<div class="modal-content">'+
           '<div class="modal-header">'+
           '<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true" class="fa fa-times"></span></button>'+
-          '<h4 class="modal-title text-capitalize">'+gettext("export")+'</h4>'+
+          '<h4 class="modal-title text-capitalize-first">'+gettext("export")+'</h4>'+
           '</div>'+
           '<div class="modal-body">'+
-          '<p class="text-capitalize">' + gettext("export selected records") + '</p>'+
+          '<p class="text-capitalize-first">' + gettext("export selected records") + '</p>'+
           '</div>'+
           '<div class="modal-footer">'+
           '<input type="submit" id="button_export" role="button" class="btn btn-danger pull-left" value="'+gettext('Confirm')+'">'+
@@ -1853,7 +1846,7 @@ var ERPconnection = {
           '<div class="modal-content">'+
           '<div class="modal-header">'+
           '<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true" class="fa fa-times"></span></button>'+
-          '<h4 class="modal-title text-capitalize">'+gettext("export")+'</h4>'+
+          '<h4 class="modal-title text-capitalize-first">'+gettext("export")+'</h4>'+
           '</div>'+
           '<div class="modal-body">'+
 

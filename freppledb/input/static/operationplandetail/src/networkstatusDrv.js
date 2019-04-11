@@ -69,13 +69,13 @@ function shownetworkstatusDrv($window, gettextCatalog) {
               rows += '<small>'+gettextCatalog.getString('superseded')+'</small>';
             }
             rows += '</td><td>'+
-            thenetwork[2]+'</td><td>'+
-            thenetwork[3]+'</td><td>'+
-            thenetwork[4]+'</td><td>'+
-            thenetwork[5]+'</td><td>'+
-            thenetwork[6]+'</td><td>'+
-            thenetwork[7]+'</td><td>'+
-            thenetwork[8]+'</td></tr>';
+              grid.formatNumber(thenetwork[2]) + '</td><td>'+
+              grid.formatNumber(thenetwork[3]) + '</td><td>'+
+              grid.formatNumber(thenetwork[4]) + '</td><td>'+
+              grid.formatNumber(thenetwork[5]) + '</td><td>'+
+              grid.formatNumber(thenetwork[6]) + '</td><td>'+
+              grid.formatNumber(thenetwork[7]) + '</td><td>'+
+              grid.formatNumber(thenetwork[8]) + '</td></tr>';
           });
         }
       }

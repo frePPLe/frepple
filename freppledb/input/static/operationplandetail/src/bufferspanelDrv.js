@@ -56,7 +56,7 @@ function showbufferspanelDrv($window, gettextCatalog) {
           rows='';
           angular.forEach(scope.operationplan.flowplans, function(theflow) {
             rows += '<tr><td>'+theflow.buffer.name+'</td><td>'+
-            theflow.quantity+'</td><td>'+theflow.onhand+'</td><td>'+
+            grid.formatNumber(theflow.quantity)+'</td><td>'+grid.formatNumber(theflow.onhand)+'</td><td>'+
             theflow.date+'</td></tr>';
           });
           angular.element(document).find('#attributes-operationflowplans thead').css('display','table-header-group');

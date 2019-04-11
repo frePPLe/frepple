@@ -67,7 +67,7 @@ function showresourcespanelDrv($window, gettextCatalog) {
                 	+ thealternate.name
                 	+ '</a></li>';
           		});
-          		rows += '</ul></td><td>' + theresource.quantity + '</td></tr>';
+          		rows += '</ul></td><td>' + grid.formatNumber(theresource.quantity) + '</td></tr>';
           	}
           });
         }

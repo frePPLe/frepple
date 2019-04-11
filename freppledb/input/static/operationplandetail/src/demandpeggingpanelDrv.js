@@ -58,7 +58,7 @@ function showoperationpeggingpanelDrv($window, gettextCatalog) {
             rows += '<tr><td>' + thedemand.demand.name +
               '</td><td>' + thedemand.demand.item.name +
               '</td><td>' + thedemand.demand.due +
-              '</td><td>' + thedemand.quantity + '</td></tr>';
+              '</td><td>' + grid.formatNumber(thedemand.quantity) + '</td></tr>';
           });
         }
       }

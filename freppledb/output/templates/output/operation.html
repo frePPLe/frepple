@@ -279,17 +279,17 @@ function drawGraphs(jsondata)
 	          '<div class="panel-heading" style="text-align:center; font-weight:bold">'
 	          + timebuckets[d['bucket']]['name'] + '</div>'
 	          + '<table><tr><td>{{_('proposed starts')|capfirst}}</td><td style="text-align:center">'
-	          + (Math.round(d['proposed_start']*10)/10)
+	          + grid.formatNumber(d['proposed_start'])
 	          + '</td></tr><tr><td>{{_('total starts')|capfirst}}</td><td style="text-align:center">'
-	          + (Math.round(d['total_start']*10)/10)
+	          + grid.formatNumber(d['total_start'])
 	          + '</td></tr><tr><td>{{_('proposed ends')|capfirst}}</td><td style="text-align:center">'
-	          + (Math.round(d['proposed_end']*10)/10)
+	          + grid.formatNumber(d['proposed_end'])
 	          + '</td></tr><tr><td>{{_('total ends')|capfirst}}</td><td style="text-align:center">'
-	          + (Math.round(d['total_end']*10)/10)
+	          + grid.formatNumber(d['total_end'])
 	          + '</td></tr><tr><td>{{_('proposed production')|capfirst}}</td><td style="text-align:center">'
-	          + (Math.round(d['proposed_production']*10)/10)
+	          + grid.formatNumber(d['proposed_production'])
 	          + '</td></tr><tr><td>{{_('total production')|capfirst}}</td><td style="text-align:center">'
-	          + (Math.round(d['total_production']*10)/10)
+	          + grid.formatNumber(d['total_production'])
 	          + '</td></tr></table>'
 	          );
 	        })
@@ -362,67 +362,72 @@ function crosses (cellvalue, options, rowdata)
     {
       case 0:
         if (cellvalue[0] != 0.0)
-    result += (Math.round(cellvalue[0]*10)/10) + '<a href="{{ request.prefix }}/data/input/manufacturingorder/?operation__name='+
-                                                        admin_escape(rowdata['operation']) +
-                                                         '&amp;startdate__gte=' + options['colModel']['startdate'] +
-                                                               '&amp;startdate__lt=' + options['colModel']['enddate'] +
-                                                         '&amp;status=proposed">&nbsp;<span class="context cross fa fa-caret-right"></span></a><br>';
-		    else
-		      result += '0.0<br>';
+          result += grid.formatNumber(cellvalue[0]) + 
+            '<a href="{{ request.prefix }}/data/input/manufacturingorder/?operation__name='+
+            admin_escape(rowdata['operation']) +
+            '&amp;startdate__gte=' + options['colModel']['startdate'] +
+            '&amp;startdate__lt=' + options['colModel']['enddate'] +
+            '&amp;status=proposed">&nbsp;<span class="context cross fa fa-caret-right"></span></a><br>';
+        else
+          result += '0<br>';
         break;
       case 1:
-			  if (cellvalue[1] != 0.0)
-    result += (Math.round(cellvalue[1]*10)/10) +  '<a href="{{ request.prefix }}/data/input/manufacturingorder/?operation__name='+
-                                                                  admin_escape(rowdata['operation']) +
-                                                            '&startdate__gte=' + options['colModel']['startdate'] +
-                                                                  '&amp;startdate__lt=' + options['colModel']['enddate'] +
-                                                                  '">&nbsp;<span class="context cross fa fa-caret-right"></span></a><br>';
-			  else
-			    result += '0.0<br>';
-			  break;
-	    case 2:
-			  if (cellvalue[2] != 0.0)
-    result += (Math.round(cellvalue[2]*10)/10) +  '<a href="{{ request.prefix }}/data/input/manufacturingorder/?operation__name='+
-                                                                  admin_escape(rowdata['operation']) +
-                                                            '&enddate__gt=' + options['colModel']['startdate'] +
-                                                                  '&amp;enddate__lte=' + options['colModel']['enddate'] +
-                                                            '&amp;status=proposed">&nbsp;<span class="context cross fa fa-caret-right"></span></a><br>';
-			  else
-			    result += '0.0<br>';
-			  break;
+        if (cellvalue[1] != 0.0)
+          result += grid.formatNumber(cellvalue[1]) +
+            '<a href="{{ request.prefix }}/data/input/manufacturingorder/?operation__name='+
+            admin_escape(rowdata['operation']) +
+            '&startdate__gte=' + options['colModel']['startdate'] +
+            '&amp;startdate__lt=' + options['colModel']['enddate'] +
+            '">&nbsp;<span class="context cross fa fa-caret-right"></span></a><br>';
+        else
+          result += '0<br>';
+        break;
+      case 2:
+        if (cellvalue[2] != 0.0)
+          result += grid.formatNumber(cellvalue[2]) +
+            '<a href="{{ request.prefix }}/data/input/manufacturingorder/?operation__name='+
+            admin_escape(rowdata['operation']) +
+            '&enddate__gt=' + options['colModel']['startdate'] +
+            '&amp;enddate__lte=' + options['colModel']['enddate'] +
+            '&amp;status=proposed">&nbsp;<span class="context cross fa fa-caret-right"></span></a><br>';
+        else
+          result += '0<br>';
+        break;
       case 3:
-			  if (cellvalue[3] != 0.0)
-    result += (Math.round(cellvalue[3]*10)/10) +  '<a href="{{ request.prefix }}/data/input/manufacturingorder/?operation__name='+
-                                                                  admin_escape(rowdata['operation']) +
-                                                            '&enddate__gt=' + options['colModel']['startdate'] +
-                                                                  '&amp;enddate__lte=' + options['colModel']['enddate'] +
-                                                                  '">&nbsp;<span class="context cross fa fa-caret-right"></span></a><br>';
-			  else
-			    result += '0.0<br>';
+        if (cellvalue[3] != 0.0)
+          result += grid.formatNumber(cellvalue[3]) +
+            '<a href="{{ request.prefix }}/data/input/manufacturingorder/?operation__name='+
+            admin_escape(rowdata['operation']) +
+            '&enddate__gt=' + options['colModel']['startdate'] +
+            '&amp;enddate__lte=' + options['colModel']['enddate'] +
+            '">&nbsp;<span class="context cross fa fa-caret-right"></span></a><br>';
+        else
+          result += '0<br>';
         break;
       case 4:
-			  if (cellvalue[4] != 0.0)
-    result += (Math.round(cellvalue[4]*10)/10) +  '<a href="{{ request.prefix }}/data/input/manufacturingorder/?operation__name='+
-                                                                  admin_escape(rowdata['operation']) +
-                                                            '&startdate__lte=' + options['colModel']['enddate'] +
-                                                                  '&amp;enddate__gt=' + options['colModel']['startdate'] +
-                                                                  '&amp;status=proposed">&nbsp;<span class="context cross fa fa-caret-right"></span></a><br>';
-			  else
-			    result += '0.0<br>';
+        if (cellvalue[4] != 0.0)
+          result += grid.formatNumber(cellvalue[4]) +
+            '<a href="{{ request.prefix }}/data/input/manufacturingorder/?operation__name='+
+            admin_escape(rowdata['operation']) +
+            '&startdate__lte=' + options['colModel']['enddate'] +
+            '&amp;enddate__gt=' + options['colModel']['startdate'] +
+            '&amp;status=proposed">&nbsp;<span class="context cross fa fa-caret-right"></span></a><br>';
+        else
+          result += '0<br>';
         break;
       case 5:
-			  if (cellvalue[5] != 0.0)
-    result += (Math.round(cellvalue[5]*10)/10) +  '<a href="{{ request.prefix }}/data/input/manufacturingorder/?operation__name='+
-                                                                  admin_escape(rowdata['operation']) +
-                                                            '&startdate__lte=' + options['colModel']['enddate'] +
-                                                                  '&amp;enddate__gt=' + options['colModel']['startdate'] +
-                                                                  '">&nbsp;<span class="context cross fa fa-caret-right"></span></a><br>';
-			  else
-			    result += '0.0<br>';
-        break;
-        
+        if (cellvalue[5] != 0.0)
+          result += grid.formatNumber(cellvalue[5]) +
+            '<a href="{{ request.prefix }}/data/input/manufacturingorder/?operation__name='+
+            admin_escape(rowdata['operation']) +
+            '&startdate__lte=' + options['colModel']['enddate'] +
+            '&amp;enddate__gt=' + options['colModel']['startdate'] +
+            '">&nbsp;<span class="context cross fa fa-caret-right"></span></a><br>';
+        else
+          result += '0<br>';
+        break;        
       default:
-        result += cellvalue[cross_idx[i]] + '<br>';
+        result += grid.formatNumber(cellvalue[cross_idx[i]]) + '<br>';
     }
   return result;
 };

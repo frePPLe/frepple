@@ -212,17 +212,17 @@ function drawGraphs(jsondata)
 	          '<div class="panel-heading" style="text-align:center; font-weight:bold">'
 	          + timebuckets[d['bucket']]['name'] + '</div>'
 	          + '<table><tr><td>{{_('proposed shipping')|capfirst}}</td><td style="text-align:center">'
-	          + (Math.round(d['proposed_start']*10)/10)
+	          + grid.formatNumber(d['proposed_start'])
 	          + '</td></tr><tr><td>{{_('total shipping')|capfirst}}</td><td style="text-align:center">'
-	          + (Math.round(d['total_start']*10)/10)
+	          + grid.formatNumber(d['total_start'])
 	          + '</td></tr><tr><td>{{_('proposed receiving')|capfirst}}</td><td style="text-align:center">'
-	          + (Math.round(d['proposed_end']*10)/10)
+	          + grid.formatNumber(d['proposed_end'])
 	          + '</td></tr><tr><td>{{_('total receiving')|capfirst}}</td><td style="text-align:center">'
-	          + (Math.round(d['total_end']*10)/10)
+	          + grid.formatNumber(d['total_end'])
 	          + '</td></tr><tr><td>{{_('proposed in transit')|capfirst}}</td><td style="text-align:center">'
-	          + (Math.round(d['proposed_in_transit']*10)/10)
+	          + grid.formatNumber(d['proposed_in_transit'])
 	          + '</td></tr><tr><td>{{_('total in transit')|capfirst}}</td><td style="text-align:center">'
-	          + (Math.round(d['total_in_transit']*10)/10)
+	          + grid.formatNumber(d['total_in_transit'])
 	          + '</td></tr></table>'
 	          );
 	        })
@@ -261,7 +261,7 @@ function crosses (cellvalue, options, rowdata)
     {
       case 0:
         if (cellvalue[0] != 0.0)
-          result += (Math.round(cellvalue[0]*10)/10) 
+          result += grid.formatNumber(cellvalue[0]) 
             + '<a href="{{ request.prefix }}/data/input/distributionorder/?item__name=' + admin_escape(rowdata['item']) 
             + '&amp;origin__name=' + admin_escape(rowdata['origin']) 
             + '&amp;destination__name=' + admin_escape(rowdata['destination'])
@@ -269,11 +269,11 @@ function crosses (cellvalue, options, rowdata)
             + '&amp;startdate__lt=' + options['colModel']['enddate'] 
             + '&amp;status=proposed">&nbsp;<span class="context cross fa fa-caret-right"></span></a><br>';
         else
-          result += '0.0<br>';
+          result += '0<br>';
         break;
       case 1:
         if (cellvalue[1] != 0.0)
-          result += (Math.round(cellvalue[1]*10)/10)
+          result += grid.formatNumber(cellvalue[1])
             + '<a href="{{ request.prefix }}/data/input/distributionorder/?item__name=' + admin_escape(rowdata['item']) 
             + '&amp;origin__name=' + admin_escape(rowdata['origin']) 
             + '&amp;destination__name=' + admin_escape(rowdata['destination'])
@@ -281,11 +281,11 @@ function crosses (cellvalue, options, rowdata)
             + '&amp;startdate__lt=' + options['colModel']['enddate'] 
             + '">&nbsp;<span class="context cross fa fa-caret-right"></span></a><br>';
         else
-          result += '0.0<br>';
+          result += '0<br>';
         break;
       case 2:
         if (cellvalue[2] != 0.0)
-          result += (Math.round(cellvalue[2]*10)/10)
+          result += grid.formatNumber(cellvalue[2])
             + '<a href="{{ request.prefix }}/data/input/distributionorder/?item__name=' + admin_escape(rowdata['item']) 
             + '&amp;origin__name=' + admin_escape(rowdata['origin']) 
             + '&amp;destination__name=' + admin_escape(rowdata['destination'])                
@@ -293,11 +293,11 @@ function crosses (cellvalue, options, rowdata)
             + '&amp;enddate__lt=' + options['colModel']['enddate'] 
             + '&amp;status=proposed">&nbsp;<span class="context cross fa fa-caret-right"></span></a><br>';
         else
-          result += '0.0<br>';
+          result += '0<br>';
         break;
       case 3:
         if (cellvalue[3] != 0.0)
-          result += (Math.round(cellvalue[3]*10)/10) 
+          result += grid.formatNumber(cellvalue[3]) 
             + '<a href="{{ request.prefix }}/data/input/distributionorder/?item__name=' + admin_escape(rowdata['item']) 
             + '&amp;origin__name=' + admin_escape(rowdata['origin']) 
             + '&amp;destination__name=' + admin_escape(rowdata['destination'])                
@@ -305,11 +305,11 @@ function crosses (cellvalue, options, rowdata)
             + '&amp;enddate__lt=' + options['colModel']['enddate']
             + '">&nbsp;<span class="context cross fa fa-caret-right"></span></a><br>';
         else
-          result += '0.0<br>';
+          result += '0<br>';
         break;
       case 4:
         if (cellvalue[4] != 0.0)
-          result += (Math.round(cellvalue[4]*10)/10)
+          result += grid.formatNumber(cellvalue[4])
             + '<a href="{{ request.prefix }}/data/input/distributionorder/?item__name=' + admin_escape(rowdata['item']) 
             + '&amp;origin__name=' + admin_escape(rowdata['origin']) 
             + '&amp;destination__name=' + admin_escape(rowdata['destination'])                
@@ -317,11 +317,11 @@ function crosses (cellvalue, options, rowdata)
             + '&amp;enddate__gte=' + options['colModel']['enddate'] 
             + '&amp;status=proposed">&nbsp;<span class="context cross fa fa-caret-right"></span></a><br>';
         else
-          result += '0.0<br>';
+          result += '0<br>';
         break;
       case 5:
         if (cellvalue[5] != 0.0)
-          result += (Math.round(cellvalue[5]*10)/10) 
+          result += grid.formatNumber(cellvalue[5]) 
             + '<a href="{{ request.prefix }}/data/input/distributionorder/?item__name=' + admin_escape(rowdata['item']) 
             + '&amp;origin__name=' + admin_escape(rowdata['origin']) 
             + '&amp;destination__name=' + admin_escape(rowdata['destination'])                
@@ -329,7 +329,7 @@ function crosses (cellvalue, options, rowdata)
             + '&amp;startdate__gte=' + options['colModel']['enddate']
             + '">&nbsp;<span class="context cross fa fa-caret-right"></span></a><br>';
         else
-          result += '0.0<br>';
+          result += '0<br>';
         break;        
     }
   return result;

@@ -137,11 +137,11 @@ function drawGraphs(jsondata)
 	          '<div class="panel-heading" style="text-align:center; font-weight:bold">'
 	          + timebuckets[d['bucket']]['name'] + '</div>'
 	          + '<table><tr><td>{{_('demand')|capfirst}}</td><td style="text-align:center">'
-	          + (Math.round(d['demand']*10)/10)
+	          + grid.formatNumber(d['demand'])
 	          + '</td></tr><tr><td>{{_('supply')|capfirst}}</td><td style="text-align:center">'
-	          + (Math.round(d['supply']*10)/10)
+	          + grid.formatNumber(d['supply'])
 	          + '</td></tr><tr><td>{{_('backlog')|capfirst}}</td><td style="text-align:center">'
-	          + (Math.round((d['backlog'])*10)/10)
+	          + grid.formatNumber(d['backlog'])
 	          + '</td></tr></table>'
 	          );
 	        })
@@ -227,26 +227,26 @@ function crosses (cellvalue, options, rowdata)
     {
       case 0:
         if (cellvalue[cross_idx[i]] != 0.0)
-          result += cellvalue[cross_idx[i]] + '<a href="{{request.prefix}}/data/input/deliveryorder/item/' +
+          result += grid.formatNumber(cellvalue[cross_idx[i]]) + '<a href="{{request.prefix}}/data/input/deliveryorder/item/' +
             admin_escape(rowdata['item']) +
             '/?o=5a&amp;demand__due__gte=' + options['colModel']['startdate'] +
             '&amp;demand__due__lt=' + options['colModel']['enddate'] +
             '">&nbsp;<span class="context cross fa fa-caret-right"></span></a><br>';
         else
-          result += '0.0<br>';
+          result += '0<br>';
         break;
       case 1:
         if (cellvalue[cross_idx[i]] != 0.0)
-          result += cellvalue[cross_idx[i]] + '<a href="{{request.prefix}}/data/input/deliveryorder/item/' +
+          result += grid.formatNumber(cellvalue[cross_idx[i]]) + '<a href="{{request.prefix}}/data/input/deliveryorder/item/' +
             admin_escape(rowdata['item']) +
             '/?o=5a&amp;enddate__gte=' + options['colModel']['startdate'] +
             '&amp;enddate__lt=' + options['colModel']['enddate'] +
             '">&nbsp;<span class="context cross fa fa-caret-right"></span></a><br>';
         else
-          result += '0.0<br>';
+          result += '0<br>';
         break;
       default:
-        result += cellvalue[cross_idx[i]] + '<br>';
+        result += grid.formatNumber(cellvalue[cross_idx[i]]) + '<br>';
     }
   return result;
 };

@@ -172,9 +172,9 @@ class OverviewReport(GridPivot):
           'bucket': row[numfields - 5],
           'startdate': row[numfields - 4].date(),
           'enddate': row[numfields - 3].date(),
-          'demand': round(row[numfields - 2], 1),
-          'supply': round(row[numfields - 1], 1),
-          'backlog': round(backlog, 1),
+          'demand': row[numfields - 2],
+          'supply': row[numfields - 1],
+          'backlog': backlog,
           }
         idx = 8
         for f in getAttributeFields(Item):

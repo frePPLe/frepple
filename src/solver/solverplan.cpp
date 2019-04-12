@@ -669,6 +669,7 @@ void SolverPropagateStatus::solve(void* v)
         if (
           opplan->getSubOperationPlans() == OperationPlan::end()
           && (opplan->getClosed() || opplan->getCompleted())
+          && !opplan->getOperation()->hasType<OperationInventory>()
           )
         {
           if (getLogLevel() > 0)

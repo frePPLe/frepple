@@ -210,6 +210,7 @@ var upload = {
   selectedRows : [],
   
   restoreSelection : function() {
+    grid.markSelectedRow(upload.selectedRows.length);
     for (var r in upload.selectedRows)
     	$("#grid").jqGrid('setSelection', upload.selectedRows[r], false);
     upload.selectedRows = [];  	
@@ -543,7 +544,7 @@ var grid = {
 				else
 					// Small numbers: Show 10 significant digits (before or after the comma), without trailing zeros
 					sOutput = String(parseFloat(nData.toPrecision(8)));
-				var sDecimalSeparator = jQuery("#grid").jqGrid("getGridRes", "formatter.number.decimalSeparator");
+				var sDecimalSeparator = jQuery("#grid").jqGrid("getGridRes", "formatter.number.decimalSeparator") || ".";
 				if (sDecimalSeparator !== ".") 
 					// Replace the "."
 					sOutput = sOutput.replace(".", sDecimalSeparator);
@@ -573,7 +574,7 @@ var grid = {
 					}
 				// }
 				*/
-				var sThousandsSeparator = jQuery("#grid").jqGrid("getGridRes", "formatter.number.thousandsSeparator");
+				var sThousandsSeparator = jQuery("#grid").jqGrid("getGridRes", "formatter.number.thousandsSeparator") || ",";
 				if (sThousandsSeparator) {
 					var nDotIndex = sOutput.lastIndexOf(sDecimalSeparator);
 					nDotIndex = (nDotIndex > -1) ? nDotIndex : sOutput.length;

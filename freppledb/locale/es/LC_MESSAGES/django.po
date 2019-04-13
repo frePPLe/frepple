@@ -1368,7 +1368,7 @@ msgstr "cancelado"
 
 #: execute/templates/execute/execute.html:59
 msgid "view"
-msgstr "vevisar"
+msgstr "ver"
 
 #: execute/templates/execute/execute.html:158
 msgid "autorefresh"

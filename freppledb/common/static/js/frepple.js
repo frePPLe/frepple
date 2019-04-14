@@ -275,14 +275,14 @@ var upload = {
       $.jgrid.hideModal("#searchmodfbox_grid");
       $('#popup').html('<div class="modal-dialog">'+
           '<div class="modal-content">'+
-          '<div class="modal-header">'+
-            '<h4 class="modal-title alert-warning">'+ gettext("Save or cancel your changes first") +'</h4>'+
+          '<div class="modal-header alert-warning" style="border-top-left-radius: inherit; border-top-right-radius: inherit">'+
+            '<h4 class="modal-title">'+ gettext("Save or cancel your changes first") +'</h4>'+
           '</div>'+
           '<div class="modal-body">'+
-            '<p>'+""+'</p>'+
+            gettext("There are unsaved changes on this page.") +
           '</div>'+
           '<div class="modal-footer">'+
-            '<input type="submit" id="savebutton" role="button" class="btn btn-primary pull-right" value="'+gettext('Save')+'">'+
+            '<input type="submit" id="savebutton" role="button" class="btn btn-danger pull-left" value="'+gettext('Save')+'">'+
             '<input type="submit" id="cancelbutton" role="button" class="btn btn-primary pull-right" value="'+gettext('Cancel')+'">'+
           '</div>'+
         '</div>'+

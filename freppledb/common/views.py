@@ -25,7 +25,6 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.contenttypes.models import ContentType
 from django.core.urlresolvers import reverse, resolve
-from django.template import loader, TemplateDoesNotExist
 from django import forms
 from django.utils.encoding import force_text
 from django.utils.translation import ugettext_lazy as _
@@ -34,6 +33,7 @@ from django.contrib.auth.models import Group
 from django.utils import translation
 from django.conf import settings
 from django.http import Http404, HttpResponseRedirect, HttpResponse, HttpResponseServerError, HttpResponseNotFound
+from django.shortcuts import render_to_response
 from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.debug import sensitive_variables
 
@@ -87,16 +87,21 @@ def handler404(request):
 
 def handler500(request):
   '''
-  Custom error handler.
-  The only difference with the default Django handler is that we passes more context
-  to the error template.
+  Custom handler for "HTTP 500 - server error"
   '''
-
   try:
-    template = loader.get_template("500.html")
-  except TemplateDoesNotExist:
+    response = render_to_response(
+      "500.html",
+      content_type='text/html',
+      context={
+        "logfile": "/var/log/apache2/error.log" if "apache.version" in request.META else settings.FREPPLE_LOGDIR
+        }
+      )
+    response.status_code = 500
+    return response
+  except Exception as e:
+    logger.error("Error generating 500 page: %s" % e)
     return HttpResponseServerError('<h1>Server Error (500)</h1>', content_type='text/html')
-  return HttpResponseServerError(template.render({}, request))
 
 
 ###############################################

@@ -310,6 +310,7 @@ function crosses (cellvalue, options, rowdata)
     {
       case 1:
         result += cellvalue[cross_idx[i]] + '<br>';
+        break;
       case 3:
         if (cellvalue[3] != 0.0)
            result += grid.formatNumber(cellvalue[3]) + "<a href='{{request.prefix}}/flowplan/" +

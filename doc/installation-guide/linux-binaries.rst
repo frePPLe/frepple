@@ -337,7 +337,7 @@ inspiration for your own deployments.
   exit
   # The default frePPLe configuration uses md5 authentication on unix domain
   # sockets to communicate with the PostgreSQL database.
-  sudo sed -i 's/local\(\s*\)all\(\s*\)all\(\s*\)peer/local\1all\2all\3\md5/g' /etc/postgresql/9.*/main/pg_hba.conf
+  sudo sed -i 's/local\(\s*\)all\(\s*\)all\(\s*\)peer/local\1all\2all\3\md5/g' /etc/postgresql/*/main/pg_hba.conf
   sudo service postgresql restart
 
   # Install python3 and required python modules

@@ -759,7 +759,6 @@ class exporter(object):
         m_fields = ['product_id', 'product_uom_qty']
 
         # Generate the demand records
-        deliveries = set()
         yield '<!-- sales order lines -->\n'
         yield '<demands>\n'
 
@@ -789,43 +788,46 @@ class exporter(object):
                     priority, minship, quoteattr(product['name']),
                     quoteattr(customer), quoteattr(location)
                 )
-            elif not j['picking_ids']:
+            else: # elif not j['picking_ids']:
                 # Export sales order lines shipped to customers
                 yield '<demand name=%s quantity="%s" due="%s" priority="%s" minshipment="%s" status="open"><item name=%s/><customer name=%s/><location name=%s/></demand>\n' % (
                     quoteattr(name), qty, due.replace(' ', 'T'),  # TODO find a better way around this ugly hack (maybe get the datetime object from the database)
                     priority, minship, quoteattr(product['name']),
                     quoteattr(customer), quoteattr(location)
                 )
-            else:
-                # Here to export sale order line based that is closed by stock moves.
-                # if DO line is done then demand status is closed
-                # if DO line is cancel, it will skip the current DO line
-                # else demand status is open
-                pick_number = 0
-                for p in pick.read(j['picking_ids'], p_fields, self.req.session.context):
-                    p_ids = p['move_lines']
-                    product_id = i['product_id'][0]
-                    mv_ids = move.search([('id', 'in', p_ids), ('product_id','=', product_id)], context=self.req.session.context)
-
-                    status = ''
-                    if p['state'] == 'done':
-                        if self.mode == 1:
-                          # Closed orders aren't transferred during a small run of mode 1
-                          continue
-                        status = 'closed'
-                    elif p['state'] == 'cancel':
-                        continue
-                    else:
-                        status = 'open'
-
-                    for mv in move.read(mv_ids, m_fields, self.req.session.context):
-                        pick_number = pick_number + 1
-                        name = u'%s %d %d' % (i['order_id'][1], i['id'], pick_number)
-                        yield '<demand name=%s quantity="%s" due="%s" priority="%s" minshipment="%s" status="%s"><item name=%s/><customer name=%s/><location name=%s/></demand>\n' % (
-                            quoteattr(name), mv['product_uom_qty'], due.replace(' ', 'T'),  # TODO find a better way around this ugly hack (maybe get the datetime object from the database)
-                            priority, minship,status, quoteattr(product['name']),
-                            quoteattr(customer), quoteattr(location)
-                        )
+#             The code below only works in specific situations.
+#             If activated incorrectly it can lead to duplicate demands.                
+#             else:
+#                 # Here to export sale order line based that is closed by stock moves.
+#                 # if DO line is done then demand status is closed
+#                 # if DO line is cancel, it will skip the current DO line
+#                 # else demand status is open
+#                 pick_number = 0
+#                 for p in pick.read(j['picking_ids'], p_fields, self.req.session.context):
+#                     p_ids = p['move_lines']
+#                     product_id = i['product_id'][0]
+#                     mv_ids = move.search([('id', 'in', p_ids), ('product_id','=', product_id)], context=self.req.session.context)
+# 
+#                     status = ''
+#                     if p['state'] == 'done':
+#                         if self.mode == 1:
+#                           # Closed orders aren't transferred during a small run of mode 1
+#                           continue
+#                         status = 'closed'
+#                     elif p['state'] == 'cancel':
+#                         continue
+#                     else:
+#                         status = 'open'
+# 
+#                     for mv in move.read(mv_ids, m_fields, self.req.session.context):
+#                         logger.error("     C sales order line %s  %s " % (i, mv))
+#                         pick_number = pick_number + 1
+#                         name = u'%s %d %d' % (i['order_id'][1], i['id'], pick_number)
+#                         yield '<demand name=%s quantity="%s" due="%s" priority="%s" minshipment="%s" status="%s"><item name=%s/><customer name=%s/><location name=%s/></demand>\n' % (
+#                             quoteattr(name), mv['product_uom_qty'], due.replace(' ', 'T'),  # TODO find a better way around this ugly hack (maybe get the datetime object from the database)
+#                             priority, minship,status, quoteattr(product['name']),
+#                             quoteattr(customer), quoteattr(location)
+#                         )
 
         yield '</demands>\n'
 
@@ -911,7 +913,6 @@ class exporter(object):
         fields = ['bom_id', 'date_start', 'date_planned', 'name', 'state', 'product_qty', 'product_uom',
                   'location_dest_id', 'product_id', 'product_tmpl_id', 'workcenter_lines']
         for i in m.read(ids, fields, self.req.session.context):
-            logger.warn("PPPPPP  %s" % i)
             if i['state'] in ('in_production', 'confirmed', 'ready') and i['bom_id']:
                 # Open orders
                 location = self.map_locations.get(i['location_dest_id'][0], None)

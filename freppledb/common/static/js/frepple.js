@@ -496,7 +496,11 @@ jQuery.extend($.fn.fmatter, {
       }
     }
     return '';
-  }
+  },
+  
+  number: function (nData, opts) {
+  	return grid.formatNumber(nData);
+	}
 });
 
 jQuery.extend($.fn.fmatter.percentage, {
@@ -530,50 +534,25 @@ var grid = {
 
    formatNumber: function(nData) {
   	 // Number formatting function copied from free-jqgrid.
-  	 // Adapted to show a max number of decimal places.  	 
-  	 var isNumber = $.fmatter.isNumber;
-			if (!isNumber(nData)) {
+  	 // Adapted to show a max number of decimal places.
+  	 if (typeof(nData) === 'undefined')
+  		 return '';
+  	  var isNumber = $.fmatter.isNumber;
+			if (!isNumber(nData))
 				nData *= 1;
-			}
-			if (isNumber(nData)) {				
+			if (isNumber(nData)) {
 				var bNegative = (nData < 0);				
 				var sOutput;
-				if (nData > 100000)
+				if (nData > 1000000)
 				  // Big numbers: Show max 1 digits after the comma, without trailing zeros
 					sOutput = String(parseFloat(nData.toFixed(1)));
 				else
-					// Small numbers: Show 10 significant digits (before or after the comma), without trailing zeros
+					// Small numbers: Show 8 significant digits (before or after the comma), without trailing zeros
 					sOutput = String(parseFloat(nData.toPrecision(8)));
 				var sDecimalSeparator = jQuery("#grid").jqGrid("getGridRes", "formatter.number.decimalSeparator") || ".";
 				if (sDecimalSeparator !== ".") 
 					// Replace the "."
 					sOutput = sOutput.replace(".", sDecimalSeparator);
-				/*   Replaced jqgrid logic with the above logic on our own
-				var sOutput = String(nData);
-				var sDecimalSeparator = jQuery("#grid").jqGrid("getGridRes", "formatter.number.decimalSeparator");				
-				//if (isNumber(decimalPlaces)) {
-					// Round to the correct decimal place
-					var nDecimalPlaces = 4;  // Hardcoded to get max 4 decimals
-					var nDecimal = 10000;    // Hardcoded to get max 4 decimals
-					sOutput = String(Math.round(nData * nDecimal) / nDecimal);
-					nDotIndex = sOutput.lastIndexOf(".");
-					if (nDecimalPlaces > 0) {
-						// Add the decimal separator
-						if (nDotIndex < 0) {
-              // Commented out from the standard JQGrid function
-							//sOutput += sDecimalSeparator;
-							//nDotIndex = sOutput.length - 1;
-						} else if (sDecimalSeparator !== ".") { // Replace the "."
-							sOutput = sOutput.replace(".", sDecimalSeparator);
-						};
-						// Commented out from the standard JQGrid function
-						// Add missing zeros
-						//while ((sOutput.length - 1 - nDotIndex) < nDecimalPlaces) {
-						//	sOutput += "0";
-						//}
-					}
-				// }
-				*/
 				var sThousandsSeparator = jQuery("#grid").jqGrid("getGridRes", "formatter.number.thousandsSeparator") || ",";
 				if (sThousandsSeparator) {
 					var nDotIndex = sOutput.lastIndexOf(sDecimalSeparator);
@@ -592,7 +571,6 @@ var grid = {
 					sOutput = sNewOutput;
 				}
 				return sOutput;
-
 			}
 			return nData;
    },

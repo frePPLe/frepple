@@ -227,106 +227,181 @@ void SolverCreate::SolverData::commit()
   // Solve the planning problem
   try
   {
-    // TODO Propagate & solve initial shortages and overloads
 
-    // Sort the demands of this problem.
-    // We use a stable sort to get reproducible results between platforms
-    // and STL implementations.
-    stable_sort(demands->begin(), demands->end(), demand_comparison);
-
-    // Solve for safety stock in buffers.
-    if (solver->getPlanSafetyStockFirst())
+    if (!solver->getConstraints())
     {
-      constrainedPlanning = (solver->getPlanType() == 1);
-      solveSafetyStock(solver);
-    }
+      // Special case to use a single sweep for truely unconstrained plans
 
-    // Loop through the list of all demands in this planning problem
-    safety_stock_planning = false;
-    constrainedPlanning = (solver->getPlanType() == 1);
-    for (deque<Demand*>::const_iterator i = demands->begin();
-        i != demands->end(); ++i)
-    {
-      iteration_count = 0;
-      try
+      // Step 1: Create a delivery operationplan for all demands
+      for (auto i = demands->begin(); i != demands->end(); ++i)
       {
-        // Plan the demand
-        (*i)->solve(*solver, this);
-      }
-      catch (...)
-      {
-        // Log the exception as the only reason for the demand not being planned
-        (*i)->getConstraints().clear();
-        // Error message
-        logger << "Error: Caught an exception while solving demand '"
-            << (*i)->getName() << "':" << endl;
-        try {throw;}
-        catch (const bad_exception&) 
+        // Skip closed and canceled demands
+        if ((*i)->getStatus() == Demand::CLOSED || (*i)->getStatus() == Demand::CANCELED)
+          continue;
+
+        // Determine the quantity to be planned and the date for the planning loop
+        double plan_qty = (*i)->getQuantity() - (*i)->getPlannedQuantity();
+        if ((*i)->getDue() == Date::infiniteFuture)
+          continue;
+
+        // Select delivery operation
+        Operation* deliveryoper = (*i)->getDeliveryOperation();
+        if (!deliveryoper)
+          continue;
+        
+        while (plan_qty > ROUNDING_ERROR)
         {
-          (*i)->getConstraints().push(new ProblemInvalidData(
-            (*i), "Error: bad exception", "demand",           
-            (*i)->getDue(), (*i)->getDue(), (*i)->getQuantity(), false
-          ));
-          logger << "  bad exception" << endl;
+          // Respect minimum shipment quantities
+          if (plan_qty < (*i)->getMinShipment())
+            plan_qty = (*i)->getMinShipment();
+
+          // Create a delivery operationplan for the remaining quantity
+          OperationPlan* deli = deliveryoper->createOperationPlan(
+            plan_qty, Date::infinitePast, (*i)->getDue(), *i, nullptr, 0, false
+          );
+          deli->activate();
+
+          // Prepare for next loop
+          plan_qty -= deli->getQuantity();
         }
-        catch (const exception& e) 
+      }
+
+      // Step 2: Solve buffer by buffer, ordered by level
+      solver->setPropagate(false);
+      for (short lvl = -1; lvl <= HasLevel::getNumberOfLevels(); ++lvl)
+      {
+        for (Buffer::iterator b = Buffer::begin(); b != Buffer::end(); ++b)
         {
-          (*i)->getConstraints().push(new ProblemInvalidData(
-            (*i), "Error: " + string(e.what()), "demand",
-            (*i)->getDue(), (*i)->getDue(), (*i)->getQuantity(), false
-          ));
-          logger << "  " << e.what() << endl;
+          if (b->getLevel() != lvl || (cluster != -1 && cluster != b->getCluster()))
+            // Not your turn yet...
+            continue;
+
+          // Given the demand, ROQ and safety stock, we resolve the shortage
+          // with an unconstrained propagation to the next level.
+          state->curBuffer = nullptr;
+          state->q_qty = -1.0;
+          state->q_date = Date::infinitePast;
+          state->a_cost = 0.0;
+          state->a_penalty = 0.0;
+          state->curDemand = nullptr;
+          state->curOwnerOpplan = nullptr;
+          state->a_qty = 0;
+          try
+          {
+            b->solve(*solver, this);
+            getCommandManager()->commit();
+          }
+          catch (const exception& e)
+          {
+            logger << "Error propagating through buffer '" << b->getName() << "': " << e.what() << endl;
+            getCommandManager()->rollback();
+          }
+
+        }
+      }
+    }
+    else
+    {
+      // Normal case: demand-per-demand loop
+
+      // Sort the demands of this problem.
+      // We use a stable sort to get reproducible results between platforms
+      // and STL implementations.
+      stable_sort(demands->begin(), demands->end(), demand_comparison);
+
+      // Solve for safety stock in buffers.
+      if (solver->getPlanSafetyStockFirst())
+      {
+        constrainedPlanning = (solver->getPlanType() == 1);
+        solveSafetyStock(solver);
+      }
+
+      // Loop through the list of all demands in this planning problem
+      safety_stock_planning = false;
+      constrainedPlanning = (solver->getPlanType() == 1);
+      for (auto i = demands->begin(); i != demands->end(); ++i)
+      {
+        iteration_count = 0;
+        try
+        {
+          // Plan the demand
+          (*i)->solve(*solver, this);
         }
         catch (...)
         {
-          (*i)->getConstraints().push(new ProblemInvalidData(
-            (*i), "Error: unknown type", "demand",
-            (*i)->getDue(), (*i)->getDue(), (*i)->getQuantity(), false
-          ));
-          logger << "  Unknown type" << endl;
+          // Log the exception as the only reason for the demand not being planned
+          (*i)->getConstraints().clear();
+          // Error message
+          logger << "Error: Caught an exception while solving demand '"
+            << (*i)->getName() << "':" << endl;
+          try { throw; }
+          catch (const bad_exception&)
+          {
+            (*i)->getConstraints().push(new ProblemInvalidData(
+              (*i), "Error: bad exception", "demand",
+              (*i)->getDue(), (*i)->getDue(), (*i)->getQuantity(), false
+            ));
+            logger << "  bad exception" << endl;
+          }
+          catch (const exception& e)
+          {
+            (*i)->getConstraints().push(new ProblemInvalidData(
+              (*i), "Error: " + string(e.what()), "demand",
+              (*i)->getDue(), (*i)->getDue(), (*i)->getQuantity(), false
+            ));
+            logger << "  " << e.what() << endl;
+          }
+          catch (...)
+          {
+            (*i)->getConstraints().push(new ProblemInvalidData(
+              (*i), "Error: unknown type", "demand",
+              (*i)->getDue(), (*i)->getDue(), (*i)->getQuantity(), false
+            ));
+            logger << "  Unknown type" << endl;
+          }
         }
       }
+
+      // Completely recreate all purchasing operation plans
+      for (set<const OperationItemSupplier*>::iterator o = purchase_operations.begin();
+        o != purchase_operations.end(); ++o
+        )
+      {
+        // Only process buffers replenished from a single supplier
+        if ((*o)->getBuffer()->getProducingOperation() != *o)
+          continue;
+
+        // Erase existing proposed purchases
+        const_cast<OperationItemSupplier*>(*o)->deleteOperationPlans(false);
+        // Create new proposed purchases
+        try
+        {
+          safety_stock_planning = true;
+          state->curBuffer = nullptr;
+          state->q_qty = -1.0;
+          state->q_date = Date::infinitePast;
+          state->a_cost = 0.0;
+          state->a_penalty = 0.0;
+          state->curDemand = nullptr;
+          state->curOwnerOpplan = nullptr;
+          state->a_qty = 0;
+          (*o)->getBuffer()->solve(*solver, this);
+          getCommandManager()->commit();
+        }
+        catch (...)
+        {
+          getCommandManager()->rollback();
+        }
+      }
+      purchase_operations.clear();
+
+      // Solve for safety stock in buffers.
+      if (!solver->getPlanSafetyStockFirst())
+        solveSafetyStock(solver);
     }
 
     // Clean the list of demands of this cluster
     demands->clear();
-
-    // Completely recreate all purchasing operation plans
-    for (set<const OperationItemSupplier*>::iterator o = purchase_operations.begin();
-      o != purchase_operations.end(); ++o
-      )
-    {
-      // Only process buffers replenished from a single supplier
-      if ((*o)->getBuffer()->getProducingOperation() != *o)
-        continue;
-
-      // Erase existing proposed purchases
-      const_cast<OperationItemSupplier*>(*o)->deleteOperationPlans(false);
-      // Create new proposed purchases
-      try
-      {
-        safety_stock_planning = true;
-        state->curBuffer = nullptr;
-        state->q_qty = -1.0;
-        state->q_date = Date::infinitePast;
-        state->a_cost = 0.0;
-        state->a_penalty = 0.0;
-        state->curDemand = nullptr;
-        state->curOwnerOpplan = nullptr;
-        state->a_qty = 0;
-        (*o)->getBuffer()->solve(*solver, this);
-        getCommandManager()->commit();
-      }
-      catch(...)
-      {
-        getCommandManager()->rollback();
-      }
-    }
-    purchase_operations.clear();
-
-    // Solve for safety stock in buffers.
-    if (!solver->getPlanSafetyStockFirst())
-      solveSafetyStock(solver);
   }
   catch (...)
   {

@@ -76,6 +76,8 @@ frepple.saveplan("output.1.xml")
 print("CREATING UNCONSTRAINED PLAN")
 frepple.solver_mrp(plantype=2, constraints=15, loglevel=2).solve()
 frepple.saveplan("output.2.xml")
+frepple.solver_mrp(plantype=2, constraints=0, loglevel=2).solve()
+frepple.saveplan("output.3.xml")
 ?>
 
 </plan>

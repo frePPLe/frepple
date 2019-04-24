@@ -11,20 +11,13 @@ Linux binary packages
 Supported distributions
 ***********************
 
-Binary installation packages are available for the following Linux
-distributions:
+A binary installation package is available for **Ubuntu 18 LTS**.
 
-#. | **Ubuntu LTS**
-   | A 64-bit binary package for Ubuntu 16 is available.
-
-#. | **Fedora 22** and higher
-   | FrePPLe is included in the official repositories.
-
-   .. image:: _images/fedorainstall.png
-
-Other Linux distributions aren't really a problem, but you'll need to build
-the frePPLe package from the source .deb or .rpm files, as described on the
-next page. The build process is completely standardized.
+Installing on other Linux distributions is also possible, but you'll first
+need to build the frePPLe package from the source package as described
+in a following page. The build and installation process are completely standardized
+for `debian-based distributions <https://en.wikipedia.org/wiki/Category:Debian-based_distributions>`_
+and `RPM-based based distributions <https://en.wikipedia.org/wiki/Category:RPM-based_Linux_distributions>`_.
 
 ******************************
 Installation and configuration

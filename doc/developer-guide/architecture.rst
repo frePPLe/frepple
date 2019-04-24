@@ -11,7 +11,7 @@ FrePPLe has a 3-tier architecture, typical for most web applications.
   | The user interface is completely web browser based, using state of the
     art web techniologies such as HTML5 and ajax.
   | FrePPLe supports most modern browsers: Google Chrome, Firefox, Safari,
-    Internet Explorer(>=10) and Opera.
+    Microsoft Edge and Opera.
 
 * | **Web server**:
   | The web server retrieves data from the database and serves the content

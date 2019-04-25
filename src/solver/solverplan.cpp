@@ -235,10 +235,6 @@ void SolverCreate::SolverData::commit()
       // Step 1: Create a delivery operationplan for all demands
       for (auto i = demands->begin(); i != demands->end(); ++i)
       {
-        // Skip closed and canceled demands
-        if ((*i)->getStatus() == Demand::CLOSED || (*i)->getStatus() == Demand::CANCELED)
-          continue;
-
         // Determine the quantity to be planned and the date for the planning loop
         double plan_qty = (*i)->getQuantity() - (*i)->getPlannedQuantity();
         if ((*i)->getDue() == Date::infiniteFuture)
@@ -514,12 +510,23 @@ void SolverCreate::solve(void *v)
   update_user_exits();
 
   // Count how many clusters we have to plan
-  int cl = (cluster == -1 ? HasLevel::getNumberOfClusters() + 1 : 1);
+  int cl = 1;
+  if (cluster == -1 && getConstraints())
+    cl = HasLevel::getNumberOfClusters() + 1;
 
   // Categorize all demands in their cluster
   demands_per_cluster.resize(cl);
-  if (cluster == -1)
+  if (!getConstraints())
   {
+    // Dumb unconstrained plan is running in a single thread
+    for (Demand::iterator i = Demand::begin(); i != Demand::end(); ++i)
+      if (i->getQuantity() > 0
+        && (i->getStatus() == Demand::OPEN || i->getStatus() == Demand::QUOTE))
+        demands_per_cluster[0].push_back(&*i);
+  }
+  else if (cluster == -1)
+  {
+    // Many clusters to solve
     for (Demand::iterator i = Demand::begin(); i != Demand::end(); ++i)
       if (i->getQuantity() > 0
         && (i->getStatus() == Demand::OPEN || i->getStatus() == Demand::QUOTE))
@@ -527,6 +534,7 @@ void SolverCreate::solve(void *v)
   }
   else
   {
+    // Only a single cluster to plan
     for (Demand::iterator i = Demand::begin(); i != Demand::end(); ++i)
       if (i->getCluster() == cluster
         && i->getQuantity() > 0
@@ -548,9 +556,11 @@ void SolverCreate::solve(void *v)
   // Solve in parallel threads.
   // When not solving in silent and autocommit mode, we only use a single
   // solver thread.
+  // We also avoid solving the unconstrained single-sweep plan to run in 
+  // multiple threads (the overhead of using multiple threads is then too high)
   // Otherwise we use as many worker threads as processor cores.
   ThreadGroup threads;
-  if (getLogLevel()>0 || !getAutocommit() || cluster != -1)
+  if (getLogLevel()>0 || !getAutocommit() || cluster != -1 || !getConstraints())
     threads.setMaxParallel(1);
 
   // Register all clusters to be solved

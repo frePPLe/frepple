@@ -5697,12 +5697,6 @@ class Flow : public Object, public Association<Operation,Buffer,Flow>::Node,
     void setOperation(Operation* o)
     {
       if (o) setPtrA(o,o->getFlows());
-      if (item && getOperation() && getOperation()->getLocation())
-      {
-        Buffer *b = Buffer::findOrCreate(item, getOperation()->getLocation());
-        if (b)
-          const_cast<Flow*>(this)->setPtrB(b, b->getFlows());
-      }
     }
 
     /** Returns true if this flow consumes material from the buffer. */
@@ -5792,12 +5786,6 @@ class Flow : public Object, public Association<Operation,Buffer,Flow>::Node,
       if (getPtrB() && getPtrB()->getItem() != i)
         throw DataException("Invalid update of operationmaterial");
       item = i;
-      if (item && getOperation() && getOperation()->getLocation())
-      {
-        Buffer *b = Buffer::findOrCreate(item, getOperation()->getLocation());
-        if (b)
-          const_cast<Flow*>(this)->setPtrB(b, b->getFlows());
-      }
     }
 
     /** Return the leading flow of this group.

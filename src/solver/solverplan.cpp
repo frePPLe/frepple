@@ -565,11 +565,19 @@ void SolverCreate::solve(void *v)
 
   // Register all clusters to be solved
   for (int j = 0; j < cl; ++j)
+  {
+    int tmp;
+    if (!getConstraints() && cluster == -1)
+      tmp = -1;
+    else if (cluster == -1)
+      tmp = j;
+    else
+      tmp = cluster;
     threads.add(
       SolverData::runme,
-      new SolverData(this, (cluster == -1) ? j :  cluster, &(demands_per_cluster[j]))
-      );
-
+      new SolverData(this, tmp, &(demands_per_cluster[j]))
+    );
+  }
   // Run the planning command threads and wait for them to exit
   threads.execute();
 }

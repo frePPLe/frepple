@@ -66,6 +66,13 @@ void HasLevel::computeLevels()
     // This isn't the most efficient loop, but it remains cheap and fast...
     while (true)
     {
+      for (auto gop = Operation::begin(); gop != Operation::end(); ++gop)
+      {
+        gop->cluster = 0;
+        gop->lvl = -1;
+        for (auto fl = gop->getFlows().begin(); fl != gop->getFlows().end(); ++fl)
+          fl->getBuffer();
+      }
       for (auto gbuf = Buffer::begin(); gbuf != Buffer::end(); ++gbuf)
       {
         gbuf->cluster = 0;
@@ -82,11 +89,6 @@ void HasLevel::computeLevels()
     {
       gres->cluster = 0;
       gres->lvl = -1;
-    }
-    for (auto gop = Operation::begin(); gop != Operation::end(); ++gop)
-    {
-      gop->cluster = 0;
-      gop->lvl = -1;
     }
 
     // Loop through all operations

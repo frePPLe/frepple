@@ -18,8 +18,8 @@
 from django.db import connections
 from django.db.models.expressions import RawSQL
 from django.utils.encoding import force_text
+from django.utils.text import format_lazy
 from django.utils.translation import ugettext_lazy as _
-from django.utils.translation import string_concat
 
 from freppledb.boot import getAttributeFields
 from freppledb.input.models import Resource, Location
@@ -53,10 +53,10 @@ class OverviewReport(GridPivot):
     GridFieldText('setupmatrix', title=_('setupmatrix'), editable=False, field_name='setupmatrix__name', formatter='detail', extra='"role":"input/setupmatrix"', initially_hidden=True),
     GridFieldText('setup', title=_('setup'), editable=False, field_name='setup', initially_hidden=True),
     GridFieldText('location__name', title=_('location'), editable=False, field_name='location__name', formatter='detail', extra='"role":"input/location"'),
-    GridFieldText('location__description', title=string_concat(_('location'), ' - ', _('description')), editable=False, initially_hidden=True),
-    GridFieldText('location__category', title=string_concat(_('location'), ' - ', _('category')), editable=False, initially_hidden=True),
-    GridFieldText('location__subcategory', title=string_concat(_('location'), ' - ', _('subcategory')), editable=False, initially_hidden=True),
-    GridFieldText('location__available', title=string_concat(_('location'), ' - ', _('available')), editable=False, field_name='location__available__name', formatter='detail', extra='"role":"input/calendar"', initially_hidden=True),
+    GridFieldText('location__description', title=format_lazy('{} - {}', _('location'), _('description')), editable=False, initially_hidden=True),
+    GridFieldText('location__category', title=format_lazy('{} - {}', _('location'), _('category')), editable=False, initially_hidden=True),
+    GridFieldText('location__subcategory', title=format_lazy('{} - {}', _('location'), _('subcategory')), editable=False, initially_hidden=True),
+    GridFieldText('location__available', title=format_lazy('{} - {}', _('location'), _('available')), editable=False, field_name='location__available__name', formatter='detail', extra='"role":"input/calendar"', initially_hidden=True),
     GridFieldText('avgutil', title=_('utilization %'), formatter='percentage', editable=False, width=100, align='center'),
     GridFieldText('available_calendar', title=_('available calendar'), editable=False, field_name='available__name', formatter='detail', extra='"role":"input/calendar"', initially_hidden=True),
     GridFieldText('owner', title=_('owner'), editable=False, field_name='owner__name', formatter='detail', extra='"role":"input/resource"', initially_hidden=True),

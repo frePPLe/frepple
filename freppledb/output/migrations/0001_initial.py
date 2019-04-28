@@ -178,11 +178,11 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='loadplan',
             name='operationplan',
-            field=models.ForeignKey(related_name='loadplans', verbose_name='operationplan', to='output.OperationPlan'),
+            field=models.ForeignKey(related_name='loadplans', verbose_name='operationplan', to='output.OperationPlan', on_delete=models.CASCADE),
         ),
         migrations.AddField(
             model_name='flowplan',
             name='operationplan',
-            field=models.ForeignKey(related_name='flowplans', verbose_name='operationplan', to='output.OperationPlan'),
+            field=models.ForeignKey(related_name='flowplans', verbose_name='operationplan', to='output.OperationPlan', on_delete=models.CASCADE),
         ),
     ]

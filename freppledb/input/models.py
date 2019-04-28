@@ -20,7 +20,7 @@ from decimal import Decimal
 
 from django.db import models, DEFAULT_DB_ALIAS
 from django.utils.translation import ugettext_lazy as _
-from django.utils.translation import string_concat
+from django.utils.text import format_lazy
 
 from freppledb.common.fields import JSONBField, AliasDateTimeField
 from freppledb.common.models import HierarchyModel, AuditModel, MultiDBManager
@@ -487,9 +487,9 @@ class Resource(AuditModel, HierarchyModel):
   types = (
     ('default', _('default')),
     ('buckets', _('buckets')),
-    ('buckets_day', string_concat(_('buckets'), '_', _('day'))),
-    ('buckets_week', string_concat(_('buckets'), '_', _('week'))),
-    ('buckets_month', string_concat(_('buckets'), '_', _('month'))),
+    ('buckets_day', format_lazy('{}_{}', _('buckets'), _('day'))),
+    ('buckets_week', format_lazy('{}_{}', _('buckets'), _('week'))),
+    ('buckets_month', format_lazy('{}_{}', _('buckets'), _('month'))),
     ('infinite', _('infinite')),
   )
 
@@ -729,7 +729,7 @@ class OperationResource(AuditModel):
     )
   skill = models.ForeignKey(
     Skill, verbose_name=_('skill'), related_name='operationresources',
-    null=True, blank=True, db_index=True, on_delete=models.CASCADE
+    null=True, blank=True, db_index=True, on_delete=models.SET_NULL
     )
   quantity = models.DecimalField(
     _('quantity'), default='1.00', max_digits=20, decimal_places=8,
@@ -872,7 +872,7 @@ class ItemSupplier(AuditModel):
     )
   resource = models.ForeignKey(
     Resource, verbose_name=_('resource'), null=True, blank=True,
-    db_index=True, related_name='itemsuppliers', on_delete=models.CASCADE,
+    db_index=True, related_name='itemsuppliers', on_delete=models.SET_NULL,
     help_text=_("Resource to model the supplier capacity")
     )
   resource_qty = models.DecimalField(
@@ -963,7 +963,7 @@ class ItemDistribution(AuditModel):
     )
   resource = models.ForeignKey(
     Resource, verbose_name=_('resource'), null=True, blank=True,
-    db_index=True, related_name='itemdistributions', on_delete=models.CASCADE,
+    db_index=True, related_name='itemdistributions', on_delete=models.SET_NULL,
     help_text=_("Resource to model the distribution capacity")
     )
   resource_qty = models.DecimalField(
@@ -1039,7 +1039,7 @@ class Demand(AuditModel, HierarchyModel):
   operation = models.ForeignKey(
     Operation,
     verbose_name=_('delivery operation'), null=True, blank=True,
-    related_name='used_demand', on_delete=models.CASCADE,
+    related_name='used_demand', on_delete=models.SET_NULL,
     help_text=_('Operation used to satisfy this demand')
     )
   quantity = models.DecimalField(

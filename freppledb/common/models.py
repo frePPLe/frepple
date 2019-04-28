@@ -47,7 +47,7 @@ class HierarchyModel(models.Model):
                           help_text=_('Unique identifier'))
   owner = models.ForeignKey('self', verbose_name=_('owner'), null=True, blank=True,
                             related_name='xchildren', help_text=_('Hierarchical parent'),
-                            on_delete=models.CASCADE)
+                            on_delete=models.SET_NULL)
 
   def save(self, *args, **kwargs):
     # Trigger recalculation of the hieracrhy.
@@ -548,7 +548,7 @@ class Comment(models.Model):
   # Translators: Translation included with Django
   user = models.ForeignKey(
     User, verbose_name=_('user'), blank=True, null=True,
-    editable=False, on_delete=models.CASCADE
+    editable=False, on_delete=models.SET_NULL
     )
   lastmodified = models.DateTimeField(
     _('last modified'), default=timezone.now, editable=False

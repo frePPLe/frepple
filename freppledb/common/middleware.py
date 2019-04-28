@@ -29,6 +29,7 @@ from django.db import DEFAULT_DB_ALIAS
 from django.db.models import Q
 from django.http import HttpResponseNotFound
 from django.http.response import HttpResponseForbidden
+from django.utils.deprecation import MiddlewareMixin
 
 from freppledb.common.models import Scenario, User
 
@@ -141,7 +142,7 @@ for i in settings.DATABASES:
   settings.DATABASES[i]['regexp'] = re.compile("^/%s/" % i)
 
 
-class MultiDBMiddleware(object):
+class MultiDBMiddleware(MiddlewareMixin):
   """
   This middleware examines the URL of the incoming request, and determines the
   name of database to use.
@@ -178,7 +179,7 @@ class MultiDBMiddleware(object):
       request.database = DEFAULT_DB_ALIAS
     else:
       # A list of scenarios is already available
-      if request.user.is_anonymous():
+      if request.user.is_anonymous:
         return
       default_scenario = None
       for i in request.user.scenarios:
@@ -204,7 +205,7 @@ class MultiDBMiddleware(object):
         request.scenario = Scenario(name=DEFAULT_DB_ALIAS)
 
 
-class AutoLoginAsAdminUser(object):
+class AutoLoginAsAdminUser(MiddlewareMixin):
   """
   Automatically log on a user as admin user.
   This can be handy during development or for demo models.

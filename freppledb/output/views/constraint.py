@@ -16,8 +16,8 @@
 #
 
 from django.db.models import Count
+from django.utils.text import format_lazy
 from django.utils.translation import ugettext_lazy as _
-from django.utils.translation import string_concat
 from django.utils.encoding import force_text
 
 from freppledb.output.models import Constraint
@@ -50,14 +50,14 @@ names = (
 
 def getEntities(request):
   return tuple([
-    (i['entity'], string_concat(_(i['entity']), ":", i['id__count']))
+    (i['entity'], format_lazy('{}:{}', _(i['entity']), i['id__count']))
     for i in Constraint.objects.using(request.database).values('entity').annotate(Count('id')).order_by('entity')
     ])
 
 
 def getNames(request):
   return tuple([
-    (i['name'], string_concat(_(i['name']), ":", i['id__count']))
+    (i['name'], format_lazy('{}:{}', _(i['name']), i['id__count']))
     for i in Constraint.objects.using(request.database).values('name').annotate(Count('id')).order_by('name')
     ])
 

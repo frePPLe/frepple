@@ -46,12 +46,12 @@ class Migration(migrations.Migration):
     migrations.AddField(
       model_name='operationplanmaterial',
       name='operationplan',
-      field=models.ForeignKey(verbose_name='operationplan', related_name='materials', to='input.OperationPlan')
+      field=models.ForeignKey(verbose_name='operationplan', related_name='materials', to='input.OperationPlan', on_delete=models.CASCADE)
     ),
     migrations.AddField(
       model_name='operationplanresource',
       name='operationplan',
-      field=models.ForeignKey(verbose_name='operationplan', related_name='resources', to='input.OperationPlan')
+      field=models.ForeignKey(verbose_name='operationplan', related_name='resources', to='input.OperationPlan', on_delete=models.CASCADE)
     ),
 
     # Remaining migrations are just catching up on python-side model

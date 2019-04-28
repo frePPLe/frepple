@@ -29,7 +29,6 @@ from django.http.response import StreamingHttpResponse, HttpResponseServerError
 from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import ungettext
-from django.utils.translation import string_concat
 from django.utils.encoding import force_text
 from django.utils.text import format_lazy
 from django.views.generic import View
@@ -626,58 +625,58 @@ class BufferList(GridReport):
     GridFieldLastModified('lastmodified'),
     # Optional fields referencing the item
     GridFieldText(
-      'item__description', title=string_concat(_('item'), ' - ', _('description')),
+      'item__description', title=format_lazy('{} - {}', _('item'), _('description')),
       initially_hidden=True, editable=False
       ),
     GridFieldText(
-      'item__category', title=string_concat(_('item'), ' - ', _('category')),
+      'item__category', title=format_lazy('{} - {}', _('item'), _('category')),
       initially_hidden=True, editable=False
       ),
     GridFieldText(
-      'item__subcategory', title=string_concat(_('item'), ' - ', _('subcategory')),
+      'item__subcategory', title=format_lazy('{} - {}', _('item'), _('subcategory')),
       initially_hidden=True, editable=False
       ),
     GridFieldText(
-      'item__owner', title=string_concat(_('item'), ' - ', _('owner')),
+      'item__owner', title=format_lazy('{} - {}', _('item'), _('owner')),
       field_name='item__owner__name', initially_hidden=True, editable=False
       ),
     GridFieldText(
-      'item__source', title=string_concat(_('item'), ' - ', _('source')),
+      'item__source', title=format_lazy('{} - {}', _('item'), _('source')),
       initially_hidden=True, editable=False
       ),
     GridFieldLastModified(
-      'item__lastmodified', title=string_concat(_('item'), ' - ', _('last modified')),
+      'item__lastmodified', title=format_lazy('{} - {}', _('item'), _('last modified')),
       initially_hidden=True, editable=False
       ),
     # Optional fields referencing the location
     GridFieldText(
-      'location__description', title=string_concat(_('location'), ' - ', _('description')),
+      'location__description', title=format_lazy('{} - {}', _('location'), _('description')),
       initially_hidden=True, editable=False
       ),
     GridFieldText(
-      'location__category', title=string_concat(_('location'), ' - ', _('category')),
+      'location__category', title=format_lazy('{} - {}', _('location'), _('category')),
       initially_hidden=True, editable=False
       ),
     GridFieldText(
-      'location__subcategory', title=string_concat(_('location'), ' - ', _('subcategory')),
+      'location__subcategory', title=format_lazy('{} - {}', _('location'), _('subcategory')),
       initially_hidden=True, editable=False
       ),
     GridFieldText(
-      'location__available', title=string_concat(_('location'), ' - ', _('available')),
+      'location__available', title=format_lazy('{} - {}', _('location'), _('available')),
       initially_hidden=True, field_name='location__available__name', formatter='detail',
       extra='"role":"input/calendar"', editable=False
       ),
     GridFieldText(
-      'location__owner', title=string_concat(_('location'), ' - ', _('owner')),
+      'location__owner', title=format_lazy('{} - {}', _('location'), _('owner')),
       initially_hidden=True, field_name='location__owner__name', formatter='detail',
       extra='"role":"input/location"', editable=False
       ),
     GridFieldText(
-      'location__source', title=string_concat(_('location'), ' - ', _('source')),
+      'location__source', title=format_lazy('{} - {}', _('location'), _('source')),
       initially_hidden=True, editable=False
       ),
     GridFieldLastModified(
-      'location__lastmodified', title=string_concat(_('location'), ' - ', _('last modified')),
+      'location__lastmodified', title=format_lazy('{} - {}', _('location'), _('last modified')),
       initially_hidden=True, editable=False
       ),
     )
@@ -758,33 +757,33 @@ class ResourceList(GridReport):
       ),
     # Optional fields referencing the location
     GridFieldText(
-      'location__description', title=string_concat(_('location'), ' - ', _('description')),
+      'location__description', title=format_lazy('{} - {}', _('location'), _('description')),
       initially_hidden=True, editable=False
       ),
     GridFieldText(
-      'location__category', title=string_concat(_('location'), ' - ', _('category')),
+      'location__category', title=format_lazy('{} - {}', _('location'), _('category')),
       initially_hidden=True, editable=False
       ),
     GridFieldText(
-      'location__subcategory', title=string_concat(_('location'), ' - ', _('subcategory')),
+      'location__subcategory', title=format_lazy('{} - {}', _('location'), _('subcategory')),
       initially_hidden=True, editable=False
       ),
     GridFieldText(
-      'location__available', title=string_concat(_('location'), ' - ', _('available')),
+      'location__available', title=format_lazy('{} - {}', _('location'), _('available')),
       initially_hidden=True, field_name='location__available__name', formatter='detail',
       extra='"role":"input/calendar"', editable=False
       ),
     GridFieldText(
-      'location__owner', title=string_concat(_('location'), ' - ', _('owner')),
+      'location__owner', title=format_lazy('{} - {}', _('location'), _('owner')),
       initially_hidden=True, field_name='location__owner__name', formatter='detail',
       extra='"role":"input/location"', editable=False
       ),
     GridFieldText(
-      'location__source', title=string_concat(_('location'), ' - ', _('source')),
+      'location__source', title=format_lazy('{} - {}', _('location'), _('source')),
       initially_hidden=True, editable=False
       ),
     GridFieldLastModified(
-      'location__lastmodified', title=string_concat(_('location'), ' - ', _('last modified')),
+      'location__lastmodified', title=format_lazy('{} - {}', _('location'), _('last modified')),
       initially_hidden=True, editable=False
       ),
     )
@@ -888,58 +887,58 @@ class ItemSupplierList(GridReport):
     GridFieldLastModified('lastmodified'),
     # Optional fields referencing the item
     GridFieldText(
-      'item__description', title=string_concat(_('item'), ' - ', _('description')),
+      'item__description', title=format_lazy('{} - {}', _('item'), _('description')),
       initially_hidden=True, editable=False
       ),
     GridFieldText(
-      'item__category', title=string_concat(_('item'), ' - ', _('category')),
+      'item__category', title=format_lazy('{} - {}', _('item'), _('category')),
       initially_hidden=True, editable=False
       ),
     GridFieldText(
-      'item__subcategory', title=string_concat(_('item'), ' - ', _('subcategory')),
+      'item__subcategory', title=format_lazy('{} - {}', _('item'), _('subcategory')),
       initially_hidden=True, editable=False
       ),
     GridFieldText(
-      'item__owner', title=string_concat(_('item'), ' - ', _('owner')),
+      'item__owner', title=format_lazy('{} - {}', _('item'), _('owner')),
       field_name='item__owner__name', initially_hidden=True, editable=False
       ),
     GridFieldText(
-      'item__source', title=string_concat(_('item'), ' - ', _('source')),
+      'item__source', title=format_lazy('{} - {}', _('item'), _('source')),
       initially_hidden=True, editable=False
       ),
     GridFieldLastModified(
-      'item__lastmodified', title=string_concat(_('item'), ' - ', _('last modified')),
+      'item__lastmodified', title=format_lazy('{} - {}', _('item'), _('last modified')),
       initially_hidden=True, editable=False
       ),
     # Optional fields referencing the location
     GridFieldText(
-      'location__description', title=string_concat(_('location'), ' - ', _('description')),
+      'location__description', title=format_lazy('{} - {}', _('location'), _('description')),
       initially_hidden=True, editable=False
       ),
     GridFieldText(
-      'location__category', title=string_concat(_('location'), ' - ', _('category')),
+      'location__category', title=format_lazy('{} - {}', _('location'), _('category')),
       initially_hidden=True, editable=False
       ),
     GridFieldText(
-      'location__subcategory', title=string_concat(_('location'), ' - ', _('subcategory')),
+      'location__subcategory', title=format_lazy('{} - {}', _('location'), _('subcategory')),
       initially_hidden=True, editable=False
       ),
     GridFieldText(
-      'location__available', title=string_concat(_('location'), ' - ', _('available')),
+      'location__available', title=format_lazy('{} - {}', _('location'), _('available')),
       initially_hidden=True, field_name='location__available__name', formatter='detail',
       extra='"role":"input/calendar"', editable=False
       ),
     GridFieldText(
-      'location__owner', title=string_concat(_('location'), ' - ', _('owner')),
+      'location__owner', title=format_lazy('{} - {}', _('location'), _('owner')),
       initially_hidden=True, field_name='location__owner__name', formatter='detail',
       extra='"role":"input/location"', editable=False
       ),
     GridFieldText(
-      'location__source', title=string_concat(_('location'), ' - ', _('source')),
+      'location__source', title=format_lazy('{} - {}', _('location'), _('source')),
       initially_hidden=True, editable=False
       ),
     GridFieldLastModified(
-      'location__lastmodified', title=string_concat(_('location'), ' - ', _('last modified')),
+      'location__lastmodified', title=format_lazy('{} - {}', _('location'), _('last modified')),
       initially_hidden=True, editable=False
       ),
     )
@@ -975,89 +974,89 @@ class ItemDistributionList(GridReport):
     GridFieldLastModified('lastmodified'),
     # Optional fields referencing the item
     GridFieldText(
-      'item__description', title=string_concat(_('item'), ' - ', _('description')),
+      'item__description', title=format_lazy('{} - {}', _('item'), _('description')),
       initially_hidden=True, editable=False
       ),
     GridFieldText(
-      'item__category', title=string_concat(_('item'), ' - ', _('category')),
+      'item__category', title=format_lazy('{} - {}', _('item'), _('category')),
       initially_hidden=True, editable=False
       ),
     GridFieldText(
-      'item__subcategory', title=string_concat(_('item'), ' - ', _('subcategory')),
+      'item__subcategory', title=format_lazy('{} - {}', _('item'), _('subcategory')),
       initially_hidden=True, editable=False
       ),
     GridFieldText(
-      'item__owner', title=string_concat(_('item'), ' - ', _('owner')),
+      'item__owner', title=format_lazy('{} - {}', _('item'), _('owner')),
       field_name='item__owner__name', initially_hidden=True, editable=False
       ),
     GridFieldText(
-      'item__source', title=string_concat(_('item'), ' - ', _('source')),
+      'item__source', title=format_lazy('{} - {}', _('item'), _('source')),
       initially_hidden=True, editable=False
       ),
     GridFieldLastModified(
-      'item__lastmodified', title=string_concat(_('item'), ' - ', _('last modified')),
+      'item__lastmodified', title=format_lazy('{} - {}', _('item'), _('last modified')),
       initially_hidden=True, editable=False
       ),
     # Optional fields referencing the location
     GridFieldText(
-      'location__description', title=string_concat(_('location'), ' - ', _('description')),
+      'location__description', title=format_lazy('{} - {}', _('location'), _('description')),
       initially_hidden=True, editable=False
       ),
     GridFieldText(
-      'location__category', title=string_concat(_('location'), ' - ', _('category')),
+      'location__category', title=format_lazy('{} - {}', _('location'), _('category')),
       initially_hidden=True, editable=False
       ),
     GridFieldText(
-      'location__subcategory', title=string_concat(_('location'), ' - ', _('subcategory')),
+      'location__subcategory', title=format_lazy('{} - {}', _('location'), _('subcategory')),
       initially_hidden=True, editable=False
       ),
     GridFieldText(
-      'location__available', title=string_concat(_('location'), ' - ', _('available')),
+      'location__available', title=format_lazy('{} - {}', _('location'), _('available')),
       initially_hidden=True, field_name='location__available__name', formatter='detail',
       extra='"role":"input/calendar"', editable=False
       ),
     GridFieldText(
-      'location__owner', title=string_concat(_('location'), ' - ', _('owner')),
+      'location__owner', title=format_lazy('{} - {}', _('location'), _('owner')),
       initially_hidden=True, field_name='location__owner__name', formatter='detail',
       extra='"role":"input/location"', editable=False
       ),
     GridFieldText(
-      'location__source', title=string_concat(_('location'), ' - ', _('source')),
+      'location__source', title=format_lazy('{} - {}', _('location'), _('source')),
       initially_hidden=True, editable=False
       ),
     GridFieldLastModified(
-      'location__lastmodified', title=string_concat(_('location'), ' - ', _('last modified')),
+      'location__lastmodified', title=format_lazy('{} - {}', _('location'), _('last modified')),
       initially_hidden=True, editable=False
       ),
     # Optional fields referencing the origin location
     GridFieldText(
-      'origin__description', title=string_concat(_('origin'), ' - ', _('description')),
+      'origin__description', title=format_lazy('{} - {}', _('origin'), _('description')),
       initially_hidden=True, editable=False
       ),
     GridFieldText(
-      'origin__category', title=string_concat(_('origin'), ' - ', _('category')),
+      'origin__category', title=format_lazy('{} - {}', _('origin'), _('category')),
       initially_hidden=True, editable=False
       ),
     GridFieldText(
-      'origin__subcategory', title=string_concat(_('origin'), ' - ', _('subcategory')),
+      'origin__subcategory', title=format_lazy('{} - {}', _('origin'), _('subcategory')),
       initially_hidden=True, editable=False
       ),
     GridFieldText(
-      'origin__available', title=string_concat(_('origin'), ' - ', _('available')),
+      'origin__available', title=format_lazy('{} - {}', _('origin'), _('available')),
       initially_hidden=True, field_name='origin__available__name', formatter='detail',
       extra='"role":"input/calendar"', editable=False
       ),
     GridFieldText(
-      'origin__owner', title=string_concat(_('origin'), ' - ', _('owner')),
+      'origin__owner', title=format_lazy('{} - {}', _('origin'), _('owner')),
       initially_hidden=True, field_name='origin__owner__name', formatter='detail',
       extra='"role":"input/location"', editable=False
       ),
     GridFieldText(
-      'origin__source', title=string_concat(_('origin'), ' - ', _('source')),
+      'origin__source', title=format_lazy('{} - {}', _('origin'), _('source')),
       initially_hidden=True, editable=False
       ),
     GridFieldLastModified(
-      'origin__lastmodified', title=string_concat(_('origin'), ' - ', _('last modified')),
+      'origin__lastmodified', title=format_lazy('{} - {}', _('origin'), _('last modified')),
       initially_hidden=True, editable=False
       ),
     )
@@ -1154,72 +1153,72 @@ class OperationResourceList(GridReport):
     GridFieldText('source', title=_('source')),
     GridFieldLastModified('lastmodified'),
     # Operation fields
-    GridFieldText('operation__description', title=string_concat(_('operation'), ' - ', _('description')), initially_hidden=True, editable=False),
-    GridFieldText('operation__category', title=string_concat(_('operation'), ' - ', _('category')), initially_hidden=True, editable=False),
-    GridFieldText('operation__subcategory', title=string_concat(_('operation'), ' - ', _('subcategory')), initially_hidden=True, editable=False),
-    GridFieldChoice('operation__type', title=string_concat(_('operation'), ' - ', _('type')), choices=Operation.types, initially_hidden=True, editable=False),
-    GridFieldDuration('operation__duration', title=string_concat(_('operation'), ' - ', _('duration')), initially_hidden=True, editable=False),
-    GridFieldDuration('operation__duration_per', title=string_concat(_('operation'), ' - ', _('duration per unit')), initially_hidden=True, editable=False),
-    GridFieldDuration('operation__fence', title=string_concat(_('operation'), ' - ', _('release fence')), initially_hidden=True, editable=False),
-    GridFieldDuration('operation__posttime', title=string_concat(_('operation'), ' - ', _('post-op time')), initially_hidden=True, editable=False),
-    GridFieldNumber('operation__sizeminimum', title=string_concat(_('operation'), ' - ', _('size minimum')), initially_hidden=True, editable=False),
-    GridFieldNumber('operation__sizemultiple', title=string_concat(_('operation'), ' - ', _('size multiple')), initially_hidden=True, editable=False),
-    GridFieldNumber('operation__sizemaximum', title=string_concat(_('operation'), ' - ', _('size maximum')), initially_hidden=True, editable=False),
-    GridFieldInteger('operation__priority', title=string_concat(_('operation'), ' - ', _('priority')), initially_hidden=True, editable=False),
-    GridFieldDateTime('operation__effective_start', title=string_concat(_('operation'), ' - ', _('effective start')), initially_hidden=True, editable=False),
-    GridFieldDateTime('operation__effective_end', title=string_concat(_('operation'), ' - ', _('effective end')), initially_hidden=True, editable=False),
-    GridFieldCurrency('operation__cost', title=string_concat(_('operation'), ' - ', _('cost')), initially_hidden=True, editable=False),
-    GridFieldChoice('operation__search', title=string_concat(_('operation'), ' - ', _('search mode')), choices=searchmode, initially_hidden=True, editable=False),
-    GridFieldText('operation__source', title=string_concat(_('operation'), ' - ', _('source')), initially_hidden=True, editable=False),
-    GridFieldLastModified('operation__lastmodified', title=string_concat(_('operation'), ' - ', _('last modified')), initially_hidden=True, editable=False),
+    GridFieldText('operation__description', title=format_lazy('{} - {}', _('operation'), _('description')), initially_hidden=True, editable=False),
+    GridFieldText('operation__category', title=format_lazy('{} - {}', _('operation'), _('category')), initially_hidden=True, editable=False),
+    GridFieldText('operation__subcategory', title=format_lazy('{} - {}', _('operation'), _('subcategory')), initially_hidden=True, editable=False),
+    GridFieldChoice('operation__type', title=format_lazy('{} - {}', _('operation'), _('type')), choices=Operation.types, initially_hidden=True, editable=False),
+    GridFieldDuration('operation__duration', title=format_lazy('{} - {}', _('operation'), _('duration')), initially_hidden=True, editable=False),
+    GridFieldDuration('operation__duration_per', title=format_lazy('{} - {}', _('operation'), _('duration per unit')), initially_hidden=True, editable=False),
+    GridFieldDuration('operation__fence', title=format_lazy('{} - {}', _('operation'), _('release fence')), initially_hidden=True, editable=False),
+    GridFieldDuration('operation__posttime', title=format_lazy('{} - {}', _('operation'), _('post-op time')), initially_hidden=True, editable=False),
+    GridFieldNumber('operation__sizeminimum', title=format_lazy('{} - {}', _('operation'), _('size minimum')), initially_hidden=True, editable=False),
+    GridFieldNumber('operation__sizemultiple', title=format_lazy('{} - {}', _('operation'), _('size multiple')), initially_hidden=True, editable=False),
+    GridFieldNumber('operation__sizemaximum', title=format_lazy('{} - {}', _('operation'), _('size maximum')), initially_hidden=True, editable=False),
+    GridFieldInteger('operation__priority', title=format_lazy('{} - {}', _('operation'), _('priority')), initially_hidden=True, editable=False),
+    GridFieldDateTime('operation__effective_start', title=format_lazy('{} - {}', _('operation'), _('effective start')), initially_hidden=True, editable=False),
+    GridFieldDateTime('operation__effective_end', title=format_lazy('{} - {}', _('operation'), _('effective end')), initially_hidden=True, editable=False),
+    GridFieldCurrency('operation__cost', title=format_lazy('{} - {}', _('operation'), _('cost')), initially_hidden=True, editable=False),
+    GridFieldChoice('operation__search', title=format_lazy('{} - {}', _('operation'), _('search mode')), choices=searchmode, initially_hidden=True, editable=False),
+    GridFieldText('operation__source', title=format_lazy('{} - {}', _('operation'), _('source')), initially_hidden=True, editable=False),
+    GridFieldLastModified('operation__lastmodified', title=format_lazy('{} - {}', _('operation'), _('last modified')), initially_hidden=True, editable=False),
     # Optional fields referencing the resource
     GridFieldText(
       'resource__description', editable=False, initially_hidden=True,
-      title=string_concat(_('resource'), ' - ', _('description'))
+      title=format_lazy('{} - {}', _('resource'), _('description'))
       ),
     GridFieldText(
       'resource__category', editable=False, initially_hidden=True,
-      title=string_concat(_('resource'), ' - ', _('category'))
+      title=format_lazy('{} - {}', _('resource'), _('category'))
       ),
     GridFieldText(
       'resource__subcategory', editable=False, initially_hidden=True,
-      title=string_concat(_('resource'), ' - ', _('subcategory'))
+      title=format_lazy('{} - {}', _('resource'), _('subcategory'))
       ),
     GridFieldText(
       'resource__type', editable=False, initially_hidden=True,
-      title=string_concat(_('resource'), ' - ', _('type'))
+      title=format_lazy('{} - {}', _('resource'), _('type'))
       ),
     GridFieldNumber(
       'resource__maximum', editable=False, initially_hidden=True,
-      title=string_concat(_('resource'), ' - ', _('maximum'))
+      title=format_lazy('{} - {}', _('resource'), _('maximum'))
       ),
     GridFieldText(
       'resource__maximum_calendar', editable=False, initially_hidden=True,
-      title=string_concat(_('resource'), ' - ', _('maximum calendar')),
+      title=format_lazy('{} - {}', _('resource'), _('maximum calendar')),
       field_name='resource__maximum_calendar__name',
       formatter='detail', extra='"role":"input/calendar"'
       ),
     GridFieldCurrency(
       'resource__cost', editable=False, initially_hidden=True,
-      title=string_concat(_('resource'), ' - ', _('cost'))
+      title=format_lazy('{} - {}', _('resource'), _('cost'))
       ),
     GridFieldDuration(
       'resource__maxearly', editable=False, initially_hidden=True,
-      title=string_concat(_('resource'), ' - ', _('maxearly'))
+      title=format_lazy('{} - {}', _('resource'), _('maxearly'))
       ),
     GridFieldText(
       'resource__setupmatrix', editable=False, initially_hidden=True,
-      title=string_concat(_('resource'), ' - ', _('setupmatrix')),
+      title=format_lazy('{} - {}', _('resource'), _('setupmatrix')),
       field_name='resource__setupmatrix__name',
       formatter='detail', extra='"role":"input/setupmatrix"'
       ),
     GridFieldText(
       'resource__setup', editable=False, initially_hidden=True,
-      title=string_concat(_('resource'), ' - ', _('setup'))
+      title=format_lazy('{} - {}', _('resource'), _('setup'))
       ),
     GridFieldText(
       'resource__location', editable=False, initially_hidden=True,
-      title=string_concat(_('resource'), ' - ', _('location')),
+      title=format_lazy('{} - {}', _('resource'), _('location')),
       field_name='resource__location__name',
       formatter='detail', extra='"role":"input/location"'
       ),
@@ -1253,51 +1252,51 @@ class OperationMaterialList(GridReport):
     GridFieldNumber('transferbatch', title=_('transfer batch quantity'), initially_hidden=True),
     GridFieldNumber('quantity_fixed', title=_('fixed quantity')),
     # Operation fields
-    GridFieldText('operation__description', title=string_concat(_('operation'), ' - ', _('description')), initially_hidden=True, editable=False),
-    GridFieldText('operation__category', title=string_concat(_('operation'), ' - ', _('category')), initially_hidden=True, editable=False),
-    GridFieldText('operation__subcategory', title=string_concat(_('operation'), ' - ', _('subcategory')), initially_hidden=True, editable=False),
-    GridFieldChoice('operation__type', title=string_concat(_('operation'), ' - ', _('type')), choices=Operation.types, initially_hidden=True, editable=False),
-    GridFieldDuration('operation__duration', title=string_concat(_('operation'), ' - ', _('duration')), initially_hidden=True, editable=False),
-    GridFieldDuration('operation__duration_per', title=string_concat(_('operation'), ' - ', _('duration per unit')), initially_hidden=True, editable=False),
-    GridFieldDuration('operation__fence', title=string_concat(_('operation'), ' - ', _('release fence')), initially_hidden=True, editable=False),
-    GridFieldDuration('operation__posttime', title=string_concat(_('operation'), ' - ', _('post-op time')), initially_hidden=True, editable=False),
-    GridFieldNumber('operation__sizeminimum', title=string_concat(_('operation'), ' - ', _('size minimum')), initially_hidden=True, editable=False),
-    GridFieldNumber('operation__sizemultiple', title=string_concat(_('operation'), ' - ', _('size multiple')), initially_hidden=True, editable=False),
-    GridFieldNumber('operation__sizemaximum', title=string_concat(_('operation'), ' - ', _('size maximum')), initially_hidden=True, editable=False),
-    GridFieldInteger('operation__priority', title=string_concat(_('operation'), ' - ', _('priority')), initially_hidden=True, editable=False),
-    GridFieldDateTime('operation__effective_start', title=string_concat(_('operation'), ' - ', _('effective start')), initially_hidden=True, editable=False),
-    GridFieldDateTime('operation__effective_end', title=string_concat(_('operation'), ' - ', _('effective end')), initially_hidden=True, editable=False),
-    GridFieldCurrency('operation__cost', title=string_concat(_('operation'), ' - ', _('cost')), initially_hidden=True, editable=False),
-    GridFieldChoice('operation__search', title=string_concat(_('operation'), ' - ', _('search mode')), choices=searchmode, initially_hidden=True, editable=False),
-    GridFieldText('operation__source', title=string_concat(_('operation'), ' - ', _('source')), initially_hidden=True, editable=False),
-    GridFieldLastModified('operation__lastmodified', title=string_concat(_('operation'), ' - ', _('last modified')), initially_hidden=True, editable=False),
+    GridFieldText('operation__description', title=format_lazy('{} - {}', _('operation'), _('description')), initially_hidden=True, editable=False),
+    GridFieldText('operation__category', title=format_lazy('{} - {}', _('operation'), _('category')), initially_hidden=True, editable=False),
+    GridFieldText('operation__subcategory', title=format_lazy('{} - {}', _('operation'), _('subcategory')), initially_hidden=True, editable=False),
+    GridFieldChoice('operation__type', title=format_lazy('{} - {}', _('operation'), _('type')), choices=Operation.types, initially_hidden=True, editable=False),
+    GridFieldDuration('operation__duration', title=format_lazy('{} - {}', _('operation'), _('duration')), initially_hidden=True, editable=False),
+    GridFieldDuration('operation__duration_per', title=format_lazy('{} - {}', _('operation'), _('duration per unit')), initially_hidden=True, editable=False),
+    GridFieldDuration('operation__fence', title=format_lazy('{} - {}', _('operation'), _('release fence')), initially_hidden=True, editable=False),
+    GridFieldDuration('operation__posttime', title=format_lazy('{} - {}', _('operation'), _('post-op time')), initially_hidden=True, editable=False),
+    GridFieldNumber('operation__sizeminimum', title=format_lazy('{} - {}', _('operation'), _('size minimum')), initially_hidden=True, editable=False),
+    GridFieldNumber('operation__sizemultiple', title=format_lazy('{} - {}', _('operation'), _('size multiple')), initially_hidden=True, editable=False),
+    GridFieldNumber('operation__sizemaximum', title=format_lazy('{} - {}', _('operation'), _('size maximum')), initially_hidden=True, editable=False),
+    GridFieldInteger('operation__priority', title=format_lazy('{} - {}', _('operation'), _('priority')), initially_hidden=True, editable=False),
+    GridFieldDateTime('operation__effective_start', title=format_lazy('{} - {}', _('operation'), _('effective start')), initially_hidden=True, editable=False),
+    GridFieldDateTime('operation__effective_end', title=format_lazy('{} - {}', _('operation'), _('effective end')), initially_hidden=True, editable=False),
+    GridFieldCurrency('operation__cost', title=format_lazy('{} - {}', _('operation'), _('cost')), initially_hidden=True, editable=False),
+    GridFieldChoice('operation__search', title=format_lazy('{} - {}', _('operation'), _('search mode')), choices=searchmode, initially_hidden=True, editable=False),
+    GridFieldText('operation__source', title=format_lazy('{} - {}', _('operation'), _('source')), initially_hidden=True, editable=False),
+    GridFieldLastModified('operation__lastmodified', title=format_lazy('{} - {}', _('operation'), _('last modified')), initially_hidden=True, editable=False),
     # Optional fields referencing the item
     GridFieldText(
-      'item__description', title=string_concat(_('item'), ' - ', _('description')),
+      'item__description', title=format_lazy('{} - {}', _('item'), _('description')),
       initially_hidden=True, editable=False
       ),
     GridFieldText(
-      'item__category', title=string_concat(_('item'), ' - ', _('category')),
+      'item__category', title=format_lazy('{} - {}', _('item'), _('category')),
       initially_hidden=True, editable=False
       ),
     GridFieldText(
-      'item__subcategory', title=string_concat(_('item'), ' - ', _('subcategory')),
+      'item__subcategory', title=format_lazy('{} - {}', _('item'), _('subcategory')),
       initially_hidden=True, editable=False
       ),
     GridFieldText(
-      'item__owner', title=string_concat(_('item'), ' - ', _('owner')),
+      'item__owner', title=format_lazy('{} - {}', _('item'), _('owner')),
       field_name='item__owner__name', initially_hidden=True, editable=False
       ),
     GridFieldCurrency(
-      'item__cost', title=string_concat(_('item'), ' - ', _('cost')),
+      'item__cost', title=format_lazy('{} - {}', _('item'), _('cost')),
       initially_hidden=True, editable=False
       ),
     GridFieldText(
-      'item__source', title=string_concat(_('item'), ' - ', _('source')),
+      'item__source', title=format_lazy('{} - {}', _('item'), _('source')),
       initially_hidden=True, editable=False
       ),
     GridFieldLastModified(
-      'item__lastmodified', title=string_concat(_('item'), ' - ', _('last modified')),
+      'item__lastmodified', title=format_lazy('{} - {}', _('item'), _('last modified')),
       initially_hidden=True, editable=False
       ),
     )
@@ -1338,88 +1337,88 @@ class DemandList(GridReport):
     GridFieldLastModified('lastmodified'),
     # Optional fields referencing the item
     GridFieldText(
-      'item__description', title=string_concat(_('item'), ' - ', _('description')),
+      'item__description', title=format_lazy('{} - {}', _('item'), _('description')),
       initially_hidden=True, editable=False
       ),
     GridFieldText(
-      'item__category', title=string_concat(_('item'), ' - ', _('category')),
+      'item__category', title=format_lazy('{} - {}', _('item'), _('category')),
       initially_hidden=True, editable=False
       ),
     GridFieldText(
-      'item__subcategory', title=string_concat(_('item'), ' - ', _('subcategory')),
+      'item__subcategory', title=format_lazy('{} - {}', _('item'), _('subcategory')),
       initially_hidden=True, editable=False
       ),
     GridFieldText(
-      'item__owner', title=string_concat(_('item'), ' - ', _('owner')),
+      'item__owner', title=format_lazy('{} - {}', _('item'), _('owner')),
       field_name='item__owner__name', initially_hidden=True, editable=False
       ),
     GridFieldCurrency(
-      'item__cost', title=string_concat(_('item'), ' - ', _('cost')),
+      'item__cost', title=format_lazy('{} - {}', _('item'), _('cost')),
       initially_hidden=True, editable=False
       ),
     GridFieldText(
-      'item__source', title=string_concat(_('item'), ' - ', _('source')),
+      'item__source', title=format_lazy('{} - {}', _('item'), _('source')),
       initially_hidden=True, editable=False
       ),
     GridFieldLastModified(
-      'item__lastmodified', title=string_concat(_('item'), ' - ', _('last modified')),
+      'item__lastmodified', title=format_lazy('{} - {}', _('item'), _('last modified')),
       initially_hidden=True, editable=False
       ),
     # Optional fields referencing the location
     GridFieldText(
-      'location__description', title=string_concat(_('location'), ' - ', _('description')),
+      'location__description', title=format_lazy('{} - {}', _('location'), _('description')),
       initially_hidden=True, editable=False
       ),
     GridFieldText(
-      'location__category', title=string_concat(_('location'), ' - ', _('category')),
+      'location__category', title=format_lazy('{} - {}', _('location'), _('category')),
       initially_hidden=True, editable=False
       ),
     GridFieldText(
-      'location__subcategory', title=string_concat(_('location'), ' - ', _('subcategory')),
+      'location__subcategory', title=format_lazy('{} - {}', _('location'), _('subcategory')),
       initially_hidden=True, editable=False
       ),
     GridFieldText(
-      'location__available', title=string_concat(_('location'), ' - ', _('available')),
+      'location__available', title=format_lazy('{} - {}', _('location'), _('available')),
       initially_hidden=True, field_name='location__available__name', formatter='detail',
       extra='"role":"input/calendar"', editable=False
       ),
     GridFieldText(
-      'location__owner', title=string_concat(_('location'), ' - ', _('owner')),
+      'location__owner', title=format_lazy('{} - {}', _('location'), _('owner')),
       initially_hidden=True, field_name='location__owner__name', formatter='detail',
       extra='"role":"input/location"', editable=False
       ),
     GridFieldText(
-      'location__source', title=string_concat(_('location'), ' - ', _('source')),
+      'location__source', title=format_lazy('{} - {}', _('location'), _('source')),
       initially_hidden=True, editable=False
       ),
     GridFieldLastModified(
-      'location__lastmodified', title=string_concat(_('location'), ' - ', _('last modified')),
+      'location__lastmodified', title=format_lazy('{} - {}', _('location'), _('last modified')),
       initially_hidden=True, editable=False
       ),
     # Optional fields referencing the customer
     GridFieldText(
-      'customer__description', title=string_concat(_('customer'), ' - ', _('description')),
+      'customer__description', title=format_lazy('{} - {}', _('customer'), _('description')),
       initially_hidden=True, editable=False
       ),
     GridFieldText(
-      'customer__category', title=string_concat(_('customer'), ' - ', _('category')),
+      'customer__category', title=format_lazy('{} - {}', _('customer'), _('category')),
       initially_hidden=True, editable=False
       ),
     GridFieldText(
-      'customer__subcategory', title=string_concat(_('customer'), ' - ', _('subcategory')),
+      'customer__subcategory', title=format_lazy('{} - {}', _('customer'), _('subcategory')),
       initially_hidden=True, editable=False
       ),
     GridFieldText(
-      'customer__owner', title=string_concat(_('customer'), ' - ', _('owner')),
+      'customer__owner', title=format_lazy('{} - {}', _('customer'), _('owner')),
       initially_hidden=True, field_name='customer__owner__name', formatter='detail',
       extra='"role":"input/customer"', editable=False
       ),
     GridFieldText(
-      'customer__source', title=string_concat(_('customer'), ' - ', _('source')),
+      'customer__source', title=format_lazy('{} - {}', _('customer'), _('source')),
       initially_hidden=True, editable=False
       ),
     GridFieldLastModified(
-      'customer__lastmodified', title=string_concat(_('customer'), ' - ', _('last modified')),
+      'customer__lastmodified', title=format_lazy('{} - {}', _('customer'), _('last modified')),
       initially_hidden=True, editable=False
       ),
     )
@@ -1576,43 +1575,43 @@ class SubOperationList(GridReport):
     GridFieldText('source', title=_('source')),
     GridFieldLastModified('lastmodified'),
     # Operation fields
-    GridFieldText('operation__description', title=string_concat(_('operation'), ' - ', _('description')), initially_hidden=True, editable=False),
-    GridFieldText('operation__category', title=string_concat(_('operation'), ' - ', _('category')), initially_hidden=True, editable=False),
-    GridFieldText('operation__subcategory', title=string_concat(_('operation'), ' - ', _('subcategory')), initially_hidden=True, editable=False),
-    GridFieldChoice('operation__type', title=string_concat(_('operation'), ' - ', _('type')), choices=Operation.types, initially_hidden=True, editable=False),
-    GridFieldDuration('operation__duration', title=string_concat(_('operation'), ' - ', _('duration')), initially_hidden=True, editable=False),
-    GridFieldDuration('operation__duration_per', title=string_concat(_('operation'), ' - ', _('duration per unit')), initially_hidden=True, editable=False),
-    GridFieldDuration('operation__fence', title=string_concat(_('operation'), ' - ', _('release fence')), initially_hidden=True, editable=False),
-    GridFieldDuration('operation__posttime', title=string_concat(_('operation'), ' - ', _('post-op time')), initially_hidden=True, editable=False),
-    GridFieldNumber('operation__sizeminimum', title=string_concat(_('operation'), ' - ', _('size minimum')), initially_hidden=True, editable=False),
-    GridFieldNumber('operation__sizemultiple', title=string_concat(_('operation'), ' - ', _('size multiple')), initially_hidden=True, editable=False),
-    GridFieldNumber('operation__sizemaximum', title=string_concat(_('operation'), ' - ', _('size maximum')), initially_hidden=True, editable=False),
-    GridFieldInteger('operation__priority', title=string_concat(_('operation'), ' - ', _('priority')), initially_hidden=True, editable=False),
-    GridFieldDateTime('operation__effective_start', title=string_concat(_('operation'), ' - ', _('effective start')), initially_hidden=True, editable=False),
-    GridFieldDateTime('operation__effective_end', title=string_concat(_('operation'), ' - ', _('effective end')), initially_hidden=True, editable=False),
-    GridFieldCurrency('operation__cost', title=string_concat(_('operation'), ' - ', _('cost')), initially_hidden=True, editable=False),
-    GridFieldChoice('operation__search', title=string_concat(_('operation'), ' - ', _('search mode')), choices=searchmode, initially_hidden=True, editable=False),
-    GridFieldText('operation__source', title=string_concat(_('operation'), ' - ', _('source')), initially_hidden=True, editable=False),
-    GridFieldLastModified('operation__lastmodified', title=string_concat(_('operation'), ' - ', _('last modified')), initially_hidden=True, editable=False),
+    GridFieldText('operation__description', title=format_lazy('{} - {}', _('operation'), _('description')), initially_hidden=True, editable=False),
+    GridFieldText('operation__category', title=format_lazy('{} - {}', _('operation'), _('category')), initially_hidden=True, editable=False),
+    GridFieldText('operation__subcategory', title=format_lazy('{} - {}', _('operation'), _('subcategory')), initially_hidden=True, editable=False),
+    GridFieldChoice('operation__type', title=format_lazy('{} - {}', _('operation'), _('type')), choices=Operation.types, initially_hidden=True, editable=False),
+    GridFieldDuration('operation__duration', title=format_lazy('{} - {}', _('operation'), _('duration')), initially_hidden=True, editable=False),
+    GridFieldDuration('operation__duration_per', title=format_lazy('{} - {}', _('operation'), _('duration per unit')), initially_hidden=True, editable=False),
+    GridFieldDuration('operation__fence', title=format_lazy('{} - {}', _('operation'), _('release fence')), initially_hidden=True, editable=False),
+    GridFieldDuration('operation__posttime', title=format_lazy('{} - {}', _('operation'), _('post-op time')), initially_hidden=True, editable=False),
+    GridFieldNumber('operation__sizeminimum', title=format_lazy('{} - {}', _('operation'), _('size minimum')), initially_hidden=True, editable=False),
+    GridFieldNumber('operation__sizemultiple', title=format_lazy('{} - {}', _('operation'), _('size multiple')), initially_hidden=True, editable=False),
+    GridFieldNumber('operation__sizemaximum', title=format_lazy('{} - {}', _('operation'), _('size maximum')), initially_hidden=True, editable=False),
+    GridFieldInteger('operation__priority', title=format_lazy('{} - {}', _('operation'), _('priority')), initially_hidden=True, editable=False),
+    GridFieldDateTime('operation__effective_start', title=format_lazy('{} - {}', _('operation'), _('effective start')), initially_hidden=True, editable=False),
+    GridFieldDateTime('operation__effective_end', title=format_lazy('{} - {}', _('operation'), _('effective end')), initially_hidden=True, editable=False),
+    GridFieldCurrency('operation__cost', title=format_lazy('{} - {}', _('operation'), _('cost')), initially_hidden=True, editable=False),
+    GridFieldChoice('operation__search', title=format_lazy('{} - {}', _('operation'), _('search mode')), choices=searchmode, initially_hidden=True, editable=False),
+    GridFieldText('operation__source', title=format_lazy('{} - {}', _('operation'), _('source')), initially_hidden=True, editable=False),
+    GridFieldLastModified('operation__lastmodified', title=format_lazy('{} - {}', _('operation'), _('last modified')), initially_hidden=True, editable=False),
     # Suboperation fields
-    GridFieldText('suboperation__description', title=string_concat(_('suboperation'), ' - ', _('description')), initially_hidden=True, editable=False),
-    GridFieldText('suboperation__category', title=string_concat(_('suboperation'), ' - ', _('category')), initially_hidden=True, editable=False),
-    GridFieldText('suboperation__subcategory', title=string_concat(_('suboperation'), ' - ', _('subcategory')), initially_hidden=True, editable=False),
-    GridFieldChoice('suboperation__type', title=string_concat(_('suboperation'), ' - ', _('type')), choices=Operation.types, initially_hidden=True, editable=False),
-    GridFieldDuration('suboperation__duration', title=string_concat(_('suboperation'), ' - ', _('duration')), initially_hidden=True, editable=False),
-    GridFieldDuration('suboperation__duration_per', title=string_concat(_('suboperation'), ' - ', _('duration per unit')), initially_hidden=True, editable=False),
-    GridFieldDuration('suboperation__fence', title=string_concat(_('suboperation'), ' - ', _('release fence')), initially_hidden=True, editable=False),
-    GridFieldDuration('suboperation__posttime', title=string_concat(_('suboperation'), ' - ', _('post-op time')), initially_hidden=True, editable=False),
-    GridFieldNumber('suboperation__sizeminimum', title=string_concat(_('suboperation'), ' - ', _('size minimum')), initially_hidden=True, editable=False),
-    GridFieldNumber('suboperation__sizemultiple', title=string_concat(_('suboperation'), ' - ', _('size multiple')), initially_hidden=True, editable=False),
-    GridFieldNumber('suboperation__sizemaximum', title=string_concat(_('suboperation'), ' - ', _('size maximum')), initially_hidden=True, editable=False),
-    GridFieldInteger('suboperation__priority', title=string_concat(_('suboperation'), ' - ', _('priority')), initially_hidden=True, editable=False),
-    GridFieldDateTime('suboperation__effective_start', title=string_concat(_('suboperation'), ' - ', _('effective start')), initially_hidden=True, editable=False),
-    GridFieldDateTime('suboperation__effective_end', title=string_concat(_('suboperation'), ' - ', _('effective end')), initially_hidden=True, editable=False),
-    GridFieldCurrency('suboperation__cost', title=string_concat(_('suboperation'), ' - ', _('cost')), initially_hidden=True, editable=False),
-    GridFieldChoice('suboperation__search', title=string_concat(_('suboperation'), ' - ', _('search mode')), choices=searchmode, initially_hidden=True, editable=False),
-    GridFieldText('suboperation__source', title=string_concat(_('suboperation'), ' - ', _('source')), initially_hidden=True, editable=False),
-    GridFieldLastModified('suboperation__lastmodified', title=string_concat(_('suboperation'), ' - ', _('last modified')), initially_hidden=True, editable=False),
+    GridFieldText('suboperation__description', title=format_lazy('{} - {}', _('suboperation'), _('description')), initially_hidden=True, editable=False),
+    GridFieldText('suboperation__category', title=format_lazy('{} - {}', _('suboperation'), _('category')), initially_hidden=True, editable=False),
+    GridFieldText('suboperation__subcategory', title=format_lazy('{} - {}', _('suboperation'), _('subcategory')), initially_hidden=True, editable=False),
+    GridFieldChoice('suboperation__type', title=format_lazy('{} - {}', _('suboperation'), _('type')), choices=Operation.types, initially_hidden=True, editable=False),
+    GridFieldDuration('suboperation__duration', title=format_lazy('{} - {}', _('suboperation'), _('duration')), initially_hidden=True, editable=False),
+    GridFieldDuration('suboperation__duration_per', title=format_lazy('{} - {}', _('suboperation'), _('duration per unit')), initially_hidden=True, editable=False),
+    GridFieldDuration('suboperation__fence', title=format_lazy('{} - {}', _('suboperation'), _('release fence')), initially_hidden=True, editable=False),
+    GridFieldDuration('suboperation__posttime', title=format_lazy('{} - {}', _('suboperation'), _('post-op time')), initially_hidden=True, editable=False),
+    GridFieldNumber('suboperation__sizeminimum', title=format_lazy('{} - {}', _('suboperation'), _('size minimum')), initially_hidden=True, editable=False),
+    GridFieldNumber('suboperation__sizemultiple', title=format_lazy('{} - {}', _('suboperation'), _('size multiple')), initially_hidden=True, editable=False),
+    GridFieldNumber('suboperation__sizemaximum', title=format_lazy('{} - {}', _('suboperation'), _('size maximum')), initially_hidden=True, editable=False),
+    GridFieldInteger('suboperation__priority', title=format_lazy('{} - {}', _('suboperation'), _('priority')), initially_hidden=True, editable=False),
+    GridFieldDateTime('suboperation__effective_start', title=format_lazy('{} - {}', _('suboperation'), _('effective start')), initially_hidden=True, editable=False),
+    GridFieldDateTime('suboperation__effective_end', title=format_lazy('{} - {}', _('suboperation'), _('effective end')), initially_hidden=True, editable=False),
+    GridFieldCurrency('suboperation__cost', title=format_lazy('{} - {}', _('suboperation'), _('cost')), initially_hidden=True, editable=False),
+    GridFieldChoice('suboperation__search', title=format_lazy('{} - {}', _('suboperation'), _('search mode')), choices=searchmode, initially_hidden=True, editable=False),
+    GridFieldText('suboperation__source', title=format_lazy('{} - {}', _('suboperation'), _('source')), initially_hidden=True, editable=False),
+    GridFieldLastModified('suboperation__lastmodified', title=format_lazy('{} - {}', _('suboperation'), _('last modified')), initially_hidden=True, editable=False),
     )
 
 
@@ -1841,81 +1840,81 @@ class ManufacturingOrderList(OperationPlanMixin, GridReport):
     GridFieldText('owner', title=_('owner'), field_name='owner__reference', extra='"formatoptions":{"defaultValue":""}', initially_hidden=True),
     GridFieldText('source', title=_('source')),
     GridFieldLastModified('lastmodified'),
-    GridFieldText('operation__description', title=string_concat(_('operation'), ' - ', _('description')), initially_hidden=True),
-    GridFieldText('operation__category', title=string_concat(_('operation'), ' - ', _('category')), initially_hidden=True),
-    GridFieldText('operation__subcategory', title=string_concat(_('operation'), ' - ', _('subcategory')), initially_hidden=True),
-    GridFieldChoice('operation__type', title=string_concat(_('operation'), ' - ', _('type')), choices=Operation.types, initially_hidden=True),
-    GridFieldDuration('operation__duration', title=string_concat(_('operation'), ' - ', _('duration')), initially_hidden=True),
-    GridFieldDuration('operation__duration_per', title=string_concat(_('operation'), ' - ', _('duration per unit')), initially_hidden=True),
-    GridFieldDuration('operation__fence', title=string_concat(_('operation'), ' - ', _('release fence')), initially_hidden=True),
-    GridFieldDuration('operation__posttime', title=string_concat(_('operation'), ' - ', _('post-op time')), initially_hidden=True),
-    GridFieldNumber('operation__sizeminimum', title=string_concat(_('operation'), ' - ', _('size minimum')), initially_hidden=True),
-    GridFieldNumber('operation__sizemultiple', title=string_concat(_('operation'), ' - ', _('size multiple')), initially_hidden=True),
-    GridFieldNumber('operation__sizemaximum', title=string_concat(_('operation'), ' - ', _('size maximum')), initially_hidden=True),
-    GridFieldInteger('operation__priority', title=string_concat(_('operation'), ' - ', _('priority')), initially_hidden=True),
-    GridFieldDateTime('operation__effective_start', title=string_concat(_('operation'), ' - ', _('effective start')), initially_hidden=True),
-    GridFieldDateTime('operation__effective_end', title=string_concat(_('operation'), ' - ', _('effective end')), initially_hidden=True),
-    GridFieldCurrency('operation__cost', title=string_concat(_('operation'), ' - ', _('cost')), initially_hidden=True),
-    GridFieldChoice('operation__search', title=string_concat(_('operation'), ' - ', _('search mode')), choices=searchmode, initially_hidden=True),
-    GridFieldText('operation__source', title=string_concat(_('operation'), ' - ', _('source')), initially_hidden=True),
-    GridFieldLastModified('operation__lastmodified', title=string_concat(_('operation'), ' - ', _('last modified')), initially_hidden=True),
+    GridFieldText('operation__description', title=format_lazy('{} - {}', _('operation'), _('description')), initially_hidden=True),
+    GridFieldText('operation__category', title=format_lazy('{} - {}', _('operation'), _('category')), initially_hidden=True),
+    GridFieldText('operation__subcategory', title=format_lazy('{} - {}', _('operation'), _('subcategory')), initially_hidden=True),
+    GridFieldChoice('operation__type', title=format_lazy('{} - {}', _('operation'), _('type')), choices=Operation.types, initially_hidden=True),
+    GridFieldDuration('operation__duration', title=format_lazy('{} - {}', _('operation'), _('duration')), initially_hidden=True),
+    GridFieldDuration('operation__duration_per', title=format_lazy('{} - {}', _('operation'), _('duration per unit')), initially_hidden=True),
+    GridFieldDuration('operation__fence', title=format_lazy('{} - {}', _('operation'), _('release fence')), initially_hidden=True),
+    GridFieldDuration('operation__posttime', title=format_lazy('{} - {}', _('operation'), _('post-op time')), initially_hidden=True),
+    GridFieldNumber('operation__sizeminimum', title=format_lazy('{} - {}', _('operation'), _('size minimum')), initially_hidden=True),
+    GridFieldNumber('operation__sizemultiple', title=format_lazy('{} - {}', _('operation'), _('size multiple')), initially_hidden=True),
+    GridFieldNumber('operation__sizemaximum', title=format_lazy('{} - {}', _('operation'), _('size maximum')), initially_hidden=True),
+    GridFieldInteger('operation__priority', title=format_lazy('{} - {}', _('operation'), _('priority')), initially_hidden=True),
+    GridFieldDateTime('operation__effective_start', title=format_lazy('{} - {}', _('operation'), _('effective start')), initially_hidden=True),
+    GridFieldDateTime('operation__effective_end', title=format_lazy('{} - {}', _('operation'), _('effective end')), initially_hidden=True),
+    GridFieldCurrency('operation__cost', title=format_lazy('{} - {}', _('operation'), _('cost')), initially_hidden=True),
+    GridFieldChoice('operation__search', title=format_lazy('{} - {}', _('operation'), _('search mode')), choices=searchmode, initially_hidden=True),
+    GridFieldText('operation__source', title=format_lazy('{} - {}', _('operation'), _('source')), initially_hidden=True),
+    GridFieldLastModified('operation__lastmodified', title=format_lazy('{} - {}', _('operation'), _('last modified')), initially_hidden=True),
     GridFieldDuration('setup_duration', title=_('setup time'), initially_hidden=True, search=False),
     GridFieldDateTime('setup_end', title=_('setup end date'), initially_hidden=True, search=False),
     GridFieldBool('feasible', title=_('feasible'), editable=False, initially_hidden=True, search=False),
     # Optional fields referencing the item
     GridFieldText(
-      'operation__item__description', title=string_concat(_('item'), ' - ', _('description')),
+      'operation__item__description', title=format_lazy('{} - {}', _('item'), _('description')),
       initially_hidden=True, editable=False
       ),
     GridFieldText(
-      'operation__item__category', title=string_concat(_('item'), ' - ', _('category')),
+      'operation__item__category', title=format_lazy('{} - {}', _('item'), _('category')),
       initially_hidden=True, editable=False
       ),
     GridFieldText(
-      'operation__item__subcategory', title=string_concat(_('item'), ' - ', _('subcategory')),
+      'operation__item__subcategory', title=format_lazy('{} - {}', _('item'), _('subcategory')),
       initially_hidden=True, editable=False
       ),
     GridFieldText(
-      'operation__item__owner', title=string_concat(_('item'), ' - ', _('owner')),
+      'operation__item__owner', title=format_lazy('{} - {}', _('item'), _('owner')),
       field_name='operation__item__owner__name', initially_hidden=True, editable=False
       ),
     GridFieldText(
-      'operation__item__source', title=string_concat(_('item'), ' - ', _('source')),
+      'operation__item__source', title=format_lazy('{} - {}', _('item'), _('source')),
       initially_hidden=True, editable=False
       ),
     GridFieldLastModified(
-      'operation__item__lastmodified', title=string_concat(_('item'), ' - ', _('last modified')),
+      'operation__item__lastmodified', title=format_lazy('{} - {}', _('item'), _('last modified')),
       initially_hidden=True, editable=False
       ),
     # Optional fields referencing the location
     GridFieldText(
-      'operation__location__description', title=string_concat(_('location'), ' - ', _('description')),
+      'operation__location__description', title=format_lazy('{} - {}', _('location'), _('description')),
       initially_hidden=True, editable=False
       ),
     GridFieldText(
-      'operation__location__category', title=string_concat(_('location'), ' - ', _('category')),
+      'operation__location__category', title=format_lazy('{} - {}', _('location'), _('category')),
       initially_hidden=True, editable=False
       ),
     GridFieldText(
-      'operation__location__subcategory', title=string_concat(_('location'), ' - ', _('subcategory')),
+      'operation__location__subcategory', title=format_lazy('{} - {}', _('location'), _('subcategory')),
       initially_hidden=True, editable=False
       ),
     GridFieldText(
-      'operation__location__available', title=string_concat(_('location'), ' - ', _('available')),
+      'operation__location__available', title=format_lazy('{} - {}', _('location'), _('available')),
       initially_hidden=True, field_name='operation__location__available__name', formatter='detail',
       extra='"role":"input/calendar"', editable=False
       ),
     GridFieldText(
-      'operation__location__owner', title=string_concat(_('location'), ' - ', _('owner')),
+      'operation__location__owner', title=format_lazy('{} - {}', _('location'), _('owner')),
       initially_hidden=True, field_name='operation__location__owner__name', formatter='detail',
       extra='"role":"input/location"', editable=False
       ),
     GridFieldText(
-      'operation__location__source', title=string_concat(_('location'), ' - ', _('source')),
+      'operation__location__source', title=format_lazy('{} - {}', _('location'), _('source')),
       initially_hidden=True, editable=False
       ),
     GridFieldLastModified(
-      'operation__location__lastmodified', title=string_concat(_('location'), ' - ', _('last modified')),
+      'operation__location__lastmodified', title=format_lazy('{} - {}', _('location'), _('last modified')),
       initially_hidden=True, editable=False
       ),
     GridFieldText(
@@ -2093,7 +2092,7 @@ class DistributionOrderList(OperationPlanMixin, GridReport):
     GridFieldNumber('quantity', title=_('quantity'), extra='"formatoptions":{"defaultValue":""}, "summaryType":"sum"'),
     GridFieldChoice('status', title=_('status'), choices=DistributionOrder.orderstatus, editable=not settings.ERP_CONNECTOR),
     GridFieldCurrency(
-      'item__cost', title=string_concat(_('item'), ' - ', _('cost')),
+      'item__cost', title=format_lazy('{} - {}', _('item'), _('cost')),
       editable=False, extra='"formatoptions":{"defaultValue":""}, "summaryType":"max"'
       ),
     GridFieldCurrency('total_cost', title=_('total cost'), editable=False, search=False, extra='"formatoptions":{"defaultValue":""}, "summaryType":"sum"'),
@@ -2105,89 +2104,89 @@ class DistributionOrderList(OperationPlanMixin, GridReport):
     GridFieldBool('feasible', title=_('feasible'), editable=False, initially_hidden=True, search=False),
     # Optional fields referencing the item
     GridFieldText(
-      'item__description', title=string_concat(_('item'), ' - ', _('description')),
+      'item__description', title=format_lazy('{} - {}', _('item'), _('description')),
       initially_hidden=True, editable=False
       ),
     GridFieldText(
-      'item__category', title=string_concat(_('item'), ' - ', _('category')),
+      'item__category', title=format_lazy('{} - {}', _('item'), _('category')),
       initially_hidden=True, editable=False
       ),
     GridFieldText(
-      'item__subcategory', title=string_concat(_('item'), ' - ', _('subcategory')),
+      'item__subcategory', title=format_lazy('{} - {}', _('item'), _('subcategory')),
       initially_hidden=True, editable=False
       ),
     GridFieldText(
-      'item__owner', title=string_concat(_('item'), ' - ', _('owner')),
+      'item__owner', title=format_lazy('{} - {}', _('item'), _('owner')),
       field_name='item__owner__name', initially_hidden=True, editable=False
       ),
     GridFieldText(
-      'item__source', title=string_concat(_('item'), ' - ', _('source')),
+      'item__source', title=format_lazy('{} - {}', _('item'), _('source')),
       initially_hidden=True, editable=False
       ),
     GridFieldLastModified(
-      'item__lastmodified', title=string_concat(_('item'), ' - ', _('last modified')),
+      'item__lastmodified', title=format_lazy('{} - {}', _('item'), _('last modified')),
       initially_hidden=True, editable=False
       ),
     # Optional fields referencing the origin location
     GridFieldText(
-      'origin__description', title=string_concat(_('origin'), ' - ', _('description')),
+      'origin__description', title=format_lazy('{} - {}', _('origin'), _('description')),
       initially_hidden=True, editable=False
       ),
     GridFieldText(
-      'origin__category', title=string_concat(_('origin'), ' - ', _('category')),
+      'origin__category', title=format_lazy('{} - {}', _('origin'), _('category')),
       initially_hidden=True, editable=False
       ),
     GridFieldText(
-      'origin__subcategory', title=string_concat(_('origin'), ' - ', _('subcategory')),
+      'origin__subcategory', title=format_lazy('{} - {}', _('origin'), _('subcategory')),
       initially_hidden=True, editable=False
       ),
     GridFieldText(
-      'origin__available', title=string_concat(_('origin'), ' - ', _('available')),
+      'origin__available', title=format_lazy('{} - {}', _('origin'), _('available')),
       initially_hidden=True, field_name='origin__available__name', formatter='detail',
       extra='"role":"input/calendar"', editable=False
       ),
     GridFieldText(
-      'origin__owner', title=string_concat(_('origin'), ' - ', _('owner')),
+      'origin__owner', title=format_lazy('{} - {}', _('origin'), _('owner')),
       initially_hidden=True, field_name='origin__owner__name', formatter='detail',
       extra='"role":"input/location"', editable=False
       ),
     GridFieldText(
-      'origin__source', title=string_concat(_('origin'), ' - ', _('source')),
+      'origin__source', title=format_lazy('{} - {}', _('origin'), _('source')),
       initially_hidden=True, editable=False
       ),
     GridFieldLastModified(
-      'origin__lastmodified', title=string_concat(_('origin'), ' - ', _('last modified')),
+      'origin__lastmodified', title=format_lazy('{} - {}', _('origin'), _('last modified')),
       initially_hidden=True, editable=False
       ),
     # Optional fields referencing the destination location
     GridFieldText(
-      'destination__description', title=string_concat(_('destination'), ' - ', _('description')),
+      'destination__description', title=format_lazy('{} - {}', _('destination'), _('description')),
       initially_hidden=True, editable=False
       ),
     GridFieldText(
-      'destination__category', title=string_concat(_('destination'), ' - ', _('category')),
+      'destination__category', title=format_lazy('{} - {}', _('destination'), _('category')),
       initially_hidden=True, editable=False
       ),
     GridFieldText(
-      'destination__subcategory', title=string_concat(_('destination'), ' - ', _('subcategory')),
+      'destination__subcategory', title=format_lazy('{} - {}', _('destination'), _('subcategory')),
       initially_hidden=True, editable=False
       ),
     GridFieldText(
-      'destination__available', title=string_concat(_('destination'), ' - ', _('available')),
+      'destination__available', title=format_lazy('{} - {}', _('destination'), _('available')),
       initially_hidden=True, field_name='origin__available__name', formatter='detail',
       extra='"role":"input/calendar"', editable=False
       ),
     GridFieldText(
-      'destination__owner', title=string_concat(_('destination'), ' - ', _('owner')),
+      'destination__owner', title=format_lazy('{} - {}', _('destination'), _('owner')),
       initially_hidden=True, field_name='origin__owner__name', formatter='detail',
       extra='"role":"input/location"', editable=False
       ),
     GridFieldText(
-      'destination__source', title=string_concat(_('destination'), ' - ', _('source')),
+      'destination__source', title=format_lazy('{} - {}', _('destination'), _('source')),
       initially_hidden=True, editable=False
       ),
     GridFieldLastModified(
-      'destination__lastmodified', title=string_concat(_('destination'), ' - ', _('last modified')),
+      'destination__lastmodified', title=format_lazy('{} - {}', _('destination'), _('last modified')),
       initially_hidden=True, editable=False
       ),
     GridFieldText(
@@ -2380,7 +2379,7 @@ class PurchaseOrderList(OperationPlanMixin, GridReport):
     GridFieldDateTime('enddate', title=_('receipt date'), extra='"formatoptions":{"srcformat":"Y-m-d H:i:s","newformat":"Y-m-d H:i:s", "defaultValue":""}, "summaryType":"max"'),
     GridFieldNumber('quantity', title=_('quantity'), extra='"formatoptions":{"defaultValue":""}, "summaryType":"sum"'),
     GridFieldChoice('status', title=_('status'), choices=PurchaseOrder.orderstatus, editable=not settings.ERP_CONNECTOR),
-    GridFieldCurrency('unit_cost', title=string_concat(_('item'), ' - ', _('cost')), editable=False, search=False, extra='"formatoptions":{"defaultValue":""}, "summaryType":"max"'),
+    GridFieldCurrency('unit_cost', title=format_lazy('{} - {}', _('item'), _('cost')), editable=False, search=False, extra='"formatoptions":{"defaultValue":""}, "summaryType":"max"'),
     GridFieldCurrency('total_cost', title=_('total cost'), editable=False, search=False, extra='"formatoptions":{"defaultValue":""}, "summaryType":"sum"'),
     GridFieldNumber('criticality', title=_('criticality'), editable=False, initially_hidden=True, extra='"formatoptions":{"defaultValue":""}, "summaryType":"min"'),
     GridFieldDuration('delay', title=_('delay'), editable=False, initially_hidden=True, extra='"formatoptions":{"defaultValue":""}, "summaryType":"max"'),
@@ -2390,84 +2389,84 @@ class PurchaseOrderList(OperationPlanMixin, GridReport):
     GridFieldLastModified('lastmodified'),
     # Optional fields referencing the item
     GridFieldText(
-      'item__description', title=string_concat(_('item'), ' - ', _('description')),
+      'item__description', title=format_lazy('{} - {}', _('item'), _('description')),
       initially_hidden=True, editable=False
       ),
     GridFieldText(
-      'item__category', title=string_concat(_('item'), ' - ', _('category')),
+      'item__category', title=format_lazy('{} - {}', _('item'), _('category')),
       initially_hidden=True, editable=False
       ),
     GridFieldText(
-      'item__subcategory', title=string_concat(_('item'), ' - ', _('subcategory')),
+      'item__subcategory', title=format_lazy('{} - {}', _('item'), _('subcategory')),
       initially_hidden=True, editable=False
       ),
     GridFieldText(
-      'item__owner', title=string_concat(_('item'), ' - ', _('owner')),
+      'item__owner', title=format_lazy('{} - {}', _('item'), _('owner')),
       field_name='item__owner__name', initially_hidden=True, editable=False
       ),
     GridFieldText(
-      'item__source', title=string_concat(_('item'), ' - ', _('source')),
+      'item__source', title=format_lazy('{} - {}', _('item'), _('source')),
       initially_hidden=True, editable=False
       ),
     GridFieldLastModified(
-      'item__lastmodified', title=string_concat(_('item'), ' - ', _('last modified')),
+      'item__lastmodified', title=format_lazy('{} - {}', _('item'), _('last modified')),
       initially_hidden=True, editable=False
       ),
     # Optional fields referencing the location
     GridFieldText(
-      'location__description', title=string_concat(_('location'), ' - ', _('description')),
+      'location__description', title=format_lazy('{} - {}', _('location'), _('description')),
       initially_hidden=True, editable=False
       ),
     GridFieldText(
-      'location__category', title=string_concat(_('location'), ' - ', _('category')),
+      'location__category', title=format_lazy('{} - {}', _('location'), _('category')),
       initially_hidden=True, editable=False
       ),
     GridFieldText(
-      'location__subcategory', title=string_concat(_('location'), ' - ', _('subcategory')),
+      'location__subcategory', title=format_lazy('{} - {}', _('location'), _('subcategory')),
       initially_hidden=True, editable=False
       ),
     GridFieldText(
-      'location__available', title=string_concat(_('location'), ' - ', _('available')),
+      'location__available', title=format_lazy('{} - {}', _('location'), _('available')),
       initially_hidden=True, field_name='location__available__name', formatter='detail',
       extra='"role":"input/calendar"', editable=False
       ),
     GridFieldText(
-      'location__owner', title=string_concat(_('location'), ' - ', _('owner')),
+      'location__owner', title=format_lazy('{} - {}', _('location'), _('owner')),
       initially_hidden=True, field_name='location__owner__name', formatter='detail',
       extra='"role":"input/location"', editable=False
       ),
     GridFieldText(
-      'location__source', title=string_concat(_('location'), ' - ', _('source')),
+      'location__source', title=format_lazy('{} - {}', _('location'), _('source')),
       initially_hidden=True, editable=False
       ),
     GridFieldLastModified(
-      'location__lastmodified', title=string_concat(_('location'), ' - ', _('last modified')),
+      'location__lastmodified', title=format_lazy('{} - {}', _('location'), _('last modified')),
       initially_hidden=True, editable=False
       ),
     # Optional fields referencing the supplier
     GridFieldText(
-      'supplier__description', title=string_concat(_('supplier'), ' - ', _('description')),
+      'supplier__description', title=format_lazy('{} - {}', _('supplier'), _('description')),
       initially_hidden=True, editable=False
       ),
     GridFieldText(
-      'supplier__category', title=string_concat(_('supplier'), ' - ', _('category')),
+      'supplier__category', title=format_lazy('{} - {}', _('supplier'), _('category')),
       initially_hidden=True, editable=False
       ),
     GridFieldText(
-      'supplier__subcategory', title=string_concat(_('supplier'), ' - ', _('subcategory')),
+      'supplier__subcategory', title=format_lazy('{} - {}', _('supplier'), _('subcategory')),
       initially_hidden=True, editable=False
       ),
     GridFieldText(
-      'supplier__owner', title=string_concat(_('supplier'), ' - ', _('owner')),
+      'supplier__owner', title=format_lazy('{} - {}', _('supplier'), _('owner')),
       initially_hidden=True, field_name='supplier__owner__name', formatter='detail',
       extra='"role":"input/supplier"', editable=False
       ),
     GridFieldText(
-      'supplier__source', title=string_concat(_('supplier'), ' - ', _('source')),
+      'supplier__source', title=format_lazy('{} - {}', _('supplier'), _('source')),
       initially_hidden=True, editable=False
       ),
     GridFieldLastModified(
-      'supplier__lastmodified', title=string_concat(_('supplier'), ' - ', _('last modified')),
+      'supplier__lastmodified', title=format_lazy('{} - {}', _('supplier'), _('last modified')),
       initially_hidden=True, editable=False
       ),
     GridFieldText(
@@ -2556,84 +2555,84 @@ class DeliveryOrderList(GridReport):
     GridFieldDuration('delay', title=_('delay'), editable=False, initially_hidden=True, extra='"formatoptions":{"defaultValue":""}, "summaryType":"max"'),
     # Optional fields referencing the item
     GridFieldText(
-      'item__description', title=string_concat(_('item'), ' - ', _('description')),
+      'item__description', title=format_lazy('{} - {}', _('item'), _('description')),
       initially_hidden=True, editable=False
       ),
     GridFieldText(
-      'item__category', title=string_concat(_('item'), ' - ', _('category')),
+      'item__category', title=format_lazy('{} - {}', _('item'), _('category')),
       initially_hidden=True, editable=False
       ),
     GridFieldText(
-      'item__subcategory', title=string_concat(_('item'), ' - ', _('subcategory')),
+      'item__subcategory', title=format_lazy('{} - {}', _('item'), _('subcategory')),
       initially_hidden=True, editable=False
       ),
     GridFieldText(
-      'item__owner', title=string_concat(_('item'), ' - ', _('owner')),
+      'item__owner', title=format_lazy('{} - {}', _('item'), _('owner')),
       field_name='item__owner__name', initially_hidden=True, editable=False
       ),
     GridFieldText(
-      'item__source', title=string_concat(_('item'), ' - ', _('source')),
+      'item__source', title=format_lazy('{} - {}', _('item'), _('source')),
       initially_hidden=True, editable=False
       ),
     GridFieldLastModified(
-      'item__lastmodified', title=string_concat(_('item'), ' - ', _('last modified')),
+      'item__lastmodified', title=format_lazy('{} - {}', _('item'), _('last modified')),
       initially_hidden=True, editable=False
       ),
     # Optional fields referencing the location
     GridFieldText(
-      'location__description', title=string_concat(_('location'), ' - ', _('description')),
+      'location__description', title=format_lazy('{} - {}', _('location'), _('description')),
       initially_hidden=True, editable=False
       ),
     GridFieldText(
-      'location__category', title=string_concat(_('location'), ' - ', _('category')),
+      'location__category', title=format_lazy('{} - {}', _('location'), _('category')),
       initially_hidden=True, editable=False
       ),
     GridFieldText(
-      'location__subcategory', title=string_concat(_('location'), ' - ', _('subcategory')),
+      'location__subcategory', title=format_lazy('{} - {}', _('location'), _('subcategory')),
       initially_hidden=True, editable=False
       ),
     GridFieldText(
-      'location__available', title=string_concat(_('location'), ' - ', _('available')),
+      'location__available', title=format_lazy('{} - {}', _('location'), _('available')),
       initially_hidden=True, field_name='location__available__name', formatter='detail',
       extra='"role":"input/calendar"', editable=False
       ),
     GridFieldText(
-      'location__owner', title=string_concat(_('location'), ' - ', _('owner')),
+      'location__owner', title=format_lazy('{} - {}', _('location'), _('owner')),
       initially_hidden=True, field_name='location__owner__name', formatter='detail',
       extra='"role":"input/location"', editable=False
       ),
     GridFieldText(
-      'location__source', title=string_concat(_('location'), ' - ', _('source')),
+      'location__source', title=format_lazy('{} - {}', _('location'), _('source')),
       initially_hidden=True, editable=False
       ),
     GridFieldLastModified(
-      'location__lastmodified', title=string_concat(_('location'), ' - ', _('last modified')),
+      'location__lastmodified', title=format_lazy('{} - {}', _('location'), _('last modified')),
       initially_hidden=True, editable=False
       ),
     # Optional fields referencing the customer
     GridFieldText(
-      'demand__customer__description', title=string_concat(_('customer'), ' - ', _('description')),
+      'demand__customer__description', title=format_lazy('{} - {}', _('customer'), _('description')),
       initially_hidden=True, editable=False
       ),
     GridFieldText(
-      'demand__customer__category', title=string_concat(_('customer'), ' - ', _('category')),
+      'demand__customer__category', title=format_lazy('{} - {}', _('customer'), _('category')),
       initially_hidden=True, editable=False
       ),
     GridFieldText(
-      'demand__customer__subcategory', title=string_concat(_('customer'), ' - ', _('subcategory')),
+      'demand__customer__subcategory', title=format_lazy('{} - {}', _('customer'), _('subcategory')),
       initially_hidden=True, editable=False
       ),
     GridFieldText(
-      'demand__customer__owner', title=string_concat(_('customer'), ' - ', _('owner')),
+      'demand__customer__owner', title=format_lazy('{} - {}', _('customer'), _('owner')),
       initially_hidden=True, field_name='supplier__owner__name', formatter='detail',
       extra='"role":"input/supplier"', editable=False
       ),
     GridFieldText(
-      'demand__customer__source', title=string_concat(_('customer'), ' - ', _('source')),
+      'demand__customer__source', title=format_lazy('{} - {}', _('customer'), _('source')),
       initially_hidden=True, editable=False
       ),
     GridFieldLastModified(
-      'demand__customer__lastmodified', title=string_concat(_('customer'), ' - ', _('last modified')),
+      'demand__customer__lastmodified', title=format_lazy('{} - {}', _('customer'), _('last modified')),
       initially_hidden=True, editable=False
       )
     )
@@ -2752,24 +2751,24 @@ class InventoryDetail(OperationPlanMixin, GridReport):
     GridFieldText('operationplan__color', title=_('inventory status'), formatter='color', width='125', editable=False, extra='"formatoptions":{"defaultValue":""}, "summaryType":"min"'),
     GridFieldText('operationplan__type', title=_('type'), field_name='operationplan__type', editable=False),
     GridFieldText('operationplan__name', title=_('operation'), editable=False, field_name='operationplan__name', formatter='detail', extra='"role":"input/operation"'),
-    GridFieldText('operationplan__operation__description', title=string_concat(_('operation'), ' - ', _('description')), editable=False, initially_hidden=True),
-    GridFieldText('operationplan__operation__category', title=string_concat(_('operation'), ' - ', _('category')), editable=False, initially_hidden=True),
-    GridFieldText('operationplan__operation__subcategory', title=string_concat(_('operation'), ' - ', _('subcategory')), editable=False, initially_hidden=True),
-    GridFieldText('operationplan__operation__type', title=string_concat(_('operation'), ' - ', _('type')), initially_hidden=True),
-    GridFieldDuration('operationplan__operation__duration', title=string_concat(_('operation'), ' - ', _('duration')), initially_hidden=True),
-    GridFieldDuration('operationplan__operation__duration_per', title=string_concat(_('operation'), ' - ', _('duration per unit')), initially_hidden=True),
-    GridFieldDuration('operationplan__operation__fence', title=string_concat(_('operation'), ' - ', _('release fence')), initially_hidden=True),
-    GridFieldDuration('operationplan__operation__posttime', title=string_concat(_('operation'), ' - ', _('post-op time')), initially_hidden=True),
-    GridFieldNumber('operationplan__operation__sizeminimum', title=string_concat(_('operation'), ' - ', _('size minimum')), initially_hidden=True),
-    GridFieldNumber('operationplan__operation__sizemultiple', title=string_concat(_('operation'), ' - ', _('size multiple')), initially_hidden=True),
-    GridFieldNumber('operationplan__operation__sizemaximum', title=string_concat(_('operation'), ' - ', _('size maximum')), initially_hidden=True),
-    GridFieldInteger('operationplan__operation__priority', title=string_concat(_('operation'), ' - ', _('priority')), initially_hidden=True),
-    GridFieldDateTime('operationplan__operation__effective_start', title=string_concat(_('operation'), ' - ', _('effective start')), initially_hidden=True),
-    GridFieldDateTime('operationplan__operation__effective_end', title=string_concat(_('operation'), ' - ', _('effective end')), initially_hidden=True),
-    GridFieldCurrency('operationplan__operation__cost', title=string_concat(_('operation'), ' - ', _('cost')), initially_hidden=True),
-    GridFieldText('operationplan__operation__search', title=string_concat(_('operation'), ' - ', _('search mode')), initially_hidden=True),
-    GridFieldText('operationplan__operation__source', title=string_concat(_('operation'), ' - ', _('source')), initially_hidden=True),
-    GridFieldLastModified('operationplan__operation__lastmodified', title=string_concat(_('operation'), ' - ', _('last modified')), initially_hidden=True),
+    GridFieldText('operationplan__operation__description', title=format_lazy('{} - {}', _('operation'), _('description')), editable=False, initially_hidden=True),
+    GridFieldText('operationplan__operation__category', title=format_lazy('{} - {}', _('operation'), _('category')), editable=False, initially_hidden=True),
+    GridFieldText('operationplan__operation__subcategory', title=format_lazy('{} - {}', _('operation'), _('subcategory')), editable=False, initially_hidden=True),
+    GridFieldText('operationplan__operation__type', title=format_lazy('{} - {}', _('operation'), _('type')), initially_hidden=True),
+    GridFieldDuration('operationplan__operation__duration', title=format_lazy('{} - {}', _('operation'), _('duration')), initially_hidden=True),
+    GridFieldDuration('operationplan__operation__duration_per', title=format_lazy('{} - {}', _('operation'), _('duration per unit')), initially_hidden=True),
+    GridFieldDuration('operationplan__operation__fence', title=format_lazy('{} - {}', _('operation'), _('release fence')), initially_hidden=True),
+    GridFieldDuration('operationplan__operation__posttime', title=format_lazy('{} - {}', _('operation'), _('post-op time')), initially_hidden=True),
+    GridFieldNumber('operationplan__operation__sizeminimum', title=format_lazy('{} - {}', _('operation'), _('size minimum')), initially_hidden=True),
+    GridFieldNumber('operationplan__operation__sizemultiple', title=format_lazy('{} - {}', _('operation'), _('size multiple')), initially_hidden=True),
+    GridFieldNumber('operationplan__operation__sizemaximum', title=format_lazy('{} - {}', _('operation'), _('size maximum')), initially_hidden=True),
+    GridFieldInteger('operationplan__operation__priority', title=format_lazy('{} - {}', _('operation'), _('priority')), initially_hidden=True),
+    GridFieldDateTime('operationplan__operation__effective_start', title=format_lazy('{} - {}', _('operation'), _('effective start')), initially_hidden=True),
+    GridFieldDateTime('operationplan__operation__effective_end', title=format_lazy('{} - {}', _('operation'), _('effective end')), initially_hidden=True),
+    GridFieldCurrency('operationplan__operation__cost', title=format_lazy('{} - {}', _('operation'), _('cost')), initially_hidden=True),
+    GridFieldText('operationplan__operation__search', title=format_lazy('{} - {}', _('operation'), _('search mode')), initially_hidden=True),
+    GridFieldText('operationplan__operation__source', title=format_lazy('{} - {}', _('operation'), _('source')), initially_hidden=True),
+    GridFieldLastModified('operationplan__operation__lastmodified', title=format_lazy('{} - {}', _('operation'), _('last modified')), initially_hidden=True),
     GridFieldDateTime('flowdate', title=_('date'), editable=False, extra='"formatoptions":{"srcformat":"Y-m-d H:i:s","newformat":"Y-m-d H:i:s", "defaultValue":""}, "summaryType":"min"'),
     GridFieldNumber('quantity', title=_('quantity'), editable=False, extra='"formatoptions":{"defaultValue":""}, "summaryType":"sum"'),
     GridFieldNumber('onhand', title=_('expected onhand'), editable=False, extra='"formatoptions":{"defaultValue":""}, "summaryType":"sum"'),
@@ -2783,62 +2782,62 @@ class InventoryDetail(OperationPlanMixin, GridReport):
     GridFieldBool('feasible', title=_('feasible'), editable=False, initially_hidden=True, search=False),
     # Optional fields referencing the item
     GridFieldText(
-      'item__description', title=string_concat(_('item'), ' - ', _('description')),
+      'item__description', title=format_lazy('{} - {}', _('item'), _('description')),
       initially_hidden=True, editable=False
       ),
     GridFieldText(
-      'item__category', title=string_concat(_('item'), ' - ', _('category')),
+      'item__category', title=format_lazy('{} - {}', _('item'), _('category')),
       initially_hidden=True, editable=False
       ),
     GridFieldText(
-      'item__subcategory', title=string_concat(_('item'), ' - ', _('subcategory')),
+      'item__subcategory', title=format_lazy('{} - {}', _('item'), _('subcategory')),
       initially_hidden=True, editable=False
       ),
     GridFieldNumber(
-      'item__cost', title=string_concat(_('item'), ' - ', _('cost')),
+      'item__cost', title=format_lazy('{} - {}', _('item'), _('cost')),
       initially_hidden=True, editable=False
       ),
     GridFieldText(
-      'item__owner', title=string_concat(_('item'), ' - ', _('owner')),
+      'item__owner', title=format_lazy('{} - {}', _('item'), _('owner')),
       field_name='item__owner__name', initially_hidden=True, editable=False
       ),
     GridFieldText(
-      'item__source', title=string_concat(_('item'), ' - ', _('source')),
+      'item__source', title=format_lazy('{} - {}', _('item'), _('source')),
       initially_hidden=True, editable=False
       ),
     GridFieldLastModified(
-      'item__lastmodified', title=string_concat(_('item'), ' - ', _('last modified')),
+      'item__lastmodified', title=format_lazy('{} - {}', _('item'), _('last modified')),
       initially_hidden=True, editable=False
       ),
     # Optional fields referencing the location
     GridFieldText(
-      'location__description', title=string_concat(_('location'), ' - ', _('description')),
+      'location__description', title=format_lazy('{} - {}', _('location'), _('description')),
       initially_hidden=True, editable=False
       ),
     GridFieldText(
-      'location__category', title=string_concat(_('location'), ' - ', _('category')),
+      'location__category', title=format_lazy('{} - {}', _('location'), _('category')),
       initially_hidden=True, editable=False
       ),
     GridFieldText(
-      'location__subcategory', title=string_concat(_('location'), ' - ', _('subcategory')),
+      'location__subcategory', title=format_lazy('{} - {}', _('location'), _('subcategory')),
       initially_hidden=True, editable=False
       ),
     GridFieldText(
-      'location__available', title=string_concat(_('location'), ' - ', _('available')),
+      'location__available', title=format_lazy('{} - {}', _('location'), _('available')),
       initially_hidden=True, field_name='location__available__name', formatter='detail',
       extra='"role":"input/calendar"', editable=False
       ),
     GridFieldText(
-      'location__owner', title=string_concat(_('location'), ' - ', _('owner')),
+      'location__owner', title=format_lazy('{} - {}', _('location'), _('owner')),
       initially_hidden=True, field_name='location__owner__name', formatter='detail',
       extra='"role":"input/location"', editable=False
       ),
     GridFieldText(
-      'location__source', title=string_concat(_('location'), ' - ', _('source')),
+      'location__source', title=format_lazy('{} - {}', _('location'), _('source')),
       initially_hidden=True, editable=False
       ),
     GridFieldLastModified(
-      'location__lastmodified', title=string_concat(_('location'), ' - ', _('last modified')),
+      'location__lastmodified', title=format_lazy('{} - {}', _('location'), _('last modified')),
       initially_hidden=True, editable=False
       ),
     GridFieldBool('feasible', title=_('feasible'), editable=False, initially_hidden=True, search=False),
@@ -2914,24 +2913,24 @@ class ResourceDetail(OperationPlanMixin, GridReport):
     GridFieldText('operationplan__operation__item', title=_('item'), editable=False, formatter='detail', extra='"role":"input/item"'),
     GridFieldText('operationplan__operation__location', title=_('location'), editable=False, formatter='detail', extra='"role":"input/location"'),
     GridFieldText('operationplan__operation__name', title=_('operation'), editable=False, formatter='detail', extra='"role":"input/operation"'),
-    GridFieldText('operationplan__operation__description', title=string_concat(_('operation'), ' - ', _('description')), editable=False, initially_hidden=True),
-    GridFieldText('operationplan__operation__category', title=string_concat(_('operation'), ' - ', _('category')), editable=False, initially_hidden=True),
-    GridFieldText('operationplan__operation__subcategory', title=string_concat(_('operation'), ' - ', _('subcategory')), editable=False, initially_hidden=True),
-    GridFieldText('operationplan__operation__type', title=string_concat(_('operation'), ' - ', _('type')), initially_hidden=True),
-    GridFieldDuration('operationplan__operation__duration', title=string_concat(_('operation'), ' - ', _('duration')), initially_hidden=True),
-    GridFieldDuration('operationplan__operation__duration_per', title=string_concat(_('operation'), ' - ', _('duration per unit')), initially_hidden=True),
-    GridFieldDuration('operationplan__operation__fence', title=string_concat(_('operation'), ' - ', _('release fence')), initially_hidden=True),
-    GridFieldDuration('operationplan__operation__posttime', title=string_concat(_('operation'), ' - ', _('post-op time')), initially_hidden=True),
-    GridFieldNumber('operationplan__operation__sizeminimum', title=string_concat(_('operation'), ' - ', _('size minimum')), initially_hidden=True),
-    GridFieldNumber('operationplan__operation__sizemultiple', title=string_concat(_('operation'), ' - ', _('size multiple')), initially_hidden=True),
-    GridFieldNumber('operationplan__operation__sizemaximum', title=string_concat(_('operation'), ' - ', _('size maximum')), initially_hidden=True),
-    GridFieldInteger('operationplan__operation__priority', title=string_concat(_('operation'), ' - ', _('priority')), initially_hidden=True),
-    GridFieldDateTime('operationplan__operation__effective_start', title=string_concat(_('operation'), ' - ', _('effective start')), initially_hidden=True),
-    GridFieldDateTime('operationplan__operation__effective_end', title=string_concat(_('operation'), ' - ', _('effective end')), initially_hidden=True),
-    GridFieldCurrency('operationplan__operation__cost', title=string_concat(_('operation'), ' - ', _('cost')), initially_hidden=True),
-    GridFieldText('operationplan__operation__search', title=string_concat(_('operation'), ' - ', _('search mode')), initially_hidden=True),
-    GridFieldText('operationplan__operation__source', title=string_concat(_('operation'), ' - ', _('source')), initially_hidden=True),
-    GridFieldLastModified('operationplan__operation__lastmodified', title=string_concat(_('operation'), ' - ', _('last modified')), initially_hidden=True),
+    GridFieldText('operationplan__operation__description', title=format_lazy('{} - {}', _('operation'), _('description')), editable=False, initially_hidden=True),
+    GridFieldText('operationplan__operation__category', title=format_lazy('{} - {}', _('operation'), _('category')), editable=False, initially_hidden=True),
+    GridFieldText('operationplan__operation__subcategory', title=format_lazy('{} - {}', _('operation'), _('subcategory')), editable=False, initially_hidden=True),
+    GridFieldText('operationplan__operation__type', title=format_lazy('{} - {}', _('operation'), _('type')), initially_hidden=True),
+    GridFieldDuration('operationplan__operation__duration', title=format_lazy('{} - {}', _('operation'), _('duration')), initially_hidden=True),
+    GridFieldDuration('operationplan__operation__duration_per', title=format_lazy('{} - {}', _('operation'), _('duration per unit')), initially_hidden=True),
+    GridFieldDuration('operationplan__operation__fence', title=format_lazy('{} - {}', _('operation'), _('release fence')), initially_hidden=True),
+    GridFieldDuration('operationplan__operation__posttime', title=format_lazy('{} - {}', _('operation'), _('post-op time')), initially_hidden=True),
+    GridFieldNumber('operationplan__operation__sizeminimum', title=format_lazy('{} - {}', _('operation'), _('size minimum')), initially_hidden=True),
+    GridFieldNumber('operationplan__operation__sizemultiple', title=format_lazy('{} - {}', _('operation'), _('size multiple')), initially_hidden=True),
+    GridFieldNumber('operationplan__operation__sizemaximum', title=format_lazy('{} - {}', _('operation'), _('size maximum')), initially_hidden=True),
+    GridFieldInteger('operationplan__operation__priority', title=format_lazy('{} - {}', _('operation'), _('priority')), initially_hidden=True),
+    GridFieldDateTime('operationplan__operation__effective_start', title=format_lazy('{} - {}', _('operation'), _('effective start')), initially_hidden=True),
+    GridFieldDateTime('operationplan__operation__effective_end', title=format_lazy('{} - {}', _('operation'), _('effective end')), initially_hidden=True),
+    GridFieldCurrency('operationplan__operation__cost', title=format_lazy('{} - {}', _('operation'), _('cost')), initially_hidden=True),
+    GridFieldText('operationplan__operation__search', title=format_lazy('{} - {}', _('operation'), _('search mode')), initially_hidden=True),
+    GridFieldText('operationplan__operation__source', title=format_lazy('{} - {}', _('operation'), _('source')), initially_hidden=True),
+    GridFieldLastModified('operationplan__operation__lastmodified', title=format_lazy('{} - {}', _('operation'), _('last modified')), initially_hidden=True),
     GridFieldDateTime('operationplan__startdate', title=_('start date'), editable=False, extra='"formatoptions":{"srcformat":"Y-m-d H:i:s","newformat":"Y-m-d H:i:s", "defaultValue":""}, "summaryType":"min"'),
     GridFieldDateTime('operationplan__enddate', title=_('end date'), editable=False, extra='"formatoptions":{"srcformat":"Y-m-d H:i:s","newformat":"Y-m-d H:i:s", "defaultValue":""}, "summaryType":"max"'),
     GridFieldDuration('opplan_duration', title=_('duration'), editable=False, extra='"formatoptions":{"defaultValue":""}, "summaryType":"sum"'),
@@ -2950,143 +2949,143 @@ class ResourceDetail(OperationPlanMixin, GridReport):
     # Optional fields referencing the item
     GridFieldText(
       'operationplan__operation__item__description', initially_hidden=True, editable=False,
-      title=string_concat(_('item'), ' - ', _('description'))
+      title=format_lazy('{} - {}', _('item'), _('description'))
       ),
     GridFieldText(
       'operationplan__operation__item__category', initially_hidden=True, editable=False,
-      title=string_concat(_('item'), ' - ', _('category'))
+      title=format_lazy('{} - {}', _('item'), _('category'))
       ),
     GridFieldText(
       'operationplan__operation__item__subcategory', initially_hidden=True, editable=False,
-      title=string_concat(_('item'), ' - ', _('subcategory'))
+      title=format_lazy('{} - {}', _('item'), _('subcategory'))
       ),
     GridFieldText(
       'operationplan__operation__item__owner', initially_hidden=True, editable=False,
-      title=string_concat(_('item'), ' - ', _('owner')),
+      title=format_lazy('{} - {}', _('item'), _('owner')),
       field_name='operationplan__operation__item__owner__name'
       ),
     GridFieldText(
       'operationplan__operation__item__source', initially_hidden=True, editable=False,
-      title=string_concat(_('item'), ' - ', _('source'))
+      title=format_lazy('{} - {}', _('item'), _('source'))
       ),
     GridFieldLastModified(
       'operationplan__operation__item__lastmodified', initially_hidden=True, editable=False,
-      title=string_concat(_('item'), ' - ', _('last modified')),
+      title=format_lazy('{} - {}', _('item'), _('last modified')),
       ),
     # Optional fields referencing the operation location
     GridFieldText(
       'operationplan__operation__location__description',
       initially_hidden=True, editable=False,
-      title=string_concat(_('location'), ' - ', _('description'))
+      title=format_lazy('{} - {}', _('location'), _('description'))
       ),
     GridFieldText(
       'operationplan__operation__location__category',
-      title=string_concat(_('location'), ' - ', _('category')),
+      title=format_lazy('{} - {}', _('location'), _('category')),
       initially_hidden=True, editable=False
       ),
     GridFieldText(
       'operationplan__operation__location__subcategory',
-      title=string_concat(_('location'), ' - ', _('subcategory')),
+      title=format_lazy('{} - {}', _('location'), _('subcategory')),
       initially_hidden=True, editable=False
       ),
     GridFieldText(
       'operationplan__operation__location__available', editable=False,
-      title=string_concat(_('location'), ' - ', _('available')),
+      title=format_lazy('{} - {}', _('location'), _('available')),
       initially_hidden=True, field_name='operationplan__operation__location__available__name', formatter='detail',
       extra='"role":"input/calendar"'
       ),
     GridFieldText(
       'operationplan__operation__location__owner', initially_hidden=True,
-      title=string_concat(_('location'), ' - ', _('owner')),
+      title=format_lazy('{} - {}', _('location'), _('owner')),
       field_name='operationplan__operation__location__owner__name', formatter='detail',
       extra='"role":"input/location"', editable=False
       ),
     GridFieldText(
       'operationplan__operation__location__source', initially_hidden=True, editable=False,
-      title=string_concat(_('location'), ' - ', _('source'))
+      title=format_lazy('{} - {}', _('location'), _('source'))
       ),
     GridFieldLastModified(
       'operationplan__operation__location__lastmodified', initially_hidden=True, editable=False,
-      title=string_concat(_('location'), ' - ', _('last modified'))
+      title=format_lazy('{} - {}', _('location'), _('last modified'))
       ),
     # Optional fields referencing the resource
     GridFieldText(
       'resource__description', editable=False, initially_hidden=True,
-      title=string_concat(_('resource'), ' - ', _('description'))
+      title=format_lazy('{} - {}', _('resource'), _('description'))
       ),
     GridFieldText(
       'resource__category', editable=False, initially_hidden=True,
-      title=string_concat(_('resource'), ' - ', _('category'))
+      title=format_lazy('{} - {}', _('resource'), _('category'))
       ),
     GridFieldText(
       'resource__subcategory', editable=False, initially_hidden=True,
-      title=string_concat(_('resource'), ' - ', _('subcategory'))
+      title=format_lazy('{} - {}', _('resource'), _('subcategory'))
       ),
     GridFieldText(
       'resource__type', editable=False, initially_hidden=True,
-      title=string_concat(_('resource'), ' - ', _('type'))
+      title=format_lazy('{} - {}', _('resource'), _('type'))
       ),
     GridFieldNumber(
       'resource__maximum', editable=False, initially_hidden=True,
-      title=string_concat(_('resource'), ' - ', _('maximum'))
+      title=format_lazy('{} - {}', _('resource'), _('maximum'))
       ),
     GridFieldText(
       'resource__maximum_calendar', editable=False, initially_hidden=True,
-      title=string_concat(_('resource'), ' - ', _('maximum calendar')),
+      title=format_lazy('{} - {}', _('resource'), _('maximum calendar')),
       field_name='resource__maximum_calendar__name',
       formatter='detail', extra='"role":"input/calendar"'
       ),
     GridFieldCurrency(
       'resource__cost', editable=False, initially_hidden=True,
-      title=string_concat(_('resource'), ' - ', _('cost'))
+      title=format_lazy('{} - {}', _('resource'), _('cost'))
       ),
     GridFieldDuration(
       'resource__maxearly', editable=False, initially_hidden=True,
-      title=string_concat(_('resource'), ' - ', _('maxearly'))
+      title=format_lazy('{} - {}', _('resource'), _('maxearly'))
       ),
     GridFieldText(
       'resource__setupmatrix', editable=False, initially_hidden=True,
-      title=string_concat(_('resource'), ' - ', _('setupmatrix')),
+      title=format_lazy('{} - {}', _('resource'), _('setupmatrix')),
       field_name='resource__setupmatrix__name',
       formatter='detail', extra='"role":"input/setupmatrix"'
       ),
     GridFieldText(
       'resource__setup', editable=False, initially_hidden=True,
-      title=string_concat(_('resource'), ' - ', _('setup'))
+      title=format_lazy('{} - {}', _('resource'), _('setup'))
       ),
     GridFieldText(
       'resource_location', editable=False, initially_hidden=True,
-      title=string_concat(_('resource'), ' - ', _('location')),
+      title=format_lazy('{} - {}', _('resource'), _('location')),
       field_name='resource__location__name',
       formatter='detail', extra='"role":"input/location"'
       ),
     # Optional fields referencing the resource location
     GridFieldText(
       'resource__location__description', initially_hidden=True, editable=False,
-      title=string_concat(_('resource'), ' - ', _('location'), ' - ', _('description'))
+      title=format_lazy('{} - {} - {}', _('resource'), _('location'), _('description'))
       ),
     GridFieldText(
       'resource__location__category', initially_hidden=True, editable=False,
-      title=string_concat(_('resource'), ' - ', _('location'), ' - ', _('category'))
+      title=format_lazy('{} - {} - {}', _('resource'), _('location'), _('category'))
       ),
     GridFieldText(
       'resource__location__subcategory', initially_hidden=True, editable=False,
-      title=string_concat(_('resource'), ' - ', _('location'), ' - ', _('subcategory'))
+      title=format_lazy('{} - {} - {}', _('resource'), _('location'), _('subcategory'))
       ),
     GridFieldText(
       'resource__location__available', initially_hidden=True, editable=False,
-      title=string_concat(_('resource'), ' - ', _('location'), ' - ', _('available')),
+      title=format_lazy('{} - {} - {}', _('resource'), _('location'), _('available')),
       field_name='resource__location__available__name', formatter='detail',
       extra='"role":"input/calendar"'
       ),
     GridFieldText(
       'resource__location__owner', extra='"role":"input/location"', editable=False,
-      title=string_concat(_('resource'), ' - ', _('location'), ' - ', _('owner')),
+      title=format_lazy('{} - {} - {}', _('resource'), _('location'), _('owner')),
       initially_hidden=True, field_name='resource__location__owner__name', formatter='detail'
       ),
     GridFieldText(
       'resource__location__source', initially_hidden=True, editable=False,
-      title=string_concat(_('resource'), ' - ', _('location'), ' - ', _('source'))
+      title=format_lazy('{} - {} - {}', _('resource'), _('location'), _('source'))
       ),
     # Status field currently not used
     # GridFieldChoice('status', title=_('load status'), choices=OperationPlanResource.OPRstatus),

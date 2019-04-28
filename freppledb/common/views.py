@@ -24,7 +24,7 @@ from django.contrib.auth.password_validation import validate_password, get_passw
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.contenttypes.models import ContentType
-from django.core.urlresolvers import reverse, resolve
+from django.urls import reverse, resolve
 from django import forms
 from django.utils.encoding import force_text
 from django.utils.translation import ugettext_lazy as _
@@ -73,7 +73,7 @@ def cockpit(request):
     )
 
 
-def handler404(request):
+def handler404(request, exception):
   '''
   Custom error handler which redirects to the main page rather than displaying the 404 page.
   '''

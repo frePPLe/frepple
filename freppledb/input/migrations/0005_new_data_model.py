@@ -74,7 +74,7 @@ class Migration(migrations.Migration):
     migrations.AlterField(
       model_name='calendarbucket',
       name='calendar',
-      field=models.ForeignKey(to='input.Calendar', related_name='buckets', verbose_name='Calendar'),
+      field=models.ForeignKey(to='input.Calendar', related_name='buckets', verbose_name='Calendar', on_delete=models.CASCADE),
     ),
 
     # Obsoleting buffers of type "procure"
@@ -106,17 +106,17 @@ class Migration(migrations.Migration):
     migrations.AlterField(
       model_name='operationresource',
       name='operation',
-      field=models.ForeignKey(verbose_name='operation', related_name='operationresources', to='input.Operation'),
+      field=models.ForeignKey(verbose_name='operation', related_name='operationresources', to='input.Operation', on_delete=models.CASCADE),
     ),
     migrations.AlterField(
       model_name='operationresource',
       name='resource',
-      field=models.ForeignKey(verbose_name='resource', related_name='operationresources', to='input.Resource'),
+      field=models.ForeignKey(verbose_name='resource', related_name='operationresources', to='input.Resource', on_delete=models.CASCADE),
     ),
     migrations.AlterField(
       model_name='operationresource',
       name='skill',
-      field=models.ForeignKey(blank=True, related_name='operationresources', null=True, verbose_name='skill', to='input.Skill'),
+      field=models.ForeignKey(blank=True, related_name='operationresources', null=True, verbose_name='skill', to='input.Skill', on_delete=models.SET_NULL),
     ),
 
     # Renaming flow to operationmaterial
@@ -131,7 +131,7 @@ class Migration(migrations.Migration):
     migrations.AddField(
       model_name='operationmaterial',
       name='item',
-      field=models.ForeignKey(verbose_name='item', to='input.Item', related_name='operationmaterials', null=True),
+      field=models.ForeignKey(verbose_name='item', to='input.Item', related_name='operationmaterials', null=True, on_delete=models.CASCADE),
       preserve_default=False,
     ),
     migrations.RunSQL(
@@ -156,7 +156,7 @@ class Migration(migrations.Migration):
     migrations.AlterField(
       model_name='operationmaterial',
       name='item',
-      field=models.ForeignKey(related_name='operationmaterials', to='input.Item', verbose_name='item'),
+      field=models.ForeignKey(related_name='operationmaterials', to='input.Item', verbose_name='item', on_delete=models.SET_NULL),
     ),
     migrations.AlterUniqueTogether(
       name='operationmaterial',
@@ -169,7 +169,7 @@ class Migration(migrations.Migration):
     migrations.AlterField(
       model_name='operationmaterial',
       name='operation',
-      field=models.ForeignKey(verbose_name='operation', related_name='operationmaterials', to='input.Operation'),
+      field=models.ForeignKey(verbose_name='operation', related_name='operationmaterials', to='input.Operation', on_delete=models.CASCADE),
     ),
 
     # Changing all fields with durations to be of type "interval" rather than "number"
@@ -308,7 +308,7 @@ class Migration(migrations.Migration):
     migrations.AlterField(
       model_name='item',
       name='operation',
-      field=models.ForeignKey(related_name='operation', verbose_name='delivery operation', to='input.Operation', blank=True, null=True, help_text='Default operation used to ship a demand for this item'),
+      field=models.ForeignKey(related_name='operation', verbose_name='delivery operation', to='input.Operation', blank=True, null=True, help_text='Default operation used to ship a demand for this item', on_delete=models.CASCADE),
     ),
 
     # Renaming model output.flowplan to operationplanmaterial
@@ -320,7 +320,7 @@ class Migration(migrations.Migration):
         ('quantity', models.DecimalField(verbose_name='quantity', decimal_places=4, max_digits=15)),
         ('flowdate', models.DateTimeField(db_index=True, verbose_name='date')),
         ('onhand', models.DecimalField(verbose_name='onhand', decimal_places=4, max_digits=15)),
-        ('operationplan', models.ForeignKey(verbose_name='operationplan', to='input.OperationPlan')),
+        ('operationplan', models.ForeignKey(verbose_name='operationplan', to='input.OperationPlan', on_delete=models.CASCADE)),
       ],
       options={
         'verbose_name': 'operationplan material',
@@ -340,7 +340,7 @@ class Migration(migrations.Migration):
         ('startdate', models.DateTimeField(db_index=True, verbose_name='startdate')),
         ('enddate', models.DateTimeField(db_index=True, verbose_name='enddate')),
         ('setup', models.CharField(verbose_name='setup', max_length=300, null=True)),
-        ('operationplan', models.ForeignKey(verbose_name='operationplan', to='input.OperationPlan')),
+        ('operationplan', models.ForeignKey(verbose_name='operationplan', to='input.OperationPlan', on_delete=models.CASCADE)),
       ],
       options={
         'verbose_name': 'operationplan resource',
@@ -354,7 +354,7 @@ class Migration(migrations.Migration):
     migrations.AlterField(
       model_name='operation',
       name='location',
-      field=models.ForeignKey(verbose_name='location', to='input.Location'),
+      field=models.ForeignKey(verbose_name='location', to='input.Location', on_delete=models.CASCADE),
     ),
 
     # New JSON field to store plan information
@@ -375,27 +375,27 @@ class Migration(migrations.Migration):
     migrations.AddField(
       model_name='operationplan',
       name='destination',
-      field=models.ForeignKey(to='input.Location', blank=True, related_name='destinations', null=True, verbose_name='destination'),
+      field=models.ForeignKey(to='input.Location', blank=True, related_name='destinations', null=True, verbose_name='destination', on_delete=models.CASCADE),
     ),
     migrations.AddField(
       model_name='operationplan',
       name='item',
-      field=models.ForeignKey(to='input.Item', blank=True, null=True, verbose_name='item'),
+      field=models.ForeignKey(to='input.Item', blank=True, null=True, verbose_name='item', on_delete=models.CASCADE),
     ),
     migrations.AddField(
       model_name='operationplan',
       name='location',
-      field=models.ForeignKey(to='input.Location', blank=True, null=True, verbose_name='location'),
+      field=models.ForeignKey(to='input.Location', blank=True, null=True, verbose_name='location', on_delete=models.CASCADE),
     ),
     migrations.AddField(
       model_name='operationplan',
       name='origin',
-      field=models.ForeignKey(to='input.Location', blank=True, related_name='origins', null=True, verbose_name='origin'),
+      field=models.ForeignKey(to='input.Location', blank=True, related_name='origins', null=True, verbose_name='origin', on_delete=models.CASCADE),
     ),
     migrations.AddField(
       model_name='operationplan',
       name='supplier',
-      field=models.ForeignKey(to='input.Supplier', blank=True, null=True, verbose_name='supplier'),
+      field=models.ForeignKey(to='input.Supplier', blank=True, null=True, verbose_name='supplier', on_delete=models.CASCADE),
     ),
     migrations.AddField(
       model_name='operationplan',
@@ -406,7 +406,7 @@ class Migration(migrations.Migration):
     migrations.AddField(
       model_name='operationplan',
       name='demand',
-      field=models.ForeignKey(to='input.Demand', blank=True, null=True, verbose_name='demand'),
+      field=models.ForeignKey(to='input.Demand', blank=True, null=True, verbose_name='demand', on_delete=models.CASCADE),
     ),
     migrations.AddField(
       model_name='operationplan',
@@ -426,7 +426,7 @@ class Migration(migrations.Migration):
     migrations.AlterField(
       model_name='operationplan',
       name='operation',
-      field=models.ForeignKey(to='input.Operation', blank=True, null=True, verbose_name='operation'),
+      field=models.ForeignKey(to='input.Operation', blank=True, null=True, verbose_name='operation', on_delete=models.CASCADE),
     ),
     migrations.AlterField(
       model_name='operationplan',

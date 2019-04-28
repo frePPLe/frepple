@@ -57,7 +57,7 @@ class Migration(migrations.Migration):
     migrations.AddField(
       model_name='userpreference',
       name='user',
-      field=models.ForeignKey(to=settings.AUTH_USER_MODEL, editable=False, null=True, verbose_name='user', related_name='preferences'),
+      field=models.ForeignKey(to=settings.AUTH_USER_MODEL, editable=False, null=True, verbose_name='user', related_name='preferences', on_delete=models.CASCADE),
     ),
     migrations.AlterUniqueTogether(
       name='userpreference',

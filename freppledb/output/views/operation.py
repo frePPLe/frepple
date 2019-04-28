@@ -18,7 +18,7 @@
 from django.db import connections
 from django.db.models.expressions import RawSQL
 from django.utils.translation import ugettext_lazy as _
-from django.utils.translation import string_concat
+from django.utils.text import format_lazy
 from django.utils.encoding import force_text
 
 from freppledb.input.models import Operation, DistributionOrder, PurchaseOrder
@@ -108,51 +108,51 @@ class OverviewReport(GridPivot):
     # Optional fields on the location
     GridFieldText(
       'location__description', editable=False, initially_hidden=True,
-      title=string_concat(_('location'), ' - ', _('description'))
+      title=format_lazy('{} - {}', _('location'), _('description'))
       ),
     GridFieldText(
       'location__category', editable=False, initially_hidden=True,
-      title=string_concat(_('location'), ' - ', _('category'))
+      title=format_lazy('{} - {}', _('location'), _('category'))
       ),
     GridFieldText(
       'location__subcategory', editable=False, initially_hidden=True,
-      title=string_concat(_('location'), ' - ', _('subcategory'))
+      title=format_lazy('{} - {}', _('location'), _('subcategory'))
       ),
     GridFieldText(
       'location__available', editable=False, initially_hidden=True,
-      title=string_concat(_('location'), ' - ', _('available')),
+      title=format_lazy('{} - {}', _('location'), _('available')),
       field_name='location__available__name',
       formatter='detail', extra='"role":"input/calendar"'
       ),
     GridFieldLastModified(
       'location__lastmodified', initially_hidden=True, editable=False,
-      title=string_concat(_('location'), ' - ', _('last modified'))
+      title=format_lazy('{} - {}', _('location'), _('last modified'))
       ),
     # Optional fields referencing the item
     GridFieldText(
       'item__description', initially_hidden=True, editable=False,
-      title=string_concat(_('item'), ' - ', _('description'))
+      title=format_lazy('{} - {}', _('item'), _('description'))
       ),
     GridFieldText(
       'item__category', initially_hidden=True, editable=False,
-      title=string_concat(_('item'), ' - ', _('category'))
+      title=format_lazy('{} - {}', _('item'), _('category'))
       ),
     GridFieldText(
       'item__subcategory', initially_hidden=True, editable=False,
-      title=string_concat(_('item'), ' - ', _('subcategory'))
+      title=format_lazy('{} - {}', _('item'), _('subcategory'))
       ),
     GridFieldText(
       'item__owner', initially_hidden=True, editable=False,
-      title=string_concat(_('item'), ' - ', _('owner')),
+      title=format_lazy('{} - {}', _('item'), _('owner')),
       field_name='item__owner__name'
       ),
     GridFieldText(
       'item__source', initially_hidden=True, editable=False,
-      title=string_concat(_('item'), ' - ', _('source'))
+      title=format_lazy('{} - {}', _('item'), _('source'))
       ),
     GridFieldLastModified(
       'item__lastmodified', initially_hidden=True, editable=False,
-      title=string_concat(_('item'), ' - ', _('last modified'))
+      title=format_lazy('{} - {}', _('item'), _('last modified'))
       ),
     )
 
@@ -352,33 +352,33 @@ class PurchaseReport(GridPivot):
       ),
     GridFieldText(
       'item__description', initially_hidden=True, editable=False,
-      title=string_concat(_('item'), ' - ', _('description'))
+      title=format_lazy('{} - {}', _('item'), _('description'))
       ),
     GridFieldText(
       'item__category', initially_hidden=True, editable=False,
-      title=string_concat(_('item'), ' - ', _('category'))
+      title=format_lazy('{} - {}', _('item'), _('category'))
       ),
     GridFieldText(
       'item__subcategory', initially_hidden=True, editable=False,
-      title=string_concat(_('item'), ' - ', _('subcategory'))
+      title=format_lazy('{} - {}', _('item'), _('subcategory'))
       ),
     GridFieldCurrency(
       'item__cost', initially_hidden=True, editable=False,
-      title=string_concat(_('item'), ' - ', _('cost')),
+      title=format_lazy('{} - {}', _('item'), _('cost')),
       field_name='item__cost'
       ),
     GridFieldText(
       'item__owner', initially_hidden=True, editable=False,
-      title=string_concat(_('item'), ' - ', _('owner')),
+      title=format_lazy('{} - {}', _('item'), _('owner')),
       field_name='item__owner__name'
       ),
     GridFieldText(
       'item__source', initially_hidden=True, editable=False,
-      title=string_concat(_('item'), ' - ', _('source'))
+      title=format_lazy('{} - {}', _('item'), _('source'))
       ),
     GridFieldLastModified(
       'item__lastmodified', initially_hidden=True, editable=False,
-      title=string_concat(_('item'), ' - ', _('last modified'))
+      title=format_lazy('{} - {}', _('item'), _('last modified'))
       ),
     GridFieldText(
       'location', title=_('location'), editable=False, field_name='location__name',
@@ -386,25 +386,25 @@ class PurchaseReport(GridPivot):
       ),
     GridFieldText(
       'location__description', editable=False, initially_hidden=True,
-      title=string_concat(_('location'), ' - ', _('description'))
+      title=format_lazy('{} - {}', _('location'), _('description'))
       ),
     GridFieldText(
       'location__category', editable=False, initially_hidden=True,
-      title=string_concat(_('location'), ' - ', _('category'))
+      title=format_lazy('{} - {}', _('location'), _('category'))
       ),
     GridFieldText(
       'location__subcategory', editable=False, initially_hidden=True,
-      title=string_concat(_('location'), ' - ', _('subcategory'))
+      title=format_lazy('{} - {}', _('location'), _('subcategory'))
       ),
     GridFieldText(
       'location__available', editable=False, initially_hidden=True,
-      title=string_concat(_('location'), ' - ', _('available')),
+      title=format_lazy('{} - {}', _('location'), _('available')),
       field_name='location__available__name',
       formatter='detail', extra='"role":"input/calendar"'
       ),
     GridFieldLastModified(
       'location__lastmodified', initially_hidden=True, editable=False,
-      title=string_concat(_('location'), ' - ', _('last modified'))
+      title=format_lazy('{} - {}', _('location'), _('last modified'))
       ),
     GridFieldText(
       'supplier', title=_('supplier'), editable=False, field_name='supplier__name',
@@ -412,28 +412,28 @@ class PurchaseReport(GridPivot):
       ),
     GridFieldText(
       'supplier__description', initially_hidden=True, editable=False,
-      title=string_concat(_('supplier'), ' - ', _('description'))
+      title=format_lazy('{} - {}', _('supplier'), _('description'))
       ),
     GridFieldText(
       'supplier__category', initially_hidden=True, editable=False,
-      title=string_concat(_('supplier'), ' - ', _('category'))
+      title=format_lazy('{} - {}', _('supplier'), _('category'))
       ),
     GridFieldText(
       'supplier__subcategory', initially_hidden=True, editable=False,
-      title=string_concat(_('supplier'), ' - ', _('subcategory'))
+      title=format_lazy('{} - {}', _('supplier'), _('subcategory'))
       ),
     GridFieldText(
       'supplier__owner', initially_hidden=True, editable=False,
-      title=string_concat(_('supplier'), ' - ', _('owner')),
+      title=format_lazy('{} - {}', _('supplier'), _('owner')),
       field_name='supplier__owner__name'
       ),
     GridFieldText(
       'supplier__source', initially_hidden=True, editable=False,
-      title=string_concat(_('supplier'), ' - ', _('source'))
+      title=format_lazy('{} - {}', _('supplier'), _('source'))
       ),
     GridFieldLastModified(
       'supplier__lastmodified', initially_hidden=True, editable=False,
-      title=string_concat(_('supplier'), ' - ', _('last modified'))
+      title=format_lazy('{} - {}', _('supplier'), _('last modified'))
       ),
     )
 
@@ -634,33 +634,33 @@ class DistributionReport(GridPivot):
       ),
     GridFieldText(
       'item__description', initially_hidden=True, editable=False,
-      title=string_concat(_('item'), ' - ', _('description'))
+      title=format_lazy('{} - {}', _('item'), _('description'))
       ),
     GridFieldText(
       'item__category', initially_hidden=True, editable=False,
-      title=string_concat(_('item'), ' - ', _('category'))
+      title=format_lazy('{} - {}', _('item'), _('category'))
       ),
     GridFieldText(
       'item__subcategory', initially_hidden=True, editable=False,
-      title=string_concat(_('item'), ' - ', _('subcategory'))
+      title=format_lazy('{} - {}', _('item'), _('subcategory'))
       ),
     GridFieldCurrency(
       'item__cost', initially_hidden=True, editable=False,
-      title=string_concat(_('item'), ' - ', _('cost')),
+      title=format_lazy('{} - {}', _('item'), _('cost')),
       field_name='item__cost'
       ),
     GridFieldText(
       'item__owner', initially_hidden=True, editable=False,
-      title=string_concat(_('item'), ' - ', _('owner')),
+      title=format_lazy('{} - {}', _('item'), _('owner')),
       field_name='item__owner__name'
       ),
     GridFieldText(
       'item__source', initially_hidden=True, editable=False,
-      title=string_concat(_('item'), ' - ', _('source'))
+      title=format_lazy('{} - {}', _('item'), _('source'))
       ),
     GridFieldLastModified(
       'item__lastmodified', initially_hidden=True, editable=False,
-      title=string_concat(_('item'), ' - ', _('last modified'))
+      title=format_lazy('{} - {}', _('item'), _('last modified'))
       ),
     GridFieldText(
       'origin', title=_('origin'), editable=False, field_name='origin__name',
@@ -668,25 +668,25 @@ class DistributionReport(GridPivot):
       ),
     GridFieldText(
       'origin__description', editable=False, initially_hidden=True,
-      title=string_concat(_('origin'), ' - ', _('description'))
+      title=format_lazy('{} - {}', _('origin'), _('description'))
       ),
     GridFieldText(
       'origin__category', editable=False, initially_hidden=True,
-      title=string_concat(_('origin'), ' - ', _('category'))
+      title=format_lazy('{} - {}', _('origin'), _('category'))
       ),
     GridFieldText(
       'origin__subcategory', editable=False, initially_hidden=True,
-      title=string_concat(_('origin'), ' - ', _('subcategory'))
+      title=format_lazy('{} - {}', _('origin'), _('subcategory'))
       ),
     GridFieldText(
       'origin__available', editable=False, initially_hidden=True,
-      title=string_concat(_('origin'), ' - ', _('available')),
+      title=format_lazy('{} - {}', _('origin'), _('available')),
       field_name='origin__available__name',
       formatter='detail', extra='"role":"input/calendar"'
       ),
     GridFieldLastModified(
       'origin__lastmodified', initially_hidden=True, editable=False,
-      title=string_concat(_('origin'), ' - ', _('last modified'))
+      title=format_lazy('{} - {}', _('origin'), _('last modified'))
       ),
     GridFieldText(
       'destination', title=_('destination'), editable=False, field_name='destination__name',
@@ -694,25 +694,25 @@ class DistributionReport(GridPivot):
       ),
     GridFieldText(
       'destination__description', editable=False, initially_hidden=True,
-      title=string_concat(_('destination'), ' - ', _('description'))
+      title=format_lazy('{} - {}', _('destination'), _('description'))
       ),
     GridFieldText(
       'destination__category', editable=False, initially_hidden=True,
-      title=string_concat(_('destination'), ' - ', _('category'))
+      title=format_lazy('{} - {}', _('destination'), _('category'))
       ),
     GridFieldText(
       'destination__subcategory', editable=False, initially_hidden=True,
-      title=string_concat(_('destination'), ' - ', _('subcategory'))
+      title=format_lazy('{} - {}', _('destination'), _('subcategory'))
       ),
     GridFieldText(
       'destination__available', editable=False, initially_hidden=True,
-      title=string_concat(_('destination'), ' - ', _('available')),
+      title=format_lazy('{} - {}', _('destination'), _('available')),
       field_name='destination__available__name',
       formatter='detail', extra='"role":"input/calendar"'
       ),
     GridFieldLastModified(
       'destination__lastmodified', initially_hidden=True, editable=False,
-      title=string_concat(_('destination'), ' - ', _('last modified'))
+      title=format_lazy('{} - {}', _('destination'), _('last modified'))
       ),
     )
 

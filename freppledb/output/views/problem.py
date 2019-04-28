@@ -15,8 +15,8 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+from django.utils.text import format_lazy
 from django.utils.translation import ugettext_lazy as _
-from django.utils.translation import string_concat
 from django.db.models import Count
 
 from freppledb.output.models import Problem
@@ -25,14 +25,14 @@ from freppledb.common.report import GridReport, GridFieldText, GridFieldNumber, 
 
 def getEntities(request):
   return tuple([
-    (i['entity'], string_concat(_(i['entity']), ":", i['id__count']))
+    (i['entity'], format_lazy('{}:{}', _(i['entity']), i['id__count']))
     for i in Problem.objects.using(request.database).values('entity').annotate(Count('id')).order_by('entity')
     ])
 
 
 def getNames(request):
   return tuple([
-    (i['name'], string_concat(_(i['name']), ":", i['id__count']))
+    (i['name'], format_lazy('{}:{}', _(i['name']), i['id__count']))
     for i in Problem.objects.using(request.database).values('name').annotate(Count('id')).order_by('name')
     ])
 

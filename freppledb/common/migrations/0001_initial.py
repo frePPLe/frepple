@@ -92,7 +92,7 @@ class Migration(migrations.Migration):
                 ('name', models.CharField(verbose_name='name', db_index=True, max_length=300)),
                 ('startdate', models.DateTimeField(verbose_name='start date')),
                 ('enddate', models.DateTimeField(verbose_name='end date')),
-                ('bucket', models.ForeignKey(verbose_name='bucket', to='common.Bucket')),
+                ('bucket', models.ForeignKey(verbose_name='bucket', to='common.Bucket', on_delete=models.CASCADE)),
             ],
             options={
                 'db_table': 'common_bucketdetail',
@@ -108,8 +108,8 @@ class Migration(migrations.Migration):
                 ('object_pk', models.TextField(verbose_name='object id')),
                 ('comment', models.TextField(verbose_name='comment', max_length=3000)),
                 ('lastmodified', models.DateTimeField(editable=False, verbose_name='last modified', default=django.utils.timezone.now)),
-                ('content_type', models.ForeignKey(related_name='content_type_set_for_comment', verbose_name='content type', to='contenttypes.ContentType')),
-                ('user', models.ForeignKey(verbose_name='user', null=True, editable=False, blank=True, to=settings.AUTH_USER_MODEL)),
+                ('content_type', models.ForeignKey(related_name='content_type_set_for_comment', verbose_name='content type', to='contenttypes.ContentType', on_delete=models.CASCADE)),
+                ('user', models.ForeignKey(verbose_name='user', null=True, editable=False, blank=True, to=settings.AUTH_USER_MODEL, on_delete=models.SET_NULL)),
             ],
             options={
                 'db_table': 'common_comment',

@@ -70,9 +70,7 @@ from django.utils.encoding import smart_str, force_text, force_str
 from django.utils.html import escape
 from django.utils.translation import ugettext as _
 from django.utils.formats import get_format
-from django.utils.text import capfirst, get_text_list
-from django.utils.translation import string_concat
-from django.template.defaultfilters import title
+from django.utils.text import capfirst, get_text_list, format_lazy
 from django.contrib.admin.models import LogEntry, CHANGE, ADDITION, DELETION
 from django.contrib.contenttypes.models import ContentType
 from django.views.generic.base import View
@@ -333,7 +331,7 @@ class GridFieldChoice(GridField):
         e.append(";%s:" % i[0])
       e.append(i[1])
     e.append('"}')
-    self.extra = string_concat(*e)
+    self.extra = format_lazy('{}' * len(e), *e)
 
 
 class GridFieldBoolNullable(GridFieldChoice):
@@ -1444,7 +1442,7 @@ class GridReport(View):
     for m in deps:
       permname = get_permission_codename('delete', m._meta)
       if not request.user.has_perm('%s.%s' % (m._meta.app_label, permname)):
-        return string_concat(m._meta.verbose_name, ':', _('Permission denied'))
+        return format_lazy('{}:{}', m._meta.verbose_name, _('Permission denied'))
 
     # Delete the data records
     cursor = connections[request.database].cursor()
@@ -1499,7 +1497,7 @@ class GridReport(View):
           if 'erase' in request.POST:
             returnvalue = reportclass.erase(request)
             if returnvalue:
-              yield string_concat('<div>', returnvalue, '</div>')
+              yield format_lazy('<div>{}</div>', returnvalue)
               return
 
           yield ('<div class="table-responsive">'

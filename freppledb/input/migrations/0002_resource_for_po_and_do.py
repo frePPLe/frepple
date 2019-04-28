@@ -28,7 +28,7 @@ class Migration(migrations.Migration):
     migrations.AddField(
       model_name='itemdistribution',
       name='resource',
-      field=models.ForeignKey(verbose_name='resource', help_text='Resource to model the distribution capacity', null=True, related_name='itemdistributions', to='input.Resource', blank=True),
+      field=models.ForeignKey(verbose_name='resource', help_text='Resource to model the distribution capacity', null=True, related_name='itemdistributions', to='input.Resource', blank=True, on_delete=models.SET_NULL),
     ),
     migrations.AddField(
       model_name='itemdistribution',
@@ -38,7 +38,7 @@ class Migration(migrations.Migration):
     migrations.AddField(
       model_name='itemsupplier',
       name='resource',
-      field=models.ForeignKey(verbose_name='resource', help_text='Resource to model the supplier capacity', null=True, related_name='itemsuppliers', to='input.Resource', blank=True),
+      field=models.ForeignKey(verbose_name='resource', help_text='Resource to model the supplier capacity', null=True, related_name='itemsuppliers', to='input.Resource', blank=True, on_delete=models.SET_NULL),
     ),
     migrations.AddField(
       model_name='itemsupplier',

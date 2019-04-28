@@ -201,7 +201,7 @@ class ModelTabs(Node):
     from django.db.models.options import Options
     from django.contrib.contenttypes.models import ContentType
     from freppledb.admin import data_site
-    from django.core.urlresolvers import reverse
+    from django.urls import reverse
     try:
       # Look up the admin class to use
       model = Variable(self.model).resolve(context)
@@ -291,7 +291,7 @@ def version_short():
 # A tag to mark whether the password of a user is correct.
 #
 
-@register.assignment_tag
+@register.simple_tag
 def checkPassword(usr, pwd):
   try:
     return User.objects.get(username=usr).check_password(pwd)

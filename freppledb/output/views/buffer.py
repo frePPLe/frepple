@@ -19,8 +19,8 @@ from datetime import timedelta, datetime
 from django.db import connections
 from django.db.models.expressions import RawSQL
 from django.utils.encoding import force_text
+from django.utils.text import format_lazy
 from django.utils.translation import ugettext_lazy as _
-from django.utils.translation import string_concat
 
 from freppledb.boot import getAttributeFields
 from freppledb.input.models import Buffer, Item, Location, OperationPlanMaterial
@@ -56,36 +56,36 @@ class OverviewReport(GridPivot):
     GridFieldText('item', title=_('item'), editable=False, field_name='item__name', formatter='detail', extra='"role":"input/item"'),
     GridFieldText('location', title=_('location'), editable=False, field_name='location__name', formatter='detail', extra='"role":"input/location"'),
     # Optional fields referencing the item
-    GridFieldText('item__description', title=string_concat(_('item'), ' - ', _('description')),
+    GridFieldText('item__description', title=format_lazy('{} - {}', _('item'), _('description')),
       initially_hidden=True, editable=False),
-    GridFieldText('item__category', title=string_concat(_('item'), ' - ', _('category')),
+    GridFieldText('item__category', title=format_lazy('{} - {}', _('item'), _('category')),
       initially_hidden=True, editable=False),
-    GridFieldText('item__subcategory', title=string_concat(_('item'), ' - ', _('subcategory')),
+    GridFieldText('item__subcategory', title=format_lazy('{} - {}', _('item'), _('subcategory')),
       initially_hidden=True, editable=False),
-    GridFieldNumber('item__cost', title=string_concat(_('item'), ' - ', _('cost')),
+    GridFieldNumber('item__cost', title=format_lazy('{} - {}', _('item'), _('cost')),
       initially_hidden=True, editable=False),
-    GridFieldText('item__owner', title=string_concat(_('item'), ' - ', _('owner')),
+    GridFieldText('item__owner', title=format_lazy('{} - {}', _('item'), _('owner')),
       field_name='item__owner__name', initially_hidden=True, editable=False),
-    GridFieldText('item__source', title=string_concat(_('item'), ' - ', _('source')),
+    GridFieldText('item__source', title=format_lazy('{} - {}', _('item'), _('source')),
       initially_hidden=True, editable=False),
-    GridFieldLastModified('item__lastmodified', title=string_concat(_('item'), ' - ', _('last modified')),
+    GridFieldLastModified('item__lastmodified', title=format_lazy('{} - {}', _('item'), _('last modified')),
       initially_hidden=True, editable=False),
     # Optional fields referencing the location
-    GridFieldText('location__description', title=string_concat(_('location'), ' - ', _('description')),
+    GridFieldText('location__description', title=format_lazy('{} - {}', _('location'), _('description')),
       initially_hidden=True, editable=False),
-    GridFieldText('location__category', title=string_concat(_('location'), ' - ', _('category')),
+    GridFieldText('location__category', title=format_lazy('{} - {}', _('location'), _('category')),
       initially_hidden=True, editable=False),
-    GridFieldText('location__subcategory', title=string_concat(_('location'), ' - ', _('subcategory')),
+    GridFieldText('location__subcategory', title=format_lazy('{} - {}', _('location'), _('subcategory')),
       initially_hidden=True, editable=False),
-    GridFieldText('location__available', title=string_concat(_('location'), ' - ', _('available')),
+    GridFieldText('location__available', title=format_lazy('{} - {}', _('location'), _('available')),
       initially_hidden=True, field_name='origin__available__name', formatter='detail',
       extra='"role":"input/calendar"', editable=False),
-    GridFieldText('location__owner', title=string_concat(_('location'), ' - ', _('owner')),
+    GridFieldText('location__owner', title=format_lazy('{} - {}', _('location'), _('owner')),
       initially_hidden=True, field_name='origin__owner__name', formatter='detail',
       extra='"role":"input/location"', editable=False),
-    GridFieldText('location__source', title=string_concat(_('location'), ' - ', _('source')),
+    GridFieldText('location__source', title=format_lazy('{} - {}', _('location'), _('source')),
       initially_hidden=True, editable=False),
-    GridFieldLastModified('location__lastmodified', title=string_concat(_('location'), ' - ', _('last modified')),
+    GridFieldLastModified('location__lastmodified', title=format_lazy('{} - {}', _('location'), _('last modified')),
       initially_hidden=True, editable=False),
     )
 

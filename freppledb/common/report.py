@@ -313,6 +313,7 @@ class GridFieldLastModified(GridField):
 class GridFieldText(GridField):
   width = 200
   align = 'left'
+  searchoptions = '{"sopt":["cn","nc","eq","ne","lt","le","gt","ge","bw","bn","in","ni","ew","en"],"searchhidden":true}'
 
 
 class GridFieldChoice(GridField):

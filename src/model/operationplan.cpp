@@ -1634,7 +1634,7 @@ void OperationPlan::deleteOperationPlans(Operation* o, bool deleteLockedOpplans)
 }
 
 
-bool OperationPlan::isExcess(bool strict) const
+bool OperationPlan::isExcess(bool use_zero) const
 {
   // Delivery operationplans aren't excess
   if (getDemand())
@@ -1642,7 +1642,7 @@ bool OperationPlan::isExcess(bool strict) const
 
   // Recursive call for suboperationplans
   for (OperationPlan* subopplan = firstsubopplan; subopplan; subopplan = subopplan->nextsubopplan)
-    if (!subopplan->isExcess())
+    if (!subopplan->isExcess(use_zero))
       return false;
 
   // Loop over all producing flowplans
@@ -1667,7 +1667,7 @@ bool OperationPlan::isExcess(bool strict) const
     double current_maximum(0.0);
     double current_minimum(0.0);
     Buffer::flowplanlist::const_iterator j = i->getBuffer()->getFlowPlans().rbegin();
-    if (!strict && j != i->getBuffer()->getFlowPlans().end())
+    if (!use_zero && j != i->getBuffer()->getFlowPlans().end())
     {
       current_maximum = i->getBuffer()->getFlowPlans().getMax(&*j);
       current_minimum = i->getBuffer()->getFlowPlans().getMin(&*j);
@@ -1678,9 +1678,9 @@ bool OperationPlan::isExcess(bool strict) const
           && j->getOnhand() < prod_qty + current_maximum - ROUNDING_ERROR)
           || j->getOnhand() < prod_qty + current_minimum - ROUNDING_ERROR )
         return false;
-      if (j->getEventType() == 4 && !strict)
+      if (j->getEventType() == 4 && !use_zero)
         current_maximum = j->getMax(false);
-      if (j->getEventType() == 3 && !strict)
+      if (j->getEventType() == 3 && !use_zero)
         current_minimum = j->getMin(false);
       if (&*j == &*i) break;
     }

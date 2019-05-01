@@ -532,15 +532,38 @@ void SolverCreate::scanExcess(CommandList* l)
       case 5:
         // Detect excess operationplans and undo them
         auto createcmd = static_cast<CommandCreateOperationPlan*>(&*cmd);
-        if (createcmd->getOperationPlan() && createcmd->getOperationPlan()->isExcess())
+        if (createcmd->getOperationPlan())
         {
-          if (getLogLevel()>1)
-            logger << "Denying creation of redundant operationplan "
-                << createcmd->getOperationPlan()->getOperation() << "  "
-                << createcmd->getOperationPlan()->getDates() << "  "
-                << createcmd->getOperationPlan()->getQuantity() << endl;
-          createcmd->rollback();
-        }
+          if (createcmd->getOperationPlan()->isExcess(!getPlanSafetyStockFirst()))
+          {
+            if (getLogLevel() > 1)
+              logger << "Denying creation of redundant operationplan "
+              << createcmd->getOperationPlan()->getOperation() << "  "
+              << createcmd->getOperationPlan()->getDates() << "  "
+              << createcmd->getOperationPlan()->getQuantity() << endl;
+            createcmd->rollback();
+          }
+          else if (!createcmd->getOperationPlan()->getOperation()->hasType<OperationItemSupplier>())
+          {
+            // Check if any later operationplans have become excess
+            auto o = createcmd->getOperationPlan()->getOperation()->getOperationPlans();
+            while (o != OperationPlan::end())
+            {
+              if (createcmd->getOperationPlan()->getEnd() < o->getEnd() 
+                && o->getProposed()
+                && o->isExcess(!getPlanSafetyStockFirst()))
+              {
+                auto tmp = &*o;
+                ++o;
+                if (getLogLevel() > 1)
+                  logger << "Removing previously created redundant operationplan " << tmp << endl;
+                delete tmp;
+              }
+              else
+                ++o;
+            }
+          }
+        }        
         break;
     }
   }

@@ -435,10 +435,10 @@ void SolverCreate::SolverData::solveSafetyStock(SolverCreate* solver)
   cleanup.setConstrained(solver->isMaterialConstrained());
   safety_stock_planning = true;
   if (getLogLevel() > 0)
-    logger << "Start safety stock replenishment pass   " << solver->getConstraints() << endl;
+    logger << "Start safety stock replenishment pass   " << solver->getConstraints() << " for cluster " << cluster << endl;
   vector< list<Buffer*> > bufs(HasLevel::getNumberOfLevels() + 1);
   for (Buffer::iterator buf = Buffer::begin(); buf != Buffer::end(); ++buf)
-    if (buf->getCluster() == cluster
+    if ((buf->getCluster() == cluster || cluster == -1)
       && !buf->hasType<BufferInfinite>()
       && (buf->getProducingOperation() || !solver->isMaterialConstrained())
       && (

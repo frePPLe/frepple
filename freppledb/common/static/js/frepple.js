@@ -2879,7 +2879,7 @@ var graph = {
      .attr("x", -2)
      .attr("y", 13) // Depends on font size...
      .attr("text-anchor", "end")
-     .text(Math.round(dm[1], 0));
+     .text(grid.formatNumber(Math.round(dm[1])));
     // Draw the minimum value
     s.append("text")
     .attr("x", -2)

@@ -258,7 +258,7 @@ class Command(BaseCommand):
       constraint = 15
       current_options = [ i[0] for i in planning_options ]
       lastrun = Task.objects.all().using(request.database) \
-        .filter(name="runplan", user=request.user) \
+        .filter(name="runplan") \
         .order_by("-id").only("arguments").first()
       if lastrun and lastrun.arguments:
         # Copy all settings from the previous run by this user

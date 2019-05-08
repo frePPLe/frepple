@@ -916,12 +916,17 @@ void Operation::initOperationPlan (
   if (ow)
     opplan->setOwner(ow, true);
 
-  // Create the loadplans and flowplans, if allowed
-  if (makeflowsloads)
-    opplan->createFlowLoads();
-
   // Setting the dates and quantity
   setOperationPlanParameters(opplan, q, s, e, true, true, roundDown);
+
+  // Create the loadplans and flowplans, if allowed
+  if (makeflowsloads)
+  {
+    opplan->createFlowLoads();
+    // Now that we know the assigned resource the duration can change 
+    // eg different availability or efficienicy)
+    setOperationPlanParameters(opplan, q, s, e, true, true, roundDown);
+  }
 
   // Update flow and loadplans, and mark for problem detection
   opplan->update();

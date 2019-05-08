@@ -191,10 +191,13 @@ PyObject* savePlan(PyObject* self, PyObject* args)
       for (auto oo=gbuf->getFlowPlans().begin(); oo!=gbuf->getFlowPlans().end(); ++oo)
         if (oo->getEventType() == 1 && oo->getQuantity() != 0.0)
         {
+          auto oh = round(oo->getOnhand() * 1000) / 1000;
+          if (fabs(oh) < ROUNDING_ERROR)
+            oh = 0.0;
           textoutput << "BUFFER\t" << *gbuf << '\t'
               << oo->getDate() << '\t'
               << oo->getQuantity() << '\t'
-              << (round(oo->getOnhand() * 1000) / 1000) << endl;
+              << oh << endl;
         }
     }
 

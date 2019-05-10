@@ -179,6 +179,12 @@ button:active, button:focus, input:active, input:focus { outline: none; }
 div.selectdb {
   padding-top: 2px;
   padding-bottom: 2px;
+  overflow-x: hidden;  // Cover situations with very long scenario names
+  ul {
+    overflow-x: hidden;
+    left: auto;  // Align with right edge
+    right: 15px; // Align with right edge
+  }
   select { /*fix django admin*/
     padding: 0px;
     border-color: @input-border;

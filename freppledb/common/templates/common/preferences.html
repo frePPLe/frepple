@@ -8,6 +8,10 @@
   #content-main th {
     line-height: 2em;
   }
+  
+  #content-main .control-label {
+    white-space: nowrap;
+  }
 </style>
 
 <script type="text/javascript">
@@ -104,7 +108,7 @@
       </div>
       <div class="col-xs-12">
         {% if form.new_password1.help_text %}
-        <div style="max-width:510px;">
+        <div>
           {% autoescape off %}{{ form.new_password1.help_text }}{% endautoescape %}
         </div>
         {% endif %}

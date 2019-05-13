@@ -338,9 +338,11 @@ REST_FRAMEWORK = {
 # Bootstrap
 DAB_FIELD_RENDERER = 'django_admin_bootstrapped.renderers.BootstrapFieldRenderer'
 MESSAGE_TAGS = {
-  messages.SUCCESS: 'alert-success success',
-  messages.WARNING: 'alert-warning warning',
-  messages.ERROR: 'alert-danger error'
+  messages.SUCCESS: 'alert-success',
+  messages.WARNING: 'alert-warning',
+  messages.ERROR: 'alert-danger',
+  messages.INFO: 'alert-success',
+  messages.DEBUG: 'alert-danger',
   }
 
 # Override any of the above settings from a separate file

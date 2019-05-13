@@ -1,6 +1,24 @@
 Release notes
 -------------
 
+5.2.0 (Upcoming release)
+========================
+
+.. rubric:: Production planning
+
+- Performance improvements in the solver algorithm.
+
+- Bug fix to avoid creating excess inventory in models with large operation minimum 
+  sizes.
+  
+.. rubric:: User interface
+
+- Various small styling improvements and usability enhancements.
+
+.. rubric:: Odoo connector
+
+- Bug fixes in the mapping of open and closed sales orders.
+
 5.1.0 (2019/04/22)
 ==================
 

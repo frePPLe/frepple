@@ -713,7 +713,7 @@ class exporter(object):
         '''
         # Get all sales order lines
         m = self.env['sale.order.line']
-        recs = m.search([('state', 'in', ['draft', 'sale'])])
+        recs = m.search([])
         fields = ['qty_delivered', 'state', 'product_id', 'product_uom_qty', 'product_uom', 'order_id']
         so_line = [i for i in recs.read(fields)]
 
@@ -725,13 +725,7 @@ class exporter(object):
         for i in m.browse(ids).read(fields):
             so[i['id']] = i
 
-        pick = self.env['stock.picking']
-        p_fields = ['move_lines', 'sale_id', 'state']
-        move = self.env['stock.move']
-        m_fields = ['product_id', 'product_uom_qty']
-
         # Generate the demand records
-        deliveries = set()
         yield '<!-- sales order lines -->\n'
         yield '<demands>\n'
 
@@ -744,41 +738,46 @@ class exporter(object):
             if not customer or not location or not product:
                 # Not interested in this sales order...
                 continue
-
             due = j.get('requested_date', False) or j['date_order']
-            qty = i['product_uom_qty'] - i['qty_delivered']
-            if qty < 0:
-              qty = 0
-            else:
-              qty = self.convert_qty_uom(qty, i['product_uom'][0], i['product_id'][0])
-            minship = j['picking_policy'] == 'one' and qty or 1.0
             priority = 1  # We give all customer orders the same default priority
 
-            if i['state'] == 'draft':
-                # Export draft sale order lines
-                yield '<demand name=%s quantity="%s" due="%s" priority="%s" minshipment="%s" status="quote"><item name=%s/><customer name=%s/><location name=%s/></demand>\n' % (
-                    quoteattr(name), qty, due.replace(' ', 'T'),  # TODO find a better way around this ugly hack (maybe get the datetime object from the database)
-                    priority, minship, quoteattr(product['name']),
-                    quoteattr(customer), quoteattr(location)
-                )
-            else: # if not j['picking_ids']:
-                # Export sales order lines shipped to customers
-                yield '<demand name=%s quantity="%s" due="%s" priority="%s" minshipment="%s" status="open"><item name=%s/><customer name=%s/><location name=%s/></demand>\n' % (
-                    quoteattr(name), qty, due.replace(' ', 'T'),  # TODO find a better way around this ugly hack (maybe get the datetime object from the database)
-                    priority, minship, quoteattr(product['name']),
-                    quoteattr(customer), quoteattr(location)
-                )
-#             else:
+            # Possible sales order status are 'draft', 'sent', 'sale', 'done' and 'cancel'
+            state = j.get('state', 'sale')
+            if state == 'draft':
+              status = 'quote'
+              qty = self.convert_qty_uom(i['product_uom_qty'], i['product_uom'][0], i['product_id'][0])
+            elif state == 'sale':
+              qty = i['product_uom_qty'] - i['qty_delivered']
+              if qty <= 0:
+                status = 'closed'
+                qty = self.convert_qty_uom(i['product_uom_qty'], i['product_uom'][0], i['product_id'][0])
+              else:
+                status = 'open'
+                qty = self.convert_qty_uom(qty, i['product_uom'][0], i['product_id'][0])
+            elif state in ('done', 'sent'):
+              status = 'closed'
+              qty = self.convert_qty_uom(i['product_uom_qty'], i['product_uom'][0], i['product_id'][0])
+            elif state == 'cancel':
+              status = 'canceled'
+              qty = self.convert_qty_uom(i['product_uom_qty'], i['product_uom'][0], i['product_id'][0])
+
+#           pick = self.req.session.model('stock.picking')
+#           p_fields = ['move_lines', 'sale_id', 'state']
+#           move = self.req.session.model('stock.move')
+#           m_fields = ['product_id', 'product_uom_qty']
+#           if j['picking_ids']:
+#                 # The code below only works in specific situations.
+#                 # If activated incorrectly it can lead to duplicate demands.
 #                 # Here to export sale order line based that is closed by stock moves.
 #                 # if DO line is done then demand status is closed
 #                 # if DO line is cancel, it will skip the current DO line
 #                 # else demand status is open
 #                 pick_number = 0
-#                 for p in pick.browse(j['picking_ids']).read(p_fields):
+#                 for p in pick.read(j['picking_ids'], p_fields, self.req.session.context):
 #                     p_ids = p['move_lines']
 #                     product_id = i['product_id'][0]
-#                     mv_ids = move.search([('id', 'in', p_ids), ('product_id','=', product_id)])
-# 
+#                     mv_ids = move.search([('id', 'in', p_ids), ('product_id','=', product_id)], context=self.req.session.context)
+#
 #                     status = ''
 #                     if p['state'] == 'done':
 #                         if self.mode == 1:
@@ -789,8 +788,9 @@ class exporter(object):
 #                         continue
 #                     else:
 #                         status = 'open'
-# 
-#                     for mv in mv_ids.read(m_fields):
+#
+#                     for mv in move.read(mv_ids, m_fields, self.req.session.context):
+#                         logger.error("     C sales order line %s  %s " % (i, mv))
 #                         pick_number = pick_number + 1
 #                         name = u'%s %d %d' % (i['order_id'][1], i['id'], pick_number)
 #                         yield '<demand name=%s quantity="%s" due="%s" priority="%s" minshipment="%s" status="%s"><item name=%s/><customer name=%s/><location name=%s/></demand>\n' % (
@@ -798,6 +798,13 @@ class exporter(object):
 #                             priority, minship,status, quoteattr(product['name']),
 #                             quoteattr(customer), quoteattr(location)
 #                         )
+            yield '<demand name=%s quantity="%s" due="%s" priority="%s" minshipment="%s" status="%s"><item name=%s/><customer name=%s/><location name=%s/></demand>\n' % (
+                  quoteattr(name), qty, due.replace(' ', 'T'),  # TODO find a better way around this ugly hack (maybe get the datetime object from the database)
+                  priority,
+                  j['picking_policy'] == 'one' and qty or 1.0,
+                  status, quoteattr(product['name']),
+                  quoteattr(customer), quoteattr(location)
+            )
 
         yield '</demands>\n'
 

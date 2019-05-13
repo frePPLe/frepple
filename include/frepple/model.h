@@ -10005,7 +10005,7 @@ class CommandMoveOperationPlan : public Command
       * which indicates to leave the quantity unchanged.
       */
     CommandMoveOperationPlan(OperationPlan* opplanptr,
-        Date newStart, Date newEnd, double newQty = -1.0);
+        Date newStart, Date newEnd, double newQty = -1.0, bool roundDown = false);
 
     /** Default constructor. */
     CommandMoveOperationPlan(OperationPlan*);

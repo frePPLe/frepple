@@ -312,7 +312,7 @@ CommandMoveOperationPlan::CommandMoveOperationPlan(OperationPlan* o) : opplan(o)
 
 
 CommandMoveOperationPlan::CommandMoveOperationPlan
-(OperationPlan* o, Date newstart, Date newend, double newQty) // TODO no control over rounding up or down
+(OperationPlan* o, Date newstart, Date newend, double newQty, bool roundDown)
   : opplan(o), state(o), firstCommand(nullptr)
 {
   if (!opplan)
@@ -322,7 +322,7 @@ CommandMoveOperationPlan::CommandMoveOperationPlan
   assert(opplan->getOperation());
   opplan->setOperationPlanParameters(
     newQty == -1.0 ? opplan->getQuantity() : newQty, 
-    newstart, newend, true, true, false
+    newstart, newend, true, true, roundDown
   );
 
   // Construct a subcommand for all suboperationplans

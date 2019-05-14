@@ -1165,10 +1165,8 @@ var grid = {
     if ($('#delete_selected').hasClass("disabled")) return;
     var sel = jQuery("#grid").jqGrid('getGridParam','selarrrow');
     if (sel.length == 1)
-    {
       // Redirect to a page for deleting a single entity
-      location.href = location.pathname + encodeURI(sel[0]) + '/delete/';
-    }
+      location.href = location.pathname + admin_escape(sel[0]) + '/delete/';
     else if (sel.length > 0)
     {
      $('#timebuckets').modal('hide');

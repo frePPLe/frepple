@@ -269,10 +269,10 @@ class OverviewReport(GridPivot):
           'location__source': row[15],
           'location__lastmodified': row[16],
           'startoh': row[numfields - 6]['onhand'] if row[numfields - 6] else 0,
-          'startohdoc': 0 if (row[numfields - 6]['onhand']  if row[numfields - 6] else 0) <= 0\
+          'startohdoc': max(0, 0 if (row[numfields - 6]['onhand']  if row[numfields - 6] else 0) <= 0\
                           else (999 if row[numfields - 6]['periodofcover'] == 86313600\
                                     else (datetime.strptime(row[numfields - 6]['flowdate'],'%Y-%m-%d %H:%M:%S') +\
-                                          timedelta(seconds=row[numfields - 6]['periodofcover']) - row[numfields - 4]).days if row[numfields - 6]['periodofcover'] else 999),
+                                          timedelta(seconds=row[numfields - 6]['periodofcover']) - row[numfields - 4]).days if row[numfields - 6]['periodofcover'] else 999)),
           'bucket': row[numfields - 5],
           'startdate': row[numfields - 4].date(),
           'enddate': row[numfields - 3].date(),

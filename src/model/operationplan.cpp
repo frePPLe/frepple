@@ -1846,9 +1846,15 @@ void OperationPlan::propagateStatus()
         all_steps_closed = false;
     }
     if (all_steps_closed)
-      getOwner()->setClosed(true);
+    {
+      getOwner()->flags |= STATUS_CONFIRMED + STATUS_CLOSED;
+      getOwner()->flags &= ~(STATUS_APPROVED + STATUS_COMPLETED);
+    }
     else if (all_steps_completed)
-      getOwner()->setCompleted(true);
+    {
+      getOwner()->flags |= STATUS_CONFIRMED + STATUS_COMPLETED;
+      getOwner()->flags &= ~(STATUS_APPROVED + STATUS_CLOSED);
+    }
     else if (getOwner()->getProposed())
     {
       for (auto subopplan = getOwner()->firstsubopplan; subopplan; subopplan = subopplan->nextsubopplan)

@@ -568,7 +568,7 @@ LoadPlan::AlternateIterator::AlternateIterator(const LoadPlan* o) : ldplan(o)
   {
     for (Resource::memberRecursiveIterator i(ldplan->getLoad()->getResource()); !i.empty(); ++i)
     {
-      if (ldplan->getResource() == &*i)
+      if (ldplan->getResource() == &*i || i->isGroup())
         continue;
       Skill* sk = ldplan->getLoad()->getSkill();
       if (!sk || i->hasSkill(sk, ldplan->getDate(), ldplan->getDate()))

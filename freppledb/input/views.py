@@ -3301,8 +3301,9 @@ class OperationPlanDetail(View):
               or orders_minus.DO is not null
               or sales.BO is not null
               or sales.SO is not null
+              or (items.name = %s and location.name = %s)
             order by items.name, location.name
-            ''', (opplan.item_id, current_date, current_date))
+            ''', (opplan.item_id, current_date, current_date, opplan.item_id, opplan.location_id))
           res['network'] = []
           for a in cursor.fetchall():
             res['network'].append([

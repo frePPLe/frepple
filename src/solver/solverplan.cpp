@@ -432,7 +432,7 @@ void SolverCreate::SolverData::commit()
 void SolverCreate::SolverData::solveSafetyStock(SolverCreate* solver)
 {
   OperatorDelete cleanup(getCommandManager());
-  cleanup.setConstrained(solver->isMaterialConstrained());
+  cleanup.setConstrained(solver->isMaterialConstrained() && solver->getPlanType() == 1);
   safety_stock_planning = true;
   if (getLogLevel() > 0)
     logger << "Start safety stock replenishment pass   " << solver->getConstraints() << " for cluster " << cluster << endl;

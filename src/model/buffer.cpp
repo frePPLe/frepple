@@ -1244,8 +1244,7 @@ void Buffer::buildProducingOperation()
 void Buffer::correctProducingFlow(Operation* itemoper) {
   
   //if operation is of type routing or alternate or split then look if flow exists at parent level
-  if (itemoper->hasType<OperationRouting>() || itemoper->hasType<OperationAlternate>()
-    || itemoper->hasType<OperationSplit>()) {
+  if (itemoper->hasType<OperationRouting, OperationAlternate, OperationSplit>()) {
 
     // check if routing has a producing flow into the buffer
     auto flow_iter = itemoper->getFlowIterator();
@@ -1257,29 +1256,28 @@ void Buffer::correctProducingFlow(Operation* itemoper) {
     }
   }
     
-  // Operation is of type routing, check if last step is producing a flow into this buffer 
+  // Operation is of type routing, check if any step is producing into this buffer 
   if (itemoper->hasType<OperationRouting>()) {
     // a first loop to look for the max priority to get the last step
     auto subs = itemoper->getSubOperationIterator();
-    int maxPriority = -1;
+    SubOperation* lastStep = nullptr;
     while (SubOperation* sub = subs.next()) {
-      if (sub->getPriority() > maxPriority)
-        maxPriority = sub->getPriority();
+      auto flow_iter = sub->getOperation()->getFlowIterator();
+      while (flow_iter != sub->getOperation()->getFlows().end()) {
+        if (flow_iter->getItem() == getItem() && flow_iter->isProducer())
+          return;
+        ++flow_iter;
+      }
+      lastStep = sub;
     }
     
     // correct the last step
-    subs = itemoper->getSubOperationIterator();
-    while (SubOperation* sub = subs.next()) {
-      if (sub->getPriority() == maxPriority) {
-        correctProducingFlow(sub->getOperation());
-        break;
-      }
-    }
+    correctProducingFlow(lastStep->getOperation());
     return;
   }
 
   //if operation is of type alternate or split then apply logic to all suboperations (which might be a routing)
-  if (itemoper->hasType<OperationAlternate>() || itemoper->hasType<OperationSplit>()) {
+  if (itemoper->hasType<OperationAlternate, OperationSplit>()) {
     auto subs = itemoper->getSubOperationIterator();
     while (SubOperation* sub = subs.next()) {
       correctProducingFlow(sub->getOperation());

@@ -1264,7 +1264,8 @@ void Buffer::correctProducingFlow(Operation* itemoper) {
     }
     
     // correct the last step
-    correctProducingFlow(lastStep->getOperation());
+    if (lastStep)
+      correctProducingFlow(lastStep->getOperation());
     return;
   }
 

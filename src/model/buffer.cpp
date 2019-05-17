@@ -982,12 +982,8 @@ void Buffer::buildProducingOperation()
       }
 
       // New operation needs to be created
-
-        // Find or create the source buffer
-        Buffer* originbuf = findOrCreate(getItem(), &*itemdist->getOrigin());
-
-        // Create new operation
-        OperationItemDistribution *oper = new OperationItemDistribution(itemdist, originbuf, this);
+      Buffer* originbuf = findOrCreate(getItem(), &*itemdist->getOrigin());
+      Operation* oper = OperationItemDistribution::findOrCreate(itemdist, originbuf, this);
 
         // Merge the new operation in an alternate operation if required
         if (producing_operation && producing_operation != uninitializedProducing)

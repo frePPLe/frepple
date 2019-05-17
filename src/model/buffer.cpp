@@ -1265,8 +1265,11 @@ void Buffer::correctProducingFlow(Operation* itemoper) {
     
     // correct the last step
     if (lastStep)
+    {
       correctProducingFlow(lastStep->getOperation());
-    return;
+      return;
+    }
+    // else: an empty routing, where the code below will add a top-level producing flow
   }
 
   //if operation is of type alternate or split then apply logic to all suboperations (which might be a routing)

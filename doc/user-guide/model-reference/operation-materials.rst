@@ -5,6 +5,27 @@ Operation materials
 Operation materials are used to model the consumption and production of 
 material by operations.
 
+If an operation Op is consuming 2 units of part A and 1 unit of part B to produce 3 units of
+part C, then this table should contain three records:
+
+=========    ========      ====      =====  
+operation    quantity      item      type
+=========    ========      ====      =====
+Op           -2            A         Start
+Op           -1            B         Start
+Op           3             C         End
+=========    ========      ====      =====
+
+If the same operation produces 1 units of part C you can leave out the third
+record. It's implicitly assumed from the item field in the operation table.
+
+=========    ========      ====      =====  
+operation    quantity      item      type
+=========    ========      ====      =====
+Op           -2            A         Start
+Op           -1            B         Start
+=========    ========      ====      =====
+
 Different types are available:
 
 * | **start**:

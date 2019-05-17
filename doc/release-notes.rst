@@ -6,6 +6,15 @@ Release notes
 
 .. rubric:: Production planning
 
+- | Modeling simplication: In the `operation material table <user-guide/modeling-wizard/manufacturing-bom/operation-materials.html>`_
+    you had to always insert both the produced material and consumed materials. 
+  | In a lot of models an operation always produces 1 unit of the item. In this type
+    of model you can now choose to leave out the records for the produced material. 
+    We'll automatically add them with makes your modeling and data interfaces easier,
+    faster and less error-prone.
+  | If an operation produces a quantity different from 1 the producing operation material 
+    record remains necessary.
+
 - Performance improvements in the solver algorithm.
 
 - Bug fix to avoid creating excess inventory in models with large operation minimum 

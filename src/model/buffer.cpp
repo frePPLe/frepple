@@ -1068,6 +1068,17 @@ void Buffer::buildProducingOperation()
     item = item->getOwner();
   }
 
+  // Make sure a producing Flow record exists
+  Item::operationIterator itemoper_iter = getItem()->getOperationIterator();
+  while (Operation *itemoper = itemoper_iter.next()) {
+
+    if (itemoper->getLocation() != getLocation())
+      continue;
+
+    correctProducingFlow(itemoper);
+  }
+
+
   // Loop over all item operations to replenish this item+location combination
   if (getItem())
   {
@@ -1226,12 +1237,75 @@ void Buffer::buildProducingOperation()
       }
     }
   }
+
+}
+
+
+void Buffer::correctProducingFlow(Operation* itemoper) {
+  
+  //if operation is of type routing or alternate or split then look if flow exists at parent level
+  if (itemoper->hasType<OperationRouting>() || itemoper->hasType<OperationAlternate>()
+    || itemoper->hasType<OperationSplit>()) {
+
+    // check if routing has a producing flow into the buffer
+    auto flow_iter = itemoper->getFlowIterator();
+    while (flow_iter != itemoper->getFlows().end()) {
+      if (flow_iter->getItem() == getItem() && flow_iter->isProducer()) {
+        // Producing flow exists, nothing to do
+        return;
+      }
+    }
+  }
+    
+  // Operation is of type routing, check if last step is producing a flow into this buffer 
+  if (itemoper->hasType<OperationRouting>()) {
+    // a first loop to look for the max priority to get the last step
+    auto subs = itemoper->getSubOperationIterator();
+    int maxPriority = -1;
+    while (SubOperation* sub = subs.next()) {
+      if (sub->getPriority() > maxPriority)
+        maxPriority = sub->getPriority();
+    }
+    
+    // correct the last step
+    subs = itemoper->getSubOperationIterator();
+    while (SubOperation* sub = subs.next()) {
+      if (sub->getPriority() == maxPriority) {
+        correctProducingFlow(sub->getOperation());
+        break;
+      }
+    }
+    return;
+  }
+
+  //if operation is of type alternate or split then apply logic to all suboperations (which might be a routing)
+  if (itemoper->hasType<OperationAlternate>() || itemoper->hasType<OperationSplit>()) {
+    auto subs = itemoper->getSubOperationIterator();
+    while (SubOperation* sub = subs.next()) {
+      correctProducingFlow(sub->getOperation());
+    }
+    return;
+  }
+  
+  // "Regular" case : operation is of type fixed time, time per...
+  auto flow_iter = itemoper->getFlowIterator();
+  bool foundFlow = false;
+  while (flow_iter != itemoper->getFlows().end()) {
+    if (flow_iter->getItem() == getItem() && flow_iter->isProducer()) {
+      foundFlow = true;
+      break;
+    }
+    ++flow_iter;
+  }
+  if (!foundFlow) {
+    new FlowEnd(itemoper, this, 1);
+  }
 }
 
 
 Duration Buffer::getDecoupledLeadTime(double qty, bool recurse_ip_buffers) const
 {
-  if (!recurse_ip_buffers)
+  if (!recurse_ip_buffers || getType() == *BufferInfinite::metadata)
     // Abort the recursion
     return Duration(0L);
 

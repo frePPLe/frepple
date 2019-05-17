@@ -303,7 +303,7 @@ void SetupMatrixRule::updateExpression()
 }
 
 
-bool SetupMatrixRule::matches(PooledString f, PooledString t) const
+bool SetupMatrixRule::matches(const PooledString& f, const PooledString& t) const
 {
   if (matchall)
     return true;
@@ -318,7 +318,7 @@ bool SetupMatrixRule::matches(PooledString f, PooledString t) const
 
 
 SetupMatrixRule* SetupMatrix::calculateSetup
-(PooledString oldsetup, PooledString newsetup, Resource* res) const
+(const PooledString& oldsetup, const PooledString& newsetup, Resource* res) const
 {
   // No need to look
   if (oldsetup == newsetup)

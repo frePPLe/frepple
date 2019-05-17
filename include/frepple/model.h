@@ -1781,7 +1781,7 @@ class SetupEvent : public TimeLine<LoadPlan>::Event
       return rule;
     }
 
-    PooledString getSetup() const
+    const PooledString& getSetup() const
     {
       return setup;
     }
@@ -1791,7 +1791,7 @@ class SetupEvent : public TimeLine<LoadPlan>::Event
       return setup;
     }
 
-    void setSetup(PooledString s)
+    void setSetup(const PooledString& s)
     {
       setup = s;
     }
@@ -5142,6 +5142,9 @@ class Buffer : public HasHierarchy<Buffer>, public HasLevel,
       */
     void buildProducingOperation();
 
+    /* Creates a producing FlowEnd if missing for that operation */
+    void correctProducingFlow(Operation * itemoper);
+
     bool hasConsumingFlows() const;
 
     /** Return the decoupled lead time of this buffer. */
@@ -6270,7 +6273,7 @@ class SetupMatrixRule : public Object
     SetupMatrixRule() {}
 
     /** Constructor. */
-    SetupMatrixRule(SetupMatrix* m, PooledString f, PooledString t, Duration d, double c, int p)
+    SetupMatrixRule(SetupMatrix* m, const PooledString& f, const PooledString& t, Duration d, double c, int p)
       : matrix(m), from(f), to(t), duration(d), cost(c), priority(p) {}
 
     /** Update the matrix pointer. */
@@ -6319,7 +6322,7 @@ class SetupMatrixRule : public Object
       return from;
     }
 
-    PooledString getFromSetup() const
+    const PooledString& getFromSetup() const
     {
       return from;
     }
@@ -6337,7 +6340,7 @@ class SetupMatrixRule : public Object
       return to;
     }
 
-    PooledString getToSetup() const
+    const PooledString& getToSetup() const
     {
       return to;
     }
@@ -6377,7 +6380,7 @@ class SetupMatrixRule : public Object
     }
 
     /** Returns true if this rule matches with the from-setup and to-setup being passed. */
-    bool matches(PooledString f, PooledString t) const;
+    bool matches(const PooledString& f, const PooledString& t) const;
 
   private:
     /** Pointer to the owning matrix. */
@@ -6501,7 +6504,7 @@ public:
   }
 
   /** Constructor. */
-  SetupMatrixRuleDefault(SetupMatrix* m, PooledString f, PooledString t, Duration d, double c, int p)
+  SetupMatrixRuleDefault(SetupMatrix* m, const PooledString& f, const PooledString& t, Duration d, double c, int p)
     : SetupMatrixRule(m, f, t, d, c, p)
   {
     initType(metadata);
@@ -6564,7 +6567,7 @@ class SetupMatrix : public HasName<SetupMatrix>, public HasSource
       * If no matching rule is found, the changeover is not allowed: a pointer 
       * to a dummy changeover with a very high cost and duration is returned.
       */
-    SetupMatrixRule* calculateSetup(PooledString, PooledString, Resource*) const;
+    SetupMatrixRule* calculateSetup(const PooledString&, const PooledString&, Resource*) const;
 
   private:
     /** Head of the list of rules. */

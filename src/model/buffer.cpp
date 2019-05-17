@@ -1068,17 +1068,6 @@ void Buffer::buildProducingOperation()
     item = item->getOwner();
   }
 
-  // Make sure a producing Flow record exists
-  Item::operationIterator itemoper_iter = getItem()->getOperationIterator();
-  while (Operation *itemoper = itemoper_iter.next()) {
-
-    if (itemoper->getLocation() != getLocation())
-      continue;
-
-    correctProducingFlow(itemoper);
-  }
-
-
   // Loop over all item operations to replenish this item+location combination
   if (getItem())
   {
@@ -1091,6 +1080,9 @@ void Buffer::buildProducingOperation()
       // Verify whether the operation is applicable to the buffer
       if (itemoper->getLocation() && itemoper->getLocation() != getLocation())
         continue;
+
+      // Make sure a producing Flow record exists
+      correctProducingFlow(itemoper);
 
       // Check if there is already a producing operation referencing this operation
       if (producing_operation && producing_operation != uninitializedProducing)

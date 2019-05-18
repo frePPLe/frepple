@@ -19,12 +19,7 @@ Different operation types are available:
   A typical example is a production operation: there is a fixed overhead of machine
   setup at the start, and the actual production is linear with the quantity to produce.
 
-* **Alternate**
-
-  This operation type represent the choice between alternate operations to achieve the
-  same result. Another cookbook recipe is dedicated to this.
-
-* **Split** (New in 2.2)
+* **Split**
 
   This operation type plans the demand proportionally over a number of operations, based
   on pre-defined percentages.
@@ -33,9 +28,17 @@ Different operation types are available:
 
   This operation type represent the sequence of operations that need to be run in sequence.
 
-  The duration for the operation refers to available time. If the operation location
-  has a calendar with the working hours and holidays, the time between the start and
-  end date of an operationplan can be longer than the duration defined on the operation.
+* **Alternate**
+
+  | This operation type represent the choice between alternate operations to achieve the
+    same result. Another cookbook recipe is dedicated to this.
+  | In the majority of models you don't have to explicitly use alternate operations 
+    in your model. FrePPLe will automatically create them as soon as there are multiple
+    replenishment methods.
+
+The duration for the operation refers to available time. If the operation location
+has a calendar with the working hours and holidays, the time between the start and
+end date of an operationplan can be longer than the duration defined on the operation.
 
 .. rubric:: Example
 

@@ -249,7 +249,7 @@ bool SolverCreate::checkOperation
     matnext.setEnd(Date::infiniteFuture);
 
     // Loop through all flowplans, if propagation is required  // @todo need some kind of coordination run here!!! see test alternate_flow_1
-    if (data.getSolver()->getPropagate() && a_qty)
+    if (getPropagate() && a_qty)
     {
       for (auto g=opplan->beginFlowPlans(); g!=opplan->endFlowPlans(); ++g)
       {
@@ -318,9 +318,9 @@ bool SolverCreate::checkOperation
       // The reply is 0, but the next-date is still less than the maximum
       // ask date. In this case we will violate the post-operation -soft-
       // constraint.
-      if (matnext.getEnd() < orig_q_date + data.getSolver()->getMinimumDelay())
+      if (matnext.getEnd() < orig_q_date + getMinimumDelay())
       {
-        matnext.setEnd(orig_q_date + data.getSolver()->getMinimumDelay());
+        matnext.setEnd(orig_q_date + getMinimumDelay());
         if (matnext.getEnd() > orig_q_date_max)
           matnext.setEnd(orig_q_date_max);
       }
@@ -336,14 +336,14 @@ bool SolverCreate::checkOperation
       // Pop actions from the command "stack" in the command list
       data.getCommandManager()->rollback(topcommand);
       // Echo a message
-      if (data.getSolver()->getLogLevel() > 1)
+      if (getLogLevel() > 1)
         logger << indent(opplan->getOperation()->getLevel())
           << "   Retrying new date." << endl;
     }
     else if (matnext.getEnd() != Date::infiniteFuture && a_qty <= ROUNDING_ERROR
       && matnext.getStart() < a_date && orig_opplan_qty > opplan->getOperation()->getSizeMinimum()
       && (!opplan->getDemand() || orig_opplan_qty > opplan->getDemand()->getMinShipment())
-      && data.getSolver()->getAllowSplits()
+      && getAllowSplits()
       && !data.safety_stock_planning)
     {
       // The reply is 0, but the next-date is not too far out.
@@ -370,7 +370,7 @@ bool SolverCreate::checkOperation
         // Pop actions from the command stack in the command list
         data.getCommandManager()->rollback(topcommand);
         // Echo a message
-        if (data.getSolver()->getLogLevel()>1)
+        if (getLogLevel()>1)
           logger << indent(opplan->getOperation()->getLevel())
             << "   Retrying with a smaller quantity: "
             << opplan->getQuantity() << endl;
@@ -397,7 +397,7 @@ bool SolverCreate::checkOperation
 	    // The operationplan was moved early (because of a resource constraint)
       // and we can't properly trust the reply date in such cases...
       // We want to enforce rechecking the next date.
-	    if (data.getSolver()->getLogLevel()>1)
+	    if (getLogLevel()>1)
         logger << indent(opplan->getOperation()->getLevel())
                << "   Recheck capacity" << endl;
 
@@ -619,7 +619,7 @@ void SolverCreate::solve(const Operation* oper, void* v)
     userexit_operation.call(oper, PythonData(data->constrainedPlanning));
 
   // Message
-  if (data->getSolver()->getLogLevel() > 1)
+  if (getLogLevel() > 1)
     logger << indent(oper->getLevel()) << "   Operation '" << oper->getName()
       << "' is asked: " << data->state->q_qty << "  " << data->state->q_date << endl;
 
@@ -629,7 +629,7 @@ void SolverCreate::solve(const Operation* oper, void* v)
   createOperation(oper, data, true, true);
 
   // Message
-  if (data->getSolver()->getLogLevel()>1)
+  if (getLogLevel()>1)
     logger << indent(oper->getLevel()) << "   Operation '" << oper->getName()
     << "' answers: " << data->state->a_qty << "  " << data->state->a_date
     << "  " << data->state->a_cost << "  " << data->state->a_penalty << endl;
@@ -686,7 +686,7 @@ OperationPlan* SolverCreate::createOperation(
           ));
         }
       }
-      if (data->getSolver()->getLogLevel() > 1)
+      if (getLogLevel() > 1)
       {
         logger << indent(oper->getLevel()) << "   " << problemtext << endl;
         logger << indent(oper->getLevel()) << "   Operation '" << oper->getName()
@@ -865,7 +865,7 @@ OperationPlan* SolverCreate::createOperation(
     data->state->q_qty_min = (data->state->q_qty_min - flow_qty_fixed) / flow_qty_per;
 
   // Check the constraints
-  data->getSolver()->checkOperation(z, *data);
+  checkOperation(z, *data);
   data->state->q_qty_min = orig_q_qty_min;
 
   // Multiply the operation reply with the flow quantity to get a final reply
@@ -890,9 +890,9 @@ OperationPlan* SolverCreate::createOperation(
   // Verify the reply
   if (data->state->a_qty == 0 && data->state->a_date <= orig_q_date)
   {
-    if (data->getSolver()->getLogLevel()>1)
-      logger << indent(oper->getLevel()) << "   Applying lazy delay " << data->getSolver()->getLazyDelay() << endl;
-    data->state->a_date = orig_q_date + data->getSolver()->getLazyDelay();
+    if (getLogLevel()>1)
+      logger << indent(oper->getLevel()) << "   Applying lazy delay " << getLazyDelay() << endl;
+    data->state->a_date = orig_q_date + getLazyDelay();
   }
   assert(data->state->a_qty >= 0);
 
@@ -900,7 +900,7 @@ OperationPlan* SolverCreate::createOperation(
   // this operation. This is useful to create a plan where the loading is divided
   // equally over the different available resources, when the search mode MINCOSTPENALTY
   // is used.
-  if (data->getSolver()->getRotateResources())
+  if (getRotateResources())
     for (OperationPlan::iterator rr = oper->getOperationPlans(); rr != OperationPlan::end(); ++rr)
       data->state->a_penalty += rr->getQuantity();
 
@@ -943,7 +943,7 @@ void SolverCreate::solve(const OperationItemSupplier* o, void* v)
     if (total_ss + ROUNDING_ERROR < total_onhand) {
       data->state->a_qty = 0;
       data->state->a_date = Date::infiniteFuture;
-      if (data->getSolver()->getLogLevel() > 1)
+      if (getLogLevel() > 1)
         logger << indent(o->getLevel()) << "   Purchasing operation '" << o->getName()
         << "' replies 0. Requested qty/date: " << data->state->q_qty
         << "/" << data->state->q_date
@@ -966,7 +966,7 @@ void SolverCreate::solve(const OperationRouting* oper, void* v)
   if (userexit_operation) userexit_operation.call(oper, PythonData(data->constrainedPlanning));
 
   // Message
-  if (data->getSolver()->getLogLevel()>1)
+  if (getLogLevel()>1)
     logger << indent(oper->getLevel()) << "   Routing operation '" << oper->getName()
       << "' is asked: " << data->state->q_qty << "  " << data->state->q_date << endl;
 
@@ -1114,7 +1114,7 @@ void SolverCreate::solve(const OperationRouting* oper, void* v)
     data->state->q_qty = a_qty;
     data->state->q_date = data->state->curOwnerOpplan->getEnd();
     q_date = data->state->q_date;
-    data->getSolver()->checkOperation(data->state->curOwnerOpplan,*data);
+    checkOperation(data->state->curOwnerOpplan,*data);
     a_qty = data->state->a_qty;
     if (a_qty == 0.0 && data->state->a_date != Date::infiniteFuture)
     {
@@ -1150,14 +1150,14 @@ void SolverCreate::solve(const OperationRouting* oper, void* v)
     // At least one of the steps is late, but the reply date at the overall routing level is not late.
     // This situation is possible when capacity or material constraints of routing steps create
     // slack in the routing. The real constrained next date becomes very hard to estimate.
-    delay = data->getSolver()->getLazyDelay();
-    if (data->getSolver()->getLogLevel()>1)
+    delay = getLazyDelay();
+    if (getLogLevel()>1)
       logger << indent(oper->getLevel()) << "   Applying lazy delay " << delay << " in routing" << endl;
     data->state->a_date = top_q_date + delay;
   }
 
   // Message
-  if (data->getSolver()->getLogLevel()>1)
+  if (getLogLevel()>1)
     logger << indent(oper->getLevel()) << "   Routing operation '" << oper->getName()
       << "' answers: " << data->state->a_qty << "  " << data->state->a_date << "  "
       << data->state->a_cost << "  " << data->state->a_penalty << endl;
@@ -1177,7 +1177,7 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v)
   // Call the user exit
   if (userexit_operation) userexit_operation.call(oper, PythonData(data->constrainedPlanning));
 
-  short loglevel = data->getSolver()->getLogLevel();
+  short loglevel = getLogLevel();
   SearchMode search = oper->getSearch();
 
   // Message
@@ -1413,20 +1413,20 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v)
       }
       else
       {
-        data->getSolver()->setLogLevel(0);
+        setLogLevel(0);
         try
         {
           (*altIter)->getOperation()->solve(*this,v);
         }
         catch (...)
         {
-          data->getSolver()->setLogLevel(loglevel);
+          setLogLevel(loglevel);
           // Restore the planning mode
           data->constrainedPlanning = originalPlanningMode;
           data->logConstraints = originalLogConstraints;
           throw;
         }
-        data->getSolver()->setLogLevel(loglevel);
+        setLogLevel(loglevel);
       }
       double deltaCost;
       if (data->state->a_qty > ROUNDING_ERROR)
@@ -1458,7 +1458,7 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v)
         data->state->q_date = origQDate;
         data->state->q_date_max = origQDate;
         data->state->curOwnerOpplan->createFlowLoads();
-        data->getSolver()->checkOperation(data->state->curOwnerOpplan,*data);
+        checkOperation(data->state->curOwnerOpplan,*data);
         data->state->a_qty = 
           (sub_flow_qty_fixed + top_flow_qty_fixed)
           +  data->state->a_qty * (sub_flow_qty_per + top_flow_qty_per);
@@ -1583,7 +1583,7 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v)
       data->state->q_date = origQDate;
       data->state->q_date_max = origQDate;
       data->state->curOwnerOpplan->createFlowLoads();
-      data->getSolver()->checkOperation(data->state->curOwnerOpplan, *data);
+      checkOperation(data->state->curOwnerOpplan, *data);
 
       // Multiply the operation reply with the flow quantity to obtain the
       // reply to return
@@ -1671,7 +1671,7 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v)
     data->state->q_date = origQDate;
     data->state->q_date_max = origQDate;
     data->state->curOwnerOpplan->createFlowLoads();
-    data->getSolver()->checkOperation(data->state->curOwnerOpplan,*data);
+    checkOperation(data->state->curOwnerOpplan,*data);
 
     // Fully planned
     a_qty = 0.0;
@@ -1683,10 +1683,10 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v)
   data->state->a_date = a_date;
   if (data->state->a_qty == 0 && data->state->a_date <= origQDate)
   {
-    if (data->getSolver()->getLogLevel()>1)
+    if (getLogLevel()>1)
       logger << indent(oper->getLevel()) << "   Applying lazy delay " <<
-        data->getSolver()->getLazyDelay() << " in alternate" << endl;
-    data->state->a_date = origQDate + data->getSolver()->getLazyDelay();
+        getLazyDelay() << " in alternate" << endl;
+    data->state->a_date = origQDate + getLazyDelay();
   }
   assert(data->state->a_qty >= 0);
 
@@ -1720,7 +1720,7 @@ void SolverCreate::solve(const OperationSplit* oper, void* v)
   double origQqty = data->state->q_qty;
   Buffer *buf = data->state->curBuffer;
   Demand *dmd = data->state->curDemand;
-  short loglevel = data->getSolver()->getLogLevel();
+  short loglevel = getLogLevel();
 
   // Call the user exit
   if (userexit_operation)
@@ -1908,7 +1908,7 @@ void SolverCreate::solve(const OperationSplit* oper, void* v)
     data->state->q_qty = top_cmd->getOperationPlan()->getQuantity();
     data->state->q_date = origQDate;
     data->state->curOwnerOpplan->createFlowLoads();
-    data->getSolver()->checkOperation(top_cmd->getOperationPlan(), *data);
+    checkOperation(top_cmd->getOperationPlan(), *data);
   }
 
   // Make sure other operationplans don't take this one as owner any more.

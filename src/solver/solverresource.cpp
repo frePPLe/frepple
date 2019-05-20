@@ -34,9 +34,9 @@ void SolverCreate::solve(const Resource* res, void* v)
   if (userexit_resource) userexit_resource.call(res, PythonData(data->constrainedPlanning));
 
   // Message
-  if (data->getSolver()->getLogLevel()>1)
+  if (getLogLevel()>1)
   {
-    if (!data->constrainedPlanning || !data->getSolver()->isConstrained())
+    if (!data->constrainedPlanning || !isConstrained())
       logger << indent(res->getLevel()) << "   Resource '" << res->getName()
         << "' is asked in unconstrained mode: "<< (-data->state->q_qty) << "  "
         << data->state->q_operationplan->getDates() << endl;
@@ -122,7 +122,7 @@ void SolverCreate::solve(const Resource* res, void* v)
       // operationplan to fit in this time period...
       if (HasOverload
         && curdate < data->state->q_loadplan->getDate()
-        && data->getSolver()->getAllowSplits())
+        && getAllowSplits())
       {
         Date currentEnd = data->state->q_operationplan->getEnd();
         data->state->q_operationplan->setOperationPlanParameters(
@@ -375,7 +375,7 @@ void SolverCreate::solve(const Resource* res, void* v)
       res, currentOpplan.start, currentOpplan.end, orig_q_qty);
 
   // Message
-  if (data->getSolver()->getLogLevel()>1)
+  if (getLogLevel()>1)
   {
     logger << indent(res->getLevel()) << "   Resource '" << res << "' answers: "
       << data->state->a_qty << "  " << data->state->a_date;
@@ -398,7 +398,7 @@ void SolverCreate::solve(const ResourceInfinite* res, void* v)
   if (userexit_resource) userexit_resource.call(res, PythonData(data->constrainedPlanning));
 
   // Message
-  if (data->getSolver()->getLogLevel()>1 && data->state->q_qty < 0)
+  if (getLogLevel()>1 && data->state->q_qty < 0)
     logger << indent(res->getLevel()) << "   Infinite resource '" << res << "' is asked: "
     << (-data->state->q_qty) << "  " << data->state->q_operationplan->getDates() << endl;
 
@@ -412,7 +412,7 @@ void SolverCreate::solve(const ResourceInfinite* res, void* v)
     / 3600.0;
 
   // Message
-  if (data->getSolver()->getLogLevel()>1 && data->state->q_qty < 0)
+  if (getLogLevel()>1 && data->state->q_qty < 0)
     logger << indent(res->getLevel()) << "   Infinite resource '" << res << "' answers: "
     << (-data->state->a_qty) << "  " << data->state->a_date << endl;
 }
@@ -428,7 +428,7 @@ void SolverCreate::solve(const ResourceBuckets* res, void* v)
     userexit_resource.call(res, PythonData(data->constrainedPlanning));
 
   // Message
-  if (data->getSolver()->getLogLevel()>1 && data->state->q_qty < 0)
+  if (getLogLevel()>1 && data->state->q_qty < 0)
     logger << indent(res->getLevel()) << "   Bucketized resource '" << res << "' is asked: "
       << (-data->state->q_qty) << "  " << opplan->getDates() << endl;
   
@@ -466,7 +466,7 @@ void SolverCreate::solve(const ResourceBuckets* res, void* v)
   {
     auto bucketend = data->state->q_loadplan->getBucketEnd();
     overloadQty = get<0>(bucketend);
-    if (data->getSolver()->getAllowSplits() && !data->state->forceLate)
+    if (getAllowSplits() && !data->state->forceLate)
     {
       // TODO if the original bucket fits, we don't try the buckets in between
       // This keeps the number of operationplans minimal and performance optimal, but 
@@ -809,7 +809,7 @@ void SolverCreate::solve(const ResourceBuckets* res, void* v)
       // Put the operationplan back at its original end date
       if (time_per_logic)
         opplan->setOperationPlanParameters(
-          data->getSolver()->getAllowSplits() ? data->state->q_qty_min : originalOpplan.quantity,
+          getAllowSplits() ? data->state->q_qty_min : originalOpplan.quantity,
           Date::infinitePast, originalOpplan.end, true, true, false
         );
       else if (!noRestore)
@@ -840,7 +840,7 @@ void SolverCreate::solve(const ResourceBuckets* res, void* v)
           {
             // Move to the new bucket          
             opplan->setOperationPlanParameters(
-              data->getSolver()->getAllowSplits() ? 0.01 : originalOpplan.quantity,
+              getAllowSplits() ? 0.01 : originalOpplan.quantity,
               prevStart, Date::infinitePast, true, true, false
             );
             if (data->state->q_loadplan->getDate() < cur->getDate())
@@ -852,7 +852,7 @@ void SolverCreate::solve(const ResourceBuckets* res, void* v)
                 newDate = opplan->getStart();
                 // Increase the size to use all available capacity in the bucket
                 double newQty;
-                if (data->getSolver()->getAllowSplits())
+                if (getAllowSplits())
                 {
                   newQty = opplan->getQuantity()
                     + get<0>(bucketend) / data->state->q_loadplan->getLoad()->getQuantity()
@@ -990,7 +990,7 @@ void SolverCreate::solve(const ResourceBuckets* res, void* v)
       );
 
   // Message
-  if (data->getSolver()->getLogLevel()>1 && data->state->q_qty < 0)
+  if (getLogLevel()>1 && data->state->q_qty < 0)
     logger << indent(res->getLevel()) << "   Bucketized resource '" << res << "' answers: "
       << data->state->a_qty << "  " << data->state->a_date << endl;
 }

@@ -47,7 +47,7 @@ void SolverCreate::solve(const Demand* l, void* v)
   {
     // Call the user exit
     if (userexit_demand) userexit_demand.call(l, PythonData(data->constrainedPlanning));
-    short loglevel = data->getSolver()->getLogLevel();
+    short loglevel = getLogLevel();
 
     // Note: This solver method does not push/pop states on the stack.
     // We continue to work on the top element of the stack.
@@ -57,13 +57,13 @@ void SolverCreate::solve(const Demand* l, void* v)
     {
       logger << "Planning demand '" << l->getName() << "' (" << l->getPriority()
           << ", " << l->getDue() << ", " << l->getQuantity() << ")";
-      if (!data->constrainedPlanning || !data->getSolver()->isConstrained())
+      if (!data->constrainedPlanning || !isConstrained())
         logger << " in unconstrained mode";
       logger << endl;
     }
 
     // Unattach previous delivery operationplans, if required.
-    if (data->getSolver()->getErasePreviousFirst())
+    if (getErasePreviousFirst())
     {
       // Locked operationplans will NOT be deleted, and a part of the demand can
       // still remain planned.
@@ -222,8 +222,8 @@ void SolverCreate::solve(const Demand* l, void* v)
               double min_qty = l->getMinShipment();
               double max_qty = plan_qty;
               double delta = fabs(max_qty - min_qty);
-              while (delta > data->getSolver()->getIterationAccuracy() * l->getQuantity()
-                && delta > data->getSolver()->getIterationThreshold())
+              while (delta > getIterationAccuracy() * l->getQuantity()
+                && delta > getIterationThreshold())
               {
                 // Note: we're kind of assuming that the demand is an integer value here.
                 double new_qty = floor((min_qty + max_qty) / 2);
@@ -313,11 +313,11 @@ void SolverCreate::solve(const Demand* l, void* v)
             && plan_qty - data->state->a_qty > ROUNDING_ERROR)
           {
             // Check whether the reply is based purely on onhand or not
-            if (data->getSolver()->hasOperationPlans(data->getCommandManager()) || next_date <= copy_plan_date)
+            if (hasOperationPlans(data->getCommandManager()) || next_date <= copy_plan_date)
             {
               // Oops, we didn't get a proper answer we can use for the next loop.
               // Print a warning and simply a bit later.
-              plan_date = copy_plan_date + data->getSolver()->getLazyDelay();
+              plan_date = copy_plan_date + getLazyDelay();
               if (loglevel > 0)
                 logger << "Demand '" << l << "': Easy retry on " << plan_date << " rather than " << next_date << endl;              
             }
@@ -327,12 +327,12 @@ void SolverCreate::solve(const Demand* l, void* v)
               plan_date = next_date;
           }
           else if (next_date <= copy_plan_date
-            || (!data->getSolver()->getAllowSplits() && data->state->a_qty > ROUNDING_ERROR)
+            || (!getAllowSplits() && data->state->a_qty > ROUNDING_ERROR)
             || (next_date == Date::infiniteFuture && data->state->a_qty > ROUNDING_ERROR))
           {
             // Oops, we didn't get a proper answer we can use for the next loop.
             // Print a warning and simply try a bit later.
-            plan_date = copy_plan_date + data->getSolver()->getLazyDelay();
+            plan_date = copy_plan_date + getLazyDelay();
             if (loglevel > 0)
               logger << "Demand '" << l << "': Easy retry on " << plan_date << " rather than " << next_date << endl;
           }
@@ -372,7 +372,7 @@ void SolverCreate::solve(const Demand* l, void* v)
             // Create the correct operationplans
             if (loglevel >= 2)
               logger << "Demand '" << l << "' plans coordination." << endl;
-            data->getSolver()->setLogLevel(0);
+            setLogLevel(0);
             double tmpresult = 0;
             try
             {
@@ -395,19 +395,19 @@ void SolverCreate::solve(const Demand* l, void* v)
             }
             catch (...)
             {
-              data->getSolver()->setLogLevel(loglevel);
+              setLogLevel(loglevel);
               throw;
             }
-            data->getSolver()->setLogLevel(loglevel);
+            setLogLevel(loglevel);
             data->state->a_qty = tmpresult;
             if (tmpresult == 0) break;
           }
 
           // Register the new operationplans. We need to make sure that the
           // correct execute method is called!
-          if (data->getSolver()->getAutocommit())
+          if (getAutocommit())
           {
-            data->getSolver()->scanExcess(data->getCommandManager());
+            scanExcess(data->getCommandManager());
             data->getCommandManager()->commit();
           }
 
@@ -420,9 +420,9 @@ void SolverCreate::solve(const Demand* l, void* v)
       // Repeat while there is still a quantity left to plan and we aren't
       // exceeding the maximum delivery delay.
       while (plan_qty > ROUNDING_ERROR
-        && ((data->getSolver()->getPlanType() != 2 && plan_date < l->getDue() + l->getMaxLateness())
-          || (data->getSolver()->getPlanType() == 2 && !data->constrainedPlanning && plan_date < l->getDue() + l->getMaxLateness())
-          || (data->getSolver()->getPlanType() == 2 && data->constrainedPlanning && plan_date == l->getDue())
+        && ((getPlanType() != 2 && plan_date < l->getDue() + l->getMaxLateness())
+          || (getPlanType() == 2 && !data->constrainedPlanning && plan_date < l->getDue() + l->getMaxLateness())
+          || (getPlanType() == 2 && data->constrainedPlanning && plan_date == l->getDue())
           ));
 
       if (l->getLatestDelivery() 
@@ -463,8 +463,9 @@ void SolverCreate::solve(const Demand* l, void* v)
     // We may have skipped it in the previous loop, awaiting a still better answer
     if (best_a_qty > 0.0 && data->constrainedPlanning)
     {
-      if (loglevel>=2) logger << "Demand '" << l << "' accepts a best answer." << endl;
-      data->getSolver()->setLogLevel(0);
+      if (loglevel>=2)
+        logger << "Demand '" << l << "' accepts a best answer." << endl;
+      setLogLevel(0);
       try
       {
         for (double remainder = best_q_qty;
@@ -483,23 +484,23 @@ void SolverCreate::solve(const Demand* l, void* v)
             break;
           }
         }
-        if (data->getSolver()->getAutocommit())
+        if (getAutocommit())
         {
-          data->getSolver()->scanExcess(data->getCommandManager());
+          scanExcess(data->getCommandManager());
           data->getCommandManager()->commit();
         }
       }
       catch (...)
       {
-        data->getSolver()->setLogLevel(loglevel);
+        setLogLevel(loglevel);
         throw;
       }
-      data->getSolver()->setLogLevel(loglevel);
+      setLogLevel(loglevel);
     }
 
     // Reset the state stack to the position we found it at.
-    while (data->state > mystate) data->pop();
-
+    while (data->state > mystate)
+      data->pop();
   }
   catch (...)
   {

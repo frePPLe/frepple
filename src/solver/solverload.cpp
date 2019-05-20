@@ -42,7 +42,7 @@ void SolverCreate::chooseResource(const Load* l, void* v)   // @todo handle unco
   }
 
   // CASE 2: Skill involved, or aggregate resource
-  short loglevel = data->getSolver()->getLogLevel();
+  short loglevel = getLogLevel();
 
   // Control the planning mode
   bool originalPlanningMode = data->constrainedPlanning;
@@ -65,7 +65,7 @@ void SolverCreate::chooseResource(const Load* l, void* v)   // @todo handle unco
   double beforePenalty = data->state->a_penalty;
   OperationPlanState originalOpplan(lplan->getOperationPlan());
   double originalLoadplanQuantity = lplan->getQuantity();
-  data->getSolver()->setLogLevel(0);  // Silence during this loop
+  setLogLevel(0);  // Silence during this loop
 
   // Create flow and loadplans
   if (lplan->getOperationPlan()->beginLoadPlans() == lplan->getOperationPlan()->endLoadPlans())
@@ -120,7 +120,7 @@ void SolverCreate::chooseResource(const Load* l, void* v)   // @todo handle unco
     try { res->solve(*this,data); }
     catch (...)
     {
-      data->getSolver()->setLogLevel(loglevel);
+      setLogLevel(loglevel);
       data->constrainedPlanning = originalPlanningMode;
       data->logConstraints = originalLogConstraints;
       data->getCommandManager()->rollback(topcommand);
@@ -181,7 +181,7 @@ void SolverCreate::chooseResource(const Load* l, void* v)   // @todo handle unco
     if (data->state->a_date < min_next_date)
       min_next_date = data->state->a_date;
   }
-  data->getSolver()->setLogLevel(loglevel);
+  setLogLevel(loglevel);
 
   // Not a single resource has the appropriate skills. You're joking?
   if (!qualified_resource_exists)
@@ -284,7 +284,7 @@ void SolverCreate::solve(const Load* l, void* v)
   // CASE II: It is an alternate load.
   // We ask each alternate load in order of priority till we find a load
   // that has a non-zero reply.
-  short loglevel = data->getSolver()->getLogLevel();
+  short loglevel = getLogLevel();
 
   // 1) collect a list of alternates
   list<const Load*> thealternates;
@@ -340,17 +340,17 @@ void SolverCreate::solve(const Load* l, void* v)
       curload->getResource()->solve(*this,data);
     else
     {
-      data->getSolver()->setLogLevel(0);
+      setLogLevel(0);
       try {curload->getResource()->solve(*this,data);}
       catch (...)
       {
-        data->getSolver()->setLogLevel(loglevel);
+        setLogLevel(loglevel);
         // Restore the planning mode
         data->constrainedPlanning = originalPlanningMode;
         data->logConstraints = originalLogConstraints;
         throw;
       }
-      data->getSolver()->setLogLevel(loglevel);
+      setLogLevel(loglevel);
     }
 
     // 4c) Evaluate the result

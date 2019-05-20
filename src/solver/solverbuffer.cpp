@@ -58,7 +58,7 @@ void SolverCreate::solve(const Buffer* b, void* v)
   bool tried_requested_date(false);
 
   // Message
-  if (data->getSolver()->getLogLevel()>1)
+  if (getLogLevel()>1)
     logger << indent(b->getLevel()) << "  Buffer '" << b->getName()
       << "' is asked: " << data->state->q_qty << "  " << data->state->q_date << endl;
 
@@ -88,7 +88,7 @@ void SolverCreate::solve(const Buffer* b, void* v)
           data->state->q_qty, false
           ));
     }
-    if (data->getSolver()->getLogLevel() > 1)
+    if (getLogLevel() > 1)
     {
       logger << indent(b->getLevel()) << "     Warning: " << o.str() << endl;
       logger << indent(b->getLevel()) << "  Buffer '" << b->getName()
@@ -174,7 +174,7 @@ void SolverCreate::solve(const Buffer* b, void* v)
           auto tmp = scanner->getOperationPlan();
           if (tmp && (tmp->getConfirmed() || tmp->getApproved()))
           {
-            if (data->getSolver()->getLogLevel() > 1)
+            if (getLogLevel() > 1)
               logger << indent(b->getLevel())
                 << "  Refuse to create extra supply because confirmed supply is already available at "
                 << scanner->getDate() << endl;
@@ -353,7 +353,7 @@ void SolverCreate::solve(const Buffer* b, void* v)
   }
 
   // Final evaluation of the replenishment
-  if (data->constrainedPlanning && data->getSolver()->isConstrained())
+  if (data->constrainedPlanning && isConstrained())
   {
     // Use the constrained planning result
     data->state->a_qty = requested_qty - shortage;
@@ -405,7 +405,7 @@ void SolverCreate::solve(const Buffer* b, void* v)
   }
 
   // Message
-  if (data->getSolver()->getLogLevel()>1)
+  if (getLogLevel()>1)
     logger << indent(b->getLevel()) << "  Buffer '" << b->getName()
         << "' answers: " << data->state->a_qty << "  " << data->state->a_date << "  "
         << data->state->a_cost << "  " << data->state->a_penalty << endl;
@@ -415,10 +415,10 @@ void SolverCreate::solve(const Buffer* b, void* v)
 void SolverCreate::solveSafetyStock(const Buffer* b, void* v)
 {
   SolverData* data = static_cast<SolverData*>(v);
-  auto shortagesonly = data->getSolver()->getShortagesOnly();
+  auto shortagesonly = getShortagesOnly();
 
   // Message
-  if (data->getSolver()->getLogLevel() > 1)
+  if (getLogLevel() > 1)
     logger << indent(b->getLevel()) << "  Buffer '" << b->getName()
       << "' solves for " << (shortagesonly ? "shortages" : "safety stock") << endl;
 
@@ -535,7 +535,7 @@ void SolverCreate::solveSafetyStock(const Buffer* b, void* v)
   }
 
   // Message
-  if (data->getSolver()->getLogLevel() > 1)
+  if (getLogLevel() > 1)
     logger << indent(b->getLevel()) << "  Buffer '" << b->getName()
         << "' solved for " << (shortagesonly ? "shortages" : "safety stock") << endl;
 }
@@ -549,7 +549,7 @@ void SolverCreate::solve(const BufferInfinite* b, void* v)
   if (userexit_buffer) userexit_buffer.call(b, PythonData(data->constrainedPlanning));
 
   // Message
-  if (data->getSolver()->getLogLevel()>1)
+  if (getLogLevel()>1)
     logger << indent(b->getLevel()) << "  Infinite buffer '" << b << "' is asked: "
         << data->state->q_qty << "  " << data->state->q_date << endl;
 
@@ -561,7 +561,7 @@ void SolverCreate::solve(const BufferInfinite* b, void* v)
     data->state->a_cost += data->state->q_qty * b->getItem()->getCost();
 
   // Message
-  if (data->getSolver()->getLogLevel()>1)
+  if (getLogLevel()>1)
     logger << indent(b->getLevel()) << "  Infinite buffer '" << b << "' answers: "
         << data->state->a_qty << "  " << data->state->a_date << "  "
         << data->state->a_cost << "  " << data->state->a_penalty << endl;

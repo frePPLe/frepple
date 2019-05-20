@@ -7,6 +7,7 @@
     - variable part of the capacity consumption
     - efficiency
     - time_per operations
+    - unconstrained plan with alternate resources
   </description>
   <current>2019-01-01T00:00:00</current>
   <calendars>
@@ -29,12 +30,6 @@
       <size_multiple>1</size_multiple>
       <item name="1. end item" />
       <location name="1. factory" />
-      <flows>
-        <flow xsi:type="flow_end">
-          <item name="1. end item" />
-          <quantity>1</quantity>
-        </flow>
-      </flows>
       <loads>
         <load>
 		  <resource name="1. Resource" xsi:type="resource_buckets">
@@ -86,12 +81,6 @@
           </buckets>
         </available>
       </location>
-      <flows>
-        <flow xsi:type="flow_end">
-          <item name="2. end item" />
-          <quantity>1</quantity>
-        </flow>
-      </flows>
       <loads>
         <load>
 		  <resource name="2. Resource" xsi:type="resource_buckets">
@@ -142,12 +131,6 @@
           </buckets>
         </available>
       </location>
-      <flows>
-        <flow xsi:type="flow_end">
-          <item name="3. end item" />
-          <quantity>1</quantity>
-        </flow>
-      </flows>
       <loads>
         <load>
 		  <resource name="3. Resource" xsi:type="resource_buckets">
@@ -188,6 +171,77 @@
       <priority>1</priority>
       <item name="3. end item" />
       <location name="3. factory" />
+    </demand>
+  </demands>
+
+  <!--
+  TEST 4: A case with alternate resources.
+  -->
+  <operations>
+    <operation name="4. make end item with A" xsi:type="operation_time_per">
+      <size_multiple>1</size_multiple>
+      <priority>1</priority>
+      <item name="4. end item" />
+      <location name="4. factory" />
+      <loads>
+        <load>
+		  <resource name="4. Resource A" xsi:type="resource_buckets">
+		    <location name="4. factory" />
+		    <maximum_calendar name="Capacity"/>
+		    <maxearly>P10D</maxearly>
+          </resource>
+          <quantity>1</quantity>
+          <quantity_fixed>1</quantity_fixed>
+        </load>
+      </loads>
+      <duration_per>PT1H</duration_per>
+    </operation>
+    <operation name="4. make end item with B" xsi:type="operation_time_per">
+      <size_multiple>1</size_multiple>
+      <priority>2</priority>
+      <item name="4. end item" />
+      <location name="4. factory" />
+      <loads>
+        <load>
+		  <resource name="4. Resource B" xsi:type="resource_buckets">
+		    <location name="4. factory" />
+		    <maximum_calendar name="Capacity"/>
+		    <efficiency>75</efficiency>
+		    <maxearly>P10D</maxearly>
+          </resource>
+          <quantity>1</quantity>
+          <quantity_fixed>1</quantity_fixed>
+        </load>
+      </loads>
+      <duration_per>PT1H</duration_per>
+    </operation>
+    <operation name="4. make end item with C" xsi:type="operation_time_per">
+      <size_multiple>1</size_multiple>
+      <priority>3</priority>
+      <item name="4. end item" />
+      <location name="4. factory" />
+      <loads>
+        <load>
+		  <resource name="4. Resource C" xsi:type="resource_buckets">
+		    <location name="4. factory" />
+		    <maximum_calendar name="Capacity"/>
+		    <efficiency>50</efficiency>
+		    <maxearly>P10D</maxearly>
+          </resource>
+          <quantity>1</quantity>
+          <quantity_fixed>1</quantity_fixed>
+        </load>
+      </loads>
+      <duration_per>PT1H</duration_per>
+    </operation>    
+  </operations>
+  <demands>
+    <demand name="4. order 1">
+      <quantity>95</quantity>
+      <due>2019-03-01T00:00:00</due>
+      <priority>1</priority>
+      <item name="4. end item" />
+      <location name="4. factory" />
     </demand>
   </demands>
 

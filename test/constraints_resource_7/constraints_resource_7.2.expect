@@ -14,6 +14,13 @@ BUFFER	3. end item @ 3. factory	2019-04-18T23:59:59	2	2
 BUFFER	3. end item @ 3. factory	2019-05-14T23:59:59	9	11
 BUFFER	3. end item @ 3. factory	2019-05-21T23:59:59	9	20
 BUFFER	3. end item @ 3. factory	2019-07-12T00:00:00	-20	0
+BUFFER	4. end item @ 4. factory	2019-02-23T17:59:59	9	9
+BUFFER	4. end item @ 4. factory	2019-02-23T18:39:59	14	23
+BUFFER	4. end item @ 4. factory	2019-02-23T18:59:59	19	42
+BUFFER	4. end item @ 4. factory	2019-03-01T00:00:00	20	62
+BUFFER	4. end item @ 4. factory	2019-03-01T00:00:00	19	81
+BUFFER	4. end item @ 4. factory	2019-03-01T00:00:00	14	95
+BUFFER	4. end item @ 4. factory	2019-03-01T00:00:00	-95	0
 DEMAND	1. order 1	2019-07-15T00:00:00	2
 DEMAND	1. order 2	2018-11-11T00:00:00	2
 DEMAND	2. order 1	2019-07-12T00:00:00	2
@@ -21,6 +28,7 @@ DEMAND	2. order 2	2018-11-09T00:00:00	2
 DEMAND	3. order 1	2019-07-12T00:00:00	20
 DEMAND	3. order 2	2019-03-29T00:00:00	1
 DEMAND	3. order 3	2018-11-09T00:00:00	10
+DEMAND	4. order 1	2019-03-01T00:00:00	95
 RESOURCE	1. Resource	2018-09-12T00:00:00	-6	-6
 RESOURCE	1. Resource	2019-04-29T23:59:59	-6	14
 RESOURCE	2. Resource	2018-09-04T00:00:00	-6	-6
@@ -30,6 +38,12 @@ RESOURCE	3. Resource	2019-03-27T00:00:00	-4	16
 RESOURCE	3. Resource	2019-04-11T23:59:59	-6	14
 RESOURCE	3. Resource	2019-04-18T23:59:59	-20	0
 RESOURCE	3. Resource	2019-04-25T23:59:59	-20	0
+RESOURCE	4. Resource A	2019-02-22T23:59:59	-20	0
+RESOURCE	4. Resource A	2019-02-28T04:00:00	-21	-1
+RESOURCE	4. Resource A	2019-02-28T05:00:00	-20	-21
+RESOURCE	4. Resource B	2019-02-22T23:59:59	-20	0
+RESOURCE	4. Resource B	2019-02-28T05:20:00	-20	0
+RESOURCE	4. Resource C	2019-02-22T23:59:59	-20	0
 OPERATION	1. make end item	2018-09-12T00:00:00	2018-11-11T00:00:00	2
 OPERATION	1. make end item	2019-04-29T23:59:59	2019-06-28T23:59:59	2
 OPERATION	2. make end item	2018-09-04T00:00:00	2018-11-09T00:00:00	2
@@ -39,12 +53,20 @@ OPERATION	3. make end item	2019-03-27T00:00:00	2019-03-29T00:00:00	1
 OPERATION	3. make end item	2019-04-11T23:59:59	2019-04-18T23:59:59	2
 OPERATION	3. make end item	2019-04-18T23:59:59	2019-05-14T23:59:59	9
 OPERATION	3. make end item	2019-04-25T23:59:59	2019-05-21T23:59:59	9
+OPERATION	4. make end item with A	2019-02-22T23:59:59	2019-02-23T18:59:59	19
+OPERATION	4. make end item with A	2019-02-28T04:00:00	2019-03-01T00:00:00	20
+OPERATION	4. make end item with A	2019-02-28T05:00:00	2019-03-01T00:00:00	19
+OPERATION	4. make end item with B	2019-02-22T23:59:59	2019-02-23T18:39:59	14
+OPERATION	4. make end item with B	2019-02-28T05:20:00	2019-03-01T00:00:00	14
+OPERATION	4. make end item with C	2019-02-22T23:59:59	2019-02-23T17:59:59	9
 PROBLEM	material excess	Buffer '1. end item @ 1. factory' has material excess of 2	2019-06-28T23:59:59 / 2019-07-15T00:00:00
 PROBLEM	material excess	Buffer '2. end item @ 2. factory' has material excess of 2	2019-07-04T23:59:59 / 2019-07-12T00:00:00
 PROBLEM	material excess	Buffer '3. end item @ 3. factory' has material excess of 20	2019-04-18T23:59:59 / 2019-07-12T00:00:00
+PROBLEM	material excess	Buffer '4. end item @ 4. factory' has material excess of 42	2019-02-23T17:59:59 / 2019-03-01T00:00:00
 PROBLEM	overload	Resource '1. Resource' has capacity shortage of 6	1971-01-01T00:00:00 / 2019-02-01T00:00:00
 PROBLEM	overload	Resource '2. Resource' has capacity shortage of 6	1971-01-01T00:00:00 / 2019-02-01T00:00:00
 PROBLEM	overload	Resource '3. Resource' has capacity shortage of 22	1971-01-01T00:00:00 / 2019-02-01T00:00:00
+PROBLEM	overload	Resource '4. Resource A' has capacity shortage of 21	2019-02-25T00:00:00 / 2019-03-02T00:00:00
 PROBLEM	before current	Operation '1. make end item' planned in the past	2018-09-12T00:00:00 / 2018-11-11T00:00:00
 PROBLEM	before current	Operation '2. make end item' planned in the past	2018-09-04T00:00:00 / 2018-11-09T00:00:00
 PROBLEM	before current	Operation '3. make end item' planned in the past	2018-10-17T00:00:00 / 2018-11-09T00:00:00

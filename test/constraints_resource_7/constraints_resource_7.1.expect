@@ -16,6 +16,15 @@ BUFFER	3. end item @ 3. factory	2019-04-18T23:59:59	2	2
 BUFFER	3. end item @ 3. factory	2019-05-14T23:59:59	9	11
 BUFFER	3. end item @ 3. factory	2019-05-21T23:59:59	9	20
 BUFFER	3. end item @ 3. factory	2019-07-12T00:00:00	-20	0
+BUFFER	4. end item @ 4. factory	2019-02-23T17:59:59	9	9
+BUFFER	4. end item @ 4. factory	2019-02-23T18:39:59	14	23
+BUFFER	4. end item @ 4. factory	2019-02-23T18:59:59	19	42
+BUFFER	4. end item @ 4. factory	2019-03-01T00:00:00	19	61
+BUFFER	4. end item @ 4. factory	2019-03-01T00:00:00	14	75
+BUFFER	4. end item @ 4. factory	2019-03-01T00:00:00	9	84
+BUFFER	4. end item @ 4. factory	2019-03-01T00:00:00	-75	9
+BUFFER	4. end item @ 4. factory	2019-03-04T11:00:00	11	20
+BUFFER	4. end item @ 4. factory	2019-03-04T11:00:00	-20	0
 DEMAND	1. order 1	2019-07-15T00:00:00	2
 DEMAND	1. order 2	2019-04-02T00:00:00	2
 DEMAND	2. order 1	2019-07-12T00:00:00	2
@@ -24,6 +33,8 @@ DEMAND	3. order 1	2019-07-12T00:00:00	20
 DEMAND	3. order 2	2019-03-29T00:00:00	1
 DEMAND	3. order 3	2019-02-22T00:00:00	5
 DEMAND	3. order 3	2019-02-15T00:00:00	5
+DEMAND	4. order 1	2019-03-04T11:00:00	20
+DEMAND	4. order 1	2019-03-01T00:00:00	75
 RESOURCE	1. Resource	2019-02-01T00:00:00	-6	14
 RESOURCE	1. Resource	2019-04-29T23:59:59	-6	14
 RESOURCE	2. Resource	2019-02-05T00:00:00	-6	14
@@ -34,6 +45,13 @@ RESOURCE	3. Resource	2019-03-27T00:00:00	-4	16
 RESOURCE	3. Resource	2019-04-11T23:59:59	-6	14
 RESOURCE	3. Resource	2019-04-18T23:59:59	-20	0
 RESOURCE	3. Resource	2019-04-25T23:59:59	-20	0
+RESOURCE	4. Resource A	2019-02-22T23:59:59	-20	0
+RESOURCE	4. Resource A	2019-02-28T05:00:00	-20	0
+RESOURCE	4. Resource A	2019-03-04T00:00:00	-12	8
+RESOURCE	4. Resource B	2019-02-22T23:59:59	-20	0
+RESOURCE	4. Resource B	2019-02-28T05:20:00	-20	0
+RESOURCE	4. Resource C	2019-02-22T23:59:59	-20	0
+RESOURCE	4. Resource C	2019-02-28T06:00:00	-20	0
 OPERATION	1. make end item	2019-02-01T00:00:00	2019-04-02T00:00:00	2
 OPERATION	1. make end item	2019-04-29T23:59:59	2019-06-28T23:59:59	2
 OPERATION	2. make end item	2019-02-05T00:00:00	2019-04-12T00:00:00	2
@@ -44,15 +62,24 @@ OPERATION	3. make end item	2019-03-27T00:00:00	2019-03-29T00:00:00	1
 OPERATION	3. make end item	2019-04-11T23:59:59	2019-04-18T23:59:59	2
 OPERATION	3. make end item	2019-04-18T23:59:59	2019-05-14T23:59:59	9
 OPERATION	3. make end item	2019-04-25T23:59:59	2019-05-21T23:59:59	9
+OPERATION	4. make end item with A	2019-02-22T23:59:59	2019-02-23T18:59:59	19
+OPERATION	4. make end item with A	2019-02-28T05:00:00	2019-03-01T00:00:00	19
+OPERATION	4. make end item with A	2019-03-04T00:00:00	2019-03-04T11:00:00	11
+OPERATION	4. make end item with B	2019-02-22T23:59:59	2019-02-23T18:39:59	14
+OPERATION	4. make end item with B	2019-02-28T05:20:00	2019-03-01T00:00:00	14
+OPERATION	4. make end item with C	2019-02-22T23:59:59	2019-02-23T17:59:59	9
+OPERATION	4. make end item with C	2019-02-28T06:00:00	2019-03-01T00:00:00	9
 PROBLEM	material excess	Buffer '1. end item @ 1. factory' has material excess of 2	2019-06-28T23:59:59 / 2019-07-15T00:00:00
 PROBLEM	material excess	Buffer '2. end item @ 2. factory' has material excess of 2	2019-07-04T23:59:59 / 2019-07-12T00:00:00
 PROBLEM	material excess	Buffer '3. end item @ 3. factory' has material excess of 20	2019-04-18T23:59:59 / 2019-07-12T00:00:00
+PROBLEM	material excess	Buffer '4. end item @ 4. factory' has material excess of 42	2019-02-23T17:59:59 / 2019-03-04T11:00:00
 PROBLEM	late	2 units of demand '1. order 2' planned up to 142.0 days after its due date	2018-11-11T00:00:00 / 2019-04-02T00:00:00
 PROBLEM	early	Demand '2. order 1' planned P3D before its due date	2019-07-12T00:00:00 / 2019-07-15T00:00:00
 PROBLEM	late	2 units of demand '2. order 2' planned up to 152.0 days after its due date	2018-11-11T00:00:00 / 2019-04-12T00:00:00
 PROBLEM	early	Demand '3. order 1' planned P3D before its due date	2019-07-12T00:00:00 / 2019-07-15T00:00:00
 PROBLEM	early	Demand '3. order 2' planned P3D before its due date	2019-03-29T00:00:00 / 2019-04-01T00:00:00
 PROBLEM	late	10 units of demand '3. order 3' planned up to 103.0 days after its due date	2018-11-11T00:00:00 / 2019-02-22T00:00:00
+PROBLEM	late	20 units of demand '4. order 1' planned up to 3.5 days after its due date	2019-03-01T00:00:00 / 2019-03-04T11:00:00
 DEMAND CONSTRAINT	1. order 2	Operation 'Ship 1. end item @ 1. factory' planned in the past	2018-11-11T00:00:00 / 2018-11-11T00:00:00	
 DEMAND CONSTRAINT	1. order 2	Operation '1. make end item' planned in the past	2018-11-02T00:00:00 / 2019-01-01T00:00:00	
 DEMAND CONSTRAINT	1. order 2	Resource '1. Resource' has capacity shortage of 6	2019-01-01T00:00:00 / 2019-03-02T00:00:00	
@@ -62,3 +89,4 @@ DEMAND CONSTRAINT	2. order 2	Resource '2. Resource' has capacity shortage of 6	2
 DEMAND CONSTRAINT	3. order 3	Operation 'Ship 3. end item @ 3. factory' planned in the past	2018-11-09T00:00:00 / 2018-11-09T00:00:00	
 DEMAND CONSTRAINT	3. order 3	Operation '3. make end item' planned in the past	2018-12-05T00:00:00 / 2018-12-28T00:00:00	
 DEMAND CONSTRAINT	3. order 3	Resource '3. Resource' has capacity shortage of 12	2019-01-01T00:00:00 / 2019-01-11T00:00:00	
+DEMAND CONSTRAINT	4. order 1	Resource '4. Resource A' has capacity shortage of 58	2019-02-26T15:00:00 / 2019-03-01T00:00:00	

@@ -628,38 +628,41 @@ var grid = {
   },
 
   // Render the customization popup window
-  showCustomize: function (pivot)
+  showCustomize: function (pivot, gridid, cross_arg, cross_idx_arg, cross_only_arg, ok_callback, reset_callback)
   {
-    var colModel = $("#grid")[0].p.colModel;
+  	var thegrid = $((typeof gridid !== 'undefined') ? gridid : "#grid");
+    var colModel = thegrid.jqGrid('getGridParam', 'colModel');
     var maxfrozen = 0;
     var skipped = 0;
     var graph = false;
+    var cross_only = pivot && typeof cross_only_arg !== 'undefined' && cross_only_arg;
+    	
+    var row0 = cross_only ?
+	      '' :
+	      '<div class="row">' +
+	      '<div class="col-xs-6">' +
+	        '<div class="panel panel-default"><div class="panel-heading">'+ gettext("Selected options") + '</div>' +
+	          '<div class="panel-body">' +
+	            '<ul class="list-group" id="Rows" style="height: 160px; overflow-y: scroll;">placeholder0</ul>' +
+	          '</div>' +
+	        '</div>'+
+	      '</div>' +
+	      '<div class="col-xs-6">' +
+	        '<div class="panel panel-default"><div class="panel-heading">' + gettext("Available options") + '</div>' +
+	          '<div class="panel-body">' +
+	            '<ul class="list-group" id="DroppointRows" style="height: 160px; overflow-y: scroll;">placeholder1</ul>' +
+	          '</div>' +
+	        '</div>' +
+	      '</div>' +
+	    '</div>';
 
-    var row0 = ""+
-      '<div class="row">' +
-      '<div class="col-xs-6">' +
-        '<div class="panel panel-default"><div class="panel-heading">'+ gettext("Selected options") + '</div>' +
-          '<div class="panel-body">' +
-            '<ul class="list-group" id="Rows" style="height: 160px; overflow-y: scroll;">placeholder0</ul>' +
-          '</div>' +
-        '</div>'+
-      '</div>' +
-      '<div class="col-xs-6">' +
-        '<div class="panel panel-default"><div class="panel-heading">' + gettext("Available options") + '</div>' +
-          '<div class="panel-body">' +
-            '<ul class="list-group" id="DroppointRows" style="height: 160px; overflow-y: scroll;">placeholder1</ul>' +
-          '</div>' +
-        '</div>' +
-      '</div>' +
-    '</div>';
-
-    row1= "";
-    row2= "";
+    var row1= "";
+    var row2= "";
 
     var val0s = ""; //selected columns
     var val0a = ""; //available columns
-    var val1s = ""; //selected columns
-    var val1a = ""; //available columns
+    var val1s = ""; //selected crosses
+    var val1a = ""; //available crosses
 
     for (var i in colModel)
     {
@@ -679,7 +682,9 @@ var grid = {
     }
 
     if (pivot)
-    {
+    {      
+      var my_cross = (typeof cross_arg !== 'undefined') ? cross_arg : cross;
+      var my_cross_idx = (typeof cross_idx_arg !== 'undefined') ? cross_idx_arg : cross_idx;
       // Add list of crosses
       var row1 = ''+
       '<div class="row">' +
@@ -704,14 +709,14 @@ var grid = {
           '</div>' +
         '</div>' +
       '</div>';
-      for (var j in cross_idx)
+      for (var j in my_cross_idx)
       {
-        val1s += '<li class="list-group-item" id="' + (100+parseInt(cross_idx[j],10)) + '" style="cursor: move;">' + cross[cross_idx[j]]['name'] + '</li>';
+        val1s += '<li class="list-group-item" id="' + (100+parseInt(my_cross_idx[j],10)) + '" style="cursor: move;">' + my_cross[my_cross_idx[j]]['name'] + '</li>';
       }
-      for (var j in cross)
+      for (var j in my_cross)
       {
-        if (cross_idx.indexOf(parseInt(j,10)) > -1 || cross[j]['name'] == "") continue;
-        val1a += '<li class="list-group-item" id="' + (100 + parseInt(j,10) ) + '" style="cursor: move;">' + cross[j]['name'] + '</li>';
+        if (my_cross_idx.indexOf(parseInt(j,10)) > -1 || my_cross[j]['name'] == "") continue;
+        val1a += '<li class="list-group-item" id="' + (100 + parseInt(j,10) ) + '" style="cursor: move;">' + my_cross[j]['name'] + '</li>';
       }
     }
     else
@@ -753,23 +758,25 @@ var grid = {
       '</div>' )
     .modal('show');
 
-    var Rows = document.getElementById("Rows");
-    var DroppointRows = document.getElementById("DroppointRows");
-    Sortable.create(Rows, {
-      group: {
-        name: 'Rows',
-        put: ['DroppointRows']
-      },
-      animation: 100
-    });
-    Sortable.create(DroppointRows, {
-      group: {
-        name: 'DroppointRows',
-        put: ['Rows']
-      },
-      animation: 100
-    });
-
+    if (!cross_only) {
+	    var Rows = document.getElementById("Rows");
+	    var DroppointRows = document.getElementById("DroppointRows");
+	    Sortable.create(Rows, {
+	      group: {
+	        name: 'Rows',
+	        put: ['DroppointRows']
+	      },
+	      animation: 100
+	    });
+	    Sortable.create(DroppointRows, {
+	      group: {
+	        name: 'DroppointRows',
+	        put: ['Rows']
+	      },
+	      animation: 100
+	    });
+    }
+    
     if (pivot) {
       var Crosses = document.getElementById("Crosses");
       var DroppointCrosses = document.getElementById("DroppointCrosses");
@@ -789,7 +796,9 @@ var grid = {
       });
     }
 
-    $('#resetCustbutton').on('click', function() {
+    $('#resetCustbutton').on(
+    	'click',
+    	typeof reset_callback !== 'undefined' ? reset_callback : function() {
       var result = {};
       result[reportkey] = null;
       if (typeof url_prefix != 'undefined')
@@ -820,7 +829,9 @@ var grid = {
        });
      });
 
-    $('#okCustbutton').on('click', function() {
+    $('#okCustbutton').on(
+    	'click',
+    	typeof ok_callback !== 'undefined' ? ok_callback : function() {
       var colModel = $("#grid")[0].p.colModel;
       var perm = [];
       var hiddenrows = [];
@@ -852,9 +863,7 @@ var grid = {
       $('#Crosses li').each(function() {
         val = parseInt(this.id,10);
         if (val >= 100)
-        {
           cross_idx.push(val-100);
-         }
       });
 
       var numfrozen = 0;
@@ -894,11 +903,11 @@ var grid = {
     //   - number argument, when called from jqgrid resizeStop event
     //   - function argument, when you want to run a callback function after the save
     var colArray = new Array();
-    var colModel = $("#grid")[0].p.colModel;
+    var colModel = $("#grid").jqGrid('getGridParam', 'colModel');
     var maxfrozen = 0;
     var pivot = false;
     var skipped = 0;
-    var page = $('#grid').getGridParam('page');
+    var page = $('#grid').jqGrid('getGridParam', 'page');
     if (typeof pgButton === 'string')
     {
       // JQgrid paging gives only the current page
@@ -907,7 +916,7 @@ var grid = {
       else if (pgButton.indexOf("prev") >= 0)
         --page;
       else if (pgButton.indexOf("last") >= 0)
-        page = $("#grid").getGridParam('lastpage');
+        page = $("#grid").jqGrid('getGridParam', 'lastpage');
       else if (pgButton.indexOf("first") >= 0)
         page = 1;
       else if (pgButton.indexOf("user") >= 0)
@@ -955,7 +964,7 @@ var grid = {
     }
     else
       result[reportkey]['frozen'] = maxfrozen;
-    if(typeof extraPreference == 'function')
+    if (typeof extraPreference == 'function')
     {
       var extra = extraPreference();
       for (var idx in extra)

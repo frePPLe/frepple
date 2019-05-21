@@ -2182,6 +2182,8 @@ class OperationPlan
     void setStartEndAndQuantity(Date st, Date nd, double q)
     {
       quantity = q;
+      if (owner)
+       owner->quantity = q;
       dates.setStartAndEnd(st, nd);
       update();
     }

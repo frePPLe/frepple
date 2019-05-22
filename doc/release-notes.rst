@@ -17,6 +17,10 @@ Release notes
 
 - Performance improvements in the solver algorithm.
 
+- Operations loading multiple bucketized resource now use the effiency of that resources.
+  In earlier releases we used the minimum efficiency of all resources that operation loads,
+  which is the correct behavior for resources of type default but not for bucketized resources.
+
 - Bug fix to avoid creating excess inventory in models with large operation minimum 
   sizes.
   

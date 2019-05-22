@@ -476,7 +476,11 @@ double Load::getLoadplanQuantity(const LoadPlan* lp) const
   if (lp->getResource()->hasType<ResourceBuckets>())
   {
     // Bucketized resource
-    auto efficiency = lp->getOperationPlan()->getEfficiency();
+    auto efficiency = (
+      lp->getResource()->getEfficiencyCalendar()
+      ? lp->getResource()->getEfficiencyCalendar()->getValue(lp->getDate())
+      : lp->getResource()->getEfficiency()
+      ) / 100.0;
     if (efficiency > 0.0)
       return -(getQuantityFixed() + getQuantity() * lp->getOperationPlan()->getQuantity()) / efficiency;
     else

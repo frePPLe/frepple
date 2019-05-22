@@ -130,8 +130,6 @@ void OperationPlan::restore(const OperationPlanState& x)
 {
   setSetupEvent(x.tmline, x.setup.getDate(), x.setup.getSetup(), x.setup.getRule());
   setStartEndAndQuantity(x.start, x.end, x.quantity);
-  if (quantity != x.quantity)
-    quantity = x.quantity;
   if (!SetupMatrix::empty())
     scanSetupTimes();
 }

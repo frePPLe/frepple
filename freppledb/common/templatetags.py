@@ -565,3 +565,17 @@ def setting(key, default=None):
 def call_method(obj, method_name, *args):
   method = getattr(obj, method_name)
   return method(*args) if method else None
+
+
+@register.filter(name='json')
+def jsonfilter(a):
+  json_str = json.dumps(a)
+  # Escape all the XML/HTML special characters.
+  escapes = ['<', '>', '&', "'"]
+  for c in escapes:
+    json_str = json_str.replace(c, r'\u%04x' % ord(c))
+
+  # now it's safe to use mark_safe
+  return mark_safe(json_str)
+
+jsonfilter.is_safe = True

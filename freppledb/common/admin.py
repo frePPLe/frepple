@@ -23,20 +23,28 @@ from django.contrib.auth.models import Group
 from django.forms.utils import ErrorList
 from django.utils.translation import ugettext_lazy as _
 
-from freppledb.common.models import User, Parameter, Comment, Bucket, BucketDetail
-from freppledb.common.adminforms import MultiDBModelAdmin, MultiDBTabularInline
+from .models import User, Parameter, Comment, Bucket, BucketDetail
+from .adminforms import MultiDBUserCreationForm, MultiDBModelAdmin, MultiDBTabularInline
 from freppledb.admin import data_site
 
 
 class MyUserAdmin(UserAdmin, MultiDBModelAdmin):
-  '''
-  This class is a frePPLe specific override of its standard
-  Django base class.
-  '''
   save_on_top = True
 
-  change_user_password_template = 'auth/change_password.html'
+  add_form = MultiDBUserCreationForm
+  add_fieldsets = (
+    (_("Personal info"), {
+      'fields': ('username', ('first_name', 'last_name'), 'email'),
+    }),
+    (_("password"), {
+      'fields': ('password1', 'password2'),
+    }),
+    (_("scenario access"), {
+      'fields': ('scenarios',)
+      })
+  )
 
+  change_user_password_template = 'auth/change_password.html'
   fieldsets = (
     (None, {'fields': ('username', 'password')}),
     # Translators: Translation included with Django

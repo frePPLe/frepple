@@ -32,7 +32,7 @@ from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 from django.utils.text import capfirst
 
-from freppledb.common.fields import JSONBField
+from .fields import JSONBField
 
 
 logger = logging.getLogger(__name__)

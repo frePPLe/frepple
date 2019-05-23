@@ -27,9 +27,12 @@ from django.contrib.admin.exceptions import DisallowedModelAdminToField
 from django.contrib.admin.models import LogEntry, CHANGE
 from django.contrib.admin.utils import quote, unquote, get_deleted_objects
 from django.contrib.admin.templatetags.admin_urls import add_preserved_filters
+from django.contrib.auth.forms import UserCreationForm
 from django.contrib.contenttypes.models import ContentType
-from django.db import transaction
+from django.db import transaction, DEFAULT_DB_ALIAS
+from django.db.models import Q
 from django.db.models.fields import DecimalField
+from django import forms
 from django.forms.widgets import NumberInput
 from django.http import HttpResponseRedirect, Http404
 from django.shortcuts import render
@@ -37,7 +40,7 @@ from django.template.response import TemplateResponse
 from django.urls import reverse
 from django.utils import six
 from django.utils.encoding import force_text
-from django.utils.html import escape, escapejs, format_html
+from django.utils.html import format_html
 from django.utils.http import urlquote
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
@@ -46,7 +49,7 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_protect
 from django.utils.encoding import smart_text
 
-from freppledb.common.models import Comment
+from .models import Comment, User, Scenario
 
 
 csrf_protect_m = method_decorator(csrf_protect)
@@ -628,3 +631,29 @@ class MultiDBTabularInline(admin.TabularInline):
 
   def formfield_for_manytomany(self, db_field, request=None, **kwargs):
     return super(MultiDBTabularInline, self).formfield_for_manytomany(db_field, request=request, using=request.database, **kwargs)
+
+
+class MultiDBUserCreationForm(UserCreationForm):
+  email = forms.EmailField(required=True, help_text=_('Required.'))
+  first_name = forms.CharField(required=True, max_length=30, help_text=_('Required. Max 30 characters.'))
+  last_name = forms.CharField(required=True, max_length=30, help_text=_('Required. Max 30 characters.'))
+  scenarios = forms.MultipleChoiceField(required=False, label="What-if scenarios in use", widget=forms.CheckboxSelectMultiple)
+
+  def __init__(self, *args, **kwargs):
+    super(UserCreationForm, self).__init__(*args, **kwargs)
+    sc = []
+    for db in Scenario.objects.using(DEFAULT_DB_ALIAS).filter(Q(status='In use') & ~Q(name=DEFAULT_DB_ALIAS)):
+      sc.append( (db.name, db.name) )
+    self.fields['scenarios'].choices = sc
+
+  class Meta(UserCreationForm):
+    model = User
+    fields = UserCreationForm.Meta.fields + ('first_name', 'last_name', 'email')
+
+  def save(self, commit=True):
+    user = super(UserCreationForm, self).save(commit=False)
+    user.set_password(self.cleaned_data["password1"])
+    user.save(using=DEFAULT_DB_ALIAS)
+    for sc in self.cleaned_data['scenarios']:
+      User.objects.using(sc).filter(username=user.username).update(is_active=True)
+    return user

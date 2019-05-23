@@ -67,9 +67,8 @@ var maxlevel = 0;
 function clickedShaped(d)
 {
   var result = '';
-
   if (typeof(d) === undefined || typeof(d) ==='') return;
-  if (d.hasOwnProperty('type') && (d.type === 'purchase' || d.type === 'itemsupplier' || d.type === 'itemdistribution' )) {
+  if (d.hasOwnProperty('type') && (d.type === 'routing' || d.type === 'purchase' || d.type === 'itemsupplier' || d.type === 'itemdistribution' )) {
     return; //don't show links for non existing operations
   } else {
     var result = url_prefix + '/detail/input/' + d.type + '/' + admin_escape(d.name) +'/';

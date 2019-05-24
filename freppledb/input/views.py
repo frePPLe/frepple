@@ -2639,10 +2639,12 @@ class DeliveryOrderList(GridReport):
 
   @ classmethod
   def basequeryset(reportclass, request, *args, **kwargs):
+
+    q = DeliveryOrder.objects.all()
     if args and args[0]:
       path = request.path.split('/')[4]
       if path == 'consumed':
-        return DeliveryOrder.objects.filter(item__name=args[0], location__name=args[1], enddate__gte=args[2], enddate__lt=args[3])
+        return q.filter(item__name=args[0], location__name=args[1], enddate__gte=args[2], enddate__lt=args[3])
       else:
         try:
           itm = Item.objects.all().using(request.database).get(name=args[0])
@@ -2651,9 +2653,9 @@ class DeliveryOrderList(GridReport):
         except Item.DoesNotExist:
           lft = 1
           rght = 1
-        return DeliveryOrder.objects.all().filter(item__lft__gte=lft, item__rght__lte=rght)
-    else:
-      return DeliveryOrder.objects.all()
+        q = q.filter(item__lft__gte=lft, item__rght__lte=rght)
+    
+    return q
 
   @classmethod
   def extra_context(reportclass, request, *args, **kwargs):

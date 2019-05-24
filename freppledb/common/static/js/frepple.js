@@ -1344,11 +1344,15 @@ var grid = {
   },
 
   // Display filter dialog
-  showFilter: function()
+  showFilter: function(gridid, curfilterid, filterid)
   {
-    if ($('#filter').hasClass("disabled")) return;
+  	var thegridid = (typeof gridid !== 'undefined') ? gridid : "grid";
+  	var thegrid = $("#" + thegridid);
+  	var curfilter = $((typeof curfilterid !== 'undefined') ? curfilterid : "#curfilter");
+  	var filter = $((typeof filterid !== 'undefined') ? filterid : "#filter");
+    if (filter.hasClass("disabled")) return;
     $('.modal').modal('hide');
-    jQuery("#grid").jqGrid('searchGrid', {
+    thegrid.jqGrid('searchGrid', {
       closeOnEscape: true,
       multipleSearch:true,
       multipleGroup:true,
@@ -1356,29 +1360,29 @@ var grid = {
       sopt: ['eq','ne','lt','le','gt','ge','bw','bn','in','ni','ew','en','cn','nc'],
       onSearch : function() {
         grid.saveColumnConfiguration();
-        var s = grid.getFilterGroup(jQuery("#fbox_grid").jqFilter('filterData'), true);
+        var s = grid.getFilterGroup(thegrid, $("#fbox_" + thegridid).jqFilter('filterData'), true);
         if (s)
         {
-          $('#curfilter').html(gettext("Filtered where") + " " + s);
-          $('#filter').addClass("btn-danger").removeClass("btn-primary");
+        	curfilter.html(gettext("Filtered where") + " " + s);
+        	filter.addClass("btn-danger").removeClass("btn-primary");
         }
         else
         {
-          $('#filter').removeClass("btn-danger").addClass("btn-primary");
-          $('#curfilter').html("");
+        	filter.removeClass("btn-danger").addClass("btn-primary");
+          curfilter.html("");
         }
         },
       onReset : function() {
         if (typeof initialfilter !== 'undefined' )
         {
-          $("#grid").jqGrid('getGridParam','postData').filters = JSON.stringify(initialfilter);
-          $('#curfilter').html(gettext("Filtered where") + " " + grid.getFilterGroup(initialfilter, true) );
-          $('#filter').addClass("btn-danger").removeClass("btn-primary");
+        	thegrid.jqGrid('getGridParam','postData').filters = JSON.stringify(initialfilter);
+        	curfilter.html(gettext("Filtered where") + " " + grid.getFilterGroup(thegrid, initialfilter, true) );
+          filter.addClass("btn-danger").removeClass("btn-primary");
         }
         else
         {
-          $('#curfilter').html("");
-          $('#filter').removeClass("btn-danger").addClass("btn-primary");
+          curfilter.html("");
+          filter.removeClass("btn-danger").addClass("btn-primary");
         }
         grid.saveColumnConfiguration();
         return true;
@@ -1386,11 +1390,11 @@ var grid = {
       });
   },
 
-  getFilterRule: function (rule)
+  getFilterRule: function (thegrid, rule)
   {
     // Find the column
     var val, i, col, oper;
-    var columns = jQuery("#grid").jqGrid ('getGridParam', 'colModel');
+    var columns = thegrid.jqGrid ('getGridParam', 'colModel');
     for (i = 0; i < columns.length; i++)
     {
       if(columns[i].name === rule.field)
@@ -1422,7 +1426,7 @@ var grid = {
     return col.label + ' ' + oper + ' "' + rule.data + '"';
   },
 
-  getFilterGroup: function(group, first)
+  getFilterGroup: function(thegrid, group, first)
   {
     var s = "", index;
 
@@ -1439,7 +1443,7 @@ var grid = {
           else
             s += " && ";
         }
-        s += grid.getFilterGroup(group.groups[index], false);
+        s += grid.getFilterGroup(thegrid, group.groups[index], false);
       }
     }
 
@@ -1454,7 +1458,7 @@ var grid = {
           else
             s += " && ";
         }
-        s += grid.getFilterRule(group.rules[index]);
+        s += grid.getFilterRule(thegrid, group.rules[index]);
       }
     }
 

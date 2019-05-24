@@ -168,7 +168,7 @@ $(function() {
        }
      });
   {% endif %}{% endif %}{% if filters %}
-  var f = grid.getFilterGroup(initialfilter, true);
+  var f = grid.getFilterGroup($("#grid"), initialfilter, true);
   if (f)
 	{
 	  $('#curfilter').html(gettext("Filtered where") + " " + f);

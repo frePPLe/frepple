@@ -106,7 +106,7 @@ $(function() {
 	height: {% if reportclass.height %}{{reportclass.height}}{% else %}$(window).height() - $("#grid").offset().top - {{reportclass.heightmargin}}{% endif %}
     });
   {% if mode == "table" %}jQuery("#grid").jqGrid('setFrozenColumns');
-  {% endif %}{% if filters %}var f = grid.getFilterGroup(initialfilter, true);
+  {% endif %}{% if filters %}var f = grid.getFilterGroup($("#grid"), initialfilter, true);
   if (f)
 	{
 	  $('#curfilter').html(gettext("Filtered where") + " " + f);

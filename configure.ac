@@ -235,21 +235,21 @@ AC_CHECK_HEADER(windows.h,
 CPPFLAGS="-I\$(top_builddir)/include $CPPFLAGS"
 if test x$debug = xtrue ; then
   # The settings on the next line are the normal debugging parameters
-  CXXFLAGS="-ggdb -Wall -std=c++0x $CXXFLAGS -O0"
+  CXXFLAGS="-ggdb -Wno-error=date-time -Wall -std=c++0x $CXXFLAGS -O0"
   AC_DEFINE([DEBUG], [], [Used for debugging builds])
 else if test x$coverage = xtrue ; then
   # The settings on the next line are suitable for creating an executable to
   # be used for code coverage measurement using gcc and gprof.
-  CXXFLAGS="-fprofile-arcs -ftest-coverage -std=c++0x $CXXFLAGS"
+  CXXFLAGS="-Wno-error=date-time -fprofile-arcs -ftest-coverage -std=c++0x $CXXFLAGS"
   AC_DEFINE([NDEBUG], [], [Disables assertions])
 else if test x$profile = xtrue ; then
   # The settings on the next line are suitable for creating an executable to
   # be used for profiling using gcc.
-  # CXXFLAGS="-g -Wall -pg -fno-inline $CXXFLAGS"
+  # CXXFLAGS="-g -Wno-error=date-time -Wall -pg -fno-inline $CXXFLAGS"
   CXXFLAGS="-g -Wall -std=c++0x $CXXFLAGS "
   AC_DEFINE([NDEBUG], [], [Disables assertions])
 else
-  CXXFLAGS="-O3 -s -std=c++0x $CXXFLAGS"
+  CXXFLAGS="-O3 -Wno-error=date-time -s -std=c++0x $CXXFLAGS"
   AC_DEFINE([NDEBUG], [], [Disables assertions])
 fi ; fi ; fi
 case $host_os in

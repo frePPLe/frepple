@@ -6,7 +6,7 @@ Release notes
 
 
 
-5.2.0 (2019/04/27)
+5.2.0 (2019/05/27)
 ==================
 
 .. rubric:: Production planning

@@ -11,7 +11,7 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 msgid ""
 msgstr ""
-"Project-Id-Version: 5.2.0\n"
+"Project-Id-Version: 5.3.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-12-08 16:28+0100\n"
 "PO-Revision-Date: 2018-08-24 10:49+0200\n"

@@ -191,17 +191,17 @@ $(function() {
 	});
 
 	$("#horizonbucketsul li a").click(function(){
-	  $("#horizonbuckets1").html($(this).text() + '  <span class="caret"></span>');
+	  $("#horizonbuckets1").html($(this).text() + '  <span class="caret"><\/span>');
 	  $("#horizonbuckets").val($(this).prop('name'));
 	});
 
 	$("#horizonunitul li a").click(function(){
-	  $("#horizonunit1").html($(this).text() + '  <span class="caret"></span>');
+	  $("#horizonunit1").html($(this).text() + '  <span class="caret"><\/span>');
 	  $("#horizonunit").val($(this).prop('name'));
 	});
 
   $("#actionsul li a").click(function(){
-    $("#actions1").html($(this).text() + ' <span class="caret"></span>');
+    $("#actions1").html($(this).text() + ' <span class="caret"><\/span>');
     $("#actions").val($(this).prop('name'));
     grid.runAction($(this).prop('name'));
   });
@@ -251,7 +251,7 @@ $(function() {
       <button disabled class="btn btn-default dropdown-toggle form-control" type="button" name="actions1" id="actions1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
       {% trans "select action"|capfirst %}&nbsp;&nbsp;<span class="caret"></span>
       </button>
-      <ul class="dropdown-menu" name="actionsul" id="actionsul" aria-labelledby="actions1" style="top: auto;">
+      <ul class="dropdown-menu" id="actionsul" aria-labelledby="actions1" style="top: auto;">
       {% for i in  actions %}
         <li><a onclick="" name="{{ i.name|escape }}">{% trans i.label|capfirst %}</a></li>
       {% endfor %}

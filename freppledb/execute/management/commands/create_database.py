@@ -95,10 +95,10 @@ class Command(BaseCommand):
                 "ALL data currently in the database will be lost.\n"
                 "Are you sure you want to do this?\n"
                 "\n"
-                "Type 'yes' to continue, or 'no' to cancel: " % database_name
+                "Type 'yes' to continue, or 'no' to cancel: " % database_name.upper()
                 )
               if confirm != 'yes':
-                print("Skipping drop and create of database %s" % database_name)
+                print("Skipping drop and create of database %s" % database_name.upper())
                 continue
 
             # Close current connections

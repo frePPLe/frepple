@@ -2085,6 +2085,35 @@ PyObject* OperationPlan::create(PyTypeObject* pytype, PyObject* args, PyObject* 
 }
 
 
+double OperationPlan::getPriority() const
+{
+  // Operationplan hasn't been set up yet
+  if (!oper)
+    return 999.0;
+
+  // Child operationplans have the same priority as the parent
+  if (getOwner() && !getOwner()->getOperation()->hasType<OperationSplit>())
+    return getOwner()->getPriority();
+
+  // Handle demand delivery operationplans
+  if (getTopOwner()->getDemand())
+    return getTopOwner()->getDemand()->getPriority();
+
+  // Handle an upstream operationplan
+  double lowestPriority = 999.0;
+  for (PeggingIterator p(const_cast<OperationPlan*>(this)); p; ++p)
+  {
+    const OperationPlan* m = p.getOperationPlan();
+    if (!m)
+      continue;
+    auto dmd = m->getTopOwner()->getDemand();
+    if (dmd && dmd->getPriority() < lowestPriority)
+      lowestPriority = dmd->getPriority();
+  }
+  return lowestPriority;
+}
+
+
 double OperationPlan::getCriticality() const
 {
   // Operationplan hasn't been set up yet

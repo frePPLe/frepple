@@ -1875,6 +1875,9 @@ class OperationPlan
     /** Returns whether this operationplan is a PO, MO or DO. */
     inline string getOrderType() const;
 
+    /** Return the lowest priority of the demands to which this operationplan pegs. */
+    double getPriority() const;
+
     /** Returns the criticality index of the operationplan, which reflects
       * its urgency.<br>
       * If the operationplan is on the critical path of one or more orders
@@ -2577,6 +2580,7 @@ class OperationPlan
       m->addDateField<Cls>(Tags::end_force, &Cls::getEnd, &Cls::setEndForce, Date::infiniteFuture, DONT_SERIALIZE);
       m->addDurationField<Cls>(Tags::setup, &Cls::getSetup, nullptr, 0L, PLAN);
       m->addDateField<Cls>(Tags::setupend, &Cls::getSetupEnd, nullptr, Date::infinitePast, PLAN);
+      m->addDoubleField<Cls>(Tags::priority, &Cls::getPriority, nullptr, 999.0, PLAN);
       m->addDoubleField<Cls>(Tags::quantity, &Cls::getQuantity, &Cls::setQuantity);
       m->addIteratorField<Cls, OperationPlan::ProblemIterator, Problem>(Tags::problems, Tags::problem, &Cls::getProblems, PLAN + WRITE_OBJECT);
 

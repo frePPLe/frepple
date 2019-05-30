@@ -52,7 +52,6 @@ class WelcomeWidget(Widget):
 How to get started?
 <ol><li>Start the <span class="underline"><a href="javascript:void(0);" onclick="tour.start('0,0,0'); return false;">guided tour</a></span></li>
 <li>Check out the <span class="underline"><a href="%(docurl)s" target="_blank" rel="noopener">documentation</a></span></li>
-<li>Start building your own model using the <span class="underline"><a href="%(prefix)s/wizard/" target="_blank" rel="noopener">wizard</a></span></li>
 <li>Visit and join the <span class="underline"><a href="http://groups.google.com/group/frepple-users" target="_blank" rel="noopener">user community</a></span></li>
 <li><span class="underline"><a href="https://frepple.com/contact/" target="_blank" rel="noopener">Contact us</a></span></li>
 </ol>
@@ -62,34 +61,6 @@ How to get started?
   }
 
 Dashboard.register(WelcomeWidget)
-
-
-class WizardWidget(Widget):
-  name = "wizard"
-  title = _("Path to unlock features")
-  tooltip = _("Fill out the data tables and access new features.")
-  asynchronous = False
-  url = '/wizard/'
-
-  def render(self, request=None):
-    return '\n'.join([
-      '<div id="content-main">',
-      '<div id="wizardsvg" style="max-width: 1220px; display: block;">',
-      render_to_string("common/wizard.svg", {
-        'hasForecast': 'freppledb.forecast' in settings.INSTALLED_APPS,
-        'hasIP': 'freppledb.inventoryplanning' in settings.INSTALLED_APPS,
-        }),
-      '</div></div>'
-      ])
-
-  javascript = '''
-    var website = "%s";
-    $(function() {
-       wizard.updateWizard();
-    });
-    ''' % settings.DOCUMENTATION_URL
-
-Dashboard.register(WizardWidget)
 
 
 class NewsWidget(Widget):

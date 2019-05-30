@@ -54,7 +54,6 @@ def createExtraPermissions(sender, using=DEFAULT_DB_ALIAS, **kwargs):
 
 
 def removePermissions(sender, using=DEFAULT_DB_ALIAS, **kwargs):
-  removeModelPermissions("common", "wizard", using)
   removeModelPermissions("common", "scenario", using)
   removeModelPermissions("admin", "logentry", using)
   removeModelPermissions("contenttypes", "contenttype", using)

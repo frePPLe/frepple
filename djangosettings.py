@@ -367,11 +367,9 @@ DEFAULT_DASHBOARD = [
   { 'rowname': 'Welcome', 'cols': [
     {'width':6, 'widgets':[
       ("welcome",{}),
-      ("news",{}),
     ]},
     {'width':6, 'widgets':[
-      #("execute",{}),
-      ("wizard",{}),      
+      ("news",{}),
     ]},
   ]},
   { 'rowname': 'sales', 'cols': [

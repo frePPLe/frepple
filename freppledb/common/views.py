@@ -104,19 +104,6 @@ def handler500(request):
     return HttpResponseServerError('<h1>Server Error (500)</h1>', content_type='text/html')
 
 
-###############################################
-@login_required
-@csrf_protect
-def wizard(request):
-  return render(request, 'common/wizard.html',
-    context = {
-      'title': _('Path to unlock features'),
-      'hasForecast': 'freppledb.forecast' in settings.INSTALLED_APPS,
-      'hasIP': 'freppledb.inventoryplanning' in settings.INSTALLED_APPS,
-      }
-    )
-
-
 class PreferencesForm(forms.Form):
   language = forms.ChoiceField(
     label=_("language"),

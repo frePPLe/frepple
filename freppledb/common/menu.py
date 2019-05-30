@@ -56,7 +56,6 @@ menu.addItem(
 menu.addItem("help", "hints", label=_('Show hints'), index=90, identifier="showHints",
   javascript='tour.displayHints($(this).hasClass("toggle-off"), false)')
 menu.addItem("help", "tour", javascript="tour.start('0,0,0')", label=_('Guided tour'), index=100)
-menu.addItem("help", "wizard", url="/wizard/", window=True, prefix=True, label=_('Path to unlock features'), index=200)
 versionnumber = VERSION.split('.', 2)
 docurl = "%s/docs/%s.%s/index.html" % (settings.DOCUMENTATION_URL, versionnumber[0], versionnumber[1])
 #. Translators: Translation included with Django

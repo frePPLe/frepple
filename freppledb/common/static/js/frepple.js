@@ -2326,54 +2326,31 @@ var dashboard = {
 
 }
 
+
+function savePreference(setting, value, callback) {
+  if (typeof url_prefix != 'undefined')
+    var url = url_prefix + '/settings/';
+  else
+    var url = '/settings/';
+  var data = {};
+  data[setting] = value;
+  $.ajax({
+    url: url,
+    type: 'POST',
+    contentType: 'application/json; charset=utf-8',
+    data: JSON.stringify(data),
+    success: function() {
+      if (typeof callback === 'function')
+      	callback();
+    }
+  });
+}
+
 //----------------------------------------------------------------------------
 // Code for handling the menu bar, context menu and active button.
 //----------------------------------------------------------------------------
 
-var activeButton = null;
-
 $(function() {
-
-  // Install code executed when you click on a menu button
-  $(".menuButton").click( function(event) {
-    // Get the target button element
-    var button = $(event.target);
-    var menu = button.next("div");
-
-    // Blur focus from the link to remove that annoying outline.
-    button.blur();
-
-    // Reset the currently active button, if any.
-    if (activeButton) {
-      activeButton.removeClass("menuButtonActive");
-      activeButton.next("div").css('visibility', "hidden");
-    }
-
-    // Activate this button, unless it was the currently active one.
-    if (button != activeButton)
-    {
-      // Update the button's style class to make it look like it's depressed.
-      button.addClass("menuButtonActive");
-
-      // Position the associated drop down menu under the button and show it.
-      var pos = button.position();
-      menu.css({
-        left: pos.left + "px",
-        top: (pos.top + button.outerHeight() + 3) + "px",
-        visibility: "visible"
-        });
-      activeButton = button;
-    }
-    else
-      activeButton = null;
-  });
-
-  $('.menuButton').mouseenter( function(event) {
-    // If another button menu is active and we move the mouse into a new menu button,
-    // we make this one active instead.
-    if (activeButton != null && activeButton != $(event.target))
-      $(event.target).click();
-  });
 
   // Send django's CRSF token with every POST request to the same site
   $(document).ajaxSend(function(event, xhr, settings) {
@@ -2410,21 +2387,6 @@ $(function() {
     }
   });
 
-});
-
-
-// Capture mouse clicks on the page so any active menu can be deactivated.
-$(document).mousedown(function (event) {
-
-  // If there is no active button, exit.
-  if (!activeButton || event.target == activeButton) return;
-
-  // If the element is not part of a menu, hide the menu
-  if ($(event.target).parent('.ui-menu-item').length < 1) {
-    activeButton.removeClass("menuButtonActive");
-    activeButton.next("div").css('visibility', "hidden");
-    activeButton = null;
-  }
 });
 
 

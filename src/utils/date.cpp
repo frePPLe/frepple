@@ -364,7 +364,9 @@ void Date::parse (const char* s, const char* fmt)
   }
   struct tm p;
   memset(&p, 0, sizeof(struct tm));
-  strptime(s, fmt, &p);
+  auto ok = strptime(s, fmt, &p);
+  if (!ok)
+    throw DataException("Error parsing date");
   // No clue whether daylight saving time is in effect...
   p.tm_isdst = -1;
   lval = mktime(&p);

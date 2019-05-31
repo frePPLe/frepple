@@ -149,6 +149,7 @@ class HierarchyModel(models.Model):
             updated = True
       logging.error("Data error: Hierarchy loops among %s" % sorted(bad.keys()))
       for i, j in sorted(bad.items()):
+        children[j].remove(i)
         nodes[i] = None
 
       # Continue loop over nodes without parent

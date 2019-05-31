@@ -11,7 +11,7 @@ license agreement, the installer will guide you to select:
 * The language and database connection parameters
 * Whether or not to register the server as a service
 
-The installer is 64-bit and has been tested on Windows 7, Windows 8 and Windows 10.
+The installer is 64-bit and has been tested on Windows 10.
 
 #. **Start the installer**
 

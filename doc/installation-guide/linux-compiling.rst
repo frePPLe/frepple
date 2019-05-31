@@ -76,9 +76,9 @@ need the following steps:
 #. Configure the build with the following command:
    ::
 
-     ./configure –sysconfdir=/etc
+     ./configure --sysconfdir=/etc
 
-   You can use the option '–help’ to see the list of available options.
+   You can use the option '--help' to see the list of available options.
 
    The sysconfdir option is required to make sure the configuration files
    are always available under /etc, even when the package is compiled with

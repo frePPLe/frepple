@@ -165,7 +165,7 @@ class Command(BaseCommand):
             ''')
           cursor.execute('''
             update operationplan set demand_id = null where type = 'DO'
-          '''))
+          ''')
           cursor.execute("delete from operationplan where type = 'DO'")
           key = ContentType.objects.get_for_model(inputmodels.DistributionOrder, for_concrete_model=False).pk
           cursor.execute("delete from django_admin_log where content_type_id = %s", (key,))

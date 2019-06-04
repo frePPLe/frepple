@@ -106,12 +106,11 @@ $(function() {
 	height: {% if reportclass.height %}{{reportclass.height}}{% else %}$(window).height() - $("#grid").offset().top - {{reportclass.heightmargin}}{% endif %}
     });
   {% if mode == "table" %}jQuery("#grid").jqGrid('setFrozenColumns');
-  {% endif %}{% if filters %}var f = grid.getFilterGroup($("#grid"), initialfilter, true);
-  if (f)
-	{
-	  $('#curfilter').html(gettext("Filtered where") + " " + f);
+  {% endif %}{% if filters %}var curfilter = $("#curfilter");
+  grid.getFilterGroup($("#grid"), initialfilter, true, curfilter);
+  if (!curfilter.is(":empty"))
 	  $('#filter').addClass("btn-danger").removeClass("btn-primary");
-	}{% endif %}
+	{% endif %}
   jQuery("#gridmode").click(function() {grid.displayMode("table");});
   jQuery("#graphmode").click(function() {grid.displayMode("graph");});{% if reportclass.editable and haschangeperm %}
   $("th").bindFirst('click', upload.validateSort);{% endif %}

@@ -4,6 +4,10 @@ Release notes
 5.2.0 (upcoming release)
 ========================
 
+.. rubric:: User interface
+
+- Filters for a report can now be updated easier. Rather than opening the search dialog
+  again you can directly edit the filter description in the title.
 
 
 5.2.0 (2019/05/27)

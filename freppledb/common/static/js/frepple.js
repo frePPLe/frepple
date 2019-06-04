@@ -1360,28 +1360,20 @@ var grid = {
       sopt: ['eq','ne','lt','le','gt','ge','bw','bn','in','ni','ew','en','cn','nc'],
       onSearch : function() {
         grid.saveColumnConfiguration();
-        var s = grid.getFilterGroup(thegrid, $("#fbox_" + thegridid).jqFilter('filterData'), true);
-        if (s)
-        {
-        	curfilter.html(gettext("Filtered where") + " " + s);
+        grid.getFilterGroup(thegrid, $("#fbox_" + thegridid).jqFilter('filterData'), true, curfilter);
+        if (curfilter.is(':empty'))
         	filter.addClass("btn-danger").removeClass("btn-primary");
-        }
         else
-        {
         	filter.removeClass("btn-danger").addClass("btn-primary");
-          curfilter.html("");
-        }
         },
-      onReset : function() {
-        if (typeof initialfilter !== 'undefined' )
-        {
+      onReset : function() {        
+        if (typeof initialfilter !== 'undefined') {
         	thegrid.jqGrid('getGridParam','postData').filters = JSON.stringify(initialfilter);
-        	curfilter.html(gettext("Filtered where") + " " + grid.getFilterGroup(thegrid, initialfilter, true) );
+        	grid.getFilterGroup(thegrid, initialfilter, true, curfilter);
           filter.addClass("btn-danger").removeClass("btn-primary");
         }
-        else
-        {
-          curfilter.html("");
+        else {
+        	curfilter.html("");
           filter.removeClass("btn-danger").addClass("btn-primary");
         }
         grid.saveColumnConfiguration();
@@ -1389,84 +1381,109 @@ var grid = {
         }
       });
   },
+  
+  countFilters: 0,
 
-  getFilterRule: function (thegrid, rule)
+  updateFilter: function(obj, idx, newvalue) {
+    if (obj instanceof Array)
+    	for (var i in obj)
+    		grid.updateFilter(obj[i], idx, newvalue);
+    else if (typeof obj == "object") {
+    	for (var i in obj) {
+    		if (i == "filtercount" && obj[i] == idx)
+      		obj.data = newvalue;
+    		else if (obj.hasOwnProperty(i))
+    			grid.updateFilter(obj[i], idx, newvalue);
+    	}
+    }
+  },
+  
+  getFilterRule: function(thegrid, rule, thefilter, fullfilter)
   {
     // Find the column
     var val, i, col, oper;
     var columns = thegrid.jqGrid ('getGridParam', 'colModel');
-    for (i = 0; i < columns.length; i++)
-    {
-      if(columns[i].name === rule.field)
-      {
+    for (i = 0; i < columns.length; i++) {
+      if(columns[i].name === rule.field) {
         col = columns[i];
         break;
       }
     }
-    if (col == undefined) return "";
-
-    // Special case for the "within N days" operator
-    if (rule.op == "win") {
-    	var fmts = ngettext("within %s days", "within %s days", 1);
-    	return col.label + ' ' + interpolate(fmts, [rule.data]);
-    }
+    if (col == undefined)
+    	return;
     
     // Find operator
-    for (var firstKey in $.jgrid.locales)
-      var operands = $.jgrid.locales[firstKey].search.odata;
-    for (i = 0; i < operands.length; i++)
-      if (operands[i].oper == rule.op)
-      {
-        oper = operands[i].text;
-        break;
-      }
-    if (oper == undefined) oper = rule.op;
+    if (rule.op == "win")
+      oper = gettext("within");
+    else {
+      for (var firstKey in $.jgrid.locales)
+        var operands = $.jgrid.locales[firstKey].search.odata;
+      for (i = 0; i < operands.length; i++)
+        if (operands[i].oper == rule.op) {
+          oper = operands[i].text;
+          break;
+        }
+      if (oper == undefined)
+    	  oper = rule.op;
+    }
 
     // Final result
-    return col.label + ' ' + oper + ' "' + rule.data + '"';
+  	thefilter.append(col.label + '&nbsp;' + oper + '&nbsp;');
+    var newelement = $("<input>");
+    newelement.val(rule.data);
+    rule["filtercount"] = grid.countFilters++;  // Mark position in the expression
+    newelement.on('change', function(event) {
+      grid.updateFilter(fullfilter, rule["filtercount"], $(event.target).val());
+    	thegrid.setGridParam({
+        postData:{filters: JSON.stringify(fullfilter)},
+        search:true
+        }).trigger('reloadGrid');
+    	grid.saveColumnConfiguration();
+      if (thefilter.is(":empty"))
+      	$("#filter").removeClass("btn-danger").addClass("btn-primary");
+      else
+      	$("#filter").addClass("btn-danger").removeClass("btn-primary");
+    	});
+    thefilter.append(newelement);
+    if (rule.op == "win")
+      // Special case for the "within N days" operator
+    	thefilter.append('&nbsp;' + gettext("days"));
   },
 
-  getFilterGroup: function(thegrid, group, first)
+  getFilterGroup: function(thegrid, group, first, thefilter, fullfilter)
   {
-    var s = "", index;
-
-    if (!first) s = "(";
-
-    if (group.groups !== undefined)
-    {
-      for (index = 0; index < group.groups.length; index++)
-      {
-        if (s.length > 1)
-        {
+    if (!first)
+    	thefilter.append("(");
+    else {
+    	thefilter.html("");
+    	fullfilter = group;
+    	grid.countFilters = 0;
+    }
+    
+    if (group.groups !== undefined) {
+      for (var index = 0; index < group.groups.length; index++) {
+        if (thefilter.html().length > 1) {
           if (group.groupOp === "OR")
-            s += " || ";
+          	thefilter.append(" || ");
           else
-            s += " && ";
+            thefilter.append(" && ");
         }
-        s += grid.getFilterGroup(thegrid, group.groups[index], false);
+        grid.getFilterGroup(thegrid, group.groups[index], false, thefilter, fullfilter);
       }
     }
 
-    if (group.rules !== undefined)
-    {
-      for (index = 0; index < group.rules.length; index++)
-      {
-        if (s.length > 1)
-        {
-          if (group.groupOp === "OR")
-            s += " || ";
-          else
-            s += " && ";
-        }
-        s += grid.getFilterRule(thegrid, group.rules[index]);
+    if (group.rules !== undefined) {
+      for (var index = 0; index < group.rules.length; index++) {
+        if (thefilter.html().length > 1)
+          thefilter.append( (group.groupOp === "OR") ? " || " : " && ");
+        grid.getFilterRule(thegrid, group.rules[index], thefilter, fullfilter);
       }
     }
 
-    if (!first) s += ")";
-
-    if (s === "()")
-      return ""; // ignore groups that don't have rules
-    return s;
+    if (!first)
+    	thefilter.append(")");    
+    else if (thefilter.html().length > 1)
+    	thefilter.prepend(gettext("Filtered where") + "&nbsp;");
   },
 
   markSelectedRow: function(sel)

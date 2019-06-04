@@ -168,12 +168,10 @@ $(function() {
        }
      });
   {% endif %}{% endif %}{% if filters %}
-  var f = grid.getFilterGroup($("#grid"), initialfilter, true);
-  if (f)
-	{
-	  $('#curfilter').html(gettext("Filtered where") + " " + f);
-	  $('#filter').addClass("btn-danger").removeClass("btn-primary");
-	};{% endif %}
+  var curfilter = $("#curfilter");
+  grid.getFilterGroup($("#grid"), initialfilter, true, curfilter);
+  if (!curfilter.is(":empty"))
+    $('#filter').addClass("btn-danger").removeClass("btn-primary");{% endif %}
   $("#grid").on('input', function(event) {
     // to prevent firefox from triggering save/undo on checkbox select
     if (!$(event.target).parent().hasClass('td_cbox')) {

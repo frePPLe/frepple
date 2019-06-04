@@ -92,24 +92,24 @@ class OverviewReport(GridPivot):
     query = '''
       select name, sum(qty) from
         (
-        select parent.name, sum(demand.quantity) qty from (%s) item
-        inner join item parent on item.lft between parent.lft and parent.rght
-        inner join demand on demand.item_id = item.name and demand.status in ('open','quote') and due < %%s
-        group by parent.name
+        select item.name, sum(demand.quantity) qty from (%s) item
+        inner join item child on child.lft between item.lft and item.rght
+        inner join demand on demand.item_id = child.name and demand.status in ('open','quote') and due < %%s
+        group by item.name
         union all
-        select parent.name, sum(operationplanmaterial.quantity) qty
-        from operationplanmaterial
+        select item.name, sum(operationplanmaterial.quantity) qty
+        from (%s) item
+        inner join item child on child.lft between item.lft and item.rght
+        inner join operationplanmaterial on operationplanmaterial.item_id = child.name
         inner join operationplan on operationplan.reference = operationplanmaterial.operationplan_id
           and operationplan.type = 'DLVR'
-          and operationplan.enddate < %%s
-        inner join (%s) item on operationplanmaterial.item_id = item.name
-        inner join item parent on item.lft between parent.lft and parent.rght
-        group by parent.name
+          and operationplan.enddate < %%s       
+        group by item.name
         ) t
         group by name
       ''' % (basesql, basesql)
     with connections[request.database].chunked_cursor() as cursor_chunked:
-      cursor_chunked.execute(query, baseparams + (request.report_startdate, request.report_startdate) + baseparams)
+      cursor_chunked.execute(query, baseparams + (request.report_startdate,)  + baseparams + (request.report_startdate,))
       for row in cursor_chunked:
         if row[0]:
           startbacklogdict[row[0]] = float(row[1])

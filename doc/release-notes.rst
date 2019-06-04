@@ -1,9 +1,13 @@
 Release notes
 -------------
 
-5.2.0 (upcoming release)
+5.3.0 (upcoming release)
 ========================
 
+.. rubric:: User interface
+
+- | Bug fix. When using the Empty Database feature on either manufacturing or distribution or delivery or purchase orders
+    then all orders (manufacturing + distribution + delivery + purchase) were deleted.
 
 
 5.2.0 (2019/05/27)

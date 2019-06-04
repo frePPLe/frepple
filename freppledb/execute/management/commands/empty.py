@@ -121,8 +121,10 @@ class Command(BaseCommand):
         hasDeO = True if 'input.deliveryorder' in models else False
         
         if not (hasPO and hasDO and hasMO and hasDeO):
-          models.remove('input.operationplanmaterial')
-          models.remove('input.operationplanresource')
+          if 'input.operationplanmaterial' in models:
+            models.remove('input.operationplanmaterial')
+          if 'input.operationplanresource' in models:
+            models.remove('input.operationplanresource')
           
         if hasPO and not (hasDO and hasMO and hasDeO):
           models.remove('input.purchaseorder')

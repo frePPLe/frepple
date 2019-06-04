@@ -6,8 +6,12 @@ Release notes
 
 .. rubric:: User interface
 
-- | Bug fix. When using the Empty Database feature on either manufacturing or distribution or delivery or purchase orders
-    then all orders (manufacturing + distribution + delivery + purchase) were deleted.
+- Bug fix. When using the Empty Database feature on either manufacturing or distribution or delivery or purchase orders
+  then all orders (manufacturing + distribution + delivery + purchase) were deleted.
+
+- Filters for a report can now be updated easier. Rather than opening the search dialog
+  again you can directly edit the filter description in the title.
+
 
 
 5.2.0 (2019/05/27)

@@ -104,9 +104,8 @@ class Command(BaseCommand):
         task.started = now
       else:
         task = Task(name='empty', submitted=now, started=now, status='0%', user=user)
-        task.arguments = '%s%s%s' % ('--user=%s ' % options['user'] if options['user'] else '',
-                                     '--models=%s ' % options['models'] if options['models'] else '',
-                                     '--database=%s ' % options['database'] if options['database'] else '',)
+        task.arguments = '%s%s' % ('--user=%s ' % options['user'] if options['user'] else '',
+                                     '--models=%s ' % options['models'] if options['models'] else '',)
       task.processid = os.getpid()
       task.save(using=database)
 

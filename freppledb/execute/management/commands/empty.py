@@ -104,6 +104,9 @@ class Command(BaseCommand):
         task.started = now
       else:
         task = Task(name='empty', submitted=now, started=now, status='0%', user=user)
+        task.arguments = '%s%s%s' % ('--user=%s ' % options['user'] if options['user'] else '',
+                                     '--models=%s ' % options['models'] if options['models'] else '',
+                                     '--database=%s ' % options['database'] if options['database'] else '',)
       task.processid = os.getpid()
       task.save(using=database)
 
@@ -115,115 +118,125 @@ class Command(BaseCommand):
       ContentTypekeys = set()
       # Validate the user list of tables
       if models:
+        hasDemand = True if 'input.demand' in models else False
+        hasOperation = True if 'input.operation' in models else False
         hasPO = True if 'input.purchaseorder' in models else False
         hasDO = True if 'input.distributionorder' in models else False
         hasMO = True if 'input.manufacturingorder' in models else False
         hasDeO = True if 'input.deliveryorder' in models else False
         
-        if not (hasPO and hasDO and hasMO and hasDeO):
-          if 'input.operationplanmaterial' in models:
-            models.remove('input.operationplanmaterial')
-          if 'input.operationplanresource' in models:
-            models.remove('input.operationplanresource')
+        if not hasOperation:
+          if hasDemand:
+            models.remove('input.demand')
+            cursor.execute('update operationplan set demand_id = null where demand_id is not null')
+            cursor.execute('delete from demand')
+            key = ContentType.objects.get_for_model(inputmodels.Demand, for_concrete_model=False).pk
+            cursor.execute("delete from django_admin_log where content_type_id = %s", (key,))
           
-        if hasPO and not (hasDO and hasMO and hasDeO):
-          models.remove('input.purchaseorder')
-          cursor.execute('''
-            delete from operationplanresource
-            where operationplan_id in (
-              select operationplan.reference from operationplan
-              where type = 'PO'
-              )
+          if not (hasPO and hasDO and hasMO and hasDeO):
+            if 'input.operationplanmaterial' in models:
+              models.remove('input.operationplanmaterial')
+            if 'input.operationplanresource' in models:
+              models.remove('input.operationplanresource')
+            
+          if hasPO and not (hasDO and hasMO and hasDeO):
+            models.remove('input.purchaseorder')
+            cursor.execute('''
+              delete from operationplanresource
+              where operationplan_id in (
+                select operationplan.reference from operationplan
+                where type = 'PO'
+                )
+              ''')
+            cursor.execute('''
+              delete from operationplanmaterial
+              where operationplan_id in (
+                select operationplan.reference from operationplan
+                where type = 'PO'
+                )
+              ''')
+            cursor.execute('''
+              update operationplan set demand_id = null%s where type = 'PO'
+            ''' % (', forecast = null' if hasForecast else '',))
+            cursor.execute("delete from operationplan where type = 'PO'")
+            key = ContentType.objects.get_for_model(inputmodels.PurchaseOrder, for_concrete_model=False).pk
+            cursor.execute("delete from django_admin_log where content_type_id = %s", (key,))
+          
+          if hasDO and not (hasPO and hasMO and hasDeO):
+            models.remove('input.distributionorder')
+            cursor.execute('''
+              delete from operationplanresource
+              where operationplan_id in (
+                select operationplan.reference from operationplan
+                where type = 'DO'
+                )
+              ''')
+            cursor.execute('''
+              delete from operationplanmaterial
+              where operationplan_id in (
+                select operationplan.reference from operationplan
+                where type = 'DO'
+                )
+              ''')
+            cursor.execute('''
+              update operationplan set demand_id = null%s where type = 'DO'
+            ''' % (', forecast = null' if hasForecast else '',))
+            cursor.execute("delete from operationplan where type = 'DO'")
+            key = ContentType.objects.get_for_model(inputmodels.DistributionOrder, for_concrete_model=False).pk
+            cursor.execute("delete from django_admin_log where content_type_id = %s", (key,))
+          
+          if hasMO and not (hasPO and hasDO and hasDeO):
+            models.remove('input.manufacturingorder')
+            cursor.execute('''
+              delete from operationplanmaterial
+              where operationplan_id in (
+                select operationplan.reference from operationplan
+                where type = 'MO'
+                )
+              ''')
+            cursor.execute('''
+              delete from operationplanresource
+              where operationplan_id in (
+                select operationplan.reference from operationplan
+                where type = 'MO'
+                )
+              ''')
+            cursor.execute('''
+              update operationplan set demand_id = null%s where type = 'MO'
+            ''' % (', forecast = null' if hasForecast else '',))
+            cursor.execute('''
+              delete from operationplan where type = 'MO'
             ''')
-          cursor.execute('''
-            delete from operationplanmaterial
-            where operationplan_id in (
-              select operationplan.reference from operationplan
-              where type = 'PO'
-              )
-            ''')
-          cursor.execute('''
-            update operationplan set demand_id = null where type = 'PO'
-          ''')
-          cursor.execute("delete from operationplan where type = 'PO'")
-          key = ContentType.objects.get_for_model(inputmodels.PurchaseOrder, for_concrete_model=False).pk
-          cursor.execute("delete from django_admin_log where content_type_id = %s", (key,))
-        
-        if hasDO and not (hasPO and hasMO and hasDeO):
-          models.remove('input.distributionorder')
-          cursor.execute('''
-            delete from operationplanresource
-            where operationplan_id in (
-              select operationplan.reference from operationplan
-              where type = 'DO'
-              )
-            ''')
-          cursor.execute('''
-            delete from operationplanmaterial
-            where operationplan_id in (
-              select operationplan.reference from operationplan
-              where type = 'DO'
-              )
-            ''')
-          cursor.execute('''
-            update operationplan set demand_id = null where type = 'DO'
-          ''')
-          cursor.execute("delete from operationplan where type = 'DO'")
-          key = ContentType.objects.get_for_model(inputmodels.DistributionOrder, for_concrete_model=False).pk
-          cursor.execute("delete from django_admin_log where content_type_id = %s", (key,))
-        
-        if hasMO and not (hasPO and hasDO and hasDeO):
-          models.remove('input.manufacturingorder')
-          cursor.execute('''
-            delete from operationplanmaterial
-            where operationplan_id in (
-              select operationplan.reference from operationplan
-              where type = 'MO'
-              )
-            ''')
-          cursor.execute('''
-            delete from operationplanresource
-            where operationplan_id in (
-              select operationplan.reference from operationplan
-              where type = 'MO'
-              )
-            ''')
-          cursor.execute('''
-            update operationplan set demand_id = null where type = 'MO'
-          ''')
-          cursor.execute('''
-            delete from operationplan where type = 'MO'
-          ''')
-          cursor.execute("delete from operationplan where type = 'MO'")
-          key = ContentType.objects.get_for_model(inputmodels.ManufacturingOrder, for_concrete_model=False).pk
-          cursor.execute("delete from django_admin_log where content_type_id = %s", (key,))
-        
-        if hasDeO and not (hasPO and hasDO and hasMO):
-          models.remove('input.deliveryorder')
-          cursor.execute('''
-            delete from operationplanmaterial
-            where operationplan_id in (
-              select operationplan.reference from operationplan
-              where type = 'DLVR'
-              )
-            ''')
-          cursor.execute('''
-            delete from operationplanresource
-            where operationplan_id in (
-              select operationplan.reference from operationplan
-              where type = 'DLVR'
-              )
-            ''')
-          cursor.execute('''
-            update operationplan set demand_id = null where type = 'DLVR'
-            ''')
-          cursor.execute("delete from operationplan where type = 'DLVR'")
-          key = ContentType.objects.get_for_model(inputmodels.DeliveryOrder, for_concrete_model=False).pk
-          cursor.execute("delete from django_admin_log where content_type_id = %s", (key,))
-        
-        if (hasPO or hasDO or hasMO or hasDeO) and not (hasPO and hasDO and hasMO and hasDeO):
-          # Keep the database in shape
-          cursor.execute("vacuum analyze")
+            cursor.execute("delete from operationplan where type = 'MO'")
+            key = ContentType.objects.get_for_model(inputmodels.ManufacturingOrder, for_concrete_model=False).pk
+            cursor.execute("delete from django_admin_log where content_type_id = %s", (key,))
+          
+          if hasDeO and not (hasPO and hasDO and hasMO):
+            models.remove('input.deliveryorder')
+            cursor.execute('''
+              delete from operationplanmaterial
+              where operationplan_id in (
+                select operationplan.reference from operationplan
+                where type = 'DLVR'
+                )
+              ''')
+            cursor.execute('''
+              delete from operationplanresource
+              where operationplan_id in (
+                select operationplan.reference from operationplan
+                where type = 'DLVR'
+                )
+              ''')
+            cursor.execute('''
+              update operationplan set demand_id = null%s where type = 'DLVR'
+              ''' % (', forecast = null' if hasForecast else '',))
+            cursor.execute("delete from operationplan where type = 'DLVR'")
+            key = ContentType.objects.get_for_model(inputmodels.DeliveryOrder, for_concrete_model=False).pk
+            cursor.execute("delete from django_admin_log where content_type_id = %s", (key,))
+          
+          if (hasPO or hasDO or hasMO or hasDeO) and not (hasPO and hasDO and hasMO and hasDeO):
+            # Keep the database in shape
+            cursor.execute("vacuum analyze")
         
         
         models2tables = set()

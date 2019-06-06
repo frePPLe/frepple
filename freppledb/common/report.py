@@ -1710,7 +1710,7 @@ class GridReport(View):
 
   @staticmethod
   def _filter_lte(query, reportrow, data):
-    return models.Q({'%s__lte' % reportrow.field_name: smart_str(data)})
+    return models.Q(**{'%s__lte' % reportrow.field_name: smart_str(data)})
 
   @staticmethod
   def _filter_ew(query, reportrow, data):

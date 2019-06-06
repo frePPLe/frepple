@@ -103,13 +103,13 @@ class OverviewReport(GridPivot):
         inner join operationplanmaterial on operationplanmaterial.item_id = child.name
         inner join operationplan on operationplan.reference = operationplanmaterial.operationplan_id
           and operationplan.type = 'DLVR'
-          and operationplan.enddate < %%s       
+          and operationplan.enddate < %%s
         group by item.name
         ) t
         group by name
       ''' % (basesql, basesql)
     with connections[request.database].chunked_cursor() as cursor_chunked:
-      cursor_chunked.execute(query, baseparams + (request.report_startdate,)  + baseparams + (request.report_startdate,))
+      cursor_chunked.execute(query, baseparams + (request.report_startdate,) + baseparams + (request.report_startdate,))
       for row in cursor_chunked:
         if row[0]:
           startbacklogdict[row[0]] = float(row[1])

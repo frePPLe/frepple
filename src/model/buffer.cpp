@@ -1232,16 +1232,13 @@ void Buffer::buildProducingOperation()
 void Buffer::correctProducingFlow(Operation* itemoper) {
   
   //if operation is of type routing or alternate or split then look if flow exists at parent level
-  if (itemoper->hasType<OperationRouting, OperationAlternate, OperationSplit>()) {
-
+  if (itemoper->hasType<OperationRouting, OperationAlternate, OperationSplit>())
+  {
     // check if routing has a producing flow into the buffer
-    auto flow_iter = itemoper->getFlowIterator();
-    while (flow_iter != itemoper->getFlows().end()) {
-      if (flow_iter->getItem() == getItem() && flow_iter->isProducer()) {
+    for (auto flow_iter = itemoper->getFlowIterator(); flow_iter != itemoper->getFlows().end(); ++flow_iter)
+      if (flow_iter->getItem() == getItem() && flow_iter->isProducer())
         // Producing flow exists, nothing to do
         return;
-      }
-    }
   }
     
   // Operation is of type routing, check if any step is producing into this buffer 

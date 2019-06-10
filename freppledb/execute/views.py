@@ -261,37 +261,32 @@ def wrapTask(request, action):
     if 'copy' in args:
       if not request.user.has_perm('auth.copy_scenario'):
         raise Exception('Missing execution privileges')
-      source = args.get('source', DEFAULT_DB_ALIAS)
+      source = args.get('source', request.database)
       worker_database = source
-      destination = args.getlist('destination')
-      force = args.get('force', False)
-      for sc in Scenario.objects.using(DEFAULT_DB_ALIAS):
-        arguments = "%s %s" % (source, sc.name)
+      destination = args.get('destination', False)
+      if destination and destination != DEFAULT_DB_ALIAS:
+        force = args.get('force', False)
+        arguments = "%s %s" % (source, destination)
         if force:
           arguments += ' --force'
-        if args.get(sc.name, 'off') == 'on' or sc.name in destination:
-          task = Task(name='scenario_copy', submitted=now, status='Waiting', user=request.user, arguments=arguments)
-          task.save(using=source)
+        task = Task(name='scenario_copy', submitted=now, status='Waiting', user=request.user, arguments=arguments)
+        task.save(using=source)
     elif 'release' in args:
       # Note: release is immediate and synchronous.
       if not request.user.has_perm('auth.release_scenario'):
         raise Exception('Missing execution privileges')
-      for sc in Scenario.objects.using(DEFAULT_DB_ALIAS):
-        if args.get(sc.name, 'off') == 'on' and sc.status != 'Free':
-          sc.status = 'Free'
-          sc.lastrefresh = now
-          sc.save(using=DEFAULT_DB_ALIAS)
-          if request.database == sc.name:
-            # Erasing the database that is currently selected.
-            request.prefix = ''
+      sc = Scenario.objects.using(DEFAULT_DB_ALIAS).get(name=request.database)
+      if sc.status != 'Free' and sc.name != DEFAULT_DB_ALIAS:
+        sc.status = 'Free'
+        sc.lastrefresh = now
+        sc.save(using=DEFAULT_DB_ALIAS)
     elif 'update' in args:
       # Note: update is immediate and synchronous.
       if not request.user.has_perm('auth.release_scenario'):
         raise Exception('Missing execution privileges')
-      for sc in Scenario.objects.using(DEFAULT_DB_ALIAS):
-        if args.get(sc.name, 'off') == 'on':
-          sc.description = args.get('description', None)
-          sc.save(using=DEFAULT_DB_ALIAS)
+      sc = Scenario.objects.using(DEFAULT_DB_ALIAS).get(name=request.database)
+      sc.description = args.get('description', None)
+      sc.save(using=DEFAULT_DB_ALIAS)
     else:
       raise Exception('Invalid scenario task')
   # G

@@ -358,10 +358,10 @@ This command is available in the user interface, the command line and the web AP
 
 * Web API::
 
-    POST /execute/api/frepple_flush/?models=input.demand,input.operationplan
+    POST /execute/api/empty/?models=input.demand,input.operationplan
   
     Deprecated:
-    POST /execute/api/empty/?models=input.demand,input.operationplan
+    POST /execute/api/frepple_flush/?models=input.demand,input.operationplan
 
 
 Administrator commands

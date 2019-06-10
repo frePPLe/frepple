@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2010-2013 by frePPLe bvba
+# Copyright (C) 2010-2019 by frePPLe bvba
 #
 # This library is free software; you can redistribute it and/or modify it
 # under the terms of the GNU Affero General Public License as published
@@ -131,8 +131,6 @@ class Command(BaseCommand):
         raise CommandError("No destination database defined with name '%s'" % destination)
       if source == destination:
         raise CommandError("Can't copy a schema on itself")
-      if settings.DATABASES[source]['ENGINE'] != settings.DATABASES[destination]['ENGINE']:
-        raise CommandError("Source and destination scenarios have a different engine")
       if sourcescenario.status != 'In use':
         raise CommandError("Source scenario is not in use")
       if destinationscenario.status != 'Free' and not force:
@@ -178,7 +176,7 @@ class Command(BaseCommand):
       # Update the scenario table
       destinationscenario.status = 'In use'
       destinationscenario.lastrefresh = datetime.today()
-      if 'description' in options:
+      if options['description']:
         destinationscenario.description = options['description']
       destinationscenario.save(using=DEFAULT_DB_ALIAS)
 
@@ -235,78 +233,128 @@ class Command(BaseCommand):
     scenarios = Scenario.objects.using(DEFAULT_DB_ALIAS)
     if scenarios.count() > 1:
       javascript = '''
-        $("#sourceul li a").click(function(){
-          $("#source").html($(this).text() + ' <span class="caret"></span>');
-          $("#sourcescenario").val($(this).text());
+        $(".scenariorelease").on("click", function(event) {
+          event.preventDefault();
+          var target = "/" + $(this).attr("data-target");
+          if (target == "/default")
+            target = "";
+          $.ajax({
+           url: target + "/execute/launch/scenario_copy/",
+           type: 'POST',
+           data: {release: 1},
+           success: function() { console.log(target, prefix); if (target == prefix) window.location.href = "/"; }
+           });
+        });
+        $(".scenariocopy").on("click", function(event) {
+          event.preventDefault();
+          var source = "/" + $(this).attr("data-source");
+          if (source == "/default")
+            source = "";
+          $.ajax({
+           url: source + "/execute/launch/scenario_copy/",
+           type: 'POST',
+           data: {
+             copy: 1,
+             source: $(this).attr("data-source"),
+             destination: $(this).attr("data-target")
+             }
+           });
+        });
+        $(".scenariolabel").on("change", function(event) {
+          event.preventDefault();
+          var target = "/" + $(this).attr("data-target");
+          if (target == "/default")
+            target = "";
+          $.ajax({
+           url: target + "/execute/launch/scenario_copy/",
+           type: 'POST',
+           data: {
+             update: 1,
+             description: $(this).val()
+             },
+           success: function() { window.location.href = window.location.href; }
+           });
         });
         '''
       context = RequestContext(request, {'javascript': javascript, 'scenarios': scenarios})
 
       template = Template('''
         {% load i18n %}
-        <form role="form" method="post" action="{{request.prefix}}/execute/launch/scenario_copy/">{% csrf_token %}
-          <table id="scenarios">
-            <tr>
-              {% comment %}Translators: Translation included with Django {% endcomment %}
-              <th style="padding: 0px 15px;">{% trans 'scenario'|capfirst %}</th>
-              <th style="padding: 0px 15px;">{% trans 'status'|capfirst %}</th>
-              <th>{% trans 'description'|capfirst %}</th>
-              <th>{% trans 'last modified'|capfirst %}</th>
-            </tr>
-            {% for j in scenarios %}{% ifnotequal j.name 'default' %}
-            <tr>
-              <td style="padding: 0px 15px;"><input type=checkbox name="{{j.name}}" id="sc{{j.name}}"/>
-                <label for="sc{{j.name}}">&nbsp;<strong>{{j.name|capfirst}}</strong>
-                </label>
-              </td>
-              {% with mystatus=j.status|lower %}
-              <td style="padding: 0px 15px;">{% trans mystatus|capfirst %}</td>
-              {% endwith %}
-              <td>{% if j.description %}{{j.description}}{% endif %}</td>
-              <td>{{j.lastrefresh|date:"DATETIME_FORMAT"}}</td>
-            </tr>
-            {% endifnotequal %}{% endfor %}
-            {% if perms.auth.copy_scenario %}
-            <tr>
-              <td><button  class="btn btn-primary" name="copy" type="submit" value="{% trans "copy"|capfirst %}" style="width:100%">{% trans "copy"|capfirst %}</button>
-              </td>
-              <td  style="padding: 0px 15px;" colspan="3">
-                {% trans "copy"|capfirst %}
-                  <div class="dropdown dropdown-submit-input" style="display: inline-block;">
-                    <button class="btn btn-default dropdown-toggle" id="source" value="" type="button" data-toggle="dropdown" style="min-width: 160px">-&nbsp;&nbsp;<span class="caret"></span></button>
-                    <ul class="dropdown-menu" aria-labelledby="source" id="sourceul" style="top: auto">
-                    {% for j in scenarios %}
-                      {% ifequal j.status 'In use' %}
-                        <li><a name="{{j.name}}">{{j.name}}</a></li>
-                      {% endifequal %}
-                    {% endfor %}
-                    </ul>
-                  </div>
-                {% trans "into selected scenarios" %}
-
-              </td>
-            </tr>
-            {% endif %}
-            {% if perms.auth.release_scenario %}
-            <tr>
-              <td><button class="btn btn-primary" name="release" type="submit" value="{% trans "release"|capfirst %}" style="width:100%">{% trans "release"|capfirst %}</button></td>
-              <td  style="padding: 0px 15px;" colspan="3">{% trans "release selected scenarios"|capfirst %}</td>
-            </tr>
-            <tr>
-              <td><button class="btn btn-primary" name="update" type="submit" value="{% trans "update"|capfirst %}" style="width:100%">{% trans "update"|capfirst %}</button></td>
-              <td  style="padding: 0px 15px;" colspan="3"><input class="form-control" name="description" type="text" size="40" placeholder="{% trans "Update description of selected scenarios" %}"/></td>
-            </tr>
-            {% endif %}
-          </table>
-          <input type="hidden" name="source" id="sourcescenario" value="">
-        </form>
+        <table id="scenarios">
+          <tr>
+            {% comment %}Translators: Translation included with Django {% endcomment %}
+            <th style="padding:5px 10px 5px 10px; text-align: center">{% trans 'scenario'|capfirst %}</th>
+            <th style="padding:5px 10px 5px 10px; text-align: center">{% trans 'action'|capfirst %}</th>
+            <th style="padding:5px 10px 5px 10px; text-align: center">
+              <span data-toggle="tooltip" data-placement="top" data-html="true"
+                data-original-title="<b>In use</b>: Contains data<br><b>Free</b>: Available to copy data into<br><b>Busy</b>: Data copy in progress">
+              {% trans 'status'|capfirst %}
+              <span class="fa fa-question-circle"></span>
+              </span>
+            </th>
+            <th style="padding:5px 10px 5px 10px; text-align: center">
+              <span data-toggle="tooltip" data-placement="top" data-original-title="Label shown in the scenario dropdown list">
+              {% trans 'label'|capfirst %}
+              <span class="fa fa-question-circle"></span>
+              </span></th>
+            <th style="padding:5px 10px 5px 10px; text-align: center">
+              <span data-toggle="tooltip" data-placement="top" data-original-title="Date of the last action">
+              {% trans 'last modified'|capfirst %}
+              <span class="fa fa-question-circle"></span>
+              </span>
+            </th>
+          </tr>
+          {% for j in scenarios %}
+          <tr>
+            <td style="padding:5px">
+              <strong>{{j.name|capfirst}}</strong>
+            </td>
+            <td style="padding:5px 10px 5px 10px">
+               {% if j.name != 'default' and j.status == 'Free' and perms.auth.copy_scenario %}
+               <div class="btn-group btn-block">
+               <button class="btn btn-block btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
+                 {% trans 'copy'|capfirst %}&nbsp;<span class="caret"></span>
+               </button>
+               <ul class="dropdown-menu" rol="menu">
+                 {% for k in scenarios %}{% if k.status == 'In use' %}
+                 <li><a class="scenariocopy" href="#" data-source="{{ k.name }}" data-target="{{ j.name }}">
+                   Copy from {{ k.name|capfirst }}
+                 </a></li>
+                 {% endif %}{% endfor %}
+               </ul>
+               </div>
+               {% elif j.name != 'default' and j.status == 'In use' and perms.auth.release_scenario %}
+               <div class="btn-group btn-block">
+               <button class="btn btn-block btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
+                 {% trans 'release'|capfirst %}&nbsp;<span class="caret"></span>
+               </button>
+               <ul class="dropdown-menu" rol="menu">
+                 <li><a class="scenariorelease" href="#" data-target="{{ j.name }}">
+                 {% trans "You will lose ALL data in this scenario!" %}
+                 </a></li>
+               </ul>
+               </div>
+               {% endif %}
+            </td>
+            {% with mystatus=j.status|lower %}
+            <td style="padding:5px 10px 5px 10px; text-align: center">{% trans mystatus|capfirst %}</td>
+            {% endwith %}
+            <td style="padding:5px 10px 5px 10px">
+              <input class="scenariolabel" type="text" size="20" data-target="{{ j.name }}"
+              value="{% if j.description %}{{j.description|escape}}{% else %}{{ j.name }}{% endif %}">
+            </td>
+            <td style="padding:5px 10px 5px 10px; text-align: center">{{j.lastrefresh|date:"DATETIME_FORMAT"}}</td>
+          </tr>
+          {% endfor %}
+        </table>
         <script>{{ javascript|safe }}</script>
       ''')
       return template.render(context)
       # A list of translation strings from the above
       translated = (
         _("copy"), _("release"), _("release selected scenarios"), _("into selected scenarios"),
-        _("update"), _("Update description of selected scenarios")
+        _("update"), _("Update description of selected scenarios"),
+        _("You will lose ALL data in this scenario!")
         )
     else:
       return None

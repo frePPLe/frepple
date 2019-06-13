@@ -2526,7 +2526,7 @@ Duration OperationAlternate::getDecoupledLeadTime(double qty) const
   // Find the longest supply path for all flows on the top operation
   for (auto fl = getFlows().begin(); fl != getFlows().end(); ++fl)
   {
-    if (fl->getQuantity() >= 0)
+    if (fl->getQuantity() >= 0 || fl->getBuffer()->getItem() == getItem())
       continue;
     Duration tmp = fl->getBuffer()->getDecoupledLeadTime(qty2, false);
     if (tmp > leadtime)
@@ -2591,7 +2591,7 @@ Duration OperationSplit::getDecoupledLeadTime(double qty) const
     // Find the longest supply path for all flows on the top operation
     for (auto fl = getFlows().begin(); fl != getFlows().end(); ++fl)
     {
-      if (fl->getQuantity() >= 0)
+      if (fl->getQuantity() >= 0 || fl->getBuffer()->getItem() == getItem())
         continue;
       Duration tmp = fl->getBuffer()->getDecoupledLeadTime(qty2, false);
       if (tmp > maxSub)
@@ -2601,7 +2601,7 @@ Duration OperationSplit::getDecoupledLeadTime(double qty) const
     // Also loop over the flows of the suboperation
     for (auto fl = suboper->getFlows().begin(); fl != suboper->getFlows().end(); ++fl)
     {
-      if (fl->getQuantity() >= 0)
+      if (fl->getQuantity() >= 0 || fl->getBuffer()->getItem() == getItem())
         continue;
       Duration tmp = fl->getBuffer()->getDecoupledLeadTime(qty2, false);
       if (tmp > maxSub)
@@ -2663,7 +2663,7 @@ Duration OperationRouting::getDecoupledLeadTime(double qty) const
     // Find the longest supply path for all flows
     for (auto fl = suboper->getFlows().begin(); fl != suboper->getFlows().end(); ++fl)
     {
-      if (fl->getQuantity() >= 0)
+      if (fl->getQuantity() >= 0 || fl->getBuffer()->getItem() == getItem())
         continue;
       Duration tmp = fl->getBuffer()->getDecoupledLeadTime(qty, false);
       if (tmp > maxSub)
@@ -2712,7 +2712,7 @@ Duration OperationFixedTime::getDecoupledLeadTime(double qty) const
   // Find the longest supply path for all flows
   for (auto fl = getFlows().begin(); fl != getFlows().end(); ++fl)
   {
-    if (fl->getQuantity() >= 0)
+    if (fl->getQuantity() >= 0 || fl->getBuffer()->getItem() == getItem())
       continue;
     Duration tmp = fl->getBuffer()->getDecoupledLeadTime(qty, false);
     if (tmp > leadtime)
@@ -2743,7 +2743,7 @@ Duration OperationTimePer::getDecoupledLeadTime(double qty) const
   // Find the longest supply path for all flows
   for (auto fl = getFlows().begin(); fl != getFlows().end(); ++fl)
   {
-    if (fl->getQuantity() >= 0)
+    if (fl->getQuantity() >= 0 || fl->getBuffer()->getItem() == getItem())
       continue;
     Duration tmp = fl->getBuffer()->getDecoupledLeadTime(qty, false);
     if (tmp > leadtime)

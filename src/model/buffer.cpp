@@ -1234,10 +1234,10 @@ void Buffer::correctProducingFlow(Operation* itemoper) {
   //if operation is of type routing or alternate or split then look if flow exists at parent level
   if (itemoper->hasType<OperationRouting, OperationAlternate, OperationSplit>())
   {
-    // check if routing has a producing flow into the buffer
+    // check if routing has a flow into the buffer
     for (auto flow_iter = itemoper->getFlowIterator(); flow_iter != itemoper->getFlows().end(); ++flow_iter)
-      if (flow_iter->getItem() == getItem() && flow_iter->isProducer())
-        // Producing flow exists, nothing to do
+      if (flow_iter->getItem() == getItem())
+        // Flow for this item exists, nothing to do
         return;
   }
     
@@ -1249,7 +1249,7 @@ void Buffer::correctProducingFlow(Operation* itemoper) {
     while (SubOperation* sub = subs.next()) {
       auto flow_iter = sub->getOperation()->getFlowIterator();
       while (flow_iter != sub->getOperation()->getFlows().end()) {
-        if (flow_iter->getItem() == getItem() && flow_iter->isProducer())
+        if (flow_iter->getItem() == getItem())
           return;
         ++flow_iter;
       }
@@ -1278,7 +1278,7 @@ void Buffer::correctProducingFlow(Operation* itemoper) {
   auto flow_iter = itemoper->getFlowIterator();
   bool foundFlow = false;
   while (flow_iter != itemoper->getFlows().end()) {
-    if (flow_iter->getItem() == getItem() && flow_iter->isProducer()) {
+    if (flow_iter->getItem() == getItem()) {
       foundFlow = true;
       break;
     }

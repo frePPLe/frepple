@@ -493,7 +493,10 @@ void SolverCreate::solveSafetyStock(const Buffer* b, void* v)
         data->state->q_qty_min = 1.0;
         data->recent_buffers.clear();
         data->recent_buffers.push(b);
+        auto data_safety_stock_planning = data->safety_stock_planning;
+        data->safety_stock_planning = false;
         b->getProducingOperation()->solve(*this,v);
+        data->safety_stock_planning = data_safety_stock_planning;
 
         if (data->state->a_qty > ROUNDING_ERROR)
           // If we got some extra supply, we retry to get some more supply.

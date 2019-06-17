@@ -4,6 +4,11 @@ Release notes
 5.3.0 (upcoming release)
 ========================
 
+.. rubric:: Production planning
+
+- Bug fix: solving safety stock across multiple stages could incorrectly leave material shortages
+  in the constrained plan.
+
 .. rubric:: User interface
 
 - Bug fix. When using the Empty Database feature on either manufacturing or distribution or delivery or purchase orders
@@ -13,8 +18,6 @@ Release notes
 
 - Filters for a report can now be updated easier. Rather than opening the search dialog
   again you can directly edit the filter description in the title.
-
-
 
 5.2.0 (2019/05/27)
 ==================

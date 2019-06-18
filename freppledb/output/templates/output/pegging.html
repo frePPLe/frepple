@@ -76,10 +76,11 @@ function reslistfmt(cellvalue, options, row)
   if (cellvalue === undefined || cellvalue ==='') return '';
   result = '';
   for (var i in cellvalue)
-    result += "<span>" + cellvalue[i]
-      + "<a href='/detail/input/resource/key/' onclick='opendetail(event)'>"
-      + "<span class='leftpadding fa fa-caret-right' role='input/resource'></span>"
-      + "</a></span><br>";
+    result += cellvalue[i]
+      + "<a href='" + url_prefix + "/detail/input/resource/" + admin_escape(cellvalue[i]) 
+      + "/' onclick='event.stopPropagation()'>"
+      + "<span class='leftpadding fa fa-caret-right'></span>"
+      + "</a><br>";
   return result;
 }
 

@@ -389,29 +389,27 @@ jQuery.extend($.fn.fmatter, {
   duration : formatDuration,
 
   admin : function(cellvalue, options, rowdata) {
-    var result = cellvalue + "<a href='/data/" + options.colModel.role + "/key/change/' onclick='opendetail(event)'><span class='leftpadding fa fa-caret-right' role='" + options.colModel.role + "'></span></a>";
-    if (cellvalue === undefined || cellvalue === '' || cellvalue === null) {
+    if (cellvalue === undefined || cellvalue === '' || cellvalue === null)
       return '';
-    }
-    if (options['colModel']['popup'] || rowdata.showdrilldown === '0') {
+    if (options['colModel']['popup'] || rowdata.showdrilldown === '0')
       return cellvalue;
-    }
-    return result;
+    return cellvalue 
+      + "<a href='" + url_prefix + "/data/" + options.colModel.role + "/" + admin_escape(cellvalue) 
+      + "/change/' onclick='event.stopPropagation()'><span class='leftpadding fa fa-caret-right'></span></a>";
   },
 
   detail : function(cellvalue, options, rowdata) {
-    var result = cellvalue + "<a href='/detail/" + options.colModel.role + "/key/' onclick='opendetail(event)'><span class='leftpadding fa fa-caret-right' role='" + options.colModel.role + "'></span></a>";
-    if (cellvalue === undefined || cellvalue === '' || cellvalue === null) {
+    if (cellvalue === undefined || cellvalue === '' || cellvalue === null)
       return '';
-    }
-    if (options['colModel']['popup'] || rowdata.showdrilldown === '0') {
+    if (options['colModel']['popup'] || rowdata.showdrilldown === '0')
       return cellvalue;
-    }
     if (rowdata.hasOwnProperty('type') && (rowdata.type === 'PO' || rowdata.type === 'DO' || rowdata.type === 'DLVR' || rowdata.type === 'STCK' ))
       return cellvalue; //don't show links for non existing operations
     if (rowdata.hasOwnProperty('operationplan__type') && (rowdata.operationplan__type === 'PO' || rowdata.operationplan__type === 'DO' || rowdata.operationplan__type === 'DLVR' || rowdata.operationplan__type === 'STCK' ))
       return cellvalue; //don't show links for non existing operations
-    return result;
+    return cellvalue 
+      + "<a href='" + url_prefix + "/detail/" + options.colModel.role + "/" + admin_escape(cellvalue) 
+      + "/' onclick='event.stopPropagation()'><span class='leftpadding fa fa-caret-right'></span></a>";
   },
 
   demanddetail : function(cellvalue, options, rowdata) {
@@ -425,9 +423,9 @@ jQuery.extend($.fn.fmatter, {
     {
       if (result != '')
       	result += ', ';
-      result += cellvalue[i][0] + " : <span>" + cellvalue[i][1] 
-        + "<a href='/detail/input/demand/key/' onclick='opendetail(event)'>"
-        + "<span class='leftpadding fa fa-caret-right' role='input/demand'></span></a></span>";
+        result += cellvalue[i][0] + " : " + cellvalue[i][1] 
+          + "<a href='" + url_prefix + "/detail/input/demand/" + admin_escape(cellvalue[i][1])
+          + "/' onclick='event.stopPropagation()'><span class='leftpadding fa fa-caret-right' role='input/demand'></span></a>";
     }
     return result;
   },
@@ -443,8 +441,10 @@ jQuery.extend($.fn.fmatter, {
     {
       if (result != '')
       	result += ', ';
-      result += '<span><span class="listdetailkey">' + cellvalue[i][0] + "</span><a href='/detail/" + options.colModel.role 
-        + "/key/' onclick='opendetail(event)'><span class='leftpadding fa fa-caret-right' role='" 
+      result += '<span><span class="listdetailkey">' + cellvalue[i][0] 
+        + "</span><a href='" + url_prefix + "/detail/" + options.colModel.role 
+        + "/" + admin_escape(cellvalue[i][0]) 
+        + "/' onclick='event.stopPropagation()'><span class='leftpadding fa fa-caret-right' role='" 
         + options.colModel.role + "'></span></a></span>&nbsp;<span>" + cellvalue[i][1] + "</span>";
     }
     return result;
@@ -2163,10 +2163,6 @@ function savePreference(setting, value, callback) {
     }
   });
 }
-
-//----------------------------------------------------------------------------
-// Code for handling the menu bar, context menu and active button.
-//----------------------------------------------------------------------------
 
 $(function() {
 

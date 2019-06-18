@@ -45,10 +45,9 @@ function reslistfmt(cellvalue, options, row)
   if (cellvalue === undefined || cellvalue ==='') return '';
   result = '';
   for (var i in cellvalue)
-    result += "<span>" + cellvalue[i][0]
-      + "<a href='/detail/input/resource/key/' onclick='opendetail(event)'>"
-      + "<span class='leftpadding fa fa-caret-right' role='input/resource'></span>"
-      + "</a></span><br>";
+    result += cellvalue[i][0]
+      + "<a href='" + url_prefix + "/detail/input/resource/" + admin_escape(cellvalue[i][0]) + "/'>"
+      + "<span class='leftpadding fa fa-caret-right'></span></a><br>";
   return result;
 }
 

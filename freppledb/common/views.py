@@ -68,7 +68,7 @@ def cockpit(request):
     context={
       'title': _('cockpit'),
       'bucketnames': Bucket.objects.order_by('-level').values_list('name', flat=True),
-      'currency': json.dumps(getCurrency())
+      'currency': getCurrency()
       }
     )
 

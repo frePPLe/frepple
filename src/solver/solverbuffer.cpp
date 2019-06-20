@@ -58,7 +58,7 @@ void SolverCreate::solve(const Buffer* b, void* v)
   bool tried_requested_date(false);
 
   // Message
-  if (getLogLevel() > 1) {
+  if (getLogLevel() > 1)
     logger << indent(b->getLevel()) << "  Buffer '" << b->getName()
       << "' is asked: " << data->state->q_qty << "  " << data->state->q_date << endl;
 

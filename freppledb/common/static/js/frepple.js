@@ -2345,7 +2345,7 @@ function import_show(title, paragraph, multiple, fxhr, initialDropped)
       modalcontent += gettext('Data file') + ':<input type="file" id="csv_file" name="csv_file"/>';
     }
     modalcontent += ''+
-          '</form><br>' +
+          '<br></form>' +
           '<div style="margin: 5px 0">'+
             '<div id="uploadResponse" style="height: 50vh; resize: vertical; display: none; background-color: inherit; border: none; overflow: auto;"></div>'+
           '</div>'+

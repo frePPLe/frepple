@@ -1502,13 +1502,13 @@ class GridReport(View):
               return
 
           yield ('<div class="table-responsive">'
-                 '<table class="table table-condensed" style="white-space: nowrap;"><tbody>')
+                 '<table class="table table-condensed" style="white-space: nowrap"><tbody>')
 
           for filename, file in request.FILES.items():
             numerrors = 0
             numwarnings = 0
             firsterror = True
-            yield '<tr style="text-align: center"><th colspan="5">%s</td></th>' % filename
+            yield '<tr style="text-align: center"><th colspan="5">%s</th></tr>' % filename
             data = EncodedCSVReader(file, delimiter=delimiter)
             for error in parseCSVdata(reportclass.model, data, user=request.user, database=request.database, ping=True):
               if error[0] == DEBUG:
@@ -1549,7 +1549,7 @@ class GridReport(View):
                   error[3] if error[3] else '',
                   error[4]
                   )
-            yield '</tbody></table></div>'
+          yield '</tbody></table></div>'
       except GeneratorExit:
         logging.warning('Connection Aborted')
       except NameError:
@@ -1593,13 +1593,13 @@ class GridReport(View):
 
         # Header in output
         yield ('<div class="table-responsive">'
-               '<table class="table table-condensed" style="white-space: nowrap;"><tbody>')
+               '<table class="table table-condensed" style="white-space: nowrap"><tbody>')
 
         for filename, file in request.FILES.items():
           numerrors = 0
           numwarnings = 0
           firsterror = True
-          yield '<tr style="text-align: center"><th colspan="5">%s</td></th>' % filename
+          yield '<tr style="text-align: center"><th colspan="5">%s</th></tr>' % filename
 
           # Loop through the data records
           wb = load_workbook(filename=file, read_only=True, data_only=True)
@@ -1647,7 +1647,7 @@ class GridReport(View):
                   error[3] if error[3] else '',
                   error[4]
                   )
-            yield '</tbody></table></div>'
+        yield '</tbody></table></div>'
     except GeneratorExit:
       logger.warning('Connection Aborted')
     except NameError:

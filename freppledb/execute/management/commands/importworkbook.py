@@ -151,7 +151,7 @@ class Command(BaseCommand):
 
             # Sort the list of models, based on dependencies between models
             models = GridReport.sort_models(models)
-            print('197----', models)
+
             # Process all rows in each worksheet
             for ws_name, model, contenttype_id, dependencies in models:
               print(force_text(_("Processing data in worksheet: %s") % ws_name))
@@ -266,7 +266,7 @@ class Command(BaseCommand):
       <table>
         <tr>
           <td style="vertical-align:top; padding: 15px">
-            <button type="submit" class="btn btn-primary" id="import" onclick="import_show('{% trans "Import a spreadsheet" %}',null,false,uploadspreadsheetajax)" value="{% trans "import"|capfirst %}">{% trans "import"|capfirst %}</button>
+            <button type="submit" class="btn btn-primary" id="import" onclick="import_show('{% trans "Import a spreadsheet" %}',null,true,uploadspreadsheetajax)" value="{% trans "import"|capfirst %}">{% trans "import"|capfirst %}</button>
           </td>
           <td style="padding: 15px 15px 0 15px">
             <p>{% trans "Import input data from a spreadsheet.</p><p>The spreadsheet must match the structure exported with the task above." %}</p>

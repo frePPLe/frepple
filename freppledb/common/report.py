@@ -2570,6 +2570,7 @@ def importWorkbook(request):
     with transaction.atomic(using=request.database):
       # Find all models in the workbook
       for filename, file in request.FILES.items():
+        yield '<strong>' + force_text(_("Processing file")) + filename + '</strong><br>'
         wb = load_workbook(filename=file, read_only=True, data_only=True)
         models = []
         for ws_name in wb.sheetnames:
@@ -2645,7 +2646,7 @@ def importWorkbook(request):
                 error[4]
                 )
           yield '</tbody></table></div>'
-        yield '<div><strong>%s</strong></div>' % _("Done")
+        yield '<div><strong>%s</strong><br><br></div>' % _("Done")
   except GeneratorExit:
     logger.warning('Connection Aborted')
   except Exception as e:

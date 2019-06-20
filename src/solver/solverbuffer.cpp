@@ -58,7 +58,7 @@ void SolverCreate::solve(const Buffer* b, void* v)
   bool tried_requested_date(false);
 
   // Message
-  if (getLogLevel()>1)
+  if (getLogLevel() > 1) {
     logger << indent(b->getLevel()) << "  Buffer '" << b->getName()
       << "' is asked: " << data->state->q_qty << "  " << data->state->q_date << endl;
 
@@ -176,7 +176,7 @@ void SolverCreate::solve(const Buffer* b, void* v)
           {
             if (getLogLevel() > 1)
               logger << indent(b->getLevel())
-                << "  Refuse to create extra supply because confirmed supply is already available at "
+                << "   Refuse to create extra supply because confirmed supply is already available at "
                 << scanner->getDate() << endl;
             supply_exists_already = true;
             shortage = -prev->getOnhand();
@@ -288,8 +288,8 @@ void SolverCreate::solve(const Buffer* b, void* v)
     // If the flag getPlanSafetyStockFirst is set, then we need to replenish
     // up to the minimum quantity. If it is not set (which is the default) then
     // we only replenish up to 0.
-    if (cur->getEventType() == 3 
-      && (getPlanSafetyStockFirst() || data->safety_stock_planning)
+    if (cur->getEventType() == 3
+      && (!data->buffer_solve_shortages_only || data->safety_stock_planning)
       && !getShortagesOnly())
       current_minimum = cur->getMin();
 
@@ -495,8 +495,11 @@ void SolverCreate::solveSafetyStock(const Buffer* b, void* v)
         data->recent_buffers.push(b);
         auto data_safety_stock_planning = data->safety_stock_planning;
         data->safety_stock_planning = false;
+        auto data_buffer_solve_shortages_only = data->buffer_solve_shortages_only;
+        data->buffer_solve_shortages_only = true;
         b->getProducingOperation()->solve(*this,v);
         data->safety_stock_planning = data_safety_stock_planning;
+        data->buffer_solve_shortages_only = data_buffer_solve_shortages_only;
 
         if (data->state->a_qty > ROUNDING_ERROR)
           // If we got some extra supply, we retry to get some more supply.

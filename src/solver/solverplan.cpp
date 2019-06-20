@@ -264,6 +264,7 @@ void SolverCreate::SolverData::commit()
 
       // Step 2: Solve buffer by buffer, ordered by level
       solver->setPropagate(false);
+      buffer_solve_shortages_only = false;
       for (short lvl = -1; lvl <= HasLevel::getNumberOfLevels(); ++lvl)
       {
         for (Buffer::iterator b = Buffer::begin(); b != Buffer::end(); ++b)
@@ -310,7 +311,10 @@ void SolverCreate::SolverData::commit()
       {
         constrainedPlanning = (solver->getPlanType() == 1);
         solveSafetyStock(solver);
+        buffer_solve_shortages_only = false;
       }
+      else
+        buffer_solve_shortages_only = true;
 
       // Loop through the list of all demands in this planning problem
       safety_stock_planning = false;
@@ -370,9 +374,11 @@ void SolverCreate::SolverData::commit()
         // Erase existing proposed purchases
         const_cast<OperationItemSupplier*>(*o)->deleteOperationPlans(false);
         // Create new proposed purchases
+        auto tmp_buffer_solve_shortages_only = buffer_solve_shortages_only;
         try
         {
           safety_stock_planning = true;
+          buffer_solve_shortages_only = false;
           state->curBuffer = nullptr;
           state->q_qty = -1.0;
           state->q_date = Date::infinitePast;
@@ -388,6 +394,7 @@ void SolverCreate::SolverData::commit()
         {
           getCommandManager()->rollback();
         }
+        buffer_solve_shortages_only = tmp_buffer_solve_shortages_only;
       }
       purchase_operations.clear();
 
@@ -462,7 +469,8 @@ void SolverCreate::SolverData::solveSafetyStock(SolverCreate* solver)
         planningDemand = nullptr;
         state->curDemand = nullptr;
         state->curOwnerOpplan = nullptr;
-        // Call the buffer solver
+        buffer_solve_shortages_only = false;
+        // Call the buffer safety stock solver
         iteration_count = 0;
         (*b)->solve(*solver, this);
         // Check for excess

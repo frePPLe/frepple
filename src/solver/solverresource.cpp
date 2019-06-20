@@ -358,8 +358,14 @@ void SolverCreate::solve(const Resource* res, void* v)
   if (data->state->a_qty > 0.0)
   {
     // Resource usage
-    data->state->a_cost += data->state->a_qty * res->getCost()
-       * (data->state->q_operationplan->getDates().getDuration() - data->state->q_operationplan->getUnavailable()) / 3600.0;
+    {
+      auto tmp = data->state->a_qty * res->getCost()
+        * (data->state->q_operationplan->getDates().getDuration() - data->state->q_operationplan->getUnavailable()) / 3600.0;
+      data->state->a_cost += tmp;
+      if (data->logcosts && data->incostevaluation)
+        logger << indent(res->getLevel()) << "     + cost on resource '" << res << "': " << tmp << endl;
+    }
+
     // Setup cost
     data->state->a_penalty += data->state->q_operationplan->getSetupCost();
     // Build-ahead penalty: 5% of the cost   @todo buildahead penalty is hardcoded
@@ -407,9 +413,14 @@ void SolverCreate::solve(const ResourceInfinite* res, void* v)
   // Reply whatever is requested, regardless of date and quantity.
   data->state->a_qty = data->state->q_qty;
   data->state->a_date = data->state->q_date;
-  data->state->a_cost += data->state->a_qty * res->getCost()
-    * (data->state->q_operationplan->getDates().getDuration() - data->state->q_operationplan->getUnavailable())
-    / 3600.0;
+  {
+    auto tmp = data->state->a_qty * res->getCost()
+      * (data->state->q_operationplan->getDates().getDuration() - data->state->q_operationplan->getUnavailable())
+      / 3600.0;
+    data->state->a_cost += tmp;
+    if (data->logcosts && data->incostevaluation)
+      logger << indent(res->getLevel()) << "     + cost on resource '" << res << "': " << tmp << endl;
+  }
 
   // Message
   if (getLogLevel()>1 && data->state->q_qty < 0)
@@ -974,8 +985,12 @@ void SolverCreate::solve(const ResourceBuckets* res, void* v)
   if (data->state->a_qty > 0.0)
   {
     // Resource usage
-    data->state->a_cost += data->state->a_qty * res->getCost()
+    auto tmp = data->state->a_qty * res->getCost()
        * (opplan->getDates().getDuration() - opplan->getUnavailable()) / 3600.0;
+    data->state->a_cost += tmp;
+    if (data->logcosts && data->incostevaluation)
+      logger << indent(res->getLevel()) << "     + cost on resource '" << res << "': " << tmp << endl;
+
     // Build-ahead penalty: 5% of the cost   @todo buildahead penalty is hardcoded
     if (originalOpplan.end > opplan->getEnd())
       data->state->a_penalty +=

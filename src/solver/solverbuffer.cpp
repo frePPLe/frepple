@@ -402,7 +402,12 @@ void SolverCreate::solve(const Buffer* b, void* v)
     else
       cumproduced = b->getFlowPlans().rbegin()->getCumulativeProduced() - cumproduced;
     if (data->state->a_qty > cumproduced)
-      data->state->a_cost += (data->state->a_qty - cumproduced) * b->getItem()->getCost();
+    {
+      auto tmp = (data->state->a_qty - cumproduced) * b->getItem()->getCost();
+      data->state->a_cost += tmp;
+      if (data->logcosts && data->incostevaluation)
+        logger << indent(b->getLevel()) << "     + cost on buffer '" << b << "': " << tmp << endl;
+    }
   }
 
   // Message
@@ -564,8 +569,13 @@ void SolverCreate::solve(const BufferInfinite* b, void* v)
   // The demand is not propagated upstream either.
   data->state->a_qty = data->state->q_qty;
   data->state->a_date = data->state->q_date;
-  if (b->getItem())
-    data->state->a_cost += data->state->q_qty * b->getItem()->getCost();
+  if (b->getItem() && data->state->q_qty > 0)
+  {
+    auto tmp = data->state->q_qty * b->getItem()->getCost();
+    data->state->a_cost += tmp;
+    if (data->logcosts && data->incostevaluation)
+      logger << indent(b->getLevel()) << "     + cost on buffer '" << b << "': " << tmp << endl;
+  }
 
   // Message
   if (getLogLevel()>1)

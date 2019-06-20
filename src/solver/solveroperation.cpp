@@ -884,7 +884,12 @@ OperationPlan* SolverCreate::createOperation(
 
   // Increment the cost
   if (data->state->a_qty > 0.0)
-    data->state->a_cost += z->getQuantity() * oper->getCost();
+  {
+    auto tmp = z->getQuantity() * oper->getCost();
+    data->state->a_cost += tmp;
+    if (data->logcosts && data->incostevaluation)
+      logger << indent(oper->getLevel()) << "     + cost on operation '" << oper << "': " << tmp << endl;
+  }
 
   // Verify the reply
   if (data->state->a_qty == 0 && data->state->a_date <= orig_q_date)
@@ -1138,7 +1143,12 @@ void SolverCreate::solve(const OperationRouting* oper, void* v)
 
   // Increment the cost
   if (data->state->a_qty > 0.0)
-    data->state->a_cost += data->state->curOwnerOpplan->getQuantity() * oper->getCost();
+  {
+    auto tmp = data->state->curOwnerOpplan->getQuantity() * oper->getCost();
+    data->state->a_cost += tmp;
+    if (data->logcosts && data->incostevaluation)
+      logger << indent(oper->getLevel()) << "     + cost on operation '" << oper << "': " << tmp << endl;
+  }
 
   // Make other operationplans don't take this one as owner any more.
   // We restore the previous owner, which could be nullptr.
@@ -1413,6 +1423,7 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v)
       else
       {
         setLogLevel(0);
+        data->incostevaluation = true;
         try
         {
           (*altIter)->getOperation()->solve(*this,v);
@@ -1470,9 +1481,12 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v)
 
       // Message
       if (loglevel && search != PRIORITY)
+      {
+        data->incostevaluation = false;
         logger << indent(oper->getLevel()) << "   Alternate operation '" << oper->getName()
           << "' evaluates alternate '" << (*altIter)->getOperation() << "': quantity " << data->state->a_qty
           << ", cost " << deltaCost << ", penalty " << deltaPenalty << endl;
+      }
 
       // Process the result
       if (search == PRIORITY)
@@ -1696,8 +1710,10 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v)
   // Increment the cost
   if (data->state->a_qty > 0.0)
   {
-    auto opplan = data->state->curOwnerOpplan;
-    data->state->a_cost += opplan->getQuantity() * oper->getCost();
+    auto tmp = data->state->curOwnerOpplan->getQuantity() * oper->getCost();
+    data->state->a_cost += tmp;
+    if (data->logcosts && data->incostevaluation)
+      logger << indent(oper->getLevel()) << "     + cost on operation '" << oper << "': " << tmp << endl;
   }
 
   // Make sure other operationplans don't take this one as owner any more.

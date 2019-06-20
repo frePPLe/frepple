@@ -1065,6 +1065,10 @@ class SolverCreate : public Solver
         /** Flags whether or not constraints are being tracked. */
         bool logConstraints;
 
+        /** Simplistic flag to trace the costs being considered for alternate selection. */
+        bool logcosts = false;   // SET TO TRUE AND RECOMPILE TO ACTIVATE EXTRA LOGGING OF THE COSTS
+        bool incostevaluation = false;
+
         /** Internal flag that is set to true when solving for safety stock. */
         bool safety_stock_planning;
 

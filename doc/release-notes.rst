@@ -6,8 +6,8 @@ Release notes
 
 .. rubric:: Production planning
 
-- Bug fix: solving safety stock across multiple stages could incorrectly leave material shortages
-  in the constrained plan.
+- Bug fix: material shortages can be left in the constrained plan, when solving safety stock
+  across multiple stages or in the presence of confirmed supply.
 
 .. rubric:: User interface
 

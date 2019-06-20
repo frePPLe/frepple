@@ -179,7 +179,8 @@ void SolverCreate::solve(const Buffer* b, void* v)
                 << "   Refuse to create extra supply because confirmed supply is already available at "
                 << scanner->getDate() << endl;
             supply_exists_already = true;
-            shortage = -prev->getOnhand();
+            if (shortage  < -prev->getOnhand())
+              shortage = -prev->getOnhand();
             tried_requested_date = true; // Disables an extra supply check
             break;
           }
@@ -255,7 +256,7 @@ void SolverCreate::solve(const Buffer* b, void* v)
         {
           // Keep track of the shorted quantity.
           // Only consider shortages later than the requested date.
-          if (theDate >= requested_date)
+          if (theDate >= requested_date && shortage < -prev->getOnhand())
             shortage = -prev->getOnhand();
 
           // Reset the date from which excess material is in the buffer. This

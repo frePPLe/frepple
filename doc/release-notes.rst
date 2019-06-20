@@ -11,13 +11,16 @@ Release notes
 
 .. rubric:: User interface
 
+- Filters for a report can now be updated easier. Rather than opening the search dialog
+  again you can directly edit the filter description in the title.
+
+- Multiple files can now be imported together in a grid. Opening the import box multiple times
+  is a bit boring. Selecting or dragging multiple files is cooler.
+
 - Bug fix. When using the Empty Database feature on either manufacturing or distribution or delivery or purchase orders
   then all orders (manufacturing + distribution + delivery + purchase) were deleted.
   
 - Bug fix on backlog calculation of the `demand report <user-guide/user-interface/plan-analysis/demand-report.html>`_
-
-- Filters for a report can now be updated easier. Rather than opening the search dialog
-  again you can directly edit the filter description in the title.
 
 5.2.0 (2019/05/27)
 ==================

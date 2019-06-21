@@ -741,7 +741,7 @@ var grid = {
         '<div class="modal-content">'+
           '<div class="modal-header">'+
             '<button type="button" class="close" data-dismiss="modal" aria-label=' + gettext("Close") + '>' +
-              '<span aria-hidden="true">&times;</span>' +
+              '<span aria-hidden="true" class="fa fa-times"></span>' +
             '</button>'+
             '<h4 class="modal-title">'+gettext("Customize")+'</h4>'+
           '</div>'+
@@ -1048,7 +1048,7 @@ var grid = {
       $('#popup').html('<div class="modal-dialog" style="width: 350px;">'+
           '<div class="modal-content">'+
             '<div class="modal-header">'+
-              '<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>'+
+            '<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true" class="fa fa-times"></span></button>'+
               '<h4 class="modal-title text-capitalize-first">'+gettext("Export CSV or Excel file")+'</h4>'+
             '</div>'+
             '<div class="modal-body">'+
@@ -1957,7 +1957,7 @@ var dashboard = {
     var txt = '<div class="modal-dialog">' +
       '<div class="modal-content">' +
         '<div class="modal-header">' +
-          '<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>' +
+          '<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true" class="fa fa-times"></span></button>' +
           '<h4 class="modal-title">' + gettext("Customize a dashboard row") + '</h4>' +
         '</div>' +
       '<div class="modal-body">' +
@@ -2309,7 +2309,7 @@ function import_show(title, paragraph, multiple, fxhr, initialDropped)
   var modalcontent = '<div class="modal-dialog">'+
       '<div class="modal-content">'+
         '<div class="modal-header">'+
-          '<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>'+
+          '<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true" class="fa fa-times"></span></button>'+
           '<h4 class="modal-title">'+
             '<span id="modal_title">'+gettext("Import CSV or Excel file")+ '</span>' +'&nbsp;'+
             '<span id="animatedcog" class="fa fa-cog fa-spin fa-2x fa-fw" style="visibility: hidden;"></span>'+
@@ -3450,4 +3450,25 @@ function Gauge(placeholderName, configuration)
 
   // initialization
   this.configure(configuration);
+}
+
+
+function showModalImage(event, title) {
+	var popup = $('#popup');
+	popup.html(
+	  '<div class="modal-dialog">'
+    + '<div class="modal-content">'
+    + '<div class="modal-header" style="border-top-left-radius: inherit; border-top-right-radius: inherit">'
+    + '<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true" class="fa fa-times"></span></button>'
+    + '<h4 class="modal-title"></h4>'
+    + '</div>'
+    + '<div class="modal-body">'
+    + '<img src="" style="width:100%">'
+    + '</div>'
+    + '</div>'
+    + '</div>');
+	popup.find("h4").text(title);
+	popup.find("img").attr("src", $(event.target).attr("src"));
+  popup.modal('show');
+	event.preventDefault();
 }

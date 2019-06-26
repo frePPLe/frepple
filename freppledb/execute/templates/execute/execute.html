@@ -61,18 +61,18 @@
 
   function cancelTask(id) {
     $.jgrid.hideModal("#searchmodfbox_grid");
-
     $("#popup").html('<div class="modal-dialog">'+
         '<div class="modal-content">'+
-          '<div class="modal-header">'+
+          '<div class="modal-header" style="border-top-left-radius: inherit; border-top-right-radius: inherit">'+
+            '<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true" class="fa fa-times"></span></button>'+
             '<h4 class="modal-title">'+gettext('Cancel task')+'</h4>'+
           '</div>'+
           '<div class="modal-body"><p>'+
           interpolate(gettext('You are about to cancel task %s'), [id]) +
           '</p></div>'+
           '<div class="modal-footer">'+
-            '<input type="submit" id="confirmbutton" role="button" class="btn btn-danger pull-left" value="'+gettext('Confirm')+'">'+
-            '<input type="submit" id="cancelbutton" role="button" class="btn btn-primary pull-right" data-dismiss="modal" value="'+gettext('Cancel')+'">'+
+            '<input type="submit" id="confirmbutton" role="button" class="btn btn-danger pull-left" value="'+gettext('Cancel task')+'">'+
+            '<input type="submit" id="cancelbutton" role="button" class="btn btn-primary pull-right" data-dismiss="modal" value="'+gettext('close')+'">'+
           '</div>'+
         '</div>'+
     '</div>' )

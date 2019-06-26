@@ -3456,7 +3456,7 @@ function Gauge(placeholderName, configuration)
 function showModalImage(event, title) {
 	var popup = $('#popup');
 	popup.html(
-	  '<div class="modal-dialog">'
+	  '<div class="modal-dialog modal-lg">'
     + '<div class="modal-content">'
     + '<div class="modal-header" style="border-top-left-radius: inherit; border-top-right-radius: inherit">'
     + '<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true" class="fa fa-times"></span></button>'

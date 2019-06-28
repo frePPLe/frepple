@@ -186,6 +186,30 @@ Here are the steps to get a fully working environment.
 
          SECRET_KEY = '%@mzit!i8b*$zc&6oev96=RANDOMSTRING'
 
+      Change the "INSTALLED_APPS" to match your environment and the licensed modules.
+      ::
+
+        INSTALLED_APPS = (
+          'django.contrib.auth',
+          'django.contrib.contenttypes',
+          'django.contrib.messages',
+          'django.contrib.staticfiles',
+          'bootstrap3',
+          'freppledb.boot',
+          #                                << ADD YOUR CUSTOM EXTENSION APPS HERE
+          'freppledb.input',
+          #'freppledb.odoo',             # << UNCOMMENT TO ACTIVATE THE ODOO INTEGRATION
+          #'freppledb.erpconnection',    # << UNCOMMENT TO ACTIVATE THE GENERIC ERP INTEGRATION
+          'freppledb.metrics',
+          'freppledb.output',
+          'freppledb.execute',
+          'freppledb.common',
+          'django_filters',
+          'rest_framework',
+          'django_admin_bootstrapped',
+          'django.contrib.admin',
+          )
+
    #. | **/etc/frepple/license.xml**
       | No license file is required for the Community Edition.
       | If you are using the Enterprise Edition, replace this file with the

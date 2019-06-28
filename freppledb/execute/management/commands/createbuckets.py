@@ -129,18 +129,20 @@ class Command(BaseCommand):
     try:
       # Initialize the task
       if options['task']:
-        try:
-          task = Task.objects.all().using(database).get(pk=options['task'])
-        except Task.DoesNotExist:
-          raise CommandError("Task identifier not found")
-        if task.started or task.finished or task.status != "Waiting" or task.name not in ('frepple_createbuckets', 'createbuckets'):
-          raise CommandError("Invalid task identifier")
-        task.status = '0%'
-        task.started = now
+        if options['task'] > 0:
+          try:
+            task = Task.objects.all().using(database).get(pk=options['task'])
+          except Task.DoesNotExist:
+            raise CommandError("Task identifier not found")
+          if task.started or task.finished or task.status != "Waiting" or task.name not in ('frepple_createbuckets', 'createbuckets'):
+            raise CommandError("Invalid task identifier")
+          task.status = '0%'
+          task.started = now
       else:
         task = Task(name='createbuckets', submitted=now, started=now, status='0%', user=user, arguments="--start=%s --end=%s --weekstart=%s" % (start, end, weekstart))
-      task.processid = os.getpid()
-      task.save(using=database)
+      if task:
+        task.processid = os.getpid()
+        task.save(using=database)
 
       # Validate the date arguments
       try:
@@ -236,8 +238,9 @@ class Command(BaseCommand):
           curdate = curdate + timedelta(1)
 
       # Log success
-      task.status = 'Done'
-      task.finished = datetime.now()
+      if task:
+        task.status = 'Done'
+        task.finished = datetime.now()
 
     except Exception as e:
       if task:

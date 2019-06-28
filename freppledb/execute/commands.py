@@ -23,9 +23,27 @@ from django.db import DEFAULT_DB_ALIAS
 from django.utils.translation import ugettext_lazy as _
 
 from freppledb.common.commands import PlanTaskRegistry, PlanTask
-from freppledb.common.models import Parameter
+from freppledb.common.models import Parameter, Bucket
 
 logger = logging.getLogger(__name__)
+
+
+@PlanTaskRegistry.register
+class CheckBuckets(PlanTask):
+  description = "Generation of time buckets"
+  sequence = 3
+
+  @classmethod
+  def getWeight(cls, database=DEFAULT_DB_ALIAS, **kwargs):
+    if Bucket.objects.all().using(database).exists():
+      return -1
+    else:
+      return 1
+
+  @classmethod
+  def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
+    from django.core import management
+    management.call_command('createbuckets', database=database, task=-1)
 
 
 @PlanTaskRegistry.register

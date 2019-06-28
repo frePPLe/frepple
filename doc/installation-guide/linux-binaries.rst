@@ -5,6 +5,7 @@ Linux binary packages
 * `Supported distributions`_
 * `Installation and configuration`_
 * `Debian installation script`_
+* `Debian uninstallation script`_
 * `Red Hat installation script`_
 
 ***********************
@@ -299,6 +300,23 @@ inspiration for your own deployments.
 
   # Create frepple database schema
   frepplectl migrate --noinput
+
+
+****************************
+Debian uninstallation script
+****************************
+
+Uninstallation is as simple as:
+
+::
+
+  # Drop all postgresql database. Repeat this command for all databases
+  # configured in the /etc/frepple/djangosettings.py file
+  sudo dropdb -U <db-user>  <db-name>
+
+  # Uninstall the package, including log files and configuration files
+  sudo apt-get purge frepple     
+
 
 ***************************
 Red Hat installation script

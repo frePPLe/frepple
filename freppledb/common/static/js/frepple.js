@@ -246,9 +246,9 @@ var upload = {
             $.jgrid.hideModal("#searchmodfbox_grid");
               $('#popup').html('<div class="modal-dialog">'+
                       '<div class="modal-content">'+
-                        '<div class="modal-header">'+
+                        '<div class="modal-header bg-danger">'+
                           '<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true" class="fa fa-times"></span></button>'+
-                          '<h4 class="modal-title alert alert-danger">'+ gettext("Error saving data")+'</h4>'+
+                          '<h4 class="modal-title">'+ gettext("Error saving data")+'</h4>'+
                         '</div>'+
                         '<div class="modal-body">'+
                           '<p>'+result.responseText+'</p>'+
@@ -1213,7 +1213,8 @@ var grid = {
                    },
                  error: function (result, stat, errorThrown) {
                $('#popup .modal-body p').html(result.responseText);
-               $('#popup .modal-title').addClass("alert alert-danger").html(gettext("Error deleting data"));
+               $('#popup .modal-title').html(gettext("Error deleting data"));
+               $('#popup .modal-header').addClass('bg-danger');
                $('#delbutton').prop("disabled", true).hide();
                    }
            })
@@ -1261,7 +1262,8 @@ var grid = {
                    },
                  error: function (result, stat, errorThrown) {
            $('#popup .modal-body p').html(result.responseText);
-           $('#popup .modal-title').addClass("alert alert-danger").html(gettext("Error copying data"));
+           $('#popup .modal-title').html(gettext("Error copying data"));
+           $('#popup .modal-header').addClass('bg-danger');
            $('#copybutton').prop("disabled", true).hide();
                    }
        })
@@ -1616,7 +1618,8 @@ var ERPconnection = {
           },
           error: function (result, stat, errorThrown) {
             fmts = ngettext("Error during export");
-            $('#popup .modal-title').addClass('alert alert-danger').html(gettext("Error during export"));
+            $('#popup .modal-title').html(gettext("Error during export"));
+            $('#popup .modal-header').addClass('bg-danger');
             $('#popup .modal-body p').html(gettext("Error during export") + ':' + result.responseText);
             $('#button_export').text(gettext('retry'));
           }
@@ -1769,7 +1772,8 @@ var ERPconnection = {
               },
               error: function (result, stat, errorThrown) {
                 fmts = ngettext("Error during export");
-                $('#popup .modal-title').addClass('alert alert-danger').html(gettext("Error during export"));
+                $('#popup .modal-title').html(gettext("Error during export"));
+                $('#popup .modal-header').addClass('bg-danger');
                 $('#popup .modal-body').css({'overflow-y':'auto'}).html('<div style="overflow-y:auto; height: 300px; resize: vertical">' + result.responseText + '</div>');
                 $('#button_export').val(gettext('Retry'));
                 $('#popup .modal-dialog').css({'visibility':'visible'})
@@ -1800,7 +1804,8 @@ var ERPconnection = {
         },
         error: function (result, stat, errorThrown) {
           fmts = gettext("Error getting data");
-          $('#popup .modal-title').addClass('alert alert-danger').html(fmts);
+          $('#popup .modal-title').html(fmts);
+          $('#popup .modal-header').addClass('bg-danger');
           $('#popup .modal-body').css({'overflow-y':'auto'}).html('<div style="overflow-y:auto; height: 300px; resize: vertical">' + result.responseText + '</div>');
           $('#button_export').val(gettext('Retry'));
           $('#popup .modal-dialog').css({'visibility':'visible'})
@@ -2282,12 +2287,12 @@ function about_show()
         $.jgrid.hideModal("#searchmodfbox_grid");
         $('#popup').html('<div class="modal-dialog style="width: 400px;">'+
                 '<div class="modal-content">'+
-                  '<div class="modal-header">'+
+                  '<div class="modal-header bg-danger">'+
                     '<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true" class="fa fa-times"></span></button>'+
-                    '<h4 class="modal-title">About frePPLe ' + data.version + '</h4>'+
+                    '<h4 class="modal-title">About frePPLe</h4>'+
                   '</div>'+
                   '<div class="modal-body">'+
-                    '<p>'+'<h4 class="modal-title alert alert-danger">'+ gettext("Error reading version information")+'</h4>'+'</p>'+
+                    '<p>' + gettext("Error reading version information") + '</p>'+
                   '</div>'+
                 '</div>'+
             '</div>' )

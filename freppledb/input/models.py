@@ -19,6 +19,7 @@ from datetime import datetime, time
 from decimal import Decimal
 
 from django.db import models, DEFAULT_DB_ALIAS
+from django.db.models.base import DEFERRED
 from django.utils.translation import ugettext_lazy as _
 from django.utils.text import format_lazy
 
@@ -1446,8 +1447,8 @@ class OperationPlanMaterial(AuditModel):
 
 class DistributionOrder(OperationPlan):
 
-  shipping_date = AliasDateTimeField(db_column='startdate', verbose_name=_('shipping date'), null=True, blank=True)
-  receipt_date = AliasDateTimeField(db_column='enddate', verbose_name=_('receipt date'), null=True, blank=True)
+  shipping_date = AliasDateTimeField(db_column='startdate', verbose_name=_('shipping date'), null=True, blank=True, default=DEFERRED)
+  receipt_date = AliasDateTimeField(db_column='enddate', verbose_name=_('receipt date'), null=True, blank=True, default=DEFERRED)
 
   class DistributionOrderManager(OperationPlan.Manager):
 
@@ -1471,8 +1472,8 @@ class DistributionOrder(OperationPlan):
 
 class PurchaseOrder(OperationPlan):
 
-  ordering_date = AliasDateTimeField(db_column='startdate', verbose_name=_('ordering date'), null=True, blank=True)
-  receipt_date = AliasDateTimeField(db_column='enddate', verbose_name=_('receipt date'), null=True, blank=True)
+  ordering_date = AliasDateTimeField(db_column='startdate', verbose_name=_('ordering date'), null=True, blank=True, default=DEFERRED)
+  receipt_date = AliasDateTimeField(db_column='enddate', verbose_name=_('receipt date'), null=True, blank=True, default=DEFERRED)
 
   class PurchaseOrderManager(OperationPlan.Manager):
 

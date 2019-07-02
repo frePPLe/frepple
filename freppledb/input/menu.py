@@ -29,7 +29,7 @@ from freppledb.input.models import OperationPlanMaterial, OperationPlanResource
 menu.addItem(
   "inventory", "inventory detail", url="/flowplan/",
   report=freppledb.input.views.InventoryDetail, index=200,
-  model=OperationPlanMaterial
+  model=OperationPlanMaterial, dependencies=[Item, Location]
   )
 menu.addItem(
   "inventory", "distribution orders", url="/data/input/distributionorder/",
@@ -85,7 +85,7 @@ menu.addItem(
 menu.addItem(
   "capacity", "resource detail report", url="/loadplan/",
   report=freppledb.input.views.ResourceDetail, index=200,
-  model=OperationPlanResource
+  model=OperationPlanResource, dependencies=[Resource]
   )
 menu.addItem(
   "capacity", "resources", url="/data/input/resource/",

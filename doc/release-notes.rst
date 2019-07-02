@@ -11,6 +11,9 @@ Release notes
 
 .. rubric:: User interface
 
+- The modeling wizard that guides new users in loading their first data in frePPLe is completely
+  redesigned and restructured. Currently the new wizard is not available in the Community Edition.
+
 - Filters for a report can now be updated easier. Rather than opening the search dialog
   again you can directly edit the filter description in the title.
 

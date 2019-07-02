@@ -5,7 +5,7 @@ Suboperations
 Suboperations apply to operations of type operation_routing, operation_alternate,
 operation_split.
 
-Each of these refer to child-operations.
+Each of these operation types have child operations belonging to them, as defined in this table.
 
 ================ ================= ===========================================================
 Field            Type              Description

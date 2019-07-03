@@ -250,7 +250,7 @@ def wrapTask(request, action):
     task = Task(name='loaddata', submitted=now, status='Waiting', user=request.user, arguments=args['fixture'])
     task.save(using=request.database)
     # Also run the workflow upon loading of manufacturing_demo or distribution_demo
-    if (args['regenerateplan'] == 'true'):
+    if (args.get('regenerateplan', False) == 'true'):
       active_modules = 'supply'
       task = Task(name='runplan', submitted=now, status='Waiting', user=request.user)
       task.arguments = "--constraint=15 --plantype=1 --env=%s --background" % (active_modules,)

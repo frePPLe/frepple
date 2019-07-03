@@ -3,7 +3,7 @@ Remote commands
 ===============
 
 All operations from the execution screen can also be launched and
-monitored remotely through an web service API.
+monitored remotely through a web service API.
 
 * `Reference`_
 * `Authentication`_

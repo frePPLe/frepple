@@ -280,7 +280,7 @@ HasProblems::EntityIterator::EntityIterator() : type(0)
   delete demIter;
   type = 4;
   opIter = new Operation::iterator(Operation::begin());
-  if (*demIter == Demand::end())
+  if (*opIter == Operation::end())
   {
     // There is nothing at all in this model
     delete opIter;

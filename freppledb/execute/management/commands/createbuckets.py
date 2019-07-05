@@ -50,7 +50,7 @@ class Command(BaseCommand):
       help='Start date in YYYY-MM-DD format'
       )
     parser.add_argument(
-      '--end', default='2021-1-1',
+      '--end', default='2022-1-1',
       help='End date in YYYY-MM-DD format'
       )
     parser.add_argument(
@@ -311,13 +311,13 @@ class Command(BaseCommand):
           <div class="form-group">
           <label class="col-sm-3 control-label">Start date</label>
           <div class="col-sm-9">
-          <input class="vDateField form-control" id="start" name="start" type="text" size="12"/>
+          <input class="vDateField form-control" id="start" name="start" type="text" size="12" value="2014-01-01"/>
           </div>
           </div>
           <div class="form-group">
           <label class="col-sm-3 control-label">End date</label>
           <div class="col-sm-9">
-          <input class="vDateField form-control" id="end" name="end" type="text" size="12"/>
+          <input class="vDateField form-control" id="end" name="end" type="text" size="12" value="2022-01-01"/>
           </div>
           </div>
           <div class="form-group">

@@ -386,7 +386,11 @@ Resource::PlanIterator::PlanIterator(Resource* r, PyObject* o) : bucketiterator(
   // Start date of the first bucket
   end_date = PyIter_Next(bucketiterator);
   if (!end_date)
-    throw LogicException("Expecting at least two dates as argument");
+  {
+    logger << "Warning: No valid buckets for exporting resource plan on '" << r << "'" << endl;
+    bucketiterator = nullptr;
+    return;
+  }
 
   // Collect all subresources
   if (!r)
@@ -556,6 +560,9 @@ void Resource::PlanIterator::update(Resource::PlanIterator::_res* i, Date till)
 
 PyObject* Resource::PlanIterator::iternext()
 {
+  if (!bucketiterator)
+    return nullptr;
+
   // Reset counters
   bucket_available = 0.0;
   bucket_unavailable = 0.0;

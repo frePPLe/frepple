@@ -1,8 +1,8 @@
 Release notes
 -------------
 
-5.3.0 (upcoming release)
-========================
+5.3.0 (2019/07/06)
+==================
 
 .. rubric:: Production planning
 
@@ -11,8 +11,14 @@ Release notes
 
 .. rubric:: User interface
 
-- The modeling wizard that guides new users in loading their first data in frePPLe is completely
-  redesigned and restructured. Currently the new wizard is not available in the Community Edition.
+- | The modelling wizard that guides new users in loading their first data in frePPLe is completely
+    redesigned. It now provides a more complete, more structured and deeper guidance for getting
+    started with frePPLe.
+  | Currently this new wizard is not available in the Community Edition.
+  
+- A new guided tour is available. Previous guided tour was a journey around the different pages 
+  and features of frePPLe. New guided tour is composed of use case questions, illustrated in
+  a short video.
 
 - Filters for a report can now be updated easier. Rather than opening the search dialog
   again you can directly edit the filter description in the title.

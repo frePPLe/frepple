@@ -10,17 +10,17 @@
     "angular-gettext": "^2.3.8"
   },
   "devDependencies": {
-    "bootstrap": "^3.3.6",
-    "grunt": ">=1.0.1",
+    "bootstrap": "^3.4.1",
+    "grunt": ">=1.0.4",
     "grunt-angular-gettext": ">1.0",
-    "grunt-contrib-clean": "^1.0.0",
+    "grunt-contrib-clean": "^2.0.0",
     "grunt-contrib-concat": "^1.0.1",
-    "grunt-contrib-less": ">=1.1.0",
-    "grunt-contrib-uglify": "^2.0.0",
-    "grunt-contrib-watch": ">=0.6.1",
+    "grunt-contrib-less": ">=2.0.0",
+    "grunt-contrib-uglify": "^4.0.1",
+    "grunt-contrib-watch": ">=1.1.0",
     "grunt-exec": "^3.0.0",
     "less": ">=2.5.3",
-    "less-plugin-autoprefix": ">=1.5.1"
+    "less-plugin-autoprefix": ">=1.5.1"  
   },
   "repository": {
     "type": "git",

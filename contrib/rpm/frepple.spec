@@ -22,7 +22,7 @@
 
 Summary: Free Production PLanning
 Name: frepple
-Version: 5.3.0
+Version: 6.0.0
 Release: 1%{?dist}
 License: AGPLv3+
 Group: Applications/Productivity

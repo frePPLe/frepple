@@ -2,27 +2,14 @@ var tourdata = [
    // Main page of the tour
    {
      description:
-    	 '<style>' +
-    	 '.block {' +
-    	 '  display: block;' +
-    	 '  width: 550px;' +
-    	 '  border: none;' +
-    	 '  background-color: #D5A97A;' +
-    	 '  padding: 14px 28px;' +
-    	 '  font-size: 16px;' +
-    	 '  cursor: pointer;' +
-    	 '	color: black; ' +
-    	 '  text-align: center;' +
-    	 '}' +
-    	 '.block:hover { '+
-    	 '	  background-color: #ddd; '+
-    	 '	  color: black; ' +
-    	 '	} ' +
-    	 '</style>' +
-    	 '<div class="container">' +
-         '<button type="button" class="block" class="btn btn-info" data-toggle="collapse" data-target="#demo1">Production Planning</button>' +
-         '<div id="demo1" class="collapse">' +
-         '<h2></h2>' +
+    	 '<div class="panel-group" id="touraccordion">' + 
+    	 '<div class="panel panel-default">' +
+    	   '<div class="panel-heading" data-toggle="collapse" data-parent="#touraccordion" href="#accordionproduction">' +
+    	   '<h4 class="panel-title">' +
+    	   'Production Planning&nbsp;&nbsp;<small><span class="fa fa-plus fa-xs"></span></small>' +
+    	   '</h4></div>' +
+         '<div id="accordionproduction" class="panel-collapse collapse">' +
+         '<div class="panel-body"><div style="margin: .5em">' +
         '<span class="underline"><a href="/?tour=1,0,0">How can I update my plan when a machine breaks down?</a></span><br>' +
         '<span class="underline"><a href="/?tour=2,0,0">How can I change the assigned resource of a manufacturing order?</a></span><br>' +
         '<span class="underline"><a href="/?tour=3,0,0">How can I detect manufacturing orders that need expediting?</a></span><br>' +
@@ -34,27 +21,34 @@ var tourdata = [
         '<span class="underline"><a href="/?tour=9,0,0">How can I measure the impact of rush orders?</a></span><br>' +
         '<span class="underline"><a href="/?tour=10,0,0">How precisely can I quote a delivery date for a new customer order?</a></span><br>' +
         '<span class="underline"><a href="/?tour=11,0,0">How can I optimize my plan in the GANTT chart of plan editor?</a></span><br>' +
-        '<h2></h2>' +
+        '</div></div>' +
         '</div>' +
         '</div>' +
-        '<div class="container">' +
-        '<button type="button" class="block" class="btn btn-info" data-toggle="collapse" data-target="#demo4">Integration / API / Automation</button>' +
-        '<div id="demo4" class="collapse">' +
-        '<h2></h2>' +
-        '<span class="underline"><a href="/?tour=12,0,0">How can I export proposed purchase orders to an ERP system?</a></span><br>' +
-        '<span class="underline"><a href="/?tour=13,0,0">What is the meaning of each MO/PO/DO status?</a></span><br>' +
-        '<span class="underline"><a href="/?tour=14,0,0">How do I synchronize data in frePPLe with my ERP system?</a></span><br>' +
-        '<h2></h2>' +
+     	  '<div class="panel panel-default">' +
+  	    '<div class="panel-heading" data-toggle="collapse" data-parent="#touraccordion" href="#accordionintegration">' +
+  	    '<h4 class="panel-title">' +
+  	    'Integration / API / Automation&nbsp;&nbsp;<small><span class="fa fa-plus fa-xs"></span></small>' +
+  	    '</h4></div>' +
+        '<div id="accordionintegration" class="panel-collapse collapse">' +
+        '<div class="panel-body"><div style="margin: .5em">' +
+        '<span class="underline"><a href="/?tour=27,0,0">How can I export proposed purchase orders to an ERP system?</a></span><br>' +
+        '<span class="underline"><a href="/?tour=28,0,0">What is the meaning of each MO/PO/DO status?</a></span><br>' +
+        '<span class="underline"><a href="/?tour=29,0,0">How do I synchronize data in frePPLe with my ERP system?</a></span><br>' +
+        '</div></div>' +
         '</div>' +
         '</div>' +
-        '<div class="container">' +
-        '<button type="button" class="block" class="btn btn-info" data-toggle="collapse" data-target="#demo5">What-if scenarios</button>' +
-        '<div id="demo5" class="collapse">' +
-        '<h2></h2>' +
-        '<span class="underline"><a href="/execute/?tour=15,0">How do what-if scenarios work?</a></span><br>' +
-        '<h2></h2>' +
+     	  '<div class="panel panel-default">' +
+  	    '<div class="panel-heading" data-toggle="collapse" data-parent="#touraccordion" href="#accordionscenario">' +
+  	    '<h4 class="panel-title">' +
+  	    'What-if scenarios&nbsp;&nbsp;<small><span class="fa fa-plus fa-xs"></span></small>' +
+  	    '</h4></div>' +
+  	    '<div id="accordionscenario" class="panel-collapse collapse">' +
+  	    '<div class="panel-body"><div style="margin: .5em">' +
+        '<span class="underline"><a href="/execute/?tour=30,0">How do what-if scenarios work?</a></span><br>' +
+        '</div></div>' +
         '</div>' +
-        '</div>' 
+        '</div>' +
+        '</div>'
    }, 
    
 // PRODUCTION PLANNING

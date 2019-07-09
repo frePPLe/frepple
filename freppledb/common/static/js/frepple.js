@@ -3008,15 +3008,15 @@ var tour = {
     tour.step = parseInt(splitargs[1]);
     tour.autoplay = parseInt(splitargs[2]);
     // Load and execute the tutorial
-    jQuery.ajax( {
+    $.ajax( {
         url: "/static/js/i18n/tour.en.js",
         dataType: "script",
-        cache: true
-      })
-      .success( tour.init )
-      .fail( function() {
-        console.log('Error loading the tutorial: ' + arguments[2].toString());
-      });
+        cache: true,
+        success: tour.init,
+        fail: function() {
+          console.log('Error loading the tutorial: ' + arguments[2].toString());
+          }
+        });
   },
 
   init: function()
@@ -3025,7 +3025,7 @@ var tour = {
     $('#timebuckets').modal('hide');
     $.jgrid.hideModal("#searchmodfbox_grid");
 
-    $('#popup').removeClass("in").addClass("tourguide").html('<div class="modal-dialog" id="tourModal" role="dialog" style="width: 600px; position: absolute; top: 30px; left: auto; right: 15px;">'+
+    $('#popup').removeClass("in").addClass("tourguide").html('<div class="modal-dialog" id="tourModal" role="dialog" style="width: 600px; position: absolute; top: 30px; bottom: 10px; left: auto; right: 15px;">'+
         '<div class="modal-content">'+
         '<div class="modal-header">'+
           '<h4 id="modalTitle" class="modal-title"><strong>'+ gettext("Guided tour") +
@@ -3034,7 +3034,7 @@ var tour = {
         '<div class="modal-body" id="tourmodalbody" style="padding-bottom:20px;">'+
             tourdata[tour.chapter]['description']+
         '</div>'+
-      '</div>'+
+     '</div>'+
     '</div>' )
     .modal({ //these 2 lines disable close when clicking outside the modal
       //backdrop: 'static',
@@ -3456,7 +3456,7 @@ function Gauge(placeholderName, configuration)
 function showModalImage(event, title) {
 	var popup = $('#popup');
 	popup.html(
-	  '<div class="modal-dialog modal-lg">'
+	  '<div class="modal-dialog modal-lg" style="margin-top: 20px; width:90%; margin-left: auto; margin-right: auto">'
     + '<div class="modal-content">'
     + '<div class="modal-header" style="border-top-left-radius: inherit; border-top-right-radius: inherit">'
     + '<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true" class="fa fa-times"></span></button>'

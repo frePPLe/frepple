@@ -19,7 +19,6 @@ from datetime import datetime, time
 from decimal import Decimal
 
 from django.db import models, DEFAULT_DB_ALIAS
-from django.db.models.base import DEFERRED
 from django.utils.translation import ugettext_lazy as _
 from django.utils.text import format_lazy
 
@@ -1441,8 +1440,19 @@ class OperationPlanMaterial(AuditModel):
 
 class DistributionOrder(OperationPlan):
 
-  shipping_date = AliasDateTimeField(db_column='startdate', verbose_name=_('shipping date'), null=True, blank=True, default=DEFERRED)
-  receipt_date = AliasDateTimeField(db_column='enddate', verbose_name=_('receipt date'), null=True, blank=True, default=DEFERRED)
+  shipping_date = AliasDateTimeField(db_column='startdate', verbose_name=_('shipping date'), null=True, blank=True)
+  receipt_date = AliasDateTimeField(db_column='enddate', verbose_name=_('receipt date'), null=True, blank=True)
+
+  def __init__(self, *args, **kwargs):
+    if 'startdate' in kwargs:
+      kwargs['shipping_date'] = kwargs['startdate']
+    elif 'shipping_date' in kwargs:
+      kwargs['startdate'] = kwargs['shipping_date']
+    if 'enddate' in kwargs:
+      kwargs['receipt_date'] = kwargs['enddate']
+    elif 'receipt_date' in kwargs:
+      kwargs['enddate'] = kwargs['receipt_date']
+    return super().__init__(*args, **kwargs)
 
   class DistributionOrderManager(OperationPlan.Manager):
 
@@ -1466,8 +1476,19 @@ class DistributionOrder(OperationPlan):
 
 class PurchaseOrder(OperationPlan):
 
-  ordering_date = AliasDateTimeField(db_column='startdate', verbose_name=_('ordering date'), null=True, blank=True, default=DEFERRED)
-  receipt_date = AliasDateTimeField(db_column='enddate', verbose_name=_('receipt date'), null=True, blank=True, default=DEFERRED)
+  ordering_date = AliasDateTimeField(db_column='startdate', verbose_name=_('ordering date'), null=True, blank=True)
+  receipt_date = AliasDateTimeField(db_column='enddate', verbose_name=_('receipt date'), null=True, blank=True)
+
+  def __init__(self, *args, **kwargs):
+    if 'startdate' in kwargs:
+      kwargs['ordering_date'] = kwargs['startdate']
+    elif 'ordering_date' in kwargs:
+      kwargs['startdate'] = kwargs['ordering_date']
+    if 'enddate' in kwargs:
+      kwargs['receipt_date'] = kwargs['enddate']
+    elif 'receipt_date' in kwargs:
+      kwargs['enddate'] = kwargs['receipt_date']
+    return super().__init__(*args, **kwargs)
 
   class PurchaseOrderManager(OperationPlan.Manager):
 

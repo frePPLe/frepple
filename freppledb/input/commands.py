@@ -887,7 +887,7 @@ class loadBuffers(LoadTask):
       cnt = 0
       starttime = time()
       cursor.execute('''
-        SELECT name, description, location_id, item_id, onhand,
+        SELECT item_id||' @ '||location_id, description, location_id, item_id, onhand,
           minimum, minimum_calendar_id, type,
           min_interval, category, subcategory, source
         FROM buffer %s

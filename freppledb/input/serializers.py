@@ -427,7 +427,7 @@ class SubOperationdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
 class BufferFilter(filters.FilterSet):
   class Meta:
     model = freppledb.input.models.Buffer
-    fields = {'name': ['exact', 'in', 'contains', ], 'description': ['exact', 'contains', ],
+    fields = {'id': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
               'category': ['exact', 'contains', ], 'subcategory': ['exact', 'contains', ],
               'type': ['exact', 'in', ], 'location': ['exact', 'in', ], 'item': ['exact', 'in', ],
               'onhand': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ], 'minimum': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
@@ -435,7 +435,7 @@ class BufferFilter(filters.FilterSet):
               'source': ['exact', 'in', ], 'lastmodified': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ], }
 
     filter_fields = (
-      'name', 'description', 'category', 'subcategory', 'type', 'location',
+      'id', 'description', 'category', 'subcategory', 'type', 'location',
       'item', 'onhand', 'minimum', 'minimum_calendar', 'min_interval',
       'source', 'lastmodified'
       )
@@ -445,12 +445,12 @@ class BufferSerializer(BulkSerializerMixin, ModelSerializer):
     class Meta:
       model = freppledb.input.models.Buffer
       fields = (
-        'name', 'description', 'category', 'subcategory', 'type', 'location',
+        'id', 'description', 'category', 'subcategory', 'type', 'location',
         'item', 'onhand', 'minimum', 'minimum_calendar', 'min_interval',
         'source', 'lastmodified'
         )
       list_serializer_class = BulkListSerializer
-      update_lookup_field = 'name'
+      update_lookup_field = 'id'
       partial = True
 
 
@@ -458,7 +458,7 @@ class BufferAPI(frePPleListCreateAPIView):
   queryset = freppledb.input.models.Buffer.objects.all()
   serializer_class = BufferSerializer
   filter_fields = (
-    'name', 'description', 'category', 'subcategory', 'type', 'location',
+    'id', 'description', 'category', 'subcategory', 'type', 'location',
     'item', 'onhand', 'minimum', 'minimum_calendar', 'min_interval',
     'source', 'lastmodified'
     )

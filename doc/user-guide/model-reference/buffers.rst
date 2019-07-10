@@ -19,10 +19,6 @@ Different types of buffers exist:
 ================ ================= ===========================================================
 Field            Type              Description
 ================ ================= ===========================================================
-name             non-empty string  | Unique name of the buffer.
-                                   | This is the key field and a required attribute.
-                                   | You have to use the convention of using "item @ location"
-                                     as the buffer name.
 item             item              | Item being stored in the buffer.
                                    | This is a required field.
 location         location          | Location of the buffer.

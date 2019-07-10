@@ -1,6 +1,13 @@
 Release notes
 -------------
 
+6.0.0
+==================
+
+.. rubric:: Integration
+
+- | Replacement of the name column of the buffer table with an ID column of type integer (ID column is primary key).
+
 5.3.0 (2019/07/06)
 ==================
 

@@ -346,8 +346,7 @@ class Buffer(AuditModel):
   )
 
   # Fields common to all buffer types
-  name = models.CharField(_('name'), max_length=300, primary_key=True,
-                          help_text=_('Unique identifier'))
+  id = models.AutoField(_('identifier'), primary_key=True)
   description = models.CharField(
     _('description'), max_length=500, null=True, blank=True
     )
@@ -399,18 +398,13 @@ class Buffer(AuditModel):
   objects = Manager()
 
   def __str__(self):
-    return self.name
-
-  def save(self, *args, **kwargs):
-    self.name = "%s @ %s" % (self.item.name if self.item else "NULL", self.location.name if self.location else "NULL")
-    # Call the real save() method
-    super(Buffer, self).save(*args, **kwargs)
+    return '%s @ %s' % (self.item.name, self.location.name)
 
   class Meta(AuditModel.Meta):
     db_table = 'buffer'
     verbose_name = _('buffer')
     verbose_name_plural = _('buffers')
-    ordering = ['name']
+    ordering = ['item','location']
     unique_together = (('item', 'location'),)
 
 

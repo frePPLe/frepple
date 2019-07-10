@@ -174,11 +174,11 @@ class OverviewReport(GridPivot):
         order by priority limit 1), (select defaultvalue from calendar where name = 'SS for '||item.name||' @ '||location.name)) as safetystock
         union all
         select 2 as priority, coalesce((select value from calendarbucket 
-        where calendar_id = (select minimum_calendar_id from buffer where name = item.name||' @ '||location.name)
+        where calendar_id = (select minimum_calendar_id from buffer where item_id = item.name and location_id = location.name)
         and greatest(d.startdate,%%s) >= startdate and greatest(d.startdate,%%s) < enddate
         order by priority limit 1), (select defaultvalue from calendar where name = (select minimum_calendar_id from buffer where name = item.name||' @ '||location.name))) as safetystock
         union all
-        select 3 as priority, minimum as safetystock from buffer where name = item.name||' @ '||location.name
+        select 3 as priority, minimum as safetystock from buffer where item_id = item.name and location_id = location.name
         ) t
         where t.safetystock is not null
         order by priority

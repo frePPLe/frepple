@@ -295,7 +295,6 @@ class Command(BaseCommand):
             )
           ld = abs(round(random.normalvariate(procure_lt, procure_lt / 3)))
           Buffer.objects.using(database).create(
-            name='%s @ %s' % (it.name, loc.name),
             location=loc,
             category='Procured',
             item=it,
@@ -333,7 +332,6 @@ class Command(BaseCommand):
 
           # Level 0 buffer
           buf = Buffer.objects.using(database).create(
-            name='%s @ %s' % (it.name, loc.name),
             item=it,
             location=loc,
             category='00'
@@ -401,7 +399,6 @@ class Command(BaseCommand):
                 cost=str(round(random.uniform(100, 200)))
                 )
               buf = Buffer.objects.using(database).create(
-                name='%s @ %s' % (it_tmp.name, loc.name),
                 item=it_tmp,
                 location=loc,
                 category='%02d' % (k + 1)

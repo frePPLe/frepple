@@ -611,7 +611,7 @@ class BufferList(GridReport):
 
   rows = (
     #. Translators: Translation included with Django
-    GridFieldText('name', title=_('name'), key=True, formatter='detail', extra='"role":"input/buffer", "editable":false'),
+    GridFieldInteger('id', title=_('identifier'), key=True, formatter='detail', extra='"role":"input/buffer"', initially_hidden=True),
     GridFieldText('description', title=_('description')),
     GridFieldText('category', title=_('category'), initially_hidden=True),
     GridFieldText('subcategory', title=_('subcategory'), initially_hidden=True),

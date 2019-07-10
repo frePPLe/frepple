@@ -106,8 +106,6 @@ var introdata = {
       description : 'A buffer is a storage for a item. It is a unique item x location ' +
         'combination where inventory is kept.<br><br>' +
         'The main fields are:<ul>' +
-        '<li style="list-style:initial">Name: Name of the buffer. Use the ' +
-        'format "item @ location".</li>' +
         '<li style="list-style:initial">Location: Location of the buffer.</li>' +
         '<li style="list-style:initial">Item: Item of the buffer.</li>' +
         '<li style="list-style:initial">Onhand: Inventory level at the start of the time horizon. ' +
@@ -180,14 +178,9 @@ var introdata = {
     {
       element : 'h1 small',
       description : 'A <strong>skill</strong> defines a certain property that can be assigned to resources.<br><br>' +
-        'A load models the association of an operation and a resource. A load can specify a skill required on the resource.<br><br>' +
+        'Operation Resources records model the association of an operation and a resource. Operation Resources can specify a skill required on the resource.<br><br>' +
         'The main fields are:<ul>' +
-        '<li style="list-style:initial">Name: Name of the buffer. We recommend that you use the ' +
-        'format "item @ location"</li>' +
-        '<li style="list-style:initial">Location: Location of the buffer.</li>' +
-        '<li style="list-style:initial">Item: Item of the buffer.</li>' +
-        '<li style="list-style:initial">Onhand: Inventory level at the start of the time horizon. ' +
-        'Considered as 0 if left empty.</li>' +
+        '<li style="list-style:initial">Name: Name of the skill.</li>' +
         '</ul>',
       position : 'right'
     }

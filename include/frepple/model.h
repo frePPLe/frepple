@@ -3558,6 +3558,8 @@ inline ostream & operator << (ostream & os, const OperationPlan* o)
     os << " - " << o->getEnd();
     if (o->getApproved())
       os << ", approved)";
+    else if (o->getCompleted())
+      os << ", completed)";
     else if (o->getConfirmed())
       os << ", confirmed)";
     else if (o->getClosed())

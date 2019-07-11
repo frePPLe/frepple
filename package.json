@@ -16,7 +16,7 @@
     "grunt-contrib-clean": "^2.0.0",
     "grunt-contrib-concat": "^1.0.1",
     "grunt-contrib-less": ">=2.0.0",
-    "grunt-contrib-uglify": "^4.0.1",
+    "grunt-contrib-uglify-es": "^3.3.0",
     "grunt-contrib-watch": ">=1.1.0",
     "grunt-exec": "^3.0.0",
     "less": ">=2.5.3",

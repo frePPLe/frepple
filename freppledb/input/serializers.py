@@ -15,12 +15,16 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+from django_filters import rest_framework as filters
+from rest_framework.serializers import StringRelatedField
+from rest_framework_bulk.drf3.serializers import BulkListSerializer, BulkSerializerMixin
+
 from freppledb.common.api.views import frePPleListCreateAPIView, frePPleRetrieveUpdateDestroyAPIView
 import freppledb.input.models
-
-from rest_framework_bulk.drf3.serializers import BulkListSerializer, BulkSerializerMixin
-from django_filters import rest_framework as filters
 from freppledb.common.api.serializers import ModelSerializer
+
+import logging
+logger = logging.getLogger(__name__)
 
 
 class CalendarFilter(filters.FilterSet):
@@ -869,11 +873,87 @@ class ManufacturingOrderFilter(filters.FilterSet):
 
 
 class ManufacturingOrderSerializer(BulkSerializerMixin, ModelSerializer):
+
+    class OperationPlanResourceNestedSerializer(BulkSerializerMixin, ModelSerializer):
+        class Meta:
+          model = freppledb.input.models.OperationPlanResource
+          fields = (
+            'resource', 'quantity', 'setup'
+            )
+          list_serializer_class = BulkListSerializer
+          partial = True
+    
+    class OperationPlanMaterialNestedSerializer(BulkSerializerMixin, ModelSerializer):
+        class Meta:
+          model = freppledb.input.models.OperationPlanMaterial
+          fields = (
+            'item', 'quantity', 'flowdate'
+            )
+          list_serializer_class = BulkListSerializer
+          partial = True
+
+    resources = OperationPlanResourceNestedSerializer(many=True, required=False)
+    materials = OperationPlanMaterialNestedSerializer(many=True, required=False)
+    
+    def create(self, validated_data):
+      # Normal processing
+      opplanreslist = validated_data.pop('resources', [])
+      opplanmatlist = validated_data.pop('materials', [])
+      mo = super().create(validated_data)
+      if opplanreslist:
+        self._processOperationPlanResource(mo, opplanreslist)
+      # TODO materials are read-only for now
+      return mo
+     
+    def update(self, instance, validated_data):
+      # Normal processing
+      opplanreslist = validated_data.pop('resources', [])
+      opplanmatlist = validated_data.pop('materials', [])
+      mo = super().update(instance, validated_data)      
+      if opplanreslist:
+        self._processOperationPlanResource(mo, opplanreslist)
+      # TODO materials are read-only for now
+      return mo
+      
+    def _processOperationPlanResource(self, mo, opplanreslist):
+      database = mo._state.db
+      for opplanres in opplanreslist:
+        for rec in opplanreslist:
+          if 'resource' in rec:
+            try:
+              rec_res = freppledb.input.models.Resource.objects.all().using(database).get(name=rec["resource"])
+              rec_topres = freppledb.input.models.Resource.objects.all().using(database).get(
+                lvl=0, lft__lte=rec_res.lft, rght__gte=rec_res.rght
+                )
+              found = False
+              for opplanres in mo.resources.all().using(database).select_related('resource'):
+                topres = freppledb.input.models.Resource.objects.all().using(database).get(
+                  lvl=0, lft__lte=opplanres.resource.lft, rght__gte=opplanres.resource.rght
+                  )
+                if topres == rec_topres:
+                  opplanres.resource = rec_res
+                  if 'quantity' in rec:
+                    opplanres.quantity = rec['quantity' ]
+                  opplanres.save(using=database, update_fields=['resource', 'quantity'])
+                  found = True
+                  break
+              if not found:
+                freppledb.input.models.OperationPlanResource(
+                  operationplan=mo,
+                  resource=rec_res,
+                  quantity=rec.get('quantity',1),
+                  startdate=mo.startdate,
+                  enddate=mo.enddate
+                  ).save(using=database)
+            except Exception as e:
+              logger.error("REST API error saving manufacturing order:", e)
+
     class Meta:
       model = freppledb.input.models.ManufacturingOrder
       fields = (
         'reference', 'status', 'operation', 'quantity', 'startdate', 'enddate',
-        'criticality', 'delay', 'plan', 'owner', 'source', 'lastmodified'
+        'criticality', 'delay', 'plan', 'owner', 'source', 'lastmodified',
+        'resources', 'materials'
         )
       list_serializer_class = BulkListSerializer
       update_lookup_field = 'reference'

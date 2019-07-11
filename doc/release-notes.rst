@@ -1,12 +1,15 @@
 Release notes
 -------------
 
-6.0.0
-==================
+6.0.0 (Upcoming release)
+========================
 
 .. rubric:: Integration
 
-- | Replacement of the name column of the buffer table with an ID column of type integer (ID column is primary key).
+- Replacement of the name column of the buffer table with an ID column of type integer (ID column is primary key).
+
+- | The REST API for manufacturing orders now returns the resources and materials it uses.
+  | Updated resources and materials can also written back with API.
 
 5.3.0 (2019/07/06)
 ==================

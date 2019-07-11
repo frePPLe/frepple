@@ -171,7 +171,7 @@ def basicauthentication(allow_logged_in=True, realm="frepple"):
               user = authenticate(username=auth[0], password=auth[2])
               if user and user.is_active:
                 # Active user
-                request.api = True
+                request.api = True         # TODO I think this is no longer used
                 login(request, user)
                 request.user = user
                 ok = True

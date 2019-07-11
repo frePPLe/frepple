@@ -24,6 +24,7 @@ from django.db import connections
 from django.db.models import Q
 from django.db.models.expressions import RawSQL
 from django.db.models.fields import CharField
+from django.db.models import FieldDoesNotExist
 from django.http import HttpResponse, Http404
 from django.http.response import StreamingHttpResponse, HttpResponseServerError
 from django.utils.decorators import method_decorator
@@ -128,8 +129,12 @@ class PathReport(GridReport):
 
   @ classmethod
   def basequeryset(reportclass, request, *args, **kwargs):
-    return reportclass.objecttype.objects.filter(name__exact=args[0]).values('name')
-
+    try:
+      field = reportclass.objecttype.objects.all()[:1].get()._meta.get_field('name')      
+      return reportclass.objecttype.objects.filter(name__exact=args[0]).values('name')
+    except FieldDoesNotExist:
+      return reportclass.objecttype.objects.annotate(name=RawSQL("item_id||' @ '||location_id",())).filter(name__exact=args[0]).values('name')
+    
 
   @classmethod
   def extra_context(reportclass, request, *args, **kwargs):
@@ -162,7 +167,6 @@ class PathReport(GridReport):
     if not buf:
       # Create a buffer record
       buf = Buffer(
-        name='%s @ %s' % (item, location),
         item=Item.objects.using(db).get(name=item),
         location=Location.objects.using(db).get(name=location)
         )
@@ -308,10 +312,10 @@ class PathReport(GridReport):
           else:
             resources = None
           try:
-            downstr = Buffer.objects.using(request.database).get(name="%s @ %s" % (curoperation.item.name, curoperation.location.name))
+            downstr = Buffer.objects.using(request.database).annotate(name=RawSQL("item_id||' @ '||location_id",())).get(name="%s @ %s" % (curoperation.item.name, curoperation.location.name))
             root.extend( reportclass.findUsage(downstr, request.database, level, curqty, realdepth + 1, True) )
           except Buffer.DoesNotExist:
-            downstr = Buffer(name="%s @ %s" % (curoperation.item.name, curoperation.location.name), item=curoperation.item, location=curlocation)
+            downstr = Buffer(item=curoperation.item, location=curlocation)
             root.extend( reportclass.findUsage(downstr, request.database, level, curqty, realdepth + 1, True) )
         elif isinstance(curoperation, ItemDistribution):
           name = 'Ship %s from %s to %s' % (curoperation.item.name, curoperation.origin.name, curoperation.location.name)
@@ -327,10 +331,10 @@ class PathReport(GridReport):
           else:
             resources = None
           try:
-            downstr = Buffer.objects.using(request.database).get(name="%s @ %s" % (curoperation.item.name, location))
+            downstr = Buffer.objects.using(request.database).annotate(name=RawSQL("item_id||' @ '||location_id",())).get(name="%s @ %s" % (curoperation.item.name, location))
             root.extend( reportclass.findUsage(downstr, request.database, level, curqty, realdepth + 1, True) )
           except Buffer.DoesNotExist:
-            downstr = Buffer(name="%s @ %s" % (curoperation.item.name, location), item=curoperation.item, location=curlocation)
+            downstr = Buffer(item=curoperation.item, location=curlocation)
             root.extend( reportclass.findUsage(downstr, request.database, level, curqty, realdepth + 1, True) )
         else:
           name = curoperation.name
@@ -345,10 +349,10 @@ class PathReport(GridReport):
               hasChildren = True
               root.append( (level - 1, curnode, y.operation, - curqty * y.quantity, subcount, None, realdepth - 1, pushsuper, x.operation.location.name if x.operation.location else None) )
             try:
-              downstr = Buffer.objects.using(request.database).get(name="%s @ %s" % (x.item.name, location))
+              downstr = Buffer.objects.using(request.database).annotate(name=RawSQL("item_id||' @ '||location_id",())).get(name="%s @ %s" % (x.item.name, location))
               root.extend( reportclass.findUsage(downstr, request.database, level - 1, curqty, realdepth - 1, True) )
             except Buffer.DoesNotExist:
-              downstr = Buffer(name="%s @ %s" % (x.item.name, location), item=x.item, location=curlocation)
+              downstr = Buffer(item=x.item, location=curlocation)
               root.extend( reportclass.findUsage(downstr, request.database, level - 1, curqty, realdepth - 1, True) )
           for x in curoperation.suboperations.using(request.database).only('suboperation').order_by("-priority"):
             subcount += curoperation.type == "routing" and 1 or -1
@@ -380,10 +384,10 @@ class PathReport(GridReport):
           else:
             resources = None
           try:
-            upstr = Buffer.objects.using(request.database).get(name="%s @ %s" % (curoperation.item.name, curoperation.origin.name))
+            upstr = Buffer.objects.using(request.database).annotate(name=RawSQL("item_id||' @ '||location_id",())).get(name="%s @ %s" % (curoperation.item.name, curoperation.origin.name))
             root.extend( reportclass.findReplenishment(upstr, request.database, level + 2, curqty, realdepth + 1, True) )
           except Buffer.DoesNotExist:
-            upstr = Buffer(name="%s @ %s" % (curoperation.item.name, curoperation.origin.name), item=curoperation.item, location=curoperation.origin)
+            upstr = Buffer(item=curoperation.item, location=curoperation.origin)
             root.extend( reportclass.findReplenishment(upstr, request.database, level + 2, curqty, realdepth + 1, True) )
         else:
           name = curoperation.name
@@ -395,7 +399,6 @@ class PathReport(GridReport):
           curflows = curoperation.operationmaterials.filter(quantity__lt=0).only('item', 'quantity').using(request.database)
           for y in curflows:
             b = Buffer(
-              name='%s @ %s' % (y.item.name, curoperation.location.name),
               item=y.item,
               location=curoperation.location
               )
@@ -529,7 +532,7 @@ class UpstreamBufferPath(PathReport):
   def getRoot(reportclass, request, entity):
     from django.core.exceptions import ObjectDoesNotExist
     try:
-      buf = Buffer.objects.using(request.database).get(name=entity)
+      buf = Buffer.objects.using(request.database).annotate(name=RawSQL("item_id||' @ '||location_id",())).get(name=entity)
       if reportclass.downstream:
         return reportclass.findUsage(buf, request.database, 0, 1, 0, True)
       else:

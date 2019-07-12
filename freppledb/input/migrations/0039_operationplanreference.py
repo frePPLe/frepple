@@ -53,6 +53,11 @@ class Migration(migrations.Migration):
       name='operationplan',
       field=models.ForeignKey(verbose_name='operationplan', related_name='resources', to='input.OperationPlan', on_delete=models.CASCADE)
     ),
+    migrations.RunSQL('''
+      alter table operationplan
+      alter column owner_id type character varying (300)
+      '''
+      ),
 
     # Remaining migrations are just catching up on python-side model
     # changes without impact on the database schema. Just adding them

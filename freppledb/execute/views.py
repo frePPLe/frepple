@@ -485,7 +485,7 @@ def logfile(request, taskid):
       else:
         # Displayed completely
         f.seek(0, os.SEEK_SET)
-        logdata = f.read(50000)
+        logdata = f.read(50000).decode("utf8", "ignore")
     finally:
       f.close()
 

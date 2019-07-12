@@ -542,7 +542,7 @@ class freppleREST(APITestCase):
     self.assertEqual(input.models.Customer.objects.filter(source='Put json').count(), 1)
 
     # Customer bulk filtered GET test
-    response = self.client.get('/api/input/customer/?name__contains=Area', data, format='json')
+    response = self.client.get('/api/input/customer/?name__contains=Area', format='json')
     self.assertEqual(response.status_code, 200)
     self.assertEqual(input.models.Customer.objects.filter(name__contains='Area').count(), 4)
 

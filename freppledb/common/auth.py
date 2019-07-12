@@ -87,7 +87,7 @@ class MultiDBBackend(ModelBackend):
     be either "group" or "user" to return permissions from
     `_get_group_permissions` or `_get_user_permissions` respectively.
     """
-    if not user_obj.is_active or user_obj.is_anonymous() or obj is not None:
+    if not user_obj.is_active or user_obj.is_anonymous or obj is not None:
       return set()
 
     perm_cache_name = '_%s_perm_cache_%s' % (from_name, user_obj._state.db)
@@ -102,7 +102,7 @@ class MultiDBBackend(ModelBackend):
 
 
   def get_all_permissions(self, user_obj, obj=None):
-    if not user_obj.is_active or user_obj.is_anonymous() or obj is not None:
+    if not user_obj.is_active or user_obj.is_anonymous or obj is not None:
       return set()
     if not hasattr(user_obj, '_perm_cache_%s' % user_obj._state.db):
       user_obj._perm_cache = self.get_user_permissions(user_obj)
@@ -158,7 +158,7 @@ def basicauthentication(allow_logged_in=True, realm="frepple"):
       try:
         if allow_logged_in:
           u = getattr(request, 'user', None)
-          if u and u.is_authenticated():
+          if u and u.is_authenticated:
             ok = True
         if not ok:
           auth_header = request.META.get('HTTP_AUTHORIZATION', None)

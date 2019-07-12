@@ -213,7 +213,7 @@ class AutoLoginAsAdminUser(MiddlewareMixin):
   def process_request(self, request):
     if not hasattr(request, 'user'):
       request.user = auth.get_user(request)
-    if not request.user.is_authenticated():
+    if not request.user.is_authenticated:
       try:
         user = User.objects.get(username="admin")
         user.backend = settings.AUTHENTICATION_BACKENDS[0]

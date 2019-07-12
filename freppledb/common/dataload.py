@@ -415,7 +415,7 @@ def _parseData(model, data, rowmapper, user, database, ping):
                   user_id=user.id,
                   content_type_id=content_type_id,
                   object_id=obj.pk,
-                  object_repr=force_text(obj),
+                  object_repr=force_text(obj)[:200],
                   action_flag=it and CHANGE or ADDITION,
                   #. Translators: Translation included with Django
                   change_message='Changed %s.' % get_text_list(form.changed_data, 'and')

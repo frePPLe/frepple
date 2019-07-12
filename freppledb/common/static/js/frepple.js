@@ -3056,68 +3056,6 @@ var tour = {
     if (tour.intro)
       // Intro popup
       var stepData = tour.intro;
-    else {
-      // Guided tour
-      var stepData = tourdata[tour.chapter]['steps'][tour.step];
-      // Switch url if required
-      var nexthref = '';
-      var currsearch = '';
-      if ( location.search.lastIndexOf('&')>-1 )
-        currsearch = location.search.replace(location.search.slice(location.search.lastIndexOf('&')),''); //delete &tour=x,y,z
-      else
-        currsearch = ''; //delete ?tour=x,y,z
-      if (location.pathname+currsearch != url_prefix+stepData['url']) {
-        nexthref = url_prefix + stepData['url'] + "?tour=" + tour.chapter + "," + tour.step + "," + tour.autoplay;
-        if (nexthref.match(/\?/g || []).length == 2)
-          nexthref = url_prefix + stepData['url'] + "&tour=" + tour.chapter + "," + tour.step + "," + tour.autoplay;
-        window.location.href = nexthref;
-        return;
-      };
-    }
-
-    // Callback
-    if ('beforestep' in stepData)
-      eval(stepData['beforestep']);
-    // Display the tooltip
-    var tooltipPos = (typeof stepData.position == 'undefined') ? 'BL' : stepData['position'];
-    $(stepData['element']).attr('role', 'button').attr('tabindex', '0');
-    $(stepData['element']).popover({
-      'html': true,
-      'container': 'body',
-      'template': tour.intro ? tour.introtip : tour.tooltip,
-      'title':'',
-      'content': stepData['description'],
-      'placement': stepData['position'],
-      'trigger': 'manual'
-      });
-    $(stepData['element'])
-    .popover('show')
-    .on('shown.bs.popover', function () {
-      var postop = $('.tourpopover').css('top').replace('px','');
-      if (postop < window.pageYOffset || postop > window.pageYOffset+window.innerHeight/2) window.scrollTo(0,postop-window.innerHeight/2);
-    })
-
-    // Update tour dialog
-    if (tour.intro == null) {
-      $('#tourmodalbody').html(tourdata[tour.chapter]['description']);
-      // Previous button
-      if (tour.chapter == 0 && tour.step == 0)
-        $("#tourprevious").prop('disabled', true);
-      else
-        $("#tourprevious").prop('disabled', false);
-      // Next button
-      if ((tour.chapter >= tourdata.length-1) && (tour.step >= tourdata[tour.chapter]['steps'].length-1))
-        $("#tournext").prop('disabled', true);
-      else
-        $("#tournext").prop('disabled', false);
-      // Autoplay
-      if (tour.autoplay)
-        tour.timeout = setTimeout(tour.next, tourdata[tour.chapter]['delay'] * 1000);
-    }
-
-    // Callback
-    if ('afterstep' in stepData)
-      eval(stepData['afterstep']);
   }
 }
 

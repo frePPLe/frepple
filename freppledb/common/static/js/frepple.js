@@ -3048,54 +3048,6 @@ var tour = {
     .modal('show');
     $('#tourmodalbody').append( '<div id="tour" style="padding-bottom:20px; display:none">' +
          tourdata[tour.chapter]['description']  + '<br><br><br></div>');
-    $('#tourprevious').on('click', function() {
-      tour.prev();
-    });
-    $('#playbutton').on('click', function() {
-      tour.toggleAutoplay();
-    });
-    $('#tournext').on('click', function() {
-      tour.next();
-    });
-    $('#tourcancelbutton').on('click', function() {
-      $('.tourpopover').popover('destroy');
-      $('#tourModal').modal('hide');
-    });
-  },
-
-  next: function()
-  {
-    $(tourdata[tour.chapter]['steps'][tour.step]['element']).popover('destroy');
-    tour.step++;
-    if (tour.step >= tourdata[tour.chapter]['steps'].length)
-    {
-      tour.chapter++;
-      tour.step = 0;
-      if (tour.chapter >= tourdata.length)
-        // Restart from the beginning
-        tour.chapter = 0;
-    }
-    tour.showStep();
-  },
-
-  prev: function()
-  {
-    $(tourdata[tour.chapter]['steps'][tour.step]['element']).popover('destroy');
-    tour.step--;
-    if (tour.step < 0)
-    {
-      tour.chapter--;
-      if (tour.chapter < 0)
-      {
-        // Stay at the very first step
-        tour.step = 0;
-        tour.chapter = 0;
-        return;
-      }
-      else
-        tour.step = tourdata[tour.chapter]['steps'].length - 1;
-    }
-    tour.showStep();
   },
 
   showStep: function()
@@ -3166,23 +3118,6 @@ var tour = {
     // Callback
     if ('afterstep' in stepData)
       eval(stepData['afterstep']);
-  },
-
-  toggleAutoplay: function()
-  {
-    if (tour.autoplay > 0)
-    {
-      $("#playbutton").html(gettext('Play')+'&nbsp;<span class="fa fa-play"></span>');
-      tour.autoplay = 0;
-      clearTimeout(tour.timeout);
-      tour.timeout = null;
-    }
-    else
-    {
-      $("#playbutton").html(gettext('Pause')+'&nbsp;<span class="fa fa-pause"></span>');
-      tour.autoplay = 1;
-      tour.next();
-    }
   }
 }
 

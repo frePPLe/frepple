@@ -130,11 +130,11 @@ class PathReport(GridReport):
   @ classmethod
   def basequeryset(reportclass, request, *args, **kwargs):
     try:
-      field = reportclass.objecttype.objects.all()[:1].get()._meta.get_field('name')      
+      field = reportclass.objecttype.objects.all()[:1].get()._meta.get_field('name')
       return reportclass.objecttype.objects.filter(name__exact=args[0]).values('name')
     except FieldDoesNotExist:
       return reportclass.objecttype.objects.annotate(name=RawSQL("item_id||' @ '||location_id",())).filter(name__exact=args[0]).values('name')
-    
+
 
   @classmethod
   def extra_context(reportclass, request, *args, **kwargs):
@@ -312,7 +312,7 @@ class PathReport(GridReport):
           else:
             resources = None
           try:
-            downstr = Buffer.objects.using(request.database).annotate(name=RawSQL("item_id||' @ '||location_id",())).get(name="%s @ %s" % (curoperation.item.name, curoperation.location.name))
+            downstr = Buffer.objects.using(request.database).get(item=curoperation.item.name, location=curoperation.location.name)
             root.extend( reportclass.findUsage(downstr, request.database, level, curqty, realdepth + 1, True) )
           except Buffer.DoesNotExist:
             downstr = Buffer(item=curoperation.item, location=curlocation)
@@ -331,7 +331,7 @@ class PathReport(GridReport):
           else:
             resources = None
           try:
-            downstr = Buffer.objects.using(request.database).annotate(name=RawSQL("item_id||' @ '||location_id",())).get(name="%s @ %s" % (curoperation.item.name, location))
+            downstr = Buffer.objects.using(request.database).get(item=curoperation.item.name, location=location)
             root.extend( reportclass.findUsage(downstr, request.database, level, curqty, realdepth + 1, True) )
           except Buffer.DoesNotExist:
             downstr = Buffer(item=curoperation.item, location=curlocation)
@@ -349,7 +349,7 @@ class PathReport(GridReport):
               hasChildren = True
               root.append( (level - 1, curnode, y.operation, - curqty * y.quantity, subcount, None, realdepth - 1, pushsuper, x.operation.location.name if x.operation.location else None) )
             try:
-              downstr = Buffer.objects.using(request.database).annotate(name=RawSQL("item_id||' @ '||location_id",())).get(name="%s @ %s" % (x.item.name, location))
+              downstr = Buffer.objects.using(request.database).get(item=x.item.name, location=location)
               root.extend( reportclass.findUsage(downstr, request.database, level - 1, curqty, realdepth - 1, True) )
             except Buffer.DoesNotExist:
               downstr = Buffer(item=x.item, location=curlocation)
@@ -384,7 +384,7 @@ class PathReport(GridReport):
           else:
             resources = None
           try:
-            upstr = Buffer.objects.using(request.database).annotate(name=RawSQL("item_id||' @ '||location_id",())).get(name="%s @ %s" % (curoperation.item.name, curoperation.origin.name))
+            upstr = Buffer.objects.using(request.database).get(item=curoperation.item.name, location=curoperation.origin.name)
             root.extend( reportclass.findReplenishment(upstr, request.database, level + 2, curqty, realdepth + 1, True) )
           except Buffer.DoesNotExist:
             upstr = Buffer(item=curoperation.item, location=curoperation.origin)
@@ -2657,7 +2657,7 @@ class DeliveryOrderList(GridReport):
           lft = 1
           rght = 1
         q = q.filter(item__lft__gte=lft, item__rght__lte=rght)
-    
+
     return q
 
   @classmethod

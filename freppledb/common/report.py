@@ -43,7 +43,7 @@ from io import StringIO, BytesIO
 import urllib
 from openpyxl import load_workbook, Workbook
 from openpyxl.utils import get_column_letter
-from openpyxl.writer.write_only import WriteOnlyCell
+from openpyxl.cell import WriteOnlyCell
 from openpyxl.styles import NamedStyle, PatternFill
 
 from django.db.models import Model

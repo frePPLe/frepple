@@ -1,14 +1,18 @@
-CherryPy == 5.1.0
-djangorestframework == 3.6.2
+CherryPy == 18.1.2
+djangorestframework == 3.9.4
 djangorestframework-bulk == 0.2.1
-djangorestframework-filters == 0.10.0
+djangorestframework-filters == 0.11.1
 django-admin-bootstrapped
-django-bootstrap3 == 8.2.2
-html5lib == 0.999
-jdcal == 1.0.1
-Markdown == 2.6.8
-openpyxl == 2.4.11
-lxml == 3.7.3
-PyJWT == 1.5.2
-requests == 2.20.0
-https://github.com/frePPLe/django/tarball/frepple_5.0
+django-bootstrap3 == 11.1.0
+django-filter == 2.1.0
+html5lib == 1.0.1
+jdcal == 1.4.1
+Markdown == 3.1.1
+openpyxl == 2.6.2
+lxml == 4.3.4
+PyJWT == 1.7.1
+requests == 2.22.0
+https://github.com/frePPLe/django/tarball/frepple_6.0
+# Psycopg2 is required also.
+# On linux: install it using your distribution's package manager.
+# On windows: install it with pip, or simply add it to this file 

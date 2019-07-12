@@ -22,7 +22,7 @@ from django.views.decorators.csrf import csrf_protect
 
 from rest_framework import generics
 from rest_framework_bulk import ListBulkCreateUpdateDestroyAPIView
-from rest_framework import filters
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import permissions
 
 from freppledb.common.models import User
@@ -80,7 +80,7 @@ class frePPleListCreateAPIView(ListBulkCreateUpdateDestroyAPIView):
      - add 'title' to the context of the html view
   '''
 
-  filter_backends = (filters.DjangoFilterBackend,)
+  filter_backends = (DjangoFilterBackend,)
   permission_classes = (frepplePermissionClass,)
 
 

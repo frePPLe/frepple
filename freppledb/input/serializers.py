@@ -16,7 +16,6 @@
 #
 
 from django_filters import rest_framework as filters
-from rest_framework.serializers import StringRelatedField
 from rest_framework_bulk.drf3.serializers import BulkListSerializer, BulkSerializerMixin
 
 from freppledb.common.api.views import frePPleListCreateAPIView, frePPleRetrieveUpdateDestroyAPIView

@@ -180,7 +180,7 @@ LANGUAGES = (
 # Set the value to 0 to force users to log in for every browser session.
 SESSION_COOKIE_AGE = 3600 * 24 * 3    # 3 days
 
-MIDDLEWARE_CLASSES = (
+MIDDLEWARE = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     # Uncomment the next line to automatically log on as the admin user,

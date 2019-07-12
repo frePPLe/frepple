@@ -344,6 +344,10 @@ MESSAGE_TAGS = {
   messages.DEBUG: 'alert-danger',
   }
 
+SILENCED_SYSTEM_CHECKS = [
+    'admin.E408',
+]
+
 # Override any of the above settings from a separate file
 if not os.access(os.path.join(FREPPLE_CONFIGDIR, 'djangosettings.py'), os.R_OK):
   print("\nError: Can't locate djangosettings.py configuration file")

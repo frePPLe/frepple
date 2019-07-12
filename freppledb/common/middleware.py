@@ -142,7 +142,7 @@ for i in settings.DATABASES:
   settings.DATABASES[i]['regexp'] = re.compile("^/%s/" % i)
 
 
-class MultiDBMiddleware(MiddlewareMixin):
+class MultiDBMiddleware:
   """
   This middleware examines the URL of the incoming request, and determines the
   name of database to use.
@@ -157,7 +157,11 @@ class MultiDBMiddleware(MiddlewareMixin):
     - is_active
     - is_superuser
   """
-  def process_request(self, request):
+  def __init__(self, get_response):
+    # One-time initialisation
+    self.get_response = get_response
+
+  def __call__(self, request):
     if not hasattr(request, 'user'):
       request.user = auth.get_user(request)
     if not hasattr(request.user, 'scenarios'):
@@ -172,7 +176,7 @@ class MultiDBMiddleware(MiddlewareMixin):
             request.path_info = request.path_info[len(request.prefix):]
             request.path = request.path[len(request.prefix):]
             request.database = i
-            return
+            return self.get_response(request)
         except Exception:
           pass
       request.prefix = ''
@@ -180,7 +184,7 @@ class MultiDBMiddleware(MiddlewareMixin):
     else:
       # A list of scenarios is already available
       if request.user.is_anonymous:
-        return
+        return self.get_response(request)
       default_scenario = None
       for i in request.user.scenarios:
         if i.name == DEFAULT_DB_ALIAS:
@@ -194,7 +198,7 @@ class MultiDBMiddleware(MiddlewareMixin):
             request.scenario = i
             request.user._state.db = i.name
             request.user.is_superuser = i.is_superuser
-            return
+            return self.get_response(request)
         except:
           pass
       request.prefix = ''
@@ -203,14 +207,19 @@ class MultiDBMiddleware(MiddlewareMixin):
         request.scenario = default_scenario
       else:
         request.scenario = Scenario(name=DEFAULT_DB_ALIAS)
+    return self.get_response(request)
 
 
-class AutoLoginAsAdminUser(MiddlewareMixin):
+class AutoLoginAsAdminUser:
   """
   Automatically log on a user as admin user.
   This can be handy during development or for demo models.
   """
-  def process_request(self, request):
+  def __init__(self, get_response):
+    # One-time initialisation
+    self.get_response = get_response
+
+  def __call__(self, request):
     if not hasattr(request, 'user'):
       request.user = auth.get_user(request)
     if not request.user.is_authenticated:
@@ -237,3 +246,4 @@ class AutoLoginAsAdminUser(MiddlewareMixin):
               pass
       except User.DoesNotExist:
         pass
+    return self.get_response(request)

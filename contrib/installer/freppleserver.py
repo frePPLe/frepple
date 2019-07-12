@@ -44,7 +44,7 @@ class RunWSGIServer(Thread):
   def __init__(self, address, port):
     self.address = address
     self.port = port
-    super(RunWSGIServer, self).__init__()
+    super().__init__()
 
   def run(self):
     try:

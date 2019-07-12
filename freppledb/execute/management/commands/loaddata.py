@@ -169,7 +169,7 @@ class Command(loaddata.Command):
         task.save(using=database)
 
       # Excecute the standard django command
-      super(Command, self).handle(*fixture_labels, **options)
+      super().handle(*fixture_labels, **options)
 
       # if the fixture doesn't contain the 'demo' word, let's not apply loaddata post-treatments
       for f in fixture_labels:

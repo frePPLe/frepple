@@ -1324,7 +1324,7 @@ class OperationPlan(AuditModel):
   def save(self, *args, **kwargs):
     self.propagateStatus()
     # Call the real save() method
-    super(OperationPlan, self).save(*args, **kwargs)
+    super().save(*args, **kwargs)
 
 
   class Meta(AuditModel.Meta):
@@ -1457,7 +1457,7 @@ class DistributionOrder(OperationPlan):
   class DistributionOrderManager(OperationPlan.Manager):
 
     def get_queryset(self):
-      return super(DistributionOrder.DistributionOrderManager, self).get_queryset() \
+      return super().get_queryset() \
         .filter(type='DO')
         #.defer("operation", "owner", "supplier", "location")
 
@@ -1466,7 +1466,7 @@ class DistributionOrder(OperationPlan):
   def save(self, *args, **kwargs):
     self.type = 'DO'
     self.operation = self.owner = self.location = self.supplier = None
-    super(DistributionOrder, self).save(*args, **kwargs)
+    super().save(*args, **kwargs)
 
   class Meta:
     proxy = True
@@ -1493,7 +1493,7 @@ class PurchaseOrder(OperationPlan):
   class PurchaseOrderManager(OperationPlan.Manager):
 
     def get_queryset(self):
-      return super(PurchaseOrder.PurchaseOrderManager, self).get_queryset() \
+      return super().get_queryset() \
         .filter(type='PO')
         # Note: defer screws up the model name when deleting a PO
         #.defer("operation", "owner", "origin", "destination")
@@ -1503,7 +1503,7 @@ class PurchaseOrder(OperationPlan):
   def save(self, *args, **kwargs):
     self.type = 'PO'
     self.operation = self.owner = self.origin = self.destination = None
-    super(PurchaseOrder, self).save(*args, **kwargs)
+    super().save(*args, **kwargs)
 
   class Meta:
     proxy = True
@@ -1516,7 +1516,7 @@ class ManufacturingOrder(OperationPlan):
   class ManufacturingOrderManager(OperationPlan.Manager):
 
     def get_queryset(self):
-      return super(ManufacturingOrder.ManufacturingOrderManager, self).get_queryset() \
+      return super().get_queryset() \
         .filter(type='MO')
         # Note: defer screws up the model name when deleting a PO
         # .defer("supplier", "location", "origin", "destination")
@@ -1529,7 +1529,7 @@ class ManufacturingOrder(OperationPlan):
     if self.operation:
       self.item = self.operation.item
       self.location = self.operation.location
-    super(ManufacturingOrder, self).save(*args, **kwargs)
+    super().save(*args, **kwargs)
 
   class Meta:
     proxy = True
@@ -1542,7 +1542,7 @@ class DeliveryOrder(OperationPlan):
   class DeliveryOrderManager(OperationPlan.Manager):
 
     def get_queryset(self):
-      return super(DeliveryOrder.DeliveryOrderManager, self).get_queryset() \
+      return super().get_queryset() \
         .filter(demand__isnull=False, owner__isnull=True)
         # Note: defer screws up the model name when deleting a PO
         # .defer("operation", "owner", "supplier", "location", "origin", "destination")
@@ -1555,7 +1555,7 @@ class DeliveryOrder(OperationPlan):
     if self.demand:
       self.item = self.demand.item
       self.location = self.demand.location
-    super(DeliveryOrder, self).save(*args, **kwargs)
+    super().save(*args, **kwargs)
 
   class Meta:
     proxy = True

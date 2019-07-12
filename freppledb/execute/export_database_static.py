@@ -1120,7 +1120,7 @@ class DatabaseTask(Thread):
   database connection in its own thread.
   '''
   def __init__(self, xprt, *f):
-    super(DatabaseTask, self).__init__()
+    super().__init__()
     self.export = xprt
     self.functions = f
 

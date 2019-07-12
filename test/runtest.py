@@ -231,7 +231,7 @@ def runTestSuite():
 class freppleTest (unittest.TestCase):
     def __init__(self, directoryname, methodName):
         self.subdirectory = directoryname
-        super(freppleTest, self).__init__(methodName)
+        super().__init__(methodName)
 
     def setUp(self):
         global testdir

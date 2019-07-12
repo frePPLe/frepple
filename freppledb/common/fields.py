@@ -47,7 +47,7 @@ class JSONField(models.TextField):
         'separators': (',', ':')
     })
     self.load_kwargs = kwargs.pop('load_kwargs', {})
-    super(JSONField, self).__init__(*args, **kwargs)
+    super().__init__(*args, **kwargs)
 
   def to_python(self, value):
     """Convert a json string to a Python value."""
@@ -67,7 +67,7 @@ class JSONField(models.TextField):
     return self.get_db_prep_value(value, None)
 
   def value_from_object(self, obj):
-    value = super(JSONField, self).value_from_object(obj)
+    value = super().value_from_object(obj)
     if self.null and value is None:
       return None
     return self.dumps_for_display(value)

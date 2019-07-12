@@ -59,7 +59,7 @@ class HierarchyModel(models.Model):
     self.lvl = None
 
     # Call the real save() method
-    super(HierarchyModel, self).save(*args, **kwargs)
+    super().save(*args, **kwargs)
 
   def delete(self, *args, **kwargs):
     try:
@@ -76,7 +76,7 @@ class HierarchyModel(models.Model):
       # Failure can happen when eg we delete the last record
       pass
     # Call the real delete() method
-    super(HierarchyModel, self).delete(*args, **kwargs)
+    super().delete(*args, **kwargs)
 
   class Meta:
     abstract = True
@@ -171,10 +171,10 @@ class MultiDBManager(models.Manager):
     from freppledb.common.middleware import _thread_locals
     req = getattr(_thread_locals, 'request', None)
     if req:
-      return super(MultiDBManager, self).get_queryset().using(getattr(req, 'database', DEFAULT_DB_ALIAS))
+      return super().get_queryset().using(getattr(req, 'database', DEFAULT_DB_ALIAS))
     else:
       db = getattr(_thread_locals, 'database', None)
-      return super(MultiDBManager, self).get_queryset().using(db or DEFAULT_DB_ALIAS)
+      return super().get_queryset().using(db or DEFAULT_DB_ALIAS)
 
 
 class MultiDBRouter:
@@ -213,7 +213,7 @@ class AuditModel(models.Model):
     self.lastmodified = datetime.now()
 
     # Call the real save() method
-    super(AuditModel, self).save(*args, **kwargs)
+    super().save(*args, **kwargs)
 
   class Meta:
     abstract = True
@@ -391,7 +391,7 @@ class User(AbstractUser):
           continue
         try:
           with transaction.atomic(using=db, savepoint=True):
-            super(User, self).save(
+            super().save(
               force_insert=force_insert,
               force_update=force_update,
               using=db,
@@ -403,7 +403,7 @@ class User(AbstractUser):
               newuser = True
               self.is_active = False
               self.is_superuser = False
-              super(User, self).save(
+              super().save(
                 force_insert=force_insert,
                 force_update=force_update,
                 using=db
@@ -417,7 +417,7 @@ class User(AbstractUser):
     # Continue with the regular save, as if nothing happened.
     self.is_active = tmp_is_active
     self.is_superuser = tmp_is_superuser
-    usr = super(User, self).save(
+    usr = super().save(
       force_insert=force_insert,
       force_update=force_update,
       using=using,

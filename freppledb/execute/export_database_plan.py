@@ -47,7 +47,7 @@ class DatabasePipe(Thread):
   '''
   def __init__(self, owner, *f):
     self.owner = owner
-    super(DatabasePipe, self).__init__()
+    super().__init__()
     self.functions = f
 
   def run(self):

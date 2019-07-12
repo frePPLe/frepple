@@ -144,12 +144,12 @@ class PreferencesForm(forms.Form):
     )
 
   def __init__(self, *args, **kwargs):
-    super(PreferencesForm, self).__init__(*args, **kwargs)
+    super().__init__(*args, **kwargs)
     if len(settings.THEMES) == 1:  #If there is only one theme make this choice unavailable
       self.fields.pop('theme')
 
   def clean(self):
-    newdata = super(PreferencesForm, self).clean()
+    newdata = super().clean()
     if newdata.get('pagesize',0) > 10000:
       raise forms.ValidationError("Maximum page size is 10000.")
     if newdata.get('pagesize',25) < 25:

@@ -321,7 +321,7 @@ class GridFieldChoice(GridField):
   align = 'center'
 
   def __init__(self, name, **kwargs):
-    super(GridFieldChoice, self).__init__(name, **kwargs)
+    super().__init__(name, **kwargs)
     e = ['"formatter":"select", "edittype":"select", "editoptions":{"value":"']
     first = True
     for i in kwargs["choices"]:

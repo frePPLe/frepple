@@ -28,7 +28,7 @@ class Command(BaseCommand):
     '''
 
   def add_arguments(self, parser):
-    super(Command, self).add_arguments(parser)
+    super().add_arguments(parser)
     parser.add_argument(
       '--database', default=None,
       help='Specify the database to recreate. When left unspecified all database will be created.'

@@ -620,17 +620,14 @@ class MultiDBModelAdmin(admin.ModelAdmin):
 
 class MultiDBTabularInline(admin.TabularInline):
 
-  def __init__(self, parent_model, admin_site):
-    super(MultiDBTabularInline, self).__init__(parent_model, admin_site)
-
   def get_queryset(self, request):
-    return super(MultiDBTabularInline, self).get_queryset(request).using(request.database)
+    return super().get_queryset(request).using(request.database)
 
   def formfield_for_foreignkey(self, db_field, request=None, **kwargs):
-    return super(MultiDBTabularInline, self).formfield_for_foreignkey(db_field, request=request, using=request.database, **kwargs)
+    return super().formfield_for_foreignkey(db_field, request=request, using=request.database, **kwargs)
 
   def formfield_for_manytomany(self, db_field, request=None, **kwargs):
-    return super(MultiDBTabularInline, self).formfield_for_manytomany(db_field, request=request, using=request.database, **kwargs)
+    return super().formfield_for_manytomany(db_field, request=request, using=request.database, **kwargs)
 
 
 class MultiDBUserCreationForm(UserCreationForm):
@@ -640,7 +637,7 @@ class MultiDBUserCreationForm(UserCreationForm):
   scenarios = forms.MultipleChoiceField(required=False, label="What-if scenarios in use", widget=forms.CheckboxSelectMultiple)
 
   def __init__(self, *args, **kwargs):
-    super(UserCreationForm, self).__init__(*args, **kwargs)
+    super().__init__(*args, **kwargs)
     sc = []
     for db in Scenario.objects.using(DEFAULT_DB_ALIAS).filter(Q(status='In use') & ~Q(name=DEFAULT_DB_ALIAS)):
       sc.append( (db.name, db.name) )
@@ -651,7 +648,7 @@ class MultiDBUserCreationForm(UserCreationForm):
     fields = UserCreationForm.Meta.fields + ('first_name', 'last_name', 'email')
 
   def save(self, commit=True):
-    user = super(UserCreationForm, self).save(commit=False)
+    user = super().save(commit=False)
     user.set_password(self.cleaned_data["password1"])
     user.save(using=DEFAULT_DB_ALIAS)
     for sc in self.cleaned_data['scenarios']:

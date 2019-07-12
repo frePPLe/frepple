@@ -24,7 +24,7 @@ class freppleBrowsableAPI(BrowsableAPIRenderer):
     - added the 'title' variable to the context to make the breadcrumbs work
   '''
   def get_context(self, data, accepted_media_type, renderer_context):
-    ctx = super(freppleBrowsableAPI, self).get_context(data, accepted_media_type, renderer_context)
+    ctx = super().get_context(data, accepted_media_type, renderer_context)
     ctx['name'] = ctx['view'].serializer_class.Meta.model._meta.model_name
     if hasattr(ctx['view'], 'list'):
       ctx['title'] = "List API for %s" % ctx['name']

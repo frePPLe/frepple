@@ -70,7 +70,7 @@ class frepplePermissionClass(permissions.DjangoModelPermissions):
       request.user.is_active = False
       request.user.is_superuser = False
 
-    return super(frepplePermissionClass, self).has_permission(request, view)
+    return super().has_permission(request, view)
 
 
 class frePPleListCreateAPIView(ListBulkCreateUpdateDestroyAPIView):

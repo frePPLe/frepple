@@ -24,14 +24,14 @@ from django.contrib.admin.sites import AdminSite, AlreadyRegistered
 class freppleAdminSite(AdminSite):
   def register(self, model_or_iterable, admin_class=None, force=False, **options):
     try:
-      super(freppleAdminSite, self).register(model_or_iterable, admin_class, **options)
+      super().register(model_or_iterable, admin_class, **options)
     except AlreadyRegistered:
       # Ignore exception if the model is already registered. It indicates that
       # another app has already registered it.
       if force:
         # Unregister the previous one and register ourselves
         self.unregister(model_or_iterable)
-        super(freppleAdminSite, self).register(model_or_iterable, admin_class, **options)
+        super().register(model_or_iterable, admin_class, **options)
 
 
 # Create two admin sites where all our apps will register their models

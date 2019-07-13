@@ -20,20 +20,16 @@
 
 #define FREPPLE_CORE
 #include "frepple/model.h"
-namespace frepple
-{
+namespace frepple {
 
-  const MetaClass* FlowPlan::metadata;
-  const MetaCategory* FlowPlan::metacategory;
+const MetaClass* FlowPlan::metadata;
+const MetaCategory* FlowPlan::metacategory;
 
-
-int FlowPlan::initialize()
-{
+int FlowPlan::initialize() {
   // Initialize the metadata
-  metacategory = MetaCategory::registerCategory<FlowPlan>("flowplan", "flowplans", reader);
-  metadata = MetaClass::registerClass<FlowPlan>(
-    "flowplan", "flowplan"
-    );
+  metacategory =
+      MetaCategory::registerCategory<FlowPlan>("flowplan", "flowplans", reader);
+  metadata = MetaClass::registerClass<FlowPlan>("flowplan", "flowplan");
   registerFields<FlowPlan>(const_cast<MetaClass*>(metadata));
 
   // Initialize the Python type
@@ -46,25 +42,20 @@ int FlowPlan::initialize()
   return x.typeReady();
 }
 
-
-FlowPlan::FlowPlan (OperationPlan *opplan, const Flow *f)
-  : fl(const_cast<Flow*>(f)), oper(opplan)
-{
+FlowPlan::FlowPlan(OperationPlan* opplan, const Flow* f)
+    : fl(const_cast<Flow*>(f)), oper(opplan) {
   assert(opplan && f);
 
   // Initialize the Python type
   initType(metadata);
 
   // Link the flowplan to the operationplan
-  if (opplan->firstflowplan)
-  {
+  if (opplan->firstflowplan) {
     // Append to the end
-    FlowPlan *c = opplan->firstflowplan;
-    while (c->nextFlowPlan)
-      c = c->nextFlowPlan;
+    FlowPlan* c = opplan->firstflowplan;
+    while (c->nextFlowPlan) c = c->nextFlowPlan;
     c->nextFlowPlan = this;
-  }
-  else
+  } else
     // First in the list
     opplan->firstflowplan = this;
 
@@ -78,25 +69,20 @@ FlowPlan::FlowPlan (OperationPlan *opplan, const Flow *f)
   fl->getOperation()->setChanged();
 }
 
-
-FlowPlan::FlowPlan(OperationPlan *opplan, const Flow *f, Date d, double q)
-  : fl(const_cast<Flow*>(f)), oper(opplan)
-{
+FlowPlan::FlowPlan(OperationPlan* opplan, const Flow* f, Date d, double q)
+    : fl(const_cast<Flow*>(f)), oper(opplan) {
   assert(opplan && f);
 
   // Initialize the Python type
   initType(metadata);
 
   // Link the flowplan to the operationplan
-  if (opplan->firstflowplan)
-  {
+  if (opplan->firstflowplan) {
     // Append to the end
-    FlowPlan *c = opplan->firstflowplan;
-    while (c->nextFlowPlan)
-      c = c->nextFlowPlan;
+    FlowPlan* c = opplan->firstflowplan;
+    while (c->nextFlowPlan) c = c->nextFlowPlan;
     c->nextFlowPlan = this;
-  }
-  else
+  } else
     // First in the list
     opplan->firstflowplan = this;
 
@@ -109,20 +95,17 @@ FlowPlan::FlowPlan(OperationPlan *opplan, const Flow *f, Date d, double q)
   fl->getOperation()->setChanged();
 }
 
-
-string FlowPlan::getStatus() const
-{
+string FlowPlan::getStatus() const {
   if (flags & STATUS_CONFIRMED)
     return "confirmed";
   else
     return "proposed";
 }
 
-
-void FlowPlan::setStatus(const string& s)
-{
+void FlowPlan::setStatus(const string& s) {
   if (getOperationPlan()->getProposed() && s == "confirmed")
-    throw DataException("OperationPlanMaterial locked while OperationPlan is not");
+    throw DataException(
+        "OperationPlanMaterial locked while OperationPlan is not");
   if (s == "confirmed")
     flags |= STATUS_CONFIRMED;
   else if (s == "proposed")
@@ -131,9 +114,7 @@ void FlowPlan::setStatus(const string& s)
     throw DataException("invalid operationplanmaterial status:" + s);
 }
 
-
-void FlowPlan::update()
-{
+void FlowPlan::update() {
   // Update the timeline data structure
   auto fl_info = fl->getFlowplanDateQuantity(this);
   fl->getBuffer()->flowplans.update(this, fl_info.second, fl_info.first);
@@ -144,25 +125,21 @@ void FlowPlan::update()
   fl->getOperation()->setChanged();
 }
 
-
-void FlowPlan::setFlow(Flow* newfl)
-{
+void FlowPlan::setFlow(Flow* newfl) {
   // No change
   if (newfl == fl) return;
 
   // Verify the data
-  if (!newfl)
-    throw DataException("Can't switch to nullptr flow");
+  if (!newfl) throw DataException("Can't switch to nullptr flow");
   if (newfl->getType() != fl->getType())
     throw DataException("Flowplans can only switch to flows of the same type");
 
-  if (!newfl->hasType<FlowTransferBatch>() || !fl)
-  {
+  if (!newfl->hasType<FlowTransferBatch>() || !fl) {
     // Remove from the old buffer, if there is one
-    if (fl)
-    {
+    if (fl) {
       if (fl->getOperation() != newfl->getOperation())
-        throw DataException("Only switching to a flow on the same operation is allowed");
+        throw DataException(
+            "Only switching to a flow on the same operation is allowed");
       fl->getBuffer()->flowplans.erase(this);
       fl->getBuffer()->setChanged();
     }
@@ -173,41 +150,36 @@ void FlowPlan::setFlow(Flow* newfl)
     fl->getBuffer()->flowplans.insert(this, fl_info.second, fl_info.first);
     fl->getBuffer()->setChanged();
     fl->getOperation()->setChanged();
-  }
-  else
-  {
+  } else {
     // Switch all flowplans of the same transfer batch
     auto oldFlow = fl;
     if (oldFlow->getOperation() != newfl->getOperation())
-      throw DataException("Only switching to a flow on the same operation is allowed");
-    for (auto flpln = getOperationPlan()->beginFlowPlans(); flpln != getOperationPlan()->endFlowPlans(); ++flpln)
-    {
-      if (flpln->getFlow() != oldFlow)
-        continue;
+      throw DataException(
+          "Only switching to a flow on the same operation is allowed");
+    for (auto flpln = getOperationPlan()->beginFlowPlans();
+         flpln != getOperationPlan()->endFlowPlans(); ++flpln) {
+      if (flpln->getFlow() != oldFlow) continue;
 
-      // Remove from the old buffer      
+      // Remove from the old buffer
       flpln->getBuffer()->flowplans.erase(&*flpln);
       flpln->getBuffer()->setChanged();
 
       // Insert in the new buffer
       flpln->fl = newfl;
       auto fl_info = flpln->fl->getFlowplanDateQuantity(&*flpln);
-      flpln->fl->getBuffer()->flowplans.insert(&*flpln, fl_info.second, fl_info.first);
+      flpln->fl->getBuffer()->flowplans.insert(&*flpln, fl_info.second,
+                                               fl_info.first);
       flpln->fl->getBuffer()->setChanged();
       flpln->fl->getOperation()->setChanged();
     }
   }
 }
 
-
-void FlowPlan::setItem(Item* newItem)
-{
+void FlowPlan::setItem(Item* newItem) {
   // Verify the data
-  if (!newItem)
-    throw DataException("Can't switch to nullptr flow");
+  if (!newItem) throw DataException("Can't switch to nullptr flow");
 
-  if (fl && fl->getBuffer())
-  {
+  if (fl && fl->getBuffer()) {
     if (newItem == fl->getBuffer()->getItem())
       // No change
       return;
@@ -220,24 +192,16 @@ void FlowPlan::setItem(Item* newItem)
   throw LogicException("Not implemented");
 }
 
-
-pair<double, double> FlowPlan::setQuantity(
-  double quantity, bool rounddown, bool update, bool execute, short mode
-  )
-{
+pair<double, double> FlowPlan::setQuantity(double quantity, bool rounddown,
+                                           bool update, bool execute,
+                                           short mode) {
   // TODO argument "update" isn't used
-  if (getConfirmed())
-  {
+  if (getConfirmed()) {
     // Confirmed flowplans take any quantity, regardless of the
     // quantity of the owning operationplan.
-    if (execute)
-    {
+    if (execute) {
       // Update the timeline data structure
-      getFlow()->getBuffer()->flowplans.update(
-        this,
-        quantity,
-        getDate()
-      );
+      getFlow()->getBuffer()->flowplans.update(this, quantity, getDate());
 
       // Mark the operation and buffer as having changed. This will trigger the
       // recomputation of their problems
@@ -247,99 +211,82 @@ pair<double, double> FlowPlan::setQuantity(
     return make_pair(quantity, oper->getQuantity());
   }
 
-  if (!getFlow()->getEffective().within(getDate()))
-  {
-    if (execute)
-    {
-      if (
-        mode == 2 
-        || (mode == 0 && getFlow()->hasType<FlowEnd>())
-        )
-      {
+  if (!getFlow()->getEffective().within(getDate())) {
+    if (execute) {
+      if (mode == 2 || (mode == 0 && getFlow()->hasType<FlowEnd>())) {
         oper->setOperationPlanParameters(
-          0.0, Date::infinitePast, oper->getEnd(),
-          true, execute, rounddown
-        );
-      }
-      else if (
-        mode == 1 
-        || (mode == 0 && getFlow()->hasType<FlowStart>())
-        )
-      {
-        oper->setOperationPlanParameters(
-          0.0, oper->getStart(), Date::infinitePast,
-          false, execute, rounddown
-        );
+            0.0, Date::infinitePast, oper->getEnd(), true, execute, rounddown);
+      } else if (mode == 1 || (mode == 0 && getFlow()->hasType<FlowStart>())) {
+        oper->setOperationPlanParameters(0.0, oper->getStart(),
+                                         Date::infinitePast, false, execute,
+                                         rounddown);
       }
     }
     return make_pair(0.0, 0.0);
   }
 
   double opplan_quantity;
-  bool less_than_fixed_qty = fabs(quantity) < fabs(getFlow()->getQuantityFixed()) + ROUNDING_ERROR;
-  if (getFlow()->getQuantity() == 0.0 || less_than_fixed_qty)
-  {
+  bool less_than_fixed_qty =
+      fabs(quantity) < fabs(getFlow()->getQuantityFixed()) + ROUNDING_ERROR;
+  if (getFlow()->getQuantity() == 0.0 || less_than_fixed_qty) {
     // Fixed quantity flows only allow resizing to 0
-    if (less_than_fixed_qty && oper->getQuantity() != 0.0)
-    {
+    if (less_than_fixed_qty && oper->getQuantity() != 0.0) {
       if (mode == 2 || (mode == 0 && getFlow()->hasType<FlowEnd>()))
         opplan_quantity = oper->setOperationPlanParameters(
-          0.0, Date::infinitePast, oper->getEnd(),
-          true, execute, rounddown
-          ).quantity;
+                                  0.0, Date::infinitePast, oper->getEnd(), true,
+                                  execute, rounddown)
+                              .quantity;
       else if (mode == 1 || (mode == 0 && getFlow()->hasType<FlowStart>()))
         opplan_quantity = oper->setOperationPlanParameters(
-          0.0, oper->getStart(), Date::infinitePast,
-          false, execute, rounddown
-          ).quantity;
+                                  0.0, oper->getStart(), Date::infinitePast,
+                                  false, execute, rounddown)
+                              .quantity;
+      else
+        throw LogicException("Unreachable code reached");
+    } else if (!less_than_fixed_qty && oper->getQuantity() == 0.0) {
+      if (mode == 2 || (mode == 0 && getFlow()->hasType<FlowEnd>()))
+        opplan_quantity = oper->setOperationPlanParameters(
+                                  0.001, Date::infinitePast, oper->getEnd(),
+                                  true, execute, rounddown)
+                              .quantity;
+      else if (mode == 1 || (mode == 0 && getFlow()->hasType<FlowStart>()))
+        opplan_quantity = oper->setOperationPlanParameters(
+                                  0.001, oper->getStart(), Date::infinitePast,
+                                  false, execute, rounddown)
+                              .quantity;
       else
         throw LogicException("Unreachable code reached");
     }
-    else if (!less_than_fixed_qty && oper->getQuantity() == 0.0)
-    {
-      if (mode == 2 || (mode == 0 && getFlow()->hasType<FlowEnd>()))
-        opplan_quantity = oper->setOperationPlanParameters(
-          0.001, Date::infinitePast, oper->getEnd(),
-          true, execute, rounddown
-          ).quantity;
-      else if (mode == 1 || (mode == 0 && getFlow()->hasType<FlowStart>()))
-        opplan_quantity = oper->setOperationPlanParameters(
-          0.001, oper->getStart(), Date::infinitePast,
-          false, execute, rounddown
-          ).quantity;
-      else
-        throw LogicException("Unreachable code reached");
-    }
-  }
-  else
-  {
+  } else {
     // Proportional or transfer batch flows
     // For transfer batch flowplans the argument quantity is expected to be the
     // total quantity of all batches.
     if (mode == 2 || (mode == 0 && getFlow()->hasType<FlowEnd>()))
-      opplan_quantity = oper->setOperationPlanParameters(
-        (quantity - getFlow()->getQuantityFixed()) / getFlow()->getQuantity(),
-        Date::infinitePast, oper->getEnd(),
-        true, execute, rounddown
-        ).quantity;
+      opplan_quantity =
+          oper->setOperationPlanParameters(
+                  (quantity - getFlow()->getQuantityFixed()) /
+                      getFlow()->getQuantity(),
+                  Date::infinitePast, oper->getEnd(), true, execute, rounddown)
+              .quantity;
     else if (mode == 1 || (mode == 0 && getFlow()->hasType<FlowStart>()))
       opplan_quantity = oper->setOperationPlanParameters(
-        (quantity - getFlow()->getQuantityFixed()) / getFlow()->getQuantity(),
-        oper->getStart(), Date::infinitePast,
-        false, execute, rounddown
-        ).quantity;
+                                (quantity - getFlow()->getQuantityFixed()) /
+                                    getFlow()->getQuantity(),
+                                oper->getStart(), Date::infinitePast, false,
+                                execute, rounddown)
+                            .quantity;
     else
       throw LogicException("Unreachable code reached");
   }
   if (opplan_quantity)
-    return make_pair(opplan_quantity * getFlow()->getQuantity() + getFlow()->getQuantityFixed(), opplan_quantity);
+    return make_pair(opplan_quantity * getFlow()->getQuantity() +
+                         getFlow()->getQuantityFixed(),
+                     opplan_quantity);
   else
     return make_pair(0.0, 0.0);
 }
 
-
-int FlowPlanIterator::initialize()
-{
+int FlowPlanIterator::initialize() {
   // Initialize the type
   PythonType& x = PythonExtension<FlowPlanIterator>::getPythonType();
   x.setName("flowplanIterator");
@@ -348,22 +295,19 @@ int FlowPlanIterator::initialize()
   return x.typeReady();
 }
 
-
-PyObject* FlowPlanIterator::iternext()
-{
+PyObject* FlowPlanIterator::iternext() {
   FlowPlan* fl;
-  if (buffer_or_opplan)
-  {
+  if (buffer_or_opplan) {
     // Skip uninteresting entries
-    while (*bufiter != buf->getFlowPlans().end() && (*bufiter)->getQuantity()==0.0)
+    while (*bufiter != buf->getFlowPlans().end() &&
+           (*bufiter)->getQuantity() == 0.0)
       ++(*bufiter);
     if (*bufiter == buf->getFlowPlans().end()) return nullptr;
     fl = const_cast<FlowPlan*>(static_cast<const FlowPlan*>(&*((*bufiter)++)));
-  }
-  else
-  {
+  } else {
     // Skip uninteresting entries
-    while (*opplaniter != opplan->endFlowPlans() && (*opplaniter)->getQuantity()==0.0)
+    while (*opplaniter != opplan->endFlowPlans() &&
+           (*opplaniter)->getQuantity() == 0.0)
       ++(*opplaniter);
     if (*opplaniter == opplan->endFlowPlans()) return nullptr;
     fl = static_cast<FlowPlan*>(&*((*opplaniter)++));
@@ -372,15 +316,11 @@ PyObject* FlowPlanIterator::iternext()
   return const_cast<FlowPlan*>(fl);
 }
 
-
-Object* FlowPlan::reader(
-  const MetaClass* cat, const DataValueDict& in, CommandManager* mgr
-)
-{
+Object* FlowPlan::reader(const MetaClass* cat, const DataValueDict& in,
+                         CommandManager* mgr) {
   // Pick up the operationplan attribute. An error is reported if it's missing.
   const DataValue* opplanElement = in.get(Tags::operationplan);
-  if (!opplanElement)
-    throw DataException("Missing operationplan field");
+  if (!opplanElement) throw DataException("Missing operationplan field");
   Object* opplanobject = opplanElement->getObject();
   if (!opplanobject || !opplanobject->hasType<OperationPlan>())
     throw DataException("Invalid operationplan field");
@@ -388,8 +328,7 @@ Object* FlowPlan::reader(
 
   // Pick up the item.
   const DataValue* itemElement = in.get(Tags::item);
-  if (!itemElement)
-    throw DataException("Item must be provided");
+  if (!itemElement) throw DataException("Item must be provided");
   Object* itemobject = itemElement->getObject();
   if (!itemobject || itemobject->getType().category != Item::metadata)
     throw DataException("Invalid item field");
@@ -401,26 +340,19 @@ Object* FlowPlan::reader(
   // TODO detect situations where the flowplan is on an alternate material
   auto flplniter = opplan->getFlowPlans();
   FlowPlan* flpln;
-  while ((flpln = flplniter.next() ))
-  {
-    if (flpln->getItem() == itm)
-      return flpln;
+  while ((flpln = flplniter.next())) {
+    if (flpln->getItem() == itm) return flpln;
   }
   return nullptr;
 }
 
-
-Duration FlowPlan::getPeriodOfCover() const
-{
+Duration FlowPlan::getPeriodOfCover() const {
   double left_for_consumption = getOnhand();
-  if (left_for_consumption < ROUNDING_ERROR)
-    return Duration(0L);
-  auto fpiter = getBuffer()->getFlowPlans().begin(this); 
+  if (left_for_consumption < ROUNDING_ERROR) return Duration(0L);
+  auto fpiter = getBuffer()->getFlowPlans().begin(this);
   ++fpiter;
-  while (fpiter != getBuffer()->getFlowPlans().end())
-  {    
-    if (fpiter->getQuantity() < 0.0)
-    {
+  while (fpiter != getBuffer()->getFlowPlans().end()) {
+    if (fpiter->getQuantity() < 0.0) {
       left_for_consumption += fpiter->getQuantity();
       if (left_for_consumption < ROUNDING_ERROR)
         return fpiter->getDate() - getDate();
@@ -430,4 +362,4 @@ Duration FlowPlan::getPeriodOfCover() const
   return Duration(999L * 86400L);
 }
 
-} // end namespace
+}  // namespace frepple

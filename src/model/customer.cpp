@@ -21,43 +21,36 @@
 #define FREPPLE_CORE
 #include "frepple/model.h"
 
-namespace frepple
-{
+namespace frepple {
 
-template<class Customer> Tree utils::HasName<Customer>::st;
+template <class Customer>
+Tree utils::HasName<Customer>::st;
 const MetaCategory* Customer::metadata;
 const MetaClass* CustomerDefault::metadata;
 
-
-int Customer::initialize()
-{
+int Customer::initialize() {
   // Initialize the metadata
-  metadata = MetaCategory::registerCategory<Customer>("customer", "customers", reader, finder);
+  metadata = MetaCategory::registerCategory<Customer>("customer", "customers",
+                                                      reader, finder);
   registerFields<Customer>(const_cast<MetaCategory*>(metadata));
 
   // Initialize the Python class
   return FreppleCategory<Customer>::initialize();
 }
 
-
-int CustomerDefault::initialize()
-{
+int CustomerDefault::initialize() {
   // Initialize the metadata
   CustomerDefault::metadata = MetaClass::registerClass<CustomerDefault>(
-    "customer", "customer_default",
-    Object::create<CustomerDefault>, true
-    );
+      "customer", "customer_default", Object::create<CustomerDefault>, true);
 
   // Initialize the Python class
-  return FreppleClass<CustomerDefault,Customer>::initialize();
+  return FreppleClass<CustomerDefault, Customer>::initialize();
 }
 
-
-Customer::~Customer()
-{
+Customer::~Customer() {
   // Remove all references from demands to this customer
   for (Demand::iterator i = Demand::begin(); i != Demand::end(); ++i)
     if (i->getCustomer() == this) i->setCustomer(nullptr);
 }
 
-} // end namespace
+}  // namespace frepple

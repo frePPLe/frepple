@@ -18,125 +18,122 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "freppleinterface.h"
+#include <signal.h>
+#include <cstdlib>
+#include <cstring>
 #include <iostream>
 #include <sstream>
-#include <cstring>
-#include <cstdlib>
-#include <signal.h>
+#include "freppleinterface.h"
 using namespace std;
 
-
-void usage()
-{
-  cout << "\nfrePPLe v" << FreppleVersion() << " command line application\n"
-      "\nUsage:\n"
-      "  frepple [options] [files | directories]\n"
-      "\nThis program reads XML input data, and executes the modeling and\n"
-      "planning commands included in them.\n"
-      "The XML input can be provided in the following ways:\n"
-      "  - Passing one or more XML files and/or directories as arguments.\n"
-      "    When a directory is specified, the application will process\n"
-      "    all files with the extension '.xml'.\n"
-      "  - Passing one or more Python files with the extension '.py'\n"
-      "    The Python commands are executed in the embedded interpreter.\n"
-      "  - When passing no file or directory arguments, input will be read\n"
-      "    from the standard input. XML data can be piped to the application.\n"
-      "\nOptions:\n"
-      "  -validate -v  Validate the XML input for correctness.\n"
-      "  -check -c     Only validate the input, without executing the content.\n"
-      "  -? -h -help   Show these instructions.\n"
-      "\nEnvironment: The variable FREPPLE_HOME optionally points to a\n"
-      "     directory where the initialization files init.xml, init.py,\n"
-      "     frepple.xsd and module libraries will be searched.\n"
-      "\nReturn codes: 0 when successful, non-zero in case of errors\n"
-      "\nMore information on this program: http://www.frepple.com\n\n"
+void usage() {
+  cout
+      << "\nfrePPLe v" << FreppleVersion()
+      << " command line application\n"
+         "\nUsage:\n"
+         "  frepple [options] [files | directories]\n"
+         "\nThis program reads XML input data, and executes the modeling and\n"
+         "planning commands included in them.\n"
+         "The XML input can be provided in the following ways:\n"
+         "  - Passing one or more XML files and/or directories as arguments.\n"
+         "    When a directory is specified, the application will process\n"
+         "    all files with the extension '.xml'.\n"
+         "  - Passing one or more Python files with the extension '.py'\n"
+         "    The Python commands are executed in the embedded interpreter.\n"
+         "  - When passing no file or directory arguments, input will be read\n"
+         "    from the standard input. XML data can be piped to the "
+         "application.\n"
+         "\nOptions:\n"
+         "  -validate -v  Validate the XML input for correctness.\n"
+         "  -check -c     Only validate the input, without executing the "
+         "content.\n"
+         "  -? -h -help   Show these instructions.\n"
+         "\nEnvironment: The variable FREPPLE_HOME optionally points to a\n"
+         "     directory where the initialization files init.xml, init.py,\n"
+         "     frepple.xsd and module libraries will be searched.\n"
+         "\nReturn codes: 0 when successful, non-zero in case of errors\n"
+         "\nMore information on this program: http://www.frepple.com\n\n"
       << endl;
 }
 
-
-void handler(int sig)
-{
+void handler(int sig) {
   ostringstream o;
   o << "Planning engine terminating due to ";
-  switch (sig)
-  {
+  switch (sig) {
 #ifdef SIGHUP
-  case SIGHUP:
-    o << "hangup signal";
-    break;
+    case SIGHUP:
+      o << "hangup signal";
+      break;
 #endif
 #ifdef SIGINT
-  case SIGINT:
-    o << "interrupt signal";
-    break;
+    case SIGINT:
+      o << "interrupt signal";
+      break;
 #endif
 #ifdef SIGQUIT
-  case SIGQUIT:
-    o << "quit signal";
-    break;
+    case SIGQUIT:
+      o << "quit signal";
+      break;
 #endif
 #ifdef SIGILL
-  case SIGILL:
-    o << "illegal instruction";
-    break;
+    case SIGILL:
+      o << "illegal instruction";
+      break;
 #endif
 #ifdef SIGABRT
-  case SIGABRT:
-    o << "abort signal";
-    break;
+    case SIGABRT:
+      o << "abort signal";
+      break;
 #endif
 #ifdef SIGBUS
-  case SIGBUS:
-    o << "bad memory access";
-    break;
+    case SIGBUS:
+      o << "bad memory access";
+      break;
 #endif
 #ifdef SIGFPE
-  case SIGFPE:
-    o << "floating-point exception";
-    break;
+    case SIGFPE:
+      o << "floating-point exception";
+      break;
 #endif
 #ifdef SIGKILL
-  case SIGKILL:
-    o << "kill signal";
-    break;
+    case SIGKILL:
+      o << "kill signal";
+      break;
 #endif
 #ifdef SIGSEGV
-  case SIGSEGV:
-    o << "segmentation violation";
-    break;
+    case SIGSEGV:
+      o << "segmentation violation";
+      break;
 #endif
 #ifdef SIGTERM
-  case SIGTERM:
-    o << "termination signal";
-    break;
+    case SIGTERM:
+      o << "termination signal";
+      break;
 #endif
 #ifdef SIGSTKFLT
-  case SIGSTKFLT:
-    o << "stack fault on coprocressor";
-    break;
+    case SIGSTKFLT:
+      o << "stack fault on coprocressor";
+      break;
 #endif
 #ifdef SIGXCPU
-  case SIGXCPU:
-    o << "CPU limit reached";
-    break;
+    case SIGXCPU:
+      o << "CPU limit reached";
+      break;
 #endif
 #ifdef SIGXFSZ
-  case SIGXFSZ:
-    o << "file size limit reached";
-    break;
+    case SIGXFSZ:
+      o << "file size limit reached";
+      break;
 #endif
-  default:
-    o << "signal " << sig;
+    default:
+      o << "signal " << sig;
   }
   o << endl;
   FreppleLog(o.str().c_str());
   exit(sig);
 }
 
-
-int main (int argc, char *argv[])
-{
+int main(int argc, char* argv[]) {
   // Install signal handlers.
   // In a debug build we don't do it, to allow debuggers to handle the
   // signal themselves.
@@ -187,39 +184,32 @@ int main (int argc, char *argv[])
   bool validate_only = false;
   bool input = false;
 
-  try
-  {
+  try {
     // Analyze the command line arguments.
-    for (int i = 1; i < argc; ++i)
-    {
-      if (argv[i][0] == '-')
-      {
+    for (int i = 1; i < argc; ++i) {
+      if (argv[i][0] == '-') {
         // An option on the command line
-        if (!strcmp(argv[i],"-validate") || !strcmp(argv[i],"-v"))
+        if (!strcmp(argv[i], "-validate") || !strcmp(argv[i], "-v"))
           validate = true;
-        else if (!strcmp(argv[i],"-check") || !strcmp(argv[i],"-c"))
+        else if (!strcmp(argv[i], "-check") || !strcmp(argv[i], "-c"))
           validate_only = true;
-        else
-        {
-          if (strcmp(argv[i],"-?")
-              && strcmp(argv[i],"-h")
-              && strcmp(argv[i],"-help"))
-            cout << "\nError: Option '" << argv[i]
-                << "' not recognized." << endl;
+        else {
+          if (strcmp(argv[i], "-?") && strcmp(argv[i], "-h") &&
+              strcmp(argv[i], "-help"))
+            cout << "\nError: Option '" << argv[i] << "' not recognized."
+                 << endl;
           usage();
           return EXIT_FAILURE;
         }
-      }
-      else
-      {
+      } else {
         // A file or directory name on the command line
-        if (!input)
-        {
+        if (!input) {
           // Initialize the library if this wasn't done before
           FreppleInitialize();
           input = true;
         }
-        if (strlen(argv[i])>=3 && !strcmp(argv[i]+strlen(argv[i])-3,".py"))
+        if (strlen(argv[i]) >= 3 &&
+            !strcmp(argv[i] + strlen(argv[i]) - 3, ".py"))
           // Execute as Python file
           FreppleReadPythonFile(argv[i]);
         else
@@ -229,24 +219,18 @@ int main (int argc, char *argv[])
     }
 
     // When no filenames are specified, we read the standard input
-    if (!input)
-    {
+    if (!input) {
       FreppleInitialize();
       FreppleReadXMLFile(nullptr, validate, validate_only);
     }
-  }
-  catch (const exception& e)
-  {
+  } catch (const exception& e) {
     ostringstream ch;
     ch << "Error: " << e.what();
     FreppleLog(ch.str());
     return EXIT_FAILURE;
-  }
-  catch (...)
-  {
+  } catch (...) {
     FreppleLog("Error: Unknown exception type");
     return EXIT_FAILURE;
   }
   return EXIT_SUCCESS;
 }
-

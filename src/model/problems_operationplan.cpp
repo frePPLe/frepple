@@ -20,62 +20,51 @@
 
 #define FREPPLE_CORE
 #include "frepple/model.h"
-namespace frepple
-{
+namespace frepple {
 
-
-void Operation::updateProblems()
-{
+void Operation::updateProblems() {
   // Find all operationplans, and delegate the problem detection to them
   if (getDetectProblems())
-    for (OperationPlan *o = first_opplan; o; o = o->next)
-      o->updateProblems();
+    for (OperationPlan* o = first_opplan; o; o = o->next) o->updateProblems();
 }
-
 
 //
 // BEFORECURRENT, BEFOREFENCE, PRECEDENCE
 //
 
-
-void OperationPlan::updateProblems()
-{
+void OperationPlan::updateProblems() {
   // A flag for each problem type that may need to be created
   bool needsBeforeCurrent(false);
   bool needsBeforeFence(false);
   bool needsPrecedence(false);
 
-  if (!firstsubopplan)
-  {
+  if (!firstsubopplan) {
     // Avoid duplicating problems on child and owner operationplans
     // Check if a BeforeCurrent or BeforeFence problem is required.
     // Note that we either detect of beforeCurrent or a beforeFence problem,
     // never both simultaneously.
-    if (getConfirmed())
-    {
+    if (getConfirmed()) {
       if (dates.getEnd() < Plan::instance().getCurrent())
         needsBeforeCurrent = true;
-    }
-    else
-    {
+    } else {
       if (dates.getStart() < Plan::instance().getCurrent())
         needsBeforeCurrent = true;
-      else if (dates.getStart() < Plan::instance().getCurrent() + oper->getFence() && getProposed())
+      else if (dates.getStart() <
+                   Plan::instance().getCurrent() + oper->getFence() &&
+               getProposed())
         needsBeforeFence = true;
     }
   }
-  // Note: 1 second grace period for precedence problems to avoid rounding issues
-  if (nextsubopplan
-    && getEnd() > nextsubopplan->getStart() + Duration(1L)
-    && !nextsubopplan->getConfirmed()
-    && owner && !owner->getOperation()->hasType<OperationSplit>()
-    )
+  // Note: 1 second grace period for precedence problems to avoid rounding
+  // issues
+  if (nextsubopplan && getEnd() > nextsubopplan->getStart() + Duration(1L) &&
+      !nextsubopplan->getConfirmed() && owner &&
+      !owner->getOperation()->hasType<OperationSplit>())
     needsPrecedence = true;
 
   // Loop through the existing problems
   for (Problem::iterator j = Problem::begin(this, false);
-      j!=Problem::end();)
-  {
+       j != Problem::end();) {
     // Need to increment now and define a pointer to the problem, since the
     // problem can be deleted soon (which invalidates the iterator).
     Problem& curprob = *j;
@@ -84,22 +73,17 @@ void OperationPlan::updateProblems()
     // concentrated. However, a drawback of this design is that a new problem
     // subclass will also require a new demand subclass. I think such a link
     // is acceptable.
-    if (typeid(curprob) == typeid(ProblemBeforeCurrent))
-    {
+    if (typeid(curprob) == typeid(ProblemBeforeCurrent)) {
       if (needsBeforeCurrent)
         needsBeforeCurrent = false;
       else
         delete &curprob;
-    }
-    else if (typeid(curprob) == typeid(ProblemBeforeFence))
-    {
+    } else if (typeid(curprob) == typeid(ProblemBeforeFence)) {
       if (needsBeforeFence)
         needsBeforeFence = false;
       else
         delete &curprob;
-    }
-    else if (typeid(curprob) == typeid(ProblemPrecedence))
-    {
+    } else if (typeid(curprob) == typeid(ProblemPrecedence)) {
       if (needsPrecedence)
         needsPrecedence = false;
       else
@@ -108,47 +92,40 @@ void OperationPlan::updateProblems()
   }
 
   // Create the problems that are required but aren't existing yet.
-  if (needsBeforeCurrent)
-    new ProblemBeforeCurrent(this);
-  if (needsBeforeFence)
-    new ProblemBeforeFence(this);
-  if (needsPrecedence)
-    new ProblemPrecedence(this);
+  if (needsBeforeCurrent) new ProblemBeforeCurrent(this);
+  if (needsBeforeFence) new ProblemBeforeFence(this);
+  if (needsPrecedence) new ProblemPrecedence(this);
 }
 
-
 OperationPlan::ProblemIterator::ProblemIterator(const OperationPlan* opplan)
-  : Problem::iterator(opplan->firstProblem)
-{
+    : Problem::iterator(opplan->firstProblem) {
   // Adding related material problems
-  for (FlowPlanIterator flpln = opplan->beginFlowPlans(); flpln != opplan->endFlowPlans(); ++flpln)
-  {
-    for (Problem::iterator prob(flpln->getBuffer()); prob != Problem::end(); ++prob)
+  for (FlowPlanIterator flpln = opplan->beginFlowPlans();
+       flpln != opplan->endFlowPlans(); ++flpln) {
+    for (Problem::iterator prob(flpln->getBuffer()); prob != Problem::end();
+         ++prob)
       if (prob->getDates().overlap(opplan->getDates()) && !prob->isFeasible())
         relatedproblems.push(&*prob);
   }
 
   // Adding related capacity problems
-  for (LoadPlanIterator ldpln = opplan->beginLoadPlans(); ldpln != opplan->endLoadPlans(); ++ldpln)
-  {
-    for (Problem::iterator prob(ldpln->getResource()); prob != Problem::end(); ++prob)
+  for (LoadPlanIterator ldpln = opplan->beginLoadPlans();
+       ldpln != opplan->endLoadPlans(); ++ldpln) {
+    for (Problem::iterator prob(ldpln->getResource()); prob != Problem::end();
+         ++prob)
       if (prob->getDates().overlap(opplan->getDates()) && !prob->isFeasible())
         relatedproblems.push(&*prob);
   }
 
   // Update the first problem pointer
-  if (!iter && !relatedproblems.empty())
-    iter = relatedproblems.top();
+  if (!iter && !relatedproblems.empty()) iter = relatedproblems.top();
 }
 
-
-OperationPlan::ProblemIterator& OperationPlan::ProblemIterator::operator++()
-{
+OperationPlan::ProblemIterator& OperationPlan::ProblemIterator::operator++() {
   // Incrementing beyond the end
   if (!iter) return *this;
 
-  if (!relatedproblems.empty())
-  {
+  if (!relatedproblems.empty()) {
     relatedproblems.pop();
     iter = relatedproblems.top();
     return *this;
@@ -159,109 +136,79 @@ OperationPlan::ProblemIterator& OperationPlan::ProblemIterator::operator++()
   return *this;
 }
 
-
-bool OperationPlan::updateFeasible()
-{
-  if (!getOperation()->getDetectProblems())
-  {
+bool OperationPlan::updateFeasible() {
+  if (!getOperation()->getDetectProblems()) {
     // No problems to be flagged on this operation
     setFeasible(true);
     return true;
   }
 
-  // The implementation of this method isn't really cleanly object oriented. It uses
-  // logic which only the different resource and buffer implementation classes should be
-  // aware.
-  if (firstsubopplan)
-  {
+  // The implementation of this method isn't really cleanly object oriented. It
+  // uses logic which only the different resource and buffer implementation
+  // classes should be aware.
+  if (firstsubopplan) {
     // Check feasibility of child operationplans
-    for (OperationPlan *i = firstsubopplan; i; i = i->nextsubopplan)
-    {
-      if (!i->updateFeasible())
-      {
+    for (OperationPlan* i = firstsubopplan; i; i = i->nextsubopplan) {
+      if (!i->updateFeasible()) {
         setFeasible(false);
         return false;
       }
     }
-  }
-  else
-  {
-    // Before current and before fence problems are only detected on child operationplans
-    if (getConfirmed())
-    {
-      if (dates.getEnd() < Plan::instance().getCurrent())
-      {
+  } else {
+    // Before current and before fence problems are only detected on child
+    // operationplans
+    if (getConfirmed()) {
+      if (dates.getEnd() < Plan::instance().getCurrent()) {
         // Before current violation
         setFeasible(false);
         return false;
       }
-    }
-    else
-    {
-      if (dates.getStart() < Plan::instance().getCurrent())
-      {
+    } else {
+      if (dates.getStart() < Plan::instance().getCurrent()) {
         // Before current violation
         setFeasible(false);
         return false;
-      }
-      else if (dates.getStart() < Plan::instance().getCurrent() + oper->getFence() && getProposed())
-      {
+      } else if (dates.getStart() <
+                     Plan::instance().getCurrent() + oper->getFence() &&
+                 getProposed()) {
         // Before fence violation
         setFeasible(false);
         return false;
       }
     }
   }
-  if (nextsubopplan
-    && getEnd() > nextsubopplan->getStart() + Duration(1L)
-    && !nextsubopplan->getConfirmed()
-    && owner && !owner->getOperation()->hasType<OperationSplit>()
-    )
-  {
+  if (nextsubopplan && getEnd() > nextsubopplan->getStart() + Duration(1L) &&
+      !nextsubopplan->getConfirmed() && owner &&
+      !owner->getOperation()->hasType<OperationSplit>()) {
     // Precedence violation
-    // Note: 1 second grace period for precedence problems to avoid rounding issues
+    // Note: 1 second grace period for precedence problems to avoid rounding
+    // issues
     setFeasible(false);
     return false;
   }
 
   // Verify the capacity constraints
-  for (auto ldplan = getLoadPlans(); ldplan != endLoadPlans(); ++ldplan)
-  {
-    if (ldplan->getResource()->hasType<ResourceDefault>() && ldplan->getQuantity() > 0)
-    {
+  for (auto ldplan = getLoadPlans(); ldplan != endLoadPlans(); ++ldplan) {
+    if (ldplan->getResource()->hasType<ResourceDefault>() &&
+        ldplan->getQuantity() > 0) {
       auto curMax = ldplan->getMax();
-      for (
-        auto cur = ldplan->getResource()->getLoadPlans().begin(&*ldplan);
-        cur != ldplan->getResource()->getLoadPlans().end();
-        ++cur
-        )
-      {
-        if (cur->getOperationPlan() == this && cur->getQuantity() < 0)
-          break;
-        if (cur->getEventType() == 4)
-          curMax = cur->getMax(false);
-        if (
-          cur->getEventType() != 5
-          && cur->isLastOnDate()
-          && cur->getOnhand() > curMax + ROUNDING_ERROR
-          )
-        {
+      for (auto cur = ldplan->getResource()->getLoadPlans().begin(&*ldplan);
+           cur != ldplan->getResource()->getLoadPlans().end(); ++cur) {
+        if (cur->getOperationPlan() == this && cur->getQuantity() < 0) break;
+        if (cur->getEventType() == 4) curMax = cur->getMax(false);
+        if (cur->getEventType() != 5 && cur->isLastOnDate() &&
+            cur->getOnhand() > curMax + ROUNDING_ERROR) {
           // Overload on default resource
           setFeasible(false);
           return false;
         }
       }
-    }
-    else if (ldplan->getResource()->hasType<ResourceBuckets>())
-    {
-      for (
-        auto cur = ldplan->getResource()->getLoadPlans().begin(&*ldplan);
-        cur != ldplan->getResource()->getLoadPlans().end() && cur->getEventType() != 2;
-        ++cur
-        )
-      {
-        if (cur->getOnhand() < -ROUNDING_ERROR)
-        {
+    } else if (ldplan->getResource()->hasType<ResourceBuckets>()) {
+      for (auto cur = ldplan->getResource()->getLoadPlans().begin(&*ldplan);
+           cur != ldplan->getResource()->getLoadPlans().end() &&
+           cur->getEventType() != 2;
+           ++cur) {
+        if (cur->getOnhand() < -ROUNDING_ERROR) {
           // Overloaded capacity on bucketized resource
           setFeasible(false);
           return false;
@@ -271,18 +218,14 @@ bool OperationPlan::updateFeasible()
   }
 
   // Verify the material constraints
-  for (auto flplan = beginFlowPlans(); flplan != endFlowPlans(); ++flplan)
-  {
-    if (
-      !flplan->getFlow()->isConsumer()
-      || flplan->getBuffer()->hasType<BufferInfinite>()
-      )
+  for (auto flplan = beginFlowPlans(); flplan != endFlowPlans(); ++flplan) {
+    if (!flplan->getFlow()->isConsumer() ||
+        flplan->getBuffer()->hasType<BufferInfinite>())
       continue;
     auto flplaniter = flplan->getBuffer()->getFlowPlans();
-    for (auto cur = flplaniter.begin(&*flplan); cur != flplaniter.end(); ++cur)
-    {
-      if (cur->getOnhand() < -ROUNDING_ERROR && cur->isLastOnDate())
-      {
+    for (auto cur = flplaniter.begin(&*flplan); cur != flplaniter.end();
+         ++cur) {
+      if (cur->getOnhand() < -ROUNDING_ERROR && cur->isLastOnDate()) {
         // Material shortage
         setFeasible(false);
         return false;
@@ -295,11 +238,8 @@ bool OperationPlan::updateFeasible()
   return true;
 }
 
-
-PyObject* OperationPlan::updateFeasiblePython(PyObject* self, PyObject* args)
-{
+PyObject* OperationPlan::updateFeasiblePython(PyObject* self, PyObject* args) {
   return PythonData(static_cast<OperationPlan*>(self)->updateFeasible());
 }
 
-
-}
+}  // namespace frepple

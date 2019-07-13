@@ -21,24 +21,19 @@
 #define FREPPLE_CORE
 #include "frepple/model.h"
 
-namespace frepple
-{
+namespace frepple {
 
 const MetaCategory* ItemSupplier::metacategory;
 const MetaClass* ItemSupplier::metadata;
 const MetaClass* OperationItemSupplier::metadata;
 
-
-int ItemSupplier::initialize()
-{
+int ItemSupplier::initialize() {
   // Initialize the metadata
   metacategory = MetaCategory::registerCategory<ItemSupplier>(
-	  "itemsupplier", "itemsuppliers",
-    Association<Supplier,Item,ItemSupplier>::reader, finder
-	  );
+      "itemsupplier", "itemsuppliers",
+      Association<Supplier, Item, ItemSupplier>::reader, finder);
   metadata = MetaClass::registerClass<ItemSupplier>(
-    "itemsupplier", "itemsupplier", Object::create<ItemSupplier>, true
-  );
+      "itemsupplier", "itemsupplier", Object::create<ItemSupplier>, true);
   registerFields<ItemSupplier>(const_cast<MetaClass*>(metadata));
 
   // Initialize the Python class
@@ -53,35 +48,26 @@ int ItemSupplier::initialize()
   return x.typeReady();
 }
 
-
-ItemSupplier::~ItemSupplier()
-{
+ItemSupplier::~ItemSupplier() {
   // Delete the association from the related objects
-  if (getSupplier())
-    getSupplier()->items.erase(this);
-  if (getItem())
-    getItem()->suppliers.erase(this);
+  if (getSupplier()) getSupplier()->items.erase(this);
+  if (getItem()) getItem()->suppliers.erase(this);
 
   // Delete all owned purchase operations
-  while (firstOperation)
-    delete firstOperation;
+  while (firstOperation) delete firstOperation;
 
   // Trigger level and cluster recomputation
   HasLevel::triggerLazyRecomputation();
 }
 
-
-ItemSupplier::ItemSupplier()
-{
+ItemSupplier::ItemSupplier() {
   initType(metadata);
 
   // Trigger level and cluster recomputation
   HasLevel::triggerLazyRecomputation();
 }
 
-
-ItemSupplier::ItemSupplier(Supplier* s, Item* r, int u)
-{
+ItemSupplier::ItemSupplier(Supplier* s, Item* r, int u) {
   setSupplier(s);
   setItem(r);
   setPriority(u);
@@ -91,9 +77,7 @@ ItemSupplier::ItemSupplier(Supplier* s, Item* r, int u)
   HasLevel::triggerLazyRecomputation();
 }
 
-
-ItemSupplier::ItemSupplier(Supplier* s, Item* r, int u, DateRange e)
-{
+ItemSupplier::ItemSupplier(Supplier* s, Item* r, int u, DateRange e) {
   setSupplier(s);
   setItem(r);
   setPriority(u);
@@ -104,66 +88,56 @@ ItemSupplier::ItemSupplier(Supplier* s, Item* r, int u, DateRange e)
   HasLevel::triggerLazyRecomputation();
 }
 
-
-PyObject* ItemSupplier::create(PyTypeObject* pytype, PyObject* args, PyObject* kwds)
-{
-  try
-  {
+PyObject* ItemSupplier::create(PyTypeObject* pytype, PyObject* args,
+                               PyObject* kwds) {
+  try {
     // Pick up the supplier
-    PyObject* sup = PyDict_GetItemString(kwds,"supplier");
-    if (!sup)
-      throw DataException("missing supplier on ItemSupplier");
+    PyObject* sup = PyDict_GetItemString(kwds, "supplier");
+    if (!sup) throw DataException("missing supplier on ItemSupplier");
     if (!PyObject_TypeCheck(sup, Supplier::metadata->pythonClass))
       throw DataException("ItemSupplier supplier must be of type supplier");
 
     // Pick up the item
-    PyObject* it = PyDict_GetItemString(kwds,"item");
-    if (!it)
-      throw DataException("missing item on ItemSupplier");
+    PyObject* it = PyDict_GetItemString(kwds, "item");
+    if (!it) throw DataException("missing item on ItemSupplier");
     if (!PyObject_TypeCheck(it, Item::metadata->pythonClass))
       throw DataException("ItemSupplier item must be of type item");
 
     // Pick up the priority
-    PyObject* q1 = PyDict_GetItemString(kwds,"priority");
+    PyObject* q1 = PyDict_GetItemString(kwds, "priority");
     int q2 = q1 ? PythonData(q1).getInt() : 1;
 
     // Pick up the effective dates
     DateRange eff;
-    PyObject* eff_start = PyDict_GetItemString(kwds,"effective_start");
-    if (eff_start)
-    {
+    PyObject* eff_start = PyDict_GetItemString(kwds, "effective_start");
+    if (eff_start) {
       PythonData d(eff_start);
       eff.setStart(d.getDate());
     }
-    PyObject* eff_end = PyDict_GetItemString(kwds,"effective_end");
-    if (eff_end)
-    {
+    PyObject* eff_end = PyDict_GetItemString(kwds, "effective_end");
+    if (eff_end) {
       PythonData d(eff_end);
       eff.setEnd(d.getDate());
     }
 
     // Create the ItemSupplier
-    ItemSupplier *l = new ItemSupplier(
-      static_cast<Supplier*>(sup),
-      static_cast<Item*>(it),
-      q2, eff
-    );
+    ItemSupplier* l = new ItemSupplier(static_cast<Supplier*>(sup),
+                                       static_cast<Item*>(it), q2, eff);
 
-    // Iterate over extra keywords, and set attributes.   @todo move this responsibility to the readers...
-    if (l)
-    {
+    // Iterate over extra keywords, and set attributes.   @todo move this
+    // responsibility to the readers...
+    if (l) {
       PyObject *key, *value;
       Py_ssize_t pos = 0;
-      while (PyDict_Next(kwds, &pos, &key, &value))
-      {
+      while (PyDict_Next(kwds, &pos, &key, &value)) {
         PythonData field(value);
         PyObject* key_utf8 = PyUnicode_AsUTF8String(key);
         DataKeyword attr(PyBytes_AsString(key_utf8));
         Py_DECREF(key_utf8);
-        if (!attr.isA(Tags::effective_end) && !attr.isA(Tags::effective_start)
-          && !attr.isA(Tags::supplier) && !attr.isA(Tags::item)
-          && !attr.isA(Tags::type) && !attr.isA(Tags::priority) && !attr.isA(Tags::action))
-        {
+        if (!attr.isA(Tags::effective_end) &&
+            !attr.isA(Tags::effective_start) && !attr.isA(Tags::supplier) &&
+            !attr.isA(Tags::item) && !attr.isA(Tags::type) &&
+            !attr.isA(Tags::priority) && !attr.isA(Tags::action)) {
           const MetaFieldBase* fmeta = l->getType().findField(attr.getHash());
           if (!fmeta && l->getType().category)
             fmeta = l->getType().category->findField(attr.getHash());
@@ -179,28 +153,21 @@ PyObject* ItemSupplier::create(PyTypeObject* pytype, PyObject* args, PyObject* k
     // Return the object
     Py_INCREF(l);
     return static_cast<PyObject*>(l);
-  }
-  catch (...)
-  {
+  } catch (...) {
     PythonType::evalException();
     return nullptr;
   }
 }
 
-
-void ItemSupplier::deleteOperationPlans(bool b)
-{
+void ItemSupplier::deleteOperationPlans(bool b) {
   for (OperationItemSupplier* i = firstOperation; i; i = i->nextOperation)
     i->deleteOperationPlans(b);
 }
 
-
-int OperationItemSupplier::initialize()
-{
+int OperationItemSupplier::initialize() {
   // Initialize the metadata
   metadata = MetaClass::registerClass<OperationItemSupplier>(
-    "operation", "operation_itemsupplier"
-    );
+      "operation", "operation_itemsupplier");
   registerFields<OperationItemSupplier>(const_cast<MetaClass*>(metadata));
 
   // Initialize the Python class
@@ -209,47 +176,39 @@ int OperationItemSupplier::initialize()
   x.setDoc("frePPLe operation_itemsupplier");
   x.supportgetattro();
   x.supportsetattro();
-  x.addMethod("decoupledLeadTime", &getDecoupledLeadTimePython, METH_VARARGS, "return the total lead time");
+  x.addMethod("decoupledLeadTime", &getDecoupledLeadTimePython, METH_VARARGS,
+              "return the total lead time");
   const_cast<MetaClass*>(metadata)->pythonClass = x.type_object();
   return x.typeReady();
 }
 
-
-OperationItemSupplier* OperationItemSupplier::findOrCreate(
-  ItemSupplier* i, Buffer *b
-  )
-{
+OperationItemSupplier* OperationItemSupplier::findOrCreate(ItemSupplier* i,
+                                                           Buffer* b) {
   if (!i || !b || !i->getSupplier())
     throw LogicException(
-      "An OperationItemSupplier always needs to point to "
-      "a itemsupplier and a buffer"
-      );
+        "An OperationItemSupplier always needs to point to "
+        "a itemsupplier and a buffer");
   stringstream o;
   o << "Purchase " << b->getName() << " from " << i->getSupplier()->getName();
-  Operation *oper = Operation::find(o.str());
-  if (oper)
-  {
+  Operation* oper = Operation::find(o.str());
+  if (oper) {
     // Reuse existing operation
     if (oper->hasType<OperationItemSupplier>())
       return static_cast<OperationItemSupplier*>(oper);
     else
-      throw DataException("Unexpected operation type for item supplier operation");
-  }
-  else
+      throw DataException(
+          "Unexpected operation type for item supplier operation");
+  } else
     // Create new operation
     return new OperationItemSupplier(i, b);
 }
 
-
-OperationItemSupplier::OperationItemSupplier(
-  ItemSupplier* i, Buffer *b
-  ) : supitem(i)
-{
+OperationItemSupplier::OperationItemSupplier(ItemSupplier* i, Buffer* b)
+    : supitem(i) {
   if (!i || !b || !i->getSupplier())
     throw LogicException(
-      "An OperationItemSupplier always needs to point to "
-      "a itemsupplier and a buffer"
-      );
+        "An OperationItemSupplier always needs to point to "
+        "a itemsupplier and a buffer");
   stringstream o;
   o << "Purchase " << b->getName() << " from " << i->getSupplier()->getName();
   setName(o.str());
@@ -264,11 +223,10 @@ OperationItemSupplier::OperationItemSupplier(
   new FlowEnd(this, b, 1);
   initType(metadata);
 
-  // Optionally, link with a supplier location and related availability calendar.
-  // A location must exist with the same name as the supplier.
+  // Optionally, link with a supplier location and related availability
+  // calendar. A location must exist with the same name as the supplier.
   auto supplierLocation = Location::find(i->getSupplier()->getName());
-  if (supplierLocation)
-    setLocation(supplierLocation);
+  if (supplierLocation) setLocation(supplierLocation);
 
   // Optionally, create a load
   if (i->getResource())
@@ -280,23 +238,16 @@ OperationItemSupplier::OperationItemSupplier(
   i->firstOperation = this;
 }
 
-
-OperationItemSupplier::~OperationItemSupplier()
-{
+OperationItemSupplier::~OperationItemSupplier() {
   // Remove from the list of operations of this supplier item
-  if (supitem)
-  {
-    if (supitem->firstOperation == this)
-    {
+  if (supitem) {
+    if (supitem->firstOperation == this) {
       // We were at the head
       supitem->firstOperation = nextOperation;
-    }
-    else
-    {
+    } else {
       // We were in the middle
       OperationItemSupplier* i = supitem->firstOperation;
-      while (i->nextOperation != this && i->nextOperation)
-        i = i->nextOperation;
+      while (i->nextOperation != this && i->nextOperation) i = i->nextOperation;
       if (!i)
         logger << "Error: ItemSupplier operation list corrupted" << endl;
       else
@@ -305,22 +256,16 @@ OperationItemSupplier::~OperationItemSupplier()
   }
 }
 
-
-Buffer* OperationItemSupplier::getBuffer() const
-{
+Buffer* OperationItemSupplier::getBuffer() const {
   return getFlows().begin()->getBuffer();
 }
 
-
-void OperationItemSupplier::trimExcess(bool zero_or_minimum) const
-{
+void OperationItemSupplier::trimExcess(bool zero_or_minimum) const {
   // This method can only trim operations not loading a resource
-  if (getLoads().begin() != getLoads().end())
-    return;
+  if (getLoads().begin() != getLoads().end()) return;
 
   for (Operation::flowlist::const_iterator fliter = getFlows().begin();
-    fliter != getFlows().end(); ++fliter)
-  {
+       fliter != getFlows().end(); ++fliter) {
     if (fliter->getQuantity() <= 0)
       // Strange, shouldn't really happen
       continue;
@@ -329,10 +274,9 @@ void OperationItemSupplier::trimExcess(bool zero_or_minimum) const
     double oh = 0;
     double excess_min = DBL_MAX;
 
-    for (Buffer::flowplanlist::const_iterator flplniter = fliter->getBuffer()->getFlowPlans().begin();
-      flplniter != fliter->getBuffer()->getFlowPlans().end();
-      ++flplniter)
-    {
+    for (Buffer::flowplanlist::const_iterator flplniter =
+             fliter->getBuffer()->getFlowPlans().begin();
+         flplniter != fliter->getBuffer()->getFlowPlans().end(); ++flplniter) {
       // For any operationplan we get the onhand when its successor
       // replenishment arrives. If that onhand is higher than the minimum
       // onhand value we can resize it.
@@ -340,28 +284,23 @@ void OperationItemSupplier::trimExcess(bool zero_or_minimum) const
       // no upstream activities.
       if (flplniter->getEventType() == 3 && zero_or_minimum)
         curmin = flplniter->getMin();
-      else if (flplniter->getEventType() == 1)
-      {
+      else if (flplniter->getEventType() == 1) {
         const FlowPlan* flpln = static_cast<const FlowPlan*>(&*flplniter);
-        if (oh - curmin < excess_min)
-        {
+        if (oh - curmin < excess_min) {
           excess_min = oh - curmin;
-          if (excess_min < 0)
-            excess_min = 0;
+          if (excess_min < 0) excess_min = 0;
         }
-        if (flpln->getQuantity() > 0 && flpln->getOperationPlan()->getProposed() && (!candidate || candidate->getDate() != flpln->getDate()))
-        {
-          if (candidate
-            && excess_min > ROUNDING_ERROR
-            && candidate->getQuantity() > excess_min + ROUNDING_ERROR
-            && candidate->getQuantity() > getSizeMinimum() + ROUNDING_ERROR
-            )
-          {
+        if (flpln->getQuantity() > 0 &&
+            flpln->getOperationPlan()->getProposed() &&
+            (!candidate || candidate->getDate() != flpln->getDate())) {
+          if (candidate && excess_min > ROUNDING_ERROR &&
+              candidate->getQuantity() > excess_min + ROUNDING_ERROR &&
+              candidate->getQuantity() > getSizeMinimum() + ROUNDING_ERROR) {
             // This candidate can now be resized
-            candidate->setQuantity(candidate->getQuantity() - excess_min, false);
+            candidate->setQuantity(candidate->getQuantity() - excess_min,
+                                   false);
             candidate = nullptr;
-          }
-          else if (flpln->getOperation() == this)
+          } else if (flpln->getOperation() == this)
             candidate = const_cast<FlowPlan*>(flpln);
           else
             candidate = nullptr;
@@ -370,59 +309,46 @@ void OperationItemSupplier::trimExcess(bool zero_or_minimum) const
       }
       oh = flplniter->getOnhand();
     }
-    if (candidate
-      && excess_min > ROUNDING_ERROR
-      && candidate->getQuantity() > excess_min + ROUNDING_ERROR
-      && candidate->getQuantity() > getSizeMinimum() + ROUNDING_ERROR
-      )
+    if (candidate && excess_min > ROUNDING_ERROR &&
+        candidate->getQuantity() > excess_min + ROUNDING_ERROR &&
+        candidate->getQuantity() > getSizeMinimum() + ROUNDING_ERROR)
       // Resize the last candidate at the end of the horizon
       candidate->setQuantity(candidate->getQuantity() - excess_min, false);
   }
 }
 
-
-Object* ItemSupplier::finder(const DataValueDict& d)
-{
+Object* ItemSupplier::finder(const DataValueDict& d) {
   // Check item
   const DataValue* tmp = d.get(Tags::item);
-  if (!tmp)
-    return nullptr;
+  if (!tmp) return nullptr;
   Item* item = static_cast<Item*>(tmp->getObject());
 
   // Check supplier field
   tmp = d.get(Tags::supplier);
-  if (!tmp)
-    return nullptr;
+  if (!tmp) return nullptr;
   Supplier* sup = static_cast<Supplier*>(tmp->getObject());
 
   // Walk over all suppliers of the item, and return
   // the first one with matching
   const DataValue* hasEffectiveStart = d.get(Tags::effective_start);
   Date effective_start;
-  if (hasEffectiveStart)
-    effective_start = hasEffectiveStart->getDate();
+  if (hasEffectiveStart) effective_start = hasEffectiveStart->getDate();
   const DataValue* hasEffectiveEnd = d.get(Tags::effective_end);
   Date effective_end;
-  if (hasEffectiveEnd)
-    effective_end = hasEffectiveEnd->getDate();
+  if (hasEffectiveEnd) effective_end = hasEffectiveEnd->getDate();
   const DataValue* hasPriority = d.get(Tags::priority);
   int priority;
-  if (hasPriority)
-    priority = hasPriority->getInt();
+  if (hasPriority) priority = hasPriority->getInt();
   for (Item::supplierlist::const_iterator fl = item->getSuppliers().begin();
-    fl != item->getSuppliers().end(); ++fl)
-  {
-    if (fl->getSupplier() != sup)
-      continue;
+       fl != item->getSuppliers().end(); ++fl) {
+    if (fl->getSupplier() != sup) continue;
     if (hasEffectiveStart && fl->getEffectiveStart() != effective_start)
       continue;
-    if (hasEffectiveEnd && fl->getEffectiveEnd() != effective_end)
-      continue;
-    if (hasPriority && fl->getPriority() != priority)
-      continue;
+    if (hasEffectiveEnd && fl->getEffectiveEnd() != effective_end) continue;
+    if (hasPriority && fl->getPriority() != priority) continue;
     return const_cast<ItemSupplier*>(&*fl);
   }
   return nullptr;
 }
 
-}
+}  // namespace frepple

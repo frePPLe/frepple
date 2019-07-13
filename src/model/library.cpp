@@ -19,23 +19,20 @@
  ***************************************************************************/
 
 #define FREPPLE_CORE
-#include "frepple/model.h"
 #include <sys/stat.h>
+#include "frepple/model.h"
 
-namespace frepple
-{
+namespace frepple {
 
 // Generic Python type for timeline events
 PythonType* EventPythonType = nullptr;
 
-void LibraryModel::initialize()
-{
+void LibraryModel::initialize() {
   // Initialize only once
   static bool init = false;
-  if (init)
-  {
+  if (init) {
     logger << "Warning: Calling frepple::LibraryModel::initialize() more "
-        << "than once." << endl;
+           << "than once." << endl;
     return;
   }
   init = true;
@@ -60,7 +57,7 @@ void LibraryModel::initialize()
   nok += PeggingIterator::initialize();
   nok += PeggingDemandIterator::initialize();
   nok += OperationPlan::InterruptionIterator::intitialize();
-  nok += OperationPlan::initialize();  
+  nok += OperationPlan::initialize();
   nok += Load::initialize();
   nok += LoadBucketizedFromStart::initialize();
   nok += LoadBucketizedFromEnd::initialize();
@@ -103,74 +100,70 @@ void LibraryModel::initialize()
   nok += ResourceBuckets::initialize();
   nok += Plan::initialize();
 
-  EventPythonType = Object::registerPythonType(
-    sizeof(TimeLine<Flow>::EventMaxQuantity),
-    &typeid(TimeLine<Flow>::EventMaxQuantity)
-    );
+  EventPythonType =
+      Object::registerPythonType(sizeof(TimeLine<Flow>::EventMaxQuantity),
+                                 &typeid(TimeLine<Flow>::EventMaxQuantity));
 
   // Exit if errors were found
-  if (nok)
-    throw RuntimeException("Error registering new Python types");
+  if (nok) throw RuntimeException("Error registering new Python types");
 
   // Register new methods in Python
   PythonInterpreter::registerGlobalMethod(
-    "printsize", printModelSize, METH_NOARGS,
-    "Print information about the memory consumption.");
+      "printsize", printModelSize, METH_NOARGS,
+      "Print information about the memory consumption.");
   PythonInterpreter::registerGlobalMethod(
-    "erase", eraseModel, METH_VARARGS,
-    "Removes the plan data from memory, and optionally the static info too.");
+      "erase", eraseModel, METH_VARARGS,
+      "Removes the plan data from memory, and optionally the static info too.");
   PythonInterpreter::registerGlobalMethod(
-    "readXMLdata", readXMLdata, METH_VARARGS,
-    "Processes a XML string passed as argument.");
+      "readXMLdata", readXMLdata, METH_VARARGS,
+      "Processes a XML string passed as argument.");
+  PythonInterpreter::registerGlobalMethod("readXMLfile", readXMLfile,
+                                          METH_VARARGS, "Read an XML file.");
+  PythonInterpreter::registerGlobalMethod("saveXMLfile", saveXMLfile,
+                                          METH_VARARGS,
+                                          "Save the model to a XML file.");
   PythonInterpreter::registerGlobalMethod(
-    "readXMLfile", readXMLfile, METH_VARARGS,
-    "Read an XML file.");
+      "saveplan", savePlan, METH_VARARGS,
+      "Save the main plan information to a file.");
   PythonInterpreter::registerGlobalMethod(
-    "saveXMLfile", saveXMLfile, METH_VARARGS,
-    "Save the model to a XML file.");
+      "buffers", Buffer::createIterator, METH_NOARGS,
+      "Returns an iterator over the buffers.");
   PythonInterpreter::registerGlobalMethod(
-    "saveplan", savePlan, METH_VARARGS,
-    "Save the main plan information to a file.");
+      "locations", Location::createIterator, METH_NOARGS,
+      "Returns an iterator over the locations.");
   PythonInterpreter::registerGlobalMethod(
-    "buffers", Buffer::createIterator, METH_NOARGS,
-    "Returns an iterator over the buffers.");
+      "customers", Customer::createIterator, METH_NOARGS,
+      "Returns an iterator over the customers.");
   PythonInterpreter::registerGlobalMethod(
-    "locations", Location::createIterator, METH_NOARGS,
-    "Returns an iterator over the locations.");
+      "suppliers", Supplier::createIterator, METH_NOARGS,
+      "Returns an iterator over the suppliers.");
   PythonInterpreter::registerGlobalMethod(
-    "customers", Customer::createIterator, METH_NOARGS,
-    "Returns an iterator over the customers.");
+      "items", Item::createIterator, METH_NOARGS,
+      "Returns an iterator over the items.");
   PythonInterpreter::registerGlobalMethod(
-    "suppliers", Supplier::createIterator, METH_NOARGS,
-    "Returns an iterator over the suppliers.");
+      "calendars", Calendar::createIterator, METH_NOARGS,
+      "Returns an iterator over the calendars.");
   PythonInterpreter::registerGlobalMethod(
-    "items", Item::createIterator, METH_NOARGS,
-    "Returns an iterator over the items.");
+      "demands", Demand::createIterator, METH_NOARGS,
+      "Returns an iterator over the demands.");
   PythonInterpreter::registerGlobalMethod(
-    "calendars", Calendar::createIterator, METH_NOARGS,
-    "Returns an iterator over the calendars.");
+      "resources", Resource::createIterator, METH_NOARGS,
+      "Returns an iterator over the resources.");
   PythonInterpreter::registerGlobalMethod(
-    "demands", Demand::createIterator, METH_NOARGS,
-    "Returns an iterator over the demands.");
+      "operations", Operation::createIterator, METH_NOARGS,
+      "Returns an iterator over the operations.");
   PythonInterpreter::registerGlobalMethod(
-    "resources", Resource::createIterator, METH_NOARGS,
-    "Returns an iterator over the resources.");
+      "operationplans", OperationPlan::createIterator, METH_VARARGS,
+      "Returns an iterator over the operationplans.");
   PythonInterpreter::registerGlobalMethod(
-    "operations", Operation::createIterator, METH_NOARGS,
-    "Returns an iterator over the operations.");
+      "problems", PythonIterator<Problem::iterator, Problem>::create,
+      METH_NOARGS, "Returns an iterator over the problems.");
   PythonInterpreter::registerGlobalMethod(
-    "operationplans", OperationPlan::createIterator, METH_VARARGS,
-    "Returns an iterator over the operationplans.");
+      "setupmatrices", SetupMatrix::createIterator, METH_NOARGS,
+      "Returns an iterator over the setup matrices.");
   PythonInterpreter::registerGlobalMethod(
-    "problems", PythonIterator<Problem::iterator, Problem>::create, METH_NOARGS,
-    "Returns an iterator over the problems.");
-  PythonInterpreter::registerGlobalMethod(
-    "setupmatrices", SetupMatrix::createIterator, METH_NOARGS,
-    "Returns an iterator over the setup matrices.");
-  PythonInterpreter::registerGlobalMethod(
-    "skills", Skill::createIterator, METH_NOARGS,
-    "Returns an iterator over the skills.");
+      "skills", Skill::createIterator, METH_NOARGS,
+      "Returns an iterator over the skills.");
 }
 
-
-}
+}  // namespace frepple

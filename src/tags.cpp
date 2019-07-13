@@ -22,10 +22,8 @@
 #include "frepple/utils.h"
 using namespace frepple;
 
-namespace frepple
-{
-namespace utils
-{
+namespace frepple {
+namespace utils {
 
 const Keyword Tags::action("action");
 const Keyword Tags::alternate("alternate");
@@ -201,7 +199,7 @@ const Keyword Tags::transferbatch("transferbatch");
 // The next line requires the namespace "xsi" to be defined.
 // It must refer to "http://www.w3.org/2001/XMLSchema-instance"
 // This is required to support subclassing in the XML schema.
-const Keyword Tags::type("type","xsi");
+const Keyword Tags::type("type", "xsi");
 const Keyword Tags::unavailable("unavailable");
 const Keyword Tags::userexit_buffer("userexit_buffer");
 const Keyword Tags::userexit_demand("userexit_demand");
@@ -213,5 +211,5 @@ const Keyword Tags::variable("variable");
 const Keyword Tags::verbose("verbose");
 const Keyword Tags::weight("weight");
 
-} // end namespace
-} // end namespace
+}  // namespace utils
+}  // namespace frepple

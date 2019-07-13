@@ -21,21 +21,17 @@
 #define FREPPLE_CORE
 #include "frepple/model.h"
 
-namespace frepple
-{
+namespace frepple {
 
 const MetaCategory* LoadPlan::metacategory;
 const MetaClass* LoadPlan::metadata;
 
-
-int LoadPlan::initialize()
-{
+int LoadPlan::initialize() {
   // Initialize the metadata
-  metacategory = MetaCategory::registerCategory<LoadPlan>("loadplan", "loadplans", reader);
+  metacategory =
+      MetaCategory::registerCategory<LoadPlan>("loadplan", "loadplans", reader);
   registerFields<LoadPlan>(const_cast<MetaCategory*>(metacategory));
-  metadata = MetaClass::registerClass<LoadPlan>(
-    "loadplan", "loadplan"
-    );
+  metadata = MetaClass::registerClass<LoadPlan>("loadplan", "loadplan");
 
   // Initialize the Python type
   PythonType& x = FreppleCategory<LoadPlan>::getPythonType();
@@ -48,9 +44,7 @@ int LoadPlan::initialize()
   return x.typeReady();
 }
 
-
-LoadPlan::LoadPlan(OperationPlan *o, const Load *r)
-{
+LoadPlan::LoadPlan(OperationPlan* o, const Load* r) {
   // Initialize the Python type
   initType(metadata);
 
@@ -63,29 +57,22 @@ LoadPlan::LoadPlan(OperationPlan *o, const Load *r)
 
   // Add to the operationplan
   nextLoadPlan = nullptr;
-  if (o->firstloadplan)
-  {
+  if (o->firstloadplan) {
     // Append to the end
-    LoadPlan *c = o->firstloadplan;
-    while (c->nextLoadPlan)
-      c = c->nextLoadPlan;
+    LoadPlan* c = o->firstloadplan;
+    while (c->nextLoadPlan) c = c->nextLoadPlan;
     c->nextLoadPlan = this;
-  }
-  else
+  } else
     // First in the list
     o->firstloadplan = this;
 
   // Insert in the resource timeline
-  getResource()->loadplans.insert(
-    this,
-    ld->getLoadplanQuantity(this),
-    ld->getLoadplanDate(this)
-  );
+  getResource()->loadplans.insert(this, ld->getLoadplanQuantity(this),
+                                  ld->getLoadplanDate(this));
 
   // For continuous resources, create a loadplan to mark
   // the end of the operationplan.
-  if (!getResource()->hasType<ResourceBuckets>())
-    new LoadPlan(o, r, this);
+  if (!getResource()->hasType<ResourceBuckets>()) new LoadPlan(o, r, this);
 
   // Mark the operation and resource as being changed. This will trigger
   // the recomputation of their problems
@@ -93,9 +80,7 @@ LoadPlan::LoadPlan(OperationPlan *o, const Load *r)
   r->getOperation()->setChanged();
 }
 
-
-LoadPlan::LoadPlan(OperationPlan *o, const Load *r, LoadPlan *lp)
-{
+LoadPlan::LoadPlan(OperationPlan* o, const Load* r, LoadPlan* lp) {
   ld = const_cast<Load*>(r);
   oper = o;
   flags |= TYPE_END;
@@ -105,56 +90,44 @@ LoadPlan::LoadPlan(OperationPlan *o, const Load *r, LoadPlan *lp)
 
   // Add to the operationplan
   nextLoadPlan = nullptr;
-  if (o->firstloadplan)
-  {
+  if (o->firstloadplan) {
     // Append to the end
-    LoadPlan *c = o->firstloadplan;
-    while (c->nextLoadPlan)
-      c = c->nextLoadPlan;
+    LoadPlan* c = o->firstloadplan;
+    while (c->nextLoadPlan) c = c->nextLoadPlan;
     c->nextLoadPlan = this;
-  }
-  else
+  } else
     // First in the list
     o->firstloadplan = this;
 
   // Insert in the resource timeline
-  getResource()->loadplans.insert(
-    this,
-    ld->getLoadplanQuantity(this),
-    ld->getLoadplanDate(this)
-  );
+  getResource()->loadplans.insert(this, ld->getLoadplanQuantity(this),
+                                  ld->getLoadplanDate(this));
 
   // Initialize the Python type
   initType(metadata);
 }
 
-
-void LoadPlan::setResource(Resource* newres, bool check, bool use_start)
-{
+void LoadPlan::setResource(Resource* newres, bool check, bool use_start) {
   // Nothing to do
-  if (res == newres)
-    return;
+  if (res == newres) return;
 
   // Validate the argument
-  if (!newres)
-    throw DataException("Can't switch to nullptr resource");
-  if (check)
-  {
+  if (!newres) throw DataException("Can't switch to nullptr resource");
+  if (check) {
     // New resource must be a subresource of the load's resource.
     bool ok = false;
     for (const Resource* i = newres; i && !ok; i = i->getOwner())
       if (i == getLoad()->getResource()) ok = true;
     if (!ok)
-      throw DataException("Resource isn't matching the resource specified on the load");
+      throw DataException(
+          "Resource isn't matching the resource specified on the load");
 
     // New resource must have the required skill
-    if (getLoad()->getSkill())
-    {
+    if (getLoad()->getSkill()) {
       ok = false;
       Resource::skilllist::const_iterator s = newres->getSkills();
-      while(ResourceSkill *rs = s.next())
-        if (rs->getSkill() == getLoad()->getSkill())
-        {
+      while (ResourceSkill* rs = s.next())
+        if (rs->getSkill() == getLoad()->getSkill()) {
           ok = true;
           break;
         }
@@ -165,20 +138,16 @@ void LoadPlan::setResource(Resource* newres, bool check, bool use_start)
 
   // Mark entities as changed
   Resource* oldRes = res;
-  if (oper)
-    oper->getOperation()->setChanged();
-  if (res && res!=newres)
-    res->setChanged();
+  if (oper) oper->getOperation()->setChanged();
+  if (res && res != newres) res->setChanged();
   newres->setChanged();
 
   // Change this loadplan and its brother
-  LoadPlan *ldplan =
-    getResource()->hasType<ResourceBuckets>() ? this : getOtherLoadPlan();
-  while (ldplan)
-  {
+  LoadPlan* ldplan =
+      getResource()->hasType<ResourceBuckets>() ? this : getOtherLoadPlan();
+  while (ldplan) {
     // Remove from the old resource, if there is one
-    if (res)
-    {
+    if (res) {
       res->loadplans.erase(ldplan);
       res->setChanged();
     }
@@ -187,11 +156,8 @@ void LoadPlan::setResource(Resource* newres, bool check, bool use_start)
     // This code assumes the date and quantity of the loadplan don't change
     // when a new resource is assigned.
     ldplan->res = newres;
-    newres->loadplans.insert(
-      ldplan,
-      ld->getLoadplanQuantity(ldplan),
-      ld->getLoadplanDate(ldplan)
-    );
+    newres->loadplans.insert(ldplan, ld->getLoadplanQuantity(ldplan),
+                             ld->getLoadplanDate(ldplan));
 
     // Repeat for the brother loadplan or exit
     if (ldplan != this)
@@ -201,7 +167,8 @@ void LoadPlan::setResource(Resource* newres, bool check, bool use_start)
   }
 
   // Clear the setup event
-  oper->setStartEndAndQuantity(oper->getSetupEnd(), oper->getEnd(), oper->getQuantity());
+  oper->setStartEndAndQuantity(oper->getSetupEnd(), oper->getEnd(),
+                               oper->getQuantity());
   oper->clearSetupEvent();
 
   // The new resource may have a different availability calendar,
@@ -212,27 +179,20 @@ void LoadPlan::setResource(Resource* newres, bool check, bool use_start)
     oper->setEnd(oper->getEnd());
 
   // Update the setup time on the old resource
-  if (oldRes)
-    oldRes->updateSetupTime();
+  if (oldRes) oldRes->updateSetupTime();
 
   // Change the resource
   newres->setChanged();
 }
 
-
-LoadPlan* LoadPlan::getOtherLoadPlan() const
-{
-  if (getResource()->hasType<ResourceBuckets>())
-    return nullptr;
-  for (LoadPlan *i = oper->firstloadplan; i; i = i->nextLoadPlan)
-    if (i->ld == ld && i != this && i->getEventType() == 1)
-      return i;
+LoadPlan* LoadPlan::getOtherLoadPlan() const {
+  if (getResource()->hasType<ResourceBuckets>()) return nullptr;
+  for (LoadPlan* i = oper->firstloadplan; i; i = i->nextLoadPlan)
+    if (i->ld == ld && i != this && i->getEventType() == 1) return i;
   throw LogicException("No matching loadplan found");
 }
 
-
-string LoadPlan::getStatus() const
-{
+string LoadPlan::getStatus() const {
   if (flags & STATUS_CONFIRMED)
     return "confirmed";
   else if (flags & STATUS_CLOSED)
@@ -241,36 +201,29 @@ string LoadPlan::getStatus() const
     return "proposed";
 }
 
-
-void LoadPlan::setStatus(const string& s)
-{  
-  if (s == "confirmed")
-  {
+void LoadPlan::setStatus(const string& s) {
+  if (s == "confirmed") {
     if (getOperationPlan()->getProposed())
-      throw DataException("OperationPlanResource status change to confirmed while OperationPlan is proposed");
+      throw DataException(
+          "OperationPlanResource status change to confirmed while "
+          "OperationPlan is proposed");
     setConfirmed(true);
-  }
-  else if (s == "proposed")
+  } else if (s == "proposed")
     setProposed(true);
-  else if (s == "closed")
-  {
+  else if (s == "closed") {
     if (getOperationPlan()->getProposed())
-      throw DataException("OperationPlanResource status change to closed while OperationPlan is proposed");
+      throw DataException(
+          "OperationPlanResource status change to closed while OperationPlan "
+          "is proposed");
     setClosed(true);
-  }
-  else
+  } else
     throw DataException("invalid operationplanresource status:" + s);
 }
 
-
-void LoadPlan::update()
-{
+void LoadPlan::update() {
   // Update the timeline data structure
-  getResource()->getLoadPlans().update(
-    this,
-    ld->getLoadplanQuantity(this),
-    ld->getLoadplanDate(this)
-  );
+  getResource()->getLoadPlans().update(this, ld->getLoadplanQuantity(this),
+                                       ld->getLoadplanDate(this));
 
   // Mark the operation and resource as being changed. This will trigger
   // the recomputation of their problems
@@ -278,14 +231,10 @@ void LoadPlan::update()
   ld->getOperation()->setChanged();
 }
 
-
-SetupEvent* LoadPlan::getSetup(bool myself_only) const
-{
+SetupEvent* LoadPlan::getSetup(bool myself_only) const {
   auto opplan = getOperationPlan();
-  if (!getResource()->getSetupMatrix() || !opplan)
-    return nullptr;
-  if (myself_only)
-    return opplan->getSetupEvent();
+  if (!getResource()->getSetupMatrix() || !opplan) return nullptr;
+  if (myself_only) return opplan->getSetupEvent();
   Resource::loadplanlist::const_iterator tmp;
   if (opplan->getSetupEvent())
     // Setup event being used
@@ -296,54 +245,44 @@ SetupEvent* LoadPlan::getSetup(bool myself_only) const
   else
     // End loadplan
     tmp = getOtherLoadPlan();
-  while (tmp != getResource()->getLoadPlans().end())
-  {
-    if (tmp->getEventType() == 5 && (
-      tmp->getDate() < opplan->getSetupEnd()
-      || (tmp->getOperationPlan() && tmp->getDate() == opplan->getSetupEnd() && *(tmp->getOperationPlan()) < *opplan)
-      ))
-       return const_cast<SetupEvent*>(static_cast<const SetupEvent*>(&*tmp));
+  while (tmp != getResource()->getLoadPlans().end()) {
+    if (tmp->getEventType() == 5 &&
+        (tmp->getDate() < opplan->getSetupEnd() ||
+         (tmp->getOperationPlan() && tmp->getDate() == opplan->getSetupEnd() &&
+          *(tmp->getOperationPlan()) < *opplan)))
+      return const_cast<SetupEvent*>(static_cast<const SetupEvent*>(&*tmp));
     --tmp;
   }
   return nullptr;
 }
 
-
-LoadPlan::~LoadPlan()
-{
+LoadPlan::~LoadPlan() {
   getResource()->setChanged();
   getResource()->loadplans.erase(this);
 }
 
-
-void LoadPlan::setLoad(Load* newld)
-{
+void LoadPlan::setLoad(Load* newld) {
   // No change
   if (newld == ld) return;
 
   // Verify the data
-  if (!newld)
-    throw DataException("Can't switch to nullptr load");
+  if (!newld) throw DataException("Can't switch to nullptr load");
   if (ld && ld->getOperation() != newld->getOperation())
-    throw DataException("Only switching to a load on the same operation is allowed");
+    throw DataException(
+        "Only switching to a load on the same operation is allowed");
 
   // Update the load and resource fields
   LoadPlan* o = getOtherLoadPlan();
-  if (o)
-    o->ld = newld;
+  if (o) o->ld = newld;
   ld = newld;
   setResource(newld->getResource(), false, false);
 }
 
-
-Object* LoadPlan::reader(
-  const MetaClass* cat, const DataValueDict& in, CommandManager* mgr
-)
-{
+Object* LoadPlan::reader(const MetaClass* cat, const DataValueDict& in,
+                         CommandManager* mgr) {
   // Pick up the operationplan attribute. An error is reported if it's missing.
   const DataValue* opplanElement = in.get(Tags::operationplan);
-  if (!opplanElement)
-    throw DataException("Missing operationplan field");
+  if (!opplanElement) throw DataException("Missing operationplan field");
   Object* opplanobject = opplanElement->getObject();
   if (!opplanobject || !opplanobject->hasType<OperationPlan>())
     throw DataException("Invalid operationplan field");
@@ -351,10 +290,10 @@ Object* LoadPlan::reader(
 
   // Pick up the resource.
   const DataValue* resourceElement = in.get(Tags::resource);
-  if (!resourceElement)
-    throw DataException("Missing resource field");
+  if (!resourceElement) throw DataException("Missing resource field");
   Object* resourceobject = resourceElement->getObject();
-  if (!resourceobject || resourceobject->getType().category != Resource::metadata)
+  if (!resourceobject ||
+      resourceobject->getType().category != Resource::metadata)
     throw DataException("Invalid resource field");
   Resource* res = static_cast<Resource*>(resourceobject);
 
@@ -363,37 +302,31 @@ Object* LoadPlan::reader(
   // If none is found, we throw a data error.
   auto ldplniter = opplan->getLoadPlans();
   LoadPlan* ldpln;
-  while ((ldpln = ldplniter.next()))
-  {
-    if (ldpln->getResource()->getTop() == res->getTop())
-    {
+  while ((ldpln = ldplniter.next())) {
+    if (ldpln->getResource()->getTop() == res->getTop()) {
       ldpln->setResource(res);
       const DataValue* statusElement = in.get(Tags::status);
-      if (statusElement)
-        ldpln->setStatus(statusElement->getString());
+      if (statusElement) ldpln->setStatus(statusElement->getString());
       return ldpln;
     }
   }
   return nullptr;
 }
 
-
-PyObject* LoadPlan::create(PyTypeObject* pytype, PyObject* args, PyObject* kwds)
-{
-  try
-  {
-    // Pick up the operationplan attribute. An error is reported if it's missing.
+PyObject* LoadPlan::create(PyTypeObject* pytype, PyObject* args,
+                           PyObject* kwds) {
+  try {
+    // Pick up the operationplan attribute. An error is reported if it's
+    // missing.
     PyObject* opplanobject = PyDict_GetItemString(kwds, "operationplan");
-    if (!opplanobject)
-      throw DataException("Missing operationplan field");
+    if (!opplanobject) throw DataException("Missing operationplan field");
     if (!PyObject_TypeCheck(opplanobject, OperationPlan::metadata->pythonClass))
       throw DataException("Invalid operationplan field");
     OperationPlan* opplan = static_cast<OperationPlan*>(opplanobject);
 
     // Pick up the resource.
     PyObject* resobject = PyDict_GetItemString(kwds, "resource");
-    if (!resobject)
-      throw DataException("Missing resource field");
+    if (!resobject) throw DataException("Missing resource field");
     if (!PyObject_TypeCheck(resobject, Resource::metadata->pythonClass))
       throw DataException("Invalid resource field");
     Resource* res = static_cast<Resource*>(resobject);
@@ -403,14 +336,11 @@ PyObject* LoadPlan::create(PyTypeObject* pytype, PyObject* args, PyObject* kwds)
     // If none is found, we throw a data error.
     auto ldplniter = opplan->getLoadPlans();
     LoadPlan* ldpln;
-    while ((ldpln = ldplniter.next()))
-    {
-      if (ldpln->getResource()->getTop() == res->getTop())
-      {
+    while ((ldpln = ldplniter.next())) {
+      if (ldpln->getResource()->getTop() == res->getTop()) {
         ldpln->setResource(res);
         PyObject* statusobject = PyDict_GetItemString(kwds, "status");
-        if (statusobject)
-        {
+        if (statusobject) {
           PythonData status(statusobject);
           ldpln->setStatus(status.getString());
         }
@@ -419,27 +349,26 @@ PyObject* LoadPlan::create(PyTypeObject* pytype, PyObject* args, PyObject* kwds)
     }
 
     // Iterate over extra keywords, and set attributes.
-    if (ldpln)
-    {
+    if (ldpln) {
       PyObject *key, *value;
       Py_ssize_t pos = 0;
-      while (PyDict_Next(kwds, &pos, &key, &value))
-      {
+      while (PyDict_Next(kwds, &pos, &key, &value)) {
         PythonData field(value);
         PyObject* key_utf8 = PyUnicode_AsUTF8String(key);
         DataKeyword attr(PyBytes_AsString(key_utf8));
         Py_DECREF(key_utf8);
-        if (!attr.isA(Tags::operationplan) && !attr.isA(Tags::resource)
-          && !attr.isA(Tags::action) && !attr.isA(Tags::status))
-        {
-          const MetaFieldBase* fmeta = ldpln->getType().findField(attr.getHash());
+        if (!attr.isA(Tags::operationplan) && !attr.isA(Tags::resource) &&
+            !attr.isA(Tags::action) && !attr.isA(Tags::status)) {
+          const MetaFieldBase* fmeta =
+              ldpln->getType().findField(attr.getHash());
           if (!fmeta && ldpln->getType().category)
             fmeta = ldpln->getType().category->findField(attr.getHash());
           if (fmeta)
             // Update the attribute
             fmeta->setField(ldpln, field);
           else
-            ldpln->setProperty(attr.getName(), value);;
+            ldpln->setProperty(attr.getName(), value);
+          ;
         }
       };
     }
@@ -447,60 +376,51 @@ PyObject* LoadPlan::create(PyTypeObject* pytype, PyObject* args, PyObject* kwds)
     // Return the object
     Py_INCREF(ldpln);
     return static_cast<PyObject*>(ldpln);
-  }
-  catch (...)
-  {
+  } catch (...) {
     PythonType::evalException();
     return nullptr;
   }
 }
 
-
-double Load::getLoadplanQuantity(const LoadPlan* lp) const
-{
-  if (
-    (!lp->getOperationPlan()->getProposed() && !lp->getOperationPlan()->getConsumeCapacity())
-    || !lp->getOperationPlan()->getQuantity()
-    || lp->getOperationPlan()->getClosed()
-    || lp->getOperationPlan()->getCompleted()
-    )
+double Load::getLoadplanQuantity(const LoadPlan* lp) const {
+  if ((!lp->getOperationPlan()->getProposed() &&
+       !lp->getOperationPlan()->getConsumeCapacity()) ||
+      !lp->getOperationPlan()->getQuantity() ||
+      lp->getOperationPlan()->getClosed() ||
+      lp->getOperationPlan()->getCompleted())
     // No capacity consumption required
     return 0.0;
-  if (!lp->getOperationPlan()->getDates().overlap(getEffective())
-    && (lp->getOperationPlan()->getDates().getDuration()
-      || !getEffective().within(lp->getOperationPlan()->getStart())))
+  if (!lp->getOperationPlan()->getDates().overlap(getEffective()) &&
+      (lp->getOperationPlan()->getDates().getDuration() ||
+       !getEffective().within(lp->getOperationPlan()->getStart())))
     // Load is not effective during this time.
-    // The extra check is required to make sure that zero duration operationplans
-    // operationplans don't get resized to 0
+    // The extra check is required to make sure that zero duration
+    // operationplans operationplans don't get resized to 0
     return 0.0;
-  if (lp->getResource()->hasType<ResourceBuckets>())
-  {
+  if (lp->getResource()->hasType<ResourceBuckets>()) {
     // Bucketized resource
-    auto efficiency = (
-      lp->getResource()->getEfficiencyCalendar()
-      ? lp->getResource()->getEfficiencyCalendar()->getValue(lp->getDate())
-      : lp->getResource()->getEfficiency()
-      ) / 100.0;
+    auto efficiency =
+        (lp->getResource()->getEfficiencyCalendar()
+             ? lp->getResource()->getEfficiencyCalendar()->getValue(
+                   lp->getDate())
+             : lp->getResource()->getEfficiency()) /
+        100.0;
     if (efficiency > 0.0)
-      return -(getQuantityFixed() + getQuantity() * lp->getOperationPlan()->getQuantity()) / efficiency;
+      return -(getQuantityFixed() +
+               getQuantity() * lp->getOperationPlan()->getQuantity()) /
+             efficiency;
     else
       return DBL_MIN;
-  }
-  else
+  } else
     // Continuous resource
     return lp->isStart() ? getQuantity() : -getQuantity();
 }
 
-
-tuple<double, Date, double> LoadPlan::getBucketEnd() const
-{
+tuple<double, Date, double> LoadPlan::getBucketEnd() const {
   assert(getResource()->hasType<ResourceBuckets>());
   double available_before = getOnhand();
-  for (
-    auto cur = res->getLoadPlans().begin(this); 
-    cur != res->getLoadPlans().end(); ++cur
-    )
-  {
+  for (auto cur = res->getLoadPlans().begin(this);
+       cur != res->getLoadPlans().end(); ++cur) {
     if (cur->getEventType() == 2)
       return make_tuple(available_before, cur->getDate(), cur->getOnhand());
     available_before = cur->getOnhand();
@@ -508,30 +428,24 @@ tuple<double, Date, double> LoadPlan::getBucketEnd() const
   return make_tuple(available_before, Date::infiniteFuture, 0);
 }
 
-
-tuple<double, Date, double> LoadPlan::getBucketStart() const
-{
+tuple<double, Date, double> LoadPlan::getBucketStart() const {
   assert(getResource()->hasType<ResourceBuckets>());
   double available_after = getOnhand();
-  for (
-    auto cur = res->getLoadPlans().begin(this);
-    cur != res->getLoadPlans().end(); --cur
-    )
-  {
+  for (auto cur = res->getLoadPlans().begin(this);
+       cur != res->getLoadPlans().end(); --cur) {
     available_after = cur->getQuantity();
-    if (cur->getEventType() == 2)
-    {
+    if (cur->getEventType() == 2) {
       auto tmp = cur->getDate();
       --cur;
-      return make_tuple(cur != res->getLoadPlans().end() ? cur->getOnhand() : 0.0, tmp, available_after);
+      return make_tuple(
+          cur != res->getLoadPlans().end() ? cur->getOnhand() : 0.0, tmp,
+          available_after);
     }
   }
   return make_tuple(0.0, Date::infinitePast, available_after);
 }
 
-
-int LoadPlanIterator::initialize()
-{
+int LoadPlanIterator::initialize() {
   // Initialize the type
   PythonType& x = PythonExtension<LoadPlanIterator>::getPythonType();
   x.setName("loadplanIterator");
@@ -540,23 +454,20 @@ int LoadPlanIterator::initialize()
   return x.typeReady();
 }
 
-
-PyObject* LoadPlanIterator::iternext()
-{
+PyObject* LoadPlanIterator::iternext() {
   LoadPlan* ld;
-  if (resource_or_opplan)
-  {
+  if (resource_or_opplan) {
     // Skip zero quantity loadplans
-    while (*resiter != res->getLoadPlans().end() && (*resiter)->getQuantity()==0.0)
+    while (*resiter != res->getLoadPlans().end() &&
+           (*resiter)->getQuantity() == 0.0)
       ++(*resiter);
     if (*resiter == res->getLoadPlans().end()) return nullptr;
 
     // Return result
     ld = const_cast<LoadPlan*>(static_cast<const LoadPlan*>(&*((*resiter)++)));
-  }
-  else
-  {
-    while (*opplaniter != opplan->endLoadPlans() && (*opplaniter)->getQuantity()==0.0)
+  } else {
+    while (*opplaniter != opplan->endLoadPlans() &&
+           (*opplaniter)->getQuantity() == 0.0)
       ++(*opplaniter);
     if (*opplaniter == opplan->endLoadPlans()) return nullptr;
     ld = static_cast<LoadPlan*>(&*((*opplaniter)++));
@@ -565,38 +476,29 @@ PyObject* LoadPlanIterator::iternext()
   return const_cast<LoadPlan*>(ld);
 }
 
-
-LoadPlan::AlternateIterator::AlternateIterator(const LoadPlan* o) : ldplan(o)
-{
-  if (ldplan->getLoad() && ldplan->getLoad()->getResource()->isGroup())
-  {
-    for (Resource::memberRecursiveIterator i(ldplan->getLoad()->getResource()); !i.empty(); ++i)
-    {
-      if (ldplan->getResource() == &*i || i->isGroup())
-        continue;
+LoadPlan::AlternateIterator::AlternateIterator(const LoadPlan* o) : ldplan(o) {
+  if (ldplan->getLoad() && ldplan->getLoad()->getResource()->isGroup()) {
+    for (Resource::memberRecursiveIterator i(ldplan->getLoad()->getResource());
+         !i.empty(); ++i) {
+      if (ldplan->getResource() == &*i || i->isGroup()) continue;
       Skill* sk = ldplan->getLoad()->getSkill();
-      if (!sk || i->hasSkill(sk, ldplan->getDate(), ldplan->getDate()))
-      {
+      if (!sk || i->hasSkill(sk, ldplan->getDate(), ldplan->getDate())) {
         auto my_eff = i->getEfficiencyCalendar()
-          ? i->getEfficiencyCalendar()->getValue(ldplan->getOperationPlan()->getStart())
-          : i->getEfficiency();
-        if (my_eff > 0.0)
-          resources.push_back(&*i);
+                          ? i->getEfficiencyCalendar()->getValue(
+                                ldplan->getOperationPlan()->getStart())
+                          : i->getEfficiency();
+        if (my_eff > 0.0) resources.push_back(&*i);
       }
     }
   }
   resIter = resources.begin();
 }
 
-
-Resource* LoadPlan::AlternateIterator::next()
-{
-  if (resIter == resources.end())
-    return nullptr;
+Resource* LoadPlan::AlternateIterator::next() {
+  if (resIter == resources.end()) return nullptr;
   auto tmp = *resIter;
   ++resIter;
   return tmp;
 }
 
-
-} // end namespace
+}  // namespace frepple

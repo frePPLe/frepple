@@ -21,12 +21,9 @@
 #define FREPPLE_CORE
 #include "frepple/model.h"
 
-namespace frepple
-{
+namespace frepple {
 
-
-void Resource::updateProblems()
-{
+void Resource::updateProblems() {
   // Delete existing problems for this resource
   Problem::clearProblems(*this, true, false);
 
@@ -43,8 +40,7 @@ void Resource::updateProblems()
   double curMin(0.0);
   double excessQty(0.0);
   for (loadplanlist::const_iterator iter = loadplans.begin();
-      iter != loadplans.end(); )
-  {
+       iter != loadplans.end();) {
     // Process changes in the maximum or minimum targets
     if (iter->getEventType() == 4)
       curMax = iter->getMax();
@@ -53,30 +49,25 @@ void Resource::updateProblems()
 
     // Only consider the last loadplan for a certain date
     const TimeLine<LoadPlan>::Event *f = &*(iter++);
-    if (iter!=loadplans.end() && iter->getDate()==f->getDate()) continue;
+    if (iter != loadplans.end() && iter->getDate() == f->getDate()) continue;
 
     // Check against minimum target
     double delta = f->getOnhand() - curMin;
-    if (delta < -ROUNDING_ERROR)
-    {
-      if (!shortageProblem)
-      {
+    if (delta < -ROUNDING_ERROR) {
+      if (!shortageProblem) {
         shortageProblemStart = f->getDate();
         shortageQty = delta;
         shortageProblem = true;
-      }
-      else if (delta < shortageQty)
+      } else if (delta < shortageQty)
         // New shortage qty
         shortageQty = delta;
-    }
-    else
-    {
-      if (shortageProblem)
-      {
+    } else {
+      if (shortageProblem) {
         // New problem now ends
         if (f->getDate() != shortageProblemStart)
-          new ProblemCapacityUnderload(this, DateRange(shortageProblemStart,
-              f->getDate()), -shortageQty);
+          new ProblemCapacityUnderload(
+              this, DateRange(shortageProblemStart, f->getDate()),
+              -shortageQty);
         shortageProblem = false;
       }
     }
@@ -86,25 +77,19 @@ void Resource::updateProblems()
 
     // Check against maximum target
     delta = f->getOnhand() - curMax;
-    if (delta > ROUNDING_ERROR)
-    {
-      if (!excessProblem)
-      {
+    if (delta > ROUNDING_ERROR) {
+      if (!excessProblem) {
         excessProblemStart = f->getDate();
         excessQty = delta;
         excessProblem = true;
-      }
-      else if (delta > excessQty)
+      } else if (delta > excessQty)
         excessQty = delta;
-    }
-    else
-    {
-      if (excessProblem)
-      {
+    } else {
+      if (excessProblem) {
         // New problem now ends
         if (f->getDate() != excessProblemStart)
-          new ProblemCapacityOverload(this, excessProblemStart,
-              f->getDate(), excessQty);
+          new ProblemCapacityOverload(this, excessProblemStart, f->getDate(),
+                                      excessQty);
         excessProblem = false;
       }
     }
@@ -113,18 +98,17 @@ void Resource::updateProblems()
 
   // The excess lasts till the end of the horizon...
   if (excessProblem)
-    new ProblemCapacityOverload(this, excessProblemStart,
-        Date::infiniteFuture, excessQty);
+    new ProblemCapacityOverload(this, excessProblemStart, Date::infiniteFuture,
+                                excessQty);
 
   // The shortage lasts till the end of the horizon...
   if (shortageProblem)
-    new ProblemCapacityUnderload(this, DateRange(shortageProblemStart,
-        Date::infiniteFuture), -shortageQty);
+    new ProblemCapacityUnderload(
+        this, DateRange(shortageProblemStart, Date::infiniteFuture),
+        -shortageQty);
 }
 
-
-void ResourceBuckets::updateProblems()
-{
+void ResourceBuckets::updateProblems() {
   // Delete existing problems for this resource
   Problem::clearProblems(*this, true, false);
 
@@ -135,14 +119,12 @@ void ResourceBuckets::updateProblems()
   Date startdate = Date::infinitePast;
   double load = 0.0;
   for (loadplanlist::const_iterator iter = loadplans.begin();
-      iter != loadplans.end(); iter++)
-  {
+       iter != loadplans.end(); iter++) {
     if (iter->getEventType() != 2)
       load = iter->getOnhand();
-    else
-    {
+    else {
       // Evaluate previous bucket
-      if (load < - ROUNDING_ERROR)
+      if (load < -ROUNDING_ERROR)
         new ProblemCapacityOverload(this, startdate, iter->getDate(), -load);
       // Reset evaluation for the new bucket
       startdate = iter->getDate();
@@ -150,24 +132,20 @@ void ResourceBuckets::updateProblems()
     }
   }
   // Evaluate the final bucket
-  if (load < - ROUNDING_ERROR)
+  if (load < -ROUNDING_ERROR)
     new ProblemCapacityOverload(this, startdate, Date::infiniteFuture, -load);
 }
 
-
-string ProblemCapacityUnderload::getDescription() const
-{
+string ProblemCapacityUnderload::getDescription() const {
   ostringstream ch;
   ch << "Resource '" << getResource() << "' has excess capacity of " << qty;
   return ch.str();
 }
 
-
-string ProblemCapacityOverload::getDescription() const
-{
+string ProblemCapacityOverload::getDescription() const {
   ostringstream ch;
   ch << "Resource '" << getResource() << "' has capacity shortage of " << qty;
   return ch.str();
 }
 
-}
+}  // namespace frepple

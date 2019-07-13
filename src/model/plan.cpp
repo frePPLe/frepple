@@ -21,20 +21,17 @@
 #define FREPPLE_CORE
 #include "frepple/model.h"
 
-namespace frepple
-{
-
+namespace frepple {
 
 Plan* Plan::thePlan;
 const MetaClass* Plan::metadata;
 const MetaCategory* Plan::metacategory;
 
-
-int Plan::initialize()
-{
+int Plan::initialize() {
   // Initialize the plan metadata.
   metacategory = MetaCategory::registerCategory<Plan>("plan", "");
-  Plan::metadata = MetaClass::registerClass<OperationPlan>("plan", "plan", true);
+  Plan::metadata =
+      MetaClass::registerClass<OperationPlan>("plan", "plan", true);
   registerFields<Plan>(const_cast<MetaCategory*>(metacategory));
 
   // Initialize the Python type
@@ -57,9 +54,7 @@ int Plan::initialize()
   return tmp;
 }
 
-
-Plan::~Plan()
-{
+Plan::~Plan() {
   // Closing the logfile
   Environment::setLogFile("");
 
@@ -67,9 +62,7 @@ Plan::~Plan()
   thePlan = nullptr;
 }
 
-
-void Plan::setCurrent (Date l)
-{
+void Plan::setCurrent(Date l) {
   // Update the time
   cur_Date = l;
 
@@ -79,4 +72,4 @@ void Plan::setCurrent (Date l)
     i->setChanged();
 }
 
-}
+}  // namespace frepple

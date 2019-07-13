@@ -21,109 +21,88 @@
 #define FREPPLE_CORE
 #include "frepple/model.h"
 
-namespace frepple
-{
+namespace frepple {
 
-template<class Item> Tree utils::HasName<Item>::st;
+template <class Item>
+Tree utils::HasName<Item>::st;
 const MetaCategory* Item::metadata;
 const MetaClass* ItemDefault::metadata;
 
-
-int Item::initialize()
-{
+int Item::initialize() {
   // Initialize the metadata
-  metadata = MetaCategory::registerCategory<Item>("item", "items", reader, finder);
+  metadata =
+      MetaCategory::registerCategory<Item>("item", "items", reader, finder);
   registerFields<Item>(const_cast<MetaCategory*>(metadata));
 
   // Initialize the Python class
   return FreppleCategory<Item>::initialize();
 }
 
-
-int ItemDefault::initialize()
-{
+int ItemDefault::initialize() {
   // Initialize the metadata
-  ItemDefault::metadata = MetaClass::registerClass<ItemDefault>("item", "item_default",
-      Object::create<ItemDefault>, true);
+  ItemDefault::metadata = MetaClass::registerClass<ItemDefault>(
+      "item", "item_default", Object::create<ItemDefault>, true);
 
   // Initialize the Python class
-  return FreppleClass<ItemDefault,Item>::initialize();
+  return FreppleClass<ItemDefault, Item>::initialize();
 }
 
-
-Item::~Item()
-{
+Item::~Item() {
   // Remove references from the buffers
   bufferIterator bufiter(this);
-  while (Buffer* buf = bufiter.next())
-    buf->setItem(nullptr);
+  while (Buffer* buf = bufiter.next()) buf->setItem(nullptr);
 
   // Remove references from the demands
   for (Demand::iterator l = Demand::begin(); l != Demand::end(); ++l)
-    if (l->getItem() == this)
-      l->setItem(nullptr);
+    if (l->getItem() == this) l->setItem(nullptr);
 
   // Remove all item operations referencing this item
-  while (firstOperation)
-    delete firstOperation;
+  while (firstOperation) delete firstOperation;
 
   // The ItemSupplier objects are automatically deleted by the
   // destructor of the Association list class.
 }
 
-
-void Demand::setItem(Item *i)
-{
+void Demand::setItem(Item* i) {
   // No change
-  if (it == i)
-    return;
+  if (it == i) return;
 
   // Unlink from previous item
-  if (it)
-  {
+  if (it) {
     if (it->firstItemDemand == this)
       it->firstItemDemand = nextItemDemand;
-    else
-    {
+    else {
       Demand* dmd = it->firstItemDemand;
-      while (dmd && dmd->nextItemDemand != this)
-        dmd = dmd->nextItemDemand;
-      if (!dmd)
-        throw LogicException("corrupted demand list for an item");
+      while (dmd && dmd->nextItemDemand != this) dmd = dmd->nextItemDemand;
+      if (!dmd) throw LogicException("corrupted demand list for an item");
       dmd->nextItemDemand = nextItemDemand;
     }
   }
 
   // Link at new item
   it = i;
-  if (it)
-  {
+  if (it) {
     nextItemDemand = it->firstItemDemand;
     it->firstItemDemand = this;
   }
 
   // Trigger recreation of the delivery operation
-  if (oper && oper->getHidden())
-    oper = uninitializedDelivery;
+  if (oper && oper->getHidden()) oper = uninitializedDelivery;
 
   // Mark as changed
   setChanged();
 }
 
-
-Date Item::findEarliestPurchaseOrder() const
-{
+Date Item::findEarliestPurchaseOrder() const {
   Date earliest = Date::infiniteFuture;
   bufferIterator buf_iter(this);
-  while (Buffer* buf = buf_iter.next())
-  {
-    for (auto flpln = buf->getFlowPlans().begin(); flpln != buf->getFlowPlans().end(); ++flpln)
-    {
-      if (flpln->getDate() >= earliest)
-        break;
+  while (Buffer* buf = buf_iter.next()) {
+    for (auto flpln = buf->getFlowPlans().begin();
+         flpln != buf->getFlowPlans().end(); ++flpln) {
+      if (flpln->getDate() >= earliest) break;
       auto opplan = flpln->getOperationPlan();
-      if (opplan && opplan->getOperation()->hasType<OperationItemSupplier>() && opplan->getProposed())
-      {
+      if (opplan && opplan->getOperation()->hasType<OperationItemSupplier>() &&
+          opplan->getProposed()) {
         earliest = flpln->getDate();
         break;
       }
@@ -132,4 +111,4 @@ Date Item::findEarliestPurchaseOrder() const
   return earliest;
 }
 
-} // end namespace
+}  // namespace frepple

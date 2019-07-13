@@ -21,8 +21,7 @@
 #define FREPPLE_CORE
 #include "frepple/model.h"
 
-namespace frepple
-{
+namespace frepple {
 
 Tree OperationPlan::st;
 
@@ -34,9 +33,7 @@ unsigned long OperationPlan::counterMin = 1;
 string OperationPlan::referenceMax;
 bool OperationPlan::propagatesetups = true;
 
-
 const MetaCategory* SetupEvent::metadata;
-
 
 Location* OperationPlan::loc = NULL;
 Location* OperationPlan::ori = NULL;
@@ -44,13 +41,13 @@ Supplier* OperationPlan::sup = NULL;
 string OperationPlan::ordertype;
 Item* OperationPlan::itm = NULL;
 
-int OperationPlan::initialize()
-{
+int OperationPlan::initialize() {
   // Initialize the metadata
   metacategory = MetaCategory::registerCategory<OperationPlan>(
-    "operationplan", "operationplans", createOperationPlan, OperationPlan::finder
-    );
-  OperationPlan::metadata = MetaClass::registerClass<OperationPlan>("operationplan", "operationplan", true);
+      "operationplan", "operationplans", createOperationPlan,
+      OperationPlan::finder);
+  OperationPlan::metadata = MetaClass::registerClass<OperationPlan>(
+      "operationplan", "operationplan", true);
   registerFields<OperationPlan>(const_cast<MetaCategory*>(metacategory));
 
   // Initialize the Python type
@@ -62,355 +59,295 @@ int OperationPlan::initialize()
   x.supportstr();
   x.supportcreate(create);
   x.addMethod("toXML", toXML, METH_VARARGS, "return a XML representation");
-  x.addMethod(
-    "calculateOperationTime", &calculateOperationTimePython, METH_VARARGS,
-    "add or subtract a duration of operation hours from a date"
-    );
-  x.addMethod(
-    "updateFeasible", &updateFeasiblePython, METH_NOARGS,
-    "updates the flag whether this operationplan is feasible or not"
-  );
+  x.addMethod("calculateOperationTime", &calculateOperationTimePython,
+              METH_VARARGS,
+              "add or subtract a duration of operation hours from a date");
+  x.addMethod("updateFeasible", &updateFeasiblePython, METH_NOARGS,
+              "updates the flag whether this operationplan is feasible or not");
   const_cast<MetaClass*>(metadata)->pythonClass = x.type_object();
   return x.typeReady();
 }
 
-
-PyObject* OperationPlan::str() const
-{
+PyObject* OperationPlan::str() const {
   ostringstream ch;
   ch << this;
   return PythonData(ch.str());
 }
 
-
-PyObject* OperationPlan::calculateOperationTimePython(PyObject *self, PyObject *args)
-{
+PyObject* OperationPlan::calculateOperationTimePython(PyObject* self,
+                                                      PyObject* args) {
   // Pick up the argument
-  PyObject *datepy;
-  PyObject *durationpy;
+  PyObject* datepy;
+  PyObject* durationpy;
   int forward = 1;
 
-  if (!PyArg_ParseTuple(args, "OO|p:calculateOperationTime", &datepy, &durationpy, &forward))
+  if (!PyArg_ParseTuple(args, "OO|p:calculateOperationTime", &datepy,
+                        &durationpy, &forward))
     return nullptr;
 
-  try
-  {
+  try {
     auto opplan = static_cast<OperationPlan*>(self);
     Date dt = PythonData(datepy).getDate();
     Duration dur = PythonData(durationpy).getDuration();
     if (!opplan->getOperation())
       return PythonData(dt + dur);
-    else
-    {
-      DateRange res = opplan->getOperation()->calculateOperationTime(opplan, dt, dur, (forward==1));
+    else {
+      DateRange res = opplan->getOperation()->calculateOperationTime(
+          opplan, dt, dur, (forward == 1));
       return PythonData(forward ? res.getEnd() : res.getStart());
     }
-  }
-  catch (...)
-  {
+  } catch (...) {
     PythonType::evalException();
     return nullptr;
   }
 }
 
-
-void OperationPlan::setChanged(bool b)
-{
+void OperationPlan::setChanged(bool b) {
   if (owner)
     owner->setChanged(b);
-  else
-  {
+  else {
     oper->setChanged(b);
     if (dmd) dmd->setChanged();
   }
 }
 
-
-void OperationPlan::restore(const OperationPlanState& x)
-{
-  setSetupEvent(x.tmline, x.setup.getDate(), x.setup.getSetup(), x.setup.getRule());
+void OperationPlan::restore(const OperationPlanState& x) {
+  setSetupEvent(x.tmline, x.setup.getDate(), x.setup.getSetup(),
+                x.setup.getRule());
   setStartEndAndQuantity(x.start, x.end, x.quantity);
-  if (!SetupMatrix::empty())
-    scanSetupTimes();
+  if (!SetupMatrix::empty()) scanSetupTimes();
 }
 
-
-Object* OperationPlan::createOperationPlan(
-  const MetaClass* cat, const DataValueDict& in, CommandManager* mgr
-  )
-{
+Object* OperationPlan::createOperationPlan(const MetaClass* cat,
+                                           const DataValueDict& in,
+                                           CommandManager* mgr) {
   // Pick up the action attribute
   Action action = MetaClass::decodeAction(in);
 
   // Check the order type
   string ordtype;
   const DataValue* ordtypeval = in.get(Tags::ordertype);
-  if (ordtypeval)
-    ordtype = ordtypeval->getString();
+  if (ordtypeval) ordtype = ordtypeval->getString();
 
   // Decode the attributes
-  Object *oper = nullptr;
-  Object *itemval = nullptr;
-  Object *locval = nullptr;
-  Object *supval = nullptr;
-  Object *orival = nullptr;
-  Object *dmdval = nullptr;
-  Object *itemdistributionval = nullptr;
-  if (ordtype == "MO" || ordtype.empty())
-  {
+  Object* oper = nullptr;
+  Object* itemval = nullptr;
+  Object* locval = nullptr;
+  Object* supval = nullptr;
+  Object* orival = nullptr;
+  Object* dmdval = nullptr;
+  Object* itemdistributionval = nullptr;
+  if (ordtype == "MO" || ordtype.empty()) {
     const DataValue* val = in.get(Tags::operation);
-    if (!val && action == ADD)
-      throw DataException("Missing operation field");
-    if (val)
-    {
+    if (!val && action == ADD) throw DataException("Missing operation field");
+    if (val) {
       oper = val->getObject();
       if (oper && oper->getType().category != Operation::metadata)
-        throw DataException("Operation field on operationplan must be of type operation");
+        throw DataException(
+            "Operation field on operationplan must be of type operation");
     }
-  }
-  else if (ordtype == "PO")
-  {
+  } else if (ordtype == "PO") {
     const DataValue* val = in.get(Tags::supplier);
-    if (!val && action == ADD)
-      throw DataException("Missing supplier field");
-    if (val)
-    {
+    if (!val && action == ADD) throw DataException("Missing supplier field");
+    if (val) {
       supval = val->getObject();
       if (supval && supval->getType().category != Supplier::metadata)
-        throw DataException("Supplier field on operationplan must be of type supplier");
+        throw DataException(
+            "Supplier field on operationplan must be of type supplier");
     }
     val = in.get(Tags::item);
-    if (!val && action == ADD)
-      throw DataException("Missing item field");
-    if (val)
-    {
+    if (!val && action == ADD) throw DataException("Missing item field");
+    if (val) {
       itemval = val->getObject();
       if (itemval && itemval->getType().category != Item::metadata)
         throw DataException("Item field on operationplan must be of type item");
     }
     val = in.get(Tags::location);
-    if (!val && action == ADD)
-      throw DataException("Missing location field");
-    if (val)
-    {
+    if (!val && action == ADD) throw DataException("Missing location field");
+    if (val) {
       locval = val->getObject();
       if (locval && locval->getType().category != Location::metadata)
-        throw DataException("Location field on operationplan must be of type location");
+        throw DataException(
+            "Location field on operationplan must be of type location");
     }
-  }
-  else if (ordtype == "DO")
-  {
+  } else if (ordtype == "DO") {
     const DataValue* val = in.get(Tags::itemdistribution);
-    if (val)
-    {
+    if (val) {
       itemdistributionval = val->getObject();
-      if (itemdistributionval && itemdistributionval->getType().category != ItemDistribution::metacategory)
-        throw DataException("Itemdistribution field on operationplan must be of type itemdistribution");
-    }
-    else
-    {
+      if (itemdistributionval && itemdistributionval->getType().category !=
+                                     ItemDistribution::metacategory)
+        throw DataException(
+            "Itemdistribution field on operationplan must be of type "
+            "itemdistribution");
+    } else {
       val = in.get(Tags::origin);
-      if (val)
-      {
+      if (val) {
         orival = val->getObject();
         if (orival && orival->getType().category != Location::metadata)
-          throw DataException("Origin field on a distribution order must be of type location");
+          throw DataException(
+              "Origin field on a distribution order must be of type location");
       }
       val = in.get(Tags::item);
-      if (!val && action == ADD)
-        throw DataException("Missing item field");
-      if (val)
-      {
+      if (!val && action == ADD) throw DataException("Missing item field");
+      if (val) {
         itemval = val->getObject();
         if (itemval && itemval->getType().category != Item::metadata)
-          throw DataException("Item field on distribution order must be of type item");
+          throw DataException(
+              "Item field on distribution order must be of type item");
       }
       val = in.get(Tags::location);
-      if (!val && action == ADD)
-        throw DataException("Missing location field");
-      if (val)
-      {
+      if (!val && action == ADD) throw DataException("Missing location field");
+      if (val) {
         locval = val->getObject();
         if (locval && locval->getType().category != Location::metadata)
-          throw DataException("Location field on distribution order must be of type location");
+          throw DataException(
+              "Location field on distribution order must be of type location");
       }
     }
-  }
-  else if (ordtype == "DLVR")
-  {
+  } else if (ordtype == "DLVR") {
     const DataValue* val = in.get(Tags::demand);
-    if (!val && action == ADD)
-      throw DataException("Missing demand field");
-    if (val)
-    {
+    if (!val && action == ADD) throw DataException("Missing demand field");
+    if (val) {
       dmdval = val->getObject();
       if (!dmdval)
         throw DataException("Empty demand field");
-      else if (dmdval->getType().category != Demand::metadata)
-      {
+      else if (dmdval->getType().category != Demand::metadata) {
         Demand* tmp = dynamic_cast<Demand*>(dmdval);
         if (!tmp)
-          throw DataException("Demand field on operationplan must be of type demand");
+          throw DataException(
+              "Demand field on operationplan must be of type demand");
       }
     }
     val = in.get(Tags::item);
-    if (!val && action == ADD)
-      throw DataException("Missing item field");
-    if (val)
-    {
+    if (!val && action == ADD) throw DataException("Missing item field");
+    if (val) {
       itemval = val->getObject();
       if (itemval && itemval->getType().category != Item::metadata)
         throw DataException("Item field on operationplan must be of type item");
     }
     val = in.get(Tags::location);
-    if (!val && action == ADD)
-      throw DataException("Missing location field");
-    if (val)
-    {
+    if (!val && action == ADD) throw DataException("Missing location field");
+    if (val) {
       locval = val->getObject();
       if (locval && locval->getType().category != Location::metadata)
-        throw DataException("Location field on operationplan must be of type location");
+        throw DataException(
+            "Location field on operationplan must be of type location");
     }
-  }
-  else
+  } else
     // Unknown order type for operationplan. We won't read it.
     return nullptr;
 
   // Decode the operationplan identifier
   string id;
   const DataValue* ref = in.get(Tags::reference);
-  if (ref)
-    id = ref->getString();
-  if (id.empty())
-  {
+  if (ref) id = ref->getString();
+  if (id.empty()) {
     const DataValue* idfier = in.get(Tags::id);
-    if (idfier)
-      id = idfier->getString();
+    if (idfier) id = idfier->getString();
   }
-  if (id.empty() && (action==CHANGE || action==REMOVE))
+  if (id.empty() && (action == CHANGE || action == REMOVE))
     // Identifier is required
     throw DataException("Missing reference or identifier field");
 
   // If an identifier is specified, we look up this operation plan
   OperationPlan* opplan = nullptr;
-  if (!id.empty())
-  {
+  if (!id.empty()) {
     opplan = OperationPlan::findReference(id);
-    if (opplan)
-    {
+    if (opplan) {
       // Check whether previous and current operations match.
       if (ordtype.empty())
         ordtype = opplan->getOrderType();
-      else if (ordtype != opplan->getOrderType())
-      {
+      else if (ordtype != opplan->getOrderType()) {
         ostringstream ch;
         ch << "Operationplan identifier " << id
-          << " defined multiple times for different order types";
+           << " defined multiple times for different order types";
         throw DataException(ch.str());
       }
     }
   }
 
   // Execute the proper action
-  switch (action)
-  {
+  switch (action) {
     case REMOVE:
-      if (opplan)
-      {
+      if (opplan) {
         // Send out the notification to subscribers
         if (opplan->getType().raiseEvent(opplan, SIG_REMOVE))
           // Delete it
           delete opplan;
-        else
-        {
+        else {
           // The callbacks disallowed the deletion!
           ostringstream ch;
           ch << "Can't delete operationplan with reference " << id;
           throw DataException(ch.str());
         }
-      }
-      else
-      {
+      } else {
         ostringstream ch;
         ch << "Operationplan with reference " << id << " doesn't exist";
         throw DataException(ch.str());
       }
       return nullptr;
     case ADD:
-      if (opplan)
-      {
+      if (opplan) {
         ostringstream ch;
         ch << "Operationplan with reference " << id
-            << " already exists and can't be added again";
+           << " already exists and can't be added again";
         throw DataException(ch.str());
       }
       break;
     case CHANGE:
-      if (!opplan)
-      {
+      if (!opplan) {
         ostringstream ch;
         ch << "Operationplan with reference " << id << " doesn't exist";
         throw DataException(ch.str());
       }
       break;
-    case ADD_CHANGE: ;
+    case ADD_CHANGE:;
   }
 
   // Flag whether or not to create sub operationplans
   bool create = true;
   const DataValue* py_create = in.get(Tags::create);
-  if (py_create)
-    create = py_create->getBool();
+  if (py_create) create = py_create->getBool();
 
   // Get start, end, quantity and status fields
   const DataValue* startfld = in.get(Tags::start);
   Date start;
-  if (startfld)
-    start = startfld->getDate();
+  if (startfld) start = startfld->getDate();
   const DataValue* endfld = in.get(Tags::end);
   Date end;
-  if (endfld)
-    end = endfld->getDate();
+  if (endfld) end = endfld->getDate();
   const DataValue* quantityfld = in.get(Tags::quantity);
   double quantity = quantityfld ? quantityfld->getDouble() : 0.0;
   const DataValue* statusfld = in.get(Tags::status);
-  if (!statusfld)
-    statusfld = in.get(Tags::statusNoPropagation);
+  if (!statusfld) statusfld = in.get(Tags::statusNoPropagation);
 
   // Return the existing operationplan
-  if (opplan)
-  {
-    if (!ordtype.empty() && ordtype == "MO" && oper && opplan->getOperation() != static_cast<Operation*>(oper))
+  if (opplan) {
+    if (!ordtype.empty() && ordtype == "MO" && oper &&
+        opplan->getOperation() != static_cast<Operation*>(oper))
       // Change the operation
       opplan->setOperation(static_cast<Operation*>(oper));
     if (quantityfld || startfld || endfld)
       opplan->setOperationPlanParameters(
-        quantityfld ? quantity : opplan->getQuantity(),
-        start, end
-      );
+          quantityfld ? quantity : opplan->getQuantity(), start, end);
     return opplan;
   }
 
   // Create a new operation plan
-  if (!start && !end)
-    start = Plan::instance().getCurrent();
-  if (ordtype == "PO")
-  {
+  if (!start && !end) start = Plan::instance().getCurrent();
+  if (ordtype == "PO") {
     // Find or create the destination buffer.
-    if (!itemval)
-      throw DataException("Missing item field");
-    if (!locval)
-      throw DataException("Missing location field");
+    if (!itemval) throw DataException("Missing item field");
+    if (!locval) throw DataException("Missing location field");
     Buffer* destbuffer = nullptr;
     Item::bufferIterator buf_iter(static_cast<Item*>(itemval));
-    while (Buffer* tmpbuf = buf_iter.next())
-    {
-      if (tmpbuf->getLocation() == static_cast<Location*>(locval))
-      {
-        if (destbuffer)
-        {
+    while (Buffer* tmpbuf = buf_iter.next()) {
+      if (tmpbuf->getLocation() == static_cast<Location*>(locval)) {
+        if (destbuffer) {
           stringstream o;
-          o << "Multiple buffers found for item '" << static_cast<Item*>(itemval) << "' and location'" << static_cast<Location*>(locval) << "'";
+          o << "Multiple buffers found for item '"
+            << static_cast<Item*>(itemval) << "' and location'"
+            << static_cast<Location*>(locval) << "'";
           throw DataException(o.str());
         }
         destbuffer = tmpbuf;
@@ -418,36 +355,36 @@ Object* OperationPlan::createOperationPlan(
     }
     if (!destbuffer)
       // Create the destination buffer
-      destbuffer = Buffer::findOrCreate(static_cast<Item*>(itemval), static_cast<Location*>(locval));
+      destbuffer = Buffer::findOrCreate(static_cast<Item*>(itemval),
+                                        static_cast<Location*>(locval));
 
     // Build the producing operation for this buffer.
     destbuffer->getProducingOperation();
 
     // Look for a matching operation replenishing this buffer.
-    for (Buffer::flowlist::const_iterator flowiter = destbuffer->getFlows().begin();
-      flowiter != destbuffer->getFlows().end() && !oper; ++flowiter)
-    {
-      if (!flowiter->getOperation()->hasType<OperationItemSupplier>())
-        continue;
-      OperationItemSupplier* opitemsupplier = static_cast<OperationItemSupplier*>(flowiter->getOperation());
-      if (supval)
-      {
-        if (static_cast<Supplier*>(supval)->isMemberOf(opitemsupplier->getItemSupplier()->getSupplier()))
+    for (Buffer::flowlist::const_iterator flowiter =
+             destbuffer->getFlows().begin();
+         flowiter != destbuffer->getFlows().end() && !oper; ++flowiter) {
+      if (!flowiter->getOperation()->hasType<OperationItemSupplier>()) continue;
+      OperationItemSupplier* opitemsupplier =
+          static_cast<OperationItemSupplier*>(flowiter->getOperation());
+      if (supval) {
+        if (static_cast<Supplier*>(supval)->isMemberOf(
+                opitemsupplier->getItemSupplier()->getSupplier()))
           oper = opitemsupplier;
-      }
-      else
+      } else
         oper = opitemsupplier;
     }
 
     // No matching operation is found.
-    if (!oper)
-    {
-      // We'll create one now, but that requires that we have a supplier defined.
+    if (!oper) {
+      // We'll create one now, but that requires that we have a supplier
+      // defined.
       if (!supval)
         throw DataException("Supplier is needed on this purchase order");
       // Note: We know that we need to create a new one. An existing one would
       // have created an operation on the buffer already.
-      ItemSupplier *itemsupplier = new ItemSupplier();
+      ItemSupplier* itemsupplier = new ItemSupplier();
       itemsupplier->setSupplier(static_cast<Supplier*>(supval));
       itemsupplier->setItem(static_cast<Item*>(itemval));
       itemsupplier->setLocation(static_cast<Location*>(locval));
@@ -455,48 +392,41 @@ Object* OperationPlan::createOperationPlan(
       itemsupplier->setPriority(0);
       oper = new OperationItemSupplier(itemsupplier, destbuffer);
       // Create operation plan
-      opplan = static_cast<Operation*>(oper)->createOperationPlan(quantity, start, end);
-      new ProblemInvalidData(
-        opplan,
-        "Purchase orders on unauthorized supplier", "operationplan",
-        start, end, quantity
-        );
-    }
-    else
+      opplan = static_cast<Operation*>(oper)->createOperationPlan(quantity,
+                                                                  start, end);
+      new ProblemInvalidData(opplan, "Purchase orders on unauthorized supplier",
+                             "operationplan", start, end, quantity);
+    } else
       // Create the operationplan
-      opplan = static_cast<Operation*>(oper)->createOperationPlan(quantity, start, end);
+      opplan = static_cast<Operation*>(oper)->createOperationPlan(quantity,
+                                                                  start, end);
 
     // Set operationplan fields
     if (!id.empty())
-      opplan->setRawReference(id);  // We can use this fast method because we call activate later
-  }
-  else if (ordtype == "DO")
-  {
+      opplan->setRawReference(
+          id);  // We can use this fast method because we call activate later
+  } else if (ordtype == "DO") {
     // Find or create the destination buffer.
-    if (itemdistributionval)
-    {
+    if (itemdistributionval) {
       itemval = static_cast<ItemDistribution*>(itemdistributionval)->getItem();
-      locval = static_cast<ItemDistribution*>(itemdistributionval)->getDestination();
+      locval =
+          static_cast<ItemDistribution*>(itemdistributionval)->getDestination();
       orival = static_cast<ItemDistribution*>(itemdistributionval)->getOrigin();
     }
-    if (!itemval)
-      throw DataException("Missing item field");
+    if (!itemval) throw DataException("Missing item field");
     if (!locval && !orival)
       throw DataException("Missing both origin and location field");
     Buffer* destbuffer = nullptr;
-    if (locval)
-    {
+    if (locval) {
       // Use the destination location
       Item::bufferIterator buf_iter(static_cast<Item*>(itemval));
-      while (Buffer* tmpbuf = buf_iter.next())
-      {
-        if (tmpbuf->getLocation() == static_cast<Location*>(locval))
-        {
-          if (destbuffer)
-          {
+      while (Buffer* tmpbuf = buf_iter.next()) {
+        if (tmpbuf->getLocation() == static_cast<Location*>(locval)) {
+          if (destbuffer) {
             stringstream o;
-            o << "Multiple buffers found for item '" << static_cast<Item*>(itemval) 
-              << "' and location '" << static_cast<Location*>(locval) << "'";
+            o << "Multiple buffers found for item '"
+              << static_cast<Item*>(itemval) << "' and location '"
+              << static_cast<Location*>(locval) << "'";
             throw DataException(o.str());
           }
           destbuffer = tmpbuf;
@@ -504,59 +434,56 @@ Object* OperationPlan::createOperationPlan(
       }
       if (!destbuffer)
         // Create the destination buffer
-        destbuffer = Buffer::findOrCreate(static_cast<Item*>(itemval), static_cast<Location*>(locval));
+        destbuffer = Buffer::findOrCreate(static_cast<Item*>(itemval),
+                                          static_cast<Location*>(locval));
 
       // Build the producing operation for this buffer.
       destbuffer->getProducingOperation();
 
       // Look for a matching operation replenishing this buffer.
-      for (Buffer::flowlist::const_iterator flowiter = destbuffer->getFlows().begin();
-        flowiter != destbuffer->getFlows().end() && !oper; ++flowiter)
-      {
-        if (!flowiter->getOperation()->hasType<OperationItemDistribution>()
-          || flowiter->getQuantity() <= 0)
+      for (Buffer::flowlist::const_iterator flowiter =
+               destbuffer->getFlows().begin();
+           flowiter != destbuffer->getFlows().end() && !oper; ++flowiter) {
+        if (!flowiter->getOperation()->hasType<OperationItemDistribution>() ||
+            flowiter->getQuantity() <= 0)
           continue;
-        OperationItemDistribution* opitemdist = static_cast<OperationItemDistribution*>(flowiter->getOperation());
+        OperationItemDistribution* opitemdist =
+            static_cast<OperationItemDistribution*>(flowiter->getOperation());
         // Origin must match as well
-        if (orival)
-        {
-          for (Operation::flowlist::const_iterator fl = opitemdist->getFlows().begin();
-            fl != opitemdist->getFlows().end(); ++fl)
-          {
-            if (fl->getQuantity() < 0 && fl->getBuffer()->getLocation()->isMemberOf(static_cast<Location*>(orival)))
+        if (orival) {
+          for (Operation::flowlist::const_iterator fl =
+                   opitemdist->getFlows().begin();
+               fl != opitemdist->getFlows().end(); ++fl) {
+            if (fl->getQuantity() < 0 &&
+                fl->getBuffer()->getLocation()->isMemberOf(
+                    static_cast<Location*>(orival)))
               oper = opitemdist;
           }
-        }
-        else if (!opitemdist->getOrigin())
+        } else if (!opitemdist->getOrigin())
           oper = opitemdist;
       }
-    }
-    else
-    {
+    } else {
       // Use only the source location to find an operation
       stringstream o;
-      o << "Ship " << static_cast<Item*>(itemval)->getName()
-        << " from " << static_cast<Location*>(orival)->getName();
+      o << "Ship " << static_cast<Item*>(itemval)->getName() << " from "
+        << static_cast<Location*>(orival)->getName();
       oper = Operation::find(o.str());
     }
 
     // No matching operation is found.
-    if (!oper)
-    {
+    if (!oper) {
       // We'll create one now if an origin is defined
       Buffer* originbuffer = nullptr;
-      if (orival)
-      {
-        Item::bufferIterator bufiter = static_cast<Item*>(itemval)->getBufferIterator();
-        while (Buffer* tmpbuf = bufiter.next())
-        {
-          if (tmpbuf->getLocation() == static_cast<Location*>(orival))
-          {
-            if (originbuffer)
-            {
+      if (orival) {
+        Item::bufferIterator bufiter =
+            static_cast<Item*>(itemval)->getBufferIterator();
+        while (Buffer* tmpbuf = bufiter.next()) {
+          if (tmpbuf->getLocation() == static_cast<Location*>(orival)) {
+            if (originbuffer) {
               stringstream o;
-              o << "Multiple buffers found for item '" << static_cast<Item*>(itemval) 
-                << "' and location '" << static_cast<Location*>(orival) << "'";
+              o << "Multiple buffers found for item '"
+                << static_cast<Item*>(itemval) << "' and location '"
+                << static_cast<Location*>(orival) << "'";
               throw DataException(o.str());
             }
             originbuffer = tmpbuf;
@@ -564,84 +491,86 @@ Object* OperationPlan::createOperationPlan(
         }
         if (!originbuffer)
           // Create the origin buffer
-          originbuffer = Buffer::findOrCreate(static_cast<Item*>(itemval), static_cast<Location*>(orival));
+          originbuffer = Buffer::findOrCreate(static_cast<Item*>(itemval),
+                                              static_cast<Location*>(orival));
       }
 
       // Create itemdistribution when not provided
-      if (!itemdistributionval)
-      {
+      if (!itemdistributionval) {
         itemdistributionval = new ItemDistribution();
         if (orival)
-          static_cast<ItemDistribution*>(itemdistributionval)->setOrigin(static_cast<Location*>(orival));
-        static_cast<ItemDistribution*>(itemdistributionval)->setItem(static_cast<Item*>(itemval));
+          static_cast<ItemDistribution*>(itemdistributionval)
+              ->setOrigin(static_cast<Location*>(orival));
+        static_cast<ItemDistribution*>(itemdistributionval)
+            ->setItem(static_cast<Item*>(itemval));
         if (locval)
-          static_cast<ItemDistribution*>(itemdistributionval)->setDestination(static_cast<Location*>(locval));
+          static_cast<ItemDistribution*>(itemdistributionval)
+              ->setDestination(static_cast<Location*>(locval));
         static_cast<ItemDistribution*>(itemdistributionval)->setPriority(0);
       }
 
       // Create operation when it doesn't exist yet
       oper = nullptr;
-      auto oper_iter = static_cast<ItemDistribution*>(itemdistributionval)->getOperations();
-      while (OperationItemDistribution* oper2 = oper_iter.next())
-      {
-        if (oper2->getOrigin() == originbuffer && oper2->getDestination() == destbuffer)
-        {
+      auto oper_iter =
+          static_cast<ItemDistribution*>(itemdistributionval)->getOperations();
+      while (OperationItemDistribution* oper2 = oper_iter.next()) {
+        if (oper2->getOrigin() == originbuffer &&
+            oper2->getDestination() == destbuffer) {
           oper = oper2;
           break;
         }
       }
       if (!oper)
         oper = new OperationItemDistribution(
-          static_cast<ItemDistribution*>(itemdistributionval), originbuffer, destbuffer
-          );
+            static_cast<ItemDistribution*>(itemdistributionval), originbuffer,
+            destbuffer);
 
       // Create operation plan
       opplan = static_cast<Operation*>(oper)->createOperationPlan(
-        quantity, start, end, nullptr, nullptr, 0, false
-        );
+          quantity, start, end, nullptr, nullptr, 0, false);
 
-      // Make sure no problem is reported when item distribution priority is 0 (Rebalancing)
-      // Checking that no item distribution in reverse mode exists
+      // Make sure no problem is reported when item distribution priority is 0
+      // (Rebalancing) Checking that no item distribution in reverse mode exists
       bool found = false;
-      auto itemdist_iter = (static_cast<Item*>(itemval))->getDistributionIterator();
-      while (ItemDistribution *i = itemdist_iter.next())
-      {
-        if (i->getOrigin() == static_cast<ItemDistribution*>(itemdistributionval)->getDestination()
-          && i->getDestination() == static_cast<ItemDistribution*>(itemdistributionval)->getOrigin())
-        {
+      auto itemdist_iter =
+          (static_cast<Item*>(itemval))->getDistributionIterator();
+      while (ItemDistribution* i = itemdist_iter.next()) {
+        if (i->getOrigin() ==
+                static_cast<ItemDistribution*>(itemdistributionval)
+                    ->getDestination() &&
+            i->getDestination() ==
+                static_cast<ItemDistribution*>(itemdistributionval)
+                    ->getOrigin()) {
           found = true;
           break;
         }
       }
       if (!found)
-        new ProblemInvalidData(opplan, "Distribution order on unknown item distribution", "operationplan",
-          start, end, quantity);
-    }
-    else
+        new ProblemInvalidData(
+            opplan, "Distribution order on unknown item distribution",
+            "operationplan", start, end, quantity);
+    } else
       // Create operation plan
-      opplan = static_cast<Operation*>(oper)->createOperationPlan(quantity, start, end, nullptr, nullptr, 0, false);
+      opplan = static_cast<Operation*>(oper)->createOperationPlan(
+          quantity, start, end, nullptr, nullptr, 0, false);
 
     // Set operationplan fields
     if (!id.empty())
-      opplan->setRawReference(id);  // We can use this fast method because we call activate later
-  }
-  else if (ordtype == "DLVR")
-  {
+      opplan->setRawReference(
+          id);  // We can use this fast method because we call activate later
+  } else if (ordtype == "DLVR") {
     // Find or create the destination buffer.
-    if (!itemval)
-      throw DataException("Missing item field");
-    if (!locval)
-      throw DataException("Missing location field");
+    if (!itemval) throw DataException("Missing item field");
+    if (!locval) throw DataException("Missing location field");
     Buffer* destbuffer = nullptr;
     Item::bufferIterator buf_iter(static_cast<Item*>(itemval));
-    while (Buffer* tmpbuf = buf_iter.next())
-    {
-      if (tmpbuf->getLocation() == static_cast<Location*>(locval))
-      {
-        if (destbuffer)
-        {
+    while (Buffer* tmpbuf = buf_iter.next()) {
+      if (tmpbuf->getLocation() == static_cast<Location*>(locval)) {
+        if (destbuffer) {
           stringstream o;
-          o << "Multiple buffers found for item '" << static_cast<Item*>(itemval) << "' and location '" << static_cast<Location*>(locval) << "'";
+          o << "Multiple buffers found for item '"
+            << static_cast<Item*>(itemval) << "' and location '"
+            << static_cast<Location*>(locval) << "'";
           throw DataException(o.str());
         }
         destbuffer = tmpbuf;
@@ -649,38 +578,35 @@ Object* OperationPlan::createOperationPlan(
     }
     if (!destbuffer)
       // Create the destination buffer
-      destbuffer = Buffer::findOrCreate(static_cast<Item*>(itemval), static_cast<Location*>(locval));
+      destbuffer = Buffer::findOrCreate(static_cast<Item*>(itemval),
+                                        static_cast<Location*>(locval));
 
     // Create new operation if not found
     oper = Operation::find("Ship " + string(destbuffer->getName()));
-    if (!oper)
-    {
+    if (!oper) {
       oper = new OperationDelivery();
       static_cast<OperationDelivery*>(oper)->setBuffer(destbuffer);
     }
 
     // Create operation plan
-    opplan = static_cast<Operation*>(oper)->createOperationPlan(quantity, start, end);
+    opplan = static_cast<Operation*>(oper)->createOperationPlan(quantity, start,
+                                                                end);
     static_cast<Demand*>(dmdval)->addDelivery(opplan);
 
     // Set operationplan fields
     if (!id.empty())
-      opplan->setRawReference(id);  // We can use this fast method because we call activate later
-  }
-  else
-  {
+      opplan->setRawReference(
+          id);  // We can use this fast method because we call activate later
+  } else {
     if (!oper)
       // Can't create operationplan because the operation doesn't exist
       throw DataException("Missing operation field");
 
     // Create an operationplan
     opplan = static_cast<Operation*>(oper)->createOperationPlan(
-      quantity, start, end, nullptr, nullptr, false
-      );
-    if (!id.empty())
-      opplan->setReference(id);
-    if (!opplan->getType().raiseEvent(opplan, SIG_ADD))
-    {
+        quantity, start, end, nullptr, nullptr, false);
+    if (!id.empty()) opplan->setReference(id);
+    if (!opplan->getType().raiseEvent(opplan, SIG_ADD)) {
       delete opplan;
       throw DataException("Can't create operationplan");
     }
@@ -689,96 +615,78 @@ Object* OperationPlan::createOperationPlan(
   // Special case: if the operation plan is locked, we need to
   // process the start and end date before locking it.
   // Subsequent calls won't affect the operationplan any longer.
-  if (statusfld && statusfld->getString() != "proposed")
-  {
+  if (statusfld && statusfld->getString() != "proposed") {
     string status = statusfld->getString();
     opplan->setStatus(status);
-    opplan->freezeStatus(
-      start ? start : opplan->getStart(), 
-      end ? end : opplan->getEnd(),
-      quantity
-      );
+    opplan->freezeStatus(start ? start : opplan->getStart(),
+                         end ? end : opplan->getEnd(), quantity);
   }
   if (!opplan->activate(create, start))
     throw DataException("Can't create operationplan");
 
   // Report the operationplan creation to the manager
-  if (mgr)
-      mgr->add(new CommandCreateObject(opplan));
+  if (mgr) mgr->add(new CommandCreateObject(opplan));
 
   return opplan;
 }
 
-
-OperationPlan* OperationPlan::findReference(string const& l)
-{
+OperationPlan* OperationPlan::findReference(string const& l) {
   bool guarantueed = false;
 
   // Compare with the max reference string
-  if (referenceMax < l)
-    guarantueed = true;
+  if (referenceMax < l) guarantueed = true;
 
   // Compare with the max counter
-  try
-  {
+  try {
     unsigned long idx = stoul(l);
     if (idx > counterMin)
       guarantueed = true;
     else
       guarantueed = false;
+  } catch (...) { /* The reference isn't a numeric value */
   }
-  catch (...) { /* The reference isn't a numeric value */ }
-  
+
   // We are sure not to find it
-  if (guarantueed)
-    return nullptr;
+  if (guarantueed) return nullptr;
 
   // Look up in the tree
   auto tmp = st.find(l);
   return tmp == st.end() ? nullptr : static_cast<OperationPlan*>(tmp);
 }
 
-
-bool OperationPlan::assignReference()
-{
+bool OperationPlan::assignReference() {
   // Need to assure that ids are unique!
   static mutex onlyOne;
-  if (!getName().empty())
-  {
+  if (!getName().empty()) {
     // An identifier was read in from input
     lock_guard<mutex> l(onlyOne);
-    if (getName() < referenceMax)
-    {
+    if (getName() < referenceMax) {
       // The assigned id potentially clashes with an existing operationplan.
       // Check whether it clashes with existing operationplans
       OperationPlan* opplan = static_cast<OperationPlan*>(st.find(getName()));
-      if (opplan != st.end() && opplan->getOperation() != oper)
-        return false;
-    }
-    else
+      if (opplan != st.end() && opplan->getOperation() != oper) return false;
+    } else
       // The new operationplan definitely doesn't clash with existing id's.
       // The counter need updating to garantuee that counter is always
       // a safe starting point for tagging new operationplans.
       referenceMax = getName();
-    try
-    {
+    try {
       unsigned long idx = stoul(getName());
-      if (idx >= counterMin)
-      {
+      if (idx >= counterMin) {
         if (idx >= ULONG_MAX)
-          throw RuntimeException("Exhausted the range of available operationplan references");
+          throw RuntimeException(
+              "Exhausted the range of available operationplan references");
         counterMin = idx + 1;
       }
+    } catch (...) { /* The reference isn't a numeric value */
     }
-    catch(...) { /* The reference isn't a numeric value */ }
-  }
-  else 
-  {
+  } else {
     // Fresh operationplan with blank id
     lock_guard<mutex> l(onlyOne);  // Need to assure that ids are unique!
     setName(to_string(counterMin++));
     if (counterMin >= ULONG_MAX)
-      throw RuntimeException("Exhausted the range of available operationplan references");
+      throw RuntimeException(
+          "Exhausted the range of available operationplan references");
   }
 
   // Insert in the tree of operationplans
@@ -787,23 +695,19 @@ bool OperationPlan::assignReference()
   return true;
 }
 
-
-void OperationPlan::setOperation(Operation* o)
-{
-  if (oper == o)
-    return;
-  if (oper)
-  {
+void OperationPlan::setOperation(Operation* o) {
+  if (oper == o) return;
+  if (oper) {
     // Switching operations
     deleteFlowLoads();
     removeFromOperationplanList();
-    
+
     // Delete existing sub operationplans
     auto x = firstsubopplan;
-    while (x)
-    {
-      auto *y = x->nextsubopplan;
-      x->owner = nullptr; // Need to clear before destroying the suboperationplan
+    while (x) {
+      auto* y = x->nextsubopplan;
+      x->owner =
+          nullptr;  // Need to clear before destroying the suboperationplan
       delete x;
       x = y;
     }
@@ -811,39 +715,30 @@ void OperationPlan::setOperation(Operation* o)
     lastsubopplan = nullptr;
 
     // Apply the change
-    oper = o;    
-    oper->setOperationPlanParameters(
-      this, quantity, dates.getStart(), dates.getEnd(), false, true
-    );
-  }
-  else
+    oper = o;
+    oper->setOperationPlanParameters(this, quantity, dates.getStart(),
+                                     dates.getEnd(), false, true);
+  } else
     // First initialization of the operationplan
     oper = o;
   activate();
 }
 
-
-bool OperationPlan::activate(bool createsubopplans, bool use_start)
-{
+bool OperationPlan::activate(bool createsubopplans, bool use_start) {
   // At least a valid operation pointer must exist
-  if (!oper)
-    throw LogicException("Initializing an invalid operationplan");
+  if (!oper) throw LogicException("Initializing an invalid operationplan");
 
   // Avoid negative quantities, and call operation specific activation code
-  if (
-    getQuantity() < 0.0 || 
-    !oper->extraInstantiate(this, createsubopplans, use_start) ||
-    (getQuantity() == 0.0 && getProposed() && !getOwner())
-    )
-  {
+  if (getQuantity() < 0.0 ||
+      !oper->extraInstantiate(this, createsubopplans, use_start) ||
+      (getQuantity() == 0.0 && getProposed() && !getOwner())) {
     delete this;
     return false;
   }
 
   // Instantiate all suboperationplans as well
   OperationPlan::iterator x(this);
-  if (x != end())
-  {
+  if (x != end()) {
     while (x != end()) {
       OperationPlan* tmp = &*x;
       ++x;
@@ -858,11 +753,9 @@ bool OperationPlan::activate(bool createsubopplans, bool use_start)
 
   // Mark as activated by assigning a unique identifier.
   setActivated(true);
-  if (!getName().empty())
-  {
+  if (!getName().empty()) {
     // Validate the user provided id.
-    if (!assignReference())
-    {
+    if (!assignReference()) {
       ostringstream ch;
       ch << "Operationplan id " << getName() << " assigned multiple times";
       delete this;
@@ -892,16 +785,13 @@ bool OperationPlan::activate(bool createsubopplans, bool use_start)
   return true;
 }
 
-
-void OperationPlan::deactivate()
-{
+void OperationPlan::deactivate() {
   // Mark as not activated
   st.erase(this);
   setName(0);
 
   // Delete from the list of deliveries
-  if (dmd)
-    dmd->removeDelivery(this);
+  if (dmd) dmd->removeDelivery(this);
 
   // Delete from the operationplan list
   removeFromOperationplanList();
@@ -910,41 +800,29 @@ void OperationPlan::deactivate()
   oper->setChanged();
 }
 
-
-void OperationPlan::insertInOperationplanList()
-{
-
+void OperationPlan::insertInOperationplanList() {
   // Check if already linked, or nothing to link
-  if (prev || !oper || oper->first_opplan == this)
-    return;
+  if (prev || !oper || oper->first_opplan == this) return;
 
-  if (!oper->first_opplan)
-  {
+  if (!oper->first_opplan) {
     // First operationplan in the list
     oper->first_opplan = this;
     oper->last_opplan = this;
-  }
-  else if (*this < *(oper->first_opplan))
-  {
+  } else if (*this < *(oper->first_opplan)) {
     // First in the list
     next = oper->first_opplan;
     next->prev = this;
     oper->first_opplan = this;
-  }
-  else if (*(oper->last_opplan) < *this)
-  {
+  } else if (*(oper->last_opplan) < *this) {
     // Last in the list
     prev = oper->last_opplan;
     prev->next = this;
     oper->last_opplan = this;
-  }
-  else
-  {
+  } else {
     // Insert in the middle of the list
-    OperationPlan *x = oper->last_opplan;
-    OperationPlan *y = nullptr;
-    while (!(*x < *this))
-    {
+    OperationPlan* x = oper->last_opplan;
+    OperationPlan* y = nullptr;
+    while (!(*x < *this)) {
       y = x;
       x = x->prev;
     }
@@ -955,9 +833,7 @@ void OperationPlan::insertInOperationplanList()
   }
 }
 
-
-void OperationPlan::removeFromOperationplanList()
-{
+void OperationPlan::removeFromOperationplanList() {
   if (prev)
     // In the middle
     prev->next = next;
@@ -975,14 +851,11 @@ void OperationPlan::removeFromOperationplanList()
   next = nullptr;
 }
 
-
-void OperationPlan::updateOperationplanList()
-{
+void OperationPlan::updateOperationplanList() {
   if (!oper) return;
 
   // Check ordering on the left
-  while (prev && !(*prev < *this))
-  {
+  while (prev && !(*prev < *this)) {
     OperationPlan* n = next;
     OperationPlan* p = prev;
     if (p->prev)
@@ -1000,8 +873,7 @@ void OperationPlan::updateOperationplanList()
   }
 
   // Check ordering on the right
-  while (next && !(*this < *next))
-  {
+  while (next && !(*this < *next)) {
     OperationPlan* n = next;
     OperationPlan* p = prev;
     next = n->next;
@@ -1019,9 +891,7 @@ void OperationPlan::updateOperationplanList()
   }
 }
 
-
-void OperationPlan::eraseSubOperationPlan(OperationPlan* o)
-{
+void OperationPlan::eraseSubOperationPlan(OperationPlan* o) {
   // Check
   if (!o) return;
 
@@ -1045,16 +915,12 @@ void OperationPlan::eraseSubOperationPlan(OperationPlan* o)
   nextsubopplan = nullptr;
 };
 
-
-bool OperationPlan::operator < (const OperationPlan& a) const
-{
+bool OperationPlan::operator<(const OperationPlan& a) const {
   // Different operations
-  if (oper != a.oper)
-    return *oper < *(a.oper);
+  if (oper != a.oper) return *oper < *(a.oper);
 
   // Different setup end date
-  if (getSetupEnd() != a.getSetupEnd())
-    return getSetupEnd() < a.getSetupEnd();
+  if (getSetupEnd() != a.getSetupEnd()) return getSetupEnd() < a.getSetupEnd();
 
   // Sort based on quantity
   if (fabs(quantity - a.quantity) > ROUNDING_ERROR)
@@ -1063,75 +929,62 @@ bool OperationPlan::operator < (const OperationPlan& a) const
   if (getActivated() != a.getActivated())
     // Keep unactivated operationplans seperate
     return getActivated() > a.getActivated();
-  
+
   if (getEnd() != a.getEnd())
     // Use the end date
     return getEnd() < a.getEnd();
-  
+
   // Using a pointer comparison as tie breaker. This can give
   // results that are not reproducible across platforms and runs.
   return this < &a;
 }
 
-
-void OperationPlan::createFlowLoads()
-{
+void OperationPlan::createFlowLoads() {
   // Initialized already, or nothing to initialize
-  if (firstflowplan || firstloadplan || !oper)
-    return;
+  if (firstflowplan || firstloadplan || !oper) return;
 
   // Create setup suboperationplans and loadplans
   if (getConsumeCapacity())
-    for (auto g=oper->getLoads().begin(); g!=oper->getLoads().end(); ++g)
-      if (!g->getAlternate())
-        new LoadPlan(this, &*g);
+    for (auto g = oper->getLoads().begin(); g != oper->getLoads().end(); ++g)
+      if (!g->getAlternate()) new LoadPlan(this, &*g);
 
   // Create flowplans for flows
-  for (Operation::flowlist::const_iterator h=oper->getFlows().begin();
-      h!=oper->getFlows().end(); ++h)
-  {
+  for (Operation::flowlist::const_iterator h = oper->getFlows().begin();
+       h != oper->getFlows().end(); ++h) {
     // Only the primary flow is instantiated.
-    if (h->getAlternate())
-      continue;
+    if (h->getAlternate()) continue;
     // Also for transfer batches, we only need to create the first flowplan.
-    // The getFlowplanDateQuantity method will be called during the creation, and
-    // create additional flowplans as required.
+    // The getFlowplanDateQuantity method will be called during the creation,
+    // and create additional flowplans as required.
     new FlowPlan(this, &*h);
   }
 }
 
-
-void OperationPlan::deleteFlowLoads()
-{
+void OperationPlan::deleteFlowLoads() {
   // If no flowplans and loadplans, the work is already done
   if (!firstflowplan && !firstloadplan) return;
 
   FlowPlanIterator e = beginFlowPlans();
-  firstflowplan = nullptr;    // Important to do this before the delete!
+  firstflowplan = nullptr;  // Important to do this before the delete!
   LoadPlanIterator f = beginLoadPlans();
   firstloadplan = nullptr;  // Important to do this before the delete!
 
   // Delete the flowplans
-  while (e != endFlowPlans())
-    delete &*(e++);
+  while (e != endFlowPlans()) delete &*(e++);
 
   // Delete the loadplans (including the setup suboperationplan)
-  while (f != endLoadPlans())
-    delete &*(f++);
+  while (f != endLoadPlans()) delete &*(f++);
 
   // Delete setup event
   clearSetupEvent();
 }
 
-
-double OperationPlan::getTotalFlowAux(const Buffer* b) const
-{
+double OperationPlan::getTotalFlowAux(const Buffer* b) const {
   double q = 0.0;
 
   // Add my own quantity
   for (FlowPlanIterator f = beginFlowPlans(); f != endFlowPlans(); ++f)
-    if (f->getBuffer() == b)
-      q += f->getQuantity();
+    if (f->getBuffer() == b) q += f->getQuantity();
 
   // Add the quantity of all children
   for (OperationPlan* c = firstsubopplan; c; c = c->nextsubopplan)
@@ -1141,15 +994,12 @@ double OperationPlan::getTotalFlowAux(const Buffer* b) const
   return q;
 }
 
-
-OperationPlan::~OperationPlan()
-{
+OperationPlan::~OperationPlan() {
   // Delete from the operationplan tree
   st.erase(this);
 
   // Delete the setup event
-  if (setupevent)
-  {
+  if (setupevent) {
     setupevent->erase();
     delete setupevent;
   }
@@ -1158,22 +1008,20 @@ OperationPlan::~OperationPlan()
   deleteFlowLoads();
 
   // Initialize
-  OperationPlan *x = firstsubopplan;
+  OperationPlan* x = firstsubopplan;
   firstsubopplan = nullptr;
   lastsubopplan = nullptr;
 
   // Delete the sub operationplans
-  while (x)
-  {
-    OperationPlan *y = x->nextsubopplan;
-    x->owner = nullptr; // Need to clear before destroying the suboperationplan
+  while (x) {
+    OperationPlan* y = x->nextsubopplan;
+    x->owner = nullptr;  // Need to clear before destroying the suboperationplan
     delete x;
     x = y;
   }
 
   // Delete also the owner
-  if (owner)
-  {
+  if (owner) {
     const OperationPlan* o = owner;
     setOwner(nullptr);
     delete o;
@@ -1186,9 +1034,7 @@ OperationPlan::~OperationPlan()
   removeFromOperationplanList();
 }
 
-
-void OperationPlan::setOwner(OperationPlan* o, bool fast)
-{
+void OperationPlan::setOwner(OperationPlan* o, bool fast) {
   // Special case: the same owner is set twice
   if (owner == o) return;
   if (o)
@@ -1199,31 +1045,24 @@ void OperationPlan::setOwner(OperationPlan* o, bool fast)
     owner->eraseSubOperationPlan(this);
 }
 
-
-void OperationPlan::setStart (Date d, bool force, bool preferEnd)
-{
+void OperationPlan::setStart(Date d, bool force, bool preferEnd) {
   // Confirmed opplans don't move
-  if (getConfirmed())
-  {
-    if (force)
-      setStartAndEnd(d, getEnd());
+  if (getConfirmed()) {
+    if (force) setStartAndEnd(d, getEnd());
     return;
   }
 
   if (!lastsubopplan)
     // No sub operationplans
-    oper->setOperationPlanParameters(this, quantity, d, Date::infinitePast, preferEnd, true, false);
-  else
-  {
+    oper->setOperationPlanParameters(this, quantity, d, Date::infinitePast,
+                                     preferEnd, true, false);
+  else {
     // Move all sub-operationplans in an orderly fashion
-    for (OperationPlan* i = firstsubopplan; i; i = i->nextsubopplan)
-    {
-      if (i->getStart() < d)
-      {
+    for (OperationPlan* i = firstsubopplan; i; i = i->nextsubopplan) {
+      if (i->getStart() < d) {
         i->setStart(d, force, preferEnd);
         d = i->getEnd();
-      }
-      else
+      } else
         // There is sufficient slack between the suboperationplans
         break;
     }
@@ -1233,33 +1072,24 @@ void OperationPlan::setStart (Date d, bool force, bool preferEnd)
   update();
 }
 
-
-void OperationPlan::setEnd(Date d, bool force)
-{
-
+void OperationPlan::setEnd(Date d, bool force) {
   // Locked opplans don't move
-  if (getConfirmed())
-  {
-    if (force)
-      setStartAndEnd(getStart(), d);
+  if (getConfirmed()) {
+    if (force) setStartAndEnd(getStart(), d);
     return;
   }
-    
 
   if (!lastsubopplan)
     // No sub operationplans
-    oper->setOperationPlanParameters(this, quantity, Date::infinitePast, d, true, true, false);
-  else
-  {
+    oper->setOperationPlanParameters(this, quantity, Date::infinitePast, d,
+                                     true, true, false);
+  else {
     // Move all sub-operationplans in an orderly fashion
-    for (OperationPlan* i = lastsubopplan; i; i = i->prevsubopplan)
-    {
-      if (!i->getEnd() || i->getEnd() > d)
-      {
+    for (OperationPlan* i = lastsubopplan; i; i = i->prevsubopplan) {
+      if (!i->getEnd() || i->getEnd() > d) {
         i->setEnd(d, force);
         d = i->getStart();
-      }
-      else
+      } else
         // There is sufficient slack between the suboperationplans
         break;
     }
@@ -1267,12 +1097,10 @@ void OperationPlan::setEnd(Date d, bool force)
 
   // Update flow and loadplans
   update();
-  //assert(getEnd() <= d);
+  // assert(getEnd() <= d);
 }
 
-
-void OperationPlan::resizeFlowLoadPlans()
-{
+void OperationPlan::resizeFlowLoadPlans() {
   // Update all flowplans
   for (auto flpln = firstflowplan; flpln; flpln = flpln->nextFlowPlan)
     flpln->update();
@@ -1281,12 +1109,10 @@ void OperationPlan::resizeFlowLoadPlans()
   if (getConsumeCapacity())
     for (LoadPlanIterator e = beginLoadPlans(); e != endLoadPlans(); ++e)
       e->update();
-  else
-  {
+  else {
     LoadPlanIterator f = beginLoadPlans();
     firstloadplan = nullptr;  // Important to do this before the delete!
-    while (f != endLoadPlans())
-      delete &*(f++);
+    while (f != endLoadPlans()) delete &*(f++);
   }
 
   // Allow the operation length to be changed now that the quantity has changed
@@ -1299,11 +1125,10 @@ void OperationPlan::resizeFlowLoadPlans()
   if (dmd) dmd->setChanged();
 }
 
-
-OperationPlan::OperationPlan(const OperationPlan& src, bool init)
-{
+OperationPlan::OperationPlan(const OperationPlan& src, bool init) {
   if (src.owner)
-    throw LogicException("Can't copy suboperationplans. Copy the owner instead.");
+    throw LogicException(
+        "Can't copy suboperationplans. Copy the owner instead.");
 
   // Copy all fields, except identifier and reference.
   // A new identifier will be generated when we activate the operationplan.
@@ -1332,10 +1157,8 @@ OperationPlan::OperationPlan(const OperationPlan& src, bool init)
   if (init) activate();
 }
 
-
 OperationPlan::OperationPlan(const OperationPlan& src,
-    OperationPlan* newOwner)
-{
+                             OperationPlan* newOwner) {
   if (!newOwner)
     throw LogicException("No new owner passed in private copy constructor.");
 
@@ -1365,50 +1188,47 @@ OperationPlan::OperationPlan(const OperationPlan& src,
     new OperationPlan(*x, this);
 }
 
-
-bool OperationPlan::mergeIfPossible()
-{
+bool OperationPlan::mergeIfPossible() {
   // Verify a merge with another operationplan.
-  // TODO The logic duplicates much of OperationFixedTime::extraInstantiate. Combine as single code.
-  // See if we can consolidate this operationplan with an existing one.
-  // Merging is possible only when all the following conditions are met:
+  // TODO The logic duplicates much of OperationFixedTime::extraInstantiate.
+  // Combine as single code. See if we can consolidate this operationplan with
+  // an existing one. Merging is possible only when all the following conditions
+  // are met:
   //   - it is a subclass of a fixedtime operation
   //   - it doesn't load any resources of type default
   //   - both operationplans are proposed
   //   - both operationplans have no owner
-  //     or both have an owner of the same operation and is of type operation_alternate
+  //     or both have an owner of the same operation and is of type
+  //     operation_alternate
   //   - start and end date of both operationplans are exactly the same
   //   - demand of both operationplans are the same
   //   - maximum operation size is not exceeded
   //   - alternate flowplans need to be on the same alternate
-  if (!getProposed())
-    return false;
+  if (!getProposed()) return false;
 
-  if (!oper->hasType<OperationFixedTime, OperationItemDistribution, OperationItemSupplier>())
+  if (!oper->hasType<OperationFixedTime, OperationItemDistribution,
+                     OperationItemSupplier>())
     return false;
 
   // Verify we load no resources of type "default".
-  // It's ok to merge operationplans which load "infinite" or "buckets" resources.
-  for (Operation::loadlist::const_iterator i = oper->getLoads().begin(); i != oper->getLoads().end(); ++i)
-    if (i->getResource()->hasType<ResourceDefault>())
-      return false;
+  // It's ok to merge operationplans which load "infinite" or "buckets"
+  // resources.
+  for (Operation::loadlist::const_iterator i = oper->getLoads().begin();
+       i != oper->getLoads().end(); ++i)
+    if (i->getResource()->hasType<ResourceDefault>()) return false;
 
   // Loop through candidates
-  for (OperationPlan::iterator x(oper); x != OperationPlan::end(); ++x)
-  {
+  for (OperationPlan::iterator x(oper); x != OperationPlan::end(); ++x) {
     if (x->getStart() > getStart())
       // No candidates will be found in what follows
       return false;
-    if (x->getDates() != getDates() || &*x == this)
+    if (x->getDates() != getDates() || &*x == this) continue;
+    if (x->getDemand() != getDemand()) continue;
+    if (!x->getProposed()) continue;
+    if (x->getQuantity() + getQuantity() >
+        oper->getSizeMaximum() + ROUNDING_ERROR)
       continue;
-    if (x->getDemand() != getDemand())
-      continue;
-    if (!x->getProposed())
-      continue;
-    if (x->getQuantity() + getQuantity() > oper->getSizeMaximum() + ROUNDING_ERROR)
-      continue;
-    if (getOwner())
-    {
+    if (getOwner()) {
       // Both must have the same owner operation of type alternate
       if (!x->getOwner())
         continue;
@@ -1420,19 +1240,19 @@ bool OperationPlan::mergeIfPossible()
         continue;
     }
 
-    // Check that the flowplans are on identical alternates and not of type fixed
+    // Check that the flowplans are on identical alternates and not of type
+    // fixed
     OperationPlan::FlowPlanIterator fp1 = beginFlowPlans();
     OperationPlan::FlowPlanIterator fp2 = x->beginFlowPlans();
     if (fp1 == endFlowPlans() || fp2 == endFlowPlans())
       // Operationplan without flows are already deleted. Leave them alone.
       continue;
     bool ok = true;
-    while (fp1 != endFlowPlans())
-    {
-      if (fp1->getBuffer() != fp2->getBuffer()
-        || fp1->getFlow()->getQuantityFixed()
-        || fp2->getFlow()->getQuantityFixed())
-        // No merge possible
+    while (fp1 != endFlowPlans()) {
+      if (fp1->getBuffer() != fp2->getBuffer() ||
+          fp1->getFlow()->getQuantityFixed() ||
+          fp2->getFlow()->getQuantityFixed())
+      // No merge possible
       {
         ok = false;
         break;
@@ -1440,44 +1260,37 @@ bool OperationPlan::mergeIfPossible()
       ++fp1;
       ++fp2;
     }
-    if (!ok)
-      continue;
+    if (!ok) continue;
 
     // All checks passed, we can merge!
     x->setQuantity(x->getQuantity() + getQuantity());
-    if (getOwner())
-      setOwner(nullptr);
+    if (getOwner()) setOwner(nullptr);
     delete this;
     return true;
   }
   return false;
 }
 
-
-void OperationPlan::scanSetupTimes()
-{
-  for (auto ldplan = beginLoadPlans(); ldplan != endLoadPlans(); ++ldplan)
-  {
-    if (
-      !ldplan->isStart() 
-      && !ldplan->getLoad()->getSetup().empty()
-      && ldplan->getResource()->getSetupMatrix()
-      )
-    {
+void OperationPlan::scanSetupTimes() {
+  for (auto ldplan = beginLoadPlans(); ldplan != endLoadPlans(); ++ldplan) {
+    if (!ldplan->isStart() && !ldplan->getLoad()->getSetup().empty() &&
+        ldplan->getResource()->getSetupMatrix()) {
       // Not a starting loadplan or there is no setup on this loadplan
       ldplan->getResource()->updateSetupTime();
       break;  // Only 1 load can have a setup
     }
   }
 
-  // TODO We can do much faster than the above loop: where we reconsider all loadplans on a 
-  // resource. We just need to scans the ones around the old date and the ones around the new date.
-  // It requires deeper changes to the solver to pass on the information on the old date.
+  // TODO We can do much faster than the above loop: where we reconsider all
+  // loadplans on a resource. We just need to scans the ones around the old date
+  // and the ones around the new date. It requires deeper changes to the solver
+  // to pass on the information on the old date.
   /*
   // Loop over all loadplans
   for (auto ldplan = beginLoadPlans(); ldplan != endLoadPlans(); ++ldplan)
   {
-    if (!ldplan->isStart() || ldplan->getLoad()->getSetup().empty() || !ldplan->getResource()->getSetupMatrix())
+    if (!ldplan->isStart() || ldplan->getLoad()->getSetup().empty() ||
+  !ldplan->getResource()->getSetupMatrix())
       // Not a starting loadplan or there is no setup on this loadplan
       continue;
 
@@ -1491,7 +1304,8 @@ void OperationPlan::scanSetupTimes()
       if (resldplan->getEventType() == 1)
       {
         auto tmp = static_cast<LoadPlan*>(&*resldplan);
-        if (tmp->isStart() && !static_cast<LoadPlan*>(&*resldplan)->getLoad()->getSetup().empty())
+        if (tmp->isStart() &&
+  !static_cast<LoadPlan*>(&*resldplan)->getLoad()->getSetup().empty())
         {
           // The setup time of this operationplan potentially changes
           resldplan->getOperationPlan()->updateSetupTime();
@@ -1499,8 +1313,8 @@ void OperationPlan::scanSetupTimes()
       }
       --resldplan;
     }
-    
-    // Scan forward until the first operationplan with a setup.    
+    
+    // Scan forward until the first operationplan with a setup.
     resldplan = ldplan->getResource()->getLoadPlans().begin(&*ldplan);
     ++resldplan;
     while (resldplan != ldplan->getResource()->getLoadPlans().end())
@@ -1508,7 +1322,8 @@ void OperationPlan::scanSetupTimes()
       if (resldplan->getEventType() == 1)
       {
         auto tmp = static_cast<LoadPlan*>(&*resldplan);
-        if (tmp->isStart() && !static_cast<LoadPlan*>(&*resldplan)->getLoad()->getSetup().empty())
+        if (tmp->isStart() &&
+  !static_cast<LoadPlan*>(&*resldplan)->getLoad()->getSetup().empty())
         {
           // The setup time of this operationplan potentially changes
           resldplan->getOperationPlan()->updateSetupTime();
@@ -1517,53 +1332,45 @@ void OperationPlan::scanSetupTimes()
         }
       }
       ++resldplan;
-    }      
+    }
   }
   */
 }
 
-
-bool OperationPlan::updateSetupTime(bool report)
-{
-  // TODO The setOperationplanParameter methods are a better/more generic/more robust place to put this logic
+bool OperationPlan::updateSetupTime(bool report) {
+  // TODO The setOperationplanParameter methods are a better/more generic/more
+  // robust place to put this logic
   Date end_of_setup = getSetupEnd();
   bool changed = false;
 
-  // Keep the setup end date constant during the update 
-  Operation::SetupInfo setup = oper->calculateSetup(this, end_of_setup, setupevent);
-  if (get<0>(setup))
-  {
+  // Keep the setup end date constant during the update
+  Operation::SetupInfo setup =
+      oper->calculateSetup(this, end_of_setup, setupevent);
+  if (get<0>(setup)) {
     // Setup event required
-    if (get<1>(setup))
-    {
+    if (get<1>(setup)) {
       // Apply setup rule duration
-      DateRange tmp = oper->calculateOperationTime(this, end_of_setup, get<1>(setup)->getDuration(), false);
+      DateRange tmp = oper->calculateOperationTime(
+          this, end_of_setup, get<1>(setup)->getDuration(), false);
       setSetupEvent(get<0>(setup), end_of_setup, get<2>(setup), get<1>(setup));
-      if (tmp.getStart() != getStart())
-      {
+      if (tmp.getStart() != getStart()) {
         setStartAndEnd(tmp.getStart(), getEnd());
         changed = true;
       }
-    }
-    else if (getStart() != end_of_setup)
-    {
+    } else if (getStart() != end_of_setup) {
       // Zero time event
       setSetupEvent(get<0>(setup), end_of_setup, get<2>(setup), get<1>(setup));
       setStartAndEnd(end_of_setup, getEnd());
       changed = true;
     }
-  
-  }
-  else
-  {
+
+  } else {
     // No setup event required
-    if (setupevent)
-    {
+    if (setupevent) {
       clearSetupEvent();
       changed = true;
     }
-    if (end_of_setup != getStart())
-    {
+    if (end_of_setup != getStart()) {
       setStartAndEnd(end_of_setup, getEnd());
       changed = true;
     }
@@ -1571,23 +1378,16 @@ bool OperationPlan::updateSetupTime(bool report)
   return changed;
 }
 
-
-void OperationPlan::update()
-{
-  if (lastsubopplan)
-  {
+void OperationPlan::update() {
+  if (lastsubopplan) {
     // Set the start and end date of the parent.
     Date st = Date::infiniteFuture;
     Date nd = Date::infinitePast;
-    for (OperationPlan *f = firstsubopplan; f; f = f->nextsubopplan)
-    {
-      if (f->getStart() < st)
-        st = f->getStart();
-      if (f->getEnd() > nd)
-        nd = f->getEnd();
+    for (OperationPlan* f = firstsubopplan; f; f = f->nextsubopplan) {
+      if (f->getStart() < st) st = f->getStart();
+      if (f->getEnd() > nd) nd = f->getEnd();
     }
-    if (nd)
-      dates.setStartAndEnd(st, nd);
+    if (nd) dates.setStartAndEnd(st, nd);
   }
 
   // Update the flow and loadplans
@@ -1597,84 +1397,74 @@ void OperationPlan::update()
   updateOperationplanList();
 
   // Update the setup time on all neighbouring operationplans
-  if (!SetupMatrix::empty() && getPropagateSetups())
-    scanSetupTimes();
+  if (!SetupMatrix::empty() && getPropagateSetups()) scanSetupTimes();
 
   // Notify the owner operationplan
-  if (owner)
-    owner->update();
+  if (owner) owner->update();
 
   // Mark as changed
   setChanged();
 }
 
-
-void OperationPlan::deleteOperationPlans(Operation* o, bool deleteLockedOpplans)
-{
+void OperationPlan::deleteOperationPlans(Operation* o,
+                                         bool deleteLockedOpplans) {
   if (!o) return;
-  for (OperationPlan *opplan = o->first_opplan; opplan; )
-  {
-    OperationPlan *tmp = opplan;
-    
+  for (OperationPlan* opplan = o->first_opplan; opplan;) {
+    OperationPlan* tmp = opplan;
+
     // Advance to the next operation plan
     opplan = opplan->next;
     if (tmp->getOwner())
       // Deleting a child operationplan will delete the parent.
-      // It is possible that also the next operationplan in the list gets deleted by the 
-      // delete statement that follows.
+      // It is possible that also the next operationplan in the list gets
+      // deleted by the delete statement that follows.
       while (opplan && tmp->getOwner() == opplan->getOwner())
         opplan = opplan->next;
 
     // Note that the deletion of the operationplan also updates the opplan list
-    if (deleteLockedOpplans || tmp->getProposed())
-      delete tmp;
+    if (deleteLockedOpplans || tmp->getProposed()) delete tmp;
   }
 }
 
-
-bool OperationPlan::isExcess(bool use_zero) const
-{
+bool OperationPlan::isExcess(bool use_zero) const {
   // Delivery operationplans aren't excess
-  if (getDemand())
-    return false;
+  if (getDemand()) return false;
 
   // Recursive call for suboperationplans
-  for (OperationPlan* subopplan = firstsubopplan; subopplan; subopplan = subopplan->nextsubopplan)
-    if (!subopplan->isExcess(use_zero))
-      return false;
+  for (OperationPlan* subopplan = firstsubopplan; subopplan;
+       subopplan = subopplan->nextsubopplan)
+    if (!subopplan->isExcess(use_zero)) return false;
 
   // Loop over all producing flowplans
   bool hasFlowplans = false;
-  for (auto i = beginFlowPlans(); i != endFlowPlans(); ++i)
-  {
+  for (auto i = beginFlowPlans(); i != endFlowPlans(); ++i) {
     hasFlowplans = true;
     // Skip consuming flowplans
     if (i->getQuantity() <= 0) continue;
 
     // Find the total produced quantity, including all suboperationplans
     double prod_qty = i->getQuantity();
-    for (OperationPlan* subopplan = firstsubopplan; subopplan; subopplan = subopplan->nextsubopplan)
+    for (OperationPlan* subopplan = firstsubopplan; subopplan;
+         subopplan = subopplan->nextsubopplan)
       for (OperationPlan::FlowPlanIterator k = subopplan->beginFlowPlans();
-        k != subopplan->endFlowPlans(); ++k)
-        if (k->getBuffer() == i->getBuffer())
-          prod_qty += k->getQuantity();
+           k != subopplan->endFlowPlans(); ++k)
+        if (k->getBuffer() == i->getBuffer()) prod_qty += k->getQuantity();
     if (prod_qty <= 0) continue;
 
     // Loop over all flowplans in the buffer (starting at the end) and verify
     // that the onhand is bigger than the flowplan quantity
     double current_maximum(0.0);
     double current_minimum(0.0);
-    Buffer::flowplanlist::const_iterator j = i->getBuffer()->getFlowPlans().rbegin();
-    if (!use_zero && j != i->getBuffer()->getFlowPlans().end())
-    {
+    Buffer::flowplanlist::const_iterator j =
+        i->getBuffer()->getFlowPlans().rbegin();
+    if (!use_zero && j != i->getBuffer()->getFlowPlans().end()) {
       current_maximum = i->getBuffer()->getFlowPlans().getMax(&*j);
       current_minimum = i->getBuffer()->getFlowPlans().getMin(&*j);
     }
-    for (; j != i->getBuffer()->getFlowPlans().end(); --j)
-    {
-      if ( (current_maximum > 0
-          && j->getOnhand() < prod_qty + current_maximum - ROUNDING_ERROR)
-          || j->getOnhand() < prod_qty + current_minimum - ROUNDING_ERROR )
+    for (; j != i->getBuffer()->getFlowPlans().end(); --j) {
+      if ((current_maximum > 0 &&
+           j->getOnhand() < prod_qty + current_maximum - ROUNDING_ERROR) ||
+          j->getOnhand() < prod_qty + current_minimum - ROUNDING_ERROR)
         return false;
       if (j->getEventType() == 4 && !use_zero)
         current_maximum = j->getMax(false);
@@ -1685,273 +1475,214 @@ bool OperationPlan::isExcess(bool use_zero) const
   }
 
   // Handle operationplan already being deleted by a deleteOperation command
-  if (!hasFlowplans && getOperation()->getFlows().begin() != getOperation()->getFlows().end())
+  if (!hasFlowplans &&
+      getOperation()->getFlows().begin() != getOperation()->getFlows().end())
     return false;
 
   // If we remove this operationplan the onhand in all buffers remains positive.
   return true;
 }
 
-
-Duration OperationPlan::getUnavailable() const
-{
+Duration OperationPlan::getUnavailable() const {
   Duration x;
-  getOperation()->calculateOperationTime(this, dates.getStart(), dates.getEnd(), &x);
+  getOperation()->calculateOperationTime(this, dates.getStart(), dates.getEnd(),
+                                         &x);
   return dates.getDuration() - x;
 }
 
-
-Object* OperationPlan::finder(const DataValueDict& key)
-{
+Object* OperationPlan::finder(const DataValueDict& key) {
   auto val = key.get(Tags::reference);
-  if (!val)
-    val = key.get(Tags::id);
-  return val ?
-    OperationPlan::findReference(val->getString()) :
-    nullptr;
+  if (!val) val = key.get(Tags::id);
+  return val ? OperationPlan::findReference(val->getString()) : nullptr;
 }
 
-
-void OperationPlan::setConfirmed(bool b)
-{
-  if (b)
-  {
+void OperationPlan::setConfirmed(bool b) {
+  if (b) {
     flags |= STATUS_CONFIRMED;
     flags &= ~(STATUS_APPROVED + STATUS_COMPLETED + STATUS_CLOSED);
-  }
-  else
-  {
+  } else {
     // Change to proposed
     flags &= ~(STATUS_CONFIRMED + STATUS_COMPLETED + STATUS_CLOSED);
     flags |= STATUS_APPROVED;
   }
-  for (OperationPlan *x = firstsubopplan; x; x = x->nextsubopplan)
+  for (OperationPlan* x = firstsubopplan; x; x = x->nextsubopplan)
     x->setConfirmed(b);
   update();
   propagateStatus();
 }
 
-
-void OperationPlan::setApproved(bool b)
-{
-  if (b)
-  {
+void OperationPlan::setApproved(bool b) {
+  if (b) {
     flags |= STATUS_APPROVED;
     flags &= ~(STATUS_CONFIRMED + STATUS_COMPLETED + STATUS_CLOSED);
-  }
-  else
+  } else
     // Change to proposed
-    flags &= ~(STATUS_APPROVED + STATUS_CONFIRMED + STATUS_COMPLETED + STATUS_CLOSED);
-  for (OperationPlan *x = firstsubopplan; x; x = x->nextsubopplan)
+    flags &= ~(STATUS_APPROVED + STATUS_CONFIRMED + STATUS_COMPLETED +
+               STATUS_CLOSED);
+  for (OperationPlan* x = firstsubopplan; x; x = x->nextsubopplan)
     x->setApproved(b);
   update();
   propagateStatus();
 }
 
-
-void OperationPlan::setProposed(bool b)
-{
+void OperationPlan::setProposed(bool b) {
   if (b)
-    flags &= ~(STATUS_APPROVED + STATUS_CONFIRMED + STATUS_COMPLETED + STATUS_CLOSED);
-  else
-  {
+    flags &= ~(STATUS_APPROVED + STATUS_CONFIRMED + STATUS_COMPLETED +
+               STATUS_CLOSED);
+  else {
     // Change to approved
     flags &= ~(STATUS_CONFIRMED + STATUS_COMPLETED + STATUS_CLOSED);
     flags |= STATUS_APPROVED;
   }
-  for (OperationPlan *x = firstsubopplan; x; x = x->nextsubopplan)
+  for (OperationPlan* x = firstsubopplan; x; x = x->nextsubopplan)
     x->setProposed(b);
   update();
   propagateStatus();
 }
 
-
-void OperationPlan::setCompleted(bool b)
-{
-  if (b)
-  {
+void OperationPlan::setCompleted(bool b) {
+  if (b) {
     flags |= STATUS_CONFIRMED + STATUS_COMPLETED;
     flags &= ~(STATUS_APPROVED + STATUS_CLOSED);
-  }
-  else
-  {
+  } else {
     // Change to approved
     flags &= ~(STATUS_CONFIRMED + STATUS_COMPLETED + STATUS_CLOSED);
     flags |= STATUS_APPROVED;
   }
-  for (OperationPlan *x = firstsubopplan; x; x = x->nextsubopplan)
+  for (OperationPlan* x = firstsubopplan; x; x = x->nextsubopplan)
     x->setClosed(b);
   update();
   propagateStatus();
 }
 
-
-void OperationPlan::setClosed(bool b)
-{
-  if (b)
-  {
+void OperationPlan::setClosed(bool b) {
+  if (b) {
     flags |= STATUS_CONFIRMED + STATUS_CLOSED;
     flags &= ~(STATUS_APPROVED + STATUS_COMPLETED);
-  }
-  else
-  {
+  } else {
     // Change to approved
     flags &= ~(STATUS_CONFIRMED + STATUS_COMPLETED + STATUS_CLOSED);
     flags |= STATUS_APPROVED;
   }
-  for (OperationPlan *x = firstsubopplan; x; x = x->nextsubopplan)
+  for (OperationPlan* x = firstsubopplan; x; x = x->nextsubopplan)
     x->setClosed(b);
   update();
   propagateStatus();
 }
 
-
-void OperationPlan::propagateStatus()
-{
-  if (getOperation()->hasType<OperationInventory>())
-    return;
+void OperationPlan::propagateStatus() {
+  if (getOperation()->hasType<OperationInventory>()) return;
 
   // Assure that all child operationplans also get the same status
   auto mystatus = getStatus();
-  for (auto subopplan = firstsubopplan; subopplan; subopplan = subopplan->nextsubopplan)
-    if (subopplan->getStatus() != mystatus)
-    {
+  for (auto subopplan = firstsubopplan; subopplan;
+       subopplan = subopplan->nextsubopplan)
+    if (subopplan->getStatus() != mystatus) {
       subopplan->setStatus(mystatus);
       subopplan->propagateStatus();
     }
 
-  if (mystatus != "completed" && mystatus != "closed")
-    return;
+  if (mystatus != "completed" && mystatus != "closed") return;
 
   // Assure the start and end date are in the past
   if (getEnd() > Plan::instance().getCurrent())
-    setOperationPlanParameters(quantity, Date::infinitePast, Plan::instance().getCurrent(), false);
+    setOperationPlanParameters(quantity, Date::infinitePast,
+                               Plan::instance().getCurrent(), false);
 
-  if (getOwner() && getOwner()->getOperation()->hasType<OperationRouting>())
-  {
+  if (getOwner() && getOwner()->getOperation()->hasType<OperationRouting>()) {
     // Assure that previous routing steps are also marked closed or completed
     for (auto prev = prevsubopplan; prev; prev = prev->prevsubopplan)
-      if (prev->getStatus() != mystatus)
-        prev->setStatus(mystatus);
+      if (prev->getStatus() != mystatus) prev->setStatus(mystatus);
     // Assure that the parent routing gets at least the status approved
     bool all_steps_completed = true;
     bool all_steps_closed = true;
-    for (auto subopplan = getOwner()->firstsubopplan; subopplan; subopplan = subopplan->nextsubopplan)
-    {
-      if (!subopplan->getCompleted())
-        all_steps_completed = false;
-      if (!subopplan->getClosed())
-        all_steps_closed = false;
+    for (auto subopplan = getOwner()->firstsubopplan; subopplan;
+         subopplan = subopplan->nextsubopplan) {
+      if (!subopplan->getCompleted()) all_steps_completed = false;
+      if (!subopplan->getClosed()) all_steps_closed = false;
     }
-    if (all_steps_closed)
-    {
+    if (all_steps_closed) {
       getOwner()->flags |= STATUS_CONFIRMED + STATUS_CLOSED;
       getOwner()->flags &= ~(STATUS_APPROVED + STATUS_COMPLETED);
-    }
-    else if (all_steps_completed)
-    {
+    } else if (all_steps_completed) {
       getOwner()->flags |= STATUS_CONFIRMED + STATUS_COMPLETED;
       getOwner()->flags &= ~(STATUS_APPROVED + STATUS_CLOSED);
-    }
-    else if (getOwner()->getProposed())
-    {
-      for (auto subopplan = getOwner()->firstsubopplan; subopplan; subopplan = subopplan->nextsubopplan)
-        if (subopplan->getProposed())
-          subopplan->setApproved(true);
+    } else if (getOwner()->getProposed()) {
+      for (auto subopplan = getOwner()->firstsubopplan; subopplan;
+           subopplan = subopplan->nextsubopplan)
+        if (subopplan->getProposed()) subopplan->setApproved(true);
       getOwner()->flags |= STATUS_APPROVED;
-      getOwner()->flags &= ~(STATUS_CONFIRMED + STATUS_COMPLETED + STATUS_CLOSED);
+      getOwner()->flags &=
+          ~(STATUS_CONFIRMED + STATUS_COMPLETED + STATUS_CLOSED);
     }
   }
 
-  // Check that upstream buffers have enough supply in the closed or completed status
-  for (auto myflpln = beginFlowPlans(); myflpln != endFlowPlans(); ++myflpln)
-  {
-    if (myflpln->getQuantity() >= 0)
-      continue;
+  // Check that upstream buffers have enough supply in the closed or completed
+  // status
+  for (auto myflpln = beginFlowPlans(); myflpln != endFlowPlans(); ++myflpln) {
+    if (myflpln->getQuantity() >= 0) continue;
 
     // Get current status
     double closed_balance = ROUNDING_ERROR;
     auto tmline = myflpln->getBuffer()->getFlowPlans();
     for (auto flpln = tmline.begin(); flpln != tmline.end(); ++flpln)
-      if (
-        flpln->getOperationPlan() && 
-        (flpln->getOperationPlan()->getClosed() || flpln->getOperationPlan()->getCompleted()) &&
-        flpln->getDate() <= myflpln->getDate()
-        )
-          closed_balance += flpln->getQuantity();
-    
-    if (closed_balance < 0.0)
-    {
+      if (flpln->getOperationPlan() &&
+          (flpln->getOperationPlan()->getClosed() ||
+           flpln->getOperationPlan()->getCompleted()) &&
+          flpln->getDate() <= myflpln->getDate())
+        closed_balance += flpln->getQuantity();
+
+    if (closed_balance < 0.0) {
       // Things don't add up here.
       // We'll close some upstream supply to make things match up
 
       // 1) Correct the date of existing completed supply
       for (auto flpln = tmline.begin(); flpln != tmline.end(); ++flpln)
-        if (
-          flpln->getQuantity() > 0.0 &&
-          flpln->getOperationPlan() &&
-          (flpln->getOperationPlan()->getClosed() || flpln->getOperationPlan()->getCompleted()) &&
-          flpln->getDate() > myflpln->getDate()
-          )
-        {
+        if (flpln->getQuantity() > 0.0 && flpln->getOperationPlan() &&
+            (flpln->getOperationPlan()->getClosed() ||
+             flpln->getOperationPlan()->getCompleted()) &&
+            flpln->getDate() > myflpln->getDate()) {
           flpln->getOperationPlan()->setStartAndEnd(
-            flpln->getOperationPlan()->getStart() < myflpln->getDate()
-            ? flpln->getOperationPlan()->getStart()
-            : myflpln->getDate(),
-            myflpln->getDate()
-          );
+              flpln->getOperationPlan()->getStart() < myflpln->getDate()
+                  ? flpln->getOperationPlan()->getStart()
+                  : myflpln->getDate(),
+              myflpln->getDate());
           closed_balance += flpln->getQuantity();
-          if (closed_balance >= 0.0)
-            break;
+          if (closed_balance >= 0.0) break;
         }
-      if (closed_balance < 0.0)
-      {
+      if (closed_balance < 0.0) {
         // 2) try changing the status of confirmed supply
         for (auto flpln = tmline.begin(); flpln != tmline.end(); ++flpln)
-          if (flpln->getQuantity() > 0.0
-            && flpln->getOperationPlan()
-            && flpln->getOperationPlan()->getConfirmed()
-            && !flpln->getOperationPlan()->getClosed()
-            && !flpln->getOperationPlan()->getCompleted())
-          {
+          if (flpln->getQuantity() > 0.0 && flpln->getOperationPlan() &&
+              flpln->getOperationPlan()->getConfirmed() &&
+              !flpln->getOperationPlan()->getClosed() &&
+              !flpln->getOperationPlan()->getCompleted()) {
             flpln->getOperationPlan()->setStatus(mystatus);
             closed_balance += flpln->getQuantity();
-            if (closed_balance >= 0.0)
-              break;
+            if (closed_balance >= 0.0) break;
           }
-        if (closed_balance < 0.0)
-        {
+        if (closed_balance < 0.0) {
           // 3) try changing the status of approved supply
           for (auto flpln = tmline.begin(); flpln != tmline.end(); ++flpln)
-            if (
-              flpln->getQuantity() > 0.0
-              && flpln->getOperationPlan()
-              && flpln->getOperationPlan()->getApproved()
-              )
-            {
+            if (flpln->getQuantity() > 0.0 && flpln->getOperationPlan() &&
+                flpln->getOperationPlan()->getApproved()) {
               flpln->getOperationPlan()->setStatus(mystatus);
               closed_balance += flpln->getQuantity();
-              if (closed_balance >= 0.0)
-                break;
+              if (closed_balance >= 0.0) break;
             }
-          if (closed_balance < 0.0)
-          {
+          if (closed_balance < 0.0) {
             // 4) Try changing the status of proposed supply
             for (auto flpln = tmline.begin(); flpln != tmline.end(); ++flpln)
-              if (
-                flpln->getQuantity() > 0.0
-                && flpln->getOperationPlan()
-                && flpln->getOperationPlan()->getProposed()
-                )
-              {
+              if (flpln->getQuantity() > 0.0 && flpln->getOperationPlan() &&
+                  flpln->getOperationPlan()->getProposed()) {
                 flpln->getOperationPlan()->setStatus(mystatus);
                 closed_balance += flpln->getQuantity();
-                if (closed_balance >= 0.0)
-                  break;
+                if (closed_balance >= 0.0) break;
               }
             // 5) Finally, update the initial inventory
             if (closed_balance < 0)
-              myflpln->getBuffer()->setOnHand(myflpln->getBuffer()->getOnHand() - closed_balance);
+              myflpln->getBuffer()->setOnHand(
+                  myflpln->getBuffer()->getOnHand() - closed_balance);
           }
         }
       }
@@ -1959,9 +1690,7 @@ void OperationPlan::propagateStatus()
   }
 }
 
-
-string OperationPlan::getStatus() const
-{
+string OperationPlan::getStatus() const {
   if (flags & STATUS_APPROVED)
     return "approved";
   else if (flags & STATUS_COMPLETED)
@@ -1974,96 +1703,74 @@ string OperationPlan::getStatus() const
     return "proposed";
 }
 
-
-void OperationPlan::setStatus(const string& s, bool propagate)
-{
-  if (s == "approved")
-  {
+void OperationPlan::setStatus(const string& s, bool propagate) {
+  if (s == "approved") {
     flags |= STATUS_APPROVED;
     flags &= ~(STATUS_CONFIRMED + STATUS_COMPLETED + STATUS_CLOSED);
-  }
-  else if (s == "confirmed")
-  {
+  } else if (s == "confirmed") {
     flags |= STATUS_CONFIRMED;
     flags &= ~(STATUS_APPROVED + STATUS_COMPLETED + STATUS_CLOSED);
-  }
-  else if (s == "proposed")
-    flags &= ~(STATUS_APPROVED + STATUS_CONFIRMED + STATUS_COMPLETED + STATUS_CLOSED);
-  else if (s == "completed")
-  {
+  } else if (s == "proposed")
+    flags &= ~(STATUS_APPROVED + STATUS_CONFIRMED + STATUS_COMPLETED +
+               STATUS_CLOSED);
+  else if (s == "completed") {
     flags &= ~(STATUS_APPROVED + STATUS_CLOSED);
     flags |= STATUS_CONFIRMED + STATUS_COMPLETED;
-  }
-  else if (s == "closed")
-  {
+  } else if (s == "closed") {
     flags &= ~(STATUS_APPROVED + STATUS_COMPLETED);
     flags |= STATUS_CONFIRMED + STATUS_CLOSED;
-  }
-  else
+  } else
     throw DataException("invalid operationplan status:" + s);
   update();
-  for (OperationPlan *x = firstsubopplan; x; x = x->nextsubopplan)
+  for (OperationPlan* x = firstsubopplan; x; x = x->nextsubopplan)
     x->setStatus(s);
-  if (propagate)
-    propagateStatus();
+  if (propagate) propagateStatus();
 }
 
-
-void OperationPlan::freezeStatus(Date st, Date nd, double q)
-{
-  if (getProposed())
-    return;
+void OperationPlan::freezeStatus(Date st, Date nd, double q) {
+  if (getProposed()) return;
   dates = DateRange(st, nd);
   quantity = q > 0 ? q : 0.0;
 }
 
-
-void OperationPlan::setDemand(Demand* l)
-{
+void OperationPlan::setDemand(Demand* l) {
   // No change
-  if (l == dmd)
-    return;
+  if (l == dmd) return;
 
   // Unregister from previous demand
-  if (dmd)
-    dmd->removeDelivery(this);
+  if (dmd) dmd->removeDelivery(this);
 
   // Register at the new demand and mark it changed
   dmd = l;
-  if (l)
-  {
+  if (l) {
     l->addDelivery(this);
     l->setChanged();
   }
 }
 
-
-PyObject* OperationPlan::create(PyTypeObject* pytype, PyObject* args, PyObject* kwds)
-{
-  try
-  {
+PyObject* OperationPlan::create(PyTypeObject* pytype, PyObject* args,
+                                PyObject* kwds) {
+  try {
     // Find or create the C++ object
     PythonDataValueDict atts(kwds);
     Object* x = createOperationPlan(OperationPlan::metadata, atts);
     Py_INCREF(x);
 
-    // Iterate over extra keywords, and set attributes.   @todo move this responsibility to the readers...
-    if (x)
-    {
+    // Iterate over extra keywords, and set attributes.   @todo move this
+    // responsibility to the readers...
+    if (x) {
       PyObject *key, *value;
       Py_ssize_t pos = 0;
-      while (PyDict_Next(kwds, &pos, &key, &value))
-      {
+      while (PyDict_Next(kwds, &pos, &key, &value)) {
         PythonData field(value);
         PyObject* key_utf8 = PyUnicode_AsUTF8String(key);
         DataKeyword attr(PyBytes_AsString(key_utf8));
         Py_DECREF(key_utf8);
-        if (!attr.isA(Tags::operation) && !attr.isA(Tags::id)
-          && !attr.isA(Tags::reference) && !attr.isA(Tags::action)
-          && !attr.isA(Tags::type) && !attr.isA(Tags::start)
-          && !attr.isA(Tags::end) && !attr.isA(Tags::quantity)
-          && !attr.isA(Tags::create))
-        {
+        if (!attr.isA(Tags::operation) && !attr.isA(Tags::id) &&
+            !attr.isA(Tags::reference) && !attr.isA(Tags::action) &&
+            !attr.isA(Tags::type) && !attr.isA(Tags::start) &&
+            !attr.isA(Tags::end) && !attr.isA(Tags::quantity) &&
+            !attr.isA(Tags::create)) {
           const MetaFieldBase* fmeta = x->getType().findField(attr.getHash());
           if (!fmeta && x->getType().category)
             fmeta = x->getType().category->findField(attr.getHash());
@@ -2076,20 +1783,15 @@ PyObject* OperationPlan::create(PyTypeObject* pytype, PyObject* args, PyObject* 
       };
     }
     return x;
-  }
-  catch (...)
-  {
+  } catch (...) {
     PythonType::evalException();
     return nullptr;
   }
 }
 
-
-double OperationPlan::getPriority() const
-{
+double OperationPlan::getPriority() const {
   // Operationplan hasn't been set up yet
-  if (!oper)
-    return 999.0;
+  if (!oper) return 999.0;
 
   // Child operationplans have the same priority as the parent
   if (getOwner() && !getOwner()->getOperation()->hasType<OperationSplit>())
@@ -2101,11 +1803,9 @@ double OperationPlan::getPriority() const
 
   // Handle an upstream operationplan
   double lowestPriority = 999.0;
-  for (PeggingIterator p(const_cast<OperationPlan*>(this)); p; ++p)
-  {
+  for (PeggingIterator p(const_cast<OperationPlan*>(this)); p; ++p) {
     const OperationPlan* m = p.getOperationPlan();
-    if (!m)
-      continue;
+    if (!m) continue;
     auto dmd = m->getTopOwner()->getDemand();
     if (dmd && dmd->getPriority() < lowestPriority)
       lowestPriority = dmd->getPriority();
@@ -2113,12 +1813,9 @@ double OperationPlan::getPriority() const
   return lowestPriority;
 }
 
-
-double OperationPlan::getCriticality() const
-{
+double OperationPlan::getCriticality() const {
   // Operationplan hasn't been set up yet
-  if (!oper)
-    return 86313600L; // 999 days in seconds;
+  if (!oper) return 86313600L;  // 999 days in seconds;
 
   // Child operationplans have the same criticality as the parent
   // TODO: Slack between routing sub operationplans isn't recognized.
@@ -2126,53 +1823,43 @@ double OperationPlan::getCriticality() const
     return getOwner()->getCriticality();
 
   // Handle demand delivery operationplans
-  if (getTopOwner()->getDemand())
-  {
-
+  if (getTopOwner()->getDemand()) {
     long early = getTopOwner()->getDemand()->getDue() - getEnd();
-    return ((early<=0L) ? 0.0 : early) / 86400.0; // Convert to days
+    return ((early <= 0L) ? 0.0 : early) / 86400.0;  // Convert to days
   }
 
   // Handle an upstream operationplan
-  Duration minslack = 86313600L; // 999 days in seconds
+  Duration minslack = 86313600L;  // 999 days in seconds
   vector<const OperationPlan*> opplans(HasLevel::getNumberOfLevels() + 5);
-  for (PeggingIterator p(const_cast<OperationPlan*>(this)); p; ++p)
-  {
+  for (PeggingIterator p(const_cast<OperationPlan*>(this)); p; ++p) {
     unsigned int lvl = p.getLevel();
-    if (lvl >= opplans.size())
-      opplans.resize(lvl + 5);
+    if (lvl >= opplans.size()) opplans.resize(lvl + 5);
     opplans[lvl] = p.getOperationPlan();
     const OperationPlan* m = p.getOperationPlan();
-    if (m && m->getTopOwner()->getDemand())
-    {
+    if (m && m->getTopOwner()->getDemand()) {
       // Reached a demand. Get the total slack now.
       Duration myslack = m->getTopOwner()->getDemand()->getDue() - m->getEnd();
       if (myslack < 0L) myslack = 0L;
-      for (unsigned int i=1; i<=lvl; i++)
-      {
-        if (opplans[i-1]->getOwner() == opplans[i] || opplans[i-1] == opplans[i]->getOwner())
+      for (unsigned int i = 1; i <= lvl; i++) {
+        if (opplans[i - 1]->getOwner() == opplans[i] ||
+            opplans[i - 1] == opplans[i]->getOwner())
           // Times between parent and child opplans isn't slack
           continue;
-        Date st = opplans[i-1]->getEnd();
+        Date st = opplans[i - 1]->getEnd();
         if (!st) st = Plan::instance().getCurrent();
         Date nd = opplans[i]->getStart();
         if (!nd) nd = Plan::instance().getCurrent();
-        if (nd > st)
-          myslack += nd - st;
+        if (nd > st) myslack += nd - st;
       }
-      if (myslack < minslack)
-        minslack = myslack;
+      if (myslack < minslack) minslack = myslack;
     }
   }
-  return minslack / 86400.0; // Convert to days
+  return minslack / 86400.0;  // Convert to days
 }
 
-
-Duration OperationPlan::getDelay() const
-{
+Duration OperationPlan::getDelay() const {
   // Operationplan hasn't been set up yet. On time by default.
-  if (!oper)
-    return 0L;
+  if (!oper) return 0L;
 
   // Child operationplans have the same delay as the parent
   // TODO for routing steps this is not really as accurrate as we could do it
@@ -2186,40 +1873,31 @@ Duration OperationPlan::getDelay() const
   // Handle an upstream operationplan
   Duration maxdelay = Duration::MIN;
   vector<const OperationPlan*> opplans(HasLevel::getNumberOfLevels() + 5);
-  for (PeggingIterator p(const_cast<OperationPlan*>(this)); p; ++p)
-  {
+  for (PeggingIterator p(const_cast<OperationPlan*>(this)); p; ++p) {
     unsigned int lvl = p.getLevel();
-    if (lvl >= opplans.size())
-      opplans.resize(lvl + 5);
+    if (lvl >= opplans.size()) opplans.resize(lvl + 5);
     opplans[lvl] = p.getOperationPlan();
     const OperationPlan* m = p.getOperationPlan();
-    if (m && m->getTopOwner()->getDemand())
-    {
+    if (m && m->getTopOwner()->getDemand()) {
       // Reached a demand. Get the total delay now.
       Duration mydelay = getEnd() - m->getTopOwner()->getDemand()->getDue();
-      for (unsigned int i = 0; i < lvl; i++)
-      {
+      for (unsigned int i = 0; i < lvl; i++) {
         if (opplans[i]->getOwner())
           // Don't count operation times on child operationplans
           continue;
-        if (opplans[i] != this)
-          mydelay -= opplans[i]->getDates().getDuration();
+        if (opplans[i] != this) mydelay -= opplans[i]->getDates().getDuration();
       }
-      if (mydelay > maxdelay)
-        maxdelay = mydelay;
+      if (mydelay > maxdelay) maxdelay = mydelay;
     }
   }
   return maxdelay;
 }
 
-
-PyObject* OperationPlan::createIterator(PyObject* self, PyObject* args)
-{
+PyObject* OperationPlan::createIterator(PyObject* self, PyObject* args) {
   // Check arguments
-  PyObject *pyoper = nullptr;
+  PyObject* pyoper = nullptr;
   int ok = PyArg_ParseTuple(args, "|O:operationplans", &pyoper);
-  if (!ok)
-    return nullptr;
+  if (!ok) return nullptr;
 
   if (!pyoper)
     // First case: Iterate over all operationplans
@@ -2227,42 +1905,40 @@ PyObject* OperationPlan::createIterator(PyObject* self, PyObject* args)
 
   // Second case: Iterate over the operationplans of a single operation
   PythonData oper(pyoper);
-  if (!oper.check(Operation::metadata))
-  {
-    PyErr_SetString(PythonDataException, "optional argument must be of type operation");
+  if (!oper.check(Operation::metadata)) {
+    PyErr_SetString(PythonDataException,
+                    "optional argument must be of type operation");
     return nullptr;
   }
-  return new PythonIterator<OperationPlan::iterator, OperationPlan>(static_cast<Operation*>(pyoper));
+  return new PythonIterator<OperationPlan::iterator, OperationPlan>(
+      static_cast<Operation*>(pyoper));
 }
 
-
-PeggingIterator OperationPlan::getPeggingDownstream() const
-{
+PeggingIterator OperationPlan::getPeggingDownstream() const {
   return PeggingIterator(this, true);
 }
 
-
-PeggingIterator OperationPlan::getPeggingUpstream() const
-{
+PeggingIterator OperationPlan::getPeggingUpstream() const {
   return PeggingIterator(this, false);
 }
 
-
-PeggingDemandIterator OperationPlan::getPeggingDemand() const
-{
+PeggingDemandIterator OperationPlan::getPeggingDemand() const {
   return PeggingDemandIterator(this);
 }
 
-
-int OperationPlan::InterruptionIterator::intitialize()
-{
+int OperationPlan::InterruptionIterator::intitialize() {
   // Initialize the metadata.
-  metacategory = MetaCategory::registerCategory<OperationPlan::InterruptionIterator>("interruption", "interruptions");
-  metadata = MetaClass::registerClass<OperationPlan::InterruptionIterator>("interruption", "operationplan interruption", true);
-  registerFields<OperationPlan::InterruptionIterator>(const_cast<MetaCategory*>(metacategory));
+  metacategory =
+      MetaCategory::registerCategory<OperationPlan::InterruptionIterator>(
+          "interruption", "interruptions");
+  metadata = MetaClass::registerClass<OperationPlan::InterruptionIterator>(
+      "interruption", "operationplan interruption", true);
+  registerFields<OperationPlan::InterruptionIterator>(
+      const_cast<MetaCategory*>(metacategory));
 
   // Initialize the Python type
-  PythonType& x = PythonExtension<OperationPlan::InterruptionIterator>::getPythonType();
+  PythonType& x =
+      PythonExtension<OperationPlan::InterruptionIterator>::getPythonType();
   x.setName("interruption");
   x.setDoc("frePPLe operationplan interruption");
   x.supportgetattro();
@@ -2272,137 +1948,103 @@ int OperationPlan::InterruptionIterator::intitialize()
   return x.typeReady();
 }
 
-
-OperationPlan::AlternateIterator::AlternateIterator(const OperationPlan* o) : opplan(o)
-{  
-  if (!o)
-    return;
-  if (o->getOwner() && o->getOwner()->getOperation()->hasType<OperationAlternate>())
-  {
+OperationPlan::AlternateIterator::AlternateIterator(const OperationPlan* o)
+    : opplan(o) {
+  if (!o) return;
+  if (o->getOwner() &&
+      o->getOwner()->getOperation()->hasType<OperationAlternate>()) {
     auto subs = o->getOwner()->getOperation()->getSubOperationIterator();
-    while (SubOperation* sub = subs.next())
-    {
+    while (SubOperation* sub = subs.next()) {
       if (sub->getOperation() != o->getOperation())
         opers.push_back(sub->getOperation());
     }
-  }
-  else
-  {
-    for (
-      auto super = o->getOperation()->getSuperOperations().begin();
-      super != o->getOperation()->getSuperOperations().end();
-      ++super
-      )
-    {
-      if (!(*super)->hasType<OperationAlternate>())
-        return;
+  } else {
+    for (auto super = o->getOperation()->getSuperOperations().begin();
+         super != o->getOperation()->getSuperOperations().end(); ++super) {
+      if (!(*super)->hasType<OperationAlternate>()) return;
       auto subs = (*super)->getSubOperationIterator();
-      while (SubOperation* sub = subs.next())
-      {
-        if (sub->getOperation() != opplan->getOperation()) 
+      while (SubOperation* sub = subs.next()) {
+        if (sub->getOperation() != opplan->getOperation())
           opers.push_back(sub->getOperation());
       }
-        
     }
   }
   operIter = opers.begin();
 }
 
-
-Operation* OperationPlan::AlternateIterator::next()
-{
-  if (operIter == opers.end())
-    return nullptr;
+Operation* OperationPlan::AlternateIterator::next() {
+  if (operIter == opers.end()) return nullptr;
   auto tmp = *operIter;
   ++operIter;
   return tmp;
 }
 
-
-OperationPlan::InterruptionIterator* OperationPlan::InterruptionIterator::next()
-{
-  while (true)
-  {
+OperationPlan::InterruptionIterator*
+OperationPlan::InterruptionIterator::next() {
+  while (true) {
     // Check whether all calendars are available
     bool available = true;
     Date selected = Date::infiniteFuture;
-    for (unsigned short t = 0; t < numCalendars; ++t)
-    {
-      if (cals[t].getDate() < selected)
-        selected = cals[t].getDate();
+    for (unsigned short t = 0; t < numCalendars; ++t) {
+      if (cals[t].getDate() < selected) selected = cals[t].getDate();
     }
     curdate = selected;
     for (unsigned short t = 0; t < numCalendars && available; ++t)
-      // TODO next line does a pretty expensive lookup in the calendar, which we might be available to avoid
+      // TODO next line does a pretty expensive lookup in the calendar, which we
+      // might be available to avoid
       available = (cals[t].getCalendar()->getValue(selected) != 0);
 
-    if (available && !status)
-    {
+    if (available && !status) {
       // Becoming available after unavailable period
       status = true;
       end = (curdate > opplan->getEnd()) ? opplan->getEnd() : curdate;
       return this;
-    }
-    else if (!available && status)
-    {
+    } else if (!available && status) {
       // Becoming unavailable after available period
       status = false;
       if (curdate >= opplan->getEnd())
         // Leaving the desired date range
         return nullptr;
       start = curdate;
-    }
-    else if (curdate >= opplan->getEnd())
+    } else if (curdate >= opplan->getEnd())
       return nullptr;
 
     // Advance to the next event
     for (unsigned short t = 0; t < numCalendars; ++t)
-      if (cals[t].getDate() == selected)
-        ++cals[t];
+      if (cals[t].getDate() == selected) ++cals[t];
   }
 }
 
-
-double OperationPlan::getEfficiency(Date d) const
-{
+double OperationPlan::getEfficiency(Date d) const {
   double best = DBL_MAX;
   LoadPlanIterator e = beginLoadPlans();
-  if (e == endLoadPlans())
-  {
+  if (e == endLoadPlans()) {
     // Use the operation loads
-    for (auto h = getOperation()->getLoads().begin(); h != getOperation()->getLoads().end(); ++h)
-    {
+    for (auto h = getOperation()->getLoads().begin();
+         h != getOperation()->getLoads().end(); ++h) {
       double best_eff = 0.0;
-      for (Resource::memberRecursiveIterator mmbr(h->getResource()); !mmbr.empty(); ++mmbr)
-      {
-        if (
-          !mmbr->isGroup()
-          && (!h->getSkill() || mmbr->hasSkill(h->getSkill()))
-          )
-        {
-          auto my_eff = mmbr->getEfficiencyCalendar()
-            ? mmbr->getEfficiencyCalendar()->getValue(d ? d : getStart())
-            : mmbr->getEfficiency();
-          if (my_eff > best_eff)
-            best_eff = my_eff;
+      for (Resource::memberRecursiveIterator mmbr(h->getResource());
+           !mmbr.empty(); ++mmbr) {
+        if (!mmbr->isGroup() &&
+            (!h->getSkill() || mmbr->hasSkill(h->getSkill()))) {
+          auto my_eff =
+              mmbr->getEfficiencyCalendar()
+                  ? mmbr->getEfficiencyCalendar()->getValue(d ? d : getStart())
+                  : mmbr->getEfficiency();
+          if (my_eff > best_eff) best_eff = my_eff;
         }
       }
-      if (best_eff < best)
-        best = best_eff;
+      if (best_eff < best) best = best_eff;
     }
-  }
-  else
-  {
+  } else {
     // Use the operationplan loadplans
-    while (e != endLoadPlans())
-    {
-      if (e->getQuantity() <= 0)
-      {
+    while (e != endLoadPlans()) {
+      if (e->getQuantity() <= 0) {
         auto tmp = e->getResource()->getEfficiencyCalendar()
-          ? e->getResource()->getEfficiencyCalendar()->getValue(d ? d : getStart())
-          : e->getResource()->getEfficiency();
-        if (tmp < best)
-          best = tmp;
+                       ? e->getResource()->getEfficiencyCalendar()->getValue(
+                             d ? d : getStart())
+                       : e->getResource()->getEfficiency();
+        if (tmp < best) best = tmp;
       }
       ++e;
     }
@@ -2415,89 +2057,67 @@ double OperationPlan::getEfficiency(Date d) const
     return 0.0;
 }
 
-
-Duration OperationPlan::getSetup() const
-{
-  if (setupevent)
-  {
-    if (getOperation())
-    {
+Duration OperationPlan::getSetup() const {
+  if (setupevent) {
+    if (getOperation()) {
       // Convert date difference back to active time
       Duration actual;
-      getOperation()->calculateOperationTime(this, dates.getStart(), setupevent->getDate(), &actual);
+      getOperation()->calculateOperationTime(this, dates.getStart(),
+                                             setupevent->getDate(), &actual);
       return actual;
-    }
-    else 
+    } else
       return setupevent->getDate() - dates.getStart();
-  }
-  else
+  } else
     // No setup event
     return 0L;
 }
 
-
-void OperationPlan::setSetupEvent(TimeLine<LoadPlan>* res, Date d, const PooledString& s, SetupMatrixRule* r)
-{
-  if (!res)
-  {
-    if (setupevent)
-    {
+void OperationPlan::setSetupEvent(TimeLine<LoadPlan>* res, Date d,
+                                  const PooledString& s, SetupMatrixRule* r) {
+  if (!res) {
+    if (setupevent) {
       delete setupevent;
       setupevent = nullptr;
     }
-  }
-  else if (setupevent)
+  } else if (setupevent)
     setupevent->update(res, d, s, r);
   else
     setupevent = new SetupEvent(res, d, s, r, this);
 }
 
-
-double OperationPlan::getSetupCost() const
-{
+double OperationPlan::getSetupCost() const {
   if (setupevent)
     return setupevent->getRule() ? setupevent->getRule()->getCost() : 0.0;
   else
     return 0.0;
 }
 
-
-SetupEvent::~SetupEvent()
-{
-  if (opplan)
-    opplan->nullSetupEvent();
+SetupEvent::~SetupEvent() {
+  if (opplan) opplan->nullSetupEvent();
 }
 
-
-void SetupEvent::update(TimeLine<LoadPlan>* res, Date d, const PooledString& s, SetupMatrixRule* r)
-{
+void SetupEvent::update(TimeLine<LoadPlan>* res, Date d, const PooledString& s,
+                        SetupMatrixRule* r) {
   setup = s;
   rule = r;
-  if (!tmline)
-  {
+  if (!tmline) {
     // First insert
     tmline = res;
     tmline->insert(this);
-  }
-  else if (res != tmline)
-  {
+  } else if (res != tmline) {
     // Reinsert at another resource
     tmline->erase(this);
     tmline = res;
     tmline->insert(this);
-  }
-  else
+  } else
     // Update the position in the list
     tmline->update(this, d);
 }
 
-
-SetupEvent* SetupEvent::getSetupBefore() const
-{
+SetupEvent* SetupEvent::getSetupBefore() const {
   auto i = getTimeLine()->begin(this);
   --i;
-  while (i != getTimeLine()->end())
-  {
+  while (i != getTimeLine()->end()) {
     if (i->getEventType() == 5)
       return const_cast<SetupEvent*>(static_cast<const SetupEvent*>(&*i));
     --i;
@@ -2505,11 +2125,10 @@ SetupEvent* SetupEvent::getSetupBefore() const
   return nullptr;
 }
 
-
-int SetupEvent::initialize()
-{
+int SetupEvent::initialize() {
   // Initialize the metadata
-  metadata = MetaCategory::registerCategory<SetupEvent>("setupevent", "setupevents");
+  metadata =
+      MetaCategory::registerCategory<SetupEvent>("setupevent", "setupevents");
   registerFields<SetupEvent>(const_cast<MetaCategory*>(metadata));
 
   // Initialize the Python type
@@ -2522,4 +2141,4 @@ int SetupEvent::initialize()
   return x.typeReady();
 }
 
-} // end namespace
+}  // namespace frepple

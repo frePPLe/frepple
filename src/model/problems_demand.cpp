@@ -21,12 +21,9 @@
 #define FREPPLE_CORE
 #include "frepple/model.h"
 
-namespace frepple
-{
+namespace frepple {
 
-
-void Demand::updateProblems()
-{
+void Demand::updateProblems() {
   // The relation between the demand and the related problem classes is such
   // that the demand object is the only active one. The problem objects are
   // fully controlled and managed by the associated demand object.
@@ -42,20 +39,14 @@ void Demand::updateProblems()
   if (!getDetectProblems()) return;
 
   // Closed demands don't have any problems
-  if (getStatus() != CLOSED)
-  {
+  if (getStatus() != CLOSED) {
     // Check which problems need to be created
-    if (deli.empty())
-    {
+    if (deli.empty()) {
       // Check if a new ProblemDemandNotPlanned needs to be created
       if (getQuantity() > 0.0) needsNotPlanned = true;
-    }
-    else
-    {
+    } else {
       // Loop through the deliveries
-      for (auto i = deli.begin(); i != deli.end(); ++i)
-      {
-        
+      for (auto i = deli.begin(); i != deli.end(); ++i) {
         long d(getDue() - (*i)->getEnd());
         if (d < 0L)
           // Check for ProblemLate problem
@@ -67,19 +58,16 @@ void Demand::updateProblems()
 
       // Check for ProblemShort problem
       double plannedqty = getPlannedQuantity();
-      if (plannedqty + ROUNDING_ERROR < qty)
-        needsShort = true;
+      if (plannedqty + ROUNDING_ERROR < qty) needsShort = true;
 
       // Check for ProblemExcess Problem
-      if (plannedqty - ROUNDING_ERROR > qty)
-        needsExcess = true;
+      if (plannedqty - ROUNDING_ERROR > qty) needsExcess = true;
     }
   }
 
   // Loop through the existing problems
   for (Problem::iterator j = Problem::begin(this, false);
-      j!=Problem::end(); )
-  {
+       j != Problem::end();) {
     // Need to increment now and define a pointer to the problem, since the
     // problem can be deleted soon (which invalidates the iterator).
     Problem& curprob = *j;
@@ -88,32 +76,32 @@ void Demand::updateProblems()
     // concentrated. However, a drawback of this design is that a new Problem
     // subclass will also require a new Demand subclass. I think such a link
     // is acceptable.
-    if (typeid(curprob) == typeid(ProblemEarly))
-    {
+    if (typeid(curprob) == typeid(ProblemEarly)) {
       // if: problem needed and it exists already
       if (needsEarly) needsEarly = false;
       // else: problem not needed but it exists already
-      else delete &curprob;
-    }
-    else if (typeid(curprob) == typeid(ProblemDemandNotPlanned))
-    {
-      if (needsNotPlanned) needsNotPlanned = false;
-      else delete &curprob;
-    }
-    else if (typeid(curprob) == typeid(ProblemLate))
-    {
-      if (needsLate) needsLate = false;
-      else delete &curprob;
-    }
-    else if (typeid(curprob) == typeid(ProblemShort))
-    {
-      if (needsShort) needsShort = false;
-      else delete &curprob;
-    }
-    else if (typeid(curprob) == typeid(ProblemExcess))
-    {
-      if (needsExcess) needsExcess = false;
-      else delete &curprob;
+      else
+        delete &curprob;
+    } else if (typeid(curprob) == typeid(ProblemDemandNotPlanned)) {
+      if (needsNotPlanned)
+        needsNotPlanned = false;
+      else
+        delete &curprob;
+    } else if (typeid(curprob) == typeid(ProblemLate)) {
+      if (needsLate)
+        needsLate = false;
+      else
+        delete &curprob;
+    } else if (typeid(curprob) == typeid(ProblemShort)) {
+      if (needsShort)
+        needsShort = false;
+      else
+        delete &curprob;
+    } else if (typeid(curprob) == typeid(ProblemExcess)) {
+      if (needsExcess)
+        needsExcess = false;
+      else
+        delete &curprob;
     }
     // Note that there may be other demand exceptions that are not caught in
     // this loop. These are problems defined and managed by subclasses.
@@ -127,39 +115,32 @@ void Demand::updateProblems()
   if (needsExcess) new ProblemExcess(this);
 }
 
-
-string ProblemLate::getDescription() const
-{
-  Demand *dmd = getDemand();
+string ProblemLate::getDescription() const {
+  Demand* dmd = getDemand();
   assert(dmd && !dmd->getDelivery().empty());
   Duration delay;
   double plannedlate = 0;
   for (Demand::OperationPlanList::const_iterator i = dmd->getDelivery().begin();
-    i != dmd->getDelivery().end();
-    ++i)
-  {
+       i != dmd->getDelivery().end(); ++i) {
     Duration tmp = (*i)->getEnd() - getDemand()->getDue();
-    if (tmp > 0L)
-    {
-      if (tmp > delay)
-        delay = tmp;
+    if (tmp > 0L) {
+      if (tmp > delay) delay = tmp;
       plannedlate += (*i)->getQuantity();
     }
   }
   ostringstream ch;
-  ch << (int)(plannedlate + 0.5) << " units of demand '" << getDemand()->getName()
-    << "' planned up to " << fixed << setprecision(1) << (delay / 86400.0) << " days after its due date";
+  ch << (int)(plannedlate + 0.5) << " units of demand '"
+     << getDemand()->getName() << "' planned up to " << fixed << setprecision(1)
+     << (delay / 86400.0) << " days after its due date";
   return ch.str();
 }
 
-
-string ProblemEarly::getDescription() const
-{
+string ProblemEarly::getDescription() const {
   assert(getDemand() && !getDemand()->getDelivery().empty());
-  Duration t(getDemand()->getDue()
-      - getDemand()->getEarliestDelivery()->getEnd());
-  return string("Demand '") + getDemand()->getName() + "' planned "
-      + string(t) + " before its due date";
+  Duration t(getDemand()->getDue() -
+             getDemand()->getEarliestDelivery()->getEnd());
+  return string("Demand '") + getDemand()->getName() + "' planned " +
+         string(t) + " before its due date";
 }
 
-}
+}  // namespace frepple

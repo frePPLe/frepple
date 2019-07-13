@@ -24,15 +24,9 @@
 using namespace frepple;
 #include <sys/stat.h>
 
+DECLARE_EXPORT(const char*) FreppleVersion() { return PACKAGE_VERSION; }
 
-DECLARE_EXPORT(const char*) FreppleVersion()
-{
-  return PACKAGE_VERSION;
-}
-
-
-DECLARE_EXPORT(void) FreppleInitialize(bool procesInitializationFiles)
-{
+DECLARE_EXPORT(void) FreppleInitialize(bool procesInitializationFiles) {
   // Initialize only once
   static bool initialized = false;
   if (initialized) return;
@@ -43,20 +37,15 @@ DECLARE_EXPORT(void) FreppleInitialize(bool procesInitializationFiles)
   LibraryModel::initialize();
   LibrarySolver::initialize();
 
-  if (!procesInitializationFiles)
-    return;
+  if (!procesInitializationFiles) return;
 
   // Search for the initialization PY file
   string init = Environment::searchFile("init.py");
-  if (!init.empty())
-  {
+  if (!init.empty()) {
     // Execute the commands in the file
-    try
-    {
+    try {
       PythonInterpreter::executeFile(init);
-    }
-    catch (...)
-    {
+    } catch (...) {
       logger << "Exception caught during execution of 'init.py'" << endl;
       throw;
     }
@@ -64,21 +53,19 @@ DECLARE_EXPORT(void) FreppleInitialize(bool procesInitializationFiles)
 
   // Search for the initialization XML file
   init = Environment::searchFile("init.xml");
-  if (!init.empty())
-  {
+  if (!init.empty()) {
     // Execute the commands in the file
-    try { XMLInputFile(init).parse(&Plan::instance(),true); }
-    catch (...)
-    {
+    try {
+      XMLInputFile(init).parse(&Plan::instance(), true);
+    } catch (...) {
       logger << "Exception caught during execution of 'init.xml'" << endl;
       throw;
     }
   }
 }
 
-
-DECLARE_EXPORT(void) FreppleReadXMLData (const char* x, bool validate, bool validateonly)
-{
+DECLARE_EXPORT(void)
+FreppleReadXMLData(const char* x, bool validate, bool validateonly) {
   if (!x) return;
   if (validateonly)
     XMLInputString(x).parse(nullptr, true);
@@ -86,11 +73,9 @@ DECLARE_EXPORT(void) FreppleReadXMLData (const char* x, bool validate, bool vali
     XMLInputString(x).parse(&Plan::instance(), validate);
 }
 
-
-DECLARE_EXPORT(void) FreppleReadXMLFile (const char* filename, bool validate, bool validateonly)
-{
-  if (!filename)
-  {
+DECLARE_EXPORT(void)
+FreppleReadXMLFile(const char* filename, bool validate, bool validateonly) {
+  if (!filename) {
     // Read from standard input
     xercesc::StdInInputSource in;
     if (validateonly)
@@ -98,8 +83,7 @@ DECLARE_EXPORT(void) FreppleReadXMLFile (const char* filename, bool validate, bo
       XMLInput().parse(in, nullptr, true);
     else
       XMLInput().parse(in, &Plan::instance(), validate);
-  }
-  else if (validateonly)
+  } else if (validateonly)
     // Read and validate a file
     XMLInputFile(filename).parse(nullptr, true);
   else
@@ -107,90 +91,84 @@ DECLARE_EXPORT(void) FreppleReadXMLFile (const char* filename, bool validate, bo
     XMLInputFile(filename).parse(&Plan::instance(), validate);
 }
 
-
-DECLARE_EXPORT(void) FreppleReadPythonFile(const char* filename)
-{
-  if (!filename)
-    throw DataException("No Python file passed to execute");
+DECLARE_EXPORT(void) FreppleReadPythonFile(const char* filename) {
+  if (!filename) throw DataException("No Python file passed to execute");
   PythonInterpreter::executeFile(filename);
 }
 
-
-DECLARE_EXPORT(void) FreppleSaveFile(const char* x)
-{
+DECLARE_EXPORT(void) FreppleSaveFile(const char* x) {
   XMLSerializerFile o(x);
   o.writeElementWithHeader(Tags::plan, &Plan::instance());
 }
 
-
 /** Closing any resources still used by frePPle.<br>
-  * Allocated memory is not freed up with this call - for performance
-  * reasons it is easier to "leak" the memory. The memory is freed when
-  * the process exits.
-  */
-DECLARE_EXPORT(void) FreppleExit()
-{
+ * Allocated memory is not freed up with this call - for performance
+ * reasons it is easier to "leak" the memory. The memory is freed when
+ * the process exits.
+ */
+DECLARE_EXPORT(void) FreppleExit() {
   // Close the log file
   Environment::setLogFile("");
 }
 
+DECLARE_EXPORT(void) FreppleLog(const string& msg) { logger << msg << endl; }
 
-DECLARE_EXPORT(void) FreppleLog(const string& msg)
-{
+extern "C" DECLARE_EXPORT(void) FreppleLog(const char* msg) {
   logger << msg << endl;
 }
 
-
-extern "C" DECLARE_EXPORT(void) FreppleLog(const char* msg)
-{
-  logger << msg << endl;
-}
-
-
-extern "C" DECLARE_EXPORT(int) FreppleWrapperInitialize()
-{
-  try {FreppleInitialize();}
-  catch (...) {return EXIT_FAILURE;}
+extern "C" DECLARE_EXPORT(int) FreppleWrapperInitialize() {
+  try {
+    FreppleInitialize();
+  } catch (...) {
+    return EXIT_FAILURE;
+  }
   return EXIT_SUCCESS;
 }
 
-
-extern "C" DECLARE_EXPORT(int) FreppleWrapperReadXMLData(char* d, bool v, bool c)
-{
-  try {FreppleReadXMLData(d, v, c);}
-  catch (...) {return EXIT_FAILURE;}
+extern "C" DECLARE_EXPORT(int)
+    FreppleWrapperReadXMLData(char* d, bool v, bool c) {
+  try {
+    FreppleReadXMLData(d, v, c);
+  } catch (...) {
+    return EXIT_FAILURE;
+  }
   return EXIT_SUCCESS;
 }
 
-
-extern "C" DECLARE_EXPORT(int) FreppleWrapperReadXMLFile(const char* f, bool v, bool c)
-{
-  try {FreppleReadXMLFile(f, v, c);}
-  catch (...) {return EXIT_FAILURE;}
+extern "C" DECLARE_EXPORT(int)
+    FreppleWrapperReadXMLFile(const char* f, bool v, bool c) {
+  try {
+    FreppleReadXMLFile(f, v, c);
+  } catch (...) {
+    return EXIT_FAILURE;
+  }
   return EXIT_SUCCESS;
 }
 
-
-extern "C" DECLARE_EXPORT(int) FreppleWrapperReadPythonFile(const char* f)
-{
-  try {FreppleReadPythonFile(f);}
-  catch (...) {return EXIT_FAILURE;}
+extern "C" DECLARE_EXPORT(int) FreppleWrapperReadPythonFile(const char* f) {
+  try {
+    FreppleReadPythonFile(f);
+  } catch (...) {
+    return EXIT_FAILURE;
+  }
   return EXIT_SUCCESS;
 }
 
-
-extern "C" DECLARE_EXPORT(int) FreppleWrapperSaveFile(char* f)
-{
-  try {FreppleSaveFile(f);}
-  catch (...) {return EXIT_FAILURE;}
+extern "C" DECLARE_EXPORT(int) FreppleWrapperSaveFile(char* f) {
+  try {
+    FreppleSaveFile(f);
+  } catch (...) {
+    return EXIT_FAILURE;
+  }
   return EXIT_SUCCESS;
 }
 
-
-extern "C" DECLARE_EXPORT(int) FreppleWrapperExit()
-{
-  try {FreppleExit();}
-  catch (...) {return EXIT_FAILURE;}
+extern "C" DECLARE_EXPORT(int) FreppleWrapperExit() {
+  try {
+    FreppleExit();
+  } catch (...) {
+    return EXIT_FAILURE;
+  }
   return EXIT_SUCCESS;
 }
-

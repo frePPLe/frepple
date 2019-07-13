@@ -21,12 +21,9 @@
 #define FREPPLE_CORE
 #include "frepple/model.h"
 
-namespace frepple
-{
+namespace frepple {
 
-
-void Buffer::updateProblems()
-{
+void Buffer::updateProblems() {
   // Delete existing problems for this buffer
   Problem::clearProblems(*this, true, false);
 
@@ -43,8 +40,7 @@ void Buffer::updateProblems()
   double curMin(0.0);
   double excessQty(0.0);
   for (flowplanlist::const_iterator iter = flowplans.begin();
-      iter != flowplans.end(); )
-  {
+       iter != flowplans.end();) {
     // Process changes in the maximum or minimum targets
     if (iter->getEventType() == 4)
       curMax = iter->getMax();
@@ -53,58 +49,46 @@ void Buffer::updateProblems()
 
     // Only consider the last flowplan for a certain date
     const TimeLine<FlowPlan>::Event *f = &*(iter++);
-    if (iter!=flowplans.end() && iter->getDate()==f->getDate()) continue;
+    if (iter != flowplans.end() && iter->getDate() == f->getDate()) continue;
 
     // Check against minimum target
     double delta = f->getOnhand() - curMin;
-    if (delta < -ROUNDING_ERROR)
-    {
-      if (!shortageProblem)
-      {
+    if (delta < -ROUNDING_ERROR) {
+      if (!shortageProblem) {
         // Start of a problem
         shortageProblemStart = f->getDate();
         shortageQty = delta;
         shortageProblem = true;
-      }
-      else if (delta < shortageQty)
+      } else if (delta < shortageQty)
         // New shortage qty
         shortageQty = delta;
-    }
-    else
-    {
-      if (shortageProblem)
-      {
+    } else {
+      if (shortageProblem) {
         // New problem now ends
         if (f->getDate() != shortageProblemStart)
-          new ProblemMaterialShortage
-          (this, shortageProblemStart, f->getDate(), -shortageQty);
+          new ProblemMaterialShortage(this, shortageProblemStart, f->getDate(),
+                                      -shortageQty);
         shortageProblem = false;
       }
     }
 
     // Check against maximum target
-    delta = f->getOnhand() - (curMin<curMax ? curMax : curMin);
-    if (delta > ROUNDING_ERROR)
-    {
-      if (!excessProblem)
-      {
+    delta = f->getOnhand() - (curMin < curMax ? curMax : curMin);
+    if (delta > ROUNDING_ERROR) {
+      if (!excessProblem) {
         // New problem starts here
         excessProblemStart = f->getDate();
         excessQty = delta;
         excessProblem = true;
-      }
-      else if (delta > excessQty)
+      } else if (delta > excessQty)
         excessQty = delta;
-    }
-    else
-    {
-      if (excessProblem)
-      {
+    } else {
+      if (excessProblem) {
         // New excess qty
         // New problem now ends
         if (f->getDate() != excessProblemStart)
-          new ProblemMaterialExcess
-          (this, excessProblemStart, f->getDate(), excessQty);
+          new ProblemMaterialExcess(this, excessProblemStart, f->getDate(),
+                                    excessQty);
         excessProblem = false;
       }
     }
@@ -113,31 +97,25 @@ void Buffer::updateProblems()
 
   // The excess lasts till the end of the horizon...
   if (excessProblem)
-    new ProblemMaterialExcess
-    (this, excessProblemStart, Date::infiniteFuture, excessQty);
+    new ProblemMaterialExcess(this, excessProblemStart, Date::infiniteFuture,
+                              excessQty);
 
   // The shortage lasts till the end of the horizon...
   if (shortageProblem)
-    new ProblemMaterialShortage
-    (this, shortageProblemStart, Date::infiniteFuture, -shortageQty);
+    new ProblemMaterialShortage(this, shortageProblemStart,
+                                Date::infiniteFuture, -shortageQty);
 }
 
-
-
-string ProblemMaterialExcess::getDescription() const
-{
+string ProblemMaterialExcess::getDescription() const {
   ostringstream ch;
   ch << "Buffer '" << getBuffer() << "' has material excess of " << qty;
   return ch.str();
 }
 
-
-string ProblemMaterialShortage::getDescription() const
-{
+string ProblemMaterialShortage::getDescription() const {
   ostringstream ch;
   ch << "Buffer '" << getBuffer() << "' has material shortage of " << qty;
   return ch.str();
 }
 
-
-}
+}  // namespace frepple

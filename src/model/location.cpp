@@ -21,90 +21,73 @@
 #define FREPPLE_CORE
 #include "frepple/model.h"
 
-namespace frepple
-{
+namespace frepple {
 
-template<class Location> Tree utils::HasName<Location>::st;
+template <class Location>
+Tree utils::HasName<Location>::st;
 const MetaCategory* Location::metadata;
 const MetaClass* LocationDefault::metadata;
 
-
-int Location::initialize()
-{
+int Location::initialize() {
   // Initialize the metadata
-  metadata = MetaCategory::registerCategory<Location>("location", "locations", reader, finder);
+  metadata = MetaCategory::registerCategory<Location>("location", "locations",
+                                                      reader, finder);
   registerFields<Location>(const_cast<MetaCategory*>(metadata));
 
   // Initialize the Python class
   return FreppleCategory<Location>::initialize();
 }
 
-
-int LocationDefault::initialize()
-{
+int LocationDefault::initialize() {
   // Initialize the metadata
-  LocationDefault::metadata = MetaClass::registerClass<LocationDefault>("location", "location_default",
-      Object::create<LocationDefault>, true);
+  LocationDefault::metadata = MetaClass::registerClass<LocationDefault>(
+      "location", "location_default", Object::create<LocationDefault>, true);
 
   // Initialize the Python class
-  return FreppleClass<LocationDefault,Location>::initialize();
+  return FreppleClass<LocationDefault, Location>::initialize();
 }
 
-
-Location::~Location()
-{
+Location::~Location() {
   // Remove all references from buffers to this location
   for (auto buf = Buffer::begin(); buf != Buffer::end(); ++buf)
-    if (buf->getLocation() == this)
-      buf->setLocation(nullptr);
+    if (buf->getLocation() == this) buf->setLocation(nullptr);
 
   // Remove all references from resources to this location
   for (auto res = Resource::begin(); res != Resource::end(); ++res)
-    if (res->getLocation() == this)
-      res->setLocation(nullptr);
+    if (res->getLocation() == this) res->setLocation(nullptr);
 
   // Remove all references from operations to this location
   for (auto oper = Operation::begin(); oper != Operation::end(); ++oper)
-    if (oper->getLocation() == this)
-      oper->setLocation(nullptr);
+    if (oper->getLocation() == this) oper->setLocation(nullptr);
 
   // Remove all references from demands to this location
   for (auto dmd = Demand::begin(); dmd != Demand::end(); ++dmd)
-    if (dmd->getLocation() == this)
-      dmd->setLocation(nullptr);
+    if (dmd->getLocation() == this) dmd->setLocation(nullptr);
 
   // Remove all item suppliers referencing this location
-  for (auto sup = Supplier::begin(); sup != Supplier::end(); ++sup)
-  {
-    for (auto it = sup->getItems().begin(); it != sup->getItems().end(); )
-    {
-      if (it->getLocation() == this)
-      {
-        const ItemSupplier *itemsup = &*it;
-        ++it;   // Advance iterator before the delete
+  for (auto sup = Supplier::begin(); sup != Supplier::end(); ++sup) {
+    for (auto it = sup->getItems().begin(); it != sup->getItems().end();) {
+      if (it->getLocation() == this) {
+        const ItemSupplier* itemsup = &*it;
+        ++it;  // Advance iterator before the delete
         delete itemsup;
-      }
-      else
+      } else
         ++it;
     }
   }
 
   // Remove all item distributions referencing this location
-  for (auto it = Item::begin(); it != Item::end(); ++it)
-  {
-    for (auto dist = it->getDistributions().begin(); dist != it->getDistributions().end(); )
-    {
-      if (dist->getOrigin() == this)
-      {
-        const ItemDistribution *itemdist = &*dist;
-        ++dist;   // Advance iterator before the delete
+  for (auto it = Item::begin(); it != Item::end(); ++it) {
+    for (auto dist = it->getDistributions().begin();
+         dist != it->getDistributions().end();) {
+      if (dist->getOrigin() == this) {
+        const ItemDistribution* itemdist = &*dist;
+        ++dist;  // Advance iterator before the delete
         delete itemdist;
-      }
-      else
+      } else
         ++dist;
     }
   }
-
 }
 
-} // end namespace
+}  // namespace frepple

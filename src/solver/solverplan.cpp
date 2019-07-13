@@ -20,15 +20,15 @@
 
 #define FREPPLE_CORE
 #include "frepple/solver.h"
-namespace frepple
-{
+namespace frepple {
 
 const MetaClass* SolverPropagateStatus::metadata;
 const MetaClass* SolverCreate::metadata;
 const Keyword SolverCreate::tag_iterationthreshold("iterationthreshold");
 const Keyword SolverCreate::tag_iterationaccuracy("iterationaccuracy");
 const Keyword SolverCreate::tag_lazydelay("lazydelay");
-const Keyword SolverCreate::tag_administrativeleadtime("administrativeleadtime");
+const Keyword SolverCreate::tag_administrativeleadtime(
+    "administrativeleadtime");
 const Keyword SolverCreate::tag_minimumdelay("minimumdelay");
 const Keyword SolverCreate::tag_allowsplits("allowsplits");
 const Keyword SolverCreate::tag_autofence("autofence");
@@ -37,15 +37,12 @@ const Keyword SolverCreate::tag_planSafetyStockFirst("plansafetystockfirst");
 const Keyword SolverCreate::tag_iterationmax("iterationmax");
 const Keyword SolverCreate::tag_resourceiterationmax("resourceiterationmax");
 
-
-void LibrarySolver::initialize()
-{
+void LibrarySolver::initialize() {
   // Initialize only once
   static bool init = false;
-  if (init)
-  {
+  if (init) {
     logger << "Warning: Calling frepple::LibrarySolver::initialize() more "
-        << "than once." << endl;
+           << "than once." << endl;
     return;
   }
   init = true;
@@ -55,17 +52,13 @@ void LibrarySolver::initialize()
   nok += SolverCreate::initialize();
   nok += OperatorDelete::initialize();
   nok += SolverPropagateStatus::initialize();
-  if (nok)
-    throw RuntimeException("Error registering new Python types");
+  if (nok) throw RuntimeException("Error registering new Python types");
 }
 
-
-int SolverCreate::initialize()
-{
+int SolverCreate::initialize() {
   // Initialize the metadata
   metadata = MetaClass::registerClass<SolverCreate>(
-    "solver", "solver_mrp", Object::create<SolverCreate>, true
-    );
+      "solver", "solver_mrp", Object::create<SolverCreate>, true);
   registerFields<SolverCreate>(const_cast<MetaClass*>(metadata));
 
   // Initialize the Python class
@@ -82,28 +75,25 @@ int SolverCreate::initialize()
   return x.typeReady();
 }
 
-
-PyObject* SolverCreate::create(PyTypeObject* pytype, PyObject* args, PyObject* kwds)
-{
-  try
-  {
+PyObject* SolverCreate::create(PyTypeObject* pytype, PyObject* args,
+                               PyObject* kwds) {
+  try {
     // Create the solver
-    SolverCreate *s = new SolverCreate();
+    SolverCreate* s = new SolverCreate();
 
-    // Iterate over extra keywords, and set attributes.   @todo move this responsibility to the readers...
-    if (kwds)
-    {
+    // Iterate over extra keywords, and set attributes.   @todo move this
+    // responsibility to the readers...
+    if (kwds) {
       PyObject *key, *value;
       Py_ssize_t pos = 0;
-      while (PyDict_Next(kwds, &pos, &key, &value))
-      {
+      while (PyDict_Next(kwds, &pos, &key, &value)) {
         PythonData field(value);
         PyObject* key_utf8 = PyUnicode_AsUTF8String(key);
         DataKeyword attr(PyBytes_AsString(key_utf8));
         Py_DECREF(key_utf8);
-        const MetaFieldBase* fmeta = SolverCreate::metadata->findField(attr.getHash());
-        if (!fmeta)
-          fmeta = Solver::metadata->findField(attr.getHash());
+        const MetaFieldBase* fmeta =
+            SolverCreate::metadata->findField(attr.getHash());
+        if (!fmeta) fmeta = Solver::metadata->findField(attr.getHash());
         if (fmeta)
           // Update the attribute
           fmeta->setField(s, field);
@@ -116,41 +106,32 @@ PyObject* SolverCreate::create(PyTypeObject* pytype, PyObject* args, PyObject* k
     // as we do with other objects, because we want this object to be available
     // for the garbage collector of Python.
     return static_cast<PyObject*>(s);
-  }
-  catch (...)
-  {
+  } catch (...) {
     PythonType::evalException();
     return nullptr;
   }
 }
 
-
 SolverCreate::SolverData::SolverData(SolverCreate* s, int c, deque<Demand*>* d)
-  : sol(s), cluster(c), demands(d), constrainedPlanning(true),
-  logConstraints(true), state(statestack), prevstate(statestack - 1)
-{
+    : sol(s),
+      cluster(c),
+      demands(d),
+      constrainedPlanning(true),
+      logConstraints(true),
+      state(statestack),
+      prevstate(statestack - 1) {
   operator_delete = new OperatorDelete();
 }
 
-
-void SolverCreate::SolverData::setCommandManager(CommandManager* a)
-{
-  if (mgr == a)
-    return;
+void SolverCreate::SolverData::setCommandManager(CommandManager* a) {
+  if (mgr == a) return;
   mgr = a;
-  if (operator_delete)
-    operator_delete->setCommandManager(a);
+  if (operator_delete) operator_delete->setCommandManager(a);
 }
 
+SolverCreate::SolverData::~SolverData() { delete operator_delete; };
 
-SolverCreate::SolverData::~SolverData()
-{
-  delete operator_delete;
-};
-
-
-bool SolverCreate::demand_comparison(const Demand* l1, const Demand* l2)
-{
+bool SolverCreate::demand_comparison(const Demand* l1, const Demand* l2) {
   if (l1->getPriority() != l2->getPriority())
     return l1->getPriority() < l2->getPriority();
   else if (l1->getDue() != l2->getDue())
@@ -159,9 +140,7 @@ bool SolverCreate::demand_comparison(const Demand* l1, const Demand* l2)
     return l1->getQuantity() < l2->getQuantity();
 }
 
-
-void SolverCreate::SolverData::push(double q, Date d, bool full)
-{
+void SolverCreate::SolverData::push(double q, Date d, bool full) {
   if (state >= statestack + MAXSTATES)
     throw RuntimeException("Maximum recursion depth exceeded");
   ++state;
@@ -169,8 +148,7 @@ void SolverCreate::SolverData::push(double q, Date d, bool full)
   state->q_qty = q;
   state->q_date = d;
   state->q_date_max = d;
-  if (full)
-  {
+  if (full) {
     state->q_loadplan = prevstate->q_loadplan;
     state->q_flowplan = prevstate->q_flowplan;
     state->q_operationplan = prevstate->q_operationplan;
@@ -178,9 +156,7 @@ void SolverCreate::SolverData::push(double q, Date d, bool full)
     state->curDemand = prevstate->curDemand;
     state->curBuffer = prevstate->curBuffer;
     state->q_qty_min = prevstate->q_qty_min;
-  }
-  else
-  {
+  } else {
     state->q_loadplan = nullptr;
     state->q_flowplan = nullptr;
     state->q_operationplan = nullptr;
@@ -196,13 +172,9 @@ void SolverCreate::SolverData::push(double q, Date d, bool full)
   state->a_qty = 0.0;
 }
 
-
-void SolverCreate::SolverData::pop(bool copy_answer)
-{
-  if (state < statestack)
-    throw LogicException("State stack empty");
-  if (copy_answer)
-  {
+void SolverCreate::SolverData::pop(bool copy_answer) {
+  if (state < statestack) throw LogicException("State stack empty");
+  if (copy_answer) {
     prevstate->a_qty = state->a_qty;
     prevstate->a_date = state->a_date;
     prevstate->a_penalty = state->a_penalty;
@@ -212,49 +184,40 @@ void SolverCreate::SolverData::pop(bool copy_answer)
   --prevstate;
 }
 
-
-void SolverCreate::SolverData::commit()
-{
+void SolverCreate::SolverData::commit() {
   // Check
   SolverCreate* solver = getSolver();
-  if (!demands || !solver)
-    throw LogicException("Missing demands or solver.");
+  if (!demands || !solver) throw LogicException("Missing demands or solver.");
 
   // Message
-  if (solver->getLogLevel()>0)
+  if (solver->getLogLevel() > 0)
     logger << "Start solving cluster " << cluster << endl;
 
   // Solve the planning problem
-  try
-  {
-
-    if (!solver->getConstraints())
-    {
+  try {
+    if (!solver->getConstraints()) {
       // Special case to use a single sweep for truely unconstrained plans
 
       // Step 1: Create a delivery operationplan for all demands
-      for (auto i = demands->begin(); i != demands->end(); ++i)
-      {
-        // Determine the quantity to be planned and the date for the planning loop
+      for (auto i = demands->begin(); i != demands->end(); ++i) {
+        // Determine the quantity to be planned and the date for the planning
+        // loop
         double plan_qty = (*i)->getQuantity() - (*i)->getPlannedQuantity();
-        if ((*i)->getDue() == Date::infiniteFuture)
-          continue;
+        if ((*i)->getDue() == Date::infiniteFuture) continue;
 
         // Select delivery operation
         Operation* deliveryoper = (*i)->getDeliveryOperation();
-        if (!deliveryoper)
-          continue;
-        
-        while (plan_qty > ROUNDING_ERROR)
-        {
+        if (!deliveryoper) continue;
+
+        while (plan_qty > ROUNDING_ERROR) {
           // Respect minimum shipment quantities
           if (plan_qty < (*i)->getMinShipment())
             plan_qty = (*i)->getMinShipment();
 
           // Create a delivery operationplan for the remaining quantity
           OperationPlan* deli = deliveryoper->createOperationPlan(
-            plan_qty, Date::infinitePast, (*i)->getDue(), *i, nullptr, 0, false
-          );
+              plan_qty, Date::infinitePast, (*i)->getDue(), *i, nullptr, 0,
+              false);
           deli->activate();
 
           // Prepare for next loop
@@ -265,11 +228,10 @@ void SolverCreate::SolverData::commit()
       // Step 2: Solve buffer by buffer, ordered by level
       solver->setPropagate(false);
       buffer_solve_shortages_only = false;
-      for (short lvl = -1; lvl <= HasLevel::getNumberOfLevels(); ++lvl)
-      {
-        for (Buffer::iterator b = Buffer::begin(); b != Buffer::end(); ++b)
-        {
-          if (b->getLevel() != lvl || (cluster != -1 && cluster != b->getCluster()))
+      for (short lvl = -1; lvl <= HasLevel::getNumberOfLevels(); ++lvl) {
+        for (Buffer::iterator b = Buffer::begin(); b != Buffer::end(); ++b) {
+          if (b->getLevel() != lvl ||
+              (cluster != -1 && cluster != b->getCluster()))
             // Not your turn yet...
             continue;
 
@@ -283,22 +245,17 @@ void SolverCreate::SolverData::commit()
           state->curDemand = nullptr;
           state->curOwnerOpplan = nullptr;
           state->a_qty = 0;
-          try
-          {
+          try {
             b->solve(*solver, this);
             getCommandManager()->commit();
-          }
-          catch (const exception& e)
-          {
-            logger << "Error propagating through buffer '" << b->getName() << "': " << e.what() << endl;
+          } catch (const exception& e) {
+            logger << "Error propagating through buffer '" << b->getName()
+                   << "': " << e.what() << endl;
             getCommandManager()->rollback();
           }
-
         }
       }
-    }
-    else
-    {
+    } else {
       // Normal case: demand-per-demand loop
 
       // Sort the demands of this problem.
@@ -307,76 +264,61 @@ void SolverCreate::SolverData::commit()
       stable_sort(demands->begin(), demands->end(), demand_comparison);
 
       // Solve for safety stock in buffers.
-      if (solver->getPlanSafetyStockFirst())
-      {
+      if (solver->getPlanSafetyStockFirst()) {
         constrainedPlanning = (solver->getPlanType() == 1);
         solveSafetyStock(solver);
         buffer_solve_shortages_only = false;
-      }
-      else
+      } else
         buffer_solve_shortages_only = true;
 
       // Loop through the list of all demands in this planning problem
       safety_stock_planning = false;
       constrainedPlanning = (solver->getPlanType() == 1);
-      for (auto i = demands->begin(); i != demands->end(); ++i)
-      {
+      for (auto i = demands->begin(); i != demands->end(); ++i) {
         iteration_count = 0;
-        try
-        {
+        try {
           // Plan the demand
           (*i)->solve(*solver, this);
-        }
-        catch (...)
-        {
-          // Log the exception as the only reason for the demand not being planned
+        } catch (...) {
+          // Log the exception as the only reason for the demand not being
+          // planned
           (*i)->getConstraints().clear();
           // Error message
           logger << "Error: Caught an exception while solving demand '"
-            << (*i)->getName() << "':" << endl;
-          try { throw; }
-          catch (const bad_exception&)
-          {
+                 << (*i)->getName() << "':" << endl;
+          try {
+            throw;
+          } catch (const bad_exception&) {
             (*i)->getConstraints().push(new ProblemInvalidData(
-              (*i), "Error: bad exception", "demand",
-              (*i)->getDue(), (*i)->getDue(), (*i)->getQuantity(), false
-            ));
+                (*i), "Error: bad exception", "demand", (*i)->getDue(),
+                (*i)->getDue(), (*i)->getQuantity(), false));
             logger << "  bad exception" << endl;
-          }
-          catch (const exception& e)
-          {
+          } catch (const exception& e) {
             (*i)->getConstraints().push(new ProblemInvalidData(
-              (*i), "Error: " + string(e.what()), "demand",
-              (*i)->getDue(), (*i)->getDue(), (*i)->getQuantity(), false
-            ));
+                (*i), "Error: " + string(e.what()), "demand", (*i)->getDue(),
+                (*i)->getDue(), (*i)->getQuantity(), false));
             logger << "  " << e.what() << endl;
-          }
-          catch (...)
-          {
+          } catch (...) {
             (*i)->getConstraints().push(new ProblemInvalidData(
-              (*i), "Error: unknown type", "demand",
-              (*i)->getDue(), (*i)->getDue(), (*i)->getQuantity(), false
-            ));
+                (*i), "Error: unknown type", "demand", (*i)->getDue(),
+                (*i)->getDue(), (*i)->getQuantity(), false));
             logger << "  Unknown type" << endl;
           }
         }
       }
 
       // Completely recreate all purchasing operation plans
-      for (set<const OperationItemSupplier*>::iterator o = purchase_operations.begin();
-        o != purchase_operations.end(); ++o
-        )
-      {
+      for (set<const OperationItemSupplier*>::iterator o =
+               purchase_operations.begin();
+           o != purchase_operations.end(); ++o) {
         // Only process buffers replenished from a single supplier
-        if ((*o)->getBuffer()->getProducingOperation() != *o)
-          continue;
+        if ((*o)->getBuffer()->getProducingOperation() != *o) continue;
 
         // Erase existing proposed purchases
         const_cast<OperationItemSupplier*>(*o)->deleteOperationPlans(false);
         // Create new proposed purchases
         auto tmp_buffer_solve_shortages_only = buffer_solve_shortages_only;
-        try
-        {
+        try {
           safety_stock_planning = true;
           buffer_solve_shortages_only = false;
           state->curBuffer = nullptr;
@@ -389,9 +331,7 @@ void SolverCreate::SolverData::commit()
           state->a_qty = 0;
           (*o)->getBuffer()->solve(*solver, this);
           getCommandManager()->commit();
-        }
-        catch (...)
-        {
+        } catch (...) {
           getCommandManager()->rollback();
         }
         buffer_solve_shortages_only = tmp_buffer_solve_shortages_only;
@@ -399,69 +339,67 @@ void SolverCreate::SolverData::commit()
       purchase_operations.clear();
 
       // Solve for safety stock in buffers.
-      if (!solver->getPlanSafetyStockFirst())
-        solveSafetyStock(solver);
+      if (!solver->getPlanSafetyStockFirst()) solveSafetyStock(solver);
     }
 
     // Clean the list of demands of this cluster
     demands->clear();
-  }
-  catch (...)
-  {
+  } catch (...) {
     // We come in this exception handling code only if there is a problem with
     // with this cluster that goes beyond problems with single orders.
     // If the problem is with single orders, the exception handling code above
     // will do a proper rollback.
 
     // Error message
-    logger << "Error: Caught an exception while solving cluster "
-        << cluster << ":" << endl;
-    try {throw;}
-    catch (const bad_exception&) {logger << "  bad exception" << endl;}
-    catch (const exception& e) {logger << "  " << e.what() << endl;}
-    catch (...) {logger << "  Unknown type" << endl;}
+    logger << "Error: Caught an exception while solving cluster " << cluster
+           << ":" << endl;
+    try {
+      throw;
+    } catch (const bad_exception&) {
+      logger << "  bad exception" << endl;
+    } catch (const exception& e) {
+      logger << "  " << e.what() << endl;
+    } catch (...) {
+      logger << "  Unknown type" << endl;
+    }
 
     // Clean up the operationplans of this cluster
-    for (Operation::iterator f=Operation::begin(); f!=Operation::end(); ++f)
-      if (f->getCluster() == cluster)
-        f->deleteOperationPlans();
+    for (Operation::iterator f = Operation::begin(); f != Operation::end(); ++f)
+      if (f->getCluster() == cluster) f->deleteOperationPlans();
 
     // Clean the list of demands of this cluster
     demands->clear();
   }
 
   // Message
-  if (solver->getLogLevel()>0)
+  if (solver->getLogLevel() > 0)
     logger << "End solving cluster " << cluster << endl;
 }
 
-
-void SolverCreate::SolverData::solveSafetyStock(SolverCreate* solver)
-{
+void SolverCreate::SolverData::solveSafetyStock(SolverCreate* solver) {
   OperatorDelete cleanup(getCommandManager());
-  cleanup.setConstrained(solver->isMaterialConstrained() && solver->getPlanType() == 1);
+  cleanup.setConstrained(solver->isMaterialConstrained() &&
+                         solver->getPlanType() == 1);
   safety_stock_planning = true;
   if (getLogLevel() > 0)
-    logger << "Start safety stock replenishment pass   " << solver->getConstraints() << " for cluster " << cluster << endl;
-  vector< list<Buffer*> > bufs(HasLevel::getNumberOfLevels() + 1);
+    logger << "Start safety stock replenishment pass   "
+           << solver->getConstraints() << " for cluster " << cluster << endl;
+  vector<list<Buffer*> > bufs(HasLevel::getNumberOfLevels() + 1);
   for (Buffer::iterator buf = Buffer::begin(); buf != Buffer::end(); ++buf)
-    if ((buf->getCluster() == cluster || cluster == -1)
-      && !buf->hasType<BufferInfinite>()
-      && (buf->getProducingOperation() || !solver->isMaterialConstrained())
-      && (
-        buf->getMinimum() 
-        || buf->getMinimumCalendar() 
-        || buf->getFlowPlans().begin() != buf->getFlowPlans().end()
-        )
-      )
-      bufs[(buf->getLevel()>=0) ? buf->getLevel() : 0].push_back(&*buf);
+    if ((buf->getCluster() == cluster || cluster == -1) &&
+        !buf->hasType<BufferInfinite>() &&
+        (buf->getProducingOperation() || !solver->isMaterialConstrained()) &&
+        (buf->getMinimum() || buf->getMinimumCalendar() ||
+         buf->getFlowPlans().begin() != buf->getFlowPlans().end()))
+      bufs[(buf->getLevel() >= 0) ? buf->getLevel() : 0].push_back(&*buf);
   State* mystate = state;
-  for (vector< list<Buffer*> >::iterator b_list = bufs.begin(); b_list != bufs.end(); ++b_list)
+  for (vector<list<Buffer*> >::iterator b_list = bufs.begin();
+       b_list != bufs.end(); ++b_list)
     for (list<Buffer*>::iterator b = b_list->begin(); b != b_list->end(); ++b)
-      try
-      {
+      try {
         state->curBuffer = nullptr;
-        // A quantity of -1 is a flag for the buffer solver to solve safety stock.
+        // A quantity of -1 is a flag for the buffer solver to solve safety
+        // stock.
         state->q_qty = -1.0;
         state->q_date = Date::infinitePast;
         state->a_cost = 0.0;
@@ -476,22 +414,19 @@ void SolverCreate::SolverData::solveSafetyStock(SolverCreate* solver)
         // Check for excess
         (*b)->solve(cleanup, this);
         getCommandManager()->commit();
-      }
-      catch (const bad_exception&)
-      {
-        logger << "Error: bad exception solving safety stock for " << *b << endl;
+      } catch (const bad_exception&) {
+        logger << "Error: bad exception solving safety stock for " << *b
+               << endl;
         while (state > mystate) pop();
         getCommandManager()->rollback();
-      }
-      catch (const exception& e)
-      {
-        logger << "Error: exception solving safety stock for " << *b << ": " << e.what() << endl;
+      } catch (const exception& e) {
+        logger << "Error: exception solving safety stock for " << *b << ": "
+               << e.what() << endl;
         while (state > mystate) pop();
         getCommandManager()->rollback();
-      }
-      catch (...)
-      {
-        logger << "Error: unknown exception solving safety stock for " << *b << endl;
+      } catch (...) {
+        logger << "Error: unknown exception solving safety stock for " << *b
+               << endl;
         while (state > mystate) pop();
         getCommandManager()->rollback();
       }
@@ -501,9 +436,7 @@ void SolverCreate::SolverData::solveSafetyStock(SolverCreate* solver)
   safety_stock_planning = false;
 }
 
-
-void SolverCreate::update_user_exits()
-{
+void SolverCreate::update_user_exits() {
   setUserExitBuffer(getPyObjectProperty(Tags::userexit_buffer.getName()));
   setUserExitDemand(getPyObjectProperty(Tags::userexit_demand.getName()));
   setUserExitFlow(getPyObjectProperty(Tags::userexit_flow.getName()));
@@ -511,9 +444,7 @@ void SolverCreate::update_user_exits()
   setUserExitResource(getPyObjectProperty(Tags::userexit_resource.getName()));
 }
 
-
-void SolverCreate::solve(void *v)
-{
+void SolverCreate::solve(void* v) {
   // Configure user exits
   update_user_exits();
 
@@ -524,39 +455,32 @@ void SolverCreate::solve(void *v)
 
   // Categorize all demands in their cluster
   demands_per_cluster.resize(cl);
-  if (!getConstraints())
-  {
+  if (!getConstraints()) {
     // Dumb unconstrained plan is running in a single thread
     for (Demand::iterator i = Demand::begin(); i != Demand::end(); ++i)
-      if (i->getQuantity() > 0
-        && (i->getStatus() == Demand::OPEN || i->getStatus() == Demand::QUOTE))
+      if (i->getQuantity() > 0 &&
+          (i->getStatus() == Demand::OPEN || i->getStatus() == Demand::QUOTE))
         demands_per_cluster[0].push_back(&*i);
-  }
-  else if (cluster == -1)
-  {
+  } else if (cluster == -1) {
     // Many clusters to solve
     for (Demand::iterator i = Demand::begin(); i != Demand::end(); ++i)
-      if (i->getQuantity() > 0
-        && (i->getStatus() == Demand::OPEN || i->getStatus() == Demand::QUOTE))
-          demands_per_cluster[i->getCluster()].push_back(&*i);
-  }
-  else
-  {
+      if (i->getQuantity() > 0 &&
+          (i->getStatus() == Demand::OPEN || i->getStatus() == Demand::QUOTE))
+        demands_per_cluster[i->getCluster()].push_back(&*i);
+  } else {
     // Only a single cluster to plan
     for (Demand::iterator i = Demand::begin(); i != Demand::end(); ++i)
-      if (i->getCluster() == cluster
-        && i->getQuantity() > 0
-        && (i->getStatus() == Demand::OPEN || i->getStatus() == Demand::QUOTE))
-          demands_per_cluster[0].push_back(&*i);
+      if (i->getCluster() == cluster && i->getQuantity() > 0 &&
+          (i->getStatus() == Demand::OPEN || i->getStatus() == Demand::QUOTE))
+        demands_per_cluster[0].push_back(&*i);
   }
 
   // Delete of operationplans
   // This deletion is not multi-threaded... But on the other hand we need to
   // loop through the operations only once
-  if (getErasePreviousFirst())
-  {
-    if (getLogLevel()>0) logger << "Deleting previous plan" << endl;
-    for (Operation::iterator e=Operation::begin(); e!=Operation::end(); ++e)
+  if (getErasePreviousFirst()) {
+    if (getLogLevel() > 0) logger << "Deleting previous plan" << endl;
+    for (Operation::iterator e = Operation::begin(); e != Operation::end(); ++e)
       if (cluster == -1 || e->getCluster() == cluster)
         e->deleteOperationPlans();
   }
@@ -564,16 +488,16 @@ void SolverCreate::solve(void *v)
   // Solve in parallel threads.
   // When not solving in silent and autocommit mode, we only use a single
   // solver thread.
-  // We also avoid solving the unconstrained single-sweep plan to run in 
+  // We also avoid solving the unconstrained single-sweep plan to run in
   // multiple threads (the overhead of using multiple threads is then too high)
   // Otherwise we use as many worker threads as processor cores.
   ThreadGroup threads;
-  if (getLogLevel()>0 || !getAutocommit() || cluster != -1 || !getConstraints())
+  if (getLogLevel() > 0 || !getAutocommit() || cluster != -1 ||
+      !getConstraints())
     threads.setMaxParallel(1);
 
   // Register all clusters to be solved
-  for (int j = 0; j < cl; ++j)
-  {
+  for (int j = 0; j < cl; ++j) {
     int tmp;
     if (!getConstraints() && cluster == -1)
       tmp = -1;
@@ -581,103 +505,80 @@ void SolverCreate::solve(void *v)
       tmp = j;
     else
       tmp = cluster;
-    threads.add(
-      SolverData::runme,
-      new SolverData(this, tmp, &(demands_per_cluster[j]))
-    );
+    threads.add(SolverData::runme,
+                new SolverData(this, tmp, &(demands_per_cluster[j])));
   }
   // Run the planning command threads and wait for them to exit
   threads.execute();
 }
 
-
-PyObject* SolverCreate::solve(PyObject *self, PyObject *args)
-{
+PyObject* SolverCreate::solve(PyObject* self, PyObject* args) {
   // Parse the argument
-  PyObject *dem = nullptr;
+  PyObject* dem = nullptr;
   if (args && !PyArg_ParseTuple(args, "|O:solve", &dem)) return nullptr;
-  if (dem && !PyObject_TypeCheck(dem, Demand::metadata->pythonClass))
-  {
+  if (dem && !PyObject_TypeCheck(dem, Demand::metadata->pythonClass)) {
     PyErr_SetString(PythonDataException, "solve(d) argument must be a demand");
     return nullptr;
   }
 
-  Py_BEGIN_ALLOW_THREADS   // Free Python interpreter for other threads
-  try
-  {
+  Py_BEGIN_ALLOW_THREADS  // Free Python interpreter for other threads
+      try {
     SolverCreate* sol = static_cast<SolverCreate*>(self);
-    if (!dem)
-    {
+    if (!dem) {
       // Complete replan
       sol->setAutocommit(true);
       sol->solve();
-    }
-    else
-    {
+    } else {
       // Incrementally plan a single demand
       sol->setAutocommit(false);
       sol->update_user_exits();
       static_cast<Demand*>(dem)->solve(*sol, &(sol->getCommands()));
     }
-  }
-  catch(...)
-  {
+  } catch (...) {
     Py_BLOCK_THREADS;
     PythonType::evalException();
     return nullptr;
   }
-  Py_END_ALLOW_THREADS   // Reclaim Python interpreter
-  return Py_BuildValue("");
+  Py_END_ALLOW_THREADS  // Reclaim Python interpreter
+      return Py_BuildValue("");
 }
 
-
-PyObject* SolverCreate::commit(PyObject *self, PyObject *args)
-{
-  Py_BEGIN_ALLOW_THREADS   // Free Python interpreter for other threads
-  try
-  {
-    SolverCreate * me = static_cast<SolverCreate*>(self);
+PyObject* SolverCreate::commit(PyObject* self, PyObject* args) {
+  Py_BEGIN_ALLOW_THREADS  // Free Python interpreter for other threads
+      try {
+    SolverCreate* me = static_cast<SolverCreate*>(self);
     assert(me->commands.getCommandManager());
     me->scanExcess(me->commands.getCommandManager());
     me->commands.getCommandManager()->commit();
-  }
-  catch(...)
-  {
+  } catch (...) {
     Py_BLOCK_THREADS;
     PythonType::evalException();
     return nullptr;
   }
-  Py_END_ALLOW_THREADS   // Reclaim Python interpreter
-  return Py_BuildValue("");
+  Py_END_ALLOW_THREADS  // Reclaim Python interpreter
+      return Py_BuildValue("");
 }
 
-
-PyObject* SolverCreate::rollback(PyObject *self, PyObject *args)
-{
-  Py_BEGIN_ALLOW_THREADS   // Free Python interpreter for other threads
-  try
-  {
-    SolverCreate * me = static_cast<SolverCreate*>(self);
+PyObject* SolverCreate::rollback(PyObject* self, PyObject* args) {
+  Py_BEGIN_ALLOW_THREADS  // Free Python interpreter for other threads
+      try {
+    SolverCreate* me = static_cast<SolverCreate*>(self);
     assert(me->commands.getCommandManager());
     me->commands.getCommandManager()->rollback();
-  }
-  catch(...)
-  {
+  } catch (...) {
     Py_BLOCK_THREADS;
     PythonType::evalException();
     return nullptr;
   }
-  Py_END_ALLOW_THREADS   // Reclaim Python interpreter
-  return Py_BuildValue("");
+  Py_END_ALLOW_THREADS  // Reclaim Python interpreter
+      return Py_BuildValue("");
 }
 
-
-int SolverPropagateStatus::initialize()
-{
+int SolverPropagateStatus::initialize() {
   // Initialize the metadata
   metadata = MetaClass::registerClass<SolverPropagateStatus>(
-    "solver", "solver_propagateStatus", Object::create<SolverPropagateStatus>, false
-    );
+      "solver", "solver_propagateStatus", Object::create<SolverPropagateStatus>,
+      false);
   registerFields<SolverPropagateStatus>(const_cast<MetaClass*>(metadata));
 
   // Initialize the Python class
@@ -692,28 +593,25 @@ int SolverPropagateStatus::initialize()
   return x.typeReady();
 }
 
-
-PyObject* SolverPropagateStatus::create(PyTypeObject* pytype, PyObject* args, PyObject* kwds)
-{
-  try
-  {
+PyObject* SolverPropagateStatus::create(PyTypeObject* pytype, PyObject* args,
+                                        PyObject* kwds) {
+  try {
     // Create the solver
-    SolverPropagateStatus *s = new SolverPropagateStatus();
+    SolverPropagateStatus* s = new SolverPropagateStatus();
 
-    // Iterate over extra keywords, and set attributes.   @todo move this responsibility to the readers...
-    if (kwds)
-    {
+    // Iterate over extra keywords, and set attributes.   @todo move this
+    // responsibility to the readers...
+    if (kwds) {
       PyObject *key, *value;
       Py_ssize_t pos = 0;
-      while (PyDict_Next(kwds, &pos, &key, &value))
-      {
+      while (PyDict_Next(kwds, &pos, &key, &value)) {
         PythonData field(value);
         PyObject* key_utf8 = PyUnicode_AsUTF8String(key);
         DataKeyword attr(PyBytes_AsString(key_utf8));
         Py_DECREF(key_utf8);
-        const MetaFieldBase* fmeta = SolverCreate::metadata->findField(attr.getHash());
-        if (!fmeta)
-          fmeta = Solver::metadata->findField(attr.getHash());
+        const MetaFieldBase* fmeta =
+            SolverCreate::metadata->findField(attr.getHash());
+        if (!fmeta) fmeta = Solver::metadata->findField(attr.getHash());
         if (fmeta)
           // Update the attribute
           fmeta->setField(s, field);
@@ -726,62 +624,45 @@ PyObject* SolverPropagateStatus::create(PyTypeObject* pytype, PyObject* args, Py
     // as we do with other objects, because we want this object to be available
     // for the garbage collector of Python.
     return static_cast<PyObject*>(s);
-  }
-  catch (...)
-  {
+  } catch (...) {
     PythonType::evalException();
     return nullptr;
   }
 }
 
-
-PyObject* SolverPropagateStatus::solve(PyObject *self, PyObject *args)
-{
-  Py_BEGIN_ALLOW_THREADS   // Free Python interpreter for other threads
-  try
-  {
+PyObject* SolverPropagateStatus::solve(PyObject* self, PyObject* args) {
+  Py_BEGIN_ALLOW_THREADS  // Free Python interpreter for other threads
+      try {
     static_cast<SolverPropagateStatus*>(self)->solve();
-  }
-  catch (...)
-  {
+  } catch (...) {
     Py_BLOCK_THREADS;
     PythonType::evalException();
     return nullptr;
   }
-  Py_END_ALLOW_THREADS   // Reclaim Python interpreter
-  return Py_BuildValue("");
+  Py_END_ALLOW_THREADS  // Reclaim Python interpreter
+      return Py_BuildValue("");
 }
 
-
-void SolverPropagateStatus::solve(void* v)
-{
+void SolverPropagateStatus::solve(void* v) {
   short lvl = 0;
   bool operationsfound;
-  do
-  {
+  do {
     operationsfound = false;
-    for (auto oper = Operation::begin(); oper != Operation::end(); ++oper)
-    {
-      if (oper->getLevel() != lvl)
-        continue;
+    for (auto oper = Operation::begin(); oper != Operation::end(); ++oper) {
+      if (oper->getLevel() != lvl) continue;
       operationsfound = true;
-      for (auto opplan = oper->getOperationPlans(); opplan != OperationPlan::end(); ++opplan)
-      {
-        if (
-          opplan->getSubOperationPlans() == OperationPlan::end()
-          && (opplan->getClosed() || opplan->getCompleted())
-          && !opplan->getOperation()->hasType<OperationInventory>()
-          )
-        {
-          if (getLogLevel() > 0)
-            logger << " propagating " << &*opplan << endl;
+      for (auto opplan = oper->getOperationPlans();
+           opplan != OperationPlan::end(); ++opplan) {
+        if (opplan->getSubOperationPlans() == OperationPlan::end() &&
+            (opplan->getClosed() || opplan->getCompleted()) &&
+            !opplan->getOperation()->hasType<OperationInventory>()) {
+          if (getLogLevel() > 0) logger << " propagating " << &*opplan << endl;
           opplan->propagateStatus();
         }
       }
     }
     lvl += 1;
-  } 
-  while (operationsfound);
+  } while (operationsfound);
 }
 
-} // end namespace
+}  // namespace frepple

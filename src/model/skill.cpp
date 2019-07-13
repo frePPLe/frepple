@@ -21,50 +21,41 @@
 #define FREPPLE_CORE
 #include "frepple/model.h"
 
-namespace frepple
-{
+namespace frepple {
 
-template<class Skill> Tree utils::HasName<Skill>::st;
+template <class Skill>
+Tree utils::HasName<Skill>::st;
 const MetaCategory* Skill::metadata;
 const MetaClass* SkillDefault::metadata;
 
-
-int Skill::initialize()
-{
+int Skill::initialize() {
   // Initialize the metadata
-  metadata = MetaCategory::registerCategory<Skill>("skill", "skills", reader, finder);
+  metadata =
+      MetaCategory::registerCategory<Skill>("skill", "skills", reader, finder);
   registerFields<Skill>(const_cast<MetaCategory*>(metadata));
 
   // Initialize the Python class
   return FreppleCategory<Skill>::initialize();
 }
 
-
-int SkillDefault::initialize()
-{
+int SkillDefault::initialize() {
   // Initialize the metadata
   SkillDefault::metadata = MetaClass::registerClass<SkillDefault>(
-    "skill",
-    "skill_default",
-    Object::create<SkillDefault>,
-    true);
+      "skill", "skill_default", Object::create<SkillDefault>, true);
 
   // Initialize the Python class
-  return FreppleClass<SkillDefault,Skill>::initialize();
+  return FreppleClass<SkillDefault, Skill>::initialize();
 }
 
-
-Skill::~Skill()
-{
+Skill::~Skill() {
   // The ResourceSkill objects are automatically deleted by the destructor
   // of the Association list class.
 
   // Clean up the references on the load models
   for (Operation::iterator o = Operation::begin(); o != Operation::end(); ++o)
-    for(Operation::loadlist::const_iterator l = o->getLoads().begin();
-      l != o->getLoads().end(); ++l)
-      if (l->getSkill() == this)
-        const_cast<Load&>(*l).setSkill(nullptr);
+    for (Operation::loadlist::const_iterator l = o->getLoads().begin();
+         l != o->getLoads().end(); ++l)
+      if (l->getSkill() == this) const_cast<Load&>(*l).setSkill(nullptr);
 }
 
-}
+}  // namespace frepple

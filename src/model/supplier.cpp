@@ -21,40 +21,32 @@
 #define FREPPLE_CORE
 #include "frepple/model.h"
 
-namespace frepple
-{
+namespace frepple {
 
-template<class Supplier> Tree utils::HasName<Supplier>::st;
+template <class Supplier>
+Tree utils::HasName<Supplier>::st;
 const MetaCategory* Supplier::metadata;
 const MetaClass* SupplierDefault::metadata;
 
-
-int Supplier::initialize()
-{
+int Supplier::initialize() {
   // Initialize the metadata
-  metadata = MetaCategory::registerCategory<Supplier>("supplier", "suppliers", reader, finder);
+  metadata = MetaCategory::registerCategory<Supplier>("supplier", "suppliers",
+                                                      reader, finder);
   registerFields<Supplier>(const_cast<MetaCategory*>(metadata));
 
   // Initialize the Python class
   return FreppleCategory<Supplier>::initialize();
 }
 
-
-int SupplierDefault::initialize()
-{
+int SupplierDefault::initialize() {
   // Initialize the metadata
   SupplierDefault::metadata = MetaClass::registerClass<SupplierDefault>(
-    "supplier", "supplier_default",
-    Object::create<SupplierDefault>, true
-    );
+      "supplier", "supplier_default", Object::create<SupplierDefault>, true);
 
   // Initialize the Python class
-  return FreppleClass<SupplierDefault,Supplier>::initialize();
+  return FreppleClass<SupplierDefault, Supplier>::initialize();
 }
 
+Supplier::~Supplier() {}
 
-Supplier::~Supplier()
-{
-}
-
-} // end namespace
+}  // namespace frepple

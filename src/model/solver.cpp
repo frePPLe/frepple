@@ -1,6 +1,6 @@
 /***************************************************************************
  *                                                                         *
- * Copyright (C) 2009 by frePPLe bvba                                                    *
+ * Copyright (C) 2009 by frePPLe bvba *
  *                                                                         *
  * This library is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU Affero General Public License as published   *
@@ -21,46 +21,40 @@
 #define FREPPLE_CORE
 #include "frepple/model.h"
 
-namespace frepple
-{
+namespace frepple {
 
-template<class Solver> Tree utils::HasName<Solver>::st;
-const MetaCategory* Solver::metadata;
+template <class Solver>
+Tree utils::HasName<Solver>::st;
+const MetaCategory *Solver::metadata;
 
-
-int Solver::initialize()
-{
+int Solver::initialize() {
   // Initialize the metadata
-  metadata = MetaCategory::registerCategory<Solver>("solver", "solvers", MetaCategory::ControllerDefault);
-  registerFields<Solver>(const_cast<MetaCategory*>(metadata));
+  metadata = MetaCategory::registerCategory<Solver>(
+      "solver", "solvers", MetaCategory::ControllerDefault);
+  registerFields<Solver>(const_cast<MetaCategory *>(metadata));
 
   // Initialize the Python class
-  PythonType& x = FreppleCategory<Solver>::getPythonType();
+  PythonType &x = FreppleCategory<Solver>::getPythonType();
   x.setName("solver");
   x.setDoc("frePPLe solver");
   x.supportgetattro();
   x.supportsetattro();
   x.addMethod("solve", solve, METH_NOARGS, "run the solver");
-  const_cast<MetaCategory*>(metadata)->pythonClass = x.type_object();
+  const_cast<MetaCategory *>(metadata)->pythonClass = x.type_object();
   return x.typeReady();
 }
 
-
-PyObject *Solver::solve(PyObject *self, PyObject *args)
-{
-  Py_BEGIN_ALLOW_THREADS   // Free Python interpreter for other threads
-  try
-  {
-    static_cast<Solver*>(self)->solve();
-  }
-  catch(...)
-  {
+PyObject *Solver::solve(PyObject *self, PyObject *args) {
+  Py_BEGIN_ALLOW_THREADS  // Free Python interpreter for other threads
+      try {
+    static_cast<Solver *>(self)->solve();
+  } catch (...) {
     Py_BLOCK_THREADS;
     PythonType::evalException();
     return nullptr;
   }
-  Py_END_ALLOW_THREADS   // Reclaim Python interpreter
-  return Py_BuildValue("");
+  Py_END_ALLOW_THREADS  // Reclaim Python interpreter
+      return Py_BuildValue("");
 }
 
-} // end namespace
+}  // namespace frepple

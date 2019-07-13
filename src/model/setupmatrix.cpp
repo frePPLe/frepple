@@ -21,68 +21,58 @@
 #define FREPPLE_CORE
 #include "frepple/model.h"
 
-namespace frepple
-{
+namespace frepple {
 
-template<class SetupMatrix> Tree utils::HasName<SetupMatrix>::st;
+template <class SetupMatrix>
+Tree utils::HasName<SetupMatrix>::st;
 const MetaCategory* SetupMatrix::metadata;
 const MetaClass* SetupMatrixDefault::metadata;
 const MetaClass* SetupMatrixRuleDefault::metadata;
 const MetaCategory* SetupMatrixRule::metadata;
 
-
-int SetupMatrix::initialize()
-{
+int SetupMatrix::initialize() {
   // Initialize the metadata
-  metadata = MetaCategory::registerCategory<SetupMatrix>("setupmatrix", "setupmatrices", reader, finder);
+  metadata = MetaCategory::registerCategory<SetupMatrix>(
+      "setupmatrix", "setupmatrices", reader, finder);
   registerFields<SetupMatrix>(const_cast<MetaCategory*>(metadata));
 
   // Initialize the Python class
   return FreppleCategory<SetupMatrix>::initialize();
 }
 
-
-int SetupMatrixRule::initialize()
-{
+int SetupMatrixRule::initialize() {
   // Initialize the metadata
   metadata = MetaCategory::registerCategory<SetupMatrixRule>(
-    "setupmatrixrule", "setupmatrixrules", reader
-    );
+      "setupmatrixrule", "setupmatrixrules", reader);
   registerFields<SetupMatrixRule>(const_cast<MetaCategory*>(metadata));
 
   // Initialize the Python class
-  return FreppleCategory<SetupMatrixRule>::initialize();;
+  return FreppleCategory<SetupMatrixRule>::initialize();
+  ;
 }
 
-
-int SetupMatrixDefault::initialize()
-{
+int SetupMatrixDefault::initialize() {
   // Initialize the metadata
   SetupMatrixDefault::metadata = MetaClass::registerClass<SetupMatrixDefault>(
-    "setupmatrix",
-    "setupmatrix_default",
-    Object::create<SetupMatrixDefault>, true);
+      "setupmatrix", "setupmatrix_default", Object::create<SetupMatrixDefault>,
+      true);
 
   // Initialize the Python class
-  return FreppleClass<SetupMatrixDefault,SetupMatrix>::initialize();
+  return FreppleClass<SetupMatrixDefault, SetupMatrix>::initialize();
 }
 
-
-int SetupMatrixRuleDefault::initialize()
-{
+int SetupMatrixRuleDefault::initialize() {
   // Initialize the metadata
-  SetupMatrixRuleDefault::metadata = MetaClass::registerClass<SetupMatrixRuleDefault>(
-    "setupmatrixrule", "setupmatrixrule_default",
-    Object::create<SetupMatrixRuleDefault>, true
-    );
+  SetupMatrixRuleDefault::metadata =
+      MetaClass::registerClass<SetupMatrixRuleDefault>(
+          "setupmatrixrule", "setupmatrixrule_default",
+          Object::create<SetupMatrixRuleDefault>, true);
 
   // Initialize the Python class
   return FreppleClass<SetupMatrixRuleDefault, SetupMatrixRule>::initialize();
 }
 
-
-SetupMatrix::~SetupMatrix()
-{
+SetupMatrix::~SetupMatrix() {
   // Destroy the rules.
   // Note that the rule destructor updates the firstRule field.
   while (firstRule) delete firstRule;
@@ -92,110 +82,89 @@ SetupMatrix::~SetupMatrix()
     if (m->getSetupMatrix() == this) m->setSetupMatrix(nullptr);
 }
 
-
-Object* SetupMatrixRule::reader(
-  const MetaClass* cat, const DataValueDict& atts, CommandManager* mgr
-)
-{
+Object* SetupMatrixRule::reader(const MetaClass* cat, const DataValueDict& atts,
+                                CommandManager* mgr) {
   // Pick up the setupmatrix
   const DataValue* matrix_val = atts.get(Tags::setupmatrix);
-  SetupMatrix *matrix = matrix_val ? static_cast<SetupMatrix*>(matrix_val->getObject()) : nullptr;
+  SetupMatrix* matrix =
+      matrix_val ? static_cast<SetupMatrix*>(matrix_val->getObject()) : nullptr;
 
   // Pick up the priority.
   const DataValue* prio_val = atts.get(Tags::priority);
   int prio = 0;
-  if (prio_val)
-    prio = prio_val->getInt();
+  if (prio_val) prio = prio_val->getInt();
 
   // Check for existence of a bucket with the same start, end and priority
   SetupMatrixRule* result = nullptr;
-  if (matrix)
-  {
+  if (matrix) {
     auto i = matrix->getRules();
     while (SetupMatrixRule* j = i.next())
-      if (j->priority == prio)
-      {
+      if (j->priority == prio) {
         result = j;
         break;
       }
   }
 
   // Pick up the action attribute and update the bucket accordingly
-  switch (MetaClass::decodeAction(atts))
-  {
-  case ADD:
-    // Only additions are allowed
-    if (result)
-    {
-      ostringstream o;
-      o << "Rule already exists in setupmatrix '" << matrix << "'";
-      throw DataException(o.str());
-    }
-    result = new SetupMatrixRuleDefault();
-    result->setPriority(prio);
-    if (matrix)
-      result->setSetupMatrix(matrix);
-    if (mgr)
-      mgr->add(new CommandCreateObject(result));
-    return result;
-  case CHANGE:
-    // Only changes are allowed
-    if (!result)
-      throw DataException("Rule doesn't exist");
-    return result;
-  case REMOVE:
-    // Delete the entity
-    if (!result)
-      throw DataException("Rule doesn't exist");
-    else
-    {
-      // Delete it
-      delete result;
-      return nullptr;
-    }
-  case ADD_CHANGE:
-    if (!result)
-    {
-      // Adding a new rule
+  switch (MetaClass::decodeAction(atts)) {
+    case ADD:
+      // Only additions are allowed
+      if (result) {
+        ostringstream o;
+        o << "Rule already exists in setupmatrix '" << matrix << "'";
+        throw DataException(o.str());
+      }
       result = new SetupMatrixRuleDefault();
       result->setPriority(prio);
-      if (matrix)
-        result->setSetupMatrix(matrix);
-      if (mgr)
-        mgr->add(new CommandCreateObject(result));
-    }
-    return result;
+      if (matrix) result->setSetupMatrix(matrix);
+      if (mgr) mgr->add(new CommandCreateObject(result));
+      return result;
+    case CHANGE:
+      // Only changes are allowed
+      if (!result) throw DataException("Rule doesn't exist");
+      return result;
+    case REMOVE:
+      // Delete the entity
+      if (!result)
+        throw DataException("Rule doesn't exist");
+      else {
+        // Delete it
+        delete result;
+        return nullptr;
+      }
+    case ADD_CHANGE:
+      if (!result) {
+        // Adding a new rule
+        result = new SetupMatrixRuleDefault();
+        result->setPriority(prio);
+        if (matrix) result->setSetupMatrix(matrix);
+        if (mgr) mgr->add(new CommandCreateObject(result));
+      }
+      return result;
   }
 
   // This part of the code isn't expected not be reached
   throw LogicException("Unreachable code reached");
 }
 
-
-void SetupMatrixRule::setSetupMatrix(SetupMatrix *s)
-{
-  if (matrix == s)
-    return;
+void SetupMatrixRule::setSetupMatrix(SetupMatrix* s) {
+  if (matrix == s) return;
 
   // Unlink from the previous matrix
-  if (matrix)
-  {
+  if (matrix) {
     if (prevRule)
       prevRule->nextRule = nextRule;
     else
       matrix->firstRule = nextRule;
-    if (nextRule)
-      nextRule->prevRule = prevRule;
+    if (nextRule) nextRule->prevRule = prevRule;
   }
 
   // Assign the pointer
   matrix = s;
 
   // Link in the list of buckets of the new calendar
-  if (matrix)
-  {
-    if (matrix->firstRule)
-    {
+  if (matrix) {
+    if (matrix->firstRule) {
       matrix->firstRule->prevRule = this;
       nextRule = matrix->firstRule;
     }
@@ -204,40 +173,30 @@ void SetupMatrixRule::setSetupMatrix(SetupMatrix *s)
   }
 }
 
-
-SetupMatrixRule::~SetupMatrixRule()
-{
+SetupMatrixRule::~SetupMatrixRule() {
   // Maintain linked list
-  if (nextRule)
-    nextRule->prevRule = prevRule;
+  if (nextRule) nextRule->prevRule = prevRule;
   if (prevRule)
     prevRule->nextRule = nextRule;
-  else 
+  else
     matrix->firstRule = nextRule;
 }
 
-
-void SetupMatrixRule::updateSort()
-{
+void SetupMatrixRule::updateSort() {
   // Update the position in the list
   if (!matrix) return;
   bool ok = true;
-  do
-  {
+  do {
     ok = true;
-    if ((nextRule && nextRule->priority == priority)
-      || (prevRule && prevRule->priority == priority))
-    {
+    if ((nextRule && nextRule->priority == priority) ||
+        (prevRule && prevRule->priority == priority)) {
       ostringstream o;
       o << "Duplicate rules with priority " << priority << " in setup matrix '"
         << matrix->getName() << "'";
       throw DataException(o.str());
-    }
-    else if (nextRule && nextRule->priority < priority)
-    {
+    } else if (nextRule && nextRule->priority < priority) {
       // Move a position later in the list
-      if (nextRule->nextRule)
-        nextRule->nextRule->prevRule = this;
+      if (nextRule->nextRule) nextRule->nextRule->prevRule = this;
       if (prevRule)
         prevRule->nextRule = nextRule;
       else
@@ -248,14 +207,10 @@ void SetupMatrixRule::updateSort()
       nextRule->nextRule = this;
       nextRule = tmp;
       ok = false;
-    }
-    else if (prevRule && prevRule->priority > priority)
-    {
+    } else if (prevRule && prevRule->priority > priority) {
       // Move a position earlier in the list
-      if (prevRule->prevRule)
-        prevRule->prevRule->nextRule = this;
-      if (nextRule)
-        nextRule->prevRule = prevRule;
+      if (prevRule->prevRule) prevRule->prevRule->nextRule = this;
+      if (nextRule) nextRule->prevRule = prevRule;
       prevRule->nextRule = nextRule;
       nextRule = prevRule;
       SetupMatrixRule* tmp = prevRule->prevRule;
@@ -263,16 +218,12 @@ void SetupMatrixRule::updateSort()
       prevRule = tmp;
       ok = false;
     }
-  } while (!ok); // Repeat till in place
+  } while (!ok);  // Repeat till in place
 }
 
-
-void SetupMatrixRule::setPriority(const int n)
-{
-  if (n == priority)
-    return;
-  if (!matrix)
-  {
+void SetupMatrixRule::setPriority(const int n) {
+  if (n == priority) return;
+  if (!matrix) {
     // As long as there is no matrix assigned, anything goes
     priority = n;
     return;
@@ -285,9 +236,7 @@ void SetupMatrixRule::setPriority(const int n)
   updateSort();
 }
 
-
-void SetupMatrixRule::updateExpression()
-{
+void SetupMatrixRule::updateExpression() {
   string tmp(from);
   if (tmp.empty())
     tmp = ".* to ";
@@ -296,19 +245,16 @@ void SetupMatrixRule::updateExpression()
   if (to.empty())
     tmp.append(".*");
   else
-    tmp.append(to);  
+    tmp.append(to);
   matchall = (tmp == ".* to .*");
-  if (!matchall)
-    expression = regex(tmp, regex::ECMAScript | regex::optimize);
+  if (!matchall) expression = regex(tmp, regex::ECMAScript | regex::optimize);
 }
 
-
-bool SetupMatrixRule::matches(const PooledString& f, const PooledString& t) const
-{
+bool SetupMatrixRule::matches(const PooledString& f,
+                              const PooledString& t) const {
   if (matchall)
     return true;
-  else
-  {
+  else {
     string tmp(f);
     tmp.append(" to ");
     tmp.append(t);
@@ -316,34 +262,30 @@ bool SetupMatrixRule::matches(const PooledString& f, const PooledString& t) cons
   }
 }
 
-
-SetupMatrixRule* SetupMatrix::calculateSetup
-(const PooledString& oldsetup, const PooledString& newsetup, Resource* res) const
-{
+SetupMatrixRule* SetupMatrix::calculateSetup(const PooledString& oldsetup,
+                                             const PooledString& newsetup,
+                                             Resource* res) const {
   // No need to look
-  if (oldsetup == newsetup)
-    return nullptr;
-  
+  if (oldsetup == newsetup) return nullptr;
+
   // Loop through all rules
   for (auto curRule = firstRule; curRule; curRule = curRule->nextRule)
-    if (curRule->matches(oldsetup, newsetup))
-      return curRule;
+    if (curRule->matches(oldsetup, newsetup)) return curRule;
 
   // No matching rule was found - create a invalid-data problem
   stringstream o;
   o << "No conversion from '" << oldsetup << "' to '" << newsetup
     << "' defined in setup matrix '" << getName() << "'";
   auto probiter = Problem::iterator(res);
-  while (Problem* prob = probiter.next())
-  {
-    if (typeid(*prob) == typeid(ProblemInvalidData) && prob->getDescription() == o.str())
+  while (Problem* prob = probiter.next()) {
+    if (typeid(*prob) == typeid(ProblemInvalidData) &&
+        prob->getDescription() == o.str())
       // Problem already exists
       return const_cast<SetupMatrixRuleDefault*>(&ChangeOverNotAllowed);
   }
-  new ProblemInvalidData(
-    res, o.str(), "resource", Date::infinitePast, Date::infiniteFuture, 1, true
-  );
+  new ProblemInvalidData(res, o.str(), "resource", Date::infinitePast,
+                         Date::infiniteFuture, 1, true);
   return const_cast<SetupMatrixRuleDefault*>(&ChangeOverNotAllowed);
 }
 
-} // end namespace
+}  // namespace frepple

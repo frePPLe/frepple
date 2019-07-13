@@ -21,16 +21,14 @@
 #define FREPPLE_CORE
 #include "frepple/solver.h"
 
-namespace frepple
-{
+namespace frepple {
 
-bool sortFlow(const Flow* lhs, const Flow* rhs)
-{
+bool sortFlow(const Flow* lhs, const Flow* rhs) {
   return lhs->getPriority() < rhs->getPriority();
 }
 
-
-void SolverCreate::solve(const Flow* fl, void* v)  // @todo implement search mode
+void SolverCreate::solve(const Flow* fl,
+                         void* v)  // @todo implement search mode
 {
   // Note: This method is only called for:
   // - consuming flows
@@ -39,19 +37,19 @@ void SolverCreate::solve(const Flow* fl, void* v)  // @todo implement search mod
   // See SolverCreate::checkOperation
   SolverData* data = static_cast<SolverData*>(v);
 
-  if (fl->hasAlternates())
-  {
+  if (fl->hasAlternates()) {
     // CASE I: It is an alternate flow.
     // We ask each alternate flow in order of priority till we find a flow
     // that has a non-zero reply.
 
     // 1) collect a list of alternates
     list<const Flow*> thealternates;
-    const Flow *x = fl->hasAlternates() ? fl : fl->getAlternate();
-    for (Operation::flowlist::const_iterator i = fl->getOperation()->getFlows().begin();
-        i != fl->getOperation()->getFlows().end(); ++i)
-      if ((i->getAlternate() == x || &*i == x)
-          && i->getEffective().within(data->state->q_flowplan->getDate()))
+    const Flow* x = fl->hasAlternates() ? fl : fl->getAlternate();
+    for (Operation::flowlist::const_iterator i =
+             fl->getOperation()->getFlows().begin();
+         i != fl->getOperation()->getFlows().end(); ++i)
+      if ((i->getAlternate() == x || &*i == x) &&
+          i->getEffective().within(data->state->q_flowplan->getDate()))
         thealternates.push_front(&*i);
 
     // 2) Sort the list
@@ -60,49 +58,47 @@ void SolverCreate::solve(const Flow* fl, void* v)  // @todo implement search mod
     // 3) Control the planning mode
     bool originalPlanningMode = data->constrainedPlanning;
     data->constrainedPlanning = true;
-    Flow *firstAlternate = nullptr;
+    Flow* firstAlternate = nullptr;
     double firstQuantity = 0.0;
 
     // Remember the top constraint
     bool originalLogConstraints = data->logConstraints;
-    //Problem* topConstraint = data->planningDemand->getConstraints().top();
+    // Problem* topConstraint = data->planningDemand->getConstraints().top();
 
     // 4) Loop through the alternates till we find a non-zero reply
     Date min_next_date(Date::infiniteFuture);
     double ask_qty;
-    FlowPlan *flplan = data->state->q_flowplan;
-    for (auto i = thealternates.begin(); i != thealternates.end();)
-    {
-      const Flow *curflow = *i;
-      data->state->q_flowplan = flplan; // because q_flowplan can change
+    FlowPlan* flplan = data->state->q_flowplan;
+    for (auto i = thealternates.begin(); i != thealternates.end();) {
+      const Flow* curflow = *i;
+      data->state->q_flowplan = flplan;  // because q_flowplan can change
 
       // 4a) Switch to this flow
       if (data->state->q_flowplan->getFlow() != curflow)
         data->state->q_flowplan->setFlow(const_cast<Flow*>(curflow));
 
       // 4b) Call the Python user exit if there is one
-      if (userexit_flow)
-      {
-        PythonData result = userexit_flow.call(data->state->q_flowplan, PythonData(data->constrainedPlanning));
-        if (!result.getBool())
-        {
+      if (userexit_flow) {
+        PythonData result = userexit_flow.call(
+            data->state->q_flowplan, PythonData(data->constrainedPlanning));
+        if (!result.getBool()) {
           // Return value is false, alternate rejected
-          if (getLogLevel()>1)
+          if (getLogLevel() > 1)
             logger << indent(curflow->getOperation()->getLevel())
-                << "   User exit disallows consumption from '"
-                << (*i)->getBuffer()->getName() << "'" << endl;
+                   << "   User exit disallows consumption from '"
+                   << (*i)->getBuffer()->getName() << "'" << endl;
           // Move to the next alternate
-          if (++i != thealternates.end() && getLogLevel()>1)
-            logger << indent(curflow->getOperation()->getLevel()) << "   Alternate flow switches from '"
-                << curflow->getBuffer()->getName() << "' to '"
-                << (*i)->getBuffer()->getName() << "'" << endl;
+          if (++i != thealternates.end() && getLogLevel() > 1)
+            logger << indent(curflow->getOperation()->getLevel())
+                   << "   Alternate flow switches from '"
+                   << curflow->getBuffer()->getName() << "' to '"
+                   << (*i)->getBuffer()->getName() << "'" << endl;
           continue;
         }
       }
 
       // Remember the first alternate
-      if (!firstAlternate)
-      {
+      if (!firstAlternate) {
         firstAlternate = const_cast<Flow*>(*i);
         firstQuantity = data->state->q_flowplan->getQuantity();
       }
@@ -117,24 +113,23 @@ void SolverCreate::solve(const Flow* fl, void* v)  // @todo implement search mod
 
       // 4c) Ask the buffer
       double orig_q_qty_min = data->state->q_qty_min;
-      data->state->q_qty_min = curflow->getQuantityFixed() + orig_q_qty_min * curflow->getQuantity();
-      data->state->q_qty = ask_qty = - data->state->q_flowplan->getQuantity();
+      data->state->q_qty_min =
+          curflow->getQuantityFixed() + orig_q_qty_min * curflow->getQuantity();
+      data->state->q_qty = ask_qty = -data->state->q_flowplan->getQuantity();
       data->state->q_date = data->state->q_flowplan->getDate();
-      CommandManager::Bookmark* topcommand = data->getCommandManager()->setBookmark();
-      curflow->getBuffer()->solve(*this,data);
+      CommandManager::Bookmark* topcommand =
+          data->getCommandManager()->setBookmark();
+      curflow->getBuffer()->solve(*this, data);
 
       // 4d) A positive reply: exit the loop
-      if (data->state->a_qty > ROUNDING_ERROR)
-      {
+      if (data->state->a_qty > ROUNDING_ERROR) {
         // Update the opplan, which is required to (1) update the flowplans
         // and to (2) take care of lot sizing constraints of this operation.
-        if (data->state->a_qty < ask_qty - ROUNDING_ERROR)
-        {
+        if (data->state->a_qty < ask_qty - ROUNDING_ERROR) {
           flplan->setQuantity(-data->state->a_qty, true);
           data->state->a_qty = -flplan->getQuantity();
         }
-        if (data->state->a_qty > ROUNDING_ERROR)
-        {
+        if (data->state->a_qty > ROUNDING_ERROR) {
           data->constrainedPlanning = originalPlanningMode;
           data->logConstraints = originalLogConstraints;
           data->state->q_qty_min = orig_q_qty_min;
@@ -148,73 +143,65 @@ void SolverCreate::solve(const Flow* fl, void* v)  // @todo implement search mod
       // 4f) Prepare for the next alternate
       if (data->state->a_date < min_next_date)
         min_next_date = data->state->a_date;
-      if (++i != thealternates.end() && getLogLevel()>1)
-        logger << indent(curflow->getOperation()->getLevel()) << "   Alternate flow switches from '"
-            << curflow->getBuffer()->getName() << "' to '"
-            << (*i)->getBuffer()->getName() << "'" << endl;
+      if (++i != thealternates.end() && getLogLevel() > 1)
+        logger << indent(curflow->getOperation()->getLevel())
+               << "   Alternate flow switches from '"
+               << curflow->getBuffer()->getName() << "' to '"
+               << (*i)->getBuffer()->getName() << "'" << endl;
     }
 
     // 5) No reply found, all alternates are infeasible
-    if (!originalPlanningMode)
-    {
+    if (!originalPlanningMode) {
       assert(firstAlternate);
       // Unconstrained plan: Plan on the primary alternate
       // Switch to this flow
-      if (flplan->getFlow() != firstAlternate)
-        flplan->setFlow(firstAlternate);
+      if (flplan->getFlow() != firstAlternate) flplan->setFlow(firstAlternate);
       // Message
-      if (getLogLevel()>1)
+      if (getLogLevel() > 1)
         logger << indent(fl->getOperation()->getLevel())
-            << "   Alternate flow plans unconstrained on alternate '"
-            << firstAlternate->getBuffer()->getName() << "'" << endl;
+               << "   Alternate flow plans unconstrained on alternate '"
+               << firstAlternate->getBuffer()->getName() << "'" << endl;
       // Plan unconstrained
       data->constrainedPlanning = false;
-      data->state->q_flowplan = flplan; // because q_flowplan can change
+      data->state->q_flowplan = flplan;  // because q_flowplan can change
       flplan->setQuantity(firstQuantity, true);
-      data->state->q_qty = ask_qty = - flplan->getQuantity();
+      data->state->q_qty = ask_qty = -flplan->getQuantity();
       data->state->q_date = flplan->getDate();
-      firstAlternate->getBuffer()->solve(*this,data);
+      firstAlternate->getBuffer()->solve(*this, data);
       data->state->a_qty = -flplan->getQuantity();
       // Restore original planning mode
       data->constrainedPlanning = originalPlanningMode;
-    }
-    else
-    {
+    } else {
       // Constrained plan: Return 0
       data->state->a_date = min_next_date;
       data->state->a_qty = 0;
-      if (getLogLevel()>1)
-        logger << indent(fl->getOperation()->getLevel()) <<
-            "   Alternate flow doesn't find supply on any alternate : "
-            << data->state->a_qty << "  " << data->state->a_date << endl;
+      if (getLogLevel() > 1)
+        logger << indent(fl->getOperation()->getLevel())
+               << "   Alternate flow doesn't find supply on any alternate : "
+               << data->state->a_qty << "  " << data->state->a_date << endl;
     }
-  }
-  else
-  {
+  } else {
     // CASE II: Not an alternate flow.
     // In this case, this method is passing control on to the buffer.
     double orig_q_qty_min = data->state->q_qty_min;
-    data->state->q_qty = - data->state->q_flowplan->getQuantity();
-    data->state->q_qty_min = - fl->getQuantityFixed() - data->state->q_qty_min * fl->getQuantity();
+    data->state->q_qty = -data->state->q_flowplan->getQuantity();
+    data->state->q_qty_min =
+        -fl->getQuantityFixed() - data->state->q_qty_min * fl->getQuantity();
     data->state->q_date = data->state->q_flowplan->getDate();
-    if (data->state->q_qty != 0.0)
-    {
-      fl->getBuffer()->solve(*this,data);
-      if (data->state->a_date > fl->getEffective().getEnd())
-      {
+    if (data->state->q_qty != 0.0) {
+      fl->getBuffer()->solve(*this, data);
+      if (data->state->a_date > fl->getEffective().getEnd()) {
         // The reply date must be less than the effectivity end date: after
         // that date the flow in question won't consume any material any more.
-        if (getLogLevel()>1
-            && data->state->a_qty < ROUNDING_ERROR)
+        if (getLogLevel() > 1 && data->state->a_qty < ROUNDING_ERROR)
           logger << indent(fl->getBuffer()->getLevel()) << "  Buffer '"
-              << fl->getBuffer()->getName() << "' answer date is adjusted to "
-              << fl->getEffective().getEnd()
-              << " because of a date effective flow" << endl;
+                 << fl->getBuffer()->getName()
+                 << "' answer date is adjusted to "
+                 << fl->getEffective().getEnd()
+                 << " because of a date effective flow" << endl;
         data->state->a_date = fl->getEffective().getEnd();
       }
-    }
-    else
-    {
+    } else {
       // It's a zero quantity flowplan.
       // E.g. because it is not effective.
       data->state->a_date = data->state->q_date;
@@ -224,5 +211,4 @@ void SolverCreate::solve(const Flow* fl, void* v)  // @todo implement search mod
   }
 }
 
-
-}
+}  // namespace frepple

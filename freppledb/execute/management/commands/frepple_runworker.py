@@ -21,9 +21,10 @@ from .runworker import Command as NewCommand
 
 
 class Command(NewCommand):
+    def handle(self, **options):
+        warnings.warn(
+            "The frepple_runworker command is renamed to runworker", DeprecationWarning
+        )
+        super().handle(**options)
 
-  def handle(self, **options):
-    warnings.warn("The frepple_runworker command is renamed to runworker", DeprecationWarning)
-    super().handle(**options)
-
-  getHTML = None
+    getHTML = None

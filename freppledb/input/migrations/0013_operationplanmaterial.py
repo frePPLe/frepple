@@ -20,27 +20,40 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-  dependencies = [
-      ('input', '0012_rename_price_to_cost'),
-  ]
+    dependencies = [("input", "0012_rename_price_to_cost")]
 
-  operations = [
-    migrations.AlterModelOptions(
-      name='operationplanmaterial',
-      options={'verbose_name_plural': 'operationplan materials', 'ordering': ['item', 'location', 'flowdate'], 'verbose_name': 'operationplan material'},
-    ),
-    migrations.RemoveField(
-      model_name='operationplanmaterial',
-      name='buffer',
-    ),
-    migrations.AddField(
-      model_name='operationplanmaterial',
-      name='item',
-      field=models.ForeignKey(blank=True, to='input.Item', related_name='operationplanmaterials', null=True, verbose_name='item', on_delete=models.CASCADE),
-    ),
-    migrations.AddField(
-      model_name='operationplanmaterial',
-      name='location',
-      field=models.ForeignKey(blank=True, to='input.Location', related_name='operationplanmaterials', null=True, verbose_name='location', on_delete=models.CASCADE),
-    )
-  ]
+    operations = [
+        migrations.AlterModelOptions(
+            name="operationplanmaterial",
+            options={
+                "verbose_name_plural": "operationplan materials",
+                "ordering": ["item", "location", "flowdate"],
+                "verbose_name": "operationplan material",
+            },
+        ),
+        migrations.RemoveField(model_name="operationplanmaterial", name="buffer"),
+        migrations.AddField(
+            model_name="operationplanmaterial",
+            name="item",
+            field=models.ForeignKey(
+                blank=True,
+                to="input.Item",
+                related_name="operationplanmaterials",
+                null=True,
+                verbose_name="item",
+                on_delete=models.CASCADE,
+            ),
+        ),
+        migrations.AddField(
+            model_name="operationplanmaterial",
+            name="location",
+            field=models.ForeignKey(
+                blank=True,
+                to="input.Location",
+                related_name="operationplanmaterials",
+                null=True,
+                verbose_name="location",
+                on_delete=models.CASCADE,
+            ),
+        ),
+    ]

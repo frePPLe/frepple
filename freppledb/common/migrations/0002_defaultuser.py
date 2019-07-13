@@ -20,27 +20,23 @@ from django.db import migrations
 
 
 def createAdminUser(apps, schema_editor):
-  if not schema_editor.connection.alias == 'default':
-    return
-  from django.contrib.auth import get_user_model
-  User = get_user_model()
-  usr = User.objects.create_superuser('admin', 'your@company.com', 'admin')
-  usr.first_name = 'admin'
-  usr.last_name = 'admin'
-  usr.date_joined = datetime(2000, 1, 1)
-  usr.horizontype = True
-  usr.horizonlength = 12
-  usr.horizonunit = "month"
-  usr.language = "auto"
-  usr.save()
+    if not schema_editor.connection.alias == "default":
+        return
+    from django.contrib.auth import get_user_model
+
+    User = get_user_model()
+    usr = User.objects.create_superuser("admin", "your@company.com", "admin")
+    usr.first_name = "admin"
+    usr.last_name = "admin"
+    usr.date_joined = datetime(2000, 1, 1)
+    usr.horizontype = True
+    usr.horizonlength = 12
+    usr.horizonunit = "month"
+    usr.language = "auto"
+    usr.save()
 
 
 class Migration(migrations.Migration):
-  dependencies = [
-      ('common', '0001_initial'),
-      ('execute', '0001_initial'),
-  ]
+    dependencies = [("common", "0001_initial"), ("execute", "0001_initial")]
 
-  operations = [
-      migrations.RunPython(createAdminUser),
-  ]
+    operations = [migrations.RunPython(createAdminUser)]

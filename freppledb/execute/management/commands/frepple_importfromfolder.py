@@ -22,12 +22,15 @@ from .importfromfolder import Command as NewCommand
 
 class Command(NewCommand):
 
-  help = '''
+    help = """
   The frepple_importfromfolder command is deprecated. It is renamed to scenario_copy.
-  '''
+  """
 
-  def handle(self, **options):
-    warnings.warn("The frepple_importtofolder command is renamed to importfromfolder", DeprecationWarning)
-    super().handle(**options)
+    def handle(self, **options):
+        warnings.warn(
+            "The frepple_importtofolder command is renamed to importfromfolder",
+            DeprecationWarning,
+        )
+        super().handle(**options)
 
-  getHTML = None
+    getHTML = None

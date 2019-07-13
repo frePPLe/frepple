@@ -23,26 +23,39 @@ from freppledb.common.report import GridReport, GridFieldText, GridFieldInteger
 
 
 class Report(GridReport):
-  title = _("Performance Indicators")
-  frozenColumns = 0
-  basequeryset = Parameter.objects.all()
-  permissions = (("view_kpi_report", "Can view kpi report"),)
-  rows = (
-    GridFieldText('category', title=_('category'), sortable=False, editable=False, align='center'),
-    #. Translators: Translation included with Django
-    GridFieldText('name', title=_('name'), sortable=False, editable=False, align='center'),
-    GridFieldInteger('value', title=_('value'), sortable=False, editable=False, align='center'),
+    title = _("Performance Indicators")
+    frozenColumns = 0
+    basequeryset = Parameter.objects.all()
+    permissions = (("view_kpi_report", "Can view kpi report"),)
+    rows = (
+        GridFieldText(
+            "category",
+            title=_("category"),
+            sortable=False,
+            editable=False,
+            align="center",
+        ),
+        # . Translators: Translation included with Django
+        GridFieldText(
+            "name", title=_("name"), sortable=False, editable=False, align="center"
+        ),
+        GridFieldInteger(
+            "value", title=_("value"), sortable=False, editable=False, align="center"
+        ),
     )
-  default_sort = (1, 'asc')
-  filterable = False
-  multiselect = False
-  help_url = 'user-guide/user-interface/plan-analysis/performance-indicator-report.html'
+    default_sort = (1, "asc")
+    filterable = False
+    multiselect = False
+    help_url = (
+        "user-guide/user-interface/plan-analysis/performance-indicator-report.html"
+    )
 
-  @staticmethod
-  def query(request, basequery):
-    # Execute the query
-    cursor = connections[request.database].cursor()
-    cursor.execute('''
+    @staticmethod
+    def query(request, basequery):
+        # Execute the query
+        cursor = connections[request.database].cursor()
+        cursor.execute(
+            """
       select 101 as id, 'Problem count' as category, name as name, count(*) as value
       from out_problem
       group by name
@@ -92,13 +105,9 @@ class Report(GridReport):
       from operationplanmaterial
       where quantity<0
       order by 1
-      '''
-      )
+      """
+        )
 
-    # Build the python result
-    for row in cursor.fetchall():
-      yield {
-        'category': row[1],
-        'name': row[2],
-        'value': row[3],
-        }
+        # Build the python result
+        for row in cursor.fetchall():
+            yield {"category": row[1], "name": row[2], "value": row[3]}

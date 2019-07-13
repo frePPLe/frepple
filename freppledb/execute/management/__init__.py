@@ -23,13 +23,13 @@ from freppledb.common.management import removeModelPermissions
 
 
 def updatePermissions(using=DEFAULT_DB_ALIAS, **kwargs):
-  removeModelPermissions("execute", "task", using)
-  p = Permission.objects.get_or_create(
-    codename='run_db',
-    content_type=ContentType.objects.get(model="permission", app_label="auth")
+    removeModelPermissions("execute", "task", using)
+    p = Permission.objects.get_or_create(
+        codename="run_db",
+        content_type=ContentType.objects.get(model="permission", app_label="auth"),
     )[0]
-  p.name = 'Run database operations'
-  p.save()
+    p.name = "Run database operations"
+    p.save()
 
 
 signals.post_migrate.connect(updatePermissions)

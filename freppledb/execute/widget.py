@@ -23,22 +23,28 @@ from freppledb.common.dashboard import Dashboard, Widget
 
 
 class ExecuteWidget(Widget):
-  name = "execute"
-  title = _("Execute")
-  permissions = (("generate_plan", "Can generate plans"),)
-  tooltip = _("Generate a constrained plan")
-  asynchronous = False
-  url = '/execute/'
+    name = "execute"
+    title = _("Execute")
+    permissions = (("generate_plan", "Can generate plans"),)
+    tooltip = _("Generate a constrained plan")
+    asynchronous = False
+    url = "/execute/"
 
-  def render(self, request=None):
-    from freppledb.common.middleware import _thread_locals
-    return '''<div style="text-align:center">
+    def render(self, request=None):
+        from freppledb.common.middleware import _thread_locals
+
+        return """<div style="text-align:center">
       <form method="post" action="%s/execute/launch/runplan/">
       <input type="hidden" name="csrfmiddlewaretoken" value="%s">
       <input type="hidden" name="plantype" value="1"/>
       <input type="hidden" name="constraint" value="15"/>
       <input class="btn btn-primary" type="submit" value="%s"/>
       </form></div>
-      ''' % (_thread_locals.request.prefix, get_token(_thread_locals.request), force_text(_("Create a plan")))
+      """ % (
+            _thread_locals.request.prefix,
+            get_token(_thread_locals.request),
+            force_text(_("Create a plan")),
+        )
+
 
 Dashboard.register(ExecuteWidget)

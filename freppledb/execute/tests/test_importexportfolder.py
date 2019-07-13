@@ -29,51 +29,52 @@ from freppledb.input.models import ManufacturingOrder, PurchaseOrder, Distributi
 
 class execute_with_commands(TransactionTestCase):
 
-  fixtures = ["demo"]
+    fixtures = ["demo"]
 
+    def setUp(self):
+        # Make sure the test database is used
+        os.environ["FREPPLE_TEST"] = "YES"
+        # Export and import from a temporary folder to avoid interfering with
+        # existing data files
+        self.datafolder = tempfile.mkdtemp()
+        settings.DATABASES[DEFAULT_DB_ALIAS]["FILEUPLOADFOLDER"] = self.datafolder
 
-  def setUp(self):
-    # Make sure the test database is used
-    os.environ['FREPPLE_TEST'] = "YES"
-    # Export and import from a temporary folder to avoid interfering with
-    # existing data files
-    self.datafolder = tempfile.mkdtemp()
-    settings.DATABASES[DEFAULT_DB_ALIAS]['FILEUPLOADFOLDER'] = self.datafolder
+    def tearDown(self):
+        rmtree(self.datafolder)
 
+    def test_exportimportfromfolder(self):
+        self.assertEqual(ManufacturingOrder.objects.count(), 0)
+        self.assertEqual(PurchaseOrder.objects.count(), 4)
+        self.assertEqual(DistributionOrder.objects.count(), 0)
 
-  def tearDown(self):
-    rmtree(self.datafolder)
+        # The exporttofolder filters by status so the count must also filter
+        countMO = ManufacturingOrder.objects.filter(status="proposed").count()
+        countPO = PurchaseOrder.objects.filter(status="proposed").count()
+        countDO = DistributionOrder.objects.filter(status="proposed").count()
 
+        management.call_command("exporttofolder")
 
-  def test_exportimportfromfolder(self):
-    self.assertEqual(ManufacturingOrder.objects.count(), 0)
-    self.assertEqual(PurchaseOrder.objects.count(), 4)
-    self.assertEqual(DistributionOrder.objects.count(), 0)
+        ManufacturingOrder.objects.all().delete()
+        DistributionOrder.objects.all().delete()
+        PurchaseOrder.objects.all().delete()
 
-    # The exporttofolder filters by status so the count must also filter
-    countMO = ManufacturingOrder.objects.filter(status='proposed').count()
-    countPO = PurchaseOrder.objects.filter(status='proposed').count()
-    countDO = DistributionOrder.objects.filter(status='proposed').count()
+        self.assertEqual(DistributionOrder.objects.count(), 0)
+        self.assertEqual(PurchaseOrder.objects.count(), 0)
+        self.assertEqual(ManufacturingOrder.objects.count(), 0)
 
-    management.call_command('exporttofolder')
+        # Move export files to the import folder
+        for file in [
+            "purchaseorder.csv",
+            "distributionorder.csv",
+            "manufacturingorder.csv",
+        ]:
+            os.rename(
+                os.path.join(self.datafolder, "export", file),
+                os.path.join(self.datafolder, file),
+            )
 
-    ManufacturingOrder.objects.all().delete()
-    DistributionOrder.objects.all().delete()
-    PurchaseOrder.objects.all().delete()
+        management.call_command("importfromfolder")
 
-    self.assertEqual(DistributionOrder.objects.count(), 0)
-    self.assertEqual(PurchaseOrder.objects.count(), 0)
-    self.assertEqual(ManufacturingOrder.objects.count(), 0)
-
-    # Move export files to the import folder
-    for file in ["purchaseorder.csv", "distributionorder.csv", "manufacturingorder.csv"]:
-      os.rename(
-        os.path.join(self.datafolder, 'export', file),
-        os.path.join(self.datafolder, file)
-        )
-
-    management.call_command('importfromfolder')
-
-    self.assertEqual(DistributionOrder.objects.count(), countDO)
-    self.assertEqual(PurchaseOrder.objects.count(), countPO)
-    self.assertEqual(ManufacturingOrder.objects.count(), countMO)
+        self.assertEqual(DistributionOrder.objects.count(), countDO)
+        self.assertEqual(PurchaseOrder.objects.count(), countPO)
+        self.assertEqual(ManufacturingOrder.objects.count(), countMO)

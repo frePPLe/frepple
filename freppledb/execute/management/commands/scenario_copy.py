@@ -31,208 +31,240 @@ from freppledb import VERSION
 
 
 class Command(BaseCommand):
-  help = '''
+    help = """
   This command copies the contents of a database into another.
   The original data in the destination database are lost.
 
   The pg_dump and psql commands need to be in the path, otherwise
   this command will fail.
-  '''
+  """
 
-  requires_system_checks = False
+    requires_system_checks = False
 
+    def get_version(self):
+        return VERSION
 
-  def get_version(self):
-    return VERSION
-
-
-  def add_arguments(self, parser):
-    parser.add_argument(
-      '--user',
-      help='User running the command'
-      ),
-    parser.add_argument(
-      '--force', action="store_true", default=False,
-      help='Overwrite scenarios already in use'
-      )
-    parser.add_argument(
-      '--description',
-      help='Description of the destination scenario'
-      )
-    parser.add_argument(
-      '--task', type=int,
-      help='Task identifier (generated automatically if not provided)'
-      )
-    parser.add_argument(
-      'source', help='source database to copy'
-      )
-    parser.add_argument(
-      'destination', help='destination database to copy'
-      )
-
-
-  def handle(self, **options):
-    # Make sure the debug flag is not set!
-    # When it is set, the django database wrapper collects a list of all sql
-    # statements executed and their timings. This consumes plenty of memory
-    # and cpu time.
-    tmp_debug = settings.DEBUG
-    settings.DEBUG = False
-
-    # Pick up options
-    force = options['force']
-    test = 'FREPPLE_TEST' in os.environ
-    if options['user']:
-      try:
-        user = User.objects.all().get(username=options['user'])
-      except:
-        raise CommandError("User '%s' not found" % options['user'] )
-    else:
-      user = None
-
-    # Synchronize the scenario table with the settings
-    Scenario.syncWithSettings()
-
-    # Initialize the task
-    source = options['source']
-    try:
-      sourcescenario = Scenario.objects.using(DEFAULT_DB_ALIAS).get(pk=source)
-    except:
-      raise CommandError("No source database defined with name '%s'" % source)
-    now = datetime.now()
-    task = None
-    if 'task' in options and options['task']:
-      try:
-        task = Task.objects.all().using(source).get(pk=options['task'])
-      except:
-        raise CommandError("Task identifier not found")
-      if task.started or task.finished or task.status != "Waiting" or task.name not in ('frepple_copy', 'scenario_copy'):
-        raise CommandError("Invalid task identifier")
-      task.status = '0%'
-      task.started = now
-    else:
-      task = Task(name='scenario_copy', submitted=now, started=now, status='0%', user=user)
-    task.processid = os.getpid()
-    task.save(using=source)
-
-    # Validate the arguments
-    destination = options['destination']
-    destinationscenario = None
-    try:
-      task.arguments = "%s %s" % (source, destination)
-      if options['description']:
-        task.arguments += '--description="%s"' % options['description'].replace('"', '\\"')
-      if force:
-        task.arguments += " --force"
-      task.save(using=source)
-      try:
-        destinationscenario = Scenario.objects.using(DEFAULT_DB_ALIAS).get(pk=destination)
-      except:
-        raise CommandError("No destination database defined with name '%s'" % destination)
-      if source == destination:
-        raise CommandError("Can't copy a schema on itself")
-      if sourcescenario.status != 'In use':
-        raise CommandError("Source scenario is not in use")
-      if destinationscenario.status != 'Free' and not force:
-        raise CommandError("Destination scenario is not free")
-
-      # Logging message - always logging in the default database
-      destinationscenario.status = 'Busy'
-      destinationscenario.save(using=DEFAULT_DB_ALIAS)
-
-      # Copying the data
-      # Commenting the next line is a little more secure, but requires you to create a .pgpass file.
-      if settings.DATABASES[source]['PASSWORD']:
-        os.environ['PGPASSWORD'] = settings.DATABASES[source]['PASSWORD']
-      if os.name == 'nt':
-        # On windows restoring with pg_restore over a pipe is broken :-(
-        cmd = "pg_dump -c -Fp %s%s%s%s | psql %s%s%s%s"
-      else:
-        cmd = "pg_dump -Fc %s%s%s%s | pg_restore -n public -Fc -c --if-exists %s%s%s -d %s"
-      commandline = cmd % (
-        settings.DATABASES[source]['USER'] and ("-U %s " % settings.DATABASES[source]['USER']) or '',
-        settings.DATABASES[source]['HOST'] and ("-h %s " % settings.DATABASES[source]['HOST']) or '',
-        settings.DATABASES[source]['PORT'] and ("-p %s " % settings.DATABASES[source]['PORT']) or '',
-        test and settings.DATABASES[source]['TEST']['NAME'] or settings.DATABASES[source]['NAME'],
-        settings.DATABASES[destination]['USER'] and ("-U %s " % settings.DATABASES[destination]['USER']) or '',
-        settings.DATABASES[destination]['HOST'] and ("-h %s " % settings.DATABASES[destination]['HOST']) or '',
-        settings.DATABASES[destination]['PORT'] and ("-p %s " % settings.DATABASES[destination]['PORT']) or '',
-        test and settings.DATABASES[destination]['TEST']['NAME'] or settings.DATABASES[destination]['NAME'],
+    def add_arguments(self, parser):
+        parser.add_argument("--user", help="User running the command"),
+        parser.add_argument(
+            "--force",
+            action="store_true",
+            default=False,
+            help="Overwrite scenarios already in use",
         )
-      with subprocess.Popen(commandline, shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT) as p:
+        parser.add_argument(
+            "--description", help="Description of the destination scenario"
+        )
+        parser.add_argument(
+            "--task",
+            type=int,
+            help="Task identifier (generated automatically if not provided)",
+        )
+        parser.add_argument("source", help="source database to copy")
+        parser.add_argument("destination", help="destination database to copy")
+
+    def handle(self, **options):
+        # Make sure the debug flag is not set!
+        # When it is set, the django database wrapper collects a list of all sql
+        # statements executed and their timings. This consumes plenty of memory
+        # and cpu time.
+        tmp_debug = settings.DEBUG
+        settings.DEBUG = False
+
+        # Pick up options
+        force = options["force"]
+        test = "FREPPLE_TEST" in os.environ
+        if options["user"]:
+            try:
+                user = User.objects.all().get(username=options["user"])
+            except:
+                raise CommandError("User '%s' not found" % options["user"])
+        else:
+            user = None
+
+        # Synchronize the scenario table with the settings
+        Scenario.syncWithSettings()
+
+        # Initialize the task
+        source = options["source"]
         try:
-          task.processid = p.pid
-          task.save(using=source)
-          p.wait()
+            sourcescenario = Scenario.objects.using(DEFAULT_DB_ALIAS).get(pk=source)
         except:
-          p.kill()
-          p.wait()
-          # Consider the destination database free again
-          destinationscenario.status = 'Free'
-          destinationscenario.lastrefresh = datetime.today()
-          destinationscenario.save(using=DEFAULT_DB_ALIAS)
-          raise Exception("Database copy failed")
-
-      # Update the scenario table
-      destinationscenario.status = 'In use'
-      destinationscenario.lastrefresh = datetime.today()
-      if options['description']:
-        destinationscenario.description = options['description']
-      destinationscenario.save(using=DEFAULT_DB_ALIAS)
-
-      # Give access to the destination scenario to:
-      #  a) the user doing the copy
-      #  b) all superusers from the source schema
-      User.objects.using(destination).filter(is_superuser=True).update(is_active=True)
-      User.objects.using(destination).filter(is_superuser=False).update(is_active=False)
-      if user:
-        User.objects.using(destination).filter(username=user.username).update(is_active=True)
-
-      # Logging message
-      task.processid = None
-      task.status = 'Done'
-      task.finished = datetime.now()
-
-      # Update the task in the destination database
-      task.message = "Scenario copied from %s" % source
-      task.save(using=destination)
-      task.message = "Scenario copied to %s" % destination
-
-      # Delete any waiting tasks in the new copy.
-      # This is needed for situations where the same source is copied to
-      # multiple destinations at the same moment.
-      Task.objects.all().using(destination).filter(id__gt=task.id).delete()
-
-    except Exception as e:
-      if task:
-        task.status = 'Failed'
-        task.message = '%s' % e
-        task.finished = datetime.now()
-      if destinationscenario and destinationscenario.status == 'Busy':
-        destinationscenario.status = 'Free'
-        destinationscenario.save(using=DEFAULT_DB_ALIAS)
-      raise e
-
-    finally:
-      if task:
-        task.processid = None
+            raise CommandError("No source database defined with name '%s'" % source)
+        now = datetime.now()
+        task = None
+        if "task" in options and options["task"]:
+            try:
+                task = Task.objects.all().using(source).get(pk=options["task"])
+            except:
+                raise CommandError("Task identifier not found")
+            if (
+                task.started
+                or task.finished
+                or task.status != "Waiting"
+                or task.name not in ("frepple_copy", "scenario_copy")
+            ):
+                raise CommandError("Invalid task identifier")
+            task.status = "0%"
+            task.started = now
+        else:
+            task = Task(
+                name="scenario_copy", submitted=now, started=now, status="0%", user=user
+            )
+        task.processid = os.getpid()
         task.save(using=source)
-      settings.DEBUG = tmp_debug
 
-  # accordion template
-  title = _('scenario management')
-  index = 1500
-  help_url = 'user-guide/command-reference.html#scenario-copy'
+        # Validate the arguments
+        destination = options["destination"]
+        destinationscenario = None
+        try:
+            task.arguments = "%s %s" % (source, destination)
+            if options["description"]:
+                task.arguments += '--description="%s"' % options["description"].replace(
+                    '"', '\\"'
+                )
+            if force:
+                task.arguments += " --force"
+            task.save(using=source)
+            try:
+                destinationscenario = Scenario.objects.using(DEFAULT_DB_ALIAS).get(
+                    pk=destination
+                )
+            except:
+                raise CommandError(
+                    "No destination database defined with name '%s'" % destination
+                )
+            if source == destination:
+                raise CommandError("Can't copy a schema on itself")
+            if sourcescenario.status != "In use":
+                raise CommandError("Source scenario is not in use")
+            if destinationscenario.status != "Free" and not force:
+                raise CommandError("Destination scenario is not free")
 
-  @ staticmethod
-  def getHTML(request):
+            # Logging message - always logging in the default database
+            destinationscenario.status = "Busy"
+            destinationscenario.save(using=DEFAULT_DB_ALIAS)
 
-    # Synchronize the scenario table with the settings
-    Scenario.syncWithSettings()
+            # Copying the data
+            # Commenting the next line is a little more secure, but requires you to create a .pgpass file.
+            if settings.DATABASES[source]["PASSWORD"]:
+                os.environ["PGPASSWORD"] = settings.DATABASES[source]["PASSWORD"]
+            if os.name == "nt":
+                # On windows restoring with pg_restore over a pipe is broken :-(
+                cmd = "pg_dump -c -Fp %s%s%s%s | psql %s%s%s%s"
+            else:
+                cmd = "pg_dump -Fc %s%s%s%s | pg_restore -n public -Fc -c --if-exists %s%s%s -d %s"
+            commandline = cmd % (
+                settings.DATABASES[source]["USER"]
+                and ("-U %s " % settings.DATABASES[source]["USER"])
+                or "",
+                settings.DATABASES[source]["HOST"]
+                and ("-h %s " % settings.DATABASES[source]["HOST"])
+                or "",
+                settings.DATABASES[source]["PORT"]
+                and ("-p %s " % settings.DATABASES[source]["PORT"])
+                or "",
+                test
+                and settings.DATABASES[source]["TEST"]["NAME"]
+                or settings.DATABASES[source]["NAME"],
+                settings.DATABASES[destination]["USER"]
+                and ("-U %s " % settings.DATABASES[destination]["USER"])
+                or "",
+                settings.DATABASES[destination]["HOST"]
+                and ("-h %s " % settings.DATABASES[destination]["HOST"])
+                or "",
+                settings.DATABASES[destination]["PORT"]
+                and ("-p %s " % settings.DATABASES[destination]["PORT"])
+                or "",
+                test
+                and settings.DATABASES[destination]["TEST"]["NAME"]
+                or settings.DATABASES[destination]["NAME"],
+            )
+            with subprocess.Popen(
+                commandline,
+                shell=True,
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.STDOUT,
+            ) as p:
+                try:
+                    task.processid = p.pid
+                    task.save(using=source)
+                    p.wait()
+                except:
+                    p.kill()
+                    p.wait()
+                    # Consider the destination database free again
+                    destinationscenario.status = "Free"
+                    destinationscenario.lastrefresh = datetime.today()
+                    destinationscenario.save(using=DEFAULT_DB_ALIAS)
+                    raise Exception("Database copy failed")
 
-    scenarios = Scenario.objects.using(DEFAULT_DB_ALIAS)
-    if scenarios.count() > 1:
-      javascript = '''
+            # Update the scenario table
+            destinationscenario.status = "In use"
+            destinationscenario.lastrefresh = datetime.today()
+            if options["description"]:
+                destinationscenario.description = options["description"]
+            destinationscenario.save(using=DEFAULT_DB_ALIAS)
+
+            # Give access to the destination scenario to:
+            #  a) the user doing the copy
+            #  b) all superusers from the source schema
+            User.objects.using(destination).filter(is_superuser=True).update(
+                is_active=True
+            )
+            User.objects.using(destination).filter(is_superuser=False).update(
+                is_active=False
+            )
+            if user:
+                User.objects.using(destination).filter(username=user.username).update(
+                    is_active=True
+                )
+
+            # Logging message
+            task.processid = None
+            task.status = "Done"
+            task.finished = datetime.now()
+
+            # Update the task in the destination database
+            task.message = "Scenario copied from %s" % source
+            task.save(using=destination)
+            task.message = "Scenario copied to %s" % destination
+
+            # Delete any waiting tasks in the new copy.
+            # This is needed for situations where the same source is copied to
+            # multiple destinations at the same moment.
+            Task.objects.all().using(destination).filter(id__gt=task.id).delete()
+
+        except Exception as e:
+            if task:
+                task.status = "Failed"
+                task.message = "%s" % e
+                task.finished = datetime.now()
+            if destinationscenario and destinationscenario.status == "Busy":
+                destinationscenario.status = "Free"
+                destinationscenario.save(using=DEFAULT_DB_ALIAS)
+            raise e
+
+        finally:
+            if task:
+                task.processid = None
+                task.save(using=source)
+            settings.DEBUG = tmp_debug
+
+    # accordion template
+    title = _("scenario management")
+    index = 1500
+    help_url = "user-guide/command-reference.html#scenario-copy"
+
+    @staticmethod
+    def getHTML(request):
+
+        # Synchronize the scenario table with the settings
+        Scenario.syncWithSettings()
+
+        scenarios = Scenario.objects.using(DEFAULT_DB_ALIAS)
+        if scenarios.count() > 1:
+            javascript = """
         $(".scenariorelease").on("click", function(event) {
           event.preventDefault();
           var target = "/" + $(this).attr("data-target");
@@ -275,10 +307,13 @@ class Command(BaseCommand):
            success: function() { window.location.href = window.location.href; }
            });
         });
-        '''
-      context = RequestContext(request, {'javascript': javascript, 'scenarios': scenarios})
+        """
+            context = RequestContext(
+                request, {"javascript": javascript, "scenarios": scenarios}
+            )
 
-      template = Template('''
+            template = Template(
+                """
         {% load i18n %}
         <table id="scenarios">
           <tr>
@@ -348,13 +383,18 @@ class Command(BaseCommand):
           {% endfor %}
         </table>
         <script>{{ javascript|safe }}</script>
-      ''')
-      return template.render(context)
-      # A list of translation strings from the above
-      translated = (
-        _("copy"), _("release"), _("release selected scenarios"), _("into selected scenarios"),
-        _("update"), _("Update description of selected scenarios"),
-        _("You will lose ALL data in this scenario!")
-        )
-    else:
-      return None
+      """
+            )
+            return template.render(context)
+            # A list of translation strings from the above
+            translated = (
+                _("copy"),
+                _("release"),
+                _("release selected scenarios"),
+                _("into selected scenarios"),
+                _("update"),
+                _("Update description of selected scenarios"),
+                _("You will lose ALL data in this scenario!"),
+            )
+        else:
+            return None

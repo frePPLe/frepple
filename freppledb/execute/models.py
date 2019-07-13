@@ -20,11 +20,12 @@ from django.utils.translation import ugettext_lazy as _
 from freppledb.common.models import User
 
 import logging
+
 logger = logging.getLogger(__name__)
 
 
 class Task(models.Model):
-  '''
+    """
   Expected status values are:
     - 'Waiting'
     - 'Done'
@@ -32,35 +33,44 @@ class Task(models.Model):
     - 'Canceled'
     - 'DD%', where DD represents the percentage completed
   Other values are okay, but the above have translations.
-  '''
-  # Database fields
-  id = models.AutoField(_('identifier'), primary_key=True, editable=False)
-  #. Translators: Translation included with Django
-  name = models.CharField(_('name'), max_length=50, db_index=True, editable=False)
-  submitted = models.DateTimeField(_('submitted'), editable=False)
-  started = models.DateTimeField(_('started'), blank=True, null=True, editable=False)
-  finished = models.DateTimeField(_('submitted'), blank=True, null=True, editable=False)
-  arguments = models.TextField(_('arguments'), max_length=200, null=True, editable=False)
-  status = models.CharField(_('status'), max_length=20, editable=False)
-  message = models.TextField(_('message'), max_length=200, null=True, editable=False)
-  logfile = models.TextField(_('log file'), max_length=200, null=True, editable=False)
-  #. Translators: Translation included with Django
-  user = models.ForeignKey(
-    User, verbose_name=_('user'), blank=True, null=True,
-    editable=False, on_delete=models.CASCADE
+  """
+
+    # Database fields
+    id = models.AutoField(_("identifier"), primary_key=True, editable=False)
+    # . Translators: Translation included with Django
+    name = models.CharField(_("name"), max_length=50, db_index=True, editable=False)
+    submitted = models.DateTimeField(_("submitted"), editable=False)
+    started = models.DateTimeField(_("started"), blank=True, null=True, editable=False)
+    finished = models.DateTimeField(
+        _("submitted"), blank=True, null=True, editable=False
     )
-  processid = models.IntegerField('processid', editable=False, null=True)
+    arguments = models.TextField(
+        _("arguments"), max_length=200, null=True, editable=False
+    )
+    status = models.CharField(_("status"), max_length=20, editable=False)
+    message = models.TextField(_("message"), max_length=200, null=True, editable=False)
+    logfile = models.TextField(_("log file"), max_length=200, null=True, editable=False)
+    # . Translators: Translation included with Django
+    user = models.ForeignKey(
+        User,
+        verbose_name=_("user"),
+        blank=True,
+        null=True,
+        editable=False,
+        on_delete=models.CASCADE,
+    )
+    processid = models.IntegerField("processid", editable=False, null=True)
 
-  def __str__(self):
-    return "%s - %s - %s" % (self.id, self.name, self.status)
+    def __str__(self):
+        return "%s - %s - %s" % (self.id, self.name, self.status)
 
-  class Meta:
-    db_table = "execute_log"
-    verbose_name_plural = _('tasks')
-    verbose_name = _('task')
+    class Meta:
+        db_table = "execute_log"
+        verbose_name_plural = _("tasks")
+        verbose_name = _("task")
 
-  @staticmethod
-  def submitTask():
-    # Add record to the database
-    # Check if a worker is present. If not launch one.
-    return 1
+    @staticmethod
+    def submitTask():
+        # Add record to the database
+        # Check if a worker is present. If not launch one.
+        return 1

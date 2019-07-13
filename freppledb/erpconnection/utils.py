@@ -19,7 +19,7 @@ from django.db import DEFAULT_DB_ALIAS
 
 
 def getERPconnection(database=DEFAULT_DB_ALIAS):
-  '''
+    """
   Customize this method to connect to the ERP database.
 
   The example here uses Microsoft ADO to connect from a windows machine to a database.
@@ -31,7 +31,8 @@ def getERPconnection(database=DEFAULT_DB_ALIAS):
        Benefit is that end user can then easily change these.
     b) Settings in the frePPLe djangosettings file.
        For storing password and other security sensitive information this file is better.
-  '''
-  import adodbapi
-  connectionstring = 'Provider=SQLNCLI11;Server=localhost;Database=acutec;User Id=acutec;Password=acutec;'
-  return adodbapi.connect(connectionstring, timeout=600)
+  """
+    import adodbapi
+
+    connectionstring = "Provider=SQLNCLI11;Server=localhost;Database=acutec;User Id=acutec;Password=acutec;"
+    return adodbapi.connect(connectionstring, timeout=600)

@@ -19,4 +19,4 @@ from django.utils.translation import ugettext_lazy as _
 from freppledb.menu import menu
 
 # Add an item to the Admin menu
-menu.addItem("admin", "execute", url="/execute/", label=_('Execute'), index=100)
+menu.addItem("admin", "execute", url="/execute/", label=_("Execute"), index=100)

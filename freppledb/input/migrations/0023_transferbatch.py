@@ -20,14 +20,19 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-  dependencies = [
-    ('input', '0022_demand_due'),
-  ]
+    dependencies = [("input", "0022_demand_due")]
 
-  operations = [
-    migrations.AddField(
-        model_name='operationmaterial',
-        name='transferbatch',
-        field=models.DecimalField(decimal_places=6, help_text='Batch size by in which material is produced or consumed', null=True, blank=True, max_digits=15, verbose_name='transfer batch quantity'),
-    ),
-  ]
+    operations = [
+        migrations.AddField(
+            model_name="operationmaterial",
+            name="transferbatch",
+            field=models.DecimalField(
+                decimal_places=6,
+                help_text="Batch size by in which material is produced or consumed",
+                null=True,
+                blank=True,
+                max_digits=15,
+                verbose_name="transfer batch quantity",
+            ),
+        )
+    ]

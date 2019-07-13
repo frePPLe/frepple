@@ -21,14 +21,19 @@ import django.db.models.deletion
 
 class Migration(migrations.Migration):
 
-  dependencies = [
-    ('input', '0036_setupmatrixrule'),
-  ]
+    dependencies = [("input", "0036_setupmatrixrule")]
 
-  operations = [
-    migrations.AddField(
-      model_name='supplier',
-      name='available',
-      field=models.ForeignKey(blank=True, help_text='Calendar defining the working hours and holidays', null=True, on_delete=django.db.models.deletion.SET_NULL, to='input.Calendar', verbose_name='available'),
-    ),
-  ]
+    operations = [
+        migrations.AddField(
+            model_name="supplier",
+            name="available",
+            field=models.ForeignKey(
+                blank=True,
+                help_text="Calendar defining the working hours and holidays",
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                to="input.Calendar",
+                verbose_name="available",
+            ),
+        )
+    ]

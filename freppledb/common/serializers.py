@@ -18,63 +18,73 @@ from django_filters import rest_framework as filters
 from rest_framework_bulk.serializers import BulkListSerializer, BulkSerializerMixin
 
 from freppledb.common.api.serializers import ModelSerializer
-from freppledb.common.api.views import frePPleListCreateAPIView, frePPleRetrieveUpdateDestroyAPIView
+from freppledb.common.api.views import (
+    frePPleListCreateAPIView,
+    frePPleRetrieveUpdateDestroyAPIView,
+)
 
 import freppledb.common.models
 
 
 class BucketFilter(filters.FilterSet):
-  class Meta:
-    model = freppledb.common.models.Bucket
-    fields = {
-      'name': ['exact', 'in', 'contains'],
-      'description': ['exact', 'contains', ],
-      'level': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
-      'source': ['exact', 'in', ],
-      'lastmodified': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
-      }
-    filter_fields = ('name', 'description', 'level')
+    class Meta:
+        model = freppledb.common.models.Bucket
+        fields = {
+            "name": ["exact", "in", "contains"],
+            "description": ["exact", "contains"],
+            "level": ["exact", "in", "gt", "gte", "lt", "lte"],
+            "source": ["exact", "in"],
+            "lastmodified": ["exact", "in", "gt", "gte", "lt", "lte"],
+        }
+        filter_fields = ("name", "description", "level")
 
 
 class BucketSerializer(BulkSerializerMixin, ModelSerializer):
-  class Meta:
-    model = freppledb.common.models.Bucket
-    fields = ('name', 'description', 'level', 'source', 'lastmodified')
-    list_serializer_class = BulkListSerializer
-    update_lookup_field = 'name'
-    partial = True
+    class Meta:
+        model = freppledb.common.models.Bucket
+        fields = ("name", "description", "level", "source", "lastmodified")
+        list_serializer_class = BulkListSerializer
+        update_lookup_field = "name"
+        partial = True
 
 
 class BucketAPI(frePPleListCreateAPIView):
-  queryset = freppledb.common.models.Bucket.objects.all()
-  serializer_class = BucketSerializer
-  filter_class = BucketFilter
+    queryset = freppledb.common.models.Bucket.objects.all()
+    serializer_class = BucketSerializer
+    filter_class = BucketFilter
 
 
 class BucketDetailFilter(filters.FilterSet):
-  class Meta:
-    model = freppledb.common.models.BucketDetail
-    fields = {
-      'bucket': ['exact', 'in', ],
-      'name': ['exact', 'in', 'contains', ],
-      'startdate': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
-      'enddate': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
-      'source': ['exact', 'in', ],
-      'lastmodified': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
-      }
-    filter_fields = ('bucket', 'name', 'startdate', 'enddate', 'source', 'lastmodified')
+    class Meta:
+        model = freppledb.common.models.BucketDetail
+        fields = {
+            "bucket": ["exact", "in"],
+            "name": ["exact", "in", "contains"],
+            "startdate": ["exact", "in", "gt", "gte", "lt", "lte"],
+            "enddate": ["exact", "in", "gt", "gte", "lt", "lte"],
+            "source": ["exact", "in"],
+            "lastmodified": ["exact", "in", "gt", "gte", "lt", "lte"],
+        }
+        filter_fields = (
+            "bucket",
+            "name",
+            "startdate",
+            "enddate",
+            "source",
+            "lastmodified",
+        )
 
 
 class BucketdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
-  queryset = freppledb.common.models.Bucket.objects.all()
-  serializer_class = BucketSerializer
-  filter_class = BucketFilter
+    queryset = freppledb.common.models.Bucket.objects.all()
+    serializer_class = BucketSerializer
+    filter_class = BucketFilter
 
 
 class BucketDetailSerializer(BulkSerializerMixin, ModelSerializer):
-  class Meta:
-    model = freppledb.common.models.BucketDetail
-    fields = ('bucket', 'name', 'startdate', 'enddate', 'source', 'lastmodified')
+    class Meta:
+        model = freppledb.common.models.BucketDetail
+        fields = ("bucket", "name", "startdate", "enddate", "source", "lastmodified")
 
 
 class BucketDetailAPI(frePPleListCreateAPIView):
@@ -91,17 +101,24 @@ class BucketDetaildetailAPI(frePPleRetrieveUpdateDestroyAPIView):
 
 class CommentSerializer(BulkSerializerMixin, ModelSerializer):
     class Meta:
-      model = freppledb.common.models.Comment
-      fields = ('id', 'object_pk', 'comment', 'lastmodified', 'content_type', 'user')
-      list_serializer_class = BulkListSerializer
-      update_lookup_field = 'id'
-      partial = True
+        model = freppledb.common.models.Comment
+        fields = ("id", "object_pk", "comment", "lastmodified", "content_type", "user")
+        list_serializer_class = BulkListSerializer
+        update_lookup_field = "id"
+        partial = True
 
 
 class CommentAPI(frePPleListCreateAPIView):
     queryset = freppledb.common.models.Comment.objects.all()
     serializer_class = CommentSerializer
-    filter_fields = ('id', 'object_pk', 'comment', 'lastmodified', 'content_type', 'user')
+    filter_fields = (
+        "id",
+        "object_pk",
+        "comment",
+        "lastmodified",
+        "content_type",
+        "user",
+    )
 
 
 class CommentdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
@@ -110,26 +127,25 @@ class CommentdetailAPI(frePPleRetrieveUpdateDestroyAPIView):
 
 
 class ParameterFilter(filters.FilterSet):
-
-  class Meta:
-    model = freppledb.common.models.Parameter
-    fields = {
-      'name': ['exact', 'in', 'contains'],
-      'description': ['exact', 'contains', ],
-      'value': ['exact', 'in', 'contains'],
-      'source': ['exact', 'in', ],
-      'lastmodified': ['exact', 'in', 'gt', 'gte', 'lt', 'lte', ],
-      }
-    filter_fields = ('name', 'value', 'description', 'source', 'lastmodified')
+    class Meta:
+        model = freppledb.common.models.Parameter
+        fields = {
+            "name": ["exact", "in", "contains"],
+            "description": ["exact", "contains"],
+            "value": ["exact", "in", "contains"],
+            "source": ["exact", "in"],
+            "lastmodified": ["exact", "in", "gt", "gte", "lt", "lte"],
+        }
+        filter_fields = ("name", "value", "description", "source", "lastmodified")
 
 
 class ParameterSerializer(BulkSerializerMixin, ModelSerializer):
     class Meta:
-      model = freppledb.common.models.Parameter
-      fields = ('name', 'source', 'lastmodified', 'value', 'description')
-      list_serializer_class = BulkListSerializer
-      update_lookup_field = 'name'
-      partial = True
+        model = freppledb.common.models.Parameter
+        fields = ("name", "source", "lastmodified", "value", "description")
+        list_serializer_class = BulkListSerializer
+        update_lookup_field = "name"
+        partial = True
 
 
 class ParameterAPI(frePPleListCreateAPIView):

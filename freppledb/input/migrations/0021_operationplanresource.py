@@ -20,12 +20,10 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
 
-  dependencies = [
-    ('input', '0020_buffer_owner'),
-  ]
+    dependencies = [("input", "0020_buffer_owner")]
 
-  operations = [
-    migrations.RunSQL(
-      'alter table operationplanresource rename column resource to resource_id'
-    ),
-  ]
+    operations = [
+        migrations.RunSQL(
+            "alter table operationplanresource rename column resource to resource_id"
+        )
+    ]

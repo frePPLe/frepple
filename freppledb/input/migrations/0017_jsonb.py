@@ -21,19 +21,21 @@ import freppledb.common.fields
 
 class Migration(migrations.Migration):
 
-  dependencies = [
-    ('input', '0016_squashed_41'),
-  ]
+    dependencies = [("input", "0016_squashed_41")]
 
-  operations = [
-    migrations.AlterField(
-      model_name='demand',
-      name='plan',
-      field=freppledb.common.fields.JSONBField(blank=True, editable=False, default='{}', null=True),
-    ),
-    migrations.AlterField(
-      model_name='operationplan',
-      name='plan',
-      field=freppledb.common.fields.JSONBField(blank=True, editable=False, default='{}', null=True),
-    ),
-  ]
+    operations = [
+        migrations.AlterField(
+            model_name="demand",
+            name="plan",
+            field=freppledb.common.fields.JSONBField(
+                blank=True, editable=False, default="{}", null=True
+            ),
+        ),
+        migrations.AlterField(
+            model_name="operationplan",
+            name="plan",
+            field=freppledb.common.fields.JSONBField(
+                blank=True, editable=False, default="{}", null=True
+            ),
+        ),
+    ]

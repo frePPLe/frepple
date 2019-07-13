@@ -20,36 +20,88 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-  dependencies = [
-    ('input', '0032_operationresource_quantityfixed'),
-  ]
+    dependencies = [("input", "0032_operationresource_quantityfixed")]
 
-  operations = [
-    migrations.RunSQL("alter table buffer alter column lastmodified set default now()"),
-    migrations.RunSQL("alter table calendar alter column lastmodified set default now()"),
-    migrations.RunSQL("alter table calendarbucket alter column lastmodified set default now()"),
-    migrations.RunSQL("alter table common_bucket alter column lastmodified set default now()"),
-    migrations.RunSQL("alter table common_bucketdetail alter column lastmodified set default now()"),
-    migrations.RunSQL("alter table common_comment alter column lastmodified set default now()"),
-    migrations.RunSQL("alter table common_parameter alter column lastmodified set default now()"),
-    migrations.RunSQL("alter table common_user alter column lastmodified set default now()"),
-    migrations.RunSQL("alter table customer alter column lastmodified set default now()"),
-    migrations.RunSQL("alter table demand alter column lastmodified set default now()"),
-    migrations.RunSQL("alter table item alter column lastmodified set default now()"),
-    migrations.RunSQL("alter table itemdistribution alter column lastmodified set default now()"),
-    migrations.RunSQL("alter table itemsupplier alter column lastmodified set default now()"),
-    migrations.RunSQL("alter table location alter column lastmodified set default now()"),
-    migrations.RunSQL("alter table operation alter column lastmodified set default now()"),
-    migrations.RunSQL("alter table operationmaterial alter column lastmodified set default now()"),
-    migrations.RunSQL("alter table operationplan alter column lastmodified set default now()"),
-    migrations.RunSQL("alter table operationplanmaterial alter column lastmodified set default now()"),
-    migrations.RunSQL("alter table operationplanresource alter column lastmodified set default now()"),
-    migrations.RunSQL("alter table operationresource alter column lastmodified set default now()"),
-    migrations.RunSQL("alter table resource alter column lastmodified set default now()"),
-    migrations.RunSQL("alter table resourceskill alter column lastmodified set default now()"),
-    migrations.RunSQL("alter table setupmatrix alter column lastmodified set default now()"),
-    migrations.RunSQL("alter table setuprule alter column lastmodified set default now()"),
-    migrations.RunSQL("alter table skill alter column lastmodified set default now()"),
-    migrations.RunSQL("alter table suboperation alter column lastmodified set default now()"),
-    migrations.RunSQL("alter table supplier alter column lastmodified set default now()"),
-  ]
+    operations = [
+        migrations.RunSQL(
+            "alter table buffer alter column lastmodified set default now()"
+        ),
+        migrations.RunSQL(
+            "alter table calendar alter column lastmodified set default now()"
+        ),
+        migrations.RunSQL(
+            "alter table calendarbucket alter column lastmodified set default now()"
+        ),
+        migrations.RunSQL(
+            "alter table common_bucket alter column lastmodified set default now()"
+        ),
+        migrations.RunSQL(
+            "alter table common_bucketdetail alter column lastmodified set default now()"
+        ),
+        migrations.RunSQL(
+            "alter table common_comment alter column lastmodified set default now()"
+        ),
+        migrations.RunSQL(
+            "alter table common_parameter alter column lastmodified set default now()"
+        ),
+        migrations.RunSQL(
+            "alter table common_user alter column lastmodified set default now()"
+        ),
+        migrations.RunSQL(
+            "alter table customer alter column lastmodified set default now()"
+        ),
+        migrations.RunSQL(
+            "alter table demand alter column lastmodified set default now()"
+        ),
+        migrations.RunSQL(
+            "alter table item alter column lastmodified set default now()"
+        ),
+        migrations.RunSQL(
+            "alter table itemdistribution alter column lastmodified set default now()"
+        ),
+        migrations.RunSQL(
+            "alter table itemsupplier alter column lastmodified set default now()"
+        ),
+        migrations.RunSQL(
+            "alter table location alter column lastmodified set default now()"
+        ),
+        migrations.RunSQL(
+            "alter table operation alter column lastmodified set default now()"
+        ),
+        migrations.RunSQL(
+            "alter table operationmaterial alter column lastmodified set default now()"
+        ),
+        migrations.RunSQL(
+            "alter table operationplan alter column lastmodified set default now()"
+        ),
+        migrations.RunSQL(
+            "alter table operationplanmaterial alter column lastmodified set default now()"
+        ),
+        migrations.RunSQL(
+            "alter table operationplanresource alter column lastmodified set default now()"
+        ),
+        migrations.RunSQL(
+            "alter table operationresource alter column lastmodified set default now()"
+        ),
+        migrations.RunSQL(
+            "alter table resource alter column lastmodified set default now()"
+        ),
+        migrations.RunSQL(
+            "alter table resourceskill alter column lastmodified set default now()"
+        ),
+        migrations.RunSQL(
+            "alter table setupmatrix alter column lastmodified set default now()"
+        ),
+        migrations.RunSQL(
+            "alter table setuprule alter column lastmodified set default now()"
+        ),
+        migrations.RunSQL(
+            "alter table skill alter column lastmodified set default now()"
+        ),
+        migrations.RunSQL(
+            "alter table suboperation alter column lastmodified set default now()"
+        ),
+        migrations.RunSQL(
+            "alter table supplier alter column lastmodified set default now()"
+        ),
+    ]

@@ -20,13 +20,10 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
 
-  dependencies = [
-    ('common', '0011_username'),
-  ]
+    dependencies = [("common", "0011_username")]
 
-  operations = [
-
-    migrations.RunSQL(
-      "insert into common_parameter (name, value, description, lastmodified) values ('plan.administrativeLeadtime','0','Specifies the number of days (value can be decimal) sales orders should be planned ahead of their due date to take into account for an administrative lead time. Default: 0',to_date('05/08/2017','DD/MM/YYYY')) ON CONFLICT (name) DO NOTHING",
-      ),
-  ]
+    operations = [
+        migrations.RunSQL(
+            "insert into common_parameter (name, value, description, lastmodified) values ('plan.administrativeLeadtime','0','Specifies the number of days (value can be decimal) sales orders should be planned ahead of their due date to take into account for an administrative lead time. Default: 0',to_date('05/08/2017','DD/MM/YYYY')) ON CONFLICT (name) DO NOTHING"
+        )
+    ]

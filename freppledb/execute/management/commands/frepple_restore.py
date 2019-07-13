@@ -22,12 +22,14 @@ from .restore import Command as NewCommand
 
 class Command(NewCommand):
 
-  help = '''
+    help = """
   The frepple_restore command is deprecated. It is renamed to restore.
-  '''
+  """
 
-  def handle(self, **options):
-    warnings.warn("The frepple_restore command is renamed to restore", DeprecationWarning)
-    super().handle(**options)
+    def handle(self, **options):
+        warnings.warn(
+            "The frepple_restore command is renamed to restore", DeprecationWarning
+        )
+        super().handle(**options)
 
-  getHTML = None
+    getHTML = None

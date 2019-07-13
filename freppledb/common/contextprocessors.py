@@ -19,12 +19,13 @@ import freppledb
 
 
 def debug(request):
-  '''
+    """
   Context processor to have the debug variable always available in our templates.
-  '''
-  from django.conf import settings
-  return {
-    'debug': settings.DEBUG,
-    'debug_js': settings.DEBUG_JS,
-    'VERSION': freppledb.VERSION
+  """
+    from django.conf import settings
+
+    return {
+        "debug": settings.DEBUG,
+        "debug_js": settings.DEBUG_JS,
+        "VERSION": freppledb.VERSION,
     }

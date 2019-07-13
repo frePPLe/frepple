@@ -20,19 +20,31 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('input', '0033_lastmodified_default'),
-    ]
+    dependencies = [("input", "0033_lastmodified_default")]
 
     operations = [
         migrations.AddField(
-            model_name='itemdistribution',
-            name='sizemaximum',
-            field=models.DecimalField(blank=True, decimal_places=8, help_text='A maximum shipping quantity', max_digits=20, null=True, verbose_name='size maximum'),
+            model_name="itemdistribution",
+            name="sizemaximum",
+            field=models.DecimalField(
+                blank=True,
+                decimal_places=8,
+                help_text="A maximum shipping quantity",
+                max_digits=20,
+                null=True,
+                verbose_name="size maximum",
+            ),
         ),
         migrations.AddField(
-            model_name='itemsupplier',
-            name='sizemaximum',
-            field=models.DecimalField(blank=True, decimal_places=8, help_text='A maximum purchasing quantity', max_digits=20, null=True, verbose_name='size maximum'),
+            model_name="itemsupplier",
+            name="sizemaximum",
+            field=models.DecimalField(
+                blank=True,
+                decimal_places=8,
+                help_text="A maximum purchasing quantity",
+                max_digits=20,
+                null=True,
+                verbose_name="size maximum",
+            ),
         ),
     ]

@@ -22,12 +22,15 @@ from .exporttofolder import Command as NewCommand
 
 class Command(NewCommand):
 
-  help = '''
+    help = """
   The frepple_exporttofolder command is deprecated. It is renamed to exporttofolder.
-  '''
+  """
 
-  def handle(self, **options):
-    warnings.warn("The frepple_exporttofolder command is renamed to exporttofolder", DeprecationWarning)
-    super().handle(**options)
+    def handle(self, **options):
+        warnings.warn(
+            "The frepple_exporttofolder command is renamed to exporttofolder",
+            DeprecationWarning,
+        )
+        super().handle(**options)
 
-  getHTML = None
+    getHTML = None

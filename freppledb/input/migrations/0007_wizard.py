@@ -20,14 +20,11 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
 
-  dependencies = [
-    ('input', '0006_new_data_model_2'),
-    ('common', '0003_wizard'),
-  ]
+    dependencies = [("input", "0006_new_data_model_2"), ("common", "0003_wizard")]
 
-  operations = [
-    migrations.RunSQL(
-      '''
+    operations = [
+        migrations.RunSQL(
+            """
       insert into common_wizard
       (name, sequenceorder, url_doc, url_internaldoc, status, owner_id)
       values
@@ -53,14 +50,14 @@ class Migration(migrations.Migration):
       ('Resources', 810, '/user-guide/modeling-wizard/manufacturing-capacity/resources.html', '/data/input/resource/', false, 'Manufacturing Capacity'),
       ('Operation Resources', 820, '/user-guide/modeling-wizard/manufacturing-capacity/operation-resources.html', '/data/input/operationresource/', false, 'Manufacturing Capacity'),
       ('Plan generation', 900, '/user-guide/modeling-wizard/generate-plan.html', '/execute/', false, 'Plan generation')
-      ''',
-      '''
+      """,
+            """
       delete from common_wizard where name in (
          'Introduction', 'Master data', 'Locations', 'Items', 'Customers', 'Sales orders', 'Purchasing', 'Suppliers',
          'Item suppliers', 'Purchase orders', 'Distribution', 'Suppliers', 'Distribution orders', 'Manufacturing BOM',
          'Operations', 'Operation materials', 'Manufacturing orders', 'Manufacturing Capacity', 'Resources',
          'Operation Resources', 'Plan generation'
          )
-      '''
-    ),
-  ]
+      """,
+        )
+    ]

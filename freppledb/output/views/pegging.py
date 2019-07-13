@@ -27,60 +27,83 @@ from freppledb.common.models import Parameter
 
 
 class ReportByDemand(GridReport):
-  '''
+    """
   A list report to show peggings.
-  '''
-  template = 'output/pegging.html'
-  title = _("Demand plan")
-  filterable = False
-  frozenColumns = 0
-  editable = False
-  default_sort = None
-  hasTimeBuckets = True
-  multiselect = False
-  heightmargin = 87
-  help_url = 'user-guide/user-interface/plan-analysis/demand-gantt-report.html'
-  rows = (
-    GridFieldText('depth', title=_('depth'), editable=False, sortable=False),
-    GridFieldText('operation', title=_('operation'), editable=False, sortable=False, key=True, formatter='detail', extra='"role":"input/operation"'),
-    GridFieldText('type', title=_('type'), editable=False, sortable=False, width=100),
-    #GridFieldText('buffer', title=_('buffer'), formatter='buffer', editable=False, sortable=False),
-    #GridFieldText('item', title=_('item'), formatter='item', editable=False, sortable=False),
-    GridFieldText('resource', title=_('resource'), editable=False, sortable=False, extra='formatter:reslistfmt'),
-    GridFieldNumber('quantity', title=_('quantity'), editable=False, sortable=False),
-    GridFieldText('operationplans', width=1000, extra='formatter:ganttcell', editable=False, sortable=False),
-    GridFieldText('parent', editable=False, sortable=False, hidden=True),
-    GridFieldText('leaf', editable=False, sortable=False, hidden=True),
-    GridFieldText('expanded', editable=False, sortable=False, hidden=True),
-    GridFieldText('current', editable=False, sortable=False, hidden=True),
-    GridFieldText('due', editable=False, sortable=False, hidden=True),
-    GridFieldText('showdrilldown', editable=False, sortable=False, hidden=True),
+  """
+
+    template = "output/pegging.html"
+    title = _("Demand plan")
+    filterable = False
+    frozenColumns = 0
+    editable = False
+    default_sort = None
+    hasTimeBuckets = True
+    multiselect = False
+    heightmargin = 87
+    help_url = "user-guide/user-interface/plan-analysis/demand-gantt-report.html"
+    rows = (
+        GridFieldText("depth", title=_("depth"), editable=False, sortable=False),
+        GridFieldText(
+            "operation",
+            title=_("operation"),
+            editable=False,
+            sortable=False,
+            key=True,
+            formatter="detail",
+            extra='"role":"input/operation"',
+        ),
+        GridFieldText(
+            "type", title=_("type"), editable=False, sortable=False, width=100
+        ),
+        # GridFieldText('buffer', title=_('buffer'), formatter='buffer', editable=False, sortable=False),
+        # GridFieldText('item', title=_('item'), formatter='item', editable=False, sortable=False),
+        GridFieldText(
+            "resource",
+            title=_("resource"),
+            editable=False,
+            sortable=False,
+            extra="formatter:reslistfmt",
+        ),
+        GridFieldNumber(
+            "quantity", title=_("quantity"), editable=False, sortable=False
+        ),
+        GridFieldText(
+            "operationplans",
+            width=1000,
+            extra="formatter:ganttcell",
+            editable=False,
+            sortable=False,
+        ),
+        GridFieldText("parent", editable=False, sortable=False, hidden=True),
+        GridFieldText("leaf", editable=False, sortable=False, hidden=True),
+        GridFieldText("expanded", editable=False, sortable=False, hidden=True),
+        GridFieldText("current", editable=False, sortable=False, hidden=True),
+        GridFieldText("due", editable=False, sortable=False, hidden=True),
+        GridFieldText("showdrilldown", editable=False, sortable=False, hidden=True),
     )
 
+    @classmethod
+    def basequeryset(reportclass, request, *args, **kwargs):
+        return Demand.objects.filter(name__exact=args[0]).values("name")
 
-  @ classmethod
-  def basequeryset(reportclass, request, *args, **kwargs):
-    return Demand.objects.filter(name__exact=args[0]).values('name')
+    @classmethod
+    def extra_context(reportclass, request, *args, **kwargs):
+        if args and args[0]:
+            request.session["lasttab"] = "plan"
+            return {
+                "active_tab": "plan",
+                "title": force_text(Demand._meta.verbose_name) + " " + args[0],
+                "post_title": _("plan"),
+            }
+        else:
+            return {}
 
-
-  @classmethod
-  def extra_context(reportclass, request, *args, **kwargs):
-    if args and args[0]:
-      request.session['lasttab'] = 'plan'
-      return {
-        'active_tab': 'plan',
-        'title': force_text(Demand._meta.verbose_name) + " " + args[0],
-        'post_title': _('plan')
-        }
-    else:
-      return {}
-
-
-  @classmethod
-  def getBuckets(reportclass, request, *args, **kwargs):
-    # Get the earliest and latest operationplan, and the demand due date
-    cursor = connections[request.database].cursor()
-    cursor.execute('''
+    @classmethod
+    def getBuckets(reportclass, request, *args, **kwargs):
+        # Get the earliest and latest operationplan, and the demand due date
+        cursor = connections[request.database].cursor()
+        cursor.execute(
+            """
       with dmd as (
         select
           due,
@@ -93,52 +116,61 @@ class ReportByDemand(GridReport):
       inner join operationplan
       on dmd.opplan = operationplan.reference
       and type <> 'STCK'
-      ''', (args[0]))
-    x = cursor.fetchone()
-    (due, start, end) = x
-    if not due:
-      # This demand is unplanned
-      request.report_startdate = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
-      request.report_enddate = request.report_startdate + timedelta(days=1)
-      request.report_bucket = None
-      request.report_bucketlist = []
-      return
-    if not start:
-      start = due
-    if not end:
-      end = due
-
-    # Adjust the horizon
-    if due > end:
-      end = due
-    if due < start:
-      start = due
-    end += timedelta(days=1)
-    start -= timedelta(days=1)
-    request.report_startdate = start.replace(hour=0, minute=0, second=0, microsecond=0)
-    request.report_enddate = end.replace(hour=0, minute=0, second=0, microsecond=0)
-    request.report_bucket = None
-    request.report_bucketlist = []
-
-
-  @classmethod
-  def query(reportclass, request, basequery):
-    # Build the base query
-    basesql, baseparams = basequery.query.get_compiler(basequery.db).as_sql(with_col_aliases=False)
-
-    # Get current date and horizon
-    horizon = (request.report_enddate - request.report_startdate).total_seconds() / 10000
-    try:
-      current = datetime.strptime(
-        Parameter.objects.using(request.database).get(name="currentdate").value,
-        "%Y-%m-%d %H:%M:%S"
+      """,
+            (args[0]),
         )
-    except:
-      current = datetime.now()
-      current = current.replace(microsecond=0)
+        x = cursor.fetchone()
+        (due, start, end) = x
+        if not due:
+            # This demand is unplanned
+            request.report_startdate = datetime.now().replace(
+                hour=0, minute=0, second=0, microsecond=0
+            )
+            request.report_enddate = request.report_startdate + timedelta(days=1)
+            request.report_bucket = None
+            request.report_bucketlist = []
+            return
+        if not start:
+            start = due
+        if not end:
+            end = due
 
-    # Collect demand due date, all operationplans and loaded resources
-    query = '''
+        # Adjust the horizon
+        if due > end:
+            end = due
+        if due < start:
+            start = due
+        end += timedelta(days=1)
+        start -= timedelta(days=1)
+        request.report_startdate = start.replace(
+            hour=0, minute=0, second=0, microsecond=0
+        )
+        request.report_enddate = end.replace(hour=0, minute=0, second=0, microsecond=0)
+        request.report_bucket = None
+        request.report_bucketlist = []
+
+    @classmethod
+    def query(reportclass, request, basequery):
+        # Build the base query
+        basesql, baseparams = basequery.query.get_compiler(basequery.db).as_sql(
+            with_col_aliases=False
+        )
+
+        # Get current date and horizon
+        horizon = (
+            request.report_enddate - request.report_startdate
+        ).total_seconds() / 10000
+        try:
+            current = datetime.strptime(
+                Parameter.objects.using(request.database).get(name="currentdate").value,
+                "%Y-%m-%d %H:%M:%S",
+            )
+        except:
+            current = datetime.now()
+            current = current.replace(microsecond=0)
+
+        # Collect demand due date, all operationplans and loaded resources
+        query = """
       with pegging as (
         select
           min(rownum) as rownum, min(due) as due, opplan, min(lvl) as lvl, sum(quantity) as quantity
@@ -176,60 +208,84 @@ class ReportByDemand(GridReport):
       left outer join operationplanresource
         on pegging.opplan = operationplanresource.operationplan_id
       order by ops.rownum, pegging.rownum
-      '''
+      """
 
-    # Build the Python result
-    with connections[request.database].chunked_cursor() as cursor_chunked:
-      cursor_chunked.execute(query, baseparams)
-      prevrec = None
-      parents = {}
-      for rec in cursor_chunked:
-        if not prevrec or rec[1] != prevrec['operation']:
-          # Return prev operation
-          if prevrec:
-            if prevrec['depth'] < rec[2]:
-              prevrec['leaf'] = 'false'
-            yield prevrec
-          # New operation
-          prevrec = {
-            'current': str(current),
-            'operation': rec[1],
-            'type': rec[10],
-            'showdrilldown': rec[11],
-            'depth': rec[2],
-            'quantity': str(rec[3]),
-            'due': round((rec[0] - request.report_startdate).total_seconds() / horizon, 3),
-            'current': round((current - request.report_startdate).total_seconds() / horizon, 3),
-            'parent': parents.get(rec[2] - 1, None) if rec[2] and rec[2] >= 1 else None,
-            'leaf': 'true',
-            'expanded': 'true',
-            'resource': rec[9] and [rec[9], ] or [],
-            'operationplans': [{
-               'operation': rec[1],
-               'quantity': str(rec[7]),
-               'x': round((rec[5] - request.report_startdate).total_seconds() / horizon, 3),
-               'w': round((rec[6] - rec[5]).total_seconds() / horizon, 3),
-               'startdate': str(rec[5]),
-               'enddate': str(rec[6]),
-               'status': rec[8],
-               'id': rec[4]
-               }]
-            }
-          parents[rec[2]] = rec[1]
-        elif rec[4] != prevrec['operationplans'][-1]['id']:
-          # Extra operationplan for the operation
-          prevrec['operationplans'].append({
-            'operation': rec[1],
-            'quantity': str(rec[7]),
-            'x': round((rec[5] - request.report_startdate).total_seconds() / horizon, 3),
-            'w': round((rec[6] - rec[5]).total_seconds() / horizon, 3),
-            'startdate': str(rec[5]),
-            'enddate': str(rec[6]),
-            'locked': rec[8],
-            'id': rec[4]
-            })
-        elif rec[9] and not rec[9] in prevrec['resource']:
-          # Extra resource loaded by the operationplan
-          prevrec['resource'].append(rec[9])
-      if prevrec:
-        yield prevrec
+        # Build the Python result
+        with connections[request.database].chunked_cursor() as cursor_chunked:
+            cursor_chunked.execute(query, baseparams)
+            prevrec = None
+            parents = {}
+            for rec in cursor_chunked:
+                if not prevrec or rec[1] != prevrec["operation"]:
+                    # Return prev operation
+                    if prevrec:
+                        if prevrec["depth"] < rec[2]:
+                            prevrec["leaf"] = "false"
+                        yield prevrec
+                    # New operation
+                    prevrec = {
+                        "current": str(current),
+                        "operation": rec[1],
+                        "type": rec[10],
+                        "showdrilldown": rec[11],
+                        "depth": rec[2],
+                        "quantity": str(rec[3]),
+                        "due": round(
+                            (rec[0] - request.report_startdate).total_seconds()
+                            / horizon,
+                            3,
+                        ),
+                        "current": round(
+                            (current - request.report_startdate).total_seconds()
+                            / horizon,
+                            3,
+                        ),
+                        "parent": parents.get(rec[2] - 1, None)
+                        if rec[2] and rec[2] >= 1
+                        else None,
+                        "leaf": "true",
+                        "expanded": "true",
+                        "resource": rec[9] and [rec[9]] or [],
+                        "operationplans": [
+                            {
+                                "operation": rec[1],
+                                "quantity": str(rec[7]),
+                                "x": round(
+                                    (rec[5] - request.report_startdate).total_seconds()
+                                    / horizon,
+                                    3,
+                                ),
+                                "w": round(
+                                    (rec[6] - rec[5]).total_seconds() / horizon, 3
+                                ),
+                                "startdate": str(rec[5]),
+                                "enddate": str(rec[6]),
+                                "status": rec[8],
+                                "id": rec[4],
+                            }
+                        ],
+                    }
+                    parents[rec[2]] = rec[1]
+                elif rec[4] != prevrec["operationplans"][-1]["id"]:
+                    # Extra operationplan for the operation
+                    prevrec["operationplans"].append(
+                        {
+                            "operation": rec[1],
+                            "quantity": str(rec[7]),
+                            "x": round(
+                                (rec[5] - request.report_startdate).total_seconds()
+                                / horizon,
+                                3,
+                            ),
+                            "w": round((rec[6] - rec[5]).total_seconds() / horizon, 3),
+                            "startdate": str(rec[5]),
+                            "enddate": str(rec[6]),
+                            "locked": rec[8],
+                            "id": rec[4],
+                        }
+                    )
+                elif rec[9] and not rec[9] in prevrec["resource"]:
+                    # Extra resource loaded by the operationplan
+                    prevrec["resource"].append(rec[9])
+            if prevrec:
+                yield prevrec

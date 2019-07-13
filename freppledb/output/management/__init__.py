@@ -21,9 +21,9 @@ from freppledb.common.management import removeModelPermissions
 
 
 def removePermissions(using=DEFAULT_DB_ALIAS, **kwargs):
-  removeModelPermissions("output", "problem", using)
-  removeModelPermissions("output", "constraint", using)
-  removeModelPermissions("output", "resourcesummary", using)
+    removeModelPermissions("output", "problem", using)
+    removeModelPermissions("output", "constraint", using)
+    removeModelPermissions("output", "resourcesummary", using)
 
 
 signals.post_migrate.connect(removePermissions)

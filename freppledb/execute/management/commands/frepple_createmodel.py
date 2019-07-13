@@ -22,12 +22,15 @@ from .createmodel import Command as NewCommand
 
 class Command(NewCommand):
 
-  help = '''
+    help = """
   The frepple_createmodel command is deprecated. It is renamed to createmodel.
-  '''
+  """
 
-  def handle(self, **options):
-    warnings.warn("The frepple_createmodel command is renamed to createmodel", DeprecationWarning)
-    super().handle(**options)
+    def handle(self, **options):
+        warnings.warn(
+            "The frepple_createmodel command is renamed to createmodel",
+            DeprecationWarning,
+        )
+        super().handle(**options)
 
-  getHTML = None
+    getHTML = None

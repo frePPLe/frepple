@@ -20,29 +20,59 @@ from django.db import models, migrations
 
 class Migration(migrations.Migration):
 
-  dependencies = [
-    ('input', '0001_initial'),
-  ]
+    dependencies = [("input", "0001_initial")]
 
-  operations = [
-    migrations.AddField(
-      model_name='itemdistribution',
-      name='resource',
-      field=models.ForeignKey(verbose_name='resource', help_text='Resource to model the distribution capacity', null=True, related_name='itemdistributions', to='input.Resource', blank=True, on_delete=models.SET_NULL),
-    ),
-    migrations.AddField(
-      model_name='itemdistribution',
-      name='resource_qty',
-      field=models.DecimalField(verbose_name='resource quantity', help_text='Resource capacity consumed per distributed unit', null=True, decimal_places=4, blank=True, max_digits=15, default='1.0'),
-    ),
-    migrations.AddField(
-      model_name='itemsupplier',
-      name='resource',
-      field=models.ForeignKey(verbose_name='resource', help_text='Resource to model the supplier capacity', null=True, related_name='itemsuppliers', to='input.Resource', blank=True, on_delete=models.SET_NULL),
-    ),
-    migrations.AddField(
-      model_name='itemsupplier',
-      name='resource_qty',
-      field=models.DecimalField(verbose_name='resource quantity', help_text='Resource capacity consumed per purchased unit', null=True, decimal_places=4, blank=True, max_digits=15, default='1.0'),
-    ),
-  ]
+    operations = [
+        migrations.AddField(
+            model_name="itemdistribution",
+            name="resource",
+            field=models.ForeignKey(
+                verbose_name="resource",
+                help_text="Resource to model the distribution capacity",
+                null=True,
+                related_name="itemdistributions",
+                to="input.Resource",
+                blank=True,
+                on_delete=models.SET_NULL,
+            ),
+        ),
+        migrations.AddField(
+            model_name="itemdistribution",
+            name="resource_qty",
+            field=models.DecimalField(
+                verbose_name="resource quantity",
+                help_text="Resource capacity consumed per distributed unit",
+                null=True,
+                decimal_places=4,
+                blank=True,
+                max_digits=15,
+                default="1.0",
+            ),
+        ),
+        migrations.AddField(
+            model_name="itemsupplier",
+            name="resource",
+            field=models.ForeignKey(
+                verbose_name="resource",
+                help_text="Resource to model the supplier capacity",
+                null=True,
+                related_name="itemsuppliers",
+                to="input.Resource",
+                blank=True,
+                on_delete=models.SET_NULL,
+            ),
+        ),
+        migrations.AddField(
+            model_name="itemsupplier",
+            name="resource_qty",
+            field=models.DecimalField(
+                verbose_name="resource quantity",
+                help_text="Resource capacity consumed per purchased unit",
+                null=True,
+                decimal_places=4,
+                blank=True,
+                max_digits=15,
+                default="1.0",
+            ),
+        ),
+    ]

@@ -20,19 +20,28 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-  dependencies = [
-    ('input', '0010_unique_together'),
-  ]
+    dependencies = [("input", "0010_unique_together")]
 
-  operations = [
-    migrations.AlterField(
-      model_name='demand',
-      name='priority',
-      field=models.IntegerField(help_text='Priority of the demand (lower numbers indicate more important demands)', verbose_name='priority', default=10),
-    ),
-    migrations.AlterField(
-      model_name='buffer',
-      name='type',
-      field=models.CharField(choices=[('default', 'default'), ('infinite', 'infinite')], null=True, default='default', max_length=20, blank=True, verbose_name='type'),
-    ),
-  ]
+    operations = [
+        migrations.AlterField(
+            model_name="demand",
+            name="priority",
+            field=models.IntegerField(
+                help_text="Priority of the demand (lower numbers indicate more important demands)",
+                verbose_name="priority",
+                default=10,
+            ),
+        ),
+        migrations.AlterField(
+            model_name="buffer",
+            name="type",
+            field=models.CharField(
+                choices=[("default", "default"), ("infinite", "infinite")],
+                null=True,
+                default="default",
+                max_length=20,
+                blank=True,
+                verbose_name="type",
+            ),
+        ),
+    ]

@@ -22,12 +22,14 @@ from .empty import Command as NewCommand
 
 class Command(NewCommand):
 
-  help = '''
+    help = """
   The frepple_flush command is deprecated. It is renamed to empty.
-  '''
+  """
 
-  def handle(self, **options):
-    warnings.warn("The frepple_flush command is renamed to empty", DeprecationWarning)
-    super().handle(**options)
+    def handle(self, **options):
+        warnings.warn(
+            "The frepple_flush command is renamed to empty", DeprecationWarning
+        )
+        super().handle(**options)
 
-  getHTML = None
+    getHTML = None

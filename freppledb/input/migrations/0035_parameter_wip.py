@@ -20,36 +20,33 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
 
-  dependencies = [
-    ('input', '0034_sizemaximum'),
-  ]
+    dependencies = [("input", "0034_sizemaximum")]
 
-  operations = [
-
-    migrations.RunSQL(
-      '''
+    operations = [
+        migrations.RunSQL(
+            """
       insert into common_parameter (name, value, lastmodified, description)
       values (
         'WIP.consume_material', 'true', now(),
         'Determines whether confirmed manufacturing orders consume material or not. Default is true.'
         )
       on conflict (name) do nothing
-      ''',
-      '''
+      """,
+            """
       delete from parameter where name = 'WIP.consume_material'
-      '''
-      ),
-    migrations.RunSQL(
-      '''
+      """,
+        ),
+        migrations.RunSQL(
+            """
       insert into common_parameter (name, value, lastmodified, description)
       values (
         'WIP.consume_capacity', 'true', now(),
         'Determines whether confirmed manufacturing orders, purchase orders and distribution orders consume capacity or not. Default is true.'
         )
       on conflict (name) do nothing
-      ''',
-      '''
+      """,
+            """
       delete from parameter where name = 'WIP.consume_capacity'
-      '''
-      )
-  ]
+      """,
+        ),
+    ]

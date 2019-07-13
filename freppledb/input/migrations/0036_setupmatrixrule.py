@@ -20,14 +20,14 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
 
-  dependencies = [
-    ('input', '0035_parameter_wip'),
-  ]
+    dependencies = [("input", "0035_parameter_wip")]
 
-  operations = [
-    migrations.RunSQL('''
+    operations = [
+        migrations.RunSQL(
+            """
       update setuprule
       set fromsetup = replace(replace(fromsetup, '*', '.*'), '?', '.'),
       tosetup = replace(replace(tosetup, '*', '.*'), '?', '.')
-      ''')
-  ]
+      """
+        )
+    ]

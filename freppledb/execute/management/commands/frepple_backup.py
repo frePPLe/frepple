@@ -22,12 +22,14 @@ from .backup import Command as NewCommand
 
 class Command(NewCommand):
 
-  help = '''
+    help = """
   The frepple_backup command is deprecated. It is renamed to backup.
-  '''
+  """
 
-  def handle(self, **options):
-    warnings.warn("The frepple_backup command is renamed to backup", DeprecationWarning)
-    super().handle(**options)
+    def handle(self, **options):
+        warnings.warn(
+            "The frepple_backup command is renamed to backup", DeprecationWarning
+        )
+        super().handle(**options)
 
-  getHTML = None
+    getHTML = None

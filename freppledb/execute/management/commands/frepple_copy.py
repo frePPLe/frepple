@@ -22,12 +22,14 @@ from .scenario_copy import Command as NewCommand
 
 class Command(NewCommand):
 
-  help = '''
+    help = """
   The frepple_copy command is deprecated. It is renamed to scenario_copy.
-  '''
+  """
 
-  def handle(self, **options):
-    warnings.warn("The frepple_copy command is renamed to scenario_copy", DeprecationWarning)
-    super().handle(**options)
+    def handle(self, **options):
+        warnings.warn(
+            "The frepple_copy command is renamed to scenario_copy", DeprecationWarning
+        )
+        super().handle(**options)
 
-  getHTML = None
+    getHTML = None

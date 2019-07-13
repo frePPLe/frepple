@@ -24,123 +24,209 @@ from django.utils.translation import ugettext_lazy as _
 
 from freppledb.boot import getAttributeFields
 from freppledb.input.models import Buffer, Item, Location, OperationPlanMaterial
-from freppledb.common.report import GridPivot, GridFieldText, GridFieldNumber, GridFieldLastModified
+from freppledb.common.report import (
+    GridPivot,
+    GridFieldText,
+    GridFieldNumber,
+    GridFieldLastModified,
+)
 
 
 class OverviewReport(GridPivot):
-  '''
+    """
   A report showing the inventory profile of buffers.
-  '''
-  template = 'output/buffer.html'
-  title = _('Inventory report')
+  """
 
-  @classmethod
-  def basequeryset(reportclass, request, *args, **kwargs):
-    if len(args) and args[0]:
-      return Buffer.objects.all()
-    else:
-      return OperationPlanMaterial.objects.values('item', 'location') \
-        .order_by('item_id', 'location_id') \
-        .distinct() \
-        .annotate(
-          buffer=RawSQL("item_id || ' @ ' || location_id", ())
-          )
+    template = "output/buffer.html"
+    title = _("Inventory report")
 
-  model = OperationPlanMaterial
-  default_sort = (1, 'asc', 2, 'asc')
-  permissions = (('view_inventory_report', 'Can view inventory report'),)
-  help_url = 'user-guide/user-interface/plan-analysis/inventory-report.html'
+    @classmethod
+    def basequeryset(reportclass, request, *args, **kwargs):
+        if len(args) and args[0]:
+            return Buffer.objects.all()
+        else:
+            return (
+                OperationPlanMaterial.objects.values("item", "location")
+                .order_by("item_id", "location_id")
+                .distinct()
+                .annotate(buffer=RawSQL("item_id || ' @ ' || location_id", ()))
+            )
 
-  rows = (
-    GridFieldText('buffer', title=_('buffer'), editable=False, key=True, initially_hidden=True),
-    GridFieldText('item', title=_('item'), editable=False, field_name='item__name', formatter='detail', extra='"role":"input/item"'),
-    GridFieldText('location', title=_('location'), editable=False, field_name='location__name', formatter='detail', extra='"role":"input/location"'),
-    # Optional fields referencing the item
-    GridFieldText('item__description', title=format_lazy('{} - {}', _('item'), _('description')),
-      initially_hidden=True, editable=False),
-    GridFieldText('item__category', title=format_lazy('{} - {}', _('item'), _('category')),
-      initially_hidden=True, editable=False),
-    GridFieldText('item__subcategory', title=format_lazy('{} - {}', _('item'), _('subcategory')),
-      initially_hidden=True, editable=False),
-    GridFieldNumber('item__cost', title=format_lazy('{} - {}', _('item'), _('cost')),
-      initially_hidden=True, editable=False),
-    GridFieldText('item__owner', title=format_lazy('{} - {}', _('item'), _('owner')),
-      field_name='item__owner__name', initially_hidden=True, editable=False),
-    GridFieldText('item__source', title=format_lazy('{} - {}', _('item'), _('source')),
-      initially_hidden=True, editable=False),
-    GridFieldLastModified('item__lastmodified', title=format_lazy('{} - {}', _('item'), _('last modified')),
-      initially_hidden=True, editable=False),
-    # Optional fields referencing the location
-    GridFieldText('location__description', title=format_lazy('{} - {}', _('location'), _('description')),
-      initially_hidden=True, editable=False),
-    GridFieldText('location__category', title=format_lazy('{} - {}', _('location'), _('category')),
-      initially_hidden=True, editable=False),
-    GridFieldText('location__subcategory', title=format_lazy('{} - {}', _('location'), _('subcategory')),
-      initially_hidden=True, editable=False),
-    GridFieldText('location__available', title=format_lazy('{} - {}', _('location'), _('available')),
-      initially_hidden=True, field_name='origin__available__name', formatter='detail',
-      extra='"role":"input/calendar"', editable=False),
-    GridFieldText('location__owner', title=format_lazy('{} - {}', _('location'), _('owner')),
-      initially_hidden=True, field_name='origin__owner__name', formatter='detail',
-      extra='"role":"input/location"', editable=False),
-    GridFieldText('location__source', title=format_lazy('{} - {}', _('location'), _('source')),
-      initially_hidden=True, editable=False),
-    GridFieldLastModified('location__lastmodified', title=format_lazy('{} - {}', _('location'), _('last modified')),
-      initially_hidden=True, editable=False),
+    model = OperationPlanMaterial
+    default_sort = (1, "asc", 2, "asc")
+    permissions = (("view_inventory_report", "Can view inventory report"),)
+    help_url = "user-guide/user-interface/plan-analysis/inventory-report.html"
+
+    rows = (
+        GridFieldText(
+            "buffer", title=_("buffer"), editable=False, key=True, initially_hidden=True
+        ),
+        GridFieldText(
+            "item",
+            title=_("item"),
+            editable=False,
+            field_name="item__name",
+            formatter="detail",
+            extra='"role":"input/item"',
+        ),
+        GridFieldText(
+            "location",
+            title=_("location"),
+            editable=False,
+            field_name="location__name",
+            formatter="detail",
+            extra='"role":"input/location"',
+        ),
+        # Optional fields referencing the item
+        GridFieldText(
+            "item__description",
+            title=format_lazy("{} - {}", _("item"), _("description")),
+            initially_hidden=True,
+            editable=False,
+        ),
+        GridFieldText(
+            "item__category",
+            title=format_lazy("{} - {}", _("item"), _("category")),
+            initially_hidden=True,
+            editable=False,
+        ),
+        GridFieldText(
+            "item__subcategory",
+            title=format_lazy("{} - {}", _("item"), _("subcategory")),
+            initially_hidden=True,
+            editable=False,
+        ),
+        GridFieldNumber(
+            "item__cost",
+            title=format_lazy("{} - {}", _("item"), _("cost")),
+            initially_hidden=True,
+            editable=False,
+        ),
+        GridFieldText(
+            "item__owner",
+            title=format_lazy("{} - {}", _("item"), _("owner")),
+            field_name="item__owner__name",
+            initially_hidden=True,
+            editable=False,
+        ),
+        GridFieldText(
+            "item__source",
+            title=format_lazy("{} - {}", _("item"), _("source")),
+            initially_hidden=True,
+            editable=False,
+        ),
+        GridFieldLastModified(
+            "item__lastmodified",
+            title=format_lazy("{} - {}", _("item"), _("last modified")),
+            initially_hidden=True,
+            editable=False,
+        ),
+        # Optional fields referencing the location
+        GridFieldText(
+            "location__description",
+            title=format_lazy("{} - {}", _("location"), _("description")),
+            initially_hidden=True,
+            editable=False,
+        ),
+        GridFieldText(
+            "location__category",
+            title=format_lazy("{} - {}", _("location"), _("category")),
+            initially_hidden=True,
+            editable=False,
+        ),
+        GridFieldText(
+            "location__subcategory",
+            title=format_lazy("{} - {}", _("location"), _("subcategory")),
+            initially_hidden=True,
+            editable=False,
+        ),
+        GridFieldText(
+            "location__available",
+            title=format_lazy("{} - {}", _("location"), _("available")),
+            initially_hidden=True,
+            field_name="origin__available__name",
+            formatter="detail",
+            extra='"role":"input/calendar"',
+            editable=False,
+        ),
+        GridFieldText(
+            "location__owner",
+            title=format_lazy("{} - {}", _("location"), _("owner")),
+            initially_hidden=True,
+            field_name="origin__owner__name",
+            formatter="detail",
+            extra='"role":"input/location"',
+            editable=False,
+        ),
+        GridFieldText(
+            "location__source",
+            title=format_lazy("{} - {}", _("location"), _("source")),
+            initially_hidden=True,
+            editable=False,
+        ),
+        GridFieldLastModified(
+            "location__lastmodified",
+            title=format_lazy("{} - {}", _("location"), _("last modified")),
+            initially_hidden=True,
+            editable=False,
+        ),
     )
 
-  crosses = (
-    ('startoh', {'title': _('start inventory')}),
-    ('startohdoc', {'title': _('start inventory days of cover')}),
-    ('safetystock', {'title': _('safety stock')}),
-    ('consumed', {'title': _('total consumed')}),
-    ('consumedMO', {'title': _('consumed by MO')}),
-    ('consumedDO', {'title': _('consumed by DO')}),
-    ('consumedSO', {'title': _('consumed by SO')}),
-    ('produced', {'title': _('total produced')}),
-    ('producedMO', {'title': _('produced by MO')}),
-    ('producedDO', {'title': _('produced by DO')}),
-    ('producedPO', {'title': _('produced by PO')}),
-    ('endoh', {'title': _('end inventory')}),
-    ('total_in_progress', {'title': _('total in progress')}),
-    ('work_in_progress_mo', {'title': _('work in progress MO')}),
-    ('on_order_po', {'title': _('on order PO')}),
-    ('in_transit_do', {'title': _('in transit DO')}),
+    crosses = (
+        ("startoh", {"title": _("start inventory")}),
+        ("startohdoc", {"title": _("start inventory days of cover")}),
+        ("safetystock", {"title": _("safety stock")}),
+        ("consumed", {"title": _("total consumed")}),
+        ("consumedMO", {"title": _("consumed by MO")}),
+        ("consumedDO", {"title": _("consumed by DO")}),
+        ("consumedSO", {"title": _("consumed by SO")}),
+        ("produced", {"title": _("total produced")}),
+        ("producedMO", {"title": _("produced by MO")}),
+        ("producedDO", {"title": _("produced by DO")}),
+        ("producedPO", {"title": _("produced by PO")}),
+        ("endoh", {"title": _("end inventory")}),
+        ("total_in_progress", {"title": _("total in progress")}),
+        ("work_in_progress_mo", {"title": _("work in progress MO")}),
+        ("on_order_po", {"title": _("on order PO")}),
+        ("in_transit_do", {"title": _("in transit DO")}),
     )
 
+    @classmethod
+    def initialize(reportclass, request):
+        if reportclass._attributes_added != 2:
+            reportclass._attributes_added = 2
+            reportclass.attr_sql = ""
+            # Adding custom item attributes
+            for f in getAttributeFields(Item, initially_hidden=True):
+                reportclass.rows += (f,)
+                reportclass.attr_sql += "item.%s, " % f.name.split("__")[-1]
+            # Adding custom location attributes
+            for f in getAttributeFields(
+                Location, related_name_prefix="location", initially_hidden=True
+            ):
+                reportclass.rows += (f,)
+                reportclass.attr_sql += "location.%s, " % f.name.split("__")[-1]
 
-  @classmethod
-  def initialize(reportclass, request):
-    if reportclass._attributes_added != 2:
-      reportclass._attributes_added = 2
-      reportclass.attr_sql = ''
-      # Adding custom item attributes
-      for f in getAttributeFields(Item, initially_hidden=True):
-        reportclass.rows += (f,)
-        reportclass.attr_sql += 'item.%s, ' % f.name.split('__')[-1]
-      # Adding custom location attributes
-      for f in getAttributeFields(Location, related_name_prefix="location", initially_hidden=True):
-        reportclass.rows += (f,)
-        reportclass.attr_sql += 'location.%s, ' % f.name.split('__')[-1]
+    @classmethod
+    def extra_context(reportclass, request, *args, **kwargs):
+        if args and args[0]:
+            request.session["lasttab"] = "plan"
+            return {
+                "title": force_text(Buffer._meta.verbose_name) + " " + args[0],
+                "post_title": _("plan"),
+            }
+        else:
+            return {}
 
-  @classmethod
-  def extra_context(reportclass, request, *args, **kwargs):
-    if args and args[0]:
-      request.session['lasttab'] = 'plan'
-      return {
-        'title': force_text(Buffer._meta.verbose_name) + " " + args[0],
-        'post_title': _('plan')
-        }
-    else:
-      return {}
+    @classmethod
+    def query(reportclass, request, basequery, sortsql="1 asc"):
+        cursor = connections[request.database].cursor()
+        basesql, baseparams = basequery.query.get_compiler(basequery.db).as_sql(
+            with_col_aliases=False
+        )
 
-  @classmethod
-  def query(reportclass, request, basequery, sortsql='1 asc'):
-    cursor = connections[request.database].cursor()
-    basesql, baseparams = basequery.query.get_compiler(basequery.db).as_sql(with_col_aliases=False)
-
-    # Execute the actual query
-    query = '''
+        # Execute the actual query
+        query = """
        select item.name||' @ '||location.name,
        item.name item_id,
        location.name location_id,
@@ -233,70 +319,101 @@ class OverviewReport(GridPivot):
        d.startdate,
        d.enddate
        order by %s, d.startdate
-    ''' % (
-        reportclass.attr_sql, basesql, sortsql
-      )
-
-    # Build the python result
-    with connections[request.database].chunked_cursor() as cursor_chunked:
-      cursor_chunked.execute(
-        query,
-        (
-          request.report_startdate,  # startoh
-          request.report_startdate, request.report_startdate, request.report_startdate, request.report_startdate,  # safetystock
-        ) +
-        (request.report_startdate, ) * 9 +  # ongoing
-        baseparams +  # opplanmat
-        (request.report_bucket, request.report_startdate, request.report_enddate),  # bucket d
+    """ % (
+            reportclass.attr_sql,
+            basesql,
+            sortsql,
         )
-      for row in cursor_chunked:
-        numfields = len(row)
-        res = {
-          'buffer': row[0],
-          'item': row[1],
-          'location': row[2],
-          'item__description': row[3],
-          'item__category': row[4],
-          'item__cost': row[6],
-          'item__owner': row[7],
-          'item__source': row[8],
-          'item__lastmodified': row[9],
-          'location__description': row[10],
-          'location__category': row[11],
-          'location__subcategory': row[12],
-          'location__available_id': row[13],
-          'location__owner_id': row[14],
-          'location__source': row[15],
-          'location__lastmodified': row[16],
-          'startoh': row[numfields - 6]['onhand'] if row[numfields - 6] else 0,
-          'startohdoc': max(0, 0 if (row[numfields - 6]['onhand']  if row[numfields - 6] else 0) <= 0\
-                          else (999 if row[numfields - 6]['periodofcover'] == 86313600\
-                                    else (datetime.strptime(row[numfields - 6]['flowdate'],'%Y-%m-%d %H:%M:%S') +\
-                                          timedelta(seconds=row[numfields - 6]['periodofcover']) - row[numfields - 4]).days if row[numfields - 6]['periodofcover'] else 999)),
-          'bucket': row[numfields - 5],
-          'startdate': row[numfields - 4].date(),
-          'enddate': row[numfields - 3].date(),
-          'safetystock': row[numfields - 2] or 0,
-          'consumed': row[numfields - 1]['consumed'] or 0,
-          'consumedMO': row[numfields - 1]['consumedMO'] or 0,
-          'consumedDO': row[numfields - 1]['consumedDO'] or 0,
-          'consumedSO': row[numfields - 1]['consumedSO'] or 0,
-          'produced': row[numfields - 1]['produced'] or 0,
-          'producedMO': row[numfields - 1]['producedMO'] or 0,
-          'producedDO': row[numfields - 1]['producedDO'] or 0,
-          'producedPO': row[numfields - 1]['producedPO'] or 0,
-          'total_in_progress': row[numfields - 1]['total_in_progress'] or 0,
-          'work_in_progress_mo': row[numfields - 1]['work_in_progress_mo'] or 0,
-          'on_order_po': row[numfields - 1]['on_order_po'] or 0,
-          'in_transit_do': row[numfields - 1]['in_transit_do'] or 0,
-          'endoh': float(row[numfields - 6]['onhand'] if row[numfields - 6] else 0) + float(row[numfields - 1]['produced'] or 0) - float(row[numfields - 1]['consumed'] or 0),
-          }
-        # Add attribute fields
-        idx = 16
-        for f in getAttributeFields(Item, related_name_prefix="item"):
-          res[f.field_name] = row[idx]
-          idx += 1
-        for f in getAttributeFields(Location, related_name_prefix="location"):
-          res[f.field_name] = row[idx]
-          idx += 1
-        yield res
+
+        # Build the python result
+        with connections[request.database].chunked_cursor() as cursor_chunked:
+            cursor_chunked.execute(
+                query,
+                (
+                    request.report_startdate,  # startoh
+                    request.report_startdate,
+                    request.report_startdate,
+                    request.report_startdate,
+                    request.report_startdate,  # safetystock
+                )
+                + (request.report_startdate,) * 9
+                + baseparams  # ongoing
+                + (  # opplanmat
+                    request.report_bucket,
+                    request.report_startdate,
+                    request.report_enddate,
+                ),  # bucket d
+            )
+            for row in cursor_chunked:
+                numfields = len(row)
+                res = {
+                    "buffer": row[0],
+                    "item": row[1],
+                    "location": row[2],
+                    "item__description": row[3],
+                    "item__category": row[4],
+                    "item__cost": row[6],
+                    "item__owner": row[7],
+                    "item__source": row[8],
+                    "item__lastmodified": row[9],
+                    "location__description": row[10],
+                    "location__category": row[11],
+                    "location__subcategory": row[12],
+                    "location__available_id": row[13],
+                    "location__owner_id": row[14],
+                    "location__source": row[15],
+                    "location__lastmodified": row[16],
+                    "startoh": row[numfields - 6]["onhand"]
+                    if row[numfields - 6]
+                    else 0,
+                    "startohdoc": max(
+                        0,
+                        0
+                        if (row[numfields - 6]["onhand"] if row[numfields - 6] else 0)
+                        <= 0
+                        else (
+                            999
+                            if row[numfields - 6]["periodofcover"] == 86313600
+                            else (
+                                datetime.strptime(
+                                    row[numfields - 6]["flowdate"], "%Y-%m-%d %H:%M:%S"
+                                )
+                                + timedelta(seconds=row[numfields - 6]["periodofcover"])
+                                - row[numfields - 4]
+                            ).days
+                            if row[numfields - 6]["periodofcover"]
+                            else 999
+                        ),
+                    ),
+                    "bucket": row[numfields - 5],
+                    "startdate": row[numfields - 4].date(),
+                    "enddate": row[numfields - 3].date(),
+                    "safetystock": row[numfields - 2] or 0,
+                    "consumed": row[numfields - 1]["consumed"] or 0,
+                    "consumedMO": row[numfields - 1]["consumedMO"] or 0,
+                    "consumedDO": row[numfields - 1]["consumedDO"] or 0,
+                    "consumedSO": row[numfields - 1]["consumedSO"] or 0,
+                    "produced": row[numfields - 1]["produced"] or 0,
+                    "producedMO": row[numfields - 1]["producedMO"] or 0,
+                    "producedDO": row[numfields - 1]["producedDO"] or 0,
+                    "producedPO": row[numfields - 1]["producedPO"] or 0,
+                    "total_in_progress": row[numfields - 1]["total_in_progress"] or 0,
+                    "work_in_progress_mo": row[numfields - 1]["work_in_progress_mo"]
+                    or 0,
+                    "on_order_po": row[numfields - 1]["on_order_po"] or 0,
+                    "in_transit_do": row[numfields - 1]["in_transit_do"] or 0,
+                    "endoh": float(
+                        row[numfields - 6]["onhand"] if row[numfields - 6] else 0
+                    )
+                    + float(row[numfields - 1]["produced"] or 0)
+                    - float(row[numfields - 1]["consumed"] or 0),
+                }
+                # Add attribute fields
+                idx = 16
+                for f in getAttributeFields(Item, related_name_prefix="item"):
+                    res[f.field_name] = row[idx]
+                    idx += 1
+                for f in getAttributeFields(Location, related_name_prefix="location"):
+                    res[f.field_name] = row[idx]
+                    idx += 1
+                yield res

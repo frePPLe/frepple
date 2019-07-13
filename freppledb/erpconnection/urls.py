@@ -23,6 +23,6 @@ from .views import Upload
 autodiscover = True
 
 urlpatterns = [
-  # Model list reports, which override standard admin screens
-  url(r'^erp/upload/$', Upload, name="erp_upload"),
-  ]
+    # Model list reports, which override standard admin screens
+    url(r"^erp/upload/$", Upload, name="erp_upload")
+]

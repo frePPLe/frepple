@@ -22,12 +22,14 @@ from .runplan import Command as NewCommand
 
 class Command(NewCommand):
 
-  help = '''
+    help = """
   The frepple_run command is deprecated. It is renamed to runplan.
-  '''
+  """
 
-  def handle(self, **options):
-    warnings.warn("The frepple_run command is renamed to runplan", DeprecationWarning)
-    super().handle(**options)
+    def handle(self, **options):
+        warnings.warn(
+            "The frepple_run command is renamed to runplan", DeprecationWarning
+        )
+        super().handle(**options)
 
-  getHTML = None
+    getHTML = None

@@ -20,17 +20,17 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
 
-  dependencies = [
-    ('input', '0039_operationplanreference'),
-  ]
+    dependencies = [("input", "0039_operationplanreference")]
 
-  operations = [
-    migrations.RunSQL('''
+    operations = [
+        migrations.RunSQL(
+            """
       insert into common_parameter (name, value, lastmodified, description)
       values (
         'plan.autoFenceOperations', '999', now(),
         'The number of days the solver should wait for a confirmed replenishment before generating a proposed order. Default:999 (wait indefinitely)'
         )
       on conflict (name) do nothing
-      '''),
-  ]
+      """
+        )
+    ]

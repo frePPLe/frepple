@@ -20,27 +20,26 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
 
-  dependencies = [
-    ('output', '0001_initial'),
-  ]
+    dependencies = [("output", "0001_initial")]
 
-  operations = [
-    migrations.RemoveField(model_name='flowplan', name='operationplan'),
-    migrations.RemoveField(model_name='loadplan', name='operationplan'),
-    migrations.DeleteModel(name='FlowPlan'),
-    migrations.DeleteModel(name='LoadPlan'),
-    migrations.DeleteModel(name='OperationPlan'),
-    migrations.DeleteModel(name='DemandPegging'),
-    migrations.AlterModelOptions(
-      name='resourcesummary',
-      options={'verbose_name': 'resource summary', 'verbose_name_plural': 'resource summaries', 'ordering': ['resource', 'startdate']},
-    ),
-    migrations.RenameField('resourcesummary', 'theresource', 'resource'),
-    migrations.AlterUniqueTogether(
-      name='resourcesummary',
-      unique_together=set([('resource', 'startdate')]),
-    ),
-    migrations.DeleteModel(
-      name='Demand',
-    ),
-  ]
+    operations = [
+        migrations.RemoveField(model_name="flowplan", name="operationplan"),
+        migrations.RemoveField(model_name="loadplan", name="operationplan"),
+        migrations.DeleteModel(name="FlowPlan"),
+        migrations.DeleteModel(name="LoadPlan"),
+        migrations.DeleteModel(name="OperationPlan"),
+        migrations.DeleteModel(name="DemandPegging"),
+        migrations.AlterModelOptions(
+            name="resourcesummary",
+            options={
+                "verbose_name": "resource summary",
+                "verbose_name_plural": "resource summaries",
+                "ordering": ["resource", "startdate"],
+            },
+        ),
+        migrations.RenameField("resourcesummary", "theresource", "resource"),
+        migrations.AlterUniqueTogether(
+            name="resourcesummary", unique_together=set([("resource", "startdate")])
+        ),
+        migrations.DeleteModel(name="Demand"),
+    ]

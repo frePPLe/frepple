@@ -48,9 +48,12 @@ menu.addItem("admin", "data", separator=True, index=1000)
 # This is required to allow the first apps to override the entries
 # of the later ones.
 for app in reversed(settings.INSTALLED_APPS):
-  try:
-    mod = import_module('%s.menu' % app)
-  except ImportError as e:
-    # Silently ignore if it's the menu module which isn't found
-    if str(e) not in ("No module named %s.menu" % app, "No module named '%s.menu'" % app):
-      raise e
+    try:
+        mod = import_module("%s.menu" % app)
+    except ImportError as e:
+        # Silently ignore if it's the menu module which isn't found
+        if str(e) not in (
+            "No module named %s.menu" % app,
+            "No module named '%s.menu'" % app,
+        ):
+            raise e

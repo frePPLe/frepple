@@ -20,13 +20,11 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
 
-  dependencies = [
-    ('input', '0029_opm_minimum_poc'),
-  ]
+    dependencies = [("input", "0029_opm_minimum_poc")]
 
-  operations = [
-    migrations.AlterUniqueTogether(
-      name='suboperation',
-      unique_together=set([('operation', 'suboperation', 'effective_start')]),
-    ),
-  ]
+    operations = [
+        migrations.AlterUniqueTogether(
+            name="suboperation",
+            unique_together=set([("operation", "suboperation", "effective_start")]),
+        )
+    ]

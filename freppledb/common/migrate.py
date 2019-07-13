@@ -19,36 +19,36 @@ from django.db import migrations
 
 
 class AttributeMigration(migrations.Migration):
-  '''
+    """
   This migration subclass allows a migration in application X to change
   a model defined in application Y.
   This is useful to extend models in application Y with custom fields.
 
   By default we are extending the 'input' app. You can set extends_app_label
   in your migration subclass.
-  '''
+  """
 
-  # Application in which we are extending the models.
-  extends_app_label = 'input'
+    # Application in which we are extending the models.
+    extends_app_label = "input"
 
-  def __init__(self, name, app_label):
-    super().__init__(name, app_label)
-    self.real_app_label = app_label
+    def __init__(self, name, app_label):
+        super().__init__(name, app_label)
+        self.real_app_label = app_label
 
-  def mutate_state(self, project_state, preserve=True):
-    self.app_label = self.extends_app_label
-    state = super().mutate_state(project_state, preserve)
-    self.app_label = self.real_app_label
-    return state
+    def mutate_state(self, project_state, preserve=True):
+        self.app_label = self.extends_app_label
+        state = super().mutate_state(project_state, preserve)
+        self.app_label = self.real_app_label
+        return state
 
-  def apply(self, project_state, schema_editor, collect_sql=False):
-    self.app_label = self.extends_app_label
-    state = super().apply(project_state, schema_editor, collect_sql)
-    self.app_label = self.real_app_label
-    return state
+    def apply(self, project_state, schema_editor, collect_sql=False):
+        self.app_label = self.extends_app_label
+        state = super().apply(project_state, schema_editor, collect_sql)
+        self.app_label = self.real_app_label
+        return state
 
-  def unapply(self, project_state, schema_editor, collect_sql=False):
-    self.app_label = self.extends_app_label
-    state = super().unapply(project_state, schema_editor, collect_sql)
-    self.app_label = self.real_app_label
-    return state
+    def unapply(self, project_state, schema_editor, collect_sql=False):
+        self.app_label = self.extends_app_label
+        state = super().unapply(project_state, schema_editor, collect_sql)
+        self.app_label = self.real_app_label
+        return state

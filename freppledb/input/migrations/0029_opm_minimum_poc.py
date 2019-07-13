@@ -20,19 +20,29 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('input', '0028_operationmaterial_quantityfixed'),
-    ]
+    dependencies = [("input", "0028_operationmaterial_quantityfixed")]
 
     operations = [
         migrations.AddField(
-            model_name='operationplanmaterial',
-            name='minimum',
-            field=models.DecimalField(blank=True, decimal_places=8, max_digits=20, null=True, verbose_name='minimum'),
+            model_name="operationplanmaterial",
+            name="minimum",
+            field=models.DecimalField(
+                blank=True,
+                decimal_places=8,
+                max_digits=20,
+                null=True,
+                verbose_name="minimum",
+            ),
         ),
         migrations.AddField(
-            model_name='operationplanmaterial',
-            name='periodofcover',
-            field=models.DecimalField(blank=True, decimal_places=8, max_digits=20, null=True, verbose_name='periodofcover'),
-        ),        
+            model_name="operationplanmaterial",
+            name="periodofcover",
+            field=models.DecimalField(
+                blank=True,
+                decimal_places=8,
+                max_digits=20,
+                null=True,
+                verbose_name="periodofcover",
+            ),
+        ),
     ]

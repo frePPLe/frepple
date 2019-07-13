@@ -20,19 +20,29 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('input', '0017_jsonb'),
-    ]
+    dependencies = [("input", "0017_jsonb")]
 
     operations = [
         migrations.AlterField(
-            model_name='operationplan',
-            name='enddate',
-            field=models.DateTimeField(blank=True, db_index=True, help_text='end date', null=True, verbose_name='end date'),
+            model_name="operationplan",
+            name="enddate",
+            field=models.DateTimeField(
+                blank=True,
+                db_index=True,
+                help_text="end date",
+                null=True,
+                verbose_name="end date",
+            ),
         ),
         migrations.AlterField(
-            model_name='operationplan',
-            name='startdate',
-            field=models.DateTimeField(blank=True, db_index=True, help_text='start date', null=True, verbose_name='start date'),
+            model_name="operationplan",
+            name="startdate",
+            field=models.DateTimeField(
+                blank=True,
+                db_index=True,
+                help_text="start date",
+                null=True,
+                verbose_name="start date",
+            ),
         ),
     ]

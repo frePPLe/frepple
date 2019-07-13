@@ -20,21 +20,11 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
 
-  dependencies = [
-    ('input', '0019_available'),
-  ]
+    dependencies = [("input", "0019_available")]
 
-  operations = [
-    migrations.RemoveField(
-      model_name='buffer', name='lft'
-    ),
-    migrations.RemoveField(
-      model_name='buffer', name='lvl'
-    ),
-    migrations.RemoveField(
-      model_name='buffer', name='owner'
-    ),
-    migrations.RemoveField(
-      model_name='buffer', name='rght'
-    ),
-  ]
+    operations = [
+        migrations.RemoveField(model_name="buffer", name="lft"),
+        migrations.RemoveField(model_name="buffer", name="lvl"),
+        migrations.RemoveField(model_name="buffer", name="owner"),
+        migrations.RemoveField(model_name="buffer", name="rght"),
+    ]

@@ -20,14 +20,18 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-  dependencies = [
-    ('input', '0031_operationplanmaterial_index'),
-  ]
+    dependencies = [("input", "0031_operationplanmaterial_index")]
 
-  operations = [
-    migrations.AddField(
-      model_name='operationresource',
-      name='quantity_fixed',
-      field=models.DecimalField(blank=True, decimal_places=8, max_digits=20, null=True, verbose_name='quantity fixed'),
-    ),
-  ]
+    operations = [
+        migrations.AddField(
+            model_name="operationresource",
+            name="quantity_fixed",
+            field=models.DecimalField(
+                blank=True,
+                decimal_places=8,
+                max_digits=20,
+                null=True,
+                verbose_name="quantity fixed",
+            ),
+        )
+    ]

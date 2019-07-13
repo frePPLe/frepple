@@ -19,14 +19,14 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('execute', '0002_task_logfile'),
-    ]
+    dependencies = [("execute", "0002_task_logfile")]
 
     operations = [
         migrations.AlterField(
-            model_name='task',
-            name='name',
-            field=models.CharField(db_index=True, editable=False, max_length=50, verbose_name='name'),
-        ),
+            model_name="task",
+            name="name",
+            field=models.CharField(
+                db_index=True, editable=False, max_length=50, verbose_name="name"
+            ),
+        )
     ]

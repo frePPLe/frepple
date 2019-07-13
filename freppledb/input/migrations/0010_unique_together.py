@@ -20,22 +20,25 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-  dependencies = [
-    ('input', '0009_operationplan_mat_res'),
-  ]
+    dependencies = [("input", "0009_operationplan_mat_res")]
 
-  operations = [
-    migrations.AlterField(
-      model_name='operationplan',
-      name='id',
-      field=models.AutoField(primary_key=True, serialize=False, verbose_name='identifier', help_text='Unique identifier of an operationplan'),
-    ),
-    migrations.AlterUniqueTogether(
-      name='calendarbucket',
-      unique_together=set([('calendar', 'startdate', 'enddate', 'priority')]),
-    ),
-    migrations.AlterUniqueTogether(
-      name='suboperation',
-      unique_together=set([('operation', 'priority', 'suboperation')]),
-    ),
-  ]
+    operations = [
+        migrations.AlterField(
+            model_name="operationplan",
+            name="id",
+            field=models.AutoField(
+                primary_key=True,
+                serialize=False,
+                verbose_name="identifier",
+                help_text="Unique identifier of an operationplan",
+            ),
+        ),
+        migrations.AlterUniqueTogether(
+            name="calendarbucket",
+            unique_together=set([("calendar", "startdate", "enddate", "priority")]),
+        ),
+        migrations.AlterUniqueTogether(
+            name="suboperation",
+            unique_together=set([("operation", "priority", "suboperation")]),
+        ),
+    ]

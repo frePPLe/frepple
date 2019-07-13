@@ -20,12 +20,10 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
 
-  dependencies = [
-    ('common', '0012_adminLT_param'),
-  ]
+    dependencies = [("common", "0012_adminLT_param")]
 
-  operations = [
-    migrations.RunSQL(
-      "insert into common_parameter (name, value, description, lastmodified) values ('currency','$','Set the currency symbol, defaults to suffix, add a comma after the symbol to make it a prefix',to_date('05/08/2017','DD/MM/YYYY')) ON CONFLICT (name) DO NOTHING",
-      ),
-  ]
+    operations = [
+        migrations.RunSQL(
+            "insert into common_parameter (name, value, description, lastmodified) values ('currency','$','Set the currency symbol, defaults to suffix, add a comma after the symbol to make it a prefix',to_date('05/08/2017','DD/MM/YYYY')) ON CONFLICT (name) DO NOTHING"
+        )
+    ]

@@ -20,24 +20,22 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
 
-  dependencies = [
-    ('common', '0003_wizard'),
-  ]
+    dependencies = [("common", "0003_wizard")]
 
-  operations = [
-    # Irreversible migration
-    migrations.RunSQL(
-      '''
+    operations = [
+        # Irreversible migration
+        migrations.RunSQL(
+            """
       update auth_permission
       set content_type_id =
          (select id from django_content_type where app_label = 'auth' and model = 'permission')
       where content_type_id in (select id from django_content_type where model = 'reports')
-      '''
-    ),
-    # Irreversible migration
-    migrations.RunSQL(
-      '''
+      """
+        ),
+        # Irreversible migration
+        migrations.RunSQL(
+            """
       delete from django_content_type where model = 'reports'
-      '''
-    ),
-  ]
+      """
+        ),
+    ]

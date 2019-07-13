@@ -22,12 +22,15 @@ from .createfixture import Command as NewCommand
 
 class Command(NewCommand):
 
-  help = '''
+    help = """
   The frepple_createfixture command is deprecated. It is renamed to createfixture.
-  '''
+  """
 
-  def handle(self, **options):
-    warnings.warn("The frepple_createfixture command is renamed to createfixture", DeprecationWarning)
-    super().handle(**options)
+    def handle(self, **options):
+        warnings.warn(
+            "The frepple_createfixture command is renamed to createfixture",
+            DeprecationWarning,
+        )
+        super().handle(**options)
 
-  getHTML = None
+    getHTML = None

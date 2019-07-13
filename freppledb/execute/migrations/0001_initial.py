@@ -20,29 +20,95 @@ from django.conf import settings
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('common', '0001_initial'),
-    ]
+    dependencies = [("common", "0001_initial")]
 
     operations = [
         migrations.CreateModel(
-            name='Task',
+            name="Task",
             fields=[
-                ('id', models.AutoField(editable=False, primary_key=True, verbose_name='identifier', serialize=False)),
-                ('name', models.CharField(editable=False, verbose_name='name', db_index=True, max_length=20)),
-                ('submitted', models.DateTimeField(editable=False, verbose_name='submitted')),
-                ('started', models.DateTimeField(null=True, editable=False, verbose_name='started', blank=True)),
-                ('finished', models.DateTimeField(null=True, editable=False, verbose_name='submitted', blank=True)),
-                ('arguments', models.TextField(null=True, editable=False, verbose_name='arguments', max_length=200)),
-                ('status', models.CharField(editable=False, verbose_name='status', max_length=20)),
-                ('message', models.TextField(null=True, editable=False, verbose_name='message', max_length=200)),
-                ('user', models.ForeignKey(verbose_name='user', null=True, editable=False, blank=True, to=settings.AUTH_USER_MODEL, on_delete=models.SET_NULL)),
-                ('logfile', models.TextField(editable=False, max_length=200, null=True, verbose_name='log file'))
+                (
+                    "id",
+                    models.AutoField(
+                        editable=False,
+                        primary_key=True,
+                        verbose_name="identifier",
+                        serialize=False,
+                    ),
+                ),
+                (
+                    "name",
+                    models.CharField(
+                        editable=False,
+                        verbose_name="name",
+                        db_index=True,
+                        max_length=20,
+                    ),
+                ),
+                (
+                    "submitted",
+                    models.DateTimeField(editable=False, verbose_name="submitted"),
+                ),
+                (
+                    "started",
+                    models.DateTimeField(
+                        null=True, editable=False, verbose_name="started", blank=True
+                    ),
+                ),
+                (
+                    "finished",
+                    models.DateTimeField(
+                        null=True, editable=False, verbose_name="submitted", blank=True
+                    ),
+                ),
+                (
+                    "arguments",
+                    models.TextField(
+                        null=True,
+                        editable=False,
+                        verbose_name="arguments",
+                        max_length=200,
+                    ),
+                ),
+                (
+                    "status",
+                    models.CharField(
+                        editable=False, verbose_name="status", max_length=20
+                    ),
+                ),
+                (
+                    "message",
+                    models.TextField(
+                        null=True,
+                        editable=False,
+                        verbose_name="message",
+                        max_length=200,
+                    ),
+                ),
+                (
+                    "user",
+                    models.ForeignKey(
+                        verbose_name="user",
+                        null=True,
+                        editable=False,
+                        blank=True,
+                        to=settings.AUTH_USER_MODEL,
+                        on_delete=models.SET_NULL,
+                    ),
+                ),
+                (
+                    "logfile",
+                    models.TextField(
+                        editable=False,
+                        max_length=200,
+                        null=True,
+                        verbose_name="log file",
+                    ),
+                ),
             ],
             options={
-                'db_table': 'execute_log',
-                'verbose_name': 'task',
-                'verbose_name_plural': 'tasks',
+                "db_table": "execute_log",
+                "verbose_name": "task",
+                "verbose_name_plural": "tasks",
             },
-        ),
+        )
     ]

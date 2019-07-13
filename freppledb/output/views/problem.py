@@ -20,45 +20,70 @@ from django.utils.translation import ugettext_lazy as _
 from django.db.models import Count
 
 from freppledb.output.models import Problem
-from freppledb.common.report import GridReport, GridFieldText, GridFieldNumber, GridFieldDateTime, GridFieldInteger
+from freppledb.common.report import (
+    GridReport,
+    GridFieldText,
+    GridFieldNumber,
+    GridFieldDateTime,
+    GridFieldInteger,
+)
 
 
 def getEntities(request):
-  return tuple([
-    (i['entity'], format_lazy('{}:{}', _(i['entity']), i['id__count']))
-    for i in Problem.objects.using(request.database).values('entity').annotate(Count('id')).order_by('entity')
-    ])
+    return tuple(
+        [
+            (i["entity"], format_lazy("{}:{}", _(i["entity"]), i["id__count"]))
+            for i in Problem.objects.using(request.database)
+            .values("entity")
+            .annotate(Count("id"))
+            .order_by("entity")
+        ]
+    )
 
 
 def getNames(request):
-  return tuple([
-    (i['name'], format_lazy('{}:{}', _(i['name']), i['id__count']))
-    for i in Problem.objects.using(request.database).values('name').annotate(Count('id')).order_by('name')
-    ])
+    return tuple(
+        [
+            (i["name"], format_lazy("{}:{}", _(i["name"]), i["id__count"]))
+            for i in Problem.objects.using(request.database)
+            .values("name")
+            .annotate(Count("id"))
+            .order_by("name")
+        ]
+    )
 
 
 class Report(GridReport):
-  '''
+    """
   A list report to show problems.
-  '''
-  template = 'output/problem.html'
-  title = _("Problem report")
-  basequeryset = Problem.objects  # TODO .extra(select={'forecast': "select name from forecast where out_problem.owner like forecast.name || ' - %%'",})
-  model = Problem
-  permissions = (("view_problem_report", "Can view problem report"),)
-  frozenColumns = 0
-  editable = False
-  multiselect = False
-  help_url = 'user-guide/user-interface/plan-analysis/problem-report.html'
-  rows = (
-    #. Translators: Translation included with Django
-    GridFieldInteger('id', title=_('id'), key=True, editable=False, hidden=True),
-    GridFieldText('entity', title=_('entity'), editable=False, align='center'),  # TODO choices=getEntities
-    #. Translators: Translation included with Django
-    GridFieldText('name', title=_('name'), editable=False, align='center'),  # TODO choices=getNames
-    GridFieldText('owner', title=_('owner'), editable=False, extra='"formatter":probfmt'),
-    GridFieldText('description', title=_('description'), editable=False, width=350),
-    GridFieldDateTime('startdate', title=_('start date'), editable=False),
-    GridFieldDateTime('enddate', title=_('end date'), editable=False),
-    GridFieldNumber('weight', title=_('weight'), editable=False),
+  """
+
+    template = "output/problem.html"
+    title = _("Problem report")
+    basequeryset = (
+        Problem.objects
+    )  # TODO .extra(select={'forecast': "select name from forecast where out_problem.owner like forecast.name || ' - %%'",})
+    model = Problem
+    permissions = (("view_problem_report", "Can view problem report"),)
+    frozenColumns = 0
+    editable = False
+    multiselect = False
+    help_url = "user-guide/user-interface/plan-analysis/problem-report.html"
+    rows = (
+        # . Translators: Translation included with Django
+        GridFieldInteger("id", title=_("id"), key=True, editable=False, hidden=True),
+        GridFieldText(
+            "entity", title=_("entity"), editable=False, align="center"
+        ),  # TODO choices=getEntities
+        # . Translators: Translation included with Django
+        GridFieldText(
+            "name", title=_("name"), editable=False, align="center"
+        ),  # TODO choices=getNames
+        GridFieldText(
+            "owner", title=_("owner"), editable=False, extra='"formatter":probfmt'
+        ),
+        GridFieldText("description", title=_("description"), editable=False, width=350),
+        GridFieldDateTime("startdate", title=_("start date"), editable=False),
+        GridFieldDateTime("enddate", title=_("end date"), editable=False),
+        GridFieldNumber("weight", title=_("weight"), editable=False),
     )

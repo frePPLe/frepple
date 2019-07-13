@@ -21,24 +21,44 @@ import django.db.models.deletion
 
 class Migration(migrations.Migration):
 
-  dependencies = [
-    ('input', '0018_operationplan_index'),
-  ]
+    dependencies = [("input", "0018_operationplan_index")]
 
-  operations = [
-    migrations.AddField(
-      model_name='operation',
-      name='available',
-      field=models.ForeignKey(blank=True, help_text='Calendar defining the working hours and holidays', null=True, on_delete=django.db.models.deletion.CASCADE, to='input.Calendar', verbose_name='available'),
-    ),
-    migrations.AddField(
-      model_name='resource',
-      name='available',
-      field=models.ForeignKey(blank=True, help_text='Calendar defining the working hours and holidays', null=True, on_delete=django.db.models.deletion.CASCADE, related_name='+', to='input.Calendar', verbose_name='available'),
-    ),
-    migrations.AlterField(
-      model_name='location',
-      name='available',
-      field=models.ForeignKey(blank=True, help_text='Calendar defining the working hours and holidays', null=True, on_delete=django.db.models.deletion.CASCADE, to='input.Calendar', verbose_name='available'),
-    ),
-  ]
+    operations = [
+        migrations.AddField(
+            model_name="operation",
+            name="available",
+            field=models.ForeignKey(
+                blank=True,
+                help_text="Calendar defining the working hours and holidays",
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                to="input.Calendar",
+                verbose_name="available",
+            ),
+        ),
+        migrations.AddField(
+            model_name="resource",
+            name="available",
+            field=models.ForeignKey(
+                blank=True,
+                help_text="Calendar defining the working hours and holidays",
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="+",
+                to="input.Calendar",
+                verbose_name="available",
+            ),
+        ),
+        migrations.AlterField(
+            model_name="location",
+            name="available",
+            field=models.ForeignKey(
+                blank=True,
+                help_text="Calendar defining the working hours and holidays",
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                to="input.Calendar",
+                verbose_name="available",
+            ),
+        ),
+    ]

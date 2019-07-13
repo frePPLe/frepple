@@ -22,12 +22,15 @@ from .createbuckets import Command as NewCommand
 
 class Command(NewCommand):
 
-  help = '''
+    help = """
   The frepple_createbuckets command is deprecated. It is renamed to createbuckets.
-  '''
+  """
 
-  def handle(self, **options):
-    warnings.warn("The frepple_createbuckets command is renamed to createbuckets", DeprecationWarning)
-    super().handle(**options)
+    def handle(self, **options):
+        warnings.warn(
+            "The frepple_createbuckets command is renamed to createbuckets",
+            DeprecationWarning,
+        )
+        super().handle(**options)
 
-  getHTML = None
+    getHTML = None

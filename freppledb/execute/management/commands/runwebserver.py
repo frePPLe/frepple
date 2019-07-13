@@ -26,77 +26,75 @@ from freppledb import VERSION
 
 class Command(BaseCommand):
 
-  help = '''
+    help = """
     Runs a multithreaded web server for frePPLe.
-  '''
+  """
 
-  requires_system_checks = False
+    requires_system_checks = False
 
+    def get_version(self):
+        return VERSION
 
-  def get_version(self):
-    return VERSION
+    def add_arguments(self, parser):
+        parser.add_argument(
+            "--port", type=int, default=settings.PORT, help="Port number of the server."
+        )
+        parser.add_argument("--address", help="IP address for the server to listen."),
+        parser.add_argument(
+            "--threads",
+            type=int,
+            default=25,
+            help="Number of server threads (default: 25).",
+        )
 
+    def handle(self, **options):
+        from cheroot import wsgi
 
-  def add_arguments(self, parser):
-    parser.add_argument(
-      "--port", type=int, default=settings.PORT,
-      help="Port number of the server."
-      )
-    parser.add_argument(
-      "--address", help="IP address for the server to listen."
-      ),
-    parser.add_argument(
-      "--threads", type=int, default=25,
-      help="Number of server threads (default: 25)."
-      )
+        # Determine the port number
+        port = options["port"]
 
+        # Determine the number of threads
+        threads = options["threads"]
+        if threads < 1:
+            raise Exception("Invalid number of threads: %s" % threads)
 
-  def handle(self, **options):
-    from cheroot import wsgi
+        # Determine the IP-address to listen on:
+        # - either as command line argument
+        # - either 0.0.0.0 by default, which means all active IPv4 interfaces
+        address = options["address"] or "0.0.0.0"
 
-    # Determine the port number
-    port = options['port']
+        # Validate the address and port number
+        try:
+            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            s.bind((address, port))
+            s.close()
+        except socket.error as e:
+            raise Exception(
+                "Invalid address '%s' and/or port '%s': %s" % (address, port, e)
+            )
 
-    # Determine the number of threads
-    threads = options['threads']
-    if threads < 1:
-      raise Exception("Invalid number of threads: %s" % threads)
+        # Print a header message
+        hostname = socket.getfqdn()
+        print("Starting frePPLe %s web server\n" % VERSION)
+        print(
+            "To access the server, point your browser to either of the following URLS:"
+        )
+        if address == "0.0.0.0":
+            print("    http://%s:%s/" % (hostname, port))
+            for ip in socket.gethostbyname_ex(socket.gethostname())[2]:
+                print("    http://%s:%s/" % (ip, port))
+        else:
+            print("    http://%s:%s/" % (address, port))
+        print("Quit the server with CTRL-C.\n")
 
-    # Determine the IP-address to listen on:
-    # - either as command line argument
-    # - either 0.0.0.0 by default, which means all active IPv4 interfaces
-    address = options['address'] or '0.0.0.0'
-
-    # Validate the address and port number
-    try:
-      s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-      s.bind( (address, port) )
-      s.close()
-    except socket.error as e:
-      raise Exception("Invalid address '%s' and/or port '%s': %s" % (address, port, e))
-
-    # Print a header message
-    hostname = socket.getfqdn()
-    print('Starting frePPLe %s web server\n' % VERSION)
-    print('To access the server, point your browser to either of the following URLS:')
-    if address == '0.0.0.0':
-      print('    http://%s:%s/' % (hostname, port))
-      for ip in socket.gethostbyname_ex(socket.gethostname())[2]:
-        print('    http://%s:%s/' % (ip, port))
-    else:
-      print('    http://%s:%s/' % (address, port))
-    print('Quit the server with CTRL-C.\n')
-
-    # Run the WSGI server
-    server = wsgi.Server(
-      (address, port),
-      StaticFilesHandler(WSGIHandler()),
-      numthreads=threads
-      )
-    # Want SSL support? Just set these attributes apparently, but I haven't tested or verified this
-    #  server.ssl_certificate = <filename>
-    #  server.ssl_private_key = <filename>
-    try:
-      server.start()
-    except KeyboardInterrupt:
-      server.stop()
+        # Run the WSGI server
+        server = wsgi.Server(
+            (address, port), StaticFilesHandler(WSGIHandler()), numthreads=threads
+        )
+        # Want SSL support? Just set these attributes apparently, but I haven't tested or verified this
+        #  server.ssl_certificate = <filename>
+        #  server.ssl_private_key = <filename>
+        try:
+            server.start()
+        except KeyboardInterrupt:
+            server.stop()

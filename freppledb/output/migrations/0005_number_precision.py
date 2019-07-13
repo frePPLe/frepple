@@ -20,44 +20,56 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('output', '0004_squashed_41'),
-    ]
+    dependencies = [("output", "0004_squashed_41")]
 
     operations = [
         migrations.AlterField(
-            model_name='constraint',
-            name='weight',
-            field=models.DecimalField(decimal_places=8, max_digits=20, verbose_name='weight'),
+            model_name="constraint",
+            name="weight",
+            field=models.DecimalField(
+                decimal_places=8, max_digits=20, verbose_name="weight"
+            ),
         ),
         migrations.AlterField(
-            model_name='problem',
-            name='weight',
-            field=models.DecimalField(decimal_places=8, max_digits=20, verbose_name='weight'),
+            model_name="problem",
+            name="weight",
+            field=models.DecimalField(
+                decimal_places=8, max_digits=20, verbose_name="weight"
+            ),
         ),
         migrations.AlterField(
-            model_name='resourcesummary',
-            name='available',
-            field=models.DecimalField(decimal_places=8, max_digits=20, null=True, verbose_name='available'),
+            model_name="resourcesummary",
+            name="available",
+            field=models.DecimalField(
+                decimal_places=8, max_digits=20, null=True, verbose_name="available"
+            ),
         ),
         migrations.AlterField(
-            model_name='resourcesummary',
-            name='free',
-            field=models.DecimalField(decimal_places=8, max_digits=20, null=True, verbose_name='free'),
+            model_name="resourcesummary",
+            name="free",
+            field=models.DecimalField(
+                decimal_places=8, max_digits=20, null=True, verbose_name="free"
+            ),
         ),
         migrations.AlterField(
-            model_name='resourcesummary',
-            name='load',
-            field=models.DecimalField(decimal_places=8, max_digits=20, null=True, verbose_name='load'),
+            model_name="resourcesummary",
+            name="load",
+            field=models.DecimalField(
+                decimal_places=8, max_digits=20, null=True, verbose_name="load"
+            ),
         ),
         migrations.AlterField(
-            model_name='resourcesummary',
-            name='setup',
-            field=models.DecimalField(decimal_places=8, max_digits=20, null=True, verbose_name='setup'),
+            model_name="resourcesummary",
+            name="setup",
+            field=models.DecimalField(
+                decimal_places=8, max_digits=20, null=True, verbose_name="setup"
+            ),
         ),
         migrations.AlterField(
-            model_name='resourcesummary',
-            name='unavailable',
-            field=models.DecimalField(decimal_places=8, max_digits=20, null=True, verbose_name='unavailable'),
+            model_name="resourcesummary",
+            name="unavailable",
+            field=models.DecimalField(
+                decimal_places=8, max_digits=20, null=True, verbose_name="unavailable"
+            ),
         ),
     ]

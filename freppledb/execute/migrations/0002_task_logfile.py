@@ -19,10 +19,8 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('execute', '0001_initial'),
-    ]
+    dependencies = [("execute", "0001_initial")]
 
     operations = [
-      # Empty migration. History was rewritten to add the logfile field already earlier.
+        # Empty migration. History was rewritten to add the logfile field already earlier.
     ]

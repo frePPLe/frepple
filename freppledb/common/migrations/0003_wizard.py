@@ -20,24 +20,56 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('common', '0002_defaultuser'),
-    ]
+    dependencies = [("common", "0002_defaultuser")]
 
     operations = [
         migrations.CreateModel(
-            name='Wizard',
+            name="Wizard",
             fields=[
-                ('name', models.CharField(max_length=300, verbose_name='name', primary_key=True, serialize=False)),
-                ('sequenceorder', models.IntegerField(verbose_name='progress', help_text='Model completion level')),
-                ('url_doc', models.URLField(blank=True, null=True, verbose_name='documentation URL', max_length=500)),
-                ('url_internaldoc', models.URLField(blank=True, null=True, verbose_name='wizard URL', max_length=500)),
-                ('status', models.BooleanField(default=True)),
-                ('owner', models.ForeignKey(blank=True, verbose_name='owner', null=True, related_name='xchildren', help_text='Hierarchical parent', to='common.Wizard', on_delete=models.SET_NULL)),
+                (
+                    "name",
+                    models.CharField(
+                        max_length=300,
+                        verbose_name="name",
+                        primary_key=True,
+                        serialize=False,
+                    ),
+                ),
+                (
+                    "sequenceorder",
+                    models.IntegerField(
+                        verbose_name="progress", help_text="Model completion level"
+                    ),
+                ),
+                (
+                    "url_doc",
+                    models.URLField(
+                        blank=True,
+                        null=True,
+                        verbose_name="documentation URL",
+                        max_length=500,
+                    ),
+                ),
+                (
+                    "url_internaldoc",
+                    models.URLField(
+                        blank=True, null=True, verbose_name="wizard URL", max_length=500
+                    ),
+                ),
+                ("status", models.BooleanField(default=True)),
+                (
+                    "owner",
+                    models.ForeignKey(
+                        blank=True,
+                        verbose_name="owner",
+                        null=True,
+                        related_name="xchildren",
+                        help_text="Hierarchical parent",
+                        to="common.Wizard",
+                        on_delete=models.SET_NULL,
+                    ),
+                ),
             ],
-            options={
-                'db_table': 'common_wizard',
-                'ordering': ['sequenceorder'],
-            },
-        ),
+            options={"db_table": "common_wizard", "ordering": ["sequenceorder"]},
+        )
     ]

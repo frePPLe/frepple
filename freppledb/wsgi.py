@@ -28,10 +28,11 @@ import os
 import sys
 
 # Assure frePPLe is found in the Python path.
-sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 
-os.environ['LC_ALL'] = 'en_US.UTF-8'
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', "freppledb.settings")
+os.environ["LC_ALL"] = "en_US.UTF-8"
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "freppledb.settings")
 
 from django.core.wsgi import get_wsgi_application
+
 application = get_wsgi_application()

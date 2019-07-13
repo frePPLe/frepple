@@ -22,12 +22,15 @@ from .exportworkbook import Command as NewCommand
 
 class Command(NewCommand):
 
-  help = '''
+    help = """
   The frepple_exportworkbook command is deprecated. It is renamed to exportworkbook.
-  '''
+  """
 
-  def handle(self, **options):
-    warnings.warn("The frepple_exportworkbook command is renamed to exportworkbook", DeprecationWarning)
-    super().handle(**options)
+    def handle(self, **options):
+        warnings.warn(
+            "The frepple_exportworkbook command is renamed to exportworkbook",
+            DeprecationWarning,
+        )
+        super().handle(**options)
 
-  getHTML = None
+    getHTML = None

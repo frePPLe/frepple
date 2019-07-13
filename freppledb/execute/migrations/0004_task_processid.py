@@ -20,14 +20,14 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-  dependencies = [
-    ('execute', '0003_Task_name_size_up'),
-  ]
+    dependencies = [("execute", "0003_Task_name_size_up")]
 
-  operations = [
-    migrations.AddField(
-      model_name='task',
-      name='processid',
-      field=models.IntegerField(editable=False, null=True, verbose_name='processid'),
-    ),
-  ]
+    operations = [
+        migrations.AddField(
+            model_name="task",
+            name="processid",
+            field=models.IntegerField(
+                editable=False, null=True, verbose_name="processid"
+            ),
+        )
+    ]

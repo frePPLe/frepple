@@ -22,12 +22,14 @@ from .loadxml import Command as NewCommand
 
 class Command(NewCommand):
 
-  help = '''
+    help = """
   The frepple_loadxml command is deprecated. It is renamed to loadxml.
-  '''
+  """
 
-  def handle(self, **options):
-    warnings.warn("The frepple_loadxml command is renamed to loadxml", DeprecationWarning)
-    super().handle(**options)
+    def handle(self, **options):
+        warnings.warn(
+            "The frepple_loadxml command is renamed to loadxml", DeprecationWarning
+        )
+        super().handle(**options)
 
-  getHTML = None
+    getHTML = None

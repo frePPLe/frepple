@@ -21,14 +21,12 @@ import freppledb.common.fields
 
 class Migration(migrations.Migration):
 
-  dependencies = [
-    ('common', '0008_squashed_41'),
-  ]
+    dependencies = [("common", "0008_squashed_41")]
 
-  operations = [
-    migrations.AlterField(
-      model_name='userpreference',
-      name='value',
-      field=freppledb.common.fields.JSONBField(max_length=1000),
-    ),
-  ]
+    operations = [
+        migrations.AlterField(
+            model_name="userpreference",
+            name="value",
+            field=freppledb.common.fields.JSONBField(max_length=1000),
+        )
+    ]

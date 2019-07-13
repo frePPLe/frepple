@@ -20,13 +20,11 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-  dependencies = [
-    ('input', '0030_suboperations_unique'),
-    ]
+    dependencies = [("input", "0030_suboperations_unique")]
 
-  operations = [
-    migrations.AddIndex(
-      model_name='operationplanmaterial',
-      index=models.Index(fields=['item', 'location'], name='opplanmat_itemloc'),
-    ),
+    operations = [
+        migrations.AddIndex(
+            model_name="operationplanmaterial",
+            index=models.Index(fields=["item", "location"], name="opplanmat_itemloc"),
+        )
     ]

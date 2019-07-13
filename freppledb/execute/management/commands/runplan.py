@@ -35,261 +35,312 @@ from freppledb import VERSION
 
 class Command(BaseCommand):
 
-  help = "Runs frePPLe to generate a plan"
+    help = "Runs frePPLe to generate a plan"
 
-  requires_system_checks = False
+    requires_system_checks = False
 
+    def get_version(self):
+        return VERSION
 
-  def get_version(self):
-    return VERSION
+    def add_arguments(self, parser):
+        parser.add_argument("--user", dest="user", help="User running the command")
+        parser.add_argument(
+            "--constraint",
+            dest="constraint",
+            type=int,
+            default=15,
+            choices=range(0, 16),
+            help="Constraints to be considered: 1=lead time, 2=material, 4=capacity, 8=release fence",
+        )
+        parser.add_argument(
+            "--plantype",
+            dest="plantype",
+            type=int,
+            choices=[1, 2],
+            default=1,
+            help="Plan type: 1=constrained, 2=unconstrained",
+        )
+        parser.add_argument(
+            "--database",
+            dest="database",
+            default=DEFAULT_DB_ALIAS,
+            help="Nominates a specific database to load data from and export results into",
+        )
+        parser.add_argument(
+            "--task",
+            dest="task",
+            type=int,
+            help="Task identifier (generated automatically if not provided)",
+        )
+        parser.add_argument(
+            "--env",
+            dest="env",
+            help="A comma separated list of extra settings passed as environment variables to the engine",
+        )
+        parser.add_argument(
+            "--background",
+            dest="background",
+            action="store_true",
+            default=False,
+            help="Run the planning engine in the background (default = False)",
+        )
 
+    def handle(self, **options):
+        # Pick up the options
+        now = datetime.now()
 
-  def add_arguments(self, parser):
-    parser.add_argument(
-      '--user', dest='user',
-      help='User running the command'
-      )
-    parser.add_argument(
-      '--constraint', dest='constraint', type=int, default=15,
-      choices=range(0, 16),
-      help='Constraints to be considered: 1=lead time, 2=material, 4=capacity, 8=release fence'
-      )
-    parser.add_argument(
-      '--plantype', dest='plantype', type=int, choices=[1, 2],
-      default=1, help='Plan type: 1=constrained, 2=unconstrained'
-      )
-    parser.add_argument(
-      '--database', dest='database', default=DEFAULT_DB_ALIAS,
-      help='Nominates a specific database to load data from and export results into'
-      )
-    parser.add_argument(
-      '--task', dest='task', type=int,
-      help='Task identifier (generated automatically if not provided)'
-      )
-    parser.add_argument(
-      '--env', dest='env',
-      help='A comma separated list of extra settings passed as environment variables to the engine'
-      )
-    parser.add_argument(
-      '--background', dest='background', action='store_true', default=False,
-      help='Run the planning engine in the background (default = False)'
-      )
+        if "database" in options:
+            database = options["database"] or DEFAULT_DB_ALIAS
+        else:
+            database = DEFAULT_DB_ALIAS
+        if database not in settings.DATABASES:
+            raise CommandError("No database settings known for '%s'" % database)
+        if "user" in options and options["user"]:
+            try:
+                user = User.objects.all().using(database).get(username=options["user"])
+            except:
+                raise CommandError("User '%s' not found" % options["user"])
+        else:
+            user = None
 
+        timestamp = now.strftime("%Y%m%d%H%M%S")
+        if database == DEFAULT_DB_ALIAS:
+            logfile = "frepple-%s.log" % timestamp
+        else:
+            logfile = "frepple_%s-%s.log" % (database, timestamp)
 
-  def handle(self, **options):
-    # Pick up the options
-    now = datetime.now()
-
-    if 'database' in options:
-      database = options['database'] or DEFAULT_DB_ALIAS
-    else:
-      database = DEFAULT_DB_ALIAS
-    if database not in settings.DATABASES:
-      raise CommandError("No database settings known for '%s'" % database )
-    if 'user' in options and options['user']:
-      try:
-        user = User.objects.all().using(database).get(username=options['user'])
-      except:
-        raise CommandError("User '%s' not found" % options['user'] )
-    else:
-      user = None
-
-    timestamp = now.strftime("%Y%m%d%H%M%S")
-    if database == DEFAULT_DB_ALIAS:
-      logfile = 'frepple-%s.log' % timestamp
-    else:
-      logfile = 'frepple_%s-%s.log' % (database, timestamp)
-
-    task = None
-    try:
-      # Initialize the task
-      if 'task' in options and options['task']:
+        task = None
         try:
-          task = Task.objects.all().using(database).get(pk=options['task'])
-        except:
-          raise CommandError("Task identifier not found")
-        if task.started or task.finished or task.status != "Waiting" or task.name not in ('runplan', 'frepple_run'):
-          raise CommandError("Invalid task identifier")
-        task.status = '0%'
-        task.started = now
-        task.logfile = logfile
-      else:
-        task = Task(name='runplan', submitted=now, started=now, status='0%', user=user, logfile=logfile)
+            # Initialize the task
+            if "task" in options and options["task"]:
+                try:
+                    task = Task.objects.all().using(database).get(pk=options["task"])
+                except:
+                    raise CommandError("Task identifier not found")
+                if (
+                    task.started
+                    or task.finished
+                    or task.status != "Waiting"
+                    or task.name not in ("runplan", "frepple_run")
+                ):
+                    raise CommandError("Invalid task identifier")
+                task.status = "0%"
+                task.started = now
+                task.logfile = logfile
+            else:
+                task = Task(
+                    name="runplan",
+                    submitted=now,
+                    started=now,
+                    status="0%",
+                    user=user,
+                    logfile=logfile,
+                )
 
-      # Validate options
-      if 'constraint' in options:
-        constraint = int(options['constraint'])
-        if constraint < 0 or constraint > 15:
-          raise ValueError("Invalid constraint: %s" % options['constraint'])
-      else:
-        constraint = 15
-      if 'plantype' in options:
-        plantype = int(options['plantype'])
-      else:
-        plantype = 1
+            # Validate options
+            if "constraint" in options:
+                constraint = int(options["constraint"])
+                if constraint < 0 or constraint > 15:
+                    raise ValueError("Invalid constraint: %s" % options["constraint"])
+            else:
+                constraint = 15
+            if "plantype" in options:
+                plantype = int(options["plantype"])
+            else:
+                plantype = 1
 
-      # Reset environment variables
-      # TODO avoid having to delete the environment variables. Use options directly?
-      PlanTaskRegistry.autodiscover()
-      for i in PlanTaskRegistry.reg:
-        if 'env' in options:
-          # Options specified
-          if i.label and i.label[0] in os.environ:
-            del os.environ[i.label[0]]
-        elif i.label:
-          # No options specified - default to activate them all
-          os.environ[i.label[0]] = '1'
+            # Reset environment variables
+            # TODO avoid having to delete the environment variables. Use options directly?
+            PlanTaskRegistry.autodiscover()
+            for i in PlanTaskRegistry.reg:
+                if "env" in options:
+                    # Options specified
+                    if i.label and i.label[0] in os.environ:
+                        del os.environ[i.label[0]]
+                elif i.label:
+                    # No options specified - default to activate them all
+                    os.environ[i.label[0]] = "1"
 
-      # Set environment variables
-      if options['env']:
-        task.arguments = "--constraint=%d --plantype=%d --env=%s" % (constraint, plantype, options['env'])
-        for i in options['env'].split(','):
-          j = i.split('=')
-          if len(j) == 1:
-            os.environ[j[0]] = '1'
-          else:
-            os.environ[j[0]] = j[1]
-      else:
-        task.arguments = "--constraint=%d --plantype=%d" % (constraint, plantype)
-      if options['background']:
-        task.arguments += " --background"
+            # Set environment variables
+            if options["env"]:
+                task.arguments = "--constraint=%d --plantype=%d --env=%s" % (
+                    constraint,
+                    plantype,
+                    options["env"],
+                )
+                for i in options["env"].split(","):
+                    j = i.split("=")
+                    if len(j) == 1:
+                        os.environ[j[0]] = "1"
+                    else:
+                        os.environ[j[0]] = j[1]
+            else:
+                task.arguments = "--constraint=%d --plantype=%d" % (
+                    constraint,
+                    plantype,
+                )
+            if options["background"]:
+                task.arguments += " --background"
 
-      # Log task
-      # Different from the other tasks the frepple engine will write the processid
-      task.save(using=database)
+            # Log task
+            # Different from the other tasks the frepple engine will write the processid
+            task.save(using=database)
 
-      # Locate commands.py
-      import freppledb.common.commands
-      cmd = freppledb.common.commands.__file__
+            # Locate commands.py
+            import freppledb.common.commands
 
-      def setlimits():
-        import resource
-        if settings.MAXMEMORYSIZE:
-          resource.setrlimit(
-            resource.RLIMIT_AS,
-            (settings.MAXMEMORYSIZE * 1024 * 1024, (settings.MAXMEMORYSIZE + 10) * 1024 * 1024)
+            cmd = freppledb.common.commands.__file__
+
+            def setlimits():
+                import resource
+
+                if settings.MAXMEMORYSIZE:
+                    resource.setrlimit(
+                        resource.RLIMIT_AS,
+                        (
+                            settings.MAXMEMORYSIZE * 1024 * 1024,
+                            (settings.MAXMEMORYSIZE + 10) * 1024 * 1024,
+                        ),
+                    )
+                if settings.MAXCPUTIME:
+                    resource.setrlimit(
+                        resource.RLIMIT_CPU,
+                        (settings.MAXCPUTIME, settings.MAXCPUTIME + 5),
+                    )
+                # Limiting the file size is a bit tricky as this limit not only applies to the log
+                # file, but also to temp files during the export
+                # if settings.MAXTOTALLOGFILESIZE:
+                #  resource.setrlimit(
+                #    resource.RLIMIT_FSIZE,
+                #   (settings.MAXTOTALLOGFILESIZE * 1024 * 1024, (settings.MAXTOTALLOGFILESIZE + 1) * 1024 * 1024)
+                #   )
+
+            # Prepare environment
+            os.environ["FREPPLE_PLANTYPE"] = str(plantype)
+            os.environ["FREPPLE_CONSTRAINT"] = str(constraint)
+            os.environ["FREPPLE_TASKID"] = str(task.id)
+            os.environ["FREPPLE_DATABASE"] = database
+            os.environ["FREPPLE_LOGFILE"] = logfile
+            os.environ["FREPPLE_PROCESSNAME"] = settings.DATABASES[database][
+                "NAME"
+            ].replace("demo", "")
+            os.environ["PATH"] = (
+                settings.FREPPLE_HOME
+                + os.pathsep
+                + os.environ["PATH"]
+                + os.pathsep
+                + settings.FREPPLE_APP
             )
-        if settings.MAXCPUTIME:
-          resource.setrlimit(
-            resource.RLIMIT_CPU,
-            (settings.MAXCPUTIME, settings.MAXCPUTIME + 5)
+            if os.path.isfile(os.path.join(settings.FREPPLE_HOME, "libfrepple.so")):
+                os.environ["LD_LIBRARY_PATH"] = settings.FREPPLE_HOME
+            if "DJANGO_SETTINGS_MODULE" not in os.environ:
+                os.environ["DJANGO_SETTINGS_MODULE"] = "freppledb.settings"
+            os.environ["PYTHONPATH"] = os.path.normpath(settings.FREPPLE_APP)
+            libdir = os.path.join(os.path.normpath(settings.FREPPLE_HOME), "lib")
+            if os.path.isdir(libdir):
+                # Folders used by the Windows version
+                os.environ["PYTHONPATH"] += os.pathsep + libdir
+                if os.path.isfile(os.path.join(libdir, "library.zip")):
+                    os.environ["PYTHONPATH"] += os.pathsep + os.path.join(
+                        libdir, "library.zip"
+                    )
+
+            if options["background"]:
+                # Execute as background process on Windows
+                if os.name == "nt":
+                    subprocess.Popen(["frepple", cmd], creationflags=0x08000000)
+                else:
+                    # Execute as background process on Linux
+                    subprocess.Popen(["frepple", cmd], preexec_fn=setlimits)
+            else:
+                if os.name == "nt":
+                    # Execute in foreground on Windows
+                    ret = subprocess.call(["frepple", cmd])
+                else:
+                    # Execute in foreground on Linux
+                    ret = subprocess.call(["frepple", cmd], preexec_fn=setlimits)
+                if ret != 0 and ret != 2:
+                    # Return code 0 is a successful run
+                    # Return code is 2 is a run cancelled by a user. That's shown in the status field.
+                    raise Exception("Failed with exit code %d" % ret)
+
+            # Reread the task from the database and update it
+            if not options["background"]:
+                task = Task.objects.all().using(database).get(pk=task.id)
+                task.processid = None
+                task.status = "Done"
+                task.finished = datetime.now()
+                task.save(using=database)
+
+        except Exception as e:
+            if task:
+                task = Task.objects.all().using(database).get(pk=task.id)
+                task.status = "Failed"
+                task.message = "%s" % e
+                task.finished = datetime.now()
+                task.processid = None
+                task.save(using=database)
+            raise e
+
+    # accordion template
+    title = _("Create a plan")
+    index = 0
+
+    help_url = "user-guide/command-reference.html#runplan"
+
+    @staticmethod
+    def getHTML(request):
+
+        if request.user.has_perm("auth.generate_plan"):
+            # Collect optional tasks
+            PlanTaskRegistry.autodiscover()
+            planning_options = PlanTaskRegistry.getLabels()
+
+            plantype = "2"
+            constraint = 15
+            current_options = [i[0] for i in planning_options]
+            lastrun = (
+                Task.objects.all()
+                .using(request.database)
+                .filter(name="runplan")
+                .order_by("-id")
+                .only("arguments")
+                .first()
             )
-        # Limiting the file size is a bit tricky as this limit not only applies to the log
-        # file, but also to temp files during the export
-        # if settings.MAXTOTALLOGFILESIZE:
-        #  resource.setrlimit(
-        #    resource.RLIMIT_FSIZE,
-        #   (settings.MAXTOTALLOGFILESIZE * 1024 * 1024, (settings.MAXTOTALLOGFILESIZE + 1) * 1024 * 1024)
-        #   )
+            if lastrun and lastrun.arguments:
+                # Copy all settings from the previous run by this user
+                for i in shlex.split(lastrun.arguments):
+                    if "=" in i:
+                        key, val = i.split("=")
+                        key = key.strip("--")
+                        if key == "constraint":
+                            try:
+                                constraint = int(val)
+                            except:
+                                pass
+                        elif key == "plantype":
+                            plantype = val
+                        elif key == "env":
+                            try:
+                                current_options = val.split(",")
+                            except:
+                                pass
 
-      # Prepare environment
-      os.environ['FREPPLE_PLANTYPE'] = str(plantype)
-      os.environ['FREPPLE_CONSTRAINT'] = str(constraint)
-      os.environ['FREPPLE_TASKID'] = str(task.id)
-      os.environ['FREPPLE_DATABASE'] = database
-      os.environ['FREPPLE_LOGFILE'] = logfile
-      os.environ['FREPPLE_PROCESSNAME'] = settings.DATABASES[database]['NAME'].replace('demo', '')
-      os.environ['PATH'] = settings.FREPPLE_HOME + os.pathsep + os.environ['PATH'] + os.pathsep + settings.FREPPLE_APP
-      if os.path.isfile(os.path.join(settings.FREPPLE_HOME, 'libfrepple.so')):
-        os.environ['LD_LIBRARY_PATH'] = settings.FREPPLE_HOME
-      if 'DJANGO_SETTINGS_MODULE' not in os.environ:
-        os.environ['DJANGO_SETTINGS_MODULE'] = 'freppledb.settings'
-      os.environ['PYTHONPATH'] = os.path.normpath(settings.FREPPLE_APP)
-      libdir = os.path.join(os.path.normpath(settings.FREPPLE_HOME), 'lib')
-      if os.path.isdir(libdir):
-        # Folders used by the Windows version
-        os.environ['PYTHONPATH'] += os.pathsep + libdir
-        if os.path.isfile(os.path.join(libdir, 'library.zip')):
-          os.environ['PYTHONPATH'] += os.pathsep + os.path.join(libdir, 'library.zip')
+            context = RequestContext(
+                request,
+                {
+                    "planning_options": planning_options,
+                    "current_options": current_options,
+                    "capacityconstrained": constraint & 4,
+                    "materialconstrained": constraint & 2,
+                    "leadtimeconstrained": constraint & 1,
+                    "fenceconstrained": constraint & 8,
+                    "plantype": plantype,
+                },
+            )
 
-      if options['background']:
-        # Execute as background process on Windows
-        if os.name == 'nt':
-          subprocess.Popen(['frepple', cmd], creationflags=0x08000000)
-        else:
-          # Execute as background process on Linux
-          subprocess.Popen(['frepple', cmd], preexec_fn=setlimits)
-      else:
-        if os.name == 'nt':
-          # Execute in foreground on Windows
-          ret = subprocess.call(['frepple', cmd])
-        else:
-          # Execute in foreground on Linux
-          ret = subprocess.call(['frepple', cmd], preexec_fn=setlimits)
-        if ret != 0 and ret != 2:
-          # Return code 0 is a successful run
-          # Return code is 2 is a run cancelled by a user. That's shown in the status field.
-          raise Exception('Failed with exit code %d' % ret)
-
-      # Reread the task from the database and update it
-      if not options['background']:
-        task = Task.objects.all().using(database).get(pk=task.id)
-        task.processid = None
-        task.status = 'Done'
-        task.finished = datetime.now()
-        task.save(using=database)
-
-    except Exception as e:
-      if task:
-        task = Task.objects.all().using(database).get(pk=task.id)
-        task.status = 'Failed'
-        task.message = '%s' % e
-        task.finished = datetime.now()
-        task.processid = None
-        task.save(using=database)
-      raise e
-
-
-  # accordion template
-  title = _('Create a plan')
-  index = 0
-
-  help_url = 'user-guide/command-reference.html#runplan'
-
-  @ staticmethod
-  def getHTML(request):
-
-    if request.user.has_perm('auth.generate_plan'):
-      # Collect optional tasks
-      PlanTaskRegistry.autodiscover()
-      planning_options = PlanTaskRegistry.getLabels()
-
-      plantype = '2'
-      constraint = 15
-      current_options = [ i[0] for i in planning_options ]
-      lastrun = Task.objects.all().using(request.database) \
-        .filter(name="runplan") \
-        .order_by("-id").only("arguments").first()
-      if lastrun and lastrun.arguments:
-        # Copy all settings from the previous run by this user
-        for i in shlex.split(lastrun.arguments):
-          if '=' in i:
-            key, val = i.split('=')
-            key = key.strip('--')
-            if key == 'constraint':
-              try:
-                constraint = int(val)
-              except:
-                pass
-            elif key == 'plantype':
-              plantype = val
-            elif key == 'env':
-              try:
-                current_options = val.split(',')
-              except:
-                pass
-
-      context = RequestContext(request, {
-        'planning_options': planning_options,
-        'current_options': current_options,
-        'capacityconstrained': constraint & 4,
-        'materialconstrained': constraint & 2,
-        'leadtimeconstrained': constraint & 1,
-        'fenceconstrained': constraint & 8,
-        'plantype': plantype
-        })
-
-      template = Template('''
+            template = Template(
+                """
         {%% load i18n %%}
         <form role="form" method="post" action="{{request.prefix}}/execute/launch/runplan/">{%% csrf_token %%}
           <table>
@@ -324,18 +375,34 @@ class Command(BaseCommand):
           </tr>
           </table>
         </form>
-      ''' % (
-        force_text(_('Load all input data, run the planning algorithm, and export the results.')),
-        force_text(_("optional planning steps")),
-        force_text(_("Plan type")),
-        force_text(_('<span data-toggle="tooltip" data-placement="top" data-html="true" data-original-title="Generate a supply plan that respects all constraints.<br>In case of shortages the demand is planned late or short.">Constrained plan</span>')),
-        force_text(_('<span data-toggle="tooltip" data-placement="top" data-html="true" data-original-title="Generate a supply plan that shows material, capacity and operation problems that prevent the demand from being planned in time.<br>The demand is always met completely and on time.">Unconstrained plan</span>')),
-        force_text(_("constraints")),
-        force_text(_("Capacity: respect capacity limits")),
-        force_text(_("Material: respect procurement limits")),
-        force_text(_("Lead time: do not plan in the past")),
-        force_text(_("Release fence: do not plan within the release time window")),
-        ))
-      return template.render(context)
-    else:
-      return None
+      """
+                % (
+                    force_text(
+                        _(
+                            "Load all input data, run the planning algorithm, and export the results."
+                        )
+                    ),
+                    force_text(_("optional planning steps")),
+                    force_text(_("Plan type")),
+                    force_text(
+                        _(
+                            '<span data-toggle="tooltip" data-placement="top" data-html="true" data-original-title="Generate a supply plan that respects all constraints.<br>In case of shortages the demand is planned late or short.">Constrained plan</span>'
+                        )
+                    ),
+                    force_text(
+                        _(
+                            '<span data-toggle="tooltip" data-placement="top" data-html="true" data-original-title="Generate a supply plan that shows material, capacity and operation problems that prevent the demand from being planned in time.<br>The demand is always met completely and on time.">Unconstrained plan</span>'
+                        )
+                    ),
+                    force_text(_("constraints")),
+                    force_text(_("Capacity: respect capacity limits")),
+                    force_text(_("Material: respect procurement limits")),
+                    force_text(_("Lead time: do not plan in the past")),
+                    force_text(
+                        _("Release fence: do not plan within the release time window")
+                    ),
+                )
+            )
+            return template.render(context)
+        else:
+            return None

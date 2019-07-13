@@ -20,15 +20,45 @@ from freppledb.boot import registerAttribute
 from django.utils.translation import ugettext_lazy as _
 
 
-registerAttribute('freppledb.input.models.Item', [
-  ('latedemandcount', _('count of late demands'), 'integer', False, True),
-  ('latedemandquantity', _('quantity of late demands'), 'number', False, True),
-  ('latedemandvalue', _('value of late demand'), 'number', False, True),
-  ('unplanneddemandcount', _('count of unplanned demands'), 'integer', False, True),
-  ('unplanneddemandquantity', _('quantity of unplanned demands'), 'number', False, True),
-  ('unplanneddemandvalue', _('value of unplanned demands'), 'integer', False, True),
-  ])
+registerAttribute(
+    "freppledb.input.models.Item",
+    [
+        ("latedemandcount", _("count of late demands"), "integer", False, True),
+        ("latedemandquantity", _("quantity of late demands"), "number", False, True),
+        ("latedemandvalue", _("value of late demand"), "number", False, True),
+        (
+            "unplanneddemandcount",
+            _("count of unplanned demands"),
+            "integer",
+            False,
+            True,
+        ),
+        (
+            "unplanneddemandquantity",
+            _("quantity of unplanned demands"),
+            "number",
+            False,
+            True,
+        ),
+        (
+            "unplanneddemandvalue",
+            _("value of unplanned demands"),
+            "integer",
+            False,
+            True,
+        ),
+    ],
+)
 
-registerAttribute('freppledb.input.models.Resource', [
-  ('overloadcount', _('count of capacity overload problems'), 'integer', False, True),
-  ])
+registerAttribute(
+    "freppledb.input.models.Resource",
+    [
+        (
+            "overloadcount",
+            _("count of capacity overload problems"),
+            "integer",
+            False,
+            True,
+        )
+    ],
+)

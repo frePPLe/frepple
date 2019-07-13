@@ -21,12 +21,6 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-  dependencies = [
-    ('common', '0009_jsonb'),
-  ]
+    dependencies = [("common", "0009_jsonb")]
 
-  operations = [
-    migrations.DeleteModel(
-      name='Wizard',
-    ),
-  ]
+    operations = [migrations.DeleteModel(name="Wizard")]

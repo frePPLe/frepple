@@ -20,14 +20,19 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('input', '0013_operationplanmaterial'),
-    ]
+    dependencies = [("input", "0013_operationplanmaterial")]
 
     operations = [
         migrations.AddField(
-            model_name='operationplan',
-            name='color',
-            field=models.DecimalField(default='0.00', max_digits=15, decimal_places=6, blank=True, null=True, verbose_name='color'),
-        ),
+            model_name="operationplan",
+            name="color",
+            field=models.DecimalField(
+                default="0.00",
+                max_digits=15,
+                decimal_places=6,
+                blank=True,
+                null=True,
+                verbose_name="color",
+            ),
+        )
     ]

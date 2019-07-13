@@ -22,12 +22,15 @@ from .restore import Command as NewCommand
 
 class Command(NewCommand):
 
-  help = '''
+    help = """
   The frepple_simulation command is deprecated. It is renamed to simulation.
-  '''
+  """
 
-  def handle(self, **options):
-    warnings.warn("The frepple_simulation command is renamed to simulation", DeprecationWarning)
-    super().handle(**options)
+    def handle(self, **options):
+        warnings.warn(
+            "The frepple_simulation command is renamed to simulation",
+            DeprecationWarning,
+        )
+        super().handle(**options)
 
-  getHTML = None
+    getHTML = None

@@ -26,23 +26,24 @@ from freppledb.common.commands import PlanTaskRegistry, PlanTask
 @PlanTaskRegistry.register
 class GetPlanMetrics(PlanTask):
 
-  description = "Update item and resource metrics"
+    description = "Update item and resource metrics"
 
-  sequence = 530
+    sequence = 530
 
-  @classmethod
-  def getWeight(cls, database=DEFAULT_DB_ALIAS, **kwargs):
-    if 'supply' in os.environ:
-      return 1
-    else:
-      return -1
+    @classmethod
+    def getWeight(cls, database=DEFAULT_DB_ALIAS, **kwargs):
+        if "supply" in os.environ:
+            return 1
+        else:
+            return -1
 
-  @classmethod
-  def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
-    with connections[database].cursor() as cursor:
-      # Update item metrics
-      try:
-        cursor.execute('''
+    @classmethod
+    def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
+        with connections[database].cursor() as cursor:
+            # Update item metrics
+            try:
+                cursor.execute(
+                    """
           with metrics as (
             select
               item.name as item,
@@ -75,13 +76,15 @@ class GetPlanMetrics(PlanTask):
             or item.unplanneddemandquantity is distinct from metrics.unplanneddemandquantity
             or item.unplanneddemandvalue is distinct from metrics.unplanneddemandvalue
             )
-          ''')
-      except Exception as e:
-        print("Error updating item metrics: %s" % e)
+          """
+                )
+            except Exception as e:
+                print("Error updating item metrics: %s" % e)
 
-      # Update resource metrics
-      try:
-        cursor.execute('''
+            # Update resource metrics
+            try:
+                cursor.execute(
+                    """
           with metrics as (
             select
               resource.name as resource,
@@ -97,6 +100,7 @@ class GetPlanMetrics(PlanTask):
           from metrics
           where metrics.resource = resource.name
             and resource.overloadcount is distinct from metrics.overloadcount
-          ''')
-      except Exception as e:
-        print("Error updating resource metrics: %s" % e)
+          """
+                )
+            except Exception as e:
+                print("Error updating resource metrics: %s" % e)

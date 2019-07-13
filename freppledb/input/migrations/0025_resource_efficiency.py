@@ -20,14 +20,19 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-  dependencies = [
-    ('input', '0024_number_precision'),
-  ]
+    dependencies = [("input", "0024_number_precision")]
 
-  operations = [
-    migrations.AddField(
-      model_name='resource',
-      name='efficiency',
-      field=models.DecimalField(blank=True, decimal_places=8, help_text='Efficiency percentage of the resource', max_digits=20, null=True, verbose_name='efficiency'),
-    ),
+    operations = [
+        migrations.AddField(
+            model_name="resource",
+            name="efficiency",
+            field=models.DecimalField(
+                blank=True,
+                decimal_places=8,
+                help_text="Efficiency percentage of the resource",
+                max_digits=20,
+                null=True,
+                verbose_name="efficiency",
+            ),
+        )
     ]

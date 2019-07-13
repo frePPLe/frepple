@@ -26,61 +26,52 @@ from freppledb import VERSION
 
 class Command(BaseCommand):
 
-  help = "Loads data from an Odoo instance into the frePPLe database"
+    help = "Loads data from an Odoo instance into the frePPLe database"
 
-  requires_system_checks = False
+    requires_system_checks = False
 
+    def get_version(self):
+        return VERSION
 
-  def get_version(self):
-    return VERSION
-
-
-  def add_arguments(self, parser):
-    parser.add_argument(
-      '--user', help='User running the command'
-      )
-    parser.add_argument(
-      '--database', default=DEFAULT_DB_ALIAS,
-      help='Nominates the frePPLe database to load'
-      )
-    parser.add_argument(
-      '--task', type=int,
-      help='Task identifier (generated automatically if not provided)'
-      )
-
-
-  def handle(self, **options):
-
-    # Pick up the options
-    self.verbosity = int(options['verbosity'])
-    database = options['database']
-    if database not in settings.DATABASES.keys():
-      raise CommandError("No database settings known for '%s'" % self.database)
-    if options['user']:
-      management.call_command(
-        'runplan',
-        env="odoo_read_2",
-        database=database,
-        user=options['user']
+    def add_arguments(self, parser):
+        parser.add_argument("--user", help="User running the command")
+        parser.add_argument(
+            "--database",
+            default=DEFAULT_DB_ALIAS,
+            help="Nominates the frePPLe database to load",
         )
-    else:
-      management.call_command(
-        'runplan',
-        env="odoo_read_2",
-        database=database
+        parser.add_argument(
+            "--task",
+            type=int,
+            help="Task identifier (generated automatically if not provided)",
         )
 
-  # accordion template
-  title = _('Import data from %(erp)s') % {'erp': 'odoo'}
-  index = 1400
-  help_url = 'integration-guide/odoo-connector.html'
+    def handle(self, **options):
 
-  @ staticmethod
-  def getHTML(request):
-    if 'freppledb.odoo' in settings.INSTALLED_APPS:
-      context = RequestContext(request)
+        # Pick up the options
+        self.verbosity = int(options["verbosity"])
+        database = options["database"]
+        if database not in settings.DATABASES.keys():
+            raise CommandError("No database settings known for '%s'" % self.database)
+        if options["user"]:
+            management.call_command(
+                "runplan", env="odoo_read_2", database=database, user=options["user"]
+            )
+        else:
+            management.call_command("runplan", env="odoo_read_2", database=database)
 
-      template = Template('''
+    # accordion template
+    title = _("Import data from %(erp)s") % {"erp": "odoo"}
+    index = 1400
+    help_url = "integration-guide/odoo-connector.html"
+
+    @staticmethod
+    def getHTML(request):
+        if "freppledb.odoo" in settings.INSTALLED_APPS:
+            context = RequestContext(request)
+
+            template = Template(
+                """
         {% load i18n %}
         <form role="form" method="post" action="{{request.prefix}}/execute/launch/odoo_import/">{% csrf_token %}
         <table>
@@ -93,7 +84,8 @@ class Command(BaseCommand):
           </tr>
         </table>
         </form>
-      ''')
-      return template.render(context)
-    else:
-      return None
+      """
+            )
+            return template.render(context)
+        else:
+            return None

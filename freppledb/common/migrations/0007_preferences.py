@@ -19,48 +19,60 @@ from django.db import migrations, models
 import freppledb.common.fields
 from django.conf import settings
 
+
 def createAdminUser(apps, schema_editor):
-  if not schema_editor.connection.alias == 'default':
-    return
-  from django.contrib.auth import get_user_model
-  User = get_user_model()
-  usr = User.objects.create_superuser('admin', 'your@company.com', 'admin')
-  usr.first_name = 'admin'
-  usr.last_name = 'admin'
-  usr.date_joined = datetime(2000, 1, 1)
-  usr.horizontype = True
-  usr.horizonlength = 6
-  usr.horizonunit = "month"
-  usr.language = "auto"
-  usr.save()
+    if not schema_editor.connection.alias == "default":
+        return
+    from django.contrib.auth import get_user_model
+
+    User = get_user_model()
+    usr = User.objects.create_superuser("admin", "your@company.com", "admin")
+    usr.first_name = "admin"
+    usr.last_name = "admin"
+    usr.date_joined = datetime(2000, 1, 1)
+    usr.horizontype = True
+    usr.horizonlength = 6
+    usr.horizonunit = "month"
+    usr.language = "auto"
+    usr.save()
+
 
 class Migration(migrations.Migration):
 
-  dependencies = [
-    ('common', '0006_permission_names'),
-  ]
+    dependencies = [("common", "0006_permission_names")]
 
-  operations = [
-    migrations.CreateModel(
-      name='UserPreference',
-      fields=[
-        ('id', models.AutoField(primary_key=True, verbose_name='identifier', serialize=False)),
-        ('property', models.CharField(max_length=100)),
-        ('value', freppledb.common.fields.JSONField(max_length=1000)),
-      ],
-      options={
-        'verbose_name_plural': 'preferences',
-        'verbose_name': 'preference',
-        'db_table': 'common_preference',
-      },
-    ),
-    migrations.AddField(
-      model_name='userpreference',
-      name='user',
-      field=models.ForeignKey(to=settings.AUTH_USER_MODEL, editable=False, null=True, verbose_name='user', related_name='preferences', on_delete=models.CASCADE),
-    ),
-    migrations.AlterUniqueTogether(
-      name='userpreference',
-      unique_together=set([('user', 'property')]),
-    ),
-  ]
+    operations = [
+        migrations.CreateModel(
+            name="UserPreference",
+            fields=[
+                (
+                    "id",
+                    models.AutoField(
+                        primary_key=True, verbose_name="identifier", serialize=False
+                    ),
+                ),
+                ("property", models.CharField(max_length=100)),
+                ("value", freppledb.common.fields.JSONField(max_length=1000)),
+            ],
+            options={
+                "verbose_name_plural": "preferences",
+                "verbose_name": "preference",
+                "db_table": "common_preference",
+            },
+        ),
+        migrations.AddField(
+            model_name="userpreference",
+            name="user",
+            field=models.ForeignKey(
+                to=settings.AUTH_USER_MODEL,
+                editable=False,
+                null=True,
+                verbose_name="user",
+                related_name="preferences",
+                on_delete=models.CASCADE,
+            ),
+        ),
+        migrations.AlterUniqueTogether(
+            name="userpreference", unique_together=set([("user", "property")])
+        ),
+    ]

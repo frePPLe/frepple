@@ -15,7 +15,7 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-r'''
+r"""
 An reusable application that contains common functionality of different
 frePPLe extension apps.
 
@@ -33,4 +33,4 @@ The common functionality handles:
   - date and time bucket definition
   - middleware allowing users to set their preferred language and work with multiple databases
   - middelware to automatically log in
-'''
+"""

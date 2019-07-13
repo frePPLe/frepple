@@ -33,16 +33,17 @@ from freppledb.input.models import PurchaseOrder, DistributionOrder, OperationPl
 from freppledb.common.models import Parameter
 
 import logging
+
 logger = logging.getLogger(__name__)
 
 
 @login_required
 @csrf_protect
 def Upload(request):
-  try:
-    data = json.loads(request.body.decode('utf-8'))
-    print(data)
-    return HttpResponse("OK")
-  except Exception as e:
-    logger.error("Can't connect to the ERP: %s" % e)
-    return HttpResponseServerError("Can't connect to the ERP")
+    try:
+        data = json.loads(request.body.decode("utf-8"))
+        print(data)
+        return HttpResponse("OK")
+    except Exception as e:
+        logger.error("Can't connect to the ERP: %s" % e)
+        return HttpResponseServerError("Can't connect to the ERP")

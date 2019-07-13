@@ -20,14 +20,14 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-  dependencies = [
-    ('input', '0021_operationplanresource'),
-  ]
+    dependencies = [("input", "0021_operationplanresource")]
 
-  operations = [
-    migrations.AlterField(
-        model_name='demand',
-        name='due',
-        field=models.DateTimeField(db_index=True, help_text='Due date of the demand', verbose_name='due'),
-    ),
-  ]
+    operations = [
+        migrations.AlterField(
+            model_name="demand",
+            name="due",
+            field=models.DateTimeField(
+                db_index=True, help_text="Due date of the demand", verbose_name="due"
+            ),
+        )
+    ]

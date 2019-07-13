@@ -22,12 +22,15 @@ from .runwebserver import Command as NewCommand
 
 class Command(NewCommand):
 
-  help = '''
+    help = """
   The frepple_runserver command is deprecated. It is renamed to runwebserver.
-  '''
+  """
 
-  def handle(self, **options):
-    warnings.warn("The frepple_runserver command is renamed to runwebserver", DeprecationWarning)
-    super().handle(**options)
+    def handle(self, **options):
+        warnings.warn(
+            "The frepple_runserver command is renamed to runwebserver",
+            DeprecationWarning,
+        )
+        super().handle(**options)
 
-  getHTML = None
+    getHTML = None

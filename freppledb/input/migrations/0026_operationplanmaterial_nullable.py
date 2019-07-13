@@ -20,13 +20,18 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-  dependencies = [
-    ('input', '0025_resource_efficiency'),
-  ]
+    dependencies = [("input", "0025_resource_efficiency")]
 
-  operations = [
-    migrations.AlterField(
-      model_name='operationplanmaterial', name='onhand',
-      field=models.DecimalField(blank=True, decimal_places=8, max_digits=20, null=True, verbose_name='onhand'),
-    ),
-  ]
+    operations = [
+        migrations.AlterField(
+            model_name="operationplanmaterial",
+            name="onhand",
+            field=models.DecimalField(
+                blank=True,
+                decimal_places=8,
+                max_digits=20,
+                null=True,
+                verbose_name="onhand",
+            ),
+        )
+    ]

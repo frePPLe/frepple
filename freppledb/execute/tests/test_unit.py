@@ -77,6 +77,8 @@ class execute_multidb(TransactionTestCase):
 
   fixtures = ['demo']
 
+  databases = settings.DATABASES.keys()
+
   def setUp(self):
     os.environ['FREPPLE_TEST'] = "YES"
     param = Parameter.objects.all().get_or_create(pk='plan.webservice')[0]

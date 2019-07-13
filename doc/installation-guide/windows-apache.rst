@@ -37,62 +37,26 @@ are required:
    The recommended version is 10.x 64-bit. It is recommended to tune the database
    parameters with the values found on http://pgtune.leopard.in.ua/.
 
-#. **Install Python 3.5 64-bit or higher**
+#. **Install Python 3.6 64-bit or higher**
 
-   The download URL is http://www.python.org/download/releases/3.5/
-
-#. **Install Psycopg2**
-
-   The Python database driver for PostgreSQLcan be downloaded from
-   http://stickpeople.com/projects/python/win-psycopg/
-
-   Pick the executable that matches the Python version. 
-
-#. **Install PyWin32**
-
-   The Python Windows extensions can be downloaded from
-   http://sourceforge.net/projects/pywin32/
-
-   Select the 64-bit installer for Python 3.5.
+   The download URL is http://www.python.org/download/releases/3.6/
 
 #. **Install the Python database drivers, Django and other python modules**
 
-   Since frePPle requires some patches to the standard Django package, so the source
-   from our cloned and patched version of django will be downloaded and installed.
+   The following pip commands install all Python third party packages
+   used by frePPLe.
 
-   In the root of your Python install you will find a "requirements.txt" file containing a list as 
-   shown below. You can always pick up the correct version from 
-   https://raw.githubusercontent.com/frepple/frepple/4.2/requirements.txt
-   (make sure to replace 4.2 with the appropriate version number!)
+   :: 
    
-   ::
-
-      CherryPy >= 3.2.2
-      CherryPy == 5.1.0
-      djangorestframework == 3.6.2
-      djangorestframework-bulk == 0.2.1
-      djangorestframework-filters == 0.10.0
-      django-admin-bootstrapped
-      django-bootstrap3 == 8.2.2
-      html5lib == 0.999
-      jdcal == 1.0.1
-      Markdown == 2.6.8
-      openpyxl == 2.4.7
-      lxml == 3.7.3
-      PyJWT == 1.5.0
-      https://github.com/frePPLe/django/tarball/frepple_4.2
-
-   To install the requirements just issue a pip3 command:
-   ::
-
-      sudo pip install -r requirements.txt
+      pip3 install psycopg2-binary pywin32
+      pip3 install -r https://raw.githubusercontent.com/frepple/frepple/6.0.0/requirements.txt
 
 #. **Install mod_wsgi**
 
    Mod_wsgi is python WSGI adapter module for Apache.
 
    The download URL is http://www.lfd.uci.edu/~gohlke/pythonlibs/#mod_wsgi
-   Choose the 64-bit for Python 3.5 and Apache 2.4, and copy the file to the Apache
+   Choose the 64-bit for Python 3.6 and Apache 2.4, and copy the file to the Apache
    modules folder.
 
 #. **Configure the Apache web server**

@@ -52,7 +52,7 @@ class Command(BaseCommand):
 
 
   def handle(self, **options):
-    from cherrypy.wsgiserver import CherryPyWSGIServer
+    from cheroot import wsgi
 
     # Determine the port number
     port = options['port']
@@ -88,7 +88,7 @@ class Command(BaseCommand):
     print('Quit the server with CTRL-C.\n')
 
     # Run the WSGI server
-    server = CherryPyWSGIServer(
+    server = wsgi.Server(
       (address, port),
       StaticFilesHandler(WSGIHandler()),
       numthreads=threads

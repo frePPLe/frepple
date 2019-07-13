@@ -115,11 +115,11 @@ Here are the steps to get a fully working environment.
 
    The python3 modules used by frePPLe are listed in the dependency file "requirements.txt". You can
    install these with a pip3 command. Make sure to run it as root user or use sudo (otherwise
-   the packages will be installed locally for that user instead of system-wide), and to replace 5.0.0
+   the packages will be installed locally for that user instead of system-wide), and to replace 6.0.0
    with the appropriate version number.
    ::
 
-      sudo -H pip3 install -r https://raw.githubusercontent.com/frepple/frepple/5.0.0/requirements.txt
+      sudo -H pip3 install -r https://raw.githubusercontent.com/frepple/frepple/6.0.0/requirements.txt
       
 
 #. **Install the frepple binary package**

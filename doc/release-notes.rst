@@ -11,6 +11,17 @@ Release notes
 - | The REST API for manufacturing orders now returns the resources and materials it uses.
   | Updated resources and materials can also written back with API.
 
+.. rubric:: Third party components
+
+- | The third party components we depend on have been upgraded to new releases. Most
+    notably upgrades are postgres 11 and django 2.2.
+  | Postgres 10 remains supported, so upgrading your database isn't a must for installing
+    this release.
+  | When upgrading a linux installation from a previous release, use the following command
+    to upgrade the Python packages. On Windows the new packages are part of the installer.
+      sudo -H pip install --force-reinstall -r https://raw.githubusercontent.com/frepple/frepple/6.0.0/requirements.txt
+      
+ 
 5.3.0 (2019/07/06)
 ==================
 

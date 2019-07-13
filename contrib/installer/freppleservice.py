@@ -64,8 +64,7 @@ class ServiceHandler(object):
   # stop the service
   def Run(self):
     # Import modules
-    import cherrypy
-    from cherrypy.wsgiserver import CherryPyWSGIServer
+    from cheroot import wsgi
     from subprocess import call, DEVNULL
     from win32process import DETACHED_PROCESS, CREATE_NO_WINDOW
 
@@ -115,16 +114,7 @@ class ServiceHandler(object):
               )
 
         # Prepare web server
-        cherrypy.config.update({
-          'global': {
-            'log.screen': False,
-            'tools.log_tracebacks.on': True,
-            'engine.autoreload.on': False,
-            'engine.SIGHUP': None,
-            'engine.SIGTERM': None
-            }
-          })
-        self.server = CherryPyWSGIServer(
+        self.server = wsgi.Server(
           (settings.ADDRESS, settings.PORT),
           StaticFilesHandler(WSGIHandler())
           )
@@ -179,7 +169,7 @@ class ServiceHandler(object):
     if not self.server:
       return
 
-    # Stop the CherryPy server
+    # Stop the web server
     self.server.stop()
 
     # Wait till stopped

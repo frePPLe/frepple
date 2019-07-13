@@ -1,4 +1,4 @@
-CherryPy == 18.1.2
+cheroot == 6.5.5
 djangorestframework == 3.9.4
 djangorestframework-bulk == 0.2.1
 djangorestframework-filters == 0.11.1
@@ -13,6 +13,18 @@ lxml == 4.3.4
 PyJWT == 1.7.1
 requests == 2.22.0
 https://github.com/frePPLe/django/tarball/frepple_6.0
-# Psycopg2 is required also.
-# On linux: install it using your distribution's package manager.
-# On windows: install it with pip, or simply add it to this file 
+
+# Postgres database connection
+# On linux: install psycopg2 using your distribution's package manager
+# On windows: uncomment the next line 
+# psycopg2-binary == 2.8.3
+
+# Additional packages for development environments
+# black >= 19.3b0
+# Sphinx == 2.1.2
+
+# Additional packages for windows development environments
+# pywin32 == 224
+# adodbapi == 2.6.0.7
+# cx-Freeze == 5.1.1
+# cx-Logging == 2.1

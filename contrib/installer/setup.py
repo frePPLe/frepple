@@ -29,7 +29,7 @@ sys.path.append(os.path.join(os.path.split(__file__)[0], '..', '..'))
 # Define what is to be included and excluded
 packages = [
   # Required for django standalone deployment
-  'logging', 'email', 'cherrypy.wsgiserver', 'sqlite3',
+  'logging', 'email', 'cheroot',
   # Added for PostgreSQL
   'psycopg2',
   # Dependencies for openpyxl

@@ -445,5 +445,5 @@ EMAIL_PORT = 587
 EMAIL_HOST_USER = 'your_email@domain.com'
 EMAIL_HOST_PASSWORD = 'frePPLeIsTheBest'
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-# Port number for the CherryPy web server
+# Port number when not using Apache
 PORT = 8000

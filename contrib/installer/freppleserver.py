@@ -16,7 +16,7 @@
 #
 import argparse
 import cx_Logging
-from cherrypy.wsgiserver import CherryPyWSGIServer
+from cheroot import wsgi
 from datetime import datetime
 from multiprocessing import freeze_support
 import os
@@ -48,7 +48,7 @@ class RunWSGIServer(Thread):
 
   def run(self):
     try:
-      self.server = CherryPyWSGIServer(
+      self.server = wsgi.Server(
         (address, port),
         StaticFilesHandler(WSGIHandler())
         )

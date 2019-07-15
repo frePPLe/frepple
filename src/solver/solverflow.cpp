@@ -84,13 +84,11 @@ void SolverCreate::solve(const Flow* fl,
         if (!result.getBool()) {
           // Return value is false, alternate rejected
           if (getLogLevel() > 1)
-            logger << indent(curflow->getOperation()->getLevel())
-                   << "   User exit disallows consumption from '"
+            logger << indentlevel << "User exit disallows consumption from '"
                    << (*i)->getBuffer()->getName() << "'" << endl;
           // Move to the next alternate
           if (++i != thealternates.end() && getLogLevel() > 1)
-            logger << indent(curflow->getOperation()->getLevel())
-                   << "   Alternate flow switches from '"
+            logger << indentlevel << "Alternate flow switches from '"
                    << curflow->getBuffer()->getName() << "' to '"
                    << (*i)->getBuffer()->getName() << "'" << endl;
           continue;
@@ -144,8 +142,7 @@ void SolverCreate::solve(const Flow* fl,
       if (data->state->a_date < min_next_date)
         min_next_date = data->state->a_date;
       if (++i != thealternates.end() && getLogLevel() > 1)
-        logger << indent(curflow->getOperation()->getLevel())
-               << "   Alternate flow switches from '"
+        logger << indentlevel << "Alternate flow switches from '"
                << curflow->getBuffer()->getName() << "' to '"
                << (*i)->getBuffer()->getName() << "'" << endl;
     }
@@ -158,8 +155,8 @@ void SolverCreate::solve(const Flow* fl,
       if (flplan->getFlow() != firstAlternate) flplan->setFlow(firstAlternate);
       // Message
       if (getLogLevel() > 1)
-        logger << indent(fl->getOperation()->getLevel())
-               << "   Alternate flow plans unconstrained on alternate '"
+        logger << indentlevel
+               << "Alternate flow plans unconstrained on alternate '"
                << firstAlternate->getBuffer()->getName() << "'" << endl;
       // Plan unconstrained
       data->constrainedPlanning = false;
@@ -176,8 +173,8 @@ void SolverCreate::solve(const Flow* fl,
       data->state->a_date = min_next_date;
       data->state->a_qty = 0;
       if (getLogLevel() > 1)
-        logger << indent(fl->getOperation()->getLevel())
-               << "   Alternate flow doesn't find supply on any alternate : "
+        logger << indentlevel
+               << "Alternate flow doesn't find supply on any alternate : "
                << data->state->a_qty << "  " << data->state->a_date << endl;
     }
   } else {
@@ -194,8 +191,7 @@ void SolverCreate::solve(const Flow* fl,
         // The reply date must be less than the effectivity end date: after
         // that date the flow in question won't consume any material any more.
         if (getLogLevel() > 1 && data->state->a_qty < ROUNDING_ERROR)
-          logger << indent(fl->getBuffer()->getLevel()) << "  Buffer '"
-                 << fl->getBuffer()->getName()
+          logger << indentlevel << "Buffer '" << fl->getBuffer()->getName()
                  << "' answer date is adjusted to "
                  << fl->getEffective().getEnd()
                  << " because of a date effective flow" << endl;

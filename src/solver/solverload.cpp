@@ -132,10 +132,9 @@ void SolverCreate::chooseResource(
       double deltaPenalty = data->state->a_penalty - beforePenalty;
       // Message
       if (loglevel > 1)
-        logger << indent(l->getOperation()->getLevel()) << "   Operation '"
-               << l->getOperation()->getName() << "' evaluates alternate '"
-               << res << "': cost " << deltaCost << ", penalty " << deltaPenalty
-               << endl;
+        logger << indentlevel << "Operation '" << l->getOperation()->getName()
+               << "' evaluates alternate '" << res << "': cost " << deltaCost
+               << ", penalty " << deltaPenalty << endl;
       data->state->a_cost = beforeCost;
       data->state->a_penalty = beforePenalty;
       double val = 0.0;
@@ -166,10 +165,9 @@ void SolverCreate::chooseResource(
         bestAlternateQuantity = lplan->getOperationPlan()->getQuantity();
       }
     } else if (loglevel > 1)
-      logger << indent(l->getOperation()->getLevel()) << "   Operation '"
-             << l->getOperation()->getName() << "' evaluates alternate '"
-             << lplan->getResource() << "': not available before "
-             << data->state->a_date << endl;
+      logger << indentlevel << "Operation '" << l->getOperation()->getName()
+             << "' evaluates alternate '" << lplan->getResource()
+             << "': not available before " << data->state->a_date << endl;
 
     // Keep track of best next date
     if (data->state->a_date < min_next_date)
@@ -190,9 +188,9 @@ void SolverCreate::chooseResource(
   if (bestAlternateSelection) {
     // Message
     if (loglevel > 1)
-      logger << indent(l->getOperation()->getLevel()) << "   Operation '"
-             << l->getOperation()->getName() << "' chooses alternate '"
-             << bestAlternateSelection << "' " << l->getSearch() << endl;
+      logger << indentlevel << "Operation '" << l->getOperation()->getName()
+             << "' chooses alternate '" << bestAlternateSelection << "' "
+             << l->getSearch() << endl;
 
     // Switch back
     data->state->q_loadplan = lplan;  // because q_loadplan can change!
@@ -233,9 +231,8 @@ void SolverCreate::chooseResource(
     data->logConstraints = originalLogConstraints;
 
     if (loglevel > 1)
-      logger << indent(lplan->getOperationPlan()->getOperation()->getLevel())
-             << "   Alternate load overloads alternate " << firstAlternate
-             << endl;
+      logger << indentlevel << "Alternate load overloads alternate "
+             << firstAlternate << endl;
   } else {
     // No alternate gave a good result in an constrained plan
     data->state->a_date = min_next_date;
@@ -252,8 +249,8 @@ void SolverCreate::chooseResource(
     data->logConstraints = originalLogConstraints;
 
     if (loglevel > 1)
-      logger << indent(lplan->getOperationPlan()->getOperation()->getLevel())
-             << "   Alternate load doesn't find supply on any alternate: "
+      logger << indentlevel
+             << "Alternate load doesn't find supply on any alternate: "
              << data->state->a_qty << "  " << data->state->a_date << endl;
   }
 }
@@ -360,15 +357,15 @@ void SolverCreate::solve(const Load* l, void* v) {
         double deltaPenalty = data->state->a_penalty - beforePenalty;
         // Message
         if (loglevel > 1 && search != PRIORITY)
-          logger << indent(l->getOperation()->getLevel()) << "   Operation '"
-                 << l->getOperation()->getName() << "' evaluates alternate '"
-                 << curload->getResource() << "': cost " << deltaCost
-                 << ", penalty " << deltaPenalty << endl;
+          logger << indentlevel << "Operation '" << l->getOperation()->getName()
+                 << "' evaluates alternate '" << curload->getResource()
+                 << "': cost " << deltaCost << ", penalty " << deltaPenalty
+                 << endl;
         if (deltaCost < ROUNDING_ERROR && deltaPenalty < ROUNDING_ERROR) {
           // Zero cost and zero penalty on this alternate. It won't get any
           // better than this, so we accept this alternate.
           if (loglevel > 1)
-            logger << indent(l->getOperation()->getLevel()) << "   Operation '"
+            logger << indentlevel << "Operation '"
                    << l->getOperation()->getName() << "' chooses alternate '"
                    << curload->getResource() << "' " << search << endl;
           // Restore the planning mode
@@ -404,10 +401,9 @@ void SolverCreate::solve(const Load* l, void* v) {
         }
       }
     } else if (loglevel > 1 && search != PRIORITY)
-      logger << indent(l->getOperation()->getLevel()) << "   Operation '"
-             << l->getOperation()->getName() << "' evaluates alternate '"
-             << curload->getResource() << "': not available before "
-             << data->state->a_date << endl;
+      logger << indentlevel << "Operation '" << l->getOperation()->getName()
+             << "' evaluates alternate '" << curload->getResource()
+             << "': not available before " << data->state->a_date << endl;
 
     // 4d) Undo the plan on the alternate
     data->getCommandManager()->rollback(topcommand);
@@ -416,8 +412,7 @@ void SolverCreate::solve(const Load* l, void* v) {
     if (data->state->a_date < min_next_date)
       min_next_date = data->state->a_date;
     if (++i != thealternates.end() && loglevel > 1 && search == PRIORITY)
-      logger << indent(curload->getOperation()->getLevel())
-             << "   Alternate load switches from '"
+      logger << indentlevel << "Alternate load switches from '"
              << curload->getResource()->getName() << "' to '"
              << (*i)->getResource()->getName() << "'" << endl;
   }
@@ -434,9 +429,9 @@ void SolverCreate::solve(const Load* l, void* v) {
   if (!originalPlanningMode || (search != PRIORITY && bestAlternateSelection)) {
     // Message
     if (loglevel > 1)
-      logger << indent(l->getOperation()->getLevel()) << "   Operation '"
-             << l->getOperation()->getName() << "' chooses alternate '"
-             << bestAlternateSelection->getResource() << "' " << search << endl;
+      logger << indentlevel << "Operation '" << l->getOperation()->getName()
+             << "' chooses alternate '" << bestAlternateSelection->getResource()
+             << "' " << search << endl;
 
     // Switch back
     data->state->q_loadplan = lplan;  // because q_loadplan can change!
@@ -473,8 +468,8 @@ void SolverCreate::solve(const Load* l, void* v) {
   data->logConstraints = originalLogConstraints;
 
   if (loglevel > 1)
-    logger << indent(lplan->getOperationPlan()->getOperation()->getLevel())
-           << "   Alternate load doesn't find supply on any alternate: "
+    logger << indentlevel
+           << "Alternate load doesn't find supply on any alternate: "
            << data->state->a_qty << "  " << data->state->a_date << endl;
 }
 

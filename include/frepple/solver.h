@@ -123,6 +123,9 @@ class SolverCreate : public Solver {
 
   bool rotateResources = true;
 
+  // Used to create correct
+  indent indentlevel;
+
   /** Used to force the buffer safety stock solver method to resolve
    * only the material shortages. */
   bool shortagesonly = false;

@@ -309,17 +309,42 @@ typedef unsigned int hashtype;
 extern ostream logger;
 
 /** Auxilary structure for easy indenting in the log stream. */
-struct indent {
-  short level;
+class indent {
+ public:
+  short level = 0;
 
   indent(short l) : level(l) {}
 
+  indent() {}
+
   indent operator()(short l) { return indent(l); }
+
+  indent& indent::operator++() {
+    ++level;
+    return *this;
+  }
+
+  indent indent::operator++(int) {
+    auto tmp = indent(level);
+    ++level;
+    return tmp;
+  }
+
+  indent& indent::operator--() {
+    --level;
+    return *this;
+  }
+
+  indent indent::operator--(int) {
+    auto tmp = indent(level);
+    --level;
+    return tmp;
+  }
 };
 
 /** Print a number of spaces to the output stream. */
 inline ostream& operator<<(ostream& os, const indent& i) {
-  for (short c = (i.level > 30 ? 30 : i.level); c > 0; --c) os << ' ';
+  for (auto c = (i.level > 30 ? 30 : i.level); c > 0; --c) os << "  ";
   return os;
 }
 

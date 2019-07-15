@@ -50,8 +50,8 @@ void SolverCreate::solve(const Demand* l, void* v) {
 
     // Message
     if (loglevel > 0) {
-      logger << "Planning demand '" << l->getName() << "' (" << l->getPriority()
-             << ", " << l->getDue() << ", " << l->getQuantity() << ")";
+      logger << "Planning demand '" << l->getName() << "': " << l->getPriority()
+             << ", " << l->getDue() << ", " << l->getQuantity();
       if (!data->constrainedPlanning || !isConstrained())
         logger << " in unconstrained mode";
       logger << endl;
@@ -156,12 +156,13 @@ void SolverCreate::solve(const Demand* l, void* v) {
     }
 
     // Planning loop
+    ++indentlevel;
     do {
       do {
         // Message
         if (loglevel > 0)
-          logger << "Demand '" << l << "' asks: " << plan_qty << "  "
-                 << plan_date << endl;
+          logger << indentlevel << "Demand '" << l << "' asks: " << plan_qty
+                 << "  " << plan_date << endl;
 
         // Store the last command in the list, in order to undo the following
         // commands if required.
@@ -190,7 +191,8 @@ void SolverCreate::solve(const Demand* l, void* v) {
             // The full asked quantity is not possible.
             // Try with the minimum shipment quantity.
             if (loglevel > 1)
-              logger << "Demand '" << l << "' tries planning minimum quantity "
+              logger << indentlevel << "Demand '" << l
+                     << "' tries planning minimum quantity "
                      << l->getMinShipment() << endl;
             data->getCommandManager()->rollback(topcommand);
             data->state->curBuffer = nullptr;
@@ -219,7 +221,7 @@ void SolverCreate::solve(const Demand* l, void* v) {
                   if (new_qty > max_qty) break;
                 }
                 if (loglevel > 0)
-                  logger << "Demand '" << l
+                  logger << indentlevel << "Demand '" << l
                          << "' tries planning a different quantity " << new_qty
                          << endl;
                 data->getCommandManager()->rollback(topcommand);
@@ -243,8 +245,8 @@ void SolverCreate::solve(const Demand* l, void* v) {
                                 // positive reply
               if (data->state->a_qty <= ROUNDING_ERROR) {
                 if (loglevel > 0)
-                  logger << "Demand '" << l << "' restores plan for quantity "
-                         << min_qty << endl;
+                  logger << indentlevel << "Demand '" << l
+                         << "' restores plan for quantity " << min_qty << endl;
                 // Restore the last feasible plan
                 data->getCommandManager()->rollback(topcommand);
                 data->state->curBuffer = nullptr;
@@ -264,8 +266,9 @@ void SolverCreate::solve(const Demand* l, void* v) {
 
         // Message
         if (loglevel > 0)
-          logger << "Demand '" << l << "' gets answer: " << data->state->a_qty
-                 << "  " << next_date << "  " << data->state->a_cost << "  "
+          logger << indentlevel << "Demand '" << l
+                 << "' gets answer: " << data->state->a_qty << "  " << next_date
+                 << "  " << data->state->a_cost << "  "
                  << data->state->a_penalty << endl;
 
         // Update the date to plan in the next loop
@@ -302,8 +305,8 @@ void SolverCreate::solve(const Demand* l, void* v) {
               // loop. Print a warning and simply a bit later.
               plan_date = copy_plan_date + getLazyDelay();
               if (loglevel > 0)
-                logger << "Demand '" << l << "': Easy retry on " << plan_date
-                       << " rather than " << next_date << endl;
+                logger << indentlevel << "Demand '" << l << "': Easy retry on "
+                       << plan_date << " rather than " << next_date << endl;
             } else
               // The shipment quantity was purely based on onhand in some
               // buffers. In this case we can still trust the next date returned
@@ -318,16 +321,17 @@ void SolverCreate::solve(const Demand* l, void* v) {
             // Print a warning and simply try a bit later.
             plan_date = copy_plan_date + getLazyDelay();
             if (loglevel > 0)
-              logger << "Demand '" << l << "': Easy retry on " << plan_date
-                     << " rather than " << next_date << endl;
+              logger << indentlevel << "Demand '" << l << "': Easy retry on "
+                     << plan_date << " rather than " << next_date << endl;
           } else if (getMinimumDelay()) {
             Date tmp = copy_plan_date + getMinimumDelay();
             if (tmp > next_date) {
               // Assures that the next planning round advances for at least the
               // minimum acceptable delay.
               if (loglevel > 0)
-                logger << "Demand '" << l << "': Minimum retry on " << tmp
-                       << " rather than " << next_date << endl;
+                logger << indentlevel << "Demand '" << l
+                       << "': Minimum retry on " << tmp << " rather than "
+                       << next_date << endl;
               plan_date = tmp;
             } else
               // Use the next-date answer from the solver
@@ -349,7 +353,8 @@ void SolverCreate::solve(const Demand* l, void* v) {
 
             // Create the correct operationplans
             if (loglevel >= 2)
-              logger << "Demand '" << l << "' plans coordination." << endl;
+              logger << indentlevel << "Demand '" << l
+                     << "' plans coordination." << endl;
             setLogLevel(0);
             double tmpresult = 0;
             try {
@@ -363,7 +368,7 @@ void SolverCreate::solve(const Demand* l, void* v) {
                 data->recent_buffers.clear();
                 deliveryoper->solve(*this, v);
                 if (data->state->a_qty < ROUNDING_ERROR) {
-                  logger << "Warning: Demand '" << l
+                  logger << indentlevel << "Warning: Demand '" << l
                          << "': Failing coordination" << endl;
                   break;
                 }
@@ -412,9 +417,9 @@ void SolverCreate::solve(const Demand* l, void* v) {
           break;
 
         if (getLogLevel() > 1)
-          logger << "Changing demand location for " << l->getName() << " from "
-                 << l->getLocation() << " to " << sortedLocation.front().first
-                 << endl;
+          logger << indentlevel << "Changing demand location for "
+                 << l->getName() << " from " << l->getLocation() << " to "
+                 << sortedLocation.front().first << endl;
 
         // Prepare for planning on the next location
         const_cast<Demand*>(l)->setLocationNoRecalc(
@@ -438,7 +443,8 @@ void SolverCreate::solve(const Demand* l, void* v) {
     // answer
     if (best_a_qty > 0.0 && data->constrainedPlanning) {
       if (loglevel >= 2)
-        logger << "Demand '" << l << "' accepts a best answer." << endl;
+        logger << indentlevel << "Demand '" << l << "' accepts a best answer."
+               << endl;
       setLogLevel(0);
       try {
         for (double remainder = best_q_qty;
@@ -451,7 +457,7 @@ void SolverCreate::solve(const Demand* l, void* v) {
           data->recent_buffers.clear();
           deliveryoper->solve(*this, v);
           if (data->state->a_qty < ROUNDING_ERROR) {
-            logger << "Warning: Demand '" << l
+            logger << indentlevel << "Warning: Demand '" << l
                    << "': Failing accepting best answer" << endl;
             break;
           }
@@ -466,6 +472,8 @@ void SolverCreate::solve(const Demand* l, void* v) {
       }
       setLogLevel(loglevel);
     }
+
+    indentlevel--;
 
     // Reset the state stack to the position we found it at.
     while (data->state > mystate) data->pop();

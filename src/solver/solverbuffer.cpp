@@ -53,10 +53,11 @@ void SolverCreate::solve(const Buffer* b, void* v) {
   bool tried_requested_date(false);
 
   // Message
-  if (getLogLevel() > 1)
-    logger << indent(b->getLevel()) << "  Buffer '" << b->getName()
+  if (getLogLevel() > 1) {
+    logger << ++indentlevel << "Buffer '" << b->getName()
            << "' is asked: " << data->state->q_qty << "  "
            << data->state->q_date << endl;
+  }
 
   // Detect loops in the supply chain
   auto tmp_recent_buffers = data->recent_buffers;
@@ -80,8 +81,8 @@ void SolverCreate::solve(const Buffer* b, void* v) {
             Date::infiniteFuture, data->state->q_qty, false));
     }
     if (getLogLevel() > 1) {
-      logger << indent(b->getLevel()) << "     Warning: " << o.str() << endl;
-      logger << indent(b->getLevel()) << "  Buffer '" << b->getName()
+      logger << indentlevel << "Warning: " << o.str() << endl;
+      logger << indentlevel-- << "Buffer '" << b->getName()
              << "' answers: " << data->state->a_qty << "  "
              << data->state->a_date << "  " << data->state->a_cost << "  "
              << data->state->a_penalty << endl;
@@ -163,8 +164,8 @@ void SolverCreate::solve(const Buffer* b, void* v) {
           auto tmp = scanner->getOperationPlan();
           if (tmp && (tmp->getConfirmed() || tmp->getApproved())) {
             if (getLogLevel() > 1)
-              logger << indent(b->getLevel())
-                     << "   Refuse to create extra supply because confirmed "
+              logger << indentlevel
+                     << "Refuse to create extra supply because confirmed "
                         "supply is already available at "
                      << scanner->getDate() << endl;
             supply_exists_already = true;
@@ -386,14 +387,14 @@ void SolverCreate::solve(const Buffer* b, void* v) {
       auto tmp = (data->state->a_qty - cumproduced) * b->getItem()->getCost();
       data->state->a_cost += tmp;
       if (data->logcosts && data->incostevaluation)
-        logger << indent(b->getLevel()) << "     + cost on buffer '" << b
-               << "': " << tmp << endl;
+        logger << indentlevel << "     + cost on buffer '" << b << "': " << tmp
+               << endl;
     }
   }
 
   // Message
   if (getLogLevel() > 1)
-    logger << indent(b->getLevel()) << "  Buffer '" << b->getName()
+    logger << indentlevel-- << "Buffer '" << b->getName()
            << "' answers: " << data->state->a_qty << "  " << data->state->a_date
            << "  " << data->state->a_cost << "  " << data->state->a_penalty
            << endl;
@@ -405,9 +406,8 @@ void SolverCreate::solveSafetyStock(const Buffer* b, void* v) {
 
   // Message
   if (getLogLevel() > 1)
-    logger << indent(b->getLevel()) << "  Buffer '" << b->getName()
-           << "' solves for " << (shortagesonly ? "shortages" : "safety stock")
-           << endl;
+    logger << ++indentlevel << "Buffer '" << b->getName() << "' solves for "
+           << (shortagesonly ? "shortages" : "safety stock") << endl;
 
   // Scan the complete horizon
   Date currentDate;
@@ -526,9 +526,8 @@ void SolverCreate::solveSafetyStock(const Buffer* b, void* v) {
 
   // Message
   if (getLogLevel() > 1)
-    logger << indent(b->getLevel()) << "  Buffer '" << b->getName()
-           << "' solved for " << (shortagesonly ? "shortages" : "safety stock")
-           << endl;
+    logger << indentlevel-- << "Buffer '" << b->getName() << "' solved for "
+           << (shortagesonly ? "shortages" : "safety stock") << endl;
 }
 
 void SolverCreate::solve(const BufferInfinite* b, void* v) {
@@ -540,7 +539,7 @@ void SolverCreate::solve(const BufferInfinite* b, void* v) {
 
   // Message
   if (getLogLevel() > 1)
-    logger << indent(b->getLevel()) << "  Infinite buffer '" << b
+    logger << ++indentlevel << "Infinite buffer '" << b
            << "' is asked: " << data->state->q_qty << "  "
            << data->state->q_date << endl;
 
@@ -552,13 +551,13 @@ void SolverCreate::solve(const BufferInfinite* b, void* v) {
     auto tmp = data->state->q_qty * b->getItem()->getCost();
     data->state->a_cost += tmp;
     if (data->logcosts && data->incostevaluation)
-      logger << indent(b->getLevel()) << "     + cost on buffer '" << b
-             << "': " << tmp << endl;
+      logger << indentlevel << "     + cost on buffer '" << b << "': " << tmp
+             << endl;
   }
 
   // Message
   if (getLogLevel() > 1)
-    logger << indent(b->getLevel()) << "  Infinite buffer '" << b
+    logger << indentlevel-- << "Infinite buffer '" << b
            << "' answers: " << data->state->a_qty << "  " << data->state->a_date
            << "  " << data->state->a_cost << "  " << data->state->a_penalty
            << endl;

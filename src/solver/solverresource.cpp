@@ -35,11 +35,11 @@ void SolverCreate::solve(const Resource* res, void* v) {
   // Message
   if (getLogLevel() > 1) {
     if (!data->constrainedPlanning || !isConstrained())
-      logger << indent(res->getLevel()) << "   Resource '" << res->getName()
+      logger << ++indentlevel << "Resource '" << res->getName()
              << "' is asked in unconstrained mode: " << (-data->state->q_qty)
              << "  " << data->state->q_operationplan->getDates() << endl;
     else
-      logger << indent(res->getLevel()) << "   Resource '" << res->getName()
+      logger << ++indentlevel << "Resource '" << res->getName()
              << "' is asked: " << (-data->state->q_qty) << "  "
              << data->state->q_operationplan->getDates() << endl;
   }
@@ -303,8 +303,7 @@ void SolverCreate::solve(const Resource* res, void* v) {
       ++iterations;
     } while (HasOverload && newDate && iterations < getResourceIterationMax());
     if (iterations >= getResourceIterationMax())
-      logger << indent(res->getLevel())
-             << "   Warning: no free capacity slot found on " << res
+      logger << indentlevel << "Warning: no free capacity slot found on " << res
              << " after " << getResourceIterationMax()
              << " iterations. Last date: " << newDate << endl;
     data->state->q_loadplan = old_q_loadplan;
@@ -337,7 +336,7 @@ void SolverCreate::solve(const Resource* res, void* v) {
                  3600.0;
       data->state->a_cost += tmp;
       if (data->logcosts && data->incostevaluation)
-        logger << indent(res->getLevel()) << "     + cost on resource '" << res
+        logger << indentlevel << "     + cost on resource '" << res
                << "': " << tmp << endl;
     }
 
@@ -359,7 +358,7 @@ void SolverCreate::solve(const Resource* res, void* v) {
 
   // Message
   if (getLogLevel() > 1) {
-    logger << indent(res->getLevel()) << "   Resource '" << res
+    logger << indentlevel-- << "Resource '" << res
            << "' answers: " << data->state->a_qty << "  "
            << data->state->a_date;
     if (currentOpplan.end > data->state->q_operationplan->getEnd())
@@ -382,7 +381,7 @@ void SolverCreate::solve(const ResourceInfinite* res, void* v) {
 
   // Message
   if (getLogLevel() > 1 && data->state->q_qty < 0)
-    logger << indent(res->getLevel()) << "   Infinite resource '" << res
+    logger << ++indentlevel << "Infinite resource '" << res
            << "' is asked: " << (-data->state->q_qty) << "  "
            << data->state->q_operationplan->getDates() << endl;
 
@@ -399,13 +398,13 @@ void SolverCreate::solve(const ResourceInfinite* res, void* v) {
                3600.0;
     data->state->a_cost += tmp;
     if (data->logcosts && data->incostevaluation)
-      logger << indent(res->getLevel()) << "     + cost on resource '" << res
+      logger << indentlevel << "     + cost on resource '" << res
              << "': " << tmp << endl;
   }
 
   // Message
   if (getLogLevel() > 1 && data->state->q_qty < 0)
-    logger << indent(res->getLevel()) << "   Infinite resource '" << res
+    logger << indentlevel-- << "Infinite resource '" << res
            << "' answers: " << (-data->state->a_qty) << "  "
            << data->state->a_date << endl;
 }
@@ -420,7 +419,7 @@ void SolverCreate::solve(const ResourceBuckets* res, void* v) {
 
   // Message
   if (getLogLevel() > 1 && data->state->q_qty < 0)
-    logger << indent(res->getLevel()) << "   Bucketized resource '" << res
+    logger << ++indentlevel << "Bucketized resource '" << res
            << "' is asked: " << (-data->state->q_qty) << "  "
            << opplan->getDates() << endl;
 
@@ -894,7 +893,7 @@ void SolverCreate::solve(const ResourceBuckets* res, void* v) {
                3600.0;
     data->state->a_cost += tmp;
     if (data->logcosts && data->incostevaluation)
-      logger << indent(res->getLevel()) << "     + cost on resource '" << res
+      logger << indentlevel << "     + cost on resource '" << res
              << "': " << tmp << endl;
 
     // Build-ahead penalty: 5% of the cost   @todo buildahead penalty is
@@ -912,7 +911,7 @@ void SolverCreate::solve(const ResourceBuckets* res, void* v) {
 
   // Message
   if (getLogLevel() > 1 && data->state->q_qty < 0)
-    logger << indent(res->getLevel()) << "   Bucketized resource '" << res
+    logger << indentlevel-- << "Bucketized resource '" << res
            << "' answers: " << data->state->a_qty << "  " << data->state->a_date
            << endl;
 }

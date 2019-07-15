@@ -319,23 +319,23 @@ class indent {
 
   indent operator()(short l) { return indent(l); }
 
-  indent& indent::operator++() {
+  indent& operator++() {
     ++level;
     return *this;
   }
 
-  indent indent::operator++(int) {
+  indent operator++(int) {
     auto tmp = indent(level);
     ++level;
     return tmp;
   }
 
-  indent& indent::operator--() {
+  indent& operator--() {
     --level;
     return *this;
   }
 
-  indent indent::operator--(int) {
+  indent operator--(int) {
     auto tmp = indent(level);
     --level;
     return tmp;

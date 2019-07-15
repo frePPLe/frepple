@@ -54,7 +54,7 @@ plan.loglevel               | Controls the verbosity of the planning log file.
                             | Accepted values are 0 (silent – default), 1 (minimal) and 2 (verbose).
 plan.minimumdelay           | Specifies a minimum delay the algorithm applies when the requested
                               date isn't feasible.                            
-                            | The default value is 0. This value should only be changed when the
+                            | The default value is 3600. This value should only be changed when the
                               planning run is taking a long time and the log file shows that demands
                               take many iterations to be planned - where the requested delivery
                               date for each iteration is advancing only in tiny increments.              

@@ -1431,7 +1431,7 @@ var grid = {
 
     // Final result
   	thefilter.append(col.label + '&nbsp;' + oper + '&nbsp;');
-    var newelement = $('<input size="10">');
+    var newelement = $('<input size="20">');
     newelement.val(rule.data);
     rule["filtercount"] = grid.countFilters++;  // Mark position in the expression
     newelement.on('change', function(event) {

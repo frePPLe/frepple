@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2007-2017 by frePPLe bvba
+# Copyright (C) 2007-2019 by frePPLe bvba
 #
 # This library is free software; you can redistribute it and/or modify it
 # under the terms of the GNU Affero General Public License as published
@@ -29,7 +29,7 @@ from django.db import connections, DEFAULT_DB_ALIAS
 from freppledb.boot import getAttributes
 from freppledb.common.models import Parameter
 from freppledb.common.commands import PlanTaskRegistry, PlanTask
-from freppledb.input.models import Resource, Item
+from freppledb.input.models import Resource, Item, Location
 
 logger = logging.getLogger(__name__)
 

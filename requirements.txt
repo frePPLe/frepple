@@ -26,5 +26,5 @@ https://github.com/frePPLe/django/tarball/frepple_6.0
 # Additional packages for windows development environments
 # pywin32 == 224
 # adodbapi == 2.6.0.7
-# cx-Freeze == 5.1.1
-# cx-Logging == 2.1
+# cx_Freeze == 5.1.1
+# cx_Logging == 2.1

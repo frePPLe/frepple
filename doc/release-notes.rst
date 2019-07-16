@@ -4,6 +4,11 @@ Release notes
 6.0.0 (Upcoming release)
 ========================
 
+.. rubric:: Production planning
+
+- Bug fix in the status propagation of completed manufacturing 
+  orders on routing operations.
+
 .. rubric:: Integration
 
 - Replacement of the name column of the buffer table with an ID column of type integer (ID column is primary key).

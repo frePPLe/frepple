@@ -1723,7 +1723,7 @@ void OperationPlan::setStatus(const string& s, bool propagate) {
     throw DataException("invalid operationplan status:" + s);
   update();
   for (OperationPlan* x = firstsubopplan; x; x = x->nextsubopplan)
-    x->setStatus(s);
+    x->setStatus(s, propagate);
   if (propagate) propagateStatus();
 }
 

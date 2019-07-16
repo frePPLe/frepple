@@ -337,14 +337,22 @@ class loadLocations(LoadTask):
         with connections[database].chunked_cursor() as cursor:
             cnt = 0
             starttime = time()
+
+            attrs = [f[0] for f in getAttributes(Location)]
+            if attrs:
+                attrsql = ", %s" % ", ".join(attrs)
+            else:
+                attrsql = ""
+
             cursor.execute(
                 """
-        SELECT
-          name, description, owner_id, available_id, category, subcategory, source
-        FROM location %s
-        """
-                % filter_where
+                SELECT
+                  name, description, owner_id, available_id, category, subcategory, source %s
+                FROM location %s
+                """
+                % (attrsql, filter_where)
             )
+
             for i in cursor:
                 cnt += 1
                 try:
@@ -359,6 +367,10 @@ class loadLocations(LoadTask):
                         x.owner = frepple.location(name=i[2])
                     if i[3]:
                         x.available = frepple.calendar(name=i[3])
+                    idx = 7
+                    for a in attrs:
+                        setattr(x, a, i[idx])
+                        idx += 1
                 except Exception as e:
                     logger.error("**** %s ****" % e)
             logger.info(

@@ -1986,6 +1986,73 @@ class ManufacturingOrder(OperationPlan):
 
     objects = ManufacturingOrderManager()
 
+    @classmethod
+    def getModelForm(cls, fields, database=DEFAULT_DB_ALIAS):
+
+        template = modelform_factory(
+            cls,
+            fields=[i for i in fields if i != "resource"],
+            formfield_callback=lambda f: (
+                isinstance(f, RelatedField) and f.formfield(using=database)
+            )
+            or f.formfield(),
+        )
+
+        if "resource" not in fields:
+            return template
+
+        # Return a form class with an extra field
+        class MO_form(template):
+            resource = forms.CharField()
+
+            def clean_resource(self):
+                try:
+                    cleaned = []
+                    for res in ast.literal_eval(self.cleaned_data["resource"]):
+                        if isinstance(res, str):
+                            rsrc = Resource.objects.all().using(database).get(name=res)
+                        else:
+                            rsrc = (
+                                Resource.objects.all().using(database).get(name=res[0])
+                            )
+                        cleaned.append(rsrc)
+                        rsrc.top_rsrc = (
+                            Resource.objects.all()
+                            .using(database)
+                            .get(lvl=0, lft__lte=rsrc.lft, rght__gte=rsrc.rght)
+                        )
+                    return cleaned
+                except:
+                    raise forms.ValidationError("Invalid resource")
+
+            def save(self, commit=True):
+                instance = super(MO_form, self).save(commit=False)
+                try:
+                    for res in self.cleaned_data["resource"]:
+                        for opplanres in instance.resources.all().select_related(
+                            "resource"
+                        ):
+                            top_rsrc = (
+                                Resource.objects.all()
+                                .using(database)
+                                .get(
+                                    lvl=0,
+                                    lft__lte=opplanres.resource.lft,
+                                    rght__gte=opplanres.resource.rght,
+                                )
+                            )
+                            if top_rsrc == res.top_rsrc:
+                                opplanres.resource = res
+                                opplanres.save(using=database)
+                                break
+                except:
+                    pass
+                if commit:
+                    instance.save()
+                return instance
+
+        return MO_form
+
     def save(self, *args, **kwargs):
         self.type = "MO"
         self.supplier = self.origin = self.destination = None

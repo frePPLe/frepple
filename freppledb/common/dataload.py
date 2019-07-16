@@ -279,6 +279,10 @@ def _parseData(model, data, rowmapper, user, database, ping):
     content_type_id = ContentType.objects.get_for_model(model).pk
     admin_log = []
 
+    # Call the beforeUpload method if it is defined
+    if hasattr(model, "beforeUpload"):
+        model.beforeUpload(database)
+
     errors = 0
     warnings = 0
     has_pk_field = False
@@ -379,9 +383,12 @@ def _parseData(model, data, rowmapper, user, database, ping):
 
             # Create a form class that will be used to validate the data
             fields = [i.name for i in headers if i]
-            UploadForm = modelform_factory(
-                model, fields=tuple(fields), formfield_callback=formfieldCallback
-            )
+            if hasattr(model, "getModelForm"):
+                UploadForm = model.getModelForm(tuple(fields), database=database)
+            else:
+                UploadForm = modelform_factory(
+                    model, fields=tuple(fields), formfield_callback=formfieldCallback
+                )
             rowWrapper = rowmapper(headers)
 
             # Get natural keys for the class

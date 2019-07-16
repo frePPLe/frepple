@@ -84,7 +84,7 @@ def cockpit(request):
             "bucketnames": Bucket.objects.order_by("-level").values_list(
                 "name", flat=True
             ),
-            "currency": getCurrency(),
+            "currency": json.dumps(getCurrency()),
         },
     )
 
@@ -164,9 +164,8 @@ class PreferencesForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        if (
-            len(settings.THEMES) == 1
-        ):  # If there is only one theme make this choice unavailable
+        if len(settings.THEMES) == 1:
+            # If there is only one theme make this choice unavailable
             self.fields.pop("theme")
 
     def clean(self):

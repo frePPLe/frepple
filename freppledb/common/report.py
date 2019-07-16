@@ -1589,15 +1589,20 @@ class GridReport(View):
                                 rec[i] == "\xa0"
                             ):  # Workaround for Jqgrid issue: date field can't be set to blank
                                 rec[i] = None
-                        UploadForm = modelform_factory(
-                            reportclass.model,
-                            fields=tuple(rec.keys()),
-                            formfield_callback=lambda f: (
-                                isinstance(f, RelatedField)
-                                and f.formfield(using=request.database)
+                        if hasattr(reportclass.model, "getModelForm"):
+                            UploadForm = reportclass.model.getModelForm(
+                                tuple(rec.keys()), database=request.database
                             )
-                            or f.formfield(),
-                        )
+                        else:
+                            UploadForm = modelform_factory(
+                                reportclass.model,
+                                fields=tuple(rec.keys()),
+                                formfield_callback=lambda f: (
+                                    isinstance(f, RelatedField)
+                                    and f.formfield(using=request.database)
+                                )
+                                or f.formfield(),
+                            )
                         form = UploadForm(rec, instance=obj)
                         if form.has_changed():
                             obj = form.save(commit=False)

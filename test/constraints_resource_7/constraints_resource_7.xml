@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <name>Test model for effective operations</name>
+  <name>Test model for bucketized resources</name>
   <description>
   In this test the various aspects of bucketized resources.
     - constant part of the capacity consumption

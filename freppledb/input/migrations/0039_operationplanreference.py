@@ -64,9 +64,9 @@ class Migration(migrations.Migration):
         ),
         migrations.RunSQL(
             """
-      alter table operationplan
-      alter column owner_id type character varying (300)
-      """
+            alter table operationplan
+            alter column owner_id type character varying (300)
+            """
         ),
         # Remaining migrations are just catching up on python-side model
         # changes without impact on the database schema. Just adding them

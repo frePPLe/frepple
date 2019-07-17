@@ -82,9 +82,9 @@ void SolverCreate::solve(const Buffer* b, void* v) {
     if (getLogLevel() > 1) {
       logger << indentlevel << "Warning: " << o.str() << endl;
       logger << indentlevel-- << "Buffer '" << b->getName()
-             << "' answers: " << data->state->a_qty << "  "
-             << data->state->a_date << "  " << data->state->a_cost << "  "
-             << data->state->a_penalty << endl;
+             << "' answers: " << data->state->a_qty;
+      if (!data->state->a_qty) logger << "  " << data->state->a_date;
+      logger << endl;
     }
     return;
   } else
@@ -394,9 +394,9 @@ void SolverCreate::solve(const Buffer* b, void* v) {
   // Message
   if (getLogLevel() > 1)
     logger << indentlevel-- << "Buffer '" << b->getName()
-           << "' answers: " << data->state->a_qty << "  " << data->state->a_date
-           << "  " << data->state->a_cost << "  " << data->state->a_penalty
-           << endl;
+           << "' answers: " << data->state->a_qty;
+  if (!data->state->a_qty) logger << "  " << data->state->a_date;
+  logger << endl;
 }
 
 void SolverCreate::solveSafetyStock(const Buffer* b, void* v) {
@@ -576,9 +576,7 @@ void SolverCreate::solve(const BufferInfinite* b, void* v) {
   // Message
   if (getLogLevel() > 1)
     logger << indentlevel-- << "Infinite buffer '" << b
-           << "' answers: " << data->state->a_qty << "  " << data->state->a_date
-           << "  " << data->state->a_cost << "  " << data->state->a_penalty
-           << endl;
+           << "' answers: " << data->state->a_qty << endl;
 }
 
 }  // namespace frepple

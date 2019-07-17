@@ -123,7 +123,7 @@ class SolverCreate : public Solver {
 
   bool rotateResources = true;
 
-  // Used to create correct
+  // Used to indent the logfile in a readable way
   indent indentlevel;
 
   /** Used to force the buffer safety stock solver method to resolve

@@ -567,11 +567,12 @@ void SolverCreate::solve(const Operation* oper, void* v) {
   createOperation(oper, data, true, true);
 
   // Message
-  if (getLogLevel() > 1)
+  if (getLogLevel() > 1) {
     logger << indentlevel-- << "Operation '" << oper->getName()
-           << "' answers: " << data->state->a_qty << "  " << data->state->a_date
-           << "  " << data->state->a_cost << "  " << data->state->a_penalty
-           << endl;
+           << "' answers: " << data->state->a_qty;
+    if (!data->state->a_qty) logger << "  " << data->state->a_date;
+    logger << endl;
+  }
 }
 
 OperationPlan* SolverCreate::createOperation(const Operation* oper,
@@ -618,9 +619,9 @@ OperationPlan* SolverCreate::createOperation(const Operation* oper,
       if (getLogLevel() > 1) {
         logger << indentlevel << problemtext << endl;
         logger << indentlevel << "Operation '" << oper->getName()
-               << "' answers: " << data->state->a_qty << "  "
-               << data->state->a_date << "  " << data->state->a_cost << "  "
-               << data->state->a_penalty << endl;
+               << "' answers: " << data->state->a_qty;
+        if (!data->state->a_qty) logger << "  " << data->state->a_date;
+        logger << endl;
       }
       return nullptr;
     }
@@ -1052,11 +1053,12 @@ void SolverCreate::solve(const OperationRouting* oper, void* v) {
   }
 
   // Message
-  if (getLogLevel() > 1)
+  if (getLogLevel() > 1) {
     logger << indentlevel-- << "Routing operation '" << oper->getName()
-           << "' answers: " << data->state->a_qty << "  " << data->state->a_date
-           << "  " << data->state->a_cost << "  " << data->state->a_penalty
-           << endl;
+           << "' answers: " << data->state->a_qty;
+    if (!data->state->a_qty) logger << "  " << data->state->a_date;
+    logger << endl;
+  }
 }
 
 // No need to take post- and pre-operation times into account
@@ -1571,11 +1573,12 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v) {
   data->state->curOwnerOpplan = prev_owner_opplan;
 
   // Message
-  if (loglevel > 1)
+  if (loglevel > 1) {
     logger << indentlevel-- << "Alternate operation '" << oper->getName()
-           << "' answers: " << data->state->a_qty << "  " << data->state->a_date
-           << "  " << data->state->a_cost << "  " << data->state->a_penalty
-           << endl;
+           << "' answers: " << data->state->a_qty;
+    if (!data->state->a_qty) logger << "  " << data->state->a_date;
+    logger << endl;
+  }
 }
 
 void SolverCreate::solve(const OperationSplit* oper, void* v) {
@@ -1773,11 +1776,12 @@ void SolverCreate::solve(const OperationSplit* oper, void* v) {
   if (loop_qty) data->state->a_date = Date::infiniteFuture;
 
   // Message
-  if (loglevel > 1)
+  if (loglevel > 1) {
     logger << indentlevel-- << "Split operation '" << oper->getName()
-           << "' answers: " << data->state->a_qty << "  " << data->state->a_date
-           << "  " << data->state->a_cost << "  " << data->state->a_penalty
-           << endl;
+           << "' answers: " << data->state->a_qty;
+    if (!data->state->a_qty) logger << "  " << data->state->a_date;
+    logger << endl;
+  }
 }
 
 }  // namespace frepple

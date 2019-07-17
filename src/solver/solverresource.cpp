@@ -405,8 +405,7 @@ void SolverCreate::solve(const ResourceInfinite* res, void* v) {
   // Message
   if (getLogLevel() > 1 && data->state->q_qty < 0)
     logger << indentlevel-- << "Infinite resource '" << res
-           << "' answers: " << (-data->state->a_qty) << "  "
-           << data->state->a_date << endl;
+           << "' answers: " << (-data->state->a_qty) << endl;
 }
 
 void SolverCreate::solve(const ResourceBuckets* res, void* v) {
@@ -910,10 +909,12 @@ void SolverCreate::solve(const ResourceBuckets* res, void* v) {
         originalOpplan.end, orig_q_qty);
 
   // Message
-  if (getLogLevel() > 1 && data->state->q_qty < 0)
+  if (getLogLevel() > 1 && data->state->q_qty < 0) {
     logger << indentlevel-- << "Bucketized resource '" << res
-           << "' answers: " << data->state->a_qty << "  " << data->state->a_date
-           << endl;
+           << "' answers: " << data->state->a_qty;
+    if (!data->state->a_qty) logger << "  " << data->state->a_date;
+    logger << endl;
+  }
 }
 
 }  // namespace frepple

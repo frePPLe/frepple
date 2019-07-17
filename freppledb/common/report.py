@@ -2382,11 +2382,9 @@ class GridPivot(GridReport):
                 for f in reportclass.rows:
                     try:
                         s = (
-                            isinstance(i[f.name], str)
-                            and escape(
-                                i[f.name].encode(settings.DEFAULT_CHARSET, "ignore")
-                            )
-                            or i[f.name]
+                            escape(i[f.name])
+                            if isinstance(i[f.name], str)
+                            else i[f.name]
                         )
                         if first2:
                             r.append('"%s":"%s"' % (f.name, s))

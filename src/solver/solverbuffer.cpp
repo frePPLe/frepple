@@ -53,11 +53,10 @@ void SolverCreate::solve(const Buffer* b, void* v) {
   bool tried_requested_date(false);
 
   // Message
-  if (getLogLevel() > 1) {
+  if (getLogLevel() > 1)
     logger << ++indentlevel << "Buffer '" << b->getName()
            << "' is asked: " << data->state->q_qty << "  "
            << data->state->q_date << endl;
-  }
 
   // Detect loops in the supply chain
   auto tmp_recent_buffers = data->recent_buffers;
@@ -415,6 +414,7 @@ void SolverCreate::solveSafetyStock(const Buffer* b, void* v) {
   double shortage(0.0);
   double current_minimum(0.0);
   Buffer::flowplanlist::const_iterator cur = b->getFlowPlans().begin();
+  Calendar* alignment_cal = Plan::instance().getCalendar();
   while (true) {
     // Iterator has now changed to a new date or we have arrived at the end.
     // If multiple flows are at the same moment in time, we are not interested
@@ -426,6 +426,24 @@ void SolverCreate::solveSafetyStock(const Buffer* b, void* v) {
       double theOnHand = prev->getOnhand();
       double theDelta = theOnHand - current_minimum + shortage;
       bool loop = true;
+
+      if (alignment_cal) {
+        // Adjust the requirement quantity to meet the full requirements of the
+        // current plan.calendar bucket.
+        Calendar::EventIterator bckt_end(alignment_cal, prev->getDate(), true);
+        ++bckt_end;
+        auto tmp_current_minimum = current_minimum;
+        for (Buffer::flowplanlist::const_iterator f(prev);
+             f != b->getFlowPlans().end() && f->getDate() < bckt_end.getDate();
+             ++f) {
+          if (f->getEventType() == 3 && !shortagesonly)
+            tmp_current_minimum = f->getMin();
+          if (f->isLastOnDate()) {
+            auto tmp = f->getOnhand() - tmp_current_minimum + shortage;
+            if (tmp < theDelta) theDelta = tmp;
+          }
+        }
+      }
 
       // Evaluate the situation at the last flowplan before the date change.
       // Is there a shortage at that date?

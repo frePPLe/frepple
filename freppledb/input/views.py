@@ -391,439 +391,158 @@ class PathReport(GridReport):
     """
         # Update item and location hierarchies
         Item.rebuildHierarchy(database=request.database)
-        Location.rebuildHierarchy(database=request.database)
-
-        entity = basequery.query.get_compiler(basequery.db).as_sql(
-            with_col_aliases=False
-        )[1]
-        entity = entity[0]
-        root = reportclass.getRoot(request, entity)
-
-        # Recurse over all operations
-        # TODO the current logic isn't generic enough. A lot of buffers may not be explicitly
-        # defined, and are created on the fly by deliveries, itemsuppliers or itemdistributions.
-        # Currently we don't account for such situations.
-        # TODO usage search doesn't find item distributions from that location
-        counter = 1
-        operations = set()
-        while len(root) > 0:
-            # Pop the current node from the stack
-            level, parent, curoperation, curqty, issuboperation, parentoper, realdepth, pushsuper, location = (
-                root.pop()
-            )
-            curnode = counter
-            counter += 1
-            if isinstance(location, str):
-                curlocation = (
-                    Location.objects.all().using(request.database).get(name=location)
-                )
-
-            # If an operation has parent operations we forget about the current operation
-            # and use only the parent
-            if pushsuper and not isinstance(
-                curoperation, (ItemSupplier, ItemDistribution)
-            ):
-                hasParents = False
-                for x in (
-                    curoperation.superoperations.using(request.database)
-                    .only("operation")
-                    .order_by("-priority")
-                ):
-                    root.append(
-                        (
-                            level,
-                            parent,
-                            x.operation,
-                            curqty,
-                            issuboperation,
-                            parentoper,
-                            realdepth,
-                            False,
-                            location,
-                        )
-                    )
-                    hasParents = True
-                if hasParents:
-                    continue
-
-            # Avoid showing the same operation twice.
-            # This feature is enabled by default. Without it we cannot correctly display
-            # supply paths with loops (which are normally a modeling error).
-            # The use of this feature has some drawbacks  a) because it is not intuitive
-            # to understand where operations are skipped in the path, and b) because
-            # the quantity of each occurrence might be different.
-            # You may choose can disable this feature by commenting out the next 3 lines.
-            if curoperation in operations:
-                continue
-            operations.add(curoperation)
-
-            # Find the next level
-            hasChildren = False
-            subcount = 0
-            if reportclass.downstream:
-                # Downstream recursion
-                if isinstance(curoperation, ItemSupplier):
-                    name = "Purchase %s @ %s from %s" % (
-                        curoperation.item.name,
-                        location,
-                        curoperation.supplier.name,
-                    )
-                    optype = "purchase"
-                    duration = curoperation.leadtime
-                    duration_per = None
-                    buffers = [
-                        (
-                            "%s @ %s"
-                            % (curoperation.item.name, curoperation.location.name),
-                            1,
-                        )
-                    ]
-                    if curoperation.resource:
-                        resources = [
-                            (
-                                curoperation.resource.name,
-                                float(curoperation.resource_qty),
-                            )
-                        ]
-                    else:
-                        resources = None
-                    try:
-                        downstr = Buffer.objects.using(request.database).get(
-                            item=curoperation.item.name,
-                            location=curoperation.location.name,
-                        )
-                        root.extend(
-                            reportclass.findUsage(
-                                downstr,
-                                request.database,
-                                level,
-                                curqty,
-                                realdepth + 1,
-                                True,
-                            )
-                        )
-                    except Buffer.DoesNotExist:
-                        downstr = Buffer(item=curoperation.item, location=curlocation)
-                        root.extend(
-                            reportclass.findUsage(
-                                downstr,
-                                request.database,
-                                level,
-                                curqty,
-                                realdepth + 1,
-                                True,
-                            )
-                        )
-                elif isinstance(curoperation, ItemDistribution):
-                    name = "Ship %s from %s to %s" % (
-                        curoperation.item.name,
-                        curoperation.origin.name,
-                        curoperation.location.name,
-                    )
-                    optype = "distribution"
-                    duration = curoperation.leadtime
-                    duration_per = None
-                    buffers = [
-                        (
-                            "%s @ %s"
-                            % (curoperation.item.name, curoperation.origin.name),
-                            -1,
-                        ),
-                        (
-                            "%s @ %s"
-                            % (curoperation.item.name, curoperation.location.name),
-                            1,
-                        ),
-                    ]
-                    if curoperation.resource:
-                        resources = [
-                            (
-                                curoperation.resource.name,
-                                float(curoperation.resource_qty),
-                            )
-                        ]
-                    else:
-                        resources = None
-                    try:
-                        downstr = Buffer.objects.using(request.database).get(
-                            item=curoperation.item.name, location=location
-                        )
-                        root.extend(
-                            reportclass.findUsage(
-                                downstr,
-                                request.database,
-                                level,
-                                curqty,
-                                realdepth + 1,
-                                True,
-                            )
-                        )
-                    except Buffer.DoesNotExist:
-                        downstr = Buffer(item=curoperation.item, location=curlocation)
-                        root.extend(
-                            reportclass.findUsage(
-                                downstr,
-                                request.database,
-                                level,
-                                curqty,
-                                realdepth + 1,
-                                True,
-                            )
-                        )
-                else:
-                    name = curoperation.name
-                    optype = curoperation.type
-                    duration = curoperation.duration
-                    duration_per = curoperation.duration_per
-                    buffers = [
-                        (
-                            "%s @ %s" % (x.item.name, curoperation.location.name),
-                            float(x.quantity),
-                        )
-                        for x in curoperation.operationmaterials.only(
-                            "item", "quantity"
-                        ).using(request.database)
-                    ]
-                    resources = [
-                        (x.resource.name, float(x.quantity))
-                        for x in curoperation.operationresources.only(
-                            "resource", "quantity"
-                        ).using(request.database)
-                    ]
-                    for x in (
-                        curoperation.operationmaterials.filter(quantity__gt=0)
-                        .only("item")
-                        .using(request.database)
-                    ):
-                        curflows = (
-                            x.item.operationmaterials.filter(
-                                quantity__lt=0,
-                                operation__location=curoperation.location.name,
-                            )
-                            .only("operation", "quantity")
-                            .using(request.database)
-                        )
-                        for y in curflows:
-                            hasChildren = True
-                            root.append(
-                                (
-                                    level - 1,
-                                    curnode,
-                                    y.operation,
-                                    -curqty * y.quantity,
-                                    subcount,
-                                    None,
-                                    realdepth - 1,
-                                    pushsuper,
-                                    x.operation.location.name
-                                    if x.operation.location
-                                    else None,
-                                )
-                            )
-                        try:
-                            downstr = Buffer.objects.using(request.database).get(
-                                item=x.item.name, location=location
-                            )
-                            root.extend(
-                                reportclass.findUsage(
-                                    downstr,
-                                    request.database,
-                                    level - 1,
-                                    curqty,
-                                    realdepth - 1,
-                                    True,
-                                )
-                            )
-                        except Buffer.DoesNotExist:
-                            downstr = Buffer(item=x.item, location=curlocation)
-                            root.extend(
-                                reportclass.findUsage(
-                                    downstr,
-                                    request.database,
-                                    level - 1,
-                                    curqty,
-                                    realdepth - 1,
-                                    True,
-                                )
-                            )
-                    for x in (
-                        curoperation.suboperations.using(request.database)
-                        .only("suboperation")
-                        .order_by("-priority")
-                    ):
-                        subcount += curoperation.type == "routing" and 1 or -1
-                        root.append(
-                            (
-                                level - 1,
-                                curnode,
-                                x.suboperation,
-                                curqty,
-                                subcount,
-                                curoperation,
-                                realdepth,
-                                False,
-                                location,
-                            )
-                        )
-                        hasChildren = True
-            else:
-                # Upstream recursion
-                if isinstance(curoperation, ItemSupplier):
-                    name = "Purchase %s @ %s from %s" % (
-                        curoperation.item.name,
-                        location,
-                        curoperation.supplier.name,
-                    )
-                    optype = "purchase"
-                    duration = curoperation.leadtime
-                    duration_per = None
-                    buffers = [("%s @ %s" % (curoperation.item.name, location), 1)]
-                    if curoperation.resource:
-                        resources = [
-                            (
-                                curoperation.resource.name,
-                                float(curoperation.resource_qty),
-                            )
-                        ]
-                    else:
-                        resources = None
-                elif isinstance(curoperation, ItemDistribution):
-                    name = "Ship %s from %s to %s" % (
-                        curoperation.item.name,
-                        curoperation.origin.name,
-                        location,
-                    )
-                    optype = "distribution"
-                    duration = curoperation.leadtime
-                    duration_per = None
-                    buffers = [
-                        (
-                            "%s @ %s"
-                            % (curoperation.item.name, curoperation.origin.name),
-                            -1,
-                        ),
-                        (
-                            "%s @ %s"
-                            % (curoperation.item.name, curoperation.location.name),
-                            1,
-                        ),
-                    ]
-                    if curoperation.resource:
-                        resources = [
-                            (
-                                curoperation.resource.name,
-                                float(curoperation.resource_qty),
-                            )
-                        ]
-                    else:
-                        resources = None
-                    try:
-                        upstr = Buffer.objects.using(request.database).get(
-                            item=curoperation.item.name,
-                            location=curoperation.origin.name,
-                        )
-                        root.extend(
-                            reportclass.findReplenishment(
-                                upstr,
-                                request.database,
-                                level + 2,
-                                curqty,
-                                realdepth + 1,
-                                True,
-                            )
-                        )
-                    except Buffer.DoesNotExist:
-                        upstr = Buffer(
-                            item=curoperation.item, location=curoperation.origin
-                        )
-                        root.extend(
-                            reportclass.findReplenishment(
-                                upstr,
-                                request.database,
-                                level + 2,
-                                curqty,
-                                realdepth + 1,
-                                True,
-                            )
-                        )
-                else:
-                    name = curoperation.name
-                    optype = curoperation.type
-                    duration = curoperation.duration
-                    duration_per = curoperation.duration_per
-                    buffers = [
-                        (
-                            "%s @ %s" % (x.item.name, curoperation.location.name),
-                            float(x.quantity),
-                        )
-                        for x in curoperation.operationmaterials.only(
-                            "item", "quantity"
-                        ).using(request.database)
-                    ]
-                    resources = [
-                        (x.resource.name, float(x.quantity))
-                        for x in curoperation.operationresources.only(
-                            "resource", "quantity"
-                        ).using(request.database)
-                    ]
-                    curflows = (
-                        curoperation.operationmaterials.filter(quantity__lt=0)
-                        .only("item", "quantity")
-                        .using(request.database)
-                    )
-                    for y in curflows:
-                        b = Buffer(item=y.item, location=curoperation.location)
-                        root.extend(
-                            reportclass.findReplenishment(
-                                b,
-                                request.database,
-                                level + 2,
-                                curqty,
-                                realdepth + 1,
-                                True,
-                            )
-                        )
-                    for x in (
-                        curoperation.suboperations.using(request.database)
-                        .only("suboperation")
-                        .order_by("-priority")
-                    ):
-                        subcount += curoperation.type == "routing" and 1 or -1
-                        root.append(
-                            (
-                                level + 1,
-                                curnode,
-                                x.suboperation,
-                                curqty,
-                                subcount,
-                                curoperation,
-                                realdepth,
-                                False,
-                                location,
-                            )
-                        )
-                        hasChildren = True
-
-            # Process the current node
-            yield {
-                "depth": abs(level),
-                "id": curnode,
-                "operation": name,
-                "type": optype,
-                "location": curoperation.location and curoperation.location.name or "",
-                "duration": duration,
-                "duration_per": duration_per,
-                "quantity": curqty,
-                "suboperation": issuboperation,
-                "buffers": buffers,
-                "resources": resources,
-                "parentoper": parentoper and parentoper.name,
-                "parent": parent,
-                "leaf": hasChildren and "false" or "true",
-                "expanded": "true",
-                "numsuboperations": subcount,
-                "realdepth": realdepth,
-            }
+        Location.rebuildHierarchy(database=request.database)               
+        
+        sql = '''
+        with recursive 
+        producing_operation as
+          (select operationmaterial.operation_id,
+          operation.type,
+          operation.location_id,
+          coalesce(operation.duration, interval '0 second') as duration,
+          operation.duration_per,
+          jsonb_object_agg(operationmaterial.item_id||' @ '||operation.location_id, operationmaterial.quantity) as buffers,
+          coalesce(jsonb_object_agg(operationresource.resource_id, operationresource.quantity) FILTER (where operationresource.resource_id is not null), '{}'::jsonb) as resources
+          from operationmaterial
+          inner join operation on operation.name = operationmaterial.operation_id
+          left outer join operationresource on operationresource.operation_id = operation.name
+          where operationmaterial.quantity > 0
+          group by operationmaterial.operation_id, operation.type, operation.location_id, operation.duration, operation.duration_per
+          union 
+          select 'Purchase '||item.name||' @ '|| location.name||' from '||itemsupplier.supplier_id,
+          'purchase' as type,
+          location.name as location_id,
+          itemsupplier.leadtime as duration,
+          null as duration_per,
+          jsonb_build_object(item.name||' @ '||location.name,1) as buffers,
+          case when itemsupplier.resource_id is not null then jsonb_build_object(itemsupplier.resource_id, itemsupplier.resource_qty) else '{}'::jsonb end resources
+          from itemsupplier
+          inner join item i_parent on i_parent.name = itemsupplier.item_id
+          inner join item on item.lft between i_parent.lft and i_parent.rght
+          inner join location l_parent on l_parent.name = itemsupplier.location_id
+          inner join location on location.lft between l_parent.lft and l_parent.rght
+          union
+          select 'Ship '||item.name||' from '||itemdistribution.origin_id||' to '||itemdistribution.location_id,
+          'distribution' as type,
+          itemdistribution.location_id,
+          itemdistribution.leadtime as duration,
+          null as duration_per,
+          jsonb_build_object(item.name||' @ '||itemdistribution.location_id,1) as buffers,
+          case when itemdistribution.resource_id is not null then jsonb_build_object(itemdistribution.resource_id, itemdistribution.resource_qty) else '{}'::jsonb end resources
+          from itemdistribution
+          inner join item parent on parent.name = itemdistribution.item_id
+          inner join item on item.lft between parent.lft and parent.rght),
+        consuming_operation as
+          (
+          select operation_id,
+          jsonb_object_agg (operationmaterial.item_id||' @ '||operation.location_id, quantity) as buffers
+          from operationmaterial
+          inner join operation on operation.name = operationmaterial.operation_id
+          where quantity < 0
+          group by operation_id
+          union
+          select 'Ship '||item.name||' from '||itemdistribution.origin_id||' to '||itemdistribution.location_id,
+          jsonb_build_object(item.name||' @ '||itemdistribution.origin_id,-1) as buffers
+          from itemdistribution
+          inner join item parent on parent.name = itemdistribution.item_id
+          inner join item on item.lft between parent.lft and parent.rght
+          ),
+        cte as (
+          select 0 depth, 
+            producing_operation.operation_id,
+            producing_operation.type,
+            producing_operation.location_id,
+            producing_operation.duration,
+            producing_operation.duration_per,
+            producing_operation.buffers,
+            producing_operation.buffers || coalesce(consuming_operation.buffers, '{}'::jsonb) as bom,
+            producing_operation.resources             
+            from producing_operation
+            left outer join consuming_operation on consuming_operation.operation_id = producing_operation.operation_id
+            where producing_operation.%s
+          union
+          select cte.depth+1 as depth,
+          producing_operation.operation_id,
+          producing_operation.type,
+          producing_operation.location_id,
+          producing_operation.duration,
+          producing_operation.duration_per,
+          producing_operation.buffers,
+          producing_operation.buffers || coalesce(co.buffers, '{}'::jsonb) as bom,
+          producing_operation.resources
+          from cte
+          inner join consuming_operation on consuming_operation.operation_id = cte.operation_id
+          inner join producing_operation on producing_operation.buffers ?| (ARRAY(select jsonb_object_keys(consuming_operation.buffers)))
+          left outer join consuming_operation co on co.operation_id = producing_operation.operation_id
+        )
+        select * from cte
+        '''
+        
+        if str(reportclass.objecttype._meta) == 'input.demand':
+          demand_name = basequery.query.get_compiler(basequery.db).as_sql(
+                        with_col_aliases=False)[1][0]
+          d = Demand.objects.get(name=demand_name)
+          if d.operation is None:
+            subquery = "buffers ? %s"
+            arguments = ('%s @ %s' % (d.item.name, d.location.name),)
+          else:
+            subquery = "operation_id = %s"
+            arguments = (d.operation.name,)
+        elif str(reportclass.objecttype._meta) == 'input.operation':
+          operation_name = basequery.query.get_compiler(basequery.db).as_sql(
+                        with_col_aliases=False)[1][0]
+          subquery = "operation_id = %s"
+          arguments = (operation_name,)
+        elif str(reportclass.objecttype._meta) == 'input.resource':     
+          resource_name = basequery.query.get_compiler(basequery.db).as_sql(
+                        with_col_aliases=False)[1][0]
+          subquery = "resources ? %s"
+          arguments = (resource_name,)      
+        elif str(reportclass.objecttype._meta) == 'input.buffer':     
+          buffer_name = basequery.query.get_compiler(basequery.db).as_sql(
+                        with_col_aliases=False)[1][0]
+          if '@' not in buffer_name:
+            b = Buffer.objects.get(id=buffer_name)
+            buffer_name = '%s @ %s' % (b.item.name,b.location.name)
+          subquery = "buffers ? %s"
+          arguments = (buffer_name,)
+        elif str(reportclass.objecttype._meta) == 'input.item':     
+          item_name = basequery.query.get_compiler(basequery.db).as_sql(
+                        with_col_aliases=False)[1][0]
+          buffers = []
+          for l in Location.objects.all():
+            buffers.append('%s @ %s' % (item_name, l.name))
+          subquery = "buffers ?| %s"
+          arguments = (buffers,)
+        print(sql % subquery)
+        cursor = connections[request.database].cursor()
+        cursor.execute(sql % subquery, arguments)
+        
+        for i in cursor.fetchall():
+          counter = 1
+          # Process the current node
+          a= {
+              "depth": i[0]*2,
+              "id": counter,
+              "operation": i[1],
+              "type": i[2],
+              "location": i[3],
+              "duration": i[4],
+              "duration_per": i[5],
+              "quantity": 1,
+              "suboperation": 0,
+              "buffers": tuple(i[7].items()) if i[7] else None,
+              "resources": tuple(i[8].items()) if i[8] else None,
+              "parentoper": None,
+              "parent": None,
+              "leaf": "true",
+              "expanded": "true",
+              "numsuboperations": 0,
+              "realdepth": i[0],
+          }
+          counter = counter + 1
+        
+          yield(a)
 
 
 class UpstreamDemandPath(PathReport):
@@ -938,6 +657,7 @@ class UpstreamBufferPath(PathReport):
         from django.core.exceptions import ObjectDoesNotExist
 
         try:
+            print("ENTITY=%s" % (entity,))
             buf = (
                 Buffer.objects.using(request.database)
                 .annotate(name=RawSQL("item_id||' @ '||location_id", ()))

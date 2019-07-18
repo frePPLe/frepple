@@ -392,11 +392,12 @@ void SolverCreate::solve(const Buffer* b, void* v) {
   }
 
   // Message
-  if (getLogLevel() > 1)
+  if (getLogLevel() > 1) {
     logger << indentlevel-- << "Buffer '" << b->getName()
            << "' answers: " << data->state->a_qty;
-  if (!data->state->a_qty) logger << "  " << data->state->a_date;
-  logger << endl;
+    if (!data->state->a_qty) logger << "  " << data->state->a_date;
+    logger << endl;
+  }
 }
 
 void SolverCreate::solveSafetyStock(const Buffer* b, void* v) {

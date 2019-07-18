@@ -1129,8 +1129,7 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v) {
     double bestFlowPer = 0.0;
     double bestFlowFixed = 0.0;
     Date bestQDate;
-    for (Operation::Operationlist::const_iterator altIter =
-             oper->getSubOperations().begin();
+    for (auto altIter = oper->getSubOperations().begin();
          altIter != oper->getSubOperations().end();) {
       // Set a bookmark in the command list.
       CommandManager::Bookmark* topcommand =
@@ -1487,10 +1486,6 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v) {
   // operation.
   if (!originalPlanningMode && fabs(origQqty - a_qty) < ROUNDING_ERROR &&
       firstAlternate) {
-    // Switch to unconstrained planning
-    data->constrainedPlanning = false;
-    data->logConstraints = false;
-
     // Message
     if (loglevel)
       logger << indentlevel << "Alternate operation '" << oper->getName()
@@ -1508,36 +1503,45 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v) {
     // if (origQDate < firstAlternate->getEffectiveStart())
     //  origQDate = firstAlternate->getEffectiveStart();
 
-    // Create the top operationplan.
-    // Note that both the top- and the sub-operation can have a flow in the
-    // requested buffer
-    CommandCreateOperationPlan* a = new CommandCreateOperationPlan(
-        oper, a_qty, Date::infinitePast, origQDate, d, prev_owner_opplan, false,
-        false);
-    if (!prev_owner_opplan) data->getCommandManager()->add(a);
+    while (a_qty > ROUNDING_ERROR) {
+      // Switch to unconstrained planning
+      data->constrainedPlanning = false;
+      data->logConstraints = false;
 
-    // Recreate the ask
-    if (!firstFlowPer || a_qty < firstFlowFixed + ROUNDING_ERROR)
-      data->state->q_qty = 0.001;
-    else
-      data->state->q_qty = (a_qty - firstFlowFixed) / firstFlowPer;
-    data->state->q_date = origQDate;
-    data->state->q_date_max = origQDate;
-    data->state->curDemand = nullptr;
-    data->state->curOwnerOpplan = a->getOperationPlan();
-    data->state->curBuffer =
-        nullptr;  // Because we already took care of it... @todo not correct if
-                  // the suboperation is again a owning operation
+      // Create the top operationplan.
+      // Note that both the top- and the sub-operation can have a flow in the
+      // requested buffer
+      CommandCreateOperationPlan* a = new CommandCreateOperationPlan(
+          oper, a_qty, Date::infinitePast, origQDate, d, prev_owner_opplan,
+          false, false);
+      if (!prev_owner_opplan) data->getCommandManager()->add(a);
 
-    // Create a sub operationplan and solve constraints
-    firstAlternate->getOperation()->solve(*this, v);
+      // Recreate the ask
+      if (!firstFlowPer || a_qty < firstFlowFixed + ROUNDING_ERROR)
+        data->state->q_qty = 0.001;
+      else
+        data->state->q_qty = (a_qty - firstFlowFixed) / firstFlowPer;
+      data->state->q_date = origQDate;
+      data->state->q_date_max = origQDate;
+      data->state->curDemand = nullptr;
+      data->state->curOwnerOpplan = a->getOperationPlan();
+      data->state->curBuffer =
+          nullptr;  // Because we already took care of it... @todo not correct
+                    // if the suboperation is again a owning operation
 
-    // Expand flows of the top operationplan.
-    data->state->q_qty = data->state->a_qty;
-    data->state->q_date = origQDate;
-    data->state->q_date_max = origQDate;
-    data->state->curOwnerOpplan->createFlowLoads();
-    checkOperation(data->state->curOwnerOpplan, *data);
+      // Create a sub operationplan and solve constraints
+      firstAlternate->getOperation()->solve(*this, v);
+
+      // Expand flows of the top operationplan.
+      data->state->q_qty = data->state->a_qty;
+      data->state->q_date = origQDate;
+      data->state->q_date_max = origQDate;
+      data->state->curOwnerOpplan->createFlowLoads();
+      checkOperation(data->state->curOwnerOpplan, *data);
+
+      // Repeat until we have all material we need
+      a_qty -= data->state->a_qty * firstFlowPer + firstFlowFixed;
+    }
 
     // Fully planned
     a_qty = 0.0;

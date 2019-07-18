@@ -24,66 +24,85 @@ from win32process import CREATE_NO_WINDOW
 
 
 def main():
-  # Environment settings (which are used in the Django settings file and need
-  # to be updated BEFORE importing the settings)
-  os.environ.setdefault('FREPPLE_HOME', sys.path[0])
-  os.environ.setdefault('DJANGO_SETTINGS_MODULE', "freppledb.settings")
-  os.environ.setdefault('FREPPLE_APP', os.path.join(sys.path[0], 'custom'))
-  os.environ.setdefault(
-    'PYTHONPATH',
-    os.path.join(sys.path[0], 'lib', 'library.zip') +
-    os.pathsep +
-    os.path.join(sys.path[0], 'lib')
+    # Environment settings (which are used in the Django settings file and need
+    # to be updated BEFORE importing the settings)
+    os.environ.setdefault("FREPPLE_HOME", sys.path[0])
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "freppledb.settings")
+    os.environ.setdefault("FREPPLE_APP", os.path.join(sys.path[0], "custom"))
+    os.environ.setdefault(
+        "PYTHONPATH",
+        os.path.join(sys.path[0], "lib", "library.zip")
+        + os.pathsep
+        + os.path.join(sys.path[0], "lib"),
     )
 
-  # Add the custom directory to the Python path.
-  sys.path += [ os.environ['FREPPLE_APP'], ]
+    # Add the custom directory to the Python path.
+    sys.path += [os.environ["FREPPLE_APP"]]
 
-  # Initialize django
-  import django
-  django.setup()
+    # Initialize django
+    import django
 
-  # Import django
-  from django.core.management import execute_from_command_line
-  from django.conf import settings
+    django.setup()
 
-  if os.path.exists(os.path.join(settings.FREPPLE_HOME, '..', 'pgsql', 'bin', 'pg_ctl.exe')):
-    # Using the included postgres database
-    # Check if the database is running. If not, start it.
-    os.environ['PATH'] = os.path.join(settings.FREPPLE_HOME, '..', 'pgsql', 'bin') + os.pathsep + os.environ['PATH']
-    status = call([
-      os.path.join(settings.FREPPLE_HOME, '..', 'pgsql', 'bin', 'pg_ctl.exe'),
-      "--pgdata", os.path.join(settings.FREPPLE_LOGDIR, 'database'),
-      "--silent",
-      "status"
-      ],
-      stdin=DEVNULL, stdout=DEVNULL, stderr=DEVNULL,
-      creationflags=CREATE_NO_WINDOW
-      )
-    if status:
-      print("Starting the PostgreSQL database now", settings.FREPPLE_LOGDIR)
-      call([
-        os.path.join(settings.FREPPLE_HOME, '..', 'pgsql', 'bin', 'pg_ctl.exe'),
-        "--pgdata", os.path.join(settings.FREPPLE_LOGDIR, 'database'),
-        "--log", os.path.join(settings.FREPPLE_LOGDIR, 'database', 'server.log'),
-        "-w",  # Wait till it's up
-        "start"
-        ],
-        stdin=DEVNULL, stdout=DEVNULL, stderr=DEVNULL,
-        creationflags=CREATE_NO_WINDOW
+    # Import django
+    from django.core.management import execute_from_command_line
+    from django.conf import settings
+
+    if os.path.exists(
+        os.path.join(settings.FREPPLE_HOME, "..", "pgsql", "bin", "pg_ctl.exe")
+    ):
+        # Using the included postgres database
+        # Check if the database is running. If not, start it.
+        os.environ["PATH"] = (
+            os.path.join(settings.FREPPLE_HOME, "..", "pgsql", "bin")
+            + os.pathsep
+            + os.environ["PATH"]
         )
+        status = call(
+            [
+                os.path.join(settings.FREPPLE_HOME, "..", "pgsql", "bin", "pg_ctl.exe"),
+                "--pgdata",
+                os.path.join(settings.FREPPLE_LOGDIR, "database"),
+                "--silent",
+                "status",
+            ],
+            stdin=DEVNULL,
+            stdout=DEVNULL,
+            stderr=DEVNULL,
+            creationflags=CREATE_NO_WINDOW,
+        )
+        if status:
+            print("Starting the PostgreSQL database now", settings.FREPPLE_LOGDIR)
+            call(
+                [
+                    os.path.join(
+                        settings.FREPPLE_HOME, "..", "pgsql", "bin", "pg_ctl.exe"
+                    ),
+                    "--pgdata",
+                    os.path.join(settings.FREPPLE_LOGDIR, "database"),
+                    "--log",
+                    os.path.join(settings.FREPPLE_LOGDIR, "database", "server.log"),
+                    "-w",  # Wait till it's up
+                    "start",
+                ],
+                stdin=DEVNULL,
+                stdout=DEVNULL,
+                stderr=DEVNULL,
+                creationflags=CREATE_NO_WINDOW,
+            )
 
-  # Synchronize the scenario table with the settings
-  from freppledb.common.models import Scenario
-  Scenario.syncWithSettings()
+    # Synchronize the scenario table with the settings
+    from freppledb.common.models import Scenario
 
-  # Execute the command
-  execute_from_command_line(sys.argv)
+    Scenario.syncWithSettings()
+
+    # Execute the command
+    execute_from_command_line(sys.argv)
 
 
-if __name__ == '__main__':
-  # Support multiprocessing module
-  freeze_support()
+if __name__ == "__main__":
+    # Support multiprocessing module
+    freeze_support()
 
-  # Call the main function
-  main()
+    # Call the main function
+    main()

@@ -179,21 +179,18 @@ class PathReport(GridReport):
 
     @classmethod
     def basequeryset(reportclass, request, *args, **kwargs):
-        try:
-            field = (
-                reportclass.objecttype.objects.all()[:1].get()._meta.get_field("name")
-            )
-            return reportclass.objecttype.objects.filter(name__exact=args[0]).values(
-                "name"
-            )
-        except FieldDoesNotExist:
-            return (
-                reportclass.objecttype.objects.annotate(
-                    name=RawSQL("item_id||' @ '||location_id", ())
-                )
-                .filter(name__exact=args[0])
-                .values("name")
-            )
+      if str(reportclass.objecttype._meta) != 'input.buffer':
+        return reportclass.objecttype.objects.filter(name__exact=args[0]).values(
+          "name"
+      )
+      else:
+        return (
+          reportclass.objecttype.objects.annotate(
+              name=RawSQL("item_id||' @ '||location_id", ())
+          )
+          .filter(name__exact=args[0])
+          .values("name")
+      )
 
     @classmethod
     def extra_context(reportclass, request, *args, **kwargs):
@@ -434,21 +431,37 @@ class PathReport(GridReport):
           inner join item on item.lft between parent.lft and parent.rght),
         consuming_operation as
           (
-          select operation_id,
-          jsonb_object_agg (operationmaterial.item_id||' @ '||operation.location_id, quantity) as buffers
+          select operationmaterial.operation_id,
+          operation.type,
+          operation.location_id,
+          coalesce(operation.duration, interval '0 second') as duration,
+          operation.duration_per,
+          jsonb_object_agg (operationmaterial.item_id||' @ '||operation.location_id, operationmaterial.quantity) as buffers,
+          coalesce(jsonb_object_agg(operationresource.resource_id, operationresource.quantity) FILTER (where operationresource.resource_id is not null), '{}'::jsonb) as resources
           from operationmaterial
           inner join operation on operation.name = operationmaterial.operation_id
-          where quantity < 0
-          group by operation_id
+          left outer join operationresource on operationresource.operation_id = operation.name
+          where operationmaterial.quantity < 0
+          group by operationmaterial.operation_id, operation.type, operation.location_id, operation.duration, operation.duration_per
           union
           select 'Ship '||item.name||' from '||itemdistribution.origin_id||' to '||itemdistribution.location_id,
-          jsonb_build_object(item.name||' @ '||itemdistribution.origin_id,-1) as buffers
+          'distribution' as type,
+          itemdistribution.location_id,
+          itemdistribution.leadtime as duration,
+          null as duration_per,
+          jsonb_build_object(item.name||' @ '||itemdistribution.origin_id,-1) as buffers,
+          case when itemdistribution.resource_id is not null then jsonb_build_object(itemdistribution.resource_id, itemdistribution.resource_qty) else '{}'::jsonb end resources
           from itemdistribution
           inner join item parent on parent.name = itemdistribution.item_id
           inner join item on item.lft between parent.lft and parent.rght
           ),
-        cte as (
-          select 0 depth, 
+        %s
+        '''
+        
+        if (reportclass.downstream == False):
+          cte = '''
+           cte as (
+            select 0 depth, 
             producing_operation.operation_id,
             producing_operation.type,
             producing_operation.location_id,
@@ -460,23 +473,55 @@ class PathReport(GridReport):
             from producing_operation
             left outer join consuming_operation on consuming_operation.operation_id = producing_operation.operation_id
             where producing_operation.%s
-          union
-          select cte.depth+1 as depth,
-          producing_operation.operation_id,
-          producing_operation.type,
-          producing_operation.location_id,
-          producing_operation.duration,
-          producing_operation.duration_per,
-          producing_operation.buffers,
-          producing_operation.buffers || coalesce(co.buffers, '{}'::jsonb) as bom,
-          producing_operation.resources
-          from cte
-          inner join consuming_operation on consuming_operation.operation_id = cte.operation_id
-          inner join producing_operation on producing_operation.buffers ?| (ARRAY(select jsonb_object_keys(consuming_operation.buffers)))
-          left outer join consuming_operation co on co.operation_id = producing_operation.operation_id
-        )
-        select * from cte
-        '''
+            union
+            select cte.depth+1 as depth,
+            producing_operation.operation_id,
+            producing_operation.type,
+            producing_operation.location_id,
+            producing_operation.duration,
+            producing_operation.duration_per,
+            producing_operation.buffers,
+            producing_operation.buffers || coalesce(co.buffers, '{}'::jsonb) as bom,
+            producing_operation.resources
+            from cte
+            inner join consuming_operation on consuming_operation.operation_id = cte.operation_id
+            inner join producing_operation on producing_operation.buffers ?| (ARRAY(select jsonb_object_keys(consuming_operation.buffers)))
+            left outer join consuming_operation co on co.operation_id = producing_operation.operation_id
+          )
+          select * from cte        
+          '''
+        else:
+          cte = '''
+           cte as (
+            select 0 depth, 
+            consuming_operation.operation_id,
+            consuming_operation.type,
+            consuming_operation.location_id,
+            consuming_operation.duration,
+            consuming_operation.duration_per,
+            consuming_operation.buffers,
+            consuming_operation.buffers || coalesce(consuming_operation.buffers, '{}'::jsonb) as bom,
+            consuming_operation.resources             
+            from consuming_operation
+            left outer join producing_operation on consuming_operation.operation_id = producing_operation.operation_id
+            where consuming_operation.%s
+            union
+            select cte.depth-1 as depth,
+            consuming_operation.operation_id,
+            consuming_operation.type,
+            consuming_operation.location_id,
+            consuming_operation.duration,
+            consuming_operation.duration_per,
+            consuming_operation.buffers,
+            consuming_operation.buffers || coalesce(co.buffers, '{}'::jsonb) as bom,
+            consuming_operation.resources
+            from cte
+            inner join producing_operation on producing_operation.operation_id = cte.operation_id
+            inner join consuming_operation on consuming_operation.buffers ?| (ARRAY(select jsonb_object_keys(producing_operation.buffers)))
+            left outer join producing_operation co on co.operation_id = consuming_operation.operation_id
+          )
+          select * from cte        
+          '''
         
         if str(reportclass.objecttype._meta) == 'input.demand':
           demand_name = basequery.query.get_compiler(basequery.db).as_sql(
@@ -514,9 +559,8 @@ class PathReport(GridReport):
             buffers.append('%s @ %s' % (item_name, l.name))
           subquery = "buffers ?| %s"
           arguments = (buffers,)
-        print(sql % subquery)
         cursor = connections[request.database].cursor()
-        cursor.execute(sql % subquery, arguments)
+        cursor.execute(sql % cte % subquery, arguments)
         
         for i in cursor.fetchall():
           counter = 1
@@ -655,9 +699,7 @@ class UpstreamBufferPath(PathReport):
     @classmethod
     def getRoot(reportclass, request, entity):
         from django.core.exceptions import ObjectDoesNotExist
-
-        try:
-            print("ENTITY=%s" % (entity,))
+        try:            
             buf = (
                 Buffer.objects.using(request.database)
                 .annotate(name=RawSQL("item_id||' @ '||location_id", ()))

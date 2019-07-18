@@ -500,7 +500,7 @@ class PathReport(GridReport):
             consuming_operation.duration,
             consuming_operation.duration_per,
             consuming_operation.buffers,
-            consuming_operation.buffers || coalesce(consuming_operation.buffers, '{}'::jsonb) as bom,
+            consuming_operation.buffers || coalesce(producing_operation.buffers, '{}'::jsonb) as bom,
             consuming_operation.resources             
             from consuming_operation
             left outer join producing_operation on consuming_operation.operation_id = producing_operation.operation_id
@@ -566,7 +566,7 @@ class PathReport(GridReport):
           counter = 1
           # Process the current node
           a= {
-              "depth": i[0]*2,
+              "depth": i[0]*2 if reportclass.downstream == False else -i[0]*2,
               "id": counter,
               "operation": i[1],
               "type": i[2],

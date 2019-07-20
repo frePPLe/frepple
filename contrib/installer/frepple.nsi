@@ -529,6 +529,7 @@ Section -Post
     nsExec::ExecToLog /OEM /TIMEOUT=90000 '"$INSTDIR\pgsql\bin\createdb" -w -p 8001 scenario1'
     nsExec::ExecToLog /OEM /TIMEOUT=90000 '"$INSTDIR\pgsql\bin\createdb" -w -p 8001 scenario2'
     nsExec::ExecToLog /OEM /TIMEOUT=90000 '"$INSTDIR\pgsql\bin\createdb" -w -p 8001 scenario3'
+    nsExec::ExecToLog /OEM /TIMEOUT=90000 '"$INSTDIR\pgsql\bin\createuser" -w -p 8001 --superuser SYSTEM'
   ${EndIf}
 
   ; Create the database schema

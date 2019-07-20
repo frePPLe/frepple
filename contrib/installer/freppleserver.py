@@ -22,9 +22,10 @@ from datetime import datetime
 from multiprocessing import freeze_support
 import os
 import socket
-from subprocess import call, DEVNULL
+import subprocess
 import sys
 from threading import Thread
+import webbrowser
 import win32api
 import win32con
 import win32gui_struct
@@ -40,7 +41,7 @@ def log(msg):
     print(datetime.now().strftime("%Y-%m-%d %H:%M:%S"), msg)
 
 
-# Running WSGI in a thread
+# Running webserver in a thread
 class RunWSGIServer(Thread):
     def __init__(self, address, port):
         self.address = address
@@ -48,43 +49,36 @@ class RunWSGIServer(Thread):
         super().__init__()
 
     def run(self):
+        cx_Logging.Info("Running the web server")
         try:
             self.server = wsgi.Server(
                 (address, port), StaticFilesHandler(WSGIHandler())
             )
             self.server.start()
         except Exception as e:
-            log("Server error: %s" % e)
+            cx_Logging.ERROR("Exception: %s" % e)
 
 
 def on_quit(sysTrayIcon):
-    wsgi.server.stop()
-    log("Stopping web server")
+    cx_Logging.Info("Stopping the web server")
+    webserver.server.stop()
 
 
 def ShowLogDirectory(sysTrayIcon):
-    import subprocess
-
     subprocess.Popen('explorer "%s"' % settings.FREPPLE_LOGDIR)
 
 
 def ShowConfigDirectory(sysTrayIcon):
-    import subprocess
-
     subprocess.Popen('explorer "%s"' % settings.FREPPLE_CONFIGDIR)
 
 
 def OpenBrowser(sysTrayIcon):
-    import webbrowser
-
     webbrowser.open_new_tab(
         "http://%s:%s" % (address == "0.0.0.0" and "127.0.0.1" or address, port)
     )
 
 
 def OpenCommandWindow(sysTrayIcon):
-    import subprocess
-
     subprocess.Popen("cmd", cwd=settings.FREPPLE_HOME)
 
 
@@ -224,7 +218,7 @@ class SysTrayIcon:
                 + os.pathsep
                 + os.environ["PATH"]
             )
-            status = call(
+            status = subprocess.call(
                 [
                     os.path.join(
                         settings.FREPPLE_HOME, "..", "pgsql", "bin", "pg_ctl.exe"
@@ -234,13 +228,13 @@ class SysTrayIcon:
                     "--silent",
                     "status",
                 ],
-                stdin=DEVNULL,
-                stdout=DEVNULL,
-                stderr=DEVNULL,
+                stdin=subprocess.DEVNULL,
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
                 creationflags=CREATE_NO_WINDOW,
             )
             if not status:
-                call(
+                subprocess.call(
                     [
                         os.path.join(
                             settings.FREPPLE_HOME, "..", "pgsql", "bin", "pg_ctl.exe"
@@ -252,9 +246,9 @@ class SysTrayIcon:
                         "-w",  # Wait till it's down
                         "stop",
                     ],
-                    stdin=DEVNULL,
-                    stdout=DEVNULL,
-                    stderr=DEVNULL,
+                    stdin=subprocess.DEVNULL,
+                    stdout=subprocess.DEVNULL,
+                    stderr=subprocess.DEVNULL,
                     creationflags=CREATE_NO_WINDOW,
                 )
 
@@ -284,16 +278,16 @@ class SysTrayIcon:
             if option_icon:
                 option_icon = self.prep_menu_icon(option_icon)
             if option_id in self.menu_actions_by_id:
-                item, extras = win32gui_struct.PackMENUITEMINFO(
+                item = win32gui_struct.PackMENUITEMINFO(
                     text=option_text, hbmpItem=option_icon, wID=option_id
-                )
+                )[0]
                 win32gui.InsertMenuItem(menu, 0, 1, item)
             else:
                 submenu = win32gui.CreatePopupMenu()
                 self.create_menu(submenu, option_action)
-                item, extras = win32gui_struct.PackMENUITEMINFO(
+                item = win32gui_struct.PackMENUITEMINFO(
                     text=option_text, hbmpItem=option_icon, hSubMenu=submenu
-                )
+                )[0]
                 win32gui.InsertMenuItem(menu, 0, 1, item)
 
     def prep_menu_icon(self, icon):
@@ -390,7 +384,7 @@ if __name__ == "__main__":
         os.path.join(settings.FREPPLE_HOME, "..", "pgsql", "bin", "pg_ctl.exe")
     ):
         # Check if the database is running. If not, start it.
-        status = call(
+        status = subprocess.call(
             [
                 os.path.join(settings.FREPPLE_HOME, "..", "pgsql", "bin", "pg_ctl.exe"),
                 "--pgdata",
@@ -398,14 +392,14 @@ if __name__ == "__main__":
                 "--silent",
                 "status",
             ],
-            stdin=DEVNULL,
-            stdout=DEVNULL,
-            stderr=DEVNULL,
+            stdin=subprocess.DEVNULL,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
             creationflags=CREATE_NO_WINDOW,
         )
         if status:
             cx_Logging.Info("Starting the PostgreSQL database")
-            call(
+            subprocess.call(
                 [
                     os.path.join(
                         settings.FREPPLE_HOME, "..", "pgsql", "bin", "pg_ctl.exe"
@@ -417,13 +411,11 @@ if __name__ == "__main__":
                     "-w",  # Wait till it's up
                     "start",
                 ],
-                stdin=DEVNULL,
-                stdout=DEVNULL,
-                stderr=DEVNULL,
+                stdin=subprocess.DEVNULL,
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
                 creationflags=CREATE_NO_WINDOW,
             )
-
-    cx_Logging.Info("Starting the web server")
 
     # Synchronize the scenario table with the settings
     from freppledb.common.models import Scenario
@@ -475,8 +467,8 @@ if __name__ == "__main__":
     )
 
     # Run the WSGI server in a new thread
-    wsgi = RunWSGIServer(address, port)
-    wsgi.start()
+    webserver = RunWSGIServer(address, port)
+    webserver.start()
 
     # Run an icon in the system tray
     SysTrayIcon(

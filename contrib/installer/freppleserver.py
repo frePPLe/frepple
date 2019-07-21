@@ -131,11 +131,10 @@ class SysTrayIcon:
         classAtom = win32gui.RegisterClass(window_class)
 
         # Create the Window.
-        style = win32con.WS_OVERLAPPED | win32con.WS_SYSMENU
         self.hwnd = win32gui.CreateWindow(
             classAtom,
             self.window_class_name,
-            style,
+            win32con.WS_OVERLAPPED | win32con.WS_SYSMENU,
             0,
             0,
             win32con.CW_USEDEFAULT,
@@ -278,16 +277,16 @@ class SysTrayIcon:
             if option_icon:
                 option_icon = self.prep_menu_icon(option_icon)
             if option_id in self.menu_actions_by_id:
-                item = win32gui_struct.PackMENUITEMINFO(
+                item, extras = win32gui_struct.PackMENUITEMINFO(
                     text=option_text, hbmpItem=option_icon, wID=option_id
-                )[0]
+                )
                 win32gui.InsertMenuItem(menu, 0, 1, item)
             else:
                 submenu = win32gui.CreatePopupMenu()
                 self.create_menu(submenu, option_action)
-                item = win32gui_struct.PackMENUITEMINFO(
+                item, extras = win32gui_struct.PackMENUITEMINFO(
                     text=option_text, hbmpItem=option_icon, hSubMenu=submenu
-                )[0]
+                )
                 win32gui.InsertMenuItem(menu, 0, 1, item)
 
     def prep_menu_icon(self, icon):
@@ -362,12 +361,22 @@ if __name__ == "__main__":
     from django.conf import settings
 
     # Initialize logging
-    cx_Logging.StartLogging(
-        os.path.join(settings.FREPPLE_LOGDIR, "systemtray.log"),
-        level=cx_Logging.INFO,
-        maxFiles=1,
-        prefix="%t",
-    )
+    try:
+        cx_Logging.StartLogging(
+            os.path.join(settings.FREPPLE_LOGDIR, "systemtray.log"),
+            level=cx_Logging.INFO,
+            maxFiles=1,
+            prefix="%t",
+        )
+    except:
+        win32gui.MessageBox(
+            None,
+            "The folder %s doesn't exist or is not writeable for your user"
+            % settings.FREPPLE_LOGDIR,
+            "Error",
+            win32con.MB_OK,
+        )
+        sys.exit(1)
 
     # Redirect all output
     logfile = os.path.join(settings.FREPPLE_LOGDIR, "server.log")

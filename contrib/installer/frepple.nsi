@@ -31,7 +31,6 @@
 !define PRODUCT_DIR_REGKEY "Software\Microsoft\Windows\CurrentVersion\App Paths\frepple.exe"
 !define PRODUCT_UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_NAME} ${PRODUCT_VERSION}"
 
-!define POSTGRESQL_VERSION "POSTGRESQL 10.3"
 !define POSTGRESFOLDER "c:\develop\pgsql"
 
 ; Select compressor
@@ -197,7 +196,6 @@ Section "PostgreSQL" SecPostgres
   File /r "${POSTGRESFOLDER}\lib"
   File /r "${POSTGRESFOLDER}\share"
   File /r "${POSTGRESFOLDER}\StackBuilder"
-  CreateDirectory "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}\${POSTGRESQL_VERSION}"
 SectionEnd
 
 
@@ -272,7 +270,7 @@ Function Databaseleave
   IfErrors 0 ok
      StrCpy $1 'A test connection to the database failed...$\r$\n$\r$\n'
      StrCpy $1 '$1Correct the connection parameters or:$\r$\n'
-     StrCpy $1 '$1  1) Install PostgreSQL 10.x (recommended), 9.5 or 9.6$\r$\n'
+     StrCpy $1 '$1  1) Install PostgreSQL 11.x (recommended) or 10.x$\r$\n'
      StrCpy $1 '$1  2) Add the PostgreSQL bin folder to the PATH environment variable$\r$\n'
      StrCpy $1 '$1  3) Create the login role "$3"$\r$\n'
      StrCpy $1 '$1  4) Create the database "$2" with owner "$3"$\r$\n'
@@ -327,9 +325,11 @@ Function FinishLeave
   ${EndIf}
 
   ; Start the server in system tray
+  ; We launch with the explorer to run the command without UAC elevation
+  ; See http://mdb-blog.blogspot.com/2013/01/nsis-lunch-program-as-user-from-uac.html  
   ReadINIStr $0 "$PLUGINSDIR\finish.ini" "Field 5" "State"
   ${If} $0 == 1
-    Exec '"$INSTDIR\bin\freppleserver.exe"'
+    nsExec::Exec '"$WINDIR\explorer.exe" "$INSTDIR\bin\freppleserver.exe"'
   ${EndIf}
 
   ; Install the service
@@ -338,8 +338,8 @@ Function FinishLeave
     nsExec::Exec '"$INSTDIR\bin\freppleservice.exe" --install default'
     sleep 2
     nsExec::Exec 'net start frePPLe_default'
-    CreateShortCut "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}\Start service.lnk" "net" "start" "frePPLe_default"
-    CreateShortCut "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}\Stop service.lnk" "net" "stop" "frePPLe_default"
+    CreateShortCut "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}\Start service.lnk" "net" '"start" "frePPLe_default"'
+    CreateShortCut "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}\Stop service.lnk" "net" '"stop" "frePPLe_default"'
   ${EndIf}
 FunctionEnd
 

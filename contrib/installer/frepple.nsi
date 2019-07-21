@@ -1,7 +1,7 @@
 ;
 ; Nullsoft script for creating a windows installer for frePPLe
 ;
-; Copyright (C) 2007-2016 by frePPLe bvba
+; Copyright (C) 2007-2019 by frePPLe bvba
 ;
 ; This library is free software; you can redistribute it and/or modify it
 ; under the terms of the GNU Affero General Public License as published
@@ -23,15 +23,18 @@
 ; To run this script successfully, you'll therefore need to have the cygwin
 ; system up and running on your machine.
 
+
 ; Main definitions
 !define PRODUCT_NAME "frePPLe"
-!define PRODUCT_VERSION "6.0.0"
 !define PRODUCT_PUBLISHER "frePPLe"
-!define PRODUCT_WEB_SITE "http://frepple.com"
+!define PRODUCT_WEB_SITE "https://frepple.com"
 !define PRODUCT_DIR_REGKEY "Software\Microsoft\Windows\CurrentVersion\App Paths\frepple.exe"
 !define PRODUCT_UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_NAME} ${PRODUCT_VERSION}"
 
 !define POSTGRESFOLDER "c:\develop\pgsql"
+
+; Read the version number from the configure.ac file
+!searchparse /file "..\..\configure.ac"  'AC_INIT([frepple], [' PRODUCT_VERSION '])'
 
 ; Select compressor
 SetCompressor /SOLID lzma
@@ -91,8 +94,8 @@ Page custom FinishOpen FinishLeave
 !insertmacro MUI_LANGUAGE "TradChinese"
 
 ;Version Information
-VIProductVersion "6.0.0.0"
-VIAddVersionKey /LANG=${LANG_ENGLISH} FileVersion "6.0.0.0"
+VIProductVersion "${PRODUCT_VERSION}.0"
+VIAddVersionKey /LANG=${LANG_ENGLISH} FileVersion "${PRODUCT_VERSION}.0"
 VIAddVersionKey /LANG=${LANG_ENGLISH} ProductName "frePPLe community edition installer"
 VIAddVersionKey /LANG=${LANG_ENGLISH} Comments "frePPLe community edition installer"
 VIAddVersionKey /LANG=${LANG_ENGLISH} CompanyName "frePPLe"

@@ -19,11 +19,16 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+# Version definition
+define(FREPPLE_MAJOR, 6)
+define(FREPPLE_MINOR, 0)
+define(FREPPLE_PATCH, 0)
+
 #
 # Initialization
 #
 AC_PREREQ(2.60)
-AC_INIT([frepple], [6.0.0])
+AC_INIT([frepple], [FREPPLE_MAJOR.FREPPLE_MINOR.FREPPLE_PATCH])
 AC_CONFIG_SRCDIR([src/main.cpp])
 AC_CONFIG_HEADER([config.h])
 AM_INIT_AUTOMAKE([tar-ustar foreign])

@@ -23,18 +23,21 @@
 ; To run this script successfully, you'll therefore need to have the cygwin
 ; system up and running on your machine.
 
+; Read the version number from the configure.ac file
+!searchparse /file "..\..\configure.ac"  'define(FREPPLE_MAJOR, ' FREPPLE_MAJOR ')'
+!searchparse /file "..\..\configure.ac"  'define(FREPPLE_MINOR, ' FREPPLE_MINOR ')'
+!searchparse /file "..\..\configure.ac"  'define(FREPPLE_PATCH, ' FREPPLE_PATCH ')'
 
 ; Main definitions
 !define PRODUCT_NAME "frePPLe"
+!define PRODUCT_VERSION "${FREPPLE_MAJOR}.${FREPPLE_MINOR}.${FREPPLE_PATCH}"
 !define PRODUCT_PUBLISHER "frePPLe"
 !define PRODUCT_WEB_SITE "https://frepple.com"
 !define PRODUCT_DIR_REGKEY "Software\Microsoft\Windows\CurrentVersion\App Paths\frepple.exe"
 !define PRODUCT_UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_NAME} ${PRODUCT_VERSION}"
 
+; Folder where the PostgreSQL release is avaiable, which we will embed in the installer
 !define POSTGRESFOLDER "c:\develop\pgsql"
-
-; Read the version number from the configure.ac file
-!searchparse /file "..\..\configure.ac"  'AC_INIT([frepple], [' PRODUCT_VERSION '])'
 
 ; Select compressor
 SetCompressor /SOLID lzma

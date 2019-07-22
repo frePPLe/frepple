@@ -4529,7 +4529,7 @@ class Buffer : public HasHierarchy<Buffer>,
   }
 
   /** Debugging function. */
-  void inspect(const string& = "") const;
+  void inspect(const string& = "", const short = 0) const;
 
   static PyObject* inspectPython(PyObject*, PyObject*);
 
@@ -5865,7 +5865,7 @@ class Resource : public HasHierarchy<Resource>,
   const loadlist& getLoads() const { return loads; }
 
   /** Debugging function. */
-  void inspect(const string& = "") const;
+  void inspect(const string& = "", const short = 0) const;
 
   static PyObject* inspectPython(PyObject*, PyObject*);
 

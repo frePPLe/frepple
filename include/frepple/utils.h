@@ -319,6 +319,8 @@ class indent {
 
   indent operator()(short l) { return indent(l); }
 
+  operator short() const { return level; }
+
   indent& operator++() {
     ++level;
     return *this;

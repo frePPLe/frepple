@@ -81,15 +81,16 @@ int ResourceBuckets::initialize() {
   return FreppleClass<ResourceBuckets, Resource>::initialize();
 }
 
-void Resource::inspect(const string& msg) const {
-  logger << "Inspecting resource " << getName() << ": ";
+void Resource::inspect(const string& msg, const short i) const {
+  indent indentstring(i);
+  logger << indentstring << "  Inspecting resource " << getName() << ": ";
   if (!msg.empty()) logger << msg;
   logger << endl;
 
   for (loadplanlist::const_iterator oo = getLoadPlans().begin();
        oo != getLoadPlans().end(); ++oo) {
-    logger << "  " << oo->getDate() << " qty:" << oo->getQuantity()
-           << ", oh:" << oo->getOnhand();
+    logger << indentstring << "    " << oo->getDate()
+           << " qty:" << oo->getQuantity() << ", oh:" << oo->getOnhand();
     switch (oo->getEventType()) {
       case 1:
         logger << ", " << oo->getOperationPlan() << endl;

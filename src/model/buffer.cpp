@@ -132,16 +132,18 @@ Buffer* OperationDelivery::getBuffer() const {
   return tmp == getFlows().end() ? nullptr : tmp->getBuffer();
 }
 
-void Buffer::inspect(const string& msg) const {
-  logger << "Inspecting buffer " << getName() << ": ";
+void Buffer::inspect(const string& msg, const short i) const {
+  indent indentstring(i);
+  logger << indentstring << "  Inspecting buffer " << getName() << ": ";
   if (!msg.empty()) logger << msg;
   logger << endl;
 
   double curmin = 0.0;
   for (auto oo = getFlowPlans().begin(); oo != getFlowPlans().end(); ++oo) {
     if (oo->getEventType() == 3) curmin = oo->getMin();
-    logger << "  " << oo->getDate() << " qty:" << oo->getQuantity()
-           << ", oh:" << oo->getOnhand() << ", min:" << curmin;
+    logger << indentstring << "    " << oo->getDate()
+           << " qty:" << oo->getQuantity() << ", oh:" << oo->getOnhand()
+           << ", min:" << curmin;
     switch (oo->getEventType()) {
       case 1:
         logger << ", " << oo->getOperationPlan() << endl;

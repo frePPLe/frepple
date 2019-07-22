@@ -790,15 +790,21 @@ class loadSuboperations(LoadTask):
             starttime = time()
             cursor.execute(
                 """
-        SELECT operation_id, suboperation_id, priority, effective_start, effective_end,
-          (SELECT type
-           from operation
-           where suboperation.operation_id = operation.name) as type
-        FROM suboperation
-        WHERE priority >= 0 %s
-        ORDER BY operation_id, priority
-        """
-                % filter_and
+                SELECT operation_id, suboperation_id, priority, effective_start, effective_end,
+                  (SELECT type
+                   from operation
+                   where suboperation.operation_id = operation.name) as type
+                FROM suboperation
+                WHERE priority >= 0 %s
+                union all
+                select owner_id, name, priority, effective_start, effective_end,
+                  (SELECT type
+                   from operation as parent
+                   where operation.owner_id = parent.name) as type
+                from operation
+                where owner_id is not null and priority <> 0 %s
+                """
+                % (filter_and, filter_and)
             )
             curopername = None
             for i in cursor:

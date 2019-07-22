@@ -2589,6 +2589,13 @@ class OperationList(GridReport):
             formatter="detail",
             extra='"role":"input/calendar"',
         ),
+        GridFieldText(
+            "owner",
+            title=_("owner"),
+            field_name="owner__name",
+            formatter="detail",
+            extra='"role":"input/operation"',
+        ),
         GridFieldInteger("priority", title=_("priority"), initially_hidden=True),
         GridFieldDateTime(
             "effective_start", title=_("effective start"), initially_hidden=True

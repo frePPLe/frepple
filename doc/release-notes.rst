@@ -9,9 +9,16 @@ Release notes
 - Bug fix in the status propagation of completed manufacturing 
   orders on routing operations.
 
-.. rubric:: Integration
+- | The name column in the 
+    `buffer table <user-guide/model-reference/buffer.html>`_ is removed. The item and location
+    fields are what uniquely defines a buffer.
+  | This data model simplification makes data interfaces simpler and more robust. 
 
-- Replacement of the name column of the buffer table with an ID column of type integer (ID column is primary key).
+- | Data model simplification: The `suboperation table <user-guide/model-reference/suboperations.html>`_ 
+    is now deprecated. All data it contained can now be stored in the operation table.
+  | This data model simplification makes development of data interfaces easier.
+  
+.. rubric:: Integration
 
 - | The REST API for manufacturing orders now returns the resources and materials it uses.
   | Updated resources and materials can also written back with API.

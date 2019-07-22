@@ -261,6 +261,14 @@ class Operation(AuditModel):
     location = models.ForeignKey(
         Location, verbose_name=_("location"), db_index=True, on_delete=models.CASCADE
     )
+    owner = models.ForeignKey(
+        "self",
+        verbose_name=_("owner"),
+        null=True,
+        blank=True,
+        related_name="xchildren",
+        on_delete=models.SET_NULL,
+    )
     priority = models.IntegerField(
         _("priority"),
         default=1,

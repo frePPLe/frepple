@@ -379,8 +379,28 @@ class ItemDistribution_admin(MultiDBModelAdmin):
 data_site.register(ItemDistribution, ItemDistribution_admin)
 
 
+class ChildOperation_inline(MultiDBTabularInline):
+    model = Operation
+    fk_name = "owner"
+    extra = 1
+    # raw_id_fields = ("owner",)
+    fields = (
+        "priority",
+        "name",
+        "effective_start",
+        "effective_end",
+        "location",
+        "type",
+        "duration",
+        "duration_per",
+    )
+    exclude = ("source",)
+
+
 class SubOperation_inline(MultiDBTabularInline):
     model = SubOperation
+    verbose_name = _("child operation")
+    verbose_name_plural = _("child suboperations")
     fk_name = "operation"
     extra = 1
     raw_id_fields = ("suboperation",)
@@ -397,9 +417,14 @@ class ResourceSkill_inline(MultiDBTabularInline):
 
 class Operation_admin(MultiDBModelAdmin):
     model = Operation
-    raw_id_fields = ("location", "item", "available")
+    raw_id_fields = ("location", "item", "available", "owner")
     save_on_top = True
-    inlines = [SubOperation_inline, OperationMaterial_inline, OperationResource_inline]
+    inlines = [
+        OperationMaterial_inline,
+        OperationResource_inline,
+        ChildOperation_inline,
+        SubOperation_inline,
+    ]
     fieldsets = (
         (
             None,
@@ -412,6 +437,7 @@ class Operation_admin(MultiDBModelAdmin):
                     "description",
                     "category",
                     "subcategory",
+                    "owner",
                 )
             },
         ),

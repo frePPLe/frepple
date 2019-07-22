@@ -24,3 +24,21 @@ machines.
 
 Each operation loads both the required machine and a qualified member of the
 operator pool.
+
+This table depicts the skills of each operator. It is defined in the
+resource, skill and resource-skill tables.
+
++----------+--------+-------+-------+-----------+-------+-------+-------+
+| Operator | Plasma | Saag  | Boor  | Draaibank | Bou   | Sweis | Verf  |
+|          | skill  | skill | skill | skill     | skill | skill | skill |
++==========+========+=======+=======+===========+=======+=======+=======+     
+| Andries  |   x    |   x   |   x   |           |       |   x   |       |
++----------+--------+-------+-------+-----------+-------+-------+-------+
+| Davie    |        |   x   |   x   |           |   x   |       |       |
++----------+--------+-------+-------+-----------+-------+-------+-------+
+| Gustav   |   x    |   x   |   x   |           |   x   |   x   |       |
++----------+--------+-------+-------+-----------+-------+-------+-------+
+| Hennie   |        |   x   |   x   |           |       |       |   x   |
++----------+--------+-------+-------+-----------+-------+-------+-------+
+| Johnny   |        |   x   |   x   |   x       |       |       |   x   |
++----------+--------+-------+-------+-----------+-------+-------+-------+

@@ -60,6 +60,11 @@ class Command(BaseCommand):
             type=int,
             help="Task identifier (generated automatically if not provided)",
         )
+        parser.add_argument(
+            "--database",
+            default=DEFAULT_DB_ALIAS,
+            help="Unused argument for this command",
+        )
         parser.add_argument("source", help="source database to copy")
         parser.add_argument("destination", help="destination database to copy")
 

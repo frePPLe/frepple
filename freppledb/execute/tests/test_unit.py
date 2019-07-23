@@ -156,19 +156,19 @@ class execute_multidb(TransactionTestCase):
 
 class FixtureTest(TransactionTestCase):
     def test_fixture_demo(self):
-        self.assertEqual(common.models.Bucket.objects.count(), 0)
+        self.assertEqual(input.models.Item.objects.count(), 0)
         management.call_command("loaddata", "demo.json", verbosity=0)
-        self.assertGreater(common.models.Bucket.objects.count(), 0)
+        self.assertGreater(input.models.Item.objects.count(), 0)
 
     def test_fixture_jobshop(self):
-        self.assertEqual(common.models.Bucket.objects.count(), 0)
+        self.assertEqual(input.models.Item.objects.count(), 0)
         management.call_command("loaddata", "jobshop.json", verbosity=0)
-        self.assertGreater(common.models.Bucket.objects.count(), 0)
+        self.assertGreater(input.models.Item.objects.count(), 0)
 
     def test_fixture_unicode_test(self):
-        self.assertEqual(common.models.Bucket.objects.count(), 0)
+        self.assertEqual(input.models.Item.objects.count(), 0)
         management.call_command("loaddata", "unicode_test.json", verbosity=0)
-        self.assertGreater(common.models.Bucket.objects.count(), 0)
+        self.assertGreater(input.models.Item.objects.count(), 0)
 
     def test_fixture_parameter_test(self):
         self.assertEqual(common.models.Parameter.objects.count(), 0)
@@ -181,9 +181,9 @@ class FixtureTest(TransactionTestCase):
         self.assertGreater(common.models.Bucket.objects.count(), 0)
 
     def test_fixture_flow_line_test(self):
-        self.assertEqual(common.models.Bucket.objects.count(), 0)
+        self.assertEqual(input.models.Item.objects.count(), 0)
         management.call_command("loaddata", "flow_line.json", verbosity=0)
-        self.assertGreater(common.models.Bucket.objects.count(), 0)
+        self.assertGreater(input.models.Item.objects.count(), 0)
 
 
 class execute_simulation(TransactionTestCase):

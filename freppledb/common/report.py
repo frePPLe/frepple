@@ -3025,6 +3025,7 @@ def exportWorkbook(request):
             header = []
             source = False
             lastmodified = False
+            owner = False
             try:
                 # The admin model of the class can define some fields to exclude from the export
                 exclude = data_site._registry[model].exclude
@@ -3043,6 +3044,8 @@ def exportWorkbook(request):
                     cell = WriteOnlyCell(ws, value=force_text(i.verbose_name).title())
                     cell.style = "headerstyle"
                     header.append(cell)
+                    if i.name == "owner":
+                        owner = True
             if hasattr(model, "propertyFields"):
                 for i in model.propertyFields:
                     if i.export:
@@ -3084,6 +3087,13 @@ def exportWorkbook(request):
                         model.objects.all()
                         .using(request.database)
                         .order_by("lvl", "pk")
+                    )
+                elif owner:
+                    # First export records with empty owner field
+                    query = (
+                        model.objects.all()
+                        .using(request.database)
+                        .order_by("-owner", "pk")
                     )
                 else:
                     query = model.objects.all().using(request.database).order_by("pk")

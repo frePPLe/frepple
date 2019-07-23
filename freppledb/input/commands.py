@@ -20,10 +20,6 @@ import uuid
 from time import time
 from datetime import datetime
 
-# uncomment below line to use checkCycles
-# import networkx
-
-
 from django.db import connections, DEFAULT_DB_ALIAS
 
 from freppledb.boot import getAttributes
@@ -36,11 +32,11 @@ logger = logging.getLogger(__name__)
 
 class CheckTask(PlanTask):
     """
-  Planning task to be used for data validation tasks.
+    Planning task to be used for data validation tasks.
 
-  Specific are:
-    - low weight by default, ie fast execution assumed
-  """
+    Specific are:
+      - low weight by default, ie fast execution assumed
+    """
 
     @staticmethod
     def getWeight(database=DEFAULT_DB_ALIAS, **kwargs):
@@ -49,13 +45,13 @@ class CheckTask(PlanTask):
 
 class LoadTask(PlanTask):
     """
-  Planning task to be used for data loading tasks.
+    Planning task to be used for data loading tasks.
 
-  Specific are:
+    Specific are:
     - low weight by default, ie fast execution assumed
     - filter attribute to load only a subset of the data
     - subclass is used by the odoo connector to recognize data loading tasks
-  """
+    """
 
     @staticmethod
     def getWeight(database=DEFAULT_DB_ALIAS, **kwargs):
@@ -160,127 +156,6 @@ class checkBuckets(CheckTask):
                     (q[1],),
                 )
                 cursor.execute("comment on index %s is %%s" % q[0], (q[1],))
-
-
-@PlanTaskRegistry.register
-# Warning: Deactivated by default. Requires the installation of networkx package
-class checkCycles(CheckTask):
-    description = "Checking for cycles"
-    sequence = 85
-
-    @classmethod
-    def getWeight(cls, database=DEFAULT_DB_ALIAS, **kwargs):
-        return -1
-
-    @classmethod
-    def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
-        import frepple
-
-        with connections[database].cursor() as cursor:
-
-            # Create Directed Graph
-            G = networkx.DiGraph()
-
-            # Let's try to be a bit smart here.
-            # There are two kinds of possible cycles, cycles within a single location
-            # and cycles across multiple locations
-            # For cycles across multiple locations, this can only happen if the locations
-            # in itemdistribution (without taking the items into consideration) present a cycle
-
-            cursor.execute(
-                "select distinct origin_id, location_id from itemdistribution"
-            )
-            # Adding edges to the directed graph
-            G.add_edges_from(cursor.fetchall())
-
-            locationCycles = list(networkx.simple_cycles(G))
-            foundLocationCycle = (len(locationCycles)) > 0
-
-            if foundLocationCycle:
-                # No luck, there are cycles found in the itemdistribution locations
-                # Let's shoot for the full query
-                # but limited to the locations that present a cycle
-                # This can be a bit optimized but let's start simple
-
-                locationList = []
-                for i in locationCycles:
-                    locationList.extend(i)
-
-                cursor.execute(
-                    """
-         select item.name||' @ '||origin_id, item.name||' @ '||location_id from itemdistribution
-         inner join item do_item on do_item.name = itemdistribution.item_id
-         inner join item on item.lft between do_item.lft and do_item.rght and item.lft = item.rght - 1
-         inner join location origin on origin.name = itemdistribution.origin_id and origin.name in (%s)
-         inner join location dst on dst.name = itemdistribution.location_id and dst.name in (%s)
-         union
-         select frm_om.item_id||' @ '||operation.location_id, to_om.item_id||' @ '||operation.location_id
-         from operation
-         inner join operationmaterial frm_om on frm_om.operation_id = operation.name and frm_om.quantity < 0
-         inner join operationmaterial to_om on to_om.operation_id = operation.name and to_om.quantity > 0
-         where operation.location_id in (%s)
-         union
-         select all_op.item_id||' @ '||operation.location_id, last_op.item_id||' @ '||operation.location_id from operation
-         inner join suboperation all_subop
-           on all_subop.operation_id = operation.name
-         inner join suboperation last_subop
-           on last_subop.operation_id = operation.name
-           and not exists (select 1 from suboperation where operation_id = operation.name and priority > last_subop.priority )
-         inner join operationmaterial all_op on all_op.operation_id = all_subop.suboperation_id and all_op.quantity < 0
-         inner join operationmaterial last_op on last_op.operation_id = last_subop.suboperation_id and last_op.quantity > 0
-         where operation.type = 'routing' and operation.location_id in (%s)
-         """
-                    % (
-                        ", ".join(["%s"] * len(locationList)),
-                        ", ".join(["%s"] * len(locationList)),
-                        ", ".join(["%s"] * len(locationList)),
-                        ", ".join(["%s"] * len(locationList)),
-                    ),
-                    locationList + locationList + locationList + locationList,
-                )
-                G.clear()
-                G.add_edges_from(cursor.fetchall())
-                foundCycles = False
-                for i in list(networkx.simple_cycles(G)):
-                    print("Found a cycle : %s" % i)
-                    foundCycles = True
-
-                if foundCycles:
-                    raise ValueError(
-                        "Stopping execution because of cycles found in the model (see log file)"
-                    )
-
-            # Second cycle possibility, within a single location and we need operations for this to happen
-            cursor.execute(
-                """
-        select frm_om.item_id||' @ '||operation.location_id, to_om.item_id||' @ '||operation.location_id
-        from operation
-        inner join operationmaterial frm_om on frm_om.operation_id = operation.name and frm_om.quantity < 0
-        inner join operationmaterial to_om on to_om.operation_id = operation.name and to_om.quantity > 0
-        union
-        select all_op.item_id||' @ '||operation.location_id, last_op.item_id||' @ '||operation.location_id from operation
-        inner join suboperation all_subop
-          on all_subop.operation_id = operation.name
-        inner join suboperation last_subop
-          on last_subop.operation_id = operation.name
-          and not exists (select 1 from suboperation where operation_id = operation.name and priority > last_subop.priority )
-        inner join operationmaterial all_op on all_op.operation_id = all_subop.suboperation_id and all_op.quantity < 0
-        inner join operationmaterial last_op on last_op.operation_id = last_subop.suboperation_id and last_op.quantity > 0
-        where operation.type = 'routing'
-      """
-            )
-
-            G.clear()
-            G.add_edges_from(cursor.fetchall())
-            foundCycles = False
-            for i in list(networkx.simple_cycles(G)):
-                print("Found a cycle : %s" % i)
-                foundCycles = True
-
-            if foundCycles:
-                raise ValueError(
-                    "Stopping execution because of cycles found in the model (see log file)"
-                )
 
 
 @PlanTaskRegistry.register
@@ -615,49 +490,78 @@ class loadOperations(LoadTask):
 
             # Preprocessing step
             # Make sure any routing has the produced item of its last step populated in the operation table
+            # Old style
             cursor.execute(
                 """
-        update operation
-        set item_id = t.item_id
-        from (
-              select operation.name operation_id, min(operationmaterial.item_id) item_id
-               from operation
-               inner join suboperation s1 on s1.operation_id = operation.name
-               inner join operationmaterial on operationmaterial.operation_id = s1.suboperation_id and quantity > 0
-               where operation.type = 'routing'
-               and not exists
-                  (select 1 from suboperation s2 where s1.operation_id = s2.operation_id and s1.priority < s2.priority)
-               group by operation.name
-               having count(operationmaterial.item_id) = 1
-             ) t
-        where operation.type = 'routing'
-          and operation.name = t.operation_id
-        """
+                update operation
+                set item_id = t.item_id
+                from (
+                      select operation.name operation_id, min(operationmaterial.item_id) item_id
+                       from operation
+                       inner join suboperation s1 on s1.operation_id = operation.name
+                       inner join operationmaterial 
+                         on operationmaterial.operation_id = s1.suboperation_id and quantity > 0
+                       where operation.type = 'routing'
+                       and not exists
+                          (select 1 from suboperation s2 where s1.operation_id = s2.operation_id and s1.priority < s2.priority)
+                       group by operation.name
+                       having count(operationmaterial.item_id) = 1
+                     ) t
+                where operation.type = 'routing'
+                  and operation.name = t.operation_id
+                """
+            )
+            # New style
+            cursor.execute(
+                """
+                update operation
+                set item_id = t.item_id
+                from (
+                      select operation.name operation_id, min(operationmaterial.item_id) item_id
+                       from operation
+                       inner join operation s1 on s1.owner_id = operation.name
+                       inner join operationmaterial
+                         on operationmaterial.operation_id = s1.name and quantity > 0
+                       where operation.type = 'routing'
+                       and not exists
+                          (select 1 from operation s2 where s1.owner_id = s2.owner_id and s1.priority < s2.priority)
+                       group by operation.name
+                       having count(operationmaterial.item_id) = 1
+                     ) t
+                where operation.type = 'routing'
+                  and operation.name = t.operation_id
+                """
             )
 
             # Preprocessing step
             # Make sure any regular operation (i.e. that has no suboperation and is not a suboperation)
             # has its item_id field populated
             # That should cover 90% of the cases
+            # Old style
             cursor.execute(
                 """
-        update operation
-        set item_id = t.item_id
-        from (
-              select operation.name operation_id, min(operationmaterial.item_id) item_id
-              from operation
-              inner join operationmaterial on operationmaterial.operation_id = operation.name and quantity > 0
-              where not exists
-                    (select 1 from suboperation
-                    where suboperation.operation_id = operation.name
-                          or suboperation.suboperation_id = operation.name)
-                and operation.type not in ('routing', 'alternate', 'split')
-              group by operation.name
-              having count(operationmaterial.item_id) = 1
-             ) t
-        where operation.type not in ('routing', 'alternate', 'split')
-          and t.operation_id = operation.name
-        """
+                update operation
+                set item_id = t.item_id
+                from (
+                      select operation.name operation_id, min(operationmaterial.item_id) item_id
+                      from operation
+                      inner join operationmaterial
+                        on operationmaterial.operation_id = operation.name and quantity > 0
+                      where not exists
+                            (select 1 from suboperation
+                            where suboperation.operation_id = operation.name
+                                  or suboperation.suboperation_id = operation.name)
+                        and not exists
+                            (select 1 from operation subop
+                            where subop.owner_id = operation.name)
+                        and operation.type not in ('routing', 'alternate', 'split')
+                        and operation.owner_id is null
+                      group by operation.name
+                      having count(operationmaterial.item_id) = 1
+                     ) t
+                where operation.type not in ('routing', 'alternate', 'split')
+                  and t.operation_id = operation.name
+                """
             )
 
             # Preprocessing step
@@ -665,25 +569,33 @@ class loadOperations(LoadTask):
             # the item field set. It is the parent operation that should have it set.
             cursor.execute(
                 """
-        update operation
-        set item_id = null
-        from suboperation
-        where operation.name = suboperation.suboperation_id
-        and operation.item_id is not null
-        """
+                update operation
+                set item_id = null
+                from suboperation
+                where operation.name = suboperation.suboperation_id
+                and operation.item_id is not null
+                """
+            )
+            cursor.execute(
+                """
+                update operation
+                set item_id = null
+                where owner_id is not null
+                and operation.item_id is not null
+                """
             )
 
         with connections[database].chunked_cursor() as cursor:
 
             cursor.execute(
                 """
-        SELECT
-          name, fence, posttime, sizeminimum, sizemultiple, sizemaximum,
-          type, duration, duration_per, location_id, cost, search, description,
-          category, subcategory, source, item_id, priority, effective_start,
-          effective_end, available_id
-        FROM operation %s
-        """
+                SELECT
+                  name, fence, posttime, sizeminimum, sizemultiple, sizemaximum,
+                  type, duration, duration_per, location_id, cost, search, description,
+                  category, subcategory, source, item_id, priority, effective_start,
+                  effective_end, available_id
+                FROM operation %s
+                """
                 % filter_where
             )
             for i in cursor:
@@ -1331,12 +1243,12 @@ class loadOperationMaterials(LoadTask):
             # the planning progress consistent across runs and database engines.
             cursor.execute(
                 """
-        SELECT
-          operation_id, item_id, quantity, type, effective_start,
-          effective_end, name, priority, search, source, transferbatch, quantity_fixed
-        FROM operationmaterial %s
-        ORDER BY operation_id, item_id
-        """
+                SELECT
+                  operation_id, item_id, quantity, type, effective_start,
+                  effective_end, name, priority, search, source, transferbatch, quantity_fixed
+                FROM operationmaterial %s
+                ORDER BY operation_id, item_id
+                """
                 % filter_where
             )
             for i in cursor:
@@ -1419,12 +1331,12 @@ class loadOperationResources(LoadTask):
             # the planning progress consistent across runs and database engines.
             cursor.execute(
                 """
-        SELECT
-          operation_id, resource_id, quantity, effective_start, effective_end, name,
-          priority, setup, search, skill_id, source, quantity_fixed
-        FROM operationresource %s
-        ORDER BY operation_id, resource_id
-        """
+                SELECT
+                  operation_id, resource_id, quantity, effective_start, effective_end, name,
+                  priority, setup, search, skill_id, source, quantity_fixed
+                FROM operationresource %s
+                ORDER BY operation_id, resource_id
+                """
                 % filter_where
             )
             for i in cursor:
@@ -1479,13 +1391,13 @@ class loadDemand(LoadTask):
             starttime = time()
             cursor.execute(
                 """
-        SELECT
-          name, due, quantity, priority, item_id,
-          operation_id, customer_id, owner_id, minshipment, maxlateness,
-          category, subcategory, source, location_id, status
-        FROM demand
-        WHERE (status IS NULL OR status in ('open', 'quote')) %s
-        """
+                SELECT
+                  name, due, quantity, priority, item_id,
+                  operation_id, customer_id, owner_id, minshipment, maxlateness,
+                  category, subcategory, source, location_id, status
+                FROM demand
+                WHERE (status IS NULL OR status in ('open', 'quote')) %s
+                """
                 % filter_and
             )
             for i in cursor:

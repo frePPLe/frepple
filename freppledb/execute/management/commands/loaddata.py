@@ -191,7 +191,7 @@ class Command(loaddata.Command):
 
             # if the fixture doesn't contain the 'demo' word, let's not apply loaddata post-treatments
             for f in fixture_labels:
-                if "_demo" not in f.lower():
+                if "demo" not in f.lower():
                     return
 
             with transaction.atomic(using=database, savepoint=False):

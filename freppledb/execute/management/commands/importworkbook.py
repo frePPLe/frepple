@@ -24,7 +24,6 @@ from logging import ERROR, WARNING, DEBUG
 
 from openpyxl import load_workbook, Workbook
 from openpyxl.utils import get_column_letter
-from openpyxl.writer.write_only import WriteOnlyCell
 
 from django.core.management.base import BaseCommand, CommandError
 from django.core.files import File

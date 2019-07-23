@@ -195,13 +195,15 @@ class Command(loaddata.Command):
                     return
 
             with transaction.atomic(using=database, savepoint=False):
-                print("updating fixture to current date")
+                if self.get_verbosity() > 2:
+                    print("updating fixture to current date")
 
                 cursor = connections[database].cursor()
                 cursor.execute(
                     """
-          select to_timestamp(value,'YYYY-MM-DD hh24:mi:ss') from common_parameter where name = 'currentdate'
-        """
+                    select to_timestamp(value,'YYYY-MM-DD hh24:mi:ss')
+                    from common_parameter where name = 'currentdate'
+                    """
                 )
                 currentDate = cursor.fetchone()[0]
                 now = datetime.now()
@@ -210,23 +212,25 @@ class Command(loaddata.Command):
                 # update currentdate to now
                 cursor.execute(
                     """
-          update common_parameter set value = 'now' where name = 'currentdate'
-        """
+                    update common_parameter set value = 'now' where name = 'currentdate'
+                    """
                 )
 
                 # update demand due dates
                 cursor.execute(
                     """
-          update demand set due = due + %s * interval '1 day'
-        """,
+                    update demand set due = due + %s * interval '1 day'
+                    """,
                     (offset,),
                 )
 
                 # update PO/DO/MO due dates
                 cursor.execute(
                     """
-          update operationplan set startdate = startdate + %s * interval '1 day', enddate = enddate + %s * interval '1 day'
-        """,
+                      update operationplan
+                      set startdate = startdate + %s * interval '1 day',
+                          enddate = enddate + %s * interval '1 day'
+                    """,
                     2 * (offset,),
                 )
 

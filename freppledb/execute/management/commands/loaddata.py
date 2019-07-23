@@ -195,7 +195,7 @@ class Command(loaddata.Command):
                     return
 
             with transaction.atomic(using=database, savepoint=False):
-                if self.get_verbosity() > 2:
+                if self.verbosity > 2:
                     print("updating fixture to current date")
 
                 cursor = connections[database].cursor()

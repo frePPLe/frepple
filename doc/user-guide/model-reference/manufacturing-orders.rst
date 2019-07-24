@@ -42,7 +42,7 @@ inventory status number            | The Inventory Status is a calculated field 
                                    | The cells have a background color that can be green, orange or red. Sorting 
                                    | the manufacturing orders using the Inventory Status column (red ones first) allows the planner to 
                                    | immediately focus on the manufacturing orders that should be treated first. 
-feasible         boolean           | Read-only boolean flag indicating whether the operationplan is violating any
+feasible         boolean           | Read-only boolean flag indicating whether the manufacturing order is violating any
                                      material, lead time or capacity constraints.
                                    | This is very handy in interpreting unconstrained plans.                                     
 criticality      number            | The criticality is a read-only field, calculated by the planning engine. 

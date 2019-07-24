@@ -62,11 +62,11 @@ members              list of resource  | Resources can be organized in a hierarc
 location             location          | Location of the resource.
                                        | Default is null.
                                        | The working hours and holidays for the resource are taken
-                                         from the ‘available’ calendar of the location.
+                                         from the "available" calendar of the location.
 maximum              double            | Defines the maximum size of the resource.
                                        | The default value is 1, i.e. a resource that can handle
-                                         1 operationplan at a time (provided of course that this
-                                         operationplan requires 1 unit on the resource).
+                                         1 operation at a time (provided of course that this
+                                         operation requires 1 unit on the resource).
                                        | A problem is reported when the resource load exceeds
                                          than this limit.
                                        | This field is ignored on resource of type buckets and infinite.
@@ -88,7 +88,7 @@ available            calendar          A calendar specifying the working hours f
                                        Default is null.
                                    
 efficiency           double            The efficiency of this resource, expressed as a percentage. The
-                                       operationplan duration will be extended or shrunk when this field
+                                       manufacturing order duration will be extended or shrunk when this field
                                        is different from 100.
 
                                        The default value is 100.            
@@ -106,33 +106,7 @@ maxearly             duration          Time window before the ask date where we 
                                        capacity.
                                    
                                        The default value is 100 days.
-                                   
-loads                list of load      Defines the capacity of the operations.
-
-loadplans            list of loadplan  This field is populated during an export with the plan
-                                       results for this resource. It shows the resource load
-                                       profile.
-                                   
-                                       The field is export-only.
-                                   
-                                       The description of the loadplan model is included in the
-                                       section on operationplan.
-                                   
-level                integer           Indication of how upstream/downstream this entity is
-                                       situated in the supply chain.
-                                   
-                                       Lower numbers indicate the entity is close to the end
-                                       item, while a high number will be shown for components
-                                       nested deep in a bill of material.
-                                   
-                                       The field is export-only.
-                                   
-cluster              integer           The network of entities can be partitioned in completely
-                                       independent parts. This field gives the index for the
-                                       partition this entity belongs to.
-
-                                       The field is export-only.
-
+                      
 setup                non-empty string  The name of the current setup of the resource, ie the
                                        setup of the resource at the start of the planning horizon.
                                    
@@ -189,7 +163,7 @@ available quantity per time bucket.
 
 A number of specialized operationresource subclasses exist to select 
 in which bucket the capacity needs to be consumed: at the start of the
-operationplan, at the end of the operationplan or somewhere between
+operation, at the end of the operation or somewhere between
 the start and end.
 
 Infinite resource

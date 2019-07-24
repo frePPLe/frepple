@@ -47,8 +47,8 @@ maxlateness    duration          | The maximum delay that can be accepted to sat
                                  | Use a value of 0 in businesses where the customer will
                                    not accept a late delivery and cancel his order in such
                                    a case. 
-minshipment    positive double   | The minimum quantity allowed for the shipment
-                                   operationplans that satisfy this demand.
+minshipment    positive double   | The minimum quantity allowed for the delivery orders
+                                   that satisfy this demand.
                                  | If this field is not specified, we compute a default
                                    value as round_up(quantity / 10). This means that we allow
                                    the demand to be met only with at most 10 partial deliveries.

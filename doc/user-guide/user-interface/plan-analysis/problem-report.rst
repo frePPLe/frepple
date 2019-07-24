@@ -48,21 +48,21 @@ Each entity type has it’s own set of exceptions:
 * **Operation**:
 
   * | **before current**:
-    | Flagged when an operationplan is being planned in the past.
-    | For operationplans in the status approved or proposed, the start data is before the
+    | Flagged when an operation is being planned in the past.
+    | For operations in the status approved or proposed, the start date is before the
       current date of the plan.
-    | For operationplans plans in the status confirmed, the end date is before
+    | For operations in the status confirmed, the end date is before
       the current date of the plan (ie they are overdue and should have been finished 
       already).
 
   * | **before fence**:
-    | Flagged when an operationplan in the status approved or proposed
+    | Flagged when an operation in the status approved or proposed
       is being planned before its fence date, i.e. it starts 1) after the current date of
       the plan, 2) it starts before the current date of the plan plus the release fence of
       the operation, and 3) the status is approved or proposed.
 
   * | **precedence**:
-    | Flagged when the sequence of two operationplans within a routing isn't respected.
+    | Flagged when the sequence of two operations within a routing isn't respected.
 
 ============ ==============================================================================
 Field        Description

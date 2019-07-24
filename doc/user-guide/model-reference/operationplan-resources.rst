@@ -10,7 +10,8 @@ on manufacturing orders, purchase orders or distribution orders.
 ================ ================= ===========================================================
 Field            Type              Description
 ================ ================= ===========================================================
-operationplan    operationplan     The operationplan consuming the resource.
+reference        operationplan     The reference of the manufacturing order, purchase order 
+                                   or distribution order consuming the capacity.
 resource         resource          The name of the resource being utilized.
 quantity         double            Size of the resource loading.
 startdate        dateTime          Start of the resource loading.

@@ -11,8 +11,8 @@ Setup matrices
    
    In the **Enterprise Edition** the more advanced solver will reduce the
    setup times by choosing smartly among different available alternate
-   resources and by planning operationplans adjacent to others requiring
-   the same setup.
+   resources and by planning manufacturing orders adjacent to others
+   requiring the same setup.
    
 A setup matrix defines the time and cost of setup conversions on a resource.
 Within a setup matrix rules are used to define the changeover cost and

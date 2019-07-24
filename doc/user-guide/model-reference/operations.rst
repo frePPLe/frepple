@@ -114,35 +114,35 @@ category               string            Free format category.
 subcategory            string            Free format subcategory.
 
 fence                  duration          Time window from the current date of the plan during
-                                         which all operationplans are expected to be
+                                         which all manufacturing orders are expected to be
                                          frozen/released.
                                          
                                          When the 'FENCE' constraint is enabled in the solver, it
                                          won't create any new operation plans in this time fence.
-                                         Only the externally supplied and locked operationplans will
-                                         then exist in this time window.
+                                         Only the externally supplied and locked manufacturing orders
+                                         will then exist in this time window.
                                          
-size_minimum           positive double   A minimum quantity for operationplans.
+size_minimum           positive double   A minimum quantity for manufacturing orders.
                                          
                                          A request for a lower, non-zero quantity will be rounded up.
 
                                          The default value is 1.
                                          
-size_minimum_calendar  calendar          A calendar to define the minimum size of operationplans
+size_minimum_calendar  calendar          A calendar to define the minimum size of manufacturing orders
                                          when this value varies over time. The end date of the
-                                         operationplan determines which date we use as lookup in the
+                                         manufacturing orders determines which date we use as lookup in the
                                          calendar.
                                          
                                          If both the size_minimum and size_minimum_calendar are 
                                          specified, we use the highest value.
                                          
-size_multiple          positive double   A lotsize quantity for operationplans.
-size_maximum           positive double   | The maximum quantity for operationplans.
+size_multiple          positive double   A multiple quantity for manufacturing orders.
+size_maximum           positive double   | The maximum quantity for manufacturing orders.
                                          | Note that this value limits the size of individual
-                                           operationplans. The solver can create multiple operationplans
-                                           of this maximum size, so this value does NOT constrain the
+                                           manufacturing orders. The solver can create multiple manufacturing
+                                           orders of this maximum size, so this value does NOT constrain the
                                            total planned quantity on the operation. The field is
-                                           useful to break big operationplans in smaller ones.
+                                           useful to break big manufacturing orders in smaller ones.
 cost                   double            | The cost of executing this operation, per unit of the
                                            operation_plan.
                                          | Depending on what the operation models, this
@@ -162,21 +162,6 @@ posttime               duration          | A post-operation time, used as a buff
                                            producing operation of a certain buffer.
                                          | If you want to model a safety stock quantity, you can use
                                            the minimum or minimum_calendar fields on the buffer.
-loads                  list of load      A list of all resources loaded by this operation.
-flows                  list of flow      A list of all buffers where material is consumed from or
-                                         produced into.
-level                  integer           | Indication of how upstream/downstream this entity is
-                                           situated in the supply chain.
-                                         | Lower numbers indicate the entity is close to the end
-                                           item, while a high number will be shown for components
-                                           nested deep in a bill of material.
-                                         | The field is export-only.
-cluster                integer           | The network of entities can be partitioned in completely
-                                           independent parts. This field gives the index for the
-                                           partition this entity belongs to.
-                                         | The field is export-only.
-hidden                 boolean           Marks entities that are considered hidden and are normally
-                                         not shown to the end user.
 ====================== ================= ===========================================================
 
 Operation_fixed_time
@@ -204,15 +189,17 @@ The total duration of the operation plan is the sum of:
 
 * A fixed DURATION.
 
-* A variable duration, computed as the operationplan quantity multiplied by
+* A variable duration, computed as the manufacturing order quantity multiplied by
   a DURATION_PER.
 
 ================ ================= ===========================================================
 Field            Type              Description
 ================ ================= ===========================================================
-duration         duration          | Fixed component of the duration of the operationplan.
+duration         duration          | Fixed component of the duration of the manufacturing
+                                     order.
                                    | The default value is 0.
-duration_per     duration          | Variable component of the duration of the operationplan.
+duration_per     duration          | Variable component of the duration of the manufacturing
+                                     order.
                                    | The default value is 0.
 ================ ================= ===========================================================
 

@@ -10,12 +10,14 @@ on hand inventory, purchase orders, distribution orders, manufacturing orders or
 ================ ================= =================================================================================
 Field            Type              Description
 ================ ================= =================================================================================
-operationplan    operationplan     A reference to the operationplan consuming or producing the material.
+reference        operationplan     A reference to the manufacturing order, purchase order or distribution order
+                                   consuming or producing the material.
 item             item              The item being produced or consumed.
 location         location          The item where material is produced or consumed.
 quantity         double            Size of the material consumption or production.
-flowdate         dateTime          Date of material consumption or production.
-onhand           double            | Inventory in the buffer after the execution of this operationplan.
+date             dateTime          Date of material consumption or production.
+onhand           double            | Inventory in the buffer after the execution of this manufacturing order, 
+                                     purchase order or distribution order.
                                    | This is field is export only.
 status           string            This field should have one of the following keywords:
 

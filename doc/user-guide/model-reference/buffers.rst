@@ -57,43 +57,8 @@ maximum_calendar calendar          | Refers to a calendar storing the maximum in
                                    | Use this field when the maximum inventory level is varying
                                      over time. Otherwise use the maximum field. If both fields
                                      are specified, the maximum field is ignored.
-producing        operation         | This operation will be instantiated by the solver to
-                                     replenish the buffer with additional material.
-                                   | You can specify this operation explicitly.
-                                   | Or, you can leave this field blank and let the system
-                                     automatically create an operation. The generated operation
-                                     is using the ItemSupplier and ItemDistribution models as
-                                     input.
-                                   | In versions before 3.0 the only way was the explicit
-                                     construction of the operation to populate this field. From
-                                     version 3.0 onwards we recommend to use the auto-generated
-                                     operations, unless you have some very specific modeling
-                                     requirements.
-                                   | From version 4.0 onwards, this field is deprecated. It is
-                                     left only for backwards compatibility. New implementations
-                                     and upgraded installs should use the easier modeling
-                                     constructs itemsupplier, itemdistribution and operation.
-flows            list of flow      Defines material flows consuming from or producing into this
-                                   buffer.
-flowplans        list of flowplan  | This field is populated during an export with the plan results
-                                     for this buffer. It shows the complete inventory profile.
-                                   | The field is export-only.
-                                   | The description of the flowplan model is included in the
-                                     section on operationplan.
 tool             boolean           | A flag to mark buffers that are actually representing a tool.
                                    | Default is false.
                                    | The impact on the planning results is visible in the
                                      pegging and criticality calculations.
-level            integer           | Indication of how upstream/downstream this entity is situated
-                                     in the supply chain.
-                                   | Lower numbers indicate the entity is close to the end item,
-                                     while a high number will be shown for components nested deep
-                                     in a bill of material.
-                                   | The field is export-only.
-cluster          integer           | The network of entities can be partitioned in completely
-                                     independent parts. This field gives the index for the
-                                     partition this entity belongs to.
-                                   | The field is export-only.
-hidden           boolean           Marks entities that are considered hidden and are normally not
-                                   shown to the end user.
 ================ ================= ===========================================================

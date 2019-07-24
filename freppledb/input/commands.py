@@ -708,13 +708,13 @@ class loadSuboperations(LoadTask):
                    where suboperation.operation_id = operation.name) as type
                 FROM suboperation
                 WHERE priority >= 0 %s
-                union all
+                union
                 select owner_id, name, priority, effective_start, effective_end,
                   (SELECT type
                    from operation as parent
                    where operation.owner_id = parent.name) as type
                 from operation
-                where owner_id is not null and priority <> 0 %s
+                where owner_id is not null and priority >= 0 %s
                 """
                 % (filter_and, filter_and)
             )

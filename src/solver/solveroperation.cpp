@@ -39,6 +39,8 @@ void SolverCreate::checkOperationCapacity(OperationPlan* opplan,
 
   // Loop through all loadplans, and solve for the resource.
   // This may move an operationplan early or late.
+  unsigned short counter = 0;
+  Date orig_q_date_max = data.state->q_date_max;
   do {
     orig = opplan->getDates();
     recheck = false;
@@ -84,13 +86,26 @@ void SolverCreate::checkOperationCapacity(OperationPlan* opplan,
       first = false;
     }
     data.logConstraints = false;  // Only first loop collects constraint info
+    if (++counter >= 20) {
+      if (data.constrainedPlanning && isCapacityConstrained())
+        data.state->a_qty = 0.0;
+      if (data.state->a_date > orig_q_date_max)
+        data.state->a_date += getMinimumDelay();
+      else
+        data.state->a_date = orig_q_date_max + getMinimumDelay();
+      if (getLogLevel() > 1)
+        logger << indentlevel << "Quitting capacity checking loop" << endl;
+      break;
+    }
   }
   // Imagine there are multiple loads. As soon as one of them is moved, we
   // need to redo the capacity check for the ones we already checked.
   // Repeat until no load has touched the opplan, or till proven infeasible.
   // No need to reloop if there is only a single load (= 2 loadplans)
   while (constrainedLoads > 1 && !opplan->getDates().almostEqual(orig) &&
-         (data.state->a_qty == 0.0 || recheck));
+         data.constrainedPlanning &&
+         ((data.state->a_qty == 0.0 && data.state->a_date < orig_q_date_max) ||
+          recheck));
   // TODO doesn't this loop increment a_penalty incorrectly???
 
   // Restore original flags
@@ -188,6 +203,7 @@ bool SolverCreate::checkOperation(OperationPlan* opplan,
   // Loop till everything is okay. During this loop the quantity and date of the
   // operationplan can be updated, but it cannot be split or deleted.
   data.state->forceLate = false;
+  unsigned short counter = 0;
   do {
     if (isCapacityConstrained()) {
       // Verify the capacity. This can move the operationplan early or late.
@@ -348,6 +364,13 @@ bool SolverCreate::checkOperation(OperationPlan* opplan,
       }
     } else
       okay = true;
+    if (!okay && ++counter >= 20) {
+      a_qty = 0.0;
+      matnext.setEnd(orig_q_date_max + data.getSolver()->getMinimumDelay());
+      if (data.getSolver()->getLogLevel() > 1)
+        logger << indentlevel << "Quitting operation checking loop" << endl;
+      break;
+    }
   } while (!okay);  // Repeat the loop if the operation was moved and the
                     // feasibility needs to be rechecked.
 

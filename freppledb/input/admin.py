@@ -437,7 +437,6 @@ class Operation_admin(MultiDBModelAdmin):
                     "description",
                     "category",
                     "subcategory",
-                    "owner",
                 )
             },
         ),
@@ -454,9 +453,18 @@ class Operation_admin(MultiDBModelAdmin):
                     "duration",
                     "duration_per",
                     "available",
+                )
+            },
+        ),
+        (
+            _("alternate selection"),
+            {
+                "fields": (
+                    "search",
+                    "priority",
                     "effective_start",
                     "effective_end",
-                    "search",
+                    "owner",
                 )
             },
         ),

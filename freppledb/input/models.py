@@ -428,6 +428,26 @@ class SubOperation(AuditModel):
         verbose_name_plural = _("suboperations")
         unique_together = (("operation", "suboperation", "effective_start"),)
 
+    def save(self, *args, **kwargs):
+        # Call the real save() method
+        super().save(*args, **kwargs)
+
+        # Merge the same info immediately in the operation table
+        self.suboperation.owner = self.operation
+        self.suboperation.priority = self.priority
+        self.suboperation.effective_start = self.effective_start
+        self.suboperation.effective_end = self.effective_end
+        self.suboperation.item = None
+        self.suboperation.save(
+            update_fields=[
+                "owner",
+                "priority",
+                "effective_start",
+                "effective_end",
+                "item",
+            ]
+        )
+
 
 class Buffer(AuditModel):
     # Types of buffers

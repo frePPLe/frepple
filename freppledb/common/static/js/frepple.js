@@ -3031,8 +3031,8 @@ var tour = {
           '<h4 id="modalTitle" class="modal-title"><strong>'+ gettext("Guided tour") +
           '</strong><button type="button" id="tourcancelbutton" class="close" data-dismiss="modal" aria-hidden="true"><span class="fa fa-times"</button>'+'</h4>'+
         '</div>'+
-        '<div class="modal-body" id="tourmodalbody" style="padding-bottom:20px;">'+
-            tourdata[tour.chapter]['description']+
+        '<div class="modal-body" id="tourmodalbody" style="padding-bottom:20px;">' +
+            tourdata[tour.chapter]['description'].replace(/{url_prefix}/g, url_prefix) +
         '</div>'+
      '</div>'+
     '</div>' )
@@ -3047,7 +3047,7 @@ var tour = {
     })
     .modal('show');
     $('#tourmodalbody').append( '<div id="tour" style="padding-bottom:20px; display:none">' +
-         tourdata[tour.chapter]['description']  + '<br><br><br></div>');
+         tourdata[tour.chapter]['description'].replace(/{url_prefix}/g, url_prefix) + '<br><br><br></div>');
   },
 
   showStep: function()

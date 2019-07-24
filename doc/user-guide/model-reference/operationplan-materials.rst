@@ -1,6 +1,6 @@
-=======================
-Operationplan materials
-=======================
+================
+Inventory detail
+================
 
 This table models the material consumption or production. The material movements are associated with 
 on hand inventory, purchase orders, distribution orders, manufacturing orders or delivery orders to customers. 
@@ -10,7 +10,7 @@ on hand inventory, purchase orders, distribution orders, manufacturing orders or
 ================ ================= =================================================================================
 Field            Type              Description
 ================ ================= =================================================================================
-reference        operationplan     A reference to the manufacturing order, purchase order or distribution order
+reference        MO/PO/DO/DLVR     A reference to the manufacturing order, purchase order or distribution order
                                    consuming or producing the material.
 item             item              The item being produced or consumed.
 location         location          The item where material is produced or consumed.

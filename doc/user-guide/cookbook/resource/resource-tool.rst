@@ -14,7 +14,7 @@ Tools
 | The operation that releases the tool get a flow to produce into this buffer.
 | The flows are typically (but not necessary) of type "flow_fixed_start" and
   "flow_fixed_end" to keep the tool quantity independent of the size of the
-  operationplan quantity.
+  manufacturing order quantity.
 
 .. note:: In a future release it is envisioned to replace the above model
           construct with a simpler and more intuitive representation as a

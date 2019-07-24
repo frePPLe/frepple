@@ -18,9 +18,9 @@ Operation           Name of the operation.
 Location            Location of the operation.
 Proposed starts     Sum of the quantity of all proposed manufacturing orders starting in this time
                     bucket.
-Total starts        Sum of the quantity of all operationplans starting in this time bucket.
-Proposed ends       Sum of the quantity of all operationplans ending in this time bucket.
-Total ends          Sum of the quantity of all operationplans starting in this time bucket.
+Total starts        Sum of the quantity of all manufacturing orders starting in this time bucket.
+Proposed ends       Sum of the quantity of all manufacturing orders ending in this time bucket.
+Total ends          Sum of the quantity of all manufacturing orders starting in this time bucket.
 Proposed production Proposed production in this bucket, where the produced quantity is assumed to
                     be evenly distributed between the start and end date of each manufacturing 
                     order.

@@ -51,7 +51,7 @@ The report supports a number of ways to interactively change the plan:
 
    - | The square icon **unplans one or more sales order**.
      | All plans associateded with the selected sales orders are removed from the 
-       plan. Only operationplans in the 'proposed' status can be removed.
+       plan. Only manufacturing orders in the 'proposed' status can be removed.
  
    - | The back arrow icon **plans one or more sales orders in backward planning mode**.
      | This means that we search to plan the demand for a delivery as close as
@@ -71,26 +71,26 @@ The plan can visualized in different ways. Use the dropdown in the upper
 left corner to change the color method. 
 
  - | **Color by feasibility**
-   | This is the default color. It highlights operationplans that are
+   | This is the default color. It highlights manufacturing orders that are
      not feasible due to capacity overloads, material shortages or 
      lead time constraints.
      
  - | **Color by criticality**
-   | An operationplan is considered critical if it is on the critical
-     path of one or more demands. Any delay on a critical operationplan
+   | A manufacturing order is considered critical if it is on the critical
+     path of one or more demands. Any delay on a critical manufacturing order
      will result in a late delivery to a customer. It will show up as red.
-   | When additional "slack time" is available in the plan the operationplan
-     is less sensitive to plan disturbances. It is less critical and will 
+   | When additional "slack time" is available in the plan the manufacturing
+     order is less sensitive to plan disturbances. It is less critical and will 
      shown in yellow to green.
      
  - | **Color by delay**
-   | An operationplan is considered delayed if it ends later than required 
+   | A manufacturing order is considered delayed if it ends later than required 
      to meet the demand on time. This delay also considers the processing
      time at the following manufacturing steps.
    | Delay and criticality are related metrics, but still distinct. For
-     instance, if all operationplans for a demand are planned in a just-in-time
+     instance, if all manufacturing order for a demand are planned in a just-in-time
      sequence without gaps they will be considered critical, ie red by the 
-     criticality criterion. The operationplans still deliver the demand on 
+     criticality criterion. The manufacturing order still deliver the demand on 
      time so they will show up as on time, ie gree by the delay citerion. 
         
  - | **Color by priority**
@@ -106,7 +106,7 @@ left corner to change the color method.
    | When then inventory of an item is above the safety stock the color is green.
    
  - | **Color by item category**
-   | The color of an operationplan is determined by the category of the item
+   | The color of a manufacturing order is determined by the category of the item
      it produces. The category is supplied by the user in the item.category
      field. 
    | The plan editor allows to choose a color for different categories,

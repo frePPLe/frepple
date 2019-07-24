@@ -1,6 +1,6 @@
-=======================
-Operationplan resources
-=======================
+===============
+Resource detail
+===============
 
 This table records the planned capacity consumption. The capacity consumption is associated with 
 on manufacturing orders, purchase orders or distribution orders.
@@ -10,8 +10,8 @@ on manufacturing orders, purchase orders or distribution orders.
 ================ ================= ===========================================================
 Field            Type              Description
 ================ ================= ===========================================================
-reference        operationplan     The reference of the manufacturing order, purchase order 
-                                   or distribution order consuming the capacity.
+reference        MO/PO/DO/DLVR     The reference of the manufacturing order, purchase order, 
+                                   distribution order or delivery order consuming the capacity.
 resource         resource          The name of the resource being utilized.
 quantity         double            Size of the resource loading.
 startdate        dateTime          Start of the resource loading.

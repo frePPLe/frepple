@@ -17,10 +17,10 @@ Field             Description
 Resource          Resource name.
 Location          Location of the resource.
 Available         Total availability on the resource.
-Unavailable       Unavailable time, as defined in the availability calendar of the resource’s
+Unavailable       Unavailable time, as defined in the availability calendar of the resource's
                   location.
 Setup             Time spent in conversions between setups.
-Load              Time spent on actual operationplans.
+Load              Time spent on actual manufacturing orders.
 Utilization       | Equal to the load divided by the available time, expressed as percentage.
                   | The utilization % just right before the graph is the average utilization
                     over the complete reporting horizon. The value for each bucket in that

@@ -22,10 +22,10 @@ The metrics being reported are:
     lateness (being the quantity planned late multiplied by the delay in days).
 
 * | **Operation**
-  | The total number of operationplans as well the summed up quantity is shown.
+  | The report displays the total quantity and number of planned operations.
 
 * | **Resource**
-  | The total resource consumption is displayed. The consumption is defined
+  | The report displays the total resource consumption. The consumption is defined
     as the load size * load duration in days.
 
 * | **Material**

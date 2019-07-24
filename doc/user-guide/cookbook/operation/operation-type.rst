@@ -36,9 +36,10 @@ Different operation types are available:
     in your model. FrePPLe will automatically create them as soon as there are multiple
     replenishment methods.
 
-The duration for the operation refers to available time. If the operation location
-has a calendar with the working hours and holidays, the time between the start and
-end date of an operationplan can be longer than the duration defined on the operation.
+The actual duration for the operation respects the working hours and holidays periods.
+These are defined in the available calendar of the operation and/or its location.
+The time between the start and end date of a manufacturing order or distribution order
+will then be extended with any unavailable time. 
 
 .. rubric:: Example
 

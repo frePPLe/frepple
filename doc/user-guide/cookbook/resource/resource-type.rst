@@ -8,7 +8,7 @@ FrePPLe has different resource types:
 
   The resource size is the maximum size of the resource.
   The load quantity specifies how much of the resource we use during the complete
-  duration of the operationplan.
+  duration of the operation.
 
   This resource model is typically used for short term detailed planning
   and scheduling.
@@ -22,7 +22,7 @@ FrePPLe has different resource types:
 
   The maximum_calendar of the resource defines the time buckets and how much
   capacity (expressed in man-hours/machine-hours) is available per time bucket.
-  Each operationplan consumes 'load quantity * operationplan quantity' of the
+  Each operation consumes 'load quantity * operation quantity' of the
   resource capacity in the time bucket where it starts.
 
   This resource model is typically used for mid term master planning.

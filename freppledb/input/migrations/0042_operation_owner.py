@@ -35,5 +35,16 @@ class Migration(migrations.Migration):
                 to="input.Operation",
                 verbose_name="owner",
             ),
-        )
+        ),
+        migrations.RunSQL(
+            """
+            update operation
+            set priority = suboperation.priority,
+                owner_id = suboperation.operation_id
+                effective_start = suboperation.effective_start,
+                effective_end = suboperation.effective_end
+            from suboperation
+            where suboperation.suboperation_id = operation.name
+            """
+        ),
     ]

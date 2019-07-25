@@ -669,8 +669,8 @@ class Simulator(object):
 
     def checkAvailable(self, qty, min_qty, oper, consume):
         """
-    Verify whether an operationplan of a given quantity is material-feasible.
-    """
+        Verify whether an operationplan of a given quantity is material-feasible.
+        """
         for fl in oper.operationmaterials.all().using(self.database):
             if fl.quantity > 0 and not consume:
                 continue
@@ -731,6 +731,17 @@ class Simulator(object):
                 )
                 if not ship_qty:
                     return 0
+                elif ship_qty < qty:
+                    qty = ship_qty
+            for suboper in (
+                oper.childoperations.all().using(self.database).order_by("priority")
+            ):
+                ship_qty = self.checkAvailable(
+                    qty, min_qty, suboper.suboperation, consume
+                )
+                if not ship_qty:
+                    return 0
+                elif ship_qty < qty:
                     qty = ship_qty
         elif oper.type == "alternate":
             # An ok from a single suboperation suffices.

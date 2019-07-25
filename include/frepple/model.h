@@ -2887,6 +2887,13 @@ class Operation : public HasName<Operation>,
    */
   bool hasSuperOperations() const { return !superoplist.empty(); }
 
+  Operation* getOwner() const {
+    if (superoplist.empty())
+      return nullptr;
+    else
+      return *superoplist.begin();
+  }
+
   /** Register a super-operation, i.e. an operation having this one as a
    * sub-operation. */
   void addSuperOperation(Operation* o) { superoplist.push_front(o); }
@@ -2969,6 +2976,8 @@ class Operation : public HasName<Operation>,
                          nullptr, BOOL_FALSE, DONT_SERIALIZE);
     m->addEnumField<Cls, SearchMode>(Tags::search, &Cls::getSearch,
                                      &Cls::setSearch, PRIORITY);
+    m->addPointerField<Cls, Operation>(Tags::owner, &Cls::getOwner, nullptr,
+                                       DONT_SERIALIZE);
     HasLevel::registerFields<Cls>(m);
   }
 

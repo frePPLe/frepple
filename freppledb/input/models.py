@@ -266,7 +266,7 @@ class Operation(AuditModel):
         verbose_name=_("owner"),
         null=True,
         blank=True,
-        related_name="xchildren",
+        related_name="childoperations",
         on_delete=models.SET_NULL,
     )
     priority = models.IntegerField(

@@ -370,8 +370,8 @@ var introdata = {
       description : 'Suboperations apply to operations of type "routing", "alternate", "split".<br>' +
         '<strong>Such operations own a number of child operations</strong>.<br><br>' +
         'The main fields are:<ul>' +
-        '<li style="list-style:initial">Operation:  Sub-operation.</li>' +
-        '<li style="list-style:initial">Resource: Parent operation.</li>' +
+        '<li style="list-style:initial">Operation: Parent operation.</li>' +
+        '<li style="list-style:initial">Sub-operation: Child operation.</li>' +
         '<li style="list-style:initial">Priority: For alternate operations: Priority of this alternate.<br>' +
         'For routing operations: Sequence number of the step.<br>' +
         'For split operations: Proportion of the demand planned along this suboperation.</li>' +

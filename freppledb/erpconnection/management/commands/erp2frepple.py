@@ -181,6 +181,8 @@ class Command(BaseCommand):
                 self.task.status = "42%"
                 self.task.save(using=self.database)
 
+                # Note: the suboperation table is now deprecated.
+                # The same data can now be directly loaded in the the operation table.
                 self.extractSuboperation()
                 self.task.status = "48%"
                 self.task.save(using=self.database)
@@ -234,9 +236,9 @@ class Command(BaseCommand):
 
     def extractLocation(self):
         """
-    Straightforward mapping JobBOSS locations to frePPLe locations.
-    Only the SHOP location is actually used in the frePPLe model.
-    """
+        Straightforward mapping JobBOSS locations to frePPLe locations.
+        Only the SHOP location is actually used in the frePPLe model.
+        """
         outfilename = os.path.join(self.destination, "location.%s" % self.ext)
         print("Start extracting locations to %s" % outfilename)
         self.cursor.execute(
@@ -253,8 +255,8 @@ class Command(BaseCommand):
 
     def extractCustomer(self):
         """
-    Straightforward mapping JobBOSS customers to frePPLe customers.
-    """
+        Straightforward mapping JobBOSS customers to frePPLe customers.
+        """
         outfilename = os.path.join(self.destination, "customer.%s" % self.ext)
         print("Start extracting customers to %s" % outfilename)
         self.cursor.execute(
@@ -271,8 +273,8 @@ class Command(BaseCommand):
 
     def extractItem(self):
         """
-    Map active JobBOSS jobs into frePPLe items.
-    """
+        Map active JobBOSS jobs into frePPLe items.
+        """
         outfilename = os.path.join(self.destination, "item.%s" % self.ext)
         print("Start extracting items to %s" % outfilename)
         self.cursor.execute(
@@ -291,8 +293,8 @@ class Command(BaseCommand):
 
     def extractSupplier(self):
         """
-    Map active JobBOSS vendors into frePPLe suppliers.
-    """
+        Map active JobBOSS vendors into frePPLe suppliers.
+        """
         outfilename = os.path.join(self.destination, "supplier.%s" % self.ext)
         print("Start extracting suppliers to %s" % outfilename)
         self.cursor.execute(
@@ -309,9 +311,9 @@ class Command(BaseCommand):
 
     def extractResource(self):
         """
-    Map JobBOSS work centers into frePPLe resources.
-    Only take the top-level workcenters, and skip the inactive ones.
-    """
+        Map JobBOSS work centers into frePPLe resources.
+        Only take the top-level workcenters, and skip the inactive ones.
+        """
         outfilename = os.path.join(self.destination, "resource.%s" % self.ext)
         print("Start extracting resources to %s" % outfilename)
         self.cursor.execute(
@@ -342,8 +344,8 @@ class Command(BaseCommand):
 
     def extractSalesOrder(self):
         """
-    Map JobBOSS top level jobs into frePPLe sales orders.
-    """
+        Map JobBOSS top level jobs into frePPLe sales orders.
+        """
         outfilename = os.path.join(self.destination, "demand.%s" % self.ext)
         print("Start extracting demand to %s" % outfilename)
         self.cursor.execute(
@@ -380,10 +382,10 @@ class Command(BaseCommand):
 
     def extractOperation(self):
         """
-    Map JobBOSS jobs into frePPLe operations.
-    We extract a routing operation and also suboperations.
-    SQL contains an ugly trick to avoid duplicate job-sequence combinations.
-    """
+        Map JobBOSS jobs into frePPLe operations.
+        We extract a routing operation and also suboperations.
+        SQL contains an ugly trick to avoid duplicate job-sequence combinations.
+        """
         outfilename = os.path.join(self.destination, "operation.%s" % self.ext)
         print("Start extracting operations to %s" % outfilename)
         self.cursor.execute(

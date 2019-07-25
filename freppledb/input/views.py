@@ -179,18 +179,18 @@ class PathReport(GridReport):
 
     @classmethod
     def basequeryset(reportclass, request, *args, **kwargs):
-      if str(reportclass.objecttype._meta) != 'input.buffer':
-        return reportclass.objecttype.objects.filter(name__exact=args[0]).values(
-          "name"
-      )
-      else:
-        return (
-          reportclass.objecttype.objects.annotate(
-              name=RawSQL("item_id||' @ '||location_id", ())
-          )
-          .filter(name__exact=args[0])
-          .values("name")
-      )
+        if str(reportclass.objecttype._meta) != "input.buffer":
+            return reportclass.objecttype.objects.filter(name__exact=args[0]).values(
+                "name"
+            )
+        else:
+            return (
+                reportclass.objecttype.objects.annotate(
+                    name=RawSQL("item_id||' @ '||location_id", ())
+                )
+                .filter(name__exact=args[0])
+                .values("name")
+            )
 
     @classmethod
     def extra_context(reportclass, request, *args, **kwargs):
@@ -384,13 +384,13 @@ class PathReport(GridReport):
     @classmethod
     def query(reportclass, request, basequery):
         """
-    A function that recurses upstream or downstream in the supply chain.
-    """
+        A function that recurses upstream or downstream in the supply chain.
+        """
         # Update item and location hierarchies
         Item.rebuildHierarchy(database=request.database)
-        Location.rebuildHierarchy(database=request.database)               
-        
-        sql = '''
+        Location.rebuildHierarchy(database=request.database)
+
+        sql = """
         -- what routings are producing my buffer "item @ location"
         with recursive all_operations as (
         select routing.name,
@@ -490,80 +490,106 @@ class PathReport(GridReport):
           end
         )
         select * from cte
-        ''' % (('nextop.produced end ?| (array( select jsonb_object_keys(cte.consumed)))',) if reportclass.downstream == False\
-         else ('nextop.consumed end ?| (array( select jsonb_object_keys(cte.produced)))',))
-        
-        
-        if str(reportclass.objecttype._meta) == 'input.demand':
-          demand_name = basequery.query.get_compiler(basequery.db).as_sql(
-                        with_col_aliases=False)[1][0]
-          d = Demand.objects.get(name=demand_name)
-          if d.operation is None:
-            subquery = "produced ? %s" if reportclass.downstream == False else "consumed ? %s"
-            arguments = ('%s @ %s' % (d.item.name, d.location.name),)
-          else:
+        """ % (
+            ("nextop.produced end ?| (array( select jsonb_object_keys(cte.consumed)))",)
+            if reportclass.downstream == False
+            else (
+                "nextop.consumed end ?| (array( select jsonb_object_keys(cte.produced)))",
+            )
+        )
+
+        if str(reportclass.objecttype._meta) == "input.demand":
+            demand_name = basequery.query.get_compiler(basequery.db).as_sql(
+                with_col_aliases=False
+            )[1][0]
+            d = Demand.objects.get(name=demand_name)
+            if d.operation is None:
+                subquery = (
+                    "produced ? %s"
+                    if reportclass.downstream == False
+                    else "consumed ? %s"
+                )
+                arguments = ("%s @ %s" % (d.item.name, d.location.name),)
+            else:
+                subquery = "name = %s"
+                arguments = (d.operation.name,)
+        elif str(reportclass.objecttype._meta) == "input.operation":
+            operation_name = basequery.query.get_compiler(basequery.db).as_sql(
+                with_col_aliases=False
+            )[1][0]
             subquery = "name = %s"
-            arguments = (d.operation.name,)
-        elif str(reportclass.objecttype._meta) == 'input.operation':
-          operation_name = basequery.query.get_compiler(basequery.db).as_sql(
-                        with_col_aliases=False)[1][0]
-          subquery = "name = %s"
-          arguments = (operation_name,)
-        elif str(reportclass.objecttype._meta) == 'input.resource':     
-          resource_name = basequery.query.get_compiler(basequery.db).as_sql(
-                        with_col_aliases=False)[1][0]
-          subquery = "resources ? %s"
-          arguments = (resource_name,)      
-        elif str(reportclass.objecttype._meta) == 'input.buffer':     
-          buffer_name = basequery.query.get_compiler(basequery.db).as_sql(
-                        with_col_aliases=False)[1][0]
-          if '@' not in buffer_name:
-            b = Buffer.objects.get(id=buffer_name)
-            buffer_name = '%s @ %s' % (b.item.name,b.location.name)
-          subquery = "produced ? %s" if reportclass.downstream == False else "consumed ? %s"
-          arguments = (buffer_name,)
-        elif str(reportclass.objecttype._meta) == 'input.item':     
-          item_name = basequery.query.get_compiler(basequery.db).as_sql(
-                        with_col_aliases=False)[1][0]
-          buffers = []
-          for l in Location.objects.all():
-            buffers.append('%s @ %s' % (item_name, l.name))
-          subquery = "produced ?| %s" if reportclass.downstream == False else "consumed ?| %s"
-          arguments = (buffers,)
+            arguments = (operation_name,)
+        elif str(reportclass.objecttype._meta) == "input.resource":
+            resource_name = basequery.query.get_compiler(basequery.db).as_sql(
+                with_col_aliases=False
+            )[1][0]
+            subquery = "resources ? %s"
+            arguments = (resource_name,)
+        elif str(reportclass.objecttype._meta) == "input.buffer":
+            buffer_name = basequery.query.get_compiler(basequery.db).as_sql(
+                with_col_aliases=False
+            )[1][0]
+            if "@" not in buffer_name:
+                b = Buffer.objects.get(id=buffer_name)
+                buffer_name = "%s @ %s" % (b.item.name, b.location.name)
+            subquery = (
+                "produced ? %s" if reportclass.downstream == False else "consumed ? %s"
+            )
+            arguments = (buffer_name,)
+        elif str(reportclass.objecttype._meta) == "input.item":
+            item_name = basequery.query.get_compiler(basequery.db).as_sql(
+                with_col_aliases=False
+            )[1][0]
+            buffers = []
+            for l in Location.objects.all():
+                buffers.append("%s @ %s" % (item_name, l.name))
+            subquery = (
+                "produced ?| %s"
+                if reportclass.downstream == False
+                else "consumed ?| %s"
+            )
+            arguments = (buffers,)
         cursor = connections[request.database].cursor()
         cursor.execute(sql % subquery, arguments)
-        
+
         counter = 1
-        for i in cursor.fetchall():          
-          routingCounter = counter if i[2] == 'routing' else (routingCounter if i[5] else None)
-          if i[5] is None:
-            depth = i[0]*2
-          else:
-            depth = i[0]*2+1
-          # Process the current node
-          a= {
-              "depth":depth,
-              "id": counter,
-              "operation": i[1],
-              "type": i[2],
-              "location": i[3],
-              "resources": tuple(i[4].items()) if i[4] else None,
-              "parentoper": i[5],
-              "suboperation": i[6] if i[5] else 0,
-              "duration": i[7],
-              "duration_per": i[8],
-              "quantity": 1,              
-              "buffers": None if i[2] == 'routing' else (tuple(i[9].items()) + tuple(i[10].items()) if i[9] and i[10] else (tuple(i[9].items()) if i[9] else tuple(i[10].items()))),                            
-              "parent": routingCounter if i[5] else None,
-              "leaf": "false" if i[2] == 'routing' else "true",
-              "expanded": "true",
-              "numsuboperations": i[11],
-              "realdepth": i[0] if reportclass.downstream == False else -i[0],
-          }
-          counter = counter + 1
-          
-        
-          yield(a)
+        for i in cursor.fetchall():
+            routingCounter = (
+                counter if i[2] == "routing" else (routingCounter if i[5] else None)
+            )
+            if i[5] is None:
+                depth = i[0] * 2
+            else:
+                depth = i[0] * 2 + 1
+            # Process the current node
+            a = {
+                "depth": depth,
+                "id": counter,
+                "operation": i[1],
+                "type": i[2],
+                "location": i[3],
+                "resources": tuple(i[4].items()) if i[4] else None,
+                "parentoper": i[5],
+                "suboperation": i[6] if i[5] else 0,
+                "duration": i[7],
+                "duration_per": i[8],
+                "quantity": 1,
+                "buffers": None
+                if i[2] == "routing"
+                else (
+                    tuple(i[9].items()) + tuple(i[10].items())
+                    if i[9] and i[10]
+                    else (tuple(i[9].items()) if i[9] else tuple(i[10].items()))
+                ),
+                "parent": routingCounter if i[5] else None,
+                "leaf": "false" if i[2] == "routing" else "true",
+                "expanded": "true",
+                "numsuboperations": i[11],
+                "realdepth": i[0] if reportclass.downstream == False else -i[0],
+            }
+            counter = counter + 1
+
+            yield (a)
 
 
 class UpstreamDemandPath(PathReport):
@@ -676,7 +702,8 @@ class UpstreamBufferPath(PathReport):
     @classmethod
     def getRoot(reportclass, request, entity):
         from django.core.exceptions import ObjectDoesNotExist
-        try:            
+
+        try:
             buf = (
                 Buffer.objects.using(request.database)
                 .annotate(name=RawSQL("item_id||' @ '||location_id", ()))

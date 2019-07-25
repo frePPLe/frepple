@@ -214,14 +214,16 @@ class exportStaticModel(object):
             cursor.execute("SELECT name FROM operation")
             primary_keys = set([i[0] for i in cursor.fetchall()])
             cursor.executemany(
-                "insert into operation \
-        (name,fence,posttime,sizeminimum,sizemultiple,sizemaximum,type, \
-        duration,duration_per,location_id,cost,search,description,category, \
-        subcategory,source,item_id,priority,effective_start,effective_end, \
-        lastmodified) \
-        values(%s,%s * interval '1 second',%s * interval '1 second',%s,%s, \
-        %s,%s,%s * interval '1 second',%s * interval '1 second',%s,%s,%s, \
-        %s,%s,%s,%s,%s,%s,%s,%s,%s)",
+                """
+                insert into operation
+                (name,fence,posttime,sizeminimum,sizemultiple,sizemaximum,type,
+                duration,duration_per,location_id,cost,search,description,category,
+                subcategory,source,item_id,priority,effective_start,effective_end,
+                owner_id,lastmodified)
+                values(%s,%s * interval '1 second',%s * interval '1 second',%s,%s,
+                %s,%s,%s * interval '1 second',%s * interval '1 second',%s,%s,%s,
+                %s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
+                """,
                 [
                     (
                         i.name,
@@ -255,6 +257,7 @@ class exportStaticModel(object):
                         if i.effective_start != default_start
                         else None,
                         i.effective_end if i.effective_end != default_end else None,
+                        i.owner.name if i.owner else None,
                         self.timestamp,
                     )
                     for i in frepple.operations()
@@ -266,14 +269,16 @@ class exportStaticModel(object):
                 ],
             )
             cursor.executemany(
-                "update operation \
-        set fence=%s * interval '1 second', posttime=%s* interval '1 second', \
-        sizeminimum=%s, sizemultiple=%s, sizemaximum=%s, type=%s, \
-        duration=%s * interval '1 second', duration_per=%s * interval '1 second', \
-        location_id=%s, cost=%s, search=%s, description=%s, \
-        category=%s, subcategory=%s, source=%s, lastmodified=%s, \
-        item_id=%s, priority=%s, effective_start=%s, effective_end=%s \
-        where name=%s",
+                """
+                update operation
+                set fence=%s * interval '1 second', posttime=%s* interval '1 second',
+                sizeminimum=%s, sizemultiple=%s, sizemaximum=%s, type=%s,
+                duration=%s * interval '1 second', duration_per=%s * interval '1 second',
+                location_id=%s, cost=%s, search=%s, description=%s,
+                category=%s, subcategory=%s, source=%s, lastmodified=%s,
+                item_id=%s, priority=%s, effective_start=%s, effective_end=%s
+                where name=%s
+                """,
                 [
                     (
                         i.fence,
@@ -319,66 +324,6 @@ class exportStaticModel(object):
             )
             print("Exported operations in %.2f seconds" % (time() - starttime))
 
-    def exportSubOperations(self, cursor):
-        with transaction.atomic(using=self.database, savepoint=False):
-            print("Exporting suboperations...")
-            starttime = time()
-            cursor.execute("SELECT operation_id, suboperation_id FROM suboperation")
-            primary_keys = set([i for i in cursor.fetchall()])
-
-            def subops():
-                for i in frepple.operations():
-                    if not i.hidden and isinstance(
-                        i,
-                        (
-                            frepple.operation_split,
-                            frepple.operation_routing,
-                            frepple.operation_alternate,
-                        ),
-                    ):
-                        for j in i.suboperations:
-                            yield j
-
-            cursor.executemany(
-                "insert into suboperation \
-        (operation_id,suboperation_id,priority,effective_start,effective_end,source,lastmodified) \
-        values(%s,%s,%s,%s,%s,%s,%s)",
-                [
-                    (
-                        i.owner.name,
-                        i.operation.name,
-                        i.priority,
-                        i.effective_start,
-                        i.effective_end,
-                        i.source,
-                        self.timestamp,
-                    )
-                    for i in subops()
-                    if (i.owner.name, i.operation.name) not in primary_keys
-                    and (not self.source or self.source == i.source)
-                ],
-            )
-            cursor.executemany(
-                "update suboperation \
-         set priority=%s, effective_start=%s, effective_end=%s, source=%s, lastmodified=%s \
-         where operation_id=%s and suboperation_id=%s",
-                [
-                    (
-                        i.priority,
-                        i.effective_start,
-                        i.effective_end,
-                        i.source,
-                        self.timestamp,
-                        i.owner.name,
-                        i.operation.name,
-                    )
-                    for i in subops()
-                    if (i.owner.name, i.operation.name) in primary_keys
-                    and (not self.source or self.source == i.source)
-                ],
-            )
-            print("Exported suboperations in %.2f seconds" % (time() - starttime))
-
     def exportOperationMaterials(self, cursor):
         with transaction.atomic(using=self.database, savepoint=False):
             default_start = datetime.datetime(1971, 1, 1)
@@ -407,10 +352,12 @@ class exportStaticModel(object):
                             yield i
 
             cursor.executemany(
-                "insert into operationmaterial \
-        (operation_id,item_id,quantity,type,effective_start,effective_end,\
-        name,priority,search,source,transferbatch,lastmodified) \
-        values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)",
+                """
+                insert into operationmaterial
+                (operation_id,item_id,quantity,type,effective_start,effective_end,
+                name,priority,search,source,transferbatch,lastmodified)
+                values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
+                """,
                 [
                     (
                         i.operation.name,
@@ -436,10 +383,12 @@ class exportStaticModel(object):
                 ],
             )
             cursor.executemany(
-                "update operationmaterial \
-        set quantity=%s, type=%s, effective_end=%s, name=%s, \
-        priority=%s, search=%s, source=%s, transferbatch=%s, lastmodified=%s \
-        where operation_id=%s and item_id=%s and effective_start=%s",
+                """
+                update operationmaterial
+                set quantity=%s, type=%s, effective_end=%s, name=%s,
+                priority=%s, search=%s, source=%s, transferbatch=%s, lastmodified=%s
+                where operation_id=%s and item_id=%s and effective_start=%s
+                """,
                 [
                     (
                         round(i.quantity, 8),
@@ -464,10 +413,12 @@ class exportStaticModel(object):
                 ],
             )
             cursor.executemany(
-                "update operationmaterial \
-        set quantity=%s, type=%s, effective_end=%s, name=%s, \
-        priority=%s, search=%s, source=%s, transferbatch=%s, lastmodified=%s \
-        where operation_id=%s and item_id=%s and effective_start is null",
+                """
+                update operationmaterial
+                set quantity=%s, type=%s, effective_end=%s, name=%s,
+                priority=%s, search=%s, source=%s, transferbatch=%s, lastmodified=%s
+                where operation_id=%s and item_id=%s and effective_start is null
+                """,
                 [
                     (
                         round(i.quantity, 8),
@@ -1461,7 +1412,6 @@ class exportStaticModel(object):
                 self.exportLocations(cursor)
                 self.exportItems(cursor)
                 self.exportOperations(cursor)
-                self.exportSubOperations(cursor)
                 self.exportOperationPlans(cursor)
                 self.exportBuffers(cursor)
                 self.exportOperationMaterials(cursor)
@@ -1489,10 +1439,7 @@ class exportStaticModel(object):
                 self.exportResources(cursor)
                 tasks = (
                     DatabaseTask(
-                        self,
-                        self.exportCalendarBuckets,
-                        self.exportSubOperations,
-                        self.exportParameters,
+                        self, self.exportCalendarBuckets, self.exportParameters
                     ),
                     DatabaseTask(
                         self,
@@ -1522,10 +1469,13 @@ class exportStaticModel(object):
             if self.source:
                 cursor.execute(
                     """
-          delete from operationmaterial
-          where (source = %s and lastmodified <> %s)
-          or operation_id in (select name from operation where operation.source = %s and operation.lastmodified <> %s)
-          """,
+                    delete from operationmaterial
+                    where (source = %s and lastmodified <> %s)
+                      or operation_id in (
+                        select name from operation
+                        where operation.source = %s and operation.lastmodified <> %s
+                        )
+                    """,
                     (self.source, self.timestamp, self.source, self.timestamp),
                 )
                 cursor.execute(
@@ -1534,21 +1484,23 @@ class exportStaticModel(object):
                 )
                 cursor.execute(
                     """
-          delete from operationplanmaterial
-          where operationplan_id in (select reference from operationplan
-            inner join demand on operationplan.demand_id = demand.name
-            where demand.source = %s and demand.lastmodified <> %s
-            )""",
+                    delete from operationplanmaterial
+                    where operationplan_id in (select reference from operationplan
+                      inner join demand on operationplan.demand_id = demand.name
+                      where demand.source = %s and demand.lastmodified <> %s
+                    )
+                    """,
                     (self.source, self.timestamp),
                 )
                 cursor.execute(
                     """
-          delete from operationplanresource
-          where operationplan_id in (
-            select reference from operationplan
-            inner join demand on operationplan.demand_id = demand.name
-            where demand.source = %s and demand.lastmodified <> %s
-            )""",
+                    delete from operationplanresource
+                    where operationplan_id in (
+                      select reference from operationplan
+                      inner join demand on operationplan.demand_id = demand.name
+                      where demand.source = %s and demand.lastmodified <> %s
+                    )
+                    """,
                     (self.source, self.timestamp),
                 )
                 cursor.execute(
@@ -1573,58 +1525,51 @@ class exportStaticModel(object):
                 )
                 cursor.execute(
                     """
-          delete from operationplanmaterial
-          where operationplan_id in (
-            select operationplan.reference
-            from operationplan
-            where (operationplan.source = %s and operationplan.lastmodified <> %s)
-            or operation_id in (select name from operation where operation.source = %s and operation.lastmodified <> %s)
-            )
-          """,
+                    delete from operationplanmaterial
+                    where operationplan_id in (
+                      select operationplan.reference
+                      from operationplan
+                      where (operationplan.source = %s and operationplan.lastmodified <> %s)
+                      or operation_id in (
+                        select name from operation
+                        where operation.source = %s and operation.lastmodified <> %s
+                        )
+                      )
+                    """,
                     (self.source, self.timestamp, self.source, self.timestamp),
                 )
                 cursor.execute(
                     """
-          delete from operationplanresource
-          where operationplan_id in (
-            select operationplan.reference
-            from operationplan
-            where (operationplan.source = %s and operationplan.lastmodified <> %s)
-            or operation_id in (select name from operation where operation.source = %s and operation.lastmodified <> %s)
-            )
-          """,
+                    delete from operationplanresource
+                    where operationplan_id in (
+                      select operationplan.reference
+                      from operationplan
+                      where (operationplan.source = %s and operationplan.lastmodified <> %s)
+                        or operation_id in (select name from operation where operation.source = %s and operation.lastmodified <> %s)
+                      )
+                    """,
                     (self.source, self.timestamp, self.source, self.timestamp),
                 )
                 cursor.execute(
                     """
-          delete from operationplan 
-          where (source = %s and lastmodified <> %s)
-          or operation_id in (select name from operation where operation.source = %s and operation.lastmodified <> %s)
-          """,
+                    delete from operationplan
+                    where (source = %s and lastmodified <> %s)
+                      or operation_id in (
+                        select name from operation
+                        where operation.source = %s and operation.lastmodified <> %s
+                        )
+                    """,
                     (self.source, self.timestamp, self.source, self.timestamp),
                 )
                 cursor.execute(
                     """
-          delete from suboperation 
-          where (source = %s and lastmodified <> %s)
-          or operation_id in (select name from operation where operation.source = %s and operation.lastmodified <> %s)
-          or suboperation_id in (select name from operation where operation.source = %s and operation.lastmodified <> %s)
-          """,
-                    (
-                        self.source,
-                        self.timestamp,
-                        self.source,
-                        self.timestamp,
-                        self.source,
-                        self.timestamp,
-                    ),
-                )
-                cursor.execute(
-                    """
-          delete from operationresource
-          where (source = %s and lastmodified <> %s)
-          or operation_id in (select name from operation where operation.source = %s and operation.lastmodified <> %s)
-          """,
+                    delete from operationresource
+                    where (source = %s and lastmodified <> %s)
+                      or operation_id in (
+                         select name from operation
+                         where operation.source = %s and operation.lastmodified <> %s
+                         )
+                  """,
                     (self.source, self.timestamp, self.source, self.timestamp),
                 )
                 cursor.execute(
@@ -1633,10 +1578,6 @@ class exportStaticModel(object):
                 )
                 cursor.execute(
                     "delete from operation where source = %s and lastmodified <> %s",
-                    (self.source, self.timestamp),
-                )
-                cursor.execute(
-                    "delete from suboperation where source = %s and lastmodified <> %s",
                     (self.source, self.timestamp),
                 )
                 cursor.execute(

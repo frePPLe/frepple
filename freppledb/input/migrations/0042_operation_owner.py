@@ -40,7 +40,7 @@ class Migration(migrations.Migration):
             """
             update operation
             set priority = suboperation.priority,
-                owner_id = suboperation.operation_id
+                owner_id = suboperation.operation_id,
                 effective_start = suboperation.effective_start,
                 effective_end = suboperation.effective_end
             from suboperation

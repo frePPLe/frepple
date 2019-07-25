@@ -391,152 +391,123 @@ class PathReport(GridReport):
         Location.rebuildHierarchy(database=request.database)               
         
         sql = '''
-        with recursive 
-        producing_operation as
-          (select operationmaterial.operation_id,
-          operation.type,
-          operation.location_id,
-          coalesce(operation.duration, interval '0 second') as duration,
-          operation.duration_per,
-          jsonb_object_agg(operationmaterial.item_id||' @ '||operation.location_id, operationmaterial.quantity) as buffers,
-          coalesce(jsonb_object_agg(operationresource.resource_id, operationresource.quantity) FILTER (where operationresource.resource_id is not null), '{}'::jsonb) as resources
-          from operationmaterial
-          inner join operation on operation.name = operationmaterial.operation_id
-          left outer join operationresource on operationresource.operation_id = operation.name
-          where operationmaterial.quantity > 0
-          group by operationmaterial.operation_id, operation.type, operation.location_id, operation.duration, operation.duration_per
-          union 
-          select 'Purchase '||item.name||' @ '|| location.name||' from '||itemsupplier.supplier_id,
-          'purchase' as type,
-          location.name as location_id,
-          itemsupplier.leadtime as duration,
-          null as duration_per,
-          jsonb_build_object(item.name||' @ '||location.name,1) as buffers,
-          case when itemsupplier.resource_id is not null then jsonb_build_object(itemsupplier.resource_id, itemsupplier.resource_qty) else '{}'::jsonb end resources
-          from itemsupplier
-          inner join item i_parent on i_parent.name = itemsupplier.item_id
-          inner join item on item.lft between i_parent.lft and i_parent.rght
-          inner join location l_parent on l_parent.name = itemsupplier.location_id
-          inner join location on location.lft between l_parent.lft and l_parent.rght
-          union
-          select 'Ship '||item.name||' from '||itemdistribution.origin_id||' to '||itemdistribution.location_id,
-          'distribution' as type,
-          itemdistribution.location_id,
-          itemdistribution.leadtime as duration,
-          null as duration_per,
-          jsonb_build_object(item.name||' @ '||itemdistribution.location_id,1) as buffers,
-          case when itemdistribution.resource_id is not null then jsonb_build_object(itemdistribution.resource_id, itemdistribution.resource_qty) else '{}'::jsonb end resources
-          from itemdistribution
-          inner join item parent on parent.name = itemdistribution.item_id
-          inner join item on item.lft between parent.lft and parent.rght),
-        consuming_operation as
-          (
-          select operationmaterial.operation_id,
-          operation.type,
-          operation.location_id,
-          coalesce(operation.duration, interval '0 second') as duration,
-          operation.duration_per,
-          jsonb_object_agg (operationmaterial.item_id||' @ '||operation.location_id, operationmaterial.quantity) as buffers,
-          coalesce(jsonb_object_agg(operationresource.resource_id, operationresource.quantity) FILTER (where operationresource.resource_id is not null), '{}'::jsonb) as resources
-          from operationmaterial
-          inner join operation on operation.name = operationmaterial.operation_id
-          left outer join operationresource on operationresource.operation_id = operation.name
-          where operationmaterial.quantity < 0
-          group by operationmaterial.operation_id, operation.type, operation.location_id, operation.duration, operation.duration_per
-          union
-          select 'Ship '||item.name||' from '||itemdistribution.origin_id||' to '||itemdistribution.location_id,
-          'distribution' as type,
-          itemdistribution.location_id,
-          itemdistribution.leadtime as duration,
-          null as duration_per,
-          jsonb_build_object(item.name||' @ '||itemdistribution.origin_id,-1) as buffers,
-          case when itemdistribution.resource_id is not null then jsonb_build_object(itemdistribution.resource_id, itemdistribution.resource_qty) else '{}'::jsonb end resources
-          from itemdistribution
-          inner join item parent on parent.name = itemdistribution.item_id
-          inner join item on item.lft between parent.lft and parent.rght
-          ),
-        %s
-        '''
+        -- what routings are producing my buffer "item @ location"
+        with recursive all_operations as (
+        select routing.name,
+        routing.type,
+        routing.location_id,
+        '{}'::jsonb resources,
+        null as owner_id,
+        routing.priority,
+        routing.duration,
+        routing.duration_per,
+        jsonb_object_agg(operationmaterial.item_id||' @ '||routing.location_id, operationmaterial.quantity) 
+        FILTER (where operationmaterial.quantity < 0) consumed,
+        jsonb_build_object(routing.item_id||' @ '||routing.location_id, 1)
+        || jsonb_object_agg(operationmaterial.item_id||' @ '||routing.location_id, operationmaterial.quantity) 
+        FILTER (where operationmaterial.quantity > 0) produced
+        from operation routing
+        left outer join operation on operation.owner_id = routing.name
+        left outer join operationmaterial on operation.name = operationmaterial.operation_id
+        where routing.type = 'routing'
+        group by routing.name, routing.type, routing.location_id, routing.priority, routing.duration, routing.duration_per
+        union
+        -- what suboperations are composing that routing
+        select operation.name, 
+        operation.type,
+        operation.location_id,
+        jsonb_object_agg(operationresource.resource_id, operationresource.quantity) FILTER (where operationresource.resource_id is not null) resources,
+        operation.owner_id,
+        operation.priority,
+        operation.duration, 
+        operation.duration_per, 
+        jsonb_object_agg(operationmaterial.item_id||' @ '||routing.location_id, operationmaterial.quantity) FILTER (where operationmaterial.quantity < 0) consumed,
+        case when operation.item_id is not null then 
+        jsonb_build_object(operation.item_id||' @ '||operation.location_id, 1)
+        else '{}'::jsonb end
+        || jsonb_object_agg(operationmaterial.item_id||' @ '||routing.location_id, operationmaterial.quantity) FILTER (where operationmaterial.quantity > 0) produced
+        from operation
+        inner join operation routing on operation.owner_id = routing.name
+        left outer join operationmaterial on operationmaterial.operation_id = operation.name
+        left outer join operationresource on operationresource.operation_id = operation.name
+        group by operation.name, operation.type, operation.location_id, operation.owner_id, operation.priority, operation.duration, operation.duration_per
+        union
+        -- what operation is producing this buffer assuming there is no routing
+        select operation.name, operation.type, operation.location_id,
+        jsonb_object_agg(operationresource.resource_id, operationresource.quantity) FILTER (where operationresource.resource_id is not null) resources,
+        operation.owner_id, operation.priority, operation.duration, operation.duration_per, 
+        jsonb_object_agg(operationmaterial.item_id||' @ '||operation.location_id, operationmaterial.quantity) FILTER (where operationmaterial.quantity < 0) consumed,
+        case when operation.item_id is not null then 
+        jsonb_build_object(operation.item_id||' @ '||operation.location_id, 1)
+        else '{}'::jsonb end
+        || jsonb_object_agg(operationmaterial.item_id||' @ '||operation.location_id, operationmaterial.quantity) FILTER (where operationmaterial.quantity > 0) produced
+        from operation
+        left outer join operationmaterial on operationmaterial.operation_id = operation.name
+        left outer join operationresource on operationresource.operation_id = operation.name
+        where operation.type != 'routing' and operation.owner_id is null
+        group by operation.name, operation.type, operation.location_id, operation.owner_id, operation.duration, operation.duration_per
+        union
+        select 'Purchase '||item.name||' @ '|| location.name||' from '||itemsupplier.supplier_id,
+        'purchase' as type,
+        location.name as location_id,
+        case when itemsupplier.resource_id is not null then jsonb_build_object(itemsupplier.resource_id, itemsupplier.resource_qty) else '{}'::jsonb end resources,
+        null as owner_id,
+        itemsupplier.priority as priority,
+        itemsupplier.leadtime as duration,
+        null as duration_per,
+        null as consumed,
+        jsonb_build_object(item.name||' @ '|| location.name,1) as produced
+        from itemsupplier
+        inner join item i_parent on i_parent.name = itemsupplier.item_id
+        inner join item on item.lft between i_parent.lft and i_parent.rght
+        inner join location l_parent on l_parent.name = itemsupplier.location_id
+        inner join location on location.lft between l_parent.lft and l_parent.rght
+        union
+        select 'Ship '||item.name||' from '||itemdistribution.origin_id||' to '||itemdistribution.location_id,
+        'distribution' as type,
+        itemdistribution.location_id,
+        case when itemdistribution.resource_id is not null then jsonb_build_object(itemdistribution.resource_id, itemdistribution.resource_qty) else '{}'::jsonb end resources,
+        null as owner_id,
+        itemdistribution.priority,
+        itemdistribution.leadtime as duration,
+        null as duration_per,
+        jsonb_build_object(item.name||' @ '||itemdistribution.origin_id, -1) as consumed,
+        jsonb_build_object(item.name||' @ '||itemdistribution.location_id, 1) as produced
+        from itemdistribution
+        inner join item parent on parent.name = itemdistribution.item_id
+        inner join item on item.lft between parent.lft and parent.rght
+        ),
+        cte as (
+        select 0 as depth, init.*, (select count(*) from all_operations where owner_id = init.name) as suboperations 
+        from all_operations init where init.%%s
+        union
+        -- if previous record is routing then pick all children
+        select cte.depth + case when nextop.owner_id is null then 1 else 0 end as depth, nextop.*, (select count(*) from all_operations where owner_id = nextop.name) as suboperations
+        from all_operations nextop
+        inner join cte on
+        case when cte.type = 'routing' then nextop.owner_id = cte.name
+          else case when nextop.owner_id is not null then '{}'::jsonb else %s
+          end
+        )
+        select * from cte
+        ''' % (('nextop.produced end ?| (array( select jsonb_object_keys(cte.consumed)))',) if reportclass.downstream == False\
+         else ('nextop.consumed end ?| (array( select jsonb_object_keys(cte.produced)))',))
         
-        if (reportclass.downstream == False):
-          cte = '''
-           cte as (
-            select 0 depth, 
-            producing_operation.operation_id,
-            producing_operation.type,
-            producing_operation.location_id,
-            producing_operation.duration,
-            producing_operation.duration_per,
-            producing_operation.buffers,
-            producing_operation.buffers || coalesce(consuming_operation.buffers, '{}'::jsonb) as bom,
-            producing_operation.resources             
-            from producing_operation
-            left outer join consuming_operation on consuming_operation.operation_id = producing_operation.operation_id
-            where producing_operation.%s
-            union
-            select cte.depth+1 as depth,
-            producing_operation.operation_id,
-            producing_operation.type,
-            producing_operation.location_id,
-            producing_operation.duration,
-            producing_operation.duration_per,
-            producing_operation.buffers,
-            producing_operation.buffers || coalesce(co.buffers, '{}'::jsonb) as bom,
-            producing_operation.resources
-            from cte
-            inner join consuming_operation on consuming_operation.operation_id = cte.operation_id
-            inner join producing_operation on producing_operation.buffers ?| (ARRAY(select jsonb_object_keys(consuming_operation.buffers)))
-            left outer join consuming_operation co on co.operation_id = producing_operation.operation_id
-          )
-          select * from cte        
-          '''
-        else:
-          cte = '''
-           cte as (
-            select 0 depth, 
-            consuming_operation.operation_id,
-            consuming_operation.type,
-            consuming_operation.location_id,
-            consuming_operation.duration,
-            consuming_operation.duration_per,
-            consuming_operation.buffers,
-            consuming_operation.buffers || coalesce(producing_operation.buffers, '{}'::jsonb) as bom,
-            consuming_operation.resources             
-            from consuming_operation
-            left outer join producing_operation on consuming_operation.operation_id = producing_operation.operation_id
-            where consuming_operation.%s
-            union
-            select cte.depth-1 as depth,
-            consuming_operation.operation_id,
-            consuming_operation.type,
-            consuming_operation.location_id,
-            consuming_operation.duration,
-            consuming_operation.duration_per,
-            consuming_operation.buffers,
-            consuming_operation.buffers || coalesce(co.buffers, '{}'::jsonb) as bom,
-            consuming_operation.resources
-            from cte
-            inner join producing_operation on producing_operation.operation_id = cte.operation_id
-            inner join consuming_operation on consuming_operation.buffers ?| (ARRAY(select jsonb_object_keys(producing_operation.buffers)))
-            left outer join producing_operation co on co.operation_id = consuming_operation.operation_id
-          )
-          select * from cte        
-          '''
         
         if str(reportclass.objecttype._meta) == 'input.demand':
           demand_name = basequery.query.get_compiler(basequery.db).as_sql(
                         with_col_aliases=False)[1][0]
           d = Demand.objects.get(name=demand_name)
           if d.operation is None:
-            subquery = "buffers ? %s"
+            subquery = "produced ? %s" if reportclass.downstream == False else "consumed ? %s"
             arguments = ('%s @ %s' % (d.item.name, d.location.name),)
           else:
-            subquery = "operation_id = %s"
+            subquery = "name = %s"
             arguments = (d.operation.name,)
         elif str(reportclass.objecttype._meta) == 'input.operation':
           operation_name = basequery.query.get_compiler(basequery.db).as_sql(
                         with_col_aliases=False)[1][0]
-          subquery = "operation_id = %s"
+          subquery = "name = %s"
           arguments = (operation_name,)
         elif str(reportclass.objecttype._meta) == 'input.resource':     
           resource_name = basequery.query.get_compiler(basequery.db).as_sql(
@@ -549,7 +520,7 @@ class PathReport(GridReport):
           if '@' not in buffer_name:
             b = Buffer.objects.get(id=buffer_name)
             buffer_name = '%s @ %s' % (b.item.name,b.location.name)
-          subquery = "buffers ? %s"
+          subquery = "produced ? %s" if reportclass.downstream == False else "consumed ? %s"
           arguments = (buffer_name,)
         elif str(reportclass.objecttype._meta) == 'input.item':     
           item_name = basequery.query.get_compiler(basequery.db).as_sql(
@@ -557,34 +528,40 @@ class PathReport(GridReport):
           buffers = []
           for l in Location.objects.all():
             buffers.append('%s @ %s' % (item_name, l.name))
-          subquery = "buffers ?| %s"
+          subquery = "produced ?| %s" if reportclass.downstream == False else "consumed ?| %s"
           arguments = (buffers,)
         cursor = connections[request.database].cursor()
-        cursor.execute(sql % cte % subquery, arguments)
+        cursor.execute(sql % subquery, arguments)
         
-        for i in cursor.fetchall():
-          counter = 1
+        counter = 1
+        for i in cursor.fetchall():          
+          routingCounter = counter if i[2] == 'routing' else (routingCounter if i[5] else None)
+          if i[5] is None:
+            depth = i[0]*2
+          else:
+            depth = i[0]*2+1
           # Process the current node
           a= {
-              "depth": i[0]*2 if reportclass.downstream == False else -i[0]*2,
+              "depth":depth,
               "id": counter,
               "operation": i[1],
               "type": i[2],
               "location": i[3],
-              "duration": i[4],
-              "duration_per": i[5],
-              "quantity": 1,
-              "suboperation": 0,
-              "buffers": tuple(i[7].items()) if i[7] else None,
-              "resources": tuple(i[8].items()) if i[8] else None,
-              "parentoper": None,
-              "parent": None,
-              "leaf": "true",
+              "resources": tuple(i[4].items()) if i[4] else None,
+              "parentoper": i[5],
+              "suboperation": i[6] if i[5] else 0,
+              "duration": i[7],
+              "duration_per": i[8],
+              "quantity": 1,              
+              "buffers": None if i[2] == 'routing' else (tuple(i[9].items()) + tuple(i[10].items()) if i[9] and i[10] else (tuple(i[9].items()) if i[9] else tuple(i[10].items()))),                            
+              "parent": routingCounter if i[5] else None,
+              "leaf": "false" if i[2] == 'routing' else "true",
               "expanded": "true",
-              "numsuboperations": 0,
-              "realdepth": i[0],
+              "numsuboperations": i[11],
+              "realdepth": i[0] if reportclass.downstream == False else -i[0],
           }
           counter = counter + 1
+          
         
           yield(a)
 

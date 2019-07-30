@@ -5485,6 +5485,9 @@ class HasHierarchy : public HasName<T> {
   /** Return the first child. */
   T* getFirstChild() const { return first_child; }
 
+  /** Return my next brother. */
+  T* getNextBrother() const { return next_brother; }
+
   /** Return true if an object is part of the children of a second object. */
   bool isMemberOf(T* p) const {
     for (auto tmp = this; tmp; tmp = tmp->parent)

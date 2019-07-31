@@ -3010,7 +3010,11 @@ class Operation : public HasName<Operation>,
                            SetupEvent** = nullptr) const;
 
  private:
-  /** List of operations using this operation as a sub-operation */
+  /** List of operations using this operation as a sub-operation.
+   * TODO When the suboperation table will be removed, an operation can have
+   * only a single owner. The type of this field should then be changed to save
+   * some memory.
+   */
   list<Operation*> superoplist;
 
   /** Item produced by the operation. */

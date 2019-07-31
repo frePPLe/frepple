@@ -367,7 +367,6 @@ class Command(BaseCommand):
               <p>
               <b>{%% filter capfirst %%}%s{%% endfilter %%}</b><br>
               <label for="cb4"><input type="checkbox" name="constraint" {%% if capacityconstrained %%}checked {%% endif %%}value="4" id="cb4"/>&nbsp;&nbsp;%s</label><br>
-              <label for="cb2"><input type="checkbox" name="constraint" {%% if materialconstrained %%}checked {%% endif %%}value="2" id="cb2"/>&nbsp;&nbsp;%s</label><br>
               <label for="cb1"><input type="checkbox" name="constraint" {%% if leadtimeconstrained %%}checked {%% endif %%}value="1" id="cb1"/>&nbsp;&nbsp;%s</label><br>
               <label for="cb8"><input type="checkbox" name="constraint" {%% if fenceconstrained %%}checked {%% endif %%}value="8" id="cb8"/>&nbsp;&nbsp;%s</label><br>
               </p>
@@ -396,7 +395,6 @@ class Command(BaseCommand):
                     ),
                     force_text(_("constraints")),
                     force_text(_("Capacity: respect capacity limits")),
-                    force_text(_("Material: respect procurement limits")),
                     force_text(_("Lead time: do not plan in the past")),
                     force_text(
                         _("Release fence: do not plan within the release time window")

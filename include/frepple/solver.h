@@ -325,36 +325,13 @@ class SolverCreate : public Solver {
   virtual const MetaClass& getType() const { return *metadata; }
   static const MetaClass* metadata;
 
-  /** Static constant for the LEADTIME constraint type.<br>
-   * The numeric value is 1.
-   * @see MATERIAL
-   * @see CAPACITY
-   * @see FENCE
-   */
+  /** Static constant for the LEADTIME constraint type. */
   static const short LEADTIME = 1;
 
-  /** Static constant for the MATERIAL constraint type.<br>
-   * The numeric value is 2.
-   * @see LEADTIME
-   * @see CAPACITY
-   * @see FENCE
-   */
-  static const short MATERIAL = 2;
-
-  /** Static constant for the CAPACITY constraint type.<br>
-   * The numeric value is 4.
-   * @see MATERIAL
-   * @see LEADTIME
-   * @see FENCE
-   */
+  /** Static constant for the CAPACITY constraint type. */
   static const short CAPACITY = 4;
 
-  /** Static constant for the FENCE constraint type.<br>
-   * The numeric value is 8.
-   * @see MATERIAL
-   * @see CAPACITY
-   * @see LEADTIME
-   */
+  /** Static constant for the FENCE constraint type. */
   static const short FENCE = 8;
 
   int getCluster() const { return cluster; }
@@ -378,11 +355,6 @@ class SolverCreate : public Solver {
    * The solver isn't allowed to create any operation plans in the past.
    */
   bool isLeadTimeConstrained() const { return (constrts & LEADTIME) > 0; }
-
-  /** Returns true if the solver respects the material procurement
-   * constraints on procurement buffers.
-   */
-  bool isMaterialConstrained() const { return (constrts & MATERIAL) > 0; }
 
   /** Returns true if the solver respects capacity constraints. */
   bool isCapacityConstrained() const { return (constrts & CAPACITY) > 0; }

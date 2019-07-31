@@ -378,8 +378,7 @@ void SolverCreate::SolverData::commit() {
 
 void SolverCreate::SolverData::solveSafetyStock(SolverCreate* solver) {
   OperatorDelete cleanup(getCommandManager());
-  cleanup.setConstrained(solver->isMaterialConstrained() &&
-                         solver->getPlanType() == 1);
+  cleanup.setConstrained(solver->getPlanType() == 1);
   safety_stock_planning = true;
   if (getLogLevel() > 0)
     logger << "Start safety stock replenishment pass   "
@@ -387,8 +386,7 @@ void SolverCreate::SolverData::solveSafetyStock(SolverCreate* solver) {
   vector<list<Buffer*> > bufs(HasLevel::getNumberOfLevels() + 1);
   for (Buffer::iterator buf = Buffer::begin(); buf != Buffer::end(); ++buf)
     if ((buf->getCluster() == cluster || cluster == -1) &&
-        !buf->hasType<BufferInfinite>() &&
-        (buf->getProducingOperation() || !solver->isMaterialConstrained()) &&
+        !buf->hasType<BufferInfinite>() && buf->getProducingOperation() &&
         (buf->getMinimum() || buf->getMinimumCalendar() ||
          buf->getFlowPlans().begin() != buf->getFlowPlans().end()))
       bufs[(buf->getLevel() >= 0) ? buf->getLevel() : 0].push_back(&*buf);

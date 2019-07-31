@@ -18,6 +18,10 @@ Release notes
     is now deprecated. All data it contained can now be stored in the operation table.
   | This data model simplification makes development of data interfaces easier.
   
+- When generating a constrained plan, the material constraint has been removed. It didn't really
+  have any impact on the plan algorith. The constraints actually used by the planning engine are
+  capacity, lead time and the operation time fence.  
+
 .. rubric:: Integration
 
 - | The REST API for manufacturing orders now returns the resources and materials it uses.

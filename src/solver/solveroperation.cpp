@@ -1562,8 +1562,10 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v) {
       data->state->curOwnerOpplan->createFlowLoads();
       checkOperation(data->state->curOwnerOpplan, *data);
 
-      // Repeat until we have all material we need
-      a_qty -= data->state->a_qty * firstFlowPer + firstFlowFixed;
+      // Repeat until we have all material we need (or not making any progress)
+      auto tmp = data->state->a_qty * firstFlowPer + firstFlowFixed;
+      if (!tmp) break;
+      a_qty -= tmp;
     }
 
     // Fully planned

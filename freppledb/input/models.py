@@ -1653,10 +1653,10 @@ class OperationPlan(AuditModel):
                 if subop.reference == self.reference:
                     subop.status = self.status
             steps = {
-                z.suboperation: z.priority
-                for z in self.owner.operation.suboperations.all()
+                z: z.priority
+                for z in self.owner.operation.childoperations.all()
                 .using(db)
-                .only("suboperation", "priority")
+                .only("name", "priority")
             }
             myprio = steps.get(self.operation, 0)
             for subop in subopplans:

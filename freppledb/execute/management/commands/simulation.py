@@ -736,9 +736,7 @@ class Simulator(object):
             for suboper in (
                 oper.childoperations.all().using(self.database).order_by("priority")
             ):
-                ship_qty = self.checkAvailable(
-                    qty, min_qty, suboper.suboperation, consume
-                )
+                ship_qty = self.checkAvailable(qty, min_qty, suboper, consume)
                 if not ship_qty:
                     return 0
                 elif ship_qty < qty:
@@ -760,6 +758,18 @@ class Simulator(object):
                     ship_qty = self.checkAvailable(
                         qty, min_qty, suboper.suboperation, consume
                     )
+                    if ship_qty:
+                        return ship_qty
+            for suboper in (
+                oper.childoperations.all().using(self.database).order_by("priority")
+            ):
+                if consume:
+                    if self.checkAvailable(qty, min_qty, suboper, False):
+                        ship_qty = self.checkAvailable(qty, min_qty, suboper, True)
+                        if ship_qty:
+                            return ship_qty
+                else:
+                    ship_qty = self.checkAvailable(qty, min_qty, suboper, consume)
                     if ship_qty:
                         return ship_qty
             return 0

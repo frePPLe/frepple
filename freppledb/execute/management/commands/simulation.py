@@ -724,16 +724,6 @@ class Simulator(object):
         if oper.type == "routing":
             # All routing suboperations must return an ok
             for suboper in (
-                oper.suboperations.all().using(self.database).order_by("priority")
-            ):
-                ship_qty = self.checkAvailable(
-                    qty, min_qty, suboper.suboperation, consume
-                )
-                if not ship_qty:
-                    return 0
-                elif ship_qty < qty:
-                    qty = ship_qty
-            for suboper in (
                 oper.childoperations.all().using(self.database).order_by("priority")
             ):
                 ship_qty = self.checkAvailable(qty, min_qty, suboper, consume)
@@ -744,22 +734,6 @@ class Simulator(object):
         elif oper.type == "alternate":
             # An ok from a single suboperation suffices.
             # We only use a single alternate for satisfying the requested quantity.
-            for suboper in (
-                oper.suboperations.all().using(self.database).order_by("priority")
-            ):
-                if consume:
-                    if self.checkAvailable(qty, min_qty, suboper.suboperation, False):
-                        ship_qty = self.checkAvailable(
-                            qty, min_qty, suboper.suboperation, True
-                        )
-                        if ship_qty:
-                            return ship_qty
-                else:
-                    ship_qty = self.checkAvailable(
-                        qty, min_qty, suboper.suboperation, consume
-                    )
-                    if ship_qty:
-                        return ship_qty
             for suboper in (
                 oper.childoperations.all().using(self.database).order_by("priority")
             ):

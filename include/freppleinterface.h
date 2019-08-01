@@ -43,7 +43,7 @@
 // Only such functions can be called from VBA...
 // For cygwin we don't use the __stdcall, but still need the export/import.
 #undef DECLARE_EXPORT
-#if defined(WIN32) && !defined(DOXYGEN)
+#if defined(WIN32)
 #ifdef __CYGWIN__
 #ifdef FREPPLE_CORE
 #define DECLARE_EXPORT(type) __declspec(dllexport) type

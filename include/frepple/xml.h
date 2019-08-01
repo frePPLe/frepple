@@ -26,7 +26,6 @@
 #define FREPPLE_XML_H
 
 // Header files for the Xerces-c XML parser.
-#ifndef DOXYGEN
 #include <xercesc/util/XercesVersion.hpp>
 #if _XERCES_VERSION < 30200
 #define XERCES_STATIC_LIBRARY
@@ -43,7 +42,6 @@
 #include <xercesc/util/TransService.hpp>
 #include <xercesc/util/XMLException.hpp>
 #include <xercesc/util/XMLUni.hpp>
-#endif
 
 namespace frepple {
 

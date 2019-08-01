@@ -76,7 +76,6 @@ typedef int Py_ssize_t;
 #define PY_SSIZE_T_MIN INT_MIN
 #endif
 
-#ifndef DOXYGEN
 #include <assert.h>
 #include <float.h>
 #include <condition_variable>
@@ -91,10 +90,8 @@ typedef int Py_ssize_t;
 #ifdef __CYGWIN__
 #include <strings.h>
 #endif
-#endif
 
 // STL include files
-#ifndef DOXYGEN
 #include <algorithm>
 #include <forward_list>
 #include <list>
@@ -104,7 +101,6 @@ typedef int Py_ssize_t;
 #include <string>
 #include <unordered_map>
 #include <vector>
-#endif
 using namespace std;
 
 /** @def PACKAGE_VERSION
@@ -136,7 +132,6 @@ using namespace std;
 #endif
 
 // For the disabled and ansi-challenged people...
-#ifndef DOXYGEN
 #ifndef HAVE_STRNCASECMP
 #ifdef _MSC_VER
 #define strncasecmp _strnicmp
@@ -146,7 +141,6 @@ using namespace std;
 #else
 // Last resort. Force it through...
 #define strncasecmp(s1, s2, n) strnuppercmp(s1, s2, n)
-#endif
 #endif
 #endif
 #endif
@@ -169,7 +163,7 @@ using namespace std;
  */
 #undef DECLARE_EXPORT
 #undef MODULE_EXPORT
-#if defined(WIN32) && !defined(DOXYGEN)
+#if defined(WIN32)
 #if defined(FREPPLE_CORE)
 #define DECLARE_EXPORT __declspec(dllexport)
 #elif defined(FREPPLE_STATIC)
@@ -5415,13 +5409,21 @@ class HasHierarchy : public HasName<T> {
   /** @brief This class models an iterator that allows us to
    * iterate over the members across all levels.
    *
-   * Objects of this class are created by the getAllMembers() method.
+   * TODO this iterator is not following the STL-style.
    */
   class memberRecursiveIterator : public NonCopyable {
    public:
     /** Constructor. */
-    memberRecursiveIterator(const T* x) {
+    memberRecursiveIterator(const T* x = nullptr) {
       if (x) members.push_back(const_cast<T*>(x));
+    }
+
+    memberRecursiveIterator(const memberRecursiveIterator& other)
+        : members(other.members) {}
+
+    memberRecursiveIterator& operator=(const memberRecursiveIterator& other) {
+      members = other.members;
+      return *this;
     }
 
     /** Return the content of the current node. */

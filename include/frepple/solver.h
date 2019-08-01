@@ -23,10 +23,8 @@
 #define SOLVER_H
 
 #include "frepple/model.h"
-#ifndef DOXYGEN
 #include <cmath>
 #include <deque>
-#endif
 
 namespace frepple {
 

@@ -279,7 +279,7 @@ class Command(BaseCommand):
            url: target + "/execute/launch/scenario_copy/",
            type: 'POST',
            data: {release: 1},
-           success: function() { console.log(target, prefix); if (target == prefix) window.location.href = "/"; }
+           success: function() { if (target == prefix) window.location.href = "/"; }
            });
         });
         $(".scenariocopy").on("click", function(event) {

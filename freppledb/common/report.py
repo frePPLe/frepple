@@ -1725,9 +1725,10 @@ class GridReport(View):
         with transaction.atomic(using=request.database):
 
             sql_list = []
+            containsOperationPlan = any(m.__name__ == 'OperationPlan' for m in deps)
             for m in deps:
               print(m.__name__)
-              if 'getDeleteStatements' in dir(m) and not any(mod.__name__ == 'OperationPlan' for mod in deps):
+              if 'getDeleteStatements' in dir(m) and not containsOperationPlan:
                 sql_list.extend(m.getDeleteStatements())
               else:
                 sql_list = connections[request.database].ops.sql_flush(

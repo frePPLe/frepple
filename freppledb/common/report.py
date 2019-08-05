@@ -1705,10 +1705,12 @@ class GridReport(View):
 
     @classmethod
     def erase(reportclass, request):
-        # Build a list of dependencies
+        # Build a list of dependencies        
         deps = set([reportclass.model])
-        GridReport.dependent_models(reportclass.model, deps)
-
+        # Special case for MO/PO/DO/DLVR that cannot be truncated
+        if reportclass.model.__name__ not in ('PurchaseOrder', 'ManufacturingOrder', 'DistributionOrder', 'DeliveryOrder'):
+          GridReport.dependent_models(reportclass.model, deps)
+          
         # Check the delete permissions for all related objects
         for m in deps:
             permname = get_permission_codename("delete", m._meta)
@@ -1716,11 +1718,19 @@ class GridReport(View):
                 return format_lazy(
                     "{}:{}", m._meta.verbose_name, _("Permission denied")
                 )
-
+                  
+                  
         # Delete the data records
         cursor = connections[request.database].cursor()
         with transaction.atomic(using=request.database):
-            sql_list = connections[request.database].ops.sql_flush(
+
+            sql_list = []
+            for m in deps:
+              print(m.__name__)
+              if 'getDeleteStatements' in dir(m) and not any(mod.__name__ == 'OperationPlan' for mod in deps):
+                sql_list.extend(m.getDeleteStatements())
+              else:
+                sql_list = connections[request.database].ops.sql_flush(
                 no_style(), [m._meta.db_table for m in deps], []
             )
             for sql in sql_list:

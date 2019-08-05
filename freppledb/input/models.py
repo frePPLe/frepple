@@ -1775,6 +1775,21 @@ class OperationPlan(AuditModel):
         # Call the real save() method
         super().save(*args, **kwargs)
 
+    @classmethod
+    def getDeleteStatements(cls):
+      stmts = []
+      stmts.append('''
+      delete from operationplanmaterial opm
+      where exists (select 1 from operationplan where type = '%s' and reference = opm.operationplan_id)
+      ''' % cls.getType())
+      stmts.append('''
+      delete from operationplanresource opr
+      where exists (select 1 from operationplan where type = '%s' and reference = opr.operationplan_id)
+      ''' % cls.getType())
+      stmts.append('''
+      delete from operationplan where type = '%s'
+      ''' % cls.getType())
+      return stmts
     class Meta(AuditModel.Meta):
         db_table = "operationplan"
         verbose_name = _("operationplan")
@@ -1958,6 +1973,10 @@ class DistributionOrder(OperationPlan):
             # .defer("operation", "owner", "supplier", "location")
 
     objects = DistributionOrderManager()
+    
+    @classmethod
+    def getType(cls):
+      return 'DO'
 
     def save(self, *args, **kwargs):
         self.type = "DO"
@@ -1998,6 +2017,10 @@ class PurchaseOrder(OperationPlan):
 
     objects = PurchaseOrderManager()
 
+    @classmethod
+    def getType(cls):
+      return 'PO'
+    
     def save(self, *args, **kwargs):
         self.type = "PO"
         self.operation = self.owner = self.origin = self.destination = None
@@ -2084,6 +2107,10 @@ class ManufacturingOrder(OperationPlan):
                 return instance
 
         return MO_form
+      
+    @classmethod
+    def getType(cls):
+      return 'MO'
 
     def save(self, *args, **kwargs):
         self.type = "MO"
@@ -2110,6 +2137,10 @@ class DeliveryOrder(OperationPlan):
 
     objects = DeliveryOrderManager()
 
+    @classmethod
+    def getType(cls):
+      return 'DLVR'
+    
     def save(self, *args, **kwargs):
         self.type = "DLVR"
         self.supplier = (

@@ -22,6 +22,12 @@ Release notes
   have any impact on the plan algorith. The constraints actually used by the planning engine are
   capacity, lead time and the operation time fence.  
 
+.. rubric:: User interface
+
+- | Bug fix: When uploading a Purchase/Distribution/Manufacturing orders file with the 
+    "First delete all existing records AND ALL RELATED TABLES" selected, all purchase, 
+    manufacturing and distribution records were deleted. 
+
 .. rubric:: Integration
 
 - | The REST API for manufacturing orders now returns the resources and materials it uses.

@@ -21,7 +21,6 @@
 /node_modules
 Makefile
 Makefile.in
-*.Po
 
 # GNU C++ & libtool
 *.o

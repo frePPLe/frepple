@@ -26,7 +26,9 @@ Release notes
 
 - | Bug fix: When uploading a Purchase/Distribution/Manufacturing orders file with the 
     "First delete all existing records AND ALL RELATED TABLES" selected, all purchase, 
-    manufacturing and distribution records were deleted. 
+    manufacturing and distribution records were deleted.
+
+- Addition of Hebrew translations, contributed by https://www.minet.co.il/  Many thanks!
 
 .. rubric:: Integration
 

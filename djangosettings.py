@@ -166,6 +166,7 @@ LANGUAGES = (
     ("en", ugettext("English")),
     ("fr", ugettext("French")),
     ("de", ugettext("German")),
+    ("he", ugettext("Hebrew")),
     ("it", ugettext("Italian")),
     ("ja", ugettext("Japanese")),
     ("nl", ugettext("Dutch")),

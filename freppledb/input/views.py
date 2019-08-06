@@ -4056,7 +4056,7 @@ class PurchaseOrderList(OperationPlanMixin, GridReport):
         q = reportclass.operationplanExtraBasequery(q.select_related("item"), request)
         return q.extra(
             select={
-                "total_cost": "cost*quantity",
+                "total_cost": "quantity*coalesce((select max(cost) from itemsupplier where itemsupplier.item_id = operationplan.item_id and itemsupplier.location_id = operationplan.location_id and itemsupplier.supplier_id = operationplan.supplier_id), (select cost from item where item.name = operationplan.item_id))",
                 "unit_cost": "coalesce((select max(cost) from itemsupplier where itemsupplier.item_id = operationplan.item_id and itemsupplier.location_id = operationplan.location_id and itemsupplier.supplier_id = operationplan.supplier_id), (select cost from item where item.name = operationplan.item_id))",
                 "feasible": "coalesce((operationplan.plan->>'feasible')::boolean, true)",
             }

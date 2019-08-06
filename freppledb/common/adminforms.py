@@ -25,7 +25,7 @@ from django.contrib.admin.options import get_content_type_for_model
 from django.contrib import messages
 from django.contrib.admin.exceptions import DisallowedModelAdminToField
 from django.contrib.admin.models import LogEntry, CHANGE
-from django.contrib.admin.utils import quote, unquote, get_deleted_objects
+from django.contrib.admin.utils import quote, unquote
 from django.contrib.admin.templatetags.admin_urls import add_preserved_filters
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.contenttypes.models import ContentType
@@ -82,6 +82,7 @@ class MultiDBModelAdmin(admin.ModelAdmin):
             def wrapper(*args, **kwargs):
                 return self.admin_site.admin_view(view)(*args, **kwargs)
 
+            wrapper.model_admin = self
             return update_wrapper(wrapper, view)
 
         urls = super().get_urls()
@@ -266,8 +267,8 @@ class MultiDBModelAdmin(admin.ModelAdmin):
 
     def response_add(self, request, obj, post_url_continue=None):
         """
-    Determines the HttpResponse for the add_view stage.
-    """
+        Determines the HttpResponse for the add_view stage.
+        """
         opts = obj._meta
         pk_value = obj._get_pk_val()
         preserved_filters = self.get_preserved_filters(request)
@@ -355,9 +356,9 @@ class MultiDBModelAdmin(admin.ModelAdmin):
 
     def response_post_save_add(self, request, obj):
         """
-    Figure out where to redirect after the 'Save' button has been pressed
-    when adding a new object.
-    """
+        Figure out where to redirect after the 'Save' button has been pressed
+        when adding a new object.
+        """
         opts = self.model._meta
         if self.has_change_permission(request, None):
             post_url = request.prefix + reverse(
@@ -374,8 +375,8 @@ class MultiDBModelAdmin(admin.ModelAdmin):
 
     def response_change(self, request, obj):
         """
-    Determines the HttpResponse for the change_view stage.
-    """
+        Determines the HttpResponse for the change_view stage.
+        """
 
         if "_popup" in request.POST:
             opts = obj._meta
@@ -551,9 +552,8 @@ class MultiDBModelAdmin(admin.ModelAdmin):
 
     def response_delete(self, request, obj_display, obj_id):
         """
-    Determines the HttpResponse for the delete_view stage.
-    """
-
+        Determines the HttpResponse for the delete_view stage.
+        """
         opts = self.model._meta
 
         if "_popup" in request.POST:
@@ -574,7 +574,7 @@ class MultiDBModelAdmin(admin.ModelAdmin):
             request,
             # Translators: Translation included with Django
             _('The %(name)s "%(obj)s" was deleted successfully.')
-            % {"name": force_text(opts.verbose_name), "obj": force_text(obj_display)},
+            % {"name": opts.verbose_name, "obj": obj_display},
             messages.SUCCESS,
         )
 
@@ -593,8 +593,8 @@ class MultiDBModelAdmin(admin.ModelAdmin):
 
     def _delete_view(self, request, object_id, extra_context):
         """
-    The 'delete' admin view for this model.
-    """
+        The 'delete' admin view for this model.
+        """
         opts = self.model._meta
         app_label = opts.app_label
 
@@ -604,7 +604,7 @@ class MultiDBModelAdmin(admin.ModelAdmin):
                 "The field %s cannot be referenced." % to_field
             )
 
-        obj = self.get_object(request, unquote(object_id))
+        obj = self.get_object(request, unquote(object_id), to_field)
 
         if not self.has_delete_permission(request, obj):
             raise PermissionDenied
@@ -612,14 +612,14 @@ class MultiDBModelAdmin(admin.ModelAdmin):
         if obj is None:
             return self._get_obj_does_not_exist_redirect(request, opts, object_id)
 
-        # frePPLe specific selection of the database
-        using = request.database
-
         # Populate deleted_objects, a data structure of all related objects that
         # will also be deleted.
-        (deleted_objects, model_count, perms_needed, protected) = get_deleted_objects(
-            [obj], opts, request.user, self.admin_site, using
-        )
+        (
+            deleted_objects,
+            model_count,
+            perms_needed,
+            protected,
+        ) = self.get_deleted_objects([obj], request)
 
         # Update the links to the related objects.  frePPLe specific.
         if request.prefix:
@@ -636,7 +636,7 @@ class MultiDBModelAdmin(admin.ModelAdmin):
         if request.POST and not protected:  # The user has confirmed the deletion.
             if perms_needed:
                 raise PermissionDenied
-            obj_display = force_text(obj)
+            obj_display = str(obj)
             attr = str(to_field) if to_field else opts.pk.attname
             obj_id = obj.serializable_value(attr)
             self.log_deletion(request, obj, obj_display)
@@ -644,24 +644,30 @@ class MultiDBModelAdmin(admin.ModelAdmin):
 
             return self.response_delete(request, obj_display, obj_id)
 
-        object_name = force_text(opts.verbose_name)
+        object_name = str(opts.verbose_name)
 
-        context = dict(
-            self.admin_site.each_context(request),
-            title=capfirst(object_name + " " + unquote(object_id)),
-            object_name=object_name,
-            object=obj,
-            object_id=obj,
-            deleted_objects=deleted_objects,
-            model_count=dict(model_count).items(),
-            perms_lacking=perms_needed,
-            protected=protected,
-            opts=opts,
-            app_label=app_label,
-            preserved_filters=self.get_preserved_filters(request),
-            is_popup=("_popup" in request.POST or "_popup" in request.GET),
-            to_field=to_field,
-        )
+        if perms_needed or protected:
+            title = _("Cannot delete %(name)s") % {"name": object_name}
+        else:
+            title = _("Are you sure?")
+
+        context = {
+            **self.admin_site.each_context(request),
+            "title": title,
+            "object_name": object_name,
+            "object": obj,
+            "object_id": obj,
+            "deleted_objects": deleted_objects,
+            "model_count": dict(model_count).items(),
+            "perms_lacking": perms_needed,
+            "protected": protected,
+            "opts": opts,
+            "app_label": app_label,
+            "preserved_filters": self.get_preserved_filters(request),
+            "is_popup": ("_popup" in request.POST or "_popup" in request.GET),
+            "to_field": to_field,
+            **(extra_context or {}),
+        }
         context.update(extra_context or {})
 
         return self.render_delete_form(request, context)

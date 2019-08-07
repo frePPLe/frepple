@@ -519,8 +519,9 @@ PyObject* SolverCreate::solve(PyObject* self, PyObject* args) {
     return nullptr;
   }
 
-  Py_BEGIN_ALLOW_THREADS  // Free Python interpreter for other threads
-      try {
+  // Free Python interpreter for other threads
+  Py_BEGIN_ALLOW_THREADS;
+  try {
     SolverCreate* sol = static_cast<SolverCreate*>(self);
     if (!dem) {
       // Complete replan
@@ -537,13 +538,15 @@ PyObject* SolverCreate::solve(PyObject* self, PyObject* args) {
     PythonType::evalException();
     return nullptr;
   }
-  Py_END_ALLOW_THREADS  // Reclaim Python interpreter
-      return Py_BuildValue("");
+  // Reclaim Python interpreter
+  Py_END_ALLOW_THREADS;
+  return Py_BuildValue("");
 }
 
 PyObject* SolverCreate::commit(PyObject* self, PyObject* args) {
-  Py_BEGIN_ALLOW_THREADS  // Free Python interpreter for other threads
-      try {
+  // Free Python interpreter for other threads
+  Py_BEGIN_ALLOW_THREADS;
+  try {
     SolverCreate* me = static_cast<SolverCreate*>(self);
     assert(me->commands.getCommandManager());
     me->scanExcess(me->commands.getCommandManager());
@@ -553,13 +556,15 @@ PyObject* SolverCreate::commit(PyObject* self, PyObject* args) {
     PythonType::evalException();
     return nullptr;
   }
-  Py_END_ALLOW_THREADS  // Reclaim Python interpreter
-      return Py_BuildValue("");
+  // Reclaim Python interpreter
+  Py_END_ALLOW_THREADS;
+  return Py_BuildValue("");
 }
 
 PyObject* SolverCreate::rollback(PyObject* self, PyObject* args) {
-  Py_BEGIN_ALLOW_THREADS  // Free Python interpreter for other threads
-      try {
+  // Free Python interpreter for other threads
+  Py_BEGIN_ALLOW_THREADS;
+  try {
     SolverCreate* me = static_cast<SolverCreate*>(self);
     assert(me->commands.getCommandManager());
     me->commands.getCommandManager()->rollback();
@@ -568,8 +573,9 @@ PyObject* SolverCreate::rollback(PyObject* self, PyObject* args) {
     PythonType::evalException();
     return nullptr;
   }
-  Py_END_ALLOW_THREADS  // Reclaim Python interpreter
-      return Py_BuildValue("");
+  // Reclaim Python interpreter
+  Py_END_ALLOW_THREADS;
+  return Py_BuildValue("");
 }
 
 int SolverPropagateStatus::initialize() {
@@ -629,16 +635,18 @@ PyObject* SolverPropagateStatus::create(PyTypeObject* pytype, PyObject* args,
 }
 
 PyObject* SolverPropagateStatus::solve(PyObject* self, PyObject* args) {
-  Py_BEGIN_ALLOW_THREADS  // Free Python interpreter for other threads
-      try {
+  // Free Python interpreter for other threads
+  Py_BEGIN_ALLOW_THREADS;
+  try {
     static_cast<SolverPropagateStatus*>(self)->solve();
   } catch (...) {
     Py_BLOCK_THREADS;
     PythonType::evalException();
     return nullptr;
   }
-  Py_END_ALLOW_THREADS  // Reclaim Python interpreter
-      return Py_BuildValue("");
+  // Reclaim Python interpreter
+  Py_END_ALLOW_THREADS;
+  return Py_BuildValue("");
 }
 
 void SolverPropagateStatus::solve(void* v) {

@@ -426,8 +426,9 @@ PyObject* OperatorDelete::solve(PyObject* self, PyObject* args) {
     }
   }
 
-  Py_BEGIN_ALLOW_THREADS  // Free Python interpreter for other threads
-      try {
+  // Free Python interpreter for other threads
+  Py_BEGIN_ALLOW_THREADS;
+  try {
     OperatorDelete* sol = static_cast<OperatorDelete*>(self);
     switch (objtype) {
       case 0:
@@ -454,8 +455,9 @@ PyObject* OperatorDelete::solve(PyObject* self, PyObject* args) {
     PythonType::evalException();
     return nullptr;
   }
-  Py_END_ALLOW_THREADS  // Reclaim Python interpreter
-      return Py_BuildValue("");
+  // Reclaim Python interpreter
+  Py_END_ALLOW_THREADS;
+  return Py_BuildValue("");
 }
 
 }  // namespace frepple

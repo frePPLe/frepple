@@ -45,16 +45,16 @@ int Solver::initialize() {
 }
 
 PyObject *Solver::solve(PyObject *self, PyObject *args) {
-  Py_BEGIN_ALLOW_THREADS  // Free Python interpreter for other threads
-      try {
+  Py_BEGIN_ALLOW_THREADS;
+  try {
     static_cast<Solver *>(self)->solve();
   } catch (...) {
     Py_BLOCK_THREADS;
     PythonType::evalException();
     return nullptr;
   }
-  Py_END_ALLOW_THREADS  // Reclaim Python interpreter
-      return Py_BuildValue("");
+  Py_END_ALLOW_THREADS;
+  return Py_BuildValue("");
 }
 
 }  // namespace frepple

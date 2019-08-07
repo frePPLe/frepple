@@ -422,7 +422,8 @@ PyObject* loadModule(PyObject* self, PyObject* args, PyObject* kwds) {
   // Free Python interpreter for other threads.
   // This is important since the module may also need access to Python
   // during its initialization...
-  Py_BEGIN_ALLOW_THREADS try {
+  Py_BEGIN_ALLOW_THREADS;
+  try {
     // Load the library
     Environment::loadModule(data);
   } catch (...) {
@@ -430,8 +431,9 @@ PyObject* loadModule(PyObject* self, PyObject* args, PyObject* kwds) {
     PythonType::evalException();
     return nullptr;
   }
-  Py_END_ALLOW_THREADS  // Reclaim Python interpreter
-      return Py_BuildValue("");
+  // Reclaim Python interpreter
+  Py_END_ALLOW_THREADS;
+  return Py_BuildValue("");
 }
 
 void Environment::printModules() {

@@ -36,9 +36,11 @@ PyObject *readXMLfile(PyObject *self, PyObject *args) {
                             &validate_only, &userexit);
   if (!ok) return nullptr;
 
+  // Free Python interpreter for other threads
+  Py_BEGIN_ALLOW_THREADS;
+
   // Execute and catch exceptions
-  Py_BEGIN_ALLOW_THREADS  // Free Python interpreter for other threads
-      try {
+  try {
     if (!filename) {
       // Read from standard input
       xercesc::StdInInputSource in;
@@ -64,8 +66,10 @@ PyObject *readXMLfile(PyObject *self, PyObject *args) {
     PythonType::evalException();
     return nullptr;
   }
-  Py_END_ALLOW_THREADS  // Reclaim Python interpreter
-      return Py_BuildValue("");
+
+  // Reclaim Python interpreter
+  Py_END_ALLOW_THREADS;
+  return Py_BuildValue("");
 }
 
 //
@@ -82,10 +86,10 @@ PyObject *readXMLdata(PyObject *self, PyObject *args) {
   if (!ok) return nullptr;
 
   // Free Python interpreter for other threads
-  Py_BEGIN_ALLOW_THREADS
+  Py_BEGIN_ALLOW_THREADS;
 
-      // Execute and catch exceptions
-      try {
+  // Execute and catch exceptions
+  try {
     if (!data) throw DataException("No input data");
     XMLInputString p(data);
     if (userexit) p.setUserExit(userexit);
@@ -98,9 +102,11 @@ PyObject *readXMLdata(PyObject *self, PyObject *args) {
     PythonType::evalException();
     return nullptr;
   }
-  Py_END_ALLOW_THREADS           // Reclaim Python interpreter
-      return Py_BuildValue("");  // Safer than using Py_None, which is not
-                                 // portable across compilers
+
+  // Reclaim Python interpreter
+  Py_END_ALLOW_THREADS;
+  return Py_BuildValue("");  // Safer than using Py_None, which is not
+                             // portable across compilers
 }
 
 //
@@ -114,9 +120,11 @@ PyObject *saveXMLfile(PyObject *self, PyObject *args) {
   int ok = PyArg_ParseTuple(args, "s|s:saveXMLfile", &filename, &content);
   if (!ok) return nullptr;
 
+  // Free Python interpreter for other threads
+  Py_BEGIN_ALLOW_THREADS;
+
   // Execute and catch exceptions
-  Py_BEGIN_ALLOW_THREADS  // Free Python interpreter for other threads
-      try {
+  try {
     XMLSerializerFile o(filename);
     if (content) {
       if (!strcmp(content, "BASE"))
@@ -134,8 +142,10 @@ PyObject *saveXMLfile(PyObject *self, PyObject *args) {
     PythonType::evalException();
     return nullptr;
   }
-  Py_END_ALLOW_THREADS  // Reclaim Python interpreter
-      return Py_BuildValue("");
+
+  // Reclaim Python interpreter
+  Py_END_ALLOW_THREADS;
+  return Py_BuildValue("");
 }
 
 //
@@ -149,10 +159,10 @@ PyObject *savePlan(PyObject *self, PyObject *args) {
   if (!ok) return nullptr;
 
   // Free Python interpreter for other threads
-  Py_BEGIN_ALLOW_THREADS
+  Py_BEGIN_ALLOW_THREADS;
 
-      // Execute and catch exceptions
-      ofstream textoutput;
+  // Execute and catch exceptions
+  ofstream textoutput;
   try {
     // Open the output file
     textoutput.open(filename, ios::out);
@@ -239,8 +249,10 @@ PyObject *savePlan(PyObject *self, PyObject *args) {
     PythonType::evalException();
     return nullptr;
   }
-  Py_END_ALLOW_THREADS  // Reclaim Python interpreter
-      return Py_BuildValue("");
+
+  // Reclaim Python interpreter
+  Py_END_ALLOW_THREADS;
+  return Py_BuildValue("");
 }
 
 //
@@ -350,9 +362,11 @@ PyObject *eraseModel(PyObject *self, PyObject *args) {
   bool deleteStaticModel = false;
   if (obj) deleteStaticModel = PythonData(obj).getBool();
 
+  // Free Python interpreter for other threads
+  Py_BEGIN_ALLOW_THREADS;
+
   // Execute and catch exceptions
-  Py_BEGIN_ALLOW_THREADS  // Free Python interpreter for other threads
-      try {
+  try {
     if (deleteStaticModel) {
       // Delete all entities.
       // The order is chosen to minimize the work of the individual destructors.
@@ -381,8 +395,10 @@ PyObject *eraseModel(PyObject *self, PyObject *args) {
     PythonType::evalException();
     return nullptr;
   }
-  Py_END_ALLOW_THREADS  // Reclaim Python interpreter
-      return Py_BuildValue("");
+
+  // Reclaim Python interpreter
+  Py_END_ALLOW_THREADS;
+  return Py_BuildValue("");
 }
 
 //
@@ -391,10 +407,10 @@ PyObject *eraseModel(PyObject *self, PyObject *args) {
 
 PyObject *printModelSize(PyObject *self, PyObject *args) {
   // Free Python interpreter for other threads
-  Py_BEGIN_ALLOW_THREADS
+  Py_BEGIN_ALLOW_THREADS;
 
-      // Execute and catch exceptions
-      try {
+  // Execute and catch exceptions
+  try {
     size_t count, memsize;
 
     // Intro
@@ -631,8 +647,10 @@ PyObject *printModelSize(PyObject *self, PyObject *args) {
     PythonType::evalException();
     return nullptr;
   }
-  Py_END_ALLOW_THREADS  // Reclaim Python interpreter
-      return Py_BuildValue("");
+
+  // Reclaim Python interpreter
+  Py_END_ALLOW_THREADS;
+  return Py_BuildValue("");
 }
 
 }  // namespace frepple

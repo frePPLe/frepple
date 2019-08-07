@@ -18,7 +18,6 @@
 import json
 
 import django.db.models as models
-from django.utils import six
 
 
 #
@@ -50,7 +49,7 @@ class JSONField(models.TextField):
 
     def to_python(self, value):
         """Convert a json string to a Python value."""
-        if isinstance(value, six.string_types) and value:
+        if isinstance(value, str) and value:
             return json.loads(value)
         else:
             return value

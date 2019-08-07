@@ -33,7 +33,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.db import DEFAULT_DB_ALIAS
 from django.db import connections, transaction, models
 from django.conf import settings
-from django.utils import translation, six
+from django.utils import translation
 from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import smart_str, force_text, force_str
 from django.template import Template, RequestContext

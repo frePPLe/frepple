@@ -24,7 +24,7 @@ from django.http import HttpResponse
 from django.utils.encoding import force_text
 from django.utils.html import escape
 from django.utils.text import capfirst
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from freppledb.common.middleware import _thread_locals
 from freppledb.common.models import Parameter

@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: 6.0.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-12-08 16:28+0100\n"
-"PO-Revision-Date: 2019-08-06 08:56+0200\n"
+"PO-Revision-Date: 2019-08-07 15:11+0200\n"
 "Last-Translator: Joao Ranita <jranita@frepple.com>\n"
 "Language-Team: frepple\n"
 "Language: nl\n"
@@ -22,16 +22,16 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 2.0.1\n"
+"X-Generator: Poedit 2.2.3\n"
 "X-Poedit-Basepath: ../../..\n"
 
 #: common/admin.py:37
 msgid "Permissions in this scenario"
-msgstr ""
+msgstr "הרשאות בתרחיש זה"
 
 #: common/admin.py:39
 msgid "Important dates"
-msgstr ""
+msgstr "תאריכים חשובים"
 
 #: common/admin.py:44 common/admin.py:72 common/admin.py:105
 #: common/admin.py:131 common/admin.py:145 common/adminforms.py:484
@@ -45,33 +45,33 @@ msgstr ""
 #: inventoryplanning/admin.py:94
 #: inventoryplanning/templates/inventoryplanning/drp.html:2145
 msgid "comments"
-msgstr ""
+msgstr "תגובות"
 
 #: common/admin.py:93
 msgid "Invalid date: expecting YYYY-MM-DD HH:MM:SS"
-msgstr ""
+msgstr "Invalid date: expecting YYYY-MM-DD HH:MM:SS"
 
 #: common/adminforms.py:219
 msgid "Change history"
-msgstr ""
+msgstr "שנה את ההיסטוריה"
 
 #: common/api/views.py:39
 msgid "REST API Help"
-msgstr ""
+msgstr "API אפס עזרה של ממשק"
 
 #: common/dataload.py:308 forecast/models.py:1354
 #, python-format
 msgid "Skipping unknown field %(column)s"
-msgstr ""
+msgstr "%(column)s מדלג על שדה לא ידוע"
 
 #: common/dataload.py:319 forecast/models.py:1373
 #, python-format
 msgid "Some keys were missing: %(keys)s"
-msgstr ""
+msgstr "%(keys)s :מספר מפתחות חסרים"
 
 #: common/dataload.py:383
 msgid "Key fields not unique"
-msgstr ""
+msgstr "שדות מפתח לא ייחודיים"
 
 #: common/dataload.py:439 forecast/models.py:1505
 #, python-format
@@ -79,34 +79,36 @@ msgid ""
 "%(rows)d data rows, changed %(changed)d and added %(added)d records, "
 "%(errors)d errors, %(warnings)d warnings"
 msgstr ""
+"%(rows)d data rows, changed %(changed)d and added %(added)d records, "
+"%(errors)d errors, %(warnings)d warnings"
 
 #: common/menu.py:50
 msgid "Show hints"
-msgstr ""
+msgstr "הצג רמזים"
 
 #: common/menu.py:52
 msgid "Guided tour"
-msgstr ""
+msgstr "סיור מודרך"
 
 #: common/menu.py:53 common/views.py:102 common/widget.py:173
 msgid "Path to unlock features"
-msgstr ""
+msgstr "נתיב לביטול נעילת מאפיינים"
 
 #: common/menu.py:58
 msgid "REST API help"
-msgstr ""
+msgstr "REST API help"
 
 #: common/menu.py:59
 msgid "frePPLe website"
-msgstr ""
+msgstr "frePPLe אתר"
 
 #: common/menu.py:60
 msgid "About frePPLe"
-msgstr ""
+msgstr ".frePPLe על"
 
 #: common/models.py:40 input/models.py:347 input/models.py:569
 msgid "Unique identifier"
-msgstr ""
+msgstr "מזהה ייחודי"
 
 #: common/models.py:41 forecast/views.py:124 forecast/views.py:158
 #: forecast/views.py:184 input/models.py:1137 input/views.py:673
@@ -129,11 +131,11 @@ msgstr ""
 #: output/views/resource.py:366 output/views/resource.py:450
 #: quoting/views.py:55
 msgid "owner"
-msgstr ""
+msgstr "בעלים"
 
 #: common/models.py:42 input/models.py:1138
 msgid "Hierarchical parent"
-msgstr ""
+msgstr "הורה היררכי"
 
 #: common/models.py:223 common/report.py:2439 common/views.py:340
 #: common/views.py:384 common/views.py:406 forecast/views.py:77
@@ -164,7 +166,7 @@ msgstr ""
 #: output/views/resource.py:336 output/views/resource.py:372
 #: output/views/resource.py:455
 msgid "source"
-msgstr ""
+msgstr "מקור"
 
 #: common/models.py:224 common/models.py:343 common/models.py:573
 #: common/report.py:295 common/report.py:2445 forecast/views.py:136
@@ -189,7 +191,7 @@ msgstr ""
 #: output/views/resource.py:376 output/views/resource.py:459
 #: planningboard/models.py:27
 msgid "last modified"
-msgstr ""
+msgstr "שונה לאחרונה"
 
 #: common/models.py:243 common/report.py:1473 common/report.py:1571
 #: common/report.py:2549 common/views.py:338
@@ -198,7 +200,7 @@ msgstr ""
 #: inventoryplanning/templates/inventoryplanning/drp.html:1852
 #: inventoryplanning/views.py:106 output/views/kpi.py:27
 msgid "value"
-msgstr ""
+msgstr "ערך"
 
 #: common/models.py:244 common/models.py:272 common/models.py:609
 #: common/views.py:339 common/views.py:382 forecast/models.py:42
@@ -237,28 +239,28 @@ msgstr ""
 #: output/views/resource.py:381 output/views/resource.py:432
 #: quoting/views.py:48
 msgid "description"
-msgstr ""
+msgstr "תיאור"
 
 #: common/models.py:251
 msgid "parameter"
-msgstr ""
+msgstr "פרמטר"
 
 #: common/models.py:252 common/views.py:328
 msgid "parameters"
-msgstr ""
+msgstr "פרמטרים"
 
 #: common/models.py:264 output/models.py:65
 #: output/templates/output/resource.html:268
 msgid "free"
-msgstr ""
+msgstr "חינם"
 
 #: common/models.py:265
 msgid "in use"
-msgstr ""
+msgstr "בשימוש"
 
 #: common/models.py:266
 msgid "busy"
-msgstr ""
+msgstr "תפוס"
 
 #: common/models.py:274 execute/models.py:37 execute/views.py:89
 #: input/models.py:1022 input/models.py:1096 input/models.py:1238
@@ -267,78 +269,78 @@ msgstr ""
 #: inventoryplanning/templates/inventoryplanning/drp.html:1844
 #: output/views/buffer.py:372 output/views/resource.py:306 quoting/views.py:58
 msgid "status"
-msgstr ""
+msgstr "סטאטוס"
 
 #: common/models.py:277
 msgid "last refreshed"
-msgstr ""
+msgstr "רוענן לאחרונה"
 
 #: common/models.py:317
 msgid "scenarios"
-msgstr ""
+msgstr "תרחישים"
 
 #: common/models.py:318
 msgid "scenario"
-msgstr ""
+msgstr "תרחיש"
 
 #: common/models.py:323
 msgid "Detect automatically"
-msgstr ""
+msgstr "זוהה באופן אוטומטי"
 
 #: common/models.py:325 common/templates/common/preferences.html:48
 #: common/views.py:111
 msgid "language"
-msgstr ""
+msgstr "שפה"
 
 #: common/models.py:329 common/templates/common/preferences.html:76
 msgid "theme"
-msgstr ""
+msgstr "נושא"
 
 #: common/models.py:332 common/templates/common/preferences.html:66
 msgid "page size"
-msgstr ""
+msgstr "גודל עמוד"
 
 #: common/models.py:566 common/models.py:579 common/views.py:365
 msgid "comment"
-msgstr ""
+msgstr "תגובה"
 
 #: common/models.py:604 input/models.py:488
 msgid "day"
-msgstr ""
+msgstr "יום"
 
 #: common/models.py:604 input/models.py:489
 msgid "week"
-msgstr ""
+msgstr "שבוע"
 
 #: common/models.py:604 input/models.py:490
 msgid "month"
-msgstr ""
+msgstr "חודש"
 
 #: common/models.py:604
 msgid "quarter"
-msgstr ""
+msgstr "רבעון"
 
 #: common/models.py:604
 msgid "year"
-msgstr ""
+msgstr "שנה"
 
 #: common/models.py:610 common/views.py:383
 msgid "level"
-msgstr ""
+msgstr "שלב"
 
 #: common/models.py:610
 msgid "Higher values indicate more granular time buckets"
-msgstr ""
+msgstr "ערכים גבוהים מצביעים על משכי זמן פרטניים יותר"
 
 #: common/models.py:616 common/models.py:625 common/report.py:2029
 #: common/report.py:2203 common/views.py:401 forecast/models.py:1037
 msgid "bucket"
-msgstr ""
+msgstr "משך זמן"
 
 #: common/models.py:617 common/views.py:374 input/models.py:487
 #: input/models.py:488 input/models.py:489 input/models.py:490
 msgid "buckets"
-msgstr ""
+msgstr "משך זמן"
 
 #: common/models.py:629 common/views.py:402 forecast/models.py:1007
 #: input/models.py:72 input/models.py:1116 input/views.py:1447
@@ -348,7 +350,7 @@ msgstr ""
 #: output/views/problem.py:54 output/views/resource.py:301
 #: output/widget.py:1111
 msgid "start date"
-msgstr ""
+msgstr "תאריך התחלה"
 
 #: common/models.py:630 common/views.py:403 forecast/models.py:1008
 #: input/models.py:73 input/models.py:1120 input/views.py:1448
@@ -357,35 +359,35 @@ msgstr ""
 #: output/models.py:23 output/models.py:45 output/views/constraint.py:83
 #: output/views/problem.py:55 output/views/resource.py:302
 msgid "end date"
-msgstr ""
+msgstr "תאריך סיום"
 
 #: common/models.py:645
 msgid "bucket date"
-msgstr ""
+msgstr "תאריך משך זמן"
 
 #: common/models.py:646 common/views.py:393
 msgid "bucket dates"
-msgstr ""
+msgstr "תאריכים של משך זמן"
 
 #: common/report.py:1147
 #, python-format
 msgid "%(title)s for %(entity)s"
-msgstr ""
+msgstr "%(entity)s עבור %(title)s"
 
 #: common/report.py:1242 common/report.py:1276 common/report.py:1315
 #, python-format
 msgid "Can't find %s"
-msgstr ""
+msgstr "%s לא מצליח למצוא"
 
 #: common/report.py:1262
 #, python-format
 msgid "Can't copy %s"
-msgstr ""
+msgstr "%s לא מצליח להעתיק"
 
 #: common/report.py:1270
 #, python-format
 msgid "Copied from %s."
-msgstr ""
+msgstr ".%s הועתק מ."
 
 #: common/report.py:1309
 #: inventoryplanning/templates/inventoryplanning/drp.html:2348
@@ -394,243 +396,245 @@ msgstr ""
 #: inventoryplanning/templates/inventoryplanning/drp.html:2414
 #: inventoryplanning/views.py:1542
 msgid "and"
-msgstr ""
+msgstr "ו"
 
 #: common/report.py:1414
 #, python-format
 msgid "Erasing data from %(model)s"
-msgstr ""
+msgstr "%(model)s- מחיקת נתונים מ"
 
 #: common/report.py:1433 common/report.py:1524
 msgid "Invalid upload request"
-msgstr ""
+msgstr "דרישת העלאה לא חוקית"
 
 #: common/report.py:1472 common/report.py:1570 common/report.py:2548
 #: execute/management/commands/importworkbook.py:165
 msgid "worksheet"
-msgstr ""
+msgstr "גיליון"
 
 #: common/report.py:1472 common/report.py:1570 common/report.py:2548
 #: execute/management/commands/importworkbook.py:165
 msgid "row"
-msgstr ""
+msgstr "שורה"
 
 #: common/report.py:1473 common/report.py:1571 common/report.py:2549
 #: execute/management/commands/importworkbook.py:166
 msgid "field"
-msgstr ""
+msgstr "שדה"
 
 #: common/report.py:1474 common/report.py:1483 common/report.py:1572
 #: common/report.py:1581 common/report.py:2550 common/report.py:2559
 #: execute/management/commands/importworkbook.py:167
 #: execute/management/commands/importworkbook.py:181
 msgid "error"
-msgstr ""
+msgstr "שגיאה"
 
 #: common/report.py:1474 common/report.py:1492 common/report.py:1572
 #: common/report.py:1590 common/report.py:2550 common/report.py:2569
 #: execute/management/commands/importworkbook.py:167
 #: execute/management/commands/importworkbook.py:199
 msgid "warning"
-msgstr ""
+msgstr "אזהרה"
 
 #: common/report.py:2033 common/report.py:2096 common/report.py:2122
 #: common/report.py:2209
 msgid "title"
-msgstr ""
+msgstr "כותרת"
 
 #: common/report.py:2039 common/report.py:2215 forecast/models.py:1038
 msgid "data field"
-msgstr ""
+msgstr "שדה נתונים"
 
 #: common/report.py:2481
 msgid "Nothing to export"
-msgstr ""
+msgstr "אין מה לייצא"
 
 #: common/report.py:2520 execute/management/commands/importworkbook.py:134
 #, python-format
 msgid "Ignoring data in worksheet: %s"
-msgstr ""
+msgstr "%s :התעלמות מנתונים בגיליון עבודה"
 
 #: common/report.py:2523 execute/management/commands/importworkbook.py:138
 #, python-format
 msgid "You don't permissions to add: %s"
-msgstr ""
+msgstr "%s: אין לך הרשאות להוסיף"
 
 #: common/report.py:2534 execute/management/commands/importworkbook.py:150
 #, python-format
 msgid "Processing data in worksheet: %s"
-msgstr ""
+msgstr "%s:מעבד נתונים בגיליון העבודה"
 
 #: common/report.py:2583 execute/management/commands/importworkbook.py:229
 #: execute/management/commands/importworkbook.py:245
 msgid "Done"
-msgstr ""
+msgstr "בוצע"
 
 #: common/templates/admin/base_site_grid.html:23
 #: common/templates/admin/base_site_gridpivot.html:32
 msgid "Error: Missing time buckets or bucket dates"
-msgstr ""
+msgstr "שגיאה: חסר משך זמן או תאריכים"
 
 #: common/templates/admin/base_site_grid.html:83
 #: common/templates/admin/base_site_gridpivot.html:85
 msgid "Warning: no data found"
-msgstr ""
+msgstr "אזהרה: נתונים לא נמצאו"
 
 #: common/templates/admin/base_site_grid.html:87
 #: common/templates/admin/base_site_gridpivot.html:89
 msgid "Error retrieving report data"
-msgstr ""
+msgstr "שגיאה באחזור נתוני הדוח"
 
 #: common/templates/admin/base_site_grid.html:222
 #: common/templates/admin/base_site_gridpivot.html:146
 #: inventoryplanning/templates/inventoryplanning/drp.html:2115
 msgid "save changes"
-msgstr ""
+msgstr "שמור שינויים"
 
 #: common/templates/admin/base_site_grid.html:223
 #: common/templates/admin/base_site_gridpivot.html:147
 #: inventoryplanning/templates/inventoryplanning/drp.html:2116
 msgid "Undo"
-msgstr ""
+msgstr "בטל"
 
 #: common/templates/admin/base_site_grid.html:223
 #: common/templates/admin/base_site_gridpivot.html:147
 #: inventoryplanning/templates/inventoryplanning/drp.html:2116
 msgid "undo changes"
-msgstr ""
+msgstr "בטל שינויים"
 
 #: common/templates/admin/base_site_grid.html:229
 #: inventoryplanning/templates/inventoryplanning/drp.html:2122
 msgid "select action"
-msgstr ""
+msgstr "בחר פעולה"
 
 #: common/templates/admin/base_site_grid.html:243
 #: common/templates/admin/base_site_grid.html:246
 #: inventoryplanning/templates/inventoryplanning/drp.html:2073
 #: inventoryplanning/templates/inventoryplanning/drp.html:2079
 msgid "no segment"
-msgstr ""
+msgstr "אין סגמנט"
 
 #: common/templates/admin/base_site_grid.html:260
 #: common/templates/admin/base_site_gridpivot.html:166
 #: inventoryplanning/templates/inventoryplanning/drp.html:2098
 msgid "filter data"
-msgstr ""
+msgstr "סנן נתונים"
 
 #: common/templates/admin/base_site_grid.html:261
 msgid "Create new object"
-msgstr ""
+msgstr "צור אובייקט חדש"
 
 #: common/templates/admin/base_site_grid.html:262
 msgid "Copy selected objects"
-msgstr ""
+msgstr "העתק אובייקטים שנבחרו"
 
 #: common/templates/admin/base_site_grid.html:263
 msgid "Delete selected objects"
-msgstr ""
+msgstr "מחק אובייקטים שנבחרו"
 
 #: common/templates/admin/base_site_grid.html:264
 #: common/templates/index.html:11
 #: inventoryplanning/templates/inventoryplanning/drp.html:2099
 msgid "Configure time buckets"
-msgstr ""
+msgstr "הגדר משך זמן"
 
 #: common/templates/admin/base_site_grid.html:265
 #: common/templates/admin/base_site_gridpivot.html:176
 msgid "import CSV or Excel file"
-msgstr ""
+msgstr "import CSV or Excel file"
 
 #: common/templates/admin/base_site_grid.html:266
 #: common/templates/admin/base_site_gridpivot.html:180
 #: inventoryplanning/templates/inventoryplanning/drp.html:2100
 msgid "export as CSV or Excel file"
-msgstr ""
+msgstr "export as CSV or Excel file"
 
 #: common/templates/admin/base_site_grid.html:267
 #: common/templates/admin/base_site_gridpivot.html:183
 #: common/templates/index.html:53
 #: inventoryplanning/templates/inventoryplanning/drp.html:2101
 msgid "customize"
-msgstr ""
+msgstr "התאמה אישית"
 
 #: common/templates/admin/base_site_grid.html:268
 #: common/templates/index.html:16 menu.py:30
 msgid "help"
-msgstr ""
+msgstr "עזרה"
 
 #: common/templates/admin/base_site_gridpivot.html:155
 msgid "display table"
-msgstr ""
+msgstr "הצג טבלה"
 
 #: common/templates/admin/base_site_gridpivot.html:158
 msgid "display graph"
-msgstr ""
+msgstr "הצג גרף"
 
 #: common/templates/admin/base_site_gridpivot.html:171
 msgid "configure time buckets"
-msgstr ""
+msgstr "הגדר משך זמן"
 
 #: common/templates/admin/base_site_gridpivot.html:186
 msgid "Help"
-msgstr ""
+msgstr "עזרה"
 
 #: common/templates/admin/base_site_nav.html:64
 msgid "Search"
-msgstr ""
+msgstr "חיפוש"
 
 #: common/templates/admin/base_site_nav.html:74
 msgid "preferences"
-msgstr ""
+msgstr "העדפות"
 
 #: common/templates/admin/base_site_nav.html:85 common/templates/index.html:8
 #: common/templatetags.py:78 common/views.py:63
 msgid "cockpit"
-msgstr ""
+msgstr "cockpit"
 
 #: common/templates/admin/base_site_nav.html:94
 msgid "Choose a what-if scenario"
-msgstr ""
+msgstr "בחר תרחיש"
 
 #: common/templates/admin/edit_inline/tabular.html:86
 #, python-format
 msgid "Only %(limit)s out of %(count)s records are shown."
-msgstr ""
+msgstr ".רשומות %(count)s מתוך %(limit)s מוצגים רק."
 
 #: common/templates/admin/login.html:113
 msgid "Forgot your password?"
-msgstr ""
+msgstr "שכחת את הסיסמה שלך?"
 
 #: common/templates/admin/login.html:123
 msgid ""
 "The user \"admin\" has password \"admin\".<br>\n"
 "We suggest changing this password."
 msgstr ""
+"למשתמש \"מנהל\" יש סיסמא \"מנהל\". <br>\n"
+"אנו ממליצים לשנות סיסמא זו."
 
 #: common/templates/admin/subtemplate_inventorystatus.html:127
 #: inventoryplanning/models.py:332
 msgid "onhand at lead time"
-msgstr ""
+msgstr "onhand at lead time"
 
 #: common/templates/admin/subtemplate_inventorystatus.html:160
 msgid "current onhand"
-msgstr ""
+msgstr "current onhand"
 
 #: common/templates/admin/subtemplate_timebuckets.html:8
 msgid "time buckets"
-msgstr ""
+msgstr "משך זמן"
 
 #: common/templates/admin/subtemplate_timebuckets.html:18
 msgid "bucket size"
-msgstr ""
+msgstr "גודל משך זמן"
 
 #: common/templates/admin/subtemplate_timebuckets.html:35
 msgid "from"
-msgstr ""
+msgstr "-מ"
 
 #: common/templates/admin/subtemplate_timebuckets.html:37
 msgid "to"
-msgstr ""
+msgstr "-ל"
 
 #: common/templates/admin/subtemplate_timebuckets.html:49
 #: common/templates/admin/subtemplate_timebuckets.html:55
@@ -640,53 +644,53 @@ msgstr ""
 #: output/templates/output/buffer.html:150 output/views/resource.py:106
 #: output/views/resource.py:108
 msgid "days"
-msgstr ""
+msgstr "ימים"
 
 #: common/templates/admin/subtemplate_timebuckets.html:50
 #: common/templates/admin/subtemplate_timebuckets.html:56
 #: output/views/resource.py:104
 msgid "weeks"
-msgstr ""
+msgstr "שבועות"
 
 #: common/templates/admin/subtemplate_timebuckets.html:51
 #: common/templates/admin/subtemplate_timebuckets.html:57
 msgid "months"
-msgstr ""
+msgstr "חודשים"
 
 #: common/templates/admin/subtemplate_timebuckets.html:60
 msgid "after plan current date"
-msgstr ""
+msgstr "לאחר התאריך הנוכחי של התכנון"
 
 #: common/templates/admin/subtemplate_timebuckets.html:67 execute/views.py:586
 msgid "OK"
-msgstr ""
+msgstr "OK"
 
 #: common/templates/admin/subtemplate_timebuckets.html:68
 msgid "cancel"
-msgstr ""
+msgstr "בטל"
 
 #: common/templates/admin/user/add_form.html:6
 msgid ""
 "First, enter a username and password. Then, you'll be able to edit more user "
 "options."
-msgstr ""
+msgstr "ראשית, הזן שם משתמש וסיסמא. לאחר מכן תוכל לערוך אפשרויות משתמש נוספות."
 
 #: common/templates/admin/user/add_form.html:8
 msgid "Enter a username and password."
-msgstr ""
+msgstr "הזן שם משתמש וסיסמא."
 
 #: common/templates/common/preferences.html:70
 msgid "Number of records per page"
-msgstr ""
+msgstr "מספר הרשומות בעמוד"
 
 #: common/templates/index.html:95 execute/templates/execute/execute.html:44
 msgid "failed"
-msgstr ""
+msgstr "נכשל"
 
 #: common/templates/rest_framework/api.html:52
 #, python-format
 msgid "Make a GET request to read %(model)s object(s)"
-msgstr ""
+msgstr "%(model)s בצע דרישה לקרוא אובייקט/ים"
 
 #: common/templates/rest_framework/api.html:61
 #: common/templates/rest_framework/api.html:62
@@ -707,27 +711,27 @@ msgstr ""
 #: common/templates/rest_framework/api.html:226
 #, python-format
 msgid "%(http_method)s request"
-msgstr ""
+msgstr "%(http_method)s request"
 
 #: common/templates/rest_framework/api.html:80
 #, python-format
 msgid "Make an OPTIONS request to see all fields on the %(model)s object"
-msgstr ""
+msgstr "%(model)s לראות את כל השדות באובייקט OPTIONSבצע בקשה ל"
 
 #: common/templates/rest_framework/api.html:105
 #, python-format
 msgid "Make a POST request using a HTML form to create a new %(model)s object"
-msgstr ""
+msgstr "Make a POST request using a HTML form to create a new %(model)s object"
 
 #: common/templates/rest_framework/api.html:132
 #, python-format
 msgid "Make a POST request in raw format to create a new %(model)s object"
-msgstr ""
+msgstr "Make a POST request using a HTML form to create a new %(model)s object"
 
 #: common/templates/rest_framework/api.html:158
 #, python-format
 msgid "Make a PUT request using a HTML form to update one %(model)s object"
-msgstr ""
+msgstr "Make a PUT request using a HTML form to update one %(model)s object"
 
 #: common/templates/rest_framework/api.html:182
 #, python-format
@@ -735,6 +739,8 @@ msgid ""
 "Make a PUT or PATCH request in raw format to update an existing or more "
 "existing %(model)s objects"
 msgstr ""
+"Make a PUT or PATCH request in raw format to update an existing or more "
+"existing %(model)s objects"
 
 #: common/templates/rest_framework/api.html:217
 #, python-format
@@ -742,6 +748,8 @@ msgid ""
 "Make a DELETE request to delete one or more existing %(model)s objects "
 "(requires filtering)"
 msgstr ""
+"Make a DELETE request to delete one or more existing %(model)s objects "
+"(requires filtering)"
 
 #: common/templates/rest_framework/index.html:17
 #, python-format
@@ -785,62 +793,102 @@ msgid ""
 "</div>\n"
 "</div>\n"
 msgstr ""
+"Deze pagina laat developers toe om de\n"
+"<a style=\"text-decoration:underline\" target=\"_blank\" rel=\"noopener\" "
+"href=\"https://en.wikipedia.org/wiki/Representational_state_transfer\">REST</"
+"a>\n"
+"API van frePPLe te leren kennen en ermee te experimenteren.<br>\n"
+"Deze API laat uw applicaties makkelijk en snel gegevens uit te wisselen met "
+"frePPLe.<br>\n"
+"<br>\n"
+"De \"lijst API\" link brengt je naar een pagina voor een lijst van objecten."
+"<br>\n"
+"De \"detail API\" link daarentegen brengt je naar een specifiek object met "
+"een bepaalde primary key.<br>\n"
+"In deze pagines kan je HTTP requests uitvoeren met de methodes GET, POST, "
+"OPTIONS, PUT, PATCH and DELETE.<br>\n"
+"De resultaten in JSON or HTML formaat worden weergegeven.<br>\n"
+"<br>\n"
+"Met tools zoals 'wget' of 'curl' kun je deze API aanroepen vanaf de command "
+"line.<br>\n"
+"Bijvoorbeeld, om de lijst van alle sales orders in JSON formaat te bekomen:"
+"<br><br>\n"
+"<div style=\"margin-left:20px\">\n"
+"Met <a style=\"text-decoration:underline\" href=\"https://en.wikipedia.org/"
+"wiki/Basic_access_authentication\" target=\"_blank\">basic authentication</"
+"a>:<br>\n"
+"<div class=\"well well-sm\" style=\"margin-top:5px\">\n"
+"wget --http-user=%(request.user)s --http-password=PASSWORD "
+"http://127.0.0.1:8000/api/input/demand/<br><br>\n"
+"curl -u %(request.user)s:PASSWORD http://127.0.0.1:8000/api/input/demand/\n"
+"</div>\n"
+"Met een <a style=\"text-decoration:underline\" href=\"https://jwt.io/\" "
+"target=\"_blank\">JSON Web Token</a> geldig voor de volgende <input id=\"jwt"
+"\" type=\"number\" value=\"%(exp)s\" min=\"0\" step=\"1\" style=\"width:4em"
+"\"/>  dagen:<br>\n"
+"<div class=\"well well-sm\" style=\"margin-top:5px\">\n"
+"wget --header 'Authorization: Bearer %(token)s' http://127.0.0.1:8000/api/"
+"input/demand/<br><br>\n"
+"curl -H 'Accept: application/json' --header 'Authorization: Bearer "
+"%(token)s' http://127.0.0.1:8000/api/input/demand/\n"
+"</div>\n"
+"</div>\n"
 
 #: common/templates/rest_framework/index.html:50
 msgid "List API"
-msgstr ""
+msgstr "API רשימת"
 
 #: common/templates/rest_framework/index.html:50
 msgid "Detail API"
-msgstr ""
+msgstr "Detail API"
 
 #: common/views.py:116
 msgid "Page size"
-msgstr ""
+msgstr "גודל עמוד"
 
 #: common/views.py:121
 msgid "Theme"
-msgstr ""
+msgstr "נושא"
 
 #: common/views.py:200
 msgid "Successfully updated preferences"
-msgstr ""
+msgstr "העדפות עודכנו בהצלחה"
 
 #: common/views.py:203
 msgid "Failure updating preferences"
-msgstr ""
+msgstr "נכשל עדכון העדפות"
 
 #: common/views.py:217
 msgid "My preferences"
-msgstr ""
+msgstr "המועדפים שלי"
 
 #: common/views.py:363
 msgid "model"
-msgstr ""
+msgstr "מודל"
 
 #: common/widget.py:29
 msgid "Happy about frePPLe?"
-msgstr ""
+msgstr "מרוצה ממערכת frePPle?"
 
 #: common/widget.py:30
 msgid "Help us improve frePPle"
-msgstr ""
+msgstr "עזרו לנו לשפר את מערכת frePPle"
 
 #: common/widget.py:114
 msgid "Click on a smiley and write your comments to help us improve frePPLe!"
-msgstr ""
+msgstr "לחץ על סמיילי וכתוב את ההערות שלך כדי לעזור לנו בשיפור frePPLe!"
 
 #: common/widget.py:115
 msgid "Send comments"
-msgstr ""
+msgstr "שליחת תגובות"
 
 #: common/widget.py:123
 msgid "Welcome"
-msgstr ""
+msgstr "ברוכים הבאים"
 
 #: common/widget.py:124
 msgid "Some links to get started"
-msgstr ""
+msgstr "מספר קישורים בכדי להתחיל"
 
 #: common/widget.py:138
 #, python-format
@@ -882,70 +930,107 @@ msgid ""
 "</a>\n"
 "</div>\n"
 msgstr ""
+"Welkom tot frePPLe, een toonaangevend open source productieplanning "
+"softwarepakket!<br/><br/>\n"
+"Hoe ga je aan de slag?\n"
+"<ol><li>Start de <span class=\"underline\"><a href=\"javascript:void(0);\" "
+"onclick=\"tour.start('0,0,0'); return false;\">rondleiding</a></span></li>\n"
+"\n"
+"<li>Browse door de <span class=\"underline\"><a href=\"%(docurl)s\" target="
+"\"_blank\" rel=\"noopener\">documentatie</a></span></li>\n"
+"<li>Bouw je eigen model met de <span class=\"underline\"><a href="
+"\"%(prefix)s/wizard/\" target=\"_blank\">wizard</a></span></li>\n"
+"</ol>\n"
+"Of spring meteen naar de belangrijkste interactive planningsschermen:"
+"<br><br>\n"
+"<div style=\"float:left; margin-left:10px; width:30%%; max-width:130px; text-"
+"align: center\">\n"
+"<a href=\"%(prefix)s/forecast/editor/\">\n"
+"  <img src=\"/static/img/forecast-editor-thumbnail.png\" style=\"width: 100%%"
+"\" alt=\"Forecast Editor\"><br>\n"
+"  <b>Forecast Editor</b>\n"
+"</a>\n"
+"</div>\n"
+"<div style=\"float:left; margin-left:10px; width:30%%; max-width:130px; text-"
+"align: center\">\n"
+"<a href=\"%(prefix)s/inventoryplanning/drp/\">\n"
+"  <img src=\"/static/img/inventory-planning-thumbnail.png\" style=\"width: "
+"100%%\" alt=\"Inventory Planning\"><br>\n"
+"  <b>Inventory Planning</b>\n"
+"</a>\n"
+"</div>\n"
+"<div style=\"float:left; margin-left:10px; width:30%%; max-width:130px; text-"
+"align: center\">\n"
+"<a href=\"%(prefix)s/planningboard/\">\n"
+"  <img src=\"/static/img/plan-editor-thumbnail.png\" style=\"width: 100%%\" "
+"alt=\"Plan Editor\"><br>\n"
+"  <b>Plan Editor</b>\n"
+"</a>\n"
+"</div>\n"
 
 #: common/widget.py:174
 msgid "Fill out the data tables and access new features."
-msgstr ""
+msgstr "מלא את טבלאות הנתונים וגש לפיצ'רים החדשים."
 
 #: common/widget.py:201
 msgid "News"
-msgstr ""
+msgstr "חדשות"
 
 #: common/widget.py:202
 msgid "Show the latest news items from the frePPLe website"
-msgstr ""
+msgstr "הצג את החדשות האחרונות מאתר frePPLe"
 
 #: common/widget.py:213
 msgid "My Actions"
-msgstr ""
+msgstr "הפעולות שלי"
 
 #: common/widget.py:214
 msgid "Display a list of the entities you recently changed"
-msgstr ""
+msgstr "הצג רשימה של הישויות ששונו לאחרונה"
 
 #: common/widget.py:244 common/widget.py:271
 msgid "Unknown content"
-msgstr ""
+msgstr "תוכן לא ידוע"
 
 #: common/widget.py:254
 msgid "Display a list of recent comments"
-msgstr ""
+msgstr "הצג רשימת תגובות אחרונות"
 
 #: demandhits/attributes.py:17 demandhits/attributes.py:20
 #, python-format
 msgid "sales orders last %(num)d months"
-msgstr ""
+msgstr "חודשים אחרונים %(num)d הזמנות מכירה מ"
 
 #: demandhits/attributes.py:18 demandhits/attributes.py:21
 #, python-format
 msgid "sales units last %(num)d months"
-msgstr ""
+msgstr "חודשים אחרונים %(num)d יחידות המכירה מ"
 
 #: demandhits/attributes.py:19 demandhits/attributes.py:22
 #, python-format
 msgid "sales value last %(num)d months"
-msgstr ""
+msgstr "חודשים אחרונים %(num)d ערכי המכירות מ"
 
 #: erpconnection/management/commands/erp2frepple.py:41
 #: odoo/management/commands/odoo_import.py:68
 #: openbravo/management/commands/openbravo_import.py:2624
 #, python-format
 msgid "Import data from %(erp)s"
-msgstr ""
+msgstr "%(erp)s -ייבא נתונים מ"
 
 #: erpconnection/management/commands/frepple2erp.py:31
 #: openbravo/management/commands/openbravo_export.py:684
 #, python-format
 msgid "Export data to %(erp)s"
-msgstr ""
+msgstr "%(erp)s -ייצא נתונים מ"
 
 #: execute/commands.py:115
 msgid "Generate supply plan"
-msgstr ""
+msgstr "צור תוכנית אספקה"
 
 #: execute/management/commands/backup.py:146
 msgid "Back up the database"
-msgstr ""
+msgstr "גיבוי בסיס הנתונים"
 
 #: execute/management/commands/backup.py:171
 #: execute/management/commands/createbuckets.py:362
@@ -953,15 +1038,15 @@ msgstr ""
 #: execute/management/commands/loaddata.py:110
 #: openbravo/management/commands/openbravo_import.py:2652
 msgid "launch"
-msgstr ""
+msgstr "השקה"
 
 #: execute/management/commands/backup.py:171
 msgid "Dump the database contents to a file."
-msgstr ""
+msgstr "רוקן את התוכן ממסד הנתונים לקובץ."
 
 #: execute/management/commands/createbuckets.py:247
 msgid "Generate buckets"
-msgstr ""
+msgstr "צור buckets"
 
 #: execute/management/commands/createbuckets.py:297
 msgid ""
@@ -1038,133 +1123,213 @@ msgid ""
 "          </div>\n"
 "          "
 msgstr ""
+"<p>Genereer tijdsbuckets voor de raporten.</p>\n"
+"          <div class=\"form-group\">\n"
+"          <label class=\"col-sm-4 control-label\">Startdatum</label>\n"
+"          <div class=\"col-sm-8\">\n"
+"          <input class=\"vDateField form-control\" id=\"start\" name=\"start"
+"\" type=\"text\" size=\"12\"/>\n"
+"          </div>\n"
+"          </div>\n"
+"          <div class=\"form-group\">\n"
+"          <label class=\"col-sm-4 control-label\">Einddatum</label>\n"
+"          <div class=\"col-sm-8\">\n"
+"          <input class=\"vDateField form-control\" id=\"end\" name=\"end\" "
+"type=\"text\" size=\"12\"/>\n"
+"          </div>\n"
+"          </div>\n"
+"          <div class=\"form-group\">\n"
+"          <label class=\"col-sm-4 control-label\" for=\"weekstart1\">Week "
+"begint op</label>\n"
+"          <div class=\"col-sm-8\">\n"
+"          <div class=\"dropdown dropdown-submit-input\">\n"
+"            <button class=\"btn btn-default dropdown-toggle form-control\"  "
+"id=\"weekstart1\" value=\"1\" type=\"button\" data-toggle=\"dropdown"
+"\">Maandag&nbsp;&nbsp;<span class=\"caret\"></span></button>\n"
+"            <ul class=\"dropdown-menu col-xs-12\" aria-labelledby="
+"\"weekstart1\" id=\"weekstartul\">\n"
+"              <li><a>Zondag</a></li>\n"
+"              <li><a>Maandag</a></li>\n"
+"              <li><a>Dinsdag</a></li>\n"
+"              <li><a>Woensdag</a></li>\n"
+"              <li><a>Donderdag</a></li>\n"
+"              <li><a>Vrijdag</a></li>\n"
+"              <li><a>Zaterdag</a></li>\n"
+"            </ul>\n"
+"          </div>\n"
+"          </div>\n"
+"          </div>\n"
+"          <div class=\"form-group\">\n"
+"          <label class=\"col-sm-4 control-label\">Label&nbsp;voor&nbsp;dag</"
+"label>\n"
+"          <div class=\"col-sm-8\">\n"
+"          <input class=\"form-control\" name=\"format-day\" type=\"text\" "
+"size=\"12\" value=\"%Y-%m-%d\"/>\n"
+"          </div>\n"
+"          </div>\n"
+"          <div class=\"form-group\">\n"
+"          <label class=\"col-sm-4 control-label\">Label&nbsp;voor&nbsp;week</"
+"label>\n"
+"          <div class=\"col-sm-8\">\n"
+"          <input class=\"form-control\" name=\"format-week\" type=\"text\" "
+"size=\"12\" value=\"%y W%W\"/>\n"
+"          </div>\n"
+"          </div>\n"
+"          <div class=\"form-group\">\n"
+"          <label class=\"col-sm-4 control-label\">Label&nbsp;voor&nbsp;"
+"maand</label>\n"
+"          <div class=\"col-sm-8\">\n"
+"          <input class=\"form-control\" name=\"format-month\" type=\"text\" "
+"size=\"12\" value=\"%b %y\"/>\n"
+"          </div>\n"
+"          </div>\n"
+"          <div class=\"form-group\">\n"
+"          <label class=\"col-sm-4 control-label\">Label&nbsp;voor&nbsp;"
+"kwartaal</label>\n"
+"          <div class=\"col-sm-8\">\n"
+"          <input class=\"form-control\" name=\"format-quarter\" type=\"text"
+"\" size=\"12\" value=\"%y Q%q\"/>\n"
+"          </div>\n"
+"          </div>\n"
+"          <div class=\"form-group\">\n"
+"          <label class=\"col-sm-4 control-label\">Label&nbsp;voor&nbsp;jaar</"
+"label>\n"
+"          <div class=\"col-sm-8\">\n"
+"          <input class=\"form-control\" name=\"format-year\" type=\"text\" "
+"size=\"12\" value=\"%Y\"/>\n"
+"          </div>\n"
+"          </div>\n"
+" "
 
 #: execute/management/commands/createbuckets.py:362
 #: execute/management/commands/empty.py:341
 #: execute/management/commands/exportworkbook.py:207
 msgid "data tables"
-msgstr ""
+msgstr "טבלת נתונים"
 
 #: execute/management/commands/createbuckets.py:362
 #: execute/management/commands/empty.py:341
 #: execute/management/commands/exportworkbook.py:207
 msgid "admin tables"
-msgstr ""
+msgstr "טבלאות מנהל"
 
 #: execute/management/commands/createbuckets.py:363
 #: execute/management/commands/empty.py:342
 msgid "Erase selected tables."
-msgstr ""
+msgstr "מחק טבלאות שנבחרו."
 
 #: execute/management/commands/empty.py:268
 msgid "Empty the database"
-msgstr ""
+msgstr "רוקן את בסיס הנתונים"
 
 #: execute/management/commands/exporttofolder.py:382
 msgid "Export plan result to folder"
-msgstr ""
+msgstr "ייצא תוצאת התכנון לתיקייה"
 
 #: execute/management/commands/exporttofolder.py:530
 #: execute/management/commands/exportworkbook.py:206
 #: execute/management/commands/importfromfolder.py:598
 msgid "export"
-msgstr ""
+msgstr "ייצא"
 
 #: execute/management/commands/exporttofolder.py:530
 #: execute/management/commands/importfromfolder.py:598
 msgid "file name"
-msgstr ""
+msgstr "שם קובץ"
 
 #: execute/management/commands/exporttofolder.py:530
 #: execute/management/commands/importfromfolder.py:598
 msgid "size"
-msgstr ""
+msgstr "גודל"
 
 #: execute/management/commands/exporttofolder.py:530
 #: execute/management/commands/importfromfolder.py:598
 msgid "changed"
-msgstr ""
+msgstr "השתנה"
 
 #: execute/management/commands/exporttofolder.py:530
 #: execute/management/commands/importfromfolder.py:598
 msgid "Delete all files"
-msgstr ""
+msgstr "מחק את כל הקבצים"
 
 #: execute/management/commands/exporttofolder.py:531
 msgid ""
 "Exports the plan (purchase orders, distribution orders and manufacturing "
 "orders) as a set of CSV files."
 msgstr ""
+"CSV מייצא את התכנון (הזמנות רכישה, הזמנות חלוקה והזמנות ייצור) כסט קבצי."
 
 #: execute/management/commands/exporttofolder.py:532
 #: execute/management/commands/importfromfolder.py:601
 #, python-format
 msgid "File %s was not deleted"
-msgstr ""
+msgstr "לא נמחק %s הקובץ"
 
 #: execute/management/commands/exporttofolder.py:532
 #: execute/management/commands/importfromfolder.py:601
 msgid "Close"
-msgstr ""
+msgstr "סגור"
 
 #: execute/management/commands/exporttofolder.py:532
 #: execute/management/commands/importfromfolder.py:601
 #, python-format
 msgid "File %s was deleted"
-msgstr ""
+msgstr "נמחק %s הקובץ"
 
 #: execute/management/commands/exporttofolder.py:532
 #: execute/management/commands/importfromfolder.py:601
 msgid "All data files were deleted"
-msgstr ""
+msgstr "כל קבצי הנתונים נמחקו"
 
 #: execute/management/commands/exporttofolder.py:533
 #: execute/management/commands/importfromfolder.py:602
 msgid "You are about to delete all files"
-msgstr ""
+msgstr "אתה עומד למחוק את כל הקבצים"
 
 #: execute/management/commands/exporttofolder.py:533
 #: execute/management/commands/importfromfolder.py:602
 #, python-format
 msgid "You are about to delete file %s"
-msgstr ""
+msgstr "%s אתה עומד למחוק את הקובץ"
 
 #: execute/management/commands/exporttofolder.py:534
 #: execute/management/commands/importfromfolder.py:599
 #: execute/management/commands/importfromfolder.py:603
 msgid "Delete file"
-msgstr ""
+msgstr "מחק קובץ"
 
 #: execute/management/commands/exporttofolder.py:534
 #: execute/management/commands/importfromfolder.py:603
 msgid "Confirm"
-msgstr ""
+msgstr "אשר"
 
 #: execute/management/commands/exportworkbook.py:128
 msgid "Export a spreadsheet"
-msgstr ""
+msgstr "ייצא גיליון אלקטרוני"
 
 #: execute/management/commands/exportworkbook.py:206
 msgid "Download all input data in a single spreadsheet."
-msgstr ""
+msgstr "הורד את כל נתוני הקלט בגיליון אלקטרוני יחיד."
 
 #: execute/management/commands/exportworkbook.py:208
 msgid ""
 "Download all input data in a single spreadsheet.<br>Optionally, you can make "
 "the data anonymous during the export to hide sensitive company data."
 msgstr ""
+"לחלופין, אתה יכול להפוך את הנתונים לאנונימיים במהלך הייצוא כדי להסתיר נתוני "
+"חברה רגישים. <br>.הורד את כל נתוני הקלט בגיליון אלקטרוני בודד ."
 
 #: execute/management/commands/importfromfolder.py:405
 msgid "Import data files from folder"
-msgstr ""
+msgstr "ייבא קבצי נתונים מהתיקייה"
 
 #: execute/management/commands/importfromfolder.py:599
 msgid "Upload data files"
-msgstr ""
+msgstr "העלה קבצי נתונים"
 
 #: execute/management/commands/importfromfolder.py:599
 msgid "Download file"
-msgstr ""
+msgstr "הורד קובץ"
 
 #: execute/management/commands/importfromfolder.py:600
 msgid ""
@@ -1172,55 +1337,59 @@ msgid ""
 "the names of data objects and the first line in the file must contain the "
 "field names."
 msgstr ""
+"מתיקיית הנתונים. על שמות הקבצים להתאים לשמות נתוני האובייקטים, והשורה "
+"הראשונה בקובץ חייבת להכיל את שמות השדות. CSV או Excel ייבא קבצי."
 
 #: execute/management/commands/importworkbook.py:248
 #: execute/management/commands/importworkbook.py:311
 msgid "Import a spreadsheet"
-msgstr ""
+msgstr "ייבא גיליון אלקטרוני"
 
 #: execute/management/commands/importworkbook.py:311
 msgid "import"
-msgstr ""
+msgstr "יבוא"
 
 #: execute/management/commands/importworkbook.py:312
 msgid ""
 "Import input data from a spreadsheet.</p><p>The spreadsheet must match the "
 "structure exported with the task above."
 msgstr ""
+"על הגיליון האלקטרוני להתאים למבנה המיוצא למשימה שלמעלה. </p><p>ייבא נתוני "
+"קלט מגיליון אלקטרוני."
 
 #: execute/management/commands/loaddata.py:110
 msgid "Load one of the available datasets."
-msgstr ""
+msgstr "טען את אחד ממסדי הנתונים הזמינים."
 
 #: execute/management/commands/loaddata.py:111
 #: execute/templates/execute/execute.html:193
 msgid "Sorry, You don't have any execute permissions..."
-msgstr ""
+msgstr "מצטערים, אין לך הרשאות לביצוע ..."
 
 #: execute/management/commands/loaddata.py:112
 msgid "Execute plan after loading is done"
-msgstr ""
+msgstr "בצע תכנון לאחר סיום הטעינה"
 
 #: execute/management/commands/loaddata.py:115
 msgid "Load a dataset"
-msgstr ""
+msgstr "טען מערך נתונים"
 
 #: execute/management/commands/runplan.py:232 execute/widget.py:35
 msgid "Create a plan"
-msgstr ""
+msgstr "צור תכנון"
 
 #: execute/management/commands/runplan.py:296
 msgid ""
 "Load all input data, run the planning algorithm, and export the results."
-msgstr ""
+msgstr "טען את כל נתוני הקלט, הרץ את אלגוריתם התכנון וייצא את התוצאות."
 
 #: execute/management/commands/runplan.py:297
 msgid "optional planning steps"
-msgstr ""
+msgstr "שלבי תכנון אופציונליים"
 
 #: execute/management/commands/runplan.py:298
 msgid "Plan type"
-msgstr ""
+msgstr "סוג תכנון"
 
 #: execute/management/commands/runplan.py:299
 msgid ""
@@ -1229,6 +1398,10 @@ msgid ""
 "case of shortages the demand is planned late or short.\">Constrained plan</"
 "span>"
 msgstr ""
+"<span data-toggle=\"tooltip\" data-placement=\"top\" data-html=\"true\" data-"
+"original-title=\"Genereer een supply plan dat alle constraints respecteer."
+"<br>In geval van tekorten wordt de vraag te laat of te weinig ingepland."
+"\">Constrained plan</span>"
 
 #: execute/management/commands/runplan.py:300
 msgid ""
@@ -1238,124 +1411,129 @@ msgid ""
 "<br>The demand is always met completely and on time.\">Unconstrained plan</"
 "span>"
 msgstr ""
+"<span data-toggle=\"tooltip\" data-placement=\"top\" data-html=\"true\" data-"
+"original-title=\"Genereer een supply plan dat material, capacity en lead "
+"time problemen toont die beletten dat de vraag op tijd kan worden geleveld."
+"<br>De vraag wordt steeds volledig en op de gewenste leverdatum ingepland."
+"\">Unconstrained plan</span>"
 
 #: execute/management/commands/runplan.py:301 output/models.py:55
 msgid "constraints"
-msgstr ""
+msgstr "אילוצים"
 
 #: execute/management/commands/runplan.py:302
 msgid "Capacity: respect capacity limits"
-msgstr ""
+msgstr "קיבולת: כבד את גבולות היכולת"
 
 #: execute/management/commands/runplan.py:303
 msgid "Material: respect procurement limits"
-msgstr ""
+msgstr "חומר: כבד את מגבלות הרכש"
 
 #: execute/management/commands/runplan.py:304
 msgid "Lead time: do not plan in the past"
-msgstr ""
+msgstr "זמן אספקה: לא מתכננים בעבר"
 
 #: execute/management/commands/runplan.py:305
 msgid "Release fence: do not plan within the release time window"
-msgstr ""
+msgstr "מגבלת שחרור: אל תתכנן בחלון זמן השחרור"
 
 #: execute/management/commands/runwebservice.py:90
 msgid "web service"
-msgstr ""
+msgstr "שירותי אינטרנט"
 
 #: execute/management/commands/scenario_copy.py:207
 msgid "scenario management"
-msgstr ""
+msgstr "scenario management"
 
 #: execute/management/commands/scenario_copy.py:288
 msgid "copy"
-msgstr ""
+msgstr "העתק"
 
 #: execute/management/commands/scenario_copy.py:288
 #: openbravo/management/commands/openbravo_import.py:2652
 msgid "release"
-msgstr ""
+msgstr "שחרור"
 
 #: execute/management/commands/scenario_copy.py:288
 msgid "release selected scenarios"
-msgstr ""
+msgstr "שחרר תרחישים שנבחרו"
 
 #: execute/management/commands/scenario_copy.py:288
 msgid "into selected scenarios"
-msgstr ""
+msgstr "לתרחישים נבחרים"
 
 #: execute/management/commands/scenario_copy.py:289
 msgid "update"
-msgstr ""
+msgstr "עדכון"
 
 #: execute/management/commands/scenario_copy.py:289
 msgid "Update description of selected scenarios"
-msgstr ""
+msgstr "עדכן תיאור של תרחישים שנבחרו"
 
 #: execute/menu.py:16 execute/widget.py:20
 msgid "Execute"
-msgstr ""
+msgstr "בצע"
 
 #: execute/models.py:33 execute/models.py:35 execute/views.py:86
 msgid "submitted"
-msgstr ""
+msgstr "הוגש"
 
 #: execute/models.py:34 execute/views.py:87
 msgid "started"
-msgstr ""
+msgstr "התחיל"
 
 #: execute/models.py:36 execute/views.py:92
 msgid "arguments"
-msgstr ""
+msgstr "טיעונים"
 
 #: execute/models.py:38 execute/views.py:91
 msgid "message"
-msgstr ""
+msgstr "הודעה"
 
 #: execute/models.py:39 execute/views.py:90 execute/views.py:526
 msgid "log file"
-msgstr ""
+msgstr "קובץ יומן"
 
 #: execute/models.py:51
 msgid "tasks"
-msgstr ""
+msgstr "משימות"
 
 #: execute/models.py:52
 msgid "task"
-msgstr ""
+msgstr "משימה"
 
 #: execute/templates/execute/execute.html:49
 msgid "done"
-msgstr ""
+msgstr "בוצע"
 
 #: execute/templates/execute/execute.html:51 input/models.py:996
 #: input/views.py:1406
 msgid "canceled"
-msgstr ""
+msgstr "בוטל"
 
 #: execute/templates/execute/execute.html:59
 msgid "view"
-msgstr ""
+msgstr "view"
 
 #: execute/templates/execute/execute.html:158
 msgid "autorefresh"
-msgstr ""
+msgstr "ריענון אוטומטי"
 
 #: execute/templates/execute/execute.html:166
 msgid "launch new tasks"
-msgstr ""
+msgstr "להפעיל משימות חדשות"
 
 #: execute/templates/execute/logfrepple.html:4
 msgid "download complete log file"
-msgstr ""
+msgstr "להוריד קובץ יומן מלא"
 
 #: execute/views.py:70
 msgid "Task status"
-msgstr ""
+msgstr "סטטוס המשימה"
 
 #: execute/views.py:88 execute/views.py:591
 msgid "finished"
-msgstr ""
+msgstr "גמור"
 
 #: execute/views.py:95 input/models.py:256 input/models.py:449
 #: input/views.py:148 input/views.py:752 input/views.py:1191
@@ -1364,46 +1542,46 @@ msgstr ""
 #: output/views/operation.py:59 output/views/resource.py:287
 #: output/views/resource.py:303
 msgid "duration"
-msgstr ""
+msgstr "משך זמן"
 
 #: execute/views.py:200
 #, python-format
 msgid "Failure launching action: %(msg)s"
-msgstr ""
+msgstr "%(msg)s: פעולת אתחול נכשלה"
 
 #: execute/views.py:490 execute/views.py:504 execute/views.py:656
 msgid "Error downloading file"
-msgstr ""
+msgstr "שגיאה בהורדת הקובץ"
 
 #: execute/views.py:517
 msgid "Displaying only the last 50K from the log file"
-msgstr ""
+msgstr "מציג רק את ה-50,000 האחרונים מקובץ היומן"
 
 #: execute/views.py:577
 #, python-format
 msgid "Filename extension must be among %(ext)s"
-msgstr ""
+msgstr "%(ext)s סיומת שם הקובץ חייבת להיות בין"
 
 #: execute/views.py:589
 msgid "Upload failed"
-msgstr ""
+msgstr "העלאה נכשלה"
 
 #: execute/views.py:611
 msgid "Error deleting file"
-msgstr ""
+msgstr "שגיאה במחיקת הקובץ"
 
 #: execute/widget.py:22
 msgid "Generate a constrained plan"
-msgstr ""
+msgstr "צור תכנון מאולץ"
 
 #: forecast/admin.py:23
 msgid "Planning parameters"
-msgstr ""
+msgstr "תכנון פרמטרים"
 
 #: forecast/admin.py:28 input/admin.py:143 input/admin.py:217
 #: input/admin.py:252 input/admin.py:333 input/admin.py:468 input/views.py:180
 msgid "supply path"
-msgstr ""
+msgstr "נתיב אספקה"
 
 #: forecast/admin.py:29 forecast/views.py:283 input/admin.py:145
 #: input/admin.py:219 input/admin.py:254 input/admin.py:335 input/admin.py:470
@@ -1413,83 +1591,83 @@ msgstr ""
 #: output/views/operation.py:180 output/views/pegging.py:66
 #: output/views/resource.py:92
 msgid "plan"
-msgstr ""
+msgstr "תכנון"
 
 #: forecast/admin.py:30 forecast/views.py:643 input/admin.py:469
 #: output/views/constraint.py:106
 msgid "why short or late?"
-msgstr ""
+msgstr "למה מוקדם או מאוחר?"
 
 #: forecast/attributes.py:17 forecast/models.py:91 forecast/models.py:1036
 #: forecast/views.py:56 forecast/views.py:104 forecast/widget.py:31
 #: input/views.py:2609
 #: inventoryplanning/templates/inventoryplanning/drp.html:2142
 msgid "forecast"
-msgstr ""
+msgstr "תחזית"
 
 #: forecast/attributes.py:21
 msgid "demand_pattern"
-msgstr ""
+msgstr "דפוס ביקוש"
 
 #: forecast/attributes.py:22
 msgid "adi"
-msgstr ""
+msgstr "adi"
 
 #: forecast/attributes.py:23
 msgid "cv2"
-msgstr ""
+msgstr "cv2"
 
 #: forecast/commands.py:674 forecast/commands.py:699 forecast/commands.py:755
 msgid "Generate forecast"
-msgstr ""
+msgstr "צור תחזית"
 
 #: forecast/menu.py:24 forecast/templates/forecast.html:4
 #: forecast/views.py:1683 input/views.py:78
 msgid "Forecast editor"
-msgstr ""
+msgstr "עורך תחזית"
 
 #: forecast/models.py:29
 msgid "Automatic"
-msgstr ""
+msgstr "אוטומטי"
 
 #: forecast/models.py:30
 #: inventoryplanning/templates/inventoryplanning/drp.html:2234
 msgctxt "forecast method"
 msgid "Constant"
-msgstr ""
+msgstr "קבוע"
 
 #: forecast/models.py:31
 #: inventoryplanning/templates/inventoryplanning/drp.html:2235
 msgctxt "forecast method"
 msgid "Trend"
-msgstr ""
+msgstr "מגמה"
 
 #: forecast/models.py:32
 #: inventoryplanning/templates/inventoryplanning/drp.html:2236
 msgctxt "forecast method"
 msgid "Seasonal"
-msgstr ""
+msgstr "עונתי"
 
 #: forecast/models.py:33
 #: inventoryplanning/templates/inventoryplanning/drp.html:2237
 msgctxt "forecast method"
 msgid "Intermittent"
-msgstr ""
+msgstr "לסירוגין"
 
 #: forecast/models.py:34
 #: inventoryplanning/templates/inventoryplanning/drp.html:2238
 msgctxt "forecast method"
 msgid "Moving average"
-msgstr ""
+msgstr "ממוצע נע"
 
 #: forecast/models.py:35
 #: inventoryplanning/templates/inventoryplanning/drp.html:2239
 msgid "Manual"
-msgstr ""
+msgstr "ידני"
 
 #: forecast/models.py:36
 msgid "Aggregate"
-msgstr ""
+msgstr "מצטבר"
 
 #: forecast/models.py:43 forecast/views.py:69 forecast/views.py:116
 #: forecast/views.py:145 forecast/views.py:176 forecast/views.py:1299
@@ -1524,7 +1702,7 @@ msgstr ""
 #: output/views/resource.py:385 output/views/resource.py:436
 #: quoting/views.py:49
 msgid "category"
-msgstr ""
+msgstr "קטגורייה"
 
 #: forecast/models.py:44 forecast/views.py:70 forecast/views.py:120
 #: forecast/views.py:149 forecast/views.py:180 forecast/views.py:1300
@@ -1558,7 +1736,7 @@ msgstr ""
 #: output/views/resource.py:355 output/views/resource.py:389
 #: output/views/resource.py:440 quoting/views.py:50
 msgid "subcategory"
-msgstr ""
+msgstr "תת קטגוריה"
 
 #: forecast/models.py:45 forecast/models.py:1006 forecast/views.py:67
 #: forecast/views.py:106 forecast/views.py:172 forecast/views.py:176
@@ -1572,7 +1750,7 @@ msgstr ""
 #: inventoryplanning/templates/inventoryplanning/drp.html:1743
 #: output/widget.py:69 output/widget.py:134 quoting/views.py:47
 msgid "customer"
-msgstr ""
+msgstr "לקוח"
 
 #: forecast/models.py:46 forecast/models.py:1004 forecast/views.py:65
 #: forecast/views.py:105 forecast/views.py:112 forecast/views.py:116
@@ -1636,7 +1814,7 @@ msgstr ""
 #: output/widget.py:1029 output/widget.py:1069 output/widget.py:1109
 #: output/widget.py:1190 quoting/views.py:46
 msgid "item"
-msgstr ""
+msgstr "מוצר"
 
 #: forecast/models.py:47 forecast/models.py:1005 forecast/views.py:66
 #: forecast/views.py:107 forecast/views.py:141 forecast/views.py:145
@@ -1700,16 +1878,16 @@ msgstr ""
 #: output/views/resource.py:455 output/views/resource.py:459
 #: output/widget.py:69 output/widget.py:133
 msgid "location"
-msgstr ""
+msgstr "מיקום"
 
 #: forecast/models.py:49
 #: inventoryplanning/templates/inventoryplanning/drp.html:2227
 msgid "Forecast method"
-msgstr ""
+msgstr "שיטת התחזית"
 
 #: forecast/models.py:51
 msgid "Method used to generate a base forecast"
-msgstr ""
+msgstr "שיטה המשמשת ליצירת תחזית בסיסית"
 
 #: forecast/models.py:54 forecast/views.py:72 input/models.py:24
 #: input/models.py:78 input/models.py:216 input/models.py:297
@@ -1726,62 +1904,62 @@ msgstr ""
 #: output/views/operation.py:80 output/views/resource.py:294
 #: quoting/views.py:54
 msgid "priority"
-msgstr ""
+msgstr "עדיפות"
 
 #: forecast/models.py:55 input/models.py:1037
 msgid "Priority of the demand (lower numbers indicate more important demands)"
-msgstr ""
+msgstr "עדיפות הביקוש (המספרים הנמוכים יותר מצביעים על דרישות חשובות יותר)"
 
 #: forecast/models.py:58 forecast/views.py:74 input/models.py:1040
 #: input/views.py:1286 quoting/views.py:57
 msgid "minimum shipment"
-msgstr ""
+msgstr "משלוח מינימלי"
 
 #: forecast/models.py:60 input/models.py:1042
 msgid "Minimum shipment quantity when planning this demand"
-msgstr ""
+msgstr "כמות משלוח מינימלית בעת תכנון דרישה זו"
 
 #: forecast/models.py:62 forecast/views.py:73 input/models.py:1045
 #: input/views.py:1285 quoting/views.py:56
 msgid "maximum lateness"
-msgstr ""
+msgstr "איחור מקסימאלי"
 
 #: forecast/models.py:63 input/models.py:1046
 msgid "Maximum lateness allowed when planning this demand"
-msgstr ""
+msgstr "איחור מרבי מותר בעת תכנון דרישה זו"
 
 #: forecast/models.py:66 forecast/views.py:75
 msgid "discrete"
-msgstr ""
+msgstr "דיסקרטי"
 
 #: forecast/models.py:67
 msgid "Round forecast numbers to integers"
-msgstr ""
+msgstr "עיגול מספרי תחזית למספרים שלמים"
 
 #: forecast/models.py:70 forecast/views.py:109
 #: inventoryplanning/templates/inventoryplanning/drp.html:2249
 msgid "estimated forecast error"
-msgstr ""
+msgstr "שגיאת תחזית משוערת"
 
 #: forecast/models.py:74
 msgid "calculated forecast method"
-msgstr ""
+msgstr "שיטת תחזית מחושבת"
 
 #: forecast/models.py:77
 msgid "calculated standard deviation"
-msgstr ""
+msgstr "סטיית תקן מחושבת"
 
 #: forecast/models.py:81 forecast/views.py:76
 msgid "planned"
-msgstr ""
+msgstr "מתוכנן"
 
 #: forecast/models.py:82
 msgid "Specifies whether this forecast record should be planned"
-msgstr ""
+msgstr "מציין אם יש לתכנן רשומת תחזית זו"
 
 #: forecast/models.py:92
 msgid "forecasts"
-msgstr ""
+msgstr "תחזיות"
 
 #: forecast/models.py:1015 forecast/templates/forecast/forecast.html:182
 #: forecast/templates/forecast/forecast.html:292 forecast/views.py:200
@@ -1791,14 +1969,14 @@ msgstr ""
 #: inventoryplanning/templates/inventoryplanning/drp.html:1301
 #: inventoryplanning/templates/inventoryplanning/drp.html:1393
 msgid "total orders"
-msgstr ""
+msgstr "סה\"כ הזמנות"
 
 #: forecast/models.py:1016 forecast/models.py:1429
 #: forecast/templates/forecast/forecast.html:186 forecast/views.py:206
 #: inventoryplanning/templates/inventoryplanning/drp.html:1284
 #: inventoryplanning/templates/inventoryplanning/drp.html:1305
 msgid "orders adjustment"
-msgstr ""
+msgstr "התאמת הזמנות"
 
 #: forecast/models.py:1017 forecast/templates/forecast/forecast.html:184
 #: forecast/templates/forecast/forecast.html:291 forecast/views.py:203
@@ -1808,12 +1986,12 @@ msgstr ""
 #: inventoryplanning/templates/inventoryplanning/drp.html:1303
 #: inventoryplanning/templates/inventoryplanning/drp.html:1392
 msgid "open orders"
-msgstr ""
+msgstr "הזמנות פתוחות"
 
 #: forecast/models.py:1018 forecast/templates/forecast/forecast.html:198
 #: forecast/templates/forecast/forecast.html:294 forecast/views.py:226
 msgid "planned orders"
-msgstr ""
+msgstr "הזמנות מתוכננות"
 
 #: forecast/models.py:1019 forecast/templates/forecast/forecast.html:188
 #: forecast/views.py:210
@@ -1822,7 +2000,7 @@ msgstr ""
 #: inventoryplanning/templates/inventoryplanning/drp.html:1286
 #: inventoryplanning/templates/inventoryplanning/drp.html:1307
 msgid "forecast baseline"
-msgstr ""
+msgstr "תחזית בסיס"
 
 #: forecast/models.py:1020 forecast/models.py:1432
 #: forecast/templates/forecast/forecast.html:190 forecast/views.py:213
@@ -1831,7 +2009,7 @@ msgstr ""
 #: inventoryplanning/templates/inventoryplanning/drp.html:1288
 #: inventoryplanning/templates/inventoryplanning/drp.html:1309
 msgid "forecast override"
-msgstr ""
+msgstr "דריסת תחזית"
 
 #: forecast/models.py:1021 forecast/templates/forecast/forecast.html:192
 #: forecast/templates/forecast/forecast.html:293 forecast/views.py:217
@@ -1839,97 +2017,97 @@ msgstr ""
 #: inventoryplanning/templates/inventoryplanning/drp.html:1311
 #: inventoryplanning/templates/inventoryplanning/drp.html:1394
 msgid "forecast total"
-msgstr ""
+msgstr "סה\"כ תחזית"
 
 #: forecast/models.py:1022 forecast/templates/forecast/forecast.html:194
 #: forecast/views.py:220
 #: inventoryplanning/templates/inventoryplanning/drp.html:1292
 #: inventoryplanning/templates/inventoryplanning/drp.html:1313
 msgid "forecast net"
-msgstr ""
+msgstr "תחזית נטו"
 
 #: forecast/models.py:1023 forecast/templates/forecast/forecast.html:196
 #: forecast/views.py:223
 #: inventoryplanning/templates/inventoryplanning/drp.html:1294
 #: inventoryplanning/templates/inventoryplanning/drp.html:1315
 msgid "forecast consumed"
-msgstr ""
+msgstr "תחזית נצרכת"
 
 #: forecast/models.py:1024 forecast/templates/forecast/forecast.html:200
 #: forecast/templates/forecast/forecast.html:295 forecast/views.py:229
 msgid "planned net forecast"
-msgstr ""
+msgstr "תחזית נטו מתוכננת"
 
 #: forecast/models.py:1025 forecast/views.py:200
 msgid "total orders value"
-msgstr ""
+msgstr "ערך כולל של ההזמנות"
 
 #: forecast/models.py:1026 forecast/models.py:1435 forecast/views.py:206
 msgid "orders adjustment value"
-msgstr ""
+msgstr "ערך התאמת הזמנות"
 
 #: forecast/models.py:1027 forecast/views.py:203
 msgid "open orders value"
-msgstr ""
+msgstr "ערך הזמנות פתוחות"
 
 #: forecast/models.py:1028 forecast/views.py:226
 msgid "planned orders value"
-msgstr ""
+msgstr "ערך הזמנות מתוכננות"
 
 #: forecast/models.py:1029 forecast/views.py:210
 msgid "forecast baseline value"
-msgstr ""
+msgstr "ערך של תחזית בסיסית"
 
 #: forecast/models.py:1030 forecast/models.py:1438 forecast/views.py:213
 msgid "forecast override value"
-msgstr ""
+msgstr "ערך עקיפת תחזית"
 
 #: forecast/models.py:1031 forecast/views.py:217
 msgid "forecast total value"
-msgstr ""
+msgstr "ערך כולל של התחזית"
 
 #: forecast/models.py:1032 forecast/views.py:220
 msgid "forecast net value"
-msgstr ""
+msgstr "ערך תחזית נטו"
 
 #: forecast/models.py:1033 forecast/views.py:223
 msgid "forecast consumed value"
-msgstr ""
+msgstr "ערך תחזית נצרכת"
 
 #: forecast/models.py:1034
 msgid "planned forecast value"
-msgstr ""
+msgstr "ערך תחזית מתוכננת"
 
 #: forecast/models.py:1047
 msgid "forecast plan"
-msgstr ""
+msgstr "תכנון תחזית"
 
 #: forecast/models.py:1048
 msgid "forecast plans"
-msgstr ""
+msgstr "תכנון תחזיוץ"
 
 #: forecast/models.py:1317
 #, python-format
 msgid "Bucket '%(name)s' not found"
-msgstr ""
+msgstr "Bucket '%(name)s' niet gevonden"
 
 #: forecast/models.py:1384
 msgid "No editable fields found"
-msgstr ""
+msgstr "לא נמצאו שדות הניתנים לעריכה"
 
 #: forecast/models.py:1421
 msgid "Forecast or item+location+customer not found"
-msgstr ""
+msgstr "תחזית או פריט+מיקום+לקוח לא נמצא"
 
 #: forecast/templates/forecast/forecast.html:45
 #: inventoryplanning/templates/inventoryplanning/drp.html:2092
 msgid "display value"
-msgstr ""
+msgstr "הצג ערך"
 
 #: forecast/templates/forecast/forecast.html:48
 #: inventoryplanning/templates/inventoryplanning/drp.html:2095
 msgid "display units"
-msgstr ""
+msgstr "הצג יחידות"
 
 #: forecast/templates/forecast/forecast.html:393
 #: inventoryplanning/templates/inventoryplanning/drp.html:801
@@ -1939,20 +2117,20 @@ msgstr ""
 #: inventoryplanning/templates/inventoryplanning/drp.html:881
 #: inventoryplanning/templates/inventoryplanning/drp.html:899
 msgid "Demand outlier"
-msgstr ""
+msgstr "ביקוש קיצוני"
 
 #: forecast/views.py:71
 msgid "method"
-msgstr ""
+msgstr "שיטה"
 
 #: forecast/views.py:87
 msgid "forecast report"
-msgstr ""
+msgstr "דוח תחזית"
 
 #: forecast/views.py:108
 #: inventoryplanning/templates/inventoryplanning/drp.html:2245
 msgid "selected forecast method"
-msgstr ""
+msgstr "שיטת התחזית שנבחרה"
 
 #: forecast/views.py:128 forecast/views.py:1301 input/models.py:174
 #: input/models.py:251 input/models.py:453 input/models.py:527
@@ -1969,7 +2147,7 @@ msgstr ""
 #: output/views/operation.py:591 output/views/resource.py:46
 #: output/views/resource.py:297 output/views/resource.py:407
 msgid "cost"
-msgstr ""
+msgstr "עלות"
 
 #: forecast/views.py:153 input/models.py:131 input/models.py:269
 #: input/models.py:518 input/views.py:698 input/views.py:779 input/views.py:805
@@ -1985,27 +2163,27 @@ msgstr ""
 #: output/views/resource.py:61 output/views/resource.py:360
 #: output/views/resource.py:444
 msgid "available"
-msgstr ""
+msgstr "זמין"
 
 #: forecast/views.py:229
 msgid "planned net forecast value"
-msgstr ""
+msgstr "ערך תחזית נטו מתוכנן"
 
 #: forecast/views.py:235
 msgid "order backlog"
-msgstr ""
+msgstr "צבר הזמנות"
 
 #: forecast/views.py:235
 msgid "order backlog value"
-msgstr ""
+msgstr "ערך צבר ההזמנות"
 
 #: forecast/views.py:238
 msgid "forecast backlog"
-msgstr ""
+msgstr "צבר תחזית"
 
 #: forecast/views.py:238
 msgid "forecast backlog value"
-msgstr ""
+msgstr "ערך צבר תחזית"
 
 #: forecast/views.py:241 output/templates/output/demand.html:143
 #: output/templates/output/demand.html:196
@@ -2013,65 +2191,65 @@ msgstr ""
 #: output/templates/output/demand_forecast.html:191 output/views/demand.py:44
 #: output/views/demand.py:210
 msgid "backlog"
-msgstr ""
+msgstr "צבר"
 
 #: forecast/views.py:241
 msgid "backlog value"
-msgstr ""
+msgstr "ערך צבר"
 
 #: forecast/views.py:244 inventoryplanning/models.py:349
 #: inventoryplanning/templates/inventoryplanning/drp.html:710
 #: inventoryplanning/templates/inventoryplanning/drp.html:724
 #: output/views/demand.py:208
 msgid "total demand"
-msgstr ""
+msgstr "סך הביקוש"
 
 #: forecast/views.py:244 inventoryplanning/models.py:352
 msgid "total demand value"
-msgstr ""
+msgstr "ערך הביקוש הכולל"
 
 #: forecast/views.py:247
 #: inventoryplanning/templates/inventoryplanning/drp.html:713
 #: inventoryplanning/templates/inventoryplanning/drp.html:727
 #: output/views/demand.py:209
 msgid "total supply"
-msgstr ""
+msgstr "סך ההיצע"
 
 #: forecast/views.py:247
 msgid "total supply value"
-msgstr ""
+msgstr "ערך אספקה כולל"
 
 #: forecast/views.py:626 forecast/views.py:633 input/models.py:1067
 #: input/views.py:1261
 #: inventoryplanning/templates/inventoryplanning/drp.html:1714
 msgid "sales orders"
-msgstr ""
+msgstr "הזמנות מכירה"
 
 #: forecast/widget.py:32
 msgid "Show the value of all sales order and forecast"
-msgstr ""
+msgstr "הצג את הערך של כל הזמנות המכירה והתחזיות"
 
 #: forecast/widget.py:216
 msgid "Forecast error"
-msgstr ""
+msgstr "שגיאת תחזית"
 
 #: forecast/widget.py:217
 msgid "Show the evolution of the SMAPE forecast error"
-msgstr ""
+msgstr "SMAPE הצג את ההתפתחות של שגיאת התחזית"
 
 #: forecast/widget.py:357
 msgid "Demand history outliers"
-msgstr ""
+msgstr "היסטוריית ביקוש חריג"
 
 #: forecast/widget.py:358
 msgid "Displays outliers detected in the demand history"
-msgstr ""
+msgstr "הצג חריגים שהתגלו בהיסטוריית הביקוש"
 
 #: forecast/widget.py:385 input/models.py:1287
 #: inventoryplanning/templates/inventoryplanning/drp.html:1841
 #: output/views/buffer.py:369
 msgid "date"
-msgstr ""
+msgstr "תאריך"
 
 #: forecast/widget.py:386 input/models.py:645 input/models.py:733
 #: input/models.py:1033 input/models.py:1108 input/models.py:1233
@@ -2087,19 +2265,19 @@ msgstr ""
 #: output/widget.py:1110 output/widget.py:1156 output/widget.py:1191
 #: quoting/views.py:52
 msgid "quantity"
-msgstr ""
+msgstr "כמות"
 
 #: input/admin.py:37
 msgid "repeating pattern"
-msgstr ""
+msgstr "דפוס חוזר"
 
 #: input/admin.py:71 input/views.py:1995
 msgid "inbound distribution"
-msgstr ""
+msgstr "inbound הפצה"
 
 #: input/admin.py:72 input/views.py:2002
 msgid "outbound distribution"
-msgstr ""
+msgstr "outbound הפצה"
 
 #: input/admin.py:73 input/admin.py:147 input/admin.py:220 input/models.py:1395
 #: input/views.py:1629 input/views.py:1652 input/views.py:1659
@@ -2107,7 +2285,7 @@ msgstr ""
 #: inventoryplanning/templates/inventoryplanning/drp.html:1712
 #: output/widget.py:156
 msgid "manufacturing orders"
-msgstr ""
+msgstr "הזמנות ייצור"
 
 #: input/admin.py:74 input/admin.py:111 input/admin.py:148 input/models.py:1369
 #: input/views.py:2220 input/views.py:2243 input/views.py:2250
@@ -2115,130 +2293,130 @@ msgstr ""
 #: inventoryplanning/templates/inventoryplanning/drp.html:1710
 #: output/widget.py:707
 msgid "purchase orders"
-msgstr ""
+msgstr "הזמנות רכש"
 
 #: input/admin.py:144 input/admin.py:218 input/admin.py:253 input/admin.py:334
 #: input/views.py:180
 msgid "where used"
-msgstr ""
+msgstr "איפה שמשתמשים"
 
 #: input/admin.py:146 input/models.py:1427 input/views.py:2502
 #: input/views.py:2676
 msgid "delivery orders"
-msgstr ""
+msgstr "הזמנות משלוח"
 
 #: input/admin.py:149 input/models.py:1343 input/views.py:1931
 #: input/views.py:1986
 #: inventoryplanning/templates/inventoryplanning/drp.html:1711
 #: output/widget.py:433
 msgid "distribution orders"
-msgstr ""
+msgstr "הזמנות הפצה"
 
 #: input/admin.py:208 input/admin.py:245 input/admin.py:461
 msgid "planning parameters"
-msgstr ""
+msgstr "תכנון הפרמטרים"
 
 #: input/admin.py:221 input/admin.py:256 input/admin.py:337
 #: output/views/constraint.py:71
 msgid "constrained demand"
-msgstr ""
+msgstr "ביקוש מוגבל"
 
 #: input/admin.py:242 input/models.py:1074 menu.py:24
 msgid "inventory"
-msgstr ""
+msgstr "מלאי"
 
 #: input/admin.py:255 input/admin.py:336 output/views/buffer.py:336
 #: output/views/resource.py:269
 msgid "plan detail"
-msgstr ""
+msgstr "תכנון פירוט"
 
 #: input/admin.py:352 input/admin.py:370
 msgid "alternates"
-msgstr ""
+msgstr "החלף"
 
 #: input/models.py:25
 msgid "minimum cost"
-msgstr ""
+msgstr "עלות מינימלית"
 
 #: input/models.py:26
 msgid "minimum penalty"
-msgstr ""
+msgstr "קנס מינימלי"
 
 #: input/models.py:27
 msgid "minimum cost plus penalty"
-msgstr ""
+msgstr "עלות מינימלית בתוספת קנס"
 
 #: input/models.py:48 input/views.py:1428
 msgid "default value"
-msgstr ""
+msgstr "ערך ברירת מחדל"
 
 #: input/models.py:50
 msgid "Value to be used when no entry is effective"
-msgstr ""
+msgstr "ערך שיש להשתמש בו כששום כניסה אינה יעילה"
 
 #: input/models.py:58 input/models.py:69 input/views.py:1446
 msgid "calendar"
-msgstr ""
+msgstr "לוח שנה"
 
 #: input/models.py:59 input/views.py:1416
 msgid "calendars"
-msgstr ""
+msgstr "לוחות שנה"
 
 #: input/models.py:94 input/views.py:1465
 msgid "start time"
-msgstr ""
+msgstr "זמן התחלה"
 
 #: input/models.py:95 input/views.py:1466
 msgid "end time"
-msgstr ""
+msgstr "זמן סיום"
 
 #: input/models.py:114
 msgid "calendar bucket"
-msgstr ""
+msgstr "לוח שנה"
 
 #: input/models.py:115 input/views.py:1438
 msgid "calendar buckets"
-msgstr ""
+msgstr "לוחות שנה"
 
 #: input/models.py:133 input/models.py:271 input/models.py:520
 msgid "Calendar defining the working hours and holidays"
-msgstr ""
+msgstr "לוח שנה מגדיר את שעות העבודה והחגים"
 
 #: input/models.py:142 input/views.py:829
 msgid "locations"
-msgstr ""
+msgstr "מיקומים"
 
 #: input/models.py:164 input/views.py:852
 msgid "customers"
-msgstr ""
+msgstr "לקוחות"
 
 #: input/models.py:176
 msgid "Cost of the item"
-msgstr ""
+msgstr "עלות הפריט"
 
 #: input/models.py:185 input/views.py:1100
 msgid "items"
-msgstr ""
+msgstr "פריטים"
 
 #: input/models.py:192
 msgid "fixed_time"
-msgstr ""
+msgstr "זמן קבוע"
 
 #: input/models.py:193
 msgid "time_per"
-msgstr ""
+msgstr "זמן_פר"
 
 #: input/models.py:194
 msgid "routing"
-msgstr ""
+msgstr "נתיב"
 
 #: input/models.py:195
 msgid "alternate"
-msgstr ""
+msgstr "אלטרנטיבי"
 
 #: input/models.py:196
 msgid "split"
-msgstr ""
+msgstr "מפוצל"
 
 #: input/models.py:202 input/models.py:358 input/models.py:505
 #: input/models.py:655 input/models.py:1100 input/views.py:147
@@ -2253,11 +2431,11 @@ msgstr ""
 #: output/views/resource.py:310 output/views/resource.py:393
 #: output/widget.py:1230
 msgid "type"
-msgstr ""
+msgstr "סוג"
 
 #: input/models.py:217 input/models.py:851 input/models.py:937
 msgid "Priority among all alternates"
-msgstr ""
+msgstr "עדיפות בין כל החלופות"
 
 #: input/models.py:220 input/models.py:306 input/models.py:595
 #: input/models.py:659 input/models.py:742 input/models.py:854
@@ -2270,13 +2448,13 @@ msgstr ""
 #: output/views/buffer.py:363 output/views/operation.py:83
 #: output/views/resource.py:295
 msgid "effective start"
-msgstr ""
+msgstr "התחלה יעילה"
 
 #: input/models.py:221 input/models.py:307 input/models.py:596
 #: input/models.py:660 input/models.py:743 input/models.py:855
 #: input/models.py:945
 msgid "Validity start date"
-msgstr ""
+msgstr "תוקף תאריך התחלה"
 
 #: input/models.py:224 input/models.py:310 input/models.py:599
 #: input/models.py:663 input/models.py:746 input/models.py:858
@@ -2289,38 +2467,39 @@ msgstr ""
 #: output/views/buffer.py:364 output/views/operation.py:86
 #: output/views/resource.py:296
 msgid "effective end"
-msgstr ""
+msgstr "סיום יעיל"
 
 #: input/models.py:225 input/models.py:311 input/models.py:600
 #: input/models.py:664 input/models.py:747 input/models.py:859
 #: input/models.py:949
 msgid "Validity end date"
-msgstr ""
+msgstr "תוקף תאריך סיום"
 
 #: input/models.py:228 input/views.py:1193 input/views.py:1241
 #: input/views.py:1493 input/views.py:1536 input/views.py:1555
 #: input/views.py:1805 output/views/buffer.py:357 output/views/operation.py:65
 #: output/views/resource.py:289
 msgid "release fence"
-msgstr ""
+msgstr "release fence"
 
 #: input/models.py:229
 msgid ""
 "Operationplans within this time window from the current day are expected to "
 "be released to production ERP"
 msgstr ""
+"ייצור- ERP תוכניות פעולה בתוך חלון זמן זה מהיום הנוכחי צפויות להשתחרר ל"
 
 #: input/models.py:232 input/views.py:1194 input/views.py:1242
 #: input/views.py:1494 input/views.py:1537 input/views.py:1556
 #: input/views.py:1806 output/views/buffer.py:358 output/views/operation.py:68
 #: output/views/resource.py:290
 msgid "post-op time"
-msgstr ""
+msgstr "זמן מנותח"
 
 #: input/models.py:233
 msgid ""
 "A delay time to be respected as a soft constraint after ending the operation"
-msgstr ""
+msgstr "זמן עיכוב שיש לכבד אותו כאילוץ רך לאחר סיום הפעולה"
 
 #: input/models.py:236 input/models.py:835 input/models.py:921
 #: input/views.py:908 input/views.py:994 input/views.py:1195
@@ -2330,11 +2509,11 @@ msgstr ""
 #: output/views/buffer.py:359 output/views/operation.py:71
 #: output/views/resource.py:291
 msgid "size minimum"
-msgstr ""
+msgstr "גודל מינימלי"
 
 #: input/models.py:238
 msgid "A minimum quantity for operationplans"
-msgstr ""
+msgstr "כמות מינימלית לתוכניות פעולה"
 
 #: input/models.py:241 input/models.py:840 input/models.py:926
 #: input/views.py:909 input/views.py:995 input/views.py:1196
@@ -2344,41 +2523,41 @@ msgstr ""
 #: output/views/buffer.py:360 output/views/operation.py:74
 #: output/views/resource.py:292
 msgid "size multiple"
-msgstr ""
+msgstr "גודל מרובה"
 
 #: input/models.py:243
 msgid "A multiple quantity for operationplans"
-msgstr ""
+msgstr "כמות מרובה לתוכניות פעולה"
 
 #: input/models.py:246 input/views.py:1197 input/views.py:1245
 #: input/views.py:1497 input/views.py:1540 input/views.py:1559
 #: input/views.py:1809 output/views/buffer.py:361 output/views/operation.py:77
 #: output/views/resource.py:293
 msgid "size maximum"
-msgstr ""
+msgstr "גודל מקסימאלי"
 
 #: input/models.py:248
 msgid "A maximum quantity for operationplans"
-msgstr ""
+msgstr "כמות מקסימאלית לתוכניות פעולה"
 
 #: input/models.py:253
 msgid "Cost per operationplan unit"
-msgstr ""
+msgstr "עלות ליחידת תוכנית פעולה"
 
 #: input/models.py:257
 msgid "A fixed duration for the operation"
-msgstr ""
+msgstr "משך קבוע לפעולה"
 
 #: input/models.py:260 input/views.py:149 input/views.py:1192
 #: input/views.py:1240 input/views.py:1492 input/views.py:1535
 #: input/views.py:1554 input/views.py:1804 output/views/buffer.py:356
 #: output/views/operation.py:62 output/views/resource.py:288
 msgid "duration per unit"
-msgstr ""
+msgstr "משך זמן ליחידה"
 
 #: input/models.py:261
 msgid "A variable duration for the operation"
-msgstr ""
+msgstr "משך משתנה לפעולה"
 
 #: input/models.py:264 input/models.py:676 input/models.py:763
 #: input/views.py:1183 input/views.py:1202 input/views.py:1229
@@ -2386,21 +2565,23 @@ msgstr ""
 #: input/views.py:1564 input/views.py:1814 output/views/buffer.py:366
 #: output/views/operation.py:92 output/views/resource.py:298
 msgid "search mode"
-msgstr ""
+msgstr "מצב חיפוש"
 
 #: input/models.py:266 input/models.py:678 input/models.py:765
 msgid "Method to select preferred alternate"
-msgstr ""
+msgstr "שיטה לבחירת חלופה מועדפת"
 
 #: input/models.py:274 input/views.py:1506
 msgid "batching window"
-msgstr ""
+msgstr "חלון אצווה"
 
 #: input/models.py:275
 msgid ""
 "The solver algorithm will scan for opportunities to create batches within "
 "this time window before and after the requirement date"
 msgstr ""
+"אלגוריתם הפתרון יסרוק הזדמנויות ליצירת קבוצות בתוך חלון זמן זה לפני תאריך "
+"הדרישה ואחריו"
 
 #: input/models.py:283 input/models.py:292 input/models.py:635
 #: input/models.py:719 input/models.py:1133 input/views.py:144
@@ -2451,21 +2632,21 @@ msgstr ""
 #: output/views/resource.py:298 output/views/resource.py:299
 #: output/views/resource.py:300 output/widget.py:1154
 msgid "operation"
-msgstr ""
+msgstr "פעולה"
 
 #: input/models.py:284 input/views.py:1476
 msgid "operations"
-msgstr ""
+msgstr "פעולות"
 
 #: input/models.py:293
 msgid "Parent operation"
-msgstr ""
+msgstr "פעולת אב"
 
 #: input/models.py:298
 msgid ""
 "Sequence of this operation among the suboperations. Negative values are "
 "ignored."
-msgstr ""
+msgstr "רצף פעולה זו בין פעולות המשנה. התעלמות מערכים שליליים."
 
 #: input/models.py:301 input/models.py:333 input/views.py:1523
 #: input/views.py:1549 input/views.py:1550 input/views.py:1551
@@ -2475,15 +2656,15 @@ msgstr ""
 #: input/views.py:1561 input/views.py:1562 input/views.py:1563
 #: input/views.py:1564 input/views.py:1565 input/views.py:1566
 msgid "suboperation"
-msgstr ""
+msgstr "תת-פעולה"
 
 #: input/models.py:302
 msgid "Child operation"
-msgstr ""
+msgstr "פעולת בן"
 
 #: input/models.py:334 input/views.py:1514
 msgid "suboperations"
-msgstr ""
+msgstr "תת-פעולות"
 
 #: input/models.py:341 input/models.py:486
 #: inventoryplanning/templates/inventoryplanning/drp.html:1471
@@ -2493,25 +2674,25 @@ msgstr ""
 #: inventoryplanning/templates/inventoryplanning/drp.html:2458
 #: inventoryplanning/templates/inventoryplanning/drp.html:2461
 msgid "default"
-msgstr ""
+msgstr "ברירת מחדל"
 
 #: input/models.py:342 input/models.py:491
 msgid "infinite"
-msgstr ""
+msgstr "אינסופי"
 
 #: input/models.py:370 input/models.py:1288 input/views.py:653
 #: inventoryplanning/models.py:331
 #: inventoryplanning/templates/inventoryplanning/drp.html:1709
 msgid "onhand"
-msgstr ""
+msgstr "במלאי"
 
 #: input/models.py:372
 msgid "current inventory"
-msgstr ""
+msgstr "מלאי נוכחי"
 
 #: input/models.py:375 input/models.py:1289 input/views.py:655
 msgid "minimum"
-msgstr ""
+msgstr "מינימאלי"
 
 #: input/models.py:377 inventoryplanning/models.py:325
 #: inventoryplanning/templates/inventoryplanning/drp.html:704
@@ -2522,108 +2703,108 @@ msgstr ""
 #: inventoryplanning/views.py:256 output/templates/output/buffer.html:171
 #: output/templates/output/buffer.html:267 output/views/buffer.py:89
 msgid "safety stock"
-msgstr ""
+msgstr "מלאי ביטחון"
 
 #: input/models.py:380 input/views.py:656
 msgid "minimum calendar"
-msgstr ""
+msgstr "לוח שנה מינימלי"
 
 #: input/models.py:382
 msgid "Calendar storing a time-dependent safety stock profile"
-msgstr ""
+msgstr "לוח שנה המאחסן פרופיל מלאי ביטחון תלוי בזמן"
 
 #: input/models.py:385
 msgid "min_interval"
-msgstr ""
+msgstr "מרווח מינימאלי"
 
 #: input/models.py:386
 msgid "Batching window for grouping replenishments in batches"
-msgstr ""
+msgstr "חלון אצווה לקיבוץ חידושים בקבוצות"
 
 #: input/models.py:408
 #: inventoryplanning/templates/inventoryplanning/drp.html:1430
 #: output/views/buffer.py:49
 msgid "buffer"
-msgstr ""
+msgstr "חוצץ"
 
 #: input/models.py:409 input/views.py:639
 msgid "buffers"
-msgstr ""
+msgstr "חוצצים"
 
 #: input/models.py:424 input/models.py:436 input/models.py:535
 #: input/views.py:748 input/views.py:782
 msgid "setup matrix"
-msgstr ""
+msgstr "מטריצת התקנה"
 
 #: input/models.py:425 input/views.py:722
 msgid "setup matrices"
-msgstr ""
+msgstr "מטריצות התקנה"
 
 #: input/models.py:441 input/views.py:750
 msgid "from setup"
-msgstr ""
+msgstr "מההתקנה"
 
 #: input/models.py:442
 msgid "Name of the old setup (wildcard characters are supported)"
-msgstr ""
+msgstr "שם ההתקנה הישנה (נתמכים בתווים כלליים)"
 
 #: input/models.py:445 input/views.py:751
 msgid "to setup"
-msgstr ""
+msgstr "להתקין"
 
 #: input/models.py:446
 msgid "Name of the new setup (wildcard characters are supported)"
-msgstr ""
+msgstr "שם ההתקנה החדשה (נתמכים בתווים כלליים)"
 
 #: input/models.py:450
 msgid "Duration of the changeover"
-msgstr ""
+msgstr "משך המעבר"
 
 #: input/models.py:454
 msgid "Cost of the conversion"
-msgstr ""
+msgstr "עלות ההמרה"
 
 #: input/models.py:476
 msgid "setup matrix rule"
-msgstr ""
+msgstr "כלל מטריצת התקנה"
 
 #: input/models.py:477
 msgid "setup matrix rules"
-msgstr ""
+msgstr "כללי מטריצת התקנה"
 
 #: input/models.py:508 input/views.py:777 output/views/resource.py:44
 #: output/views/resource.py:397
 msgid "maximum"
-msgstr ""
+msgstr "מקסימאלי"
 
 #: input/models.py:510
 msgid "Size of the resource"
-msgstr ""
+msgstr "גודל המשאב"
 
 #: input/models.py:513 input/views.py:778 output/views/resource.py:45
 #: output/views/resource.py:401
 msgid "maximum calendar"
-msgstr ""
+msgstr "לוח שנה מקסימאלי"
 
 #: input/models.py:515
 msgid "Calendar defining the resource size varying over time"
-msgstr ""
+msgstr "לוח שנה המגדיר את גודל המשאב המשתנה לאורך זמן"
 
 #: input/models.py:529
 msgid "Cost for using 1 unit of the resource for 1 hour"
-msgstr ""
+msgstr "עלות השימוש ביחידה אחת של המשאב למשך שעה"
 
 #: input/models.py:531
 msgid "max early"
-msgstr ""
+msgstr "הקדמה מקסימאלית"
 
 #: input/models.py:532
 msgid "Time window before the ask date where we look for available capacity"
-msgstr ""
+msgstr "חלון זמן לפני התאריך הנבחר כאשר אנו מחפשים קיבולת זמינה"
 
 #: input/models.py:537
 msgid "Setup matrix defining the conversion time and cost"
-msgstr ""
+msgstr "הגדרת מטריצה המגדירה את זמן ההמרה ואת עלותה"
 
 #: input/models.py:540 input/models.py:759 input/models.py:1236
 #: input/views.py:783 input/views.py:1182 output/models.py:63
@@ -2632,29 +2813,29 @@ msgstr ""
 #: output/views/resource.py:64 output/views/resource.py:312
 #: output/views/resource.py:421
 msgid "setup"
-msgstr ""
+msgstr "התקנה"
 
 #: input/models.py:541
 msgid "Setup of the resource at the start of the plan"
-msgstr ""
+msgstr "הגדרת המשאב בתחילת התכנון"
 
 #: input/models.py:544 input/views.py:786
 msgid "efficiency %"
-msgstr ""
+msgstr "יעילות %"
 
 #: input/models.py:545
 msgid "Efficiency percentage of the resource"
-msgstr ""
+msgstr "אחוז יעילות של המשאב"
 
 #: input/models.py:548 input/views.py:788
 #, python-format
 msgid "efficiency %% calendar"
-msgstr ""
+msgstr "לוח שנה %% יעילות"
 
 #: input/models.py:550
 msgid ""
 "Calendar defining the efficiency percentage of the resource varying over time"
-msgstr ""
+msgstr "לוח שנה המגדיר את אחוז היעילות של המשאב המשתנה לאורך זמן"
 
 #: input/models.py:559 input/models.py:587 input/models.py:724
 #: input/models.py:862 input/models.py:952 input/models.py:1226
@@ -2672,116 +2853,116 @@ msgstr ""
 #: output/views/resource.py:455 output/views/resource.py:459
 #: output/widget.py:1154
 msgid "resource"
-msgstr ""
+msgstr "משאב"
 
 #: input/models.py:560 input/views.py:762 input/views.py:1793
 msgid "resources"
-msgstr ""
+msgstr "משאבים"
 
 #: input/models.py:578 input/models.py:591 input/models.py:729
 #: input/views.py:1151 input/views.py:1174
 msgid "skill"
-msgstr ""
+msgstr "מיומנות"
 
 #: input/models.py:579 input/views.py:1124
 msgid "skills"
-msgstr ""
+msgstr "מיומנויות"
 
 #: input/models.py:604
 msgid "Priority of this skill in a group of alternates"
-msgstr ""
+msgstr "עדיפות המיומנות הזו בקבוצת חלופות"
 
 #: input/models.py:619
 msgid "resource skill"
-msgstr ""
+msgstr "מיומנות משאבים"
 
 #: input/models.py:620 input/views.py:1142
 msgid "resource skills"
-msgstr ""
+msgstr "מיומנויות משאבים"
 
 #: input/models.py:627
 msgid "Start"
-msgstr ""
+msgstr "התחלה"
 
 #: input/models.py:628
 msgid "End"
-msgstr ""
+msgstr "סיום"
 
 #: input/models.py:629
 msgid "Batch transfer"
-msgstr ""
+msgstr "העברת אצווה"
 
 #: input/models.py:647
 msgid "Quantity to consume or produce per operationplan unit"
-msgstr ""
+msgstr "כמות לצריכה או לייצור לפי יחידה של תוכנית פעולה"
 
 #: input/models.py:650 input/views.py:1176 input/views.py:1233
 msgid "fixed quantity"
-msgstr ""
+msgstr "כמות קבועה"
 
 #: input/models.py:652
 msgid "Fixed quantity to consume or produce"
-msgstr ""
+msgstr "כמות קבועה לצריכה או לייצור"
 
 #: input/models.py:656
 msgid "Consume/produce material at the start or the end of the operationplan"
-msgstr ""
+msgstr "לצרוך / לייצר חומר בתחילת או בסיום תוכנית הפעולה"
 
 #: input/models.py:669
 msgid "Optional name of this operation material"
-msgstr ""
+msgstr "שם אופציונלי של חומר פעולה זה"
 
 #: input/models.py:673
 msgid "Priority of this operation material in a group of alternates"
-msgstr ""
+msgstr "עדיפות של חומר פעולה זה בקבוצת חלופות"
 
 #: input/models.py:681 input/views.py:1232
 msgid "transfer batch quantity"
-msgstr ""
+msgstr "העברת כמות אצווה"
 
 #: input/models.py:683
 msgid "Batch size by in which material is produced or consumed"
-msgstr ""
+msgstr "גודל אצווה שלפיו מיוצר או נצרך חומר"
 
 #: input/models.py:711
 msgid "operation material"
-msgstr ""
+msgstr "חומר פעולה"
 
 #: input/models.py:712 input/views.py:1212
 msgid "operation materials"
-msgstr ""
+msgstr "חומרים של הפעולה"
 
 #: input/models.py:734
 msgid "Required quantity of the resource"
-msgstr ""
+msgstr "הכמות הנדרשת של המשאב"
 
 #: input/models.py:737
 msgid "quantity fixed"
-msgstr ""
+msgstr "כמות קבועה"
 
 #: input/models.py:739
 msgid "constant part of the capacity consumption (bucketized resources only)"
-msgstr ""
+msgstr "(בלבד bucketized משאבי) חלק קבוע של צריכת הקיבולת"
 
 #: input/models.py:752
 msgid "Optional name of this load"
-msgstr ""
+msgstr "שם אופציונלי של העמסה זו"
 
 #: input/models.py:756
 msgid "Priority of this load in a group of alternates"
-msgstr ""
+msgstr "עדיפות של העמסה זו בקבוצת חלופות"
 
 #: input/models.py:760
 msgid "Setup required on the resource for this operation"
-msgstr ""
+msgstr "הגדרה נדרשת למשאב עבור פעולה זו"
 
 #: input/models.py:793
 msgid "operation resource"
-msgstr ""
+msgstr "משאב פעולה"
 
 #: input/models.py:794 input/views.py:1164
 msgid "operation resources"
-msgstr ""
+msgstr "משאבי פעולה"
 
 #: input/models.py:808 input/models.py:826 input/models.py:1157
 #: input/views.py:906 input/views.py:2346 input/views.py:2419
@@ -2792,64 +2973,64 @@ msgstr ""
 #: output/views/operation.py:424 output/views/operation.py:428
 #: output/widget.py:1029 output/widget.py:1190
 msgid "supplier"
-msgstr ""
+msgstr "ספק"
 
 #: input/models.py:809 input/views.py:874
 msgid "suppliers"
-msgstr ""
+msgstr "ספקים"
 
 #: input/models.py:831 input/models.py:917 input/models.py:918
 #: input/views.py:907 input/views.py:993 inventoryplanning/models.py:318
 #: inventoryplanning/templates/inventoryplanning/drp.html:1686
 #: inventoryplanning/views.py:251
 msgid "lead time"
-msgstr ""
+msgstr "lead time"
 
 #: input/models.py:832
 msgid "Purchasing lead time"
-msgstr ""
+msgstr "רכישת זמן ההובלה"
 
 #: input/models.py:837
 msgid "A minimum purchasing quantity"
-msgstr ""
+msgstr "כמות רכישה מינימלית"
 
 #: input/models.py:842
 msgid "A multiple purchasing quantity"
-msgstr ""
+msgstr "כמות רכישה מרובה"
 
 #: input/models.py:847
 msgid "Purchasing cost per unit"
-msgstr ""
+msgstr "עלות רכישה ליחידה"
 
 #: input/models.py:864
 msgid "Resource to model the supplier capacity"
-msgstr ""
+msgstr "משאב למדל את קיבולת הספק"
 
 #: input/models.py:867 input/models.py:957 input/views.py:916
 #: input/views.py:1003
 msgid "resource quantity"
-msgstr ""
+msgstr "כמות משאב"
 
 #: input/models.py:869
 msgid "Resource capacity consumed per purchased unit"
-msgstr ""
+msgstr "קיבולת משאבים הנצרכת ליחידת רכישה"
 
 #: input/models.py:872 input/models.py:962 input/views.py:912
 #: input/views.py:999
 msgid "fence"
-msgstr ""
+msgstr "לְהַקִים מְחִיצָה"
 
 #: input/models.py:873
 msgid "Frozen fence for creating new procurements"
-msgstr ""
+msgstr "הקמת מחיצה ליצירת רכש חדש"
 
 #: input/models.py:895
 msgid "item supplier"
-msgstr ""
+msgstr "פריט הספק"
 
 #: input/models.py:896 input/views.py:896
 msgid "item suppliers"
-msgstr ""
+msgstr "פריטי הספק"
 
 #: input/models.py:913 input/models.py:1148 input/views.py:992
 #: input/views.py:1064 input/views.py:1068 input/views.py:1072
@@ -2864,174 +3045,174 @@ msgstr ""
 #: output/views/operation.py:625 output/views/operation.py:631
 #: output/widget.py:1069 output/widget.py:1109
 msgid "origin"
-msgstr ""
+msgstr "מקור"
 
 #: input/models.py:923
 msgid "A minimum shipping quantity"
-msgstr ""
+msgstr "מות משלוח מינימלית"
 
 #: input/models.py:928
 msgid "A multiple shipping quantity"
-msgstr ""
+msgstr "כמות משלוח מרובה"
 
 #: input/models.py:933
 msgid "Shipping cost per unit"
-msgstr ""
+msgstr "עלות משלוח ליחידה"
 
 #: input/models.py:940 input/views.py:998
 msgid "push priority"
-msgstr ""
+msgstr "עדיפות דחופה"
 
 #: input/models.py:941
 msgid "Priority for the push mode"
-msgstr ""
+msgstr "עדיפות למצב דחוף"
 
 #: input/models.py:954
 msgid "Resource to model the distribution capacity"
-msgstr ""
+msgstr "משאב למודל יכולת ההפצה"
 
 #: input/models.py:959
 msgid "Resource capacity consumed per distributed unit"
-msgstr ""
+msgstr "קיבולת משאבים שנצרך ליחידה מבוזרת"
 
 #: input/models.py:963
 msgid "Frozen fence for creating new shipments"
-msgstr ""
+msgstr "הקמת מחיצה ליצירת משלוחים חדשים"
 
 #: input/models.py:985
 msgid "item distribution"
-msgstr ""
+msgstr "הפצת פריט"
 
 #: input/models.py:986 input/views.py:982
 msgid "item distributions"
-msgstr ""
+msgstr "הפצות של הפריט"
 
 #: input/models.py:992 input/views.py:1387
 msgid "inquiry"
-msgstr ""
+msgstr "שאילתה"
 
 #: input/models.py:993 input/views.py:1392
 msgid "quote"
-msgstr ""
+msgstr "לציין"
 
 #: input/models.py:994 input/views.py:1397
 msgid "open"
-msgstr ""
+msgstr "פתוח"
 
 #: input/models.py:995 input/models.py:1086 input/views.py:1402
 #: input/views.py:1907 input/views.py:2192 input/views.py:2474
 #: inventoryplanning/templates/inventoryplanning/drp.html:2131
 msgid "closed"
-msgstr ""
+msgstr "סגור"
 
 #: input/models.py:1020 input/models.py:1170 input/views.py:1275
 #: output/widget.py:70 output/widget.py:134 quoting/views.py:51
 msgid "due"
-msgstr ""
+msgstr "עקב"
 
 #: input/models.py:1020
 msgid "Due date of the demand"
-msgstr ""
+msgstr "עקב תאריך היעד של הביקוש"
 
 #: input/models.py:1024
 msgid "Status of the demand. Only \"open\" demands are planned"
-msgstr ""
+msgstr "סטאטוס הביקוש, מתוכננות הזמנות \"פתוחות\" בלבד"
 
 #: input/models.py:1028 input/views.py:1282 quoting/views.py:53
 msgid "delivery operation"
-msgstr ""
+msgstr "פעולת שליחה"
 
 #: input/models.py:1030
 msgid "Operation used to satisfy this demand"
-msgstr ""
+msgstr "פעולה ששימשה כדי לספק את הביקוש הזה"
 
 #: input/models.py:1049 input/models.py:1128 input/views.py:1276
 #: input/views.py:1790 input/views.py:2066 input/views.py:2354
 #: input/views.py:2522 output/views/buffer.py:374 output/views/resource.py:308
 #: output/widget.py:71
 msgid "delay"
-msgstr ""
+msgstr "עיכוב"
 
 #: input/models.py:1052 input/views.py:1277
 msgid "planned quantity"
-msgstr ""
+msgstr "כמות מתוכננת"
 
 #: input/models.py:1053
 msgid "Quantity planned for delivery"
-msgstr ""
+msgstr "כמות מתוכננת לשליחה"
 
 #: input/models.py:1056 input/views.py:1278
 msgid "delivery date"
-msgstr ""
+msgstr "תאריך משלוח"
 
 #: input/models.py:1056
 msgid "Delivery date of the demand"
-msgstr ""
+msgstr "תאריך משלוח של הביקוש"
 
 #: input/models.py:1066
 msgid "sales order"
-msgstr ""
+msgstr "הזמנת מכירה"
 
 #: input/models.py:1075 input/models.py:1394
 msgid "manufacturing order"
-msgstr ""
+msgstr "הזמנת ייצור"
 
 #: input/models.py:1076 input/models.py:1368
 msgid "purchase order"
-msgstr ""
+msgstr "הזמנת רכש"
 
 #: input/models.py:1077 input/models.py:1342
 msgid "distribution order"
-msgstr ""
+msgstr "הזמנת הפצב"
 
 #: input/models.py:1078 input/models.py:1426
 msgid "delivery order"
-msgstr ""
+msgstr "הזמנת משלוח"
 
 #: input/models.py:1083 input/models.py:1220 input/models.py:1268
 #: input/views.py:1892 input/views.py:2177 input/views.py:2459
 #: inventoryplanning/templates/inventoryplanning/drp.html:2129
 msgid "proposed"
-msgstr ""
+msgstr "מוצע"
 
 #: input/models.py:1084 input/views.py:1897 input/views.py:2182
 #: input/views.py:2464
 #: inventoryplanning/templates/inventoryplanning/drp.html:2128
 msgid "approved"
-msgstr ""
+msgstr "אושר"
 
 #: input/models.py:1085 input/models.py:1221 input/models.py:1269
 #: input/views.py:1902 input/views.py:2187 input/views.py:2469
 #: inventoryplanning/templates/inventoryplanning/drp.html:2130
 msgid "confirmed"
-msgstr ""
+msgstr "אושר"
 
 #: input/models.py:1093
 msgid "Unique identifier of an operationplan"
-msgstr ""
+msgstr "מזהה ייחודי של תוכנית פעולה"
 
 #: input/models.py:1097
 msgid "Status of the order"
-msgstr ""
+msgstr "סטטוס הזמנה"
 
 #: input/models.py:1101
 msgid "Order type"
-msgstr ""
+msgstr "סוג הזמנה"
 
 #: input/models.py:1104 input/views.py:1780 input/views.py:2051
 #: input/views.py:2342 input/views.py:2511
 #: inventoryplanning/templates/inventoryplanning/drp.html:1843
 #: output/views/buffer.py:347 output/views/resource.py:278
 msgid "reference"
-msgstr ""
+msgstr "הפניה"
 
 #: input/models.py:1105
 msgid "External reference of this order"
-msgstr ""
+msgstr "התייחסות חיצונית להזמנה זו"
 
 #: input/models.py:1112 inventoryplanning/models.py:333
 msgid "color"
-msgstr ""
+msgstr "צבע"
 
 #: input/models.py:1124 input/views.py:1789 input/views.py:2065
 #: input/views.py:2353
@@ -3040,7 +3221,7 @@ msgstr ""
 #: output/widget.py:1031 output/widget.py:1071 output/widget.py:1111
 #: output/widget.py:1156
 msgid "criticality"
-msgstr ""
+msgstr "קריטיות"
 
 #: input/models.py:1152 input/views.py:2055 input/views.py:2131
 #: input/views.py:2135 input/views.py:2139 input/views.py:2143
@@ -3050,7 +3231,7 @@ msgstr ""
 #: output/views/operation.py:651 output/views/operation.py:657
 #: output/widget.py:1070 output/widget.py:1110
 msgid "destination"
-msgstr ""
+msgstr "יעד"
 
 #: input/models.py:1166 input/views.py:2512 output/models.py:38
 #: output/templates/output/demand.html:139
@@ -3060,98 +3241,98 @@ msgstr ""
 #: output/views/constraint.py:22 output/views/constraint.py:76
 #: output/views/demand.py:42
 msgid "demand"
-msgstr ""
+msgstr "ביקוש"
 
 #: input/models.py:1170
 msgid "Due date of the demand/forecast"
-msgstr ""
+msgstr "עקב תאריך הביקוש/התחזית"
 
 #: input/models.py:1212 input/models.py:1230 input/models.py:1283
 msgid "operationplan"
-msgstr ""
+msgstr "תוכנית פעולה"
 
 #: input/models.py:1213
 msgid "operationplans"
-msgstr ""
+msgstr "תוכניות פעולה"
 
 #: input/models.py:1234 output/models.py:60 output/widget.py:1155
 msgid "startdate"
-msgstr ""
+msgstr "תאריך התחלה"
 
 #: input/models.py:1235 output/widget.py:1030 output/widget.py:1070
 #: output/widget.py:1155 output/widget.py:1191
 msgid "enddate"
-msgstr ""
+msgstr "תאריך סיום"
 
 #: input/models.py:1239
 msgid "Status of the OperationPlanResource"
-msgstr ""
+msgstr "סטאטוס משאב תכנון הפעולה"
 
 #: input/models.py:1260
 msgid "operationplan resource"
-msgstr ""
+msgstr "משאב תכנון הפעולה"
 
 #: input/models.py:1261
 msgid "operationplan resources"
-msgstr ""
+msgstr "משאבי תכנון הפעולה"
 
 #: input/models.py:1290 inventoryplanning/models.py:34
 #: inventoryplanning/templates/inventoryplanning/drp.html:2357
 #: inventoryplanning/templates/inventoryplanning/drp.html:2408
 msgid "period of cover"
-msgstr ""
+msgstr "תקופת הכיסוי"
 
 #: input/models.py:1293
 msgid "status of the material production or consumption"
-msgstr ""
+msgstr "סטאטוס ייצור או צריכת החומרים"
 
 #: input/models.py:1314
 msgid "operationplan material"
-msgstr ""
+msgstr "תוכנית פעולה של החומר"
 
 #: input/models.py:1315
 msgid "operationplan materials"
-msgstr ""
+msgstr "תוכנית פעולה של החומרים"
 
 #: input/models.py:1323 input/views.py:2056
 msgid "shipping date"
-msgstr ""
+msgstr "תאריך משלוח"
 
 #: input/models.py:1324 input/models.py:1349 input/views.py:2057
 #: input/views.py:2348
 msgid "receipt date"
-msgstr ""
+msgstr "תאריך קבלה"
 
 #: input/models.py:1348 input/views.py:2347
 msgid "ordering date"
-msgstr ""
+msgstr "תאריך הזמנה"
 
 #: input/templates/input/path.html:244
 msgid "Too many objects to display"
-msgstr ""
+msgstr "יותר מדי אובייקטים להצגה"
 
 #: input/views.py:77 input/views.py:94 input/views.py:109
 #, python-format
 msgid "%(name)s - %(count)d match"
 msgid_plural "%(name)s - %(count)d matches"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%(name)s - %(count)d התאמה בין"
+msgstr[1] "%(name)s - %(count)d matches"
 
 #: input/views.py:95 inventoryplanning/views.py:223
 msgid "Inventory planning"
-msgstr ""
+msgstr "תכנון מלאי"
 
 #: input/views.py:143 output/views/pegging.py:37
 msgid "depth"
-msgstr ""
+msgstr "עומק"
 
 #: input/views.py:740
 msgid "setup rules"
-msgstr ""
+msgstr "כללי התקנה"
 
 #: input/views.py:781 output/views/resource.py:47 output/views/resource.py:411
 msgid "maxearly"
-msgstr ""
+msgstr "הקדמה מקסימאלית"
 
 #: input/views.py:1387 input/views.py:1392 input/views.py:1397
 #: input/views.py:1402 input/views.py:1406 input/views.py:1892
@@ -3161,22 +3342,22 @@ msgstr ""
 #: input/views.py:2469 input/views.py:2474
 #, python-brace-format
 msgid "change status to {status}"
-msgstr ""
+msgstr "{status}שינוי סטאטוס ל-"
 
 #: input/views.py:1674
 #, python-format
 msgid "work in progress in %(loc)s at %(date)s"
-msgstr ""
+msgstr ".%(date)s בתאריך %(loc)s עבודה בתהליך ב"
 
 #: input/views.py:1685
 #, python-format
 msgid "produced in %(loc)s between %(date1)s and %(date2)s"
-msgstr ""
+msgstr "%(date1)s ו %(date2)s בין %(loc)s - מיוצר ב"
 
 #: input/views.py:1696
 #, python-format
 msgid "consumed in %(loc)s between %(date1)s and %(date2)s"
-msgstr ""
+msgstr "%(date1)s ו %(date2)s %(loc)sנצרך ב"
 
 #: input/views.py:1781 input/views.py:2052 input/views.py:2343
 #: inventoryplanning/templates/inventoryplanning/drp.html:1845
@@ -3184,84 +3365,84 @@ msgstr ""
 #: output/views/buffer.py:348 output/views/resource.py:279
 #: output/widget.py:1192
 msgid "inventory status"
-msgstr ""
+msgstr "סטאטוס מלאי"
 
 #: input/views.py:1791 input/views.py:2067 input/views.py:2355
 #: output/views/buffer.py:377 output/views/resource.py:309
 msgid "demands"
-msgstr ""
+msgstr "ביקוש"
 
 #: input/views.py:1792
 msgid "materials"
-msgstr ""
+msgstr "חומרים"
 
 #: input/views.py:1795 input/views.py:2068 input/views.py:2356
 msgid "inventory item"
-msgstr ""
+msgstr "פריט מלאי"
 
 #: input/views.py:1796 input/views.py:2069 input/views.py:2357
 msgid "inventory location"
-msgstr ""
+msgstr "מיקום המלאי"
 
 #: input/views.py:1817
 msgid "setup time"
-msgstr ""
+msgstr "זמן התקנה"
 
 #: input/views.py:1818 output/views/resource.py:313
 msgid "setup end date"
-msgstr ""
+msgstr "תאריך סיום התקנה"
 
 #: input/views.py:1819 input/views.py:2072 input/views.py:2359
 #: output/views/buffer.py:378 output/views/buffer.py:411
 #: output/views/resource.py:315
 msgid "feasible"
-msgstr ""
+msgstr "בר ביצוע"
 
 #: input/views.py:1877 input/views.py:2161 input/views.py:2444
 msgid "end items"
-msgstr ""
+msgstr "פריטי סיום"
 
 #: input/views.py:1954
 #, python-format
 msgid "in transit in %(loc)s at %(date)s"
-msgstr ""
+msgstr "%(date)sב- %(loc)sבמעבר מ"
 
 #: input/views.py:1965
 #, python-format
 msgid "received in %(loc)s between %(date1)s and %(date2)s"
-msgstr ""
+msgstr "%(date1)s ו %(date2)s בין %(loc)s יתקבל ב"
 
 #: input/views.py:1976
 #, python-format
 msgid "shipped to %(loc)s between %(date1)s and %(date2)s"
-msgstr ""
+msgstr "%(date1)s ו %(date2)s בין %(loc)sיישלח ל"
 
 #: input/views.py:2064 input/views.py:2352
 msgid "total cost"
-msgstr ""
+msgstr "סה\"כ עלות"
 
 #: input/views.py:2265
 #, python-format
 msgid "on order in %(loc)s at %(date)s"
-msgstr ""
+msgstr "%(date)s ב %(loc)s בהזמנה מ"
 
 #: input/views.py:2276
 #, python-format
 msgid "on order in %(loc)s between %(date1)s and %(date2)s"
-msgstr ""
+msgstr "%(date1)s and %(date2)s בין %(loc)s בהזמנה מ"
 
 #: input/views.py:2517
 msgid "demand quantity"
-msgstr ""
+msgstr "כמות הביקוש"
 
 #: input/views.py:2520
 msgid "due date"
-msgstr ""
+msgstr "תאריך יעד"
 
 #: input/views.py:2667
 #, python-format
 msgid "delivered from %(loc)s between %(date1)s and %(date2)s"
-msgstr ""
+msgstr "%(date2)s ו %(date1)s בין %(loc)s נשלח מ"
 
 #: inventoryplanning/admin.py:32 inventoryplanning/models.py:326
 #: inventoryplanning/templates/inventoryplanning/drp.html:702
@@ -3271,122 +3452,122 @@ msgstr ""
 #: inventoryplanning/templates/inventoryplanning/drp.html:2377
 #: inventoryplanning/views.py:257
 msgid "reorder quantity"
-msgstr ""
+msgstr "כמות הזמנה חוזרת"
 
 #: inventoryplanning/admin.py:38
 msgid "Safety stock quantity"
-msgstr ""
+msgstr "כמות מלאי ביטחון"
 
 #: inventoryplanning/attributes.py:17
 msgid "Successor part"
-msgstr ""
+msgstr "חלק יורש"
 
 #: inventoryplanning/commands.py:483
 msgid "Compute inventory parameters"
-msgstr ""
+msgstr "חישוב פרמטרי מלאי"
 
 #: inventoryplanning/commands.py:976
 msgid "Generate inventory rebalancing requests"
-msgstr ""
+msgstr "צור בקשות לאיזון מלאי"
 
 #: inventoryplanning/models.py:23
 #: inventoryplanning/templates/inventoryplanning/drp.html:2233
 msgctxt "forecast method"
 msgid "Automatic"
-msgstr ""
+msgstr "אוטומטי"
 
 #: inventoryplanning/models.py:24
 msgctxt "forecast method"
 msgid "Normal"
-msgstr ""
+msgstr "נורמלי"
 
 #: inventoryplanning/models.py:25
 msgctxt "forecast method"
 msgid "Poisson"
-msgstr ""
+msgstr "פואסוני"
 
 #: inventoryplanning/models.py:26
 msgctxt "forecast method"
 msgid "Negative Binomial"
-msgstr ""
+msgstr "התפלגות בינומית שלילית"
 
 #: inventoryplanning/models.py:32
 msgid "calculated"
-msgstr ""
+msgstr "מחושב"
 
 #: inventoryplanning/models.py:46 inventoryplanning/models.py:93
 #: inventoryplanning/views.py:132 inventoryplanning/views.py:145
 msgid "ROQ minimum quantity"
-msgstr ""
+msgstr "ROQ כמות מינימאלית של"
 
 #: inventoryplanning/models.py:50 inventoryplanning/models.py:97
 #: inventoryplanning/views.py:133 inventoryplanning/views.py:146
 msgid "ROQ maximum quantity"
-msgstr ""
+msgstr "ROQ כמות מקסימאלית של"
 
 #: inventoryplanning/models.py:54 inventoryplanning/models.py:101
 #: inventoryplanning/views.py:134 inventoryplanning/views.py:147
 msgid "ROQ minimum period of cover"
-msgstr ""
+msgstr "תקופת כיסוי מינימאלית ROQ"
 
 #: inventoryplanning/models.py:57 inventoryplanning/models.py:104
 #: inventoryplanning/views.py:135 inventoryplanning/views.py:148
 msgid "ROQ maximum period of cover"
-msgstr ""
+msgstr "תקופת כיסוי מקסימאלית ROQ"
 
 #: inventoryplanning/models.py:60 inventoryplanning/views.py:141
 msgid "lead time deviation"
-msgstr ""
+msgstr "סטיית זמן ביצוע"
 
 #: inventoryplanning/models.py:63 inventoryplanning/views.py:142
 msgid "demand deviation"
-msgstr ""
+msgstr "סטיית ביקוש"
 
 #: inventoryplanning/models.py:67 inventoryplanning/models.py:107
 #: inventoryplanning/templates/inventoryplanning/drp.html:2312
 #: inventoryplanning/views.py:140 inventoryplanning/views.py:153
 msgid "service level"
-msgstr ""
+msgstr "רמת שירות"
 
 #: inventoryplanning/models.py:71 inventoryplanning/models.py:111
 #: inventoryplanning/views.py:136 inventoryplanning/views.py:149
 msgid "safety stock minimum quantity"
-msgstr ""
+msgstr "כמות מלאי ביטחון מינימאלי"
 
 #: inventoryplanning/models.py:75 inventoryplanning/models.py:115
 #: inventoryplanning/views.py:137 inventoryplanning/views.py:150
 msgid "safety stock maximum quantity"
-msgstr ""
+msgstr "כמות מלאי ביטחון מקסימאלי"
 
 #: inventoryplanning/models.py:79 inventoryplanning/models.py:119
 #: inventoryplanning/views.py:138 inventoryplanning/views.py:151
 msgid "safety stock minimum period of cover"
-msgstr ""
+msgstr "תקופת כיסוי מינימאלית למלאי ביטחון"
 
 #: inventoryplanning/models.py:82 inventoryplanning/models.py:122
 #: inventoryplanning/views.py:139 inventoryplanning/views.py:152
 msgid "safety stock maximum period of cover"
-msgstr ""
+msgstr "תקופת כיסוי מקסימאלית למלאי ביטחון"
 
 #: inventoryplanning/models.py:85 inventoryplanning/models.py:125
 #: inventoryplanning/models.py:250 inventoryplanning/views.py:143
 #: inventoryplanning/views.py:154
 msgid "Do not stock"
-msgstr ""
+msgstr "לא לשמור במלאי"
 
 #: inventoryplanning/models.py:86 inventoryplanning/models.py:126
 msgid "Enforces a safety stock of 0 and a reorder quantity of 1"
-msgstr ""
+msgstr "אכיפת מלאי ביטחון של 0 והזמנת כמות מחודשת של 1"
 
 #: inventoryplanning/models.py:89 inventoryplanning/models.py:129
 #: inventoryplanning/models.py:251 inventoryplanning/views.py:144
 #: inventoryplanning/views.py:155
 msgid "Push mode"
-msgstr ""
+msgstr "Push מצב"
 
 #: inventoryplanning/models.py:90 inventoryplanning/models.py:130
 msgid "Activate stock push mode which moves all inventory downstream"
-msgstr ""
+msgstr "הפעל את מצב דחיפת המלאי המעביר את כל המלאי במורד הזרם"
 
 #: inventoryplanning/models.py:93 inventoryplanning/models.py:97
 #: inventoryplanning/models.py:101 inventoryplanning/models.py:104
@@ -3401,216 +3582,216 @@ msgstr ""
 #: inventoryplanning/views.py:152 inventoryplanning/views.py:153
 #: inventoryplanning/views.py:154 inventoryplanning/views.py:155
 msgid "segment"
-msgstr ""
+msgstr "פלח"
 
 #: inventoryplanning/models.py:145
 msgid "inventory planning parameter"
-msgstr ""
+msgstr "פרמטר תכנון מלאי"
 
 #: inventoryplanning/models.py:146 inventoryplanning/views.py:122
 msgid "inventory planning parameters"
-msgstr ""
+msgstr "פרמטרים של תכנון המלאי"
 
 #: inventoryplanning/models.py:165 inventoryplanning/views.py:84
 msgid "query"
-msgstr ""
+msgstr "שאילתא"
 
 #: inventoryplanning/models.py:169
 msgid "sku_count"
-msgstr ""
+msgstr "ספירת מק\"ט"
 
 #: inventoryplanning/models.py:170
 msgid "Number of sku in the segment"
-msgstr ""
+msgstr "מספר המקט\"ים בפלח זה"
 
 #: inventoryplanning/models.py:241
 msgid "ROQ Minimum Quantity"
-msgstr ""
+msgstr "ROQ כמות מינמאלית של"
 
 #: inventoryplanning/models.py:242
 msgid "ROQ Maximum Quantity"
-msgstr ""
+msgstr "ROQ כמות מקסימאלית של"
 
 #: inventoryplanning/models.py:243
 msgid "ROQ Minimum Period of Cover (days)"
-msgstr ""
+msgstr "(בימים) ROQ תקופת כיסוי מינימאלית של"
 
 #: inventoryplanning/models.py:244
 msgid "ROQ Maximum Period of Cover (days)"
-msgstr ""
+msgstr "(בימים) ROQ תקופת כיסוי מקסימאלית של"
 
 #: inventoryplanning/models.py:245
 msgid "Service Level"
-msgstr ""
+msgstr "רמת שירות"
 
 #: inventoryplanning/models.py:246
 msgid "Safety Stock Minimum Quantity"
-msgstr ""
+msgstr "כמות מלאי ביטחון מינימאלי"
 
 #: inventoryplanning/models.py:247
 msgid "Safety Stock Maximum Quantity"
-msgstr ""
+msgstr "כמות מלאי ביטחון מקסימאלי"
 
 #: inventoryplanning/models.py:248
 msgid "Safety Stock Minimum Period of Cover (days)"
-msgstr ""
+msgstr "תקופת כיסוי מינימאלית של מלאי הביטחון (בימים)"
 
 #: inventoryplanning/models.py:249
 msgid "Safety Stock Maximum Period of Cover (days)"
-msgstr ""
+msgstr "תקופת כיסוי מקסימאלית של מלאי הביטחון (בימים)"
 
 #: inventoryplanning/models.py:257
 msgid "Business Rule"
-msgstr ""
+msgstr "כלל עסקי"
 
 #: inventoryplanning/models.py:319
 msgid "calculated reorder quantity"
-msgstr ""
+msgstr "חישוב כמות הזמנה מחודשת"
 
 #: inventoryplanning/models.py:320
 msgid "calculated safety stock"
-msgstr ""
+msgstr "חישוב מלאי ביטחון"
 
 #: inventoryplanning/models.py:327
 msgid "safety stock value"
-msgstr ""
+msgstr "ערך מלאי ביטחון"
 
 #: inventoryplanning/models.py:328
 msgid "reorder quantity value"
-msgstr ""
+msgstr "ערך הזמנה מחודשת"
 
 #: inventoryplanning/models.py:334
 #: inventoryplanning/templates/inventoryplanning/drp.html:1713
 #: inventoryplanning/views.py:259
 msgid "overdue sales orders"
-msgstr ""
+msgstr "איחור בהזמנות מכירה"
 
 #: inventoryplanning/models.py:335 inventoryplanning/views.py:260
 msgid "open sales orders"
-msgstr ""
+msgstr "הזמנות מכירה פתוחות"
 
 #: inventoryplanning/models.py:336 inventoryplanning/views.py:263
 msgid "proposed purchases"
-msgstr ""
+msgstr "רכישות מוצעות"
 
 #: inventoryplanning/models.py:337 inventoryplanning/views.py:264
 msgid "proposed transfers"
-msgstr ""
+msgstr "העברות מוצעות"
 
 #: inventoryplanning/models.py:338 inventoryplanning/views.py:261
 msgid "open purchases"
-msgstr ""
+msgstr "רכישות פתוחות"
 
 #: inventoryplanning/models.py:339 inventoryplanning/views.py:262
 msgid "open transfers"
-msgstr ""
+msgstr "הזמנות הפצה פתוחות"
 
 #: inventoryplanning/models.py:340
 msgid "onhand value"
-msgstr ""
+msgstr "ערך בהישג יד"
 
 #: inventoryplanning/models.py:341
 msgid "overdue sales orders value"
-msgstr ""
+msgstr "ערך איחור הזמנות מכירה"
 
 #: inventoryplanning/models.py:342
 msgid "open sales orders value"
-msgstr ""
+msgstr "ערך הזמנות מכירה פתוחות"
 
 #: inventoryplanning/models.py:343
 msgid "proposed purchases value"
-msgstr ""
+msgstr "ערך הצעות רכש"
 
 #: inventoryplanning/models.py:344
 msgid "proposed transfers value"
-msgstr ""
+msgstr "ערך הצעות העברות"
 
 #: inventoryplanning/models.py:345
 msgid "open purchases value"
-msgstr ""
+msgstr "ערך הזמנות רכש פתוחות"
 
 #: inventoryplanning/models.py:346
 msgid "open transfers value"
-msgstr ""
+msgstr "ערך הזמנות הפצה פתוחות"
 
 #: inventoryplanning/models.py:347 inventoryplanning/views.py:254
 msgid "local forecast"
-msgstr ""
+msgstr "תחזית מקומית"
 
 #: inventoryplanning/models.py:348
 #: inventoryplanning/templates/inventoryplanning/drp.html:709
 #: inventoryplanning/templates/inventoryplanning/drp.html:723
 #: inventoryplanning/views.py:255
 msgid "dependent demand"
-msgstr ""
+msgstr "ביקוש עצמאי"
 
 #: inventoryplanning/models.py:350
 msgid "local forecast value"
-msgstr ""
+msgstr "ערך תחזית מקומית"
 
 #: inventoryplanning/models.py:351
 msgid "dependent demand value"
-msgstr ""
+msgstr "ערך ביקוש עצמאי"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:149
 msgid "Unsaved changes"
-msgstr ""
+msgstr "קיימים שינויים שלא נשמרו"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:152
 msgid "Do you want to save your changes first?"
-msgstr ""
+msgstr "האם ברצונך לשמור קודם את השינויים שלך?"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:196
 #: inventoryplanning/templates/inventoryplanning/drp.html:653
 msgid "Error retrieving data"
-msgstr ""
+msgstr "שגיאה באחזור נתונים"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:671
 #: inventoryplanning/templates/inventoryplanning/drp.html:683
 msgid "total orders 3 years ago"
-msgstr ""
+msgstr "סה\"כ הזמנות 3 שנים אחורה"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:672
 #: inventoryplanning/templates/inventoryplanning/drp.html:684
 msgid "orders adjustment 3 years ago"
-msgstr ""
+msgstr "התאמת הזמנות 3 שנים אחורה"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:673
 #: inventoryplanning/templates/inventoryplanning/drp.html:685
 msgid "total orders 2 years ago"
-msgstr ""
+msgstr "סה\"כ הזמנות 2 שנים אחורה"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:674
 #: inventoryplanning/templates/inventoryplanning/drp.html:686
 msgid "orders adjustment 2 years ago"
-msgstr ""
+msgstr "התאמת הזמנות 2 שנים אחורה"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:675
 #: inventoryplanning/templates/inventoryplanning/drp.html:687
 msgid "total orders 1 year ago"
-msgstr ""
+msgstr "סה\"כ הזמנות 1 שנים אחורה"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:676
 #: inventoryplanning/templates/inventoryplanning/drp.html:688
 msgid "orders adjustment 1 year ago"
-msgstr ""
+msgstr "התאמת הזמנות 1 שנים אחורה"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:681
 #: inventoryplanning/templates/inventoryplanning/drp.html:693
 msgid "total forecast"
-msgstr ""
+msgstr "סה\"כ תחזית"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:703
 #: inventoryplanning/templates/inventoryplanning/drp.html:717
 #: inventoryplanning/templates/inventoryplanning/drp.html:1049
 msgid "reorder quantity override"
-msgstr ""
+msgstr "עקיפת כמות הזמנה מחודשת"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:705
 #: inventoryplanning/templates/inventoryplanning/drp.html:719
 #: inventoryplanning/templates/inventoryplanning/drp.html:1053
 msgid "safety stock override"
-msgstr ""
+msgstr "עקיפת מלאי ביטחון"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:706
 #: inventoryplanning/templates/inventoryplanning/drp.html:720
@@ -3619,28 +3800,28 @@ msgstr ""
 #: output/templates/output/buffer.html:151
 #: output/templates/output/buffer.html:265 output/views/buffer.py:87
 msgid "start inventory"
-msgstr ""
+msgstr "מלאי התחלתי"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:707
 #: inventoryplanning/templates/inventoryplanning/drp.html:721
 #: output/templates/output/buffer.html:149 output/views/buffer.py:88
 msgid "start inventory days of cover"
-msgstr ""
+msgstr "ימי כיסוי של מלאי התחלתי"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:708
 #: inventoryplanning/templates/inventoryplanning/drp.html:722
 msgid "local demand"
-msgstr ""
+msgstr "ביקוש מקומי"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:711
 #: inventoryplanning/templates/inventoryplanning/drp.html:725
 msgid "confirmed supply"
-msgstr ""
+msgstr "אספקה מאושרת"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:712
 #: inventoryplanning/templates/inventoryplanning/drp.html:726
 msgid "proposed supply"
-msgstr ""
+msgstr "אספקה מוצעת"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:714
 #: inventoryplanning/templates/inventoryplanning/drp.html:728
@@ -3648,68 +3829,68 @@ msgstr ""
 #: output/templates/output/buffer.html:168
 #: output/templates/output/buffer.html:276 output/views/buffer.py:98
 msgid "end inventory"
-msgstr ""
+msgstr "מלאי סופי"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:1169
 #: output/templates/output/buffer.html:272
 msgid "produced"
-msgstr ""
+msgstr "מיוצר"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:1170
 #: output/templates/output/buffer.html:268
 msgid "consumed"
-msgstr ""
+msgstr "נצרך"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:1720
 msgid "superseded"
-msgstr ""
+msgstr "הוחלף"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:1744
 #: inventoryplanning/templates/inventoryplanning/drp.html:1745
 #: inventoryplanning/templates/inventoryplanning/drp.html:1746
 #, python-format
 msgid "Last %(x)s months"
-msgstr ""
+msgstr "חודשים אחרונים %(x)s"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:1854
 msgid "Last Modified"
-msgstr ""
+msgstr "עודכן לאחרונה"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2057
 #: inventoryplanning/templates/inventoryplanning/drp.html:2064
 msgid "no grouping"
-msgstr ""
+msgstr "ללא קיבוץ"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2058
 #: inventoryplanning/templates/inventoryplanning/drp.html:2065
 msgid "group by item"
-msgstr ""
+msgstr "קבץ לפי פריט"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2059
 #: inventoryplanning/templates/inventoryplanning/drp.html:2066
 msgid "group by location"
-msgstr ""
+msgstr "קבץ לפי מיקום"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2108
 msgid "detail"
-msgstr ""
+msgstr "פרט"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2117
 msgid "Recalculate"
-msgstr ""
+msgstr "חישוב מחדש"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2117
 msgid "simulate changes without saving"
-msgstr ""
+msgstr "לדמות שינויים מבלי לשמור"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2122
 msgid "no"
-msgstr ""
+msgstr "לא"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2126
 #, python-format
 msgid "export to %(erp)s"
-msgstr ""
+msgstr "%(erp)s- ייצא ל"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2128
 #: inventoryplanning/templates/inventoryplanning/drp.html:2129
@@ -3717,67 +3898,67 @@ msgstr ""
 #: inventoryplanning/templates/inventoryplanning/drp.html:2131
 #, python-format
 msgid "change status to %(status)s"
-msgstr ""
+msgstr "%(status)s שנה סטאטוס ל"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2141
 msgid "attributes"
-msgstr ""
+msgstr "תכונות"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2144
 msgid "transactions"
-msgstr ""
+msgstr "עסקאות"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2156
 msgid "Item attributes"
-msgstr ""
+msgstr "תכונות פריט"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2165
 msgid "Inventory status"
-msgstr ""
+msgstr "סטאטוס מלאי"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2169
 msgid "Top 5 customers"
-msgstr ""
+msgstr "חמשת הלקוחות המובילים"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2176
 msgid "Buffer attributes"
-msgstr ""
+msgstr "תכונות חוצצות"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2183
 msgid "Location attributes"
-msgstr ""
+msgstr "תכונות-מיקום"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2192
 msgid "Network status"
-msgstr ""
+msgstr "סטאטוס רשת"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2199
 msgid "Supply information"
-msgstr ""
+msgstr "מידע על אספקה"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2221
 msgid "Parameters"
-msgstr ""
+msgstr "פרמטרים"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2272
 msgid "new item comment"
-msgstr ""
+msgstr "תגובה חדשה על פריט"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2273
 msgid "new item-location comment"
-msgstr ""
+msgstr "תגובה חדשה על פריט-מיקום"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2274
 msgid "new location comment"
-msgstr ""
+msgstr "תגובה חדשה על מיקום"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2277
 msgid "no comments yet"
-msgstr ""
+msgstr "אין תגובות עדיין"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2307
 msgid "computed safety stock"
-msgstr ""
+msgstr "מלאי ביטחון מחושב"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2308
 #: inventoryplanning/templates/inventoryplanning/drp.html:2327
@@ -3789,35 +3970,35 @@ msgstr ""
 #: output/widget.py:684 output/widget.py:693 output/widget.py:829
 #: output/widget.py:976 output/widget.py:985 output/widget.py:994
 msgid "units"
-msgstr ""
+msgstr "יחידות"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2321
 msgid "demand standard deviation"
-msgstr ""
+msgstr "סטיית תקן של הביקוש"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2330
 msgid "lead time standard deviation"
-msgstr ""
+msgstr "סטיית תקן של זמן הביצוע"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2339
 #: inventoryplanning/templates/inventoryplanning/drp.html:2389
 msgid "constrained by"
-msgstr ""
+msgstr "מוגבל על ידי"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2342
 #: inventoryplanning/templates/inventoryplanning/drp.html:2357
 #: inventoryplanning/templates/inventoryplanning/drp.html:2392
 #: inventoryplanning/templates/inventoryplanning/drp.html:2408
 msgid "between"
-msgstr ""
+msgstr "בין"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2382
 msgid "computed economic reorder quantity"
-msgstr ""
+msgstr "חישוב כמות הזמנה כלכלית"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2428
 msgid "Stocking policy"
-msgstr ""
+msgstr "מדיניות מלאי"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2433
 msgid ""
@@ -3826,16 +4007,20 @@ msgid ""
 "<br>This item-location will be planned with replenishments matching 1-to-1 "
 "with the demand.\" >Do not stock</span>"
 msgstr ""
+"<span data-toggle=\"tooltip\" data-placement=\"left\" data-html=\"true\" "
+"data-original-title=\"Zet de safety stock op 0 en reorderhoeveelheid op 1."
+"<br>Deze product-locatie wordt dan ingepland met een 1-op-1 matching tussen "
+"de vraag en supply.\" >Stockeer niet</span>"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2443
 #: inventoryplanning/templates/inventoryplanning/drp.html:2462
 msgid "true"
-msgstr ""
+msgstr "אמת"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2444
 #: inventoryplanning/templates/inventoryplanning/drp.html:2463
 msgid "false"
-msgstr ""
+msgstr "שקר"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2452
 msgid ""
@@ -3843,620 +4028,623 @@ msgid ""
 "data-original-title=\"In push mode, any excess inventory will be distributed "
 "downstream to child locations.\">Activates push mode</span>"
 msgstr ""
+"<span data-toggle=\"tooltip\" data-placement=\"left\" data-html=\"true\" "
+"data-original-title=\"In push mode wordt alle stock meteen downstream "
+"doorgezonden naar andere locaties.\">Activeer push mode</span>"
 
 #: inventoryplanning/views.py:76
 msgid "segments"
-msgstr ""
+msgstr "פלחים"
 
 #: inventoryplanning/views.py:85
 msgid "sku count"
-msgstr ""
+msgstr "ספירת מק\"ט"
 
 #: inventoryplanning/views.py:96
 msgid "business rules"
-msgstr ""
+msgstr "כללי עסקאות"
 
 #: inventoryplanning/views.py:105
 msgid "business rule"
-msgstr ""
+msgstr "כלל עסקי"
 
 #: inventoryplanning/views.py:258
 msgid "on hand"
-msgstr ""
+msgstr "בהישג יד"
 
 #: inventoryplanning/views.py:1003
 msgid "Buy"
-msgstr ""
+msgstr "קנה"
 
 #: inventoryplanning/views.py:1019
 msgid "Transport"
-msgstr ""
+msgstr "הובלה"
 
 #: inventoryplanning/views.py:1045
 msgid "Manufacture"
-msgstr ""
+msgstr "ייצור"
 
 #: inventoryplanning/views.py:1590 inventoryplanning/views.py:1632
 #: inventoryplanning/views.py:1677 inventoryplanning/views.py:1700
 #: inventoryplanning/views.py:1723 inventoryplanning/views.py:1746
 msgid "Invalid number"
-msgstr ""
+msgstr "מספר לא תקין"
 
 #: inventoryplanning/views.py:1650
 msgid "No forecast found"
-msgstr ""
+msgstr "תחזית לא נמצאה"
 
 #: inventoryplanning/widget.py:25
 msgid "Display the current status of your current inventory"
-msgstr ""
+msgstr "הצג את הסטאטוס של המלאי הנוכחי"
 
 #: inventoryplanning/widget.py:132
 msgid "green"
-msgstr ""
+msgstr "ירוק"
 
 #: inventoryplanning/widget.py:133
 msgid "yellow"
-msgstr ""
+msgstr "צהוב"
 
 #: inventoryplanning/widget.py:134
 msgid "red"
-msgstr ""
+msgstr "אדום"
 
 #: inventoryplanning/widget.py:149 output/widget.py:1383
 msgid "inventory by location"
-msgstr ""
+msgstr "מלאי לפי מיקום"
 
 #: inventoryplanning/widget.py:150 output/widget.py:1384
 msgid "Display the locations with the highest inventory value"
-msgstr ""
+msgstr "הצג את המיקומים עם ערך המלאי הגבוה ביותר"
 
 #: menu.py:23
 msgid "sales"
-msgstr ""
+msgstr "מכירות"
 
 #: menu.py:25 output/views/constraint.py:24
 msgid "capacity"
-msgstr ""
+msgstr "קיבולת"
 
 #: menu.py:26
 msgid "purchasing"
-msgstr ""
+msgstr "רכישה"
 
 #: menu.py:27
 msgid "distribution"
-msgstr ""
+msgstr "הפצה"
 
 #: menu.py:28
 msgid "manufacturing"
-msgstr ""
+msgstr "ייצור"
 
 #: menu.py:29
 msgid "admin"
-msgstr ""
+msgstr "מנהל"
 
 #: odoo/commands.py:52 odoo/commands.py:157
 msgid "Read Odoo data"
-msgstr ""
+msgstr "Odoo קרא את נתוני"
 
 #: odoo/commands.py:211
 msgid "Write results to Odoo"
-msgstr ""
+msgstr "Odoo כתוב תוצאות ל"
 
 #: odoo/views.py:45
 msgid "Invalid configuration parameters"
-msgstr ""
+msgstr "פרמטרי תצורה לא חוקיים"
 
 #: odoo/views.py:129 openbravo/views.py:94
 msgid "No proposed data records selected"
-msgstr ""
+msgstr "לא נבחרו רשומות נתונים מוצעות"
 
 #: openbravo/attributes.py:16
 msgid "vendor item name"
-msgstr ""
+msgstr "שם פריט הספק"
 
 #: openbravo/management/commands/openbravo_import.py:2653
 msgid ""
 "Import data changes in the last {{ delta }} days from the ERP into frePPLe."
-msgstr ""
+msgstr ".frePPLe. אל ERP ימים האחרונים {{ delta }} ייבא שינויים בנתונים מה."
 
 #: output/models.py:17 output/models.py:39 output/views/constraint.py:77
 #: output/views/problem.py:49
 msgid "entity"
-msgstr ""
+msgstr "ישות"
 
 #: output/models.py:24 output/models.py:46 output/views/constraint.py:84
 #: output/views/problem.py:56 output/widget.py:1231
 msgid "weight"
-msgstr ""
+msgstr "משקל"
 
 #: output/models.py:32
 msgid "problem"
-msgstr ""
+msgstr "בעיה"
 
 #: output/models.py:33
 msgid "problems"
-msgstr ""
+msgstr "בעיות"
 
 #: output/models.py:54
 msgid "constraint"
-msgstr ""
+msgstr "אילוץ"
 
 #: output/models.py:62 output/templates/output/resource.html:209
 #: output/templates/output/resource.html:265 output/views/resource.py:63
 msgid "unavailable"
-msgstr ""
+msgstr "לא זמין"
 
 #: output/models.py:64 output/templates/output/resource.html:213
 #: output/templates/output/resource.html:267 output/views/resource.py:65
 msgid "load"
-msgstr ""
+msgstr "טען"
 
 #: output/templates/output/buffer.html:154 output/views/buffer.py:95
 msgid "produced by MO"
-msgstr ""
+msgstr "יוצר על ידי MO"
 
 #: output/templates/output/buffer.html:157 output/views/buffer.py:96
 msgid "produced by DO"
-msgstr ""
+msgstr "יוצר על ידי DO"
 
 #: output/templates/output/buffer.html:160 output/views/buffer.py:91
 msgid "consumed by MO"
-msgstr ""
+msgstr "נצרך על ידי MO"
 
 #: output/templates/output/buffer.html:163 output/views/buffer.py:93
 msgid "consumed by SO"
-msgstr ""
+msgstr "נצרך על ידי SO"
 
 #: output/templates/output/buffer.html:166 output/views/buffer.py:92
 msgid "consumed by DO"
-msgstr ""
+msgstr "נצרך על ידי DO"
 
 #: output/templates/output/buffer.html:174 output/views/buffer.py:99
 msgid "total in progress"
-msgstr ""
+msgstr "סה\"כ בתהליך"
 
 #: output/templates/output/buffer.html:177 output/views/buffer.py:100
 msgid "work in progress MO"
-msgstr ""
+msgstr "עבודת התקדמות MO"
 
 #: output/templates/output/buffer.html:180 output/views/buffer.py:101
 msgid "on order PO"
-msgstr ""
+msgstr "בהזמנת PO"
 
 #: output/templates/output/buffer.html:183 output/views/buffer.py:102
 msgid "in transit DO"
-msgstr ""
+msgstr "בעסקה DO"
 
 #: output/templates/output/demand.html:141
 #: output/templates/output/demand.html:195
 #: output/templates/output/demand_forecast.html:115
 #: output/templates/output/demand_forecast.html:190 output/views/demand.py:43
 msgid "supply"
-msgstr ""
+msgstr "אספקה"
 
 #: output/templates/output/distribution_order_summary.html:214
 #: output/views/operation.py:662
 msgid "proposed shipping"
-msgstr ""
+msgstr "משלוח מוצע"
 
 #: output/templates/output/distribution_order_summary.html:216
 #: output/views/operation.py:663
 msgid "total shipping"
-msgstr ""
+msgstr "סה\"כ משלוח"
 
 #: output/templates/output/distribution_order_summary.html:218
 #: output/templates/output/purchase_order_summary.html:218
 #: output/views/operation.py:435 output/views/operation.py:664
 msgid "proposed receiving"
-msgstr ""
+msgstr "קבלה מוצעת"
 
 #: output/templates/output/distribution_order_summary.html:220
 #: output/templates/output/purchase_order_summary.html:220
 #: output/views/operation.py:436 output/views/operation.py:665
 msgid "total receiving"
-msgstr ""
+msgstr "סה\"כ קבלה"
 
 #: output/templates/output/distribution_order_summary.html:222
 #: output/views/operation.py:666
 msgid "proposed in transit"
-msgstr ""
+msgstr "העברה מוצעת"
 
 #: output/templates/output/distribution_order_summary.html:224
 #: output/views/operation.py:667
 msgid "total in transit"
-msgstr ""
+msgstr "סה\"כ בהעברה"
 
 #: output/templates/output/operation.html:281
 #: output/templates/output/operation.html:331 output/views/operation.py:152
 msgid "proposed starts"
-msgstr ""
+msgstr "התחלה מוצעת"
 
 #: output/templates/output/operation.html:283 output/views/operation.py:153
 msgid "total starts"
-msgstr ""
+msgstr "סה\"כ התחלות"
 
 #: output/templates/output/operation.html:285
 #: output/templates/output/operation.html:333 output/views/operation.py:154
 msgid "proposed ends"
-msgstr ""
+msgstr "סיום מוצע"
 
 #: output/templates/output/operation.html:287 output/views/operation.py:155
 msgid "total ends"
-msgstr ""
+msgstr "סה\"כ סיום"
 
 #: output/templates/output/operation.html:289
 #: output/templates/output/operation.html:335 output/views/operation.py:156
 msgid "proposed production"
-msgstr ""
+msgstr "ייצור מוצע"
 
 #: output/templates/output/operation.html:291 output/views/operation.py:157
 msgid "total production"
-msgstr ""
+msgstr "סה\"כ ייצור"
 
 #: output/templates/output/operation.html:330
 msgid "approved and confirmed starts"
-msgstr ""
+msgstr "התחלות מאושרות"
 
 #: output/templates/output/operation.html:332
 msgid "approved and confirmed ends"
-msgstr ""
+msgstr "סיום מאושר"
 
 #: output/templates/output/operation.html:334
 msgid "approved and confirmed production"
-msgstr ""
+msgstr "ייצור מאושר"
 
 #: output/templates/output/pegging.html:114
 msgid "zoom in"
-msgstr ""
+msgstr "הגדל"
 
 #: output/templates/output/pegging.html:115
 msgid "zoom out"
-msgstr ""
+msgstr "הקטן"
 
 #: output/templates/output/pegging.html:116
 msgctxt "Gantt"
 msgid "earlier"
-msgstr ""
+msgstr "מוקדם"
 
 #: output/templates/output/pegging.html:117
 msgctxt "Gantt"
 msgid "later"
-msgstr ""
+msgstr "מאוחר"
 
 #: output/templates/output/pegging.html:118
 msgctxt "Gantt"
 msgid "reset"
-msgstr ""
+msgstr "אתחל"
 
 #: output/templates/output/purchase_order_summary.html:214
 #: output/views/operation.py:433
 msgid "proposed ordering"
-msgstr ""
+msgstr "הזמנות מוצעות"
 
 #: output/templates/output/purchase_order_summary.html:216
 #: output/views/operation.py:434
 msgid "total ordering"
-msgstr ""
+msgstr "סה\"כ הזמנות"
 
 #: output/templates/output/purchase_order_summary.html:222
 #: output/views/operation.py:437
 msgid "proposed on order"
-msgstr ""
+msgstr "הזמנה מוצעת"
 
 #: output/templates/output/purchase_order_summary.html:224
 #: output/views/operation.py:438
 msgid "total on order"
-msgstr ""
+msgstr "סה\"כ הזמנות"
 
 #: output/templates/output/resource.html:269 output/views/constraint.py:29
 msgid "overload"
-msgstr ""
+msgstr "העמסת יתר"
 
 #: output/views/buffer.py:32
 msgid "Inventory report"
-msgstr ""
+msgstr "דוח מלאי"
 
 #: output/views/buffer.py:90
 msgid "total consumed"
-msgstr ""
+msgstr "סה\"כ נצרך"
 
 #: output/views/buffer.py:94
 msgid "total produced"
-msgstr ""
+msgstr "סה\"כ ייוצר"
 
 #: output/views/buffer.py:97
 msgid "produced by PO"
-msgstr ""
+msgstr "יוצר על ידי PO"
 
 #: output/views/buffer.py:304
 msgid "Inventory detail report"
-msgstr ""
+msgstr "דוח פירוט מלאי"
 
 #: output/views/buffer.py:371
 msgid "expected onhand"
-msgstr ""
+msgstr "בהישג יד צפוי"
 
 #: output/views/buffer.py:375
 msgid "operationplan quantity"
-msgstr ""
+msgstr "כמות תוכנית פעולה"
 
 #: output/views/buffer.py:376
 msgid "inventory_item"
-msgstr ""
+msgstr "פריט במלאי"
 
 #: output/views/constraint.py:23
 msgid "material"
-msgstr ""
+msgstr "חומר"
 
 #: output/views/constraint.py:30
 msgid "underload"
-msgstr ""
+msgstr "underload"
 
 #: output/views/constraint.py:31
 msgid "material excess"
-msgstr ""
+msgstr "עודף חומר"
 
 #: output/views/constraint.py:32
 msgid "material shortage"
-msgstr ""
+msgstr "חוסר בחומר"
 
 #: output/views/constraint.py:33
 msgid "excess"
-msgstr ""
+msgstr "עודף"
 
 #: output/views/constraint.py:34 output/widget.py:134
 msgid "short"
-msgstr ""
+msgstr "קצר"
 
 #: output/views/constraint.py:35
 msgid "early"
-msgstr ""
+msgstr "מוקדם"
 
 #: output/views/constraint.py:36
 msgid "late"
-msgstr ""
+msgstr "מאוחר"
 
 #: output/views/constraint.py:37
 msgid "unplanned"
-msgstr ""
+msgstr "לא תוכנן"
 
 #: output/views/constraint.py:38
 msgid "precedence"
-msgstr ""
+msgstr "קדימות"
 
 #: output/views/constraint.py:39
 msgid "before fence"
-msgstr ""
+msgstr "לפני חוצץ"
 
 #: output/views/constraint.py:40
 msgid "before current"
-msgstr ""
+msgstr "לפני הנוכחי"
 
 #: output/views/constraint.py:63
 msgid "Constraint report"
-msgstr ""
+msgstr "דוח אילוצים"
 
 #: output/views/demand.py:33 output/views/demand.py:198
 msgid "Demand report"
-msgstr ""
+msgstr "דוח ביקושים"
 
 #: output/views/demand.py:206
 msgid "net forecast"
-msgstr ""
+msgstr "תחזית נטו"
 
 #: output/views/demand.py:207
 msgid "orders"
-msgstr ""
+msgstr "הזמנות"
 
 #: output/views/kpi.py:19
 msgid "Performance Indicators"
-msgstr ""
+msgstr "מדדי ביצועים"
 
 #: output/views/operation.py:27
 msgid "Manufacturing order summary"
-msgstr ""
+msgstr "סיכום הזמנת ייצור"
 
 #: output/views/operation.py:335
 msgid "Purchase order summary"
-msgstr ""
+msgstr "סיכום הזמנת רכש"
 
 #: output/views/operation.py:567
 msgid "Distribution order summary"
-msgstr ""
+msgstr "סיכום הזמנת הפצה"
 
 #: output/views/pegging.py:27
 msgid "Demand plan"
-msgstr ""
+msgstr "תוכנית ביקוש"
 
 #: output/views/problem.py:38
 msgid "Problem report"
-msgstr ""
+msgstr "דוח בעיות"
 
 #: output/views/resource.py:31
 msgid "Resource report"
-msgstr ""
+msgstr "דוח משאבים"
 
 #: output/views/resource.py:48 output/views/resource.py:415
 msgid "setupmatrix"
-msgstr ""
+msgstr "הגדרת מטריצה"
 
 #: output/views/resource.py:55 output/views/resource.py:66
 msgid "utilization %"
-msgstr ""
+msgstr "יעילות %"
 
 #: output/views/resource.py:56
 msgid "available calendar"
-msgstr ""
+msgstr "לוח שנה זמין"
 
 #: output/views/resource.py:102
 msgid "hours"
-msgstr ""
+msgstr "שעות"
 
 #: output/views/resource.py:220
 msgid "Resource detail report"
-msgstr ""
+msgstr "דוח פירוט משאבים"
 
 #: output/views/resource.py:304
 msgid "net duration"
-msgstr ""
+msgstr "משך נטו"
 
 #: output/views/resource.py:311
 msgid "load quantity"
-msgstr ""
+msgstr "כמות העמסה"
 
 #: output/views/resource.py:314
 msgid "setup duration"
-msgstr ""
+msgstr "הגדרת משך"
 
 #: output/widget.py:31
 msgid "late orders"
-msgstr ""
+msgstr "הזמנות באיחור"
 
 #: output/widget.py:32
 msgid "Shows orders that will be delivered after their due date"
-msgstr ""
+msgstr "מציג הזמנות שיימסרו לאחר תאריך היעד שלהם"
 
 #: output/widget.py:70
 msgid "planned date"
-msgstr ""
+msgstr "תאריך מתוכנן"
 
 #: output/widget.py:95
 msgid "short orders"
-msgstr ""
+msgstr "הזמנות קצרות"
 
 #: output/widget.py:96
 msgid "Shows orders that are not planned completely"
-msgstr ""
+msgstr "מציג הזמנות שאינן מתוכננות לחלוטין"
 
 #: output/widget.py:157
 msgid "Shows manufacturing orders by start date"
-msgstr ""
+msgstr "מציג הזמנות ייצור לפי תאריך התחלה"
 
 #: output/widget.py:404 output/widget.py:413 output/widget.py:422
 #: output/widget.py:678 output/widget.py:687 output/widget.py:696
 #: output/widget.py:979 output/widget.py:988 output/widget.py:997
 msgid "Review"
-msgstr ""
+msgstr "סקירה"
 
 #: output/widget.py:405 output/widget.py:679 output/widget.py:980
 msgid "confirmed orders"
-msgstr ""
+msgstr "הזמנות מאושרות"
 
 #: output/widget.py:414 output/widget.py:423 output/widget.py:688
 #: output/widget.py:697 output/widget.py:989 output/widget.py:998
 #, python-format
 msgid "proposed orders within %(fence)s days"
-msgstr ""
+msgstr "ימים %(fence)s הצעות להזמנות תוך"
 
 #: output/widget.py:434
 msgid "Shows distribution orders by start date"
-msgstr ""
+msgstr "מציג הזמנות חלוקה לפי תאריך התחלה"
 
 #: output/widget.py:708
 msgid "Shows purchase orders by ordering date"
-msgstr ""
+msgstr "מציג הזמנות רכש לפי תאריך הזמנה"
 
 #: output/widget.py:1008
 msgid "purchase queue"
-msgstr ""
+msgstr "שאילתת רכש"
 
 #: output/widget.py:1009
 msgid "Display a list of new purchase orders"
-msgstr ""
+msgstr "הצג רשימת הזמנות רכש חדשות"
 
 #: output/widget.py:1048
 msgid "distribution queue"
-msgstr ""
+msgstr "שאילתת הפצה"
 
 #: output/widget.py:1049 output/widget.py:1089
 msgid "Display a list of new distribution orders"
-msgstr ""
+msgstr "הצג רשימת הזמנות הפצה חדשות"
 
 #: output/widget.py:1088
 msgid "shipping queue"
-msgstr ""
+msgstr "שאילתת משלוח"
 
 #: output/widget.py:1129
 msgid "resource queue"
-msgstr ""
+msgstr "שאילתת משאב"
 
 #: output/widget.py:1130
 msgid "Display planned activities for the resources"
-msgstr ""
+msgstr "הצגת פעילויות מתוכננות עבור המשאבים"
 
 #: output/widget.py:1173
 msgid "purchase order analysis"
-msgstr ""
+msgstr "ניתוח הזמנת רכש"
 
 #: output/widget.py:1174
 msgid "Analyse the urgency of existing purchase orders"
-msgstr ""
+msgstr "נתח את הדחיפות של הזמנות רכישה קיימות"
 
 #: output/widget.py:1213
 msgid "alerts"
-msgstr ""
+msgstr "התראות"
 
 #: output/widget.py:1214
 msgid "Overview of all alerts in the plan"
-msgstr ""
+msgstr "סקירה של כל האזהרות בתכנון"
 
 #: output/widget.py:1230
 msgid "count"
-msgstr ""
+msgstr "לספור"
 
 #: output/widget.py:1256
 msgid "demand alerts"
-msgstr ""
+msgstr "אזהרות ביקוש"
 
 #: output/widget.py:1265
 msgid "capacity alerts"
-msgstr ""
+msgstr "אזהרות קיבולת"
 
 #: output/widget.py:1274
 msgid "material alerts"
-msgstr ""
+msgstr "אזהרות חומרים"
 
 #: output/widget.py:1283
 msgid "resource utilization"
-msgstr ""
+msgstr "יעילות משאבים"
 
 #: output/widget.py:1284
 msgid "Shows the resources with the highest utilization"
-msgstr ""
+msgstr "הצג את המשאבים עם היעילות הגבוהה ביותר"
 
 #: output/widget.py:1475
 msgid "inventory by item"
-msgstr ""
+msgstr "מלאי לפי פריט"
 
 #: output/widget.py:1476
 msgid "Display the items with the highest inventory value"
-msgstr ""
+msgstr "הצג את הפריטים עם ערך המלאי הגבוה ביותר"
 
 #: output/widget.py:1564
 msgid "delivery performance"
-msgstr ""
+msgstr "ביצועי משלוח"
 
 #: output/widget.py:1565
 msgid ""
 "Shows the percentage of demands that are planned to be shipped completely on "
 "time"
-msgstr ""
+msgstr "מציג את אחוז ההזמנות המתוכננות להישלח באופן מלא בזמן"
 
 #: output/widget.py:1606
 msgid "On time delivery"
-msgstr ""
+msgstr "משלוח בזמן"
 
 #: planningboard/menu.py:20 planningboard/views.py:114
 msgid "Plan editor"
-msgstr ""
+msgstr "עורך תכנון"
 
 #: planningboard/models.py:32 planningboard/models.py:33
 msgid "chat history"
-msgstr ""
+msgstr "היסטורית שיחה"
 
 #: quoting/views.py:33
 msgid "quotes"
-msgstr ""
+msgstr "הצעות מחיר"
 
 #~ msgid "Total in Progress"
 #~ msgstr "Totaal in pogress"

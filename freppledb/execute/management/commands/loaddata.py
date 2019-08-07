@@ -24,7 +24,7 @@ from django.core.management.base import CommandError
 from django.core.management.commands import loaddata
 from django.db import connections, transaction
 from django.template import Template, RequestContext
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from freppledb.common.models import User
 from freppledb.common.middleware import _thread_locals

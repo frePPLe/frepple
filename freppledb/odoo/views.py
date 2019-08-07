@@ -26,7 +26,7 @@ from xml.sax.saxutils import quoteattr
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseServerError
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from django.views.decorators.csrf import csrf_protect
 
 from freppledb.input.models import PurchaseOrder, DistributionOrder, OperationPlan

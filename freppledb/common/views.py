@@ -31,7 +31,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.urls import reverse, resolve
 from django import forms
 from django.utils.encoding import force_text
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from django.utils.text import capfirst
 from django.contrib.auth.models import Group
 from django.utils import translation

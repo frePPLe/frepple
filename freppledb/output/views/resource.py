@@ -19,7 +19,7 @@ from django.db import connections
 from django.db.models.expressions import RawSQL
 from django.utils.encoding import force_text
 from django.utils.text import format_lazy
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from freppledb.boot import getAttributeFields
 from freppledb.input.models import Resource, Location

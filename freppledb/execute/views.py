@@ -28,7 +28,7 @@ from django.conf import settings
 from django.views import static
 from django.views.decorators.cache import never_cache
 from django.shortcuts import render
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from django.db import DEFAULT_DB_ALIAS
 from django.contrib.admin.views.decorators import staff_member_required
 from django.views.decorators.csrf import csrf_protect, csrf_exempt

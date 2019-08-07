@@ -23,7 +23,7 @@ import subprocess
 from django.core.management.base import BaseCommand, CommandError
 from django.db import DEFAULT_DB_ALIAS
 from django.conf import settings
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from django.utils.encoding import force_text
 from django.template import Template, RequestContext
 

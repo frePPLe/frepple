@@ -41,7 +41,7 @@ from django.db.models.fields import (
 from django.db.models.fields.related import RelatedField
 from django.forms.models import modelform_factory
 from django.utils import translation
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from django.utils.encoding import force_text
 from django.utils.text import get_text_list
 

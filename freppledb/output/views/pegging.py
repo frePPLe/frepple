@@ -19,7 +19,7 @@ from datetime import datetime, timedelta
 
 from django.db import connections
 from django.utils.encoding import force_text
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from freppledb.input.models import Demand
 from freppledb.common.report import GridReport, GridFieldText, GridFieldNumber

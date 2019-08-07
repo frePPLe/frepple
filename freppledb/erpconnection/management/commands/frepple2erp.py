@@ -22,7 +22,7 @@ from django.core.management.base import BaseCommand, CommandError
 from django.conf import settings
 from django.db import DEFAULT_DB_ALIAS, connections
 from django.template import Template, RequestContext
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from freppledb import VERSION
 from freppledb.common.models import User

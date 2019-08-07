@@ -22,7 +22,7 @@ from django.core.management.base import BaseCommand, CommandError
 from django.db import connections, DEFAULT_DB_ALIAS, transaction
 from django.conf import settings
 from django.utils.encoding import force_text
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from django.template import Template, RequestContext
 
 from freppledb.common.models import Bucket, BucketDetail

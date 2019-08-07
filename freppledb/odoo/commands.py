@@ -27,7 +27,7 @@ from django.utils.http import urlencode
 
 from django.db import DEFAULT_DB_ALIAS
 from django.conf import settings
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from freppledb.common.models import Parameter
 from freppledb.common.commands import PlanTaskRegistry, PlanTask

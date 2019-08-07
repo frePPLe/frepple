@@ -28,7 +28,7 @@ from django.db.models import FieldDoesNotExist
 from django.http import HttpResponse, Http404
 from django.http.response import StreamingHttpResponse, HttpResponseServerError
 from django.utils.decorators import method_decorator
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from django.utils.translation import ungettext
 from django.utils.encoding import force_text
 from django.utils.text import format_lazy

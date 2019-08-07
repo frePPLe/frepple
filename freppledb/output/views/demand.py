@@ -21,7 +21,7 @@ from django.conf import settings
 from django.contrib.admin.views.decorators import staff_member_required
 from django.db import connections
 from django.http import HttpResponseForbidden, HttpResponse, HttpResponseBadRequest
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from django.utils.encoding import force_text
 
 from freppledb.boot import getAttributeFields

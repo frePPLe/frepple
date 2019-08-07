@@ -72,7 +72,7 @@ from django.utils import translation
 from django.utils.decorators import method_decorator
 from django.utils.encoding import smart_str, force_text, force_str
 from django.utils.html import escape
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 from django.utils.formats import get_format
 from django.utils.text import capfirst, get_text_list, format_lazy
 from django.contrib.admin.models import LogEntry, CHANGE, ADDITION, DELETION

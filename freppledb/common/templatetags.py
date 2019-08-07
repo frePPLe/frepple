@@ -23,7 +23,7 @@ from django.contrib.admin.utils import unquote
 from django.template import Library, Node, Variable, TemplateSyntaxError
 from django.conf import settings
 from django.db import models, connections
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 from django.utils.http import urlquote
 from django.utils.encoding import iri_to_uri, force_text
 from django.utils.html import escape

@@ -157,27 +157,21 @@ class Command(BaseCommand):
                         models.remove("input.purchaseorder")
                         cursor.execute(
                             """
-              delete from operationplanresource
-              where operationplan_id in (
-                select operationplan.reference from operationplan
-                where type = 'PO'
-                )
-              """
+                            delete from operationplanresource
+                            where operationplan_id in (
+                              select operationplan.reference from operationplan
+                              where type = 'PO'
+                              )
+                            """
                         )
                         cursor.execute(
                             """
-              delete from operationplanmaterial
-              where operationplan_id in (
-                select operationplan.reference from operationplan
-                where type = 'PO'
-                )
-              """
-                        )
-                        cursor.execute(
+                            delete from operationplanmaterial
+                            where operationplan_id in (
+                              select operationplan.reference from operationplan
+                              where type = 'PO'
+                              )
                             """
-              update operationplan set demand_id = null%s where type = 'PO'
-            """
-                            % (", forecast = null" if hasForecast else "",)
                         )
                         cursor.execute("delete from operationplan where type = 'PO'")
                         key = ContentType.objects.get_for_model(
@@ -192,27 +186,21 @@ class Command(BaseCommand):
                         models.remove("input.distributionorder")
                         cursor.execute(
                             """
-              delete from operationplanresource
-              where operationplan_id in (
-                select operationplan.reference from operationplan
-                where type = 'DO'
-                )
-              """
+                            delete from operationplanresource
+                            where operationplan_id in (
+                              select operationplan.reference from operationplan
+                              where type = 'DO'
+                              )
+                            """
                         )
                         cursor.execute(
                             """
-              delete from operationplanmaterial
-              where operationplan_id in (
-                select operationplan.reference from operationplan
-                where type = 'DO'
-                )
-              """
-                        )
-                        cursor.execute(
+                            delete from operationplanmaterial
+                            where operationplan_id in (
+                              select operationplan.reference from operationplan
+                              where type = 'DO'
+                              )
                             """
-              update operationplan set demand_id = null%s where type = 'DO'
-            """
-                            % (", forecast = null" if hasForecast else "",)
                         )
                         cursor.execute("delete from operationplan where type = 'DO'")
                         key = ContentType.objects.get_for_model(
@@ -227,32 +215,21 @@ class Command(BaseCommand):
                         models.remove("input.manufacturingorder")
                         cursor.execute(
                             """
-              delete from operationplanmaterial
-              where operationplan_id in (
-                select operationplan.reference from operationplan
-                where type = 'MO'
-                )
-              """
+                            delete from operationplanmaterial
+                            where operationplan_id in (
+                              select operationplan.reference from operationplan
+                              where type = 'MO'
+                              )
+                          """
                         )
                         cursor.execute(
                             """
-              delete from operationplanresource
-              where operationplan_id in (
-                select operationplan.reference from operationplan
-                where type = 'MO'
-                )
-              """
-                        )
-                        cursor.execute(
+                            delete from operationplanresource
+                            where operationplan_id in (
+                              select operationplan.reference from operationplan
+                              where type = 'MO'
+                              )
                             """
-              update operationplan set demand_id = null%s where type = 'MO'
-            """
-                            % (", forecast = null" if hasForecast else "",)
-                        )
-                        cursor.execute(
-                            """
-              delete from operationplan where type = 'MO'
-            """
                         )
                         cursor.execute("delete from operationplan where type = 'MO'")
                         key = ContentType.objects.get_for_model(
@@ -267,27 +244,21 @@ class Command(BaseCommand):
                         models.remove("input.deliveryorder")
                         cursor.execute(
                             """
-              delete from operationplanmaterial
-              where operationplan_id in (
-                select operationplan.reference from operationplan
-                where type = 'DLVR'
-                )
-              """
+                            delete from operationplanmaterial
+                            where operationplan_id in (
+                            select operationplan.reference from operationplan
+                            where type = 'DLVR'
+                            )
+                            """
                         )
                         cursor.execute(
                             """
-              delete from operationplanresource
-              where operationplan_id in (
-                select operationplan.reference from operationplan
-                where type = 'DLVR'
-                )
-              """
-                        )
-                        cursor.execute(
+                            delete from operationplanresource
+                            where operationplan_id in (
+                              select operationplan.reference from operationplan
+                              where type = 'DLVR'
+                              )
                             """
-              update operationplan set demand_id = null%s where type = 'DLVR'
-              """
-                            % (", forecast = null" if hasForecast else "",)
                         )
                         cursor.execute("delete from operationplan where type = 'DLVR'")
                         key = ContentType.objects.get_for_model(

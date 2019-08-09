@@ -25,8 +25,8 @@ Different operation types exist:
   | FrePPLe automatically builds an alternate operation if the same item-location
     can be replenished in multiple ways: eg multiple operations to produce an item,
     multiple vendors for an item, multiple source locations for a distribution order,
-    a choice between making the item or purchasing it, etc... Explicitly adding
-    alternate operations in your model should no longer be required in many cases.
+    a choice between making the item or purchasing it, etc... **Explicitly adding
+    alternate operations in your model is no longer required.**
 
 * | `Operation_split`_:
   | This operation type plans the demand proportionally over a number of
@@ -227,7 +227,7 @@ search           string            Defines the order of preference among the alt
                                    * | MINCOST
                                      | Select the alternate which gives the lowest cost.
                                      | The cost includes the cost of all upstream operations,
-                                        resources and buffers.
+                                        resources and materials.
 
                                    * | MINPENALTY
                                      | Select the alternate which gives the lowest penalty.

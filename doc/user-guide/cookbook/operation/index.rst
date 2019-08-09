@@ -13,3 +13,4 @@ Using the template different manufacturing orders can be created at different da
    operation-posttime
    operation-routing
    operation-autofence
+   operation-alternate

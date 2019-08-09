@@ -381,3 +381,26 @@ class cookbooktest(TransactionTestCase):
             "resource",
             "resource-efficiency.expect",
         )
+        
+    def test_operation_alternate(self):
+        self.loadExcel(
+            settings.FREPPLE_HOME,
+            "..",
+            "doc",
+            "user-guide",
+            "cookbook",
+            "operation",
+            "operation-alternate.xlsx",
+        )
+        management.call_command("runplan", plantype=1, constraint=15, env="supply")
+        self.assertOperationplans(
+            settings.FREPPLE_HOME,
+            "..",
+            "doc",
+            "user-guide",
+            "cookbook",
+            "operation",
+            "operation-alternate.expect",
+        )
+
+

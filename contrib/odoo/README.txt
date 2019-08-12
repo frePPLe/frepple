@@ -3,8 +3,9 @@ This directory contains an addon for Odoo that provides a 2-way integration
 between frePPLe and Odoo.
 
 The connector is available for different odoo releases:
-  - v11: Supported, but not fully tested and validated yet.
-  - v10: Mainstream release targeted for any new developments.
+  - v12: Mainstream release targeted for any new developments.
+  - v11: Supported, but not fully tested and validated.
+  - v10: Supported, but not actively developed any longer.
   - v9: Supported, but not actively developed any longer.
   - v8: Deprecated and soon to be removed.
 
@@ -36,7 +37,7 @@ The module adds the following functionality in Odoo:
 
 Full documentation on the installation, configuration and data mapping is 
 available at:
-  https://frepple.com/docs/4.4/integration-guide/odoo-connector.html
+  https://frepple.com/docs/current/integration-guide/odoo-connector.html
 
 Here's the list of open issues for the connector (the list is not 
 necessarily complete...):

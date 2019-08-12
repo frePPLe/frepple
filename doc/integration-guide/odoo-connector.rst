@@ -35,8 +35,8 @@ The connector provides the following functionality:
   | Implemented as an odoo addon module, it is easy to customize the connector
     to your needs.
 
-* The integration has been developed and tested with v10 (main development
-  focus), v9 (support-only) and Odoo v8 (outdated).
+* The integration has been developed and tested with v12 (main development
+  focus), v11, v10 (support-only) and v9 (outdated).
 
 Here are the slides presented during the Odoo user conference in October 2016.
 

@@ -152,7 +152,7 @@ new1 = 6
 new2 = 0
 new3 = 0
 set_release:
-	for i in "configure.ac" "include/frepple/utils.h" "contrib/rpm/frepple.spec" "freppledb/__init__.py"  "freppledb/common/static/css/frepple.less" "bin/frepple.xsd" "contrib/debian/changelog" "doc/conf.py"; do \
+	for i in "configure.ac" "include/frepple/utils.h" "contrib/rpm/frepple.spec" "freppledb/__init__.py"  "freppledb/common/static/css/frepple.less" "bin/frepple.xsd" "contrib/debian/changelog" "contrib/odoo/addons_v8/frepple/__openerp__.py" "contrib/odoo/addons_v9/__openerp__.py" "contrib/odoo/addons_v10/frepple/__manifest__.py" "contrib/odoo/addons_v11/frepple/__manifest__.py" "contrib/odoo/addons_v12/frepple/__manifest__.py" "doc/conf.py"; do \
 		sed 's/$(old1)\.$(old2)\.$(old3)/$(new1).$(new2).$(new3)/g' $$i >out.tmp; \
 		mv out.tmp $$i; \
 	done

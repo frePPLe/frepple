@@ -35,6 +35,8 @@ Release notes
 - | The REST API for manufacturing orders now returns the resources and materials it uses.
   | Updated resources and materials can also written back with API.
 
+- Added support for integration with Odoo 12.
+
 .. rubric:: Third party components
 
 - | The third party components we depend on have been upgraded to new releases. Most

@@ -403,10 +403,15 @@ jQuery.extend($.fn.fmatter, {
       return '';
     if (options['colModel']['popup'] || rowdata.showdrilldown === '0')
       return cellvalue;
-    if (rowdata.hasOwnProperty('type') && (rowdata.type === 'PO' || rowdata.type === 'DO' || rowdata.type === 'DLVR' || rowdata.type === 'STCK' ))
-      return cellvalue; //don't show links for non existing operations
-    if (rowdata.hasOwnProperty('operationplan__type') && (rowdata.operationplan__type === 'PO' || rowdata.operationplan__type === 'DO' || rowdata.operationplan__type === 'DLVR' || rowdata.operationplan__type === 'STCK' ))
-      return cellvalue; //don't show links for non existing operations
+    if (options.colModel.name == "operation") {
+    	if (rowdata.hasOwnProperty('type') 
+    			&& (rowdata.type === 'PO' || rowdata.type === 'DO' || rowdata.type === 'DLVR' || rowdata.type === 'STCK' ))
+          return cellvalue; //don't show links for non existing operations
+      if (rowdata.hasOwnProperty('operationplan__type')
+      		&& (rowdata.operationplan__type === 'PO' || rowdata.operationplan__type === 'DO' 
+      			|| rowdata.operationplan__type === 'DLVR' || rowdata.operationplan__type === 'STCK' ))
+          return cellvalue; //don't show links for non existing operations
+    }
     return cellvalue 
       + "<a href='" + url_prefix + "/detail/" + options.colModel.role + "/" + admin_escape(cellvalue) 
       + "/' onclick='event.stopPropagation()'><span class='leftpadding fa fa-caret-right'></span></a>";

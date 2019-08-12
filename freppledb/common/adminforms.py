@@ -522,9 +522,18 @@ class MultiDBModelAdmin(admin.ModelAdmin):
 
         try:
             # frePPLe specific: Delete delete-confirmation and edit pages from the crumbs
+            # Lastcrumb has a URL like /data/input/customer/B/delete/
+            # Editing page of this object is /data/input/customer/B/change/
+            # Detail page of this object is /detail/input/customer/B/
+            lastcrumb = request.session["crumbs"][request.prefix][-1][2]
+            lastcrumbcore = lastcrumb[6:-8]
+            detailpages = [
+                "/data/%s/change" % lastcrumbcore,
+                "/detail/%s/" % lastcrumbcore,
+            ]
             del request.session["crumbs"][request.prefix][-1]
-            # TODO the edit page is not always in the crumbs. you can delete from the list view
-            del request.session["crumbs"][request.prefix][-1]
+            if request.session["crumbs"][request.prefix][-1][2] in detailpages:
+                del request.session["crumbs"][request.prefix][-1]
         except:
             pass
 

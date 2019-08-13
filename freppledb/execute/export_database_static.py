@@ -582,7 +582,7 @@ class exportStaticModel(object):
                 insert into buffer
                 (description,location_id,item_id,onhand,minimum,minimum_calendar_id,
                 type,category,subcategory,source,lastmodified)
-                values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
+                values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
                 """,
                 [
                     (

@@ -1008,12 +1008,10 @@ class DeliveryOrder_admin(MultiDBModelAdmin):
         "delay",
         "operation",
         "owner",
-        "color" "origin",
+        "color",
+        "origin",
         "destination",
         "name",
-        "due",
-        "startdate",
-        "enddate",
         "supplier",
     )
     tabs = [

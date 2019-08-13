@@ -557,6 +557,11 @@ class XMLSerializer : public Serializer {
           << t3.stringAttribute() << val3 << "\"/>\n";
   }
 
+  void writeElement(const Keyword& u, const PooledString& v, const double val) {
+    *m_fp << indentstring << u.stringStartElement() << " " << v << "=\"" << val
+          << "\"/>\n";
+  }
+
   /** Writes a C-type character string.<br>
    * Output: \<TAG_T\>val\</TAG_T\> */
   void writeElement(const Keyword& t, const char* val) {

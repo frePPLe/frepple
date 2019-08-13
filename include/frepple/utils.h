@@ -194,6 +194,7 @@ namespace utils {
 class Object;
 class Serializer;
 class Keyword;
+class PooledString;
 class DataInput;
 class DataValue;
 class PythonFunction;
@@ -2285,6 +2286,9 @@ class Serializer {
   /** Write a double value enclosed opening and closing tags. */
   virtual void writeElement(const Keyword& t, const double val) = 0;
 
+  virtual void writeElement(const Keyword& t, const PooledString& p,
+                            const double val) = 0;
+
   /** Write a boolean value enclosed opening and closing tags. The boolean
    * is written out as the string 'true' or 'false'.
    */
@@ -3267,7 +3271,7 @@ class Object : public PyObject {
   }
 
   /** Method to write custom properties to a serializer. */
-  void writeProperties(Serializer&) const;
+  virtual void writeProperties(Serializer&) const;
 
   /** Returns whether an entity is real or dummy. */
   virtual bool getHidden() const { return false; }

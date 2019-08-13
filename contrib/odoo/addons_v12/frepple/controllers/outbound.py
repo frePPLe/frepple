@@ -931,7 +931,6 @@ class exporter(object):
             #                             priority, minship,status, quoteattr(product['name']),
             #                             quoteattr(customer), quoteattr(location)
             #                         )
-            logger.warning("due %s %s" % (due, due.__class__))
             yield '<demand name=%s quantity="%s" due="%s" priority="%s" minshipment="%s" status="%s"><item name=%s/><customer name=%s/><location name=%s/></demand>\n' % (
                 quoteattr(name),
                 qty,

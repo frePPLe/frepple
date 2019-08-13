@@ -175,11 +175,13 @@ class exportStaticModel(object):
                 cursor.execute("delete from calendarbucket")
 
             cursor.executemany(
-                "insert into calendarbucket \
-        (calendar_id,startdate,enddate,id,priority,value, \
-        sunday,monday,tuesday,wednesday,thursday,friday,saturday, \
-        starttime,endtime,source,lastmodified) \
-        values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)",
+                """
+                insert into calendarbucket
+                (calendar_id,startdate,enddate,id,priority,value,
+                sunday,monday,tuesday,wednesday,thursday,friday,saturday,
+                starttime,endtime,source,lastmodified)
+                values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
+                """,
                 [
                     (
                         i[0].calendar.name,
@@ -213,6 +215,7 @@ class exportStaticModel(object):
             default_end = datetime.datetime(2030, 12, 31)
             cursor.execute("SELECT name FROM operation")
             primary_keys = set([i[0] for i in cursor.fetchall()])
+            # Export parent operations first
             cursor.executemany(
                 """
                 insert into operation
@@ -257,15 +260,71 @@ class exportStaticModel(object):
                         if i.effective_start != default_start
                         else None,
                         i.effective_end if i.effective_end != default_end else None,
-                        i.owner.name if i.owner else None,
+                        i.owner.name if i.owner and not i.owner.hidden else None,
                         self.timestamp,
                     )
                     for i in frepple.operations()
                     if i.name not in primary_keys
                     and not i.hidden
                     and not isinstance(i, frepple.operation_itemsupplier)
-                    and i.name != "setup operation"
                     and (not self.source or self.source == i.source)
+                    and not (i.owner and not i.owner.hidden)
+                ],
+            )
+            # Export child operations
+            cursor.executemany(
+                """
+                insert into operation
+                (name,fence,posttime,sizeminimum,sizemultiple,sizemaximum,type,
+                duration,duration_per,location_id,cost,search,description,category,
+                subcategory,source,item_id,priority,effective_start,effective_end,
+                owner_id,lastmodified)
+                values(%s,%s * interval '1 second',%s * interval '1 second',%s,%s,
+                %s,%s,%s * interval '1 second',%s * interval '1 second',%s,%s,%s,
+                %s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
+                """,
+                [
+                    (
+                        i.name,
+                        i.fence,
+                        i.posttime,
+                        round(i.size_minimum, 8),
+                        round(i.size_multiple, 8),
+                        i.size_maximum < 9999999999999
+                        and round(i.size_maximum, 8)
+                        or None,
+                        i.__class__.__name__[10:],
+                        isinstance(
+                            i,
+                            (frepple.operation_fixed_time, frepple.operation_time_per),
+                        )
+                        and i.duration
+                        or None,
+                        isinstance(i, frepple.operation_time_per)
+                        and i.duration_per
+                        or None,
+                        i.location and i.location.name or None,
+                        round(i.cost, 8),
+                        isinstance(i, frepple.operation_alternate) and i.search or None,
+                        i.description,
+                        i.category,
+                        i.subcategory,
+                        i.source,
+                        i.item.name if i.item else None,
+                        i.priority if i.priority != 1 else None,
+                        i.effective_start
+                        if i.effective_start != default_start
+                        else None,
+                        i.effective_end if i.effective_end != default_end else None,
+                        i.owner.name if i.owner and not i.owner.hidden else None,
+                        self.timestamp,
+                    )
+                    for i in frepple.operations()
+                    if i.name not in primary_keys
+                    and not i.hidden
+                    and not isinstance(i, frepple.operation_itemsupplier)
+                    and (not self.source or self.source == i.source)
+                    and (i.owner and not i.owner.hidden)
                 ],
             )
             cursor.executemany(
@@ -516,16 +575,17 @@ class exportStaticModel(object):
         with transaction.atomic(using=self.database, savepoint=False):
             print("Exporting buffers...")
             starttime = time()
-            cursor.execute("SELECT name FROM buffer")
+            cursor.execute("SELECT item_id || ' @ ' || location_id FROM buffer")
             primary_keys = set([i[0] for i in cursor.fetchall()])
             cursor.executemany(
-                "insert into buffer \
-        (name,description,location_id,item_id,onhand,minimum,minimum_calendar_id, \
-        type,category,subcategory,source,lastmodified) \
-        values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)",
+                """
+                insert into buffer
+                (description,location_id,item_id,onhand,minimum,minimum_calendar_id,
+                type,category,subcategory,source,lastmodified)
+                values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
+                """,
                 [
                     (
-                        i.name,
                         i.description,
                         i.location and i.location.name or None,
                         i.item and i.item.name or None,
@@ -545,16 +605,16 @@ class exportStaticModel(object):
                 ],
             )
             cursor.executemany(
-                "update buffer \
-         set description=%s, location_id=%s, item_id=%s, onhand=%s, \
-         minimum=%s, minimum_calendar_id=%s, type=%s, \
-         category=%s, subcategory=%s, source=%s, lastmodified=%s \
-         where name=%s",
+                """
+                update buffer
+                set description=%s, onhand=%s,
+                  minimum=%s, minimum_calendar_id=%s, type=%s, \
+                  category=%s, subcategory=%s, source=%s, lastmodified=%s \
+                where location_id=%s and item_id=%s
+                """,
                 [
                     (
                         i.description,
-                        i.location and i.location.name or None,
-                        i.item and i.item.name or None,
                         round(i.onhand, 8),
                         round(i.minimum, 8),
                         i.minimum_calendar and i.minimum_calendar.name or None,
@@ -563,20 +623,13 @@ class exportStaticModel(object):
                         i.subcategory,
                         i.source,
                         self.timestamp,
-                        i.name,
+                        i.location and i.location.name or None,
+                        i.item and i.item.name or None,
                     )
                     for i in frepple.buffers()
                     if i.name in primary_keys
                     and not i.hidden
                     and (not self.source or self.source == i.source)
-                ],
-            )
-            cursor.executemany(
-                "update buffer set owner_id=%s where name=%s",
-                [
-                    (i.owner.name, i.name)
-                    for i in frepple.buffers()
-                    if i.owner and not i.hidden
                 ],
             )
             print("Exported buffers in %.2f seconds" % (time() - starttime))

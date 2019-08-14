@@ -72,6 +72,7 @@ class MakePlanFeasible(PlanTask):
                 loglevel = maxloglevel
 
         # Propagate the operationplan status
+        logger.info("Propagating work-in-progress status information")
         frepple.solver_propagateStatus(loglevel=loglevel).solve()
 
         # Update the feasibility flag of all operationplans

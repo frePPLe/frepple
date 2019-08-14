@@ -1930,7 +1930,7 @@ class OperationPlan : public Object,
    * undoable: eg after changing the status from proposed to closed, we can't go
    * back to the previous situation any more.
    */
-  void propagateStatus();
+  void propagateStatus(bool log = false);
 
   /** Remove the setup event. */
   void clearSetupEvent() {

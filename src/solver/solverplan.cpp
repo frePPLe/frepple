@@ -652,6 +652,7 @@ PyObject* SolverPropagateStatus::solve(PyObject* self, PyObject* args) {
 void SolverPropagateStatus::solve(void* v) {
   short lvl = 0;
   bool operationsfound;
+  bool log = getLogLevel() > 0;
   do {
     operationsfound = false;
     for (auto oper = Operation::begin(); oper != Operation::end(); ++oper) {
@@ -660,11 +661,8 @@ void SolverPropagateStatus::solve(void* v) {
       for (auto opplan = oper->getOperationPlans();
            opplan != OperationPlan::end(); ++opplan) {
         if (opplan->getSubOperationPlans() == OperationPlan::end() &&
-            (opplan->getClosed() || opplan->getCompleted()) &&
-            !opplan->getOperation()->hasType<OperationInventory>()) {
-          if (getLogLevel() > 0) logger << " propagating " << &*opplan << endl;
-          opplan->propagateStatus();
-        }
+            (opplan->getClosed() || opplan->getCompleted()))
+          opplan->propagateStatus(log);
       }
     }
     lvl += 1;

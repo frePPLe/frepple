@@ -1313,7 +1313,8 @@ void OperationPlan::scanSetupTimes() {
       }
       --resldplan;
     }
-    
+    
+
     // Scan forward until the first operationplan with a setup.
     resldplan = ldplan->getResource()->getLoadPlans().begin(&*ldplan);
     ++resldplan;
@@ -1570,7 +1571,7 @@ void OperationPlan::setClosed(bool b) {
   propagateStatus();
 }
 
-void OperationPlan::propagateStatus() {
+void OperationPlan::propagateStatus(bool log) {
   if (getOperation()->hasType<OperationInventory>()) return;
 
   // Assure that all child operationplans also get the same status
@@ -1579,20 +1580,41 @@ void OperationPlan::propagateStatus() {
        subopplan = subopplan->nextsubopplan)
     if (subopplan->getStatus() != mystatus) {
       subopplan->setStatus(mystatus);
-      subopplan->propagateStatus();
+      subopplan->propagateStatus(log);
     }
 
   if (mystatus != "completed" && mystatus != "closed") return;
 
+  bool firstlog = true;
+
   // Assure the start and end date are in the past
-  if (getEnd() > Plan::instance().getCurrent())
+  if (getEnd() > Plan::instance().getCurrent()) {
+    if (log) {
+      if (firstlog) {
+        firstlog = false;
+        logger << "Propagating " << this << endl;
+      }
+      logger << "    Adjusting end date to " << Plan::instance().getCurrent()
+             << endl;
+    }
     setOperationPlanParameters(quantity, Date::infinitePast,
                                Plan::instance().getCurrent(), false);
+  }
 
   if (getOwner() && getOwner()->getOperation()->hasType<OperationRouting>()) {
     // Assure that previous routing steps are also marked closed or completed
     for (auto prev = prevsubopplan; prev; prev = prev->prevsubopplan)
-      if (prev->getStatus() != mystatus) prev->setStatus(mystatus);
+      if (prev->getStatus() != mystatus) {
+        if (log) {
+          if (firstlog) {
+            firstlog = false;
+            logger << "Propagating " << this << endl;
+          }
+          logger << "    Changing status of previous routing step " << prev
+                 << endl;
+        }
+        prev->setStatus(mystatus);
+      }
     // Assure that the parent routing gets at least the status approved
     bool all_steps_completed = true;
     bool all_steps_closed = true;
@@ -1604,9 +1626,23 @@ void OperationPlan::propagateStatus() {
     if (all_steps_closed) {
       getOwner()->flags |= STATUS_CONFIRMED + STATUS_CLOSED;
       getOwner()->flags &= ~(STATUS_APPROVED + STATUS_COMPLETED);
+      if (log) {
+        if (firstlog) {
+          firstlog = false;
+          logger << "Propagating " << this << endl;
+        }
+        logger << "    Marking routing as closed " << getOwner() << endl;
+      }
     } else if (all_steps_completed) {
       getOwner()->flags |= STATUS_CONFIRMED + STATUS_COMPLETED;
       getOwner()->flags &= ~(STATUS_APPROVED + STATUS_CLOSED);
+      if (log) {
+        if (firstlog) {
+          firstlog = false;
+          logger << "Propagating " << this << endl;
+        }
+        logger << "    Marking routing as completed " << getOwner() << endl;
+      }
     } else if (getOwner()->getProposed()) {
       for (auto subopplan = getOwner()->firstsubopplan; subopplan;
            subopplan = subopplan->nextsubopplan)
@@ -1614,6 +1650,13 @@ void OperationPlan::propagateStatus() {
       getOwner()->flags |= STATUS_APPROVED;
       getOwner()->flags &=
           ~(STATUS_CONFIRMED + STATUS_COMPLETED + STATUS_CLOSED);
+      if (log) {
+        if (firstlog) {
+          firstlog = false;
+          logger << "Propagating " << this << endl;
+        }
+        logger << "    Marking routing as approved " << getOwner() << endl;
+      }
     }
   }
 
@@ -1623,7 +1666,7 @@ void OperationPlan::propagateStatus() {
     if (myflpln->getQuantity() >= 0) continue;
 
     // Get current status
-    double closed_balance = ROUNDING_ERROR;
+    double closed_balance = 0.0;
     auto tmline = myflpln->getBuffer()->getFlowPlans();
     for (auto flpln = tmline.begin(); flpln != tmline.end(); ++flpln)
       if (flpln->getOperationPlan() &&
@@ -1632,57 +1675,106 @@ void OperationPlan::propagateStatus() {
           flpln->getDate() <= myflpln->getDate())
         closed_balance += flpln->getQuantity();
 
-    if (closed_balance < 0.0) {
+    if (closed_balance < -ROUNDING_ERROR) {
       // Things don't add up here.
       // We'll close some upstream supply to make things match up
-
+      if (log) {
+        if (firstlog) {
+          firstlog = false;
+          logger << "Propagating " << this << endl;
+        }
+        logger << "    Available material balance on " << myflpln->getBuffer()
+               << " short of " << closed_balance << " on " << myflpln->getDate()
+               << endl;
+      }
       // 1) Correct the date of existing completed supply
       for (auto flpln = tmline.begin(); flpln != tmline.end(); ++flpln)
         if (flpln->getQuantity() > 0.0 && flpln->getOperationPlan() &&
             (flpln->getOperationPlan()->getClosed() ||
              flpln->getOperationPlan()->getCompleted()) &&
             flpln->getDate() > myflpln->getDate()) {
+          if (log) {
+            if (firstlog) {
+              firstlog = false;
+              logger << "Propagating " << this << endl;
+            }
+            logger << "      Adjusting end date of "
+                   << flpln->getOperationPlan() << endl;
+          }
           flpln->getOperationPlan()->setStartAndEnd(
               flpln->getOperationPlan()->getStart() < myflpln->getDate()
                   ? flpln->getOperationPlan()->getStart()
                   : myflpln->getDate(),
               myflpln->getDate());
           closed_balance += flpln->getQuantity();
-          if (closed_balance >= 0.0) break;
+          if (closed_balance >= -ROUNDING_ERROR) break;
         }
-      if (closed_balance < 0.0) {
+      if (closed_balance < -ROUNDING_ERROR) {
         // 2) try changing the status of confirmed supply
         for (auto flpln = tmline.begin(); flpln != tmline.end(); ++flpln)
           if (flpln->getQuantity() > 0.0 && flpln->getOperationPlan() &&
               flpln->getOperationPlan()->getConfirmed() &&
               !flpln->getOperationPlan()->getClosed() &&
               !flpln->getOperationPlan()->getCompleted()) {
+            if (log) {
+              if (firstlog) {
+                firstlog = false;
+                logger << "Propagating " << this << endl;
+              }
+              logger << "      Changing status of " << flpln->getOperationPlan()
+                     << endl;
+            }
             flpln->getOperationPlan()->setStatus(mystatus);
             closed_balance += flpln->getQuantity();
-            if (closed_balance >= 0.0) break;
+            if (closed_balance >= -ROUNDING_ERROR) break;
           }
-        if (closed_balance < 0.0) {
+        if (closed_balance < -ROUNDING_ERROR) {
           // 3) try changing the status of approved supply
           for (auto flpln = tmline.begin(); flpln != tmline.end(); ++flpln)
             if (flpln->getQuantity() > 0.0 && flpln->getOperationPlan() &&
                 flpln->getOperationPlan()->getApproved()) {
+              if (log) {
+                if (firstlog) {
+                  firstlog = false;
+                  logger << "Propagating " << this << endl;
+                }
+                logger << "      Changing status of "
+                       << flpln->getOperationPlan() << endl;
+              }
               flpln->getOperationPlan()->setStatus(mystatus);
               closed_balance += flpln->getQuantity();
-              if (closed_balance >= 0.0) break;
+              if (closed_balance >= -ROUNDING_ERROR) break;
             }
-          if (closed_balance < 0.0) {
+          if (closed_balance < -ROUNDING_ERROR) {
             // 4) Try changing the status of proposed supply
             for (auto flpln = tmline.begin(); flpln != tmline.end(); ++flpln)
               if (flpln->getQuantity() > 0.0 && flpln->getOperationPlan() &&
                   flpln->getOperationPlan()->getProposed()) {
+                if (log) {
+                  if (firstlog) {
+                    firstlog = false;
+                    logger << "Propagating " << this << endl;
+                  }
+                  logger << "      Changing status of "
+                         << flpln->getOperationPlan() << endl;
+                }
                 flpln->getOperationPlan()->setStatus(mystatus);
                 closed_balance += flpln->getQuantity();
-                if (closed_balance >= 0.0) break;
+                if (closed_balance >= -ROUNDING_ERROR) break;
               }
             // 5) Finally, update the initial inventory
-            if (closed_balance < 0)
+            if (closed_balance < -ROUNDING_ERROR) {
+              if (log) {
+                if (firstlog) {
+                  firstlog = false;
+                  logger << "Propagating " << this << endl;
+                }
+                logger << "      Incrementing initial inventory with "
+                       << -closed_balance << endl;
+              }
               myflpln->getBuffer()->setOnHand(
                   myflpln->getBuffer()->getOnHand() - closed_balance);
+            }
           }
         }
       }

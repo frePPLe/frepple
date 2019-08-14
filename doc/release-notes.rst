@@ -6,9 +6,6 @@ Release notes
 
 .. rubric:: Production planning
 
-- Bug fix in the status propagation of completed manufacturing 
-  orders on routing operations.
-
 - | The name column in the 
     `buffer table <user-guide/model-reference/buffer.html>`_ is removed. The item and location
     fields are what uniquely defines a buffer.
@@ -21,6 +18,8 @@ Release notes
 - When generating a constrained plan, the material constraint has been removed. It didn't really
   have any impact on the plan algorith. The constraints actually used by the planning engine are
   capacity, lead time and the operation time fence.  
+
+- Bug fixes and improved log messages in the propagation of work-in-progress status information.
 
 .. rubric:: User interface
 

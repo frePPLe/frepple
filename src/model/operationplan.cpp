@@ -318,8 +318,12 @@ Object* OperationPlan::createOperationPlan(const MetaClass* cat,
   if (endfld) end = endfld->getDate();
   const DataValue* quantityfld = in.get(Tags::quantity);
   double quantity = quantityfld ? quantityfld->getDouble() : 0.0;
+  bool statuspropagation = true;
   const DataValue* statusfld = in.get(Tags::status);
-  if (!statusfld) statusfld = in.get(Tags::statusNoPropagation);
+  if (!statusfld) {
+    statusfld = in.get(Tags::statusNoPropagation);
+    statuspropagation = false;
+  }
 
   // Return the existing operationplan
   if (opplan) {
@@ -617,7 +621,7 @@ Object* OperationPlan::createOperationPlan(const MetaClass* cat,
   // Subsequent calls won't affect the operationplan any longer.
   if (statusfld && statusfld->getString() != "proposed") {
     string status = statusfld->getString();
-    opplan->setStatus(status);
+    opplan->setStatus(status, statuspropagation);
     opplan->freezeStatus(start ? start : opplan->getStart(),
                          end ? end : opplan->getEnd(), quantity);
   }

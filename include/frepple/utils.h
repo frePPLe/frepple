@@ -18,12 +18,6 @@
  *                                                                         *
  ***************************************************************************/
 
-/** @file utils.h
- * @brief Header file for auxilary classes.
- *
- * @namespace frepple::utils
- * @brief Utilities for the frePPle core
- */
 #pragma once
 #ifndef FREPPLE_UTILS_H
 #define FREPPLE_UTILS_H
@@ -91,7 +85,6 @@ typedef int Py_ssize_t;
 #include <strings.h>
 #endif
 
-// STL include files
 #include <algorithm>
 #include <forward_list>
 #include <list>
@@ -99,13 +92,12 @@ typedef int Py_ssize_t;
 #include <set>
 #include <stack>
 #include <string>
+#include <thread>
 #include <unordered_map>
 #include <vector>
 using namespace std;
 
-/** @def PACKAGE_VERSION
- * Defines the version of frePPLe.
- */
+// Defines the version of frePPLe.
 #ifdef HAVE_CONFIG_H
 #undef PACKAGE_BUGREPORT
 #undef PACKAGE_NAME
@@ -116,19 +108,6 @@ using namespace std;
 #else
 // Define the version for (windows) compilers that don't use autoconf
 #define PACKAGE_VERSION "6.0.0"
-#endif
-
-// Header for multithreading
-#include <chrono>
-#include <thread>
-#if defined(HAVE_PTHREAD_H)
-#include <pthread.h>
-#elif defined(WIN32)
-#define WIN32_LEAN_AND_MEAN
-#include <process.h>
-#include <windows.h>
-#else
-#error Multithreading not supported on your platform
 #endif
 
 // For the disabled and ansi-challenged people...
@@ -145,21 +124,19 @@ using namespace std;
 #endif
 #endif
 
-/** @def ROUNDING_ERROR
+/* @def ROUNDING_ERROR
  * This constant defines the magnitude of what can still be considered
  * as a rounding error.
  */
 #define ROUNDING_ERROR 0.000001
 
-/** @def DECLARE_EXPORT
- * Used to define which symbols to export from a Windows DLL.
- * @def MODULE_EXPORT
- * Signature used for a module initialization routine. It assures the
- * function is exported appropriately when running on Windows.<br>
- * A module will need to define a function with the following prototype:
- * @code
- * MODULE_EXPORT string initialize();
- * @endcode
+/* - DECLARE_EXPORT
+ *   Used to define which symbols to export from a Windows DLL.
+ * - MODULE_EXPORT
+ *   Signature used for a module initialization routine. It assures the
+ *   function is exported appropriately when running on Windows.
+ *   A module will need to define a function with the following prototype:
+ *       MODULE_EXPORT string initialize();
  */
 #undef DECLARE_EXPORT
 #undef MODULE_EXPORT
@@ -232,20 +209,20 @@ class MetaFieldShort;
 // Include the list of predefined tags
 #include "frepple/tags.h"
 
-/** This type defines what operation we want to do with the entity. */
+/* This type defines what operation we want to do with the entity. */
 enum Action {
-  /** or A.<br>
+  /* or A.
    * Add an new entity, and report an error if the entity already exists. */
   ADD = 0,
-  /** or C.<br>
+  /* or C.
    * Change an existing entity, and report an error if the entity doesn't
    * exist yet. */
   CHANGE = 1,
-  /** or D.<br>
+  /* or D.
    * Delete an entity, and report an error if the entity doesn't exist. */
   REMOVE = 2,
-  /** or AC.<br>
-   * Change an entity or create a new one if it doesn't exist yet.<br>
+  /* or AC.
+   * Change an entity or create a new one if it doesn't exist yet.
    * This is the default action.
    */
   ADD_CHANGE = 3
@@ -253,7 +230,7 @@ enum Action {
 
 enum tribool { BOOL_UNSET, BOOL_TRUE, BOOL_FALSE };
 
-/** Writes an action description to an output stream. */
+/* Writes an action description to an output stream. */
 inline ostream& operator<<(ostream& os, const Action& d) {
   switch (d) {
     case ADD:
@@ -274,15 +251,15 @@ inline ostream& operator<<(ostream& os, const Action& d) {
   }
 }
 
-/** This type defines the types of callback events possible. */
+/* This type defines the types of callback events possible. */
 enum Signal {
-  /** Adding a new entity. */
+  /* Adding a new entity. */
   SIG_ADD = 0,
-  /** Deleting an entity. */
+  /* Deleting an entity. */
   SIG_REMOVE = 1
 };
 
-/** Writes a signal description to an output stream. */
+/* Writes a signal description to an output stream. */
 inline ostream& operator<<(ostream& os, const Signal& d) {
   switch (d) {
     case SIG_ADD:
@@ -297,13 +274,13 @@ inline ostream& operator<<(ostream& os, const Signal& d) {
   }
 }
 
-/** This is the datatype used for hashing an XML-element to a numeric value. */
+/* This is the datatype used for hashing an XML-element to a numeric value. */
 typedef unsigned int hashtype;
 
-/** This stream is the general output for all logging and debugging messages. */
+/* This stream is the general output for all logging and debugging messages. */
 extern ostream logger;
 
-/** Auxilary structure for easy indenting in the log stream. */
+/* Auxilary structure for easy indenting in the log stream. */
 class indent {
  public:
   short level = 0;
@@ -339,7 +316,7 @@ class indent {
   }
 };
 
-/** Print a number of spaces to the output stream. */
+/* Print a number of spaces to the output stream. */
 inline ostream& operator<<(ostream& os, const indent& i) {
   for (auto c = (i.level > 30 ? 30 : i.level); c > 0; --c) os << "  ";
   return os;
@@ -349,10 +326,10 @@ inline ostream& operator<<(ostream& os, const indent& i) {
 // CUSTOM EXCEPTION CLASSES
 //
 
-/** @brief An exception of this type is thrown when data errors are found.
+/* An exception of this type is thrown when data errors are found.
  *
  * The normal handling of this error is to catch the exception and
- * continue execution of the rest of the program.<br>
+ * continue execution of the rest of the program.
  * When a DataException is thrown the object is expected to remain in
  * valid and consistent state.
  */
@@ -362,7 +339,7 @@ class DataException : public logic_error {
   DataException(const string s) : logic_error(s) {}
 };
 
-/** @brief An exception of this type is thrown when the library gets in an
+/* An exception of this type is thrown when the library gets in an
  * inconsistent state from which the normal course of action can't continue.
  *
  * The normal handling of this error is to exit the program, and report the
@@ -374,13 +351,13 @@ class LogicException : public logic_error {
   LogicException(const string s) : logic_error(s) {}
 };
 
-/** @brief An exception of this type is thrown when the library runs into
- * problems that are specific at runtime. <br>
+/* An exception of this type is thrown when the library runs into
+ * problems that are specific at runtime.
  * These could either be memory problems, threading problems, file system
  * problems, etc...
  *
  * Errors of this type can be caught by the client applications and the
- * application can continue in most cases.<br>
+ * application can continue in most cases.
  * This exception shouldn't be used for issueing warnings. Warnings should
  * simply be logged in the logfile and actions continue in some default way.
  */
@@ -390,20 +367,20 @@ class RuntimeException : public runtime_error {
   RuntimeException(const string s) : runtime_error(s) {}
 };
 
-/** @brief Python exception class matching with frepple::LogicException. */
+/* Python exception class matching with frepple::LogicException. */
 extern PyObject* PythonLogicException;
 
-/** @brief Python exception class matching with frepple::DataException. */
+/* Python exception class matching with frepple::DataException. */
 extern PyObject* PythonDataException;
 
-/** @brief Python exception class matching with frepple::RuntimeException. */
+/* Python exception class matching with frepple::RuntimeException. */
 extern PyObject* PythonRuntimeException;
 
 //
 // UTILITY CLASS "NON-COPYABLE"
 //
 
-/** @brief Class NonCopyable is a base class.<br>Derive your own class from
+/* Class NonCopyable is a base class. Derive your own class from
  * it when you want to prohibit copy construction and copy assignment.
  *
  * Some objects, particularly those which hold complex resources like files
@@ -414,7 +391,7 @@ extern PyObject* PythonRuntimeException;
  * take the time to write the appropriate functions.  Deriving from
  * noncopyable will prevent the otherwise implicitly-generated functions
  * (which don't have the proper semantics) from becoming a trap for other
- * programmers.<br>
+ * programmers.
  * The traditional way to deal with these is to declare a private copy
  * constructor and copy assignment, and then document why this is done. But
  * deriving from NonCopyable is simpler and clearer, and doesn't require
@@ -425,17 +402,17 @@ class NonCopyable {
   NonCopyable() {}
   ~NonCopyable() {}
 
-  /** This copy constructor doesn't exist. */
+  /* This copy constructor doesn't exist. */
   NonCopyable(const NonCopyable&) = delete;
 
-  /** This assignment operator doesn't exist. */
+  /* This assignment operator doesn't exist. */
   NonCopyable& operator=(const NonCopyable&) = delete;
 };
 
-/** @brief This class is used to maintain the Python interpreter.
+/* This class is used to maintain the Python interpreter.
  *
  * A single interpreter is used throughout the lifetime of the
- * application.<br>
+ * application.
  * The implementation is implemented in a thread-safe way (within the
  * limitations of the Python threading model, of course).
  *
@@ -453,19 +430,19 @@ class NonCopyable {
  */
 class PythonInterpreter {
  public:
-  /** Initializes the interpreter. */
+  /* Initializes the interpreter. */
   static void initialize();
 
-  /** Finalizes the interpreter. */
+  /* Finalizes the interpreter. */
   static void finalize();
 
-  /** Execute some python code. */
+  /* Execute some python code. */
   static void execute(const char*);
 
-  /** Execute a file with Python code. */
+  /* Execute a file with Python code. */
   static void executeFile(string);
 
-  /** Register a new method in the main extension module.<br>
+  /* Register a new method in the main extension module.
    * Arguments:
    * - The name of the built-in function/method
    * - The function that implements it.
@@ -476,29 +453,29 @@ class PythonInterpreter {
   static void registerGlobalMethod(const char*, PyCFunction, int, const char*,
                                    bool = true);
 
-  /** Register a new method in the main extension module. */
+  /* Register a new method in the main extension module. */
   static void registerGlobalMethod(const char*, PyCFunctionWithKeywords, int,
                                    const char*, bool = true);
 
-  /** Add a new object in the main extension module. */
+  /* Add a new object in the main extension module. */
   static void registerGlobalObject(const char*, PyObject*, bool = true);
 
-  /** Return a pointer to the main extension module. */
+  /* Return a pointer to the main extension module. */
   static DECLARE_EXPORT PyObject* getModule() { return module; }
 
  private:
-  /** Callback function to create the extension module. */
+  /* Callback function to create the extension module. */
   static PyObject* createModule();
 
-  /** A pointer to the frePPLe extension module. */
+  /* A pointer to the frePPLe extension module. */
   static PyObject* module;
 
-  /** Python API: Used for redirecting the Python output to the same file
+  /* Python API: Used for redirecting the Python output to the same file
    * as the application.
    */
   static PyObject* python_log(PyObject*, PyObject*);
 
-  /** Main thread info. */
+  /* Main thread info. */
   static PyThreadState* mainThreadState;
 };
 
@@ -506,7 +483,7 @@ class PythonInterpreter {
 // UTILITY CLASSES "DATE", "DATE_RANGE" AND "TIME".
 //
 
-/** @brief This class represents a time duration with an accuracy of
+/* This class represents a time duration with an accuracy of
  * one second.
  *
  * The duration can be both positive and negative.
@@ -515,75 +492,75 @@ class Duration {
   friend ostream& operator<<(ostream&, const Duration&);
 
  public:
-  /** Default constructor and constructor with Duration passed. */
+  /* Default constructor and constructor with Duration passed. */
   Duration(const long l = 0) : lval(l) {}
 
-  /** Constructor using a double value.
+  /* Constructor using a double value.
    * The double is rounded to the closest integer/second.
    */
   Duration(const double d) : lval(static_cast<long>(d + 0.499)) {}
 
-  /** Constructor from a character string.<br>
+  /* Constructor from a character string.
    * See the parse() method for details on the format of the argument.
    */
   Duration(const char* s) { parse(s); }
 
-  /** Comparison between periods of time. */
+  /* Comparison between periods of time. */
   bool operator<(const long& b) const { return lval < b; }
 
-  /** Comparison between periods of time. */
+  /* Comparison between periods of time. */
   bool operator>(const long& b) const { return lval > b; }
 
-  /** Comparison between periods of time. */
+  /* Comparison between periods of time. */
   bool operator<=(const long& b) const { return lval <= b; }
 
-  /** Comparison between periods of time. */
+  /* Comparison between periods of time. */
   bool operator>=(const long& b) const { return lval >= b; }
 
-  /** Comparison between periods of time. */
+  /* Comparison between periods of time. */
   bool operator<(const Duration& b) const { return lval < b.lval; }
 
-  /** Comparison between periods of time. */
+  /* Comparison between periods of time. */
   bool operator>(const Duration& b) const { return lval > b.lval; }
 
-  /** Comparison between periods of time. */
+  /* Comparison between periods of time. */
   bool operator<=(const Duration& b) const { return lval <= b.lval; }
 
-  /** Comparison between periods of time. */
+  /* Comparison between periods of time. */
   bool operator>=(const Duration& b) const { return lval >= b.lval; }
 
-  /** Equality operator. */
+  /* Equality operator. */
   bool operator==(const Duration& b) const { return lval == b.lval; }
 
-  /** Inequality operator. */
+  /* Inequality operator. */
   bool operator!=(const Duration& b) const { return lval != b.lval; }
 
-  /** Increase the Duration. */
+  /* Increase the Duration. */
   void operator+=(const Duration& l) { lval += l.lval; }
 
-  /** Decrease the Duration. */
+  /* Decrease the Duration. */
   void operator-=(const Duration& l) { lval -= l.lval; }
 
-  /** Returns true of the duration is equal to 0. */
+  /* Returns true of the duration is equal to 0. */
   bool operator!() const { return lval == 0L; }
 
-  /** This conversion operator creates a long value from a Duration. */
+  /* This conversion operator creates a long value from a Duration. */
   operator long() const { return lval; }
 
   double getSeconds() const { return lval; }
 
-  /** Converts the date to a string, formatted according to ISO 8601. */
+  /* Converts the date to a string, formatted according to ISO 8601. */
   operator string() const {
     char str[20];
     toCharBuffer(str);
     return string(str);
   }
 
-  /** Function that parses a input string to a time value.<br>
+  /* Function that parses a input string to a time value.
    * The string format is following the ISO 8601 specification for
-   * durations: [-]P[nY][nM][nW][nD][T[nH][nM][nS]]<br>
+   * durations: [-]P[nY][nM][nW][nD][T[nH][nM][nS]]
    * Some examples to illustrate how the string is converted to a
-   * Duration, expressed in seconds:<br>
+   * Duration, expressed in seconds:
    *    P1Y = 1 year = 365 days = 31536000 seconds
    *    P1M = 365/12 days = 2628000 seconds
    *    P1W = 1 week = 7 days = 604800 seconds
@@ -598,41 +575,41 @@ class Duration {
    */
   void parse(const char*);
 
-  /** Function to parse a string to a double, representing the
-   * number of seconds.<br>
+  /* Function to parse a string to a double, representing the
+   * number of seconds.
    * Compared to the parse() method it also processes the
    * decimal part of the duration.
    * @see parse(const char*)
    */
   static double parse2double(const char*);
 
-  /** Write out a double as a time period string.
+  /* Write out a double as a time period string.
    * @see toCharBuffer()
    */
   static void double2CharBuffer(double, char*);
 
-  /** The maximum value for a Duration. */
+  /* The maximum value for a Duration. */
   static const Duration MAX;
 
-  /** The minimum value for a Duration. */
+  /* The minimum value for a Duration. */
   static const Duration MIN;
 
  private:
-  /** The time is stored as a number of seconds. */
+  /* The time is stored as a number of seconds. */
   long lval;
 
-  /** This function fills a character buffer with a text representation of
-   * the Duration.<br>
+  /* This function fills a character buffer with a text representation of
+   * the Duration.
    * The character buffer passed MUST have room for at least 20 characters.
    * 20 characters is sufficient for even the most longest possible time
-   * duration.<br>
+   * duration.
    * The output format is described with the string() method.
    * @see string()
    */
   void toCharBuffer(char*) const;
 };
 
-/** Prints a Duration to the outputstream.
+/* Prints a Duration to the outputstream.
  * @see Duration::string()
  */
 inline ostream& operator<<(ostream& os, const Duration& t) {
@@ -641,14 +618,14 @@ inline ostream& operator<<(ostream& os, const Duration& t) {
   return os << str;
 }
 
-/** @brief This class represents a date and time with an accuracy of
+/* This class represents a date and time with an accuracy of
  * one second. */
 class Date {
   friend class DateDetail;
   friend ostream& operator<<(ostream&, const Date&);
 
  private:
-  /** This string is a format string to be used to convert a date to and
+  /* This string is a format string to be used to convert a date to and
    * from a string format. The formats codes that are allowed are the
    * ones recognized by the standard C function strftime:
    *  - %a short name of day
@@ -678,10 +655,10 @@ class Date {
    */
   static string format;
 
-  /** The internal representation of a date is a single long value. */
+  /* The internal representation of a date is a single long value. */
   time_t lval;
 
-  /** Checks whether we stay within the boundaries of finite Dates. */
+  /* Checks whether we stay within the boundaries of finite Dates. */
   void checkFinite(long long i) {
     if (i < infinitePast.lval)
       lval = infinitePast.lval;
@@ -691,12 +668,12 @@ class Date {
       lval = static_cast<long>(i);
   }
 
-  /** A private constructor used to create the infinitePast and
+  /* A private constructor used to create the infinitePast and
    * infiniteFuture constants. */
   Date(const char* s, bool dummy) { parse(s); }
 
  public:
-  /** A utility function that uses the C function localtime to compute the
+  /* A utility function that uses the C function localtime to compute the
    * details of the current time: day of the week, day of the month,
    * day of the year, hour, minutes, seconds
    */
@@ -716,10 +693,10 @@ class Date {
 #endif
   }
 
-  /** Constructor initialized with a long value. */
+  /* Constructor initialized with a long value. */
   Date(const time_t l) : lval(l) { checkFinite(lval); }
 
-  /** Default constructor. */
+  /* Default constructor. */
   // This constructor can skip the check for finite dates, and
   // thus gives the best performance.
   Date() : lval(infinitePast.lval) {}
@@ -727,74 +704,74 @@ class Date {
   /* Note: the automatic copy constructor works fine and is faster than
      writing our own. */
 
-  /** Constructor initialized with a string and an optional format string. */
+  /* Constructor initialized with a string and an optional format string. */
   Date(const char* s, const char* f = format.c_str()) {
     parse(s, f);
     checkFinite(lval);
   }
 
-  /** Comparison between dates. */
+  /* Comparison between dates. */
   bool operator<(const Date& b) const { return lval < b.lval; }
 
-  /** Comparison between dates. */
+  /* Comparison between dates. */
   bool operator>(const Date& b) const { return lval > b.lval; }
 
-  /** Equality of dates. */
+  /* Equality of dates. */
   bool operator==(const Date& b) const { return lval == b.lval; }
 
-  /** Inequality of dates. */
+  /* Inequality of dates. */
   bool operator!=(const Date& b) const { return lval != b.lval; }
 
-  /** Comparison between dates. */
+  /* Comparison between dates. */
   bool operator>=(const Date& b) const { return lval >= b.lval; }
 
-  /** Comparison between dates. */
+  /* Comparison between dates. */
   bool operator<=(const Date& b) const { return lval <= b.lval; }
 
-  /** Assignment operator. */
+  /* Assignment operator. */
   void operator=(const Date& b) { lval = b.lval; }
 
-  /** Adds some time to this date. */
+  /* Adds some time to this date. */
   void operator+=(const Duration& l) {
     checkFinite(static_cast<long long>(l) + lval);
   }
 
-  /** Subtracts some time to this date. */
+  /* Subtracts some time to this date. */
   void operator-=(const Duration& l) {
     checkFinite(-static_cast<long long>(l) + lval);
   }
 
-  /** Adding a time to a date returns a new date. */
+  /* Adding a time to a date returns a new date. */
   Date operator+(const Duration& l) const {
     Date d;
     d.checkFinite(static_cast<long long>(l) + lval);
     return d;
   }
 
-  /** Subtracting a time from a date returns a new date. */
+  /* Subtracting a time from a date returns a new date. */
   Date operator-(const Duration& l) const {
     Date d;
     d.checkFinite(-static_cast<long>(l) + lval);
     return d;
   }
 
-  /** Subtracting two date values returns the time difference in a
+  /* Subtracting two date values returns the time difference in a
    * Duration object. */
   Duration operator-(const Date& l) const {
     return static_cast<long>(lval - l.lval);
   }
 
-  /** Check whether the date has been initialized. */
+  /* Check whether the date has been initialized. */
   bool operator!() const { return lval == infinitePast.lval; }
 
-  /** Check whether the date has been initialized. */
+  /* Check whether the date has been initialized. */
   operator bool() const { return lval != infinitePast.lval; }
 
-  /** Static function returns a date object initialized with the current
+  /* Static function returns a date object initialized with the current
    * Date and time. */
   static Date now() { return Date(time(0)); }
 
-  /** Converts the date to a string. The format can be controlled by the
+  /* Converts the date to a string. The format can be controlled by the
    * setFormat() function. */
   operator string() const {
     char str[30];
@@ -802,35 +779,35 @@ class Date {
     return string(str);
   }
 
-  /** This function fills a character buffer with a text representation of
-   * the date.<br>
+  /* This function fills a character buffer with a text representation of
+   * the date.
    * The character buffer passed is expected to have room for
    * at least 30 characters. 30 characters should be sufficient for even
    * the most funky date format.
    */
   size_t toCharBuffer(char* str) const;
 
-  /** Return the seconds since the epoch, which is also the internal
+  /* Return the seconds since the epoch, which is also the internal
    * representation of a date. */
   time_t getTicks() const { return lval; }
 
-  /** Function that parses a string according to the format string. */
+  /* Function that parses a string according to the format string. */
   void parse(const char*, const char* = format.c_str());
 
-  /** Updates the default date format. */
+  /* Updates the default date format. */
   static void setFormat(const string& n) { format = n; }
 
-  /** Retrieves the default date format. */
+  /* Retrieves the default date format. */
   static string getFormat() { return format; }
 
-  /** A constant representing the infinite past, i.e. the earliest time which
-   * we can represent.<br>
+  /* A constant representing the infinite past, i.e. the earliest time which
+   * we can represent.
    * This value is normally 1971-01-01T00:00:00.
    */
   static const Date infinitePast;
 
-  /** A constant representing the infinite future, i.e. the latest time which
-   * we can represent.<br>
+  /* A constant representing the infinite future, i.e. the latest time which
+   * we can represent.
    * This value is currently set to 2030-12-31T00:00:00.
    */
   static const Date infiniteFuture;
@@ -843,7 +820,7 @@ class Date {
 #endif
 };
 
-/** Auxilary class that allows calculations on dates.
+/* Auxilary class that allows calculations on dates.
  *
  * This class is nothing but a wrapper around a standard "struct tm".
  * Quoting from the C standard:
@@ -866,7 +843,7 @@ class DateDetail {
   time_t val;
 
  public:
-  /** Constructor from a date. */
+  /* Constructor from a date. */
   inline DateDetail(const Date& d) : val(d.lval) {
 // The standard library function localtime() is not re-entrant: the same
 // static structure is used for all calls. In a multi-threaded environment
@@ -899,13 +876,13 @@ class DateDetail {
 #endif
   }
 
-  /** Convert a DateDetail object into a Date object. */
+  /* Convert a DateDetail object into a Date object. */
   inline operator Date() {
     if (val < 0) normalize();
     return Date(val);
   }
 
-  /** Constructor with year, month and day as arguments. Hours, minutes
+  /* Constructor with year, month and day as arguments. Hours, minutes
    * and seconds can optionally be passed too. */
   inline DateDetail(int year, int month, int day, int hr = 0, int min = 0,
                     int sec = 0)
@@ -931,7 +908,7 @@ class DateDetail {
     return str;
   }
 
-  /** Converts the date to a string. The format can be controlled by the
+  /* Converts the date to a string. The format can be controlled by the
    * setFormat() function. */
   operator string() const {
     char str[30];
@@ -939,7 +916,7 @@ class DateDetail {
     return string(str);
   }
 
-  /** After calculations the values can go out of their
+  /* After calculations the values can go out of their
    * expected ranges. This method will bring them back within
    * these limits.
    */
@@ -948,27 +925,27 @@ class DateDetail {
         mktime(const_cast<struct tm*>(&time_info));
   }
 
-  /** Return the weekday: 0 = sunday, 6 = saturday */
+  /* Return the weekday: 0 = sunday, 6 = saturday */
   int getWeekDay() const {
     if (val < 0) normalize();
     return time_info.tm_wday;
   }
 
-  /** Return the number of seconds since the start of the month. */
+  /* Return the number of seconds since the start of the month. */
   long getSecondsMonth() const {
     if (val < 0) normalize();
     return (time_info.tm_mday - 1) * 86400 + time_info.tm_sec +
            time_info.tm_min * 60 + time_info.tm_hour * 3600;
   }
 
-  /** Return the number of seconds since january 1st. */
+  /* Return the number of seconds since january 1st. */
   long getSecondsYear() const {
     if (val < 0) normalize();
     return time_info.tm_yday * 86400 + time_info.tm_sec +
            time_info.tm_min * 60 + time_info.tm_hour * 3600;
   }
 
-  /** Return the number of seconds since the start of the week.
+  /* Return the number of seconds since the start of the week.
    * The week is starting on Sunday.
    */
   long getSecondsWeek() const {
@@ -977,7 +954,7 @@ class DateDetail {
            time_info.tm_min * 60 + time_info.tm_hour * 3600;
   }
 
-  /** Return the number of seconds since the start of the day.
+  /* Return the number of seconds since the start of the day.
    * The return value is constructed in a DST-insensitive way.
    */
   long getSecondsDay() const {
@@ -985,7 +962,7 @@ class DateDetail {
     return time_info.tm_sec + time_info.tm_min * 60 + time_info.tm_hour * 3600;
   }
 
-  /** Go back till midnight of the current day. */
+  /* Go back till midnight of the current day. */
   void roundDownDay() {
     if (val < 0) normalize();
     time_info.tm_sec = 0;
@@ -994,7 +971,7 @@ class DateDetail {
     val = -1;
   }
 
-  /** Go back till midnight of the next day. */
+  /* Go back till midnight of the next day. */
   void roundUpDay() {
     if (val < 0) normalize();
     time_info.tm_sec = 0;
@@ -1004,7 +981,7 @@ class DateDetail {
     val = -1;
   }
 
-  /** Change the offset within the day.
+  /* Change the offset within the day.
    * The argument is interpreted in a DST-insenstive way.
    */
   void setSecondsDay(int sec) {
@@ -1015,13 +992,13 @@ class DateDetail {
     val = -1;
   }
 
-  /** Add a number of days. */
+  /* Add a number of days. */
   void addDays(int days) {
     time_info.tm_mday += days;
     val = -1;
   }
 
-  /** Add a number of days, and set the seconds in that day.
+  /* Add a number of days, and set the seconds in that day.
    * The argument offset within the day is interpreted in a DST-insenstive way.
    */
   void addDays(int days, int sec) {
@@ -1043,25 +1020,25 @@ inline string Date::toString(const char* fmt) {
   return tmp.toString(fmt);
 }
 
-/** Prints a date to the outputstream. */
+/* Prints a date to the outputstream. */
 inline ostream& operator<<(ostream& os, const Date& d) {
   char str[30];
   d.toCharBuffer(str);
   return os << str;
 }
 
-/** Prints a datedetail to the outputstream. */
+/* Prints a datedetail to the outputstream. */
 inline ostream& operator<<(ostream& os, const DateDetail& d) {
   char str[30];
   d.toCharBuffer(str);
   return os << str;
 }
 
-/** @brief This class defines a date-range, i.e. a start-date and end-date pair.
+/* This class defines a date-range, i.e. a start-date and end-date pair.
  *
  * The behavior is such that the start date is considered as included in
  * it, but the end date is excluded from it.
- * In other words, a daterange is a halfopen date interval: [start,end[<br>
+ * In other words, a daterange is a halfopen date interval: [start,end[
  * The start and end dates are always such that the start date is less than
  * or equal to the end date.
  */
@@ -1069,7 +1046,7 @@ class DateRange  // TODO REMOVE THIS CLASS, because it is not a native data
                  // format.
 {
  public:
-  /** Constructor with specified start and end dates.<br>
+  /* Constructor with specified start and end dates.
    * If the start date is later than the end date parameter, the
    * parameters will be swapped. */
   DateRange(const Date& st, const Date& nd) : start(st), end(nd) {
@@ -1079,18 +1056,18 @@ class DateRange  // TODO REMOVE THIS CLASS, because it is not a native data
     }
   }
 
-  /** Default constructor.<br>
+  /* Default constructor.
    * This will create a daterange covering the complete horizon.
    */
   DateRange() : start(Date::infinitePast), end(Date::infiniteFuture) {}
 
-  /** Copy constructor. */
+  /* Copy constructor. */
   DateRange(const DateRange& n) : start(n.start), end(n.end) {}
 
-  /** Returns the start date. */
+  /* Returns the start date. */
   const Date& getStart() const { return start; }
 
-  /** Updates the start date.<br>
+  /* Updates the start date.
    * If the new start date is later than the end date, the end date will
    * be set equal to the new start date.
    */
@@ -1099,10 +1076,10 @@ class DateRange  // TODO REMOVE THIS CLASS, because it is not a native data
     if (start > end) end = start;
   }
 
-  /** Returns the end date. */
+  /* Returns the end date. */
   const Date& getEnd() const { return end; }
 
-  /** Updates the end date.<br>
+  /* Updates the end date.
    * If the new end date is earlier than the start date, the start date will
    * be set equal to the new end date.
    */
@@ -1111,7 +1088,7 @@ class DateRange  // TODO REMOVE THIS CLASS, because it is not a native data
     if (start > end) start = end;
   }
 
-  /** Updates the start and end dates simultaneously. */
+  /* Updates the start and end dates simultaneously. */
   void setStartAndEnd(const Date& st, const Date& nd) {
     if (st < nd) {
       start = st;
@@ -1122,47 +1099,47 @@ class DateRange  // TODO REMOVE THIS CLASS, because it is not a native data
     }
   }
 
-  /** Returns the duration of the interval. Note that this number will always
+  /* Returns the duration of the interval. Note that this number will always
    * be greater than or equal to 0, since the end date is always later than
    * the start date.
    */
   Duration getDuration() const { return end - start; }
 
-  /** Bool conversion operator.<br>
+  /* Bool conversion operator.
    * Returns true if the daterange is different from the default. */
   operator bool() const {
     return start != Date::infinitePast || end != Date::infiniteFuture;
   }
 
-  /** Equality of date ranges. */
+  /* Equality of date ranges. */
   bool operator==(const DateRange& b) const {
     return start == b.start && end == b.end;
   }
 
-  /** Inequality of date ranges. */
+  /* Inequality of date ranges. */
   bool operator!=(const DateRange& b) const {
     return start != b.start || end != b.end;
   }
 
-  /** Move the daterange later in time. */
+  /* Move the daterange later in time. */
   void operator+=(const Duration& l) {
     start += l;
     end += l;
   }
 
-  /** Move the daterange earlier in time. */
+  /* Move the daterange earlier in time. */
   void operator-=(const Duration& l) {
     start -= l;
     end -= l;
   }
 
-  /** Assignment operator. */
+  /* Assignment operator. */
   void operator=(const DateRange& dr) {
     start = dr.start;
     end = dr.end;
   }
 
-  /** Comparison operator. */
+  /* Comparison operator. */
   bool operator<(const DateRange& dr) const {
     if (start != dr.start)
       // Comparison based on the start date
@@ -1172,7 +1149,7 @@ class DateRange  // TODO REMOVE THIS CLASS, because it is not a native data
       return end < dr.end;
   }
 
-  /** Return true if two date ranges are overlapping.<br>
+  /* Return true if two date ranges are overlapping.
    * The start point of the first interval is included in the comparison,
    * whereas the end point isn't. As a result this method is not
    * symmetrical, ie when a.intersect(b) returns true b.intersect(a) is
@@ -1182,14 +1159,14 @@ class DateRange  // TODO REMOVE THIS CLASS, because it is not a native data
     return dr.start <= end && dr.end > start;
   }
 
-  /** Returns the number of seconds the two dateranges overlap. */
+  /* Returns the number of seconds the two dateranges overlap. */
   Duration overlap(const DateRange& dr) const {
     long x =
         (dr.end < end ? dr.end : end) - (dr.start > start ? dr.start : start);
     return x > 0 ? x : 0;
   }
 
-  /** Returns true if the date passed as argument does fall within the
+  /* Returns true if the date passed as argument does fall within the
    * daterange. */
   bool within(const Date& d) const { return d >= start && d < end; }
 
@@ -1200,33 +1177,33 @@ class DateRange  // TODO REMOVE THIS CLASS, because it is not a native data
             end == dr.end + Duration(1L));
   }
 
-  /** Convert the daterange to a string. */
+  /* Convert the daterange to a string. */
   operator string() const;
 
-  /** Updates the default seperator. */
+  /* Updates the default seperator. */
   static void setSeparator(const string& n) {
     separator = n;
     separatorlength = n.size();
   }
 
-  /** Retrieves the default seperator. */
+  /* Retrieves the default seperator. */
   static const string& getSeparator() { return separator; }
 
  private:
-  /** Start date of the interval. */
+  /* Start date of the interval. */
   Date start;
 
-  /** End dat of the interval. */
+  /* End dat of the interval. */
   Date end;
 
-  /** Separator to be used when printing this string. */
+  /* Separator to be used when printing this string. */
   static string separator;
 
-  /** Separator to be used when printing this string. */
+  /* Separator to be used when printing this string. */
   static size_t separatorlength;
 };
 
-/** Prints a date range to the outputstream.
+/* Prints a date range to the outputstream.
  * @see DateRange::string() */
 inline ostream& operator<<(ostream& os, const DateRange& dr) {
   return os << dr.getStart() << DateRange::getSeparator() << dr.getEnd();
@@ -1236,9 +1213,9 @@ inline ostream& operator<<(ostream& os, const DateRange& dr) {
 // METADATA AND OBJECT FACTORY
 //
 
-/** @brief This class defines a keyword for the frePPLe data model.
+/* This class defines a keyword for the frePPLe data model.
  *
- * The keywords are used to define the attribute names for the objects.<br>
+ * The keywords are used to define the attribute names for the objects.
  * They are used as:
  *  - Element and attribute names in XML documents
  *  - Attribute names in the Python extension.
@@ -1250,216 +1227,216 @@ inline ostream& operator<<(ostream& os, const DateRange& dr) {
  */
 class Keyword : public NonCopyable {
  private:
-  /** Stores the hash value of this tag. */
+  /* Stores the hash value of this tag. */
   hashtype dw;
 
-  /** Store different preprocessed variations of the name of the tag.
+  /* Store different preprocessed variations of the name of the tag.
    * These are all stored in memory for improved performance. */
   string strName, strStartElement, strEndElement, strElement, strAttribute,
       strQuoted;
 
-  /** A function to verify the uniquess of our hashes. */
+  /* A function to verify the uniquess of our hashes. */
   void check();
 
  public:
-  /** Container for maintaining a list of all tags. */
+  /* Container for maintaining a list of all tags. */
   typedef map<hashtype, Keyword*> tagtable;
 
-  /** This is the constructor.<br>
+  /* This is the constructor.
    * The tag doesn't belong to an XML namespace. */
   Keyword(const string&);
 
-  /** This is the constructor. The tag belongs to the XML namespace passed
-   * as second argument.<br>
+  /* This is the constructor. The tag belongs to the XML namespace passed
+   * as second argument.
    * Note that we still require the first argument to be unique, since it
    * is used as a keyword for the Python extensions.
    */
   Keyword(const string&, const string&);
 
-  /** Destructor. */
+  /* Destructor. */
   ~Keyword();
 
-  /** Returns the hash value of the tag. */
+  /* Returns the hash value of the tag. */
   hashtype getHash() const { return dw; }
 
-  /** Returns the name of the tag. */
+  /* Returns the name of the tag. */
   const string& getName() const { return strName; }
 
-  /** Returns the quoted name of the tag: "TAG": */
+  /* Returns the quoted name of the tag: "TAG": */
   const string& getQuoted() const { return strQuoted; }
 
-  /** Returns a string to start an XML element with this tag: \<TAG */
+  /* Returns a string to start an XML element with this tag: \<TAG */
   const string& stringStartElement() const { return strStartElement; }
 
-  /** Returns a string to end an XML element with this tag: \</TAG\> */
+  /* Returns a string to end an XML element with this tag: \</TAG\> */
   const string& stringEndElement() const { return strEndElement; }
 
-  /** Returns a string to start an XML element with this tag: \<TAG\> */
+  /* Returns a string to start an XML element with this tag: \<TAG\> */
   const string& stringElement() const { return strElement; }
 
-  /** Returns a string to start an XML attribute with this tag: TAG=" */
+  /* Returns a string to start an XML attribute with this tag: TAG=" */
   const string& stringAttribute() const { return strAttribute; }
 
-  /** This is the hash function. See the note on the perfectness of
+  /* This is the hash function. See the note on the perfectness of
    * this function at the start. This function should be as simple
-   * as possible while still garantueeing the perfectness.<br>
+   * as possible while still garantueeing the perfectness.
    * The hash function is based on the Xerces-C implementation,
    * with the difference that the hash calculated by our function is
-   * portable between platforms.<br>
+   * portable between platforms.
    * The hash modulus is 954991 (which is the biggest prime number
    * lower than 1000000).
    */
   static hashtype hash(const char*);
 
-  /** This is the hash function.
+  /* This is the hash function.
    * @see hash(const char*)
    */
   static hashtype hash(const string& c) { return hash(c.c_str()); }
 
-  /** Finds a tag when passed a certain string. If no tag exists yet, it
+  /* Finds a tag when passed a certain string. If no tag exists yet, it
    * will be created. */
   static const Keyword& find(const char*);
 
-  /** Return a reference to a table with all defined tags. */
+  /* Return a reference to a table with all defined tags. */
   static tagtable& getTags();
 
-  /** Prints a list of all tags that have been defined. This can be useful
-   * for debugging and also for creating a good hashing function.<br>
+  /* Prints a list of all tags that have been defined. This can be useful
+   * for debugging and also for creating a good hashing function.
    * GNU gperf is a program that can generate a perfect hash function for
    * a given set of symbols.
    */
   static void printTags();
 
-  /** Equality operator. */
+  /* Equality operator. */
   bool operator==(const Keyword& k) const { return dw == k.dw; }
 
-  /** Inequality operator. */
+  /* Inequality operator. */
   bool operator!=(const Keyword& k) const { return dw != k.dw; }
 };
 
-/** @brief This abstract class is the base class used for callbacks.
+/* This abstract class is the base class used for callbacks.
  * @see MetaClass::callback
  * @see FunctorStatic
  * @see FunctorInstance
  */
 class Functor : public NonCopyable {
  public:
-  /** This is the callback method.<br>
+  /* This is the callback method.
    * The return value should be true in case the action is allowed to
    * happen. In case a subscriber disapproves the action false is
    * returned.
    */
   virtual bool callback(Object* v, const Signal a) const = 0;
 
-  /** Destructor. */
+  /* Destructor. */
   virtual ~Functor() {}
 };
 
 // The following handler functions redirect the call from Python onto a
 // matching virtual function in a Ojbect subclass.
 extern "C" {
-/** Handler function called from Python. Internal use only. */
+/* Handler function called from Python. Internal use only. */
 PyObject* getattro_handler(PyObject*, PyObject*);
 
-/** Handler function called from Python. Internal use only. */
+/* Handler function called from Python. Internal use only. */
 int setattro_handler(PyObject*, PyObject*, PyObject*);
 
-/** Handler function called from Python. Internal use only. */
+/* Handler function called from Python. Internal use only. */
 PyObject* compare_handler(PyObject*, PyObject*, int);
 
-/** Handler function called from Python. Internal use only. */
+/* Handler function called from Python. Internal use only. */
 PyObject* iternext_handler(PyObject*);
 
-/** Handler function called from Python. Internal use only. */
+/* Handler function called from Python. Internal use only. */
 PyObject* call_handler(PyObject*, PyObject*, PyObject*);
 
-/** Handler function called from Python. Internal use only. */
+/* Handler function called from Python. Internal use only. */
 PyObject* str_handler(PyObject*);
 }
 
-/** @brief This class is a thin wrapper around the type information in Python.
+/* This class is a thin wrapper around the type information in Python.
  *
  * This class defines a number of convenience functions to interact with the
  * PyTypeObject struct of the Python C API.
  */
 class PythonType : public NonCopyable {
  private:
-  /** This static variable is a template for cloning type definitions.<br>
+  /* This static variable is a template for cloning type definitions.
    * It is copied for each type object we create.
    */
   static const PyTypeObject PyTypeObjectTemplate;
 
-  /** Incremental size of the method table.<br>
+  /* Incremental size of the method table.
    * We allocate memory for the method definitions per block, not
    * one-by-one.
    */
   static const unsigned short methodArraySize = 5;
 
-  /** The Python type object which this class is wrapping. */
+  /* The Python type object which this class is wrapping. */
   PyTypeObject* table;
 
  public:
-  /** A static function that evaluates an exception and sets the Python
-   * error string properly.<br>
+  /* A static function that evaluates an exception and sets the Python
+   * error string properly.
    * This function should only be called from within a catch-block, since
    * internally it rethrows the exception!
    */
   static void evalException();
 
-  /** Constructor, sets the tp_base_size member. */
+  /* Constructor, sets the tp_base_size member. */
   PythonType(size_t, const type_info*);
 
-  /** Return a pointer to the actual Python PyTypeObject. */
+  /* Return a pointer to the actual Python PyTypeObject. */
   inline PyTypeObject* type_object() const { return table; }
 
-  /** Add a new method. */
+  /* Add a new method. */
   void addMethod(const char*, PyCFunction, int, const char*);
 
-  /** Add a new method. */
+  /* Add a new method. */
   void addMethod(const char*, PyCFunctionWithKeywords, int, const char*);
 
-  /** Updates tp_name. */
+  /* Updates tp_name. */
   void setName(const string& n) {
     string* name = new string("frepple." + n);
     table->tp_name = const_cast<char*>(name->c_str());
   }
 
-  /** Updates tp_doc. */
+  /* Updates tp_doc. */
   void setDoc(const string& n) {
     string* doc = new string(n);
     table->tp_doc = const_cast<char*>(doc->c_str());
   }
 
-  /** Updates tp_base. */
+  /* Updates tp_base. */
   void setBase(PyTypeObject* b) { table->tp_base = b; }
 
-  /** Updates the deallocator. */
+  /* Updates the deallocator. */
   void supportdealloc(void (*f)(PyObject*)) { table->tp_dealloc = f; }
 
-  /** Updates tp_getattro.<br>
+  /* Updates tp_getattro.
    * The extension class will need to define a member function with this
-   * prototype:<br>
+   * prototype:
    *   PythonData getattro(const XMLData& name)
    */
   void supportgetattro() { table->tp_getattro = getattro_handler; }
 
-  /** Updates tp_setattro.<br>
+  /* Updates tp_setattro.
    * The extension class will need to define a member function with this
-   * prototype:<br>
+   * prototype:
    *   int setattro(const Attribute& attr, const PythonData& field)
    */
   void supportsetattro() { table->tp_setattro = setattro_handler; }
 
-  /** Updates tp_richcompare.<br>
+  /* Updates tp_richcompare.
    * The extension class will need to define a member function with this
-   * prototype:<br>
+   * prototype:
    *   int compare(const PyObject* other) const
    */
   void supportcompare() { table->tp_richcompare = compare_handler; }
 
-  /** Updates tp_iter and tp_iternext.<br>
+  /* Updates tp_iter and tp_iternext.
    * The extension class will need to define a member function with this
-   * prototype:<br>
+   * prototype:
    *   PyObject* iternext()
    */
   void supportiter() {
@@ -1467,39 +1444,39 @@ class PythonType : public NonCopyable {
     table->tp_iternext = iternext_handler;
   }
 
-  /** Updates tp_call.<br>
+  /* Updates tp_call.
    * The extension class will need to define a member function with this
-   * prototype:<br>
+   * prototype:
    *   PyObject* call(const PythonData& args, const PythonData& kwds)
    */
   void supportcall() { table->tp_call = call_handler; }
 
-  /** Updates tp_str.<br>
+  /* Updates tp_str.
    * The extension class will need to define a member function with this
-   * prototype:<br>
+   * prototype:
    *   PyObject* str()
    */
   void supportstr() { table->tp_str = str_handler; }
 
-  /** Type definition for create functions. */
+  /* Type definition for create functions. */
   typedef PyObject* (*createfunc)(PyTypeObject*, PyObject*, PyObject*);
 
-  /** Updates tp_new with the function passed as argument. */
+  /* Updates tp_new with the function passed as argument. */
   void supportcreate(createfunc c) { table->tp_new = c; }
 
-  /** This method needs to be called after the type information has all
+  /* This method needs to be called after the type information has all
    * been updated. It adds the type to the frepple module. */
   int typeReady();
 
-  /** Comparison operator. */
+  /* Comparison operator. */
   bool operator==(const PythonType& i) const {
     return *cppClass == *(i.cppClass);
   }
 
-  /** Comparison operator. */
+  /* Comparison operator. */
   bool operator==(const type_info& i) const { return *cppClass == i; }
 
-  /** Type info of the registering class. */
+  /* Type info of the registering class. */
   const type_info* cppClass;
 };
 
@@ -1541,24 +1518,24 @@ enum FieldCategory {
   DONT_SERIALIZE = 8192 + 1024   // Never write this field
 };
 
-/** @brief This class stores metadata on a data field of a class. */
+/* This class stores metadata on a data field of a class. */
 class MetaFieldBase {
  public:
   MetaFieldBase(const Keyword& k, unsigned int fl) : name(k), flags(fl) {}
 
   const Keyword& getName() const { return name; }
 
-  /** Function to update a field given a data value. */
+  /* Function to update a field given a data value. */
   virtual void setField(Object*, const DataValue&,
                         CommandManager* = nullptr) const = 0;
 
-  /** Function to retrieve a field value. */
+  /* Function to retrieve a field value. */
   virtual void getField(Object*, DataValue&) const = 0;
 
-  /** Function to serialize a field value. */
+  /* Function to serialize a field value. */
   virtual void writeField(Serializer&) const = 0;
 
-  /** Return the extra size used by this object.
+  /* Return the extra size used by this object.
    * Only the size that is additional to the class instance size needs
    * to be reported here.
    */
@@ -1577,26 +1554,26 @@ class MetaFieldBase {
   virtual const Keyword* getKeyword() const { return nullptr; }
 
  private:
-  /** Field name. */
+  /* Field name. */
   const Keyword& name;
 
-  /** A series of bit flags for specific behavior. */
+  /* A series of bit flags for specific behavior. */
   unsigned int flags;
 };
 
 class MetaCategory;
-/** @brief This class stores metadata about the classes in the library.
+/* This class stores metadata about the classes in the library.
  * The stored information goes well beyond the standard 'type_info'.
  *
  * A MetaClass instance represents metadata for a specific instance type.
  * A MetaCategory instance represents metadata for a category of object.
  * For instance, 'Resource' is a category while 'ResourceDefault' and
- * 'ResourceInfinite' are specific classes.<br>
+ * 'ResourceInfinite' are specific classes.
  * The metadata class also maintains subscriptions to certain events.
  * Registered classes and objects will receive callbacks when objects are
- * being created, changed or deleted.<br>
+ * being created, changed or deleted.
  * The proper usage is to include the following code snippet in every
- * class:<br>
+ * class:
  * @code
  *  In the header file:
  *    class X : public Object
@@ -1630,59 +1607,59 @@ class MetaClass : public NonCopyable {
   friend class FunctorInstance;
 
  public:
-  /** Type definition for a factory method that calls the
+  /* Type definition for a factory method that calls the
    * default constructor. */
   typedef Object* (*creatorDefault)();
 
-  /** A string specifying the object type, i.e. the subclass within
+  /* A string specifying the object type, i.e. the subclass within
    * the category. */
   string type;
 
-  /** The size of an instance of this class. */
+  /* The size of an instance of this class. */
   size_t size;
 
-  /** A reference to a keyword of the base string. */
+  /* A reference to a keyword of the base string. */
   const Keyword* typetag;
 
-  /** The category of this class. */
+  /* The category of this class. */
   const MetaCategory* category = nullptr;
 
-  /** A pointer to the Python type. */
+  /* A pointer to the Python type. */
   PyTypeObject* pythonClass = nullptr;
 
-  /** A factory method for the registered class. */
+  /* A factory method for the registered class. */
   creatorDefault factoryMethod = nullptr;
 
-  /** A flag that tracks whether this object can inherit context from
+  /* A flag that tracks whether this object can inherit context from
    * its parent during creation.
    */
   bool parent = false;
 
-  /** A flag whether this is the default class in its category. */
+  /* A flag whether this is the default class in its category. */
   bool isDefault = true;
 
-  /** Destructor. */
+  /* Destructor. */
   virtual ~MetaClass() {}
 
-  /** Initialize the data structure and register the class. */
+  /* Initialize the data structure and register the class. */
   void addClass(const string&, const string&, bool = false,
                 creatorDefault = nullptr);
 
-  /** This constructor registers the metadata of a class. */
+  /* This constructor registers the metadata of a class. */
   template <class T>
   static inline MetaClass* registerClass(const string& cat, const string& cls,
                                          bool def = false) {
     return new MetaClass(cat, cls, sizeof(T), def);
   }
 
-  /** This constructor registers the metadata of a class that is intended
+  /* This constructor registers the metadata of a class that is intended
    * only for internal use. */
   template <class T>
   static inline MetaClass* registerClass(const string& cls, creatorDefault f) {
     return new MetaClass(cls, sizeof(T), f);
   }
 
-  /** This constructor registers the metadata of a class, with a factory
+  /* This constructor registers the metadata of a class, with a factory
    * method that uses the default constructor of the class. */
   template <class T>
   static inline MetaClass* registerClass(const string& cat, const string& cls,
@@ -1690,7 +1667,7 @@ class MetaClass : public NonCopyable {
     return new MetaClass(cat, cls, sizeof(T), f, def);
   }
 
-  /** This function will analyze the string being passed, and return the
+  /* This function will analyze the string being passed, and return the
    * appropriate action.
    * The string is expected to be one of the following:
    *  - 'A' for action ADD
@@ -1701,13 +1678,13 @@ class MetaClass : public NonCopyable {
    */
   static Action decodeAction(const char*);
 
-  /** This method picks up the attribute named "ACTION" from the list and
+  /* This method picks up the attribute named "ACTION" from the list and
    * calls the method decodeAction(const XML_Char*) to analyze it.
    * @see decodeAction(const XML_Char*)
    */
   static Action decodeAction(const DataValueDict&);
 
-  /** Sort two metaclass objects. This is used to sort entities on their
+  /* Sort two metaclass objects. This is used to sort entities on their
    * type information in a stable and platform independent way.
    * @see operator !=
    * @see operator ==
@@ -1716,7 +1693,7 @@ class MetaClass : public NonCopyable {
     return typetag->getHash() < b.typetag->getHash();
   }
 
-  /** Compare two metaclass objects. We are not always sure that only a
+  /* Compare two metaclass objects. We are not always sure that only a
    * single instance of a metadata object exists in the system, and a
    * pointer comparison is therefore not appropriate.
    * @see operator !=
@@ -1726,7 +1703,7 @@ class MetaClass : public NonCopyable {
     return typetag->getHash() == b.typetag->getHash();
   }
 
-  /** Compare two metaclass objects. We are not always sure that only a
+  /* Compare two metaclass objects. We are not always sure that only a
    * single instance of a metadata object exists in the system, and a
    * pointer comparison is therefore not appropriate.
    * @see operator ==
@@ -1736,37 +1713,37 @@ class MetaClass : public NonCopyable {
     return typetag->getHash() != b.typetag->getHash();
   }
 
-  /** This method should be called whenever objects of this class are being
+  /* This method should be called whenever objects of this class are being
    * created, updated or deleted. It will run the callback method of all
-   * subscribers.<br>
+   * subscribers.
    * If the function returns true, all callback methods approved of the
    * event. If false is returned, one of the callbacks disapproved it and
    * the event action should be allowed to execute.
    */
   bool raiseEvent(Object* v, Signal a) const;
 
-  /** Connect a new subscriber to the class. */
+  /* Connect a new subscriber to the class. */
   void connect(Functor* c, Signal a) const {
     const_cast<MetaClass*>(this)->subscribers[a].push_front(c);
   }
 
-  /** Disconnect a subscriber from the class. */
+  /* Disconnect a subscriber from the class. */
   void disconnect(Functor* c, Signal a) const {
     const_cast<MetaClass*>(this)->subscribers[a].remove(c);
   }
 
-  /** Print all registered factory methods to the standard output for
+  /* Print all registered factory methods to the standard output for
    * debugging purposes. */
   static void printClasses();
 
-  /** Find a particular class by its name. If it can't be located the return
+  /* Find a particular class by its name. If it can't be located the return
    * value is nullptr. */
   static const MetaClass* findClass(const char*);
 
-  /** Default constructor. */
+  /* Default constructor. */
   MetaClass() : type("unspecified"), typetag(&Keyword::find("unspecified")) {}
 
-  /** Register a field. */
+  /* Register a field. */
   template <class Cls>
   inline void addStringField(const Keyword& k,
                              string (Cls::*getfunc)(void) const,
@@ -1878,32 +1855,32 @@ class MetaClass : public NonCopyable {
         new MetaFieldDurationDouble<Cls>(k, getfunc, setfunc, d, c));
   }
 
-  /** Search a field. */
+  /* Search a field. */
   const MetaFieldBase* findField(const Keyword&) const;
 
-  /** Search a field. */
+  /* Search a field. */
   const MetaFieldBase* findField(hashtype) const;
 
   typedef vector<MetaFieldBase*> fieldlist;
 
-  /** Return a reference to a list of fields. */
+  /* Return a reference to a list of fields. */
   const fieldlist& getFields() const { return fields; }
 
  private:
-  /** This constructor registers the metadata of a class. */
+  /* This constructor registers the metadata of a class. */
   MetaClass(const string& cls, size_t sz, creatorDefault f)
       : type(cls), size(sz), factoryMethod(f) {
     factoryMethod = f;
     typetag = &Keyword::find(cls.c_str());
   }
 
-  /** This constructor registers the metadata of a class. */
+  /* This constructor registers the metadata of a class. */
   MetaClass(const string& cat, const string& cls, size_t sz, bool def = false)
       : size(sz), isDefault(def) {
     addClass(cat, cls, def);
   }
 
-  /** This constructor registers the metadata of a class, with a factory
+  /* This constructor registers the metadata of a class, with a factory
    * method that uses the default constructor of the class. */
   MetaClass(const string& cat, const string& cls, size_t sz, creatorDefault f,
             bool def = false)
@@ -1912,28 +1889,28 @@ class MetaClass : public NonCopyable {
     factoryMethod = f;
   }
 
-  /** This is a list of objects that will receive a callback when the call
-   * method is being used.<br>
+  /* This is a list of objects that will receive a callback when the call
+   * method is being used.
    * There is limited error checking in maintaining this list, and it is the
    * user's responsability of calling the connect() and disconnect() methods
-   * correctly.<br>
+   * correctly.
    * This design garantuees maximum performance, but assumes a properly
    * educated user.
    */
   list<Functor*> subscribers[4];
 
-  /** Registry of all fields of the model. */
+  /* Registry of all fields of the model. */
   fieldlist fields;
 };
 
-/** @brief A MetaCategory instance represents metadata for a category of
+/* A MetaCategory instance represents metadata for a category of
  * object.
  *
  * A MetaClass instance represents metadata for a specific instance type.
  * For instance, 'Resource' is a category while 'ResourceDefault' and
- * 'ResourceInfinite' are specific classes.<br>
+ * 'ResourceInfinite' are specific classes.
  * A category has the following specific pieces of data:
- *  - A reader function for creating objects.<br>
+ *  - A reader function for creating objects.
  *    The reader function creates objects for all classes registered with it.
  *  - A group tag used for the grouping objects of the category in the XML
  *    output stream.
@@ -1945,29 +1922,29 @@ class MetaCategory : public MetaClass {
   friend class HasName;
 
  public:
-  /** The name used to name a collection of objects of this category. */
+  /* The name used to name a collection of objects of this category. */
   string group;
 
-  /** A XML tag grouping objects of the category. */
+  /* A XML tag grouping objects of the category. */
   const Keyword* grouptag;
 
-  /** Type definition for the find control function. */
+  /* Type definition for the find control function. */
   typedef Object* (*findController)(const DataValueDict&);
 
-  /** Type definition for the read control function. */
+  /* Type definition for the read control function. */
   typedef Object* (*readController)(const MetaClass*, const DataValueDict&,
                                     CommandManager*);
 
-  /** This template method is available as a object creation factory for
+  /* This template method is available as a object creation factory for
    * classes without key fields and which rely on a default constructor.
    */
   static Object* ControllerDefault(const MetaClass*, const DataValueDict&,
                                    CommandManager* = nullptr);
 
-  /** Destructor. */
+  /* Destructor. */
   virtual ~MetaCategory() {}
 
-  /** Template constructor. */
+  /* Template constructor. */
   template <class cls>
   static inline MetaCategory* registerCategory(const string& t, const string& g,
                                                readController r = nullptr,
@@ -1975,80 +1952,80 @@ class MetaCategory : public MetaClass {
     return new MetaCategory(t, g, sizeof(cls), r, f);
   }
 
-  /** Type definition for the map of all registered classes. */
+  /* Type definition for the map of all registered classes. */
   typedef map<hashtype, const MetaClass*, less<hashtype> > ClassMap;
 
-  /** Type definition for the map of all categories. */
+  /* Type definition for the map of all categories. */
   typedef map<hashtype, const MetaCategory*, less<hashtype> > CategoryMap;
 
-  /** Looks up a category name in the registry. If the category can't be
+  /* Looks up a category name in the registry. If the category can't be
    * located the return value is nullptr. */
   static const MetaCategory* findCategoryByTag(const char*);
 
-  /** Looks up a category name in the registry. If the category can't be
+  /* Looks up a category name in the registry. If the category can't be
    * located the return value is nullptr. */
   static const MetaCategory* findCategoryByTag(const hashtype);
 
-  /** Looks up a category name in the registry. If the category can't be
+  /* Looks up a category name in the registry. If the category can't be
    * located the return value is nullptr. */
   static const MetaCategory* findCategoryByGroupTag(const char*);
 
-  /** Looks up a category name in the registry. If the category can't be
+  /* Looks up a category name in the registry. If the category can't be
    * located the return value is nullptr. */
   static const MetaCategory* findCategoryByGroupTag(const hashtype);
 
-  /** Find a class in this category with a specified name.<br>
+  /* Find a class in this category with a specified name.
    * If the catrgory can't be found the return value is nullptr.
    */
   const MetaClass* findClass(const char*) const;
 
-  /** Find a class in this category with a specified name.<br>
+  /* Find a class in this category with a specified name.
    * If the catrgory can't be found the return value is nullptr.
    */
   const MetaClass* findClass(const hashtype) const;
 
-  /** Find an object given a dictionary of values. */
+  /* Find an object given a dictionary of values. */
   Object* find(const DataValueDict& key) const {
     return findFunction ? findFunction(key) : nullptr;
   }
 
-  /** A control function for reading objects of a category.
+  /* A control function for reading objects of a category.
    * The controller function manages the creation and destruction of
    * objects in this category.
    */
   readController readFunction;
 
-  /** Compute the hash for "default" once and store it in this variable for
+  /* Compute the hash for "default" once and store it in this variable for
    * efficiency. */
   static const hashtype defaultHash;
 
  private:
-  /** Private constructor, called by registerCategory. */
+  /* Private constructor, called by registerCategory. */
   MetaCategory(const string&, const string&, size_t, readController,
                findController);
 
-  /** A map of all classes registered for this category. */
+  /* A map of all classes registered for this category. */
   ClassMap classes;
 
-  /** This is the root for a linked list of all categories.
+  /* This is the root for a linked list of all categories.
    * Categories are chained to the list in the order of their registration.
    */
   static const MetaCategory* firstCategory;
 
-  /** A pointer to the next category in the singly linked list. */
+  /* A pointer to the next category in the singly linked list. */
   const MetaCategory* nextCategory;
 
-  /** A control function to find an object given its primary key. */
+  /* A control function to find an object given its primary key. */
   findController findFunction;
 
-  /** A map of all categories by their name. */
+  /* A map of all categories by their name. */
   static CategoryMap categoriesByTag;
 
-  /** A map of all categories by their group name. */
+  /* A map of all categories by their group name. */
   static CategoryMap categoriesByGroupTag;
 };
 
-/** @brief This class represents a static subscription to a signal.
+/* This class represents a static subscription to a signal.
  *
  * When the signal callback is triggered the static method callback() on the
  * parameter class will be called.
@@ -2058,12 +2035,12 @@ class FunctorStatic : public Functor {
   friend class MetaClass;
 
  public:
-  /** Add a signal subscriber. */
+  /* Add a signal subscriber. */
   static void connect(const Signal a) {
     T::metadata->connect(new FunctorStatic<T, U>(), a);
   }
 
-  /** Remove a signal subscriber. */
+  /* Remove a signal subscriber. */
   static void disconnect(const Signal a) {
     MetaClass& t =
         const_cast<MetaClass&>(static_cast<const MetaClass&>(*T::metadata));
@@ -2084,7 +2061,7 @@ class FunctorStatic : public Functor {
   }
 
  private:
-  /** This is the callback method. The functor will call the static callback
+  /* This is the callback method. The functor will call the static callback
    * method of the subscribing class.
    */
   virtual bool callback(Object* v, const Signal a) const {
@@ -2092,7 +2069,7 @@ class FunctorStatic : public Functor {
   }
 };
 
-/** @brief This class represents an object subscribing to a signal.
+/* This class represents an object subscribing to a signal.
  *
  * When the signal callback is triggered the method callback() on the
  * instance object will be called.
@@ -2100,7 +2077,7 @@ class FunctorStatic : public Functor {
 template <class T, class U>
 class FunctorInstance : public Functor {
  public:
-  /** Connect a new subscriber to a signal.<br>
+  /* Connect a new subscriber to a signal.
    * It is the users' responsibility to call the disconnect method
    * when the subscriber is being deleted. Otherwise the application
    * will crash.
@@ -2109,7 +2086,7 @@ class FunctorInstance : public Functor {
     if (u) T::metadata.connect(new FunctorInstance(u), a);
   }
 
-  /** Disconnect from a signal. */
+  /* Disconnect from a signal. */
   static void disconnect(U* u, const Signal a) {
     MetaClass& t =
         const_cast<MetaClass&>(static_cast<const MetaClass&>(T::metadata));
@@ -2129,16 +2106,16 @@ class FunctorInstance : public Functor {
     throw LogicException("Subscription doesn't exist");
   }
 
-  /** Constructor. */
+  /* Constructor. */
   FunctorInstance(U* u) : instance(u) {}
 
  private:
-  /** This is the callback method. */
+  /* This is the callback method. */
   virtual bool callback(Object* v, const Signal a) const {
     return instance ? instance->callback(static_cast<T*>(v), a) : true;
   }
 
-  /** The object whose callback method will be called. */
+  /* The object whose callback method will be called. */
   U* instance;
 };
 
@@ -2146,16 +2123,16 @@ class FunctorInstance : public Functor {
 // UTILITY CLASS "TIMER".
 //
 
-/** @brief This class is used to measure the processor time used by the
+/* This class is used to measure the processor time used by the
  * program.
  *
  * The accuracy of the timer is dependent on the implementation of the
  * ANSI C-function clock() by your compiler and your platform.
  * You may count on milli-second accuracy. Different platforms provide
  * more accurate timer functions, which can be used if the accuracy is a
- * prime objective.<br>
+ * prime objective.
  * When compiled with Visual C++, the timer is returning the elapsed
- * time - which is not the expected ANSI behavior!<br>
+ * time - which is not the expected ANSI behavior!
  * Other compilers and platforms return the consumed cpu time, as expected.
  * When the load on a machine is low, the consumed cpu-time and the elapsed
  * time are close to each other. On a system with a higher load, the
@@ -2163,25 +2140,25 @@ class FunctorInstance : public Functor {
  */
 class Timer {
  public:
-  /** Default constructor. Creating the timer object sets the start point
+  /* Default constructor. Creating the timer object sets the start point
    * for the time measurement. */
   explicit Timer() : start_time(clock()) {}
 
-  /** Reset the time counter to 0. */
+  /* Reset the time counter to 0. */
   void restart() { start_time = clock(); }
 
-  /** Return the cpu-time in seconds consumed since the creation or the last
+  /* Return the cpu-time in seconds consumed since the creation or the last
    * reset of the timer. */
   double elapsed() const {
     return double(clock() - start_time) / CLOCKS_PER_SEC;
   }
 
  private:
-  /** Stores the time when the timer is started. */
+  /* Stores the time when the timer is started. */
   clock_t start_time;
 };
 
-/** Prints a timer to the outputstream. The output is formatted as a double. */
+/* Prints a timer to the outputstream. The output is formatted as a double. */
 inline ostream& operator<<(ostream& os, const Timer& t) {
   return os << t.elapsed();
 }
@@ -2190,32 +2167,32 @@ inline ostream& operator<<(ostream& os, const Timer& t) {
 // UTILITY CLASSES FOR INPUT AND OUTPUT
 //
 
-/** @brief Abstract base class for writing serialized data to an output stream.
+/* Abstract base class for writing serialized data to an output stream.
  *
  * Subclasses implement writing different formats and stream types.
  */
 class Serializer {
  protected:
-  /** Updating the output stream. */
+  /* Updating the output stream. */
   void setOutput(ostream& o) { m_fp = &o; }
 
  public:
-  /** Returns which type of export is requested. */
+  /* Returns which type of export is requested. */
   FieldCategory getContentType() const { return forceBase ? BASE : content; }
 
-  /** Specify the type of export. */
+  /* Specify the type of export. */
   void setContentType(FieldCategory c) { content = c; }
 
-  /** Set the content type, by parsing its text description. */
+  /* Set the content type, by parsing its text description. */
   void setContentType(const string&);
 
-  /** Constructor with a given stream. */
+  /* Constructor with a given stream. */
   Serializer(ostream& os) { m_fp = &os; }
 
-  /** Default constructor. */
+  /* Default constructor. */
   Serializer() { m_fp = &logger; }
 
-  /** Update the flag to write references or not.
+  /* Update the flag to write references or not.
    * The value of the flag before the call is returned. This is useful
    * to restore the previous state later on.
    */
@@ -2225,12 +2202,12 @@ class Serializer {
     return tmp;
   }
 
-  /** Returns whether we write only references for nested objects or not. */
+  /* Returns whether we write only references for nested objects or not. */
   inline bool getSaveReferences() const { return writeReference; }
 
   inline bool getWriteHidden() const { return writeHidden; }
 
-  /** Update the flag to write hidden objects or not.
+  /* Update the flag to write hidden objects or not.
    * The value of the flag before the call is returned. This is useful
    * to restore the previous state later on.
    */
@@ -2248,19 +2225,19 @@ class Serializer {
     return tmp;
   }
 
-  /** Start writing a new list. */
+  /* Start writing a new list. */
   virtual void BeginList(const Keyword&) = 0;
 
-  /** Write the closing tag of a list. */
+  /* Write the closing tag of a list. */
   virtual void EndList(const Keyword& t) = 0;
 
-  /** Start writing a new object. */
+  /* Start writing a new object. */
   virtual void BeginObject(const Keyword&) = 0;
 
-  /** Write the closing tag of this object. */
+  /* Write the closing tag of this object. */
   virtual void EndObject(const Keyword& t) = 0;
 
-  /** Start writing a new object. */
+  /* Start writing a new object. */
   virtual void BeginObject(const Keyword&, const string&) = 0;
   virtual void BeginObject(const Keyword&, const Keyword&, const int) = 0;
   virtual void BeginObject(const Keyword&, const Keyword&, const Date) = 0;
@@ -2273,72 +2250,72 @@ class Serializer {
                            const Keyword&, const Date, const Keyword&,
                            const Date) = 0;
 
-  /** Write the string to the output. No tags are added, so this method
+  /* Write the string to the output. No tags are added, so this method
    * is used for passing text straight into the output file. */
   virtual void writeString(const string& c) = 0;
 
-  /** Write an unsigned long value enclosed opening and closing tags.  */
+  /* Write an unsigned long value enclosed opening and closing tags.  */
   virtual void writeElement(const Keyword& t, const long unsigned int val) = 0;
 
-  /** Write an integer value enclosed opening and closing tags. */
+  /* Write an integer value enclosed opening and closing tags. */
   virtual void writeElement(const Keyword& t, const int val) = 0;
 
-  /** Write a double value enclosed opening and closing tags. */
+  /* Write a double value enclosed opening and closing tags. */
   virtual void writeElement(const Keyword& t, const double val) = 0;
 
   virtual void writeElement(const Keyword& t, const PooledString& p,
                             const double val) = 0;
 
-  /** Write a boolean value enclosed opening and closing tags. The boolean
+  /* Write a boolean value enclosed opening and closing tags. The boolean
    * is written out as the string 'true' or 'false'.
    */
   virtual void writeElement(const Keyword& t, const bool val) = 0;
 
-  /** Write a string value enclosed opening and closing tags. Special
+  /* Write a string value enclosed opening and closing tags. Special
    * characters are appropriately escaped. */
   virtual void writeElement(const Keyword& t, const string& val) = 0;
 
-  /** Writes an element with a string attribute. */
+  /* Writes an element with a string attribute. */
   virtual void writeElement(const Keyword& u, const Keyword& t,
                             const string& val) = 0;
 
-  /** Writes an element with a long attribute. */
+  /* Writes an element with a long attribute. */
   virtual void writeElement(const Keyword& u, const Keyword& t,
                             const long val) = 0;
 
-  /** Writes an element with a date attribute. */
+  /* Writes an element with a date attribute. */
   virtual void writeElement(const Keyword& u, const Keyword& t,
                             const Date& val) = 0;
 
-  /** Writes an element with 2 string attributes. */
+  /* Writes an element with 2 string attributes. */
   virtual void writeElement(const Keyword& u, const Keyword& t1,
                             const string& val1, const Keyword& t2,
                             const string& val2) = 0;
 
-  /** Writes an element with a string and an unsigned long attribute. */
+  /* Writes an element with a string and an unsigned long attribute. */
   virtual void writeElement(const Keyword& u, const Keyword& t1,
                             unsigned long val1, const Keyword& t2,
                             const string& val2) = 0;
 
-  /** Writes an element with a short, an unsigned long and a double attribute.
+  /* Writes an element with a short, an unsigned long and a double attribute.
    */
   virtual void writeElement(const Keyword& u, const Keyword& t1, short val1,
                             const Keyword& t2, unsigned long val2,
                             const Keyword& t3, double val3) = 0;
 
-  /** Writes a C-type character string. */
+  /* Writes a C-type character string. */
   virtual void writeElement(const Keyword& t, const char* val) = 0;
 
-  /** Writes an Duration element. /> */
+  /* Writes an Duration element. /> */
   virtual void writeElement(const Keyword& t, const Duration d) = 0;
 
-  /** Writes an date element. */
+  /* Writes an date element. */
   virtual void writeElement(const Keyword& t, const Date d) = 0;
 
-  /** Writes an daterange element. */
+  /* Writes an daterange element. */
   virtual void writeElement(const Keyword& t, const DateRange& d) = 0;
 
-  /** This method writes a serializable object.<br>
+  /* This method writes a serializable object.
    * If an object is nested more than 2 levels deep only a reference
    * to it is written, rather than the complete object.
    * You should call this method for all objects in your XML document,
@@ -2348,7 +2325,7 @@ class Serializer {
   virtual void writeElement(const Keyword&, const Object*,
                             FieldCategory = BASE);
 
-  /** @see writeElement(const Keyword&, const Object*, mode) */
+  /* @see writeElement(const Keyword&, const Object*, mode) */
   void writeElement(const Keyword& t, const Object& o) {
     writeElement(t, &o, forceBase ? BASE : content);
   }
@@ -2357,7 +2334,7 @@ class Serializer {
     writeElement(t, &o, m);
   }
 
-  /** Returns a pointer to the object that is currently being saved. */
+  /* Returns a pointer to the object that is currently being saved. */
   Object* getCurrentObject() const {
     return const_cast<Object*>(currentObject);
   }
@@ -2368,12 +2345,12 @@ class Serializer {
     return t;
   }
 
-  /** Returns a pointer to the parent of the object that is being saved. */
+  /* Returns a pointer to the parent of the object that is being saved. */
   Object* getPreviousObject() const {
     return const_cast<Object*>(parentObject);
   }
 
-  /** Returns the number of objects that have been serialized. */
+  /* Returns the number of objects that have been serialized. */
   unsigned long countObjects() const { return numObjects; }
 
   inline void skipHead(bool b = true) { skipHeader = b; }
@@ -2389,107 +2366,107 @@ class Serializer {
   inline bool getServiceMode() const { return service_mode; }
 
  protected:
-  /** Output stream. */
+  /* Output stream. */
   ostream* m_fp;
 
-  /** Keep track of the number of objects being stored. */
+  /* Keep track of the number of objects being stored. */
   unsigned long numObjects = 0;
 
-  /** This stores a pointer to the object that is currently being saved. */
+  /* This stores a pointer to the object that is currently being saved. */
   const Object* currentObject = nullptr;
 
-  /** This stores a pointer to the object that has previously been saved. */
+  /* This stores a pointer to the object that has previously been saved. */
   const Object* parentObject = nullptr;
 
-  /** Stores the type of data to be exported. */
+  /* Stores the type of data to be exported. */
   FieldCategory content = BASE;
 
-  /** Flag allowing us to skip writing the head of the XML element.
+  /* Flag allowing us to skip writing the head of the XML element.
    * The flag is reset to 'true'.
    */
   bool skipHeader = false;
 
-  /** Flag allowing us to skip writing the tail of the XML element.
+  /* Flag allowing us to skip writing the tail of the XML element.
    * The flag is reset to 'true'.
    */
   bool skipFooter = false;
 
-  /** Flag to mark whether hidden objects need to be written as well. */
+  /* Flag to mark whether hidden objects need to be written as well. */
   bool writeHidden = false;
 
-  /** Flag to mark whether to save objects or their reference. */
+  /* Flag to mark whether to save objects or their reference. */
   bool writeReference = false;
 
-  /** Flag to force the output mode to be base. */
+  /* Flag to force the output mode to be base. */
   bool forceBase = false;
 
-  /** Flag whether or not we are in service mode.
+  /* Flag whether or not we are in service mode.
    * In service mode, objects are serialized slightly different.
    */
   bool service_mode = false;
 };
 
-/** @brief A class to model a string to be interpreted as a keyword.
+/* A class to model a string to be interpreted as a keyword.
  *
  * The class uses hashes to do a fast comparison with the set of keywords.
  */
 class DataKeyword {
  private:
-  /** This string stores the hash value of the element. */
+  /* This string stores the hash value of the element. */
   hashtype hash = 0;
 
-  /** A pointer to the string representation of the keyword.<br>
+  /* A pointer to the string representation of the keyword.
    * The string buffer is to be managed by the code creating this
    * instance.
    */
   const char* ch = nullptr;
 
  public:
-  /** Default constructor. */
+  /* Default constructor. */
   explicit DataKeyword() {}
 
-  /** Constructor. */
+  /* Constructor. */
   explicit DataKeyword(const string& n)
       : hash(Keyword::hash(n)), ch(n.c_str()) {}
 
-  /** Constructor. */
+  /* Constructor. */
   explicit DataKeyword(const char* c) : hash(Keyword::hash(c)), ch(c) {}
 
-  /** Copy constructor. */
+  /* Copy constructor. */
   DataKeyword(const DataKeyword& o) : hash(o.hash), ch(o.ch) {}
 
-  /** Returns the hash value of this tag. */
+  /* Returns the hash value of this tag. */
   hashtype getHash() const { return hash; }
 
-  /** Returns this tag. */
+  /* Returns this tag. */
   void reset(const char* const c) {
     hash = Keyword::hash(c);
     ch = c;
   }
 
-  /** Return the element name. Since this method involves a lookup in a
+  /* Return the element name. Since this method involves a lookup in a
    * table with Keywords, it has some performance impact and should be
    * avoided where possible. Only the hash of an element can efficiently
    * be retrieved.
    */
   const char* getName() const;
 
-  /** Returns true when this element is an instance of this tag. This method
+  /* Returns true when this element is an instance of this tag. This method
    * doesn't involve a string comparison and is extremely efficient. */
   bool isA(const Keyword& t) const { return t.getHash() == hash; }
 
-  /** Returns true when this element is an instance of this tag. This method
+  /* Returns true when this element is an instance of this tag. This method
    * doesn't involve a string comparison and is extremely efficient. */
   bool isA(const Keyword* t) const { return t->getHash() == hash; }
 
-  /** Comparison operator. */
+  /* Comparison operator. */
   bool operator<(const DataKeyword& o) const { return hash < o.hash; }
 
-  /** String comparison. */
+  /* String comparison. */
   bool operator==(const string o) const { return o == ch; }
 };
 
-/** @brief This abstract class represents a variant data type.
+/* This abstract class represents a variant data type.
  *
  * It can hold a data value of the following types:
  *   - bool
@@ -2509,7 +2486,7 @@ class DataValue {
     throw LogicException("DataValue is an abstract class");
   }
 
-  /** Destructor. */
+  /* Destructor. */
   virtual ~DataValue() {}
 
   void operator>>(unsigned long int& val) const { val = getUnsignedLong(); }
@@ -2583,35 +2560,35 @@ class DataValue {
   virtual void setObject(Object*) = 0;
 };
 
-/** @brief This class represents an XML element being read in from the
+/* This class represents an XML element being read in from the
  * input file. */
 class XMLData : public DataValue {
  private:
-  /** This string stores the XML input data. */
+  /* This string stores the XML input data. */
   string m_strData;
 
-  /** Object pointer. */
+  /* Object pointer. */
   Object* m_obj = nullptr;
 
  public:
   virtual operator bool() const { return !m_strData.empty() && !m_obj; }
 
-  /** Default constructor. */
+  /* Default constructor. */
   XMLData() {}
 
-  /** Constructor. */
+  /* Constructor. */
   XMLData(const string& v) : m_strData(v) {}
 
-  /** Copy constructor from DataValue base class. */
+  /* Copy constructor from DataValue base class. */
   XMLData(const DataValue& d) {
     m_obj = d.getObject();
     if (!m_obj) m_strData = d.getString();
   }
 
-  /** Destructor. */
+  /* Destructor. */
   virtual ~XMLData() {}
 
-  /** Re-initializes an existing element. Using this method we can avoid
+  /* Re-initializes an existing element. Using this method we can avoid
    * destroying and recreating XMLData objects too frequently. Instead
    * we can manage them in a array.
    */
@@ -2620,16 +2597,16 @@ class XMLData : public DataValue {
     m_obj = nullptr;
   }
 
-  /** Add some characters to this data field of this element.<br>
+  /* Add some characters to this data field of this element.
    * The second argument is the number of bytes, not the number of
    * characters.
    */
   void appendString(const char* pData) { m_strData.append(pData); }
 
-  /** Set the data value of this element. */
+  /* Set the data value of this element. */
   void setData(const char* pData) { m_strData.assign(pData); }
 
-  /** Return the data field. */
+  /* Return the data field. */
   const char* getData() const { return m_strData.c_str(); }
 
   virtual long getLong() const { return atol(getData()); }
@@ -2648,17 +2625,17 @@ class XMLData : public DataValue {
 
   virtual Date getDate() const { return Date(getData()); }
 
-  /** Returns the string value of the XML data. The xerces library takes care
+  /* Returns the string value of the XML data. The xerces library takes care
    * of appropriately unescaping special character sequences. */
   virtual const string& getString() const { return m_strData; }
 
-  /** Interprets the element as a boolean value.<br>
+  /* Interprets the element as a boolean value.
    * <p>Our implementation is a bit more generous and forgiving than the
    * boolean datatype that is part of the XML schema v2 standard.
-   * The standard expects the following literals:<br>
+   * The standard expects the following literals:
    *   {true, false, 1, 0}</p>
    * <p>Our implementation uses only the first charater of the text, and is
-   * case insensitive. It thus matches a wider range of values:<br>
+   * case insensitive. It thus matches a wider range of values:
    *   {t.*, T.*, f.*, F.*, 1.*, 0.*}</p>
    */
   bool getBool() const;
@@ -2703,7 +2680,7 @@ class XMLData : public DataValue {
   virtual void setObject(Object* o) { m_obj = o; }
 };
 
-/** @brief This class groups some functions used to interact with the operating
+/* This class groups some functions used to interact with the operating
  * system environment.
  *
  * It handles:
@@ -2714,20 +2691,20 @@ class XMLData : public DataValue {
  */
 class Environment {
  private:
-  /** Caches the number of processor cores. */
+  /* Caches the number of processor cores. */
   static int processorcores;
 
-  /** A file where output is directed to. */
+  /* A file where output is directed to. */
   static ofstream logfile;
 
-  /** The name of the log file. */
+  /* The name of the log file. */
   static string logfilename;
 
-  /** A list of all loaded modules. */
+  /* A list of all loaded modules. */
   static set<string> moduleRegistry;
 
  public:
-  /** Search for a file with a given name.<br>
+  /* Search for a file with a given name.
    * The following directories are searched in sequence to find a match:
    *   - The current directory.
    *   - The directory referred to by the variable FREPPLE_HOME, if it
@@ -2739,28 +2716,28 @@ class Environment {
    */
   static string searchFile(const string);
 
-  /** Returns the number of processor cores on your machine. */
+  /* Returns the number of processor cores on your machine. */
   static int getProcessorCores();
 
-  /** Returns the name of the logfile. */
+  /* Returns the name of the logfile. */
   static const string& getLogFile() { return logfilename; }
 
-  /** Updates the filename for logging error messages and warnings.
+  /* Updates the filename for logging error messages and warnings.
    * The file is also opened for writing and the standard output and
-   * standard error output streams are redirected to it.<br>
+   * standard error output streams are redirected to it.
    * If the filename starts with '+' the log file is appended to
    * instead of being overwritten.
    */
   static void setLogFile(const string& x);
 
-  /** Type for storing parameters passed to a module that is loaded. */
+  /* Type for storing parameters passed to a module that is loaded. */
   typedef map<string, XMLData> ParameterList;
 
-  /** Updates the process name on Linux when the environment variable
+  /* Updates the process name on Linux when the environment variable
    * FREPPLE_PROCESSNAME is set. Maximum 7 characters are used. */
   static void setProcessName();
 
-  /** @brief Function to dynamically load a shared library in frePPLe.
+  /* Function to dynamically load a shared library in frePPLe.
    *
    * After loading the library, the function "initialize" of the module
    * is executed.
@@ -2773,20 +2750,15 @@ class Environment {
    */
   static void loadModule(string lib);
 
-  /** Print all modules that have been loaded. */
+  /* Print all modules that have been loaded. */
   static void printModules();
-
-  /** Sleep for a number of milliseconds. */
-  static void sleep(unsigned int m) {
-    this_thread::sleep_for(chrono::milliseconds(m));
-  }
 };
 
-/** @brief This class instantiates the abstract DataValue class, and is a
+/* This class instantiates the abstract DataValue class, and is a
  * wrapper around a standard Python PyObject pointer.
  *
  * When creating a PythonData from a C++ object, make sure to increment
- * the reference count of the object.<br>
+ * the reference count of the object.
  * When constructing a PythonData from an existing Python object, the
  * code that provided us the PyObject pointer should have incremented the
  * reference count already.
@@ -2799,34 +2771,34 @@ class PythonData : public DataValue {
   string result;
 
  public:
-  /** Default constructor. The default value is equal to Py_None. */
+  /* Default constructor. The default value is equal to Py_None. */
   explicit PythonData() : obj(Py_None) { Py_INCREF(obj); }
 
-  /** Destructor. */
+  /* Destructor. */
   ~PythonData() {
     if (obj) Py_DECREF(obj);
   }
 
-  /** Copy constructor. */
+  /* Copy constructor. */
   PythonData(const PythonData& o) : obj(o) {
     if (obj) Py_INCREF(obj);
   }
 
-  /** Constructor from an existing Python object. */
+  /* Constructor from an existing Python object. */
   PythonData(const PyObject* o) : obj(o ? const_cast<PyObject*>(o) : Py_None) {
     Py_INCREF(obj);
   }
 
-  /** Set the internal pointer to nullptr. */
+  /* Set the internal pointer to nullptr. */
   inline void setNull() {
     if (obj) Py_DECREF(obj);
     obj = nullptr;
   }
 
-  /** Return true if a valid Python object is available. */
+  /* Return true if a valid Python object is available. */
   inline bool isValid() const { return obj != nullptr; }
 
-  /** This conversion operator casts the object back to a PyObject pointer.
+  /* This conversion operator casts the object back to a PyObject pointer.
    * The reference count of the Python object is increased, so you want to be
    * careful to apply this conversion.
    */
@@ -2835,10 +2807,10 @@ class PythonData : public DataValue {
     return obj;
   }
 
-  /** Check for null value. */
+  /* Check for null value. */
   operator bool() const { return obj != nullptr && obj != Py_None; }
 
-  /** Assignment operator. */
+  /* Assignment operator. */
   PythonData& operator=(const PythonData& o) {
     if (obj) Py_DECREF(obj);
     obj = o.obj;
@@ -2846,21 +2818,21 @@ class PythonData : public DataValue {
     return *this;
   }
 
-  /** Check whether the Python object is of a certain type.<br>
+  /* Check whether the Python object is of a certain type.
    * Subclasses of the argument type will also give a true return value.
    */
   bool check(const MetaClass* c) const {
     return obj ? PyObject_TypeCheck(obj, c->pythonClass) : false;
   }
 
-  /** Check whether the Python object is of a certain type.<br>
+  /* Check whether the Python object is of a certain type.
    * Subclasses of the argument type will also give a true return value.
    */
   bool check(const PythonType& c) const {
     return obj ? PyObject_TypeCheck(obj, c.type_object()) : false;
   }
 
-  /** Convert a Python string into a C++ string. */
+  /* Convert a Python string into a C++ string. */
   inline const string& getString() const {
     if (obj == Py_None)
       const_cast<PythonData*>(this)->result = "";
@@ -2881,7 +2853,7 @@ class PythonData : public DataValue {
     return result;
   }
 
-  /** Extract an unsigned long from the Python object. */
+  /* Extract an unsigned long from the Python object. */
   unsigned long getUnsignedLong() const {
     if (obj == Py_None) return 0;
     if (PyUnicode_Check(obj)) {
@@ -2897,11 +2869,11 @@ class PythonData : public DataValue {
       return getInt();
   }
 
-  /** Convert a Python datetime.date or datetime.datetime object into a
+  /* Convert a Python datetime.date or datetime.datetime object into a
    * frePPLe date. */
   Date getDate() const;
 
-  /** Convert a Python number or string into a C++ double. */
+  /* Convert a Python number or string into a C++ double. */
   inline double getDouble() const {
     if (obj == Py_None) return 0;
     if (PyUnicode_Check(obj)) {
@@ -2914,7 +2886,7 @@ class PythonData : public DataValue {
     return PyFloat_AsDouble(obj);
   }
 
-  /** Convert a Python number or string into a C++ integer. */
+  /* Convert a Python number or string into a C++ integer. */
   inline int getInt() const {
     if (obj == Py_None) return 0;
     if (PyUnicode_Check(obj)) {
@@ -2930,7 +2902,7 @@ class PythonData : public DataValue {
     return result;
   }
 
-  /** Convert a Python number into a C++ long. */
+  /* Convert a Python number into a C++ long. */
   inline long getLong() const {
     if (obj == Py_None) return 0;
     if (PyUnicode_Check(obj)) {
@@ -2946,11 +2918,11 @@ class PythonData : public DataValue {
     return result;
   }
 
-  /** Convert a Python number into a C++ bool. */
+  /* Convert a Python number into a C++ bool. */
   inline bool getBool() const { return PyObject_IsTrue(obj) ? true : false; }
 
-  /** Convert a Python number as a number of seconds into a frePPLe
-   * Duration.<br>
+  /* Convert a Python number as a number of seconds into a frePPLe
+   * Duration.
    * A Duration is represented as a number of seconds in Python.
    */
   Duration getDuration() const {
@@ -2966,43 +2938,43 @@ class PythonData : public DataValue {
     return result;
   }
 
-  /** Return the frePPle Object referred to by the Python value.
+  /* Return the frePPle Object referred to by the Python value.
    * If it points to a non-frePPLe object, the return value is nullptr.
    */
   Object* getObject() const;
 
-  /** Constructor from a pointer to an Object.<br>
+  /* Constructor from a pointer to an Object.
    * The metadata of the Object instances allow us to create a Python
    * object that works as a proxy for the C++ object.
    */
   PythonData(Object* p);
 
-  /** Convert a C++ string into a Unicode Python string. */
+  /* Convert a C++ string into a Unicode Python string. */
   inline PythonData(const string& val) { setString(val); }
 
-  /** Convert a C++ double into a Python number. */
+  /* Convert a C++ double into a Python number. */
   inline PythonData(const double val) { setDouble(val); }
 
-  /** Convert a C++ integer into a Python integer. */
+  /* Convert a C++ integer into a Python integer. */
   inline PythonData(const int val) { setInt(val); }
 
-  /** Convert a C++ unsigned integer into a Python integer. */
+  /* Convert a C++ unsigned integer into a Python integer. */
   inline PythonData(const unsigned int val) { setInt(val); }
 
-  /** Convert a C++ long into a Python long. */
+  /* Convert a C++ long into a Python long. */
   inline PythonData(const long val) { setLong(val); }
 
-  /** Convert a C++ unsigned long into a Python long. */
+  /* Convert a C++ unsigned long into a Python long. */
   inline PythonData(const unsigned long val) { setUnsignedLong(val); }
 
-  /** Convert a C++ boolean into a Python boolean. */
+  /* Convert a C++ boolean into a Python boolean. */
   inline PythonData(const bool val) { setBool(val); }
 
-  /** Convert a frePPLe duration into a Python number representing
+  /* Convert a frePPLe duration into a Python number representing
    * the number of seconds. */
   inline PythonData(const Duration val) { setDuration(val); }
 
-  /** Convert a frePPLe date into a Python datetime.datetime object. */
+  /* Convert a frePPLe date into a Python datetime.datetime object. */
   PythonData(const Date val) { setDate(val); }
 
   virtual void setLong(const long val) {
@@ -3052,28 +3024,28 @@ class PythonData : public DataValue {
   virtual void setObject(Object*);
 };
 
-/** @brief This call is a wrapper around a Python function that can be
+/* This call is a wrapper around a Python function that can be
  * called from the C++ code.
  */
 class PythonFunction : public PythonData {
  public:
-  /** Default constructor. */
+  /* Default constructor. */
   PythonFunction() {}
 
-  /** Constructor. */
+  /* Constructor. */
   PythonFunction(const string&);
 
-  /** Constructor. */
+  /* Constructor. */
   PythonFunction(PyObject*);
 
-  /** Copy constructor. */
+  /* Copy constructor. */
   PythonFunction(const PythonFunction& o) : func(o.func) {
     if (func) {
       Py_INCREF(func);
     }
   }
 
-  /** Assignment operator. */
+  /* Assignment operator. */
   PythonFunction& operator=(const PythonFunction& o) {
     if (func) {
       Py_DECREF(func);
@@ -3085,45 +3057,45 @@ class PythonFunction : public PythonData {
     return *this;
   }
 
-  /** Destructor. */
+  /* Destructor. */
   ~PythonFunction() {
     if (func) {
       Py_DECREF(func);
     }
   }
 
-  /** Conversion operator to a Python pointer. */
+  /* Conversion operator to a Python pointer. */
   operator const PyObject*() const { return func; }
 
-  /** Conversion operator to a string. */
+  /* Conversion operator to a string. */
   operator string() const {
     return func ? PyEval_GetFuncName(func) : "nullptr";
   }
 
-  /** Conversion operator to bool. */
+  /* Conversion operator to bool. */
   operator bool() const { return func != nullptr; }
 
-  /** Call the Python function without arguments. */
+  /* Call the Python function without arguments. */
   PythonData call() const;
 
-  /** Call the Python function with one argument. */
+  /* Call the Python function with one argument. */
   PythonData call(const PyObject*) const;
 
-  /** Call the Python function with two arguments. */
+  /* Call the Python function with two arguments. */
   PythonData call(const PyObject*, const PyObject*) const;
 
  private:
-  /** A pointer to the Python object. */
+  /* A pointer to the Python object. */
   PyObject* func = nullptr;
 };
 
-/** @brief This class represents a dictionary of keyword + value pairs.
+/* This class represents a dictionary of keyword + value pairs.
  *
  * This abstract class can be instantiated as XML attributes, or as a
  * Python keyword dictionary.
- *  - XML:<br>
+ *  - XML:
  *    &lt;buffer name="a" onhand="10" category="A" /&gt;
- *  - Python:<br>
+ *  - Python:
  *    buffer(name="a", onhand="10", category="A")
  *
  * TODO adding an abstract iterator or visitor to this class allows further
@@ -3131,14 +3103,14 @@ class PythonFunction : public PythonData {
  */
 class DataValueDict {
  public:
-  /** Lookup function in the dictionary. */
+  /* Lookup function in the dictionary. */
   virtual const DataValue* get(const Keyword&) const = 0;
 
-  /** Destructor. */
+  /* Destructor. */
   virtual ~DataValueDict() {}
 };
 
-/** @brief This class is a wrapper around a Python dictionary. */
+/* This class is a wrapper around a Python dictionary. */
 class PythonDataValueDict : public DataValueDict {
  private:
   PyObject* kwds;
@@ -3159,7 +3131,7 @@ class PythonDataValueDict : public DataValueDict {
   }
 };
 
-/** @brief Object is the abstract base class for the main entities.
+/* Object is the abstract base class for the main entities.
  *
  * It handles to following capabilities:
  * - <b>Metadata:</b> All subclasses publish metadata about their structure.
@@ -3168,11 +3140,11 @@ class PythonDataValueDict : public DataValueDict {
  *   interested classes or objects can get a callback notification.
  * - <b>Serialization:</b> Objects need to be persisted and later restored.
  *   Subclasses that don't need to be persisted can skip the implementation
- *   of the writeElement method.<br>
+ *   of the writeElement method.
  *   Instances can be marked as hidden, which means that they are not
  *   serialized at all.
  *
- * It inherits from the PyObject C struct, defined in the Python C API.<br>
+ * It inherits from the PyObject C struct, defined in the Python C API.
  * These functions aren't called directly from Python. Python first calls a
  * handler C-function and the handler function will use a virtual call to
  * run the correct C++-method.
@@ -3182,10 +3154,10 @@ class Object : public PyObject {
   friend int setattro_handler(PyObject*, PyObject*, PyObject*);
 
  public:
-  /** Constructor. */
+  /* Constructor. */
   explicit Object() {}
 
-  /** Destructor. */
+  /* Destructor. */
   virtual ~Object() {
     if (PyObject::ob_refcnt > 1)
       logger << "Warning: Deleting " << (PyObject*)(this)
@@ -3197,15 +3169,15 @@ class Object : public PyObject {
     if (dict) Py_DECREF(dict);
   }
 
-  /** Called while serializing the object. */
+  /* Called while serializing the object. */
   virtual void writeElement(Serializer*, const Keyword&,
                             FieldCategory = BASE) const;
 
-  /** Mark the object as hidden or not. Hidden objects are not exported
+  /* Mark the object as hidden or not. Hidden objects are not exported
    * and are used only as dummy constructs. */
   virtual void setHidden(bool b) {}
 
-  /** Method to set a custom property.
+  /* Method to set a custom property.
    * Avaialable types:
    *   1: bool
    *   2: date
@@ -3215,40 +3187,40 @@ class Object : public PyObject {
   void setProperty(const string& name, const DataValue& value, short type,
                    CommandManager* mgr = nullptr);
 
-  /** Set a custom property referring to a python object. */
+  /* Set a custom property referring to a python object. */
   void setProperty(const string& name, PyObject* value);
 
-  /** Update a boolean property. */
+  /* Update a boolean property. */
   void setBoolProperty(const string&, bool);
 
-  /** Update a date property. */
+  /* Update a date property. */
   void setDateProperty(const string&, Date);
 
-  /** Update a double property. */
+  /* Update a double property. */
   void setDoubleProperty(const string&, double);
 
-  /** Update a string property. */
+  /* Update a string property. */
   void setStringProperty(const string&, string);
 
-  /** Check whether a property with a certain name is set. */
+  /* Check whether a property with a certain name is set. */
   bool hasProperty(const string&) const;
 
-  /** Retrieve a boolean property. */
+  /* Retrieve a boolean property. */
   bool getBoolProperty(const string&, bool = true) const;
 
-  /** Retrieve a date property. */
+  /* Retrieve a date property. */
   Date getDateProperty(const string&, Date = Date::infinitePast) const;
 
-  /** Retrieve a double property. */
+  /* Retrieve a double property. */
   double getDoubleProperty(const string&, double = 0.0) const;
 
-  /** Retrieve a double property. */
+  /* Retrieve a double property. */
   PyObject* getPyObjectProperty(const string&) const;
 
-  /** Delete a property if it is set. */
+  /* Delete a property if it is set. */
   void deleteProperty(const string&);
 
-  /** Retrieve a string property.
+  /* Retrieve a string property.
    * This method needs to be defined inline. On windows the function
    * otherwise can allocate and release the string in different modules,
    * resulting in a nasty crash.
@@ -3270,22 +3242,22 @@ class Object : public PyObject {
     return result;
   }
 
-  /** Method to write custom properties to a serializer. */
+  /* Method to write custom properties to a serializer. */
   virtual void writeProperties(Serializer&) const;
 
-  /** Returns whether an entity is real or dummy. */
+  /* Returns whether an entity is real or dummy. */
   virtual bool getHidden() const { return false; }
 
-  /** This returns the type information on the object, a bit similar to
+  /* This returns the type information on the object, a bit similar to
    * the standard type_info information. */
   virtual const MetaClass& getType() const {
     throw LogicException("No type information registered");
   }
 
-  /** Return the number of bytes this object occupies in memory. */
+  /* Return the number of bytes this object occupies in memory. */
   virtual size_t getSize() const;
 
-  /** This template function can generate a factory method for objects that
+  /* This template function can generate a factory method for objects that
    * can be constructed with their default constructor.  */
   template <class T>
   static Object* create() {
@@ -3308,7 +3280,7 @@ class Object : public PyObject {
            this->getType() == *V::metadata;
   }
 
-  /** Free the memory.<br>
+  /* Free the memory.
    * Our extensions don't use the usual Python heap allocator. They are
    * created and initialized with the regular C++ new and delete. A special
    * deallocator is called from Python to delete objects when their reference
@@ -3319,7 +3291,7 @@ class Object : public PyObject {
     delete static_cast<T*>(o);
   }
 
-  /** Template function that generates a factory method callable
+  /* Template function that generates a factory method callable
    * from Python. */
   template <class T>
   static PyObject* create(PyTypeObject* pytype, PyObject* args,
@@ -3363,31 +3335,31 @@ class Object : public PyObject {
     }
   }
 
-  /** Return an XML representation of the object.<br>
+  /* Return an XML representation of the object.
    * If a file object is passed as argument, the representation is directly
-   * written to it.<br>
+   * written to it.
    * If no argument is given the representation is returned as a string.
    */
   static PyObject* toXML(PyObject*, PyObject*);
 
-  /** A function to force an object to be destroyed by the Python garbage
-   * collection.<br>
+  /* A function to force an object to be destroyed by the Python garbage
+   * collection.
    * Be very careful to use this!
    */
   void resetReferenceCount() { PyObject::ob_refcnt = 0; }
 
-  /** Returns the current reference count. */
+  /* Returns the current reference count. */
   Py_ssize_t getReferenceCount() const { return PyObject::ob_refcnt; }
 
-  /** Initialize the object to a certain Python type. */
+  /* Initialize the object to a certain Python type. */
   inline void initType(const MetaClass* t) {
     PyObject_INIT(this, t->pythonClass);
   }
 
-  /** Initialize the object to a certain Python type. */
+  /* Initialize the object to a certain Python type. */
   inline void initType(PyTypeObject* t) { PyObject_INIT(this, t); }
 
-  /** Default getattro method. <br>
+  /* Default getattro method.
    * Subclasses are expected to implement an override if the type supports
    * gettattro.
    */
@@ -3396,7 +3368,7 @@ class Object : public PyObject {
     return nullptr;
   }
 
-  /** Default compare method. <br>
+  /* Default compare method.
    * Subclasses are expected to implement an override if the type supports
    * compare.
    */
@@ -3404,7 +3376,7 @@ class Object : public PyObject {
     throw LogicException("Missing method 'compare'");
   }
 
-  /** Default iternext method. <br>
+  /* Default iternext method.
    * Subclasses are expected to implement an override if the type supports
    * iteration.
    */
@@ -3413,7 +3385,7 @@ class Object : public PyObject {
     return nullptr;
   }
 
-  /** Default call method. <br>
+  /* Default call method.
    * Subclasses are expected to implement an override if the type supports
    * calls.
    */
@@ -3422,7 +3394,7 @@ class Object : public PyObject {
     return nullptr;
   }
 
-  /** Default str method. <br>
+  /* Default str method.
    * Subclasses are expected to implement an override if the type supports
    * conversion to a string.
    */
@@ -3444,14 +3416,14 @@ class Object : public PyObject {
   PyObject* dict = nullptr;
 };
 
-/** @brief Template class to define Python extensions.
+/* Template class to define Python extensions.
  *
  * The template argument should be your extension class, inheriting from
  * this template class:
  *   class MyClass : PythonExtension<MyClass>
  *
  * The structure of the C++ wrappers around the C Python API is heavily
- * inspired on the design of PyCXX.<br>
+ * inspired on the design of PyCXX.
  * More information can be found on http://cxx.sourceforge.net
  *
  * TODO This class has become somewhat redundant, and we can do without.
@@ -3459,17 +3431,17 @@ class Object : public PyObject {
 template <class T>
 class PythonExtension : public Object, public NonCopyable {
  public:
-  /** Constructor.<br>
+  /* Constructor.
    * The Python metadata fields always need to be set correctly.
    */
   explicit PythonExtension() {
     PyObject_Init(this, getPythonType().type_object());
   }
 
-  /** Destructor. */
+  /* Destructor. */
   virtual ~PythonExtension() {}
 
-  /** This method keeps the type information object for your extension. */
+  /* This method keeps the type information object for your extension. */
   static PythonType& getPythonType() {
     static PythonType* cachedTypePtr = nullptr;
     if (cachedTypePtr) return *cachedTypePtr;
@@ -3483,7 +3455,7 @@ class PythonExtension : public Object, public NonCopyable {
     return *cachedTypePtr;
   }
 
-  /** Free the memory.<br>
+  /* Free the memory.
    * Our extensions don't use the usual Python heap allocator. They are
    * created and initialized with the regular C++ new and delete. A special
    * deallocator is called from Python to delete objects when their reference
@@ -3492,7 +3464,7 @@ class PythonExtension : public Object, public NonCopyable {
   static void deallocator(PyObject* o) { delete static_cast<T*>(o); }
 };
 
-/** Wrapper class to expose frePPLe iterators to Python.
+/* Wrapper class to expose frePPLe iterators to Python.
  *
  * The requirements for the argument classes are as follows:
  *  - ITERCLASS must implement a method:
@@ -3508,7 +3480,7 @@ class PythonIterator : public Object {
   typedef PythonIterator<ITERCLASS, DATACLASS> MYCLASS;
 
  public:
-  /** This method keeps the type information object for your extension. */
+  /* This method keeps the type information object for your extension. */
   static PythonType& getPythonType() {
     static PythonType* cachedTypePtr = nullptr;
     if (cachedTypePtr) return *cachedTypePtr;
@@ -3543,7 +3515,7 @@ class PythonIterator : public Object {
     return x.typeReady();
   }
 
-  /** Constructor from a pointer.
+  /* Constructor from a pointer.
    * The underlying iterator must have a matching constructor.
    */
   template <class OTHER>
@@ -3551,12 +3523,12 @@ class PythonIterator : public Object {
     this->initType(getPythonType().type_object());
   }
 
-  /** Default constructor.
+  /* Default constructor.
    * The underlying iterator must have a matching constructor.
    */
   PythonIterator() { this->initType(getPythonType().type_object()); }
 
-  /** Constructor from a reference.
+  /* Constructor from a reference.
    * The underlying iterator must have a matching constructor.
    */
   template <class OTHER>
@@ -3583,43 +3555,33 @@ class PythonIterator : public Object {
 // UTILITY CLASSES FOR MULTITHREADING
 //
 
-/** @brief This class supports parallel execution of a number of functions.
- *
- * Currently Pthreads and Windows threads are supported as the implementation
- * of the multithreading.
- * TODO Replace with C++11 threads when these are available in mainstream gcc
- */
+/* This class supports parallel execution of a number of functions. */
 class ThreadGroup : public NonCopyable {
  public:
-  /** Prototype of the thread function. */
+  /* Prototype of the thread function. */
   typedef void (*callable)(void*);
 
-  /** Constructor which defaults to have as many worker threads as there are
+  /* Constructor which defaults to have as many worker threads as there are
    * cores on the machine.
    */
-  ThreadGroup() : countCallables(0) {
-    maxParallel = Environment::getProcessorCores();
-  };
+  ThreadGroup() { maxParallel = Environment::getProcessorCores(); };
 
-  /** Constructor with a predefined number of worker threads. */
-  ThreadGroup(int i) : countCallables(0) { setMaxParallel(i); };
+  /* Constructor with a predefined number of worker threads. */
+  ThreadGroup(int i) { setMaxParallel(i); };
 
-  /** Add a new function to be called and its argument. */
-  void add(callable func, void* args) {
-    callables.push(make_pair(func, args));
-    ++countCallables;
-  }
+  /* Add a new function to be called and its argument. */
+  void add(callable func, void* args) { callables.push(make_pair(func, args)); }
 
-  /** Execute all functions and wait for them to finish. */
+  /* Execute all functions and wait for them to finish. */
   void execute();
 
-  /** Returns the number of parallel workers that is activated.<br>
+  /* Returns the number of parallel workers that is activated.
    * By default we activate as many worker threads as there are cores on
    * the machine.
    */
   int getMaxParallel() const { return maxParallel; }
 
-  /** Updates the number of parallel workers that is activated. */
+  /* Updates the number of parallel workers that is activated. */
   void setMaxParallel(int b) {
     if (b < 1)
       throw DataException("Invalid number of parallel execution threads");
@@ -3629,37 +3591,27 @@ class ThreadGroup : public NonCopyable {
  private:
   typedef pair<callable, void*> callableWithArgument;
 
-  /** Mutex to protect the curCommand data field during multi-threaded
-   * execution.
-   * @see selectCommand
-   */
+  /* Mutex to protect the callable vector during multi-threaded execution. */
   mutex lock;
 
-  /** Specifies the maximum number of commands in the list that can be
+  /* Specifies the maximum number of commands in the list that can be
    * executed in parallel.
-   * The default value is 1, i.e. sequential execution.<br>
-   * The value of this field is NOT inherited from parent command lists.<br>
+   * The default value is 1, i.e. sequential execution.
+   * The value of this field is NOT inherited from parent command lists.
    * Note that the maximum applies to this command list only, and it isn't
    * a system-wide limit on the creation of threads.
    */
   int maxParallel;
 
-  /** Stack with all registered functions and their invocation arguments. */
+  /* Stack with all registered functions and their invocation arguments. */
   stack<callableWithArgument> callables;
 
-  /** Count registered callables. */
-  unsigned int countCallables;
-
-  /** This functions runs a single command execution thread. It is used as
+  /* This functions runs a single command execution thread. It is used as
    * a holder for the main routines of a trheaded routine.
    */
-#if defined(HAVE_PTHREAD_H)
-  static void* wrapper(void* arg);
-#else
-  static unsigned __stdcall wrapper(void*);
-#endif
+  static void wrapper(ThreadGroup*);
 
-  /** This method selects the next function to be executed.
+  /* This method selects the next function to be executed.
    * @see wrapper
    */
   callableWithArgument selectNextCallable();
@@ -3669,7 +3621,7 @@ class ThreadGroup : public NonCopyable {
 // RED-BLACK TREE CLASS
 //
 
-/** @brief This class implements a binary tree data structure. It is used as a
+/* This class implements a binary tree data structure. It is used as a
  * container for entities keyed by their name.
  *
  * Technically, the data structure can be described as a red-black tree
@@ -3678,14 +3630,14 @@ class ThreadGroup : public NonCopyable {
  */
 class Tree : public NonCopyable {
  public:
-  /** The algorithm assigns a color to each node in the tree. The color is
-   * used to keep the tree balanced.<br>
+  /* The algorithm assigns a color to each node in the tree. The color is
+   * used to keep the tree balanced.
    * A node with color 'none' is a node that hasn't been inserted yet in
    * the tree.
    */
   enum NodeColor { red, black, none, head };
 
-  /** @brief This class represents a node in the tree.
+  /* This class represents a node in the tree.
    *
    * Elements which we want to represent in the tree will need to inherit
    * from this class, since this tree container is intrusive.
@@ -3694,27 +3646,27 @@ class Tree : public NonCopyable {
     friend class Tree;
 
    public:
-    /** Destructor. */
+    /* Destructor. */
     virtual ~TreeNode() {}
 
-    /** Returns the name of this node. This name is used to sort the
+    /* Returns the name of this node. This name is used to sort the
      * nodes. */
     inline string getName() const { return nm; }
 
     inline void setName(const string& i) { nm = i; }
 
-    /** Return the color of this node: "red" or "black" for actual nodes,
+    /* Return the color of this node: "red" or "black" for actual nodes,
      * and "none" for the root node and nodes not yet inserted.
      */
     NodeColor getColor() const { return color; }
 
-    /** Comparison operator. */
+    /* Comparison operator. */
     bool operator<(const TreeNode& o) { return nm < o.nm; }
 
-    /** Default constructor. */
+    /* Default constructor. */
     TreeNode() {}
 
-    /** Return a pointer to the node following this one. */
+    /* Return a pointer to the node following this one. */
     TreeNode* increment() const {
       TreeNode* node = const_cast<TreeNode*>(this);
       if (node->right != nullptr) {
@@ -3731,7 +3683,7 @@ class Tree : public NonCopyable {
       return node;
     }
 
-    /** Return a pointer to the node preceding this one. */
+    /* Return a pointer to the node preceding this one. */
     TreeNode* decrement() const {
       TreeNode* node = const_cast<TreeNode*>(this);
       if (node->color == red && node->parent->parent == node)
@@ -3752,23 +3704,23 @@ class Tree : public NonCopyable {
     }
 
    private:
-    /** Name. */
+    /* Name. */
     string nm;
 
-    /** Pointer to the parent node. */
+    /* Pointer to the parent node. */
     TreeNode* parent = nullptr;
 
-    /** Pointer to the left child node. */
+    /* Pointer to the left child node. */
     TreeNode* left = nullptr;
 
-    /** Pointer to the right child node. */
+    /* Pointer to the right child node. */
     TreeNode* right = nullptr;
 
-    /** Color of the node. This is used to keep the tree balanced. */
+    /* Color of the node. This is used to keep the tree balanced. */
     NodeColor color = none;
   };
 
-  /** Default constructor. */
+  /* Default constructor. */
   Tree(bool b = false) : count(0), clearOnDestruct(b) {
     header.color = head;  // Mark as special head
     header.parent = nullptr;
@@ -3776,7 +3728,7 @@ class Tree : public NonCopyable {
     header.right = &header;
   }
 
-  /** Destructor.<br>
+  /* Destructor.
    * By default, the objects in the tree are not deleted when the tree
    * is deleted. This is done for performance reasons: the program can shut
    * down faster.
@@ -3785,19 +3737,19 @@ class Tree : public NonCopyable {
     if (clearOnDestruct) clear();
   }
 
-  /** Returns an iterator to the start of the list.<br>
+  /* Returns an iterator to the start of the list.
    * The user will need to take care of properly acquiring a read lock on
    * on the tree object.
    */
   TreeNode* begin() const { return const_cast<TreeNode*>(header.left); }
 
-  /** Returns an iterator pointing beyond the last element in the list.<br>
+  /* Returns an iterator pointing beyond the last element in the list.
    * The user will need to take care of properly acquiring a read lock on
    * on the tree object.
    */
   TreeNode* end() const { return const_cast<TreeNode*>(&header); }
 
-  /** Returns true if the list is empty.<br>
+  /* Returns true if the list is empty.
    * Its complexity is O(1). */
   bool empty() const { return header.parent == nullptr; }
 
@@ -3807,7 +3759,7 @@ class Tree : public NonCopyable {
 
   static inline bool isnull(const string& a) { return a.empty(); }
 
-  /** Renames an existing node, and adjusts its position in the tree. */
+  /* Renames an existing node, and adjusts its position in the tree. */
   void rename(TreeNode* obj, const string& newname, TreeNode* hint = nullptr) {
     if (obj->nm == newname) return;
     if (isnull(obj->nm)) {
@@ -3824,14 +3776,14 @@ class Tree : public NonCopyable {
     insert(obj, hint);
   };
 
-  /** This method returns the number of nodes inserted in this tree.<br>
+  /* This method returns the number of nodes inserted in this tree.
    * Its complexity is O(1), so it can be called on large trees without any
    * performance impact.
    */
   size_t size() const { return count; }
 
-  /** Verifies the integrity of the tree and returns true if everything
-   * is correct.<br>
+  /* Verifies the integrity of the tree and returns true if everything
+   * is correct.
    * The tree should be locked before calling this function.
    */
   void verify() const {
@@ -3887,7 +3839,7 @@ class Tree : public NonCopyable {
     // If we reach this point, then this tree is healthy
   }
 
-  /** Remove all elements from the tree. */
+  /* Remove all elements from the tree. */
   void clear() {
     // Tree is already empty
     if (empty()) return;
@@ -3902,7 +3854,7 @@ class Tree : public NonCopyable {
     }
   }
 
-  /** Remove a node from the tree. */
+  /* Remove a node from the tree. */
   void erase(TreeNode* z) {
     // A colorless node was never inserted in the tree, and shouldn't be
     // removed from it either...
@@ -4029,7 +3981,7 @@ class Tree : public NonCopyable {
     }
   }
 
-  /** Search for an element in the tree.<br>
+  /* Search for an element in the tree.
    * Profiling shows this function has a significant impact on the CPU
    * time (mainly because of the string comparisons), and has been
    * optimized as much as possible.
@@ -4044,8 +3996,8 @@ class Tree : public NonCopyable {
     return result;
   }
 
-  /** Find the element with this given key or the element
-   * immediately preceding it.<br>
+  /* Find the element with this given key or the element
+   * immediately preceding it.
    * The second argument is a boolean that is set to true when the
    * element is found in the list.
    */
@@ -4069,11 +4021,11 @@ class Tree : public NonCopyable {
     return lower;
   }
 
-  /** Insert a new node in the tree. */
+  /* Insert a new node in the tree. */
   TreeNode* insert(TreeNode* v) { return insert(v, nullptr); }
 
-  /** Insert a new node in the tree. The second argument is a hint on
-   * the proper location in the tree.<br>
+  /* Insert a new node in the tree. The second argument is a hint on
+   * the proper location in the tree.
    * Profiling shows this function has a significant impact on the cpu
    * time (mainly because of the string comparisons), and has been
    * optimized as much as possible.
@@ -4144,7 +4096,7 @@ class Tree : public NonCopyable {
   }
 
  private:
-  /** Restructure the tree such that the depth of the branches remains
+  /* Restructure the tree such that the depth of the branches remains
    * properly balanced. This method is called during insertion. */
   inline void rebalance(TreeNode* x) {
     x->color = red;
@@ -4187,7 +4139,7 @@ class Tree : public NonCopyable {
     header.parent->color = black;
   }
 
-  /** Rebalancing operation used during the rebalancing. */
+  /* Rebalancing operation used during the rebalancing. */
   inline void rotateLeft(TreeNode* x) {
     TreeNode* y = x->right;
     x->right = y->left;
@@ -4207,7 +4159,7 @@ class Tree : public NonCopyable {
     x->parent = y;
   }
 
-  /** Rebalancing operation used during the rebalancing. */
+  /* Rebalancing operation used during the rebalancing. */
   inline void rotateRight(TreeNode* x) {
     TreeNode* y = x->left;
     x->left = y->right;
@@ -4227,7 +4179,7 @@ class Tree : public NonCopyable {
     x->parent = y;
   }
 
-  /** Method used internally by the verify() method. */
+  /* Method used internally by the verify() method. */
   unsigned int countBlackNodes(TreeNode* node) const {
     unsigned int sum = 0;
     for (; node != header.parent; node = node->parent)
@@ -4245,7 +4197,7 @@ class Tree : public NonCopyable {
     return x;
   }
 
-  /** This node stores the following data:
+  /* This node stores the following data:
    *  - parent: root of the tree.
    *  - left: leftmost element in the tree.
    *  - right: rightmost element in the tree.
@@ -4253,13 +4205,13 @@ class Tree : public NonCopyable {
    */
   TreeNode header;
 
-  /** Stores the number of elements in the tree. */
+  /* Stores the number of elements in the tree. */
   size_t count;
 
-  /** Controls whether the destructor needs to be clear all objects in the
-   * tree in its destructor.<br>
+  /* Controls whether the destructor needs to be clear all objects in the
+   * tree in its destructor.
    * The default is to skip this cleanup! This is fine when you are dealing
-   * with a static tree that lives throughout your program.<br>
+   * with a static tree that lives throughout your program.
    * When you create a tree with a shorter lifespan, you'll need to pass
    * the constructor 'true' as argument in order to avoid memory leaks.
    */
@@ -4270,7 +4222,7 @@ class Tree : public NonCopyable {
 // UTILITY CLASS "COMMAND": for executing & undoing actions
 //
 
-/** @brief Abstract base class for all commands.
+/* Abstract base class for all commands.
  *
  * Command objects are designed for algorithms that need to keep track of
  * their decision, efficiently undo them and redo them.
@@ -4294,13 +4246,13 @@ class Command {
   friend class frepple::CommandMoveOperationPlan;  // TODO update api to avoid
                                                    // this friend
  public:
-  /** Default constructor. The creation of a command should NOT execute the
+  /* Default constructor. The creation of a command should NOT execute the
    * command yet. The execute() method needs to be called explicitly to
    * do so.
    */
   Command(){};
 
-  /** This method makes the change permanent.<br>
+  /* This method makes the change permanent.
    * A couple of notes on how this method should be implemented by the
    * subclasses:
    *   - Calling the method multiple times is harmless. Only the first
@@ -4308,7 +4260,7 @@ class Command {
    */
   virtual void commit(){};
 
-  /** This method permanently undoes the change.<br>
+  /* This method permanently undoes the change.
    * A couple of notes on how this method should be implemented by the
    * subclasses:
    *   - Calling the rollback() method multiple times is harmless. Only
@@ -4316,9 +4268,9 @@ class Command {
    */
   virtual void rollback(){};
 
-  /** This method temporarily undoes the change. The concrete subclasses
+  /* This method temporarily undoes the change. The concrete subclasses
    * most maintain information that enables redoing the changes
-   * efficiently.<br>
+   * efficiently.
    * A couple of notes on how this method should be implemented by the
    * subclasses:
    *   - Calling the method multiple times is harmless and results in the
@@ -4326,12 +4278,12 @@ class Command {
    */
   virtual void undo(){};
 
-  /** Virtual destructor. */
+  /* Virtual destructor. */
   virtual ~Command(){};
 
   Command* getNext() const { return next; }
 
-  /** Returns an identifier for each subclass:
+  /* Returns an identifier for each subclass:
    *  - 1: CommandList (and BookMark)
    *  - 2: CommandSetField
    *  - 3: CommandSetProperty
@@ -4343,20 +4295,20 @@ class Command {
   virtual short getType() const = 0;
 
  private:
-  /** Points to the commandlist which owns this command. The default value
+  /* Points to the commandlist which owns this command. The default value
    * is nullptr, meaning there is no owner. */
   Command* owner = nullptr;
 
-  /** Points to the next command in the owner command list.<br>
+  /* Points to the next command in the owner command list.
    * The commands are chained in a double linked list data structure. */
   Command* next = nullptr;
 
-  /** Points to the previous command in the owner command list.<br>
+  /* Points to the previous command in the owner command list.
    * The commands are chained in a double linked list data structure. */
   Command* prev = nullptr;
 };
 
-/** @brief A command to update a field on an object. */
+/* A command to update a field on an object. */
 class CommandSetField : public Command {
  private:
   Object* obj;
@@ -4364,19 +4316,19 @@ class CommandSetField : public Command {
   XMLData olddata;
 
  public:
-  /** Constructor. */
+  /* Constructor. */
   CommandSetField(Object* o, const MetaFieldBase* f, const DataValue& d)
       : obj(o), fld(f) {
     if (!obj || !fld) return;
     fld->getField(obj, olddata);
   }
 
-  /** Destructor. */
+  /* Destructor. */
   virtual ~CommandSetField() {
     if (obj && fld) fld->setField(obj, olddata);
   }
 
-  /** Undoes the field change. */
+  /* Undoes the field change. */
   virtual void rollback() {
     if (!obj || !fld) return;
     fld->setField(obj, olddata);
@@ -4384,14 +4336,14 @@ class CommandSetField : public Command {
     fld = nullptr;
   }
 
-  /** Committing the change - nothing to be done as the change
+  /* Committing the change - nothing to be done as the change
    * is realized when creating the command. */
   virtual void commit() {
     obj = nullptr;
     fld = nullptr;
   }
 
-  /** Undoes the field change. */
+  /* Undoes the field change. */
   virtual void undo() {
     if (obj && fld) fld->setField(obj, olddata);
   }
@@ -4403,7 +4355,7 @@ class CommandSetField : public Command {
   virtual short getType() const { return 2; }
 };
 
-/** @brief A command to update a property on an object. */
+/* A command to update a property on an object. */
 class CommandSetProperty : public Command {
  private:
   Object* obj;
@@ -4416,29 +4368,29 @@ class CommandSetProperty : public Command {
   bool old_bool;
 
  public:
-  /** Constructor. */
+  /* Constructor. */
   CommandSetProperty(Object*, const string&, const DataValue&, short);
 
-  /** Destructor. */
+  /* Destructor. */
   virtual ~CommandSetProperty() {
     if (obj && !name.empty()) undo();
   }
 
-  /** Undoes the field change. */
+  /* Undoes the field change. */
   virtual void rollback() {
     if (obj && !name.empty()) undo();
     obj = nullptr;
     name = "";
   }
 
-  /** Committing the change - nothing to be done as the change
+  /* Committing the change - nothing to be done as the change
    * is realized when creating the command. */
   virtual void commit() {
     obj = nullptr;
     name = "";
   }
 
-  /** Undoes the property change. */
+  /* Undoes the property change. */
   virtual void undo();
 
   void clearObject() { obj = nullptr; }
@@ -4448,7 +4400,7 @@ class CommandSetProperty : public Command {
   virtual short getType() const { return 3; }
 };
 
-/** @brief A command to create a new object.
+/* A command to create a new object.
  *
  * The object is already created when the command is created. This command
  * then allows to undo that creation.
@@ -4459,25 +4411,25 @@ class CommandCreateObject : public Command {
   Object* obj;
 
  public:
-  /** Constructor. */
+  /* Constructor. */
   CommandCreateObject(Object* o) : obj(o) {}
 
-  /** Destructor. */
+  /* Destructor. */
   virtual ~CommandCreateObject() {
     if (obj) undo();
   }
 
-  /** Undoes the creation change. */
+  /* Undoes the creation change. */
   virtual void rollback() {
     if (obj) undo();
   }
 
-  /** Committing the change - nothing to be done as the change
+  /* Committing the change - nothing to be done as the change
    * is realized before the command is created.
    */
   virtual void commit() { obj = nullptr; }
 
-  /** Undoes the creation. */
+  /* Undoes the creation. */
   virtual void undo() {
     if (!obj) return;
 
@@ -4511,7 +4463,7 @@ class CommandCreateObject : public Command {
   virtual short getType() const { return 4; }
 };
 
-/** @brief A container command to group a series of commands together.
+/* A container command to group a series of commands together.
  *
  * This class implements the "composite" design pattern in order to get an
  * efficient and intuitive hierarchical grouping of commands.
@@ -4519,39 +4471,39 @@ class CommandCreateObject : public Command {
  */
 class CommandList : public Command {
  private:
-  /** Points to the first command in the list.<br>
+  /* Points to the first command in the list.
    * Following commands can be found by following the next pointers
-   * on the commands.<br>
+   * on the commands.
    * The commands are this chained in a double linked list data structure.
    */
   Command* firstCommand = nullptr;
 
-  /** Points to the last command in the list. */
+  /* Points to the last command in the list. */
   Command* lastCommand = nullptr;
 
  public:
   class iterator {
    public:
-    /** Constructor. */
+    /* Constructor. */
     iterator(Command* x) : cur(x) {}
 
-    /** Copy constructor. */
+    /* Copy constructor. */
     iterator(const iterator& it) { cur = it.cur; }
 
-    /** Return the content of the current node. */
+    /* Return the content of the current node. */
     Command& operator*() const { return *cur; }
 
-    /** Return the content of the current node. */
+    /* Return the content of the current node. */
     Command* operator->() const { return cur; }
 
-    /** Pre-increment operator which moves the pointer to the next
+    /* Pre-increment operator which moves the pointer to the next
      * element. */
     iterator& operator++() {
       cur = cur->next;
       return *this;
     }
 
-    /** Post-increment operator which moves the pointer to the next
+    /* Post-increment operator which moves the pointer to the next
      * element. */
     iterator operator++(int) {
       iterator tmp = *this;
@@ -4559,47 +4511,47 @@ class CommandList : public Command {
       return tmp;
     }
 
-    /** Comparison operator. */
+    /* Comparison operator. */
     bool operator==(const iterator& y) const { return cur == y.cur; }
 
-    /** Inequality operator. */
+    /* Inequality operator. */
     bool operator!=(const iterator& y) const { return cur != y.cur; }
 
    private:
     Command* cur;
   };
 
-  /** Returns an iterator over all commands in the list. */
+  /* Returns an iterator over all commands in the list. */
   iterator begin() const { return iterator(firstCommand); }
 
-  /** Returns an iterator beyond the last command. */
+  /* Returns an iterator beyond the last command. */
   iterator end() const { return iterator(nullptr); }
 
-  /** Append an additional command to the end of the list. */
+  /* Append an additional command to the end of the list. */
   void add(Command* c);
 
-  /** Undoes all actions on the list.<br>
+  /* Undoes all actions on the list.
    * At the end it also clears the list of actions.
    */
   virtual void rollback();
 
-  /** Commits all actions on its list.<br>
+  /* Commits all actions on its list.
    * At the end it also clears the list of actions.
    */
   virtual void commit();
 
-  /** Undoes all actions on its list.<br>
+  /* Undoes all actions on its list.
    * The list of actions is left intact, so the changes can still be redone.
    */
   virtual void undo();
 
-  /** Returns true if no commands have been added yet to the list. */
+  /* Returns true if no commands have been added yet to the list. */
   bool empty() const { return firstCommand == nullptr; }
 
-  /** Default constructor. */
+  /* Default constructor. */
   explicit CommandList() {}
 
-  /** Destructor.<br>
+  /* Destructor.
    * A commandlist should only be deleted when all of its commands
    * have been committed or undone. If this is not the case a warning
    * will be printed.
@@ -4609,12 +4561,12 @@ class CommandList : public Command {
   virtual short getType() const { return 1; }
 };
 
-/** @brief This class allows management of tasks with supporting commiting them,
+/* This class allows management of tasks with supporting commiting them,
  * rolling them back, and setting bookmarks which can be undone and redone.
  */
 class CommandManager {
  public:
-  /** A bookmark that keeps track of commands that can be undone and redone. */
+  /* A bookmark that keeps track of commands that can be undone and redone. */
   class Bookmark : public CommandList {
     friend class CommandManager;
 
@@ -4626,10 +4578,10 @@ class CommandManager {
     Bookmark(Bookmark* p = nullptr) : parent(p) {}
 
    public:
-    /** Returns true if the bookmark commands are active. */
+    /* Returns true if the bookmark commands are active. */
     bool isActive() const { return active; }
 
-    /** Returns true if the bookmark is a child, grand-child or
+    /* Returns true if the bookmark is a child, grand-child or
      * grand-grand-child of the argument bookmark.
      */
     bool isChildOf(const Bookmark* b) const {
@@ -4639,29 +4591,29 @@ class CommandManager {
     }
   };
 
-  /** An STL-like iterator to move over all bookmarks in forward order. */
+  /* An STL-like iterator to move over all bookmarks in forward order. */
   class iterator {
    public:
-    /** Constructor. */
+    /* Constructor. */
     iterator(Bookmark* x) : cur(x) {}
 
-    /** Copy constructor. */
+    /* Copy constructor. */
     iterator(const iterator& it) { cur = it.cur; }
 
-    /** Return the content of the current node. */
+    /* Return the content of the current node. */
     Bookmark& operator*() const { return *cur; }
 
-    /** Return the content of the current node. */
+    /* Return the content of the current node. */
     Bookmark* operator->() const { return cur; }
 
-    /** Pre-increment operator which moves the pointer to the next
+    /* Pre-increment operator which moves the pointer to the next
      * element. */
     iterator& operator++() {
       cur = cur->nextBookmark;
       return *this;
     }
 
-    /** Post-increment operator which moves the pointer to the next
+    /* Post-increment operator which moves the pointer to the next
      * element. */
     iterator operator++(int) {
       iterator tmp = *this;
@@ -4669,39 +4621,39 @@ class CommandManager {
       return tmp;
     }
 
-    /** Comparison operator. */
+    /* Comparison operator. */
     bool operator==(const iterator& y) const { return cur == y.cur; }
 
-    /** Inequality operator. */
+    /* Inequality operator. */
     bool operator!=(const iterator& y) const { return cur != y.cur; }
 
    private:
     Bookmark* cur;
   };
 
-  /** An STL-like iterator to move over all bookmarks in reverse order. */
+  /* An STL-like iterator to move over all bookmarks in reverse order. */
   class reverse_iterator {
    public:
-    /** Constructor. */
+    /* Constructor. */
     reverse_iterator(Bookmark* x) : cur(x) {}
 
-    /** Copy constructor. */
+    /* Copy constructor. */
     reverse_iterator(const reverse_iterator& it) { cur = it.cur; }
 
-    /** Return the content of the current node. */
+    /* Return the content of the current node. */
     Bookmark& operator*() const { return *cur; }
 
-    /** Return the content of the current node. */
+    /* Return the content of the current node. */
     Bookmark* operator->() const { return cur; }
 
-    /** Pre-increment operator which moves the pointer to the next
+    /* Pre-increment operator which moves the pointer to the next
      * element. */
     reverse_iterator& operator++() {
       cur = cur->prevBookmark;
       return *this;
     }
 
-    /** Post-increment operator which moves the pointer to the next
+    /* Post-increment operator which moves the pointer to the next
      * element. */
     reverse_iterator operator++(int) {
       reverse_iterator tmp = *this;
@@ -4709,10 +4661,10 @@ class CommandManager {
       return tmp;
     }
 
-    /** Comparison operator. */
+    /* Comparison operator. */
     bool operator==(const reverse_iterator& y) const { return cur == y.cur; }
 
-    /** Inequality operator. */
+    /* Inequality operator. */
     bool operator!=(const reverse_iterator& y) const { return cur != y.cur; }
 
    private:
@@ -4720,28 +4672,28 @@ class CommandManager {
   };
 
  private:
-  /** Head of a list of bookmarks.<br>
+  /* Head of a list of bookmarks.
    * A command manager has always at least this default bookmark.
    */
   Bookmark firstBookmark;
 
-  /** Tail of a list of bookmarks. */
+  /* Tail of a list of bookmarks. */
   Bookmark* lastBookmark;
 
-  /** Current bookmarks.<br>
+  /* Current bookmarks.
    * If commands are added to the manager, this is the bookmark where
    * they'll be appended to.
    */
   Bookmark* currentBookmark;
 
  public:
-  /** Constructor. */
+  /* Constructor. */
   CommandManager() {
     lastBookmark = &firstBookmark;
     currentBookmark = &firstBookmark;
   }
 
-  /** Destructor. */
+  /* Destructor. */
   ~CommandManager() {
     for (Bookmark* i = lastBookmark; i && i != &firstBookmark;) {
       Bookmark* tmp = i;
@@ -4750,46 +4702,46 @@ class CommandManager {
     }
   }
 
-  /** Returns an iterator over all bookmarks in forward direction. */
+  /* Returns an iterator over all bookmarks in forward direction. */
   iterator begin() { return iterator(&firstBookmark); }
 
-  /** Returns an iterator beyond the last bookmark in forward direction. */
+  /* Returns an iterator beyond the last bookmark in forward direction. */
   iterator end() { return iterator(nullptr); }
 
-  /** Returns an iterator over all bookmarks in reverse direction. */
+  /* Returns an iterator over all bookmarks in reverse direction. */
   reverse_iterator rbegin() { return reverse_iterator(lastBookmark); }
 
-  /** Returns an iterator beyond the last bookmark in reverse direction. */
+  /* Returns an iterator beyond the last bookmark in reverse direction. */
   reverse_iterator rend() { return reverse_iterator(nullptr); }
 
-  /** Add a command to the active bookmark. */
+  /* Add a command to the active bookmark. */
   void add(Command* c) { currentBookmark->add(c); }
 
-  /** Add new setField command to the active bookmark. */
+  /* Add new setField command to the active bookmark. */
   void addCommandSetField(Object* o, const MetaFieldBase* f,
                           const DataValue& d) {
     add(new CommandSetField(o, f, d));
   }
 
-  /** Create a new bookmark. */
+  /* Create a new bookmark. */
   Bookmark* setBookmark();
 
-  /** Undo all commands in a bookmark (and its children).<br>
-   * It can later be redone.<br>
+  /* Undo all commands in a bookmark (and its children).
+   * It can later be redone.
    * The active bookmark in the manager is set to the parent of
    * argument bookmark.
    */
   void undoBookmark(Bookmark*);
 
-  /** Undo all commands in a bookmark (and its children).<br>
+  /* Undo all commands in a bookmark (and its children).
    * It can no longer be redone. The bookmark does however still exist.
    */
   void rollback(Bookmark*);
 
-  /** Commit all commands. */
+  /* Commit all commands. */
   void commit();
 
-  /** Rolling back all commands. */
+  /* Rolling back all commands. */
   void rollback();
 };
 
@@ -4797,39 +4749,39 @@ class CommandManager {
 // INPUT PROCESSING CLASSES
 //
 
-/** @brief An abstract class that is instantiated for data input streams
+/* An abstract class that is instantiated for data input streams
  * in various formats.
  */
 class DataInput {
  public:
-  /** Default constructor. */
+  /* Default constructor. */
   explicit DataInput() {}
 
-  /** Update the command manager used to track all changes. */
+  /* Update the command manager used to track all changes. */
   void setCommandManager(CommandManager* c) { cmds = c; }
 
-  /** Return the command manager used to track all changes. */
+  /* Return the command manager used to track all changes. */
   CommandManager* getCommandManager() const { return cmds; }
 
-  /** Return the source field that will be populated on each object created
+  /* Return the source field that will be populated on each object created
    * or updated from the XML data.
    */
   string getSource() const { return source; }
 
-  /** Update the source field that will be populated on each object created
+  /* Update the source field that will be populated on each object created
    * or updated from the XML data.
    */
   void setSource(const string& s) { source = s; }
 
-  /** Specify a Python callback function that is for every object read
+  /* Specify a Python callback function that is for every object read
    * from the input stream.
    */
   void setUserExit(PyObject* p) { userexit = p; }
 
-  /** Return the Python callback function. */
+  /* Return the Python callback function. */
   const PythonFunction& getUserExit() const { return userexit; }
 
-  /** Type definition for callback functions defined in C++. */
+  /* Type definition for callback functions defined in C++. */
   typedef void (*callback)(Object*, void* data);
 
   void setUserExitCpp(callback f, void* data = nullptr) {
@@ -4842,21 +4794,21 @@ class DataInput {
   }
 
  private:
-  /** A value to populate on the source field of all entities being created
+  /* A value to populate on the source field of all entities being created
    * or updated from the input data.
    */
   string source;
 
-  /** A Python callback function that is called once an object has been read
+  /* A Python callback function that is called once an object has been read
    * from the XML input. The return value is not used.
    */
   PythonFunction userexit;
 
-  /** A second type of callback function. This time called from C++. */
+  /* A second type of callback function. This time called from C++. */
   callback user_exit_cpp = nullptr;
   void* user_exit_cpp_data = nullptr;
 
-  /** A command manager used to track changes applied from the input. */
+  /* A command manager used to track changes applied from the input. */
   CommandManager* cmds = nullptr;
 };
 
@@ -4864,7 +4816,7 @@ class DataInput {
 //  UTILITY CLASSES "HASNAME", "HASHIERARCHY", "HASDESCRIPTION"
 //
 
-/** @brief Base class for objects using a string as their primary key.
+/* Base class for objects using a string as their primary key.
  *
  * Instances of this class have the following properties:
  *   - Have a unique name.
@@ -4874,32 +4826,32 @@ class DataInput {
 template <class T>
 class HasName : public NonCopyable, public Tree::TreeNode, public Object {
  private:
-  /** Maintains a global list of all created entities. The list is keyed
+  /* Maintains a global list of all created entities. The list is keyed
    * by the name. */
   static Tree st;
   typedef T* type;
 
  public:
-  /** @brief This class models a STL-like iterator that allows us to
+  /* This class models a STL-like iterator that allows us to
    * iterate over the named entities in a simple and safe way.
    *
    * Objects of this class are created by the begin() and end() functions.
    */
   class iterator {
    public:
-    /** Constructor. */
+    /* Constructor. */
     iterator(Tree::TreeNode* x) : node(x) {}
 
-    /** Copy constructor. */
+    /* Copy constructor. */
     iterator(const iterator& it) { node = it.node; }
 
-    /** Return the content of the current node. */
+    /* Return the content of the current node. */
     T& operator*() const { return *static_cast<T*>(node); }
 
-    /** Return the content of the current node. */
+    /* Return the content of the current node. */
     T* operator->() const { return static_cast<T*>(node); }
 
-    /** Return current value and advance the iterator. */
+    /* Return current value and advance the iterator. */
     T* next() {
       if (node->getColor() == Tree::head) return nullptr;
       T* tmp = static_cast<T*>(node);
@@ -4907,14 +4859,14 @@ class HasName : public NonCopyable, public Tree::TreeNode, public Object {
       return tmp;
     }
 
-    /** Pre-increment operator which moves the pointer to the next
+    /* Pre-increment operator which moves the pointer to the next
      * element. */
     iterator& operator++() {
       node = node->increment();
       return *this;
     }
 
-    /** Post-increment operator which moves the pointer to the next
+    /* Post-increment operator which moves the pointer to the next
      * element. */
     iterator operator++(int) {
       Tree::TreeNode* tmp = node;
@@ -4922,14 +4874,14 @@ class HasName : public NonCopyable, public Tree::TreeNode, public Object {
       return tmp;
     }
 
-    /** Pre-decrement operator which moves the pointer to the previous
+    /* Pre-decrement operator which moves the pointer to the previous
      * element. */
     iterator& operator--() {
       node = node->decrement();
       return *this;
     }
 
-    /** Post-decrement operator which moves the pointer to the previous
+    /* Post-decrement operator which moves the pointer to the previous
      * element. */
     iterator operator--(int) {
       Tree::TreeNode* tmp = node;
@@ -4937,46 +4889,46 @@ class HasName : public NonCopyable, public Tree::TreeNode, public Object {
       return tmp;
     }
 
-    /** Comparison operator. */
+    /* Comparison operator. */
     bool operator==(const iterator& y) const { return node == y.node; }
 
-    /** Inequality operator. */
+    /* Inequality operator. */
     bool operator!=(const iterator& y) const { return node != y.node; }
 
    private:
     Tree::TreeNode* node;
   };
 
-  /** Returns a STL-like iterator to the end of the entity list. */
+  /* Returns a STL-like iterator to the end of the entity list. */
   static iterator end() { return st.end(); }
 
-  /** Returns a STL-like iterator to the start of the entity list. */
+  /* Returns a STL-like iterator to the start of the entity list. */
   static iterator begin() { return st.begin(); }
 
   static PyObject* createIterator(PyObject* self, PyObject* args) {
     return new PythonIterator<iterator, T>(st.begin());
   }
 
-  /** Returns false if no named entities have been defined yet. */
+  /* Returns false if no named entities have been defined yet. */
   static bool empty() { return st.empty(); }
 
-  /** Returns the number of defined entities. */
+  /* Returns the number of defined entities. */
   static size_t size() { return st.size(); }
 
-  /** Debugging method to verify the validity of the tree.
+  /* Debugging method to verify the validity of the tree.
    * An exception is thrown when the tree is corrupted. */
   static void verify() { st.verify(); }
 
-  /** Deletes all elements from the list. */
+  /* Deletes all elements from the list. */
   static void clear() { st.clear(); }
 
-  /** Default constructor. */
+  /* Default constructor. */
   explicit HasName() {}
 
-  /** Rename the entity. */
+  /* Rename the entity. */
   void setName(const string& newname) { st.rename(this, newname); }
 
-  /** Rename the entity.
+  /* Rename the entity.
    * The second argument is a hint: when passing an entity with
    * a name close to the new one, the insertion will be sped up
    * considerably.
@@ -4985,26 +4937,26 @@ class HasName : public NonCopyable, public Tree::TreeNode, public Object {
     st.rename(this, newname, hint);
   }
 
-  /** Destructor. */
+  /* Destructor. */
   ~HasName() { st.erase(this); }
 
-  /** Return the name as the string representation in Python. */
+  /* Return the name as the string representation in Python. */
   virtual PyObject* str() const { return PythonData(getName()); }
 
-  /** Comparison operator for Python. */
+  /* Comparison operator for Python. */
   int compare(const PyObject* other) const {
     return getName().compare(static_cast<const T*>(other)->getName());
   }
 
-  /** Find an entity given its name. In case it can't be found, a nullptr
+  /* Find an entity given its name. In case it can't be found, a nullptr
    * pointer is returned. */
   static T* find(const string& k) {
     Tree::TreeNode* i = st.find(k);
     return (i != st.end() ? static_cast<T*>(i) : nullptr);
   }
 
-  /** Find the element with this given key or the element
-   * immediately preceding it.<br>
+  /* Find the element with this given key or the element
+   * immediately preceding it.
    * The optional second argument is a boolean that is set to true when
    * the element is found in the list.
    */
@@ -5013,20 +4965,20 @@ class HasName : public NonCopyable, public Tree::TreeNode, public Object {
     return (i != st.end() ? static_cast<T*>(i) : nullptr);
   }
 
-  /** This method is available as a object creation factory for
+  /* This method is available as a object creation factory for
    * classes that are using a string as a key identifier, in particular
    * classes derived from the HasName base class.
    * The following attributes are recognized:
-   * - name:<br>
-   *   Name of the entity to be created/changed/removed.<br>
+   * - name:
+   *   Name of the entity to be created/changed/removed.
    *   The default value is "unspecified".
-   * - type:<br>
-   *   Determines the subclass to be created.<br>
+   * - type:
+   *   Determines the subclass to be created.
    *   The default value is "default".
-   * - action:<br>
-   *   Determines the action to be performed on the object.<br>
+   * - action:
+   *   Determines the action to be performed on the object.
    *   This can be A (for 'add'), C (for 'change'), AC (for 'add_change')
-   *   or R (for 'remove').<br>
+   *   or R (for 'remove').
    *   'add_change' is the default value.
    * @see HasName
    */
@@ -5121,7 +5073,7 @@ class HasName : public NonCopyable, public Tree::TreeNode, public Object {
     return x;
   }
 
-  /** Find an entity given its name. In case it can't be found, a nullptr
+  /* Find an entity given its name. In case it can't be found, a nullptr
    * pointer is returned. */
   static Object* finder(const DataValueDict& k) {
     const DataValue* val = k.get(Tags::name);
@@ -5131,17 +5083,17 @@ class HasName : public NonCopyable, public Tree::TreeNode, public Object {
   }
 };
 
-/** @brief Implements a pool of re-usable string values, following the
+/* Implements a pool of re-usable string values, following the
  * flyweight design pattern.
  */
 class PooledString {
  private:
-  /** Pool of strings. */
+  /* Pool of strings. */
   typedef unordered_map<string, unsigned int> pool_type;
   static pool_type pool;
   static string nullstring;
 
-  /** Pointer to an element in the pool. */
+  /* Pointer to an element in the pool. */
   pool_type::value_type* ptr = nullptr;
 
   void clear() {
@@ -5168,21 +5120,21 @@ class PooledString {
                                                  4 * sizeof(void*)));
   }
 
-  /** Default constructor with empty pointer. */
+  /* Default constructor with empty pointer. */
   PooledString() {}
 
-  /** Constructor from string. */
+  /* Constructor from string. */
   PooledString(const string& val) { insert(val); }
 
-  /** Constructor from a character pointer. */
+  /* Constructor from a character pointer. */
   PooledString(const char* val) { insert(string(val)); }
 
-  /** Copy constructor. */
+  /* Copy constructor. */
   PooledString(const PooledString& other) : ptr(other.ptr) {
     if (ptr) ++(ptr->second);
   }
 
-  /** Assignment operator. */
+  /* Assignment operator. */
   PooledString& operator=(const PooledString& other) {
     if (ptr != other.ptr) {
       clear();
@@ -5192,7 +5144,7 @@ class PooledString {
     return *this;
   }
 
-  /** String assignment operator. */
+  /* String assignment operator. */
   PooledString& operator=(const string& val) {
     if (ptr) {
       if (ptr->first != val) clear();
@@ -5204,22 +5156,22 @@ class PooledString {
     return *this;
   }
 
-  /** Destructor. */
+  /* Destructor. */
   ~PooledString() { clear(); }
 
   inline explicit operator bool() const { return ptr != nullptr; }
 
-  /** Equality operator. */
+  /* Equality operator. */
   inline bool operator==(const PooledString& other) const {
     return ptr == other.ptr;
   }
 
-  /** Inequality operator. */
+  /* Inequality operator. */
   inline bool operator!=(const PooledString& other) const {
     return ptr != other.ptr;
   }
 
-  /** Conversion to string. */
+  /* Conversion to string. */
   operator const string&() const { return ptr ? ptr->first : nullstring; }
 
   /* Return true if the string is empty. */
@@ -5238,21 +5190,21 @@ class PooledString {
   }
 };
 
-/** Prints a pooled string to the outputstream. */
+/* Prints a pooled string to the outputstream. */
 inline ostream& operator<<(ostream& os, const PooledString& s) {
   return os << string(s);
 }
 
-/** @brief This is a decorator class for all objects having a source field. */
+/* This is a decorator class for all objects having a source field. */
 class HasSource {
  private:
   PooledString source;
 
  public:
-  /** Returns the source field. */
+  /* Returns the source field. */
   string getSource() const { return source; }
 
-  /** Sets the source field. */
+  /* Sets the source field. */
   void setSource(const string& c) { source = c; }
 
   template <class Cls>
@@ -5261,28 +5213,28 @@ class HasSource {
   }
 };
 
-/** @brief This is a decorator class for the main objects.
+/* This is a decorator class for the main objects.
  *
  * Instances of this class have a description, category and sub_category.
  */
 class HasDescription : public HasSource {
  public:
-  /** Returns the category. */
+  /* Returns the category. */
   string getCategory() const { return cat; }
 
-  /** Returns the sub_category. */
+  /* Returns the sub_category. */
   string getSubCategory() const { return subcat; }
 
-  /** Returns the getDescription. */
+  /* Returns the getDescription. */
   string getDescription() const { return descr; }
 
-  /** Sets the category field. */
+  /* Sets the category field. */
   void setCategory(const string& f) { cat = f; }
 
-  /** Sets the sub_category field. */
+  /* Sets the sub_category field. */
   void setSubCategory(const string& f) { subcat = f; }
 
-  /** Sets the description field. */
+  /* Sets the description field. */
   void setDescription(const string& f) { descr = f; }
 
   template <class Cls>
@@ -5302,7 +5254,7 @@ class HasDescription : public HasSource {
   PooledString descr;
 };
 
-/** @brief This is a base class for the main objects.
+/* This is a base class for the main objects.
  *
  * Instances of this class have the following properties:
  *  - Unique name and global hashtable are inherited from the class HasName.
@@ -5320,38 +5272,38 @@ class HasHierarchy : public HasName<T> {
   class memberRecursiveIterator;
   friend class memberIterator;
   friend class memberRecursiveIterator;
-  /** @brief This class models an STL-like iterator that allows us to
+  /* This class models an STL-like iterator that allows us to
    * iterate over the immediate members.
    *
    * Objects of this class are created by the getMembers() method.
    */
   class memberIterator {
    public:
-    /** Constructor to iterate over member entities. */
+    /* Constructor to iterate over member entities. */
     memberIterator(const HasHierarchy<T>* x) : member_iter(true) {
       curmember = x ? const_cast<HasHierarchy<T>*>(x)->first_child : nullptr;
     }
 
-    /** Constructor to iterate over all entities. */
+    /* Constructor to iterate over all entities. */
     memberIterator() : curmember(&*T::begin()), member_iter(false) {}
 
-    /** Constructor. */
+    /* Constructor. */
     memberIterator(const typename HasName<T>::iterator& it)
         : curmember(&*it), member_iter(false) {}
 
-    /** Copy constructor. */
+    /* Copy constructor. */
     memberIterator(const memberIterator& it) {
       curmember = it.curmember;
       member_iter = it.member_iter;
     }
 
-    /** Return the content of the current node. */
+    /* Return the content of the current node. */
     T& operator*() const { return *static_cast<T*>(curmember); }
 
-    /** Return the content of the current node. */
+    /* Return the content of the current node. */
     T* operator->() const { return static_cast<T*>(curmember); }
 
-    /** Pre-increment operator which moves the pointer to the next member. */
+    /* Pre-increment operator which moves the pointer to the next member. */
     memberIterator& operator++() {
       if (member_iter)
         curmember = curmember->next_brother;
@@ -5360,7 +5312,7 @@ class HasHierarchy : public HasName<T> {
       return *this;
     }
 
-    /** Post-increment operator which moves the pointer to the next member. */
+    /* Post-increment operator which moves the pointer to the next member. */
     memberIterator operator++(int) {
       memberIterator tmp = *this;
       if (member_iter)
@@ -5370,7 +5322,7 @@ class HasHierarchy : public HasName<T> {
       return tmp;
     }
 
-    /** Return current member and advance the iterator. */
+    /* Return current member and advance the iterator. */
     T* next() {
       if (!curmember) return nullptr;
       T* tmp = static_cast<T*>(curmember);
@@ -5381,43 +5333,43 @@ class HasHierarchy : public HasName<T> {
       return tmp;
     }
 
-    /** Comparison operator. */
+    /* Comparison operator. */
     bool operator==(const memberIterator& y) const {
       return curmember == y.curmember;
     }
 
-    /** Inequality operator. */
+    /* Inequality operator. */
     bool operator!=(const memberIterator& y) const {
       return curmember != y.curmember;
     }
 
-    /** Comparison operator. */
+    /* Comparison operator. */
     bool operator==(const typename HasName<T>::iterator& y) const {
       return curmember ? (curmember == &*y) : (y == T::end());
     }
 
-    /** Inequality operator. */
+    /* Inequality operator. */
     bool operator!=(const typename HasName<T>::iterator& y) const {
       return curmember ? (curmember != &*y) : (y != T::end());
     }
 
-    /** End iterator. */
+    /* End iterator. */
     static memberIterator end() { return nullptr; }
 
    private:
-    /** Points to a member. */
+    /* Points to a member. */
     HasHierarchy<T>* curmember;
     bool member_iter;
   };
 
-  /** @brief This class models an iterator that allows us to
+  /* This class models an iterator that allows us to
    * iterate over the members across all levels.
    *
    * TODO this iterator is not following the STL-style.
    */
   class memberRecursiveIterator : public NonCopyable {
    public:
-    /** Constructor. */
+    /* Constructor. */
     memberRecursiveIterator(const T* x = nullptr) {
       if (x) members.push_back(const_cast<T*>(x));
     }
@@ -5430,13 +5382,13 @@ class HasHierarchy : public HasName<T> {
       return *this;
     }
 
-    /** Return the content of the current node. */
+    /* Return the content of the current node. */
     T& operator*() const { return *members.back(); }
 
-    /** Return the content of the current node. */
+    /* Return the content of the current node. */
     T* operator->() const { return members.back(); }
 
-    /** Pre-increment operator which moves the pointer to the next member. */
+    /* Pre-increment operator which moves the pointer to the next member. */
     memberRecursiveIterator& operator++() {
       if (members.empty()) throw LogicException("Incrementing beyond end");
       if (members.back()->first_child)
@@ -5471,10 +5423,10 @@ class HasHierarchy : public HasName<T> {
     vector<T*> members;
   };
 
-  /** Default constructor. */
+  /* Default constructor. */
   HasHierarchy() {}
 
-  /** Destructor.
+  /* Destructor.
    * When deleting a node of the hierarchy, the children will get the
    * current parent as the new parent.
    * In this way the deletion of nodes doesn't create "dangling branches"
@@ -5482,19 +5434,19 @@ class HasHierarchy : public HasName<T> {
    */
   ~HasHierarchy();
 
-  /** Return a member iterator. */
+  /* Return a member iterator. */
   memberIterator getMembers() const { return this; }
 
-  /** Return an iterator over all members, across all member levels. */
+  /* Return an iterator over all members, across all member levels. */
   memberRecursiveIterator getAllMembers() const { return this; }
 
-  /** Return the first child. */
+  /* Return the first child. */
   T* getFirstChild() const { return first_child; }
 
-  /** Return my next brother. */
+  /* Return my next brother. */
   T* getNextBrother() const { return next_brother; }
 
-  /** Return true if an object is part of the children of a second object. */
+  /* Return true if an object is part of the children of a second object. */
   bool isMemberOf(T* p) const {
     for (auto tmp = this; tmp; tmp = tmp->parent)
       if (tmp == p)
@@ -5509,28 +5461,28 @@ class HasHierarchy : public HasName<T> {
     return tmp;
   }
 
-  /** Returns true if this entity belongs to a higher hierarchical level.<br>
+  /* Returns true if this entity belongs to a higher hierarchical level.
    * An entity can have only a single owner, and can't belong to multiple
    * hierarchies.
    */
   bool hasOwner() const { return parent != nullptr; }
 
-  /** Returns true if this entity has lower level entities belonging to
+  /* Returns true if this entity has lower level entities belonging to
    * it. */
   bool isGroup() const { return first_child != nullptr; }
 
-  /** Changes the owner of the entity.<br>
-   * The argument must be a valid pointer to an entity of the same type.<br>
-   * A nullptr pointer can be passed to clear the existing owner.<br>
+  /* Changes the owner of the entity.
+   * The argument must be a valid pointer to an entity of the same type.
+   * A nullptr pointer can be passed to clear the existing owner.
    */
   void setOwner(T* f);
 
-  /** Returns the owning entity. */
+  /* Returns the owning entity. */
   inline T* getOwner() const { return parent; }
 
-  /** Returns the level in the hierarchy.<br>
-   * Level 0 means the entity doesn't have any parent.<br>
-   * Level 1 means the entity has a parent entity with level 0.<br>
+  /* Returns the level in the hierarchy.
+   * Level 0 means the entity doesn't have any parent.
+   * Level 1 means the entity has a parent entity with level 0.
    * Level "x" means the entity has a parent entity whose level is "x-1".
    */
   unsigned short getHierarchyLevel() const;
@@ -5546,7 +5498,7 @@ class HasHierarchy : public HasName<T> {
   }
 
  private:
-  /** Children are linked as a single linked list. */
+  /* Children are linked as a single linked list. */
   T* parent = nullptr;
   T* first_child = nullptr;
   T* last_child = nullptr;
@@ -5557,11 +5509,11 @@ class HasHierarchy : public HasName<T> {
 // ASSOCIATION
 //
 
-/** @brief This template class represents a data structure for a load or flow
+/* This template class represents a data structure for a load or flow
  * network.
  *
- * A node class has pointers to 2 root classes.<br> The 2 root classes each
- * maintain a singly linked list of nodes.<br>
+ * A node class has pointers to 2 root classes. The 2 root classes each
+ * maintain a singly linked list of nodes.
  * An example to clarify the usage:
  *  - class "node" = a newspaper subscription.
  *  - class "person" = maintains a list of all his subscriptions.
@@ -5570,7 +5522,7 @@ class HasHierarchy : public HasName<T> {
  * This data structure could be replaced with 2 linked lists, but this
  * specialized data type consumes considerably lower memory.
  *
- * Reading from the structure is safe in multi-threading mode.<br>
+ * Reading from the structure is safe in multi-threading mode.
  * Updates to the data structure in a multi-threading mode require the user
  * to properly lock and unlock the container.
  */
@@ -5580,7 +5532,7 @@ class Association {
   class Node;
 
  private:
-  /** @brief A abstract base class for the internal representation of the
+  /* A abstract base class for the internal representation of the
    * association lists.
    */
   class List {
@@ -5597,13 +5549,13 @@ class Association {
   };
 
  public:
-  /** @brief A list type of the "first" / "from" part of the association. */
+  /* A list type of the "first" / "from" part of the association. */
   class ListA : public List {
    public:
-    /** Constructor. */
+    /* Constructor. */
     ListA(){};
 
-    /** @brief An iterator over the associated objects. */
+    /* An iterator over the associated objects. */
     class iterator {
      protected:
       C* nodeptr;
@@ -5637,7 +5589,7 @@ class Association {
       }
     };
 
-    /** @brief An iterator over the associated objects. */
+    /* An iterator over the associated objects. */
     class const_iterator {
      protected:
       C* nodeptr;
@@ -5683,7 +5635,7 @@ class Association {
 
     const_iterator end() const { return const_iterator(nullptr); }
 
-    /** Destructor. */
+    /* Destructor. */
     ~ListA() {
       C* next;
       for (C* p = this->first; p; p = next) {
@@ -5692,7 +5644,7 @@ class Association {
       }
     }
 
-    /** Remove an association. */
+    /* Remove an association. */
     void erase(const C* n) {
       if (!n) return;
       if (n == this->first) {
@@ -5707,21 +5659,21 @@ class Association {
           }
     }
 
-    /** Return the number of associations. */
+    /* Return the number of associations. */
     size_t size() const {
       size_t i(0);
       for (C* p = this->first; p; p = p->nextA) ++i;
       return i;
     }
 
-    /** Search for the association effective at a certain date. */
+    /* Search for the association effective at a certain date. */
     C* find(const B* b, Date d = Date::infinitePast) const {
       for (C* p = this->first; p; p = p->nextA)
         if (p->ptrB == b && p->effectivity.within(d)) return p;
       return nullptr;
     }
 
-    /** Search for the association with a certain name. */
+    /* Search for the association with a certain name. */
     C* find(const string& n) const {
       for (C* p = this->first; p; p = p->nextA)
         if (p->name == n) return p;
@@ -5729,13 +5681,13 @@ class Association {
     }
   };
 
-  /** @brief A list type of the "second" / "to" part of the association. */
+  /* A list type of the "second" / "to" part of the association. */
   class ListB : public List {
    public:
-    /** Constructor. */
+    /* Constructor. */
     ListB(){};
 
-    /** @brief An iterator over the associated objects. */
+    /* An iterator over the associated objects. */
     class iterator {
      protected:
       C* nodeptr;
@@ -5769,7 +5721,7 @@ class Association {
       }
     };
 
-    /** @brief An iterator over the associated objects. */
+    /* An iterator over the associated objects. */
     class const_iterator {
      protected:
       C* nodeptr;
@@ -5807,7 +5759,7 @@ class Association {
       }
     };
 
-    /** Destructor. */
+    /* Destructor. */
     ~ListB() {
       C* next;
       for (C* p = this->first; p; p = next) {
@@ -5824,7 +5776,7 @@ class Association {
 
     const_iterator end() const { return const_iterator(nullptr); }
 
-    /** Remove an association. */
+    /* Remove an association. */
     void erase(const C* n) {
       if (!n) return;
       if (n == this->first) {
@@ -5839,21 +5791,21 @@ class Association {
           }
     }
 
-    /** Return the number of associations. */
+    /* Return the number of associations. */
     size_t size() const {
       size_t i(0);
       for (C* p = this->first; p; p = p->nextB) ++i;
       return i;
     }
 
-    /** Search for the association effective at a certain date. */
+    /* Search for the association effective at a certain date. */
     C* find(const A* b, Date d = Date::infinitePast) const {
       for (C* p = this->first; p; p = p->nextB)
         if (p->ptrA == b && p->effectivity.within(d)) return p;
       return nullptr;
     }
 
-    /** Search for the association with a certain name. */
+    /* Search for the association with a certain name. */
     C* find(const string& n) const {
       for (C* p = this->first; p; p = p->nextB)
         if (p->name == n) return p;
@@ -5861,7 +5813,7 @@ class Association {
     }
   };
 
-  /** @brief A base class for the class representing the association
+  /* A base class for the class representing the association
    * itself.
    */
   class Node {
@@ -5875,10 +5827,10 @@ class Association {
     int priority = 1;
 
    public:
-    /** Constructor. */
+    /* Constructor. */
     Node(){};
 
-    /** Constructor. */
+    /* Constructor. */
     Node(A* a, B* b, const ListA& al, const ListB& bl) : ptrA(a), ptrB(b) {
       if (al.last)
         // Append at the end of the A-list
@@ -5931,39 +5883,39 @@ class Association {
 
     B* getPtrB() const { return ptrB; }
 
-    /** Update the start date of the effectivity range. */
+    /* Update the start date of the effectivity range. */
     void setEffectiveStart(Date d) { effectivity.setStart(d); }
 
-    /** Update the end date of the effectivity range. */
+    /* Update the end date of the effectivity range. */
     void setEffectiveEnd(Date d) { effectivity.setEnd(d); }
 
-    /** Update the effectivity range. */
+    /* Update the effectivity range. */
     void setEffective(DateRange dr) { effectivity = dr; }
 
-    /** Get the start date of the effectivity range. */
+    /* Get the start date of the effectivity range. */
     Date getEffectiveStart() const { return effectivity.getStart(); }
 
-    /** Get the end date of the effectivity range. */
+    /* Get the end date of the effectivity range. */
     Date getEffectiveEnd() const { return effectivity.getEnd(); }
 
-    /** Return the effectivity daterange.<br>
+    /* Return the effectivity daterange.
      * The default covers the complete time horizon.
      */
     DateRange getEffective() const { return effectivity; }
 
-    /** Sets an optional, non-unique name for the association.<br>
+    /* Sets an optional, non-unique name for the association.
      * All associations with the same name are considered alternates
      * of each other.
      */
     void setName(const string& x) { name = x; }
 
-    /** Return the optional name of the association. */
+    /* Return the optional name of the association. */
     string getName() const { return name; }
 
-    /** Update the priority. */
+    /* Update the priority. */
     void setPriority(int i) { priority = i; }
 
-    /** Return the priority. */
+    /* Return the priority. */
     int getPriority() const { return priority; }
   };
 
@@ -6076,13 +6028,13 @@ class MetaFieldString : public MetaFieldBase {
   }
 
  protected:
-  /** Get function. */
+  /* Get function. */
   getFunction getf;
 
-  /** Set function. */
+  /* Set function. */
   setFunction setf;
 
-  /** Default value */
+  /* Default value */
   string def;
 };
 
@@ -6130,13 +6082,13 @@ class MetaFieldBool : public MetaFieldBase {
   }
 
  protected:
-  /** Get function. */
+  /* Get function. */
   getFunction getf;
 
-  /** Set function. */
+  /* Set function. */
   setFunction setf;
 
-  /** Default value */
+  /* Default value */
   tribool def;
 };
 
@@ -6194,16 +6146,16 @@ class MetaFieldDouble : public MetaFieldBase {
   }
 
  protected:
-  /** Get function. */
+  /* Get function. */
   getFunction getf = nullptr;
 
-  /** Set function. */
+  /* Set function. */
   setFunction setf = nullptr;
 
-  /** Default value. */
+  /* Default value. */
   double def;
 
-  /** Set function. */
+  /* Set function. */
   isDefaultFunction isDfltFunc = nullptr;
 };
 
@@ -6248,13 +6200,13 @@ class MetaFieldInt : public MetaFieldBase {
   }
 
  protected:
-  /** Get function. */
+  /* Get function. */
   getFunction getf;
 
-  /** Set function. */
+  /* Set function. */
   setFunction setf;
 
-  /** Defaut value. */
+  /* Defaut value. */
   int def;
 };
 
@@ -6299,13 +6251,13 @@ class MetaFieldEnum : public MetaFieldBase {
   }
 
  protected:
-  /** Get function. */
+  /* Get function. */
   getFunction getf;
 
-  /** Set function. */
+  /* Set function. */
   setFunction setf;
 
-  /** Defaut value. */
+  /* Defaut value. */
   Enum def;
 };
 
@@ -6351,13 +6303,13 @@ class MetaFieldShort : public MetaFieldBase {
   }
 
  protected:
-  /** Get function. */
+  /* Get function. */
   getFunction getf;
 
-  /** Set function. */
+  /* Set function. */
   setFunction setf;
 
-  /** Defaut value. */
+  /* Defaut value. */
   short def;
 };
 
@@ -6403,13 +6355,13 @@ class MetaFieldUnsignedLong : public MetaFieldBase {
   }
 
  protected:
-  /** Get function. */
+  /* Get function. */
   getFunction getf;
 
-  /** Set function. */
+  /* Set function. */
   setFunction setf;
 
-  /** Defaut value. */
+  /* Defaut value. */
   unsigned long def;
 };
 
@@ -6455,13 +6407,13 @@ class MetaFieldDuration : public MetaFieldBase {
   }
 
  protected:
-  /** Get function. */
+  /* Get function. */
   getFunction getf;
 
-  /** Set function. */
+  /* Set function. */
   setFunction setf;
 
-  /** Default value. */
+  /* Default value. */
   Duration def;
 };
 
@@ -6512,13 +6464,13 @@ class MetaFieldDurationDouble : public MetaFieldBase {
   }
 
  protected:
-  /** Get function. */
+  /* Get function. */
   getFunction getf;
 
-  /** Set function. */
+  /* Set function. */
   setFunction setf;
 
-  /** Default value. */
+  /* Default value. */
   double def;
 };
 
@@ -6564,13 +6516,13 @@ class MetaFieldDate : public MetaFieldBase {
   }
 
  protected:
-  /** Get function. */
+  /* Get function. */
   getFunction getf;
 
-  /** Set function. */
+  /* Set function. */
   setFunction setf;
 
-  /** Default value. */
+  /* Default value. */
   Date def;
 };
 
@@ -6670,10 +6622,10 @@ class MetaFieldPointer : public MetaFieldBase {
   virtual const MetaClass* getClass() const { return Ptr::metadata; }
 
  protected:
-  /** Get function. */
+  /* Get function. */
   getFunction getf;
 
-  /** Set function. */
+  /* Set function. */
   setFunction setf;
 };
 
@@ -6776,7 +6728,7 @@ class MetaFieldIterator : public MetaFieldBase {
   virtual const Keyword* getKeyword() const { return &singleKeyword; }
 
  protected:
-  /** Get function. */
+  /* Get function. */
   getFunction getf;
 
   const Keyword& singleKeyword;
@@ -6786,7 +6738,7 @@ class MetaFieldIterator : public MetaFieldBase {
 // LIBRARY INITIALISATION
 //
 
-/** @brief This class holds functions that used for maintenance of the library.
+/* This class holds functions that used for maintenance of the library.
  *
  * Its static member function 'initialize' should be called BEFORE the
  * first use of any class in the library.
@@ -6798,15 +6750,15 @@ class LibraryUtils {
   static void initialize();
 };
 
-/** @brief This Python function loads a frepple extension module in memory. */
+/* This Python function loads a frepple extension module in memory. */
 PyObject* loadModule(PyObject*, PyObject*, PyObject*);
 
-/** @brief A template class to expose category classes which use a string
+/* A template class to expose category classes which use a string
  * as the key to Python. */
 template <class T>
 class FreppleCategory : public PythonExtension<FreppleCategory<T> > {
  public:
-  /** Initialization method. */
+  /* Initialization method. */
   static int initialize() {
     // Initialize the type
     PythonType& x = PythonExtension<FreppleCategory<T> >::getPythonType();
@@ -6822,7 +6774,7 @@ class FreppleCategory : public PythonExtension<FreppleCategory<T> > {
   }
 };
 
-/** @brief A template class to expose classes to Python. */
+/* A template class to expose classes to Python. */
 template <class ME, class BASE>
 class FreppleClass : public PythonExtension<FreppleClass<ME, BASE> > {
  public:
@@ -6844,7 +6796,7 @@ class FreppleClass : public PythonExtension<FreppleClass<ME, BASE> > {
   }
 };
 
-/** A class to remember the last N objects, and verify whether a certain
+/* A class to remember the last N objects, and verify whether a certain
  * object is part of that list.
  * Internally we use a circular array data structure to store the recent
  * entries.
@@ -6868,7 +6820,7 @@ class RecentlyUsed {
     return *this;
   }
 
-  /** Add a new entry to the list. */
+  /* Add a new entry to the list. */
   void push(const OBJ& o) {
     entries[head >= N ? head - N : head] = o;
     if (++head > 2 * N) head = N;

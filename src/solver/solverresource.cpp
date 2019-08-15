@@ -23,7 +23,7 @@
 
 namespace frepple {
 
-/** @todo resource solver should be using a move command rather than direct move
+/* @todo resource solver should be using a move command rather than direct move
  */
 void SolverCreate::solve(const Resource* res, void* v) {
   SolverData* data = static_cast<SolverData*>(v);

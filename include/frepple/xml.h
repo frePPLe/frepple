@@ -18,9 +18,6 @@
  *                                                                         *
  ***************************************************************************/
 
-/** @file xml.h
- * @brief Header file for XML processing.
- */
 #pragma once
 #ifndef FREPPLE_XML_H
 #define FREPPLE_XML_H
@@ -50,7 +47,7 @@ namespace utils {
 // Forward declarations
 class XMLInput;
 
-/** @brief This class will read in an XML-file and call the appropriate
+/* This class will read in an XML-file and call the appropriate
  * handler functions of the Object classes and objects.
  *
  * This class is implemented based on the Xerces SAX XML parser.
@@ -59,7 +56,7 @@ class XMLInput;
  *
  * FrePPLe creates a new parser and loads the XML schema every time
  * XML data need to be parsed. When this happens only a few times during a
- * run this is good enough.<br>
+ * run this is good enough.
  * However, when the libary has to parse plenty of small XML messages this
  * will create a significant overhead. The code would need to be enhanced
  * to maintain a pool of parsers and cache their grammars.
@@ -68,7 +65,7 @@ class XMLInput : public DataInput,
                  public NonCopyable,
                  private xercesc::DefaultHandler {
  private:
-  /** This variable defines the maximum depth of the object creation stack.
+  /* This variable defines the maximum depth of the object creation stack.
    * This maximum is intended to protect us from malicious malformed
    * xml-documents, and also for allocating efficient data structures for
    * the parser.
@@ -85,13 +82,13 @@ class XMLInput : public DataInput,
   };
 
  private:
-  /** A transcoder to encoding to UTF-8. */
+  /* A transcoder to encoding to UTF-8. */
   static xercesc::XMLTranscoder* utf8_encoder;
 
-  /** A pointer to an XML parser for processing the input. */
+  /* A pointer to an XML parser for processing the input. */
   xercesc::SAX2XMLReader* parser = nullptr;
 
-  /** Stack of objects and their data fields. */
+  /* Stack of objects and their data fields. */
   struct obj {
     const MetaClass* cls;
     Object* object;
@@ -100,25 +97,25 @@ class XMLInput : public DataInput,
   };
   vector<obj> objects;
 
-  /** Stack of fields already read. */
+  /* Stack of fields already read. */
   vector<fld> data;
 
-  /** Index into the objects stack. */
+  /* Index into the objects stack. */
   int objectindex = -1;
 
-  /** Index into the data field stack. */
+  /* Index into the data field stack. */
   int dataindex = -1;
 
-  /** A variable to keep track of the size of the element stack. It is used
+  /* A variable to keep track of the size of the element stack. It is used
    * together with the variable m_EStack.
    */
   short numElements = -1;
 
-  /** Controls wether or not we need to process character data. */
+  /* Controls wether or not we need to process character data. */
   bool reading = false;
 
-  /** This field controls whether we continue processing after data errors
-   * or whether we abort processing the remaining XML data.<br>
+  /* This field controls whether we continue processing after data errors
+   * or whether we abort processing the remaining XML data.
    * Selecting the right mode is important:
    *  - Setting the flag to false is appropriate for processing large
    *    amounts of a bulk-load operation. In this mode a single, potentially
@@ -131,22 +128,22 @@ class XMLInput : public DataInput,
    */
   bool abortOnDataException = true;
 
-  /** This field counts how deep we are in a nested series of ignored input.
+  /* This field counts how deep we are in a nested series of ignored input.
    * It is represented as a counter since the ignored element could contain
    * itself.
    */
   unsigned short ignore = 0;
 
-  /** A buffer used for transcoding XML data. */
+  /* A buffer used for transcoding XML data. */
   char encodingbuffer[4 * 1024];
 
-  /** Handler called when a new element tag is encountered.
+  /* Handler called when a new element tag is encountered.
    * It pushes a new element on the stack and calls the current handler.
    */
   void startElement(const XMLCh* const, const XMLCh* const, const XMLCh* const,
                     const xercesc::Attributes&);
 
-  /** Handler called when closing element tag is encountered.
+  /* Handler called when closing element tag is encountered.
    * If this is the closing tag for the current event handler, pop it
    * off the handler stack. If this empties the stack, shut down parser.
    * Otherwise, just feed the element with the already completed
@@ -155,60 +152,60 @@ class XMLInput : public DataInput,
    */
   void endElement(const XMLCh* const, const XMLCh* const, const XMLCh* const);
 
-  /** Handler called when character data are read in.
+  /* Handler called when character data are read in.
    * The data string is add it to the current element data.
    */
   void characters(const XMLCh* const, const XMLSize_t);
 
-  /** Handler called by Xerces in fatal error conditions. It throws an
+  /* Handler called by Xerces in fatal error conditions. It throws an
    * exception to abort the parsing procedure. */
   void fatalError(const xercesc::SAXParseException&);
 
-  /** Handler called by Xercess when reading a processing instruction. The
+  /* Handler called by Xercess when reading a processing instruction. The
    * handler looks up the target in the repository and will call the
    * registered XMLinstruction.
    * @see XMLinstruction
    */
   void processingInstruction(const XMLCh* const, const XMLCh* const);
 
-  /** Handler called by Xerces in error conditions. It throws an exception
+  /* Handler called by Xerces in error conditions. It throws an exception
    * to abort the parsing procedure. */
   void error(const xercesc::SAXParseException&);
 
-  /** Handler called by Xerces for warnings. */
+  /* Handler called by Xerces for warnings. */
   void warning(const xercesc::SAXParseException&);
 
  public:
-  /** Constructor. */
+  /* Constructor. */
   XMLInput();
 
-  /** Destructor. */
+  /* Destructor. */
   virtual ~XMLInput();
 
-  /** This is the core parsing function, which triggers the XML parser to
+  /* This is the core parsing function, which triggers the XML parser to
    * start processing the input. It is normally called from the method
    * parse(Object*) once a proper stream has been created.
    * @see parse(Object*)
    */
   void parse(xercesc::InputSource&, Object*, bool = false);
 
-  /** Updates whether we ignore data exceptions or whether we abort the
+  /* Updates whether we ignore data exceptions or whether we abort the
    * processing of the XML data stream. */
   void setAbortOnDataError(bool i) { abortOnDataException = i; }
 
-  /** Returns the behavior of the parser in case of data errors.<br>
+  /* Returns the behavior of the parser in case of data errors.
    * When true is returned, the processing of the XML stream continues
    * after a DataException. Other, more critical, exceptions types will
-   * still abort the parsing process.<br>
+   * still abort the parsing process.
    * False indicates that the processing of the XML stream is aborted.
    */
   bool getAbortOnDataError() const { return abortOnDataException; }
 
-  /** Transcode the Xerces XML characters to our UTF8 encoded buffer. */
+  /* Transcode the Xerces XML characters to our UTF8 encoded buffer. */
   char* transcodeUTF8(const XMLCh*);
 
  protected:
-  /** The real parsing job is delegated to subclasses.
+  /* The real parsing job is delegated to subclasses.
    * Subclass can then define the specifics for parsing a flat file,
    * a string, a SOAP message, etc...
    * @exception RuntimeException Thrown in the following situations:
@@ -223,13 +220,13 @@ class XMLInput : public DataInput,
   }
 };
 
-/** @brief This class reads XML data from a string. */
+/* This class reads XML data from a string. */
 class XMLInputString : public XMLInput {
  public:
-  /** Default constructor. */
+  /* Default constructor. */
   XMLInputString(const string& s) : data(s){};
 
-  /** Parse the specified string. */
+  /* Parse the specified string. */
   void parse(Object* pRoot, bool v = false) {
     /* The MemBufInputSource expects the number of bytes as second parameter.
      * In our case this is the same as the number of characters, but this
@@ -243,7 +240,7 @@ class XMLInputString : public XMLInput {
   }
 
  private:
-  /** String containing the data to be parsed. Note that NO local copy of the
+  /* String containing the data to be parsed. Note that NO local copy of the
    * data is made, only a reference is stored. The class relies on the code
    * calling the command to correctly create and destroy the string being
    * used.
@@ -251,7 +248,7 @@ class XMLInputString : public XMLInput {
   const string data;
 };
 
-/** @brief This class reads XML data from a file system.
+/* This class reads XML data from a file system.
  *
  * The filename argument can be the name of a file or a directory.
  * If a directory is passed, all files with the extension ".xml"
@@ -259,20 +256,20 @@ class XMLInputString : public XMLInput {
  */
 class XMLInputFile : public XMLInput {
  public:
-  /** Constructor. The argument passed is the name of a
+  /* Constructor. The argument passed is the name of a
    * file or a directory. */
   XMLInputFile(const string& s) : filename(s){};
 
-  /** Default constructor. */
+  /* Default constructor. */
   XMLInputFile(){};
 
-  /** Update the name of the file to be processed. */
+  /* Update the name of the file to be processed. */
   void setFileName(const string& s) { filename = s; }
 
-  /** Returns the name of the file or directory to process. */
+  /* Returns the name of the file or directory to process. */
   string getFileName() { return filename; }
 
-  /** Parse the specified file.
+  /* Parse the specified file.
    * When a directory was passed as the argument a failure is
    * flagged as soon as a single file returned a failure. All
    * files in an directory are processed however, regardless of
@@ -285,11 +282,11 @@ class XMLInputFile : public XMLInput {
   void parse(Object*, bool = false);
 
  private:
-  /** Name of the file to be opened. */
+  /* Name of the file to be opened. */
   string filename;
 };
 
-/** @brief This class represents a list of XML key+value pairs.
+/* This class represents a list of XML key+value pairs.
  *
  * The method is a thin wrapper around one of the internal data
  * structures of the XMLInput class.
@@ -298,17 +295,17 @@ class XMLDataValueDict : public DataValueDict {
  public:
   typedef vector<pair<DataKeyword, XMLData> > dict;
 
-  /** Constructor. */
+  /* Constructor. */
   XMLDataValueDict(vector<XMLInput::fld>& f, int st, int nd)
       : fields(f), strt(st), nd(nd) {}
 
-  /** Look up a certain keyword. */
+  /* Look up a certain keyword. */
   const XMLData* get(const Keyword& key) const;
 
-  /** Enlarge the dictiorary. */
+  /* Enlarge the dictiorary. */
   void enlarge() { ++nd; }
 
-  /** Auxilary debugging method. */
+  /* Auxilary debugging method. */
   void print();
 
  private:
@@ -317,41 +314,41 @@ class XMLDataValueDict : public DataValueDict {
   int nd;
 };
 
-/** @brief Base class for writing XML formatted data to an output stream.
+/* Base class for writing XML formatted data to an output stream.
  *
  * Subclasses implement writing to specific stream types, such as files
  * and strings.
  */
 class XMLSerializer : public Serializer {
  public:
-  /** Updates the string that is printed as the first line of each XML
-   * document.<br>
+  /* Updates the string that is printed as the first line of each XML
+   * document.
    * The default value is:
    *   <?xml version="1.0" encoding="UTF-8"?>
    */
   void setHeaderStart(const string& s) { headerStart = s; }
 
-  /** Returns the string that is printed as the first line of each XML
+  /* Returns the string that is printed as the first line of each XML
    * document. */
   string getHeaderStart() const { return headerStart; }
 
-  /** Updates the attributes that are written for the root element of each
-   * XML document.<br>
+  /* Updates the attributes that are written for the root element of each
+   * XML document.
    * The default value is an empty string.
    */
   void setHeaderAtts(const string& s) { headerAtts = s; }
 
-  /** Returns the attributes that are written for the root element of each
+  /* Returns the attributes that are written for the root element of each
    * XML document. */
   string getHeaderAtts() const { return headerAtts; }
 
-  /** Constructor with a given stream. */
+  /* Constructor with a given stream. */
   XMLSerializer(ostream& os) : Serializer(os) { indentstring[0] = '\0'; }
 
-  /** Default constructor. */
+  /* Default constructor. */
   XMLSerializer() { indentstring[0] = '\0'; }
 
-  /** Start writing a new object. This method will open a new XML-tag.<br>
+  /* Start writing a new object. This method will open a new XML-tag.
    * Output: \<TAG\>
    */
   void BeginList(const Keyword& t) {
@@ -359,7 +356,7 @@ class XMLSerializer : public Serializer {
     incIndent();
   }
 
-  /** Start writing a new object. This method will open a new XML-tag.<br>
+  /* Start writing a new object. This method will open a new XML-tag.
    * Output: \<TAG\>
    */
   void BeginObject(const Keyword& t) {
@@ -367,7 +364,7 @@ class XMLSerializer : public Serializer {
     incIndent();
   }
 
-  /** Start writing a new object. This method will open a new XML-tag.
+  /* Start writing a new object. This method will open a new XML-tag.
    * Output: \<TAG attributes\>
    */
   void BeginObject(const Keyword& t, const string& atts) {
@@ -375,7 +372,7 @@ class XMLSerializer : public Serializer {
     incIndent();
   }
 
-  /** Start writing a new object. This method will open a new XML-tag.<br>
+  /* Start writing a new object. This method will open a new XML-tag.
    * Output: \<TAG TAG1="val1"\>
    */
   void BeginObject(const Keyword& t, const Keyword& attr1, const string& val1) {
@@ -385,7 +382,7 @@ class XMLSerializer : public Serializer {
     incIndent();
   }
 
-  /** Start writing a new object. This method will open a new XML-tag.<br>
+  /* Start writing a new object. This method will open a new XML-tag.
    * Output: \<TAG TAG1="val1"\>
    */
   void BeginObject(const Keyword& t, const Keyword& attr1, const Date val1) {
@@ -394,7 +391,7 @@ class XMLSerializer : public Serializer {
     incIndent();
   }
 
-  /** Start writing a new object. This method will open a new XML-tag.<br>
+  /* Start writing a new object. This method will open a new XML-tag.
    * Output: \<TAG TAG1="val1"\>
    */
   void BeginObject(const Keyword& t, const Keyword& attr1, const int val1) {
@@ -403,7 +400,7 @@ class XMLSerializer : public Serializer {
     incIndent();
   }
 
-  /** Start writing a new object. This method will open a new XML-tag.<br>
+  /* Start writing a new object. This method will open a new XML-tag.
    * Output: \<TAG TAG1="val1" TAG2="val2"\>
    */
   void BeginObject(const Keyword& t, const Keyword& attr1, const string& val1,
@@ -435,8 +432,8 @@ class XMLSerializer : public Serializer {
     incIndent();
   }
 
-  /** Write the closing tag of this object and decrease the indentation
-   * level.<br>
+  /* Write the closing tag of this object and decrease the indentation
+   * level.
    * Output: \</TAG_T\>
    */
   void EndObject(const Keyword& t) {
@@ -444,8 +441,8 @@ class XMLSerializer : public Serializer {
     *m_fp << indentstring << t.stringEndElement();
   }
 
-  /** Write the closing tag of this object and decrease the indentation
-   * level.<br>
+  /* Write the closing tag of this object and decrease the indentation
+   * level.
    * Output: \</TAG_T\>
    */
   void EndList(const Keyword& t) {
@@ -453,30 +450,30 @@ class XMLSerializer : public Serializer {
     *m_fp << indentstring << t.stringEndElement();
   }
 
-  /** Write the string to the output. No XML-tags are added, so this method
+  /* Write the string to the output. No XML-tags are added, so this method
    * is used for passing text straight into the output file. */
   void writeString(const string& c) { *m_fp << indentstring << c << "\n"; }
 
-  /** Write an unsigned long value enclosed opening and closing tags.<br>
+  /* Write an unsigned long value enclosed opening and closing tags.
    * Output: \<TAG_T\>uint\</TAG_T\> */
   void writeElement(const Keyword& t, const long unsigned int val) {
     *m_fp << indentstring << t.stringElement() << val << t.stringEndElement();
   }
 
-  /** Write an integer value enclosed opening and closing tags.<br>
+  /* Write an integer value enclosed opening and closing tags.
    * Output: \<TAG_T\>integer\</TAG_T\> */
   void writeElement(const Keyword& t, const int val) {
     *m_fp << indentstring << t.stringElement() << val << t.stringEndElement();
   }
 
-  /** Write a double value enclosed opening and closing tags.<br>
+  /* Write a double value enclosed opening and closing tags.
    * Output: \<TAG_T\>double\</TAG_T\> */
   void writeElement(const Keyword& t, const double val) {
     *m_fp << indentstring << t.stringElement() << val << t.stringEndElement();
   }
 
-  /** Write a boolean value enclosed opening and closing tags. The boolean
-   * is written out as the string 'true' or 'false'.<br>
+  /* Write a boolean value enclosed opening and closing tags. The boolean
+   * is written out as the string 'true' or 'false'.
    * Output: \<TAG_T\>true\</TAG_T\>
    */
   void writeElement(const Keyword& t, const bool val) {
@@ -484,8 +481,8 @@ class XMLSerializer : public Serializer {
           << t.stringEndElement();
   }
 
-  /** Write a string value enclosed opening and closing tags. Special
-   * characters (i.e. & < > " ' ) are appropriately escaped.<br>
+  /* Write a string value enclosed opening and closing tags. Special
+   * characters (i.e. & < > " ' ) are appropriately escaped.
    * Output: \<TAG_T\>val\</TAG_T\> */
   void writeElement(const Keyword& t, const string& val) {
     if (!val.empty()) {
@@ -495,7 +492,7 @@ class XMLSerializer : public Serializer {
     }
   }
 
-  /** Writes an element with a string attribute.<br>
+  /* Writes an element with a string attribute.
    * Output: \<TAG_U TAG_T="string"/\> */
   void writeElement(const Keyword& u, const Keyword& t, const string& val) {
     if (val.empty())
@@ -507,21 +504,21 @@ class XMLSerializer : public Serializer {
     }
   }
 
-  /** Writes an element with a long attribute.<br>
+  /* Writes an element with a long attribute.
    * Output: \<TAG_U TAG_T="val"/\> */
   void writeElement(const Keyword& u, const Keyword& t, const long val) {
     *m_fp << indentstring << u.stringStartElement() << t.stringAttribute()
           << val << "\"/>\n";
   }
 
-  /** Writes an element with a date attribute.<br>
+  /* Writes an element with a date attribute.
    * Output: \<TAG_U TAG_T="val"/\> */
   void writeElement(const Keyword& u, const Keyword& t, const Date& val) {
     *m_fp << indentstring << u.stringStartElement() << t.stringAttribute()
           << string(val) << "\"/>\n";
   }
 
-  /** Writes an element with 2 string attributes.<br>
+  /* Writes an element with 2 string attributes.
    * Output: \<TAG_U TAG_T1="val1" TAG_T2="val2"/\> */
   void writeElement(const Keyword& u, const Keyword& t1, const string& val1,
                     const Keyword& t2, const string& val2) {
@@ -536,7 +533,7 @@ class XMLSerializer : public Serializer {
     }
   }
 
-  /** Writes an element with a string and an unsigned long attribute.<br>
+  /* Writes an element with a string and an unsigned long attribute.
    * Output: \<TAG_U TAG_T1="val1" TAG_T2="val2"/\> */
   void writeElement(const Keyword& u, const Keyword& t1, unsigned long val1,
                     const Keyword& t2, const string& val2) {
@@ -546,8 +543,8 @@ class XMLSerializer : public Serializer {
     *m_fp << "\"/>\n";
   }
 
-  /** Writes an element with a short, an unsigned long and a double
-   * attribute.<br>
+  /* Writes an element with a short, an unsigned long and a double
+   * attribute.
    * Output: \<TAG_U TAG_T1="val1" TAG_T2="val2" TAG_T3="val3"/\> */
   void writeElement(const Keyword& u, const Keyword& t1, short val1,
                     const Keyword& t2, unsigned long val2, const Keyword& t3,
@@ -562,7 +559,7 @@ class XMLSerializer : public Serializer {
           << "\"/>\n";
   }
 
-  /** Writes a C-type character string.<br>
+  /* Writes a C-type character string.
    * Output: \<TAG_T\>val\</TAG_T\> */
   void writeElement(const Keyword& t, const char* val) {
     if (!val) return;
@@ -571,50 +568,50 @@ class XMLSerializer : public Serializer {
     *m_fp << t.stringEndElement();
   }
 
-  /** Writes an Duration element.<br>
+  /* Writes an Duration element.
    * Output: \<TAG_T\>d\</TAG_T\> /> */
   void writeElement(const Keyword& t, const Duration d) {
     *m_fp << indentstring << t.stringElement() << d << t.stringEndElement();
   }
 
-  /** Writes an date element.<br>
+  /* Writes an date element.
    * Output: \<TAG_T\>d\</TAG_T\> /> */
   void writeElement(const Keyword& t, const Date d) {
     *m_fp << indentstring << t.stringElement() << d << t.stringEndElement();
   }
 
-  /** Writes an daterange element.<br>
+  /* Writes an daterange element.
    * Output: \<TAG_T\>d\</TAG_T\> */
   void writeElement(const Keyword& t, const DateRange& d) {
     *m_fp << indentstring << t.stringElement() << d << t.stringEndElement();
   }
 
-  /** This method writes a serializable object with a complete XML compliant
-   * header.<br>
+  /* This method writes a serializable object with a complete XML compliant
+   * header.
    * You should call this method for the root object of your xml document,
    * and writeElement for all objects nested in it.
    * @see writeElement(const Keyword&, Object*)
    */
   void writeElementWithHeader(const Keyword& tag, const Object* object);
 
-  /** Returns a pointer to the object that is currently being saved. */
+  /* Returns a pointer to the object that is currently being saved. */
   Object* getCurrentObject() const {
     return const_cast<Object*>(currentObject);
   }
 
-  /** Returns a pointer to the parent of the object that is being saved. */
+  /* Returns a pointer to the parent of the object that is being saved. */
   Object* getPreviousObject() const {
     return const_cast<Object*>(parentObject);
   }
 
-  /** Returns the number of objects that have been serialized. */
+  /* Returns the number of objects that have been serialized. */
   unsigned long countObjects() const { return numObjects; }
 
-  /** Get a string suitable for correctly indenting the output. */
+  /* Get a string suitable for correctly indenting the output. */
   const char* getIndent() { return indentstring; }
 
  private:
-  /** Write the argument to the output stream, while escaping any
+  /* Write the argument to the output stream, while escaping any
    * special characters.
    * The following characters are replaced:
    *    - &: replaced with &amp;
@@ -632,39 +629,39 @@ class XMLSerializer : public Serializer {
    */
   void escape(const string&);
 
-  /** Increase the indentation level. The indentation level is between
+  /* Increase the indentation level. The indentation level is between
    * 0 and 40. */
   void incIndent();
 
-  /** Decrease the indentation level. */
+  /* Decrease the indentation level. */
   void decIndent();
 
-  /** This string defines what will be printed at the start of each XML
+  /* This string defines what will be printed at the start of each XML
    * document. The default value is:
    *   \<?xml version="1.0" encoding="UTF-8"?\>
    */
   string headerStart = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
 
-  /** This string defines what will be attributes are printed for the root
+  /* This string defines what will be attributes are printed for the root
    * element of each XML document.
    * The default value is:
    *    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
    */
   string headerAtts = "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"";
 
-  /** This string is a null terminated string containing as many spaces as
+  /* This string is a null terminated string containing as many spaces as
    * indicated by the m_indent.
    * @see incIndent, decIndent
    */
   char indentstring[41];
 
-  /** This variable keeps track of the indentation level.
+  /* This variable keeps track of the indentation level.
    * @see incIndent, decIndent
    */
   short int m_nIndent = 0;
 };
 
-/** @brief This class writes XML data to a flat file.
+/* This class writes XML data to a flat file.
  *
  * Note that an object of this class can write only to a single file. If
  * multiple files are required multiple XMLOutputFile objects will be
@@ -673,7 +670,7 @@ class XMLSerializer : public Serializer {
  */
 class XMLSerializerFile : public XMLSerializer {
  public:
-  /** Constructor with a filename as argument. An exception will be
+  /* Constructor with a filename as argument. An exception will be
    * thrown if the output file can't be properly initialized. */
   XMLSerializerFile(const string& chFilename) {
     of.open(chFilename.c_str(), ios::out);
@@ -681,14 +678,14 @@ class XMLSerializerFile : public XMLSerializer {
     setOutput(of);
   }
 
-  /** Destructor. */
+  /* Destructor. */
   ~XMLSerializerFile() { of.close(); }
 
  private:
   ofstream of;
 };
 
-/** @brief This class writes XML data to a string.
+/* This class writes XML data to a string.
  *
  * The generated output is stored internally in the class, and can be
  * accessed by converting the XMLOutputString object to a string object.
@@ -698,13 +695,13 @@ class XMLSerializerFile : public XMLSerializer {
  */
 class XMLSerializerString : public XMLSerializer {
  public:
-  /** Constructor with a starting string as argument. */
+  /* Constructor with a starting string as argument. */
   XMLSerializerString(const string& str) : os(str) { setOutput(os); }
 
-  /** Default constructor. */
+  /* Default constructor. */
   XMLSerializerString() { setOutput(os); }
 
-  /** Return the output string. */
+  /* Return the output string. */
   const string getData() const { return os.str(); }
 
  private:

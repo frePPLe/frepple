@@ -92,7 +92,7 @@ PeggingIterator::PeggingIterator(const Demand* d)
   // Only in this way can we avoid that the same operationplan is returned
   // multiple times
   while (operator bool()) {
-    /** Check if already found in the vector. */
+    /* Check if already found in the vector. */
     bool found = false;
     state& curtop = states.back();
     for (deque<state>::iterator it = states_sorted.begin();

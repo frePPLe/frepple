@@ -19,9 +19,11 @@
  ***************************************************************************/
 
 #define FREPPLE_CORE
+
+#include "frepple/utils.h"
+
 #include <clocale>
 #include <ctime>
-#include "frepple/utils.h"
 
 namespace frepple {
 namespace utils {

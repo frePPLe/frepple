@@ -19,8 +19,10 @@
  ***************************************************************************/
 
 #define FREPPLE_CORE
-#include <sys/stat.h>
+
 #include "frepple/utils.h"
+
+#include <sys/stat.h>
 #include "frepple/xml.h"
 #ifdef HAVE_SYS_PRCTL_H
 #include <sys/prctl.h>

@@ -23,7 +23,7 @@
 
 namespace frepple {
 
-/** @todo The flow quantity is handled at the wrong place. It needs to be
+/* @todo The flow quantity is handled at the wrong place. It needs to be
  * handled by the operation, since flows can exist on multiple suboperations
  * with different quantities. The buffer solve can't handle this, because
  * it only calls the solve() for the producing operation...

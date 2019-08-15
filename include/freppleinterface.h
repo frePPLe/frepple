@@ -18,16 +18,13 @@
  *                                                                         *
  ***************************************************************************/
 
-/** @file freppleinterface.h
- * @brief Public header file for C and C++.
- *
- * This is the public header file for high-level access to the library
- * functionality.<br>
+/* This is the public header file for high-level access to the library
+ * functionality.
  * The methods listed provide also a safe interface API for accessing the
  * library functionality from C, C++, Visual Basic and other programming
  * languages.
  *
- * When extending the library, use the header file frepple.h instead.<br>
+ * When extending the library, use the header file frepple.h instead.
  * It provides a more detailed API to interface with frePPLe.
  */
 
@@ -61,10 +58,10 @@
 #define DECLARE_EXPORT(type) type
 #endif
 
-/** This method returns a version string. */
+/* This method returns a version string. */
 DECLARE_EXPORT(const char*) FreppleVersion();
 
-/** This function should be called once when the client application starts,
+/* This function should be called once when the client application starts,
  * and before calling any other function in the API.
  *
  * This method is synchronous, i.e. it returns only when the complete
@@ -73,10 +70,10 @@ DECLARE_EXPORT(const char*) FreppleVersion();
  */
 DECLARE_EXPORT(void) FreppleInitialize(bool = true);
 
-/** The character buffer pointed to by the first parameter contains data in
- * XML format that is passed on to frePPLe for processing.<br>
+/* The character buffer pointed to by the first parameter contains data in
+ * XML format that is passed on to frePPLe for processing.
  * The second argument specifies whether frePPLe should validate the data
- * against the XSD schema.<br>
+ * against the XSD schema.
  * The last argument specifies whether frePPLe needs to perform only the
  * validation and skip the actual processing.
  *
@@ -88,11 +85,11 @@ DECLARE_EXPORT(void) FreppleInitialize(bool = true);
  */
 DECLARE_EXPORT(void) FreppleReadXMLData(const char*, bool, bool);
 
-/** The first parameter is the name of a file that contains data in XML
+/* The first parameter is the name of a file that contains data in XML
  * format for frePPLe processing. If a nullptr pointer is passed, frepple
- * will read from the standard input.<br>
+ * will read from the standard input.
  * The second argument specifies whether frePPLe should validate the data
- * against the XSD schema.<br>
+ * against the XSD schema.
  * The last argument specifies whether frePPLe needs to perform only the
  * validation and skip the actual processing.
  *
@@ -102,7 +99,7 @@ DECLARE_EXPORT(void) FreppleReadXMLData(const char*, bool, bool);
  */
 DECLARE_EXPORT(void) FreppleReadXMLFile(const char*, bool, bool);
 
-/** Execute the Python code in a file.
+/* Execute the Python code in a file.
  *
  * This method is synchroneous, i.e. it returns only when the complete
  * processing is finished. The method can throw exceptions, and the client
@@ -110,7 +107,7 @@ DECLARE_EXPORT(void) FreppleReadXMLFile(const char*, bool, bool);
  */
 DECLARE_EXPORT(void) FreppleReadPythonFile(const char*);
 
-/** Calling this function will save the frePPLe data in the file that
+/* Calling this function will save the frePPLe data in the file that
  * is passed as the argument.
  *
  * This method is synchroneous, i.e. it returns only when the complete
@@ -119,7 +116,7 @@ DECLARE_EXPORT(void) FreppleReadPythonFile(const char*);
  */
 DECLARE_EXPORT(void) FreppleSaveFile(const char*);
 
-/** This function causes the frepple executable to shut down in an orderly
+/* This function causes the frepple executable to shut down in an orderly
  * way.
  *
  * This method is synchroneous, i.e. it returns only when the complete
@@ -129,7 +126,7 @@ DECLARE_EXPORT(void) FreppleSaveFile(const char*);
 DECLARE_EXPORT(void) FreppleExit();
 
 #ifdef __cplusplus
-/** Echo a message in the frePPLe log stream (which is either a file or
+/* Echo a message in the frePPLe log stream (which is either a file or
  * the standard output stream).
  *
  * This function is only available when using C++. The same functionality
@@ -141,12 +138,12 @@ DECLARE_EXPORT(void) FreppleLog(const std::string&);
 extern "C" {
 
 #endif
-/** Echo a message in the frePPLe log stream (which is either a file or
+/* Echo a message in the frePPLe log stream (which is either a file or
  * the standard output stream).
  */
 DECLARE_EXPORT(void) FreppleLog(const char*);
 
-/** Same as FreppleInitialize, but catches all exceptions and returns a
+/* Same as FreppleInitialize, but catches all exceptions and returns a
  * status instead.
  *
  * Use this function when calling the library from C or VB applications.
@@ -154,7 +151,7 @@ DECLARE_EXPORT(void) FreppleLog(const char*);
  */
 DECLARE_EXPORT(int) FreppleWrapperInitialize();
 
-/** Same as FreppleReadXMLData, but catches all exceptions and returns a
+/* Same as FreppleReadXMLData, but catches all exceptions and returns a
  * status instead.
  *
  * Use this function when calling the library from C or VB applications.
@@ -162,7 +159,7 @@ DECLARE_EXPORT(int) FreppleWrapperInitialize();
  */
 DECLARE_EXPORT(int) FreppleWrapperReadXMLData(char*, bool, bool);
 
-/** Same as FreppleReadXMLFile, but catches all exceptions and returns a
+/* Same as FreppleReadXMLFile, but catches all exceptions and returns a
  * status instead.
  *
  * Use this function when calling the library from C or VB applications.
@@ -170,7 +167,7 @@ DECLARE_EXPORT(int) FreppleWrapperReadXMLData(char*, bool, bool);
  */
 DECLARE_EXPORT(int) FreppleWrapperReadXMLFile(const char*, bool, bool);
 
-/** Same as FreppleReadPythonFile, but catches all exceptions and returns a
+/* Same as FreppleReadPythonFile, but catches all exceptions and returns a
  * status instead.
  *
  * Use this function when calling the library from C or VB applications.
@@ -178,7 +175,7 @@ DECLARE_EXPORT(int) FreppleWrapperReadXMLFile(const char*, bool, bool);
  */
 DECLARE_EXPORT(int) FreppleWrapperReadPythonFile(const char*);
 
-/** Same as FreppleSaveFile, but catches all exceptions and returns a
+/* Same as FreppleSaveFile, but catches all exceptions and returns a
  * status instead.
  *
  * Use this function when calling the library from C or VB applications.
@@ -186,7 +183,7 @@ DECLARE_EXPORT(int) FreppleWrapperReadPythonFile(const char*);
  */
 DECLARE_EXPORT(int) FreppleWrapperSaveFile(char*);
 
-/** Same as FreppleExit, but catches all exceptions and returns a
+/* Same as FreppleExit, but catches all exceptions and returns a
  * status instead.
  *
  * Use this function when calling the library from C or VB applications.

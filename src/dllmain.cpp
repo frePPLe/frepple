@@ -101,7 +101,7 @@ DECLARE_EXPORT(void) FreppleSaveFile(const char* x) {
   o.writeElementWithHeader(Tags::plan, &Plan::instance());
 }
 
-/** Closing any resources still used by frePPle.<br>
+/* Closing any resources still used by frePPle.
  * Allocated memory is not freed up with this call - for performance
  * reasons it is easier to "leak" the memory. The memory is freed when
  * the process exits.

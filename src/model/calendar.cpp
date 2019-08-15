@@ -77,7 +77,7 @@ int CalendarDefault::initialize() {
   return FreppleClass<CalendarDefault, Calendar>::initialize();
 }
 
-/** Updates the value in a certain date range.<br>
+/* Updates the value in a certain date range.
  * This will create a new bucket if required. */
 void Calendar::setValue(Date start, Date end, const double v) {
   CalendarBucket* x = static_cast<CalendarBucket*>(findBucket(start));

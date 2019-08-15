@@ -71,7 +71,7 @@ ResourceSkill::~ResourceSkill() {
   if (getSkill()) getSkill()->resources.erase(this);
 }
 
-/** @todo this method implementation is not generic enough and not extendible by
+/* @todo this method implementation is not generic enough and not extendible by
  * subclasses. */
 PyObject* ResourceSkill::create(PyTypeObject* pytype, PyObject* args,
                                 PyObject* kwds) {

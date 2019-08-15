@@ -18,11 +18,9 @@
  *                                                                         *
  ***************************************************************************/
 
-/** @file pythonutils.cpp
- * @brief Reusable functions for python functionality.
- *
+/* Reusable functions for python functionality.
  * The structure of the C++ wrappers around the C Python API is heavily
- * inspired on the design of PyCXX.<br>
+ * inspired on the design of PyCXX.
  * More information can be found on http://cxx.sourceforge.net
  */
 

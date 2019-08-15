@@ -131,23 +131,19 @@ AM_CONDITIONAL(DOC, test x$generatedoc = xtrue)
 AC_ARG_VAR([PYFLAGS],
 [Argument passed to setup.py when installing frePPLe's Python application.])
 
-# Check the availability of the external programs
-AC_CHECK_PROG(HAVE_DOT, dot, [YES], [NO])
-
 # Checks for header files.
 AC_HEADER_DIRENT
 AC_HEADER_STDC
-AC_CHECK_HEADERS([fcntl.h stdlib.h unistd.h python.h pthread.h sys/prctl.h])
+AC_CHECK_HEADERS([fcntl.h stdlib.h unistd.h python.h sys/prctl.h])
 
 # Checks for library functions.
 AC_FUNC_MALLOC
 AC_FUNC_MKTIME
 AC_FUNC_STAT
-AC_FUNC_STRFTIME
 AC_CHECK_FUNCS([dup2 memset strncasecmp strnicmp strptime putenv _putenv localtime_r prctl])
 
 # Checks for typedefs, structures, and compiler characteristics.
-AC_CHECK_HEADERS([ext/slist slist vector map set stack tuple])
+AC_CHECK_HEADERS([algorithm forward_list vector map set stack tuple])
 AC_HEADER_STDBOOL
 AC_C_CONST
 AC_C_INLINE
@@ -220,8 +216,7 @@ if test $? -ne 0 ; then
 AC_MSG_RESULT([no])
 AC_MSG_ERROR([
   This package requires the django web application framework.
-  Please install this package from https://www.djangoproject.com/
-  and also make sure to apply frePPLe's patches for it.
+  Please install this package from https://github.com/frePPLe/django/
 ])
 fi
 AC_MSG_RESULT([yes])
@@ -258,13 +253,11 @@ else
 fi ; fi ; fi
 case $host_os in
   cygwin*)
-    LIBS="-lpthread $LIBS"
     # Linker option to avoid some ugly warnings...
     LDFLAGS="$LDFLAGS -Wl,--enable-auto-import"
     ;;
   *)
     LIBS="-ldl $LIBS"
-    CXXFLAGS="-pthread $CXXFLAGS"
     ;;
 esac
 AM_CONDITIONAL(CYGWIN, test x$host_os = xcygwin)

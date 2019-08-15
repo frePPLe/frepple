@@ -22,7 +22,7 @@
 #include "freppleinterface.h"
 using namespace frepple;
 
-/** Used to initialize frePPLe as a Python extension module. */
+/* Used to initialize frePPLe as a Python extension module. */
 PyMODINIT_FUNC PyInit_frepple(void) {
   try {
     // Initialize frePPLe, without reading the configuration

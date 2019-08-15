@@ -1023,7 +1023,7 @@ void SolverCreate::solve(const OperationRouting* oper, void* v) {
   // because only now we know how long the operation lasts in total.
   // Solving for the top operationplan can resize and move the steps that are
   // in the routing!
-  /** @todo moving routing opplan doesn't recheck for feasibility of steps... */
+  /* @todo moving routing opplan doesn't recheck for feasibility of steps... */
   data->state->curOwnerOpplan->createFlowLoads();
   if (data->state->curOwnerOpplan->getQuantity() > 0.0) {
     data->state->q_qty = a_qty;

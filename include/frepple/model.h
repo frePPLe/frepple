@@ -22,15 +22,6 @@
 #ifndef MODEL_H
 #define MODEL_H
 
-/** @mainpage
- * FrePPLe provides a framework for modeling a manufacturing environment
- * and generating production plans.<br>
- * This document describes its C++ API.<P>
- *
- * @namespace frepple
- * @brief Core namespace
- */
-
 #include <regex>
 
 #include "frepple/utils.h"
@@ -89,13 +80,13 @@ class Supplier;
 class SetupMatrix;
 class SetupMatrixRule;
 
-/** @brief This class is used for initialization. */
+/* This class is used for initialization. */
 class LibraryModel {
  public:
   static void initialize();
 };
 
-/** @brief This class represents a time bucket as a part of a calendar.
+/* This class represents a time bucket as a part of a calendar.
  *
  * Manipulation of instances of this class need to be handled with the
  * methods on the friend class Calendar.
@@ -105,36 +96,36 @@ class CalendarBucket : public Object, public NonCopyable, public HasSource {
   friend class Calendar;
 
  private:
-  /** Start date of the bucket. */
+  /* Start date of the bucket. */
   Date startdate;
 
-  /** End Date of the bucket. */
+  /* End Date of the bucket. */
   Date enddate = Date::infiniteFuture;
 
-  /** A pointer to the next bucket. */
+  /* A pointer to the next bucket. */
   CalendarBucket* nextBucket = nullptr;
 
-  /** A pointer to the previous bucket. */
+  /* A pointer to the previous bucket. */
   CalendarBucket* prevBucket = nullptr;
 
-  /** A pointer to the owning calendar. */
+  /* A pointer to the owning calendar. */
   Calendar* cal = nullptr;
 
-  /** Value of this bucket.*/
+  /* Value of this bucket.*/
   double val = 0.0;
 
-  /** Starting time on the effective days. */
+  /* Starting time on the effective days. */
   Duration starttime;
 
-  /** Ending time on the effective days. */
+  /* Ending time on the effective days. */
   Duration endtime = 86400L;
 
-  /** Priority of this bucket, compared to other buckets effective
+  /* Priority of this bucket, compared to other buckets effective
    * at a certain time.
    */
   int priority = 0;
 
-  /** Weekdays on which the entry is effective.
+  /* Weekdays on which the entry is effective.
    * - Bit 0: Sunday
    * - Bit 1: Monday
    * - Bit 2: Tueday
@@ -145,58 +136,58 @@ class CalendarBucket : public Object, public NonCopyable, public HasSource {
    */
   short days = 127;
 
-  /** Keep all calendar buckets sorted in ascending order of start date
+  /* Keep all calendar buckets sorted in ascending order of start date
    * and use the priority as a tie breaker.
    */
   void updateSort();
 
  public:
-  /** Default constructor. */
+  /* Default constructor. */
   CalendarBucket() { initType(metadata); }
 
-  /** Destructor. */
+  /* Destructor. */
   ~CalendarBucket();
 
-  /** This is a factory method that creates a new bucket in a calendar.<br>
+  /* This is a factory method that creates a new bucket in a calendar.
    * It uses the calendar and id fields to identify existing buckets.
    */
   static Object* reader(const MetaClass*, const DataValueDict&,
                         CommandManager* = nullptr);
 
-  /** Update the calendar owning the bucket. */
+  /* Update the calendar owning the bucket. */
   void setCalendar(Calendar*);
 
-  /** Return the calendar to whom the bucket belongs. */
+  /* Return the calendar to whom the bucket belongs. */
   Calendar* getCalendar() const { return cal; }
 
-  /** Returns the value of this bucket. */
+  /* Returns the value of this bucket. */
   double getValue() const { return val; }
 
-  /** Updates the value of this bucket. */
+  /* Updates the value of this bucket. */
   void setValue(double v) { val = v; }
 
-  /** Returns the end date of the bucket. */
+  /* Returns the end date of the bucket. */
   Date getEnd() const { return enddate; }
 
-  /** Updates the end date of the bucket. */
+  /* Updates the end date of the bucket. */
   void setEnd(const Date d);
 
-  /** Returns the start date of the bucket. */
+  /* Returns the start date of the bucket. */
   Date getStart() const { return startdate; }
 
-  /** Updates the start date of the bucket. */
+  /* Updates the start date of the bucket. */
   void setStart(const Date d);
 
-  /** Returns the priority of this bucket, compared to other buckets
-   * effective at a certain time.<br>
-   * Lower numbers indicate a higher priority level.<br>
+  /* Returns the priority of this bucket, compared to other buckets
+   * effective at a certain time.
+   * Lower numbers indicate a higher priority level.
    * The default value is 0.
    */
   int getPriority() const { return priority; }
 
-  /** Updates the priority of this bucket, compared to other buckets
-   * effective at a certain time.<br>
-   * Lower numbers indicate a higher priority level.<br>
+  /* Updates the priority of this bucket, compared to other buckets
+   * effective at a certain time.
+   * Lower numbers indicate a higher priority level.
    * The default value is 0.
    */
   void setPriority(int f) {
@@ -204,26 +195,26 @@ class CalendarBucket : public Object, public NonCopyable, public HasSource {
     updateSort();
   }
 
-  /** Get the days on which the entry is valid.<br>
+  /* Get the days on which the entry is valid.
    * The value is a bit pattern with bit 0 representing sunday, bit 1
-   * monday, ... and bit 6 representing saturday.<br>
+   * monday, ... and bit 6 representing saturday.
    * The default value is 127.
    */
   short getDays() const { return days; }
 
-  /** Update the days on which the entry is valid. */
+  /* Update the days on which the entry is valid. */
   void setDays(short p) {
     if (p < 0 || p > 127)
       throw DataException("Calendar bucket days must be between 0 and 127");
     days = p;
   }
 
-  /** Return the time of the day when the entry becomes valid.<br>
+  /* Return the time of the day when the entry becomes valid.
    * The default value is 0 or midnight.
    */
   Duration getStartTime() const { return starttime; }
 
-  /** Update the time of the day when the entry becomes valid. */
+  /* Update the time of the day when the entry becomes valid. */
   void setStartTime(Duration t) {
     if (t > 86400L || t < 0L)
       throw DataException(
@@ -237,12 +228,12 @@ class CalendarBucket : public Object, public NonCopyable, public HasSource {
     }
   }
 
-  /** Return the time of the day when the entry becomes invalid.<br>
+  /* Return the time of the day when the entry becomes invalid.
    * The default value is 23h59m59s.
    */
   Duration getEndTime() const { return endtime; }
 
-  /** Update the time of the day when the entry becomes invalid. */
+  /* Update the time of the day when the entry becomes invalid. */
   void setEndTime(Duration t) {
     if (t > 86400L || t < 0L)
       throw DataException(
@@ -256,10 +247,10 @@ class CalendarBucket : public Object, public NonCopyable, public HasSource {
     }
   }
 
-  /** Convert the value of the bucket to a boolean value. */
+  /* Convert the value of the bucket to a boolean value. */
   virtual bool getBool() const { return val != 0; }
 
-  /** Returns true if the bucket is continuously effective between
+  /* Returns true if the bucket is continuously effective between
    * its start and end date, in other words it is effective 24 hours
    * a day and 7 days per week.
    */
@@ -291,7 +282,7 @@ class CalendarBucket : public Object, public NonCopyable, public HasSource {
   }
 
  public:
-  /** @brief An iterator class to go through all buckets of the calendar. */
+  /* An iterator class to go through all buckets of the calendar. */
   class iterator {
    private:
     CalendarBucket* curBucket;
@@ -343,7 +334,7 @@ class CalendarBucket : public Object, public NonCopyable, public HasSource {
   };
 };
 
-/** @brief This is the class used to represent variables that are
+/* This is the class used to represent variables that are
  * varying over time.
  *
  * Some example usages for calendars:
@@ -358,18 +349,18 @@ class Calendar : public HasName<Calendar>, public HasSource {
   friend class EventIterator;
   friend class CalendarBucket;
 
-  /** Default constructor. */
+  /* Default constructor. */
   explicit Calendar() {}
 
-  /** Destructor, which cleans up the buckets too and all references to the
+  /* Destructor, which cleans up the buckets too and all references to the
    * calendar from the core model.
    */
   ~Calendar();
 
-  /** Returns the value on the specified date. */
+  /* Returns the value on the specified date. */
   double getValue(const Date, bool forward = true) const;
 
-  /** Updates the value in a certain date range.<br>
+  /* Updates the value in a certain date range.
    * This will create a new bucket if required.
    */
   void setValue(Date start, Date end, const double);
@@ -378,37 +369,37 @@ class Calendar : public HasName<Calendar>, public HasSource {
     return reinterpret_cast<CalendarBucket&>(*i).getValue();
   }
 
-  /** Returns the default calendar value when no entry is matching. */
+  /* Returns the default calendar value when no entry is matching. */
   double getDefault() const { return defaultValue; }
 
-  /** Convert the value of the calendar to a boolean value. */
+  /* Convert the value of the calendar to a boolean value. */
   virtual bool getBool() const { return defaultValue != 0; }
 
-  /** Update the default calendar value when no entry is matching. */
+  /* Update the default calendar value when no entry is matching. */
   virtual void setDefault(double v) { defaultValue = v; }
 
-  /** Removes a bucket from the list.
+  /* Removes a bucket from the list.
    * The first argument is the bucket to remove, and the second argument
    * is a flag indicating whether to delete the bucket or not.
    */
   void removeBucket(CalendarBucket* bckt, bool del = true);
 
-  /** Returns the bucket where a certain date belongs to.
+  /* Returns the bucket where a certain date belongs to.
    * A nullptr pointer is returned when no bucket is effective.
    */
   CalendarBucket* findBucket(Date d, bool fwd = true) const;
 
-  /** Add a new bucket to the calendar. */
+  /* Add a new bucket to the calendar. */
   CalendarBucket* addBucket(Date, Date, double);
 
-  /** Return the memory size, including the event list. */
+  /* Return the memory size, including the event list. */
   virtual size_t getSize() const {
     auto tmp = Object::getSize();
     tmp += (sizeof(pair<Date, double>) + sizeof(void*) * 3) * eventlist.size();
     return tmp;
   }
 
-  /** @brief An iterator class to go through all dates where the calendar
+  /* An iterator class to go through all dates where the calendar
    * value changes.*/
   class EventIterator {
    protected:
@@ -449,7 +440,7 @@ class Calendar : public HasName<Calendar>, public HasSource {
     }
   };
 
-  /** Returns an iterator to go through the list of buckets. */
+  /* Returns an iterator to go through the list of buckets. */
   CalendarBucket::iterator getBuckets() const {
     return CalendarBucket::iterator(firstBucket);
   }
@@ -475,7 +466,7 @@ class Calendar : public HasName<Calendar>, public HasSource {
         Tags::buckets, Tags::bucket, &Cls::getBuckets, BASE + WRITE_OBJECT);
   }
 
-  /** Build a list of dates where the calendar value changes.
+  /* Build a list of dates where the calendar value changes.
    * By default we build the list for 1 year before and after the
    * current date.
    * If a date is passed as argument, we build/update a list to include
@@ -483,13 +474,13 @@ class Calendar : public HasName<Calendar>, public HasSource {
    */
   void buildEventList(Date include = Date::infinitePast);
 
-  /** Erase the event list (to save memory).
+  /* Erase the event list (to save memory).
    * The list will be rebuild the next time an iterator is created.
    */
   void clearEventList() { eventlist.clear(); }
 
  protected:
-  /** Find the lowest priority of any bucket. */
+  /* Find the lowest priority of any bucket. */
   int lowestPriority() const {
     int min = 0;
     for (CalendarBucket::iterator i = getBuckets();
@@ -499,21 +490,21 @@ class Calendar : public HasName<Calendar>, public HasSource {
   }
 
  private:
-  /** A pointer to the first bucket. The buckets are stored in a doubly
+  /* A pointer to the first bucket. The buckets are stored in a doubly
    * linked list. */
   CalendarBucket* firstBucket = nullptr;
 
-  /** Value used when no bucket is effective at all. */
+  /* Value used when no bucket is effective at all. */
   double defaultValue = 0.0;
 
-  /** A cached list of all events. */
+  /* A cached list of all events. */
   map<Date, double> eventlist;
 };
 
-/** @brief A calendar storing double values in its buckets. */
+/* A calendar storing double values in its buckets. */
 class CalendarDefault : public Calendar {
  public:
-  /** Default constructor. */
+  /* Default constructor. */
   explicit CalendarDefault() { initType(metadata); }
 
   virtual const MetaClass& getType() const { return *metadata; }
@@ -521,19 +512,19 @@ class CalendarDefault : public Calendar {
   static int initialize();
 };
 
-/** @brief A problem represents infeasibilities, alerts and warnings in
+/* A problem represents infeasibilities, alerts and warnings in
  * the plan.
  *
  * Problems are maintained internally by the system. They are thus only
- * exported, meaning that you can't directly import or create problems.<br>
- * This class is the pure virtual base class for all problem types.<br>
+ * exported, meaning that you can't directly import or create problems.
+ * This class is the pure virtual base class for all problem types.
  * The usage of the problem objects is based on the following principles:
  *  - Problems objects are passive. They don't actively change the model
  *    state.
  *  - Objects of the HasProblems class actively create and destroy Problem
  *    objects.
  *  - Problem objects are managed in a 'lazy' way, meaning they only are
- *    getting created when the list of problems is requested by the user.<br>
+ *    getting created when the list of problems is requested by the user.
  *    During normal planning activities we merely mark the planning entities
  *    that have changed, so we can easily pick up which entities to recompute
  *    the problems for. In this way we can avoid the cpu and memory overhead
@@ -549,47 +540,47 @@ class Problem : public NonCopyable, public Object {
   class List;
   friend class List;
 
-  /** Constructor.<br>
+  /* Constructor.
    * Note that this method can't manipulate the problem container, since
    * the problem objects aren't fully constructed yet.
    * @see addProblem
    */
   explicit Problem(HasProblems* p = nullptr) : owner(p) { initType(metadata); }
 
-  /** Initialize the class. */
+  /* Initialize the class. */
   static int initialize();
 
-  /** Destructor.
+  /* Destructor.
    * @see removeProblem
    */
   virtual ~Problem() {}
 
-  /** Return the category of the problem. */
+  /* Return the category of the problem. */
   string getName() const { return getType().type; }
 
-  /** Returns the duration of this problem. */
+  /* Returns the duration of this problem. */
   virtual const DateRange getDates() const = 0;
 
-  /** Get the start date of the problem. */
+  /* Get the start date of the problem. */
   Date getStart() const { return getDates().getStart(); }
 
-  /** Get the start date of the problem. */
+  /* Get the start date of the problem. */
   Date getEnd() const { return getDates().getEnd(); }
 
-  /** Returns a text description of this problem. */
+  /* Returns a text description of this problem. */
   virtual string getDescription() const = 0;
 
-  /** Returns the object type having this problem. */
+  /* Returns the object type having this problem. */
   virtual string getEntity() const = 0;
 
-  /** Returns true if the plan remains feasible even if it contains this
+  /* Returns true if the plan remains feasible even if it contains this
    * problem, i.e. if the problems flags only a warning.
    * Returns false if a certain problem points at an infeasibility of the
    * plan.
    */
   virtual bool isFeasible() const = 0;
 
-  /** Returns a double number reflecting the magnitude of the problem. This
+  /* Returns a double number reflecting the magnitude of the problem. This
    * allows us to focus on the significant problems and filter out the
    * small ones.
    */
@@ -597,44 +588,44 @@ class Problem : public NonCopyable, public Object {
 
   PyObject* str() const { return PythonData(getDescription()); }
 
-  /** Returns an iterator to the very first problem. The iterator can be
+  /* Returns an iterator to the very first problem. The iterator can be
    * incremented till it points past the very last problem. */
   static iterator begin();
 
-  /** Return an iterator to the first problem of this entity. The iterator
+  /* Return an iterator to the first problem of this entity. The iterator
    * can be incremented till it points past the last problem of this
-   * plannable entity.<br>
+   * plannable entity.
    * The boolean argument specifies whether the problems need to be
    * recomputed as part of this method.
    */
   static iterator begin(HasProblems*, bool = true);
 
-  /** Return an iterator pointing beyond the last problem. */
+  /* Return an iterator pointing beyond the last problem. */
   static const iterator end();
 
-  /** Erases the list of all problems. This methods can be used reduce the
+  /* Erases the list of all problems. This methods can be used reduce the
    * memory consumption at critical points. The list of problems will be
    * recreated when the problem detection is triggered again.
    */
   static void clearProblems();
 
-  /** Erases the list of problems linked with a certain plannable object.<br>
+  /* Erases the list of problems linked with a certain plannable object.
    * If the second parameter is set to true, the problems will be
    * recreated when the next problem detection round is triggered.
    */
   static void clearProblems(HasProblems& p, bool setchanged = true,
                             bool includeInvalidData = true);
 
-  /** Returns a pointer to the object that owns this problem. */
+  /* Returns a pointer to the object that owns this problem. */
   virtual Object* getOwner() const = 0;
 
-  /** Return a reference to the metadata structure. */
+  /* Return a reference to the metadata structure. */
   virtual const MetaClass& getType() const { return *metadata; }
 
-  /** Storing metadata on this class. */
+  /* Storing metadata on this class. */
   static const MetaCategory* metadata;
 
-  /** An internal convenience method to return the next linked problem. */
+  /* An internal convenience method to return the next linked problem. */
   Problem* getNextProblem() const { return nextProblem; }
 
   template <class Cls>
@@ -658,15 +649,15 @@ class Problem : public NonCopyable, public Object {
   }
 
  protected:
-  /** Each Problem object references a HasProblem object as its owner. */
+  /* Each Problem object references a HasProblem object as its owner. */
   HasProblems* owner = nullptr;
 
-  /** Each Problem contains a pointer to the next pointer for the same
+  /* Each Problem contains a pointer to the next pointer for the same
    * owner. This class implements thus an intrusive single linked list
    * of Problem objects. */
   Problem* nextProblem = nullptr;
 
-  /** Adds a newly created problem to the problem container.
+  /* Adds a newly created problem to the problem container.
    * This method needs to be called in the constructor of a problem
    * subclass. It can't be called from the constructor of the base
    * Problem class, since the object isn't fully created yet and thus
@@ -675,9 +666,9 @@ class Problem : public NonCopyable, public Object {
    */
   void addProblem();
 
-  /** Removes a problem from the problem container.
+  /* Removes a problem from the problem container.
    * This method needs to be called from the destructor of a problem
-   * subclass.<br>
+   * subclass.
    * Due to the single linked list data structure, this methods'
    * performance is linear with the number of problems of an entity.
    * This is acceptable since we don't expect entities with a huge amount
@@ -686,22 +677,22 @@ class Problem : public NonCopyable, public Object {
    */
   void removeProblem();
 
-  /** Comparison of 2 problems.<br>
+  /* Comparison of 2 problems.
    * To garantuee that the problems are sorted in a consistent and stable
    * way, the following sorting criteria are used (in order of priority):
-   * <ol><li>Entity<br>
-   *    This sort is to be ensured by the client. This method can't
-   *    compare problems of different entities!</li>
-   * <li>Type<br>
-   *    Each problem type has a hashcode used for sorting.</li>
-   * <li>Start date</li></ol>
+   * - Entity
+   *   This sort is to be ensured by the client. This method can't
+   *   compare problems of different entities!
+   * - Type
+   *   Each problem type has a hashcode used for sorting.
+   * - Start date
    * The sorting is expected such that it can be used as a key, i.e. no
    * two problems of will ever evaluate to be identical.
    */
   bool operator<(const Problem& a) const;
 };
 
-/** @brief Classes that keep track of problem conditions need to implement
+/* Classes that keep track of problem conditions need to implement
  * this class.
  *
  * This class is closely related to the Problem class.
@@ -716,23 +707,23 @@ class HasProblems {
  public:
   class EntityIterator;
 
-  /** Returns an iterator pointing to the first HasProblem object. */
+  /* Returns an iterator pointing to the first HasProblem object. */
   static EntityIterator beginEntity();
 
-  /** Returns an iterator pointing beyond the last HasProblem object. */
+  /* Returns an iterator pointing beyond the last HasProblem object. */
   static EntityIterator endEntity();
 
-  /** Constructor. */
+  /* Constructor. */
   HasProblems() {}
 
-  /** Destructor. It needs to take care of making sure all problems objects
+  /* Destructor. It needs to take care of making sure all problems objects
    * are being deleted as well. */
   virtual ~HasProblems() { Problem::clearProblems(*this, false); }
 
-  /** Returns the plannable entity relating to this problem container. */
+  /* Returns the plannable entity relating to this problem container. */
   virtual Plannable* getEntity() const = 0;
 
-  /** Called to update the list of problems. The function will only be
+  /* Called to update the list of problems. The function will only be
    * called when:
    *  - the list of problems is being recomputed
    *  - AND, problem detection is enabled for this object
@@ -747,64 +738,64 @@ class HasProblems {
   }
 
  private:
-  /** A pointer to the first problem of this object. Problems are maintained
+  /* A pointer to the first problem of this object. Problems are maintained
    * in a single linked list. */
   Problem* firstProblem = nullptr;
 };
 
-/** @brief This auxilary class is used to maintain a list of problem models. */
+/* This auxilary class is used to maintain a list of problem models. */
 class Problem::List {
  public:
-  /** Constructor. */
+  /* Constructor. */
   List(){};
 
-  /** Destructor. */
+  /* Destructor. */
   ~List() { clear(); }
 
-  /** Empty the list.<br>
+  /* Empty the list.
    * If a problem is passed as argument, that problem and all problems
-   * following it in the list are deleted.<br>
+   * following it in the list are deleted.
    * If no argument is passed, the complete list is erased.
    */
   void clear(Problem* = nullptr);
 
-  /** Add a problem to the list. */
+  /* Add a problem to the list. */
   Problem* push(const MetaClass*, const Object*, Date, Date, double);
 
   /* Add a problem to the list. */
   void push(Problem* p);
 
-  /** Remove all problems from the list that appear AFTER the one
+  /* Remove all problems from the list that appear AFTER the one
    * passed as argument. */
   void pop(Problem*);
 
-  /** Get the last problem on the list. */
+  /* Get the last problem on the list. */
   Problem* top() const;
 
-  /** Cur the list in two parts . */
+  /* Cur the list in two parts . */
   Problem* unlink(Problem* p) {
     Problem* tmp = p->nextProblem;
     p->nextProblem = nullptr;
     return tmp;
   }
 
-  /** Returns true if the list is empty. */
+  /* Returns true if the list is empty. */
   bool empty() const { return first == nullptr; }
 
   typedef Problem::iterator iterator;
 
-  /** Return an iterator to the start of the list. */
+  /* Return an iterator to the start of the list. */
   Problem::iterator begin() const;
 
-  /** End iterator. */
+  /* End iterator. */
   Problem::iterator end() const;
 
  private:
-  /** Pointer to the head of the list. */
+  /* Pointer to the head of the list. */
   Problem* first = nullptr;
 };
 
-/** @brief This class is an implementation of the "visitor" design pattern.
+/* This class is an implementation of the "visitor" design pattern.
  * It is intended as a basis for different algorithms processing the frePPLe
  * data.
  *
@@ -814,10 +805,10 @@ class Problem::List {
  */
 class Solver : public Object {
  public:
-  /** Constructor. */
+  /* Constructor. */
   explicit Solver() {}
 
-  /** Destructor. */
+  /* Destructor. */
   virtual ~Solver() {}
 
   static int initialize();
@@ -926,28 +917,28 @@ class Solver : public Object {
     throw LogicException("Called undefined solve(Solvable*) method");
   }
 
-  /** Returns how elaborate and verbose output is requested.<br>
+  /* Returns how elaborate and verbose output is requested.
    * As a guideline solvers should respect the following guidelines:
-   * - 0:<br>
-   *   Completely silent.<br>
+   * - 0:
+   *   Completely silent.
    *   This is the default value.
-   * - 1:<br>
+   * - 1:
    *   Minimal and high-level messages on the progress that are sufficient
-   *   for logging normal operation.<br>
-   * - 2:<br>
+   *   for logging normal operation.
+   * - 2:
    *   Higher numbers are solver dependent. These levels are typically
    *   used for debugging and tracing, and provide more detail on the
    *   solver's progress.
    */
   short getLogLevel() const { return loglevel; }
 
-  /** Controls whether verbose output will be generated. */
+  /* Controls whether verbose output will be generated. */
   virtual void setLogLevel(short v) { loglevel = v; }
 
-  /** Return whether or not we automatically commit the changes. */
+  /* Return whether or not we automatically commit the changes. */
   bool getAutocommit() const { return autocommit; }
 
-  /** Update whether or not we automatically commit the changes. */
+  /* Update whether or not we automatically commit the changes. */
   void setAutocommit(const bool b) { autocommit = b; }
 
   virtual const MetaClass& getType() const { return *metadata; }
@@ -961,30 +952,30 @@ class Solver : public Object {
   }
 
  private:
-  /** Controls the amount of tracing and debugging messages. */
+  /* Controls the amount of tracing and debugging messages. */
   short loglevel = 0;
 
-  /** Automatically commit any plan changes or not. */
+  /* Automatically commit any plan changes or not. */
   bool autocommit = true;
 };
 
-/** @brief This class needs to be implemented by all classes that implement
+/* This class needs to be implemented by all classes that implement
  * dynamic behavior, and which can be called by a solver.
  */
 class Solvable {
  public:
-  /** This method is called by solver classes. The implementation of this
+  /* This method is called by solver classes. The implementation of this
    * class simply calls the solve method on the solver class. Using the
    * polymorphism the solver can implement seperate methods for different
    * plannable subclasses.
    */
   virtual void solve(Solver& s, void* v = nullptr) const { s.solve(this, v); }
 
-  /** Destructor. */
+  /* Destructor. */
   virtual ~Solvable() {}
 };
 
-/** @brief This class needs to be implemented by all classes that implement
+/* This class needs to be implemented by all classes that implement
  * dynamic behavior in the plan.
  *
  * The problem detection logic is implemented in the detectProblems() method.
@@ -994,31 +985,31 @@ class Solvable {
  */
 class Plannable : public HasProblems, public Solvable {
  public:
-  /** Constructor. */
+  /* Constructor. */
   Plannable() : useProblemDetection(true), changed(true) { anyChange = true; }
 
-  /** Specify whether this entity reports problems. */
+  /* Specify whether this entity reports problems. */
   void setDetectProblems(bool b);
 
-  /** Returns whether or not this object needs to detect problems. */
+  /* Returns whether or not this object needs to detect problems. */
   bool getDetectProblems() const { return useProblemDetection; }
 
-  /** Loops through all plannable objects and updates their problems if
+  /* Loops through all plannable objects and updates their problems if
    * required. */
   static void computeProblems();
 
-  /** See if this entity has changed since the last problem
+  /* See if this entity has changed since the last problem
    * problem detection run. */
   bool getChanged() const { return changed; }
 
-  /** Mark that this entity has been updated and that the problem
+  /* Mark that this entity has been updated and that the problem
    * detection needs to be redone. */
   void setChanged(bool b = true) {
     changed = b;
     if (b) anyChange = true;
   }
 
-  /** Implement the pure virtual function from the HasProblem class. */
+  /* Implement the pure virtual function from the HasProblem class. */
   Plannable* getEntity() const { return const_cast<Plannable*>(this); }
 
   template <class Cls>
@@ -1028,30 +1019,30 @@ class Plannable : public HasProblems, public Solvable {
     HasProblems::registerFields<Cls>(m);
   }
 
-  /** Return an iterator over the list of problems. */
+  /* Return an iterator over the list of problems. */
   Problem::iterator getProblems() const;
 
  private:
-  /** Stores whether this entity should be skip problem detection, or not. */
+  /* Stores whether this entity should be skip problem detection, or not. */
   bool useProblemDetection;
 
-  /** Stores whether this entity has been updated since the last problem
+  /* Stores whether this entity has been updated since the last problem
    * detection run. */
   bool changed;
 
-  /** Marks whether any entity at all has changed its status since the last
+  /* Marks whether any entity at all has changed its status since the last
    * problem detection round.
    */
   static bool anyChange;
 
-  /** This flag is set to true during the problem recomputation. It is
+  /* This flag is set to true during the problem recomputation. It is
    * required to garantuee safe access to the problems in a multi-threaded
    * environment.
    */
   static bool computationBusy;
 };
 
-/** @brief The purpose of this class is to compute the levels of all buffers,
+/* The purpose of this class is to compute the levels of all buffers,
  * operations and resources in the model, and to categorize them in clusters.
  *
  * Resources and buffers linked to the delivery operations of
@@ -1068,31 +1059,31 @@ class Plannable : public HasProblems, public Solvable {
  */
 class HasLevel {
  private:
-  /** Flags whether the current computation is still up to date or not.
+  /* Flags whether the current computation is still up to date or not.
    * The flag is set when new objects of this are created or updated.
    * Running the computeLevels function clears the flag.
    */
   static bool recomputeLevels;
 
-  /** This flag is set to true during the computation of the levels. It is
+  /* This flag is set to true during the computation of the levels. It is
    * required to ensure safe access to the level information in a
    * multi-threaded environment.
    */
   static bool computationBusy;
 
-  /** Stores the total number of clusters in the model. */
+  /* Stores the total number of clusters in the model. */
   static int numberOfClusters;
 
-  /** Stores the maximum level number in the model. */
+  /* Stores the maximum level number in the model. */
   static short numberOfLevels;
 
-  /** Stores the level of this entity. Higher numbers indicate more
+  /* Stores the level of this entity. Higher numbers indicate more
    * upstream entities.
    * A value of -1 indicates an unused entity.
    */
   short lvl;
 
-  /** Stores the cluster number of the current entity. */
+  /* Stores the cluster number of the current entity. */
   int cluster;
 
  protected:
@@ -1104,24 +1095,24 @@ class HasLevel {
                         DONT_SERIALIZE);
   }
 
-  /** Default constructor. The initial level is -1 and basically indicates
+  /* Default constructor. The initial level is -1 and basically indicates
    * that this object (either Operation, Buffer or Resource) is not
    * being used at all...
    */
   HasLevel() : lvl(0), cluster(0) {}
 
-  /** Copy constructor. Since the characterictics of the new object are the
+  /* Copy constructor. Since the characterictics of the new object are the
    * same as the original, the level and cluster are also the same.
    * No recomputation is required.
    */
   HasLevel(const HasLevel& o) : lvl(o.lvl), cluster(o.cluster) {}
 
-  /** Destructor. Deleting a HasLevel object triggers recomputation of the
+  /* Destructor. Deleting a HasLevel object triggers recomputation of the
    * level and cluster computation, since the network now has changed.
    */
   ~HasLevel() { recomputeLevels = true; }
 
-  /** This function recomputes all levels in the model.
+  /* This function recomputes all levels in the model.
    * It is called automatically when the getLevel or getCluster() function
    * on a Buffer, Resource or Operation are called while the
    * "recomputeLevels" flag is set.
@@ -1141,7 +1132,7 @@ class HasLevel {
   static void computeLevels();
 
  public:
-  /** Returns the total number of levels.<br>
+  /* Returns the total number of levels.
    * If not up to date the recomputation will be triggered.
    */
   static short getNumberOfLevels() {
@@ -1149,7 +1140,7 @@ class HasLevel {
     return numberOfLevels;
   }
 
-  /** Returns the total number of clusters.<br>
+  /* Returns the total number of clusters.
    * If not up to date the recomputation will be triggered.
    */
   static int getNumberOfClusters() {
@@ -1157,19 +1148,19 @@ class HasLevel {
     return numberOfClusters;
   }
 
-  /** Return the level (and recompute first if required). */
+  /* Return the level (and recompute first if required). */
   short getLevel() const {
     if (recomputeLevels || computationBusy) computeLevels();
     return lvl;
   }
 
-  /** Return the cluster number (and recompute first if required). */
+  /* Return the cluster number (and recompute first if required). */
   int getCluster() const {
     if (recomputeLevels || computationBusy) computeLevels();
     return cluster;
   }
 
-  /** This function should be called when something is changed in the network
+  /* This function should be called when something is changed in the network
    * structure. The notification sets a flag, but does not immediately
    * trigger the recomputation.
    * @see computeLevels
@@ -1177,7 +1168,7 @@ class HasLevel {
   static void triggerLazyRecomputation() { recomputeLevels = true; }
 };
 
-/** @brief This abstract class is used to associate buffers and resources with
+/* This abstract class is used to associate buffers and resources with
  * a physical or logical location.
  *
  * The 'available' calendar is used to model the working hours and holidays
@@ -1189,26 +1180,26 @@ class Location : public HasHierarchy<Location>, public HasDescription {
  public:
   typedef Association<Location, Item, ItemDistribution>::ListA distributionlist;
 
-  /** Default constructor. */
+  /* Default constructor. */
   explicit Location() { initType(metadata); }
 
-  /** Destructor. */
+  /* Destructor. */
   virtual ~Location();
 
-  /** Returns the availability calendar of the location.<br>
+  /* Returns the availability calendar of the location.
    * The availability calendar models the working hours and holidays. It
    * applies to all operations, resources and buffers using this location.
    */
   Calendar* getAvailable() const { return available; }
 
-  /** Updates the availability calendar of the location. */
+  /* Updates the availability calendar of the location. */
   void setAvailable(Calendar* b) { available = b; }
 
-  /** Returns a constant reference to the item distributions pointing to
+  /* Returns a constant reference to the item distributions pointing to
    * this location as origin. */
   const distributionlist& getDistributions() const { return distributions; }
 
-  /** Returns an iterator over the list of item distributions pointing to
+  /* Returns an iterator over the list of item distributions pointing to
    * this location as origin. */
   distributionlist::const_iterator getDistributionIterator() const {
     return distributions.begin();
@@ -1229,18 +1220,18 @@ class Location : public HasHierarchy<Location>, public HasDescription {
   }
 
  private:
-  /** The availability calendar models the working hours and holidays. It
+  /* The availability calendar models the working hours and holidays. It
    * applies to all operations, resources and buffers using this location.
    */
   Calendar* available = nullptr;
 
-  /** This is a list of item distributions pointing to this location as
+  /* This is a list of item distributions pointing to this location as
    * destination.
    */
   distributionlist distributions;
 };
 
-/** @brief This class implements the abstract Location class. */
+/* This class implements the abstract Location class. */
 class LocationDefault : public Location {
  public:
   explicit LocationDefault() { initType(metadata); }
@@ -1250,17 +1241,17 @@ class LocationDefault : public Location {
   static int initialize();
 };
 
-/** @brief This abstracts class represents customers.
+/* This abstracts class represents customers.
  *
  * Demands can be associated with a customer, but there is no planning
  * behavior directly linked to customers.
  */
 class Customer : public HasHierarchy<Customer>, public HasDescription {
  public:
-  /** Default constructor. */
+  /* Default constructor. */
   explicit Customer() {}
 
-  /** Destructor. */
+  /* Destructor. */
   virtual ~Customer();
 
   virtual const MetaClass& getType() const { return *metadata; }
@@ -1276,10 +1267,10 @@ class Customer : public HasHierarchy<Customer>, public HasDescription {
   }
 };
 
-/** @brief This class implements the abstract Customer class. */
+/* This class implements the abstract Customer class. */
 class CustomerDefault : public Customer {
  public:
-  /** Default constructor. */
+  /* Default constructor. */
   explicit CustomerDefault() { initType(metadata); }
 
   virtual const MetaClass& getType() const { return *metadata; }
@@ -1287,24 +1278,24 @@ class CustomerDefault : public Customer {
   static int initialize();
 };
 
-/** @brief This abstracts class represents a supplier. */
+/* This abstracts class represents a supplier. */
 class Supplier : public HasHierarchy<Supplier>, public HasDescription {
   friend class ItemSupplier;
 
  public:
   typedef Association<Supplier, Item, ItemSupplier>::ListA itemlist;
 
-  /** Default constructor. */
+  /* Default constructor. */
   explicit Supplier() {}
 
-  /** Destructor. */
+  /* Destructor. */
   virtual ~Supplier();
 
-  /** Returns a constant reference to the list of items this supplier can
+  /* Returns a constant reference to the list of items this supplier can
    * deliver. */
   const itemlist& getItems() const { return items; }
 
-  /** Returns an iterator over the list of items this supplier can deliver. */
+  /* Returns an iterator over the list of items this supplier can deliver. */
   itemlist::const_iterator getItemIterator() const { return items.begin(); }
 
   virtual const MetaClass& getType() const { return *metadata; }
@@ -1322,11 +1313,11 @@ class Supplier : public HasHierarchy<Supplier>, public HasDescription {
   }
 
  private:
-  /** This is a list of items this supplier has. */
+  /* This is a list of items this supplier has. */
   itemlist items;
 };
 
-/** @brief This class implements the abstract Supplier class. */
+/* This class implements the abstract Supplier class. */
 class SupplierDefault : public Supplier {
  public:
   explicit SupplierDefault() { initType(metadata); }
@@ -1336,36 +1327,36 @@ class SupplierDefault : public Supplier {
   static int initialize();
 };
 
-/** @brief A suboperation is used in operation types which have child
+/* A suboperation is used in operation types which have child
  * operations.
  */
 class SubOperation : public Object, public HasSource {
  private:
-  /** Pointer to the parent operation. */
+  /* Pointer to the parent operation. */
   Operation* owner = nullptr;
 
-  /** Pointer to the child operation.
+  /* Pointer to the child operation.
    * Note that the same child operation can be used in multiple parents.
    * The child operation is completely unaware of its parents.
    */
   Operation* oper = nullptr;
 
-  /** Validity date range for the child operation. */
+  /* Validity date range for the child operation. */
   DateRange effective;
 
-  /** Priority index. */
+  /* Priority index. */
   int prio = 1;
 
-  /** Python constructor. */
+  /* Python constructor. */
   static PyObject* create(PyTypeObject*, PyObject*, PyObject*);
 
  public:
   typedef list<SubOperation*> suboperationlist;
 
-  /** Default constructor. */
+  /* Default constructor. */
   explicit SubOperation() { initType(metadata); }
 
-  /** Destructor. */
+  /* Destructor. */
   ~SubOperation();
 
   Operation* getOwner() const { return owner; }
@@ -1418,10 +1409,10 @@ class SubOperation : public Object, public HasSource {
     suboperationlist::const_iterator nd;
 
    public:
-    /** Constructor. */
+    /* Constructor. */
     iterator(suboperationlist& l) : cur(l.begin()), nd(l.end()) {}
 
-    /** Return current value and advance the iterator. */
+    /* Return current value and advance the iterator. */
     SubOperation* next() {
       if (cur == nd) return nullptr;
       SubOperation* tmp = *cur;
@@ -1433,7 +1424,7 @@ class SubOperation : public Object, public HasSource {
 
 #include "frepple/timeline.h"
 
-/** @brief A timeline event representing a setup change.
+/* A timeline event representing a setup change.
  *
  * The following rule applies to the event:
  * - No change in setup
@@ -1456,17 +1447,17 @@ class SetupEvent : public TimeLine<LoadPlan>::Event {
  public:
   virtual TimeLine<LoadPlan>* getTimeLine() const { return tmline; }
 
-  /** Default constructor. */
+  /* Default constructor. */
   SetupEvent() : TimeLine<LoadPlan>::Event(5) { initType(metadata); }
 
-  /** Copy constructor. */
+  /* Copy constructor. */
   SetupEvent(const SetupEvent& x)
       : TimeLine<LoadPlan>::Event(5), setup(x.setup), rule(x.rule) {
     initType(metadata);
     dt = x.getDate();
   }
 
-  /** Constructor. */
+  /* Constructor. */
   SetupEvent(const SetupEvent* x) : TimeLine<LoadPlan>::Event(5) {
     initType(metadata);
     if (x) {
@@ -1476,14 +1467,14 @@ class SetupEvent : public TimeLine<LoadPlan>::Event {
     }
   }
 
-  /** Destructor. */
+  /* Destructor. */
   virtual ~SetupEvent();
 
   void erase() {
     if (tmline) tmline->erase(this);
   }
 
-  /** Assignment operator.
+  /* Assignment operator.
    * We don't relink the event in the timeline yet.
    * We don't copy the operationplan field either.
    */
@@ -1495,7 +1486,7 @@ class SetupEvent : public TimeLine<LoadPlan>::Event {
     return *this;
   }
 
-  /** Constructor. */
+  /* Constructor. */
   SetupEvent(TimeLine<LoadPlan>* t, Date d, const PooledString& s,
              SetupMatrixRule* r = nullptr, OperationPlan* o = nullptr)
       : TimeLine<LoadPlan>::Event(5), setup(s), tmline(t), opplan(o) {
@@ -1533,7 +1524,7 @@ class SetupEvent : public TimeLine<LoadPlan>::Event {
   }
 };
 
-/** @brief An operationplan is the key dynamic element of a plan. It
+/* An operationplan is the key dynamic element of a plan. It
  * represents a certain quantity being planned along a certain operation
  * during a certain date range.
  *
@@ -1547,7 +1538,7 @@ class SetupEvent : public TimeLine<LoadPlan>::Event {
  *    method should be called. It will assign the operationplan a unique
  *    numeric identifier, register the operationplan in a container owned
  *    by the operation instance, and also create loadplans and flowplans
- *    if this hasn't been done yet.<br>
+ *    if this hasn't been done yet.
  *  - Operationplans can be organized in hierarchical structure, matching
  *    the operation hierarchies they belong to.
  */
@@ -1577,43 +1568,43 @@ class OperationPlan : public Object,
   typedef TimeLine<FlowPlan> flowplanlist;
   typedef TimeLine<LoadPlan> loadplanlist;
 
-  /** Flowplan iteration. */
+  /* Flowplan iteration. */
   inline FlowPlanIterator getFlowPlans() const;
   inline FlowPlanIterator beginFlowPlans() const;
   inline FlowPlanIterator endFlowPlans() const;
   int sizeFlowPlans() const;
 
-  /** Loadplan iteration. */
+  /* Loadplan iteration. */
   inline LoadPlanIterator getLoadPlans() const;
   LoadPlanIterator beginLoadPlans() const;
   LoadPlanIterator endLoadPlans() const;
   int sizeLoadPlans() const;
 
-  /** Interruption iteration. */
+  /* Interruption iteration. */
   inline InterruptionIterator getInterruptions() const;
 
-  /** Returns whether this operationplan is a PO, MO or DO. */
+  /* Returns whether this operationplan is a PO, MO or DO. */
   inline string getOrderType() const;
 
-  /** Return the lowest priority of the demands to which this operationplan
+  /* Return the lowest priority of the demands to which this operationplan
    * pegs. */
   double getPriority() const;
 
-  /** Returns the criticality index of the operationplan, which reflects
-   * its urgency.<br>
+  /* Returns the criticality index of the operationplan, which reflects
+   * its urgency.
    * If the operationplan is on the critical path of one or more orders
    * the criticality is high. If the operationplan is only used to satisfy
-   * safety stock requirements it will have a low criticality.<br>
+   * safety stock requirements it will have a low criticality.
    * Computing the criticality is complex, CPU-expensive and the result
    * will change when the plan changes. Caching the value may be in
-   * order.<br>
+   * order.
    * Criticality is currently implemented as the slack in the downstream
    * path. If the criticality is 2, it means the operationplan can be
    * delayed by 2 days without impacting the delivery of any demand.
    */
   double getCriticality() const;
 
-  /** Returns the difference between:
+  /* Returns the difference between:
    *  a) the end date of the this operationplan
    * and
    *  b) the due of the demand fed by this operationplan
@@ -1636,7 +1627,7 @@ class OperationPlan : public Object,
    */
   Duration getDelay() const;
 
-  /** Merge this operationplan with another one if possible.
+  /* Merge this operationplan with another one if possible.
    * The return value is true when a merge was done.
    * Careful: When a merge is done this pointer object is deleted!
    */
@@ -1644,33 +1635,33 @@ class OperationPlan : public Object,
 
   friend class iterator;
 
-  /** This is a factory method that creates an operationplan pointer based
+  /* This is a factory method that creates an operationplan pointer based
    * on the operation and id. */
   static Object* createOperationPlan(const MetaClass*, const DataValueDict&,
                                      CommandManager* = nullptr);
 
-  /** Shortcut method to the cluster. */
+  /* Shortcut method to the cluster. */
   int getCluster() const;
 
-  /** Destructor. */
+  /* Destructor. */
   virtual ~OperationPlan();
 
   virtual void setChanged(bool b = true);
 
-  /** Returns the quantity. */
+  /* Returns the quantity. */
   double getQuantity() const { return quantity; }
 
-  /** Update the quantity. */
+  /* Update the quantity. */
   void setQuantity(double f) { setQuantity(f, false, true, true); }
 
-  /** Updates the quantity.<br>
+  /* Updates the quantity.
    * The operationplan quantity is subject to the following rules:
-   *  - The quantity must be greater than or equal to the minimum size.<br>
+   *  - The quantity must be greater than or equal to the minimum size.
    *    The value is rounded up to the smallest multiple above the minimum
    *    size if required, or rounded down to 0.
-   *  - The quantity must be a multiple of the multiple_size field.<br>
+   *  - The quantity must be a multiple of the multiple_size field.
    *    The value is rounded up or down to meet this constraint.
-   *  - The quantity must be smaller than or equal to the maximum size.<br>
+   *  - The quantity must be smaller than or equal to the maximum size.
    *    The value is limited to the smallest multiple below this limit.
    *  - Setting the quantity of an operationplan to 0 is always possible,
    *    regardless of the minimum, multiple and maximum values.
@@ -1680,20 +1671,20 @@ class OperationPlan : public Object,
   inline double setQuantity(double f, bool roundDown, bool update = true,
                             bool execute = true, Date end = Date::infinitePast);
 
-  /** Returns a pointer to the demand for which this operationplan is a
+  /* Returns a pointer to the demand for which this operationplan is a
    * delivery. If the operationplan isn't a delivery, this is a nullptr pointer.
    */
   Demand* getDemand() const { return dmd; }
 
-  /** Updates the demand to which this operationplan is a solution. */
+  /* Updates the demand to which this operationplan is a solution. */
   void setDemand(Demand* l);
 
-  /** Calculate the unavailable time during the operationplan. The regular
+  /* Calculate the unavailable time during the operationplan. The regular
    * duration is extended with this amount.
    */
   Duration getUnavailable() const;
 
-  /** Return the status of the operationplan.
+  /* Return the status of the operationplan.
    * The status string is one of the following:
    *   - proposed
    *   - approved
@@ -1702,21 +1693,21 @@ class OperationPlan : public Object,
    */
   string getStatus() const;
 
-  /** Update the status of the operationplan. */
+  /* Update the status of the operationplan. */
   void setStatus(const string&, bool propagate);
 
   void setStatusNoPropagation(const string& s) { setStatus(s, false); }
 
   void setStatus(const string& s) { setStatus(s, true); }
 
-  /** Enforce a specific start date, end date and quantity. There is
+  /* Enforce a specific start date, end date and quantity. There is
    * no validation whether the values are consistent with the operation
    * parameters.
    * This method only works for locked operationplans.
    */
   void freezeStatus(Date, Date, double);
 
-  /** Return the list of problems of this operationplan. */
+  /* Return the list of problems of this operationplan. */
   inline OperationPlan::ProblemIterator getProblems() const;
 
   bool getActivated() const { return (flags & ACTIVATED) != 0; }
@@ -1736,39 +1727,39 @@ class OperationPlan : public Object,
 
   bool getFeasible() const { return !(flags & FEASIBLE); }
 
-  /** Returns true is this operationplan is allowed to consume material.
+  /* Returns true is this operationplan is allowed to consume material.
    * This field only has an impact for locked operationplans.
    */
   bool getConsumeMaterial() const { return !(flags & CONSUME_MATERIAL); }
 
-  /** Returns true is this operationplan is allowed to produce material.
+  /* Returns true is this operationplan is allowed to produce material.
    * This field only has an impact for locked operationplans.
    */
   bool getProduceMaterial() const { return !(flags & PRODUCE_MATERIAL); }
 
-  /** Returns true is this operationplan is allowed to consume capacity.
+  /* Returns true is this operationplan is allowed to consume capacity.
    * This field only has an impact for locked operationplans.
    */
   bool getConsumeCapacity() const { return !(flags & CONSUME_CAPACITY); }
 
-  /** Deletes all operationplans of a certain operation. A boolean flag
+  /* Deletes all operationplans of a certain operation. A boolean flag
    * allows to specify whether locked operationplans are to be deleted too.
    */
   static void deleteOperationPlans(Operation* o, bool deleteLocked = false);
 
-  /** Update the status to CONFIRMED, or back to PROPOSED. */
+  /* Update the status to CONFIRMED, or back to PROPOSED. */
   void setConfirmed(bool b);
 
-  /** Update the status to APPROVED, or back to PROPOSED. */
+  /* Update the status to APPROVED, or back to PROPOSED. */
   void setApproved(bool b);
 
-  /** Update the status to PROPOSED, or back to APPROVED. */
+  /* Update the status to PROPOSED, or back to APPROVED. */
   void setProposed(bool b);
 
-  /** Update the status to COMPLETED, or back to APPROVED. */
+  /* Update the status to COMPLETED, or back to APPROVED. */
   void setCompleted(bool b);
 
-  /** Update the status to CLOSED, or back to APPROVED. */
+  /* Update the status to CLOSED, or back to APPROVED. */
   void setClosed(bool b);
 
   void setActivated(bool b) {
@@ -1778,7 +1769,7 @@ class OperationPlan : public Object,
       flags &= ~ACTIVATED;
   }
 
-  /** Update flag which allow/disallows material consumption. */
+  /* Update flag which allow/disallows material consumption. */
   void setConsumeMaterial(bool b) {
     if (b)
       flags &= ~CONSUME_MATERIAL;
@@ -1789,7 +1780,7 @@ class OperationPlan : public Object,
       if (!i->getConfirmed()) i->setConsumeMaterial(b);
   }
 
-  /** Update flag which allow/disallows material production. */
+  /* Update flag which allow/disallows material production. */
   void setProduceMaterial(bool b) {
     if (b)
       flags &= ~PRODUCE_MATERIAL;
@@ -1800,7 +1791,7 @@ class OperationPlan : public Object,
       if (!i->getConfirmed()) i->setProduceMaterial(b);
   }
 
-  /** Update flag which allow/disallows capacity consumption. */
+  /* Update flag which allow/disallows capacity consumption. */
   void setConsumeCapacity(bool b) {
     if (b)
       flags &= ~CONSUME_CAPACITY;
@@ -1818,20 +1809,20 @@ class OperationPlan : public Object,
       flags |= FEASIBLE;
   }
 
-  /** Returns a pointer to the operation being instantiated. */
+  /* Returns a pointer to the operation being instantiated. */
   Operation* getOperation() const { return oper; }
 
-  /** Update the operation of an operationplan. */
+  /* Update the operation of an operationplan. */
   void setOperation(Operation* o);
 
   inline OperationPlanState setOperationPlanParameters(
       double qty, Date startdate, Date enddate, bool preferEnd = true,
       bool execute = true, bool roundDown = true);
 
-  /** Fixes the start and end date of an operationplan. Note that this
+  /* Fixes the start and end date of an operationplan. Note that this
    * overrules the standard duration given on the operation, i.e. no logic
    * kicks in to verify the data makes sense. This is up to the user to
-   * take care of.<br>
+   * take care of.
    * The methods setStart(Date) and setEnd(Date) are therefore preferred
    * since they properly apply all appropriate logic.
    */
@@ -1840,10 +1831,10 @@ class OperationPlan : public Object,
     update();
   }
 
-  /** Fixes the start date, end date and quantity of an operationplan. Note that
+  /* Fixes the start date, end date and quantity of an operationplan. Note that
    * this overrules the standard duration given on the operation, i.e. no logic
    * kicks in to verify the data makes sense. This is up to the user to
-   * take care of.<br>
+   * take care of.
    * The methods setStart(Date) and setEnd(Date) are therefore preferred
    * since they properly apply all appropriate logic.
    */
@@ -1854,12 +1845,12 @@ class OperationPlan : public Object,
     update();
   }
 
-  /** A method to restore a previous state of an operationplan.<br>
+  /* A method to restore a previous state of an operationplan.
    * NO validity checks are done on the parameters.
    */
   void restore(const OperationPlanState& x);
 
-  /** Updates the operationplan owning this operationplan.<br>
+  /* Updates the operationplan owning this operationplan.
    * The optional extra argument specifies whether we need to complete
    * validation of the parent-child operation or not. Validation is
    * necessary to validate input from the user. But when the owner field
@@ -1873,11 +1864,11 @@ class OperationPlan : public Object,
 
   void setOwner(OperationPlan* o) { setOwner(o, false); }
 
-  /** Returns a pointer to the operationplan for which this operationplan
-   * a sub-operationplan.<br>
-   * The method returns nullptr if there is no owner defined.<br>
+  /* Returns a pointer to the operationplan for which this operationplan
+   * a sub-operationplan.
+   * The method returns nullptr if there is no owner defined.
    * E.g. Sub-operationplans of a routing refer to the overall routing
-   * operationplan.<br>
+   * operationplan.
    * E.g. An alternate sub-operationplan refers to its parent.
    * @see getTopOwner
    */
@@ -1885,14 +1876,14 @@ class OperationPlan : public Object,
 
   SetupEvent* getSetupEvent() const { return setupevent; }
 
-  /** Return a pointer to the next suboperationplan of the owner. */
+  /* Return a pointer to the next suboperationplan of the owner. */
   OperationPlan* getNextSubOpplan() const { return nextsubopplan; }
 
-  /** Return a pointer to the previous suboperationplan of the owner. */
+  /* Return a pointer to the previous suboperationplan of the owner. */
   OperationPlan* getPrevSubOpplan() const { return prevsubopplan; }
 
-  /** Returns a pointer to the operationplan owning a set of
-   * sub-operationplans. There can be multiple levels of suboperations.<br>
+  /* Returns a pointer to the operationplan owning a set of
+   * sub-operationplans. There can be multiple levels of suboperations.
    * If no owner exists the method returns the current operationplan.
    * @see getOwner
    */
@@ -1907,32 +1898,32 @@ class OperationPlan : public Object,
       return const_cast<OperationPlan*>(this);
   }
 
-  /** Returns the start and end date of this operationplan. */
+  /* Returns the start and end date of this operationplan. */
   const DateRange& getDates() const { return dates; }
 
-  /** Return the start of the actual operation time. */
+  /* Return the start of the actual operation time. */
   Date getSetupEnd() const {
     return setupevent ? setupevent->getDate() : dates.getStart();
   }
 
-  /** Return the setup cost. */
+  /* Return the setup cost. */
   double getSetupCost() const;
 
-  /** Update the setup information. */
+  /* Update the setup information. */
   void setSetupEvent(TimeLine<LoadPlan>*, Date, const PooledString&,
                      SetupMatrixRule* = nullptr);
 
   void setSetupEvent(Resource* r, Date d, const PooledString& s,
                      SetupMatrixRule* m = nullptr);
 
-  /** Make sure that a status change is also reflected on related
+  /* Make sure that a status change is also reflected on related
    * operationplans. Note that the propagation of a status change is not
    * undoable: eg after changing the status from proposed to closed, we can't go
    * back to the previous situation any more.
    */
   void propagateStatus(bool log = false);
 
-  /** Remove the setup event. */
+  /* Remove the setup event. */
   void clearSetupEvent() {
     if (!setupevent) return;
     setupevent->erase();
@@ -1940,20 +1931,20 @@ class OperationPlan : public Object,
     setupevent = nullptr;
   }
 
-  /** Remove the setup event. */
+  /* Remove the setup event. */
   void nullSetupEvent() { setupevent = nullptr; }
 
-  /** Return true if the operationplan is redundant, ie all material
-   * it produces is not used at all.<br>
+  /* Return true if the operationplan is redundant, ie all material
+   * it produces is not used at all.
    * If the optional argument is false (which is the default value), we
    * check with the minimum stock level of the buffers. If the argument
    * is true, we check with 0.
    */
   bool isExcess(bool = false) const;
 
-  /** Returns a unique identifier of the operationplan.<br>
+  /* Returns a unique identifier of the operationplan.
    * The identifier can be specified in the data input (in which case
-   * we check for the uniqueness during the read operation).<br>
+   * we check for the uniqueness during the read operation).
    * For operationplans created during a solver run, the identifier is
    * assigned in the instantiate() function. The numbering starts with the
    * highest identifier read in from the input and is then incremented
@@ -1962,7 +1953,7 @@ class OperationPlan : public Object,
    * This method is declared as constant. But actually, it can still update
    * the identifier field if it is wasn't set before.
    */
-  /** Return the external identifier. */
+  /* Return the external identifier. */
   string getReference() const {
     if (getName().empty()) {
       const_cast<OperationPlan*>(this)->assignReference();  // Lazy generation
@@ -1971,7 +1962,7 @@ class OperationPlan : public Object,
     return getName();
   }
 
-  /** Update the external identifier. */
+  /* Update the external identifier. */
   void setReference(const string& s) {
     setName(s);
     assignReference();
@@ -1980,7 +1971,7 @@ class OperationPlan : public Object,
 
   void setRawReference(const string& s) { setName(s); }
 
-  /** Update the next autogenerated reference number.
+  /* Update the next autogenerated reference number.
    * Only increases are allowed to avoid assigning duplicate references.
    */
   static void setCounterMin(unsigned long l) {
@@ -1990,15 +1981,15 @@ class OperationPlan : public Object,
           "Exhausted the range of available operationplan references");
   }
 
-  /** Return the next autogenerated id number. */
+  /* Return the next autogenerated id number. */
   static unsigned long getCounterMin() { return counterMin; }
 
-  /** Return the end date. */
+  /* Return the end date. */
   Date getEnd() const { return dates.getEnd(); }
 
-  /** Updates the end date of the operationplan and compute the start
-   * date.<br>
-   * Locked operationplans are not updated by this function.<br>
+  /* Updates the end date of the operationplan and compute the start
+   * date.
+   * Locked operationplans are not updated by this function.
    * Slack can be introduced between sub operationaplans by this method,
    * i.e. the sub operationplans are only moved if required to meet the
    * end date.
@@ -2009,12 +2000,12 @@ class OperationPlan : public Object,
 
   void setEndForce(Date d) { setEnd(d, true); }
 
-  /** Return the end date. */
+  /* Return the end date. */
   Date getStart() const { return dates.getStart(); }
 
-  /** Updates the start date of the operationplan and compute the end
-   * date.<br>
-   * Locked operation_plans are not updated by this function.<br>
+  /* Updates the start date of the operationplan and compute the end
+   * date.
+   * Locked operation_plans are not updated by this function.
    * Slack can be introduced between sub operationaplans by this method,
    * i.e. the sub operationplans are only moved if required to meet the
    * start date.
@@ -2025,7 +2016,7 @@ class OperationPlan : public Object,
 
   void setStartForce(Date d) { setStart(d, true, true); }
 
-  /** Return the efficiency factor of the operationplan.
+  /* Return the efficiency factor of the operationplan.
    * It's computed as the most inefficient of all resources loaded by the
    * operationplan.
    */
@@ -2037,10 +2028,10 @@ class OperationPlan : public Object,
 
   PyObject* str() const;
 
-  /** Python factory method. */
+  /* Python factory method. */
   static PyObject* create(PyTypeObject*, PyObject*, PyObject*);
 
-  /** Initialize the operationplan. The initialization function should be
+  /* Initialize the operationplan. The initialization function should be
    * called when the operationplan is ready to be 'officially' added. The
    * initialization performs the following actions:
    *  - assign an identifier
@@ -2056,14 +2047,14 @@ class OperationPlan : public Object,
    */
   bool activate(bool createsubopplans = true, bool use_start = false);
 
-  /** Remove an operationplan from the list of officially registered ones.<br>
+  /* Remove an operationplan from the list of officially registered ones.
    * The operationplan will keep its loadplans and flowplans after
    * unregistration.
    */
   void deactivate();
 
-  /** This method links the operationplan in the list of all operationplans
-   * maintained on the operation.<br>
+  /* This method links the operationplan in the list of all operationplans
+   * maintained on the operation.
    * In most cases calling this method is not required since it included
    * in the activate method. In exceptional cases the solver already
    * needs to see uncommitted operationplans in the list - eg for the
@@ -2072,54 +2063,54 @@ class OperationPlan : public Object,
    */
   void insertInOperationplanList();
 
-  /** This method remove the operationplan from the list of all operationplans
-   * maintained on the operation.<br>
+  /* This method remove the operationplan from the list of all operationplans
+   * maintained on the operation.
    * @see deactivate
    */
   void removeFromOperationplanList();
 
-  /** Remove a sub-operation_plan from the list. */
+  /* Remove a sub-operation_plan from the list. */
   virtual void eraseSubOperationPlan(OperationPlan*);
 
-  /** This function is used to create the loadplans, flowplans and
+  /* This function is used to create the loadplans, flowplans and
    * setup operationplans.
    */
   void createFlowLoads();
 
-  /** A function to compute whether an operationplan is feasible or not. */
+  /* A function to compute whether an operationplan is feasible or not. */
   bool updateFeasible();
 
-  /** Python API for the above method. */
+  /* Python API for the above method. */
   static PyObject* updateFeasiblePython(PyObject*, PyObject*);
 
-  /** This function is used to delete the loadplans, flowplans and
+  /* This function is used to delete the loadplans, flowplans and
    * setup operationplans.
    */
   void deleteFlowLoads();
 
-  /** Operationplans are never considered hidden, even if the operation they
+  /* Operationplans are never considered hidden, even if the operation they
    * instantiate is hidden. Only exception are stock operationplans.
    */
   inline bool getHidden() const;
 
-  /** Searches for an OperationPlan with a given identifier.<br>
-   * Returns a nullptr pointer if no such OperationPlan can be found.<br>
+  /* Searches for an OperationPlan with a given identifier.
+   * Returns a nullptr pointer if no such OperationPlan can be found.
    * The method is of complexity O(n), i.e. involves a LINEAR search through
-   * the existing operationplans, and can thus be quite slow in big models.<br>
+   * the existing operationplans, and can thus be quite slow in big models.
    * The method is O(1), i.e. constant time regardless of the model size,
    * when the parameter passed is bigger than the operationplan counter.
    */
   static OperationPlan* findReference(string const& l);
 
-  /** Problem detection is actually done by the Operation class. That class
+  /* Problem detection is actually done by the Operation class. That class
    * actually "delegates" the responsability to this class, for efficiency.
    */
   virtual void updateProblems();
 
-  /** Implement the pure virtual function from the HasProblem class. */
+  /* Implement the pure virtual function from the HasProblem class. */
   inline Plannable* getEntity() const;
 
-  /** Return the metadata. We return the metadata of the operation class,
+  /* Return the metadata. We return the metadata of the operation class,
    * not the one of the operationplan class!
    */
   const MetaClass& getType() const { return *metadata; }
@@ -2128,26 +2119,26 @@ class OperationPlan : public Object,
 
   static const MetaCategory* metacategory;
 
-  /** Lookup a operationplan. */
+  /* Lookup a operationplan. */
   static Object* finder(const DataValueDict&);
 
-  /** Comparison of 2 OperationPlans.
+  /* Comparison of 2 OperationPlans.
    * To garantuee that the problems are sorted in a consistent and stable
    * way, the following sorting criteria are used (in order of priority):
-   * <ol><li>Operation</li>
-   * <li>Start date (earliest dates first)</li>
-   * <li>Quantity (biggest quantities first)</li></ol>
+   * - Operation
+   * - Start date (earliest dates first)
+   * - Quantity (biggest quantities first)
    * Multiple operationplans for the same values of the above keys can exist.
    */
   bool operator<(const OperationPlan& a) const;
 
-  /** Copy constructor.<br>
+  /* Copy constructor.
    * If the optional argument is false, the new copy is not initialized
    * and won't have flowplans and loadplans.
    */
   OperationPlan(const OperationPlan&, bool = true);
 
-  /** Return the total quantity which this operationplan, its children
+  /* Return the total quantity which this operationplan, its children
    * and its parents produce or consume from a given buffer.
    */
   double getTotalFlow(const Buffer* b) const {
@@ -2166,13 +2157,13 @@ class OperationPlan : public Object,
 
   PeggingDemandIterator getPeggingDemand() const;
 
-  /** Return an iterator over alternate operations for this operationplan. */
+  /* Return an iterator over alternate operations for this operationplan. */
   AlternateIterator getAlternates() const;
 
-  /** Return the setup time on this operationplan. */
+  /* Return the setup time on this operationplan. */
   Duration getSetup() const;
 
-  /** Update the setup time in situations where it could have changed.
+  /* Update the setup time in situations where it could have changed.
    * The return value is true when the time has changed.
    */
   bool updateSetupTime(bool report = false);
@@ -2287,24 +2278,24 @@ class OperationPlan : public Object,
   }
 
  private:
-  /** A tree structure with all operationplans to allow a fast lookup by id. */
+  /* A tree structure with all operationplans to allow a fast lookup by id. */
   static Tree st;
 
-  /** Private copy constructor.<br>
+  /* Private copy constructor.
    * It is used in the public copy constructor to make a deep clone of
    * suboperationplans.
    * @see OperationPlan(const OperationPlan&, bool = true)
    */
   OperationPlan(const OperationPlan&, OperationPlan*);
 
-  /** Updates the operationplan based on the latest information of quantity,
-   * date and locked flag.<br>
+  /* Updates the operationplan based on the latest information of quantity,
+   * date and locked flag.
    * This method will also update parent and child operationplans.
    * @see resizeFlowLoadPlans
    */
   void update();
 
-  /** Generates a unique identifier for the operationplan.
+  /* Generates a unique identifier for the operationplan.
    * The field is 0 while the operationplan is not fully registered yet.
    * The field is 1 when the operationplan is fully registered but only a
    * temporary id is generated.
@@ -2313,26 +2304,26 @@ class OperationPlan : public Object,
    */
   bool assignReference();
 
-  /** Recursive auxilary function for getTotalFlow.
+  /* Recursive auxilary function for getTotalFlow.
    * @ see getTotalFlow
    */
   double getTotalFlowAux(const Buffer*) const;
 
-  /** Update the loadplans and flowplans of the operationplan based on the
-   * latest information of quantity, date and locked flag.<br>
+  /* Update the loadplans and flowplans of the operationplan based on the
+   * latest information of quantity, date and locked flag.
    * This method will NOT update parent or child operationplans.
    *
    * Only intended for internal use by update()
    */
   void resizeFlowLoadPlans();
 
-  /** Maintain the operationplan list in sorted order.
+  /* Maintain the operationplan list in sorted order.
    *
    * Only intended for internal use by update()
    */
   void updateOperationplanList();
 
-  /** Update the setup time on all neighbouring operationplans.
+  /* Update the setup time on all neighbouring operationplans.
    *
    * This method leaves the setup end date constant, which also
    * keeps all material production and consumption at their original
@@ -2343,10 +2334,10 @@ class OperationPlan : public Object,
   void scanSetupTimes();
 
  private:
-  /** Default constructor.<br>
+  /* Default constructor.
    * This way of creating operationplan objects is not intended for use by
    * any client applications. Client applications should use the factory
-   * method on the operation class instead.<br>
+   * method on the operation class instead.
    * Subclasses of the Operation class may use this constructor in their
    * own override of the createOperationPlan method.
    * @see Operation::createOperationPlan
@@ -2368,90 +2359,90 @@ class OperationPlan : public Object,
   static const unsigned short FEASIBLE = 128;
   static const unsigned short ACTIVATED = 256;
 
-  /** Counter of OperationPlans, which is used to automatically assign a
-   * unique identifier for each operationplan.<br>
+  /* Counter of OperationPlans, which is used to automatically assign a
+   * unique identifier for each operationplan.
    * The value of the counter is the first available identifier value that
-   * can be used for a new operationplan.<br>
+   * can be used for a new operationplan.
    * The first value is 1, and each operationplan increases it by 1.
    * @see assignIdentifier()
    */
   static unsigned long counterMin;
   static string referenceMax;
 
-  /** Flag controlling where setup time verification should be performed. */
+  /* Flag controlling where setup time verification should be performed. */
   static bool propagatesetups;
 
-  /** Pointer to a higher level OperationPlan. */
+  /* Pointer to a higher level OperationPlan. */
   OperationPlan* owner = nullptr;
 
-  /** Pointer to the demand.<br>
+  /* Pointer to the demand.
    * Only delivery operationplans have this field set. The field is nullptr
    * for all other operationplans.
    */
   Demand* dmd = nullptr;
 
-  /** External identifier for this operationplan. */
+  /* External identifier for this operationplan. */
   string ref;
 
-  /** Start and end date. */
+  /* Start and end date. */
   DateRange dates;
 
-  /** Pointer to the operation. */
+  /* Pointer to the operation. */
   Operation* oper = nullptr;
 
-  /** Root of a single linked list of flowplans. */
+  /* Root of a single linked list of flowplans. */
   FlowPlan* firstflowplan = nullptr;
 
-  /** Single linked list of loadplans. */
+  /* Single linked list of loadplans. */
   LoadPlan* firstloadplan = nullptr;
 
-  /** Pointer to the previous operationplan.<br>
+  /* Pointer to the previous operationplan.
    * Operationplans are chained in a doubly linked list for each operation.
    * @see next
    */
   OperationPlan* prev = nullptr;
 
-  /** Pointer to the next operationplan.<br>
+  /* Pointer to the next operationplan.
    * Operationplans are chained in a doubly linked list for each operation.
    * @see prev
    */
   OperationPlan* next = nullptr;
 
-  /** Pointer to the first suboperationplan of this operationplan. */
+  /* Pointer to the first suboperationplan of this operationplan. */
   OperationPlan* firstsubopplan = nullptr;
 
-  /** Pointer to the last suboperationplan of this operationplan. */
+  /* Pointer to the last suboperationplan of this operationplan. */
   OperationPlan* lastsubopplan = nullptr;
 
-  /** Pointer to the next suboperationplan of the parent operationplan. */
+  /* Pointer to the next suboperationplan of the parent operationplan. */
   OperationPlan* nextsubopplan = nullptr;
 
-  /** Pointer to the previous suboperationplan of the parent operationplan. */
+  /* Pointer to the previous suboperationplan of the parent operationplan. */
   OperationPlan* prevsubopplan = nullptr;
 
-  /** Setup event of this operationplan. */
+  /* Setup event of this operationplan. */
   SetupEvent* setupevent = nullptr;
 
-  /** Quantity. */
+  /* Quantity. */
   double quantity = 0.0;
 
-  /** Flags on the operationplan: status, consumematerial, consumecapacity,
+  /* Flags on the operationplan: status, consumematerial, consumecapacity,
    * infeasible. */
   unsigned short flags = 0;
 
-  /** Hidden, static field to store the location during import. */
+  /* Hidden, static field to store the location during import. */
   static Location* loc;
 
-  /** Hidden, static field to store the origin during import. */
+  /* Hidden, static field to store the origin during import. */
   static Location* ori;
 
-  /** Hidden, static field to store the supplier during import. */
+  /* Hidden, static field to store the supplier during import. */
   static Supplier* sup;
 
-  /** Hidden, static field to store the order type during import. */
+  /* Hidden, static field to store the order type during import. */
   static string ordertype;
 
-  /** Hidden, static field to store the item during import. */
+  /* Hidden, static field to store the item during import. */
   static Item* itm;
 
   void setLocation(Location* l) { loc = l; }
@@ -2499,22 +2490,22 @@ bool TimeLine<type>::Event::operator<(const Event& fl2) const {
   }
 }
 
-/** This type defines what mode used to search the alternates. */
+/* This type defines what mode used to search the alternates. */
 enum SearchMode {
-  /** Select the alternate with the lowest priority number.<br>
+  /* Select the alternate with the lowest priority number.
    * This is the default.
    */
   PRIORITY = 0,
-  /** Select the alternate which gives the lowest cost. */
+  /* Select the alternate which gives the lowest cost. */
   MINCOST = 1,
-  /** Select the alternate which gives the lowest penalty. */
+  /* Select the alternate which gives the lowest penalty. */
   MINPENALTY = 2,
-  /** Select the alternate which gives the lowest sum of the cost and
+  /* Select the alternate which gives the lowest sum of the cost and
    * penalty. */
   MINCOSTPENALTY = 3
 };
 
-/** Writes a search mode to an output stream. */
+/* Writes a search mode to an output stream. */
 inline ostream& operator<<(ostream& os, const SearchMode& d) {
   switch (d) {
     case PRIORITY:
@@ -2535,13 +2526,13 @@ inline ostream& operator<<(ostream& os, const SearchMode& d) {
   }
 }
 
-/** Translate a string to a search mode value. */
+/* Translate a string to a search mode value. */
 SearchMode decodeSearchMode(const string& c);
 
-/** @brief An operation represents an activity: these consume and produce
+/* An operation represents an activity: these consume and produce
  * material, take time and also require capacity.
  *
- * An operation consumes and produces material, modeled through flows.<br>
+ * An operation consumes and produces material, modeled through flows.
  * An operation requires capacity, modeled through loads.
  *
  * This is an abstract base class for all different operation types.
@@ -2557,7 +2548,7 @@ class Operation : public HasName<Operation>,
   friend class Item;
 
  protected:
-  /** Extra logic called when instantiating an operationplan.<br>
+  /* Extra logic called when instantiating an operationplan.
    * When the function returns false the creation of the operationplan
    * is denied and it is deleted.
    */
@@ -2567,10 +2558,10 @@ class Operation : public HasName<Operation>,
   }
 
  public:
-  /** Default constructor. */
+  /* Default constructor. */
   explicit Operation() {}
 
-  /** Destructor. */
+  /* Destructor. */
   virtual ~Operation();
 
   virtual string getOrderType() const { return "MO"; }
@@ -2579,10 +2570,10 @@ class Operation : public HasName<Operation>,
 
   OperationPlan* getLastOpPlan() const { return last_opplan; }
 
-  /** Returns the delay after this operation. */
+  /* Returns the delay after this operation. */
   Duration getPostTime() const { return post_time; }
 
-  /** Updates the delay after this operation.<br>
+  /* Updates the delay after this operation.
    * This delay is a soft constraint. This means that solvers should try to
    * respect this waiting time but can choose to leave a shorter time delay
    * if required.
@@ -2594,14 +2585,14 @@ class Operation : public HasName<Operation>,
     setChanged();
   }
 
-  /** Return the operation cost.<br>
+  /* Return the operation cost.
    * The cost of executing this operation, per unit of the
-   * operation_plan.<br>
+   * operation_plan.
    * The default value is 0.0.
    */
   double getCost() const { return cost; }
 
-  /** Update the operation cost.<br>
+  /* Update the operation cost.
    * The cost of executing this operation, per unit of the operation_plan.
    */
   void setCost(const double c) {
@@ -2614,17 +2605,17 @@ class Operation : public HasName<Operation>,
   typedef Association<Operation, Buffer, Flow>::ListA flowlist;
   typedef Association<Operation, Resource, Load>::ListA loadlist;
 
-  /** This is the factory method which creates all operationplans of the
+  /* This is the factory method which creates all operationplans of the
    * operation. */
   OperationPlan* createOperationPlan(double, Date, Date, Demand* = nullptr,
                                      OperationPlan* = nullptr,
                                      bool makeflowsloads = true,
                                      bool roundDown = true) const;
 
-  /** Returns true for operation types that own suboperations. */
+  /* Returns true for operation types that own suboperations. */
   virtual bool hasSubOperations() const { return false; }
 
-  /** Calculates the daterange starting from (or ending at) a certain date
+  /* Calculates the daterange starting from (or ending at) a certain date
    * and using a certain amount of effective available time on the
    * operation.
    *
@@ -2643,7 +2634,7 @@ class Operation : public HasName<Operation>,
                                    Duration duration, bool forward,
                                    Duration* actualduration = nullptr) const;
 
-  /** Calculates the effective, available time between two dates.
+  /* Calculates the effective, available time between two dates.
    *
    * This calculation considers the availability calendars of:
    * - the availability calendar of the operation and its location
@@ -2659,7 +2650,7 @@ class Operation : public HasName<Operation>,
                                    Date end,
                                    Duration* actualduration = nullptr) const;
 
-  /** This method stores ALL logic the operation needs to compute the
+  /* This method stores ALL logic the operation needs to compute the
    * correct relationship between the quantity, startdate and enddate
    * of an operationplan.
    *
@@ -2702,7 +2693,7 @@ class Operation : public HasName<Operation>,
       bool preferEnd = true, bool execute = true,
       bool roundDown = true) const = 0;
 
-  /** Updates the quantity of an operationplan.<br>
+  /* Updates the quantity of an operationplan.
    * This method considers the lot size constraints and also propagates
    * the new quantity to child operationplans.
    */
@@ -2710,86 +2701,86 @@ class Operation : public HasName<Operation>,
                                           bool roundDown, bool upd,
                                           bool execute, Date start) const;
 
-  /** Returns the location of the operation, which is used to model the
+  /* Returns the location of the operation, which is used to model the
    * working hours and holidays. */
   Location* getLocation() const { return loc; }
 
-  /** Updates the location of the operation, which is used to model the
+  /* Updates the location of the operation, which is used to model the
    * working hours and holidays. */
   void setLocation(Location* l) { loc = l; }
 
-  /** Returns the item. */
+  /* Returns the item. */
   Item* getItem() const { return item; }
 
-  /** Updates the item. */
+  /* Updates the item. */
   void setItem(Item*);
 
-  /** Update the priority. */
+  /* Update the priority. */
   void setPriority(int i) { priority = i; }
 
-  /** Return the priority. */
+  /* Return the priority. */
   int getPriority() const { return priority; }
 
-  /** Get the start date of the effectivity range. */
+  /* Get the start date of the effectivity range. */
   Date getEffectiveStart() const { return effectivity.getStart(); }
 
-  /** Get the end date of the effectivity range. */
+  /* Get the end date of the effectivity range. */
   Date getEffectiveEnd() const { return effectivity.getEnd(); }
 
-  /** Return the effectivity daterange.<br>
+  /* Return the effectivity daterange.
    * The default covers the complete time horizon.
    */
   DateRange getEffective() const { return effectivity; }
 
-  /** Update the start date of the effectivity range. */
+  /* Update the start date of the effectivity range. */
   void setEffectiveStart(Date d) { effectivity.setStart(d); }
 
-  /** Update the end date of the effectivity range. */
+  /* Update the end date of the effectivity range. */
   void setEffectiveEnd(Date d) { effectivity.setEnd(d); }
 
-  /** Update the effectivity range. */
+  /* Update the effectivity range. */
   void setEffective(DateRange dr) { effectivity = dr; }
 
-  /** Returns the availability calendar of the operation. */
+  /* Returns the availability calendar of the operation. */
   Calendar* getAvailable() const { return available; }
 
-  /** Updates the availability calendar of the operation. */
+  /* Updates the availability calendar of the operation. */
   void setAvailable(Calendar* b) { available = b; }
 
-  /** Returns an reference to the list of flows.
+  /* Returns an reference to the list of flows.
    * TODO get rid of this method.
    */
   const flowlist& getFlows() const { return flowdata; }
 
-  /** Returns an reference to the list of flows. */
+  /* Returns an reference to the list of flows. */
   flowlist::const_iterator getFlowIterator() const { return flowdata.begin(); }
 
-  /** Returns an reference to the list of loads.
+  /* Returns an reference to the list of loads.
    * TODO get rid of this method.
    */
   const loadlist& getLoads() const { return loaddata; }
 
-  /** Returns an reference to the list of loads. */
+  /* Returns an reference to the list of loads. */
   loadlist::const_iterator getLoadIterator() const { return loaddata.begin(); }
 
   OperationPlan::iterator getOperationPlans() const;
 
-  /** Return the flow that is associates a given buffer with this
+  /* Return the flow that is associates a given buffer with this
    * operation. Returns nullptr is no such flow exists. */
   Flow* findFlow(const Buffer* b, Date d) const;
 
-  /** Return the load that is associates a given resource with this
+  /* Return the load that is associates a given resource with this
    * operation. Returns nullptr is no such load exists. */
   Load* findLoad(const Resource* r, Date d) const {
     return loaddata.find(r, d);
   }
 
-  /** Deletes all operationplans of this operation. The boolean parameter
+  /* Deletes all operationplans of this operation. The boolean parameter
    * controls whether we delete also locked operationplans or not.
    */
   void deleteOperationPlans(bool deleteLockedOpplans = false);
 
-  /** Sets the minimum size of operationplans.<br>
+  /* Sets the minimum size of operationplans.
    * The default value is 1.0
    */
   void setSizeMinimum(double f) {
@@ -2799,13 +2790,13 @@ class Operation : public HasName<Operation>,
     setChanged();
   }
 
-  /** Returns the minimum size for operationplans. */
+  /* Returns the minimum size for operationplans. */
   double getSizeMinimum() const { return size_minimum; }
 
-  /** Returns the calendar defining the minimum size of operationplans. */
+  /* Returns the calendar defining the minimum size of operationplans. */
   Calendar* getSizeMinimumCalendar() const { return size_minimum_calendar; }
 
-  /** Sets the multiple size of operationplans. */
+  /* Sets the multiple size of operationplans. */
   void setSizeMultiple(double f) {
     if (f < 0)
       throw DataException("Operation can't have a negative multiple size");
@@ -2813,16 +2804,16 @@ class Operation : public HasName<Operation>,
     setChanged();
   }
 
-  /** Sets a calendar to defining the minimum size of operationplans. */
+  /* Sets a calendar to defining the minimum size of operationplans. */
   virtual void setSizeMinimumCalendar(Calendar* c) {
     size_minimum_calendar = c;
     setChanged();
   }
 
-  /** Returns the mutiple size for operationplans. */
+  /* Returns the mutiple size for operationplans. */
   double getSizeMultiple() const { return size_multiple; }
 
-  /** Sets the maximum size of operationplans. */
+  /* Sets the maximum size of operationplans. */
   void setSizeMaximum(double f) {
     if (f < size_minimum)
       throw DataException(
@@ -2833,17 +2824,17 @@ class Operation : public HasName<Operation>,
     setChanged();
   }
 
-  /** Returns the maximum size for operationplans. */
+  /* Returns the maximum size for operationplans. */
   double getSizeMaximum() const { return size_maximum; }
 
-  /** Return the decoupled lead time of this operation.
+  /* Return the decoupled lead time of this operation.
    * TODO the decoupled lead time could vary over time, wich we don't handle now
    */
   virtual Duration getDecoupledLeadTime(double qty) const = 0;
 
   static PyObject* getDecoupledLeadTimePython(PyObject* self, PyObject* args);
 
-  /** Add a new child operationplan.
+  /* Add a new child operationplan.
    * By default an operationplan can have only a single suboperation,
    * representing a changeover.
    * Operation subclasses can implement their own restrictions on the
@@ -2856,7 +2847,7 @@ class Operation : public HasName<Operation>,
 
   static int initialize();
 
-  /** Auxilary method to initialize an vector of availability calendar
+  /* Auxilary method to initialize an vector of availability calendar
    * iterators related to an operation.
    */
   unsigned short collectCalendars(Calendar::EventIterator[], Date,
@@ -2867,7 +2858,7 @@ class Operation : public HasName<Operation>,
 
   typedef list<SubOperation*> Operationlist;
 
-  /** Returns a reference to the list of sub operations of this operation.
+  /* Returns a reference to the list of sub operations of this operation.
    * The list is always sorted with the operation with the lowest priority
    * value at the start of the list.
    */
@@ -2877,12 +2868,12 @@ class Operation : public HasName<Operation>,
     return SubOperation::iterator(getSubOperations());
   }
 
-  /** Returns a reference to the list of super-operations, i.e. operations
+  /* Returns a reference to the list of super-operations, i.e. operations
    * using the current Operation as a sub-Operation.
    */
   const list<Operation*>& getSuperOperations() const { return superoplist; }
 
-  /** Returns a reference to the list of super-operations, i.e. operations
+  /* Returns a reference to the list of super-operations, i.e. operations
    * using the current Operation as a sub-Operation.
    */
   bool hasSuperOperations() const { return !superoplist.empty(); }
@@ -2894,29 +2885,29 @@ class Operation : public HasName<Operation>,
       return *superoplist.begin();
   }
 
-  /** Register a super-operation, i.e. an operation having this one as a
+  /* Register a super-operation, i.e. an operation having this one as a
    * sub-operation. */
   void addSuperOperation(Operation* o) { superoplist.push_front(o); }
 
-  /** Removes a super-operation from the list. */
+  /* Removes a super-operation from the list. */
   void removeSuperOperation(Operation*);
 
-  /** Return the release fence of this operation. */
+  /* Return the release fence of this operation. */
   Duration getFence() const { return fence; }
 
-  /** Update the release fence of this operation. */
+  /* Update the release fence of this operation. */
   void setFence(Duration t) {
     if (fence != t) setChanged();
     fence = t;
   }
 
-  /** Return the search mode. */
+  /* Return the search mode. */
   SearchMode getSearch() const { return search; }
 
-  /** Update the search mode. */
+  /* Update the search mode. */
   void setSearch(const string a) { search = decodeSearchMode(a); }
 
-  /** Update the search mode. */
+  /* Update the search mode. */
   void setSearch(SearchMode a) { search = a; }
 
   virtual void updateProblems();
@@ -2981,7 +2972,7 @@ class Operation : public HasName<Operation>,
     HasLevel::registerFields<Cls>(m);
   }
 
-  /** Return the memory size. */
+  /* Return the memory size. */
   virtual size_t getSize() const {
     size_t tmp = Object::getSize();
     // Add the memory for the superoperation list: 3 pointers per superoperation
@@ -2989,7 +2980,7 @@ class Operation : public HasName<Operation>,
     return tmp;
   }
 
-  /** Empty list of operations.
+  /* Empty list of operations.
    * For operation types which have no suboperations this list is
    * used as the list of suboperations.
    */
@@ -3002,7 +2993,7 @@ class Operation : public HasName<Operation>,
 
   typedef tuple<Resource*, SetupMatrixRule*, PooledString> SetupInfo;
 
-  /** Calculate the setup time of an operationplan.
+  /* Calculate the setup time of an operationplan.
    * The date argument can either be the start or the end date
    * of a setup, depending on the value of the third argument.
    */
@@ -3010,85 +3001,85 @@ class Operation : public HasName<Operation>,
                            SetupEvent** = nullptr) const;
 
  private:
-  /** List of operations using this operation as a sub-operation.
+  /* List of operations using this operation as a sub-operation.
    * TODO When the suboperation table will be removed, an operation can have
    * only a single owner. The type of this field should then be changed to save
    * some memory.
    */
   list<Operation*> superoplist;
 
-  /** Item produced by the operation. */
+  /* Item produced by the operation. */
   Item* item = nullptr;
 
-  /** Location of the operation.<br>
+  /* Location of the operation.
    * The location is used to model the working hours and holidays.
    */
   Location* loc = nullptr;
 
-  /** Represents the time between this operation and a next one. */
+  /* Represents the time between this operation and a next one. */
   Duration post_time;
 
-  /** Represents the release fence of this operation, i.e. a period of time
+  /* Represents the release fence of this operation, i.e. a period of time
    * (relative to the current date of the plan) in which normally no
    * operationplan is allowed to be created.
    */
   Duration fence;
 
-  /** Singly linked list of all flows of this operation. */
+  /* Singly linked list of all flows of this operation. */
   flowlist flowdata;
 
-  /** Singly linked list of all resources Loaded by this operation. */
+  /* Singly linked list of all resources Loaded by this operation. */
   loadlist loaddata;
 
-  /** Minimum size for operationplans. */
+  /* Minimum size for operationplans. */
   double size_minimum = 1.0;
 
-  /** Minimum size for operationplans when this size varies over time.
+  /* Minimum size for operationplans when this size varies over time.
    * If this field is specified, the size_minimum field is ignored.
    */
   Calendar* size_minimum_calendar = nullptr;
 
-  /** Multiple size for operationplans. */
+  /* Multiple size for operationplans. */
   double size_multiple = 0.0;
 
-  /** Maximum size for operationplans. */
+  /* Maximum size for operationplans. */
   double size_maximum = DBL_MAX;
 
-  /** Cost of the operation. */
+  /* Cost of the operation. */
   double cost = 0.0;
 
-  /** A pointer to the first operationplan of this operation.<br>
+  /* A pointer to the first operationplan of this operation.
    * All operationplans of this operation are stored in a sorted
    * doubly linked list.
    */
   OperationPlan* first_opplan = nullptr;
 
-  /** A pointer to the last operationplan of this operation.<br>
+  /* A pointer to the last operationplan of this operation.
    * All operationplans of this operation are stored in a sorted
    * doubly linked list.
    */
   OperationPlan* last_opplan = nullptr;
 
-  /** A pointer to the next operation producing the item. */
+  /* A pointer to the next operation producing the item. */
   Operation* next = nullptr;
 
-  /** Availability calendar of the operation. */
+  /* Availability calendar of the operation. */
   Calendar* available = nullptr;
 
-  /** Effectivity of the operation. */
+  /* Effectivity of the operation. */
   DateRange effectivity;
 
-  /** Priority of the operation among alternates. */
+  /* Priority of the operation among alternates. */
   int priority = 1;
 
-  /** Does the operation require serialization or not. */
+  /* Does the operation require serialization or not. */
   bool hidden = false;
 
-  /** Mode to select the preferred alternates. */
+  /* Mode to select the preferred alternates. */
   SearchMode search = PRIORITY;
 };
 
-/** Writes an operationplan to an output stream. */
+/* Writes an operationplan to an output stream. */
 inline ostream& operator<<(ostream& os, const OperationPlan* o) {
   if (o) {
     os << static_cast<const void*>(o) << " (";
@@ -3131,7 +3122,7 @@ inline int OperationPlan::getCluster() const {
 
 Plannable* OperationPlan::getEntity() const { return oper; }
 
-/** @brief A class to iterator over operationplans.
+/* A class to iterator over operationplans.
  *
  * Different modes are supported:
  *   - iterate over all operationplans of a single operation.
@@ -3140,7 +3131,7 @@ Plannable* OperationPlan::getEntity() const { return oper; }
  */
 class OperationPlan::iterator {
  public:
-  /** Constructor. The iterator will loop only over the operationplans
+  /* Constructor. The iterator will loop only over the operationplans
    * of the operation passed. */
   iterator(const Operation* x, bool forward = true)
       : op(Operation::end()), mode(forward ? 1 : 4) {
@@ -3152,13 +3143,13 @@ class OperationPlan::iterator {
       opplan = x->getLastOpPlan();
   }
 
-  /** Constructor. The iterator will loop only over the suboperationplans
+  /* Constructor. The iterator will loop only over the suboperationplans
    * of the operationplan passed. */
   iterator(const OperationPlan* x) : op(Operation::end()), mode(2) {
     opplan = x ? x->firstsubopplan : nullptr;
   }
 
-  /** Constructor. The iterator will loop over all operationplans. */
+  /* Constructor. The iterator will loop over all operationplans. */
   iterator() : op(Operation::begin()), mode(3) {
     // The while loop is required since the first operation might not
     // have any operationplans at all
@@ -3172,16 +3163,16 @@ class OperationPlan::iterator {
     opplan = nullptr;
   }
 
-  /** Copy constructor. */
+  /* Copy constructor. */
   iterator(const iterator& it) : opplan(it.opplan), op(it.op), mode(it.mode) {}
 
-  /** Return the content of the current node. */
+  /* Return the content of the current node. */
   OperationPlan& operator*() const { return *opplan; }
 
-  /** Return the content of the current node. */
+  /* Return the content of the current node. */
   OperationPlan* operator->() const { return opplan; }
 
-  /** Pre-increment operator which moves the pointer to the next
+  /* Pre-increment operator which moves the pointer to the next
    * element. */
   iterator& operator++() {
     if (opplan) {
@@ -3203,7 +3194,7 @@ class OperationPlan::iterator {
     return *this;
   }
 
-  /** Post-increment operator which moves the pointer to the next
+  /* Post-increment operator which moves the pointer to the next
    * element. */
   iterator operator++(int) {
     iterator tmp(*this);
@@ -3224,27 +3215,27 @@ class OperationPlan::iterator {
     return tmp;
   }
 
-  /** Return current element and advance the iterator. */
+  /* Return current element and advance the iterator. */
   OperationPlan* next() {
     OperationPlan* tmp = opplan;
     operator++();
     return tmp;
   }
 
-  /** Comparison operator. */
+  /* Comparison operator. */
   bool operator==(const iterator& y) const { return opplan == y.opplan; }
 
-  /** Inequality operator. */
+  /* Inequality operator. */
   bool operator!=(const iterator& y) const { return opplan != y.opplan; }
 
  private:
-  /** A pointer to current operationplan. */
+  /* A pointer to current operationplan. */
   OperationPlan* opplan;
 
-  /** An iterator over the operations. */
+  /* An iterator over the operations. */
   Operation::iterator op;
 
-  /** Describes the type of iterator.<br>
+  /* Describes the type of iterator.
    * 1) iterate over operationplan instances of operation
    * 2) iterate over suboperationplans of an operationplan
    * 3) iterate over all operationplans
@@ -3264,7 +3255,7 @@ inline OperationPlan::iterator OperationPlan::getSubOperationPlans() const {
   return OperationPlan::iterator(this);
 }
 
-/** A simple class to easily remember the date, quantity, setup and owner
+/* A simple class to easily remember the date, quantity, setup and owner
  * of an operationplan.
  */
 class OperationPlanState  // @todo should also be able to remember and restore
@@ -3277,10 +3268,10 @@ class OperationPlanState  // @todo should also be able to remember and restore
   TimeLine<LoadPlan>* tmline = nullptr;
   double quantity = 0.0;
 
-  /** Default constructor. */
+  /* Default constructor. */
   OperationPlanState() {}
 
-  /** Constructor. */
+  /* Constructor. */
   OperationPlanState(const OperationPlan* x) : setup(x->getSetupEvent()) {
     if (!x) return;
     start = x->getStart();
@@ -3289,7 +3280,7 @@ class OperationPlanState  // @todo should also be able to remember and restore
     tmline = x->getSetupEvent() ? x->getSetupEvent()->getTimeLine() : nullptr;
   }
 
-  /** Copy constructor. */
+  /* Copy constructor. */
   OperationPlanState(const OperationPlanState& x)
       : start(x.start),
         end(x.end),
@@ -3297,14 +3288,14 @@ class OperationPlanState  // @todo should also be able to remember and restore
         tmline(x.tmline),
         quantity(x.quantity) {}
 
-  /** Constructor. */
+  /* Constructor. */
   OperationPlanState(const Date x, const Date y, double q,
                      SetupEvent* z = nullptr)
       : start(x), end(y), setup(z), quantity(q) {
     if (z) tmline = z->getTimeLine();
   }
 
-  /** Constructor. */
+  /* Constructor. */
   OperationPlanState(const DateRange& x, double q, SetupEvent* z = nullptr)
       : start(x.getStart()), end(x.getEnd()), setup(z), quantity(q) {
     if (z) tmline = z->getTimeLine();
@@ -3328,17 +3319,17 @@ inline OperationPlanState OperationPlan::setOperationPlanParameters(
       this, qty, startdate, enddate, preferEnd, execute, roundDown);
 }
 
-/** @brief Models an operation that takes a fixed amount of time, independent
+/* Models an operation that takes a fixed amount of time, independent
  * of the quantity. */
 class OperationFixedTime : public Operation {
  public:
-  /** Default constructor. */
+  /* Default constructor. */
   explicit OperationFixedTime() { initType(metadata); }
 
-  /** Returns the length of the operation. */
+  /* Returns the length of the operation. */
   Duration getDuration() const { return duration; }
 
-  /** Updates the duration of the operation. Existing operation plans of this
+  /* Updates the duration of the operation. Existing operation plans of this
    * operation are not automatically refreshed to reflect the change. */
   void setDuration(Duration t) {
     if (t < 0L)
@@ -3346,7 +3337,7 @@ class OperationFixedTime : public Operation {
     duration = t;
   }
 
-  /** Return the decoupled lead time of this operation. */
+  /* Return the decoupled lead time of this operation. */
   virtual Duration getDecoupledLeadTime(double qty) const;
 
   static int initialize();
@@ -3356,7 +3347,7 @@ class OperationFixedTime : public Operation {
   virtual const MetaClass& getType() const { return *metadata; }
   static const MetaClass* metadata;
 
-  /** A operation of this type enforces the following rules on its
+  /* A operation of this type enforces the following rules on its
    * operationplans:
    *  - The duration is always constant.
    *  - If the end date is specified, we use that and ignore the start
@@ -3384,32 +3375,32 @@ class OperationFixedTime : public Operation {
                                 bool use_start = false);
 
  private:
-  /** Stores the lengh of the Operation. */
+  /* Stores the lengh of the Operation. */
   Duration duration;
 };
 
-/** @brief Models an operation whose duration is the sum of a constant time,
+/* Models an operation whose duration is the sum of a constant time,
  * plus a certain time per unit.
  */
 class OperationTimePer : public Operation {
  public:
-  /** Default constructor. */
+  /* Default constructor. */
   explicit OperationTimePer() : duration_per(0.0) { initType(metadata); }
 
-  /** Returns the constant part of the operation time. */
+  /* Returns the constant part of the operation time. */
   Duration getDuration() const { return duration; }
 
-  /** Sets the constant part of the operation time. */
+  /* Sets the constant part of the operation time. */
   void setDuration(Duration t) {
     if (t < 0L)
       throw DataException("TimePer operation can't have a negative duration");
     duration = t;
   }
 
-  /** Returns the time per unit of the operation time. */
+  /* Returns the time per unit of the operation time. */
   double getDurationPer() const { return duration_per; }
 
-  /** Sets the time per unit of the operation time. */
+  /* Sets the time per unit of the operation time. */
   void setDurationPer(double t) {
     if (t < 0.0)
       throw DataException(
@@ -3417,7 +3408,7 @@ class OperationTimePer : public Operation {
     duration_per = t;
   }
 
-  /** A operation of this type enforces the following rules on its
+  /* A operation of this type enforces the following rules on its
    * operationplans:
    *   - If both the start and end date are specified, the quantity is
    *     computed to match these dates.
@@ -3439,7 +3430,7 @@ class OperationTimePer : public Operation {
       OperationPlan* opplan, double qty, Date startdate, Date enddate,
       bool preferEnd = true, bool execute = true, bool roundDown = true) const;
 
-  /** Return the decoupled lead time of this operation. */
+  /* Return the decoupled lead time of this operation. */
   virtual Duration getDecoupledLeadTime(double qty) const;
 
   static int initialize();
@@ -3458,10 +3449,10 @@ class OperationTimePer : public Operation {
   }
 
  private:
-  /** Constant part of the operation time. */
+  /* Constant part of the operation time. */
   Duration duration;
 
-  /** Variable part of the operation time.
+  /* Variable part of the operation time.
    * We store the value as a double value rather than a Duration to
    * be able to store fractional duration_per value. Duration can only
    * represent seconds.
@@ -3469,20 +3460,20 @@ class OperationTimePer : public Operation {
   double duration_per;
 };
 
-/** @brief Represents a routing operation, i.e. an operation consisting of
+/* Represents a routing operation, i.e. an operation consisting of
  * multiple, sequential sub-operations.
  */
 class OperationRouting : public Operation {
  public:
-  /** Default constructor. */
+  /* Default constructor. */
   explicit OperationRouting() { initType(metadata); }
 
-  /** Destructor. */
+  /* Destructor. */
   ~OperationRouting();
 
   virtual bool hasSubOperations() const { return true; }
 
-  /** A operation of this type enforces the following rules on its
+  /* A operation of this type enforces the following rules on its
    * operationplans:
    *  - If an end date is given, sequentially use this method on the
    *    different steps. The steps are stepped through starting from the
@@ -3505,7 +3496,7 @@ class OperationRouting : public Operation {
                                   bool roundDown, bool upd, bool execute,
                                   Date end) const;
 
-  /** Add a new child operationplan.
+  /* Add a new child operationplan.
    * When the third argument is true, we don't validate the insertion and just
    * insert it at the front of the unlocked operationplans.
    * When the third argument is false, we do a full validation. This means:
@@ -3518,14 +3509,14 @@ class OperationRouting : public Operation {
    */
   virtual void addSubOperationPlan(OperationPlan*, OperationPlan*, bool = true);
 
-  /** Return the decoupled lead time of this operation. */
+  /* Return the decoupled lead time of this operation. */
   virtual Duration getDecoupledLeadTime(double qty) const;
 
   static int initialize();
 
   virtual void solve(Solver& s, void* v = nullptr) const { s.solve(this, v); }
 
-  /** Return a list of all sub-operations. */
+  /* Return a list of all sub-operations. */
   virtual Operationlist& getSubOperations() const {
     return const_cast<Operationlist&>(steps);
   }
@@ -3540,7 +3531,7 @@ class OperationRouting : public Operation {
         BASE + WRITE_OBJECT);
   }
 
-  /** Return the memory size. */
+  /* Return the memory size. */
   virtual size_t getSize() const {
     size_t tmp = Operation::getSize();
     // Add the memory for the steps: 3 pointers per step
@@ -3549,27 +3540,27 @@ class OperationRouting : public Operation {
   }
 
  protected:
-  /** Extra logic to be used when instantiating an operationplan. */
+  /* Extra logic to be used when instantiating an operationplan. */
   virtual bool extraInstantiate(OperationPlan* o, bool createsubopplans = true,
                                 bool use_start = false);
 
  private:
-  /** Stores a double linked list of all step suboperations. */
+  /* Stores a double linked list of all step suboperations. */
   Operationlist steps;
 };
 
-/** @brief This class represents a split between multiple operations. */
+/* This class represents a split between multiple operations. */
 class OperationSplit : public Operation {
  public:
-  /** Default constructor. */
+  /* Default constructor. */
   explicit OperationSplit() { initType(metadata); }
 
-  /** Destructor. */
+  /* Destructor. */
   ~OperationSplit();
 
   virtual bool hasSubOperations() const { return true; }
 
-  /** A operation of this type enforces the following rules on its
+  /* A operation of this type enforces the following rules on its
    * operationplans:
    *  - Very simple, accept any value. Ignore any lot size constraints
    *    since we use the ones on the sub operationplans.
@@ -3579,7 +3570,7 @@ class OperationSplit : public Operation {
       OperationPlan* opplan, double qty, Date startdate, Date enddate,
       bool preferEnd = true, bool execute = true, bool roundDown = true) const;
 
-  /** Add a new child operationplan.
+  /* Add a new child operationplan.
    * An alternate operationplan plan can have a maximum of 2
    * suboperationplans:
    *  - A setup operationplan if the alternate top-operation loads a
@@ -3588,7 +3579,7 @@ class OperationSplit : public Operation {
    */
   virtual void addSubOperationPlan(OperationPlan*, OperationPlan*, bool = true);
 
-  /** Return the decoupled lead time of this operation.
+  /* Return the decoupled lead time of this operation.
    * Take the lead time of the longest operation.
    */
   virtual Duration getDecoupledLeadTime(double qty) const;
@@ -3611,7 +3602,7 @@ class OperationSplit : public Operation {
         BASE + WRITE_OBJECT);
   }
 
-  /** Return the memory size. */
+  /* Return the memory size. */
   virtual size_t getSize() const {
     size_t tmp = Operation::getSize();
     // Add the memory for the suboperation list: 3 pointers per alternates
@@ -3620,31 +3611,31 @@ class OperationSplit : public Operation {
   }
 
  protected:
-  /** Extra logic to be used when instantiating an operationplan. */
+  /* Extra logic to be used when instantiating an operationplan. */
   virtual bool extraInstantiate(OperationPlan* o, bool createsubopplans = true,
                                 bool use_start = false);
 
  private:
-  /** List of all alternate operations. */
+  /* List of all alternate operations. */
   Operationlist alternates;
 };
 
-/** @brief This class represents a choice between multiple operations. The
+/* This class represents a choice between multiple operations. The
  * alternates are sorted in order of priority.
  */
 class OperationAlternate : public Operation {
  public:
-  /** Default constructor. */
+  /* Default constructor. */
   explicit OperationAlternate() { initType(metadata); }
 
-  /** Destructor. */
+  /* Destructor. */
   ~OperationAlternate();
 
   virtual bool hasSubOperations() const { return true; }
 
   virtual string getOrderType() const { return "ALT"; }
 
-  /** A operation of this type enforces the following rules on its
+  /* A operation of this type enforces the following rules on its
    * operationplans:
    *  - Very simple, call the method with the same name on the alternate
    *    suboperationplan.
@@ -3654,7 +3645,7 @@ class OperationAlternate : public Operation {
       OperationPlan* opplan, double qty, Date startdate, Date enddate,
       bool preferEnd = true, bool execute = true, bool roundDown = true) const;
 
-  /** Add a new child operationplan.
+  /* Add a new child operationplan.
    * An alternate operationplan plan can have a maximum of 2
    * suboperationplans:
    *  - A setup operationplan if the alternate top-operation loads a
@@ -3663,7 +3654,7 @@ class OperationAlternate : public Operation {
    */
   virtual void addSubOperationPlan(OperationPlan*, OperationPlan*, bool = true);
 
-  /** Return the decoupled lead time of this operation:
+  /* Return the decoupled lead time of this operation:
    * Take the lead time of the preferred operation
    */
   virtual Duration getDecoupledLeadTime(double qty) const;
@@ -3686,7 +3677,7 @@ class OperationAlternate : public Operation {
         BASE + WRITE_OBJECT);
   }
 
-  /** Return the memory size. */
+  /* Return the memory size. */
   virtual size_t getSize() const {
     size_t tmp = Operation::getSize();
     // Add the memory for the suboperation list: 3 pointers per alternates
@@ -3695,16 +3686,16 @@ class OperationAlternate : public Operation {
   }
 
  protected:
-  /** Extra logic to be used when instantiating an operationplan. */
+  /* Extra logic to be used when instantiating an operationplan. */
   virtual bool extraInstantiate(OperationPlan* o, bool createsubopplans = true,
                                 bool use_start = false);
 
  private:
-  /** List of all alternate operations. */
+  /* List of all alternate operations. */
   Operationlist alternates;
 };
 
-/** A class to iterato over alternates of an operationplan. */
+/* A class to iterato over alternates of an operationplan. */
 class OperationPlan::AlternateIterator {
  private:
   const OperationPlan* opplan = nullptr;
@@ -3714,7 +3705,7 @@ class OperationPlan::AlternateIterator {
  public:
   AlternateIterator(const OperationPlan* o);
 
-  /** Copy constructor. */
+  /* Copy constructor. */
   AlternateIterator(const AlternateIterator& other) : opplan(other.opplan) {
     for (auto i = other.opers.begin(); i != other.opers.end(); ++i)
       opers.push_back(*i);
@@ -3728,7 +3719,7 @@ inline OperationPlan::AlternateIterator OperationPlan::getAlternates() const {
   return OperationPlan::AlternateIterator(this);
 }
 
-/** @brief This class holds the definition of distribution replenishments. */
+/* This class holds the definition of distribution replenishments. */
 class ItemDistribution
     : public Object,
       public Association<Location, Item, ItemDistribution>::Node,
@@ -3742,28 +3733,28 @@ class ItemDistribution
     OperationItemDistribution* curOper;
 
    public:
-    /** Constructor. */
+    /* Constructor. */
     OperationIterator(const ItemDistribution* i) {
       curOper = i ? i->firstOperation : nullptr;
     }
 
-    /** Return current value and advance the iterator. */
+    /* Return current value and advance the iterator. */
     inline OperationItemDistribution* next();
   };
 
-  /** Factory method. */
+  /* Factory method. */
   static PyObject* create(PyTypeObject*, PyObject*, PyObject*);
 
-  /** Constructor. */
+  /* Constructor. */
   explicit ItemDistribution();
 
-  /** Destructor. */
+  /* Destructor. */
   virtual ~ItemDistribution();
 
-  /** Search an existing object. */
+  /* Search an existing object. */
   static Object* finder(const DataValueDict& k);
 
-  /** Remove all shipping operationplans. */
+  /* Remove all shipping operationplans. */
   void deleteOperationPlans(bool deleteLockedOpplans = false);
 
   static int initialize();
@@ -3772,19 +3763,19 @@ class ItemDistribution
   static const MetaClass* metadata;
   static const MetaCategory* metacategory;
 
-  /** Returns the item. */
+  /* Returns the item. */
   Item* getItem() const { return getPtrB(); }
 
-  /** Update the item. */
+  /* Update the item. */
   void setItem(Item*);
 
-  /** Returns the origin location. */
+  /* Returns the origin location. */
   Location* getOrigin() const { return orig; }
 
-  /** Returns the destination location. */
+  /* Returns the destination location. */
   Location* getDestination() const { return getPtrA(); }
 
-  /** Updates the origin Location. This method can only be called once on each
+  /* Updates the origin Location. This method can only be called once on each
    * instance. */
   void setOrigin(Location* s) {
     if (!s) return;
@@ -3792,7 +3783,7 @@ class ItemDistribution
     HasLevel::triggerLazyRecomputation();
   }
 
-  /** Updates the destination location. This method can only be called once on
+  /* Updates the destination location. This method can only be called once on
    * each instance. */
   void setDestination(Location* i) {
     if (!i) return;
@@ -3800,28 +3791,28 @@ class ItemDistribution
     HasLevel::triggerLazyRecomputation();
   }
 
-  /** Update the resource representing the supplier capacity. */
+  /* Update the resource representing the supplier capacity. */
   void setResource(Resource* r) {
     res = r;
     HasLevel::triggerLazyRecomputation();
   }
 
-  /** Return the resource representing the distribution capacity. */
+  /* Return the resource representing the distribution capacity. */
   Resource* getResource() const { return res; }
 
-  /** Update the resource capacity used per distributed unit. */
+  /* Update the resource capacity used per distributed unit. */
   void setResourceQuantity(double d) {
     if (d < 0) throw DataException("Resource_quantity must be positive");
     res_qty = d;
   }
 
-  /** Return the resource capacity used per distributed unit. */
+  /* Return the resource capacity used per distributed unit. */
   double getResourceQuantity() const { return res_qty; }
 
-  /** Return the purchasing leadtime. */
+  /* Return the purchasing leadtime. */
   Duration getLeadTime() const { return leadtime; }
 
-  /** Update the shipping lead time.<br>
+  /* Update the shipping lead time.
    * Note that any already existing purchase operations and their
    * operationplans are NOT updated.
    */
@@ -3831,7 +3822,7 @@ class ItemDistribution
     leadtime = p;
   }
 
-  /** Sets the minimum size for shipments.<br>
+  /* Sets the minimum size for shipments.
    * The default value is 1.0
    */
   void setSizeMinimum(double f) {
@@ -3841,10 +3832,10 @@ class ItemDistribution
     size_minimum = f;
   }
 
-  /** Returns the minimum size for shipments. */
+  /* Returns the minimum size for shipments. */
   double getSizeMinimum() const { return size_minimum; }
 
-  /** Sets the multiple size for shipments. */
+  /* Sets the multiple size for shipments. */
   void setSizeMultiple(double f) {
     if (f < 0)
       throw DataException(
@@ -3852,10 +3843,10 @@ class ItemDistribution
     size_multiple = f;
   }
 
-  /** Returns the mutiple size for shipments. */
+  /* Returns the mutiple size for shipments. */
   double getSizeMultiple() const { return size_multiple; }
 
-  /** Sets the maximum size for shipments. */
+  /* Sets the maximum size for shipments. */
   void setSizeMaximum(double f) {
     if (f < size_minimum)
       throw DataException(
@@ -3866,15 +3857,15 @@ class ItemDistribution
     size_maximum = f;
   }
 
-  /** Returns the mutiple size for shipments. */
+  /* Returns the mutiple size for shipments. */
   double getSizeMaximum() const { return size_maximum; }
 
-  /** Returns the cost of shipping 1 unit of this item.<br>
+  /* Returns the cost of shipping 1 unit of this item.
    * The default value is 0.0.
    */
   double getCost() const { return cost; }
 
-  /** Update the cost of shipping 1 unit. */
+  /* Update the cost of shipping 1 unit. */
   void setCost(const double c) {
     if (c >= 0)
       cost = c;
@@ -3924,38 +3915,38 @@ class ItemDistribution
   }
 
  private:
-  /** Source location. */
+  /* Source location. */
   Location* orig = nullptr;
 
-  /** Shipping lead time. */
+  /* Shipping lead time. */
   Duration leadtime;
 
-  /** Minimum procurement quantity. */
+  /* Minimum procurement quantity. */
   double size_minimum = 1.0;
 
-  /** Procurement multiple quantity. */
+  /* Procurement multiple quantity. */
   double size_multiple = 1.0;
 
-  /** Procurement maximum quantity. */
+  /* Procurement maximum quantity. */
   double size_maximum = DBL_MAX;
 
-  /** Procurement cost. */
+  /* Procurement cost. */
   double cost = 0.0;
 
-  /** Pointer to the head of the auto-generated shipping operation list.*/
+  /* Pointer to the head of the auto-generated shipping operation list.*/
   OperationItemDistribution* firstOperation = nullptr;
 
-  /** Resource to model distribution capacity. */
+  /* Resource to model distribution capacity. */
   Resource* res = nullptr;
 
-  /** Consumption on the distribution capacity resource. */
+  /* Consumption on the distribution capacity resource. */
   double res_qty = 1.0;
 
-  /** Release fence for the distribution operation. */
+  /* Release fence for the distribution operation. */
   Duration fence;
 };
 
-/** @brief An item defines the products being planned, sold, stored and/or
+/* An item defines the products being planned, sold, stored and/or
  * manufactured. Buffers and demands have a reference an item.
  *
  * This is an abstract class.
@@ -3977,15 +3968,15 @@ class Item : public HasHierarchy<Item>, public HasDescription {
   typedef Association<Supplier, Item, ItemSupplier>::ListB supplierlist;
   typedef Association<Location, Item, ItemDistribution>::ListB distributionlist;
 
-  /** Default constructor. */
+  /* Default constructor. */
   explicit Item() {}
 
-  /** Return the cost of the item.<br>
+  /* Return the cost of the item.
    * The default value is 0.0.
    */
   double getCost() const { return cost; }
 
-  /** Update the cost of the item. */
+  /* Update the cost of the item. */
   void setCost(const double c) {
     if (c >= 0)
       cost = c;
@@ -3993,11 +3984,11 @@ class Item : public HasHierarchy<Item>, public HasDescription {
       throw DataException("Item cost must be positive");
   }
 
-  /** Returns a constant reference to the list of items this supplier can
+  /* Returns a constant reference to the list of items this supplier can
    * deliver. */
   const supplierlist& getSuppliers() const { return suppliers; }
 
-  /** Returns an iterator over the list of items this supplier can deliver. */
+  /* Returns an iterator over the list of items this supplier can deliver. */
   supplierlist::const_iterator getSupplierIterator() const {
     return suppliers.begin();
   }
@@ -4008,16 +3999,16 @@ class Item : public HasHierarchy<Item>, public HasDescription {
     return distributions.begin();
   }
 
-  /** Nested class to iterate of Operation objects producing this item. */
+  /* Nested class to iterate of Operation objects producing this item. */
   class operationIterator {
    private:
     Operation* cur;
 
    public:
-    /** Constructor. */
+    /* Constructor. */
     operationIterator(const Item* c) { cur = c ? c->firstOperation : nullptr; }
 
-    /** Return current value and advance the iterator. */
+    /* Return current value and advance the iterator. */
     Operation* next() {
       Operation* tmp = cur;
       if (cur) cur = cur->next;
@@ -4035,16 +4026,16 @@ class Item : public HasHierarchy<Item>, public HasDescription {
 
   static int initialize();
 
-  /** Return the receipt date of the earliest proposed purchase
+  /* Return the receipt date of the earliest proposed purchase
    * order for this item.
    * When none is found, the function returns Date::InfiniteFuture
    */
   Date findEarliestPurchaseOrder() const;
 
-  /** Return the cluster of this item. */
+  /* Return the cluster of this item. */
   int getCluster() const;
 
-  /** Destructor. */
+  /* Destructor. */
   virtual ~Item();
 
   virtual const MetaClass& getType() const { return *metadata; }
@@ -4076,35 +4067,35 @@ class Item : public HasHierarchy<Item>, public HasDescription {
   }
 
  private:
-  /** This is the operation used to satisfy a demand for this item.
+  /* This is the operation used to satisfy a demand for this item.
    * @see Demand
    */
   Operation* deliveryOperation = nullptr;
 
-  /** Cost of the item. */
+  /* Cost of the item. */
   double cost = 0.0;
 
-  /** This is a list of suppliers this item has. */
+  /* This is a list of suppliers this item has. */
   supplierlist suppliers;
 
-  /** This is the list of itemdistributions of this item. */
+  /* This is the list of itemdistributions of this item. */
   distributionlist distributions;
 
-  /** Maintain a list of buffers. */
+  /* Maintain a list of buffers. */
   Buffer* firstItemBuffer = nullptr;
 
-  /** Maintain a list of demands. */
+  /* Maintain a list of demands. */
   Demand* firstItemDemand = nullptr;
 
-  /** Maintain a list of operations producing this item. */
+  /* Maintain a list of operations producing this item. */
   Operation* firstOperation = nullptr;
 };
 
-/** @brief This class is the default implementation of the abstract Item
+/* This class is the default implementation of the abstract Item
  * class. */
 class ItemDefault : public Item {
  public:
-  /** Default constructor. */
+  /* Default constructor. */
   explicit ItemDefault() { initType(metadata); }
 
   virtual const MetaClass& getType() const { return *metadata; }
@@ -4112,7 +4103,7 @@ class ItemDefault : public Item {
   static int initialize();
 };
 
-/** @brief This class represents an item that can be purchased from a supplier.
+/* This class represents an item that can be purchased from a supplier.
  */
 class ItemSupplier : public Object,
                      public Association<Supplier, Item, ItemSupplier>::Node,
@@ -4120,43 +4111,43 @@ class ItemSupplier : public Object,
   friend class OperationItemSupplier;
 
  public:
-  /** Default constructor. */
+  /* Default constructor. */
   explicit ItemSupplier();
 
-  /** Constructor. */
+  /* Constructor. */
   explicit ItemSupplier(Supplier*, Item*, int);
 
-  /** Constructor. */
+  /* Constructor. */
   explicit ItemSupplier(Supplier*, Item*, int, DateRange);
 
-  /** Destructor. */
+  /* Destructor. */
   ~ItemSupplier();
 
-  /** Search an existing object. */
+  /* Search an existing object. */
   static Object* finder(const DataValueDict&);
 
-  /** Initialize the class. */
+  /* Initialize the class. */
   static int initialize();
 
-  /** Returns the supplier. */
+  /* Returns the supplier. */
   Supplier* getSupplier() const { return getPtrA(); }
 
-  /** Returns the item. */
+  /* Returns the item. */
   Item* getItem() const { return getPtrB(); }
 
-  /** Updates the supplier. This method can only be called on an instance. */
+  /* Updates the supplier. This method can only be called on an instance. */
   void setSupplier(Supplier* s) {
     if (s) setPtrA(s, s->getItems());
     HasLevel::triggerLazyRecomputation();
   }
 
-  /** Updates the item. This method can only be called on an instance. */
+  /* Updates the item. This method can only be called on an instance. */
   void setItem(Item* i) {
     if (i) setPtrB(i, i->getSuppliers());
     HasLevel::triggerLazyRecomputation();
   }
 
-  /** Sets the minimum size for procurements.<br>
+  /* Sets the minimum size for procurements.
    * The default value is 1.0
    */
   void setSizeMinimum(double f) {
@@ -4165,20 +4156,20 @@ class ItemSupplier : public Object,
     size_minimum = f;
   }
 
-  /** Returns the minimum size for procurements. */
+  /* Returns the minimum size for procurements. */
   double getSizeMinimum() const { return size_minimum; }
 
-  /** Sets the multiple size for procurements. */
+  /* Sets the multiple size for procurements. */
   void setSizeMultiple(double f) {
     if (f < 0)
       throw DataException("ItemSupplier can't have a negative multiple size");
     size_multiple = f;
   }
 
-  /** Returns the mutiple size for procurements. */
+  /* Returns the mutiple size for procurements. */
   double getSizeMultiple() const { return size_multiple; }
 
-  /** Sets the maximum size for procurements. */
+  /* Sets the maximum size for procurements. */
   void setSizeMaximum(double f) {
     if (f < size_minimum)
       throw DataException(
@@ -4188,15 +4179,15 @@ class ItemSupplier : public Object,
     size_maximum = f;
   }
 
-  /** Returns the maximum size for procurements. */
+  /* Returns the maximum size for procurements. */
   double getSizeMaximum() const { return size_maximum; }
 
-  /** Returns the cost of purchasing 1 unit of this item from this supplier.<br>
+  /* Returns the cost of purchasing 1 unit of this item from this supplier.
    * The default value is 0.0.
    */
   double getCost() const { return cost; }
 
-  /** Update the cost of purchasing 1 unit. */
+  /* Update the cost of purchasing 1 unit. */
   void setCost(const double c) {
     if (c >= 0)
       cost = c;
@@ -4204,41 +4195,41 @@ class ItemSupplier : public Object,
       throw DataException("ItemSupplier cost must be positive");
   }
 
-  /** Return the applicable location. */
+  /* Return the applicable location. */
   Location* getLocation() const { return loc; }
 
-  /** Update the applicable locations.
+  /* Update the applicable locations.
    * Note that any already existing purchase operations and their
    * operationplans are NOT updated.
    */
   void setLocation(Location* l) { loc = l; }
 
-  /** Update the resource representing the supplier capacity. */
+  /* Update the resource representing the supplier capacity. */
   void setResource(Resource* r) {
     res = r;
     HasLevel::triggerLazyRecomputation();
   }
 
-  /** Return the resource representing the supplier capacity. */
+  /* Return the resource representing the supplier capacity. */
   Resource* getResource() const { return res; }
 
-  /** Update the resource capacity used per purchased unit. */
+  /* Update the resource capacity used per purchased unit. */
   void setResourceQuantity(double d) {
     if (d < 0) throw DataException("Resource_quantity must be positive");
     res_qty = d;
   }
 
-  /** Return the resource capacity used per purchased unit. */
+  /* Return the resource capacity used per purchased unit. */
   double getResourceQuantity() const { return res_qty; }
 
   Duration getFence() const { return fence; }
 
   void setFence(Duration d) { fence = d; }
 
-  /** Return the purchasing lead time. */
+  /* Return the purchasing lead time. */
   Duration getLeadTime() const { return leadtime; }
 
-  /** Update the procurement lead time.<br>
+  /* Update the procurement lead time.
    * Note that any already existing purchase operations and their
    * operationplans are NOT updated.
    */
@@ -4248,7 +4239,7 @@ class ItemSupplier : public Object,
     leadtime = p;
   }
 
-  /** Remove all purchasing operationplans. */
+  /* Remove all purchasing operationplans. */
   void deleteOperationPlans(bool deleteLockedOpplans = false);
 
   virtual const MetaClass& getType() const { return *metadata; }
@@ -4289,51 +4280,51 @@ class ItemSupplier : public Object,
   }
 
  private:
-  /** Factory method. */
+  /* Factory method. */
   static PyObject* create(PyTypeObject*, PyObject*, PyObject*);
 
-  /** Location where the supplier item applies to. */
+  /* Location where the supplier item applies to. */
   Location* loc = nullptr;
 
-  /** Procurement lead time. */
+  /* Procurement lead time. */
   Duration leadtime;
 
-  /** Minimum procurement quantity. */
+  /* Minimum procurement quantity. */
   double size_minimum = 1.0;
 
-  /** Procurement multiple quantity. */
+  /* Procurement multiple quantity. */
   double size_multiple = 1.0;
 
-  /** Procurement multiple quantity. */
+  /* Procurement multiple quantity. */
   double size_maximum = DBL_MAX;
 
-  /** Procurement cost. */
+  /* Procurement cost. */
   double cost = 0.0;
 
-  /** Pointer to the head of the auto-generated purchase operation list.*/
+  /* Pointer to the head of the auto-generated purchase operation list.*/
   OperationItemSupplier* firstOperation = nullptr;
 
-  /** Resource to model supplier capacity. */
+  /* Resource to model supplier capacity. */
   Resource* res = nullptr;
 
-  /** Consumption on the supplier capacity resource. */
+  /* Consumption on the supplier capacity resource. */
   double res_qty = 1.0;
 
-  /** Release fence for the purchasing operation. */
+  /* Release fence for the purchasing operation. */
   Duration fence;
 };
 
-/** @brief An internally generated operation that ships material from an
+/* An internally generated operation that ships material from an
  * origin location to a destinationLocation.
  */
 class OperationItemDistribution : public OperationFixedTime {
   friend class ItemDistribution;
 
  private:
-  /** Pointer to the ItemDistribution that 'owns' this operation. */
+  /* Pointer to the ItemDistribution that 'owns' this operation. */
   ItemDistribution* itemdist;
 
-  /** Pointer to the next operation of the supplier item. */
+  /* Pointer to the next operation of the supplier item. */
   OperationItemDistribution* nextOperation;
 
  public:
@@ -4347,10 +4338,10 @@ class OperationItemDistribution : public OperationFixedTime {
 
   static Operation* findOrCreate(ItemDistribution*, Buffer*, Buffer*);
 
-  /** Constructor. */
+  /* Constructor. */
   explicit OperationItemDistribution(ItemDistribution*, Buffer*, Buffer*);
 
-  /** Destructor. */
+  /* Destructor. */
   virtual ~OperationItemDistribution();
 
   static int initialize();
@@ -4370,7 +4361,7 @@ class OperationItemDistribution : public OperationFixedTime {
                                     nullptr, MANDATORY);
   }
 
-  /** Scan and trim operationplans creating excess inventory in the
+  /* Scan and trim operationplans creating excess inventory in the
    * buffer.
    */
   void trimExcess() const;
@@ -4382,17 +4373,17 @@ OperationItemDistribution* ItemDistribution::OperationIterator::next() {
   return tmp;
 }
 
-/** @brief An internally generated operation that supplies procured material
+/* An internally generated operation that supplies procured material
  * into a buffer.
  */
 class OperationItemSupplier : public OperationFixedTime {
   friend class ItemSupplier;
 
  private:
-  /** Pointer to the ItemSupplier that 'owns' this operation. */
+  /* Pointer to the ItemSupplier that 'owns' this operation. */
   ItemSupplier* supitem;
 
-  /** Pointer to the next operation of the ItemSupplier. */
+  /* Pointer to the next operation of the ItemSupplier. */
   OperationItemSupplier* nextOperation;
 
  public:
@@ -4404,10 +4395,10 @@ class OperationItemSupplier : public OperationFixedTime {
 
   static OperationItemSupplier* findOrCreate(ItemSupplier*, Buffer*);
 
-  /** Constructor. */
+  /* Constructor. */
   explicit OperationItemSupplier(ItemSupplier*, Buffer*);
 
-  /** Destructor. */
+  /* Destructor. */
   virtual ~OperationItemSupplier();
 
   static int initialize();
@@ -4425,7 +4416,7 @@ class OperationItemSupplier : public OperationFixedTime {
                                     DONT_SERIALIZE);
   }
 
-  /** Scan and trim operationplans creating excess inventory in the
+  /* Scan and trim operationplans creating excess inventory in the
    * buffer.
    */
   void trimExcess(bool zero_or_minimum) const;
@@ -4445,7 +4436,7 @@ Supplier* OperationPlan::getSupplier() const {
       ->getSupplier();
 }
 
-/** @brief A buffer represents a combination of a item and location.<br>
+/* A buffer represents a combination of a item and location.
  * It is the entity for keeping modeling inventory.
  */
 class Buffer : public HasHierarchy<Buffer>,
@@ -4459,14 +4450,14 @@ class Buffer : public HasHierarchy<Buffer>,
   typedef TimeLine<FlowPlan> flowplanlist;
   typedef Association<Operation, Buffer, Flow>::ListB flowlist;
 
-  /** Default constructor. */
+  /* Default constructor. */
   explicit Buffer() {}
 
   static Buffer* findOrCreate(Item*, Location*);
 
   static Buffer* findFromName(string nm);
 
-  /** Builds a producing operation for a buffer.
+  /* Builds a producing operation for a buffer.
    * The logic used is based on the following:
    *   - If specified explicitly, don't do anything.
    *   - Add an operation for every supplier that can supply this item to
@@ -4486,13 +4477,13 @@ class Buffer : public HasHierarchy<Buffer>,
 
   bool hasConsumingFlows() const;
 
-  /** Return the decoupled lead time of this buffer. */
+  /* Return the decoupled lead time of this buffer. */
   virtual Duration getDecoupledLeadTime(double qty,
                                         bool recurse_ip_buffers = true) const;
 
   static PyObject* getDecoupledLeadTimePython(PyObject* self, PyObject* args);
 
-  /** Returns the operation that is used to supply extra supply into this
+  /* Returns the operation that is used to supply extra supply into this
    * buffer. */
   Operation* getProducingOperation() const {
     if (producing_operation == uninitializedProducing)
@@ -4500,7 +4491,7 @@ class Buffer : public HasHierarchy<Buffer>,
     return producing_operation;
   }
 
-  /** Updates the operation that is used to supply extra supply into this
+  /* Updates the operation that is used to supply extra supply into this
    * buffer. */
   void setProducingOperation(Operation* o) {
     if (o && o->getHidden())
@@ -4511,29 +4502,29 @@ class Buffer : public HasHierarchy<Buffer>,
     setChanged();
   }
 
-  /** Returns the item stored in this buffer. */
+  /* Returns the item stored in this buffer. */
   Item* getItem() const { return it; }
 
-  /** Updates the Item stored in this buffer. */
+  /* Updates the Item stored in this buffer. */
   void setItem(Item*);
 
-  /** Returns the Location of this buffer. */
+  /* Returns the Location of this buffer. */
   Location* getLocation() const { return loc; }
 
-  /** Updates the location of this buffer. */
+  /* Updates the location of this buffer. */
   void setLocation(Location* i) {
     loc = i;
     // Trigger level recomputation
     HasLevel::triggerLazyRecomputation();
   }
 
-  /** Returns the minimum inventory level. */
+  /* Returns the minimum inventory level. */
   double getMinimum() const { return min_val; }
 
-  /** Return true if this buffer represents a tool. */
+  /* Return true if this buffer represents a tool. */
   bool getTool() const { return (flags & TOOL) != 0; }
 
-  /** Marks the buffer as a tool. */
+  /* Marks the buffer as a tool. */
   void setTool(bool b) {
     if (b)
       flags |= TOOL;
@@ -4541,87 +4532,87 @@ class Buffer : public HasHierarchy<Buffer>,
       flags &= ~TOOL;
   }
 
-  /** Debugging function. */
+  /* Debugging function. */
   void inspect(const string& = "", const short = 0) const;
 
   static PyObject* inspectPython(PyObject*, PyObject*);
 
-  /** Return a pointer to the next buffer for the same item. */
+  /* Return a pointer to the next buffer for the same item. */
   Buffer* getNextItemBuffer() const { return nextItemBuffer; }
 
-  /** Returns a pointer to a calendar for storing the minimum inventory
+  /* Returns a pointer to a calendar for storing the minimum inventory
    * level. */
   Calendar* getMinimumCalendar() const { return min_cal; }
 
-  /** Returns the maximum inventory level. */
+  /* Returns the maximum inventory level. */
   double getMaximum() const { return max_val; }
 
-  /** Returns a pointer to a calendar for storing the maximum inventory
+  /* Returns a pointer to a calendar for storing the maximum inventory
    * level. */
   Calendar* getMaximumCalendar() const { return max_cal; }
 
-  /** Updates the minimum inventory target for the buffer. */
+  /* Updates the minimum inventory target for the buffer. */
   void setMinimum(double);
 
-  /** Updates the minimum inventory target for the buffer. */
+  /* Updates the minimum inventory target for the buffer. */
   void setMinimumCalendar(Calendar*);
 
-  /** Updates the minimum inventory target for the buffer. */
+  /* Updates the minimum inventory target for the buffer. */
   void setMaximum(double);
 
-  /** Updates the minimum inventory target for the buffer. */
+  /* Updates the minimum inventory target for the buffer. */
   void setMaximumCalendar(Calendar*);
 
-  /** Initialize the class. */
+  /* Initialize the class. */
   static int initialize();
 
-  /** Destructor. */
+  /* Destructor. */
   virtual ~Buffer();
 
-  /** Returns the available material on hand immediately after the
+  /* Returns the available material on hand immediately after the
    * given date.
    */
   double getOnHand(Date d) const;
 
-  /** Return the current on hand value, using the instance of the inventory
+  /* Return the current on hand value, using the instance of the inventory
    * operation.
    */
   double getOnHand() const;
 
-  /** Update the on-hand inventory at the start of the planning horizon. */
+  /* Update the on-hand inventory at the start of the planning horizon. */
   void setOnHand(double f);
 
-  /** Returns minimum or maximum available material on hand in the given
+  /* Returns minimum or maximum available material on hand in the given
    * daterange. The third parameter specifies whether we return the
    * minimum (which is the default) or the maximum value.
    * The computation is INclusive the start and end dates.
    */
   double getOnHand(Date, Date, bool min = true) const;
 
-  /** Returns a reference to the list of all flows of this buffer. */
+  /* Returns a reference to the list of all flows of this buffer. */
   const flowlist& getFlows() const { return flows; }
 
   flowlist::const_iterator getFlowIterator() const { return flows.begin(); }
 
   virtual void solve(Solver& s, void* v = nullptr) const { s.solve(this, v); }
 
-  /** Returns a reference to the list of all flow plans of this buffer. */
+  /* Returns a reference to the list of all flow plans of this buffer. */
   const flowplanlist& getFlowPlans() const { return flowplans; }
 
   flowplanlist::const_iterator getFlowPlanIterator() const {
     return flowplans.begin();
   }
 
-  /** Returns a reference to the list of all flow plans of this buffer. */
+  /* Returns a reference to the list of all flow plans of this buffer. */
   flowplanlist& getFlowPlans() { return flowplans; }
 
-  /** Return the flow that is associates a given operation with this buffer.
+  /* Return the flow that is associates a given operation with this buffer.
    * Returns nullptr is no such flow exists. */
   Flow* findFlow(const Operation* o, Date d) const {
     return o ? o->findFlow(this, d) : nullptr;
   }
 
-  /** Deletes all operationplans consuming from or producing from this
+  /* Deletes all operationplans consuming from or producing from this
    * buffer. The boolean parameter controls whether we delete also locked
    * operationplans or not.
    */
@@ -4639,7 +4630,7 @@ class Buffer : public HasHierarchy<Buffer>,
   virtual const MetaClass& getType() const { return *metadata; }
   static const MetaCategory* metadata;
 
-  /** This function matches producing and consuming operationplans
+  /* This function matches producing and consuming operationplans
    * with each other, and updates the pegging iterator accordingly.
    */
   void followPegging(PeggingIterator&, FlowPlan*, double, double, short);
@@ -4677,81 +4668,81 @@ class Buffer : public HasHierarchy<Buffer>,
     HasLevel::registerFields<Cls>(m);
   }
 
-  /** A dummy producing operation to mark uninitialized ones. */
+  /* A dummy producing operation to mark uninitialized ones. */
   static OperationFixedTime* uninitializedProducing;
 
  private:
-  /** A constant defining the default max inventory target.\\
+  /* A constant defining the default max inventory target.\\
    * Theoretically we should set this to DBL_MAX, but then the results
    * are not portable across platforms.
    */
   static const double default_max;
 
-  /** This models the dynamic part of the plan, representing all planned
+  /* This models the dynamic part of the plan, representing all planned
    * material flows on this buffer. */
   flowplanlist flowplans;
 
-  /** This models the defined material flows on this buffer. */
+  /* This models the defined material flows on this buffer. */
   flowlist flows;
 
-  /** Hide this entity from serialization or not. */
+  /* Hide this entity from serialization or not. */
   bool hidden = false;
 
-  /** This is the operation used to create extra material in this buffer. */
+  /* This is the operation used to create extra material in this buffer. */
   Operation* producing_operation = uninitializedProducing;
 
-  /** Location of this buffer.<br>
-   * This field is only used as information.<br>
+  /* Location of this buffer.
+   * This field is only used as information.
    * The default is nullptr.
    */
   Location* loc = nullptr;
 
-  /** Item being stored in this buffer.<br>
+  /* Item being stored in this buffer.
    * The default value is nullptr.
    */
   Item* it = nullptr;
 
-  /** Minimum inventory target.<br>
+  /* Minimum inventory target.
    * If a minimum calendar is specified this field is ignored.
    * @see min_cal
    */
   double min_val = 0.0;
 
-  /** Maximum inventory target. <br>
+  /* Maximum inventory target.
    * If a maximum calendar is specified this field is ignored.
    * @see max_cal
    */
   double max_val = default_max;
 
-  /** Points to a calendar to store the minimum inventory level.<br>
+  /* Points to a calendar to store the minimum inventory level.
    * The default value is nullptr, resulting in a constant minimum level
    * of 0.
    */
   Calendar* min_cal = nullptr;
 
-  /** Points to a calendar to store the maximum inventory level.<br>
+  /* Points to a calendar to store the maximum inventory level.
    * The default value is nullptr, resulting in a buffer without excess
    * inventory problems.
    */
   Calendar* max_cal = nullptr;
 
-  /** Maintain a linked list of buffers per item. */
+  /* Maintain a linked list of buffers per item. */
   Buffer* nextItemBuffer = nullptr;
 
-  /** A flag that marks whether this buffer represents a tool or not. */
+  /* A flag that marks whether this buffer represents a tool or not. */
   static const unsigned short TOOL = 1;
   unsigned short flags = 0;
 };
 
-/** @brief An internally generated operation to represent inventory. */
+/* An internally generated operation to represent inventory. */
 class OperationInventory : public OperationFixedTime {
   friend class Buffer;
 
  private:
-  /** Constructor. */
+  /* Constructor. */
   explicit OperationInventory(Buffer*);
 
-  /** Destructor. */
+  /* Destructor. */
   virtual ~OperationInventory() {}
 
  public:
@@ -4771,22 +4762,22 @@ class OperationInventory : public OperationFixedTime {
   }
 };
 
-/** @brief An internally generated operation to represent a zero time delivery.
+/* An internally generated operation to represent a zero time delivery.
  */
 class OperationDelivery : public OperationFixedTime {
   friend class Demand;
 
  public:
-  /** Default constructor. */
+  /* Default constructor. */
   explicit OperationDelivery();
 
-  /** Destructor. */
+  /* Destructor. */
   virtual ~OperationDelivery() {}
 
-  /** Return the delivery buffer. */
+  /* Return the delivery buffer. */
   Buffer* getBuffer() const;
 
-  /** Update the delivery buffer. */
+  /* Update the delivery buffer. */
   void setBuffer(Buffer*);
 
   static int initialize();
@@ -4859,7 +4850,7 @@ class Item::bufferIterator {
   Buffer* cur;
 
  public:
-  /** Constructor. */
+  /* Constructor. */
   bufferIterator(const Item* i) : cur(i ? i->firstItemBuffer : nullptr) {}
 
   bool operator!=(const bufferIterator& b) const { return b.cur != cur; }
@@ -4894,7 +4885,7 @@ inline int Item::getCluster() const {
   return firstItemBuffer ? firstItemBuffer->getCluster() : 0;
 }
 
-/** @brief This class is the default implementation of the abstract Buffer
+/* This class is the default implementation of the abstract Buffer
  * class. */
 class BufferDefault : public Buffer {
  public:
@@ -4905,7 +4896,7 @@ class BufferDefault : public Buffer {
   static int initialize();
 };
 
-/** @brief  This class represents a material buffer with an infinite supply of
+/*  This class represents a material buffer with an infinite supply of
  * extra material.
  *
  * In other words, it never constrains the plan and it doesn't propagate any
@@ -4925,7 +4916,7 @@ class BufferInfinite : public Buffer {
   static int initialize();
 };
 
-/** @brief This class defines a material flow to/from a buffer, linked with an
+/* This class defines a material flow to/from a buffer, linked with an
  * operation. This default implementation plans the material flow at the
  * start of the operation, after the setup time has been completed.
  */
@@ -4934,10 +4925,10 @@ class Flow : public Object,
              public Solvable,
              public HasSource {
  public:
-  /** Destructor. */
+  /* Destructor. */
   virtual ~Flow();
 
-  /** Constructor. */
+  /* Constructor. */
   explicit Flow(Operation* o, Buffer* b, double q) : quantity(q) {
     setOperation(o);
     setBuffer(b);
@@ -4945,7 +4936,7 @@ class Flow : public Object,
     HasLevel::triggerLazyRecomputation();
   }
 
-  /** Constructor. */
+  /* Constructor. */
   explicit Flow(Operation* o, Buffer* b, double q, DateRange e) : quantity(q) {
     setOperation(o);
     setBuffer(b);
@@ -4954,13 +4945,13 @@ class Flow : public Object,
     HasLevel::triggerLazyRecomputation();
   }
 
-  /** Search an existing object. */
+  /* Search an existing object. */
   static Object* finder(const DataValueDict&);
 
-  /** Returns the operation. */
+  /* Returns the operation. */
   Operation* getOperation() const { return getPtrA(); }
 
-  /** Updates the operation of this flow. This method can be called only ONCE
+  /* Updates the operation of this flow. This method can be called only ONCE
    * for each flow. In case that doesn't suit you, delete the existing flow
    * and create a new one.
    */
@@ -4968,19 +4959,19 @@ class Flow : public Object,
     if (o) setPtrA(o, o->getFlows());
   }
 
-  /** Returns true if this flow consumes material from the buffer. */
+  /* Returns true if this flow consumes material from the buffer. */
   bool isConsumer() const { return quantity < 0 || quantity_fixed < 0; }
 
-  /** Returns true if this flow produces material into the buffer. */
+  /* Returns true if this flow produces material into the buffer. */
   bool isProducer() const {
     return quantity > 0 || quantity_fixed > 0 ||
            (quantity == 0 && quantity_fixed == 0);
   }
 
-  /** Returns the material flow PER UNIT of the operationplan. */
+  /* Returns the material flow PER UNIT of the operationplan. */
   double getQuantity() const { return quantity; }
 
-  /** Updates the material flow PER UNIT of the operationplan. Existing
+  /* Updates the material flow PER UNIT of the operationplan. Existing
    * flowplans are NOT updated to take the new quantity in effect. Only new
    * operationplans and updates to existing ones will use the new quantity
    * value.
@@ -4992,10 +4983,10 @@ class Flow : public Object,
       throw DataException("Quantity and quantity_fixed must have equal sign");
   }
 
-  /** Returns the CONSTANT material flow PER UNIT of the operationplan. */
+  /* Returns the CONSTANT material flow PER UNIT of the operationplan. */
   double getQuantityFixed() const { return quantity_fixed; }
 
-  /** Updates the CONSTANT material flow of the operationplan. Existing
+  /* Updates the CONSTANT material flow of the operationplan. Existing
    * flowplans are NOT updated to take the new quantity in effect. Only new
    * operationplans and updates to existing ones will use the new quantity
    * value.
@@ -5007,7 +4998,7 @@ class Flow : public Object,
       throw DataException("Quantity and quantity_fixed must have equal sign");
   }
 
-  /** Returns the buffer. */
+  /* Returns the buffer. */
   Buffer* getBuffer() const {
     Buffer* b = getPtrB();
     if (b) return b;
@@ -5021,7 +5012,7 @@ class Flow : public Object,
     return b;
   }
 
-  /** Updates the buffer of this flow. This method can be called only ONCE
+  /* Updates the buffer of this flow. This method can be called only ONCE
    * for each flow. In case that doesn't suit you, delete the existing flow
    * and create a new one.
    */
@@ -5037,7 +5028,7 @@ class Flow : public Object,
     item = i;
   }
 
-  /** Return the leading flow of this group.
+  /* Return the leading flow of this group.
    * When the flow has no alternate or if the flow is itself leading
    * then nullptr is returned.
    */
@@ -5050,7 +5041,7 @@ class Flow : public Object,
     return nullptr;
   }
 
-  /** Return whether the flow has alternates. */
+  /* Return whether the flow has alternates. */
   bool hasAlternates() const {
     if (getName().empty() || !getOperation()) return false;
     for (Operation::flowlist::const_iterator h =
@@ -5060,20 +5051,20 @@ class Flow : public Object,
     return false;
   }
 
-  /** Return the search mode. */
+  /* Return the search mode. */
   SearchMode getSearch() const { return search; }
 
-  /** Update the search mode. */
+  /* Update the search mode. */
   void setSearch(const string a) { search = decodeSearchMode(a); }
 
-  /** A flow is considered hidden when either its buffer or operation
+  /* A flow is considered hidden when either its buffer or operation
    * are hidden. */
   virtual bool getHidden() const {
     return (getBuffer() && getBuffer()->getHidden()) ||
            (getOperation() && getOperation()->getHidden());
   }
 
-  /** This method holds the logic the compute the date and quantity of a
+  /* This method holds the logic the compute the date and quantity of a
    * flowplan. */
   virtual pair<Date, double> getFlowplanDateQuantity(const FlowPlan*) const;
 
@@ -5117,40 +5108,40 @@ class Flow : public Object,
   }
 
  protected:
-  /** Default constructor. */
+  /* Default constructor. */
   explicit Flow() {
     initType(metadata);
     HasLevel::triggerLazyRecomputation();
   }
 
  private:
-  /** Item of the flow. This can be used to automatically generate the buffer
+  /* Item of the flow. This can be used to automatically generate the buffer
    * when and if needed.
    */
   Item* item = nullptr;
 
-  /** Variable quantity of the material consumption/production. */
+  /* Variable quantity of the material consumption/production. */
   double quantity = 0.0;
 
-  /** Constant quantity of the material consumption/production. */
+  /* Constant quantity of the material consumption/production. */
   double quantity_fixed = 0.0;
 
-  /** Mode to select the preferred alternates. */
+  /* Mode to select the preferred alternates. */
   SearchMode search = PRIORITY;
 
   static PyObject* create(PyTypeObject* pytype, PyObject*, PyObject*);
 };
 
-/** @brief This class defines a material flow to/from a buffer, linked with an
+/* This class defines a material flow to/from a buffer, linked with an
  * operation. This subclass represents a flow that is at the start date of
  * the operation.
  */
 class FlowStart : public Flow {
  public:
-  /** Constructor. */
+  /* Constructor. */
   explicit FlowStart(Operation* o, Buffer* b, double q) : Flow(o, b, q) {}
 
-  /** This constructor is called from the plan begin_element function. */
+  /* This constructor is called from the plan begin_element function. */
   explicit FlowStart() {}
 
   virtual const MetaClass& getType() const { return *metadata; }
@@ -5158,19 +5149,19 @@ class FlowStart : public Flow {
   virtual void solve(Solver& s, void* v = nullptr) const { s.solve(this, v); }
 };
 
-/** @brief This class defines a material flow to/from a buffer, linked with an
+/* This class defines a material flow to/from a buffer, linked with an
  * operation. This subclass represents a flow that is at end date of the
  * operation.
  */
 class FlowEnd : public Flow {
  public:
-  /** Constructor. */
+  /* Constructor. */
   explicit FlowEnd(Operation* o, Buffer* b, double q) : Flow(o, b, q) {}
 
-  /** This constructor is called from the plan begin_element function. */
+  /* This constructor is called from the plan begin_element function. */
   explicit FlowEnd() {}
 
-  /** This method holds the logic the compute the date and quantity of a
+  /* This method holds the logic the compute the date and quantity of a
    * flowplan. */
   virtual pair<Date, double> getFlowplanDateQuantity(const FlowPlan*) const;
 
@@ -5180,7 +5171,7 @@ class FlowEnd : public Flow {
   static const MetaClass* metadata;
 };
 
-/** @brief This class represents a flow producing/material of a fixed quantity
+/* This class represents a flow producing/material of a fixed quantity
  * spread across the total duration of the operationplan
  *
  * TODO The implementation of this class ignores date effectivity.
@@ -5190,13 +5181,13 @@ class FlowTransferBatch : public Flow {
   double transferbatch = 0;
 
  public:
-  /** Constructor. */
+  /* Constructor. */
   explicit FlowTransferBatch(Operation* o, Buffer* b, double q)
       : Flow(o, b, q) {
     initType(metadata);
   }
 
-  /** This constructor is called from the plan begin_element function. */
+  /* This constructor is called from the plan begin_element function. */
   explicit FlowTransferBatch() { initType(metadata); }
 
   double getTransferBatch() const { return transferbatch; }
@@ -5214,7 +5205,7 @@ class FlowTransferBatch : public Flow {
                            &Cls::setTransferBatch);
   }
 
-  /** This method holds the logic the compute the date and quantity of a
+  /* This method holds the logic the compute the date and quantity of a
    * flowplan. */
   virtual pair<Date, double> getFlowplanDateQuantity(const FlowPlan*) const;
 
@@ -5224,7 +5215,7 @@ class FlowTransferBatch : public Flow {
   static const MetaClass* metadata;
 };
 
-/** @brief A flowplan represents a planned material flow in or out of a buffer.
+/* A flowplan represents a planned material flow in or out of a buffer.
  *
  * Flowplans are owned by operationplans, which manage a container to store
  * them.
@@ -5235,20 +5226,20 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand {
   friend class FlowTransferBatch;
 
  private:
-  /** Points to the flow instantiated by this flowplan. */
+  /* Points to the flow instantiated by this flowplan. */
   Flow* fl = nullptr;
 
-  /** Points to the operationplan owning this flowplan. */
+  /* Points to the operationplan owning this flowplan. */
   OperationPlan* oper = nullptr;
 
-  /** Points to the next flowplan owned by the same operationplan. */
+  /* Points to the next flowplan owned by the same operationplan. */
   FlowPlan* nextFlowPlan = nullptr;
 
-  /** Finds the flowplan on the operationplan when we read data. */
+  /* Finds the flowplan on the operationplan when we read data. */
   static Object* reader(const MetaClass*, const DataValueDict&,
                         CommandManager*);
 
-  /** Is this operationplanmaterial locked?
+  /* Is this operationplanmaterial locked?
       LEAVE THIS VARIABLE DECLARATION BELOW THE OTHERS
   */
   // Flag bits
@@ -5263,10 +5254,10 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand {
   static int initialize();
   virtual const MetaClass& getType() const { return *metadata; }
 
-  /** Constructor. */
+  /* Constructor. */
   explicit FlowPlan(OperationPlan*, const Flow*);
 
-  /** Constructor. */
+  /* Constructor. */
   explicit FlowPlan(OperationPlan*, const Flow*, Date, double);
 
   bool isFollowingBatch() const { return (flags & FOLLOWING_BATCH) != 0; }
@@ -5278,26 +5269,26 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand {
       flags &= ~FOLLOWING_BATCH;
   }
 
-  /** Returns the flow of which this is an plan instance. */
+  /* Returns the flow of which this is an plan instance. */
   Flow* getFlow() const { return fl; }
 
-  /** Returns the buffer, a convenient shortcut. */
+  /* Returns the buffer, a convenient shortcut. */
   Buffer* getBuffer() const { return fl ? fl->getBuffer() : nullptr; }
 
-  /** Returns the operation, a convenient shortcut. */
+  /* Returns the operation, a convenient shortcut. */
   Operation* getOperation() const { return fl ? fl->getOperation() : nullptr; }
 
-  /** Returns the item being produced or consumed. */
+  /* Returns the item being produced or consumed. */
   Item* getItem() const {
     return (fl && fl->getBuffer()) ? fl->getBuffer()->getItem() : nullptr;
   }
 
-  /** Update the flowplan to a different item.
+  /* Update the flowplan to a different item.
    * The new flow must belong to the same operation.
    */
   void setItem(Item*);
 
-  /** Update the operationplan.
+  /* Update the operationplan.
    * This can only be called once.
    */
   void setOperationPlan(OperationPlan* o) {
@@ -5307,15 +5298,15 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand {
       oper = o;
   }
 
-  /** Update the flow of an already existing flowplan.<br>
+  /* Update the flow of an already existing flowplan.
    * The new flow must belong to the same operation.
    */
   void setFlow(Flow*);
 
-  /** Returns the operationplan owning this flowplan. */
+  /* Returns the operationplan owning this flowplan. */
   virtual OperationPlan* getOperationPlan() const { return oper; }
 
-  /** Return the status of the operationplanmaterial.
+  /* Return the status of the operationplanmaterial.
    * The status string is one of the following:
    * - proposed
    * - confirmed
@@ -5323,7 +5314,7 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand {
    */
   string getStatus() const;
 
-  /** Update the status of the operationplanmaterial. */
+  /* Update the status of the operationplanmaterial. */
   void setStatus(const string&);
 
   bool getProposed() const {
@@ -5363,11 +5354,11 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand {
     }
   }
 
-  /** Returns the duration before the current onhand will be completely
+  /* Returns the duration before the current onhand will be completely
    * consumed. */
   Duration getPeriodOfCover() const;
 
-  /** Destructor. */
+  /* Destructor. */
   virtual ~FlowPlan() {
     Buffer* b = getFlow()->getBuffer();
     b->setChanged();
@@ -5378,10 +5369,10 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand {
     setQuantity(quantity, false, true, true);
   }
 
-  /** Updates the quantity of the flowplan by changing the quantity of the
-   * operationplan owning this flowplan.<br>
+  /* Updates the quantity of the flowplan by changing the quantity of the
+   * operationplan owning this flowplan.
    * The boolean parameter is used to control whether to round up (false)
-   * or down (true) in case the operation quantity must be a multiple.<br>
+   * or down (true) in case the operation quantity must be a multiple.
    * The second parameter is to flag whether we want to actually perform
    * the resizing, or only to simulate it.
    *
@@ -5401,17 +5392,17 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand {
                                    bool update = true, bool execute = true,
                                    short mode = 2);
 
-  /** This function needs to be called whenever the flowplan date or
+  /* This function needs to be called whenever the flowplan date or
    * quantity are changed.
    */
   void update();
 
-  /** Return a pointer to the timeline data structure owning this flowplan. */
+  /* Return a pointer to the timeline data structure owning this flowplan. */
   TimeLine<FlowPlan>* getTimeLine() const {
     return &(getFlow()->getBuffer()->flowplans);
   }
 
-  /** Returns true when the flowplan is hidden.<br>
+  /* Returns true when the flowplan is hidden.
    * This is determined by looking at whether the flow is hidden or not.
    */
   bool getHidden() const { return fl->getHidden(); }
@@ -5458,77 +5449,77 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand {
   }
 };
 
-/** @brief An specific changeover rule in a setup matrix. */
+/* An specific changeover rule in a setup matrix. */
 class SetupMatrixRule : public Object {
   friend class SetupMatrix;
 
  public:
-  /** Default constructor. */
+  /* Default constructor. */
   SetupMatrixRule() {}
 
-  /** Constructor. */
+  /* Constructor. */
   SetupMatrixRule(SetupMatrix* m, const PooledString& f, const PooledString& t,
                   Duration d, double c, int p)
       : matrix(m), from(f), to(t), duration(d), cost(c), priority(p) {}
 
-  /** Update the matrix pointer. */
+  /* Update the matrix pointer. */
   void setSetupMatrix(SetupMatrix*);
 
-  /** Destructor. */
+  /* Destructor. */
   ~SetupMatrixRule();
 
   static int initialize();
 
   static const MetaCategory* metadata;
 
-  /** Factory method. */
+  /* Factory method. */
   static Object* reader(const MetaClass*, const DataValueDict&,
                         CommandManager* = nullptr);
 
-  /** Update the priority.<br>
+  /* Update the priority.
    * The priority value is a key field. If multiple rules have the
    * same priority a data exception is thrown.
    */
   void setPriority(const int);
 
-  /** Return the matrix owning this rule. */
+  /* Return the matrix owning this rule. */
   SetupMatrix* getSetupMatrix() const { return matrix; }
 
-  /** Return the priority. */
+  /* Return the priority. */
   int getPriority() const { return priority; }
 
-  /** Update the from setup. */
+  /* Update the from setup. */
   void setFromSetup(const string& f) {
     from = f;
     updateExpression();
   }
 
-  /** Return the from setup. */
+  /* Return the from setup. */
   string getFromSetupString() const { return from; }
 
   const PooledString& getFromSetup() const { return from; }
 
-  /** Update the to setup. */
+  /* Update the to setup. */
   void setToSetup(const string& f) {
     to = f;
     updateExpression();
   }
 
-  /** Return the to setup. */
+  /* Return the to setup. */
   string getToSetupString() const { return to; }
 
   const PooledString& getToSetup() const { return to; }
 
-  /** Update the conversion duration. */
+  /* Update the conversion duration. */
   void setDuration(Duration p) { duration = p; }
 
-  /** Return the conversion duration. */
+  /* Return the conversion duration. */
   Duration getDuration() const { return duration; }
 
-  /** Update the conversion cost. */
+  /* Update the conversion cost. */
   void setCost(double p) { cost = p; }
 
-  /** Return the conversion cost. */
+  /* Return the conversion cost. */
   double getCost() const { return cost; }
 
   template <class Cls>
@@ -5546,33 +5537,33 @@ class SetupMatrixRule : public Object {
         DONT_SERIALIZE + PARENT);
   }
 
-  /** Returns true if this rule matches with the from-setup and to-setup being
+  /* Returns true if this rule matches with the from-setup and to-setup being
    * passed. */
   bool matches(const PooledString& f, const PooledString& t) const;
 
  private:
-  /** Pointer to the owning matrix. */
+  /* Pointer to the owning matrix. */
   SetupMatrix* matrix = nullptr;
 
-  /** Pointer to the next rule in this matrix. */
+  /* Pointer to the next rule in this matrix. */
   SetupMatrixRule* nextRule = nullptr;
 
-  /** Pointer to the previous rule in this matrix. */
+  /* Pointer to the previous rule in this matrix. */
   SetupMatrixRule* prevRule = nullptr;
 
-  /** Original setup. */
+  /* Original setup. */
   PooledString from;
 
-  /** New setup. */
+  /* New setup. */
   PooledString to;
 
-  /** Changeover time. */
+  /* Changeover time. */
   Duration duration;
 
-  /** Changeover cost. */
+  /* Changeover cost. */
   double cost = 0.0;
 
-  /** Priority of the rule.<br>
+  /* Priority of the rule.
    * This field is the key field, i.e. within a setup matrix all rules
    * need to have different priorities.
    */
@@ -5586,13 +5577,13 @@ class SetupMatrixRule : public Object {
   bool matchall = false;
 
  public:
-  /** @brief An iterator class to go through all rules of a setup matrix. */
+  /* An iterator class to go through all rules of a setup matrix. */
   class iterator {
    private:
     SetupMatrixRule* curRule;
 
    public:
-    /** Constructor. */
+    /* Constructor. */
     iterator(SetupMatrixRule* c = nullptr) : curRule(c) {}
 
     bool operator!=(const iterator& b) const { return b.curRule != curRule; }
@@ -5635,15 +5626,15 @@ class SetupMatrixRule : public Object {
   };
 };
 
-/** @brief This class is the default implementation of the abstract
+/* This class is the default implementation of the abstract
  * SetupMatrixRule class.
  */
 class SetupMatrixRuleDefault : public SetupMatrixRule {
  public:
-  /** Default constructor. */
+  /* Default constructor. */
   explicit SetupMatrixRuleDefault() { initType(metadata); }
 
-  /** Constructor. */
+  /* Constructor. */
   SetupMatrixRuleDefault(SetupMatrix* m, const PooledString& f,
                          const PooledString& t, Duration d, double c, int p)
       : SetupMatrixRule(m, f, t, d, c, p) {
@@ -5655,7 +5646,7 @@ class SetupMatrixRuleDefault : public SetupMatrixRule {
   static int initialize();
 };
 
-/** @brief This class is used to represent a matrix defining the changeover
+/* This class is used to represent a matrix defining the changeover
  * times between setups.
  */
 class SetupMatrix : public HasName<SetupMatrix>, public HasSource {
@@ -5674,12 +5665,12 @@ class SetupMatrix : public HasName<SetupMatrix>, public HasSource {
   }
 
  public:
-  /** Default constructor. */
+  /* Default constructor. */
   explicit SetupMatrix()
       : ChangeOverNotAllowed(this, "NotAllowed", "NotAllowed", 365L * 86400L,
                              DBL_MAX, INT_MAX) {}
 
-  /** Destructor. */
+  /* Destructor. */
   ~SetupMatrix();
 
   static int initialize();
@@ -5687,23 +5678,23 @@ class SetupMatrix : public HasName<SetupMatrix>, public HasSource {
   virtual const MetaClass& getType() const { return *metadata; }
   static const MetaCategory* metadata;
 
-  /** Returns an iterator to go through the list of rules. */
+  /* Returns an iterator to go through the list of rules. */
   SetupMatrixRule::iterator getRules() const {
     return SetupMatrixRule::iterator(firstRule);
   }
 
-  /** Computes the changeover time and cost between 2 setup values.
+  /* Computes the changeover time and cost between 2 setup values.
    *
    * To compute the time of a changeover the algorithm will evaluate all
-   * rules in sequence (in order of priority).<br>
+   * rules in sequence (in order of priority).
    * For a rule to match the changeover between the original setup X to
    * a new setup Y, two conditions need to be fulfilled:
-   *  - The original setup X must match with the fromsetup of the rule.<br>
+   *  - The original setup X must match with the fromsetup of the rule.
    *    If the fromsetup field is empty, it is considered a match.
-   *  - The new setup Y must match with the tosetup of the rule.<br>
+   *  - The new setup Y must match with the tosetup of the rule.
    *    If the tosetup field is empty, it is considered a match.
    * As soon as a matching rule is found, it is applied and subsequent
-   * rules are not evaluated.<br>
+   * rules are not evaluated.
    * If no matching rule is found, the changeover is not allowed: a pointer
    * to a dummy changeover with a very high cost and duration is returned.
    */
@@ -5711,14 +5702,14 @@ class SetupMatrix : public HasName<SetupMatrix>, public HasSource {
                                   Resource*) const;
 
  private:
-  /** Head of the list of rules. */
+  /* Head of the list of rules. */
   SetupMatrixRule* firstRule = nullptr;
 
-  /** A dummy rule to mark disallowed changeovers. */
+  /* A dummy rule to mark disallowed changeovers. */
   const SetupMatrixRuleDefault ChangeOverNotAllowed;
 };
 
-/** @brief This class is the default implementation of the abstract
+/* This class is the default implementation of the abstract
  * SetupMatrix class.
  */
 class SetupMatrixDefault : public SetupMatrix {
@@ -5730,25 +5721,25 @@ class SetupMatrixDefault : public SetupMatrix {
   static int initialize();
 };
 
-/** @brief This class models skills that can be assigned to resources. */
+/* This class models skills that can be assigned to resources. */
 class Skill : public HasName<Skill>, public HasSource {
   friend class ResourceSkill;
 
  public:
-  /** Default constructor. */
+  /* Default constructor. */
   explicit Skill() { initType(metadata); }
 
-  /** Destructor. */
+  /* Destructor. */
   ~Skill();
 
   typedef Association<Resource, Skill, ResourceSkill>::ListB resourcelist;
 
-  /** Returns an iterator over the list of resources having this skill. */
+  /* Returns an iterator over the list of resources having this skill. */
   resourcelist::const_iterator getResources() const {
     return resources.begin();
   }
 
-  /** Python interface to add a new resource. */
+  /* Python interface to add a new resource. */
   static PyObject* addPythonResource(PyObject*, PyObject*);
 
   static int initialize();
@@ -5768,11 +5759,11 @@ class Skill : public HasName<Skill>, public HasSource {
   }
 
  private:
-  /** This is a list of resources having this skill. */
+  /* This is a list of resources having this skill. */
   resourcelist resources;
 };
 
-/** @brief this class is the default implementation of the abstract
+/* this class is the default implementation of the abstract
  * Skill class.
  */
 class SkillDefault : public Skill {
@@ -5784,7 +5775,7 @@ class SkillDefault : public Skill {
   static int initialize();
 };
 
-/** @brief This class represents a workcentre, a physical or logical
+/* This class represents a workcentre, a physical or logical
  * representation of capacity.
  */
 class Resource : public HasHierarchy<Resource>,
@@ -5800,32 +5791,32 @@ class Resource : public HasHierarchy<Resource>,
   class PlanIterator;
   class OperationPlanIterator;
 
-  /** The default time window before the ask date where we look for
+  /* The default time window before the ask date where we look for
    * available capacity. */
   static Duration defaultMaxEarly;
 
-  /** Default constructor. */
+  /* Default constructor. */
   explicit Resource() { setMaximum(1); }
 
-  /** Destructor. */
+  /* Destructor. */
   virtual ~Resource();
 
-  /** Updates the size of a resource, when it is time-dependent. */
+  /* Updates the size of a resource, when it is time-dependent. */
   virtual void setMaximumCalendar(Calendar*);
 
-  /** Updates the size of a resource. */
+  /* Updates the size of a resource. */
   void setMaximum(double);
 
-  /** Return a pointer to the maximum capacity profile. */
+  /* Return a pointer to the maximum capacity profile. */
   Calendar* getMaximumCalendar() const { return size_max_cal; }
 
-  /** Return a pointer to the maximum capacity. */
+  /* Return a pointer to the maximum capacity. */
   double getMaximum() const { return size_max; }
 
-  /** Returns the availability calendar of the resource. */
+  /* Returns the availability calendar of the resource. */
   Calendar* getAvailable() const { return available; }
 
-  /** Updates the availability calendar of the resource. */
+  /* Updates the availability calendar of the resource. */
   void setAvailable(Calendar* b) { available = b; }
 
   double getEfficiency() const { return efficiency; }
@@ -5841,12 +5832,12 @@ class Resource : public HasHierarchy<Resource>,
 
   void setEfficiencyCalendar(Calendar* c) { efficiency_calendar = c; }
 
-  /** Returns the cost of using 1 unit of this resource for 1 hour.<br>
+  /* Returns the cost of using 1 unit of this resource for 1 hour.
    * The default value is 0.0.
    */
   double getCost() const { return cost; }
 
-  /** Update the cost of using 1 unit of this resource for 1 hour. */
+  /* Update the cost of using 1 unit of this resource for 1 hour. */
   void setCost(const double c) {
     if (c >= 0)
       cost = c;
@@ -5858,67 +5849,67 @@ class Resource : public HasHierarchy<Resource>,
   typedef Association<Resource, Skill, ResourceSkill>::ListA skilllist;
   typedef TimeLine<LoadPlan> loadplanlist;
 
-  /** Returns a reference to the list of loadplans. */
+  /* Returns a reference to the list of loadplans. */
   const loadplanlist& getLoadPlans() const { return loadplans; }
 
-  /** Returns a reference to the list of loadplans. */
+  /* Returns a reference to the list of loadplans. */
   loadplanlist::const_iterator getLoadPlanIterator() const {
     return loadplans.begin();
   }
 
-  /** Returns a reference to the list of loadplans. */
+  /* Returns a reference to the list of loadplans. */
   loadplanlist& getLoadPlans() { return loadplans; }
 
   inline OperationPlanIterator getOperationPlans() const;
 
-  /** Returns a constant reference to the list of loads. It defines
+  /* Returns a constant reference to the list of loads. It defines
    * which operations are using the resource.
    * TODO Get rid of this
    */
   const loadlist& getLoads() const { return loads; }
 
-  /** Debugging function. */
+  /* Debugging function. */
   void inspect(const string& = "", const short = 0) const;
 
   static PyObject* inspectPython(PyObject*, PyObject*);
 
-  /** Returns a constant reference to the list of loads. It defines
+  /* Returns a constant reference to the list of loads. It defines
    * which operations are using the resource.
    */
   loadlist::const_iterator getLoadIterator() const { return loads.begin(); }
 
-  /** Returns a constant reference to the list of skills. */
+  /* Returns a constant reference to the list of skills. */
   skilllist::const_iterator getSkills() const { return skills.begin(); }
 
-  /** Returns true when an resource has a certain skill between the specified
+  /* Returns true when an resource has a certain skill between the specified
    * dates. */
   bool hasSkill(Skill*, Date = Date::infinitePast, Date = Date::infinitePast,
                 ResourceSkill** = nullptr) const;
 
-  /** Return the load that is associates a given operation with this
+  /* Return the load that is associates a given operation with this
    * resource. Returns nullptr is no such load exists. */
   Load* findLoad(const Operation* o, Date d) const { return loads.find(o, d); }
 
-  /** Initialize the class. */
+  /* Initialize the class. */
   static int initialize();
 
-  /** Returns the location of this resource. */
+  /* Returns the location of this resource. */
   Location* getLocation() const { return loc; }
 
-  /** Updates the location of this resource. */
+  /* Updates the location of this resource. */
   void setLocation(Location* i) { loc = i; }
 
   virtual void solve(Solver& s, void* v = nullptr) const { s.solve(this, v); }
 
-  /** Deletes all operationplans loading this resource. The boolean parameter
+  /* Deletes all operationplans loading this resource. The boolean parameter
    * controls whether we delete also locked operationplans or not.
    */
   void deleteOperationPlans(bool = false);
 
-  /** Recompute the problems of this resource. */
+  /* Recompute the problems of this resource. */
   virtual void updateProblems();
 
-  /** Update the setup time of all operationplans on the resource. */
+  /* Update the setup time of all operationplans on the resource. */
   void updateSetupTime() const;
 
   void setOwner(Resource*);
@@ -5933,16 +5924,16 @@ class Resource : public HasHierarchy<Resource>,
   virtual const MetaClass& getType() const { return *metadata; }
   static const MetaCategory* metadata;
 
-  /** Returns true when this resource capacity represents time.
+  /* Returns true when this resource capacity represents time.
    * This is used by the resourceplan export.
    */
   virtual bool isTime() { return true; }
 
-  /** Returns the maximum inventory buildup allowed in case of capacity
+  /* Returns the maximum inventory buildup allowed in case of capacity
    * shortages. */
   Duration getMaxEarly() const { return maxearly; }
 
-  /** Updates the maximum inventory buildup allowed in case of capacity
+  /* Updates the maximum inventory buildup allowed in case of capacity
    * shortages. */
   void setMaxEarly(Duration c) {
     if (c >= 0L)
@@ -5951,21 +5942,21 @@ class Resource : public HasHierarchy<Resource>,
       throw DataException("MaxEarly must be positive");
   }
 
-  /** Return a pointer to the setup matrix. */
+  /* Return a pointer to the setup matrix. */
   SetupMatrix* getSetupMatrix() const { return setupmatrix; }
 
-  /** Update the reference to the setup matrix. */
+  /* Update the reference to the setup matrix. */
   void setSetupMatrix(SetupMatrix* s);
 
-  /** Return the current setup. */
+  /* Return the current setup. */
   PooledString getSetup() const {
     return setup ? setup->getSetup() : PooledString();
   }
 
-  /** Return the current setup. */
+  /* Return the current setup. */
   string getSetupString() const { return setup ? setup->getSetup() : ""; }
 
-  /** Update the current setup. */
+  /* Update the current setup. */
   void setSetup(const string& s) {
     if (setup)
       // Updated existing event
@@ -5976,7 +5967,7 @@ class Resource : public HasHierarchy<Resource>,
     }
   }
 
-  /** Return the setup of the resource on a specific date.
+  /* Return the setup of the resource on a specific date.
    * To avoid any ambiguity about the current setup of a resource
    * the calculation is based only on the latest *setup end* event
    * before (or at, when the parameter is true) the argument date.
@@ -6026,53 +6017,53 @@ class Resource : public HasHierarchy<Resource>,
   }
 
  protected:
-  /** This calendar is used to updates to the resource size. */
+  /* This calendar is used to updates to the resource size. */
   Calendar* size_max_cal = nullptr;
 
-  /** Stores the collection of all loadplans of this resource. */
+  /* Stores the collection of all loadplans of this resource. */
   loadplanlist loadplans;
 
  private:
-  /** The maximum resource size.<br>
+  /* The maximum resource size.
    * If a calendar is specified, this field is ignored.
    */
   double size_max = 0.0;
 
-  /** This is a list of all load models that are linking this resource with
+  /* This is a list of all load models that are linking this resource with
    * operations. */
   loadlist loads;
 
-  /** This is a list of skills this resource has. */
+  /* This is a list of skills this resource has. */
   skilllist skills;
 
-  /** A pointer to the location of the resource. */
+  /* A pointer to the location of the resource. */
   Location* loc = nullptr;
 
-  /** The cost of using 1 unit of this resource for 1 hour. */
+  /* The cost of using 1 unit of this resource for 1 hour. */
   double cost = 0.0;
 
-  /** The efficiency percentage of this resource. */
+  /* The efficiency percentage of this resource. */
   double efficiency = 100.0;
 
-  /** Time phased efficiency percentage. */
+  /* Time phased efficiency percentage. */
   Calendar* efficiency_calendar = nullptr;
 
-  /** Maximum inventory buildup allowed in case of capacity shortages. */
+  /* Maximum inventory buildup allowed in case of capacity shortages. */
   Duration maxearly = defaultMaxEarly;
 
-  /** Reference to the setup matrix. */
+  /* Reference to the setup matrix. */
   SetupMatrix* setupmatrix = nullptr;
 
-  /** Current setup. */
+  /* Current setup. */
   SetupEvent* setup = nullptr;
 
-  /** Availability calendar of the buffer. */
+  /* Availability calendar of the buffer. */
   Calendar* available = nullptr;
 
-  /** Specifies whether this resource is hidden for serialization. */
+  /* Specifies whether this resource is hidden for serialization. */
   bool hidden = false;
 
-  /** Python method that returns an iterator over the resource plan. */
+  /* Python method that returns an iterator over the resource plan. */
   static PyObject* plan(PyObject*, PyObject*);
 };
 
@@ -6082,10 +6073,10 @@ inline void OperationPlan::setSetupEvent(Resource* r, Date d,
   setSetupEvent(&(r->getLoadPlans()), d, s, m);
 }
 
-/** @brief This class provides an efficient way to iterate over
- * the plan of a resource aggregated in time buckets.<br>
+/* This class provides an efficient way to iterate over
+ * the plan of a resource aggregated in time buckets.
  * For resources of type default, a list of dates needs to be passed as
- * argument to define the time buckets.<br>
+ * argument to define the time buckets.
  * For resources of type buckets, the time buckets are defined on the
  * resource and the argument is ignored.
  */
@@ -6093,18 +6084,18 @@ class Resource::PlanIterator : public PythonExtension<Resource::PlanIterator> {
  public:
   static int initialize();
 
-  /** Constructor.
+  /* Constructor.
    * The first argument is the resource whose plan we're looking at.
    * The second argument is a Python iterator over a list of dates. These
    * dates define the buckets at which we aggregate the resource plan.
    */
   PlanIterator(Resource*, PyObject*);
 
-  /** Destructor. */
+  /* Destructor. */
   ~PlanIterator();
 
  private:
-  /** Structure for iterating over a resource. */
+  /* Structure for iterating over a resource. */
   struct _res {
     Resource* res;
     Resource::loadplanlist::iterator ldplaniter;
@@ -6121,10 +6112,10 @@ class Resource::PlanIterator : public PythonExtension<Resource::PlanIterator> {
 
   vector<_res> res_list;
 
-  /** A Python object pointing to a list of start dates of buckets. */
+  /* A Python object pointing to a list of start dates of buckets. */
   PyObject* bucketiterator;
 
-  /** Python function to iterate over the periods. */
+  /* Python function to iterate over the periods. */
   PyObject* iternext();
 
   double bucket_available;
@@ -6134,14 +6125,14 @@ class Resource::PlanIterator : public PythonExtension<Resource::PlanIterator> {
 
   void update(_res*, Date till);
 
-  /** Python object pointing to the start date of the plan bucket. */
+  /* Python object pointing to the start date of the plan bucket. */
   PyObject* start_date = nullptr;
 
-  /** Python object pointing to the start date of the plan bucket. */
+  /* Python object pointing to the start date of the plan bucket. */
   PyObject* end_date = nullptr;
 };
 
-/** @brief This class is the default implementation of the abstract
+/* This class is the default implementation of the abstract
  * Resource class.
  */
 class ResourceDefault : public Resource {
@@ -6153,7 +6144,7 @@ class ResourceDefault : public Resource {
   static int initialize();
 };
 
-/** @brief This class represents a resource that'll never have any
+/* This class represents a resource that'll never have any
  * capacity shortage. */
 class ResourceInfinite : public Resource {
  public:
@@ -6168,11 +6159,11 @@ class ResourceInfinite : public Resource {
   static int initialize();
 };
 
-/** @brief This class represents a resource whose capacity is defined per
+/* This class represents a resource whose capacity is defined per
     time bucket. */
 class ResourceBuckets : public Resource {
  public:
-  /** Default constructor. */
+  /* Default constructor. */
   explicit ResourceBuckets() { initType(metadata); }
 
   virtual void solve(Solver& s, void* v = nullptr) const { s.solve(this, v); }
@@ -6192,54 +6183,54 @@ class ResourceBuckets : public Resource {
 
   double getMaxBucketCapacity() const;
 
-  /** Updates the time buckets and the quantity per time bucket. */
+  /* Updates the time buckets and the quantity per time bucket. */
   virtual void setMaximumCalendar(Calendar*);
 
-  /** Compute the availability of the resource per bucket. */
+  /* Compute the availability of the resource per bucket. */
   static PyObject* computeBucketAvailability(PyObject*, PyObject*);
 
  private:
   bool computedFromCalendars = false;
 };
 
-/** @brief This class associates a resource with its skills. */
+/* This class associates a resource with its skills. */
 class ResourceSkill : public Object,
                       public Association<Resource, Skill, ResourceSkill>::Node,
                       public HasSource {
  public:
-  /** Default constructor. */
+  /* Default constructor. */
   explicit ResourceSkill() { initType(metadata); }
 
-  /** Constructor. */
+  /* Constructor. */
   explicit ResourceSkill(Skill*, Resource*, int);
 
-  /** Constructor. */
+  /* Constructor. */
   explicit ResourceSkill(Skill*, Resource*, int, DateRange);
 
-  /** Destructor. */
+  /* Destructor. */
   ~ResourceSkill();
 
-  /** Initialize the class. */
+  /* Initialize the class. */
   static int initialize();
 
-  /** Search an existing object. */
+  /* Search an existing object. */
   static Object* finder(const DataValueDict&);
 
-  /** Returns the resource. */
+  /* Returns the resource. */
   Resource* getResource() const { return getPtrA(); }
 
-  /** Updates the resource. This method can only be called on an instance. */
+  /* Updates the resource. This method can only be called on an instance. */
   void setResource(Resource* r) {
     if (r) setPtrA(r, r->skills);
   }
 
-  /** Returns the skill. */
+  /* Returns the skill. */
   Skill* getSkill() const { return getPtrB(); }
 
   virtual const MetaClass& getType() const { return *metadata; }
   static const MetaCategory* metadata;
 
-  /** Updates the skill. This method can only be called on an instance. */
+  /* Updates the skill. This method can only be called on an instance. */
   void setSkill(Skill* s) {
     if (s) setPtrB(s, s->resources);
   }
@@ -6260,21 +6251,21 @@ class ResourceSkill : public Object,
   }
 
  private:
-  /** Factory method. */
+  /* Factory method. */
   static PyObject* create(PyTypeObject*, PyObject*, PyObject*);
 };
 
-/** @brief This class implements the abstract ResourceSkill class. */
+/* This class implements the abstract ResourceSkill class. */
 class ResourceSkillDefault : public ResourceSkill {
  public:
-  /** This constructor is called from the plan begin_element function. */
+  /* This constructor is called from the plan begin_element function. */
   explicit ResourceSkillDefault() {}
 
   virtual const MetaClass& getType() const { return *metadata; }
   static const MetaClass* metadata;
 };
 
-/** @brief This class links a resource to a certain operation. */
+/* This class links a resource to a certain operation. */
 class Load : public Object,
              public Association<Operation, Resource, Load>::Node,
              public Solvable,
@@ -6283,7 +6274,7 @@ class Load : public Object,
   friend class Operation;
 
  public:
-  /** Constructor. */
+  /* Constructor. */
   explicit Load(Operation* o, Resource* r, double u) {
     setOperation(o);
     setResource(r);
@@ -6292,7 +6283,7 @@ class Load : public Object,
     HasLevel::triggerLazyRecomputation();
   }
 
-  /** Constructor. */
+  /* Constructor. */
   explicit Load(Operation* o, Resource* r, double u, DateRange e) {
     setOperation(o);
     setResource(r);
@@ -6302,33 +6293,33 @@ class Load : public Object,
     HasLevel::triggerLazyRecomputation();
   }
 
-  /** Destructor. */
+  /* Destructor. */
   ~Load();
 
-  /** Search an existing object. */
+  /* Search an existing object. */
   static Object* finder(const DataValueDict& k);
 
-  /** Returns the operation consuming the resource capacity. */
+  /* Returns the operation consuming the resource capacity. */
   Operation* getOperation() const { return getPtrA(); }
 
-  /** Updates the operation being loaded. This method can only be called
+  /* Updates the operation being loaded. This method can only be called
    * once for a load. */
   void setOperation(Operation*);
 
-  /** Returns the capacity resource being consumed. */
+  /* Returns the capacity resource being consumed. */
   Resource* getResource() const { return getPtrB(); }
 
-  /** Updates the capacity being consumed. This method can only be called
+  /* Updates the capacity being consumed. This method can only be called
    * once on a resource. */
   virtual void setResource(Resource* r) {
     if (r) setPtrB(r, r->getLoads());
   }
 
-  /** Returns how much capacity is consumed during the duration of the
+  /* Returns how much capacity is consumed during the duration of the
    * operationplan. */
   double getQuantity() const { return qty; }
 
-  /** Updates the quantity of the load. */
+  /* Updates the quantity of the load. */
   void setQuantity(double f) {
     if (f < 0)
       throw DataException("OperationResource quantity can't be negative");
@@ -6343,7 +6334,7 @@ class Load : public Object,
     qtyfixed = f;
   }
 
-  /** Return the leading load of this group.
+  /* Return the leading load of this group.
    * When the load has no alternate or if the flow is itself leading
    * then nullptr is returned.
    */
@@ -6356,7 +6347,7 @@ class Load : public Object,
     return nullptr;
   }
 
-  /** Return whether the load has alternates. */
+  /* Return whether the load has alternates. */
   bool hasAlternates() const {
     if (getName().empty() || !getOperation()) return false;
     for (Operation::loadlist::const_iterator h =
@@ -6366,33 +6357,33 @@ class Load : public Object,
     return false;
   }
 
-  /** Return the required resource setup. */
+  /* Return the required resource setup. */
   PooledString getSetup() const { return setup; }
 
-  /** Update the required resource setup. */
+  /* Update the required resource setup. */
   void setSetupString(const string&);
 
-  /** Return the required resource setup. */
+  /* Return the required resource setup. */
   string getSetupString() const { return setup; }
 
-  /** Update the required skill. */
+  /* Update the required skill. */
   void setSkill(Skill* s) { skill = s; }
 
-  /** Return the required skill. */
+  /* Return the required skill. */
   Skill* getSkill() const { return skill; }
 
-  /** Find the preferred resource in a resource pool to assign a load to.
+  /* Find the preferred resource in a resource pool to assign a load to.
    * This method is only useful when the loadplan is not created yet.
    */
   Resource* findPreferredResource(Date d) const;
 
-  /** This method holds the logic the compute the date of a loadplan. */
+  /* This method holds the logic the compute the date of a loadplan. */
   virtual Date getLoadplanDate(const LoadPlan*) const;
 
-  /** This method holds the logic the compute the quantity of a loadplan. */
+  /* This method holds the logic the compute the quantity of a loadplan. */
   virtual double getLoadplanQuantity(const LoadPlan*) const;
 
-  /** This method allows computing the operationplan start or end date
+  /* This method allows computing the operationplan start or end date
    * when given the date of the loadplan.
    */
   virtual Date getOperationPlanDate(const LoadPlan*, Date, bool = true) const;
@@ -6408,16 +6399,16 @@ class Load : public Object,
   virtual const MetaClass& getType() const { return *metadata; }
   static const MetaCategory* metadata;
 
-  /** Default constructor. */
+  /* Default constructor. */
   Load() {
     initType(metadata);
     HasLevel::triggerLazyRecomputation();
   }
 
-  /** Return the search mode. */
+  /* Return the search mode. */
   SearchMode getSearch() const { return search; }
 
-  /** Update the search mode. */
+  /* Update the search mode. */
   void setSearch(const string a) { search = decodeSearchMode(a); }
 
   template <class Cls>
@@ -6448,38 +6439,38 @@ class Load : public Object,
   }
 
  private:
-  /** Stores how much capacity is consumed during the duration of an
+  /* Stores how much capacity is consumed during the duration of an
    * operationplan. */
   double qty = 1.0;
 
-  /** Constant capacity consumption for bucketized resources only. */
+  /* Constant capacity consumption for bucketized resources only. */
   double qtyfixed = 0.0;
 
-  /** Required setup. */
+  /* Required setup. */
   PooledString setup;
 
-  /** Required skill. */
+  /* Required skill. */
   Skill* skill = nullptr;
 
-  /** Mode to select the preferred alternates. */
+  /* Mode to select the preferred alternates. */
   SearchMode search = PRIORITY;
 
  protected:
-  /** Factory method. */
+  /* Factory method. */
   static PyObject* create(PyTypeObject*, PyObject*, PyObject*);
 };
 
-/** @brief This class implements the abstract Load class. */
+/* This class implements the abstract Load class. */
 class LoadDefault : public Load {
  public:
-  /** Constructor. */
+  /* Constructor. */
   explicit LoadDefault(Operation* o, Resource* r, double q) : Load(o, r, q) {}
 
-  /** Constructor. */
+  /* Constructor. */
   explicit LoadDefault(Operation* o, Resource* r, double q, DateRange e)
       : Load(o, r, q, e) {}
 
-  /** This constructor is called from the plan begin_element function. */
+  /* This constructor is called from the plan begin_element function. */
   explicit LoadDefault() {}
 
   virtual void solve(Solver& s, void* v = nullptr) const { s.solve(this, v); }
@@ -6488,7 +6479,7 @@ class LoadDefault : public Load {
   static const MetaClass* metadata;
 };
 
-/** @brief This class a load that loads a bucketized resource at a percentage of
+/* This class a load that loads a bucketized resource at a percentage of
  * the operationplan duration. An offset of 0 means loading the resource at the
  * start of the operationplan. An offset of 100 means loading the resource at
  * the end of the operationplan. The calculations consider the available periods
@@ -6496,16 +6487,16 @@ class LoadDefault : public Load {
  */
 class LoadBucketizedPercentage : public Load {
  public:
-  /** Constructor. */
+  /* Constructor. */
   explicit LoadBucketizedPercentage(Operation* o, Resource* r, double q)
       : Load(o, r, q) {}
 
-  /** Constructor. */
+  /* Constructor. */
   explicit LoadBucketizedPercentage(Operation* o, Resource* r, double q,
                                     DateRange e)
       : Load(o, r, q, e) {}
 
-  /** This constructor is called from the plan begin_element function. */
+  /* This constructor is called from the plan begin_element function. */
   explicit LoadBucketizedPercentage() {}
 
   void setResource(Resource* r) {
@@ -6544,7 +6535,7 @@ class LoadBucketizedPercentage : public Load {
   double offset = 0;
 };
 
-/** @brief This class a load that loads a bucketized resource at a specified
+/* This class a load that loads a bucketized resource at a specified
  * offset from the start of the operationplan.
  * An offset of 0 means loading the resource at the start of the operationplan.
  * An offset of 1 day means loading the resource 1 day after the operationplan
@@ -6555,16 +6546,16 @@ class LoadBucketizedPercentage : public Load {
  */
 class LoadBucketizedFromStart : public Load {
  public:
-  /** Constructor. */
+  /* Constructor. */
   explicit LoadBucketizedFromStart(Operation* o, Resource* r, double q)
       : Load(o, r, q) {}
 
-  /** Constructor. */
+  /* Constructor. */
   explicit LoadBucketizedFromStart(Operation* o, Resource* r, double q,
                                    DateRange e)
       : Load(o, r, q, e) {}
 
-  /** This constructor is called from the plan begin_element function. */
+  /* This constructor is called from the plan begin_element function. */
   explicit LoadBucketizedFromStart() {}
 
   void setResource(Resource* r) {
@@ -6602,7 +6593,7 @@ class LoadBucketizedFromStart : public Load {
   Duration offset;
 };
 
-/** @brief This class a load that loads a bucketized resource at a specified
+/* This class a load that loads a bucketized resource at a specified
  * offset from the end of the operationplan.
  * An offset of 0 means loading the resource at the end of the operationplan.
  * An offset of 1 day means loading the resource 1 day before the operationplan
@@ -6613,16 +6604,16 @@ class LoadBucketizedFromStart : public Load {
  */
 class LoadBucketizedFromEnd : public Load {
  public:
-  /** Constructor. */
+  /* Constructor. */
   explicit LoadBucketizedFromEnd(Operation* o, Resource* r, double q)
       : Load(o, r, q) {}
 
-  /** Constructor. */
+  /* Constructor. */
   explicit LoadBucketizedFromEnd(Operation* o, Resource* r, double q,
                                  DateRange e)
       : Load(o, r, q, e) {}
 
-  /** This constructor is called from the plan begin_element function. */
+  /* This constructor is called from the plan begin_element function. */
   explicit LoadBucketizedFromEnd() {}
 
   void setResource(Resource* r) {
@@ -6659,7 +6650,7 @@ class LoadBucketizedFromEnd : public Load {
   Duration offset;
 };
 
-/** @brief Represents the (independent) demand in the system. It can represent a
+/* Represents the (independent) demand in the system. It can represent a
  * customer order or a forecast.
  *
  * This is an abstract class.
@@ -6680,11 +6671,11 @@ class Demand : public HasHierarchy<Demand>,
     OperationPlanList::const_iterator end;
 
    public:
-    /** Constructor. */
+    /* Constructor. */
     DeliveryIterator(const Demand* d)
         : cur(d->getDelivery().begin()), end(d->getDelivery().end()) {}
 
-    /** Return current value and advance the iterator. */
+    /* Return current value and advance the iterator. */
     OperationPlan* next() {
       if (cur == end) return nullptr;
       OperationPlan* tmp = *cur;
@@ -6693,16 +6684,16 @@ class Demand : public HasHierarchy<Demand>,
     }
   };
 
-  /** Default constructor. */
+  /* Default constructor. */
   explicit Demand() {}
 
-  /** Destructor.
+  /* Destructor.
    * Deleting the demand will also delete all delivery operation
    * plans (including locked ones).
    */
   virtual ~Demand();
 
-  /** Return the memory size. */
+  /* Return the memory size. */
   virtual size_t getSize() const {
     size_t tmp = Object::getSize();
     // Add the memory for the list of deliveries: 2 pointers per delivery
@@ -6711,19 +6702,19 @@ class Demand : public HasHierarchy<Demand>,
     return tmp;
   }
 
-  /** Returns the quantity of the demand. */
+  /* Returns the quantity of the demand. */
   double getQuantity() const { return qty; }
 
-  /** Updates the quantity of the demand. The quantity must be be greater
+  /* Updates the quantity of the demand. The quantity must be be greater
    * than or equal to 0. */
   virtual void setQuantity(double);
 
-  /** Returns the priority of the demand.<br>
+  /* Returns the priority of the demand.
    * Lower numbers indicate a higher priority level.
    */
   int getPriority() const { return prio; }
 
-  /** Updates the due date of the demand.<br>
+  /* Updates the due date of the demand.
    * Lower numbers indicate a higher priority level.
    */
   virtual void setPriority(int i) {
@@ -6731,16 +6722,16 @@ class Demand : public HasHierarchy<Demand>,
     setChanged();
   }
 
-  /** Returns the item/product being requested. */
+  /* Returns the item/product being requested. */
   Item* getItem() const { return it; }
 
-  /** Update the item being requested. */
+  /* Update the item being requested. */
   virtual void setItem(Item*);
 
-  /** Returns the location where the demand is shipped from. */
+  /* Returns the location where the demand is shipped from. */
   Location* getLocation() const { return loc; }
 
-  /** Update the location where the demand is shipped from. */
+  /* Update the location where the demand is shipped from. */
   void setLocation(Location* l) {
     if (loc == l) return;
     if (oper && oper->getHidden()) {
@@ -6751,7 +6742,7 @@ class Demand : public HasHierarchy<Demand>,
     setChanged();
   }
 
-  /** Update the location where the demand is shipped from.
+  /* Update the location where the demand is shipped from.
    * This method does not trigger level or problem recalculation.
    */
   void setLocationNoRecalc(Location* l) {
@@ -6759,7 +6750,7 @@ class Demand : public HasHierarchy<Demand>,
     oper = uninitializedDelivery;
   }
 
-  /** This fields points to an operation that is to be used to plan the
+  /* This fields points to an operation that is to be used to plan the
    * demand. By default, the field is left to nullptr and the demand will then
    * be planned using the delivery operation of its item.
    * @see Item::getDelivery()
@@ -6771,14 +6762,14 @@ class Demand : public HasHierarchy<Demand>,
       return oper;
   }
 
-  /** Updates the operation being used to plan the demand. */
+  /* Updates the operation being used to plan the demand. */
   virtual void setOperation(Operation* o) {
     if (oper == o) return;
     oper = o;
     setChanged();
   }
 
-  /** This function returns the operation that is to be used to satisfy this
+  /* This function returns the operation that is to be used to satisfy this
    * demand. In sequence of priority this goes as follows:
    *   1) If the "operation" field on the demand is explicitly set, use it.
    *   2) Otherwise, use the "delivery" field of the requested item, if
@@ -6797,27 +6788,27 @@ class Demand : public HasHierarchy<Demand>,
    */
   Operation* getDeliveryOperation() const;
 
-  /** Returns the cluster which this demand belongs to. */
+  /* Returns the cluster which this demand belongs to. */
   int getCluster() const {
     Operation* o = getDeliveryOperation();
     return o ? o->getCluster() : 0;
   }
 
-  /** Returns the delivery operationplan list. */
+  /* Returns the delivery operationplan list. */
   const OperationPlanList& getDelivery() const;
 
   DeliveryIterator getOperationPlans() const { return DeliveryIterator(this); }
 
-  /** Return the status. */
+  /* Return the status. */
   status getStatus() const { return state; }
 
-  /** Update the status. */
+  /* Update the status. */
   void setStatus(status s) {
     state = s;
     setChanged();
   }
 
-  /** Return the status as a string. */
+  /* Return the status as a string. */
   string getStatusString() const {
     switch (state) {
       case QUOTE:
@@ -6835,7 +6826,7 @@ class Demand : public HasHierarchy<Demand>,
     }
   }
 
-  /** Update the demand status from a string. */
+  /* Update the demand status from a string. */
   void setStatusString(const string& s) {
     if (s == "open" || s.empty())
       state = OPEN;
@@ -6851,78 +6842,78 @@ class Demand : public HasHierarchy<Demand>,
       throw DataException("Demand status not recognized");
   }
 
-  /** Return a pointer to the next demand for the same item. */
+  /* Return a pointer to the next demand for the same item. */
   Demand* getNextItemDemand() const { return nextItemDemand; }
 
-  /** Returns the latest delivery operationplan. */
+  /* Returns the latest delivery operationplan. */
   OperationPlan* getLatestDelivery() const;
 
-  /** Returns the earliest delivery operationplan. */
+  /* Returns the earliest delivery operationplan. */
   OperationPlan* getEarliestDelivery() const;
 
-  /** Adds a delivery operationplan for this demand. */
+  /* Adds a delivery operationplan for this demand. */
   void addDelivery(OperationPlan* o);
 
-  /** Removes a delivery operationplan for this demand. */
+  /* Removes a delivery operationplan for this demand. */
   void removeDelivery(OperationPlan* o);
 
-  /** Deletes all delivery operationplans of this demand.<br>
+  /* Deletes all delivery operationplans of this demand.
    * The (optional) boolean parameter controls whether we delete also locked
-   * operationplans or not.<br>
+   * operationplans or not.
    * The second (optional) argument is a command list that can be used to
    * remove the operationplans in an undo-able way.
    */
   void deleteOperationPlans(bool deleteLockedOpplans = false,
                             CommandManager* = nullptr);
 
-  /** Python method for adding a constraint. */
+  /* Python method for adding a constraint. */
   static PyObject* addConstraint(PyObject*, PyObject*, PyObject*);
 
-  /** Returns the due date of the demand. */
+  /* Returns the due date of the demand. */
   Date getDue() const { return dueDate; }
 
-  /** Updates the due date of the demand. */
+  /* Updates the due date of the demand. */
   virtual void setDue(Date d) {
     dueDate = d;
     setChanged();
   }
 
-  /** Returns the customer. */
+  /* Returns the customer. */
   Customer* getCustomer() const { return cust; }
 
-  /** Updates the customer. */
+  /* Updates the customer. */
   virtual void setCustomer(Customer* c) {
     cust = c;
     setChanged();
   }
 
-  /** Return a reference to the constraint list. */
+  /* Return a reference to the constraint list. */
   const Problem::List& getConstraints() const { return constraints; }
 
-  /** Return a reference to the constraint list. */
+  /* Return a reference to the constraint list. */
   Problem::List& getConstraints() { return constraints; }
 
-  /** Return an iterator over the constraints encountered when planning
+  /* Return an iterator over the constraints encountered when planning
    * this demand. */
   Problem::List::iterator getConstraintIterator() const;
 
-  /** Returns the total amount that has been planned. */
+  /* Returns the total amount that has been planned. */
   double getPlannedQuantity() const;
 
-  /** Return an iterator over the problems of this demand. */
+  /* Return an iterator over the problems of this demand. */
   Problem::List::iterator getProblemIterator() const;
 
   static int initialize();
 
   virtual void solve(Solver& s, void* v = nullptr) const { s.solve(this, v); }
 
-  /** Return the maximum delay allowed in satisfying this demand.<br>
+  /* Return the maximum delay allowed in satisfying this demand.
    * The default value is infinite.
    */
   Duration getMaxLateness() const { return maxLateness; }
 
-  /** Updates the maximum allowed lateness for this demand.<br>
-   * The default value is infinite.<br>
+  /* Updates the maximum allowed lateness for this demand.
+   * The default value is infinite.
    * The argument must be a positive time period.
    */
   virtual void setMaxLateness(Duration m) {
@@ -6931,8 +6922,8 @@ class Demand : public HasHierarchy<Demand>,
     maxLateness = m;
   }
 
-  /** Return the minimum shipment quantity allowed in satisfying this
-   * demand.<br>
+  /* Return the minimum shipment quantity allowed in satisfying this
+   * demand.
    * The default value is -1.0. In this case we apply a minimum shipment
    * such that we have at most "DefaultMaxShipments" partial deliveries.
    */
@@ -6947,8 +6938,8 @@ class Demand : public HasHierarchy<Demand>,
 
   bool isMinShipmentDefault() const { return minShipment == -1.0; }
 
-  /** Updates the maximum allowed lateness for this demand.<br>
-   * The default value is infinite.<br>
+  /* Updates the maximum allowed lateness for this demand.
+   * The default value is infinite.
    * The argument must be a positive time period.
    */
   virtual void setMinShipment(double m) {
@@ -6958,14 +6949,14 @@ class Demand : public HasHierarchy<Demand>,
     minShipment = m;
   }
 
-  /** Recompute the problems. */
+  /* Recompute the problems. */
   virtual void updateProblems();
 
-  /** Specifies whether of not this demand is to be hidden from
+  /* Specifies whether of not this demand is to be hidden from
    * serialization. The default value is false. */
   void setHidden(bool b) { hidden = b; }
 
-  /** Returns true if this demand is to be hidden from serialization. */
+  /* Returns true if this demand is to be hidden from serialization. */
   bool getHidden() const { return hidden; }
 
   virtual const MetaClass& getType() const { return *metadata; }
@@ -6973,13 +6964,13 @@ class Demand : public HasHierarchy<Demand>,
 
   PeggingIterator getPegging() const;
 
-  /** Return the latest delivery date for the demand. */
+  /* Return the latest delivery date for the demand. */
   Date getDeliveryDate() const {
     OperationPlan* op = getLatestDelivery();
     return op ? op->getEnd() : Date::infiniteFuture;
   }
 
-  /** Return the delay of the latest delivery compared to the due date. */
+  /* Return the delay of the latest delivery compared to the due date. */
   Duration getDelay() const {
     OperationPlan* op = getLatestDelivery();
     return (op ? op->getEnd() : Date::infiniteFuture) - getDue();
@@ -7031,59 +7022,59 @@ class Demand : public HasHierarchy<Demand>,
  private:
   static OperationFixedTime* uninitializedDelivery;
 
-  /** Maximum number of partial shipments we use by default.
+  /* Maximum number of partial shipments we use by default.
    * Unless the user specified a value for the minshipments field, we use
    * this default to compute a minshipment value.
    */
   static const int DefaultMaxShipments = 10;
 
-  /** Requested item. */
+  /* Requested item. */
   Item* it = nullptr;
 
-  /** Location. */
+  /* Location. */
   Location* loc = nullptr;
 
-  /** Delivery Operation. Can be left nullptr, in which case the delivery
+  /* Delivery Operation. Can be left nullptr, in which case the delivery
    * operation can be specified on the requested item. */
   Operation* oper = uninitializedDelivery;
 
-  /** Customer creating this demand. */
+  /* Customer creating this demand. */
   Customer* cust = nullptr;
 
-  /** Requested quantity. Only positive numbers are allowed. */
+  /* Requested quantity. Only positive numbers are allowed. */
   double qty = 0.0;
 
-  /** Due date. */
+  /* Due date. */
   Date dueDate;
 
-  /** Maximum lateness allowed when planning this demand.<br>
+  /* Maximum lateness allowed when planning this demand.
    * The default value is 5 years.
    */
   Duration maxLateness = Duration(5L * 365L * 86400L);
 
-  /** Minimum size for a delivery operation plan satisfying this demand. */
+  /* Minimum size for a delivery operation plan satisfying this demand. */
   double minShipment = -1.0;
 
-  /** A list of operation plans to deliver this demand.
+  /* A list of operation plans to deliver this demand.
    * The list is sorted by the end date of the deliveries. The sorting is
    * done lazily in the getDelivery() method.
    */
   OperationPlanList deli;
 
-  /** A list of constraints preventing this demand from being planned in
+  /* A list of constraints preventing this demand from being planned in
    * full and on time. */
   Problem::List constraints;
 
-  /** A linked list with all demands of an item. */
+  /* A linked list with all demands of an item. */
   Demand* nextItemDemand = nullptr;
 
-  /** Status of the demand. */
+  /* Status of the demand. */
   status state = OPEN;
 
-  /** Priority. Lower numbers indicate a higher priority level.*/
+  /* Priority. Lower numbers indicate a higher priority level.*/
   int prio = 0;
 
-  /** Hide this demand or not. */
+  /* Hide this demand or not. */
   bool hidden = false;
 };
 
@@ -7092,7 +7083,7 @@ class Item::demandIterator {
   Demand* cur;
 
  public:
-  /** Constructor. */
+  /* Constructor. */
   demandIterator(const Item* i) : cur(i ? i->firstItemDemand : nullptr) {}
 
   bool operator!=(const demandIterator& b) const { return b.cur != cur; }
@@ -7123,7 +7114,7 @@ class Item::demandIterator {
 
 inline Item::demandIterator Item::getDemandIterator() const { return this; }
 
-/** @brief This class is the default implementation of the abstract
+/* This class is the default implementation of the abstract
  * Demand class. */
 class DemandDefault : public Demand {
  public:
@@ -7141,7 +7132,7 @@ class DemandDefault : public Demand {
   }
 };
 
-/** @brief This class represents the resource capacity of an operationplan.
+/* This class represents the resource capacity of an operationplan.
  *
  * For both the start and the end date of the operationplan, a loadplan
  * object is created. These are then inserted in the timeline structure
@@ -7154,7 +7145,7 @@ class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand {
   // Forward declarations
   class AlternateIterator;
 
-  /** Public constructor.<br>
+  /* Public constructor.
    * This constructor constructs the starting loadplan and will
    * also call a private constructor to creates the ending loadplan.
    * In other words, a single call to the constructor will create
@@ -7162,22 +7153,22 @@ class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand {
    */
   explicit LoadPlan(OperationPlan*, const Load*);
 
-  /** Return the operationplan owning this loadplan. */
+  /* Return the operationplan owning this loadplan. */
   virtual OperationPlan* getOperationPlan() const { return oper; }
 
-  /** Return the operation. */
+  /* Return the operation. */
   Operation* getOperation() const { return oper->getOperation(); }
 
-  /** Return the start date of the operationplan. */
+  /* Return the start date of the operationplan. */
   Date getStartDate() const { return oper->getStart(); }
 
-  /** Return the start date of the operationplan. */
+  /* Return the start date of the operationplan. */
   Date getEndDate() const { return oper->getEnd(); }
 
-  /** Return the load of which this is a plan instance. */
+  /* Return the load of which this is a plan instance. */
   Load* getLoad() const { return ld; }
 
-  /** Update the resource.<br>
+  /* Update the resource.
    * The optional second argument specifies whether or not we need to verify
    * if the assigned resource is valid. A valid resource must a) be a
    * subresource of the resource specified on the load, and b) must also
@@ -7185,7 +7176,7 @@ class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand {
    */
   void setResource(Resource* res) { setResource(res, true); }
 
-  /** Update the resource.<br>
+  /* Update the resource.
    * The optional second argument specifies whether or not we need to verify
    * if the assigned resource is valid. A valid resource must a) be a
    * subresource of the resource specified on the load, and b) must also
@@ -7193,59 +7184,59 @@ class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand {
    */
   void setResource(Resource* res, bool check, bool use_start = true);
 
-  /** Return the resource. */
+  /* Return the resource. */
   Resource* getResource() const { return res; }
 
-  /** Update the load of an already existing flowplan.<br>
+  /* Update the load of an already existing flowplan.
    * The new load must belong to the same operation.
    */
   void setLoad(Load*);
 
-  /** Return true when this loadplan marks the start of an operationplan. */
+  /* Return true when this loadplan marks the start of an operationplan. */
   bool isStart() const { return (flags & TYPE_END) == 0; }
 
-  /** Return the status of the operationplanresource.
+  /* Return the status of the operationplanresource.
    * The status string is one of the following:
    *   - proposed: when the owning operationplan has the status proposed
    *   - confirmed: for all other situations
    */
   string getStatus() const;
 
-  /** Update the status of the operationplanresource. */
+  /* Update the status of the operationplanresource. */
   void setStatus(const string&);
 
-  /** Destructor. */
+  /* Destructor. */
   virtual ~LoadPlan();
 
-  /** This function needs to be called whenever the loadplan date or
+  /* This function needs to be called whenever the loadplan date or
    * quantity are changed.
    */
   void update();
 
-  /** Return a pointer to the timeline data structure owning this loadplan. */
+  /* Return a pointer to the timeline data structure owning this loadplan. */
   TimeLine<LoadPlan>* getTimeLine() const { return &(res->loadplans); }
 
-  /** Returns the current setup of the resource. */
+  /* Returns the current setup of the resource. */
   string getSetup() const {
     auto tmp = getSetup(true);
     return tmp ? tmp->getSetup() : "";
   }
 
-  /** Returns the required setup for the operation. */
+  /* Returns the required setup for the operation. */
   string getSetupLoad() const { return getLoad() ? getLoad()->getSetup() : ""; }
 
-  /** Returns the current setup of the resource.<br>
+  /* Returns the current setup of the resource.
    * When the argument is true the setup of this loadplan is returned.
    * When the argument is false the setup just before the loadplan is returned.
    */
   SetupEvent* getSetup(bool) const;
 
-  /** Returns true when the loadplan is hidden.<br>
+  /* Returns true when the loadplan is hidden.
    * This is determined by looking at whether the load is hidden or not.
    */
   bool getHidden() const { return getQuantity() < 0 || ld->getHidden(); }
 
-  /** Override the setQuantity of the TimeLine class, this is needed for the
+  /* Override the setQuantity of the TimeLine class, this is needed for the
    * registerFields function.
    */
   void setQuantity(double quantity) {
@@ -7262,21 +7253,21 @@ class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand {
       oper = o;
   }
 
-  /** Each operationplan has 2 loadplans per load: one at the start,
+  /* Each operationplan has 2 loadplans per load: one at the start,
    * when the capacity consumption starts, and one at the end, when the
-   * capacity consumption ends.<br>
+   * capacity consumption ends.
    * This method returns the "companion" loadplan. It is not very
    * scalable: the performance is linear with the number of loadplans
    * on the resource.
    */
   LoadPlan* getOtherLoadPlan() const;
 
-  /** Auxilary method for bucketized resources.
+  /* Auxilary method for bucketized resources.
    * Returns the date and onhand at the end of this bucket.
    */
   tuple<double, Date, double> getBucketEnd() const;
 
-  /** Auxilary method for bucketized resources.
+  /* Auxilary method for bucketized resources.
    * Returns starting date and quantity of this bucket.
    */
   tuple<double, Date, double> getBucketStart() const;
@@ -7322,7 +7313,7 @@ class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand {
     m->addStringField<Cls>(Tags::setup, &Cls::getSetupLoad, nullptr, "", PLAN);
   }
 
-  /** Finds the loadplan on the operationplan when we read data. */
+  /* Finds the loadplan on the operationplan when we read data. */
   static Object* reader(const MetaClass*, const DataValueDict&,
                         CommandManager*);
 
@@ -7364,28 +7355,28 @@ class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand {
   }
 
  private:
-  /** Private constructor. It is called from the public constructor.<br>
+  /* Private constructor. It is called from the public constructor.
    * The public constructor constructs the starting loadplan, while this
    * constructor creates the ending loadplan.
    */
   LoadPlan(OperationPlan*, const Load*, LoadPlan*);
 
-  /** A pointer to the load model. */
+  /* A pointer to the load model. */
   Load* ld;
 
-  /** A pointer to the selected resource.<br>
+  /* A pointer to the selected resource.
    * In case we use skills, the resource of the loadplan can be different
    * than the resource on the load.
    */
   Resource* res;
 
-  /** A pointer to the operationplan owning this loadplan. */
+  /* A pointer to the operationplan owning this loadplan. */
   OperationPlan* oper;
 
-  /** Points to the next loadplan owned by the same operationplan. */
+  /* Points to the next loadplan owned by the same operationplan. */
   LoadPlan* nextLoadPlan;
 
-  /** flag bits. */
+  /* flag bits. */
   static const unsigned short STATUS_CONFIRMED = 1;
   static const unsigned short STATUS_CLOSED = 2;
   static const unsigned short TYPE_END = 4;
@@ -7395,7 +7386,7 @@ class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand {
   static PyObject* create(PyTypeObject*, PyObject*, PyObject*);
 };
 
-/** This class allows iteration over alternate resources for a loadplan. */
+/* This class allows iteration over alternate resources for a loadplan. */
 class LoadPlan::AlternateIterator {
  private:
   const LoadPlan* ldplan;
@@ -7405,7 +7396,7 @@ class LoadPlan::AlternateIterator {
  public:
   AlternateIterator(const LoadPlan*);
 
-  /** Copy constructor. */
+  /* Copy constructor. */
   AlternateIterator(const AlternateIterator& other) : ldplan(other.ldplan) {
     for (auto i = other.resources.begin(); i != other.resources.end(); ++i)
       resources.push_back(*i);
@@ -7424,10 +7415,10 @@ class Resource::OperationPlanIterator {
   Resource::loadplanlist::const_iterator iter;
 
  public:
-  /** Constructor. */
+  /* Constructor. */
   OperationPlanIterator(const Resource* r) : iter(r->getLoadPlanIterator()) {}
 
-  /** Return current value and advance the iterator. */
+  /* Return current value and advance the iterator. */
   OperationPlan* next() {
     Resource::loadplanlist::Event* i = iter.next();
     while (i && i->getEventType() == 1 && i->getQuantity() <= 0)
@@ -7440,7 +7431,7 @@ inline Resource::OperationPlanIterator Resource::getOperationPlans() const {
   return Resource::OperationPlanIterator(this);
 }
 
-/** @brief This class models a iterator that walks over all available
+/* This class models a iterator that walks over all available
  * HasProblem entities.
  *
  * This class hard-codes the subclasses that are implementing HasProblems.
@@ -7450,7 +7441,7 @@ inline Resource::OperationPlanIterator Resource::getOperationPlans() const {
  */
 class HasProblems::EntityIterator {
  private:
-  /** This union contains iterators through the different entity types.
+  /* This union contains iterators through the different entity types.
    * Only one of the different iterators will be active at a time, and
    * can thus save memory by collapsing the iterators into a single
    * union. */
@@ -7462,7 +7453,7 @@ class HasProblems::EntityIterator {
     Operation::iterator* opIter;
   };
 
-  /** This type indicates which type of entity we are currently recursing
+  /* This type indicates which type of entity we are currently recursing
    * through.
    *  - 0: buffers
    *  - 1: resources
@@ -7473,44 +7464,44 @@ class HasProblems::EntityIterator {
   unsigned short type;
 
  public:
-  /** Default constructor, which creates an iterator to the first
+  /* Default constructor, which creates an iterator to the first
    * HasProblems object. */
   explicit EntityIterator();
 
-  /** Used to create an iterator pointing beyond the last HasProblems
+  /* Used to create an iterator pointing beyond the last HasProblems
    * object. */
   explicit EntityIterator(unsigned short i) : bufIter(nullptr), type(i) {}
 
-  /** Copy constructor. */
+  /* Copy constructor. */
   EntityIterator(const EntityIterator&);
 
-  /** Assignment operator. */
+  /* Assignment operator. */
   EntityIterator& operator=(const EntityIterator&);
 
-  /** Destructor. */
+  /* Destructor. */
   ~EntityIterator();
 
-  /** Pre-increment operator. */
+  /* Pre-increment operator. */
   EntityIterator& operator++();
 
-  /** Inequality operator.<br>
+  /* Inequality operator.
    * Two iterators are different when they point to different objects.
    */
   bool operator!=(const EntityIterator& t) const;
 
-  /** Equality operator.<br>
+  /* Equality operator.
    * Two iterators are equal when they point to the same object.
    */
   bool operator==(const EntityIterator& t) const { return !(*this != t); }
 
-  /** Dereference operator. */
+  /* Dereference operator. */
   HasProblems& operator*() const;
 
-  /** Dereference operator. */
+  /* Dereference operator. */
   HasProblems* operator->() const;
 };
 
-/** @brief This class models an STL-like iterator that allows us to iterate
+/* This class models an STL-like iterator that allows us to iterate
  * over the named entities in a simple and safe way.
  *
  * Objects of this class are returned by the begin() and end() functions.
@@ -7522,27 +7513,27 @@ class Problem::iterator {
   friend class Problem;
 
  protected:
-  /** A pointer to the current problem. If this pointer is nullptr, we are
+  /* A pointer to the current problem. If this pointer is nullptr, we are
    * at the end of the list. */
   Problem* iter = nullptr;
   const HasProblems* owner = nullptr;
   HasProblems::EntityIterator* eiter = nullptr;
 
  public:
-  /** Creates an iterator that will loop through the problems of a
-   * single entity only. <BR>
+  /* Creates an iterator that will loop through the problems of a
+   * single entity only.
    * This constructor is also used to create a end-iterator, when passed
    * a nullptr pointer as argument.
    */
   explicit iterator(const HasProblems* o)
       : iter(o ? o->firstProblem : nullptr), owner(o) {}
 
-  /** Creates an iterator that will loop through the constraints of
+  /* Creates an iterator that will loop through the constraints of
    * a demand.
    */
   explicit iterator(Problem* o) : iter(o) {}
 
-  /** Creates an iterator that will loop through the problems of all
+  /* Creates an iterator that will loop through the problems of all
    * entities. */
   explicit iterator() {
     // Update problems
@@ -7557,7 +7548,7 @@ class Problem::iterator {
         (*eiter != HasProblems::endEntity()) ? (*eiter)->firstProblem : nullptr;
   }
 
-  /** Copy constructor. */
+  /* Copy constructor. */
   iterator(const iterator& i) : iter(i.iter), owner(i.owner) {
     if (i.eiter)
       eiter = new HasProblems::EntityIterator(*(i.eiter));
@@ -7565,25 +7556,25 @@ class Problem::iterator {
       eiter = nullptr;
   }
 
-  /** Destructor. */
+  /* Destructor. */
   ~iterator() {
     if (eiter) delete eiter;
   }
 
-  /** Pre-increment operator. */
+  /* Pre-increment operator. */
   iterator& operator++();
 
-  /** Return current problem and advance the iterator. */
+  /* Return current problem and advance the iterator. */
   Problem* next() {
     Problem* tmp = iter;
     operator++();
     return tmp;
   }
 
-  /** Inequality operator. */
+  /* Inequality operator. */
   bool operator!=(const iterator& t) const { return iter != t.iter; }
 
-  /** Equality operator. */
+  /* Equality operator. */
   bool operator==(const iterator& t) const { return iter == t.iter; }
 
   Problem& operator*() const { return *iter; }
@@ -7591,12 +7582,12 @@ class Problem::iterator {
   Problem* operator->() const { return iter; }
 };
 
-/** Retrieve an iterator for the list. */
+/* Retrieve an iterator for the list. */
 inline Problem::iterator Problem::List::begin() const {
   return Problem::iterator(first);
 }
 
-/** Stop iterator. */
+/* Stop iterator. */
 inline Problem::iterator Problem::List::end() const {
   return Problem::iterator(static_cast<Problem*>(nullptr));
 }
@@ -7606,10 +7597,10 @@ class OperationPlan::ProblemIterator : public Problem::iterator {
   stack<Problem*> relatedproblems;
 
  public:
-  /** Constructor. */
+  /* Constructor. */
   ProblemIterator(const OperationPlan*);
 
-  /** Advance the iterator. */
+  /* Advance the iterator. */
   ProblemIterator& operator++();
 };
 
@@ -7618,7 +7609,7 @@ inline OperationPlan::ProblemIterator OperationPlan::getProblems() const {
   return OperationPlan::ProblemIterator(this);
 }
 
-/** @brief This is the (logical) top class of the complete model.
+/* This is the (logical) top class of the complete model.
  *
  * This is a singleton class: only a single instance can be created.
  * The data model has other limitations that make it not obvious to support
@@ -7629,34 +7620,34 @@ inline OperationPlan::ProblemIterator OperationPlan::getProblems() const {
  */
 class Plan : public Plannable, public Object {
  private:
-  /** Current Date of this plan. */
+  /* Current Date of this plan. */
   Date cur_Date;
 
-  /** A name for this plan. */
+  /* A name for this plan. */
   string name;
 
-  /** A getDescription of this plan. */
+  /* A getDescription of this plan. */
   string descr;
 
-  /** A calendar to which all operationplans will align. */
+  /* A calendar to which all operationplans will align. */
   Calendar* cal;
 
-  /** Pointer to the singleton plan object. */
+  /* Pointer to the singleton plan object. */
   static Plan* thePlan;
 
-  /** The only constructor of this class is made private. An object of this
+  /* The only constructor of this class is made private. An object of this
    * class is created by the instance() member function.
    */
   Plan() : cur_Date(Date::now()), cal(nullptr) { initType(metadata); }
 
  public:
-  /** Return a pointer to the singleton plan object.
+  /* Return a pointer to the singleton plan object.
    * The singleton object is created during the initialization of the
    * library.
    */
   static Plan& instance() { return *thePlan; }
 
-  /** Destructor.
+  /* Destructor.
    * @warning In multi threaded applications, the destructor is never called
    * and the plan object leaks when we exit the application.
    * In single-threaded applications this function is called properly, when
@@ -7664,43 +7655,43 @@ class Plan : public Plannable, public Object {
    */
   ~Plan();
 
-  /** Returns the plan name. */
+  /* Returns the plan name. */
   string getName() const { return name; }
 
-  /** Updates the plan name. */
+  /* Updates the plan name. */
   void setName(const string& s) { name = s; }
 
-  /** Returns the current date of the plan. */
+  /* Returns the current date of the plan. */
   Date getCurrent() const { return cur_Date; }
 
-  /** Updates the current date of the plan. This method can be relatively
+  /* Updates the current date of the plan. This method can be relatively
    * heavy in a plan where operationplans already exist, since the
    * detection for BeforeCurrent problems needs to be rerun.
    */
   void setCurrent(Date);
 
-  /** Return the calendar to which operationplans are aligned. */
+  /* Return the calendar to which operationplans are aligned. */
   Calendar* getCalendar() const { return cal; }
 
-  /** Set a calendar to align operationplans to. */
+  /* Set a calendar to align operationplans to. */
   void setCalendar(Calendar* c) { cal = c; }
 
-  /** Returns the description of the plan. */
+  /* Returns the description of the plan. */
   string getDescription() const { return descr; }
 
-  /** Updates the description of the plan. */
+  /* Updates the description of the plan. */
   void setDescription(const string& str) { descr = str; }
 
   void setLogFile(const string& s) { Environment::setLogFile(s); }
 
   string getLogFile() const { return Environment::getLogFile(); }
 
-  /** Initialize the class. */
+  /* Initialize the class. */
   static int initialize();
 
   virtual void updateProblems(){};
 
-  /** This method basically solves the whole planning problem. */
+  /* This method basically solves the whole planning problem. */
   virtual void solve(Solver& s, void* v = nullptr) const { s.solve(this, v); }
 
   Location::iterator getLocations() const { return Location::begin(); }
@@ -7806,7 +7797,7 @@ class Plan : public Plannable, public Object {
   }
 };
 
-/** @brief A problem of this class is created when an operationplan is being
+/* A problem of this class is created when an operationplan is being
  * planned in the past, i.e. it starts before the "current" date of
  * the plan.
  */
@@ -7857,10 +7848,10 @@ class ProblemBeforeCurrent : public Problem {
     }
   }
 
-  /** Return a reference to the metadata structure. */
+  /* Return a reference to the metadata structure. */
   const MetaClass& getType() const { return *metadata; }
 
-  /** Storing metadata on this class. */
+  /* Storing metadata on this class. */
   static const MetaClass* metadata;
 
  private:
@@ -7870,7 +7861,7 @@ class ProblemBeforeCurrent : public Problem {
   double qty;
 };
 
-/** @brief A problem of this class is created when an operationplan is being
+/* A problem of this class is created when an operationplan is being
  * planned before its fence date, i.e. it starts 1) before the "current"
  * date of the plan plus the release fence of the operation and 2) after the
  * current date of the plan.
@@ -7919,10 +7910,10 @@ class ProblemBeforeFence : public Problem {
       return o->getDates();
   }
 
-  /** Return a reference to the metadata structure. */
+  /* Return a reference to the metadata structure. */
   const MetaClass& getType() const { return *metadata; }
 
-  /** Storing metadata on this class. */
+  /* Storing metadata on this class. */
   static const MetaClass* metadata;
 
  private:
@@ -7932,7 +7923,7 @@ class ProblemBeforeFence : public Problem {
   double qty;
 };
 
-/** @brief A problem of this class is created when the sequence of two
+/* A problem of this class is created when the sequence of two
  * operationplans in a routing isn't respected.
  */
 class ProblemPrecedence : public Problem {
@@ -7950,7 +7941,7 @@ class ProblemPrecedence : public Problem {
 
   bool isFeasible() const { return false; }
 
-  /** The weight of the problem is equal to the duration in days. */
+  /* The weight of the problem is equal to the duration in days. */
   double getWeight() const {
     return static_cast<double>(getDates().getDuration()) / 86400;
   }
@@ -7970,14 +7961,14 @@ class ProblemPrecedence : public Problem {
     return DateRange(o->getNextSubOpplan()->getStart(), o->getEnd());
   }
 
-  /** Return a reference to the metadata structure. */
+  /* Return a reference to the metadata structure. */
   const MetaClass& getType() const { return *metadata; }
 
-  /** Storing metadata on this class. */
+  /* Storing metadata on this class. */
   static const MetaClass* metadata;
 };
 
-/** @brief A Problem of this class is created in the model when a new demand is
+/* A Problem of this class is created in the model when a new demand is
  * brought in the system, but it hasn't been planned yet.
  *
  * As a special case, a demand with a requested quantity of 0.0 doesn't create
@@ -8009,14 +8000,14 @@ class ProblemDemandNotPlanned : public Problem {
 
   Demand* getDemand() const { return static_cast<Demand*>(owner); }
 
-  /** Return a reference to the metadata structure. */
+  /* Return a reference to the metadata structure. */
   const MetaClass& getType() const { return *metadata; }
 
-  /** Storing metadata on this class. */
+  /* Storing metadata on this class. */
   static const MetaClass* metadata;
 };
 
-/** @brief A problem of this class is created when a demand is satisfied later
+/* A problem of this class is created when a demand is satisfied later
  * than the accepted tolerance after its due date.
  */
 class ProblemLate : public Problem {
@@ -8024,7 +8015,7 @@ class ProblemLate : public Problem {
   string getDescription() const;
   bool isFeasible() const { return true; }
 
-  /** The weight is quantity that is delivered late.
+  /* The weight is quantity that is delivered late.
    * It doesn't matter how much it is delayed.
    */
   double getWeight() const {
@@ -8036,12 +8027,12 @@ class ProblemLate : public Problem {
     return tmp;
   }
 
-  /** Constructor. */
+  /* Constructor. */
   explicit ProblemLate(Demand* d, bool add = true) : Problem(d) {
     if (add) addProblem();
   }
 
-  /** Destructor. */
+  /* Destructor. */
   ~ProblemLate() { removeProblem(); }
 
   const DateRange getDates() const {
@@ -8056,14 +8047,14 @@ class ProblemLate : public Problem {
 
   Object* getOwner() const { return static_cast<Demand*>(owner); }
 
-  /** Return a reference to the metadata structure. */
+  /* Return a reference to the metadata structure. */
   const MetaClass& getType() const { return *metadata; }
 
-  /** Storing metadata on this class. */
+  /* Storing metadata on this class. */
   static const MetaClass* metadata;
 };
 
-/** @brief A problem of this class is created when a demand is planned earlier
+/* A problem of this class is created when a demand is planned earlier
  * than the accepted tolerance before its due date.
  */
 class ProblemEarly : public Problem {
@@ -8099,14 +8090,14 @@ class ProblemEarly : public Problem {
 
   Demand* getDemand() const { return static_cast<Demand*>(getOwner()); }
 
-  /** Return a reference to the metadata structure. */
+  /* Return a reference to the metadata structure. */
   const MetaClass& getType() const { return *metadata; }
 
-  /** Storing metadata on this class. */
+  /* Storing metadata on this class. */
   static const MetaClass* metadata;
 };
 
-/** @brief A Problem of this class is created in the model when a data exception
+/* A Problem of this class is created in the model when a data exception
  * prevents planning of certain objects
  */
 class ProblemInvalidData : public Problem {
@@ -8140,21 +8131,21 @@ class ProblemInvalidData : public Problem {
     throw LogicException("Unknown problem entity type");
   }
 
-  /** Return a reference to the metadata structure. */
+  /* Return a reference to the metadata structure. */
   const MetaClass& getType() const { return *metadata; }
 
-  /** Storing metadata on this class. */
+  /* Storing metadata on this class. */
   static const MetaClass* metadata;
 
  private:
-  /** Description of the data issue. */
+  /* Description of the data issue. */
   string description;
   string entity;
   DateRange dates;
   double qty;
 };
 
-/** @brief A problem of this class is created when a demand is planned for less
+/* A problem of this class is created when a demand is planned for less
  * than the requested quantity.
  */
 class ProblemShort : public Problem {
@@ -8189,14 +8180,14 @@ class ProblemShort : public Problem {
 
   Demand* getDemand() const { return static_cast<Demand*>(owner); }
 
-  /** Return a reference to the metadata structure. */
+  /* Return a reference to the metadata structure. */
   const MetaClass& getType() const { return *metadata; }
 
-  /** Storing metadata on this class. */
+  /* Storing metadata on this class. */
   static const MetaClass* metadata;
 };
 
-/** @brief A problem of this class is created when a demand is planned for more
+/* A problem of this class is created when a demand is planned for more
  * than the requested quantity.
  */
 class ProblemExcess : public Problem {
@@ -8231,14 +8222,14 @@ class ProblemExcess : public Problem {
 
   Demand* getDemand() const { return static_cast<Demand*>(getOwner()); }
 
-  /** Return a reference to the metadata structure. */
+  /* Return a reference to the metadata structure. */
   const MetaClass& getType() const { return *metadata; }
 
-  /** Storing metadata on this class. */
+  /* Storing metadata on this class. */
   static const MetaClass* metadata;
 };
 
-/** @brief A problem of this class is created when a resource is being
+/* A problem of this class is created when a resource is being
  * overloaded during a certain period of time.
  */
 class ProblemCapacityOverload : public Problem {
@@ -8265,21 +8256,21 @@ class ProblemCapacityOverload : public Problem {
 
   Resource* getResource() const { return static_cast<Resource*>(getOwner()); }
 
-  /** Return a reference to the metadata structure. */
+  /* Return a reference to the metadata structure. */
   const MetaClass& getType() const { return *metadata; }
 
-  /** Storing metadata on this class. */
+  /* Storing metadata on this class. */
   static const MetaClass* metadata;
 
  private:
-  /** Overload quantity. */
+  /* Overload quantity. */
   double qty;
 
-  /** The daterange of the problem. */
+  /* The daterange of the problem. */
   DateRange dr;
 };
 
-/** @brief A problem of this class is created when a resource is loaded below
+/* A problem of this class is created when a resource is loaded below
  * its minimum during a certain period of time.
  */
 class ProblemCapacityUnderload : public Problem {
@@ -8305,21 +8296,21 @@ class ProblemCapacityUnderload : public Problem {
 
   Resource* getResource() const { return static_cast<Resource*>(getOwner()); }
 
-  /** Return a reference to the metadata structure. */
+  /* Return a reference to the metadata structure. */
   const MetaClass& getType() const { return *metadata; }
 
-  /** Storing metadata on this class. */
+  /* Storing metadata on this class. */
   static const MetaClass* metadata;
 
  private:
-  /** Underload quantity. */
+  /* Underload quantity. */
   double qty;
 
-  /** The daterange of the problem. */
+  /* The daterange of the problem. */
   DateRange dr;
 };
 
-/** @brief A problem of this class is created when a buffer is having a
+/* A problem of this class is created when a buffer is having a
  * material shortage during a certain period of time.
  */
 class ProblemMaterialShortage : public Problem {
@@ -8346,21 +8337,21 @@ class ProblemMaterialShortage : public Problem {
 
   Buffer* getBuffer() const { return static_cast<Buffer*>(getOwner()); }
 
-  /** Return a reference to the metadata structure. */
+  /* Return a reference to the metadata structure. */
   const MetaClass& getType() const { return *metadata; }
 
-  /** Storing metadata on this class. */
+  /* Storing metadata on this class. */
   static const MetaClass* metadata;
 
  private:
-  /** Shortage quantity. */
+  /* Shortage quantity. */
   double qty;
 
-  /** The daterange of the problem. */
+  /* The daterange of the problem. */
   DateRange dr;
 };
 
-/** @brief A problem of this class is created when a buffer is carrying too
+/* A problem of this class is created when a buffer is carrying too
  * much material during a certain period of time.
  */
 class ProblemMaterialExcess : public Problem {
@@ -8386,21 +8377,21 @@ class ProblemMaterialExcess : public Problem {
 
   Buffer* getBuffer() const { return static_cast<Buffer*>(owner); }
 
-  /** Return a reference to the metadata structure. */
+  /* Return a reference to the metadata structure. */
   const MetaClass& getType() const { return *metadata; }
 
-  /** Storing metadata on this class. */
+  /* Storing metadata on this class. */
   static const MetaClass* metadata;
 
  private:
-  /** Excess quantity. */
+  /* Excess quantity. */
   double qty;
 
-  /** The daterange of the problem. */
+  /* The daterange of the problem. */
   DateRange dr;
 };
 
-/** @brief This command is used to create an operationplan.
+/* This command is used to create an operationplan.
  *
  * The operationplan will have its loadplans and flowplans created when the
  * command is created. It is assigned an id and added to the list of all
@@ -8408,7 +8399,7 @@ class ProblemMaterialExcess : public Problem {
  */
 class CommandCreateOperationPlan : public Command {
  public:
-  /** Constructor. */
+  /* Constructor. */
   CommandCreateOperationPlan(const Operation* o, double q, Date d1, Date d2,
                              Demand* l, OperationPlan* ow = nullptr,
                              bool makeflowsloads = true,
@@ -8443,17 +8434,17 @@ class CommandCreateOperationPlan : public Command {
   virtual short getType() const { return 5; }
 
  private:
-  /** Pointer to the newly created operationplan. */
+  /* Pointer to the newly created operationplan. */
   OperationPlan* opplan;
 };
 
-/** @brief This command is used to delete an operationplan.<br>
+/* This command is used to delete an operationplan.
  * The implementation assumes there is only a single level of child
  * sub operationplans.
  */
 class CommandDeleteOperationPlan : public Command {
  public:
-  /** Constructor. */
+  /* Constructor. */
   CommandDeleteOperationPlan(OperationPlan* o);
 
   virtual void commit() {
@@ -8486,14 +8477,14 @@ class CommandDeleteOperationPlan : public Command {
   virtual short getType() const { return 6; }
 
  private:
-  /** Pointer to the operationplan being deleted.<br>
+  /* Pointer to the operationplan being deleted.
    * Until the command is committed we don't deallocate the memory for the
    * operationplan, but only remove all pointers to it from various places.
    */
   OperationPlan* opplan;
 };
 
-/** @brief This class represents the command of moving an operationplan to a
+/* This class represents the command of moving an operationplan to a
  * new date and/or resizing it.
  * @todo Moving in a routing operation can't be undone with the current
  * implementation! The command will need to store all original dates of
@@ -8501,7 +8492,7 @@ class CommandDeleteOperationPlan : public Command {
  */
 class CommandMoveOperationPlan : public Command {
  public:
-  /** Constructor.<br>
+  /* Constructor.
    * Unlike most other commands the constructor already executes the change.
    * @param opplanptr Pointer to the operationplan being moved.
    * @param newStart New start date of the operationplan.
@@ -8512,16 +8503,16 @@ class CommandMoveOperationPlan : public Command {
   CommandMoveOperationPlan(OperationPlan* opplanptr, Date newStart, Date newEnd,
                            double newQty = -1.0, bool roundDown = false);
 
-  /** Default constructor. */
+  /* Default constructor. */
   CommandMoveOperationPlan(OperationPlan*);
 
-  /** Commit the changes. */
+  /* Commit the changes. */
   virtual void commit() {
     opplan->mergeIfPossible();
     opplan = nullptr;
   }
 
-  /** Undo the changes. */
+  /* Undo the changes. */
   virtual void rollback() {
     restore(true);
     opplan = nullptr;
@@ -8529,116 +8520,116 @@ class CommandMoveOperationPlan : public Command {
 
   virtual void undo() { restore(false); }
 
-  /** Undo the changes.<br>
+  /* Undo the changes.
    * When the argument is true, subcommands for suboperationplans are deleted.
    */
   void restore(bool = false);
 
-  /** Destructor. */
+  /* Destructor. */
   virtual ~CommandMoveOperationPlan() {
     if (opplan) rollback();
   }
 
-  /** Returns the operationplan being manipulated. */
+  /* Returns the operationplan being manipulated. */
   OperationPlan* getOperationPlan() const { return opplan; }
 
-  /** Set another start date for the operationplan. */
+  /* Set another start date for the operationplan. */
   void setStart(Date d) {
     if (opplan) opplan->setStart(d);
   }
 
-  /** Set another start date, end date and quantity for the operationplan. */
+  /* Set another start date, end date and quantity for the operationplan. */
   void setParameters(Date s, Date e, double q, bool b, bool roundDown = true) {
     assert(opplan->getOperation());
     if (opplan) opplan->setOperationPlanParameters(q, s, e, b, true, roundDown);
   }
 
-  /** Set another start date for the operationplan. */
+  /* Set another start date for the operationplan. */
   void setEnd(Date d) {
     if (opplan) opplan->setEnd(d);
   }
 
-  /** Set another quantity for the operationplan. */
+  /* Set another quantity for the operationplan. */
   void setQuantity(double q) {
     if (opplan) opplan->setQuantity(q);
   }
 
-  /** Return the quantity of the original operationplan. */
+  /* Return the quantity of the original operationplan. */
   double getQuantity() const { return state.quantity; }
 
-  /** Return the dates of the original operationplan. */
+  /* Return the dates of the original operationplan. */
   DateRange getDates() const { return DateRange(state.start, state.end); }
 
   virtual short getType() const { return 7; }
 
  private:
-  /** This is a pointer to the operationplan being moved. */
+  /* This is a pointer to the operationplan being moved. */
   OperationPlan* opplan = nullptr;
 
-  /** Store the state of the operation plan. */
+  /* Store the state of the operation plan. */
   OperationPlanState state;
 
-  /** A pointer to a list of suboperationplan commands. */
+  /* A pointer to a list of suboperationplan commands. */
   Command* firstCommand = nullptr;
 };
 
-/** @brief This class allows upstream and downstream navigation through
+/* This class allows upstream and downstream navigation through
  * the plan.
  *
  * Downstream navigation follows the material flow from raw materials
- * towards the produced end item.<br>
+ * towards the produced end item.
  * Upstream navigation traces back the material flow from the end item up to
- * the consumed raw materials.<br>
+ * the consumed raw materials.
  * The class is implemented as an STL-like iterator.
  */
 class PeggingIterator : public Object {
  public:
-  /** Copy constructor. */
+  /* Copy constructor. */
   PeggingIterator(const PeggingIterator& c);
 
-  /** Constructor for demand pegging. */
+  /* Constructor for demand pegging. */
   PeggingIterator(const Demand*);
 
-  /** Constructor for operationplan pegging. */
+  /* Constructor for operationplan pegging. */
   PeggingIterator(const OperationPlan*, bool = true);
 
-  /** Constructor for flowplan pegging. */
+  /* Constructor for flowplan pegging. */
   PeggingIterator(FlowPlan*, bool = true);
 
-  /** Constructor for loadplan pegging. */
+  /* Constructor for loadplan pegging. */
   PeggingIterator(LoadPlan*, bool = true);
 
-  /** Return the operationplan. */
+  /* Return the operationplan. */
   OperationPlan* getOperationPlan() const {
     return second_pass
                ? const_cast<OperationPlan*>(states_sorted.front().opplan)
                : const_cast<OperationPlan*>(states.back().opplan);
   }
 
-  /** Destructor. */
+  /* Destructor. */
   virtual ~PeggingIterator() {}
 
-  /** Return true if this is a downstream iterator. */
+  /* Return true if this is a downstream iterator. */
   inline bool isDownstream() const { return downstream; }
 
-  /** Return the pegged quantity. */
+  /* Return the pegged quantity. */
   double getQuantity() const {
     return second_pass ? states_sorted.front().quantity
                        : states.back().quantity;
   }
 
-  /** Returns the recursion depth of the iterator.*/
+  /* Returns the recursion depth of the iterator.*/
   short getLevel() const {
     return second_pass ? states_sorted.front().level : states.back().level;
   }
 
-  /** Move the iterator downstream. */
+  /* Move the iterator downstream. */
   PeggingIterator& operator++();
 
-  /** Move the iterator upstream. */
+  /* Move the iterator upstream. */
   PeggingIterator& operator--();
 
-  /** Conversion operator to a boolean value.
+  /* Conversion operator to a boolean value.
    * The return value is true when the iterator still has next elements to
    * explore. Returns false when the iteration is finished.
    */
@@ -8648,10 +8639,10 @@ class PeggingIterator : public Object {
 
   PeggingIterator* next();
 
-  /** Add an entry on the stack. */
+  /* Add an entry on the stack. */
   void updateStack(const OperationPlan*, double, double, short);
 
-  /** Initialize the class. */
+  /* Initialize the class. */
   static int initialize();
 
   virtual const MetaClass& getType() const { return *metadata; }
@@ -8668,7 +8659,7 @@ class PeggingIterator : public Object {
   }
 
  private:
-  /** This structure is used to keep track of the iterator states during the
+  /* This structure is used to keep track of the iterator states during the
    * iteration. */
   struct state {
     const OperationPlan* opplan;
@@ -8700,25 +8691,25 @@ class PeggingIterator : public Object {
   /* Auxilary function to make recursive code possible. */
   void followPegging(const OperationPlan*, double, double, short);
 
-  /** Store a list of all operations still to peg. */
+  /* Store a list of all operations still to peg. */
   statestack states;
 
   deque<state> states_sorted;
 
-  /** Follow the pegging upstream or downstream. */
+  /* Follow the pegging upstream or downstream. */
   bool downstream;
 
-  /** Used by the Python iterator to mark the first call. */
+  /* Used by the Python iterator to mark the first call. */
   bool firstIteration;
 
-  /** Optimization to reuse elements on the stack. */
+  /* Optimization to reuse elements on the stack. */
   bool first;
 
-  /** Extra data structure to avoid duplicate operationplan ids in the list. */
+  /* Extra data structure to avoid duplicate operationplan ids in the list. */
   bool second_pass;
 };
 
-/** An iterator that shows all demands linked to an operationplan. */
+/* An iterator that shows all demands linked to an operationplan. */
 class PeggingDemandIterator : public Object {
  private:
   typedef map<Demand*, double> demandmap;
@@ -8727,16 +8718,16 @@ class PeggingDemandIterator : public Object {
   bool first = true;
 
  public:
-  /** Constructor. */
+  /* Constructor. */
   PeggingDemandIterator(const OperationPlan*);
 
-  /** Copy constructor. */
+  /* Copy constructor. */
   PeggingDemandIterator(const PeggingDemandIterator&);
 
-  /** Advance to the next demand. */
+  /* Advance to the next demand. */
   PeggingDemandIterator* next();
 
-  /** Initialize the class. */
+  /* Initialize the class. */
   static int initialize();
 
   virtual const MetaClass& getType() const { return *metadata; }
@@ -8757,7 +8748,7 @@ class PeggingDemandIterator : public Object {
   }
 };
 
-/** @brief An iterator class to go through all flowplans of an operationplan.
+/* An iterator class to go through all flowplans of an operationplan.
  * @see OperationPlan::beginFlowPlans
  * @see OperationPlan::endFlowPlans
  */
@@ -8837,7 +8828,7 @@ inline int OperationPlan::sizeFlowPlans() const {
   return c;
 }
 
-/** @brief An iterator class to go through all loadplans of an operationplan.
+/* An iterator class to go through all loadplans of an operationplan.
  * @see OperationPlan::beginLoadPlans
  * @see OperationPlan::endLoadPlans
  */
@@ -8950,7 +8941,7 @@ class OperationPlan::InterruptionIterator : public Object {
 
   Date getEnd() const { return end; }
 
-  /** Return a reference to the metadata structure. */
+  /* Return a reference to the metadata structure. */
   virtual const MetaClass& getType() const { return *metadata; }
 
   static int intitialize();
@@ -8979,10 +8970,10 @@ class CalendarEventIterator : public PythonExtension<CalendarEventIterator> {
 
 class FlowPlanIterator : public PythonExtension<FlowPlanIterator> {
  public:
-  /** Registration of the Python class and its metadata. */
+  /* Registration of the Python class and its metadata. */
   static int initialize();
 
-  /** Constructor to iterate over the flowplans of a buffer. */
+  /* Constructor to iterate over the flowplans of a buffer. */
   FlowPlanIterator(Buffer* b) : buf(b), buffer_or_opplan(true) {
     if (!b)
       throw LogicException("Creating flowplan iterator for nullptr buffer");
@@ -8990,7 +8981,7 @@ class FlowPlanIterator : public PythonExtension<FlowPlanIterator> {
         new Buffer::flowplanlist::const_iterator(b->getFlowPlans().begin());
   }
 
-  /** Constructor to iterate over the flowplans of an operationplan. */
+  /* Constructor to iterate over the flowplans of an operationplan. */
   FlowPlanIterator(OperationPlan* o) : opplan(o), buffer_or_opplan(false) {
     if (!o)
       throw LogicException(
@@ -9016,7 +9007,7 @@ class FlowPlanIterator : public PythonExtension<FlowPlanIterator> {
     OperationPlan::FlowPlanIterator* opplaniter;
   };
 
-  /** Flags whether we are browsing over the flowplans in a buffer or in an
+  /* Flags whether we are browsing over the flowplans in a buffer or in an
    * operationplan. */
   bool buffer_or_opplan;
 
@@ -9059,14 +9050,14 @@ class LoadPlanIterator : public PythonExtension<LoadPlanIterator> {
     OperationPlan::LoadPlanIterator* opplaniter;
   };
 
-  /** Flags whether we are browsing over the flowplans in a buffer or in an
+  /* Flags whether we are browsing over the flowplans in a buffer or in an
    * operationplan. */
   bool resource_or_opplan;
 
   PyObject* iternext();
 };
 
-/** @brief This Python function is used for reading XML input.
+/* This Python function is used for reading XML input.
  *
  * The function takes up to three arguments:
  *   - XML data file to be processed.
@@ -9080,7 +9071,7 @@ class LoadPlanIterator : public PythonExtension<LoadPlanIterator> {
  */
 PyObject* readXMLfile(PyObject*, PyObject*);
 
-/** @brief This Python function is used for processing XML input data from a
+/* This Python function is used for processing XML input data from a
  * string.
  *
  * The function takes up to three arguments:
@@ -9094,11 +9085,11 @@ PyObject* readXMLfile(PyObject*, PyObject*);
  */
 PyObject* readXMLdata(PyObject*, PyObject*);
 
-/** @brief This Python function writes the dynamic part of the plan to an text
+/* This Python function writes the dynamic part of the plan to an text
  * file.
  *
  * This saved information covers the buffer flowplans, operationplans,
- * resource loading, demand, problems, etc...<br>
+ * resource loading, demand, problems, etc...
  * The main use of this function is in the test suite: a simple text file
  * comparison allows us to identify changes quickly. The output format is
  * only to be seen in this context of testing, and is not intended to be used
@@ -9106,7 +9097,7 @@ PyObject* readXMLdata(PyObject*, PyObject*);
  */
 PyObject* savePlan(PyObject*, PyObject*);
 
-/** @brief This Python function prints a summary of the dynamically allocated
+/* This Python function prints a summary of the dynamically allocated
  * memory to the standard output. This is useful for understanding better the
  * size of your model.
  *
@@ -9116,13 +9107,13 @@ PyObject* savePlan(PyObject*, PyObject*);
  */
 PyObject* printModelSize(PyObject* self, PyObject* args);
 
-/** @brief This python function writes the complete model to a XML-file.
+/* This python function writes the complete model to a XML-file.
  *
  * Both the static model (i.e. items, locations, buffers, resources,
  * calendars, etc...) and the dynamic data (i.e. the actual plan including
- * the operationplans, demand, problems, etc...).<br>
+ * the operationplans, demand, problems, etc...).
  * The format is such that the output file can be re-read to restore the
- * very same model.<br>
+ * very same model.
  * The function takes the following arguments:
  *   - Name of the output file
  *   - Type of output desired: BASE, PLAN or DETAIL.
@@ -9130,16 +9121,16 @@ PyObject* printModelSize(PyObject* self, PyObject* args);
  */
 PyObject* saveXMLfile(PyObject*, PyObject*);
 
-/** @brief This Python function erases the model or the plan from memory.
+/* This Python function erases the model or the plan from memory.
  *
  * The function allows the following modes to control what to delete:
- *  - plan:<br>
+ *  - plan:
  *    Deletes the dynamic modelling constructs, such as operationplans,
  *    loadplans and flowplans only. Locked operationplans are not
- *    deleted.<br>
- *    The static model is left intact.<br>
+ *    deleted.
+ *    The static model is left intact.
  *    This is the default mode.
- *  - model:<br>
+ *  - model:
  *    The dynamic as well as the static objects are removed. You'll end
  *    up with a completely empty model.
  *    Due to the logic required in the object destructors this mode doesn't

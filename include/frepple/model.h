@@ -6936,6 +6936,8 @@ class Demand : public HasHierarchy<Demand>,
       return ceil(getQuantity() / DefaultMaxShipments);
   }
 
+  double getRawMinShipment() const { return minShipment; }
+
   bool isMinShipmentDefault() const { return minShipment == -1.0; }
 
   /* Updates the maximum allowed lateness for this demand.

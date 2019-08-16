@@ -29,6 +29,9 @@ Release notes
 
 - Addition of Hebrew translations, contributed by https://www.minet.co.il/  Many thanks!
 
+- Give a warning when users try to upload spreadsheets in the old .XLS Excel format
+  instead of the new .XLSX spreadsheet format.
+
 .. rubric:: Integration
 
 - | The REST API for manufacturing orders now returns the resources and materials it uses.

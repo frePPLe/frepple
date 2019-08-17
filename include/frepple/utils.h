@@ -1749,9 +1749,15 @@ class MetaClass : public NonCopyable {
                              string (Cls::*getfunc)(void) const,
                              void (Cls::*setfunc)(const string&) = nullptr,
                              string dflt = "", unsigned int c = BASE) {
-    fields.push_back(new MetaFieldString<Cls>(
-        k, getfunc, setfunc, dflt,
-        c));  // TODO use a block allocator to keep all metadata compact
+    fields.push_back(new MetaFieldString<Cls>(k, getfunc, setfunc, dflt, c));
+  }
+
+  template <class Cls>
+  inline void addStringRefField(const Keyword& k,
+                                const string& (Cls::*getfunc)(void)const,
+                                void (Cls::*setfunc)(const string&) = nullptr,
+                                string dflt = "", unsigned int c = BASE) {
+    fields.push_back(new MetaFieldStringRef<Cls>(k, getfunc, setfunc, dflt, c));
   }
 
   template <class Cls>
@@ -3651,7 +3657,7 @@ class Tree : public NonCopyable {
 
     /* Returns the name of this node. This name is used to sort the
      * nodes. */
-    inline string getName() const { return nm; }
+    inline const string& getName() const { return nm; }
 
     inline void setName(const string& i) { nm = i; }
 
@@ -5220,13 +5226,13 @@ class HasSource {
 class HasDescription : public HasSource {
  public:
   /* Returns the category. */
-  string getCategory() const { return cat; }
+  const string& getCategory() const { return cat; }
 
   /* Returns the sub_category. */
-  string getSubCategory() const { return subcat; }
+  const string& getSubCategory() const { return subcat; }
 
   /* Returns the getDescription. */
-  string getDescription() const { return descr; }
+  const string& getDescription() const { return descr; }
 
   /* Sets the category field. */
   void setCategory(const string& f) { cat = f; }
@@ -5239,12 +5245,12 @@ class HasDescription : public HasSource {
 
   template <class Cls>
   static inline void registerFields(MetaClass* m) {
-    m->addStringField<Cls>(Tags::category, &Cls::getCategory, &Cls::setCategory,
-                           "", BASE + PLAN);
-    m->addStringField<Cls>(Tags::subcategory, &Cls::getSubCategory,
-                           &Cls::setSubCategory, "", BASE + PLAN);
-    m->addStringField<Cls>(Tags::description, &Cls::getDescription,
-                           &Cls::setDescription, "", BASE + PLAN);
+    m->addStringRefField<Cls>(Tags::category, &Cls::getCategory,
+                              &Cls::setCategory, "", BASE + PLAN);
+    m->addStringRefField<Cls>(Tags::subcategory, &Cls::getSubCategory,
+                              &Cls::setSubCategory, "", BASE + PLAN);
+    m->addStringRefField<Cls>(Tags::description, &Cls::getDescription,
+                              &Cls::setDescription, "", BASE + PLAN);
     HasSource::registerFields<Cls>(m);
   }
 
@@ -5489,8 +5495,8 @@ class HasHierarchy : public HasName<T> {
 
   template <class Cls>
   static inline void registerFields(MetaClass* m) {
-    m->addStringField<Cls>(Tags::name, &Cls::getName, &Cls::setName, "",
-                           MANDATORY);
+    m->addStringRefField<Cls>(Tags::name, &Cls::getName, &Cls::setName, "",
+                              MANDATORY);
     m->addPointerField<Cls, Cls>(Tags::owner, &Cls::getOwner, &Cls::setOwner,
                                  BASE + PARENT);
     m->addIteratorField<Cls, typename Cls::memberIterator, Cls>(
@@ -5910,7 +5916,7 @@ class Association {
     void setName(const string& x) { name = x; }
 
     /* Return the optional name of the association. */
-    string getName() const { return name; }
+    const string& getName() const { return name; }
 
     /* Update the priority. */
     void setPriority(int i) { priority = i; }
@@ -5992,6 +5998,62 @@ class MetaFieldString : public MetaFieldBase {
   MetaFieldString(const Keyword& n, getFunction getfunc,
                   setFunction setfunc = nullptr, string dflt = "",
                   unsigned int c = BASE)
+      : MetaFieldBase(n, c), getf(getfunc), setf(setfunc), def(dflt) {
+    if (getfunc == nullptr)
+      throw DataException("Getter function can't be nullptr");
+  };
+
+  virtual void setField(Object* me, const DataValue& el,
+                        CommandManager* cmd) const {
+    if (setf == nullptr) {
+      ostringstream o;
+      o << "Can't set field " << getName().getName() << " on class "
+        << me->getType().type;
+      throw DataException(o.str());
+    }
+    if (cmd) cmd->addCommandSetField(me, this, el);
+    (static_cast<Cls*>(me)->*setf)(el.getString());
+  }
+
+  virtual void getField(Object* me, DataValue& el) const {
+    el.setString((static_cast<Cls*>(me)->*getf)());
+  }
+
+  virtual void writeField(Serializer& output) const {
+    if (output.getServiceMode()) {
+      if (getFlag(DONT_SERIALIZE_SVC)) return;
+    } else {
+      if (getFlag(DONT_SERIALIZE_DFT)) return;
+    }
+    string tmp = (static_cast<Cls*>(output.getCurrentObject())->*getf)();
+    if (tmp != def) output.writeElement(getName(), tmp);
+  }
+
+  virtual size_t getSize(const Object* o) const {
+    return (static_cast<const Cls*>(o)->*getf)().size();
+  }
+
+ protected:
+  /* Get function. */
+  getFunction getf;
+
+  /* Set function. */
+  setFunction setf;
+
+  /* Default value */
+  string def;
+};
+
+template <class Cls>
+class MetaFieldStringRef : public MetaFieldBase {
+ public:
+  typedef void (Cls::*setFunction)(const string&);
+
+  typedef const string& (Cls::*getFunction)(void)const;
+
+  MetaFieldStringRef(const Keyword& n, getFunction getfunc,
+                     setFunction setfunc = nullptr, string dflt = "",
+                     unsigned int c = BASE)
       : MetaFieldBase(n, c), getf(getfunc), setf(setfunc), def(dflt) {
     if (getfunc == nullptr)
       throw DataException("Getter function can't be nullptr");

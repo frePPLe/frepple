@@ -456,8 +456,8 @@ class Calendar : public HasName<Calendar>, public HasSource {
 
   template <class Cls>
   static inline void registerFields(MetaClass* m) {
-    m->addStringField<Cls>(Tags::name, &Cls::getName, &Cls::setName, "",
-                           MANDATORY);
+    m->addStringRefField<Cls>(Tags::name, &Cls::getName, &Cls::setName, "",
+                              MANDATORY);
     HasSource::registerFields<Cls>(m);
     m->addDoubleField<Cls>(Tags::deflt, &Cls::getDefault, &Cls::setDefault);
     m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, &Cls::setHidden,
@@ -556,7 +556,7 @@ class Problem : public NonCopyable, public Object {
   virtual ~Problem() {}
 
   /* Return the category of the problem. */
-  string getName() const { return getType().type; }
+  const string& getName() const { return getType().type; }
 
   /* Returns the duration of this problem. */
   virtual const DateRange getDates() const = 0;
@@ -630,8 +630,8 @@ class Problem : public NonCopyable, public Object {
 
   template <class Cls>
   static inline void registerFields(MetaClass* m) {
-    m->addStringField<Cls>(Tags::name, &Cls::getName, nullptr, "",
-                           MANDATORY + COMPUTED);
+    m->addStringRefField<Cls>(Tags::name, &Cls::getName, nullptr, "",
+                              MANDATORY + COMPUTED);
     m->addStringField<Cls>(Tags::description, &Cls::getDescription, nullptr, "",
                            MANDATORY + COMPUTED);
     m->addDateField<Cls>(Tags::start, &Cls::getStart, nullptr,
@@ -1954,7 +1954,7 @@ class OperationPlan : public Object,
    * the identifier field if it is wasn't set before.
    */
   /* Return the external identifier. */
-  string getReference() const {
+  const string& getReference() const {
     if (getName().empty()) {
       const_cast<OperationPlan*>(this)->assignReference();  // Lazy generation
       const_cast<OperationPlan*>(this)->setActivated(true);
@@ -2170,10 +2170,10 @@ class OperationPlan : public Object,
 
   template <class Cls>
   static inline void registerFields(MetaClass* m) {
-    m->addStringField<Cls>(Tags::reference, &Cls::getReference,
-                           &Cls::setReference, "", MANDATORY);
-    m->addStringField<Cls>(Tags::id, &Cls::getReference, &Cls::setReference, "",
-                           DONT_SERIALIZE);
+    m->addStringRefField<Cls>(Tags::reference, &Cls::getReference,
+                              &Cls::setReference, "", MANDATORY);
+    m->addStringRefField<Cls>(Tags::id, &Cls::getReference, &Cls::setReference,
+                              "", DONT_SERIALIZE);
     m->addPointerField<Cls, Operation>(
         Tags::operation, &Cls::getOperation, &Cls::setOperation,
         BASE + PLAN + WRITE_REFERENCE_DFT + WRITE_OBJECT_SVC + WRITE_HIDDEN);
@@ -2925,8 +2925,8 @@ class Operation : public HasName<Operation>,
 
   template <class Cls>
   static inline void registerFields(MetaClass* m) {
-    m->addStringField<Cls>(Tags::name, &Cls::getName, &Cls::setName, "",
-                           MANDATORY);
+    m->addStringRefField<Cls>(Tags::name, &Cls::getName, &Cls::setName, "",
+                              MANDATORY);
     HasDescription::registerFields<Cls>(m);
     Plannable::registerFields<Cls>(m);
     m->addDurationField<Cls>(Tags::posttime, &Cls::getPostTime,
@@ -5091,7 +5091,7 @@ class Flow : public Object,
                            &Cls::setQuantityFixed);
     m->addIntField<Cls>(Tags::priority, &Cls::getPriority, &Cls::setPriority,
                         1);
-    m->addStringField<Cls>(Tags::name, &Cls::getName, &Cls::setName);
+    m->addStringRefField<Cls>(Tags::name, &Cls::getName, &Cls::setName);
     m->addEnumField<Cls, SearchMode>(Tags::search, &Cls::getSearch,
                                      &Cls::setSearch, PRIORITY);
     m->addDateField<Cls>(Tags::effective_start, &Cls::getEffectiveStart,
@@ -5657,8 +5657,8 @@ class SetupMatrix : public HasName<SetupMatrix>, public HasSource {
 
   template <class Cls>
   static inline void registerFields(MetaClass* m) {
-    m->addStringField<Cls>(Tags::name, &Cls::getName, &Cls::setName, "",
-                           MANDATORY);
+    m->addStringRefField<Cls>(Tags::name, &Cls::getName, &Cls::setName, "",
+                              MANDATORY);
     HasSource::registerFields<Cls>(m);
     m->addIteratorField<Cls, SetupMatrixRule::iterator, SetupMatrixRule>(
         Tags::rules, Tags::rule, &Cls::getRules, BASE + WRITE_OBJECT);
@@ -5739,9 +5739,6 @@ class Skill : public HasName<Skill>, public HasSource {
     return resources.begin();
   }
 
-  /* Python interface to add a new resource. */
-  static PyObject* addPythonResource(PyObject*, PyObject*);
-
   static int initialize();
 
   virtual const MetaClass& getType() const { return *metadata; }
@@ -5749,8 +5746,8 @@ class Skill : public HasName<Skill>, public HasSource {
 
   template <class Cls>
   static inline void registerFields(MetaClass* m) {
-    m->addStringField<Cls>(Tags::name, &Cls::getName, &Cls::setName, "",
-                           MANDATORY);
+    m->addStringRefField<Cls>(Tags::name, &Cls::getName, &Cls::setName, "",
+                              MANDATORY);
     m->addIteratorField<Cls, resourcelist::const_iterator, ResourceSkill>(
         Tags::resourceskills, Tags::resourceskill, &Cls::getResources);
     m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, &Cls::setHidden,
@@ -6423,7 +6420,7 @@ class Load : public Object,
                            &Cls::setQuantityFixed, 0.0);
     m->addIntField<Cls>(Tags::priority, &Cls::getPriority, &Cls::setPriority,
                         1);
-    m->addStringField<Cls>(Tags::name, &Cls::getName, &Cls::setName);
+    m->addStringRefField<Cls>(Tags::name, &Cls::getName, &Cls::setName);
     m->addEnumField<Cls, SearchMode>(Tags::search, &Cls::getSearch,
                                      &Cls::setSearch, PRIORITY);
     m->addDateField<Cls>(Tags::effective_start, &Cls::getEffectiveStart,
@@ -7658,7 +7655,7 @@ class Plan : public Plannable, public Object {
   ~Plan();
 
   /* Returns the plan name. */
-  string getName() const { return name; }
+  const string& getName() const { return name; }
 
   /* Updates the plan name. */
   void setName(const string& s) { name = s; }
@@ -7679,14 +7676,14 @@ class Plan : public Plannable, public Object {
   void setCalendar(Calendar* c) { cal = c; }
 
   /* Returns the description of the plan. */
-  string getDescription() const { return descr; }
+  const string& getDescription() const { return descr; }
 
   /* Updates the description of the plan. */
   void setDescription(const string& str) { descr = str; }
 
   void setLogFile(const string& s) { Environment::setLogFile(s); }
 
-  string getLogFile() const { return Environment::getLogFile(); }
+  const string& getLogFile() const { return Environment::getLogFile(); }
 
   /* Initialize the class. */
   static int initialize();
@@ -7740,12 +7737,12 @@ class Plan : public Plannable, public Object {
 
   template <class Cls>
   static inline void registerFields(MetaClass* m) {
-    m->addStringField<Plan>(Tags::name, &Plan::getName, &Plan::setName);
-    m->addStringField<Plan>(Tags::description, &Plan::getDescription,
-                            &Plan::setDescription);
+    m->addStringRefField<Plan>(Tags::name, &Plan::getName, &Plan::setName);
+    m->addStringRefField<Plan>(Tags::description, &Plan::getDescription,
+                               &Plan::setDescription);
     m->addDateField<Plan>(Tags::current, &Plan::getCurrent, &Plan::setCurrent);
-    m->addStringField<Plan>(Tags::logfile, &Plan::getLogFile, &Plan::setLogFile,
-                            "", DONT_SERIALIZE);
+    m->addStringRefField<Plan>(Tags::logfile, &Plan::getLogFile,
+                               &Plan::setLogFile, "", DONT_SERIALIZE);
     m->addUnsignedLongField(Tags::id, &Plan::getOperationPlanCounterMin,
                             &Plan::setOperationPlanCounterMin, 0UL,
                             DONT_SERIALIZE);

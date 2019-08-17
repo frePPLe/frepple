@@ -5378,57 +5378,50 @@ class HasHierarchy : public HasName<T> {
   class memberRecursiveIterator : public NonCopyable {
    public:
     /* Constructor. */
-    memberRecursiveIterator(const T* x = nullptr) {
-      if (x) members.push_back(const_cast<T*>(x));
-    }
+    memberRecursiveIterator(const T* x = nullptr)
+        : root(x), current(x ? x->first_child : nullptr) {}
 
     memberRecursiveIterator(const memberRecursiveIterator& other)
-        : members(other.members) {}
+        : root(other.root), current(other.current) {}
 
     memberRecursiveIterator& operator=(const memberRecursiveIterator& other) {
-      members = other.members;
+      root = other.root;
+      current = other.current;
       return *this;
     }
 
     /* Return the content of the current node. */
-    T& operator*() const { return *members.back(); }
+    T& operator*() const { return *current; }
 
     /* Return the content of the current node. */
-    T* operator->() const { return members.back(); }
+    T* operator->() const { return current; }
 
     /* Pre-increment operator which moves the pointer to the next member. */
     memberRecursiveIterator& operator++() {
-      if (members.empty()) throw LogicException("Incrementing beyond end");
-      if (members.back()->first_child)
-        // Go one more level down
-        members.push_back(members.back()->first_child);
-      else {
+      if (!current)
+        return *this;
+      else if (current->first_child)
+        current = current->first_child;
+      else if (current->next_brother)
+        current = current->next_brother;
+      else
         do {
-          if (members.size() == 1) {
-            // Don't stay at same level on the root
-            members.pop_back();
-            break;
-          } else {
-            members.back() = members.back()->next_brother;
-            if (members.back())
-              // Stay at same level
-              break;
-            else {
-              members.pop_back();
-              if (members.empty())
-                // No more nodes found
-                break;
-            }
+          current = current->parent;
+          if (current == root)
+            current = nullptr;
+          else if (current && current->next_brother) {
+            current = current->next_brother;
+            return *this;
           }
-        } while (true);
-      }
+        } while (current);
       return *this;
     }
 
-    bool empty() { return members.empty(); }
+    bool empty() const { return current == nullptr; }
 
    private:
-    vector<T*> members;
+    const T* root;
+    T* current = nullptr;
   };
 
   /* Default constructor. */

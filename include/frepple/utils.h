@@ -5379,7 +5379,7 @@ class HasHierarchy : public HasName<T> {
    public:
     /* Constructor. */
     memberRecursiveIterator(const T* x = nullptr)
-        : root(x), current(x ? x->first_child : nullptr) {}
+        : root(x), current(const_cast<T*>(x)) {}
 
     memberRecursiveIterator(const memberRecursiveIterator& other)
         : root(other.root), current(other.current) {}
@@ -5402,6 +5402,8 @@ class HasHierarchy : public HasName<T> {
         return *this;
       else if (current->first_child)
         current = current->first_child;
+      else if (current == root)
+        current = nullptr;
       else if (current->next_brother)
         current = current->next_brother;
       else

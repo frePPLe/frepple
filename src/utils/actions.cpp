@@ -267,7 +267,7 @@ void CommandSetProperty::undo() {
 void ThreadGroup::execute() {
   // Determine the number of threads
   auto numthreads = callables.size();
-  if (numthreads > maxParallel) numthreads = maxParallel;
+  if (numthreads > static_cast<size_t>(maxParallel)) numthreads = maxParallel;
 
   if (numthreads <= 1)
     // Sequential execution

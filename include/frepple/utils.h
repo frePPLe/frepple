@@ -193,6 +193,8 @@ template <class T>
 class MetaFieldDurationDouble;
 template <class T>
 class MetaFieldString;
+template <class T>
+class MetaFieldStringRef;
 template <class T, class u>
 class MetaFieldEnum;
 template <class T, class U>

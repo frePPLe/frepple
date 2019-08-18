@@ -5099,7 +5099,6 @@ class PooledString {
   /* Pool of strings. */
   typedef unordered_map<string, unsigned int> pool_type;
   static pool_type pool;
-  static string nullstring;
 
   /* Pointer to an element in the pool. */
   pool_type::value_type* ptr = nullptr;
@@ -5123,6 +5122,8 @@ class PooledString {
   }
 
  public:
+  static string nullstring;
+
   static pair<size_t, size_t> getSize() {
     return make_pair(pool.size(), pool.size() * (sizeof(pool_type::value_type) +
                                                  4 * sizeof(void*)));
@@ -5210,14 +5211,14 @@ class HasSource {
 
  public:
   /* Returns the source field. */
-  string getSource() const { return source; }
+  const string& getSource() const { return source; }
 
   /* Sets the source field. */
   void setSource(const string& c) { source = c; }
 
   template <class Cls>
   static inline void registerFields(MetaClass* m) {
-    m->addStringField<Cls>(Tags::source, &Cls::getSource, &Cls::setSource);
+    m->addStringRefField<Cls>(Tags::source, &Cls::getSource, &Cls::setSource);
   }
 };
 

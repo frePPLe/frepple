@@ -1503,7 +1503,7 @@ class SetupEvent : public TimeLine<LoadPlan>::Event {
 
   const PooledString& getSetup() const { return setup; }
 
-  string getSetupString() const { return setup; }
+  const string& getSetupString() const { return setup; }
 
   void setSetup(const PooledString& s) { setup = s; }
 
@@ -1518,7 +1518,7 @@ class SetupEvent : public TimeLine<LoadPlan>::Event {
 
   template <class Cls>
   static inline void registerFields(MetaClass* m) {
-    m->addStringField<Cls>(Tags::setup, &Cls::getSetupString);
+    m->addStringRefField<Cls>(Tags::setup, &Cls::getSetupString);
     m->addPointerField<Cls, SetupMatrixRule>(Tags::rule, &Cls::getRule);
     m->addDateField<Cls>(Tags::date, &Cls::getDate);
   }
@@ -5495,7 +5495,7 @@ class SetupMatrixRule : public Object {
   }
 
   /* Return the from setup. */
-  string getFromSetupString() const { return from; }
+  const string& getFromSetupString() const { return from; }
 
   const PooledString& getFromSetup() const { return from; }
 
@@ -5506,7 +5506,7 @@ class SetupMatrixRule : public Object {
   }
 
   /* Return the to setup. */
-  string getToSetupString() const { return to; }
+  const string& getToSetupString() const { return to; }
 
   const PooledString& getToSetup() const { return to; }
 
@@ -5524,10 +5524,10 @@ class SetupMatrixRule : public Object {
 
   template <class Cls>
   static inline void registerFields(MetaClass* m) {
-    m->addStringField<Cls>(Tags::fromsetup, &Cls::getFromSetupString,
-                           &Cls::setFromSetup);
-    m->addStringField<Cls>(Tags::tosetup, &Cls::getToSetupString,
-                           &Cls::setToSetup);
+    m->addStringRefField<Cls>(Tags::fromsetup, &Cls::getFromSetupString,
+                              &Cls::setFromSetup);
+    m->addStringRefField<Cls>(Tags::tosetup, &Cls::getToSetupString,
+                              &Cls::setToSetup);
     m->addDurationField<Cls>(Tags::duration, &Cls::getDuration,
                              &Cls::setDuration);
     m->addDoubleField<Cls>(Tags::cost, &Cls::getCost, &Cls::setCost);
@@ -5951,7 +5951,9 @@ class Resource : public HasHierarchy<Resource>,
   }
 
   /* Return the current setup. */
-  string getSetupString() const { return setup ? setup->getSetup() : ""; }
+  const string& getSetupString() const {
+    return setup ? setup->getSetup() : PooledString::nullstring;
+  }
 
   /* Update the current setup. */
   void setSetup(const string& s) {
@@ -5991,7 +5993,8 @@ class Resource : public HasHierarchy<Resource>,
                                       &Cls::setEfficiencyCalendar);
     m->addPointerField<Cls, Location>(Tags::location, &Cls::getLocation,
                                       &Cls::setLocation);
-    m->addStringField<Cls>(Tags::setup, &Cls::getSetupString, &Cls::setSetup);
+    m->addStringRefField<Cls>(Tags::setup, &Cls::getSetupString,
+                              &Cls::setSetup);
     m->addPointerField<Cls, SetupMatrix>(
         Tags::setupmatrix, &Cls::getSetupMatrix, &Cls::setSetupMatrix);
     m->addPointerField<Cls, Calendar>(Tags::available, &Cls::getAvailable,
@@ -6361,7 +6364,7 @@ class Load : public Object,
   void setSetupString(const string&);
 
   /* Return the required resource setup. */
-  string getSetupString() const { return setup; }
+  const string& getSetupString() const { return setup; }
 
   /* Update the required skill. */
   void setSkill(Skill* s) { skill = s; }
@@ -6427,8 +6430,8 @@ class Load : public Object,
                          &Cls::setEffectiveStart);
     m->addDateField<Cls>(Tags::effective_end, &Cls::getEffectiveEnd,
                          &Cls::setEffectiveEnd, Date::infiniteFuture);
-    m->addStringField<Cls>(Tags::setup, &Cls::getSetupString,
-                           &Cls::setSetupString);
+    m->addStringRefField<Cls>(Tags::setup, &Cls::getSetupString,
+                              &Cls::setSetupString);
     m->addPointerField<Cls, Skill>(Tags::skill, &Cls::getSkill, &Cls::setSkill);
     HasSource::registerFields<Cls>(m);
     m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, &Cls::setHidden,
@@ -7222,7 +7225,9 @@ class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand {
   }
 
   /* Returns the required setup for the operation. */
-  string getSetupLoad() const { return getLoad() ? getLoad()->getSetup() : ""; }
+  const string& getSetupLoad() const {
+    return getLoad() ? getLoad()->getSetup() : PooledString::nullstring;
+  }
 
   /* Returns the current setup of the resource.
    * When the argument is true the setup of this loadplan is returned.

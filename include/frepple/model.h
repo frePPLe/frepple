@@ -7320,7 +7320,8 @@ class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand {
                          Date::infiniteFuture, DONT_SERIALIZE);
     m->addPointerField<Cls, Operation>(Tags::operation, &Cls::getOperation,
                                        nullptr, DONT_SERIALIZE);
-    m->addStringField<Cls>(Tags::setup, &Cls::getSetupLoad, nullptr, "", PLAN);
+    m->addStringRefField<Cls>(Tags::setup, &Cls::getSetupLoad, nullptr, "",
+                              PLAN);
   }
 
   /* Finds the loadplan on the operationplan when we read data. */

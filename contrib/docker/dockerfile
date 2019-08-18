@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2018 by frePPLe bvba
+# Copyright (C) 2018-2019 by frePPLe bvba
 #
 # This library is free software; you can redistribute it and/or modify it
 # under the terms of the GNU Affero General Public License as published
@@ -18,14 +18,15 @@
 # STAGE 1: Compile and build the application
 #
 
-FROM ubuntu:16.04 as builder
-RUN apt-get -y -q update && apt-get -y install \
-  libxerces-c3.1 apache2 libapache2-mod-wsgi-py3 \
+FROM ubuntu:18.04 as builder
+
+RUN apt-get -y -q update && DEBIAN_FRONTEND=noninteractive apt-get -y install \
+  libxerces-c3.2 apache2 libapache2-mod-wsgi-py3 \
   python3-psycopg2 python3-pip postgresql-client
 
-RUN apt-get -y install git wget libtool \
+RUN DEBIAN_FRONTEND=noninteractive apt-get -y install git wget libtool \
   make python3-dev libxerces-c-dev automake autoconf g++ \
-  python-sphinx cdbs debhelper pbuilder python3-sphinx 
+  python-sphinx cdbs debhelper pbuilder python3-sphinx
 
 # A trick to force rebuilding from here if there are new commits
 ADD https://api.github.com/repos/frePPLe/frepple/compare/master...HEAD /dev/null
@@ -41,10 +42,10 @@ RUN make -f Makefile.dist prep config && \
 # STAGE 2: Build the deployment container
 #
 
-FROM ubuntu:16.04
+FROM ubuntu:18.04
 
-RUN apt-get -y -q update && apt-get -y install \
-  libxerces-c3.1 apache2 libapache2-mod-wsgi-py3 \
+RUN apt-get -y -q update && DEBIAN_FRONTEND=noninteractive apt-get -y install \
+  libxerces-c3.2 apache2 libapache2-mod-wsgi-py3 \
   python3-psycopg2 python3-pip postgresql-client
 
 # The following copy commands don't work on LCOW:
@@ -65,6 +66,12 @@ RUN dpkg -i frepple_*.deb && \
 
 EXPOSE 80
 EXPOSE 443
+
+VOLUME ["/var/log/frepple", "/etc/frepple", "/var/log/apache2", "/etc/apache2"]
+
+# Update djangosettings
+# TODO update random secret key
+RUN sed -i 's/"HOST": ""/"HOST": "frepple-postgres"/g' /etc/frepple/djangosettings.py
 
 CMD frepplectl migrate && \
   rm -f /usr/local/apache2/logs/httpd.pid && \

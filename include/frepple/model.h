@@ -5952,7 +5952,10 @@ class Resource : public HasHierarchy<Resource>,
 
   /* Return the current setup. */
   const string& getSetupString() const {
-    return setup ? setup->getSetup() : PooledString::nullstring;
+    if (setup)
+      return setup->getSetup();
+    else
+      return PooledString::nullstring;
   }
 
   /* Update the current setup. */
@@ -7226,7 +7229,10 @@ class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand {
 
   /* Returns the required setup for the operation. */
   const string& getSetupLoad() const {
-    return getLoad() ? getLoad()->getSetup() : PooledString::nullstring;
+    if (getLoad())
+      return getLoad()->getSetup();
+    else
+      return PooledString::nullstring;
   }
 
   /* Returns the current setup of the resource.

@@ -251,7 +251,7 @@ void SolverCreate::chooseResource(
     if (loglevel > 1)
       logger << indentlevel
              << "Alternate load doesn't find supply on any alternate: "
-             << data->state->a_qty << "  " << data->state->a_date << endl;
+             << "not available before " << data->state->a_date << endl;
   }
 }
 
@@ -470,7 +470,7 @@ void SolverCreate::solve(const Load* l, void* v) {
   if (loglevel > 1)
     logger << indentlevel
            << "Alternate load doesn't find supply on any alternate: "
-           << data->state->a_qty << "  " << data->state->a_date << endl;
+           << "not available before " << data->state->a_date << endl;
 }
 
 }  // namespace frepple

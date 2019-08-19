@@ -942,7 +942,9 @@ class SolverCreate : public Solver {
    */
   OperationPlan* createOperation(const Operation*, SolverData*,
                                  bool propagate = true,
-                                 bool start_or_end = true);
+                                 bool start_or_end = true,
+                                 double* qty_per = nullptr,
+                                 double* qty_fixed = nullptr);
 
   /* This function will check all constraints for an operationplan
    * and propagate it upstream. The check does NOT check eventual

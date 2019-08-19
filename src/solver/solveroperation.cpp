@@ -600,8 +600,9 @@ void SolverCreate::solve(const Operation* oper, void* v) {
 
 OperationPlan* SolverCreate::createOperation(const Operation* oper,
                                              SolverCreate::SolverData* data,
-                                             bool propagate,
-                                             bool start_or_end) {
+                                             bool propagate, bool start_or_end,
+                                             double* qty_per,
+                                             double* qty_fixed) {
   OperationPlan* z = nullptr;
 
   // Find the flow for the quantity-per. This can throw an exception if no
@@ -646,11 +647,16 @@ OperationPlan* SolverCreate::createOperation(const Operation* oper,
         if (!data->state->a_qty) logger << "  " << data->state->a_date;
         logger << endl;
       }
+      if (qty_per) *qty_per = flow_qty_per;
+      if (qty_fixed) *qty_fixed = flow_qty_fixed;
       return nullptr;
     }
   } else
     // Using this operation as a delivery operation for a demand
     flow_qty_per = 1.0;
+
+  if (qty_per) *qty_per = flow_qty_per;
+  if (qty_fixed) *qty_fixed = flow_qty_fixed;
 
   // If transferbatch, then recompute the operation quantity and date here
   if (transferbatch_flow) {
@@ -794,12 +800,8 @@ OperationPlan* SolverCreate::createOperation(const Operation* oper,
   data->state->q_qty_min = orig_q_qty_min;
 
   // Multiply the operation reply with the flow quantity to get a final reply
-  if (data->state->curBuffer) {
-    if (data->state->a_qty == 0.0)
-      data->state->a_qty = 0;
-    else
-      data->state->a_qty = data->state->a_qty * flow_qty_per + flow_qty_fixed;
-  }
+  if (data->state->curBuffer && data->state->a_qty)
+    data->state->a_qty = data->state->a_qty * flow_qty_per + flow_qty_fixed;
 
   // Ignore any constraints if we get a complete reply.
   // Sometimes constraints are flagged due to a pre- or post-operation time.

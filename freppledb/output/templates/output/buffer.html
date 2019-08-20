@@ -136,10 +136,10 @@ function drawGraphs(jsondata)
 	          d3.select("#tooltip").style('display', 'none');
 	
 	          window.location = url_prefix
-	            +"/flowplan/"
-	            +admin_escape(d['buffer'])
-	            +"/?flowdate__gte="+timebuckets[d['bucket']]['startdate']
-	            +"&flowdate__lt="+timebuckets[d['bucket']]['enddate'];
+	            + "/flowplan/"
+	            + admin_escape(d['buffer'])
+	            + "/?noautofilter&flowdate__gte=" + timebuckets[d['bucket']]['startdate']
+	            + "&flowdate__lt=" + timebuckets[d['bucket']]['enddate'];
 	
 	          d3.event.stopPropagation();
 	        })
@@ -317,7 +317,7 @@ function crosses (cellvalue, options, rowdata)
               admin_escape(rowdata['buffer']) +
               "/?flowdate__gte=" + options['colModel']['startdate'] +
               "&amp;flowdate__lt=" + options['colModel']['enddate'] +
-              "&amp;quantity__lt=0'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
+              "&amp;quantity__lt=0&amp;noautofilter'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
           result += '0<br>';
         break;
@@ -328,7 +328,7 @@ function crosses (cellvalue, options, rowdata)
               admin_escape(rowdata['location']) + "/" +
               options['colModel']['startdate'] + "/" +
               options['colModel']['enddate'] + "/" +
-              "'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
+              "?noautofilter'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
           result += '0<br>';
         break;
@@ -339,7 +339,7 @@ function crosses (cellvalue, options, rowdata)
               admin_escape(rowdata['location']) + "/" +
               options['colModel']['startdate'] + "/" +
               options['colModel']['enddate'] + "/" +
-              "'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
+              "?noautofilter'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
           result += '0<br>';
         break;
@@ -350,7 +350,7 @@ function crosses (cellvalue, options, rowdata)
               admin_escape(rowdata['location']) + "/" +
               options['colModel']['startdate'] + "/" +
               options['colModel']['enddate'] + "/" +
-              "'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
+              "?noautofilter'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
           result += '0<br>';
         break;
@@ -360,7 +360,7 @@ function crosses (cellvalue, options, rowdata)
               admin_escape(rowdata['buffer']) +
               "/?flowdate__gte=" + options['colModel']['startdate'] +
               "&amp;flowdate__lt=" + options['colModel']['enddate'] +
-              "&amp;quantity__gte=0'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
+              "&amp;quantity__gte=0&amp;noautofilter'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
           result += '0<br>';
         break;
@@ -371,7 +371,7 @@ function crosses (cellvalue, options, rowdata)
               admin_escape(rowdata['location']) + "/" +
               options['colModel']['startdate'] + "/" +
               options['colModel']['enddate'] + "/" +
-              "'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
+              "?noautofilter'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
           result += '0<br>';
         break;
@@ -382,7 +382,7 @@ function crosses (cellvalue, options, rowdata)
               admin_escape(rowdata['location']) + "/" +
               options['colModel']['startdate'] + "/" +
               options['colModel']['enddate'] + "/" +
-              "'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
+              "?noautofilter'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
           result += '0<br>';
         break;
@@ -393,7 +393,7 @@ function crosses (cellvalue, options, rowdata)
               admin_escape(rowdata['location']) + "/" +
               options['colModel']['startdate'] + "/" +
               options['colModel']['enddate'] + "/" +
-              "'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
+              "?noautofilter'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
           result += '0<br>';
         break;
@@ -402,7 +402,7 @@ function crosses (cellvalue, options, rowdata)
            result += grid.formatNumber(cellvalue[13]) + "<a href='{{request.prefix}}/data/input/manufacturingorder/operationplanmaterial/" +
               admin_escape(rowdata['item']) + "/" + admin_escape(rowdata['location']) +
               "/" + options['colModel']['enddate'] +
-              "/'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
+              "/?noautofilter'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
           result += '0<br>';
         break;
@@ -411,7 +411,7 @@ function crosses (cellvalue, options, rowdata)
            result += grid.formatNumber(cellvalue[14]) + "<a href='{{request.prefix}}/data/input/purchaseorder/operationplanmaterial/" +
               admin_escape(rowdata['item']) + "/" + admin_escape(rowdata['location']) +
               "/" + options['colModel']['enddate'] +
-              "/'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
+              "/?noautofilter'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
           result += '0<br>';
         break;
@@ -420,7 +420,7 @@ function crosses (cellvalue, options, rowdata)
            result += grid.formatNumber(cellvalue[15]) + "<a href='{{request.prefix}}/data/input/distributionorder/operationplanmaterial/" +
               admin_escape(rowdata['item']) + "/" + admin_escape(rowdata['location']) +
               "/" + options['colModel']['enddate'] +
-              "/'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
+              "/?noautofilter'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
           result += '0<br>';
         break;

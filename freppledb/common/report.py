@@ -523,6 +523,10 @@ class GridReport(View):
     # Allow to exclude time buckets in the past
     showOnlyFutureTimeBuckets = False
 
+    # Allow this report to automatically restore the previous filter
+    # (unless a filter is already applied explicitly in the URL of course)
+    autofilter = True
+
     # Specify a minimum level for the time buckets available in the report.
     # Higher values (ie more granular) buckets can then not be selected.
     maxBucketLevel = None
@@ -1387,6 +1391,15 @@ class GridReport(View):
             is_popup = "_popup" in request.GET
             sidx, sord = reportclass.getSortName(request)
 
+            autofilter = "noautofilter" not in request.GET and reportclass.autofilter
+            filters = reportclass.getQueryString(request)
+            if not filters and request.prefs and autofilter:
+                # Inherit the filter settings from the preferences
+                filters = request.prefs.get("filter", None)
+            if request.prefs and autofilter:
+                page = request.prefs.get("page", 1)
+            else:
+                page = 1
             context = {
                 "reportclass": reportclass,
                 "title": (
@@ -1406,12 +1419,11 @@ class GridReport(View):
                 "cross_idx": cross_idx,
                 "cross_list": cross_list,
                 "object_id": args and quote(args[0]) or None,
-                "page": request.prefs.get("page", 1) if request.prefs else 1,
+                "page": page,
                 "sord": sord,
                 "sidx": sidx,
                 "is_popup": is_popup,
-                "filters": reportclass.getQueryString(request)
-                or (request.prefs and request.prefs.get("filter", None)),
+                "filters": filters,
                 "args": args,
                 "bucketnames": bucketnames,
                 "model": reportclass.model,

@@ -85,12 +85,6 @@ After installation, users find the following additional features in odoo:
 
 * The manufacturing menu also contains a link to the complete frePPLe
   user interface.
-    
-* The manufacturing menu has an extra task to recreate the plan using
-  frePPLe.
-
-* A scheduler task to recreate the plan as a cron job.
-
 
 Using the connector in frePPLe
 ------------------------------
@@ -185,12 +179,6 @@ The section below describes the installation and configuration of these.
       | The connector assumes each company has only a single manufacturing
         location.
       | All bills of materials are modeled there.
-  
-    * | Cmdline:
-      | Command line launched when the plan generation for a company is launched
-        interactively from the user interface.
-      | Note that when launched from a scheduler cron job, the command line is
-        configured on the job directly.
   
   * | You can run a **quick test** of the above by opening a web browser to the URL
       http\://<host>:<port>/frepple/xml?database=<db>&language=<language>&company=<company>.

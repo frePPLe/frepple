@@ -79,8 +79,7 @@ void SolverCreate::chooseResource(
 
     // If it's an aggregate, push it's members on the stack
     if (res->isGroup()) {
-      for (Resource::memberIterator x = res->getMembers(); x != Resource::end();
-           ++x)
+      for (auto x = res->getMembers(); x != Resource::end(); ++x)
         res_stack.push(&*x);
       continue;
     }

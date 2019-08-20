@@ -14,6 +14,10 @@ Release notes
 - | Data model simplification: The `suboperation table <user-guide/model-reference/suboperations.html>`_ 
     is now deprecated. All data it contained can now be stored in the operation table.
   | This data model simplification makes development of data interfaces easier.
+
+- The default minimum shipment for a demand is changed from "round_down(quantity / 10)"
+  to "round_up(quantity / 10)". This provides a better default for planning very slow moving
+  forecasts. 
   
 - When generating a constrained plan, the material constraint has been removed. It didn't really
   have any impact on the plan algorith. The constraints actually used by the planning engine are

@@ -6936,7 +6936,7 @@ class Demand : public HasHierarchy<Demand>,
       return minShipment;
     else
       // Automatically suggest a value
-      return ceil(getQuantity() / DefaultMaxShipments);
+      return floor(getQuantity() / DefaultMaxShipments);
   }
 
   double getRawMinShipment() const { return minShipment; }

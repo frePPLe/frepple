@@ -50,7 +50,7 @@ maxlateness    duration          | The maximum delay that can be accepted to sat
 minshipment    positive double   | The minimum quantity allowed for the delivery orders
                                    that satisfy this demand.
                                  | If this field is not specified, we compute a default
-                                   value as round_up(quantity / 10). This means that we allow
+                                   value as round_down(quantity / 10). This means that we allow
                                    the demand to be met only with at most 10 partial deliveries.
 constraints    list of problem   | This field returns the list of reasons why the demand
                                    was planned late or short.

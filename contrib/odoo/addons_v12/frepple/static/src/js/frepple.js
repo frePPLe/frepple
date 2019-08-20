@@ -6,6 +6,9 @@ odoo.define('frepple', function (require) {
 
   /* Forecast editor widget. */
   var ForecastEditor = Widget.extend({
+    canBeRemoved: function () {
+      return $.when();
+      },
     start: function() {
       var el = this.$el;
       el.height("calc(100% - 34px)");
@@ -25,6 +28,9 @@ odoo.define('frepple', function (require) {
 
   /* Inventory planning widget. */
   var InventoryPlanning = Widget.extend({
+    canBeRemoved: function () {
+      return $.when();
+      },  	
     start: function() {
       var el = this.$el;
       el.height("calc(100% - 34px)");
@@ -44,6 +50,9 @@ odoo.define('frepple', function (require) {
 
   /* Plan editor widget. */
   var PlanEditor = Widget.extend({
+    canBeRemoved: function () {
+      return $.when();
+      },  	
     start: function() {
       var el = this.$el;
       el.height("calc(100% - 34px)");
@@ -63,6 +72,9 @@ odoo.define('frepple', function (require) {
 
   /* Full user interface widget. */
   var HomePage = Widget.extend({
+    canBeRemoved: function () {
+      return $.when();
+      },
     start: function() {
       var el = this.$el;
       el.height("calc(100% - 34px)");

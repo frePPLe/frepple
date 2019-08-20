@@ -25,39 +25,38 @@ _logger = logging.getLogger(__name__)
 try:
     import jwt
 except:
-    _logger.error('PyJWT module has not been installed. Please install the library from https://pypi.python.org/pypi/PyJWT')
-
-
-FREPPLE_CMD = 'frepplectl runplan --env=odoo_read,supply,odoo_write'
+    _logger.error(
+        "PyJWT module has not been installed. Please install the library from https://pypi.python.org/pypi/PyJWT"
+    )
 
 
 class ResCompany(models.Model):
-    _name = 'res.company'
-    _inherit = 'res.company'
+    _name = "res.company"
+    _inherit = "res.company"
 
-    manufacturing_warehouse = fields.Many2one('stock.warehouse', 'Manufacturing warehouse', ondelete='set null')
-    calendar = fields.Many2one('resource.calendar', 'Calendar', ondelete='set null')
-    cmdline = fields.Char('Command line', size=128, default=FREPPLE_CMD)
-    webtoken_key = fields.Char('Webtoken key', size=128)
-    frepple_server = fields.Char('frePPLe web server', size=128)
-
+    manufacturing_warehouse = fields.Many2one(
+        "stock.warehouse", "Manufacturing warehouse", ondelete="set null"
+    )
+    calendar = fields.Many2one("resource.calendar", "Calendar", ondelete="set null")
+    webtoken_key = fields.Char("Webtoken key", size=128)
+    frepple_server = fields.Char("frePPLe web server", size=128)
 
     @api.model
     def getFreppleURL(self, navbar=True, _url="/"):
-        '''
+        """
         Create an authorization header trusted by frePPLe
-        '''
+        """
         user_company_webtoken = self.env.user.company_id.webtoken_key
         if not user_company_webtoken:
-          raise exceptions.UserError("FrePPLe company web token not configured")
-        encode_params = dict(exp=round(time.time()) + 600,
-                             user=self.env.user.login,
-                             navbar=navbar)
-        webtoken = jwt.encode(encode_params,
-                              user_company_webtoken,
-                              algorithm='HS256').decode('ascii')
+            raise exceptions.UserError("FrePPLe company web token not configured")
+        encode_params = dict(
+            exp=round(time.time()) + 600, user=self.env.user.login, navbar=navbar
+        )
+        webtoken = jwt.encode(
+            encode_params, user_company_webtoken, algorithm="HS256"
+        ).decode("ascii")
         server = self.env.user.company_id.frepple_server
         if not server:
-          raise exceptions.UserError("FrePPLe server utl not configured")
+            raise exceptions.UserError("FrePPLe server utl not configured")
         url = "%s%s?webtoken=%s" % (server, _url, webtoken)
         return url

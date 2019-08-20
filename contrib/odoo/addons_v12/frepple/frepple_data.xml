@@ -20,7 +20,6 @@
             <group>
 	          <field name="calendar"/>
 	          <field name="manufacturing_warehouse"/>
-	          <field name="cmdline"/>
 	          <field name="webtoken_key"/>
 	          <field name="frepple_server"/>
 	        </group>
@@ -28,43 +27,6 @@
         </xpath>
       </field>
     </record>
-
-    <!-- Cron task -->
-    <record forcecreate="True" id="ir_cron_scheduler_action" model="ir.cron">
-      <field name="name">Generate frePPLe plan</field>
-      <field eval="False" name="active"/>
-      <field name="user_id" ref="base.user_root"/>
-      <field name="interval_number">1</field>
-      <field name="interval_type">days</field>
-      <field name="numbercall">-1</field>
-      <field eval="False" name="doall"/>
-      <field eval="'frepple.plan'" name="model"/>
-      <field eval="'run_frepple'" name="function"/>
-      <field eval="'(&quot;frepplectl -env=odoo_read,odoo_write&quot;,)'" name="args"/>
-      <field name="model_id" ref="model_frepple_plan"/>
-    </record>
-
-    <!-- Generate plan window -->
-    <record id="view_generate_plan" model="ir.ui.view">
-      <field name="name">Generate plan</field>
-      <field name="model">frepple.plan</field>
-      <field name="arch" type="xml">
-        <form string="Scheduler Parameters" version="7.0">
-          <group>
-            <field name="company"/>
-          </group>
-          <footer>
-            <button name="generate_plan" string="Generate Plan" type="object"  class="oe_highlight"  />
-            or
-            <button string="Cancel" class="oe_link" special="cancel" />
-          </footer>
-        </form>
-      </field>
-    </record>
-    <act_window name="Generate frePPLe Plan" res_model="frepple.plan"
-      src_model="frepple.plan" view_mode="form"
-      target="new" key2="client_action_multi"
-      id="action_generate_plan"/>
 
     <!-- Complete frePPLe UI in manufacturing menu. -->
     <record id="action_frepple_web" model="ir.actions.client">
@@ -113,11 +75,6 @@
       sequence="100"
       action="action_frepple_inventoryplanning"
       />
-
-    <!-- Menu item under "Warehouse / Schedulers" -->
-    <menuitem action="action_generate_plan" id="menu_generate_plan"
-      parent="stock.menu_stock_warehouse_mgmt"
-      sequence="110" groups="stock.group_stock_manager"/>
 
     <!-- Plan information tab on a sales order. -->
     <!-- 

@@ -1777,19 +1777,29 @@ class OperationPlan(AuditModel):
 
     @classmethod
     def getDeleteStatements(cls):
-      stmts = []
-      stmts.append('''
+        stmts = []
+        stmts.append(
+            """
       delete from operationplanmaterial opm
       where exists (select 1 from operationplan where type = '%s' and reference = opm.operationplan_id)
-      ''' % cls.getType())
-      stmts.append('''
+      """
+            % cls.getType()
+        )
+        stmts.append(
+            """
       delete from operationplanresource opr
       where exists (select 1 from operationplan where type = '%s' and reference = opr.operationplan_id)
-      ''' % cls.getType())
-      stmts.append('''
+      """
+            % cls.getType()
+        )
+        stmts.append(
+            """
       delete from operationplan where type = '%s'
-      ''' % cls.getType())
-      return stmts
+      """
+            % cls.getType()
+        )
+        return stmts
+
     class Meta(AuditModel.Meta):
         db_table = "operationplan"
         verbose_name = _("operationplan")
@@ -1973,10 +1983,10 @@ class DistributionOrder(OperationPlan):
             # .defer("operation", "owner", "supplier", "location")
 
     objects = DistributionOrderManager()
-    
+
     @classmethod
     def getType(cls):
-      return 'DO'
+        return "DO"
 
     def save(self, *args, **kwargs):
         self.type = "DO"
@@ -2019,8 +2029,8 @@ class PurchaseOrder(OperationPlan):
 
     @classmethod
     def getType(cls):
-      return 'PO'
-    
+        return "PO"
+
     def save(self, *args, **kwargs):
         self.type = "PO"
         self.operation = self.owner = self.origin = self.destination = None
@@ -2107,10 +2117,10 @@ class ManufacturingOrder(OperationPlan):
                 return instance
 
         return MO_form
-      
+
     @classmethod
     def getType(cls):
-      return 'MO'
+        return "MO"
 
     def save(self, *args, **kwargs):
         self.type = "MO"
@@ -2139,8 +2149,8 @@ class DeliveryOrder(OperationPlan):
 
     @classmethod
     def getType(cls):
-      return 'DLVR'
-    
+        return "DLVR"
+
     def save(self, *args, **kwargs):
         self.type = "DLVR"
         self.supplier = (

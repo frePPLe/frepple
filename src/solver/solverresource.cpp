@@ -312,8 +312,10 @@ void SolverCreate::solve(const Resource* res, void* v) {
     if (HasOverload)
       // No available capacity found anywhere in the horizon
       data->state->a_date = Date::infiniteFuture;
-    else
+    else if (data->state->q_operationplan->getEnd() > currentOpplan.end)
       data->state->a_date = data->state->q_operationplan->getEnd();
+    else
+      data->state->a_date = currentOpplan.end + Duration(1L);
 
     // Create a zero quantity reply
     data->state->a_qty = 0.0;

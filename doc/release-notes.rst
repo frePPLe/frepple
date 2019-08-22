@@ -52,8 +52,9 @@ Release notes
   | When upgrading a linux installation from a previous release, use the following command
     to upgrade the Python packages. On Windows the new packages are part of the installer.
       sudo -H pip install --force-reinstall -r https://raw.githubusercontent.com/frepple/frepple/6.0.0/requirements.txt
-      
- 
+
+- Support for running in Python virtualenv environments.
+
 5.3.0 (2019/07/06)
 ==================
 

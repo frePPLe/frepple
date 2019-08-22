@@ -23,6 +23,13 @@ import sys
 import logging
 
 if __name__ == "__main__":
+    # Support for running in Python virtual environments
+    if "VIRTUAL_ENV" in os.environ:
+        activate_script = os.path.join(
+            os.environ["VIRTUAL_ENV"], "Scripts", "activate_this.py"
+        )
+        exec(open(activate_script).read(), {"__file__": activate_script})
+
     # Initialize django
     import django
 

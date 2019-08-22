@@ -17,23 +17,33 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-r'''
+r"""
 This command is the wrapper for all administrative actions on frePPLe.
-'''
+"""
 
 import os
 import sys
 
 if __name__ == "__main__":
-  # Initialize django
-  os.environ.setdefault("DJANGO_SETTINGS_MODULE", "freppledb.settings")
-  import django
-  django.setup()
+    # Initialize Python virtual environments
+    if "VIRTUAL_ENV" in os.environ:
+        activate_script = os.path.join(
+            os.environ["VIRTUAL_ENV"], "Scripts", "activate_this.py"
+        )
+        exec(open(activate_script).read(), {"__file__": activate_script})
 
-  # Synchronize the scenario table with the settings
-  from freppledb.common.models import Scenario
-  Scenario.syncWithSettings()
+    # Initialize django
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "freppledb.settings")
+    import django
 
-  # Run the command
-  from django.core.management import execute_from_command_line
-  execute_from_command_line(sys.argv)
+    django.setup()
+
+    # Synchronize the scenario table with the settings
+    from freppledb.common.models import Scenario
+
+    Scenario.syncWithSettings()
+
+    # Run the command
+    from django.core.management import execute_from_command_line
+
+    execute_from_command_line(sys.argv)

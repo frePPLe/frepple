@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2007-2013 by frePPLe bvba
+# Copyright (C) 2019 by frePPLe bvba
 #
 # This library is free software; you can redistribute it and/or modify it
 # under the terms of the GNU Affero General Public License as published
@@ -15,22 +15,4 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-r"""
-An reusable application that contains common functionality of different
-frePPLe extension apps.
-
-The common functionality handles:
-  - custom fields: json, jsonb and alias
-  - user model
-  - user preferences
-  - authentication using the e-mail address
-  - basic authentication
-  - JWT authentication
-  - navigation menu and breadcrumbs
-  - generic report framework
-  - generic data export and import framework
-  - generic dashboard widget framework
-  - date and time bucket definition
-  - middleware allowing users to set their preferred language and work with multiple databases
-  - middelware to automatically log in
-"""
+default_app_config = "freppledb.common.apps.CommonConfig"

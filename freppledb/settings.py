@@ -392,12 +392,6 @@ if not os.access(os.path.join(FREPPLE_CONFIGDIR, "djangosettings.py"), os.R_OK):
     sys.exit(1)
 with open(os.path.join(FREPPLE_CONFIGDIR, "djangosettings.py")) as mysettingfile:
     exec(mysettingfile.read(), globals())
-if DEBUG:
-    # Add a dummy module to sys.modules to make the development server
-    # autoreload when the configuration file changes.
-    module = types.ModuleType("djangosettings")
-    module.__file__ = os.path.join(FREPPLE_CONFIGDIR, "djangosettings.py")
-    sys.modules["djangosettings"] = module
 
 # Some Django settings we don't like to be overriden
 MANAGERS = ADMINS

@@ -365,7 +365,6 @@ Resource::PlanIterator::PlanIterator(Resource* r, PyObject* o)
         Resource::loadplanlist::iterator(i->res->getLoadPlans().begin());
     i->bucketized = i->res->hasType<ResourceBuckets>();
     i->cur_date = PythonData(end_date).getDate();
-    i->setup_loadplan = nullptr;
     i->prev_date = i->cur_date;
     i->cur_size = 0.0;
     i->cur_load = 0.0;
@@ -400,17 +399,8 @@ Resource::PlanIterator::PlanIterator(Resource* r, PyObject* o)
         if (tp == 4)
           // New max size
           i->cur_size = i->ldplaniter->getMax();
-        else if (tp == 1) {
-          const LoadPlan* ldplan =
-              dynamic_cast<const LoadPlan*>(&*(i->ldplaniter));
-          if (ldplan->getOperationPlan()->getSetupEnd() !=
-                  ldplan->getOperationPlan()->getStart() &&
-              ldplan->getQuantity() > 0)
-            i->setup_loadplan = ldplan;
-          else
-            i->setup_loadplan = nullptr;
-          i->cur_load = ldplan->getOnhand();
-        }
+        else if (tp == 1)
+          i->cur_load = i->ldplaniter->getOnhand();
         ++(i->ldplaniter);
       }
     }
@@ -550,18 +540,8 @@ PyObject* Resource::PlanIterator::iternext() {
           if (tp == 4)
             // New max size
             i->cur_size = i->ldplaniter->getMax();
-          else if (tp == 1) {
-            const LoadPlan* ldplan =
-                dynamic_cast<const LoadPlan*>(&*(i->ldplaniter));
-            assert(ldplan);
-            if (ldplan->getOperationPlan()->getSetupEnd() !=
-                    ldplan->getOperationPlan()->getStart() &&
-                ldplan->getQuantity() > 0)
-              i->setup_loadplan = ldplan;
-            else
-              i->setup_loadplan = nullptr;
-            i->cur_load = ldplan->getOnhand();
-          }
+          else if (tp == 1)
+            i->cur_load = i->ldplaniter->getOnhand();
 
           // Move to the next event
           ++(i->ldplaniter);
@@ -576,11 +556,20 @@ PyObject* Resource::PlanIterator::iternext() {
         DateRange bckt(cpp_start_date, cpp_end_date);
         for (auto j = i->res->getLoadPlans().begin();
              j != i->res->getLoadPlans().end(); ++j) {
-          auto tmp = j->getOperationPlan();
-          if (tmp && j->getQuantity() < 0) {
-            auto stp = DateRange(tmp->getStart(), tmp->getSetupEnd());
-            bucket_setup -=
-                static_cast<long>(bckt.overlap(stp)) * j->getQuantity();
+          auto opplan = j->getOperationPlan();
+          if (opplan && j->getQuantity() < 0) {
+            auto strt = opplan->getStart() > cpp_start_date ? opplan->getStart()
+                                                            : cpp_start_date;
+            auto nd = opplan->getSetupEnd() < cpp_end_date
+                          ? opplan->getSetupEnd()
+                          : cpp_end_date;
+            if (strt < nd) {
+              Duration setupduration;
+              auto overlap = opplan->getOperation()->calculateOperationTime(
+                  opplan, strt, nd, &setupduration);
+              bucket_setup -=
+                  static_cast<long>(setupduration) * j->getQuantity();
+            }
           }
         }
       }

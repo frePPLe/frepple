@@ -6104,7 +6104,6 @@ class Resource::PlanIterator : public PythonExtension<Resource::PlanIterator> {
     Resource::loadplanlist::iterator ldplaniter;
     Calendar::EventIterator unavailIter;
     Calendar::EventIterator unavailLocIter;
-    const LoadPlan* setup_loadplan;
     Date cur_date;
     Date prev_date;
     double cur_size;

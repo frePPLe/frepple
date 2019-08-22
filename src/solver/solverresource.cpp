@@ -315,7 +315,8 @@ void SolverCreate::solve(const Resource* res, void* v) {
     else if (data->state->q_operationplan->getEnd() > currentOpplan.end)
       data->state->a_date = data->state->q_operationplan->getEnd();
     else
-      data->state->a_date = currentOpplan.end + Duration(1L);
+      data->state->a_date =
+          currentOpplan.end + data->getSolver()->getMinimumDelay();
 
     // Create a zero quantity reply
     data->state->a_qty = 0.0;

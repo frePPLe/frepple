@@ -2332,8 +2332,7 @@ class GridPivot(GridReport):
             if isinstance(reportclass.basequeryset, collections.Callable):
                 query = reportclass.query(
                     request,
-                    reportclass.basequeryset(request, *args, **kwargs)
-                    .filter(pk__exact=args[0])
+                    reportclass.basequeryset(request, *args, **kwargs)                    
                     .using(request.database),
                     sortsql="1 asc",
                 )

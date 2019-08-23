@@ -43,7 +43,14 @@ class OverviewReport(GridPivot):
     @classmethod
     def basequeryset(reportclass, request, *args, **kwargs):
         if len(args) and args[0]:
-            return Buffer.objects.all()
+            index = args[0].find(' @ ')
+            if index == -1:
+              return Buffer.objects.filter(id=args[0])
+            else:
+              return OperationPlanMaterial.objects.values("item", "location")\
+                .filter(item__name=args[0][0:index], location__name=args[0][index+3:])\
+                .order_by("item_id", "location_id")\
+                .distinct()
         else:
             return (
                 OperationPlanMaterial.objects.values("item", "location")
@@ -211,8 +218,14 @@ class OverviewReport(GridPivot):
     def extra_context(reportclass, request, *args, **kwargs):
         if args and args[0]:
             request.session["lasttab"] = "plan"
+            
+            index = args[0].find(' @ ')
+            if index == -1:
+              buffer = Buffer.objects.get(id=args[0])
+            
             return {
-                "title": force_text(Buffer._meta.verbose_name) + " " + args[0],
+                "title": force_text(Buffer._meta.verbose_name) + " " + 
+                (args[0] if index != -1 else buffer.item.name + ' @ ' + buffer.location.name),
                 "post_title": _("plan"),
             }
         else:

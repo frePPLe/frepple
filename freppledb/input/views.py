@@ -4665,8 +4665,15 @@ class InventoryDetail(OperationPlanMixin, GridReport):
     def basequeryset(reportclass, request, *args, **kwargs):
         if len(args) and args[0]:
             dlmtr = args[0].find(" @ ")
+            if dlmtr != -1:
+              item = args[0][:dlmtr]
+              location = args[0][dlmtr + 3 :]
+            else:
+              buffer = Buffer.objects.get(id=args[0])
+              item = buffer.item.name
+              location = buffer.location.name 
             base = OperationPlanMaterial.objects.filter(
-                item=args[0][:dlmtr], location=args[0][dlmtr + 3 :]
+                item=item, location=location
             )
         else:
             base = OperationPlanMaterial.objects
@@ -4681,10 +4688,18 @@ class InventoryDetail(OperationPlanMixin, GridReport):
     def extra_context(reportclass, request, *args, **kwargs):
         if args and args[0]:
             request.session["lasttab"] = "plandetail"
+            dlmtr = args[0].find(" @ ")
+            if dlmtr != -1:
+              item = args[0][:dlmtr]
+              location = args[0][dlmtr + 3 :]
+            else:
+              buffer = Buffer.objects.get(id=args[0])
+              item = buffer.item.name
+              location = buffer.location.name 
             return {
                 "active_tab": "plandetail",
                 "model": Buffer,
-                "title": force_text(Buffer._meta.verbose_name) + " " + args[0],
+                "title": force_text(Buffer._meta.verbose_name) + " " + item + " @ " + location,
                 "post_title": _("plan detail"),
             }
         else:

@@ -227,7 +227,11 @@ class OverviewReport(GridPivot):
 
     @classmethod
     def basequeryset(reportclass, request, *args, **kwargs):
-        return Resource.objects.all().annotate(
+        if args and args[0]:
+          queryset = Resource.objects.filter(name=args[0])
+        else:
+          queryset = Resource.objects.all()
+        return queryset.annotate(
             avgutil=RawSQL(
                 """
           select ( coalesce(sum(out_resourceplan.load),0) + coalesce(sum(out_resourceplan.setup),0) )

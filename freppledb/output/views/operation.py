@@ -227,7 +227,7 @@ class OverviewReport(GridPivot):
     def basequeryset(request, *args, **kwargs):
         if args and args[0]:
             request.session["lasttab"] = "plan"
-            return Operation.objects.all()
+            return Operation.objects.filter(name=args[0])
         else:
             current, start, end = getHorizon(request)
             return Operation.objects.all().extra(

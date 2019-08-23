@@ -463,6 +463,22 @@ class PathReport(GridReport):
         inner join location l_parent on l_parent.name = itemsupplier.location_id
         inner join location on location.lft between l_parent.lft and l_parent.rght
         union
+        select 'Purchase '||item.name||' @ '|| location.name||' from '||itemsupplier.supplier_id,
+        'purchase' as type,
+        location.name as location_id,
+        case when itemsupplier.resource_id is not null then jsonb_build_object(itemsupplier.resource_id, itemsupplier.resource_qty) else '{}'::jsonb end resources,
+        null as owner_id,
+        itemsupplier.priority as priority,
+        itemsupplier.leadtime as duration,
+        null as duration_per,
+        null as consumed,
+        jsonb_build_object(item.name||' @ '|| location.name,1) as produced
+        from itemsupplier
+        inner join item i_parent on i_parent.name = itemsupplier.item_id
+        inner join item on item.lft between i_parent.lft and i_parent.rght
+        inner join location on location.lft = location.rght - 1
+        where location_id is null
+        union
         select 'Ship '||item.name||' from '||itemdistribution.origin_id||' to '||itemdistribution.location_id,
         'distribution' as type,
         itemdistribution.location_id,

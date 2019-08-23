@@ -48,15 +48,15 @@ variable_popup = Variable("is_popup")
 
 class CrumbsNode(Node):
     r"""
-  A generic breadcrumbs framework.
+    A generic breadcrumbs framework.
 
-  Usage in your templates:
-  {% crumbs %}
+    Usage in your templates:
+    {% crumbs %}
 
-  The admin app already defines a block for crumbs, so the typical usage of the
-  crumbs tag is as follows:
-  {%block breadcrumbs%}<div class="breadcrumbs">{%crumbs%}</div>{%endblock%}
-  """
+    The admin app already defines a block for crumbs, so the typical usage of the
+    crumbs tag is as follows:
+    {%block breadcrumbs%}<div class="breadcrumbs">{%crumbs%}</div>{%endblock%}
+    """
 
     def render(self, context):
         try:
@@ -123,6 +123,10 @@ class CrumbsNode(Node):
                             )
                         )
                     else:
+                        if not req.GET or "noautofilter" in req.GET:
+                            args = ""
+                        else:
+                            args = "?%s" % iri_to_uri(req.GET.urlencode())
                         cur.append(
                             (
                                 title,
@@ -130,9 +134,7 @@ class CrumbsNode(Node):
                                 % (
                                     req.prefix,
                                     urlquote(req.path),
-                                    req.GET
-                                    and ("?" + iri_to_uri(req.GET.urlencode()))
-                                    or "",
+                                    args,
                                     str(escape(capfirst(title))),
                                 ),
                                 req.path,

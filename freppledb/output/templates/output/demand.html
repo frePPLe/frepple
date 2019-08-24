@@ -126,7 +126,7 @@ function drawGraphs(jsondata)
 	          window.location = "{{ request.prefix }}"
 	            +"/data/input/deliveryorder/item/"
 	            +admin_escape(d['item'])
-	            +"/?o=5a&enddate__gte="+timebuckets[d['bucket']]['startdate']
+	            +"/?noautofilter&o=5a&enddate__gte="+timebuckets[d['bucket']]['startdate']
 	            +"&enddate__lt="+timebuckets[d['bucket']]['enddate'];
 	
 	          var coord = d3.mouse(document.body);
@@ -229,7 +229,7 @@ function crosses (cellvalue, options, rowdata)
         if (cellvalue[cross_idx[i]] != 0.0)
           result += grid.formatNumber(cellvalue[cross_idx[i]]) + '<a href="{{request.prefix}}/data/input/deliveryorder/item/' +
             admin_escape(rowdata['item']) +
-            '/?o=5a&amp;demand__due__gte=' + options['colModel']['startdate'] +
+            '/?noautofilter&amp;o=5a&amp;demand__due__gte=' + options['colModel']['startdate'] +
             '&amp;demand__due__lt=' + options['colModel']['enddate'] +
             '">&nbsp;<span class="context cross fa fa-caret-right"></span></a><br>';
         else
@@ -239,7 +239,7 @@ function crosses (cellvalue, options, rowdata)
         if (cellvalue[cross_idx[i]] != 0.0)
           result += grid.formatNumber(cellvalue[cross_idx[i]]) + '<a href="{{request.prefix}}/data/input/deliveryorder/item/' +
             admin_escape(rowdata['item']) +
-            '/?o=5a&amp;enddate__gte=' + options['colModel']['startdate'] +
+            '/?noautofilter&amp;o=5a&amp;enddate__gte=' + options['colModel']['startdate'] +
             '&amp;enddate__lt=' + options['colModel']['enddate'] +
             '">&nbsp;<span class="context cross fa fa-caret-right"></span></a><br>';
         else

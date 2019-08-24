@@ -43,7 +43,7 @@ class LateOrdersWidget(Widget):
     tooltip = _("Shows orders that will be delivered after their due date")
     permissions = (("view_problem_report", "Can view problem report"),)
     asynchronous = True
-    url = "/problem/?entity=demand&name=late&sord=asc&sidx=startdate"
+    url = "/problem/?noautofilter&entity=demand&name=late&sord=asc&sidx=startdate"
     exporturl = True
     limit = 20
 
@@ -123,7 +123,7 @@ class ShortOrdersWidget(Widget):
     asynchronous = True
     # Note the gte filter lets pass "short" and "unplanned", and filters out
     # "late" and "early".
-    url = "/problem/?entity=demand&name__gte=short&sord=asc&sidx=startdate"
+    url = "/problem/?noautofilter&entity=demand&name__gte=short&sord=asc&sidx=startdate"
     exporturl = True
     limit = 20
 
@@ -197,7 +197,7 @@ class ManufacturingOrderWidget(Widget):
     tooltip = _("Shows manufacturing orders by start date")
     permissions = (("view_problem_report", "Can view problem report"),)
     asynchronous = True
-    url = "/data/input/manufacturingorder/?sord=asc&sidx=startdate&status__in=proposed,confirmed"
+    url = "/data/input/manufacturingorder/?noautofilter&sord=asc&sidx=startdate&status__in=proposed,confirmed,approved"
     exporturl = True
     fence1 = 7
     fence2 = 30
@@ -341,7 +341,7 @@ class ManufacturingOrderWidget(Widget):
       left outer join operationplan
         on operationplan.startdate >= common_bucketdetail.startdate
         and operationplan.startdate < common_bucketdetail.enddate
-        and status in ('confirmed', 'proposed')
+        and status in ('confirmed', 'proposed', 'approved')
         and operationplan.type = 'MO'
       left outer join operation
         on operationplan.operation_id = operation.name
@@ -356,7 +356,7 @@ class ManufacturingOrderWidget(Widget):
       from operationplan
       inner join operation
         on operationplan.operation_id = operation.name
-      where status = 'confirmed'
+      where status in ('confirmed', 'approved')
         and operationplan.type = 'MO'
       union all
       select
@@ -407,7 +407,7 @@ class ManufacturingOrderWidget(Widget):
                 )
             elif rec[0] == 1:
                 result.append(
-                    '</table><div class="row"><div class="col-xs-4"><h2>%s / %s %s / %s%s%s&nbsp;<a href="%s/data/input/manufacturingorder/?sord=asc&sidx=startdate&amp;status=confirmed" role="button" class="btn btn-success btn-xs">%s</a></h2><small>%s</small></div>'
+                    '</table><div class="row"><div class="col-xs-4"><h2>%s / %s %s / %s%s%s&nbsp;<a href="%s/data/input/manufacturingorder/?noautofilter&sord=asc&sidx=startdate&amp;status__in=confirmed,approved" role="button" class="btn btn-success btn-xs">%s</a></h2><small>%s</small></div>'
                     % (
                         rec[3],
                         rec[4],
@@ -423,7 +423,7 @@ class ManufacturingOrderWidget(Widget):
             elif rec[0] == 2 and fence1:
                 limit_fence1 = current + timedelta(days=fence1)
                 result.append(
-                    '<div class="col-xs-4"><h2>%s / %s %s / %s%s%s&nbsp;<a href="%s/data/input/manufacturingorder/?sord=asc&sidx=startdate&startdate__lte=%s&amp;status=proposed" role="button" class="btn btn-success btn-xs">%s</a></h2><small>%s</small></div>'
+                    '<div class="col-xs-4"><h2>%s / %s %s / %s%s%s&nbsp;<a href="%s/data/input/manufacturingorder/?noautofilter&sord=asc&sidx=startdate&startdate__lte=%s&amp;status=proposed" role="button" class="btn btn-success btn-xs">%s</a></h2><small>%s</small></div>'
                     % (
                         rec[3],
                         rec[4],
@@ -443,7 +443,7 @@ class ManufacturingOrderWidget(Widget):
             elif fence2:
                 limit_fence2 = current + timedelta(days=fence2)
                 result.append(
-                    '<div class="col-xs-4"><h2>%s / %s %s / %s%s%s&nbsp;<a href="%s/data/input/manufacturingorder/?sord=asc&sidx=startdate&startdate__lte=%s&amp;status=proposed" rol="button" class="btn btn-success btn-xs">%s</a></h2><small>%s</small></div>'
+                    '<div class="col-xs-4"><h2>%s / %s %s / %s%s%s&nbsp;<a href="%s/data/input/manufacturingorder/?noautofilter&sord=asc&sidx=startdate&startdate__lte=%s&amp;status=proposed" rol="button" class="btn btn-success btn-xs">%s</a></h2><small>%s</small></div>'
                     % (
                         rec[3],
                         rec[4],
@@ -473,7 +473,7 @@ class DistributionOrderWidget(Widget):
     tooltip = _("Shows distribution orders by start date")
     permissions = (("view_problem_report", "Can view problem report"),)
     asynchronous = True
-    url = "/data/input/distributionorder/?sord=asc&sidx=startdate&status__in=proposed,confirmed"
+    url = "/data/input/distributionorder/?noautofilter&sord=asc&sidx=startdate&status__in=proposed,confirmed"
     exporturl = True
     fence1 = 7
     fence2 = 30
@@ -619,7 +619,7 @@ class DistributionOrderWidget(Widget):
         and operationplan.startdate < common_bucketdetail.enddate
       left outer join item
         on operationplan.item_id = item.name
-        and status in ('confirmed', 'proposed')
+        and status in ('confirmed', 'proposed', 'approved')
         and type = 'DO'
       where bucket_id = %%s and common_bucketdetail.enddate > %%s
         and common_bucketdetail.startdate < %%s
@@ -632,7 +632,7 @@ class DistributionOrderWidget(Widget):
       from operationplan
       inner join item
       on operationplan.item_id = item.name
-      where status = 'confirmed' and type = 'DO'
+      where status in ('confirmed', 'approved') and type = 'DO'
       union all
       select
         2, null, null, count(*),
@@ -680,7 +680,7 @@ class DistributionOrderWidget(Widget):
                 )
             elif rec[0] == 1:
                 result.append(
-                    '</table><div class="row"><div class="col-xs-4"><h2>%s / %s %s / %s%s%s&nbsp;<a href="%s/data/input/distributionorder/?sord=asc&sidx=startdate&amp;status=confirmed" class="btn btn-success btn-xs">%s</a></h2><small>%s</small></div>'
+                    '</table><div class="row"><div class="col-xs-4"><h2>%s / %s %s / %s%s%s&nbsp;<a href="%s/data/input/distributionorder/?noautofilter&sord=asc&sidx=startdate&amp;status__in=confirmed,approved" class="btn btn-success btn-xs">%s</a></h2><small>%s</small></div>'
                     % (
                         rec[3],
                         rec[4],
@@ -696,7 +696,7 @@ class DistributionOrderWidget(Widget):
             elif rec[0] == 2 and fence1:
                 limit_fence1 = current + timedelta(days=fence1)
                 result.append(
-                    '<div class="col-xs-4"><h2>%s / %s %s / %s%s%s&nbsp;<a href="%s/data/input/distributionorder/?sord=asc&sidx=startdate&startdate__lte=%s&amp;status=proposed" class="btn btn-success btn-xs">%s</a></h2><small>%s</small></div>'
+                    '<div class="col-xs-4"><h2>%s / %s %s / %s%s%s&nbsp;<a href="%s/data/input/distributionorder/?noautofilter&sord=asc&sidx=startdate&startdate__lte=%s&amp;status=proposed" class="btn btn-success btn-xs">%s</a></h2><small>%s</small></div>'
                     % (
                         rec[3],
                         rec[4],
@@ -716,7 +716,7 @@ class DistributionOrderWidget(Widget):
             elif fence2:
                 limit_fence2 = current + timedelta(days=fence2)
                 result.append(
-                    '<div class="col-xs-4"><h2>%s / %s %s / %s%s%s&nbsp;<a href=%s/data/input/distributionorder/?sord=asc&sidx=startdate&startdate__lte=%s&amp;status=proposed" class="btn btn-success btn-xs">%s</a></h2><small>%s</small></div>'
+                    '<div class="col-xs-4"><h2>%s / %s %s / %s%s%s&nbsp;<a href=%s/data/input/distributionorder/?noautofilter&sord=asc&sidx=startdate&startdate__lte=%s&amp;status=proposed" class="btn btn-success btn-xs">%s</a></h2><small>%s</small></div>'
                     % (
                         rec[3],
                         rec[4],
@@ -905,7 +905,7 @@ class PurchaseOrderWidget(Widget):
       left outer join operationplan
         on operationplan.startdate >= common_bucketdetail.startdate
         and operationplan.startdate < common_bucketdetail.enddate
-        and status in ('confirmed', 'proposed') %s
+        and status in ('confirmed', 'proposed', 'approved') %s
       left outer join item
         on operationplan.item_id = item.name
       left outer join itemsupplier
@@ -927,7 +927,7 @@ class PurchaseOrderWidget(Widget):
         on operationplan.item_id = itemsupplier.item_id
         and operationplan.supplier_id = itemsupplier.supplier_id
         and operationplan.location_id = itemsupplier.location_id
-      where status = 'confirmed' %s and type = 'PO'
+      where status in ('confirmed', 'approved') %s and type = 'PO'
       union all
       select
         2, null, null, count(*),
@@ -1001,7 +1001,7 @@ class PurchaseOrderWidget(Widget):
                 )
             elif rec[0] == 1:
                 result.append(
-                    '</table><div class="row"><div class="col-xs-4"><h2>%s / %s %s / %s%s%s&nbsp;<a href="%s/data/input/purchaseorder/?sord=asc&sidx=startdate&amp;status=confirmed" class="btn btn-success btn-xs">%s</a></h2><small>%s</small></div>'
+                    '</table><div class="row"><div class="col-xs-4"><h2>%s / %s %s / %s%s%s&nbsp;<a href="%s/data/input/purchaseorder/?noautofilter&sord=asc&sidx=startdate&amp;status__in=confirmed,approved" class="btn btn-success btn-xs">%s</a></h2><small>%s</small></div>'
                     % (
                         rec[3],
                         rec[4],
@@ -1017,7 +1017,7 @@ class PurchaseOrderWidget(Widget):
             elif rec[0] == 2 and fence1:
                 limit_fence1 = current + timedelta(days=fence1)
                 result.append(
-                    '<div class="col-xs-4"><h2>%s / %s %s / %s%s%s&nbsp;<a href="%s/data/input/purchaseorder/?sord=asc&sidx=startdate&startdate__lte=%s&amp;status=proposed" class="btn btn-success btn-xs">%s</a></h2><small>%s</small></div>'
+                    '<div class="col-xs-4"><h2>%s / %s %s / %s%s%s&nbsp;<a href="%s/data/input/purchaseorder/?noautofilter&sord=asc&sidx=startdate&startdate__lte=%s&amp;status=proposed" class="btn btn-success btn-xs">%s</a></h2><small>%s</small></div>'
                     % (
                         rec[3],
                         rec[4],
@@ -1037,7 +1037,7 @@ class PurchaseOrderWidget(Widget):
             elif fence2:
                 limit_fence2 = current + timedelta(days=fence2)
                 result.append(
-                    '<div class="col-xs-4"><h2>%s / %s %s / %s%s%s&nbsp;<a href="%s/data/input/purchaseorder/?sord=asc&sidx=startdate&startdate__lte=%s&amp;status=proposed" class="btn btn-success btn-xs">%s</a></h2><small>%s</small></div>'
+                    '<div class="col-xs-4"><h2>%s / %s %s / %s%s%s&nbsp;<a href="%s/data/input/purchaseorder/?noautofilter&sord=asc&sidx=startdate&startdate__lte=%s&amp;status=proposed" class="btn btn-success btn-xs">%s</a></h2><small>%s</small></div>'
                     % (
                         rec[3],
                         rec[4],
@@ -1067,7 +1067,7 @@ class PurchaseQueueWidget(Widget):
     tooltip = _("Display a list of new purchase orders")
     permissions = (("view_purchaseorder", "Can view purchase orders"),)
     asynchronous = True
-    url = "/data/input/purchaseorder/?status=proposed&sidx=startdate&sord=asc"
+    url = "/data/input/purchaseorder/?noautofilter&status=proposed&sidx=startdate&sord=asc"
     exporturl = True
     limit = 20
 
@@ -1123,7 +1123,7 @@ class DistributionQueueWidget(Widget):
     tooltip = _("Display a list of new distribution orders")
     permissions = (("view_distributionorder", "Can view distribution orders"),)
     asynchronous = True
-    url = "/data/input/distributionorder/?status=proposed&sidx=startdate&sord=asc"
+    url = "/data/input/distributionorder/?noautofilter&status=proposed&sidx=startdate&sord=asc"
     exporturl = True
     limit = 20
 
@@ -1181,7 +1181,7 @@ class ShippingQueueWidget(Widget):
     tooltip = _("Display a list of new distribution orders")
     permissions = (("view_distributionorder", "Can view distribution orders"),)
     asynchronous = True
-    url = "/data/input/distributionorder/?sidx=plandate&sord=asc"
+    url = "/data/input/distributionorder/?noautofilter&sidx=plandate&sord=asc"
     exporturl = True
     limit = 20
 
@@ -1276,7 +1276,7 @@ class ResourceQueueWidget(Widget):
             .order_by("startdate")[:limit]
         ):
             result.append(
-                '<tr%s><td class="underline"><a href="%s/loadplan/?resource=%s&sidx=startdate&sord=asc">%s</a></td><td>%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td></tr>'
+                '<tr%s><td class="underline"><a href="%s/loadplan/?noautofilter&resource=%s&sidx=startdate&sord=asc">%s</a></td><td>%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td></tr>'
                 % (
                     alt and ' class="altRow"' or "",
                     request.prefix,
@@ -1303,7 +1303,7 @@ class PurchaseAnalysisWidget(Widget):
     tooltip = _("Analyse the urgency of existing purchase orders")
     permissions = (("view_purchaseorder", "Can view purchase orders"),)
     asynchronous = True
-    url = "/data/input/purchaseorder/?status=confirmed&sidx=color&sord=asc"
+    url = "/data/input/purchaseorder/?noautofilter&status=confirmed&sidx=color&sord=asc"
     limit = 20
 
     @classmethod
@@ -1388,7 +1388,7 @@ class AlertsWidget(Widget):
         alt = False
         for res in cursor.fetchall():
             result.append(
-                '<tr%s><td class="underline"><a href="%s/problem/?name=%s">%s</a></td><td class="aligncenter">%d</td><td class="aligncenter">%d</td></tr>'
+                '<tr%s><td class="underline"><a href="%s/problem/?noautofilter&name=%s">%s</a></td><td class="aligncenter">%d</td><td class="aligncenter">%d</td></tr>'
                 % (
                     alt and ' class="altRow"' or "",
                     request.prefix,
@@ -1409,7 +1409,7 @@ Dashboard.register(AlertsWidget)
 class DemandAlertsWidget(AlertsWidget):
     name = "demand_alerts"
     title = _("demand alerts")
-    url = "/problem/?entity=demand"
+    url = "/problem/?noautofilter&entity=demand"
     entities = "demand"
 
 
@@ -1419,7 +1419,7 @@ Dashboard.register(DemandAlertsWidget)
 class CapacityAlertsWidget(AlertsWidget):
     name = "capacity_alerts"
     title = _("capacity alerts")
-    url = "/problem/?entity=capacity"
+    url = "/problem/?noautofilter&entity=capacity"
     entities = "capacity"
 
 
@@ -1429,7 +1429,7 @@ Dashboard.register(CapacityAlertsWidget)
 class MaterialAlertsWidget(AlertsWidget):
     name = "material_alerts"
     title = _("material alerts")
-    url = "/problem/?entity=material"
+    url = "/problem/?noautofilter&entity=material"
     entities = "material"
 
 
@@ -1529,7 +1529,7 @@ class ResourceLoadWidget(Widget):
         cursor.execute(query, (request.report_startdate, request.report_enddate, limit))
         for res in cursor.fetchall():
             result.append(
-                '<tr><td><a href="%s/resource/%s/">%s</a></td><td class="util">%.2f</td></tr>'
+                '<tr><td><a href="%s/resource/%s/?noautofilter">%s</a></td><td class="util">%.2f</td></tr>'
                 % (request.prefix, quote(res[0]), res[0], res[1])
             )
         result.append("</table>")

@@ -110,7 +110,7 @@ function drawGraphs(jsondata)
                 d3.select("#tooltip").style('display', 'none');
                 window.location ="{{ request.prefix }}"
 		           + "/data/input/purchaseorder/"
-		           + "?item__name="+admin_escape(d['item'])
+		           + "?noautofilter&item__name="+admin_escape(d['item'])
 		           + "&supplier__name="+admin_escape(d['supplier'])
 		           + "&location__name="+admin_escape(d['location'])
 		           + "&startdate__lt="+timebuckets[d['bucket']]['enddate']
@@ -133,7 +133,7 @@ function drawGraphs(jsondata)
                 d3.select("#tooltip").style('display', 'none');
                 window.location = "{{ request.prefix }}"
                   + "/data/input/purchaseorder/"
-                  + "?item__name="+admin_escape(d['item'])
+                  + "?noautofilter&item__name="+admin_escape(d['item'])
                   + "&supplier__name="+admin_escape(d['supplier'])
                   + "&location__name="+admin_escape(d['location'])
                   + "&startdate__lt="+timebuckets[d['bucket']]['enddate']
@@ -157,7 +157,7 @@ function drawGraphs(jsondata)
                 d3.select("#tooltip").style('display', 'none');
                 window.location = "{{ request.prefix }}"
                   + "/data/input/purchaseorder/"
-                  + "?item__name="+admin_escape(d['item'])
+                  + "?noautofilter&item__name="+admin_escape(d['item'])
                   + "&supplier__name="+admin_escape(d['supplier'])
                   + "&location__name="+admin_escape(d['location'])
                   + "&enddate__lt="+timebuckets[d['bucket']]['enddate']
@@ -180,7 +180,7 @@ function drawGraphs(jsondata)
                 d3.select("#tooltip").style('display', 'none');
                 window.location = "{{ request.prefix }}"
                   + "/data/input/purchaseorder/"
-                  + "?item__name="+admin_escape(d['item'])
+                  + "?noautofilter&item__name="+admin_escape(d['item'])
                   + "&supplier__name="+admin_escape(d['supplier'])
                   + "&location__name="+admin_escape(d['location'])
                   + "&enddate__lt="+timebuckets[d['bucket']]['enddate']
@@ -199,7 +199,7 @@ function drawGraphs(jsondata)
 	          d3.select("#tooltip").style('display', 'none');
 	          window.location = "{{ request.prefix }}"
 	            +"/data/input/purchaseorder/"
-	            +"?item__name="+admin_escape(d['item'])
+	            +"?noautofilter&item__name="+admin_escape(d['item'])
 	            +"&supplier__name="+admin_escape(d['supplier'])
 	            +"&location__name="+admin_escape(d['location'])
 	            +"&startdate__lt="+timebuckets[d['bucket']]['enddate']
@@ -262,7 +262,8 @@ function crosses (cellvalue, options, rowdata)
       case 0:
         if (cellvalue[0] != 0.0)
           result += grid.formatNumber(cellvalue[0]) 
-            + '<a href="{{ request.prefix }}/data/input/purchaseorder/?item__name=' + admin_escape(rowdata['item']) 
+            + '<a href="{{ request.prefix }}/data/input/purchaseorder/?noautofilter'
+            + '&amp;item__name=' + admin_escape(rowdata['item']) 
             + '&amp;location__name=' + admin_escape(rowdata['location']) 
             + '&amp;supplier__name=' + admin_escape(rowdata['supplier'])
             + '&amp;startdate__gte=' + options['colModel']['startdate']
@@ -274,7 +275,8 @@ function crosses (cellvalue, options, rowdata)
       case 1:
         if (cellvalue[1] != 0.0)
           result += grid.formatNumber(cellvalue[1])
-            + '<a href="{{ request.prefix }}/data/input/purchaseorder/?item__name=' + admin_escape(rowdata['item']) 
+            + '<a href="{{ request.prefix }}/data/input/purchaseorder/?noautofilter'
+            + '&amp;item__name=' + admin_escape(rowdata['item']) 
             + '&amp;location__name=' + admin_escape(rowdata['location']) 
             + '&amp;supplier__name=' + admin_escape(rowdata['supplier'])
             + '&startdate__gte=' + options['colModel']['startdate']
@@ -286,7 +288,8 @@ function crosses (cellvalue, options, rowdata)
       case 2:
         if (cellvalue[2] != 0.0)
           result += grid.formatNumber(cellvalue[2])
-            + '<a href="{{ request.prefix }}/data/input/purchaseorder/?item__name=' + admin_escape(rowdata['item']) 
+            + '<a href="{{ request.prefix }}/data/input/purchaseorder/?noautofilter'
+            + '&amp;item__name=' + admin_escape(rowdata['item']) 
             + '&amp;location__name=' + admin_escape(rowdata['location']) 
             + '&amp;supplier__name=' + admin_escape(rowdata['supplier'])                
             + '&enddate__gte=' + options['colModel']['startdate']
@@ -298,7 +301,8 @@ function crosses (cellvalue, options, rowdata)
       case 3:
         if (cellvalue[3] != 0.0)
           result += grid.formatNumber(cellvalue[3]) 
-            + '<a href="{{ request.prefix }}/data/input/purchaseorder/?item__name=' + admin_escape(rowdata['item']) 
+            + '<a href="{{ request.prefix }}/data/input/purchaseorder/?noautofilter'
+            + '&amp;item__name=' + admin_escape(rowdata['item']) 
             + '&amp;location__name=' + admin_escape(rowdata['location']) 
             + '&amp;supplier__name=' + admin_escape(rowdata['supplier'])                
             + '&enddate__gte=' + options['colModel']['startdate']
@@ -310,7 +314,8 @@ function crosses (cellvalue, options, rowdata)
       case 4:
         if (cellvalue[4] != 0.0)
           result += grid.formatNumber(cellvalue[4])
-            + '<a href="{{ request.prefix }}/data/input/purchaseorder/?item__name=' + admin_escape(rowdata['item']) 
+            + '<a href="{{ request.prefix }}/data/input/purchaseorder/?noautofilter'
+            + '&amp;item__name=' + admin_escape(rowdata['item']) 
             + '&amp;location__name=' + admin_escape(rowdata['location']) 
             + '&amp;supplier__name=' + admin_escape(rowdata['supplier'])                
             + '&startdate__lt=' + options['colModel']['enddate']
@@ -322,7 +327,8 @@ function crosses (cellvalue, options, rowdata)
       case 5:
         if (cellvalue[5] != 0.0)
           result += grid.formatNumber(cellvalue[5]) 
-            + '<a href="{{ request.prefix }}/data/input/purchaseorder/?item__name=' + admin_escape(rowdata['item']) 
+            + '<a href="{{ request.prefix }}/data/input/purchaseorder/?noautofilter'
+            + '&amp;item__name=' + admin_escape(rowdata['item']) 
             + '&amp;location__name=' + admin_escape(rowdata['location']) 
             + '&amp;supplier__name=' + admin_escape(rowdata['supplier'])                
             + '&startdate__lt=' + options['colModel']['enddate']

@@ -236,6 +236,9 @@ class ExcelTest(TransactionTestCase):
     def test_workbook_brazilian_portuguese(self):
         self.run_workbook("pt-br")
 
+    def test_workbook_hebrew(self):
+        self.run_workbook("he")
+
 
 class freppleREST(APITestCase):
 

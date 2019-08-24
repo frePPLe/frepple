@@ -194,7 +194,7 @@ function drawGraphs(jsondata)
 	          window.location = url_prefix
 	            + "/loadplan/"
 	            + admin_escape(d['resource'])
-	            + "/?operationplan__startdate__lt=" + timebuckets[d['bucket']]['enddate']
+	            + "/?noautofilter&operationplan__startdate__lt=" + timebuckets[d['bucket']]['enddate']
 	            + (typeof d['type'] !== 'undefined' && d['type'].includes('bucket') ?
 	               "&operationplan__startdate__gte=" : 
 	               "&operationplan__enddate__gt=")
@@ -307,7 +307,7 @@ function crosses (cellvalue, options, rowdata)
           result += grid.formatNumber(cellvalue[3]) +
             '<a href="{{request.prefix}}/loadplan/' +
             admin_escape(rowdata['resource']) +
-            '/?operationplan__startdate__lt=' + options['colModel']['enddate'] +
+            '/?noautofilter&amp;operationplan__startdate__lt=' + options['colModel']['enddate'] +
             (typeof rowdata['type'] !== 'undefined' && rowdata['type'].includes('bucket') ?
             '&amp;operationplan__startdate__gte=' : '&amp;operationplan__enddate__gt=') +
             options['colModel']['startdate'] +

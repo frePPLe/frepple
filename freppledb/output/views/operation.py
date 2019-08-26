@@ -406,7 +406,7 @@ class PurchaseReport(GridPivot):
     template = "output/purchase_order_summary.html"
     title = _("Purchase order summary")
     model = PurchaseOrder
-    permissions = (("view_purchaseorder", "Can view purchase orders"),)
+    permissions = (("view_purchaseorder", "Can view purchase order"),)
     help_url = "user-guide/user-interface/plan-analysis/purchase-order-summary.html"
 
     rows = (
@@ -764,7 +764,7 @@ class DistributionReport(GridPivot):
     template = "output/distribution_order_summary.html"
     title = _("Distribution order summary")
     model = DistributionOrder
-    permissions = (("view_distributionorder", "Can view distribution orders"),)
+    permissions = (("view_distributionorder", "Can view distribution order"),)
     help_url = "user-guide/user-interface/plan-analysis/distribution-order-summary.html"
 
     rows = (

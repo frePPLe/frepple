@@ -31,29 +31,16 @@ def removeModelPermissions(app, model, db=DEFAULT_DB_ALIAS):
     ).delete()
 
 
-def createViewPermissions(sender, using=DEFAULT_DB_ALIAS, **kwargs):
-    if using != DEFAULT_DB_ALIAS or "apps" not in kwargs:
-        return
-    # Create model read permissions
-    for m in kwargs["apps"].get_models():
-        p = Permission.objects.get_or_create(
-            codename="view_%s" % m._meta.model_name,
-            content_type=ContentType.objects.db_manager(using).get_for_model(m),
-        )[0]
-        p.name = "Can view %s" % m._meta.verbose_name_raw
-        p.save()
-
-
 def createExtraPermissions(sender, using=DEFAULT_DB_ALIAS, **kwargs):
     if using != DEFAULT_DB_ALIAS:
         return
-    # Create the report permissions for the single menu instance we know about.
     from freppledb.menu import menu
-
-    menu.createReportPermissions(sender.name)
-    # Create widget permissions
     from freppledb.common.dashboard import Dashboard
 
+    # Create the report permissions for the single menu instance we know about.
+    menu.createReportPermissions(sender.name)
+
+    # Create widget permissions
     Dashboard.createWidgetPermissions(sender.name)
 
 
@@ -68,5 +55,4 @@ def removePermissions(sender, using=DEFAULT_DB_ALIAS, **kwargs):
 
 signals.post_migrate.connect(removePermissions)
 signals.post_migrate.connect(createExtraPermissions)
-signals.post_migrate.connect(createViewPermissions)
 request_finished.connect(resetRequest)

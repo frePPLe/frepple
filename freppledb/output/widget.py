@@ -1121,7 +1121,7 @@ class DistributionQueueWidget(Widget):
     name = "distribution_queue"
     title = _("distribution queue")
     tooltip = _("Display a list of new distribution orders")
-    permissions = (("view_distributionorder", "Can view distribution orders"),)
+    permissions = (("view_distributionorder", "Can view distribution order"),)
     asynchronous = True
     url = "/data/input/distributionorder/?noautofilter&status=proposed&sidx=startdate&sord=asc"
     exporturl = True
@@ -1179,7 +1179,7 @@ class ShippingQueueWidget(Widget):
     name = "shipping_queue"
     title = _("shipping queue")
     tooltip = _("Display a list of new distribution orders")
-    permissions = (("view_distributionorder", "Can view distribution orders"),)
+    permissions = (("view_distributionorder", "Can view distribution order"),)
     asynchronous = True
     url = "/data/input/distributionorder/?noautofilter&sidx=plandate&sord=asc"
     exporturl = True

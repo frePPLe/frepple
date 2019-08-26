@@ -55,6 +55,10 @@ Release notes
 
 - Support for running in Python virtualenv environments.
 
+.. rubric:: Documentation
+
+- Addition of "cookbook" example models on the following functionalities: alternate resources, resource efficiency.
+
 5.3.0 (2019/07/06)
 ==================
 

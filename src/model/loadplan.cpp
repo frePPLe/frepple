@@ -349,7 +349,10 @@ PyObject* LoadPlan::create(PyTypeObject* pytype, PyObject* args,
     }
 
     // Iterate over extra keywords, and set attributes.
-    if (ldpln) {
+    if (!ldpln) {
+      Py_INCREF(Py_None);
+      return Py_None;
+    } else {
       PyObject *key, *value;
       Py_ssize_t pos = 0;
       while (PyDict_Next(kwds, &pos, &key, &value)) {
@@ -371,11 +374,10 @@ PyObject* LoadPlan::create(PyTypeObject* pytype, PyObject* args,
           ;
         }
       };
+      Py_INCREF(ldpln);
+      return static_cast<PyObject*>(ldpln);
     }
 
-    // Return the object
-    Py_INCREF(ldpln);
-    return static_cast<PyObject*>(ldpln);
   } catch (...) {
     PythonType::evalException();
     return nullptr;

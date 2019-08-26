@@ -32,8 +32,7 @@ void SolverCreate::solve(const Demand* l, void* v) {
   typedef list<pair<Location*, double> > SortedLocation;
   // Set a bookmark at the current command
   SolverData* data = static_cast<SolverData*>(v);
-  CommandManager::Bookmark* topcommand =
-      data->getCommandManager()->setBookmark();
+  auto topcommand = data->getCommandManager()->setBookmark();
 
   // Create a state stack
   State* mystate = data->state;
@@ -166,8 +165,7 @@ void SolverCreate::solve(const Demand* l, void* v) {
 
         // Store the last command in the list, in order to undo the following
         // commands if required.
-        CommandManager::Bookmark* topcommand =
-            data->getCommandManager()->setBookmark();
+        auto topcommand = data->getCommandManager()->setBookmark();
 
         // Plan the demand by asking the delivery operation to plan
         double q_qty = plan_qty;

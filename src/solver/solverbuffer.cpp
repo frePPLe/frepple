@@ -92,8 +92,7 @@ void SolverCreate::solve(const Buffer* b, void* v) {
 
   // Store the last command in the list, in order to undo the following
   // commands if required.
-  CommandManager::Bookmark* topcommand =
-      data->getCommandManager()->setBookmark();
+  auto topcommand = data->getCommandManager()->setBookmark();
   OperationPlan* prev_owner_opplan = data->state->curOwnerOpplan;
 
   // Evaluate the buffer profile and solve shortages by asking more material.
@@ -490,8 +489,7 @@ void SolverCreate::solveSafetyStock(const Buffer* b, void* v) {
 
         // Note that the supply created with the next line changes the
         // onhand value at all later dates!
-        CommandManager::Bookmark* topcommand =
-            data->getCommandManager()->setBookmark();
+        auto topcommand = data->getCommandManager()->setBookmark();
         auto cur_q_date = data->state->q_date;
         data->state->q_qty_min = 1.0;
         data->recent_buffers.clear();

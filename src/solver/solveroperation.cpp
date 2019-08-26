@@ -182,8 +182,7 @@ bool SolverCreate::checkOperation(OperationPlan* opplan,
     return false;
 
   // Set a bookmark in the command list.
-  CommandManager::Bookmark* topcommand =
-      data.getCommandManager()->setBookmark();
+  auto topcommand = data.getCommandManager()->setBookmark();
 
   // Temporary variables
   DateRange orig_dates = opplan->getDates();
@@ -1157,8 +1156,7 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v) {
     for (auto altIter = oper->getSubOperations().begin();
          altIter != oper->getSubOperations().end();) {
       // Set a bookmark in the command list.
-      CommandManager::Bookmark* topcommand =
-          data->getCommandManager()->setBookmark();
+      auto topcommand = data->getCommandManager()->setBookmark();
       bool nextalternate = true;
 
       // Filter out alternates that are not suitable
@@ -1672,8 +1670,7 @@ void SolverCreate::solve(const OperationSplit* oper, void* v) {
   CommandCreateOperationPlan* top_cmd = nullptr;
   while (recheck) {
     // Set a bookmark in the command list.
-    CommandManager::Bookmark* topcommand =
-        data->getCommandManager()->setBookmark();
+    auto topcommand = data->getCommandManager()->setBookmark();
 
     // Create the top operationplan.
     top_cmd = new CommandCreateOperationPlan(

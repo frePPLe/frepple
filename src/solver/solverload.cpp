@@ -111,8 +111,7 @@ void SolverCreate::chooseResource(
     }
 
     // Plan the resource
-    CommandManager::Bookmark* topcommand =
-        data->getCommandManager()->setBookmark();
+    auto topcommand = data->getCommandManager()->setBookmark();
     try {
       res->solve(*this, data);
     } catch (...) {
@@ -323,8 +322,7 @@ void SolverCreate::solve(const Load* l, void* v) {
     // sorted based on their cost. If the cost is the same we should use a
     // decent tie breaker, eg number of skills or number of loads. The first
     // resource with the qualified skill that is available will be used.
-    CommandManager::Bookmark* topcommand =
-        data->getCommandManager()->setBookmark();
+    auto topcommand = data->getCommandManager()->setBookmark();
     if (search == PRIORITY)
       curload->getResource()->solve(*this, data);
     else {

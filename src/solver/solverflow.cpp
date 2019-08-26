@@ -115,8 +115,7 @@ void SolverCreate::solve(const Flow* fl,
           curflow->getQuantityFixed() + orig_q_qty_min * curflow->getQuantity();
       data->state->q_qty = ask_qty = -data->state->q_flowplan->getQuantity();
       data->state->q_date = data->state->q_flowplan->getDate();
-      CommandManager::Bookmark* topcommand =
-          data->getCommandManager()->setBookmark();
+      auto topcommand = data->getCommandManager()->setBookmark();
       curflow->getBuffer()->solve(*this, data);
 
       // 4d) A positive reply: exit the loop

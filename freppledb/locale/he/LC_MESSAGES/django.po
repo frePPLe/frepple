@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: 6.0.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-12-08 16:28+0100\n"
-"PO-Revision-Date: 2019-08-26 08:38+0200\n"
+"PO-Revision-Date: 2019-08-26 09:28+0200\n"
 "Last-Translator: Joao Ranita <jranita@frepple.com>\n"
 "Language-Team: frepple\n"
 "Language: nl\n"
@@ -2359,7 +2359,7 @@ msgstr "זמן סיום"
 
 #: input/models.py:114
 msgid "calendar bucket"
-msgstr "לוח שנה"
+msgstr "פרטי לוח השנה"
 
 #: input/models.py:115 input/views.py:1438
 msgid "calendar buckets"
@@ -3032,7 +3032,7 @@ msgstr "פריטי הספק"
 #: output/views/operation.py:625 output/views/operation.py:631
 #: output/widget.py:1069 output/widget.py:1109
 msgid "origin"
-msgstr "מקור"
+msgstr "מיקום המקור"
 
 #: input/models.py:923
 msgid "A minimum shipping quantity"

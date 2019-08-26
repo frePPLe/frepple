@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: 6.0.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-12-08 16:28+0100\n"
-"PO-Revision-Date: 2019-08-16 16:06+0200\n"
+"PO-Revision-Date: 2019-08-26 08:38+0200\n"
 "Last-Translator: Joao Ranita <jranita@frepple.com>\n"
 "Language-Team: frepple\n"
 "Language: nl\n"
@@ -3095,7 +3095,7 @@ msgstr "סגור"
 #: input/models.py:1020 input/models.py:1170 input/views.py:1275
 #: output/widget.py:70 output/widget.py:134 quoting/views.py:51
 msgid "due"
-msgstr "עקב"
+msgstr "זמן התחלה"
 
 #: input/models.py:1020
 msgid "Due date of the demand"
@@ -4142,7 +4142,7 @@ msgstr "ישות"
 #: output/models.py:24 output/models.py:46 output/views/constraint.py:84
 #: output/views/problem.py:56 output/widget.py:1231
 msgid "weight"
-msgstr "משקל"
+msgstr "סך יחידות"
 
 #: output/models.py:32
 msgid "problem"
@@ -4485,7 +4485,7 @@ msgstr "הגדרת משך"
 
 #: output/widget.py:31
 msgid "late orders"
-msgstr "הזמנות באיחור"
+msgstr "הזמנות מאחרות"
 
 #: output/widget.py:32
 msgid "Shows orders that will be delivered after their due date"
@@ -4493,11 +4493,11 @@ msgstr "מציג הזמנות שיימסרו לאחר תאריך היעד שלה
 
 #: output/widget.py:70
 msgid "planned date"
-msgstr "תאריך מתוכנן"
+msgstr "תאריך סיום"
 
 #: output/widget.py:95
 msgid "short orders"
-msgstr "הזמנות קצרות"
+msgstr "הזמנות מקדימות"
 
 #: output/widget.py:96
 msgid "Shows orders that are not planned completely"
@@ -4577,7 +4577,7 @@ msgstr "סקירה של כל האזהרות בתכנון"
 
 #: output/widget.py:1230
 msgid "count"
-msgstr "לספור"
+msgstr "סך הזמנות"
 
 #: output/widget.py:1256
 msgid "demand alerts"
@@ -4609,7 +4609,7 @@ msgstr "הצג את הפריטים עם ערך המלאי הגבוה ביותר"
 
 #: output/widget.py:1564
 msgid "delivery performance"
-msgstr "ביצועי משלוח"
+msgstr "ביצועי אספקות"
 
 #: output/widget.py:1565
 msgid ""
@@ -4619,7 +4619,7 @@ msgstr "מציג את אחוז ההזמנות המתוכננות להישלח ב
 
 #: output/widget.py:1606
 msgid "On time delivery"
-msgstr "משלוח בזמן"
+msgstr "אספקות בזמן"
 
 #: planningboard/menu.py:20 planningboard/views.py:114
 msgid "Plan editor"

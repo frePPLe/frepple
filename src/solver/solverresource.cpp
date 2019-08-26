@@ -439,15 +439,6 @@ void SolverCreate::solve(const ResourceBuckets* res, void* v) {
   double overloadQty = 0.0;
   double min_free_quantity = ROUNDING_ERROR;
   bool date_effective = false;
-  double efficiency = DBL_MAX;
-  if (opplan->getOperation()->getSizeMinimumCalendar()) date_effective = true;
-  for (auto h = opplan->beginLoadPlans();
-       h != opplan->endLoadPlans() && !date_effective; ++h) {
-    if (h->getResource()->getEfficiencyCalendar()) date_effective = true;
-    if (h->getResource()->getEfficiency() < efficiency)
-      efficiency = h->getResource()->getEfficiency();
-  }
-  if (efficiency == DBL_MAX) efficiency = 100.0;
 
   // Initialize the default reply
   data->state->a_date = data->state->q_date;
@@ -494,6 +485,12 @@ void SolverCreate::solve(const ResourceBuckets* res, void* v) {
             // Resize to fit
             Date oldEnd = opplan->getEnd();
             double oldQty = opplan->getQuantity();
+            double efficiency =
+                data->state->q_loadplan->getResource()->getEfficiencyCalendar()
+                    ? data->state->q_loadplan->getResource()
+                          ->getEfficiencyCalendar()
+                          ->getValue(data->state->q_loadplan->getDate())
+                    : data->state->q_loadplan->getResource()->getEfficiency();
             double newQty =
                 oldQty + get<0>(bucketend) /
                              data->state->q_loadplan->getLoad()->getQuantity() *
@@ -527,6 +524,12 @@ void SolverCreate::solve(const ResourceBuckets* res, void* v) {
               opplan, 0.01, false, false, false, Date::infinitePast) *
               data->state->q_loadplan->getLoad()->getQuantity() +
           data->state->q_loadplan->getLoad()->getQuantityFixed();
+      double efficiency =
+          data->state->q_loadplan->getResource()->getEfficiencyCalendar()
+              ? data->state->q_loadplan->getResource()
+                    ->getEfficiencyCalendar()
+                    ->getValue(data->state->q_loadplan->getDate())
+              : data->state->q_loadplan->getResource()->getEfficiency();
       if (efficiency != 100.0) min_free_quantity /= efficiency * 100.0;
     }
     // TODO The logic is not symmetrical with time_per operations.
@@ -568,6 +571,12 @@ void SolverCreate::solve(const ResourceBuckets* res, void* v) {
           !time_per_logic) {
         Date oldEnd = opplan->getEnd();
         double oldQty = opplan->getQuantity();
+        double efficiency =
+            data->state->q_loadplan->getResource()->getEfficiencyCalendar()
+                ? data->state->q_loadplan->getResource()
+                      ->getEfficiencyCalendar()
+                      ->getValue(data->state->q_loadplan->getDate())
+                : data->state->q_loadplan->getResource()->getEfficiency();
         double newQty =
             oldQty + overloadQty /
                          data->state->q_loadplan->getLoad()->getQuantity() *
@@ -679,6 +688,13 @@ void SolverCreate::solve(const ResourceBuckets* res, void* v) {
               // Only a part of the requirement fits in the bucket
               Date oldEnd = opplan->getEnd();
               double oldQty = opplan->getQuantity();
+              double efficiency =
+                  data->state->q_loadplan->getResource()
+                          ->getEfficiencyCalendar()
+                      ? data->state->q_loadplan->getResource()
+                            ->getEfficiencyCalendar()
+                            ->getValue(data->state->q_loadplan->getDate())
+                      : data->state->q_loadplan->getResource()->getEfficiency();
               double newQty =
                   oldQty +
                   overload / data->state->q_loadplan->getLoad()->getQuantity() *
@@ -792,12 +808,19 @@ void SolverCreate::solve(const ResourceBuckets* res, void* v) {
                 // Increase the size to use all available capacity in the bucket
                 double newQty;
                 if (getAllowSplits()) {
+                  double efficiency =
+                      data->state->q_loadplan->getResource()
+                              ->getEfficiencyCalendar()
+                          ? data->state->q_loadplan->getResource()
+                                ->getEfficiencyCalendar()
+                                ->getValue(data->state->q_loadplan->getDate())
+                          : data->state->q_loadplan->getResource()
+                                ->getEfficiency();
                   newQty =
                       opplan->getQuantity() +
                       get<0>(bucketend) /
                           data->state->q_loadplan->getLoad()->getQuantity() *
-                          efficiency / 100.0;  // TODO tricky when the
-                                               // efficiency varies over time
+                          efficiency / 100.0;
                   if (newQty > originalOpplan.quantity)
                     newQty = originalOpplan.quantity;
                 } else

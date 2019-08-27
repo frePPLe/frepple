@@ -168,7 +168,7 @@ class SupplyPlanning(PlanTask):
             allowsplits=(
                 Parameter.getValue("allowsplits", database, "true").lower() == "true"
             ),
-            minimumdelay=int(Parameter.getValue("plan.minimumdelay", database, "0")),
+            minimumdelay=int(Parameter.getValue("plan.minimumdelay", database, "3600")),
             rotateresources=(
                 Parameter.getValue("plan.rotateResources", database, "true").lower()
                 == "true"

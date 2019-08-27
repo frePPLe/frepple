@@ -270,7 +270,7 @@ class Command(BaseCommand):
                 # Generate the constrained plan
                 if verbosity > 1:
                     print("  Generating plan...")
-                management.call_command("runplan", database=database)
+                management.call_command("runplan", database=database, env="supply")
 
                 if options["pause"]:
                     print(
@@ -387,18 +387,18 @@ class Simulator(object):
 
     def start_bucket(self, strt, nd):
         """
-    A method called at the start of each simulation bucket.
+        A method called at the start of each simulation bucket.
 
-    It can be used to gather performance metrics, or initialize some variables.
-    """
+        It can be used to gather performance metrics, or initialize some variables.
+        """
         return
 
     def end_bucket(self, strt, nd):
         """
-    A method called at the end of each simulation bucket.
+        A method called at the end of each simulation bucket.
 
-    It can be used to gather performance metrics, or initialize some variables.
-    """
+        It can be used to gather performance metrics, or initialize some variables.
+        """
         if self.verbosity > 2:
             self.printStatus()
 
@@ -444,12 +444,12 @@ class Simulator(object):
 
     def finish_manufacturing_orders(self, strt, nd):
         """
-    Find all confirmed manufacturing orders scheduled to finish in this bucket.
+        Find all confirmed manufacturing orders scheduled to finish in this bucket.
 
-    For each of these manufacturing orders:
-      - change the status to "closed"
-      - execute all operation materials at the end of the operation
-    """
+        For each of these manufacturing orders:
+          - change the status to "closed"
+          - execute all operation materials at the end of the operation
+        """
         for op in (
             ManufacturingOrder.objects.select_for_update()
             .using(self.database)
@@ -458,7 +458,7 @@ class Simulator(object):
             if self.verbosity > 2:
                 print(
                     "      Closing MO %s - %d of %s"
-                    % (op.id, op.quantity, op.operation.name)
+                    % (op.reference, op.quantity, op.operation.name)
                 )
             op.status = "closed"
             op.save(using=self.database)
@@ -484,11 +484,11 @@ class Simulator(object):
 
     def create_manufacturing_orders(self, strt, nd):
         """
-    Find proposed manufacturing orders within the time bucket.
-    For each of these:
-      - change the status to "confirmed"
-      - execute all operation materials at the start of the operation
-    """
+        Find proposed manufacturing orders within the time bucket.
+        For each of these:
+          - change the status to "confirmed"
+          - execute all operation materials at the start of the operation
+        """
         for op in (
             ManufacturingOrder.objects.select_for_update()
             .using(self.database)
@@ -497,7 +497,7 @@ class Simulator(object):
             if self.verbosity > 2:
                 print(
                     "      Opening MO %s - %d of %s"
-                    % (op.id, op.quantity, op.operation.name)
+                    % (op.reference, op.quantity, op.operation.name)
                 )
             for fl in op.operation.operationmaterials.all().using(self.database):
                 if not op.operation.location or not fl.item:
@@ -523,11 +523,11 @@ class Simulator(object):
 
     def receive_purchase_orders(self, strt, nd):
         """
-    Find all confirmed purchase orders with an expected delivery date within the simulation bucket.
-    For each of these purchase orders:
-      - change the status to "closed"
-      - add the received quantity into the onhand of the buffer
-    """
+        Find all confirmed purchase orders with an expected delivery date within the simulation bucket.
+        For each of these purchase orders:
+          - change the status to "closed"
+          - add the received quantity into the onhand of the buffer
+        """
         for po in (
             PurchaseOrder.objects.select_for_update()
             .using(self.database)
@@ -536,7 +536,7 @@ class Simulator(object):
             if self.verbosity > 2:
                 print(
                     "      Closing PO %s - %d of %s@%s"
-                    % (po.id, po.quantity, po.item.name, po.location.name)
+                    % (po.reference, po.quantity, po.item.name, po.location.name)
                 )
             try:
                 buf = (
@@ -553,10 +553,10 @@ class Simulator(object):
 
     def create_purchase_orders(self, strt, nd):
         """
-    Find proposed purchase orders within the time bucket.
-    For each of these purchase orders:
-      - change the status to "confirmed"
-    """
+        Find proposed purchase orders within the time bucket.
+        For each of these purchase orders:
+          - change the status to "confirmed"
+        """
         for po in (
             PurchaseOrder.objects.select_for_update()
             .using(self.database)
@@ -565,18 +565,18 @@ class Simulator(object):
             if self.verbosity > 2:
                 print(
                     "      Opening PO %s - %d of %s@%s"
-                    % (po.id, po.quantity, po.item.name, po.location.name)
+                    % (po.reference, po.quantity, po.item.name, po.location.name)
                 )
             po.status = "confirmed"
             po.save(using=self.database)
 
     def create_distribution_orders(self, strt, nd):
         """
-    Find proposed distribution orders due to be shipped within the time bucket.
-    For each of these distribution orders:
-      - change the status to "confirmed"
-      - consume the material from the source location
-    """
+        Find proposed distribution orders due to be shipped within the time bucket.
+        For each of these distribution orders:
+          - change the status to "confirmed"
+          - consume the material from the source location
+        """
         for do in (
             DistributionOrder.objects.select_for_update()
             .using(self.database)
@@ -586,7 +586,7 @@ class Simulator(object):
                 print(
                     "      Opening DO %s - %d from %s@%s to %s@%s"
                     % (
-                        do.id,
+                        do.reference,
                         do.quantity,
                         do.item.name,
                         do.origin.name,
@@ -609,11 +609,11 @@ class Simulator(object):
 
     def receive_distribution_orders(self, strt, nd):
         """
-    Find all confirmed distribution orders with an expected delivery date within the simulation buckets.
-    For each of these purchase orders:
-      - change the status to "closed"
-      - add the received quantity into the onhand of the buffer
-    """
+        Find all confirmed distribution orders with an expected delivery date within the simulation buckets.
+        For each of these purchase orders:
+          - change the status to "closed"
+          - add the received quantity into the onhand of the buffer
+        """
         for do in (
             DistributionOrder.objects.select_for_update()
             .using(self.database)
@@ -622,7 +622,7 @@ class Simulator(object):
             if self.verbosity > 2:
                 print(
                     "      Closing DO %s - %d of %s@%s"
-                    % (do.id, do.quantity, do.item.name, do.destination.name)
+                    % (do.reference, do.quantity, do.item.name, do.destination.name)
                 )
             try:
                 buf = (
@@ -639,17 +639,17 @@ class Simulator(object):
 
     def generate_customer_demand(self, strt, nd):
         """
-    Simulate new customers orders being received.
-    This function creates new records in the demand table.
-
-    The default implementation doesn't create any new demands. We only
-    simulate the execution of the current open sales orders.
-
-    A simplistic, hardcoded example of creating demands is shown.
-    TODO A more generic mechanism to have a data-driven automatic demand generation would be nice.
-    Eg use some "template records" in the demand table which we use to
-    automatically create new demands with a specific frequency.
-    """
+        Simulate new customers orders being received.
+        This function creates new records in the demand table.
+    
+        The default implementation doesn't create any new demands. We only
+        simulate the execution of the current open sales orders.
+    
+        A simplistic, hardcoded example of creating demands is shown.
+        TODO A more generic mechanism to have a data-driven automatic demand generation would be nice.
+        Eg use some "template records" in the demand table which we use to
+        automatically create new demands with a specific frequency.
+        """
         return
 
         self.demand_number += 1
@@ -773,22 +773,22 @@ class Simulator(object):
 
     def ship_customer_demand(self, strt, nd):
         """
-    Deliver customer orders to customers.
-
-    We search for open demand records with a due date earlier than the end of the bucket.
-    The records found are ordered by priority and due date.
-    For each record found:
-      - we check if the order can be (completely or partially) shipped from end item inventory
-      - if no:
-          - skip the demand
-            Hopefully we can ship it when simulating the next bucket...
-      - if the remaining quantity can be completely shipped:
-          - change the demand status to 'closed'
-          - reduce the inventory of the product
-      - if the remaining quantity can be partially shipped:
-          - reduce the quantity of the demand
-          - reduce the inventory of the product
-    """
+        Deliver customer orders to customers.
+    
+        We search for open demand records with a due date earlier than the end of the bucket.
+        The records found are ordered by priority and due date.
+        For each record found:
+          - we check if the order can be (completely or partially) shipped from end item inventory
+          - if no:
+              - skip the demand
+                Hopefully we can ship it when simulating the next bucket...
+          - if the remaining quantity can be completely shipped:
+              - change the demand status to 'closed'
+              - reduce the inventory of the product
+          - if the remaining quantity can be partially shipped:
+              - reduce the quantity of the demand
+              - reduce the inventory of the product
+        """
         for dmd in (
             Demand.objects.using(self.database)
             .filter(due__lt=nd, status="open")
@@ -889,15 +889,15 @@ class Simulator(object):
 
     def printStatus(self):
         """
-    This is an auxilary method useful during debugging.
+        This is an auxilary method useful during debugging.
 
-    It prints the list of all open transactions:
-      - open customer demands
-      - confirmed purchase orders
-      - confirmed manufacturing orders
-      - confirmed distribution orders
-      - current inventory
-    """
+        It prints the list of all open transactions:
+          - open customer demands
+          - confirmed purchase orders
+          - confirmed manufacturing orders
+          - confirmed distribution orders
+          - current inventory
+        """
         print("  Current status:")
         for dmd in (
             Demand.objects.all()
@@ -906,13 +906,14 @@ class Simulator(object):
             .order_by("due", "name")
         ):
             print(
-                "    Demand '%s': %d %s@%s due on %s"
+                "    Demand '%s': %d %s@%s due on %s, planned delivery on %s"
                 % (
                     dmd.name,
                     dmd.quantity,
                     dmd.item.name,
                     dmd.location.name if dmd.location else "None",
                     dmd.due,
+                    dmd.deliverydate,
                 )
             )
         for po in (
@@ -923,7 +924,13 @@ class Simulator(object):
         ):
             print(
                 "    Purchase order '%s': %d %s@%s delivery on %s"
-                % (po.id, po.quantity, po.item.name, po.location.name, po.enddate)
+                % (
+                    po.reference,
+                    po.quantity,
+                    po.item.name,
+                    po.location.name,
+                    po.enddate,
+                )
             )
         for do in (
             DistributionOrder.objects.all()
@@ -933,7 +940,13 @@ class Simulator(object):
         ):
             print(
                 "    Distribution order '%s': %d %s@%s arriving on %s"
-                % (do.id, do.quantity, do.item.name, do.destination.name, do.enddate)
+                % (
+                    do.reference,
+                    do.quantity,
+                    do.item.name,
+                    do.destination.name,
+                    do.enddate,
+                )
             )
         for op in (
             ManufacturingOrder.objects.all()
@@ -943,15 +956,18 @@ class Simulator(object):
         ):
             print(
                 "    Operation plan '%s': %d %s finishing on %s"
-                % (op.id, op.quantity, op.operation.name, op.enddate)
+                % (op.reference, op.quantity, op.operation.name, op.enddate)
             )
         for buf in (
             Buffer.objects.all()
             .using(self.database)
             .filter(onhand__gt=0)
-            .order_by("name")
+            .order_by("item", "location")
         ):
-            print("    Inventory '%s': %d" % (buf.name, buf.onhand))
+            print(
+                "    Inventory '%s @ %s': %d"
+                % (buf.item.name, buf.location.name, buf.onhand)
+            )
 
     def show_metrics(self):
         if not self.verbosity:

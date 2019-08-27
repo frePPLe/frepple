@@ -19,6 +19,7 @@ import base64
 import json
 import os
 from time import sleep
+import unittest
 
 from django.conf import settings
 from django.core import management
@@ -200,6 +201,7 @@ class execute_simulation(TransactionTestCase):
     def tearDown(self):
         del os.environ["FREPPLE_TEST"]
 
+    @unittest.skip("Needs validation")
     def test_run_cmd(self):
         # Run the plan and measure the lateness
         management.call_command("runplan", plantype=1, constraint=15, env="supply")

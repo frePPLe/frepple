@@ -207,7 +207,7 @@ INSTALLED_APPS = (
     "bootstrap3",
     "freppledb.boot",
     # Add any project specific apps here
-    "freppledb.odoo",
+    # "freppledb.odoo",
     #'freppledb.erpconnection',
     "freppledb.input",
     "freppledb.output",

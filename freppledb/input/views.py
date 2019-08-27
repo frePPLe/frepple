@@ -594,8 +594,8 @@ class PathReport(GridReport):
                 if i[2] == "routing"
                 else (
                     tuple(i[9].items()) + tuple(i[10].items())
-                    if i[9] and i[10]
-                    else (tuple(i[9].items()) if i[9] else tuple(i[10].items()))
+                    if (i[9] and i[10])
+                    else (tuple(i[9].items()) if i[9] else (tuple(i[10].items()) if i[10] else None))
                 ),
                 "parent": routingCounter if i[5] else None,
                 "leaf": "false" if i[2] == "routing" else "true",

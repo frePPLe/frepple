@@ -124,11 +124,14 @@ class BaseReport(GridReport):
     def extra_context(reportclass, request, *args, **kwargs):
         if args and args[0] and reportclass.detailmodel:
             request.session["lasttab"] = "constraint"
+            if reportclass.detailmodel._meta.model_name == 'buffer' and ' @ ' not in args[0]:
+              b = Buffer.objects.get(id=args[0])
+              bufferName = b.item.name + ' @ ' + b.location.name
             return {
                 "active_tab": "constraint",
                 "title": force_text(reportclass.detailmodel._meta.verbose_name)
                 + " "
-                + args[0],
+                + (bufferName if 'bufferName' in vars() else args[0]),
                 "post_title": reportclass.detail_post_title,
             }
         else:
@@ -161,9 +164,14 @@ class ReportByBuffer(BaseReport):
     @classmethod
     def basequeryset(reportclass, request, *args, **kwargs):
         if args and args[0]:
+            if not ' @ ' in args[0]:
+              b = Buffer.objects.get(id=args[0])
+              bufferName = b.item.name + ' @ ' + b.location.name
+            else:
+              bufferName = args[0]
             request.session["lasttab"] = "constraint"
             return Constraint.objects.all().filter(
-                owner__exact=args[0], entity__exact="material"
+                owner__exact=bufferName, entity__exact="material"
             )
         else:
             return Constraint.objects.all()

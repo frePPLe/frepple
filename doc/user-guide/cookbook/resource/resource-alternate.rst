@@ -49,18 +49,18 @@ The solver understands it has to pick a resource in the pool of resources that s
 
 The *search mode* column lets the solver know how the resource has to be picked. Possible options for the search mode are:
 
-  .. rubric:: Priority
+  .. rubric:: **Priority**
   
   When search mode is set to *priority*, frePPLe will pick the resources with highest priority (defined in resource skill table)
   as long as the demand is planned on time.
   
-  .. rubric:: Minimum cost search mode
+  .. rubric:: **Minimum cost search mode**
   
   When search mode is set to *minimum cost*, frePPLe will pick the resource that minimizes the cost of production.
   Each upstream cost, whether it is at operation, resource, item supplier or item distribution level is included in the total calulated cost and multiplied by
   the number of parts produced, purchased, shipped.
   
-  .. rubric:: Minimum penalty
+  .. rubric:: **Minimum penalty**
   
   When search mode is set to *minimum penalty*, frePPLe will pick the resource that minimizes the penalty.
   A penalty is paid by an resource each time it produces some material earlier than the requested date. 
@@ -70,15 +70,15 @@ The *search mode* column lets the solver know how the resource has to be picked.
   to produce the second demand (as the first resource will pay a penalty because it has been picked for the first demand and can only produce earlier). Then,
   for the third demand, both resources will have the same penalty and frePPle will pick again the first one.
   
-  .. rubric:: Minimum cost plus penalty
+  .. rubric:: **Minimum cost plus penalty**
   
   Obviously, this option is a combination of the cost and the penalty. FrePPLe will compute both the cost and the penalty for a resource and will pick the one
   that minimizes the sum.
 
 
 For the machine park, we have set the search 
-mode to *priority* as we want frePPLe to choose machine A over machine B. For the operators, we want to share the work among the different
-operators se we chose the *minimum cost plus penalty* policy.
+mode to *priority* as we want frePPLe to choose machine A over machine B. For the operators, we are also using *priority* search mode
+with a priority 1 for Antonio and a priority 2 for Carl.
 
 The skills have to be defined in the `Skills <../../../user-guide/model-reference/skills.php>`_ table :
 
@@ -98,5 +98,7 @@ Note that:
 
 * We could have used a different skill for the machines and the operators in the example.
 
-In the Resource Skills table, we have set a priority of 1 to *machine A* as this is the preferred option.
+In the Resource Skills table, we have set a priority of 1 to *machine A* and *Antonio* as these are the preferred options. Other resources get a priority of 2.
+
+As long as the demand is planned on time (or early), the solver will pick the combination *machine A* / *Antonio* to plan the demand. When a demand is to be planned late, then the solver will jump to the second combination *machine B* / *Carl*.
 

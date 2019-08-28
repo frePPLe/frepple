@@ -787,6 +787,8 @@ class SolverCreate : public Solver {
 
     /* Defines a minimum quantity that we expect the answer to cover. */
     double q_qty_min;
+
+    bool has_bucketized_resources;
   };
 
   /* This class is a helper class of the SolverCreate class.

@@ -32,11 +32,11 @@
       <location name="1. factory" />
       <loads>
         <load>
-		  <resource name="1. Resource" xsi:type="resource_buckets">
-		    <location name="1. factory" />
-		    <maximum_calendar name="Capacity"/>
-		    <efficiency>50</efficiency>
-		    <maxearly>P100D</maxearly>
+          <resource name="1. Resource" xsi:type="resource_buckets">
+            <location name="1. factory" />
+            <maximum_calendar name="Capacity"/>
+            <efficiency>50</efficiency>
+            <maxearly>P100D</maxearly>
           </resource>
           <quantity>1</quantity>
           <quantity_fixed>1</quantity_fixed>
@@ -83,11 +83,11 @@
       </location>
       <loads>
         <load>
-		  <resource name="2. Resource" xsi:type="resource_buckets">
-		    <location name="2. factory" />
-		    <maximum_calendar name="Capacity"/>
-		    <efficiency>50</efficiency>
-		    <maxearly>P100D</maxearly>
+          <resource name="2. Resource" xsi:type="resource_buckets">
+            <location name="2. factory" />
+            <maximum_calendar name="Capacity"/>
+            <efficiency>50</efficiency>
+            <maxearly>P100D</maxearly>
           </resource>
           <quantity>1</quantity>
           <quantity_fixed>1</quantity_fixed>
@@ -133,11 +133,11 @@
       </location>
       <loads>
         <load>
-		  <resource name="3. Resource" xsi:type="resource_buckets">
-		    <location name="3. factory" />
-		    <maximum_calendar name="Capacity"/>
-		    <efficiency>50</efficiency>
-		    <maxearly>P100D</maxearly>
+            <resource name="3. Resource" xsi:type="resource_buckets">
+                <location name="3. factory" />
+            <maximum_calendar name="Capacity"/>
+            <efficiency>50</efficiency>
+            <maxearly>P100D</maxearly>
           </resource>
           <quantity>1</quantity>
           <quantity_fixed>1</quantity_fixed>
@@ -185,10 +185,10 @@
       <location name="4. factory" />
       <loads>
         <load>
-		  <resource name="4. Resource A" xsi:type="resource_buckets">
-		    <location name="4. factory" />
-		    <maximum_calendar name="Capacity"/>
-		    <maxearly>P10D</maxearly>
+          <resource name="4. Resource A" xsi:type="resource_buckets">
+            <location name="4. factory" />
+            <maximum_calendar name="Capacity"/>
+            <maxearly>P10D</maxearly>
           </resource>
           <quantity>1</quantity>
           <quantity_fixed>1</quantity_fixed>
@@ -203,11 +203,11 @@
       <location name="4. factory" />
       <loads>
         <load>
-		  <resource name="4. Resource B" xsi:type="resource_buckets">
-		    <location name="4. factory" />
-		    <maximum_calendar name="Capacity"/>
-		    <efficiency>75</efficiency>
-		    <maxearly>P10D</maxearly>
+          <resource name="4. Resource B" xsi:type="resource_buckets">
+            <location name="4. factory" />
+            <maximum_calendar name="Capacity"/>
+            <efficiency>75</efficiency>
+            <maxearly>P10D</maxearly>
           </resource>
           <quantity>1</quantity>
           <quantity_fixed>1</quantity_fixed>
@@ -222,11 +222,11 @@
       <location name="4. factory" />
       <loads>
         <load>
-		  <resource name="4. Resource C" xsi:type="resource_buckets">
-		    <location name="4. factory" />
-		    <maximum_calendar name="Capacity"/>
-		    <efficiency>50</efficiency>
-		    <maxearly>P10D</maxearly>
+              <resource name="4. Resource C" xsi:type="resource_buckets">
+                <location name="4. factory" />
+                <maximum_calendar name="Capacity"/>
+                <efficiency>50</efficiency>
+                <maxearly>P10D</maxearly>
           </resource>
           <quantity>1</quantity>
           <quantity_fixed>1</quantity_fixed>
@@ -243,6 +243,69 @@
       <item name="4. end item" />
       <location name="4. factory" />
     </demand>
+  </demands>
+  <!--
+  TEST 5: A case with a complicated interaction between material and capcity constraints.
+  The material constraints brings the operation to a new bucket.
+  -->
+  <buffers>
+    <buffer name="5. component @ 5. factory">
+      <item name="5. component" />
+      <location name="5. factory" />
+      <onhand>11</onhand>
+    </buffer>
+  </buffers>
+  <suppliers>
+    <supplier name="5. Supplier">
+      <itemsuppliers>
+        <itemsupplier>
+          <item name="5. end item"/>
+          <leadtime>P9D</leadtime>
+          <priority>2</priority>
+        </itemsupplier>
+      </itemsuppliers>
+    </supplier>
+  </suppliers>
+  <operations>
+    <operation name="5. make end item" xsi:type="operation_time_per">
+      <size_multiple>1</size_multiple>
+      <item name="5. end item" />
+      <priority>1</priority>
+      <location name="5. factory" />
+      <flows>
+        <flow xsi:type="flow_start">
+          <item name="5. component"/>
+          <quantity>-1</quantity>
+        </flow>
+      </flows>
+      <loads>
+        <load>
+          <resource name="5. Resource" xsi:type="resource_buckets">
+            <location name="5. factory" />
+            <maximum_calendar name="Capacity"/>
+          </resource>
+          <quantity>2</quantity>
+        </load>
+      </loads>
+      <duration>P1D</duration>
+      <duration_per>P1D</duration_per>
+    </operation>
+  </operations>
+  <demands>
+    <demand name="5. order 1">
+      <quantity>10</quantity>
+      <due>2019-04-08T00:00:00</due>
+      <priority>1</priority>
+      <item name="5. end item" />
+      <location name="5. factory" />
+    </demand>
+    <demand name="5. order 2">
+      <quantity>4</quantity>
+      <due>2019-03-27T00:00:00</due>
+      <priority>2</priority>
+      <item name="5. end item" />
+      <location name="5. factory" />
+    </demand>    
   </demands>
 
 <?python

@@ -425,6 +425,10 @@ void SolverCreate::solve(const ResourceBuckets* res, void* v) {
            << "' is asked: " << (-data->state->q_qty) << "  "
            << opplan->getDates() << endl;
 
+  // Set a flag for the checkOperation method to mark that bucketized resources
+  // are involved
+  data->state->has_bucketized_resources = true;
+
   // Initialize some variables
   bool time_per_logic =
       opplan->getOperation()->hasType<OperationTimePer>() &&

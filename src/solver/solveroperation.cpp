@@ -204,6 +204,7 @@ bool SolverCreate::checkOperation(OperationPlan* opplan,
   data.state->forceLate = false;
   unsigned short counter = 0;
   do {
+    data.state->has_bucketized_resources = false;
     if (isCapacityConstrained()) {
       // Verify the capacity. This can move the operationplan early or late.
       checkOperationCapacity(opplan, data);
@@ -229,6 +230,9 @@ bool SolverCreate::checkOperation(OperationPlan* opplan,
         // Return false if no capacity is available
         return false;
     }
+    Date opplan_strt_capacity = data.state->has_bucketized_resources
+                                    ? opplan->getStart()
+                                    : Date::infinitePast;
 
     // Check material
     data.state->q_qty = opplan->getQuantity();
@@ -361,7 +365,11 @@ bool SolverCreate::checkOperation(OperationPlan* opplan,
         opplan->setQuantity(0);
         okay = true;
       }
-    } else
+    } else if (opplan_strt_capacity &&
+               opplan_strt_capacity != opplan->getStart())
+      // The start date has moved and bucketized resources need to be rechecked
+      okay = false;
+    else
       okay = true;
     if (!okay && ++counter >= 20) {
       a_qty = 0.0;

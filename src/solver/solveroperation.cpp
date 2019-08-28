@@ -366,7 +366,8 @@ bool SolverCreate::checkOperation(OperationPlan* opplan,
         okay = true;
       }
     } else if (opplan_strt_capacity &&
-               opplan_strt_capacity != opplan->getStart())
+               opplan_strt_capacity != opplan->getStart() &&
+               opplan->getQuantity() > ROUNDING_ERROR)
       // The start date has moved and bucketized resources need to be rechecked
       okay = false;
     else

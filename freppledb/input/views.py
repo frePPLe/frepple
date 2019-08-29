@@ -595,7 +595,11 @@ class PathReport(GridReport):
                 else (
                     tuple(i[9].items()) + tuple(i[10].items())
                     if (i[9] and i[10])
-                    else (tuple(i[9].items()) if i[9] else (tuple(i[10].items()) if i[10] else None))
+                    else (
+                        tuple(i[9].items())
+                        if i[9]
+                        else (tuple(i[10].items()) if i[10] else None)
+                    )
                 ),
                 "parent": routingCounter if i[5] else None,
                 "leaf": "false" if i[2] == "routing" else "true",
@@ -821,10 +825,6 @@ class DownstreamOperationPath(UpstreamOperationPath):
 
 
 class BufferList(GridReport):
-    """
-  A list report to show buffers.
-  """
-
     title = _("buffers")
     basequeryset = Buffer.objects.all()
     model = Buffer
@@ -962,10 +962,6 @@ class BufferList(GridReport):
 
 
 class SetupMatrixList(GridReport):
-    """
-  A list report to show setup matrices.
-  """
-
     title = _("setup matrices")
     basequeryset = SetupMatrix.objects.all()
     model = SetupMatrix
@@ -987,10 +983,6 @@ class SetupMatrixList(GridReport):
 
 
 class SetupRuleList(GridReport):
-    """
-  A list report to show setup matrix rules.
-  """
-
     title = _("setup rules")
     basequeryset = SetupRule.objects.all()
     model = SetupRule
@@ -1022,10 +1014,6 @@ class SetupRuleList(GridReport):
 
 
 class ResourceList(GridReport):
-    """
-  A list report to show resources.
-  """
-
     title = _("resources")
     basequeryset = Resource.objects.all()
     model = Resource
@@ -1156,10 +1144,6 @@ class ResourceList(GridReport):
 
 
 class LocationList(GridReport):
-    """
-  A list report to show locations.
-  """
-
     title = _("locations")
     basequeryset = Location.objects.all()
     model = Location
@@ -1198,10 +1182,6 @@ class LocationList(GridReport):
 
 
 class CustomerList(GridReport):
-    """
-  A list report to show customers.
-  """
-
     title = _("customers")
     basequeryset = Customer.objects.all()
     model = Customer
@@ -1233,10 +1213,6 @@ class CustomerList(GridReport):
 
 
 class SupplierList(GridReport):
-    """
-  A list report to show supplier.
-  """
-
     title = _("suppliers")
     basequeryset = Supplier.objects.all()
     model = Supplier
@@ -1277,10 +1253,6 @@ class SupplierList(GridReport):
 
 
 class ItemSupplierList(GridReport):
-    """
-  A list report to show item suppliers.
-  """
-
     title = _("item suppliers")
     basequeryset = ItemSupplier.objects.all()
     model = ItemSupplier
@@ -1434,10 +1406,6 @@ class ItemSupplierList(GridReport):
 
 
 class ItemDistributionList(GridReport):
-    """
-  A list report to show item distribution.
-  """
-
     title = _("item distributions")
     basequeryset = ItemDistribution.objects.all()
     model = ItemDistribution
@@ -1640,10 +1608,6 @@ class ItemDistributionList(GridReport):
 
 
 class ItemList(GridReport):
-    """
-  A list report to show items.
-  """
-
     title = _("items")
     basequeryset = Item.objects.all()
     model = Item
@@ -1677,10 +1641,6 @@ class ItemList(GridReport):
 
 
 class SkillList(GridReport):
-    """
-  A list report to show skills.
-  """
-
     title = _("skills")
     basequeryset = Skill.objects.all()
     model = Skill
@@ -1702,10 +1662,6 @@ class SkillList(GridReport):
 
 
 class ResourceSkillList(GridReport):
-    """
-  A list report to show resource skills.
-  """
-
     title = _("resource skills")
     basequeryset = ResourceSkill.objects.all()
     model = ResourceSkill
@@ -1747,10 +1703,6 @@ class ResourceSkillList(GridReport):
 
 
 class OperationResourceList(GridReport):
-    """
-  A list report to show operationresources.
-  """
-
     title = _("operation resources")
     basequeryset = OperationResource.objects.all()
     model = OperationResource
@@ -2000,10 +1952,6 @@ class OperationResourceList(GridReport):
 
 
 class OperationMaterialList(GridReport):
-    """
-  A list report to show operationmaterials.
-  """
-
     title = _("operation materials")
     basequeryset = OperationMaterial.objects.all()
     model = OperationMaterial
@@ -2212,10 +2160,6 @@ class OperationMaterialList(GridReport):
 
 
 class DemandList(GridReport):
-    """
-  A list report to show sales orders.
-  """
-
     template = "input/demand.html"
     title = _("sales orders")
     basequeryset = Demand.objects.all()
@@ -2474,10 +2418,6 @@ class DemandList(GridReport):
 
 
 class CalendarList(GridReport):
-    """
-  A list report to show calendars.
-  """
-
     title = _("calendars")
     basequeryset = Calendar.objects.all()
     model = Calendar
@@ -2503,10 +2443,6 @@ class CalendarList(GridReport):
 
 
 class CalendarBucketList(GridReport):
-    """
-  A list report to show calendar buckets.
-  """
-
     title = _("calendar buckets")
     basequeryset = CalendarBucket.objects.all()
     model = CalendarBucket
@@ -2556,10 +2492,6 @@ class CalendarBucketList(GridReport):
 
 
 class OperationList(GridReport):
-    """
-  A list report to show operations.
-  """
-
     title = _("operations")
     basequeryset = Operation.objects.all()
     model = Operation
@@ -2633,10 +2565,6 @@ class OperationList(GridReport):
 
 
 class SubOperationList(GridReport):
-    """
-  A list report to show suboperations.
-  """
-
     title = _("suboperations")
     basequeryset = SubOperation.objects.all()
     model = SubOperation
@@ -2972,10 +2900,6 @@ class OperationPlanMixin:
 
 
 class ManufacturingOrderList(OperationPlanMixin, GridReport):
-    """
-  A list report to show manufacturing orders.
-  """
-
     template = "input/operationplanreport.html"
     title = _("manufacturing orders")
     default_sort = (1, "desc")
@@ -3503,10 +3427,6 @@ class ManufacturingOrderList(OperationPlanMixin, GridReport):
 
 
 class DistributionOrderList(OperationPlanMixin, GridReport):
-    """
-  A list report to show distribution orders.
-  """
-
     template = "input/operationplanreport.html"
     title = _("distribution orders")
     default_sort = (1, "desc")
@@ -3942,10 +3862,6 @@ class DistributionOrderList(OperationPlanMixin, GridReport):
 
 
 class PurchaseOrderList(OperationPlanMixin, GridReport):
-    """
-  A list report to show purchase orders.
-  """
-
     template = "input/operationplanreport.html"
     title = _("purchase orders")
     model = PurchaseOrder
@@ -4388,10 +4304,6 @@ class PurchaseOrderList(OperationPlanMixin, GridReport):
 
 
 class DeliveryOrderList(GridReport):
-    """
-  A list report to show delivery plans for demand.
-  """
-
     template = "input/deliveryorder.html"
     title = _("delivery orders")
     model = DeliveryOrder
@@ -4682,15 +4594,13 @@ class InventoryDetail(OperationPlanMixin, GridReport):
         if len(args) and args[0]:
             dlmtr = args[0].find(" @ ")
             if dlmtr != -1:
-              item = args[0][:dlmtr]
-              location = args[0][dlmtr + 3 :]
+                item = args[0][:dlmtr]
+                location = args[0][dlmtr + 3 :]
             else:
-              buffer = Buffer.objects.get(id=args[0])
-              item = buffer.item.name
-              location = buffer.location.name 
-            base = OperationPlanMaterial.objects.filter(
-                item=item, location=location
-            )
+                buffer = Buffer.objects.get(id=args[0])
+                item = buffer.item.name
+                location = buffer.location.name
+            base = OperationPlanMaterial.objects.filter(item=item, location=location)
         else:
             base = OperationPlanMaterial.objects
         base = reportclass.operationplanExtraBasequery(base, request)
@@ -4706,16 +4616,20 @@ class InventoryDetail(OperationPlanMixin, GridReport):
             request.session["lasttab"] = "plandetail"
             dlmtr = args[0].find(" @ ")
             if dlmtr != -1:
-              item = args[0][:dlmtr]
-              location = args[0][dlmtr + 3 :]
+                item = args[0][:dlmtr]
+                location = args[0][dlmtr + 3 :]
             else:
-              buffer = Buffer.objects.get(id=args[0])
-              item = buffer.item.name
-              location = buffer.location.name 
+                buffer = Buffer.objects.get(id=args[0])
+                item = buffer.item.name
+                location = buffer.location.name
             return {
                 "active_tab": "plandetail",
                 "model": Buffer,
-                "title": force_text(Buffer._meta.verbose_name) + " " + item + " @ " + location,
+                "title": force_text(Buffer._meta.verbose_name)
+                + " "
+                + item
+                + " @ "
+                + location,
                 "post_title": _("plan detail"),
             }
         else:
@@ -5045,10 +4959,6 @@ class InventoryDetail(OperationPlanMixin, GridReport):
 
 
 class ResourceDetail(OperationPlanMixin, GridReport):
-    """
-  A list report to show OperationPlanResources.
-  """
-
     template = "input/operationplanreport.html"
     title = _("resource detail")
     model = OperationPlanResource

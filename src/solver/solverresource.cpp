@@ -26,6 +26,12 @@ namespace frepple {
 /* @todo resource solver should be using a move command rather than direct move
  */
 void SolverCreate::solve(const Resource* res, void* v) {
+  // Shortcut for unconstrained resources
+  if (!res->getConstrained()) {
+    solveUnconstrained(res, v);
+    return;
+  }
+
   SolverData* data = static_cast<SolverData*>(v);
 
   // Call the user exit
@@ -375,7 +381,7 @@ void SolverCreate::solve(const Resource* res, void* v) {
   }
 }
 
-void SolverCreate::solve(const ResourceInfinite* res, void* v) {
+void SolverCreate::solveUnconstrained(const Resource* res, void* v) {
   SolverData* data = static_cast<SolverData*>(v);
 
   // Call the user exit
@@ -384,7 +390,7 @@ void SolverCreate::solve(const ResourceInfinite* res, void* v) {
 
   // Message
   if (getLogLevel() > 1 && data->state->q_qty < 0)
-    logger << ++indentlevel << "Infinite resource '" << res
+    logger << ++indentlevel << "Unconstrained resource '" << res
            << "' is asked: " << (-data->state->q_qty) << "  "
            << data->state->q_operationplan->getDates() << endl;
 
@@ -407,11 +413,16 @@ void SolverCreate::solve(const ResourceInfinite* res, void* v) {
 
   // Message
   if (getLogLevel() > 1 && data->state->q_qty < 0)
-    logger << indentlevel-- << "Infinite resource '" << res
+    logger << indentlevel-- << "Unconstrained resource '" << res
            << "' answers: " << (-data->state->a_qty) << endl;
 }
 
 void SolverCreate::solve(const ResourceBuckets* res, void* v) {
+  if (!res->getConstrained()) {
+    solveUnconstrained(res, v);
+    return;
+  }
+
   SolverData* data = static_cast<SolverData*>(v);
   auto opplan = data->state->q_operationplan;
 

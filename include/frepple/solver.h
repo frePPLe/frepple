@@ -254,10 +254,14 @@ class SolverCreate : public Solver {
    */
   void solve(const Resource*, void* = nullptr);
 
+  void solveUnconstrained(const Resource*, void* = nullptr);
+
   /* Behavior of this solver method:
    *  - Always return OK.
    */
-  void solve(const ResourceInfinite*, void* = nullptr);
+  void solve(const ResourceInfinite* r, void* v = nullptr) {
+    solveUnconstrained(r, v);
+  }
 
   /* Behavior of this solver method:
    *  - The operationplan is checked for a capacity in the time bucket

@@ -25,13 +25,13 @@ from freppledb.boot import getAttributeFields
 from freppledb.input.models import Resource, Location
 from freppledb.common.models import Parameter
 from freppledb.common.report import GridPivot, GridFieldCurrency, GridFieldDuration
-from freppledb.common.report import GridFieldNumber, GridFieldText
+from freppledb.common.report import GridFieldNumber, GridFieldText, GridFieldBool
 
 
 class OverviewReport(GridPivot):
     """
-  A report showing the loading of each resource.
-  """
+    A report showing the loading of each resource.
+    """
 
     template = "output/resource.html"
     title = _("Resource report")
@@ -77,6 +77,13 @@ class OverviewReport(GridPivot):
             title=_("type"),
             editable=False,
             field_name="type",
+            initially_hidden=True,
+        ),
+        GridFieldBool(
+            "constrained",
+            title=_("constrained"),
+            editable=False,
+            field_name="constrained",
             initially_hidden=True,
         ),
         GridFieldNumber(
@@ -228,9 +235,9 @@ class OverviewReport(GridPivot):
     @classmethod
     def basequeryset(reportclass, request, *args, **kwargs):
         if args and args[0]:
-          queryset = Resource.objects.filter(name=args[0])
+            queryset = Resource.objects.filter(name=args[0])
         else:
-          queryset = Resource.objects.all()
+            queryset = Resource.objects.all()
         return queryset.annotate(
             avgutil=RawSQL(
                 """
@@ -279,6 +286,7 @@ class OverviewReport(GridPivot):
         res.setupmatrix_id, res.setup, location.name, location.description,
         location.category, location.subcategory, location.available_id,
         res.avgutil, res.available_id available_calendar, res.owner_id,
+        res.constrained,
         %s
         d.bucket as col1, d.startdate as col2,
         coalesce(sum(out_resourceplan.available),0) / (case when res.type = 'buckets' then 1 else %f end) as available,
@@ -306,6 +314,7 @@ class OverviewReport(GridPivot):
         res.type, res.maximum, res.maximum_calendar_id, res.available_id, res.cost, res.maxearly,
         res.setupmatrix_id, res.setup, location.name, location.description,
         location.category, location.subcategory, location.available_id, res.avgutil, res.owner_id,
+        res.constrained,
         %s d.bucket, d.startdate
       order by %s, d.startdate
       """ % (
@@ -353,6 +362,7 @@ class OverviewReport(GridPivot):
                     "avgutil": round(row[16], 2),
                     "available_calendar": row[17],
                     "owner": row[18],
+                    "constrained": row[19],
                     "bucket": row[numfields - 6],
                     "startdate": row[numfields - 5].date(),
                     "available": row[numfields - 4],
@@ -361,7 +371,7 @@ class OverviewReport(GridPivot):
                     "setup": row[numfields - 1],
                     "utilization": util,
                 }
-                idx = 19
+                idx = 20
                 for f in getAttributeFields(Resource):
                     result[f.field_name] = row[idx]
                     idx += 1

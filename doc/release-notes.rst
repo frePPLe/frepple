@@ -19,6 +19,10 @@ Release notes
   to "round_up(quantity / 10)". This provides a better default for planning very slow moving
   forecasts. 
   
+- The resource type 'infinite' is now deprecated. It is replaced by a new field 'constrained' on
+  resource. This approach allows easier activation and deactivation of certain resources as 
+  constraints during planning.
+  
 - When generating a constrained plan, the material constraint has been removed. It didn't really
   have any impact on the plan algorith. The constraints actually used by the planning engine are
   capacity, lead time and the operation time fence.  

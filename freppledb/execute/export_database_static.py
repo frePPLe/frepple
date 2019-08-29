@@ -1137,10 +1137,10 @@ class exportStaticModel(object):
             primary_keys = set([i[0] for i in cursor.fetchall()])
             cursor.executemany(
                 "insert into resource \
-        (name,description,maximum,maximum_calendar_id,location_id,type,cost, \
-         maxearly,setup,setupmatrix_id,category,subcategory,efficiency, \
-         available_id,source,lastmodified) \
-        values(%s,%s,%s,%s,%s,%s,%s,%s * interval '1 second',%s,%s,%s,%s,%s,%s,%s,%s)",
+                (name,description,maximum,maximum_calendar_id,location_id,type,cost, \
+                 maxearly,setup,setupmatrix_id,category,subcategory,efficiency, \
+                 available_id,constrained,source,lastmodified) \
+                values(%s,%s,%s,%s,%s,%s,%s,%s * interval '1 second',%s,%s,%s,%s,%s,%s,%s,%s,%s)",
                 [
                     (
                         i.name,
@@ -1157,6 +1157,7 @@ class exportStaticModel(object):
                         i.subcategory,
                         i.efficiency,
                         i.available.name if i.available else None,
+                        i.constrained,
                         i.source,
                         self.timestamp,
                     )
@@ -1168,11 +1169,11 @@ class exportStaticModel(object):
             )
             cursor.executemany(
                 "update resource \
-        set description=%s, maximum=%s, maximum_calendar_id=%s, location_id=%s, \
-        type=%s, cost=%s, maxearly=%s * interval '1 second', setup=%s, setupmatrix_id=%s, \
-        category=%s, subcategory=%s, efficiency=%s, available_id=%s, \
-        source=%s, lastmodified=%s \
-        where name=%s",
+                set description=%s, maximum=%s, maximum_calendar_id=%s, location_id=%s, \
+                type=%s, cost=%s, maxearly=%s * interval '1 second', setup=%s, setupmatrix_id=%s, \
+                category=%s, subcategory=%s, efficiency=%s, available_id=%s, constrained=%s, \
+                source=%s, lastmodified=%s \
+                where name=%s",
                 [
                     (
                         i.description,
@@ -1188,6 +1189,7 @@ class exportStaticModel(object):
                         i.subcategory,
                         round(i.efficiency, 8),
                         i.available.name if i.available else None,
+                        i.constrained,
                         i.source,
                         self.timestamp,
                         i.name,

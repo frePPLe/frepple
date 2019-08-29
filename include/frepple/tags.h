@@ -46,6 +46,7 @@ class Tags {
   static const Keyword completed;
   static const Keyword confirmed;
   static const Keyword constraints;
+  static const Keyword constrained;
   static const Keyword consume_material;
   static const Keyword consume_capacity;
   static const Keyword consuming;

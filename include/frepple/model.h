@@ -5825,6 +5825,12 @@ class Resource : public HasHierarchy<Resource>,
       throw DataException("Resource efficiency must be positive");
   }
 
+  bool getConstrained() const { return is_constrained; }
+
+  void setConstrained(bool b) {
+    if (!hasType<ResourceInfinite>()) is_constrained = b;
+  }
+
   Calendar* getEfficiencyCalendar() const { return efficiency_calendar; }
 
   void setEfficiencyCalendar(Calendar* c) { efficiency_calendar = c; }
@@ -5996,6 +6002,8 @@ class Resource : public HasHierarchy<Resource>,
                                       &Cls::setEfficiencyCalendar);
     m->addPointerField<Cls, Location>(Tags::location, &Cls::getLocation,
                                       &Cls::setLocation);
+    m->addBoolField<Cls>(Tags::constrained, &Cls::getConstrained,
+                         &Cls::setConstrained, BOOL_TRUE);
     m->addStringRefField<Cls>(Tags::setup, &Cls::getSetupString,
                               &Cls::setSetup);
     m->addPointerField<Cls, SetupMatrix>(
@@ -6065,6 +6073,9 @@ class Resource : public HasHierarchy<Resource>,
 
   /* Specifies whether this resource is hidden for serialization. */
   bool hidden = false;
+
+  /* Controls whether this resource */
+  bool is_constrained = true;
 
   /* Python method that returns an iterator over the resource plan. */
   static PyObject* plan(PyObject*, PyObject*);
@@ -6152,6 +6163,7 @@ class ResourceInfinite : public Resource {
  public:
   explicit ResourceInfinite() {
     setDetectProblems(false);
+    setConstrained(false);
     initType(metadata);
   }
 

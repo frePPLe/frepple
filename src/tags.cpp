@@ -45,6 +45,7 @@ const Keyword Tags::cluster("cluster");
 const Keyword Tags::completed("completed");
 const Keyword Tags::confirmed("confirmed");
 const Keyword Tags::constraints("constraints");
+const Keyword Tags::constrained("constrained");
 const Keyword Tags::consume_material("consume_material");
 const Keyword Tags::consume_capacity("consume_capacity");
 const Keyword Tags::consuming("consuming");

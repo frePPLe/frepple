@@ -553,6 +553,7 @@
           </xsd:sequence>
         </xsd:complexType>
       </xsd:element>
+      <xsd:element name="constrained" type="xsd:boolean" />
       <xsd:element name="detectproblems" type="xsd:boolean" />
       <xsd:element name="loads" type="loadlist" />
       <xsd:element name="loadplans" type="loadplanlist"/>
@@ -563,6 +564,7 @@
     <xsd:attributeGroup ref="common_attributes" />
     <xsd:attribute name="maxearly" type="xsd:duration" />
     <xsd:attribute name="detectproblems" type="xsd:boolean" />
+    <xsd:attribute name="constrained" type="xsd:boolean" />
     <xsd:attribute name="maximum" type="positiveDouble" />
     <xsd:attribute name="cost" type="positiveDouble" />
     <xsd:attribute name="efficiency" type="positiveDouble" />

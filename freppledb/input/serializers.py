@@ -877,6 +877,7 @@ class ResourceFilter(filters.FilterSet):
             "setupmatrix": ["exact", "in"],
             "efficiency": ["exact", "in", "gt", "gte", "lt", "lte"],
             "efficiency_calendar": ["exact", "in"],
+            "constrained": ["exact"],
             "source": ["exact", "in"],
             "lastmodified": ["exact", "in", "gt", "gte", "lt", "lte"],
         }
@@ -896,6 +897,7 @@ class ResourceFilter(filters.FilterSet):
             "setup",
             "efficiency",
             "efficiency_calendar",
+            "constrained",
             "source",
             "lastmodified",
         )
@@ -919,6 +921,7 @@ class ResourceSerializer(BulkSerializerMixin, ModelSerializer):
             "setup",
             "efficiency",
             "efficiency_calendar",
+            "constrained",
             "source",
             "lastmodified",
         )

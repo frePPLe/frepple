@@ -42,6 +42,8 @@ Different types of resources exist:
 
 * | `Infinite resource <#infinite-resource>`_:
   | An infinite resource has no capacity limit.
+  | This can be modeled by setting the "constrained" field to false
+    or (deprecated) by setting the resource type to "infinite".
 
 **Fields**
 
@@ -63,6 +65,9 @@ location             location          | Location of the resource.
                                        | Default is null.
                                        | The working hours and holidays for the resource are taken
                                          from the "available" calendar of the location.
+constrained          boolean           | This flag controls whether whether or not this resource is
+                                         planned in finite capacity mode.
+                                       | The default is true, except for resources of type infinite.                                        
 maximum              double            | Defines the maximum size of the resource.
                                        | The default value is 1, i.e. a resource that can handle
                                          1 operation at a time (provided of course that this

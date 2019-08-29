@@ -1096,13 +1096,14 @@ class loadResources(LoadTask):
             Resource.rebuildHierarchy(database=database)
             cursor.execute(
                 """
-        SELECT
-          name, description, maximum, maximum_calendar_id, location_id, type,
-          cost, maxearly, setup, setupmatrix_id, category, subcategory,
-          owner_id, source, available_id, efficiency, efficiency_calendar_id
-        FROM %s %s
-        ORDER BY lvl ASC, name
-        """
+                SELECT
+                  name, description, maximum, maximum_calendar_id, location_id, type,
+                  cost, maxearly, setup, setupmatrix_id, category, subcategory,
+                  owner_id, source, available_id, efficiency, efficiency_calendar_id,
+                  coalesce(constrained, true)
+                FROM %s %s
+                ORDER BY lvl ASC, name
+                """
                 % (
                     connections[cursor.db.alias].ops.quote_name("resource"),
                     filter_where,
@@ -1118,6 +1119,7 @@ class loadResources(LoadTask):
                             category=i[10],
                             subcategory=i[11],
                             source=i[13],
+                            constrained=i[17],
                         )
                         convert2cal = None
                     elif not i[5] or i[5] == "default":
@@ -1127,6 +1129,7 @@ class loadResources(LoadTask):
                             category=i[10],
                             subcategory=i[11],
                             source=i[13],
+                            constrained=i[17],
                         )
                         convert2cal = None
                     elif i[5].startswith("buckets"):
@@ -1136,6 +1139,7 @@ class loadResources(LoadTask):
                             category=i[10],
                             subcategory=i[11],
                             source=i[13],
+                            constrained=i[17],
                         )
                         convert2cal = i[5][8:]
                     else:

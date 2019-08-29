@@ -651,6 +651,14 @@ class Resource(AuditModel, HierarchyModel):
         choices=types,
         default="default",
     )
+    constrained = models.NullBooleanField(
+        _("constrained"),
+        null=True,
+        blank=True,
+        help_text=_(
+            "controls whether or not this resource is planned in finite capacity mode"
+        ),
+    )
     maximum = models.DecimalField(
         _("maximum"),
         default="1.00",

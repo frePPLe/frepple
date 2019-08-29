@@ -1048,6 +1048,7 @@ class ResourceList(GridReport):
             initially_hidden=True,
         ),
         GridFieldChoice("type", title=_("type"), choices=Resource.types),
+        GridFieldBool("constrained", title=_("constrained")),
         GridFieldNumber("maximum", title=_("maximum")),
         GridFieldText(
             "maximum_calendar",
@@ -5354,6 +5355,12 @@ class ResourceDetail(OperationPlanMixin, GridReport):
             editable=False,
             initially_hidden=True,
             title=format_lazy("{} - {}", _("resource"), _("type")),
+        ),
+        GridFieldBool(
+            "resource__constrained",
+            editable=False,
+            initially_hidden=True,
+            title=format_lazy("{} - {}", _("resource"), _("constrained")),
         ),
         GridFieldNumber(
             "resource__maximum",

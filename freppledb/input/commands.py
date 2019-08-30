@@ -1251,7 +1251,7 @@ class loadOperationMaterials(LoadTask):
                   operation_id, item_id, quantity, type, effective_start,
                   effective_end, name, priority, search, source, transferbatch, quantity_fixed
                 FROM operationmaterial %s
-                ORDER BY operation_id, item_id
+                ORDER BY operation_id, priority, item_id
                 """
                 % filter_where
             )
@@ -1339,7 +1339,7 @@ class loadOperationResources(LoadTask):
                   operation_id, resource_id, quantity, effective_start, effective_end, name,
                   priority, setup, search, skill_id, source, quantity_fixed
                 FROM operationresource %s
-                ORDER BY operation_id, resource_id
+                ORDER BY operation_id, priority, resource_id
                 """
                 % filter_where
             )

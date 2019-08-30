@@ -12,7 +12,7 @@ To just get a list of all sales orders in JSON format:
 
    curl -H 'Accept: application/json; indent=4' -u admin:admin http://127.0.0.1:8000/api/input/demand/?format=json
 
-To just get a filtered list of sales orders withe quantity equal or above 200, and with location *factory 2*
+To just get a filtered list of sales orders with quantity equal or above 200, and with location *factory 2*
 (the URL needs escaping, the spaces and & were replaced by ``%20`` and ``\&``) in JSON format:
 
 ::

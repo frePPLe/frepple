@@ -275,8 +275,7 @@ void SolverCreate::solve(const Load* l, void* v) {
   list<const Load*> thealternates;
   const Load* x = l->hasAlternates() ? l : l->getAlternate();
   SearchMode search = l->getSearch();
-  for (Operation::loadlist::const_iterator i =
-           l->getOperation()->getLoads().begin();
+  for (auto i = l->getOperation()->getLoads().begin();
        i != l->getOperation()->getLoads().end(); ++i)
     if ((i->getAlternate() == x || &*i == x) &&
         i->getEffective().within(data->state->q_loadplan->getDate()))

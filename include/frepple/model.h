@@ -5044,10 +5044,9 @@ class Flow : public Object,
   /* Return whether the flow has alternates. */
   bool hasAlternates() const {
     if (getName().empty() || !getOperation()) return false;
-    for (Operation::flowlist::const_iterator h =
-             getOperation()->getFlows().begin();
+    for (auto h = getOperation()->getFlows().begin();
          h != getOperation()->getFlows().end(); ++h)
-      if (getName() == h->getName() && this != &*h) return true;
+      if (this != &*h && getName() == h->getName()) return true;
     return false;
   }
 
@@ -6349,7 +6348,7 @@ class Load : public Object,
   }
 
   /* Return the leading load of this group.
-   * When the load has no alternate or if the flow is itself leading
+   * When the load has no alternate or if the load is itself leading
    * then nullptr is returned.
    */
   Load* getAlternate() const {
@@ -6364,10 +6363,9 @@ class Load : public Object,
   /* Return whether the load has alternates. */
   bool hasAlternates() const {
     if (getName().empty() || !getOperation()) return false;
-    for (Operation::loadlist::const_iterator h =
-             getOperation()->getLoads().begin();
+    for (auto h = getOperation()->getLoads().begin();
          h != getOperation()->getLoads().end(); ++h)
-      if (getName() == h->getName() && this != &*h) return true;
+      if (this != &*h && getName() == h->getName()) return true;
     return false;
   }
 

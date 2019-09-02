@@ -66,23 +66,6 @@ $(function() {
 {% block breadcrumbs %}{% endblock %}
 
 {% block content %}
-{% if form.errors and not form.non_field_errors %}
-<p class="errornote">
-{% comment %}Translators: Translation included with Django {% endcomment %}
-{% if form.errors.items|length == 1 %}{% trans "Please correct the error below." %}{% else %}
-{% comment %}Translators: Translation included with Django {% endcomment %}
-{% trans "Please correct the errors below." %}{% endif %}
-</p>
-{% endif %}
-
-{% if form.non_field_errors %}
-{% for error in form.non_field_errors %}
-<p class="errornote">
-    {{ error }}
-</p>
-{% endfor %}
-{% endif %}
-
 <div class="row" style="padding-bottom: 30px; padding-top: 50px;">
 	<div class="col-xs-4 center-block" style="min-width: 200px; max-width:300px; float:none;">
 	 {% block branding %}{{ block.super }}{% endblock %}
@@ -121,6 +104,25 @@ $(function() {
 		</form>
 	</div>
 </div>
+
+{% if form.errors and not form.non_field_errors %}
+<div class="row">
+<div class="col-xs-4 center-block alert alert-danger" role="alert" style="min-width: 200px; max-width:300px; float:none; text-align:center;">
+{% comment %}Translators: Translation included with Django {% endcomment %}
+{% if form.errors.items|length == 1 %}{% trans "Please correct the error below." %}{% else %}
+{% comment %}Translators: Translation included with Django {% endcomment %}
+{% trans "Please correct the errors below." %}{% endif %}
+</div></div>
+{% endif %}
+
+{% if form.non_field_errors %}
+{% for error in form.non_field_errors %}
+<div class="row">
+<div class="col-xs-4 center-block alert alert-danger" role="alert" style="min-width: 200px; max-width:300px; float:none; text-align:center;">
+    {{ error }}
+</div></div>
+{% endfor %}
+{% endif %}
 
 {% checkPassword "admin" "admin" as recommend_reset %}
 {% if recommend_reset %}

@@ -186,7 +186,7 @@ void SolverCreate::chooseResource(
   if (bestAlternateSelection) {
     // Message
     if (loglevel > 1)
-      logger << indentlevel << "Operation '" << l->getOperation()->getName()
+      logger << indentlevel << "  Operation '" << l->getOperation()->getName()
              << "' chooses alternate '" << bestAlternateSelection << "' "
              << l->getSearch() << endl;
 
@@ -408,7 +408,7 @@ void SolverCreate::solve(const Load* l, void* v) {
     if (data->state->a_date < min_next_date)
       min_next_date = data->state->a_date;
     if (++i != thealternates.end() && loglevel > 1 && search == PRIORITY)
-      logger << indentlevel << "Alternate load switches from '"
+      logger << indentlevel << "  Alternate load switches from '"
              << curload->getResource()->getName() << "' to '"
              << (*i)->getResource()->getName() << "'" << endl;
   }
@@ -425,7 +425,7 @@ void SolverCreate::solve(const Load* l, void* v) {
   if (!originalPlanningMode || (search != PRIORITY && bestAlternateSelection)) {
     // Message
     if (loglevel > 1)
-      logger << indentlevel << "Operation '" << l->getOperation()->getName()
+      logger << indentlevel << "  Operation '" << l->getOperation()->getName()
              << "' chooses alternate '" << bestAlternateSelection->getResource()
              << "' " << search << endl;
 

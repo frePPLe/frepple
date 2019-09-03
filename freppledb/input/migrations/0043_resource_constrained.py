@@ -20,7 +20,7 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [("input", "0042_operation_owner")]
+    dependencies = [("input", "0040_autofence_parameter")]
 
     operations = [
         migrations.AddField(

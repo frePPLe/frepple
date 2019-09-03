@@ -20,7 +20,7 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [("input", "0040_autofence_parameter")]
+    dependencies = [("input", "0043_resource_constrained")]
 
     operations = [
         migrations.AlterModelOptions(

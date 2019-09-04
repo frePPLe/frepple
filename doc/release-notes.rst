@@ -26,6 +26,10 @@ Release notes
 - When generating a constrained plan, the material constraint has been removed. It didn't really
   have any impact on the plan algorith. The constraints actually used by the planning engine are
   capacity, lead time and the operation time fence.  
+  
+- Improvements to the solver algorithm for bucketized resources and time-per operations.
+  The improvements provide a more realistic plan when manufacturing orders span across
+  multiple capacity buckets.
 
 - Bug fixes and improved log messages in the propagation of work-in-progress status information.
 

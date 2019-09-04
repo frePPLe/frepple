@@ -424,20 +424,18 @@ class PathReport(GridReport):
            ||jsonb_object_agg(siblingoperationmaterial.item_id||' @ '||sibling.location_id, siblingoperationmaterial.quantity)filter (where siblingoperationmaterial.id is not null) as sibling_om,
            jsonb_object_agg(siblingoperationresource.resource_id, siblingoperationresource.quantity)filter (where siblingoperationresource.id is not null) as sibling_or,
              grandparentoperation.name as grandparentoperation, 
-           grandparentoperation.type as grandparentoperation_type,           
-             parentsibling.name as parentsibling
+           grandparentoperation.type as grandparentoperation_type
       from operation
       left outer join operationmaterial on operationmaterial.operation_id = operation.name
       left outer join operationresource on operationresource.operation_id = operation.name
       left outer join operation parentoperation on parentoperation.name = operation.owner_id
       left outer join operation grandparentoperation on grandparentoperation.name = parentoperation.owner_id
       left outer join operation sibling on sibling.owner_id = parentoperation.name
-      left outer join operation parentsibling on parentsibling.owner_id = grandparentoperation.name
       left outer join operationmaterial siblingoperationmaterial on siblingoperationmaterial.operation_id = sibling.name
       left outer join operationresource siblingoperationresource on siblingoperationresource.operation_id = sibling.name
       where operation.type in ('time_per','fixed_time')
       %s
-      group by operation.name, parentoperation.name, sibling.name, grandparentoperation.name, parentsibling.name
+      group by operation.name, parentoperation.name, sibling.name, grandparentoperation.name
       ) t
       union all
       -- DISTRIBUTION OPERATIONS
@@ -564,20 +562,18 @@ class PathReport(GridReport):
            ||jsonb_object_agg(siblingoperationmaterial.item_id||' @ '||sibling.location_id, siblingoperationmaterial.quantity)filter (where siblingoperationmaterial.id is not null) as sibling_om,
            jsonb_object_agg(siblingoperationresource.resource_id, siblingoperationresource.quantity)filter (where siblingoperationresource.id is not null) as sibling_or,
              grandparentoperation.name as grandparentoperation, 
-           grandparentoperation.type as grandparentoperation_type,           
-             parentsibling.name as parentsibling
+           grandparentoperation.type as grandparentoperation_type
       from operation
       left outer join operationmaterial on operationmaterial.operation_id = operation.name
       left outer join operationresource on operationresource.operation_id = operation.name
       left outer join operation parentoperation on parentoperation.name = operation.owner_id
       left outer join operation grandparentoperation on grandparentoperation.name = parentoperation.owner_id
-      left outer join operation sibling on sibling.owner_id = parentoperation.name
-      left outer join operation parentsibling on parentsibling.owner_id = grandparentoperation.name
+      left outer join operation sibling on sibling.owner_id = parentoperation.name      
       left outer join operationmaterial siblingoperationmaterial on siblingoperationmaterial.operation_id = sibling.name
       left outer join operationresource siblingoperationresource on siblingoperationresource.operation_id = sibling.name
       where operation.type in ('time_per','fixed_time')
       and %s
-      group by operation.name, parentoperation.name, sibling.name, grandparentoperation.name, parentsibling.name
+      group by operation.name, parentoperation.name, sibling.name, grandparentoperation.name
       ) t
       union all
       -- DISTRIBUTION OPERATIONS
@@ -695,20 +691,18 @@ class PathReport(GridReport):
            ||jsonb_object_agg(siblingoperationmaterial.item_id||' @ '||sibling.location_id, siblingoperationmaterial.quantity)filter (where siblingoperationmaterial.id is not null) as sibling_om,
            jsonb_object_agg(siblingoperationresource.resource_id, siblingoperationresource.quantity)filter (where siblingoperationresource.id is not null) as sibling_or,
              grandparentoperation.name as grandparentoperation, 
-           grandparentoperation.type as grandparentoperation_type,           
-             parentsibling.name as parentsibling
+           grandparentoperation.type as grandparentoperation_type
       from operation
       left outer join operationmaterial on operationmaterial.operation_id = operation.name
       left outer join operationresource on operationresource.operation_id = operation.name
       left outer join operation parentoperation on parentoperation.name = operation.owner_id
       left outer join operation grandparentoperation on grandparentoperation.name = parentoperation.owner_id
       left outer join operation sibling on sibling.owner_id = parentoperation.name
-      left outer join operation parentsibling on parentsibling.owner_id = grandparentoperation.name
       left outer join operationmaterial siblingoperationmaterial on siblingoperationmaterial.operation_id = sibling.name
       left outer join operationresource siblingoperationresource on siblingoperationresource.operation_id = sibling.name
       where operation.type in ('time_per','fixed_time')
       and (operation.name = %s or parentoperation.name = %s or grandparentoperation.name = %s)
-      group by operation.name, parentoperation.name, sibling.name, grandparentoperation.name, parentsibling.name
+      group by operation.name, parentoperation.name, sibling.name, grandparentoperation.name
       ) t
       '''
       
@@ -764,21 +758,19 @@ class PathReport(GridReport):
            ||jsonb_object_agg(siblingoperationmaterial.item_id||' @ '||sibling.location_id, siblingoperationmaterial.quantity)filter (where siblingoperationmaterial.id is not null) as sibling_om,
            jsonb_object_agg(siblingoperationresource.resource_id, siblingoperationresource.quantity)filter (where siblingoperationresource.id is not null) as sibling_or,
              grandparentoperation.name as grandparentoperation, 
-           grandparentoperation.type as grandparentoperation_type,           
-             parentsibling.name as parentsibling
+           grandparentoperation.type as grandparentoperation_type
       from operation
       left outer join operationmaterial on operationmaterial.operation_id = operation.name
       left outer join operationresource on operationresource.operation_id = operation.name
       left outer join operation parentoperation on parentoperation.name = operation.owner_id
       left outer join operation grandparentoperation on grandparentoperation.name = parentoperation.owner_id
       left outer join operation sibling on sibling.owner_id = parentoperation.name
-      left outer join operation parentsibling on parentsibling.owner_id = grandparentoperation.name
       left outer join operationmaterial siblingoperationmaterial on siblingoperationmaterial.operation_id = sibling.name
       left outer join operationresource siblingoperationresource on siblingoperationresource.operation_id = sibling.name
       where operation.type in ('time_per','fixed_time')
       and operation.location_id = %%s
       %s
-      group by operation.name, parentoperation.name, sibling.name, grandparentoperation.name, parentsibling.name
+      group by operation.name, parentoperation.name, sibling.name, grandparentoperation.name
       ) t
       union all
       -- DISTRIBUTION OPERATIONS

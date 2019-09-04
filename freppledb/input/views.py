@@ -961,6 +961,9 @@ class PathReport(GridReport):
       
       if i[4]:
         for buffer, quantity in tuple(i[4].items()):
+          # I might already have visisted that buffer
+          if buffer in reportclass.node_count:
+            continue
           reportclass.node_count.add(buffer)
           if float(quantity) < 0 and not downstream:
             yield from reportclass.getOperationFromBuffer(request, buffer, downstream, depth+1)

@@ -859,6 +859,10 @@ class PathReport(GridReport):
     @classmethod
     def processRecord(reportclass, i, request, depth, downstream):
  
+      # First can we go further ?
+      if len(reportclass.node_count) > 400:
+        return
+      
       # do we <have a grandparentoperation
       if i[11] and not i[11] in reportclass.operation_dict:
         reportclass.operation_id = reportclass.operation_id + 1
@@ -884,6 +888,7 @@ class PathReport(GridReport):
           "numsuboperations": reportclass.suboperations_count_dict[i[11]],
           "realdepth": -depth if reportclass.downstream else depth,
         }
+        reportclass.node_count.add(i[11])
         yield grandparentoperation
       
       # do we have a parent operation
@@ -916,6 +921,7 @@ class PathReport(GridReport):
           "numsuboperations": reportclass.suboperations_count_dict[i[8]],
           "realdepth": -depth if reportclass.downstream else depth,
         }
+        reportclass.node_count.add(i[8])
         yield parentoperation
       
       # go through the regular time_per/fixed_time operation
@@ -941,10 +947,16 @@ class PathReport(GridReport):
             "numsuboperations": 0,
             "realdepth": -depth if reportclass.downstream else depth,
         }
+        reportclass.node_count.add(i[0])
         yield operation
                 
+      if i[5]:
+        for resource, quantity in tuple(i[5].items()):
+          reportclass.node_count.add(resource)
+      
       if i[4]:
         for buffer, quantity in tuple(i[4].items()):
+          reportclass.node_count.add(buffer)
           if float(quantity) < 0 and not downstream:
             yield from reportclass.getOperationFromBuffer(request, buffer, downstream, depth+1)
           elif float(quantity) > 0 and downstream:
@@ -972,6 +984,11 @@ class PathReport(GridReport):
         # dictionary to reassign a priority to the alternate suboperations
         # required otherwise suboperations with same priority overlap.
         reportclass.alternate_count_dict = {}
+        
+        # set used to count the number of nodes in the graph.
+        # we stop at 400 otherwise we could draw the full supply chain
+        # in the case of downstream raw material.
+        reportclass.node_count = set()
 
         if str(reportclass.objecttype._meta) == "input.buffer":
           buffer_name = basequery.query.get_compiler(basequery.db).as_sql(

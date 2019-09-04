@@ -510,6 +510,8 @@ class PathReport(GridReport):
       where location_id is null
       '''
         
+      query = query + ' order by 4'
+        
       if downstream:
         cursor.execute(query, (item_name,) * 2)
       else:
@@ -637,6 +639,7 @@ class PathReport(GridReport):
       inner join item on item.lft between i_parent.lft and i_parent.rght
       inner join location on location.lft = location.rght - 1
       where location_id is null and itemsupplier.resource_id = %%s
+      order by 4
       ''' % ('operationresource.resource_id = %s' if downstream == False else '''
              exists (select 1 from operationresource where operation_id = operation.name and resource_id = %s)      
             ''')
@@ -704,6 +707,7 @@ class PathReport(GridReport):
       and (operation.name = %s or parentoperation.name = %s or grandparentoperation.name = %s)
       group by operation.name, parentoperation.name, sibling.name, grandparentoperation.name
       ) t
+      order by 4
       '''
       
       cursor.execute(query, (operation_name,) * 3)
@@ -846,6 +850,8 @@ class PathReport(GridReport):
       where location_id is null
       '''
         
+      query = query + ' order by 4'
+        
       if downstream:
         cursor.execute(query, (location, item, item ,location))
       else:
@@ -898,10 +904,10 @@ class PathReport(GridReport):
         if i[8] not in reportclass.suboperations_count_dict:
           reportclass.suboperations_count_dict[i[8]] = Operation.objects.filter(owner_id=i[8]).count()
         if i[11]:
-          if i[11] in reportclass.alternate_count_dict:
-            reportclass.alternate_count_dict[i[11]] = reportclass.alternate_count_dict[i[11]] + 1
+          if i[11] in reportclass.parent_count_dict:
+            reportclass.parent_count_dict[i[11]] = reportclass.parent_count_dict[i[11]] + 1
           else:
-            reportclass.alternate_count_dict[i[11]] = 1
+            reportclass.parent_count_dict[i[11]] = 1
         parentoperation = {
           "depth": depth*2,
           "id": reportclass.operation_id,
@@ -910,7 +916,7 @@ class PathReport(GridReport):
           "location": i[1],
           "resources": None,
           "parentoper": i[11],
-          "suboperation": -reportclass.alternate_count_dict[i[11]] if i[11] else 0,
+          "suboperation": -reportclass.parent_count_dict[i[11]] if i[11] else 0,
           "duration": None,
           "duration_per": None,
           "quantity": 1,
@@ -928,11 +934,11 @@ class PathReport(GridReport):
       if i[0] not in reportclass.operation_dict:
         reportclass.operation_id = reportclass.operation_id + 1
         reportclass.operation_dict[i[0]] = reportclass.operation_id
-        if i[8] and i[9] in ('alternate','split'):
-          if i[8] in reportclass.alternate_count_dict:
-            reportclass.alternate_count_dict[i[8]] = reportclass.alternate_count_dict[i[8]] + 1
+        if i[8]:
+          if i[8] in reportclass.parent_count_dict:
+            reportclass.parent_count_dict[i[8]] = reportclass.parent_count_dict[i[8]] + 1
           else:
-            reportclass.alternate_count_dict[i[8]] = 1
+            reportclass.parent_count_dict[i[8]] = 1
         operation = {
             "depth": depth*2 if not i[8] else depth*2+1,
             "id": reportclass.operation_id,
@@ -941,7 +947,7 @@ class PathReport(GridReport):
             "location": i[1],
             "resources": tuple(i[5].items()) if i[5] else None,
             "parentoper": i[8],
-            "suboperation": (i[3] if i[8] else 0) if not (i[8] and i[9] in ('alternate','split')) else -reportclass.alternate_count_dict[i[8]],
+            "suboperation": 0 if not i[8] else (reportclass.parent_count_dict[i[8]] if i[9] == 'routing' else -reportclass.parent_count_dict[i[8]]),
             "duration": i[6],
             "duration_per": i[7],
             "quantity": 1,
@@ -989,9 +995,9 @@ class PathReport(GridReport):
         # prevents to hit database more than once for a given routing/alternate
         reportclass.suboperations_count_dict = {}
         
-        # dictionary to reassign a priority to the alternate suboperations
+        # dictionary to reassign a priority to the alternate/routing suboperations
         # required otherwise suboperations with same priority overlap.
-        reportclass.alternate_count_dict = {}
+        reportclass.parent_count_dict = {}
         
         # set used to count the number of nodes in the graph.
         # we stop at 400 otherwise we could draw the full supply chain

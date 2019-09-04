@@ -1678,6 +1678,7 @@ class DemandFilter(filters.FilterSet):
             "plan": ["exact", "in", "contains"],
             "minshipment": ["exact", "in", "gt", "gte", "lt", "lte"],
             "maxlateness": ["exact", "in", "gt", "gte", "lt", "lte"],
+            "owner": ["exact", "in"],
         }
 
         filter_fields = (
@@ -1699,6 +1700,7 @@ class DemandFilter(filters.FilterSet):
             "plan",
             "minshipment",
             "maxlateness",
+            "owner",
         )
 
 
@@ -1724,6 +1726,7 @@ class DemandSerializer(BulkSerializerMixin, ModelSerializer):
             "plan",
             "minshipment",
             "maxlateness",
+            "owner",
         )
         list_serializer_class = BulkListSerializer
         update_lookup_field = "name"

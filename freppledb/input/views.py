@@ -928,6 +928,11 @@ class PathReport(GridReport):
       if i[0] not in reportclass.operation_dict:
         reportclass.operation_id = reportclass.operation_id + 1
         reportclass.operation_dict[i[0]] = reportclass.operation_id
+        if i[8] and i[9] in ('alternate','split'):
+          if i[8] in reportclass.alternate_count_dict:
+            reportclass.alternate_count_dict[i[8]] = reportclass.alternate_count_dict[i[8]] + 1
+          else:
+            reportclass.alternate_count_dict[i[8]] = 1
         operation = {
             "depth": depth*2 if not i[8] else depth*2+1,
             "id": reportclass.operation_id,
@@ -936,7 +941,7 @@ class PathReport(GridReport):
             "location": i[1],
             "resources": tuple(i[5].items()) if i[5] else None,
             "parentoper": i[8],
-            "suboperation": i[3] if i[8] else 0,
+            "suboperation": (i[3] if i[8] else 0) if not (i[8] and i[9] in ('alternate','split')) else -reportclass.alternate_count_dict[i[8]],
             "duration": i[6],
             "duration_per": i[7],
             "quantity": 1,

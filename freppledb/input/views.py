@@ -198,10 +198,19 @@ class PathReport(GridReport):
             request.session["lasttab"] = "whereused"
         else:
             request.session["lasttab"] = "supplypath"
+        
+        if reportclass.objecttype._meta.model_name == 'buffer':
+          index = args[0].find(' @ ')
+          if index == -1:
+            b = Buffer.objects.get(id=args[0])
+            buffer_name = b.item.name + ' @ ' + b.location.name
+          else:
+            buffer_name = args[0]
+        
         return {
             "title": force_text(reportclass.objecttype._meta.verbose_name)
             + " "
-            + args[0],
+            + (buffer_name if 'buffer_name' in vars() else args[0]),
             "post_title": _("where used")
             if reportclass.downstream
             else _("supply path"),

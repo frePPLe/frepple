@@ -463,92 +463,88 @@ void SolverCreate::solve(const ResourceBuckets* res, void* v) {
     auto bucketend = data->state->q_loadplan->getBucketEnd();
     overloadQty = get<0>(bucketend);
     if (getAllowSplits() && !data->state->forceLate) {
-      // TODO if the original bucket fits, we don't try the buckets in between
-      // This keeps the number of operationplans minimal and performance
-      // optimal, but can give unintuitive results for operationplans spanning
-      // multiple buckets.
-      if (overloadQty < -ROUNDING_ERROR) {
-        // Requested bucket is overloaded
-        // Reduce the operationplan to its minimum size
+      // TODO opportunity for performance optimization in situations where
+      // everything happens in a single bucket
+
+      // Reduce the operationplan to its minimum size
+      opplan->setOperationPlanParameters(data->state->q_qty_min / 10,
+                                         Date::infinitePast, originalOpplan.end,
+                                         true, true, false);
+      // See if it fits in that bucket
+      bucketend = data->state->q_loadplan->getBucketEnd();
+      overloadQty = get<0>(bucketend);
+
+      // In the same bucket, we may be able to plan more than the minimum
+      auto bucketstart = data->state->q_loadplan->getBucketStart();
+      if (overloadQty > ROUNDING_ERROR &&
+          opplan->getQuantity() < originalOpplan.quantity - ROUNDING_ERROR) {
+        // Resize the operationplan to the maximum size that still fits in
+        // this bucket
+
+        // Fit the best operationplan in this bucket
+        // If enough time is available we can plan the full requested quantity
         opplan->setOperationPlanParameters(
-            data->state->q_qty_min, Date::infinitePast, originalOpplan.end,
+            originalOpplan.quantity, get<1>(bucketstart), originalOpplan.end,
             true, true, false);
-
-        // See if it fits in that bucket
+        // There may not be enough capacity to support this quantity
         bucketend = data->state->q_loadplan->getBucketEnd();
-        overloadQty = get<0>(bucketend);
-
-        // In the same bucket, we may be able to plan more than the minimum
-        auto bucketstart = data->state->q_loadplan->getBucketStart();
-        if (overloadQty > ROUNDING_ERROR &&
-            opplan->getQuantity() < originalOpplan.quantity - ROUNDING_ERROR) {
-          // Resize the operationplan to the maximum size that still fits in
-          // this bucket
-
-          // Fit the best operationplan in this bucket
-          // If enough time is available we can plan the full requested quantity
-          opplan->setOperationPlanParameters(
-              originalOpplan.quantity, get<1>(bucketstart), originalOpplan.end,
-              true, true, false);
-          // There may not be enough capacity to support this quantity
-          bucketend = data->state->q_loadplan->getBucketEnd();
-          if (get<0>(bucketend) > -ROUNDING_ERROR) {
-            overloadQty = 0.0;
-            data->state->a_qty = -data->state->q_loadplan->getQuantity();
-            data->state->a_date = data->state->q_loadplan->getDate();
-          } else {
-            // Resize to fit
-            Date oldEnd = opplan->getEnd();
-            double oldQty = opplan->getQuantity();
-            double efficiency =
-                data->state->q_loadplan->getResource()->getEfficiencyCalendar()
-                    ? data->state->q_loadplan->getResource()
-                          ->getEfficiencyCalendar()
-                          ->getValue(data->state->q_loadplan->getDate())
-                    : data->state->q_loadplan->getResource()->getEfficiency();
-            double newQty =
-                oldQty + get<0>(bucketend) /
-                             data->state->q_loadplan->getLoad()->getQuantity() *
-                             efficiency / 100.0;
-            if (newQty > ROUNDING_ERROR) {
-              opplan->setOperationPlanParameters(newQty, Date::infinitePast,
-                                                 oldEnd);
-              if (opplan->getQuantity() > 0 &&
-                  opplan->getQuantity() <= newQty + ROUNDING_ERROR &&
-                  opplan->getEnd() <= oldEnd) {
-                // The squeezing did work!
-                // The operationplan quantity is now reduced. The buffer solver
-                // will ask again for the remaining short quantity, so we don't
-                // need to bother about that here.
-                overloadQty = 0.0;
-                data->state->a_qty = -data->state->q_loadplan->getQuantity();
-                data->state->a_date = data->state->q_loadplan->getDate();
-              }
+        if (get<0>(bucketend) > -ROUNDING_ERROR) {
+          overloadQty = 0.0;
+          data->state->a_qty = -data->state->q_loadplan->getQuantity();
+          data->state->a_date = data->state->q_loadplan->getDate();
+        } else {
+          // Resize to fit
+          Date oldEnd = opplan->getEnd();
+          double oldQty = opplan->getQuantity();
+          double efficiency =
+              data->state->q_loadplan->getResource()->getEfficiencyCalendar()
+                  ? data->state->q_loadplan->getResource()
+                        ->getEfficiencyCalendar()
+                        ->getValue(data->state->q_loadplan->getDate())
+                  : data->state->q_loadplan->getResource()->getEfficiency();
+          double newQty =
+              oldQty + get<0>(bucketend) /
+                           data->state->q_loadplan->getLoad()->getQuantity() *
+                           efficiency / 100.0;
+          if (newQty > ROUNDING_ERROR) {
+            opplan->setOperationPlanParameters(newQty, Date::infinitePast,
+                                               oldEnd);
+            if (opplan->getQuantity() > 0 &&
+                opplan->getQuantity() <= newQty + ROUNDING_ERROR &&
+                opplan->getEnd() <= oldEnd) {
+              // The squeezing did work!
+              // The operationplan quantity is now reduced. The buffer solver
+              // will ask again for the remaining short quantity, so we don't
+              // need to bother about that here.
+              overloadQty = 0.0;
+              data->state->a_qty = -data->state->q_loadplan->getQuantity();
+              data->state->a_date = data->state->q_loadplan->getDate();
             }
           }
         }
       }
+    } else {
+      // Compute the minimum free capacity we need in a bucket
+      // -> not fully correct if efficiency and effectivity come into the
+      // picture
+      // -> replace with a move to each bucket
+      if (!date_effective) {
+        min_free_quantity =
+            opplan->getOperation()->setOperationPlanQuantity(
+                opplan, 0.01, false, false, false, Date::infinitePast) *
+                data->state->q_loadplan->getLoad()->getQuantity() +
+            data->state->q_loadplan->getLoad()->getQuantityFixed();
+        double efficiency =
+            data->state->q_loadplan->getResource()->getEfficiencyCalendar()
+                ? data->state->q_loadplan->getResource()
+                      ->getEfficiencyCalendar()
+                      ->getValue(data->state->q_loadplan->getDate())
+                : data->state->q_loadplan->getResource()->getEfficiency();
+        if (efficiency != 100.0) min_free_quantity /= efficiency * 100.0;
+      }
+      // TODO The logic is not symmetrical with time_per operations.
+      // For time-per operations we already evaluated the current bucket.
     }
-  } else {
-    // Compute the minimum free capacity we need in a bucket
-    // -> not fully correct if efficiency and effectivity come into the picture
-    // -> replace with a move to each bucket
-    if (!date_effective) {
-      min_free_quantity =
-          opplan->getOperation()->setOperationPlanQuantity(
-              opplan, 0.01, false, false, false, Date::infinitePast) *
-              data->state->q_loadplan->getLoad()->getQuantity() +
-          data->state->q_loadplan->getLoad()->getQuantityFixed();
-      double efficiency =
-          data->state->q_loadplan->getResource()->getEfficiencyCalendar()
-              ? data->state->q_loadplan->getResource()
-                    ->getEfficiencyCalendar()
-                    ->getValue(data->state->q_loadplan->getDate())
-              : data->state->q_loadplan->getResource()->getEfficiency();
-      if (efficiency != 100.0) min_free_quantity /= efficiency * 100.0;
-    }
-    // TODO The logic is not symmetrical with time_per operations.
-    // For time-per operations we already evaluated the current bucket.
   }
 
   // Loop for a valid location by using EARLIER capacity
@@ -584,6 +580,7 @@ void SolverCreate::solve(const ResourceBuckets* res, void* v) {
           orig_q_qty > -overloadQty - ROUNDING_ERROR &&
           data->state->q_loadplan->getLoad()->getQuantity() &&
           !time_per_logic) {
+        OperationPlanState beforeSqueeze(opplan);
         Date oldEnd = opplan->getEnd();
         double oldQty = opplan->getQuantity();
         double efficiency =
@@ -626,8 +623,7 @@ void SolverCreate::solve(const ResourceBuckets* res, void* v) {
             // and restoring the original are causing lots of updates in the
             // buffer and resource timelines...
             // We need an api that only checks the resizing.
-            opplan->setOperationPlanParameters(oldQty, Date::infinitePast,
-                                               oldEnd);
+            opplan->restore(beforeSqueeze);
           }
         }
       }
@@ -714,9 +710,11 @@ void SolverCreate::solve(const ResourceBuckets* res, void* v) {
                   oldQty +
                   overload / data->state->q_loadplan->getLoad()->getQuantity() *
                       efficiency / 100.0;
-              if (newQty < ROUNDING_ERROR)
+              if (newQty < ROUNDING_ERROR ||
+                  fabs(oldQty - newQty) < ROUNDING_ERROR)
                 moved = false;
               else {
+                OperationPlanState tmp(opplan);
                 opplan->setOperationPlanParameters(newQty, newStart.getStart(),
                                                    Date::infinitePast, false,
                                                    true, true);
@@ -731,7 +729,7 @@ void SolverCreate::solve(const ResourceBuckets* res, void* v) {
                   data->state->a_qty = -data->state->q_loadplan->getQuantity();
                 } else {
                   // It didn't work. Restore the original operationplan.
-                  opplan->setStart(newStart.getStart());
+                  opplan->restore(tmp);
                 }
               }
             }

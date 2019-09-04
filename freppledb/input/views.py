@@ -871,6 +871,8 @@ class PathReport(GridReport):
       if i[11] and not i[11] in reportclass.operation_dict:
         reportclass.operation_id = reportclass.operation_id + 1
         reportclass.operation_dict[i[11]] = reportclass.operation_id
+        if i[11] not in reportclass.suboperations_count_dict:
+          reportclass.suboperations_count_dict[i[11]] = Operation.objects.filter(owner_id=i[11]).count()
         grandparentoperation = {
           "depth": depth*2,
           "id": reportclass.operation_id,
@@ -887,7 +889,7 @@ class PathReport(GridReport):
           "parent": None,
           "leaf": "false",
           "expanded": "true",
-          "numsuboperations": Operation.objects.filter(owner_id=i[11]).count(),
+          "numsuboperations": reportclass.suboperations_count_dict[i[11]],
           "realdepth": -depth if reportclass.downstream else depth,
         }
         yield grandparentoperation
@@ -896,6 +898,13 @@ class PathReport(GridReport):
       if i[8] and not i[8] in reportclass.operation_dict:
         reportclass.operation_id = reportclass.operation_id + 1
         reportclass.operation_dict[i[8]] = reportclass.operation_id
+        if i[8] not in reportclass.suboperations_count_dict:
+          reportclass.suboperations_count_dict[i[8]] = Operation.objects.filter(owner_id=i[8]).count()
+        if i[11]:
+          if i[11] in reportclass.alternate_count_dict:
+            reportclass.alternate_count_dict[i[11]] = reportclass.alternate_count_dict[i[11]] + 1
+          else:
+            reportclass.alternate_count_dict[i[11]] = 1
         parentoperation = {
           "depth": depth*2,
           "id": reportclass.operation_id,
@@ -903,8 +912,8 @@ class PathReport(GridReport):
           "type": i[9],
           "location": i[1],
           "resources": None,
-          "parentoper": None,
-          "suboperation": i[10] if i[11] else 0,
+          "parentoper": i[11],
+          "suboperation": -reportclass.alternate_count_dict[i[11]] if i[11] else 0,
           "duration": None,
           "duration_per": None,
           "quantity": 1,
@@ -912,7 +921,7 @@ class PathReport(GridReport):
           "parent": None,
           "leaf": "false",
           "expanded": "true",
-          "numsuboperations": Operation.objects.filter(owner_id=i[8]).count(),
+          "numsuboperations": reportclass.suboperations_count_dict[i[8]],
           "realdepth": -depth if reportclass.downstream else depth,
         }
         yield parentoperation
@@ -957,8 +966,20 @@ class PathReport(GridReport):
         # Update item and location hierarchies
         Item.rebuildHierarchy(database=request.database)
         Location.rebuildHierarchy(database=request.database)
+        
+        # dictionary to retrieve the operation id from its name 
         reportclass.operation_dict = {}
+        
+        # counter used to give a unique id to the operation
         reportclass.operation_id = 0
+        
+        # dictionary to count the number of suboperations
+        # prevents to hit database more than once for a given routing/alternate
+        reportclass.suboperations_count_dict = {}
+        
+        # dictionary to reassign a priority to the alternate suboperations
+        # required otherwise suboperations with same priority overlap.
+        reportclass.alternate_count_dict = {}
 
         if str(reportclass.objecttype._meta) == "input.buffer":
           buffer_name = basequery.query.get_compiler(basequery.db).as_sql(
@@ -967,7 +988,7 @@ class PathReport(GridReport):
           if " @ " not in buffer_name:
               b = Buffer.objects.get(id=buffer_name)
               buffer_name = "%s @ %s" % (b.item.name, b.location.name)
-          
+
           for i in reportclass.getOperationFromBuffer(request, 
                                                       buffer_name, 
                                                       reportclass.downstream, 
@@ -980,6 +1001,7 @@ class PathReport(GridReport):
             d = Demand.objects.get(name=demand_name)
             if d.operation is None:
               buffer_name = "%s @ %s" % (d.item.name, d.location.name)
+
               for i in reportclass.getOperationFromBuffer(request, 
                                                           buffer_name, 
                                                           reportclass.downstream, 
@@ -987,6 +1009,7 @@ class PathReport(GridReport):
                 yield i
             else:
               operation_name = d.operation.name
+
               for i in reportclass.getOperationFromName(request, 
                                                           operation_name, 
                                                           reportclass.downstream, 
@@ -996,6 +1019,7 @@ class PathReport(GridReport):
             resource_name = basequery.query.get_compiler(basequery.db).as_sql(
                 with_col_aliases=False
             )[1][0]
+
             for i in reportclass.getOperationFromResource(request, 
                                                         resource_name, 
                                                         reportclass.downstream, 
@@ -1005,6 +1029,7 @@ class PathReport(GridReport):
             operation_name = basequery.query.get_compiler(basequery.db).as_sql(
                 with_col_aliases=False
             )[1][0]
+
             for i in reportclass.getOperationFromName(request, 
                                                         operation_name, 
                                                         reportclass.downstream, 
@@ -1014,6 +1039,7 @@ class PathReport(GridReport):
             item_name = basequery.query.get_compiler(basequery.db).as_sql(
                 with_col_aliases=False
             )[1][0]
+
             for i in reportclass.getOperationFromItem(request, 
                                                         item_name, 
                                                         reportclass.downstream, 

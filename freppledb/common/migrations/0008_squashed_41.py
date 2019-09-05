@@ -47,13 +47,6 @@ def createAdminUser(apps, schema_editor):
 
 class Migration(migrations.Migration):
 
-    replaces = [
-        ("common", "0002_defaultuser"),
-        ("common", "0003_wizard"),
-        ("common", "0006_permission_names"),
-        ("common", "0007_preferences"),
-    ]
-
     dependencies = [
         ("common", "0001_initial"),
         ("contenttypes", "0002_remove_content_type_name"),

@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2017 by frePPLe bvba
+# Copyright (C) 2019 by frePPLe bvba
 #
 # This library is free software; you can redistribute it and/or modify it
 # under the terms of the GNU Affero General Public License as published
@@ -20,6 +20,10 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
+    replaces = [("output", "0004_squashed_41"), ("output", "0005_number_precision")]
+
+    initial = True
+
     dependencies = [("common", "0008_squashed_41")]
 
     operations = [
@@ -29,33 +33,33 @@ class Migration(migrations.Migration):
                 (
                     "id",
                     models.AutoField(
+                        auto_created=True,
                         primary_key=True,
                         serialize=False,
-                        auto_created=True,
                         verbose_name="ID",
                     ),
                 ),
                 (
                     "demand",
                     models.CharField(
-                        max_length=300, verbose_name="demand", db_index=True
+                        db_index=True, max_length=300, verbose_name="demand"
                     ),
                 ),
                 (
                     "entity",
                     models.CharField(
-                        max_length=15, verbose_name="entity", db_index=True
+                        db_index=True, max_length=15, verbose_name="entity"
                     ),
                 ),
                 (
                     "owner",
                     models.CharField(
-                        max_length=300, verbose_name="owner", db_index=True
+                        db_index=True, max_length=300, verbose_name="owner"
                     ),
                 ),
                 (
                     "name",
-                    models.CharField(max_length=20, verbose_name="name", db_index=True),
+                    models.CharField(db_index=True, max_length=20, verbose_name="name"),
                 ),
                 (
                     "description",
@@ -63,16 +67,16 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "startdate",
-                    models.DateTimeField(verbose_name="start date", db_index=True),
+                    models.DateTimeField(db_index=True, verbose_name="start date"),
                 ),
                 (
                     "enddate",
-                    models.DateTimeField(verbose_name="end date", db_index=True),
+                    models.DateTimeField(db_index=True, verbose_name="end date"),
                 ),
                 (
                     "weight",
                     models.DecimalField(
-                        verbose_name="weight", decimal_places=6, max_digits=15
+                        decimal_places=8, max_digits=20, verbose_name="weight"
                     ),
                 ),
             ],
@@ -89,27 +93,27 @@ class Migration(migrations.Migration):
                 (
                     "id",
                     models.AutoField(
+                        auto_created=True,
                         primary_key=True,
                         serialize=False,
-                        auto_created=True,
                         verbose_name="ID",
                     ),
                 ),
                 (
                     "entity",
                     models.CharField(
-                        max_length=15, verbose_name="entity", db_index=True
+                        db_index=True, max_length=15, verbose_name="entity"
                     ),
                 ),
                 (
                     "owner",
                     models.CharField(
-                        max_length=300, verbose_name="owner", db_index=True
+                        db_index=True, max_length=300, verbose_name="owner"
                     ),
                 ),
                 (
                     "name",
-                    models.CharField(max_length=20, verbose_name="name", db_index=True),
+                    models.CharField(db_index=True, max_length=20, verbose_name="name"),
                 ),
                 (
                     "description",
@@ -117,16 +121,16 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "startdate",
-                    models.DateTimeField(verbose_name="start date", db_index=True),
+                    models.DateTimeField(db_index=True, verbose_name="start date"),
                 ),
                 (
                     "enddate",
-                    models.DateTimeField(verbose_name="end date", db_index=True),
+                    models.DateTimeField(db_index=True, verbose_name="end date"),
                 ),
                 (
                     "weight",
                     models.DecimalField(
-                        verbose_name="weight", decimal_places=6, max_digits=15
+                        decimal_places=8, max_digits=20, verbose_name="weight"
                     ),
                 ),
             ],
@@ -143,51 +147,48 @@ class Migration(migrations.Migration):
                 (
                     "id",
                     models.AutoField(
+                        auto_created=True,
                         primary_key=True,
                         serialize=False,
-                        auto_created=True,
                         verbose_name="ID",
                     ),
                 ),
-                (
-                    "theresource",
-                    models.CharField(max_length=300, verbose_name="resource"),
-                ),
+                ("resource", models.CharField(max_length=300, verbose_name="resource")),
                 ("startdate", models.DateTimeField(verbose_name="startdate")),
                 (
                     "available",
                     models.DecimalField(
-                        verbose_name="available",
+                        decimal_places=8,
+                        max_digits=20,
                         null=True,
-                        decimal_places=4,
-                        max_digits=15,
+                        verbose_name="available",
                     ),
                 ),
                 (
                     "unavailable",
                     models.DecimalField(
-                        verbose_name="unavailable",
+                        decimal_places=8,
+                        max_digits=20,
                         null=True,
-                        decimal_places=4,
-                        max_digits=15,
+                        verbose_name="unavailable",
                     ),
                 ),
                 (
                     "setup",
                     models.DecimalField(
-                        verbose_name="setup", null=True, decimal_places=4, max_digits=15
+                        decimal_places=8, max_digits=20, null=True, verbose_name="setup"
                     ),
                 ),
                 (
                     "load",
                     models.DecimalField(
-                        verbose_name="load", null=True, decimal_places=4, max_digits=15
+                        decimal_places=8, max_digits=20, null=True, verbose_name="load"
                     ),
                 ),
                 (
                     "free",
                     models.DecimalField(
-                        verbose_name="free", null=True, decimal_places=4, max_digits=15
+                        decimal_places=8, max_digits=20, null=True, verbose_name="free"
                     ),
                 ),
             ],
@@ -195,59 +196,8 @@ class Migration(migrations.Migration):
                 "verbose_name": "resource summary",
                 "verbose_name_plural": "resource summaries",
                 "db_table": "out_resourceplan",
-                "ordering": ["theresource", "startdate"],
-            },
-        ),
-        migrations.AlterUniqueTogether(
-            name="resourcesummary", unique_together=set([("theresource", "startdate")])
-        ),
-        migrations.AlterModelOptions(
-            name="resourcesummary",
-            options={
-                "verbose_name": "resource summary",
-                "verbose_name_plural": "resource summaries",
                 "ordering": ["resource", "startdate"],
+                "unique_together": {("resource", "startdate")},
             },
-        ),
-        migrations.RenameField(
-            model_name="resourcesummary", old_name="theresource", new_name="resource"
-        ),
-        migrations.AlterUniqueTogether(
-            name="resourcesummary", unique_together=set([("resource", "startdate")])
-        ),
-        migrations.AlterField(
-            model_name="resourcesummary",
-            name="available",
-            field=models.DecimalField(
-                verbose_name="available", null=True, decimal_places=6, max_digits=15
-            ),
-        ),
-        migrations.AlterField(
-            model_name="resourcesummary",
-            name="free",
-            field=models.DecimalField(
-                verbose_name="free", null=True, decimal_places=6, max_digits=15
-            ),
-        ),
-        migrations.AlterField(
-            model_name="resourcesummary",
-            name="load",
-            field=models.DecimalField(
-                verbose_name="load", null=True, decimal_places=6, max_digits=15
-            ),
-        ),
-        migrations.AlterField(
-            model_name="resourcesummary",
-            name="setup",
-            field=models.DecimalField(
-                verbose_name="setup", null=True, decimal_places=6, max_digits=15
-            ),
-        ),
-        migrations.AlterField(
-            model_name="resourcesummary",
-            name="unavailable",
-            field=models.DecimalField(
-                verbose_name="unavailable", null=True, decimal_places=6, max_digits=15
-            ),
         ),
     ]

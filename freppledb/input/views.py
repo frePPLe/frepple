@@ -198,19 +198,19 @@ class PathReport(GridReport):
             request.session["lasttab"] = "whereused"
         else:
             request.session["lasttab"] = "supplypath"
-        
-        if reportclass.objecttype._meta.model_name == 'buffer':
-          index = args[0].find(' @ ')
-          if index == -1:
-            b = Buffer.objects.get(id=args[0])
-            buffer_name = b.item.name + ' @ ' + b.location.name
-          else:
-            buffer_name = args[0]
-        
+
+        if reportclass.objecttype._meta.model_name == "buffer":
+            index = args[0].find(" @ ")
+            if index == -1:
+                b = Buffer.objects.get(id=args[0])
+                buffer_name = b.item.name + " @ " + b.location.name
+            else:
+                buffer_name = args[0]
+
         return {
             "title": force_text(reportclass.objecttype._meta.verbose_name)
             + " "
-            + (buffer_name if 'buffer_name' in vars() else args[0]),
+            + (buffer_name if "buffer_name" in vars() else args[0]),
             "post_title": _("where used")
             if reportclass.downstream
             else _("supply path"),
@@ -219,11 +219,10 @@ class PathReport(GridReport):
             "model": reportclass.objecttype._meta,
         }
 
-     
     @classmethod
     def getOperationFromItem(reportclass, request, item_name, downstream, depth):
-      cursor = connections[request.database].cursor()
-      query = '''      
+        cursor = connections[request.database].cursor()
+        query = """      
       -- MANUFACTURING OPERATIONS
       select distinct 
       case when parentoperation is null then operation else sibling end,
@@ -296,17 +295,26 @@ class PathReport(GridReport):
       from itemdistribution
       inner join item parent on parent.name = itemdistribution.item_id
       inner join item on item.name = %%s and item.lft between parent.lft and parent.rght 
-      ''' % (('''
+      """ % (
+            (
+                """
                 and (operation.item_id = %s or 
                 (operationmaterial.item_id = %s and operationmaterial.quantity > 0))
-            ''', ) if not downstream else\
-            ('''
+            """,
+            )
+            if not downstream
+            else (
+                """
                 and exists (select 1 from operationmaterial om where om.operation_id = operation.name
                 and om.item_id = %s and om.quantity < 0)
-            ''', ))
-      
-      if not downstream:
-        query = query + '''
+            """,
+            )
+        )
+
+        if not downstream:
+            query = (
+                query
+                + """
         union all
       -- PURCHASING OPERATIONS
       select 'Purchase '||item.name||' @ '|| location.name||' from '||itemsupplier.supplier_id,
@@ -346,24 +354,26 @@ class PathReport(GridReport):
       inner join item on item.name = %s and item.lft between i_parent.lft and i_parent.rght
       inner join location on location.lft = location.rght - 1
       where location_id is null
-      '''
-        
-      query = query + ' order by 4'
-        
-      if downstream:
-        cursor.execute(query, (item_name,) * 2)
-      else:
-        cursor.execute(query, (item_name,) * 5)
-      
-      for i in cursor.fetchall():
-        for j in reportclass.processRecord(i, request, depth, downstream):
-          yield j
-    
-    
+      """
+            )
+
+        query = query + " order by 4"
+
+        if downstream:
+            cursor.execute(query, (item_name,) * 2)
+        else:
+            cursor.execute(query, (item_name,) * 5)
+
+        for i in cursor.fetchall():
+            for j in reportclass.processRecord(i, request, depth, downstream):
+                yield j
+
     @classmethod
-    def getOperationFromResource(reportclass, request, resource_name, downstream, depth):
-      cursor = connections[request.database].cursor()
-      query = '''      
+    def getOperationFromResource(
+        reportclass, request, resource_name, downstream, depth
+    ):
+        cursor = connections[request.database].cursor()
+        query = """      
       -- MANUFACTURING OPERATIONS
       select distinct 
       case when parentoperation is null then operation else sibling end,
@@ -478,22 +488,24 @@ class PathReport(GridReport):
       inner join location on location.lft = location.rght - 1
       where location_id is null and itemsupplier.resource_id = %%s
       order by 4
-      ''' % ('operationresource.resource_id = %s' if downstream == False else '''
+      """ % (
+            "operationresource.resource_id = %s"
+            if downstream == False
+            else """
              exists (select 1 from operationresource where operation_id = operation.name and resource_id = %s)      
-            ''')
-      
-      cursor.execute(query, (resource_name,) * 4)
-      
-      for i in cursor.fetchall():
-        for j in reportclass.processRecord(i, request, depth, downstream):
-          yield j
-        
-      
-      
+            """
+        )
+
+        cursor.execute(query, (resource_name,) * 4)
+
+        for i in cursor.fetchall():
+            for j in reportclass.processRecord(i, request, depth, downstream):
+                yield j
+
     @classmethod
     def getOperationFromName(reportclass, request, operation_name, downstream, depth):
-      cursor = connections[request.database].cursor()
-      query = '''      
+        cursor = connections[request.database].cursor()
+        query = """      
       -- MANUFACTURING OPERATIONS
       select distinct 
       case when parentoperation is null then operation else sibling end,
@@ -546,22 +558,20 @@ class PathReport(GridReport):
       group by operation.name, parentoperation.name, sibling.name, grandparentoperation.name
       ) t
       order by 4
-      '''
-      
-      cursor.execute(query, (operation_name,) * 3)
-      
-      for i in cursor.fetchall():
-        for j in reportclass.processRecord(i, request, depth, downstream):
-          yield j
-          
-    
-    
+      """
+
+        cursor.execute(query, (operation_name,) * 3)
+
+        for i in cursor.fetchall():
+            for j in reportclass.processRecord(i, request, depth, downstream):
+                yield j
+
     @classmethod
     def getOperationFromBuffer(reportclass, request, buffer_name, downstream, depth):
-      cursor = connections[request.database].cursor()
-      item = buffer_name[0:buffer_name.find(' @ ')]
-      location = buffer_name[buffer_name.find(' @ ') + 3:]
-      query = '''      
+        cursor = connections[request.database].cursor()
+        item = buffer_name[0 : buffer_name.find(" @ ")]
+        location = buffer_name[buffer_name.find(" @ ") + 3 :]
+        query = """      
       -- MANUFACTURING OPERATIONS
       select distinct 
       case when parentoperation is null then operation else sibling end,
@@ -636,17 +646,28 @@ class PathReport(GridReport):
       inner join item parent on parent.name = itemdistribution.item_id
       inner join item on item.name = %%s and item.lft between parent.lft and parent.rght 
       where itemdistribution.%s = %%s
-      ''' % (('''
+      """ % (
+            (
+                """
                 and (operation.item_id = %s or 
                 (operationmaterial.item_id = %s and operationmaterial.quantity > 0))
-            ''', 'location_id') if not downstream else\
-            ('''
+            """,
+                "location_id",
+            )
+            if not downstream
+            else (
+                """
                 and exists (select 1 from operationmaterial om where om.operation_id = operation.name
                 and om.item_id = %s and om.quantity < 0)
-            ''', 'origin_id'))
-      
-      if not downstream:
-        query = query + '''
+            """,
+                "origin_id",
+            )
+        )
+
+        if not downstream:
+            query = (
+                query
+                + """
         union all
       -- PURCHASING OPERATIONS
       select 'Purchase '||item.name||' @ '|| location.name||' from '||itemsupplier.supplier_id,
@@ -686,134 +707,155 @@ class PathReport(GridReport):
       inner join item on item.name = %s and item.lft between i_parent.lft and i_parent.rght
       inner join location on location.name = %s and location.lft = location.rght - 1
       where location_id is null
-      '''
-        
-      query = query + ' order by 4'
-        
-      if downstream:
-        cursor.execute(query, (location, item, item ,location))
-      else:
-        cursor.execute(query, (location, item, item , item, location, item, location, item, location))
-      
-      for i in cursor.fetchall():
-        for j in reportclass.processRecord(i, request, depth, downstream):
-          yield j
-            
+      """
+            )
+
+        query = query + " order by 4"
+
+        if downstream:
+            cursor.execute(query, (location, item, item, location))
+        else:
+            cursor.execute(
+                query,
+                (location, item, item, item, location, item, location, item, location),
+            )
+
+        for i in cursor.fetchall():
+            for j in reportclass.processRecord(i, request, depth, downstream):
+                yield j
 
     @classmethod
     def processRecord(reportclass, i, request, depth, downstream):
- 
-      # First can we go further ?
-      if len(reportclass.node_count) > 400:
-        return
-      
-      # do we <have a grandparentoperation
-      if i[11] and not i[11] in reportclass.operation_dict:
-        reportclass.operation_id = reportclass.operation_id + 1
-        reportclass.operation_dict[i[11]] = reportclass.operation_id
-        if i[11] not in reportclass.suboperations_count_dict:
-          reportclass.suboperations_count_dict[i[11]] = Operation.objects.filter(owner_id=i[11]).count()
-        grandparentoperation = {
-          "depth": depth*2,
-          "id": reportclass.operation_id,
-          "operation": i[11],
-          "type": i[12],
-          "location": i[1],
-          "resources": None,
-          "parentoper": None,
-          "suboperation": 0,
-          "duration": None,
-          "duration_per": None,
-          "quantity": 1,
-          "buffers": None,
-          "parent": None,
-          "leaf": "false",
-          "expanded": "true",
-          "numsuboperations": reportclass.suboperations_count_dict[i[11]],
-          "realdepth": -depth if reportclass.downstream else depth,
-        }
-        reportclass.node_count.add(i[11])
-        yield grandparentoperation
-      
-      # do we have a parent operation
-      if i[8] and not i[8] in reportclass.operation_dict:
-        reportclass.operation_id = reportclass.operation_id + 1
-        reportclass.operation_dict[i[8]] = reportclass.operation_id
-        if i[8] not in reportclass.suboperations_count_dict:
-          reportclass.suboperations_count_dict[i[8]] = Operation.objects.filter(owner_id=i[8]).count()
-        if i[11]:
-          if i[11] in reportclass.parent_count_dict:
-            reportclass.parent_count_dict[i[11]] = reportclass.parent_count_dict[i[11]] + 1
-          else:
-            reportclass.parent_count_dict[i[11]] = 1
-        parentoperation = {
-          "depth": depth*2,
-          "id": reportclass.operation_id,
-          "operation": i[8],
-          "type": i[9],
-          "location": i[1],
-          "resources": None,
-          "parentoper": i[11],
-          "suboperation": -reportclass.parent_count_dict[i[11]] if i[11] else 0,
-          "duration": None,
-          "duration_per": None,
-          "quantity": 1,
-          "buffers": None,
-          "parent": None,
-          "leaf": "false",
-          "expanded": "true",
-          "numsuboperations": reportclass.suboperations_count_dict[i[8]],
-          "realdepth": -depth if reportclass.downstream else depth,
-        }
-        reportclass.node_count.add(i[8])
-        yield parentoperation
-      
-      # go through the regular time_per/fixed_time operation
-      if i[0] not in reportclass.operation_dict:
-        reportclass.operation_id = reportclass.operation_id + 1
-        reportclass.operation_dict[i[0]] = reportclass.operation_id
-        if i[8]:
-          if i[8] in reportclass.parent_count_dict:
-            reportclass.parent_count_dict[i[8]] = reportclass.parent_count_dict[i[8]] + 1
-          else:
-            reportclass.parent_count_dict[i[8]] = 1
-        operation = {
-            "depth": depth*2 if not i[8] else depth*2+1,
-            "id": reportclass.operation_id,
-            "operation": i[0],
-            "type": i[2],
-            "location": i[1],
-            "resources": tuple(i[5].items()) if i[5] else None,
-            "parentoper": i[8],
-            "suboperation": 0 if not i[8] else (reportclass.parent_count_dict[i[8]] if i[9] == 'routing' else -reportclass.parent_count_dict[i[8]]),
-            "duration": i[6],
-            "duration_per": i[7],
-            "quantity": 1,
-            "buffers": tuple(i[4].items()) if i[4] else None,
-            "parent": reportclass.operation_dict[i[8]] if i[8] else None,
-            "leaf": "true",
-            "expanded": "true",
-            "numsuboperations": 0,
-            "realdepth": -depth if reportclass.downstream else depth,
-        }
-        reportclass.node_count.add(i[0])
-        yield operation
-                
-      if i[5]:
-        for resource, quantity in tuple(i[5].items()):
-          reportclass.node_count.add(resource)
-      
-      if i[4]:
-        for buffer, quantity in tuple(i[4].items()):
-          # I might already have visisted that buffer
-          if buffer in reportclass.node_count:
-            continue
-          reportclass.node_count.add(buffer)
-          if float(quantity) < 0 and not downstream:
-            yield from reportclass.getOperationFromBuffer(request, buffer, downstream, depth+1)
-          elif float(quantity) > 0 and downstream:
-            yield from reportclass.getOperationFromBuffer(request, buffer, downstream, depth+1)
-    
+
+        # First can we go further ?
+        if len(reportclass.node_count) > 400:
+            return
+
+        # do we <have a grandparentoperation
+        if i[11] and not i[11] in reportclass.operation_dict:
+            reportclass.operation_id = reportclass.operation_id + 1
+            reportclass.operation_dict[i[11]] = reportclass.operation_id
+            if i[11] not in reportclass.suboperations_count_dict:
+                reportclass.suboperations_count_dict[i[11]] = Operation.objects.filter(
+                    owner_id=i[11]
+                ).count()
+            grandparentoperation = {
+                "depth": depth * 2,
+                "id": reportclass.operation_id,
+                "operation": i[11],
+                "type": i[12],
+                "location": i[1],
+                "resources": None,
+                "parentoper": None,
+                "suboperation": 0,
+                "duration": None,
+                "duration_per": None,
+                "quantity": 1,
+                "buffers": None,
+                "parent": None,
+                "leaf": "false",
+                "expanded": "true",
+                "numsuboperations": reportclass.suboperations_count_dict[i[11]],
+                "realdepth": -depth if reportclass.downstream else depth,
+            }
+            reportclass.node_count.add(i[11])
+            yield grandparentoperation
+
+        # do we have a parent operation
+        if i[8] and not i[8] in reportclass.operation_dict:
+            reportclass.operation_id = reportclass.operation_id + 1
+            reportclass.operation_dict[i[8]] = reportclass.operation_id
+            if i[8] not in reportclass.suboperations_count_dict:
+                reportclass.suboperations_count_dict[i[8]] = Operation.objects.filter(
+                    owner_id=i[8]
+                ).count()
+            if i[11]:
+                if i[11] in reportclass.parent_count_dict:
+                    reportclass.parent_count_dict[i[11]] = (
+                        reportclass.parent_count_dict[i[11]] + 1
+                    )
+                else:
+                    reportclass.parent_count_dict[i[11]] = 1
+            parentoperation = {
+                "depth": depth * 2,
+                "id": reportclass.operation_id,
+                "operation": i[8],
+                "type": i[9],
+                "location": i[1],
+                "resources": None,
+                "parentoper": i[11],
+                "suboperation": -reportclass.parent_count_dict[i[11]] if i[11] else 0,
+                "duration": None,
+                "duration_per": None,
+                "quantity": 1,
+                "buffers": None,
+                "parent": None,
+                "leaf": "false",
+                "expanded": "true",
+                "numsuboperations": reportclass.suboperations_count_dict[i[8]],
+                "realdepth": -depth if reportclass.downstream else depth,
+            }
+            reportclass.node_count.add(i[8])
+            yield parentoperation
+
+        # go through the regular time_per/fixed_time operation
+        if i[0] not in reportclass.operation_dict:
+            reportclass.operation_id = reportclass.operation_id + 1
+            reportclass.operation_dict[i[0]] = reportclass.operation_id
+            if i[8]:
+                if i[8] in reportclass.parent_count_dict:
+                    reportclass.parent_count_dict[i[8]] = (
+                        reportclass.parent_count_dict[i[8]] + 1
+                    )
+                else:
+                    reportclass.parent_count_dict[i[8]] = 1
+            operation = {
+                "depth": depth * 2 if not i[8] else depth * 2 + 1,
+                "id": reportclass.operation_id,
+                "operation": i[0],
+                "type": i[2],
+                "location": i[1],
+                "resources": tuple(i[5].items()) if i[5] else None,
+                "parentoper": i[8],
+                "suboperation": 0
+                if not i[8]
+                else (
+                    reportclass.parent_count_dict[i[8]]
+                    if i[9] == "routing"
+                    else -reportclass.parent_count_dict[i[8]]
+                ),
+                "duration": i[6],
+                "duration_per": i[7],
+                "quantity": 1,
+                "buffers": tuple(i[4].items()) if i[4] else None,
+                "parent": reportclass.operation_dict[i[8]] if i[8] else None,
+                "leaf": "true",
+                "expanded": "true",
+                "numsuboperations": 0,
+                "realdepth": -depth if reportclass.downstream else depth,
+            }
+            reportclass.node_count.add(i[0])
+            yield operation
+
+        if i[5]:
+            for resource, quantity in tuple(i[5].items()):
+                reportclass.node_count.add(resource)
+
+        if i[4]:
+            for buffer, quantity in tuple(i[4].items()):
+                # I might already have visisted that buffer
+                if buffer in reportclass.node_count:
+                    continue
+                reportclass.node_count.add(buffer)
+                if float(quantity) < 0 and not downstream:
+                    yield from reportclass.getOperationFromBuffer(
+                        request, buffer, downstream, depth + 1
+                    )
+                elif float(quantity) > 0 and downstream:
+                    yield from reportclass.getOperationFromBuffer(
+                        request, buffer, downstream, depth + 1
+                    )
+
     @classmethod
     def query(reportclass, request, basequery):
         """
@@ -822,90 +864,84 @@ class PathReport(GridReport):
         # Update item and location hierarchies
         Item.rebuildHierarchy(database=request.database)
         Location.rebuildHierarchy(database=request.database)
-        
-        # dictionary to retrieve the operation id from its name 
+
+        # dictionary to retrieve the operation id from its name
         reportclass.operation_dict = {}
-        
+
         # counter used to give a unique id to the operation
         reportclass.operation_id = 0
-        
+
         # dictionary to count the number of suboperations
         # prevents to hit database more than once for a given routing/alternate
         reportclass.suboperations_count_dict = {}
-        
+
         # dictionary to reassign a priority to the alternate/routing suboperations
         # required otherwise suboperations with same priority overlap.
         reportclass.parent_count_dict = {}
-        
+
         # set used to count the number of nodes in the graph.
         # we stop at 400 otherwise we could draw the full supply chain
         # in the case of downstream raw material.
         reportclass.node_count = set()
 
         if str(reportclass.objecttype._meta) == "input.buffer":
-          buffer_name = basequery.query.get_compiler(basequery.db).as_sql(
-              with_col_aliases=False
-          )[1][0] 
-          if " @ " not in buffer_name:
-              b = Buffer.objects.get(id=buffer_name)
-              buffer_name = "%s @ %s" % (b.item.name, b.location.name)
+            buffer_name = basequery.query.get_compiler(basequery.db).as_sql(
+                with_col_aliases=False
+            )[1][0]
+            if " @ " not in buffer_name:
+                b = Buffer.objects.get(id=buffer_name)
+                buffer_name = "%s @ %s" % (b.item.name, b.location.name)
 
-          for i in reportclass.getOperationFromBuffer(request, 
-                                                      buffer_name, 
-                                                      reportclass.downstream, 
-                                                      depth=0):
-            yield i
+            for i in reportclass.getOperationFromBuffer(
+                request, buffer_name, reportclass.downstream, depth=0
+            ):
+                yield i
         elif str(reportclass.objecttype._meta) == "input.demand":
             demand_name = basequery.query.get_compiler(basequery.db).as_sql(
                 with_col_aliases=False
             )[1][0]
             d = Demand.objects.get(name=demand_name)
             if d.operation is None:
-              buffer_name = "%s @ %s" % (d.item.name, d.location.name)
+                buffer_name = "%s @ %s" % (d.item.name, d.location.name)
 
-              for i in reportclass.getOperationFromBuffer(request, 
-                                                          buffer_name, 
-                                                          reportclass.downstream, 
-                                                          depth=0):
-                yield i
+                for i in reportclass.getOperationFromBuffer(
+                    request, buffer_name, reportclass.downstream, depth=0
+                ):
+                    yield i
             else:
-              operation_name = d.operation.name
+                operation_name = d.operation.name
 
-              for i in reportclass.getOperationFromName(request, 
-                                                          operation_name, 
-                                                          reportclass.downstream, 
-                                                          depth=0):
-                yield i
+                for i in reportclass.getOperationFromName(
+                    request, operation_name, reportclass.downstream, depth=0
+                ):
+                    yield i
         elif str(reportclass.objecttype._meta) == "input.resource":
             resource_name = basequery.query.get_compiler(basequery.db).as_sql(
                 with_col_aliases=False
             )[1][0]
 
-            for i in reportclass.getOperationFromResource(request, 
-                                                        resource_name, 
-                                                        reportclass.downstream, 
-                                                        depth=0):
-              yield i
+            for i in reportclass.getOperationFromResource(
+                request, resource_name, reportclass.downstream, depth=0
+            ):
+                yield i
         elif str(reportclass.objecttype._meta) == "input.operation":
             operation_name = basequery.query.get_compiler(basequery.db).as_sql(
                 with_col_aliases=False
             )[1][0]
 
-            for i in reportclass.getOperationFromName(request, 
-                                                        operation_name, 
-                                                        reportclass.downstream, 
-                                                        depth=0):
-              yield i
+            for i in reportclass.getOperationFromName(
+                request, operation_name, reportclass.downstream, depth=0
+            ):
+                yield i
         elif str(reportclass.objecttype._meta) == "input.item":
             item_name = basequery.query.get_compiler(basequery.db).as_sql(
                 with_col_aliases=False
             )[1][0]
 
-            for i in reportclass.getOperationFromItem(request, 
-                                                        item_name, 
-                                                        reportclass.downstream, 
-                                                        depth=0):
-              yield i
+            for i in reportclass.getOperationFromItem(
+                request, item_name, reportclass.downstream, depth=0
+            ):
+                yield i
         else:
             raise Exception("Supply path for an unknown entity")
 

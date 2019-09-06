@@ -44,6 +44,9 @@ Release notes
 - Give a warning when users try to upload spreadsheets in the old .XLS Excel format
   instead of the new .XLSX spreadsheet format.
 
+- Performance improvement for the "supply path" and "where used" reports for complex and 
+  deep bill of materials.
+    
 .. rubric:: Integration
 
 - | The REST API for manufacturing orders now returns the resources and materials it uses.

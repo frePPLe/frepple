@@ -21,6 +21,8 @@ Main Django configuration file.
 """
 import os, sys
 
+from django.utils.translation import gettext_lazy as _
+
 try:
     DEBUG = "runserver" in sys.argv
 except:
@@ -161,21 +163,20 @@ USE_TZ = False  # TODO Test with this parameter set to True
 # Language names and codes should match the ones in Django.
 # You can see the list supported by Django at:
 #    https://github.com/django/django/blob/master/django/conf/global_settings.py
-ugettext = lambda s: s
 LANGUAGES = (
-    ("en", ugettext("English")),
-    ("fr", ugettext("French")),
-    ("de", ugettext("German")),
-    ("he", ugettext("Hebrew")),
-    ("it", ugettext("Italian")),
-    ("ja", ugettext("Japanese")),
-    ("nl", ugettext("Dutch")),
-    ("pt", ugettext("Portuguese")),
-    ("pt-br", ugettext("Brazilian Portuguese")),
-    ("ru", ugettext("Russian")),
-    ("es", ugettext("Spanish")),
-    ("zh-cn", ugettext("Simplified Chinese")),
-    ("zh-tw", ugettext("Traditional Chinese")),
+    ("en", _("English")),
+    ("fr", _("French")),
+    ("de", _("German")),
+    ("he", _("Hebrew")),
+    ("it", _("Italian")),
+    ("ja", _("Japanese")),
+    ("nl", _("Dutch")),
+    ("pt", _("Portuguese")),
+    ("pt-br", _("Brazilian Portuguese")),
+    ("ru", _("Russian")),
+    ("es", _("Spanish")),
+    ("zh-cn", _("Simplified Chinese")),
+    ("zh-tw", _("Traditional Chinese")),
 )
 
 # The remember-me checkbox on the login page allows to keep a session cookie
@@ -363,14 +364,14 @@ DEFAULT_PAGESIZE = 100
 # Configuration of the default dashboard
 DEFAULT_DASHBOARD = [
     {
-        "rowname": "Welcome",
+        "rowname": _("Welcome"),
         "cols": [
             {"width": 6, "widgets": [("welcome", {})]},
             {"width": 6, "widgets": [("news", {})]},
         ],
     },
     {
-        "rowname": "sales",
+        "rowname": _("sales"),
         "cols": [
             {
                 "width": 9,
@@ -389,7 +390,7 @@ DEFAULT_DASHBOARD = [
         ],
     },
     {
-        "rowname": "purchasing",
+        "rowname": _("purchasing"),
         "cols": [
             {
                 "width": 9,
@@ -409,7 +410,7 @@ DEFAULT_DASHBOARD = [
         ],
     },
     {
-        "rowname": "distribution",
+        "rowname": _("distribution"),
         "cols": [
             {
                 "width": 12,
@@ -421,7 +422,7 @@ DEFAULT_DASHBOARD = [
         ],
     },
     {
-        "rowname": "manufacturing",
+        "rowname": _("manufacturing"),
         "cols": [
             {
                 "width": 9,
@@ -440,7 +441,7 @@ DEFAULT_DASHBOARD = [
         ],
     },
     {
-        "rowname": "activity",
+        "rowname": _("activity"),
         "cols": [
             {"width": 6, "widgets": [("recent_comments", {"limit": 10})]},
             {"width": 6, "widgets": [("recent_actions", {"limit": 10})]},

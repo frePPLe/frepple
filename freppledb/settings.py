@@ -25,10 +25,12 @@ Instead put all your settings in the file FREPPLE_CONFDIR/djangosettings.py.
 import locale
 import os
 import sys
-import types
 import importlib
 import freppledb
+
 from django.contrib import messages
+from django.utils.translation import gettext_lazy as _
+
 
 # FREPPLE_APP directory
 if "FREPPLE_APP" in os.environ:
@@ -109,28 +111,27 @@ TIME_ZONE = "Europe/Brussels"
 # Language names and codes should match the ones in Django.
 # You can see the list supported by Django at:
 #    https://github.com/django/django/blob/master/django/conf/global_settings.py
-ugettext = lambda s: s
 LANGUAGES = (
     # Translators: Translation included with Django
-    ("en", ugettext("English")),
+    ("en", _("English")),
     # Translators: Translation included with Django
-    ("fr", ugettext("French")),
+    ("fr", _("French")),
     # Translators: Translation included with Django
-    ("de", ugettext("German")),
+    ("de", _("German")),
     # Translators: Translation included with Django
-    ("it", ugettext("Italian")),
+    ("it", _("Italian")),
     # Translators: Translation included with Django
-    ("jp", ugettext("Japanese")),
+    ("jp", _("Japanese")),
     # Translators: Translation included with Django
-    ("nl", ugettext("Dutch")),
+    ("nl", _("Dutch")),
     # Translators: Translation included with Django
-    ("pt", ugettext("Portuguese")),
+    ("pt", _("Portuguese")),
     # Translators: Translation included with Django
-    ("pt-br", ugettext("Brazilian Portuguese")),
+    ("pt-br", _("Brazilian Portuguese")),
     # Translators: Translation included with Django
-    ("zh-cn", ugettext("Simplified Chinese")),
+    ("zh-cn", _("Simplified Chinese")),
     # Translators: Translation included with Django
-    ("zh-tw", ugettext("Traditional Chinese")),
+    ("zh-tw", _("Traditional Chinese")),
 )
 
 # The default redirects URLs not ending with a slash.
@@ -253,7 +254,7 @@ DEFAULT_PAGESIZE = 100
 # Configuration of the default dashboard
 DEFAULT_DASHBOARD = [
     {
-        "rowname": "Welcome",
+        "rowname": _("Welcome"),
         "cols": [
             {"width": 6, "widgets": [("welcome", {})]},
             {
@@ -266,7 +267,7 @@ DEFAULT_DASHBOARD = [
         ],
     },
     {
-        "rowname": "sales",
+        "rowname": _("sales"),
         "cols": [
             {
                 "width": 9,
@@ -285,7 +286,7 @@ DEFAULT_DASHBOARD = [
         ],
     },
     {
-        "rowname": "purchasing",
+        "rowname": _("purchasing"),
         "cols": [
             {
                 "width": 9,
@@ -305,7 +306,7 @@ DEFAULT_DASHBOARD = [
         ],
     },
     {
-        "rowname": "distribution",
+        "rowname": _("distribution"),
         "cols": [
             {
                 "width": 12,
@@ -317,7 +318,7 @@ DEFAULT_DASHBOARD = [
         ],
     },
     {
-        "rowname": "manufacturing",
+        "rowname": _("manufacturing"),
         "cols": [
             {
                 "width": 9,
@@ -336,7 +337,7 @@ DEFAULT_DASHBOARD = [
         ],
     },
     {
-        "rowname": "activity",
+        "rowname": _("activity"),
         "cols": [
             {"width": 6, "widgets": [("recent_comments", {"limit": 10})]},
             {"width": 6, "widgets": [("recent_actions", {"limit": 10})]},

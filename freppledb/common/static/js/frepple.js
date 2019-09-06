@@ -365,8 +365,9 @@ function formatDuration(cellvalue, options, rowdata) {
   minutes = Math.floor((seconds - (days * 86400) - (hours * 3600)) / 60);
   seconds = seconds - (days * 86400) - (hours * 3600) - (minutes * 60);
 
-  if (rowdata.criticality > 998)
-    return 'N/A';
+  if (days > 365 * 5)
+  	// When it's more than 5 years, we assume you meant infinite
+  	return 'N/A';
   if (days > 0)
     return (sign*days).toString() 
       + " " + ((hours < 10) ? "0" : "") + hours + ((minutes < 10) ? ":0" : ":") 

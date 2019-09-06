@@ -3265,9 +3265,12 @@ class ManufacturingOrderList(OperationPlanMixin, GridReport):
             select={
                 "material": "(select json_agg(json_build_array(item_id, quantity)) from (select item_id, round(quantity,2) quantity from operationplanmaterial where operationplan.reference = operationplanmaterial.operationplan_id  order by quantity limit 10) mat)",
                 "resource": "(select json_agg(json_build_array(resource_id, quantity)) from (select resource_id, round(quantity,2) quantity from operationplanresource where operationplan.reference = operationplanresource.operationplan_id  order by quantity desc limit 10) res)",
+                "setup": "(select json_agg(json_build_array(resource_id, setup)) from (select resource_id, setup from operationplanresource where setup is not null and operationplan.reference = operationplanresource.operationplan_id order by resource_id limit 10) res)",
                 "setup_duration": "(operationplan.plan->'setup')",
                 "setup_end": "(operationplan.plan->>'setupend')",
                 "feasible": "coalesce((operationplan.plan->>'feasible')::boolean, true)",
+                "opplan_duration": "(operationplan.enddate - operationplan.startdate)",
+                "opplan_net_duration": "(operationplan.enddate - operationplan.startdate - coalesce((operationplan.plan->>'unavailable')::int * interval '1 second', interval '0 second'))",
             }
         )
 
@@ -3317,6 +3320,20 @@ class ManufacturingOrderList(OperationPlanMixin, GridReport):
             title=_("end date"),
             extra='"formatoptions":{"srcformat":"Y-m-d H:i:s","newformat":"Y-m-d H:i:s", "defaultValue":""}, "summaryType":"max"',
         ),
+        GridFieldDuration(
+            "opplan_duration",
+            title=_("duration"),
+            formatter="duration",
+            editable=False,
+            extra='"formatoptions":{"defaultValue":""}, "summaryType":"sum"',
+        ),
+        GridFieldDuration(
+            "opplan_net_duration",
+            title=_("net duration"),
+            formatter="duration",
+            editable=False,
+            extra='"formatoptions":{"defaultValue":""}, "summaryType":"sum"',
+        ),
         GridFieldNumber(
             "quantity",
             title=_("quantity"),
@@ -3364,6 +3381,16 @@ class ManufacturingOrderList(OperationPlanMixin, GridReport):
         GridFieldText(
             "resource",
             title=_("resources"),
+            editable=False,
+            search=False,
+            sortable=False,
+            initially_hidden=True,
+            formatter="listdetail",
+            extra='"role":"input/resource"',
+        ),
+        GridFieldText(
+            "setup",
+            title=_("setups"),
             editable=False,
             search=False,
             sortable=False,

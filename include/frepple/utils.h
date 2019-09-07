@@ -1229,7 +1229,7 @@ class Keyword : public NonCopyable {
   /* A function to verify the uniquess of our hashes. */
   void check();
 
-  static hash<string> hasher;
+  static std::hash<string> hasher;
 
   size_t dw;
   string strName;

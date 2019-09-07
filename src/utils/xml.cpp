@@ -55,6 +55,7 @@
 namespace frepple {
 namespace utils {
 
+std::hash<string> Keyword::hasher;
 xercesc::XMLTranscoder* XMLInput::utf8_encoder = nullptr;
 
 char* XMLInput::transcodeUTF8(const XMLCh* xercesChars) {

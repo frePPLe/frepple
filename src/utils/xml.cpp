@@ -351,7 +351,7 @@ void XMLInput::endElement(const XMLCh* const uri, const XMLCh* const ename,
   string ename_utf8 = transcodeUTF8(ename);
 
   // Currently ignoring all input?
-  hashtype h = Keyword::hash(ename_utf8);
+  size_t h = Keyword::hash(ename_utf8);
   if (ignore) {
     if (data[dataindex].hash == h) {
       // Finishing ignored element level
@@ -885,46 +885,25 @@ bool XMLData::getBool() const {
 
 const char* DataKeyword::getName() const {
   if (ch) return ch;
-  Keyword::tagtable::const_iterator i = Keyword::getTags().find(hash);
+  auto i = Keyword::getTags().find(hash);
   if (i == Keyword::getTags().end())
     throw LogicException("Undefined element keyword");
   return i->second->getName().c_str();
 }
 
-Keyword::Keyword(const string& name) : strName(name) {
-  // Error condition: name is empty
-  if (name.empty()) throw LogicException("Creating keyword without name");
-
-  // Create a number of variations of the tag name   TODO GET RID OF THESE XML
-  // SPECIFIC SHIT
-  strStartElement = string("<") + name;
-  strEndElement = string("</") + name + ">\n";
-  strElement = string("<") + name + ">";
-  strAttribute = string(" ") + name + "=\"";
-  strQuoted = string("\"") + name + "\":";
-
-  // Compute the hash value
-  dw = hash(name.c_str());
+Keyword::Keyword(const string& n)
+    : dw(hash(n.c_str())), strName(n), fullname(n) {
+  if (strName.empty()) throw LogicException("Creating keyword without name");
 
   // Verify that the hash is "perfect".
   check();
 }
 
-Keyword::Keyword(const string& name, const string& nspace) : strName(name) {
-  // Error condition: name is empty
-  if (name.empty()) throw LogicException("Creating keyword without name");
+Keyword::Keyword(const string& n, const string& nspace)
+    : dw(hash(n)), strName(n), fullname(nspace + ":" + n) {
+  if (strName.empty()) throw LogicException("Creating keyword without name");
   if (nspace.empty())
     throw LogicException("Creating keyword with empty namespace");
-
-  // Create a number of variations of the tag name
-  strStartElement = string("<") + nspace + ":" + name;
-  strEndElement = string("</") + nspace + ":" + name + ">\n";
-  strElement = string("<") + nspace + ":" + name + ">";
-  strAttribute = string(" ") + nspace + ":" + name + "=\"";
-  strQuoted = string("\"") + name + "\":";
-
-  // Compute the hash value
-  dw = hash(name);
 
   // Verify that the hash is "perfect".
   check();
@@ -936,7 +915,7 @@ void Keyword::check() {
   static mutex dd;
   {
     lock_guard<mutex> l(dd);
-    tagtable::const_iterator i = getTags().find(dw);
+    auto i = getTags().find(dw);
     if (i != getTags().end() && i->second->getName() != strName)
       throw LogicException("Tag XML-tag hash function clashes for " +
                            i->second->getName() + " and " + strName);
@@ -946,12 +925,12 @@ void Keyword::check() {
 
 Keyword::~Keyword() {
   // Remove from the tag list
-  tagtable::iterator i = getTags().find(dw);
+  auto i = getTags().find(dw);
   if (i != getTags().end()) getTags().erase(i);
 }
 
 const Keyword& Keyword::find(const char* name) {
-  tagtable::const_iterator i = getTags().find(hash(name));
+  auto i = getTags().find(hash(name));
   return *(i != getTags().end() ? i->second : new Keyword(name));
 }
 
@@ -960,20 +939,8 @@ Keyword::tagtable& Keyword::getTags() {
   return alltags;
 }
 
-hashtype Keyword::hash(const char* c) {
-  if (c == 0 || *c == 0) return 0;
-
-  // Compute hash
-  const char* curCh = c;
-  hashtype hashVal = *curCh;
-  while (*curCh) hashVal = (hashVal * 37) + (hashVal >> 24) + *curCh++;
-
-  // Divide by modulus
-  return hashVal % 954991;
-}
-
 void Keyword::printTags() {
-  for (tagtable::iterator i = getTags().begin(); i != getTags().end(); ++i)
+  for (auto i = getTags().begin(); i != getTags().end(); ++i)
     logger << i->second->getName() << "   " << i->second->dw << endl;
 }
 

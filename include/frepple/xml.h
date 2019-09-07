@@ -78,7 +78,7 @@ class XMLInput : public DataInput,
     const MetaFieldBase* field;
     XMLData value;
     string name;
-    hashtype hash;
+    size_t hash;
   };
 
  private:
@@ -93,7 +93,7 @@ class XMLInput : public DataInput,
     const MetaClass* cls;
     Object* object;
     int start;
-    hashtype hash;
+    size_t hash;
   };
   vector<obj> objects;
 
@@ -352,7 +352,7 @@ class XMLSerializer : public Serializer {
    * Output: \<TAG\>
    */
   void BeginList(const Keyword& t) {
-    *m_fp << indentstring << t.stringElement() << "\n";
+    *m_fp << indentstring << "<" << t << ">\n";
     incIndent();
   }
 
@@ -360,7 +360,7 @@ class XMLSerializer : public Serializer {
    * Output: \<TAG\>
    */
   void BeginObject(const Keyword& t) {
-    *m_fp << indentstring << t.stringElement() << "\n";
+    *m_fp << indentstring << "<" << t << ">\n";
     incIndent();
   }
 
@@ -368,7 +368,7 @@ class XMLSerializer : public Serializer {
    * Output: \<TAG attributes\>
    */
   void BeginObject(const Keyword& t, const string& atts) {
-    *m_fp << indentstring << t.stringStartElement() << " " << atts << ">\n";
+    *m_fp << indentstring << "<" << t << " " << atts << ">\n";
     incIndent();
   }
 
@@ -376,7 +376,7 @@ class XMLSerializer : public Serializer {
    * Output: \<TAG TAG1="val1"\>
    */
   void BeginObject(const Keyword& t, const Keyword& attr1, const string& val1) {
-    *m_fp << indentstring << t.stringStartElement() << attr1.stringAttribute();
+    *m_fp << indentstring << "<" << t << " " << attr1.getFullName() << "=\"";
     escape(val1);
     *m_fp << "\">\n";
     incIndent();
@@ -386,8 +386,8 @@ class XMLSerializer : public Serializer {
    * Output: \<TAG TAG1="val1"\>
    */
   void BeginObject(const Keyword& t, const Keyword& attr1, const Date val1) {
-    *m_fp << indentstring << t.stringStartElement() << attr1.stringAttribute()
-          << val1 << "\">\n";
+    *m_fp << indentstring << "<" << t << " " << attr1 << "=\"" << val1
+          << "\">\n";
     incIndent();
   }
 
@@ -395,8 +395,8 @@ class XMLSerializer : public Serializer {
    * Output: \<TAG TAG1="val1"\>
    */
   void BeginObject(const Keyword& t, const Keyword& attr1, const int val1) {
-    *m_fp << indentstring << t.stringStartElement() << attr1.stringAttribute()
-          << val1 << "\">\n";
+    *m_fp << indentstring << "<" << t << " " << attr1 << "=\"" << val1
+          << "\">\n";
     incIndent();
   }
 
@@ -405,9 +405,10 @@ class XMLSerializer : public Serializer {
    */
   void BeginObject(const Keyword& t, const Keyword& attr1, const string& val1,
                    const Keyword& attr2, const string& val2) {
-    *m_fp << indentstring << t.stringStartElement() << attr1.stringAttribute();
+    *m_fp << indentstring << "<" << t << " " << attr1.getFullName() << "=\"";
     escape(val1);
-    *m_fp << "\"" << attr2.stringAttribute();
+    *m_fp << "\""
+          << " " << attr2.getFullName() << "=\"";
     escape(val2);
     *m_fp << "\">\n";
     incIndent();
@@ -416,8 +417,8 @@ class XMLSerializer : public Serializer {
   void BeginObject(const Keyword& t, const Keyword& attr1,
                    const unsigned long& val1, const Keyword& attr2,
                    const string& val2) {
-    *m_fp << indentstring << t.stringStartElement() << attr1.stringAttribute()
-          << val1 << "\"" << attr2.stringAttribute();
+    *m_fp << indentstring << "<" << t << " " << attr1 << "=\"" << val1 << "\""
+          << " " << attr2.getFullName() << "=\"";
     escape(val2);
     *m_fp << "\">\n";
     incIndent();
@@ -426,9 +427,9 @@ class XMLSerializer : public Serializer {
   void BeginObject(const Keyword& t, const Keyword& attr1, const int& val1,
                    const Keyword& attr2, const Date val2, const Keyword& attr3,
                    const Date val3) {
-    *m_fp << indentstring << t.stringStartElement() << attr1.stringAttribute()
-          << val1 << "\"" << attr2.stringAttribute() << val2 << "\""
-          << attr3.stringAttribute() << val3 << "\">\n";
+    *m_fp << indentstring << "<" << t << " " << attr1 << "=\"" << val1 << "\""
+          << " " << attr2 << "=\"" << val2 << "\""
+          << " " << attr3 << "=\"" << val3 << "\">\n";
     incIndent();
   }
 
@@ -438,7 +439,7 @@ class XMLSerializer : public Serializer {
    */
   void EndObject(const Keyword& t) {
     decIndent();
-    *m_fp << indentstring << t.stringEndElement();
+    *m_fp << indentstring << "</" << t << ">\n";
   }
 
   /* Write the closing tag of this object and decrease the indentation
@@ -447,7 +448,7 @@ class XMLSerializer : public Serializer {
    */
   void EndList(const Keyword& t) {
     decIndent();
-    *m_fp << indentstring << t.stringEndElement();
+    *m_fp << indentstring << "</" << t << ">\n";
   }
 
   /* Write the string to the output. No XML-tags are added, so this method
@@ -457,19 +458,19 @@ class XMLSerializer : public Serializer {
   /* Write an unsigned long value enclosed opening and closing tags.
    * Output: \<TAG_T\>uint\</TAG_T\> */
   void writeElement(const Keyword& t, const long unsigned int val) {
-    *m_fp << indentstring << t.stringElement() << val << t.stringEndElement();
+    *m_fp << indentstring << "<" << t << ">" << val << "</" << t << ">\n";
   }
 
   /* Write an integer value enclosed opening and closing tags.
    * Output: \<TAG_T\>integer\</TAG_T\> */
   void writeElement(const Keyword& t, const int val) {
-    *m_fp << indentstring << t.stringElement() << val << t.stringEndElement();
+    *m_fp << indentstring << "<" << t << ">" << val << "</" << t << ">\n";
   }
 
   /* Write a double value enclosed opening and closing tags.
    * Output: \<TAG_T\>double\</TAG_T\> */
   void writeElement(const Keyword& t, const double val) {
-    *m_fp << indentstring << t.stringElement() << val << t.stringEndElement();
+    *m_fp << indentstring << "<" << t << ">" << val << "</" << t << ">\n";
   }
 
   /* Write a boolean value enclosed opening and closing tags. The boolean
@@ -477,8 +478,8 @@ class XMLSerializer : public Serializer {
    * Output: \<TAG_T\>true\</TAG_T\>
    */
   void writeElement(const Keyword& t, const bool val) {
-    *m_fp << indentstring << t.stringElement() << (val ? "true" : "false")
-          << t.stringEndElement();
+    *m_fp << indentstring << "<" << t << ">" << (val ? "true" : "false") << "</"
+          << t << ">\n";
   }
 
   /* Write a string value enclosed opening and closing tags. Special
@@ -486,9 +487,9 @@ class XMLSerializer : public Serializer {
    * Output: \<TAG_T\>val\</TAG_T\> */
   void writeElement(const Keyword& t, const string& val) {
     if (!val.empty()) {
-      *m_fp << indentstring << t.stringElement();
+      *m_fp << indentstring << "<" << t.getFullName() << ">";
       escape(val);
-      *m_fp << t.stringEndElement();
+      *m_fp << "</" << t.getFullName() << ">\n";
     }
   }
 
@@ -496,9 +497,9 @@ class XMLSerializer : public Serializer {
    * Output: \<TAG_U TAG_T="string"/\> */
   void writeElement(const Keyword& u, const Keyword& t, const string& val) {
     if (val.empty())
-      *m_fp << indentstring << u.stringStartElement() << "/>\n";
+      *m_fp << indentstring << "<" << u << "/>\n";
     else {
-      *m_fp << indentstring << u.stringStartElement() << t.stringAttribute();
+      *m_fp << indentstring << "<" << u << " " << t.getFullName() << "=\"";
       escape(val);
       *m_fp << "\"/>\n";
     }
@@ -507,15 +508,14 @@ class XMLSerializer : public Serializer {
   /* Writes an element with a long attribute.
    * Output: \<TAG_U TAG_T="val"/\> */
   void writeElement(const Keyword& u, const Keyword& t, const long val) {
-    *m_fp << indentstring << u.stringStartElement() << t.stringAttribute()
-          << val << "\"/>\n";
+    *m_fp << indentstring << "<" << u << " " << t << "=\"" << val << "\"/>\n";
   }
 
   /* Writes an element with a date attribute.
    * Output: \<TAG_U TAG_T="val"/\> */
   void writeElement(const Keyword& u, const Keyword& t, const Date& val) {
-    *m_fp << indentstring << u.stringStartElement() << t.stringAttribute()
-          << string(val) << "\"/>\n";
+    *m_fp << indentstring << "<" << u << " " << t << "=\"" << string(val)
+          << "\"/>\n";
   }
 
   /* Writes an element with 2 string attributes.
@@ -523,11 +523,12 @@ class XMLSerializer : public Serializer {
   void writeElement(const Keyword& u, const Keyword& t1, const string& val1,
                     const Keyword& t2, const string& val2) {
     if (val1.empty())
-      *m_fp << indentstring << u.stringStartElement() << "/>\n";
+      *m_fp << indentstring << "<" << u << "/>\n";
     else {
-      *m_fp << indentstring << u.stringStartElement() << t1.stringAttribute();
+      *m_fp << indentstring << "<" << u << " " << t1.getFullName() << "=\"";
       escape(val1);
-      *m_fp << "\"" << t2.stringAttribute();
+      *m_fp << "\""
+            << " " << t2.getFullName() << "=\"";
       escape(val2);
       *m_fp << "\"/>\n";
     }
@@ -537,8 +538,8 @@ class XMLSerializer : public Serializer {
    * Output: \<TAG_U TAG_T1="val1" TAG_T2="val2"/\> */
   void writeElement(const Keyword& u, const Keyword& t1, unsigned long val1,
                     const Keyword& t2, const string& val2) {
-    *m_fp << indentstring << u.stringStartElement() << t1.stringAttribute()
-          << val1 << "\"" << t2.stringAttribute();
+    *m_fp << indentstring << "<" << u << " " << t1 << "=\"" << val1 << "\""
+          << " " << t2.getFullName() << "=\"";
     escape(val2);
     *m_fp << "\"/>\n";
   }
@@ -549,41 +550,40 @@ class XMLSerializer : public Serializer {
   void writeElement(const Keyword& u, const Keyword& t1, short val1,
                     const Keyword& t2, unsigned long val2, const Keyword& t3,
                     double val3) {
-    *m_fp << indentstring << u.stringStartElement() << t1.stringAttribute()
-          << val1 << "\"" << t2.stringAttribute() << val2 << "\""
-          << t3.stringAttribute() << val3 << "\"/>\n";
+    *m_fp << indentstring << "<" << u << " " << t1 << "=\"" << val1 << "\""
+          << " " << t2 << "=\"" << val2 << "\""
+          << " " << t3 << "=\"" << val3 << "\"/>\n";
   }
 
   void writeElement(const Keyword& u, const PooledString& v, const double val) {
-    *m_fp << indentstring << u.stringStartElement() << " " << v << "=\"" << val
-          << "\"/>\n";
+    *m_fp << indentstring << "<" << u << " " << v << "=\"" << val << "\"/>\n";
   }
 
   /* Writes a C-type character string.
    * Output: \<TAG_T\>val\</TAG_T\> */
   void writeElement(const Keyword& t, const char* val) {
     if (!val) return;
-    *m_fp << indentstring << t.stringElement();
+    *m_fp << indentstring << "<" << t.getFullName() << ">";
     escape(val);
-    *m_fp << t.stringEndElement();
+    *m_fp << "</" << t.getFullName() << ">\n";
   }
 
   /* Writes an Duration element.
    * Output: \<TAG_T\>d\</TAG_T\> /> */
   void writeElement(const Keyword& t, const Duration d) {
-    *m_fp << indentstring << t.stringElement() << d << t.stringEndElement();
+    *m_fp << indentstring << "<" << t << ">" << d << "</" << t << ">\n";
   }
 
   /* Writes an date element.
    * Output: \<TAG_T\>d\</TAG_T\> /> */
   void writeElement(const Keyword& t, const Date d) {
-    *m_fp << indentstring << t.stringElement() << d << t.stringEndElement();
+    *m_fp << indentstring << "<" << t << ">" << d << "</" << t << ">\n";
   }
 
   /* Writes an daterange element.
    * Output: \<TAG_T\>d\</TAG_T\> */
   void writeElement(const Keyword& t, const DateRange& d) {
-    *m_fp << indentstring << t.stringElement() << d << t.stringEndElement();
+    *m_fp << indentstring << "<" << t << ">" << d << "</" << t << ">\n";
   }
 
   /* This method writes a serializable object with a complete XML compliant

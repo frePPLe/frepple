@@ -70,7 +70,7 @@ ofstream Environment::logfile;
 string Environment::logfilename;
 
 // Hash value computed only once
-const hashtype MetaCategory::defaultHash(Keyword::hash("default"));
+const size_t MetaCategory::defaultHash(Keyword::hash("default"));
 
 vector<PythonType*> Object::table;
 
@@ -346,7 +346,7 @@ const MetaCategory* MetaCategory::findCategoryByTag(const char* c) {
   return (i != categoriesByTag.end()) ? i->second : nullptr;
 }
 
-const MetaCategory* MetaCategory::findCategoryByTag(const hashtype h) {
+const MetaCategory* MetaCategory::findCategoryByTag(const size_t h) {
   // Loop through all categories
   CategoryMap::const_iterator i = categoriesByTag.find(h);
   return (i != categoriesByTag.end()) ? i->second : nullptr;
@@ -358,7 +358,7 @@ const MetaCategory* MetaCategory::findCategoryByGroupTag(const char* c) {
   return (i != categoriesByGroupTag.end()) ? i->second : nullptr;
 }
 
-const MetaCategory* MetaCategory::findCategoryByGroupTag(const hashtype h) {
+const MetaCategory* MetaCategory::findCategoryByGroupTag(const size_t h) {
   // Loop through all categories
   CategoryMap::const_iterator i = categoriesByGroupTag.find(h);
   return (i != categoriesByGroupTag.end()) ? i->second : nullptr;
@@ -370,7 +370,7 @@ const MetaClass* MetaCategory::findClass(const char* c) const {
   return (j == classes.end()) ? nullptr : j->second;
 }
 
-const MetaClass* MetaCategory::findClass(const hashtype h) const {
+const MetaClass* MetaCategory::findClass(const size_t h) const {
   // Look up in the registered classes
   MetaCategory::ClassMap::const_iterator j = classes.find(h);
   return (j == classes.end()) ? nullptr : j->second;
@@ -414,7 +414,7 @@ const MetaFieldBase* MetaClass::findField(const Keyword& key) const {
   return nullptr;
 }
 
-const MetaFieldBase* MetaClass::findField(hashtype h) const {
+const MetaFieldBase* MetaClass::findField(size_t h) const {
   for (fieldlist::const_iterator i = fields.begin(); i != fields.end(); ++i)
     if ((*i)->getHash() == h) return *i;
   return nullptr;

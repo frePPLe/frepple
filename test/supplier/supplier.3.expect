@@ -33,8 +33,8 @@ OPERATION	Purchase Component C @ warehouse from Supplier of component C	2014-12-
 PROBLEM	material excess	Buffer 'Component A @ warehouse' has material excess of 10	1971-01-01T00:00:00 / 2015-01-01T00:00:00
 PROBLEM	material excess	Buffer 'Component B @ warehouse' has material excess of 10	1971-01-01T00:00:00 / 2015-01-01T00:00:00
 PROBLEM	material excess	Buffer 'Component C @ warehouse' has material excess of 110	1971-01-01T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	material excess	Buffer 'Component D @ warehouse' has material excess of 10	1971-01-01T00:00:00 / 2015-01-01T00:00:00
 PROBLEM	invalid data	No replenishment defined for 'Component D @ warehouse'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	material excess	Buffer 'Component D @ warehouse' has material excess of 10	1971-01-01T00:00:00 / 2015-01-01T00:00:00
 PROBLEM	material shortage	Buffer 'Component D @ warehouse' has material shortage of 190	2015-01-01T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	before current	Operation 'Purchase Component A @ warehouse from Supplier of components A and B' planned in the past	2014-12-18T00:00:00 / 2015-01-01T00:00:00
 PROBLEM	before current	Operation 'Purchase Component B @ warehouse from Supplier of component B' planned in the past	2014-12-18T00:00:00 / 2015-01-01T00:00:00

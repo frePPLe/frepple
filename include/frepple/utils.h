@@ -276,9 +276,6 @@ inline ostream& operator<<(ostream& os, const Signal& d) {
   }
 }
 
-/* This is the datatype used for hashing an XML-element to a numeric value. */
-typedef unsigned int hashtype;
-
 /* This stream is the general output for all logging and debugging messages. */
 extern ostream logger;
 
@@ -1229,20 +1226,18 @@ inline ostream& operator<<(ostream& os, const DateRange& dr) {
  */
 class Keyword : public NonCopyable {
  private:
-  /* Stores the hash value of this tag. */
-  hashtype dw;
-
-  /* Store different preprocessed variations of the name of the tag.
-   * These are all stored in memory for improved performance. */
-  string strName, strStartElement, strEndElement, strElement, strAttribute,
-      strQuoted;
-
   /* A function to verify the uniquess of our hashes. */
   void check();
 
+  static hash<string> hasher;
+
+  size_t dw;
+  string strName;
+  string fullname;
+
  public:
   /* Container for maintaining a list of all tags. */
-  typedef map<hashtype, Keyword*> tagtable;
+  typedef map<size_t, Keyword*> tagtable;
 
   /* This is the constructor.
    * The tag doesn't belong to an XML namespace. */
@@ -1259,41 +1254,15 @@ class Keyword : public NonCopyable {
   ~Keyword();
 
   /* Returns the hash value of the tag. */
-  hashtype getHash() const { return dw; }
+  size_t getHash() const { return dw; }
 
-  /* Returns the name of the tag. */
   const string& getName() const { return strName; }
 
-  /* Returns the quoted name of the tag: "TAG": */
-  const string& getQuoted() const { return strQuoted; }
+  const string& getFullName() const { return fullname; }
 
-  /* Returns a string to start an XML element with this tag: \<TAG */
-  const string& stringStartElement() const { return strStartElement; }
+  static size_t hash(const string& c) { return hasher(c); }
 
-  /* Returns a string to end an XML element with this tag: \</TAG\> */
-  const string& stringEndElement() const { return strEndElement; }
-
-  /* Returns a string to start an XML element with this tag: \<TAG\> */
-  const string& stringElement() const { return strElement; }
-
-  /* Returns a string to start an XML attribute with this tag: TAG=" */
-  const string& stringAttribute() const { return strAttribute; }
-
-  /* This is the hash function. See the note on the perfectness of
-   * this function at the start. This function should be as simple
-   * as possible while still garantueeing the perfectness.
-   * The hash function is based on the Xerces-C implementation,
-   * with the difference that the hash calculated by our function is
-   * portable between platforms.
-   * The hash modulus is 954991 (which is the biggest prime number
-   * lower than 1000000).
-   */
-  static hashtype hash(const char*);
-
-  /* This is the hash function.
-   * @see hash(const char*)
-   */
-  static hashtype hash(const string& c) { return hash(c.c_str()); }
+  static size_t hash(const char* c) { return hasher(c); }
 
   /* Finds a tag when passed a certain string. If no tag exists yet, it
    * will be created. */
@@ -1545,7 +1514,7 @@ class MetaFieldBase {
 
   bool getFlag(unsigned int i) const { return (flags & i) != 0; }
 
-  hashtype getHash() const { return name.getHash(); }
+  size_t getHash() const { return name.getHash(); }
 
   virtual bool isPointer() const { return false; }
 
@@ -1692,7 +1661,7 @@ class MetaClass : public NonCopyable {
    * @see operator ==
    */
   bool operator<(const MetaClass& b) const {
-    return typetag->getHash() < b.typetag->getHash();
+    return typetag->getName() < b.typetag->getName();
   }
 
   /* Compare two metaclass objects. We are not always sure that only a
@@ -1867,7 +1836,7 @@ class MetaClass : public NonCopyable {
   const MetaFieldBase* findField(const Keyword&) const;
 
   /* Search a field. */
-  const MetaFieldBase* findField(hashtype) const;
+  const MetaFieldBase* findField(size_t) const;
 
   typedef vector<MetaFieldBase*> fieldlist;
 
@@ -1961,10 +1930,10 @@ class MetaCategory : public MetaClass {
   }
 
   /* Type definition for the map of all registered classes. */
-  typedef map<hashtype, const MetaClass*, less<hashtype> > ClassMap;
+  typedef map<size_t, const MetaClass*, less<size_t> > ClassMap;
 
   /* Type definition for the map of all categories. */
-  typedef map<hashtype, const MetaCategory*, less<hashtype> > CategoryMap;
+  typedef map<size_t, const MetaCategory*, less<size_t> > CategoryMap;
 
   /* Looks up a category name in the registry. If the category can't be
    * located the return value is nullptr. */
@@ -1972,7 +1941,7 @@ class MetaCategory : public MetaClass {
 
   /* Looks up a category name in the registry. If the category can't be
    * located the return value is nullptr. */
-  static const MetaCategory* findCategoryByTag(const hashtype);
+  static const MetaCategory* findCategoryByTag(const size_t);
 
   /* Looks up a category name in the registry. If the category can't be
    * located the return value is nullptr. */
@@ -1980,7 +1949,7 @@ class MetaCategory : public MetaClass {
 
   /* Looks up a category name in the registry. If the category can't be
    * located the return value is nullptr. */
-  static const MetaCategory* findCategoryByGroupTag(const hashtype);
+  static const MetaCategory* findCategoryByGroupTag(const size_t);
 
   /* Find a class in this category with a specified name.
    * If the catrgory can't be found the return value is nullptr.
@@ -1990,7 +1959,7 @@ class MetaCategory : public MetaClass {
   /* Find a class in this category with a specified name.
    * If the catrgory can't be found the return value is nullptr.
    */
-  const MetaClass* findClass(const hashtype) const;
+  const MetaClass* findClass(const size_t) const;
 
   /* Find an object given a dictionary of values. */
   Object* find(const DataValueDict& key) const {
@@ -2005,7 +1974,7 @@ class MetaCategory : public MetaClass {
 
   /* Compute the hash for "default" once and store it in this variable for
    * efficiency. */
-  static const hashtype defaultHash;
+  static const size_t defaultHash;
 
  private:
   /* Private constructor, called by registerCategory. */
@@ -2421,7 +2390,7 @@ class Serializer {
 class DataKeyword {
  private:
   /* This string stores the hash value of the element. */
-  hashtype hash = 0;
+  size_t hash = 0;
 
   /* A pointer to the string representation of the keyword.
    * The string buffer is to be managed by the code creating this
@@ -2444,7 +2413,7 @@ class DataKeyword {
   DataKeyword(const DataKeyword& o) : hash(o.hash), ch(o.ch) {}
 
   /* Returns the hash value of this tag. */
-  hashtype getHash() const { return hash; }
+  size_t getHash() const { return hash; }
 
   /* Returns this tag. */
   void reset(const char* const c) {
@@ -5202,6 +5171,11 @@ class PooledString {
 /* Prints a pooled string to the outputstream. */
 inline ostream& operator<<(ostream& os, const PooledString& s) {
   return os << string(s);
+}
+
+/* Prints a pooled string to the outputstream. */
+inline ostream& operator<<(ostream& os, const Keyword& s) {
+  return os << s.getName();
 }
 
 /* This is a decorator class for all objects having a source field. */

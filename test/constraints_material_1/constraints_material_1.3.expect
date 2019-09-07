@@ -34,17 +34,17 @@ OPERATION	supply 3	2009-01-01T00:00:00	2009-01-01T00:00:00	25	confirmed
 OPERATION	supply 3	2009-01-20T00:00:00	2009-01-20T00:00:00	2	confirmed
 OPERATION	supply 4	2009-01-01T00:00:00	2009-01-01T00:00:00	10	confirmed
 OPERATION	supply 4	2009-01-20T00:00:00	2009-01-20T00:00:00	10	confirmed
-PROBLEM	material excess	Buffer 'item 1 @ factory' has material excess of 25	2009-01-01T00:00:00 / 2009-01-12T00:00:00
 PROBLEM	invalid data	No replenishment defined for 'item 1 @ factory'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	material excess	Buffer 'item 1 @ factory' has material excess of 25	2009-01-01T00:00:00 / 2009-01-12T00:00:00
 PROBLEM	material shortage	Buffer 'item 1 @ factory' has material shortage of 5	2009-01-12T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	material excess	Buffer 'item 2 @ factory' has material excess of 25	2009-01-01T00:00:00 / 2009-01-11T00:00:00
 PROBLEM	invalid data	No replenishment defined for 'item 2 @ factory'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	material excess	Buffer 'item 2 @ factory' has material excess of 25	2009-01-01T00:00:00 / 2009-01-11T00:00:00
 PROBLEM	material shortage	Buffer 'item 2 @ factory' has material shortage of 5	2009-01-11T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	material excess	Buffer 'item 3 @ factory' has material excess of 25	2009-01-01T00:00:00 / 2009-01-11T00:00:00
 PROBLEM	invalid data	No replenishment defined for 'item 3 @ factory'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	material excess	Buffer 'item 3 @ factory' has material excess of 25	2009-01-01T00:00:00 / 2009-01-11T00:00:00
 PROBLEM	material shortage	Buffer 'item 3 @ factory' has material shortage of 5	2009-01-11T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	invalid data	No replenishment defined for 'item 4 @ factory'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	material excess	Buffer 'item 4 @ factory' has material excess of 10	2009-01-01T00:00:00 / 2009-01-05T00:00:00
 PROBLEM	material excess	Buffer 'item 4 @ factory' has material excess of 2	2009-01-20T00:00:00 / 2009-01-22T00:00:00
-PROBLEM	invalid data	No replenishment defined for 'item 4 @ factory'	1971-01-01T00:00:00 / 2030-12-31T00:00:00
 PROBLEM	material shortage	Buffer 'item 4 @ factory' has material shortage of 8	2009-01-10T00:00:00 / 2009-01-20T00:00:00
 PROBLEM	material shortage	Buffer 'item 4 @ factory' has material shortage of 6	2009-01-22T00:00:00 / 2030-12-31T00:00:00

@@ -65,6 +65,8 @@ class MultiDBModelAdmin(admin.ModelAdmin):
      - support for changing the primary key of an object
      - different logic to determine the next page to display
 
+    See https://docs.djangoproject.com/en/2.2/topics/db/multi-db/#exposing-multiple-databases-in-django-s-admin-interface
+
     See the standard code in the file django\contrib\admin\options.py
     The level of customization is relatively high, and this code is a bit of a
     concern for future upgrades of Django...
@@ -454,24 +456,27 @@ class MultiDBModelAdmin(admin.ModelAdmin):
         "The 'comment' view for this model."
         request.session["lasttab"] = "comments"
         try:
-            model=self.model._meta.model_name
+            model = self.model._meta.model_name
             modeltype = ContentType.objects.using(request.database).get(
                 app_label=self.model._meta.app_label, model=model
             )
             modeltype._state.db = request.database
             object_id = unquote(object_id)
             # Special treatment for buffers
-            if model == 'buffer':
-              from freppledb.input.models import Buffer
-              if ' @ ' in object_id:
-                bufferName = object_id              
-                index = object_id.find(' @ ')
-                b = Buffer.objects.get(item=object_id[0:index], location=object_id[index+3:])
-                if b:
-                  object_id = b.id
-              else:
-                b = Buffer.objects.get(id=object_id)
-                bufferName = b.item.name + ' @ ' + b.location.name
+            if model == "buffer":
+                from freppledb.input.models import Buffer
+
+                if " @ " in object_id:
+                    bufferName = object_id
+                    index = object_id.find(" @ ")
+                    b = Buffer.objects.get(
+                        item=object_id[0:index], location=object_id[index + 3 :]
+                    )
+                    if b:
+                        object_id = b.id
+                else:
+                    b = Buffer.objects.get(id=object_id)
+                    bufferName = b.item.name + " @ " + b.location.name
             modelinstance = modeltype.get_object_for_this_type(pk=object_id)
             comments = (
                 Comment.objects.using(request.database)
@@ -495,7 +500,7 @@ class MultiDBModelAdmin(admin.ModelAdmin):
                 context={
                     "title": force_text(modelinstance._meta.verbose_name)
                     + " "
-                    + (bufferName if 'bufferName' in vars() else object_id),
+                    + (bufferName if "bufferName" in vars() else object_id),
                     "post_title": _("comments"),
                     "model": self.model._meta.model_name,
                     "opts": self.model._meta,
@@ -699,6 +704,10 @@ class MultiDBModelAdmin(admin.ModelAdmin):
 
 
 class MultiDBTabularInline(admin.TabularInline):
+    """
+    See https://docs.djangoproject.com/en/2.2/topics/db/multi-db/#exposing-multiple-databases-in-django-s-admin-interface
+    """
+
     def get_queryset(self, request):
         return super().get_queryset(request).using(request.database)
 

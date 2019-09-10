@@ -842,6 +842,13 @@ void SolverCreate::solve(const ResourceBuckets* res, void* v) {
                                                    Date::infinitePast, true,
                                                    true, true);
                 break;
+                if (opplan->getEnd() > originalOpplan.end)
+                  break;
+                else {
+                  // New bucket starts
+                  prevStart = cur->getDate();
+                  availableQty = cur->getOnhand();
+                }
               } else {
                 // New bucket starts
                 prevStart = cur->getDate();
@@ -914,6 +921,12 @@ void SolverCreate::solve(const ResourceBuckets* res, void* v) {
         data->state->a_qty = 0.0;
       }
     }
+  }
+
+  if (time_per_logic && !data->state->a_qty &&
+      data->state->a_date <= originalOpplan.end) {
+    data->state->a_date =
+        originalOpplan.end + data->getSolver()->getLazyDelay();
   }
 
   // Force ok in unconstrained plan

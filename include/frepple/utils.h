@@ -5062,6 +5062,9 @@ class HasName : public NonCopyable, public Tree::TreeNode, public Object {
 
 /* Implements a pool of re-usable string values, following the
  * flyweight design pattern.
+ * TODO The implementation of this class is not thread-proof. Either this class
+ * needs to use a shared pointer, or we simplify the design to implement an
+ * add-only pool.
  */
 class PooledString {
  private:
@@ -5139,6 +5142,8 @@ class PooledString {
 
   inline explicit operator bool() const { return ptr != nullptr; }
 
+  size_t hash() const { return Keyword::hash(ptr ? ptr->first : nullstring); }
+
   /* Equality operator. */
   inline bool operator==(const PooledString& other) const {
     return ptr == other.ptr;
@@ -5155,10 +5160,13 @@ class PooledString {
   /* Return true if the string is empty. */
   inline bool empty() const { return !ptr; }
 
-  inline string getString() const { return ptr ? ptr->first : nullstring; }
+  inline const string& getString() const {
+    return ptr ? ptr->first : nullstring;
+  }
 
   bool operator<(const PooledString& other) const {
-    return ptr->first < other.ptr->first;
+    return (ptr ? ptr->first : nullstring) <
+           (other.ptr ? other.ptr->first : nullstring);
   }
 
   /* Debugging function. */

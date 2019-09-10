@@ -31,6 +31,8 @@ Release notes
   The improvements provide a more realistic plan when manufacturing orders span across
   multiple capacity buckets.
 
+- Performance improvements in the evaluation of setup matrices.
+
 - Bug fixes and improved log messages in the propagation of work-in-progress status information.
 
 .. rubric:: User interface

@@ -5538,7 +5538,9 @@ class SetupMatrixRule : public Object {
 
   /* Returns true if this rule matches with the from-setup and to-setup being
    * passed. */
-  bool matches(const PooledString& f, const PooledString& t) const;
+  bool matches(const PooledString& from_to) const {
+    return regex_match(from_to.getString(), expression);
+  }
 
  private:
   /* Pointer to the owning matrix. */
@@ -5572,8 +5574,8 @@ class SetupMatrixRule : public Object {
 
   void updateExpression();
 
+  /* A compiled regular expression for the from-to definition. */
   regex expression;
-  bool matchall = false;
 
  public:
   /* An iterator class to go through all rules of a setup matrix. */
@@ -5706,6 +5708,20 @@ class SetupMatrix : public HasName<SetupMatrix>, public HasSource {
 
   /* A dummy rule to mark disallowed changeovers. */
   const SetupMatrixRuleDefault ChangeOverNotAllowed;
+
+  /* A cache with information on changeovers.
+   * This speeds up the expensive evaluation of the regular expressions
+   * in the setup matrix rules.
+   */
+  typedef pair<PooledString, PooledString> from_to;
+  struct from_to_hash {
+   public:
+    size_t operator()(const from_to& x) const {
+      return x.first.hash() ^ x.second.hash();
+    }
+  };
+  typedef unordered_map<from_to, SetupMatrixRule*, from_to_hash> cachedrules;
+  cachedrules cachedChangeovers;
 };
 
 /* This class is the default implementation of the abstract

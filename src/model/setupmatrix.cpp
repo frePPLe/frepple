@@ -246,20 +246,7 @@ void SetupMatrixRule::updateExpression() {
     tmp.append(".*");
   else
     tmp.append(to);
-  matchall = (tmp == ".* to .*");
-  if (!matchall) expression = regex(tmp, regex::ECMAScript | regex::optimize);
-}
-
-bool SetupMatrixRule::matches(const PooledString& f,
-                              const PooledString& t) const {
-  if (matchall)
-    return true;
-  else {
-    string tmp(f);
-    tmp.append(" to ");
-    tmp.append(t);
-    return regex_match(tmp, expression);
-  }
+  expression = regex(tmp, regex::ECMAScript | regex::optimize);
 }
 
 SetupMatrixRule* SetupMatrix::calculateSetup(const PooledString& oldsetup,
@@ -268,24 +255,30 @@ SetupMatrixRule* SetupMatrix::calculateSetup(const PooledString& oldsetup,
   // No need to look
   if (oldsetup == newsetup) return nullptr;
 
+  // Look up in the cache
+  auto key = make_pair(oldsetup, newsetup);
+  auto val = cachedChangeovers.find(key);
+  if (val != cachedChangeovers.end()) return val->second;
+
   // Loop through all rules
+  string from_to = (oldsetup);
+  from_to.append(" to ");
+  from_to.append(newsetup);
   for (auto curRule = firstRule; curRule; curRule = curRule->nextRule)
-    if (curRule->matches(oldsetup, newsetup)) return curRule;
+    if (curRule->matches(from_to)) {
+      const_cast<cachedrules&>(cachedChangeovers)[key] = curRule;
+      return curRule;
+    }
 
   // No matching rule was found - create a invalid-data problem
   stringstream o;
   o << "No conversion from '" << oldsetup << "' to '" << newsetup
     << "' defined in setup matrix '" << getName() << "'";
-  auto probiter = Problem::iterator(res);
-  while (Problem* prob = probiter.next()) {
-    if (typeid(*prob) == typeid(ProblemInvalidData) &&
-        prob->getDescription() == o.str())
-      // Problem already exists
-      return const_cast<SetupMatrixRuleDefault*>(&ChangeOverNotAllowed);
-  }
   new ProblemInvalidData(res, o.str(), "resource", Date::infinitePast,
                          Date::infiniteFuture, 1, true);
-  return const_cast<SetupMatrixRuleDefault*>(&ChangeOverNotAllowed);
+  auto norule = const_cast<SetupMatrixRuleDefault*>(&ChangeOverNotAllowed);
+  const_cast<cachedrules&>(cachedChangeovers)[key] = norule;
+  return norule;
 }
 
 }  // namespace frepple

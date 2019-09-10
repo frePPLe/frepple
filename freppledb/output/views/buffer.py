@@ -43,14 +43,18 @@ class OverviewReport(GridPivot):
     @classmethod
     def basequeryset(reportclass, request, *args, **kwargs):
         if len(args) and args[0]:
-            index = args[0].find(' @ ')
+            index = args[0].find(" @ ")
             if index == -1:
-              return Buffer.objects.filter(id=args[0])
+                return Buffer.objects.filter(id=args[0])
             else:
-              return OperationPlanMaterial.objects.values("item", "location")\
-                .filter(item__name=args[0][0:index], location__name=args[0][index+3:])\
-                .order_by("item_id", "location_id")\
-                .distinct()
+                return (
+                    OperationPlanMaterial.objects.values("item", "location")
+                    .filter(
+                        item__name=args[0][0:index], location__name=args[0][index + 3 :]
+                    )
+                    .order_by("item_id", "location_id")
+                    .distinct()
+                )
         else:
             return (
                 OperationPlanMaterial.objects.values("item", "location")
@@ -204,7 +208,9 @@ class OverviewReport(GridPivot):
             reportclass._attributes_added = 2
             reportclass.attr_sql = ""
             # Adding custom item attributes
-            for f in getAttributeFields(Item, initially_hidden=True):
+            for f in getAttributeFields(
+                Item, related_name_prefix="item", initially_hidden=True
+            ):
                 reportclass.rows += (f,)
                 reportclass.attr_sql += "item.%s, " % f.name.split("__")[-1]
             # Adding custom location attributes
@@ -218,14 +224,19 @@ class OverviewReport(GridPivot):
     def extra_context(reportclass, request, *args, **kwargs):
         if args and args[0]:
             request.session["lasttab"] = "plan"
-            
-            index = args[0].find(' @ ')
+
+            index = args[0].find(" @ ")
             if index == -1:
-              buffer = Buffer.objects.get(id=args[0])
-            
+                buffer = Buffer.objects.get(id=args[0])
+
             return {
-                "title": force_text(Buffer._meta.verbose_name) + " " + 
-                (args[0] if index != -1 else buffer.item.name + ' @ ' + buffer.location.name),
+                "title": force_text(Buffer._meta.verbose_name)
+                + " "
+                + (
+                    args[0]
+                    if index != -1
+                    else buffer.item.name + " @ " + buffer.location.name
+                ),
                 "post_title": _("plan"),
             }
         else:
@@ -422,7 +433,7 @@ class OverviewReport(GridPivot):
                     - float(row[numfields - 1]["consumed"] or 0),
                 }
                 # Add attribute fields
-                idx = 16
+                idx = 17
                 for f in getAttributeFields(Item, related_name_prefix="item"):
                     res[f.field_name] = row[idx]
                     idx += 1

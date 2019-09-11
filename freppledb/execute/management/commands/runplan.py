@@ -50,7 +50,7 @@ class Command(BaseCommand):
             type=int,
             default=15,
             choices=range(0, 16),
-            help="Constraints to be considered: 1=lead time, 2=material, 4=capacity, 8=release fence",
+            help="Constraints to be considered: 1=lead time, 4=capacity, 8=release fence",
         )
         parser.add_argument(
             "--plantype",

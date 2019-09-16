@@ -270,6 +270,11 @@ void LoadPlan::setLoad(Load* newld) {
   if (ld && ld->getOperation() != newld->getOperation())
     throw DataException(
         "Only switching to a load on the same operation is allowed");
+  if (ld && ld->getResource()->hasType<ResourceBuckets>() !=
+                newld->getResource()->hasType<ResourceBuckets>())
+    throw DataException(
+        "Cannot switch between alternate loads from bucketized and default "
+        "resources");
 
   // Update the load and resource fields
   LoadPlan* o = getOtherLoadPlan();

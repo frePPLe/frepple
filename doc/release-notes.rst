@@ -1,6 +1,11 @@
 Release notes
 -------------
 
+6.1.0 (Upcoming release)
+========================
+
+
+
 6.0.0 (2019/16/09)
 ==================
 
@@ -24,7 +29,7 @@ Release notes
   constraints during planning.
   
 - When generating a constrained plan, the material constraint has been removed. It didn't really
-  have any impact on the plan algorith. The constraints actually used by the planning engine are
+  have any impact on the plan algorithm. The constraints actually used by the planning engine are
   capacity, lead time and the operation time fence.  
   
 - Improvements to the solver algorithm for bucketized resources and time-per operations.
@@ -45,7 +50,7 @@ Release notes
 
 - Addition of Hebrew translations, contributed by https://www.minet.co.il/  Many thanks!
 
-- Give a warning when users try to upload spreadsheets in the old .XLS Excel format
+- Give a warning when users try to upload spreadsheets in the (very) old .XLS Excel format
   instead of the new .XLSX spreadsheet format.
 
 - Performance improvement for the "supply path" and "where used" reports for complex and 

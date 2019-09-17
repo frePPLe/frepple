@@ -145,11 +145,11 @@ astyle:
 # This make target is used to consistently update all those places.
 #  * The  first 2 arguments need to be integers.
 #  * The third argument can be empty. Or it can be a string starting with a '.'/dot.
-old1 = 5
-old2 = 3
+old1 = 6
+old2 = 0
 old3 = 0
 new1 = 6
-new2 = 0
+new2 = 1
 new3 = 0
 set_release:
 	for i in "configure.ac" "include/frepple/utils.h" "contrib/rpm/frepple.spec" "freppledb/__init__.py"  "freppledb/common/static/css/frepple.less" "bin/frepple.xsd" "contrib/debian/changelog" "contrib/odoo/addons_v8/frepple/__openerp__.py" "contrib/odoo/addons_v9/__openerp__.py" "contrib/odoo/addons_v10/frepple/__manifest__.py" "contrib/odoo/addons_v11/frepple/__manifest__.py" "contrib/odoo/addons_v12/frepple/__manifest__.py" "doc/conf.py"; do \

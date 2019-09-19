@@ -4,11 +4,6 @@ Items
 
 An item represents an end product, intermediate product or a raw material.
 
-Each demand is associated with an item.
-
-A buffer is also associated with an item: it represents a storage of the item
-at a certain location.
-
 **Fields**
 
 =============== ================= ===========================================================
@@ -43,3 +38,23 @@ buffers         list of buffer    Returns the list of buffers for this item.
 hidden          boolean           Marks entities that are considered hidden and are normally
                                   not shown to the end user.
 =============== ================= ===========================================================
+
+
+**Extra fields added by "metrics" app**
+
+This addon app provides some basic metrics that allow easy filtering and sorting for items that
+have constrained sales orders.
+
+======================= ================= ===========================================================
+Field                   Type              Description
+======================= ================= ===========================================================
+latedemandcount         Integer           The number of open sales orders of this item that
+                                          is planned to be delivered late. 
+latedemandquantity      Number            Total quantity of open sales orders of this item that
+                                          is planned to be delivered late.
+latedemandvalue         Number            Total value of open sales orders of this item that
+                                          is planned to be delivered late.
+unplanneddemandcount    Integer           The number of unplanned open sales orders of this item. 
+unplanneddemandquantity Number            Total quantity of unplanned open sales orders of this item.
+unplanneddemandvalue    Number            Total value of unplanned open sales orders of this item.
+======================= ================= ===========================================================

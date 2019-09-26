@@ -89,6 +89,9 @@ void Demand::setItem(Item* i) {
   // Trigger recreation of the delivery operation
   if (oper && oper->getHidden()) oper = uninitializedDelivery;
 
+  // Trigger level calculation
+  HasLevel::triggerLazyRecomputation();
+
   // Mark as changed
   setChanged();
 }

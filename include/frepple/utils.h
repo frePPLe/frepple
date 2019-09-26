@@ -2840,9 +2840,11 @@ class PythonData : public DataValue {
       Py_DECREF(t);
       if (x < 0 || x > ULONG_MAX) throw DataException("Invalid number");
       return static_cast<unsigned long>(x);
-    } else if (PyLong_Check(obj))
-      return PyLong_AsUnsignedLong(obj);
-    else
+    } else if (PyLong_Check(obj)) {
+      auto result = PyLong_AsUnsignedLong(obj);
+      if (PyErr_Occurred()) throw DataException("Invalid number");
+      return result;
+    } else
       return getInt();
   }
 

@@ -8457,10 +8457,6 @@ class CommandCreateOperationPlan : public Command {
     opplan = nullptr;
   }
 
-  virtual void undo() {
-    if (opplan) opplan->deleteFlowLoads();
-  }
-
   virtual ~CommandCreateOperationPlan() {
     if (opplan) delete opplan;
   }
@@ -8488,27 +8484,24 @@ class CommandDeleteOperationPlan : public Command {
     opplan = nullptr;
   }
 
-  virtual void undo() {
-    if (!opplan) return;
-    opplan->createFlowLoads();
-    opplan->insertInOperationplanList();
-    if (opplan->getDemand()) opplan->getDemand()->addDelivery(opplan);
-    OperationPlan::iterator x(opplan);
-    while (OperationPlan* i = x.next()) {
-      // TODO the recreation of the flows and loads can recreate them on a
-      // different resource from the pool. This results in a different resource
-      // loading, setup time and duration.
-      i->createFlowLoads();
-      i->insertInOperationplanList();
-    }
-  }
-
   virtual void rollback() {
-    undo();
+    if (opplan) {
+      opplan->createFlowLoads();
+      opplan->insertInOperationplanList();
+      if (opplan->getDemand()) opplan->getDemand()->addDelivery(opplan);
+      OperationPlan::iterator x(opplan);
+      while (OperationPlan* i = x.next()) {
+        // TODO the recreation of the flows and loads can recreate them on a
+        // different resource from the pool. This results in a different
+        // resource loading, setup time and duration.
+        i->createFlowLoads();
+        i->insertInOperationplanList();
+      }
+    }
     opplan = nullptr;
   }
 
-  virtual ~CommandDeleteOperationPlan() { undo(); }
+  virtual ~CommandDeleteOperationPlan() { rollback(); }
 
   virtual short getType() const { return 6; }
 
@@ -8553,8 +8546,6 @@ class CommandMoveOperationPlan : public Command {
     restore(true);
     opplan = nullptr;
   }
-
-  virtual void undo() { restore(false); }
 
   /* Undo the changes.
    * When the argument is true, subcommands for suboperationplans are deleted.

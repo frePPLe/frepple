@@ -4215,9 +4215,6 @@ class Tree : public NonCopyable {
  *   - rollback():
  *     Reverts the change permanently.
  *     Redoing the change is no longer possible after calling this method.
- *   - undo():
- *     Temporarily reverts the change.
- *     Redoing the change is still possible.
  */
 class Command {
   friend class CommandList;
@@ -4247,17 +4244,6 @@ class Command {
    */
   virtual void rollback(){};
 
-  /* This method temporarily undoes the change. The concrete subclasses
-   * most maintain information that enables redoing the changes
-   * efficiently.
-   * A couple of notes on how this method should be implemented by the
-   * subclasses:
-   *   - Calling the method multiple times is harmless and results in the
-   *     same state change as calling it only once.
-   */
-  virtual void undo(){};
-
-  /* Virtual destructor. */
   virtual ~Command(){};
 
   Command* getNext() const { return next; }
@@ -4322,11 +4308,6 @@ class CommandSetField : public Command {
     fld = nullptr;
   }
 
-  /* Undoes the field change. */
-  virtual void undo() {
-    if (obj && fld) fld->setField(obj, olddata);
-  }
-
   void clearObject() { obj = nullptr; }
 
   Object* getObject() const { return obj; }
@@ -4352,15 +4333,11 @@ class CommandSetProperty : public Command {
 
   /* Destructor. */
   virtual ~CommandSetProperty() {
-    if (obj && !name.empty()) undo();
+    if (obj && !name.empty()) rollback();
   }
 
   /* Undoes the field change. */
-  virtual void rollback() {
-    if (obj && !name.empty()) undo();
-    obj = nullptr;
-    name = "";
-  }
+  virtual void rollback();
 
   /* Committing the change - nothing to be done as the change
    * is realized when creating the command. */
@@ -4368,9 +4345,6 @@ class CommandSetProperty : public Command {
     obj = nullptr;
     name = "";
   }
-
-  /* Undoes the property change. */
-  virtual void undo();
 
   void clearObject() { obj = nullptr; }
 
@@ -4395,12 +4369,7 @@ class CommandCreateObject : public Command {
 
   /* Destructor. */
   virtual ~CommandCreateObject() {
-    if (obj) undo();
-  }
-
-  /* Undoes the creation change. */
-  virtual void rollback() {
-    if (obj) undo();
+    if (obj) rollback();
   }
 
   /* Committing the change - nothing to be done as the change
@@ -4408,34 +4377,35 @@ class CommandCreateObject : public Command {
    */
   virtual void commit() { obj = nullptr; }
 
-  /* Undoes the creation. */
-  virtual void undo() {
-    if (!obj) return;
-
-    // Check for setfield commands on this object, and invalidate them.
-    for (Command* cmd = getNext(); cmd; cmd = cmd->getNext()) {
-      switch (cmd->getType()) {
-        case 1:
-          // TODO: The undo is limited to the current command list. If there
-          // are multiple bookmarks in the command manager we only undo a
-          // part of the commands. For most practical purposes the current
-          // behavior will be sufficient.
-          throw LogicException("Not implemented");
-        case 2:
-          // CommandSetField
-          if (static_cast<CommandSetField*>(cmd)->getObject() == obj)
-            static_cast<CommandSetField*>(cmd)->clearObject();
-          break;
-        case 3:
-          // CommandSetProperty
-          if (static_cast<CommandSetProperty*>(cmd)->getObject() == obj)
-            static_cast<CommandSetProperty*>(cmd)->clearObject();
-          break;
+  /* Undoes the creation change. */
+  virtual void rollback() {
+    if (obj) {
+      // Check for setfield commands on this object, and invalidate them.
+      for (Command* cmd = getNext(); cmd; cmd = cmd->getNext()) {
+        switch (cmd->getType()) {
+          case 1:
+            // TODO: The undo is limited to the current command list. If there
+            // are multiple bookmarks in the command manager we only undo a
+            // part of the commands. For most practical purposes the current
+            // behavior will be sufficient.
+            throw LogicException("Not implemented");
+          case 2:
+            // CommandSetField
+            if (static_cast<CommandSetField*>(cmd)->getObject() == obj)
+              static_cast<CommandSetField*>(cmd)->clearObject();
+            break;
+          case 3:
+            // CommandSetProperty
+            if (static_cast<CommandSetProperty*>(cmd)->getObject() == obj)
+              static_cast<CommandSetProperty*>(cmd)->clearObject();
+            break;
+        }
       }
-    }
 
-    // Actual deletion
-    delete obj;
+      // Actual deletion
+      delete obj;
+      obj = nullptr;
+    }
     obj = nullptr;
   }
 
@@ -4519,13 +4489,8 @@ class CommandList : public Command {
    */
   virtual void commit();
 
-  /* Undoes all actions on its list.
-   * The list of actions is left intact, so the changes can still be redone.
-   */
-  virtual void undo();
-
   /* Returns true if no commands have been added yet to the list. */
-  bool empty() const { return firstCommand == nullptr; }
+  bool empty() const { return !firstCommand; }
 
   /* Default constructor. */
   explicit CommandList() {}
@@ -4704,13 +4669,6 @@ class CommandManager {
 
   /* Create a new bookmark. */
   Bookmark* setBookmark();
-
-  /* Undo all commands in a bookmark (and its children).
-   * It can later be redone.
-   * The active bookmark in the manager is set to the parent of
-   * argument bookmark.
-   */
-  void undoBookmark(Bookmark*);
 
   /* Undo all commands in a bookmark (and its children).
    * It can no longer be redone. The bookmark does however still exist.

@@ -63,14 +63,6 @@ void CommandList::rollback() {
   lastCommand = nullptr;
 }
 
-void CommandList::undo() {
-  // Undo all commands and delete them.
-  // Note that undoing an operation that hasn't been executed yet or has been
-  // undone already is expected to be harmless, so we don't need to worry
-  // about that...
-  for (Command* i = lastCommand; i; i = i->prev) i->undo();
-}
-
 void CommandList::commit() {
   // Commit the commands
   for (Command* i = firstCommand; i;) {
@@ -105,21 +97,6 @@ CommandManager::Bookmark* CommandManager::setBookmark() {
   lastBookmark = n;
   currentBookmark = n;
   return n;
-}
-
-void CommandManager::undoBookmark(CommandManager::Bookmark* b) {
-  if (!b) throw LogicException("Can't undo nullptr bookmark");
-
-  Bookmark* i = lastBookmark;
-  for (; i && i != b; i = i->prevBookmark) {
-    if (i->isChildOf(b) && i->active) {
-      i->undo();
-      i->active = false;
-    }
-  }
-  if (!i) throw LogicException("Can't find bookmark to undo");
-  i->undo();
-  currentBookmark = b->parent;
 }
 
 void CommandManager::rollback(CommandManager::Bookmark* b) {
@@ -207,57 +184,59 @@ CommandSetProperty::CommandSetProperty(Object* o, const string& nm,
   }
 }
 
-void CommandSetProperty::undo() {
-  if (!obj || name.empty()) return;
-
-  if (old_exists) {
-    switch (type) {
-      case 1:  // Boolean
-      {
-        bool tmp_bool = obj->getBoolProperty(name);
-        obj->setBoolProperty(name, old_bool);
-        old_bool = tmp_bool;
-      } break;
-      case 2:  // Date
-      {
-        Date tmp_date = obj->getDateProperty(name);
-        obj->setDateProperty(name, old_date);
-        old_date = tmp_date;
-      } break;
-      case 3:  // Double
-      {
-        double tmp_double = obj->getDoubleProperty(name);
-        obj->setDoubleProperty(name, old_double);
-        old_double = tmp_double;
-      } break;
-      case 4:  // String
-      {
-        string tmp_string = obj->getStringProperty(name);
-        obj->setStringProperty(name, old_string);
-        old_string = tmp_string;
-      } break;
-      default:
-        break;
+void CommandSetProperty::rollback() {
+  if (!obj || name.empty()) {
+    if (old_exists) {
+      switch (type) {
+        case 1:  // Boolean
+        {
+          bool tmp_bool = obj->getBoolProperty(name);
+          obj->setBoolProperty(name, old_bool);
+          old_bool = tmp_bool;
+        } break;
+        case 2:  // Date
+        {
+          Date tmp_date = obj->getDateProperty(name);
+          obj->setDateProperty(name, old_date);
+          old_date = tmp_date;
+        } break;
+        case 3:  // Double
+        {
+          double tmp_double = obj->getDoubleProperty(name);
+          obj->setDoubleProperty(name, old_double);
+          old_double = tmp_double;
+        } break;
+        case 4:  // String
+        {
+          string tmp_string = obj->getStringProperty(name);
+          obj->setStringProperty(name, old_string);
+          old_string = tmp_string;
+        } break;
+        default:
+          break;
+      }
+    } else {
+      switch (type) {
+        case 1:  // Boolean
+          old_bool = obj->getBoolProperty(name);
+          break;
+        case 2:  // Date
+          old_date = obj->getDateProperty(name);
+          break;
+        case 3:  // Double
+          old_double = obj->getDoubleProperty(name);
+          break;
+        case 4:  // String
+          old_string = obj->getStringProperty(name);
+          break;
+        default:
+          break;
+      }
+      obj->deleteProperty(name);
     }
-  } else {
-    switch (type) {
-      case 1:  // Boolean
-        old_bool = obj->getBoolProperty(name);
-        break;
-      case 2:  // Date
-        old_date = obj->getDateProperty(name);
-        break;
-      case 3:  // Double
-        old_double = obj->getDoubleProperty(name);
-        break;
-      case 4:  // String
-        old_string = obj->getStringProperty(name);
-        break;
-      default:
-        break;
-    }
-    obj->deleteProperty(name);
   }
+  obj = nullptr;
+  name = "";
 }
 
 //

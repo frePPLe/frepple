@@ -111,8 +111,8 @@ void SolverCreate::solve(const Flow* fl,
 
       // 4c) Ask the buffer
       double orig_q_qty_min = data->state->q_qty_min;
-      data->state->q_qty_min =
-          curflow->getQuantityFixed() + orig_q_qty_min * curflow->getQuantity();
+      data->state->q_qty_min = -curflow->getQuantityFixed() -
+                               orig_q_qty_min * curflow->getQuantity();
       data->state->q_qty = ask_qty = -data->state->q_flowplan->getQuantity();
       data->state->q_date = data->state->q_flowplan->getDate();
       auto topcommand = data->getCommandManager()->setBookmark();

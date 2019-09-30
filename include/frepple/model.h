@@ -8144,8 +8144,8 @@ class ProblemInvalidData : public Problem {
 
   double getWeight() const { return qty; }
 
-  explicit ProblemInvalidData(HasProblems* o, string d, string e, Date st,
-                              Date nd, double q, bool add = true)
+  explicit ProblemInvalidData(HasProblems* o, const string& d, const string& e,
+                              Date st, Date nd, double q, bool add = true)
       : Problem(o), description(d), entity(e), dates(st, nd), qty(q) {
     if (add) addProblem();
   }

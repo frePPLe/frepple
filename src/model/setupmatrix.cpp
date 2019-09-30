@@ -246,7 +246,22 @@ void SetupMatrixRule::updateExpression() {
     tmp.append(".*");
   else
     tmp.append(to);
-  expression = regex(tmp, regex::ECMAScript | regex::optimize);
+  try {
+    expression = regex(tmp, regex::ECMAScript | regex::optimize);
+  } catch (regex_error) {
+    string msg("Invalid setup matrix rule \"" + tmp + "\" on setup matrix \"" +
+               getSetupMatrix()->getName() + "\"");
+    Resource* rsrc = nullptr;
+    for (auto r = Resource::begin(); r != Resource::end(); ++r)
+      if (r->getSetupMatrix() == getSetupMatrix()) {
+        rsrc = &*r;
+        break;
+      }
+    if (rsrc)
+      new ProblemInvalidData(rsrc, msg, "capacity", Date::infinitePast,
+                             Date::infiniteFuture, 1);
+    throw DataException(msg);
+  }
 }
 
 SetupMatrixRule* SetupMatrix::calculateSetup(const PooledString& oldsetup,

@@ -3663,11 +3663,11 @@ class ManufacturingOrderList(OperationPlanMixin, GridReport):
     def initialize(reportclass, request):
         if reportclass._attributes_added != 2:
             reportclass._attributes_added = 2
-            # Adding custom operation attributes
+            for f in getAttributeFields(OperationPlan):
+                reportclass.rows += (f,)
             for f in getAttributeFields(Operation, related_name_prefix="operation"):
                 f.editable = False
                 reportclass.rows += (f,)
-            # Adding custom location attributes
             for f in getAttributeFields(Location, related_name_prefix="location"):
                 f.editable = False
                 reportclass.rows += (f,)
@@ -4094,15 +4094,14 @@ class DistributionOrderList(OperationPlanMixin, GridReport):
     def initialize(reportclass, request):
         if reportclass._attributes_added != 2:
             reportclass._attributes_added = 2
-            # Adding custom item attributes
+            for f in getAttributeFields(DistributionOrder):
+                reportclass.rows += (f,)
             for f in getAttributeFields(Item, related_name_prefix="item"):
                 f.editable = False
                 reportclass.rows += (f,)
-            # Adding custom location attributes
             for f in getAttributeFields(Location, related_name_prefix="origin"):
                 f.editable = False
                 reportclass.rows += (f,)
-            # Adding custom location attributes
             for f in getAttributeFields(Location, related_name_prefix="destination"):
                 f.editable = False
                 reportclass.rows += (f,)
@@ -4536,15 +4535,14 @@ class PurchaseOrderList(OperationPlanMixin, GridReport):
     def initialize(reportclass, request):
         if reportclass._attributes_added != 2:
             reportclass._attributes_added = 2
-            # Adding custom item attributes
+            for f in getAttributeFields(PurchaseOrder):
+                reportclass.rows += (f,)
             for f in getAttributeFields(Item, related_name_prefix="item"):
                 f.editable = False
                 reportclass.rows += (f,)
-            # Adding custom location attributes
             for f in getAttributeFields(Location, related_name_prefix="location"):
                 f.editable = False
                 reportclass.rows += (f,)
-            # Adding custom supplier attributes
             for f in getAttributeFields(Supplier, related_name_prefix="supplier"):
                 f.editable = False
                 reportclass.rows += (f,)
@@ -4802,17 +4800,16 @@ class DeliveryOrderList(GridReport):
     def initialize(reportclass, request):
         if reportclass._attributes_added != 2:
             reportclass._attributes_added = 2
-            # Adding custom item attributes
+            for f in getAttributeFields(DeliveryOrder):
+                reportclass.rows += (f,)
             for f in getAttributeFields(Item, related_name_prefix="item"):
                 f.editable = False
                 f.initially_hidden = True
                 reportclass.rows += (f,)
-            # Adding custom location attributes
             for f in getAttributeFields(Location, related_name_prefix="location"):
                 f.editable = False
                 f.initially_hidden = True
                 reportclass.rows += (f,)
-            # Adding custom customer attributes
             for f in getAttributeFields(
                 Customer, related_name_prefix="demand__customer"
             ):

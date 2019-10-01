@@ -92,8 +92,8 @@ def add_extra_model_fields(sender, **kwargs):
 
 def registerAttribute(model, attrlist):
     """
-  Register a new attribute.
-  """
+    Register a new attribute.
+    """
     if model not in _register:
         _register[model] = []
     for attr in attrlist:
@@ -109,9 +109,14 @@ def registerAttribute(model, attrlist):
 
 def getAttributes(model):
     """
-  Return all attributes for a given model.
-  """
-    return _register.get("%s.%s" % (model.__module__, model.__name__), [])
+    Return all attributes for a given model.
+    """
+    for attr in _register.get("%s.%s" % (model.__module__, model.__name__), []):
+        yield attr
+    for base in model.__bases__:
+        if hasattr(base, "_meta"):
+            for attr in getAttributes(base):
+                yield attr
 
 
 def getAttributeFields(model, related_name_prefix=None, initially_hidden=False):
@@ -127,9 +132,7 @@ def getAttributeFields(model, related_name_prefix=None, initially_hidden=False):
     from freppledb.common.report import GridFieldDuration, GridFieldTime
 
     result = []
-    for field_name, label, fieldtype, editable, hidden in _register.get(
-        "%s.%s" % (model.__module__, model.__name__), []
-    ):
+    for field_name, label, fieldtype, editable, hidden in getAttributes(model):
         if related_name_prefix:
             field_name = "%s__%s" % (related_name_prefix, field_name)
             label = "%s - %s" % (related_name_prefix.split("__")[-1], label)

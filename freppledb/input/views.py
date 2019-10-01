@@ -3663,7 +3663,7 @@ class ManufacturingOrderList(OperationPlanMixin, GridReport):
     def initialize(reportclass, request):
         if reportclass._attributes_added != 2:
             reportclass._attributes_added = 2
-            for f in getAttributeFields(OperationPlan):
+            for f in getAttributeFields(ManufacturingOrder):
                 reportclass.rows += (f,)
             for f in getAttributeFields(Operation, related_name_prefix="operation"):
                 f.editable = False

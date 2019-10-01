@@ -2332,8 +2332,9 @@ class GridPivot(GridReport):
             if isinstance(reportclass.basequeryset, collections.Callable):
                 query = reportclass.query(
                     request,
-                    reportclass.basequeryset(request, *args, **kwargs)                    
-                    .using(request.database),
+                    reportclass.basequeryset(request, *args, **kwargs).using(
+                        request.database
+                    ),
                     sortsql="1 asc",
                 )
             else:
@@ -3155,11 +3156,11 @@ def exportWorkbook(request):
 
 def importWorkbook(request):
     """
-  This method reads a spreadsheet in Office Open XML format (typically with
-  the extension .xlsx or .ods).
-  Each entity has a tab in the spreadsheet, and the first row contains
-  the fields names.
-  """
+    This method reads a spreadsheet in Office Open XML format (typically with
+    the extension .xlsx or .ods).
+    Each entity has a tab in the spreadsheet, and the first row contains
+    the fields names.
+    """
     # Build a list of all contenttypes
     all_models = [
         (ct.model_class(), ct.pk)
@@ -3167,59 +3168,59 @@ def importWorkbook(request):
         if ct.model_class()
     ]
     try:
-        with transaction.atomic(using=request.database):
-            # Find all models in the workbook
-            for filename, file in request.FILES.items():
-                yield "<strong>" + force_text(
-                    _("Processing file")
-                ) + filename + "</strong><br>"
-                if file.content_type == "application/vnd.ms-excel":
-                    yield _(
-                        "Files in the old .XLS excel format can't be read.<br>Please convert them to the new .XLSX format."
+        # Find all models in the workbook
+        for filename, file in request.FILES.items():
+            yield "<strong>" + force_text(
+                _("Processing file")
+            ) + filename + "</strong><br>"
+            if file.content_type == "application/vnd.ms-excel":
+                yield _(
+                    "Files in the old .XLS excel format can't be read.<br>Please convert them to the new .XLSX format."
+                )
+                continue
+            elif (
+                file.content_type
+                != "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            ):
+                yield _("Unsupported file format.")
+                continue
+            wb = load_workbook(filename=file, read_only=True, data_only=True)
+            models = []
+            for ws_name in wb.sheetnames:
+                # Find the model
+                model = None
+                contenttype_id = None
+                for m, ct in all_models:
+                    if matchesModelName(ws_name, m):
+                        model = m
+                        contenttype_id = ct
+                        break
+                if not model or model in EXCLUDE_FROM_BULK_OPERATIONS:
+                    yield '<div class="alert alert-warning">' + force_text(
+                        _("Ignoring data in worksheet: %s") % ws_name
+                    ) + "</div>"
+                elif not request.user.has_perm(
+                    "%s.%s"
+                    % (
+                        model._meta.app_label,
+                        get_permission_codename("add", model._meta),
                     )
-                    continue
-                elif (
-                    file.content_type
-                    != "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                 ):
-                    yield _("Unsupported file format.")
-                    continue
-                wb = load_workbook(filename=file, read_only=True, data_only=True)
-                models = []
-                for ws_name in wb.sheetnames:
-                    # Find the model
-                    model = None
-                    contenttype_id = None
-                    for m, ct in all_models:
-                        if matchesModelName(ws_name, m):
-                            model = m
-                            contenttype_id = ct
-                            break
-                    if not model or model in EXCLUDE_FROM_BULK_OPERATIONS:
-                        yield '<div class="alert alert-warning">' + force_text(
-                            _("Ignoring data in worksheet: %s") % ws_name
-                        ) + "</div>"
-                    elif not request.user.has_perm(
-                        "%s.%s"
-                        % (
-                            model._meta.app_label,
-                            get_permission_codename("add", model._meta),
-                        )
-                    ):
-                        # Check permissions
-                        yield '<div class="alert alert-danger">' + force_text(
-                            _("You don't permissions to add: %s") % ws_name
-                        ) + "</div>"
-                    else:
-                        deps = set([model])
-                        GridReport.dependent_models(model, deps)
-                        models.append((ws_name, model, contenttype_id, deps))
+                    # Check permissions
+                    yield '<div class="alert alert-danger">' + force_text(
+                        _("You don't permissions to add: %s") % ws_name
+                    ) + "</div>"
+                else:
+                    deps = set([model])
+                    GridReport.dependent_models(model, deps)
+                    models.append((ws_name, model, contenttype_id, deps))
 
-                # Sort the list of models, based on dependencies between models
-                models = GridReport.sort_models(models)
+            # Sort the list of models, based on dependencies between models
+            models = GridReport.sort_models(models)
 
-                # Process all rows in each worksheet
-                for ws_name, model, contenttype_id, dependencies in models:
+            # Process all rows in each worksheet
+            for ws_name, model, contenttype_id, dependencies in models:
+                with transaction.atomic(using=request.database):
                     yield "<strong>" + force_text(
                         _("Processing data in worksheet: %s") % ws_name
                     ) + "</strong><br>"
@@ -3283,7 +3284,7 @@ def importWorkbook(request):
                                 error[4],
                             )
                     yield "</tbody></table></div>"
-                yield "<div><strong>%s</strong><br><br></div>" % _("Done")
+            yield "<div><strong>%s</strong><br><br></div>" % _("Done")
     except GeneratorExit:
         logger.warning("Connection Aborted")
     except Exception as e:

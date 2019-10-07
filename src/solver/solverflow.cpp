@@ -88,8 +88,9 @@ void SolverCreate::solve(const Flow* fl,
                    << (*i)->getBuffer()->getName() << "'" << endl;
           // Move to the next alternate
           if (++i != thealternates.end() && getLogLevel() > 1)
-            logger << indentlevel << "Alternate flow switches from '"
-                   << curflow->getBuffer()->getName() << "' to '"
+            logger << indentlevel << "Operation switches from '"
+                   << curflow->getBuffer()->getName()
+                   << "' to alternate material '"
                    << (*i)->getBuffer()->getName() << "'" << endl;
           continue;
         }
@@ -141,8 +142,8 @@ void SolverCreate::solve(const Flow* fl,
       if (data->state->a_date < min_next_date)
         min_next_date = data->state->a_date;
       if (++i != thealternates.end() && getLogLevel() > 1)
-        logger << indentlevel << "Alternate flow switches from '"
-               << curflow->getBuffer()->getName() << "' to '"
+        logger << indentlevel << "Operation switches from '"
+               << curflow->getBuffer()->getName() << "' to alternate material '"
                << (*i)->getBuffer()->getName() << "'" << endl;
     }
 

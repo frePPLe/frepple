@@ -270,49 +270,63 @@ class Command(BaseCommand):
         scenarios = Scenario.objects.using(DEFAULT_DB_ALIAS)
         if scenarios.count() > 1:
             javascript = """
-        $(".scenariorelease").on("click", function(event) {
-          event.preventDefault();
-          var target = "/" + $(this).attr("data-target");
-          if (target == "/default")
-            target = "";
-          $.ajax({
-           url: target + "/execute/launch/scenario_copy/",
-           type: 'POST',
-           data: {release: 1},
-           success: function() { if (target == prefix) window.location.href = "/"; }
-           });
-        });
-        $(".scenariocopy").on("click", function(event) {
-          event.preventDefault();
-          var source = "/" + $(this).attr("data-source");
-          if (source == "/default")
-            source = "";
-          $.ajax({
-           url: source + "/execute/launch/scenario_copy/",
-           type: 'POST',
-           data: {
-             copy: 1,
-             source: $(this).attr("data-source"),
-             destination: $(this).attr("data-target")
-             }
-           });
-        });
-        $(".scenariolabel").on("change", function(event) {
-          event.preventDefault();
-          var target = "/" + $(this).attr("data-target");
-          if (target == "/default")
-            target = "";
-          $.ajax({
-           url: target + "/execute/launch/scenario_copy/",
-           type: 'POST',
-           data: {
-             update: 1,
-             description: $(this).val()
-             },
-           success: function() { window.location.href = window.location.href; }
-           });
-        });
-        """
+                $(".scenariorelease").on("click", function(event) {
+                  event.preventDefault();
+                  var target = "/" + $(this).attr("data-target");
+                  if (target == "/default")
+                    target = "";
+                  $.ajax({
+                   url: target + "/execute/launch/scenario_copy/",
+                   type: 'POST',
+                   data: {release: 1},
+                   complete: function() {
+                     $("#scenariotoast").addClass("show");
+                     $("#scenariotoast span").text("Scenario released");
+                     setTimeout(function(){$("#scenariotoast").removeClass("show") }, 3000);
+                     if (target == url_prefix) window.location.href = "/"; }
+                   });
+                });
+                $(".scenariocopy").on("click", function(event) {
+                  event.preventDefault();
+                  var source = "/" + $(this).attr("data-source");
+                  if (source == "/default")
+                    source = "";
+                  $.ajax({
+                   url: source + "/execute/launch/scenario_copy/",
+                   type: 'POST',
+                   data: {
+                     copy: 1,
+                     source: $(this).attr("data-source"),
+                     destination: $(this).attr("data-target")
+                     },
+                   success: function() {
+                     $("#scenariotoast").addClass("show");
+                     $("#scenariotoast span").text("Launched copy task");
+                     setTimeout(function(){$("#scenariotoast").removeClass("show") }, 3000);
+                   }});
+                });
+                $(".scenariolabel").on("change", function(event) {
+                  event.preventDefault();
+                  var target = "/" + $(this).attr("data-target");
+                  if (target == "/default")
+                    target = "";
+                  $.ajax({
+                   url: target + "/execute/launch/scenario_copy/",
+                   type: 'POST',
+                   data: {
+                     update: 1,
+                     description: $(this).val()
+                     },
+                   success: function() {
+                     $("#scenariotoast").addClass("show");
+                     $("#scenariotoast span").text("Updated description");
+                     setTimeout(function(){
+                       $("#scenariotoast").removeClass("show");
+                       }, 3000);
+                    }
+                   });
+                });
+                """
             context = RequestContext(
                 request, {"javascript": javascript, "scenarios": scenarios}
             )
@@ -320,6 +334,9 @@ class Command(BaseCommand):
             template = Template(
                 """
         {% load i18n %}
+        <div id="scenariotoast" class="toast"><div style="position: relative; left: -50%">
+          <h1><span class="btn btn-primary"></span></h1>
+        </div></div>
         <table id="scenarios">
           <tr>
             {% comment %}Translators: Translation included with Django {% endcomment %}

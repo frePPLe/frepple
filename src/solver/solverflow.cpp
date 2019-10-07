@@ -132,6 +132,10 @@ void SolverCreate::solve(const Flow* fl,
           data->logConstraints = originalLogConstraints;
           data->state->q_qty_min = orig_q_qty_min;
           return;
+        } else {
+          // Got rounded down to zero, which is not good for the iteration on
+          // the next flow. Restore to the original quantity.
+          flplan->setQuantity(-ask_qty, false);
         }
       }
 

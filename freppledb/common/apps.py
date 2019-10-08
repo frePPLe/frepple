@@ -11,6 +11,7 @@ import os
 
 from django.apps import AppConfig
 from django.conf import settings
+from django.core.exceptions import ImproperlyConfigured
 from django.utils.autoreload import autoreload_started
 
 
@@ -24,3 +25,27 @@ class CommonConfig(AppConfig):
 
     def ready(self):
         autoreload_started.connect(watchDjangoSettings)
+
+        # Validate all required modules are activated
+        missing = []
+        required_apps = [
+            "django.contrib.auth",
+            "django.contrib.contenttypes",
+            "django.contrib.messages",
+            "django.contrib.staticfiles",
+            "bootstrap3",
+            "freppledb.boot",
+            "freppledb.input",
+            "freppledb.output",
+            "freppledb.execute",
+            "freppledb.common",
+            "django_filters",
+            "rest_framework",
+            "django_admin_bootstrapped",
+            "django.contrib.admin",
+        ]
+        for app in required_apps:
+            if app not in settings.INSTALLED_APPS:
+                missing.append(app)
+        if missing:
+            raise ImproperlyConfigured("Missing required apps: %s" % ", ".join(missing))

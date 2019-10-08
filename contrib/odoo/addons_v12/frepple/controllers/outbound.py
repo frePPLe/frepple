@@ -476,7 +476,40 @@ class exporter(object):
         m = self.env["product.product"]
         recs = m.search([])
         s = self.env["product.supplierinfo"]
-        s_fields = ["name", "delay", "min_qty", "date_end", "date_start", "price"]
+        s_fields = [
+            "product_tmpl_id",
+            "name",
+            "delay",
+            "min_qty",
+            "date_end",
+            "date_start",
+            "price",
+        ]
+        s_recs = s.search([])
+        self.product_supplier = {}
+        for s in s_recs.read(s_fields):
+            if s["product_tmpl_id"][0] in self.product_supplier:
+                self.product_supplier[s["product_tmpl_id"][0]].append(
+                    (
+                        s["name"],
+                        s["delay"],
+                        s["min_qty"],
+                        s["date_end"],
+                        s["date_start"],
+                        s["price"],
+                    )
+                )
+            else:
+                self.product_supplier[s["product_tmpl_id"][0]] = [
+                    (
+                        s["name"],
+                        s["delay"],
+                        s["min_qty"],
+                        s["date_end"],
+                        s["date_start"],
+                        s["price"],
+                    )
+                ]
         supplier = {}
         if recs:
             yield "<!-- products -->\n"
@@ -501,22 +534,17 @@ class exporter(object):
                 # Export suppliers for the item, if the item is allowed to be purchased
                 if (
                     tmpl["purchase_ok"]
-                    and buy_route in tmpl["route_ids"]
-                    and tmpl["seller_ids"]
+                    and i["product_tmpl_id"][0] in self.product_supplier
                 ):
                     yield "<itemsuppliers>\n"
-                    for sup in s.browse(tmpl["seller_ids"]).read(s_fields):
-                        name = "%d %s" % (sup["name"][0], sup["name"][1])
+                    for sup in self.product_supplier[i["product_tmpl_id"][0]]:
+                        name = "%d %s" % (sup[0][0], sup[0][1])
                         yield '<itemsupplier leadtime="P%dD" priority="1" size_minimum="%f" cost="%f"%s%s><supplier name=%s/></itemsupplier>\n' % (
-                            sup["delay"],
-                            sup["min_qty"],
-                            sup["price"],
-                            ' effective_end="%s"' % sup["date_end"]
-                            if sup["date_end"]
-                            else "",
-                            ' effective_start="%s"' % sup["date_start"]
-                            if sup["date_start"]
-                            else "",
+                            sup[1],
+                            sup[2],
+                            sup[5],
+                            ' effective_end="%s"' % sup[3] if sup[3] else "",
+                            ' effective_start="%s"' % sup[4] if sup[4] else "",
                             quoteattr(name),
                         )
                     yield "</itemsuppliers>\n"
@@ -546,7 +574,7 @@ class exporter(object):
         mrp_routing_workcenters = {}
         m = self.env["mrp.routing.workcenter"]
         recs = m.search([], order="routing_id, sequence asc")
-        fields = ["routing_id", "workcenter_id", "sequence", "time_cycle"]
+        fields = ["name", "routing_id", "workcenter_id", "sequence", "time_cycle"]
         for i in recs.read(fields):
             if i["routing_id"][0] in mrp_routing_workcenters:
                 # If the same workcenter is used multiple times in a routing,
@@ -560,11 +588,16 @@ class exporter(object):
                             break
                 if not exists:
                     mrp_routing_workcenters[i["routing_id"][0]].append(
-                        [i["workcenter_id"][1], i["time_cycle"], i["sequence"]]
+                        [
+                            i["workcenter_id"][1],
+                            i["time_cycle"],
+                            i["sequence"],
+                            i["name"],
+                        ]
                     )
             else:
                 mrp_routing_workcenters[i["routing_id"][0]] = [
-                    [i["workcenter_id"][1], i["time_cycle"], i["sequence"]]
+                    [i["workcenter_id"][1], i["time_cycle"], i["sequence"], i["name"]]
                 ]
 
         # Models used in the bom-loop below
@@ -716,13 +749,19 @@ class exporter(object):
 
                 yield "<suboperations>"
                 steplist = mrp_routing_workcenters[i["routing_id"][0]]
+                # sequence cannot be trusted in odoo12
+                counter = 0
                 for step in steplist:
-                    yield '<suboperation priority="%s">' '<operation name=%s duration="PT%dH" xsi:type="operation_fixed_time">\n' "<location name=%s/>\n" '<loads><load quantity="%f"><resource name=%s/></load></loads>\n' % (
-                        step[2],
-                        quoteattr("%s - %s" % (operation, step[2])),
+                    counter = counter + 1
+                    suboperation = step[3]
+                    yield "<suboperation>" '<operation name=%s priority="%s" duration="PT%dH" xsi:type="operation_fixed_time">\n' "<location name=%s/>\n" '<loads><load quantity="%f"><resource name=%s/></load></loads>\n' % (
+                        quoteattr(
+                            "%s - %s - %s" % (operation, suboperation, (counter * 100))
+                        ),
+                        counter * 10,
                         int(step[1]),
                         quoteattr(location),
-                        step[1],
+                        1,
                         quoteattr(step[0]),
                     )
                     if step[2] == steplist[-1][2]:

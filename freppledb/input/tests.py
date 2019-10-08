@@ -345,8 +345,8 @@ class ExcelTest(TransactionTestCase):
         self.assertEqual(BucketDetail.objects.count(), countBucketDetail)
         self.assertEqual(Parameter.objects.count(), countParameter)
 
-    def test_workbook_english(self):
-        self.run_workbook("en")
+    def test_workbook_brazilian_portuguese(self):
+        self.run_workbook("pt-br")
 
     def test_workbook_chinese(self):
         self.run_workbook("zh-cn")
@@ -354,8 +354,17 @@ class ExcelTest(TransactionTestCase):
     def test_workbook_dutch(self):
         self.run_workbook("nl")
 
+    def test_workbook_english(self):
+        self.run_workbook("en")
+
     def test_workbook_french(self):
         self.run_workbook("fr")
+
+    def test_workbook_hebrew(self):
+        self.run_workbook("he")
+
+    def test_workbook_italian(self):
+        self.run_workbook("it")
 
     def test_workbook_japanese(self):
         self.run_workbook("ja")
@@ -363,11 +372,14 @@ class ExcelTest(TransactionTestCase):
     def test_workbook_portuguese(self):
         self.run_workbook("pt")
 
-    def test_workbook_brazilian_portuguese(self):
-        self.run_workbook("pt-br")
+    def test_workbook_russian(self):
+        self.run_workbook("ru")
 
-    def test_workbook_hebrew(self):
-        self.run_workbook("he")
+    def test_workbook_spanish(self):
+        self.run_workbook("es")
+
+    def test_workbook_taiwanese(self):
+        self.run_workbook("zh-tw")
 
 
 class freppleREST(APITestCase):

@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-12-08 16:28+0100\n"
-"PO-Revision-Date: 2018-12-08 16:01+0100\n"
+"PO-Revision-Date: 2019-10-08 17:11+0200\n"
 "Last-Translator: Joao Ranita <jranita@frepple.com>\n"
 "Language-Team: frepple\n"
 "Language: es\n"
@@ -22,7 +22,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 2.2\n"
+"X-Generator: Poedit 2.0.1\n"
 "X-Poedit-Basepath: ../../..\n"
 "X-Poedit-SearchPath-0: .\n"
 
@@ -2911,7 +2911,7 @@ msgstr "ítem proveedores"
 #: output/views/operation.py:625 output/views/operation.py:631
 #: output/widget.py:1069 output/widget.py:1109
 msgid "origin"
-msgstr "origen"
+msgstr "ubicación de origen"
 
 #: input/models.py:923
 msgid "A minimum shipping quantity"
@@ -3009,7 +3009,7 @@ msgstr "órdenes planificadas"
 
 #: input/models.py:1056 input/views.py:1278
 msgid "delivery date"
-msgstr "operación de entrega"
+msgstr "fecha de entrega"
 
 #: input/models.py:1056
 msgid "Delivery date of the demand"

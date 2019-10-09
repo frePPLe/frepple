@@ -384,12 +384,9 @@ PyObject *eraseModel(PyObject *self, PyObject *args) {
       Item::clear();
       Plan::instance().setName("");
       Plan::instance().setDescription("");
-    } else {
+    } else
       // Delete the operationplans only
-      for (Operation::iterator gop = Operation::begin();
-           gop != Operation::end(); ++gop)
-        gop->deleteOperationPlans();
-    }
+      OperationPlan::clear();
   } catch (...) {
     Py_BLOCK_THREADS;
     PythonType::evalException();

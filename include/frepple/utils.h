@@ -207,6 +207,8 @@ template <class T>
 class MetaFieldInt;
 template <class T>
 class MetaFieldShort;
+template <class T>
+class MetaFieldCommand;
 
 // Include the list of predefined tags
 #include "frepple/tags.h"
@@ -1799,6 +1801,12 @@ class MetaClass : public NonCopyable {
         new MetaFieldIterator<Cls, Iter, PythonIterator<Iter, Ptr>, Ptr>(
             k1, k2, getfunc, c));
     if (c & PARENT) parent = true;
+  }
+
+  template <class Cls>
+  inline void addCommandField(const Keyword& k,
+                              void (Cls::*cmdfunc)(const string&) = nullptr) {
+    fields.push_back(new MetaFieldCommand<Cls>(k, cmdfunc));
   }
 
   template <class Cls>
@@ -6038,6 +6046,29 @@ class MetaFieldStringRef : public MetaFieldBase {
 
   /* Default value */
   string def;
+};
+
+template <class Cls>
+class MetaFieldCommand : public MetaFieldBase {
+ public:
+  typedef void (Cls::*cmdFunction)(const string&);
+
+  MetaFieldCommand(const Keyword& n, cmdFunction cmdfunc = nullptr)
+      : MetaFieldBase(n, DONT_SERIALIZE), cmdf(cmdfunc) {
+    if (!cmdf) throw DataException("Command function can't be nullptr");
+  };
+
+  virtual void setField(Object* me, const DataValue& el,
+                        CommandManager* cmd) const {
+    (static_cast<Cls*>(me)->*cmdf)(el.getString());
+  }
+
+  virtual void getField(Object* me, DataValue& el) const {}
+
+  virtual void writeField(Serializer& output) const {}
+
+ protected:
+  cmdFunction cmdf;
 };
 
 template <class Cls>

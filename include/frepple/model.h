@@ -2145,9 +2145,12 @@ class OperationPlan : public Object,
     return getTopOwner()->getTotalFlowAux(b);
   }
 
-  static inline OperationPlan::iterator end();
+  static inline iterator end();
 
-  static inline OperationPlan::iterator begin();
+  static inline iterator begin();
+
+  // Delete all operationplans
+  static void clear();
 
   inline OperationPlan::iterator getSubOperationPlans() const;
 
@@ -7772,6 +7775,8 @@ class Plan : public Plannable, public Object {
   static const MetaClass* metadata;
   static const MetaCategory* metacategory;
 
+  void erase(const string& e);
+
   template <class Cls>
   static inline void registerFields(MetaClass* m) {
     m->addStringRefField<Plan>(Tags::name, &Plan::getName, &Plan::setName);
@@ -7830,6 +7835,7 @@ class Plan : public Plannable, public Object {
     m->addIteratorField<Cls, OperationPlan::iterator, OperationPlan>(
         Tags::operationplans, Tags::operationplan, &Plan::getOperationPlans,
         BASE + WRITE_OBJECT);
+    m->addCommandField<Cls>(Tags::erase, &Plan::erase);
   }
 };
 

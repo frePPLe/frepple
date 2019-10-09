@@ -86,6 +86,7 @@ class Tags {
   static const Keyword enddate;
   static const Keyword endtime;
   static const Keyword entity;
+  static const Keyword erase;
   static const Keyword factor;
   static const Keyword feasible;
   static const Keyword fence;

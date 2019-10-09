@@ -1989,6 +1989,11 @@ Duration OperationPlan::getDelay() const {
   return maxdelay;
 }
 
+void OperationPlan::clear() {
+  for (auto gop = Operation::begin(); gop != Operation::end(); ++gop)
+    gop->deleteOperationPlans();
+}
+
 PyObject* OperationPlan::createIterator(PyObject* self, PyObject* args) {
   // Check arguments
   PyObject* pyoper = nullptr;

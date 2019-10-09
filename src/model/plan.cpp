@@ -72,4 +72,35 @@ void Plan::setCurrent(Date l) {
     i->setChanged();
 }
 
+void Plan::erase(const string& e) {
+  if (e == "item")
+    Item::clear();
+  else if (e == "location")
+    Location::clear();
+  else if (e == "customer")
+    Customer::clear();
+  else if (e == "operation")
+    Operation::clear();
+  else if (e == "demand")
+    Demand::clear();
+  else if (e == "buffer")
+    Buffer::clear();
+  else if (e == "skill")
+    Skill::clear();
+  else if (e == "resource")
+    Resource::clear();
+  else if (e == "setupmatrix")
+    SetupMatrix::clear();
+  else if (e == "calendar")
+    Calendar::clear();
+  else if (e == "supplier")
+    Supplier::clear();
+  else if (e == "operationplan")
+    OperationPlan::clear();
+  // Not supported on itemsupplier, itemdistribution, resourceskill, flow, load,
+  // setupmatrixrule...
+  else
+    DataException("erase operation not supported");
+}
+
 }  // namespace frepple

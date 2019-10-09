@@ -85,6 +85,7 @@ const Keyword Tags::end_force("end_force");
 const Keyword Tags::enddate("enddate");
 const Keyword Tags::endtime("endtime");
 const Keyword Tags::entity("entity");
+const Keyword Tags::erase("erase");
 const Keyword Tags::factor("factor");
 const Keyword Tags::feasible("feasible");
 const Keyword Tags::fence("fence");

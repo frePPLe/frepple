@@ -281,6 +281,8 @@ void HasLevel::computeLevels() {
               }
             }
           }  // End of needs-procssing if statement
+          else if (cur_buf->lvl < 0 && !cur_Flow->isConsumer())
+            cur_buf->lvl = 0;
 
           // Add all buffers for this item to the same cluster
           Item::bufferIterator buf_iter(cur_Flow->getBuffer()->getItem());

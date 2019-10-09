@@ -1101,10 +1101,10 @@ class exporter(object):
                 qty = self.convert_qty_uom(
                     i["product_qty"], i["product_uom_id"][0], i["product_id"][0]
                 )
-                yield '<operationplan reference=%s start="%s" end="%s" quantity="%s" locked="true"><operation name=%s/></operationplan>\n' % (
+                yield '<operationplan reference=%s start="%s" end="%s" quantity="%s" status="confirmed"><operation name=%s/></operationplan>\n' % (
                     quoteattr(i["name"]),
-                    startdate,
-                    startdate,
+                    startdate.strftime("%Y-%m-%dT%H:%M:%S"),
+                    startdate.strftime("%Y-%m-%dT%H:%M:%S"),
                     qty,
                     quoteattr(operation),
                 )

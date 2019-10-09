@@ -48,4 +48,6 @@ class CommonConfig(AppConfig):
             if app not in settings.INSTALLED_APPS:
                 missing.append(app)
         if missing:
-            raise ImproperlyConfigured("Missing required apps: %s" % ", ".join(missing))
+            raise ImproperlyConfigured(
+                "Missing required apps in INSTALLED_APPS: %s" % ", ".join(missing)
+            )

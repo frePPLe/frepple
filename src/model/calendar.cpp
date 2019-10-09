@@ -260,7 +260,7 @@ CalendarBucket* Calendar::findBucket(Date d, bool fwd) const {
   double curPriority = DBL_MAX;
   int date_weekday = -1;
   Duration date_time;
-  for (CalendarBucket* b = firstBucket; b; b = b->nextBucket) {
+  for (auto b = firstBucket; b; b = b->nextBucket) {
     if (b->getStart() > d)
       // Buckets are sorted by the start date. Other entries definitely
       // won't be effective.
@@ -336,8 +336,7 @@ Object* CalendarBucket::reader(const MetaClass* cat, const DataValueDict& atts,
   // Check for existence of a bucket with the same start, end and priority
   CalendarBucket* result = nullptr;
   if (cal) {
-    for (CalendarBucket::iterator i = cal->getBuckets();
-         i != CalendarBucket::iterator::end(); ++i)
+    for (auto i = cal->getBuckets(); i != CalendarBucket::iterator::end(); ++i)
       if (i->getStart() == strt && i->getEnd() == nd &&
           i->getPriority() == prio) {
         result = &*i;
@@ -537,7 +536,7 @@ void Calendar::buildEventList(Date includedate) {
     struct tm datedetail_startdata;
     struct tm* datedetail;
     curDate = Date::infiniteFuture;
-    for (const CalendarBucket* b = firstBucket; b; b = b->nextBucket) {
+    for (auto b = firstBucket; b; b = b->nextBucket) {
       // FIRST CASE: Bucket that is continuously effective
       if (b->isContinuouslyEffective()) {
         // Evaluate the start date of the bucket

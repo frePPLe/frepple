@@ -523,8 +523,7 @@ bool SolverCreate::checkOperationLeadTime(OperationPlan* opplan,
 
         // If it's an aggregate, push it's members on the stack
         if (res->isGroup()) {
-          for (Resource::memberIterator x = res->getMembers();
-               x != Resource::end(); ++x)
+          for (auto x = res->getMembers(); x != Resource::end(); ++x)
             res_stack.push(&*x);
           continue;
         }
@@ -839,8 +838,7 @@ OperationPlan* SolverCreate::createOperation(const Operation* oper,
   // loading is divided equally over the different available resources, when the
   // search mode MINCOSTPENALTY is used.
   if (getRotateResources())
-    for (OperationPlan::iterator rr = oper->getOperationPlans();
-         rr != OperationPlan::end(); ++rr)
+    for (auto rr = oper->getOperationPlans(); rr != OperationPlan::end(); ++rr)
       data->state->a_penalty += rr->getQuantity();
 
   return z;
@@ -920,8 +918,7 @@ void SolverCreate::solve(const OperationRouting* oper, void* v) {
       logger << "Deprecation warning: routing operation '" << oper
              << "' shouldn't produce material" << endl;
     }
-    for (Operation::Operationlist::const_iterator e =
-             oper->getSubOperations().begin();
+    for (auto e = oper->getSubOperations().begin();
          e != oper->getSubOperations().end(); ++e) {
       f = (*e)->getOperation()->findFlow(data->state->curBuffer,
                                          data->state->q_date);
@@ -995,8 +992,7 @@ void SolverCreate::solve(const OperationRouting* oper, void* v) {
   Duration delay;
   Date top_q_date(data->state->q_date);
   Date q_date;
-  for (Operation::Operationlist::const_reverse_iterator e =
-           oper->getSubOperations().rbegin();
+  for (auto e = oper->getSubOperations().rbegin();
        e != oper->getSubOperations().rend() && a_qty > 0.0; ++e) {
     // Plan the next step
     data->state->q_qty = a_qty;
@@ -1659,8 +1655,7 @@ void SolverCreate::solve(const OperationSplit* oper, void* v) {
 
   // Compute the sum of all effective percentages
   int sum_percent = 0;
-  for (Operation::Operationlist::const_iterator iter =
-           oper->getSubOperations().begin();
+  for (auto iter = oper->getSubOperations().begin();
        iter != oper->getSubOperations().end(); ++iter) {
     if ((*iter)->getEffective().within(data->state->q_date))
       sum_percent += (*iter)->getPriority();
@@ -1690,8 +1685,7 @@ void SolverCreate::solve(const OperationSplit* oper, void* v) {
     recheck = false;
     int planned_percentages = 0;
     double planned_quantity = 0.0;
-    for (Operation::Operationlist::const_reverse_iterator iter =
-             oper->getSubOperations().rbegin();
+    for (auto iter = oper->getSubOperations().rbegin();
          iter != oper->getSubOperations().rend(); ++iter) {
       // Verify effectivity date and percentage > 0
       if (!(*iter)->getPriority() || !(*iter)->getEffective().within(origQDate))

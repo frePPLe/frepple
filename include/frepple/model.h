@@ -483,8 +483,7 @@ class Calendar : public HasName<Calendar>, public HasSource {
   /* Find the lowest priority of any bucket. */
   int lowestPriority() const {
     int min = 0;
-    for (CalendarBucket::iterator i = getBuckets();
-         i != CalendarBucket::iterator::end(); ++i)
+    for (auto i = getBuckets(); i != CalendarBucket::iterator::end(); ++i)
       if (i->getPriority() < min) min = i->getPriority();
     return min;
   }
@@ -5037,8 +5036,7 @@ class Flow : public Object,
    */
   Flow* getAlternate() const {
     if (getName().empty() || !getOperation()) return nullptr;
-    for (Operation::flowlist::const_iterator h =
-             getOperation()->getFlows().begin();
+    for (auto h = getOperation()->getFlows().begin();
          h != getOperation()->getFlows().end() && this != &*h; ++h)
       if (getName() == h->getName()) return const_cast<Flow*>(&*h);
     return nullptr;
@@ -6372,8 +6370,7 @@ class Load : public Object,
    */
   Load* getAlternate() const {
     if (getName().empty() || !getOperation()) return nullptr;
-    for (Operation::loadlist::const_iterator h =
-             getOperation()->getLoads().begin();
+    for (auto h = getOperation()->getLoads().begin();
          h != getOperation()->getLoads().end() && this != &*h; ++h)
       if (getName() == h->getName()) return const_cast<Load*>(&*h);
     return nullptr;
@@ -8857,7 +8854,7 @@ inline OperationPlan::FlowPlanIterator OperationPlan::getFlowPlans() const {
 
 inline int OperationPlan::sizeFlowPlans() const {
   int c = 0;
-  for (FlowPlanIterator i = beginFlowPlans(); i != endFlowPlans(); ++i) ++c;
+  for (auto i = beginFlowPlans(); i != endFlowPlans(); ++i) ++c;
   return c;
 }
 
@@ -8936,7 +8933,7 @@ inline OperationPlan::LoadPlanIterator OperationPlan::getLoadPlans() const {
 
 inline int OperationPlan::sizeLoadPlans() const {
   int c = 0;
-  for (LoadPlanIterator i = beginLoadPlans(); i != endLoadPlans(); ++i) ++c;
+  for (auto i = beginLoadPlans(); i != endLoadPlans(); ++i) ++c;
   return c;
 }
 

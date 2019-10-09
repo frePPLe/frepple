@@ -417,8 +417,7 @@ void XMLInput::endElement(const XMLCh* const uri, const XMLCh* const ename,
     if (objectindex > 0 && objects[objectindex].cls->parent) {
       assert(objects[objectindex - 1].cls);
       const MetaClass* cl = objects[objectindex - 1].cls;
-      for (MetaClass::fieldlist::const_iterator i =
-               objects[objectindex].cls->getFields().begin();
+      for (auto i = objects[objectindex].cls->getFields().begin();
            i != objects[objectindex].cls->getFields().end(); ++i)
         if ((*i)->getFlag(PARENT) && objectindex >= 1) {
           const MetaFieldBase* fld = data[objects[objectindex].start - 1].field;
@@ -489,8 +488,7 @@ void XMLInput::endElement(const XMLCh* const uri, const XMLCh* const ename,
         objects[objectindex].cls->category->parent) {
       assert(objects[objectindex - 1].cls);
       const MetaClass* cl = objects[objectindex - 1].cls;
-      for (MetaClass::fieldlist::const_iterator i =
-               objects[objectindex].cls->category->getFields().begin();
+      for (auto i = objects[objectindex].cls->category->getFields().begin();
            i != objects[objectindex].cls->category->getFields().end(); ++i)
         if ((*i)->getFlag(PARENT) && objectindex >= 1) {
           const MetaFieldBase* fld = data[objects[objectindex].start - 1].field;

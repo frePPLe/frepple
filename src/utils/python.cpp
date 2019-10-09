@@ -61,48 +61,39 @@ void Object::writeElement(Serializer* o, const Keyword& tag,
     case MANDATORY:
       // Write references only
       if (meta.category)
-        for (MetaClass::fieldlist::const_iterator i =
-                 meta.category->getFields().begin();
+        for (auto i = meta.category->getFields().begin();
              i != meta.category->getFields().end(); ++i)
           if ((*i)->getFlag(MANDATORY)) (*i)->writeField(*o);
-      for (MetaClass::fieldlist::const_iterator i = meta.getFields().begin();
-           i != meta.getFields().end(); ++i)
+      for (auto i = meta.getFields().begin(); i != meta.getFields().end(); ++i)
         if ((*i)->getFlag(MANDATORY)) (*i)->writeField(*o);
       break;
     case BASE:
       // Write only the fields required to successfully save&restore the object.
       if (meta.category)
-        for (MetaClass::fieldlist::const_iterator i =
-                 meta.category->getFields().begin();
+        for (auto i = meta.category->getFields().begin();
              i != meta.category->getFields().end(); ++i)
           if ((*i)->getFlag(BASE + MANDATORY)) (*i)->writeField(*o);
-      for (MetaClass::fieldlist::const_iterator i = meta.getFields().begin();
-           i != meta.getFields().end(); ++i)
+      for (auto i = meta.getFields().begin(); i != meta.getFields().end(); ++i)
         if ((*i)->getFlag(BASE + MANDATORY)) (*i)->writeField(*o);
       writeProperties(*o);
       break;
     case DETAIL:
       // Write detailed info on the object.
       if (meta.category)
-        for (MetaClass::fieldlist::const_iterator i =
-                 meta.category->getFields().begin();
+        for (auto i = meta.category->getFields().begin();
              i != meta.category->getFields().end(); ++i)
           if ((*i)->getFlag(DETAIL + MANDATORY)) (*i)->writeField(*o);
-      for (MetaClass::fieldlist::const_iterator i = meta.getFields().begin();
-           i != meta.getFields().end(); ++i)
+      for (auto i = meta.getFields().begin(); i != meta.getFields().end(); ++i)
         if ((*i)->getFlag(DETAIL + MANDATORY)) (*i)->writeField(*o);
       writeProperties(*o);
       break;
     case PLAN:
       // Write plan info on the object.
       if (meta.category)
-        for (MetaClass::fieldlist::const_iterator i =
-                 meta.category->getFields().begin();
-             i != meta.category->getFields().end(); ++i)
-          if ((*i)->getFlag(BASE + PLAN + MANDATORY)) (*i)->writeField(*o);
-      for (MetaClass::fieldlist::const_iterator i = meta.getFields().begin();
-           i != meta.getFields().end(); ++i)
-        if ((*i)->getFlag(BASE + PLAN + MANDATORY)) (*i)->writeField(*o);
+        for (auto i : meta.category->getFields())
+          if (i->getFlag(BASE + PLAN + MANDATORY)) i->writeField(*o);
+      for (auto i : meta.getFields())
+        if (i->getFlag(BASE + PLAN + MANDATORY)) i->writeField(*o);
       writeProperties(*o);
       break;
     default:
@@ -123,13 +114,10 @@ size_t Object::getSize() const {
 
   // ... plus the size of fields consuming extra memory
   if (meta.category)
-    for (MetaClass::fieldlist::const_iterator i =
-             meta.category->getFields().begin();
-         i != meta.category->getFields().end(); ++i)
-      if (!(*i)->getFlag(COMPUTED)) tmp += (*i)->getSize(this);
-  for (MetaClass::fieldlist::const_iterator i = meta.getFields().begin();
-       i != meta.getFields().end(); ++i)
-    if (!(*i)->getFlag(COMPUTED)) tmp += (*i)->getSize(this);
+    for (auto i : meta.category->getFields())
+      if (!i->getFlag(COMPUTED)) tmp += i->getSize(this);
+  for (auto i : meta.getFields())
+    if (!i->getFlag(COMPUTED)) tmp += i->getSize(this);
 
   // ... plus the size of a custom Python attributes
   if (dict) {
@@ -280,8 +268,8 @@ void PythonInterpreter::execute(const char* cmd) {
 
 void PythonInterpreter::executeFile(string filename) {
   // Replacing ' with \' to escape the quotes in the Python command
-  for (string::size_type pos = filename.find_first_of("'", 0);
-       pos < string::npos; pos = filename.find_first_of("'", pos)) {
+  for (auto pos = filename.find_first_of("'", 0); pos < string::npos;
+       pos = filename.find_first_of("'", pos)) {
     filename.replace(pos, 1, "\\'", 2);
     pos += 2;
   }
@@ -500,9 +488,8 @@ PythonType::PythonType(size_t base_size, const type_info* tp) : cppClass(tp) {
 
 PythonType* Object::registerPythonType(int size, const type_info* t) {
   // Scan the types already registered
-  for (vector<PythonType*>::const_iterator i = table.begin(); i != table.end();
-       ++i)
-    if (**i == *t) return *i;
+  for (auto i : table)
+    if (*i == *t) return i;
 
   // Not found in the vector, so create a new one
   PythonType* cachedTypePtr = new PythonType(size, t);

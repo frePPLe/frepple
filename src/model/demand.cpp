@@ -91,7 +91,7 @@ void Demand::deleteOperationPlans(bool deleteLocked, CommandManager* cmds) {
   while (true) {
     // Find a candidate to delete
     OperationPlan* candidate = nullptr;
-    for (OperationPlanList::iterator i = deli.begin(); i != deli.end(); ++i)
+    for (auto i = deli.begin(); i != deli.end(); ++i)
       if (deleteLocked || (*i)->getProposed()) {
         candidate = *i;
         break;
@@ -144,9 +144,7 @@ OperationPlan* Demand::getLatestDelivery() const {
 OperationPlan* Demand::getEarliestDelivery() const {
   const Demand::OperationPlanList& l = getDelivery();
   OperationPlan* last = nullptr;
-  for (Demand::OperationPlanList::const_iterator i = l.begin(); i != l.end();
-       ++i)
-    last = *i;
+  for (auto i = l.begin(); i != l.end(); ++i) last = *i;
   return last;
 }
 
@@ -241,7 +239,7 @@ Operation* Demand::getDeliveryOperation() const {
 
 double Demand::getPlannedQuantity() const {
   double delivered(0.0);
-  for (OperationPlanList::const_iterator i = deli.begin(); i != deli.end(); ++i)
+  for (auto i = deli.begin(); i != deli.end(); ++i)
     delivered += (*i)->getQuantity();
   return delivered;
 }

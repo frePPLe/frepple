@@ -51,7 +51,7 @@ void CommandList::rollback() {
   // Note that undoing an operation that hasn't been executed yet or has been
   // undone already is expected to be harmless, so we don't need to worry
   // about that...
-  for (Command* i = lastCommand; i;) {
+  for (auto i = lastCommand; i;) {
     Command* t = i;  // Temporarily store the pointer to be deleted
     i = i->prev;
     t->next = nullptr;
@@ -65,7 +65,7 @@ void CommandList::rollback() {
 
 void CommandList::commit() {
   // Commit the commands
-  for (Command* i = firstCommand; i;) {
+  for (auto i = firstCommand; i;) {
     Command* t = i;  // Temporarily store the pointer to be deleted
     i->commit();
     i = i->next;
@@ -129,7 +129,7 @@ void CommandManager::rollback(CommandManager::Bookmark* b) {
 
 void CommandManager::commit() {
   if (firstBookmark.active) firstBookmark.commit();
-  for (Bookmark* i = firstBookmark.nextBookmark; i;) {
+  for (auto i = firstBookmark.nextBookmark; i;) {
     if (i->active) i->commit();
     Bookmark* tmp = i;
     i = i->nextBookmark;
@@ -141,7 +141,7 @@ void CommandManager::commit() {
 }
 
 void CommandManager::rollback() {
-  for (Bookmark* i = lastBookmark; i != &firstBookmark;) {
+  for (auto i = lastBookmark; i != &firstBookmark;) {
     i->rollback();
     Bookmark* tmp = i;
     i = i->prevBookmark;
@@ -329,8 +329,7 @@ PyObject* loadModule(PyObject* self, PyObject* args, PyObject* kwds) {
 
 void Environment::printModules() {
   bool first = true;
-  for (set<string>::const_iterator i = moduleRegistry.begin();
-       i != moduleRegistry.end(); ++i) {
+  for (auto i = moduleRegistry.begin(); i != moduleRegistry.end(); ++i) {
     if (first) {
       logger << "Loaded modules:" << endl;
       first = false;

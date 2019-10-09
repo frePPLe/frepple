@@ -78,7 +78,7 @@ SetupMatrix::~SetupMatrix() {
   while (firstRule) delete firstRule;
 
   // Remove all references to this setup matrix from resources
-  for (Resource::iterator m = Resource::begin(); m != Resource::end(); ++m)
+  for (auto m = Resource::begin(); m != Resource::end(); ++m)
     if (m->getSetupMatrix() == this) m->setSetupMatrix(nullptr);
 }
 

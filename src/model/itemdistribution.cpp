@@ -244,15 +244,13 @@ OperationItemDistribution::~OperationItemDistribution() {
 }
 
 Buffer* OperationItemDistribution::getOrigin() const {
-  for (flowlist::const_iterator i = getFlows().begin(); i != getFlows().end();
-       ++i)
+  for (auto i = getFlows().begin(); i != getFlows().end(); ++i)
     if (i->getQuantity() < 0.0) return i->getBuffer();
   return nullptr;
 }
 
 Buffer* OperationItemDistribution::getDestination() const {
-  for (flowlist::const_iterator i = getFlows().begin(); i != getFlows().end();
-       ++i)
+  for (auto i = getFlows().begin(); i != getFlows().end(); ++i)
     if (i->getQuantity() > 0.0) return i->getBuffer();
   return nullptr;
 }

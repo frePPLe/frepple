@@ -168,8 +168,7 @@ PyObject *savePlan(PyObject *self, PyObject *args) {
     textoutput.open(filename, ios::out);
 
     // Write the buffer summary
-    for (Buffer::iterator gbuf = Buffer::begin(); gbuf != Buffer::end();
-         ++gbuf) {
+    for (auto gbuf = Buffer::begin(); gbuf != Buffer::end(); ++gbuf) {
       if (gbuf->getHidden()) continue;
       for (auto oo = gbuf->getFlowPlans().begin();
            oo != gbuf->getFlowPlans().end(); ++oo)
@@ -182,8 +181,7 @@ PyObject *savePlan(PyObject *self, PyObject *args) {
     }
 
     // Write the demand summary
-    for (Demand::iterator gdem = Demand::begin(); gdem != Demand::end();
-         ++gdem) {
+    for (auto gdem = Demand::begin(); gdem != Demand::end(); ++gdem) {
       const Demand::OperationPlanList &deli = gdem->getDelivery();
       for (auto pp = deli.begin(); pp != deli.end(); ++pp)
         textoutput << "DEMAND\t" << (*gdem) << '\t' << (*pp)->getEnd() << '\t'
@@ -191,8 +189,7 @@ PyObject *savePlan(PyObject *self, PyObject *args) {
     }
 
     // Write the resource summary
-    for (Resource::iterator gres = Resource::begin(); gres != Resource::end();
-         ++gres) {
+    for (auto gres = Resource::begin(); gres != Resource::end(); ++gres) {
       if (gres->getHidden()) continue;
       for (auto qq = gres->getLoadPlans().begin();
            qq != gres->getLoadPlans().end(); ++qq)
@@ -204,8 +201,7 @@ PyObject *savePlan(PyObject *self, PyObject *args) {
     }
 
     // Write the operationplan summary.
-    for (OperationPlan::iterator rr = OperationPlan::begin();
-         rr != OperationPlan::end(); ++rr) {
+    for (auto rr = OperationPlan::begin(); rr != OperationPlan::end(); ++rr) {
       // TODO if-condition here isn't very clean and generic
       if (rr->getOperation()->getHidden() &&
           !rr->getOperation()
@@ -302,7 +298,7 @@ CommandMoveOperationPlan::CommandMoveOperationPlan(OperationPlan *o,
 
 void CommandMoveOperationPlan::restore(bool del) {
   // Restore all suboperationplans and (optionally) delete the subcommands
-  for (Command *c = firstCommand; c;) {
+  for (auto *c = firstCommand; c;) {
     CommandMoveOperationPlan *tmp = static_cast<CommandMoveOperationPlan *>(c);
     tmp->restore(del);
     c = c->next;
@@ -382,6 +378,7 @@ PyObject *eraseModel(PyObject *self, PyObject *args) {
       Calendar::clear();
       Supplier::clear();
       Item::clear();
+      Skill::clear();
       Plan::instance().setName("");
       Plan::instance().setDescription("");
     } else
@@ -435,10 +432,9 @@ PyObject *printModelSize(PyObject *self, PyObject *args) {
     // Locations
     memsize = 0;
     size_t countItemDistributions(0), memItemDistributions(0);
-    for (Location::iterator l = Location::begin(); l != Location::end(); ++l) {
+    for (auto l = Location::begin(); l != Location::end(); ++l) {
       memsize += l->getSize();
-      for (Location::distributionlist::const_iterator rs =
-               l->getDistributions().begin();
+      for (auto rs = l->getDistributions().begin();
            rs != l->getDistributions().end(); ++rs) {
         ++countItemDistributions;
         memItemDistributions += rs->getSize();
@@ -450,7 +446,7 @@ PyObject *printModelSize(PyObject *self, PyObject *args) {
 
     // Customers
     memsize = 0;
-    for (Customer::iterator c = Customer::begin(); c != Customer::end(); ++c)
+    for (auto c = Customer::begin(); c != Customer::end(); ++c)
       memsize += c->getSize();
     logger << "Customer              \t" << Customer::size() << "\t" << memsize
            << endl;
@@ -458,7 +454,7 @@ PyObject *printModelSize(PyObject *self, PyObject *args) {
 
     // Suppliers
     memsize = 0;
-    for (Supplier::iterator c = Supplier::begin(); c != Supplier::end(); ++c)
+    for (auto c = Supplier::begin(); c != Supplier::end(); ++c)
       memsize += c->getSize();
     logger << "Supplier              \t" << Supplier::size() << "\t" << memsize
            << endl;
@@ -466,7 +462,7 @@ PyObject *printModelSize(PyObject *self, PyObject *args) {
 
     // Buffers
     memsize = 0;
-    for (Buffer::iterator b = Buffer::begin(); b != Buffer::end(); ++b)
+    for (auto b = Buffer::begin(); b != Buffer::end(); ++b)
       memsize += b->getSize();
     logger << "Buffer                \t" << Buffer::size() << "\t" << memsize
            << endl;
@@ -475,8 +471,7 @@ PyObject *printModelSize(PyObject *self, PyObject *args) {
     // Setup matrices
     memsize = 0;
     size_t countSetupRules(0), memSetupRules(0);
-    for (SetupMatrix::iterator s = SetupMatrix::begin();
-         s != SetupMatrix::end(); ++s) {
+    for (auto s = SetupMatrix::begin(); s != SetupMatrix::end(); ++s) {
       memsize += s->getSize();
       SetupMatrixRule::iterator iter = s->getRules();
       while (SetupMatrixRule *sr = iter.next()) {
@@ -493,7 +488,7 @@ PyObject *printModelSize(PyObject *self, PyObject *args) {
 
     // Resources
     memsize = 0;
-    for (Resource::iterator r = Resource::begin(); r != Resource::end(); ++r)
+    for (auto r = Resource::begin(); r != Resource::end(); ++r)
       memsize += r->getSize();
     logger << "Resource              \t" << Resource::size() << "\t" << memsize
            << endl;
@@ -502,7 +497,7 @@ PyObject *printModelSize(PyObject *self, PyObject *args) {
     // Skills and resourceskills
     size_t countResourceSkills(0), memResourceSkills(0);
     memsize = 0;
-    for (Skill::iterator sk = Skill::begin(); sk != Skill::end(); ++sk) {
+    for (auto sk = Skill::begin(); sk != Skill::end(); ++sk) {
       memsize += sk->getSize();
       Skill::resourcelist::const_iterator iter = sk->getResources();
       while (ResourceSkill *r = iter.next()) {
@@ -520,16 +515,13 @@ PyObject *printModelSize(PyObject *self, PyObject *args) {
     // Operations, flows and loads
     size_t countFlows(0), memFlows(0), countLoads(0), memLoads(0);
     memsize = 0;
-    for (Operation::iterator o = Operation::begin(); o != Operation::end();
-         ++o) {
+    for (auto o = Operation::begin(); o != Operation::end(); ++o) {
       memsize += o->getSize();
-      for (Operation::flowlist::const_iterator fl = o->getFlows().begin();
-           fl != o->getFlows().end(); ++fl) {
+      for (auto fl = o->getFlows().begin(); fl != o->getFlows().end(); ++fl) {
         ++countFlows;
         memFlows += fl->getSize();
       }
-      for (Operation::loadlist::const_iterator ld = o->getLoads().begin();
-           ld != o->getLoads().end(); ++ld) {
+      for (auto ld = o->getLoads().begin(); ld != o->getLoads().end(); ++ld) {
         ++countLoads;
         memLoads += ld->getSize();
       }
@@ -545,8 +537,7 @@ PyObject *printModelSize(PyObject *self, PyObject *args) {
     // Calendars and calendar buckets
     memsize = 0;
     size_t countBuckets(0), memBuckets(0);
-    for (Calendar::iterator cl = Calendar::begin(); cl != Calendar::end();
-         ++cl) {
+    for (auto cl = Calendar::begin(); cl != Calendar::end(); ++cl) {
       memsize += cl->getSize();
       for (auto bckt = cl->getBuckets();
            bckt != CalendarBucket::iterator::end(); ++bckt) {
@@ -564,10 +555,10 @@ PyObject *printModelSize(PyObject *self, PyObject *args) {
     // Items
     memsize = 0;
     size_t countItemSuppliers(0), memItemSuppliers(0);
-    for (Item::iterator i = Item::begin(); i != Item::end(); ++i) {
+    for (auto i = Item::begin(); i != Item::end(); ++i) {
       memsize += i->getSize();
-      for (Item::supplierlist::const_iterator rs = i->getSuppliers().begin();
-           rs != i->getSuppliers().end(); ++rs) {
+      for (auto rs = i->getSuppliers().begin(); rs != i->getSuppliers().end();
+           ++rs) {
         ++countItemSuppliers;
         memItemSuppliers += rs->getSize();
       }
@@ -583,7 +574,7 @@ PyObject *printModelSize(PyObject *self, PyObject *args) {
     // Demands
     memsize = 0;
     size_t c_count = 0, c_memsize = 0;
-    for (Demand::iterator dm = Demand::begin(); dm != Demand::end(); ++dm) {
+    for (auto dm = Demand::begin(); dm != Demand::end(); ++dm) {
       memsize += dm->getSize();
       Problem::iterator cstrnt_iter(dm->getConstraints().begin());
       while (Problem *cstrnt = cstrnt_iter.next()) {
@@ -600,8 +591,7 @@ PyObject *printModelSize(PyObject *self, PyObject *args) {
     // Operationplans
     size_t countloadplans(0), countflowplans(0);
     memsize = count = 0;
-    for (OperationPlan::iterator j = OperationPlan::begin();
-         j != OperationPlan::end(); ++j) {
+    for (auto j = OperationPlan::begin(); j != OperationPlan::end(); ++j) {
       ++count;
       memsize += j->getSize();
       countloadplans += j->sizeLoadPlans();

@@ -39,8 +39,7 @@ void Resource::updateProblems() {
   double shortageQty(0.0);
   double curMin(0.0);
   double excessQty(0.0);
-  for (loadplanlist::const_iterator iter = loadplans.begin();
-       iter != loadplans.end();) {
+  for (auto iter = loadplans.begin(); iter != loadplans.end();) {
     // Process changes in the maximum or minimum targets
     if (iter->getEventType() == 4)
       curMax = iter->getMax();
@@ -118,8 +117,7 @@ void ResourceBuckets::updateProblems() {
   // Loop over all events
   Date startdate = Date::infinitePast;
   double load = 0.0;
-  for (loadplanlist::const_iterator iter = loadplans.begin();
-       iter != loadplans.end(); iter++) {
+  for (auto iter = loadplans.begin(); iter != loadplans.end(); iter++) {
     if (iter->getEventType() != 2)
       load = iter->getOnhand();
     else {

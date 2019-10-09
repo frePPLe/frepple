@@ -160,7 +160,7 @@ PyObject* ItemSupplier::create(PyTypeObject* pytype, PyObject* args,
 }
 
 void ItemSupplier::deleteOperationPlans(bool b) {
-  for (OperationItemSupplier* i = firstOperation; i; i = i->nextOperation)
+  for (auto i = firstOperation; i; i = i->nextOperation)
     i->deleteOperationPlans(b);
 }
 
@@ -264,8 +264,7 @@ void OperationItemSupplier::trimExcess(bool zero_or_minimum) const {
   // This method can only trim operations not loading a resource
   if (getLoads().begin() != getLoads().end()) return;
 
-  for (Operation::flowlist::const_iterator fliter = getFlows().begin();
-       fliter != getFlows().end(); ++fliter) {
+  for (auto fliter = getFlows().begin(); fliter != getFlows().end(); ++fliter) {
     if (fliter->getQuantity() <= 0)
       // Strange, shouldn't really happen
       continue;
@@ -274,8 +273,7 @@ void OperationItemSupplier::trimExcess(bool zero_or_minimum) const {
     double oh = 0;
     double excess_min = DBL_MAX;
 
-    for (Buffer::flowplanlist::const_iterator flplniter =
-             fliter->getBuffer()->getFlowPlans().begin();
+    for (auto flplniter = fliter->getBuffer()->getFlowPlans().begin();
          flplniter != fliter->getBuffer()->getFlowPlans().end(); ++flplniter) {
       // For any operationplan we get the onhand when its successor
       // replenishment arrives. If that onhand is higher than the minimum
@@ -339,8 +337,8 @@ Object* ItemSupplier::finder(const DataValueDict& d) {
   const DataValue* hasPriority = d.get(Tags::priority);
   int priority;
   if (hasPriority) priority = hasPriority->getInt();
-  for (Item::supplierlist::const_iterator fl = item->getSuppliers().begin();
-       fl != item->getSuppliers().end(); ++fl) {
+  for (auto fl = item->getSuppliers().begin(); fl != item->getSuppliers().end();
+       ++fl) {
     if (fl->getSupplier() != sup) continue;
     if (hasEffectiveStart && fl->getEffectiveStart() != effective_start)
       continue;

@@ -120,8 +120,8 @@ string ProblemLate::getDescription() const {
   assert(dmd && !dmd->getDelivery().empty());
   Duration delay;
   double plannedlate = 0;
-  for (Demand::OperationPlanList::const_iterator i = dmd->getDelivery().begin();
-       i != dmd->getDelivery().end(); ++i) {
+  for (auto i = dmd->getDelivery().begin(); i != dmd->getDelivery().end();
+       ++i) {
     Duration tmp = (*i)->getEnd() - getDemand()->getDue();
     if (tmp > 0L) {
       if (tmp > delay) delay = tmp;

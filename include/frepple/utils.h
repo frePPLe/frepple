@@ -2030,8 +2030,7 @@ class FunctorStatic : public Functor {
     MetaClass& t =
         const_cast<MetaClass&>(static_cast<const MetaClass&>(*T::metadata));
     // Loop through all subscriptions
-    for (list<Functor*>::iterator i = t.subscribers[a].begin();
-         i != t.subscribers[a].end(); ++i) {
+    for (auto i = t.subscribers[a].begin(); i != t.subscribers[a].end(); ++i) {
       // Try casting the functor to the right type
       FunctorStatic<T, U>* f = dynamic_cast<FunctorStatic<T, U>*>(*i);
       if (f) {
@@ -2076,8 +2075,7 @@ class FunctorInstance : public Functor {
     MetaClass& t =
         const_cast<MetaClass&>(static_cast<const MetaClass&>(T::metadata));
     // Loop through all subscriptions
-    for (list<Functor*>::iterator i = t.subscribers[a].begin();
-         i != t.subscribers[a].end(); ++i) {
+    for (auto i = t.subscribers[a].begin(); i != t.subscribers[a].end(); ++i) {
       // Try casting the functor to the right type
       FunctorInstance<T, U>* f = dynamic_cast<FunctorInstance<T, U>*>(*i);
       if (f && f->instance == u) {
@@ -3784,7 +3782,7 @@ class Tree : public NonCopyable {
 
     unsigned int len = countBlackNodes(header.left);
     size_t counter = 0;
-    for (TreeNode* x = begin(); x != end(); x = x->increment()) {
+    for (auto x = begin(); x != end(); x = x->increment()) {
       TreeNode* L = x->left;
       TreeNode* R = x->right;
       ++counter;
@@ -3832,7 +3830,7 @@ class Tree : public NonCopyable {
     if (empty()) return;
 
     // Erase all elements
-    for (TreeNode* x = begin(); x != end(); x = begin()) {
+    for (auto x = begin(); x != end(); x = begin()) {
       Object* o = dynamic_cast<Object*>(x);
       if (o && o->getType().raiseEvent(o, SIG_REMOVE))
         delete (x);  // The destructor calls the erase method
@@ -3990,7 +3988,7 @@ class Tree : public NonCopyable {
    */
   TreeNode* findLowerBound(const string& k, bool* f) const {
     auto lower = end();
-    for (TreeNode* x = header.parent; x;) {
+    for (auto x = header.parent; x;) {
       int comp = compare(k, x->nm);
       if (!comp) {
         // Found
@@ -4389,7 +4387,7 @@ class CommandCreateObject : public Command {
   virtual void rollback() {
     if (obj) {
       // Check for setfield commands on this object, and invalidate them.
-      for (Command* cmd = getNext(); cmd; cmd = cmd->getNext()) {
+      for (auto cmd = getNext(); cmd; cmd = cmd->getNext()) {
         switch (cmd->getType()) {
           case 1:
             // TODO: The undo is limited to the current command list. If there
@@ -4537,7 +4535,7 @@ class CommandManager {
      * grand-grand-child of the argument bookmark.
      */
     bool isChildOf(const Bookmark* b) const {
-      for (const Bookmark* p = this; p; p = p->parent)
+      for (auto p = this; p; p = p->parent)
         if (p == b) return true;
       return false;
     }
@@ -4647,7 +4645,7 @@ class CommandManager {
 
   /* Destructor. */
   ~CommandManager() {
-    for (Bookmark* i = lastBookmark; i && i != &firstBookmark;) {
+    for (auto i = lastBookmark; i && i != &firstBookmark;) {
       Bookmark* tmp = i;
       i = i->prevBookmark;
       delete tmp;

@@ -266,8 +266,7 @@ Buffer* OperationInventory::getBuffer() const {
 
 double Buffer::getOnHand() const {
   string invop = "Inventory " + string(getName());
-  for (flowplanlist::const_iterator i = flowplans.begin(); i != flowplans.end();
-       ++i) {
+  for (auto i = flowplans.begin(); i != flowplans.end(); ++i) {
     if (i->getDate())
       return 0.0;  // Inventory event is always at start of horizon
     if (i->getEventType() != 1) continue;
@@ -285,8 +284,7 @@ double Buffer::getOnHand(Date d) const {
     return tmp == flowplans.end() ? 0.0 : tmp->getOnhand();
   }
   double tmp(0.0);
-  for (flowplanlist::const_iterator oo = flowplans.begin();
-       oo != flowplans.end(); ++oo) {
+  for (auto oo = flowplans.begin(); oo != flowplans.end(); ++oo) {
     if (oo->getDate() > d)
       // Found a flowplan with a later date.
       // Return the onhand after the previous flowplan.
@@ -309,7 +307,7 @@ double Buffer::getOnHand(Date d1, Date d2, bool min) const {
   // Loop through all flowplans
   double tmp(0.0), record(0.0);
   Date d, prev_Date;
-  for (flowplanlist::const_iterator oo = flowplans.begin(); true; ++oo) {
+  for (auto oo = flowplans.begin(); true; ++oo) {
     if (oo == flowplans.end() || oo->getDate() > d) {
       // Date has now changed or we have arrived at the end
 
@@ -355,8 +353,7 @@ void Buffer::setMinimum(double m) {
   min_val = m;
 
   // Create or update a single timeline min event
-  for (flowplanlist::iterator oo = flowplans.begin(); oo != flowplans.end();
-       oo++)
+  for (auto oo = flowplans.begin(); oo != flowplans.end(); oo++)
     if (oo->getEventType() == 3) {
       // Update existing event
       static_cast<flowplanlist::EventMinQuantity*>(&*oo)->setMin(min_val);
@@ -377,7 +374,7 @@ void Buffer::setMinimumCalendar(Calendar* cal) {
   setChanged();
 
   // Delete previous events.
-  for (flowplanlist::iterator oo = flowplans.begin(); oo != flowplans.end();) {
+  for (auto oo = flowplans.begin(); oo != flowplans.end();) {
     flowplanlist::Event* tmp = &*oo;
     ++oo;
     if (tmp->getEventType() == 3) {
@@ -423,8 +420,7 @@ void Buffer::setMaximum(double m) {
   max_val = m;
 
   // Create or update a single timeline max event
-  for (flowplanlist::iterator oo = flowplans.begin(); oo != flowplans.end();
-       oo++)
+  for (auto oo = flowplans.begin(); oo != flowplans.end(); oo++)
     if (oo->getEventType() == 4) {
       // Update existing event
       static_cast<flowplanlist::EventMaxQuantity*>(&*oo)->setMax(max_val);
@@ -444,7 +440,7 @@ void Buffer::setMaximumCalendar(Calendar* cal) {
   setChanged();
 
   // Delete previous events.
-  for (flowplanlist::iterator oo = flowplans.begin(); oo != flowplans.end();)
+  for (auto oo = flowplans.begin(); oo != flowplans.end();)
     if (oo->getEventType() == 4) {
       flowplans.erase(&(*oo));
       delete &(*(oo++));
@@ -474,7 +470,7 @@ void Buffer::setMaximumCalendar(Calendar* cal) {
 
 void Buffer::deleteOperationPlans(bool deleteLocked) {
   // Delete the operationplans
-  for (flowlist::iterator i = flows.begin(); i != flows.end(); ++i)
+  for (auto i = flows.begin(); i != flows.end(); ++i)
     OperationPlan::deleteOperationPlans(i->getOperation(), deleteLocked);
 
   // Mark to recompute the problems
@@ -1055,8 +1051,7 @@ void Buffer::buildProducingOperation() {
     producing_operation = nullptr;
   } else {
     // Remove eventual existing problem on the buffer
-    for (Problem::iterator j = Problem::begin(this, false); j != Problem::end();
-         ++j) {
+    for (auto j = Problem::begin(this, false); j != Problem::end(); ++j) {
       if (typeid(*j) == typeid(ProblemInvalidData)) {
         delete &*j;
         break;

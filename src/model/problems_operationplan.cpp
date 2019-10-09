@@ -25,7 +25,7 @@ namespace frepple {
 void Operation::updateProblems() {
   // Find all operationplans, and delegate the problem detection to them
   if (getDetectProblems())
-    for (OperationPlan* o = first_opplan; o; o = o->next) o->updateProblems();
+    for (auto o = first_opplan; o; o = o->next) o->updateProblems();
 }
 
 //
@@ -63,8 +63,7 @@ void OperationPlan::updateProblems() {
     needsPrecedence = true;
 
   // Loop through the existing problems
-  for (Problem::iterator j = Problem::begin(this, false);
-       j != Problem::end();) {
+  for (auto j = Problem::begin(this, false); j != Problem::end();) {
     // Need to increment now and define a pointer to the problem, since the
     // problem can be deleted soon (which invalidates the iterator).
     Problem& curprob = *j;
@@ -148,7 +147,7 @@ bool OperationPlan::updateFeasible() {
   // classes should be aware.
   if (firstsubopplan) {
     // Check feasibility of child operationplans
-    for (OperationPlan* i = firstsubopplan; i; i = i->nextsubopplan) {
+    for (auto i = firstsubopplan; i; i = i->nextsubopplan) {
       if (!i->updateFeasible()) {
         setFeasible(false);
         return false;

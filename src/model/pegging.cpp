@@ -67,11 +67,9 @@ PeggingIterator::PeggingIterator(const PeggingIterator& c)
       first(c.first),
       second_pass(c.second_pass) {
   initType(metadata);
-  for (statestack::const_iterator i = c.states.begin(); i != c.states.end();
-       ++i)
+  for (auto i = c.states.begin(); i != c.states.end(); ++i)
     states.push_back(state(i->opplan, i->quantity, i->offset, i->level));
-  for (deque<state>::const_iterator i = c.states_sorted.begin();
-       i != c.states_sorted.end(); ++i)
+  for (auto i = c.states_sorted.begin(); i != c.states_sorted.end(); ++i)
     states_sorted.push_back(state(i->opplan, i->quantity, i->offset, i->level));
 }
 
@@ -82,8 +80,7 @@ PeggingIterator::PeggingIterator(const Demand* d)
       second_pass(false) {
   initType(metadata);
   const Demand::OperationPlanList& deli = d->getDelivery();
-  for (Demand::OperationPlanList::const_iterator opplaniter = deli.begin();
-       opplaniter != deli.end(); ++opplaniter) {
+  for (auto opplaniter = deli.begin(); opplaniter != deli.end(); ++opplaniter) {
     OperationPlan* t = (*opplaniter)->getTopOwner();
     updateStack(t, t->getQuantity(), 0.0, 0);
   }
@@ -95,8 +92,8 @@ PeggingIterator::PeggingIterator(const Demand* d)
     /* Check if already found in the vector. */
     bool found = false;
     state& curtop = states.back();
-    for (deque<state>::iterator it = states_sorted.begin();
-         it != states_sorted.end() && !found; ++it)
+    for (auto it = states_sorted.begin(); it != states_sorted.end() && !found;
+         ++it)
       if (it->opplan == curtop.opplan) {
         // Update existing element in sorted stack
         it->quantity += curtop.quantity;

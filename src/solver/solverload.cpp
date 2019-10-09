@@ -304,8 +304,7 @@ void SolverCreate::solve(const Load* l, void* v) {
   double beforePenalty = data->state->a_penalty;
   OperationPlanState originalOpplan(lplan->getOperationPlan());
   double originalLoadplanQuantity = data->state->q_loadplan->getQuantity();
-  for (list<const Load*>::const_iterator i = thealternates.begin();
-       i != thealternates.end();) {
+  for (auto i = thealternates.begin(); i != thealternates.end();) {
     const Load* curload = *i;
     data->state->q_loadplan = lplan;  // because q_loadplan can change!
 

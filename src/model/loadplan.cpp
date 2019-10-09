@@ -187,7 +187,7 @@ void LoadPlan::setResource(Resource* newres, bool check, bool use_start) {
 
 LoadPlan* LoadPlan::getOtherLoadPlan() const {
   if (getResource()->hasType<ResourceBuckets>()) return nullptr;
-  for (LoadPlan* i = oper->firstloadplan; i; i = i->nextLoadPlan)
+  for (auto i = oper->firstloadplan; i; i = i->nextLoadPlan)
     if (i->ld == ld && i != this && i->getEventType() == 1) return i;
   throw LogicException("No matching loadplan found");
 }

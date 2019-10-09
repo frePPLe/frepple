@@ -484,13 +484,13 @@ void SolverCreate::solve(const Demand* l, void* v) {
 }
 
 void SolverCreate::scanExcess(CommandManager* mgr) {
-  for (CommandManager::iterator i = mgr->begin(); i != mgr->end(); ++i)
+  for (auto i = mgr->begin(); i != mgr->end(); ++i)
     if (i->isActive()) scanExcess(&*i);
 }
 
 void SolverCreate::scanExcess(CommandList* l) {
   // Loop over all newly created operationplans found in the command stack
-  for (CommandList::iterator cmd = l->begin(); cmd != l->end(); ++cmd) {
+  for (auto cmd = l->begin(); cmd != l->end(); ++cmd) {
     switch (cmd->getType()) {
       case 1:
         // Recurse deeper into command lists
@@ -536,7 +536,7 @@ void SolverCreate::scanExcess(CommandList* l) {
 }
 
 bool SolverCreate::hasOperationPlans(CommandManager* mgr) {
-  for (CommandManager::iterator i = mgr->begin(); i != mgr->end(); ++i) {
+  for (auto i = mgr->begin(); i != mgr->end(); ++i) {
     if (i->isActive()) {
       if (hasOperationPlans(&*i)) return true;
     }
@@ -546,7 +546,7 @@ bool SolverCreate::hasOperationPlans(CommandManager* mgr) {
 
 bool SolverCreate::hasOperationPlans(CommandList* l) {
   // Loop over all newly created operationplans found in the command stack
-  for (CommandList::iterator cmd = l->begin(); cmd != l->end(); ++cmd) {
+  for (auto cmd = l->begin(); cmd != l->end(); ++cmd) {
     switch (cmd->getType()) {
       case 1:
         // Recurse deeper into command lists

@@ -366,8 +366,7 @@ Object* OperationPlan::createOperationPlan(const MetaClass* cat,
     destbuffer->getProducingOperation();
 
     // Look for a matching operation replenishing this buffer.
-    for (Buffer::flowlist::const_iterator flowiter =
-             destbuffer->getFlows().begin();
+    for (auto flowiter = destbuffer->getFlows().begin();
          flowiter != destbuffer->getFlows().end() && !oper; ++flowiter) {
       if (!flowiter->getOperation()->hasType<OperationItemSupplier>()) continue;
       OperationItemSupplier* opitemsupplier =
@@ -445,8 +444,7 @@ Object* OperationPlan::createOperationPlan(const MetaClass* cat,
       destbuffer->getProducingOperation();
 
       // Look for a matching operation replenishing this buffer.
-      for (Buffer::flowlist::const_iterator flowiter =
-               destbuffer->getFlows().begin();
+      for (auto flowiter = destbuffer->getFlows().begin();
            flowiter != destbuffer->getFlows().end() && !oper; ++flowiter) {
         if (!flowiter->getOperation()->hasType<OperationItemDistribution>() ||
             flowiter->getQuantity() <= 0)
@@ -455,8 +453,7 @@ Object* OperationPlan::createOperationPlan(const MetaClass* cat,
             static_cast<OperationItemDistribution*>(flowiter->getOperation());
         // Origin must match as well
         if (orival) {
-          for (Operation::flowlist::const_iterator fl =
-                   opitemdist->getFlows().begin();
+          for (auto fl = opitemdist->getFlows().begin();
                fl != opitemdist->getFlows().end(); ++fl) {
             if (fl->getQuantity() < 0 &&
                 fl->getBuffer()->getLocation()->isMemberOf(
@@ -953,8 +950,7 @@ void OperationPlan::createFlowLoads() {
       if (!g->getAlternate()) new LoadPlan(this, &*g);
 
   // Create flowplans for flows
-  for (Operation::flowlist::const_iterator h = oper->getFlows().begin();
-       h != oper->getFlows().end(); ++h) {
+  for (auto h = oper->getFlows().begin(); h != oper->getFlows().end(); ++h) {
     // Only the primary flow is instantiated.
     if (h->getAlternate()) continue;
     // Also for transfer batches, we only need to create the first flowplan.
@@ -987,11 +983,11 @@ double OperationPlan::getTotalFlowAux(const Buffer* b) const {
   double q = 0.0;
 
   // Add my own quantity
-  for (FlowPlanIterator f = beginFlowPlans(); f != endFlowPlans(); ++f)
+  for (auto f = beginFlowPlans(); f != endFlowPlans(); ++f)
     if (f->getBuffer() == b) q += f->getQuantity();
 
   // Add the quantity of all children
-  for (OperationPlan* c = firstsubopplan; c; c = c->nextsubopplan)
+  for (auto c = firstsubopplan; c; c = c->nextsubopplan)
     q += c->getTotalFlowAux(b);
 
   // Return result
@@ -1062,7 +1058,7 @@ void OperationPlan::setStart(Date d, bool force, bool preferEnd) {
                                      preferEnd, true, false);
   else {
     // Move all sub-operationplans in an orderly fashion
-    for (OperationPlan* i = firstsubopplan; i; i = i->nextsubopplan) {
+    for (auto i = firstsubopplan; i; i = i->nextsubopplan) {
       if (i->getStart() < d) {
         i->setStart(d, force, preferEnd);
         d = i->getEnd();
@@ -1089,7 +1085,7 @@ void OperationPlan::setEnd(Date d, bool force) {
                                      true, true, false);
   else {
     // Move all sub-operationplans in an orderly fashion
-    for (OperationPlan* i = lastsubopplan; i; i = i->prevsubopplan) {
+    for (auto i = lastsubopplan; i; i = i->prevsubopplan) {
       if (!i->getEnd() || i->getEnd() > d) {
         i->setEnd(d, force);
         d = i->getStart();
@@ -1111,8 +1107,7 @@ void OperationPlan::resizeFlowLoadPlans() {
 
   // Update all loadplans
   if (getConsumeCapacity())
-    for (LoadPlanIterator e = beginLoadPlans(); e != endLoadPlans(); ++e)
-      e->update();
+    for (auto e = beginLoadPlans(); e != endLoadPlans(); ++e) e->update();
   else {
     LoadPlanIterator f = beginLoadPlans();
     firstloadplan = nullptr;  // Important to do this before the delete!
@@ -1319,6 +1314,8 @@ void OperationPlan::scanSetupTimes() {
     }
     
 
+
+
     // Scan forward until the first operationplan with a setup.
     resldplan = ldplan->getResource()->getLoadPlans().begin(&*ldplan);
     ++resldplan;
@@ -1388,7 +1385,7 @@ void OperationPlan::update() {
     // Set the start and end date of the parent.
     Date st = Date::infiniteFuture;
     Date nd = Date::infinitePast;
-    for (OperationPlan* f = firstsubopplan; f; f = f->nextsubopplan) {
+    for (auto f = firstsubopplan; f; f = f->nextsubopplan) {
       if (f->getStart() < st) st = f->getStart();
       if (f->getEnd() > nd) nd = f->getEnd();
     }
@@ -1414,7 +1411,7 @@ void OperationPlan::update() {
 void OperationPlan::deleteOperationPlans(Operation* o,
                                          bool deleteLockedOpplans) {
   if (!o) return;
-  for (OperationPlan* opplan = o->first_opplan; opplan;) {
+  for (auto opplan = o->first_opplan; opplan;) {
     OperationPlan* tmp = opplan;
 
     // Advance to the next operation plan
@@ -1510,8 +1507,7 @@ void OperationPlan::setConfirmed(bool b) {
     flags &= ~(STATUS_CONFIRMED + STATUS_COMPLETED + STATUS_CLOSED);
     flags |= STATUS_APPROVED;
   }
-  for (OperationPlan* x = firstsubopplan; x; x = x->nextsubopplan)
-    x->setConfirmed(b);
+  for (auto x = firstsubopplan; x; x = x->nextsubopplan) x->setConfirmed(b);
   update();
   propagateStatus();
 }
@@ -1524,8 +1520,7 @@ void OperationPlan::setApproved(bool b) {
     // Change to proposed
     flags &= ~(STATUS_APPROVED + STATUS_CONFIRMED + STATUS_COMPLETED +
                STATUS_CLOSED);
-  for (OperationPlan* x = firstsubopplan; x; x = x->nextsubopplan)
-    x->setApproved(b);
+  for (auto x = firstsubopplan; x; x = x->nextsubopplan) x->setApproved(b);
   update();
   propagateStatus();
 }
@@ -1539,8 +1534,7 @@ void OperationPlan::setProposed(bool b) {
     flags &= ~(STATUS_CONFIRMED + STATUS_COMPLETED + STATUS_CLOSED);
     flags |= STATUS_APPROVED;
   }
-  for (OperationPlan* x = firstsubopplan; x; x = x->nextsubopplan)
-    x->setProposed(b);
+  for (auto x = firstsubopplan; x; x = x->nextsubopplan) x->setProposed(b);
   update();
   propagateStatus();
 }
@@ -1554,8 +1548,7 @@ void OperationPlan::setCompleted(bool b) {
     flags &= ~(STATUS_CONFIRMED + STATUS_COMPLETED + STATUS_CLOSED);
     flags |= STATUS_APPROVED;
   }
-  for (OperationPlan* x = firstsubopplan; x; x = x->nextsubopplan)
-    x->setClosed(b);
+  for (auto x = firstsubopplan; x; x = x->nextsubopplan) x->setClosed(b);
   update();
   propagateStatus();
 }
@@ -1569,8 +1562,7 @@ void OperationPlan::setClosed(bool b) {
     flags &= ~(STATUS_CONFIRMED + STATUS_COMPLETED + STATUS_CLOSED);
     flags |= STATUS_APPROVED;
   }
-  for (OperationPlan* x = firstsubopplan; x; x = x->nextsubopplan)
-    x->setClosed(b);
+  for (auto x = firstsubopplan; x; x = x->nextsubopplan) x->setClosed(b);
   update();
   propagateStatus();
 }
@@ -1818,7 +1810,7 @@ void OperationPlan::setStatus(const string& s, bool propagate) {
   } else
     throw DataException("invalid operationplan status:" + s);
   update();
-  for (OperationPlan* x = firstsubopplan; x; x = x->nextsubopplan)
+  for (auto x = firstsubopplan; x; x = x->nextsubopplan)
     x->setStatus(s, propagate);
   if (propagate) propagateStatus();
 }

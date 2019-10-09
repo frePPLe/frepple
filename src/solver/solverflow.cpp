@@ -45,8 +45,7 @@ void SolverCreate::solve(const Flow* fl,
     // 1) collect a list of alternates
     list<const Flow*> thealternates;
     const Flow* x = fl->hasAlternates() ? fl : fl->getAlternate();
-    for (Operation::flowlist::const_iterator i =
-             fl->getOperation()->getFlows().begin();
+    for (auto i = fl->getOperation()->getFlows().begin();
          i != fl->getOperation()->getFlows().end(); ++i)
       if ((i->getAlternate() == x || &*i == x) &&
           i->getEffective().within(data->state->q_flowplan->getDate()))

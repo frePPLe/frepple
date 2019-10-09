@@ -85,8 +85,7 @@ Load::~Load() {
     for (OperationPlan::iterator i(getOperation()); i != OperationPlan::end();
          ++i)
       // Loop over loadplans
-      for (OperationPlan::LoadPlanIterator j = i->beginLoadPlans();
-           j != i->endLoadPlans();)
+      for (auto j = i->beginLoadPlans(); j != i->endLoadPlans();)
         if (j->getLoad() == this)
           j.deleteLoadPlan();
         else
@@ -103,8 +102,7 @@ void Load::setOperation(Operation* o) {
   if (!setup.empty() && o) {
     // Guarantuee that only a single load has a setup.
     // Alternates of that load can have a setup as well.
-    for (Operation::loadlist::iterator i = o->loaddata.begin();
-         i != o->loaddata.end(); ++i)
+    for (auto i = o->loaddata.begin(); i != o->loaddata.end(); ++i)
       if (&*i != this && !i->setup.empty() && i->getName() != getName())
         throw DataException(
             "Only a single load of an operation can specify a setup");
@@ -119,7 +117,7 @@ void Load::setSetupString(const string& n) {
   if (!n.empty() && getOperation()) {
     // Guarantuee that only a single load has a setup.
     // Alternates of that load can have a setup as well.
-    for (Operation::loadlist::iterator i = getOperation()->loaddata.begin();
+    for (auto i = getOperation()->loaddata.begin();
          i != getOperation()->loaddata.end(); ++i)
       if (&*i != this && !i->setup.empty() && i->getName() != getName())
         throw DataException(

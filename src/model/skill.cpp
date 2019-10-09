@@ -52,9 +52,8 @@ Skill::~Skill() {
   // of the Association list class.
 
   // Clean up the references on the load models
-  for (Operation::iterator o = Operation::begin(); o != Operation::end(); ++o)
-    for (Operation::loadlist::const_iterator l = o->getLoads().begin();
-         l != o->getLoads().end(); ++l)
+  for (auto o = Operation::begin(); o != Operation::end(); ++o)
+    for (auto l = o->getLoads().begin(); l != o->getLoads().end(); ++l)
       if (l->getSkill() == this) const_cast<Load&>(*l).setSkill(nullptr);
 }
 

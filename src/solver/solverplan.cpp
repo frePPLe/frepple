@@ -229,7 +229,7 @@ void SolverCreate::SolverData::commit() {
       solver->setPropagate(false);
       buffer_solve_shortages_only = false;
       for (short lvl = -1; lvl <= HasLevel::getNumberOfLevels(); ++lvl) {
-        for (Buffer::iterator b = Buffer::begin(); b != Buffer::end(); ++b) {
+        for (auto b = Buffer::begin(); b != Buffer::end(); ++b) {
           if (b->getLevel() != lvl ||
               (cluster != -1 && cluster != b->getCluster()))
             // Not your turn yet...
@@ -308,9 +308,8 @@ void SolverCreate::SolverData::commit() {
       }
 
       // Completely recreate all purchasing operation plans
-      for (set<const OperationItemSupplier*>::iterator o =
-               purchase_operations.begin();
-           o != purchase_operations.end(); ++o) {
+      for (auto o = purchase_operations.begin(); o != purchase_operations.end();
+           ++o) {
         // Only process buffers replenished from a single supplier
         if ((*o)->getBuffer()->getProducingOperation() != *o) continue;
 
@@ -364,7 +363,7 @@ void SolverCreate::SolverData::commit() {
     }
 
     // Clean up the operationplans of this cluster
-    for (Operation::iterator f = Operation::begin(); f != Operation::end(); ++f)
+    for (auto f = Operation::begin(); f != Operation::end(); ++f)
       if (f->getCluster() == cluster) f->deleteOperationPlans();
 
     // Clean the list of demands of this cluster
@@ -384,17 +383,15 @@ void SolverCreate::SolverData::solveSafetyStock(SolverCreate* solver) {
     logger << "Start safety stock replenishment pass   "
            << solver->getConstraints() << " for cluster " << cluster << endl;
   vector<list<Buffer*> > bufs(HasLevel::getNumberOfLevels() + 1);
-  for (Buffer::iterator buf = Buffer::begin(); buf != Buffer::end(); ++buf)
+  for (auto buf = Buffer::begin(); buf != Buffer::end(); ++buf)
     if ((buf->getCluster() == cluster || cluster == -1) &&
         !buf->hasType<BufferInfinite>() && buf->getProducingOperation() &&
         (buf->getMinimum() || buf->getMinimumCalendar() ||
          buf->getFlowPlans().begin() != buf->getFlowPlans().end()))
       bufs[(buf->getLevel() >= 0) ? buf->getLevel() : 0].push_back(&*buf);
   State* mystate = state;
-  for (vector<list<Buffer*> >::iterator b_list = bufs.begin();
-       b_list != bufs.end(); ++b_list)
-    for (list<Buffer*>::iterator b = b_list->begin(); b != b_list->end(); ++b)
-      try {
+  for (auto b_list = bufs.begin(); b_list != bufs.end(); ++b_list)
+    for (auto b = b_list->begin(); b != b_list->end(); ++b) try {
         state->curBuffer = nullptr;
         // A quantity of -1 is a flag for the buffer solver to solve safety
         // stock.
@@ -455,19 +452,19 @@ void SolverCreate::solve(void* v) {
   demands_per_cluster.resize(cl);
   if (!getConstraints()) {
     // Dumb unconstrained plan is running in a single thread
-    for (Demand::iterator i = Demand::begin(); i != Demand::end(); ++i)
+    for (auto i = Demand::begin(); i != Demand::end(); ++i)
       if (i->getQuantity() > 0 &&
           (i->getStatus() == Demand::OPEN || i->getStatus() == Demand::QUOTE))
         demands_per_cluster[0].push_back(&*i);
   } else if (cluster == -1) {
     // Many clusters to solve
-    for (Demand::iterator i = Demand::begin(); i != Demand::end(); ++i)
+    for (auto i = Demand::begin(); i != Demand::end(); ++i)
       if (i->getQuantity() > 0 &&
           (i->getStatus() == Demand::OPEN || i->getStatus() == Demand::QUOTE))
         demands_per_cluster[i->getCluster()].push_back(&*i);
   } else {
     // Only a single cluster to plan
-    for (Demand::iterator i = Demand::begin(); i != Demand::end(); ++i)
+    for (auto i = Demand::begin(); i != Demand::end(); ++i)
       if (i->getCluster() == cluster && i->getQuantity() > 0 &&
           (i->getStatus() == Demand::OPEN || i->getStatus() == Demand::QUOTE))
         demands_per_cluster[0].push_back(&*i);
@@ -478,7 +475,7 @@ void SolverCreate::solve(void* v) {
   // loop through the operations only once
   if (getErasePreviousFirst()) {
     if (getLogLevel() > 0) logger << "Deleting previous plan" << endl;
-    for (Operation::iterator e = Operation::begin(); e != Operation::end(); ++e)
+    for (auto e = Operation::begin(); e != Operation::end(); ++e)
       if (cluster == -1 || e->getCluster() == cluster)
         e->deleteOperationPlans();
   }

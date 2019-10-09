@@ -53,7 +53,7 @@ Item::~Item() {
   while (Buffer* buf = bufiter.next()) buf->setItem(nullptr);
 
   // Remove references from the demands
-  for (Demand::iterator l = Demand::begin(); l != Demand::end(); ++l)
+  for (auto l = Demand::begin(); l != Demand::end(); ++l)
     if (l->getItem() == this) l->setItem(nullptr);
 
   // Remove all item operations referencing this item

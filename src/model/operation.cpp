@@ -134,11 +134,11 @@ Operation::~Operation() {
   }
 
   // Remove the reference to this operation from all demands
-  for (Demand::iterator l = Demand::begin(); l != Demand::end(); ++l)
+  for (auto l = Demand::begin(); l != Demand::end(); ++l)
     if (l->getOperation() == this) l->setOperation(nullptr);
 
   // Remove the reference to this operation from all buffers
-  for (Buffer::iterator m = Buffer::begin(); m != Buffer::end(); ++m)
+  for (auto m = Buffer::begin(); m != Buffer::end(); ++m)
     if (m->getProducingOperation() == this) m->setProducingOperation(nullptr);
 
   // Remove the operation from its super-operations and sub-operations
@@ -1443,7 +1443,7 @@ OperationPlanState OperationRouting::setOperationPlanParameters(
   bool realfirst = true;
   if (e) {
     // Case 1: an end date is specified
-    for (OperationPlan* i = opplan->lastsubopplan; i; i = i->prevsubopplan) {
+    for (auto i = opplan->lastsubopplan; i; i = i->prevsubopplan) {
       x = i->setOperationPlanParameters(q, Date::infinitePast, e, preferEnd,
                                         execute, roundDown);
       e = x.start;
@@ -1455,7 +1455,7 @@ OperationPlanState OperationRouting::setOperationPlanParameters(
     return OperationPlanState(x.start, y, x.quantity);
   } else if (s) {
     // Case 2: a start date is specified
-    for (OperationPlan* i = opplan->firstsubopplan; i; i = i->nextsubopplan) {
+    for (auto i = opplan->firstsubopplan; i; i = i->nextsubopplan) {
       x = i->setOperationPlanParameters(q, s, Date::infinitePast, preferEnd,
                                         execute, roundDown);
       s = x.end;
@@ -1589,8 +1589,7 @@ bool OperationSplit::extraInstantiate(OperationPlan* o, bool createsubopplans,
   // Compute the sum of all effective percentages.
   int sum_percent = 0;
   Date enddate = o->getEnd();
-  for (Operation::Operationlist::const_iterator altIter =
-           getSubOperations().begin();
+  for (auto altIter = getSubOperations().begin();
        altIter != getSubOperations().end(); ++altIter) {
     if ((*altIter)->getEffective().within(enddate))
       sum_percent += (*altIter)->getPriority();
@@ -1601,8 +1600,7 @@ bool OperationSplit::extraInstantiate(OperationPlan* o, bool createsubopplans,
     return true;
 
   // Create all child operationplans
-  for (Operation::Operationlist::const_iterator altIter =
-           getSubOperations().begin();
+  for (auto altIter = getSubOperations().begin();
        altIter != getSubOperations().end(); ++altIter) {
     // Verify effectivity date and percentage > 0
     if (!(*altIter)->getPriority() ||
@@ -1613,8 +1611,7 @@ bool OperationSplit::extraInstantiate(OperationPlan* o, bool createsubopplans,
     // In case the split suboperation produces multiple materials this code
     // is not foolproof...
     const Flow* f = nullptr;
-    for (Operation::flowlist::const_iterator fiter =
-             (*altIter)->getOperation()->getFlows().begin();
+    for (auto fiter = (*altIter)->getOperation()->getFlows().begin();
          fiter != (*altIter)->getOperation()->getFlows().end() && !f; ++fiter) {
       if (fiter->getQuantity() > 0.0 && fiter->getEffective().within(enddate))
         f = &*fiter;
@@ -1665,7 +1662,7 @@ void OperationSplit::addSubOperationPlan(OperationPlan* parent,
     // Check whether the new alternate is a valid suboperation
     bool ok = false;
     const Operationlist& alts = parent->getOperation()->getSubOperations();
-    for (Operationlist::const_iterator i = alts.begin(); i != alts.end(); i++)
+    for (auto i = alts.begin(); i != alts.end(); i++)
       if ((*i)->getOperation() == child->getOperation()) {
         ok = true;
         break;
@@ -1707,7 +1704,7 @@ void OperationAlternate::addSubOperationPlan(OperationPlan* parent,
     // Check whether the new alternate is a valid suboperation
     bool ok = false;
     const Operationlist& alts = parent->getOperation()->getSubOperations();
-    for (Operationlist::const_iterator i = alts.begin(); i != alts.end(); i++)
+    for (auto i = alts.begin(); i != alts.end(); i++)
       if ((*i)->getOperation() == child->getOperation()) {
         ok = true;
         break;
@@ -1990,7 +1987,7 @@ double Operation::setOperationPlanQuantity(OperationPlan* oplan, double f,
 
   // Apply the same size also to its unlocked children
   if (execute && oplan->firstsubopplan)
-    for (OperationPlan* i = oplan->firstsubopplan; i; i = i->nextsubopplan)
+    for (auto i = oplan->firstsubopplan; i; i = i->nextsubopplan)
       if (!i->getConfirmed()) {
         i->quantity = oplan->quantity;
         if (upd) i->resizeFlowLoadPlans();
@@ -2012,7 +2009,7 @@ double OperationRouting::setOperationPlanQuantity(OperationPlan* oplan,
   if (!execute) return newqty;
 
   // Update all routing sub operationplans
-  for (OperationPlan* i = oplan->firstsubopplan; i; i = i->nextsubopplan) {
+  for (auto i = oplan->firstsubopplan; i; i = i->nextsubopplan) {
     if (!i->getProposed()) {
       // Find the unlocked operationplan on the same operation
       OperationPlan* match = i->prevsubopplan;
@@ -2074,9 +2071,8 @@ Duration OperationAlternate::getDecoupledLeadTime(double qty) const {
   // Find the preferred alternate
   int curPrio = INT_MAX;
   Operation* suboper = nullptr;
-  for (Operation::Operationlist::const_iterator sub =
-           getSubOperations().begin();
-       sub != getSubOperations().end(); ++sub) {
+  for (auto sub = getSubOperations().begin(); sub != getSubOperations().end();
+       ++sub) {
     if ((*sub)->getPriority() < curPrio &&
         (*sub)->getEffective().within(Plan::instance().getCurrent())) {
       suboper = (*sub)->getOperation();
@@ -2133,9 +2129,8 @@ Duration OperationAlternate::getDecoupledLeadTime(double qty) const {
 
 Duration OperationSplit::getDecoupledLeadTime(double qty) const {
   Duration totalmax;
-  for (Operation::Operationlist::const_iterator sub =
-           getSubOperations().begin();
-       sub != getSubOperations().end(); ++sub) {
+  for (auto sub = getSubOperations().begin(); sub != getSubOperations().end();
+       ++sub) {
     if (!(*sub)->getEffective().within(Plan::instance().getCurrent()))
       // This suboperation is not effective
       continue;
@@ -2207,9 +2202,8 @@ Duration OperationRouting::getDecoupledLeadTime(double qty) const {
   // total routing.
   Duration nextStepsDuration;
   Duration totalmax;
-  for (Operation::Operationlist::const_reverse_iterator sub =
-           getSubOperations().rbegin();
-       sub != getSubOperations().rend(); ++sub) {
+  for (auto sub = getSubOperations().rbegin(); sub != getSubOperations().rend();
+       ++sub) {
     Duration maxSub;
     Operation* suboper = (*sub)->getOperation();
 
@@ -2370,7 +2364,7 @@ Operation* Operation::findFromName(string nm) {
       if (buf && sup && buf->getItem() && buf->getLocation()) {
         // Find itemsupplier
         ItemSupplier* item_sup = nullptr;
-        for (Item* it = buf->getItem(); it && !item_sup; it = it->getOwner()) {
+        for (auto it = buf->getItem(); it && !item_sup; it = it->getOwner()) {
           Item::supplierlist::const_iterator supitem_iter =
               it->getSupplierIterator();
           while (ItemSupplier* i = supitem_iter.next()) {

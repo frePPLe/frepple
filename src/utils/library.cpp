@@ -372,18 +372,16 @@ const MetaClass* MetaCategory::findClass(const char* c) const {
 
 const MetaClass* MetaCategory::findClass(const size_t h) const {
   // Look up in the registered classes
-  MetaCategory::ClassMap::const_iterator j = classes.find(h);
+  auto j = classes.find(h);
   return (j == classes.end()) ? nullptr : j->second;
 }
 
 const MetaClass* MetaClass::findClass(const char* c) {
   // Loop through all categories
-  for (MetaCategory::CategoryMap::const_iterator i =
-           MetaCategory::categoriesByTag.begin();
+  for (auto i = MetaCategory::categoriesByTag.begin();
        i != MetaCategory::categoriesByTag.end(); ++i) {
     // Look up in the registered classes
-    MetaCategory::ClassMap::const_iterator j =
-        i->second->classes.find(Keyword::hash(c));
+    auto j = i->second->classes.find(Keyword::hash(c));
     if (j != i->second->classes.end()) return j->second;
   }
   // Not found...
@@ -393,13 +391,12 @@ const MetaClass* MetaClass::findClass(const char* c) {
 void MetaClass::printClasses() {
   logger << "Registered classes:" << endl;
   // Loop through all categories
-  for (MetaCategory::CategoryMap::const_iterator i =
-           MetaCategory::categoriesByTag.begin();
+  for (auto i = MetaCategory::categoriesByTag.begin();
        i != MetaCategory::categoriesByTag.end(); ++i) {
     logger << "  " << i->second->type << endl;
     // Loop through the classes for the category
-    for (MetaCategory::ClassMap::const_iterator j = i->second->classes.begin();
-         j != i->second->classes.end(); ++j)
+    for (auto j = i->second->classes.begin(); j != i->second->classes.end();
+         ++j)
       if (j->first == Keyword::hash("default"))
         logger << "    default ( = " << j->second->type << " )" << j->second
                << endl;
@@ -409,13 +406,13 @@ void MetaClass::printClasses() {
 }
 
 const MetaFieldBase* MetaClass::findField(const Keyword& key) const {
-  for (fieldlist::const_iterator i = fields.begin(); i != fields.end(); ++i)
+  for (auto i = fields.begin(); i != fields.end(); ++i)
     if ((*i)->getName() == key) return *i;
   return nullptr;
 }
 
 const MetaFieldBase* MetaClass::findField(size_t h) const {
-  for (fieldlist::const_iterator i = fields.begin(); i != fields.end(); ++i)
+  for (auto i = fields.begin(); i != fields.end(); ++i)
     if ((*i)->getHash() == h) return *i;
   return nullptr;
 }
@@ -444,8 +441,7 @@ Action MetaClass::decodeAction(const DataValueDict& atts) {
 
 bool MetaClass::raiseEvent(Object* v, Signal a) const {
   bool result(true);
-  for (list<Functor*>::const_iterator i = subscribers[a].begin();
-       i != subscribers[a].end(); ++i)
+  for (auto i = subscribers[a].begin(); i != subscribers[a].end(); ++i)
     // Note that we always call all subscribers, even if one or more
     // already replied negatively. However, an exception thrown from a
     // callback method will break the publishing chain.

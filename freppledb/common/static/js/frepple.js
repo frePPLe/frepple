@@ -414,8 +414,8 @@ jQuery.extend($.fn.fmatter, {
           return cellvalue; //don't show links for non existing operations
     }
     return cellvalue 
-      + "<a href='" + url_prefix + "/detail/" + options.colModel.role + "/" + admin_escape(cellvalue) 
-      + "/' onclick='event.stopPropagation()'><span class='leftpadding fa fa-caret-right'></span></a>";
+      + "<a href=\"" + url_prefix + "/detail/" + options.colModel.role + "/" + admin_escape(cellvalue) 
+      + "/\" onclick='event.stopPropagation()'><span class='leftpadding fa fa-caret-right'></span></a>";
   },
 
   demanddetail : function(cellvalue, options, rowdata) {
@@ -430,8 +430,8 @@ jQuery.extend($.fn.fmatter, {
       if (result != '')
       	result += ', ';
         result += cellvalue[i][0] + " : " + cellvalue[i][1] 
-          + "<a href='" + url_prefix + "/detail/input/demand/" + admin_escape(cellvalue[i][1])
-          + "/' onclick='event.stopPropagation()'><span class='leftpadding fa fa-caret-right' role='input/demand'></span></a>";
+          + "<a href=\"" + url_prefix + "/detail/input/demand/" + admin_escape(cellvalue[i][1])
+          + "/\" onclick='event.stopPropagation()'><span class='leftpadding fa fa-caret-right' role='input/demand'></span></a>";
     }
     return result;
   },
@@ -448,9 +448,9 @@ jQuery.extend($.fn.fmatter, {
       if (result != '')
       	result += ', ';
       result += '<span><span class="listdetailkey">' + cellvalue[i][0] 
-        + "</span><a href='" + url_prefix + "/detail/" + options.colModel.role 
+        + "</span><a href=\"" + url_prefix + "/detail/" + options.colModel.role 
         + "/" + admin_escape(cellvalue[i][0]) 
-        + "/' onclick='event.stopPropagation()'><span class='leftpadding fa fa-caret-right' role='" 
+        + "/\" onclick='event.stopPropagation()'><span class='leftpadding fa fa-caret-right' role='" 
         + options.colModel.role + "'></span></a></span>&nbsp;<span>" + cellvalue[i][1] + "</span>";
     }
     return result;

@@ -1314,7 +1314,7 @@ void OperationPlan::scanSetupTimes() {
     }
     
 
-
+
 
     // Scan forward until the first operationplan with a setup.
     resldplan = ldplan->getResource()->getLoadPlans().begin(&*ldplan);
@@ -1428,14 +1428,17 @@ void OperationPlan::deleteOperationPlans(Operation* o,
   }
 }
 
-bool OperationPlan::isExcess(bool use_zero) const {
+double OperationPlan::isExcess(bool use_zero) const {
   // Delivery operationplans aren't excess
-  if (getDemand()) return false;
+  if (getDemand()) return 0.0;
 
   // Recursive call for suboperationplans
+  double opplan_excess_qty = getQuantity();
   for (OperationPlan* subopplan = firstsubopplan; subopplan;
-       subopplan = subopplan->nextsubopplan)
-    if (!subopplan->isExcess(use_zero)) return false;
+       subopplan = subopplan->nextsubopplan) {
+    auto tmp = subopplan->isExcess(use_zero);
+    if (tmp < opplan_excess_qty) opplan_excess_qty = tmp;
+  }
 
   // Loop over all producing flowplans
   bool hasFlowplans = false;
@@ -1445,13 +1448,14 @@ bool OperationPlan::isExcess(bool use_zero) const {
     if (i->getQuantity() <= 0) continue;
 
     // Find the total produced quantity, including all suboperationplans
-    double prod_qty = i->getQuantity();
+    double flpln_excess_qty = i->getQuantity();
     for (OperationPlan* subopplan = firstsubopplan; subopplan;
          subopplan = subopplan->nextsubopplan)
       for (OperationPlan::FlowPlanIterator k = subopplan->beginFlowPlans();
            k != subopplan->endFlowPlans(); ++k)
-        if (k->getBuffer() == i->getBuffer()) prod_qty += k->getQuantity();
-    if (prod_qty <= 0) continue;
+        if (k->getBuffer() == i->getBuffer())
+          flpln_excess_qty += k->getQuantity();
+    if (flpln_excess_qty <= 0) continue;
 
     // Loop over all flowplans in the buffer (starting at the end) and verify
     // that the onhand is bigger than the flowplan quantity
@@ -1464,25 +1468,44 @@ bool OperationPlan::isExcess(bool use_zero) const {
       current_minimum = i->getBuffer()->getFlowPlans().getMin(&*j);
     }
     for (; j != i->getBuffer()->getFlowPlans().end(); --j) {
-      if ((current_maximum > 0 &&
-           j->getOnhand() < prod_qty + current_maximum - ROUNDING_ERROR) ||
-          j->getOnhand() < prod_qty + current_minimum - ROUNDING_ERROR)
-        return false;
-      if (j->getEventType() == 4 && !use_zero)
-        current_maximum = j->getMax(false);
-      if (j->getEventType() == 3 && !use_zero)
-        current_minimum = j->getMin(false);
+      if (!j->isLastOnDate()) {
+        if (&*j == &*i) break;
+        continue;
+      }
+      if (current_maximum > 0.0) {
+        auto above_max = j->getOnhand() - current_maximum;
+        if (above_max < ROUNDING_ERROR) return 0.0;
+        if (above_max < flpln_excess_qty) flpln_excess_qty = above_max;
+      } else {
+        auto above_min = j->getOnhand() - current_minimum;
+        if (above_min < ROUNDING_ERROR) return 0.0;
+        if (above_min < flpln_excess_qty) flpln_excess_qty = above_min;
+      }
+      if (!use_zero) {
+        if (j->getEventType() == 4) current_maximum = j->getMax(false);
+        if (j->getEventType() == 3) current_minimum = j->getMin(false);
+      }
       if (&*j == &*i) break;
+    }
+
+    // Convert excess on this flowplan to excess on operationplan
+    flpln_excess_qty -= i->getFlow()->getQuantityFixed();
+    if (flpln_excess_qty < ROUNDING_ERROR) return 0.0;
+    if (i->getFlow()->getQuantity()) {
+      flpln_excess_qty /= i->getFlow()->getQuantity();
+      if (flpln_excess_qty < opplan_excess_qty)
+        opplan_excess_qty = flpln_excess_qty;
     }
   }
 
   // Handle operationplan already being deleted by a deleteOperation command
   if (!hasFlowplans &&
       getOperation()->getFlows().begin() != getOperation()->getFlows().end())
-    return false;
+    return 0.0;
 
-  // If we remove this operationplan the onhand in all buffers remains positive.
-  return true;
+  // If we remove/reduce this operationplan the onhand in all buffers remains
+  // positive.
+  return opplan_excess_qty;
 }
 
 Duration OperationPlan::getUnavailable() const {
@@ -1789,6 +1812,15 @@ string OperationPlan::getStatus() const {
     return "confirmed";
   else
     return "proposed";
+}
+
+bool OperationPlan::isConstrained() const {
+  for (PeggingIterator p(this); p; ++p) {
+    const OperationPlan* m = p.getOperationPlan();
+    Demand* dmd = m ? m->getTopOwner()->getDemand() : nullptr;
+    if (dmd && dmd->getDue() < m->getEnd()) return true;
+  }
+  return false;
 }
 
 void OperationPlan::setStatus(const string& s, bool propagate) {

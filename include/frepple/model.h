@@ -1683,6 +1683,11 @@ class OperationPlan : public Object,
    */
   Duration getUnavailable() const;
 
+  /* Returns whether or not this operationplan is linked to a demand that
+   * is planned late or not.
+   */
+  bool isConstrained() const;
+
   /* Return the status of the operationplan.
    * The status string is one of the following:
    *   - proposed
@@ -1939,7 +1944,7 @@ class OperationPlan : public Object,
    * check with the minimum stock level of the buffers. If the argument
    * is true, we check with 0.
    */
-  bool isExcess(bool = false) const;
+  double isExcess(bool = false) const;
 
   /* Returns a unique identifier of the operationplan.
    * The identifier can be specified in the data input (in which case

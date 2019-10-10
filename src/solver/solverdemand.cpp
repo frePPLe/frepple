@@ -500,8 +500,10 @@ void SolverCreate::scanExcess(CommandList* l) {
         // Detect excess operationplans and undo them
         auto createcmd = static_cast<CommandCreateOperationPlan*>(&*cmd);
         if (createcmd->getOperationPlan()) {
-          if (createcmd->getOperationPlan()->isExcess(
-                  !getPlanSafetyStockFirst())) {
+          if (createcmd->getOperationPlan()->getQuantity() -
+                  createcmd->getOperationPlan()->isExcess(
+                      !getPlanSafetyStockFirst()) <
+              ROUNDING_ERROR) {
             if (getLogLevel() > 1)
               logger << "Denying creation of redundant operationplan "
                      << createcmd->getOperationPlan()->getOperation() << "  "
@@ -517,7 +519,9 @@ void SolverCreate::scanExcess(CommandList* l) {
                          ->getOperationPlans();
             while (o != OperationPlan::end()) {
               if (createcmd->getOperationPlan()->getEnd() < o->getEnd() &&
-                  o->getProposed() && o->isExcess(!getPlanSafetyStockFirst())) {
+                  o->getProposed() &&
+                  (o->getQuantity() - o->isExcess(!getPlanSafetyStockFirst()) <
+                   ROUNDING_ERROR)) {
                 auto tmp = &*o;
                 ++o;
                 if (getLogLevel() > 1)

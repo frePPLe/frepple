@@ -4,9 +4,20 @@ Release notes
 6.1.0 (Upcoming release)
 ========================
 
+.. rubric:: Production planning
+
+- Bug fixes in the solver algorithm when using alternate materials.
+
+.. rubric:: User interface
+
+- Support for user-defined attributes on purchase orders, manufacturing orders and
+  distribution orders.
+
 .. rubric:: Integration
 
 - Renamed the command "create_database" to "createdatabase" for consistency with the other commands.
+
+- Various fixes to the connector for Odoo 12.
 
 6.0.0 (2019/16/09)
 ==================

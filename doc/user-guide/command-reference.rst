@@ -29,7 +29,7 @@ This section provides an overview of the available actions:
 
   * :ref:`loaddata`
   * :ref:`createbuckets`
-  * :ref:`create_database`
+  * :ref:`createdatabase`
   * :ref:`migrate`
   * :ref:`restore`
   * :ref:`createsuperuser`
@@ -470,7 +470,7 @@ This command is available in the user interface, the command line and the web AP
     Deprecated:
     POST /execute/api/frepple_createbuckets/?start=2012-01-01&end=2020-01-01&weekstart=1
 
-.. _create_database:
+.. _createdatabase:
 
 Create the PostgreSQL database(s)
 ---------------------------------
@@ -486,10 +486,10 @@ This command is available on the command line only:
 ::
 
     # Create all scenario databases
-    frepplectl create_database
+    frepplectl createdatabase
     
     # Recreate only a single database 
-    frepplectl create_database --database=scenario3
+    frepplectl createdatabase --database=scenario3
 
 .. _migrate:
 

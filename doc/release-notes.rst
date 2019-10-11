@@ -4,7 +4,9 @@ Release notes
 6.1.0 (Upcoming release)
 ========================
 
+.. rubric:: Integration
 
+- Renamed the command "create_database" to "createdatabase" for consistency with the other commands.
 
 6.0.0 (2019/16/09)
 ==================

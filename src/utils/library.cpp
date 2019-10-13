@@ -42,7 +42,8 @@ namespace utils {
 
 // Static stringpool table
 PooledString::pool_type PooledString::pool;
-string PooledString::nullstring;
+const string PooledString::nullstring;
+const char PooledString::nullchar = '\0';
 
 // Repository of all categories and commands
 const MetaCategory* MetaCategory::firstCategory = nullptr;

@@ -5060,7 +5060,8 @@ class PooledString {
   }
 
  public:
-  static string nullstring;
+  const static string nullstring;
+  const static char nullchar;
 
   static pair<size_t, size_t> getSize() {
     return make_pair(pool.size(), pool.size() * (sizeof(pool_type::value_type) +
@@ -5125,6 +5126,21 @@ class PooledString {
 
   /* Return true if the string is empty. */
   inline bool empty() const { return !ptr; }
+
+  /* Return the character at a certain position in the string, or \0 if not
+   * found. */
+  const char& at(size_t pos) const {
+    return ptr ? ptr->first.at(pos) : nullchar;
+  }
+
+  /* Return the first character in the string. Or \0 if the string is empty. */
+  const char& front() const { return ptr ? ptr->first.front() : nullchar; }
+
+  /* Return the last character in the string. Or \0 if the string is empty. */
+  const char& back() const { return ptr ? ptr->first.back() : nullchar; }
+
+  /* Return the length of the string. */
+  size_t size() const { return ptr ? ptr->first.size() : 0; }
 
   inline const string& getString() const {
     return ptr ? ptr->first : nullstring;

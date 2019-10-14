@@ -1457,6 +1457,209 @@ class exportStaticModel(object):
             # Create a database connection
             cursor = connections[self.database].cursor()
 
+            # Cleanup unused records
+            if self.source:
+                cursor.execute(
+                    """
+                    delete from operationmaterial
+                    where (source = %s and lastmodified <> %s)
+                      or operation_id in (
+                        select name from operation
+                        where operation.source = %s and operation.lastmodified <> %s
+                        )
+                    """,
+                    (self.source, self.timestamp, self.source, self.timestamp),
+                )
+                cursor.execute(
+                    "delete from buffer where source = %s and lastmodified <> %s",
+                    (self.source, self.timestamp),
+                )
+                cursor.execute(
+                    """
+                    delete from operationplanmaterial
+                    where operationplan_id in (select reference from operationplan
+                      inner join demand on operationplan.demand_id = demand.name
+                      where demand.source = %s and demand.lastmodified <> %s
+                    )
+                    """,
+                    (self.source, self.timestamp),
+                )
+                cursor.execute(
+                    """
+                    delete from operationplanresource
+                    where operationplan_id in (
+                      select reference from operationplan
+                      inner join demand on operationplan.demand_id = demand.name
+                      where demand.source = %s and demand.lastmodified <> %s
+                    )
+                    """,
+                    (self.source, self.timestamp),
+                )
+                cursor.execute(
+                    "delete from operationplan where demand_id in (select name from demand where source = %s and lastmodified <> %s)",
+                    (self.source, self.timestamp),
+                )
+                cursor.execute(
+                    "delete from demand where source = %s and lastmodified <> %s",
+                    (self.source, self.timestamp),
+                )
+                cursor.execute(
+                    "delete from itemsupplier where source = %s and lastmodified <> %s",
+                    (self.source, self.timestamp),
+                )
+                cursor.execute(
+                    "delete from itemdistribution where source = %s and lastmodified <> %s",
+                    (self.source, self.timestamp),
+                )
+                cursor.execute(
+                    """
+                    delete from operationplanmaterial
+                    where operationplan_id in (
+                      select operationplan.reference
+                      from operationplan
+                      where (operationplan.source = %s and operationplan.lastmodified <> %s)
+                      or operation_id in (
+                        select name from operation
+                        where operation.source = %s and operation.lastmodified <> %s
+                        )
+                      or supplier_id in (
+                        select name from supplier where source = %s and lastmodified <> %s
+                       )
+                      )
+                    """,
+                    (
+                        self.source,
+                        self.timestamp,
+                        self.source,
+                        self.timestamp,
+                        self.source,
+                        self.timestamp,
+                    ),
+                )
+                cursor.execute(
+                    """
+                    delete from operationplanresource
+                    where operationplan_id in (
+                      select operationplan.reference
+                      from operationplan
+                      where (operationplan.source = %s and operationplan.lastmodified <> %s)
+                        or operation_id in (select name from operation where operation.source = %s and operation.lastmodified <> %s)
+                        or supplier_id in (
+                        select name from supplier where source = %s and lastmodified <> %s
+                       )
+                      )
+                    """,
+                    (
+                        self.source,
+                        self.timestamp,
+                        self.source,
+                        self.timestamp,
+                        self.source,
+                        self.timestamp,
+                    ),
+                )
+                cursor.execute(
+                    """
+                    delete from operationplan
+                    where owner_id is not null and ((source = %s and lastmodified <> %s)
+                      or operation_id in (
+                        select name from operation
+                        where operation.source = %s and operation.lastmodified <> %s
+                        )
+                      or supplier_id in (
+                        select name from supplier where source = %s and lastmodified <> %s
+                       ))
+                    """,
+                    (
+                        self.source,
+                        self.timestamp,
+                        self.source,
+                        self.timestamp,
+                        self.source,
+                        self.timestamp,
+                    ),
+                )
+                cursor.execute(
+                    """
+                    delete from operationplan
+                    where (source = %s and lastmodified <> %s)
+                      or operation_id in (
+                        select name from operation
+                        where operation.source = %s and operation.lastmodified <> %s
+                        )
+                      or supplier_id in (
+                        select name from supplier where source = %s and lastmodified <> %s
+                       )
+                    """,
+                    (
+                        self.source,
+                        self.timestamp,
+                        self.source,
+                        self.timestamp,
+                        self.source,
+                        self.timestamp,
+                    ),
+                )
+                cursor.execute(
+                    """
+                    delete from operationresource
+                    where (source = %s and lastmodified <> %s)
+                      or operation_id in (
+                         select name from operation
+                         where operation.source = %s and operation.lastmodified <> %s
+                         )
+                  """,
+                    (self.source, self.timestamp, self.source, self.timestamp),
+                )
+                cursor.execute(
+                    "delete from operation where source = %s and lastmodified <> %s",
+                    (self.source, self.timestamp),
+                )
+                cursor.execute(
+                    "delete from item where source = %s and lastmodified <> %s",
+                    (self.source, self.timestamp),
+                )
+                cursor.execute(
+                    "delete from resourceskill where source = %s and lastmodified <> %s",
+                    (self.source, self.timestamp),
+                )
+                cursor.execute(
+                    "delete from operation where source = %s and lastmodified <> %s",
+                    (self.source, self.timestamp),
+                )
+                cursor.execute(
+                    "delete from resource where source = %s and lastmodified <> %s",
+                    (self.source, self.timestamp),
+                )
+                cursor.execute(
+                    "delete from location where source = %s and lastmodified <> %s",
+                    (self.source, self.timestamp),
+                )
+                cursor.execute(
+                    "delete from calendar where source = %s and lastmodified <> %s",
+                    (self.source, self.timestamp),
+                )
+                cursor.execute(
+                    "delete from skill where source = %s and lastmodified <> %s",
+                    (self.source, self.timestamp),
+                )
+                cursor.execute(
+                    "delete from setuprule where source = %s and lastmodified <> %s",
+                    (self.source, self.timestamp),
+                )
+                cursor.execute(
+                    "delete from setupmatrix where source = %s and lastmodified <> %s",
+                    (self.source, self.timestamp),
+                )
+                cursor.execute(
+                    "delete from customer where source = %s and lastmodified <> %s",
+                    (self.source, self.timestamp),
+                )
+                cursor.execute(
+                    "delete from supplier where source = %s and lastmodified <> %s",
+                    (self.source, self.timestamp),
+                )
+
             if False:
                 # OPTION 1: Sequential export of each entity
                 # The parallel export normally gives a better performance, but
@@ -1519,154 +1722,6 @@ class exportStaticModel(object):
                 # Wait for all threads to finish
                 for i in tasks:
                     i.join()
-
-            # Cleanup unused records
-            if self.source:
-                cursor.execute(
-                    """
-                    delete from operationmaterial
-                    where (source = %s and lastmodified <> %s)
-                      or operation_id in (
-                        select name from operation
-                        where operation.source = %s and operation.lastmodified <> %s
-                        )
-                    """,
-                    (self.source, self.timestamp, self.source, self.timestamp),
-                )
-                cursor.execute(
-                    "delete from buffer where source = %s and lastmodified <> %s",
-                    (self.source, self.timestamp),
-                )
-                cursor.execute(
-                    """
-                    delete from operationplanmaterial
-                    where operationplan_id in (select reference from operationplan
-                      inner join demand on operationplan.demand_id = demand.name
-                      where demand.source = %s and demand.lastmodified <> %s
-                    )
-                    """,
-                    (self.source, self.timestamp),
-                )
-                cursor.execute(
-                    """
-                    delete from operationplanresource
-                    where operationplan_id in (
-                      select reference from operationplan
-                      inner join demand on operationplan.demand_id = demand.name
-                      where demand.source = %s and demand.lastmodified <> %s
-                    )
-                    """,
-                    (self.source, self.timestamp),
-                )
-                cursor.execute(
-                    "delete from operationplan where demand_id in (select name from demand where source = %s and lastmodified <> %s)",
-                    (self.source, self.timestamp),
-                )
-                cursor.execute(
-                    "delete from demand where source = %s and lastmodified <> %s",
-                    (self.source, self.timestamp),
-                )
-                cursor.execute(
-                    "delete from itemsupplier where source = %s and lastmodified <> %s",
-                    (self.source, self.timestamp),
-                )
-                cursor.execute(
-                    "delete from itemdistribution where source = %s and lastmodified <> %s",
-                    (self.source, self.timestamp),
-                )
-                cursor.execute(
-                    "delete from item where source = %s and lastmodified <> %s",
-                    (self.source, self.timestamp),
-                )
-                cursor.execute(
-                    """
-                    delete from operationplanmaterial
-                    where operationplan_id in (
-                      select operationplan.reference
-                      from operationplan
-                      where (operationplan.source = %s and operationplan.lastmodified <> %s)
-                      or operation_id in (
-                        select name from operation
-                        where operation.source = %s and operation.lastmodified <> %s
-                        )
-                      )
-                    """,
-                    (self.source, self.timestamp, self.source, self.timestamp),
-                )
-                cursor.execute(
-                    """
-                    delete from operationplanresource
-                    where operationplan_id in (
-                      select operationplan.reference
-                      from operationplan
-                      where (operationplan.source = %s and operationplan.lastmodified <> %s)
-                        or operation_id in (select name from operation where operation.source = %s and operation.lastmodified <> %s)
-                      )
-                    """,
-                    (self.source, self.timestamp, self.source, self.timestamp),
-                )
-                cursor.execute(
-                    """
-                    delete from operationplan
-                    where (source = %s and lastmodified <> %s)
-                      or operation_id in (
-                        select name from operation
-                        where operation.source = %s and operation.lastmodified <> %s
-                        )
-                    """,
-                    (self.source, self.timestamp, self.source, self.timestamp),
-                )
-                cursor.execute(
-                    """
-                    delete from operationresource
-                    where (source = %s and lastmodified <> %s)
-                      or operation_id in (
-                         select name from operation
-                         where operation.source = %s and operation.lastmodified <> %s
-                         )
-                  """,
-                    (self.source, self.timestamp, self.source, self.timestamp),
-                )
-                cursor.execute(
-                    "delete from resourceskill where source = %s and lastmodified <> %s",
-                    (self.source, self.timestamp),
-                )
-                cursor.execute(
-                    "delete from operation where source = %s and lastmodified <> %s",
-                    (self.source, self.timestamp),
-                )
-                cursor.execute(
-                    "delete from resource where source = %s and lastmodified <> %s",
-                    (self.source, self.timestamp),
-                )
-                cursor.execute(
-                    "delete from location where source = %s and lastmodified <> %s",
-                    (self.source, self.timestamp),
-                )
-                cursor.execute(
-                    "delete from calendar where source = %s and lastmodified <> %s",
-                    (self.source, self.timestamp),
-                )
-                cursor.execute(
-                    "delete from skill where source = %s and lastmodified <> %s",
-                    (self.source, self.timestamp),
-                )
-                cursor.execute(
-                    "delete from setuprule where source = %s and lastmodified <> %s",
-                    (self.source, self.timestamp),
-                )
-                cursor.execute(
-                    "delete from setupmatrix where source = %s and lastmodified <> %s",
-                    (self.source, self.timestamp),
-                )
-                cursor.execute(
-                    "delete from customer where source = %s and lastmodified <> %s",
-                    (self.source, self.timestamp),
-                )
-                cursor.execute(
-                    "delete from supplier where source = %s and lastmodified <> %s",
-                    (self.source, self.timestamp),
-                )
 
             # Close the database connection
             cursor.close()

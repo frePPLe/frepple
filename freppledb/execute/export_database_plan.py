@@ -25,10 +25,10 @@ embedded Python interpreter from the frePPLe engine.
 from datetime import timedelta, datetime, date
 import json
 import os
-import io
 import logging
 from psycopg2.extensions import adapt
 from subprocess import Popen, PIPE
+import tempfile
 from time import time
 from threading import Thread
 
@@ -272,8 +272,7 @@ class export:
             logger.info("Exporting problems...")
         starttime = time()
         cursor = connections[self.database].cursor()
-        with io.StringIO() as tmp:
-            pattern = "\t".join(("%s",) * 7) + "\n"
+        with tempfile.TemporaryFile(mode="w+t", encoding="utf-8") as tmp:
             for i in frepple.problems():
                 if isinstance(i.owner, frepple.operationplan):
                     owner = i.owner.operation
@@ -281,17 +280,20 @@ class export:
                     owner = i.owner
                 if self.cluster != -1 and owner.cluster != self.cluster:
                     continue
-                tmp.write(
-                    pattern
-                    % (
-                        i.entity,
-                        i.name,
-                        owner.name,
-                        i.description,
-                        str(i.start),
-                        str(i.end),
-                        round(i.weight, 8),
-                    )
+                print(
+                    (
+                        "%s\t%s\t%s\t%s\t%s\t%s\t%s"
+                        % (
+                            i.entity,
+                            i.name,
+                            owner.name,
+                            i.description,
+                            str(i.start),
+                            str(i.end),
+                            round(i.weight, 8),
+                        )
+                    ),
+                    file=tmp,
                 )
             tmp.seek(0)
             cursor.copy_from(
@@ -316,26 +318,28 @@ class export:
             logger.info("Exporting constraints...")
         starttime = time()
         cursor = connections[self.database].cursor()
-        with io.StringIO() as tmp:
-            pattern = "\t".join(("%s",) * 8) + "\n"
+        with tempfile.TemporaryFile(mode="w+t", encoding="utf-8") as tmp:
             for d in frepple.demands():
                 if self.cluster != -1 and self.cluster != d.cluster:
                     continue
                 for i in d.constraints:
-                    tmp.write(
-                        pattern
-                        % (
-                            d.name,
-                            i.entity,
-                            i.name,
-                            isinstance(i.owner, frepple.operationplan)
-                            and i.owner.operation.name
-                            or i.owner.name,
-                            i.description,
-                            str(i.start),
-                            str(i.end),
-                            round(i.weight, 8),
-                        )
+                    print(
+                        (
+                            "%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s"
+                            % (
+                                d.name,
+                                i.entity,
+                                i.name,
+                                isinstance(i.owner, frepple.operationplan)
+                                and i.owner.operation.name
+                                or i.owner.name,
+                                i.description,
+                                str(i.start),
+                                str(i.end),
+                                round(i.weight, 8),
+                            )
+                        ),
+                        file=tmp,
                     )
             tmp.seek(0)
             cursor.copy_from(
@@ -586,14 +590,17 @@ class export:
       );
       """
         )
-        with io.StringIO() as tmp:
-            pattern = "\t".join(("%s",) * 22) + "\n"
+        with tempfile.TemporaryFile(mode="w+t", encoding="utf-8") as tmp:
             for p in getOperationPlans():
-                tmp.write(pattern % p)
-
+                print(
+                    "%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s"
+                    % p,
+                    file=tmp,
+                )
             tmp.seek(0)
             cursor.copy_from(file=tmp, table="tmp_operationplan")
             tmp.close()
+
         # Merge temp table into the actual table
         cursor.execute(
             """
@@ -754,9 +761,7 @@ class export:
         cursor = connections[self.database].cursor()
         currentTime = self.timestamp
         updates = []
-
-        with io.StringIO() as tmp:
-            pattern = "\t".join(("%s",) * 10) + "\n"
+        with tempfile.TemporaryFile(mode="w+t", encoding="utf-8") as tmp:
             for i in frepple.buffers():
                 if self.cluster != -1 and self.cluster != i.cluster:
                     continue
@@ -771,20 +776,23 @@ class export:
                             j.operationplan.end,
                         )
                     else:
-                        tmp.write(
-                            pattern
-                            % (
-                                j.operationplan.id,
-                                j.buffer.item.name,
-                                j.buffer.location.name,
-                                round(j.quantity, 8),
-                                str(j.date),
-                                round(j.onhand, 8),
-                                round(j.minimum, 8),
-                                round(j.period_of_cover, 8),
-                                j.status,
-                                currentTime,
-                            )
+                        print(
+                            (
+                                "%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s"
+                                % (
+                                    j.operationplan.id,
+                                    j.buffer.item.name,
+                                    j.buffer.location.name,
+                                    round(j.quantity, 8),
+                                    str(j.date),
+                                    round(j.onhand, 8),
+                                    round(j.minimum, 8),
+                                    round(j.period_of_cover, 8),
+                                    j.status,
+                                    currentTime,
+                                )
+                            ),
+                            file=tmp,
                         )
 
             tmp.seek(0)
@@ -819,8 +827,7 @@ class export:
         starttime = time()
         cursor = connections[self.database].cursor()
         currentTime = self.timestamp
-        with io.StringIO() as tmp:
-            pattern = "\t".join(("%s",) * 8) + "\n"
+        with tempfile.TemporaryFile(mode="w+t", encoding="utf-8") as tmp:
             for i in frepple.resources():
                 if self.cluster != -1 and self.cluster != i.cluster:
                     continue
@@ -836,18 +843,21 @@ class export:
                             j.operationplan.end,
                         )
                     else:
-                        tmp.write(
-                            pattern
-                            % (
-                                j.operationplan.reference,
-                                j.resource.name,
-                                round(-j.quantity, 8),
-                                str(j.startdate),
-                                str(j.enddate),
-                                j.setup and j.setup or "\\N",
-                                j.status,
-                                currentTime,
-                            )
+                        print(
+                            (
+                                "%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s"
+                                % (
+                                    j.operationplan.reference,
+                                    j.resource.name,
+                                    round(-j.quantity, 8),
+                                    str(j.startdate),
+                                    str(j.enddate),
+                                    j.setup and j.setup or "\\N",
+                                    j.status,
+                                    currentTime,
+                                )
+                            ),
+                            file=tmp,
                         )
             tmp.seek(0)
             cursor.copy_from(
@@ -914,21 +924,23 @@ class export:
         buckets = [rec[0] for rec in cursor.fetchall()]
 
         # Loop over all reporting buckets of all resources
-        with io.StringIO() as tmp:
-            pattern = "\t".join(("%s",) * 7) + "\n"
+        with tempfile.TemporaryFile(mode="w+t", encoding="utf-8") as tmp:
             for i in frepple.resources():
                 for j in i.plan(buckets):
-                    tmp.write(
-                        pattern
-                        % (
-                            i.name,
-                            str(j["start"]),
-                            round(j["available"], 8),
-                            round(j["unavailable"], 8),
-                            round(j["setup"], 8),
-                            round(j["load"], 8),
-                            round(j["free"], 8),
-                        )
+                    print(
+                        (
+                            "%s\t%s\t%s\t%s\t%s\t%s\t%s"
+                            % (
+                                i.name,
+                                str(j["start"]),
+                                round(j["available"], 8),
+                                round(j["unavailable"], 8),
+                                round(j["setup"], 8),
+                                round(j["load"], 8),
+                                round(j["free"], 8),
+                            )
+                        ),
+                        file=tmp,
                     )
             tmp.seek(0)
             cursor.copy_from(

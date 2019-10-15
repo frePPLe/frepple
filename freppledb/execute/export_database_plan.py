@@ -177,7 +177,11 @@ class export:
                 """
         delete from out_problem
         where entity = 'material'
-        and owner in (select buffer.name from buffer inner join cluster_keys on cluster_keys.name = buffer.item_id)
+        and owner in (
+           select buffer.item_id || ' @ ' || buffer.location_id
+           from buffer
+           inner join cluster_keys on cluster_keys.name = buffer.item_id
+           )
         """
             )
             cursor.execute(

@@ -229,6 +229,8 @@ class remote_commands(TransactionTestCase):
 
     fixtures = ["demo"]
 
+    databases = settings.DATABASES.keys()
+
     def setUp(self):
         # Make sure the test database is used
         os.environ["FREPPLE_TEST"] = "YES"
@@ -272,12 +274,70 @@ class remote_commands(TransactionTestCase):
             cnt += 1
         self.assertLess(cnt, 10, "Running task taking too long")
 
-        # Copy a plan
+        # Copy the plan
+        db2 = None
+        for i in settings.DATABASES:
+            if i != DEFAULT_DB_ALIAS:
+                db2 = i
+                break
+        if db2:
+            response = self.client.post(
+                "/execute/api/scenario_copy/",
+                {"copy": 1, "source": DEFAULT_DB_ALIAS, "destination": db2},
+                **headers
+            )
+            self.assertEqual(response.status_code, 200)
+            taskinfo = json.loads(response.content.decode())
+            taskid2 = taskinfo["taskid"]
+            self.assertEqual(taskid2, taskid0 + 1)
+
+            # Wait for the copy the finish
+            cnt = 0
+            while cnt <= 20:
+                response = self.client.get(
+                    "/execute/api/status/?id=%s" % taskid2, **headers
+                )
+                self.assertEqual(response.status_code, 200)
+                taskinfo = json.loads(response.content.decode())
+                if taskinfo[str(taskid2)]["status"] == "Done":
+                    break
+                sleep(1)
+                cnt += 1
+            self.assertLess(cnt, 20, "Running task taking too long")
+
+            # Refresh the client to see the new scenario
+            self.client = self.client_class()
+
+            # Generate a plan in the scenario
+            response = self.client.post(
+                "/%s/execute/api/runplan/" % db2,
+                {"constraint": 1, "plantype": 1},
+                **headers
+            )
+            self.assertEqual(response.status_code, 200)
+            taskinfo = json.loads(response.content.decode())
+            taskid3 = taskinfo["taskid"]
+            self.assertGreater(taskid3, 0)
+
+            # Wait 10 seconds for the plan the finish
+            cnt = 0
+            while cnt <= 10:
+                response = self.client.get(
+                    "/%s/execute/api/status/?id=%s" % (db2, taskid3), **headers
+                )
+                self.assertEqual(response.status_code, 200)
+                taskinfo = json.loads(response.content.decode())
+                if taskinfo[str(taskid3)]["status"] == "Done":
+                    break
+                sleep(1)
+                cnt += 1
+            self.assertLess(cnt, 10, "Running task taking too long")
+
+        # Empty the plan
         response = self.client.post("/execute/api/empty/", {}, **headers)
         self.assertEqual(response.status_code, 200)
         taskinfo = json.loads(response.content.decode())
         taskid1 = taskinfo["taskid"]
-        self.assertEqual(taskid1, taskid0 + 1)
 
         # Wait for the flush the finish
         cnt = 0

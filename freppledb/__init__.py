@@ -31,10 +31,9 @@ def runCommand(taskname, *args, **kwargs):
     if "FREPPLE_TEST" in os.environ:
         from django.conf import settings
 
-        connections[database].close()
-        settings.DATABASES[database]["NAME"] = settings.DATABASES[database]["TEST"][
-            "NAME"
-        ]
+        for db in settings.DATABASES:
+            connections[db].close()
+            settings.DATABASES[db]["NAME"] = settings.DATABASES[db]["TEST"]["NAME"]
 
     # Run the command
     try:

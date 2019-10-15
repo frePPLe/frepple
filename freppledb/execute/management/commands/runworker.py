@@ -104,10 +104,9 @@ class Command(BaseCommand):
 
         # Use the test database if we are running the test suite
         if "FREPPLE_TEST" in os.environ:
-            connections[database].close()
-            settings.DATABASES[database]["NAME"] = settings.DATABASES[database]["TEST"][
-                "NAME"
-            ]
+            for db in settings.DATABASES:
+                connections[db].close()
+                settings.DATABASES[db]["NAME"] = settings.DATABASES[db]["TEST"]["NAME"]
 
         # Check if a worker already exists
         if checkActive(database):

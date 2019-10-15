@@ -388,23 +388,27 @@ class User(AbstractUser):
     )
 
     def save(
-        self,
-        force_insert=False,
-        force_update=False,
-        using=DEFAULT_DB_ALIAS,
-        update_fields=None,
+        self, force_insert=False, force_update=False, using=None, update_fields=None
     ):
         """
-    Every change to a user model is saved to all active scenarios.
+        Every change to a user model is saved to all active scenarios.
 
-    The is_superuser and is_active fields can be different in each scenario.
-    All other fields are expected to be identical in each database.
+        The is_superuser and is_active fields can be different in each scenario.
+        All other fields are expected to be identical in each database.
 
-    Because of the logic in this method creating users directly in the
-    database tables is NOT a good idea!
-    """
+        Because of the logic in this method creating users directly in the
+        database tables is NOT a good idea!
+        """
         # We want to automatically give access to the django admin to all users
         self.is_staff = True
+        if not using:
+            using = getattr(self, "_state", None)
+            if using:
+                using = using.db
+            else:
+                from freppledb.common.middleware import _thread_locals
+
+                using = getattr(_thread_locals, "database", DEFAULT_DB_ALIAS)
 
         scenarios = [
             i["name"]

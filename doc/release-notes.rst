@@ -17,6 +17,8 @@ Release notes
 
 - Renamed the command "create_database" to "createdatabase" for consistency with the other commands.
 
+- Bug fix: remote execution API failure on scenarios
+
 - Various fixes to the connector for Odoo 12.
 
 6.0.0 (2019/16/09)

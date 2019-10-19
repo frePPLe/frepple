@@ -10,7 +10,11 @@
     "description": "Connector to frePPLe - finite capacity planning and scheduling",
     "depends": ["product", "purchase", "sale", "resource", "mrp"],
     "external_dependencies": {"python": ["pyjwt"]},
-    "data": ["frepple_data.xml"],
+    "data": [
+        "frepple_data.xml",
+        "security/frepple_security.xml",
+        "views/res_config_settings_views.xml",
+    ],
     "demo": [],
     "test": [],
     "installable": True,

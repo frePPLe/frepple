@@ -161,7 +161,8 @@ The section below describes the installation and configuration of these.
       "server_wide_modules= frepple,web,web_kanban"
   
   * | **Configure the Odoo addon**
-    | The module adds some configuration fields on the company model.
+    | The module adds some configuration on the company. You can edit these
+      from the company edit form or from the settings.     
     | Edit these parameters:
   
     * | Webtoken key:
@@ -179,7 +180,10 @@ The section below describes the installation and configuration of these.
       | The connector assumes each company has only a single manufacturing
         location.
       | All bills of materials are modeled there.
-  
+
+    .. image:: _images/odoo-settings.png
+       :alt: Configuring the Odoo add-on.
+
   * | You can run a **quick test** of the above by opening a web browser to the URL
       http\://<host>:<port>/frepple/xml?database=<db>&language=<language>&company=<company>.
       The parameters db and company determine which odoo database to connect to.

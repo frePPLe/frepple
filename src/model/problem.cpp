@@ -483,7 +483,7 @@ void Problem::List::clear(Problem* c) {
     Problem* del = cur;
     cur = cur->nextProblem;
     del->owner = nullptr;
-    Py_DECREF(del);
+    del->resetReferenceCount();
     delete del;
   }
 
@@ -545,7 +545,7 @@ void Problem::List::pop(Problem* p) {
     Problem* del = q;
     q = q->nextProblem;
     del->owner = nullptr;
-    Py_DECREF(del);
+    del->resetReferenceCount();
     delete del;
   }
 }

@@ -31,6 +31,8 @@ from django.db import models
 from django.core.exceptions import ImproperlyConfigured
 from django.db.models.signals import class_prepared
 
+from freppledb.common.fields import JSONBField
+
 
 _register = {}
 
@@ -85,6 +87,8 @@ def add_extra_model_fields(sender, **kwargs):
             field = models.TimeField(
                 label, null=True, blank=True, db_index=True, editable=editable
             )
+        elif fieldtype == "jsonb":
+            field = JSONBField(default="{}", null=True, blank=True, editable=editable)
         else:
             raise ImproperlyConfigured("Invalid attribute type '%s'." % fieldtype)
         field.contribute_to_class(sender, field_name)
@@ -204,6 +208,15 @@ def getAttributeFields(model, related_name_prefix=None, initially_hidden=False):
         elif fieldtype == "time":
             result.append(
                 GridFieldTime(
+                    field_name,
+                    title=label,
+                    initially_hidden=hidden or initially_hidden,
+                    editable=editable,
+                )
+            )
+        elif fieldtype == "jsonb":
+            result.append(
+                GridFieldText(
                     field_name,
                     title=label,
                     initially_hidden=hidden or initially_hidden,

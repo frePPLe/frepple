@@ -516,39 +516,54 @@ class exporter(object):
             yield "<items>\n"
             fields = ["id", "name", "code", "product_tmpl_id", "seller_ids"]
             for i in recs.read(fields):
-                tmpl = self.product_templates[i["product_tmpl_id"][0]]
-                if i["code"]:
-                    name = u"[%s] %s" % (i["code"], i["name"])
-                else:
-                    name = i["name"]
-                prod_obj = {"name": name, "template": i["product_tmpl_id"][0]}
-                self.product_product[i["id"]] = prod_obj
-                self.product_template_product[i["product_tmpl_id"][0]] = prod_obj
-                yield '<item name=%s cost="%f" subcategory="%s,%s">\n' % (
-                    quoteattr(name),
-                    (tmpl["list_price"] or 0)
-                    / self.convert_qty_uom(1.0, tmpl["uom_id"][0], i["id"]),
-                    self.uom_categories[self.uom[tmpl["uom_id"][0]]["category"]],
-                    i["id"],
-                )
-                # Export suppliers for the item, if the item is allowed to be purchased
-                if (
-                    tmpl["purchase_ok"]
-                    and i["product_tmpl_id"][0] in self.product_supplier
-                ):
-                    yield "<itemsuppliers>\n"
-                    for sup in self.product_supplier[i["product_tmpl_id"][0]]:
-                        name = "%d %s" % (sup[0][0], sup[0][1])
-                        yield '<itemsupplier leadtime="P%dD" priority="1" size_minimum="%f" cost="%f"%s%s><supplier name=%s/></itemsupplier>\n' % (
-                            sup[1],
-                            sup[2],
-                            sup[5],
-                            ' effective_end="%s"' % sup[3] if sup[3] else "",
-                            ' effective_start="%s"' % sup[4] if sup[4] else "",
-                            quoteattr(name),
-                        )
-                    yield "</itemsuppliers>\n"
-                yield "</item>\n"
+                yielded_header = False
+                try:
+                    tmpl = self.product_templates[i["product_tmpl_id"][0]]
+                    if i["code"]:
+                        name = u"[%s] %s" % (i["code"], i["name"])
+                    else:
+                        name = i["name"]
+                    prod_obj = {"name": name, "template": i["product_tmpl_id"][0]}
+                    self.product_product[i["id"]] = prod_obj
+                    self.product_template_product[i["product_tmpl_id"][0]] = prod_obj
+                    yield '<item name=%s cost="%f" subcategory="%s,%s">\n' % (
+                        quoteattr(name),
+                        (tmpl["list_price"] or 0)
+                        / self.convert_qty_uom(1.0, tmpl["uom_id"][0], i["id"]),
+                        self.uom_categories[self.uom[tmpl["uom_id"][0]]["category"]],
+                        i["id"],
+                    )
+                    yielded_header = True
+                    # Export suppliers for the item, if the item is allowed to be purchased
+                    if (
+                        tmpl["purchase_ok"]
+                        and i["product_tmpl_id"][0] in self.product_supplier
+                    ):
+                        yield "<itemsuppliers>\n"
+                        for sup in self.product_supplier[i["product_tmpl_id"][0]]:
+                            try:
+                                name = "%d %s" % (sup[0][0], sup[0][1])
+                                yield '<itemsupplier leadtime="P%dD" priority="1" size_minimum="%f" cost="%f"%s%s><supplier name=%s/></itemsupplier>\n' % (
+                                    sup[1],
+                                    sup[2],
+                                    sup[5],
+                                    ' effective_end="%s"' % sup[3] if sup[3] else "",
+                                    ' effective_start="%s"' % sup[4] if sup[4] else "",
+                                    quoteattr(name),
+                                )
+                            except Exception as e:
+                                logger.error(
+                                    "Error exporting suppliers for product %s: %s"
+                                    % (i.get("id", None), e)
+                                )
+                        yield "</itemsuppliers>\n"
+                    yield "</item>\n"
+                except Exception as e:
+                    logger.error(
+                        "Error exporting product %s: %s" % (i.get("id", None), e)
+                    )
+                    if yielded_header:
+                        yield "</item>\n"
             yield "</items>\n"
 
     def export_boms(self):

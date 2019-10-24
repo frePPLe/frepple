@@ -25,10 +25,15 @@ from freppledb.common import models as common_models
 from freppledb.common.middleware import resetRequest
 
 
-def removeModelPermissions(app, model, db=DEFAULT_DB_ALIAS):
-    Permission.objects.all().using(db).filter(
-        content_type__app_label=app, content_type__model=model
-    ).delete()
+def removeModelPermissions(app, model, db=DEFAULT_DB_ALIAS, exclude=None):
+    q = (
+        Permission.objects.all()
+        .using(db)
+        .filter(content_type__app_label=app, content_type__model=model)
+    )
+    if exclude:
+        q = q.exclude(codename__in=exclude)
+    q.delete()
 
 
 def createExtraPermissions(sender, using=DEFAULT_DB_ALIAS, **kwargs):
@@ -45,7 +50,9 @@ def createExtraPermissions(sender, using=DEFAULT_DB_ALIAS, **kwargs):
 
 
 def removePermissions(sender, using=DEFAULT_DB_ALIAS, **kwargs):
-    removeModelPermissions("common", "scenario", using)
+    removeModelPermissions(
+        "common", "scenario", using, exclude=["copy_scenario", "release_scenario"]
+    )
     removeModelPermissions("admin", "logentry", using)
     removeModelPermissions("contenttypes", "contenttype", using)
     Permission.objects.all().using(using).filter(codename="add_permission").delete()

@@ -367,7 +367,7 @@ class Command(BaseCommand):
               <strong>{{j.name|capfirst}}</strong>
             </td>
             <td style="padding:5px 10px 5px 10px">
-               {% if j.name != 'default' and j.status == 'Free' and perms.auth.copy_scenario %}
+               {% if j.name != 'default' and j.status == 'Free' and perms.common.copy_scenario %}
                <div class="btn-group btn-block">
                <button class="btn btn-block btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
                  {% trans 'copy'|capfirst %}&nbsp;<span class="caret"></span>
@@ -380,7 +380,7 @@ class Command(BaseCommand):
                  {% endif %}{% endfor %}
                </ul>
                </div>
-               {% elif j.name != 'default' and j.status == 'In use' and perms.auth.release_scenario %}
+               {% elif j.name != 'default' and j.status == 'In use' and perms.common.release_scenario %}
                <div class="btn-group btn-block">
                <button class="btn btn-block btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
                  {% trans 'release'|capfirst %}&nbsp;<span class="caret"></span>

@@ -12,6 +12,9 @@ Release notes
 
 - Support for user-defined attributes on purchase orders, manufacturing orders and
   distribution orders.
+  
+- Bug fix: The  user permissions "can copy a scenario" and "can release a scenario" 
+  were not working properly. 
 
 .. rubric:: Integration
 

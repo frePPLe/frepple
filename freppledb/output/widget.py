@@ -617,10 +617,10 @@ class DistributionOrderWidget(Widget):
       left outer join operationplan
         on operationplan.startdate >= common_bucketdetail.startdate
         and operationplan.startdate < common_bucketdetail.enddate
+        and type = 'DO'
+        and status in ('confirmed', 'proposed', 'approved')
       left outer join item
         on operationplan.item_id = item.name
-        and status in ('confirmed', 'proposed', 'approved')
-        and type = 'DO'
       where bucket_id = %%s and common_bucketdetail.enddate > %%s
         and common_bucketdetail.startdate < %%s
       group by common_bucketdetail.name, common_bucketdetail.startdate
@@ -905,7 +905,7 @@ class PurchaseOrderWidget(Widget):
       left outer join operationplan
         on operationplan.startdate >= common_bucketdetail.startdate
         and operationplan.startdate < common_bucketdetail.enddate
-        and status in ('confirmed', 'proposed', 'approved') %s
+        and status in ('confirmed', 'proposed', 'approved') and type = 'PO' %s
       left outer join item
         on operationplan.item_id = item.name
       left outer join itemsupplier

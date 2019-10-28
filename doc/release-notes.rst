@@ -8,6 +8,9 @@ Release notes
 
 - Bug fixes in the solver algorithm when using alternate materials.
 
+- Bug fixes in the solver algorithm when using post-operation times at many 
+  places in the supply path.
+
 .. rubric:: User interface
 
 - Support for user-defined attributes on purchase orders, manufacturing orders and

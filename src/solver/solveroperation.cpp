@@ -330,7 +330,7 @@ bool SolverCreate::checkOperation(OperationPlan* opplan,
       data.getCommandManager()->rollback(topcommand);
       // Echo a message
       if (getLogLevel() > 1)
-        logger << indentlevel << "Retrying new date." << endl;
+        logger << indentlevel << "  Retrying new date." << endl;
     } else if (matnext.getEnd() != Date::infiniteFuture &&
                a_qty <= ROUNDING_ERROR && matnext.getStart() < a_date &&
                orig_opplan_qty > opplan->getOperation()->getSizeMinimum() &&
@@ -458,9 +458,8 @@ bool SolverCreate::checkOperationLeadTime(OperationPlan* opplan,
   if (getAllowSplits()) {
     if (extra)
       // Lead time check during operation resolver
-      opplan->setOperationPlanParameters(
-          opplan->getQuantity(), threshold,
-          original.end + opplan->getOperation()->getPostTime(), false);
+      opplan->setOperationPlanParameters(opplan->getQuantity(), threshold,
+                                         data.state->q_date_max, false);
     else
       // Lead time check during capacity resolver
       opplan->setOperationPlanParameters(opplan->getQuantity(), threshold,
@@ -595,6 +594,39 @@ void SolverCreate::solve(const Operation* oper, void* v) {
   data->state->q_date_max = data->state->q_date;
   data->state->q_date -= oper->getPostTime();
   createOperation(oper, data, true, true);
+
+  // Original request
+  if (!best_batch_date) {
+    auto asked_date = data->state->q_date;
+    auto asked_qty = data->state->q_qty;
+    bool repeat;
+    auto ask_early = oper->getPostTime();
+    auto delta = data->getSolver()->getMinimumDelay();
+    if (!delta) delta = Duration(3600L);
+    do {
+      auto bm = data->getCommandManager()->setBookmark();
+      data->push(asked_qty, asked_date, true);
+      // Subtract the post-operation time.
+      data->state->q_date -= ask_early;
+      createOperation(oper, data, true, true);
+      data->pop(true);
+      repeat = false;
+      if (!data->state->a_qty) {
+        bm->rollback();
+        if (data->state->a_date <= asked_date && ask_early > Duration(0L)) {
+          repeat = true;
+          if (ask_early > delta)
+            ask_early -= delta;
+          else
+            ask_early = Duration(0L);
+          if (getLogLevel() > 1)
+            logger << indentlevel << "Operation '" << oper->getName()
+                   << "' repeats ask with smaller post-operation delay: "
+                   << asked_qty << "  " << (asked_date - delta) << endl;
+        }
+      }
+    } while (repeat);
+  }
 
   // Message
   if (getLogLevel() > 1) {

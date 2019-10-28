@@ -590,43 +590,35 @@ void SolverCreate::solve(const Operation* oper, void* v) {
            << "' is asked: " << data->state->q_qty << "  "
            << data->state->q_date << endl;
 
-  // Subtract the post-operation time.
-  data->state->q_date_max = data->state->q_date;
-  data->state->q_date -= oper->getPostTime();
-  createOperation(oper, data, true, true);
-
-  // Original request
-  if (!best_batch_date) {
-    auto asked_date = data->state->q_date;
-    auto asked_qty = data->state->q_qty;
-    bool repeat;
-    auto ask_early = oper->getPostTime();
-    auto delta = data->getSolver()->getMinimumDelay();
-    if (!delta) delta = Duration(3600L);
-    do {
-      auto bm = data->getCommandManager()->setBookmark();
-      data->push(asked_qty, asked_date, true);
-      // Subtract the post-operation time.
-      data->state->q_date -= ask_early;
-      createOperation(oper, data, true, true);
-      data->pop(true);
-      repeat = false;
-      if (!data->state->a_qty) {
-        bm->rollback();
-        if (data->state->a_date <= asked_date && ask_early > Duration(0L)) {
-          repeat = true;
-          if (ask_early > delta)
-            ask_early -= delta;
-          else
-            ask_early = Duration(0L);
-          if (getLogLevel() > 1)
-            logger << indentlevel << "Operation '" << oper->getName()
-                   << "' repeats ask with smaller post-operation delay: "
-                   << asked_qty << "  " << (asked_date - delta) << endl;
-        }
+  auto asked_date = data->state->q_date;
+  auto asked_qty = data->state->q_qty;
+  bool repeat;
+  auto ask_early = oper->getPostTime();
+  auto delta = data->getSolver()->getMinimumDelay();
+  if (!delta) delta = Duration(3600L);
+  do {
+    auto bm = data->getCommandManager()->setBookmark();
+    data->push(asked_qty, asked_date, true);
+    // Subtract the post-operation time.
+    data->state->q_date -= ask_early;
+    createOperation(oper, data, true, true);
+    data->pop(true);
+    repeat = false;
+    if (!data->state->a_qty) {
+      bm->rollback();
+      if (data->state->a_date <= asked_date && ask_early > Duration(0L)) {
+        repeat = true;
+        if (ask_early > delta)
+          ask_early -= delta;
+        else
+          ask_early = Duration(0L);
+        if (getLogLevel() > 1)
+          logger << indentlevel << "Operation '" << oper->getName()
+                 << "' repeats ask with smaller post-operation delay: "
+                 << asked_qty << "  " << (asked_date - delta) << endl;
       }
-    } while (repeat);
-  }
+    }
+  } while (repeat);
 
   // Message
   if (getLogLevel() > 1) {

@@ -15,7 +15,7 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 from urllib.parse import urlencode
 
 from django.contrib.admin.utils import quote
@@ -327,8 +327,7 @@ class ManufacturingOrderWidget(Widget):
                 "%Y-%m-%d %H:%M:%S",
             )
         except:
-            current = datetime.now()
-            current = current.replace(microsecond=0)
+            current = date.today()
         request.database = db
         GridReport.getBuckets(request)
         cursor = connections[db].cursor()
@@ -603,8 +602,7 @@ class DistributionOrderWidget(Widget):
                 "%Y-%m-%d %H:%M:%S",
             )
         except:
-            current = datetime.now()
-            current = current.replace(microsecond=0)
+            current = date.today()
         request.database = db
         GridReport.getBuckets(request)
         cursor = connections[db].cursor()
@@ -890,8 +888,7 @@ class PurchaseOrderWidget(Widget):
                 "%Y-%m-%d %H:%M:%S",
             )
         except:
-            current = datetime.now()
-            current = current.replace(microsecond=0)
+            current = date.today()
         request.database = db
         GridReport.getBuckets(request)
         supplierfilter = "and supplier_id = %s" if supplier else ""

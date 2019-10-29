@@ -156,6 +156,9 @@ void SolverCreate::SolverData::push(double q, Date d, bool full) {
     state->curDemand = prevstate->curDemand;
     state->curBuffer = prevstate->curBuffer;
     state->q_qty_min = prevstate->q_qty_min;
+    state->forceLate = prevstate->forceLate;
+    state->a_cost = prevstate->a_cost;
+    state->a_penalty = prevstate->a_penalty;
   } else {
     state->q_loadplan = nullptr;
     state->q_flowplan = nullptr;
@@ -164,10 +167,10 @@ void SolverCreate::SolverData::push(double q, Date d, bool full) {
     state->curDemand = nullptr;
     state->curBuffer = nullptr;
     state->q_qty_min = 1.0;
+    state->forceLate = false;
+    state->a_cost = 0.0;
+    state->a_penalty = 0.0;
   }
-  state->forceLate = false;
-  state->a_cost = 0.0;
-  state->a_penalty = 0.0;
   state->a_date = Date::infiniteFuture;
   state->a_qty = 0.0;
 }

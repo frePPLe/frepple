@@ -3172,7 +3172,7 @@ def importWorkbook(request):
         for filename, file in request.FILES.items():
             yield "<strong>" + force_text(
                 _("Processing file")
-            ) + filename + "</strong><br>"
+            ) + " " + filename + "</strong><br>"
             if file.content_type == "application/vnd.ms-excel":
                 yield _(
                     "Files in the old .XLS excel format can't be read.<br>Please convert them to the new .XLSX format."

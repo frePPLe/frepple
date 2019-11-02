@@ -17,6 +17,7 @@
 
 from datetime import datetime
 import os
+from psycopg2.extras import execute_batch
 
 from django.core.management.base import BaseCommand, CommandError
 from django.conf import settings
@@ -192,22 +193,23 @@ class Command(BaseCommand):
       """
         )
         output = [i for i in self.cursor_frepple.fetchall()]
-        self.cursor_erp.executemany(
+        execute_batch(
+            self.cursor_erp,
             """
-      insert into test
-      (item, location, location2, quantity, startdate, enddate)
-      values (?, ?, ?, ?, ?, ?)
-      """,
+            insert into test
+            (item, location, location2, quantity, startdate, enddate)
+            values (?, ?, ?, ?, ?, ?)
+            """,
             output,
         )
 
     def extractDistributionOrders(self):
         """
-    Export distribution orders from frePPle.
-    We export:
-      - approved distribution orders.
-      - proposed distribution orders that start within the next day and with a total cost less than 500$.
-    """
+        Export distribution orders from frePPle.
+        We export:
+          - approved distribution orders.
+          - proposed distribution orders that start within the next day and with a total cost less than 500$.
+        """
         print("Start exporting distribution orders")
         self.cursor_frepple.execute(
             """
@@ -224,12 +226,13 @@ class Command(BaseCommand):
       """
         )
         output = [i for i in self.cursor_frepple.fetchall()]
-        self.cursor_erp.executemany(
+        execute_batch(
+            self.cursor_erp,
             """
-      insert into test
-      (item, location, location2, quantity, startdate, enddate)
-      values (?, ?, ?, ?, ?, ?)
-      """,
+            insert into test
+            (item, location, location2, quantity, startdate, enddate)
+            values (%s, %s, %s, %s, %s, %s)
+            """,
             output,
         )
 
@@ -255,11 +258,12 @@ class Command(BaseCommand):
       """
         )
         output = [i for i in self.cursor_frepple.fetchall()]
-        self.cursor_erp.executemany(
+        execute_batch(
+            self.cursor_erp,
             """
-      insert into test
-      (item, location, location2, quantity, startdate, enddate)
-      values (?, ?, ?, ?, ?, ?)
-      """,
+            insert into test
+            (item, location, location2, quantity, startdate, enddate)
+            values (%s, %s, %s, %s, %s, %s)
+            """,
             output,
         )

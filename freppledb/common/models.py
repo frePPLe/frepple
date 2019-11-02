@@ -16,6 +16,7 @@
 #
 from datetime import datetime
 import logging
+from psycopg2.extras import execute_batch
 
 from django.conf import settings
 from django.contrib.admin.utils import quote
@@ -166,7 +167,9 @@ class HierarchyModel(models.Model):
 
         # Write all results to the database
         with transaction.atomic(using=database):
-            connections[database].cursor().executemany(
+            cursor = connections[database].cursor()
+            execute_batch(
+                cursor,
                 "update %s set lft=%%s, rght=%%s, lvl=%%s where name = %%s"
                 % connections[database].ops.quote_name(cls._meta.db_table),
                 updates,

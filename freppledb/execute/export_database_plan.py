@@ -23,12 +23,12 @@ The code in this file is executed NOT by the Django web application, but by the
 embedded Python interpreter from the frePPLe engine.
 """
 from datetime import timedelta, datetime, date
+import io
 import json
-import os
 import logging
+import os
 from psycopg2.extensions import adapt
-from subprocess import Popen, PIPE
-import tempfile
+from psycopg2.extras import execute_batch
 from time import time
 from threading import Thread
 
@@ -38,6 +38,56 @@ from django.conf import settings
 import frepple
 
 logger = logging.getLogger(__name__)
+
+
+def clean_value(value):
+    if value is None:
+        return r"\N"
+    elif "\n" in value:
+        return value.replace("\n", "\\n")
+    else:
+        return value
+
+
+class CopyFromGenerator(io.TextIOBase):
+    """
+    Inspired on and copied from:
+      https://hakibenita.com/fast-load-data-python-postgresql
+    """
+
+    def __init__(self, itr):
+        self._iter = itr
+        self._buff = ""
+
+    def readable(self):
+        return True
+
+    def _read1(self, n=None):
+        while not self._buff:
+            try:
+                self._buff = next(self._iter)
+            except StopIteration:
+                break
+        ret = self._buff[:n]
+        self._buff = self._buff[len(ret) :]
+        return ret
+
+    def read(self, n=None):
+        line = []
+        if n is None or n < 0:
+            while True:
+                m = self._read1()
+                if not m:
+                    break
+                line.append(m)
+        else:
+            while n > 0:
+                m = self._read1(n)
+                if not m:
+                    break
+                n -= len(m)
+                line.append(m)
+        return "".join(line)
 
 
 class DatabasePipe(Thread):
@@ -74,7 +124,7 @@ class export:
         self.encoding = "UTF8"
         self.timestamp = str(datetime.now())
 
-    def getPegging(self, opplan):
+    def getPegging(self, opplan, buffer=None):
         unavail = opplan.unavailable
         pln = {
             "pegging": {
@@ -96,6 +146,11 @@ class export:
         if opplan.setupend != opplan.start:
             pln["setup"] = opplan.setup
             pln["setupend"] = opplan.setupend.strftime("%Y-%m-%d %H:%M:%S")
+        if buffer:
+            if buffer.item:
+                pln["item"] = buffer.item.name
+            if buffer.location:
+                pln["location"] = buffer.location.name
         # We need to double any backslash to assure that the string remains
         # valid when passing it through postgresql (which eats them away)
         return json.dumps(pln).replace("\\", "\\\\")
@@ -272,11 +327,7 @@ class export:
             logger.info("Emptied plan tables in %.2f seconds" % (time() - starttime))
 
     def exportProblems(self):
-        if self.verbosity:
-            logger.info("Exporting problems...")
-        starttime = time()
-        cursor = connections[self.database].cursor()
-        with tempfile.TemporaryFile(mode="w+t", encoding="utf-8") as tmp:
+        def getData():
             for i in frepple.problems():
                 if isinstance(i.owner, frepple.operationplan):
                     owner = i.owner.operation
@@ -284,88 +335,83 @@ class export:
                     owner = i.owner
                 if self.cluster != -1 and owner.cluster != self.cluster:
                     continue
-                print(
-                    (
-                        "%s\t%s\t%s\t%s\t%s\t%s\t%s"
-                        % (
-                            i.entity,
-                            i.name,
-                            owner.name,
-                            i.description,
-                            str(i.start),
-                            str(i.end),
-                            round(i.weight, 8),
-                        )
-                    ),
-                    file=tmp,
+                yield "%s\v%s\v%s\v%s\v%s\v%s\v%s\n" % (
+                    clean_value(i.entity),
+                    clean_value(i.name),
+                    clean_value(owner.name),
+                    clean_value(i.description),
+                    str(i.start),
+                    str(i.end),
+                    round(i.weight, 8),
                 )
-            tmp.seek(0)
-            cursor.copy_from(
-                tmp,
-                "out_problem",
-                columns=(
-                    "entity",
-                    "name",
-                    "owner",
-                    "description",
-                    "startdate",
-                    "enddate",
-                    "weight",
-                ),
-            )
-            tmp.close()
+
+        if self.verbosity:
+            logger.info("Exporting problems...")
+        starttime = time()
+        cursor = connections[self.database].cursor()
+        cursor.copy_from(
+            CopyFromGenerator(getData()),
+            "out_problem",
+            columns=(
+                "entity",
+                "name",
+                "owner",
+                "description",
+                "startdate",
+                "enddate",
+                "weight",
+            ),
+            size=1024,
+            sep="\v",
+        )
         if self.verbosity:
             logger.info("Exported problems in %.2f seconds" % (time() - starttime))
 
     def exportConstraints(self):
-        if self.verbosity:
-            logger.info("Exporting constraints...")
-        starttime = time()
-        cursor = connections[self.database].cursor()
-        with tempfile.TemporaryFile(mode="w+t", encoding="utf-8") as tmp:
+        def getData():
             for d in frepple.demands():
                 if self.cluster != -1 and self.cluster != d.cluster:
                     continue
                 for i in d.constraints:
-                    print(
-                        (
-                            "%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s"
-                            % (
-                                d.name,
-                                i.entity,
-                                i.name,
-                                isinstance(i.owner, frepple.operationplan)
-                                and i.owner.operation.name
-                                or i.owner.name,
-                                i.description,
-                                str(i.start),
-                                str(i.end),
-                                round(i.weight, 8),
-                            )
-                        ),
-                        file=tmp,
+                    yield "%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\n" % (
+                        clean_value(d.name),
+                        clean_value(i.entity),
+                        clean_value(i.name),
+                        isinstance(i.owner, frepple.operationplan)
+                        and clean_value(i.owner.operation.name)
+                        or clean_value(i.owner.name),
+                        clean_value(i.description),
+                        str(i.start),
+                        str(i.end),
+                        round(i.weight, 8),
                     )
-            tmp.seek(0)
-            cursor.copy_from(
-                tmp,
-                "out_constraint",
-                columns=(
-                    "demand",
-                    "entity",
-                    "name",
-                    "owner",
-                    "description",
-                    "startdate",
-                    "enddate",
-                    "weight",
-                ),
-            )
-            tmp.close()
+
+        if self.verbosity:
+            logger.info("Exporting constraints...")
+        starttime = time()
+        cursor = connections[self.database].cursor()
+        cursor.copy_from(
+            CopyFromGenerator(getData()),
+            "out_constraint",
+            columns=(
+                "demand",
+                "entity",
+                "name",
+                "owner",
+                "description",
+                "startdate",
+                "enddate",
+                "weight",
+            ),
+            size=1024,
+            sep="\v",
+        )
+
         if self.verbosity:
             logger.info("Exported constraints in %.2f seconds" % (time() - starttime))
 
     def exportOperationplans(self):
-        def getOperationPlans():
+        def getData():
             for i in frepple.operations():
                 if self.cluster != -1 and self.cluster != i.cluster:
                     continue
@@ -375,8 +421,8 @@ class export:
 
                     if isinstance(i, frepple.operation_inventory):
                         # Export inventory
-                        yield (
-                            i.name,
+                        yield "%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\n" % (
+                            clean_value(i.name),
                             "STCK",
                             j.status,
                             round(j.quantity, 8),
@@ -385,20 +431,20 @@ class export:
                             round(j.criticality, 8),
                             j.delay,
                             self.getPegging(j),
-                            j.source or "\\N",
+                            clean_value(j.source),
                             self.timestamp,
                             "\\N",
-                            j.owner.reference
+                            clean_value(j.owner.reference)
                             if j.owner and not j.owner.operation.hidden
                             else "\\N",
-                            j.operation.buffer.item.name,
-                            j.operation.buffer.location.name,
+                            clean_value(j.operation.buffer.item.name),
+                            clean_value(j.operation.buffer.location.name),
                             "\\N",
                             "\\N",
                             "\\N",
-                            j.demand.name
+                            clean_value(j.demand.name)
                             if j.demand
-                            else j.owner.demand.name
+                            else clean_value(j.owner.demand.name)
                             if j.owner and j.owner.demand
                             else "\\N",
                             j.demand.due
@@ -407,12 +453,12 @@ class export:
                             if j.owner and j.owner.demand
                             else "\\N",
                             color,
-                            j.reference,
+                            clean_value(j.reference),
                         )
                     elif isinstance(i, frepple.operation_itemdistribution):
                         # Export DO
-                        yield (
-                            i.name,
+                        yield "%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\n" % (
+                            clean_value(i.name),
                             "DO",
                             j.status,
                             round(j.quantity, 8),
@@ -421,26 +467,26 @@ class export:
                             round(j.criticality, 8),
                             j.delay,
                             self.getPegging(j),
-                            j.source or "\\N",
+                            clean_value(j.source),
                             self.timestamp,
                             "\\N",
-                            j.owner.reference
+                            clean_value(j.owner.reference)
                             if j.owner and not j.owner.operation.hidden
                             else "\\N",
-                            j.operation.destination.item.name
+                            clean_value(j.operation.destination.item.name)
                             if j.operation.destination
                             else j.operation.origin.item.name,
-                            j.operation.destination.location.name
+                            clean_value(j.operation.destination.location.name)
                             if j.operation.destination
                             else "\\N",
-                            j.operation.origin.location.name
+                            clean_value(j.operation.origin.location.name)
                             if j.operation.origin
                             else "\\N",
                             "\\N",
                             "\\N",
-                            j.demand.name
+                            clean_value(j.demand.name)
                             if j.demand
-                            else j.owner.demand.name
+                            else clean_value(j.owner.demand.name)
                             if j.owner and j.owner.demand
                             else "\\N",
                             j.demand.due
@@ -449,12 +495,12 @@ class export:
                             if j.owner and j.owner.demand
                             else "\\N",
                             color,
-                            j.reference,
+                            clean_value(j.reference),
                         )
                     elif isinstance(i, frepple.operation_itemsupplier):
                         # Export PO
-                        yield (
-                            i.name,
+                        yield "%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\n" % (
+                            clean_value(i.name),
                             "PO",
                             j.status,
                             round(j.quantity, 8),
@@ -463,20 +509,20 @@ class export:
                             round(j.criticality, 8),
                             j.delay,
                             self.getPegging(j),
-                            j.source or "\\N",
+                            clean_value(j.source),
                             self.timestamp,
                             "\\N",
-                            j.owner.reference
+                            clean_value(j.owner.reference)
                             if j.owner and not j.owner.operation.hidden
                             else "\\N",
-                            j.operation.buffer.item.name,
+                            clean_value(j.operation.buffer.item.name),
                             "\\N",
                             "\\N",
-                            j.operation.buffer.location.name,
-                            j.operation.itemsupplier.supplier.name,
-                            j.demand.name
+                            clean_value(j.operation.buffer.location.name),
+                            clean_value(j.operation.itemsupplier.supplier.name),
+                            clean_value(j.demand.name)
                             if j.demand
-                            else j.owner.demand.name
+                            else clean_value(j.owner.demand.name)
                             if j.owner and j.owner.demand
                             else "\\N",
                             j.demand.due
@@ -485,12 +531,12 @@ class export:
                             if j.owner and j.owner.demand
                             else "\\N",
                             color,
-                            j.reference,
+                            clean_value(j.reference),
                         )
                     elif not i.hidden:
                         # Export MO
-                        yield (
-                            i.name,
+                        yield "%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\n" % (
+                            clean_value(i.name),
                             "MO",
                             j.status,
                             round(j.quantity, 8),
@@ -499,20 +545,20 @@ class export:
                             round(j.criticality, 8),
                             j.delay,
                             self.getPegging(j),
-                            j.source or "\\N",
+                            clean_value(j.source),
                             self.timestamp,
-                            i.name,
-                            j.owner.reference
+                            clean_value(i.name),
+                            clean_value(j.owner.reference)
                             if j.owner and not j.owner.operation.hidden
                             else "\\N",
-                            i.item.name if i.item else "\\N",
+                            clean_value(i.item.name) if i.item else "\\N",
                             "\\N",
                             "\\N",
-                            i.location.name if i.location else "\\N",
+                            clean_value(i.location.name) if i.location else "\\N",
                             "\\N",
-                            j.demand.name
+                            clean_value(j.demand.name)
                             if j.demand
-                            else j.owner.demand.name
+                            else clean_value(j.owner.demand.name)
                             if j.owner and j.owner.demand
                             else "\\N",
                             j.demand.due
@@ -521,12 +567,12 @@ class export:
                             if j.owner and j.owner.demand
                             else "\\N",
                             color,
-                            j.reference,
+                            clean_value(j.reference),
                         )
                     elif j.demand or (j.owner and j.owner.demand):
                         # Export shipments (with automatically created delivery operations)
-                        yield (
-                            i.name,
+                        yield "%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\n" % (
+                            clean_value(i.name),
                             "DLVR",
                             j.status,
                             round(j.quantity, 8),
@@ -535,20 +581,20 @@ class export:
                             round(j.criticality, 8),
                             j.delay,
                             self.getPegging(j),
-                            j.source or "\\N",
+                            clean_value(j.source),
                             self.timestamp,
                             "\\N",
-                            j.owner.reference
+                            clean_value(j.owner.reference)
                             if j.owner and not j.owner.operation.hidden
                             else "\\N",
-                            j.operation.buffer.item.name,
+                            clean_value(j.operation.buffer.item.name),
                             "\\N",
                             "\\N",
-                            j.operation.buffer.location.name,
+                            clean_value(j.operation.buffer.location.name),
                             "\\N",
-                            j.demand.name
+                            clean_value(j.demand.name)
                             if j.demand
-                            else j.owner.demand.name
+                            else clean_value(j.owner.demand.name)
                             if j.owner and j.owner.demand
                             else "\\N",
                             j.demand.due
@@ -557,7 +603,7 @@ class export:
                             if j.owner and j.owner.demand
                             else "\\N",
                             color,
-                            j.reference,
+                            clean_value(j.reference),
                         )
 
         if self.verbosity:
@@ -568,189 +614,182 @@ class export:
         # Export operationplans to a temporary table
         cursor.execute(
             """
-      create temporary table tmp_operationplan (
-        name character varying(1000),
-        type character varying(5) NOT NULL,
-        status character varying(20),
-        quantity numeric(20,8) NOT NULL,
-        startdate timestamp with time zone,
-        enddate timestamp with time zone,
-        criticality numeric(20,8),
-        delay numeric,
-        plan json,
-        source character varying(300),
-        lastmodified timestamp with time zone NOT NULL,
-        operation_id character varying(300),
-        owner_id character varying(300),
-        item_id character varying(300),
-        destination_id character varying(300),
-        origin_id character varying(300),
-        location_id character varying(300),
-        supplier_id character varying(300),
-        demand_id character varying(300),
-        due timestamp with time zone,
-        color numeric(20,8),
-        reference character varying(300) NOT NULL
-      );
-      """
+            create temporary table tmp_operationplan (
+                name character varying(1000),
+                type character varying(5) NOT NULL,
+                status character varying(20),
+                quantity numeric(20,8) NOT NULL,
+                startdate timestamp with time zone,
+                enddate timestamp with time zone,
+                criticality numeric(20,8),
+                delay numeric,
+                plan json,
+                source character varying(300),
+                lastmodified timestamp with time zone NOT NULL,
+                operation_id character varying(300),
+                owner_id character varying(300),
+                item_id character varying(300),
+                destination_id character varying(300),
+                origin_id character varying(300),
+                location_id character varying(300),
+                supplier_id character varying(300),
+                demand_id character varying(300),
+                due timestamp with time zone,
+                color numeric(20,8),
+                reference character varying(300) NOT NULL
+            );
+            """
         )
-        with tempfile.TemporaryFile(mode="w+t", encoding="utf-8") as tmp:
-            for p in getOperationPlans():
-                print(
-                    "%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s"
-                    % p,
-                    file=tmp,
-                )
-            tmp.seek(0)
-            cursor.copy_from(file=tmp, table="tmp_operationplan")
-            tmp.close()
+        cursor.copy_from(
+            CopyFromGenerator(getData()), table="tmp_operationplan", size=1024, sep="\v"
+        )
 
         # Merge temp table into the actual table
         cursor.execute(
             """
-      update operationplan
-        set name=tmp.name, type=tmp.type, status=tmp.status,
-        quantity=tmp.quantity, startdate=tmp.startdate, enddate=tmp.enddate,
-        criticality=tmp.criticality, delay=tmp.delay * interval '1 second',
-        plan=tmp.plan, source=tmp.source,
-        lastmodified=tmp.lastmodified, operation_id=tmp.operation_id, owner_id=tmp.owner_id,
-        item_id=tmp.item_id, destination_id=tmp.destination_id, origin_id=tmp.origin_id,
-        location_id=tmp.location_id, supplier_id=tmp.supplier_id, demand_id=tmp.demand_id,
-        due=tmp.due, color=tmp.color
-      from tmp_operationplan as tmp
-      where operationplan.reference = tmp.reference;
-      """
+            update operationplan
+                set name=tmp.name, type=tmp.type, status=tmp.status,
+                quantity=tmp.quantity, startdate=tmp.startdate, enddate=tmp.enddate,
+                criticality=tmp.criticality, delay=tmp.delay * interval '1 second',
+                plan=tmp.plan, source=tmp.source,
+                lastmodified=tmp.lastmodified, operation_id=tmp.operation_id, owner_id=tmp.owner_id,
+                item_id=tmp.item_id, destination_id=tmp.destination_id, origin_id=tmp.origin_id,
+                location_id=tmp.location_id, supplier_id=tmp.supplier_id, demand_id=tmp.demand_id,
+                due=tmp.due, color=tmp.color
+            from tmp_operationplan as tmp
+            where operationplan.reference = tmp.reference;
+            """
         )
         cursor.execute(
             """
-      with cte as (
-        select reference
-        from operationplan
-        where status in ('confirmed','approved','completed')
-        and type = 'MO'
-        and not exists (select 1 from tmp_operationplan where reference = operationplan.reference)
-        )
-      delete from operationplanmaterial
-      where exists (select 1 from cte where cte.reference = operationplan_id)
-      """
+            with cte as (
+              select reference
+              from operationplan
+              where status in ('confirmed','approved','completed')
+              and type = 'MO'
+              and not exists (select 1 from tmp_operationplan where reference = operationplan.reference)
+              )
+            delete from operationplanmaterial
+            where exists (select 1 from cte where cte.reference = operationplan_id)
+            """
         )
         cursor.execute(
             """
-      with cte as (
-        select reference
-        from operationplan
-        where status in ('confirmed','approved','completed')
-        and type = 'MO'
-        and not exists (select 1 from tmp_operationplan where reference = operationplan.reference)
-        )
-      delete from operationplanresource
-      where exists (select 1 from cte where cte.reference = operationplan_id)
-      """
+            with cte as (
+              select reference
+              from operationplan
+              where status in ('confirmed','approved','completed')
+              and type = 'MO'
+              and not exists (select 1 from tmp_operationplan where reference = operationplan.reference)
+              )
+            delete from operationplanresource
+            where exists (select 1 from cte where cte.reference = operationplan_id)
+            """
         )
         cursor.execute(
             """
-      delete from operationplan
-      where status in ('confirmed','approved','completed')
-      and type = 'MO'
-      and not exists (select 1 from tmp_operationplan where reference = operationplan.reference)
-      """
+            delete from operationplan
+            where status in ('confirmed','approved','completed')
+            and type = 'MO'
+            and not exists (select 1 from tmp_operationplan where reference = operationplan.reference)
+            """
         )
 
         cursor.execute(
             """
-      with cte as (
-        select reference
-        from operationplan
-        where status in ('confirmed','approved','completed')
-        and type = 'MO'
-        and not exists (select 1 from tmp_operationplan where reference = operationplan.reference)
-        )
-      delete from operationplanmaterial
-      where exists (select 1 from cte where cte.reference = operationplan_id)
-    """
+            with cte as (
+              select reference
+              from operationplan
+              where status in ('confirmed','approved','completed')
+              and type = 'MO'
+              and not exists (select 1 from tmp_operationplan where reference = operationplan.reference)
+              )
+            delete from operationplanmaterial
+            where exists (select 1 from cte where cte.reference = operationplan_id)
+            """
         )
         cursor.execute(
             """
-      with cte as (
-        select reference
-        from operationplan
-        where status in ('confirmed','approved','completed')
-        and type = 'MO'
-        and not exists (select 1 from tmp_operationplan where reference = operationplan.reference)
-        )
-      delete from operationplanresource
-      where exists (select 1 from cte where cte.reference = operationplan_id)
-    """
+            with cte as (
+              select reference
+              from operationplan
+              where status in ('confirmed','approved','completed')
+              and type = 'MO'
+              and not exists (select 1 from tmp_operationplan where reference = operationplan.reference)
+              )
+            delete from operationplanresource
+            where exists (select 1 from cte where cte.reference = operationplan_id)
+            """
         )
         cursor.execute(
             """
-      delete
-      from operationplan
-      where status in ('confirmed','approved','completed')
-      and type = 'MO'
-      and not exists (select 1 from tmp_operationplan where reference = operationplan.reference)
-    """
+            delete
+            from operationplan
+            where status in ('confirmed','approved','completed')
+            and type = 'MO'
+            and not exists (select 1 from tmp_operationplan where reference = operationplan.reference)
+            """
         )
 
         cursor.execute(
             """
-      insert into operationplan
-        (name,type,status,quantity,startdate,enddate,
-        criticality,delay,plan,source,lastmodified,
-        operation_id,owner_id,
-        item_id,destination_id,origin_id,
-        location_id,supplier_id,
-        demand_id,due,color,reference)
-      select name,type,status,quantity,startdate,enddate,
-        criticality,delay * interval '1 second',plan,source,lastmodified,
-        operation_id,owner_id,
-        item_id,destination_id,origin_id,
-        location_id,supplier_id,
-        demand_id,due,color,reference
-      from tmp_operationplan
-      where not exists (
-        select 1
-        from operationplan
-        where operationplan.reference = tmp_operationplan.reference
-        );
-      """
+            insert into operationplan
+              (name,type,status,quantity,startdate,enddate,
+              criticality,delay,plan,source,lastmodified,
+              operation_id,owner_id,
+              item_id,destination_id,origin_id,
+              location_id,supplier_id,
+              demand_id,due,color,reference)
+            select name,type,status,quantity,startdate,enddate,
+              criticality,delay * interval '1 second',plan,source,lastmodified,
+              operation_id,owner_id,
+              item_id,destination_id,origin_id,
+              location_id,supplier_id,
+              demand_id,due,color,reference
+            from tmp_operationplan
+            where not exists (
+              select 1
+              from operationplan
+              where operationplan.reference = tmp_operationplan.reference
+              );
+            """
         )
 
         # update demand table specific fields
         cursor.execute(
             """
-        with cte as (
-          select demand_id, sum(quantity) plannedquantity, max(enddate) deliverydate, max(enddate)-due as delay
-          from operationplan
-          where demand_id is not null and owner_id is null
-          group by demand_id, due
-        )
-        update demand
-          set delay = cte.delay,
-          plannedquantity = cte.plannedquantity,
-          deliverydate = cte.deliverydate
-        from cte
-        where cte.demand_id = demand.name
-      """
+            with cte as (
+              select demand_id, sum(quantity) plannedquantity, max(enddate) deliverydate, max(enddate)-due as delay
+              from operationplan
+              where demand_id is not null and owner_id is null
+              group by demand_id, due
+            )
+            update demand
+              set delay = cte.delay,
+              plannedquantity = cte.plannedquantity,
+              deliverydate = cte.deliverydate
+            from cte
+            where cte.demand_id = demand.name
+            """
         )
         cursor.execute(
             """
-      update demand
-        set delay = null,
-        plannedquantity = null,
-        deliverydate = null
-      where (delay is not null or plannedquantity is not null or deliverydate is not null)
-      and not exists(
-        select 1 from operationplan where owner_id is null and operationplan.demand_id = demand.name
-        )
-      """
+            update demand set
+              delay = null,
+              plannedquantity = null,
+              deliverydate = null
+            where (delay is not null or plannedquantity is not null or deliverydate is not null)
+            and not exists(
+              select 1 from operationplan where owner_id is null and operationplan.demand_id = demand.name
+              )
+            """
         )
         cursor.execute(
             """
-      update demand
-        set plannedquantity = 0
-      where status in ('open','quote') and plannedquantity is null
-      """
+            update demand
+              set plannedquantity = 0
+            where status in ('open','quote') and plannedquantity is null
+            """
         )
 
         if self.verbosity:
@@ -759,13 +798,7 @@ class export:
             )
 
     def exportOperationPlanMaterials(self):
-        if self.verbosity:
-            logger.info("Exporting operationplan materials...")
-        starttime = time()
-        cursor = connections[self.database].cursor()
-        currentTime = self.timestamp
-        updates = []
-        with tempfile.TemporaryFile(mode="w+t", encoding="utf-8") as tmp:
+        def getData():
             for i in frepple.buffers():
                 if self.cluster != -1 and self.cluster != i.cluster:
                     continue
@@ -780,43 +813,42 @@ class export:
                             j.operationplan.end,
                         )
                     else:
-                        print(
-                            (
-                                "%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s"
-                                % (
-                                    j.operationplan.id,
-                                    j.buffer.item.name,
-                                    j.buffer.location.name,
-                                    round(j.quantity, 8),
-                                    str(j.date),
-                                    round(j.onhand, 8),
-                                    round(j.minimum, 8),
-                                    round(j.period_of_cover, 8),
-                                    j.status,
-                                    currentTime,
-                                )
-                            ),
-                            file=tmp,
+                        yield "%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\n" % (
+                            clean_value(j.operationplan.id),
+                            clean_value(j.buffer.item.name),
+                            clean_value(j.buffer.location.name),
+                            round(j.quantity, 8),
+                            str(j.date),
+                            round(j.onhand, 8),
+                            round(j.minimum, 8),
+                            round(j.period_of_cover, 8),
+                            j.status,
+                            self.timestamp,
                         )
 
-            tmp.seek(0)
-            cursor.copy_from(
-                tmp,
-                "operationplanmaterial",
-                columns=(
-                    "operationplan_id",
-                    "item_id",
-                    "location_id",
-                    "quantity",
-                    "flowdate",
-                    "onhand",
-                    "minimum",
-                    "periodofcover",
-                    "status",
-                    "lastmodified",
-                ),
-            )
-            tmp.close()
+        if self.verbosity:
+            logger.info("Exporting operationplan materials...")
+        starttime = time()
+        cursor = connections[self.database].cursor()
+        updates = []
+        cursor.copy_from(
+            CopyFromGenerator(getData()),
+            "operationplanmaterial",
+            columns=(
+                "operationplan_id",
+                "item_id",
+                "location_id",
+                "quantity",
+                "flowdate",
+                "onhand",
+                "minimum",
+                "periodofcover",
+                "status",
+                "lastmodified",
+            ),
+            size=1024,
+            sep="\v",
+        )
         if len(updates) > 0:
             cursor.execute("\n".join(updates))
         if self.verbosity:
@@ -826,12 +858,7 @@ class export:
             )
 
     def exportOperationPlanResources(self):
-        if self.verbosity:
-            logger.info("Exporting operationplan resources...")
-        starttime = time()
-        cursor = connections[self.database].cursor()
-        currentTime = self.timestamp
-        with tempfile.TemporaryFile(mode="w+t", encoding="utf-8") as tmp:
+        def getData():
             for i in frepple.resources():
                 if self.cluster != -1 and self.cluster != i.cluster:
                     continue
@@ -847,38 +874,37 @@ class export:
                             j.operationplan.end,
                         )
                     else:
-                        print(
-                            (
-                                "%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s"
-                                % (
-                                    j.operationplan.reference,
-                                    j.resource.name,
-                                    round(-j.quantity, 8),
-                                    str(j.startdate),
-                                    str(j.enddate),
-                                    j.setup and j.setup or "\\N",
-                                    j.status,
-                                    currentTime,
-                                )
-                            ),
-                            file=tmp,
+                        yield "%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\n" % (
+                            clean_value(j.operationplan.reference),
+                            clean_value(j.resource.name),
+                            round(-j.quantity, 8),
+                            str(j.startdate),
+                            str(j.enddate),
+                            clean_value(j.setup),
+                            j.status,
+                            self.timestamp,
                         )
-            tmp.seek(0)
-            cursor.copy_from(
-                tmp,
-                "operationplanresource",
-                columns=(
-                    "operationplan_id",
-                    "resource_id",
-                    "quantity",
-                    "startdate",
-                    "enddate",
-                    "setup",
-                    "status",
-                    "lastmodified",
-                ),
-            )
-            tmp.close()
+
+        if self.verbosity:
+            logger.info("Exporting operationplan resources...")
+        starttime = time()
+        cursor = connections[self.database].cursor()
+        cursor.copy_from(
+            CopyFromGenerator(getData()),
+            "operationplanresource",
+            columns=(
+                "operationplan_id",
+                "resource_id",
+                "quantity",
+                "startdate",
+                "enddate",
+                "setup",
+                "status",
+                "lastmodified",
+            ),
+            size=1024,
+            sep="\v",
+        )
         if self.verbosity:
             logger.info(
                 "Exported operationplan resources in %.2f seconds"
@@ -886,16 +912,18 @@ class export:
             )
 
     def exportResourceplans(self):
+        # Build a list of horizon buckets
         if self.verbosity:
             logger.info("Exporting resourceplans...")
         starttime = time()
-        cursor = connections[self.database].cursor()
+
         # Determine start and end date of the reporting horizon
         # The start date is computed as 5 weeks before the start of the earliest loadplan in
         # the entire plan.
         # The end date is computed as 5 weeks after the end of the latest loadplan in
         # the entire plan.
         # If no loadplans exist at all we use the current date +- 1 month.
+        cursor = connections[self.database].cursor()
         startdate = datetime.max
         enddate = datetime.min
         for i in frepple.resources():
@@ -914,56 +942,46 @@ class export:
         enddate = (enddate + timedelta(days=30)).date()
         if enddate > date(2030, 12, 30):  # This is the max frePPLe can represent.
             enddate = date(2030, 12, 30)
-
-        # Build a list of horizon buckets
         cursor.execute(
             """
-      select startdate
-      from common_bucketdetail
-      where startdate between %s and %s
-        and bucket_id = (select name from common_bucket order by level desc limit 1)
-      """,
+            select startdate
+            from common_bucketdetail
+            where startdate between %s and %s
+              and bucket_id = (select name from common_bucket order by level desc limit 1)
+            """,
             (startdate, enddate),
         )
         buckets = [rec[0] for rec in cursor.fetchall()]
 
-        # Loop over all reporting buckets of all resources
-        with tempfile.TemporaryFile(mode="w+t", encoding="utf-8") as tmp:
+        def getData():
+            # Loop over all reporting buckets of all resources
             for i in frepple.resources():
                 for j in i.plan(buckets):
-                    print(
-                        (
-                            "%s\t%s\t%s\t%s\t%s\t%s\t%s"
-                            % (
-                                i.name,
-                                str(j["start"]),
-                                round(j["available"], 8),
-                                round(j["unavailable"], 8),
-                                round(j["setup"], 8),
-                                round(j["load"], 8),
-                                round(j["free"], 8),
-                            )
-                        ),
-                        file=tmp,
+                    yield "%s\v%s\v%s\v%s\v%s\v%s\v%s\n" % (
+                        clean_value(i.name),
+                        str(j["start"]),
+                        round(j["available"], 8),
+                        round(j["unavailable"], 8),
+                        round(j["setup"], 8),
+                        round(j["load"], 8),
+                        round(j["free"], 8),
                     )
-            tmp.seek(0)
-            cursor.copy_from(
-                tmp,
-                "out_resourceplan",
-                columns=(
-                    "resource",
-                    "startdate",
-                    "available",
-                    "unavailable",
-                    "setup",
-                    "load",
-                    "free",
-                ),
-            )
-            tmp.close()
 
-        # update owner records with sum of children quantities
-
+        cursor.copy_from(
+            CopyFromGenerator(getData()),
+            "out_resourceplan",
+            columns=(
+                "resource",
+                "startdate",
+                "available",
+                "unavailable",
+                "setup",
+                "load",
+                "free",
+            ),
+            size=1024,
+            sep="\v",
+        )
         if self.verbosity:
             logger.info("Exported resourceplans in %.2f seconds" % (time() - starttime))
 
@@ -989,16 +1007,19 @@ class export:
         starttime = time()
         with transaction.atomic(using=self.database, savepoint=False):
             cursor = connections[self.database].cursor()
-            cursor.executemany(
-                "update demand set plan=%s where name=%s", [i for i in getDemandPlan()]
+            execute_batch(
+                cursor,
+                "update demand set plan=%s where name=%s",
+                getDemandPlan(),
+                page_size=200,
             )
         logger.info("Exported demand pegging in %.2f seconds" % (time() - starttime))
 
     def run(self):
         """
-    This function exports the data from the frePPLe memory into the database.
-    The export runs in parallel over 2 connections to PostgreSQL.
-    """
+        This function exports the data from the frePPLe memory into the database.
+        The export runs in parallel over 2 connections to PostgreSQL.
+        """
         # Truncate
         task = DatabasePipe(self, export.truncate)
         task.start()
@@ -1017,9 +1038,10 @@ class export:
                 export.exportOperationplans,
                 export.exportOperationPlanMaterials,
                 export.exportOperationPlanResources,
-                export.exportPegging,
-            ),
+                export.exportPegging
+                ),
         )
+
         # Start all threads
         for i in tasks:
             i.start()
@@ -1043,71 +1065,3 @@ class export:
             )
             for table, recs in cursor.fetchall():
                 logger.info("Table %s: %d records" % (table, recs))
-
-    def run_sequential(self):
-        """
-    This function exports the data from the frePPLe memory into the database.
-    The export runs sequentially over s single connection to PostgreSQL.
-    """
-        test = "FREPPLE_TEST" in os.environ
-
-        # Start a PSQL process
-        my_env = os.environ
-        if settings.DATABASES[self.database]["PASSWORD"]:
-            my_env["PGPASSWORD"] = settings.DATABASES[self.database]["PASSWORD"]
-        # process = Popen("psql -q -w %s%s%s%s" % (
-        process = Popen(
-            "psql -w %s%s%s%s"
-            % (
-                settings.DATABASES[self.database]["USER"]
-                and ("-U %s " % settings.DATABASES[self.database]["USER"])
-                or "",
-                settings.DATABASES[self.database]["HOST"]
-                and ("-h %s " % settings.DATABASES[self.database]["HOST"])
-                or "",
-                settings.DATABASES[self.database]["PORT"]
-                and ("-p %s " % settings.DATABASES[self.database]["PORT"])
-                or "",
-                test
-                and settings.DATABASES[self.database]["TEST"]["NAME"]
-                or settings.DATABASES[self.database]["NAME"],
-            ),
-            stdin=PIPE,
-            stderr=PIPE,
-            bufsize=0,
-            shell=True,
-            env=my_env,
-        )
-        if process.returncode is None:
-            # PSQL session is still running
-            process.stdin.write("SET statement_timeout = 0;\n".encode(self.encoding))
-            process.stdin.write("SET client_encoding = 'UTF8';\n".encode(self.encoding))
-
-        # Send all output to the PSQL process through a pipe
-        try:
-            self.truncate()
-            self.exportProblems()
-            self.exportConstraints()
-            self.exportOperationplans()
-            self.exportOperationPlanMaterials()
-            self.exportOperationPlanResources()
-            self.exportResourceplans()
-            self.exportPegging()
-        except:
-            logger.error("An error occured during the sequential export")
-
-        if self.verbosity:
-            cursor = connections[self.database].cursor()
-            cursor.execute(
-                """
-        select 'out_problem', count(*) from out_problem
-        union select 'out_constraint', count(*) from out_constraint
-        union select 'operationplan', count(*) from operationplan
-        union select 'operationplanmaterial', count(*) from operationplanmaterial
-        union select 'operationplanresource', count(*) from operationplanresource
-        union select 'out_resourceplan', count(*) from out_resourceplan
-        order by 1
-        """
-            )
-            for table, recs in cursor.fetchall():
-                logger.info("Table %s: %d records" % (table, recs or 0))

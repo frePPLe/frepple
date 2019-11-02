@@ -5046,6 +5046,7 @@ class PooledString {
     if (--(ptr->second) == 0) {
       // Remove from the pool
       pool.erase(ptr->first);
+      ptr = nullptr;
     }
   }
 
@@ -5095,12 +5096,14 @@ class PooledString {
   /* String assignment operator. */
   PooledString& operator=(const string& val) {
     if (ptr) {
-      if (ptr->first != val) clear();
-      insert(val);
-    } else {
+      if (ptr->first != val) {
+        // Different from existing value
+        clear();
+        insert(val);
+      }
+    } else if (!val.empty())
       // Currently empty
-      if (!val.empty()) insert(val);
-    }
+      insert(val);
     return *this;
   }
 

@@ -323,6 +323,7 @@ LOGGING = {
         # },
         "django": {"handlers": ["console"], "level": "INFO"},
         "freppledb": {"handlers": ["console"], "level": "INFO"},
+        "freppleapps": {"handlers": ["console"], "level": "INFO"},
     },
 }
 

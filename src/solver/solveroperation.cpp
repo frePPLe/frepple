@@ -26,7 +26,7 @@ void SolverCreate::checkOperationCapacity(OperationPlan* opplan,
                                           SolverCreate::SolverData& data) {
   unsigned short constrainedLoads = 0;
   for (auto h = opplan->beginLoadPlans(); h != opplan->endLoadPlans(); ++h)
-    if (!h->getResource()->hasType<ResourceInfinite>() && h->isStart() &&
+    if (h->getResource()->getConstrained() && h->isStart() &&
         h->getLoad()->getQuantity() != 0.0) {
       if (++constrainedLoads > 1) break;
     }

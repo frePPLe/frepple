@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-12-08 16:28+0100\n"
-"PO-Revision-Date: 2017-12-26 13:54+0100\n"
+"PO-Revision-Date: 2019-11-05 16:51+0100\n"
 "Last-Translator: Joao Ranita <jranita@frepple.com>\n"
 "Language-Team: frepple\n"
 "Language: nl\n"
@@ -22,7 +22,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 1.8.7.1\n"
+"X-Generator: Poedit 2.0.1\n"
 
 #: common/static/js/frepple.js:187 common/static/js/frepple.min.js:11
 msgid "There are unsaved changes on this page."
@@ -89,7 +89,7 @@ msgstr "Geselecteerde kruis"
 
 #: common/static/js/frepple.js:652 common/static/js/frepple.min.js:11
 msgid "Available Cross"
-msgstr "Beschikbare kruis"
+msgstr "Beschikbaar kruis"
 
 #: common/static/js/frepple.js:674 common/static/js/frepple.min.js:11
 msgid "Frozen columns"
@@ -157,8 +157,7 @@ msgstr "Verwijder gegevens"
 #: common/static/js/frepple.js:1133 common/static/js/frepple.min.js:12
 #, javascript-format
 msgid "You are about to delete %s objects AND ALL RELATED RECORDS!"
-msgstr ""
-"U staat op het punt %s objecten EN HUN GERELATEERDE RECORDS te verwijderen!"
+msgstr "U staat op het punt %s objecten EN HUN GERELATEERDE RECORDS te verwijderen!"
 
 #: common/static/js/frepple.js:1136 common/static/js/frepple.js:1184
 #: common/static/js/frepple.js:1705 common/static/js/frepple.js:1790
@@ -378,9 +377,7 @@ msgstr "huidige voorraad"
 #~ msgstr "ongebruikt"
 
 #~ msgid "Importing... pressing Close button will not stop the process."
-#~ msgstr ""
-#~ "Importeren... Het indrukken van de Sluit-knop zal de import niet "
-#~ "onderbreken."
+#~ msgstr "Importeren... Het indrukken van de Sluit-knop zal de import niet onderbreken."
 
 #~ msgid "problems"
 #~ msgstr "problemen"

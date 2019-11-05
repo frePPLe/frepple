@@ -545,6 +545,9 @@ void SolverCreate::solve(const ResourceBuckets* res, void* v) {
       // TODO The logic is not symmetrical with time_per operations.
       // For time-per operations we already evaluated the current bucket.
     }
+  } else {
+    auto bucketend = data->state->q_loadplan->getBucketEnd();
+    overloadQty = get<0>(bucketend);
   }
 
   // Loop for a valid location by using EARLIER capacity
@@ -577,7 +580,7 @@ void SolverCreate::solve(const ResourceBuckets* res, void* v) {
       // Because of operation size constraints (minimum and multiple values)
       // it is possible that the resizing fails.
       if (overloadQty < -ROUNDING_ERROR &&
-          orig_q_qty > -overloadQty - ROUNDING_ERROR &&
+          orig_q_qty > -overloadQty + ROUNDING_ERROR &&
           data->state->q_loadplan->getLoad()->getQuantity() &&
           !time_per_logic) {
         OperationPlanState beforeSqueeze(opplan);
@@ -891,7 +894,7 @@ void SolverCreate::solve(const ResourceBuckets* res, void* v) {
         if (effective_end > originalOpplan.end) newDate = effective_end;
       }
 
-      if (!hasOverloadInFirstBucket) {
+      if (!hasOverloadInFirstBucket && !data->state->forceLate) {
         // Actually, there was no problem
         data->state->a_date = data->state->q_date;
         data->state->a_qty = orig_q_qty;
@@ -964,7 +967,11 @@ void SolverCreate::solve(const ResourceBuckets* res, void* v) {
   if (getLogLevel() > 1 && data->state->q_qty < 0) {
     logger << indentlevel-- << "Bucketized resource '" << res
            << "' answers: " << data->state->a_qty;
-    if (!data->state->a_qty) logger << "  " << data->state->a_date;
+    if (!data->state->a_qty)
+      logger << "  " << data->state->a_date;
+    else if (originalOpplan.start > data->state->q_operationplan->getStart())
+      logger << " using earlier capacity "
+             << data->state->q_operationplan->getStart();
     logger << endl;
   }
 }

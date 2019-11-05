@@ -41,7 +41,14 @@ void SolverCreate::checkOperationCapacity(OperationPlan* opplan,
   // This may move an operationplan early or late.
   unsigned short counter = 0;
   Date orig_q_date_max = data.state->q_date_max;
+  bool first_iteration = true;
   do {
+    if (getLogLevel() > 1) {
+      if (!first_iteration)
+        logger << indentlevel << "  Rechecking capacity " << endl;
+      else
+        first_iteration = false;
+    }
     orig = opplan->getDates();
     recheck = false;
     first = true;

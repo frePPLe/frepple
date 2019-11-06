@@ -278,7 +278,6 @@ AC_CONFIG_FILES([
 AC_CONFIG_FILES([
   test/Makefile
   test/calendar/Makefile
-  test/callback/Makefile
   test/constraints_combined_1/Makefile
   test/constraints_combined_2/Makefile
   test/constraints_leadtime_1/Makefile
@@ -311,8 +310,6 @@ AC_CONFIG_FILES([
   test/load_bucketized/Makefile
   test/load_effective/Makefile
   test/cluster/Makefile
-  test/multithreading/Makefile
-  test/name/Makefile
   test/operation_alternate/Makefile
   test/operation_available/Makefile
   test/operation_effective/Makefile
@@ -338,7 +335,6 @@ AC_CONFIG_FILES([
   test/wip_1/Makefile
   test/wip_2/Makefile
   test/xml/Makefile
-  test/xml_remote/Makefile
 ])
 
 # Generate all make files

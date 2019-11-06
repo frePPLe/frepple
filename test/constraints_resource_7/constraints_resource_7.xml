@@ -307,7 +307,72 @@
       <location name="5. factory" />
     </demand>    
   </demands>
-
+  
+  <!--
+    TEST 6: multiple bucketized resources that aren't simultaneously available before some time
+  -->
+  <operations>
+    <operation name="6. make end item" xsi:type="operation_fixed_time">
+      <item name="6. end item" />
+      <location name="6. factory" />
+      <loads>
+        <load>
+          <resource name="6. Resource A" xsi:type="resource_buckets">
+          <location name="6. factory" />
+          <maximum_calendar name="capacity 6A">
+             <default>0</default>
+             <buckets>
+                <!-- 2 + 4 + 8 + 16 + 32 = 62 = effective monday through friday -->
+                <bucket start="2019-02-01T00:00:00" end="2019-02-28T00:00:00" days="62" value="10" />
+                <bucket start="2019-06-01T00:00:00" end="2019-12-30T00:00:00" days="62" value="10" />
+             </buckets>
+          </maximum_calendar>
+          </resource>
+          <quantity>1</quantity>
+        </load>
+        <load>
+          <resource name="6. Resource B" xsi:type="resource_buckets">
+          <location name="6. factory" />
+          <maximum_calendar name="capacity 6B">
+             <default>0</default>
+             <buckets>
+                <!-- 2 + 4 + 8 + 16 + 32 = 62 = effective monday through friday -->
+                <bucket start="2019-01-01T00:00:00" end="2019-08-01T00:00:00" days="62" value="8" />
+                <bucket start="2019-08-01T00:00:00" end="2019-12-30T00:00:00" days="62" value="4" />
+             </buckets>
+          </maximum_calendar>
+          </resource>
+          <quantity>1</quantity>
+        </load>
+        <load>
+          <resource name="6. Resource C" xsi:type="resource_buckets">
+          <location name="6. factory" />
+          <maximum_calendar name="capacity 6C">
+             <default>0</default>
+             <buckets>
+                <!-- 2 + 4 + 8 + 16 + 32 = 62 = effective monday through friday -->
+                <bucket start="2019-05-01T00:00:00" end="2019-10-30T00:00:00" days="62" value="6" />
+             </buckets>
+          </maximum_calendar>
+          </resource>
+          <quantity>1</quantity>
+        </load>
+      </loads>
+      <duration>P0D</duration>
+    </operation>
+  </operations>
+  <demands>
+    <demand name="6. order 1">
+      <quantity>80</quantity>
+      <due>2019-02-15T00:00:00</due>
+      <priority>1</priority>
+      <item name="6. end item" />
+      <location name="6. factory" />
+      <minshipment>1</minshipment>
+    </demand>
+  </demands>
+  
+  
 <?python
 print("CREATING CONSTRAINED PLAN")
 frepple.solver_mrp(plantype=1, constraints=15, loglevel=2).solve()

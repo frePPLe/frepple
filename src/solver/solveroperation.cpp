@@ -88,7 +88,7 @@ void SolverCreate::checkOperationCapacity(OperationPlan* opplan,
           // First load is ok, but moved the operationplan.
           // We can continue to check the second loadplan.
           orig = opplan->getDates();
-        if (!first) recheck = true;
+        if (!first && data.state->a_qty) recheck = true;
       }
       first = false;
     }

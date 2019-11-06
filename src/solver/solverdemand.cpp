@@ -263,11 +263,13 @@ void SolverCreate::solve(const Demand* l, void* v) {
         }
 
         // Message
-        if (loglevel > 0)
+        if (loglevel > 0) {
           logger << indentlevel << "Demand '" << l
-                 << "' gets answer: " << data->state->a_qty << "  " << next_date
-                 << "  " << data->state->a_cost << "  "
+                 << "' gets answer: " << data->state->a_qty;
+          if (!data->state->a_qty) logger << "  " << next_date;
+          logger << "  " << data->state->a_cost << "  "
                  << data->state->a_penalty << endl;
+        }
 
         // Update the date to plan in the next loop
         Date copy_plan_date = plan_date;

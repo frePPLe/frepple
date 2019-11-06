@@ -545,9 +545,6 @@ void SolverCreate::solve(const ResourceBuckets* res, void* v) {
       // TODO The logic is not symmetrical with time_per operations.
       // For time-per operations we already evaluated the current bucket.
     }
-  } else {
-    auto bucketend = data->state->q_loadplan->getBucketEnd();
-    overloadQty = get<0>(bucketend);
   }
 
   // Loop for a valid location by using EARLIER capacity

@@ -557,7 +557,7 @@ This action is possible in the user interface and the command line:
    
 * Command line::
 
-    frepplectl createsuperuser new_user_name
+    frepplectl changepassword user_name
 
 
 .. _flush: 

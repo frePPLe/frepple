@@ -178,10 +178,6 @@ class Command(BaseCommand):
                         if matchesModelName(filename0, m):
                             model = m
                             contenttype_id = ct
-                            logger.info(
-                                "%s Matched a model to file: %s"
-                                % (datetime.now().replace(microsecond=0), ifile)
-                            )
                             break
 
                     if not model or model in EXCLUDE_FROM_BULK_OPERATIONS:

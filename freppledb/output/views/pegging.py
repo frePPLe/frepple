@@ -28,8 +28,8 @@ from freppledb.common.models import Parameter
 
 class ReportByDemand(GridReport):
     """
-  A list report to show peggings.
-  """
+    This report shows a simple Gantt chart with the delivery of a sales order.
+    """
 
     template = "output/pegging.html"
     title = _("Demand plan")
@@ -104,19 +104,19 @@ class ReportByDemand(GridReport):
         cursor = connections[request.database].cursor()
         cursor.execute(
             """
-      with dmd as (
-        select
-          due,
-          cast(jsonb_array_elements(plan->'pegging')->>'opplan' as varchar) opplan
-        from demand
-        where name = %s
-        )
-      select min(dmd.due), min(startdate), max(enddate)
-      from dmd
-      inner join operationplan
-      on dmd.opplan = operationplan.reference
-      and type <> 'STCK'
-      """,
+            with dmd as (
+                select
+                  due,
+                  cast(jsonb_array_elements(plan->'pegging')->>'opplan' as varchar) opplan
+                from demand
+                where name = %s
+                )
+            select min(dmd.due), min(startdate), max(enddate)
+            from dmd
+            inner join operationplan
+            on dmd.opplan = operationplan.reference
+            and type <> 'STCK'
+            """,
             (args[0]),
         )
         x = cursor.fetchone()
@@ -171,44 +171,45 @@ class ReportByDemand(GridReport):
 
         # Collect demand due date, all operationplans and loaded resources
         query = """
-      with pegging as (
-        select
-          min(rownum) as rownum, min(due) as due, opplan, min(lvl) as lvl, sum(quantity) as quantity
-        from (select
-          row_number() over () as rownum, opplan, due, lvl, quantity
-        from (select
-          due,
-          cast(jsonb_array_elements(plan->'pegging')->>'opplan' as varchar) as opplan,
-          cast(jsonb_array_elements(plan->'pegging')->>'level' as integer) as lvl,
-          cast(jsonb_array_elements(plan->'pegging')->>'quantity' as numeric) as quantity
-          from demand
-          where name = %s
-          ) d1
-          ) d2
-        group by opplan
-        )
-      select
-        pegging.due, operationplan.name, pegging.lvl, ops.pegged,
-        pegging.rownum, operationplan.startdate, operationplan.enddate, operationplan.quantity,
-        operationplan.status, operationplanresource.resource_id, operationplan.type,
-        case when operationplan.operation_id is not null then 1 else 0 end as show
-      from pegging
-      inner join operationplan
-        on operationplan.reference = pegging.opplan
-      inner join (
-        select name,
-          min(rownum) as rownum,
-          sum(pegging.quantity) as pegged
-        from pegging
-        inner join operationplan
-          on pegging.opplan = operationplan.reference
-        group by operationplan.name
-        ) ops
-      on operationplan.name = ops.name
-      left outer join operationplanresource
-        on pegging.opplan = operationplanresource.operationplan_id
-      order by ops.rownum, pegging.rownum
-      """
+          with pegging as (
+            select
+              min(rownum) as rownum, min(due) as due, opplan, min(lvl) as lvl, sum(quantity) as quantity
+            from (select
+              row_number() over () as rownum, opplan, due, lvl, quantity
+            from (select
+              due,
+              cast(jsonb_array_elements(plan->'pegging')->>'opplan' as varchar) as opplan,
+              cast(jsonb_array_elements(plan->'pegging')->>'level' as integer) as lvl,
+              cast(jsonb_array_elements(plan->'pegging')->>'quantity' as numeric) as quantity
+              from demand
+              where name = %s
+              ) d1
+              ) d2
+            group by opplan
+            )
+          select
+            pegging.due, operationplan.name, pegging.lvl, ops.pegged,
+            pegging.rownum, operationplan.startdate, operationplan.enddate, operationplan.quantity,
+            operationplan.status, operationplanresource.resource_id, operationplan.type,
+            case when operationplan.operation_id is not null then 1 else 0 end as show,
+            operationplan.color, operationplan.type
+          from pegging
+          inner join operationplan
+            on operationplan.reference = pegging.opplan
+          inner join (
+            select name,
+              min(rownum) as rownum,
+              sum(pegging.quantity) as pegged
+            from pegging
+            inner join operationplan
+              on pegging.opplan = operationplan.reference
+            group by operationplan.name
+            ) ops
+          on operationplan.name = ops.name
+          left outer join operationplanresource
+            on pegging.opplan = operationplanresource.operationplan_id
+          order by ops.rownum, pegging.rownum
+          """
 
         # Build the Python result
         with connections[request.database].chunked_cursor() as cursor_chunked:
@@ -261,12 +262,14 @@ class ReportByDemand(GridReport):
                                 "startdate": str(rec[5]),
                                 "enddate": str(rec[6]),
                                 "status": rec[8],
-                                "id": rec[4],
+                                "reference": rec[4],
+                                "color": round(rec[12]),
+                                "type": rec[13],
                             }
                         ],
                     }
                     parents[rec[2]] = rec[1]
-                elif rec[4] != prevrec["operationplans"][-1]["id"]:
+                elif rec[4] != prevrec["operationplans"][-1]["reference"]:
                     # Extra operationplan for the operation
                     prevrec["operationplans"].append(
                         {
@@ -280,8 +283,10 @@ class ReportByDemand(GridReport):
                             "w": round((rec[6] - rec[5]).total_seconds() / horizon, 3),
                             "startdate": str(rec[5]),
                             "enddate": str(rec[6]),
-                            "locked": rec[8],
-                            "id": rec[4],
+                            "status": rec[8],
+                            "reference": rec[4],
+                            "color": round(rec[12]),
+                            "type": rec[13],
                         }
                     )
                 elif rec[9] and not rec[9] in prevrec["resource"]:

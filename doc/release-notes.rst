@@ -11,6 +11,9 @@ Release notes
 - Bug fixes in the solver algorithm when using post-operation times at many 
   places in the supply path.
 
+- The `demand Gantt report <user-guide/user-interface/plan-analysis/demand-gantt-report.html`
+  got a long overdue refreshed look and now displays more information.
+
 .. rubric:: User interface
 
 - Support for user-defined attributes on purchase orders, manufacturing orders and

@@ -6,8 +6,27 @@
 #grid_location__name, #grid_operationplans, .ui-jqgrid .ui-jqgrid-resize, .ui-jqgrid .ui-jqgrid-htable th div {
   height: 34px;
 }
+
+rect.opplan {
+  vector-effect: non-scaling-stroke;
+  stroke-width: 1px;
+  stroke: rgb(0,0,0);
+  rx: 2;
+  ry: 2;
+}
+
 </style>
 <script type="text/javascript">
+
+var threshold_green = 100;
+var threshold_yellow = 100;
+var threshold_red = 100;
+
+
+function buildcolor(color) {
+  // todo copy/reuse from frepple.js color formatter to get identical color as in 
+  return 'rgb(111,111,255)';  
+}
 
 function ganttcell(cellvalue, options, rowdata)
 {
@@ -25,39 +44,98 @@ function ganttcell(cellvalue, options, rowdata)
            break;
         }
      };
-     if (row >= layer.length) layer.push(data["enddate"]);
-     if (data['status'] == 'confirmed')
-       result.push( 
-         '<rect x="' + data["x"] + '" y="' + (-row*gantt.rowsize) 
-         + '" width="' + Math.max(data["w"],1) 
-         + '" height="' + (gantt.rowsize-3) 
-         + '" class="opplan_locked"><title>Operation: ' + data["operation"] 
-         + (data["description"] ? ('<br>Description: ' + data["description"]) : '') 
-         + '<br>Id: ' + data["id"] + '<br>Quantity: ' + data["quantity"] 
-         + '<br>Start Date: ' + data["startdate"] 
-         + '<br>End Date: ' + data["enddate"] + '</title></rect>'
-         );
-     else
-       result.push(
-         '<rect x="' + data["x"] + '" y="' + (-row*gantt.rowsize) 
-         + '" width="' + Math.max(data["w"],1) 
-         + '" height="' + (gantt.rowsize-3) 
-         + '" class="opplan"><title>Operation: ' 
-         + data["operation"] + (data["description"] ? ('<br>Description: ' + data["description"]) : '') 
-         + '<br>Id: ' + data["id"] + '<br>Quantity: ' + data["quantity"] 
-         + '<br>Start Date: ' + data["startdate"] 
-         + '<br>End Date: ' + data["enddate"] + '</title></rect>'
+     if (row >= layer.length) layer.push(data["enddate"]);     
+     result.push( 
+         '<rect class="opplan" x="' + data["x"] + '" y="' + (-row*gantt.rowsize) 
+         + '" fill="' + buildcolor(data["color"]) + '" width="' + Math.max(data["w"],1) 
+         + '" height="' + (gantt.rowsize-3)
+         + '" data-operation="' + (data["operation"] ? data["operation"] : '') 
+         + '" data-description="' + (data["description"] ? data["description"] : '') 
+         + '" data-reference="' + (data["id"] ? data["id"] : '') 
+         + '" data-quantity="' + (data["quantity"] ? data["quantity"] : '')  
+         + '" data-startdate="' + (data["startdate"] ? data["startdate"] : '')  
+         + '" data-endate="' + (data["enddate"] ? data["enddate"] : '') 
+         + '" data-status="' + (data['status'] ? data['status'] : 'proposed')
+         + '" data-color="' + (data["color"] ? data["color"] : '')
+         + '" data-type="' + (data["type"] ? data["type"] : '')
+         + '"/>'
          );
   }
   result.push( '<line x1="' + rowdata["due"] + '" y1="' + gantt.rowsize + '" x2="' + rowdata["due"] + '" y2="-' + (layer.length*gantt.rowsize) + '" vector-effect="non-scaling-stroke" stroke="red" stroke-width="1" />');
   result.push( '<line x1="' + rowdata["current"] + '" y1="' + gantt.rowsize + '" x2="' + rowdata["current"] + '" y2="-' + (layer.length*gantt.rowsize) + '" vector-effect="non-scaling-stroke" stroke="black" stroke-width="1" />');
   var scale = $("#jqgh_grid_operationplans").width() / 10000;
   return '<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="100%" height="' + (gantt.rowsize*layer.length+3) + 'px">'
-    + '<title>' + escape(rowdata["name"]) + '</title>'
     + '<g class="transformer" transform="scale(' + scale + ',1) translate(0,' + ((layer.length-1)*gantt.rowsize+3) +')" title="' + layer.length +'">'
     + result.join('\n')
     + '</g></svg>';
 }
+
+function buildtooltip(){
+  return $(this).attr("data-operation");
+  /*
+  var descriptiontext = '';
+  if ((typeof(d.ordertype) === 'undefined') || d.ordertype === 'MO') {
+    if (d.operation.hasOwnProperty('description')) {
+      descriptiontext = gettextCatalog.getString('description')+": " + d.operation.description + '<br>';
+    }
+    return gettextCatalog.getString('manufacturing order') + '<br>' +
+      d.operation.name + '<br>' +
+      gettextCatalog.getString('reference')+": " + d.reference + '<br>' +
+      descriptiontext +
+      gettextCatalog.getString('start')+": " + moment(d.start).format("YYYY-MM-DD HH:mm:ss") + '<br>' +
+      gettextCatalog.getString('setup end')+": " + moment(d.setupend).format("YYYY-MM-DD HH:mm:ss") + '<br>' +
+      gettextCatalog.getString('end')+": " + moment(d.end).format("YYYY-MM-DD HH:mm:ss") + '<br>' +
+      gettextCatalog.getString('quantity')+": " + d.quantity + "<br>" +
+      gettextCatalog.getString('criticality')+": " + (Math.round(d.criticality * 10) / 10) + "<br>" +
+      gettextCatalog.getString('delay')+": " + (Math.round(d.delay / 8640) / 10) + "<br>" +
+      gettextCatalog.getString('status')+": " + (typeof(d.status) === 'undefined' ? gettextCatalog.getString("proposed") : d.status) + "<br>";
+  }
+  if (d.ordertype === 'PO') {
+    return gettextCatalog.getString('purchase order') + '<br>' +
+      d.item.name + ' @ ' + d.location.name + '<br>' +
+      gettextCatalog.getString('reference')+": " + d.reference + '<br>' +
+      descriptiontext +
+      gettextCatalog.getString('supplier')+": " + d.supplier.name + '<br>' +
+      gettextCatalog.getString('start')+": " + moment(d.start).format("YYYY-MM-DD HH:mm:ss") + '<br>' +
+      gettextCatalog.getString('end')+": " + moment(d.end).format("YYYY-MM-DD HH:mm:ss") + '<br>' +
+      gettextCatalog.getString('quantity')+": " + d.quantity + "<br>" +
+      gettextCatalog.getString('criticality')+": " + (Math.round(d.criticality * 10) / 10) + "<br>" +
+      gettextCatalog.getString('delay')+": " + (Math.round(d.delay / 8640) / 10) + "<br>" +
+      gettextCatalog.getString('status')+": " + (typeof(d.status) === 'undefined' ? gettextCatalog.getString("proposed") : d.status) + "<br>";
+  }
+  if (d.ordertype === 'DO') {
+    return gettextCatalog.getString('distribution order') + '<br>' +
+      d.item.name + ' @ ' + d.location.name + '<br>' +
+      gettextCatalog.getString('origin')+": " + d.origin.name + '<br>' +
+      gettextCatalog.getString('reference')+": " + d.reference + '<br>' +
+      descriptiontext +
+      gettextCatalog.getString('start')+": " + moment(d.start).format("YYYY-MM-DD HH:mm:ss") + '<br>' +
+      gettextCatalog.getString('end')+": " + moment(d.end).format("YYYY-MM-DD HH:mm:ss") + '<br>' +
+      gettextCatalog.getString('quantity')+": " + d.quantity + "<br>" +
+      gettextCatalog.getString('criticality')+": " + (Math.round(d.criticality * 10) / 10) + "<br>" +
+      gettextCatalog.getString('delay')+": " + (Math.round(d.delay / 8640) / 10) + "<br>" +
+      gettextCatalog.getString('status')+": " + (typeof(d.status) === 'undefined' ? gettextCatalog.getString("proposed") : d.status) + "<br>";
+  }
+  if (d.ordertype === 'STCK') {
+    return gettextCatalog.getString('inventory') + '<br>' +
+      d.item.name + ' @ ' + d.location.name + '<br>' +
+      gettextCatalog.getString('quantity')+": " + d.quantity + "<br>" +
+      gettextCatalog.getString('criticality')+": " + (Math.round(d.criticality * 10) / 10) + "<br>";
+  }
+  if (d.ordertype === 'DLVR') {
+    return gettextCatalog.getString('customer delivery') + '<br>' +
+      d.item.name + ' @ ' + d.location.name + '<br>' +
+      gettextCatalog.getString('demand')+": " + d.demand.name +
+      descriptiontext +
+      gettextCatalog.getString('start')+": " + moment(d.start).format("YYYY-MM-DD HH:mm:ss") + '<br>' +
+      gettextCatalog.getString('end')+": " + moment(d.end).format("YYYY-MM-DD HH:mm:ss") + '<br>' +
+      gettextCatalog.getString('quantity')+": " + d.quantity + "<br>" +
+      gettextCatalog.getString('criticality')+": " + (Math.round(d.criticality * 10) / 10) + "<br>" +
+      gettextCatalog.getString('delay')+": " + (Math.round(d.delay / 8640) / 10) + "<br>";
+  }
+  */
+}
+
 
 var horizonstart = new Date({{request.report_startdate|date:"Y"}},{{request.report_startdate|date:"n"}}-1,{{request.report_startdate|date:"j"}});
 var horizonend = new Date({{request.report_enddate|date:"Y"}},{{request.report_enddate|date:"n"}}-1,{{request.report_enddate|date:"j"}});
@@ -69,7 +147,6 @@ var delta = (viewend.getTime() - viewstart.getTime()) / 86400000.0;
 $(function() {
   gantt.header();
 });
-
 
 function reslistfmt(cellvalue, options, row)
 {
@@ -108,6 +185,12 @@ loadComplete: function(data) {
     var msg = $("<h2>").text(gettext("This demand has not been planned")).css('padding','30px');
     $("#content-main").replaceWith(msg);
   }
+  $('svg rect').tooltip({
+    title: buildtooltip,
+    html: true,
+    placement: 'auto',
+    container: 'body'
+  });
 },
 {% endblock %}
 

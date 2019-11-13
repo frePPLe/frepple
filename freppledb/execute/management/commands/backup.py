@@ -116,7 +116,7 @@ class Command(BaseCommand):
             if settings.DATABASES[database]["HOST"]:
                 args.append("--host=%s" % settings.DATABASES[database]["HOST"])
             if settings.DATABASES[database]["PORT"]:
-                args.append("--port=%s " % settings.DATABASES[database]["PORT"])
+                args.append("--port=%s" % settings.DATABASES[database]["PORT"])
             args.append(settings.DATABASES[database]["NAME"])
             with subprocess.Popen(args) as p:
                 try:

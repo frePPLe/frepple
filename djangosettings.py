@@ -219,6 +219,11 @@ INSTALLED_APPS = (
     "rest_framework",
     "django_admin_bootstrapped",
     "django.contrib.admin",
+    # The next app is only for developers!
+    # Only enable it when you know what you're doing: the ability
+    # to run arbitrary SQL commands bypasses all security and can corrupt
+    # the database contents
+    # "freppledb.executesql",
 )
 
 # Custom attribute fields in the database

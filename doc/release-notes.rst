@@ -30,6 +30,12 @@ Release notes
 
 - Various fixes to the connector for Odoo 12.
 
+.. rubric:: Development
+
+- A new screen allows to `execute SQL commands on the database <user-guide/user-interface/executesql.html>`_.
+  This new app is only intended to facilitate development and testing, and shouldn't be activated in 
+  production environments.
+
 6.0.0 (2019/16/09)
 ==================
 

@@ -15,4 +15,5 @@ This part of the manual describes the functionalities of the user interface.
    plan-analysis/index
    what-if-scenarios
    execute
+   executesql
    

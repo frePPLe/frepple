@@ -670,8 +670,8 @@ def delete_user(sender, instance, **kwargs):
 class Comment(models.Model):
     id = models.AutoField(_("identifier"), primary_key=True)
     content_type = models.ForeignKey(
-        # Translators: Translation included with Django
         ContentType,
+        # Translators: Translation included with Django
         verbose_name=_("content type"),
         related_name="content_type_set_for_%(class)s",
         on_delete=models.CASCADE,

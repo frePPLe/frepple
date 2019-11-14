@@ -176,12 +176,12 @@ class PreferencesForm(forms.Form):
             raise forms.ValidationError("Minimum page size is 25.")
         if newdata["cur_password"]:
             if not self.user.check_password(newdata["cur_password"]):
-                # . Translators: Translation included with Django
+                # fmt: off
                 raise forms.ValidationError(
-                    _(
-                        "Your old password was entered incorrectly. Please enter it again."
-                    )
+                    # . Translators: Translation included with Django
+                    _("Your old password was entered incorrectly. Please enter it again.")
                 )
+                # fmt: on
             # Validate_password raises a ValidationError
             validate_password(
                 newdata["new_password1"],

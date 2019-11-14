@@ -279,10 +279,10 @@ class MultiDBModelAdmin(admin.ModelAdmin):
 
         elif "_addanother" in request.POST:
             msg = format_html(
+                # fmt: off
                 # Translators: Translation included with Django
-                _(
-                    'The {name} "{obj}" was added successfully. You may add another {name} below.'
-                ),
+                _('The {name} "{obj}" was added successfully. You may add another {name} below.'),
+                # fmt: on
                 **msg_dict
             )
             self.message_user(request, msg, messages.SUCCESS)
@@ -376,10 +376,10 @@ class MultiDBModelAdmin(admin.ModelAdmin):
         }
         if "_continue" in request.POST:
             msg = format_html(
+                # fmt: off
                 # Translators: Translation included with Django
-                _(
-                    'The {name} "{obj}" was changed successfully. You may edit it again below.'
-                ),
+                _('The {name} "{obj}" was changed successfully. You may edit it again below.'),
+                # fmt: on
                 **msg_dict
             )
             self.message_user(request, msg, messages.SUCCESS)
@@ -622,8 +622,10 @@ class MultiDBModelAdmin(admin.ModelAdmin):
         object_name = str(opts.verbose_name)
 
         if perms_needed or protected:
+            # Translators: Translation included with Django
             title = _("Cannot delete %(name)s") % {"name": object_name}
         else:
+            # Translators: Translation included with Django
             title = _("Are you sure?")
 
         context = {
@@ -723,6 +725,7 @@ class MultiDBTabularInline(admin.TabularInline):
 
 
 class MultiDBUserCreationForm(UserCreationForm):
+    # Translators: Translation included with Django
     email = forms.EmailField(required=True, help_text=_("Required."))
     first_name = forms.CharField(
         required=True, max_length=30, help_text=_("Required. Max 30 characters.")

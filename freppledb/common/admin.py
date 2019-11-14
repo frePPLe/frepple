@@ -37,6 +37,7 @@ class MyUserAdmin(UserAdmin, MultiDBModelAdmin):
             _("Personal info"),
             {"fields": ("username", ("first_name", "last_name"), "email")},
         ),
+        # Translators: Translation included with Django
         (_("password"), {"fields": ("password1", "password2")}),
         (_("scenario access"), {"fields": ("scenarios",)}),
     )

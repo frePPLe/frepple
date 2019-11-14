@@ -574,8 +574,8 @@ class BulkForeignKeyFormField(forms.fields.Field):
                 return self.cache[value]
             except KeyError:
                 # fmt: off
-                # . Translators: Translation included with Django
                 raise forms.ValidationError(
+                    # . Translators: Translation included with Django
                     _("Select a valid choice. That choice is not one of the available choices.")
                 )
                 # fmt: on
@@ -584,8 +584,8 @@ class BulkForeignKeyFormField(forms.fields.Field):
                 return self.queryset.get(pk=value)
             except self.model.DoesNotExist:
                 # fmt: off
-                # . Translators: Translation included with Django
                 raise forms.ValidationError(
+                    # . Translators: Translation included with Django
                     _("Select a valid choice. That choice is not one of the available choices.")
                 )
                 # fmt: on

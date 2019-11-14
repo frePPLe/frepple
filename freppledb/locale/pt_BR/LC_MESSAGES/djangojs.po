@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-11-05 16:31+0100\n"
+"POT-Creation-Date: 2019-11-14 17:09+0100\n"
 "PO-Revision-Date: 2018-08-24 09:56+0200\n"
 "Last-Translator: Joao Ranita <jranita@frepple.com>\n"
 "Language-Team: frepple\n"
@@ -38,7 +38,7 @@ msgstr "Erro ao salvar dados"
 #: common/static/js/frepple.js:1619 common/static/js/frepple.js:1785
 #: common/static/js/frepple.js:2383 common/static/js/frepple.js:2507
 #: common/static/js/frepple.min.js:11
-#: forecast/static/forecast/src/forecast.js:927
+#: forecast/static/forecast/src/forecast.js:931
 #: forecast/static/js/frepple-forecast.min.js:11
 msgid "Close"
 msgstr "Fechar"
@@ -58,7 +58,7 @@ msgstr "Guardar"
 #: common/static/js/frepple.js:1334 common/static/js/frepple.js:1603
 #: common/static/js/frepple.js:1689 common/static/js/frepple.js:2045
 #: common/static/js/frepple.min.js:11
-#: forecast/static/forecast/src/forecast.js:954
+#: forecast/static/forecast/src/forecast.js:958
 #: forecast/static/js/frepple-forecast.min.js:11
 msgid "Cancel"
 msgstr "Cancelar"
@@ -95,13 +95,13 @@ msgid "Available options"
 msgstr "Opções disponíveis"
 
 #: common/static/js/frepple.js:711 common/static/js/frepple.min.js:11
-#: forecast/static/forecast/src/forecast.js:936
+#: forecast/static/forecast/src/forecast.js:940
 #: forecast/static/js/frepple-forecast.min.js:11
 msgid "Selected Cross"
 msgstr "Cruzamento seleccionado"
 
 #: common/static/js/frepple.js:721 common/static/js/frepple.min.js:11
-#: forecast/static/forecast/src/forecast.js:944
+#: forecast/static/forecast/src/forecast.js:948
 #: forecast/static/js/frepple-forecast.min.js:11
 msgid "Available Cross"
 msgstr "Cruzamentos disponíveis"
@@ -112,19 +112,19 @@ msgstr "Colunas fixas"
 
 #: common/static/js/frepple.js:762 common/static/js/frepple.js:2141
 #: common/static/js/frepple.min.js:11
-#: forecast/static/forecast/src/forecast.js:930
+#: forecast/static/forecast/src/forecast.js:934
 #: forecast/static/js/frepple-forecast.min.js:11
 msgid "Customize"
 msgstr "Customizar"
 
 #: common/static/js/frepple.js:770 common/static/js/frepple.min.js:11
-#: forecast/static/forecast/src/forecast.js:953
+#: forecast/static/forecast/src/forecast.js:957
 #: forecast/static/js/frepple-forecast.min.js:11
 msgid "OK"
 msgstr "OK"
 
 #: common/static/js/frepple.js:772 common/static/js/frepple.min.js:11
-#: forecast/static/forecast/src/forecast.js:955
+#: forecast/static/forecast/src/forecast.js:959
 #: forecast/static/js/frepple-forecast.min.js:11
 msgid "Reset"
 msgstr "Reset"

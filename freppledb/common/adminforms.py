@@ -392,10 +392,10 @@ class MultiDBModelAdmin(admin.ModelAdmin):
 
         elif "_saveasnew" in request.POST:
             msg = format_html(
+                # fmt: off
                 # Translators: Translation included with Django
-                _(
-                    'The {name} "{obj}" was added successfully. You may edit it again below.'
-                ),
+                _('The {name} "{obj}" was added successfully. You may edit it again below.'),
+                # fmt: on
                 **msg_dict
             )
             self.message_user(request, msg, messages.SUCCESS)
@@ -412,10 +412,10 @@ class MultiDBModelAdmin(admin.ModelAdmin):
 
         elif "_addanother" in request.POST:
             msg = format_html(
+                # fmt: off
                 # Translators: Translation included with Django
-                _(
-                    'The {name} "{obj}" was changed successfully. You may add another {name} below.'
-                ),
+                _('The {name} "{obj}" was changed successfully. You may add another {name} below.'),
+                # fmt: on
                 **msg_dict
             )
             self.message_user(request, msg, messages.SUCCESS)

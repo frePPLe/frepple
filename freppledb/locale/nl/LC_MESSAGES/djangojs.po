@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-11-05 16:31+0100\n"
+"POT-Creation-Date: 2019-11-14 17:09+0100\n"
 "PO-Revision-Date: 2019-11-05 17:35+0100\n"
 "Last-Translator: Joao Ranita <jranita@frepple.com>\n"
 "Language-Team: frepple\n"
@@ -37,7 +37,7 @@ msgstr "Foutmelding tijdens wegschrijven gegevens"
 #: common/static/js/frepple.js:1619 common/static/js/frepple.js:1785
 #: common/static/js/frepple.js:2383 common/static/js/frepple.js:2507
 #: common/static/js/frepple.min.js:11
-#: forecast/static/forecast/src/forecast.js:927
+#: forecast/static/forecast/src/forecast.js:931
 #: forecast/static/js/frepple-forecast.min.js:11
 msgid "Close"
 msgstr "Sluit"
@@ -57,7 +57,7 @@ msgstr "Bewaar"
 #: common/static/js/frepple.js:1334 common/static/js/frepple.js:1603
 #: common/static/js/frepple.js:1689 common/static/js/frepple.js:2045
 #: common/static/js/frepple.min.js:11
-#: forecast/static/forecast/src/forecast.js:954
+#: forecast/static/forecast/src/forecast.js:958
 #: forecast/static/js/frepple-forecast.min.js:11
 msgid "Cancel"
 msgstr "Annuleer"
@@ -92,13 +92,13 @@ msgid "Available options"
 msgstr "Beschikbare opties"
 
 #: common/static/js/frepple.js:711 common/static/js/frepple.min.js:11
-#: forecast/static/forecast/src/forecast.js:936
+#: forecast/static/forecast/src/forecast.js:940
 #: forecast/static/js/frepple-forecast.min.js:11
 msgid "Selected Cross"
 msgstr "Geselecteerde kruis"
 
 #: common/static/js/frepple.js:721 common/static/js/frepple.min.js:11
-#: forecast/static/forecast/src/forecast.js:944
+#: forecast/static/forecast/src/forecast.js:948
 #: forecast/static/js/frepple-forecast.min.js:11
 msgid "Available Cross"
 msgstr "Beschikbaar kruis"
@@ -109,19 +109,19 @@ msgstr "Vastgepinde kolommen"
 
 #: common/static/js/frepple.js:762 common/static/js/frepple.js:2141
 #: common/static/js/frepple.min.js:11
-#: forecast/static/forecast/src/forecast.js:930
+#: forecast/static/forecast/src/forecast.js:934
 #: forecast/static/js/frepple-forecast.min.js:11
 msgid "Customize"
 msgstr "Personaliseer"
 
 #: common/static/js/frepple.js:770 common/static/js/frepple.min.js:11
-#: forecast/static/forecast/src/forecast.js:953
+#: forecast/static/forecast/src/forecast.js:957
 #: forecast/static/js/frepple-forecast.min.js:11
 msgid "OK"
 msgstr "OK"
 
 #: common/static/js/frepple.js:772 common/static/js/frepple.min.js:11
-#: forecast/static/forecast/src/forecast.js:955
+#: forecast/static/forecast/src/forecast.js:959
 #: forecast/static/js/frepple-forecast.min.js:11
 msgid "Reset"
 msgstr "Herstel"
@@ -175,7 +175,8 @@ msgstr "Verwijder gegevens"
 #: common/static/js/frepple.js:1207 common/static/js/frepple.min.js:11
 #, javascript-format
 msgid "You are about to delete %s objects AND ALL RELATED RECORDS!"
-msgstr "U staat op het punt %s objecten EN HUN GERELATEERDE RECORDS te verwijderen!"
+msgstr ""
+"U staat op het punt %s objecten EN HUN GERELATEERDE RECORDS te verwijderen!"
 
 #: common/static/js/frepple.js:1210 common/static/js/frepple.js:1259
 #: common/static/js/frepple.js:1602 common/static/js/frepple.js:1688
@@ -451,7 +452,9 @@ msgstr "huidige voorraad"
 #~ msgstr "ongebruikt"
 
 #~ msgid "Importing... pressing Close button will not stop the process."
-#~ msgstr "Importeren... Het indrukken van de Sluit-knop zal de import niet onderbreken."
+#~ msgstr ""
+#~ "Importeren... Het indrukken van de Sluit-knop zal de import niet "
+#~ "onderbreken."
 
 #~ msgid "problems"
 #~ msgstr "problemen"

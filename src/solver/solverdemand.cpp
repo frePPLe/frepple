@@ -94,7 +94,7 @@ void SolverCreate::solve(const Demand* l, void* v) {
           string("Demand '") + l->getName() + "' has no delivery operation";
       Problem::iterator j = Problem::begin(const_cast<Demand*>(l), false);
       while (j != Problem::end()) {
-        if (&(j->getType()) == ProblemInvalidData::metadata &&
+        if (j->hasType<ProblemInvalidData>() &&
             j->getDescription() == problemtext)
           break;
         ++j;

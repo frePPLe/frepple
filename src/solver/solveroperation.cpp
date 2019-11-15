@@ -151,8 +151,7 @@ bool SolverCreate::checkOperation(OperationPlan* opplan,
       if (data.logConstraints && data.planningDemand) {
         auto j = data.planningDemand->getConstraints().begin();
         while (j != data.planningDemand->getConstraints().end()) {
-          if (&(j->getType()) == ProblemInvalidData::metadata &&
-              j->getDescription() == msg)
+          if (j->hasType<ProblemInvalidData>() && j->getDescription() == msg)
             break;
           ++j;
         }
@@ -667,7 +666,7 @@ OperationPlan* SolverCreate::createOperation(const Operation* oper,
       if (dmd) {
         auto j = dmd->getConstraints().begin();
         while (j != dmd->getConstraints().end()) {
-          if (&(j->getType()) == ProblemInvalidData::metadata &&
+          if (j->hasType<ProblemInvalidData>() &&
               j->getDescription() == problemtext)
             break;
           ++j;
@@ -965,8 +964,7 @@ void SolverCreate::solve(const OperationRouting* oper, void* v) {
       if (data->logConstraints && data->planningDemand) {
         auto j = data->planningDemand->getConstraints().begin();
         while (j != data->planningDemand->getConstraints().end()) {
-          if (&(j->getType()) == ProblemInvalidData::metadata &&
-              j->getDescription() == msg)
+          if (j->hasType<ProblemInvalidData>() && j->getDescription() == msg)
             break;
           ++j;
         }
@@ -1253,7 +1251,7 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v) {
           if (data->logConstraints && data->planningDemand) {
             auto j = data->planningDemand->getConstraints().begin();
             while (j != data->planningDemand->getConstraints().end()) {
-              if (&(j->getType()) == ProblemInvalidData::metadata &&
+              if (j->hasType<ProblemInvalidData>() &&
                   j->getDescription() == msg)
                 break;
               ++j;
@@ -1749,8 +1747,7 @@ void SolverCreate::solve(const OperationSplit* oper, void* v) {
         if (data->logConstraints && data->planningDemand) {
           auto j = data->planningDemand->getConstraints().begin();
           while (j != data->planningDemand->getConstraints().end()) {
-            if (&(j->getType()) == ProblemInvalidData::metadata &&
-                j->getDescription() == msg)
+            if (j->hasType<ProblemInvalidData>() && j->getDescription() == msg)
               break;
             ++j;
           }

@@ -1124,7 +1124,7 @@ void Buffer::correctProducingFlow(Operation* itemoper) {
 
 Duration Buffer::getDecoupledLeadTime(double qty,
                                       bool recurse_ip_buffers) const {
-  if (!recurse_ip_buffers || getType() == *BufferInfinite::metadata)
+  if (!recurse_ip_buffers || hasType<BufferInfinite>())
     // Abort the recursion
     return Duration(0L);
 

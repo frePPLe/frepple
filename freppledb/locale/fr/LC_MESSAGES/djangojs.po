@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-14 17:09+0100\n"
-"PO-Revision-Date: 2019-11-14 17:12+0100\n"
+"PO-Revision-Date: 2019-11-15 07:40+0100\n"
 "Last-Translator: Joao Ranita <jranita@frepple.com>\n"
 "Language-Team: frepple\n"
 "Language: fr\n"
@@ -81,7 +81,7 @@ msgstr "Cliquer pour sélectionner un enregistrement"
 
 #: common/static/js/frepple.js:627 common/static/js/frepple.min.js:11
 msgid "Select action"
-msgstr ""
+msgstr "Sélectionner l'action"
 
 #: common/static/js/frepple.js:661 common/static/js/frepple.min.js:11
 msgid "Selected options"
@@ -206,7 +206,7 @@ msgstr "Exporter le plan"
 
 #: common/static/js/frepple.js:1435 common/static/js/frepple.min.js:11
 msgid "within"
-msgstr ""
+msgstr "dans les"
 
 #: common/static/js/frepple.js:1468 common/static/js/frepple.min.js:11
 msgid "days"
@@ -368,57 +368,57 @@ msgstr "Visite guidée"
 #: forecast/static/forecast/src/forecast.js:32
 #: forecast/static/js/frepple-forecast.min.js:11
 msgid "total orders 3 years ago"
-msgstr ""
+msgstr "Total des ordres il y a 3 ans"
 
 #: forecast/static/forecast/src/forecast.js:33
 #: forecast/static/js/frepple-forecast.min.js:11
 msgid "orders adjustment 3 years ago"
-msgstr ""
+msgstr "Ajustement des ordres il y a 3 ans"
 
 #: forecast/static/forecast/src/forecast.js:34
 #: forecast/static/js/frepple-forecast.min.js:11
 msgid "total orders 2 years ago"
-msgstr ""
+msgstr "Total des ordres il y a 2 ans"
 
 #: forecast/static/forecast/src/forecast.js:35
 #: forecast/static/js/frepple-forecast.min.js:11
 msgid "orders adjustment 2 years ago"
-msgstr ""
+msgstr "Ajustement des ordres il y a 2 ans"
 
 #: forecast/static/forecast/src/forecast.js:36
 #: forecast/static/js/frepple-forecast.min.js:11
 msgid "total orders 1 years ago"
-msgstr ""
+msgstr "Total des ordres il y a 1 an"
 
 #: forecast/static/forecast/src/forecast.js:37
 #: forecast/static/js/frepple-forecast.min.js:11
 msgid "orders adjustment 1 years ago"
-msgstr ""
+msgstr "Ajustement des ordres il y a 1 an"
 
 #: forecast/static/forecast/src/forecast.js:38
 #: forecast/static/js/frepple-forecast.min.js:11
 msgid "total orders"
-msgstr ""
+msgstr "Total des ordres"
 
 #: forecast/static/forecast/src/forecast.js:39
 #: forecast/static/js/frepple-forecast.min.js:11
 msgid "open orders"
-msgstr ""
+msgstr "Ordres ouverts"
 
 #: forecast/static/forecast/src/forecast.js:40
 #: forecast/static/js/frepple-forecast.min.js:11
 msgid "forecast baseline"
-msgstr ""
+msgstr "prévision de base"
 
 #: forecast/static/forecast/src/forecast.js:41
 #: forecast/static/js/frepple-forecast.min.js:11
 msgid "forecast override"
-msgstr ""
+msgstr "ajustement de prévision"
 
 #: forecast/static/forecast/src/forecast.js:42
 #: forecast/static/js/frepple-forecast.min.js:11
 msgid "total forecast"
-msgstr ""
+msgstr "Prévision totale"
 
 #: input/static/js/frepple-operationplandetail.min.js:11
 #: input/static/operationplandetail/src/supplypositionpanelDrv.js:22

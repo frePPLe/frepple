@@ -257,8 +257,14 @@ class PathReport(GridReport):
            sibling.priority as sibling_priority, 
            sibling.duration as sibling_duration, 
            sibling.duration_per as sibling_duration_per,
-           case when sibling.item_id is not null then jsonb_build_object(sibling.item_id||' @ '||sibling.location_id, 1) else '{}'::jsonb end
-           ||jsonb_object_agg(siblingoperationmaterial.item_id||' @ '||sibling.location_id, siblingoperationmaterial.quantity)filter (where siblingoperationmaterial.id is not null) as sibling_om,
+           case when grandparentoperation.item_id is not null 
+           and sibling.priority = (select max(priority) from operation where name = parentoperation.name) 
+           then jsonb_build_object(grandparentoperation.item_id||' @ '||grandparentoperation.location_id, 1) else '{}'::jsonb end
+           ||case when parentoperation.item_id is not null 
+           and sibling.priority = (select max(priority) from operation where name = parentoperation.name) 
+           then jsonb_build_object(parentoperation.item_id||' @ '||parentoperation.location_id, 1) else '{}'::jsonb end
+           ||case when sibling.item_id is not null then jsonb_build_object(sibling.item_id||' @ '||sibling.location_id, 1) else '{}'::jsonb end
+           ||coalesce(jsonb_object_agg(siblingoperationmaterial.item_id||' @ '||sibling.location_id, siblingoperationmaterial.quantity)filter (where siblingoperationmaterial.id is not null), '{}'::jsonb) as sibling_om,
            jsonb_object_agg(siblingoperationresource.resource_id, siblingoperationresource.quantity)filter (where siblingoperationresource.id is not null) as sibling_or,
              grandparentoperation.name as grandparentoperation, 
            grandparentoperation.type as grandparentoperation_type
@@ -299,7 +305,9 @@ class PathReport(GridReport):
             (
                 """
                 and (operation.item_id = %s or 
-                (operationmaterial.item_id = %s and operationmaterial.quantity > 0))
+                (operationmaterial.item_id = %s and operationmaterial.quantity > 0)
+                or parentoperation.item_id = %s
+                or grandparentoperation.item_id = %s)
             """,
             )
             if not downstream
@@ -362,7 +370,7 @@ class PathReport(GridReport):
         if downstream:
             cursor.execute(query, (item_name,) * 2)
         else:
-            cursor.execute(query, (item_name,) * 5)
+            cursor.execute(query, (item_name,) * 7)
 
         for i in cursor.fetchall():
             for j in reportclass.processRecord(i, request, depth, downstream):
@@ -408,8 +416,14 @@ class PathReport(GridReport):
            sibling.priority as sibling_priority, 
            sibling.duration as sibling_duration, 
            sibling.duration_per as sibling_duration_per,
-           case when sibling.item_id is not null then jsonb_build_object(sibling.item_id||' @ '||sibling.location_id, 1) else '{}'::jsonb end
-           ||jsonb_object_agg(siblingoperationmaterial.item_id||' @ '||sibling.location_id, siblingoperationmaterial.quantity)filter (where siblingoperationmaterial.id is not null) as sibling_om,
+           case when grandparentoperation.item_id is not null 
+           and sibling.priority = (select max(priority) from operation where name = parentoperation.name) 
+           then jsonb_build_object(grandparentoperation.item_id||' @ '||grandparentoperation.location_id, 1) else '{}'::jsonb end
+           ||case when parentoperation.item_id is not null 
+           and sibling.priority = (select max(priority) from operation where name = parentoperation.name) 
+           then jsonb_build_object(parentoperation.item_id||' @ '||parentoperation.location_id, 1) else '{}'::jsonb end
+           ||case when sibling.item_id is not null then jsonb_build_object(sibling.item_id||' @ '||sibling.location_id, 1) else '{}'::jsonb end
+           || coalesce(jsonb_object_agg(siblingoperationmaterial.item_id||' @ '||sibling.location_id, siblingoperationmaterial.quantity)filter (where siblingoperationmaterial.id is not null), '{}'::jsonb) as sibling_om,
            jsonb_object_agg(siblingoperationresource.resource_id, siblingoperationresource.quantity)filter (where siblingoperationresource.id is not null) as sibling_or,
              grandparentoperation.name as grandparentoperation, 
            grandparentoperation.type as grandparentoperation_type
@@ -540,8 +554,14 @@ class PathReport(GridReport):
            sibling.priority as sibling_priority, 
            sibling.duration as sibling_duration, 
            sibling.duration_per as sibling_duration_per,
-           case when sibling.item_id is not null then jsonb_build_object(sibling.item_id||' @ '||sibling.location_id, 1) else '{}'::jsonb end
-           ||jsonb_object_agg(siblingoperationmaterial.item_id||' @ '||sibling.location_id, siblingoperationmaterial.quantity)filter (where siblingoperationmaterial.id is not null) as sibling_om,
+           case when grandparentoperation.item_id is not null 
+           and sibling.priority = (select max(priority) from operation where name = parentoperation.name) 
+           then jsonb_build_object(grandparentoperation.item_id||' @ '||grandparentoperation.location_id, 1) else '{}'::jsonb end
+           ||case when parentoperation.item_id is not null 
+           and sibling.priority = (select max(priority) from operation where name = parentoperation.name) 
+           then jsonb_build_object(parentoperation.item_id||' @ '||parentoperation.location_id, 1) else '{}'::jsonb end
+           ||case when sibling.item_id is not null then jsonb_build_object(sibling.item_id||' @ '||sibling.location_id, 1) else '{}'::jsonb end
+           ||coalesce(jsonb_object_agg(siblingoperationmaterial.item_id||' @ '||sibling.location_id, siblingoperationmaterial.quantity)filter (where siblingoperationmaterial.id is not null), '{}'::jsonb) as sibling_om,
            jsonb_object_agg(siblingoperationresource.resource_id, siblingoperationresource.quantity)filter (where siblingoperationresource.id is not null) as sibling_or,
              grandparentoperation.name as grandparentoperation, 
            grandparentoperation.type as grandparentoperation_type
@@ -606,8 +626,14 @@ class PathReport(GridReport):
            sibling.priority as sibling_priority, 
            sibling.duration as sibling_duration, 
            sibling.duration_per as sibling_duration_per,
-           case when sibling.item_id is not null then jsonb_build_object(sibling.item_id||' @ '||sibling.location_id, 1) else '{}'::jsonb end
-           ||jsonb_object_agg(siblingoperationmaterial.item_id||' @ '||sibling.location_id, siblingoperationmaterial.quantity)filter (where siblingoperationmaterial.id is not null) as sibling_om,
+           case when grandparentoperation.item_id is not null 
+           and sibling.priority = (select max(priority) from operation where name = parentoperation.name) 
+           then jsonb_build_object(grandparentoperation.item_id||' @ '||grandparentoperation.location_id, 1) else '{}'::jsonb end
+           ||case when parentoperation.item_id is not null 
+           and sibling.priority = (select max(priority) from operation where name = parentoperation.name) 
+           then jsonb_build_object(parentoperation.item_id||' @ '||parentoperation.location_id, 1) else '{}'::jsonb end
+           ||case when sibling.item_id is not null then jsonb_build_object(sibling.item_id||' @ '||sibling.location_id, 1) else '{}'::jsonb end
+           ||coalesce(jsonb_object_agg(siblingoperationmaterial.item_id||' @ '||sibling.location_id, siblingoperationmaterial.quantity)filter (where siblingoperationmaterial.id is not null), '{}'::jsonb) as sibling_om,
            jsonb_object_agg(siblingoperationresource.resource_id, siblingoperationresource.quantity)filter (where siblingoperationresource.id is not null) as sibling_or,
              grandparentoperation.name as grandparentoperation, 
            grandparentoperation.type as grandparentoperation_type
@@ -650,7 +676,9 @@ class PathReport(GridReport):
             (
                 """
                 and (operation.item_id = %s or 
-                (operationmaterial.item_id = %s and operationmaterial.quantity > 0))
+                (operationmaterial.item_id = %s and operationmaterial.quantity > 0)
+                or parentoperation.item_id = %s
+                or grandparentoperation.item_id = %s)
             """,
                 "location_id",
             )
@@ -717,7 +745,19 @@ class PathReport(GridReport):
         else:
             cursor.execute(
                 query,
-                (location, item, item, item, location, item, location, item, location),
+                (
+                    location,
+                    item,
+                    item,
+                    item,
+                    item,
+                    item,
+                    location,
+                    item,
+                    location,
+                    item,
+                    location,
+                ),
             )
 
         for i in cursor.fetchall():

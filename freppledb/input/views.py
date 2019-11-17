@@ -258,10 +258,10 @@ class PathReport(GridReport):
            sibling.duration as sibling_duration, 
            sibling.duration_per as sibling_duration_per,
            case when grandparentoperation.item_id is not null 
-           and sibling.priority = (select max(priority) from operation where name = parentoperation.name) 
+           and sibling.priority = (select max(priority) from operation where owner_id = parentoperation.name) 
            then jsonb_build_object(grandparentoperation.item_id||' @ '||grandparentoperation.location_id, 1) else '{}'::jsonb end
            ||case when parentoperation.item_id is not null 
-           and sibling.priority = (select max(priority) from operation where name = parentoperation.name) 
+           and sibling.priority = (select max(priority) from operation where owner_id = parentoperation.name) 
            then jsonb_build_object(parentoperation.item_id||' @ '||parentoperation.location_id, 1) else '{}'::jsonb end
            ||case when sibling.item_id is not null then jsonb_build_object(sibling.item_id||' @ '||sibling.location_id, 1) else '{}'::jsonb end
            ||coalesce(jsonb_object_agg(siblingoperationmaterial.item_id||' @ '||sibling.location_id, siblingoperationmaterial.quantity)filter (where siblingoperationmaterial.id is not null), '{}'::jsonb) as sibling_om,
@@ -417,10 +417,10 @@ class PathReport(GridReport):
            sibling.duration as sibling_duration, 
            sibling.duration_per as sibling_duration_per,
            case when grandparentoperation.item_id is not null 
-           and sibling.priority = (select max(priority) from operation where name = parentoperation.name) 
+           and sibling.priority = (select max(priority) from operation where owner_id = parentoperation.name) 
            then jsonb_build_object(grandparentoperation.item_id||' @ '||grandparentoperation.location_id, 1) else '{}'::jsonb end
            ||case when parentoperation.item_id is not null 
-           and sibling.priority = (select max(priority) from operation where name = parentoperation.name) 
+           and sibling.priority = (select max(priority) from operation where owner_id = parentoperation.name) 
            then jsonb_build_object(parentoperation.item_id||' @ '||parentoperation.location_id, 1) else '{}'::jsonb end
            ||case when sibling.item_id is not null then jsonb_build_object(sibling.item_id||' @ '||sibling.location_id, 1) else '{}'::jsonb end
            || coalesce(jsonb_object_agg(siblingoperationmaterial.item_id||' @ '||sibling.location_id, siblingoperationmaterial.quantity)filter (where siblingoperationmaterial.id is not null), '{}'::jsonb) as sibling_om,
@@ -555,10 +555,10 @@ class PathReport(GridReport):
            sibling.duration as sibling_duration, 
            sibling.duration_per as sibling_duration_per,
            case when grandparentoperation.item_id is not null 
-           and sibling.priority = (select max(priority) from operation where name = parentoperation.name) 
+           and sibling.priority = (select max(priority) from operation where owner_id = parentoperation.name) 
            then jsonb_build_object(grandparentoperation.item_id||' @ '||grandparentoperation.location_id, 1) else '{}'::jsonb end
            ||case when parentoperation.item_id is not null 
-           and sibling.priority = (select max(priority) from operation where name = parentoperation.name) 
+           and sibling.priority = (select max(priority) from operation where owner_id = parentoperation.name) 
            then jsonb_build_object(parentoperation.item_id||' @ '||parentoperation.location_id, 1) else '{}'::jsonb end
            ||case when sibling.item_id is not null then jsonb_build_object(sibling.item_id||' @ '||sibling.location_id, 1) else '{}'::jsonb end
            ||coalesce(jsonb_object_agg(siblingoperationmaterial.item_id||' @ '||sibling.location_id, siblingoperationmaterial.quantity)filter (where siblingoperationmaterial.id is not null), '{}'::jsonb) as sibling_om,
@@ -627,10 +627,10 @@ class PathReport(GridReport):
            sibling.duration as sibling_duration, 
            sibling.duration_per as sibling_duration_per,
            case when grandparentoperation.item_id is not null 
-           and sibling.priority = (select max(priority) from operation where name = parentoperation.name) 
+           and sibling.priority = (select max(priority) from operation where owner_id = parentoperation.name) 
            then jsonb_build_object(grandparentoperation.item_id||' @ '||grandparentoperation.location_id, 1) else '{}'::jsonb end
            ||case when parentoperation.item_id is not null 
-           and sibling.priority = (select max(priority) from operation where name = parentoperation.name) 
+           and sibling.priority = (select max(priority) from operation where owner_id = parentoperation.name) 
            then jsonb_build_object(parentoperation.item_id||' @ '||parentoperation.location_id, 1) else '{}'::jsonb end
            ||case when sibling.item_id is not null then jsonb_build_object(sibling.item_id||' @ '||sibling.location_id, 1) else '{}'::jsonb end
            ||coalesce(jsonb_object_agg(siblingoperationmaterial.item_id||' @ '||sibling.location_id, siblingoperationmaterial.quantity)filter (where siblingoperationmaterial.id is not null), '{}'::jsonb) as sibling_om,

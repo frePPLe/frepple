@@ -21,6 +21,10 @@ Release notes
   
 - Bug fix: The  user permissions "can copy a scenario" and "can release a scenario" 
   were not working properly. 
+  
+- Enhancement of the supply path to draw cases where producing operation materials 
+  record is missing (produced item declared at operation level) or produced item is only
+  declared at routing level.
 
 .. rubric:: Integration
 

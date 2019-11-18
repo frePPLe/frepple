@@ -15,17 +15,67 @@ rect.opplan {
   ry: 2;
 }
 
+.tooltip.bottom .tooltip-arrow {
+  border-bottom-color: white;
+}
+
+.tooltip.in {
+opacity: 1;
+}
+
+.tooltip-inner {
+  text-align:left;
+  color: #333;
+  background-color: white;
+  max-width: 350px;
+}
+
 </style>
 <script type="text/javascript">
 
-var threshold_green = 100;
-var threshold_yellow = 100;
-var threshold_red = 100;
-
-
-function buildcolor(color) {
-  // todo copy/reuse from frepple.js color formatter to get identical color as in 
+function buildcolor(rowdata) {
+  // The logic here needs to be in sync with the color formatter in the frepple.js file
+  var thenumber = parseInt(rowdata['color']);
+  if (rowdata['inventory_item'] || rowdata['leadtime']) {
+      if (!isNaN(thenumber)) {
+        if (thenumber >= 100 && thenumber < 999999)
+          return '#008000';
+        else if (thenumber === 0)
+          return '#f00';
+        else if (thenumber === 999999)
+          return 'white';
+        else {
+          thenumber = Math.round(thenumber/100*255);
+          return 'rgb(' + 255 + ',' + thenumber + ',' + 0 + ')';
+        }
+      }
+    } else {
+      var thedelay = Math.round(parseInt(rowdata['delay'])/8640)/10;
+      if (parseInt(rowdata['criticality']) === 999)
+        return '#f00';
+      else if (thedelay < 0)
+        return '#008000';
+      else if (thedelay === 0)
+        return '#008000';
+      else if (thedelay > 0) {
+        if (thenumber > 100 || thenumber < 0)
+          return '#f00';
+        else
+          return 'rgb(' + 255 + ',' + Math.round(thenumber/100*255) + ',' + 0 + ')';
+      }
+    }
   return 'rgb(111,111,255)';  
+}
+
+function escapeAttribute(val) {
+	if (typeof val === 'string' || val instanceof String)
+	  return val.replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&apos;');
+	else
+		return val;
 }
 
 function ganttcell(cellvalue, options, rowdata)
@@ -44,22 +94,17 @@ function ganttcell(cellvalue, options, rowdata)
            break;
         }
      };
-     if (row >= layer.length) layer.push(data["enddate"]);     
-     result.push( 
-         '<rect class="opplan" x="' + data["x"] + '" y="' + (-row*gantt.rowsize) 
-         + '" fill="' + buildcolor(data["color"]) + '" width="' + Math.max(data["w"],1) 
-         + '" height="' + (gantt.rowsize-3)
-         + '" data-operation="' + (data["operation"] ? data["operation"] : '') 
-         + '" data-description="' + (data["description"] ? data["description"] : '') 
-         + '" data-reference="' + (data["id"] ? data["id"] : '') 
-         + '" data-quantity="' + (data["quantity"] ? data["quantity"] : '')  
-         + '" data-startdate="' + (data["startdate"] ? data["startdate"] : '')  
-         + '" data-endate="' + (data["enddate"] ? data["enddate"] : '') 
-         + '" data-status="' + (data['status'] ? data['status'] : 'proposed')
-         + '" data-color="' + (data["color"] ? data["color"] : '')
-         + '" data-type="' + (data["type"] ? data["type"] : '')
-         + '"/>'
-         );
+     if (row >= layer.length) layer.push(data["enddate"]);
+     var rect = '<rect class="opplan" x="' + data["x"] + '" y="' + (-row*gantt.rowsize) 
+       + '" fill="' + buildcolor(data) + '" width="' + Math.max(data["w"],1) 
+       + '" height="' + (gantt.rowsize-3) + '"';
+     Object.keys(data).forEach(function(key,index) {
+    	 if (key != "w" && key != "x" && data[key] !== null) {
+    		 rect += ' data-' + key + '="' + escapeAttribute(data[key]) + '"';
+    	 }
+     });
+     rect += '/>';
+     result.push(rect);
   }
   result.push( '<line x1="' + rowdata["due"] + '" y1="' + gantt.rowsize + '" x2="' + rowdata["due"] + '" y2="-' + (layer.length*gantt.rowsize) + '" vector-effect="non-scaling-stroke" stroke="red" stroke-width="1" />');
   result.push( '<line x1="' + rowdata["current"] + '" y1="' + gantt.rowsize + '" x2="' + rowdata["current"] + '" y2="-' + (layer.length*gantt.rowsize) + '" vector-effect="non-scaling-stroke" stroke="black" stroke-width="1" />');
@@ -71,69 +116,68 @@ function ganttcell(cellvalue, options, rowdata)
 }
 
 function buildtooltip(){
-  return $(this).attr("data-operation");
-  /*
   var descriptiontext = '';
-  if ((typeof(d.ordertype) === 'undefined') || d.ordertype === 'MO') {
-    if (d.operation.hasOwnProperty('description')) {
-      descriptiontext = gettextCatalog.getString('description')+": " + d.operation.description + '<br>';
+  var thedelay = Math.round(parseFloat(parseInt($(this).attr("data-delay")))/8640)/10;
+  if (thedelay < 0.1)
+  	thedelay = "" + (-thedelay) + " days early";
+  else if (thedelay > 0.1)
+  	thedelay = "" + thedelay + " days late";
+  else
+  	thedelay = "on time";
+  if ($(this).attr("data-type") === 'MO') {
+    if ($(this).attr("data-description")) {
+      descriptiontext = gettext('description')+": " + $(this).attr("data-description") + '<br>';
     }
-    return gettextCatalog.getString('manufacturing order') + '<br>' +
-      d.operation.name + '<br>' +
-      gettextCatalog.getString('reference')+": " + d.reference + '<br>' +
-      descriptiontext +
-      gettextCatalog.getString('start')+": " + moment(d.start).format("YYYY-MM-DD HH:mm:ss") + '<br>' +
-      gettextCatalog.getString('setup end')+": " + moment(d.setupend).format("YYYY-MM-DD HH:mm:ss") + '<br>' +
-      gettextCatalog.getString('end')+": " + moment(d.end).format("YYYY-MM-DD HH:mm:ss") + '<br>' +
-      gettextCatalog.getString('quantity')+": " + d.quantity + "<br>" +
-      gettextCatalog.getString('criticality')+": " + (Math.round(d.criticality * 10) / 10) + "<br>" +
-      gettextCatalog.getString('delay')+": " + (Math.round(d.delay / 8640) / 10) + "<br>" +
-      gettextCatalog.getString('status')+": " + (typeof(d.status) === 'undefined' ? gettextCatalog.getString("proposed") : d.status) + "<br>";
+    return gettext('manufacturing order') + '<br>' +
+      $(this).attr("data-operation") + '<br>' +
+      gettext('reference')+": " + $(this).attr("data-reference") + '<br>' +
+      gettext('start')+": " + $(this).attr("data-startdate") + '<br>' +
+      gettext('end')+": " + $(this).attr("data-enddate") + '<br>' +
+      gettext('quantity')+": " + $(this).attr("data-quantity") + "<br>" +
+      gettext('criticality')+": " + $(this).attr("data-criticality") + "<br>" +
+      gettext('delay')+": " +  thedelay + "<br>" +
+      gettext('status')+": " + gettext($(this).attr("data-status")) + "<br>";
   }
-  if (d.ordertype === 'PO') {
-    return gettextCatalog.getString('purchase order') + '<br>' +
-      d.item.name + ' @ ' + d.location.name + '<br>' +
-      gettextCatalog.getString('reference')+": " + d.reference + '<br>' +
-      descriptiontext +
-      gettextCatalog.getString('supplier')+": " + d.supplier.name + '<br>' +
-      gettextCatalog.getString('start')+": " + moment(d.start).format("YYYY-MM-DD HH:mm:ss") + '<br>' +
-      gettextCatalog.getString('end')+": " + moment(d.end).format("YYYY-MM-DD HH:mm:ss") + '<br>' +
-      gettextCatalog.getString('quantity')+": " + d.quantity + "<br>" +
-      gettextCatalog.getString('criticality')+": " + (Math.round(d.criticality * 10) / 10) + "<br>" +
-      gettextCatalog.getString('delay')+": " + (Math.round(d.delay / 8640) / 10) + "<br>" +
-      gettextCatalog.getString('status')+": " + (typeof(d.status) === 'undefined' ? gettextCatalog.getString("proposed") : d.status) + "<br>";
+  else if ($(this).attr("data-type") === 'PO') {
+    return gettext('purchase order') + '<br>' +
+      $(this).attr("data-item") + ' @ ' + $(this).attr("data-location") + '<br>' +
+      gettext('reference')+": " + $(this).attr("data-reference") + '<br>' +
+      gettext('supplier')+": " + $(this).attr("data-supplier") + '<br>' +
+      gettext('start')+": " + $(this).attr("data-startdate") + '<br>' +
+      gettext('end')+": " + $(this).attr("data-enddate") + '<br>' +
+      gettext('quantity')+": " + $(this).attr("data-quantity") + "<br>" +
+      gettext('criticality')+": " + $(this).attr("data-criticality") + "<br>" +
+      gettext('delay')+": " +  thedelay + "<br>" +
+      gettext('status')+": " + gettext($(this).attr("data-status")) + "<br>";
   }
-  if (d.ordertype === 'DO') {
-    return gettextCatalog.getString('distribution order') + '<br>' +
-      d.item.name + ' @ ' + d.location.name + '<br>' +
-      gettextCatalog.getString('origin')+": " + d.origin.name + '<br>' +
-      gettextCatalog.getString('reference')+": " + d.reference + '<br>' +
-      descriptiontext +
-      gettextCatalog.getString('start')+": " + moment(d.start).format("YYYY-MM-DD HH:mm:ss") + '<br>' +
-      gettextCatalog.getString('end')+": " + moment(d.end).format("YYYY-MM-DD HH:mm:ss") + '<br>' +
-      gettextCatalog.getString('quantity')+": " + d.quantity + "<br>" +
-      gettextCatalog.getString('criticality')+": " + (Math.round(d.criticality * 10) / 10) + "<br>" +
-      gettextCatalog.getString('delay')+": " + (Math.round(d.delay / 8640) / 10) + "<br>" +
-      gettextCatalog.getString('status')+": " + (typeof(d.status) === 'undefined' ? gettextCatalog.getString("proposed") : d.status) + "<br>";
+  else if ($(this).attr("data-type") === 'DO') {
+    return gettext('distribution order') + '<br>' +
+      $(this).attr("data-item") + ' @ ' + $(this).attr("data-location") + '<br>' +
+      gettext('origin')+": " + $(this).attr("data-origin") + '<br>' +
+      gettext('reference')+": " + $(this).attr("data-reference") + '<br>' +
+      gettext('start')+": " + $(this).attr("data-startdate") + '<br>' +
+      gettext('end')+": " + $(this).attr("data-enddate") + '<br>' +
+      gettext('quantity')+": " + $(this).attr("data-quantity") + "<br>" +
+      gettext('criticality')+": " + $(this).attr("data-criticality") + "<br>" +
+      gettext('delay')+": " +  thedelay + "<br>" +
+      gettext('status')+": " + gettext($(this).attr("data-status")) + "<br>";
   }
-  if (d.ordertype === 'STCK') {
-    return gettextCatalog.getString('inventory') + '<br>' +
-      d.item.name + ' @ ' + d.location.name + '<br>' +
-      gettextCatalog.getString('quantity')+": " + d.quantity + "<br>" +
-      gettextCatalog.getString('criticality')+": " + (Math.round(d.criticality * 10) / 10) + "<br>";
+  else if ($(this).attr("data-type") === 'STCK') {
+    return gettext('inventory') + '<br>' +
+      $(this).attr("data-item") + ' @ ' + $(this).attr("data-location") + '<br>' +
+      gettext('quantity')+": " + $(this).attr("data-quantity") + "<br>";
   }
-  if (d.ordertype === 'DLVR') {
-    return gettextCatalog.getString('customer delivery') + '<br>' +
-      d.item.name + ' @ ' + d.location.name + '<br>' +
-      gettextCatalog.getString('demand')+": " + d.demand.name +
-      descriptiontext +
-      gettextCatalog.getString('start')+": " + moment(d.start).format("YYYY-MM-DD HH:mm:ss") + '<br>' +
-      gettextCatalog.getString('end')+": " + moment(d.end).format("YYYY-MM-DD HH:mm:ss") + '<br>' +
-      gettextCatalog.getString('quantity')+": " + d.quantity + "<br>" +
-      gettextCatalog.getString('criticality')+": " + (Math.round(d.criticality * 10) / 10) + "<br>" +
-      gettextCatalog.getString('delay')+": " + (Math.round(d.delay / 8640) / 10) + "<br>";
+  else if ($(this).attr("data-type") === 'DLVR') {
+    return gettext('customer delivery') + '<br>' +
+      $(this).attr("data-item") + ' @ ' + $(this).attr("data-location") + '<br>' +
+      gettext('demand')+": " + $(this).attr("data-demand") + '<br>' +
+      gettext('start')+": " + $(this).attr("data-startdate") + '<br>' +
+      gettext('end')+": " + $(this).attr("data-enddate") + '<br>' +
+      gettext('quantity')+": " + $(this).attr("data-quantity") + "<br>" +
+      gettext('criticality')+": " + $(this).attr("data-criticality") + "<br>" +
+      gettext('delay')+": " +  thedelay + "<br>" +
+      gettext('status')+": " + gettext($(this).attr("data-status")) + "<br>";
   }
-  */
 }
 
 
@@ -187,8 +231,9 @@ loadComplete: function(data) {
   }
   $('svg rect').tooltip({
     title: buildtooltip,
+    animation: false,
     html: true,
-    placement: 'auto',
+    placement: 'bottom',
     container: 'body'
   });
 },

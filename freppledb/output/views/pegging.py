@@ -192,7 +192,11 @@ class ReportByDemand(GridReport):
             pegging.rownum, operationplan.startdate, operationplan.enddate, operationplan.quantity,
             operationplan.status, operationplanresource.resource_id, operationplan.type,
             case when operationplan.operation_id is not null then 1 else 0 end as show,
-            operationplan.color, operationplan.type
+            operationplan.color, operationplan.reference, operationplan.item_id,
+            coalesce(operationplan.location_id, operationplan.destination_id),
+            operationplan.supplier_id, operationplan.origin_id,
+            operationplan.criticality, operationplan.demand_id,
+            extract(epoch from operationplan.delay)
           from pegging
           inner join operationplan
             on operationplan.reference = pegging.opplan
@@ -262,9 +266,16 @@ class ReportByDemand(GridReport):
                                 "startdate": str(rec[5]),
                                 "enddate": str(rec[6]),
                                 "status": rec[8],
-                                "reference": rec[4],
+                                "reference": rec[13],
                                 "color": round(rec[12]),
-                                "type": rec[13],
+                                "type": rec[10],
+                                "item": rec[14],
+                                "location": rec[15],
+                                "supplier": rec[16],
+                                "origin": rec[17],
+                                "criticality": round(rec[18]),
+                                "demand": rec[19],
+                                "delay": str(rec[20]),
                             }
                         ],
                     }
@@ -284,9 +295,16 @@ class ReportByDemand(GridReport):
                             "startdate": str(rec[5]),
                             "enddate": str(rec[6]),
                             "status": rec[8],
-                            "reference": rec[4],
+                            "reference": rec[13],
                             "color": round(rec[12]),
-                            "type": rec[13],
+                            "type": rec[10],
+                            "item": rec[14],
+                            "location": rec[15],
+                            "supplier": rec[16],
+                            "origin": rec[17],
+                            "criticality": round(rec[18]),
+                            "demand": rec[19],
+                            "delay": str(rec[20]),
                         }
                     )
                 elif rec[9] and not rec[9] in prevrec["resource"]:

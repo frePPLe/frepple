@@ -15,15 +15,15 @@ rect.opplan {
   ry: 2;
 }
 
-.tooltip.bottom .tooltip-arrow {
+#main-row .tooltip.bottom .tooltip-arrow {
   border-bottom-color: white;
 }
 
-.tooltip.in {
+#main-row .tooltip.in {
 opacity: 1;
 }
 
-.tooltip-inner {
+#main-row .tooltip-inner {
   text-align:left;
   color: #333;
   background-color: white;
@@ -98,6 +98,8 @@ function ganttcell(cellvalue, options, rowdata)
      var rect = '<rect class="opplan" x="' + data["x"] + '" y="' + (-row*gantt.rowsize) 
        + '" fill="' + buildcolor(data) + '" width="' + Math.max(data["w"],1) 
        + '" height="' + (gantt.rowsize-3) + '"';
+     if (data["status"] == "proposed")
+    	 rect += ' fill-opacity="0.5"';
      Object.keys(data).forEach(function(key,index) {
     	 if (key != "w" && key != "x" && data[key] !== null) {
     		 rect += ' data-' + key + '="' + escapeAttribute(data[key]) + '"';
@@ -234,7 +236,7 @@ loadComplete: function(data) {
     animation: false,
     html: true,
     placement: 'bottom',
-    container: 'body'
+    container: '#main-row'
   });
 },
 {% endblock %}
@@ -245,6 +247,7 @@ loadComplete: function(data) {
 <button class="btn btn-xs btn-primary" id="move_in" onclick="gantt.zoom(1,-86400000)" data-toggle="tooltip" data-placement="top" data-original-title="{% filter capfirst|force_escape %}{% trans 'earlier' context 'Gantt' %}{% endfilter %}" ><span class="fa fa-backward"></span></button>
 <button class="btn btn-xs btn-primary" id="move_out" onclick="gantt.zoom(1,86400000)" data-toggle="tooltip" data-placement="top" data-original-title="{% filter capfirst|force_escape %}{% trans 'later' context 'Gantt' %}{% endfilter %}" ><span class="fa fa-forward"></span></button>
 <button class="btn btn-xs btn-primary" id="reset" onclick="gantt.reset()" data-toggle="tooltip" data-placement="top" data-original-title="{% filter capfirst|force_escape %}{% trans 'reset' context 'Gantt' %}{% endfilter %}" ><span class="fa fa-undo"></span></button>
+<button class="btn btn-xs btn-primary" onclick="grid.showCustomize(false);" data-toggle="tooltip" data-placement="top" data-original-title="{% trans 'customize'|capfirst|force_escape %}"><span class="fa fa-wrench"></span></button>
 {% endblock %}
 
 {% block tools %}{% tabs "input.demand" %}{% endblock %}

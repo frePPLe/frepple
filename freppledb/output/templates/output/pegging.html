@@ -19,15 +19,19 @@ rect.opplan {
   border-bottom-color: white;
 }
 
+#main-row .tooltip.top .tooltip-arrow {
+  border-top-color: white;
+}
+
 #main-row .tooltip.in {
 opacity: 1;
 }
 
 #main-row .tooltip-inner {
   text-align:left;
+  white-space: nowrap;
   color: #333;
   background-color: white;
-  max-width: 350px;
 }
 
 </style>
@@ -135,7 +139,7 @@ function buildtooltip(){
       gettext('reference')+": " + $(this).attr("data-reference") + '<br>' +
       gettext('start')+": " + $(this).attr("data-startdate") + '<br>' +
       gettext('end')+": " + $(this).attr("data-enddate") + '<br>' +
-      gettext('quantity')+": " + $(this).attr("data-quantity") + "<br>" +
+      gettext('quantity')+": " + grid.formatNumber($(this).attr("data-quantity")) + "<br>" +
       gettext('criticality')+": " + $(this).attr("data-criticality") + "<br>" +
       gettext('delay')+": " +  thedelay + "<br>" +
       gettext('status')+": " + gettext($(this).attr("data-status")) + "<br>";
@@ -147,7 +151,7 @@ function buildtooltip(){
       gettext('supplier')+": " + $(this).attr("data-supplier") + '<br>' +
       gettext('start')+": " + $(this).attr("data-startdate") + '<br>' +
       gettext('end')+": " + $(this).attr("data-enddate") + '<br>' +
-      gettext('quantity')+": " + $(this).attr("data-quantity") + "<br>" +
+      gettext('quantity')+": " + grid.formatNumber(parseFloat($(this).attr("data-quantity"))) + "<br>" +
       gettext('criticality')+": " + $(this).attr("data-criticality") + "<br>" +
       gettext('delay')+": " +  thedelay + "<br>" +
       gettext('status')+": " + gettext($(this).attr("data-status")) + "<br>";
@@ -159,7 +163,7 @@ function buildtooltip(){
       gettext('reference')+": " + $(this).attr("data-reference") + '<br>' +
       gettext('start')+": " + $(this).attr("data-startdate") + '<br>' +
       gettext('end')+": " + $(this).attr("data-enddate") + '<br>' +
-      gettext('quantity')+": " + $(this).attr("data-quantity") + "<br>" +
+      gettext('quantity')+": " + grid.formatNumber(parseFloat($(this).attr("data-quantity"))) + "<br>" +
       gettext('criticality')+": " + $(this).attr("data-criticality") + "<br>" +
       gettext('delay')+": " +  thedelay + "<br>" +
       gettext('status')+": " + gettext($(this).attr("data-status")) + "<br>";
@@ -167,7 +171,7 @@ function buildtooltip(){
   else if ($(this).attr("data-type") === 'STCK') {
     return gettext('inventory') + '<br>' +
       $(this).attr("data-item") + ' @ ' + $(this).attr("data-location") + '<br>' +
-      gettext('quantity')+": " + $(this).attr("data-quantity") + "<br>";
+      gettext('quantity')+": " + grid.formatNumber(parseFloat($(this).attr("data-quantity"))) + "<br>";
   }
   else if ($(this).attr("data-type") === 'DLVR') {
     return gettext('customer delivery') + '<br>' +
@@ -175,7 +179,7 @@ function buildtooltip(){
       gettext('demand')+": " + $(this).attr("data-demand") + '<br>' +
       gettext('start')+": " + $(this).attr("data-startdate") + '<br>' +
       gettext('end')+": " + $(this).attr("data-enddate") + '<br>' +
-      gettext('quantity')+": " + $(this).attr("data-quantity") + "<br>" +
+      gettext('quantity')+": " + grid.formatNumber(parseFloat($(this).attr("data-quantity"))) + "<br>" +
       gettext('criticality')+": " + $(this).attr("data-criticality") + "<br>" +
       gettext('delay')+": " +  thedelay + "<br>" +
       gettext('status')+": " + gettext($(this).attr("data-status")) + "<br>";
@@ -235,7 +239,7 @@ loadComplete: function(data) {
     title: buildtooltip,
     animation: false,
     html: true,
-    placement: 'bottom',
+    placement: 'auto bottom',
     container: '#main-row'
   });
 },

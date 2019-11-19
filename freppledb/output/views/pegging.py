@@ -65,7 +65,11 @@ class ReportByDemand(GridReport):
             extra="formatter:reslistfmt",
         ),
         GridFieldNumber(
-            "quantity", title=_("quantity"), editable=False, sortable=False
+            "quantity",
+            title=_("required quantity"),
+            field_name="quantity",
+            editable=False,
+            sortable=False,
         ),
         GridFieldText(
             "operationplans",

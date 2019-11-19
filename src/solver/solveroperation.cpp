@@ -621,7 +621,7 @@ void SolverCreate::solve(const Operation* oper, void* v) {
         if (getLogLevel() > 1)
           logger << indentlevel << "Operation '" << oper->getName()
                  << "' repeats ask with smaller post-operation delay: "
-                 << asked_qty << "  " << (asked_date - delta) << endl;
+                 << asked_qty << "  " << (asked_date - ask_early) << endl;
       }
     }
   } while (repeat);

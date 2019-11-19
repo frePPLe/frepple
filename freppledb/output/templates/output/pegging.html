@@ -139,7 +139,8 @@ function buildtooltip(){
       gettext('reference')+": " + $(this).attr("data-reference") + '<br>' +
       gettext('start')+": " + $(this).attr("data-startdate") + '<br>' +
       gettext('end')+": " + $(this).attr("data-enddate") + '<br>' +
-      gettext('quantity')+": " + grid.formatNumber($(this).attr("data-quantity")) + "<br>" +
+      gettext('quantity')+": " + grid.formatNumber(parseFloat($(this).attr("data-quantity"))) + "<br>" +
+      gettext('required quantity')+": " + grid.formatNumber($(this).attr("data-required_quantity")) + "<br>" +
       gettext('criticality')+": " + $(this).attr("data-criticality") + "<br>" +
       gettext('delay')+": " +  thedelay + "<br>" +
       gettext('status')+": " + gettext($(this).attr("data-status")) + "<br>";
@@ -152,6 +153,7 @@ function buildtooltip(){
       gettext('start')+": " + $(this).attr("data-startdate") + '<br>' +
       gettext('end')+": " + $(this).attr("data-enddate") + '<br>' +
       gettext('quantity')+": " + grid.formatNumber(parseFloat($(this).attr("data-quantity"))) + "<br>" +
+      gettext('required quantity')+": " + grid.formatNumber(parseFloat($(this).attr("data-required_quantity"))) + "<br>" +
       gettext('criticality')+": " + $(this).attr("data-criticality") + "<br>" +
       gettext('delay')+": " +  thedelay + "<br>" +
       gettext('status')+": " + gettext($(this).attr("data-status")) + "<br>";
@@ -164,6 +166,7 @@ function buildtooltip(){
       gettext('start')+": " + $(this).attr("data-startdate") + '<br>' +
       gettext('end')+": " + $(this).attr("data-enddate") + '<br>' +
       gettext('quantity')+": " + grid.formatNumber(parseFloat($(this).attr("data-quantity"))) + "<br>" +
+      gettext('required quantity')+": " + grid.formatNumber(parseFloat($(this).attr("data-required_quantity"))) + "<br>" +
       gettext('criticality')+": " + $(this).attr("data-criticality") + "<br>" +
       gettext('delay')+": " +  thedelay + "<br>" +
       gettext('status')+": " + gettext($(this).attr("data-status")) + "<br>";

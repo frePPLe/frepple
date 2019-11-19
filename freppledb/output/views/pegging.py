@@ -177,7 +177,12 @@ class ReportByDemand(GridReport):
         query = """
           with pegging as (
             select
-              min(rownum) as rownum, min(due) as due, opplan, min(lvl) as lvl, sum(quantity) as quantity
+              min(rownum) as rownum, 
+              min(due) as due, 
+              opplan, 
+              min(lvl) as lvl,
+              quantity as required_quantity,
+              sum(quantity) as quantity
             from (select
               row_number() over () as rownum, opplan, due, lvl, quantity
             from (select
@@ -189,18 +194,31 @@ class ReportByDemand(GridReport):
               where name = %s
               ) d1
               ) d2
-            group by opplan
+            group by opplan, quantity
             )
           select
-            pegging.due, operationplan.name, pegging.lvl, ops.pegged,
-            pegging.rownum, operationplan.startdate, operationplan.enddate, operationplan.quantity,
-            operationplan.status, operationplanresource.resource_id, operationplan.type,
+            pegging.due, 
+            operationplan.name, 
+            pegging.lvl, 
+            ops.pegged,
+            pegging.rownum, 
+            operationplan.startdate, 
+            operationplan.enddate, 
+            operationplan.quantity,
+            operationplan.status, 
+            array_agg(operationplanresource.resource_id) FILTER (WHERE operationplanresource.resource_id is not null), 
+            operationplan.type,
             case when operationplan.operation_id is not null then 1 else 0 end as show,
-            operationplan.color, operationplan.reference, operationplan.item_id,
+            operationplan.color, 
+            operationplan.reference, 
+            operationplan.item_id,
             coalesce(operationplan.location_id, operationplan.destination_id),
-            operationplan.supplier_id, operationplan.origin_id,
-            operationplan.criticality, operationplan.demand_id,
-            extract(epoch from operationplan.delay)
+            operationplan.supplier_id, 
+            operationplan.origin_id,
+            operationplan.criticality, 
+            operationplan.demand_id,
+            extract(epoch from operationplan.delay),
+            pegging.required_quantity
           from pegging
           inner join operationplan
             on operationplan.reference = pegging.opplan
@@ -216,6 +234,17 @@ class ReportByDemand(GridReport):
           on operationplan.name = ops.name
           left outer join operationplanresource
             on pegging.opplan = operationplanresource.operationplan_id
+          group by 
+            pegging.due, operationplan.name, pegging.lvl, ops.pegged,
+            pegging.rownum, operationplan.startdate, operationplan.enddate, operationplan.quantity,
+            operationplan.status, 
+            operationplan.type,
+            case when operationplan.operation_id is not null then 1 else 0 end,
+            operationplan.color, operationplan.reference, operationplan.item_id,
+            coalesce(operationplan.location_id, operationplan.destination_id),
+            operationplan.supplier_id, operationplan.origin_id,
+            operationplan.criticality, operationplan.demand_id,
+            extract(epoch from operationplan.delay), ops.rownum, pegging.required_quantity
           order by ops.rownum, pegging.rownum
           """
 
@@ -254,7 +283,7 @@ class ReportByDemand(GridReport):
                         else None,
                         "leaf": "true",
                         "expanded": "true",
-                        "resource": rec[9] and [rec[9]] or [],
+                        "resource": rec[9],
                         "operationplans": [
                             {
                                 "operation": rec[1],
@@ -280,6 +309,7 @@ class ReportByDemand(GridReport):
                                 "criticality": round(rec[18]),
                                 "demand": rec[19],
                                 "delay": str(rec[20]),
+                                "required_quantity": str(rec[21]),
                             }
                         ],
                     }
@@ -309,6 +339,7 @@ class ReportByDemand(GridReport):
                             "criticality": round(rec[18]),
                             "demand": rec[19],
                             "delay": str(rec[20]),
+                            "required_quantity": str(rec[21]),
                         }
                     )
                 elif rec[9] and not rec[9] in prevrec["resource"]:

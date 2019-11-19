@@ -5,6 +5,21 @@
 
 <script type="text/javascript">
 
+var wasPressed = false;
+
+function fkey(e) {
+	console.log(e);
+  e = e || window.event;
+  if( wasPressed || e.code !== 'F5') return; 
+  $("#executesql_launch").click();
+  wasPressed = true;
+  event.preventDefault();
+};
+
+$(document).on("keydown", fkey);
+$(document).on("keypress", fkey);
+$(document).on("keyup", function(e ) {wasPressed= false;});
+ 
 function render(data) {
   var grid = $("#executesql_results");
   $("#executesql_launch").prop('disabled', false);
@@ -21,7 +36,8 @@ function render(data) {
 	      datatype: "local",
 	      data: data['data'],
 	      autowidth: true,
-	      shrinkToFit: false
+	      shrinkToFit: false,
+	      rownumbers: true
 	      });
   }
   else {
@@ -49,12 +65,15 @@ $(function() {
 	$("#executesql_launch").on("click", function(event) {
 	  $("#executesql_launch").prop('disabled', true);
 	  $("#executesql_cancel").prop('disabled', false);
-	  //$("#executesql_results").empty();	
+	  var sql = $("#executesql_statements");
+	  var data = sql.val();
+	  if (sql[0].selectionStart != sql[0].selectionEnd)
+	    data = data.substring(sql[0].selectionStart, sql[0].selectionEnd);
 	  xhr = $.ajax({
 	    url: url_prefix + "/executesql/",
 	    type: 'POST',
 	    dataType: 'json',
-	    data: $("#executesql_statements").val(),
+	    data: data,
 	    success: render,
 	    error: render,
 	    async: true

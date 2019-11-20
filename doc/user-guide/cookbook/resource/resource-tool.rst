@@ -8,7 +8,7 @@ Tools
 | They can also be virtual: e.g. electronic kanban/QRM cards to limit the
   work-in-progress in a certain manufacturing cell.
 
-| They are  modelled as a buffer for which the subcategory field is set
+| They are modeled as a buffer for which the subcategory field is set
   to "tool".
 | The operation that claims the tool gets a flow to consume from this buffer.
 | The operation that releases the tool get a flow to produce into this buffer.

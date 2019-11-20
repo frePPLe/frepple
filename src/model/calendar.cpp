@@ -395,8 +395,8 @@ void CalendarBucket::setCalendar(Calendar* c) {
 
   // Unlink from the previous calendar
   if (cal) {
-    cal->removeBucket(this, false);
     cal->eventlist.clear();
+    cal->removeBucket(this, false);
   }
   cal = c;
 

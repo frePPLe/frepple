@@ -16,6 +16,11 @@ Release notes
 
 .. rubric:: User interface
 
+- | Filter arguments are now trimmed to provide a more intuitive filtering. The invisible 
+    leading or trailing whitespace lead to confusion and mistakes.
+  | On the other hand, if you were filtering on purpose with such whitespace: this is
+    no longer possible.  
+
 - Support for user-defined attributes on purchase orders, manufacturing orders and
   distribution orders.
   

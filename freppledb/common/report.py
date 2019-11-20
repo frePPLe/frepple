@@ -2008,61 +2008,79 @@ class GridReport(View):
 
     @staticmethod
     def _filter_ne(query, reportrow, data):
-        return ~models.Q(**{"%s__iexact" % reportrow.field_name: smart_str(data)})
+        return ~models.Q(
+            **{"%s__iexact" % reportrow.field_name: smart_str(data).strip()}
+        )
 
     @staticmethod
     def _filter_bn(query, reportrow, data):
-        return ~models.Q(**{"%s__istartswith" % reportrow.field_name: smart_str(data)})
+        return ~models.Q(
+            **{"%s__istartswith" % reportrow.field_name: smart_str(data).strip()}
+        )
 
     @staticmethod
     def _filter_en(query, reportrow, data):
-        return ~models.Q(**{"%s__iendswith" % reportrow.field_name: smart_str(data)})
+        return ~models.Q(
+            **{"%s__iendswith" % reportrow.field_name: smart_str(data).strip()}
+        )
 
     @staticmethod
     def _filter_nc(query, reportrow, data):
-        return ~models.Q(**{"%s__icontains" % reportrow.field_name: smart_str(data)})
+        return ~models.Q(
+            **{"%s__icontains" % reportrow.field_name: smart_str(data).strip()}
+        )
 
     @staticmethod
     def _filter_ni(query, reportrow, data):
         return ~models.Q(
-            **{"%s__in" % reportrow.field_name: smart_str(data).split(",")}
+            **{"%s__in" % reportrow.field_name: smart_str(data).strip().split(",")}
         )
 
     @staticmethod
     def _filter_in(query, reportrow, data):
-        return models.Q(**{"%s__in" % reportrow.field_name: smart_str(data).split(",")})
+        return models.Q(
+            **{"%s__in" % reportrow.field_name: smart_str(data).strip().split(",")}
+        )
 
     @staticmethod
     def _filter_eq(query, reportrow, data):
-        return models.Q(**{"%s__iexact" % reportrow.field_name: smart_str(data)})
+        return models.Q(
+            **{"%s__iexact" % reportrow.field_name: smart_str(data).strip()}
+        )
 
     @staticmethod
     def _filter_bw(query, reportrow, data):
-        return models.Q(**{"%s__istartswith" % reportrow.field_name: smart_str(data)})
+        return models.Q(
+            **{"%s__istartswith" % reportrow.field_name: smart_str(data).strip()}
+        )
 
     @staticmethod
     def _filter_gt(query, reportrow, data):
-        return models.Q(**{"%s__gt" % reportrow.field_name: smart_str(data)})
+        return models.Q(**{"%s__gt" % reportrow.field_name: smart_str(data).strip()})
 
     @staticmethod
     def _filter_gte(query, reportrow, data):
-        return models.Q(**{"%s__gte" % reportrow.field_name: smart_str(data)})
+        return models.Q(**{"%s__gte" % reportrow.field_name: smart_str(data).strip()})
 
     @staticmethod
     def _filter_lt(query, reportrow, data):
-        return models.Q(**{"%s__lt" % reportrow.field_name: smart_str(data)})
+        return models.Q(**{"%s__lt" % reportrow.field_name: smart_str(data).strip()})
 
     @staticmethod
     def _filter_lte(query, reportrow, data):
-        return models.Q(**{"%s__lte" % reportrow.field_name: smart_str(data)})
+        return models.Q(**{"%s__lte" % reportrow.field_name: smart_str(data).strip()})
 
     @staticmethod
     def _filter_ew(query, reportrow, data):
-        return models.Q(**{"%s__iendswith" % reportrow.field_name: smart_str(data)})
+        return models.Q(
+            **{"%s__iendswith" % reportrow.field_name: smart_str(data).strip()}
+        )
 
     @staticmethod
     def _filter_cn(query, reportrow, data):
-        return models.Q(**{"%s__icontains" % reportrow.field_name: smart_str(data)})
+        return models.Q(
+            **{"%s__icontains" % reportrow.field_name: smart_str(data).strip()}
+        )
 
     @staticmethod
     def _filter_win(query, reportrow, data):

@@ -86,6 +86,12 @@ function ganttcell(cellvalue, options, rowdata)
 {
   var layer = [];
   var result = [];
+  var map = {};
+  map["MO"] = "manufacturingorder";
+  map["PO"] = "purchaseorder";
+  map["DO"] = "distributionorder";
+  map["DLVR"] = "deliveryorder";
+  
   for (o in rowdata["operationplans"])
   {
      var data = rowdata["operationplans"][o];
@@ -99,7 +105,8 @@ function ganttcell(cellvalue, options, rowdata)
         }
      };
      if (row >= layer.length) layer.push(data["enddate"]);
-     var rect = '<rect class="opplan" x="' + data["x"] + '" y="' + (-row*gantt.rowsize) 
+     var rect = '<a href="/data/input/' + map[data["type"]] +'/?reference='+ admin_escape(data["reference"]) + '">'
+       + '<rect class="opplan" x="' + data["x"] + '" y="' + (-row*gantt.rowsize) 
        + '" fill="' + buildcolor(data) + '" width="' + Math.max(data["w"],1) 
        + '" height="' + (gantt.rowsize-3) + '"';
      if (data["status"] == "proposed")
@@ -110,6 +117,7 @@ function ganttcell(cellvalue, options, rowdata)
     	 }
      });
      rect += '/>';
+     rect += '</a>'
      result.push(rect);
   }
   result.push( '<line x1="' + rowdata["due"] + '" y1="' + gantt.rowsize + '" x2="' + rowdata["due"] + '" y2="-' + (layer.length*gantt.rowsize) + '" vector-effect="non-scaling-stroke" stroke="red" stroke-width="1" />');

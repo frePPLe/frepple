@@ -43,7 +43,7 @@ registerAttribute(
         (
             "unplanneddemandvalue",
             _("value of unplanned demands"),
-            "integer",
+            "number",
             False,
             True,
         ),

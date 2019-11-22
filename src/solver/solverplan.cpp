@@ -36,6 +36,7 @@ const Keyword SolverCreate::tag_rotateresources("rotateresources");
 const Keyword SolverCreate::tag_planSafetyStockFirst("plansafetystockfirst");
 const Keyword SolverCreate::tag_iterationmax("iterationmax");
 const Keyword SolverCreate::tag_resourceiterationmax("resourceiterationmax");
+const Keyword SolverCreate::tag_erasePreviousFirst("erasePreviousFirst");
 
 void LibrarySolver::initialize() {
   // Initialize only once
@@ -120,7 +121,11 @@ SolverCreate::SolverData::SolverData(SolverCreate* s, int c, deque<Demand*>* d)
       logConstraints(true),
       state(statestack),
       prevstate(statestack - 1) {
+  assert(s);
+
+  // Delete operator
   operator_delete = new OperatorDelete();
+  operator_delete->setLogLevel(s->getLogLevel());
 }
 
 void SolverCreate::SolverData::setCommandManager(CommandManager* a) {

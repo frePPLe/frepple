@@ -319,6 +319,30 @@ class SolverCreate : public Solver {
     commands.setCommandManager(&mgr);
   }
 
+  /* Copy constructor */
+  SolverCreate(const SolverCreate& other) : commands(this) {
+    initType(metadata);
+    commands.setCommandManager(&mgr);
+
+    // Copy fields
+    plantype = other.plantype;
+    lazydelay = other.lazydelay;
+    administrativeleadtime = other.administrativeleadtime;
+    minimumdelay = other.minimumdelay;
+    autofence = other.autofence;
+    iteration_threshold = other.iteration_threshold;
+    iteration_accuracy = other.iteration_accuracy;
+    iteration_max = other.iteration_max;
+    resource_iteration_max = other.resource_iteration_max;
+    userexit_flow = other.userexit_flow;
+    userexit_demand = other.userexit_demand;
+    userexit_buffer = other.userexit_buffer;
+    userexit_resource = other.userexit_resource;
+    userexit_operation = other.userexit_operation;
+    planSafetyStockFirst = other.planSafetyStockFirst;
+    erasePreviousFirst = other.erasePreviousFirst;
+  }
+
   /* Destructor. */
   virtual ~SolverCreate() {}
 
@@ -600,6 +624,9 @@ class SolverCreate : public Solver {
     m->addBoolField<Cls>(SolverCreate::tag_planSafetyStockFirst,
                          &Cls::getPlanSafetyStockFirst,
                          &Cls::setPlanSafetyStockFirst);
+    m->addBoolField<Cls>(SolverCreate::tag_erasePreviousFirst,
+                         &Cls::getErasePreviousFirst,
+                         &Cls::setErasePreviousFirst);
     m->addUnsignedLongField<Cls>(SolverCreate::tag_iterationmax,
                                  &Cls::getIterationMax, &Cls::setIterationMax);
     m->addUnsignedLongField<Cls>(SolverCreate::tag_resourceiterationmax,
@@ -622,6 +649,7 @@ class SolverCreate : public Solver {
   static const Keyword tag_rotateresources;
   static const Keyword tag_planSafetyStockFirst;
   static const Keyword tag_administrativeleadtime;
+  static const Keyword tag_erasePreviousFirst;
   static const Keyword tag_iterationmax;
   static const Keyword tag_resourceiterationmax;
 

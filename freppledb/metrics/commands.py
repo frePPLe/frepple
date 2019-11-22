@@ -72,11 +72,11 @@ class GetPlanMetrics(PlanTask):
                     create temporary table metrics as
                     select item.name as item_id, 
                     sum(case when out_problem_tmp.name = 'late' then 1 else 0 end) as latedemandcount,
-                    sum(case when out_problem_tmp.name = 'late' then weight else 0 end) as latedemandquantity,
-                    sum(case when out_problem_tmp.name = 'late' then weight_cost else 0 end) as latedemandvalue,
+                    sum(case when out_problem_tmp.name = 'late' then out_problem_tmp.weight else 0 end) as latedemandquantity,
+                    sum(case when out_problem_tmp.name = 'late' then out_problem_tmp.weight_cost else 0 end) as latedemandvalue,
                     sum(case when out_problem_tmp.name = 'unplanned' then 1 else 0 end) as unplanneddemandcount,
-                    sum(case when out_problem_tmp.name = 'unplanned' then weight else 0 end) as unplanneddemandquantity,
-                    sum(case when out_problem_tmp.name = 'unplanned' then weight_cost else 0 end) as unplanneddemandvalue
+                    sum(case when out_problem_tmp.name = 'unplanned' then out_problem_tmp.weight else 0 end) as unplanneddemandquantity,
+                    sum(case when out_problem_tmp.name = 'unplanned' then out_problem_tmp.weight_cost else 0 end) as unplanneddemandvalue
                     from item
                     left outer join out_problem_tmp on out_problem_tmp.item_id = item.name
                     where item.lft = item.rght - 1

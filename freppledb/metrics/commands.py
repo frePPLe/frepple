@@ -21,7 +21,7 @@ from django.conf import settings
 from django.db import connections, DEFAULT_DB_ALIAS
 
 from freppledb.common.commands import PlanTaskRegistry, PlanTask
-from freppledb.input.models import Item
+from freppledb.input.models import Item, Resource
 
 
 @PlanTaskRegistry.register
@@ -131,24 +131,28 @@ class GetPlanMetrics(PlanTask):
 
             # Update resource metrics
             try:
+
+                Resource.rebuildHierarchy(database)
+
                 cursor.execute(
                     """
-          with metrics as (
-            select
-              resource.name as resource,
-              coalesce(count(out_problem.name), 0) as overloadcount
-            from out_problem
-            right outer join resource -- right outer join to assure all resources are in the output
-              on out_problem.owner = resource.name
-            where out_problem.name is null or out_problem.name = 'overload'
-            group by resource.name
-            )
-          update resource set
-            overloadcount = metrics.overloadcount
-          from metrics
-          where metrics.resource = resource.name
-            and resource.overloadcount is distinct from metrics.overloadcount
-          """
+                with resource_hierarchy as (select child.name child, parent.name parent
+                from resource child
+                inner join resource parent on child.lft between parent.lft and parent.rght
+                where child.lft = child.rght-1),          
+                cte as (
+                    select parent, count(out_problem.id) as overloadcount from resource_hierarchy
+                    left outer join out_problem on out_problem.name = 'overload' 
+                                                   and out_problem.owner = resource_hierarchy.child                                           
+                    group by parent
                 )
+                update resource
+                set overloadcount = cte.overloadcount
+                from cte
+                where cte.parent = resource.name
+                and resource.overloadcount is distinct from cte.overloadcount;
+                """
+                )
+
             except Exception as e:
                 print("Error updating resource metrics: %s" % e)

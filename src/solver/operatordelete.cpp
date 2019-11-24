@@ -446,6 +446,7 @@ PyObject* OperatorDelete::solve(PyObject* self, PyObject* args) {
       case 3:
         // Delete upstream of a single resource
         sol->solve(static_cast<Resource*>(obj));
+        break;
       case 4:
         // Delete an operationplan
         sol->solve(static_cast<OperationPlan*>(obj));

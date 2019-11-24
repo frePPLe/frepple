@@ -7902,7 +7902,7 @@ class ProblemBeforeCurrent : public Problem {
   Operation* oper = nullptr;
   Date start;
   Date end;
-  double qty;
+  double qty = 0;
 };
 
 /* A problem of this class is created when an operationplan is being
@@ -7964,7 +7964,7 @@ class ProblemBeforeFence : public Problem {
   Operation* oper = nullptr;
   Date start;
   Date end;
-  double qty;
+  double qty = 0.0;
 };
 
 /* A problem of this class is created when the sequence of two

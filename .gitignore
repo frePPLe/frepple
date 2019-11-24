@@ -72,6 +72,7 @@ build
 .pydevproject
 .tern-project
 *.md.html
+.autotools
 
 # Packaging
 *.deb

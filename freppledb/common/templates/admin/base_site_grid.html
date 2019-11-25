@@ -2,7 +2,7 @@
 {% load i18n %}
 
 {% block extrahead %}{{block.super}}
-<script type="text/javascript">
+<script>
 
 var reportkey = '{{reportkey|safe}}';
 var initialfilter{% if filters %} = {{filters|safe}}{% endif %};

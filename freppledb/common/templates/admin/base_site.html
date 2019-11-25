@@ -13,18 +13,18 @@
 <link rel="shortcut icon" href="{{STATIC_URL}}favicon.ico"/>
 {% endblock %}
 {% block extrahead %}{{block.super}}
-<script type="text/javascript" src="/data/jsi18n/"></script>
-<script type="text/javascript" src="{{STATIC_URL}}js/jquery-3.4.1.min.js"></script>
-<script type="text/javascript" src="{{STATIC_URL}}js/bootstrap.min.js"></script>
-<script type="text/javascript" src="{{STATIC_URL}}js/moment-with-locales.min.js"></script>
-<script type="text/javascript" src="{{STATIC_URL}}js/bootstrap-datetimepicker.min.js"></script>
-<script type="text/javascript" src="{{STATIC_URL}}js/typeahead.bundle.min.js"></script>
-<script type="text/javascript" src="{{STATIC_URL}}js/i18n/grid.locale-{{LANGUAGE_CODE|default:"en"}}.js"></script>
-<script type="text/javascript" src="{{STATIC_URL}}js/jquery.jqgrid.min.js"></script>
-<script type="text/javascript" src="{{STATIC_URL}}js/frepple{% if not debug_js %}.min{% endif %}.js"></script>
-<script type="text/javascript" src="{{STATIC_URL}}js/Sortable.min.js"></script>
-<script type="text/javascript" src="{{STATIC_URL}}js/i18n/intro.en.js"></script>
-<script type="text/javascript">
+<script src="/data/jsi18n/"></script>
+<script src="{{STATIC_URL}}js/jquery-3.4.1.min.js"></script>
+<script src="{{STATIC_URL}}js/bootstrap.min.js"></script>
+<script src="{{STATIC_URL}}js/moment-with-locales.min.js"></script>
+<script src="{{STATIC_URL}}js/bootstrap-datetimepicker.min.js"></script>
+<script src="{{STATIC_URL}}js/typeahead.bundle.min.js"></script>
+<script src="{{STATIC_URL}}js/i18n/grid.locale-{{LANGUAGE_CODE|default:"en"}}.js"></script>
+<script src="{{STATIC_URL}}js/jquery.jqgrid.min.js"></script>
+<script src="{{STATIC_URL}}js/frepple{% if not debug_js %}.min{% endif %}.js"></script>
+<script src="{{STATIC_URL}}js/Sortable.min.js"></script>
+<script src="{{STATIC_URL}}js/i18n/intro.en.js"></script>
+<script>
 
   var url_prefix = '{{request.prefix}}';
   var database = '{{request.database}}';

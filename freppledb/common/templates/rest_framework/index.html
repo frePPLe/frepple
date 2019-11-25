@@ -3,7 +3,7 @@
 {% load i18n %}
 
 {% block extrahead %}{{block.super}}
-<script type="text/javascript">
+<script>
 $(function() {
   $("#jwt").on('input', function() {
   	window.location.href = '{{request.prefix}}/api/?exp=' + $("#jwt").val();

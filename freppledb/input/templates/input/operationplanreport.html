@@ -3,45 +3,45 @@
 {% load static %}
 
 {% block extrahead %}{{block.super}}
-<script type="text/javascript" src="{{STATIC_URL}}js/angular.min.js"></script>
-<script type="text/javascript" src="{{STATIC_URL}}js/angular-cookies.min.js"></script>
-<script type="text/javascript" src="{{STATIC_URL}}js/angular-gettext.min.js"></script>
-<script type="text/javascript" src="{{STATIC_URL}}js/angular-websocket.js"></script>
-<script type="text/javascript" src="{{STATIC_URL}}js/i18n/angular-freppletranslations.js"></script>
+<script src="{{STATIC_URL}}js/angular.min.js"></script>
+<script src="{{STATIC_URL}}js/angular-cookies.min.js"></script>
+<script src="{{STATIC_URL}}js/angular-gettext.min.js"></script>
+<script src="{{STATIC_URL}}js/angular-websocket.js"></script>
+<script src="{{STATIC_URL}}js/i18n/angular-freppletranslations.js"></script>
 
 {% if debug_js %}
-<script type="text/javascript" src="{{STATIC_URL}}common/src/module.js"></script>
-<script type="text/javascript" src="{{STATIC_URL}}common/src/preferences.js"></script>
-<script type="text/javascript" src="{{STATIC_URL}}common/src/webfactory.js"></script>
-<script type="text/javascript" src="{{STATIC_URL}}common/src/chat.js"></script>
+<script src="{{STATIC_URL}}common/src/module.js"></script>
+<script src="{{STATIC_URL}}common/src/preferences.js"></script>
+<script src="{{STATIC_URL}}common/src/webfactory.js"></script>
+<script src="{{STATIC_URL}}common/src/chat.js"></script>
 
-<script type="text/javascript" src="{{STATIC_URL}}input/src/module.js"></script>
-<script type="text/javascript" src="{{STATIC_URL}}input/src/customer.js"></script>
-<script type="text/javascript" src="{{STATIC_URL}}input/src/demand.js"></script>
-<script type="text/javascript" src="{{STATIC_URL}}input/src/location.js"></script>
-<script type="text/javascript" src="{{STATIC_URL}}input/src/buffer.js"></script>
-<script type="text/javascript" src="{{STATIC_URL}}input/src/resource.js"></script>
-<script type="text/javascript" src="{{STATIC_URL}}input/src/item.js"></script>
-<script type="text/javascript" src="{{STATIC_URL}}input/src/operation.js"></script>
-<script type="text/javascript" src="{{STATIC_URL}}input/src/operationplan.js"></script>
-<script type="text/javascript" src="{{STATIC_URL}}input/src/model.js"></script>
+<script src="{{STATIC_URL}}input/src/module.js"></script>
+<script src="{{STATIC_URL}}input/src/customer.js"></script>
+<script src="{{STATIC_URL}}input/src/demand.js"></script>
+<script src="{{STATIC_URL}}input/src/location.js"></script>
+<script src="{{STATIC_URL}}input/src/buffer.js"></script>
+<script src="{{STATIC_URL}}input/src/resource.js"></script>
+<script src="{{STATIC_URL}}input/src/item.js"></script>
+<script src="{{STATIC_URL}}input/src/operation.js"></script>
+<script src="{{STATIC_URL}}input/src/operationplan.js"></script>
+<script src="{{STATIC_URL}}input/src/model.js"></script>
 
-<script type="text/javascript" src="{{STATIC_URL}}operationplandetail/src/module.js"></script>
-<script type="text/javascript" src="{{STATIC_URL}}operationplandetail/src/operationplandetailCtrl.js"></script>
-<script type="text/javascript" src="{{STATIC_URL}}operationplandetail/src/problemspanelDrv.js"></script>
-<script type="text/javascript" src="{{STATIC_URL}}operationplandetail/src/resourcespanelDrv.js"></script>
-<script type="text/javascript" src="{{STATIC_URL}}operationplandetail/src/bufferspanelDrv.js"></script>
-<script type="text/javascript" src="{{STATIC_URL}}operationplandetail/src/demandpeggingpanelDrv.js"></script>
-<script type="text/javascript" src="{{STATIC_URL}}operationplandetail/src/operationplanpanelDrv.js"></script>
-<script type="text/javascript" src="{{STATIC_URL}}operationplandetail/src/networkstatusDrv.js"></script>
-<script type="text/javascript" src="{{STATIC_URL}}operationplandetail/src/supplyinformationDrv.js"></script>
+<script src="{{STATIC_URL}}operationplandetail/src/module.js"></script>
+<script src="{{STATIC_URL}}operationplandetail/src/operationplandetailCtrl.js"></script>
+<script src="{{STATIC_URL}}operationplandetail/src/problemspanelDrv.js"></script>
+<script src="{{STATIC_URL}}operationplandetail/src/resourcespanelDrv.js"></script>
+<script src="{{STATIC_URL}}operationplandetail/src/bufferspanelDrv.js"></script>
+<script src="{{STATIC_URL}}operationplandetail/src/demandpeggingpanelDrv.js"></script>
+<script src="{{STATIC_URL}}operationplandetail/src/operationplanpanelDrv.js"></script>
+<script src="{{STATIC_URL}}operationplandetail/src/networkstatusDrv.js"></script>
+<script src="{{STATIC_URL}}operationplandetail/src/supplyinformationDrv.js"></script>
 {% else %}
-<script type="text/javascript" src="{{STATIC_URL}}js/frepple-common.min.js"></script>
-<script type="text/javascript" src="{{STATIC_URL}}js/frepple-input.min.js"></script>
-<script type="text/javascript" src="{{STATIC_URL}}js/frepple-operationplandetail.min.js"></script>
+<script src="{{STATIC_URL}}js/frepple-common.min.js"></script>
+<script src="{{STATIC_URL}}js/frepple-input.min.js"></script>
+<script src="{{STATIC_URL}}js/frepple-operationplandetail.min.js"></script>
 {% endif %}
 
-<script type="text/javascript">
+<script>
 
   function extraPreference() {
     return {
@@ -181,7 +181,7 @@ multiboxonly: false,
   </div>
 </div>
 <div data-ng-include="'/static/operationplandetail/operationplandetail.html'"></div>
-<script type="text/javascript">
+<script>
 //frepple.js will call this function to alert angular that the grid has changed
 function checkrows(grid, selection) {
   var selectiondata = [];

@@ -2,7 +2,7 @@
 {% load i18n %}
 
 {% block extrahead %}{{block.super}}{% if not 'navbar' in request.session or request.session.navbar %}
-<script type="text/javascript">
+<script>
 $(function() {
   breadcrumbs_reflow();
   $(window).resize(breadcrumbs_reflow);

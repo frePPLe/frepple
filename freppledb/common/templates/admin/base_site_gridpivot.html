@@ -2,9 +2,9 @@
 {% load i18n %}
 {% block extrahead %}{{block.super}}
 {% if args.0 or mode == 'graph' %}
-<script type="text/javascript" src="{{STATIC_URL}}js/d3.min.js"></script>
+<script src="{{STATIC_URL}}js/d3.min.js"></script>
 {% endif %}
-<script type="text/javascript">
+<script>
 var editrow;
 var editcol;
 

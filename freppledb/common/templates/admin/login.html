@@ -27,8 +27,8 @@ The changes are:
 {% endblock %}
 
 {% block extrahead %}
-<script type="text/javascript" src="{{STATIC_URL}}js/jquery-3.4.1.min.js"></script>
-<script type="text/javascript">
+<script src="{{STATIC_URL}}js/jquery-3.4.1.min.js"></script>
+<script>
 $(function() {
   if (!!window.MSInputMethodContext && !!document.documentMode) {
     // You are using internet explorer.

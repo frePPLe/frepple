@@ -8,7 +8,6 @@
 var wasPressed = false;
 
 function fkey(e) {
-	console.log(e);
   e = e || window.event;
   if( wasPressed || e.code !== 'F5') return; 
   $("#executesql_launch").click();
@@ -30,15 +29,16 @@ function render(data) {
   	$("#error").css('display','none');
 	  var colmodel = [];
 	  for (var c in data['columns'])
-	  	colmodel.push({"name": data['columns'][c]});  
+	  	colmodel.push({"name": data['columns'][c]});
 	  grid.jqGrid({
 	      colModel: colmodel,
 	      datatype: "local",
 	      data: data['data'],
 	      autowidth: true,
 	      shrinkToFit: false,
-	      rownumbers: true
-	      });
+	      rownumbers: true,
+	      maxHeight: $(window).height() - grid.offset().top - 63
+	      });	  
   }
   else {
   	$("#error").css('display','block').text(data['status']);
@@ -61,7 +61,7 @@ $(function() {
           'height': $("#executesql_statements").height()
         });}
   });
-  
+
 	$("#executesql_launch").on("click", function(event) {
 	  $("#executesql_launch").prop('disabled', true);
 	  $("#executesql_cancel").prop('disabled', false);
@@ -105,7 +105,7 @@ $(function() {
 
 {% block content %}
 <div class="row form-group">
-<div class="col-xs-5 form-inline">
+<div class="col-md-5">
 <button id="executesql_launch" class="btn btn-primary">{% trans "launch"|capfirst %}</button>
 <button id="executesql_cancel" class="btn btn-primary" disabled>{% trans "cancel"|capfirst %}</button>
 </div>
@@ -118,20 +118,22 @@ $(function() {
 </div>
 </div>
 
-<div class="row form-group">
-<div class="col-xs-12">
+<div class="row formgroup" style="text-align: center">
+<div class="col-md-12">
 <textarea id="executesql_statements" rows="10"
  style="width:100%; {% if request.prefs.height %}height:{{ request.prefs.height}}px; {% endif %}resize: none; font-size:1.25em; font-family:courier">
 {{ request.prefs.sql }}
 </textarea>
-<span id="resize-handle" class="fa fa-bars handle" style="display: inline-block; text-align: center; width: 100%"></span>
 </div>
+<span id="resize-handle" class="fa fa-bars handle" style="display: inline-block; touch-action: none"></span>
 </div>
 
 <div class="row form-group">
 <div class="col-xs-12">
 <div id="error"></div>
-<table style="width:100%" id="executesql_results" class="table table-striped" style="background-color: white"></table>
+<div style="padding-right: 10px; width:100%">
+<table id="executesql_results" class="table table-striped" style="background-color: white"></table>
+</div>
 </div>
 </div>
 {% endblock %}

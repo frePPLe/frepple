@@ -1286,7 +1286,7 @@ class GridReport(View):
                     == "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                 ):
                     xlscount += 1
-                elif file.content_type == "application/vnd.ms-excel":
+                elif filename.endswith(".xls"):
                     return HttpResponseNotFound(
                         """
                       Files in the old .XLS excel format can't be read.<br>
@@ -3191,7 +3191,7 @@ def importWorkbook(request):
             yield "<strong>" + force_text(
                 _("Processing file")
             ) + " " + filename + "</strong><br>"
-            if file.content_type == "application/vnd.ms-excel":
+            if filename.endswith(".xls"):
                 yield _(
                     "Files in the old .XLS excel format can't be read.<br>Please convert them to the new .XLSX format."
                 )

@@ -40,11 +40,11 @@ In the above example, four operations have to be defined in the operation table 
 ===================  ================= ========== =============  ========
 Operation            Item              Type       Owner          Priority
 ===================  ================= ========== =============  ========
-Build Product        Product           routing      
+Build Product        Product           routing        
 GRIND                                  time_per   Build Product  1
 PAINT                                  time_per   Build Product  2
 DRY                                    fixed_time Build Product  3
-===================  ================= ==========
+===================  ================= ========== =============  ========
 
 Now that the four operations have been declared, we need to fill the table suboperation to declare that operations GRIND, 
 PAINT and DRY are suboperations of "Build Product" operation and also declare in which sequence these operations are performed.

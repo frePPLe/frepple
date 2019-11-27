@@ -283,7 +283,12 @@ class Command(BaseCommand):
                         raise Exception(
                             "Missing folder in export configuration for %s" % filename
                         )
+
+                    # Report progress
                     logger.info("%s Started export of %s" % (datetime.now(), filename))
+                    if task:
+                        task.message = "Exporting %s" % filename
+                        task.save(using=self.database)
 
                     # Make sure export folder exists
                     exportFolder = os.path.join(

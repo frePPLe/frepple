@@ -1680,8 +1680,11 @@ class OperationPlan(AuditModel):
                     subop.save(update_fields=["status", "startdate", "enddate"])
 
             # Assure that the parent is at least approved
-            all_steps_completed = True
-            all_steps_closed = True
+            if len(steps) == len(subopplans):
+                all_steps_completed = all_steps_closed = True
+            else:
+                # We know there are will be some proposed steps
+                all_steps_completed = all_steps_closed = False
             for subop in subopplans:
                 if subop.status not in ("closed", "completed"):
                     all_steps_completed = False

@@ -388,8 +388,8 @@ void SolverCreate::SolverData::solveSafetyStock(SolverCreate* solver) {
   cleanup.setConstrained(solver->getPlanType() == 1);
   safety_stock_planning = true;
   if (getLogLevel() > 0)
-    logger << "Start safety stock replenishment pass   "
-           << solver->getConstraints() << " for cluster " << cluster << endl;
+    logger << "Start safety stock replenishment pass for cluster " << cluster
+           << endl;
   vector<list<Buffer*> > bufs(HasLevel::getNumberOfLevels() + 1);
   for (auto buf = Buffer::begin(); buf != Buffer::end(); ++buf)
     if ((buf->getCluster() == cluster || cluster == -1) &&

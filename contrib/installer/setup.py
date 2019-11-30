@@ -114,6 +114,7 @@ for mod in [
     pytz,
     requests,
     openpyxl,
+    dateutil,
 ]:
     srcdir = mod.__path__[0]
     targetdir = os.path.join("custom", mod.__name__)

@@ -82,6 +82,7 @@ excludes = [
 # Add all modules that need to be added in uncompiled format
 import bootstrap3
 import certifi
+import dateutil
 import django
 import django_admin_bootstrapped
 import freppledb
@@ -107,6 +108,7 @@ data_files = [
 for mod in [
     bootstrap3,
     certifi,
+    dateutil,
     django,
     django_admin_bootstrapped,
     freppledb,
@@ -114,7 +116,6 @@ for mod in [
     pytz,
     requests,
     openpyxl,
-    dateutil,
 ]:
     srcdir = mod.__path__[0]
     targetdir = os.path.join("custom", mod.__name__)

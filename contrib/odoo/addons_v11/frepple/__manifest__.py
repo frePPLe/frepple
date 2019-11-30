@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     "name": "frepple",
-    "version": "6.1.0",
+    "version": "6.2.0",
     "category": "Manufacturing",
     "summary": "Advanced planning and scheduling",
     "author": "frePPLe",

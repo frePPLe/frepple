@@ -178,9 +178,15 @@ class TaskReport(GridReport):
                     import_module("%s.management.commands.%s" % (appname, commandname)),
                     "Command",
                 )
-                if accord.index >= 0 and getattr(accord, "getHTML", None):
+                if getattr(accord, "index", -1) >= 0 and getattr(
+                    accord, "getHTML", None
+                ):
                     accordions.add(accord)
-            except Exception:
+            except Exception as e:
+                logger.warn(
+                    "Couldn't import getHTML method from %s.management.commands.%s: %s"
+                    % (appname, commandname, e)
+                )
                 pass  # Silently ignore failures
 
         accordions = sorted(accordions, key=operator.attrgetter("index"))

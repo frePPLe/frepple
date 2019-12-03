@@ -15,7 +15,7 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-from datetime import datetime
+from dateutil.parser import parse
 
 from django import forms
 from django.contrib.auth.admin import UserAdmin
@@ -124,7 +124,7 @@ class ParameterForm(forms.ModelForm):
         # Currentdate parameter must be a date+time value
         if name == "currentdate":
             try:
-                datetime.strptime(value, "%Y-%m-%d %H:%M:%S")
+                parse(value)
             except:
                 self._errors["value"] = ErrorList(
                     [_("Invalid date: expecting YYYY-MM-DD HH:MM:SS")]

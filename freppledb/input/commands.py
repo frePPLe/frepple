@@ -19,6 +19,7 @@ import logging
 import uuid
 from time import time
 from datetime import datetime
+from dateutil.parser import parse
 
 from django.db import connections, DEFAULT_DB_ALIAS
 
@@ -180,9 +181,7 @@ class loadParameter(LoadTask):
             for rec in cursor:
                 if rec[0] == "currentdate":
                     try:
-                        frepple.settings.current = datetime.strptime(
-                            rec[1], "%Y-%m-%d %H:%M:%S"
-                        )
+                        frepple.settings.current = parse(rec[1])
                         default_current_date = False
                     except:
                         pass

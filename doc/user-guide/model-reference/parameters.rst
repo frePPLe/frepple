@@ -23,7 +23,8 @@ allowsplits                 | When set to true (default value), a sales order or
                               will result in a plan with less manufacturing orders. The plan 
                               generation will be considerably faster, but can have additional 
                               delivery delays of the customer orders and forecasts.
-currentdate                 | Current date of the plan, formatted as YYYY-MM-DD HH:MM:SS.
+currentdate                 | Current date of the plan, preferred format is YYYY-MM-DD HH:MM:SS
+                              but most known formats to represent a date and/or time are accepted.
                               If the parameter is missing or empty the system time is used as current date.
 currency                    | Currency symbol.
                             | This parameter may be only set on the default database and will be

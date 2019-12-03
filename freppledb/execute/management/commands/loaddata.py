@@ -16,6 +16,7 @@
 #
 
 from datetime import datetime
+from dateutil.parser import parse
 import os
 
 from django.apps import apps
@@ -26,7 +27,7 @@ from django.db import connections, transaction
 from django.template import Template, RequestContext
 from django.utils.translation import gettext_lazy as _
 
-from freppledb.common.models import User
+from freppledb.common.models import User, Parameter
 from freppledb.common.middleware import _thread_locals
 from freppledb.execute.models import Task
 
@@ -199,13 +200,10 @@ class Command(loaddata.Command):
                     print("updating fixture to current date")
 
                 cursor = connections[database].cursor()
-                cursor.execute(
-                    """
-                    select to_timestamp(value,'YYYY-MM-DD hh24:mi:ss')
-                    from common_parameter where name = 'currentdate'
-                    """
+                currentDate = parse(
+                    Parameter.objects.using(database).get(name="currentdate").value
                 )
-                currentDate = cursor.fetchone()[0]
+
                 now = datetime.now()
                 offset = (now - currentDate).days
 

@@ -45,6 +45,7 @@ from openpyxl import load_workbook, Workbook
 from openpyxl.utils import get_column_letter
 from openpyxl.cell import WriteOnlyCell
 from openpyxl.styles import NamedStyle, PatternFill
+from dateutil.parser import parse
 
 from django.db.models import Model
 from django.apps import apps
@@ -147,9 +148,8 @@ def matchesModelName(name, model):
 def getHorizon(request, future_only=False):
     # Pick up the current date
     try:
-        current = datetime.strptime(
-            Parameter.objects.using(request.database).get(name="currentdate").value,
-            "%Y-%m-%d %H:%M:%S",
+        current = parse(
+            Parameter.objects.using(request.database).get(name="currentdate").value
         )
     except:
         current = datetime.now()

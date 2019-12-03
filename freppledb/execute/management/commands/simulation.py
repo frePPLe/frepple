@@ -16,6 +16,7 @@
 #
 
 from datetime import datetime, timedelta
+from dateutil.parser import parse
 import importlib
 
 from django.conf import settings
@@ -205,7 +206,7 @@ class Command(BaseCommand):
                 .get_or_create(name="currentdate")[0]
             )
             try:
-                curdate = datetime.strptime(param.value, "%Y-%m-%d %H:%M:%S")
+                curdate = parse(param.value)
             except:
                 curdate = datetime.now()
             curdate = curdate.date()

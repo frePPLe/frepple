@@ -16,6 +16,7 @@
 #
 
 from datetime import datetime, timedelta
+from dateutil.parser import parse
 
 from django.db import connections
 from django.utils.encoding import force_text
@@ -165,9 +166,8 @@ class ReportByDemand(GridReport):
             request.report_enddate - request.report_startdate
         ).total_seconds() / 10000
         try:
-            current = datetime.strptime(
-                Parameter.objects.using(request.database).get(name="currentdate").value,
-                "%Y-%m-%d %H:%M:%S",
+            current = parse(
+                Parameter.objects.using(request.database).get(name="currentdate").value
             )
         except:
             current = datetime.now()

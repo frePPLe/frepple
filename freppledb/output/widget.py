@@ -15,7 +15,8 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-from datetime import datetime, timedelta, date
+from datetime import timedelta, date
+from dateutil.parser import parse
 from urllib.parse import urlencode
 
 from django.contrib.admin.utils import quote
@@ -322,10 +323,7 @@ class ManufacturingOrderWidget(Widget):
         except:
             db = DEFAULT_DB_ALIAS
         try:
-            current = datetime.strptime(
-                Parameter.objects.using(db).get(name="currentdate").value,
-                "%Y-%m-%d %H:%M:%S",
-            )
+            current = parse(Parameter.objects.using(db).get(name="currentdate").value)
         except:
             current = date.today()
         request.database = db
@@ -597,10 +595,7 @@ class DistributionOrderWidget(Widget):
         except:
             db = DEFAULT_DB_ALIAS
         try:
-            current = datetime.strptime(
-                Parameter.objects.using(db).get(name="currentdate").value,
-                "%Y-%m-%d %H:%M:%S",
-            )
+            current = parse(Parameter.objects.using(db).get(name="currentdate").value)
         except:
             current = date.today()
         request.database = db
@@ -883,10 +878,7 @@ class PurchaseOrderWidget(Widget):
         except:
             db = DEFAULT_DB_ALIAS
         try:
-            current = datetime.strptime(
-                Parameter.objects.using(db).get(name="currentdate").value,
-                "%Y-%m-%d %H:%M:%S",
-            )
+            current = parse(Parameter.objects.using(db).get(name="currentdate").value)
         except:
             current = date.today()
         request.database = db

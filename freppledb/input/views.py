@@ -16,6 +16,7 @@
 #
 
 from datetime import datetime
+from dateutil.parser import parse
 import json
 
 from django.conf import settings
@@ -5759,9 +5760,8 @@ class OperationPlanDetail(View):
     def getData(self, request):
         # Current date
         try:
-            current_date = datetime.strptime(
-                Parameter.objects.using(request.database).get(name="currentdate").value,
-                "%Y-%m-%d %H:%M:%S",
+            current_date = parse(
+                Parameter.objects.using(request.database).get(name="currentdate").value
             )
         except:
             current_date = datetime.now()

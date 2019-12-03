@@ -1,6 +1,14 @@
 Release notes
 -------------
 
+6.2.0
+==================
+
+.. rubric:: Production planning
+
+- Currentdate parameter now accepts most known formats to represent a date and/or time. 
+
+
 6.1.0 (2019/11/29)
 ==================
 

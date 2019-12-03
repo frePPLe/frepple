@@ -187,7 +187,6 @@ class TaskReport(GridReport):
                     "Couldn't import getHTML method from %s.management.commands.%s: %s"
                     % (appname, commandname, e)
                 )
-                pass  # Silently ignore failures
 
         accordions = sorted(accordions, key=operator.attrgetter("index"))
 

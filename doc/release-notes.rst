@@ -6,7 +6,12 @@ Release notes
 
 .. rubric:: Production planning
 
-- Currentdate parameter now accepts most known formats to represent a date and/or time. 
+- Currentdate parameter now accepts most known formats to represent a date and/or time.
+
+.. rubric:: Integration
+
+- Export of duration fields will not be in seconds anymore but will use same format used
+  in the tool: "DD HH:MM:SS". This change is effective for both csv and Excel exports.
 
 
 6.1.0 (2019/11/29)

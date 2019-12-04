@@ -915,7 +915,12 @@ class GridReport(View):
                 writer.writerow(
                     [
                         force_text(
-                            _localize(row[f], decimal_separator),
+                            _localize(
+                                _parseSeconds(row[f].total_seconds())
+                                if isinstance(row[f], timedelta)
+                                else row[f],
+                                decimal_separator,
+                            ),
                             encoding=encoding,
                             errors="ignore",
                         )
@@ -928,7 +933,12 @@ class GridReport(View):
                 writer.writerow(
                     [
                         force_text(
-                            _localize(getattr(row, f), decimal_separator),
+                            _localize(
+                                _parseSeconds(getattr(row, f).total_seconds())
+                                if isinstance(getattr(row, f), timedelta)
+                                else getattr(row, f),
+                                decimal_separator,
+                            ),
                             encoding=encoding,
                             errors="ignore",
                         )
@@ -2596,7 +2606,13 @@ class GridPivot(GridReport):
                 # Data for rows
                 if hasattr(row, "__getitem__"):
                     fields = [
-                        force_text(row[f.name], encoding=encoding, errors="ignore")
+                        force_text(
+                            _parseSeconds(row[f.name].total_seconds())
+                            if isinstance(row[f], timedelta)
+                            else row[f],
+                            encoding=encoding,
+                            errors="ignore",
+                        )
                         if row[f.name] is not None
                         else ""
                         for f in myrows
@@ -2608,7 +2624,12 @@ class GridPivot(GridReport):
                     fields.extend(
                         [
                             force_text(
-                                _localize(row[f[0]], decimal_separator),
+                                _localize(
+                                    _parseSeconds(row[f[0]].total_seconds())
+                                    if isinstance(row[f[0]], timedelta)
+                                    else row[f[0]],
+                                    decimal_separator,
+                                ),
                                 encoding=encoding,
                                 errors="ignore",
                             )
@@ -2620,7 +2641,11 @@ class GridPivot(GridReport):
                 else:
                     fields = [
                         force_text(
-                            getattr(row, f.name), encoding=encoding, errors="ignore"
+                            _parseSeconds(getattr(row, f.name).total_seconds())
+                            if isinstance(getattr(row, f.name), timedelta)
+                            else getattr(row, f.name),
+                            encoding=encoding,
+                            errors="ignore",
                         )
                         if getattr(row, f.name) is not None
                         else ""
@@ -2639,7 +2664,12 @@ class GridPivot(GridReport):
                     fields.extend(
                         [
                             force_text(
-                                _localize(getattr(row, f[0]), decimal_separator),
+                                _localize(
+                                    _parseSeconds(getattr(row, f[0]).total_seconds())
+                                    if isinstance(getattr(row, f[0]), timedelta)
+                                    else getattr(row, f[0]),
+                                    decimal_separator,
+                                ),
                                 encoding=encoding,
                                 errors="ignore",
                             )
@@ -2668,7 +2698,9 @@ class GridPivot(GridReport):
                         sf.truncate(0)
                         fields = [
                             force_text(
-                                row_of_buckets[0][s.name],
+                                _parseSeconds(row_of_buckets[0][s.name].total_seconds())
+                                if isinstance(row_of_buckets[0][s.name], timedelta)
+                                else row_of_buckets[0][s.name],
                                 encoding=encoding,
                                 errors="ignore",
                             )
@@ -2697,7 +2729,12 @@ class GridPivot(GridReport):
                         fields.extend(
                             [
                                 force_text(
-                                    _localize(bucket[cross[0]], decimal_separator),
+                                    _localize(
+                                        _parseSeconds(bucket[cross[0]].total_seconds())
+                                        if isinstance(bucket[cross[0]], timedelta)
+                                        else bucket[cross[0]],
+                                        decimal_separator,
+                                    ),
                                     encoding=encoding,
                                     errors="ignore",
                                 )
@@ -2718,7 +2755,11 @@ class GridPivot(GridReport):
                 sf.truncate(0)
                 fields = [
                     force_text(
-                        row_of_buckets[0][s.name], encoding=encoding, errors="ignore"
+                        _parseSeconds(row_of_buckets[0][s.name].total_seconds())
+                        if isinstance(row_of_buckets[0][s.name], timedelta)
+                        else row_of_buckets[0][s.name],
+                        encoding=encoding,
+                        errors="ignore",
                     )
                     for s in myrows
                     if s.name
@@ -2745,7 +2786,12 @@ class GridPivot(GridReport):
                 fields.extend(
                     [
                         force_text(
-                            _localize(bucket[cross[0]], decimal_separator),
+                            _localize(
+                                _parseSeconds(bucket[cross[0]].total_seconds())
+                                if isinstance(bucket[cross[0]], timedelta)
+                                else bucket[cross[0]],
+                                decimal_separator,
+                            ),
                             encoding=encoding,
                             errors="ignore",
                         )
@@ -3009,13 +3055,34 @@ def _buildMaskedNames(model, exportConfig):
     del keys
 
 
+# formats a number of seconds into format DD HH:MM:SS.XXXX
+def _parseSeconds(total_seconds):
+
+    days = math.floor(total_seconds / 86400)
+    hours = math.floor((total_seconds - days * 86400) / 3600)
+    minutes = math.floor((total_seconds - days * 86400 - hours * 3600) / 60)
+    seconds = math.floor(total_seconds - days * 86400 - hours * 3600 - minutes * 60)
+    remainder = total_seconds - 86400 * days - 3600 * hours - 60 * minutes - seconds
+
+    return "%s%s%d:%s%d:%s%d%s" % (
+        ("%d " % days) if days > 0 else "",
+        "0" if hours < 10 else "",
+        hours,
+        "0" if minutes < 10 else "",
+        minutes,
+        "0" if seconds < 10 else "",
+        seconds,
+        (".%s" % str(round(remainder, 8))[2:]) if remainder > 0 else "",
+    )
+
+
 def _getCellValue(data, field=None, exportConfig=None):
     if data is None:
         return ""
     elif isinstance(data, numericTypes) or isinstance(data, (date, datetime)):
         return data
     elif isinstance(data, timedelta):
-        return data.total_seconds()
+        return _parseSeconds(data.total_seconds())
     elif isinstance(data, time):
         return data.isoformat()
     elif not exportConfig or not exportConfig.get("anonymous", False):

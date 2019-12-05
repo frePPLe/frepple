@@ -33,6 +33,7 @@ packages = [
     "logging",
     "email",
     "cheroot",
+    "portend",
     "sqlparse",
     "pathlib",
     # Added for PostgreSQL

@@ -1,4 +1,5 @@
 cheroot == 6.5.5
+portend == 2.5
 djangorestframework == 3.9.4
 djangorestframework-bulk == 0.2.1
 djangorestframework-filters == 0.11.1

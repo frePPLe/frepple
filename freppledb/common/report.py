@@ -915,12 +915,7 @@ class GridReport(View):
                 writer.writerow(
                     [
                         force_text(
-                            _localize(
-                                _parseSeconds(row[f].total_seconds())
-                                if isinstance(row[f], timedelta)
-                                else row[f],
-                                decimal_separator,
-                            ),
+                            _localize(row[f], decimal_separator),
                             encoding=encoding,
                             errors="ignore",
                         )
@@ -933,12 +928,7 @@ class GridReport(View):
                 writer.writerow(
                     [
                         force_text(
-                            _localize(
-                                _parseSeconds(getattr(row, f).total_seconds())
-                                if isinstance(getattr(row, f), timedelta)
-                                else getattr(row, f),
-                                decimal_separator,
-                            ),
+                            _localize(getattr(row, f), decimal_separator),
                             encoding=encoding,
                             errors="ignore",
                         )
@@ -2608,8 +2598,8 @@ class GridPivot(GridReport):
                     fields = [
                         force_text(
                             _parseSeconds(row[f.name].total_seconds())
-                            if isinstance(row[f], timedelta)
-                            else row[f],
+                            if isinstance(row[f.name], timedelta)
+                            else row[f.name],
                             encoding=encoding,
                             errors="ignore",
                         )
@@ -2624,12 +2614,7 @@ class GridPivot(GridReport):
                     fields.extend(
                         [
                             force_text(
-                                _localize(
-                                    _parseSeconds(row[f[0]].total_seconds())
-                                    if isinstance(row[f[0]], timedelta)
-                                    else row[f[0]],
-                                    decimal_separator,
-                                ),
+                                _localize(row[f[0]], decimal_separator),
                                 encoding=encoding,
                                 errors="ignore",
                             )
@@ -2664,12 +2649,7 @@ class GridPivot(GridReport):
                     fields.extend(
                         [
                             force_text(
-                                _localize(
-                                    _parseSeconds(getattr(row, f[0]).total_seconds())
-                                    if isinstance(getattr(row, f[0]), timedelta)
-                                    else getattr(row, f[0]),
-                                    decimal_separator,
-                                ),
+                                _localize(getattr(row, f[0]), decimal_separator),
                                 encoding=encoding,
                                 errors="ignore",
                             )
@@ -2729,12 +2709,7 @@ class GridPivot(GridReport):
                         fields.extend(
                             [
                                 force_text(
-                                    _localize(
-                                        _parseSeconds(bucket[cross[0]].total_seconds())
-                                        if isinstance(bucket[cross[0]], timedelta)
-                                        else bucket[cross[0]],
-                                        decimal_separator,
-                                    ),
+                                    _localize(bucket[cross[0]], decimal_separator),
                                     encoding=encoding,
                                     errors="ignore",
                                 )
@@ -2786,12 +2761,7 @@ class GridPivot(GridReport):
                 fields.extend(
                     [
                         force_text(
-                            _localize(
-                                _parseSeconds(bucket[cross[0]].total_seconds())
-                                if isinstance(bucket[cross[0]], timedelta)
-                                else bucket[cross[0]],
-                                decimal_separator,
-                            ),
+                            _localize(bucket[cross[0]], decimal_separator),
                             encoding=encoding,
                             errors="ignore",
                         )
@@ -3017,17 +2987,17 @@ numericTypes = (Decimal, float, int)
 
 def _localize(value, decimal_separator):
     """
-  Localize numbers.
-  Dates are always represented as YYYY-MM-DD hh:mm:ss since this is
-  a format that is understood uniformly across different regions in the
-  world.
-  """
+    Localize numbers.
+    Dates are always represented as YYYY-MM-DD hh:mm:ss since this is
+    a format that is understood uniformly across different regions in the
+    world.
+    """
     if isinstance(value, collections.Callable):
         value = value()
     if isinstance(value, numericTypes):
         return decimal_separator == "," and str(value).replace(".", ",") or str(value)
     elif isinstance(value, timedelta):
-        return value.total_seconds()
+        return _parseSeconds(value.total_seconds())
     elif isinstance(value, (list, tuple)):
         return "|".join([str(_localize(i, decimal_separator)) for i in value])
     else:

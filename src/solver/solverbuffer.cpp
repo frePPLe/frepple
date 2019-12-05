@@ -464,7 +464,8 @@ void SolverCreate::solveSafetyStock(const Buffer* b, void* v) {
 
         // Validate whether confirmed/approved supply exists within the
         // autofence window
-        if (getAutoFence()) {
+        if (getAutoFence() &&
+            b->getOnHand(Date::infiniteFuture) > -ROUNDING_ERROR) {
           bool exists = false;
           for (auto f = b->getFlowPlans().begin(); f != b->getFlowPlans().end();
                ++f) {

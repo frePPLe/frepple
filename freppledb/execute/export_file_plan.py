@@ -16,24 +16,22 @@
 #
 
 r"""
-Exports frePPLe information to flat files.
-
-The code in this file is executed NOT by Django, but by the embedded Python
-interpreter from the frePPLe engine.
-
+Exports frePPLe plan information to a set of flat files.
 The code iterates over all objects in the C++ core engine, and writes this
 information to a set of text files.
+
+The code in this file is NOT executed by Django, but by the embedded Python
+interpreter from the frePPLe engine.
+
+THIS CODE IS CURRENTLY NOT USED, AND IS NOT UPDATED OR TESTED.
+WE LEAVE IT HERE AS-IS, HOPING IT MIGHT BE USEFUL TO SOME FOLKS IN
+THE USER COMMUNITY.
 """
 from time import time
 from datetime import datetime, timedelta
 import csv
-import inspect
-
-from django.conf import settings
 
 import frepple
-
-encoding = settings.CSV_CHARSET
 
 
 def exportProblems():

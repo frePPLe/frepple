@@ -66,10 +66,6 @@ class MakePlanFeasible(PlanTask):
 
         # Determine log level
         loglevel = int(Parameter.getValue("plan.loglevel", database, 0))
-        if cls.task and cls.task.user:
-            maxloglevel = cls.task.user.getMaxLoglevel(database)
-            if loglevel > maxloglevel:
-                loglevel = maxloglevel
 
         # Propagate the operationplan status
         logger.info("Propagating work-in-progress status information")
@@ -146,10 +142,6 @@ class SupplyPlanning(PlanTask):
 
         # Determine log level
         loglevel = int(Parameter.getValue("plan.loglevel", database, 0))
-        if cls.task and cls.task.user:
-            maxloglevel = cls.task.user.getMaxLoglevel(database)
-            if loglevel > maxloglevel:
-                loglevel = maxloglevel
 
         # Create a solver where the plan type are defined by an environment variable
         try:

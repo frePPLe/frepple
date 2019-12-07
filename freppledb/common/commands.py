@@ -16,11 +16,14 @@
 #
 
 from datetime import datetime
+import io
 from importlib import import_module
 from operator import attrgetter
 import os
 import sys
 import logging
+from threading import Thread
+
 
 if __name__ == "__main__":
     # Support for running in Python virtual environments
@@ -46,8 +49,299 @@ from freppledb.execute.models import Task
 logger = logging.getLogger(__name__)
 
 
+def clean_value(value):
+    """
+    A small auxilary function to handle newline characters in exporting
+    data to PostgreSQL over a COPY command.
+    """
+    if value is None:
+        return r"\N"
+    elif "\n" in value:
+        return value.replace("\n", "\\n")
+    else:
+        return value
+
+
+class CopyFromGenerator(io.TextIOBase):
+    """
+    File-like object to handle exporting data to PostgreSQL over
+    a copy command.
+
+    Inspired on and copied from:
+      https://hakibenita.com/fast-load-data-python-postgresql
+    """
+
+    def __init__(self, itr):
+        self._iter = itr
+        self._buff = ""
+
+    def readable(self):
+        return True
+
+    def _read1(self, n=None):
+        while not self._buff:
+            try:
+                self._buff = next(self._iter)
+            except StopIteration:
+                break
+        ret = self._buff[:n]
+        self._buff = self._buff[len(ret) :]
+        return ret
+
+    def read(self, n=None):
+        line = []
+        if n is None or n < 0:
+            while True:
+                m = self._read1()
+                if not m:
+                    break
+                line.append(m)
+        else:
+            while n > 0:
+                m = self._read1(n)
+                if not m:
+                    break
+                n -= len(m)
+                line.append(m)
+        return "".join(line)
+
+
+class PlanTask:
+    """
+    Base class for steps in the plan generation process
+    """
+
+    # Field to be set on each subclass
+    description = ""
+    sequence = None
+    label = None
+
+    # Fields for internal use
+    task = None
+    thread = "main"
+    parent = None
+
+    @classmethod
+    def getWeight(cls, **kwargs):
+        return 1
+
+    @classmethod
+    def run(cls, **kwargs):
+        logger.warning("Warning: PlanTask doesn't implement the run method")
+
+    @classmethod
+    def display(cls, indentlevel=0, **kwargs):
+        logger.info(
+            "%s%s: %s (weight %s)"
+            % (indentlevel * " ", cls.mainstep, cls.description, cls.weight)
+        )
+
+    @classmethod
+    def _sort(self):
+        pass
+
+    @classmethod
+    def _find(cls, sequence):
+        if cls.sequence == sequence:
+            return cls
+
+    @classmethod
+    def _remove(self, sequence):
+        pass
+
+
+class PlanTaskSequence(PlanTask):
+    """
+    Class that runs a sequence of task in sequence.
+    """
+
+    def __init__(self):
+        self.steps = []
+
+    def addTask(self, task):
+        self.steps.append(task)
+        task.parent = self
+
+    def getWeight(self, **kwargs):
+        total = 0
+        for s in self.steps:
+            s.weight = s.getWeight(**kwargs)
+            if s.weight is not None and s.weight >= 0:
+                total += s.weight
+        return total
+
+    def run(self, database=DEFAULT_DB_ALIAS, **kwargs):
+        # Collect the list of tasks
+        task_weight = self.getWeight(**kwargs)
+        if not task_weight:
+            task_weight = 1
+
+        # Execute all tasks in the list
+        try:
+            progress = 0
+            for step in self.steps:
+                if step.weight is None or step.weight < 0:
+                    continue
+
+                # Update status and message
+                if self.task:
+                    self.task.status = "%d%%" % int(progress * 100.0 / task_weight)
+                    self.task.message = step.description
+                    self.task.save(using=database)
+
+                # Run the step
+                if step.thread == "main":
+                    logger.info(
+                        "Start step %s '%s' at %s"
+                        % (
+                            step.sequence,
+                            step.description,
+                            datetime.now().strftime("%H:%M:%S"),
+                        )
+                    )
+                else:
+                    logger.info(
+                        "Start step %s %s '%s' at %s"
+                        % (
+                            step.thread,
+                            step.step,
+                            step.description,
+                            datetime.now().strftime("%H:%M:%S"),
+                        )
+                    )
+                step.run(database=database, **kwargs)
+                logger.info(
+                    "Finished '%s' at %s \n"
+                    % (step.description, datetime.now().strftime("%H:%M:%S"))
+                )
+                progress += step.weight
+
+            # Final task status
+            if self.task:
+                self.task.finished = datetime.now()
+                self.task.status = "100%"
+                self.task.message = ""
+                self.task.save(using=database)
+        except Exception as e:
+            if self.task:
+                self.task.finished = datetime.now()
+                self.task.status = "Failed"
+                self.task.message = str(e)
+                self.task.save(using=database)
+            raise
+
+    def display(self, indentlevel=0, **kwargs):
+        for i in self.steps:
+            i.weight = i.getWeight(**kwargs)
+            if i.weight is not None and i.weight >= 0:
+                i.display(indentlevel=indentlevel, **kwargs)
+
+    def getLabels(self, labellist):
+        for t in self.steps:
+            if t.label:
+                lbl = (t.label[0], force_text(t.label[1]))
+                if lbl not in labellist:
+                    labellist.append(lbl)
+        return labellist
+
+    def _sort(self):
+        self.steps = sorted(self.steps, key=attrgetter("step"))
+        for i in self.steps:
+            i._sort()
+
+    def _find(self, sequence):
+        for i in self.steps:
+            res = i.getTask(sequence)
+            if res:
+                return res
+
+    def _remove(self, sequence):
+        for i in self.steps:
+            if i.sequence == sequence:
+                self.steps.remove(i)
+                return
+
+
+class PlanTaskParallel(PlanTask):
+    """
+    Class that will execute a number of tasks in parallel groups.
+    """
+
+    class _PlanTaskThread(Thread):
+        def __init__(self, seq, name, **kwargs):
+            super().__init__()
+            self.seq = seq
+            self.name = name
+            self.kwargs = kwargs
+            self.exception = None
+
+        def run(self):
+            try:
+                self.seq.run(**self.kwargs)
+            except Exception as e:
+                self.exception = e
+
+    def __init__(self):
+        self.groups = {}
+
+    def addTask(self, task):
+        if task.thread not in self.groups:
+            self.groups[task.thread] = PlanTaskSequence()
+        self.groups[task.thread].addTask(task)
+
+    def getWeight(self, **kwargs):
+        longest = -1
+        for g in self.groups.values():
+            g.weight = g.getWeight(**kwargs)
+            if g.weight is not None and g.weight > longest:
+                longest = g.weight
+        return longest
+
+    def run(self, **kwargs):
+        threads = []
+        for threadname, g in self.groups.items():
+            if g.weight is not None and g.weight >= 0:
+                threads.append(self._PlanTaskThread(g, name=threadname, **kwargs))
+        for t in threads:
+            t.start()
+        for t in threads:
+            t.join()
+            # Catch the exception from the worker thread
+            if t.exception:
+                logger.error("Exception caught on thread %s" % t.name)
+                raise t.exception
+
+    def display(self, indentlevel=0, **kwargs):
+        for threadname, g in self.groups.items():
+            g.weight = g.getWeight(**kwargs)
+            if g.weight is not None and g.weight >= 0:
+                logger.info(
+                    "%s%s Thread %s (weight %s):"
+                    % (indentlevel * " ", self.sequence, threadname, g.weight)
+                )
+            g.display(indentlevel=indentlevel + 2, **kwargs)
+
+    def getLabels(self, labellist):
+        for g in self.groups.values():
+            g.getLabels(labellist)
+
+    def _sort(self):
+        for g in self.groups.values():
+            g._sort()
+
+    def _find(self, sequence):
+        for g in self.groups.values():
+            res = g._find(sequence)
+            if res:
+                return res
+
+    def _remove(self, task):
+        for g in self.groups.values():
+            g._remove(task)
+
+
 class PlanTaskRegistry:
-    reg = []
+    reg = PlanTaskSequence()
 
     @classmethod
     def register(cls, task):
@@ -57,30 +351,48 @@ class PlanTaskRegistry:
             logger.warning("Warning: PlanTask doesn't have a sequence")
         else:
             # Remove a previous task at the same sequence
-            for t in cls.reg:
-                if t.sequence == task.sequence:
-                    cls.reg.remove(t)
+            cls.reg._remove(task.sequence)
+
+            # Compute the hidden attributes
+            if isinstance(task.sequence, tuple):
+                task.mainstep = task.sequence[0]
+                task.thread = task.sequence[1]
+                task.step = task.sequence[2]
+            else:
+                task.mainstep = task.sequence
+                task.step = task.sequence
+
+            # Check presence of existing task at this main step
+            existing = None
+            for s in cls.reg.steps:
+                if s.step == task.mainstep:
+                    existing = s
                     break
-            # Adding the new task to the registry
-            cls.reg.append(task)
+            if isinstance(existing, PlanTaskParallel):
+                # Already existing as parallel group
+                s.addTask(task)
+            elif not existing and task.thread == "main":
+                # Simple sequential step
+                cls.reg.addTask(task)
+            else:
+                # Create a new parallel group
+                prll = PlanTaskParallel()
+                prll.description = task.description[0]
+                prll.sequence = task.mainstep
+                prll.step = task.mainstep
+                cls.reg.addTask(prll)
+                prll.addTask(task)
+                if existing:
+                    cls.reg.steps.remove(existing)
+                    prll.addTask(existing)
+
+            if isinstance(task.description, tuple):
+                task.description = task.description[1]
         return task
 
     @classmethod
     def getTask(cls, sequence=None):
-        for i in cls.reg:
-            if i.sequence == sequence:
-                return i
-        return None
-
-    @classmethod
-    def getLabels(cls):
-        res = []
-        for t in cls.reg:
-            if t.label:
-                lbl = (t.label[0], force_text(t.label[1]))
-                if lbl not in res:
-                    res.append(lbl)
-        return res
+        return cls.reg._find(sequence)
 
     @classmethod
     def unregister(cls, task):
@@ -92,14 +404,14 @@ class PlanTaskRegistry:
             logger.warning("Warning: PlanTask doesn't have a sequence")
         else:
             # Removing a task from the registry
-            cls.reg.remove(task)
+            cls.reg._remove(task.sequence)
 
     @classmethod
     def autodiscover(cls):
-        if not cls.reg:
+        if not cls.reg.steps:
             for app in reversed(settings.INSTALLED_APPS):
                 try:
-                    mod = import_module("%s.commands" % app)
+                    import_module("%s.commands" % app)
                 except ImportError as e:
                     # Silently ignore if it's the commands module which isn't found
                     if str(e) not in (
@@ -107,106 +419,37 @@ class PlanTaskRegistry:
                         "No module named '%s.commands'" % app,
                     ):
                         raise e
-            cls.reg = sorted(cls.reg, key=attrgetter("sequence"))
+            cls.reg._sort()
 
     @classmethod
     def display(cls, **kwargs):
         logger.info("Planning task registry:")
-        for i in cls.reg:
-            i.weight = i.getWeight(**kwargs)
-            if i.weight is not None and i.weight >= 0:
-                logger.info(
-                    "  %s: %s (weight %s)" % (i.sequence, i.description, i.weight)
-                )
+        cls.reg.display(indentlevel=1, **kwargs)
 
     @classmethod
-    def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
-        cls.task = None
+    def run(cls, cluster=-1, database=DEFAULT_DB_ALIAS, **kwargs):
+        cls.reg.task = None
         if "FREPPLE_TASKID" in os.environ:
             try:
-                cls.task = (
+                cls.reg.task = (
                     Task.objects.all()
                     .using(database)
                     .get(pk=os.environ["FREPPLE_TASKID"])
                 )
             except:
                 raise Exception("Task identifier not found")
-        if cls.task and cls.task.status == "Canceling":
-            cls.task.status = "Cancelled"
-            cls.task.save(using=database)
+        if cls.reg.task and cls.reg.task.status == "Canceling":
+            cls.reg.task.status = "Cancelled"
+            cls.reg.task.save(using=database)
             sys.exit(2)
+        cls.reg.run(cluster=cluster, database=database, **kwargs)
+        logger.info("Finished planning at %s" % datetime.now().strftime("%H:%M:%S"))
 
-        # Collect the list of tasks
-        task_weights = 0
-        task_list = []
-        for i in cls.reg:
-            i.task = cls.task
-            i.weight = i.getWeight(database=database, **kwargs)
-            if i.weight is not None and i.weight >= 0:
-                task_weights += i.weight
-                task_list.append(i)
-        if not task_weights:
-            task_weights = 1
-
-        # Execute all tasks in the list
-        try:
-            progress = 0
-            for step in task_list:
-                # Update status and message
-                if cls.task:
-                    cls.task.status = "%d%%" % int(progress * 100.0 / task_weights)
-                    cls.task.message = step.description
-                    cls.task.save(using=database)
-
-                # Run the step
-                logger.info(
-                    "Start step %s '%s' at %s"
-                    % (
-                        step.sequence,
-                        step.description,
-                        datetime.now().strftime("%H:%M:%S"),
-                    )
-                )
-                step.run(database=database, **kwargs)
-                if step.sequence > 0:
-                    logger.info(
-                        "Finished '%s' at %s \n"
-                        % (step.description, datetime.now().strftime("%H:%M:%S"))
-                    )
-                progress += step.weight
-
-            # Final task status
-            if cls.task:
-                cls.task.finished = datetime.now()
-                cls.task.status = "100%"
-                cls.task.message = ""
-                cls.task.save(using=database)
-            logger.info("Finished planning at %s" % datetime.now().strftime("%H:%M:%S"))
-        except Exception as e:
-            if cls.task:
-                cls.task.finished = datetime.now()
-                cls.task.status = "Failed"
-                cls.task.message = str(e)
-                cls.task.save(using=database)
-            raise
-
-
-class PlanTask:
-    """
-  Base class for steps in the plan generation process
-  """
-
-    description = ""
-    sequence = None
-    label = None
-
-    @staticmethod
-    def getWeight(**kwargs):
-        return 1
-
-    @staticmethod
-    def run(**kwargs):
-        logger.warning("Warning: PlanTask doesn't implement the run method")
+    @classmethod
+    def getLabels(cls):
+        labellist = []
+        cls.reg.getLabels(labellist)
+        return labellist
 
 
 if __name__ == "__main__":
@@ -254,11 +497,12 @@ if __name__ == "__main__":
     from freppledb.common.commands import PlanTaskRegistry as register
 
     register.autodiscover()
+    register.display()
     newstatus = "Done"
     try:
         register.run(database=database)
     except Exception as e:
-        print("Error during planning: %s" % e)
+        logger.error("Error during planning: %s" % e)
         newstatus = "Failed"
         raise
     finally:

@@ -251,7 +251,7 @@ class PlanTaskSequence(PlanTask):
 
     def _find(self, sequence):
         for i in self.steps:
-            res = i.getTask(sequence)
+            res = i._find(sequence)
             if res:
                 return res
 
@@ -436,8 +436,8 @@ class PlanTaskRegistry:
                     .using(database)
                     .get(pk=os.environ["FREPPLE_TASKID"])
                 )
-            except:
-                raise Exception("Task identifier not found")
+            except Task.DoesNotExist:
+                logger.info("Task identifier not found")
         if cls.reg.task and cls.reg.task.status == "Canceling":
             cls.reg.task.status = "Cancelled"
             cls.reg.task.save(using=database)
@@ -497,7 +497,6 @@ if __name__ == "__main__":
     from freppledb.common.commands import PlanTaskRegistry as register
 
     register.autodiscover()
-    register.display()
     newstatus = "Done"
     try:
         register.run(database=database)

@@ -95,7 +95,15 @@ class TruncatePlan(PlanTask):
                         )
                     )
             cursor.execute(
-                "delete from out_constraint where demand in (select demand.name from demand inner join cluster_keys on cluster_keys.name = demand.item_id)"
+                """
+                delete from out_constraint
+                where demand in (
+                  select demand.name
+                  from demand
+                  inner join cluster_keys
+                    on cluster_keys.name = demand.item_id
+                  )
+                """
             )
             cursor.execute(
                 """
@@ -181,7 +189,15 @@ class TruncatePlan(PlanTask):
                         )
                     )
             cursor.execute(
-                "delete from out_problem where entity = 'demand' and owner in (select demand.name from demand inner join cluster_keys on cluster_keys.name = demand.item_id)"
+                """
+                delete from out_problem
+                where entity = 'demand'
+                and owner in (
+                  select demand.name
+                  from demand
+                  inner join cluster_keys on cluster_keys.name = demand.item_id
+                  )
+                """
             )
             cursor.execute(
                 "delete from operationplanresource using cluster_keys where resource_id = cluster_keys.name"
@@ -202,10 +218,19 @@ class TruncatePlan(PlanTask):
                         )
                     )
             cursor.execute(
-                "delete from out_problem using cluster_keys where entity = 'operation' and owner = cluster_keys.name"
+                """"
+                delete from out_problem
+                using cluster_keys
+                where entity = 'operation' and owner = cluster_keys.name
+                """
             )
             cursor.execute(
-                "delete from operationplan using cluster_keys where (status='proposed' or status is null) and operationplan.name = cluster_keys.name"
+                """
+                delete from operationplan
+                using cluster_keys
+                where (status='proposed' or status is null)
+                and operationplan.name = cluster_keys.name
+                """
             )
             cursor.execute("drop table cluster_keys")
 

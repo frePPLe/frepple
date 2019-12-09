@@ -54,7 +54,7 @@ class MakePlanFeasible(PlanTask):
     sequence = 199
 
     @classmethod
-    def getWeight(cls, database=DEFAULT_DB_ALIAS, **kwargs):
+    def getWeight(cls, **kwargs):
         if "supply" in os.environ:
             return 1
         else:
@@ -96,7 +96,7 @@ class SupplyPlanning(PlanTask):
     label = ("supply", _("Generate supply plan"))
 
     @classmethod
-    def getWeight(cls, database=DEFAULT_DB_ALIAS, **kwargs):
+    def getWeight(cls, **kwargs):
         if "supply" in os.environ:
             return 1
         else:
@@ -211,78 +211,18 @@ class ExportStatic(PlanTask):
 
 
 @PlanTaskRegistry.register
-class ExportPlan(PlanTask):
-
-    description = "Export plan"
-    sequence = 400
-
-    @classmethod
-    def getWeight(cls, database=DEFAULT_DB_ALIAS, **kwargs):
-        if "supply" in os.environ:
-            return 1
-        else:
-            return -1
-
-    @staticmethod
-    def run(database=DEFAULT_DB_ALIAS, **kwargs):
-        from freppledb.execute.export_database_plan import export
-
-        export(database=database).run()
-
-
-@PlanTaskRegistry.register
-class ExportPlanToFile(PlanTask):
-
-    description = "Export plan to file"
-    sequence = 500
-
-    @staticmethod
-    def getWeight(database=DEFAULT_DB_ALIAS, **kwargs):
-        # Task not active!
-        return -1
-
-    @staticmethod
-    def run(database=DEFAULT_DB_ALIAS, **kwargs):
-        from freppledb.execute.export_file_plan import (
-            exportfrepple as export_plan_to_file,
-        )
-
-        export_plan_to_file()
-
-
-@PlanTaskRegistry.register
-class ExportPlanToXML(PlanTask):
-
-    description = "Export plan to XML files"
-    sequence = 600
-
-    @staticmethod
-    def getWeight(database=DEFAULT_DB_ALIAS, **kwargs):
-        # Task not active!
-        return -1
-
-    @staticmethod
-    def run(database=DEFAULT_DB_ALIAS, **kwargs):
-        import frepple
-
-        frepple.saveXMLfile("output.1.xml", "BASE")
-        # frepple.saveXMLfile("output.2.xml","PLAN")
-        # frepple.saveXMLfile("output.3.xml","PLANDETAIL")
-
-
-@PlanTaskRegistry.register
 class EraseModel(PlanTask):
 
     description = "Erase model"
     sequence = 700
 
-    @staticmethod
-    def getWeight(database=DEFAULT_DB_ALIAS, **kwargs):
+    @classmethod
+    def getWeight(cls, database=DEFAULT_DB_ALIAS, **kwargs):
         # Task not active!
         return -1
 
-    @staticmethod
-    def run(database=DEFAULT_DB_ALIAS, **kwargs):
+    @classmethod
+    def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
         import frepple
 
         frepple.erase(True)

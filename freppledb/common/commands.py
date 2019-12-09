@@ -211,8 +211,12 @@ class PlanTaskSequence(PlanTask):
                     )
                 step.run(database=database, **kwargs)
                 logger.info(
-                    "Finished '%s' at %s \n"
-                    % (step.description, datetime.now().strftime("%H:%M:%S"))
+                    "Finished '%s' at %s %s"
+                    % (
+                        step.description,
+                        datetime.now().strftime("%H:%M:%S"),
+                        "\n" if self.task else "",
+                    )
                 )
                 progress += step.weight
 

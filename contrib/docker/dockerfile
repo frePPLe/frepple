@@ -67,11 +67,11 @@ RUN dpkg -i frepple_*.deb && \
 EXPOSE 80
 EXPOSE 443
 
-VOLUME ["/var/log/frepple", "/etc/frepple", "/var/log/apache2", "/etc/apache2"]
-
 # Update djangosettings
 # TODO update random secret key
 RUN sed -i 's/"HOST": ""/"HOST": "frepple-postgres"/g' /etc/frepple/djangosettings.py
+
+VOLUME ["/var/log/frepple", "/etc/frepple", "/var/log/apache2", "/etc/apache2"]
 
 CMD frepplectl migrate && \
   rm -f /usr/local/apache2/logs/httpd.pid && \

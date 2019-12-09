@@ -157,9 +157,9 @@ class Command(BaseCommand):
                     # Options specified
                     if label[0] in os.environ:
                         del os.environ[label[0]]
-                    else:
-                        # No options specified - default to activate them all
-                        os.environ[label[0]] = "1"
+                else:
+                    # No options specified - default to activate them all
+                    os.environ[label[0]] = "1"
 
             # Set environment variables
             if options["env"]:

@@ -43,7 +43,7 @@ void Demand::updateProblems() {
     // Check which problems need to be created
     if (deli.empty()) {
       // Check if a new ProblemDemandNotPlanned needs to be created
-      if (getQuantity() > 0.0) needsNotPlanned = true;
+      if (getQuantity() > ROUNDING_ERROR) needsNotPlanned = true;
     } else {
       // Loop through the deliveries
       for (auto i = deli.begin(); i != deli.end(); ++i) {

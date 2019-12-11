@@ -668,6 +668,18 @@ class GridReport(View):
             for f in getAttributeFields(self.model):
                 self.__class__.rows += (f,)
 
+        # Set row and cross attributes on the request
+        if hasattr(self, "rows"):
+            if callable(self.rows):
+                request.rows = self.rows(request)
+            else:
+                request.rows = self.rows
+        if hasattr(self, "crosses"):
+            if callable(self.crosses):
+                request.crosses = self.crosses(request)
+            else:
+                request.crosses = self.crosses
+
         # Dispatch to the correct method
         if request.method == "GET":
             return self.get(request, *args_unquoted, **kwargs)
@@ -677,26 +689,26 @@ class GridReport(View):
             return HttpResponseNotAllowed(["get", "post"])
 
     @classmethod
-    def _validate_rows(cls, prefs):
+    def _validate_rows(cls, request, prefs):
         if not prefs:
             return [
                 (
                     i,
-                    cls.rows[i].hidden or cls.rows[i].initially_hidden,
-                    cls.rows[i].width,
+                    request.rows[i].hidden or request.rows[i].initially_hidden,
+                    request.rows[i].width,
                 )
-                for i in range(len(cls.rows))
+                for i in range(len(request.rows))
             ]
         else:
             # Validate the preferences to 1) map from name to index, 2) assure all rows
             # are included, 3) ignore non-existing fields
-            defaultrows = {cls.rows[i].name: i for i in range(len(cls.rows))}
+            defaultrows = {request.rows[i].name: i for i in range(len(request.rows))}
             rows = []
             for r in prefs:
                 try:
                     idx = int(r[0])
-                    if idx < len(cls.rows):
-                        defaultrows.pop(cls.rows[idx].name, None)
+                    if idx < len(request.rows):
+                        defaultrows.pop(request.rows[idx].name, None)
                         rows.append(r)
                 except (ValueError, IndexError):
                     if r[0] in defaultrows:
@@ -706,23 +718,23 @@ class GridReport(View):
                 rows.append(
                     (
                         idx,
-                        cls.rows[idx].hidden or cls.rows[idx].initially_hidden,
-                        cls.rows[idx].width,
+                        request.rows[idx].hidden or request.rows[idx].initially_hidden,
+                        request.rows[idx].width,
                     )
                 )
             return rows
 
     @classmethod
-    def _render_colmodel(cls, is_popup=False, prefs=None, mode="graph"):
+    def _render_colmodel(cls, request, is_popup=False, prefs=None, mode="graph"):
         if not prefs:
             frozencolumns = cls.frozenColumns
             rows = [
-                (i, cls.rows[i].initially_hidden, cls.rows[i].width)
-                for i in range(len(cls.rows))
+                (i, request.rows[i].initially_hidden, request.rows[i].width)
+                for i in range(len(request.rows))
             ]
         else:
             frozencolumns = prefs.get("frozen", cls.frozenColumns)
-            rows = cls._validate_rows(prefs.get("rows"))
+            rows = cls._validate_rows(request, prefs.get("rows"))
         result = []
         if is_popup:
             result.append(
@@ -735,13 +747,13 @@ class GridReport(View):
                 result.append(
                     '{%s,"width":%s,"counter":%d%s%s%s}'
                     % (
-                        cls.rows[index],
+                        request.rows[index],
                         width,
                         index,
                         count < frozencolumns and ',"frozen":true' or "",
                         is_popup and ',"popup":true' or "",
                         hidden
-                        and not cls.rows[index].hidden
+                        and not request.rows[index].hidden
                         and ',"hidden":true'
                         or "",
                     )
@@ -772,15 +784,15 @@ class GridReport(View):
         if request.prefs and request.prefs.get("rows", None):
             # Customized settings
             fields = [
-                cls.rows[f[0]]
-                for f in cls._validate_rows(request.prefs["rows"])
-                if not f[1] and not cls.rows[f[0]].hidden
+                request.rows[f[0]]
+                for f in cls._validate_rows(request, request.prefs["rows"])
+                if not f[1] and not request.rows[f[0]].hidden
             ]
         else:
             # Default settings
             fields = [
                 i
-                for i in cls.rows
+                for i in request.rows
                 if i.field_name and not i.hidden and not i.initially_hidden
             ]
         field_names = [f.field_name for f in fields]
@@ -797,7 +809,7 @@ class GridReport(View):
         ws.auto_filter.ref = "A1:%s1048576" % get_column_letter(len(header))
 
         # Loop over all records
-        fields = [i.field_name for i in cls.rows if i.field_name and not i.hidden]
+        fields = [i.field_name for i in request.rows if i.field_name and not i.hidden]
 
         if isinstance(cls.basequeryset, collections.Callable):
             query = cls._apply_sort(
@@ -846,33 +858,33 @@ class GridReport(View):
             )
         if request.prefs and request.prefs.get("rows", None):
             # Customized settings
-            custrows = cls._validate_rows(request.prefs["rows"])
+            custrows = cls._validate_rows(request, request.prefs["rows"])
             writer.writerow(
                 [
                     force_text(
-                        cls.rows[f[0]].title, encoding=encoding, errors="ignore"
+                        request.rows[f[0]].title, encoding=encoding, errors="ignore"
                     ).title()
                     for f in custrows
-                    if not f[1] and not cls.rows[f[0]].hidden
+                    if not f[1] and not request.rows[f[0]].hidden
                 ]
             )
             fields = [
-                cls.rows[f[0]].field_name
+                request.rows[f[0]].field_name
                 for f in custrows
-                if not f[1] and not cls.rows[f[0]].hidden
+                if not f[1] and not request.rows[f[0]].hidden
             ]
         else:
             # Default settings
             writer.writerow(
                 [
                     force_text(f.title, encoding=encoding, errors="ignore").title()
-                    for f in cls.rows
+                    for f in request.rows
                     if f.title and not f.hidden and not f.initially_hidden
                 ]
             )
             fields = [
                 i.field_name
-                for i in cls.rows
+                for i in request.rows
                 if i.field_name and not i.hidden and not i.initially_hidden
             ]
 
@@ -953,11 +965,11 @@ class GridReport(View):
             return (
                 "%s %s, %s %s, %s"
                 % (
-                    cls.rows[cls.default_sort[0]].name,
+                    request.rows[cls.default_sort[0]].name,
                     cls.default_sort[1],
-                    cls.rows[cls.default_sort[2]].name,
+                    request.rows[cls.default_sort[2]].name,
                     cls.default_sort[3],
-                    cls.rows[cls.default_sort[4]].name,
+                    request.rows[cls.default_sort[4]].name,
                 ),
                 cls.default_sort[5],
             )
@@ -965,14 +977,14 @@ class GridReport(View):
             return (
                 "%s %s, %s"
                 % (
-                    cls.rows[cls.default_sort[0]].name,
+                    request.rows[cls.default_sort[0]].name,
                     cls.default_sort[1],
-                    cls.rows[cls.default_sort[2]].name,
+                    request.rows[cls.default_sort[2]].name,
                 ),
                 cls.default_sort[3],
             )
         elif len(cls.default_sort) >= 2:
-            return (cls.rows[cls.default_sort[0]].name, cls.default_sort[1])
+            return (request.rows[cls.default_sort[0]].name, cls.default_sort[1])
 
     @classmethod
     def _apply_sort(cls, request, query):
@@ -995,30 +1007,30 @@ class GridReport(View):
                 return query
             elif len(cls.default_sort) > 6:
                 return query.order_by(
-                    cls.rows[cls.default_sort[0]].field_name
+                    request.rows[cls.default_sort[0]].field_name
                     if cls.default_sort[1] == "asc"
-                    else ("-%s" % cls.rows[cls.default_sort[0]].field_name),
-                    cls.rows[cls.default_sort[2]].field_name
+                    else ("-%s" % request.rows[cls.default_sort[0]].field_name),
+                    request.rows[cls.default_sort[2]].field_name
                     if cls.default_sort[3] == "asc"
-                    else ("-%s" % cls.rows[cls.default_sort[2]].field_name),
-                    cls.rows[cls.default_sort[4]].field_name
+                    else ("-%s" % request.rows[cls.default_sort[2]].field_name),
+                    request.rows[cls.default_sort[4]].field_name
                     if cls.default_sort[5] == "asc"
-                    else ("-%s" % cls.rows[cls.default_sort[4]].field_name),
+                    else ("-%s" % request.rows[cls.default_sort[4]].field_name),
                 )
             elif len(cls.default_sort) >= 4:
                 return query.order_by(
-                    cls.rows[cls.default_sort[0]].field_name
+                    request.rows[cls.default_sort[0]].field_name
                     if cls.default_sort[1] == "asc"
-                    else ("-%s" % cls.rows[cls.default_sort[0]].field_name),
-                    cls.rows[cls.default_sort[2]].field_name
+                    else ("-%s" % request.rows[cls.default_sort[0]].field_name),
+                    request.rows[cls.default_sort[2]].field_name
                     if cls.default_sort[3] == "asc"
-                    else ("-%s" % cls.rows[cls.default_sort[2]].field_name),
+                    else ("-%s" % request.rows[cls.default_sort[2]].field_name),
                 )
             elif len(cls.default_sort) >= 2:
                 return query.order_by(
-                    cls.rows[cls.default_sort[0]].field_name
+                    request.rows[cls.default_sort[0]].field_name
                     if cls.default_sort[1] == "asc"
-                    else ("-%s" % cls.rows[cls.default_sort[0]].field_name)
+                    else ("-%s" % request.rows[cls.default_sort[0]].field_name)
                     )
             else:
                 return query
@@ -1039,7 +1051,7 @@ class GridReport(View):
                     else:
                         sortargs.append("-%s" % sortfield)
                 except:
-                    for r in cls.rows:
+                    for r in request.rows:
                         if r.name == sortfield:
                             try:
                                 query.order_by(r.field_name).query.__str__()
@@ -1104,7 +1116,7 @@ class GridReport(View):
                 sortfield, dir = s.strip().split(" ", 1)
                 idx = 1
                 has_one = False
-                for i in cls.rows:
+                for i in request.rows:
                     if i.name == sortfield:
                         sortargs.append(
                             "%s %s" % (idx, "desc" if dir == "desc" else "asc")
@@ -1128,9 +1140,9 @@ class GridReport(View):
             sort = request.prefs["sidx"]
         else:
             # 3
-            sort = cls.rows[0].name
+            sort = request.rows[0].name
         idx = 1
-        for i in cls.rows:
+        for i in request.rows:
             if i.name == sort:
                 if "sord" in request.GET and request.GET["sord"] == "desc":
                     return idx > 1 and "%d desc, 1 asc" % idx or "1 desc"
@@ -1154,7 +1166,7 @@ class GridReport(View):
                     column = column[comma + 2 :]
                 sort = 1
                 ok = False
-                for r in cls.rows:
+                for r in request.rows:
                     if r.name == column:
                         ok = True
                         break
@@ -1203,7 +1215,7 @@ class GridReport(View):
         first = True
 
         # GridReport
-        fields = [i.field_name for i in cls.rows if i.field_name]
+        fields = [i.field_name for i in request.rows if i.field_name]
         for i in (
             hasattr(cls, "query")
             and cls.query(request, query[cnt - 1 : cnt + request.pagesize])
@@ -1215,7 +1227,7 @@ class GridReport(View):
             else:
                 r = [",\n{"]
             first2 = True
-            for f in cls.rows:
+            for f in request.rows:
                 if not f.name:
                     continue
                 if isinstance(i[f.field_name], str) or isinstance(
@@ -1280,16 +1292,18 @@ class GridReport(View):
             return cls.parseJSONupload(request)
 
     @classmethod
-    def _validate_crosses(cls, prefs):
+    def _validate_crosses(cls, request, prefs):
         cross_idx = []
         for i in prefs:
             try:
                 num = int(i)
-                if num < len(cls.crosses) and cls.crosses[num][1].get("visible", True):
+                if num < len(request.crosses) and request.crosses[num][1].get(
+                    "visible", True
+                ):
                     cross_idx.append(num)
             except ValueError:
-                for j in range(len(cls.crosses)):
-                    if cls.crosses[j][0] == i and cls.crosses[j][1].get(
+                for j in range(len(request.crosses)):
+                    if request.crosses[j][0] == i and request.crosses[j][1].get(
                         "visible", True
                     ):
                         cross_idx.append(j)
@@ -1324,18 +1338,20 @@ class GridReport(View):
             kwargs["preferences"] = request.prefs
         if not fmt:
             # Return HTML page
-            if not hasattr(cls, "crosses"):
+            if not hasattr(request, "crosses"):
                 cross_idx = None
                 cross_list = None
             elif request.prefs and "crosses" in request.prefs:
-                cross_idx = str(cls._validate_crosses(request.prefs["crosses"]))
+                cross_idx = str(
+                    cls._validate_crosses(request, request.prefs["crosses"])
+                )
                 cross_list = cls._render_cross(request)
             else:
                 cross_idx = str(
                     [
                         i
-                        for i in range(len(cls.crosses))
-                        if cls.crosses[i][1].get("visible", True)
+                        for i in range(len(request.crosses))
+                        if request.crosses[i][1].get("visible", True)
                     ]
                 )
                 cross_list = cls._render_cross(request)
@@ -1373,7 +1389,9 @@ class GridReport(View):
                 "post_title": cls.post_title,
                 "preferences": request.prefs,
                 "reportkey": reportkey,
-                "colmodel": cls._render_colmodel(is_popup, request.prefs, mode),
+                "colmodel": cls._render_colmodel(
+                    request, is_popup, request.prefs, mode
+                ),
                 "cross_idx": cross_idx,
                 "cross_list": cross_list,
                 "object_id": args and quote(args[0]) or None,
@@ -1940,10 +1958,10 @@ class GridReport(View):
             pass
 
     @classmethod
-    def _getRowByName(cls, name):
+    def _getRowByName(cls, request, name):
         if not hasattr(cls, "_rowsByName"):
             cls._rowsByName = {}
-            for i in cls.rows:
+            for i in request.rows:
                 cls._rowsByName[i.name] = i
                 if i.field_name != i.name:
                     cls._rowsByName[i.field_name] = i
@@ -2073,7 +2091,7 @@ class GridReport(View):
         filtered = False
         filters = ['{"groupOp":"AND","rules":[']
         for i, j in request.GET.items():
-            for r in cls.rows:
+            for r in request.rows:
                 if r.field_name and i.startswith(r.field_name):
                     operator = (i == r.field_name) and "exact" or i[i.rfind("_") + 1 :]
                     try:
@@ -2158,7 +2176,7 @@ class GridReport(View):
         # Django-style filtering, using URL parameters
         if plus_django_style:
             for i, j in request.GET.items():
-                for r in cls.rows:
+                for r in request.rows:
                     if r.name and i.startswith(r.field_name):
                         try:
                             items = items.filter(**{i: unquote(j)})
@@ -2190,7 +2208,7 @@ class GridPivot(GridReport):
     @classmethod
     def _render_cross(cls, request):
         result = []
-        for i in cls.crosses:
+        for i in request.crosses:
             if "title" in i[1]:
                 t = i[1]["title"](request) if callable(i[1]["title"]) else i[1]["title"]
             else:
@@ -2210,17 +2228,17 @@ class GridPivot(GridReport):
         return ",\n".join(result)
 
     @classmethod
-    def _render_colmodel(cls, is_popup=False, prefs=None, mode="graph"):
+    def _render_colmodel(cls, request, is_popup=False, prefs=None, mode="graph"):
         if prefs and "rows" in prefs:
             # Validate the preferences to 1) map from name to index, 2) assure all rows
             # are included, 3) ignore non-existing fields
             prefrows = prefs["rows"]
-            defaultrows = {cls.rows[i].name: i for i in range(len(cls.rows))}
+            defaultrows = {request.rows[i].name: i for i in range(len(request.rows))}
             rows = []
             for r in prefrows:
                 try:
                     idx = int(r[0])
-                    defaultrows.pop(cls.rows[idx].name, None)
+                    defaultrows.pop(request.rows[idx].name, None)
                     rows.append(r)
                 except (ValueError, IndexError):
                     if r[0] in defaultrows:
@@ -2230,8 +2248,8 @@ class GridPivot(GridReport):
                 rows.append(
                     (
                         idx,
-                        cls.rows[idx].hidden or cls.rows[idx].initially_hidden,
-                        cls.rows[idx].width,
+                        request.rows[idx].hidden or request.rows[idx].initially_hidden,
+                        request.rows[idx].width,
                     )
                 )
         else:
@@ -2239,10 +2257,10 @@ class GridPivot(GridReport):
             rows = [
                 (
                     i,
-                    cls.rows[i].initially_hidden or cls.rows[i].hidden,
-                    cls.rows[i].width,
+                    request.rows[i].initially_hidden or request.rows[i].hidden,
+                    request.rows[i].width,
                 )
-                for i in range(len(cls.rows))
+                for i in range(len(request.rows))
             ]
 
         result = []
@@ -2256,7 +2274,7 @@ class GridPivot(GridReport):
                 result.append(
                     '{%s,"width":%s,"counter":%d,"frozen":true%s,"hidden":%s,"fixed":true}'
                     % (
-                        cls.rows[index],
+                        request.rows[index],
                         width,
                         index,
                         is_popup and ',"popup":true' or "",
@@ -2353,16 +2371,16 @@ class GridPivot(GridReport):
         r = []
         for i in query:
             # We use the first field in the output to recognize new rows.
-            if currentkey != i[cls.rows[0].name]:
+            if currentkey != i[request.rows[0].name]:
                 # New line
                 if currentkey:
                     yield "".join(r)
                     r = ["},\n{"]
                 else:
                     r = ["{"]
-                currentkey = i[cls.rows[0].name]
+                currentkey = i[request.rows[0].name]
                 first2 = True
-                for f in cls.rows:
+                for f in request.rows:
                     try:
                         s = (
                             escape(i[f.name])
@@ -2378,7 +2396,7 @@ class GridPivot(GridReport):
                         pass
             r.append(', "%s":[' % i["bucket"])
             first2 = True
-            for f in cls.crosses:
+            for f in request.crosses:
                 if i[f[0]] is None:
                     if first2:
                         r.append("null")
@@ -2450,22 +2468,23 @@ class GridPivot(GridReport):
         # Pick up the preferences
         if request.prefs and "rows" in request.prefs:
             myrows = [
-                cls.rows[f[0]]
-                for f in cls._validate_rows(request.prefs["rows"])
+                request.rows[f[0]]
+                for f in cls._validate_rows(request, request.prefs["rows"])
                 if not f[1]
             ]
         else:
             myrows = [
                 f
-                for f in cls.rows
+                for f in request.rows
                 if f.name and not f.hidden and not f.initially_hidden
             ]
         if request.prefs and "crosses" in request.prefs:
             mycrosses = [
-                cls.crosses[f] for f in cls._validate_crosses(request.prefs["crosses"])
+                request.crosses[f]
+                for f in cls._validate_crosses(request, request.prefs["crosses"])
             ]
         else:
-            mycrosses = [f for f in cls.crosses if f[1].get("visible", True)]
+            mycrosses = [f for f in request.crosses if f[1].get("visible", True)]
 
         # Write a header row
         fields = [
@@ -2593,9 +2612,9 @@ class GridPivot(GridReport):
             for row in query:
                 # We use the first field in the output to recognize new rows.
                 if not currentkey:
-                    currentkey = row[cls.rows[0].name]
+                    currentkey = row[request.rows[0].name]
                     row_of_buckets = [row]
-                elif currentkey == row[cls.rows[0].name]:
+                elif currentkey == row[request.rows[0].name]:
                     row_of_buckets.append(row)
                 else:
                     # Write an entity
@@ -2648,7 +2667,7 @@ class GridPivot(GridReport):
                         # Return string
                         writer.writerow(fields)
                         yield sf.getvalue()
-                    currentkey = row[cls.rows[0].name]
+                    currentkey = row[request.rows[0].name]
                     row_of_buckets = [row]
             # Write the last entity
             for cross in mycrosses:
@@ -2749,22 +2768,23 @@ class GridPivot(GridReport):
         # Pick up the preferences
         if request.prefs and "rows" in request.prefs:
             myrows = [
-                cls.rows[f[0]]
-                for f in cls._validate_rows(request.prefs["rows"])
+                request.rows[f[0]]
+                for f in cls._validate_rows(request, request.prefs["rows"])
                 if not f[1]
             ]
         else:
             myrows = [
                 f
-                for f in cls.rows
+                for f in request.rows
                 if f.name and not f.initially_hidden and not f.hidden
             ]
         if request.prefs and "crosses" in request.prefs:
             mycrosses = [
-                cls.crosses[f] for f in cls._validate_crosses(request.prefs["crosses"])
+                request.crosses[f]
+                for f in cls._validate_crosses(request, request.prefs["crosses"])
             ]
         else:
-            mycrosses = [f for f in cls.crosses if f[1].get("visible", True)]
+            mycrosses = [f for f in request.crosses if f[1].get("visible", True)]
 
         # Write a header row
         fields = []
@@ -2832,9 +2852,9 @@ class GridPivot(GridReport):
             for row in query:
                 # We use the first field in the output to recognize new rows.
                 if not currentkey:
-                    currentkey = row[cls.rows[0].name]
+                    currentkey = row[request.rows[0].name]
                     row_of_buckets = [row]
-                elif currentkey == row[cls.rows[0].name]:
+                elif currentkey == row[request.rows[0].name]:
                     row_of_buckets.append(row)
                 else:
                     # Write a row
@@ -2868,7 +2888,7 @@ class GridPivot(GridReport):
                             ]
                         )
                         ws.append(fields)
-                    currentkey = row[cls.rows[0].name]
+                    currentkey = row[request.rows[0].name]
                     row_of_buckets = [row]
             # Write the last row
             if row_of_buckets:

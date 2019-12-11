@@ -480,10 +480,10 @@ class EncodedCSVReader:
 
 class GridReport(View):
     """
-  The base class for all jqgrid views.
-  The parameter values defined here are used as defaults for all reports, but
-  can be overwritten.
-  """
+    The base class for all jqgrid views.
+    The parameter values defined here are used as defaults for all reports, but
+    can be overwritten.
+    """
 
     # Points to template to be used
     template = "admin/base_site_grid.html"
@@ -559,8 +559,8 @@ class GridReport(View):
     @classmethod
     def getAppLabel(cls):
         """
-    Return the name of the Django application which defines this report.
-    """
+        Return the name of the Django application which defines this report.
+        """
         if hasattr(cls, "app_label"):
             return cls.app_label
         s = cls.__module__.split(".")
@@ -579,17 +579,17 @@ class GridReport(View):
     @classmethod
     def getBuckets(cls, request, *args, **kwargs):
         """
-    This function gets passed a name of a bucketization.
-    It returns a tuple with:
-      - the start date of the report horizon
-      - the end date of the reporting horizon
-      - a list of buckets.
+        This function gets passed a name of a bucketization.
+        It returns a tuple with:
+          - the start date of the report horizon
+          - the end date of the reporting horizon
+          - a list of buckets.
 
-    The functions takes into consideration some special flags:
-      - showOnlyFutureTimeBuckets: filter to allow only future time buckets to be shown
-      - maxBucketLevel: respect the lowest supported level in the time bucket hierarchy
-      - minBucketLevel: respect the highest supported level in the time bucket hierarchy
-    """
+        The functions takes into consideration some special flags:
+          - showOnlyFutureTimeBuckets: filter to allow only future time buckets to be shown
+          - maxBucketLevel: respect the lowest supported level in the time bucket hierarchy
+          - minBucketLevel: respect the highest supported level in the time bucket hierarchy
+        """
         # Select the bucket size
         if not cls.maxBucketLevel:
             maxlvl = 999
@@ -943,10 +943,10 @@ class GridReport(View):
     @classmethod
     def getSortName(cls, request):
         """
-    Build a jqgrid sort configuration pair sidx and sord:
-    For instance:
-       ("fieldname1 asc, fieldname2", "desc")
-    """
+        Build a jqgrid sort configuration pair sidx and sord:
+        For instance:
+           ("fieldname1 asc, fieldname2", "desc")
+        """
         if request.GET.get("sidx", ""):
             # 1) Sorting order specified on the request
             return (request.GET["sidx"], request.GET.get("sord", "asc"))
@@ -989,8 +989,8 @@ class GridReport(View):
     @classmethod
     def _apply_sort(cls, request, query):
         """
-    Applies a sort to the query.
-    """
+        Applies a sort to the query.
+        """
         sortname = None
         if request.GET.get("sidx", ""):
             # 1) Sorting order specified on the request
@@ -1031,7 +1031,7 @@ class GridReport(View):
                     request.rows[cls.default_sort[0]].field_name
                     if cls.default_sort[1] == "asc"
                     else ("-%s" % request.rows[cls.default_sort[0]].field_name)
-                    )
+                )
             else:
                 return query
         else:
@@ -1071,8 +1071,8 @@ class GridReport(View):
     @classmethod
     def _apply_sort_index(cls, request):
         """
-    Build an SQL fragment to sort on: Eg "1 asc, 2 desc"
-    """
+        Build an SQL fragment to sort on: Eg "1 asc, 2 desc"
+        """
         sortname = None
         if request.GET.get("sidx", ""):
             # 1) Sorting order specified on the request
@@ -1738,13 +1738,13 @@ class GridReport(View):
     @classmethod
     def parseCSVupload(cls, request):
         """
-      This method reads CSV data from a string (in memory) and creates or updates
-      the database records.
-      The data must follow the following format:
+        This method reads CSV data from a string (in memory) and creates or updates
+        the database records.
+        The data must follow the following format:
         - the first row contains a header, listing all field names
         - a first character # marks a comment line
         - empty rows are skipped
-      """
+        """
         # Check permissions
         if not cls.model:
             yield "<div>%s</div>" % _("Invalid upload request")
@@ -1847,14 +1847,14 @@ class GridReport(View):
     @classmethod
     def parseSpreadsheetUpload(cls, request):
         """
-    This method reads a spreadsheet file (in memory) and creates or updates
-    the database records.
-    The data must follow the following format:
-      - only the first tab in the spreadsheet is read
-      - the first row contains a header, listing all field names
-      - a first character # marks a comment line
-      - empty rows are skipped
-    """
+        This method reads a spreadsheet file (in memory) and creates or updates
+        the database records.
+        The data must follow the following format:
+          - only the first tab in the spreadsheet is read
+          - the first row contains a header, listing all field names
+          - a first character # marks a comment line
+          - empty rows are skipped
+        """
         # Check permissions
         if not cls.model:
             yield "<div>%s</div>" % _("Invalid upload request")
@@ -2125,7 +2125,7 @@ class GridReport(View):
                     continue
                 q_filters.append(
                     cls._filter_map_jqgrid_django[op](q_filters, reportrow, data)
-                    )
+                )
             except:
                 pass  # Silently ignore invalid filters
         if "groups" in filterdata:

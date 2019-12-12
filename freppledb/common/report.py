@@ -2165,12 +2165,12 @@ class GridReport(View):
         return "".join(filters)
 
     @classmethod
-    def _get_q_filter(cls, filterdata):
+    def _get_q_filter(cls, request, filterdata):
         q_filters = []
         for rule in filterdata["rules"]:
             try:
                 op, field, data = rule["op"], rule["field"], rule["data"]
-                reportrow = cls._getRowByName(field)
+                reportrow = cls._getRowByName(request, field)
                 if data == "" and not isinstance(
                     reportrow, (GridFieldText, GridFieldChoice)
                 ):
@@ -2184,7 +2184,7 @@ class GridReport(View):
         if "groups" in filterdata:
             for group in filterdata["groups"]:
                 try:
-                    z = cls._get_q_filter(group)
+                    z = cls._get_q_filter(request, group)
                     if z:
                         q_filters.append(z)
                 except:
@@ -2220,7 +2220,7 @@ class GridReport(View):
                 }
 
         if filters:
-            z = cls._get_q_filter(filters)
+            z = cls._get_q_filter(request, filters)
             if z:
                 return items.filter(z)
             else:

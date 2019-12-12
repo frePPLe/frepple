@@ -3206,7 +3206,7 @@ def exportWorkbook(request):
                 for f in rec:
                     cells.append(
                         _getCellValue(
-                            f, field=modelfields[fld], exportconfig=exportConfig
+                            f, field=modelfields[fld], exportConfig=exportConfig
                         )
                     )
                     fld += 1

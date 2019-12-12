@@ -56,10 +56,8 @@ from freppledb.common.report import (
     importWorkbook,
     GridFieldDuration,
     GridFieldBool,
-)
-from freppledb.common.report import (
+    GridFieldLocalDateTime,
     GridReport,
-    GridFieldDateTime,
     GridFieldText,
     GridFieldInteger,
 )
@@ -117,13 +115,13 @@ class TaskReport(GridReport):
         GridFieldInteger("id", title=_("identifier"), key=True),
         # . Translators: Translation included with Django
         GridFieldText("name", title=_("name"), editable=False, align="center"),
-        GridFieldDateTime(
+        GridFieldLocalDateTime(
             "submitted", title=_("submitted"), editable=False, align="center"
         ),
-        GridFieldDateTime(
+        GridFieldLocalDateTime(
             "started", title=_("started"), editable=False, align="center"
         ),
-        GridFieldDateTime(
+        GridFieldLocalDateTime(
             "finished", title=_("finished"), editable=False, align="center"
         ),
         GridFieldText(

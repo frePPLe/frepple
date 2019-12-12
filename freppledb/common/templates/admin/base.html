@@ -7,6 +7,11 @@
 <title>{% block title %}{% endblock %}</title>
 {% block extrastyle %}{% endblock %}
 {% block extrahead %}{% endblock %}
+{% if tzoffset is None %}
+<script>
+document.cookie = 'tzoffset=' + (new Date().getTimezoneOffset() * 60);
+</script>
+{% endif %}
 </head>
 
 <body class="{% if is_popup %}popup {% endif %}{% block bodyclass %}{% endblock %}">

@@ -8,6 +8,13 @@ Release notes
 
 - Currentdate parameter now accepts most known formats to represent a date and/or time.
 
+..rurbric:: User interface
+
+- | The last-modified fields and the task execution dates are now shown in the
+    local timezone of your browser.
+  | For on-premise installations this doesn't change anything. However, our cloud 
+    customers across the world will be happy to better recognize the timestamps.  
+   
 .. rubric:: Integration
 
 - Export of duration fields will not be in seconds anymore but will use same format used

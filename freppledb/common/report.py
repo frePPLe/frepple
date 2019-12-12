@@ -39,6 +39,7 @@ import math
 import operator
 import json
 import re
+from time import timezone
 from io import StringIO, BytesIO
 import urllib
 from openpyxl import load_workbook, Workbook
@@ -346,6 +347,10 @@ class GridFieldLastModified(GridField):
     width = 140
 
 
+class GridFieldLocalDateTime(GridFieldDateTime):
+    pass
+
+
 class GridFieldText(GridField):
     width = 200
     align = "left"
@@ -441,9 +446,9 @@ def getBOM(encoding):
 
 class EncodedCSVReader:
     """
-  A CSV reader which will iterate over lines in the CSV data buffer.
-  The reader will scan the BOM header in the data to detect the right encoding.
-  """
+    A CSV reader which will iterate over lines in the CSV data buffer.
+    The reader will scan the BOM header in the data to detect the right encoding.
+    """
 
     def __init__(self, datafile, **kwds):
         # Read the file into memory
@@ -576,6 +581,44 @@ class GridReport(View):
     def extra_context(cls, request, *args, **kwargs):
         return {}
 
+    @staticmethod
+    def _getJSONValue(data, field=None, request=None):
+        if isinstance(data, str) or isinstance(data, (list, tuple)):
+            return json.dumps(data)
+        elif isinstance(data, timedelta):
+            return data.total_seconds()
+        elif data is None:
+            return '""'
+        elif (
+            isinstance(data, datetime)
+            and isinstance(field, (GridFieldLastModified, GridFieldLocalDateTime))
+            and request
+        ):
+            if not hasattr(request, "tzoffset"):
+                request.tzoffset = GridReport.getTimezoneOffset(request)
+            return '"%s"' % (data + request.tzoffset)
+        else:
+            return '"%s"' % data
+
+    @staticmethod
+    def _getCSVValue(data, field=None, request=None, decimal_separator=""):
+        if data is None:
+            return ""
+        else:
+            if (
+                isinstance(data, datetime)
+                and isinstance(field, (GridFieldLastModified, GridFieldLocalDateTime))
+                and request
+            ):
+                if not hasattr(request, "tzoffset"):
+                    request.tzoffset = GridReport.getTimezoneOffset(request)
+                data += request.tzoffset
+            return force_text(
+                _localize(data, decimal_separator),
+                encoding=settings.CSV_CHARSET,
+                errors="ignore",
+            )
+
     @classmethod
     def getBuckets(cls, request, *args, **kwargs):
         """
@@ -647,6 +690,13 @@ class GridReport(View):
             request.report_bucketlist = res.values("name", "startdate", "enddate")
         else:
             request.report_bucketlist = []
+
+    @staticmethod
+    def getTimezoneOffset(request):
+        """
+        Return the difference between the end user's UTC offset and the server's UTC offset
+        """
+        return timedelta(seconds=timezone - int(request.COOKIES.get("tzoffset", 0)))
 
     @method_decorator(staff_member_required)
     @method_decorator(csrf_protect)
@@ -809,8 +859,6 @@ class GridReport(View):
         ws.auto_filter.ref = "A1:%s1048576" % get_column_letter(len(header))
 
         # Loop over all records
-        fields = [i.field_name for i in request.rows if i.field_name and not i.hidden]
-
         if isinstance(cls.basequeryset, collections.Callable):
             query = cls._apply_sort(
                 request,
@@ -829,9 +877,21 @@ class GridReport(View):
             or query.values(*field_names)
         ):
             if hasattr(row, "__getitem__"):
-                ws.append([_getCellValue(row[f]) for f in field_names])
+                ws.append(
+                    [
+                        _getCellValue(row[f.field_name], field=f, request=request)
+                        for f in fields
+                    ]
+                )
             else:
-                ws.append([_getCellValue(getattr(row, f)) for f in field_names])
+                ws.append(
+                    [
+                        _getCellValue(
+                            getattr(row, f.field_name), field=f, request=request
+                        )
+                        for f in fields
+                    ]
+                )
 
         # Write the spreadsheet
         wb.save(output)
@@ -848,8 +908,7 @@ class GridReport(View):
             translation.activate(request.LANGUAGE_CODE)
 
         # Write a Unicode Byte Order Mark header, aka BOM (Excel needs it to open UTF-8 file properly)
-        encoding = settings.CSV_CHARSET
-        yield getBOM(encoding)
+        yield getBOM(settings.CSV_CHARSET)
 
         # Choose fields to export
         if not hasattr(request, "prefs"):
@@ -862,14 +921,16 @@ class GridReport(View):
             writer.writerow(
                 [
                     force_text(
-                        request.rows[f[0]].title, encoding=encoding, errors="ignore"
+                        request.rows[f[0]].title,
+                        encoding=settings.CSV_CHARSET,
+                        errors="ignore",
                     ).title()
                     for f in custrows
                     if not f[1] and not request.rows[f[0]].hidden
                 ]
             )
             fields = [
-                request.rows[f[0]].field_name
+                request.rows[f[0]]
                 for f in custrows
                 if not f[1] and not request.rows[f[0]].hidden
             ]
@@ -877,13 +938,15 @@ class GridReport(View):
             # Default settings
             writer.writerow(
                 [
-                    force_text(f.title, encoding=encoding, errors="ignore").title()
+                    force_text(
+                        f.title, encoding=settings.CSV_CHARSET, errors="ignore"
+                    ).title()
                     for f in request.rows
                     if f.title and not f.hidden and not f.initially_hidden
                 ]
             )
             fields = [
-                i.field_name
+                i
                 for i in request.rows
                 if i.field_name and not i.hidden and not i.initially_hidden
             ]
@@ -905,7 +968,9 @@ class GridReport(View):
                 cls.filter_items(request, cls.basequeryset).using(request.database),
             )
         for row in (
-            hasattr(cls, "query") and cls.query(request, query) or query.values(*fields)
+            hasattr(cls, "query")
+            and cls.query(request, query)
+            or query.values(*[i.field_name for i in fields])
         ):
             # Clear the return string buffer
             sf.seek(0)
@@ -914,26 +979,24 @@ class GridReport(View):
             if hasattr(row, "__getitem__"):
                 writer.writerow(
                     [
-                        force_text(
-                            _localize(row[f], decimal_separator),
-                            encoding=encoding,
-                            errors="ignore",
+                        cls._getCSVValue(
+                            row[f.field_name],
+                            field=f,
+                            request=request,
+                            decimal_separator=decimal_separator,
                         )
-                        if row[f] is not None
-                        else ""
                         for f in fields
                     ]
                 )
             else:
                 writer.writerow(
                     [
-                        force_text(
-                            _localize(getattr(row, f), decimal_separator),
-                            encoding=encoding,
-                            errors="ignore",
+                        cls._getCSVValue(
+                            getattr(row, f.field_name),
+                            field=f,
+                            request=request,
+                            decimal_separator=decimal_separator,
                         )
-                        if getattr(row, f) is not None
-                        else ""
                         for f in fields
                     ]
                 )
@@ -1230,18 +1293,8 @@ class GridReport(View):
             for f in request.rows:
                 if not f.name:
                     continue
-                if isinstance(i[f.field_name], str) or isinstance(
-                    i[f.field_name], (list, tuple)
-                ):
-                    s = json.dumps(i[f.field_name])
-                elif isinstance(i[f.field_name], timedelta):
-                    s = i[f.field_name].total_seconds()
-                elif i[f.field_name] is not None:
-                    s = '"%s"' % i[f.field_name]
-                else:
-                    s = '""'
+                s = cls._getJSONValue(i[f.field_name], field=f, request=request)
                 if first2:
-                    # if isinstance(i[f.field_name], (list,tuple)): pegging report has a tuple of strings...
                     r.append('"%s":%s' % (f.name, s))
                     first2 = False
                 elif i[f.field_name] is not None:
@@ -2382,16 +2435,12 @@ class GridPivot(GridReport):
                 first2 = True
                 for f in request.rows:
                     try:
-                        s = (
-                            escape(i[f.name])
-                            if isinstance(i[f.name], str)
-                            else i[f.name]
-                        )
+                        s = cls._getJSONValue(i[f.name], field=f, request=request)
                         if first2:
-                            r.append('"%s":"%s"' % (f.name, s))
+                            r.append('"%s":%s' % (f.name, s))
                             first2 = False
                         elif i[f.name] is not None:
-                            r.append(', "%s":"%s"' % (f.name, s))
+                            r.append(', "%s":%s' % (f.name, s))
                     except:
                         pass
             r.append(', "%s":[' % i["bucket"])
@@ -2462,8 +2511,7 @@ class GridPivot(GridReport):
             )
 
         # Write a Unicode Byte Order Mark header, aka BOM (Excel needs it to open UTF-8 file properly)
-        encoding = settings.CSV_CHARSET
-        yield getBOM(encoding)
+        yield getBOM(settings.CSV_CHARSET)
 
         # Pick up the preferences
         if request.prefs and "rows" in request.prefs:
@@ -2488,13 +2536,19 @@ class GridPivot(GridReport):
 
         # Write a header row
         fields = [
-            force_text(f.title, encoding=encoding, errors="ignore").title()
+            force_text(f.title, encoding=settings.CSV_CHARSET, errors="ignore").title()
             for f in myrows
             if f.name
         ]
         if listformat:
             fields.extend(
-                [capfirst(force_text(_("bucket"), encoding=encoding, errors="ignore"))]
+                [
+                    capfirst(
+                        force_text(
+                            _("bucket"), encoding=settings.CSV_CHARSET, errors="ignore"
+                        )
+                    )
+                ]
             )
             fields.extend(
                 [
@@ -2509,7 +2563,7 @@ class GridPivot(GridReport):
                                 if "title" in f[1]
                                 else f[0]
                             ),
-                            encoding=encoding,
+                            encoding=settings.CSV_CHARSET,
                             errors="ignore",
                         )
                     )
@@ -2520,13 +2574,19 @@ class GridPivot(GridReport):
             fields.extend(
                 [
                     capfirst(
-                        force_text(_("data field"), encoding=encoding, errors="ignore")
+                        force_text(
+                            _("data field"),
+                            encoding=settings.CSV_CHARSET,
+                            errors="ignore",
+                        )
                     )
                 ]
             )
             fields.extend(
                 [
-                    force_text(b["name"], encoding=encoding, errors="ignore")
+                    force_text(
+                        b["name"], encoding=settings.CSV_CHARSET, errors="ignore"
+                    )
                     for b in request.report_bucketlist
                 ]
             )
@@ -2542,26 +2602,29 @@ class GridPivot(GridReport):
                 # Data for rows
                 if hasattr(row, "__getitem__"):
                     fields = [
-                        force_text(
-                            _parseSeconds(row[f.name].total_seconds())
-                            if isinstance(row[f.name], timedelta)
-                            else row[f.name],
-                            encoding=encoding,
-                            errors="ignore",
+                        cls._getCSVValue(
+                            row[f.name],
+                            field=f,
+                            request=request,
+                            decimal_separator=decimal_separator,
                         )
-                        if row[f.name] is not None
-                        else ""
                         for f in myrows
                         if f.name
                     ]
                     fields.extend(
-                        [force_text(row["bucket"], encoding=encoding, errors="ignore")]
+                        [
+                            force_text(
+                                row["bucket"],
+                                encoding=settings.CSV_CHARSET,
+                                errors="ignore",
+                            )
+                        ]
                     )
                     fields.extend(
                         [
                             force_text(
                                 _localize(row[f[0]], decimal_separator),
-                                encoding=encoding,
+                                encoding=settings.CSV_CHARSET,
                                 errors="ignore",
                             )
                             if row[f[0]] is not None
@@ -2571,15 +2634,12 @@ class GridPivot(GridReport):
                     )
                 else:
                     fields = [
-                        force_text(
-                            _parseSeconds(getattr(row, f.name).total_seconds())
-                            if isinstance(getattr(row, f.name), timedelta)
-                            else getattr(row, f.name),
-                            encoding=encoding,
-                            errors="ignore",
+                        cls._getCSVValue(
+                            getattr(row, f.name),
+                            field=f,
+                            request=request,
+                            decimal_separator=decimal_separator,
                         )
-                        if getattr(row, f.name) is not None
-                        else ""
                         for f in myrows
                         if f.name
                     ]
@@ -2587,7 +2647,7 @@ class GridPivot(GridReport):
                         [
                             force_text(
                                 getattr(row, "bucket"),
-                                encoding=encoding,
+                                encoding=settings.CSV_CHARSET,
                                 errors="ignore",
                             )
                         ]
@@ -2596,7 +2656,7 @@ class GridPivot(GridReport):
                         [
                             force_text(
                                 _localize(getattr(row, f[0]), decimal_separator),
-                                encoding=encoding,
+                                encoding=settings.CSV_CHARSET,
                                 errors="ignore",
                             )
                             if getattr(row, f[0]) is not None
@@ -2623,12 +2683,11 @@ class GridPivot(GridReport):
                         sf.seek(0)
                         sf.truncate(0)
                         fields = [
-                            force_text(
-                                _parseSeconds(row_of_buckets[0][s.name].total_seconds())
-                                if isinstance(row_of_buckets[0][s.name], timedelta)
-                                else row_of_buckets[0][s.name],
-                                encoding=encoding,
-                                errors="ignore",
+                            cls._getCSVValue(
+                                row_of_buckets[0][s.name],
+                                field=s,
+                                request=request,
+                                decimal_separator=decimal_separator,
                             )
                             for s in myrows
                             if s.name
@@ -2647,7 +2706,7 @@ class GridPivot(GridReport):
                                             else cross[0]
                                         )
                                     ),
-                                    encoding=encoding,
+                                    encoding=settings.CSV_CHARSET,
                                     errors="ignore",
                                 )
                             ]
@@ -2656,7 +2715,7 @@ class GridPivot(GridReport):
                             [
                                 force_text(
                                     _localize(bucket[cross[0]], decimal_separator),
-                                    encoding=encoding,
+                                    encoding=settings.CSV_CHARSET,
                                     errors="ignore",
                                 )
                                 if bucket[cross[0]] is not None
@@ -2675,12 +2734,11 @@ class GridPivot(GridReport):
                 sf.seek(0)
                 sf.truncate(0)
                 fields = [
-                    force_text(
-                        _parseSeconds(row_of_buckets[0][s.name].total_seconds())
-                        if isinstance(row_of_buckets[0][s.name], timedelta)
-                        else row_of_buckets[0][s.name],
-                        encoding=encoding,
-                        errors="ignore",
+                    cls._getCSVValue(
+                        row_of_buckets[0][s.name],
+                        field=s,
+                        request=request,
+                        decimal_separator=decimal_separator,
                     )
                     for s in myrows
                     if s.name
@@ -2699,7 +2757,7 @@ class GridPivot(GridReport):
                                     else cross[0]
                                 )
                             ),
-                            encoding=encoding,
+                            encoding=settings.CSV_CHARSET,
                             errors="ignore",
                         )
                     ]
@@ -2708,7 +2766,7 @@ class GridPivot(GridReport):
                     [
                         force_text(
                             _localize(bucket[cross[0]], decimal_separator),
-                            encoding=encoding,
+                            encoding=settings.CSV_CHARSET,
                             errors="ignore",
                         )
                         for bucket in row_of_buckets
@@ -2834,12 +2892,18 @@ class GridPivot(GridReport):
             for row in query:
                 # Append a row
                 if hasattr(row, "__getitem__"):
-                    fields = [_getCellValue(row[f.name]) for f in myrows if f.name]
+                    fields = [
+                        _getCellValue(row[f.name], field=f, request=request)
+                        for f in myrows
+                        if f.name
+                    ]
                     fields.extend([_getCellValue(row["bucket"])])
                     fields.extend([_getCellValue(row[f[0]]) for f in mycrosses])
                 else:
                     fields = [
-                        _getCellValue(getattr(row, f.name)) for f in myrows if f.name
+                        _getCellValue(getattr(row, f.name), field=f, request=request)
+                        for f in myrows
+                        if f.name
                     ]
                     fields.extend([_getCellValue(getattr(row, "bucket"))])
                     fields.extend(
@@ -2862,7 +2926,9 @@ class GridPivot(GridReport):
                         if cross[1].get("visible", False):
                             continue
                         fields = [
-                            _getCellValue(row_of_buckets[0][s.name])
+                            _getCellValue(
+                                row_of_buckets[0][s.name], field=s, request=request
+                            )
                             for s in myrows
                             if s.name
                         ]
@@ -2896,7 +2962,9 @@ class GridPivot(GridReport):
                     if cross[1].get("visible", False):
                         continue
                     fields = [
-                        _getCellValue(row_of_buckets[0][s.name])
+                        _getCellValue(
+                            row_of_buckets[0][s.name], field=s, request=request
+                        )
                         for s in myrows
                         if s.name
                     ]
@@ -2939,7 +3007,7 @@ def _localize(value, decimal_separator):
     if isinstance(value, numericTypes):
         return decimal_separator == "," and str(value).replace(".", ",") or str(value)
     elif isinstance(value, timedelta):
-        return _parseSeconds(value.total_seconds())
+        return _parseSeconds(value)
     elif isinstance(value, (list, tuple)):
         return "|".join([str(_localize(i, decimal_separator)) for i in value])
     else:
@@ -2967,34 +3035,41 @@ def _buildMaskedNames(model, exportConfig):
     del keys
 
 
-# formats a number of seconds into format DD HH:MM:SS.XXXX
-def _parseSeconds(total_seconds):
-
-    days = math.floor(total_seconds / 86400)
-    hours = math.floor((total_seconds - days * 86400) / 3600)
-    minutes = math.floor((total_seconds - days * 86400 - hours * 3600) / 60)
-    seconds = math.floor(total_seconds - days * 86400 - hours * 3600 - minutes * 60)
-    remainder = total_seconds - 86400 * days - 3600 * hours - 60 * minutes - seconds
-
-    return "%s%s%d:%s%d:%s%d%s" % (
-        ("%d " % days) if days > 0 else "",
-        "0" if hours < 10 else "",
+def _parseSeconds(data):
+    """
+    Formats a number of seconds into format HH:MM:SS.XXXX
+    """
+    total_seconds = data.total_seconds()
+    hours = math.floor(total_seconds / 3600)
+    minutes = math.floor((total_seconds - hours * 3600) / 60)
+    seconds = math.floor(total_seconds - hours * 3600 - minutes * 60)
+    remainder = total_seconds - 3600 * hours - 60 * minutes - seconds
+    return "%02d:%02d:%02d%s" % (
         hours,
-        "0" if minutes < 10 else "",
         minutes,
-        "0" if seconds < 10 else "",
         seconds,
         (".%s" % str(round(remainder, 8))[2:]) if remainder > 0 else "",
     )
 
 
-def _getCellValue(data, field=None, exportConfig=None):
+def _getCellValue(data, field=None, exportConfig=None, request=None):
     if data is None:
         return ""
-    elif isinstance(data, numericTypes) or isinstance(data, (date, datetime)):
+    elif isinstance(data, datetime):
+        if (
+            field
+            and request
+            and isinstance(field, (GridFieldLastModified, GridFieldLocalDateTime))
+        ):
+            if not hasattr(request, "tzoffset"):
+                request.tzoffset = GridReport.getTimezoneOffset(request)
+            return data + request.tzoffset
+        else:
+            return data
+    elif isinstance(data, numericTypes) or isinstance(data, date):
         return data
     elif isinstance(data, timedelta):
-        return _parseSeconds(data.total_seconds())
+        return _parseSeconds(data)
     elif isinstance(data, time):
         return data.isoformat()
     elif not exportConfig or not exportConfig.get("anonymous", False):
@@ -3129,7 +3204,11 @@ def exportWorkbook(request):
                 cells = []
                 fld = 0
                 for f in rec:
-                    cells.append(_getCellValue(f, modelfields[fld], exportConfig))
+                    cells.append(
+                        _getCellValue(
+                            f, field=modelfields[fld], exportconfig=exportConfig
+                        )
+                    )
                     fld += 1
                 ws.append(cells)
         except Exception:

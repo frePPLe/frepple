@@ -75,6 +75,8 @@ class MenuItem:
     def has_permission(self, user):
         if self.separator:
             return True
+        if callable(self.permission):
+            return self.permission(user)
         if self.permission:
             if not user.has_perm(self.permission):
                 return False

@@ -369,6 +369,32 @@ class Operation(AuditModel):
         verbose_name_plural = _("operations")
         ordering = ["name"]
 
+    # Make sure owner type is correct
+    def clean_fields(self, exclude=None):
+        super().clean_fields(exclude=exclude)
+        if self.owner is not None:
+            owner = Operation.objects.get(name=self.owner)
+
+            if owner.type in ["time_per", "fixed_time"]:
+                raise forms.ValidationError(
+                    "Invalid owner: Owner cannot be of type time per or fixed time."
+                )
+            if owner.type == "routing" and self.type not in ["time_per", "fixed_time"]:
+                raise forms.ValidationError(
+                    "Invalid owner: Only time per or fixed time operations can have an owner of type routng."
+                )
+            if owner.name == self.name:
+                raise forms.ValidationError(
+                    "Invalid owner: Operation name and owner must be different."
+                )
+            if self.type in ["alternate", "split"] and owner.type in [
+                "alternate",
+                "split",
+            ]:
+                raise forms.ValidationError(
+                    "Invalid owner: alternate and split operations cannot have an owner of type alternate or split."
+                )
+
 
 class SubOperation(AuditModel):
     # Database fields

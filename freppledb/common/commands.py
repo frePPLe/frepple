@@ -51,13 +51,13 @@ logger = logging.getLogger(__name__)
 
 def clean_value(value):
     """
-    A small auxilary function to handle newline characters in exporting
-    data to PostgreSQL over a COPY command.
+    A small auxilary function to handle newline characters or backslashes
+    in exporting data to PostgreSQL over a COPY command.
     """
     if value is None:
         return r"\N"
-    elif "\n" in value:
-        return value.replace("\n", "\\n")
+    elif "\n" in value or "\\" in value:
+        return value.replace("\n", "\\n").replace("\\", "\\\\")
     else:
         return value
 

@@ -2262,22 +2262,21 @@ class GridPivot(GridReport):
     def _render_cross(cls, request):
         result = []
         for i in request.crosses:
-            if "title" in i[1]:
-                t = i[1]["title"](request) if callable(i[1]["title"]) else i[1]["title"]
-            else:
-                t = ""
-            if "editable" in i[1]:
-                e = (
-                    i[1]["editable"](request)
-                    if callable(i[1]["editable"])
-                    else i[1]["editable"]
-                )
-            else:
-                e = False
-            result.append(
-                "{key:'%s',name:'%s',editable:%s}"
-                % (i[0], capfirst(t), "true" if e else "false")
-            )
+            m = {"key": i[0]}
+            for key, value in i[1].items():
+                if callable(value):
+                    if key == "title":
+                        m["name"] = capfirst(force_text(value(request)))
+                    else:
+                        m[key] = force_text(value(request), strings_only=True)
+                else:
+                    if key == "title":
+                        m["name"] = capfirst(force_text(value))
+                    else:
+                        m[key] = force_text(value, strings_only=True)
+            if "editable" not in m:
+                m["editable"] = False
+            result.append(json.dumps(m))
         return ",\n".join(result)
 
     @classmethod

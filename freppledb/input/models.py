@@ -381,7 +381,7 @@ class Operation(AuditModel):
                 )
             if owner.type == "routing" and self.type not in ["time_per", "fixed_time"]:
                 raise forms.ValidationError(
-                    "Invalid owner: Only time per or fixed time operations can have an owner of type routng."
+                    "Invalid owner: Only time per or fixed time operations can have an owner of type routing."
                 )
             if owner.name == self.name:
                 raise forms.ValidationError(

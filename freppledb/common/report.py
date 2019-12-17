@@ -1405,6 +1405,7 @@ class GridReport(View):
                         i
                         for i in range(len(request.crosses))
                         if request.crosses[i][1].get("visible", True)
+                        and not request.crosses[i][1].get("initially_hidden", False)
                     ]
                 )
                 cross_list = cls._render_cross(request)

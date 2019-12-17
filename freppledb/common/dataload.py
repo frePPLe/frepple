@@ -49,14 +49,14 @@ from django.utils.text import get_text_list
 def parseExcelWorksheet(model, data, user=None, database=DEFAULT_DB_ALIAS, ping=False):
     class MappedRow:
         """
-    A row of data is made to behave as a dictionary.
-    For instance the following data:
-       headers: ['field1', 'field2', 'field3']
-       data: [val1, val2, val3]
-    behaves like:
-      {'field1': val1, 'field2': val2, 'field3': val3}
-    but it's faster because we don't actually build the dictionary.
-    """
+        A row of data is made to behave as a dictionary.
+        For instance the following data:
+           headers: ['field1', 'field2', 'field3']
+           data: [val1, val2, val3]
+        behaves like:
+          {'field1': val1, 'field2': val2, 'field3': val3}
+        but it's faster because we don't actually build the dictionary.
+        """
 
         def __init__(self, headers=[]):
             self.headers = {}
@@ -286,14 +286,20 @@ def _parseData(model, data, rowmapper, user, database, ping):
     errors = 0
     warnings = 0
     has_pk_field = False
+    processed_header = False
     rowWrapper = rowmapper()
     for row in data:
 
         rownumber += 1
         rowWrapper.setData(row)
 
-        # Case 1: The first line is read as a header line
-        if rownumber == 1:
+        # Case 1: Skip empty rows
+        if rowWrapper.empty():
+            continue
+
+        # Case 2: The first line is read as a header line
+        elif not processed_header:
+            processed_header = True
 
             # Collect required fields
             required_fields = set()
@@ -400,10 +406,6 @@ def _parseData(model, data, rowmapper, user, database, ping):
                     model.natural_key, tuple
                 ):
                     natural_key = model.natural_key
-
-        # Case 2: Skip empty rows
-        elif rowWrapper.empty():
-            continue
 
         # Case 3: Process a data row
         else:

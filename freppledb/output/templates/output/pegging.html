@@ -105,7 +105,7 @@ function ganttcell(cellvalue, options, rowdata)
         }
      };
      if (row >= layer.length) layer.push(data["enddate"]);
-     var rect = '<a href="/data/input/' + map[data["type"]] +'/?reference='+ admin_escape(data["reference"]) + '">'
+     var rect = '<a href="' + url_prefix + '/data/input/' + map[data["type"]] +'/?reference='+ admin_escape(data["reference"]) + '">'
        + '<rect class="opplan" x="' + data["x"] + '" y="' + (-row*gantt.rowsize) 
        + '" fill="' + buildcolor(data) + '" width="' + Math.max(data["w"],1) 
        + '" height="' + (gantt.rowsize-3) + '"';

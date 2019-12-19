@@ -57,7 +57,7 @@ from freppledb.input.models import (
 from freppledb.common.report import GridReport, GridFieldBool, GridFieldLastModified
 from freppledb.common.report import GridFieldDateTime, GridFieldTime, GridFieldText
 from freppledb.common.report import GridFieldNumber, GridFieldInteger, GridFieldCurrency
-from freppledb.common.report import GridFieldChoice, GridFieldDuration
+from freppledb.common.report import GridFieldChoice, GridFieldDuration, GridFieldJSON
 from freppledb.admin import data_site
 
 import logging
@@ -3106,39 +3106,9 @@ class OperationPlanMixin:
                     )
                 except Segment.DoesNotExist:
                     pass
-        if "freppledb.forecast" in settings.INSTALLED_APPS:
-            return query.extra(
-                select={
-                    "demand": """
-          select json_agg(json_build_array(value, key, tp))
-          from (
-            select
-              key, value,
-              case when demand.name is not null then 'D' when forecast.name is not null then 'F' end as tp
-            from jsonb_each_text(operationplan.plan->'pegging')
-            left outer join demand on key = demand.name
-            left outer join forecast on substring(key from 0 for position(' - ' in key)) = forecast.name
-            where demand.name is not null or forecast.name is not null
-            order by value desc, key desc
-            limit 10
-          ) peg""",
-                    "end_items": """
-          select json_agg(json_build_array(key, val))
-          from (
-            select coalesce(demand.item_id, forecast.item_id) as key, sum(value::numeric) as val
-            from jsonb_each_text(operationplan.plan->'pegging')
-            left outer join demand on key = demand.name
-            left outer join forecast on substring(key from 0 for position(' - ' in key)) = forecast.name
-            group by coalesce(demand.item_id, forecast.item_id)
-            order by 2 desc
-            limit 10
-            ) peg_items""",
-                }
-            )
-        else:
-            return query.extra(
-                select={
-                    "demand": """
+        return query.annotate(
+            demands=RawSQL(
+                """
           select json_agg(json_build_array(value, key))
           from (
             select key, value
@@ -3146,7 +3116,10 @@ class OperationPlanMixin:
             order by value desc, key desc
             limit 10
             ) peg""",
-                    "end_items": """
+                [],
+            ),
+            end_items=RawSQL(
+                """
           select json_agg(json_build_array(key, val))
           from (
             select demand.item_id as key, sum(value::numeric) as val
@@ -3156,8 +3129,9 @@ class OperationPlanMixin:
             order by 2 desc
             limit 10
             ) peg_items""",
-                }
-            )
+                [],
+            ),
+        )
 
 
 class ManufacturingOrderList(OperationPlanMixin, GridReport):
@@ -3302,17 +3276,33 @@ class ManufacturingOrderList(OperationPlanMixin, GridReport):
                 )
 
         q = reportclass.operationplanExtraBasequery(q, request)
-        return q.extra(
-            select={
-                "material": "(select json_agg(json_build_array(item_id, quantity)) from (select item_id, round(quantity,2) quantity from operationplanmaterial where operationplan.reference = operationplanmaterial.operationplan_id  order by quantity limit 10) mat)",
-                "resource": "(select json_agg(json_build_array(resource_id, quantity)) from (select resource_id, round(quantity,2) quantity from operationplanresource where operationplan.reference = operationplanresource.operationplan_id  order by quantity desc limit 10) res)",
-                "setup": "(select json_agg(json_build_array(resource_id, setup)) from (select resource_id, setup from operationplanresource where setup is not null and operationplan.reference = operationplanresource.operationplan_id order by resource_id limit 10) res)",
-                "setup_duration": "(operationplan.plan->'setup')",
-                "setup_end": "(operationplan.plan->>'setupend')",
-                "feasible": "coalesce((operationplan.plan->>'feasible')::boolean, true)",
-                "opplan_duration": "(operationplan.enddate - operationplan.startdate)",
-                "opplan_net_duration": "(operationplan.enddate - operationplan.startdate - coalesce((operationplan.plan->>'unavailable')::int * interval '1 second', interval '0 second'))",
-            }
+        return q.annotate(
+            material=RawSQL(
+                "(select json_agg(json_build_array(item_id, quantity)) from (select item_id, round(quantity,2) quantity from operationplanmaterial where operationplan.reference = operationplanmaterial.operationplan_id  order by quantity limit 10) mat)",
+                [],
+            ),
+            resource=RawSQL(
+                "(select json_agg(json_build_array(resource_id, quantity)) from (select resource_id, round(quantity,2) quantity from operationplanresource where operationplan.reference = operationplanresource.operationplan_id  order by quantity desc limit 10) res)",
+                [],
+            ),
+            setup=RawSQL(
+                "(select json_agg(json_build_array(resource_id, setup)) from (select resource_id, setup from operationplanresource where setup is not null and operationplan.reference = operationplanresource.operationplan_id order by resource_id limit 10) res)",
+                [],
+            ),
+            setup_duration=RawSQL("(operationplan.plan->'setup')", []),
+            setup_end=RawSQL("(operationplan.plan->>'setupend')", []),
+            feasible=RawSQL(
+                "coalesce((operationplan.plan->>'feasible')::boolean, true)", []
+            ),
+            opplan_duration=RawSQL(
+                "(operationplan.enddate - operationplan.startdate)", []
+            ),
+            opplan_net_duration=RawSQL(
+                "(operationplan.enddate - operationplan.startdate - coalesce((operationplan.plan->>'unavailable')::int * interval '1 second', interval '0 second'))",
+                [],
+            ),
+            inventory_item=RawSQL("operationplan.plan->'item'", []),
+            inventory_location=RawSQL("operationplan.plan->'location'", []),
         )
 
     rows = (
@@ -3400,30 +3390,30 @@ class ManufacturingOrderList(OperationPlanMixin, GridReport):
             initially_hidden=True,
             extra='"formatoptions":{"defaultValue":""}, "summaryType":"max"',
         ),
-        GridFieldText(
-            "demand",
+        GridFieldJSON(
+            "demands",
             title=_("demands"),
             editable=False,
-            search=False,
+            search=True,
             sortable=False,
             formatter="demanddetail",
             extra='"role":"input/demand"',
         ),
-        GridFieldText(
+        GridFieldJSON(
             "material",
             title=_("materials"),
             editable=False,
-            search=False,
+            search=True,
             sortable=False,
             initially_hidden=True,
             formatter="listdetail",
             extra='"role":"input/item"',
         ),
-        GridFieldText(
+        GridFieldJSON(
             "resource",
             title=_("resources"),
             editable=False,
-            search=False,
+            search=True,
             sortable=False,
             initially_hidden=True,
             formatter="listdetail",
@@ -3824,11 +3814,14 @@ class DistributionOrderList(OperationPlanMixin, GridReport):
                 elif path == "in":
                     q = q.filter(destination_id=args[0])
         q = reportclass.operationplanExtraBasequery(q, request)
-        return q.extra(
-            select={
-                "total_cost": "cost*quantity",
-                "feasible": "coalesce((operationplan.plan->>'feasible')::boolean, true)",
-            }
+        return q.annotate(
+            total_cost=RawSQL(
+                "select item.cost*operationplan.quantity from item where name = operationplan.item_id",
+                [],
+            ),
+            feasible=RawSQL(
+                "coalesce((operationplan.plan->>'feasible')::boolean, true)", []
+            ),
         )
 
     rows = (
@@ -3917,11 +3910,11 @@ class DistributionOrderList(OperationPlanMixin, GridReport):
             initially_hidden=True,
             extra='"formatoptions":{"defaultValue":""}, "summaryType":"max"',
         ),
-        GridFieldText(
-            "demand",
+        GridFieldJSON(
+            "demands",
             title=_("demands"),
             editable=False,
-            search=False,
+            search=True,
             sortable=False,
             formatter="demanddetail",
             extra='"role":"input/demand"',
@@ -4368,11 +4361,11 @@ class PurchaseOrderList(OperationPlanMixin, GridReport):
             initially_hidden=True,
             extra='"formatoptions":{"defaultValue":""}, "summaryType":"max"',
         ),
-        GridFieldText(
-            "demand",
+        GridFieldJSON(
+            "demands",
             title=_("demands"),
             editable=False,
-            search=False,
+            search=True,
             sortable=False,
             formatter="demanddetail",
             extra='"role":"input/demand"',

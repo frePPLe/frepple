@@ -347,6 +347,12 @@ class GridFieldLastModified(GridField):
     width = 140
 
 
+class GridFieldJSON(GridField):
+    width = 200
+    align = "left"
+    searchoptions = '{"sopt":["cn","nc"],"searchhidden":true}'
+
+
 class GridFieldLocalDateTime(GridFieldDateTime):
     pass
 
@@ -1246,6 +1252,17 @@ class GridReport(View):
             return "%s asc" % sort
 
     @classmethod
+    def count_query_elements(cls, database, query):
+        cursor = connections[database].cursor()
+        cursor.execute(
+            "select count(*) from ("
+            + query.get_compiler(database).as_sql(with_col_aliases=False)[0]
+            + ") t_subquery",
+            query.get_compiler(database).as_sql(with_col_aliases=False)[1],
+        )
+        return cursor.fetchone()[0]
+
+    @classmethod
     def _generate_json_data(cls, request, *args, **kwargs):
         page = "page" in request.GET and int(request.GET["page"]) or 1
         request.prefs = request.user.getPreference(
@@ -1257,7 +1274,7 @@ class GridReport(View):
             ).using(request.database)
         else:
             query = cls.filter_items(request, cls.basequeryset).using(request.database)
-        recs = query.count()
+        recs = cls.count_query_elements(request.database, query.query)
         total_pages = math.ceil(float(recs) / request.pagesize)
         if page > total_pages:
             page = total_pages

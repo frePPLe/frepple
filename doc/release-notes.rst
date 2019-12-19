@@ -14,6 +14,9 @@ Release notes
     local timezone of your browser.
   | For on-premise installations this doesn't change anything. However, our cloud 
     customers across the world will be happy to better recognize the timestamps.  
+    
+- | Ability to filter on json fields such as the "Demands" field of manufacturing/distribution/purchase 
+    orders table.
    
 .. rubric:: Integration
 

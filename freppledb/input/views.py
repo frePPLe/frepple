@@ -22,7 +22,8 @@ import json
 from django.conf import settings
 from django.contrib.admin.views.decorators import staff_member_required
 from django.db import connections
-from django.db.models import Q
+from django.db.models.functions import Cast
+from django.db.models import Q, F, FloatField, DateTimeField, DurationField
 from django.db.models.expressions import RawSQL
 from django.db.models.fields import CharField
 from django.db.models import FieldDoesNotExist
@@ -3289,8 +3290,15 @@ class ManufacturingOrderList(OperationPlanMixin, GridReport):
                 "(select json_agg(json_build_array(resource_id, setup)) from (select resource_id, setup from operationplanresource where setup is not null and operationplan.reference = operationplanresource.operationplan_id order by resource_id limit 10) res)",
                 [],
             ),
-            setup_duration=RawSQL("(operationplan.plan->'setup')", []),
-            setup_end=RawSQL("(operationplan.plan->>'setupend')", []),
+            setup_duration=Cast(
+                RawSQL(
+                    "(operationplan.plan->>'setup')::numeric * '1 second'::interval", []
+                ),
+                DurationField(),
+            ),
+            setup_end=Cast(
+                RawSQL("(operationplan.plan->>'setupend')", []), DateTimeField()
+            ),
             feasible=RawSQL(
                 "coalesce((operationplan.plan->>'feasible')::boolean, true)", []
             ),
@@ -3423,7 +3431,7 @@ class ManufacturingOrderList(OperationPlanMixin, GridReport):
             "setup",
             title=_("setups"),
             editable=False,
-            search=False,
+            search=True,
             sortable=False,
             initially_hidden=True,
             formatter="listdetail",
@@ -3535,14 +3543,14 @@ class ManufacturingOrderList(OperationPlanMixin, GridReport):
             "setup_duration", title=_("setup time"), initially_hidden=True, search=False
         ),
         GridFieldDateTime(
-            "setup_end", title=_("setup end date"), initially_hidden=True, search=False
+            "setup_end", title=_("setup end date"), initially_hidden=True, search=True
         ),
         GridFieldBool(
             "feasible",
             title=_("feasible"),
             editable=False,
             initially_hidden=True,
-            search=False,
+            search=True,
         ),
         # Optional fields referencing the item
         GridFieldText(
@@ -3635,7 +3643,7 @@ class ManufacturingOrderList(OperationPlanMixin, GridReport):
             "end_items",
             title=_("end items"),
             editable=False,
-            search=False,
+            search=True,
             sortable=False,
             initially_hidden=True,
             formatter="listdetail",
@@ -4266,12 +4274,24 @@ class PurchaseOrderList(OperationPlanMixin, GridReport):
                 q = q.filter(item__lft__gte=lft, item__rght__lte=rght)
 
         q = reportclass.operationplanExtraBasequery(q.select_related("item"), request)
-        return q.extra(
-            select={
-                "total_cost": "quantity*coalesce((select max(cost) from itemsupplier where itemsupplier.item_id = operationplan.item_id and itemsupplier.location_id = operationplan.location_id and itemsupplier.supplier_id = operationplan.supplier_id), (select cost from item where item.name = operationplan.item_id))",
-                "unit_cost": "coalesce((select max(cost) from itemsupplier where itemsupplier.item_id = operationplan.item_id and itemsupplier.location_id = operationplan.location_id and itemsupplier.supplier_id = operationplan.supplier_id), (select cost from item where item.name = operationplan.item_id))",
-                "feasible": "coalesce((operationplan.plan->>'feasible')::boolean, true)",
-            }
+        return q.annotate(
+            unit_cost=Cast(
+                RawSQL(
+                    """
+            coalesce((select max(cost) from itemsupplier 
+                      where itemsupplier.item_id = operationplan.item_id 
+                      and (itemsupplier.location_id is null or itemsupplier.location_id = operationplan.location_id) 
+                      and itemsupplier.supplier_id = operationplan.supplier_id), 
+                     (select cost from item where item.name = operationplan.item_id), 0)
+                    """,
+                    [],
+                ),
+                output_field=FloatField(),
+            ),
+            total_cost=Cast(F("unit_cost") * F("quantity"), output_field=FloatField()),
+            feasible=RawSQL(
+                "coalesce((operationplan.plan->>'feasible')::boolean, true)", []
+            ),
         )
 
     rows = (
@@ -4337,14 +4357,14 @@ class PurchaseOrderList(OperationPlanMixin, GridReport):
             "unit_cost",
             title=format_lazy("{} - {}", _("item"), _("cost")),
             editable=False,
-            search=False,
+            search=True,
             extra='"formatoptions":{"defaultValue":""}, "summaryType":"max"',
         ),
         GridFieldCurrency(
             "total_cost",
             title=_("total cost"),
             editable=False,
-            search=False,
+            search=True,
             extra='"formatoptions":{"defaultValue":""}, "summaryType":"sum"',
         ),
         GridFieldNumber(
@@ -4376,7 +4396,7 @@ class PurchaseOrderList(OperationPlanMixin, GridReport):
             title=_("feasible"),
             editable=False,
             initially_hidden=True,
-            search=False,
+            search=True,
         ),
         GridFieldLastModified("lastmodified"),
         # Optional fields referencing the item
@@ -5513,6 +5533,7 @@ class ResourceDetail(OperationPlanMixin, GridReport):
             title=_("setup duration"),
             editable=False,
             initially_hidden=True,
+            search=False,
         ),
         GridFieldBool(
             "feasible",

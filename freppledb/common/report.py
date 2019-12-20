@@ -3165,7 +3165,11 @@ def exportWorkbook(request):
                     if i.name == "owner":
                         owner = True
             if hasattr(model, "propertyFields"):
-                for i in model.propertyFields:
+                if callable(model.propertyFields):
+                    props = model.propertyFields(request)
+                else:
+                    props = model.propertyFields
+                for i in props:
                     if i.export:
                         fields.append(i.name)
                         cell = WriteOnlyCell(
@@ -3193,28 +3197,23 @@ def exportWorkbook(request):
             # Add an auto-filter to the table
             ws.auto_filter.ref = "A1:%s1048576" % get_column_letter(len(header))
 
-            # Build the export query
-            if hasattr(model, "export_objects"):
-                # Use the export manager is one exists
-                query = model.export_objects.all().using(request.database)
+            # Use the default manager
+            if issubclass(model, HierarchyModel):
+                model.rebuildHierarchy(database=request.database)
+                query = (
+                    model.objects.all().using(request.database).order_by("lvl", "pk")
+                )
+            elif owner:
+                # First export records with empty owner field
+                query = (
+                    model.objects.all().using(request.database).order_by("-owner", "pk")
+                )
             else:
-                # Use the default manager
-                if issubclass(model, HierarchyModel):
-                    model.rebuildHierarchy(database=request.database)
-                    query = (
-                        model.objects.all()
-                        .using(request.database)
-                        .order_by("lvl", "pk")
-                    )
-                elif owner:
-                    # First export records with empty owner field
-                    query = (
-                        model.objects.all()
-                        .using(request.database)
-                        .order_by("-owner", "pk")
-                    )
-                else:
-                    query = model.objects.all().using(request.database).order_by("pk")
+                query = model.objects.all().using(request.database).order_by("pk")
+
+            # Special annotation of the export query
+            if hasattr(model, "export_objects"):
+                query = model.export_objects(query, request)
 
             # Loop over all records
             for rec in query.values_list(*fields):

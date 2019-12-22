@@ -1,0 +1,41 @@
+
+version: "3"
+
+services:
+
+  frepple-webserver:
+    build: '.'
+    image: frepple-opensuse
+    container_name: frepple-webserver-opensuse
+    ports:
+      - 9000:80
+      - 9001:443
+    depends_on:
+      - frepple-postgres
+    networks:
+      - backend
+    volumes:
+      - log-apache:/var/log/apache2
+      - log-frepple:/var/log/frepple
+      - config-frepple:/etc/frepple
+      - config-apache:/etc/apache2
+
+  frepple-postgres:
+    image: "postgres:11"
+    container_name: frepple-postgres
+    networks:
+      - backend
+    environment:
+      POSTGRES_PASSWORD: frepple
+      POSTGRES_DB: frepple
+      POSTGRES_USER: frepple
+
+volumes:
+  log-apache:
+  log-frepple:
+  config-frepple:
+  config-apache:
+  data-postgres:
+
+networks:
+  backend:

@@ -1,0 +1,86 @@
+#
+# Copyright (C) 2018-2019 by frePPLe bvba
+#
+# All information contained herein is, and remains the property of frePPLe.
+# You are allowed to use and modify the source code, as long as the software is used
+# within your company.
+# You are not allowed to distribute the software, either in the form of source code
+# or in the form of compiled binaries.
+#
+
+#
+# STAGE 1: Compile and build the application
+#
+
+FROM opensuse/leap:15.1 as builder
+
+RUN zypper refresh && \
+  zypper --non-interactive update && \
+  zypper --non-interactive install --force-resolution --replacefiles \
+    libxerces-c-3_1 httpd python3 python3-pip python3-psycopg2 \
+    libxerces-c-devel openssl make automake autoconf python3-devel \
+    gcc-c++ rpm-build libpq5 postgresql-devel postgresql \
+    libtool git openssl-devel && \
+  pip3 install sphinx && \
+  zypper clean
+
+RUN useradd builder -u 1000 -m -G users && \
+  echo "builder ALL=(ALL:ALL) NOPASSWD:ALL" >> /etc/sudoers && \
+  echo "%_topdir    /home/builder/rpm" >> /home/builder/.rpmmacros && \
+  mkdir /home/builder/rpm && \
+  mkdir -p /home/builder/rpm/{BUILD,RPMS,SOURCES,SPECS,SRPMS} && \
+  chown -R builder /home/builder
+
+# OPTION 1: BUILDING FROM LOCAL DISTRIBUTION:
+ADD requirements.txt .
+RUN pip3 install -r requirements.txt
+
+# OPTION 2: BUILDING FROM GIT REPOSITORY
+# This is useful when using this dockerfile standalone.
+# A trick to force rebuilding from here if there are new commits
+#ADD https://api.github.com/repos/jdetaeye/frepple-enterprise/compare/master...HEAD /dev/null
+#RUN git clone https://github.com/jdetaeye/frepple-enterprise.git frepple && \
+#  pip3 install -r frepple/requirements.txt
+# TODO create src rpm
+
+USER builder
+COPY --chown=1000 frepple.spec /home/builder/rpm/SPECS/
+COPY --chown=1000 *.tar.gz /home/builder/rpm/SOURCES/
+RUN rpmbuild -ba /home/builder/rpm/SPECS/frepple.spec
+
+#
+# STAGE 2: Build the deployment container
+#
+
+FROM opensuse/leap:15.1
+
+RUN zypper refresh && \
+  zypper --non-interactive update && \
+  zypper --non-interactive install --force-resolution --replacefiles \
+    libxerces-c-3_1 openssl httpd apache2-mod_wsgi-python3 python3 \
+    python3-pip libpq5 python3-psycopg2 postgresql && \
+  zypper clean
+
+COPY --from=builder /requirements.txt .
+COPY --from=builder /home/builder/rpm/RPMS/x86_64/frepple-*-1.x86_64.rpm ./
+
+RUN rpm -i frepple*.rpm && \
+  pip3 install -r requirements.txt && \
+  a2enmod proxy && \
+  a2enmod proxy_wstunnel && \
+  rm requirements.txt *.rpm
+
+EXPOSE 80
+EXPOSE 443
+
+VOLUME ["/var/log/frepple", "/etc/frepple", "/var/log/apache2", "/etc/apache2"]
+
+# Update djangosettings
+# TODO update random secret key
+RUN sed -i 's/"HOST": ""/"HOST": "frepple-postgres"/g' /etc/frepple/djangosettings.py
+
+CMD frepplectl migrate && \
+  rcapache2 start && \
+  tail -f /var/log/apache2/*log
+
+

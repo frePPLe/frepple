@@ -274,6 +274,9 @@ AC_CONFIG_FILES([
   contrib/odoo/Makefile
   contrib/rpm/Makefile
   contrib/vc/Makefile
+  contrib/linux/Makefile
+  contrib/linux/opensuse-15.1/Makefile
+  contrib/linux/ubuntu-18.04/Makefile
   ])
 AC_CONFIG_FILES([
   test/Makefile

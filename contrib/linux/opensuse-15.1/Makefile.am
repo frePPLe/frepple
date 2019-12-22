@@ -14,6 +14,5 @@ contrib: $(top_builddir)/frepple-$(VERSION).tar.gz
 	cp $(top_builddir)/frepple-$(VERSION).tar.gz $(VERSION).tar.gz
 	cp $(top_builddir)/requirements.txt .
 	docker build --tag $(TAGNAME)-builder:$(VERSION) --target builder .
-	docker create $(TAGNAME)-builder:$(VERSION)
 	docker cp `docker create $(TAGNAME)-builder:$(VERSION)`:/home/builder/rpm/RPMS/x86_64/frepple-$(VERSION)-1.x86_64.rpm $(TAGNAME)-frepple-$(VERSION)-1.x86_64.rpm
 	rm $(VERSION).tar.gz

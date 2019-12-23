@@ -3335,12 +3335,14 @@ class ManufacturingOrderList(OperationPlanMixin, GridReport):
             title=_("item"),
             formatter="detail",
             extra='"role":"input/item"',
+            editable=False,
         ),
         GridFieldText(
             "operation__location__name",
             title=_("location"),
             formatter="detail",
             extra='"role":"input/location"',
+            editable=False,
         ),
         GridFieldText(
             "operation",
@@ -3540,10 +3542,18 @@ class ManufacturingOrderList(OperationPlanMixin, GridReport):
             initially_hidden=True,
         ),
         GridFieldDuration(
-            "setup_duration", title=_("setup time"), initially_hidden=True, search=False
+            "setup_duration",
+            title=_("setup time"),
+            initially_hidden=True,
+            search=False,
+            editable=False,
         ),
         GridFieldDateTime(
-            "setup_end", title=_("setup end date"), initially_hidden=True, search=True
+            "setup_end",
+            title=_("setup end date"),
+            initially_hidden=True,
+            search=True,
+            editable=False,
         ),
         GridFieldBool(
             "feasible",

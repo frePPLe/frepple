@@ -275,6 +275,7 @@ AC_CONFIG_FILES([
   contrib/rpm/Makefile
   contrib/vc/Makefile
   contrib/linux/Makefile
+  contrib/linux/centos-8/Makefile  
   contrib/linux/opensuse-15.1/Makefile
   contrib/linux/ubuntu-18.04/Makefile
   ])

@@ -23,6 +23,10 @@ Release notes
 - Export of duration fields will not be in seconds anymore but will use same format used
   in the tool: "DD HH:MM:SS". This change is effective for both csv and Excel exports.
 
+.. rubric:: Development
+
+- New mechanism to build Linux packages. The new, docker-based process makes supporting
+  multiple linux distributions much easier.
 
 6.1.0 (2019/11/29)
 ==================

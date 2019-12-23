@@ -3107,7 +3107,35 @@ class OperationPlanMixin:
                     )
                 except Segment.DoesNotExist:
                     pass
-        return query.annotate(
+        if "freppledb.forecast" in settings.INSTALLED_APPS:
+            return query.annotate(
+                demands=RawSQL("""
+          select json_agg(json_build_array(value, key, tp))
+          from (
+            select
+              key, value,
+              case when demand.name is not null then 'D' when forecast.name is not null then 'F' end as tp
+            from jsonb_each_text(operationplan.plan->'pegging')
+            left outer join demand on key = demand.name
+            left outer join forecast on substring(key from 0 for position(' - ' in key)) = forecast.name
+            where demand.name is not null or forecast.name is not null
+            order by value desc, key desc
+            limit 10
+          ) peg""", []),
+                end_items=RawSQL("""
+          select json_agg(json_build_array(key, val))
+          from (
+            select coalesce(demand.item_id, forecast.item_id) as key, sum(value::numeric) as val
+            from jsonb_each_text(operationplan.plan->'pegging')
+            left outer join demand on key = demand.name
+            left outer join forecast on substring(key from 0 for position(' - ' in key)) = forecast.name
+            group by coalesce(demand.item_id, forecast.item_id)
+            order by 2 desc
+            limit 10
+            ) peg_items""",[]),
+            )
+        else:
+            return query.annotate(
             demands=RawSQL(
                 """
           select json_agg(json_build_array(value, key))

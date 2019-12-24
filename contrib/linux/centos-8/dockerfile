@@ -22,23 +22,34 @@ FROM centos:8 as builder
 
 RUN yum -y update
 RUN yum -y install epel-release && \
-  yum -y install xerces-c httpd python36 rh-python36-mod_wsgi  \
-     python3-psycopg2 python3-pip postgresql-libs && \
-  yum clean all
+  yum -y install xerces-c python36 rpm-build git wget \
+    python3-psycopg2 python3-pip postgresql-devel openssl openssl-devel \
+    libtool make python3-devel xerces-c-devel automake autoconf gcc-c++ && \
+  yum clean all 
 
-RUN yum -y install git wget libtool \
-  make python3-devel xerces-c-devel automake autoconf gcc-c++ && \
-  pip3 install sphinx
+RUN useradd builder -u 1000 -m -G users && \
+  echo "builder ALL=(ALL:ALL) NOPASSWD:ALL" >> /etc/sudoers && \
+  echo "%_topdir    /home/builder/rpm" >> /home/builder/.rpmmacros && \
+  mkdir /home/builder/rpm && \
+  mkdir -p /home/builder/rpm/{BUILD,RPMS,SOURCES,SPECS,SRPMS} && \
+  chown -R builder /home/builder
 
+# OPTION 1: BUILDING FROM LOCAL DISTRIBUTION:
+ADD requirements.txt .
+RUN pip3 install -r requirements.txt sphinx
+
+# OPTION 2: BUILDING FROM GIT REPOSITORY
+# This is useful when using this dockerfile standalone.
 # A trick to force rebuilding from here if there are new commits
-ADD https://api.github.com/repos/frePPLe/frepple/compare/master...HEAD /dev/null
-RUN git clone https://github.com/frePPLe/frepple.git frepple && \
-  pip3 install -r frepple/requirements.txt
+#ADD https://api.github.com/repos/jdetaeye/frepple-enterprise/compare/master...HEAD /dev/null
+#RUN git clone https://github.com/jdetaeye/frepple-enterprise.git frepple && \
+#  pip3 install -r frepple/requirements.txt
+# TODO create src rpm
 
-WORKDIR /frepple
-RUN make -f Makefile.dist prep config && \
-  cd contrib/centos && \
-  make contrib
+USER builder
+COPY --chown=1000 frepple.spec /home/builder/rpm/SPECS/
+COPY --chown=1000 *.tar.gz /home/builder/rpm/SOURCES/
+RUN rpmbuild -ba /home/builder/rpm/SPECS/frepple.spec
 
 #
 # STAGE 2: Build the deployment container
@@ -50,8 +61,8 @@ COPY --from=builder /frepple/requirements.txt .
 COPY --from=builder /frepple/contrib/centos/frepple_*.rpm .
 
 RUN yum -y update && \
-  yum -y install libxerces-c3.2 apache2 libapache2-mod-wsgi-py3 \
-     python3-psycopg2 python3-pip postgresql-client && \
+  yum -y install xerces-c python36 httpd python3-mod_wsgi \
+     python3-psycopg2 python3-pip openssl postgresql-client && \
   yum clean all
 
 RUN yum -y --no-install-recommends install \

@@ -8,7 +8,7 @@ Release notes
 
 - Currentdate parameter now accepts most known formats to represent a date and/or time.
 
-..rurbric:: User interface
+..rubric:: User interface
 
 - | The last-modified fields and the task execution dates are now shown in the
     local timezone of your browser.

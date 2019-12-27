@@ -209,7 +209,7 @@ def basicauthentication(allow_logged_in=True, realm="frepple"):
     return view_decorator
 
 
-def getWebserviceAuthorization(**kwargs):
+def getWebserviceAuthorization(database=DEFAULT_DB_ALIAS, **kwargs):
     # Create authorization header for the web service
     payload = {}
     for key, value in kwargs.items():
@@ -217,4 +217,6 @@ def getWebserviceAuthorization(**kwargs):
             payload["exp"] = round(time.time()) + value
         else:
             payload[key] = value
-    return jwt.encode(payload, settings.SECRET_KEY, algorithm="HS256").decode("ascii")
+    return jwt.encode(
+        payload, settings.DATABASES[database].SECRET_WEBTOKEN_KEY, algorithm="HS256"
+    ).decode("ascii")

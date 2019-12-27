@@ -46,7 +46,7 @@ def APIIndexView(request):
             "request": request,
             "title": _("REST API Help"),
             "token": getWebserviceAuthorization(
-                user=request.user.username, exp=exp * 86400
+                user=request.user.username, exp=exp * 86400, database=request.database
             ),
         },
     )

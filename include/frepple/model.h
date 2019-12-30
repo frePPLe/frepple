@@ -5544,8 +5544,8 @@ class SetupMatrixRule : public Object {
 
   /* Returns true if this rule matches with the from-setup and to-setup being
    * passed. */
-  bool matches(const PooledString& from_to) const {
-    return regex_match(from_to.getString(), expression);
+  bool matches(const string& from_to) const {
+    return regex_match(from_to, expression);
   }
 
  private:
@@ -5674,8 +5674,9 @@ class SetupMatrix : public HasName<SetupMatrix>, public HasSource {
  public:
   /* Default constructor. */
   explicit SetupMatrix()
-      : ChangeOverNotAllowed(this, "NotAllowed", "NotAllowed", 365L * 86400L,
-                             DBL_MAX, INT_MAX) {}
+      : ChangeOverNotAllowed(this, PooledString("NotAllowed"),
+                             PooledString("NotAllowed"), 365L * 86400L, DBL_MAX,
+                             INT_MAX) {}
 
   /* Destructor. */
   ~SetupMatrix();
@@ -5989,9 +5990,10 @@ class Resource : public HasHierarchy<Resource>,
   void setSetup(const string& s) {
     if (setup)
       // Updated existing event
-      setup->setSetup(s);
+      setup->setSetup(PooledString(s));
     else {
-      setup = new SetupEvent(&getLoadPlans(), Date::infinitePast, s);
+      setup =
+          new SetupEvent(&getLoadPlans(), Date::infinitePast, PooledString(s));
       getLoadPlans().insert(setup);
     }
   }
@@ -7254,7 +7256,7 @@ class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand {
   /* Returns the current setup of the resource. */
   string getSetup() const {
     auto tmp = getSetup(true);
-    return tmp ? tmp->getSetup() : "";
+    return tmp ? tmp->getSetup().getString() : "";
   }
 
   /* Returns the required setup for the operation. */

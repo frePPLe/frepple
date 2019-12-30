@@ -5072,11 +5072,17 @@ class PooledString {
   /* Default constructor with empty pointer. */
   PooledString() {}
 
-  /* Constructor from string. */
-  PooledString(const string& val) { insert(val); }
+  /* Constructor from string.
+   * The constructor is explicit to avoid implicit calls to this
+   * constructor, which is slow.
+   */
+  explicit PooledString(const string& val) { insert(val); }
 
-  /* Constructor from a character pointer. */
-  PooledString(const char* val) { insert(string(val)); }
+  /* Constructor from a character pointer.
+   * The constructor is explicit to avoid implicit calls to this
+   * constructor, which is slow.
+   */
+  explicit PooledString(const char* val) { insert(string(val)); }
 
   /* Copy constructor. */
   PooledString(const PooledString& other) : ptr(other.ptr) {

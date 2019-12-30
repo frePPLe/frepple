@@ -671,6 +671,7 @@ Operation::SetupInfo Operation::calculateSetup(OperationPlan* opplan,
 
   // Loop over each load or loadplan and see check what setup time they need
   bool firstResourceWithSetup = true;
+  static PooledString emptystring;
   auto ldplan = opplan->beginLoadPlans();
   if (ldplan == opplan->endLoadPlans()) {
     // First case: This operationplan doesn't have any loadplans yet.
@@ -694,8 +695,8 @@ Operation::SetupInfo Operation::calculateSetup(OperationPlan* opplan,
       if (prevevent) *prevevent = cursetup;
       return SetupInfo(ld->getResource(),
                        ld->getResource()->getSetupMatrix()->calculateSetup(
-                           cursetup ? cursetup->getSetup() : "", ld->getSetup(),
-                           ld->getResource()),
+                           cursetup ? cursetup->getSetup() : emptystring,
+                           ld->getSetup(), ld->getResource()),
                        ld->getSetup());
     }
   } else {
@@ -723,7 +724,7 @@ Operation::SetupInfo Operation::calculateSetup(OperationPlan* opplan,
       return SetupInfo(
           ldplan->getResource(),
           ldplan->getResource()->getSetupMatrix()->calculateSetup(
-              cursetup ? cursetup->getSetup() : "",
+              cursetup ? cursetup->getSetup() : emptystring,
               ldplan->getLoad()->getSetup(), ldplan->getResource()),
           ldplan->getLoad()->getSetup());
     }

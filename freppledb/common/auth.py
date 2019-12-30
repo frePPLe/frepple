@@ -218,5 +218,7 @@ def getWebserviceAuthorization(database=DEFAULT_DB_ALIAS, **kwargs):
         else:
             payload[key] = value
     return jwt.encode(
-        payload, settings.DATABASES[database].SECRET_WEBTOKEN_KEY, algorithm="HS256"
+        payload,
+        settings.DATABASES[database].get("SECRET_WEBTOKEN_KEY", settings.SECRET_KEY),
+        algorithm="HS256",
     ).decode("ascii")

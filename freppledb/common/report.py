@@ -47,6 +47,7 @@ from openpyxl.utils import get_column_letter
 from openpyxl.cell import WriteOnlyCell
 from openpyxl.styles import NamedStyle, PatternFill
 from dateutil.parser import parse
+from openpyxl.comments import Comment as CellComment
 
 from django.db.models import Model
 from django.apps import apps
@@ -831,6 +832,9 @@ class GridReport(View):
         headerstyle = NamedStyle(name="headerstyle")
         headerstyle.fill = PatternFill(fill_type="solid", fgColor="70c4f4")
         wb.add_named_style(headerstyle)
+        readlonlyheaderstyle = NamedStyle(name="readlonlyheaderstyle")
+        readlonlyheaderstyle.fill = PatternFill(fill_type="solid", fgColor="d0ebfb")
+        wb.add_named_style(readlonlyheaderstyle)
 
         # Choose fields to export and write the title row
         if not hasattr(request, "prefs"):
@@ -855,9 +859,18 @@ class GridReport(View):
 
         # Write a formatted header row
         header = []
+        comment = None
         for f in fields:
             cell = WriteOnlyCell(ws, value=force_text(f.title).title())
-            cell.style = "headerstyle"
+            if f.editable or f.key:
+                cell.style = "headerstyle"
+            else:
+                cell.style = "readlonlyheaderstyle"
+                if not comment:
+                    comment = CellComment(
+                        force_text(_("Read only")), "Author", height=20, width=80
+                    )
+                cell.comment = comment
             header.append(cell)
         ws.append(header)
 
@@ -2803,6 +2816,9 @@ class GridPivot(GridReport):
         headerstyle = NamedStyle(name="headerstyle")
         headerstyle.fill = PatternFill(fill_type="solid", fgColor="70c4f4")
         wb.add_named_style(headerstyle)
+        readlonlyheaderstyle = NamedStyle(name="readlonlyheaderstyle")
+        readlonlyheaderstyle.fill = PatternFill(fill_type="solid", fgColor="d0ebfb")
+        wb.add_named_style(readlonlyheaderstyle)
 
         # Prepare the query
         if not hasattr(request, "prefs"):
@@ -2863,14 +2879,31 @@ class GridPivot(GridReport):
 
         # Write a header row
         fields = []
+        comment = None
         for f in myrows:
             if f.name:
                 cell = WriteOnlyCell(ws, value=force_text(f.title).title())
-                cell.style = "headerstyle"
+                if f.editable or f.key:
+                    cell.style = "headerstyle"
+                else:
+                    cell.style = "readlonlyheaderstyle"
+                    if not comment:
+                        comment = CellComment(
+                            force_text(_("Read only")), "Author", height=20, width=80
+                        )
+                    cell.comment = comment
                 fields.append(cell)
         if listformat:
             cell = WriteOnlyCell(ws, value=capfirst(force_text(_("bucket"))))
-            cell.style = "headerstyle"
+            if f.editable or f.key:
+                cell.style = "headerstyle"
+            else:
+                cell.style = "readlonlyheaderstyle"
+                if not comment:
+                    comment = CellComment(
+                        force_text(_("Read only")), "Author", height=20, width=80
+                    )
+                cell.comment = comment
             fields.append(cell)
             for f in mycrosses:
                 cell = WriteOnlyCell(
@@ -2889,15 +2922,23 @@ class GridPivot(GridReport):
                         )
                     ),
                 )
-                cell.style = "headerstyle"
+                if f[1].get("editable", False):
+                    cell.style = "headerstyle"
+                else:
+                    cell.style = "readlonlyheaderstyle"
+                    if not comment:
+                        comment = CellComment(
+                            force_text(_("Read only")), "Author", height=20, width=80
+                        )
+                    cell.comment = comment
                 fields.append(cell)
         else:
             cell = WriteOnlyCell(ws, value=capfirst(_("data field")))
-            cell.style = "headerstyle"
+            cell.style = "readlonlyheaderstyle"
             fields.append(cell)
             for b in request.report_bucketlist:
                 cell = WriteOnlyCell(ws, value=str(b["name"]))
-                cell.style = "headerstyle"
+                cell.style = "readlonlyheaderstyle"
                 fields.append(cell)
         ws.append(fields)
 
@@ -2940,7 +2981,7 @@ class GridPivot(GridReport):
                 else:
                     # Write a row
                     for cross in mycrosses:
-                        if cross[1].get("visible", False):
+                        if not cross[1].get("visible", False):
                             continue
                         fields = [
                             _getCellValue(
@@ -3115,6 +3156,9 @@ def exportWorkbook(request):
     headerstyle = NamedStyle(name="headerstyle")
     headerstyle.fill = PatternFill(fill_type="solid", fgColor="70c4f4")
     wb.add_named_style(headerstyle)
+    readlonlyheaderstyle = NamedStyle(name="readlonlyheaderstyle")
+    readlonlyheaderstyle.fill = PatternFill(fill_type="solid", fgColor="d0ebfb")
+    wb.add_named_style(readlonlyheaderstyle)
 
     # Loop over all selected entity types
     exportConfig = {"anonymous": request.POST.get("anonymous", False)}
@@ -3144,6 +3188,7 @@ def exportWorkbook(request):
             source = False
             lastmodified = False
             owner = False
+            comment = None
             try:
                 # The admin model of the class can define some fields to exclude from the export
                 exclude = data_site._registry[model].exclude
@@ -3160,7 +3205,18 @@ def exportWorkbook(request):
                     fields.append(i.column)
                     modelfields.append(i)
                     cell = WriteOnlyCell(ws, value=force_text(i.verbose_name).title())
-                    cell.style = "headerstyle"
+                    if i.editable:
+                        cell.style = "headerstyle"
+                    else:
+                        cell.style = "readlonlyheaderstyle"
+                        if not comment:
+                            comment = CellComment(
+                                force_text(_("Read only")),
+                                "Author",
+                                height=20,
+                                width=80,
+                            )
+                        cell.comment = comment
                     header.append(cell)
                     if i.name == "owner":
                         owner = True
@@ -3175,7 +3231,18 @@ def exportWorkbook(request):
                         cell = WriteOnlyCell(
                             ws, value=force_text(i.verbose_name).title()
                         )
-                        cell.style = "headerstyle"
+                        if i.editable:
+                            cell.style = "headerstyle"
+                        else:
+                            cell.style = "readlonlyheaderstyle"
+                            if not comment:
+                                comment = CellComment(
+                                    force_text(_("Read only")),
+                                    "Author",
+                                    height=20,
+                                    width=80,
+                                )
+                            cell.comment = comment
                         header.append(cell)
                         modelfields.append(i)
             if source:
@@ -3187,7 +3254,12 @@ def exportWorkbook(request):
             if lastmodified:
                 fields.append("lastmodified")
                 cell = WriteOnlyCell(ws, value=force_text(_("last modified")).title())
-                cell.style = "headerstyle"
+                cell.style = "readlonlyheaderstyle"
+                if not comment:
+                    comment = CellComment(
+                        force_text(_("Read only")), "Author", height=20, width=80
+                    )
+                cell.comment = comment
                 header.append(cell)
                 modelfields.append(lastmodified)
 

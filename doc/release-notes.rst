@@ -17,6 +17,10 @@ Release notes
     
 - | Ability to filter on json fields such as the "Demands" field of manufacturing/distribution/purchase 
     orders table.
+    
+- When exporting Excel files, read-only fields are now visually identifiable in the
+  header row. A color and comment distinguish read-only fields from fields that can be
+  updated when uploading the data file.  
    
 .. rubric:: Integration
 

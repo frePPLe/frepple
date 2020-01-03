@@ -3788,8 +3788,7 @@ class ItemDistribution
     if (!s) return;
     if (getDestination() == s)
       throw LogicException(
-          "Source and destination of an OperationItemDistribution must be "
-          "different");
+          "Source and destination of an ItemDistribution must be different");
     orig = s;
     HasLevel::triggerLazyRecomputation();
   }
@@ -3800,8 +3799,7 @@ class ItemDistribution
     if (!i) return;
     if (getOrigin() == i)
       throw LogicException(
-          "Source and destination of an OperationItemDistribution must be "
-          "different");
+          "Source and destination of an ItemDistribution must be different");
     setPtrA(i, i->getDistributions());
     HasLevel::triggerLazyRecomputation();
   }

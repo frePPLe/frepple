@@ -171,6 +171,10 @@ Operation* OperationItemDistribution::findOrCreate(ItemDistribution* itemdist,
     throw LogicException(
         "An OperationItemDistribution always needs to point to "
         "a ItemDistribution, a source buffer and a destination buffer");
+  if (dest == src)
+    throw LogicException(
+        "Source and destination of an OperationItemDistribution must be "
+        "different");
   stringstream o;
   o << "Ship " << dest->getItem()->getName() << " from "
     << src->getLocation()->getName() << " to "
@@ -195,6 +199,10 @@ OperationItemDistribution::OperationItemDistribution(ItemDistribution* i,
     throw LogicException(
         "An OperationItemDistribution always needs to point to a destination "
         "and/or a source buffer");
+  if (dest == src)
+    throw LogicException(
+        "Source and destination of an OperationItemDistribution must be "
+        "different");
   stringstream o;
   auto item = dest ? dest->getItem() : src->getItem();
   o << "Ship " << item->getName();

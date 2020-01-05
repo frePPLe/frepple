@@ -8,7 +8,7 @@ Release notes
 
 - Currentdate parameter now accepts most known formats to represent a date and/or time.
 
-..rubric:: User interface
+.. rubric:: User interface
 
 - | The last-modified fields and the task execution dates are now shown in the
     local timezone of your browser.
@@ -31,6 +31,13 @@ Release notes
 
 - New mechanism to build Linux packages. The new, docker-based process makes supporting
   multiple linux distributions much easier.
+
+.. rubric:: Security
+
+- | A vulnerability in the django web application framework was identified and corrected.
+    The password reset form could be tricked to send the new password to a wrong email address.
+  | The same patch can be applied to earlier releases. Contact us if you need help for this.
+  | See https://www.djangoproject.com/weblog/2019/dec/18/security-releases/ for full details.
 
 6.1.0 (2019/11/29)
 ==================

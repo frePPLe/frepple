@@ -2053,9 +2053,16 @@ class GridReport(View):
 
     @staticmethod
     def _filter_ne(query, reportrow, data):
-        return ~models.Q(
-            **{"%s__iexact" % reportrow.field_name: smart_str(data).strip()}
-        )
+        if isinstance(
+            reportrow, (GridFieldCurrency, GridFieldInteger, GridFieldNumber)
+        ):
+            return ~models.Q(
+                **{"%s__exact" % reportrow.field_name: smart_str(data).strip()}
+            )
+        else:
+            return ~models.Q(
+                **{"%s__iexact" % reportrow.field_name: smart_str(data).strip()}
+            )
 
     @staticmethod
     def _filter_bn(query, reportrow, data):
@@ -2071,9 +2078,16 @@ class GridReport(View):
 
     @staticmethod
     def _filter_nc(query, reportrow, data):
-        return ~models.Q(
-            **{"%s__icontains" % reportrow.field_name: smart_str(data).strip()}
-        )
+        if isinstance(
+            reportrow, (GridFieldCurrency, GridFieldInteger, GridFieldNumber)
+        ):
+            return ~models.Q(
+                **{"%s__contains" % reportrow.field_name: smart_str(data).strip()}
+            )
+        else:
+            return ~models.Q(
+                **{"%s__icontains" % reportrow.field_name: smart_str(data).strip()}
+            )
 
     @staticmethod
     def _filter_ni(query, reportrow, data):
@@ -2089,9 +2103,16 @@ class GridReport(View):
 
     @staticmethod
     def _filter_eq(query, reportrow, data):
-        return models.Q(
-            **{"%s__iexact" % reportrow.field_name: smart_str(data).strip()}
-        )
+        if isinstance(
+            reportrow, (GridFieldCurrency, GridFieldInteger, GridFieldNumber)
+        ):
+            return models.Q(
+                **{"%s__exact" % reportrow.field_name: smart_str(data).strip()}
+            )
+        else:
+            return models.Q(
+                **{"%s__iexact" % reportrow.field_name: smart_str(data).strip()}
+            )
 
     @staticmethod
     def _filter_bw(query, reportrow, data):

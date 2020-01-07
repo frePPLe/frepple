@@ -403,9 +403,9 @@ class Command(BaseCommand):
                   <input class="empty_all" type="checkbox" name="alldata" checked value="1">&nbsp;<strong>{%trans 'data tables'|upper%}</strong>
                 </label>
                 <br>
-                {% for group in menu %}{% for item in group.1 %}{% if item.1.model and not item.1.excludeFromBulkOperations and not group.0 == _("admin")%}
+                {% for group in menu %}{% for item in group.1 %}{% if item.1.model and not item.1.excludeFromBulkOperations and not item.1.admin %}
                 <label for="empty_{{ item.1.model | model_name }}">
-                  <input class="empty_entity" type="checkbox" name="models" data-tables="data" value="{{ item.1.model | model_name }}" {% if group.0 != _("admin") %}checked {% endif %}id="empty_{{ item.1.model | model_name }}">&nbsp;{{ group.0 }} - {{ item.0 }}
+                  <input class="empty_entity" type="checkbox" name="models" data-tables="data" value="{{ item.1.model | model_name }}" checked id="empty_{{ item.1.model | model_name }}">&nbsp;{{ group.0 }} - {{ item.0 }}
                 </label>
                 <br>
                 {% endif %}{% endfor %}{% endfor %}
@@ -413,9 +413,9 @@ class Command(BaseCommand):
                   <input class="empty_all" type="checkbox" name="alladmin" value="1">&nbsp;<strong>{%trans 'admin tables'|upper%}</strong>
                 </label>
                 <br>
-                {% for group in menu %}{% for item in group.1 %}{% if item.1.model and not item.1.excludeFromBulkOperations and group.0 == _("admin")%}
+                {% for group in menu %}{% for item in group.1 %}{% if item.1.model and not item.1.excludeFromBulkOperations and item.1.admin %}
                 <label for="empty_{{ item.1.model | model_name }}">
-                  <input class="empty_entity" type="checkbox" name="models" data-tables="admin" value="{{ item.1.model | model_name }}" {% if group.0 != _("admin") %}checked {% endif %}id="empty_{{ item.1.model | model_name }}">&nbsp;{{ group.0 }} - {{ item.0 }}
+                  <input class="empty_entity" type="checkbox" name="models" data-tables="admin" value="{{ item.1.model | model_name }}" id="empty_{{ item.1.model | model_name }}">&nbsp;{{ group.0 }} - {{ item.0 }}
                 </label>
                 <br>
                 {% endif %}{% endfor %}{% endfor %}

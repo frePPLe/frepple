@@ -180,7 +180,7 @@ class Command(BaseCommand):
             </label><br>
             {% for group in menu %}
               {% for item in group.1 %}
-                {% if item.1.model and not item.1.excludeFromBulkOperations and not group.0 == _("admin")%}
+                {% if item.1.model and not item.1.excludeFromBulkOperations and not item.1.admin %}
                   <label for="chbx_{{ item.1.model | model_name }}">
                     <input class="chck_entity check" data-tables="data" type="checkbox" name="entities" value="{{ item.1.model | model_name }}"{% if item.3 %} checked=""{% endif %} id="chbx_{{ item.1.model | model_name }}">
                       {{ group.0 }} - {{ item.0 }}
@@ -193,7 +193,7 @@ class Command(BaseCommand):
             </label><br>
             {% for group in menu %}
               {% for item in group.1 %}
-                {% if item.1.model and not item.1.excludeFromBulkOperations and group.0 == _("admin")%}
+                {% if item.1.model and not item.1.excludeFromBulkOperations and item.1.admin %}
                   <label for="chbx_{{ item.1.model | model_name }}">
                     <input class="chck_entity check" data-tables="admin" type="checkbox" name="entities" value="{{ item.1.model | model_name }}"{% if item.3 %} checked=""{% endif %} id="chbx_{{ item.1.model | model_name }}">
                       {{ group.0 }} - {{ item.0 }}

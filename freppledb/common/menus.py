@@ -46,6 +46,7 @@ class MenuItem:
         identifier=None,
         permission=None,
         dependencies=None,
+        admin=False,
     ):
         self.name = name
         self.url = url
@@ -68,6 +69,7 @@ class MenuItem:
         self.excludeFromBulkOperations = model in EXCLUDE_FROM_BULK_OPERATIONS
         self.permission = permission
         self.dependencies = dependencies
+        self.admin = admin
 
     def __str__(self):
         return self.name
@@ -164,6 +166,7 @@ class Menu:
         identifier=None,
         permission=None,
         dependencies=None,
+        admin=False,
     ):
         for i in range(len(self._groups)):
             if self._groups[i][0] == group:
@@ -186,6 +189,7 @@ class Menu:
                         it["window"] = window
                         it["separator"] = separator
                         it["model"] = model
+                        it["admin"] = admin
                         return
                 # Create a new item
                 self._groups[i][3].append(
@@ -203,6 +207,7 @@ class Menu:
                         identifier=identifier,
                         permission=permission,
                         dependencies=dependencies,
+                        admin=admin,
                     )
                 )
                 return

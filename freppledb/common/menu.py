@@ -31,6 +31,7 @@ menu.addItem(
     report=freppledb.common.views.ParameterList,
     index=1100,
     model=Parameter,
+    admin=True,
 )
 menu.addItem(
     "admin",
@@ -39,6 +40,7 @@ menu.addItem(
     report=freppledb.common.views.BucketList,
     index=1200,
     model=Bucket,
+    admin=True,
 )
 menu.addItem(
     "admin",
@@ -47,6 +49,7 @@ menu.addItem(
     report=freppledb.common.views.BucketDetailList,
     index=1300,
     model=BucketDetail,
+    admin=True,
 )
 menu.addItem(
     "admin",
@@ -55,6 +58,7 @@ menu.addItem(
     report=freppledb.common.views.CommentList,
     index=1400,
     model=Comment,
+    admin=True,
 )
 
 # User maintenance
@@ -66,6 +70,7 @@ menu.addItem(
     report=freppledb.common.views.UserList,
     index=2100,
     model=User,
+    admin=True,
 )
 menu.addItem(
     "admin",
@@ -74,6 +79,7 @@ menu.addItem(
     report=freppledb.common.views.GroupList,
     index=2200,
     permission="auth.change_group",
+    admin=True,
 )
 
 # Help menu

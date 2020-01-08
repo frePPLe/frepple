@@ -63,7 +63,8 @@ class Command(loaddata.Command):
           function checkbox_changed(checkbox) {
             $("#regeneratevar").val(checkbox.checked);
           };
-    """
+          """
+
         context = RequestContext(
             request, {"fixtures": fixtures, "javascript": javascript}
         )
@@ -95,8 +96,8 @@ class Command(loaddata.Command):
           <td style="padding:15px">
             <div>
               <ul class="checkbox">
-                <li><input type="checkbox" id="cb1" onclick="checkbox_changed(this)" checked />
-                <label for="cb1">{% trans "Execute plan after loading is done" %}</label></li>
+                <li><input type="checkbox" id="loaddatacb1" onclick="checkbox_changed(this)" checked />
+                <label for="loaddatacb1">{% trans "Execute plan after loading is done" %}</label></li>
               </ul>
             </div>
           </td>

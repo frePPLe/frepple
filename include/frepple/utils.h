@@ -1243,14 +1243,14 @@ class Keyword : public NonCopyable {
 
   /* This is the constructor.
    * The tag doesn't belong to an XML namespace. */
-  Keyword(const string&);
+  explicit Keyword(const string&);
 
   /* This is the constructor. The tag belongs to the XML namespace passed
    * as second argument.
    * Note that we still require the first argument to be unique, since it
    * is used as a keyword for the Python extensions.
    */
-  Keyword(const string&, const string&);
+  explicit Keyword(const string&, const string&);
 
   /* Destructor. */
   ~Keyword();

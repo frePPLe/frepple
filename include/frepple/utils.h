@@ -35,6 +35,9 @@
    and without _DEBUG defined, so we have to #include all the system headers
    used by pyconfig.h right here.
 */
+#ifdef _MSC_VER
+#define HAVE_SNPRINTF
+#endif
 #if defined(_DEBUG) && defined(_MSC_VER)
 #include <assert.h>
 #include <basetsd.h>
@@ -72,6 +75,7 @@ typedef int Py_ssize_t;
 
 #include <assert.h>
 #include <float.h>
+
 #include <condition_variable>
 #include <ctime>
 #include <fstream>
@@ -193,6 +197,8 @@ template <class T>
 class MetaFieldDurationDouble;
 template <class T>
 class MetaFieldString;
+template <class T>
+class MetaFieldFunction;
 template <class T>
 class MetaFieldStringRef;
 template <class T, class u>
@@ -1526,6 +1532,11 @@ class MetaFieldBase {
 
   virtual const Keyword* getKeyword() const { return nullptr; }
 
+  typedef void (*HandlerFunction)(Object*, const DataValueDict&,
+                                  CommandManager*);
+
+  virtual HandlerFunction getFunction() const { return nullptr; }
+
  private:
   /* Field name. */
   const Keyword& name;
@@ -1778,6 +1789,13 @@ class MetaClass : public NonCopyable {
                               unsigned int c = BASE) {
     fields.push_back(new MetaFieldPointer<Cls, Ptr>(k, getfunc, setfunc, c));
     if (c & PARENT) parent = true;
+  }
+
+  template <class Cls>
+  inline void addFunctionField(const Keyword& k,
+                               MetaFieldBase::HandlerFunction f,
+                               unsigned int c = DONT_SERIALIZE) {
+    fields.push_back(new MetaFieldFunction<Cls>(k, f, c));
   }
 
   template <class Cls, class Iter, class Ptr>
@@ -4869,7 +4887,7 @@ class HasName : public NonCopyable, public Tree::TreeNode, public Object {
   explicit HasName() {}
 
   /* Rename the entity. */
-  void setName(const string& newname) { st.rename(this, newname); }
+  virtual void setName(const string& newname) { st.rename(this, newname); }
 
   /* Rename the entity.
    * The second argument is a hint: when passing an entity with
@@ -5437,6 +5455,9 @@ class HasHierarchy : public HasName<T> {
     while (tmp->parent) tmp = tmp->parent;
     return tmp;
   }
+
+  /* Return the first root object. */
+  static T* getRoot() { return !T::empty() ? T::begin()->getTop() : nullptr; }
 
   /* Returns true if this entity belongs to a higher hierarchical level.
    * An entity can have only a single owner, and can't belong to multiple
@@ -6683,6 +6704,26 @@ class MetaFieldPointer : public MetaFieldBase {
 
   /* Set function. */
   setFunction setf;
+};
+
+template <class Cls>
+class MetaFieldFunction : public MetaFieldBase {
+ public:
+  MetaFieldFunction(const Keyword& n, HandlerFunction f,
+                    unsigned int c = DONT_SERIALIZE)
+      : MetaFieldBase(n, c), thefunction(f){};
+
+  virtual void setField(Object* me, const DataValue& el,
+                        CommandManager* cmd) const {}
+
+  virtual HandlerFunction getFunction() const { return thefunction; }
+
+  virtual void getField(Object* me, DataValue& el) const {}
+
+  virtual void writeField(Serializer& output) const {}
+
+ protected:
+  HandlerFunction thefunction;
 };
 
 template <class Cls, class Iter, class PyIter, class Ptr>

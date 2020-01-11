@@ -172,7 +172,7 @@ class PlanTaskSequence(PlanTask):
 
     def run(self, database=DEFAULT_DB_ALIAS, **kwargs):
         # Collect the list of tasks
-        task_weight = self.getWeight(**kwargs)
+        task_weight = self.getWeight(database=database, **kwargs)
         if not task_weight:
             task_weight = 1
 

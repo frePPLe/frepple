@@ -30,12 +30,22 @@
           </div>
 
           <div class="row" style="padding-bottom: 15px">
-            <div class="col-xs-12 form-inline">
+            <div class="col-xs-12 form-inline">              
               <input type="radio" name="horizontype" value="0"{% if not request.user.horizontype %} checked{% endif %}/>
               &nbsp;&nbsp;{% trans 'from'|capfirst %}&nbsp;
+              <div class="input-group date">
               <input id="horizonstart"  style="display:inline" type="text" size="9" class="vDateField form-control" value="{{request.user.horizonstart|date:"Y-m-d"}}"/>
+              <span class="input-group-addon">
+                <span class="fa fa-calendar"></span>
+              </span>
+              </div>
               &nbsp;{% trans 'to' %}&nbsp;
-              <input id="horizonend"  style="display:inline" type="text" size="9" class="vDateField form-control" value="{{request.user.horizonend|date:"Y-m-d"}}"/>
+              <div class="input-group date">
+              <input id="horizonend" style="display:inline" type="text" size="9" class="vDateField form-control" value="{{request.user.horizonend|date:"Y-m-d"}}"/>
+              <span class="input-group-addon">
+                <span class="fa fa-calendar"></span>
+              </span>
+              </div>
               <br>
            </div>
           </div>

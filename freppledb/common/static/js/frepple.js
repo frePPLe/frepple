@@ -1134,10 +1134,20 @@ var grid = {
       clear: 'fa fa-trash',
       close: 'fa fa-remove'
     };
-    $( "#horizonstart" ).datetimepicker({format: 'YYYY-MM-DD', calendarWeeks: true, icons: iconslist, locale: document.documentElement.lang});
-    $( "#horizonend" ).datetimepicker({format: 'YYYY-MM-DD', calendarWeeks: true, icons: iconslist, locale: document.documentElement.lang});
-    $("#horizonstart").on("dp.change", function (selected) {
-      $("#horizonend").data("DateTimePicker").minDate(selected.date);
+    $("#horizonstart").parent().datetimepicker({
+    	  format: 'YYYY-MM-DD',
+    	  calendarWeeks: true,
+    	  icons: iconslist,
+    	  locale: document.documentElement.lang
+    	  });
+    $("#horizonend").parent().datetimepicker({
+    	  format: 'YYYY-MM-DD',
+    	  calendarWeeks: true,
+    	  icons: iconslist,
+    	  locale: document.documentElement.lang
+    	  });
+    $("#horizonstart").parent().on("dp.change", function (selected) {
+      $("#horizonend").parent().data("DateTimePicker").minDate(selected.date);
       });
     $( "#okbutton" ).on('click', function() {
             // Compare old and new parameters

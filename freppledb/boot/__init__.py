@@ -35,6 +35,7 @@ from freppledb.common.fields import JSONBField
 
 
 _register = {}
+_register_kwargs = {}
 
 
 def add_extra_model_fields(sender, **kwargs):
@@ -42,10 +43,21 @@ def add_extra_model_fields(sender, **kwargs):
     for field_name, label, fieldtype, editable, initially_hidden in _register.get(
         model_path, []
     ):
+
+        register_args = (
+            _register_kwargs[(model_path, field_name)]
+            if (model_path, field_name) in _register_kwargs
+            else None
+        )
+
         if fieldtype == "string":
+            if register_args and "max_length" in register_args:
+                max_length = register_args["max_length"]
+            else:
+                max_length = 300
             field = models.CharField(
                 label,
-                max_length=300,
+                max_length=max_length,
                 null=True,
                 blank=True,
                 db_index=True,
@@ -94,7 +106,7 @@ def add_extra_model_fields(sender, **kwargs):
         field.contribute_to_class(sender, field_name)
 
 
-def registerAttribute(model, attrlist):
+def registerAttribute(model, attrlist, **kwargs):
     """
     Register a new attribute.
     """
@@ -109,6 +121,9 @@ def registerAttribute(model, attrlist):
             _register[model].append(attr + (False,))
         else:
             _register[model].append(attr)
+
+        if kwargs:
+            _register_kwargs[(model, attr[0])] = kwargs
 
 
 def getAttributes(model):

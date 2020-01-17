@@ -38,6 +38,9 @@ Release notes
     The password reset form could be tricked to send the new password to a wrong email address.
   | The same patch can be applied to earlier releases. Contact us if you need help for this.
   | See https://www.djangoproject.com/weblog/2019/dec/18/security-releases/ for full details.
+  | By default frePPLe doesn't configure an SMTP mail server. The password reset functionality
+    isn't active then, and you are NOT impacted by this issue.
+  
 
 6.1.0 (2019/11/29)
 ==================

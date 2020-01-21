@@ -5318,14 +5318,19 @@ class ResourceDetail(OperationPlanMixin, GridReport):
         else:
             base = OperationPlanResource.objects
         base = reportclass.operationplanExtraBasequery(base, request)
-        return base.select_related().extra(
-            select={
-                "opplan_duration": "(operationplan.enddate - operationplan.startdate)",
-                "opplan_net_duration": "(operationplan.enddate - operationplan.startdate - coalesce((operationplan.plan->>'unavailable')::int * interval '1 second', interval '0 second'))",
-                "setup_end": "(operationplan.plan->>'setupend')",
-                "setup_duration": "(operationplan.plan->>'setup')",
-                "feasible": "coalesce((operationplan.plan->>'feasible')::boolean, true)",
-            }
+        return base.select_related().annotate(
+            opplan_duration=RawSQL(
+                "(operationplan.enddate - operationplan.startdate)", []
+            ),
+            opplan_net_duration=RawSQL(
+                "(operationplan.enddate - operationplan.startdate - coalesce((operationplan.plan->>'unavailable')::int * interval '1 second', interval '0 second'))",
+                [],
+            ),
+            setup_end=RawSQL("(operationplan.plan->>'setupend')", []),
+            setup_duration=RawSQL("(operationplan.plan->>'setup')", []),
+            feasible=RawSQL(
+                "coalesce((operationplan.plan->>'feasible')::boolean, true)", []
+            ),
         )
 
     @classmethod
@@ -5540,7 +5545,7 @@ class ResourceDetail(OperationPlanMixin, GridReport):
             extra='"formatoptions":{"defaultValue":""}, "summaryType":"max"',
         ),
         GridFieldText(
-            "demand",
+            "demands",
             title=_("demands"),
             formatter="demanddetail",
             extra='"role":"input/demand"',

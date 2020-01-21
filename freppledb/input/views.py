@@ -3109,7 +3109,8 @@ class OperationPlanMixin:
                     pass
         if "freppledb.forecast" in settings.INSTALLED_APPS:
             return query.annotate(
-                demands=RawSQL("""
+                demands=RawSQL(
+                    """
           select json_agg(json_build_array(value, key, tp))
           from (
             select
@@ -3121,8 +3122,11 @@ class OperationPlanMixin:
             where demand.name is not null or forecast.name is not null
             order by value desc, key desc
             limit 10
-          ) peg""", []),
-                end_items=RawSQL("""
+          ) peg""",
+                    [],
+                ),
+                end_items=RawSQL(
+                    """
           select json_agg(json_build_array(key, val))
           from (
             select coalesce(demand.item_id, forecast.item_id) as key, sum(value::numeric) as val
@@ -3132,12 +3136,14 @@ class OperationPlanMixin:
             group by coalesce(demand.item_id, forecast.item_id)
             order by 2 desc
             limit 10
-            ) peg_items""",[]),
+            ) peg_items""",
+                    [],
+                ),
             )
         else:
             return query.annotate(
-            demands=RawSQL(
-                """
+                demands=RawSQL(
+                    """
           select json_agg(json_build_array(value, key))
           from (
             select key, value
@@ -3145,10 +3151,10 @@ class OperationPlanMixin:
             order by value desc, key desc
             limit 10
             ) peg""",
-                [],
-            ),
-            end_items=RawSQL(
-                """
+                    [],
+                ),
+                end_items=RawSQL(
+                    """
           select json_agg(json_build_array(key, val))
           from (
             select demand.item_id as key, sum(value::numeric) as val
@@ -3158,9 +3164,9 @@ class OperationPlanMixin:
             order by 2 desc
             limit 10
             ) peg_items""",
-                [],
-            ),
-        )
+                    [],
+                ),
+            )
 
 
 class ManufacturingOrderList(OperationPlanMixin, GridReport):
@@ -4940,10 +4946,10 @@ class InventoryDetail(OperationPlanMixin, GridReport):
         else:
             base = OperationPlanMaterial.objects
         base = reportclass.operationplanExtraBasequery(base, request)
-        return base.select_related().extra(
-            select={
-                "feasible": "coalesce((operationplan.plan->>'feasible')::boolean, true)"
-            }
+        return base.select_related().annotate(
+            feasible=RawSQL(
+                "coalesce((operationplan.plan->>'feasible')::boolean, true)", []
+            )
         )
 
     @classmethod
@@ -5170,7 +5176,7 @@ class InventoryDetail(OperationPlanMixin, GridReport):
             extra='"formatoptions":{"defaultValue":""}, "summaryType":"sum"',
         ),
         GridFieldText(
-            "demand",
+            "demands",
             title=_("demands"),
             formatter="demanddetail",
             extra='"role":"input/demand"',

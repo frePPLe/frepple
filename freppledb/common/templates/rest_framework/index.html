@@ -14,7 +14,7 @@ $(function() {
 
 {% block content %}
 <div id="content-summary" class="row"><div class="col-md-12">
-{% blocktrans %}This page helps developers to learn and experiment with the
+{% blocktrans with username=request.user.username %}This page helps developers to learn and experiment with the
 <a style="text-decoration:underline" target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Representational_state_transfer">REST</a>
 API of frePPLe.<br>
 This API allows your application to exchange information with frePPLe.<br>
@@ -29,8 +29,8 @@ For instance, to return the list of all sales orders in JSON format:<br><br>
 <div style="margin-left:20px">
 Using <a style="text-decoration:underline" href="https://en.wikipedia.org/wiki/Basic_access_authentication" target="_blank">basic authentication</a>:<br>
 <div class="well well-sm" style="margin-top:5px">
-wget --http-user={{request.user}} --http-password=PASSWORD http://127.0.0.1:8000/api/input/demand/<br><br>
-curl -u {{request.user}}:PASSWORD http://127.0.0.1:8000/api/input/demand/
+wget --http-user={{username}} --http-password=PASSWORD http://127.0.0.1:8000/api/input/demand/<br><br>
+curl -u {{username}}:PASSWORD http://127.0.0.1:8000/api/input/demand/
 </div>
 Using <a style="text-decoration:underline" href="https://jwt.io/" target="_blank">JSON Web Token authentication</a> valid for the next <input id="jwt" type="number" value="{{exp}}" min="0" step="1" style="width:4em"/>  days:<br>
 <div class="well well-sm" style="margin-top:5px">

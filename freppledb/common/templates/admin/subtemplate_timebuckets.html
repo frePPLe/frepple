@@ -34,14 +34,14 @@
               <input type="radio" name="horizontype" value="0"{% if not request.user.horizontype %} checked{% endif %}/>
               &nbsp;&nbsp;{% trans 'from'|capfirst %}&nbsp;
               <div class="input-group date">
-              <input id="horizonstart"  style="display:inline" type="text" size="9" class="vDateField form-control" value="{{request.user.horizonstart|date:"Y-m-d"}}"/>
+              <input id="horizonstart"  style="display:inline; width:8em" type="text" class="vDateField form-control" value="{{request.user.horizonstart|date:"Y-m-d"}}"/>
               <span class="input-group-addon">
                 <span class="fa fa-calendar"></span>
               </span>
               </div>
               &nbsp;{% trans 'to' %}&nbsp;
               <div class="input-group date">
-              <input id="horizonend" style="display:inline" type="text" size="9" class="vDateField form-control" value="{{request.user.horizonend|date:"Y-m-d"}}"/>
+              <input id="horizonend" style="display:inline; width:8em" type="text" class="vDateField form-control" value="{{request.user.horizonend|date:"Y-m-d"}}"/>
               <span class="input-group-addon">
                 <span class="fa fa-calendar"></span>
               </span>

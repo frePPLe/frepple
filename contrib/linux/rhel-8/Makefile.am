@@ -20,5 +20,5 @@ contrib: $(top_builddir)/frepple-$(VERSION).tar.gz
 	docker build --tag $(TAGNAME)-builder:$(VERSION) --target builder \
           --build-arg RHEL_USER=$(RHEL_USER) \
           --build-arg RHEL_PASSWORD=$(RHEL_PASSWORD) .
-	docker cp `docker create $(TAGNAME)-builder:$(VERSION)`:/home/builder/rpm/RPMS/x86_64/frepple-$(VERSION)-1.x86_64.rpm $(TAGNAME)-frepple-$(VERSION)-1.x86_64.rpm
+	docker cp `docker create $(TAGNAME)-builder:$(VERSION)`:/home/builder/rpm/RPMS/x86_64/frepple-$(VERSION)-1.el8.x86_64.rpm $(TAGNAME)-frepple-$(VERSION)-1.el8.x86_64.rpm
 	rm $(VERSION).tar.gz

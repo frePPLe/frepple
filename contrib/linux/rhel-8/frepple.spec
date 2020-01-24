@@ -17,14 +17,13 @@
 
 Summary: Free Production PLanning
 Name: frepple
-Version: 6.2.0
+Version: 6.3.0
 Release: 1%{?dist}
 License: AGPLv3+
 Group: Applications/Productivity
 URL: http://www.frepple.com
 Source: https://github.com/frePPLe/frepple/archive/%{version}.tar.gz
 BuildRoot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-XXXXXX)
-# Note on dependencies: Django is also required, but we need a custom install.
 Requires: xerces-c, openssl, httpd, python3-mod_wsgi, python3, python3-psycopg2
 Requires(pre): shadow-utils
 BuildRequires: python3-devel, automake, autoconf, libtool, xerces-c-devel
@@ -43,16 +42,16 @@ Requires: %{name} = %{version}-%{release}
 These are the libraries and header files need for developing plug-ins and
 extensions of frePPLe - free Production PLanning.
 
-%package doc
-Summary: Documentation subpackage for frePPLe
-Group: Documentation
-Requires: %{name} = %{version}-%{release}
-%if 0%{?fedora} || 0%{?rhel} > 5
-BuildArch: noarch
-%endif
-
-%description doc
-Documentation subpackage for frePPLe - free Production PLanning.
+#%package doc
+#Summary: Documentation subpackage for frePPLe
+#Group: Documentation
+#Requires: %{name} = %{version}-%{release}
+#%if 0%{?fedora} || 0%{?rhel} > 5
+#BuildArch: noarch
+#%endif
+#
+#%description doc
+#Documentation subpackage for frePPLe - free Production PLanning.
 
 %pre
 # Add frepple group.
@@ -68,7 +67,7 @@ usermod -a -G frepple apache
 %configure \
   --disable-static \
   --disable-dependency-tracking \
-  --enable-doc
+  --disable-doc
 # Remove rpath from libtool
 sed -i 's|^hardcode_libdir_flag_spec=.*|hardcode_libdir_flag_spec=""|g' libtool
 sed -i 's|^runpath_var=LD_RUN_PATH|runpath_var=DIE_RPATH_DIE|g' libtool
@@ -79,9 +78,9 @@ make %{?_smp_mflags} all
 
 #%check
 # Run test suite. We skip some long, broken or less interesting tests.
-TESTARGS="--regression -e operation_routing -e constraints_combined_1 -e wip"
+TESTARGS="--regression -e operation_routing -e constraints_combined_1 -e wip -e move_in_2 -e move_out_2 -e move_out_3 -e wip_sweep"
 export TESTARGS
-make check
+cd test && make check
 
 %install
 rm -rf %{buildroot}
@@ -131,7 +130,6 @@ rm -rf /var/log/frepple
 %{python3_sitearch}/*
 %{_mandir}/man1/frepple.1.*
 %{_mandir}/man1/frepplectl.1.*
-%doc COPYING
 %config(noreplace) %{_sysconfdir}/httpd/conf.d/z_frepple.conf
 %attr(0660,-,frepple) %config(noreplace) %{_sysconfdir}/frepple/license.xml
 %attr(0660,-,frepple) %config(noreplace) %{_sysconfdir}/frepple/djangosettings.py
@@ -146,6 +144,3 @@ rm -rf /var/log/frepple
 %{_includedir}/frepple.h
 %{_includedir}/freppleinterface.h
 
-%files doc
-%defattr(-,root,root,-)
-%doc doc/_build/html

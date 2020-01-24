@@ -2720,6 +2720,7 @@ class GridPivot(GridReport):
                 yield sf.getvalue()
         else:
             currentkey = None
+            row_of_buckets = None
             for row in query:
                 # We use the first field in the output to recognize new rows.
                 if not currentkey:
@@ -2780,52 +2781,53 @@ class GridPivot(GridReport):
                     currentkey = row[request.rows[0].name]
                     row_of_buckets = [row]
             # Write the last entity
-            for cross in mycrosses:
-                # Clear the return string buffer
-                sf.seek(0)
-                sf.truncate(0)
-                fields = [
-                    cls._getCSVValue(
-                        row_of_buckets[0][s.name],
-                        field=s,
-                        request=request,
-                        decimal_separator=decimal_separator,
-                    )
-                    for s in myrows
-                    if s.name
-                ]
-                fields.extend(
-                    [
-                        force_text(
-                            capfirst(
-                                _(
-                                    (
-                                        cross[1]["title"](request)
-                                        if callable(cross[1]["title"])
-                                        else cross[1]["title"]
+            if row_of_buckets:
+                for cross in mycrosses:
+                    # Clear the return string buffer
+                    sf.seek(0)
+                    sf.truncate(0)
+                    fields = [
+                        cls._getCSVValue(
+                            row_of_buckets[0][s.name],
+                            field=s,
+                            request=request,
+                            decimal_separator=decimal_separator,
+                        )
+                        for s in myrows
+                        if s.name
+                    ]
+                    fields.extend(
+                        [
+                            force_text(
+                                capfirst(
+                                    _(
+                                        (
+                                            cross[1]["title"](request)
+                                            if callable(cross[1]["title"])
+                                            else cross[1]["title"]
+                                        )
+                                        if "title" in cross[1]
+                                        else cross[0]
                                     )
-                                    if "title" in cross[1]
-                                    else cross[0]
-                                )
-                            ),
-                            encoding=settings.CSV_CHARSET,
-                            errors="ignore",
-                        )
-                    ]
-                )
-                fields.extend(
-                    [
-                        force_text(
-                            _localize(bucket[cross[0]], decimal_separator),
-                            encoding=settings.CSV_CHARSET,
-                            errors="ignore",
-                        )
-                        for bucket in row_of_buckets
-                    ]
-                )
-                # Return string
-                writer.writerow(fields)
-                yield sf.getvalue()
+                                ),
+                                encoding=settings.CSV_CHARSET,
+                                errors="ignore",
+                            )
+                        ]
+                    )
+                    fields.extend(
+                        [
+                            force_text(
+                                _localize(bucket[cross[0]], decimal_separator),
+                                encoding=settings.CSV_CHARSET,
+                                errors="ignore",
+                            )
+                            for bucket in row_of_buckets
+                        ]
+                    )
+                    # Return string
+                    writer.writerow(fields)
+                    yield sf.getvalue()
 
     @classmethod
     def _generate_spreadsheet_data(cls, request, output, *args, **kwargs):

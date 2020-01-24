@@ -15,12 +15,19 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+from django.http import StreamingHttpResponse
 from django.test import TestCase
 
 
 class OutputTest(TestCase):
 
     fixtures = ["demo"]
+
+    def checkResponse(self, response):
+        if isinstance(response, StreamingHttpResponse):
+            for rec in response.streaming_content:
+                rec
+        self.assertEqual(response.status_code, 200)
 
     def setUp(self):
         # Login
@@ -29,60 +36,60 @@ class OutputTest(TestCase):
     # Buffer
     def test_output_buffer(self):
         response = self.client.get("/buffer/?format=json")
-        self.assertEqual(response.status_code, 200)
         self.assertContains(response, '"records":0,')
-        response = self.client.get("/buffer/?format=csvtable")
         self.assertEqual(response.status_code, 200)
+        response = self.client.get("/buffer/?format=csvtable")
+        self.checkResponse(response)
         self.assertTrue(
             response.__getitem__("Content-Type").startswith("text/csv; charset=")
         )
         response = self.client.get("/buffer/?format=csvlist")
-        self.assertEqual(response.status_code, 200)
+        self.checkResponse(response)
         self.assertTrue(
             response.__getitem__("Content-Type").startswith("text/csv; charset=")
         )
         response = self.client.get("/buffer/?format=spreadsheettable")
-        self.assertEqual(response.status_code, 200)
+        self.checkResponse(response)
         self.assertTrue(
             response.__getitem__("Content-Type").startswith(
                 "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
             )
         )
         response = self.client.get("/flowplan/?format=json")
-        self.assertEqual(response.status_code, 200)
+        self.checkResponse(response)
 
     # Resource
     def test_output_resource(self):
         response = self.client.get("/resource/?format=json")
-        self.assertEqual(response.status_code, 200)
         self.assertContains(response, '"records":3,')
-        response = self.client.get("/resource/?format=csvtable")
         self.assertEqual(response.status_code, 200)
+        response = self.client.get("/resource/?format=csvtable")
+        self.checkResponse(response)
         self.assertTrue(
             response.__getitem__("Content-Type").startswith("text/csv; charset=")
         )
         response = self.client.get("/resource/?format=spreadsheetlist")
-        self.assertEqual(response.status_code, 200)
+        self.checkResponse(response)
         self.assertTrue(
             response.__getitem__("Content-Type").startswith(
                 "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
             )
         )
         response = self.client.get("/loadplan/?format=json")
-        self.assertEqual(response.status_code, 200)
+        self.checkResponse(response)
 
     # Demand
     def test_output_demand(self):
         response = self.client.get("/demand/")
-        self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Demand report")
-        response = self.client.get("/demand/?format=csvlist")
         self.assertEqual(response.status_code, 200)
+        response = self.client.get("/demand/?format=csvlist")
+        self.checkResponse(response)
         self.assertTrue(
             response.__getitem__("Content-Type").startswith("text/csv; charset=")
         )
         response = self.client.get("/demand/?format=spreadsheettable")
-        self.assertEqual(response.status_code, 200)
+        self.checkResponse(response)
         self.assertTrue(
             response.__getitem__("Content-Type").startswith(
                 "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
@@ -92,15 +99,15 @@ class OutputTest(TestCase):
     # Manufacturing orders
     def test_output_manufacturing_orders(self):
         response = self.client.get("/operation/?format=json")
-        self.assertEqual(response.status_code, 200)
         self.assertContains(response, '"records":0,')
-        response = self.client.get("/operation/?format=csvtable")
         self.assertEqual(response.status_code, 200)
+        response = self.client.get("/operation/?format=csvtable")
+        self.checkResponse(response)
         self.assertTrue(
             response.__getitem__("Content-Type").startswith("text/csv; charset=")
         )
         response = self.client.get("/operation/?format=spreadsheetlist")
-        self.assertEqual(response.status_code, 200)
+        self.checkResponse(response)
         self.assertTrue(
             response.__getitem__("Content-Type").startswith(
                 "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
@@ -110,15 +117,15 @@ class OutputTest(TestCase):
     # Purchase orders
     def test_output_purchase_orders(self):
         response = self.client.get("/purchase/?format=json")
-        self.assertEqual(response.status_code, 200)
         self.assertContains(response, '"records":4,')
-        response = self.client.get("/purchase/?format=csvtable")
         self.assertEqual(response.status_code, 200)
+        response = self.client.get("/purchase/?format=csvtable")
+        self.checkResponse(response)
         self.assertTrue(
             response.__getitem__("Content-Type").startswith("text/csv; charset=")
         )
         response = self.client.get("/purchase/?format=spreadsheetlist")
-        self.assertEqual(response.status_code, 200)
+        self.checkResponse(response)
         self.assertTrue(
             response.__getitem__("Content-Type").startswith(
                 "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
@@ -128,15 +135,15 @@ class OutputTest(TestCase):
     # Distribution orders
     def test_output_distribution_orders(self):
         response = self.client.get("/distribution/?format=json")
-        self.assertEqual(response.status_code, 200)
         self.assertContains(response, '"records":0,')
-        response = self.client.get("/distribution/?format=csvtable")
         self.assertEqual(response.status_code, 200)
+        response = self.client.get("/distribution/?format=csvtable")
+        self.checkResponse(response)
         self.assertTrue(
             response.__getitem__("Content-Type").startswith("text/csv; charset=")
         )
         response = self.client.get("/distribution/?format=spreadsheetlist")
-        self.assertEqual(response.status_code, 200)
+        self.checkResponse(response)
         self.assertTrue(
             response.__getitem__("Content-Type").startswith(
                 "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
@@ -146,15 +153,15 @@ class OutputTest(TestCase):
     # Problem
     def test_output_problem(self):
         response = self.client.get("/problem/?format=json")
-        self.assertEqual(response.status_code, 200)
         self.assertContains(response, '"records":0,')  # specific for community
-        response = self.client.get("/problem/?format=csvlist")
         self.assertEqual(response.status_code, 200)
+        response = self.client.get("/problem/?format=csvlist")
+        self.checkResponse(response)
         self.assertTrue(
             response.__getitem__("Content-Type").startswith("text/csv; charset=")
         )
         response = self.client.get("/problem/?format=spreadsheetlist")
-        self.assertEqual(response.status_code, 200)
+        self.checkResponse(response)
         self.assertTrue(
             response.__getitem__("Content-Type").startswith(
                 "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
@@ -165,20 +172,20 @@ class OutputTest(TestCase):
     def test_output_pegging(self):
         response = self.client.get("/demandpegging/Demand%2001/?format=json")
         self.assertContains(response, '"records":1,')
-        self.assertEqual(response.status_code, 200)
+        self.checkResponse(response)
 
     # Constraint
     def test_output_constraint(self):
         response = self.client.get("/constraint/?format=json")
-        self.assertEqual(response.status_code, 200)
         self.assertContains(response, '"records":0,')
-        response = self.client.get("/constraint/?format=csvlist")
         self.assertEqual(response.status_code, 200)
+        response = self.client.get("/constraint/?format=csvlist")
+        self.checkResponse(response)
         self.assertTrue(
             response.__getitem__("Content-Type").startswith("text/csv; charset=")
         )
         response = self.client.get("/constraint/?format=spreadsheetlist")
-        self.assertEqual(response.status_code, 200)
+        self.checkResponse(response)
         self.assertTrue(
             response.__getitem__("Content-Type").startswith(
                 "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
@@ -188,15 +195,15 @@ class OutputTest(TestCase):
     # KPI
     def test_output_kpi(self):
         response = self.client.get("/kpi/")
-        self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Performance Indicators")
-        response = self.client.get("/kpi/?format=csvlist")
         self.assertEqual(response.status_code, 200)
+        response = self.client.get("/kpi/?format=csvlist")
+        self.checkResponse(response)
         self.assertTrue(
             response.__getitem__("Content-Type").startswith("text/csv; charset=")
         )
         response = self.client.get("/kpi/?format=spreadsheetlist")
-        self.assertEqual(response.status_code, 200)
+        self.checkResponse(response)
         self.assertTrue(
             response.__getitem__("Content-Type").startswith(
                 "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"

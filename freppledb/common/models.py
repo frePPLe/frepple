@@ -633,9 +633,9 @@ class UserPreference(models.Model):
     objects = UserPreferenceManager()
 
     id = models.AutoField(_("identifier"), primary_key=True)
-    # Translators: Translation included with Django
     user = models.ForeignKey(
         User,
+        # Translators: Translation included with Django
         verbose_name=_("user"),
         blank=False,
         null=True,

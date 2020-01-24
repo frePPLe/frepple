@@ -126,10 +126,9 @@ a {
 }
 
 div.sphinxsidebar {
-  float: left;
-  padding-right: 15px;
+  position: fixed;
   height: 100%;
-  margin: 0;
+  margin-left: -260px;
   text-align: left;
 }
 

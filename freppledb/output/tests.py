@@ -153,7 +153,7 @@ class OutputTest(TestCase):
     # Problem
     def test_output_problem(self):
         response = self.client.get("/problem/?format=json")
-        self.assertContains(response, '"records":0,')  # specific for community
+        self.assertContains(response, '"records":0,')
         self.assertEqual(response.status_code, 200)
         response = self.client.get("/problem/?format=csvlist")
         self.checkResponse(response)

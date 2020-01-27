@@ -2190,7 +2190,7 @@ $(function() {
   // Send django's CRSF token with every POST request to the same site
   $(document).ajaxSend(function(event, xhr, settings) {
     if (!/^(GET|HEAD|OPTIONS|TRACE)$/.test(settings.type) && sameOrigin(settings.url))
-      xhr.setRequestHeader("X-CSRFToken", getToken());
+      xhr.setRequestHeader("X-CSRFToken", getCookie("csrftoken"));
     });
 
   // Never cache ajax results
@@ -2226,16 +2226,27 @@ $(function() {
 
 
 //----------------------------------------------------------------------------
-// Return the value of the csrf-token
+// Cookie manipulation functions
 //----------------------------------------------------------------------------
 
-function getToken()
-{
+function getCookie(name) {
   var allcookies = document.cookie.split(';');
-  for (var i = allcookies.length; i >= 0; i-- )
-    if (jQuery.trim(allcookies[i]).indexOf("csrftoken=") == 0)
-      return jQuery.trim(jQuery.trim(allcookies[i]).substr(10));
-  return 'none';
+  var search = name + '=';
+  for (var i = allcookies.length; i >= 0; i--)
+    if (jQuery.trim(allcookies[i]).indexOf(search) == 0)
+      return jQuery.trim(allcookies[i]).substr(search.length);
+  return null;
+}
+
+function setCookie(name, value, days) {
+	// When the expiry is unspecified, you get a cookie valid for the browser session
+  var expires = "";
+  if (days) {
+      var date = new Date();
+      date.setTime(date.getTime() + (days*24*60*60*1000));
+      expires = "; expires=" + date.toUTCString();
+  }
+  document.cookie = name + "=" + (value || "")  + expires + "; path=/";
 }
 
 

@@ -9,7 +9,9 @@
 {% block extrahead %}{% endblock %}
 {% if tzoffset is None %}
 <script>
-document.cookie = 'tzoffset=' + (new Date().getTimezoneOffset() * 60);
+$(function() {
+  setCookie('tzoffset', new Date().getTimezoneOffset() * 60);
+});
 </script>
 {% endif %}
 </head>

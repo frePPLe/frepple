@@ -77,24 +77,24 @@ def usage():
     # Print help information and exit
     print(
         """
-    Usage to run all tests:
-      ./runtest.py [options]
+        Usage to run all tests:
+          ./runtest.py [options]
 
-    Usage with list of tests to run:
-      ./runtest.py [options] {test1} {test2} ...
+        Usage with list of tests to run:
+          ./runtest.py [options] {test1} {test2} ...
 
-    With the following options:
-      -v  --vcc:
-         Test executables created by Microsoft Visual Studio C++ compiler.
-      -d  --debug:
-         Verbose output of the test.
-      -r  --regression:
-         Run only the tests that are relevant for a regression test.
-         The full test suite also includes some extra tests for testing other aspects.
-      -e  --exclude:'
-         Skip a specific test from the suite.
-         This option can be specified multiple times.
-    """
+        With the following options:
+          -v  --vcc:
+             Test executables created by Microsoft Visual Studio C++ compiler.
+          -d  --debug:
+             Verbose output of the test.
+          -r  --regression:
+             Run only the tests that are relevant for a regression test.
+             The full test suite also includes some extra tests for testing other aspects.
+          -e  --exclude:'
+             Skip a specific test from the suite.
+             This option can be specified multiple times.
+        """
     )
 
 

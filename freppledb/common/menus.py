@@ -47,6 +47,7 @@ class MenuItem:
         permission=None,
         dependencies=None,
         admin=False,
+        callback=None,
     ):
         self.name = name
         self.url = url
@@ -70,6 +71,7 @@ class MenuItem:
         self.permission = permission
         self.dependencies = dependencies
         self.admin = admin
+        self.callback = callback
 
     def __str__(self):
         return self.name
@@ -167,6 +169,7 @@ class Menu:
         permission=None,
         dependencies=None,
         admin=False,
+        callback=None,
     ):
         for i in range(len(self._groups)):
             if self._groups[i][0] == group:
@@ -190,6 +193,7 @@ class Menu:
                         it["separator"] = separator
                         it["model"] = model
                         it["admin"] = admin
+                        it["callback"] = callback
                         return
                 # Create a new item
                 self._groups[i][3].append(
@@ -208,6 +212,7 @@ class Menu:
                         permission=permission,
                         dependencies=dependencies,
                         admin=admin,
+                        callback=callback,
                     )
                 )
                 return

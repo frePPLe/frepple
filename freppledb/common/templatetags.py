@@ -430,8 +430,8 @@ register.filter(admin_unquote)
 
 class MenuNode(Node):
     r"""
-  A tag to return HTML code for the menu.
-  """
+    A tag to return HTML code for the menu.
+    """
 
     def __init__(self, varname):
         self.varname = varname
@@ -449,25 +449,35 @@ class MenuNode(Node):
         with connections[req.database].cursor() as cursor:
             cursor.execute(
                 """
-        select table_name from (
-          select table_name,
-            query_to_xml(
-              format('select 1 as cnt from %I.%I limit 1', table_schema, table_name),
-              false, true, ''
-              ) as xml_count
-          from information_schema.tables
-          where table_schema = 'public' and table_type = 'BASE TABLE'
-          ) s
-        where xml_count is document
-        """
+                select table_name from (
+                  select table_name,
+                    query_to_xml(
+                      format('select 1 as cnt from %I.%I limit 1', table_schema, table_name),
+                      false, true, ''
+                      ) as xml_count
+                  from information_schema.tables
+                  where table_schema = 'public' and table_type = 'BASE TABLE'
+                  ) s
+                where xml_count is document
+                """
             )
             present = set([i[0] for i in cursor])
+
+        def generator(i):
+            for j in i[1]:
+                if callable(j[2].callback):
+                    # Dynamic definition of menu items with a callback function
+                    for x in j[2].callback(req):
+                        yield x
+                else:
+                    # Static definition of the menu
+                    yield j
 
         for i in menu.getMenu(req.LANGUAGE_CODE):
             group = [i[0], [], False]
             empty = True
             kept_back = None
-            for j in i[1]:
+            for j in generator(i):
                 if j[2].has_permission(req.user):
                     ok = True
                     if j[2].dependencies:

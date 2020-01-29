@@ -32,25 +32,6 @@ class Migration(migrations.Migration):
             name="SQLReport",
             fields=[
                 (
-                    "source",
-                    models.CharField(
-                        blank=True,
-                        db_index=True,
-                        max_length=300,
-                        null=True,
-                        verbose_name="source",
-                    ),
-                ),
-                (
-                    "lastmodified",
-                    models.DateTimeField(
-                        db_index=True,
-                        default=django.utils.timezone.now,
-                        editable=False,
-                        verbose_name="last modified",
-                    ),
-                ),
-                (
                     "id",
                     models.AutoField(
                         primary_key=True, serialize=False, verbose_name="identifier"
@@ -85,6 +66,25 @@ class Migration(migrations.Migration):
                         related_name="reports",
                         to=settings.AUTH_USER_MODEL,
                         verbose_name="user",
+                    ),
+                ),
+                (
+                    "source",
+                    models.CharField(
+                        blank=True,
+                        db_index=True,
+                        max_length=300,
+                        null=True,
+                        verbose_name="source",
+                    ),
+                ),
+                (
+                    "lastmodified",
+                    models.DateTimeField(
+                        db_index=True,
+                        default=django.utils.timezone.now,
+                        editable=False,
+                        verbose_name="last modified",
                     ),
                 ),
             ],

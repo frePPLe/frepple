@@ -28,6 +28,7 @@ from django.http import (
     StreamingHttpResponse,
     HttpResponse,
     JsonResponse,
+    HttpResponseForbidden,
     HttpResponseNotAllowed,
 )
 from django.shortcuts import render
@@ -91,14 +92,86 @@ def getSchema(request):
 class ReportManager(View):
 
     title = _("report manager")
-    permissions = (("create_custom_report", "Can create custom reports"),)
     template = "reportmanager/reportmanager.html"
     reportkey = "reportmanager.reportmanager"
 
     @classmethod
     def has_permission(cls, user):
-        # TODO not implemented yet!   if public, all can see. If private only user can see
-        return True
+        return user.has_perm("reportmanager.create_sqlreport")
+
+    @classmethod
+    def runQuery(cls, database, sql):
+        try:
+            with connections[database].cursor() as cursor:
+                with transaction.atomic():
+                    cursor.execute(sql=sql)
+                    if cursor.description:
+                        counter = 0
+                        columns = []
+                        colmodel = []
+                        for f in cursor.description:
+                            columns.append(f[0])
+                            colmodel.append(cls.getColModel(f[0], f[1], counter))
+                            counter += 1
+
+                        yield """{
+                                    "rowcount": %s,
+                                    "status": "ok",
+                                    "columns": %s,
+                                    "colmodel": %s,
+                                    "data": [
+                                    """ % (
+                            cursor.rowcount,
+                            json.dumps(columns),
+                            json.dumps(colmodel),
+                        )
+                        first = True
+                        for result in cursor.fetchall():
+                            if first:
+                                yield json.dumps(
+                                    dict(
+                                        zip(
+                                            columns,
+                                            [
+                                                i
+                                                if i is None
+                                                else i.total_seconds()
+                                                if isinstance(i, timedelta)
+                                                else str(i)
+                                                for i in result
+                                            ],
+                                        )
+                                    )
+                                )
+                                first = False
+                            else:
+                                yield ",%s" % json.dumps(
+                                    dict(
+                                        zip(
+                                            columns,
+                                            [
+                                                i
+                                                if i is None
+                                                else i.total_seconds()
+                                                if isinstance(i, timedelta)
+                                                else str(i)
+                                                for i in result
+                                            ],
+                                        )
+                                    )
+                                )
+                        yield "]}"
+                    elif cursor.rowcount:
+                        yield '{"rowcount": %s, "status": "Updated %s rows"}' % (
+                            cursor.rowcount,
+                            cursor.rowcount,
+                        )
+                    else:
+                        yield '{"rowcount": %s, "status": "Done"}' % cursor.rowcount
+        except GeneratorExit:
+            pass
+        except Exception as e:
+            yield json.dumps({"status": str(e)})
 
     @classmethod
     def get(cls, request, *args, **kwargs):
@@ -107,25 +180,93 @@ class ReportManager(View):
         )
         if args:
             report = SQLReport.objects.using(request.database).get(pk=args[0])
+            if not report.public and report.user.id != request.user.id:
+                return HttpResponseForbidden("You're not the owner of this report")
         else:
             report = None
-        return render(
-            request,
-            cls.template,
-            {
-                "title": report.name if report else _("Report manager"),
-                "report": report,
-                "reportkey": "%s.%s" % (cls.reportkey, report.id)
-                if report
-                else cls.reportkey,
-            },
-        )
+            if not cls.has_permission(request.user):
+                return HttpResponseForbidden("<h1>%s</h1>" % _("Permission denied"))
+
+        if report and "format" in request.GET:
+            return StreamingHttpResponse(
+                content_type="application/json; charset=%s" % settings.DEFAULT_CHARSET,
+                streaming_content=cls.runQuery(
+                    database=request.database, sql=report.sql
+                ),
+            )
+
+        else:
+            return render(
+                request,
+                cls.template,
+                {
+                    "title": report.name if report else _("Report manager"),
+                    "report": report,
+                    "reportkey": "%s.%s" % (cls.reportkey, report.id)
+                    if report
+                    else cls.reportkey,
+                },
+            )
 
     @method_decorator(staff_member_required)
     @method_decorator(csrf_protect)
     @method_decorator(never_cache)
     def dispatch(self, *args, **kwargs):
         return super().dispatch(*args, **kwargs)
+
+    @classmethod
+    def post(cls, request, *args, **kwargs):
+        # Allow only post from superusers
+        if not request.user.is_superuser:
+            return HttpResponseNotAllowed(
+                ["post"], content="Only a superuser can execute SQL statements"
+            )
+        if request.method != "POST" or not request.is_ajax():
+            return HttpResponseForbidden("<h1>%s</h1>" % _("Permission denied"))
+
+        if "format" in request.POST:
+            formatted = sqlparse.format(
+                request.POST.get("sql", ""),
+                keyword_case="lower",
+                identifier_case="lower",
+                strip_comments=False,
+                reindent=True,
+                wrap_after=50,
+                indent_tabs=False,
+                indent_width=2,
+            )
+            return JsonResponse({"formatted": formatted})
+
+        elif "save" in request.POST:
+            if "id" in request.POST:
+                m = SQLReport.objects.using(request.database).get(pk=request.POST["id"])
+                if m.user.id != request.user.id:
+                    return HttpResponseForbidden("You're not the owner of this report")
+                f = SQLReportForm(request.POST, instance=m)
+            else:
+                f = SQLReportForm(request.POST)
+            if f.is_valid():
+                m = f.save(commit=False)
+                m.user = request.user
+                m.save()
+            return JsonResponse({"result": 1})
+
+        elif "delete" in request.POST:
+            SQLReport.objects.using(request.database).filter(
+                pk=request.POST["id"], user=request.user
+            ).delete()
+            return HttpResponse("ok")
+
+        elif "test" in request.POST:
+            return StreamingHttpResponse(
+                content_type="application/json; charset=%s" % settings.DEFAULT_CHARSET,
+                streaming_content=cls.runQuery(
+                    database=request.database, sql=request.POST["sql"]
+                ),
+            )
+
+        else:
+            return HttpResponseNotAllowed("Unknown post request")
 
     @classmethod
     def getColModel(cls, name, oid, counter):
@@ -277,126 +418,3 @@ class ReportManager(View):
                 }
             )
         return colmodel
-
-    @classmethod
-    def post(cls, request, *args, **kwargs):
-        # Allow only post from superusers
-        if not request.user.is_superuser:
-            return HttpResponseNotAllowed(
-                ["post"], content="Only a superuser can execute SQL statements"
-            )
-        if request.method != "POST" or not request.is_ajax():
-            return HttpResponseNotAllowed("Only ajax post requests allowed")
-
-        if "format" in request.POST:
-            formatted = sqlparse.format(
-                request.POST.get("sql", ""),
-                keyword_case="lower",
-                identifier_case="lower",
-                strip_comments=False,
-                reindent=True,
-                wrap_after=50,
-                indent_tabs=False,
-                indent_width=2,
-            )
-            return JsonResponse({"formatted": formatted})
-
-        elif "save" in request.POST:
-            f = SQLReportForm(request.POST)
-            if f.is_valid():
-                m = f.save(commit=False)
-                m.user = request.user
-                m.save()
-            return JsonResponse({"result": 1})
-
-        elif "delete" in request.POST:
-            SQLReport.objects.using(request.database).filter(
-                pk=request.POST["id"]
-            ).delete()
-            return HttpResponse("ok")
-
-        elif "test" in request.POST:
-
-            def runQuery():
-                try:
-                    with connections[request.database].cursor() as cursor:
-                        with transaction.atomic():
-                            cursor.execute(sql=request.POST["sql"])
-                            if cursor.description:
-                                counter = 0
-                                columns = []
-                                colmodel = []
-                                for f in cursor.description:
-                                    columns.append(f[0])
-                                    colmodel.append(
-                                        cls.getColModel(f[0], f[1], counter)
-                                    )
-                                    counter += 1
-
-                                yield """{
-                                    "rowcount": %s,
-                                    "status": "ok",
-                                    "columns": %s,
-                                    "colmodel": %s,
-                                    "data": [
-                                    """ % (
-                                    cursor.rowcount,
-                                    json.dumps(columns),
-                                    json.dumps(colmodel),
-                                )
-                                first = True
-                                for result in cursor.fetchall():
-                                    if first:
-                                        yield json.dumps(
-                                            dict(
-                                                zip(
-                                                    columns,
-                                                    [
-                                                        i
-                                                        if i is None
-                                                        else i.total_seconds()
-                                                        if isinstance(i, timedelta)
-                                                        else str(i)
-                                                        for i in result
-                                                    ],
-                                                )
-                                            )
-                                        )
-                                        first = False
-                                    else:
-                                        yield ",%s" % json.dumps(
-                                            dict(
-                                                zip(
-                                                    columns,
-                                                    [
-                                                        i
-                                                        if i is None
-                                                        else i.total_seconds()
-                                                        if isinstance(i, timedelta)
-                                                        else str(i)
-                                                        for i in result
-                                                    ],
-                                                )
-                                            )
-                                        )
-                                yield "]}"
-                            elif cursor.rowcount:
-                                yield '{"rowcount": %s, "status": "Updated %s rows"}' % (
-                                    cursor.rowcount,
-                                    cursor.rowcount,
-                                )
-                            else:
-                                yield '{"rowcount": %s, "status": "Done"}' % cursor.rowcount
-                except GeneratorExit:
-                    pass
-                except Exception as e:
-                    yield json.dumps({"status": str(e)})
-
-            return StreamingHttpResponse(
-                content_type="application/json; charset=%s" % settings.DEFAULT_CHARSET,
-                streaming_content=runQuery(),
-            )
-
-        else:
-            print("request.", request.POST)
-            return HttpResponseNotAllowed("Unknown post request")

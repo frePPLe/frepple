@@ -85,7 +85,7 @@ $(function() {
       	"sql": $("#reportmanager_statements").val(),
       	"save": true,
       	"name": $("#id_name").val(),
-      	"public": $("#id_shared").is(":checked"),
+      	"public": $("#id_public").is(":checked"),
       	"description": $("#id_description").val()
       	},
       async: true
@@ -135,7 +135,15 @@ $(function() {
 	});
 	
 	{% if report %}
-	$("#reportmanager_test").click();
+  xhr = $.ajax({
+      url: url_prefix + "/reportmanager/{{report.id}}/",
+      type: 'GET',
+      dataType: 'json',
+      data: {"format": "json"},
+      success: render,
+      error: render,
+      async: true
+      });
 	{% else %}
 	getSchema();
 	{% endif %}
@@ -167,13 +175,13 @@ $(function() {
   <button class="btn btn-xs btn-primary" onclick="grid.showCustomize(true)">
     <span data-toggle="tooltip" data-placement="top" title="" class="fa fa-wrench" data-original-title="{% trans 'customize'|capfirst|force_escape %}"></span>
   </button>
-  {% if perms.reportmanager.change_sqlreport %}
+  {% if perms.reportmanager.create_sqlreport %}
   <button class="btn btn-xs btn-primary" onclick="startEdit()" data-toggle="tooltip" data-placement="top" data-original-title="{% trans 'edit'|capfirst|force_escape %}">
     <span class="fa fa-pencil"></span>
   </button>
   {% endif %}
   <button class="btn btn-xs btn-primary" 
-    onclick="window.open('{% setting "DOCUMENTATION_URL" %}/docs/{% version_short %}/user-guide/user-interface/executesql.html');"
+    onclick="window.open('{% setting "DOCUMENTATION_URL" %}/docs/{% version_short %}/user-guide/user-interface/reportmanager.html');"
     data-toggle="tooltip" data-placement="top" data-original-title="{% trans 'help'|capfirst|force_escape %}">
     <span class="fa fa-question"></span>
   </button>
@@ -194,10 +202,10 @@ $(function() {
 
 <div class="row">
 <div class="control-label col-md-3">
-  <label for="id_shared">{% trans "shared"|capfirst %}:</label>
+  <label for="id_public">{% trans "public"|capfirst %}:</label>
 </div>
 <div class="controls col-md-9">
-  <input type="checkbox" name="shared" class="form-control" {% if report.shared %}checked {% endif %}id="id_shared">
+  <input type="checkbox" name="public" class="form-control" {% if report.public %}checked {% endif %}id="id_public">
 </div>
 </div>
 
@@ -207,7 +215,8 @@ $(function() {
 </div>
 <div class="controls col-md-9">
   <input type="text" name="description" class="form-control vTextField" maxlength="500"
-    placeholder="{% trans "description"|capfirst %}" required="" value="{{report.name}}" id="id_description">
+    placeholder="{% trans "description"|capfirst %}" id="id_description"
+    {% if report.description %}value="{{report.description}}"{% endif %}>
 </div>
 </div>
 

@@ -50,7 +50,7 @@ class SQLReportForm(ModelForm):
         fields = "__all__"
 
 
-@permission_required("create_custom_report", raise_exception=True)
+@permission_required("reportmanager.create_sqlreport", raise_exception=True)
 def getSchema(request):
     """
     Construct schema information of the following form, sorted by db_table_name.

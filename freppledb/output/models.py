@@ -38,6 +38,7 @@ class Problem(models.Model):
         ordering = ["startdate"]
         verbose_name = _("problem")
         verbose_name_plural = _("problems")
+        default_permissions = []
 
 
 class Constraint(models.Model):
@@ -60,6 +61,7 @@ class Constraint(models.Model):
         ordering = ["demand", "startdate"]
         verbose_name = _("constraint")
         verbose_name_plural = _("constraints")
+        default_permissions = []
 
 
 class ResourceSummary(models.Model):
@@ -83,3 +85,4 @@ class ResourceSummary(models.Model):
             "resource summary"
         )  # No need to translate these since only used internally
         verbose_name_plural = "resource summaries"
+        default_permissions = []

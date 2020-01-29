@@ -26,14 +26,14 @@ logger = logging.getLogger(__name__)
 
 class Task(models.Model):
     """
-  Expected status values are:
-    - 'Waiting'
-    - 'Done'
-    - 'Failed'
-    - 'Canceled'
-    - 'DD%', where DD represents the percentage completed
-  Other values are okay, but the above have translations.
-  """
+    Expected status values are:
+      - 'Waiting'
+      - 'Done'
+      - 'Failed'
+      - 'Canceled'
+      - 'DD%', where DD represents the percentage completed
+    Other values are okay, but the above have translations.
+    """
 
     # Database fields
     id = models.AutoField(_("identifier"), primary_key=True, editable=False)
@@ -68,6 +68,7 @@ class Task(models.Model):
         db_table = "execute_log"
         verbose_name_plural = _("tasks")
         verbose_name = _("task")
+        default_permissions = ["view"]
 
     @staticmethod
     def submitTask():

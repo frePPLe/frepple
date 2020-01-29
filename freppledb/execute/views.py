@@ -65,15 +65,16 @@ from freppledb.execute.management.commands.runworker import checkActive
 
 import logging
 
+
 logger = logging.getLogger(__name__)
 
 
 def sendStaticFile(request, filename, folder):
     """
-  Serving log and data files can be handled either:
-  - by Django's Python code
-  - by the apache web server if the module xsendfile is installed
-  """
+    Serving log and data files can be handled either:
+    - by Django's Python code
+    - by the apache web server if the module xsendfile is installed
+    """
     if getattr(settings, "APACHE_XSENDFILE", False):
         # Forward to Apache
         # Code inspired on https://github.com/johnsensible/django-sendfile/
@@ -89,8 +90,8 @@ def sendStaticFile(request, filename, folder):
 
 class TaskReport(GridReport):
     """
-  A list report to review the history of actions.
-  """
+    A list report to review the history of actions.
+    """
 
     template = "execute/execute.html"
     title = _("Task status")

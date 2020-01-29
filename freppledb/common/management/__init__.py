@@ -50,14 +50,12 @@ def createExtraPermissions(sender, using=DEFAULT_DB_ALIAS, **kwargs):
 
 
 def removePermissions(sender, using=DEFAULT_DB_ALIAS, **kwargs):
-    removeModelPermissions(
-        "common", "scenario", using, exclude=["copy_scenario", "release_scenario"]
-    )
     removeModelPermissions("admin", "logentry", using)
     removeModelPermissions("contenttypes", "contenttype", using)
     Permission.objects.all().using(using).filter(codename="add_permission").delete()
     Permission.objects.all().using(using).filter(codename="change_permission").delete()
     Permission.objects.all().using(using).filter(codename="delete_permission").delete()
+    Permission.objects.all().using(using).filter(codename="view_permission").delete()
 
 
 signals.post_migrate.connect(removePermissions)

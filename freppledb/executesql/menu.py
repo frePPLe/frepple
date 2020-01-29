@@ -18,8 +18,14 @@
 from django.utils.translation import gettext_lazy as _
 
 from freppledb.menu import menu
+from .views import ExecuteSQL
 
 # Add an item to the Admin menu
 menu.addItem(
-    "admin", "executesql", url="/executesql/", label=_("Execute SQL"), index=110
+    "admin",
+    "executesql",
+    url="/executesql/",
+    report=ExecuteSQL,
+    label=_("Execute SQL"),
+    index=110,
 )

@@ -1,4 +1,5 @@
-# Copyright (C) 2013 by frePPLe bvba
+#
+# Copyright (C) 2020 by frePPLe bvba
 #
 # This library is free software; you can redistribute it and/or modify it
 # under the terms of the GNU Affero General Public License as published
@@ -14,16 +15,22 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-from django.utils.translation import gettext_lazy as _
+from django.conf import settings
+from django.db import migrations, models
+import django.db.models.deletion
 
-from freppledb.menu import menu
-from .views import TaskReport
 
-menu.addItem(
-    "admin",
-    "execute",
-    url="/execute/",
-    label=_("Execute"),
-    report=TaskReport,
-    index=100,
-)
+class Migration(migrations.Migration):
+
+    dependencies = [("execute", "0005_squashed_60")]
+
+    operations = [
+        migrations.AlterModelOptions(
+            name="task",
+            options={
+                "default_permissions": ["view"],
+                "verbose_name": "task",
+                "verbose_name_plural": "tasks",
+            },
+        )
+    ]

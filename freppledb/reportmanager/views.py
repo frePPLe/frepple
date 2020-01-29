@@ -96,6 +96,11 @@ class ReportManager(View):
     reportkey = "reportmanager.reportmanager"
 
     @classmethod
+    def has_permission(cls, user):
+        # TODO not implemented yet!   if public, all can see. If private only user can see
+        return True
+
+    @classmethod
     def get(cls, request, *args, **kwargs):
         request.prefs = request.user.getPreference(
             cls.reportkey, database=request.database

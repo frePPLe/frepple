@@ -21,7 +21,12 @@ import logging
 from django.conf import settings
 from django.contrib.admin.views.decorators import staff_member_required
 from django.db import connections, transaction
-from django.http import StreamingHttpResponse, HttpResponseNotAllowed, Http404
+from django.http import (
+    StreamingHttpResponse,
+    HttpResponseNotAllowed,
+    Http404,
+    HttpResponseForbidden,
+)
 from django.shortcuts import render
 from django.utils.decorators import method_decorator
 from django.utils.translation import gettext as _
@@ -38,6 +43,10 @@ class ExecuteSQL(View):
     reportkey = "executesql.executesql"
 
     @classmethod
+    def has_permission(cls, user):
+        return user.is_superuser
+
+    @classmethod
     def get(reportclass, request, *args, **kwargs):
         request.prefs = request.user.getPreference(
             reportclass.reportkey, database=request.database
@@ -51,8 +60,10 @@ class ExecuteSQL(View):
     @method_decorator(staff_member_required)
     @method_decorator(csrf_protect)
     @method_decorator(never_cache)
-    def dispatch(self, *args, **kwargs):
-        return super().dispatch(*args, **kwargs)
+    def dispatch(self, request, *args, **kwargs):
+        if not self.has_permission(request.user):
+            return HttpResponseForbidden("<h1>%s</h1>" % _("Permission denied"))
+        return super().dispatch(request, *args, **kwargs)
 
     @classmethod
     def post(reportclass, request, *args, **kwargs):

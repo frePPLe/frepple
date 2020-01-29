@@ -705,13 +705,23 @@ class GridReport(View):
         """
         return timedelta(seconds=timezone - int(request.COOKIES.get("tzoffset", 0)))
 
+    @classmethod
+    def has_permission(cls, user):
+        for perm in cls.permissions:
+            if not user.has_perm("auth.%s" % perm[0]):
+                return False
+        if cls.model:
+            return user.has_perm(
+                "%s.view_%s" % (cls.model._meta.app_label, cls.model._meta.model_name)
+            )
+        return True
+
     @method_decorator(staff_member_required)
     @method_decorator(csrf_protect)
     def dispatch(self, request, *args, **kwargs):
         # Verify the user is authorized to view the report
-        for perm in self.permissions:
-            if not request.user.has_perm("auth.%s" % perm[0]):
-                return HttpResponseForbidden("<h1>%s</h1>" % _("Permission denied"))
+        if not self.has_permission(request.user):
+            return HttpResponseForbidden("<h1>%s</h1>" % _("Permission denied"))
 
         # Unescape special characters in the arguments.
         # All arguments are encoded with escaping function used on the django admin.

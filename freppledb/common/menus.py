@@ -86,17 +86,11 @@ class MenuItem:
                 return False
         if self.report:
             # The menu item is a report class
-            for perm in self.report.permissions:
-                if not user.has_perm("auth.%s" % perm[0]):
-                    return False
+            return self.report.has_permission(user)
         if self.model:
             # The menu item is a model
             return user.has_perm(
-                "%s.%s"
-                % (
-                    self.model._meta.app_label,
-                    get_permission_codename("view", self.model._meta),
-                )
+                "%s.view_%s" % (self.model._meta.app_label, self.model._meta.model_name)
             )
         # Other item is always available
         return True
@@ -260,7 +254,11 @@ class Menu:
         content_type = None
         for i in self._groups:
             for j in i[3]:
-                if j.report and j.report.__module__.startswith(app):
+                if (
+                    j.report
+                    and j.report.__module__.startswith(app)
+                    and hasattr(j.report, "permissions")
+                ):
                     # Loop over all permissions of the class
                     for k in j.report.permissions:
                         if content_type is None:

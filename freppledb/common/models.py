@@ -344,10 +344,7 @@ class Scenario(models.Model):
 
     class Meta:
         db_table = "common_scenario"
-        permissions = (
-            ("copy_scenario", "Can copy a scenario"),
-            ("release_scenario", "Can release a scenario"),
-        )
+        default_permissions = ("copy", "release")
         verbose_name_plural = _("scenarios")
         verbose_name = _("scenario")
         ordering = ["name"]
@@ -654,6 +651,7 @@ class UserPreference(models.Model):
         unique_together = (("user", "property"),)
         verbose_name = "preference"
         verbose_name_plural = "preferences"
+        default_permissions = []
 
 
 @receiver(pre_delete, sender=User)
@@ -692,6 +690,7 @@ class Comment(models.Model):
         ordering = ("id",)
         verbose_name = _("comment")
         verbose_name_plural = _("comments")
+        default_permissions = []
 
     def __str__(self):
         return "%s: %s..." % (self.object_pk, self.comment[:50])

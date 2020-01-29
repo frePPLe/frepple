@@ -88,6 +88,13 @@ class Migration(migrations.Migration):
                     ),
                 ),
             ],
-            options={"abstract": False},
+            options={
+                "default_permissions": ["create"],
+                "ordering": ("name",),
+                "verbose_name": "custom report",
+                "verbose_name_plural": "custom reports",
+                "abstract": False,
+                "db_table": "reportmanager_report",
+            },
         )
     ]

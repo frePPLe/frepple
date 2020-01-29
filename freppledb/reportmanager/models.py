@@ -39,3 +39,10 @@ class SQLReport(AuditModel):
         on_delete=models.CASCADE,
     )
     public = models.BooleanField(blank=True, default=False)
+
+    class Meta:
+        db_table = "reportmanager_report"
+        ordering = ("name",)
+        verbose_name = _("custom report")
+        verbose_name_plural = _("custom reports")
+        default_permissions = ["create"]

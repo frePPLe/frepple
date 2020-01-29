@@ -1,18 +1,11 @@
 #
-# Copyright (C) 2011-2013 by frePPLe bvba
+# Copyright (C) 2017 by frePPLe bvba
 #
-# This library is free software; you can redistribute it and/or modify it
-# under the terms of the GNU Affero General Public License as published
-# by the Free Software Foundation; either version 3 of the License, or
-# (at your option) any later version.
-#
-# This library is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero
-# General Public License for more details.
-#
-# You should have received a copy of the GNU Affero General Public
-# License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# All information contained herein is, and remains the property of frePPLe.
+# You are allowed to use and modify the source code, as long as the software is used
+# within your company.
+# You are not allowed to distribute the software, either in the form of source code
+# or in the form of compiled binaries.
 #
 
 import os
@@ -35,6 +28,7 @@ from django.db import connections, transaction, models
 from django.conf import settings
 from django.utils import translation
 from django.utils.translation import gettext_lazy as _
+from django.utils.text import capfirst
 from django.utils.encoding import smart_str, force_text, force_str
 from django.template import Template, RequestContext
 from django.http import HttpRequest
@@ -141,6 +135,8 @@ class Command(BaseCommand):
             try:
                 with transaction.atomic(using=self.database):
                     # Find all models in the workbook
+                    if "filename" not in locals():
+                        filename = options["file"]
                     for file in filename:
                         wb = load_workbook(
                             filename=file, read_only=True, data_only=True
@@ -306,6 +302,12 @@ class Command(BaseCommand):
             setattr(_thread_locals, "database", None)
             if task:
                 task.save(using=self.database)
+
+        # Task update
+        task.status = "Done"
+        task.finished = datetime.now()
+        task.processid = None
+        task.save(using=self.database, update_fields=["status", "finished"])
 
         return _("Done")
 

@@ -30,7 +30,12 @@ from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 
 from freppledb.common.models import Parameter
-from freppledb.common.commands import PlanTaskRegistry, PlanTask
+from freppledb.common.commands import (
+    PlanTaskRegistry,
+    PlanTask,
+    PlanTaskParallel,
+    PlanTaskSequence,
+)
 from freppledb.input.commands import LoadTask
 
 logger = logging.getLogger(__name__)
@@ -63,7 +68,9 @@ class OdooReadData(PlanTask):
         for i in range(5):
             if ("odoo_read_%s" % i) in os.environ:
                 cls.mode = i
-                for stdLoad in PlanTaskRegistry.reg:
+                for stdLoad in PlanTaskRegistry.reg.steps:
+                    if isinstance(stdLoad, (PlanTaskParallel, PlanTaskSequence)):
+                        continue
                     if issubclass(stdLoad, LoadTask):
                         stdLoad.filter = (
                             "(source is null or source<>'odoo_%s')" % cls.mode

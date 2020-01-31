@@ -77,9 +77,12 @@ class execute_with_commands(TransactionTestCase):
         outfolder = os.path.join(
             settings.DATABASES[DEFAULT_DB_ALIAS]["FILEUPLOADFOLDER"], "export"
         )
-        for file in os.listdir(outfolder):
-            if file.endswith(".csv"):
-                os.remove(os.path.join(outfolder, file))
+        try:
+            for file in os.listdir(outfolder):
+                if file.endswith(".csv"):
+                    os.remove(os.path.join(outfolder, file))
+        except FileNotFoundError:
+            pass
         management.call_command("exporttofolder", verbosity="0")
         count = 0
         for file in os.listdir(outfolder):
@@ -87,7 +90,7 @@ class execute_with_commands(TransactionTestCase):
                 f = os.stat(os.path.join(outfolder, file))
                 if f.st_size > 10:
                     count += 1
-        self.assertEqual(count, 8)
+        self.assertGreaterEqual(count, 8)
 
 
 class execute_multidb(TransactionTestCase):

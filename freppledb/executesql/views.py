@@ -20,7 +20,7 @@ import logging
 
 from django.conf import settings
 from django.contrib.admin.views.decorators import staff_member_required
-from django.db import connections, transaction
+from django.db import transaction
 from django.http import (
     StreamingHttpResponse,
     HttpResponseNotAllowed,
@@ -33,6 +33,8 @@ from django.utils.translation import gettext as _
 from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_protect
 from django.views.generic import View
+
+from freppledb.common.report import create_connection
 
 logger = logging.getLogger(__name__)
 
@@ -68,13 +70,18 @@ class ExecuteSQL(View):
     @classmethod
     def post(reportclass, request, *args, **kwargs):
         def runQuery():
+            conn = None
+            sqlrole = settings.DATABASES[request.database].get("SQL_ROLE", None)
             try:
-                with connections[request.database].cursor() as cursor:
+                conn = create_connection(request.database)
+                with conn.cursor() as cursor:
                     with transaction.atomic():
+                        if sqlrole:
+                            cursor.execute("set role %s", (sqlrole,))
                         sql = request.read().decode(
                             request.encoding or settings.DEFAULT_CHARSET
                         )
-                        cursor.execute(sql=sql)
+                        cursor.execute(sql)
                         if cursor.description:
                             columns = [desc[0] for desc in cursor.description]
                             yield """{
@@ -109,6 +116,9 @@ class ExecuteSQL(View):
                 pass
             except Exception as e:
                 yield json.dumps({"status": str(e)})
+            finally:
+                if conn:
+                    conn.close()
 
         # Allow only post from superusers
         if not request.user.is_superuser:

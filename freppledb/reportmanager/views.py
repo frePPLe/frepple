@@ -22,6 +22,7 @@ import sqlparse
 
 from django.conf import settings
 from django.contrib.admin.views.decorators import staff_member_required
+from django.contrib.auth.decorators import permission_required
 from django.db import connections, transaction
 from django.forms import ModelForm
 from django.http import (
@@ -39,7 +40,7 @@ from django.views.decorators.csrf import csrf_protect
 from django.views.generic import View
 
 from freppledb.reportmanager.models import SQLReport
-from django.contrib.auth.decorators import permission_required
+from freppledb.common.report import create_connection
 
 logger = logging.getLogger(__name__)
 
@@ -101,9 +102,14 @@ class ReportManager(View):
 
     @classmethod
     def runQuery(cls, database, sql):
+        conn = None
         try:
-            with connections[database].cursor() as cursor:
+            conn = create_connection(database)
+            with conn.cursor() as cursor:
                 with transaction.atomic():
+                    sqlrole = settings.DATABASES[database]["SQL_ROLE"]
+                    if sqlrole:
+                        cursor.execute("set role %s" % (sqlrole,))
                     cursor.execute(sql=sql)
                     if cursor.description:
                         counter = 0
@@ -168,10 +174,15 @@ class ReportManager(View):
                         )
                     else:
                         yield '{"rowcount": %s, "status": "Done"}' % cursor.rowcount
+                    if sqlrole:
+                        cursor.execute("commit")
         except GeneratorExit:
             pass
         except Exception as e:
             yield json.dumps({"status": str(e)})
+        finally:
+            if conn:
+                conn.close()
 
     @classmethod
     def get(cls, request, *args, **kwargs):

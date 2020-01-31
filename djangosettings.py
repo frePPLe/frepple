@@ -63,6 +63,11 @@ DATABASES = {
         "FILEUPLOADFOLDER": os.path.normpath(
             os.path.join(FREPPLE_LOGDIR, "data", "default")
         ),
+        # Role name for executing custom reports and processing sql data files.
+        # Make sure this role has properly restricted permissions!
+        # When left unspecified, SQL statements run with the full read-write
+        # permissions of the user specified above.
+        "SQL_ROLE": None,
         "SECRET_WEBTOKEN_KEY": SECRET_KEY,
     },
     "scenario1": {
@@ -87,6 +92,11 @@ DATABASES = {
         "FILEUPLOADFOLDER": os.path.normpath(
             os.path.join(FREPPLE_LOGDIR, "data", "scenario1")
         ),
+        # Role name for executing custom reports and processing sql data files.
+        # Make sure this role has properly restricted permissions!
+        # When left unspecified, SQL statements run with the full read-write
+        # permissions of the user specified above.
+        "SQL_ROLE": None,
         "SECRET_WEBTOKEN_KEY": SECRET_KEY,
     },
     "scenario2": {
@@ -111,6 +121,11 @@ DATABASES = {
         "FILEUPLOADFOLDER": os.path.normpath(
             os.path.join(FREPPLE_LOGDIR, "data", "scenario2")
         ),
+        # Role name for executing custom reports and processing sql data files.
+        # Make sure this role has properly restricted permissions!
+        # When left unspecified, SQL statements run with the full read-write
+        # permissions of the user specified above.
+        "SQL_ROLE": None,
         "SECRET_WEBTOKEN_KEY": SECRET_KEY,
     },
     "scenario3": {
@@ -135,6 +150,11 @@ DATABASES = {
         "FILEUPLOADFOLDER": os.path.normpath(
             os.path.join(FREPPLE_LOGDIR, "data", "scenario3")
         ),
+        # Role name for executing custom reports and processing sql data files.
+        # Make sure this role has properly restricted permissions!
+        # When left unspecified, SQL statements run with the full read-write
+        # permissions of the user specified above.
+        "SQL_ROLE": None,
         "SECRET_WEBTOKEN_KEY": SECRET_KEY,
     },
 }
@@ -215,6 +235,7 @@ INSTALLED_APPS = (
     "freppledb.metrics",
     "freppledb.execute",
     "freppledb.common",
+    "freppledb.reportmanager",
     "django_filters",
     "rest_framework",
     "django_admin_bootstrapped",

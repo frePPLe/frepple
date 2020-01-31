@@ -50,6 +50,7 @@ from dateutil.parser import parse
 from openpyxl.comments import Comment as CellComment
 
 from django.db.models import Model
+from django.db.utils import DEFAULT_DB_ALIAS, load_backend
 from django.apps import apps
 from django.contrib.auth.models import Group
 from django.contrib.auth import get_permission_codename
@@ -106,6 +107,14 @@ EXCLUDE_FROM_BULK_OPERATIONS = (Group, User, Comment)
 
 
 separatorpattern = re.compile(r"[\s\-_]+")
+
+
+def create_connection(alias=DEFAULT_DB_ALIAS):
+    connections.ensure_defaults(alias)
+    connections.prepare_test_settings(alias)
+    db = connections.databases[alias]
+    backend = load_backend(db["ENGINE"])
+    return backend.DatabaseWrapper(db, alias)
 
 
 def matchesModelName(name, model):

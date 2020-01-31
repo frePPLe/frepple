@@ -77,12 +77,12 @@ class execute_with_commands(TransactionTestCase):
         outfolder = os.path.join(
             settings.DATABASES[DEFAULT_DB_ALIAS]["FILEUPLOADFOLDER"], "export"
         )
-        try:
+        if not os.path.isdir(outfolder):
+            os.makedirs(outfolder)
+        else:
             for file in os.listdir(outfolder):
                 if file.endswith(".csv"):
                     os.remove(os.path.join(outfolder, file))
-        except FileNotFoundError:
-            pass
         management.call_command("exporttofolder", verbosity="0")
         count = 0
         for file in os.listdir(outfolder):

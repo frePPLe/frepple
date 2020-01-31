@@ -1,6 +1,34 @@
 Release notes
 -------------
 
+6.3.0 (upcoming release)
+========================
+
+.. rubric:: User interface
+
+- A new `report manager <user-guide/user-interface/report-manager.html>`_
+  app allows prower users to define custom reports using SQL. This greatly enhances
+  the flexibility to taylor the reports to your business process and needs.
+  
+.. rubric:: Integration
+
+- Data files in SQL format can now be processed with the command 
+  `import data files from folder <user-guide/command-reference.html#importfromfolder>`_.
+  For security reasons this functionality is only active when the setting SQL_ROLE is
+  set. It should be configured by an administrator to a database role that is correctly
+  tuned to a minimal set of privileges.
+
+- Data files in the PostgreSQL COPY format can now be processed with the command 
+  `import data files from folder <user-guide/command-reference.html#importfromfolder>`_.
+  Data files in this format are uploaded MUCH faster.
+
+.. rubric:: Documentation
+
+- Browsing the documentation is now more intuitive. A feature list allows you to find
+  your way by functional topic.
+  
+- A new section with videos on common use cases is added.
+
 6.2.0 (2020/01/17)
 ==================
 

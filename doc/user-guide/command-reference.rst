@@ -193,28 +193,52 @@ This task allows importing data from a set of CSV-formatted files (eventually GZ
 The purpose of this task is to help the exchange of information with other systems.
 
 The files are all placed in a folder that is configurable per scenario with the
-UPLOADFILEFOLDER in the djangosettings.py configuration file. The log file importfromfolder.log records
+UPLOADFILEFOLDER in the djangosettings.py configuration file. The log file records
 all data imports, in addition to any data errors identified during their processing.
 
 The data files to be imported must meet the following criteria:
 
-* The name must match the data object they store: eg demand.csv, item.csv, item.xlsx, item.csv.gz
-
-* The first line of the file should contain the field names.
-
-* The file should be in CSV or Excel format, and can optionally be compressed with GZ (eg demand.csv.gz).
+* | The name must match the data object they store: eg demand.csv, item.csv, item.xlsx, item.csv.gz
+  | This is important for frePPLe to understand the correct processing order of the files.
   
-* Some specific notes on the CSV format:
+* | Multiple files for the same entity can be provided. They will be processed in alphabetical order:
+    eg demand.1.csv, demand.2.csv, demand.extra.xlsx, demand.postprocessing.sql 
 
-  * The separator in your CSV-files varies with the chosen language: If in your
-    language a comma is used as a decimal separator for numbers, the CSV file
-    will use a semicolon (;) as delimiter. Otherwise a comma (,) is used.
-    See http://en.wikipedia.org/wiki/Decimal_mark
+* | The first line of the file should contain the field names. The field name can be in English
+    or the default language configured with the LANGUAGE_CODE setting.
 
-  * The date format expected by frePPLe is 'YYYY-MM-DD HH\:MM\:SS'.
+The following file formats are accepted:
 
-  * The data file is expected to be encoded in the character encoding defined by
-    the setting CSV_CHARSET (default UTF-8).
+  * | **Excel**:   
+    | The file name must end with .xlsx
+
+  * | **CSV**:     
+    | The file name must end with .csv (or .csv.gz when compressed with gzip).
+    | Some specific notes on the CSV format:
+
+    * The separator in your CSV-files varies with the chosen language: If in your
+      language a comma is used as a decimal separator for numbers, the CSV file
+      will use a semicolon (;) as delimiter. Otherwise a comma (,) is used.
+      See http://en.wikipedia.org/wiki/Decimal_mark
+
+    * The date format expected by frePPLe is 'YYYY-MM-DD HH\:MM\:SS'.
+
+    * The data file is expected to be encoded in the character encoding defined by
+      the setting CSV_CHARSET (default UTF-8).
+      
+  * | **PostgreSQL copy files**:  
+    | The file name must end with .cpy (or .cpy.gz when compressed with gzip).
+    | Uploading in this format goes MUCH quicker than the other formats. I has some
+      limitations however: a) the validation of the input data is not as extensive
+      as the other formats, b) a single faulty record will abort the upload and c)
+      it only supports adding new records and not updating existing records. 
+    | This method is therefore only recommended for loading very large data files
+      with clean data.
+    
+  * | **SQL**:
+    | The file name must end with .sql (or .sql.gz when compressed with gzip).
+    | For security reasons a database role with a minimal set of permissions must be
+      define. The setting DATABASES / SQL_ROLE needs to refer to this role.
 
 In this option you can see a list of files present in the specified folder, and download
 each file by clicking on the arrow down button, or delete a file by clicking on the

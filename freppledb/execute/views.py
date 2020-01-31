@@ -636,7 +636,7 @@ class FileManager:
             # File upload folder
             return (
                 settings.DATABASES[request.database]["FILEUPLOADFOLDER"],
-                (".xlsx", ".csv", ".csv.gz"),
+                (".xlsx", ".csv", ".csv.gz", ".cpy", ".cpy.gz", ".sql", ".sql.gz"),
             )
         elif foldercode == "1":
             # Export folder

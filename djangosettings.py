@@ -235,15 +235,17 @@ INSTALLED_APPS = (
     "freppledb.metrics",
     "freppledb.execute",
     "freppledb.common",
-    "freppledb.reportmanager",
     "django_filters",
     "rest_framework",
     "django_admin_bootstrapped",
     "django.contrib.admin",
-    # The next app is only for developers!
-    # Only enable it when you know what you're doing: the ability
-    # to run arbitrary SQL commands bypasses all security and can corrupt
-    # the database contents
+    # The next two apps allow users to run their own SQL statements on
+    # the database.
+    # It is HIGHLY recommended to activate this apps only after 1)
+    # create a postgresql database role that is correctly limited to a
+    # a minimal set of permissions and 2) update the SQL_ROLE setting
+    # in the database section with the name of this role.
+    "freppledb.reportmanager",
     # "freppledb.executesql",
 )
 

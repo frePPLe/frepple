@@ -41,7 +41,7 @@ from freppledb.common.report import GridReport, matchesModelName
 from freppledb import VERSION
 from freppledb.common.dataload import parseCSVdata, parseExcelWorksheet
 from freppledb.common.models import User
-from freppledb.common.report import EXCLUDE_FROM_BULK_OPERATIONS
+from freppledb.common.report import EXCLUDE_FROM_BULK_OPERATIONS, create_connection
 
 logger = logging.getLogger(__name__)
 
@@ -147,6 +147,7 @@ class Command(BaseCommand):
                 or ","
             )
             translation.activate(settings.LANGUAGE_CODE)
+            self.SQLrole = settings.DATABASES[self.database].get("SQL_ROLE", None)
 
             # Execute
             if "FILEUPLOADFOLDER" in settings.DATABASES[
@@ -168,7 +169,17 @@ class Command(BaseCommand):
                 for ifile in os.listdir(
                     settings.DATABASES[self.database]["FILEUPLOADFOLDER"]
                 ):
-                    if not ifile.lower().endswith((".csv", ".csv.gz", ".xlsx")):
+                    if not ifile.lower().endswith(
+                        (
+                            ".sql",
+                            ".sql.gz",
+                            ".csv",
+                            ".csv.gz",
+                            ".cpy",
+                            ".cpy.gz",
+                            ".xlsx",
+                        )
+                    ):
                         continue
                     filename0 = ifile.split(".")[0]
 
@@ -219,7 +230,27 @@ class Command(BaseCommand):
                         ),
                         ifile,
                     )
-                    if ifile.lower().endswith(".xlsx"):
+                    if ifile.lower().endswith((".sql", ".sql.gz")):
+                        logger.info(
+                            "%s Started executing SQL statements from file: %s"
+                            % (datetime.now().replace(microsecond=0), ifile)
+                        )
+                        errors[0] += self.executeSQLfile(filetoparse)
+                        logger.info(
+                            "%s Finished executing SQL statements from file: %s"
+                            % (datetime.now().replace(microsecond=0), ifile)
+                        )
+                    elif ifile.lower().endswith((".cpy", ".cpy.gz")):
+                        logger.info(
+                            "%s Started uploading copy file: %s"
+                            % (datetime.now().replace(microsecond=0), ifile)
+                        )
+                        errors[0] += self.executeCOPYfile(model, filetoparse)
+                        logger.info(
+                            "%s Finished uploading copy file: %s"
+                            % (datetime.now().replace(microsecond=0), ifile)
+                        )
+                    elif ifile.lower().endswith(".xlsx"):
                         logger.info(
                             "%s Started processing data in Excel file: %s"
                             % (datetime.now().replace(microsecond=0), ifile)
@@ -295,6 +326,117 @@ class Command(BaseCommand):
             logger.info(
                 "%s End of importfromfolder\n" % datetime.now().replace(microsecond=0)
             )
+
+    def executeCOPYfile(self, model, ifile):
+        """
+        Use the copy command to upload data into the database
+        The filename must be equal to the table name (E.g : demand, buffer, forecast...)
+        The first line of the file must contain the columns to popualate, comma separated
+        """
+        cursor = connections[self.database].cursor()
+        try:
+
+            if ifile.lower().endswith(".gz"):
+                file_open = gzip.open
+            else:
+                file_open = open
+
+            # Retrieve the header line of the file
+            tableName = model._meta.db_table
+            f = file_open(ifile, "rt")
+            firstLine = f.readline().rstrip()
+            f.close()
+
+            # Validate the data fields in the header
+            headers = []
+            for f in firstLine.split(","):
+                col = f.strip().strip("#").strip('"').lower() if f else ""
+                dbfield = None
+                for i in model._meta.fields:
+                    # Try with database field name
+                    if col == i.get_attname():
+                        dbfield = i.get_attname()
+                        break
+                    # Try with translated field names
+                    elif col == i.name.lower() or col == i.verbose_name.lower():
+                        dbfield = i.get_attname()
+                        break
+                    if translation.get_language() != "en":
+                        # Try with English field names
+                        with translation.override("en"):
+                            if col == i.name.lower() or col == i.verbose_name.lower():
+                                dbfield = i.get_attname()
+                                break
+                if dbfield:
+                    headers.append('"%s"' % dbfield)
+                else:
+                    raise Exception("Invalid field name '%s'" % col)
+
+            # count how many records in table before the copy operation
+            cursor.execute("select count(*) from %s" % tableName)
+            countBefore = cursor.fetchone()[0]
+
+            # Load the data records
+            copyFile = file_open(ifile)
+            cursor.copy_expert(
+                "copy %s (%s) from STDIN with delimiter ',' csv header"
+                % (tableName, ",".join(headers)),
+                copyFile,
+            )
+
+            # count how many records in table after the copy operation
+            cursor.execute("select count(*) from %s" % tableName)
+            countAfter = cursor.fetchone()[0]
+
+            logger.info(
+                "%s %s records uploaded into table %s"
+                % (
+                    datetime.now().replace(microsecond=0),
+                    (countAfter - countBefore),
+                    tableName,
+                )
+            )
+            return 0
+
+        except Exception as e:
+            logger.error(
+                "%s Error uploading COPY file: %s"
+                % (datetime.now().replace(microsecond=0), e)
+            )
+            return 1
+        finally:
+            # Need to force closing the connection. Otherwise we keep the
+            # connection in the restricted role.
+            connections[self.database].close()
+
+    def executeSQLfile(self, ifile):
+        """
+        Execute statements from a text with SQL statements.
+        """
+        if ifile.lower().endswith(".gz"):
+            file_open = gzip.open
+        else:
+            file_open = open
+        conn = None
+        try:
+            if not self.SQLrole:
+                raise Exception(
+                    "The setting DATABASES / SQL_ROLE must be specified first."
+                )
+            conn = create_connection(self.database)
+            with conn.cursor() as cursor:
+                cursor.execute("set role %s", (self.SQLrole,))
+                cursor.execute(file_open(ifile, "rt").read())
+            return 0
+        except Exception as e:
+            logger.error(
+                "%s Error executing SQL: %s"
+                % (datetime.now().replace(microsecond=0), e)
+            )
+            return 1
+        finally:
+            if conn:
+                conn.close()
 
     def loadCSVfile(self, model, file):
         errorcount = 0
@@ -425,7 +567,17 @@ class Command(BaseCommand):
                 uploadfolder = settings.DATABASES[request.database]["FILEUPLOADFOLDER"]
                 if os.path.isdir(uploadfolder):
                     for file in os.listdir(uploadfolder):
-                        if file.endswith((".csv", ".csv.gz", ".log", ".xlsx")):
+                        if file.endswith(
+                            (
+                                ".csv",
+                                ".csv.gz",
+                                ".xlsx",
+                                ".cpy",
+                                ".sql",
+                                ".cpy.gz",
+                                ".sql.gz",
+                            )
+                        ):
                             filestoupload.append(
                                 [
                                     file,
@@ -542,7 +694,7 @@ class Command(BaseCommand):
           $.jgrid.hideModal("#searchmodfbox_grid");
           var dialogcontent;
           if (typeof filename === 'object') {
-            dialogcontent = "{% trans 'You are about to delete all files' %}";           
+            dialogcontent = "{% trans 'You are about to delete all files' %}";
             var oldfilename = filename;
             filename = 'AllFiles';
           } else {

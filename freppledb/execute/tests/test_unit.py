@@ -73,6 +73,22 @@ class execute_with_commands(TransactionTestCase):
         self.assertTrue(input.models.OperationPlanResource.objects.count() > 20)
         self.assertTrue(input.models.OperationPlan.objects.count() > 300)
 
+        # Export to CSV files
+        outfolder = os.path.join(
+            settings.DATABASES[DEFAULT_DB_ALIAS]["FILEUPLOADFOLDER"], "export"
+        )
+        for file in os.listdir(outfolder):
+            if file.endswith(".csv"):
+                os.remove(os.path.join(outfolder, file))
+        management.call_command("exporttofolder", verbosity="0")
+        count = 0
+        for file in os.listdir(outfolder):
+            if file.endswith(".csv"):
+                f = os.stat(os.path.join(outfolder, file))
+                if f.st_size > 10:
+                    count += 1
+        self.assertEqual(count, 8)
+
 
 class execute_multidb(TransactionTestCase):
 

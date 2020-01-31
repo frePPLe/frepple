@@ -317,12 +317,16 @@ class Command(BaseCommand):
                             # Initialize the report
                             if hasattr(reportclass, "initialize"):
                                 reportclass.initialize(request)
-                            if not reportclass._attributes_added and reportclass.model:
-                                reportclass._attributes_added = True
-                                for f in reportclass.getAttributeFields(
-                                    reportclass.model
-                                ):
-                                    reportclass.rows += (f,)
+                            if hasattr(reportclass, "rows"):
+                                if callable(reportclass.rows):
+                                    request.rows = reportclass.rows(request)
+                                else:
+                                    request.rows = reportclass.rows
+                            if hasattr(reportclass, "crosses"):
+                                if callable(reportclass.crosses):
+                                    request.crosses = reportclass.crosses(request)
+                                else:
+                                    request.crosses = reportclass.crosses
                             if reportclass.hasTimeBuckets:
                                 reportclass.getBuckets(request)
 

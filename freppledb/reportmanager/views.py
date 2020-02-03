@@ -165,18 +165,17 @@ class ReportManager(GridReport):
                         database=request.database, sql=report.sql
                     ),
                 )
-            else:
-                return render(
-                    request,
-                    cls.template,
-                    {
-                        "title": report.name if report else _("Report manager"),
-                        "report": report,
-                        "reportkey": "%s.%s" % (cls.reportkey, report.id)
-                        if report
-                        else cls.reportkey,
-                    },
-                )
+        return render(
+            request,
+            cls.template,
+            {
+                "title": report.name if report else _("Report manager"),
+                "report": report,
+                "reportkey": "%s.%s" % (cls.reportkey, report.id)
+                if report
+                else cls.reportkey,
+            },
+        )
 
     @method_decorator(staff_member_required)
     @method_decorator(csrf_protect)

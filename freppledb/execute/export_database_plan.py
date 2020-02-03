@@ -207,21 +207,6 @@ class export:
             )
             cursor.execute(
                 """
-        delete from operationplanmaterial
-        using cluster_keys
-        where operationplan_id in (
-          select reference from operationplan
-          inner join cluster_keys on cluster_keys.name = operationplan.item_id
-          union
-          select reference from operationplan where owner_id in (
-            select reference from operationplan parent_opplan
-            inner join cluster_keys on cluster_keys.name = parent_opplan.item_id
-            )
-          )
-        """
-            )
-            cursor.execute(
-                """
         delete from out_problem
         where entity = 'demand' and owner in (
           select demand.name from demand inner join cluster_keys on cluster_keys.name = demand.item_id
@@ -237,26 +222,6 @@ class export:
            from buffer
            inner join cluster_keys on cluster_keys.name = buffer.item_id
            )
-        """
-            )
-            cursor.execute(
-                """
-        delete from operationplanresource
-        where operationplan_id in (
-          select reference
-          from operationplan
-          inner join cluster_keys on cluster_keys.name = operationplan.item_id
-          where status = 'proposed' or status is null or type='STCK'
-          union
-          select reference
-          from operationplan
-          where owner_id in (
-            select reference
-            from operationplan parent_opplan
-            inner join cluster_keys on cluster_keys.name = parent_opplan.item_id
-            )
-          and (status = 'proposed' or status is null)
-          )
         """
             )
             cursor.execute(
@@ -662,32 +627,6 @@ class export:
         )
         cursor.execute(
             """
-            with cte as (
-              select reference
-              from operationplan
-              where status in ('confirmed','approved','completed')
-              and type = 'MO'
-              and not exists (select 1 from tmp_operationplan where reference = operationplan.reference)
-              )
-            delete from operationplanmaterial
-            where exists (select 1 from cte where cte.reference = operationplan_id)
-            """
-        )
-        cursor.execute(
-            """
-            with cte as (
-              select reference
-              from operationplan
-              where status in ('confirmed','approved','completed')
-              and type = 'MO'
-              and not exists (select 1 from tmp_operationplan where reference = operationplan.reference)
-              )
-            delete from operationplanresource
-            where exists (select 1 from cte where cte.reference = operationplan_id)
-            """
-        )
-        cursor.execute(
-            """
             delete from operationplan
             where status in ('confirmed','approved','completed')
             and type = 'MO'
@@ -695,32 +634,6 @@ class export:
             """
         )
 
-        cursor.execute(
-            """
-            with cte as (
-              select reference
-              from operationplan
-              where status in ('confirmed','approved','completed')
-              and type = 'MO'
-              and not exists (select 1 from tmp_operationplan where reference = operationplan.reference)
-              )
-            delete from operationplanmaterial
-            where exists (select 1 from cte where cte.reference = operationplan_id)
-            """
-        )
-        cursor.execute(
-            """
-            with cte as (
-              select reference
-              from operationplan
-              where status in ('confirmed','approved','completed')
-              and type = 'MO'
-              and not exists (select 1 from tmp_operationplan where reference = operationplan.reference)
-              )
-            delete from operationplanresource
-            where exists (select 1 from cte where cte.reference = operationplan_id)
-            """
-        )
         cursor.execute(
             """
             delete
@@ -1038,8 +951,8 @@ class export:
                 export.exportOperationplans,
                 export.exportOperationPlanMaterials,
                 export.exportOperationPlanResources,
-                export.exportPegging
-                ),
+                export.exportPegging,
+            ),
         )
 
         # Start all threads

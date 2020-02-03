@@ -1817,20 +1817,6 @@ class OperationPlan(AuditModel):
         stmts = []
         stmts.append(
             """
-      delete from operationplanmaterial opm
-      where exists (select 1 from operationplan where type = '%s' and reference = opm.operationplan_id)
-      """
-            % cls.getType()
-        )
-        stmts.append(
-            """
-      delete from operationplanresource opr
-      where exists (select 1 from operationplan where type = '%s' and reference = opr.operationplan_id)
-      """
-            % cls.getType()
-        )
-        stmts.append(
-            """
       delete from operationplan where type = '%s'
       """
             % cls.getType()

@@ -1523,27 +1523,6 @@ class exportStaticModel(object):
                     (self.source, self.timestamp),
                 )
                 cursor.execute(
-                    """
-                    delete from operationplanmaterial
-                    where operationplan_id in (select reference from operationplan
-                      inner join demand on operationplan.demand_id = demand.name
-                      where demand.source = %s and demand.lastmodified <> %s
-                    )
-                    """,
-                    (self.source, self.timestamp),
-                )
-                cursor.execute(
-                    """
-                    delete from operationplanresource
-                    where operationplan_id in (
-                      select reference from operationplan
-                      inner join demand on operationplan.demand_id = demand.name
-                      where demand.source = %s and demand.lastmodified <> %s
-                    )
-                    """,
-                    (self.source, self.timestamp),
-                )
-                cursor.execute(
                     "delete from operationplan where demand_id in (select name from demand where source = %s and lastmodified <> %s)",
                     (self.source, self.timestamp),
                 )
@@ -1558,53 +1537,6 @@ class exportStaticModel(object):
                 cursor.execute(
                     "delete from itemdistribution where source = %s and lastmodified <> %s",
                     (self.source, self.timestamp),
-                )
-                cursor.execute(
-                    """
-                    delete from operationplanmaterial
-                    where operationplan_id in (
-                      select operationplan.reference
-                      from operationplan
-                      where (operationplan.source = %s and operationplan.lastmodified <> %s)
-                      or operation_id in (
-                        select name from operation
-                        where operation.source = %s and operation.lastmodified <> %s
-                        )
-                      or supplier_id in (
-                        select name from supplier where source = %s and lastmodified <> %s
-                       )
-                      )
-                    """,
-                    (
-                        self.source,
-                        self.timestamp,
-                        self.source,
-                        self.timestamp,
-                        self.source,
-                        self.timestamp,
-                    ),
-                )
-                cursor.execute(
-                    """
-                    delete from operationplanresource
-                    where operationplan_id in (
-                      select operationplan.reference
-                      from operationplan
-                      where (operationplan.source = %s and operationplan.lastmodified <> %s)
-                        or operation_id in (select name from operation where operation.source = %s and operation.lastmodified <> %s)
-                        or supplier_id in (
-                        select name from supplier where source = %s and lastmodified <> %s
-                       )
-                      )
-                    """,
-                    (
-                        self.source,
-                        self.timestamp,
-                        self.source,
-                        self.timestamp,
-                        self.source,
-                        self.timestamp,
-                    ),
                 )
                 cursor.execute(
                     """

@@ -368,7 +368,8 @@ class Command(BaseCommand):
                     except Exception as e:
                         errors += 1
                         logger.error(
-                            "%s Failed to export to %s" % (datetime.now(), filename)
+                            "%s Failed to export to %s: %s"
+                            % (datetime.now(), filename, e)
                         )
                         if task:
                             task.message = "Failed to export %s" % filename

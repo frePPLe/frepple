@@ -6,7 +6,7 @@
 <script>
  
 function render(data) {
-  var grid = $("#reportmanager_results");
+  var grid = $("#grid");
   $("#reportmanager_test").prop('disabled', false);
   $("#reportmanager_cancel").prop('disabled', true); 
   if (!grid.is(':empty'))
@@ -19,8 +19,11 @@ function render(data) {
 	      data: data['data'],
 	      autowidth: true,
 	      shrinkToFit: false,
-	      rownumbers: true,
-	      maxHeight: $(window).height() - grid.offset().top - 63
+	      iconSet: "fontAwesome",
+	      guiStyle: "bootstrapPrimary",	      
+	      autoencode: false,
+	      scrollRows: true,
+	      height: ($(window).height() - $("#grid").offset().top - 63 < 150) ? 150 : $(window).height() - $("#grid").offset().top - 63
 	      });	  
   }
   else {
@@ -36,6 +39,10 @@ function getSchema() {
 	    datatype: "html",
 	    success: function(data) {
 	      $("#schemacolumn").html(data);
+	      $("#schemacolumn .schema-header").click(function() {
+          $(this).children("span.fa").toggleClass("fa-plus").toggleClass("fa-minus");
+	      	$(this).next(".collapse").collapse("toggle");
+	      });
 	    },
 	    async: true
 	    });
@@ -165,14 +172,11 @@ $(function() {
 {% endif %}
  
 {% if report %}
-<div id="toolicons" class="col-xs-4 hor-align-right ver-align-middle pull-right">
-  <button id="filter" class="btn btn-xs btn-primary" onclick="grid.showFilter()">
-    <span data-toggle="tooltip" data-placement="top" title="" class="fa fa-search" data-original-title="{% trans 'filter data'|capfirst|force_escape %}"></span>
-  </button>  
-  <button class="btn btn-xs btn-primary" onclick="grid.showExport(false)">
+<div id="toolicons" class="col-xs-4 hor-align-right ver-align-middle pull-right"> 
+  <button class="btn btn-xs btn-primary" onclick="grid.showExport(true)">
     <span data-toggle="tooltip" data-placement="top" title="" class="fa fa-arrow-down" data-original-title="{% trans 'export as CSV or Excel file'|capfirst|force_escape %}"></span>
   </button>
-  <button class="btn btn-xs btn-primary" onclick="grid.showCustomize(true)">
+  <button class="btn btn-xs btn-primary" onclick="grid.showCustomize(false)">
     <span data-toggle="tooltip" data-placement="top" title="" class="fa fa-wrench" data-original-title="{% trans 'customize'|capfirst|force_escape %}"></span>
   </button>
   {% if perms.reportmanager.create_sqlreport %}
@@ -190,48 +194,51 @@ $(function() {
 </div>
 
 <div id="editreport" {% if report %}class="hidden"{% endif %}>
-<div class="row" >
-<div class="control-label col-md-3">
-  <label class="required" for="id_name">{% trans "name"|capfirst %}:</label>
+<div class="row" style="padding-top:5px; padding-bottom:5px">
+<div class="control-label col-md-2" style="text-align:right">
+  <label class="required" style="font-weight:bold; color:#333" for="id_name">{% trans "name"|capfirst %}:</label>
 </div>
-<div class="controls col-md-9">
+<div class="controls col-md-10">
   <input type="text" name="name" class="form-control vTextField" maxlength="300" 
     placeholder="{% trans "name"|capfirst %}" value="{{report.name}}" required id="id_name">
 </div>
 </div>
 
-<div class="row">
-<div class="control-label col-md-3">
-  <label for="id_public">{% trans "public"|capfirst %}:</label>
-</div>
-<div class="controls col-md-9">
-  <input type="checkbox" name="public" class="form-control" {% if report.public %}checked {% endif %}id="id_public">
-</div>
-</div>
-
-<div class="row">
-<div class="control-label col-md-3">
+<div class="row" style="padding-top:5px; padding-bottom:5px">
+<div class="control-label col-md-2" style="text-align:right">
   <label for="id_description">{% trans "description"|capfirst %}:</label>
 </div>
-<div class="controls col-md-9">
+<div class="controls col-md-10">
   <input type="text" name="description" class="form-control vTextField" maxlength="500"
     placeholder="{% trans "description"|capfirst %}" id="id_description"
     {% if report.description %}value="{{report.description}}"{% endif %}>
 </div>
 </div>
 
-<div class="row formgroup" style="text-align: center">
+<div class="row" style="padding-top:5px; padding-bottom:5px">
+<div class="control-label col-md-2" style="text-align:right">
+  <label for="id_public">{% trans "public"|capfirst %}:</label>
+</div>
+<div class="controls col-md-10">
+  &nbsp;&nbsp;&nbsp;<input type="checkbox" style="transform: scale(1.5);" name="public" {% if report.public %}checked {% endif %}id="id_public">
+</div>
+</div>
+
+<div class="row" style="text-align:center">
 <div class="col-md-12">
-<div id="sqlandschema" style="width:100%"> 
-<table style="table-layout: fixed; width: 100%"><tr>
-<td style="padding-right: 10px">
+<div id="sqlandschema" style="width:100%">
+<table style="table-layout: fixed; width: 100%">
+<tr>
+<td style="padding-right: 5px">
+<h4 style="text-align: left">{% trans "SQL query"|capfirst %}:</h4>
 <textarea id="reportmanager_statements" rows="10"
  style="width: 100%; height:{% if request.prefs.height %}{{ request.prefs.height}}{% else %}200{% endif %}px; resize: none; font-size:1.25em; font-family:courier">
 {{ report.sql }}
 </textarea>
 </td>
-<td style="width:25em; padding-left:10px">
-<div id="schemacolumn" style="margin-left:15px; overflow-y: scroll; height:{% if request.prefs.height %}{{ request.prefs.height}}{% else %}200{% endif %}px"></div>
+<td style="width:28em; padding-left:5px; padding-right:10px">
+<h4>{% trans "schema"|capfirst %}</h4>
+<div id="schemacolumn" style="overflow-y: scroll; height:{% if request.prefs.height %}{{ request.prefs.height}}{% else %}200{% endif %}px"></div>
 </td>
 </tr></table>
 </div>
@@ -242,11 +249,11 @@ $(function() {
 <!-- End editing section -->
 </div>  
 
-<div class="row form-group">
-<div class="col-xs-12">
+<div class="row">
+<div class="col-md-12">
 <div id="error"></div>
 <div style="padding-right: 10px; width:100%">
-<table id="reportmanager_results" class="table table-striped" style="background-color: white"></table>
+<table id="grid" class="table table-striped" style="background-color: white"></table>
 </div>
 </div>
 </div>

@@ -440,26 +440,6 @@ class GridFieldDuration(GridField):
     )
 
 
-def getBOM(encoding):
-    try:
-        # Get the official name of the encoding (since encodings can have many alias names)
-        name = codecs.lookup(encoding).name
-    except:
-        return ""  # Unknown encoding, without BOM header
-    if name == "utf-32-be":
-        return codecs.BOM_UTF32_BE
-    elif name == "utf-32-le":
-        return codecs.BOM_UTF32_LE
-    elif name == "utf-16-be":
-        return codecs.BOM_UTF16_BE
-    elif name == "utf-16-le":
-        return codecs.BOM_UTF16_LE
-    elif name == "utf-8":
-        return codecs.BOM_UTF8
-    else:
-        return ""
-
-
 class EncodedCSVReader:
     """
     A CSV reader which will iterate over lines in the CSV data buffer.
@@ -578,6 +558,47 @@ class GridReport(View):
         return "%s.%s" % (cls.__module__, cls.__name__)
 
     @classmethod
+    def _localize(cls, value, decimal_separator):
+        """
+        Localize numbers.
+        Dates are always represented as YYYY-MM-DD hh:mm:ss since this is
+        a format that is understood uniformly across different regions in the
+        world.
+        """
+        if isinstance(value, collections.Callable):
+            value = value()
+        if isinstance(value, numericTypes):
+            return (
+                decimal_separator == "," and str(value).replace(".", ",") or str(value)
+            )
+        elif isinstance(value, timedelta):
+            return _parseSeconds(value)
+        elif isinstance(value, (list, tuple)):
+            return "|".join([str(cls._localize(i, decimal_separator)) for i in value])
+        else:
+            return value
+
+    @staticmethod
+    def getBOM(encoding):
+        try:
+            # Get the official name of the encoding (since encodings can have many alias names)
+            name = codecs.lookup(encoding).name
+        except:
+            return ""  # Unknown encoding, without BOM header
+        if name == "utf-32-be":
+            return codecs.BOM_UTF32_BE
+        elif name == "utf-32-le":
+            return codecs.BOM_UTF32_LE
+        elif name == "utf-16-be":
+            return codecs.BOM_UTF16_BE
+        elif name == "utf-16-le":
+            return codecs.BOM_UTF16_LE
+        elif name == "utf-8":
+            return codecs.BOM_UTF8
+        else:
+            return ""
+
+    @classmethod
     def getAppLabel(cls):
         """
         Return the name of the Django application which defines this report.
@@ -616,8 +637,8 @@ class GridReport(View):
         else:
             return '"%s"' % data
 
-    @staticmethod
-    def _getCSVValue(data, field=None, request=None, decimal_separator=""):
+    @classmethod
+    def _getCSVValue(cls, data, field=None, request=None, decimal_separator=""):
         if data is None:
             return ""
         else:
@@ -630,7 +651,7 @@ class GridReport(View):
                     request.tzoffset = GridReport.getTimezoneOffset(request)
                 data += request.tzoffset
             return force_text(
-                _localize(data, decimal_separator),
+                cls._localize(data, decimal_separator),
                 encoding=settings.CSV_CHARSET,
                 errors="ignore",
             )
@@ -946,7 +967,7 @@ class GridReport(View):
             translation.activate(request.LANGUAGE_CODE)
 
         # Write a Unicode Byte Order Mark header, aka BOM (Excel needs it to open UTF-8 file properly)
-        yield getBOM(settings.CSV_CHARSET)
+        yield cls.getBOM(settings.CSV_CHARSET)
 
         # Choose fields to export
         if not hasattr(request, "prefs"):
@@ -2581,7 +2602,7 @@ class GridPivot(GridReport):
             )
 
         # Write a Unicode Byte Order Mark header, aka BOM (Excel needs it to open UTF-8 file properly)
-        yield getBOM(settings.CSV_CHARSET)
+        yield cls.getBOM(settings.CSV_CHARSET)
 
         # Pick up the preferences
         if request.prefs and "rows" in request.prefs:
@@ -2693,7 +2714,7 @@ class GridPivot(GridReport):
                     fields.extend(
                         [
                             force_text(
-                                _localize(row[f[0]], decimal_separator),
+                                cls._localize(row[f[0]], decimal_separator),
                                 encoding=settings.CSV_CHARSET,
                                 errors="ignore",
                             )
@@ -2725,7 +2746,7 @@ class GridPivot(GridReport):
                     fields.extend(
                         [
                             force_text(
-                                _localize(getattr(row, f[0]), decimal_separator),
+                                cls._localize(getattr(row, f[0]), decimal_separator),
                                 encoding=settings.CSV_CHARSET,
                                 errors="ignore",
                             )
@@ -2785,7 +2806,7 @@ class GridPivot(GridReport):
                         fields.extend(
                             [
                                 force_text(
-                                    _localize(bucket[cross[0]], decimal_separator),
+                                    cls._localize(bucket[cross[0]], decimal_separator),
                                     encoding=settings.CSV_CHARSET,
                                     errors="ignore",
                                 )
@@ -2837,7 +2858,7 @@ class GridPivot(GridReport):
                     fields.extend(
                         [
                             force_text(
-                                _localize(bucket[cross[0]], decimal_separator),
+                                cls._localize(bucket[cross[0]], decimal_separator),
                                 encoding=settings.CSV_CHARSET,
                                 errors="ignore",
                             )
@@ -3093,25 +3114,6 @@ class GridPivot(GridReport):
 
 
 numericTypes = (Decimal, float, int)
-
-
-def _localize(value, decimal_separator):
-    """
-    Localize numbers.
-    Dates are always represented as YYYY-MM-DD hh:mm:ss since this is
-    a format that is understood uniformly across different regions in the
-    world.
-    """
-    if isinstance(value, collections.Callable):
-        value = value()
-    if isinstance(value, numericTypes):
-        return decimal_separator == "," and str(value).replace(".", ",") or str(value)
-    elif isinstance(value, timedelta):
-        return _parseSeconds(value)
-    elif isinstance(value, (list, tuple)):
-        return "|".join([str(_localize(i, decimal_separator)) for i in value])
-    else:
-        return value
 
 
 def _buildMaskedNames(model, exportConfig):

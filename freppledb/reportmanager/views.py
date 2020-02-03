@@ -15,15 +15,23 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+import csv
 from datetime import timedelta
+from io import BytesIO, StringIO
 import json
 import logging
+from openpyxl import Workbook
+from openpyxl.utils import get_column_letter
+from openpyxl.cell import WriteOnlyCell
+from openpyxl.styles import NamedStyle, PatternFill
+from openpyxl.comments import Comment as CellComment
 import sqlparse
+import urllib
 
 from django.conf import settings
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.decorators import permission_required
-from django.db import connections, transaction
+from django.db import connections
 from django.forms import ModelForm
 from django.http import (
     StreamingHttpResponse,
@@ -34,13 +42,15 @@ from django.http import (
 )
 from django.shortcuts import render
 from django.utils.decorators import method_decorator
+from django.utils.encoding import force_text
+from django.utils.formats import get_format
+from django.utils.text import capfirst
 from django.utils.translation import gettext as _
 from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_protect
-from django.views.generic import View
 
 from freppledb.reportmanager.models import SQLReport
-from freppledb.common.report import create_connection
+from freppledb.common.report import create_connection, GridReport, _getCellValue
 
 logger = logging.getLogger(__name__)
 
@@ -84,13 +94,13 @@ def getSchema(request):
                         row[1], row
                     ).split(".")[-1]
                 except KeyError:
-                    field_type = "Unknown"
+                    field_type = "JSONB"
                 td.append((column_name, field_type))
             schema.append((table_name, td))
     return render(request, "reportmanager/schema.html", context={"schema": schema})
 
 
-class ReportManager(View):
+class ReportManager(GridReport):
 
     title = _("report manager")
     template = "reportmanager/reportmanager.html"
@@ -99,90 +109,6 @@ class ReportManager(View):
     @classmethod
     def has_permission(cls, user):
         return user.has_perm("reportmanager.create_sqlreport")
-
-    @classmethod
-    def runQuery(cls, database, sql):
-        conn = None
-        try:
-            conn = create_connection(database)
-            with conn.cursor() as cursor:
-                with transaction.atomic():
-                    sqlrole = settings.DATABASES[database]["SQL_ROLE"]
-                    if sqlrole:
-                        cursor.execute("set role %s" % (sqlrole,))
-                    cursor.execute(sql=sql)
-                    if cursor.description:
-                        counter = 0
-                        columns = []
-                        colmodel = []
-                        for f in cursor.description:
-                            columns.append(f[0])
-                            colmodel.append(cls.getColModel(f[0], f[1], counter))
-                            counter += 1
-
-                        yield """{
-                                    "rowcount": %s,
-                                    "status": "ok",
-                                    "columns": %s,
-                                    "colmodel": %s,
-                                    "data": [
-                                    """ % (
-                            cursor.rowcount,
-                            json.dumps(columns),
-                            json.dumps(colmodel),
-                        )
-                        first = True
-                        for result in cursor.fetchall():
-                            if first:
-                                yield json.dumps(
-                                    dict(
-                                        zip(
-                                            columns,
-                                            [
-                                                i
-                                                if i is None
-                                                else i.total_seconds()
-                                                if isinstance(i, timedelta)
-                                                else str(i)
-                                                for i in result
-                                            ],
-                                        )
-                                    )
-                                )
-                                first = False
-                            else:
-                                yield ",%s" % json.dumps(
-                                    dict(
-                                        zip(
-                                            columns,
-                                            [
-                                                i
-                                                if i is None
-                                                else i.total_seconds()
-                                                if isinstance(i, timedelta)
-                                                else str(i)
-                                                for i in result
-                                            ],
-                                        )
-                                    )
-                                )
-                        yield "]}"
-                    elif cursor.rowcount:
-                        yield '{"rowcount": %s, "status": "Updated %s rows"}' % (
-                            cursor.rowcount,
-                            cursor.rowcount,
-                        )
-                    else:
-                        yield '{"rowcount": %s, "status": "Done"}' % cursor.rowcount
-                    if sqlrole:
-                        cursor.execute("commit")
-        except GeneratorExit:
-            pass
-        except Exception as e:
-            yield json.dumps({"status": str(e)})
-        finally:
-            if conn:
-                conn.close()
 
     @classmethod
     def get(cls, request, *args, **kwargs):
@@ -198,26 +124,59 @@ class ReportManager(View):
             if not cls.has_permission(request.user):
                 return HttpResponseForbidden("<h1>%s</h1>" % _("Permission denied"))
 
-        if report and "format" in request.GET:
-            return StreamingHttpResponse(
-                content_type="application/json; charset=%s" % settings.DEFAULT_CHARSET,
-                streaming_content=cls.runQuery(
-                    database=request.database, sql=report.sql
-                ),
-            )
-
-        else:
-            return render(
-                request,
-                cls.template,
-                {
-                    "title": report.name if report else _("Report manager"),
-                    "report": report,
-                    "reportkey": "%s.%s" % (cls.reportkey, report.id)
-                    if report
-                    else cls.reportkey,
-                },
-            )
+        if report:
+            fmt = request.GET.get("format", None)
+            if fmt in ("spreadsheetlist", "spreadsheet"):
+                # Return an excel spreadsheet
+                out = BytesIO()
+                cls._generate_spreadsheet_data(request, out, report, *args, **kwargs)
+                response = HttpResponse(
+                    content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                    content=out.getvalue(),
+                )
+                # Filename parameter is encoded as specified in rfc5987
+                response["Content-Disposition"] = (
+                    "attachment; filename*=utf-8''%s.xlsx"
+                    % urllib.parse.quote(report.name)
+                )
+                response["Cache-Control"] = "no-cache, no-store"
+                return response
+            elif fmt in ("csvlist", "csv"):
+                # Return CSV file
+                response = StreamingHttpResponse(
+                    content_type="text/csv; charset=%s" % settings.CSV_CHARSET,
+                    streaming_content=cls._generate_csv_data(
+                        request, report, *args, **kwargs
+                    ),
+                )
+                # Filename parameter is encoded as specified in rfc5987
+                response["Content-Disposition"] = (
+                    "attachment; filename*=utf-8''%s.csv"
+                    % urllib.parse.quote(report.name)
+                )
+                response["Cache-Control"] = "no-cache, no-store"
+                return response
+            elif fmt == "json":
+                # Return json
+                return StreamingHttpResponse(
+                    content_type="application/json; charset=%s"
+                    % settings.DEFAULT_CHARSET,
+                    streaming_content=cls._generate_json_data(
+                        database=request.database, sql=report.sql
+                    ),
+                )
+            else:
+                return render(
+                    request,
+                    cls.template,
+                    {
+                        "title": report.name if report else _("Report manager"),
+                        "report": report,
+                        "reportkey": "%s.%s" % (cls.reportkey, report.id)
+                        if report
+                        else cls.reportkey,
+                    },
+                )
 
     @method_decorator(staff_member_required)
     @method_decorator(csrf_protect)
@@ -271,7 +230,7 @@ class ReportManager(View):
         elif "test" in request.POST:
             return StreamingHttpResponse(
                 content_type="application/json; charset=%s" % settings.DEFAULT_CHARSET,
-                streaming_content=cls.runQuery(
+                streaming_content=cls._generate_json_data(
                     database=request.database, sql=request.POST["sql"]
                 ),
             )
@@ -284,7 +243,7 @@ class ReportManager(View):
         colmodel = {
             "name": name,
             "index": name,
-            "label": name,
+            "label": capfirst(name),
             "editable": False,
             "title": False,
             "counter": counter,
@@ -429,3 +388,181 @@ class ReportManager(View):
                 }
             )
         return colmodel
+
+    @staticmethod
+    def getSQL(sql):
+        # TODO optionally wrap in another query that can be filtered, paged and sorted
+        return sqlparse.split(sql)[0]
+
+    @classmethod
+    def _generate_json_data(cls, database, sql):
+        conn = None
+        try:
+            conn = create_connection(database)
+            with conn.cursor() as cursor:
+                sqlrole = settings.DATABASES[database]["SQL_ROLE"]
+                if sqlrole:
+                    cursor.execute("set role %s" % (sqlrole,))
+                cursor.execute(sql=cls.getSQL(sql))
+                if cursor.description:
+                    counter = 0
+                    columns = []
+                    colmodel = []
+                    for f in cursor.description:
+                        columns.append(f[0])
+                        colmodel.append(cls.getColModel(f[0], f[1], counter))
+                        counter += 1
+
+                    yield """{
+                                    "rowcount": %s,
+                                    "status": "ok",
+                                    "columns": %s,
+                                    "colmodel": %s,
+                                    "data": [
+                                    """ % (
+                        cursor.rowcount,
+                        json.dumps(columns),
+                        json.dumps(colmodel),
+                    )
+                    first = True
+                    for result in cursor.fetchall():
+                        if first:
+                            yield json.dumps(
+                                dict(
+                                    zip(
+                                        columns,
+                                        [
+                                            i
+                                            if i is None
+                                            else i.total_seconds()
+                                            if isinstance(i, timedelta)
+                                            else str(i)
+                                            for i in result
+                                        ],
+                                    )
+                                )
+                            )
+                            first = False
+                        else:
+                            yield ",%s" % json.dumps(
+                                dict(
+                                    zip(
+                                        columns,
+                                        [
+                                            i
+                                            if i is None
+                                            else i.total_seconds()
+                                            if isinstance(i, timedelta)
+                                            else str(i)
+                                            for i in result
+                                        ],
+                                    )
+                                )
+                            )
+                    yield "]}"
+                elif cursor.rowcount:
+                    yield '{"rowcount": %s, "status": "Updated %s rows"}' % (
+                        cursor.rowcount,
+                        cursor.rowcount,
+                    )
+                else:
+                    yield '{"rowcount": %s, "status": "Done"}' % cursor.rowcount
+        except GeneratorExit:
+            pass
+        except Exception as e:
+            yield json.dumps({"status": str(e)})
+        finally:
+            if conn:
+                conn.close()
+
+    @classmethod
+    def _generate_csv_data(cls, request, report, *args, **kwargs):
+        sf = StringIO()
+        decimal_separator = get_format("DECIMAL_SEPARATOR", request.LANGUAGE_CODE, True)
+        if decimal_separator == ",":
+            writer = csv.writer(sf, quoting=csv.QUOTE_NONNUMERIC, delimiter=";")
+        else:
+            writer = csv.writer(sf, quoting=csv.QUOTE_NONNUMERIC, delimiter=",")
+
+        # Write a Unicode Byte Order Mark header, aka BOM (Excel needs it to open UTF-8 file properly)
+        yield cls.getBOM(settings.CSV_CHARSET)
+
+        # Run the query
+        conn = None
+        try:
+            conn = create_connection(request.database)
+            with conn.cursor() as cursor:
+                sqlrole = settings.DATABASES[request.database]["SQL_ROLE"]
+                if sqlrole:
+                    cursor.execute("set role %s" % (sqlrole,))
+                cursor.execute(sql=cls.getSQL(report.sql))
+                if cursor.description:
+                    # Write header row
+                    writer.writerow([f[0] for f in cursor.description])
+                    yield sf.getvalue()
+
+                # Write all output rows
+                for result in cursor.fetchall():
+                    # Clear the return string buffer
+                    sf.seek(0)
+                    sf.truncate(0)
+                    writer.writerow(
+                        [
+                            cls._getCSVValue(
+                                i, request=request, decimal_separator=decimal_separator
+                            )
+                            for i in result
+                        ]
+                    )
+                    yield sf.getvalue()
+        except GeneratorExit:
+            pass
+        finally:
+            if conn:
+                conn.close()
+
+    @classmethod
+    def _generate_spreadsheet_data(cls, request, out, report, *args, **kwargs):
+        # Create a workbook
+        wb = Workbook(write_only=True)
+        ws = wb.create_sheet(title=report.name)
+
+        # Create a named style for the header row
+        readlonlyheaderstyle = NamedStyle(name="readlonlyheaderstyle")
+        readlonlyheaderstyle.fill = PatternFill(fill_type="solid", fgColor="d0ebfb")
+        wb.add_named_style(readlonlyheaderstyle)
+
+        # Run the query
+        conn = None
+        try:
+            conn = create_connection(request.database)
+            comment = CellComment(
+                force_text(_("Read only")), "Author", height=20, width=80
+            )
+            with conn.cursor() as cursor:
+                sqlrole = settings.DATABASES[request.database]["SQL_ROLE"]
+                if sqlrole:
+                    cursor.execute("set role %s" % (sqlrole,))
+                cursor.execute(sql=cls.getSQL(report.sql))
+                if cursor.description:
+                    # Write header row
+                    header = []
+                    for f in cursor.description:
+                        cell = WriteOnlyCell(ws, value=f[0])
+                        cell.style = "readlonlyheaderstyle"
+                        cell.comment = comment
+                        header.append(cell)
+                    ws.append(header)
+
+                    # Add an auto-filter to the table
+                    ws.auto_filter.ref = "A1:%s1048576" % get_column_letter(len(header))
+
+                # Write all output rows
+                for result in cursor.fetchall():
+                    ws.append([_getCellValue(i, request=request) for i in result])
+
+            # Write the spreadsheet
+            wb.save(out)
+        finally:
+            if conn:
+                conn.close()

@@ -18,6 +18,7 @@
 import odoo
 import logging
 from xml.etree.cElementTree import iterparse
+from datetime import datetime
 
 logger = logging.getLogger(__name__)
 
@@ -68,7 +69,18 @@ class importer(object):
         # Parsing the XML data file
         countproc = 0
         countmfg = 0
+
+        # dictionary that stores as key the supplier id and the associated po id
+        # this dict is used to aggregate the exported POs for a same supplier
+        # into one PO in odoo with multiple lines
         supplier_reference = {}
+
+        # dictionary that stores as key a tuple (product id, supplier id)
+        # and as value a poline odoo object
+        # this dict is used to aggregate POs for the same product supplier
+        # into one PO with sum of quantities and min date
+        product_supplier_dict = {}
+
         for event, elem in iterparse(self.datafile, events=("start", "end")):
             if event == "end" and elem.tag == "operationplan":
                 uom_id, item_id = elem.get("item_id").split(",")
@@ -81,7 +93,9 @@ class importer(object):
                             po = proc_order.create(
                                 {
                                     "company_id": self.company.id,
-                                    "partner_id": supplier_id,
+                                    "partner_id": int(
+                                        elem.get("supplier").split(" ", 1)[0]
+                                    ),
                                     # TODO Odoo has no place to store the location and criticality
                                     # int(elem.get('location_id')),
                                     # elem.get('criticality'),
@@ -89,17 +103,30 @@ class importer(object):
                                 }
                             )
                             supplier_reference[supplier_id] = po.id
-                        po_line = proc_orderline.create(
-                            {
-                                "order_id": supplier_reference[supplier_id],
-                                "product_id": int(item_id),
-                                "product_qty": elem.get("quantity"),
-                                "product_uom": int(uom_id),
-                                "date_planned": elem.get("end"),
-                                "price_unit": 0,
-                                "name": elem.get("item"),
-                            }
-                        )
+
+                        quantity = elem.get("quantity")
+                        date_planned = elem.get("end")
+                        if (item_id, supplier_id) not in product_supplier_dict:
+                            po_line = proc_orderline.create(
+                                {
+                                    "order_id": supplier_reference[supplier_id],
+                                    "product_id": int(item_id),
+                                    "product_qty": quantity,
+                                    "product_uom": int(uom_id),
+                                    "date_planned": date_planned,
+                                    "price_unit": 0,
+                                    "name": elem.get("item"),
+                                }
+                            )
+                            product_supplier_dict[(item_id, supplier_id)] = po_line
+
+                        else:
+                            po_line = product_supplier_dict[(item_id, supplier_id)]
+                            po_line.date_planned = min(
+                                po_line.date_planned,
+                                datetime.strptime(date_planned, "%Y-%m-%d %H:%M:%S"),
+                            )
+                            po_line.product_qty = po_line.product_qty + float(quantity)
                         countproc += 1
                     # TODO Create a distribution order
                     # elif ????:

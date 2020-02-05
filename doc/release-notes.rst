@@ -21,6 +21,16 @@ Release notes
 - Data files in the PostgreSQL COPY format can now be processed with the command 
   `import data files from folder <user-guide/command-reference.html#importfromfolder>`_.
   Data files in this format are uploaded MUCH faster.
+  
+- Postgresql foreign key constraint on operationplanmaterial and operationplanresource
+  for the operationplan_id field is made cascade delete. As a conseqeunce, there is no need 
+  anymore to delete the operationplanmaterial (Inventory Detail) and operationplanresource 
+  (Resource Detail) records before being able to delete an operationplan record (MO/PO/DO).
+  
+- odoo connectors (v12 and v13): Export of multiple POs for a same supplier will 
+  create a single PO in odoo with multiple lines. If the exported POs also contain multiple 
+  lines for the same product, then a single PO Line is created in odoo with the sum of 
+  the quantities and the minimum planned date of all exported records for that product.
 
 .. rubric:: Documentation
 

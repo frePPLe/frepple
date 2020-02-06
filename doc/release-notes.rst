@@ -32,11 +32,6 @@ Release notes
   lines for the same product, then a single PO Line is created in odoo with the sum of 
   the quantities and the minimum planned date of all exported records for that product.
 
-- | The deletion of an operationplan now cascades automatically and also deletes from
-    the inventory detail and resource detail tables.
-  | In previous releases you had to delete from the inventory detail and resource detail
-    tables before you could delete the operationplan. This was quite tedious.
-
 .. rubric:: Documentation
 
 - Browsing the documentation is now more intuitive. A feature list allows you to find

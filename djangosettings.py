@@ -66,8 +66,8 @@ DATABASES = {
         # Role name for executing custom reports and processing sql data files.
         # Make sure this role has properly restricted permissions!
         # When left unspecified, SQL statements run with the full read-write
-        # permissions of the user specified above.
-        "SQL_ROLE": None,
+        # permissions of the user specified above. Which can be handy, but is not secure.
+        "SQL_ROLE": "report_role",
         "SECRET_WEBTOKEN_KEY": SECRET_KEY,
     },
     "scenario1": {
@@ -95,8 +95,8 @@ DATABASES = {
         # Role name for executing custom reports and processing sql data files.
         # Make sure this role has properly restricted permissions!
         # When left unspecified, SQL statements run with the full read-write
-        # permissions of the user specified above.
-        "SQL_ROLE": None,
+        # permissions of the user specified above. Which can be handy, but is not secure.
+        "SQL_ROLE": "report_role",
         "SECRET_WEBTOKEN_KEY": SECRET_KEY,
     },
     "scenario2": {
@@ -124,8 +124,8 @@ DATABASES = {
         # Role name for executing custom reports and processing sql data files.
         # Make sure this role has properly restricted permissions!
         # When left unspecified, SQL statements run with the full read-write
-        # permissions of the user specified above.
-        "SQL_ROLE": None,
+        # permissions of the user specified above. Which can be handy, but is not secure.
+        "SQL_ROLE": "report_role",
         "SECRET_WEBTOKEN_KEY": SECRET_KEY,
     },
     "scenario3": {
@@ -153,8 +153,8 @@ DATABASES = {
         # Role name for executing custom reports and processing sql data files.
         # Make sure this role has properly restricted permissions!
         # When left unspecified, SQL statements run with the full read-write
-        # permissions of the user specified above.
-        "SQL_ROLE": None,
+        # permissions of the user specified above. Which can be handy, but is not secure.
+        "SQL_ROLE": "report_role",
         "SECRET_WEBTOKEN_KEY": SECRET_KEY,
     },
 }
@@ -240,11 +240,7 @@ INSTALLED_APPS = (
     "django_admin_bootstrapped",
     "django.contrib.admin",
     # The next two apps allow users to run their own SQL statements on
-    # the database.
-    # It is HIGHLY recommended to activate this apps only after 1)
-    # create a postgresql database role that is correctly limited to a
-    # a minimal set of permissions and 2) update the SQL_ROLE setting
-    # in the database section with the name of this role.
+    # the database, using the SQL_ROLE configured above.
     "freppledb.reportmanager",
     # "freppledb.executesql",
 )

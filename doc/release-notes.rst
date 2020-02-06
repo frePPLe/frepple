@@ -27,10 +27,15 @@ Release notes
   anymore to delete the operationplanmaterial (Inventory Detail) and operationplanresource 
   (Resource Detail) records before being able to delete an operationplan record (MO/PO/DO).
   
-- odoo connectors (v12 and v13): Export of multiple POs for a same supplier will 
+- Odoo connectors (v12 and v13): Export of multiple POs for a same supplier will 
   create a single PO in odoo with multiple lines. If the exported POs also contain multiple 
   lines for the same product, then a single PO Line is created in odoo with the sum of 
   the quantities and the minimum planned date of all exported records for that product.
+
+- | The deletion of an operationplan now cascades automatically and also deletes from
+    the inventory detail and resource detail tables.
+  | In previous releases you had to delete from the inventory detail and resource detail
+    tables before you could delete the operationplan. This was quite tedious.
 
 .. rubric:: Documentation
 

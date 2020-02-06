@@ -46,3 +46,6 @@ class SQLReport(AuditModel):
         verbose_name = _("custom report")
         verbose_name_plural = _("custom reports")
         default_permissions = ["create"]
+
+    def __str__(self):
+        return self.name

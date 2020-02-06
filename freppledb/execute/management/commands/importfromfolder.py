@@ -147,7 +147,9 @@ class Command(BaseCommand):
                 or ","
             )
             translation.activate(settings.LANGUAGE_CODE)
-            self.SQLrole = settings.DATABASES[self.database].get("SQL_ROLE", None)
+            self.SQLrole = settings.DATABASES[self.database].get(
+                "SQL_ROLE", "report_role"
+            )
 
             # Execute
             if "FILEUPLOADFOLDER" in settings.DATABASES[
@@ -419,10 +421,6 @@ class Command(BaseCommand):
             file_open = open
         conn = None
         try:
-            if not self.SQLrole:
-                raise Exception(
-                    "The setting DATABASES / SQL_ROLE must be specified first."
-                )
             conn = create_connection(self.database)
             with conn.cursor() as cursor:
                 cursor.execute("set role %s", (self.SQLrole,))

@@ -71,7 +71,9 @@ class ExecuteSQL(View):
     def post(reportclass, request, *args, **kwargs):
         def runQuery():
             conn = None
-            sqlrole = settings.DATABASES[request.database].get("SQL_ROLE", None)
+            sqlrole = settings.DATABASES[request.database].get(
+                "SQL_ROLE", "report_role"
+            )
             try:
                 conn = create_connection(request.database)
                 with conn.cursor() as cursor:

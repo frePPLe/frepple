@@ -7,7 +7,7 @@ Release notes
 .. rubric:: User interface
 
 - A new `report manager <user-guide/user-interface/report-manager.html>`_
-  app allows prower users to define custom reports using SQL. This greatly enhances
+  app allows power users to define custom reports using SQL. This greatly enhances
   the flexibility to taylor the reports to your business process and needs.
   
 .. rubric:: Integration

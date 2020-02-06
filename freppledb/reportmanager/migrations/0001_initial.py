@@ -56,7 +56,7 @@ class Migration(migrations.Migration):
                         verbose_name="description",
                     ),
                 ),
-                ("public", models.BooleanField(blank=True, default=False)),
+                ("public", models.BooleanField(blank=True, null=True, default=False)),
                 (
                     "user",
                     models.ForeignKey(

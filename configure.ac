@@ -272,7 +272,6 @@ AC_CONFIG_FILES([
   contrib/docker/Makefile
   contrib/installer/Makefile
   contrib/odoo/Makefile
-  contrib/rpm/Makefile
   contrib/vc/Makefile
   contrib/linux/Makefile
   contrib/linux/centos-8/Makefile  

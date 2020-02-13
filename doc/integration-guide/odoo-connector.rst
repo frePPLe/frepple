@@ -35,8 +35,8 @@ The connector provides the following functionality:
   | Implemented as an odoo addon module, it is easy to customize the connector
     to your needs.
 
-* The integration has been developed and tested with v12 (main development
-  focus), v11, v10 (support-only) and v9 (outdated).
+* The integration has been developed and tested with v13 (main development
+  focus), v12, v11, v10 (support-only) and v9 (outdated).
 
 Here are the slides presented during the Odoo user conference in October 2016.
 
@@ -194,21 +194,28 @@ The section below describes the installation and configuration of these.
 * **Configuring the connector - frePPLe side**
 
   * | **Edit the frePPLe configuration file djangosettings.py**
-    | The file is found under /etc/frepple (linux) or <install folder>\bin\custom
+    | The file is found under /etc/frepple (Linux) or <install folder>\\bin\\custom
       (Windows).
-    | Assure that the "freppledb.odoo" is included in the setting
-      INSTALLED_APPS which defines the enabled extensions. By default
-      it is disabled.
-    | Update the DATABASE section such that the SECRET_WEBTOKEN_KEY setting of each
-      scenario is equal to the web token key configured in Odoo.
+    
+    * | Assure that the "freppledb.odoo" is included in the setting
+        INSTALLED_APPS which defines the enabled extensions. By default
+        it is disabled.
+    
+    * | Update the DATABASE section such that the SECRET_WEBTOKEN_KEY setting of each
+        scenario is equal to the web token key configured in Odoo.
+
+    * | Make sure the setting MIDDLEWARE doesn't include the
+        "django.middleware.clickjacking.XFrameOptionsMiddleware" class.
+
+    * | Add a line "SESSION_COOKIE_SAMESITE = None"
+    
+  * **Configure parameters**
   
-  * **Configure parameters**:
+    * | odoo.url: URL of the Odoo server
   
-    * odoo.url: URL of the Odoo server
+    * | odoo.db: Odoo database to connect to
   
-    * odoo.db: Odoo database to connect to
-  
-    * odoo.user: Odoo user for the connection
+    * | odoo.user: Odoo user for the connection
   
     * | odoo.password: Password for the connection
       | For improved security it is recommended to specify this password in the

@@ -539,7 +539,7 @@ var grid = {
    // popup is closed and the selected id is passed to the calling page.
    selected: undefined,
 
-   formatNumber: function(nData) {
+   formatNumber: function(nData, maxdecimals=6) {
   	 // Number formatting function copied from free-jqgrid.
   	 // Adapted to show a max number of decimal places.
   	 if (typeof(nData) === 'undefined')
@@ -550,12 +550,20 @@ var grid = {
 			if (isNumber(nData)) {
 				var bNegative = (nData < 0);				
 				var sOutput;
-				if (nData > 1000000)
-				  // Big numbers: Show max 1 digits after the comma, without trailing zeros
+				if (nData > 100000 || maxdecimals <= 0)
+					sOutput = String(parseFloat(nData.toFixed()));
+				else if (nData > 10000 || maxdecimals <= 1)
 					sOutput = String(parseFloat(nData.toFixed(1)));
+				else if (nData > 1000 || maxdecimals <= 2)
+					sOutput = String(parseFloat(nData.toFixed(2)));
+				else if (nData > 100 || maxdecimals <= 3)
+					sOutput = String(parseFloat(nData.toFixed(3)));
+				else if (nData > 10 || maxdecimals <= 4)
+					sOutput = String(parseFloat(nData.toFixed(4)));
+				else if (nData > 1 || maxdecimals <= 5)
+					sOutput = String(parseFloat(nData.toFixed(5)));
 				else
-					// Small numbers: Show 8 significant digits (before or after the comma), without trailing zeros
-					sOutput = String(parseFloat(nData.toPrecision(8)));
+					sOutput = String(parseFloat(nData.toFixed(maxdecimals)));
 				var sDecimalSeparator = jQuery("#grid").jqGrid("getGridRes", "formatter.number.decimalSeparator") || ".";
 				if (sDecimalSeparator !== ".") 
 					// Replace the "."

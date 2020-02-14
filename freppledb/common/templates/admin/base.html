@@ -6,7 +6,7 @@
 <meta name="robots" content="NONE,NOARCHIVE">
 <title>{% block title %}{% endblock %}</title>
 {% block extrastyle %}{% endblock %}
-{% block extrahead %}{% endblock %}
+{% block extrahead %}{% endblock %}{% google_analytics %}
 {% if tzoffset is None %}
 <script>
 $(function() {

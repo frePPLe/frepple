@@ -160,6 +160,11 @@ DATABASES = {
 }
 
 LANGUAGE_CODE = "en"
+
+# Google analytics code to report usage statistics to.
+# The value None disables this feature.
+GOOGLE_ANALYTICS = "UA-1950616-4"
+
 # ================= END UPDATED BLOCK BY WINDOWS INSTALLER =================
 
 # If passwords are set in this file they will be used instead of the ones set in the database parameters table

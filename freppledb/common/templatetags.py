@@ -660,9 +660,9 @@ register.tag("getDashboard", getDashboard)
 @register.simple_tag
 def google_analytics():
     """
-  A tag to add google analytics tracking code to the site.
-  """
-    if settings.GOOGLE_ANALYTICS:
+    A tag to add google analytics tracking code to the site.
+    """
+    if settings.GOOGLE_ANALYTICS and not settings.DEBUG:
         return mark_safe(
             "<script>\n"
             "(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){\n"

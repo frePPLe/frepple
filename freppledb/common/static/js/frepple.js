@@ -1383,9 +1383,9 @@ var grid = {
         grid.saveColumnConfiguration();
         grid.getFilterGroup(thegrid, $("#fbox_" + thegridid).jqFilter('filterData'), true, curfilter);
         if (curfilter.is(':empty'))
-        	filter.addClass("btn-danger").removeClass("btn-primary");
-        else
         	filter.removeClass("btn-danger").addClass("btn-primary");
+        else
+        	filter.addClass("btn-danger").removeClass("btn-primary");
         },
       onReset : function() {        
         if (typeof initialfilter !== 'undefined') {
@@ -1569,7 +1569,7 @@ var favorite = {
 		
 	  check: function() {
 	  	var fav = $("#favoritename").val();
-	  	if (fav.length > 0 && !(fav in favorites)) {
+	  	if (fav.length > 0 && !(fav in favorites) && $("#filter").hasClass("btn-danger")) {
 	      $("#favoritesave").removeClass("disabled");
 	  	  return true;
 	  	}
@@ -1617,11 +1617,12 @@ var favorite = {
 	  open: function(event) {
 	  	var fav = $(event.target).parent().text();
 	  	if (fav in favorites) {
+	  		var f = JSON.stringify(favorites[fav]);
 	  		$('#grid').setGridParam({
-	        postData:{filters: JSON.stringify(favorites[fav])},
+	        postData:{filters: f},
 	        search:true
 	        }).trigger('reloadGrid');
-      	grid.getFilterGroup($('#grid'), favorites[fav], true, $("#curfilter"));
+      	grid.getFilterGroup($('#grid'), JSON.parse(f), true, $("#curfilter"));
         $("#filter").addClass("btn-danger").removeClass("btn-primary");
 	  	}
 	  }

@@ -4,8 +4,6 @@ Segment
 
 A segment is a group of item+locations, all satisfying a specific filter criterion.
 
-**Fields**
-
 ================ ================= =====================================================================
 Field            Type              Description
 ================ ================= =====================================================================

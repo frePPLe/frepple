@@ -9,8 +9,6 @@ sales organization’s structure.
 
 FrePPLe uses customers only from reporting purposes, no real planning logic is currently linked to them.
 
-**Fields**
-
 ============ ================= ===========================================================
 Field        Type              Description
 ============ ================= ===========================================================

@@ -1,6 +1,6 @@
-=============================
-Inventory planning parameters
-=============================
+==================
+Inventory policies
+==================
 
 A record should be entered in this table if you wish frePPLe to calculate 
 a safety stock and a reorder quantity for an item-location. The calculation can be

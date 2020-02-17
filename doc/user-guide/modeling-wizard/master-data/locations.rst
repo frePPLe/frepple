@@ -48,4 +48,4 @@ Warehouse 3   France
 
 * Complete table description: :doc:`../../model-reference/locations`
 
-* Modeling working hours: :doc:`../../cookbook/calendar/working-hours` 
+* Modeling working hours: :doc:`../../examples/calendar/working-hours` 

@@ -6,8 +6,6 @@ Defines an item that can be shipped from an origin location to a destination loc
 
 The association can be date effective and also has a priority.
 
-**Fields**
-
 =============== ================= ===========================================================
 Field           Type              Description
 =============== ================= ===========================================================

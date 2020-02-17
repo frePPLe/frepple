@@ -68,9 +68,6 @@ Based on this matrix:
   | When the from and to setup are identical we simply don't evaluate any
     of the rules.
 
-
-**Fields**
-
 ============ ================= ===========================================================
 Field        Type              Description
 ============ ================= ===========================================================

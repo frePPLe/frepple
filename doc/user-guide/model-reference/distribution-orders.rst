@@ -22,13 +22,14 @@ The parameters driving the stock rebalancing requests generation are the followi
   | The minimum part cost threshold used to trigger a rebalancing. Parts with cost below the threshold will not be rebalanced.
 
 - | *REBALANCING _TOTAL_COST_THRESHOLD*:
-  | The minimum total cost threshold to trigger a rebalancing (equals to rebalanced qty multiplied by item price). Rebalancing requests with total cost below the threshold will not be created.
+  | The minimum total cost threshold to trigger a rebalancing (equals to rebalanced qty multiplied by item price). 
+    Rebalancing requests with total cost below the threshold will not be created.
 
 - | *REBALANCING _BURNOUT_THRESHOLD*:
-  | The minimum time to "burn up" excess inventory (compared to forecast) that can be rebalanced (in periods). If the "burn out" period (Excess Quantity/Forecast) is less than the threshold, the rebalancing will not occur. (E.g : If the rebalanced quantity corresponds to less than 3 months of forecast at the destination location, do not perform rebalancing).
-
-
-**Fields**
+  | The minimum time to "burn up" excess inventory (compared to forecast) that can be rebalanced (in periods). 
+    If the "burn out" period (Excess Quantity/Forecast) is less than the threshold, the rebalancing will not occur. 
+    (E.g : If the rebalanced quantity corresponds to less than 3 months of forecast at the destination location, 
+    do not perform rebalancing).
 
 ================ ================= =================================================================================================================================
 Field            Type              Description

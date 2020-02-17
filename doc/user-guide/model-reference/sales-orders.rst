@@ -6,8 +6,6 @@ Defines independent demands for items.
 
 These can be actual customer orders, or forecasted demands.
 
-**Fields**
-
 ============== ================= ===========================================================
 Field          Type              Description
 ============== ================= ===========================================================

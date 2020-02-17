@@ -4,8 +4,6 @@ Items
 
 An item represents an end product, intermediate product or a raw material.
 
-**Fields**
-
 =============== ================= ===========================================================
 Field           Type              Description
 =============== ================= ===========================================================
@@ -43,7 +41,7 @@ hidden          boolean           Marks entities that are considered hidden and 
 **Extra fields added by "metrics" app**
 
 This addon app provides some basic metrics that allow easy filtering and sorting for items that
-have constrained sales orders.
+have constrained open sales orders.
 
 ======================= ================= ===========================================================
 Field                   Type              Description
@@ -58,3 +56,61 @@ unplanneddemandcount    Integer           The number of unplanned open sales ord
 unplanneddemandquantity Number            Total quantity of unplanned open sales orders of this item.
 unplanneddemandvalue    Number            Total value of unplanned open sales orders of this item.
 ======================= ================= ===========================================================
+
+
+**Extra fields added by "demand hits" app**
+
+This addon app provides some metrics on the historical demand of the item. This is useful in
+identifying fast-moving and slow-moving items and define an ABC classification for segmenting
+the inventory policies correctly.
+
+======================= ================= ===========================================================
+Field                   Type              Description
+======================= ================= ===========================================================
+orders_6m               Number            The number of sales orders of this item during the
+                                          last 6 months. 
+sales_6m                Number            Total quantity of sales orders of this item during the
+                                          last 6 months.
+salesvalue_6m           Number            Total value of sales orders of this item during the
+                                          last 6 months.
+orders_12m              Number            The number of sales orders of this item during the
+                                          last 12 months. 
+sales_12m               Number            Total quantity of sales orders of this item during the
+                                          last 12 months.
+salesvalue_12m          Number            Total value of sales orders of this item during the
+                                          last 12 months.
+======================= ================= ===========================================================
+
+
+**Extra fields added by "forecast" app**
+
+The forecast app enables the calculation of statistical forecasts based on the demand history.
+It also includes a categorization of demand patterns, as described on 
+https://frepple.com/blog/demand-classification/
+
+======================= ================= ===========================================================
+Field                   Type              Description
+======================= ================= ===========================================================
+demand_pattern          String            Demand pattern: "smooth", "intermittent", "erratic" or
+                                          "lumpy".
+adi                     Number            | Average demand interval.
+                                          | It measures the demand regularity in time by computing 
+                                            the average interval between two demands.
+cv2                     Number            | Square of the coefficient of variation.
+                                          | It measures the variation in quantities.
+======================= ================= ===========================================================
+
+
+**Extra fields added by "inventory planning" app**
+
+This app enables the calculation of safety stocks and reorder quantities.
+
+======================= ================= ===========================================================
+Field                   Type              Description
+======================= ================= ===========================================================
+successor               Item              | Refers to another item that is replacing this item.
+                                          | It is used to display a global overview of the inventory 
+                                            status of an item - across all locations and across its
+                                            successor and predecessor items.
+======================= ================= ===========================================================
+

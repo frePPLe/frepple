@@ -23,7 +23,7 @@ The forecast solver will calculate the forecast based on the historical demand f
 (item, location, customer) intersections declared in the Forecast table.
 
 The inventory planning solver will compute a safety stock and a reorder quantity for
-all buffers declared in the inventory planning parameters table.
+all buffers declared in the inventory policy table.
 
 Two main plan types can be distinguished, based on whether you want to
 see demand OR material, lead time and capacity problems to be shown.

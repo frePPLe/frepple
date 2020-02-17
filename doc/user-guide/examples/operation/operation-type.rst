@@ -1,0 +1,46 @@
+==============
+Operation Type
+==============
+
+Different operation types are available:
+
+* **Fixed_time**
+
+  The duration of the operation is constant, regardless of the quantity being planned.
+
+  A typical example is a transport operation: transporting 1 piece with a truck takes just
+  as long as transporting 100 pieces.
+
+* **Time_per**
+
+  The duration of the operation increases linearly with the planned quantity. The total
+  duration takes the form of 'A + B * quantity', where A and B are constants.
+
+  A typical example is a production operation: there is a fixed overhead of machine
+  setup at the start, and the actual production is linear with the quantity to produce.
+
+* **Split**
+
+  This operation type plans the demand proportionally over a number of operations, based
+  on pre-defined percentages.
+
+* **Routing**
+
+  This operation type represent the sequence of operations that need to be run in sequence.
+
+* **Alternate**
+
+  | This operation type represent the choice between alternate operations to achieve the
+    same result. Another example is dedicated to this.
+  | In the majority of models you don't have to explicitly use alternate operations 
+    in your model. FrePPLe will automatically create them as soon as there are multiple
+    replenishment methods.
+
+The actual duration for the operation respects the working hours and holidays periods.
+These are defined in the available calendar of the operation and/or its location.
+The time between the start and end date of a manufacturing order or distribution order
+will then be extended with any unavailable time. 
+
+`Check this feature on a live example <https://demo.frepple.com/operation-type/data/input/operation/>`_
+
+This example has a transport operation of type fixed_time and a production operation of type time_per.

@@ -28,6 +28,6 @@ status         string            | Status of the demand.
 
 * Complete table description: :doc:`../../model-reference/sales-orders`
 
-* Modeling demand priorities: :doc:`../../cookbook/demand/priorities`
+* Modeling demand priorities: :doc:`../../examples/demand/priorities`
 
-* Modeling demand policies: :doc:`../../cookbook/demand/policies`
+* Modeling demand policies: :doc:`../../examples/demand/policies`

@@ -8,8 +8,6 @@ This table is populated with new proposed manufacturing orders when frePPLe gene
 It is also possible to load manufacturing orders that are already approved or confirmed in your ERP
 system.
 
-**Fields**
-
 ================ ================= =================================================================================================================================
 Field            Type              Description
 ================ ================= =================================================================================================================================

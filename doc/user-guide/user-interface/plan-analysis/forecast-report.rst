@@ -34,6 +34,12 @@ Forecast Net         Forecast quantity not yet consumed by orders.
 Forecast Consumed    Forecast quantity already consumed by orders.
 Planned Orders       Quantity of orders planned in this time bucket.
 Planned Net Forecast Quantity of net forecast planned in this time bucket.
+Order backlog        | Quantity of sales orders with a due date before the end of the bucket
+                       that will be shipped late.
+                     | This field is cumulative across all previous buckets.
+Forecast backlog     | Quantity of forecast that will be shipped late.
+                     | This field is cumulative across all previous buckets.
+Backlog              This is the sum of the order backlog and the forecast backlog.
 ==================== ==============================================================================
 
 .. image:: ../_images/forecast-report-single.png

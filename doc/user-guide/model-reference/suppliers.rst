@@ -2,9 +2,7 @@
 Suppliers
 =========
 
-A supplier ships us items.
-
-**Fields**
+A supplier from which we can purchase items.
 
 ================ ================= ===========================================================
 Field            Type              Description

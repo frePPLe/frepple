@@ -6,8 +6,6 @@ A resource skill associates a certain skill with a resource.
 
 The association can be date effective and also has a priority.
 
-**Fields**
-
 =============== ================= ===========================================================
 Field           Type              Description
 =============== ================= ===========================================================

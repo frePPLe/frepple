@@ -12,4 +12,5 @@ interface.
    modeling-wizard/index
    model-reference/index
    command-reference
-   cookbook/index
+   examples/index
+   videos/index

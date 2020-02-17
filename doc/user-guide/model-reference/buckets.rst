@@ -18,8 +18,6 @@ You can define buckets and bucket dates in three different ways:
 
 This table is typically updated only once a year. There is no point in doing this more frequently.
 
-**Fields**
-
 ================ ================= ===========================================================
 Field            Type              Description
 ================ ================= ===========================================================

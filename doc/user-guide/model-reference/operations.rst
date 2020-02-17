@@ -36,8 +36,6 @@ Different operation types exist:
   | Models a sequence a number of step sub-operations, to be executed
     sequentially.
 
-**Fields**
-
 ====================== ================= ===========================================================
 Field                  Type              Description
 ====================== ================= ===========================================================
@@ -122,6 +120,16 @@ fence                  duration          Time window from the current date of th
                                          Only the externally supplied and locked manufacturing orders
                                          will then exist in this time window.
                                          
+                                         By default the fence is 0, we can plan operations to be
+                                         started immediately.
+
+batchwindow            duration          The solver algorithm will scan for opportunities to create
+                                         batches within this time window before and after the 
+                                         requirement date.
+                                         
+                                         By default the batching windows is 0, which disables this
+                                         feature.
+                                                                                  
 size_minimum           positive double   A minimum quantity for manufacturing orders.
                                          
                                          A request for a lower, non-zero quantity will be rounded up.

@@ -1,6 +1,24 @@
 
 @import url("basic.css");
 
+th > p:first-child,
+td > p:first-child {
+    margin-top: 10px;
+}
+
+th > p:last-child,
+td > p:last-child {
+    margin-bottom: 10px;
+}
+
+.body table {
+    width: 100%;
+}
+
+div.body {
+	margin-bottom: 20px;
+}
+   
 @font-face {
   font-family: 'Open Sans';
   font-style: normal;
@@ -71,14 +89,13 @@ a {
   outline: none;
 }
 
-.documentwrapper {
-  max-width: 750px;
-  float: left;
-}
-
 #banner, .document {
   max-width: 995px;
   margin: 0px auto;
+}
+
+div.body {
+    max-width: 995px;
 }
 
 #site-title {
@@ -125,13 +142,26 @@ a {
   color: #333;
 }
 
-div.sphinxsidebar {
-  position: fixed;
-  height: 100%;
-  margin-left: -260px;
-  text-align: left;
+@media (min-width: 1550px) {
+  div.sphinxsidebar {
+    position: fixed;
+    height: 100%;
+    margin-left: -260px;
+    text-align: left;
+  }
 }
 
+@media (max-width: 1549px) {
+  div.sphinxsidebar {
+    float: left;
+    padding-right: 25px;
+    padding-bottom: 25px;
+    padding-left: 10px;
+    height: 100%;
+    margin: 0;
+    text-align: left;
+  }
+}
 
 div.sphinxsidebar ul {
   padding-left: 1.5em;

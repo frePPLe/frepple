@@ -8,7 +8,6 @@ This module allows the user to declare the bill of materials for a manufacturing
    :maxdepth: 2
 
    operations
-   suboperations
    operation-materials
    manufacturing-orders
 

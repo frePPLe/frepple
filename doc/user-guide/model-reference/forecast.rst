@@ -2,9 +2,10 @@
 Forecast
 ========
 
-This table allows to specify the item/location/customer combinations for which forecast should be computed.
+This table specifies the lowest level item/location/customer combinations for which 
+forecast data is maintained and/or a statistical forecast is to be computed.
 
-**Fields**
+Note that higher levels in the hierarchy don't need to be inserted in this table.
 
 ================ ================= =====================================================================
 Field            Type              Description

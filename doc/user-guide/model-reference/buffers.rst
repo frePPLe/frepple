@@ -14,8 +14,6 @@ Different types of buffers exist:
   | An infinite buffer is unconstrained and has an infinite supply of the material.
   | Propagation through a bill of material will be stopped at an infinite buffer.
 
-**Fields**
-
 ================ ================= ===========================================================
 Field            Type              Description
 ================ ================= ===========================================================

@@ -2,11 +2,9 @@
 Item suppliers
 ==============
 
-Defines an item that can be procured from a certain supplier.
+Defines an item that can be purchased from a certain supplier.
 
 The association can be date effective and also has a priority.
-
-**Fields**
 
 =============== ================= ===========================================================
 Field           Type              Description

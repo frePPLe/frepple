@@ -58,7 +58,7 @@ maximum      number            The resource capacity.
 
 * Complete table description: :doc:`../../model-reference/resources`
 
-* Modeling resource types: :doc:`../../cookbook/resource/resource-type`
+* Modeling resource types: :doc:`../../examples/resource/resource-type`
 
-* Modeling resource skills: :doc:`../../cookbook/resource/resource-skills` 
+* Modeling resource skills: :doc:`../../examples/resource/resource-skills` 
 

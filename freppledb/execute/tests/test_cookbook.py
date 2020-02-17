@@ -92,7 +92,7 @@ class cookbooktest(TransactionTestCase):
             "..",
             "doc",
             "user-guide",
-            "cookbook",
+            "examples",
             "calendar",
             "calendar-working-hours.xlsx",
         )
@@ -102,7 +102,7 @@ class cookbooktest(TransactionTestCase):
             "..",
             "doc",
             "user-guide",
-            "cookbook",
+            "examples",
             "calendar",
             "calendar-working-hours.expect",
         )
@@ -113,7 +113,7 @@ class cookbooktest(TransactionTestCase):
             "..",
             "doc",
             "user-guide",
-            "cookbook",
+            "examples",
             "resource",
             "resource-type.xlsx",
         )
@@ -123,7 +123,7 @@ class cookbooktest(TransactionTestCase):
             "..",
             "doc",
             "user-guide",
-            "cookbook",
+            "examples",
             "resource",
             "resource-type.expect",
         )
@@ -134,7 +134,7 @@ class cookbooktest(TransactionTestCase):
             "..",
             "doc",
             "user-guide",
-            "cookbook",
+            "examples",
             "resource",
             "resource-skills.xlsx",
         )
@@ -144,7 +144,7 @@ class cookbooktest(TransactionTestCase):
             "..",
             "doc",
             "user-guide",
-            "cookbook",
+            "examples",
             "resource",
             "resource-skills.expect",
         )
@@ -155,7 +155,7 @@ class cookbooktest(TransactionTestCase):
             "..",
             "doc",
             "user-guide",
-            "cookbook",
+            "examples",
             "resource",
             "resource-tool.xlsx",
         )
@@ -165,7 +165,7 @@ class cookbooktest(TransactionTestCase):
             "..",
             "doc",
             "user-guide",
-            "cookbook",
+            "examples",
             "resource",
             "resource-tool.expect",
         )
@@ -176,7 +176,7 @@ class cookbooktest(TransactionTestCase):
             "..",
             "doc",
             "user-guide",
-            "cookbook",
+            "examples",
             "demand",
             "demand-priorities.xlsx",
         )
@@ -186,7 +186,7 @@ class cookbooktest(TransactionTestCase):
             "..",
             "doc",
             "user-guide",
-            "cookbook",
+            "examples",
             "demand",
             "demand-priorities.expect",
         )
@@ -197,7 +197,7 @@ class cookbooktest(TransactionTestCase):
             "..",
             "doc",
             "user-guide",
-            "cookbook",
+            "examples",
             "demand",
             "demand-policies.xlsx",
         )
@@ -207,7 +207,7 @@ class cookbooktest(TransactionTestCase):
             "..",
             "doc",
             "user-guide",
-            "cookbook",
+            "examples",
             "demand",
             "demand-policies.expect",
         )
@@ -218,7 +218,7 @@ class cookbooktest(TransactionTestCase):
             "..",
             "doc",
             "user-guide",
-            "cookbook",
+            "examples",
             "operation",
             "operation-type.xlsx",
         )
@@ -228,7 +228,7 @@ class cookbooktest(TransactionTestCase):
             "..",
             "doc",
             "user-guide",
-            "cookbook",
+            "examples",
             "operation",
             "operation-type.expect",
         )
@@ -239,7 +239,7 @@ class cookbooktest(TransactionTestCase):
             "..",
             "doc",
             "user-guide",
-            "cookbook",
+            "examples",
             "operation",
             "operation-posttime.xlsx",
         )
@@ -249,7 +249,7 @@ class cookbooktest(TransactionTestCase):
             "..",
             "doc",
             "user-guide",
-            "cookbook",
+            "examples",
             "operation",
             "operation-posttime.expect",
         )
@@ -260,7 +260,7 @@ class cookbooktest(TransactionTestCase):
             "..",
             "doc",
             "user-guide",
-            "cookbook",
+            "examples",
             "operation",
             "operation-autofence.xlsx",
         )
@@ -270,7 +270,7 @@ class cookbooktest(TransactionTestCase):
             "..",
             "doc",
             "user-guide",
-            "cookbook",
+            "examples",
             "operation",
             "operation-autofence.expect",
         )
@@ -281,7 +281,7 @@ class cookbooktest(TransactionTestCase):
             "..",
             "doc",
             "user-guide",
-            "cookbook",
+            "examples",
             "operation",
             "operation-routing.xlsx",
         )
@@ -291,7 +291,7 @@ class cookbooktest(TransactionTestCase):
             "..",
             "doc",
             "user-guide",
-            "cookbook",
+            "examples",
             "operation",
             "operation-routing.expect",
         )
@@ -302,7 +302,7 @@ class cookbooktest(TransactionTestCase):
             "..",
             "doc",
             "user-guide",
-            "cookbook",
+            "examples",
             "buffer",
             "transfer-batch.xlsx",
         )
@@ -312,7 +312,7 @@ class cookbooktest(TransactionTestCase):
             "..",
             "doc",
             "user-guide",
-            "cookbook",
+            "examples",
             "buffer",
             "transfer-batch.expect",
         )
@@ -323,7 +323,7 @@ class cookbooktest(TransactionTestCase):
             "..",
             "doc",
             "user-guide",
-            "cookbook",
+            "examples",
             "supplier",
             "supplier-capacity.xlsx",
         )
@@ -333,7 +333,7 @@ class cookbooktest(TransactionTestCase):
             "..",
             "doc",
             "user-guide",
-            "cookbook",
+            "examples",
             "supplier",
             "supplier-capacity.expect",
         )
@@ -344,7 +344,7 @@ class cookbooktest(TransactionTestCase):
             "..",
             "doc",
             "user-guide",
-            "cookbook",
+            "examples",
             "buffer",
             "alternate-materials.xlsx",
         )
@@ -354,18 +354,18 @@ class cookbooktest(TransactionTestCase):
             "..",
             "doc",
             "user-guide",
-            "cookbook",
+            "examples",
             "buffer",
             "alternate-materials.expect",
         )
-        
+
     def test_resource_efficiency(self):
         self.loadExcel(
             settings.FREPPLE_HOME,
             "..",
             "doc",
             "user-guide",
-            "cookbook",
+            "examples",
             "resource",
             "resource-efficiency.xlsx",
         )
@@ -377,18 +377,18 @@ class cookbooktest(TransactionTestCase):
             "..",
             "doc",
             "user-guide",
-            "cookbook",
+            "examples",
             "resource",
             "resource-efficiency.expect",
         )
-        
+
     def test_operation_alternate(self):
         self.loadExcel(
             settings.FREPPLE_HOME,
             "..",
             "doc",
             "user-guide",
-            "cookbook",
+            "examples",
             "operation",
             "operation-alternate.xlsx",
         )
@@ -398,18 +398,18 @@ class cookbooktest(TransactionTestCase):
             "..",
             "doc",
             "user-guide",
-            "cookbook",
+            "examples",
             "operation",
             "operation-alternate.expect",
         )
-        
+
     def test_resource_alternate(self):
         self.loadExcel(
             settings.FREPPLE_HOME,
             "..",
             "doc",
             "user-guide",
-            "cookbook",
+            "examples",
             "resource",
             "resource-alternate.xlsx",
         )
@@ -419,10 +419,9 @@ class cookbooktest(TransactionTestCase):
             "..",
             "doc",
             "user-guide",
-            "cookbook",
+            "examples",
             "resource",
             "resource-alternate.expect",
         )
-        
 
 

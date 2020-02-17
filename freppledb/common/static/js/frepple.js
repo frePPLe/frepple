@@ -952,22 +952,17 @@ var grid = {
       else
         skipped++;
     }
-    var result = {};
+    var result = {
+    	 [reportkey]: {
+    	   "rows": colArray,
+         "page": page,
+         "favorites": favorites
+       }};
     var filter = $('#grid').getGridParam("postData").filters;
     if (typeof filter !== 'undefined' && filter.rules != [])
-      result[reportkey] = {
-        "rows": colArray,
-        "page": page,
-        "filter": filter
-        };
-    else
-      result[reportkey] = {
-        "rows": colArray,
-        "page": page,
-        };
-    var sidx = $('#grid').getGridParam('sortname');
-    if (sidx !== '')
-    {
+      result[reportkey]["filter"] = filter;
+    var sidx = $('#grid').getGridParam('sortname');    
+    if (sidx !== '') {
       // Report is sorted
       result[reportkey]['sidx'] = sidx;
       result[reportkey]['sord'] = $('#grid').getGridParam('sortorder');
@@ -1475,7 +1470,7 @@ var grid = {
       // Special case for the "within N days" operator
     	thefilter.append('&nbsp;' + gettext("days"));
   },
-
+  
   getFilterGroup: function(thegrid, group, first, thefilter, fullfilter)
   {
     if (!first)
@@ -1511,7 +1506,7 @@ var grid = {
     else if (thefilter.html().length > 1)
     	thefilter.prepend(gettext("Filtered where") + "&nbsp;");
   },
-
+  
   markSelectedRow: function(sel)
   {
     if (typeof sel==='undefined') {
@@ -1565,6 +1560,72 @@ var grid = {
     window.location.href = url;
   }
 }
+
+//
+// Functions to manage favorites
+//
+
+var favorite = {
+		
+	  check: function() {
+	  	var fav = $("#favoritename").val();
+	  	if (fav.length > 0 && !(fav in favorites)) {
+	      $("#favoritesave").removeClass("disabled");
+	  	  return true;
+	  	}
+	  	else {
+	  	  $("#favoritesave").addClass("disabled");
+	  	  return false;
+	  	}
+	  },
+	  
+	  save: function() {
+	  	var fav = $("#favoritename").val();
+	  	if (!favorite.check()) return;
+	  	favorites[fav] = JSON.parse($('#grid').getGridParam("postData").filters);
+	  	grid.saveColumnConfiguration();
+	  	var divider = $("#favoritelist li.divider");
+	    if (divider.length == 0) {
+	    	$("#favoritelist").prepend('<li role="separator" class="divider"></li>');
+	    	divider = $("#favoritelist li.divider");
+	    }
+	    var newfav_li = $('<li id="zorro"></li>');
+	    var newfav_a = $('<a href="#" onclick="favorite.open(event)"></a>');
+	    newfav_a.text(fav);
+	    newfav_a.append(
+	    		'<div style="float:right"><span class="fa fa-trash-o" onclick="favorite.remove(event)"></span></div>'
+	    		);
+	    newfav_li.append(newfav_a);
+	    divider.before(newfav_li);
+	    favorite.check();
+	  },
+	  
+	  remove: function(event) {
+	  	var fav = $(event.target).closest("a").text();
+	  	if (fav in favorites) {
+		  	if (confirm(gettext("Click ok to confirm deleting the favorite"))) {
+	  		  delete favorites[fav];
+	  	    grid.saveColumnConfiguration();
+	  	    $(event.target).closest("li").remove();
+	  	    $("#favoritename").val(fav);
+	  	    favorite.check();
+		  	}
+	  	}
+	  	event.stopImmediatePropagation();
+	  },
+	  
+	  open: function(event) {
+	  	var fav = $(event.target).parent().text();
+	  	if (fav in favorites) {
+	  		$('#grid').setGridParam({
+	        postData:{filters: JSON.stringify(favorites[fav])},
+	        search:true
+	        }).trigger('reloadGrid');
+      	grid.getFilterGroup($('#grid'), favorites[fav], true, $("#curfilter"));
+        $("#filter").addClass("btn-danger").removeClass("btn-primary");
+	  	}
+	  }
+};
 
 //----------------------------------------------------------------------------
 // Code for ERP integration

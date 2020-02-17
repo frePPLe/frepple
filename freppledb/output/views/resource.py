@@ -35,7 +35,6 @@ class OverviewReport(GridPivot):
 
     template = "output/resource.html"
     title = _("Resource report")
-    basequeryset = Resource.objects.all()
     model = Resource
     permissions = (("view_resource_report", "Can view resource report"),)
     editable = False
@@ -284,9 +283,9 @@ class OverviewReport(GridPivot):
       select res.name, res.description, res.category, res.subcategory,
         res.type, res.constrained, res.maximum, res.maximum_calendar_id,
         res.cost, res.maxearly, res.setupmatrix_id, res.setup, location.name,
-        location.description, location.category, location.subcategory, 
+        location.description, location.category, location.subcategory,
         location.available_id, res.avgutil, res.available_id available_calendar,
-        res.owner_id,        
+        res.owner_id,
         %s
         d.bucket as col1, d.startdate as col2,
         coalesce(sum(out_resourceplan.available),0) / (case when res.type = 'buckets' then 1 else %f end) as available,

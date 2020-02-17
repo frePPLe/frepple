@@ -642,10 +642,10 @@ class Simulator(object):
         """
         Simulate new customers orders being received.
         This function creates new records in the demand table.
-    
+
         The default implementation doesn't create any new demands. We only
         simulate the execution of the current open sales orders.
-    
+
         A simplistic, hardcoded example of creating demands is shown.
         TODO A more generic mechanism to have a data-driven automatic demand generation would be nice.
         Eg use some "template records" in the demand table which we use to

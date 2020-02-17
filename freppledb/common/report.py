@@ -1253,6 +1253,7 @@ class GridReport(View):
             else:
                 return "1 asc"
 
+        raise Exception("Unreachable piece of code")  # TODO Delete till end of method!
         sortname = None
         if request.GET.get("sidx", None):
             # 1

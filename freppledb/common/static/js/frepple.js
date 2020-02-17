@@ -322,7 +322,7 @@ function formatDuration(cellvalue, options, rowdata) {
   var hours = 0;
   var minutes =0;
   var seconds = 0;
-  var sign = 1;
+  var sign;
   var d = [];
   var t = [];
 
@@ -378,7 +378,6 @@ function formatDuration(cellvalue, options, rowdata) {
       + ((minutes < 10) ? ":0" : ":") + minutes 
       + ((seconds < 10) ? ":0" : ":") 
       + Number((seconds).toFixed((seconds === Math.floor(seconds))?0:6));
-  return Number((sign*seconds).toFixed((seconds === Math.floor(seconds))?0:6));
 }
 
 jQuery.extend($.fn.fmatter, {
@@ -856,7 +855,7 @@ var grid = {
         $("#grid").jqGrid('destroyFrozenColumns');
 
       $('#Rows li').each(function() {
-        val = parseInt(this.id,10);
+        var val = parseInt(this.id,10);
         if (val < 100)
         {
             $("#grid").jqGrid("showCol", colModel[val].name);
@@ -865,7 +864,7 @@ var grid = {
       });
 
       $('#DroppointRows li').each(function() {
-        val = parseInt(this.id,10);
+        var val = parseInt(this.id,10);
         if (val < 100)
         {
           hiddenrows.push(val);
@@ -876,14 +875,13 @@ var grid = {
       });
 
       $('#Crosses li').each(function() {
-        val = parseInt(this.id,10);
+        var val = parseInt(this.id,10);
         if (val >= 100)
           cross_idx.push(val-100);
       });
 
       var numfrozen = 0;
       if (pivot) {
-        var firstnonfrozen = 0;
         for (var i in colModel)
           if ("counter" in colModel[i])
             numfrozen = i+1;
@@ -1018,7 +1016,7 @@ var grid = {
   afterEditCell: function (rowid, cellname, value, iRow, iCol)
   {
   var colmodel = $(this).jqGrid('getGridParam', 'colModel')[iCol];
-  iconslist = {
+  var iconslist = {
       time: 'fa fa-clock-o',
       date: 'fa fa-calendar',
       up: 'fa fa-chevron-up',
@@ -1030,8 +1028,7 @@ var grid = {
       close: 'fa fa-remove'
     };
 
-  if (colmodel.formatter == 'date')
-  {
+  if (colmodel.formatter == 'date') {
     if (colmodel.formatoptions['srcformat'] == "Y-m-d")
       $("#" + iRow + '_' + cellname).on('focusin', function() {
         $(this).parent().css({'position': 'relative', 'overflow': 'visible'});
@@ -1044,7 +1041,7 @@ var grid = {
       });
   }
   else
-	$("#" + iRow + '_' + cellname).select();
+	  $("#" + iRow + '_' + cellname).select();
   },
 
   showExport: function(only_list)
@@ -1781,7 +1778,7 @@ var ERPconnection = {
               '</table>'+
           '</div>');
 
-          labels = ["id","type","item","value","quantity","location","origin","startdate","enddate","criticality"];
+          var labels = ["id","type","item","value","quantity","location","origin","startdate","enddate","criticality"];
 
           var bodycontent='';
           if (transactiontype == 'SO') {

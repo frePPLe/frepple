@@ -3760,7 +3760,6 @@ class DistributionOrderList(OperationPlanMixin, GridReport):
     template = "input/operationplanreport.html"
     title = _("distribution orders")
     default_sort = (1, "desc")
-    basequeryset = DistributionOrder.objects.all()
     model = DistributionOrder
     frozenColumns = 1
     multiselect = True

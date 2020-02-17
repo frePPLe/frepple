@@ -62,7 +62,7 @@ curl -H 'Accept: application/json' --header 'Authorization: Bearer {{token}}' ht
             </td>
             <td><span style="cursor: pointer">
               {{request.prefix}}/api/{{  item.1.model|app_label }}/{{  item.1.model|short_model_name }}/
-              <input type="text" class="vTextField" onChange ="window.location.href = '{{request.prefix}}/api/{{ item.1.model|app_label }}/{{  item.1.model|short_model_name }}/'+encodeURI($(event.target).val())+'/'" maxlength="30" type="text">
+              <input type="text" class="vTextField" onChange ="window.location.href = '{{request.prefix}}/api/{{ item.1.model|app_label }}/{{  item.1.model|short_model_name }}/'+encodeURI($(event.target).val())+'/'" maxlength="30">
               </input>/<span class="leftpadding fa fa-caret-right"></span>
             </span></td>
           </tr>

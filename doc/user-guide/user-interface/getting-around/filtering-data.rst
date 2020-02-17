@@ -10,11 +10,13 @@ AND or OR conditions.
 When the displayed data are filtered, the applied filters are shown above
 the data. The filter values can be edited, which allows quick re-filtering.
 
-When the filter value is empty, that criterion is not considered in the filter.
-
-In the **Enterprise Edition** filter criteria are automatically stored on the
-server: see :doc:`customizing-a-report`. When you reopen the report later on,
-the report will open with the same filter criteria as when you left it.
-
+Filters you frequently use can be saved as a favorite. Favorite filters are
+accessible with the star icon in the tool bar on the upper left. Favorites
+are private for each user.
+ 
 .. image:: ../_images/filtering.png
    :alt: Filtering data
+ 
+.. image:: ../_images/favorite.png
+   :alt: Managing favorites
+   

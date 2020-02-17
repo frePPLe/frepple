@@ -6,6 +6,9 @@ Release notes
 
 .. rubric:: User interface
 
+- You can now `save frequently used filters as a favorite <user-guide/user-interface/getting-around/filtering-data.html>`_.
+  This saves you precious time entering filter expressions over and over again.  
+
 - A new `report manager <user-guide/user-interface/report-manager.html>`_
   app allows power users to define custom reports using SQL. This greatly enhances
   the flexibility to taylor the reports to your business process and needs.

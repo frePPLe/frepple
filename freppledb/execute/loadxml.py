@@ -24,7 +24,7 @@ from django.conf import settings
 # Send the output to a logfile
 try:
     db = os.environ["FREPPLE_DATABASE"] or DEFAULT_DB_ALIAS
-except:
+except Exception:
     db = DEFAULT_DB_ALIAS
 if db == DEFAULT_DB_ALIAS:
     frepple.settings.logfile = os.path.join(settings.FREPPLE_LOGDIR, "frepple.log")

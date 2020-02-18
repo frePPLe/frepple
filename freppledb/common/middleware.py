@@ -66,7 +66,7 @@ class LocaleMiddleware(DjangoLocaleMiddleware):
                     auth = auth_header.split()
                     if auth[0].lower() == "bearer":
                         webtoken = auth[1]
-                except:
+                except Exception:
                     pass
         if webtoken:
             # Decode the web token
@@ -207,7 +207,7 @@ class MultiDBMiddleware:
                         request.user._state.db = i.name
                         request.user.is_superuser = i.is_superuser
                         return self.get_response(request)
-                except:
+                except Exception:
                     pass
             request.prefix = ""
             request.database = DEFAULT_DB_ALIAS
@@ -254,7 +254,7 @@ class AutoLoginAsAdminUser:
                             if user2.is_active:
                                 db.is_superuser = user2.is_superuser
                                 request.user.scenarios.append(db)
-                        except:
+                        except Exception:
                             # Silently ignore errors. Eg user doesn't exist in scenario
                             pass
             except User.DoesNotExist:

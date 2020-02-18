@@ -228,7 +228,7 @@ class exporter(object):
             else:
                 # No entries. We'll assume 24*7 availability.
                 yield '<calendar name=%s default="1"><buckets>\n' % quoteattr(self.calendar)
-        except:
+        except Exception:
             # Exception happens if the resource module isn't installed.
             yield '<!-- Working hours are assumed to be 24*7. -->\n'
             yield '<calendar name=%s default="1"><buckets>\n' % quoteattr(self.calendar)
@@ -240,7 +240,7 @@ class exporter(object):
                 nd = datetime.strptime(i['date'], '%Y-%m-%d') + timedelta(days=1)
                 yield '<bucket start="%sT00:00:00" end="%sT00:00:00" value="0" priority="1"/>\n' % (
                     i['date'], nd.strftime("%Y-%m-%d"))
-        except:
+        except Exception:
             # Exception happens if the hr module is not installed
             yield '<!-- No holidays since the HR module is not installed -->\n'
         yield '</buckets></calendar></calendars>\n'

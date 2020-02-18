@@ -50,7 +50,7 @@ def load_class(full_class_string):
         module = importlib.import_module(module_path)
         # Finally, we retrieve the Class
         return getattr(module, class_str)
-    except:
+    except Exception:
         raise CommandError("Can't load class %s" % full_class_string)
 
 
@@ -137,7 +137,7 @@ class Command(BaseCommand):
         if options["user"]:
             try:
                 user = User.objects.all().using(database).get(username=options["user"])
-            except:
+            except Exception:
                 raise CommandError("User '%s' not found" % options["user"])
         else:
             user = None
@@ -150,7 +150,7 @@ class Command(BaseCommand):
             if options["task"]:
                 try:
                     task = Task.objects.all().using(database).get(pk=options["task"])
-                except:
+                except Exception:
                     raise CommandError("Task identifier not found")
                 if (
                     task.started
@@ -207,7 +207,7 @@ class Command(BaseCommand):
             )
             try:
                 curdate = parse(param.value)
-            except:
+            except Exception:
                 curdate = datetime.now()
             curdate = curdate.date()
 

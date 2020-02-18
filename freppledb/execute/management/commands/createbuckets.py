@@ -117,7 +117,7 @@ class Command(BaseCommand):
         if options["user"]:
             try:
                 user = User.objects.all().using(database).get(username=options["user"])
-            except:
+            except Exception:
                 raise CommandError("User '%s' not found" % options["user"])
         else:
             user = None

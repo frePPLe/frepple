@@ -251,7 +251,7 @@ class exporter(object):
                 yield '<calendar name=%s default="1"><buckets>\n' % quoteattr(
                     self.calendar
                 )
-        except:
+        except Exception:
             # Exception happens if the resource module isn't installed.
             yield "<!-- Working hours are assumed to be 24*7. -->\n"
             yield '<calendar name=%s default="1"><buckets>\n' % quoteattr(self.calendar)
@@ -265,7 +265,7 @@ class exporter(object):
                     i["date"],
                     nd.strftime("%Y-%m-%d"),
                 )
-        except:
+        except Exception:
             # Exception happens if the hr module is not installed
             yield "<!-- No holidays since the HR module is not installed -->\n"
         yield "</buckets></calendar></calendars>\n"
@@ -626,7 +626,7 @@ class exporter(object):
                 "product_uom",
                 "subproduct_type",
             ]
-        except:
+        except Exception:
             subproduct_model = None
 
         # Loop over all bom records

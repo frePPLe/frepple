@@ -146,11 +146,11 @@ class SupplyPlanning(PlanTask):
         # Create a solver where the plan type are defined by an environment variable
         try:
             plantype = int(os.environ["FREPPLE_PLANTYPE"])
-        except:
+        except Exception:
             plantype = 1  # Default is a constrained plan
         try:
             constraint = int(os.environ["FREPPLE_CONSTRAINT"])
-        except:
+        except Exception:
             constraint = 15  # Default is with all constraints enabled
         cls.solver = frepple.solver_mrp(
             constraints=constraint,

@@ -125,7 +125,7 @@ class ParameterForm(forms.ModelForm):
         if name == "currentdate":
             try:
                 parse(value)
-            except:
+            except Exception:
                 self._errors["value"] = ErrorList(
                     [_("Invalid date: expecting YYYY-MM-DD HH:MM:SS")]
                 )

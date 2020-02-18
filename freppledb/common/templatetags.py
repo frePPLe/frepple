@@ -61,7 +61,7 @@ class CrumbsNode(Node):
     def render(self, context):
         try:
             req = context["request"]
-        except:
+        except Exception:
             return ""  # No request found in the context: no crumbs...
         if not hasattr(req, "session"):
             return  # No session found in the context: no crumbs...
@@ -71,9 +71,9 @@ class CrumbsNode(Node):
             cur = req.session["crumbs"]
             try:
                 cur = cur[req.prefix]
-            except:
+            except Exception:
                 cur = []
-        except:
+        except Exception:
             req.session["crumbs"] = {}
             cur = []
 
@@ -81,7 +81,7 @@ class CrumbsNode(Node):
         count = 0
         try:
             title = variable_title.resolve(context)
-        except:
+        except Exception:
             title = req.get_full_path()
         if title != _("cockpit"):
             # Don't handle the cockpit screen in the crumbs
@@ -146,7 +146,7 @@ class CrumbsNode(Node):
                 while count > MAX_CRUMBS:
                     count -= 1
                     del cur[0]
-            except:
+            except Exception:
                 # Ignore errors to fail in a clean and graceful way
                 pass
 
@@ -276,7 +276,7 @@ class ModelTabs(Node):
                 )
             result.append("</ul></div></div>")
             return mark_safe("\n".join(result))
-        except:
+        except Exception:
             raise
 
 
@@ -327,7 +327,7 @@ def version_short():
 def checkPassword(usr, pwd):
     try:
         return User.objects.get(username=usr).check_password(pwd)
-    except:
+    except Exception:
         return False
 
 
@@ -441,7 +441,7 @@ class MenuNode(Node):
 
         try:
             req = context["request"]
-        except:
+        except Exception:
             return ""  # No request found in the context
         o = []
 
@@ -492,7 +492,7 @@ class MenuNode(Node):
                                         .value.lower()
                                         == "true"
                                     )
-                                except:
+                                except Exception:
                                     ok = False
                                 if ok is False:
                                     break
@@ -619,7 +619,7 @@ class DashboardNode(Node):
 
         try:
             req = context["request"]
-        except:
+        except Exception:
             return ""  # No request found in the context
         reg = Dashboard.buildList()
         mydashboard = req.user.getPreference(

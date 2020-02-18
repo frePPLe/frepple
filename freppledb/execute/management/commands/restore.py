@@ -65,7 +65,7 @@ class Command(BaseCommand):
         if options["user"]:
             try:
                 user = User.objects.all().using(database).get(username=options["user"])
-            except:
+            except Exception:
                 raise CommandError("User '%s' not found" % options["user"])
         else:
             user = None
@@ -77,7 +77,7 @@ class Command(BaseCommand):
             if options["task"]:
                 try:
                     task = Task.objects.all().using(database).get(pk=options["task"])
-                except:
+                except Exception:
                     raise CommandError("Task identifier not found")
                 if (
                     task.started
@@ -123,7 +123,7 @@ class Command(BaseCommand):
                     task.processid = p.pid
                     task.save(using=database)
                     p.wait()
-                except:
+                except Exception:
                     p.kill()
                     p.wait()
                     raise Exception("Database restoration failed")

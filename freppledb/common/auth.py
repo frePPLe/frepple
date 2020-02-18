@@ -135,7 +135,7 @@ class MultiDBBackend(ModelBackend):
                         if user2.is_active:
                             db.is_superuser = user2.is_superuser
                             user.scenarios.append(db)
-                    except:
+                    except Exception:
                         # Silently ignore errors. Eg user doesn't exist in scenario
                         pass
             return user
@@ -187,7 +187,7 @@ def basicauthentication(allow_logged_in=True, realm="frepple"):
                                 login(request, user)
                                 request.user = user
                                 ok = True
-            except:
+            except Exception:
                 # Everything going wrong in the above will get the 401-unauthorized
                 # reply. Any exception is silently ignored.
                 pass

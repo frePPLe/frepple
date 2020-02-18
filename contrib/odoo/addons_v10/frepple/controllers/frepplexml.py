@@ -28,7 +28,7 @@ from odoo.addons.frepple.controllers.inbound import importer
 
 try:
    import jwt
-except:
+except Exception:
    logger.error('PyJWT module has not been installed. Please install the library from https://pypi.python.org/pypi/PyJWT')
 
 
@@ -139,7 +139,7 @@ class XMLController(odoo.http.Controller):
                 )
               if self.user != decoded.get('user', None):
                 return Response('Incorrect or missing webtoken', 401)
-            except:
+            except Exception:
                 return Response('Incorrect or missing webtoken', 401)
 
             # Import the data

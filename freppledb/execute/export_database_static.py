@@ -1730,7 +1730,7 @@ class DatabaseTask(Thread):
         for f in self.functions:
             try:
                 f(cursor)
-            except:
+            except Exception:
                 traceback.print_exc()
 
         # Close the connection

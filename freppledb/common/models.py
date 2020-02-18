@@ -79,7 +79,7 @@ class HierarchyModel(models.Model):
             obj.rght = None
             obj.lvl = None
             obj.save(update_fields=["lft", "rght", "lvl"], using=self._state.db)
-        except:
+        except Exception:
             # Failure can happen when eg we delete the last record
             pass
         # Call the real delete() method
@@ -290,7 +290,7 @@ class Parameter(AuditModel):
     def getValue(key, database=DEFAULT_DB_ALIAS, default=None):
         try:
             return Parameter.objects.using(database).get(pk=key).value
-        except:
+        except Exception:
             return default
 
 
@@ -329,7 +329,7 @@ class Scenario(models.Model):
                             ).save()
                         else:
                             Scenario(name=db, status="Free").save()
-        except:
+        except Exception:
             # Failures are acceptable - eg when the default database has not been intialized yet
             pass
 
@@ -482,7 +482,7 @@ class User(AbstractUser):
                             using=db,
                             update_fields=update_fields2 if not newuser else None,
                         )
-                except:
+                except Exception:
                     try:
                         with transaction.atomic(using=db, savepoint=False):
                             newuser = True
@@ -561,7 +561,7 @@ class User(AbstractUser):
         except ValueError:
             logger.error("Invalid preference '%s' of user '%s'" % (prop, self.username))
             return default
-        except:
+        except Exception:
             return default
 
     def setPreference(self, prop, val, database=DEFAULT_DB_ALIAS):

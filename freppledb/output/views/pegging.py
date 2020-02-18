@@ -169,7 +169,7 @@ class ReportByDemand(GridReport):
             current = parse(
                 Parameter.objects.using(request.database).get(name="currentdate").value
             )
-        except:
+        except Exception:
             current = datetime.now()
             current = current.replace(microsecond=0)
 

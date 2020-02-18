@@ -25,7 +25,7 @@ from django.utils.translation import gettext_lazy as _
 
 try:
     DEBUG = "runserver" in sys.argv
-except:
+except Exception:
     DEBUG = False
 DEBUG_JS = DEBUG
 

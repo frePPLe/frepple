@@ -178,7 +178,7 @@ class Command(BaseCommand):
                     .using(self.database)
                     .get(username=options["user"])
                 )
-            except:
+            except Exception:
                 raise CommandError("User '%s' not found" % options["user"])
         else:
             self.user = None
@@ -208,7 +208,7 @@ class Command(BaseCommand):
                     task = (
                         Task.objects.all().using(self.database).get(pk=options["task"])
                     )
-                except:
+                except Exception:
                     raise CommandError("Task identifier not found")
                 if (
                     task.started
@@ -267,7 +267,7 @@ class Command(BaseCommand):
                         logger.info("Executing pre-statement '%s'" % stmt)
                         cursor.execute(stmt)
                         logger.info("%s record(s) modified" % cursor.rowcount)
-                    except:
+                    except Exception:
                         errors += 1
                         logger.error(
                             "An error occurred when executing statement '%s'" % stmt
@@ -384,7 +384,7 @@ class Command(BaseCommand):
                         logger.info("Executing post-statement '%s'" % stmt)
                         cursor.execute(stmt)
                         logger.info("%s record(s) modified" % cursor.rowcount)
-                    except:
+                    except Exception:
                         errors += 1
                         logger.error(
                             "An error occured when executing statement '%s'" % stmt

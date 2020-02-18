@@ -5825,7 +5825,7 @@ class OperationPlanDetail(View):
             current_date = parse(
                 Parameter.objects.using(request.database).get(name="currentdate").value
             )
-        except:
+        except Exception:
             current_date = datetime.now()
         cursor = connections[request.database].cursor()
 

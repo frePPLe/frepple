@@ -224,7 +224,7 @@ class TaskReport(GridReport):
                 .only("id")[0]
             )
             return '"lastcompleted":%d,\n' % lastCompletedTask.id
-        except:
+        except Exception:
             return '"lastcompleted":0,\n'
 
 
@@ -310,7 +310,7 @@ def wrapTask(request, action):
         for value in args.getlist("constraint"):
             try:
                 constraint += int(value)
-            except:
+            except Exception:
                 pass
         task = Task(name="runplan", submitted=now, status="Waiting", user=request.user)
         task.arguments = "--constraint=%s --plantype=%s" % (
@@ -580,16 +580,15 @@ def DownloadLogFile(request, taskid):
 @never_cache
 def logfile(request, taskid):
     """
-  This view shows the frePPLe log file of the last planning run in this database.
-  """
-
+    This view shows the frePPLe log file of the last planning run in this database.
+    """
     try:
         filename = Task.objects.using(request.database).get(id=taskid).logfile
         if not filename.lower().endswith(".log"):
             return HttpResponseNotFound(force_text(_("Error downloading file")))
 
         f = open(os.path.join(settings.FREPPLE_LOGDIR, filename), "rb")
-    except:
+    except Exception:
         logdata = "File not found"
     else:
         try:
@@ -624,11 +623,11 @@ def logfile(request, taskid):
 
 class FileManager:
     """
-  Class to upload and download files from a folder.
-  The folder code argument indicates which folder to use:
+    Class to upload and download files from a folder.
+    The folder code argument indicates which folder to use:
     - 0: file upload folder
     - 1: export subdirectory of the file upload folder
-  """
+    """
 
     @staticmethod
     def getFolderInfo(request, foldercode):
@@ -670,7 +669,7 @@ class FileManager:
         if not os.path.isdir(settings.DATABASES[request.database]["FILEUPLOADFOLDER"]):
             try:
                 os.makedirs(settings.DATABASES[request.database]["FILEUPLOADFOLDER"])
-            except:
+            except Exception:
                 errorcount += 1
                 response.write("Upload folder doesn't exist")
 

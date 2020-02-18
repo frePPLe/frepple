@@ -34,7 +34,7 @@ from freppledb.common.auth import getWebserviceAuthorization
 def APIIndexView(request):
     try:
         exp = int(request.GET.get("exp", "3"))
-    except:
+    except Exception:
         exp = 3
     if exp > 7:
         exp = 7

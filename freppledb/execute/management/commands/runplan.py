@@ -98,7 +98,7 @@ class Command(BaseCommand):
         if "user" in options and options["user"]:
             try:
                 user = User.objects.all().using(database).get(username=options["user"])
-            except:
+            except Exception:
                 raise CommandError("User '%s' not found" % options["user"])
         else:
             user = None
@@ -115,7 +115,7 @@ class Command(BaseCommand):
             if "task" in options and options["task"]:
                 try:
                     task = Task.objects.all().using(database).get(pk=options["task"])
-                except:
+                except Exception:
                     raise CommandError("Task identifier not found")
                 if (
                     task.started
@@ -316,14 +316,14 @@ class Command(BaseCommand):
                         if key == "constraint":
                             try:
                                 constraint = int(val)
-                            except:
+                            except Exception:
                                 pass
                         elif key == "plantype":
                             plantype = val
                         elif key == "env":
                             try:
                                 current_options = val.split(",")
-                            except:
+                            except Exception:
                                 pass
 
             context = RequestContext(

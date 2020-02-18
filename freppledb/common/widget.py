@@ -47,7 +47,7 @@ class WelcomeWidget(Widget):
                 prefix = ""
             else:
                 prefix = "/%s" % _thread_locals.request.database
-        except:
+        except Exception:
             prefix = ""
         return (
             _(
@@ -99,7 +99,7 @@ class RecentActionsWidget(Widget):
 
         try:
             db = _thread_locals.request.database or DEFAULT_DB_ALIAS
-        except:
+        except Exception:
             db = DEFAULT_DB_ALIAS
         if isinstance(_thread_locals.request.user, AnonymousUser):
             q = LogEntry.objects.using(db).select_related("content_type", "user")[
@@ -168,7 +168,7 @@ class RecentCommentsWidget(Widget):
 
         try:
             db = _thread_locals.request.database or DEFAULT_DB_ALIAS
-        except:
+        except Exception:
             db = DEFAULT_DB_ALIAS
         cmts = (
             Comment.objects.using(db)

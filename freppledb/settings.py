@@ -80,7 +80,7 @@ else:
 
 try:
     DEBUG = "runserver" in sys.argv
-except:
+except Exception:
     DEBUG = False
 DEBUG_JS = DEBUG
 

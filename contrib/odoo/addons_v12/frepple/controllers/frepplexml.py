@@ -29,7 +29,7 @@ from odoo.addons.frepple.controllers.inbound import importer
 
 try:
     import jwt
-except:
+except Exception:
     logger.error(
         "PyJWT module has not been installed. Please install the library from https://pypi.python.org/pypi/PyJWT"
     )

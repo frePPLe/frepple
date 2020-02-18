@@ -136,7 +136,7 @@ class Menu:
                     gr[2] = index
                 return
         # Create new group, if it wasn't found already
-        self._groups.append((name, label or name, index, []))
+        self._groups.append([name, label or name, index, []])
 
     def removeGroup(self, name):
         # Scan across groups

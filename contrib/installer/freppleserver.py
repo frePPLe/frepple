@@ -368,7 +368,7 @@ if __name__ == "__main__":
             maxFiles=1,
             prefix="%t",
         )
-    except:
+    except Exception:
         win32gui.MessageBox(
             None,
             "The folder %s doesn't exist or is not writeable for your user"

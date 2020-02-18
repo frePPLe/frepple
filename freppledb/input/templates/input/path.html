@@ -43,7 +43,7 @@ text.id {
 function reslistfmt(cellvalue, options, row)
 {
   if (cellvalue === undefined || cellvalue ==='') return '';
-  result = '';
+  var result = '';
   for (var i in cellvalue)
     result += cellvalue[i][0]
       + "<a href='" + url_prefix + "/detail/input/resource/" + admin_escape(cellvalue[i][0]) + "/'>"
@@ -251,7 +251,7 @@ function drawGraph(jsondata)
     nodes[i].x = width_level * (0.5 + maxlevel - nodes[i].level);
 
   // Initialize D3 force layout
-  svg = d3.select('#svggraph')
+  var svg = d3.select('#svggraph')
     .attr('width', width)
     .attr('height', 2000)
     .attr('viewBox','0 0 ' + width + ' 400')
@@ -273,8 +273,8 @@ function drawGraph(jsondata)
     .on('tick', tick);
 
   // Handles to link and node element groups
-  path = svg.append('svg:g').selectAll('path');
-  shapes = svg.append('svg:g').selectAll('g');
+  var path = svg.append('svg:g').selectAll('path');
+  var shapes = svg.append('svg:g').selectAll('g');
 
   // Path (link) group
   path = path.data(links);

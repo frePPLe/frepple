@@ -2,8 +2,8 @@
 Creating an custom theme
 ========================
 
-The user interface is styled using bootstrap. All variables documented at
-http://getbootstrap.com/customize/ are available to you to design your
+The user interface is styled using bootstrap v3. All variables documented at
+https://getbootstrap.com/docs/3.4/customize/ are available to you to design your
 look and feel.
 
 Proceed with the following steps to compile a custom theme:
@@ -47,15 +47,18 @@ Proceed with the following steps to compile a custom theme:
 
 #. | **Compile the LESS files**:
    | The less files need to be compiled into a CSS stylesheet for each theme.
-     This is done by the following command:
+     Edit the gruntfile.js file to include your theme in the list of themes, and
+     then run the following command:
 
    ::
 
        grunt less
 
    In each of the theme folders the file bootstrap.min.css and bootstrap.min.css.map
-   are generated.
+   will be generated.
 
 #. | **Update djangosettings.py file**:
    | New themes are only shown in the user interface when the theme is configured
      in the setting *THEMES*.
+   | You can also edit the setting *DEFAULT_THEME* to make your theme the default
+     one.

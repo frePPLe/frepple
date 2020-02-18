@@ -12,6 +12,7 @@ This section has instructions to navigate through the user interface.
    navigation
    filtering-data
    sorting-data
+   favorites
    selecting-time-buckets
    exporting-data
    importing-data

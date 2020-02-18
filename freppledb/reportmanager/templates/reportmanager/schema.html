@@ -5,7 +5,7 @@
     <div class="panel-heading schema-header" role="tab">
       <span class="fa fa-plus pull-right panel-toggle"></span>
       <h4 class="name panel-title" style="display: inline-block">
-         <a href="#" role="button">{% trans "table"|capfirst %}&nbsp;{{ m.0 }}</a>         
+         <a role="button">{% trans "table"|capfirst %}&nbsp;{{ m.0 }}</a>         
       </h4>
     </div>
     <div class="panel-collapse collapse panel-body table-responsive schema-table">
@@ -15,7 +15,7 @@
             <tbody>
                 {% for c in m.1 %}
                 <tr>
-                    <td width="50%"><code>{{ c.0 }}</code></td>
+                    <td width="50%"><a href="#" class="schemafield"><code>{{ c.0 }}</code>&nbsp;<span class="fa fa-clipboard"></span></a></td>
                     <td width="50%" class="text-muted"><small>{{ c.1 }}</small></td>
                 </tr>
                 {% endfor %}

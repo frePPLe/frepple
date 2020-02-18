@@ -43,6 +43,23 @@ function getSchema() {
           $(this).children("span.fa").toggleClass("fa-plus").toggleClass("fa-minus");
 	      	$(this).next(".collapse").collapse("toggle");
 	      });
+	      $("a.schemafield").on("click", function(e) {
+	      	var field = $(e.target).closest("a").find("code").first().text();
+	      	if (field != "") {	      		
+	      	  var statements = $("#reportmanager_statements");
+	      		if (statements[0].selectionStart || statements[0].selectionStart === 0) {
+	      	    var startPos = statements[0].selectionStart;
+	      	    var endPos = statements[0].selectionEnd;
+	      	    statements[0].value = statements[0].value.substring(0, startPos) +
+	      	      field + ", " +
+	      	      statements[0].value.substring(endPos, statements[0].value.length);
+	      	    statements[0].selectionStart = startPos + field.length + 2;
+	      	    statements[0].selectionEnd = startPos + field.length + 2;
+	      	  } 
+	      	else
+	      	  this.value += field + ", ";
+	      	}
+	      });
 	    },
 	    async: true
 	    });
@@ -61,7 +78,10 @@ $(function() {
   $("#reportmanager_statements").resizable({
     handleSelector: "#resize-handle",
     resizeWidth: false,
-    resizeHeight: true
+    resizeHeight: true,
+    onDrag: function(e) {
+      $("#schemacolumn").height($("#reportmanager_statements").height());
+    }
   });
 
 	$("#reportmanager_test").on("click", function(event) {

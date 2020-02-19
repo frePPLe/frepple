@@ -36,7 +36,7 @@ class SQLReport_admin(MultiDBModelAdmin):
             "name": "edit",
             "label": _("edit"),
             "view": "admin:reportmanager_sqlreport_change",
-            "permissions": "reportmanager.change_report",
+            "permissions": "reportmanager.change_sqlreport",
         },
         {
             "name": "comments",

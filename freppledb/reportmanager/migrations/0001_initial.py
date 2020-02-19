@@ -89,7 +89,6 @@ class Migration(migrations.Migration):
                 ),
             ],
             options={
-                "default_permissions": ["create"],
                 "ordering": ("name",),
                 "verbose_name": "custom report",
                 "verbose_name_plural": "custom reports",

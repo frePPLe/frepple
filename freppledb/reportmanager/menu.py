@@ -25,6 +25,10 @@ from .models import SQLReport
 
 
 def MyReports(request):
+    if not request.user.has_perm(
+        "reportmanager.view_sqlreport"
+    ) and not request.user.has_perm("reportmanager.add_sqlreport"):
+        return []
     result = []
     index = 1
     for x in (
@@ -58,6 +62,7 @@ menu.addItem(
     "reportmanager",
     url="/data/reportmanager/sqlreport/",
     report=ReportList,
+    permission="reportmanager.change_sqlreport",
     model=SQLReport,
     index=1100,
     admin=True,

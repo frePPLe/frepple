@@ -31,7 +31,7 @@ function render(data) {
   }
 }
 
-{% if perms.reportmanager.change_sqlreport %}
+{% if perms.reportmanager.change_sqlreport or perms.reportmanager.add_sqlreport%}
 function getSchema() {
 	 $.ajax({
 	    url: url_prefix + "/reportmanager/schema/",
@@ -84,6 +84,14 @@ $(function() {
     }
   });
 
+  $("#reportmanager_statements").on("input", function() {
+  	$("#reportmanager_save").removeClass("btn-primary").addClass("btn-danger");
+    $(window).on('beforeunload', function() {
+      if ($("#reportmanager_save").hasClass("btn-danger"))
+        return 'There are unsaved changes.';
+    });
+  });
+  
 	$("#reportmanager_test").on("click", function(event) {
 	  $("#reportmanager_test").prop('disabled', true);
 	  $("#reportmanager_cancel").prop('disabled', false);
@@ -126,6 +134,7 @@ $(function() {
             + '</ul></div></div>'
             );
         setTimeout(function() {$("#save_ok").remove();}, 3000);
+        $("#reportmanager_save").addClass("btn-primary").removeClass("btn-danger");
         id = data.id;
       }
       });
@@ -211,7 +220,7 @@ $(function() {
   <button class="btn btn-xs btn-primary" onclick="grid.showCustomize(false)">
     <span data-toggle="tooltip" data-placement="top" title="" class="fa fa-wrench" data-original-title="{% trans 'customize'|capfirst|force_escape %}"></span>
   </button>
-  {% if perms.reportmanager.create_sqlreport %}
+  {% if perms.reportmanager.change_sqlreport and report and report.owner == request.user %}
   <button class="btn btn-xs btn-primary" onclick="startEdit()" data-toggle="tooltip" data-placement="top" data-original-title="{% trans 'edit'|capfirst|force_escape %}">
     <span class="fa fa-pencil"></span>
   </button>

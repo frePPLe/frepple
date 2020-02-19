@@ -66,7 +66,7 @@ from .admin import SQLReportForm
 logger = logging.getLogger(__name__)
 
 
-@permission_required("reportmanager.create_sqlreport", raise_exception=True)
+@permission_required("reportmanager.add_sqlreport", raise_exception=True)
 def getSchema(request):
     """
     Construct schema information of the following form, sorted by db_table_name.
@@ -126,6 +126,7 @@ class ReportList(GridReport):
         GridFieldText(
             "user__username",
             title=_("user"),
+            editable=False,
             formatter="detail",
             extra='"role":"common/user"',
         ),
@@ -146,7 +147,7 @@ class ReportManager(GridReport):
 
     @classmethod
     def has_permission(cls, user):
-        return user.has_perm("reportmanager.create_sqlreport")
+        return user.has_perm("reportmanager.view_sqlreport")
 
     @classmethod
     def get(cls, request, *args, **kwargs):
@@ -155,11 +156,13 @@ class ReportManager(GridReport):
         )
         if args:
             report = SQLReport.objects.using(request.database).get(pk=args[0])
-            if not report.public and report.user.id != request.user.id:
+            if not cls.has_permission(request.user) or (
+                not report.public and report.user.id != request.user.id
+            ):
                 return HttpResponseForbidden("You're not the owner of this report")
         else:
             report = None
-            if not cls.has_permission(request.user):
+            if not request.user.has_perm("reportmanager.add_sqlreport"):
                 return HttpResponseForbidden("<h1>%s</h1>" % _("Permission denied"))
 
         if report:

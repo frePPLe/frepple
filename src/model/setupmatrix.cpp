@@ -248,7 +248,7 @@ void SetupMatrixRule::updateExpression() {
     tmp.append(to);
   try {
     expression = regex(tmp, regex::ECMAScript | regex::optimize);
-  } catch (regex_error) {
+  } catch (const regex_error&) {
     string msg("Invalid setup matrix rule \"" + tmp + "\" on setup matrix \"" +
                getSetupMatrix()->getName() + "\"");
     Resource* rsrc = nullptr;

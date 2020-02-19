@@ -4323,7 +4323,8 @@ class PurchaseOrderList(OperationPlanMixin, GridReport):
                 RawSQL(
                     """
             coalesce((select max(cost) from itemsupplier 
-                      where itemsupplier.item_id = operationplan.item_id 
+                      where itemsupplier.item_id = operationplan.item_id
+                      and cost > 0
                       and (itemsupplier.location_id is null or itemsupplier.location_id = operationplan.location_id) 
                       and itemsupplier.supplier_id = operationplan.supplier_id), 
                      (select cost from item where item.name = operationplan.item_id), 0)

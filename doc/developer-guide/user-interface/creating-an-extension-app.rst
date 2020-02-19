@@ -88,22 +88,22 @@ process.
    .. code-block:: Python
    
       ...
-      registerAttribute(    
-          "freppledb.input.models.Item", # Class we are extending
+      registerAttribute(
+          "freppledb.input.models.Item",  # Class we are extending
           [
               (
-                  "attribute_1",         # Field name in the database
+                  "attribute_1",  # Field name in the database
                   _("first attribute"),  # Human readable label of the field
-                  "number",              # Type of the field.
-                  True,                  # Is the field editable?
-                  True,                  # Should the field be visible by default?
-              ),
+                  "number",  # Type of the field.
+                  True,  # Is the field editable?
+                  True,  # Should the field be visible by default?
+              )
           ],
-      )   
+      )
       ...
 
-   | This file only declares the model structure. The actual table will be created in a
-     later step.
+   | This file only declares the model structure. The actual database field will be 
+     created in a following step.
    
 #. | **Define the database models**:
    | The file **models.py** describes new database models.
@@ -112,22 +112,34 @@ process.
    .. code-block:: Python
      
       class My_Model(AuditModel):
-        # Database fields
-        name = models.CharField(_('name'), max_length=settings.NAMESIZE, primary_key=True)
-        charfield = models.CharField(_('charfield'), max_length=settings.DESCRIPTIONSIZE, null=True,
-          blank=True, help_text= _('A sample character field'))
-        booleanfield = models.BooleanField(_('booleanfield'), blank=True, default=True,
-          help_text= _('A sample boolean field'))
-        decimalfield = models.DecimalField(_('decimalfield'), max_digits=settings.MAX_DIGITS,
-          decimal_places=settings.DECIMAL_PLACES, default='0.00',
-          help_text= _('A sample decimal field')
-          ) 
+          # Database fields
+          name = models.CharField(_("name"), max_length=300, primary_key=True)
+          charfield = models.CharField(
+              _("charfield"),
+              max_length=300,
+              null=True,
+              blank=True,
+              help_text=_("A sample character field"),
+          )
+          booleanfield = models.BooleanField(
+              _("booleanfield"),
+              blank=True,
+              default=True,
+              help_text=_("A sample boolean field"),
+          )
+          decimalfield = models.DecimalField(
+              _("decimalfield"),
+              max_digits=20,
+              decimal_places=8,
+              default="0.00",
+              help_text=_("A sample decimal field"),
+          )
       
-        class Meta(AuditModel.Meta):
-          db_table = 'my_model'                 # Name of the database table
-          verbose_name = _('my model')          # A translatable name for the entity
-          verbose_name_plural = _('my models')  # Plural name
-          ordering = ['name']
+          class Meta(AuditModel.Meta):
+              db_table = "my_model"  # Name of the database table
+              verbose_name = _("my model")  # A translatable name for the entity
+              verbose_name_plural = _("my models")  # Plural name
+              ordering = ["name"]
 
    | This file only declares the model structure. The actual table will be created in a
      later step.
@@ -135,19 +147,59 @@ process.
    | You can find all details on models and fields on 
      https://docs.djangoproject.com/en/2.2/ref/models/fields/
         
-#. | **Create the fields in the database**:
-   | In the previous steps all models and attributes were defined. In this step we create
-     them in the PostgreSQL database.   
-   | The database table and its indexes are created with the following two
-     commands. The first one generates an incremental database update script.
-     The second one executes the migration generated in the first step.
+#. | **Create tables and fields in the database**:
+   | In the previous steps all models and attributes were defined. Now we create
+     them in the PostgreSQL database. This is done by running the following statement
+     on the command line:
+   
+    .. code-block::
+
+      # Deployment script to apply database schema updates - run by system administrators
+      frepplectl migrate
+
+   | This command will incrementally bring the database schema up to date. The database
+     schema migration allows upgrading between different versions of frePPLe without
+     loss of data and without recreating the database from scratch. The database migrations
+     also allow to incrementally update the database with new versions of your app.
+    
+   | Migration scripts are Python scripts, located in the **migrations** folder. The scripts
+     are generated mostly automatic with the command line below. More complex migrations will
+     need review and/or coding by developers.
+    
+   .. code-block::
+      
+      # Generate a skeleton migration script - run by developers only
+      frepplectl makemigrations my_app
+    
+   .. code-block:: Python
+   
+      class Migration(AttributeMigration):
+      
+          # Module owning the extended model
+          extends_app_label = "input"
+      
+          # Defines migrations that are prerequisites for this one
+          dependencies = [("my_app", "0001_initial")]
+      
+          # Defines the migration operation to perform: such as CreateModel, AlterField,
+          # DeleteModel, AddIndex, RunSQL, RunPython, etc...
+          operations = [
+              migrations.AddField(
+                  model_name="item",
+                  name="attribute_1",
+                  field=models.DecimalField(
+                      blank=True,
+                      db_index=True,
+                      decimal_places=8,
+                      max_digits=20,
+                      null=True,
+                      verbose_name="first attribute",
+                  ),
+              )
+          ]
 
    | You can find all details on migrations on 
      https://docs.djangoproject.com/en/2.2/topics/migrations/
-   ::
-
-      frepplectl makemigrations
-      frepplectl migrate
 
 #. | **Register the new models in the admin**:
    | You'll need to edit the file admin.py.
@@ -186,10 +238,27 @@ process.
      but specific to frePPLe.
 
 #. | **Add demo data**:
-   | In a subfolder called fixtures you can define demo datasets that can
+   | In a subfolder **fixtures** you can define demo datasets that can
      be loaded with the command "frepplectl loaddata" or interactively
      in the execution screen.
 
+   | Fixtures are dat
+   .. code-block:: JSON
+   
+      [
+      {"model": "my_app.my_model", "fields": {"name": "sample #1", "charfield": "A", "booleanfield": true, "decimalfield": 999.0}},
+      {"model": "my_app.my_model", "fields": {"name": "sample #2", "charfield": "B", "booleanfield": false, "decimalfield": 666.0}}
+      ]
+
+      
+#. | **Customize the planning script**:
+   | The script commands.py is executed by the planning engine to generate a
+     plan.
+   | You can creating a customized version in your app to add customized
+     planning steps.
+   | Note that this is not standard Django functionality, but specific to
+     frePPLe.
+     
 #. | **Add custom commands**:
    | By creating files in the folder management/commands you can define extra
      commands.
@@ -214,14 +283,6 @@ process.
    ::
 
       frepplectl test my_app
-
-#. | **Customize the planning script**:
-   | The script commands.py is executed by the planning engine to generate a
-     plan.
-   | You can creating a customized version in your app to add customized
-     planning steps.
-   | Note that this is not standard Django functionality, but specific to
-     frePPLe.
 
 #. | **More information!**:
    | FrePPLe is based on django web application framework. You can dig deeper

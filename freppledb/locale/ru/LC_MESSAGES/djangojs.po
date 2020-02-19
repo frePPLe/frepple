@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-14 17:09+0100\n"
-"PO-Revision-Date: 2018-12-11 11:53+0100\n"
+"PO-Revision-Date: 2020-02-18 16:13+0100\n"
 "Last-Translator: \n"
 "Language-Team: Michael Nasonov <info@ivc-inform.ru>\n"
 "Language: ru\n"
@@ -75,10 +75,8 @@ msgid "Click to select record"
 msgstr "Нажмите, чтобы выбрать запись"
 
 #: common/static/js/frepple.js:627 common/static/js/frepple.min.js:11
-#, fuzzy
-#| msgid "Selected options"
 msgid "Select action"
-msgstr "Выбранные опции"
+msgstr "Выберите действие"
 
 #: common/static/js/frepple.js:661 common/static/js/frepple.min.js:11
 msgid "Selected options"
@@ -203,13 +201,11 @@ msgstr "Экспорт плана"
 
 #: common/static/js/frepple.js:1435 common/static/js/frepple.min.js:11
 msgid "within"
-msgstr ""
+msgstr "в пределах"
 
 #: common/static/js/frepple.js:1468 common/static/js/frepple.min.js:11
-#, fuzzy
-#| msgid "days late"
 msgid "days"
-msgstr "Дней позже"
+msgstr "дней"
 
 #: common/static/js/frepple.js:1504 common/static/js/frepple.min.js:11
 msgid "Filtered where"
@@ -367,57 +363,57 @@ msgstr "Помошник"
 #: forecast/static/forecast/src/forecast.js:32
 #: forecast/static/js/frepple-forecast.min.js:11
 msgid "total orders 3 years ago"
-msgstr ""
+msgstr "итого заказов за 3 года"
 
 #: forecast/static/forecast/src/forecast.js:33
 #: forecast/static/js/frepple-forecast.min.js:11
 msgid "orders adjustment 3 years ago"
-msgstr ""
+msgstr "корректировка заказов за 3 года"
 
 #: forecast/static/forecast/src/forecast.js:34
 #: forecast/static/js/frepple-forecast.min.js:11
 msgid "total orders 2 years ago"
-msgstr ""
+msgstr "итого заказов за 2 года"
 
 #: forecast/static/forecast/src/forecast.js:35
 #: forecast/static/js/frepple-forecast.min.js:11
 msgid "orders adjustment 2 years ago"
-msgstr ""
+msgstr "корректировка заказов за 2 года"
 
 #: forecast/static/forecast/src/forecast.js:36
 #: forecast/static/js/frepple-forecast.min.js:11
 msgid "total orders 1 years ago"
-msgstr ""
+msgstr "итого заказов за 1 год"
 
 #: forecast/static/forecast/src/forecast.js:37
 #: forecast/static/js/frepple-forecast.min.js:11
 msgid "orders adjustment 1 years ago"
-msgstr ""
+msgstr "корректировка заказов за 1 год"
 
 #: forecast/static/forecast/src/forecast.js:38
 #: forecast/static/js/frepple-forecast.min.js:11
 msgid "total orders"
-msgstr ""
+msgstr "итого заказов"
 
 #: forecast/static/forecast/src/forecast.js:39
 #: forecast/static/js/frepple-forecast.min.js:11
 msgid "open orders"
-msgstr ""
+msgstr "закаы открытые"
 
 #: forecast/static/forecast/src/forecast.js:40
 #: forecast/static/js/frepple-forecast.min.js:11
 msgid "forecast baseline"
-msgstr ""
+msgstr "базовый прогноз"
 
 #: forecast/static/forecast/src/forecast.js:41
 #: forecast/static/js/frepple-forecast.min.js:11
 msgid "forecast override"
-msgstr ""
+msgstr "переопределение прогноза"
 
 #: forecast/static/forecast/src/forecast.js:42
 #: forecast/static/js/frepple-forecast.min.js:11
 msgid "total forecast"
-msgstr ""
+msgstr "общий прогноз"
 
 #: input/static/js/frepple-operationplandetail.min.js:11
 #: input/static/operationplandetail/src/supplypositionpanelDrv.js:22

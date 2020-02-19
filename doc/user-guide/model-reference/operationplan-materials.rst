@@ -5,8 +5,6 @@ Inventory detail
 This table models the material consumption or production. The material movements are associated with 
 on hand inventory, purchase orders, distribution orders, manufacturing orders or delivery orders to customers. 
 
-**Fields**
-
 ================ ================= =================================================================================
 Field            Type              Description
 ================ ================= =================================================================================

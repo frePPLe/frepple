@@ -68,7 +68,7 @@ class LateOrdersWidget(Widget):
         limit = int(request.GET.get("limit", cls.limit))
         try:
             db = _thread_locals.request.database or DEFAULT_DB_ALIAS
-        except:
+        except Exception:
             db = DEFAULT_DB_ALIAS
         cursor = connections[db].cursor()
         result = [
@@ -149,7 +149,7 @@ class ShortOrdersWidget(Widget):
         limit = int(request.GET.get("limit", cls.limit))
         try:
             db = _thread_locals.request.database or DEFAULT_DB_ALIAS
-        except:
+        except Exception:
             db = DEFAULT_DB_ALIAS
         cursor = connections[db].cursor()
         result = [
@@ -320,11 +320,11 @@ class ManufacturingOrderWidget(Widget):
         currency = getCurrency()
         try:
             db = _thread_locals.request.database or DEFAULT_DB_ALIAS
-        except:
+        except Exception:
             db = DEFAULT_DB_ALIAS
         try:
             current = parse(Parameter.objects.using(db).get(name="currentdate").value)
-        except:
+        except Exception:
             current = date.today()
         request.database = db
         GridReport.getBuckets(request)
@@ -592,11 +592,11 @@ class DistributionOrderWidget(Widget):
         currency = getCurrency()
         try:
             db = _thread_locals.request.database or DEFAULT_DB_ALIAS
-        except:
+        except Exception:
             db = DEFAULT_DB_ALIAS
         try:
             current = parse(Parameter.objects.using(db).get(name="currentdate").value)
-        except:
+        except Exception:
             current = date.today()
         request.database = db
         GridReport.getBuckets(request)
@@ -875,11 +875,11 @@ class PurchaseOrderWidget(Widget):
         currency = getCurrency()
         try:
             db = _thread_locals.request.database or DEFAULT_DB_ALIAS
-        except:
+        except Exception:
             db = DEFAULT_DB_ALIAS
         try:
             current = parse(Parameter.objects.using(db).get(name="currentdate").value)
-        except:
+        except Exception:
             current = date.today()
         request.database = db
         GridReport.getBuckets(request)
@@ -1068,7 +1068,7 @@ class PurchaseQueueWidget(Widget):
         limit = int(request.GET.get("limit", cls.limit))
         try:
             db = _thread_locals.request.database or DEFAULT_DB_ALIAS
-        except:
+        except Exception:
             db = DEFAULT_DB_ALIAS
         result = [
             '<div class="table-responsive"><table class="table table-condensed table-hover">',
@@ -1124,7 +1124,7 @@ class DistributionQueueWidget(Widget):
         limit = int(request.GET.get("limit", cls.limit))
         try:
             db = _thread_locals.request.database or DEFAULT_DB_ALIAS
-        except:
+        except Exception:
             db = DEFAULT_DB_ALIAS
         result = [
             '<div class="table-responsive"><table class="table table-condensed table-hover">',
@@ -1182,7 +1182,7 @@ class ShippingQueueWidget(Widget):
         limit = int(request.GET.get("limit", cls.limit))
         try:
             db = _thread_locals.request.database or DEFAULT_DB_ALIAS
-        except:
+        except Exception:
             db = DEFAULT_DB_ALIAS
         result = [
             '<div class="table-responsive"><table class="table table-condensed table-hover">',
@@ -1240,7 +1240,7 @@ class ResourceQueueWidget(Widget):
         limit = int(request.GET.get("limit", cls.limit))
         try:
             db = _thread_locals.request.database or DEFAULT_DB_ALIAS
-        except:
+        except Exception:
             db = DEFAULT_DB_ALIAS
         result = [
             '<div class="table-responsive"><table class="table table-condensed table-hover">',
@@ -1300,7 +1300,7 @@ class PurchaseAnalysisWidget(Widget):
         limit = int(request.GET.get("limit", cls.limit))
         try:
             db = _thread_locals.request.database or DEFAULT_DB_ALIAS
-        except:
+        except Exception:
             db = DEFAULT_DB_ALIAS
         result = [
             '<div class="table-responsive"><table class="table table-condensed table-hover">',
@@ -1353,7 +1353,7 @@ class AlertsWidget(Widget):
         entities = request.GET.get("entities", cls.entities).split(",")
         try:
             db = _thread_locals.request.database or DEFAULT_DB_ALIAS
-        except:
+        except Exception:
             db = DEFAULT_DB_ALIAS
         result = [
             '<div class="table-responsive"><table class="table table-condensed table-hover">',

@@ -43,6 +43,23 @@ function getSchema() {
           $(this).children("span.fa").toggleClass("fa-plus").toggleClass("fa-minus");
 	      	$(this).next(".collapse").collapse("toggle");
 	      });
+	      $("a.schemafield").on("click", function(e) {
+	      	var field = $(e.target).closest("a").find("code").first().text();
+	      	if (field != "") {	      		
+	      	  var statements = $("#reportmanager_statements");
+	      		if (statements[0].selectionStart || statements[0].selectionStart === 0) {
+	      	    var startPos = statements[0].selectionStart;
+	      	    var endPos = statements[0].selectionEnd;
+	      	    statements[0].value = statements[0].value.substring(0, startPos) +
+	      	      field + ", " +
+	      	      statements[0].value.substring(endPos, statements[0].value.length);
+	      	    statements[0].selectionStart = startPos + field.length + 2;
+	      	    statements[0].selectionEnd = startPos + field.length + 2;
+	      	  } 
+	      	else
+	      	  this.value += field + ", ";
+	      	}
+	      });
 	    },
 	    async: true
 	    });
@@ -61,7 +78,10 @@ $(function() {
   $("#reportmanager_statements").resizable({
     handleSelector: "#resize-handle",
     resizeWidth: false,
-    resizeHeight: true
+    resizeHeight: true,
+    onDrag: function(e) {
+      $("#schemacolumn").height($("#reportmanager_statements").height());
+    }
   });
 
 	$("#reportmanager_test").on("click", function(event) {
@@ -81,21 +101,33 @@ $(function() {
 	    async: true
 	    });
 	});
-	 
+	
+	var id = {% if report %}{{report.id}}{% else %}0{% endif %};
+	
   $("#reportmanager_save").on("click", function(event) {
+  	var data = {        
+        "sql": $("#reportmanager_statements").val(),
+        "save": true,
+        "name": $("#id_name").val(),
+        "public": $("#id_public").is(":checked"),
+        "description": $("#id_description").val()
+        };
+  	if (id) data["id"] = id;
     xhr = $.ajax({
       url: url_prefix + "/reportmanager/",
       type: 'POST',
       dataType: 'json',
-      data: {
-      	{% if report %}"id": {{report.id}},{% endif %}
-      	"sql": $("#reportmanager_statements").val(),
-      	"save": true,
-      	"name": $("#id_name").val(),
-      	"public": $("#id_public").is(":checked"),
-      	"description": $("#id_description").val()
-      	},
-      async: true
+      data: data,
+      async: true,
+      success: function(data) {
+        $("#workarea").prepend(
+            '<div id="save_ok" class="row"><div class="col-md-12" style="margin-top: 5px">' 
+            + '<ul class="alert alert-success"><li>{% trans "The report was saved successfully." %}</li>'
+            + '</ul></div></div>'
+            );
+        setTimeout(function() {$("#save_ok").remove();}, 3000);
+        id = data.id;
+      }
       });
   });
 
@@ -127,7 +159,7 @@ $(function() {
         "delete": true
         },
       success: function() {
-      	window.location.href = url_prefix + "/";
+      	window.location.href = url_prefix + "/data/reportmanager/sqlreport/";
       },
       async: true
       });

@@ -25,8 +25,6 @@ buckets and combine the results in the following way:
 * In case no bucket is effective on a certain date, the calendar will return
   the "default" value.
 
-**Fields**
-
 ============ ================= ===========================================================
 Field        Type              Description
 ============ ================= ===========================================================

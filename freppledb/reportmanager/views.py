@@ -31,14 +31,16 @@ import urllib
 from django.conf import settings
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.decorators import permission_required
+from django.contrib import messages
 from django.db import connections
-from django.forms import ModelForm
+from django.db.models import Q
 from django.http import (
     StreamingHttpResponse,
     HttpResponse,
     JsonResponse,
     HttpResponseForbidden,
     HttpResponseNotAllowed,
+    HttpResponseServerError,
 )
 from django.shortcuts import render
 from django.utils.decorators import method_decorator
@@ -50,15 +52,18 @@ from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_protect
 
 from freppledb.reportmanager.models import SQLReport
-from freppledb.common.report import create_connection, GridReport, _getCellValue
+from freppledb.common.report import (
+    create_connection,
+    GridReport,
+    _getCellValue,
+    GridFieldText,
+    GridFieldLastModified,
+    GridFieldBoolNullable,
+    GridFieldInteger,
+)
+from .admin import SQLReportForm
 
 logger = logging.getLogger(__name__)
-
-
-class SQLReportForm(ModelForm):
-    class Meta:
-        model = SQLReport
-        fields = "__all__"
 
 
 @permission_required("reportmanager.create_sqlreport", raise_exception=True)
@@ -98,6 +103,39 @@ def getSchema(request):
                 td.append((column_name, field_type))
             schema.append((table_name, td))
     return render(request, "reportmanager/schema.html", context={"schema": schema})
+
+
+class ReportList(GridReport):
+    template = "admin/base_site_grid.html"
+    title = _("custom reports")
+    model = SQLReport
+    help_url = "user-guide/user-interface/report-manager.html"
+    frozenColumns = 1
+    rows = (
+        GridFieldInteger(
+            "id",
+            title=_("identifier"),
+            key=True,
+            formatter="detail",
+            extra='"role":"reportmanager/sqlreport"',
+        ),
+        GridFieldText("name", title=_("name")),
+        GridFieldText("description", title=_("description")),
+        GridFieldText("sql", title=_("SQL query")),
+        GridFieldBoolNullable("public", title=_("public")),
+        GridFieldText(
+            "user__username",
+            title=_("user"),
+            formatter="detail",
+            extra='"role":"common/user"',
+        ),
+        GridFieldText("source", title=_("source")),
+        GridFieldLastModified("lastmodified"),
+    )
+
+    @classmethod
+    def basequeryset(reportclass, request, *args, **kwargs):
+        return SQLReport.objects.filter(Q(user=request.user) | Q(public=True))
 
 
 class ReportManager(GridReport):
@@ -218,12 +256,22 @@ class ReportManager(GridReport):
                 m = f.save(commit=False)
                 m.user = request.user
                 m.save()
-            return JsonResponse({"result": 1})
+                return JsonResponse({"id": m.id})
+            else:
+                return HttpResponseServerError("Error saving report")
 
         elif "delete" in request.POST:
+            pk = request.POST["id"]
             SQLReport.objects.using(request.database).filter(
-                pk=request.POST["id"], user=request.user
+                pk=pk, user=request.user
             ).delete()
+            messages.add_message(
+                request,
+                messages.INFO,
+                # Translators: Translation included with Django
+                _('The %(name)s "%(obj)s" was deleted successfully.')
+                % {"name": _("custom report"), "obj": pk},
+            )
             return HttpResponse("ok")
 
         elif "test" in request.POST:
@@ -391,7 +439,7 @@ class ReportManager(GridReport):
     @staticmethod
     def getSQL(sql):
         # TODO optionally wrap in another query that can be filtered, paged and sorted
-        return sqlparse.split(sql)[0]
+        return sqlparse.split(sql)[0] if sql else ""
 
     @classmethod
     def _generate_json_data(cls, database, sql):
@@ -399,7 +447,7 @@ class ReportManager(GridReport):
         try:
             conn = create_connection(database)
             with conn.cursor() as cursor:
-                sqlrole = settings.DATABASES[database]["SQL_ROLE"]
+                sqlrole = settings.DATABASES[database].get("SQL_ROLE", "report_role")
                 if sqlrole:
                     cursor.execute("set role %s" % (sqlrole,))
                 cursor.execute(sql=cls.getSQL(sql))
@@ -491,7 +539,9 @@ class ReportManager(GridReport):
         try:
             conn = create_connection(request.database)
             with conn.cursor() as cursor:
-                sqlrole = settings.DATABASES[request.database]["SQL_ROLE"]
+                sqlrole = settings.DATABASES[request.database].get(
+                    "SQL_ROLE", "report_role"
+                )
                 if sqlrole:
                     cursor.execute("set role %s" % (sqlrole,))
                 cursor.execute(sql=cls.getSQL(report.sql))
@@ -539,7 +589,9 @@ class ReportManager(GridReport):
                 force_text(_("Read only")), "Author", height=20, width=80
             )
             with conn.cursor() as cursor:
-                sqlrole = settings.DATABASES[request.database]["SQL_ROLE"]
+                sqlrole = settings.DATABASES[request.database].get(
+                    "SQL_ROLE", "report_role"
+                )
                 if sqlrole:
                     cursor.execute("set role %s" % (sqlrole,))
                 cursor.execute(sql=cls.getSQL(report.sql))

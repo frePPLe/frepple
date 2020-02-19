@@ -4,8 +4,6 @@ Operation resources
 
 Operation resources are used to model the capacity consumption of an operation.
 
-**Fields**
-
 =============== ================= ===========================================================
 Field           Type              Description
 =============== ================= ===========================================================
@@ -72,8 +70,6 @@ search          string            | Defines the order of preference among the al
                                       the cost and penalty.
                                     | The sum is computed for the complete upstream path.
 =============== ================= ===========================================================
-
-**Types**
 
 On *default resources* the resource is used during the complete duration
 of the operation.

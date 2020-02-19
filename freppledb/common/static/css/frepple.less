@@ -328,7 +328,7 @@ ul.nav.nav-tabs {
   line-height: 2.2em;
 }
 
-#toolicons div.btn-group button:not(.active) {
+#toolicons div.btn-group[role=group] button:not(.active) {
   background-color: @body-bg;
   color: @brand-primary;
 }
@@ -465,6 +465,15 @@ tr.ui-state-highlight {
     cursor: pointer;
   }
 }
+
+/* Checkboxes on admin forms */
+
+.control-group .controls .checkbox input[type=checkbox] {
+  position: relative;
+  margin-left: 0;
+  transform: scale(1.5);
+}
+
 
 /*+++++++++++++++++++++++++++++++++++++*/
 /* jqgrid styles */

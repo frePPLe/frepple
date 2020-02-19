@@ -150,7 +150,7 @@ class Command(BaseCommand):
         if options["user"]:
             try:
                 user = User.objects.all().using(database).get(username=options["user"])
-            except:
+            except Exception:
                 raise CommandError("User '%s' not found" % options["user"])
         else:
             user = None
@@ -164,7 +164,7 @@ class Command(BaseCommand):
             if options["task"]:
                 try:
                     task = Task.objects.all().using(database).get(pk=options["task"])
-                except:
+                except Exception:
                     raise CommandError("Task identifier not found")
                 if (
                     task.started
@@ -204,7 +204,7 @@ class Command(BaseCommand):
             # Pick up the startdate
             try:
                 startdate = datetime.strptime(currentdate, "%Y-%m-%d")
-            except:
+            except Exception:
                 raise CommandError("current date is not matching format YYYY-MM-DD")
 
             # Check whether the database is empty

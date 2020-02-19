@@ -1,12 +1,10 @@
-=============================
-Inventory planning parameters
-=============================
+==================
+Inventory policies
+==================
 
 A record should be entered in this table if you wish to calculate a safety stock
 and a reorder quantity for a buffer. The calculation can be done for raw materials,
 intermediate materials and/or end items.
-
-**Fields**
 
 =====================================  ================= ========================================================================================
 Field                                  Type              Description
@@ -30,11 +28,17 @@ lead time deviation                    number            The lead time standard 
                                                          left empty.
 demand deviation                       number            The demand standard deviation considered when calculating the safety stock, can be 
                                                          left empty.
-do not stock                           boolean           | Indicates whether this buffer should be stocked.
-                                                         | Possible values are : 
-                                                         | "TRUE" : Default reorder quantity of 1 and safety stock of 0 will be used.
-                                                         | "FALSE" : Reorder quantity and safety stock will be calculated.
-segment\_\*                             number           This values in these columns are not editible by the user. They represent the 
+do not stock                           boolean           | Indicates whether this buffer should be stocked. When set to true, a replenishment
+                                                           will only created when there is a demand.
+                                                         | Possible values are: 
+                                                         | "TRUE": Default reorder quantity of 1 and safety stock of 0 will be used.
+                                                         | "FALSE": Reorder quantity and safety stock will be calculated.
+push mode                              boolean           | Indicates whether excess inventory should be pushed downstream to other locations
+                                                           in the network.
+                                                         | Possible values are: 
+                                                         | "TRUE": Push excess inventory downstream.
+                                                         | "FALSE": Keep excess inventory at this item-location.
+segment\_\*                            number            This values in these columns are not editible by the user. They represent the 
                                                          parameter values computed by the system based on the business rules.
                                                          
                                                          When both a user-specified and computed value are provided for a parameter, the

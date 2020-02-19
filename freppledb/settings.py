@@ -80,7 +80,7 @@ else:
 
 try:
     DEBUG = "runserver" in sys.argv
-except:
+except Exception:
     DEBUG = False
 DEBUG_JS = DEBUG
 
@@ -355,6 +355,10 @@ MAXCPUTIME = None  # limit in seconds, use None for unlimited
 
 # Max total log files size in MB, if the limit is reached deletes the oldest.
 MAXTOTALLOGFILESIZE = 200
+
+# Google analytics code to report usage statistics to.
+# The default value of None disables this feature.
+GOOGLE_ANALYTICS = None
 
 # Adress and port number for the runwebserver command, the Windows system tray
 # executable and the Windows service

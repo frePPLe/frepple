@@ -169,7 +169,7 @@ class ReportByDemand(GridReport):
             current = parse(
                 Parameter.objects.using(request.database).get(name="currentdate").value
             )
-        except:
+        except Exception:
             current = datetime.now()
             current = current.replace(microsecond=0)
 
@@ -177,9 +177,9 @@ class ReportByDemand(GridReport):
         query = """
           with pegging as (
             select
-              min(rownum) as rownum, 
-              min(due) as due, 
-              opplan, 
+              min(rownum) as rownum,
+              min(due) as due,
+              opplan,
               min(lvl) as lvl,
               quantity as required_quantity,
               sum(quantity) as quantity
@@ -197,25 +197,25 @@ class ReportByDemand(GridReport):
             group by opplan, quantity
             )
           select
-            pegging.due, 
-            operationplan.name, 
-            pegging.lvl, 
+            pegging.due,
+            operationplan.name,
+            pegging.lvl,
             ops.pegged,
-            pegging.rownum, 
-            operationplan.startdate, 
-            operationplan.enddate, 
+            pegging.rownum,
+            operationplan.startdate,
+            operationplan.enddate,
             operationplan.quantity,
-            operationplan.status, 
-            array_agg(operationplanresource.resource_id) FILTER (WHERE operationplanresource.resource_id is not null), 
+            operationplan.status,
+            array_agg(operationplanresource.resource_id) FILTER (WHERE operationplanresource.resource_id is not null),
             operationplan.type,
             case when operationplan.operation_id is not null then 1 else 0 end as show,
-            operationplan.color, 
-            operationplan.reference, 
+            operationplan.color,
+            operationplan.reference,
             operationplan.item_id,
             coalesce(operationplan.location_id, operationplan.destination_id),
-            operationplan.supplier_id, 
+            operationplan.supplier_id,
             operationplan.origin_id,
-            operationplan.criticality, 
+            operationplan.criticality,
             operationplan.demand_id,
             extract(epoch from operationplan.delay),
             pegging.required_quantity
@@ -234,10 +234,10 @@ class ReportByDemand(GridReport):
           on operationplan.name = ops.name
           left outer join operationplanresource
             on pegging.opplan = operationplanresource.operationplan_id
-          group by 
+          group by
             pegging.due, operationplan.name, pegging.lvl, ops.pegged,
             pegging.rownum, operationplan.startdate, operationplan.enddate, operationplan.quantity,
-            operationplan.status, 
+            operationplan.status,
             operationplan.type,
             case when operationplan.operation_id is not null then 1 else 0 end,
             operationplan.color, operationplan.reference, operationplan.item_id,

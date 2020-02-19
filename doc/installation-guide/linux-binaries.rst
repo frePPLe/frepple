@@ -12,7 +12,13 @@ Linux binary packages
 Supported distributions
 ***********************
 
-A binary installation package is available for **Ubuntu 18 LTS**.
+Binary installation packages are available for:
+
+* Ubuntu 18 LTS
+* Red Hat Enterprise Linux 8 (Enterprise Edition only)
+* CentOS 8 (Enterprise Edition only)
+* Suse 15 (Enterprise Edition only)
+* OpenSuse 15 (Enterprise Edition only)
 
 Installing on other Linux distributions is also possible, but you'll first
 need to build the frePPLe package from the source package as described
@@ -208,7 +214,11 @@ Here are the steps to get a fully working environment.
           'rest_framework',
           'django_admin_bootstrapped',
           'django.contrib.admin',
-          )
+          # The next two apps allow users to run their own SQL statements on
+          # the database, using the SQL_ROLE configured above.
+          'freppledb.reportmanager',
+          'freppledb.executesql',
+          )    
 
    #. | **/etc/frepple/license.xml**
       | No license file is required for the Community Edition.

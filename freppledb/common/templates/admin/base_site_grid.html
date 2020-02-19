@@ -6,6 +6,7 @@
 
 var reportkey = '{{reportkey|safe}}';
 var initialfilter{% if filters %} = {{filters|safe}}{% endif %};
+var favorites = {% if preferences.favorites %}{{preferences.favorites|json}}{% else %}{}{% endif %};
 var resizing;
 var editrow;
 var editcol;
@@ -263,7 +264,23 @@ $(function() {
 
 <div id="toolicons" class="col-xs-4 hor-align-right ver-align-middle pull-right">{% block actions %}
 {% if reportclass.filterable %}
-<button class="btn btn-xs btn-primary" id="filter" onclick="grid.showFilter()" data-toggle="tooltip" data-placement="top" data-original-title="{% trans 'filter data'|capfirst|force_escape %}" ><span class="fa fa-search"></span></button>{% endif %}
+<button class="btn btn-xs btn-primary" id="filter" onclick="grid.showFilter()" data-toggle="tooltip" data-placement="top" data-original-title="{% trans 'filter data'|capfirst|force_escape %}" ><span class="fa fa-search"></span></button>
+<div class="btn-group" data-toggle="tooltip" data-placement="top" data-original-title="{% trans 'favorites'|capfirst|force_escape %}">
+  <button class="btn btn-xs btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    <span class="fa fa-star"></span>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-right" id="favoritelist">
+    {% if preferences.favorites %}
+    {% for fav in preferences.favorites %}
+    <li><a onclick="favorite.open(event)">{{fav}}<div style="float:right"><span class="fa fa-trash-o" onclick="favorite.remove(event)"></span></div></a></li>
+    {% endfor %}
+    <li role="separator" class="divider"></li>
+    {% endif %}
+    <li><a><button id="favoritesave" onclick="favorite.save()" type="button" class="btn btn-primary btn-xs disabled">{% trans "save"|capfirst %}</button>
+    <input id="favoritename" oninput="favorite.check()" type="text" size="15"></a>
+    </li>
+  </ul>
+</div>{% endif %}
 {% if hasaddperm %}<button class="btn btn-xs btn-primary" onclick="location.href='{{request.prefix}}/data/{{model|app_label}}/{{model|object_name|lower}}/add/{% if is_popup %}?_popup=1{% endif %}'" data-toggle="tooltip" data-placement="top" data-original-title="{% trans "Create new object"|escape %}" ><span class="fa fa-plus"></span></button>
 {% if not is_popup %}<button class="btn btn-xs btn-primary"  disabled id="copy_selected" onclick="grid.showCopy()" data-toggle="tooltip" data-placement="top" data-original-title="{% trans 'Copy selected objects'|escape %}" ><span class="fa fa-copy"></span></button>
 {% endif %}{% endif %}{% if hasdeleteperm and not is_popup %}<button class="btn btn-xs btn-primary" id="delete_selected" disabled data-toggle="tooltip" data-placement="top" data-original-title="{% trans 'Delete selected objects'|escape %}" onclick="grid.showDelete()" ><span class="fa fa-minus"></span></button>

@@ -18,8 +18,6 @@ When populating this table make sure to respect the following simple guidelines:
 
 This table is typically updated only once a year. There is no point in doing this more frequently. 
 
-**Fields**
-
 ================ ================= ===========================================================
 Field            Type              Description
 ================ ================= ===========================================================

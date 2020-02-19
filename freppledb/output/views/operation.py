@@ -618,7 +618,7 @@ class PurchaseReport(GridPivot):
                         sortargs.append(sortfield)
                     else:
                         sortargs.append("-%s" % sortfield)
-                except:
+                except Exception:
                     for r in reportclass.rows:
                         if r.name == sortfield:
                             try:
@@ -627,7 +627,7 @@ class PurchaseReport(GridPivot):
                                     sortargs.append(r.field_name)
                                 else:
                                     sortargs.append("-%s" % r.field_name)
-                            except:
+                            except Exception:
                                 # Can't sort on this field
                                 pass
                             break
@@ -972,7 +972,7 @@ class DistributionReport(GridPivot):
                         sortargs.append(sortfield)
                     else:
                         sortargs.append("-%s" % sortfield)
-                except:
+                except Exception:
                     for r in reportclass.rows:
                         if r.name == sortfield:
                             try:
@@ -981,7 +981,7 @@ class DistributionReport(GridPivot):
                                     sortargs.append(r.field_name)
                                 else:
                                     sortargs.append("-%s" % r.field_name)
-                            except:
+                            except Exception:
                                 # Can't sort on this field
                                 pass
                             break

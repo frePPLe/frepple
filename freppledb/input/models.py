@@ -2110,7 +2110,7 @@ class ManufacturingOrder(OperationPlan):
                             .get(lvl=0, lft__lte=rsrc.lft, rght__gte=rsrc.rght)
                         )
                     return cleaned
-                except:
+                except Exception:
                     raise forms.ValidationError("Invalid resource")
 
             def save(self, commit=True):
@@ -2133,7 +2133,7 @@ class ManufacturingOrder(OperationPlan):
                                 opplanres.resource = res
                                 opplanres.save(using=database)
                                 break
-                except:
+                except Exception:
                     pass
                 if commit:
                     instance.save()

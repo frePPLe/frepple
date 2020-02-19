@@ -55,7 +55,7 @@ class WorkerAlive(Thread):
                 )
                 p.value = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                 p.save(update_fields=["value"])
-            except:
+            except Exception:
                 pass
             time.sleep(5)
 
@@ -66,7 +66,7 @@ def checkActive(database=DEFAULT_DB_ALIAS):
         return datetime.now() - datetime.strptime(
             p.value, "%Y-%m-%d %H:%M:%S"
         ) <= timedelta(0, 5)
-    except:
+    except Exception:
         return False
 
 
@@ -137,7 +137,7 @@ class Command(BaseCommand):
                     .order_by("id")[0]
                 )
                 idle_loop_done = False
-            except:
+            except Exception:
                 # No more tasks found
                 if continuous:
                     time.sleep(5)
@@ -261,7 +261,7 @@ class Command(BaseCommand):
         # Remove the parameter again
         try:
             Parameter.objects.all().using(database).get(pk="Worker alive").delete()
-        except:
+        except Exception:
             pass
         setattr(_thread_locals, "database", None)
 
@@ -280,7 +280,7 @@ class Command(BaseCommand):
                     filelist.append(
                         {"name": filename, "size": size, "creation": creation}
                     )
-                except:
+                except Exception:
                     pass
                 totallogs += size
         todelete = totallogs - settings.MAXTOTALLOGFILESIZE * 1024 * 1024
@@ -290,7 +290,7 @@ class Command(BaseCommand):
                 try:
                     os.remove(fordeletion["name"])
                     todelete -= fordeletion["size"]
-                except:
+                except Exception:
                     pass
 
         # Exit

@@ -174,7 +174,7 @@ def Upload(request):
                             int(op.criticality),
                         )
                     )
-            except:
+            except Exception:
                 pass
         if not data_ok:
             return HttpResponseServerError(_("No proposed data records selected"))

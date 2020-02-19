@@ -8,8 +8,6 @@ and operations are located.
 Each location has an 'available' calendar to model the working hours 
 and holidays of resources, buffers and operations in that location.
 
-**Fields**
-
 ============ ================= ===========================================================
 Field        Type              Description
 ============ ================= ===========================================================

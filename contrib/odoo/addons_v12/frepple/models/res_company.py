@@ -24,7 +24,7 @@ _logger = logging.getLogger(__name__)
 
 try:
     import jwt
-except:
+except Exception:
     _logger.error(
         "PyJWT module has not been installed. Please install the library from https://pypi.python.org/pypi/PyJWT"
     )

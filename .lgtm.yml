@@ -1,0 +1,17 @@
+extraction:
+  cpp:
+    configure:
+      command:
+      - pip3 install -r requirements.txt
+      - make -f Makefile.dist prep configure
+      - ./configure --disable-doc
+  python:
+    python_setup:
+      requirements_files: requirements.txt
+      version: 3
+      setup_py: false
+  javascript:
+    index:
+      exclude:
+        - node_modules
+      typescript: none

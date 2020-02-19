@@ -82,7 +82,7 @@ class Command(BaseCommand):
         if options["user"]:
             try:
                 user = User.objects.all().get(username=options["user"])
-            except:
+            except Exception:
                 raise CommandError("User '%s' not found" % options["user"])
         else:
             user = None
@@ -94,14 +94,14 @@ class Command(BaseCommand):
         source = options["source"]
         try:
             sourcescenario = Scenario.objects.using(DEFAULT_DB_ALIAS).get(pk=source)
-        except:
+        except Exception:
             raise CommandError("No source database defined with name '%s'" % source)
         now = datetime.now()
         task = None
         if "task" in options and options["task"]:
             try:
                 task = Task.objects.all().using(source).get(pk=options["task"])
-            except:
+            except Exception:
                 raise CommandError("Task identifier not found")
             if (
                 task.started
@@ -135,7 +135,7 @@ class Command(BaseCommand):
                 destinationscenario = Scenario.objects.using(DEFAULT_DB_ALIAS).get(
                     pk=destination
                 )
-            except:
+            except Exception:
                 raise CommandError(
                     "No destination database defined with name '%s'" % destination
                 )
@@ -195,7 +195,7 @@ class Command(BaseCommand):
                     task.processid = p.pid
                     task.save(using=source)
                     p.wait()
-                except:
+                except Exception:
                     p.kill()
                     p.wait()
                     # Consider the destination database free again

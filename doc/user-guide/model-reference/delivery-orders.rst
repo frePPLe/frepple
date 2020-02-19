@@ -8,8 +8,6 @@ This table is populated with new proposed deliveries when frePPLe generates a pl
 It is also possible to load deliveries that are already approved or confirmed in your ERP
 system.
 
-**Fields**
-
 ================= ================= =================================================================================================================================
 Field             Type              Description
 ================= ================= =================================================================================================================================

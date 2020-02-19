@@ -322,7 +322,7 @@ function formatDuration(cellvalue, options, rowdata) {
   var hours = 0;
   var minutes =0;
   var seconds = 0;
-  var sign = 1;
+  var sign;
   var d = [];
   var t = [];
 
@@ -378,7 +378,6 @@ function formatDuration(cellvalue, options, rowdata) {
       + ((minutes < 10) ? ":0" : ":") + minutes 
       + ((seconds < 10) ? ":0" : ":") 
       + Number((seconds).toFixed((seconds === Math.floor(seconds))?0:6));
-  return Number((sign*seconds).toFixed((seconds === Math.floor(seconds))?0:6));
 }
 
 jQuery.extend($.fn.fmatter, {
@@ -539,7 +538,7 @@ var grid = {
    // popup is closed and the selected id is passed to the calling page.
    selected: undefined,
 
-   formatNumber: function(nData) {
+   formatNumber: function(nData, maxdecimals=6) {
   	 // Number formatting function copied from free-jqgrid.
   	 // Adapted to show a max number of decimal places.
   	 if (typeof(nData) === 'undefined')
@@ -550,12 +549,20 @@ var grid = {
 			if (isNumber(nData)) {
 				var bNegative = (nData < 0);				
 				var sOutput;
-				if (nData > 1000000)
-				  // Big numbers: Show max 1 digits after the comma, without trailing zeros
+				if (nData > 100000 || maxdecimals <= 0)
+					sOutput = String(parseFloat(nData.toFixed()));
+				else if (nData > 10000 || maxdecimals <= 1)
 					sOutput = String(parseFloat(nData.toFixed(1)));
+				else if (nData > 1000 || maxdecimals <= 2)
+					sOutput = String(parseFloat(nData.toFixed(2)));
+				else if (nData > 100 || maxdecimals <= 3)
+					sOutput = String(parseFloat(nData.toFixed(3)));
+				else if (nData > 10 || maxdecimals <= 4)
+					sOutput = String(parseFloat(nData.toFixed(4)));
+				else if (nData > 1 || maxdecimals <= 5)
+					sOutput = String(parseFloat(nData.toFixed(5)));
 				else
-					// Small numbers: Show 8 significant digits (before or after the comma), without trailing zeros
-					sOutput = String(parseFloat(nData.toPrecision(8)));
+					sOutput = String(parseFloat(nData.toFixed(maxdecimals)));
 				var sDecimalSeparator = jQuery("#grid").jqGrid("getGridRes", "formatter.number.decimalSeparator") || ".";
 				if (sDecimalSeparator !== ".") 
 					// Replace the "."
@@ -610,7 +617,7 @@ var grid = {
    setStatus : function(newstatus)
    {
     var sel = jQuery("#grid").jqGrid('getGridParam','selarrrow');
-    for ( i in sel ) {
+    for (var i in sel) {
       jQuery("#grid").jqGrid("setCell", sel[i], "status", newstatus, "dirty-cell");
       jQuery("#grid").jqGrid("setRowData", sel[i], false, "edited");
     };
@@ -623,7 +630,7 @@ var grid = {
   pivotcolumns : function  (cellvalue, options, rowdata)
   {
     var result = '';
-    for (i in cross_idx)
+    for (var i in cross_idx)
     {
       if (result != '') result += '<br>';
       if (cross[cross_idx[i]]['editable'])
@@ -807,7 +814,7 @@ var grid = {
     	'click',
     	typeof reset_callback !== 'undefined' ? reset_callback : function() {
       var result = {};
-      result[reportkey] = null;
+      result[reportkey] = {"favorites": favorites};
       if (typeof url_prefix != 'undefined')
         var url = url_prefix + '/settings/';
       else
@@ -848,7 +855,7 @@ var grid = {
         $("#grid").jqGrid('destroyFrozenColumns');
 
       $('#Rows li').each(function() {
-        val = parseInt(this.id,10);
+        var val = parseInt(this.id,10);
         if (val < 100)
         {
             $("#grid").jqGrid("showCol", colModel[val].name);
@@ -857,7 +864,7 @@ var grid = {
       });
 
       $('#DroppointRows li').each(function() {
-        val = parseInt(this.id,10);
+        var val = parseInt(this.id,10);
         if (val < 100)
         {
           hiddenrows.push(val);
@@ -868,14 +875,13 @@ var grid = {
       });
 
       $('#Crosses li').each(function() {
-        val = parseInt(this.id,10);
+        var val = parseInt(this.id,10);
         if (val >= 100)
           cross_idx.push(val-100);
       });
 
       var numfrozen = 0;
       if (pivot) {
-        var firstnonfrozen = 0;
         for (var i in colModel)
           if ("counter" in colModel[i])
             numfrozen = i+1;
@@ -883,7 +889,7 @@ var grid = {
             perm.push(parseInt(i,10));
       }
       else
-        numfrozen = parseInt($("#frozen").val())
+        numfrozen = parseInt($("#frozen").val());
       for (var i in hiddenrows)
         perm.push(hiddenrows[i]);
       $("#grid").jqGrid("remapColumns", perm, true);
@@ -901,6 +907,45 @@ var grid = {
     });
   },
 
+  getGridConfig: function() {
+    // Returns the current settings of the grid:
+  	// 1) Filter
+  	// 2) Sorting
+  	// 3) Column configuration
+    var colArray = new Array();
+    var colModel = $("#grid").jqGrid('getGridParam', 'colModel');
+    var pivot = false;
+    var skipped = 0;
+    for (var i in colModel)
+    {
+      if (colModel[i].name != "rn" && colModel[i].name != "cb" && "counter" in colModel[i] && !('alwayshidden' in colModel[i]))
+      {
+        colArray.push([colModel[i].name, colModel[i].hidden, colModel[i].width]);
+        if (colModel[i].frozen) maxfrozen = parseInt(i) + 1 - skipped;
+      }
+      else if (colModel[i].name == 'columns' || colModel[i].name == 'graph')
+        pivot = true;
+      else
+        skipped++;
+    }
+  	var result = {"rows": colArray};
+    var filter = $('#grid').getGridParam("postData").filters;
+    if (typeof filter !== 'undefined' && filter.rules != [])
+    	result["filter"] = filter;
+    var sidx = $('#grid').getGridParam('sortname');    
+    if (sidx !== '') {
+      // Report is sorted
+    	result['sidx'] = sidx;
+    	result['sord'] = $('#grid').getGridParam('sortorder');
+    }
+    if (pivot) {
+    	result['crosses'] = [];
+      for (var i in cross_idx)
+      	result[reportkey]['crosses'].push(cross[cross_idx[i]].key);
+    }
+    return result;
+  },
+  
   // Save the customized column configuration
   saveColumnConfiguration : function(pgButton, indx)
   {
@@ -944,22 +989,17 @@ var grid = {
       else
         skipped++;
     }
-    var result = {};
+    var result = {
+    	 [reportkey]: {
+    	   "rows": colArray,
+         "page": page,
+         "favorites": favorites
+       }};
     var filter = $('#grid').getGridParam("postData").filters;
     if (typeof filter !== 'undefined' && filter.rules != [])
-      result[reportkey] = {
-        "rows": colArray,
-        "page": page,
-        "filter": filter
-        };
-    else
-      result[reportkey] = {
-        "rows": colArray,
-        "page": page,
-        };
-    var sidx = $('#grid').getGridParam('sortname');
-    if (sidx !== '')
-    {
+      result[reportkey]["filter"] = filter;
+    var sidx = $('#grid').getGridParam('sortname');    
+    if (sidx !== '') {
       // Report is sorted
       result[reportkey]['sidx'] = sidx;
       result[reportkey]['sord'] = $('#grid').getGridParam('sortorder');
@@ -1015,7 +1055,7 @@ var grid = {
   afterEditCell: function (rowid, cellname, value, iRow, iCol)
   {
   var colmodel = $(this).jqGrid('getGridParam', 'colModel')[iCol];
-  iconslist = {
+  var iconslist = {
       time: 'fa fa-clock-o',
       date: 'fa fa-calendar',
       up: 'fa fa-chevron-up',
@@ -1027,8 +1067,7 @@ var grid = {
       close: 'fa fa-remove'
     };
 
-  if (colmodel.formatter == 'date')
-  {
+  if (colmodel.formatter == 'date') {
     if (colmodel.formatoptions['srcformat'] == "Y-m-d")
       $("#" + iRow + '_' + cellname).on('focusin', function() {
         $(this).parent().css({'position': 'relative', 'overflow': 'visible'});
@@ -1041,7 +1080,7 @@ var grid = {
       });
   }
   else
-	$("#" + iRow + '_' + cellname).select();
+	  $("#" + iRow + '_' + cellname).select();
   },
 
   showExport: function(only_list)
@@ -1123,7 +1162,7 @@ var grid = {
     // Show popup
     $('#popup').modal('hide');
     $.jgrid.hideModal("#searchmodfbox_grid");
-    iconslist = {
+    var iconslist = {
       time: 'fa fa-clock-o',
       date: 'fa fa-calendar',
       up: 'fa fa-chevron-up',
@@ -1293,16 +1332,14 @@ var grid = {
       $.jgrid.hideModal("#searchmodfbox_grid");
       var tableheadercontent = '';
       var tablebodycontent = '';
-      for (i = 0; i<data.labels.length; i++) {
-	    tableheadercontent += '<th>'+gettext(data.labels[i])+'</th>';
-          };
+      for (var i = 0; i < data.labels.length; i++)
+	      tableheadercontent += '<th>'+gettext(data.labels[i])+'</th>';
       for (i = 0; i<data.values.length; i++) {
-	  tablebodycontent += '<tr><td><input id="cb_modaltable-'+i+'" class="cbox" type="checkbox" aria-checked="false"></td>';
-	  for (j = 0; j<data.values[i].length; j++) {
+	      tablebodycontent += '<tr><td><input id="cb_modaltable-'+i+'" class="cbox" type="checkbox" aria-checked="false"></td>';
+	      for (var j = 0; j<data.values[i].length; j++)
 	        tablebodycontent += '<td>'+gettext(data.values[i][j])+'</td>';
-	      };
-          tablebodycontent += '</tr>';
-          };
+        tablebodycontent += '</tr>';
+      };
 
       $('#popup').html('<div class="modal-dialog">'+
         '<div class="modal-content">'+
@@ -1380,9 +1417,9 @@ var grid = {
         grid.saveColumnConfiguration();
         grid.getFilterGroup(thegrid, $("#fbox_" + thegridid).jqFilter('filterData'), true, curfilter);
         if (curfilter.is(':empty'))
-        	filter.addClass("btn-danger").removeClass("btn-primary");
-        else
         	filter.removeClass("btn-danger").addClass("btn-primary");
+        else
+        	filter.addClass("btn-danger").removeClass("btn-primary");
         },
       onReset : function() {        
         if (typeof initialfilter !== 'undefined') {
@@ -1467,7 +1504,7 @@ var grid = {
       // Special case for the "within N days" operator
     	thefilter.append('&nbsp;' + gettext("days"));
   },
-
+  
   getFilterGroup: function(thegrid, group, first, thefilter, fullfilter)
   {
     if (!first)
@@ -1503,7 +1540,7 @@ var grid = {
     else if (thefilter.html().length > 1)
     	thefilter.prepend(gettext("Filtered where") + "&nbsp;");
   },
-
+  
   markSelectedRow: function(sel)
   {
     if (typeof sel==='undefined') {
@@ -1558,6 +1595,106 @@ var grid = {
   }
 }
 
+//
+// Functions to manage favorites
+//
+
+var favorite = {
+		
+	  check: function() {
+	  	var fav = $("#favoritename").val();
+	  	if (fav.length > 0 && !(fav in favorites)) {
+	      $("#favoritesave").removeClass("disabled");
+	  	  return true;
+	  	}
+	  	else {
+	  	  $("#favoritesave").addClass("disabled");
+	  	  return false;
+	  	}
+	  },
+	  
+	  save: function() {
+	  	var fav = $("#favoritename").val();
+	  	if (!favorite.check()) return;
+	  	favorites[fav] = grid.getGridConfig();
+	  	grid.saveColumnConfiguration();
+	  	var divider = $("#favoritelist li.divider");
+	    if (divider.length == 0) {
+	    	$("#favoritelist").prepend('<li role="separator" class="divider"></li>');
+	    	divider = $("#favoritelist li.divider");
+	    }
+	    var newfav_li = $('<li id="zorro"></li>');
+	    var newfav_a = $('<a href="#" onclick="favorite.open(event)"></a>');
+	    newfav_a.text(fav);
+	    newfav_a.append(
+	    		'<div style="float:right"><span class="fa fa-trash-o" onclick="favorite.remove(event)"></span></div>'
+	    		);
+	    newfav_li.append(newfav_a);
+	    divider.before(newfav_li);
+	    favorite.check();
+	  },
+	  
+	  remove: function(event) {
+	  	var fav = $(event.target).closest("a").text();
+	  	if (fav in favorites) {
+		  	if (confirm(gettext("Click ok to confirm deleting the favorite"))) {
+	  		  delete favorites[fav];
+	  	    grid.saveColumnConfiguration();
+	  	    $(event.target).closest("li").remove();
+	  	    $("#favoritename").val(fav);
+	  	    favorite.check();
+		  	}
+	  	}
+	  	event.stopImmediatePropagation();
+	  },
+	  
+	  open: function(event) {
+	  	var fav = $(event.target).parent().text();
+	  	var thegrid = $("#grid");
+	  	if (fav in favorites) {
+        if ("filter" in favorites[fav]) {
+          $('#grid').setGridParam({
+            postData:{filters: favorites[fav]["filter"]},
+            search:true
+            });
+          grid.getFilterGroup($('#grid'), JSON.parse(favorites[fav]["filter"]), true, $("#curfilter"));
+          $("#filter").addClass("btn-danger").removeClass("btn-primary");
+        }
+        else {
+          $('#grid').setGridParam({
+            postData:{filters: ""},
+            search:true
+            });
+          $("#curfilter").html("");
+        	$("#filter").removeClass("btn-danger").addClass("btn-primary");
+        }
+        thegrid.trigger('reloadGrid');
+	  		/*
+	  		
+	  		TODO  Restore sorting + restore column order.
+	  		
+	  		if ("sord" in favorites[fav] && "sidx" in favorites[fav]) {
+	  			thegrid.setGridParam({
+	  				sortname: favorites[fav]["sidx"],
+	          sortorder: favorites[fav]["sord"]
+	          });
+	  		}
+	  		else {
+	  			thegrid.setGridParam({
+	  				sortname: "",
+	          sortorder: "asc"
+	          });
+	  		}
+	      //thegrid.jqGrid("remapColumns", favorites[fav]["rows"], true);
+	  		grid.saveColumnConfiguration(function() {
+	  			console.log("reloading");
+	  			window.location.href = window.location.href;
+	  		});
+	  		*/
+	  	}
+	  }
+};
+
 //----------------------------------------------------------------------------
 // Code for ERP integration
 //----------------------------------------------------------------------------
@@ -1570,8 +1707,7 @@ var ERPconnection = {
         return;
       var data = [];
 
-      for (var i in sel)
-      {
+      for (var i in sel) {
         var r = grid.jqGrid('getRowData', sel[i]);
         if (r.type === undefined)
           r.type = transactiontype;
@@ -1657,12 +1793,11 @@ var ERPconnection = {
         return;
       var data = [];
 
-      for (var i in sel)
-      {
+      for (var i in sel) {
         var r = grid.jqGrid('getRowData', sel[i]);
         if (r.type === undefined)
           r.type = transactiontype;
-          data.push(r);
+        data.push(r);
       }
       if (data == [])
         return;
@@ -1711,16 +1846,17 @@ var ERPconnection = {
               '</table>'+
           '</div>');
 
-          labels = ["id","type","item","value","quantity","location","origin","startdate","enddate","criticality"];
+          var labels = ["id","type","item","value","quantity","location","origin","startdate","enddate","criticality"];
 
           var bodycontent='';
           if (transactiontype == 'SO') {
             var tableheadercontent = $('<tr/>');
 
-            tableheadercontent.append($('<th/>').html('<input id="cb_modaltableall" class="cbox" type="checkbox" aria-checked="false">'));
-            for (i = 0; i<labels.length; i++) {
+            tableheadercontent.append($('<th/>').html(
+            		'<input id="cb_modaltableall" class="cbox" type="checkbox" aria-checked="false">'
+            		));
+            for (i = 0; i<labels.length; i++)
               tableheadercontent.append( $('<th/>').addClass('text-capitalize').text(gettext(labels[i])) );
-            };
 
             var tablebodycontent = $('<tbody/>');
             for (i = 0; i<data.length; i++) {
@@ -1729,9 +1865,8 @@ var ERPconnection = {
 
               td.append( $('<input/>').attr({'id':"cb_modaltable-"+i, 'class':"cbox", 'type':"checkbox", 'aria-checked':"false"}));
               row.append(td);
-              for (j = 0; j<labels.length; j++) {
+              for (var j = 0; j < labels.length; j++)
                 row.append( $('<td/>').text(data[i][labels[j]]) );
-              };
               tablebodycontent.append( row );
             };
 
@@ -1787,7 +1922,7 @@ var ERPconnection = {
                 };
               },
               error: function (result, stat, errorThrown) {
-                fmts = ngettext("Error during export");
+                var fmts = ngettext("Error during export");
                 $('#popup .modal-title').html(gettext("Error during export"));
                 $('#popup .modal-header').addClass('bg-danger');
                 $('#popup .modal-body').css({'overflow-y':'auto'}).html('<div style="overflow-y:auto; height: 300px; resize: vertical">' + result.responseText + '</div>');
@@ -1819,7 +1954,7 @@ var ERPconnection = {
           $("#actions1").html($("#actionsul").children().first().text() + '  <span class="caret"></span>');
         },
         error: function (result, stat, errorThrown) {
-          fmts = gettext("Error getting data");
+          var fmts = gettext("Error getting data");
           $('#popup .modal-title').html(fmts);
           $('#popup .modal-header').addClass('bg-danger');
           $('#popup .modal-body').css({'overflow-y':'auto'}).html('<div style="overflow-y:auto; height: 300px; resize: vertical">' + result.responseText + '</div>');
@@ -2539,7 +2674,7 @@ function import_show(title, paragraph, multiple, fxhr, initialDropped)
       }, fxhr)
     );
    }
-  )
+  );
 }
 
 

@@ -44,20 +44,20 @@ logger = logging.getLogger(__name__)
 @PlanTaskRegistry.register
 class OdooReadData(PlanTask):
     """
-  This function connects to a URL, authenticates itself using HTTP basic
-  authentication, and then reads data from the URL.
-  The data from the source must adhere to frePPLe's official XML schema,
-  as defined in the schema files bin/frepple.xsd and bin/frepple_core.xsd.
+    This function connects to a URL, authenticates itself using HTTP basic
+    authentication, and then reads data from the URL.
+    The data from the source must adhere to frePPLe's official XML schema,
+    as defined in the schema files bin/frepple.xsd and bin/frepple_core.xsd.
 
-  The mode is pass as an argument:
+    The mode is pass as an argument:
     - Mode 1:
       This mode returns all data that is loaded with every planning run.
     - Mode 2:
       This mode returns data that is loaded that changes infrequently and
       can be transferred during automated scheduled runs at a quiet moment.
-  Which data elements belong to each category is determined in the Odoo
-  addon module and can vary between implementations.
-  """
+    Which data elements belong to each category is determined in the Odoo
+    addon module and can vary between implementations.
+    """
 
     description = "Load Odoo data"
     sequence = 119
@@ -77,8 +77,7 @@ class OdooReadData(PlanTask):
                         )
                         stdLoad.description += " - non-odoo source"
                 return 1
-        else:
-            return -1
+        return -1
 
     @classmethod
     def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
@@ -186,8 +185,7 @@ class OdooSaveStatic(PlanTask):
                 cls.mode = i
                 cls.description = "Save static model of source odoo_%s" % cls.mode
                 return 1
-        else:
-            return -1
+        return -1
 
     @classmethod
     def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):

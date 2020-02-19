@@ -183,7 +183,7 @@ class loadParameter(LoadTask):
                     try:
                         frepple.settings.current = parse(rec[1])
                         default_current_date = False
-                    except:
+                    except Exception:
                         pass
                 elif rec[0] == "plan.calendar" and rec[1]:
                     frepple.settings.calendar = frepple.calendar(name=rec[1])
@@ -1630,7 +1630,7 @@ class loadOperationPlans(LoadTask):
                         if i[6]:
                             try:
                                 opplan.owner = frepple.operationplan(reference=i[6])
-                            except:
+                            except Exception:
                                 pass
                         if i[8]:
                             opplan.demand = frepple.demand(name=i[8])

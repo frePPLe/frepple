@@ -44,8 +44,6 @@ Different types are available:
     at various moments during the total duration of the manufacturing order
     (not including the setup time on the loaded resource).
 
-**Fields**
-
 =============== ================= ===========================================================
 Field           Type              Description
 =============== ================= ===========================================================

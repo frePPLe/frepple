@@ -5,8 +5,6 @@ Resource detail
 This table records the planned capacity consumption. The capacity consumption is associated with 
 on manufacturing orders, purchase orders or distribution orders.
 
-**Fields**
-
 ================ ================= ===========================================================
 Field            Type              Description
 ================ ================= ===========================================================

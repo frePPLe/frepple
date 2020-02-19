@@ -17,13 +17,15 @@
 
 from django.conf.urls import url
 
-from .views import ReportManager, getSchema
+from .views import ReportManager, ReportList, getSchema
 
 # Automatically add these URLs when the application is installed
 autodiscover = True
 
 urlpatterns = [
-    url(r"^reportmanager/$", ReportManager.as_view(), name="reportmanager"),
     url(r"^reportmanager/schema/$", getSchema, name="reportmanager_schema"),
     url(r"^reportmanager/(.+)/$", ReportManager.as_view(), name="reportmanager_id"),
+    url(r"^reportmanager/$", ReportManager.as_view()),
+    url(r"^data/reportmanager/sqlreport/add/$", ReportManager.as_view()),
+    url(r"^data/reportmanager/sqlreport/$", ReportList.as_view()),
 ]

@@ -33,16 +33,15 @@ def html_page_context(app, pagename, templatename, context, doctree):
        only prune and collapse.
     """
     rendered_toc = get_rendered_toctree(app.builder, pagename)
-    context['toc'] = rendered_toc
-    context['display_toc'] = True  # force toctree to display
+    context["toc"] = rendered_toc
+    context["display_toc"] = True  # force toctree to display
 
     def make_toctree(collapse=True):
-        return get_rendered_toctree(app.builder,
-                                    pagename,
-                                    prune=False,
-                                    collapse=collapse,
-                                    )
-    context['toctree'] = make_toctree
+        return get_rendered_toctree(
+            app.builder, pagename, prune=False, collapse=collapse
+        )
+
+    context["toctree"] = make_toctree
 
 
 def get_rendered_toctree(builder, docname, prune=False, collapse=True):
@@ -50,12 +49,8 @@ def get_rendered_toctree(builder, docname, prune=False, collapse=True):
     with the given parameters, and then return the rendered
     HTML fragment.
     """
-    fulltoc = build_full_toctree(builder,
-                                 docname,
-                                 prune=prune,
-                                 collapse=collapse,
-                                 )
-    rendered_toc = builder.render_partial(fulltoc)['fragment']
+    fulltoc = build_full_toctree(builder, docname, prune=prune, collapse=collapse)
+    rendered_toc = builder.render_partial(fulltoc)["fragment"]
     return rendered_toc
 
 
@@ -67,10 +62,14 @@ def build_full_toctree(builder, docname, prune, collapse):
     doctree = env.get_doctree(env.config.master_doc)
     toctrees = []
     for toctreenode in doctree.traverse(addnodes.toctree):
-        toctree = env.resolve_toctree(docname, builder, toctreenode,
-                                      collapse=collapse,
-                                      prune=prune,
-                                      )
+        toctree = env.resolve_toctree(
+            docname,
+            builder,
+            toctreenode,
+            collapse=collapse,
+            prune=prune,
+            includehidden=True,
+        )
         toctrees.append(toctree)
     if not toctrees:
         return None
@@ -83,4 +82,4 @@ def build_full_toctree(builder, docname, prune, collapse):
 
 
 def setup(app):
-    app.connect('html-page-context', html_page_context)
+    app.connect("html-page-context", html_page_context)

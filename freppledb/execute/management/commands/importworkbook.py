@@ -93,7 +93,7 @@ class Command(BaseCommand):
                     .using(self.database)
                     .get(username=options["user"])
                 )
-            except:
+            except Exception:
                 raise CommandError("User '%s' not found" % options["user"])
         else:
             self.user = None
@@ -112,7 +112,7 @@ class Command(BaseCommand):
                     task = (
                         Task.objects.all().using(self.database).get(pk=options["task"])
                     )
-                except:
+                except Exception:
                     raise CommandError("Task identifier not found")
                 if (
                     task.started

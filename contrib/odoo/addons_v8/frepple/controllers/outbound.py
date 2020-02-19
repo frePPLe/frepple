@@ -233,7 +233,7 @@ hr.holidays.public.line.start + 1 day -> calendar_bucket.end
             else:
                 # No entries. We'll assume 24*7 availability.
                 yield '<calendar name=%s default="1"><buckets>\n' % quoteattr(self.calendar)
-        except:
+        except Exception:
             # Exception happens if the resource module isn't installed.
             yield '<!-- Working hours are assumed to be 24*7. -->\n'
             yield '<calendar name=%s default="1"><buckets>\n' % quoteattr(self.calendar)
@@ -245,7 +245,7 @@ hr.holidays.public.line.start + 1 day -> calendar_bucket.end
                 nd = datetime.strptime(i['date'], '%Y-%m-%d') + timedelta(days=1)
                 yield '<bucket start="%sT00:00:00" end="%sT00:00:00" value="0" priority="1"/>\n' % (
                     i['date'], nd.strftime("%Y-%m-%d"))
-        except:
+        except Exception:
             # Exception happens if the hr module is not installed
             yield '<!-- No holidays since the HR module is not installed -->\n'
         yield '</buckets></calendar></calendars>\n'
@@ -870,7 +870,7 @@ mrp.production.date_planned -> operationplan.start
                 operation = u'%d %s @ %s' % (i['bom_id'][0], i['bom_id'][1], location)
                 try:
                     startdate = datetime.strptime(i['date_start'] or i['date_planned'], '%Y-%m-%d %H:%M:%S')
-                except:
+                except Exception:
                     continue
                 if not location or not operation in self.operations:
                     continue

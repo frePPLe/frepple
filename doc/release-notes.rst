@@ -6,9 +6,13 @@ Release notes
 
 .. rubric:: User interface
 
+- You can now `save frequently used report settings as a favorite <user-guide/user-interface/getting-around/favorites.html>`_.
+  This can be huge time saver in your daily review of the plan. 
+
 - A new `report manager <user-guide/user-interface/report-manager.html>`_
-  app allows prower users to define custom reports using SQL. This greatly enhances
-  the flexibility to taylor the reports to your business process and needs.
+  app allows power users to define custom reports using SQL. This greatly enhances
+  the flexibility to tailor the plan output into reports that match your 
+  business process and needs.
   
 .. rubric:: Integration
 
@@ -27,7 +31,7 @@ Release notes
   anymore to delete the operationplanmaterial (Inventory Detail) and operationplanresource 
   (Resource Detail) records before being able to delete an operationplan record (MO/PO/DO).
   
-- odoo connectors (v12 and v13): Export of multiple POs for a same supplier will 
+- Odoo connectors (v12 and v13): Export of multiple POs for a same supplier will 
   create a single PO in odoo with multiple lines. If the exported POs also contain multiple 
   lines for the same product, then a single PO Line is created in odoo with the sum of 
   the quantities and the minimum planned date of all exported records for that product.

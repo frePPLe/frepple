@@ -51,7 +51,7 @@ class Command(loaddata.Command):
                     for i in files:
                         if i.endswith(".json"):
                             fixtures.add(i.split(".")[0])
-            except:
+            except Exception:
                 pass  # Silently ignore failures
         fixtures = sorted(fixtures)
 
@@ -150,7 +150,7 @@ class Command(loaddata.Command):
             if options["task"]:
                 try:
                     task = Task.objects.all().using(database).get(pk=options["task"])
-                except:
+                except Exception:
                     raise CommandError("Task identifier not found")
                 if (
                     task.started
@@ -173,7 +173,7 @@ class Command(loaddata.Command):
                             .using(database)
                             .get(username=options["user"])
                         )
-                    except:
+                    except Exception:
                         raise CommandError("User '%s' not found" % options["user"])
                 else:
                     user = None

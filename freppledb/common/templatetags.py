@@ -61,7 +61,7 @@ class CrumbsNode(Node):
     def render(self, context):
         try:
             req = context["request"]
-        except:
+        except Exception:
             return ""  # No request found in the context: no crumbs...
         if not hasattr(req, "session"):
             return  # No session found in the context: no crumbs...
@@ -71,9 +71,9 @@ class CrumbsNode(Node):
             cur = req.session["crumbs"]
             try:
                 cur = cur[req.prefix]
-            except:
+            except Exception:
                 cur = []
-        except:
+        except Exception:
             req.session["crumbs"] = {}
             cur = []
 
@@ -81,7 +81,7 @@ class CrumbsNode(Node):
         count = 0
         try:
             title = variable_title.resolve(context)
-        except:
+        except Exception:
             title = req.get_full_path()
         if title != _("cockpit"):
             # Don't handle the cockpit screen in the crumbs
@@ -146,7 +146,7 @@ class CrumbsNode(Node):
                 while count > MAX_CRUMBS:
                     count -= 1
                     del cur[0]
-            except:
+            except Exception:
                 # Ignore errors to fail in a clean and graceful way
                 pass
 
@@ -276,7 +276,7 @@ class ModelTabs(Node):
                 )
             result.append("</ul></div></div>")
             return mark_safe("\n".join(result))
-        except:
+        except Exception:
             raise
 
 
@@ -327,7 +327,7 @@ def version_short():
 def checkPassword(usr, pwd):
     try:
         return User.objects.get(username=usr).check_password(pwd)
-    except:
+    except Exception:
         return False
 
 
@@ -441,7 +441,7 @@ class MenuNode(Node):
 
         try:
             req = context["request"]
-        except:
+        except Exception:
             return ""  # No request found in the context
         o = []
 
@@ -492,7 +492,7 @@ class MenuNode(Node):
                                         .value.lower()
                                         == "true"
                                     )
-                                except:
+                                except Exception:
                                     ok = False
                                 if ok is False:
                                     break
@@ -619,7 +619,7 @@ class DashboardNode(Node):
 
         try:
             req = context["request"]
-        except:
+        except Exception:
             return ""  # No request found in the context
         reg = Dashboard.buildList()
         mydashboard = req.user.getPreference(
@@ -655,6 +655,31 @@ def getDashboard(parser, token):
 
 
 register.tag("getDashboard", getDashboard)
+
+
+@register.simple_tag
+def google_analytics():
+    """
+    A tag to add google analytics tracking code to the site.
+    """
+    if settings.GOOGLE_ANALYTICS and not settings.DEBUG:
+        return mark_safe(
+            "<script>\n"
+            "(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){\n"
+            "(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),\n"
+            "m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)\n"
+            "})\n"
+            "(window,document,'script','//www.google-analytics.com/analytics.js','ga');\n"
+            "ga('create', '%s', 'auto');\n"
+            "ga('send', 'pageview');\n"
+            "</script>" % settings.GOOGLE_ANALYTICS
+        )
+    else:
+        return mark_safe("")
+
+
+google_analytics.is_safe = True
+
 
 #
 # A tag to return a setting.

@@ -20,7 +20,7 @@ from django.utils.translation import gettext_lazy as _
 from freppledb.common.menus import MenuItem
 from freppledb.menu import menu
 
-from .views import ReportManager
+from .views import ReportList
 from .models import SQLReport
 
 
@@ -54,5 +54,11 @@ menu.addGroup("custom", label=_("custom"), index=750)
 menu.addItem("custom", "myreports", callback=MyReports, index=100)
 menu.addItem("custom", "data", separator=True, index=1000)
 menu.addItem(
-    "custom", "reportmanager", url="/reportmanager/", report=ReportManager, index=1100
+    "custom",
+    "reportmanager",
+    url="/data/reportmanager/sqlreport/",
+    report=ReportList,
+    model=SQLReport,
+    index=1100,
+    admin=True,
 )

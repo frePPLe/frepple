@@ -9,8 +9,6 @@ This table is populated with new proposed purchase orders when frePPLe generates
 It is also possible to load purchase orders that are already approved or confirmed in your ERP
 system.
 
-**Fields**
-
 ================ ================= =================================================================================================================================
 Field            Type              Description
 ================ ================= =================================================================================================================================

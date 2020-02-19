@@ -20,12 +20,12 @@ from django.utils.translation import gettext_lazy as _
 from freppledb.menu import menu
 from .views import ExecuteSQL
 
-# Add an item to the Admin menu
+menu.addGroup("custom", label=_("custom"), index=750)
 menu.addItem(
-    "admin",
+    "custom",
     "executesql",
     url="/executesql/",
     report=ExecuteSQL,
     label=_("Execute SQL"),
-    index=110,
+    index=1100,
 )

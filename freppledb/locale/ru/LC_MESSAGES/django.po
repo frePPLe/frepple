@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-11-14 17:09+0100\n"
-"PO-Revision-Date: 2018-12-11 12:03+0100\n"
+"PO-Revision-Date: 2020-02-18 13:53+0300\n"
 "Last-Translator: \n"
 "Language-Team: Michael Nasonov <info@ivc-inform.ru>\n"
 "Language: ru\n"
@@ -17,17 +17,15 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
 "%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
-"X-Generator: Poedit 2.0.1\n"
+"X-Generator: Poedit 1.8.11\n"
 
 #: admin.py:25
 msgid "This user is inactive."
-msgstr ""
+msgstr "Этот пользователь неактивен."
 
 #: common/admin.py:35
-#, fuzzy
-#| msgid "scenarios"
 msgid "scenario access"
-msgstr "сценарии"
+msgstr "доступ к сценарию"
 
 #: common/admin.py:44
 msgid "Permissions in this scenario"
@@ -57,7 +55,7 @@ msgstr "недопустимое представление даты: YYYY-MM-DD
 
 #: common/adminforms.py:724 common/adminforms.py:727
 msgid "Required. Max 30 characters."
-msgstr ""
+msgstr "Требуется заполнить макс 30 символов."
 
 #: common/api/views.py:39
 msgid "REST API Help"
@@ -95,10 +93,8 @@ msgid "Guided tour"
 msgstr "Помошник"
 
 #: common/menu.py:96
-#, fuzzy
-#| msgid "location"
 msgid "Documentation"
-msgstr "местоположение"
+msgstr "документация"
 
 #: common/menu.py:105
 msgid "REST API help"
@@ -320,10 +316,8 @@ msgstr "размер страницы"
 #: inventoryplanning/models.py:39 inventoryplanning/models.py:308
 #: inventoryplanning/models.py:361 inventoryplanning/views.py:140
 #: inventoryplanning/views.py:183 planningboard/models.py:23
-#, fuzzy
-#| msgid "Unique identifier"
 msgid "identifier"
-msgstr "идент."
+msgstr "ID"
 
 #: common/models.py:675 common/models.py:692 common/views.py:450
 msgid "comment"
@@ -476,20 +470,20 @@ msgid "Nothing to export"
 msgstr "Экспортировать нечего"
 
 #: common/report.py:3196
-#, fuzzy
-#| msgid "Error deleting file"
 msgid "Processing file"
-msgstr "Ошибка удаления файла"
+msgstr "Обработка файла"
 
 #: common/report.py:3200
 msgid ""
 "Files in the old .XLS excel format can't be read.<br>Please convert them to "
 "the new .XLSX format."
 msgstr ""
+"Файлы в старом формате .XLS Excel не могут быть прочитаны. <br> Пожалуйста, "
+"преобразуйте их в новый формат .XLSX."
 
 #: common/report.py:3207
 msgid "Unsupported file format."
-msgstr ""
+msgstr "Неподдерживаемый формат файла."
 
 #: common/report.py:3222 execute/management/commands/importworkbook.py:154
 #, python-format
@@ -518,10 +512,13 @@ msgid ""
 "Your administrator can find more information on the error in the log file "
 "%(logfile)s"
 msgstr ""
+"К сожалению, что-то пошло не так. <br>\n"
+"Ваш администратор может найти дополнительную информацию об ошибке в файле "
+"журнала %(logfile)s"
 
 #: common/templates/admin/auth/user/add_form.html:4
 msgid "Add user - required fields"
-msgstr ""
+msgstr "Добавить пользователя - обязательные поля"
 
 #: common/templates/admin/base_site_grid.html:23
 #: common/templates/admin/base_site_gridpivot.html:32
@@ -644,23 +641,20 @@ msgstr "Поиск"
 #: common/templates/admin/base_site_nav.html:71
 #, python-format
 msgid "Your license expired %(x)s days ago"
-msgstr ""
+msgstr "Срок действия вашей лицензии истек %(x)s дней назад"
 
 #: common/templates/admin/base_site_nav.html:74
 msgid "License expired"
-msgstr ""
+msgstr "Лицензия истекла"
 
 #: common/templates/admin/base_site_nav.html:80
-#, fuzzy, python-format
-#| msgid "work in progress in %(loc)s at %(date)s"
+#, python-format
 msgid "Your license expires in %(x)s days"
-msgstr "НЗП в %(loc)s на %(date)s"
+msgstr "Срок действия вашей лицензии истекает через %(x)s дней"
 
 #: common/templates/admin/base_site_nav.html:85
-#, fuzzy
-#| msgid "days"
 msgid "days left"
-msgstr "дней"
+msgstr "дней осталось"
 
 #: common/templates/admin/base_site_nav.html:94
 msgid "preferences"
@@ -682,7 +676,7 @@ msgstr "Отображаются только %(limit)s из записей %(co
 
 #: common/templates/admin/login.html:98
 msgid "Remember Me"
-msgstr ""
+msgstr "Запомнить меня"
 
 #: common/templates/admin/login.html:102
 msgid "Forgot your password?"
@@ -816,16 +810,13 @@ msgstr ""
 "%(model)s"
 
 #: common/templates/rest_framework/api.html:182
-#, fuzzy, python-format
-#| msgid ""
-#| "Make a PUT or PATCH request in raw format to update an existing or more "
-#| "existing %(model)s objects"
+#, python-format
 msgid ""
 "Make a PUT or PATCH request in raw format to update one or more existing "
 "%(model)s objects"
 msgstr ""
-"Выполните запрос PUT или PATCH в необработанном формате, чтобы обновить "
-"существующие или более существующие объекты %(model)s"
+"Выполните запрос PUT или PATCH в необработанном формате, чтобы обновить один "
+"или несколько существующих объектов %(model)s"
 
 #: common/templates/rest_framework/api.html:217
 #, python-format
@@ -958,46 +949,7 @@ msgid "Some links to get started"
 msgstr "Ознакомление - быстрый старт"
 
 #: common/widget.py:47
-#, fuzzy, python-format
-#| msgid ""
-#| "Welcome to the world's leading open source production planning tool!"
-#| "<br><br>\n"
-#| "How to get started?\n"
-#| "<ol><li>Start the <span class=\"underline\"><a href=\"javascript:void(0);"
-#| "\" onclick=\"tour.start('0,0,0'); return false;\">guided tour</a></span></"
-#| "li>\n"
-#| "<li>Check out the <span class=\"underline\"><a href=\"%(docurl)s\" target="
-#| "\"_blank\" rel=\"noopener\">documentation</a></span></li>\n"
-#| "<li>Start building your own model using the <span class=\"underline\"><a "
-#| "href=\"%(prefix)s/wizard/\" target=\"_blank\" rel=\"noopener\">wizard</"
-#| "a></span></li>\n"
-#| "</ol>\n"
-#| "Or simply dive into one of the main interactive planning screens:"
-#| "<br><br>\n"
-#| "<div style=\"float:left; margin-left:10px; width:30%%; max-width:130px; "
-#| "text-align: center\">\n"
-#| "<a href=\"%(prefix)s/forecast/editor/\">\n"
-#| "  <img src=\"/static/img/forecast-editor-thumbnail.png\" style=\"width: "
-#| "100%%\" alt=\"Forecast Editor\"><br>\n"
-#| "  <b>Forecast Editor</b>\n"
-#| "</a>\n"
-#| "</div>\n"
-#| "<div style=\"float:left; margin-left:10px; width:30%%; max-width:130px; "
-#| "text-align: center\">\n"
-#| "<a href=\"%(prefix)s/inventoryplanning/drp/\">\n"
-#| "  <img src=\"/static/img/inventory-planning-thumbnail.png\" style="
-#| "\"width: 100%%\" alt=\"Inventory Planning\"><br>\n"
-#| "  <b>Inventory Planning</b>\n"
-#| "</a>\n"
-#| "</div>\n"
-#| "<div style=\"float:left; margin-left:10px; width:30%%; max-width:130px; "
-#| "text-align: center\">\n"
-#| "<a href=\"%(prefix)s/planningboard/\">\n"
-#| "  <img src=\"/static/img/plan-editor-thumbnail.png\" style=\"width: 100%%"
-#| "\" alt=\"Plan Editor\"><br>\n"
-#| "  <b>Plan Editor</b>\n"
-#| "</a>\n"
-#| "</div>\n"
+#, python-format
 msgid ""
 "Welcome to the world's leading open source production planning tool!<br>\n"
 "Click one of images below to explore the main interactive planning screens:"
@@ -1027,20 +979,10 @@ msgid ""
 "</a>\n"
 "</div>\n"
 msgstr ""
-"Вы сделали правильный выбор - это ведущий в мире инструмент для планирования "
-"производства с открытым исходным кодом!<br><br>\n"
-"С чего начать?\n"
-"<ol><li>Начните с <span class=\"underline\"><a href=\"javascript:void(0);\" "
-"onclick=\"tour.start('0,0,0'); return false;\">экскурсии по системе</a></"
-"span></li>\n"
-"<li>Посмотрите <span class=\"underline\"><a href=\"%(docurl)s\" target="
-"\"_blank\" rel=\"noopener\">документацию</a></span></li>\n"
-"<li>Начните строить свою собственную модель, используя<span class=\"underline"
-"\"><a href=\"%(prefix)s/wizard/\" target=\"_blank\" rel=\"noopener\">мастер "
-"конфигурирования</a></span></li>\n"
-"</ol>\n"
-"Или просто погрузитесь в один из основных интерактивных экранов планирования:"
-"<br><br>\n"
+"Добро пожаловать в ведущий в мире инструмент для планирования производства с "
+"открытым исходным кодом!<br>\n"
+"Нажмите на одно из изображений ниже, чтобы изучить основные интерактивные "
+"экраны планирования:<br><br>\n"
 "<div style=\"float:left; margin-left:10px; width:30%%; max-width:130px; text-"
 "align: center\">\n"
 "<a href=\"%(prefix)s/forecast/editor/\">\n"
@@ -1054,7 +996,7 @@ msgstr ""
 "<a href=\"%(prefix)s/inventoryplanning/drp/\">\n"
 "  <img src=\"/static/img/inventory-planning-thumbnail.png\" style=\"width: "
 "100%%\" alt=\"Inventory Planning\"><br>\n"
-"  <b>Планирование запасов</b>\n"
+"  <b>План запасов</b>\n"
 "</a>\n"
 "</div>\n"
 "<div style=\"float:left; margin-left:10px; width:30%%; max-width:130px; text-"
@@ -1062,7 +1004,7 @@ msgstr ""
 "<a href=\"%(prefix)s/planningboard/\">\n"
 "  <img src=\"/static/img/plan-editor-thumbnail.png\" style=\"width: 100%%\" "
 "alt=\"Plan Editor\"><br>\n"
-"  <b>Планирование производства</b>\n"
+"  <b>План производстваr</b>\n"
 "</a>\n"
 "</div>\n"
 
@@ -1144,80 +1086,6 @@ msgid "Generate buckets"
 msgstr "Сформировать группы периодов времени"
 
 #: execute/management/commands/createbuckets.py:334
-#, fuzzy
-#| msgid ""
-#| "<p>Create time buckets for reporting.</p>\n"
-#| "          <div class=\"form-group\">\n"
-#| "          <label class=\"col-sm-3 control-label\">Start date</label>\n"
-#| "          <div class=\"col-sm-9\">\n"
-#| "          <input class=\"vDateField form-control\" id=\"start\" name="
-#| "\"start\" type=\"text\" size=\"12\"/>\n"
-#| "          </div>\n"
-#| "          </div>\n"
-#| "          <div class=\"form-group\">\n"
-#| "          <label class=\"col-sm-3 control-label\">End date</label>\n"
-#| "          <div class=\"col-sm-9\">\n"
-#| "          <input class=\"vDateField form-control\" id=\"end\" name=\"end"
-#| "\" type=\"text\" size=\"12\"/>\n"
-#| "          </div>\n"
-#| "          </div>\n"
-#| "          <div class=\"form-group\">\n"
-#| "          <label class=\"col-sm-3 control-label\" for=\"weekstart1\">Week "
-#| "starts on</label>\n"
-#| "          <div class=\"col-sm-9\">\n"
-#| "          <div class=\"dropdown dropdown-submit-input\">\n"
-#| "            <button class=\"btn btn-default dropdown-toggle form-control"
-#| "\"  id=\"weekstart1\" value=\"1\" type=\"button\" data-toggle=\"dropdown"
-#| "\">Monday&nbsp;&nbsp;<span class=\"caret\"></span></button>\n"
-#| "            <ul class=\"dropdown-menu col-xs-12\" aria-labelledby="
-#| "\"weekstart1\" id=\"weekstartul\">\n"
-#| "              <li><a>Sunday</a></li>\n"
-#| "              <li><a>Monday</a></li>\n"
-#| "              <li><a>Tuesday</a></li>\n"
-#| "              <li><a>Wednesday</a></li>\n"
-#| "              <li><a>Thursday</a></li>\n"
-#| "              <li><a>Friday</a></li>\n"
-#| "              <li><a>Saturday</a></li>\n"
-#| "            </ul>\n"
-#| "          </div>\n"
-#| "          </div>\n"
-#| "          </div>\n"
-#| "          <div class=\"form-group\">\n"
-#| "          <label class=\"col-sm-3 control-label\">Day name</label>\n"
-#| "          <div class=\"col-sm-9\">\n"
-#| "          <input class=\"form-control\" name=\"format-day\" type=\"text\" "
-#| "size=\"12\" value=\"%Y-%m-%d\"/>\n"
-#| "          </div>\n"
-#| "          </div>\n"
-#| "          <div class=\"form-group\">\n"
-#| "          <label class=\"col-sm-3 control-label\">Week name</label>\n"
-#| "          <div class=\"col-sm-9\">\n"
-#| "          <input class=\"form-control\" name=\"format-week\" type=\"text"
-#| "\" size=\"12\" value=\"%y W%W\"/>\n"
-#| "          </div>\n"
-#| "          </div>\n"
-#| "          <div class=\"form-group\">\n"
-#| "          <label class=\"col-sm-3 control-label\">Month name</label>\n"
-#| "          <div class=\"col-sm-9\">\n"
-#| "          <input class=\"form-control\" name=\"format-month\" type=\"text"
-#| "\" size=\"12\" value=\"%b %y\"/>\n"
-#| "          </div>\n"
-#| "          </div>\n"
-#| "          <div class=\"form-group\">\n"
-#| "          <label class=\"col-sm-3 control-label\">Quarter name</label>\n"
-#| "          <div class=\"col-sm-9\">\n"
-#| "          <input class=\"form-control\" name=\"format-quarter\" type="
-#| "\"text\" size=\"12\" value=\"%y Q%q\"/>\n"
-#| "          </div>\n"
-#| "          </div>\n"
-#| "          <div class=\"form-group\">\n"
-#| "          <label class=\"col-sm-3 control-label\">Year name</label>\n"
-#| "          <div class=\"col-sm-9\">\n"
-#| "          <input class=\"form-control\" name=\"format-year\" type=\"text"
-#| "\" size=\"12\" value=\"%Y\"/>\n"
-#| "          </div>\n"
-#| "          </div>\n"
-#| "          "
 msgid ""
 "<p>Create time buckets for reporting.</p>\n"
 "          <div class=\"form-group\">\n"
@@ -1633,7 +1501,7 @@ msgstr "Обновите описание выбранных сценариев"
 
 #: execute/management/commands/scenario_copy.py:412
 msgid "You will lose ALL data in this scenario!"
-msgstr ""
+msgstr "Вы потеряете ВСЕ данные в этом сценарии!"
 
 #: execute/menu.py:16 execute/widget.py:20
 msgid "Execute"
@@ -1685,10 +1553,8 @@ msgid "autorefresh"
 msgstr "автообновление"
 
 #: execute/templates/execute/execute.html:196
-#, fuzzy
-#| msgid "launch new tasks"
 msgid "launch tasks"
-msgstr "запуск новой задачи"
+msgstr "запуск  задач"
 
 #: execute/templates/execute/logfrepple.html:4
 msgid "download complete log file"
@@ -1742,14 +1608,12 @@ msgid "Generate a constrained plan"
 msgstr "Расчет плана с ограничениями"
 
 #: executesql/menu.py:24
-#, fuzzy
-#| msgid "Execute"
 msgid "Execute SQL"
-msgstr "Выполнить"
+msgstr "Выполнить SQL"
 
 #: executesql/views.py:48
 msgid "Execute SQL statements"
-msgstr ""
+msgstr "Выполнить операторы SQL"
 
 #: forecast/admin.py:39
 msgid "Planning parameters"
@@ -2296,10 +2160,8 @@ msgstr "показать позиции"
 #: inventoryplanning/templates/inventoryplanning/drp.html:1645
 #: inventoryplanning/templates/inventoryplanning/drp.html:1681
 #: inventoryplanning/templates/inventoryplanning/drp.html:1758
-#, fuzzy
-#| msgid "net forecast"
 msgid "past forecast"
-msgstr "чистый прогноз"
+msgstr "прошлый прогноз"
 
 #: forecast/templates/forecast/forecast.html:327 forecast/views.py:448
 #: output/templates/output/demand.html:143
@@ -2505,26 +2367,20 @@ msgid "distribution orders"
 msgstr "заказы распределения"
 
 #: input/admin.py:395
-#, fuzzy
-#| msgid "Child operation"
 msgid "child operation"
-msgstr "Подчиненная операция"
+msgstr "дочерняя операция"
 
 #: input/admin.py:396
-#, fuzzy
-#| msgid "Child operation"
 msgid "child suboperations"
-msgstr "Подчиненная операция"
+msgstr "дочерние подоперации"
 
 #: input/admin.py:437 input/admin.py:526 input/admin.py:1048
 msgid "planning parameters"
 msgstr "параметры планирования"
 
 #: input/admin.py:454
-#, fuzzy
-#| msgid "alternates"
 msgid "alternate selection"
-msgstr "альтернативы"
+msgstr "альтернативный выбор"
 
 #: input/admin.py:487 input/admin.py:548 input/admin.py:719
 #: output/views/constraint.py:88
@@ -2545,10 +2401,8 @@ msgid "alternates"
 msgstr "альтернативы"
 
 #: input/admin.py:1092
-#, fuzzy
-#| msgid "computed safety stock"
 msgid "computed fields"
-msgstr "расчетный страховой запас"
+msgstr "вычисляемые поля"
 
 #: input/models.py:31
 msgid "minimum cost"
@@ -2988,15 +2842,13 @@ msgstr "правила матрицы наладки"
 
 #: input/models.py:659 input/views.py:1346 input/views.py:5851
 #: output/views/resource.py:77
-#, fuzzy
-#| msgid "constrained by"
 msgid "constrained"
-msgstr "ограничивается"
+msgstr "ограничен"
 
 #: input/models.py:663
 msgid ""
 "controls whether or not this resource is planned in finite capacity mode"
-msgstr ""
+msgstr "контролирует, планируется ли этот ресурс в режиме конечной емкости"
 
 #: input/models.py:667 input/views.py:1347 input/views.py:2203
 #: input/views.py:5857 output/views/resource.py:84
@@ -3229,10 +3081,8 @@ msgid "A multiple purchasing quantity"
 msgstr "количество в партии закупки"
 
 #: input/models.py:1163
-#, fuzzy
-#| msgid "A minimum purchasing quantity"
 msgid "A maximum purchasing quantity"
-msgstr "минимальное количество закупки"
+msgstr "максимальное количество закупки"
 
 #: input/models.py:1171
 msgid "Purchasing cost per unit"
@@ -3292,10 +3142,8 @@ msgid "A multiple shipping quantity"
 msgstr "партия отгрузки"
 
 #: input/models.py:1294
-#, fuzzy
-#| msgid "A minimum shipping quantity"
 msgid "A maximum shipping quantity"
-msgstr "минимальное количество отгрузки"
+msgstr "максимальное количество отгрузки"
 
 #: input/models.py:1302
 msgid "Shipping cost per unit"
@@ -3433,7 +3281,7 @@ msgstr "исполняется"
 #: input/models.py:1496 input/views.py:3743 input/views.py:4209
 #: input/views.py:4683
 msgid "completed"
-msgstr ""
+msgstr "выполнено"
 
 #: input/models.py:1503 input/models.py:1846 input/models.py:1925
 #: input/views.py:3360 input/views.py:3909 input/views.py:4394
@@ -3494,22 +3342,16 @@ msgid "operationplans"
 msgstr "плана операций"
 
 #: input/models.py:1865
-#, fuzzy
-#| msgid "Task status"
 msgid "load status"
-msgstr "состояние задачи"
+msgstr "статус загрузки"
 
 #: input/models.py:1870
-#, fuzzy
-#| msgid "Status of the order"
 msgid "Status of the resource assignment"
-msgstr "состояние заказа"
+msgstr "Статус назначения ресурса"
 
 #: input/models.py:1895 input/models.py:1896 input/views.py:5452
-#, fuzzy
-#| msgid "resource skill"
 msgid "resource detail"
-msgstr "навык ресурса"
+msgstr "Ресурс детально"
 
 #: input/models.py:1939 inventoryplanning/models.py:35
 #: inventoryplanning/templates/inventoryplanning/drp.html:2745
@@ -3518,20 +3360,16 @@ msgid "period of cover"
 msgstr "период покрытия"
 
 #: input/models.py:1942 input/views.py:5443
-#, fuzzy
-#| msgid "material alerts"
 msgid "material status"
-msgstr "оповещения материала"
+msgstr "статус материала"
 
 #: input/models.py:1947
 msgid "status of the material production or consumption"
 msgstr "состояние производства или потребления материала"
 
 #: input/models.py:1973 input/models.py:1974
-#, fuzzy
-#| msgid "Inventory detail report"
 msgid "inventory detail"
-msgstr "Движение запасов"
+msgstr "запасы подробно"
 
 #: input/models.py:1981 input/views.py:3948
 msgid "shipping date"
@@ -3627,10 +3465,8 @@ msgid "materials"
 msgstr "материал"
 
 #: input/views.py:3473
-#, fuzzy
-#| msgid "setup"
 msgid "setups"
-msgstr "наладка"
+msgstr "наладки"
 
 #: input/views.py:3491 input/views.py:4005 input/views.py:4489
 msgid "inventory item"
@@ -3696,10 +3532,8 @@ msgid "delivered from %(loc)s between %(date1)s and %(date2)s"
 msgstr "доставлено из %(loc)s между %(date1)s и %(date2)s"
 
 #: input/views.py:5062
-#, fuzzy
-#| msgid "Inventory detail report"
 msgid "Inventory detail"
-msgstr "Движение запасов"
+msgstr "Запасы подробно"
 
 #: input/views.py:5275
 msgid "expected onhand"
@@ -3861,16 +3695,12 @@ msgid "segment"
 msgstr "сегмент"
 
 #: inventoryplanning/models.py:191
-#, fuzzy
-#| msgid "inventory item"
 msgid "inventory policy"
-msgstr "позиция запаса"
+msgstr "политика запаса"
 
 #: inventoryplanning/models.py:192 inventoryplanning/views.py:174
-#, fuzzy
-#| msgid "inventory item"
 msgid "inventory policies"
-msgstr "позиция запаса"
+msgstr "политики запасов"
 
 #: inventoryplanning/models.py:209 inventoryplanning/views.py:119
 msgid "query"
@@ -4029,14 +3859,10 @@ msgid "orders adjustment 2 years ago"
 msgstr "корректировка заказов за два прошлых года"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:120
-#, fuzzy
-#| msgid "total orders 1 year ago"
 msgid "total orders 1 years ago"
-msgstr "все заказы за прошлый год"
+msgstr "все заказов за прошлый год"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:121
-#, fuzzy
-#| msgid "orders adjustment 1 year ago"
 msgid "orders adjustment 1 years ago"
 msgstr "корректировка заказов за прошлый год"
 
@@ -4392,42 +4218,32 @@ msgid "admin"
 msgstr "Админ"
 
 #: metrics/attributes.py:19
-#, fuzzy
-#| msgid "Due date of the demand"
 msgid "count of late demands"
-msgstr "срок исполнения спроса"
+msgstr "количество просроченного спроса"
 
 #: metrics/attributes.py:20
-#, fuzzy
-#| msgid "Due date of the demand"
 msgid "quantity of late demands"
-msgstr "срок исполнения спроса"
+msgstr "просроченный спрос"
 
 #: metrics/attributes.py:21
-#, fuzzy
-#| msgid "Due date of the demand"
 msgid "value of late demand"
-msgstr "срок исполнения спроса"
+msgstr "стоимость опозданий спроса"
 
 #: metrics/attributes.py:24
-#, fuzzy
-#| msgid "constrained demand"
 msgid "count of unplanned demands"
-msgstr "ограничение спроса"
+msgstr "количество не попавшего в план спроса"
 
 #: metrics/attributes.py:31
-#, fuzzy
-#| msgid "Quantity planned for delivery"
 msgid "quantity of unplanned demands"
-msgstr "Количество, запланированное для доставки"
+msgstr "спрос не попал в план"
 
 #: metrics/attributes.py:38
 msgid "value of unplanned demands"
-msgstr ""
+msgstr "стоимость спроса незапланированного"
 
 #: metrics/attributes.py:51
 msgid "count of capacity overload problems"
-msgstr ""
+msgstr "количество проблем перегрузки емкости"
 
 #: odoo/commands.py:52 odoo/commands.py:166
 msgid "Read Odoo data"
@@ -4930,7 +4746,7 @@ msgstr "квоты"
 
 #: settings.py:337
 msgid "activity"
-msgstr ""
+msgstr "действия"
 
 #: webservice/management/commands/runwebservice.py:79
 msgid "web service"
@@ -4938,11 +4754,11 @@ msgstr "веб-сервис"
 
 #: wizard/templates/wizard/index.html:40
 msgid "data loading wizard"
-msgstr ""
+msgstr "мастер загрузки данных"
 
 #: wizard/templates/wizard/index.html:48
 msgid "dashboard"
-msgstr ""
+msgstr "Дашборд"
 
 #~ msgid "Path to unlock features"
 #~ msgstr "мастер конфигурирования"

@@ -85,7 +85,7 @@ class Command(BaseCommand):
                     .using(self.database)
                     .get(username=options["user"])
                 )
-            except:
+            except Exception:
                 raise CommandError("User '%s' not found" % options["user"])
         else:
             self.user = None
@@ -116,7 +116,7 @@ class Command(BaseCommand):
                     task = (
                         Task.objects.all().using(self.database).get(pk=options["task"])
                     )
-                except:
+                except Exception:
                     raise CommandError("Task identifier not found")
                 if (
                     task.started
@@ -147,7 +147,9 @@ class Command(BaseCommand):
                 or ","
             )
             translation.activate(settings.LANGUAGE_CODE)
-            self.SQLrole = settings.DATABASES[self.database].get("SQL_ROLE", None)
+            self.SQLrole = settings.DATABASES[self.database].get(
+                "SQL_ROLE", "report_role"
+            )
 
             # Execute
             if "FILEUPLOADFOLDER" in settings.DATABASES[
@@ -419,10 +421,6 @@ class Command(BaseCommand):
             file_open = open
         conn = None
         try:
-            if not self.SQLrole:
-                raise Exception(
-                    "The setting DATABASES / SQL_ROLE must be specified first."
-                )
             conn = create_connection(self.database)
             with conn.cursor() as cursor:
                 cursor.execute("set role %s", (self.SQLrole,))
@@ -482,7 +480,7 @@ class Command(BaseCommand):
                                 error[4],
                             )
                         )
-        except:
+        except Exception:
             logger.error(
                 "%s Error: Invalid data format - skipping the file \n"
                 % datetime.now().replace(microsecond=0)
@@ -535,7 +533,7 @@ class Command(BaseCommand):
                                     error[4],
                                 )
                             )
-        except:
+        except Exception:
             logger.error(
                 "%s Error: Invalid data format - skipping the file \n"
                 % datetime.now().replace(microsecond=0)

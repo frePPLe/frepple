@@ -2,9 +2,6 @@
 Customizing a report
 ====================
 
-.. Note::
-   This feature is only available in the Enterprise Edition.
-
 Each user can update the configuration of the reports to suite his needs and taste.
 
 Click the customize icon in the tool bar to bring up a popup window where the user

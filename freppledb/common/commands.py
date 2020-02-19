@@ -460,7 +460,7 @@ if __name__ == "__main__":
     # Select database
     try:
         database = os.environ["FREPPLE_DATABASE"] or DEFAULT_DB_ALIAS
-    except:
+    except Exception:
         database = DEFAULT_DB_ALIAS
 
     # Use the test database if we are running the test suite

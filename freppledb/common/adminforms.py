@@ -483,7 +483,7 @@ class MultiDBModelAdmin(admin.ModelAdmin):
                 .filter(content_type__pk=modeltype.id, object_pk=object_id)
                 .order_by("-id")
             )
-        except:
+        except Exception:
             raise Http404("Object not found")
         if request.method == "POST":
             if request.user.has_perm("common.add_comment"):
@@ -552,7 +552,7 @@ class MultiDBModelAdmin(admin.ModelAdmin):
             del request.session["crumbs"][request.prefix][-1]
             if request.session["crumbs"][request.prefix][-1][2] in detailpages:
                 del request.session["crumbs"][request.prefix][-1]
-        except:
+        except Exception:
             pass
 
         # frePPLe specific: Redirect to previous url

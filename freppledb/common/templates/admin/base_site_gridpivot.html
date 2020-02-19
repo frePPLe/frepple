@@ -17,6 +17,7 @@ var editcol;
 
 var reportkey = '{{reportkey|safe}}';
 var initialfilter{% if filters %} = {{filters|safe}}{% endif %};
+var favorites = {% if preferences.favorites %}{{preferences.favorites|json}}{% else %}{}{% endif %};
 var resizing;
 var editrow;
 var editcol;
@@ -176,6 +177,22 @@ $(function() {
 	  <button id="filter" class="btn btn-xs btn-primary" onclick="grid.showFilter()">
 	    <span data-toggle="tooltip" data-placement="top" title="{% trans 'filter data'|capfirst|force_escape%}" class="fa fa-search"></span>
 	  </button>
+	  <div class="btn-group" data-toggle="tooltip" data-placement="top" data-original-title="{% trans 'favorites'|capfirst|force_escape %}">
+    <button class="btn btn-xs btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      <span class="fa fa-star"></span>
+    </button>
+    <ul class="dropdown-menu dropdown-menu-right" id="favoritelist">
+      {% if preferences.favorites %}
+      {% for fav in preferences.favorites %}
+      <li><a onclick="favorite.open(event)">{{fav}}<div style="float:right"><span class="fa fa-trash-o" onclick="favorite.remove(event)"></span></div></a></li>
+      {% endfor %}
+      <li role="separator" class="divider"></li>
+      {% endif %}
+      <li><a><button id="favoritesave" onclick="favorite.save()" type="button" class="btn btn-primary btn-xs disabled">{% trans "save"|capfirst %}</button>
+      <input id="favoritename" oninput="favorite.check()" type="text" size="15"></a>
+      </li>
+    </ul>
+    </div>
 	{% endif %}
 	{% if reportclass.hasTimeBuckets %}
 	  <button class="btn btn-xs btn-primary" onclick="grid.showBucket()">

@@ -37,6 +37,9 @@ templates_path = ['_templates']
 # The suffix of source filenames.
 source_suffix = '.rst'
 
+# If true, the reST sources are included in the HTML build as _sources/name.
+html_copy_source = False
+
 # The encoding of source files.
 #source_encoding = 'utf-8-sig'
 
@@ -174,13 +177,13 @@ html_show_copyright = False
 #html_use_opensearch = ''
 
 # This is the file name suffix for HTML files (e.g. ".xhtml").
-#html_file_suffix = None
+html_file_suffix = ".html"
 
 # Output file base name for HTML help builder.
 htmlhelp_basename = 'frePPLedoc'
 
 # Add permalinks for each heading and description environment as paragraph signs
-html_add_permalinks = None
+html_add_permalinks = ''
 
 # -- Options for LaTeX output ---------------------------------------------
 

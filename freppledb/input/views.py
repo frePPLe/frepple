@@ -3760,7 +3760,6 @@ class DistributionOrderList(OperationPlanMixin, GridReport):
     template = "input/operationplanreport.html"
     title = _("distribution orders")
     default_sort = (1, "desc")
-    basequeryset = DistributionOrder.objects.all()
     model = DistributionOrder
     frozenColumns = 1
     multiselect = True
@@ -5827,7 +5826,7 @@ class OperationPlanDetail(View):
             current_date = parse(
                 Parameter.objects.using(request.database).get(name="currentdate").value
             )
-        except:
+        except Exception:
             current_date = datetime.now()
         cursor = connections[request.database].cursor()
 

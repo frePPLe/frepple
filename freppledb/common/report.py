@@ -162,7 +162,7 @@ def getHorizon(request, future_only=False):
         current = parse(
             Parameter.objects.using(request.database).get(name="currentdate").value
         )
-    except:
+    except Exception:
         current = datetime.now()
         current = current.replace(microsecond=0)
 
@@ -170,7 +170,7 @@ def getHorizon(request, future_only=False):
     horizonunit = request.GET.get("horizonunit", request.user.horizonunit)
     try:
         horizonlength = int(request.GET.get("horizonlength"))
-    except:
+    except Exception:
         horizonlength = request.user.horizonlength
     if horizontype:
         # First type: Horizon relative to the current date
@@ -195,11 +195,11 @@ def getHorizon(request, future_only=False):
             horizonstart = datetime.strptime(
                 request.GET.get("horizonstart"), "%Y-%m-%d"
             )
-        except:
+        except Exception:
             horizonstart = request.user.horizonstart
         try:
             horizonend = datetime.strptime(request.GET.get("horizonend"), "%Y-%m-%d")
-        except:
+        except Exception:
             horizonend = request.user.horizonend
         start = horizonstart
         if not start or (future_only and start < current):
@@ -413,7 +413,7 @@ def getCurrency():
             return ("", " %s" % escape(cur[0]))
         else:
             return ("%s " % escape(cur[0]), " %s" % escape(cur[1]))
-    except:
+    except Exception:
         return ("", " $")
 
 
@@ -583,7 +583,7 @@ class GridReport(View):
         try:
             # Get the official name of the encoding (since encodings can have many alias names)
             name = codecs.lookup(encoding).name
-        except:
+        except Exception:
             return ""  # Unknown encoding, without BOM header
         if name == "utf-32-be":
             return codecs.BOM_UTF32_BE
@@ -702,7 +702,7 @@ class GridReport(View):
                     .order_by("-level")[0]
                     .name
                 )
-            except:
+            except Exception:
                 bucket = None
         if not arg_buckets and not request.user.horizonbuckets and bucket:
             request.user.horizonbuckets = bucket
@@ -1172,7 +1172,7 @@ class GridReport(View):
                         sortargs.append(sortfield)
                     else:
                         sortargs.append("-%s" % sortfield)
-                except:
+                except Exception:
                     for r in request.rows:
                         if r.name == sortfield:
                             try:
@@ -1181,7 +1181,7 @@ class GridReport(View):
                                     sortargs.append(r.field_name)
                                 else:
                                     sortargs.append("-%s" % r.field_name)
-                            except:
+                            except Exception:
                                 # Can't sort on this field
                                 pass
                             break
@@ -1253,6 +1253,7 @@ class GridReport(View):
             else:
                 return "1 asc"
 
+        raise Exception("Unreachable piece of code")  # TODO Delete till end of method!
         sortname = None
         if request.GET.get("sidx", None):
             # 1
@@ -1297,7 +1298,7 @@ class GridReport(View):
                     sort = cls.default_sort[0]
             else:
                 sort = cls.default_sort[0]
-        except:
+        except Exception:
             sort = cls.default_sort[0]
         if request.GET.get("sord", None) == "desc" or cls.default_sort[1] == "desc":
             return "%s desc" % sort
@@ -2249,7 +2250,7 @@ class GridReport(View):
                             )
                         )
                         filtered = True
-                    except:
+                    except Exception:
                         pass  # Ignore invalid operators
         if not filtered:
             return None
@@ -2271,7 +2272,7 @@ class GridReport(View):
                 q_filters.append(
                     cls._filter_map_jqgrid_django[op](q_filters, reportrow, data)
                 )
-            except:
+            except Exception:
                 pass  # Silently ignore invalid filters
         if "groups" in filterdata:
             for group in filterdata["groups"]:
@@ -2279,7 +2280,7 @@ class GridReport(View):
                     z = cls._get_q_filter(request, group)
                     if z:
                         q_filters.append(z)
-                except:
+                except Exception:
                     pass  # Silently ignore invalid groups
         if len(q_filters) == 0:
             return None
@@ -2325,7 +2326,7 @@ class GridReport(View):
                     if r.name and i.startswith(r.field_name):
                         try:
                             items = items.filter(**{i: unquote(j)})
-                        except:
+                        except Exception:
                             pass  # silently ignore invalid filters
         return items
 
@@ -2532,7 +2533,7 @@ class GridPivot(GridReport):
                             first2 = False
                         elif i[f.name] is not None:
                             r.append(', "%s":%s' % (f.name, s))
-                    except:
+                    except Exception:
                         pass
             r.append(', "%s":[' % i["bucket"])
             first2 = True
@@ -3236,7 +3237,7 @@ def exportWorkbook(request):
             try:
                 # The admin model of the class can define some fields to exclude from the export
                 exclude = data_site._registry[model].exclude
-            except:
+            except Exception:
                 exclude = None
             for i in model._meta.fields:
                 if i.name in ["lft", "rght", "lvl"]:

@@ -8,8 +8,6 @@ A resource can have any number of skills.
 The operationresource table associates an operation with a resource. In that table we
 can define a skill required on the resource.
 
-**Fields**
-
 ============ ================= ===========================================================
 Field        Type              Description
 ============ ================= ===========================================================

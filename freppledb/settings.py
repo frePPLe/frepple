@@ -170,20 +170,6 @@ DATABASE_ROUTERS = ["freppledb.common.models.MultiDBRouter"]
 
 CSRF_FAILURE_VIEW = "freppledb.common.views.csrf_failure"
 
-# A list of strings representing the host/domain names the application can serve.
-# This is a security measure to prevent an attacker from poisoning caches and
-# password reset emails with links to malicious hosts by submitting requests
-# with a fake HTTP Host header, which is possible even under many seemingly-safe
-# webserver configurations.
-# Values in this list can be fully qualified names (e.g. 'www.example.com'),
-# in which case they will be matched against the request's Host header exactly
-# (case-insensitive, not including port).
-# A value beginning with a period can be used as a subdomain wildcard: '.example.com'
-# will match example.com, www.example.com, and any other subdomain of example.com.
-# A value of '*' will match anything, effectively disabling this feature.
-# This option is only active when DEBUG = false.
-ALLOWED_HOSTS = ["*"]
-
 # Keep each database connection alive for 10 minutes.
 CONN_MAX_AGE = 600
 

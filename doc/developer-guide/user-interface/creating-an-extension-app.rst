@@ -9,10 +9,15 @@ This page outlines the steps involved in creating a custom app and
 explore the capabilities to tailor frePPLe to your business needs and 
 process.
 
-#. You will need to be familiar with the 
-   `Python programming language <http://python.org/>`_ to complete this
-   tutorial.
-   
+:ref:`runplan`
+
+#. | **Prerequisites**:
+   | You will need to be familiar with the
+     `Python programming language <http://python.org/>`_ to complete this
+     tutorial.
+   | Knowledge of HTML and SQL is also needed to understand how your app
+     works within the frePPLe framework.
+
 #. | **Create the app folder**:
    | An app is structured as a Python module that needs to follow a specific
      structure.
@@ -238,11 +243,12 @@ process.
      but specific to frePPLe.
 
 #. | **Add demo data**:
-   | In a subfolder **fixtures** you can define demo datasets that can
-     be loaded with the command "frepplectl loaddata" or interactively
-     in the execution screen.
+   | In the subfolder **fixtures** you can define demo datasets that can
+     be loaded with the command "frepplectl loaddata" or `interactively
+     in the execution screen <user-guide/command-reference.html#loaddata>`_.
 
-   | Fixtures are dat
+   | Fixtures are text files in JSON format.
+   
    .. code-block:: JSON
    
       [
@@ -260,29 +266,96 @@ process.
      frePPLe.
      
 #. | **Add custom commands**:
-   | By creating files in the folder management/commands you can define extra
-     commands.
-   | You can execute the custom commands with:
+   | Files in the folder **management/commands** define extra commands.
+   | You can execute the custom commands from the command line, through a
+     web API or interactively from the execution screen.
 
    ::
 
+      # Run from the command line
       frepplectl my_command
+      
+   ::
+   
+      # Web API of the command
+      POST /execute/api/my_command/
+   
+   .. image:: ../_images/my_command.png
+      :alt: Custom command in the executio screen
+   
+   Simplified, the code for a command looks as follows:
+   
+   .. code-block:: Python
+
+      class Command(BaseCommand):
+          # Help text shown when you run "frepplectl help my_command"
+          help = "This command does ..."
+      
+          # Define optional and required arguments
+          def add_arguments(self, parser):
+              parser.add_argument(
+                  "--my_arg",
+                  dest="my_arg",
+                  type=int,
+                  default=0,
+                  help="an optional argument for the command",
+              )
+           
+          # The busisness logic of the command goes in this method
+          def handle(self, *args, **options):
+              print("This command was called with argument %s" % options["my_arg"])
+      
+          # Label to display on the execution screen
+          title = _("My own command")
+      
+          # Sequence of the command on the execution screen
+          index = 1
+      
+          # This method generates the text to display on the execution screen
+          @staticmethod
+          def getHTML(request):
+              context = RequestContext(request)
+              template = Template(
+                  """
+                  {% load i18n %}
+                  <form class="form" role="form" method="post"
+                     action="{{request.prefix}}/execute/launch/my_command/">{% csrf_token %}
+                  <table>
+                  <tr>
+                    <td style="padding:15px; vertical-align:top">
+                    <button  class="btn btn-primary" id="load" type="submit">{% trans "launch"|capfirst %}</button>
+                    </td>
+                    <td style="padding:15px">
+                    A description of my command
+                    </td>
+                  </tr>
+                  </table>
+                  </form>
+                  """
+              )
+              return template.render(context)
+              
+   | You can find more detailed information on 
+     https://docs.djangoproject.com/en/2.2/howto/custom-management-commands/
 
 #. | **Add dashboard widgets**:
-   | You can define new widgets in a file widget.py. Explore some existing
+   | You can define new widgets in a file **widget.py**. Explore some existing
      widgets to see how the simple structure of such widgets.
-   | In the Enterprise Edition each user can create his/her own dashboard,
-     by selecting the desired widgets from the available list.
-   | In the Community Edition the dashboard is configuration with the setting
-     DEFAULT_DASHBOARD in the file djangosettings.py.
 
 #. | **Add unit tests**:
-   | Unit tests are defined in the file tests.py.
+   | Unit tests are defined in the file **tests.py**.
    | They are executed when you run the command:
 
    ::
 
+      # Run the test
       frepplectl test my_app
+
+   The code for a test looks as follows:
+   
+   .. code-block:: Python
+   
+   
 
 #. | **More information!**:
    | FrePPLe is based on django web application framework. You can dig deeper

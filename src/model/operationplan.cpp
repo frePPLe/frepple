@@ -745,7 +745,7 @@ bool OperationPlan::activate(bool createsubopplans, bool use_start) {
       ++x;
       tmp->activate();
     }
-    x = this;
+    x = OperationPlan::iterator(this);
     if (x == end()) {
       delete this;
       return false;
@@ -1312,7 +1312,7 @@ void OperationPlan::scanSetupTimes() {
       }
       --resldplan;
     }
-    
+
 
 
 

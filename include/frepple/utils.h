@@ -708,9 +708,6 @@ class Date {
   // thus gives the best performance.
   Date() : lval(infinitePast.lval) {}
 
-  /* Note: the automatic copy constructor works fine and is faster than
-     writing our own. */
-
   /* Constructor initialized with a string and an optional format string. */
   Date(const char* s, const char* f = format.c_str()) {
     parse(s, f);
@@ -734,9 +731,6 @@ class Date {
 
   /* Comparison between dates. */
   bool operator<=(const Date& b) const { return lval <= b.lval; }
-
-  /* Assignment operator. */
-  void operator=(const Date& b) { lval = b.lval; }
 
   /* Adds some time to this date. */
   void operator+=(const Duration& l) {
@@ -2432,9 +2426,6 @@ class DataKeyword {
 
   /* Constructor. */
   explicit DataKeyword(const char* c) : hash(Keyword::hash(c)), ch(c) {}
-
-  /* Copy constructor. */
-  DataKeyword(const DataKeyword& o) : hash(o.hash), ch(o.ch) {}
 
   /* Returns the hash value of this tag. */
   size_t getHash() const { return hash; }
@@ -4460,9 +4451,6 @@ class CommandList : public Command {
     /* Constructor. */
     iterator(Command* x) : cur(x) {}
 
-    /* Copy constructor. */
-    iterator(const iterator& it) { cur = it.cur; }
-
     /* Return the content of the current node. */
     Command& operator*() const { return *cur; }
 
@@ -4568,6 +4556,12 @@ class CommandManager {
     /* Copy constructor. */
     iterator(const iterator& it) { cur = it.cur; }
 
+    /* Copy assignment operator. */
+    iterator& operator=(iterator& it) {
+      cur = it.cur;
+      return *this;
+    }
+
     /* Return the content of the current node. */
     Bookmark& operator*() const { return *cur; }
 
@@ -4607,6 +4601,12 @@ class CommandManager {
 
     /* Copy constructor. */
     reverse_iterator(const reverse_iterator& it) { cur = it.cur; }
+
+    /* Copy assignment operator. */
+    reverse_iterator& operator=(reverse_iterator& it) {
+      cur = it.cur;
+      return *this;
+    }
 
     /* Return the content of the current node. */
     Bookmark& operator*() const { return *cur; }
@@ -4802,9 +4802,6 @@ class HasName : public NonCopyable, public Tree::TreeNode, public Object {
    public:
     /* Constructor. */
     iterator(Tree::TreeNode* x) : node(x) {}
-
-    /* Copy constructor. */
-    iterator(const iterator& it) { node = it.node; }
 
     /* Return the content of the current node. */
     T& operator*() const { return *static_cast<T*>(node); }
@@ -5290,12 +5287,6 @@ class HasHierarchy : public HasName<T> {
     /* Constructor. */
     memberIterator(const typename HasName<T>::iterator& it)
         : curmember(&*it), member_iter(false) {}
-
-    /* Copy constructor. */
-    memberIterator(const memberIterator& it) {
-      curmember = it.curmember;
-      member_iter = it.member_iter;
-    }
 
     /* Return the content of the current node. */
     T& operator*() const { return *static_cast<T*>(curmember); }

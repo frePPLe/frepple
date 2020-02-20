@@ -1106,6 +1106,9 @@ class HasLevel {
    */
   HasLevel(const HasLevel& o) : lvl(o.lvl), cluster(o.cluster) {}
 
+  /** Disallow assignment */
+  HasLevel& operator=(HasLevel& rhs) = delete;
+
   /* Destructor. Deleting a HasLevel object triggers recomputation of the
    * level and cluster computation, since the network now has changed.
    */
@@ -3173,6 +3176,14 @@ class OperationPlan::iterator {
   /* Copy constructor. */
   iterator(const iterator& it) : opplan(it.opplan), op(it.op), mode(it.mode) {}
 
+  /* Copy assignment operator. */
+  iterator& operator=(iterator& it) {
+    opplan = it.opplan;
+    op = it.op;
+    mode = it.mode;
+    return *this;
+  }
+
   /* Return the content of the current node. */
   OperationPlan& operator*() const { return *opplan; }
 
@@ -3714,6 +3725,15 @@ class OperationPlan::AlternateIterator {
 
   /* Copy constructor. */
   AlternateIterator(const AlternateIterator& other) : opplan(other.opplan) {
+    for (auto i = other.opers.begin(); i != other.opers.end(); ++i)
+      opers.push_back(*i);
+    operIter = opers.begin();
+  }
+
+  /* Copy assignment operator. */
+  AlternateIterator& operator=(AlternateIterator& other) {
+    opplan = other.opplan;
+    opers.clear();
     for (auto i = other.opers.begin(); i != other.opers.end(); ++i)
       opers.push_back(*i);
     operIter = opers.begin();
@@ -6320,7 +6340,7 @@ class Load : public Object,
   /* Constructor. */
   explicit Load(Operation* o, Resource* r, double u) {
     setOperation(o);
-    setResource(r);
+    Load::setResource(r);
     setQuantity(u);
     initType(metadata);
     HasLevel::triggerLazyRecomputation();
@@ -6329,7 +6349,7 @@ class Load : public Object,
   /* Constructor. */
   explicit Load(Operation* o, Resource* r, double u, DateRange e) {
     setOperation(o);
-    setResource(r);
+    Load::setResource(r);
     setQuantity(u);
     setEffective(e);
     initType(metadata);
@@ -6529,13 +6549,20 @@ class LoadDefault : public Load {
 class LoadBucketizedPercentage : public Load {
  public:
   /* Constructor. */
-  explicit LoadBucketizedPercentage(Operation* o, Resource* r, double q)
-      : Load(o, r, q) {}
+  explicit LoadBucketizedPercentage(Operation* o, Resource* r, double q) {
+    setOperation(o);
+    setResource(r);
+    setQuantity(q);
+  }
 
   /* Constructor. */
   explicit LoadBucketizedPercentage(Operation* o, Resource* r, double q,
-                                    DateRange e)
-      : Load(o, r, q, e) {}
+                                    DateRange e) {
+    setOperation(o);
+    setResource(r);
+    setQuantity(q);
+    setEffective(e);
+  }
 
   /* This constructor is called from the plan begin_element function. */
   explicit LoadBucketizedPercentage() {}
@@ -6588,13 +6615,20 @@ class LoadBucketizedPercentage : public Load {
 class LoadBucketizedFromStart : public Load {
  public:
   /* Constructor. */
-  explicit LoadBucketizedFromStart(Operation* o, Resource* r, double q)
-      : Load(o, r, q) {}
+  explicit LoadBucketizedFromStart(Operation* o, Resource* r, double q) {
+    setOperation(o);
+    setResource(r);
+    setQuantity(q);
+  }
 
   /* Constructor. */
   explicit LoadBucketizedFromStart(Operation* o, Resource* r, double q,
-                                   DateRange e)
-      : Load(o, r, q, e) {}
+                                   DateRange e) {
+    setOperation(o);
+    setResource(r);
+    setQuantity(q);
+    setEffective(e);
+  }
 
   /* This constructor is called from the plan begin_element function. */
   explicit LoadBucketizedFromStart() {}
@@ -6646,13 +6680,20 @@ class LoadBucketizedFromStart : public Load {
 class LoadBucketizedFromEnd : public Load {
  public:
   /* Constructor. */
-  explicit LoadBucketizedFromEnd(Operation* o, Resource* r, double q)
-      : Load(o, r, q) {}
+  explicit LoadBucketizedFromEnd(Operation* o, Resource* r, double q) {
+    setOperation(o);
+    setResource(r);
+    setQuantity(q);
+  }
 
   /* Constructor. */
   explicit LoadBucketizedFromEnd(Operation* o, Resource* r, double q,
-                                 DateRange e)
-      : Load(o, r, q, e) {}
+                                 DateRange e) {
+    setOperation(o);
+    setResource(r);
+    setQuantity(q);
+    setEffective(e);
+  }
 
   /* This constructor is called from the plan begin_element function. */
   explicit LoadBucketizedFromEnd() {}
@@ -7452,6 +7493,15 @@ class LoadPlan::AlternateIterator {
     resIter = resources.begin();
   }
 
+  /* Copy assignment operator. */
+  AlternateIterator& operator=(AlternateIterator& other) {
+    resources.clear();
+    for (auto i = other.resources.begin(); i != other.resources.end(); ++i)
+      resources.push_back(*i);
+    resIter = resources.begin();
+    return *this;
+  }
+
   Resource* next();
 };
 
@@ -7603,6 +7653,18 @@ class Problem::iterator {
       eiter = new HasProblems::EntityIterator(*(i.eiter));
     else
       eiter = nullptr;
+  }
+
+  /* Copy assignment operator. */
+  iterator& operator=(iterator& i) {
+    if (eiter) delete eiter;
+    iter = i.iter;
+    owner = i.owner;
+    if (i.eiter)
+      eiter = new HasProblems::EntityIterator(*(i.eiter));
+    else
+      eiter = nullptr;
+    return *this;
   }
 
   /* Destructor. */

@@ -941,7 +941,7 @@ var grid = {
     if (pivot) {
     	result['crosses'] = [];
       for (var i in cross_idx)
-      	result[reportkey]['crosses'].push(cross[cross_idx[i]].key);
+      	result['crosses'].push(cross[cross_idx[i]].key);
     }
     return result;
   },
@@ -1650,29 +1650,95 @@ var favorite = {
 	  
 	  open: function(event) {
 	  	var fav = $(event.target).parent().text();
+	  	if (!(fav in favorites)) return;
+
 	  	var thegrid = $("#grid");
-	  	if (fav in favorites) {
-        if ("filter" in favorites[fav]) {
-          $('#grid').setGridParam({
-            postData:{filters: favorites[fav]["filter"]},
-            search:true
-            });
-          grid.getFilterGroup($('#grid'), JSON.parse(favorites[fav]["filter"]), true, $("#curfilter"));
-          $("#filter").addClass("btn-danger").removeClass("btn-primary");
+	  	var graph = false;
+	  	var pivot = false;
+	  	var skipped = 0;
+    	var colModel = thegrid.jqGrid('getGridParam', 'colModel');
+    	var numfrozen = 0;
+    	for (var i in colModel) {
+    		if (colModel[i].name == 'graph') graph = true;
+    		else if (colModel[i].name == 'columns') {
+    			pivot = true;
+    			numfrozen = parseInt(i);
+    		}
+    		else if (colModel[i].name == 'cb') skipped += 1;
+    		if ("counter" in colModel[i] && colModel[i].frozen)
+           numfrozen = parseInt(i);
+      }
+	  	if (!graph) thegrid.jqGrid('destroyFrozenColumns');
+	  	
+	  	// Restore visibility and column width	
+      for (var r of favorites[fav]["rows"]) {
+      	if (r[1])
+      		thegrid.jqGrid("hideCol", r[0]);
+      	else
+      		thegrid.jqGrid("showCol", r[0]);
+      	thegrid.jqGrid('setColWidth', r[0], r[2]);
+      }
+
+      // Restore crosses
+      if ("crosses" in favorites[fav]) {
+      	cross_idx = [];
+        for (var i of favorites[fav]["crosses"]) {
+        	for (var j in cross)
+        		if (cross[j]["key"] == i)
+        			cross_idx.push(parseInt(j));
         }
-        else {
-          $('#grid').setGridParam({
-            postData:{filters: ""},
-            search:true
-            });
-          $("#curfilter").html("");
-        	$("#filter").removeClass("btn-danger").addClass("btn-primary");
-        }
-        thegrid.trigger('reloadGrid');
+      }
+    	
+    	// Reorder columns
+      var perm = [];
+    	for (var f of favorites[fav]["rows"]) {
+    		if (!f[1]) {
+    			perm.push(f[0]);    		
+    		  thegrid.jqGrid('setColProp', f[0], {frozen: perm.length < numfrozen + skipped});
+    		}
+    	}
+      if (pivot) {
+      	for (var j of colModel) {
+      	  if (!("counter" in j)) {
+      	  	perm.push(j["name"]);
+      	    j.frozen = (j.name == 'columns');
+      	  }
+      	  else
+      	  	j.frozen = true;
+      	}
+      }
+      for (var k of colModel) {
+      	if (!perm.includes(k["name"]) && k["name"] != "cb")
+      		perm.push(k["name"]);
+      	j.frozen = false;
+      }
+      thegrid.jqGrid("remapColumnsByName", perm, true, false);
+      
+      // Restore the filter
+      if ("filter" in favorites[fav] && favorites[fav]["filter"] != "") {
+        $('#grid').setGridParam({
+          postData: {filters: favorites[fav]["filter"]},
+          search: true
+          });
+        grid.getFilterGroup($('#grid'), JSON.parse(favorites[fav]["filter"]), true, $("#curfilter"));
+        $("#filter").addClass("btn-danger").removeClass("btn-primary");
+      }
+      else {
+        $('#grid').setGridParam({
+          postData: {filters: ""},
+          search: true
+          });
+        $("#curfilter").html("");
+      	$("#filter").removeClass("btn-danger").addClass("btn-primary");
+      }
+      
+      // Refresh the data
+      if (!graph) thegrid.jqGrid('setFrozenColumns');
+      thegrid.trigger('reloadGrid');
+      thegrid.setGridWidth($('#content-main').width());
+      grid.saveColumnConfiguration();      
 	  		/*
-	  		
-	  		TODO  Restore sorting + restore column order.
-	  		
+	  		 * todo restore sorting
 	  		if ("sord" in favorites[fav] && "sidx" in favorites[fav]) {
 	  			thegrid.setGridParam({
 	  				sortname: favorites[fav]["sidx"],
@@ -1685,13 +1751,7 @@ var favorite = {
 	          sortorder: "asc"
 	          });
 	  		}
-	      //thegrid.jqGrid("remapColumns", favorites[fav]["rows"], true);
-	  		grid.saveColumnConfiguration(function() {
-	  			console.log("reloading");
-	  			window.location.href = window.location.href;
-	  		});
 	  		*/
-	  	}
 	  }
 };
 

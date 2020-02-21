@@ -3737,6 +3737,7 @@ class OperationPlan::AlternateIterator {
     for (auto i = other.opers.begin(); i != other.opers.end(); ++i)
       opers.push_back(*i);
     operIter = opers.begin();
+    return *this;
   }
 
   Operation* next();
@@ -8692,6 +8693,9 @@ class PeggingIterator : public Object {
   /* Copy constructor. */
   PeggingIterator(const PeggingIterator& c);
 
+  /* Assignment operator. */
+  PeggingIterator& operator=(const PeggingIterator&);
+
   /* Constructor for demand pegging. */
   PeggingIterator(const Demand*);
 
@@ -8867,11 +8871,6 @@ class OperationPlan::FlowPlanIterator {
   FlowPlanIterator(FlowPlan* b) : curflowplan(b) {}
 
  public:
-  FlowPlanIterator(const FlowPlanIterator& b) {
-    curflowplan = b.curflowplan;
-    prevflowplan = b.prevflowplan;
-  }
-
   bool operator!=(const FlowPlanIterator& b) const {
     return b.curflowplan != curflowplan;
   }
@@ -8946,11 +8945,6 @@ class OperationPlan::LoadPlanIterator {
   LoadPlanIterator(LoadPlan* b) : curloadplan(b) {}
 
  public:
-  LoadPlanIterator(const LoadPlanIterator& b) {
-    curloadplan = b.curloadplan;
-    prevloadplan = b.prevloadplan;
-  }
-
   bool operator!=(const LoadPlanIterator& b) const {
     return b.curloadplan != curloadplan;
   }

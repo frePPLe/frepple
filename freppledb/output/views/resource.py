@@ -196,7 +196,7 @@ class OverviewReport(GridPivot):
     crosses = (
         ("available", {"title": _("available")}),
         ("unavailable", {"title": _("unavailable")}),
-        ("setup", {"title": _("setup")}),
+        ("setuptime", {"title": _("setup")}),
         ("load", {"title": _("load")}),
         ("utilization", {"title": _("utilization %")}),
     )
@@ -367,7 +367,7 @@ class OverviewReport(GridPivot):
                     "available": row[numfields - 4],
                     "unavailable": row[numfields - 3],
                     "load": row[numfields - 2],
-                    "setup": row[numfields - 1],
+                    "setuptime": row[numfields - 1],
                     "utilization": util,
                 }
                 idx = 20

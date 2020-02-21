@@ -262,7 +262,6 @@ class ReportByDemand(GridReport):
                         yield prevrec
                     # New operation
                     prevrec = {
-                        "current": str(current),
                         "operation": rec[1],
                         "type": rec[10],
                         "showdrilldown": rec[11],

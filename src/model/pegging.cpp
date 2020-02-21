@@ -73,6 +73,18 @@ PeggingIterator::PeggingIterator(const PeggingIterator& c)
     states_sorted.push_back(state(i->opplan, i->quantity, i->offset, i->level));
 }
 
+PeggingIterator& PeggingIterator::operator=(const PeggingIterator& c) {
+  downstream = c.downstream;
+  firstIteration = c.firstIteration;
+  first = c.first;
+  second_pass = c.second_pass;
+  for (auto i = c.states.begin(); i != c.states.end(); ++i)
+    states.push_back(state(i->opplan, i->quantity, i->offset, i->level));
+  for (auto i = c.states_sorted.begin(); i != c.states_sorted.end(); ++i)
+    states_sorted.push_back(state(i->opplan, i->quantity, i->offset, i->level));
+  return *this;
+}
+
 PeggingIterator::PeggingIterator(const Demand* d)
     : downstream(false),
       firstIteration(true),

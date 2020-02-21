@@ -1710,13 +1710,13 @@ var favorite = {
       for (var k of colModel) {
       	if (!perm.includes(k["name"]) && k["name"] != "cb")
       		perm.push(k["name"]);
-      	j.frozen = false;
+      	k.frozen = false;
       }
       thegrid.jqGrid("remapColumnsByName", perm, true, false);
       
       // Restore the filter
       if ("filter" in favorites[fav] && favorites[fav]["filter"] != "") {
-        $('#grid').setGridParam({
+        thegrid.setGridParam({
           postData: {filters: favorites[fav]["filter"]},
           search: true
           });
@@ -1724,7 +1724,7 @@ var favorite = {
         $("#filter").addClass("btn-danger").removeClass("btn-primary");
       }
       else {
-        $('#grid').setGridParam({
+      	thegrid.setGridParam({
           postData: {filters: ""},
           search: true
           });

@@ -1107,7 +1107,7 @@ class HasLevel {
   HasLevel(const HasLevel& o) : lvl(o.lvl), cluster(o.cluster) {}
 
   /** Disallow assignment */
-  HasLevel& operator=(HasLevel& rhs) = delete;
+  HasLevel& operator=(const HasLevel& rhs) = delete;
 
   /* Destructor. Deleting a HasLevel object triggers recomputation of the
    * level and cluster computation, since the network now has changed.
@@ -3177,7 +3177,7 @@ class OperationPlan::iterator {
   iterator(const iterator& it) : opplan(it.opplan), op(it.op), mode(it.mode) {}
 
   /* Copy assignment operator. */
-  iterator& operator=(iterator& it) {
+  iterator& operator=(const iterator& it) {
     opplan = it.opplan;
     op = it.op;
     mode = it.mode;
@@ -3731,7 +3731,7 @@ class OperationPlan::AlternateIterator {
   }
 
   /* Copy assignment operator. */
-  AlternateIterator& operator=(AlternateIterator& other) {
+  AlternateIterator& operator=(const AlternateIterator& other) {
     opplan = other.opplan;
     opers.clear();
     for (auto i = other.opers.begin(); i != other.opers.end(); ++i)
@@ -7494,7 +7494,7 @@ class LoadPlan::AlternateIterator {
   }
 
   /* Copy assignment operator. */
-  AlternateIterator& operator=(AlternateIterator& other) {
+  AlternateIterator& operator=(const AlternateIterator& other) {
     resources.clear();
     for (auto i = other.resources.begin(); i != other.resources.end(); ++i)
       resources.push_back(*i);
@@ -7656,7 +7656,7 @@ class Problem::iterator {
   }
 
   /* Copy assignment operator. */
-  iterator& operator=(iterator& i) {
+  iterator& operator=(const iterator& i) {
     if (eiter) delete eiter;
     iter = i.iter;
     owner = i.owner;

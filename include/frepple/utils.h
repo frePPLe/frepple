@@ -4557,7 +4557,7 @@ class CommandManager {
     iterator(const iterator& it) { cur = it.cur; }
 
     /* Copy assignment operator. */
-    iterator& operator=(iterator& it) {
+    iterator& operator=(const iterator& it) {
       cur = it.cur;
       return *this;
     }
@@ -4603,7 +4603,7 @@ class CommandManager {
     reverse_iterator(const reverse_iterator& it) { cur = it.cur; }
 
     /* Copy assignment operator. */
-    reverse_iterator& operator=(reverse_iterator& it) {
+    reverse_iterator& operator=(const reverse_iterator& it) {
       cur = it.cur;
       return *this;
     }

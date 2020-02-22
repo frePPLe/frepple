@@ -18,8 +18,7 @@
 from django.conf import settings
 from django.contrib.auth.models import AnonymousUser
 from django.contrib.admin.models import LogEntry
-from django.db import DEFAULT_DB_ALIAS, connections
-from django.template.loader import render_to_string
+from django.db import DEFAULT_DB_ALIAS
 from django.utils import formats
 from django.utils.html import escape
 from django.utils.translation import gettext_lazy as _

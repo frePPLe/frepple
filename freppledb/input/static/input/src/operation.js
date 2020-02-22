@@ -42,7 +42,7 @@ function OperationFactory($http, getURLprefix, Location) {
     angular.forEach(data, function(value, key) {
       switch (key) {
         case "location":
-          if (value && !value instanceof Location)
+          if (value && !(value instanceof Location))
             data['location'] = new Location(value);
           break;
       };

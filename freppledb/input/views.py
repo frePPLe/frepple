@@ -26,7 +26,6 @@ from django.db.models.functions import Cast
 from django.db.models import Q, F, FloatField, DateTimeField, DurationField
 from django.db.models.expressions import RawSQL
 from django.db.models.fields import CharField
-from django.db.models import FieldDoesNotExist
 from django.http import HttpResponse, Http404
 from django.http.response import StreamingHttpResponse, HttpResponseServerError
 from django.utils.decorators import method_decorator

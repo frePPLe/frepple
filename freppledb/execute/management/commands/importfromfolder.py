@@ -107,7 +107,6 @@ class Command(BaseCommand):
 
         task = None
         errors = [0, 0]
-        returnederrors = [0, 0]
         try:
             setattr(_thread_locals, "database", self.database)
             # Initialize the task

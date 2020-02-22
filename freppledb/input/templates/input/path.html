@@ -61,19 +61,20 @@ var width = 800;
 var width_level = 100;
 var minlevel = 0;
 var maxlevel = 0;
-
+var path;
+var shapes;
 
 function clickedShaped(d)
 {
-  var result = '';
-  if (typeof(d) === undefined) return;
-  if (d.hasOwnProperty('type') && (d.type === 'routing' || d.type === 'purchase' || d.type === 'itemsupplier' || d.type === 'itemdistribution' )) {
-    return; //don't show links for non existing operations
-  } else {
-    var result = url_prefix + '/detail/input/' + d.type + '/' + admin_escape(d.name) +'/';
-  }
-
-  window.open(result, "_self");
+  if (
+  	d.hasOwnProperty('type')
+  	&& ['routing',  'purchase', 'itemsupplier', 'itemdistribution'].includes(d.type)
+  	)
+    return; // Don't show links for non existing operations
+  window.open(
+  	url_prefix + '/detail/input/' + d.type + '/' + admin_escape(d.name) +'/',
+  	"_self"
+  	);
 }
 
 
@@ -273,8 +274,8 @@ function drawGraph(jsondata)
     .on('tick', tick);
 
   // Handles to link and node element groups
-  var path = svg.append('svg:g').selectAll('path');
-  var shapes = svg.append('svg:g').selectAll('g');
+  path = svg.append('svg:g').selectAll('path');
+  shapes = svg.append('svg:g').selectAll('g');
 
   // Path (link) group
   path = path.data(links);

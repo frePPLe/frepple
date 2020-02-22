@@ -3119,8 +3119,8 @@ numericTypes = (Decimal, float, int)
 
 def _buildMaskedNames(model, exportConfig):
     """
-  Build a map with anonymous names for a model, and store it in the exportConfiguration.
-  """
+    Build a map with anonymous names for a model, and store it in the exportConfiguration.
+    """
     modelname = model._meta.model_name
     if modelname in exportConfig:
         return
@@ -3135,7 +3135,6 @@ def _buildMaskedNames(model, exportConfig):
     for key in keys:
         exportConfig[modelname][key] = "%s %07d" % (modelname, idx)
         idx += 1
-    del keys
 
 
 def _parseSeconds(data):

@@ -78,15 +78,15 @@ function DemandFactory ($http, getURLprefix, Location, Item, Customer) {
             });
           break;
         case "item":
-          if (value && !value instanceof Item)
+          if (value && !(value instanceof Item))
             data['item'] = new Item(value);
           break;
         case "location":
-          if (value && !value instanceof Location)
+          if (value && !(value instanceof Location))
             data['location'] = new Location(value);
           break;
         case "customer":
-          if (value && !value instanceof Customer)
+          if (value && !(value instanceof Customer))
             data['customer'] = new Customer(value);
           break;
         case "maxlateness":

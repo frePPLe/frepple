@@ -42,11 +42,11 @@ function BufferFactory ($http, getURLprefix, Item, Location) {
     angular.forEach(data, function(value, key) {
       switch (key) {
         case "location":
-          if (value && !value instanceof Location)
+          if (value && !(value instanceof Location))
             data['location'] = new Location(value);
           break;
         case "item":
-          if (value && !value instanceof Item)
+          if (value && !(value instanceof Item))
             data['item'] = new Location(value);
           break;
         };

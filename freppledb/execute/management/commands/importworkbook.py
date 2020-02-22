@@ -15,35 +15,27 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-import os
-import sys
 from datetime import datetime
-import subprocess
-import re
 from logging import ERROR, WARNING, DEBUG
 
-from openpyxl import load_workbook, Workbook
-from openpyxl.utils import get_column_letter
+from openpyxl import load_workbook
 
 from django.core.management.base import BaseCommand, CommandError
-from django.core.files import File
 from django.contrib.auth import get_permission_codename
 from django.contrib.auth.models import Group
 from django.contrib.contenttypes.models import ContentType
 from django.db import DEFAULT_DB_ALIAS
-from django.db import connections, transaction, models
+from django.db import transaction, models
 from django.conf import settings
-from django.utils import translation
 from django.utils.translation import gettext_lazy as _
 from django.utils.text import capfirst
-from django.utils.encoding import smart_str, force_text, force_str
+from django.utils.encoding import force_text
 from django.template import Template, RequestContext
-from django.http import HttpRequest
 
 from freppledb import VERSION
 from freppledb.common.middleware import _thread_locals
 from freppledb.common.models import User, Comment
-from freppledb.common.report import importWorkbook, GridReport, matchesModelName
+from freppledb.common.report import GridReport, matchesModelName
 from freppledb.common.dataload import parseExcelWorksheet
 from freppledb.execute.models import Task
 

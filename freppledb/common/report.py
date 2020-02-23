@@ -34,7 +34,7 @@ import csv
 from datetime import date, datetime, timedelta, time
 from decimal import Decimal
 import functools
-from logging import ERROR, WARNING, DEBUG
+import logging
 import math
 import operator
 import json
@@ -95,8 +95,6 @@ from freppledb.common.models import (
 from freppledb.common.dataload import parseExcelWorksheet, parseCSVdata
 from freppledb.admin import data_site
 
-
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -1919,11 +1917,11 @@ class GridReport(View):
                         database=request.database,
                         ping=True,
                     ):
-                        if error[0] == DEBUG:
+                        if error[0] == logging.DEBUG:
                             # Yield some result so we can detect disconnect clients and interrupt the upload
                             yield " "
                             continue
-                        if firsterror and error[0] in (ERROR, WARNING):
+                        if firsterror and error[0] in (logging.ERROR, logging.WARNING):
                             yield '<tr><th class="sr-only">%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s%s%s</th></tr>' % (
                                 capfirst(_("worksheet")),
                                 capfirst(_("row")),
@@ -1934,7 +1932,7 @@ class GridReport(View):
                                 capfirst(_("warning")),
                             )
                             firsterror = False
-                        if error[0] == ERROR:
+                        if error[0] == logging.ERROR:
                             yield '<tr><td class="sr-only">%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s: %s</td></tr>' % (
                                 cls.model._meta.verbose_name,
                                 error[1] if error[1] else "",
@@ -1944,7 +1942,7 @@ class GridReport(View):
                                 error[4],
                             )
                             numerrors += 1
-                        elif error[1] == WARNING:
+                        elif error[1] == logging.WARNING:
                             yield '<tr><td class="sr-only">%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s: %s</td></tr>' % (
                                 cls.model._meta.verbose_name,
                                 error[1] if error[1] else "",
@@ -2032,11 +2030,14 @@ class GridReport(View):
                             database=request.database,
                             ping=True,
                         ):
-                            if error[0] == DEBUG:
+                            if error[0] == logging.DEBUG:
                                 # Yield some result so we can detect disconnect clients and interrupt the upload
                                 yield " "
                                 continue
-                            if firsterror and error[0] in (ERROR, WARNING):
+                            if firsterror and error[0] in (
+                                logging.ERROR,
+                                logging.WARNING,
+                            ):
                                 yield '<tr><th class="sr-only">%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s%s%s</th></tr>' % (
                                     capfirst(_("worksheet")),
                                     capfirst(_("row")),
@@ -2047,7 +2048,7 @@ class GridReport(View):
                                     capfirst(_("warning")),
                                 )
                                 firsterror = False
-                            if error[0] == ERROR:
+                            if error[0] == logging.ERROR:
                                 yield '<tr><td class="sr-only">%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s: %s</td></tr>' % (
                                     cls.model._meta.verbose_name,
                                     error[1] if error[1] else "",
@@ -2057,7 +2058,7 @@ class GridReport(View):
                                     error[4],
                                 )
                                 numerrors += 1
-                            elif error[1] == WARNING:
+                            elif error[1] == logging.WARNING:
                                 yield '<tr><td class="sr-only">%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s: %s</td></tr>' % (
                                     cls.model._meta.verbose_name,
                                     error[1] if error[1] else "",
@@ -3447,11 +3448,11 @@ def importWorkbook(request):
                         database=request.database,
                         ping=True,
                     ):
-                        if error[0] == DEBUG:
+                        if error[0] == logging.DEBUG:
                             # Yield some result so we can detect disconnect clients and interrupt the upload
                             yield " "
                             continue
-                        if firsterror and error[0] in (ERROR, WARNING):
+                        if firsterror and error[0] in (logging.ERROR, logging.WARNING):
                             yield '<tr><th class="sr-only">%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s%s%s</th></tr>' % (
                                 capfirst(_("worksheet")),
                                 capfirst(_("row")),
@@ -3462,7 +3463,7 @@ def importWorkbook(request):
                                 capfirst(_("warning")),
                             )
                             firsterror = False
-                        if error[0] == ERROR:
+                        if error[0] == logging.ERROR:
                             yield '<tr><td class="sr-only">%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s: %s</td></tr>' % (
                                 ws_name,
                                 error[1] if error[1] else "",
@@ -3472,7 +3473,7 @@ def importWorkbook(request):
                                 error[4],
                             )
                             numerrors += 1
-                        elif error[1] == WARNING:
+                        elif error[1] == logging.WARNING:
                             yield '<tr><td class="sr-only">%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s: %s</td></tr>' % (
                                 ws_name,
                                 error[1] if error[1] else "",

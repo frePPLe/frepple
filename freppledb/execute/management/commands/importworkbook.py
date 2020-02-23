@@ -16,8 +16,7 @@
 #
 
 from datetime import datetime
-from logging import ERROR, WARNING, DEBUG
-
+import logging
 from openpyxl import load_workbook
 
 from django.core.management.base import BaseCommand, CommandError
@@ -39,7 +38,6 @@ from freppledb.common.report import GridReport, matchesModelName
 from freppledb.common.dataload import parseExcelWorksheet
 from freppledb.execute.models import Task
 
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -200,11 +198,14 @@ class Command(BaseCommand):
                                 database=self.database,
                                 ping=True,
                             ):
-                                if error[0] == DEBUG:
+                                if error[0] == logging.DEBUG:
                                     # Yield some result so we can detect disconnect clients and interrupt the upload
                                     # yield ' '
                                     continue
-                                if firsterror and error[0] in (ERROR, WARNING):
+                                if firsterror and error[0] in (
+                                    logging.ERROR,
+                                    logging.WARNING,
+                                ):
                                     print(
                                         "%s %s %s %s %s%s%s"
                                         % (
@@ -223,7 +224,7 @@ class Command(BaseCommand):
                                     #   capfirst(_("error")), " / ", capfirst(_("warning"))
                                     #   )
                                     firsterror = False
-                                if error[0] == ERROR:
+                                if error[0] == logging.ERROR:
                                     print(
                                         "%s %s %s %s %s: %s"
                                         % (
@@ -244,7 +245,7 @@ class Command(BaseCommand):
                                     #   error[4]
                                     #   )
                                     numerrors += 1
-                                elif error[1] == WARNING:
+                                elif error[1] == logging.WARNING:
                                     print(
                                         "%s %s %s %s %s: %s"
                                         % (

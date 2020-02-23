@@ -27,7 +27,6 @@ import logging
 from django.conf import settings
 from django.contrib.auth import get_permission_codename
 from django.contrib.contenttypes.models import ContentType
-from logging import ERROR, WARNING
 from django.core.management.base import BaseCommand, CommandError
 from django.db import connections, DEFAULT_DB_ALIAS, transaction
 from django.utils import translation
@@ -444,7 +443,7 @@ class Command(BaseCommand):
                 for error in parseCSVdata(
                     model, datafile, user=self.user, database=self.database
                 ):
-                    if error[0] == ERROR:
+                    if error[0] == logging.ERROR:
                         logger.error(
                             "%s Error: %s%s%s%s"
                             % (
@@ -456,7 +455,7 @@ class Command(BaseCommand):
                             )
                         )
                         errorcount += 1
-                    elif error[0] == WARNING:
+                    elif error[0] == logging.WARNING:
                         logger.warning(
                             "%s Warning: %s%s%s%s"
                             % (
@@ -497,7 +496,7 @@ class Command(BaseCommand):
                     for error in parseExcelWorksheet(
                         model, ws, user=self.user, database=self.database
                     ):
-                        if error[0] == ERROR:
+                        if error[0] == logging.ERROR:
                             logger.error(
                                 "%s Error: %s%s%s%s"
                                 % (
@@ -509,7 +508,7 @@ class Command(BaseCommand):
                                 )
                             )
                             errorcount += 1
-                        elif error[0] == WARNING:
+                        elif error[0] == logging.WARNING:
                             logger.warning(
                                 "%s Warning: %s%s%s%s"
                                 % (

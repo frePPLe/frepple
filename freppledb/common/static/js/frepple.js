@@ -1732,26 +1732,23 @@ var favorite = {
       	$("#filter").removeClass("btn-danger").addClass("btn-primary");
       }
       
+      // Restore the sort      
+	  	if ("sord" in favorites[fav] && "sidx" in favorites[fav])
+  		  thegrid.setGridParam({
+          sortname: favorites[fav]["sidx"],
+          sortorder: favorites[fav]["sord"]
+          });
+  		else
+  		  thegrid.setGridParam({
+  		    sortname: "",
+          sortorder: "asc"
+          });
+			
       // Refresh the data
       if (!graph) thegrid.jqGrid('setFrozenColumns');
       thegrid.trigger('reloadGrid');
       thegrid.setGridWidth($('#content-main').width());
-      grid.saveColumnConfiguration();      
-	  		/*
-	  		 * todo restore sorting
-	  		if ("sord" in favorites[fav] && "sidx" in favorites[fav]) {
-	  			thegrid.setGridParam({
-	  				sortname: favorites[fav]["sidx"],
-	          sortorder: favorites[fav]["sord"]
-	          });
-	  		}
-	  		else {
-	  			thegrid.setGridParam({
-	  				sortname: "",
-	          sortorder: "asc"
-	          });
-	  		}
-	  		*/
+      grid.saveColumnConfiguration();
 	  }
 };
 

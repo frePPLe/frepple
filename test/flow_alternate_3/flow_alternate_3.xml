@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <name>Test model for alternate flows</name>
+  <description>
+  This test verifies the behavior of alternate flows when there is
+  unallocated supply or existing confirmed supply on alternate materials.
+  </description>
+  <current>2020-01-01T00:00:00</current>
+  <buffers>
+    <buffer name="component A1 @ factory">
+      <item name="component A1"/>
+      <location name="factory"/>
+      <onhand>1</onhand>
+    </buffer>
+    <buffer name="component A2 @ factory">
+      <item name="component A2"/>
+      <location name="factory"/>
+      <onhand>0</onhand>
+    </buffer>
+    <buffer name="component B1 @ factory">
+      <item name="component B1"/>
+      <location name="factory"/>
+      <onhand>5</onhand>
+    </buffer>
+    <buffer name="component B2 @ factory">
+      <item name="component B2"/>
+      <location name="factory"/>
+      <onhand>0</onhand>
+    </buffer>
+    <buffer name="component B3 @ factory">
+      <item name="component B3"/>
+      <location name="factory"/>
+      <onhand>0</onhand>
+    </buffer>
+    <buffer name="component C1 @ factory">
+      <item name="component C1"/>
+      <location name="factory"/>
+      <onhand>0</onhand>
+    </buffer>
+    <buffer name="component C2 @ factory">
+      <item name="component C2"/>
+      <location name="factory"/>
+      <onhand>500</onhand>
+    </buffer>
+  </buffers>
+  <items>
+    <item name="component A1">
+      <itemsuppliers>
+        <itemsupplier>
+          <supplier name="Component supplier"/>
+          <leadtime>P7D</leadtime>
+        </itemsupplier>
+      </itemsuppliers>
+    </item>
+    <item name="component A2">
+      <itemsuppliers>
+        <itemsupplier>
+          <supplier name="Component supplier"/>
+          <leadtime>P5D</leadtime>
+        </itemsupplier>
+      </itemsuppliers>
+    </item>
+    <item name="component B1">
+      <itemsuppliers>
+        <itemsupplier>
+          <supplier name="Component supplier"/>
+          <leadtime>P7D</leadtime>
+        </itemsupplier>
+      </itemsuppliers>
+    </item>
+    <item name="component B2">
+      <itemsuppliers>
+        <itemsupplier>
+          <supplier name="Component supplier"/>
+          <leadtime>P7D</leadtime>
+        </itemsupplier>
+      </itemsuppliers>
+    </item>
+    <item name="component B3">
+      <itemsuppliers>
+        <itemsupplier>
+          <supplier name="Component supplier"/>
+          <leadtime>P7D</leadtime>
+        </itemsupplier>
+      </itemsuppliers>
+    </item> 
+    <item name="component C1">
+      <itemsuppliers>
+        <itemsupplier>
+          <supplier name="Component supplier"/>
+          <leadtime>P7D</leadtime>
+        </itemsupplier>
+      </itemsuppliers>
+    </item>  
+    <item name="component C2">
+      <itemsuppliers>
+        <itemsupplier>
+          <supplier name="Component supplier"/>
+          <leadtime>P5D</leadtime>
+        </itemsupplier>
+      </itemsuppliers>
+    </item>    
+  </items>    
+  <operations>
+    <operation name="assembly" xsi:type="operation_fixed_time" duration="P7D">
+      <item name="product"/>
+      <location name="factory"/>
+      <flows>
+        <flow xsi:type="flow_end">
+          <item name="product"/>
+          <quantity>1</quantity>
+        </flow>
+        <flow xsi:type="flow_start">
+          <item name="component A1"/>
+          <quantity>-1</quantity>
+          <priority>1</priority>
+          <name>group1</name>
+        </flow>
+        <flow xsi:type="flow_start">
+          <item name="component A2"/>
+          <quantity>-2</quantity>
+          <priority>2</priority>
+          <name>group1</name>
+        </flow>
+        <flow xsi:type="flow_start">
+          <item name="component B1"/>
+          <quantity>-1</quantity>
+          <priority>1</priority>
+          <name>group2</name>
+        </flow>
+        <flow xsi:type="flow_start">
+          <item name="component B2"/>
+          <quantity>-1</quantity>
+          <priority>2</priority>
+          <name>group2</name>
+        </flow>
+        <flow xsi:type="flow_start">
+          <item name="component B3"/>
+          <quantity>-1</quantity>
+          <priority>3</priority>
+          <name>group2</name>
+        </flow>
+        <flow xsi:type="flow_start">
+          <item name="component C1"/>
+          <quantity>-1</quantity>
+          <priority>1</priority>
+          <name>group3</name>
+        </flow>
+        <flow xsi:type="flow_start">
+          <item name="component C2"/>
+          <quantity>-1</quantity>
+          <priority>2</priority>
+          <name>group3</name>
+        </flow>
+      </flows>
+    </operation>
+  </operations>
+  <demands>
+    <demand name="order 1">
+      <quantity>100</quantity>
+      <due>2020-01-11T00:00:00</due>
+      <priority>11</priority>
+      <item name="product"/>
+      <location name="factory"/>
+    </demand>
+  </demands>
+  <operationplans>
+    <operationplan ordertype="PO" end="2020-02-01T00:00:00"
+      quantity="500" status="confirmed">
+      <item name="component A2"/>
+      <location name="factory"/>
+      <supplier name="Component supplier"/>
+    </operationplan>
+  </operationplans>
+  
+<?python
+print("CREATING CONSTRAINED PLAN without autofence")
+frepple.solver_mrp(plantype=1, constraints=13, loglevel=2, autofence=0).solve()
+frepple.saveplan("output.1.xml")
+print("CREATING CONSTRAINED PLAN with autofence")
+frepple.solver_mrp(plantype=1, constraints=13, loglevel=2, autofence=86400*90).solve()
+# Comparing the first and second output: 
+#  The demand is now planned later, because we need to wait for the supply on component A2.
+#  But we no longer buy the component A1. 
+frepple.saveplan("output.2.xml")
+print("CREATING UNCONSTRAINED PLAN without autofence")
+frepple.solver_mrp(plantype=2, constraints=13, loglevel=2, autofence=0).solve()
+frepple.saveplan("output.3.xml")
+print("CREATING UNCONSTRAINED PLAN with autofence")
+frepple.solver_mrp(plantype=2, constraints=13, loglevel=2, autofence=86400*90).solve()
+frepple.saveplan("output.4.xml")
+?>
+</plan>

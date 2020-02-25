@@ -4,6 +4,14 @@ Release notes
 6.3.0 (upcoming release)
 ========================
 
+.. rubric:: Production planning
+
+- | Solver enhancement to improve planning with alternate materials. 
+  | In earlier releases available ivnentory and committed supply were considered individually
+    for each alternate material
+  | From this release onwards, the algorithm checks available stock and supply across all 
+    alternate materials before generating new replenishments.  
+
 .. rubric:: User interface
 
 - You can now `save frequently used report settings as a favorite <user-guide/user-interface/getting-around/favorites.html>`_.

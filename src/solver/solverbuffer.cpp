@@ -111,6 +111,9 @@ void SolverCreate::solve(const Buffer* b, void* v) {
           : b->getFlowPlans().rbegin()->getCumulativeProduced();
   double current_minimum(0.0);
   double unconfirmed_supply(0.0);
+  bool firstmsg1 = true;
+  bool firstmsg2 = true;
+  bool firstmsg3 = true;
 
   bool hasTransferbatching = false;
   for (auto fl = b->getFlows().begin(); fl != b->getFlows().end(); ++fl)
@@ -142,34 +145,110 @@ void SolverCreate::solve(const Buffer* b, void* v) {
 
       // Evaluate the situation at the last flowplan before the date change.
       // Is there a shortage at that date?
-      // We have 3 ways to resolve it:
+      // We have different ways to resolve it:
+      //  - Don't resolve the shortage, but wait for existing confirmed supply.
+      //  - Use existing stock and confirmed supply on alternate materials.
       //  - Scan backward for a producer we can combine with to make a
       //    single batch.
       //  - Scan forward for producer we can replace in a single batch.
       //  - Create new supply for the shortage at that date.
-
-      // Solution zero: wait for confirmed supply that is already existing
       bool supply_exists_already = false;
-      if (theDelta < -ROUNDING_ERROR && autofence &&
-          b->getOnHand(Date::infiniteFuture) > -ROUNDING_ERROR) {
-        for (Buffer::flowplanlist::const_iterator scanner = cur;
-             scanner != b->getFlowPlans().end() &&
-             scanner->getDate() < theDate + autofence;
-             ++scanner) {
-          if (scanner->getQuantity() <= 0 ||
-              scanner->getDate() < requested_date)
+      if (theDelta < -ROUNDING_ERROR && autofence) {
+        // Solution zero: wait for confirmed supply that is already existing
+        if (b->getOnHand(Date::infiniteFuture) > -ROUNDING_ERROR) {
+          for (Buffer::flowplanlist::const_iterator scanner = cur;
+               scanner != b->getFlowPlans().end() &&
+               scanner->getDate() < theDate + autofence;
+               ++scanner) {
+            if (scanner->getQuantity() <= 0 ||
+                scanner->getDate() < requested_date)
+              continue;
+            auto tmp = scanner->getOperationPlan();
+            if (tmp && (tmp->getConfirmed() || tmp->getApproved())) {
+              if (getLogLevel() > 1 && firstmsg1) {
+                logger << indentlevel
+                       << "Refuse to create extra supply because confirmed "
+                          "supply is already available at "
+                       << scanner->getDate() << endl;
+                firstmsg1 = false;
+              }
+              supply_exists_already = true;
+              if (shortage < -prev->getOnhand()) shortage = -prev->getOnhand();
+              tried_requested_date = true;  // Disables an extra supply check
+              break;
+            }
+          }
+        }
+      }
+
+      // Solution zero-bis: use stock and confirmed supply on alternate
+      // materials
+      // We only skip stop the replenishment search is a single alternate can
+      // provide all material we need. We don't add up leftovers from multiple
+      // materials.
+      auto theflow = data->state->q_flowplan
+                         ? data->state->q_flowplan->getFlow()
+                         : nullptr;
+      if (theDelta < -ROUNDING_ERROR && !supply_exists_already &&
+          /*data->constrainedPlanning && */ theflow &&
+          !theflow->getName().empty()) {
+        for (auto h = theflow->getOperation()->getFlows().begin();
+             h != theflow->getOperation()->getFlows().end() &&
+             !supply_exists_already;
+             ++h) {
+          if (b == h->getBuffer() || theflow->getName() != h->getName())
             continue;
-          auto tmp = scanner->getOperationPlan();
-          if (tmp && (tmp->getConfirmed() || tmp->getApproved())) {
-            if (getLogLevel() > 1)
+          if (!h->getEffective().within(data->state->q_flowplan->getDate()))
+            continue;
+          auto qty =
+              h->getQuantityFixed() +
+              data->state->q_flowplan->getOperationPlan()->getQuantity() *
+                  h->getQuantity();
+          if (qty >= 0) continue;
+          if (h->getBuffer()->getOnHand(data->state->q_flowplan->getDate(),
+                                        Date::infiniteFuture,
+                                        true) > -qty - ROUNDING_ERROR) {
+            if (getLogLevel() > 1 && firstmsg2) {
               logger << indentlevel
-                     << "Refuse to create extra supply because confirmed "
-                        "supply is already available at "
-                     << scanner->getDate() << endl;
-            supply_exists_already = true;
+                     << "Refuse to create extra supply because inventory "
+                        "is already available on alternate material "
+                     << h->getBuffer()->getItem() << endl;
+              firstmsg2 = false;
+            }
             if (shortage < -prev->getOnhand()) shortage = -prev->getOnhand();
+            supply_exists_already = true;
             tried_requested_date = true;  // Disables an extra supply check
             break;
+          }
+          if (autofence && !supply_exists_already &&
+              h->getBuffer()->getOnHand(Date::infiniteFuture) >
+                  -qty - ROUNDING_ERROR) {
+            for (Buffer::flowplanlist::const_iterator scanner =
+                     h->getBuffer()->getFlowPlans().begin();
+                 scanner != h->getBuffer()->getFlowPlans().end() &&
+                 scanner->getDate() < theDate + autofence;
+                 ++scanner) {
+              if (scanner->getQuantity() <= 0 ||
+                  scanner->getDate() < requested_date ||
+                  scanner->getDate() < theDate)
+                continue;
+              auto tmp = scanner->getOperationPlan();
+              if (tmp && (tmp->getConfirmed() || tmp->getApproved())) {
+                if (getLogLevel() > 1 && firstmsg3) {
+                  logger << indentlevel
+                         << "Refuse to create extra supply because confirmed "
+                            "supply is already available on alternate material "
+                         << h->getBuffer()->getItem() << " at "
+                         << scanner->getDate() << endl;
+                  firstmsg3 = false;
+                }
+                if (shortage < -prev->getOnhand())
+                  shortage = -prev->getOnhand();
+                supply_exists_already = true;
+                tried_requested_date = true;  // Disables an extra supply check
+                break;
+              }
+            }
           }
         }
       }
@@ -197,10 +276,10 @@ void SolverCreate::solve(const Buffer* b, void* v) {
 
           // Make sure the new operationplans don't inherit an owner.
           // When an operation calls the solve method of suboperations, this
-          // field is used to pass the information about the owner operationplan
-          // down. When solving for buffers we must make sure NOT to pass owner
-          // information. At the end of solving for a buffer we need to restore
-          // the original settings...
+          // field is used to pass the information about the owner
+          // operationplan down. When solving for buffers we must make sure
+          // NOT to pass owner information. At the end of solving for a buffer
+          // we need to restore the original settings...
           data->state->curOwnerOpplan = nullptr;
 
           // Note that the supply created with the next line changes the
@@ -270,8 +349,8 @@ void SolverCreate::solve(const Buffer* b, void* v) {
     // date change in the statement above. Otherwise the code above would
     // already use the new value before the intended date.
     // If the flag getPlanSafetyStockFirst is set, then we need to replenish
-    // up to the minimum quantity. If it is not set (which is the default) then
-    // we only replenish up to 0.
+    // up to the minimum quantity. If it is not set (which is the default)
+    // then we only replenish up to 0.
     if (cur->getEventType() == 3 &&
         (!data->buffer_solve_shortages_only || data->safety_stock_planning) &&
         !getShortagesOnly())
@@ -311,16 +390,15 @@ void SolverCreate::solve(const Buffer* b, void* v) {
     data->state->q_qty = shortage;
     data->state->q_date = requested_date;
     // Make sure the new operationplans don't inherit an owner.
-    // When an operation calls the solve method of suboperations, this field is
-    // used to pass the information about the owner operationplan down. When
-    // solving for buffers we must make sure NOT to pass owner information.
-    // At the end of solving for a buffer we need to restore the original
-    // settings...
+    // When an operation calls the solve method of suboperations, this field
+    // is used to pass the information about the owner operationplan down.
+    // When solving for buffers we must make sure NOT to pass owner
+    // information. At the end of solving for a buffer we need to restore the
+    // original settings...
     data->state->curOwnerOpplan = nullptr;
-    // Note that the supply created with the next line changes the onhand value
-    // at all later dates!
-    // Note that asking at the requested date doesn't keep the material on
-    // stock to a minimum.
+    // Note that the supply created with the next line changes the onhand
+    // value at all later dates! Note that asking at the requested date
+    // doesn't keep the material on stock to a minimum.
     if (requested_qty - shortage < ROUNDING_ERROR)
       data->getCommandManager()->rollback(topcommand);
     b->getProducingOperation()->solve(*this, v);
@@ -428,8 +506,8 @@ void SolverCreate::solveSafetyStock(const Buffer* b, void* v) {
       bool loop = true;
 
       if (alignment_cal) {
-        // Adjust the requirement quantity to meet the full requirements of the
-        // current plan.calendar bucket.
+        // Adjust the requirement quantity to meet the full requirements of
+        // the current plan.calendar bucket.
         Calendar::EventIterator bckt_end(alignment_cal, prev->getDate(), true);
         ++bckt_end;
         auto tmp_current_minimum = current_minimum;
@@ -487,9 +565,9 @@ void SolverCreate::solveSafetyStock(const Buffer* b, void* v) {
         }
 
         // Make sure the new operationplans don't inherit an owner.
-        // When an operation calls the solve method of suboperations, this field
-        // is used to pass the information about the owner operationplan down.
-        // When solving for buffers we must make sure NOT to pass owner
+        // When an operation calls the solve method of suboperations, this
+        // field is used to pass the information about the owner operationplan
+        // down. When solving for buffers we must make sure NOT to pass owner
         // information. At the end of solving for a buffer we need to restore
         // the original settings...
         data->state->curOwnerOpplan = nullptr;

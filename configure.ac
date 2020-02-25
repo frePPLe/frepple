@@ -305,6 +305,7 @@ AC_CONFIG_FILES([
   test/distribution_1/Makefile
   test/flow_alternate_1/Makefile
   test/flow_alternate_2/Makefile
+  test/flow_alternate_3/Makefile
   test/flow_effective/Makefile
   test/flow_fixed/Makefile
   test/flow_transferbatch/Makefile

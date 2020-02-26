@@ -1276,6 +1276,37 @@ class GridReport(View):
         return "1 asc"
 
     @classmethod
+    def defaultSortString(cls, request):
+        if not cls.default_sort:
+            return " asc"
+        elif len(cls.default_sort) >= 6:
+            return "%s %s, %s %s, %s %s" % (
+                request.rows[cls.default_sort[0]].name,
+                cls.default_sort[1],
+                request.rows[cls.default_sort[2]].name,
+                cls.default_sort[3],
+                request.rows[cls.default_sort[4]].name,
+                cls.default_sort[5],
+            )
+        elif len(cls.default_sort) >= 4:
+            return (
+                "%s %s, %s %s"
+                % (
+                    request.rows[cls.default_sort[0]].name,
+                    cls.default_sort[1],
+                    request.rows[cls.default_sort[2]].name,
+                    cls.default_sort[3],
+                ),
+            )
+        elif len(cls.default_sort) >= 2:
+            return "%s %s" % (
+                request.rows[cls.default_sort[0]].name,
+                cls.default_sort[1],
+            )
+        else:
+            return " asc"
+
+    @classmethod
     def get_sort(cls, request):
         try:
             if "sidx" in request.GET:
@@ -1521,6 +1552,7 @@ class GridReport(View):
                 "page": page,
                 "sord": sord,
                 "sidx": sidx,
+                "default_sort": cls.defaultSortString(request),
                 "is_popup": is_popup,
                 "filters": filters,
                 "args": args,

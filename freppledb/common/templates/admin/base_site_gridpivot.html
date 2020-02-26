@@ -18,6 +18,7 @@ var editcol;
 var reportkey = '{{reportkey|safe}}';
 var initialfilter{% if filters %} = {{filters|safe}}{% endif %};
 var favorites = {% if preferences.favorites %}{{preferences.favorites|json}}{% else %}{}{% endif %};
+var default_sort = "{{default_sort|safe}}";
 var resizing;
 var editrow;
 var editcol;

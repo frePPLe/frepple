@@ -1732,17 +1732,49 @@ var favorite = {
       	$("#filter").removeClass("btn-danger").addClass("btn-primary");
       }
       
-      // Restore the sort      
-	  	if ("sord" in favorites[fav] && "sidx" in favorites[fav])
+      // Restore the sort for the backend
+      var sortstring;      
+	  	if ("sord" in favorites[fav] && "sidx" in favorites[fav]) {
   		  thegrid.setGridParam({
           sortname: favorites[fav]["sidx"],
           sortorder: favorites[fav]["sord"]
           });
-  		else
+  		  sortstring = (favorites[fav]["sidx"] + " " + favorites[fav]["sord"]).split(",");
+	  	}
+  		else {
   		  thegrid.setGridParam({
   		    sortname: "",
           sortorder: "asc"
           });
+  		  sortstring = default_sort.split(",");
+  		}
+	  	
+	  	// Reset the sort icons
+	  	var p = thegrid.jqGrid('getGridParam');
+	  	for (var k of p.colModel) {
+	  		var headercell = $("#" + p.id + "_" + k["name"]);
+	  		headercell.find("span.s-ico").css("display","none");
+	  		headercell.find("span.ui-grid-ico-sort").addClass("disabled");
+	  		headercell.find("span.ui-jqgrid-sort-order").html("&nbsp;");
+	  		k.lso = "";
+	  	}
+	  	
+	  	// Update the sort icons
+	  	for (var k in sortstring) {
+	  		var s = sortstring[k].trim().split(" ");
+	  		var colname = s[0].trim();
+	  		var headercell = $("#" + p.id + "_" + colname);
+	  		headercell.find("span.s-ico").css("display","");
+	  		if (s[1].trim() == "asc") {
+	  		  headercell.find("span.ui-icon-asc").removeClass("disabled");
+	  		  p.colModel[p.iColByName[colname]].lso = "asc-desc";
+	  		}
+	  		else {
+	  		  headercell.find("span.ui-icon-desc").removeClass("disabled");
+	  		  p.colModel[p.iColByName[colname]].lso = "desc-asc";
+	  		}
+  		  headercell.find("span.ui-jqgrid-sort-order").html(parseInt(k)+1);
+	  	}
 			
       // Refresh the data
       if (!graph) thegrid.jqGrid('setFrozenColumns');

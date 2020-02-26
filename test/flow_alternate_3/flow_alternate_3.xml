@@ -49,6 +49,7 @@
         <itemsupplier>
           <supplier name="Component supplier"/>
           <leadtime>P7D</leadtime>
+          <cost>100</cost>
         </itemsupplier>
       </itemsuppliers>
     </item>
@@ -57,6 +58,7 @@
         <itemsupplier>
           <supplier name="Component supplier"/>
           <leadtime>P5D</leadtime>
+          <cost>1</cost>
         </itemsupplier>
       </itemsuppliers>
     </item>
@@ -65,6 +67,7 @@
         <itemsupplier>
           <supplier name="Component supplier"/>
           <leadtime>P7D</leadtime>
+          <cost>100</cost>
         </itemsupplier>
       </itemsuppliers>
     </item>
@@ -73,6 +76,7 @@
         <itemsupplier>
           <supplier name="Component supplier"/>
           <leadtime>P7D</leadtime>
+          <cost>1</cost>
         </itemsupplier>
       </itemsuppliers>
     </item>
@@ -81,6 +85,7 @@
         <itemsupplier>
           <supplier name="Component supplier"/>
           <leadtime>P7D</leadtime>
+          <cost>1</cost>
         </itemsupplier>
       </itemsuppliers>
     </item> 
@@ -89,6 +94,7 @@
         <itemsupplier>
           <supplier name="Component supplier"/>
           <leadtime>P7D</leadtime>
+          <cost>100</cost>
         </itemsupplier>
       </itemsuppliers>
     </item>  
@@ -97,6 +103,7 @@
         <itemsupplier>
           <supplier name="Component supplier"/>
           <leadtime>P5D</leadtime>
+          <cost>1</cost>
         </itemsupplier>
       </itemsuppliers>
     </item>    
@@ -174,6 +181,16 @@
   </operationplans>
   
 <?python
+
+# Search modes other than PRIORITY are not implemented.
+# The cost of the priority alternate is much higher, but still all search modes
+# will give exactly the same output.
+#
+#for fl in frepple.operation(name="assembly").flows:
+#    fl.search = "MINCOST"
+#    fl.search = "MINCOSTPENALTY"
+#    fl.search = "MINPENALTY"
+
 print("CREATING CONSTRAINED PLAN without autofence")
 frepple.solver_mrp(plantype=1, constraints=13, loglevel=2, autofence=0).solve()
 frepple.saveplan("output.1.xml")

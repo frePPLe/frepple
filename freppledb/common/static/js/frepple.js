@@ -630,7 +630,7 @@ var grid = {
   pivotcolumns : function  (cellvalue, options, rowdata)
   {
     var result = '';
-    for (var i in cross_idx)
+    for (var i of cross_idx)
     {
       if (result != '') result += '<br>';
       if (cross[cross_idx[i]]['editable'])

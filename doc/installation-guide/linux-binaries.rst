@@ -316,7 +316,7 @@ inspiration for your own deployments.
 
   # Install python3 and required python modules
   sudo apt-get -y install python3 python3-pip
-  sudo -H pip3 install -r https://raw.githubusercontent.com/frepple/frepple/5.0.0/requirements.txt
+  sudo -H pip3 install -r https://raw.githubusercontent.com/frepple/frepple/6.0.0/requirements.txt
 
   # Install the frePPLe binary .deb package and the necessary dependencies.
   # There are frepple, frepple-doc and frepple-dev debian package files.
@@ -333,7 +333,7 @@ inspiration for your own deployments.
   sudo service apache2 restart
 
   # Create frepple database schema
-  frepplectl migrate --noinput
+  sudo frepplectl migrate --noinput
 
 
 ****************************
@@ -387,15 +387,15 @@ inspiration for your own deployments.
 
   # Install python3 and required python modules
   sudo dnf install python3 python3-pip
-  sudo -H pip3 install -r https://raw.githubusercontent.com/frepple/frepple/5.0.0/requirements.txt
+  sudo -H pip3 install -r https://raw.githubusercontent.com/frepple/frepple/6.0.0/requirements.txt
 
   # Install the frePPLe binary RPM package and the necessary dependencies.
   # There are frepple, frepple-doc and frepple-dev package files.
   # Normally you only need to install the frepple package.
-  dnf --nogpgcheck localinstall  frepple*.rpm
+  sudo dnf --nogpgcheck localinstall  frepple*.rpm
 
-  # Create frepple database schema
-  frepplectl migrate --noinput
+  # Create frepple database schema  
+  sudo frepplectl migrate --noinput
 
 ******************************
 Suse installation instructions

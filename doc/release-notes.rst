@@ -51,6 +51,9 @@ Release notes
   
 - A new section with videos on common use cases is added.
 
+- The `tutorial for developing custom apps <developer-guide/user-interface/creating-an-extension-app>`_
+  has been refreshed and extended.
+
 6.2.0 (2020/01/17)
 ==================
 

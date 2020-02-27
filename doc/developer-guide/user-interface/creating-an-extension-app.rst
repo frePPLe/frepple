@@ -9,358 +9,599 @@ This page outlines the steps involved in creating a custom app and
 explore the capabilities to tailor frePPLe to your business needs and 
 process.
 
-:ref:`runplan`
+* :ref:`app_prerequisites`
+* :ref:`app_folder`
+* :ref:`app_registration`
+* :ref:`app_attributes`
+* :ref:`app_models`
+* :ref:`app_migrations`
+* :ref:`app_rest_api`
+* :ref:`app_edit_form`
+* :ref:`app_views`
+* :ref:`app_urls`
+* :ref:`app_menu`
+* :ref:`app_fixtures`
+* :ref:`app_plan_generation`
+* :ref:`app_commands`
+* :ref:`app_unit_tests`
+* :ref:`app_more_info`
 
-#. | **Prerequisites**:
-   | You will need to be familiar with the
-     `Python programming language <http://python.org/>`_ to complete this
-     tutorial.
-   | Knowledge of HTML and SQL is also needed to understand how your app
-     works within the frePPLe framework.
 
-#. | **Create the app folder**:
-   | An app is structured as a Python module that needs to follow a specific
-     structure.
-   | You can create a skeleton structure for your app by unzipping this file.
-     and place its contents under the freppledb folder.
+.. _app_prerequisites:
 
-   :download:`Download zip-file with sample extension <my-app.zip>`
+Prerequisites
+-------------
 
-   .. code-block::
+You will need to be familiar with the
+`Python programming language <http://python.org/>`_ to complete this tutorial.
 
-      my-app
-         |- __init__.py
-         |- models.py
-         |- admin.py
-         |- attributes.py
-         |- migrations
-         |   |- __init__.py
-         |   |- 0001-initial.py
-         |   |- 0002-attributes.py
-         |- urls.py
-         |- views.py
-         |- menu.py
-         |- commands.py
-         |- tests.py
-         |- templates
-         |   |- ...
-         |- management
-             |- __init__.py
-             |- commands
-                 |- __init__.py
-                 |- mycommand.py
+Knowledge of HTML and SQL is also needed to fully understand how your
+app works within the frePPLe framework.
 
-#. | **Register your app**:
-   | In the file **djangosettings.py** your new app needs to be added in the
-     section INSTALLED_APPS.
-   | The ordering of the apps is important - apps higher in the list can
-     override functionality of apps lower in the list. Insert your app
-     at the location indicated in the file.
+.. _app_folder:
 
-   .. code-block:: Python
-     
-      INSTALLED_APPS = (
-          "django.contrib.auth",
-          "django.contrib.contenttypes",
-          "django.contrib.messages",
-          "django.contrib.staticfiles",
-          "bootstrap3",
-          "freppledb.boot",
-          # Add any project specific apps here
-          "freppledb.myapp",  # <<<< HERE'S OUR APP
-          # "freppledb.odoo",
-          # "freppledb.erpconnection",
-          "freppledb.input",
-          "freppledb.output",
-          "freppledb.metrics",
-          "freppledb.execute",
-          "freppledb.common",
-          "django_filters",
-          "rest_framework",
-          "django_admin_bootstrapped",
-          "django.contrib.admin",
-          # The next two apps allow users to run their own SQL statements on
-          # the database, using the SQL_ROLE configured above.
-          "freppledb.reportmanager",
-          # "freppledb.executesql",
-      )
+Download the tutorial app
+-------------------------
 
-#. | **Extend existing models.**:
-   | The file **attributes.py** defines new fields that extend the standard
-     data model. For instance, pretty much every implementation has some
-     specifi item characteristics which the planner would like to see. 
+An app is structured as a Python module that needs to follow a specific structure.
+You can create a skeleton structure for your app by unzipping this file.
+and place its contents under the freppledb folder.
+
+:download:`Download zip-file with sample extension <my-app.zip>`
+
+.. code-block::
+
+   my-app
+      |- __init__.py
+      |- models.py
+      |- attributes.py
+      |- migrations
+      |   |- __init__.py
+      |   |- 0001-initial.py
+      |   |- 0002-attributes.py
+      |- admin.py
+      |- serializers.py
+      |- views.py
+      |- urls.py
+      |- menu.py
+      |- commands.py
+      |- fixtures
+      |   |- my_app_data.json
+      |- tests.py
+      |- management
+          |- __init__.py
+          |- commands
+              |- __init__.py
+              |- mycommand.py
+
+.. _app_registration:
+
+Register your app
+-----------------
+
+In the file **djangosettings.py** your new app needs to be added in the
+section INSTALLED_APPS.
+
+The ordering of the apps is important - apps higher in the list can
+override functionality of apps lower in the list. Insert your app
+at the location indicated in the file.
+
+.. code-block:: Python
+  
+   INSTALLED_APPS = (
+       "django.contrib.auth",
+       "django.contrib.contenttypes",
+       "django.contrib.messages",
+       "django.contrib.staticfiles",
+       "bootstrap3",
+       "freppledb.boot",
+       # Add any project specific apps here
+       "freppledb.myapp",  # <<<< HERE'S OUR APP
+       # "freppledb.odoo",
+       # "freppledb.erpconnection",
+       "freppledb.input",
+       "freppledb.output",
+       "freppledb.metrics",
+       "freppledb.execute",
+       "freppledb.common",
+       "django_filters",
+       "rest_framework",
+       "django_admin_bootstrapped",
+       "django.contrib.admin",
+       # The next two apps allow users to run their own SQL statements on
+       # the database, using the SQL_ROLE configured above.
+       "freppledb.reportmanager",
+       # "freppledb.executesql",
+   )
+
+.. _app_attributes:
+
+Extend existing models with new fields
+--------------------------------------
+
+The file **attributes.py** defines new fields that extend the standard
+data model. For instance, pretty much every implementation has some
+specific item characteristics which the planner would like to see. 
+
+.. code-block:: Python
+
+   ...
+   registerAttribute(
+       "freppledb.input.models.Item",  # Class we are extending
+       [
+           (
+               "attribute_1",  # Field name in the database
+               _("first attribute"),  # Human readable label of the field
+               "number",  # Type of the field.
+               True,  # Is the field editable?
+               True,  # Should the field be visible by default?
+           )
+       ],
+   )
+   ...
+
+This file only declares the model structure. The actual database field will be 
+created in a following step.
+
+.. _app_models:
    
-   .. code-block:: Python
-   
-      ...
-      registerAttribute(
-          "freppledb.input.models.Item",  # Class we are extending
-          [
-              (
-                  "attribute_1",  # Field name in the database
-                  _("first attribute"),  # Human readable label of the field
-                  "number",  # Type of the field.
-                  True,  # Is the field editable?
-                  True,  # Should the field be visible by default?
-              )
-          ],
-      )
-      ...
+Define the database models
+--------------------------
 
-   | This file only declares the model structure. The actual database field will be 
-     created in a following step.
-   
-#. | **Define the database models**:
-   | The file **models.py** describes new database models.
-     It defines the database tables, their fields and indexes.
+The file **models.py** describes new database models. It defines the database tables, 
+their fields and indexes.
 
-   .. code-block:: Python
-     
-      class My_Model(AuditModel):
-          # Database fields
-          name = models.CharField(_("name"), max_length=300, primary_key=True)
-          charfield = models.CharField(
-              _("charfield"),
-              max_length=300,
-              null=True,
-              blank=True,
-              help_text=_("A sample character field"),
-          )
-          booleanfield = models.BooleanField(
-              _("booleanfield"),
-              blank=True,
-              default=True,
-              help_text=_("A sample boolean field"),
-          )
-          decimalfield = models.DecimalField(
-              _("decimalfield"),
-              max_digits=20,
-              decimal_places=8,
-              default="0.00",
-              help_text=_("A sample decimal field"),
-          )
-      
-          class Meta(AuditModel.Meta):
-              db_table = "my_model"  # Name of the database table
-              verbose_name = _("my model")  # A translatable name for the entity
-              verbose_name_plural = _("my models")  # Plural name
-              ordering = ["name"]
-
-   | This file only declares the model structure. The actual table will be created in a
-     later step.
+.. code-block:: Python
+  
+   class My_Model(AuditModel):
+       # Database fields
+       name = models.CharField(_("name"), max_length=300, primary_key=True)
+       charfield = models.CharField(
+           _("charfield"),
+           max_length=300,
+           null=True,
+           blank=True,
+           help_text=_("A sample character field"),
+       )
+       booleanfield = models.BooleanField(
+           _("booleanfield"),
+           blank=True,
+           default=True,
+           help_text=_("A sample boolean field"),
+       )
+       decimalfield = models.DecimalField(
+           _("decimalfield"),
+           max_digits=20,
+           decimal_places=8,
+           default="0.00",
+           help_text=_("A sample decimal field"),
+       )
    
-   | You can find all details on models and fields on 
-     https://docs.djangoproject.com/en/2.2/ref/models/fields/
+       class Meta(AuditModel.Meta):
+           db_table = "my_model"  # Name of the database table
+           verbose_name = _("my model")  # A translatable name for the entity
+           verbose_name_plural = _("my models")  # Plural name
+           ordering = ["name"]
+
+This file only declares the model structure. The actual table will be created in a
+later step.
+
+You can find all details on models and fields on https://docs.djangoproject.com/en/2.2/ref/models/fields/
+
+.. _app_migrations:
         
-#. | **Create tables and fields in the database**:
-   | In the previous steps all models and attributes were defined. Now we create
-     them in the PostgreSQL database. This is done by running the following statement
-     on the command line:
+Create tables and fields in the database
+----------------------------------------
+
+In the previous steps all models and attributes were defined. Now we create
+them in the PostgreSQL database. This is done by running the following statement
+on the command line:
+
+.. code-block::
+
+   # Deployment script to apply database schema updates - run by system administrators
+   frepplectl migrate
+
+This command will incrementally bring the database schema up to date. The database
+schema migration allows upgrading between different versions of frePPLe (or your ap) 
+without loss of data and without recreating the database from scratch.
+ 
+Migration scripts are Python scripts, located in the **migrations** folder. The scripts
+are generated mostly automatic with the command line below. More complex migrations will
+need review and/or coding by developers.
+ 
+.. code-block::
    
-    .. code-block::
+   # Generate a skeleton migration script - run by developers only
+   frepplectl makemigrations my_app
+ 
+.. code-block:: Python
 
-      # Deployment script to apply database schema updates - run by system administrators
-      frepplectl migrate
+   class Migration(AttributeMigration):
+   
+       # Module owning the extended model
+       extends_app_label = "input"
+   
+       # Defines migrations that are prerequisites for this one
+       dependencies = [("my_app", "0001_initial")]
+   
+       # Defines the migration operation to perform: such as CreateModel, AlterField,
+       # DeleteModel, AddIndex, RunSQL, RunPython, etc...
+       operations = [
+           migrations.AddField(
+               model_name="item",
+               name="attribute_1",
+               field=models.DecimalField(
+                   blank=True,
+                   db_index=True,
+                   decimal_places=8,
+                   max_digits=20,
+                   null=True,
+                   verbose_name="first attribute",
+               ),
+           )
+       ]
 
-   | This command will incrementally bring the database schema up to date. The database
-     schema migration allows upgrading between different versions of frePPLe without
-     loss of data and without recreating the database from scratch. The database migrations
-     also allow to incrementally update the database with new versions of your app.
+You can find all details on migrations on https://docs.djangoproject.com/en/2.2/topics/migrations/
+
+.. _app_rest_api:
+
+Define a REST API for your models
+---------------------------------
+
+The file **serializers.py** defines a REST API for your models. You can explore the REST API from
+the menu "help/REST API help".
+
+.. image:: ../_images/my_rest_api.png
+   :alt: A REST API for your model
+   
+.. code-block:: Python
+
+   class MyModelFilter(filters.FilterSet):
+       class Meta:
+           model = My_Model
+           fields = {
+               "name": ["exact", "in", "contains"],
+               "charfield": ["exact", "contains"],
+               "booleanfield": ["exact"],
+               "decimalfield": ["exact", "in", "gt", "gte", "lt", "lte"],
+               "source": ["exact", "in"],
+               "lastmodified": ["exact", "in", "gt", "gte", "lt", "lte"],
+           }
+           filter_fields = ("name", "charfield", "booleanfield", "decimalfield")
+   
+   
+   class MyModelSerializer(BulkSerializerMixin, ModelSerializer):
+       class Meta:
+           model = My_Model
+           fields = ("name", "charfield", "booleanfield", "decimalfield")
+           list_serializer_class = BulkListSerializer
+           update_lookup_field = "name"
+           partial = True
+   
+   
+   class MyModelSerializerAPI(frePPleListCreateAPIView):
+       queryset = My_Model.objects.all()
+       serializer_class = MyModelSerializer
+       filter_class = MyModelFilter
+
+You can find all details on creating REST APIs on https://www.django-rest-framework.org/
+
+.. _app_edit_form:
     
-   | Migration scripts are Python scripts, located in the **migrations** folder. The scripts
-     are generated mostly automatic with the command line below. More complex migrations will
-     need review and/or coding by developers.
+Create editing forms for your models
+------------------------------------
+
+The file **admin.py** defines a form to edit objects of your models.
+
+.. image:: ../_images/my_model.png
+   :alt: Editing form for your model
+   
+.. code-block:: Python
+
+   class My_Model_Admin(MultiDBModelAdmin):
+       model = My_Model
+       fields = ("name", "charfield", "booleanfield", "decimalfield")
+       save_on_top = True
+       # Defines tabs shown on the edit form
+       tabs = [
+           {
+               "name": "edit",
+               "label": _("edit"),
+               "view": "admin:my_app_my_model_change",
+               "permissions": "my_app.change_my_model",
+           },
+           {
+               "name": "comments",
+               "label": _("comments"),
+               "view": "admin:my_app_my_model_comment",
+           },
+           {
+               "name": "history",
+               "label": _("History"),
+               "view": "admin:my_app_my_model_history",
+           },
+       ]
+
+
+   data_site.register(My_Model, My_Model_Admin)
+
+You can find all details on admin forms on https://docs.djangoproject.com/en/2.2/ref/contrib/admin/
+
+.. _app_views:
+
+Define new reports
+------------------
+
+New reports are defined in a file **views.py**. The classes in this file
+typically will run SQL statements to retrieve data from the database, apply
+the correct business logic and return HTML code to the user's browser.     
+
+.. image:: ../_images/my_view.png
+   :alt: List view for your model
+
+.. code-block:: Python     
+
+   class MyModelList(GridReport):
+       """
+       This report show an editable grid for your models.
+       You can sort data, filter data, import excel files, export excel files.
+       """      
+       title = _("My models")
+       basequeryset = My_Model.objects.all()
+       model = My_Model
+       frozenColumns = 1
+       rows = (
+           GridFieldText(
+               "name",
+               title=_("name"),
+               key=True,
+               formatter="detail",
+               extra='"role":"my_app/my_model"',
+           ),
+           GridFieldText("charfield", title=_("charfield")),
+           GridFieldBoolNullable("booleanfield", title=_("category")),
+           GridFieldNumber("decimalfield", title=_("decimalfield")),
+           GridFieldText("source", title=_("source")),
+           GridFieldLastModified("lastmodified"),
+       )
+
+More advanced views can also separate the python business logic from
+the HTML rendering. This example app doesn't explore this.
+
+See :doc:`this page <adding-or-customizing-a-report>` for more details
+on the structure of the report code.
+
+.. _app_urls:
     
-   .. code-block::
-      
-      # Generate a skeleton migration script - run by developers only
-      frepplectl makemigrations my_app
-    
-   .. code-block:: Python
+Register the URLs of the new reports
+------------------------------------
+
+The url where the report is published is defined in the file **urls.py**.
+
+.. code-block:: Python  
+
+   urlpatterns = [
+       # Model list reports, which override standard admin screens
+       url(
+           r"^data/my_app/my_model/$",
+           MyModelList.as_view(),
+           name="my_app_my_model_changelist",
+       ),
+       # URLs for the REST API
+       url(r"^api/my_app/my_model/$", MyModelSerializerAPI.as_view()),
+   ]
+
+You can find more detailed information on https://docs.djangoproject.com/en/2.2/topics/http/urls/
+
+.. _app_menu:
+
+Add the reports to the menu
+---------------------------
+
+The menu is defined in the file **menu.py**. In the screenshot above
+you can see your own menu.  With the menu, the users have access to the
+reports, views and urls you defined in the previous steps.
+  
+.. code-block:: Python
+
+   menu.addGroup("my_menu", label=_("My App"), index=1)
+   menu.addItem(
+       "my_menu",
+       "my_model",
+       url="/data/my_app/my_model/",
+       report=MyModelList,
+       index=100,
+       model=My_Model,
+   )
+   menu.addItem(
+       "my_menu",
+       "google",
+       url="http://google.com",
+       window=True,
+       label=_("link to my company"),
+       prefix=False,
+       index=300,
+   )
+
+.. _app_fixtures:
+
+Add demo data
+-------------
+
+In the subfolder **fixtures** you can define demo datasets that can
+be loaded with the command "frepplectl loaddata" or `interactively
+in the execution screen <user-guide/command-reference.html#loaddata>`_.
+
+Fixtures are text files in JSON format. They can be loaded from the
+command line, from the execution screen (see the "my_app_data" entry in the screenshot below)
+or through a web API.
+
+.. code-block:: JSON
+
+   [
+   {"model": "my_app.my_model", "fields": {"name": "sample #1", "charfield": "A", "booleanfield": true, "decimalfield": 999.0}},
+   {"model": "my_app.my_model", "fields": {"name": "sample #2", "charfield": "B", "booleanfield": false, "decimalfield": 666.0}}
+   ]
+
+.. image:: ../_images/my_fixture.png
+   :alt: Loading my own dataset
    
-      class Migration(AttributeMigration):
-      
-          # Module owning the extended model
-          extends_app_label = "input"
-      
-          # Defines migrations that are prerequisites for this one
-          dependencies = [("my_app", "0001_initial")]
-      
-          # Defines the migration operation to perform: such as CreateModel, AlterField,
-          # DeleteModel, AddIndex, RunSQL, RunPython, etc...
-          operations = [
-              migrations.AddField(
-                  model_name="item",
-                  name="attribute_1",
-                  field=models.DecimalField(
-                      blank=True,
-                      db_index=True,
-                      decimal_places=8,
-                      max_digits=20,
-                      null=True,
-                      verbose_name="first attribute",
-                  ),
-              )
-          ]
+You can find more detailed information on https://docs.djangoproject.com/en/2.2/howto/initial-data/
 
-   | You can find all details on migrations on 
-     https://docs.djangoproject.com/en/2.2/topics/migrations/
+.. _app_plan_generation:
 
-#. | **Register the new models in the admin**:
-   | You'll need to edit the file admin.py.
-   | FrePPLe uses 2 admin sites by default: freppledb.admin.data_admin for
-     model input data, and freppledb.admin.admin_site for models that are
-     normally used only by system administrators.
+Customize the plan generation
+-----------------------------
 
-#. | **Create or override HTML template pages**:
-   | The web pages are rendered from a set of HTML templates. Create a
-     template folder in your new app to store your templates. In the file
-     djangosettings.py this folder needs to be added *before* the other
-     entries (in this way your override is used instead of the standard file).
+The script **commands.py** is used to customize the plan generation.
+You can add extra pre- or post-processing steps, and you can also
+make the execution of t. 
 
-   | For instance, you can copy the file admin/base_site.html into your
-     template folder, and edit the line shown below with the name and logo
-     of your company.
+.. code-block:: Python
 
-   ::
-
-     {% block branding %}frePPLe {% version %}{% endblock %}
-
-#. | **Define new reports**:
-   | New reports are normally defined in a file views.py or as files in a
-     folder called views.
-   | See :doc:`this page <adding-or-customizing-a-report>` for more details
-     on the structure of the report code.
-
-#. | **Register the URLs of the new reports**:
-   | The url where the report is published is defined in the file urls.py.
-
-#. | **Add the reports to the menu**:
-   | The menu is a defined in the file menu.py.
-   | Note that the models registered in the admin automatically get added
-     already in the menu.
-   | Note that this menu structure is not standard Django functionality,
-     but specific to frePPLe.
-
-#. | **Add demo data**:
-   | In the subfolder **fixtures** you can define demo datasets that can
-     be loaded with the command "frepplectl loaddata" or `interactively
-     in the execution screen <user-guide/command-reference.html#loaddata>`_.
-
-   | Fixtures are text files in JSON format.
+   @PlanTaskRegistry.register
+   class MyCalculation(PlanTask):
+       description = "My customized planning step"
    
-   .. code-block:: JSON
+       # Defines when the task should be executed
+       sequence = 51
    
-      [
-      {"model": "my_app.my_model", "fields": {"name": "sample #1", "charfield": "A", "booleanfield": true, "decimalfield": 999.0}},
-      {"model": "my_app.my_model", "fields": {"name": "sample #2", "charfield": "B", "booleanfield": false, "decimalfield": 666.0}}
-      ]
+       label = ("myapp", _("My own calculations"))
+   
+       @classmethod
+       def getWeight(cls, database=DEFAULT_DB_ALIAS, **kwargs):
+           if "myapp" in os.environ:
+               # Defines the relative duration of this task.
+               return 1
+           else:
+               # Skip this step
+               return -1
+   
+       @classmethod
+       def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
+           print("Starting incredibly complex calculation")
+           time.sleep(20)
+           print("Finished incredibly complex calculation")
 
-      
-#. | **Customize the planning script**:
-   | The script commands.py is executed by the planning engine to generate a
-     plan.
-   | You can creating a customized version in your app to add customized
-     planning steps.
-   | Note that this is not standard Django functionality, but specific to
-     frePPLe.
+The screenshots below show a) a checkbox where the user can 
+choose whether or not to perform the extra logic, b) a custom
+message when our step is executing, and c) prints from our
+custom calculations in the plan generation log file.
+
+.. image:: ../_images/my_calculations.png
+   :alt: My customized action to generate the plan.
+
+.. image:: ../_images/my_logfile.png
+   :alt: The log file of my custom command.
+   
+.. _app_commands:
      
-#. | **Add custom commands**:
-   | Files in the folder **management/commands** define extra commands.
-   | You can execute the custom commands from the command line, through a
-     web API or interactively from the execution screen.
+Add custom administration commands
+----------------------------------
 
-   ::
+Files in the folder **management/commands** define extra commands.
+You can execute the custom commands from the command line, through a
+web API or interactively from the execution screen.
 
-      # Run from the command line
-      frepplectl my_command
-      
-   ::
-   
-      # Web API of the command
-      POST /execute/api/my_command/
-   
-   .. image:: ../_images/my_command.png
-      :alt: Custom command in the executio screen
-   
-   Simplified, the code for a command looks as follows:
-   
-   .. code-block:: Python
+::
 
-      class Command(BaseCommand):
-          # Help text shown when you run "frepplectl help my_command"
-          help = "This command does ..."
-      
-          # Define optional and required arguments
-          def add_arguments(self, parser):
-              parser.add_argument(
-                  "--my_arg",
-                  dest="my_arg",
-                  type=int,
-                  default=0,
-                  help="an optional argument for the command",
-              )
+   # Run from the command line
+   frepplectl my_command
+   
+::
+
+   # Web API of the command
+   POST /execute/api/my_command/
+
+.. image:: ../_images/my_command.png
+   :alt: Custom command in the execution screen
+
+Simplified, the code for a command looks as follows:
+
+.. code-block:: Python
+
+   class Command(BaseCommand):
+       # Help text shown when you run "frepplectl help my_command"
+       help = "This command does ..."
+   
+       # Define optional and required arguments
+       def add_arguments(self, parser):
+           parser.add_argument(
+               "--my_arg",
+               dest="my_arg",
+               type=int,
+               default=0,
+               help="an optional argument for the command",
+           )
+        
+       # The busisness logic of the command goes in this method
+       def handle(self, *args, **options):
+           print("This command was called with argument %s" % options["my_arg"])
+   
+       # Label to display on the execution screen
+       title = _("My own command")
+   
+       # Sequence of the command on the execution screen
+       index = 1
+   
+       # This method generates the text to display on the execution screen
+       @staticmethod
+       def getHTML(request):
+           context = RequestContext(request)
+           template = Template(
+               """
+               {% load i18n %}
+               <form class="form" role="form" method="post"
+                  action="{{request.prefix}}/execute/launch/my_command/">{% csrf_token %}
+               <table>
+               <tr>
+                 <td style="padding:15px; vertical-align:top">
+                 <button  class="btn btn-primary" id="load" type="submit">{% trans "launch"|capfirst %}</button>
+                 </td>
+                 <td style="padding:15px">
+                 A description of my command
+                 </td>
+               </tr>
+               </table>
+               </form>
+               """
+           )
+           return template.render(context)
            
-          # The busisness logic of the command goes in this method
-          def handle(self, *args, **options):
-              print("This command was called with argument %s" % options["my_arg"])
-      
-          # Label to display on the execution screen
-          title = _("My own command")
-      
-          # Sequence of the command on the execution screen
-          index = 1
-      
-          # This method generates the text to display on the execution screen
-          @staticmethod
-          def getHTML(request):
-              context = RequestContext(request)
-              template = Template(
-                  """
-                  {% load i18n %}
-                  <form class="form" role="form" method="post"
-                     action="{{request.prefix}}/execute/launch/my_command/">{% csrf_token %}
-                  <table>
-                  <tr>
-                    <td style="padding:15px; vertical-align:top">
-                    <button  class="btn btn-primary" id="load" type="submit">{% trans "launch"|capfirst %}</button>
-                    </td>
-                    <td style="padding:15px">
-                    A description of my command
-                    </td>
-                  </tr>
-                  </table>
-                  </form>
-                  """
-              )
-              return template.render(context)
-              
-   | You can find more detailed information on 
-     https://docs.djangoproject.com/en/2.2/howto/custom-management-commands/
+You can find more detailed information on https://docs.djangoproject.com/en/2.2/howto/custom-management-commands/
 
-#. | **Add dashboard widgets**:
-   | You can define new widgets in a file **widget.py**. Explore some existing
-     widgets to see how the simple structure of such widgets.
+.. _app_unit_tests:
 
-#. | **Add unit tests**:
-   | Unit tests are defined in the file **tests.py**.
-   | They are executed when you run the command:
+Add unit tests
+--------------
 
-   ::
+Unit tests are defined in the file **tests.py**. They are executed when you run the command:
 
-      # Run the test
-      frepplectl test my_app
+::
 
-   The code for a test looks as follows:
-   
-   .. code-block:: Python
-   
-   
+   # Run the test
+   frepplectl test freppledb.my_app
 
-#. | **More information!**:
-   | FrePPLe is based on django web application framework. You can dig deeper
-     by visiting https://www.djangoproject.com, checking out the full documentation
-     and follow a tutorial.
-   | Another good approach is to study the way the standard apps in frePPLe
-     are structured. The full source code of the Community Edition is on 
-     https://github.com/frePPLe/frepple/tree/master/freppledb
+The code for a unit test looks as follows:
+
+.. code-block:: Python
+
+   class SimpleTest(TestCase):
+     def test_basic_addition(self):
+         self.assertEqual(1 + 1, 2)    # Just making sure
+
+You can find more detailed information on https://docs.djangoproject.com/en/2.2/topics/testing/overview/
+
+.. _app_more_info:
+
+Even more information!
+----------------------
+
+FrePPLe is based on django web application framework. You can dig deeper
+by visiting https://www.djangoproject.com, checking out the full documentation
+and follow a tutorial.
+
+Another good approach is to study the way the standard apps in frePPLe
+are structured. The full source code of the Community Edition is on 
+https://github.com/frePPLe/frepple/tree/master/freppledb

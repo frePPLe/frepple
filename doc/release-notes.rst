@@ -1,14 +1,14 @@
 Release notes
 -------------
 
-6.3.0 (upcoming release)
-========================
+6.3.0 (2020/02/28)
+==================
 
 .. rubric:: Production planning
 
 - | Solver enhancement to improve planning with alternate materials. 
-  | In earlier releases available ivnentory and committed supply were considered individually
-    for each alternate material
+  | In earlier releases available inventory and committed supply were considered individually
+    for each alternate material.
   | From this release onwards, the algorithm checks available stock and supply across all 
     alternate materials before generating new replenishments.  
 

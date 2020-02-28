@@ -15,6 +15,6 @@ extraction:
       exclude:
         - "freppledb/common/static/js/angular*.js"
         - "freppledb/common/static/js/*.src.js"
-        - "freppledb/common/static/js/*.*.src.js"
+        - "freppledb/common/static/js/jquery.jqgrid.src.js"
         - "freppledb/common/static/js/d3.js"
       typescript: none

@@ -39,11 +39,6 @@ Release notes
   anymore to delete the operationplanmaterial (Inventory Detail) and operationplanresource 
   (Resource Detail) records before being able to delete an operationplan record (MO/PO/DO).
   
-- Odoo connectors (v12 and v13): Export of multiple POs for a same supplier will 
-  create a single PO in odoo with multiple lines. If the exported POs also contain multiple 
-  lines for the same product, then a single PO Line is created in odoo with the sum of 
-  the quantities and the minimum planned date of all exported records for that product.
-
 .. rubric:: Documentation
 
 - Browsing the documentation is now more intuitive. A feature list allows you to find
@@ -58,11 +53,11 @@ Release notes
 
 - Adding support for odoo v13.
 
-- When exporting multiple selected proposed purchase orders from frePPLe, the connector now 
-  creates a single odoo purchase order per supplier. A single odoo purchase order line
-  is created per item purchased from that supplier.
+- v12 and v13: Export of multiple POs for the same supplier will create a single PO in odoo 
+  with multiple lines. If the exported POs also contain multiple lines for the same product,
+  then a single PO Line is created in odoo with the sum of the quantities and the minimum
+  planned date of all exported records for that product.
   
-
 6.2.0 (2020/01/17)
 ==================
 

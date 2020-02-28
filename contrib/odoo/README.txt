@@ -3,6 +3,7 @@ This directory contains an addon for Odoo that provides a 2-way integration
 between frePPLe and Odoo.
 
 The connector is available for different odoo releases:
+  - v13: Mainstream release targeted for any new developments.
   - v12: Mainstream release targeted for any new developments.
   - v11: Supported, but not fully tested and validated.
   - v10: Supported, but not actively developed any longer.

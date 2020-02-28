@@ -54,6 +54,15 @@ Release notes
 - The `tutorial for developing custom apps <developer-guide/user-interface/creating-an-extension-app>`_
   has been refreshed and extended.
 
+.. rubric:: Odoo connector
+
+- Adding support for odoo v13.
+
+- When exporting multiple selected proposed purchase orders from frePPLe, the connector now 
+  creates a single odoo purchase order per supplier. A single odoo purchase order line
+  is created per item purchased from that supplier.
+  
+
 6.2.0 (2020/01/17)
 ==================
 

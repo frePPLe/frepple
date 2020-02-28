@@ -3,7 +3,7 @@ A Django project implementing a web-based user interface for frePPLe.
 """
 
 
-VERSION = "6.3.0"
+VERSION = "6.4.0"
 
 
 def runCommand(taskname, *args, **kwargs):

@@ -28,13 +28,9 @@ due            dateTime          Due date of the demand.
 priority       integer           | Priority of the demand relative to the other demands.
                                  | A lower number indicates higher priority.
                                  | The default value is 0.
-operation      operation         | Operation to be used to satisfy the demand.
-                                 | If left unspecified the operation on the item will be
-                                   used.
-                                 | New in version 3.0: If no operation is specified on the
-                                   demand or the item, frePPLe will automatically try to create
-                                   a delivery operation for the requested item and location.
-                                   A data error is created when we this isn't possible.
+operation      operation         | Operation to be plan to satisfy the demand.
+                                 | When left unspecified, frePPLe will automatically create
+                                   a delivery operation for the item and location combination.
 customer       customer          Customer placing the demand.
 status         string            Status of the demand.
                                  Possible values are "open" (default), "closed", "canceled"

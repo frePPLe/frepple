@@ -46,5 +46,8 @@ discrete         boolean           | Indicates whether the forecast quantity sho
                                      (integer values only).
                                    | Possible values are : "TRUE" (default) or "FALSE".
 planned          boolean           | Indicates whether the forecasted quantity should be planned.
-                                   | Possible values are : "TRUE" (default) or "FALSE".                                   
+                                   | Possible values are : "TRUE" (default) or "FALSE".                
+operation        string            | Operation to be used to satisfy the forecast.
+                                   | When left unspecified, frePPLe will automatically create
+                                     a delivery operation for the item and location combination.                                     
 ================ ================= =====================================================================

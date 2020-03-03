@@ -21,11 +21,19 @@ function drawGraphs(jsondata)
   {% else %}var margin = {top: 0, right: 0, bottom: 0, left: 70};
   {% endif %}var width = $({% if args.0 %}"#graph"{% else %}"#grid_graph"{% endif %}).width() - margin.left - margin.right;
   var height = {% if args.0 %}$("#graph").height(){% else %}80{% endif %} - margin.top - margin.bottom;
-
+  
   // Lookup table of displayed columns
-  var fields = {};
-  for (var i in cross_idx)
-    fields[cross_idx[i]] = 0;
+  var fields = new Set();
+  // dict that gives from an id the name of the cross
+  var field_by_id = {};
+  // dict that gives from the name of a cross the id
+  var id_by_field = {};
+  for (var i in cross_idx) {
+    fields.add(cross[cross_idx[i]]["key"]);
+    field_by_id[cross_idx[i]] = cross[cross_idx[i]]["key"];
+    id_by_field[cross[cross_idx[i]]["key"]] = cross_idx[i];
+  }
+ 
 
   // Define X-axis
   var domain_x = [];
@@ -65,28 +73,33 @@ function drawGraphs(jsondata)
     {
       var tmp = jsondata['rows'][index][timebuckets[bckt]['name']];
       data.push({
-        'buffer': jsondata['rows'][index]['buffer'],
-        'bucket': bckt,
-        'startinv': tmp[0],
-        'startohdoc': tmp[1],
-        'safetystock': tmp[2],    
-        'consumed': tmp[3],
-        'consumedMO': tmp[4],
-        'consumedDO': tmp[5],
-        'consumedSO': tmp[6],
-        'produced': tmp[7],
-        'producedMO': tmp[8],
-        'producedDO': tmp[9],
-        'producedPO': tmp[10],
-        'endinv': tmp[11],
-        'total_in_progress': tmp[12],
-        'work_in_progress_mo': tmp[13],
-        'on_order_po': tmp[14],
-        'in_transit_do': tmp[15]
-        });
+	        'buffer': jsondata['rows'][index]['buffer'],
+	        'bucket': bckt,
+	        'startinv': tmp[id_by_field['startoh']],
+	        'startohdoc': tmp[id_by_field['startohdoc']],
+	        'safetystock': tmp[id_by_field['safetystock']],    
+	        'consumed': tmp[id_by_field['consumed']],
+	        'consumedMO': tmp[id_by_field['consumedMO']],
+	        'consumedDO': tmp[id_by_field['consumedDO']],
+	        'consumedSO': tmp[id_by_field['consumedSO']],
+	        'consumedFcst': tmp[id_by_field['consumedFcst']],
+	        'produced': tmp[id_by_field['produced']],
+	        'producedMO': tmp[id_by_field['producedMO']],
+	        'producedDO': tmp[id_by_field['producedDO']],
+	        'producedPO': tmp[id_by_field['producedPO']],
+	        'endinv': tmp[id_by_field['endoh']],
+	        'total_in_progress': tmp[id_by_field['total_in_progress']],
+	        'work_in_progress_mo': tmp[id_by_field['work_in_progress_mo']],
+	        'on_order_po': tmp[id_by_field['on_order_po']],
+	        'in_transit_do': tmp[id_by_field['in_transit_do']]
+	        });
       for (var i in cross_idx)
       {
-        if (cross_idx[i] == 0 || cross_idx[i] == 2 || cross_idx[i] == 3 || cross_idx[i] == 7 || cross_idx[i] == 11) {
+        if (field_by_id[cross_idx[i]] == 'startoh' 
+            || field_by_id[cross_idx[i]] == 'safetystock' 
+            || field_by_id[cross_idx[i]] == 'consumed' 
+            || field_by_id[cross_idx[i]] == 'produced' 
+            || field_by_id[cross_idx[i]] == 'endoh') {
           if (tmp[cross_idx[i]] < min_y) min_y = tmp[cross_idx[i]];
           if (tmp[cross_idx[i]] > max_y) max_y = tmp[cross_idx[i]];
           }
@@ -106,7 +119,7 @@ function drawGraphs(jsondata)
       .attr("transform", function(d) { return "translate(" + x(timebuckets[d['bucket']]['name']) + ",0)"; })
       .each(function(d) {
         var bucket = d3.select(this);
-        if (d['produced'] > 0 && 1 in fields)
+        if (d['produced'] > 0 && fields.has('produced'))
         {
           my_y = y(d['produced']);
           bucket.append("rect")
@@ -116,7 +129,7 @@ function drawGraphs(jsondata)
             .attr("y", my_y)
             .style("fill","#2B95EC");
         }
-        if (d['consumed'] > 0 && 2 in fields)
+        if (d['consumed'] > 0 && fields.has('consumed'))
         {
           my_y = y(d['consumed']);
           bucket.append("rect")
@@ -165,6 +178,9 @@ function drawGraphs(jsondata)
 	        if (d['consumedSO'])
 	          tiptext += '</td></tr><tr><td>{{_('consumed by SO')|capfirst}}</td><td style="text-align:right">- '
 	            + grid.formatNumber(d['consumedSO']);
+	        if (d['consumedFcst'])
+	          tiptext += '</td></tr><tr><td>{{_('consumed by Fcst')|capfirst}}</td><td style="text-align:right">- '
+	            + grid.formatNumber(d['consumedFcst']);
 	        if (d['consumedDO'])
 	          tiptext += '</td></tr><tr><td>{{_('consumed by DO')|capfirst}}</td><td style="text-align:right">- '
 	            + grid.formatNumber(d['consumedDO']);
@@ -193,7 +209,7 @@ function drawGraphs(jsondata)
       });
 
     // Create D3 line
-    if (0 in fields)
+    if (fields.has('startoh'))
     {
       var line = d3.svg.line()
         .x(function(d) { return x(timebuckets[d['bucket']]['name']) + x_width / 2; })
@@ -203,7 +219,7 @@ function drawGraphs(jsondata)
         .attr("stroke","#8BBA00")
         .attr("d", line(data));
     }
-    else if (3 in fields)
+    else if (fields.has('endoh'))
     {
       var line = d3.svg.line()
         .x(function(d) { return x(timebuckets[d['bucket']]['name']) + x_width / 2; })
@@ -213,7 +229,7 @@ function drawGraphs(jsondata)
         .attr("stroke","#7B5E08")
         .attr("d", line(data));
     }
-    if (2 in fields)
+    if (fields.has('safetystock'))
     {
       var line = d3.svg.line()
         .x(function(d) { return x(timebuckets[d['bucket']]['name']) + x_width / 2; })
@@ -265,23 +281,27 @@ function drawGraphs(jsondata)
     // Display legend
     var legend = svg.append("g");
     var codes = [
-      ["{{_('start inventory')|capfirst}}", "#8BBA00"],
+      ['{{_('start inventory')|capfirst}}', "#8BBA00"],
       [],
-      ["{{_('safety stock')|capfirst}}", "#FF0000"],
-      ["{{_('consumed')|capfirst}}", "#F6BD0F"],
-      [],
-      [],
-      [],
-      ["{{_('produced')|capfirst}}", "#2B95EC"],
+      ['{{_('safety stock')|capfirst}}', "#FF0000"],
+      ['{{_('consumed')|capfirst}}', "#F6BD0F"],
       [],
       [],
       [],
-      ["{{_('end inventory')|capfirst}}", "#7B5E08"]
+      ['{{_('produced')|capfirst}}', "#2B95EC"],
+      [],
+      [],
+      [],
+      ['{{_('end inventory')|capfirst}}', "#7B5E08"]
       ];
     var cnt = 0;
     for (var i in cross_idx)
     {
-      if (cross_idx[i] == 0 || cross_idx[i] == 2|| cross_idx[i] == 3 || cross_idx[i] == 7 || cross_idx[i] == 11) {
+      if (field_by_id[cross_idx[i]] == 'startoh' 
+            || field_by_id[cross_idx[i]] == 'safetystock' 
+            || field_by_id[cross_idx[i]] == 'consumed' 
+            || field_by_id[cross_idx[i]] == 'produced' 
+            || field_by_id[cross_idx[i]] == 'endoh') {
         legend.append("rect")
           .attr("x", width + 82)
           .attr("width", 18)
@@ -305,15 +325,25 @@ function drawGraphs(jsondata)
 function crosses (cellvalue, options, rowdata)
 {
   var result = '';
+  
+  // dict that gives from an id the name of the cross
+  var field_by_id = {};
+  // dict that gives from the name of a cross the id
+  var id_by_field = {};
+  for (var i in cross_idx) {
+    field_by_id[cross_idx[i]] = cross[cross_idx[i]]["key"];
+    id_by_field[cross[cross_idx[i]]["key"]] = cross_idx[i];
+  }
+  
   for (var i in cross_idx)
-    switch(cross_idx[i])
+    switch(field_by_id[cross_idx[i]])
     {
-      case 1:
+      case 'startohdoc':
         result += cellvalue[cross_idx[i]] + '<br>';
         break;
-      case 3:
-        if (cellvalue[3] != 0.0)
-           result += grid.formatNumber(cellvalue[3]) + "<a href='{{request.prefix}}/flowplan/" +
+      case 'consumed':
+        if (cellvalue[id_by_field['consumed']] != 0.0)
+           result += grid.formatNumber(cellvalue[id_by_field['consumed']]) + "<a href='{{request.prefix}}/flowplan/" +
               admin_escape(rowdata['buffer']) +
               "/?flowdate__gte=" + options['colModel']['startdate'] +
               "&amp;flowdate__lt=" + options['colModel']['enddate'] +
@@ -321,9 +351,9 @@ function crosses (cellvalue, options, rowdata)
         else
           result += '0<br>';
         break;
-      case 4:
-        if (cellvalue[4] != 0.0)
-           result += grid.formatNumber(cellvalue[4]) + "<a href='{{request.prefix}}/data/input/manufacturingorder/consumed/" +
+      case 'consumedMO':
+        if (cellvalue[id_by_field['consumedMO']] != 0.0)
+           result += grid.formatNumber(cellvalue[id_by_field['consumedMO']]) + "<a href='{{request.prefix}}/data/input/manufacturingorder/consumed/" +
               admin_escape(rowdata['item']) + "/" +
               admin_escape(rowdata['location']) + "/" +
               options['colModel']['startdate'] + "/" +
@@ -332,9 +362,9 @@ function crosses (cellvalue, options, rowdata)
         else
           result += '0<br>';
         break;
-      case 5:
-        if (cellvalue[5] != 0.0)
-           result += grid.formatNumber(cellvalue[5]) + "<a href='{{request.prefix}}/data/input/distributionorder/consumed/" +
+      case 'consumedDO':
+        if (cellvalue[id_by_field['consumedDO']] != 0.0)
+           result += grid.formatNumber(cellvalue[id_by_field['consumedDO']]) + "<a href='{{request.prefix}}/data/input/distributionorder/consumed/" +
               admin_escape(rowdata['item']) + "/" +
               admin_escape(rowdata['location']) + "/" +
               options['colModel']['startdate'] + "/" +
@@ -343,20 +373,31 @@ function crosses (cellvalue, options, rowdata)
         else
           result += '0<br>';
         break;
-      case 6:
-        if (cellvalue[6] != 0.0)
-           result += grid.formatNumber(cellvalue[6]) + "<a href='{{request.prefix}}/data/input/deliveryorder/consumed/" +
+      case 'consumedSO':
+        if (cellvalue[id_by_field['consumedSO']] != 0.0)
+           result += grid.formatNumber(cellvalue[id_by_field['consumedSO']]) + "<a href='{{request.prefix}}/data/input/deliveryorder/consumed/" +
               admin_escape(rowdata['item']) + "/" +
               admin_escape(rowdata['location']) + "/" +
               options['colModel']['startdate'] + "/" +
               options['colModel']['enddate'] + "/" +
-              "?noautofilter'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
+              "?noautofilter" + "&amp;orders=True" +"'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
           result += '0<br>';
         break;
-      case 7:
-        if (cellvalue[7] != 0.0)
-           result += grid.formatNumber(cellvalue[7]) + "<a href='{{request.prefix}}/flowplan/" +
+      case 'consumedFcst':
+        if (cellvalue[id_by_field['consumedFcst']] != 0.0)
+           result += grid.formatNumber(cellvalue[id_by_field['consumedFcst']]) + "<a href='{{request.prefix}}/data/input/deliveryorder/consumed/" +
+              admin_escape(rowdata['item']) + "/" +
+              admin_escape(rowdata['location']) + "/" +
+              options['colModel']['startdate'] + "/" +
+              options['colModel']['enddate'] + "/" +
+              "?noautofilter" + "&amp;orders=False" +"'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
+        else
+          result += '0<br>';
+        break;
+      case 'produced':
+        if (cellvalue[id_by_field['produced']] != 0.0)
+           result += grid.formatNumber(cellvalue[id_by_field['produced']]) + "<a href='{{request.prefix}}/flowplan/" +
               admin_escape(rowdata['buffer']) +
               "/?flowdate__gte=" + options['colModel']['startdate'] +
               "&amp;flowdate__lt=" + options['colModel']['enddate'] +
@@ -364,9 +405,9 @@ function crosses (cellvalue, options, rowdata)
         else
           result += '0<br>';
         break;
-      case 8:
-        if (cellvalue[8] != 0.0)
-           result += grid.formatNumber(cellvalue[8]) + "<a href='{{request.prefix}}/data/input/manufacturingorder/produced/" +
+      case 'producedMO':
+        if (cellvalue[id_by_field['producedMO']] != 0.0)
+           result += grid.formatNumber(cellvalue[id_by_field['producedMO']]) + "<a href='{{request.prefix}}/data/input/manufacturingorder/produced/" +
               admin_escape(rowdata['item']) + "/" +
               admin_escape(rowdata['location']) + "/" +
               options['colModel']['startdate'] + "/" +
@@ -375,9 +416,9 @@ function crosses (cellvalue, options, rowdata)
         else
           result += '0<br>';
         break;
-      case 9:
-        if (cellvalue[9] != 0.0)
-           result += grid.formatNumber(cellvalue[9]) + "<a href='{{request.prefix}}/data/input/distributionorder/produced/" +
+      case 'producedDO':
+        if (cellvalue[id_by_field['producedDO']] != 0.0)
+           result += grid.formatNumber(cellvalue[id_by_field['producedDO']]) + "<a href='{{request.prefix}}/data/input/distributionorder/produced/" +
               admin_escape(rowdata['item']) + "/" +
               admin_escape(rowdata['location']) + "/" +
               options['colModel']['startdate'] + "/" +
@@ -386,9 +427,9 @@ function crosses (cellvalue, options, rowdata)
         else
           result += '0<br>';
         break;
-      case 10:
-        if (cellvalue[10] != 0.0)
-           result += grid.formatNumber(cellvalue[10]) + "<a href='{{request.prefix}}/data/input/purchaseorder/produced/" +
+      case 'producedPO':
+        if (cellvalue[id_by_field['producedPO']] != 0.0)
+           result += grid.formatNumber(cellvalue[id_by_field['producedPO']]) + "<a href='{{request.prefix}}/data/input/purchaseorder/produced/" +
               admin_escape(rowdata['item']) + "/" +
               admin_escape(rowdata['location']) + "/" +
               options['colModel']['startdate'] + "/" +
@@ -397,27 +438,27 @@ function crosses (cellvalue, options, rowdata)
         else
           result += '0<br>';
         break;
-      case 13:
-        if (cellvalue[13] != 0.0)
-           result += grid.formatNumber(cellvalue[13]) + "<a href='{{request.prefix}}/data/input/manufacturingorder/operationplanmaterial/" +
+      case 'work_in_progress_mo':
+        if (cellvalue[id_by_field['work_in_progress_mo']] != 0.0)
+           result += grid.formatNumber(cellvalue[id_by_field['work_in_progress_mo']]) + "<a href='{{request.prefix}}/data/input/manufacturingorder/operationplanmaterial/" +
               admin_escape(rowdata['item']) + "/" + admin_escape(rowdata['location']) +
               "/" + options['colModel']['enddate'] +
               "/?noautofilter'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
           result += '0<br>';
         break;
-      case 14:
-        if (cellvalue[14] != 0.0)
-           result += grid.formatNumber(cellvalue[14]) + "<a href='{{request.prefix}}/data/input/purchaseorder/operationplanmaterial/" +
+      case 'on_order_po':
+        if (cellvalue[id_by_field['on_order_po']] != 0.0)
+           result += grid.formatNumber(cellvalue[id_by_field['on_order_po']]) + "<a href='{{request.prefix}}/data/input/purchaseorder/operationplanmaterial/" +
               admin_escape(rowdata['item']) + "/" + admin_escape(rowdata['location']) +
               "/" + options['colModel']['enddate'] +
               "/?noautofilter'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
           result += '0<br>';
         break;
-      case 15:
-        if (cellvalue[15] != 0.0)
-           result += grid.formatNumber(cellvalue[15]) + "<a href='{{request.prefix}}/data/input/distributionorder/operationplanmaterial/" +
+      case 'in_transit_do':
+        if (cellvalue[id_by_field['in_transit_do']] != 0.0)
+           result += grid.formatNumber(cellvalue[id_by_field['in_transit_do']]) + "<a href='{{request.prefix}}/data/input/distributionorder/operationplanmaterial/" +
               admin_escape(rowdata['item']) + "/" + admin_escape(rowdata['location']) +
               "/" + options['colModel']['enddate'] +
               "/?noautofilter'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";

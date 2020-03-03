@@ -32,7 +32,7 @@ const MetaClass *ProblemMaterialExcess::metadata,
     *ProblemInvalidData::metadata, *ProblemDemandNotPlanned::metadata,
     *ProblemPrecedence::metadata, *ProblemBeforeFence::metadata,
     *ProblemBeforeCurrent::metadata, *ProblemCapacityUnderload::metadata,
-    *ProblemCapacityOverload::metadata;
+    *ProblemCapacityOverload::metadata, *ProblemAwaitSupply::metadata;
 
 int Problem::initialize() {
   // Initialize the problem metadata.
@@ -68,6 +68,8 @@ int Problem::initialize() {
   ProblemBeforeCurrent::metadata =
       MetaClass::registerClass<ProblemBeforeCurrent>("problem",
                                                      "before current", true);
+  ProblemAwaitSupply::metadata = MetaClass::registerClass<ProblemAwaitSupply>(
+      "problem", "await supply", true);
   ProblemCapacityUnderload::metadata =
       MetaClass::registerClass<ProblemCapacityUnderload>("problem", "underload",
                                                          true);
@@ -516,6 +518,9 @@ Problem* Problem::List::push(const MetaClass* m, const Object* o, Date st,
   else if (m == ProblemBeforeFence::metadata)
     p = new ProblemBeforeFence(
         const_cast<Operation*>(dynamic_cast<const Operation*>(o)), st, nd, w);
+  else if (m == ProblemAwaitSupply::metadata)
+    p = new ProblemAwaitSupply(
+        const_cast<Buffer*>(dynamic_cast<const Buffer*>(o)), st, nd, w);
   else
     throw LogicException("Problem factory can't create this type of problem");
 

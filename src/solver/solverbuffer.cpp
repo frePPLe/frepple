@@ -171,6 +171,10 @@ void SolverCreate::solve(const Buffer* b, void* v) {
                           "supply is already available at "
                        << scanner->getDate() << endl;
                 firstmsg1 = false;
+                if (data->logConstraints && data->planningDemand)
+                  data->planningDemand->getConstraints().push(
+                      ProblemAwaitSupply::metadata, b, theDate,
+                      scanner->getDate(), theDelta);
               }
               supply_exists_already = true;
               if (shortage < -prev->getOnhand()) shortage = -prev->getOnhand();
@@ -189,8 +193,7 @@ void SolverCreate::solve(const Buffer* b, void* v) {
       auto theflow = data->state->q_flowplan
                          ? data->state->q_flowplan->getFlow()
                          : nullptr;
-      if (theDelta < -ROUNDING_ERROR && !supply_exists_already &&
-          /*data->constrainedPlanning && */ theflow &&
+      if (theDelta < -ROUNDING_ERROR && !supply_exists_already && theflow &&
           !theflow->getName().empty()) {
         for (auto h = theflow->getOperation()->getFlows().begin();
              h != theflow->getOperation()->getFlows().end() &&
@@ -241,6 +244,10 @@ void SolverCreate::solve(const Buffer* b, void* v) {
                          << h->getBuffer()->getItem() << " at "
                          << scanner->getDate() << endl;
                   firstmsg3 = false;
+                  if (data->logConstraints && data->planningDemand)
+                    data->planningDemand->getConstraints().push(
+                        ProblemAwaitSupply::metadata, b, theDate,
+                        scanner->getDate(), theDelta);
                 }
                 if (shortage < -prev->getOnhand())
                   shortage = -prev->getOnhand();

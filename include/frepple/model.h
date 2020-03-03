@@ -8038,6 +8038,44 @@ class ProblemBeforeFence : public Problem {
   double qty = 0.0;
 };
 
+/* An instance of this class is used to flag constraints where a
+ * replenishment isn't created and we wait for later supply instead.
+ */
+class ProblemAwaitSupply : public Problem {
+ public:
+  string getDescription() const {
+    ostringstream ch;
+    ch << "Buffer '" << static_cast<Buffer*>(getOwner())
+       << "' awaits confirmed supply";
+    return ch.str();
+  }
+
+  bool isFeasible() const { return true; }
+
+  double getWeight() const { return qty; }
+
+  explicit ProblemAwaitSupply(Buffer* b, Date st, Date nd, double q)
+      : Problem(b), dates(st, nd), qty(q) {}
+
+  ~ProblemAwaitSupply() { removeProblem(); }
+
+  string getEntity() const { return "material"; }
+
+  Object* getOwner() const { return static_cast<Buffer*>(owner); }
+
+  const DateRange getDates() const { return dates; }
+
+  /* Return a reference to the metadata structure. */
+  const MetaClass& getType() const { return *metadata; }
+
+  /* Storing metadata on this class. */
+  static const MetaClass* metadata;
+
+ private:
+  DateRange dates;
+  double qty = 0.0;
+};
+
 /* A problem of this class is created when the sequence of two
  * operationplans in a routing isn't respected.
  */

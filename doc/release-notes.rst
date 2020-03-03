@@ -4,6 +4,10 @@ Release notes
 6.4.0 (Upcoming release)
 ========================
 
+.. rubric:: Production planning
+
+- Simpler and more efficient modeling capabilities for make-to-order supply chains.  
+
 6.3.0 (2020/02/28)
 ==================
 

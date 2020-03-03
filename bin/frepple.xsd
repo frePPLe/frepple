@@ -361,6 +361,18 @@
     <xsd:attribute name="cost" type="positiveDouble" />
   </xsd:complexType>
 
+  <xsd:complexType name="item_mto">
+    <xsd:complexContent>
+      <xsd:extension base="item" />
+    </xsd:complexContent>
+  </xsd:complexType>
+ 
+  <xsd:complexType name="item_mts">
+    <xsd:complexContent>
+      <xsd:extension base="item" />
+    </xsd:complexContent>
+  </xsd:complexType>
+  
   <xsd:complexType name="itemlist">
     <xsd:sequence minOccurs="0" maxOccurs="unbounded">
       <xsd:element name="item" type="item" />

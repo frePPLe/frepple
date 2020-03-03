@@ -899,6 +899,7 @@ class DistributionOrder_admin(MultiDBModelAdmin):
                     "shipping_date",
                     "receipt_date",
                     "status",
+                    "batch",
                 )
             },
         ),
@@ -949,6 +950,7 @@ class PurchaseOrder_admin(MultiDBModelAdmin):
                     "ordering_date",
                     "receipt_date",
                     "status",
+                    "batch",
                 )
             },
         ),
@@ -997,6 +999,7 @@ class DeliveryOrder_admin(MultiDBModelAdmin):
                     "location",
                     "quantity",
                     "status",
+                    "batch",
                 )
             },
         ),
@@ -1041,6 +1044,7 @@ class Demand_admin(MultiDBModelAdmin):
                     "customer",
                     "due",
                     "quantity",
+                    "batch",
                     "priority",
                     "status",
                     "description",

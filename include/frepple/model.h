@@ -1642,6 +1642,12 @@ class OperationPlan : public Object,
   static Object* createOperationPlan(const MetaClass*, const DataValueDict&,
                                      CommandManager* = nullptr);
 
+  PooledString getBatch() const { return batch; }
+
+  const string& getBatchString() const { return batch; }
+
+  void setBatch(const string& s) { batch = s; }
+
   /* Shortcut method to the cluster. */
   int getCluster() const;
 
@@ -2204,7 +2210,8 @@ class OperationPlan : public Object,
                            &Cls::setQuantity);
     m->addIteratorField<Cls, OperationPlan::ProblemIterator, Problem>(
         Tags::problems, Tags::problem, &Cls::getProblems, PLAN + WRITE_OBJECT);
-
+    m->addStringRefField<Cls>(Tags::batch, &Cls::getBatchString,
+                              &Cls::setBatch);
     // Default of -999 to enforce serializing the value if it is 0
     m->addDoubleField<Cls>(Tags::criticality, &Cls::getCriticality, nullptr,
                            -999, PLAN);
@@ -2432,6 +2439,9 @@ class OperationPlan : public Object,
 
   /* Setup event of this operationplan. */
   SetupEvent* setupevent = nullptr;
+
+  /* Serial number, batch or sales order for MTO production. */
+  PooledString batch;
 
   /* Quantity. */
   double quantity = 0.0;
@@ -4127,10 +4137,22 @@ class Item : public HasHierarchy<Item>, public HasDescription {
 
 /* This class is the default implementation of the abstract Item
  * class. */
-class ItemDefault : public Item {
+class ItemMTS : public Item {
  public:
   /* Default constructor. */
-  explicit ItemDefault() { initType(metadata); }
+  explicit ItemMTS() { initType(metadata); }
+
+  virtual const MetaClass& getType() const { return *metadata; }
+  static const MetaClass* metadata;
+  static int initialize();
+};
+
+/* This class is the default implementation of the abstract Item
+ * class. */
+class ItemMTO : public Item {
+ public:
+  /* Default constructor. */
+  explicit ItemMTO() { initType(metadata); }
 
   virtual const MetaClass& getType() const { return *metadata; }
   static const MetaClass* metadata;
@@ -6925,6 +6947,12 @@ class Demand : public HasHierarchy<Demand>,
       throw DataException("Demand status not recognized");
   }
 
+  PooledString getBatch() const { return batch; }
+
+  const string& getBatchString() const { return batch; }
+
+  void setBatch(const string& s) { batch = s; }
+
   /* Return a pointer to the next demand for the same item. */
   Demand* getNextItemDemand() const { return nextItemDemand; }
 
@@ -7102,6 +7130,8 @@ class Demand : public HasHierarchy<Demand>,
                          Date::infiniteFuture, PLAN);
     m->addDoubleField<Cls>(Tags::planned_quantity, &Cls::getPlannedQuantity,
                            nullptr, -1.0, PLAN);
+    m->addStringRefField<Cls>(Tags::batch, &Cls::getBatchString,
+                              &Cls::setBatch);
   }
 
  private:
@@ -7161,6 +7191,9 @@ class Demand : public HasHierarchy<Demand>,
 
   /* Hide this demand or not. */
   bool hidden = false;
+
+  /* Batch name */
+  PooledString batch;
 };
 
 class Item::demandIterator {

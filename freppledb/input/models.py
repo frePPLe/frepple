@@ -190,6 +190,11 @@ class Customer(AuditModel, HierarchyModel):
 
 
 class Item(AuditModel, HierarchyModel):
+    types = (
+        ("make to stock", _("make to stock")),
+        ("make to order", _("make to order")),
+    )
+
     # Database fields
     description = models.CharField(
         _("description"), max_length=500, null=True, blank=True
@@ -207,6 +212,9 @@ class Item(AuditModel, HierarchyModel):
         max_digits=20,
         decimal_places=8,
         help_text=_("Cost of the item"),
+    )
+    type = models.CharField(
+        _("type"), max_length=20, null=True, blank=True, choices=types
     )
 
     def __str__(self):
@@ -1464,6 +1472,14 @@ class Demand(AuditModel, HierarchyModel):
         blank=True,
         help_text=_("Maximum lateness allowed when planning this demand"),
     )
+    batch = models.CharField(
+        _("batch"),
+        max_length=300,
+        null=True,
+        blank=True,
+        db_index=True,
+        help_text=_("MTO batch name"),
+    )
     delay = models.DurationField(_("delay"), null=True, blank=True, editable=False)
     plannedquantity = models.DecimalField(
         _("planned quantity"),
@@ -1581,6 +1597,14 @@ class OperationPlan(AuditModel):
         related_name="xchildren",
         help_text=_("Hierarchical parent"),
         on_delete=models.CASCADE,
+    )
+    batch = models.CharField(
+        _("batch"),
+        max_length=300,
+        null=True,
+        blank=True,
+        db_index=True,
+        help_text=_("MTO batch name"),
     )
     # Used for purchase orders and distribution orders
     item = models.ForeignKey(

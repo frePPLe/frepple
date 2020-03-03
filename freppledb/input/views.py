@@ -1896,6 +1896,7 @@ class ItemList(GridReport):
             extra='"role":"input/item"',
         ),
         GridFieldCurrency("cost", title=_("cost")),
+        GridFieldChoice("type", title=_("type"), choices=Item.types),
         GridFieldText("source", title=_("source")),
         GridFieldLastModified("lastmodified"),
     )
@@ -2497,6 +2498,7 @@ class DemandList(GridReport):
         GridFieldNumber(
             "minshipment", title=_("minimum shipment"), initially_hidden=True
         ),
+        GridFieldText("batch", title=_("batch"), field_name="batch"),
         GridFieldText("source", title=_("source")),
         GridFieldLastModified("lastmodified"),
         # Optional fields referencing the item
@@ -3419,6 +3421,7 @@ class ManufacturingOrderList(OperationPlanMixin, GridReport):
             choices=OperationPlan.orderstatus,
             editable=not settings.ERP_CONNECTOR,
         ),
+        GridFieldText("batch", title=_("batch"), field_name="batch"),
         GridFieldNumber(
             "criticality",
             title=_("criticality"),
@@ -3946,6 +3949,7 @@ class DistributionOrderList(OperationPlanMixin, GridReport):
             search=False,
             extra='"formatoptions":{"defaultValue":""}, "summaryType":"sum"',
         ),
+        GridFieldText("batch", title=_("batch"), field_name="batch"),
         GridFieldNumber(
             "criticality",
             title=_("criticality"),
@@ -4410,6 +4414,7 @@ class PurchaseOrderList(OperationPlanMixin, GridReport):
             search=True,
             extra='"formatoptions":{"defaultValue":""}, "summaryType":"sum"',
         ),
+        GridFieldText("batch", title=_("batch"), field_name="batch"),
         GridFieldNumber(
             "criticality",
             title=_("criticality"),
@@ -4708,6 +4713,7 @@ class DeliveryOrderList(GridReport):
             choices=OperationPlan.orderstatus,
             editable=not settings.ERP_CONNECTOR,
         ),
+        GridFieldText("batch", title=_("batch"), field_name="batch"),
         GridFieldDuration(
             "delay",
             title=_("delay"),
@@ -4917,8 +4923,8 @@ class DeliveryOrderList(GridReport):
 
 class InventoryDetail(OperationPlanMixin, GridReport):
     """
-  A list report to show OperationPlanMaterial.
-  """
+    A list report to show OperationPlanMaterial.
+    """
 
     template = "input/operationplanreport.html"
     title = _("Inventory detail")
@@ -5154,6 +5160,12 @@ class InventoryDetail(OperationPlanMixin, GridReport):
             title=_("status"),
             editable=False,
             field_name="operationplan__status",
+        ),
+        GridFieldText(
+            "operationplan__batch",
+            title=_("batch"),
+            editable=False,
+            field_name="operationplan__batch",
         ),
         GridFieldNumber(
             "operationplan__criticality",
@@ -5537,6 +5549,12 @@ class ResourceDetail(OperationPlanMixin, GridReport):
             extra='"formatoptions":{"defaultValue":""}, "summaryType":"sum"',
         ),
         GridFieldText("operationplan__status", title=_("status"), editable=False),
+        GridFieldText(
+            "operationplan__batch",
+            title=_("batch"),
+            editable=False,
+            field_name="operationplan__batch",
+        ),
         GridFieldNumber(
             "operationplan__criticality",
             title=_("criticality"),

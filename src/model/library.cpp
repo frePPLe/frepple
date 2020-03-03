@@ -20,6 +20,7 @@
 
 #define FREPPLE_CORE
 #include <sys/stat.h>
+
 #include "frepple/model.h"
 
 namespace frepple {
@@ -85,7 +86,8 @@ void LibraryModel::initialize() {
   nok += Demand::initialize();
   nok += DemandDefault::initialize();
   nok += Item::initialize();
-  nok += ItemDefault::initialize();
+  nok += ItemMTS::initialize();
+  nok += ItemMTO::initialize();
   nok += SetupMatrixRule::initialize();
   nok += SetupMatrixRuleDefault::initialize();
   nok += SetupMatrix::initialize();

@@ -770,25 +770,38 @@ class loadItems(LoadTask):
                 attrsql = ""
             cursor.execute(
                 """
-        SELECT
-          name, description, owner_id,
-          cost, category, subcategory, source %s
-        FROM item %s
-        """
+                select
+                  name, description, owner_id,
+                  cost, category, subcategory, source, type,
+                  (select type from item p_item where item.owner_id = p_item.name) %s
+                from item %s
+                """
                 % (attrsql, filter_where)
             )
             for i in cursor:
                 cnt += 1
                 try:
-                    x = frepple.item(
-                        name=i[0],
-                        description=i[1],
-                        category=i[4],
-                        subcategory=i[5],
-                        source=i[6],
-                    )
+                    if i[7] == "make to order":
+                        x = frepple.item_mto(
+                            name=i[0],
+                            description=i[1],
+                            category=i[4],
+                            subcategory=i[5],
+                            source=i[6],
+                        )
+                    else:
+                        x = frepple.item_mts(
+                            name=i[0],
+                            description=i[1],
+                            category=i[4],
+                            subcategory=i[5],
+                            source=i[6],
+                        )
                     if i[2]:
-                        x.owner = frepple.item(name=i[2])
+                        if i[8] == "make to order":
+                            x.owner = frepple.item_mto(name=i[2])
+                        else:
+                            x.owner = frepple.item_mto(name=i[2])
                     if i[3]:
                         x.cost = i[3]
                     idx = 7
@@ -1402,7 +1415,7 @@ class loadDemand(LoadTask):
                 SELECT
                   name, due, quantity, priority, item_id,
                   operation_id, customer_id, owner_id, minshipment, maxlateness,
-                  category, subcategory, source, location_id, status
+                  category, subcategory, source, location_id, status, batch
                 FROM demand
                 WHERE (status IS NULL OR status in ('open', 'quote')) %s
                 """
@@ -1421,6 +1434,7 @@ class loadDemand(LoadTask):
                         category=i[10],
                         subcategory=i[11],
                         source=i[12],
+                        batch=i[15],
                     )
                     if i[5]:
                         x.operation = frepple.operation(name=i[5])
@@ -1476,30 +1490,30 @@ class loadOperationPlans(LoadTask):
             starttime = time()
             cursor.execute(
                 """
-        SELECT
-          operationplan.operation_id, operationplan.reference, operationplan.quantity,
-          operationplan.startdate, operationplan.enddate, operationplan.status, operationplan.source,
-          operationplan.type, operationplan.origin_id, operationplan.destination_id, operationplan.supplier_id,
-          operationplan.item_id, operationplan.location_id,
-          coalesce(dmd.name, null)
-        FROM operationplan
-        LEFT OUTER JOIN (select name from demand
-          where demand.status is null or demand.status in ('open', 'quote')
-          ) dmd
-        on dmd.name = operationplan.demand_id
-        WHERE operationplan.owner_id IS NULL
-          and operationplan.quantity >= 0 and operationplan.status <> 'closed'
-          %s%s and operationplan.type in ('PO', 'MO', 'DO', 'DLVR')
-          and (operationplan.startdate is null or operationplan.startdate < '2030-12-31')
-          and (operationplan.enddate is null or operationplan.enddate < '2030-12-31')
-        ORDER BY operationplan.reference ASC
-        """
+                SELECT
+                  operationplan.operation_id, operationplan.reference, operationplan.quantity,
+                  operationplan.startdate, operationplan.enddate, operationplan.status, operationplan.source,
+                  operationplan.type, operationplan.origin_id, operationplan.destination_id, operationplan.supplier_id,
+                  operationplan.item_id, operationplan.location_id, operationplan.batch,
+                  coalesce(dmd.name, null)
+                FROM operationplan
+                LEFT OUTER JOIN (select name from demand
+                  where demand.status is null or demand.status in ('open', 'quote')
+                  ) dmd
+                on dmd.name = operationplan.demand_id
+                WHERE operationplan.owner_id IS NULL
+                  and operationplan.quantity >= 0 and operationplan.status <> 'closed'
+                  %s%s and operationplan.type in ('PO', 'MO', 'DO', 'DLVR')
+                  and (operationplan.startdate is null or operationplan.startdate < '2030-12-31')
+                  and (operationplan.enddate is null or operationplan.enddate < '2030-12-31')
+                ORDER BY operationplan.reference ASC
+                """
                 % (filter_and, confirmed_filter)
             )
             for i in cursor:
                 try:
-                    if i[13]:
-                        dmd = frepple.demand(name=i[13])
+                    if i[14]:
+                        dmd = frepple.demand(name=i[14])
                     else:
                         dmd = None
                     if i[7] == "MO":
@@ -1513,6 +1527,7 @@ class loadOperationPlans(LoadTask):
                             end=i[4],
                             statusNoPropagation=i[5],
                             create=create_flag,
+                            batch=i[13],
                         )
                         if opplan and i[5] == "confirmed":
                             if not consume_material:
@@ -1533,6 +1548,7 @@ class loadOperationPlans(LoadTask):
                             statusNoPropagation=i[5],
                             source=i[6],
                             create=create_flag,
+                            batch=i[13],
                         )
                         if opplan and i[5] == "confirmed":
                             if not consume_capacity:
@@ -1551,6 +1567,7 @@ class loadOperationPlans(LoadTask):
                             statusNoPropagation=i[5],
                             source=i[6],
                             create=create_flag,
+                            batch=i[13],
                         )
                         if opplan and i[5] == "confirmed":
                             if not consume_capacity:
@@ -1570,6 +1587,7 @@ class loadOperationPlans(LoadTask):
                             statusNoPropagation=i[5],
                             source=i[6],
                             create=create_flag,
+                            batch=i[13],
                         )
                         if opplan and i[5] == "confirmed":
                             if not consume_capacity:
@@ -1587,26 +1605,26 @@ class loadOperationPlans(LoadTask):
         with connections[database].chunked_cursor() as cursor:
             cursor.execute(
                 """
-        SELECT
-          operationplan.operation_id, operationplan.reference, operationplan.quantity,
-          operationplan.startdate, operationplan.enddate, operationplan.status,
-          operationplan.owner_id, operationplan.source,
-          coalesce(dmd.name, null)
-        FROM operationplan
-        INNER JOIN (select reference
-          from operationplan
-          ) opplan_parent
-        on operationplan.owner_id = opplan_parent.reference
-        LEFT OUTER JOIN (select name from demand
-          where demand.status is null or demand.status in ('open', 'quote')
-          ) dmd
-        on dmd.name = operationplan.demand_id
-        WHERE operationplan.quantity >= 0 and operationplan.status <> 'closed'
-          %s%s and operationplan.type = 'MO'
-          and (operationplan.startdate is null or operationplan.startdate < '2030-12-31')
-          and (operationplan.enddate is null or operationplan.enddate < '2030-12-31')
-        ORDER BY operationplan.reference ASC
-        """
+                SELECT
+                  operationplan.operation_id, operationplan.reference, operationplan.quantity,
+                  operationplan.startdate, operationplan.enddate, operationplan.status,
+                  operationplan.owner_id, operationplan.source, operationplan.batch,
+                  coalesce(dmd.name, null)
+                FROM operationplan
+                INNER JOIN (select reference
+                  from operationplan
+                  ) opplan_parent
+                on operationplan.owner_id = opplan_parent.reference
+                LEFT OUTER JOIN (select name from demand
+                  where demand.status is null or demand.status in ('open', 'quote')
+                  ) dmd
+                on dmd.name = operationplan.demand_id
+                WHERE operationplan.quantity >= 0 and operationplan.status <> 'closed'
+                  %s%s and operationplan.type = 'MO'
+                  and (operationplan.startdate is null or operationplan.startdate < '2030-12-31')
+                  and (operationplan.enddate is null or operationplan.enddate < '2030-12-31')
+                ORDER BY operationplan.reference ASC
+                """
                 % (filter_and, confirmed_filter)
             )
             for i in cursor:
@@ -1620,6 +1638,7 @@ class loadOperationPlans(LoadTask):
                         start=i[3],
                         end=i[4],
                         statusNoPropagation=i[5],
+                        batch=i[9],
                     )
                     if opplan and i[5] == "confirmed":
                         if not consume_material:
@@ -1648,12 +1667,12 @@ class loadOperationPlans(LoadTask):
             # By limiting the number of digits in the query we enforce reusing numbers at some point.
             cursor.execute(
                 """
-        select coalesce(max(reference::bigint), 0) as max_reference
-        from operationplan
-        where status <> 'proposed'
-        and reference ~ '^[0-9]*$'
-        and char_length(reference) <= 9
-        """
+                select coalesce(max(reference::bigint), 0) as max_reference
+                from operationplan
+                where status <> 'proposed'
+                and reference ~ '^[0-9]*$'
+                and char_length(reference) <= 9
+                """
             )
             d = cursor.fetchone()
             frepple.settings.id = d[0]
@@ -1674,18 +1693,18 @@ class loadOperationPlanMaterials(LoadTask):
             starttime = time()
             cursor.execute(
                 """
-        select
-          operationplan_id, opplanmat.item_id, opplanmat.location_id,
-          coalesce(opplanmat.status, 'confirmed'), opplanmat.quantity,
-          opplanmat.flowdate
-        from operationplanmaterial as opplanmat
-        inner join operationplan
-          on operationplan.reference = opplanmat.operationplan_id
-        where operationplan.type = 'MO'
-          and (opplanmat.status in ('confirmed', 'closed') or opplanmat.status is null)
-          %s
-        order by operationplan_id
-        """
+                select
+                  operationplan_id, opplanmat.item_id, opplanmat.location_id,
+                  coalesce(opplanmat.status, 'confirmed'), opplanmat.quantity,
+                  opplanmat.flowdate
+                from operationplanmaterial as opplanmat
+                inner join operationplan
+                  on operationplan.reference = opplanmat.operationplan_id
+                where operationplan.type = 'MO'
+                  and (opplanmat.status in ('confirmed', 'closed') or opplanmat.status is null)
+                  %s
+                order by operationplan_id
+                """
                 % (
                     "and operationplan.status in ('approved', 'confirmed', 'completed')"
                     if "supply" in os.environ
@@ -1731,15 +1750,15 @@ class loadOperationPlanResources(LoadTask):
             starttime = time()
             cursor.execute(
                 """
-        select
-          operationplan_id, opplanres.resource_id, coalesce(opplanres.status, 'confirmed'), opplanres.source
-        from operationplanresource as opplanres
-        inner join operationplan
-          on operationplan.reference = opplanres.operationplan_id
-        where operationplan.type = 'MO'
-          %s
-        order by resource_id
-        """
+                select
+                  operationplan_id, opplanres.resource_id, coalesce(opplanres.status, 'confirmed'), opplanres.source
+                from operationplanresource as opplanres
+                inner join operationplan
+                  on operationplan.reference = opplanres.operationplan_id
+                where operationplan.type = 'MO'
+                  %s
+                order by resource_id
+                """
                 % (
                     "and operationplan.status in ('approved', 'confirmed', 'completed')"
                     if "supply" in os.environ
@@ -1774,10 +1793,10 @@ class PlanSize(CheckTask):
     @staticmethod
     def run(database=DEFAULT_DB_ALIAS, **kwargs):
         """
-    It is important that all data is loaded at this point. We build out
-    all buffers and their supply paths at this point.
-    If new replenishment methods are added later on, they will not be used.
-    """
+        It is important that all data is loaded at this point. We build out
+        all buffers and their supply paths at this point.
+        If new replenishment methods are added later on, they will not be used.
+        """
         import frepple
 
         frepple.printsize()

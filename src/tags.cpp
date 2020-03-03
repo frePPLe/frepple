@@ -32,6 +32,7 @@ const Keyword Tags::alternate_name("alternate_name");
 const Keyword Tags::approved("approved");
 const Keyword Tags::autocommit("autocommit");
 const Keyword Tags::available("available");
+const Keyword Tags::batch("batch");
 const Keyword Tags::booleanproperty("booleanproperty");
 const Keyword Tags::bucket("bucket");
 const Keyword Tags::buckets("buckets");

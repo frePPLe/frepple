@@ -1423,7 +1423,7 @@ class exportStaticModel(object):
             execute_batch(
                 cursor,
                 "insert into item \
-                (name,description,cost,category,subcategory,source,lastmodified) \
+                (name,description,cost,category,subcategory,type,source,lastmodified) \
                 values(%s,%s,%s,%s,%s,%s,%s)",
                 [
                     (
@@ -1432,6 +1432,9 @@ class exportStaticModel(object):
                         round(i.cost, 8),
                         i.category,
                         i.subcategory,
+                        "make to order"
+                        if isinstance(i, frepple.item_mto)
+                        else "make to stock",
                         i.source,
                         self.timestamp,
                     )

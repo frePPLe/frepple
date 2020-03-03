@@ -33,6 +33,7 @@ class Tags {
   static const Keyword approved;
   static const Keyword autocommit;
   static const Keyword available;
+  static const Keyword batch;
   static const Keyword booleanproperty;
   static const Keyword bucket;
   static const Keyword buckets;

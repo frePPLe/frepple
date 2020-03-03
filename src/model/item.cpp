@@ -26,25 +26,25 @@ namespace frepple {
 template <class Item>
 Tree utils::HasName<Item>::st;
 const MetaCategory* Item::metadata;
-const MetaClass* ItemDefault::metadata;
+const MetaClass *ItemMTO::metadata, *ItemMTS::metadata;
 
 int Item::initialize() {
-  // Initialize the metadata
   metadata =
       MetaCategory::registerCategory<Item>("item", "items", reader, finder);
   registerFields<Item>(const_cast<MetaCategory*>(metadata));
-
-  // Initialize the Python class
   return FreppleCategory<Item>::initialize();
 }
 
-int ItemDefault::initialize() {
-  // Initialize the metadata
-  ItemDefault::metadata = MetaClass::registerClass<ItemDefault>(
-      "item", "item_default", Object::create<ItemDefault>, true);
+int ItemMTS::initialize() {
+  ItemMTS::metadata = MetaClass::registerClass<ItemMTS>(
+      "item", "item_mts", Object::create<ItemMTS>, true);
+  return FreppleClass<ItemMTS, Item>::initialize();
+}
 
-  // Initialize the Python class
-  return FreppleClass<ItemDefault, Item>::initialize();
+int ItemMTO::initialize() {
+  ItemMTO::metadata = MetaClass::registerClass<ItemMTO>(
+      "item", "item_mto", Object::create<ItemMTO>);
+  return FreppleClass<ItemMTO, Item>::initialize();
 }
 
 Item::~Item() {

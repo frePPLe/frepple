@@ -107,7 +107,7 @@
 		<item>
 			<name>component B</name>
 		</item>
-		<item>
+		<item xsi:type="item_mto">
 			<name>item 1</name>
 		</item>
 	</items>
@@ -117,7 +117,7 @@
 			<producing>
 				<name>make item 1</name>
 			</producing>
-			<item>
+			<item xsi:type="item_mto">
 				<name>item 1</name>
 			</item>
 		</buffer>
@@ -142,7 +142,7 @@
 			<name>delivery 1</name>
 			<flows>
 				<flow>
-					<item>
+					<item xsi:type="item_mto">
 						<name>item 1</name>
 					</item>
 					<quantity>-1</quantity>
@@ -161,7 +161,7 @@
 			</loads>
 			<flows>
 				<flow xsi:type="flow_end">
-					<item>
+					<item xsi:type="item_mto">
 						<name>item 1</name>
 					</item>
 					<quantity>1</quantity>
@@ -226,7 +226,7 @@
 		<demand>
 			<name>order 1</name>
 			<quantity>1</quantity>
-			<item>
+			<item xsi:type="item_mto">
 				<name>item 1</name>
 			</item>
 			<customer>
@@ -241,7 +241,7 @@
 		<demand>
 			<name>order 2</name>
 			<quantity>1</quantity>
-			<item>
+			<item xsi:type="item_mto">
 				<name>item 1</name>
 			</item>
 			<customer>
@@ -256,7 +256,7 @@
 		<demand>
 			<name>order 3</name>
 			<quantity>1</quantity>
-			<item>
+			<item xsi:type="item_mto">
 				<name>item 1</name>
 			</item>
 			<customer>

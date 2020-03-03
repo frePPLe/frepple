@@ -24,7 +24,7 @@
     </calendar>
   </calendars>
   <items>
-    <item name="item 1"/>
+    <item name="item 1" xsi:type="item_mto" />
   </items>
   <buffers>
     <buffer name="buffer 1">

@@ -317,7 +317,7 @@
        <operation name="Strange WIP sizes"/>
     </operationplan>
     <!-- WIP on fixed_time operation -->
-    <operationplan id="1001" quantity="10" start="2013-12-31T00:00:00" end="2014-01-05T00:00:00" status="confirmed">
+    <operationplan reference="1001" quantity="10" start="2013-12-31T00:00:00" end="2014-01-05T00:00:00" status="confirmed">
       <operation name="Oper1"/>
       <flowplans>
         <flowplan>
@@ -334,7 +334,7 @@
         </flowplan>
       </flowplans>
     </operationplan>
-    <operationplan id="1002" quantity="10" start="2014-02-01T00:00:00" end="2014-02-05T00:00:00" status="confirmed">
+    <operationplan reference="1002" quantity="10" start="2014-02-01T00:00:00" end="2014-02-05T00:00:00" status="confirmed">
       <operation name="Oper1"/>
       <flowplans>
         <flowplan>
@@ -351,7 +351,7 @@
         </flowplan>
       </flowplans>
     </operationplan>
-    <operationplan id="1003" quantity="10" start="2014-03-01T00:00:00" end="2014-03-05T00:00:00" status="confirmed">
+    <operationplan reference="1003" quantity="10" start="2014-03-01T00:00:00" end="2014-03-05T00:00:00" status="confirmed">
       <operation name="Oper1"/>
       <flowplans>
         <flowplan>
@@ -368,15 +368,15 @@
         </flowplan>
       </flowplans>
     </operationplan>
-    <operationplan id="1004" quantity="10" start="2014-04-01T00:00:00" end="2014-04-05T00:00:00" status="confirmed">
+    <operationplan reference="1004" quantity="10" start="2014-04-01T00:00:00" end="2014-04-05T00:00:00" status="confirmed">
       <operation name="Oper1"/>
     </operationplan>
     <!-- WIP on routing operation -->
-    <operationplan id="3005" quantity="10" end="2014-02-05T00:00:00" status="confirmed">
+    <operationplan reference="3005" quantity="10" end="2014-02-05T00:00:00" status="confirmed">
       <operation name="Oper3"/>
     </operationplan>
-    <operationplan id="3006" quantity="2" start="2014-02-01T00:00:00" end="2014-02-05T00:00:00" status="confirmed">
-      <owner id="3005"/>
+    <operationplan reference="3006" quantity="2" start="2014-02-01T00:00:00" end="2014-02-05T00:00:00" status="confirmed">
+      <owner reference="3005"/>
       <operation name="Oper3B"/>
       <flowplans>
         <flowplan>
@@ -387,22 +387,22 @@
         </flowplan>
       </flowplans>
     </operationplan>
-    <operationplan id="3007" quantity="10" end="2014-04-05T00:00:00" status="approved">
+    <operationplan reference="3007" quantity="10" end="2014-04-05T00:00:00" status="approved">
       <operation name="Oper3"/>
     </operationplan>
-    <operationplan id="3008" quantity="10" start="2014-03-30T00:00:00" status="approved">
-      <owner id="3007"/>
+    <operationplan reference="3008" quantity="10" start="2014-03-30T00:00:00" status="approved">
+      <owner reference="3007"/>
       <operation name="Oper3B"/>
     </operationplan>
-    <operationplan id="3009" quantity="10" start="2014-06-05T00:00:00" status="approved">
+    <operationplan reference="3009" quantity="10" start="2014-06-05T00:00:00" status="approved">
       <operation name="Oper3"/>
     </operationplan>
-    <operationplan id="3010" quantity="10" start="2014-06-10T00:00:00" status="approved">
-      <owner id="3009"/>
+    <operationplan reference="3010" quantity="10" start="2014-06-10T00:00:00" status="approved">
+      <owner reference="3009"/>
       <operation name="Oper3B"/>
     </operationplan>   
     <!-- WIP on alternate operation -->
-    <operationplan id="4005" quantity="10" start="2014-01-01T00:00:00" end="2014-01-05T00:00:00" status="confirmed">
+    <operationplan reference="4005" quantity="10" start="2014-01-01T00:00:00" end="2014-01-05T00:00:00" status="confirmed">
       <operation name="Oper4"/>
       <flowplans>
         <flowplan>
@@ -413,7 +413,7 @@
         </flowplan>
       </flowplans>
     </operationplan>
-    <operationplan id="4006" quantity="10" start="2014-02-01T00:00:00" end="2014-02-05T00:00:00" status="confirmed">
+    <operationplan reference="4006" quantity="10" start="2014-02-01T00:00:00" end="2014-02-05T00:00:00" status="confirmed">
       <operation name="Oper4"/>
       <flowplans>
         <flowplan>
@@ -424,8 +424,8 @@
         </flowplan>
       </flowplans>
     </operationplan>
-    <operationplan id="4007" quantity="10" start="2014-02-01T00:00:00" end="2014-02-05T00:00:00" status="confirmed">
-      <owner id="4006"><operation name="Oper4"/></owner>
+    <operationplan reference="4007" quantity="10" start="2014-02-01T00:00:00" end="2014-02-05T00:00:00" status="confirmed">
+      <owner reference="4006"><operation name="Oper4"/></owner>
       <operation name="Oper4B"/>
       <flowplans>
         <flowplan>
@@ -436,7 +436,7 @@
         </flowplan>
       </flowplans>
     </operationplan>
-    <operationplan id="4008" quantity="10" start="2014-03-01T00:00:00" end="2014-03-05T00:00:00" status="confirmed">
+    <operationplan reference="4008" quantity="10" start="2014-03-01T00:00:00" end="2014-03-05T00:00:00" status="confirmed">
       <operation name="Oper4"/>
       <flowplans>
         <flowplan>
@@ -447,8 +447,8 @@
         </flowplan>
       </flowplans>
     </operationplan>
-    <operationplan id="4009" quantity="10" start="2014-03-01T00:00:00" end="2014-03-05T00:00:00" status="confirmed">
-      <owner id="4008"/>
+    <operationplan reference="4009" quantity="10" start="2014-03-01T00:00:00" end="2014-03-05T00:00:00" status="confirmed">
+      <owner reference="4008"/>
       <operation name="Oper4B"/>
       <flowplans>
         <flowplan>
@@ -459,8 +459,8 @@
         </flowplan>
       </flowplans>
     </operationplan>
-    <operationplan id="4010" quantity="10" start="2014-03-01T00:00:00" end="2014-03-05T00:00:00" status="confirmed">
-      <owner id="4008"/>
+    <operationplan reference="4010" quantity="10" start="2014-03-01T00:00:00" end="2014-03-05T00:00:00" status="confirmed">
+      <owner reference="4008"/>
       <operation name="Oper4A"/>
       <flowplans>
         <flowplan>
@@ -472,19 +472,19 @@
       </flowplans>
     </operationplan>
     <!-- WIP with material and capacity flags -->
-    <operationplan id="5001" quantity="10" start="2019-01-01T00:00:00" status="confirmed">
+    <operationplan reference="5001" quantity="10" start="2019-01-01T00:00:00" status="confirmed">
       <operation name="Oper5"/>
     </operationplan>
-    <operationplan id="5002" quantity="10" start="2019-02-01T00:00:00" status="confirmed" consume_material="false">
+    <operationplan reference="5002" quantity="10" start="2019-02-01T00:00:00" status="confirmed" consume_material="false">
       <operation name="Oper5"/>
     </operationplan>
-    <operationplan id="5003" quantity="10" start="2019-03-01T00:00:00" status="confirmed" produce_material="false">
+    <operationplan reference="5003" quantity="10" start="2019-03-01T00:00:00" status="confirmed" produce_material="false">
       <operation name="Oper5"/>
     </operationplan>
-    <operationplan id="5004" quantity="10" start="2019-04-01T00:00:00" status="confirmed" consume_capacity="false">
+    <operationplan reference="5004" quantity="10" start="2019-04-01T00:00:00" status="confirmed" consume_capacity="false">
       <operation name="Oper5"/>
     </operationplan>
-    <operationplan id="5005" quantity="10" start="2019-05-01T00:00:00" status="confirmed" 
+    <operationplan reference="5005" quantity="10" start="2019-05-01T00:00:00" status="confirmed" 
       consume_material="false" produce_material="false" consume_capacity="false">
       <operation name="Oper5"/>
     </operationplan>

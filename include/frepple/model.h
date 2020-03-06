@@ -1646,7 +1646,12 @@ class OperationPlan : public Object,
 
   const string& getBatchString() const { return batch; }
 
-  void setBatch(const string& s) { batch = s; }
+  void setBatch(const string& t) {
+    PooledString tmp(t);
+    setBatch(tmp);
+  }
+
+  void setBatch(const PooledString&);
 
   /* Shortcut method to the cluster. */
   int getCluster() const;
@@ -1966,7 +1971,6 @@ class OperationPlan : public Object,
    * This method is declared as constant. But actually, it can still update
    * the identifier field if it is wasn't set before.
    */
-  /* Return the external identifier. */
   const string& getReference() const {
     if (getName().empty()) {
       const_cast<OperationPlan*>(this)->assignReference();  // Lazy generation
@@ -2627,7 +2631,8 @@ class Operation : public HasName<Operation>,
 
   /* This is the factory method which creates all operationplans of the
    * operation. */
-  OperationPlan* createOperationPlan(double, Date, Date, Demand* = nullptr,
+  OperationPlan* createOperationPlan(double, Date, Date, const PooledString&,
+                                     Demand* = nullptr,
                                      OperationPlan* = nullptr,
                                      bool makeflowsloads = true,
                                      bool roundDown = true) const;
@@ -3110,6 +3115,7 @@ inline ostream& operator<<(ostream& os, const OperationPlan* o) {
     os << ", " << o->getQuantity() << ", " << o->getStart();
     if (o->getSetupEnd() != o->getStart()) os << " - " << o->getSetupEnd();
     os << " - " << o->getEnd();
+    if (o->getBatch()) os << ", " << o->getBatch();
     if (o->getApproved())
       os << ", approved)";
     else if (o->getCompleted())
@@ -4074,7 +4080,7 @@ class Item : public HasHierarchy<Item>, public HasDescription {
    * order for this item.
    * When none is found, the function returns Date::InfiniteFuture
    */
-  Date findEarliestPurchaseOrder() const;
+  Date findEarliestPurchaseOrder(const PooledString&) const;
 
   /* Return the cluster of this item. */
   int getCluster() const;
@@ -4511,6 +4517,8 @@ class Buffer : public HasHierarchy<Buffer>,
 
   static Buffer* findOrCreate(Item*, Location*);
 
+  static Buffer* findOrCreate(Item*, Location*, const PooledString&);
+
   static Buffer* findFromName(string nm);
 
   /* Builds a producing operation for a buffer.
@@ -4573,6 +4581,14 @@ class Buffer : public HasHierarchy<Buffer>,
     // Trigger level recomputation
     HasLevel::triggerLazyRecomputation();
   }
+
+  PooledString getBatch() const { return batch; }
+
+  const string& getBatchString() const { return batch; }
+
+  void setBatch(const string& s) { batch = s; }
+
+  void setBatch(const PooledString& s) { batch = s; }
 
   /* Returns the minimum inventory level. */
   double getMinimum() const { return min_val; }
@@ -4702,6 +4718,8 @@ class Buffer : public HasHierarchy<Buffer>,
                                   BASE + WRITE_OBJECT_SVC);
     m->addPointerField<Cls, Location>(Tags::location, &Cls::getLocation,
                                       &Cls::setLocation);
+    m->addStringRefField<Cls>(Tags::batch, &Cls::getBatchString,
+                              &Cls::setBatch);
     Plannable::registerFields<Cls>(m);
     m->addDoubleField<Cls>(Tags::onhand, &Cls::getOnHand, &Cls::setOnHand);
     m->addDoubleField<Cls>(Tags::minimum, &Cls::getMinimum, &Cls::setMinimum);
@@ -4784,6 +4802,9 @@ class Buffer : public HasHierarchy<Buffer>,
 
   /* Maintain a linked list of buffers per item. */
   Buffer* nextItemBuffer = nullptr;
+
+  /* Marks MTO buffers. */
+  PooledString batch;
 
   /* A flag that marks whether this buffer represents a tool or not. */
   static const unsigned short TOOL = 1;
@@ -5289,6 +5310,11 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand {
   /* Points to the next flowplan owned by the same operationplan. */
   FlowPlan* nextFlowPlan = nullptr;
 
+  /* For MTS items: flowplan.getBuffer() == flow->getBuffer()
+   * For MTO items: flowplan.getBuffer() != flow->getBuffer()
+   */
+  Buffer* buf = nullptr;
+
   /* Finds the flowplan on the operationplan when we read data. */
   static Object* reader(const MetaClass*, const DataValueDict&,
                         CommandManager*);
@@ -5301,6 +5327,9 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand {
   static const unsigned short STATUS_CLOSED = 2;
   static const unsigned short FOLLOWING_BATCH = 4;
   unsigned short flags = 0;
+
+  /* Internal use only from OperationPlan::setBatch() */
+  void updateBatch();
 
  public:
   static const MetaClass* metadata;
@@ -5326,16 +5355,14 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand {
   /* Returns the flow of which this is an plan instance. */
   Flow* getFlow() const { return fl; }
 
-  /* Returns the buffer, a convenient shortcut. */
-  Buffer* getBuffer() const { return fl ? fl->getBuffer() : nullptr; }
+  /* Returns the buffer. */
+  Buffer* getBuffer() const { return buf; }
 
   /* Returns the operation, a convenient shortcut. */
   Operation* getOperation() const { return fl ? fl->getOperation() : nullptr; }
 
   /* Returns the item being produced or consumed. */
-  Item* getItem() const {
-    return (fl && fl->getBuffer()) ? fl->getBuffer()->getItem() : nullptr;
-  }
+  Item* getItem() const { return buf ? buf->getItem() : nullptr; }
 
   /* Update the flowplan to a different item.
    * The new flow must belong to the same operation.
@@ -5414,9 +5441,9 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand {
 
   /* Destructor. */
   virtual ~FlowPlan() {
-    Buffer* b = getFlow()->getBuffer();
-    b->setChanged();
-    b->flowplans.erase(this);
+    assert(buf);
+    buf->setChanged();
+    buf->flowplans.erase(this);
   }
 
   void setQuantityAPI(double quantity) {
@@ -5453,7 +5480,7 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand {
 
   /* Return a pointer to the timeline data structure owning this flowplan. */
   TimeLine<FlowPlan>* getTimeLine() const {
-    return &(getFlow()->getBuffer()->flowplans);
+    return &(buf->flowplans);
   }
 
   /* Returns true when the flowplan is hidden.
@@ -5464,11 +5491,11 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand {
   void setDate(Date d) {
     if (getConfirmed()) {
       // Update the timeline data structure
-      getFlow()->getBuffer()->flowplans.update(this, getQuantity(), d);
+      buf->flowplans.update(this, getQuantity(), d);
 
       // Mark the operation and buffer as having changed. This will trigger the
       // recomputation of their problems
-      fl->getBuffer()->setChanged();
+      buf->setChanged();
       fl->getOperation()->setChanged();
     } else {
       throw DataException(
@@ -6952,6 +6979,8 @@ class Demand : public HasHierarchy<Demand>,
   const string& getBatchString() const { return batch; }
 
   void setBatch(const string& s) { batch = s; }
+
+  void setBatch(const PooledString& s) { batch = s; }
 
   /* Return a pointer to the next demand for the same item. */
   Demand* getNextItemDemand() const { return nextItemDemand; }
@@ -8587,12 +8616,13 @@ class CommandCreateOperationPlan : public Command {
  public:
   /* Constructor. */
   CommandCreateOperationPlan(const Operation* o, double q, Date d1, Date d2,
-                             Demand* l, OperationPlan* ow = nullptr,
+                             Demand* l, const PooledString& batch,
+                             OperationPlan* ow = nullptr,
                              bool makeflowsloads = true,
                              bool roundDown = true) {
-    opplan =
-        o ? o->createOperationPlan(q, d1, d2, l, ow, makeflowsloads, roundDown)
-          : nullptr;
+    opplan = o ? o->createOperationPlan(q, d1, d2, batch, l, ow, makeflowsloads,
+                                        roundDown)
+               : nullptr;
   }
 
   void commit() {

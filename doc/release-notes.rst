@@ -6,7 +6,11 @@ Release notes
 
 .. rubric:: Production planning
 
-- Simpler and more efficient modeling capabilities for make-to-order supply chains.  
+- | Simpler and more efficient modeling capabilities for 
+    `make-to-order and configure-to-order supply chains <user-guide/examples/buffer/make-to-order.html>`_.
+    The (complete or partial) supply path can now automatically be made specific to a 
+    sales order or an item attribute.
+  | In earlier releases this was already possible, but required a more complex data interface.
 
 6.3.0 (2020/02/28)
 ==================

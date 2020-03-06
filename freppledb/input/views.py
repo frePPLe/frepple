@@ -1092,9 +1092,9 @@ class BufferList(GridReport):
     help_url = "user-guide/modeling-wizard/master-data/buffers.html"
 
     rows = (
-        # . Translators: Translation included with Django
         GridFieldInteger(
             "id",
+            # . Translators: Translation included with Django
             title=_("identifier"),
             key=True,
             formatter="detail",
@@ -1118,6 +1118,7 @@ class BufferList(GridReport):
             formatter="detail",
             extra='"role":"input/item"',
         ),
+        GridFieldText("batch", title=_("batch"), field_name="batch"),
         GridFieldNumber("onhand", title=_("onhand")),
         GridFieldChoice("type", title=_("type"), choices=Buffer.types),
         GridFieldNumber("minimum", title=_("minimum")),
@@ -1132,6 +1133,12 @@ class BufferList(GridReport):
         GridFieldText("source", title=_("source")),
         GridFieldLastModified("lastmodified"),
         # Optional fields referencing the item
+        GridFieldText(
+            "item__type",
+            title=format_lazy("{} - {}", _("item"), _("type")),
+            initially_hidden=True,
+            editable=False,
+        ),
         GridFieldText(
             "item__description",
             title=format_lazy("{} - {}", _("item"), _("description")),
@@ -1578,6 +1585,12 @@ class ItemSupplierList(GridReport):
         GridFieldLastModified("lastmodified"),
         # Optional fields referencing the item
         GridFieldText(
+            "item__type",
+            title=format_lazy("{} - {}", _("item"), _("type")),
+            initially_hidden=True,
+            editable=False,
+        ),
+        GridFieldText(
             "item__description",
             title=format_lazy("{} - {}", _("item"), _("description")),
             initially_hidden=True,
@@ -1730,6 +1743,12 @@ class ItemDistributionList(GridReport):
         GridFieldText("source", title=_("source")),
         GridFieldLastModified("lastmodified"),
         # Optional fields referencing the item
+        GridFieldText(
+            "item__type",
+            title=format_lazy("{} - {}", _("item"), _("type")),
+            initially_hidden=True,
+            editable=False,
+        ),
         GridFieldText(
             "item__description",
             title=format_lazy("{} - {}", _("item"), _("description")),
@@ -2376,6 +2395,12 @@ class OperationMaterialList(GridReport):
         ),
         # Optional fields referencing the item
         GridFieldText(
+            "item__type",
+            title=format_lazy("{} - {}", _("item"), _("type")),
+            initially_hidden=True,
+            editable=False,
+        ),
+        GridFieldText(
             "item__description",
             title=format_lazy("{} - {}", _("item"), _("description")),
             initially_hidden=True,
@@ -2445,6 +2470,7 @@ class DemandList(GridReport):
             formatter="detail",
             extra='"role":"input/item"',
         ),
+        GridFieldText("batch", title=_("batch"), initially_hidden=True),
         GridFieldText(
             "location",
             title=_("location"),
@@ -2502,6 +2528,12 @@ class DemandList(GridReport):
         GridFieldText("source", title=_("source")),
         GridFieldLastModified("lastmodified"),
         # Optional fields referencing the item
+        GridFieldText(
+            "item__type",
+            title=format_lazy("{} - {}", _("item"), _("type")),
+            initially_hidden=True,
+            editable=False,
+        ),
         GridFieldText(
             "item__description",
             title=format_lazy("{} - {}", _("item"), _("description")),
@@ -3357,6 +3389,9 @@ class ManufacturingOrderList(OperationPlanMixin, GridReport):
             extra="role:'input/manufacturingorder'",
             editable=not settings.ERP_CONNECTOR,
         ),
+        GridFieldText(
+            "batch", title=_("batch"), editable="true", initially_hidden=True
+        ),
         GridFieldNumber(
             "color",
             title=_("inventory status"),
@@ -3599,6 +3634,12 @@ class ManufacturingOrderList(OperationPlanMixin, GridReport):
             search=True,
         ),
         # Optional fields referencing the item
+        GridFieldText(
+            "operation__item__type",
+            title=format_lazy("{} - {}", _("item"), _("type")),
+            initially_hidden=True,
+            editable=False,
+        ),
         GridFieldText(
             "operation__item__description",
             title=format_lazy("{} - {}", _("item"), _("description")),
@@ -3886,6 +3927,9 @@ class DistributionOrderList(OperationPlanMixin, GridReport):
             extra='role:"input/distributionorder"',
             editable=not settings.ERP_CONNECTOR,
         ),
+        GridFieldText(
+            "batch", title=_("batch"), editable="true", initially_hidden=True
+        ),
         GridFieldNumber(
             "color",
             title=_("inventory status"),
@@ -3983,6 +4027,12 @@ class DistributionOrderList(OperationPlanMixin, GridReport):
             search=False,
         ),
         # Optional fields referencing the item
+        GridFieldText(
+            "item__type",
+            title=format_lazy("{} - {}", _("item"), _("type")),
+            initially_hidden=True,
+            editable=False,
+        ),
         GridFieldText(
             "item__description",
             title=format_lazy("{} - {}", _("item"), _("description")),
@@ -4350,6 +4400,9 @@ class PurchaseOrderList(OperationPlanMixin, GridReport):
             extra='role:"input/purchaseorder"',
             editable=not settings.ERP_CONNECTOR,
         ),
+        GridFieldText(
+            "batch", title=_("batch"), editable="true", initially_hidden=True
+        ),
         GridFieldNumber(
             "color",
             title=_("inventory status"),
@@ -4448,6 +4501,12 @@ class PurchaseOrderList(OperationPlanMixin, GridReport):
         ),
         GridFieldLastModified("lastmodified"),
         # Optional fields referencing the item
+        GridFieldText(
+            "item__type",
+            title=format_lazy("{} - {}", _("item"), _("type")),
+            initially_hidden=True,
+            editable=False,
+        ),
         GridFieldText(
             "item__description",
             title=format_lazy("{} - {}", _("item"), _("description")),
@@ -4659,14 +4718,17 @@ class DeliveryOrderList(GridReport):
     multiselect = True
     help_url = "user-guide/model-reference/delivery-orders.html"
     rows = (
-        # . Translators: Translation included with Django
         GridFieldText(
             "reference",
+            # . Translators: Translation included with Django
             title=_("reference"),
             key=True,
             formatter="detail",
             extra='role:"input/deliveryorder"',
             editable=not settings.ERP_CONNECTOR,
+        ),
+        GridFieldText(
+            "batch", title=_("batch"), editable="true", initially_hidden=True
         ),
         GridFieldText(
             "demand",
@@ -4722,6 +4784,12 @@ class DeliveryOrderList(GridReport):
             extra='"formatoptions":{"defaultValue":""}, "summaryType":"max"',
         ),
         # Optional fields referencing the item
+        GridFieldText(
+            "item__type",
+            title=format_lazy("{} - {}", _("item"), _("type")),
+            initially_hidden=True,
+            editable=False,
+        ),
         GridFieldText(
             "item__description",
             title=format_lazy("{} - {}", _("item"), _("description")),
@@ -5204,6 +5272,12 @@ class InventoryDetail(OperationPlanMixin, GridReport):
         ),
         # Optional fields referencing the item
         GridFieldText(
+            "item__type",
+            title=format_lazy("{} - {}", _("item"), _("type")),
+            initially_hidden=True,
+            editable=False,
+        ),
+        GridFieldText(
             "item__description",
             title=format_lazy("{} - {}", _("item"), _("description")),
             initially_hidden=True,
@@ -5609,6 +5683,12 @@ class ResourceDetail(OperationPlanMixin, GridReport):
             search=False,
         ),
         # Optional fields referencing the item
+        GridFieldText(
+            "operationplan__operation__item__type",
+            title=format_lazy("{} - {}", _("item"), _("type")),
+            initially_hidden=True,
+            editable=False,
+        ),
         GridFieldText(
             "operationplan__operation__item__description",
             initially_hidden=True,

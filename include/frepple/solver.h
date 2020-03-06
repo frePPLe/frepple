@@ -24,6 +24,7 @@
 
 #include <cmath>
 #include <deque>
+
 #include "frepple/model.h"
 
 namespace frepple {
@@ -776,6 +777,8 @@ class SolverCreate : public Solver {
      */
     bool forceLate;
 
+    PooledString curBatch;
+
     /* This is the quantity we are asking for. */
     double q_qty;
 
@@ -943,15 +946,14 @@ class SolverCreate : public Solver {
     /* A list of recent buffers to detect loops in the supply path. */
     RecentlyUsed<const Buffer*, 10> recent_buffers;
 
-    /* Collect all purchase operations. */
-    struct order_operationitemsuppliers {
-      bool operator()(const OperationItemSupplier* const& lhs,
-                      const OperationItemSupplier* const& rhs) const {
+    /* Collect all buffers replenished from a single supplier. */
+    struct order_buffers {
+      bool operator()(const Buffer* const& lhs,
+                      const Buffer* const& rhs) const {
         return lhs->getName() < rhs->getName();
       }
     };
-    set<const OperationItemSupplier*, order_operationitemsuppliers>
-        purchase_operations;
+    set<const Buffer*, order_buffers> purchase_buffers;
 
    public:
     /* Pointer to the current solver status. */

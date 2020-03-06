@@ -20,6 +20,12 @@ members        list of demand    | Demands are organized in a hierarchical tree.
                                  | This field defines a list of child demand.
 quantity       double            Requested quantity.
 item           item              Requested item.
+batch          string            | Blank/unused for make-to-stock items.
+                                 | For make-to-order items, it identifies the material 
+                                   batch that can be used to satisfy the demand. This field
+                                   can be set to the sales order name (true make-to-order
+                                   production), or it can be set an item attribute (eg color
+                                   of the item).
 location       location          | Requested shipping location.
                                  | This field can be left blank if there is only a single
                                    location in the model, or if a delivery operation is

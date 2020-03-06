@@ -864,6 +864,7 @@
       <xsd:element name="planned_quantity" type="positiveDouble" />
       <xsd:element name="item" type="item" />
       <xsd:element name="location" type="location" />
+      <xsd:element name="batch" type="xsd:normalizedString" />
       <xsd:element name="due" type="xsd:dateTime" />
       <xsd:element name="priority" type="xsd:integer" />
       <xsd:element name="operation" type="operation" />
@@ -883,6 +884,7 @@
       <xsd:element name="constraints" type="problemlist" />
     </xsd:choice>
     <xsd:attributeGroup ref="common_attributes" />
+    <xsd:attribute name="batch" type="xsd:normalizedString" />
     <xsd:attribute name="quantity" type="positiveDouble" />
     <xsd:attribute name="planned_quantity" type="positiveDouble" />
     <xsd:attribute name="due" type="xsd:dateTime" />
@@ -1012,6 +1014,7 @@
       <xsd:element name="ordertype" type="ordertype" />
       <xsd:element name="id" type="xsd:normalizedString" /> <!-- Deprecated. Id is now an alias for reference -->
       <xsd:element name="reference" type="xsd:normalizedString" />
+      <xsd:element name="batch" type="xsd:normalizedString" />
       <xsd:element name="operation" type="operation" />
       <xsd:element name="demand" type="demand" />
       <xsd:element name="start" type="xsd:dateTime" />
@@ -1039,6 +1042,7 @@
     <xsd:attribute name="ordertype" type="ordertype" />
     <xsd:attribute name="id" type="xsd:normalizedString" /> <!-- Deprecated. Id is now an alias for reference -->
     <xsd:attribute name="reference" type="xsd:normalizedString" />
+    <xsd:attribute name="batch" type="xsd:normalizedString" />
     <xsd:attribute name="start" type="xsd:dateTime" />
     <xsd:attribute name="end" type="xsd:dateTime" />
     <xsd:attribute name="quantity" type="positiveDouble" />

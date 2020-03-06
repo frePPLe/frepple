@@ -23,6 +23,24 @@ class Migration(migrations.Migration):
     dependencies = [("input", "0046_sql_role")]
 
     operations = [
+        migrations.AlterModelOptions(
+            name="buffer",
+            options={
+                "ordering": ["item", "location", "batch"],
+                "verbose_name": "buffer",
+                "verbose_name_plural": "buffers",
+            },
+        ),
+        migrations.AddField(
+            model_name="buffer",
+            name="batch",
+            field=models.CharField(
+                blank=True, max_length=300, null=True, verbose_name="batch"
+            ),
+        ),
+        migrations.AlterUniqueTogether(
+            name="buffer", unique_together={("item", "location", "batch")}
+        ),
         migrations.AddField(
             model_name="demand",
             name="batch",

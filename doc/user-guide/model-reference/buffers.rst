@@ -18,11 +18,17 @@ Different types of buffers exist:
 Field            Type              Description
 ================ ================= ===========================================================
 item             item              | Item being stored in the buffer.
-                                   | This is a required field.
+                                   | The combination item+location+batch is the unique primary
+                                     key of this table.
 location         location          | Location of the buffer.
-                                   | This is a required field.
                                    | The working hours and holidays for the buffer are taken
-                                     from the ‘available’ calendar of the location.
+                                     from the available calendar of the location.
+                                   | The combination item+location+batch is the unique primary
+                                     key of this table.
+batch            string            | Blank, unused for make-to-stock items.
+                                   | Batch identification for make-to-order items.
+                                   | The combination item+location+batch is the unique primary
+                                     key of this table.                                                              
 description      string            Free format description.
 category         string            Free format category.
 subcategory      string            | Free format subcategory.

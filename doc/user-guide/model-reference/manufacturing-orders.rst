@@ -18,6 +18,8 @@ operation        operation         The operation to perform.
 start date       DateTime          The date when the operation is starting.
 end date         DateTime          The date when the operation is ending.
 quantity         number            The manufactured quantity.
+batch            string            | Blank/unused for make-to-stock items.
+                                   | Identification of the batch for make-to-order items. 
 status           non-empty string  This field should have one of the following values:
 
                                    * | proposed:

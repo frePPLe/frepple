@@ -96,10 +96,11 @@ void Demand::setItem(Item* i) {
   setChanged();
 }
 
-Date Item::findEarliestPurchaseOrder() const {
+Date Item::findEarliestPurchaseOrder(const PooledString& batch) const {
   Date earliest = Date::infiniteFuture;
   bufferIterator buf_iter(this);
   while (Buffer* buf = buf_iter.next()) {
+    if (buf->getBatch() != batch) continue;
     for (auto flpln = buf->getFlowPlans().begin();
          flpln != buf->getFlowPlans().end(); ++flpln) {
       if (flpln->getDate() >= earliest) break;

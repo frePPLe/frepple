@@ -719,14 +719,15 @@ OperationPlan* SolverCreate::createOperation(const Operation* oper,
     if (data->state->curOwnerOpplan) {
       // There is already an owner and thus also an owner command
       assert(!data->state->curDemand);
-      z = oper->createOperationPlan(opplan_qty, Date::infinitePast,
-                                    max_short_date, data->state->curDemand,
-                                    data->state->curOwnerOpplan, true, false);
+      z = oper->createOperationPlan(
+          opplan_qty, Date::infinitePast, max_short_date, data->state->curBatch,
+          data->state->curDemand, data->state->curOwnerOpplan, true, false);
     } else {
       // There is no owner operationplan yet. We need a new command.
       CommandCreateOperationPlan* a = new CommandCreateOperationPlan(
           oper, opplan_qty, Date::infinitePast, max_short_date,
-          data->state->curDemand, data->state->curOwnerOpplan, true, false);
+          data->state->curDemand, data->state->curBatch,
+          data->state->curOwnerOpplan, true, false);
       data->state->curDemand = nullptr;
       z = a->getOperationPlan();
       data->getCommandManager()->add(a);
@@ -798,22 +799,26 @@ OperationPlan* SolverCreate::createOperation(const Operation* oper,
       if (start_or_end)
         z = oper->createOperationPlan(
             opplan_qty, Date::infinitePast, data->state->q_date,
-            data->state->curDemand, data->state->curOwnerOpplan, true, false);
+            data->state->curBatch, data->state->curDemand,
+            data->state->curOwnerOpplan, true, false);
       else
-        z = oper->createOperationPlan(
-            opplan_qty, data->state->q_date, Date::infinitePast,
-            data->state->curDemand, data->state->curOwnerOpplan, true, false);
+        z = oper->createOperationPlan(opplan_qty, data->state->q_date,
+                                      Date::infinitePast, data->state->curBatch,
+                                      data->state->curDemand,
+                                      data->state->curOwnerOpplan, true, false);
     } else {
       // There is no owner operationplan yet. We need a new command.
       CommandCreateOperationPlan* a;
       if (start_or_end)
         a = new CommandCreateOperationPlan(
             oper, opplan_qty, Date::infinitePast, data->state->q_date,
-            data->state->curDemand, data->state->curOwnerOpplan, true, false);
+            data->state->curDemand, data->state->curBatch,
+            data->state->curOwnerOpplan, true, false);
       else
         a = new CommandCreateOperationPlan(
             oper, opplan_qty, data->state->q_date, Date::infinitePast,
-            data->state->curDemand, data->state->curOwnerOpplan, true, false);
+            data->state->curDemand, data->state->curBatch,
+            data->state->curOwnerOpplan, true, false);
       data->state->curDemand = nullptr;
       z = a->getOperationPlan();
       data->getCommandManager()->add(a);
@@ -876,13 +881,16 @@ OperationPlan* SolverCreate::createOperation(const Operation* oper,
 
 void SolverCreate::solve(const OperationItemSupplier* o, void* v) {
   SolverData* data = static_cast<SolverData*>(v);
-  if (v) data->purchase_operations.insert(o);
+  if (data && data->state->curBuffer &&
+      data->state->curBuffer->getProducingOperation() == o)
+    data->purchase_buffers.insert(data->state->curBuffer);
 
   // Manage global replenishment
   Item* item = o->getBuffer()->getItem();
   if (item && item->getBoolProperty("global_purchase", false) &&
       data->constrainedPlanning &&
-      data->state->q_date <= item->findEarliestPurchaseOrder()) {
+      data->state->q_date <=
+          item->findEarliestPurchaseOrder(data->state->curBatch)) {
     double total_onhand = 0;
     double total_ss = 0;
 
@@ -1003,7 +1011,8 @@ void SolverCreate::solve(const OperationRouting* oper, void* v) {
   // Create the top operationplan
   CommandCreateOperationPlan* a = new CommandCreateOperationPlan(
       oper, a_qty, Date::infinitePast, data->state->q_date,
-      data->state->curDemand, data->state->curOwnerOpplan, false, false);
+      data->state->curDemand, data->state->curBatch,
+      data->state->curOwnerOpplan, false, false);
   data->state->curDemand = nullptr;
 
   // Quantity can be changed because of size constraints on the top operation
@@ -1305,8 +1314,8 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v) {
       // Note that both the top- and the sub-operation can have a flow in the
       // requested buffer
       CommandCreateOperationPlan* a = new CommandCreateOperationPlan(
-          oper, a_qty, Date::infinitePast, ask_date, d, prev_owner_opplan,
-          false, false);
+          oper, a_qty, Date::infinitePast, ask_date, d, data->state->curBatch,
+          prev_owner_opplan, false, false);
       if (!prev_owner_opplan) data->getCommandManager()->add(a);
 
       // Create a sub operationplan
@@ -1478,8 +1487,8 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v) {
       // Note that both the top- and the sub-operation can have a flow in the
       // requested buffer
       CommandCreateOperationPlan* a = new CommandCreateOperationPlan(
-          oper, a_qty, Date::infinitePast, bestQDate, d, prev_owner_opplan,
-          false, false);
+          oper, a_qty, Date::infinitePast, bestQDate, d, data->state->curBatch,
+          prev_owner_opplan, false, false);
       if (!prev_owner_opplan) data->getCommandManager()->add(a);
 
       // Recreate the ask
@@ -1569,8 +1578,8 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v) {
       // Note that both the top- and the sub-operation can have a flow in the
       // requested buffer
       CommandCreateOperationPlan* a = new CommandCreateOperationPlan(
-          oper, a_qty, Date::infinitePast, origQDate, d, prev_owner_opplan,
-          false, false);
+          oper, a_qty, Date::infinitePast, origQDate, d, data->state->curBatch,
+          prev_owner_opplan, false, false);
       if (!prev_owner_opplan) data->getCommandManager()->add(a);
 
       // Recreate the ask
@@ -1708,7 +1717,8 @@ void SolverCreate::solve(const OperationSplit* oper, void* v) {
     // Create the top operationplan.
     top_cmd = new CommandCreateOperationPlan(
         oper, top_flow_qty_per ? origQqty / top_flow_qty_per : origQqty,
-        Date::infinitePast, origQDate, dmd, prev_owner_opplan, false, false);
+        Date::infinitePast, origQDate, dmd, data->state->curBatch,
+        prev_owner_opplan, false, false);
     if (!prev_owner_opplan) data->getCommandManager()->add(top_cmd);
 
     recheck = false;

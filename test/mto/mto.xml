@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<description>
+		Multiple cases to verify the MTO functionality:
+		- 1: a MTS item as reference
+		- 2: a MTO item with a full MTO supply path (except 1 component that is MTS)
+		- 3: a MTS item that is produced through an MTO supply path
+	</description>
+	<current>2020-01-01T00:00:00</current>
+
+	<!-- CASE 1 -->
+	<items>
+		<item name="1 - end item" />
+		<item name="1 - subassembly" />
+		<item name="1 - component A" />
+		<item name="1 - component B" />
+	</items>
+	<suppliers>
+		<supplier name="1 - Supplier">
+			<itemsuppliers>
+				<itemsupplier>
+					<item name="1 - component A" />
+					<leadtime>P7D</leadtime>
+				</itemsupplier>
+				<itemsupplier>
+					<item name="1 - component B" />
+					<leadtime>P7D</leadtime>
+				</itemsupplier>
+			</itemsuppliers>
+		</supplier>
+	</suppliers>
+	<operations>
+		<operation name="1 - make end item"
+			xsi:type="operation_fixed_time">
+			<location name="factory" />
+			<item name="1 - end item" />
+			<duration>P7D</duration>
+			<flows>
+				<flow xsi:type="flow_end">
+					<item name="1 - end item" />
+					<quantity>1</quantity>
+				</flow>
+				<flow xsi:type="flow_start">
+					<item name="1 - subassembly" />
+					<quantity>-1</quantity>
+				</flow>
+			</flows>
+		</operation>
+		<operation name="1 - make subassembly"
+			xsi:type="operation_time_per">
+			<location name="factory" />
+			<item name="1 - subassembly" />
+			<duration>P7D</duration>
+			<flows>
+				<flow xsi:type="flow_end">
+					<item name="1 - subassembly" />
+					<quantity>1</quantity>
+				</flow>
+				<flow xsi:type="flow_start">
+					<item name="1 - component A" />
+					<quantity>-1</quantity>
+				</flow>
+				<flow xsi:type="flow_start">
+					<item name="1 - component B" />
+					<quantity>-1</quantity>
+				</flow>
+			</flows>
+		</operation>
+	</operations>
+	<demands>
+		<demand name="1 - mts1">
+			<quantity>1</quantity>
+			<due>2020-03-01T00:00:00</due>
+			<priority>1</priority>
+			<item name="1 - end item" />
+			<location name="factory" />
+		</demand>
+	</demands>
+
+	<!-- CASE 2 -->
+	<items>
+		<item name="2 - end item" xsi:type="item_mto" />
+		<item name="2 - subassembly" xsi:type="item_mto" />
+		<item name="2 - component A" xsi:type="item_mto" />
+		<item name="2 - component B" xsi:type="item_mts" />
+	</items>
+	<suppliers>
+		<supplier name="2 - Supplier">
+			<itemsuppliers>
+				<itemsupplier>
+					<item name="2 - component A" />
+					<leadtime>P7D</leadtime>
+				</itemsupplier>
+				<itemsupplier>
+					<item name="2 - component B" />
+					<leadtime>P7D</leadtime>
+				</itemsupplier>
+			</itemsuppliers>
+		</supplier>
+	</suppliers>
+	<operations>
+		<operation name="2 - make end item"
+			xsi:type="operation_fixed_time">
+			<location name="factory" />
+			<item name="2 - end item" />
+			<duration>P7D</duration>
+			<flows>
+				<flow xsi:type="flow_end">
+					<item name="2 - end item" />
+					<quantity>1</quantity>
+				</flow>
+				<flow xsi:type="flow_start">
+					<item name="2 - subassembly" />
+					<quantity>-1</quantity>
+				</flow>
+			</flows>
+		</operation>
+		<operation name="2 - make subassembly"
+			xsi:type="operation_time_per">
+			<location name="factory" />
+			<item name="2 - subassembly" />
+			<duration>P7D</duration>
+			<flows>
+				<flow xsi:type="flow_end">
+					<item name="2 - subassembly" />
+					<quantity>1</quantity>
+				</flow>
+				<flow xsi:type="flow_start">
+					<item name="2 - component A" />
+					<quantity>-1</quantity>
+				</flow>
+				<flow xsi:type="flow_start">
+					<item name="2 - component B" />
+					<quantity>-1</quantity>
+				</flow>
+			</flows>
+		</operation>
+	</operations>
+	<demands>
+		<demand name="2 - mto1">
+			<batch>mto1</batch>
+			<quantity>1</quantity>
+			<due>2020-03-01T00:00:00</due>
+			<priority>1</priority>
+			<item name="2 - end item" />
+			<location name="factory" />
+		</demand>
+	</demands>
+	<operationplans>
+		<operationplan reference="2 - PO" ordertype="PO"
+			end="2020-01-01T00:00:00" quantity="100" status="confirmed">
+			<item name="2 - component A" />
+			<location name="factory" />
+			<supplier name="2 - Supplier" />
+			<batch>mto2</batch> <!-- Unusable supply because a different batch -->
+		</operationplan>
+		<operationplan reference="2 - MO"
+			end="2019-12-01T00:00:00" quantity="100" status="confirmed"
+			consume_material="false" produce_material="true">
+			<operation name="2 - make subassembly" />
+			<batch>mto2</batch> <!-- Unusable supply because a different batch -->
+		</operationplan>
+	</operationplans>
+
+	<!-- CASE 3 -->
+	<items>
+		<item name="3 - end item" xsi:type="item_mts" />
+		<item name="3 - subassembly" xsi:type="item_mto" />
+		<item name="3 - component A" xsi:type="item_mto" />
+		<item name="3 - component B" xsi:type="item_mts" />
+	</items>
+	<suppliers>
+		<supplier name="3 - Supplier">
+			<itemsuppliers>
+				<itemsupplier>
+					<item name="3 - component A" />
+					<leadtime>P7D</leadtime>
+				</itemsupplier>
+				<itemsupplier>
+					<item name="3 - component B" />
+					<leadtime>P7D</leadtime>
+				</itemsupplier>
+			</itemsuppliers>
+		</supplier>
+	</suppliers>
+	<operations>
+		<operation name="3 - make end item"
+			xsi:type="operation_fixed_time">
+			<location name="factory" />
+			<item name="3 - end item" />
+			<duration>P7D</duration>
+			<flows>
+				<flow xsi:type="flow_end">
+					<item name="3 - end item" />
+					<quantity>1</quantity>
+				</flow>
+				<flow xsi:type="flow_start">
+					<item name="3 - subassembly" />
+					<quantity>-1</quantity>
+				</flow>
+			</flows>
+		</operation>
+		<operation name="3 - make subassembly"
+			xsi:type="operation_time_per">
+			<location name="factory" />
+			<item name="3 - subassembly" />
+			<duration>P7D</duration>
+			<flows>
+				<flow xsi:type="flow_end">
+					<item name="3 - subassembly" />
+					<quantity>1</quantity>
+				</flow>
+				<flow xsi:type="flow_start">
+					<item name="3 - component A" />
+					<quantity>-1</quantity>
+				</flow>
+				<flow xsi:type="flow_start">
+					<item name="3 - component B" />
+					<quantity>-1</quantity>
+				</flow>
+			</flows>
+		</operation>
+	</operations>
+	<demands>
+		<demand name="3 - mto1">
+			<quantity>1</quantity>
+			<due>2020-03-01T00:00:00</due>
+			<priority>1</priority>
+			<item name="3 - end item" />
+			<location name="factory" />
+		</demand>
+	</demands>
+	<operationplans>
+		<operationplan reference="3 - PO" ordertype="PO"
+			end="2020-01-01T00:00:00" quantity="100" status="confirmed">
+			<item name="3 - component A" />
+			<location name="factory" />
+			<supplier name="3 - Supplier" />
+			<batch>mto2</batch> <!-- Unusable supply because a different batch -->
+		</operationplan>
+		<operationplan reference="3 - MO"
+			end="2019-12-01T00:00:00" quantity="100" status="confirmed"
+			consume_material="false" produce_material="true">
+			<operation name="3 - make subassembly" />
+			<batch>mto2</batch> <!-- Unusable supply because a different batch -->
+		</operationplan>
+	</operationplans>
+  	
+<?python
+print("CREATING CONSTRAINED PLAN")
+frepple.solver_mrp(plantype=1, constraints=15, loglevel=2).solve()
+frepple.saveplan("output.1.xml")
+print("CREATING UNCONSTRAINED PLAN")
+frepple.solver_mrp(plantype=2, constraints=15, loglevel=2).solve()
+frepple.saveplan("output.2.xml")
+frepple.solver_mrp(plantype=2, constraints=0, loglevel=2).solve()
+frepple.saveplan("output.3.xml")
+?>
+
+</plan>

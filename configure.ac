@@ -315,6 +315,7 @@ AC_CONFIG_FILES([
   test/load_bucketized/Makefile
   test/load_effective/Makefile
   test/cluster/Makefile
+  test/mto/Makefile
   test/operation_alternate/Makefile
   test/operation_available/Makefile
   test/operation_effective/Makefile

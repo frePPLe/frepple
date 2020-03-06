@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2007-2013 by frePPLe bvba
+# Copyright (C) 2007-2020 by frePPLe bvba
 #
 # This library is free software; you can redistribute it and/or modify it
 # under the terms of the GNU Affero General Public License as published
@@ -76,7 +76,6 @@ class CalendarBucket_admin(MultiDBModelAdmin):
             "label": _("comments"),
             "view": "admin:input_calendarbucket_comment",
         },
-        # . Translators: Translation included with Django
         {
             "name": "history",
             "label": _("History"),
@@ -105,7 +104,6 @@ class Calendar_admin(MultiDBModelAdmin):
             "label": _("comments"),
             "view": "admin:input_calendar_comment",
         },
-        # . Translators: Translation included with Django
         {
             "name": "history",
             "label": _("History"),
@@ -154,7 +152,6 @@ class Location_admin(MultiDBModelAdmin):
             "label": _("comments"),
             "view": "admin:input_location_comment",
         },
-        # . Translators: Translation included with Django
         {
             "name": "history",
             "label": _("History"),
@@ -183,7 +180,6 @@ class Customer_admin(MultiDBModelAdmin):
             "label": _("comments"),
             "view": "admin:input_customer_comment",
         },
-        # . Translators: Translation included with Django
         {
             "name": "history",
             "label": _("History"),
@@ -225,7 +221,6 @@ class Supplier_admin(MultiDBModelAdmin):
             "label": _("comments"),
             "view": "admin:input_supplier_comment",
         },
-        # . Translators: Translation included with Django
         {
             "name": "history",
             "label": _("History"),
@@ -313,7 +308,6 @@ class Item_admin(MultiDBModelAdmin):
             "label": _("comments"),
             "view": "admin:input_item_comment",
         },
-        # . Translators: Translation included with Django
         {"name": "history", "label": _("History"), "view": "admin:input_item_history"},
     ]
 
@@ -338,7 +332,6 @@ class ItemSupplier_admin(MultiDBModelAdmin):
             "label": _("comments"),
             "view": "admin:input_itemsupplier_comment",
         },
-        # . Translators: Translation included with Django
         {
             "name": "history",
             "label": _("History"),
@@ -367,7 +360,6 @@ class ItemDistribution_admin(MultiDBModelAdmin):
             "label": _("comments"),
             "view": "admin:input_itemdistribution_comment",
         },
-        # . Translators: Translation included with Django
         {
             "name": "history",
             "label": _("History"),
@@ -498,7 +490,6 @@ class Operation_admin(MultiDBModelAdmin):
             "label": _("comments"),
             "view": "admin:input_operation_comment",
         },
-        # . Translators: Translation included with Django
         {
             "name": "history",
             "label": _("History"),
@@ -525,7 +516,16 @@ class Buffer_admin(MultiDBModelAdmin):
     fieldsets = (
         (
             None,
-            {"fields": ("item", "location", "description", "category", "subcategory")},
+            {
+                "fields": (
+                    "item",
+                    "location",
+                    "batch",
+                    "description",
+                    "category",
+                    "subcategory",
+                )
+            },
         ),
         (_("inventory"), {"fields": ("onhand",)}),
         (
@@ -559,7 +559,6 @@ class Buffer_admin(MultiDBModelAdmin):
             "label": _("comments"),
             "view": "admin:input_buffer_comment",
         },
-        # . Translators: Translation included with Django
         {
             "name": "history",
             "label": _("History"),
@@ -594,7 +593,6 @@ class SetupRule_admin(MultiDBModelAdmin):
             "label": _("comments"),
             "view": "admin:input_setuprule_comment",
         },
-        # . Translators: Translation included with Django
         {
             "name": "history",
             "label": _("History"),
@@ -623,7 +621,6 @@ class SetupMatrix_admin(MultiDBModelAdmin):
             "label": _("comments"),
             "view": "admin:input_setupmatrix_comment",
         },
-        # . Translators: Translation included with Django
         {
             "name": "history",
             "label": _("History"),
@@ -651,7 +648,6 @@ class Skill_admin(MultiDBModelAdmin):
             "label": _("comments"),
             "view": "admin:input_skill_comment",
         },
-        # . Translators: Translation included with Django
         {"name": "history", "label": _("History"), "view": "admin:input_skill_history"},
     ]
 
@@ -676,7 +672,6 @@ class ResourceSkill_admin(MultiDBModelAdmin):
             "label": _("comments"),
             "view": "admin:input_resourceskill_comment",
         },
-        # . Translators: Translation included with Django
         {
             "name": "history",
             "label": _("History"),
@@ -730,7 +725,6 @@ class Resource_admin(MultiDBModelAdmin):
             "label": _("comments"),
             "view": "admin:input_resource_comment",
         },
-        # . Translators: Translation included with Django
         {
             "name": "history",
             "label": _("History"),
@@ -776,7 +770,6 @@ class OperationMaterial_admin(MultiDBModelAdmin):
             "label": _("comments"),
             "view": "admin:input_operationmaterial_comment",
         },
-        # . Translators: Translation included with Django
         {
             "name": "history",
             "label": _("History"),
@@ -822,7 +815,6 @@ class OperationResource_admin(MultiDBModelAdmin):
             "label": _("comments"),
             "view": "admin:input_operationresource_comment",
         },
-        # . Translators: Translation included with Django
         {
             "name": "history",
             "label": _("History"),
@@ -1079,7 +1071,6 @@ class Demand_admin(MultiDBModelAdmin):
             "label": _("comments"),
             "view": "admin:input_demand_comment",
         },
-        # . Translators: Translation included with Django
         {
             "name": "history",
             "label": _("History"),

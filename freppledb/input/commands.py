@@ -980,11 +980,35 @@ class loadBuffers(LoadTask):
             starttime = time()
             cursor.execute(
                 """
-        SELECT item_id||' @ '||location_id, description, location_id, item_id, onhand,
-          minimum, minimum_calendar_id, type,
-          min_interval, category, subcategory, source
-        FROM buffer %s
-        """
+                select
+                  case
+                  when batch is not null
+                    and exists (select 1 from item where item.name = buffer.item_id and item.type = 'make to order')
+                    then item_id || ' - ' || batch || ' @ '||location_id
+                  else
+                    item_id ||' @ '||location_id
+                  end as name,
+                  min (description),
+                  min(location_id), min(item_id),
+                  sum(onhand),
+                  min(minimum),
+                  min(minimum_calendar_id),
+                  min(type),
+                  min(min_interval),
+                  min(category),
+                  min(subcategory),
+                  min(source),
+                  min(batch)
+                from buffer
+                -- %s
+                group by case
+                  when batch is not null
+                    and exists (select 1 from item where item.name = buffer.item_id and item.type = 'make to order')
+                    then item_id || ' - ' || batch || ' @ '||location_id
+                  else
+                    item_id ||' @ '||location_id
+                  end
+                """
                 % filter_where
             )
             for i in cursor:
@@ -999,6 +1023,7 @@ class loadBuffers(LoadTask):
                         category=i[9],
                         subcategory=i[10],
                         source=i[11],
+                        batch=i[12],
                     )
                 elif not i[7] or i[7] == "default":
                     b = frepple.buffer(
@@ -1010,6 +1035,7 @@ class loadBuffers(LoadTask):
                         category=i[9],
                         subcategory=i[10],
                         source=i[11],
+                        batch=i[12],
                     )
                     if i[8]:
                         b.mininterval = i[8].total_seconds()
@@ -1044,10 +1070,10 @@ class loadSetupMatrices(LoadTask):
             starttime = time()
             cursor.execute(
                 """
-        SELECT name, source
-        FROM setupmatrix %s
-        ORDER BY name
-        """
+                SELECT name, source
+                FROM setupmatrix %s
+                ORDER BY name
+                """
                 % filter_where
             )
             for i in cursor:
@@ -1065,11 +1091,11 @@ class loadSetupMatrices(LoadTask):
             starttime = time()
             cursor.execute(
                 """
-        SELECT
-          setupmatrix_id, priority, fromsetup, tosetup, duration, cost, source
-        FROM setuprule %s
-        ORDER BY setupmatrix_id, priority DESC
-        """
+                SELECT
+                  setupmatrix_id, priority, fromsetup, tosetup, duration, cost, source
+                FROM setuprule %s
+                ORDER BY setupmatrix_id, priority DESC
+                """
                 % filter_where
             )
             for i in cursor:

@@ -400,7 +400,7 @@ class ExportOperationPlans(PlanTask):
 
                 if isinstance(i, frepple.operation_inventory):
                     # Export inventory
-                    yield "%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\n" % (
+                    yield "%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\n" % (
                         clean_value(i.name),
                         "STCK",
                         j.status,
@@ -433,10 +433,11 @@ class ExportOperationPlans(PlanTask):
                         else "\\N",
                         color,
                         clean_value(j.reference),
+                        "\\N",
                     )
                 elif isinstance(i, frepple.operation_itemdistribution):
                     # Export DO
-                    yield "%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\n" % (
+                    yield "%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\n" % (
                         clean_value(i.name),
                         "DO",
                         j.status,
@@ -475,10 +476,11 @@ class ExportOperationPlans(PlanTask):
                         else "\\N",
                         color,
                         clean_value(j.reference),
+                        clean_value(j.batch),
                     )
                 elif isinstance(i, frepple.operation_itemsupplier):
                     # Export PO
-                    yield "%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\n" % (
+                    yield "%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\n" % (
                         clean_value(i.name),
                         "PO",
                         j.status,
@@ -511,10 +513,11 @@ class ExportOperationPlans(PlanTask):
                         else "\\N",
                         color,
                         clean_value(j.reference),
+                        clean_value(j.batch),
                     )
                 elif not i.hidden:
                     # Export MO
-                    yield "%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\n" % (
+                    yield "%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\n" % (
                         clean_value(i.name),
                         "MO",
                         j.status,
@@ -547,10 +550,11 @@ class ExportOperationPlans(PlanTask):
                         else "\\N",
                         color,
                         clean_value(j.reference),
+                        clean_value(j.batch),
                     )
                 elif j.demand or (j.owner and j.owner.demand):
                     # Export shipments (with automatically created delivery operations)
-                    yield "%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\n" % (
+                    yield "%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\n" % (
                         clean_value(i.name),
                         "DLVR",
                         j.status,
@@ -583,6 +587,7 @@ class ExportOperationPlans(PlanTask):
                         else "\\N",
                         color,
                         clean_value(j.reference),
+                        clean_value(j.batch),
                     )
 
     @classmethod
@@ -617,8 +622,9 @@ class ExportOperationPlans(PlanTask):
                 demand_id character varying(300),
                 due timestamp with time zone,
                 color numeric(20,8),
-                reference character varying(300) NOT NULL
-            );
+                reference character varying(300) NOT NULL,
+                batch character varying(300)
+            )
             """
         )
         cursor.copy_from(
@@ -639,7 +645,7 @@ class ExportOperationPlans(PlanTask):
                 lastmodified=tmp.lastmodified, operation_id=tmp.operation_id, owner_id=tmp.owner_id,
                 item_id=tmp.item_id, destination_id=tmp.destination_id, origin_id=tmp.origin_id,
                 location_id=tmp.location_id, supplier_id=tmp.supplier_id, demand_id=tmp.demand_id,
-                due=tmp.due, color=tmp.color
+                due=tmp.due, color=tmp.color, batch=tmp.batch
             from tmp_operationplan as tmp
             where operationplan.reference = tmp.reference;
             """
@@ -661,13 +667,13 @@ class ExportOperationPlans(PlanTask):
               operation_id,owner_id,
               item_id,destination_id,origin_id,
               location_id,supplier_id,
-              demand_id,due,color,reference)
+              demand_id,due,color,reference,batch)
             select name,type,status,quantity,startdate,enddate,
               criticality,delay * interval '1 second',plan,source,lastmodified,
               operation_id,owner_id,
               item_id,destination_id,origin_id,
               location_id,supplier_id,
-              demand_id,due,color,reference
+              demand_id,due,color,reference,batch
             from tmp_operationplan
             where not exists (
               select 1

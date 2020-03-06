@@ -210,14 +210,9 @@ PyObject *savePlan(PyObject *self, PyObject *args) {
       textoutput << "OPERATION\t" << rr->getOperation() << '\t'
                  << rr->getStart() << '\t' << rr->getEnd() << '\t'
                  << rr->getQuantity();
-      if (rr->getProposed())
-        textoutput << endl;
-      else if (rr->getConfirmed())
-        textoutput << "\tconfirmed" << endl;
-      else if (rr->getApproved())
-        textoutput << "\tapproved" << endl;
-      else
-        throw LogicException("Unknown operationplan status");
+      if (rr->getBatch()) textoutput << "\t" << rr->getBatch();
+      if (!rr->getProposed()) textoutput << "\t" << rr->getStatus();
+      textoutput << endl;
     }
 
     // Write the problem summary.

@@ -175,10 +175,12 @@ OperationPlan::iterator Operation::getOperationPlans() const {
 }
 
 OperationPlan* Operation::createOperationPlan(double q, Date s, Date e,
+                                              const PooledString& batch,
                                               Demand* l, OperationPlan* ow,
                                               bool makeflowsloads,
                                               bool roundDown) const {
   OperationPlan* opplan = new OperationPlan();
+  opplan->setBatch(batch);
   initOperationPlan(opplan, q, s, e, l, ow, makeflowsloads, roundDown);
   return opplan;
 }
@@ -671,7 +673,6 @@ Operation::SetupInfo Operation::calculateSetup(OperationPlan* opplan,
 
   // Loop over each load or loadplan and see check what setup time they need
   bool firstResourceWithSetup = true;
-  static PooledString emptystring;
   auto ldplan = opplan->beginLoadPlans();
   if (ldplan == opplan->endLoadPlans()) {
     // First case: This operationplan doesn't have any loadplans yet.
@@ -693,11 +694,12 @@ Operation::SetupInfo Operation::calculateSetup(OperationPlan* opplan,
           setupevent ? setupevent->getSetupBefore()
                      : ld->getResource()->getSetupAt(setupend, opplan);
       if (prevevent) *prevevent = cursetup;
-      return SetupInfo(ld->getResource(),
-                       ld->getResource()->getSetupMatrix()->calculateSetup(
-                           cursetup ? cursetup->getSetup() : emptystring,
-                           ld->getSetup(), ld->getResource()),
-                       ld->getSetup());
+      return SetupInfo(
+          ld->getResource(),
+          ld->getResource()->getSetupMatrix()->calculateSetup(
+              cursetup ? cursetup->getSetup() : PooledString::emptystring,
+              ld->getSetup(), ld->getResource()),
+          ld->getSetup());
     }
   } else {
     // Second case: This operationplan already has loadplans. Using them
@@ -724,7 +726,7 @@ Operation::SetupInfo Operation::calculateSetup(OperationPlan* opplan,
       return SetupInfo(
           ldplan->getResource(),
           ldplan->getResource()->getSetupMatrix()->calculateSetup(
-              cursetup ? cursetup->getSetup() : emptystring,
+              cursetup ? cursetup->getSetup() : PooledString::emptystring,
               ldplan->getLoad()->getSetup(), ldplan->getResource()),
           ldplan->getLoad()->getSetup());
     }
@@ -766,6 +768,12 @@ Flow* Operation::findFlow(const Buffer* b, Date d) const {
       return const_cast<Flow*>(&*fl);
     else if (!fl->getBuffer() && fl->getItem() == b->getItem() &&
              getLocation() == b->getLocation())
+      return const_cast<Flow*>(&*fl);
+    else if (fl->getBuffer() && b->getBatch() &&
+             fl->getItem() == b->getItem() &&
+             fl->getBuffer()->getLocation() == b->getLocation() &&
+             !fl->getBuffer()->getBatch())
+      // Generic buffer on flow matches a MTO buffer
       return const_cast<Flow*>(&*fl);
   }
   return nullptr;
@@ -1483,7 +1491,8 @@ bool OperationRouting::extraInstantiate(OperationPlan* o, bool createsubopplans,
            ++e) {
         if (p) d -= (*e)->getOperation()->getPostTime();
         p = (*e)->getOperation()->createOperationPlan(
-            o->getQuantity(), Date::infinitePast, d, nullptr, o, 0, true);
+            o->getQuantity(), Date::infinitePast, d, o->getBatch(), nullptr, o,
+            0, true);
         d = p->getStart();
       }
     } else {
@@ -1494,7 +1503,8 @@ bool OperationRouting::extraInstantiate(OperationPlan* o, bool createsubopplans,
       for (auto e = getSubOperations().begin(); e != getSubOperations().end();
            ++e) {
         p = (*e)->getOperation()->createOperationPlan(
-            o->getQuantity(), d, Date::infinitePast, nullptr, nullptr, 0, true);
+            o->getQuantity(), d, Date::infinitePast, o->getBatch(), nullptr,
+            nullptr, 0, true);
         d = p->getEnd() + (*e)->getOperation()->getPostTime();
         p->setOwner(o);  // Required to get the correct ordering of the steps
       }
@@ -1555,7 +1565,8 @@ bool OperationAlternate::extraInstantiate(OperationPlan* o,
     if (altIter != getSubOperations().end())
       // Create an operationplan instance
       (*altIter)->getOperation()->createOperationPlan(
-          o->getQuantity(), o->getStart(), o->getEnd(), nullptr, o, 0, true);
+          o->getQuantity(), o->getStart(), o->getEnd(), o->getBatch(), nullptr,
+          o, 0, true);
   }
   return true;
 }
@@ -1622,7 +1633,7 @@ bool OperationSplit::extraInstantiate(OperationPlan* o, bool createsubopplans,
     (*altIter)->getOperation()->createOperationPlan(
         o->getQuantity() * (*altIter)->getPriority() / sum_percent /
             (f ? f->getQuantity() : 1.0),
-        o->getStart(), enddate, nullptr, o, 0, true);
+        o->getStart(), enddate, o->getBatch(), nullptr, o, 0, true);
   }
   return true;
 }

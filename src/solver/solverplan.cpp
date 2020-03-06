@@ -164,6 +164,7 @@ void SolverCreate::SolverData::push(double q, Date d, bool full) {
     state->forceLate = prevstate->forceLate;
     state->a_cost = prevstate->a_cost;
     state->a_penalty = prevstate->a_penalty;
+    state->curBatch = prevstate->curBatch;
   } else {
     state->q_loadplan = nullptr;
     state->q_flowplan = nullptr;
@@ -175,6 +176,7 @@ void SolverCreate::SolverData::push(double q, Date d, bool full) {
     state->forceLate = false;
     state->a_cost = 0.0;
     state->a_penalty = 0.0;
+    state->curBatch = PooledString::emptystring;
   }
   state->a_date = Date::infiniteFuture;
   state->a_qty = 0.0;
@@ -224,8 +226,8 @@ void SolverCreate::SolverData::commit() {
 
           // Create a delivery operationplan for the remaining quantity
           OperationPlan* deli = deliveryoper->createOperationPlan(
-              plan_qty, Date::infinitePast, (*i)->getDue(), *i, nullptr, 0,
-              false);
+              plan_qty, Date::infinitePast, (*i)->getDue(), (*i)->getBatch(),
+              *i, nullptr, 0, false);
           deli->activate();
 
           // Prepare for next loop
@@ -316,13 +318,11 @@ void SolverCreate::SolverData::commit() {
       }
 
       // Completely recreate all purchasing operation plans
-      for (auto o = purchase_operations.begin(); o != purchase_operations.end();
+      for (auto o = purchase_buffers.begin(); o != purchase_buffers.end();
            ++o) {
-        // Only process buffers replenished from a single supplier
-        if ((*o)->getBuffer()->getProducingOperation() != *o) continue;
-
         // Erase existing proposed purchases
-        const_cast<OperationItemSupplier*>(*o)->deleteOperationPlans(false);
+        const_cast<Buffer*>(*o)->getProducingOperation()->deleteOperationPlans(
+            false);
         // Create new proposed purchases
         auto tmp_buffer_solve_shortages_only = buffer_solve_shortages_only;
         try {
@@ -336,14 +336,15 @@ void SolverCreate::SolverData::commit() {
           state->curDemand = nullptr;
           state->curOwnerOpplan = nullptr;
           state->a_qty = 0;
-          (*o)->getBuffer()->solve(*solver, this);
+          state->curBatch = (*o)->getBatch();
+          (*o)->solve(*solver, this);
           getCommandManager()->commit();
         } catch (...) {
           getCommandManager()->rollback();
         }
         buffer_solve_shortages_only = tmp_buffer_solve_shortages_only;
       }
-      purchase_operations.clear();
+      purchase_buffers.clear();
 
       // Solve for safety stock in buffers.
       if (!solver->getPlanSafetyStockFirst()) solveSafetyStock(solver);
@@ -411,6 +412,7 @@ void SolverCreate::SolverData::solveSafetyStock(SolverCreate* solver) {
         state->curDemand = nullptr;
         state->curOwnerOpplan = nullptr;
         buffer_solve_shortages_only = false;
+        state->curBatch = (*b)->getBatch();
         // Call the buffer safety stock solver
         iteration_count = 0;
         (*b)->solve(*solver, this);

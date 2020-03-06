@@ -522,6 +522,7 @@ class Buffer(AuditModel):
         null=False,
         on_delete=models.CASCADE,
     )
+    batch = models.CharField(_("batch"), max_length=300, null=True, blank=True)
     onhand = models.DecimalField(
         _("onhand"),
         null=True,
@@ -556,11 +557,11 @@ class Buffer(AuditModel):
     )
 
     class Manager(MultiDBManager):
-        def get_by_natural_key(self, item, location):
-            return self.get(item=item, location=location)
+        def get_by_natural_key(self, item, location, batch):
+            return self.get(item=item, location=location, batch=batch)
 
     def natural_key(self):
-        return (self.item, self.location)
+        return (self.item, self.location, self.batch)
 
     objects = Manager()
 
@@ -571,8 +572,8 @@ class Buffer(AuditModel):
         db_table = "buffer"
         verbose_name = _("buffer")
         verbose_name_plural = _("buffers")
-        ordering = ["item", "location"]
-        unique_together = (("item", "location"),)
+        ordering = ["item", "location", "batch"]
+        unique_together = (("item", "location", "batch"),)
 
 
 class SetupMatrix(AuditModel):

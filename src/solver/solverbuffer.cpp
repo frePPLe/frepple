@@ -591,6 +591,7 @@ void SolverCreate::solveSafetyStock(const Buffer* b, void* v) {
         auto data_buffer_solve_shortages_only =
             data->buffer_solve_shortages_only;
         data->buffer_solve_shortages_only = true;
+        data->state->curBatch = b->getBatch();
         b->getProducingOperation()->solve(*this, v);
         data->safety_stock_planning = data_safety_stock_planning;
         data->buffer_solve_shortages_only = data_buffer_solve_shortages_only;

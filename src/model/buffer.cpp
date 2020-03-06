@@ -20,6 +20,7 @@
 
 #define FREPPLE_CORE
 #include <math.h>
+
 #include "frepple/model.h"
 
 // This is the name used for the dummy operation used to represent the
@@ -239,8 +240,8 @@ void Buffer::setOnHand(double f) {
   OperationPlan::iterator i(o);
   if (i == OperationPlan::end()) {
     // No operationplan exists yet
-    OperationPlan* opplan =
-        o->createOperationPlan(fabs(f), Date::infinitePast, Date::infinitePast);
+    OperationPlan* opplan = o->createOperationPlan(
+        fabs(f), Date::infinitePast, Date::infinitePast, getBatch());
     opplan->setClosed(true);
     opplan->activate();
   } else {
@@ -676,6 +677,32 @@ Buffer* Buffer::findOrCreate(Item* itm, Location* loc) {
   b = new BufferDefault();
   b->setItem(itm);
   b->setLocation(loc);
+  b->setName(o.str());
+  return b;
+}
+
+Buffer* Buffer::findOrCreate(Item* itm, Location* loc,
+                             const PooledString& batch) {
+  if (!itm || !loc) return nullptr;
+
+  // Return existing buffer if it exists
+  Item::bufferIterator buf_iter(itm);
+  while (Buffer* tmpbuf = buf_iter.next()) {
+    if (tmpbuf->getLocation() == loc && tmpbuf->getBatch() == batch)
+      return tmpbuf;
+  }
+
+  // Create a new buffer with a unique name
+  stringstream o;
+  o << itm->getName();
+  if (!batch.empty()) o << " - " << batch;
+  o << " @ " << loc->getName();
+  Buffer* b;
+  while ((b = find(o.str()))) o << '*';
+  b = new BufferDefault();
+  b->setItem(itm);
+  b->setLocation(loc);
+  b->setBatch(batch);
   b->setName(o.str());
   return b;
 }

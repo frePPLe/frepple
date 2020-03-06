@@ -309,7 +309,7 @@ Object* OperationPlan::createOperationPlan(const MetaClass* cat,
   const DataValue* py_create = in.get(Tags::create);
   if (py_create) create = py_create->getBool();
 
-  // Get start, end, quantity and status fields
+  // Get start, end, quantity, status and batch fields
   const DataValue* startfld = in.get(Tags::start);
   Date start;
   if (startfld) start = startfld->getDate();
@@ -324,6 +324,9 @@ Object* OperationPlan::createOperationPlan(const MetaClass* cat,
     statusfld = in.get(Tags::statusNoPropagation);
     statuspropagation = false;
   }
+  PooledString batch;
+  const DataValue* batchfld = in.get(Tags::batch);
+  if (batchfld) batch = batchfld->getString();
 
   // Return the existing operationplan
   if (opplan) {
@@ -334,6 +337,7 @@ Object* OperationPlan::createOperationPlan(const MetaClass* cat,
     if (quantityfld || startfld || endfld)
       opplan->setOperationPlanParameters(
           quantityfld ? quantity : opplan->getQuantity(), start, end);
+    opplan->setBatch(batch);
     return opplan;
   }
 
@@ -346,7 +350,8 @@ Object* OperationPlan::createOperationPlan(const MetaClass* cat,
     Buffer* destbuffer = nullptr;
     Item::bufferIterator buf_iter(static_cast<Item*>(itemval));
     while (Buffer* tmpbuf = buf_iter.next()) {
-      if (tmpbuf->getLocation() == static_cast<Location*>(locval)) {
+      if (tmpbuf->getLocation() == static_cast<Location*>(locval) &&
+          tmpbuf->getBatch() == batch) {
         if (destbuffer) {
           stringstream o;
           o << "Multiple buffers found for item '"
@@ -395,14 +400,14 @@ Object* OperationPlan::createOperationPlan(const MetaClass* cat,
       itemsupplier->setPriority(0);
       oper = new OperationItemSupplier(itemsupplier, destbuffer);
       // Create operation plan
-      opplan = static_cast<Operation*>(oper)->createOperationPlan(quantity,
-                                                                  start, end);
+      opplan = static_cast<Operation*>(oper)->createOperationPlan(
+          quantity, start, end, batch);
       new ProblemInvalidData(opplan, "Purchase orders on unauthorized supplier",
                              "operationplan", start, end, quantity);
     } else
       // Create the operationplan
-      opplan = static_cast<Operation*>(oper)->createOperationPlan(quantity,
-                                                                  start, end);
+      opplan = static_cast<Operation*>(oper)->createOperationPlan(
+          quantity, start, end, batch);
 
     // Set operationplan fields
     if (!id.empty())
@@ -424,7 +429,8 @@ Object* OperationPlan::createOperationPlan(const MetaClass* cat,
       // Use the destination location
       Item::bufferIterator buf_iter(static_cast<Item*>(itemval));
       while (Buffer* tmpbuf = buf_iter.next()) {
-        if (tmpbuf->getLocation() == static_cast<Location*>(locval)) {
+        if (tmpbuf->getLocation() == static_cast<Location*>(locval) &&
+            !tmpbuf->getBatch()) {
           if (destbuffer) {
             stringstream o;
             o << "Multiple buffers found for item '"
@@ -457,7 +463,8 @@ Object* OperationPlan::createOperationPlan(const MetaClass* cat,
                fl != opitemdist->getFlows().end(); ++fl) {
             if (fl->getQuantity() < 0 &&
                 fl->getBuffer()->getLocation()->isMemberOf(
-                    static_cast<Location*>(orival)))
+                    static_cast<Location*>(orival)) &&
+                !fl->getBuffer()->getBatch())
               oper = opitemdist;
           }
         } else if (!opitemdist->getOrigin())
@@ -479,7 +486,8 @@ Object* OperationPlan::createOperationPlan(const MetaClass* cat,
         Item::bufferIterator bufiter =
             static_cast<Item*>(itemval)->getBufferIterator();
         while (Buffer* tmpbuf = bufiter.next()) {
-          if (tmpbuf->getLocation() == static_cast<Location*>(orival)) {
+          if (tmpbuf->getLocation() == static_cast<Location*>(orival) &&
+              !tmpbuf->getBatch()) {
             if (originbuffer) {
               stringstream o;
               o << "Multiple buffers found for item '"
@@ -528,7 +536,7 @@ Object* OperationPlan::createOperationPlan(const MetaClass* cat,
 
       // Create operation plan
       opplan = static_cast<Operation*>(oper)->createOperationPlan(
-          quantity, start, end, nullptr, nullptr, 0, false);
+          quantity, start, end, batch, nullptr, nullptr, 0, false);
 
       // Make sure no problem is reported when item distribution priority is 0
       // (Rebalancing) Checking that no item distribution in reverse mode exists
@@ -553,7 +561,7 @@ Object* OperationPlan::createOperationPlan(const MetaClass* cat,
     } else
       // Create operation plan
       opplan = static_cast<Operation*>(oper)->createOperationPlan(
-          quantity, start, end, nullptr, nullptr, 0, false);
+          quantity, start, end, batch, nullptr, nullptr, 0, false);
 
     // Set operationplan fields
     if (!id.empty())
@@ -566,7 +574,8 @@ Object* OperationPlan::createOperationPlan(const MetaClass* cat,
     Buffer* destbuffer = nullptr;
     Item::bufferIterator buf_iter(static_cast<Item*>(itemval));
     while (Buffer* tmpbuf = buf_iter.next()) {
-      if (tmpbuf->getLocation() == static_cast<Location*>(locval)) {
+      if (tmpbuf->getLocation() == static_cast<Location*>(locval) &&
+          tmpbuf->getBatch() == batch) {
         if (destbuffer) {
           stringstream o;
           o << "Multiple buffers found for item '"
@@ -580,10 +589,11 @@ Object* OperationPlan::createOperationPlan(const MetaClass* cat,
     if (!destbuffer)
       // Create the destination buffer
       destbuffer = Buffer::findOrCreate(static_cast<Item*>(itemval),
-                                        static_cast<Location*>(locval));
+                                        static_cast<Location*>(locval), batch);
 
     // Create new operation if not found
-    oper = Operation::find("Ship " + string(destbuffer->getName()));
+    oper = Operation::find("Ship " + static_cast<Item*>(itemval)->getName() +
+                           " @ " + static_cast<Location*>(locval)->getName());
     if (!oper) {
       oper = new OperationDelivery();
       static_cast<OperationDelivery*>(oper)->setBuffer(destbuffer);
@@ -591,7 +601,7 @@ Object* OperationPlan::createOperationPlan(const MetaClass* cat,
 
     // Create operation plan
     opplan = static_cast<Operation*>(oper)->createOperationPlan(quantity, start,
-                                                                end);
+                                                                end, batch);
     static_cast<Demand*>(dmdval)->addDelivery(opplan);
 
     // Set operationplan fields
@@ -605,7 +615,7 @@ Object* OperationPlan::createOperationPlan(const MetaClass* cat,
 
     // Create an operationplan
     opplan = static_cast<Operation*>(oper)->createOperationPlan(
-        quantity, start, end, nullptr, nullptr, false);
+        quantity, start, end, batch, nullptr, nullptr, false);
     if (!id.empty()) opplan->setReference(id);
     if (!opplan->getType().raiseEvent(opplan, SIG_ADD)) {
       delete opplan;
@@ -2180,6 +2190,15 @@ double OperationPlan::getEfficiency(Date d) const {
     return best / 100.0;
   else
     return 0.0;
+}
+
+void OperationPlan::setBatch(const PooledString& s) {
+  if (batch != s) {
+    batch = s;
+    auto flplniter = getFlowPlans();
+    FlowPlan* flpln;
+    while ((flpln = flplniter.next())) flpln->updateBatch();
+  }
 }
 
 Duration OperationPlan::getSetup() const {

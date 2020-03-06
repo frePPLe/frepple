@@ -9,6 +9,31 @@ Field           Type              Description
 =============== ================= ===========================================================
 name            non-empty string  | Unique name of the item.
                                   | This is the key field and a required attribute.
+type            string            Type of item:
+                                                                            
+                                  * | make to stock (default):
+                                    | Inventory, production and consumption of this item is
+                                      managed aggregated.
+
+                                  * | make to order:
+                                    | Inventory, production and consumption of this item is
+                                      managed per batch. Material of different batches is
+                                      planned seperately and can't be mixed. A batch can 
+                                      represent a sales order, a serial number, or an item
+                                      attribute (such as color).
+                                  
+                                  | Supply chains can combine items of both types.
+                                  | For instance, the manufacturing operations are planned
+                                    in make-to-order mode while raw materials are purchased
+                                    in make-to-stock mode. 
+                                  | For instance, end items can be planned in make-to-stock
+                                    mode while the manufacturing operations is planned in
+                                    make-to-order mode with serialzed batch numbers
+                                    that move between production stages.
+                                  | For instance, the final production stages of a product
+                                    can be make-to-order that configure the product, while
+                                    subassemblies going in to the end item can be produced
+                                    in make-to-stock mode.                               
 description     string            Free format description.
 category        string            Free format category.
 subcategory     string            Free format subcategory.

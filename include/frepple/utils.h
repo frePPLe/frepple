@@ -5076,6 +5076,7 @@ class PooledString {
   }
 
  public:
+  const static PooledString emptystring;
   const static string nullstring;
   const static char nullchar;
 

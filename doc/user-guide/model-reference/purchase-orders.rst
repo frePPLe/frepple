@@ -23,6 +23,8 @@ ordering date    datetime          The date when the purchase order is leaving t
 receipt date     datetime          The date of the purchase order delivery.
 start date       datetime          Deprecated alias for the ordering date.
 end date         datetime          Deprecated alias for the receipt date.
+batch            string            | Blank/unused for make-to-stock items.
+                                   | Identification of the batch for make-to-order items. 
 status           string            This field should have one of the following keywords:
                                    
                                    * | proposed:

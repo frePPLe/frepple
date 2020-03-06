@@ -199,11 +199,12 @@ Operation* Demand::getDeliveryOperation() const {
   }
   if (l) {
     // Search for buffers for the requested item and location.
+    // We want the generic buffer, and not any of the mto-buffers.
     bool ok = true;
     Buffer* buf = nullptr;
     Item::bufferIterator buf_iter(getItem());
     while (Buffer* tmpbuf = buf_iter.next()) {
-      if (tmpbuf->getLocation() == l) {
+      if (tmpbuf->getLocation() == l && !tmpbuf->getBatch()) {
         if (buf) {
           // Second buffer found. We don't know which one to pick - abort.
           ok = false;

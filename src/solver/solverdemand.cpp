@@ -73,7 +73,7 @@ void SolverCreate::solve(const Demand* l, void* v) {
     // Determine the quantity to be planned and the date for the planning loop
     double plan_qty = l->getQuantity() - l->getPlannedQuantity();
     Date plan_date = l->getDue();
-    if (getAdministrativeLeadTime()) plan_date -= getAdministrativeLeadTime();
+    plan_date -= getAdministrativeLeadTime();
     if (plan_qty < ROUNDING_ERROR || plan_date == Date::infiniteFuture) {
       if (loglevel > 0) logger << "  Nothing to be planned." << endl;
       data->pop();
@@ -120,7 +120,7 @@ void SolverCreate::solve(const Demand* l, void* v) {
                                              data->constrainedPlanning
                                        : false;
     if (globalPurchase &&
-        l->getDue() >= l->getItem()->findEarliestPurchaseOrder())
+        l->getDue() >= l->getItem()->findEarliestPurchaseOrder(l->getBatch()))
       // Global purchasing is only active until the receipt of the first
       // proposed purchase order of this item. Beyond that date the initial
       // excess is burnt off / redistributed, and every location buys for its
@@ -133,8 +133,11 @@ void SolverCreate::solve(const Demand* l, void* v) {
       Item::bufferIterator iter(item);
 
       while (Buffer* buffer = iter.next()) {
-        // Make sure we don't pick original location
-        if (buffer->getLocation() == originalLocation) continue;
+        // Make sure we don't pick original location.
+        // Also skip buffers that have a different batch.
+        if (buffer->getLocation() == originalLocation ||
+            buffer->getBatch() != l->getBatch())
+          continue;
 
         // We need to calculate the excess
         Calendar* ss_calendar = buffer->getMinimumCalendar();
@@ -176,6 +179,7 @@ void SolverCreate::solve(const Demand* l, void* v) {
         data->planningDemand = const_cast<Demand*>(l);
         data->state->curDemand = const_cast<Demand*>(l);
         data->state->curOwnerOpplan = nullptr;
+        data->state->curBatch = l->getBatch();
         data->recent_buffers.clear();
         deliveryoper->solve(*this, v);
         Date next_date = data->state->a_date;
@@ -197,6 +201,7 @@ void SolverCreate::solve(const Demand* l, void* v) {
             data->state->q_qty = l->getMinShipment();
             data->state->q_date = plan_date;
             data->state->curDemand = const_cast<Demand*>(l);
+            data->state->curBatch = l->getBatch();
             data->recent_buffers.clear();
             deliveryoper->solve(*this, v);
             if (data->state->a_date < next_date)
@@ -227,6 +232,7 @@ void SolverCreate::solve(const Demand* l, void* v) {
                 data->state->q_qty = new_qty;
                 data->state->q_date = plan_date;
                 data->state->curDemand = const_cast<Demand*>(l);
+                data->state->curBatch = l->getBatch();
                 data->recent_buffers.clear();
                 deliveryoper->solve(*this, v);
                 if (data->state->a_date < next_date)
@@ -251,6 +257,7 @@ void SolverCreate::solve(const Demand* l, void* v) {
                 data->state->q_qty = min_qty;
                 data->state->q_date = plan_date;
                 data->state->curDemand = const_cast<Demand*>(l);
+                data->state->curBatch = l->getBatch();
                 data->recent_buffers.clear();
                 deliveryoper->solve(*this, v);
               }
@@ -364,6 +371,7 @@ void SolverCreate::solve(const Demand* l, void* v) {
                 data->state->q_qty = remainder;
                 data->state->q_date = copy_plan_date;
                 data->state->curDemand = const_cast<Demand*>(l);
+                data->state->curBatch = l->getBatch();
                 data->state->curBuffer = nullptr;
                 data->recent_buffers.clear();
                 deliveryoper->solve(*this, v);
@@ -453,6 +461,7 @@ void SolverCreate::solve(const Demand* l, void* v) {
           data->state->q_qty = remainder;
           data->state->q_date = best_q_date;
           data->state->curDemand = const_cast<Demand*>(l);
+          data->state->curBatch = l->getBatch();
           data->state->curBuffer = nullptr;
           data->recent_buffers.clear();
           deliveryoper->solve(*this, v);

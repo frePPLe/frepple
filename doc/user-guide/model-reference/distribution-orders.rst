@@ -54,6 +54,8 @@ shipping date    dateTime          The date when the distribution order is leavi
 receipt date     dateTime          The date of the distribution order delivery.
 start date       dateTime          Deprecated alias for the shipping date.
 end date         datetime          Deprecated alias for the receipt date.
+batch            string            | Blank/unused for make-to-stock items.
+                                   | Identification of the batch for make-to-order items. 
 status           string            This field should have one of the following keywords:
                                    
                                    * | proposed:

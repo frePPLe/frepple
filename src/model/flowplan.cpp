@@ -59,13 +59,28 @@ FlowPlan::FlowPlan(OperationPlan* opplan, const Flow* f)
     // First in the list
     opplan->firstflowplan = this;
 
+  // Find the buffer
+  if (fl->getBuffer() && fl->getBuffer()->getItem() &&
+      fl->getBuffer()->getItem()->hasType<ItemMTO>()) {
+    /*
+    if (!opplan->getBatch())
+      // Automagically generate a batch number
+      opplan->setBatch(opplan->getReference());
+    */
+    buf = Buffer::findOrCreate(fl->getBuffer()->getItem(),
+                               fl->getBuffer()->getLocation(),
+                               opplan->getBatch());
+  } else
+    buf = fl->getBuffer();
+  assert(buf);
+
   // Compute the flowplan quantity
   auto fl_info = fl->getFlowplanDateQuantity(this);
-  fl->getBuffer()->flowplans.insert(this, fl_info.second, fl_info.first);
+  buf->flowplans.insert(this, fl_info.second, fl_info.first);
 
   // Mark the operation and buffer as having changed. This will trigger the
   // recomputation of their problems
-  fl->getBuffer()->setChanged();
+  buf->setChanged();
   fl->getOperation()->setChanged();
 }
 
@@ -86,12 +101,28 @@ FlowPlan::FlowPlan(OperationPlan* opplan, const Flow* f, Date d, double q)
     // First in the list
     opplan->firstflowplan = this;
 
+  // Find the buffer
+  if (fl->getBuffer() && fl->getBuffer()->getItem() &&
+      fl->getBuffer()->getItem()->hasType<ItemMTO>()) {
+    /*
+    if (!opplan->getBatch())
+      // Automagically generate a batch number
+      opplan->setBatch(opplan->getReference());
+    */
+    if (fl->getBuffer()->getItem()->hasType<ItemMTO>() && opplan->getBatch())
+      buf = Buffer::findOrCreate(fl->getBuffer()->getItem(),
+                                 fl->getBuffer()->getLocation(),
+                                 opplan->getBatch());
+  } else
+    buf = fl->getBuffer();
+  assert(buf);
+
   // Compute the flowplan quantity
-  fl->getBuffer()->flowplans.insert(this, q, d);
+  buf->flowplans.insert(this, q, d);
 
   // Mark the operation and buffer as having changed. This will trigger the
   // recomputation of their problems
-  fl->getBuffer()->setChanged();
+  buf->setChanged();
   fl->getOperation()->setChanged();
 }
 
@@ -117,12 +148,32 @@ void FlowPlan::setStatus(const string& s) {
 void FlowPlan::update() {
   // Update the timeline data structure
   auto fl_info = fl->getFlowplanDateQuantity(this);
-  fl->getBuffer()->flowplans.update(this, fl_info.second, fl_info.first);
+  buf->flowplans.update(this, fl_info.second, fl_info.first);
 
   // Mark the operation and buffer as having changed. This will trigger the
   // recomputation of their problems
-  fl->getBuffer()->setChanged();
+  buf->setChanged();
   fl->getOperation()->setChanged();
+}
+
+void FlowPlan::updateBatch() {
+  // Remove from the old buffer, if there is one
+  if (buf) {
+    buf->flowplans.erase(this);
+    buf->setChanged();
+    buf->flowplans.check();
+  }
+
+  // Insert in the new buffer
+  PooledString batch = getOperationPlan()->getBatch();
+  if (fl->getBuffer()->getItem()->hasType<ItemMTO>() && batch)
+    buf = Buffer::findOrCreate(fl->getBuffer()->getItem(),
+                               fl->getBuffer()->getLocation(), batch);
+  else
+    buf = fl->getBuffer();
+  buf->flowplans.insert(this, getQuantity(), getDate());
+  buf->setChanged();
+  buf->flowplans.check();
 }
 
 void FlowPlan::setFlow(Flow* newfl) {
@@ -134,21 +185,28 @@ void FlowPlan::setFlow(Flow* newfl) {
   if (newfl->getType() != fl->getType())
     throw DataException("Flowplans can only switch to flows of the same type");
 
+  PooledString batch;
+  if (buf) batch = buf->getBatch();
   if (!newfl->hasType<FlowTransferBatch>() || !fl) {
     // Remove from the old buffer, if there is one
     if (fl) {
       if (fl->getOperation() != newfl->getOperation())
         throw DataException(
             "Only switching to a flow on the same operation is allowed");
-      fl->getBuffer()->flowplans.erase(this);
-      fl->getBuffer()->setChanged();
+      buf->flowplans.erase(this);
+      buf->setChanged();
     }
 
     // Insert in the new buffer
     fl = newfl;
     auto fl_info = fl->getFlowplanDateQuantity(this);
-    fl->getBuffer()->flowplans.insert(this, fl_info.second, fl_info.first);
-    fl->getBuffer()->setChanged();
+    if (fl->getBuffer()->getItem()->hasType<ItemMTO>() && !batch.empty())
+      buf = Buffer::findOrCreate(fl->getBuffer()->getItem(),
+                                 fl->getBuffer()->getLocation(), batch);
+    else
+      buf = fl->getBuffer();
+    buf->flowplans.insert(this, fl_info.second, fl_info.first);
+    buf->setChanged();
     fl->getOperation()->setChanged();
   } else {
     // Switch all flowplans of the same transfer batch
@@ -156,20 +214,24 @@ void FlowPlan::setFlow(Flow* newfl) {
     if (oldFlow->getOperation() != newfl->getOperation())
       throw DataException(
           "Only switching to a flow on the same operation is allowed");
+    if (fl->getBuffer()->getItem()->hasType<ItemMTO>() && !batch.empty())
+      buf = Buffer::findOrCreate(fl->getBuffer()->getItem(),
+                                 fl->getBuffer()->getLocation(), batch);
+    else
+      buf = fl->getBuffer();
     for (auto flpln = getOperationPlan()->beginFlowPlans();
          flpln != getOperationPlan()->endFlowPlans(); ++flpln) {
       if (flpln->getFlow() != oldFlow) continue;
 
       // Remove from the old buffer
-      flpln->getBuffer()->flowplans.erase(&*flpln);
-      flpln->getBuffer()->setChanged();
+      flpln->buf->flowplans.erase(&*flpln);
+      flpln->buf->setChanged();
 
       // Insert in the new buffer
       flpln->fl = newfl;
       auto fl_info = flpln->fl->getFlowplanDateQuantity(&*flpln);
-      flpln->fl->getBuffer()->flowplans.insert(&*flpln, fl_info.second,
-                                               fl_info.first);
-      flpln->fl->getBuffer()->setChanged();
+      buf->flowplans.insert(&*flpln, fl_info.second, fl_info.first);
+      buf->setChanged();
       flpln->fl->getOperation()->setChanged();
     }
   }
@@ -201,11 +263,11 @@ pair<double, double> FlowPlan::setQuantity(double quantity, bool rounddown,
     // quantity of the owning operationplan.
     if (execute) {
       // Update the timeline data structure
-      getFlow()->getBuffer()->flowplans.update(this, quantity, getDate());
+      buf->flowplans.update(this, quantity, getDate());
 
       // Mark the operation and buffer as having changed. This will trigger the
       // recomputation of their problems
-      fl->getBuffer()->setChanged();
+      buf->setChanged();
       fl->getOperation()->setChanged();
     }
     return make_pair(quantity, oper->getQuantity());

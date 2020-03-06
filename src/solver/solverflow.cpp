@@ -189,12 +189,13 @@ void SolverCreate::solve(const Flow* fl,
         -fl->getQuantityFixed() - data->state->q_qty_min * fl->getQuantity();
     data->state->q_date = data->state->q_flowplan->getDate();
     if (data->state->q_qty != 0.0) {
-      fl->getBuffer()->solve(*this, data);
+      auto thebuf = data->state->q_flowplan->getBuffer();
+      thebuf->solve(*this, data);
       if (data->state->a_date > fl->getEffective().getEnd()) {
         // The reply date must be less than the effectivity end date: after
         // that date the flow in question won't consume any material any more.
         if (getLogLevel() > 1 && data->state->a_qty < ROUNDING_ERROR)
-          logger << indentlevel << "Buffer '" << fl->getBuffer()->getName()
+          logger << indentlevel << "Buffer '" << thebuf
                  << "' answer date is adjusted to "
                  << fl->getEffective().getEnd()
                  << " because of a date effective flow" << endl;

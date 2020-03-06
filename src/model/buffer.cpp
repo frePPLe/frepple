@@ -695,14 +695,14 @@ Buffer* Buffer::findOrCreate(Item* itm, Location* loc,
   // Create a new buffer with a unique name
   stringstream o;
   o << itm->getName();
-  if (!batch.empty()) o << " - " << batch;
+  if (batch) o << " - " << batch;
   o << " @ " << loc->getName();
   Buffer* b;
   while ((b = find(o.str()))) o << '*';
   b = new BufferDefault();
   b->setItem(itm);
   b->setLocation(loc);
-  b->setBatch(batch);
+  if (batch) b->setBatch(batch);
   b->setName(o.str());
   return b;
 }

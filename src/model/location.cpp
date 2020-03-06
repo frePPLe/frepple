@@ -49,16 +49,34 @@ int LocationDefault::initialize() {
 
 Location::~Location() {
   // Remove all references from buffers to this location
-  for (auto buf = Buffer::begin(); buf != Buffer::end(); ++buf)
-    if (buf->getLocation() == this) buf->setLocation(nullptr);
+  for (auto buf = Buffer::begin(); buf != Buffer::end();) {
+    if (buf->getLocation() == this) {
+      auto tmp = &*buf;
+      ++buf;
+      delete tmp;
+    } else
+      ++buf;
+  }
 
   // Remove all references from resources to this location
-  for (auto res = Resource::begin(); res != Resource::end(); ++res)
-    if (res->getLocation() == this) res->setLocation(nullptr);
+  for (auto res = Resource::begin(); res != Resource::end();) {
+    if (res->getLocation() == this) {
+      auto tmp = &*res;
+      ++res;
+      delete tmp;
+    } else
+      ++res;
+  }
 
   // Remove all references from operations to this location
-  for (auto oper = Operation::begin(); oper != Operation::end(); ++oper)
-    if (oper->getLocation() == this) oper->setLocation(nullptr);
+  for (auto oper = Operation::begin(); oper != Operation::end();) {
+    if (oper->getLocation() == this) {
+      auto tmp = &*oper;
+      ++oper;
+      delete tmp;
+    } else
+      ++oper;
+  }
 
   // Remove all references from demands to this location
   for (auto dmd = Demand::begin(); dmd != Demand::end(); ++dmd)

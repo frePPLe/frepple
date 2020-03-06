@@ -174,7 +174,7 @@ frepple.erase(False)
 # Now we delete a location. Its sublocations will get a new parent.
 # References to the location are being removed from buffers and
 # resources.
-frepple.location(name="Location 1", action="R")
+frepple.location(name="Sublocation 1", action="R")
 frepple.saveXMLfile("output.5.xml")
 
 # Now we delete a customer. References to it will be removed from demands.

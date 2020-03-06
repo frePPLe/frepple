@@ -14,7 +14,7 @@
 			<name>All places</name>
 		</location>
 		<location>
-			<name>Sublocation 1</name>
+			<name>Location 1</name>
 			<owner>
 				<name>All places</name>
 			</owner>
@@ -22,7 +22,7 @@
 		<location>
 			<name>Sublocation 2</name>
 			<owner>
-				<name>All places</name>
+				<name>Location 1</name>
 			</owner>
 		</location>
 	</locations>
@@ -86,11 +86,8 @@
 			<maximum_calendar>
 				<name>assembly capacity</name>
 			</maximum_calendar>
-		</resource>
-		<resource>
-			<name>transport</name>
 			<location>
-				<name>Sublocation 1</name>
+				<name>Location 1</name>
 			</location>
 		</resource>
 	</resources>
@@ -114,6 +111,9 @@
 			<item xsi:type="item_mto">
 				<name>item 1</name>
 			</item>
+			<location>
+				<name>Location 1</name>
+			</location>
 		</buffer>
 		<buffer>
 			<name>buffer A</name>
@@ -123,12 +123,18 @@
 			<item>
 				<name>component A</name>
 			</item>
+			<location>
+				<name>Location 1</name>
+			</location>
 		</buffer>
 		<buffer>
 			<name>buffer B</name>
 			<item>
 				<name>component B</name>
 			</item>
+			<location>
+				<name>Location 1</name>
+			</location>
 		</buffer>
 	</buffers>
 	<operations>

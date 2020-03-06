@@ -16,7 +16,6 @@ The installer is 64-bit and has been tested on Windows 10.
 #. **Start the installer**
 
    .. image:: _images/wininstall0.png
-     :scale: 50 %
 
 #. **Accept the license agreement**
 
@@ -24,14 +23,12 @@ The installer is 64-bit and has been tested on Windows 10.
    GNU Affero General Public License (aka AGPL) or to buy a commercial license.
 
    .. image:: _images/wininstall1.png
-     :scale: 50 %
 
 #. **Select the installation directory**
 
    A different location is selected depending on the user name.
 
    .. image:: _images/wininstall3.png
-     :scale: 50 %
 
 #. **Select the license file**
 
@@ -41,14 +38,12 @@ The installer is 64-bit and has been tested on Windows 10.
    The license file contains the customer name, validity date and licensed modules.
 
    .. image:: _images/wininstall4.png
-     :scale: 50 %
 
 #. **Select the components to install**
 
    Optional extra components can be enabled.
 
    .. image:: _images/wininstall5.png
-     :scale: 50 %
 
    - **Install and configure the PostgreSQL database.**
 
@@ -112,7 +107,6 @@ The installer is 64-bit and has been tested on Windows 10.
       database fails, or if you followed the regular install.
 
    .. image:: _images/wininstall6.png
-     :scale: 50 %
 
    Your selections are saved in the file custom/djangosettings.py. The file can
    later be edited with a text editor.
@@ -123,7 +117,6 @@ The installer is 64-bit and has been tested on Windows 10.
    monitor the creation of the database schema.
 
    .. image:: _images/wininstall7.png
-     :scale: 50 %
 
 #. **Finish**
 
@@ -137,7 +130,6 @@ The installer is 64-bit and has been tested on Windows 10.
    in development).
 
    .. image:: _images/wininstall8.png
-     :scale: 50 %
 
 #. **Start the server**
 
@@ -190,6 +182,6 @@ The installer is 64-bit and has been tested on Windows 10.
   Multiple versions of frePPLe can be installed on the same machine, but not when using the
   PostgreSQL database included with the installer.
 
-  Multiple installations of the same release can’t. If you’ld need such a setup, it is better to
+  Multiple installations of the same release can't. If you'd need such a setup, it is better to
   install once and create different copies of the custom folder. Each copy will get need different
   parameter file djangosettings.py.

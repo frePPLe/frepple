@@ -1,5 +1,5 @@
 ====================
-Operation Alternates
+Alternate operations
 ====================
 
 Alternate operations are operations that produce the same item in a given location.
@@ -19,9 +19,6 @@ over another one when generating the supply plan.
 
 
 .. image:: _images/round_table_supply_path.png
-   :height: 375 px
-   :width: 1210 px
-   :scale: 100 %
    :alt: Supply path for round table
 
 In this example, there are 2 alternate operations to produce item *round table*. The two operations have the same 
@@ -33,9 +30,6 @@ then frePPLe understands that these two operations are alternate and will apply 
 the plan.
 
 .. image:: _images/round_table_operation.png
-   :height: 150 px
-   :width: 1210 px
-   :scale: 100 %
    :alt: Operations to produce round table.
    
 The *search mode* field is what will be read by the solver to determine which operation to pick when generating a manufacturing order.
@@ -50,9 +44,6 @@ If the search mode is left blank, frePPLe will assume that search mode is *prior
   To be accurate, frePPLe will pick the operation with the highest priority as long as no demand is planned late. In below screenshot, we have 3 demands of 250 units for *round table* item with due date far in the future:
 
   .. image:: _images/round_table_resource_detail.png
-     :height: 150 px
-     :width: 1210 px
-     :scale: 100 %
      :alt: Resource detail for round table
 
   We can see that frePPLe anticipates some demands that are delivered early to make sure *Assemble round table with new machine* operation is used.
@@ -61,9 +52,6 @@ If the search mode is left blank, frePPLe will assume that search mode is *prior
   *Assemble round table with new machine* operation, this is what will happen:
 
   .. image:: _images/round_table_resource_detail_2.png
-     :height: 150 px
-     :width: 1210 px
-     :scale: 100 %
      :alt: Resource detail for round table
 
   We can see from above screenshot that frePPLe has picked operation *Assemble round table with old machine* to make sure no demand would not be delivered late.

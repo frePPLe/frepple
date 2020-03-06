@@ -4,11 +4,7 @@ Generate a plan
 
 The plan generation screen can be found under the Admin/Execute menu.
 
-
 .. image:: _images/create_a_plan.png
-   :height: 558 px
-   :width: 676 px
-   :scale: 100 %
    :alt: Generate a plan
 
 This option runs the frePPLe planning engine with the input data from the

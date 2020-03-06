@@ -34,7 +34,6 @@ can be replenished with a purchase order to a specific vendor.
 
 .. image:: _images/modeling-purchase.png
    :alt: Modeling - Purchase operation
-   :scale: 33%
    :align: center
   
 **Transfer: Replenishing with a distribution order**

@@ -1,5 +1,5 @@
 ==================
-Operation Routings
+Routing operations
 ==================
 
 It is possible in frePPLe to declare an operation of type routing.
@@ -7,9 +7,6 @@ This operation type represents a set of suboperations that must be run in sequen
 It is not possible to define a buffer between two suboperations of a routing operation.
 
 .. image:: _images/routing.png
-   :height: 375 px
-   :width: 1210 px
-   :scale: 100 %
    :alt: An example of a routing
 
 In the above example, four operations have to be defined in the operation table :

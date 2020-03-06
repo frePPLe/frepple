@@ -35,9 +35,6 @@ Here are more specifics details on the configuration:
     bill of material that uses cheaper components.
   
   .. image:: _images/alternate-materials-1.png
-     :height: 385 px
-     :width: 1112 px
-     :scale: 100 %  
      :alt: Operation table
   
 - | The operation material table contains records to consume both component C and C-alt. The
@@ -48,8 +45,5 @@ Here are more specifics details on the configuration:
     lead time. Until then we need to buy component C to meet our demand.
 
   .. image:: _images/alternate-materials-2.png
-     :height: 568 px
-     :width: 1113 px
-     :scale: 100 %  
      :alt: Operation material table
     

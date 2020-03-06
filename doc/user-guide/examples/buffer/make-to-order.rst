@@ -40,9 +40,6 @@ Here is a step by step guide to explore the example:
     `supply path for item E <https://demo.frepple.com/make-to-order/supplypath/item/D%20-%20end%20item/>`_
 
   .. image:: _images/make-to-order-1.png
-     :height: 812 px
-     :width: 1894 px
-     :scale: 100 %  
      :alt: Supply path
       
 * | The item table has the main difference to control the behavior. 
@@ -54,9 +51,6 @@ Here is a step by step guide to explore the example:
     managed aggregated across all demands. 
 
   .. image:: _images/make-to-order-2.png
-     :height: 843 px
-     :width: 1891 px
-     :scale: 100 %  
      :alt: Supply path
   
 * You can also find differences in some other input tables:

@@ -320,8 +320,11 @@ Object* OperationPlan::createOperationPlan(const MetaClass* cat,
   double quantity = quantityfld ? quantityfld->getDouble() : 0.0;
   bool statuspropagation = true;
   const DataValue* statusfld = in.get(Tags::status);
-  if (!statusfld) {
+  string status;
+  if (statusfld) status = statusfld->getString();
+  else {
     statusfld = in.get(Tags::statusNoPropagation);
+    if (statusfld) status = statusfld->getString();
     statuspropagation = false;
   }
   PooledString batch;
@@ -351,7 +354,7 @@ Object* OperationPlan::createOperationPlan(const MetaClass* cat,
     Item::bufferIterator buf_iter(static_cast<Item*>(itemval));
     while (Buffer* tmpbuf = buf_iter.next()) {
       if (tmpbuf->getLocation() == static_cast<Location*>(locval) &&
-          tmpbuf->getBatch() == batch) {
+          !tmpbuf->getBatch()) {
         if (destbuffer) {
           stringstream o;
           o << "Multiple buffers found for item '"
@@ -627,7 +630,6 @@ Object* OperationPlan::createOperationPlan(const MetaClass* cat,
   // process the start and end date before locking it.
   // Subsequent calls won't affect the operationplan any longer.
   if (statusfld && statusfld->getString() != "proposed") {
-    string status = statusfld->getString();
     opplan->setStatus(status, statuspropagation);
     opplan->freezeStatus(start ? start : opplan->getStart(),
                          end ? end : opplan->getEnd(), quantity);

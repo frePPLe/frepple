@@ -3115,17 +3115,11 @@ inline ostream& operator<<(ostream& os, const OperationPlan* o) {
     os << ", " << o->getQuantity() << ", " << o->getStart();
     if (o->getSetupEnd() != o->getStart()) os << " - " << o->getSetupEnd();
     os << " - " << o->getEnd();
-    if (o->getBatch()) os << ", " << o->getBatch();
-    if (o->getApproved())
-      os << ", approved)";
-    else if (o->getCompleted())
-      os << ", completed)";
-    else if (o->getConfirmed())
-      os << ", confirmed)";
-    else if (o->getClosed())
-      os << ", closed)";
+    if (o->getBatch()) os << ", " << o->getBatch();    
+    if (o->getProposed())
+        os << ")";
     else
-      os << ")";
+        os << ", " << o->getStatus() << ")" << endl;      
   } else
     os << "nullptr";
   return os;

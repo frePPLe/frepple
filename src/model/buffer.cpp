@@ -1146,7 +1146,10 @@ void Buffer::correctProducingFlow(Operation* itemoper) {
     ++flow_iter;
   }
   if (!foundFlow) {
-    new FlowEnd(itemoper, this, 1);
+    if (getBatch())
+      new FlowEnd(itemoper, Buffer::findOrCreate(getItem(), getLocation()), 1);
+    else
+        new FlowEnd(itemoper, this, 1);
   }
 }
 

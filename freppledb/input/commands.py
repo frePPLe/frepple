@@ -1023,11 +1023,11 @@ class loadBuffers(LoadTask):
                         description=i[1],
                         location=frepple.location(name=i[2]),
                         item=frepple.item(name=i[3]),
+                        batch=i[12],
                         onhand=max(i[4] or 0, 0),
                         category=i[9],
                         subcategory=i[10],
                         source=i[11],
-                        batch=i[12],
                     )
                 elif not i[7] or i[7] == "default":
                     b = frepple.buffer(
@@ -1035,11 +1035,11 @@ class loadBuffers(LoadTask):
                         description=i[1],
                         location=frepple.location(name=i[2]),
                         item=frepple.item(name=i[3]),
+                        batch=i[12],
                         onhand=max(i[4] or 0, 0),
                         category=i[9],
                         subcategory=i[10],
                         source=i[11],
-                        batch=i[12],
                     )
                     if i[8]:
                         b.mininterval = i[8].total_seconds()

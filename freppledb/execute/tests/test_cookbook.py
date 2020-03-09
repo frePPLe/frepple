@@ -56,10 +56,17 @@ class cookbooktest(TransactionTestCase):
     def assertOperationplans(self, *resultpath):
         opplans = sorted(
             [
-                "%s,%s,%s,%s" % (i.name, i.startdate, i.enddate, round(i.quantity, 1))
+                "%s,%s,%s,%s%s"
+                % (
+                    i.name,
+                    i.startdate,
+                    i.enddate,
+                    round(i.quantity, 1),
+                    ",%s " % i.batch if i.batch else "",
+                )
                 for i in freppledb.input.models.OperationPlan.objects.order_by(
-                    "name", "startdate", "quantity"
-                ).only("name", "startdate", "enddate", "quantity")
+                    "name", "startdate", "quantity", "batch"
+                ).only("name", "startdate", "enddate", "quantity", "batch")
             ],
             key=lambda s: s.lower(),
         )
@@ -296,6 +303,27 @@ class cookbooktest(TransactionTestCase):
             "operation-routing.expect",
         )
 
+    def test_make_to_order(self):
+        self.loadExcel(
+            settings.FREPPLE_HOME,
+            "..",
+            "doc",
+            "user-guide",
+            "examples",
+            "buffer",
+            "make-to-order.xlsx",
+        )
+        management.call_command("runplan", plantype=1, constraint=15, env="supply")
+        self.assertOperationplans(
+            settings.FREPPLE_HOME,
+            "..",
+            "doc",
+            "user-guide",
+            "examples",
+            "buffer",
+            "make-to-order.expect",
+        )
+
     def test_buffer_transfer_batch(self):
         self.loadExcel(
             settings.FREPPLE_HOME,
@@ -369,9 +397,7 @@ class cookbooktest(TransactionTestCase):
             "resource",
             "resource-efficiency.xlsx",
         )
-        management.call_command(
-            "runplan", plantype=1, constraint=15, env="supply"
-        )
+        management.call_command("runplan", plantype=1, constraint=15, env="supply")
         self.assertOperationplans(
             settings.FREPPLE_HOME,
             "..",
@@ -423,5 +449,3 @@ class cookbooktest(TransactionTestCase):
             "resource",
             "resource-alternate.expect",
         )
-
-

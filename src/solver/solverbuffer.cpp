@@ -289,6 +289,9 @@ void SolverCreate::solve(const Buffer* b, void* v) {
           // we need to restore the original settings...
           data->state->curOwnerOpplan = nullptr;
 
+          // Producer needs to propagate the batch of this buffer
+          data->state->curBatch = b->getBatch();
+
           // Note that the supply created with the next line changes the
           // onhand value at all later dates!
           b->getProducingOperation()->solve(*this, v);

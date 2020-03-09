@@ -2393,4 +2393,15 @@ Operation* Operation::findFromName(string nm) {
   return nullptr;
 }
 
+void Operation::updateMTO() {
+  for (auto fl = getFlows().begin(); fl != getFlows().end(); ++fl) {
+    auto i = fl->getItem();
+    if (i && i->hasType<ItemMTO>()) {
+      flags |= FLAGS_MTO;
+      return;
+    }
+  }
+  flags &= ~FLAGS_MTO;
+}
+
 }  // namespace frepple

@@ -704,6 +704,7 @@ Buffer* Buffer::findOrCreate(Item* itm, Location* loc,
   b->setLocation(loc);
   if (batch) b->setBatch(batch);
   b->setName(o.str());
+  b->setCluster(itm->getCluster());
   return b;
 }
 

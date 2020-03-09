@@ -592,7 +592,8 @@ class loadOperations(LoadTask):
                   name, fence, posttime, sizeminimum, sizemultiple, sizemaximum,
                   type, duration, duration_per, location_id, cost, search, description,
                   category, subcategory, source, item_id, priority, effective_start,
-                  effective_end, available_id
+                  effective_end, available_id,
+                  (select type from item where item.name = operation.item_id)
                 FROM operation %s
                 """
                 % filter_where
@@ -665,7 +666,10 @@ class loadOperations(LoadTask):
                     if i[11]:
                         x.search = i[11]
                     if i[16]:
-                        x.item = frepple.item(name=i[16])
+                        if i[21] == "make to order":
+                            x.item = frepple.item_mto(name=i[16])
+                        else:
+                            x.item = frepple.item_mts(name=i[16])
                     if i[17] is not None:
                         x.priority = i[17]
                     if i[18]:

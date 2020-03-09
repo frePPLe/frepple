@@ -62,11 +62,6 @@ FlowPlan::FlowPlan(OperationPlan* opplan, const Flow* f)
   // Find the buffer
   if (fl->getBuffer() && fl->getBuffer()->getItem() &&
       fl->getBuffer()->getItem()->hasType<ItemMTO>()) {
-    /*
-    if (!opplan->getBatch())
-      // Automagically generate a batch number
-      opplan->setBatch(opplan->getReference());
-    */
     buf = Buffer::findOrCreate(fl->getBuffer()->getItem(),
                                fl->getBuffer()->getLocation(),
                                opplan->getBatch());
@@ -104,11 +99,6 @@ FlowPlan::FlowPlan(OperationPlan* opplan, const Flow* f, Date d, double q)
   // Find the buffer
   if (fl->getBuffer() && fl->getBuffer()->getItem() &&
       fl->getBuffer()->getItem()->hasType<ItemMTO>()) {
-    /*
-    if (!opplan->getBatch())
-      // Automagically generate a batch number
-      opplan->setBatch(opplan->getReference());
-    */
     if (fl->getBuffer()->getItem()->hasType<ItemMTO>() && opplan->getBatch())
       buf = Buffer::findOrCreate(fl->getBuffer()->getItem(),
                                  fl->getBuffer()->getLocation(),

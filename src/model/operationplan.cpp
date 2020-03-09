@@ -321,7 +321,8 @@ Object* OperationPlan::createOperationPlan(const MetaClass* cat,
   bool statuspropagation = true;
   const DataValue* statusfld = in.get(Tags::status);
   string status;
-  if (statusfld) status = statusfld->getString();
+  if (statusfld)
+    status = statusfld->getString();
   else {
     statusfld = in.get(Tags::statusNoPropagation);
     if (statusfld) status = statusfld->getString();
@@ -955,6 +956,10 @@ bool OperationPlan::operator<(const OperationPlan& a) const {
 void OperationPlan::createFlowLoads() {
   // Initialized already, or nothing to initialize
   if (firstflowplan || firstloadplan || !oper) return;
+
+  if (oper->getMTO() && !getBatch())
+    // Automagically generate a reference number
+    setBatch(getReference());
 
   // Create setup suboperationplans and loadplans
   if (getConsumeCapacity())

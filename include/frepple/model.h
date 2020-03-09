@@ -1162,6 +1162,12 @@ class HasLevel {
     return cluster;
   }
 
+  /* Set the cluster.
+   * This method assumes that you know what you're doing. There is
+   * no check or validation of the data.
+   */
+  void setCluster(int c) { cluster = c; }
+
   /* This function should be called when something is changed in the network
    * structure. The notification sets a flag, but does not immediately
    * trigger the recomputation.
@@ -2938,11 +2944,19 @@ class Operation : public HasName<Operation>,
   virtual void updateProblems();
 
   void setHidden(bool b) {
+    auto hidden = getHidden();
     if (hidden != b) setChanged();
-    hidden = b;
+    if (b)
+      flags |= FLAGS_HIDDEN;
+    else
+      flags &= ~FLAGS_HIDDEN;
   }
 
-  bool getHidden() const { return hidden; }
+  bool getHidden() const { return (flags & FLAGS_HIDDEN) != 0; }
+
+  bool getMTO() const { return (flags & FLAGS_MTO) != 0; }
+
+  void updateMTO();
 
   static Operation* findFromName(string);
 
@@ -3097,8 +3111,10 @@ class Operation : public HasName<Operation>,
   /* Priority of the operation among alternates. */
   int priority = 1;
 
-  /* Does the operation require serialization or not. */
-  bool hidden = false;
+  /* Bit fields. */
+  static const unsigned short FLAGS_HIDDEN = 1;
+  static const unsigned short FLAGS_MTO = 2;
+  unsigned short flags = 0;
 
   /* Mode to select the preferred alternates. */
   SearchMode search = PRIORITY;
@@ -3115,11 +3131,11 @@ inline ostream& operator<<(ostream& os, const OperationPlan* o) {
     os << ", " << o->getQuantity() << ", " << o->getStart();
     if (o->getSetupEnd() != o->getStart()) os << " - " << o->getSetupEnd();
     os << " - " << o->getEnd();
-    if (o->getBatch()) os << ", " << o->getBatch();    
+    if (o->getBatch()) os << ", " << o->getBatch();
     if (o->getProposed())
-        os << ")";
+      os << ")";
     else
-        os << ", " << o->getStatus() << ")" << endl;      
+      os << ", " << o->getStatus() << ")" << endl;
   } else
     os << "nullptr";
   return os;
@@ -5001,16 +5017,16 @@ class Flow : public Object,
 
   /* Constructor. */
   explicit Flow(Operation* o, Buffer* b, double q) : quantity(q) {
-    setOperation(o);
     setBuffer(b);
+    setOperation(o);
     initType(metadata);
     HasLevel::triggerLazyRecomputation();
   }
 
   /* Constructor. */
   explicit Flow(Operation* o, Buffer* b, double q, DateRange e) : quantity(q) {
-    setOperation(o);
     setBuffer(b);
+    setOperation(o);
     setEffective(e);
     initType(metadata);
     HasLevel::triggerLazyRecomputation();
@@ -5027,7 +5043,12 @@ class Flow : public Object,
    * and create a new one.
    */
   void setOperation(Operation* o) {
-    if (o) setPtrA(o, o->getFlows());
+    if (!o) return;
+    setPtrA(o, o->getFlows());
+    // Note: This MTO update is called for every flow that is created.
+    // For models with many flows per operation this makes up some overhead that
+    // scales quadratically.
+    o->updateMTO();
   }
 
   /* Returns true if this flow consumes material from the buffer. */
@@ -5473,9 +5494,7 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand {
   void update();
 
   /* Return a pointer to the timeline data structure owning this flowplan. */
-  TimeLine<FlowPlan>* getTimeLine() const {
-    return &(buf->flowplans);
-  }
+  TimeLine<FlowPlan>* getTimeLine() const { return &(buf->flowplans); }
 
   /* Returns true when the flowplan is hidden.
    * This is determined by looking at whether the flow is hidden or not.

@@ -30,74 +30,145 @@ In this example we demonstrate some typical examples:
   
 `Check this feature on a live example <https://demo.frepple.com/make-to-order/data/input/manufacturingorder/>`_
 
+:download:`Download an Excel spreadsheet with the data for this example<make-to-order.xlsx>`
+
 Here is a step by step guide to explore the example:
 
 * | At first sight the supply paths of all products look identical:   
-    `supply path for item A <https://demo.frepple.com/make-to-order/supplypath/item/A%20-%20end%20item/>`_
-    `supply path for item B <https://demo.frepple.com/make-to-order/supplypath/item/B%20-%20end%20item/>`_
-    `supply path for item C <https://demo.frepple.com/make-to-order/supplypath/item/C%20-%20end%20item/>`_
-    `supply path for item D <https://demo.frepple.com/make-to-order/supplypath/item/D%20-%20end%20item/>`_
+    `supply path for item A <https://demo.frepple.com/make-to-order/supplypath/item/A%20-%20end%20item/>`_,
+    `supply path for item B <https://demo.frepple.com/make-to-order/supplypath/item/B%20-%20end%20item/>`_,
+    `supply path for item C <https://demo.frepple.com/make-to-order/supplypath/item/C%20-%20end%20item/>`_,
+    `supply path for item D <https://demo.frepple.com/make-to-order/supplypath/item/D%20-%20end%20item/>`_ and
     `supply path for item E <https://demo.frepple.com/make-to-order/supplypath/item/D%20-%20end%20item/>`_
 
   .. image:: _images/make-to-order-1.png
      :alt: Supply path
-      
-* | The item table has the main difference to control the behavior. 
-    Check out how the type field varies for the cases A through E. 
-  | The type is set to "make to order" for all items where inventory, production and
-    consumption is managed per batch. Material of different batches is planned 
-    seperately and can't be mixed.
-  | The type is set to to "make to stock" when the inventory, production and is
-    managed aggregated across all demands. 
+        
+* The key tables to study the specifics of this model are:
 
-  .. image:: _images/make-to-order-2.png
-     :alt: Supply path
+  * | The type field in the `item table <https://demo.frepple.com/make-to-order/data/input/item/>`_
+      can be set to "make to order" or "make to stock".
+    | The type is set to "make to order" for all items where inventory, production and
+      consumption is managed per batch. Material of different batches is planned 
+      seperately and can't be mixed.
+    | The type is set to to "make to stock" when the inventory, production and is
+      managed aggregated across all demands.
+        
+  * | The batch field in the `sales order table <https://demo.frepple.com/make-to-order/data/input/demand/>`_
+      specifies which items can be used to meet the demand. Cases B, C and E have batch information
+      on the sales orders that needs to be passed on to manufacturing orders and purchase orders.
+
+  * | The batch field in the `buffer table <https://demo.frepple.com/make-to-order/data/input/buffer/>`_
+      allows to specifies to specify stocks by batch.
+
+
+* | The item A is a **make-to-stock** product.
+
+  | All items in the supply path are marked "make to stock". The sales orders
+    don't have the batch field filled in.
   
-* You can also find differences in some other input tables:
+  | The manufacturing orders and purchase orders that are generated to meet the demand
+    all have an empty batch field.
+  
+  .. image:: _images/make-to-order-A1.png
+     :alt: Configuration for item A
 
-  * The batch field in the `sales order table <https://demo.frepple.com/make-to-order/data/input/demand/>`_
-    specifies which items can be used to meet the demand. Cases B, C and E have batch information
-    on the sales orders that needs to be passed on to manufacturing orders and purchase orders.
+  .. image:: _images/make-to-order-A4.png
+     :alt: Sales orders for item A
+       
+  .. image:: _images/make-to-order-A2.png
+     :alt: Manufacturing orders for item A
+  
+  .. image:: _images/make-to-order-A3.png
+     :alt: Purchase orders for item A
+  
+* | Item B is a **make-to-order** product. 
 
-  * The batch field in the `buffer table <https://demo.frepple.com/make-to-order/data/input/buffer/>`_
-    allows to specifies to specify stocks by batch.
+
+  | All items in the supply path are marked "make to order". The batch field
+    on the sales orders is set to the sales orders' unique name.
     
-* The item A is a make-to-stock product. The manufacturing orders and purchase orders
-  that are generated to meet the demand all have an empty batch field.
-  
-  add image
-  
-* | Item B is a make-to-order product. The batch number specified on the demands is 
+  | When frePPLe generates the plan, the batch number specified on the demands is 
     automatically propagated to all manufacturing orders and purchase orders in the
     supply path.
+ 
   | Material cannot be shared/exchanged between batches. In the buffer table you can 
     see there is inventory of component 1, but it can't be used because it's reserved
-    for another order "B - order 3". (Excercise: change the batch number to one of the 
+    for another order "B - order X". (Excercise: change the batch number to one of the 
     sales orders of this end item, regenerate the plan, and verify that this time the
     stock can be used and we have one less purchase order).
-
-  add image
   
-* | Item C is a configure-to-order product.
+  .. image:: _images/make-to-order-B1.png
+     :alt: Configuration for item B
+  
+  .. image:: _images/make-to-order-B4.png
+     :alt: Sales orders for item B
+  
+  .. image:: _images/make-to-order-B2.png
+     :alt: Manufacturing orders for item A
+  
+  .. image:: _images/make-to-order-B3.png
+     :alt: Purchase orders for item B
+
+* | Item C is a **configure-to-order** product.
+
   | The end item and the assembly are produced in make-to-order mode. The batch 
     information is propagated from the sales orders to the manufacturing orders
     and the purchase orders of component 1.
+    
   | The other parts of the supply path are planned in make-to-stock mode. No batch
     information is seen on these purchase orders and manufacturing orders.
+    
+  .. image:: _images/make-to-order-C1.png
+     :alt: Configuration for item C
+
+  .. image:: _images/make-to-order-C4.png
+     :alt: Sales orders for item C
+       
+  .. image:: _images/make-to-order-C2.png
+     :alt: Manufacturing orders for item C
   
-  add image
+  .. image:: _images/make-to-order-C3.png
+     :alt: Purchase orders for item C
   
-* | Item D is a make-to-stock product. The subassembly, assembly and end item 
+* | Item D shows **serialized production**. 
+
+  | The final product is make-to-stock, but part of the supply path consists
+    of "make to order" items. The subassembly, assembly and end item 
     operations are linked to each other with a batch number that is automatically
     generated by frePPLe.
 
-  add image
+  .. image:: _images/make-to-order-D1.png
+     :alt: Configuration for item D
+
+  .. image:: _images/make-to-order-D4.png
+     :alt: Sales orders for item D
+       
+  .. image:: _images/make-to-order-D2.png
+     :alt: Manufacturing orders for item D
   
-* | Item E is an end item that is available in 2 colors: green and yellow.
+  .. image:: _images/make-to-order-D3.png
+     :alt: Purchase orders for item D
+  
+* | Item E demonstrates **attribute-based planning**. The end item E is available
+    in 2 colors: green and yellow.
   | The green version of item E has enough inventory, and no manufacturing orders
     or purchase orders are generated.
   | The inventory of the yellow item E is running low, and we need to launch another
     production batch. The batch field on the manufacturing order tells us the
     color of the item we need to produce.
   
-  add image
+  .. image:: _images/make-to-order-E1.png
+     :alt: Configuration for item E
+
+  .. image:: _images/make-to-order-E5.png
+     :alt: Sales orders for item E
+       
+  .. image:: _images/make-to-order-E2.png
+     :alt: Manufacturing orders for item E
+  
+  .. image:: _images/make-to-order-E3.png
+     :alt: Purchase orders for item E
+  
+  .. image:: _images/make-to-order-E4.png
+     :alt: Buffers

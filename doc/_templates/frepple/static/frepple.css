@@ -89,9 +89,8 @@ a {
   outline: none;
 }
 
-#banner, .document {
-  max-width: 995px;
-  margin: 0px auto;
+.document {
+	display: flex;
 }
 
 div.body {
@@ -142,24 +141,28 @@ div.body {
   color: #333;
 }
 
-@media (min-width: 1550px) {
-  div.sphinxsidebar {
-    position: fixed;
-    height: 100%;
-    margin-left: -260px;
-    text-align: left;
+div.sphinxsidebar {
+  height: 100%;
+  margin: 0 25px 0 25px;
+  text-align: left;
+  min-width: 220px;    
+}
+  
+@media (min-width: 1250px) {
+  #banner, .document {
+    margin: 0px auto;
+    max-width: 1250px;
   }
 }
 
-@media (max-width: 1549px) {
-  div.sphinxsidebar {
-    float: left;
-    padding-right: 25px;
-    padding-bottom: 25px;
-    padding-left: 10px;
-    height: 100%;
-    margin: 0;
-    text-align: left;
+@media (max-width: 1249px) {
+  #banner, .document {
+    max-width: 995px;
+    margin-right:25px;
+    min-width: 300px;
+  }
+  .bodywrapper .body {
+    min-width: 300px;
   }
 }
 

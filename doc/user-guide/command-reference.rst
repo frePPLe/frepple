@@ -228,7 +228,7 @@ The following file formats are accepted:
       
   * | **PostgreSQL copy files**:  
     | The file name must end with .cpy (or .cpy.gz when compressed with gzip).
-    | Uploading in this format goes MUCH quicker than the other formats. I has some
+    | Uploading in this format goes MUCH quicker than the other formats. It has some
       limitations however: a) the validation of the input data is not as extensive
       as the other formats, b) a single faulty record will abort the upload and c)
       it only supports adding new records and not updating existing records. 

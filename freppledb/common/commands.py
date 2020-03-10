@@ -115,6 +115,7 @@ class PlanTask:
     description = ""
     sequence = None
     label = None
+    export = False
 
     # Fields for internal use
     task = None
@@ -155,6 +156,8 @@ class PlanTaskSequence(PlanTask):
     Class that runs a sequence of task in sequence.
     """
 
+    export = True
+
     def __init__(self):
         self.steps = []
 
@@ -162,10 +165,13 @@ class PlanTaskSequence(PlanTask):
         self.steps.append(task)
         task.parent = self
 
-    def getWeight(self, **kwargs):
+    def getWeight(self, export=False, **kwargs):
         total = 0
         for s in self.steps:
-            s.weight = s.getWeight(**kwargs)
+            if export:
+                s.weight = 1 if s.export else -1
+            else:
+                s.weight = s.getWeight(**kwargs)
             if s.weight is not None and s.weight >= 0:
                 total += s.weight
         return total
@@ -270,6 +276,8 @@ class PlanTaskParallel(PlanTask):
     """
     Class that will execute a number of tasks in parallel groups.
     """
+
+    export = True
 
     class _PlanTaskThread(Thread):
         def __init__(self, seq, name, **kwargs):
@@ -431,23 +439,29 @@ class PlanTaskRegistry:
         cls.reg.display(indentlevel=1, **kwargs)
 
     @classmethod
-    def run(cls, cluster=-1, database=DEFAULT_DB_ALIAS, **kwargs):
-        cls.reg.task = None
-        if "FREPPLE_TASKID" in os.environ:
-            try:
-                cls.reg.task = (
-                    Task.objects.all()
-                    .using(database)
-                    .get(pk=os.environ["FREPPLE_TASKID"])
-                )
-            except Task.DoesNotExist:
-                logger.info("Task identifier not found")
-        if cls.reg.task and cls.reg.task.status == "Canceling":
-            cls.reg.task.status = "Cancelled"
-            cls.reg.task.save(using=database)
-            sys.exit(2)
-        cls.reg.run(cluster=cluster, database=database, **kwargs)
-        logger.info("Finished planning at %s" % datetime.now().strftime("%H:%M:%S"))
+    def run(cls, cluster=-1, database=DEFAULT_DB_ALIAS, export=False, **kwargs):
+        if export:
+            logger.info("Start export at %s" % datetime.now().strftime("%H:%M:%S"))
+        else:
+            cls.reg.task = None
+            if "FREPPLE_TASKID" in os.environ:
+                try:
+                    cls.reg.task = (
+                        Task.objects.all()
+                        .using(database)
+                        .get(pk=os.environ["FREPPLE_TASKID"])
+                    )
+                except Task.DoesNotExist:
+                    logger.info("Task identifier not found")
+            if cls.reg.task and cls.reg.task.status == "Canceling":
+                cls.reg.task.status = "Cancelled"
+                cls.reg.task.save(using=database)
+                sys.exit(2)
+        cls.reg.run(cluster=cluster, database=database, export=export, **kwargs)
+        if export:
+            logger.info("Finished export at %s" % datetime.now().strftime("%H:%M:%S"))
+        else:
+            logger.info("Finished planning at %s" % datetime.now().strftime("%H:%M:%S"))
 
     @classmethod
     def getLabels(cls):

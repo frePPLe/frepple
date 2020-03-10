@@ -39,6 +39,7 @@ class TruncatePlan(PlanTask):
 
     description = "Erasing previous plan"
     sequence = 400
+    export = True
 
     @classmethod
     def getWeight(cls, **kwargs):
@@ -238,6 +239,7 @@ class ExportProblems(PlanTask):
 
     description = ("Export plan", "Exporting problems")
     sequence = (401, "export2", 2)
+    export = True
 
     @classmethod
     def getWeight(cls, **kwargs):
@@ -292,6 +294,7 @@ class ExportConstraints(PlanTask):
 
     description = ("Export plan", "Exporting constraints")
     sequence = (401, "export2", 3)
+    export = True
 
     @classmethod
     def getWeight(cls, **kwargs):
@@ -347,6 +350,7 @@ class ExportOperationPlans(PlanTask):
 
     description = ("Export plan", "Exporting operationplans")
     sequence = (401, "export1", 1)
+    export = True
 
     @classmethod
     def getWeight(cls, **kwargs):
@@ -726,6 +730,7 @@ class ExportOperationPlanMaterials(PlanTask):
 
     description = ("Export plan", "Exporting operationplan materials")
     sequence = (401, "export1", 2)
+    export = True
 
     @classmethod
     def getWeight(cls, **kwargs):
@@ -800,6 +805,7 @@ class ExportOperationPlanResources(PlanTask):
 
     description = ("Export plan", "Exporting operationplan resources")
     sequence = (401, "export1", 3)
+    export = True
 
     @classmethod
     def getWeight(cls, **kwargs):
@@ -868,6 +874,7 @@ class ExportResourcePlans(PlanTask):
 
     description = ("Export plan", "Exporting resource plans")
     sequence = (401, "export2", 1)
+    export = True
 
     @classmethod
     def getWeight(cls, **kwargs):
@@ -955,6 +962,7 @@ class ExportPegging(PlanTask):
 
     description = ("Export plan", "Exporting demand pegging")
     sequence = (401, "export1", 4)
+    export = True
 
     @classmethod
     def getWeight(cls, **kwargs):

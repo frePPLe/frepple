@@ -3078,7 +3078,7 @@ class GridPivot(GridReport):
                 else:
                     # Write a row
                     for cross in mycrosses:
-                        if not cross[1].get("visible", False):
+                        if cross[1].get("visible", False):
                             continue
                         fields = [
                             _getCellValue(

@@ -77,7 +77,7 @@ class OverviewReport(GridPivot):
                 OperationPlanMaterial.objects.values(
                     "item", "location", "operationplan__batch"
                 )
-                .order_by("item_id", "location_id", "batch")
+                .order_by("item_id", "location_id", "operationplan__batch")
                 .distinct()
                 .annotate(
                     buffer=RawSQL(
@@ -114,7 +114,13 @@ class OverviewReport(GridPivot):
             formatter="detail",
             extra='"role":"input/location"',
         ),
-        GridFieldText("batch", title=_("batch"), editable=False, initially_hidden=True),
+        GridFieldText(
+            "batch",
+            title=_("batch"),
+            field_name="operationplan_batch",
+            editable=False,
+            initially_hidden=True,
+        ),
         # Optional fields referencing the item
         GridFieldText(
             "item__description",

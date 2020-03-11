@@ -40,7 +40,7 @@ Production planning & scheduling
 | at order entry**                        | delivery date considers all capacity and material constraints as well as   | - Video :doc:`user-guide/videos/production-planning/quote-delivery-date`      |
 |                                         | reservations for other open sales orders.                                  |                                                                               |
 +-----------------------------------------+----------------------------------------------------------------------------+-------------------------------------------------------------------------------+
-| **Make-to-order,                        | Make-to-order, make-to-stock and assemble-to-order products are all        |                                                                               |
+| **Make-to-order,                        | Make-to-order, make-to-stock and assemble-to-order products are all        | - Example :doc:`user-guide/examples/buffer/make-to-order`                     |
 | make-to-stock and                       | supported.                                                                 |                                                                               |
 | assemble-to-order**                     |                                                                            |                                                                               |
 +-----------------------------------------+----------------------------------------------------------------------------+-------------------------------------------------------------------------------+

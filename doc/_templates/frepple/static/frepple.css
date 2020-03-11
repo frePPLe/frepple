@@ -278,3 +278,13 @@ div.sphinxsidebar .toctree-l2, div.sphinxsidebar  .toctree-l3, div.sphinxsidebar
   font-weight: normal;
   padding-top: 5px;
 }
+
+.circle {
+    width: 1.2em;
+    height: 1.2em;
+    border-radius: .6em;
+    color: #fff;
+    text-align: center;
+    background: #337ab7;
+    display: inline-block;
+}

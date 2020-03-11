@@ -43,24 +43,50 @@ class OverviewReport(GridPivot):
     @classmethod
     def basequeryset(reportclass, request, *args, **kwargs):
         if len(args) and args[0]:
-            index = args[0].find(" @ ")
-            if index == -1:
+            i_b_l = args[0].split(" @ ")
+            if len(i_b_l) == 1:
                 return Buffer.objects.filter(id=args[0])
+            elif len(i_b_l) == 2:
+                return (
+                    OperationPlanMaterial.objects.values(
+                        "item", "location", "operationplan__batch"
+                    )
+                    .filter(
+                        item__name=i_b_l[0],
+                        location__name=i_b_l[1],
+                        operationplan__batch_isnull=True,
+                    )
+                    .order_by("item_id", "location_id", "operationplan__batch")
+                    .distinct()
+                )
             else:
                 return (
-                    OperationPlanMaterial.objects.values("item", "location")
-                    .filter(
-                        item__name=args[0][0:index], location__name=args[0][index + 3 :]
+                    OperationPlanMaterial.objects.values(
+                        "item", "location", "operationplan__batch"
                     )
-                    .order_by("item_id", "location_id")
+                    .filter(
+                        item__name=i_b_l[0],
+                        location__name=i_b_l[2],
+                        operationplan__batch=i_b_l[1],
+                    )
+                    .order_by("item_id", "location_id", "operationplan__batch")
                     .distinct()
                 )
         else:
             return (
-                OperationPlanMaterial.objects.values("item", "location")
-                .order_by("item_id", "location_id")
+                OperationPlanMaterial.objects.values(
+                    "item", "location", "operationplan__batch"
+                )
+                .order_by("item_id", "location_id", "batch")
                 .distinct()
-                .annotate(buffer=RawSQL("item_id || ' @ ' || location_id", ()))
+                .annotate(
+                    buffer=RawSQL(
+                        "operationplanmaterial.item_id || "
+                        "(case when operationplan.batch is null then '' else ' @ ' || operationplan.batch end) "
+                        "|| ' @ ' || operationplanmaterial.location_id",
+                        (),
+                    )
+                )
             )
 
     model = OperationPlanMaterial
@@ -88,6 +114,7 @@ class OverviewReport(GridPivot):
             formatter="detail",
             extra='"role":"input/location"',
         ),
+        GridFieldText("batch", title=_("batch"), editable=False, initially_hidden=True),
         # Optional fields referencing the item
         GridFieldText(
             "item__description",
@@ -251,99 +278,143 @@ class OverviewReport(GridPivot):
 
         # Execute the actual query
         query = """
-       select item.name||' @ '||location.name,
-       item.name item_id,
-       location.name location_id,
-       item.description,
-       item.category,
-       item.subcategory,
-       item.cost,
-       item.owner_id,
-       item.source,
-       item.lastmodified,
-       location.description,
-       location.category,
-       location.subcategory,
-       location.available_id,
-       location.owner_id,
-       location.source,
-       location.lastmodified,
-       %s
-       (select jsonb_build_object('onhand', onhand, 'flowdate', to_char(flowdate,'YYYY-MM-DD HH24:MI:SS'), 'periodofcover', periodofcover) 
-       from operationplanmaterial where item_id = item.name and
-       location_id = location.name and flowdate < greatest(d.startdate,%%s)
-       order by flowdate desc, id desc limit 1) startoh,
-       d.bucket,
-       d.startdate,
-       d.enddate,
-       (select safetystock from
-        (
-        select 1 as priority, coalesce((select value from calendarbucket 
-        where calendar_id = 'SS for '||item.name||' @ '||location.name
-        and greatest(d.startdate,%%s) >= startdate and greatest(d.startdate,%%s) < enddate
-        order by priority limit 1), (select defaultvalue from calendar where name = 'SS for '||item.name||' @ '||location.name)) as safetystock
-        union all
-        select 2 as priority, coalesce((select value from calendarbucket 
-        where calendar_id = (select minimum_calendar_id from buffer where item_id = item.name and location_id = location.name)
-        and greatest(d.startdate,%%s) >= startdate and greatest(d.startdate,%%s) < enddate
-        order by priority limit 1), (select defaultvalue from calendar where name = (select minimum_calendar_id from buffer where name = item.name||' @ '||location.name))) as safetystock
-        union all
-        select 3 as priority, minimum as safetystock from buffer where item_id = item.name and location_id = location.name
-        ) t
-        where t.safetystock is not null
-        order by priority
-        limit 1) safetystock,
-       (select jsonb_build_object(
-      'work_in_progress_mo', sum(case when (startdate < d.enddate and enddate >= d.enddate) and opm.quantity > 0 and operationplan.type = 'MO' then opm.quantity else 0 end),
-      'on_order_po', sum(case when (startdate < d.enddate and enddate >= d.enddate) and opm.quantity > 0 and operationplan.type = 'PO' then opm.quantity else 0 end),
-      'in_transit_do', sum(case when (startdate < d.enddate and enddate >= d.enddate) and opm.quantity > 0 and operationplan.type = 'DO' then opm.quantity else 0 end),
-      'total_in_progress', sum(case when (startdate < d.enddate and enddate >= d.enddate) and opm.quantity > 0 then opm.quantity else 0 end),
-      'consumed', sum(case when (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity < 0 then -opm.quantity else 0 end),
-      'consumedMO', sum(case when operationplan.type = 'MO' and (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity < 0 then -opm.quantity else 0 end),
-      'consumedDO', sum(case when operationplan.type = 'DO' and (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity < 0 then -opm.quantity else 0 end),
-      'consumedSO', sum(case when operationplan.type = 'DLVR' and (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity < 0 then -opm.quantity else 0 end),
-      'produced', sum(case when (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity > 0 then opm.quantity else 0 end),
-      'producedMO', sum(case when operationplan.type = 'MO' and (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity > 0 then opm.quantity else 0 end),
-      'producedDO', sum(case when operationplan.type = 'DO' and (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity > 0 then opm.quantity else 0 end),
-      'producedPO', sum(case when operationplan.type = 'PO' and (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity > 0 then opm.quantity else 0 end)
-      )
-      from operationplanmaterial opm
-      inner join operationplan on operationplan.reference = opm.operationplan_id 
-      and ((startdate < d.enddate and enddate >= d.enddate) 
-            or (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate))
-      where opm.item_id = item.name and opm.location_id = location.name) ongoing
-       from
-       (%s) opplanmat
-       inner join item on item.name = opplanmat.item_id
-       inner join location on location.name = opplanmat.location_id
-       -- Multiply with buckets
-      cross join (
-         select name as bucket, startdate, enddate
-         from common_bucketdetail
-         where bucket_id = %%s and enddate > %%s and startdate < %%s
-         ) d
-      group by
-       item.name,
-       location.name,
-       item.description, 
-       item.category, 
-       item.subcategory,
-       item.cost,
-       item.owner_id,
-       item.source, 
-       item.lastmodified, 
-       location.description, 
-       location.category,
-       location.subcategory, 
-       location.available_id, 
-       location.owner_id,
-       location.source, 
-       location.lastmodified,
-       d.bucket,
-       d.startdate,
-       d.enddate
-       order by %s, d.startdate
-    """ % (
+           select
+           opplanmat.buffer,
+           item.name item_id,
+           location.name location_id,
+           item.description,
+           item.category,
+           item.subcategory,
+           item.cost,
+           item.owner_id,
+           item.source,
+           item.lastmodified,
+           location.description,
+           location.category,
+           location.subcategory,
+           location.available_id,
+           location.owner_id,
+           location.source,
+           location.lastmodified,
+           batch,
+           %s
+           (select jsonb_build_object(
+               'onhand', onhand,
+               'flowdate', to_char(flowdate,'YYYY-MM-DD HH24:MI:SS'),
+               'periodofcover', periodofcover
+               )
+           from operationplanmaterial
+           inner join operationplan
+             on operationplanmaterial.operationplan_id = operationplan.reference
+           where operationplanmaterial.item_id = item.name
+             and operationplanmaterial.location_id = location.name
+             and operationplan.batch is not distinct from opplanmat.batch
+             and flowdate < greatest(d.startdate,%%s)
+           order by flowdate desc, id desc limit 1) startoh,
+           d.bucket,
+           d.startdate,
+           d.enddate,
+           (select safetystock from
+            (
+            select 1 as priority, coalesce(
+              (select value from calendarbucket
+               where calendar_id = 'SS for ' || opplanmat.buffer
+               and greatest(d.startdate,%%s) >= startdate and greatest(d.startdate,%%s) < enddate
+               order by priority limit 1),
+              (select defaultvalue from calendar where name = 'SS for ' || opplanmat.buffer)
+              ) as safetystock
+            union all
+            select 2 as priority, coalesce(
+              (select value
+               from calendarbucket
+               where calendar_id = (
+                 select minimum_calendar_id
+                 from buffer
+                 where item_id = item.name
+                 and location_id = location.name
+                 and buffer.batch is not distinct from opplanmat.batch
+                 )
+               and greatest(d.startdate,%%s) >= startdate
+               and greatest(d.startdate,%%s) < enddate
+               order by priority limit 1),
+              (select defaultvalue
+               from calendar
+               where name = (
+                 select minimum_calendar_id
+                 from buffer
+                 where item_id = item.name
+                 and location_id = location.name
+                 and buffer.batch is not distinct from opplanmat.batch
+                 )
+              )
+            ) as safetystock
+            union all
+            select 3 as priority, minimum as safetystock
+            from buffer
+            where item_id = item.name
+            and location_id = location.name
+            and buffer.batch is not distinct from opplanmat.batch
+            ) t
+            where t.safetystock is not null
+            order by priority
+            limit 1) safetystock,
+            (select jsonb_build_object(
+               'work_in_progress_mo', sum(case when (startdate < d.enddate and enddate >= d.enddate) and opm.quantity > 0 and operationplan.type = 'MO' then opm.quantity else 0 end),
+               'on_order_po', sum(case when (startdate < d.enddate and enddate >= d.enddate) and opm.quantity > 0 and operationplan.type = 'PO' then opm.quantity else 0 end),
+               'in_transit_do', sum(case when (startdate < d.enddate and enddate >= d.enddate) and opm.quantity > 0 and operationplan.type = 'DO' then opm.quantity else 0 end),
+               'total_in_progress', sum(case when (startdate < d.enddate and enddate >= d.enddate) and opm.quantity > 0 then opm.quantity else 0 end),
+               'consumed', sum(case when (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity < 0 then -opm.quantity else 0 end),
+               'consumedMO', sum(case when operationplan.type = 'MO' and (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity < 0 then -opm.quantity else 0 end),
+               'consumedDO', sum(case when operationplan.type = 'DO' and (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity < 0 then -opm.quantity else 0 end),
+               'consumedSO', sum(case when operationplan.type = 'DLVR' and (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity < 0 then -opm.quantity else 0 end),
+               'produced', sum(case when (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity > 0 then opm.quantity else 0 end),
+               'producedMO', sum(case when operationplan.type = 'MO' and (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity > 0 then opm.quantity else 0 end),
+               'producedDO', sum(case when operationplan.type = 'DO' and (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity > 0 then opm.quantity else 0 end),
+               'producedPO', sum(case when operationplan.type = 'PO' and (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate) and opm.quantity > 0 then opm.quantity else 0 end)
+               )
+             from operationplanmaterial opm
+             inner join operationplan
+             on operationplan.reference = opm.operationplan_id
+               and ((startdate < d.enddate and enddate >= d.enddate)
+               or (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate))
+             where opm.item_id = item.name
+               and opm.location_id = location.name
+               and operationplan.batch is not distinct from opplanmat.batch
+           ) ongoing
+           from
+           (%s) opplanmat
+           inner join item on item.name = opplanmat.item_id
+           inner join location on location.name = opplanmat.location_id
+           -- Multiply with buckets
+          cross join (
+             select name as bucket, startdate, enddate
+             from common_bucketdetail
+             where bucket_id = %%s and enddate > %%s and startdate < %%s
+             ) d
+          group by
+           opplanmat.buffer,
+           item.name,
+           location.name,
+           opplanmat.batch,
+           item.description,
+           item.category,
+           item.subcategory,
+           item.cost,
+           item.owner_id,
+           item.source,
+           item.lastmodified,
+           location.description,
+           location.category,
+           location.subcategory,
+           location.available_id,
+           location.owner_id,
+           location.source,
+           location.lastmodified,
+           d.bucket,
+           d.startdate,
+           d.enddate
+           order by %s, d.startdate
+        """ % (
             reportclass.attr_sql,
             basesql,
             sortsql,
@@ -387,6 +458,7 @@ class OverviewReport(GridPivot):
                     "location__owner_id": row[14],
                     "location__source": row[15],
                     "location__lastmodified": row[16],
+                    "batch": row[17],
                     "startoh": row[numfields - 6]["onhand"]
                     if row[numfields - 6]
                     else 0,

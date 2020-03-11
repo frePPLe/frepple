@@ -695,7 +695,7 @@ Buffer* Buffer::findOrCreate(Item* itm, Location* loc,
   // Create a new buffer with a unique name
   stringstream o;
   o << itm->getName();
-  if (batch) o << " - " << batch;
+  if (batch) o << " @ " << batch;
   o << " @ " << loc->getName();
   Buffer* b;
   while ((b = find(o.str()))) o << '*';
@@ -1149,7 +1149,7 @@ void Buffer::correctProducingFlow(Operation* itemoper) {
     if (getBatch())
       new FlowEnd(itemoper, Buffer::findOrCreate(getItem(), getLocation()), 1);
     else
-        new FlowEnd(itemoper, this, 1);
+      new FlowEnd(itemoper, this, 1);
   }
 }
 

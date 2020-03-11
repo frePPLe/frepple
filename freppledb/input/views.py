@@ -5007,15 +5007,22 @@ class InventoryDetail(OperationPlanMixin, GridReport):
     @classmethod
     def basequeryset(reportclass, request, *args, **kwargs):
         if len(args) and args[0]:
-            dlmtr = args[0].find(" @ ")
-            if dlmtr != -1:
-                item = args[0][:dlmtr]
-                location = args[0][dlmtr + 3 :]
-            else:
+            i_b_l = args[0].split(" @ ")
+            if len(i_b_l) == 1:
                 buffer = Buffer.objects.get(id=args[0])
-                item = buffer.item.name
-                location = buffer.location.name
-            base = OperationPlanMaterial.objects.filter(item=item, location=location)
+                base = OperationPlanMaterial.objects.filter(
+                    item=buffer.item.name,
+                    location=buffer.location.name,
+                    operationplan__batch__isnull=True,
+                )
+            elif len(i_b_l) == 2:
+                base = OperationPlanMaterial.objects.filter(
+                    item=i_b_l[0], location=i_b_l[1], operationplan__batch__isnull=True
+                )
+            else:
+                base = OperationPlanMaterial.objects.filter(
+                    item=i_b_l[0], location=i_b_l[2], operationplan__batch=i_b_l[1]
+                )
         else:
             base = OperationPlanMaterial.objects
         base = reportclass.operationplanExtraBasequery(base, request)
@@ -5078,6 +5085,12 @@ class InventoryDetail(OperationPlanMixin, GridReport):
             extra='"role":"input/location"',
         ),
         GridFieldText("operationplan__reference", title=_("reference"), editable=False),
+        GridFieldText(
+            "operationplan__batch",
+            title=_("batch"),
+            editable=False,
+            initially_hidden=True,
+        ),
         GridFieldText(
             "operationplan__color",
             title=_("inventory status"),

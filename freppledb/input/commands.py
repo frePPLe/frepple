@@ -1668,7 +1668,7 @@ class loadOperationPlans(LoadTask):
                         start=i[3],
                         end=i[4],
                         statusNoPropagation=i[5],
-                        batch=i[9],
+                        batch=i[8],
                     )
                     if opplan and i[5] == "confirmed":
                         if not consume_material:
@@ -1681,8 +1681,8 @@ class loadOperationPlans(LoadTask):
                                 opplan.owner = frepple.operationplan(reference=i[6])
                             except Exception:
                                 pass
-                        if i[8]:
-                            opplan.demand = frepple.demand(name=i[8])
+                        if i[9]:
+                            opplan.demand = frepple.demand(name=i[9])
                 except Exception as e:
                     logger.error("**** %s ****" % e)
             logger.info(

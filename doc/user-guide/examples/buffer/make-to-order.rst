@@ -34,7 +34,7 @@ In this example we demonstrate some typical examples:
 
 Here is a step by step guide to explore the example:
 
-* | At first sight the supply paths of all products look identical:   
+* | At first sight the supply paths of all products look identical:
     `supply path for item A <https://demo.frepple.com/make-to-order/supplypath/item/A%20-%20end%20item/>`_,
     `supply path for item B <https://demo.frepple.com/make-to-order/supplypath/item/B%20-%20end%20item/>`_,
     `supply path for item C <https://demo.frepple.com/make-to-order/supplypath/item/C%20-%20end%20item/>`_,
@@ -64,11 +64,11 @@ Here is a step by step guide to explore the example:
 
 * | The item A is a **make-to-stock** product.
 
-  | All items in the supply path are marked "make to stock". The sales orders
-    don't have the batch field filled in.
-  
-  | The manufacturing orders and purchase orders that are generated to meet the demand
-    all have an empty batch field.
+  In the input data all items in the supply path are marked "make to stock" :samp:`A`. 
+  Also, the sales orders don't have the batch field :samp:`B` filled in.
+
+  In the output plan, the manufacturing orders and purchase orders generated to meet
+  the demand all have an empty batch field :samp:`C`.
   
   .. image:: _images/make-to-order-A1.png
      :alt: Configuration for item A

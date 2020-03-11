@@ -279,7 +279,12 @@ div.sphinxsidebar .toctree-l2, div.sphinxsidebar  .toctree-l3, div.sphinxsidebar
   padding-top: 5px;
 }
 
-.circle {
+a.download.internal code {
+	font-family: inherit;
+	font-weight: normal;
+}
+
+code.samp span.pre {
     width: 1.2em;
     height: 1.2em;
     border-radius: .6em;

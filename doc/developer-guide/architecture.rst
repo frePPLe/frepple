@@ -19,7 +19,7 @@ FrePPLe has a 3-tier architecture, typical for most web applications.
   | FrePPLe supports the Apache web server, and also has a built-in
     Python-based web server.
   | Long running tasks (such as the planning algorithm, database backup,
-    scenario copying, ...) don’t run in the web server process. Instead,
+    scenario copying, ...) don't run in the web server process. Instead,
     the web server will spawn a separate worker process to execute these.
 
 * | **Database backend**:

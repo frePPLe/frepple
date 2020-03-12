@@ -610,7 +610,7 @@ class DistributionOrderWidget(Widget):
       left outer join operationplan
         on operationplan.startdate >= common_bucketdetail.startdate
         and operationplan.startdate < common_bucketdetail.enddate
-        and type = 'DO'
+        and operationplan.type = 'DO'
         and status in ('confirmed', 'proposed', 'approved')
       left outer join item
         on operationplan.item_id = item.name
@@ -625,7 +625,7 @@ class DistributionOrderWidget(Widget):
       from operationplan
       inner join item
       on operationplan.item_id = item.name
-      where status in ('confirmed', 'approved') and type = 'DO'
+      where status in ('confirmed', 'approved') and operationplan.type = 'DO'
       union all
       select
         2, null, null, count(*),
@@ -635,7 +635,7 @@ class DistributionOrderWidget(Widget):
       inner join item
       on operationplan.item_id = item.name
       where status = 'proposed' and startdate < %%s + interval '%s day'
-      and type = 'DO'
+      and operationplan.type = 'DO'
       union all
       select
         3, null, null, count(*),
@@ -645,7 +645,7 @@ class DistributionOrderWidget(Widget):
       inner join item
       on operationplan.item_id = item.name
       where status = 'proposed' and startdate < %%s + interval '%s day'
-      and type = 'DO'
+      and operationplan.type = 'DO'
       order by 1, 3
       """ % (
             fence1,
@@ -894,7 +894,8 @@ class PurchaseOrderWidget(Widget):
       left outer join operationplan
         on operationplan.startdate >= common_bucketdetail.startdate
         and operationplan.startdate < common_bucketdetail.enddate
-        and status in ('confirmed', 'proposed', 'approved') and type = 'PO' %s
+        and status in ('confirmed', 'proposed', 'approved')
+        and operationplan.type = 'PO' %s
       left outer join item
         on operationplan.item_id = item.name
       left outer join itemsupplier
@@ -916,7 +917,8 @@ class PurchaseOrderWidget(Widget):
         on operationplan.item_id = itemsupplier.item_id
         and operationplan.supplier_id = itemsupplier.supplier_id
         and operationplan.location_id = itemsupplier.location_id
-      where status in ('confirmed', 'approved') %s and type = 'PO'
+      where status in ('confirmed', 'approved') %s
+        and operationplan.type = 'PO'
       union all
       select
         2, null, null, count(*),
@@ -929,7 +931,8 @@ class PurchaseOrderWidget(Widget):
         on operationplan.item_id = itemsupplier.item_id
         and operationplan.supplier_id = itemsupplier.supplier_id
         and operationplan.location_id = itemsupplier.location_id
-      where status = 'proposed' and type = 'PO' and startdate < %%s + interval '%s day' %s
+      where status = 'proposed' and operationplan.type = 'PO'
+        and startdate < %%s + interval '%s day' %s
       union all
       select
         3, null, null, count(*),
@@ -942,7 +945,8 @@ class PurchaseOrderWidget(Widget):
         on operationplan.item_id = itemsupplier.item_id
         and operationplan.supplier_id = itemsupplier.supplier_id
         and operationplan.location_id = itemsupplier.location_id
-      where status = 'proposed' and type = 'PO' and startdate < %%s + interval '%s day' %s
+      where status = 'proposed' and operationplan.type = 'PO'
+        and startdate < %%s + interval '%s day' %s
       order by 1, 3
       """ % (
             supplierfilter,

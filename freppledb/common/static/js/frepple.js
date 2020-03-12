@@ -472,7 +472,7 @@ jQuery.extend($.fn.fmatter, {
     // cellvalue contains computed_color field used only for sorting
 	// color field is the field to be read here
 	cellvalue = rowdata.color
-	console.log(cellvalue);
+
 	if (cellvalue === undefined || cellvalue === '') return '';
   	var thenumber = parseInt(cellvalue);
 
@@ -492,7 +492,7 @@ jQuery.extend($.fn.fmatter, {
     } else {
       var thedelay = Math.round(parseInt(rowdata.delay)/8640)/10;
       if (parseInt(rowdata.criticality) === 999 || parseInt(rowdata.operationplan__criticality) === 999) {
-        return '<div class="invStatus" style="text-align: center; background-color: #f00; color: #151515;"></div>';
+        return '';
       } else if (thedelay < 0) {
         return '<div class="invStatus" style="text-align: center; background-color: #008000; color: #151515;">'+ (-thedelay)+' '+gettext("days early")+'</div>';
       } else if (thedelay === 0) {

@@ -3378,6 +3378,20 @@ class ManufacturingOrderList(OperationPlanMixin, GridReport):
             ),
             inventory_item=RawSQL("operationplan.plan->'item'", []),
             inventory_location=RawSQL("operationplan.plan->'location'", []),
+            computed_color=RawSQL(
+                """
+                case when operationplan.color >= 999999 and plan ? 'item' then
+                999999 
+                - extract(epoch from operationplan.delay)/86400.0
+                + 1000000
+                when operationplan.color >= 999999 and not(plan ? 'item') then
+                999999 
+                - extract(epoch from operationplan.delay)/86400.0
+                else operationplan.color
+                end
+                """,
+                [],
+            ),
         )
 
     rows = (
@@ -3393,13 +3407,14 @@ class ManufacturingOrderList(OperationPlanMixin, GridReport):
             "batch", title=_("batch"), editable="true", initially_hidden=True
         ),
         GridFieldNumber(
-            "color",
+            "computed_color",
             title=_("inventory status"),
             formatter="color",
             width="125",
             editable=False,
             extra='"formatoptions":{"defaultValue":""}, "summaryType":"min"',
         ),
+        GridFieldNumber("color", hidden=True),
         GridFieldText(
             "operation__item__name",
             title=_("item"),
@@ -3916,6 +3931,20 @@ class DistributionOrderList(OperationPlanMixin, GridReport):
             feasible=RawSQL(
                 "coalesce((operationplan.plan->>'feasible')::boolean, true)", []
             ),
+            computed_color=RawSQL(
+                """
+                case when operationplan.color >= 999999 and plan ? 'item' then
+                999999 
+                - extract(epoch from operationplan.delay)/86400.0
+                + 1000000
+                when operationplan.color >= 999999 and not(plan ? 'item') then
+                999999 
+                - extract(epoch from operationplan.delay)/86400.0
+                else operationplan.color
+                end
+                """,
+                [],
+            ),
         )
 
     rows = (
@@ -3931,13 +3960,14 @@ class DistributionOrderList(OperationPlanMixin, GridReport):
             "batch", title=_("batch"), editable="true", initially_hidden=True
         ),
         GridFieldNumber(
-            "color",
+            "computed_color",
             title=_("inventory status"),
             formatter="color",
             width="125",
             editable=False,
             extra='"formatoptions":{"defaultValue":""}, "summaryType":"min"',
         ),
+        GridFieldNumber("color", hidden=True),
         GridFieldText(
             "item",
             title=_("item"),
@@ -4389,6 +4419,20 @@ class PurchaseOrderList(OperationPlanMixin, GridReport):
             feasible=RawSQL(
                 "coalesce((operationplan.plan->>'feasible')::boolean, true)", []
             ),
+            computed_color=RawSQL(
+                """
+                case when operationplan.color >= 999999 and plan ? 'item' then
+                999999 
+                - extract(epoch from operationplan.delay)/86400.0
+                + 1000000
+                when operationplan.color >= 999999 and not(plan ? 'item') then
+                999999 
+                - extract(epoch from operationplan.delay)/86400.0
+                else operationplan.color
+                end
+                """,
+                [],
+            ),
         )
 
     rows = (
@@ -4404,13 +4448,14 @@ class PurchaseOrderList(OperationPlanMixin, GridReport):
             "batch", title=_("batch"), editable="true", initially_hidden=True
         ),
         GridFieldNumber(
-            "color",
+            "computed_color",
             title=_("inventory status"),
             formatter="color",
             width="125",
             editable=False,
             extra='"formatoptions":{"defaultValue":""}, "summaryType":"min"',
         ),
+        GridFieldNumber("color", hidden=True),
         GridFieldText(
             "item",
             title=_("item"),

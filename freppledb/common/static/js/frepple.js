@@ -469,7 +469,11 @@ jQuery.extend($.fn.fmatter, {
   },
 
   color : function (cellvalue, options, rowdata) {
-    if (cellvalue === undefined || cellvalue === '') return '';
+    // cellvalue contains computed_color field used only for sorting
+	// color field is the field to be read here
+	cellvalue = rowdata.color
+	console.log(cellvalue);
+	if (cellvalue === undefined || cellvalue === '') return '';
   	var thenumber = parseInt(cellvalue);
 
     if (rowdata.inventory_item || rowdata.leadtime) {

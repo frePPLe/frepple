@@ -8,5 +8,5 @@ The data element varying over time can be used for various situations: working h
 .. toctree::
    :maxdepth: 1
 
-   working-hours
+   calendar-working-hours
    calendar-bucket-priority

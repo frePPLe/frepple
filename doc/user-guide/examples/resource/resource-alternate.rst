@@ -29,6 +29,9 @@ To assemble a round table we need both an operator and a machine.
 
 `Check this feature on a live example <https://demo.frepple.com/resource-alternate/data/input/resource/>`_
 
+:download:`Download an Excel spreadsheet with the data for this example <resource-alternate.xlsx>`
+
+
 * machine A, machine B and machine C are the 3 machines available in the factory. Only machine A and machine B
   can assemble a round table. Machine A is prefered over machine B as it is faster (efficiency set at 120%).
 

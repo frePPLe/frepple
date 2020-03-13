@@ -22,6 +22,9 @@ Tools
 
 `Check this feature on a live example <https://demo.frepple.com/resource-tool/data/input/operationmaterial/>`_
 
+:download:`Download an Excel spreadsheet with the data for this example <resource-tool.xlsx>`
+
+
 In this example we have a production consisting of 5 subsequent steps.
 We model a (virtual) tool to control the level of work-in-progress
 across the operations 2 through 4: only 2 jobs are allowed simultaneously

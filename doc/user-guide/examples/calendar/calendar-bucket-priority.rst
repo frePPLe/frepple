@@ -18,6 +18,8 @@ The above rules allow you to determine the value of a calendar at any moment in 
 
 `Check this feature on a live example <https://demo.frepple.com/calendar-working-hours/detail/input/calendar/Working%20hours/>`_
 
+
+
 The attached example models a warehouse where the replenishment operations are running on weekdays
 (Monday through Friday) from 8am till 5pm with a lunch break of an hour. The warehouse is not
 working on Christmas, December 25th.

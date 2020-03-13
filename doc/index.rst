@@ -143,7 +143,7 @@ Capacity modeling
 |                                         | - available capacity expressed as hours per time bucket                    |                                                                               |
 |                                         | - unconstrained infinite-capacity resources or unconstrained)              |                                                                               |
 +-----------------------------------------+----------------------------------------------------------------------------+-------------------------------------------------------------------------------+
-| **Working hours and vacations**         | Define calendars based on working hours, shifts, factory shutdowns,        | - Example :doc:`user-guide/examples/calendar/working-hours`                   |
+| **Working hours and vacations**         | Define calendars based on working hours, shifts, factory shutdowns,        | - Example :doc:`user-guide/examples/calendar/calendar-working-hours`          |
 |                                         | holiday periods, etc.                                                      | - Video :doc:`user-guide/videos/production-planning/define-operator-shifts`   |
 +-----------------------------------------+----------------------------------------------------------------------------+-------------------------------------------------------------------------------+
 | **Resource pools**                      | Group identical/similar resources (machines or operators) in an aggegrated | - Example :doc:`user-guide/examples/resource/resource-alternate`              |

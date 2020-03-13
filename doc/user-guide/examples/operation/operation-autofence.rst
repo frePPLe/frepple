@@ -30,6 +30,8 @@ confirmed supply.
 
 `Check this feature on a live example <https://demo.frepple.com/operation-autofence/>`_
 
+:download:`Download an Excel spreadsheet with the data for this example<operation-autofence.xlsx>`
+
 This example shows two products. Each of these products can be manufactured
 in house, or we can outsource the production to a subcontractor.
 We have confirmed purchases orders with the subcontractor going as far out

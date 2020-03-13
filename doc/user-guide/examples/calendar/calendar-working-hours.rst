@@ -22,6 +22,9 @@ an operation in location A that loads a resource in location B using another cal
 
 `Check this feature on a live example <https://demo.frepple.com/calendar-working-hours/data/input/location/>`_
 
+:download:`Download an Excel spreadsheet with the data for this example <calendar-working-hours.xlsx>`
+
+
 The attached example models a warehouse where the manufacturing operations are running on weekdays (Monday through Friday) from 8am till 5pm with a lunch break of an hour. The manufacturing site is also not working on Christmas, December 25th.
 
 The shipping operation is available 24-by-7: it takes 48 hours, and is planned to last exactly 48 hours.

@@ -18,6 +18,9 @@ have a plan with rushed operations planned to follow each other quicker.
 
 `Check this feature on a live example <https://demo.frepple.com/operation-posttime/data/input/operation/>`_
 
+:download:`Download an Excel spreadsheet with the data for this example <operation-posttime.xlsx>`
+
+
 In this example we model a two-step production process with a decoupling buffer
 between both steps. A post-operation delay of 3 days is specified for the first
 step: ideally there is a delay of 3 days between production into the decoupling

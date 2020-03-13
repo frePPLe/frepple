@@ -12,6 +12,8 @@ be extended to account for these unavailable periods.
 
 `Check this feature on a live example <https://demo.frepple.com/supplier-capacity/data/input/itemsupplier/>`_
 
+:download:`Download an Excel spreadsheet with the data for this example <supplier-capacity.xlsx>`
+
 In this example we have a single supplier that can ship us 100 parts per week.
 We need to buy material to meet 3 sales orders from him.  
 

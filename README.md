@@ -18,8 +18,8 @@ The software release can be downloaded from https://github.com/frePPLe/frepple/r
 in the following formats:
 
 * Windows installer
-* Linux .deb debian package
-* Linux .rpm Red Hat package
+* Ubuntu 18 .deb debian package
+* Docker files for various Linux distributions
 * Source tarball or zip file
 
 ## Documentation
@@ -31,8 +31,8 @@ Visit [https://frepple.com](https://frepple.com) for documentation, screencasts 
 The *Community Edition* is released under the [GNU Affero General
 Public License v3 or later](http://www.gnu.org/licenses/).
 
-The *Enterprise Edition* can be purchased from frePPLe bvba. It provides additional functionality
+The *Enterprise Edition* can be purchased from frePPLe bv. It provides additional functionality
 and professional support.
 
 The *Cloud Edition* provides provides the same capabilities as the Enterprise Edition, but is 
-hosted as a service in the cloud: fully supported and maintained by frePPLe bvba.
+hosted as a service in the cloud: fully supported and maintained by frePPLe bv.

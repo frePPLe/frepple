@@ -1162,11 +1162,16 @@ class HasLevel {
     return cluster;
   }
 
-  /* Set the cluster.
-   * This method assumes that you know what you're doing. There is
-   * no check or validation of the data.
+  /* Copies the cluser and level information from another buffer.
+   * This method assumes that you know what you're doing!
+   * There is no check or validation of the data and it doesn't
+   * trigger the recalculation.
    */
-  void setCluster(int c) { cluster = c; }
+  void copyLevelAndCluster(const HasLevel* p) {
+    if (!p) return;
+    cluster = p->cluster;
+    lvl = p->lvl;
+  }
 
   /* This function should be called when something is changed in the network
    * structure. The notification sets a flag, but does not immediately

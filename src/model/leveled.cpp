@@ -42,21 +42,15 @@ void HasLevel::computeLevels() {
   // Another thread may already have computed the levels while this thread was
   // waiting for the lock. In that case the while loop will be skipped.
   while (recomputeLevels) {
-    // Reset the recomputation flag. Note that during the computation the flag
-    // could be switched on again by some model change in a different thread.
-    // In that case, the while loop will be rerun.
-    recomputeLevels = false;
-
     // Force creation of all delivery operations
     for (auto gdem = Demand::begin(); gdem != Demand::end(); ++gdem)
       gdem->getDeliveryOperation();
 
     // Reset current levels on buffers, resources and operations.
-    // Also force the creation of all producing operations on the buffers.
-    size_t numbufs = Buffer::size();
     // Creating the producing operations of the buffers can cause new buffers
     // to be created. We repeat this loop until no new buffers are being added.
     // This isn't the most efficient loop, but it remains cheap and fast...
+    auto numbufs = Buffer::size();
     while (true) {
       for (auto gop = Operation::begin(); gop != Operation::end(); ++gop) {
         gop->cluster = 0;
@@ -70,7 +64,7 @@ void HasLevel::computeLevels() {
         gbuf->lvl = -1;
         gbuf->getProducingOperation();
       }
-      size_t numbufs_after = Buffer::size();
+      auto numbufs_after = Buffer::size();
       if (numbufs == numbufs_after)
         break;
       else
@@ -80,6 +74,11 @@ void HasLevel::computeLevels() {
       gres->cluster = 0;
       gres->lvl = -1;
     }
+
+    // When during the computation below the recomputeLevels flag is switched
+    // on again by some model change, the while loop will rerun the calculation
+    // again.
+    recomputeLevels = false;
 
     // Loop through all operations
     stack<pair<Operation*, int> > opstack;
@@ -280,7 +279,7 @@ void HasLevel::computeLevels() {
                 buffl->getOperation()->cluster = cur_cluster;
               }
             }
-          }  // End of needs-procssing if statement
+          }  // End of needs-processing if statement
           else if (cur_buf->lvl < 0 && !cur_Flow->isConsumer())
             cur_buf->lvl = 0;
 
@@ -302,8 +301,29 @@ void HasLevel::computeLevels() {
       }  // End while stack not empty
 
     }  // End of Operation loop
+
+    // Copy the level from generic buffers to the specific mto-buffers
+    // TODO this logic will no longer apply when the mto-buffers can
+    // have their own producing operation.
+    for (auto gbuf = Buffer::begin(); gbuf != Buffer::end(); ++gbuf) {
+      if (!gbuf->getBatch() || !gbuf->getItem()) continue;
+      Buffer* generic = nullptr;
+      Item::bufferIterator buf_iter(gbuf->getItem());
+      while (Buffer* tmpbuf = buf_iter.next()) {
+        if (!tmpbuf->getBatch()) {
+          generic = tmpbuf;
+          break;
+        }
+      }
+      if (generic) {
+        Item::bufferIterator buf_iter(gbuf->getItem());
+        while (Buffer* tmpbuf = buf_iter.next()) {
+          if (tmpbuf->getBatch()) tmpbuf->copyLevelAndCluster(generic);
+        }
+      }
+    }
   }  // End of while recomputeLevels. The loop will be repeated as long as model
-  // changes are done during the recomputation.
+     // changes are done during the recomputation.
 
   // Unlock the exclusive access to this function
   computationBusy = false;

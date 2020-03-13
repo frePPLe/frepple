@@ -666,7 +666,7 @@ Buffer* Buffer::findOrCreate(Item* itm, Location* loc) {
   // Return existing buffer if it exists
   Item::bufferIterator buf_iter(itm);
   while (Buffer* tmpbuf = buf_iter.next()) {
-    if (tmpbuf->getLocation() == loc) return tmpbuf;
+    if (tmpbuf->getLocation() == loc && !tmpbuf->getBatch()) return tmpbuf;
   }
 
   // Create a new buffer with a unique name
@@ -686,10 +686,15 @@ Buffer* Buffer::findOrCreate(Item* itm, Location* loc,
   if (!itm || !loc) return nullptr;
 
   // Return existing buffer if it exists
+  Buffer* generic = nullptr;
   Item::bufferIterator buf_iter(itm);
   while (Buffer* tmpbuf = buf_iter.next()) {
-    if (tmpbuf->getLocation() == loc && tmpbuf->getBatch() == batch)
-      return tmpbuf;
+    if (tmpbuf->getLocation() == loc) {
+      if (tmpbuf->getBatch() == batch)
+        return tmpbuf;
+      else if (!tmpbuf->getBatch())
+        generic = tmpbuf;
+    }
   }
 
   // Create a new buffer with a unique name
@@ -702,9 +707,11 @@ Buffer* Buffer::findOrCreate(Item* itm, Location* loc,
   b = new BufferDefault();
   b->setItem(itm);
   b->setLocation(loc);
-  if (batch) b->setBatch(batch);
   b->setName(o.str());
-  b->setCluster(itm->getCluster());
+  if (batch) {
+    b->setBatch(batch);
+    if (generic) b->copyLevelAndCluster(generic);
+  }
   return b;
 }
 

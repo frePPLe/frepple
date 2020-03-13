@@ -32,8 +32,8 @@ Inventory E - end item - yellow @ factory E,1971-01-01 00:00:00,1971-01-01 00:00
 Purchase A - component 1 @ factory A from My Supplier,2020-02-26 00:00:00,2020-03-04 00:00:00,30.0
 Purchase A - component 2 @ factory A from My Supplier,2020-02-25 00:00:00,2020-03-03 00:00:00,30.0
 Purchase A - component 3 @ factory A from My Supplier,2020-02-24 00:00:00,2020-03-02 00:00:00,30.0
-Purchase B - component 1 @ B - order 1 @ factory B from My Supplier,2020-02-27 00:00:00,2020-03-05 00:00:00,10.0,B - order 1
-Purchase B - component 1 @ B - order 2 @ factory B from My Supplier,2020-02-26 00:00:00,2020-03-04 00:00:00,10.0,B - order 2
+Purchase B - component 1 @ factory B from My Supplier,2020-02-26 00:00:00,2020-03-04 00:00:00,10.0,B - order 2
+Purchase B - component 1 @ factory B from My Supplier,2020-02-27 00:00:00,2020-03-05 00:00:00,10.0,B - order 1
 Purchase B - component 2 @ factory B from My Supplier,2020-02-25 00:00:00,2020-03-03 00:00:00,10.0,B - order 2
 Purchase B - component 2 @ factory B from My Supplier,2020-02-26 00:00:00,2020-03-04 00:00:00,10.0,B - order 1
 Purchase B - component 3 @ factory B from My Supplier,2020-02-24 00:00:00,2020-03-02 00:00:00,10.0,B - order 2
@@ -57,7 +57,7 @@ Ship C - end item @ factory C,2020-03-06 00:00:00,2020-03-06 00:00:00,10.0,C - o
 Ship C - end item @ factory C,2020-03-06 00:00:00,2020-03-06 00:00:00,10.0,C - order 2
 Ship D - end item @ factory D,2020-03-06 00:00:00,2020-03-06 00:00:00,10.0
 Ship D - end item @ factory D,2020-03-06 00:00:00,2020-03-06 00:00:00,10.0
-Ship E - end item - yellow @ factory E,2020-03-06 00:00:00,2020-03-06 00:00:00,10.0,green
-Ship E - end item - yellow @ factory E,2020-03-06 00:00:00,2020-03-06 00:00:00,10.0,green
-Ship E - end item - yellow @ factory E,2020-03-06 00:00:00,2020-03-06 00:00:00,10.0,yellow
-Ship E - end item - yellow @ factory E,2020-03-06 00:00:00,2020-03-06 00:00:00,10.0,yellow
+Ship E - end item @ factory E,2020-03-06 00:00:00,2020-03-06 00:00:00,10.0,green
+Ship E - end item @ factory E,2020-03-06 00:00:00,2020-03-06 00:00:00,10.0,green
+Ship E - end item @ factory E,2020-03-06 00:00:00,2020-03-06 00:00:00,10.0,yellow
+Ship E - end item @ factory E,2020-03-06 00:00:00,2020-03-06 00:00:00,10.0,yellow

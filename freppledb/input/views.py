@@ -3380,11 +3380,11 @@ class ManufacturingOrderList(OperationPlanMixin, GridReport):
             inventory_location=RawSQL("operationplan.plan->'location'", []),
             computed_color=RawSQL(
                 """
-                case when operationplan.color >= 999999 and plan ? 'item' then
+                case when operationplan.color >= 999999 and operationplan.plan ? 'item' then
                 999999 
                 - extract(epoch from operationplan.delay)/86400.0
                 + 1000000
-                when operationplan.color >= 999999 and not(plan ? 'item') then
+                when operationplan.color >= 999999 and not(operationplan.plan ? 'item') then
                 999999 
                 - extract(epoch from operationplan.delay)/86400.0
                 else operationplan.color
@@ -3933,11 +3933,11 @@ class DistributionOrderList(OperationPlanMixin, GridReport):
             ),
             computed_color=RawSQL(
                 """
-                case when operationplan.color >= 999999 and plan ? 'item' then
+                case when operationplan.color >= 999999 and operationplan.plan ? 'item' then
                 999999 
                 - extract(epoch from operationplan.delay)/86400.0
                 + 1000000
-                when operationplan.color >= 999999 and not(plan ? 'item') then
+                when operationplan.color >= 999999 and not(operationplan.plan ? 'item') then
                 999999 
                 - extract(epoch from operationplan.delay)/86400.0
                 else operationplan.color
@@ -4421,11 +4421,11 @@ class PurchaseOrderList(OperationPlanMixin, GridReport):
             ),
             computed_color=RawSQL(
                 """
-                case when operationplan.color >= 999999 and plan ? 'item' then
+                case when operationplan.color >= 999999 and operationplan.plan ? 'item' then
                 999999 
                 - extract(epoch from operationplan.delay)/86400.0
                 + 1000000
-                when operationplan.color >= 999999 and not(plan ? 'item') then
+                when operationplan.color >= 999999 and not(operationplan.plan ? 'item') then
                 999999 
                 - extract(epoch from operationplan.delay)/86400.0
                 else operationplan.color

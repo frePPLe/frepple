@@ -25,10 +25,10 @@ FROM roboxes/rhel8 as builder
 ARG RHEL_USER
 ARG RHEL_PASSWORD
 
-RUN subscription-manager register --username $RHEL_USER --password $RHEL_PASSWORD --auto-attach
-RUN yum -y update
-RUN yum -y install epel-release && \
-  yum -y install xerces-c python36 rpm-build git wget \
+RUN subscription-manager register --username $RHEL_USER --password $RHEL_PASSWORD --auto-attach && \
+  yum -y update && \
+  yum -y install epel-release && \
+  yum -y install xerces-c python36 rpm-build rpm-sign git wget \
     python3-psycopg2 python3-pip postgresql-devel openssl openssl-devel \
     libtool make python3-devel xerces-c-devel automake autoconf gcc-c++ && \
   yum clean all 
@@ -36,13 +36,14 @@ RUN subscription-manager unregister
 
 RUN useradd builder -u 6666 -m -G users && \
   echo "builder ALL=(ALL:ALL) NOPASSWD:ALL" >> /etc/sudoers && \
-  echo "%_topdir    /home/builder/rpm" >> /home/builder/.rpmmacros && \
+  echo "%_topdir    /home/builder/rpm" > /home/builder/.rpmmacros && \
+  echo "%_gpg_name  devops@frepple.com" >> /home/builder/.rpmmacros && \
   mkdir /home/builder/rpm && \
   mkdir -p /home/builder/rpm/{BUILD,RPMS,SOURCES,SPECS,SRPMS} && \
   chown -R builder /home/builder
 
 # OPTION 1: BUILDING FROM LOCAL DISTRIBUTION:
-ADD requirements.txt .
+ADD requirements.txt gpg_key* ./
 USER builder
 RUN pip3 install --user -r requirements.txt sphinx
 
@@ -57,6 +58,13 @@ RUN pip3 install --user -r requirements.txt sphinx
 COPY --chown=6666 frepple.spec /home/builder/rpm/SPECS/
 COPY --chown=6666 *.tar.gz /home/builder/rpm/SOURCES/
 RUN rpmbuild -ba /home/builder/rpm/SPECS/frepple.spec
+
+# Optional: sign the rpm file
+RUN if test -f gpg_key; \
+  then \
+  gpg --import gpg_key; \
+  rpm --addsign /home/builder/rpm/RPMS/x86_64/*.rpm; \
+  fi
 
 #
 # STAGE 2: Build the deployment container

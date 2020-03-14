@@ -221,6 +221,11 @@ AC_MSG_ERROR([
 fi
 AC_MSG_RESULT([yes])
 
+# Optional extra tools
+AC_CHECK_PROGS(DOCKER, docker)
+AM_CONDITIONAL(DOCKER, [test x$DOCKER != x])
+AC_CHECK_PROGS(GPG, gpg)
+
 #
 # Check whether we are running on a Windows operating system
 #

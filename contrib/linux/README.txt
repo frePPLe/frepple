@@ -9,7 +9,7 @@ It builds 2-stage docker images.
 A quick reference of some handy extra commands:
 
  - Interactive shell:
-   docker run -i -t --rm=true <image> /bin/bash
+   docker run -i -t --rm=true -v `pwd`:/mnt/myfiles <image> /bin/bash
 
  - Copy data from the builder image
    id=$(docker create opensuse-builder-6.1.0)

@@ -5,12 +5,16 @@
 
 DEB_PYTHON3_MODULE_PACKAGES=freppledb
 DEB_PYTHON_SETUP_CMD=setup.py
-DEB_BUILD_OPTIONS = nocheck parallel=2
-DEB_CONFIGURE_EXTRA_FLAGS = --disable-static --disable-dependency-tracking --enable-doc PYFLAGS='--install-layout=deb'
+DEB_BUILD_OPTIONS = parallel=2
+DEB_CONFIGURE_EXTRA_FLAGS = --disable-static --disable-dependency-tracking --disable-doc PYFLAGS='--install-layout=deb'
 
 include /usr/share/cdbs/1/rules/debhelper.mk
 include /usr/share/cdbs/1/class/autotools.mk
 include /usr/share/cdbs/1/class/python-distutils.mk
+
+override_dh_auto_test:
+	export TESTARGS="--regression" && cd test && make check
+	./frepplectl.py test freppledb --noinput -v3
 
 install/frepple::
 	# Install apache configuration

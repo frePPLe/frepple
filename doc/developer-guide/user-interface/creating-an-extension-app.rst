@@ -49,7 +49,7 @@ and place its contents under the freppledb folder.
 
 :download:`Download zip-file with sample extension <my-app.zip>`
 
-.. code-block::
+.. code-block:: none
 
    my-app
       |- __init__.py
@@ -197,7 +197,7 @@ In the previous steps all models and attributes were defined. Now we create
 them in the PostgreSQL database. This is done by running the following statement
 on the command line:
 
-.. code-block::
+.. code-block:: none
 
    # Deployment script to apply database schema updates - run by system administrators
    frepplectl migrate
@@ -210,7 +210,7 @@ Migration scripts are Python scripts, located in the **migrations** folder. The 
 are generated mostly automatic with the command line below. More complex migrations will
 need review and/or coding by developers.
  
-.. code-block::
+.. code-block:: none
    
    # Generate a skeleton migration script - run by developers only
    frepplectl makemigrations my_app

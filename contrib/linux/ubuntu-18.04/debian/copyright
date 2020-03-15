@@ -1,15 +1,7 @@
 
-Format:
+Upstream Author(s):
 
-    http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
-
-Source:
-
-    https://frepple.com/
-
-Upstream-Contact:
-
-    info@frepple.com
+    frePPLe bvba
 
 Copyright:
 
@@ -17,6 +9,21 @@ Copyright:
 
 License:
 
-    The frePPLe software is made available under a propietary licence.
-    See your license agreement with frePPLe bvba for more details.
+   This is free software; you can redistribute it and/or modify it under the terms
+   of the GNU Affero General Public License as published by the Free Software
+   Foundation; either version 3 of the License, or (at your option) any later
+   version.
 
+   This library is distributed in the hope that it will be useful, but WITHOUT ANY
+   WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+   PARTICULAR PURPOSE.  See the GNU Affero General Public License for more
+   details.
+
+   You should have received a copy of the GNU Affero General Public License
+   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+On Debian systems, the complete text of the GNU Affero General
+Public License can be found in `/usr/share/common-licenses/AGPL-3'.
+
+The Debian packaging is copyright 2012, frepple bvba <jdetaeye@frepple.com> and
+is licensed under the AGPL, see `/usr/share/common-licenses/AGPL-3'.

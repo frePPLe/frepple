@@ -1,13 +1,13 @@
 
+DOC_DIRS = developer-guide installation-guide integration-guide user-guide _templates
+DOC_FILES = $(shell find . -type f -name '*.rst') $(shell find . -type f -name '*.png')
+
 EXTRA_DIST = frepple.1 frepplectl.1 frepple.py conf.py build.bat *.rst
-EXTRA_DIST += _templates installation-guide developer-guide user-guide
+EXTRA_DIST += $(DOC_DIRS)
 
 man_MANS = frepple.1 frepplectl.1
 
 if DOC
-
-DOC_DIRS = developer-guide installation-guide integration-guide user-guide _templates
-DOC_FILES = $(shell find . -type f -name '*.rst') $(shell find . -type f -name '*.png')
 
 all: _build
 

@@ -6,16 +6,16 @@ man_MANS = frepple.1 frepplectl.1
 
 if DOC
 
-all-local: sphinx
+DOC_DIRS = developer-guide installation-guide integration-guide user-guide _templates
+DOC_FILES = $(shell find . -type f -name '*.rst') $(shell find . -type f -name '*.png')
 
-sphinx:
+all: _build
+
+_build: $(DOC_DIRS) $(DOC_FILES)
 	-rm -rf _build
 	@SPHINXBUILD@ -a -E -b html -d _build/doctrees . _build/html
 
-clean-local:
-	-rm -rf _build *.pyc *.pyo
-
-install-data-local:
+install-data-local: all
 	cd _build; \
 	echo "Installing documentation in $(DESTDIR)$(docdir)"; \
 	find html -type d -exec $(mkinstalldirs) "$(DESTDIR)$(docdir)/{}" \;; \
@@ -26,6 +26,9 @@ install-data-local:
 uninstall-local:
 	-rm -rf $(DESTDIR)$(docdir)
 
-.PHONY: clean-local uninstall-local install-data-local all-local rebuildHTML
+.PHONY: clean-local uninstall-local install-data-local all
 
 endif
+
+clean-local:
+	-rm -rf _build __pycache__

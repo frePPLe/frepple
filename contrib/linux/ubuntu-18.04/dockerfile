@@ -23,7 +23,7 @@ FROM ubuntu:18.04 as builder
 
 RUN apt-get -y -q update && DEBIAN_FRONTEND=noninteractive apt-get -y install \
   libxerces-c3.2 apache2 libapache2-mod-wsgi-py3 \
-  python3-psycopg2 python3-pip postgresql-client \
+  python3-psycopg2 python3-pip postgresql \
   git wget libtool make python3-dev libxerces-c-dev automake autoconf \
   g++ python-sphinx cdbs debhelper pbuilder python3-sphinx \
   openssl libssl-dev libpq-dev
@@ -35,7 +35,13 @@ RUN pip3 install -r requirements.txt
 COPY *.tar.gz ./
 COPY debian/  debian/
 
+# Create a database user to run the test suite
+USER postgres
+RUN /etc/init.d/postgresql start && \
+  psql template1 -c "create role frepple login superuser password 'frepple'"
+
 # subtle - and _ things going on here...
+USER root
 RUN tar -xzf *.orig.tar.gz && \
   src=`basename --suffix=.orig.tar.gz frepple-*` && \
   mv debian $src && \

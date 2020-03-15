@@ -131,6 +131,12 @@ AM_CONDITIONAL(DOC, test x$generatedoc = xtrue)
 AC_ARG_VAR([PYFLAGS],
 [Argument passed to setup.py when installing frePPLe's Python application.])
 
+#
+# Define a configure argument to control which checks are run
+#
+AC_ARG_VAR([TESTARGS],
+[Argument passed to test/runtest.py to control the check to be run.])
+
 # Checks for header files.
 AC_HEADER_DIRENT
 AC_HEADER_STDC

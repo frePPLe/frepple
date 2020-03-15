@@ -3,7 +3,7 @@
 #
 
 EXTRA_DIST = frepple.spec httpd.conf dockerfile
-CLEANFILES = *.rpm *.gz requirements.txt *.deb
+CLEANFILES = *.rpm *.gz requirements.txt *.deb gpg_key
 
 TAGNAME = rhel-8
 

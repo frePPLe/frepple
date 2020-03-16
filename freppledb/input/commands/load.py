@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2007-2019 by frePPLe bvba
+# Copyright (C) 2007-2020 by frePPLe bvba
 #
 # This library is free software; you can redistribute it and/or modify it
 # under the terms of the GNU Affero General Public License as published
@@ -808,7 +808,7 @@ class loadItems(LoadTask):
                             x.owner = frepple.item_mto(name=i[2])
                     if i[3]:
                         x.cost = i[3]
-                    idx = 7
+                    idx = 9
                     for a in attrs:
                         setattr(x, a, i[idx])
                         idx += 1

@@ -596,10 +596,6 @@ class ExportOperationPlans(PlanTask):
 
     @classmethod
     def run(cls, cluster=-1, database=DEFAULT_DB_ALIAS, **kwargs):
-
-        # Set the timestamp for the export tasks in this thread
-        cls.parent.timestamp = datetime.now()
-
         # Export operationplans to a temporary table
         cursor = connections[database].cursor()
         cursor.execute(

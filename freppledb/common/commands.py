@@ -121,6 +121,8 @@ class PlanTask:
     task = None
     thread = "main"
     parent = None
+    timestamp = None
+    source = None
 
     @classmethod
     def getWeight(cls, **kwargs):
@@ -178,6 +180,10 @@ class PlanTaskSequence(PlanTask):
 
     def run(self, database=DEFAULT_DB_ALIAS, **kwargs):
         # Collect the list of tasks
+        if self.parent:
+            self.timestamp = self.parent.timestamp
+        else:
+            self.timestamp = datetime.now().replace(microsecond=0)
         task_weight = self.getWeight(database=database, **kwargs)
         if not task_weight:
             task_weight = 1
@@ -215,6 +221,7 @@ class PlanTaskSequence(PlanTask):
                             datetime.now().strftime("%H:%M:%S"),
                         )
                     )
+                step.timestamp = self.timestamp
                 step.run(database=database, **kwargs)
                 logger.info(
                     "Finished '%s' at %s %s"
@@ -288,6 +295,10 @@ class PlanTaskParallel(PlanTask):
             self.exception = None
 
         def run(self):
+            if self.seq.parent:
+                self.seq.timestamp = self.seq.parent.timestamp
+            else:
+                self.seq.timestamp = datetime.now().replace(microsecond=0)
             try:
                 self.seq.run(**self.kwargs)
             except Exception as e:
@@ -310,6 +321,7 @@ class PlanTaskParallel(PlanTask):
         return longest
 
     def run(self, **kwargs):
+        self.timestamp = self.parent.timestamp
         threads = []
         for threadname, g in self.groups.items():
             if g.weight is not None and g.weight >= 0:

@@ -1,6 +1,6 @@
-===============
-Model reference
-===============
+=================
+Table description
+=================
 
 This chapter describe the frePPLe data entities, their fields and relationships.
 

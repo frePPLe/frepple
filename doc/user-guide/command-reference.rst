@@ -1,6 +1,6 @@
-=================
-Command reference
-=================
+=====
+Tasks
+=====
 
 FrePPLe provides a list of commands that perform actions on the 
 database, the input data and/or the output data.

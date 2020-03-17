@@ -23,10 +23,14 @@ from django.db import DEFAULT_DB_ALIAS, connections
 from freppledb.boot import getAttributes
 from freppledb.common.commands import PlanTaskRegistry, PlanTask
 from freppledb.input.models import (
+    Buffer,
     Calendar,
+    CalendarBucket,
     Customer,
     Demand,
     Item,
+    ItemSupplier,
+    ItemDistribution,
     Location,
     Operation,
     OperationMaterial,
@@ -36,6 +40,7 @@ from freppledb.input.models import (
     SetupMatrix,
     SetupRule,
     Skill,
+    Supplier,
 )
 
 logger = logging.getLogger(__name__)
@@ -45,13 +50,16 @@ default_start = datetime(1971, 1, 1)
 default_end = datetime(2030, 12, 31)
 
 
-def SQL4attributes(attrs):
+def SQL4attributes(attrs, with_on_conflict=True):
     """ Snippet is used many times in this file"""
-    return (
-        "".join([",%s" % i for i in attrs]),
-        ",%s" * len(attrs),
-        "".join([",\n%s=excluded.%s" % (i, i) for i in attrs]),
-    )
+    if with_on_conflict:
+        return (
+            "".join([",%s" % i for i in attrs]),
+            ",%s" * len(attrs),
+            "".join([",\n%s=excluded.%s" % (i, i) for i in attrs]),
+        )
+    else:
+        return ("".join([",%s" % i for i in attrs]), ",%s" * len(attrs))
 
 
 @PlanTaskRegistry.register
@@ -202,10 +210,34 @@ class cleanStatic(PlanTask):
 
 
 @PlanTaskRegistry.register
+class exportParameters(PlanTask):
+
+    description = ("Export static data", "Export parameters")
+    sequence = (301, "exportstatic1", 1)
+
+    @classmethod
+    def getWeight(cls, database=DEFAULT_DB_ALIAS, **kwargs):
+        # Only complete export should save the current date
+        return 1 if kwargs.get("exportstatic", False) and not cls.source else -1
+
+    @classmethod
+    def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
+        import frepple
+
+        with connections[database].cursor() as cursor:
+            # Update current date if the parameter already exists
+            # If it doesn't exist, we want to continue using the system clock for the next run.
+            cursor.execute(
+                "update common_parameter set value=%s, lastmodified=%s where name='currentdate'",
+                (frepple.settings.current.strftime("%Y-%m-%d %H:%M:%S"), cls.timestamp),
+            )
+
+
+@PlanTaskRegistry.register
 class exportCalendars(PlanTask):
 
-    description = "Export calendars"
-    sequence = 301
+    description = ("Export static data", "Export calendars")
+    sequence = (301, "exportstatic2", 1)
 
     @classmethod
     def getWeight(cls, database=DEFAULT_DB_ALIAS, **kwargs):
@@ -1013,12 +1045,421 @@ class exportDemands(PlanTask):
         )
 
 
-def STILLTOWRITE(self):
-    DatabaseTask(self.exportCalendarBuckets, self.exportParameters),
-    DatabaseTask(
-        self.exportBuffers,
-        self.exportOperationMaterials,
-        self.exportSuppliers,
-        self.exportItemSuppliers,
-        self.exportItemDistributions,
-    ),
+@PlanTaskRegistry.register
+class exportCalendarBuckets(PlanTask):
+
+    description = ("Export static data", "Export calendar buckets")
+    sequence = (305, "exportstatic3", 1)
+
+    @classmethod
+    def getWeight(cls, database=DEFAULT_DB_ALIAS, **kwargs):
+        return 1 if kwargs.get("exportstatic", False) else -1
+
+    @classmethod
+    def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
+        import frepple
+
+        attrs = [f[0] for f in getAttributes(CalendarBucket)]
+
+        def int_to_time(i):
+            hour = i // 3600
+            i -= hour * 3600
+            minute = i // 60
+            i -= minute * 60
+            second = i
+            if hour >= 24:
+                hour -= 24
+            return "%s:%s:%s" % (hour, minute, second)
+
+        def getData(cursor):
+            cursor.execute("SELECT max(id) FROM calendarbucket")
+            cnt = cursor.fetchone()[0] or 1
+            for c in frepple.calendars():
+                if (
+                    c.hidden
+                    or c.source == "common_bucket"
+                    or (cls.source and cls.source != c.source)
+                ):
+                    continue
+                for i in c.buckets:
+                    cnt += 1
+                    r = [
+                        c.name,
+                        i.start if i.start != default_start else None,
+                        i.end if i.end != default_end else None,
+                        cnt,
+                        i.priority,
+                        round(i.value, 8),
+                        True if (i.days & 1) else False,
+                        True if (i.days & 2) else False,
+                        True if (i.days & 4) else False,
+                        True if (i.days & 8) else False,
+                        True if (i.days & 16) else False,
+                        True if (i.days & 32) else False,
+                        True if (i.days & 64) else False,
+                        int_to_time(i.starttime),
+                        int_to_time(i.endtime - 1),
+                        i.source,
+                        cls.timestamp,
+                    ]
+                    for a in attrs:
+                        r.append(getattr(i, a, None))
+                    yield r
+
+        with connections[database].cursor() as cursor:
+            if cls.source:
+                cursor.execute(
+                    "delete from calendarbucket where source = %s", [cls.source]
+                )
+            else:
+                cursor.execute("delete from calendarbucket")
+            execute_batch(
+                cursor,
+                """
+                insert into calendarbucket
+                (calendar_id,startdate,enddate,id,priority,value,
+                sunday,monday,tuesday,wednesday,thursday,friday,saturday,
+                starttime,endtime,source,lastmodified%s)
+                values(%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s%s)
+                """
+                % SQL4attributes(attrs, with_on_conflict=False),
+                getData(cursor),
+            )
+
+
+@PlanTaskRegistry.register
+class exportBuffers(PlanTask):
+
+    description = ("Export static data", "Export buffers")
+    sequence = (305, "exportstatic4", 1)
+
+    @classmethod
+    def getWeight(cls, database=DEFAULT_DB_ALIAS, **kwargs):
+        return 1 if kwargs.get("exportstatic", False) else -1
+
+    @classmethod
+    def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
+        import frepple
+
+        attrs = [f[0] for f in getAttributes(Buffer)]
+
+        def getData():
+            for i in frepple.buffers():
+                if i.hidden or (cls.source and cls.source != i.source):
+                    continue
+                r = [
+                    i.item.name,
+                    i.location.name,
+                    i.batch or None,
+                    i.description,
+                    round(i.onhand, 8),
+                    round(i.minimum, 8),
+                    i.minimum_calendar.name if i.minimum_calendar else None,
+                    i.__class__.__name__[7:],
+                    i.category,
+                    i.subcategory,
+                    i.source,
+                    cls.timestamp,
+                ]
+                for a in attrs:
+                    r.append(getattr(i, a, None))
+                yield r
+
+        with connections[database].cursor() as cursor:
+            execute_batch(
+                cursor,
+                """
+                insert into buffer
+                (item_id,location_id,batch,description,onhand,minimum,minimum_calendar_id,
+                type,category,subcategory,source,lastmodified%s)
+                values(%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s%s)
+                on conflict (location_id, item_id, batch)
+                do update set
+                  description=excluded.description,
+                  onhand=excluded.onhand,
+                  minimum=excluded.minimum,
+                  minimum_calendar_id=excluded.minimum_calendar_id,
+                  type=excluded.type,
+                  category=excluded.category,
+                  subcategory=excluded.subcategory,
+                  source=excluded.source,
+                  lastmodified=excluded.lastmodified
+                  %s
+                """
+                % SQL4attributes(attrs),
+                getData(),
+            )
+
+
+@PlanTaskRegistry.register
+class exportOperationMaterials(PlanTask):
+
+    description = ("Export static data", "Export operation material")
+    sequence = (305, "exportstatic4", 2)
+
+    @classmethod
+    def getWeight(cls, database=DEFAULT_DB_ALIAS, **kwargs):
+        return 1 if kwargs.get("exportstatic", False) else -1
+
+    @classmethod
+    def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
+        import frepple
+
+        attrs = [f[0] for f in getAttributes(OperationMaterial)]
+
+        def getData():
+            for o in frepple.operations():
+                if o.hidden:
+                    continue
+                for i in o.flows:
+                    if i.hidden or (cls.source and cls.source != i.source):
+                        continue
+                    r = [
+                        i.operation.name,
+                        i.buffer.item.name,
+                        i.effective_start
+                        if i.effective_start != default_start
+                        else None,
+                        round(i.quantity, 8),
+                        i.type[5:],
+                        i.effective_end if i.effective_end != default_end else None,
+                        i.name,
+                        i.priority,
+                        i.search != "PRIORITY" and i.search or None,
+                        i.source,
+                        round(i.transferbatch, 8)
+                        if isinstance(i, frepple.flow_transfer_batch)
+                        else None,
+                        cls.timestamp,
+                    ]
+                    for a in attrs:
+                        r.append(getattr(i, a, None))
+                    yield r
+
+        with connections[database].cursor() as cursor:
+            execute_batch(
+                cursor,
+                """
+                insert into operationmaterial
+                (operation_id,item_id,effective_start,quantity,type,effective_end,
+                name,priority,search,source,transferbatch,lastmodified%s)
+                values(%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s%s)
+                on conflict (operation_id, item_id, effective_start)
+                do update set
+                  quantity=excluded.quantity,
+                  type=excluded.type,
+                  effective_end=excluded.effective_end,
+                  name=excluded.name,
+                  priority=excluded.priority,
+                  search=excluded.search,
+                  source=excluded.source,
+                  transferbatch=excluded.transferbatch,
+                  lastmodified=excluded.lastmodified
+                  %s
+                """
+                % SQL4attributes(attrs),
+                getData(),
+            )
+
+
+@PlanTaskRegistry.register
+class exportSuppliers(PlanTask):
+
+    description = ("Export static data", "Export suppliers")
+    sequence = (305, "exportstatic4", 3)
+
+    @classmethod
+    def getWeight(cls, database=DEFAULT_DB_ALIAS, **kwargs):
+        return 1 if kwargs.get("exportstatic", False) else -1
+
+    @classmethod
+    def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
+        import frepple
+
+        attrs = [f[0] for f in getAttributes(Supplier)]
+
+        def getData():
+            for i in frepple.suppliers():
+                if cls.source and cls.source != i.source:
+                    continue
+                r = [
+                    i.name,
+                    i.description,
+                    i.category,
+                    i.subcategory,
+                    i.source,
+                    cls.timestamp,
+                ]
+                for a in attrs:
+                    r.append(getattr(i, a, None))
+                yield r
+
+        def getOwners():
+            for i in frepple.suppliers():
+                if i.owner and (not cls.source or cls.source == i.source):
+                    yield (i.owner.name, i.name)
+
+        with connections[database].cursor() as cursor:
+            execute_batch(
+                cursor,
+                """
+                insert into supplier
+                (name,description,category,subcategory,source,lastmodified,owner_id%s)
+                values(%%s,%%s,%%s,%%s,%%s,%%s,null%s)
+                on conflict (name)
+                do update set
+                  description=excluded.description,
+                  category=excluded.category,
+                  subcategory=excluded.subcategory,
+                  source=excluded.source,
+                  lastmodified=excluded.lastmodified,
+                  owner_id=excluded.owner_id
+                  %s
+                """
+                % SQL4attributes(attrs),
+                getData(),
+            )
+            execute_batch(
+                cursor, "update supplier set owner_id=%s where name=%s", getOwners()
+            )
+
+
+@PlanTaskRegistry.register
+class exportItemSuppliers(PlanTask):
+
+    description = ("Export static data", "Export item suppliers")
+    sequence = (305, "exportstatic4", 4)
+
+    @classmethod
+    def getWeight(cls, database=DEFAULT_DB_ALIAS, **kwargs):
+        return 1 if kwargs.get("exportstatic", False) else -1
+
+    @classmethod
+    def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
+        import frepple
+
+        attrs = [f[0] for f in getAttributes(ItemSupplier)]
+
+        def getData():
+            for s in frepple.suppliers():
+                if cls.source and cls.source != s.source:
+                    continue
+                for i in s.itemsuppliers:
+                    if i.hidden or (cls.source and cls.source != i.source):
+                        continue
+                    r = [
+                        i.item.name,
+                        i.location.name if i.location else None,
+                        i.supplier.name,
+                        i.effective_start
+                        if i.effective_start != default_start
+                        else None,
+                        i.leadtime,
+                        i.size_minimum,
+                        i.size_multiple,
+                        i.cost,
+                        i.priority,
+                        i.effective_end if i.effective_end != default_end else None,
+                        i.resource.name if i.resource else None,
+                        i.resource_qty,
+                        i.source,
+                        cls.timestamp,
+                    ]
+                    for a in attrs:
+                        r.append(getattr(i, a, None))
+                    yield r
+
+        with connections[database].cursor() as cursor:
+            execute_batch(
+                cursor,
+                """
+                insert into itemsupplier
+                (item_id,location_id,supplier_id,effective_start,leadtime,sizeminimum,
+                 sizemultiple,cost,priority,effective_end,resource_id,resource_qty,source,
+                 lastmodified%s)
+                values(%%s,%%s,%%s,%%s,%%s * interval '1 second',%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s%s)
+                on conflict (item_id, location_id, supplier_id, effective_start)
+                do update set
+                  leadtime=excluded.leadtime,
+                  sizeminimum=excluded.sizeminimum,
+                  sizemultiple=excluded.sizemultiple,
+                  cost=excluded.cost,
+                  priority=excluded.priority,
+                  effective_end=excluded.effective_end,
+                  resource_id=excluded.resource_id,
+                  resource_qty=excluded.resource_qty,
+                  source=excluded.source,
+                  lastmodified=excluded.lastmodified
+                  %s
+                """
+                % SQL4attributes(attrs),
+                getData(),
+            )
+
+
+@PlanTaskRegistry.register
+class exportItemDistributions(PlanTask):
+
+    description = ("Export static data", "Export item distributions")
+    sequence = (305, "exportstatic4", 5)
+
+    @classmethod
+    def getWeight(cls, database=DEFAULT_DB_ALIAS, **kwargs):
+        return 1 if kwargs.get("exportstatic", False) else -1
+
+    @classmethod
+    def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
+        import frepple
+
+        attrs = [f[0] for f in getAttributes(ItemDistribution)]
+
+        def getData():
+            for s in frepple.items():
+                if s.hidden or (cls.source and cls.source != s.source):
+                    continue
+                for i in s.itemdistributions:
+                    if i.hidden or (cls.source and cls.source != i.source):
+                        continue
+                    r = [
+                        i.item.name,
+                        i.destination.name if i.destination else None,
+                        i.origin.name,
+                        i.effective_start
+                        if i.effective_start != default_start
+                        else None,
+                        i.leadtime,
+                        i.size_minimum,
+                        i.size_multiple,
+                        i.cost,
+                        i.priority,
+                        i.effective_end if i.effective_end != default_end else None,
+                        i.source,
+                        cls.timestamp,
+                    ]
+                    for a in attrs:
+                        r.append(getattr(i, a, None))
+                    yield r
+
+        with connections[database].cursor() as cursor:
+            execute_batch(
+                cursor,
+                """
+                insert into itemdistribution
+                (item_id,location_id,origin_id,effective_start,leadtime,sizeminimum,
+                 sizemultiple,cost,priority,effective_end,source,lastmodified%s)
+                values(%%s,%%s,%%s,%%s,%%s * interval '1 second',%%s,%%s,%%s,%%s,%%s,%%s,%%s%s)
+                on conflict (item_id, location_id, origin_id, effective_start)
+                do update set
+                  leadtime=excluded.leadtime,
+                  sizeminimum=excluded.sizeminimum,
+                  sizemultiple=excluded.sizemultiple,
+                  cost=excluded.cost,
+                  priority=excluded.priority,
+                  effective_end=excluded.effective_end,
+                  source=excluded.source,
+                  lastmodified=excluded.lastmodified
+                  %s
+                """
+                % SQL4attributes(attrs),
+                getData(),
+            )

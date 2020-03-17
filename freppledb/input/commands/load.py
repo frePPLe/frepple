@@ -77,25 +77,25 @@ class checkBuckets(CheckTask):
         with connections[database].cursor() as cursor:
             cursor.execute(
                 """
-        WITH problems AS (
-          (
-            SELECT bucket_id, enddate AS date, 'enddate not matching next bucket startdate' AS message FROM common_bucketdetail
-            EXCEPT
-            SELECT bucket_id, startdate, 'enddate not matching next bucket startdate' AS message FROM common_bucketdetail
-          )
-          UNION ALL
-            SELECT bucket_id, startdate AS date, 'startdate not unique for this bucket_id' AS message FROM common_bucketdetail GROUP BY bucket_id, startdate HAVING COUNT(*)>1
-          UNION ALL
-            SELECT bucket_id, enddate AS date, 'enddate not unique for this bucket_id' AS message FROM common_bucketdetail GROUP BY bucket_id, enddate HAVING COUNT(*)>1
-        ),
-        maxenddate AS (
-              SELECT bucket_id, MAX(enddate) AS theend FROM common_bucketdetail GROUP BY bucket_id
-        )
-        SELECT problems.bucket_id, common_bucketdetail.name, problems.date, problems.date = maxenddate.theend, problems.message
-        FROM common_bucketdetail
-        RIGHT OUTER JOIN problems ON problems.bucket_id = common_bucketdetail.bucket_id AND (common_bucketdetail.startdate = problems.date OR common_bucketdetail.enddate = problems.date)
-        INNER JOIN maxenddate ON maxenddate.bucket_id = common_bucketdetail.bucket_id
-      """
+                WITH problems AS (
+                  (
+                    SELECT bucket_id, enddate AS date, 'enddate not matching next bucket startdate' AS message FROM common_bucketdetail
+                    EXCEPT
+                    SELECT bucket_id, startdate, 'enddate not matching next bucket startdate' AS message FROM common_bucketdetail
+                  )
+                  UNION ALL
+                    SELECT bucket_id, startdate AS date, 'startdate not unique for this bucket_id' AS message FROM common_bucketdetail GROUP BY bucket_id, startdate HAVING COUNT(*)>1
+                  UNION ALL
+                    SELECT bucket_id, enddate AS date, 'enddate not unique for this bucket_id' AS message FROM common_bucketdetail GROUP BY bucket_id, enddate HAVING COUNT(*)>1
+                ),
+                maxenddate AS (
+                      SELECT bucket_id, MAX(enddate) AS theend FROM common_bucketdetail GROUP BY bucket_id
+                )
+                SELECT problems.bucket_id, common_bucketdetail.name, problems.date, problems.date = maxenddate.theend, problems.message
+                FROM common_bucketdetail
+                RIGHT OUTER JOIN problems ON problems.bucket_id = common_bucketdetail.bucket_id AND (common_bucketdetail.startdate = problems.date OR common_bucketdetail.enddate = problems.date)
+                INNER JOIN maxenddate ON maxenddate.bucket_id = common_bucketdetail.bucket_id
+                """
             )
             errors = 0
             empty = True
@@ -138,12 +138,12 @@ class checkBuckets(CheckTask):
             # Check if partial indexes exist
             cursor.execute(
                 """
-        select name from common_bucket
-        except
-        select description from pg_description
-        inner join pg_class on pg_class.oid = pg_description.objoid
-        inner join pg_indexes on pg_indexes.indexname = pg_class.relname and pg_indexes.tablename = 'common_bucketdetail'
-      """
+                select name from common_bucket
+                except
+                select description from pg_description
+                inner join pg_class on pg_class.oid = pg_description.objoid
+                inner join pg_indexes on pg_indexes.indexname = pg_class.relname and pg_indexes.tablename = 'common_bucketdetail'
+                """
             )
             queries = []
             for rec in cursor:
@@ -172,10 +172,10 @@ class loadParameter(LoadTask):
         with connections[database].chunked_cursor() as cursor:
             cursor.execute(
                 """
-        SELECT name, value
-        FROM common_parameter
-        where name in ('currentdate', 'plan.calendar')
-        """
+                SELECT name, value
+                FROM common_parameter
+                where name in ('currentdate', 'plan.calendar')
+                """
             )
             default_current_date = True
             for rec in cursor:
@@ -271,15 +271,15 @@ class loadCalendars(LoadTask):
             starttime = time()
             cursor.execute(
                 """
-        SELECT
-          name, defaultvalue, source, 0 hidden
-        FROM calendar %s
-        union
-        SELECT
-          name, 0, 'common_bucket', 1 hidden
-        FROM common_bucket
-        order by name asc
-        """
+                SELECT
+                  name, defaultvalue, source, 0 hidden
+                FROM calendar %s
+                union
+                SELECT
+                  name, 0, 'common_bucket', 1 hidden
+                FROM common_bucket
+                order by name asc
+                """
                 % filter_where
             )
             for i in cursor:
@@ -313,19 +313,19 @@ class loadCalendarBuckets(LoadTask):
             starttime = time()
             cursor.execute(
                 """
-        SELECT
-          calendar_id, startdate, enddate, priority, value,
-          sunday, monday, tuesday, wednesday, thursday, friday, saturday,
-          starttime, endtime, source
-        FROM calendarbucket %s
-        UNION
-        SELECT
-          bucket_id calendar_id, startdate, enddate, 10 priority , 0 as value,
-          't' sunday,'t' monday,'t' tuesday,'t' wednesday,'t' thurday,'t' friday,'t' saturday,
-          time '00:00:00' starttime, time '23:59:59' endtime, 'common_bucketdetail' source
-        FROM common_bucketdetail
-        ORDER BY calendar_id, startdate desc
-        """
+                SELECT
+                  calendar_id, startdate, enddate, priority, value,
+                  sunday, monday, tuesday, wednesday, thursday, friday, saturday,
+                  starttime, endtime, source
+                FROM calendarbucket %s
+                UNION
+                SELECT
+                  bucket_id calendar_id, startdate, enddate, 10 priority , 0 as value,
+                  't' sunday,'t' monday,'t' tuesday,'t' wednesday,'t' thurday,'t' friday,'t' saturday,
+                  time '00:00:00' starttime, time '23:59:59' endtime, 'common_bucketdetail' source
+                FROM common_bucketdetail
+                ORDER BY calendar_id, startdate desc
+                """
                 % filter_where
             )
             prevcal = None
@@ -394,10 +394,10 @@ class loadCustomers(LoadTask):
             starttime = time()
             cursor.execute(
                 """
-        SELECT
-          name, description, owner_id, category, subcategory, source
-        FROM customer %s
-        """
+                SELECT
+                  name, description, owner_id, category, subcategory, source
+                FROM customer %s
+                """
                 % filter_where
             )
             for i in cursor:
@@ -439,10 +439,10 @@ class loadSuppliers(LoadTask):
             starttime = time()
             cursor.execute(
                 """
-        SELECT
-          name, description, owner_id, category, subcategory, source, available_id
-        FROM supplier %s
-        """
+                SELECT
+                  name, description, owner_id, category, subcategory, source, available_id
+                FROM supplier %s
+                """
                 % filter_where
             )
             for i in cursor:
@@ -498,7 +498,7 @@ class loadOperations(LoadTask):
                       select operation.name operation_id, min(operationmaterial.item_id) item_id
                        from operation
                        inner join suboperation s1 on s1.operation_id = operation.name
-                       inner join operationmaterial 
+                       inner join operationmaterial
                          on operationmaterial.operation_id = s1.suboperation_id and quantity > 0
                        where operation.type = 'routing'
                        and not exists
@@ -837,13 +837,13 @@ class loadItemSuppliers(LoadTask):
             starttime = time()
             cursor.execute(
                 """
-        SELECT
-          supplier_id, item_id, location_id, sizeminimum, sizemultiple, sizemaximum,
-          cost, priority, effective_start, effective_end, source, leadtime,
-          resource_id, resource_qty, fence
-        FROM itemsupplier %s
-        ORDER BY supplier_id, item_id, location_id, priority desc
-        """
+                SELECT
+                  supplier_id, item_id, location_id, sizeminimum, sizemultiple, sizemaximum,
+                  cost, priority, effective_start, effective_end, source, leadtime,
+                  resource_id, resource_qty, fence
+                FROM itemsupplier %s
+                ORDER BY supplier_id, item_id, location_id, priority desc
+                """
                 % filter_where
             )
             cursuppliername = None
@@ -910,13 +910,13 @@ class loadItemDistributions(LoadTask):
             starttime = time()
             cursor.execute(
                 """
-        SELECT
-          origin_id, item_id, location_id, sizeminimum, sizemultiple, sizemaximum,
-          cost, priority, effective_start, effective_end, source,
-          leadtime, resource_id, resource_qty, fence
-        FROM itemdistribution %s
-        ORDER BY origin_id, item_id, location_id, priority desc
-        """
+                SELECT
+                  origin_id, item_id, location_id, sizeminimum, sizemultiple, sizemaximum,
+                  cost, priority, effective_start, effective_end, source,
+                  leadtime, resource_id, resource_qty, fence
+                FROM itemdistribution %s
+                ORDER BY origin_id, item_id, location_id, priority desc
+                """
                 % filter_where
             )
             curoriginname = None
@@ -1245,11 +1245,11 @@ class loadResourceSkills(LoadTask):
             starttime = time()
             cursor.execute(
                 """
-        SELECT
-          resource_id, skill_id, effective_start, effective_end, priority, source
-        FROM resourceskill %s
-        ORDER BY skill_id, priority, resource_id
-        """
+                SELECT
+                  resource_id, skill_id, effective_start, effective_end, priority, source
+                FROM resourceskill %s
+                ORDER BY skill_id, priority, resource_id
+                """
                 % filter_where
             )
             for i in cursor:

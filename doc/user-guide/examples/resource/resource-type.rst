@@ -71,5 +71,5 @@ The fourth and fith resource mirror the loading of the second resource.
 Resource D does this with monthly capacity buckets. Resource E does it in a
 fully unconstrained way.
 
-.. image:: images/resource-type.png
+.. image:: _images/resource-type.png
   :alt: Resource report

@@ -122,7 +122,6 @@ class PlanTask:
     thread = "main"
     parent = None
     timestamp = None
-    source = None
 
     @classmethod
     def getWeight(cls, **kwargs):
@@ -173,18 +172,16 @@ class PlanTaskSequence(PlanTask):
             if export:
                 s.weight = 1 if s.export else -1
             else:
-                s.weight = s.getWeight(**kwargs)
+                s.weight = s.getWeight(**PlanTaskRegistry.getArguments())
             if s.weight is not None and s.weight >= 0:
                 total += s.weight
         return total
 
     def run(self, database=DEFAULT_DB_ALIAS, **kwargs):
         # Collect the list of tasks
-        if self.parent:
-            self.timestamp = self.parent.timestamp
-        else:
-            self.timestamp = datetime.now().replace(microsecond=0)
-        task_weight = self.getWeight(database=database, **kwargs)
+        task_weight = self.getWeight(
+            database=database, **PlanTaskRegistry.getArguments()
+        )
         if not task_weight:
             task_weight = 1
 
@@ -222,7 +219,7 @@ class PlanTaskSequence(PlanTask):
                         )
                     )
                 step.timestamp = self.timestamp
-                step.run(database=database, **kwargs)
+                step.run(database=database, **PlanTaskRegistry.getArguments())
                 logger.info(
                     "Finished '%s' at %s %s"
                     % (
@@ -295,10 +292,6 @@ class PlanTaskParallel(PlanTask):
             self.exception = None
 
         def run(self):
-            if self.seq.parent:
-                self.seq.timestamp = self.seq.parent.timestamp
-            else:
-                self.seq.timestamp = datetime.now().replace(microsecond=0)
             try:
                 self.seq.run(**self.kwargs)
             except Exception as e:
@@ -321,11 +314,15 @@ class PlanTaskParallel(PlanTask):
         return longest
 
     def run(self, **kwargs):
-        self.timestamp = self.parent.timestamp
         threads = []
         for threadname, g in self.groups.items():
+            g.timestamp = self.timestamp
             if g.weight is not None and g.weight >= 0:
-                threads.append(self._PlanTaskThread(g, name=threadname, **kwargs))
+                threads.append(
+                    self._PlanTaskThread(
+                        g, name=threadname, **PlanTaskRegistry.getArguments()
+                    )
+                )
         for t in threads:
             t.start()
         for t in threads:
@@ -366,6 +363,15 @@ class PlanTaskParallel(PlanTask):
 
 class PlanTaskRegistry:
     reg = PlanTaskSequence()
+    arguments = {}
+
+    @classmethod
+    def addArguments(cls, **kwargs):
+        cls.arguments.update(kwargs)
+
+    @classmethod
+    def getArguments(cls):
+        return cls.arguments
 
     @classmethod
     def register(cls, task):
@@ -469,7 +475,16 @@ class PlanTaskRegistry:
                 cls.reg.task.status = "Cancelled"
                 cls.reg.task.save(using=database)
                 sys.exit(2)
-        cls.reg.run(cluster=cluster, database=database, export=export, **kwargs)
+        cls.arguments = {}
+        cls.arguments.update(kwargs)
+        cls.reg.timestamp = datetime.now().replace(microsecond=0)
+        cls.reg.run(
+            cluster=cluster,
+            exportstatic=True,
+            database=database,
+            export=export,
+            **cls.arguments
+        )
         if export:
             logger.info("Finished export at %s" % datetime.now().strftime("%H:%M:%S"))
         else:

@@ -76,6 +76,7 @@ class OdooReadData(PlanTask):
                             "(source is null or source<>'odoo_%s')" % cls.mode
                         )
                         stdLoad.description += " - non-odoo source"
+                PlanTaskRegistry.addArguments(exportstatic=True, source="odoo_%s" % i)
                 return 1
         return -1
 
@@ -170,28 +171,6 @@ class OdooReadData(PlanTask):
         for r in frepple.locations():
             if r.owner is None and r != root_location:
                 r.owner = root_location
-
-
-@PlanTaskRegistry.register
-class OdooSaveStatic(PlanTask):
-    description = "Save static model"
-    sequence = 131
-    label = ("odoo_read_1", _("Read Odoo data"))
-
-    @classmethod
-    def getWeight(cls, database=DEFAULT_DB_ALIAS, **kwargs):
-        for i in range(5):
-            if ("odoo_read_%s" % i) in os.environ:
-                cls.mode = i
-                cls.description = "Save static model of source odoo_%s" % cls.mode
-                return 1
-        return -1
-
-    @classmethod
-    def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
-        from freppledb.execute.export_database_static import exportStaticModel
-
-        exportStaticModel(database=database, source="odoo_%s" % cls.mode).run()
 
 
 @PlanTaskRegistry.register

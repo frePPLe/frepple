@@ -70,10 +70,14 @@ class cleanStatic(PlanTask):
 
     @classmethod
     def getWeight(cls, database=DEFAULT_DB_ALIAS, **kwargs):
-        return 1 if kwargs.get("exportstatic", False) and cls.source else -1
+        if kwargs.get("exportstatic", False) and kwargs.get("source", None):
+            return 1
+        else:
+            return -1
 
     @classmethod
     def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
+        source = kwargs.get("source", None)
         with connections[database].cursor() as cursor:
             cursor.execute(
                 """
@@ -84,27 +88,27 @@ class cleanStatic(PlanTask):
                     where operation.source = %s and operation.lastmodified <> %s
                     )
                 """,
-                (cls.source, cls.timestamp, cls.source, cls.timestamp),
+                (source, cls.timestamp, source, cls.timestamp),
             )
             cursor.execute(
                 "delete from buffer where source = %s and lastmodified <> %s",
-                (cls.source, cls.timestamp),
+                (source, cls.timestamp),
             )
             cursor.execute(
                 "delete from operationplan where demand_id in (select name from demand where source = %s and lastmodified <> %s)",
-                (cls.source, cls.timestamp),
+                (source, cls.timestamp),
             )
             cursor.execute(
                 "delete from demand where source = %s and lastmodified <> %s",
-                (cls.source, cls.timestamp),
+                (source, cls.timestamp),
             )
             cursor.execute(
                 "delete from itemsupplier where source = %s and lastmodified <> %s",
-                (cls.source, cls.timestamp),
+                (source, cls.timestamp),
             )
             cursor.execute(
                 "delete from itemdistribution where source = %s and lastmodified <> %s",
-                (cls.source, cls.timestamp),
+                (source, cls.timestamp),
             )
             cursor.execute(
                 """
@@ -118,14 +122,7 @@ class cleanStatic(PlanTask):
                     select name from supplier where source = %s and lastmodified <> %s
                    ))
                 """,
-                (
-                    cls.source,
-                    cls.timestamp,
-                    cls.source,
-                    cls.timestamp,
-                    cls.source,
-                    cls.timestamp,
-                ),
+                (source, cls.timestamp, source, cls.timestamp, source, cls.timestamp),
             )
             cursor.execute(
                 """
@@ -139,14 +136,7 @@ class cleanStatic(PlanTask):
                     select name from supplier where source = %s and lastmodified <> %s
                    )
                 """,
-                (
-                    cls.source,
-                    cls.timestamp,
-                    cls.source,
-                    cls.timestamp,
-                    cls.source,
-                    cls.timestamp,
-                ),
+                (source, cls.timestamp, source, cls.timestamp, source, cls.timestamp),
             )
             cursor.execute(
                 """
@@ -157,55 +147,55 @@ class cleanStatic(PlanTask):
                      where operation.source = %s and operation.lastmodified <> %s
                      )
                   """,
-                (cls.source, cls.timestamp, cls.source, cls.timestamp),
+                (source, cls.timestamp, source, cls.timestamp),
             )
             cursor.execute(
                 "delete from operation where source = %s and lastmodified <> %s",
-                (cls.source, cls.timestamp),
+                (source, cls.timestamp),
             )
             cursor.execute(
                 "delete from item where source = %s and lastmodified <> %s",
-                (cls.source, cls.timestamp),
+                (source, cls.timestamp),
             )
             cursor.execute(
                 "delete from resourceskill where source = %s and lastmodified <> %s",
-                (cls.source, cls.timestamp),
+                (source, cls.timestamp),
             )
             cursor.execute(
                 "delete from operation where source = %s and lastmodified <> %s",
-                (cls.source, cls.timestamp),
+                (source, cls.timestamp),
             )
             cursor.execute(
                 "delete from resource where source = %s and lastmodified <> %s",
-                (cls.source, cls.timestamp),
+                (source, cls.timestamp),
             )
             cursor.execute(
                 "delete from location where source = %s and lastmodified <> %s",
-                (cls.source, cls.timestamp),
+                (source, cls.timestamp),
             )
             cursor.execute(
                 "delete from calendar where source = %s and lastmodified <> %s",
-                (cls.source, cls.timestamp),
+                (source, cls.timestamp),
             )
             cursor.execute(
                 "delete from skill where source = %s and lastmodified <> %s",
-                (cls.source, cls.timestamp),
+                (source, cls.timestamp),
             )
             cursor.execute(
                 "delete from setuprule where source = %s and lastmodified <> %s",
-                (cls.source, cls.timestamp),
+                (source, cls.timestamp),
             )
             cursor.execute(
                 "delete from setupmatrix where source = %s and lastmodified <> %s",
-                (cls.source, cls.timestamp),
+                (source, cls.timestamp),
             )
             cursor.execute(
                 "delete from customer where source = %s and lastmodified <> %s",
-                (cls.source, cls.timestamp),
+                (source, cls.timestamp),
             )
             cursor.execute(
                 "delete from supplier where source = %s and lastmodified <> %s",
-                (cls.source, cls.timestamp),
+                (source, cls.timestamp),
             )
 
 
@@ -218,7 +208,10 @@ class exportParameters(PlanTask):
     @classmethod
     def getWeight(cls, database=DEFAULT_DB_ALIAS, **kwargs):
         # Only complete export should save the current date
-        return 1 if kwargs.get("exportstatic", False) and not cls.source else -1
+        if kwargs.get("exportstatic", False) and not kwargs.get("source", None):
+            return 1
+        else:
+            return -1
 
     @classmethod
     def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
@@ -247,6 +240,7 @@ class exportCalendars(PlanTask):
     def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
         import frepple
 
+        source = kwargs.get("source", None)
         attrs = [f[0] for f in getAttributes(Calendar)]
 
         def getData():
@@ -254,7 +248,7 @@ class exportCalendars(PlanTask):
                 if (
                     i.hidden
                     or i.source == "common_bucket"
-                    or (cls.source and cls.source != i.source)
+                    or (source and source != i.source)
                 ):
                     continue
                 r = [i.name, round(i.default, 8), i.source, cls.timestamp]
@@ -294,11 +288,12 @@ class exportLocations(PlanTask):
     def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
         import frepple
 
+        source = kwargs.get("source", None)
         attrs = [f[0] for f in getAttributes(Location)]
 
         def getData():
             for i in frepple.locations():
-                if cls.source and cls.source != i.source:
+                if source and source != i.source:
                     continue
                 r = [
                     i.name,
@@ -315,7 +310,7 @@ class exportLocations(PlanTask):
 
         def getOwners():
             for i in frepple.locations():
-                if i.owner and (not cls.source or cls.source == i.source):
+                if i.owner and (not source or source == i.source):
                     yield (i.owner.name, i.name)
 
         with connections[database].cursor() as cursor:
@@ -357,11 +352,12 @@ class exportItems(PlanTask):
     def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
         import frepple
 
+        source = kwargs.get("source", None)
         attrs = [f[0] for f in getAttributes(Item)]
 
         def getData():
             for i in frepple.items():
-                if cls.source and cls.source != i.source:
+                if source and source != i.source:
                     continue
                 r = [
                     i.name,
@@ -381,7 +377,7 @@ class exportItems(PlanTask):
 
         def getOwners():
             for i in frepple.items():
-                if i.owner and (not cls.source or cls.source == i.source):
+                if i.owner and (not source or source == i.source):
                     yield (i.owner.name, i.name)
 
         with connections[database].cursor() as cursor:
@@ -424,13 +420,14 @@ class exportOperations(PlanTask):
     def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
         import frepple
 
+        source = kwargs.get("source", None)
         attrs = [f[0] for f in getAttributes(Operation)]
 
         def getData():
             for i in frepple.operations():
                 if (
                     i.hidden
-                    or (cls.source and cls.source != i.source)
+                    or (source and source != i.source)
                     or isinstance(
                         i,
                         (
@@ -478,7 +475,8 @@ class exportOperations(PlanTask):
                 if (
                     i.owner
                     and not i.hidden
-                    and (not cls.source or cls.source == i.source)
+                    and not i.owner.hidden
+                    and (not source or source == i.source)
                     and not isinstance(
                         i,
                         (
@@ -552,7 +550,7 @@ class exportSetupMatrices(PlanTask):
 
         def getData():
             for i in frepple.setupmatrices():
-                if cls.source and cls.source != i.source:
+                if source and source != i.source:
                     continue
                 r = [i.name, i.source, cls.timestamp]
                 for a in attrs:
@@ -590,11 +588,12 @@ class exportResources(PlanTask):
     def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
         import frepple
 
+        source = kwargs.get("source", None)
         attrs = [f[0] for f in getAttributes(Resource)]
 
         def getData():
             for i in frepple.resources():
-                if i.hidden or (cls.source and cls.source != i.source):
+                if i.hidden or (source and source != i.source):
                     continue
                 r = [
                     i.name,
@@ -622,11 +621,7 @@ class exportResources(PlanTask):
 
         def getOwners():
             for i in frepple.resources():
-                if (
-                    not i.hidden
-                    and i.owner
-                    and (not cls.source or cls.source == i.source)
-                ):
+                if not i.hidden and i.owner and (not source or source == i.source):
                     yield (i.owner.name, i.name)
 
         with connections[database].cursor() as cursor:
@@ -683,12 +678,13 @@ class exportSetupRules(PlanTask):
     def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
         import frepple
 
+        source = kwargs.get("source", None)
         attrs = [f[0] for f in getAttributes(SetupRule)]
 
         def getData():
             for m in frepple.setupmatrices():
                 for i in m.rules:
-                    if cls.source and cls.source != i.source:
+                    if source and source != i.source:
                         continue
                     r = [
                         m.name,
@@ -739,11 +735,12 @@ class exportSkills(PlanTask):
     def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
         import frepple
 
+        source = kwargs.get("source", None)
         attrs = [f[0] for f in getAttributes(Skill)]
 
         def getData():
             for i in frepple.skills():
-                if cls.source and cls.source != i.source:
+                if source and source != i.source:
                     continue
                 r = [i.name, i.source, cls.timestamp]
                 for a in attrs:
@@ -781,12 +778,13 @@ class exportResourceSkills(PlanTask):
     def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
         import frepple
 
+        source = kwargs.get("source", None)
         attrs = [f[0] for f in getAttributes(ResourceSkill)]
 
         def getData():
             for s in frepple.skills():
                 for i in s.resourceskills:
-                    if cls.source and cls.source != i.source:
+                    if source and source != i.source:
                         continue
                     r = [
                         i.effective_start
@@ -838,6 +836,7 @@ class exportOperationResources(PlanTask):
     def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
         import frepple
 
+        source = kwargs.get("source", None)
         attrs = [f[0] for f in getAttributes(OperationResource)]
 
         def getData():
@@ -845,7 +844,7 @@ class exportOperationResources(PlanTask):
                 if o.hidden:
                     continue
                 for i in o.loads:
-                    if i.hidden or (cls.source and cls.source != i.source):
+                    if i.hidden or (source and source != i.source):
                         continue
                     r = [
                         i.operation.name,
@@ -905,11 +904,12 @@ class exportCustomers(PlanTask):
     def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
         import frepple
 
+        source = kwargs.get("source", None)
         attrs = [f[0] for f in getAttributes(Customer)]
 
         def getData():
             for i in frepple.customers():
-                if cls.source and cls.source != i.source:
+                if source and source != i.source:
                     continue
                 r = [
                     i.name,
@@ -925,7 +925,7 @@ class exportCustomers(PlanTask):
 
         def getOwners():
             for i in frepple.customers():
-                if i.owner and (not cls.source or cls.source == i.source):
+                if i.owner and (not source or source == i.source):
                     yield (i.owner.name, i.name)
 
         with connections[database].cursor() as cursor:
@@ -967,6 +967,7 @@ class exportDemands(PlanTask):
     def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
         import frepple
 
+        source = kwargs.get("source", None)
         attrs = [f[0] for f in getAttributes(Demand)]
 
         def getData():
@@ -974,7 +975,7 @@ class exportDemands(PlanTask):
                 if (
                     not isinstance(i, frepple.demand_default)
                     or i.hidden
-                    or (cls.source and cls.source != i.source)
+                    or (source and source != i.source)
                 ):
                     continue
                 r = [
@@ -1006,7 +1007,7 @@ class exportDemands(PlanTask):
                     i.owner
                     and isinstance(i, frepple.demand_default)
                     and not i.hidden
-                    and (not cls.source or cls.source == i.source)
+                    and (not source or source == i.source)
                 ):
                     yield (i.owner.name, i.name)
 
@@ -1059,6 +1060,7 @@ class exportCalendarBuckets(PlanTask):
     def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
         import frepple
 
+        source = kwargs.get("source", None)
         attrs = [f[0] for f in getAttributes(CalendarBucket)]
 
         def int_to_time(i):
@@ -1078,7 +1080,7 @@ class exportCalendarBuckets(PlanTask):
                 if (
                     c.hidden
                     or c.source == "common_bucket"
-                    or (cls.source and cls.source != c.source)
+                    or (source and source != c.source)
                 ):
                     continue
                 for i in c.buckets:
@@ -1107,10 +1109,8 @@ class exportCalendarBuckets(PlanTask):
                     yield r
 
         with connections[database].cursor() as cursor:
-            if cls.source:
-                cursor.execute(
-                    "delete from calendarbucket where source = %s", [cls.source]
-                )
+            if source:
+                cursor.execute("delete from calendarbucket where source = %s", [source])
             else:
                 cursor.execute("delete from calendarbucket")
             execute_batch(
@@ -1141,11 +1141,12 @@ class exportBuffers(PlanTask):
     def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
         import frepple
 
+        source = kwargs.get("source", None)
         attrs = [f[0] for f in getAttributes(Buffer)]
 
         def getData():
             for i in frepple.buffers():
-                if i.hidden or (cls.source and cls.source != i.source):
+                if i.hidden or (source and source != i.source):
                     continue
                 r = [
                     i.item.name,
@@ -1205,6 +1206,7 @@ class exportOperationMaterials(PlanTask):
     def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
         import frepple
 
+        source = kwargs.get("source", None)
         attrs = [f[0] for f in getAttributes(OperationMaterial)]
 
         def getData():
@@ -1212,7 +1214,7 @@ class exportOperationMaterials(PlanTask):
                 if o.hidden:
                     continue
                 for i in o.flows:
-                    if i.hidden or (cls.source and cls.source != i.source):
+                    if i.hidden or (source and source != i.source):
                         continue
                     r = [
                         i.operation.name,
@@ -1276,11 +1278,12 @@ class exportSuppliers(PlanTask):
     def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
         import frepple
 
+        source = kwargs.get("source", None)
         attrs = [f[0] for f in getAttributes(Supplier)]
 
         def getData():
             for i in frepple.suppliers():
-                if cls.source and cls.source != i.source:
+                if source and source != i.source:
                     continue
                 r = [
                     i.name,
@@ -1296,7 +1299,7 @@ class exportSuppliers(PlanTask):
 
         def getOwners():
             for i in frepple.suppliers():
-                if i.owner and (not cls.source or cls.source == i.source):
+                if i.owner and (not source or source == i.source):
                     yield (i.owner.name, i.name)
 
         with connections[database].cursor() as cursor:
@@ -1338,14 +1341,15 @@ class exportItemSuppliers(PlanTask):
     def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
         import frepple
 
+        source = kwargs.get("source", None)
         attrs = [f[0] for f in getAttributes(ItemSupplier)]
 
         def getData():
             for s in frepple.suppliers():
-                if cls.source and cls.source != s.source:
+                if source and source != s.source:
                     continue
                 for i in s.itemsuppliers:
-                    if i.hidden or (cls.source and cls.source != i.source):
+                    if i.hidden or (source and source != i.source):
                         continue
                     r = [
                         i.item.name,
@@ -1411,14 +1415,15 @@ class exportItemDistributions(PlanTask):
     def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
         import frepple
 
+        source = kwargs.get("source", None)
         attrs = [f[0] for f in getAttributes(ItemDistribution)]
 
         def getData():
             for s in frepple.items():
-                if s.hidden or (cls.source and cls.source != s.source):
+                if s.hidden or (source and source != s.source):
                     continue
                 for i in s.itemdistributions:
-                    if i.hidden or (cls.source and cls.source != i.source):
+                    if i.hidden or (source and source != i.source):
                         continue
                     r = [
                         i.item.name,

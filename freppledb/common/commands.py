@@ -179,9 +179,7 @@ class PlanTaskSequence(PlanTask):
 
     def run(self, database=DEFAULT_DB_ALIAS, **kwargs):
         # Collect the list of tasks
-        task_weight = self.getWeight(
-            database=database, **PlanTaskRegistry.getArguments()
-        )
+        task_weight = self.getWeight(**PlanTaskRegistry.getArguments())
         if not task_weight:
             task_weight = 1
 
@@ -219,7 +217,7 @@ class PlanTaskSequence(PlanTask):
                         )
                     )
                 step.timestamp = self.timestamp
-                step.run(database=database, **PlanTaskRegistry.getArguments())
+                step.run(**PlanTaskRegistry.getArguments())
                 logger.info(
                     "Finished '%s' at %s %s"
                     % (
@@ -475,16 +473,10 @@ class PlanTaskRegistry:
                 cls.reg.task.status = "Cancelled"
                 cls.reg.task.save(using=database)
                 sys.exit(2)
-        cls.arguments = {}
+        cls.arguments = {"database": database, "export": export, "cluster": cluster}
         cls.arguments.update(kwargs)
         cls.reg.timestamp = datetime.now().replace(microsecond=0)
-        cls.reg.run(
-            cluster=cluster,
-            exportstatic=True,
-            database=database,
-            export=export,
-            **cls.arguments
-        )
+        cls.reg.run(**cls.arguments)
         if export:
             logger.info("Finished export at %s" % datetime.now().strftime("%H:%M:%S"))
         else:

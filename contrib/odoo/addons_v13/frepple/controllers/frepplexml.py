@@ -118,7 +118,6 @@ class XMLController(odoo.http.Controller):
             database = req.httprequest.form.get("database", None)
             req.session.db = database
             try:
-                logger.warning("zzzz %s %s %s " % (req, database, language))
                 self.authenticate(req, database, language)
             except Exception as e:
                 logger.warning("Failed login attempt %s" % e)

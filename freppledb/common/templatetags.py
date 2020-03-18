@@ -482,20 +482,8 @@ class MenuNode(Node):
                     ok = True
                     if j[2].dependencies:
                         for dep in j[2].dependencies:
-                            if isinstance(dep, list) and len(dep) == 2:
-                                # Evaluate the value
-                                try:
-                                    ok = (
-                                        dep[0]
-                                        .objects.using(req.database)
-                                        .get(name=dep[1])
-                                        .value.lower()
-                                        == "true"
-                                    )
-                                except Exception:
-                                    ok = False
-                                if ok is False:
-                                    break
+                            if callable(dep):
+                                ok = dep(req)
                             elif dep._meta.db_table not in present:
                                 ok = False
                                 break

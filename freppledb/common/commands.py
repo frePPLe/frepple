@@ -187,7 +187,7 @@ class PlanTaskSequence(PlanTask):
         try:
             progress = 0
             for step in self.steps:
-                if step.weight is None or step.weight < 0:
+                if step.weight is None or step.weight <= 0:
                     continue
 
                 # Update status and message

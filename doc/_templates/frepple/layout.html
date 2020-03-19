@@ -1,5 +1,22 @@
 {% extends "basic/layout.html" %}
 
+{%- block extrahead %}
+<link rel="stylesheet" href="{{ pathto('_static/jquery.modal.min.css', 1) }}" />
+<script src="{{ pathto('_static/jquery.modal.min.js', 1) }}"></script>
+<script>
+$(function() {
+  $(".bodywrapper img").click(function(event) {
+    var popup = $('#popup');
+    popup.find("h4").text($(event.target).attr("alt"));
+    popup.find("img").attr("src", $(event.target).attr("src"));
+    popup.modal({fadeDuration: 250});
+    event.preventDefault();
+    return false;
+	});
+});
+</script>
+{% endblock %}
+
 {%- block relbar1 %}<div id="banner">
 <div id="site-title" role="banner"><a href="https://frepple.com/" title="frePPLe" rel="home">
 <img src="{{ pathto('_static/frepple.svg', 1) }}" height="40" alt="frePPLe"></a>
@@ -43,6 +60,10 @@ Documentation v{{ release }}</div>
       </div>
   {%- endblock %}
       <div class="clearer"></div>
+    </div>
+    <div id="popup" class="modal" style="max-width: inherit">
+      <h4 class="modal-title"></h4>
+      <div><img src="" style="width:100%"></div>
     </div>
 {%- endblock %}
 

@@ -381,7 +381,6 @@ Pricing
    installation-guide/index
    integration-guide/index
    developer-guide/index
-   faq
    license
    release-notes
    

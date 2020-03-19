@@ -5269,6 +5269,12 @@ class InventoryDetail(OperationPlanMixin, GridReport):
             editable=False,
             extra='"formatoptions":{"defaultValue":""}, "summaryType":"sum"',
         ),
+        GridFieldDuration(
+            "periodofcover",
+            title=_("period of cover"),
+            editable=False,
+            extra='"formatoptions":{"defaultValue":""}, "summaryType":"sum"',
+        ),
         GridFieldDateTime(
             "operationplan__startdate",
             title=_("start date"),

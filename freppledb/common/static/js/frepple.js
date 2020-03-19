@@ -331,7 +331,7 @@ function formatDuration(cellvalue, options, rowdata) {
     seconds = cellvalue;
     sign = Math.sign(seconds);
   } else {
-    sign = (cellvalue.indexOf('-') > -1)?-1:1;
+    sign = (cellvalue.lstrip().charAt(0) == '-')?-1:1;
     d = cellvalue.replace(/ +/g, " ").split(" ");
     if (d.length == 1)
     {

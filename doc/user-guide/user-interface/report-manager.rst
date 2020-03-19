@@ -21,15 +21,10 @@ the report is allowed to perform this action.
 .. Important::
 
    The custom reports run in a database role that is configurable with the setting
-   DATABASES / SQL_ROLE. If not configured correctly, users can run queries that damage
-   the integrity or performance of the database.
+   DATABASES / SQL_ROLE. By default this is role that only has read permissions
+   to a subset of the database tables.
    
-   For security reasons this should be set to a role that has sufficiently
-   restricted permissions, eg read-only access to a subset of the database tables.
-   
-   If you're not familiar with this level of administration of the PostgreSQL database,
-   it can be safer to disable the "report manager" app altogether in the INSTALLED_APPS
-   setting.  
+   Database administrators can grant additional permissions, if required.
    
 Creation of custom reports is only available to users that are granted the permission 
 "reportmanager | can create custom reports".

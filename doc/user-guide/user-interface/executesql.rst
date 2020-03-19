@@ -4,10 +4,11 @@ SQL execution screen
 
 .. Important::
 
-   This capability should only be used in development environments.
+   The SQL queries are run in a database role that is configurable with the setting
+   DATABASES / SQL_ROLE. By default this role has only read permissions
+   to a subset of the database tables.
    
-   Giving access to this feature in production environments and/or
-   end users is insecure and can corrupt the database contents.
+   Database administrators can grant additional permissions, if required.
    
 This screen allows you to run SQL statements on the frePPLe database.
 

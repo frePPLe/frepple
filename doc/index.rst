@@ -84,7 +84,7 @@ Production planning & scheduling
 |                                         |   way. This results is an unconstrained plan that shows only the "real"    |                                                                               |
 |                                         |   shortages.                                                               |                                                                               |
 +-----------------------------------------+----------------------------------------------------------------------------+-------------------------------------------------------------------------------+
-| **Fast heuristic solver                 | FrePPLe uses a heuristic planning algorithm, that can provide constrained  | - Doc :doc:`developer-guide/planning-engine/planning-algorithm`               |
+| **Fast heuristic solver                 | FrePPLe uses a heuristic planning algorithm, that can provide constrained  | - Doc :doc:`developer-guide/planning-algorithm`                               |
 | algorithm**                             | and unconstrained plans.                                                   | - Example :doc:`user-guide/examples/demand/priorities`                        |
 |                                         |                                                                            |                                                                               |
 |                                         | The algorithm goes through the following loop:                             |                                                                               |
@@ -235,7 +235,7 @@ User interface
 |                                         | web browsers.                                                              |                                                                               |
 +-----------------------------------------+----------------------------------------------------------------------------+-------------------------------------------------------------------------------+
 | **Multi-lingual**                       | Available in English, French, German, Hebrew, Italian, Japanese, Dutch,    | - `Live demo <https://demo.frepple.com/preferences/>`_                        |
-|                                         | Portuguese, Brazilian Portuguese, Russian, Spanish, simplified and         | - Doc :doc:`developer-guide/user-interface/translating-the-user-interface`    |
+|                                         | Portuguese, Brazilian Portuguese, Russian, Spanish, simplified and         | - Doc :doc:`developer-guide/translating-the-user-interface`                   |
 |                                         | traditional Chinese.                                                       |                                                                               |
 |                                         |                                                                            |                                                                               |
 |                                         | The language is detected automatically from the user's browser, and can be |                                                                               |
@@ -337,7 +337,7 @@ Technology
 |                                         | The planning algorithms are implemented in C++ and can be scripted with    |                                                                               |
 |                                         | Python.                                                                    |                                                                               |
 +-----------------------------------------+----------------------------------------------------------------------------+-------------------------------------------------------------------------------+
-| **Extendable platform                   | You can code addons to extend the application with custom reports, data    |  - Doc :doc:`developer-guide/user-interface/creating-an-extension-app`        |
+| **Extendable platform                   | You can code addons to extend the application with custom reports, data    |  - Doc :doc:`developer-guide/creating-an-extension-app`                       |
 | with apps**                             | fields, and custom planning logic.                                         |                                                                               |
 +-----------------------------------------+----------------------------------------------------------------------------+-------------------------------------------------------------------------------+
 | **Supported on Linux                    |                                                                            | - Doc :doc:`installation-guide/windows-installer`                             |

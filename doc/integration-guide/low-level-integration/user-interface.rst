@@ -15,8 +15,7 @@ To create a exceptional and powerful user experience, frePPLe provides:
 
 - Ability to completely customize the look and feel of the frePPLe user interface. You
   can create custom themes to match your web application. 
-  See http://getbootstrap.com/customize/ and 
-  :doc:`../../developer-guide/user-interface/creating-a-custom-theme`
+  See http://getbootstrap.com/customize/ and :doc:`../../developer-guide/creating-a-custom-theme`
 
 | Below are two examples of such an integration.
 | The green boundary is the complete user interface, in this case Odoo (see https://odoo.com)

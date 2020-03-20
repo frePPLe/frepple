@@ -13,6 +13,5 @@ This part of the manual covers all topics related to installation and deployment
    upgrading
    windows-compiling
    linux-compiling
-   other-platforms
    multi-model
    python-module

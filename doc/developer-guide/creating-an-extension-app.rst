@@ -252,7 +252,7 @@ Define a REST API for your models
 The file **serializers.py** defines a REST API for your models. You can explore the REST API from
 the menu "help/REST API help".
 
-.. image:: ../_images/my_rest_api.png
+.. image:: _images/my_rest_api.png
    :alt: A REST API for your model
    
 .. code-block:: Python
@@ -294,7 +294,7 @@ Create editing forms for your models
 
 The file **admin.py** defines a form to edit objects of your models.
 
-.. image:: ../_images/my_model.png
+.. image:: _images/my_model.png
    :alt: Editing form for your model
    
 .. code-block:: Python
@@ -337,7 +337,7 @@ New reports are defined in a file **views.py**. The classes in this file
 typically will run SQL statements to retrieve data from the database, apply
 the correct business logic and return HTML code to the user's browser.     
 
-.. image:: ../_images/my_view.png
+.. image:: _images/my_view.png
    :alt: List view for your model
 
 .. code-block:: Python     
@@ -444,7 +444,7 @@ or through a web API.
    {"model": "my_app.my_model", "fields": {"name": "sample #2", "charfield": "B", "booleanfield": false, "decimalfield": 666.0}}
    ]
 
-.. image:: ../_images/my_fixture.png
+.. image:: _images/my_fixture.png
    :alt: Loading my own dataset
    
 You can find more detailed information on https://docs.djangoproject.com/en/2.2/howto/initial-data/
@@ -489,10 +489,10 @@ choose whether or not to perform the extra logic, b) a custom
 message when our step is executing, and c) prints from our
 custom calculations in the plan generation log file.
 
-.. image:: ../_images/my_calculations.png
+.. image:: _images/my_calculations.png
    :alt: My customized action to generate the plan.
 
-.. image:: ../_images/my_logfile.png
+.. image:: _images/my_logfile.png
    :alt: The log file of my custom command.
    
 .. _app_commands:
@@ -514,7 +514,7 @@ web API or interactively from the execution screen.
    # Web API of the command
    POST /execute/api/my_command/
 
-.. image:: ../_images/my_command.png
+.. image:: _images/my_command.png
    :alt: Custom command in the execution screen
 
 Simplified, the code for a command looks as follows:

@@ -102,14 +102,17 @@ def parseExcelWorksheet(model, data, user=None, database=DEFAULT_DB_ALIAS, ping=
                     data = "%.6f" % data
                 else:
                     data = str(data) if data is not None else None
-            elif isinstance(field, (DateField, DateTimeField)) and isinstance(
-                data, datetime
-            ):
-                # Rounding to second
-                if data.microsecond < 500000:
-                    data = data.replace(microsecond=0)
+            elif isinstance(field, (DateField, DateTimeField)):
+                if isinstance(data, datetime):
+                    # Rounding to second
+                    if data.microsecond < 500000:
+                        data = data.replace(microsecond=0)
+                    else:
+                        data = data.replace(microsecond=0) + timedelta(seconds=1)
+                elif data:
+                    data = data.strip()
                 else:
-                    data = data.replace(microsecond=0) + timedelta(seconds=1)
+                    data = None
             elif isinstance(field, TimeField) and isinstance(data, datetime):
                 data = "%s:%s:%s" % (data.hour, data.minute, data.second)
             elif (

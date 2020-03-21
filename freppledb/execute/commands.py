@@ -193,24 +193,6 @@ class SupplyPlanning(PlanTask):
 
 
 @PlanTaskRegistry.register
-class ExportStatic(PlanTask):
-
-    description = "Export static data"
-    sequence = 300
-
-    @classmethod
-    def getWeight(cls, database=DEFAULT_DB_ALIAS, **kwargs):
-        # Task not active!
-        return -1
-
-    @classmethod
-    def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
-        from freppledb.execute.export_database_static import exportStaticModel
-
-        exportStaticModel(database=database, source=None).run()
-
-
-@PlanTaskRegistry.register
 class EraseModel(PlanTask):
 
     description = "Erase model"

@@ -254,6 +254,9 @@ class PlanTaskSequence(PlanTask):
                 lbl = (t.label[0], force_text(t.label[1]))
                 if lbl not in labellist:
                     labellist.append(lbl)
+            m = getattr(t, "getLabels", None)
+            if callable(m):
+                t.getLabels(labellist)
         return labellist
 
     def _sort(self):
@@ -434,9 +437,11 @@ class PlanTaskRegistry:
             # Removing a task from the registry
             cls.reg._remove(task.sequence)
 
+    _discovery_has_run = False
+
     @classmethod
     def autodiscover(cls):
-        if not cls.reg.steps:
+        if not cls._discovery_has_run:
             for app in reversed(settings.INSTALLED_APPS):
                 try:
                     import_module("%s.commands" % app)
@@ -448,14 +453,17 @@ class PlanTaskRegistry:
                     ):
                         raise e
             cls.reg._sort()
+            cls._discovery_has_run = True
 
     @classmethod
     def display(cls, **kwargs):
+        cls.autodiscover()
         logger.info("Planning task registry:")
         cls.reg.display(indentlevel=1, **kwargs)
 
     @classmethod
     def run(cls, cluster=-1, database=DEFAULT_DB_ALIAS, export=False, **kwargs):
+        cls.autodiscover()
         if export:
             logger.info("Start export at %s" % datetime.now().strftime("%H:%M:%S"))
         else:
@@ -484,6 +492,7 @@ class PlanTaskRegistry:
 
     @classmethod
     def getLabels(cls):
+        cls.autodiscover()
         labellist = []
         cls.reg.getLabels(labellist)
         return labellist
@@ -533,7 +542,6 @@ if __name__ == "__main__":
     # Find all planning steps and execute them
     from freppledb.common.commands import PlanTaskRegistry as register
 
-    register.autodiscover()
     newstatus = "Done"
     try:
         register.run(database=database)

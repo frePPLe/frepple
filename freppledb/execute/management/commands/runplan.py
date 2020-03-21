@@ -151,7 +151,6 @@ class Command(BaseCommand):
 
             # Reset environment variables
             # TODO avoid having to delete the environment variables. Use options directly?
-            PlanTaskRegistry.autodiscover()
             for label in PlanTaskRegistry.getLabels():
                 if "env" in options:
                     # Options specified
@@ -293,7 +292,6 @@ class Command(BaseCommand):
 
         if request.user.has_perm("auth.generate_plan"):
             # Collect optional tasks
-            PlanTaskRegistry.autodiscover()
             planning_options = PlanTaskRegistry.getLabels()
 
             plantype = "2"

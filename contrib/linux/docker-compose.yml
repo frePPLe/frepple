@@ -5,8 +5,8 @@ services:
 
   frepple-webserver:
     build: '.'
-    image: frepple-opensuse
-    container_name: frepple-webserver-opensuse
+    image: frepple-ubuntu-18.04:6.4.0
+    container_name: frepple-webserver
     ports:
       - 9000:80
       - 9001:443

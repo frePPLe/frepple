@@ -14,7 +14,8 @@ $(top_builddir)/frepple-$(VERSION).tar.gz:
 contrib: $(top_builddir)/frepple-$(VERSION).tar.gz
 	cp $(top_builddir)/frepple-$(VERSION).tar.gz frepple_$(VERSION).orig.tar.gz
 	cp $(top_builddir)/requirements.txt .
-	docker build --tag $(TAGNAME)-builder:$(VERSION) --target builder .
-	docker cp `docker create $(TAGNAME)-builder:$(VERSION)`:frepple_$(VERSION)-$(BUILD)_amd64.deb $(TAGNAME)-frepple_$(VERSION)_$(BUILD).amd64.deb
-	docker cp `docker create $(TAGNAME)-builder:$(VERSION)`:frepple-doc_$(VERSION)-$(BUILD)_all.deb $(TAGNAME)-frepple-doc_$(VERSION)-$(BUILD)_all.deb
+	docker build --tag frepple-$(TAGNAME)-builder:$(VERSION) --target builder .
+	docker cp `docker create frepple-$(TAGNAME)-builder:$(VERSION)`:frepple_$(VERSION)-$(BUILD)_amd64.deb $(TAGNAME)-frepple_$(VERSION)_$(BUILD).amd64.deb
+	docker cp `docker create frepple-$(TAGNAME)-builder:$(VERSION)`:frepple-doc_$(VERSION)-$(BUILD)_all.deb $(TAGNAME)-frepple-doc_$(VERSION)-$(BUILD)_all.deb
+	docker build --tag frepple-$(TAGNAME):$(VERSION) .
 	rm frepple_$(VERSION).orig.tar.gz

@@ -35,17 +35,15 @@ RUN pip3 install -r requirements.txt
 COPY *.tar.gz ./
 COPY debian/  debian/
 
-# Create a database user to run the test suite
-USER postgres
-RUN /etc/init.d/postgresql start && \
-  psql template1 -c "create role frepple login superuser password 'frepple'"
-
 # subtle - and _ things going on here...
-USER root
-RUN tar -xzf *.orig.tar.gz && \
+RUN sed -i 's/local\(\s*\)all\(\s*\)all\(\s*\)peer/local\1all\2all\3\md5/g' /etc/postgresql/10/main/pg_hba.conf && \
+  /etc/init.d/postgresql start && \
+  sudo -u postgres psql template1 -c "create role frepple login superuser password 'frepple'" && \
+  tar -xzf *.orig.tar.gz && \
   src=`basename --suffix=.orig.tar.gz frepple-*` && \
   mv debian $src && \
   cd $src && \
+  mkdir logs && \
   dpkg-buildpackage -us -uc -D
 
 # OPTION 2: BUILDING FROM GIT REPOSITORY
@@ -69,8 +67,8 @@ RUN apt-get -y -q update && DEBIAN_FRONTEND=noninteractive apt-get -y install \
 
 # The following copy commands don't work on LCOW:
 # See https://github.com/moby/moby/issues/33850
-COPY --from=builder /frepple/requirements.txt .
-COPY --from=builder /frepple/contrib/debian/frepple_*.deb .
+COPY --from=builder /requirements.txt /
+COPY --from=builder /frepple_*_amd64.deb /
 
 RUN dpkg -i frepple_*.deb && \
   apt-get -f -y -q install && \

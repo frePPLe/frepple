@@ -43,8 +43,8 @@ class ResetPasswordRequestView(FormView):
     @staticmethod
     def validate_email_address(email):
         """
-    This method here validates the if the input is an email address or not. Its return type is boolean, True if the input is a email address or False if its not.
-    """
+        This method here validates the if the input is an email address or not. Its return type is boolean, True if the input is a email address or False if its not.
+        """
         try:
             validate_email(email)
             return True
@@ -53,15 +53,15 @@ class ResetPasswordRequestView(FormView):
 
     def post(self, request, *args, **kwargs):
         """
-    A normal post request which takes input from field "email_or_username" (in ResetPasswordRequestForm).
-    """
+        A normal post request which takes input from field "email_or_username" (in ResetPasswordRequestForm).
+        """
         form = self.form_class(request.POST)
         if form.is_valid():
             data = form.cleaned_data["email_or_username"]
         if self.validate_email_address(data) is True:  # uses the method written above
             """
-      If the input is an valid email address, then the following code will lookup for users associated with that email address. If found then an email will be sent to the address, else an error message will be printed on the screen.
-      """
+            If the input is an valid email address, then the following code will lookup for users associated with that email address. If found then an email will be sent to the address, else an error message will be printed on the screen.
+            """
             associated_users = User.objects.filter(Q(email=data) | Q(username=data))
             if associated_users.exists():
                 for user in associated_users:
@@ -110,8 +110,8 @@ class ResetPasswordRequestView(FormView):
             return result
         else:
             """
-      If the input is an username, then the following code will lookup for users associated with that user. If found then an email will be sent to the user's address, else an error message will be printed on the screen.
-      """
+            If the input is an username, then the following code will lookup for users associated with that user. If found then an email will be sent to the user's address, else an error message will be printed on the screen.
+            """
             associated_users = User.objects.filter(username=data)
             if associated_users.exists():
                 for user in associated_users:
@@ -158,8 +158,6 @@ class ResetPasswordRequestView(FormView):
             result = self.form_invalid(form)
             messages.error(request, "This username does not exist in the system.")
             return result
-        messages.error(request, "Invalid Input")
-        return self.form_invalid(form)
 
 
 class PasswordResetConfirmView(FormView):
@@ -169,9 +167,9 @@ class PasswordResetConfirmView(FormView):
 
     def post(self, request, uidb64=None, token=None, *arg, **kwargs):
         """
-    View that checks the hash in a password reset link and presents a
-    form for entering a new password.
-    """
+        View that checks the hash in a password reset link and presents a
+        form for entering a new password.
+        """
         UserModel = get_user_model()
         form = self.form_class(request.POST)
         assert uidb64 is not None and token is not None  # checked by URLconf

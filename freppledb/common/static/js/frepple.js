@@ -470,11 +470,11 @@ jQuery.extend($.fn.fmatter, {
 
   color : function (cellvalue, options, rowdata) {
     // cellvalue contains computed_color field used only for sorting
-	// color field is the field to be read here
-	cellvalue = rowdata.color
+	  // color field is the field to be read here
+	  cellvalue = rowdata.color;
 
-	if (cellvalue === undefined || cellvalue === '') return '';
-  	var thenumber = parseInt(cellvalue);
+    if (cellvalue === undefined || cellvalue === '') return '';
+    var thenumber = parseInt(cellvalue);
 
     if (rowdata.inventory_item || rowdata.leadtime) {
 	    if (!isNaN(thenumber)) {
@@ -1460,7 +1460,7 @@ var grid = {
   getFilterRule: function(thegrid, rule, thefilter, fullfilter)
   {
     // Find the column
-    var val, i, col, oper;
+    var i, col, oper;
     var columns = thegrid.jqGrid ('getGridParam', 'colModel');
     for (i = 0; i < columns.length; i++) {
       if(columns[i].name === rule.field) {
@@ -1941,7 +1941,6 @@ var ERPconnection = {
 
           var labels = ["id","type","item","value","quantity","location","origin","startdate","enddate","criticality"];
 
-          var bodycontent='';
           if (transactiontype == 'SO') {
             var tableheadercontent = $('<tr/>');
 

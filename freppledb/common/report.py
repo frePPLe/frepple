@@ -1251,30 +1251,6 @@ class GridReport(View):
             else:
                 return "1 asc"
 
-        raise Exception("Unreachable piece of code")  # TODO Delete till end of method!
-        sortname = None
-        if request.GET.get("sidx", None):
-            # 1
-            sort = request.GET["sidx"]
-        elif request.prefs and "sidx" in request.prefs:
-            # 2
-            sort = request.prefs["sidx"]
-        else:
-            # 3
-            sort = request.rows[0].name
-        idx = 1
-        for i in request.rows:
-            if i.name == sort:
-                if "sord" in request.GET and request.GET["sord"] == "desc":
-                    return idx > 1 and "%d desc, 1 asc" % idx or "1 desc"
-                elif request.prefs and request.prefs.get("sord", "asc") == "desc":
-                    return idx > 1 and "%d desc, 1 asc" % idx or "1 desc"
-                else:
-                    return idx > 1 and "%d asc, 1 asc" % idx or "1 asc"
-            else:
-                idx += 1
-        return "1 asc"
-
     @classmethod
     def defaultSortString(cls, request):
         if not cls.default_sort:

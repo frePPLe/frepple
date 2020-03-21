@@ -280,7 +280,6 @@ AC_CONFIG_FILES([ src/Makefile src/model/Makefile src/solver/Makefile src/utils/
 AC_CONFIG_FILES([ 
   contrib/Makefile
   contrib/debian/Makefile
-  contrib/docker/Makefile
   contrib/installer/Makefile
   contrib/odoo/Makefile
   contrib/vc/Makefile

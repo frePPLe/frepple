@@ -215,8 +215,7 @@ class exporter(object):
         try:
             m = self.env["resource.calendar"]
             recs = m.search([("name", "=", self.calendar)])
-            rec = m.read(ids, ["attendance_ids"], limit=1)
-            m = self.env["resource.calendar.attendance"]
+            rec = recs.read(["attendance_ids"], limit=1)
             fields = ["dayofweek", "date_from", "hour_from", "hour_to"]
             buckets = []
             for i in rec["attendance_ids"].read(fields):
@@ -461,16 +460,6 @@ class exporter(object):
         rts = self.env["stock.location.route"]
         fields = ["name"]
         recs = rts.search([])
-        stock_location_routes = {}
-        buy_route = None
-        mfg_route = None
-        for i in recs.read(fields):
-            stock_location_routes[i["id"]] = i
-            if i["name"] and i["name"].lower().startswith("buy"):
-                # Recognize items that can be purchased
-                buy_route = i["id"]
-            if i["name"] and i["name"].lower().startswith("manufacture"):
-                mfg_route = i["id"]
 
         # Read the suppliers
         m = self.env["res.partner"]
@@ -491,7 +480,6 @@ class exporter(object):
         recs = m.search([])
         s = self.env["product.supplierinfo"]
         s_fields = ["name", "delay", "min_qty", "date_end", "date_start", "price"]
-        supplier = {}
         if recs:
             yield "<!-- products -->\n"
             yield "<items>\n"
@@ -551,10 +539,10 @@ class exporter(object):
         self.operations = set()
 
         # Read all active manufacturing routings
-        m = self.env["mrp.routing"]
-        recs = m.search([])
-        fields = ["location_id"]
         mrp_routings = {}
+        # m = self.env["mrp.routing"]
+        # recs = m.search([])
+        # fields = ["location_id"]
         # for i in recs.read(fields):
         #    mrp_routings[i["id"]] = i["location_id"]
 
@@ -632,7 +620,6 @@ class exporter(object):
                     "skipping %s %s" % (i["product_tmpl_id"][0], i["routing_id"])
                 )
                 continue
-            buf_name = u"%s @ %s" % (product_buf["name"], location)
             uom_factor = self.convert_qty_uom(
                 1.0, i["product_uom_id"][0], i["product_tmpl_id"][0]
             )

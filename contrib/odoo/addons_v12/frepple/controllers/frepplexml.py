@@ -43,7 +43,7 @@ class XMLController(odoo.http.Controller):
         Implements HTTP basic authentication.
         TODO Authentication using a webtoken instead (or additional).
         """
-        if not "authorization" in req.httprequest.headers:
+        if "authorization" not in req.httprequest.headers:
             raise Exception("No authentication header")
         authmeth, auth = req.httprequest.headers["authorization"].split(" ", 1)
         if authmeth.lower() != "basic":

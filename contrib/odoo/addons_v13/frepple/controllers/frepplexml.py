@@ -44,7 +44,7 @@ class XMLController(odoo.http.Controller):
         Implements HTTP basic authentication.
         TODO Authentication using a webtoken instead (or additional).
         """
-        if not "authorization" in req.httprequest.headers:
+        if "authorization" not in req.httprequest.headers:
             raise Exception("No authentication header")
         authmeth, auth = req.httprequest.headers["authorization"].split(" ", 1)
         if authmeth.lower() != "basic":
@@ -65,14 +65,13 @@ class XMLController(odoo.http.Controller):
         "/frepple/xml", type="http", auth="none", methods=["POST", "GET"], csrf=False
     )
     def xml(self, **kwargs):
-        database = kwargs.get("database", None)
-        if not database:
-            database = db_monodb()
         req = odoo.http.request
         language = kwargs.get("language", None)
         if req.httprequest.method == "GET":
             # Login
             database = kwargs.get("database", None)
+            # if not database:
+            #     database = db_monodb()
             req.session.db = database
             try:
                 uid = self.authenticate(req, database, language)
@@ -116,6 +115,8 @@ class XMLController(odoo.http.Controller):
         elif req.httprequest.method == "POST":
             # Authenticate the user
             database = req.httprequest.form.get("database", None)
+            # if not database:
+            #     database = db_monodb()
             req.session.db = database
             try:
                 self.authenticate(req, database, language)

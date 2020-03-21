@@ -215,8 +215,7 @@ class exporter(object):
         try:
             m = self.env["resource.calendar"]
             recs = m.search([("name", "=", self.calendar)])
-            rec = m.read(ids, ["attendance_ids"], limit=1)
-            m = self.env["resource.calendar.attendance"]
+            rec = recs.read(["attendance_ids"], limit=1)
             fields = ["dayofweek", "date_from", "hour_from", "hour_to"]
             buckets = []
             for i in rec["attendance_ids"].read(fields):
@@ -660,7 +659,6 @@ class exporter(object):
                     "skipping %s %s" % (i["product_tmpl_id"][0], i["routing_id"])
                 )
                 continue
-            buf_name = u"%s @ %s" % (product_buf["name"], location)
             uom_factor = self.convert_qty_uom(
                 1.0, i["product_uom_id"][0], i["product_tmpl_id"][0]
             )

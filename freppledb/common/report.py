@@ -249,13 +249,14 @@ class GridField(object):
 
     def __str__(self):
         o = [
-            '"name":"%s","index":"%s","editable":%s,"label":"%s","align":"%s","title":false'
+            '"name":"%s","index":"%s","editable":%s,"label":"%s","align":"%s","title":false,"field_name":"%s"'
             % (
                 self.name or "",
                 self.name or "",
                 self.editable and "true" or "false",
                 force_text(self.title).title().replace("'", "\\'"),
                 self.align,
+                self.field_name,
             )
         ]
         if self.key:

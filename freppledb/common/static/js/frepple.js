@@ -1463,7 +1463,7 @@ var grid = {
     var i, col, oper;
     var columns = thegrid.jqGrid ('getGridParam', 'colModel');
     for (i = 0; i < columns.length; i++) {
-      if(columns[i].name === rule.field) {
+      if(columns[i].name === rule.field || columns[i].field_name === rule.field) {
         col = columns[i];
         break;
       }

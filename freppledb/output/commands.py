@@ -917,6 +917,7 @@ class ExportResourcePlans(PlanTask):
             from common_bucketdetail
             where startdate between %s and %s
               and bucket_id = (select name from common_bucket order by level desc limit 1)
+            order by startdate
             """,
             (startdate, enddate),
         )

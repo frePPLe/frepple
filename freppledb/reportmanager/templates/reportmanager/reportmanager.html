@@ -220,7 +220,7 @@ $(function() {
   <button class="btn btn-xs btn-primary" onclick="grid.showCustomize(false)">
     <span data-toggle="tooltip" data-placement="top" title="" class="fa fa-wrench" data-original-title="{% trans 'customize'|capfirst|force_escape %}"></span>
   </button>
-  {% if perms.reportmanager.change_sqlreport and report and report.owner == request.user %}
+  {% if perms.reportmanager.change_sqlreport and report.user == request.user %}
   <button class="btn btn-xs btn-primary" onclick="startEdit()" data-toggle="tooltip" data-placement="top" data-original-title="{% trans 'edit'|capfirst|force_escape %}">
     <span class="fa fa-pencil"></span>
   </button>

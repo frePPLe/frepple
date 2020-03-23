@@ -9,29 +9,41 @@ Calendar buckets are effective only during specific periods, specified through:
 * Weekdays on which they are effective
 * Hours between which they are effective
 
-If multiple calendar buckets are effective at the same moment in time, the value with the lowest priority field overrides the others.
+If multiple calendar buckets are effective at the same moment in time, the value with
+the lowest priority field overrides the others.
 
 A calendar also has a default value that is valid when no calendar bucket is effective.
 
-The above rules allow you to determine the value of a calendar at any moment in time, as illustrated in the example below.
-
+The above rules allow you to determine the value of a calendar at any
+moment in time, as illustrated in the example below.
 
 `Check this feature on a live example <https://demo.frepple.com/calendar-working-hours/detail/input/calendar/Working%20hours/>`_
 
+:download:`Download an Excel spreadsheet with the data for this example <calendar-working-hours.xlsx>`
 
 
-The attached example models a warehouse where the replenishment operations are running on weekdays
-(Monday through Friday) from 8am till 5pm with a lunch break of an hour. The warehouse is not
-working on Christmas, December 25th.
+* | The attached example models a warehouse where the replenishment operations are running on weekdays
+    (Monday through Friday) from 8am till 5pm with a lunch break of an hour. The warehouse is not
+    working on Christmas, December 25th.
 
-A calendar is used to define these working hours. It has 3 calendar buckets, whose effectivity is illustrated in this picture.
+  .. image:: _images/calendar-working-hours-3.png
+     :alt: Calendar buckets
 
-.. image:: calendar_buckets.png
+* | A calendar is used to define these working hours. It has 3 calendar buckets, whose effectivity is
+    illustrated in this picture.
 
-At 20 dec 2014 13:00, or any other moment during the weekend, no calendar bucket is effective. The value of the calendar is then 0, the default value.
+  .. image:: _images/calendar-bucket-priority.png
+     :alt: Calendar buckets
 
-22 dec 2014 11:00 falls during regular working hours. The value of the calendar is now 1, as the first calendar bucket is effective.
+  | At 20 dec 2014 13:00, or any other moment during the weekend, no calendar bucket is effective. 
+    The value of the calendar is then 0, the default value.
 
-At 23 dec 2014 12:15 the value of the calendar value is 0 again. There are 2 effective calendar buckets at this moment, but the second calendar bucket has the lowest priority value and overrides the other.
+  | 22 dec 2014 11:00 falls during regular working hours. The value of the calendar is now 1, as 
+    the first calendar bucket is effective.
 
-At 25 dec 2014 14:00, or any other moment on December 25, the value of the calendar value is also 0. The third calendar bucket has the lowest priority.
+  | At 23 dec 2014 12:15 the value of the calendar value is 0 again. There are 2 effective 
+    calendar buckets at this moment, but the second calendar bucket has the lowest priority value
+    and overrides the other.
+
+  | At 25 dec 2014 14:00, or any other moment on December 25, the value of the calendar value is also 0.
+    The third calendar bucket has the lowest priority.

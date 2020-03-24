@@ -591,69 +591,6 @@ class SetupMatrix(AuditModel):
         ordering = ["name"]
 
 
-class SetupRule(AuditModel):
-    """
-  A rule that is part of a setup matrix.
-  """
-
-    # Database fields
-    id = models.AutoField(_("identifier"), primary_key=True)
-    setupmatrix = models.ForeignKey(
-        SetupMatrix,
-        verbose_name=_("setup matrix"),
-        related_name="rules",
-        on_delete=models.CASCADE,
-    )
-    priority = models.IntegerField(_("priority"))
-    fromsetup = models.CharField(
-        _("from setup"),
-        max_length=300,
-        blank=True,
-        null=True,
-        help_text=_("Name of the old setup (wildcard characters are supported)"),
-    )
-    tosetup = models.CharField(
-        _("to setup"),
-        max_length=300,
-        blank=True,
-        null=True,
-        help_text=_("Name of the new setup (wildcard characters are supported)"),
-    )
-    duration = models.DurationField(
-        _("duration"), null=True, blank=True, help_text=_("Duration of the changeover")
-    )
-    cost = models.DecimalField(
-        _("cost"),
-        max_digits=20,
-        decimal_places=8,
-        null=True,
-        blank=True,
-        help_text=_("Cost of the conversion"),
-    )
-
-    class Manager(MultiDBManager):
-        def get_by_natural_key(self, setupmatrix, priority):
-            return self.get(setupmatrix=setupmatrix, priority=priority)
-
-    def natural_key(self):
-        return (self.setupmatrix, self.priority)
-
-    objects = Manager()
-
-    def __str__(self):
-        return "%s - %s" % (
-            self.setupmatrix.name if self.setupmatrix else None,
-            self.priority,
-        )
-
-    class Meta(AuditModel.Meta):
-        ordering = ["priority"]
-        db_table = "setuprule"
-        unique_together = (("setupmatrix", "priority"),)
-        verbose_name = _("setup matrix rule")
-        verbose_name_plural = _("setup matrix rules")
-
-
 class Resource(AuditModel, HierarchyModel):
     # Types of resources.
     # The predefined buckets-size entries are unfortunately hardcoded. A database
@@ -790,6 +727,79 @@ class Resource(AuditModel, HierarchyModel):
         verbose_name = _("resource")
         verbose_name_plural = _("resources")
         ordering = ["name"]
+
+
+class SetupRule(AuditModel):
+    """
+    A rule that is part of a setup matrix.
+    """
+
+    # Database fields
+    id = models.AutoField(_("identifier"), primary_key=True)
+    setupmatrix = models.ForeignKey(
+        SetupMatrix,
+        verbose_name=_("setup matrix"),
+        related_name="rules",
+        on_delete=models.CASCADE,
+    )
+    priority = models.IntegerField(_("priority"))
+    fromsetup = models.CharField(
+        _("from setup"),
+        max_length=300,
+        blank=True,
+        null=True,
+        help_text=_("Name of the old setup (wildcard characters are supported)"),
+    )
+    tosetup = models.CharField(
+        _("to setup"),
+        max_length=300,
+        blank=True,
+        null=True,
+        help_text=_("Name of the new setup (wildcard characters are supported)"),
+    )
+    duration = models.DurationField(
+        _("duration"), null=True, blank=True, help_text=_("Duration of the changeover")
+    )
+    cost = models.DecimalField(
+        _("cost"),
+        max_digits=20,
+        decimal_places=8,
+        null=True,
+        blank=True,
+        help_text=_("Cost of the conversion"),
+    )
+    resource = models.ForeignKey(
+        Resource,
+        verbose_name=_("resource"),
+        db_index=True,
+        related_name="setuprules",
+        blank=True,
+        null=True,
+        on_delete=models.SET_NULL,
+        help_text=_("Extra resource used during this changeover"),
+    )
+
+    class Manager(MultiDBManager):
+        def get_by_natural_key(self, setupmatrix, priority):
+            return self.get(setupmatrix=setupmatrix, priority=priority)
+
+    def natural_key(self):
+        return (self.setupmatrix, self.priority)
+
+    objects = Manager()
+
+    def __str__(self):
+        return "%s - %s" % (
+            self.setupmatrix.name if self.setupmatrix else None,
+            self.priority,
+        )
+
+    class Meta(AuditModel.Meta):
+        ordering = ["priority"]
+        db_table = "setuprule"
+        unique_together = (("setupmatrix", "priority"),)
+        verbose_name = _("setup matrix rule")
+        verbose_name_plural = _("setup matrix rules")
 
 
 class Skill(AuditModel):

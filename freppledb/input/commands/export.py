@@ -693,6 +693,7 @@ class exportSetupRules(PlanTask):
                         i.tosetup,
                         i.duration,
                         round(i.cost, 8),
+                        i.resource.name if i.resource else None,
                         i.source,
                         cls.timestamp,
                     ]
@@ -704,14 +705,15 @@ class exportSetupRules(PlanTask):
             execute_batch(
                 cursor,
                 """insert into setuprule
-                (setupmatrix_id,priority,fromsetup,tosetup,duration,cost,source,lastmodified%s)
-                values(%%s,%%s,%%s,%%s,%%s * interval '1 second',%%s,%%s,%%s%s)
+                (setupmatrix_id,priority,fromsetup,tosetup,duration,cost,resource_id,source,lastmodified%s)
+                values(%%s,%%s,%%s,%%s,%%s * interval '1 second',%%s,%%s,%%s,%%s%s)
                 on conflict (matrix_id, priority)
                 do update set
                   fromsetup=excluded.fromsetup,
                   tosetup=excluded.tosetup,
                   duration=excluded.duration,
                   cost=excluded.cost,
+                  resource_id=excluded.resource_id,
                   source=excluded.source,
                   lastmodified=excluded.lastmodified
                   %s

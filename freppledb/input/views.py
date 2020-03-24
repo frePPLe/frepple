@@ -1276,6 +1276,12 @@ class SetupRuleList(GridReport):
         GridFieldText("tosetup", title=_("to setup")),
         GridFieldDuration("duration", title=_("duration")),
         GridFieldCurrency("cost", title=_("cost"), initially_hidden=True),
+        GridFieldText(
+            "resource",
+            title=_("resource"),
+            formatter="detail",
+            extra='"role":"input/resource"',
+        ),
         GridFieldLastModified("lastmodified"),
     )
 

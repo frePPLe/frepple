@@ -5584,6 +5584,10 @@ class SetupMatrixRule : public Object {
   /* Return the matrix owning this rule. */
   SetupMatrix* getSetupMatrix() const { return matrix; }
 
+  Resource* getResource() const { return resource; }
+
+  void setResource(Resource* r) { resource = r; }
+
   /* Return the priority. */
   int getPriority() const { return priority; }
 
@@ -5631,6 +5635,8 @@ class SetupMatrixRule : public Object {
                              &Cls::setDuration);
     m->addDoubleField<Cls>(Tags::cost, &Cls::getCost, &Cls::setCost);
     m->addIntField<Cls>(Tags::priority, &Cls::getPriority, &Cls::setPriority);
+    m->addPointerField<Cls, Resource>(Tags::resource, &Cls::getResource,
+                                      &Cls::setResource);
     m->addPointerField<Cls, SetupMatrix>(
         Tags::setupmatrix, &Cls::getSetupMatrix, &Cls::setSetupMatrix,
         DONT_SERIALIZE + PARENT);
@@ -5651,6 +5657,9 @@ class SetupMatrixRule : public Object {
 
   /* Pointer to the previous rule in this matrix. */
   SetupMatrixRule* prevRule = nullptr;
+
+  /* Additional resource needed during the changeover. */
+  Resource* resource = nullptr;
 
   /* Original setup. */
   PooledString from;

@@ -96,5 +96,8 @@ tosetup      string            | The new setup.
                                | If the field is empty the rules applies to any new
                                  setup value.
 duration     timeperiod        Duration of the changeover.
+resource     resource          | Resource required the changeover.
+                               | Only unconstrained resources can be assigned
+                                 during a changeover.
 cost         double            Cost of the changeover.
 ============ ================= ===========================================================

@@ -1096,7 +1096,8 @@ class loadSetupMatrices(LoadTask):
             cursor.execute(
                 """
                 SELECT
-                  setupmatrix_id, priority, fromsetup, tosetup, duration, cost, source
+                  setupmatrix_id, priority, fromsetup, tosetup, duration,
+                  cost, source, resource_id
                 FROM setuprule %s
                 ORDER BY setupmatrix_id, priority DESC
                 """
@@ -1105,7 +1106,7 @@ class loadSetupMatrices(LoadTask):
             for i in cursor:
                 cnt += 1
                 try:
-                    frepple.setupmatrixrule(
+                    r = frepple.setupmatrixrule(
                         setupmatrix=frepple.setupmatrix(name=i[0]),
                         priority=i[1],
                         fromsetup=i[2],
@@ -1114,6 +1115,8 @@ class loadSetupMatrices(LoadTask):
                         cost=i[5],
                         source=i[6],
                     )
+                    if i[7]:
+                        r.resource = frepple.resource(name=i[7])
                 except Exception as e:
                     logger.error("**** %s ****" % e)
             logger.info(

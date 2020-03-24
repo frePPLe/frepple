@@ -826,6 +826,7 @@ class SetupRuleFilter(filters.FilterSet):
             "priority": ["exact", "in", "gt", "gte", "lt", "lte"],
             "duration": ["exact", "in", "gt", "gte", "lt", "lte"],
             "cost": ["exact", "in", "gt", "gte", "lt", "lte"],
+            "resource": ["exact", "in"],
         }
 
         filter_fields = (
@@ -836,6 +837,7 @@ class SetupRuleFilter(filters.FilterSet):
             "priority",
             "duration",
             "cost",
+            "resource",
         )
 
 
@@ -850,6 +852,7 @@ class SetupRuleSerializer(BulkSerializerMixin, ModelSerializer):
             "priority",
             "duration",
             "cost",
+            "resource",
         )
         list_serializer_class = BulkListSerializer
         update_lookup_field = "setupmatrix"

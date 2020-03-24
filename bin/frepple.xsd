@@ -492,6 +492,7 @@
                   <xsd:element name="tosetup" type="xsd:normalizedString" minOccurs="0" />
                   <xsd:element name="duration" type="xsd:duration" minOccurs="0" />
                   <xsd:element name="cost" type="xsd:double" minOccurs="0" />
+                  <xsd:element name="resource" type="resource" minOccurs="0" />
                 </xsd:all>
                 <xsd:attribute name="priority" type="xsd:integer" use="required" />
                 <xsd:attribute name="fromsetup" type="xsd:normalizedString" />

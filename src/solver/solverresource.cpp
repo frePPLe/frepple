@@ -418,12 +418,11 @@ void SolverCreate::solveUnconstrained(const Resource* res, void* v) {
 }
 
 void SolverCreate::solve(const ResourceBuckets* res, void* v) {
-  if (!res->getConstrained()) {
+  SolverData* data = static_cast<SolverData*>(v);
+  if (!res->getConstrained() || !data->state->q_loadplan->getLoad()) {
     solveUnconstrained(res, v);
     return;
   }
-
-  SolverData* data = static_cast<SolverData*>(v);
   auto opplan = data->state->q_operationplan;
 
   // Call the user exit

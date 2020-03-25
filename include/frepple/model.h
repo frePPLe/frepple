@@ -7542,7 +7542,7 @@ class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand {
   LoadPlan(OperationPlan*, const Load*, LoadPlan*);
 
   /* A pointer to the load model. */
-  Load* ld;
+  Load* ld = nullptr;
 
   /* A pointer to the selected resource.
    * In case we use skills, the resource of the loadplan can be different

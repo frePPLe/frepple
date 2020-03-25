@@ -113,6 +113,7 @@ void LoadPlan::setResource(Resource* newres, bool check, bool use_start) {
 
   // Validate the argument
   if (!newres) throw DataException("Can't switch to nullptr resource");
+  if (!getLoad()) throw DataException("Can't switch setup resources");
   if (check) {
     // New resource must be a subresource of the load's resource.
     bool ok = false;
@@ -156,8 +157,8 @@ void LoadPlan::setResource(Resource* newres, bool check, bool use_start) {
     // This code assumes the date and quantity of the loadplan don't change
     // when a new resource is assigned.
     ldplan->res = newres;
-    newres->loadplans.insert(ldplan, ld->getLoadplanQuantity(ldplan),
-                             ld->getLoadplanDate(ldplan));
+    newres->loadplans.insert(ldplan, getLoad()->getLoadplanQuantity(ldplan),
+                             getLoad()->getLoadplanDate(ldplan));
 
     // Repeat for the brother loadplan or exit
     if (ldplan != this)

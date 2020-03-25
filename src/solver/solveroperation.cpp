@@ -26,7 +26,7 @@ void SolverCreate::checkOperationCapacity(OperationPlan* opplan,
                                           SolverCreate::SolverData& data) {
   unsigned short constrainedLoads = 0;
   for (auto h = opplan->beginLoadPlans(); h != opplan->endLoadPlans(); ++h)
-    if (h->getResource()->getConstrained() && h->isStart() &&
+    if (h->getResource()->getConstrained() && h->isStart() && h->getLoad() &&
         h->getLoad()->getQuantity() != 0.0) {
       if (++constrainedLoads > 1) break;
     }
@@ -500,7 +500,7 @@ bool SolverCreate::checkOperationLeadTime(OperationPlan* opplan,
       // First, switch all pools to their most efficient resource
       for (auto ldplan = opplan->beginLoadPlans();
            ldplan != opplan->endLoadPlans(); ++ldplan) {
-        if (ldplan->getQuantity() < 0.0 &&
+        if (ldplan->getQuantity() < 0.0 && ldplan->getLoad() &&
             ldplan->getLoad()->getResource()->isGroup()) {
           auto most_efficient =
               ldplan->getLoad()->findPreferredResource(opplan->getStart());

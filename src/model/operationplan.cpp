@@ -961,7 +961,7 @@ void OperationPlan::createFlowLoads() {
     // Automagically generate a reference number
     setBatch(getReference());
 
-  // Create setup suboperationplans and loadplans
+  // Create loadplans
   if (getConsumeCapacity())
     for (auto g = oper->getLoads().begin(); g != oper->getLoads().end(); ++g)
       if (!g->getAlternate()) new LoadPlan(this, &*g);
@@ -1289,7 +1289,8 @@ bool OperationPlan::mergeIfPossible() {
 
 void OperationPlan::scanSetupTimes() {
   for (auto ldplan = beginLoadPlans(); ldplan != endLoadPlans(); ++ldplan) {
-    if (!ldplan->isStart() && !ldplan->getLoad()->getSetup().empty() &&
+    if (!ldplan->isStart() && ldplan->getLoad() &&
+        !ldplan->getLoad()->getSetup().empty() &&
         ldplan->getResource()->getSetupMatrix()) {
       // Not a starting loadplan or there is no setup on this loadplan
       ldplan->getResource()->updateSetupTime();

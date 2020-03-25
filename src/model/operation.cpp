@@ -706,7 +706,8 @@ Operation::SetupInfo Operation::calculateSetup(OperationPlan* opplan,
     // is more efficient, and some of them may already be switched to
     // alternate resources.
     for (; ldplan != opplan->endLoadPlans(); ++ldplan) {
-      if (ldplan->getQuantity() < 0 || ldplan->getLoad()->getSetup().empty() ||
+      if (ldplan->getQuantity() < 0 || !ldplan->getLoad() ||
+          ldplan->getLoad()->getSetup().empty() ||
           !ldplan->getResource()->getSetupMatrix())
         // Not a consuming loadplan or there is no setup on this loadplan
         continue;

@@ -247,7 +247,8 @@ class PathReport(GridReport):
            operation.duration as operation_duration, 
            operation.duration_per as operation_duration_per,
            case when operation.item_id is not null then jsonb_build_object(operation.item_id||' @ '||operation.location_id, 1) else '{}'::jsonb end
-           ||jsonb_object_agg(operationmaterial.item_id||' @ '||operation.location_id, operationmaterial.quantity) filter (where operationmaterial.id is not null) as operation_om,
+           ||jsonb_object_agg(operationmaterial.item_id||' @ '||operation.location_id, 
+                              coalesce(operationmaterial.quantity, operationmaterial.quantity_fixed,0)) filter (where operationmaterial.id is not null) as operation_om,
            jsonb_object_agg(operationresource.resource_id, operationresource.quantity) filter (where operationresource.id is not null) as operation_or,
              parentoperation.name as parentoperation, 
            parentoperation.type as parentoperation_type,
@@ -265,7 +266,8 @@ class PathReport(GridReport):
            and sibling.priority = (select max(priority) from operation where owner_id = parentoperation.name) 
            then jsonb_build_object(parentoperation.item_id||' @ '||parentoperation.location_id, 1) else '{}'::jsonb end
            ||case when sibling.item_id is not null then jsonb_build_object(sibling.item_id||' @ '||sibling.location_id, 1) else '{}'::jsonb end
-           ||coalesce(jsonb_object_agg(siblingoperationmaterial.item_id||' @ '||sibling.location_id, siblingoperationmaterial.quantity)filter (where siblingoperationmaterial.id is not null), '{}'::jsonb) as sibling_om,
+           ||coalesce(jsonb_object_agg(siblingoperationmaterial.item_id||' @ '||sibling.location_id, 
+                                       coalesce(siblingoperationmaterial.quantity, siblingoperationmaterial.quantity_fixed,0)) filter (where siblingoperationmaterial.id is not null), '{}'::jsonb) as sibling_om,
            jsonb_object_agg(siblingoperationresource.resource_id, siblingoperationresource.quantity)filter (where siblingoperationresource.id is not null) as sibling_or,
              grandparentoperation.name as grandparentoperation, 
            grandparentoperation.type as grandparentoperation_type
@@ -406,7 +408,8 @@ class PathReport(GridReport):
            operation.duration as operation_duration, 
            operation.duration_per as operation_duration_per,
            case when operation.item_id is not null then jsonb_build_object(operation.item_id||' @ '||operation.location_id, 1) else '{}'::jsonb end
-           ||jsonb_object_agg(operationmaterial.item_id||' @ '||operation.location_id, operationmaterial.quantity) filter (where operationmaterial.id is not null) as operation_om,
+           ||jsonb_object_agg(operationmaterial.item_id||' @ '||operation.location_id, 
+                              coalesce(operationmaterial.quantity, operationmaterial.quantity_fixed, 0)) filter (where operationmaterial.id is not null) as operation_om,
            jsonb_object_agg(operationresource.resource_id, operationresource.quantity) filter (where operationresource.id is not null) as operation_or,
              parentoperation.name as parentoperation, 
            parentoperation.type as parentoperation_type,
@@ -424,7 +427,8 @@ class PathReport(GridReport):
            and sibling.priority = (select max(priority) from operation where owner_id = parentoperation.name) 
            then jsonb_build_object(parentoperation.item_id||' @ '||parentoperation.location_id, 1) else '{}'::jsonb end
            ||case when sibling.item_id is not null then jsonb_build_object(sibling.item_id||' @ '||sibling.location_id, 1) else '{}'::jsonb end
-           || coalesce(jsonb_object_agg(siblingoperationmaterial.item_id||' @ '||sibling.location_id, siblingoperationmaterial.quantity)filter (where siblingoperationmaterial.id is not null), '{}'::jsonb) as sibling_om,
+           || coalesce(jsonb_object_agg(siblingoperationmaterial.item_id||' @ '||sibling.location_id, 
+                                        coalesce(siblingoperationmaterial.quantity, siblingoperationmaterial.quantity_fixed, 0)) filter (where siblingoperationmaterial.id is not null), '{}'::jsonb) as sibling_om,
            jsonb_object_agg(siblingoperationresource.resource_id, siblingoperationresource.quantity)filter (where siblingoperationresource.id is not null) as sibling_or,
              grandparentoperation.name as grandparentoperation, 
            grandparentoperation.type as grandparentoperation_type
@@ -544,7 +548,8 @@ class PathReport(GridReport):
            operation.duration as operation_duration, 
            operation.duration_per as operation_duration_per,
            case when operation.item_id is not null then jsonb_build_object(operation.item_id||' @ '||operation.location_id, 1) else '{}'::jsonb end
-           ||jsonb_object_agg(operationmaterial.item_id||' @ '||operation.location_id, operationmaterial.quantity) filter (where operationmaterial.id is not null) as operation_om,
+           ||jsonb_object_agg(operationmaterial.item_id||' @ '||operation.location_id, 
+                              coalesce(operationmaterial.quantity, operationmaterial.quantity_fixed, 0)) filter (where operationmaterial.id is not null) as operation_om,
            jsonb_object_agg(operationresource.resource_id, operationresource.quantity) filter (where operationresource.id is not null) as operation_or,
              parentoperation.name as parentoperation, 
            parentoperation.type as parentoperation_type,
@@ -562,7 +567,8 @@ class PathReport(GridReport):
            and sibling.priority = (select max(priority) from operation where owner_id = parentoperation.name) 
            then jsonb_build_object(parentoperation.item_id||' @ '||parentoperation.location_id, 1) else '{}'::jsonb end
            ||case when sibling.item_id is not null then jsonb_build_object(sibling.item_id||' @ '||sibling.location_id, 1) else '{}'::jsonb end
-           ||coalesce(jsonb_object_agg(siblingoperationmaterial.item_id||' @ '||sibling.location_id, siblingoperationmaterial.quantity)filter (where siblingoperationmaterial.id is not null), '{}'::jsonb) as sibling_om,
+           ||coalesce(jsonb_object_agg(siblingoperationmaterial.item_id||' @ '||sibling.location_id, 
+                                       coalesce(siblingoperationmaterial.quantity, siblingoperationmaterial.quantity_fixed, 0)) filter (where siblingoperationmaterial.id is not null), '{}'::jsonb) as sibling_om,
            jsonb_object_agg(siblingoperationresource.resource_id, siblingoperationresource.quantity)filter (where siblingoperationresource.id is not null) as sibling_or,
              grandparentoperation.name as grandparentoperation, 
            grandparentoperation.type as grandparentoperation_type
@@ -616,7 +622,8 @@ class PathReport(GridReport):
            operation.duration as operation_duration, 
            operation.duration_per as operation_duration_per,
            case when operation.item_id is not null then jsonb_build_object(operation.item_id||' @ '||operation.location_id, 1) else '{}'::jsonb end
-           ||jsonb_object_agg(operationmaterial.item_id||' @ '||operation.location_id, operationmaterial.quantity) filter (where operationmaterial.id is not null) as operation_om,
+           ||jsonb_object_agg(operationmaterial.item_id||' @ '||operation.location_id, 
+                              coalesce(operationmaterial.quantity, operationmaterial.quantity_fixed, 0)) filter (where operationmaterial.id is not null) as operation_om,
            jsonb_object_agg(operationresource.resource_id, operationresource.quantity) filter (where operationresource.id is not null) as operation_or,
              parentoperation.name as parentoperation, 
            parentoperation.type as parentoperation_type,
@@ -634,7 +641,8 @@ class PathReport(GridReport):
            and sibling.priority = (select max(priority) from operation where owner_id = parentoperation.name) 
            then jsonb_build_object(parentoperation.item_id||' @ '||parentoperation.location_id, 1) else '{}'::jsonb end
            ||case when sibling.item_id is not null then jsonb_build_object(sibling.item_id||' @ '||sibling.location_id, 1) else '{}'::jsonb end
-           ||coalesce(jsonb_object_agg(siblingoperationmaterial.item_id||' @ '||sibling.location_id, siblingoperationmaterial.quantity)filter (where siblingoperationmaterial.id is not null), '{}'::jsonb) as sibling_om,
+           ||coalesce(jsonb_object_agg(siblingoperationmaterial.item_id||' @ '||sibling.location_id, 
+                                       coalesce(siblingoperationmaterial.quantity, siblingoperationmaterial.quantity_fixed, 0)) filter (where siblingoperationmaterial.id is not null), '{}'::jsonb) as sibling_om,
            jsonb_object_agg(siblingoperationresource.resource_id, siblingoperationresource.quantity)filter (where siblingoperationresource.id is not null) as sibling_or,
              grandparentoperation.name as grandparentoperation, 
            grandparentoperation.type as grandparentoperation_type

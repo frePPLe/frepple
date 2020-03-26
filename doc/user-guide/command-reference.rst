@@ -319,10 +319,10 @@ This command is available in the user interface, the command line and the web AP
 
 * Web API:
 
-    To copy a scenario (including *Production*) into another scenario:
+    To copy a scenario (including Production) into another scenario:
     * POST /execute/api/scenario_copy/?copy=1&source=db1&destination=db2&force=1
     
-    To promote a scenario into Production (where db2 must be *Production*):
+    To promote a scenario into Production (where db2 must be Production):
     * POST /execute/api/scenario_copy/?promote=1&source=db1&destination=db2
     
     Deprecated:

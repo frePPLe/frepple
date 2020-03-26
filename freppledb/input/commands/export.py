@@ -995,6 +995,7 @@ class exportDemands(PlanTask):
                     i.maxlateness,
                     i.category,
                     i.subcategory,
+                    i.description,
                     i.source,
                     cls.timestamp,
                     i.status,
@@ -1019,9 +1020,9 @@ class exportDemands(PlanTask):
                 """
                 insert into demand
                 (name,due,quantity,priority,item_id,location_id,operation_id,customer_id,
-                 minshipment,maxlateness,category,subcategory,source,lastmodified,status,
-                 owner_id%s)
-                values(%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s * interval '1 second',%%s,%%s,%%s,%%s,%%s,null%s)
+                 minshipment,maxlateness,category,subcategory,source,description,lastmodified,
+                 status,owner_id%s)
+                values(%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s * interval '1 second',%%s,%%s,%%s,%%s,%%s,%%s,null%s)
                 on conflict (name)
                 do update set
                   due=excluded.due,
@@ -1034,6 +1035,7 @@ class exportDemands(PlanTask):
                   minshipment=excluded.minshipment,
                   maxlateness=excluded.maxlateness,
                   category=excluded.category,
+                  description=excluded.description,
                   source=excluded.source,
                   lastmodified=excluded.lastmodified,
                   status=excluded.status,

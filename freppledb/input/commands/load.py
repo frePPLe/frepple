@@ -1448,7 +1448,8 @@ class loadDemand(LoadTask):
                 SELECT
                   name, due, quantity, priority, item_id,
                   operation_id, customer_id, owner_id, minshipment, maxlateness,
-                  category, subcategory, source, location_id, status, batch
+                  category, subcategory, source, location_id, status,
+                  batch, description
                 FROM demand
                 WHERE (status IS NULL OR status in ('open', 'quote')) %s
                 """
@@ -1468,6 +1469,7 @@ class loadDemand(LoadTask):
                         subcategory=i[11],
                         source=i[12],
                         batch=i[15],
+                        description=i[16],
                     )
                     if i[5]:
                         x.operation = frepple.operation(name=i[5])

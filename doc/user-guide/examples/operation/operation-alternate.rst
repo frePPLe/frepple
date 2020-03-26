@@ -8,11 +8,13 @@ There are many situations where there exists alternate operations.
 For example, it is sometimes possible to build an item or to purchase it from a supplier. We could also get an item 
 in a warehouse from two different factories or a factory can have distinct operations producing the same item...
 
-If multiple machines can produce the same item, we would recommend to use a modelling with alternate resources
+If multiple machines can produce the same item, we would recommend to use a modelling with `alternate resources <../resource/resource-alternate.html>`_
 but sometimes it might be easier to model this as alternate operations with a different resource linked to each 
 operation (one operation linked to 5 alternate resources becomes 5 operations each linked to 1 resource).
 
 `Check this feature on a live example <https://demo.frepple.com/operation-alternate/data/input/operation/>`_
+
+:download:`Download an Excel spreadsheet with the data for this example<operation-alternate.xlsx>`
 
 In the following example, we will explain how to model alternate operations and demistify why frePPLe picks one operation
 over another one when generating the supply plan.
@@ -46,7 +48,7 @@ If the search mode is left blank, frePPLe will assume that search mode is *prior
   .. image:: _images/round_table_resource_detail.png
      :alt: Resource detail for round table
 
-  We can see that frePPLe anticipates some demands that are delivered early to make sure *Assemble round table with new machine* operation is used.
+  We can see that frePPLe anticipates some demands that are delivered early :samp:`A` to make sure *Assemble round table with new machine* operation is used.
 
   Now if we change the due date of the 3 demands so that there isn't enough time to deliver on time all 3 demands with
   *Assemble round table with new machine* operation, this is what will happen:
@@ -54,7 +56,7 @@ If the search mode is left blank, frePPLe will assume that search mode is *prior
   .. image:: _images/round_table_resource_detail_2.png
      :alt: Resource detail for round table
 
-  We can see from above screenshot that frePPLe has picked operation *Assemble round table with old machine* to make sure no demand would not be delivered late.
+  We can see from above screenshot that frePPLe has picked operation *Assemble round table with old machine* :samp:`B` to make sure no demand would not be delivered late.
 
   Time for a clarification: If two or more operations share a same priority, then frePPLe will apply exact same behavior as above, always picking the same
   operation as long as no demand is late. The picked operation is the first one tested.

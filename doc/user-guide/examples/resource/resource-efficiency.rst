@@ -30,18 +30,20 @@ been performed with a 100% efficiency resource).
 The modeling outlined in this example applies only to situations where **the same 
 efficiency factor is applicable for all operations** the resource can perform.
 When the **effiency varies by product**, you should use an alternate operation 
-instead (see example on alternate operations).
+instead (see example on `alternate operations <../../../user-guide/examples/operation/operation-alternate.php>`_).
 
 .. rubric:: Example
 
 `Check this feature on a live example <https://demo.frepple.com/resource-efficiency/data/input/resource/>`_
+
+:download:`Download an Excel spreadsheet with the data for this example<resource-efficiency.xlsx>`
 
 * "old machine" is slow and has 75% of efficiency.
 
 * "new machine" is fast and has 120% of efficiency.
 
 * machine park is the parent resource of both resources and will be used in 
-  `Operation Resources table <../../../user-guide/model-reference/operation-resources.php>`_.
+  `Operation Resources <../../../user-guide/model-reference/operation-resources.php>`_ table.
 
 .. image:: _images/resources.png
    :alt: old and new machine resources.
@@ -53,7 +55,9 @@ The 2 assemble operations are time_per operations with a fixed duration of 2 hou
    
 As both "new machine" and "old machine" can be used to assemble the two produced items of the 
 example (a round table or a square table), we need to declare the parent resource
-in the `Operation Resources table <../../../user-guide/model-reference/operation-resources.php>`_.
+in the `Operation Resources <../../../user-guide/model-reference/operation-resources.php>`_ table.
+This lets the solver know that any resource of the group can perform the task, 
+see `Resource alternate <../../../user-guide/examples/resource/resource-alternate.php>`_ example for more details.
 
 .. image:: _images/operationresources.png
    :alt: Operation resources table.
@@ -61,10 +65,12 @@ in the `Operation Resources table <../../../user-guide/model-reference/operation
 When executing a constrained supply planning, frePPLe will create 2 manufacturing orders
 to plan the 2 sales orders (one sales order for 250 square tables and another one for 250 round tables).
 
-Both resources will be used and we can now have a look at the manufacturing order durations:
+Both resources will be used and we can now have a look at the manufacturing order durations in the 
+`Resource Detail <https://demo.frepple.com/resource-efficiency/loadplan/>`_ report:
 
 .. image:: _images/resourcedetail.png
    :alt: Resource detail report.
    
-We can see that, even if the 2 operations have the same time duration values and the produced
-quantities are the same, the 2 manufacturing orders have different duration.
+We can see that, even if the 2 operations have the same time duration values, the manufacturing order
+executed with the "new machine" has a shorter duration (8 days and 18 hours) :samp:`1` than the manufacturing order run on the
+"old machine" (14 days) :samp:`2`.

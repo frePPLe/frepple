@@ -1,3 +1,16 @@
-make product,2014-03-30 21:20:00,2014-03-31 00:00:00,10.0
-Ship product @ store,2014-04-01 00:00:00,2014-04-01 00:00:00,10.0
-Ship product from factory to store,2014-03-31 00:00:00,2014-04-01 00:00:00,10.0
+make product A (time_per),2020-03-30 21:20:00,2020-03-31 00:00:00,10.0
+make product B (fixed_time),2020-03-30 18:00:00,2020-03-31 00:00:00,10.0
+make product C (alternate),2020-03-30 13:00:00,2020-03-31 00:00:00,10.0
+make product C (option 1),2020-03-30 13:00:00,2020-03-31 00:00:00,10.0
+make product D (option 1),2020-03-30 22:30:00,2020-03-31 00:00:00,3.0
+make product D (option 2),2020-03-30 22:30:00,2020-03-31 00:00:00,3.0
+make product D (option 3),2020-03-30 22:00:00,2020-03-31 00:00:00,6.0
+make product D (split),2020-03-30 22:00:00,2020-03-31 00:00:00,12.0
+Ship product A @ store,2020-04-01 00:00:00,2020-04-01 00:00:00,10.0
+Ship product A from factory to store,2020-03-31 00:00:00,2020-04-01 00:00:00,10.0
+Ship product B @ store,2020-04-01 00:00:00,2020-04-01 00:00:00,10.0
+Ship product B from factory to store,2020-03-31 00:00:00,2020-04-01 00:00:00,10.0
+Ship product C @ store,2020-04-01 00:00:00,2020-04-01 00:00:00,10.0
+Ship product C from factory to store,2020-03-31 00:00:00,2020-04-01 00:00:00,10.0
+Ship product D @ store,2020-04-01 00:00:00,2020-04-01 00:00:00,12.0
+Ship product D from factory to store,2020-03-31 00:00:00,2020-04-01 00:00:00,12.0

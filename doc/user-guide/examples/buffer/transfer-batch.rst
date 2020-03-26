@@ -12,15 +12,28 @@ the operation.
 .. image:: _images/transfer-batch.png
    :alt: Two examples of overlapping operations 
 
-`Check this feature on a live example <https://demo.frepple.com/transfer-batch/data/input/operationmaterial/>`_
+`Check this feature on a live example <https://demo.frepple.com/transfer-batch/planningboard/>`_
+
+:download:`Download an Excel spreadsheet with the data for this example<transfer-batch.xlsx>`
 
 The model contains 2 examples. The rows in the above screenshot show for each example:
 
-- the loading of the assembly resource
+- the loading of the subassembly resource :samp:`A`.
    
-- the loading of the subassembly resource
+- the inventory between the assembly and subassembly operations :samp:`B`.
    
-- the inventory between the assembly and subassembly operations
+- the loading of the assembly resource :samp:`C`.
+
+Modeling transfer batches is straightforward:
+
+.. image:: _images/om-transfer-batch.png
+   :alt: Operation Materials table
+
+- Set the type of the `Operation Materials <https://demo.frepple.com/transfer-batch/data/input/operationmaterial/>`_ records to "Batch transfer" :samp:`1`.
+
+- Populate the field "transfer batch quantity" in the `Operation Materials <https://demo.frepple.com/transfer-batch/data/input/operationmaterial/>`_ table :samp:`2`. This defines
+  the amount of material that is produced or consumed per batch.
+
 
 | The first example models a case where subassemblies are produced in batches of
   100 pieces. The assembly operation consumes these in batches of 100 pieces.    
@@ -38,10 +51,3 @@ The model contains 2 examples. The rows in the above screenshot show for each ex
 You can easily modify the example. You will obtain different inventory profiles in the
 buffer between both operations when you vary the operation duration and/or the transfer batch
 quantity.
-
-Modeling transfer batches is straightforward:
-
-- Set the type of the operationmaterial record to "transfer_batch".
-
-- Populate the field "transfer batch quantity" in the operationmaterial table. This defines
-  the amount of material that is produced or consumed per batch.

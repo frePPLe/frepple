@@ -482,8 +482,10 @@ class MenuNode(Node):
                     ok = True
                     if j[2].dependencies:
                         for dep in j[2].dependencies:
-                            if callable(dep):
+                            if not isinstance(dep, type) and callable(dep):
                                 ok = dep(req)
+                                if not ok:
+                                    break
                             elif dep._meta.db_table not in present:
                                 ok = False
                                 break

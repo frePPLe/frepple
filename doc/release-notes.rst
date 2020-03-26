@@ -17,6 +17,11 @@ Release notes
     needed during the setup change.
   | Only unconstrained resources can be assigned for the changeover. The solver can't handle
     constraints on the changeover resource.
+    
+.. rubric:: User interface
+
+- | Scenario Management: It is possible now to promote a scenario to production. All data of the scenario
+    will be copied to production database.
 
 6.3.0 (2020/02/28)
 ==================

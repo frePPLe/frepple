@@ -287,14 +287,18 @@ which keeps the plan in memory.
 Scenario management
 -------------------
 
-This option allows a user to create copies of a dataset into a
-what-if scenario.
+This option allows a user to either create copies of a dataset into a
+what-if scenario or promote the data from a scenario into *Production* database.
 
 When the data is successfully copied, the status changes from 'Free'
 to 'In use'.
 
 When the user doesn't need the what-if scenario any more, it can be released
 again.
+
+Releasing a scenario can be done from any scenario while copying and promoting
+actions can only be performed from current scenario to destination scenario. 
+
 
 The label of a scenario, which is displayed in the dropdown list in the 
 upper right hand corner, can also be updated here.
@@ -308,14 +312,18 @@ This command is available in the user interface, the command line and the web AP
 
 * Command line::
 
-    frepplectl scenario_copy db1 db2
+    frepplectl scenario_copy [--force --promote] db1 db2
     
     Deprecated:
     frepplectl frepple_copy db1 db2
 
-* Web API::
+* Web API:
 
-    POST /execute/api/scenario_copy/?copy=1&source=db1&destination=db2&force=1
+    To copy a scenario (including *Production*) into another scenario:
+    * POST /execute/api/scenario_copy/?copy=1&source=db1&destination=db2&force=1
+    
+    To promote a scenario into Production (where db2 must be *Production*):
+    * POST /execute/api/scenario_copy/?promote=1&source=db1&destination=db2
     
     Deprecated:
     POST /execute/api/frepple_copy/?copy=1&source=db1&destination=db2&force=1

@@ -65,6 +65,12 @@ class Command(BaseCommand):
             default=DEFAULT_DB_ALIAS,
             help="Unused argument for this command",
         )
+        parser.add_argument(
+            "--promote",
+            action="store_true",
+            default=False,
+            help="promotes a scenario to production",
+        )
         parser.add_argument("source", help="source database to copy")
         parser.add_argument("destination", help="destination database to copy")
 
@@ -78,6 +84,7 @@ class Command(BaseCommand):
 
         # Pick up options
         force = options["force"]
+        promote = options["promote"]
         test = "FREPPLE_TEST" in os.environ
         if options["user"]:
             try:
@@ -143,8 +150,14 @@ class Command(BaseCommand):
                 raise CommandError("Can't copy a schema on itself")
             if sourcescenario.status != "In use":
                 raise CommandError("Source scenario is not in use")
-            if destinationscenario.status != "Free" and not force:
+            if destinationscenario.status != "Free" and not force and not promote:
                 raise CommandError("Destination scenario is not free")
+            if promote and (
+                destination != DEFAULT_DB_ALIAS or source == DEFAULT_DB_ALIAS
+            ):
+                raise CommandError(
+                    "Incorrect source or destination database with promote flag"
+                )
 
             # Logging message - always logging in the default database
             destinationscenario.status = "Busy"
@@ -156,9 +169,9 @@ class Command(BaseCommand):
                 os.environ["PGPASSWORD"] = settings.DATABASES[source]["PASSWORD"]
             if os.name == "nt":
                 # On windows restoring with pg_restore over a pipe is broken :-(
-                cmd = "pg_dump -c -Fp %s%s%s%s | psql %s%s%s%s"
+                cmd = "pg_dump -c -Fp %s%s%s%s%s | psql %s%s%s%s"
             else:
-                cmd = "pg_dump -Fc %s%s%s%s | pg_restore -n public -Fc -c --if-exists %s%s%s -d %s"
+                cmd = "pg_dump -Fc %s%s%s%s%s | pg_restore -n public -Fc -c --if-exists %s%s%s -d %s"
             commandline = cmd % (
                 settings.DATABASES[source]["USER"]
                 and ("-U %s " % settings.DATABASES[source]["USER"])
@@ -169,6 +182,9 @@ class Command(BaseCommand):
                 settings.DATABASES[source]["PORT"]
                 and ("-p %s " % settings.DATABASES[source]["PORT"])
                 or "",
+                "-T common_user -T common_scenario "
+                if destination == DEFAULT_DB_ALIAS
+                else "",
                 test
                 and settings.DATABASES[source]["TEST"]["NAME"]
                 or settings.DATABASES[source]["NAME"],
@@ -231,7 +247,10 @@ class Command(BaseCommand):
             task.finished = datetime.now()
 
             # Update the task in the destination database
-            task.message = "Scenario copied from %s" % source
+            task.message = "Scenario %s from %s" % (
+                "promoted" if promote else "copied",
+                source,
+            )
             task.save(using=destination)
             task.message = "Scenario copied to %s" % destination
 
@@ -286,6 +305,23 @@ class Command(BaseCommand):
                      if (target == url_prefix) window.location.href = "/"; }
                    });
                 });
+                $(".scenariopromote").on("click", function(event) {
+                  event.preventDefault();
+                  var source = "/" + $(this).attr("data-source");
+                  $.ajax({
+                   url: source + "/execute/launch/scenario_copy/",
+                   type: 'POST',
+                   data: {
+                     promote: 1,
+                     source: $(this).attr("data-source"),
+                     destination: $(this).attr("data-target")
+                     },
+                   success: function() {
+                     $("#scenariotoast").addClass("show");
+                     $("#scenariotoast span").text("Launched promotion task");
+                     setTimeout(function(){$("#scenariotoast").removeClass("show") }, 3000);
+                   }});
+                });
                 $(".scenariocopy").on("click", function(event) {
                   event.preventDefault();
                   var source = "/" + $(this).attr("data-source");
@@ -328,7 +364,13 @@ class Command(BaseCommand):
                 });
                 """
             context = RequestContext(
-                request, {"javascript": javascript, "scenarios": scenarios}
+                request,
+                {
+                    "javascript": javascript,
+                    "scenarios": scenarios,
+                    "DEFAULT_DB_ALIAS": DEFAULT_DB_ALIAS,
+                    "current_database": request.database,
+                },
             )
 
             template = Template(
@@ -367,30 +409,37 @@ class Command(BaseCommand):
               <strong>{{j.name|capfirst}}</strong>
             </td>
             <td style="padding:5px 10px 5px 10px">
-               {% if j.name != 'default' and j.status == 'Free' and perms.common.copy_scenario %}
+               {% if j.name != DEFAULT_DB_ALIAS and j.status == 'Free' and perms.common.copy_scenario %}
                <div class="btn-group btn-block">
                <button class="btn btn-block btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
-                 {% trans 'copy'|capfirst %}&nbsp;<span class="caret"></span>
+                 {% trans 'manage'|capfirst %}&nbsp;<span class="caret"></span>
                </button>
                <ul class="dropdown-menu" rol="menu">
-                 {% for k in scenarios %}{% if k.status == 'In use' %}
-                 <li><a class="scenariocopy" href="#" data-source="{{ k.name }}" data-target="{{ j.name }}">
-                   Copy from {{ k.name|capfirst }}
-                 </a></li>
-                 {% endif %}{% endfor %}
+                 <li><a class="scenariocopy" href="#" data-source="{{ current_database }}" data-target="{{ j.name }}">
+                   Copy from {{ current_database }}
+                 </a></li>                 
                </ul>
                </div>
-               {% elif j.name != 'default' and j.status == 'In use' and perms.common.release_scenario %}
+               {% elif j.name != DEFAULT_DB_ALIAS and j.status == 'In use'%}
+               {% if perms.common.release_scenario or perms.common.promote_scenario  %}
                <div class="btn-group btn-block">
                <button class="btn btn-block btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
-                 {% trans 'release'|capfirst %}&nbsp;<span class="caret"></span>
+                 {% trans 'manage'|capfirst %}&nbsp;<span class="caret"></span>
                </button>
                <ul class="dropdown-menu" rol="menu">
+                 {% if perms.common.release_scenario %}
                  <li><a class="scenariorelease" href="#" data-target="{{ j.name }}">
-                 {% trans "You will lose ALL data in this scenario!" %}
+                 {% trans "Release: You will lose ALL data in this scenario!" %}
                  </a></li>
+                 {% endif %}
+                 {% if perms.common.promote_scenario and current_database == j.name %}
+                 <li><a class="scenariopromote" href="#" data-source="{{ j.name }}" data-target="{{ DEFAULT_DB_ALIAS }}" >
+                 {% trans "Promote: All data will be copied to Production" %}
+                 </a></li>
+                 {% endif %}
                </ul>
                </div>
+               {% endif %}
                {% endif %}
             </td>
             {% with mystatus=j.status|lower %}
@@ -400,7 +449,7 @@ class Command(BaseCommand):
               <input class="scenariolabel" type="text" size="20" data-target="{{ j.name }}"
               value="{% if j.description %}{{j.description|escape}}{% else %}{{ j.name }}{% endif %}">
             </td>
-            <td style="padding:5px 10px 5px 10px; text-align: center">{{j.lastrefresh|date:"DATETIME_FORMAT"}}</td>
+            <td style="padding:5px 10px 5px 10px; text-align: center">{{j.lastrefresh|date:"Y-m-d G:i:s"}}</td>
           </tr>
           {% endfor %}
         </table>
@@ -412,11 +461,13 @@ class Command(BaseCommand):
             translated = (
                 _("copy"),
                 _("release"),
+                _("promote"),
                 _("release selected scenarios"),
                 _("into selected scenarios"),
                 _("update"),
                 _("Update description of selected scenarios"),
-                _("You will lose ALL data in this scenario!"),
+                _("Release: You will lose ALL data in this scenario!"),
+                _("Promote: All data will be copied to Production"),
             )
         else:
             return None

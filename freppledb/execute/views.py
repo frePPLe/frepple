@@ -385,6 +385,22 @@ def wrapTask(request, action):
                 sc.status = "Free"
                 sc.lastrefresh = now
                 sc.save(using=DEFAULT_DB_ALIAS)
+        elif "promote" in args:
+            if not request.user.has_perm("auth.promote_scenario"):
+                raise Exception("Missing execution privileges")
+            source = args.get("source", request.database)
+            worker_database = source
+            destination = args.get("destination", False)
+            if destination and destination == DEFAULT_DB_ALIAS:
+                arguments = "--promote %s %s" % (source, destination)
+                task = Task(
+                    name="scenario_copy",
+                    submitted=now,
+                    status="Waiting",
+                    user=request.user,
+                    arguments=arguments,
+                )
+                task.save(using=source)
         elif "update" in args:
             # Note: update is immediate and synchronous.
             if not request.user.has_perm("auth.release_scenario"):

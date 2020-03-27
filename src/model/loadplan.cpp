@@ -59,7 +59,7 @@ LoadPlan::LoadPlan(OperationPlan* o, const Load* r) {
   nextLoadPlan = nullptr;
   if (o->firstloadplan) {
     // Append to the end
-    LoadPlan* c = o->firstloadplan;
+    auto c = o->firstloadplan;
     while (c->nextLoadPlan) c = c->nextLoadPlan;
     c->nextLoadPlan = this;
   } else
@@ -92,7 +92,7 @@ LoadPlan::LoadPlan(OperationPlan* o, const Load* r, LoadPlan* lp) {
   nextLoadPlan = nullptr;
   if (o->firstloadplan) {
     // Append to the end
-    LoadPlan* c = o->firstloadplan;
+    auto c = o->firstloadplan;
     while (c->nextLoadPlan) c = c->nextLoadPlan;
     c->nextLoadPlan = this;
   } else
@@ -105,6 +105,37 @@ LoadPlan::LoadPlan(OperationPlan* o, const Load* r, LoadPlan* lp) {
 
   // Initialize the Python type
   initType(metadata);
+}
+
+LoadPlan::LoadPlan(OperationPlan* o, SetupEvent* e, bool start) : oper(o) {
+  assert(o && e && e->getRule() && e->getRule()->getResource());
+
+  // Initialize
+  initType(metadata);
+  res = e->getRule()->getResource();
+  if (!start) flags |= TYPE_END;
+
+  // Add to the operationplan
+  nextLoadPlan = nullptr;
+  if (o->firstloadplan) {
+    // Append to the end
+    auto c = o->firstloadplan;
+    while (c->nextLoadPlan) c = c->nextLoadPlan;
+    c->nextLoadPlan = this;
+  } else
+    // First in the list
+    o->firstloadplan = this;
+
+  // Insert in the resource timeline
+  getResource()->loadplans.insert(this, e->getLoadplanQuantity(this),
+                                  e->getLoadplanDate(this));
+
+  // For continuous resources, create a loadplan to mark the end of the setup.
+  if (!getResource()->hasType<ResourceBuckets>() && start)
+    new LoadPlan(o, e, false);
+
+  // Mark the resource as being changed.
+  getResource()->setChanged();
 }
 
 void LoadPlan::setResource(Resource* newres, bool check, bool use_start) {
@@ -222,14 +253,21 @@ void LoadPlan::setStatus(const string& s) {
 }
 
 void LoadPlan::update() {
-  // Update the timeline data structure
-  getResource()->getLoadPlans().update(this, ld->getLoadplanQuantity(this),
-                                       ld->getLoadplanDate(this));
+  if (ld) {
+    // Update the timeline data structure
+    getResource()->getLoadPlans().update(this, ld->getLoadplanQuantity(this),
+                                         ld->getLoadplanDate(this));
+    ld->getOperation()->setChanged();
+  } else if (getOperationPlan()->getSetupEvent()) {
+    auto s = getOperationPlan()->getSetupEvent();
+    if (s->getRule() && s->getRule()->getResource())
+      // Update the setup resource timeline data
+      s->getRule()->getResource()->getLoadPlans().update(
+          this, s->getLoadplanQuantity(this), s->getLoadplanDate(this));
+  }
 
-  // Mark the operation and resource as being changed. This will trigger
-  // the recomputation of their problems
+  // Mark the resource as being changed.
   getResource()->setChanged();
-  ld->getOperation()->setChanged();
 }
 
 SetupEvent* LoadPlan::getSetup(bool myself_only) const {

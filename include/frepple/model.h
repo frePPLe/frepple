@@ -1483,9 +1483,7 @@ class SetupEvent : public TimeLine<LoadPlan>::Event {
   /* Destructor. */
   virtual ~SetupEvent();
 
-  void erase() {
-    if (tmline) tmline->erase(this);
-  }
+  void erase();
 
   /* Assignment operator.
    * We don't relink the event in the timeline yet.
@@ -1505,6 +1503,7 @@ class SetupEvent : public TimeLine<LoadPlan>::Event {
       : TimeLine<LoadPlan>::Event(5), setup(s), tmline(t), opplan(o) {
     initType(metadata);
     dt = d;
+    rule = r;
     if (opplan && tmline) tmline->insert(this);
   }
 
@@ -1523,6 +1522,10 @@ class SetupEvent : public TimeLine<LoadPlan>::Event {
   SetupEvent* getSetupBefore() const;
 
   void update(TimeLine<LoadPlan>*, Date, const PooledString&, SetupMatrixRule*);
+
+  Date getLoadplanDate(const LoadPlan* lp) const;
+
+  double getLoadplanQuantity(const LoadPlan* lp) const;
 
   static int initialize();
 
@@ -7327,6 +7330,8 @@ class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand {
    */
   explicit LoadPlan(OperationPlan*, const Load*);
 
+  explicit LoadPlan(OperationPlan*, SetupEvent*, bool start = true);
+
   /* Return the operationplan owning this loadplan. */
   virtual OperationPlan* getOperationPlan() const { return oper; }
 
@@ -7337,7 +7342,7 @@ class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand {
   Date getStartDate() const { return oper->getStart(); }
 
   /* Return the start date of the operationplan. */
-  Date getEndDate() const { return oper->getEnd(); }
+  Date getEndDate() const { return ld ? oper->getEnd() : oper->getSetupEnd(); }
 
   /* Return the load of which this is a plan instance. */
   Load* getLoad() const { return ld; }
@@ -7413,7 +7418,9 @@ class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand {
   /* Returns true when the loadplan is hidden.
    * This is determined by looking at whether the load is hidden or not.
    */
-  bool getHidden() const { return getQuantity() < 0 || ld->getHidden(); }
+  bool getHidden() const {
+    return getQuantity() < 0 || (getLoad() && getLoad()->getHidden());
+  }
 
   /* Override the setQuantity of the TimeLine class, this is needed for the
    * registerFields function.
@@ -7541,7 +7548,9 @@ class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand {
    */
   LoadPlan(OperationPlan*, const Load*, LoadPlan*);
 
-  /* A pointer to the load model. */
+  /* A pointer to the load model.
+   * Watch out: This pointer is null for loadplans of a setup resource!
+   */
   Load* ld = nullptr;
 
   /* A pointer to the selected resource.
@@ -7564,6 +7573,14 @@ class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand {
 
   /* Factory method. */
   static PyObject* create(PyTypeObject*, PyObject*, PyObject*);
+};
+
+inline Date SetupEvent::getLoadplanDate(const LoadPlan* lp) const {
+  return lp->isStart() ? opplan->getStart() : opplan->getSetupEnd();
+}
+
+inline double SetupEvent::getLoadplanQuantity(const LoadPlan* lp) const {
+  return lp->isStart() ? 1 : -1;
 };
 
 /* This class allows iteration over alternate resources for a loadplan. */

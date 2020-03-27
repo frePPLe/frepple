@@ -2226,15 +2226,24 @@ Duration OperationPlan::getSetup() const {
 
 void OperationPlan::setSetupEvent(TimeLine<LoadPlan>* res, Date d,
                                   const PooledString& s, SetupMatrixRule* r) {
-  if (!res) {
-    if (setupevent) {
-      delete setupevent;
-      setupevent = nullptr;
+  if (setupevent && setupevent->getRule() &&
+      setupevent->getRule()->getResource()) {
+    for (auto l = beginLoadPlans(); l != endLoadPlans();) {
+      if (l->getLoad())
+        ++l;
+      else
+        l.deleteLoadPlan();
     }
+  }
+  if (!res) {
+    delete setupevent;
+    setupevent = nullptr;
+    return;
   } else if (setupevent)
     setupevent->update(res, d, s, r);
   else
     setupevent = new SetupEvent(res, d, s, r, this);
+  if (r && r->getResource()) new LoadPlan(this, setupevent);
 }
 
 double OperationPlan::getSetupCost() const {
@@ -2248,6 +2257,18 @@ SetupEvent::~SetupEvent() {
   if (opplan) opplan->nullSetupEvent();
 }
 
+void SetupEvent::erase() {
+  if (tmline) tmline->erase(this);
+  if (opplan && rule && rule->getResource()) {
+    for (auto l = opplan->beginLoadPlans(); l != opplan->endLoadPlans();) {
+      if (l->getLoad())
+        ++l;
+      else
+        l.deleteLoadPlan();
+    }
+  }
+}
+
 void SetupEvent::update(TimeLine<LoadPlan>* res, Date d, const PooledString& s,
                         SetupMatrixRule* r) {
   setup = s;
@@ -2256,6 +2277,7 @@ void SetupEvent::update(TimeLine<LoadPlan>* res, Date d, const PooledString& s,
     // First insert
     tmline = res;
     tmline->insert(this);
+    if (r && r->getResource()) new LoadPlan(opplan, this);
   } else if (res != tmline) {
     // Reinsert at another resource
     tmline->erase(this);

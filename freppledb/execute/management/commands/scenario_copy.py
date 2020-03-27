@@ -182,7 +182,15 @@ class Command(BaseCommand):
                 settings.DATABASES[source]["PORT"]
                 and ("-p %s " % settings.DATABASES[source]["PORT"])
                 or "",
-                "-T common_user -T common_scenario "
+                """
+                -T common_user 
+                -T common_scenario 
+                -T auth_group 
+                -T auth_group_permission 
+                -T auth_permission 
+                -T common_user_groups 
+                -T common_user_user_permissions 
+                """
                 if destination == DEFAULT_DB_ALIAS
                 else "",
                 test
@@ -230,16 +238,18 @@ class Command(BaseCommand):
             # Give access to the destination scenario to:
             #  a) the user doing the copy
             #  b) all superusers from the source schema
-            User.objects.using(destination).filter(is_superuser=True).update(
-                is_active=True
-            )
-            User.objects.using(destination).filter(is_superuser=False).update(
-                is_active=False
-            )
-            if user:
-                User.objects.using(destination).filter(username=user.username).update(
+            # unless it's a promotion
+            if destination != DEFAULT_DB_ALIAS:
+                User.objects.using(destination).filter(is_superuser=True).update(
                     is_active=True
                 )
+                User.objects.using(destination).filter(is_superuser=False).update(
+                    is_active=False
+                )
+                if user:
+                    User.objects.using(destination).filter(
+                        username=user.username
+                    ).update(is_active=True)
 
             # Logging message
             task.processid = None

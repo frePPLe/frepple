@@ -17,5 +17,3 @@ install/frepple::
 	# Install apache configuration
 	mkdir -p $(CURDIR)/debian/tmp/etc/apache2/sites-available
 	install -m 644 debian/httpd.conf $(CURDIR)/debian/tmp/etc/apache2/sites-available/frepple.conf
-	# Rename script file
-	mv $(CURDIR)/debian/tmp/usr/bin/frepplectl.py $(CURDIR)/debian/tmp/usr/bin/frepplectl

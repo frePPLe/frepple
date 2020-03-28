@@ -16,6 +16,7 @@ AUTOMAKE_OPTIONS = foreign
 install-data-local: setup.py
 	echo "Installing Django web application"; \
 	$(PYTHON) setup.py install --prefix $(DESTDIR)$(prefix) $(PYFLAGS)
+	mv "$(DESTDIR)$(bindir)/frepplectl.py" "$(DESTDIR)$(bindir)/frepplectl"
 	-mkdir static
 	$(PYTHON) frepplectl.py collectstatic --noinput --clear --ignore '*.less'
 	find static -type d -exec $(mkinstalldirs) "$(DESTDIR)$(datadir)/frepple/{}" \;; \

@@ -21,6 +21,10 @@
 #define FREPPLE_CORE
 
 #include <sys/stat.h>
+#ifndef S_IREAD
+// For Cygwin...
+#define S_IREAD S_IRUSR
+#endif
 
 #include "frepple/utils.h"
 #include "frepple/xml.h"

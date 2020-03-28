@@ -25,8 +25,7 @@ install-data-local: setup.py
 
 uninstall-local:
 	-rm -rf $(DESTDIR)$(datadir)/frepple $(DESTDIR)$(libdir)/frepple
-	-rm -rf $(DESTDIR)$(pythondir)/freppledb
-	-rm -rf $(DESTDIR)$(pythondir)/freppledb-$(PACKAGE_VERSION)*.egg-info
+	-rm -rf $(DESTDIR)$(pythondir)/frepple*
 	-rm -rf $(DESTDIR)$(datadir)/frepple/static
 
 clean-local:

@@ -28,6 +28,7 @@ uninstall-local:
 	-rm -rf $(DESTDIR)$(datadir)/frepple $(DESTDIR)$(libdir)/frepple
 	-rm -rf $(DESTDIR)$(pythondir)/frepple*
 	-rm -rf $(DESTDIR)$(datadir)/frepple/static
+	-rm -rf $(DESTDIR)$(bindir)/frepplectl
 
 clean-local:
 	-rm -rf install-test *.exe

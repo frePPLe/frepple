@@ -7415,6 +7415,8 @@ class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand {
    */
   SetupEvent* getSetup(bool) const;
 
+  bool isSetupOnly() const { return getLoad() == nullptr; }
+
   /* Returns true when the loadplan is hidden.
    * This is determined by looking at whether the load is hidden or not.
    */
@@ -7488,6 +7490,8 @@ class LoadPlan : public TimeLine<LoadPlan>::EventChangeOnhand {
                                       &Cls::setResource, BASE);
     m->addPointerField<Cls, Resource>(Tags::alternate, &Cls::getResource,
                                       &Cls::setResource, DONT_SERIALIZE);
+    m->addBoolField<Cls>(Tags::setuponly, &Cls::isSetupOnly, nullptr,
+                         BOOL_FALSE);
     m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, nullptr, BOOL_FALSE,
                          DONT_SERIALIZE);
     m->addDateField<Cls>(Tags::startdate, &Cls::getStartDate, nullptr,

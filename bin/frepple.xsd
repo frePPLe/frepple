@@ -836,6 +836,7 @@
       <xsd:element name="operationplan" type="operationplan" />
       <xsd:element name="resource" type="resource" />
       <xsd:element name="status" type="xsd:string" />
+      <xsd:element name="setuponly" type="xsd:boolean" />
     </xsd:choice>    
     <xsd:attribute name="date" type="xsd:dateTime" />
     <xsd:attribute name="quantity" type="xsd:double" />
@@ -843,6 +844,7 @@
     <xsd:attribute name="minimum" type="xsd:double" />
     <xsd:attribute name="maximum" type="xsd:double" />
     <xsd:attribute name="status" type="xsd:string" />
+    <xsd:attribute name="setuponly" type="xsd:boolean" />
   </xsd:complexType>
 
   <xsd:complexType name="loadplanlist">

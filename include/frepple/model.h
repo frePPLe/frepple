@@ -2645,11 +2645,11 @@ class Operation : public HasName<Operation>,
 
   /* This is the factory method which creates all operationplans of the
    * operation. */
-  OperationPlan* createOperationPlan(double, Date, Date, const PooledString&,
-                                     Demand* = nullptr,
-                                     OperationPlan* = nullptr,
-                                     bool makeflowsloads = true,
-                                     bool roundDown = true) const;
+  OperationPlan* createOperationPlan(
+      double, Date, Date, const PooledString&, Demand* = nullptr,
+      OperationPlan* = nullptr, bool makeflowsloads = true,
+      bool roundDown = true,
+      const string& ref = PooledString::nullstring) const;
 
   /* Returns true for operation types that own suboperations. */
   virtual bool hasSubOperations() const { return false; }

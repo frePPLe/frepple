@@ -405,18 +405,13 @@ Object* OperationPlan::createOperationPlan(const MetaClass* cat,
       oper = new OperationItemSupplier(itemsupplier, destbuffer);
       // Create operation plan
       opplan = static_cast<Operation*>(oper)->createOperationPlan(
-          quantity, start, end, batch);
+          quantity, start, end, batch, nullptr, nullptr, 0, false, id);
       new ProblemInvalidData(opplan, "Purchase orders on unauthorized supplier",
                              "operationplan", start, end, quantity);
     } else
       // Create the operationplan
       opplan = static_cast<Operation*>(oper)->createOperationPlan(
-          quantity, start, end, batch);
-
-    // Set operationplan fields
-    if (!id.empty())
-      opplan->setRawReference(
-          id);  // We can use this fast method because we call activate later
+          quantity, start, end, batch, nullptr, nullptr, 0, false, id);
   } else if (ordtype == "DO") {
     // Find or create the destination buffer.
     if (itemdistributionval) {
@@ -540,7 +535,7 @@ Object* OperationPlan::createOperationPlan(const MetaClass* cat,
 
       // Create operation plan
       opplan = static_cast<Operation*>(oper)->createOperationPlan(
-          quantity, start, end, batch, nullptr, nullptr, 0, false);
+          quantity, start, end, batch, nullptr, nullptr, 0, false, id);
 
       // Make sure no problem is reported when item distribution priority is 0
       // (Rebalancing) Checking that no item distribution in reverse mode exists
@@ -565,12 +560,7 @@ Object* OperationPlan::createOperationPlan(const MetaClass* cat,
     } else
       // Create operation plan
       opplan = static_cast<Operation*>(oper)->createOperationPlan(
-          quantity, start, end, batch, nullptr, nullptr, 0, false);
-
-    // Set operationplan fields
-    if (!id.empty())
-      opplan->setRawReference(
-          id);  // We can use this fast method because we call activate later
+          quantity, start, end, batch, nullptr, nullptr, 0, false, id);
   } else if (ordtype == "DLVR") {
     // Find or create the destination buffer.
     if (!itemval) throw DataException("Missing item field");
@@ -604,14 +594,9 @@ Object* OperationPlan::createOperationPlan(const MetaClass* cat,
     }
 
     // Create operation plan
-    opplan = static_cast<Operation*>(oper)->createOperationPlan(quantity, start,
-                                                                end, batch);
+    opplan = static_cast<Operation*>(oper)->createOperationPlan(
+        quantity, start, end, batch, nullptr, nullptr, 0, false, id);
     static_cast<Demand*>(dmdval)->addDelivery(opplan);
-
-    // Set operationplan fields
-    if (!id.empty())
-      opplan->setRawReference(
-          id);  // We can use this fast method because we call activate later
   } else {
     if (!oper)
       // Can't create operationplan because the operation doesn't exist
@@ -619,8 +604,7 @@ Object* OperationPlan::createOperationPlan(const MetaClass* cat,
 
     // Create an operationplan
     opplan = static_cast<Operation*>(oper)->createOperationPlan(
-        quantity, start, end, batch, nullptr, nullptr, false);
-    if (!id.empty()) opplan->setReference(id);
+        quantity, start, end, batch, nullptr, nullptr, 0, false, id);
     if (!opplan->getType().raiseEvent(opplan, SIG_ADD)) {
       delete opplan;
       throw DataException("Can't create operationplan");

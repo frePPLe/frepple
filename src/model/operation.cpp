@@ -178,9 +178,11 @@ OperationPlan* Operation::createOperationPlan(double q, Date s, Date e,
                                               const PooledString& batch,
                                               Demand* l, OperationPlan* ow,
                                               bool makeflowsloads,
-                                              bool roundDown) const {
+                                              bool roundDown,
+                                              const string& ref) const {
   OperationPlan* opplan = new OperationPlan();
   opplan->setBatch(batch);
+  if (!ref.empty()) opplan->setName(ref);
   initOperationPlan(opplan, q, s, e, l, ow, makeflowsloads, roundDown);
   return opplan;
 }

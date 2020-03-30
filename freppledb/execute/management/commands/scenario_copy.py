@@ -189,7 +189,9 @@ class Command(BaseCommand):
                 -T auth_group_permission 
                 -T auth_permission 
                 -T common_user_groups 
-                -T common_user_user_permissions 
+                -T common_user_user_permissions
+                -T common_preferences
+                -T reportmanager_report
                 """
                 if destination == DEFAULT_DB_ALIAS
                 else "",

@@ -120,7 +120,7 @@ class OverviewReport(GridPivot):
         inner join item child on child.lft between item.lft and item.rght
         inner join operationplanmaterial on operationplanmaterial.item_id = child.name
         inner join operationplan on operationplan.reference = operationplanmaterial.operationplan_id
-          and operationplan.type = 'DLVR'
+          and operationplan.demand_id is not null
           and operationplan.enddate < %%s
         group by item.name
         ) t
@@ -153,7 +153,9 @@ class OverviewReport(GridPivot):
       sum(coalesce((select sum(quantity) from demand
        where demand.item_id = child.name and status in ('open','quote') and due >= greatest(%%s,d.startdate) and due < d.enddate),0)) orders,
       sum(coalesce((select sum(-operationplanmaterial.quantity) from operationplanmaterial
-      inner join operationplan on operationplan.reference = operationplanmaterial.operationplan_id and operationplan.type = 'DLVR'
+      inner join operationplan
+        on operationplan.reference = operationplanmaterial.operationplan_id
+        and operationplan.demand_id is not null
       where operationplanmaterial.item_id = child.name
       and operationplanmaterial.flowdate >= greatest(%%s,d.startdate)
       and operationplanmaterial.flowdate < d.enddate),0)) planned

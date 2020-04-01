@@ -1512,6 +1512,12 @@ class loadOperationPlans(LoadTask):
                 Parameter.getValue("WIP.consume_capacity", database, "true").lower()
                 == "true"
             )
+            consume_material_completed = (
+                Parameter.getValue(
+                    "COMPLETED.consume_material", database, "true"
+                ).lower()
+                == "true"
+            )
             if "supply" in os.environ:
                 confirmed_filter = " and operationplan.status in ('confirmed', 'approved', 'completed')"
                 create_flag = True
@@ -1564,11 +1570,15 @@ class loadOperationPlans(LoadTask):
                             create=create_flag,
                             batch=i[13],
                         )
-                        if opplan and i[5] == "confirmed":
-                            if not consume_material:
-                                opplan.consume_material = False
-                            if not consume_capacity:
-                                opplan.consume_capacity = False
+                        if opplan:
+                            if i[5] == "confirmed":
+                                if not consume_material:
+                                    opplan.consume_material = False
+                                if not consume_capacity:
+                                    opplan.consume_capacity = False
+                            elif i[5] == "completed":
+                                if not consume_material_completed:
+                                    opplan.consume_material = False
                     elif i[7] == "PO":
                         cnt_po += 1
                         opplan = frepple.operationplan(
@@ -1604,9 +1614,13 @@ class loadOperationPlans(LoadTask):
                             create=create_flag,
                             batch=i[13],
                         )
-                        if opplan and i[5] == "confirmed":
-                            if not consume_capacity:
-                                opplan.consume_capacity = False
+                        if opplan:
+                            if i[5] == "confirmed":
+                                if not consume_capacity:
+                                    opplan.consume_capacity = False
+                            elif i[5] == "completed":
+                                if not consume_material_completed:
+                                    opplan.consume_material = False
                     elif i[7] == "DLVR":
                         cnt_dlvr += 1
                         opplan = frepple.operationplan(
@@ -1627,6 +1641,9 @@ class loadOperationPlans(LoadTask):
                         if opplan and i[5] == "confirmed":
                             if not consume_capacity:
                                 opplan.consume_capacity = False
+                            elif i[5] == "completed":
+                                if not consume_material_completed:
+                                    opplan.consume_material = False
                         opplan = None
                     else:
                         logger.warning(
@@ -1675,12 +1692,15 @@ class loadOperationPlans(LoadTask):
                         statusNoPropagation=i[5],
                         batch=i[8],
                     )
-                    if opplan and i[5] == "confirmed":
-                        if not consume_material:
-                            opplan.consume_material = False
-                        if not consume_capacity:
-                            opplan.consume_capacity = False
                     if opplan:
+                        if i[5] == "confirmed":
+                            if not consume_material:
+                                opplan.consume_material = False
+                            if not consume_capacity:
+                                opplan.consume_capacity = False
+                        elif i[5] == "completed":
+                            if not consume_material_completed:
+                                opplan.consume_material = False
                         if i[6]:
                             try:
                                 opplan.owner = frepple.operationplan(reference=i[6])

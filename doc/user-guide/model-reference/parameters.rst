@@ -69,6 +69,9 @@ plan.webservice             | Specifies whether we keep the plan in memory as a 
                               quick incremental planning. This functionality is only available in
                               the Enterprise and Cloud Editions. 
                             | Accepted values are false and true (default).
+COMPLETED.consume_material  | Determines whether completed manufacturing orders consume material 
+                              or not.
+                            | Default is true.
 WIP.consume_material        | Determines whether confirmed manufacturing orders consume material 
                               or not.
                             | Default is true.

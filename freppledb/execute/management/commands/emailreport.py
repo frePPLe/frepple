@@ -18,6 +18,7 @@
 import os
 import re
 import subprocess
+from io import BytesIO
 from os.path import basename
 from datetime import datetime
 from zipfile import ZipFile
@@ -177,26 +178,18 @@ class Command(BaseCommand):
                 to=correctedRecipients,
             )
 
-            # create zip file
-            zippath = os.path.join(
-                settings.DATABASES[database]["FILEUPLOADFOLDER"],
-                "export",
-                "reports.zip",
-            )
+            b = BytesIO()
+            with ZipFile(b, mode="w") as zf:
+                for f in correctedReports:
+                    zf.write(f, basename(f))
+                zf.close()
 
-            zf = ZipFile(zippath, mode="w")
-            for r in correctedReports:
-                zf.write(r, basename(r))
-            zf.close()
+                # attach zip file
+                message.attach("reports.zip", b.getvalue(), "application/zip")
 
-            # attach zip file
-            message.attach_file(zippath)
-
-            # send email
-            message.send()
-
-            # delete zip file
-            os.remove(zippath)
+                # send email
+                message.send()
+            b.close()
 
             # Logging message
             task.processid = None

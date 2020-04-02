@@ -421,7 +421,8 @@ class Command(BaseCommand):
         try:
             conn = create_connection(self.database)
             with conn.cursor() as cursor:
-                cursor.execute("set role %s", (self.SQLrole,))
+                if self.SQLrole:
+                    cursor.execute("set role %s", (self.SQLrole,))
                 cursor.execute(file_open(ifile, "rt").read())
             return 0
         except Exception as e:

@@ -22,6 +22,10 @@ Release notes
 
 - | Scenario Management: It is possible now to promote a scenario to production. All data of the scenario
     will be copied to production database.
+    
+  | Email exported reports: Reports that have been exported using *Export plan result to folder* command can be 
+    emailed to one or more recipients thanks to the addition of a new command in the 
+    `execute <user-guide/command-reference.html#emailreport>`_ screen.
 
 6.3.0 (2020/02/28)
 ==================

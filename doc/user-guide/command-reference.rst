@@ -19,6 +19,7 @@ This section provides an overview of the available actions:
   * :ref:`exportworkbook`
   * :ref:`importworkbook`
   * :ref:`exporttofolder`
+  * :ref:`emailreport`
   * :ref:`importfromfolder`
   * :ref:`runwebservice`
   * :ref:`scenario_copy`
@@ -182,6 +183,38 @@ This command is available in the user interface, the command line and the web AP
 
     Retrieve one of the exported files:
     GET /execute/uploadtofolder/1/<filename>/
+    
+.. _emailreport:
+
+Email exported reports
+----------------------
+
+Reports that have been exported using *Export plan result to folder* command can be 
+emailed to one or more recipients.
+
+Recipients have to be separated by a comma in the *Emails* field.
+
+Selected reports are zipped into a *reports.zip* file that is attached to the email.
+
+In order to have this command working, the EMAIL parameters in the djangosettings.py 
+file must be properly configured.
+
+This command is available in the user interface, the command line and the web API:
+
+* Execution screen:
+
+  .. image:: /user-guide/user-interface/_images/execution-emailreport.png
+     :alt: Execution screen - Email exported reports
+
+* Command line::
+
+    frepplectl emailreport [--sender] --recipient --report
+    
+
+* Web API::
+    
+    Email exported reports:
+    POST /execute/api/emailreport/?recipient=recipient1,recipient2...&report=report1,report2,report3...
 
 
 .. _importfromfolder:

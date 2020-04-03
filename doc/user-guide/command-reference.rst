@@ -350,7 +350,7 @@ This command is available in the user interface, the command line and the web AP
     Deprecated:
     frepplectl frepple_copy db1 db2
 
-* Web API:
+* Web API::
 
     To copy a scenario (including Production) into another scenario:
     * POST /execute/api/scenario_copy/?copy=1&source=db1&destination=db2&force=1

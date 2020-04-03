@@ -1665,7 +1665,7 @@ class OperationPlan : public Object,
     setBatch(tmp);
   }
 
-  void setBatch(const PooledString&);
+  void setBatch(const PooledString&, bool up = true);
 
   /* Shortcut method to the cluster. */
   int getCluster() const;

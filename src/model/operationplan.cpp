@@ -1038,10 +1038,14 @@ OperationPlan::~OperationPlan() {
 void OperationPlan::setOwner(OperationPlan* o, bool fast) {
   // Special case: the same owner is set twice
   if (owner == o) return;
-  if (o)
+  if (o) {
     // Register with the new owner
     o->getOperation()->addSubOperationPlan(o, this, fast);
-  else if (owner)
+    if (o->getBatch())
+      setBatch(o->getBatch(), false);
+    else if (!getBatch())
+      o->setBatch(getBatch());
+  } else if (owner)
     // Setting the owner field to nullptr
     owner->eraseSubOperationPlan(this);
 }
@@ -2184,12 +2188,18 @@ double OperationPlan::getEfficiency(Date d) const {
     return 0.0;
 }
 
-void OperationPlan::setBatch(const PooledString& s) {
-  if (batch != s) {
-    batch = s;
-    auto flplniter = getFlowPlans();
-    FlowPlan* flpln;
-    while ((flpln = flplniter.next())) flpln->updateBatch();
+void OperationPlan::setBatch(const PooledString& s, bool up) {
+  if (getTopOwner() != this && up)
+    getTopOwner()->setBatch(s, false);
+  else {
+    auto subopplans = getSubOperationPlans();
+    while (auto subopplan = subopplans.next()) subopplan->setBatch(s, false);
+    if (batch != s) {
+      batch = s;
+      auto flplniter = getFlowPlans();
+      FlowPlan* flpln;
+      while ((flpln = flplniter.next())) flpln->updateBatch();
+    }
   }
 }
 

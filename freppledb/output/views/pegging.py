@@ -218,7 +218,8 @@ class ReportByDemand(GridReport):
             operationplan.criticality,
             operationplan.demand_id,
             extract(epoch from operationplan.delay),
-            pegging.required_quantity
+            pegging.required_quantity,
+            operationplan.batch
           from pegging
           inner join operationplan
             on operationplan.reference = pegging.opplan
@@ -309,6 +310,7 @@ class ReportByDemand(GridReport):
                                 "demand": rec[19],
                                 "delay": str(rec[20]),
                                 "required_quantity": str(rec[21]),
+                                "batch": rec[22],
                             }
                         ],
                     }
@@ -339,6 +341,7 @@ class ReportByDemand(GridReport):
                             "demand": rec[19],
                             "delay": str(rec[20]),
                             "required_quantity": str(rec[21]),
+                            "batch": rec[22],
                         }
                     )
                 elif rec[9] and not rec[9] in prevrec["resource"]:

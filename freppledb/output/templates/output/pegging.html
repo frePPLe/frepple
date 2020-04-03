@@ -130,7 +130,7 @@ function ganttcell(cellvalue, options, rowdata)
 }
 
 function buildtooltip(){
-  var descriptiontext = '';
+  var extra = '';
   var thedelay = Math.round(parseFloat(parseInt($(this).attr("data-delay")))/8640)/10;
   if (thedelay < 0.1)
   	thedelay = "" + (-thedelay) + " days early";
@@ -138,13 +138,15 @@ function buildtooltip(){
   	thedelay = "" + thedelay + " days late";
   else
   	thedelay = "on time";
+  if ($(this).attr("data-description"))
+    extra += gettext('description')+": " + $(this).attr("data-description") + '<br>';
+  if ($(this).attr("data-batch"))
+    extra += gettext('batch')+": " + $(this).attr("data-batch") + '<br>';
   if ($(this).attr("data-type") === 'MO') {
-    if ($(this).attr("data-description")) {
-      descriptiontext = gettext('description')+": " + $(this).attr("data-description") + '<br>';
-    }
     return gettext('manufacturing order') + '<br>' +
       $(this).attr("data-operation") + '<br>' +
       gettext('reference')+": " + $(this).attr("data-reference") + '<br>' +
+      extra +
       gettext('start')+": " + $(this).attr("data-startdate") + '<br>' +
       gettext('end')+": " + $(this).attr("data-enddate") + '<br>' +
       gettext('quantity')+": " + grid.formatNumber(parseFloat($(this).attr("data-quantity"))) + "<br>" +
@@ -157,6 +159,7 @@ function buildtooltip(){
     return gettext('purchase order') + '<br>' +
       $(this).attr("data-item") + ' @ ' + $(this).attr("data-location") + '<br>' +
       gettext('reference')+": " + $(this).attr("data-reference") + '<br>' +
+      extra +
       gettext('supplier')+": " + $(this).attr("data-supplier") + '<br>' +
       gettext('start')+": " + $(this).attr("data-startdate") + '<br>' +
       gettext('end')+": " + $(this).attr("data-enddate") + '<br>' +
@@ -171,6 +174,7 @@ function buildtooltip(){
       $(this).attr("data-item") + ' @ ' + $(this).attr("data-location") + '<br>' +
       gettext('origin')+": " + $(this).attr("data-origin") + '<br>' +
       gettext('reference')+": " + $(this).attr("data-reference") + '<br>' +
+      extra +
       gettext('start')+": " + $(this).attr("data-startdate") + '<br>' +
       gettext('end')+": " + $(this).attr("data-enddate") + '<br>' +
       gettext('quantity')+": " + grid.formatNumber(parseFloat($(this).attr("data-quantity"))) + "<br>" +
@@ -186,6 +190,7 @@ function buildtooltip(){
   }
   else if ($(this).attr("data-type") === 'DLVR') {
     return gettext('customer delivery') + '<br>' +
+      extra +
       $(this).attr("data-item") + ' @ ' + $(this).attr("data-location") + '<br>' +
       gettext('demand')+": " + $(this).attr("data-demand") + '<br>' +
       gettext('start')+": " + $(this).attr("data-startdate") + '<br>' +

@@ -491,13 +491,15 @@ AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
 ]
 
+# Configuration of SMTP mail server
 EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = "your_email@domain.com"
 SERVER_EMAIL = "your_email@domain.com"
-EMAIL_HOST = "smtp.gmail.com"
-EMAIL_PORT = 587
 EMAIL_HOST_USER = "your_email@domain.com"
 EMAIL_HOST_PASSWORD = "frePPLeIsTheBest"
+EMAIL_HOST = None
+EMAIL_PORT = 25
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+
 # Port number when not using Apache
 PORT = 8000

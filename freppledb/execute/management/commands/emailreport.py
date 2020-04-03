@@ -17,7 +17,6 @@
 
 import os
 import re
-import subprocess
 from io import BytesIO
 from os.path import basename
 from datetime import datetime
@@ -32,6 +31,7 @@ from django.utils.translation import gettext_lazy as _
 from django.template import Template, RequestContext
 
 from freppledb.execute.models import Task
+from freppledb.common.middleware import _thread_locals
 from freppledb.common.models import User
 from freppledb import VERSION
 
@@ -67,12 +67,10 @@ class Command(BaseCommand):
         )
 
     def handle(self, **options):
-        # Make sure the debug flag is not set!
-        # When it is set, the django database wrapper collects a list of all sql
-        # statements executed and their timings. This consumes plenty of memory
-        # and cpu time.
-        tmp_debug = settings.DEBUG
-        settings.DEBUG = False
+        now = datetime.now()
+        database = options["database"]
+        if database not in settings.DATABASES:
+            raise CommandError("No database settings known for '%s'" % database)
 
         # Pick up options
         if options["user"]:
@@ -83,89 +81,98 @@ class Command(BaseCommand):
         else:
             user = None
 
-        sender = options["sender"]
-        recipient = options["recipient"]
-        report = options["report"]
-
-        if not sender:
-            raise CommandError("No sender has been defined")
-
-        if not recipient:
-            raise CommandError("No recipient has been defined")
-
-        if not report:
-            raise CommandError("No report to email has been defined")
-
-        database = options["database"]
-
-        # Make sure file exist in the export folder
-        reports = report.split(",")
-        correctedReports = []
-        missingFiles = []
-        for r in reports:
-            if len(r.strip()) == 0:
-                continue
-            path = os.path.join(
-                settings.DATABASES[database]["FILEUPLOADFOLDER"], "export", r.strip()
-            )
-            if not os.path.isfile(path):
-                missingFiles.append(r.strip())
-            else:
-                correctedReports.append(path)
-
-        if len(missingFiles) > 0:
-            raise CommandError(
-                "Following files are missing in export folder: %s"
-                % (",".join(str(x) for x in missingFiles))
-            )
-
-        if len(correctedReports) == 0:
-            raise CommandError("No report defined in options")
-
-        # Validate email adresses
-        recipients = recipient.split(",")
-        correctedRecipients = []
-        invalidEmails = []
-        for r in recipients:
-            if len(r.strip()) == 0:
-                continue
-            if not re.fullmatch(r"[^@]+@[^@]+\.[^@]+", r.strip()):
-                invalidEmails.append(r.strip())
-            else:
-                correctedRecipients.append(r.strip())
-
-        if len(invalidEmails) > 0:
-            raise CommandError(
-                "Invalid email formatting for following addresses: %s"
-                % (",".join(str(x) for x in invalidEmails))
-            )
-        if len(correctedRecipients) == 0:
-            raise CommandError("No recipient defined in options")
-
-        now = datetime.now()
         task = None
-        if "task" in options and options["task"]:
-            try:
-                task = Task.objects.all().using(database).get(pk=options["task"])
-            except Exception:
-                raise CommandError("Task identifier not found")
-            if (
-                task.started
-                or task.finished
-                or task.status != "Waiting"
-                or task.name not in ("emailreport")
-            ):
-                raise CommandError("Invalid task identifier")
-            task.status = "0%"
-            task.started = now
-        else:
-            task = Task(
-                name="emailreport", submitted=now, started=now, status="0%", user=user
-            )
-        task.processid = os.getpid()
-        task.save(using=database)
-
         try:
+            setattr(_thread_locals, "database", database)
+            if "task" in options and options["task"]:
+                try:
+                    task = Task.objects.all().using(database).get(pk=options["task"])
+                except Exception:
+                    raise CommandError("Task identifier not found")
+                if (
+                    task.started
+                    or task.finished
+                    or task.status != "Waiting"
+                    or task.name not in ("emailreport")
+                ):
+                    raise CommandError("Invalid task identifier")
+                task.status = "0%"
+                task.started = now
+            else:
+                task = Task(
+                    name="emailreport",
+                    submitted=now,
+                    started=now,
+                    status="0%",
+                    user=user,
+                )
+            task.processid = os.getpid()
+            task.save(using=database)
+
+            if not settings.EMAIL_HOST:
+                raise CommandError(
+                    "No SMTP mail server is configured in your djangosettings.py file"
+                )
+
+            sender = options["sender"]
+            recipient = options["recipient"]
+            report = options["report"]
+
+            if not sender:
+                raise CommandError("No sender has been defined")
+
+            if not recipient:
+                raise CommandError("No recipient has been defined")
+
+            if not report:
+                raise CommandError("No report to email has been defined")
+
+            # Make sure file exist in the export folder
+            reports = report.split(",")
+            correctedReports = []
+            missingFiles = []
+            for r in reports:
+                if len(r.strip()) == 0:
+                    continue
+                path = os.path.join(
+                    settings.DATABASES[database]["FILEUPLOADFOLDER"],
+                    "export",
+                    r.strip(),
+                )
+                if not os.path.isfile(path):
+                    missingFiles.append(r.strip())
+                else:
+                    correctedReports.append(path)
+
+            if len(missingFiles) > 0:
+                raise CommandError(
+                    "Following files are missing in export folder: %s"
+                    % (",".join(str(x) for x in missingFiles))
+                )
+
+            if len(correctedReports) == 0:
+                raise CommandError("No report defined in options")
+
+            # Validate email adresses
+            recipients = recipient.split(",")
+            correctedRecipients = []
+            invalidEmails = []
+            for r in recipients:
+                if len(r.strip()) == 0:
+                    continue
+                if not re.fullmatch(r"[^@]+@[^@]+\.[^@]+", r.strip()):
+                    invalidEmails.append(r.strip())
+                else:
+                    correctedRecipients.append(r.strip())
+
+            if len(invalidEmails) > 0:
+                raise CommandError(
+                    "Invalid email formatting for following addresses: %s"
+                    % (",".join(str(x) for x in invalidEmails))
+                )
+            if len(correctedRecipients) == 0:
+                raise CommandError("No recipient defined in options")
+
             task.arguments = "--recipient=%s --report=%s" % (recipient, report)
             task.save(using=database)
 
@@ -193,7 +200,7 @@ class Command(BaseCommand):
                 # attach zip file
                 task.status = "90%"
                 task.message = "Sending email"
-                task.save()
+                task.save(using=database)
                 message.attach("reports.zip", b.getvalue(), "application/zip")
                 # send email
                 message.send()
@@ -214,10 +221,10 @@ class Command(BaseCommand):
             raise e
 
         finally:
+            setattr(_thread_locals, "database", None)
             if task:
                 task.processid = None
                 task.save(using=database)
-            settings.DEBUG = tmp_debug
 
     # accordion template
     title = _("Email exported reports")
@@ -286,7 +293,7 @@ class Command(BaseCommand):
           <table>
             <tr>
               <td style="vertical-align:top; padding-left: 15px">
-                <button type="submit" class="btn btn-primary" id="emailreport" value="{% trans "email"|capfirst %}">{% trans "email"|capfirst %}</button>
+                <button type="submit" class="btn btn-primary" id="emailreport" value="email">{% trans "email"|capfirst %}</button>
               </td>
               <td colspan='5' style="padding-left: 15px;">
                 <p>{% trans "Emails the selected reports to a comma separated list of recipients. Files are zipped and attached to email." %}</p>
@@ -294,7 +301,7 @@ class Command(BaseCommand):
             </tr>
             <tr>
               <td></td>
-              <td><div>                   
+              <td><div>
                    <input type="checkbox" id="allcheckboxes" checked>
                    <strong>{% trans 'file name'|capfirst %}</strong></td>
                    </div>
@@ -313,21 +320,18 @@ class Command(BaseCommand):
               <td>{{j.1}}</td>
             </tr>
             {% endfor %}
-            <tr height = 20px></tr>
             <tr>
-                <td style="padding-left: 15px"><strong>{% trans 'emails'|capfirst %}:</strong>
+                <td style="padding-left:15px; padding-top:10px"><strong>{% trans 'emails'|capfirst %}:</strong>
                 </td>
-                <td>
-                <input type="email" id="emails" name="recipient" multiple value="{{user_email}}">
-                </td>
-                <td>
+                <td style="padding-top:10px" colspan="3">
+                <input type="email" class="form-control" id="emails" name="recipient" multiple value="{{user_email}}">
                 </td>
             </tr>
           </table>
           <input type="hidden" name="report" id="report" value="{{all_reports}}">
         </form>
         <script>
-        function validateButton() {                    
+        function validateButton() {
             var reports = "";
             var first = true;
             {% for j in filesexported %}
@@ -337,7 +341,7 @@ class Command(BaseCommand):
                     first = false
                   }
                   else {
-                    reports = reports + ",{{j.0}}";                   
+                    reports = reports + ",{{j.0}}";
                   }
               }
             {% endfor %}
@@ -356,10 +360,10 @@ class Command(BaseCommand):
                $("#emails").tooltip('hide').attr('data-original-title', '{% trans 'please enter email addresses'|capfirst %}');
             }
             $('#emailreport').prop('disabled', !(oneChecked && emails_ok));
-                        
+
         }
-        $("#emails").on('input', function () {                   
-            validateButton();       
+        $("#emails").on('input', function () {
+            validateButton();
         });
         $("#allcheckboxes").on("click", function(event) {
             var isChecked = $('#allcheckboxes').is(':checked');

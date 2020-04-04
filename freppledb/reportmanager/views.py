@@ -141,7 +141,7 @@ class ReportList(GridReport):
 
 class ReportManager(GridReport):
 
-    title = _("report manager")
+    title = _("report editor")
     template = "reportmanager/reportmanager.html"
     reportkey = "reportmanager.reportmanager"
 
@@ -210,7 +210,7 @@ class ReportManager(GridReport):
             request,
             cls.template,
             {
-                "title": report.name if report else _("Report manager"),
+                "title": report.name if report else _("report editor"),
                 "report": report,
                 "reportkey": "%s.%s" % (cls.reportkey, report.id)
                 if report
@@ -273,7 +273,7 @@ class ReportManager(GridReport):
                 messages.INFO,
                 # Translators: Translation included with Django
                 _('The %(name)s "%(obj)s" was deleted successfully.')
-                % {"name": _("custom report"), "obj": pk},
+                % {"name": _("my report"), "obj": pk},
             )
             return HttpResponse("ok")
 

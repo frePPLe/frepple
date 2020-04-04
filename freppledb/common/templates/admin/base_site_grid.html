@@ -277,6 +277,7 @@ $(function() {
     {% endfor %}
     <li role="separator" class="divider"></li>
     {% endif %}
+    {% comment %}Translators: Translation included with Django {% endcomment %}
     <li><a><button id="favoritesave" onclick="favorite.save()" type="button" class="btn btn-primary btn-xs disabled">{% trans "save"|capfirst %}</button>
     <input id="favoritename" oninput="favorite.check()" type="text" size="15"></a>
     </li>

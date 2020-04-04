@@ -20,9 +20,9 @@ from django.utils.translation import gettext_lazy as _
 from freppledb.menu import menu
 from .views import ExecuteSQL
 
-menu.addGroup("custom", label=_("custom"), index=750)
+menu.addGroup("myreports", label=_("my reports"), index=750)
 menu.addItem(
-    "custom",
+    "myreports",
     "executesql",
     url="/executesql/",
     report=ExecuteSQL,

@@ -43,8 +43,8 @@ class SQLReport(AuditModel):
     class Meta:
         db_table = "reportmanager_report"
         ordering = ("name",)
-        verbose_name = _("custom report")
-        verbose_name_plural = _("custom reports")
+        verbose_name = _("my report")
+        verbose_name_plural = _("my reports")
 
     def __str__(self):
         return self.name

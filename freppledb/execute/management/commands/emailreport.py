@@ -394,8 +394,6 @@ class Command(BaseCommand):
                 ),
                 _("file name"),
                 _("size"),
-                _("last modified"),
-                _("emails"),
                 _("please correct invalid email addresses"),
                 _("please enter email addresses"),
             )

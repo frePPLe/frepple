@@ -27,5 +27,5 @@ menu.addItem(
     url="/executesql/",
     report=ExecuteSQL,
     label=_("Execute SQL"),
-    index=1100,
+    index=1200,
 )

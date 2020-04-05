@@ -107,7 +107,7 @@ def getSchema(request):
 
 class ReportList(GridReport):
     template = "admin/base_site_grid.html"
-    title = _("custom reports")
+    title = _("my reports")
     model = SQLReport
     help_url = "user-guide/user-interface/report-manager.html"
     frozenColumns = 1

@@ -13,7 +13,7 @@ Release notes
   | In earlier releases this was already possible, but required a more complex data interface.
 
 - | Resources can now be assigned to a setup matrix changeover. The extra resource is required
-    to perform the changeover - typically a technicien to reconfigure the machine or a tool that is
+    to perform the changeover - typically a technician to reconfigure the machine or a tool that is
     needed during the setup change.
   | Only unconstrained resources can be assigned for the changeover. The solver can't handle
     constraints on the changeover resource.

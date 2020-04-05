@@ -111,7 +111,7 @@ using namespace std;
 #include <config.h>
 #else
 // Define the version for (windows) compilers that don't use autoconf
-#define PACKAGE_VERSION "6.4.0"
+#define PACKAGE_VERSION "6.5.0"
 #endif
 
 // For the disabled and ansi-challenged people...

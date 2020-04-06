@@ -341,7 +341,7 @@ Object* OperationPlan::createOperationPlan(const MetaClass* cat,
     if (quantityfld || startfld || endfld)
       opplan->setOperationPlanParameters(
           quantityfld ? quantity : opplan->getQuantity(), start, end);
-    opplan->setBatch(batch);
+    if (batchfld) opplan->setBatch(batch);
     return opplan;
   }
 

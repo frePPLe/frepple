@@ -480,6 +480,7 @@ class Command(BaseCommand):
                             )
                         )
         except Exception:
+            errorcount += 1
             logger.error(
                 "%s Error: Invalid data format - skipping the file \n"
                 % datetime.now().replace(microsecond=0)
@@ -533,6 +534,7 @@ class Command(BaseCommand):
                                 )
                             )
         except Exception:
+            errorcount += 1
             logger.error(
                 "%s Error: Invalid data format - skipping the file \n"
                 % datetime.now().replace(microsecond=0)

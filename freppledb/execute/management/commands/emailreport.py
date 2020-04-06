@@ -283,6 +283,7 @@ class Command(BaseCommand):
                     "filesexported": filesexported,
                     "user_email": request.user.email,
                     "all_reports": ",".join(map(str, all_reports)),
+                    "initially_disabled": "" if len(all_reports) > 0 else "disabled",
                 },
             )
 
@@ -293,7 +294,7 @@ class Command(BaseCommand):
           <table>
             <tr>
               <td style="vertical-align:top; padding-left: 15px">
-                <button type="submit" class="btn btn-primary" id="emailreport" value="email">{% trans "email"|capfirst %}</button>
+                <button type="submit" class="btn btn-primary" id="emailreport" value="email" {{initially_disabled}}>{% trans "email"|capfirst %}</button>
               </td>
               <td colspan='5' style="padding-left: 15px;">
                 <p>{% trans "Emails the selected reports to a comma separated list of recipients. Files are zipped and attached to email." %}</p>

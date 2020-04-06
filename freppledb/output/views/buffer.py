@@ -17,6 +17,7 @@
 from datetime import timedelta, datetime
 
 from django.db import connections
+from django.db.models import Q
 from django.db.models.expressions import RawSQL
 from django.utils.encoding import force_text
 from django.utils.text import format_lazy
@@ -49,40 +50,85 @@ class OverviewReport(GridPivot):
             elif len(i_b_l) == 2:
                 return (
                     OperationPlanMaterial.objects.values(
-                        "item", "location", "operationplan__batch"
+                        "item", "item__type", "location", "operationplan__batch"
                     )
                     .filter(
+                        (
+                            (Q(item__type="make to stock") | Q(item__type__isnull=True))
+                            & Q(operationplan__batch__isnull=True)
+                        )
+                        | (
+                            Q(item__type="make to order")
+                            & Q(operationplan__batch__isnull=False)
+                        ),
                         item__name=i_b_l[0],
                         location__name=i_b_l[1],
-                        operationplan__batch_isnull=True,
                     )
-                    .order_by("item_id", "location_id", "operationplan__batch")
+                    .order_by(
+                        "item_id", "item__type", "location_id", "operationplan__batch"
+                    )
                     .distinct()
+                    .annotate(
+                        buffer=RawSQL(
+                            "operationplanmaterial.item_id || "
+                            "(case when item.type is distinct from 'make to order' then '' else ' @ ' || operationplan.batch end) "
+                            "|| ' @ ' || operationplanmaterial.location_id",
+                            (),
+                        )
+                    )
                 )
             else:
                 return (
                     OperationPlanMaterial.objects.values(
-                        "item", "location", "operationplan__batch"
+                        "item", "location", "item__type", "operationplan__batch"
                     )
                     .filter(
+                        (
+                            (Q(item__type="make to stock") | Q(item__type__isnull=True))
+                            & Q(operationplan__batch__isnull=True)
+                        )
+                        | (
+                            Q(item__type="make to order")
+                            & Q(operationplan__batch__isnull=False)
+                        ),
                         item__name=i_b_l[0],
                         location__name=i_b_l[2],
                         operationplan__batch=i_b_l[1],
                     )
                     .order_by("item_id", "location_id", "operationplan__batch")
                     .distinct()
+                    .annotate(
+                        buffer=RawSQL(
+                            "operationplanmaterial.item_id || "
+                            "(case when item.type is distinct from 'make to order' then '' else ' @ ' || operationplan.batch end) "
+                            "|| ' @ ' || operationplanmaterial.location_id",
+                            (),
+                        )
+                    )
                 )
         else:
             return (
                 OperationPlanMaterial.objects.values(
-                    "item", "location", "operationplan__batch"
+                    "item", "location", "item__type", "operationplan__batch"
                 )
-                .order_by("item_id", "location_id", "operationplan__batch")
+                .order_by(
+                    "item_id", "location_id", "item__type", "operationplan__batch"
+                )
                 .distinct()
+                .filter(
+                    (
+                        (Q(item__type="make to stock") | Q(item__type__isnull=True))
+                        & Q(operationplan__batch__isnull=True)
+                    )
+                    | (
+                        Q(item__type="make to order")
+                        & Q(operationplan__batch__isnull=False)
+                    )
+                )
                 .annotate(
                     buffer=RawSQL(
                         "operationplanmaterial.item_id || "
-                        "(case when operationplan.batch is null then '' else ' @ ' || operationplan.batch end) "
+                        "(case when item.type is distinct from 'make to order' then '' else ' @ ' || operationplan.batch end) "
                         "|| ' @ ' || operationplanmaterial.location_id",
                         (),
                     )
@@ -125,6 +171,12 @@ class OverviewReport(GridPivot):
         GridFieldText(
             "item__description",
             title=format_lazy("{} - {}", _("item"), _("description")),
+            initially_hidden=True,
+            editable=False,
+        ),
+        GridFieldText(
+            "item__type",
+            title=format_lazy("{} - {}", _("item"), _("type")),
             initially_hidden=True,
             editable=False,
         ),
@@ -289,6 +341,7 @@ class OverviewReport(GridPivot):
            item.name item_id,
            location.name location_id,
            item.description,
+           item.type,
            item.category,
            item.subcategory,
            item.cost,
@@ -403,6 +456,7 @@ class OverviewReport(GridPivot):
            location.name,
            opplanmat.batch,
            item.description,
+           item.type,
            item.category,
            item.subcategory,
            item.cost,
@@ -452,19 +506,21 @@ class OverviewReport(GridPivot):
                     "item": row[1],
                     "location": row[2],
                     "item__description": row[3],
-                    "item__category": row[4],
-                    "item__cost": row[6],
-                    "item__owner": row[7],
-                    "item__source": row[8],
-                    "item__lastmodified": row[9],
-                    "location__description": row[10],
-                    "location__category": row[11],
-                    "location__subcategory": row[12],
-                    "location__available_id": row[13],
-                    "location__owner_id": row[14],
-                    "location__source": row[15],
-                    "location__lastmodified": row[16],
-                    "batch": row[17],
+                    "item__type": row[4],
+                    "item__category": row[5],
+                    "item__subcategory": row[6],
+                    "item__cost": row[7],
+                    "item__owner": row[8],
+                    "item__source": row[9],
+                    "item__lastmodified": row[10],
+                    "location__description": row[11],
+                    "location__category": row[12],
+                    "location__subcategory": row[13],
+                    "location__available_id": row[14],
+                    "location__owner_id": row[15],
+                    "location__source": row[16],
+                    "location__lastmodified": row[17],
+                    "batch": row[18],
                     "startoh": row[numfields - 6]["onhand"]
                     if row[numfields - 6]
                     else 0,

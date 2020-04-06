@@ -205,9 +205,11 @@ $(function() {
 
 {% if perms.reportmanager.change_sqlreport %}
 <div id="editbuttons" class="col-md-5{% if report %} hidden{% endif %}">
+{% comment %}Translators: Translation included with Django {% endcomment %}
 <button id="reportmanager_save" class="btn btn-primary">{% trans "save"|capfirst %}</button>
 <button id="reportmanager_test" class="btn btn-primary">{% trans "test"|capfirst %}</button>
 <button id="reportmanager_format" class="btn btn-primary">{% trans "format"|capfirst %}</button>
+{% comment %}Translators: Translation included with Django {% endcomment %}
 {% if report %}<button id="reportmanager_delete" class="btn btn-primary">{% trans "delete"|capfirst %}</button>{% endif %}
 </div>
 {% endif %}

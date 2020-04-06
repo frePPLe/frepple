@@ -54,11 +54,11 @@ def MyReports(request):
     return result
 
 
-menu.addGroup("custom", label=_("custom"), index=750)
-menu.addItem("custom", "myreports", callback=MyReports, index=100)
-menu.addItem("custom", "data", separator=True, index=1000)
+menu.addGroup("myreports", label=_("my reports"), index=750)
+menu.addItem("myreports", "myreports", callback=MyReports, index=100)
+menu.addItem("myreports", "data", separator=True, index=1000)
 menu.addItem(
-    "custom",
+    "myreports",
     "reportmanager",
     url="/data/reportmanager/sqlreport/",
     report=ReportList,

@@ -34,7 +34,6 @@ function drawGraphs(jsondata)
     id_by_field[cross[cross_idx[i]]["key"]] = cross_idx[i];
   }
  
-
   // Define X-axis
   var domain_x = [];
   var bucketnamelength = 0;
@@ -95,11 +94,12 @@ function drawGraphs(jsondata)
 	        });
       for (var i in cross_idx)
       {
-        if (field_by_id[cross_idx[i]] == 'startoh' 
-            || field_by_id[cross_idx[i]] == 'safetystock' 
-            || field_by_id[cross_idx[i]] == 'consumed' 
-            || field_by_id[cross_idx[i]] == 'produced' 
-            || field_by_id[cross_idx[i]] == 'endoh') {
+        var t = field_by_id[cross_idx[i]];
+        if (t == 'startoh' 
+            || t == 'safetystock' 
+            || t == 'consumed' 
+            || t == 'produced' 
+            || t == 'endoh') {
           if (tmp[cross_idx[i]] < min_y) min_y = tmp[cross_idx[i]];
           if (tmp[cross_idx[i]] > max_y) max_y = tmp[cross_idx[i]];
           }

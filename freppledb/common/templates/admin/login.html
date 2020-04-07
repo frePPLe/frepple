@@ -82,13 +82,11 @@ $(function() {
 		  </div>
 		  <div class="form-group">
 		    {{ form.password.errors }}
-		    {% comment %}Translators: Translation included with Django {% endcomment %}
 		    <label for="id_password" class="required">{% trans 'Password'|capfirst %}:</label>
 		    <input id="id_password" class="form-control" name="password" type="password">
 		    <input type="hidden" name="next" value="{{ request.prefix }}{{ next }}" />
 		  </div>
 		  <div class="form-group text-center">
-		    {% comment %}Translators: Translation included with Django {% endcomment %}
 		    <input type="submit" class="btn btn-lg btn-primary" value="{% trans 'Log in' %}"/>
 		  </div>
 	  {% setting "SESSION_COOKIE_AGE" as persistent_cookie %}
@@ -108,9 +106,7 @@ $(function() {
 {% if form.errors and not form.non_field_errors %}
 <div class="row">
 <div class="col-xs-4 center-block alert alert-danger" role="alert" style="min-width: 200px; max-width:300px; float:none; text-align:center;">
-{% comment %}Translators: Translation included with Django {% endcomment %}
 {% if form.errors.items|length == 1 %}{% trans "Please correct the error below." %}{% else %}
-{% comment %}Translators: Translation included with Django {% endcomment %}
 {% trans "Please correct the errors below." %}{% endif %}
 </div></div>
 {% endif %}

@@ -25,11 +25,10 @@ from django.utils.translation import gettext_lazy as _
 
 class freppleAuthenticationForm(AuthenticationForm):
     error_messages = {
-        # fmt: off
-        # . Translators: Translation included with Django
-        "invalid_login": _("Please enter a correct %(username)s and password. Note that both fields may be case-sensitive."),
-        # fmt: on
-        "inactive": _("This user is inactive.")
+        "invalid_login": _(
+            "Please enter a correct %(username)s and password. Note that both fields may be case-sensitive."
+        ),
+        "inactive": _("This user is inactive."),
     }
 
 

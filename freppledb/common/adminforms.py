@@ -263,10 +263,8 @@ class MultiDBModelAdmin(admin.ModelAdmin):
             and self.save_as_continue
             and self.has_change_permission(request, obj)
         ):
-            # Translators: Translation included with Django
             msg = _('The {name} "{obj}" was added successfully.')
             if self.has_change_permission(request, obj):
-                # Translators: Translation included with Django
                 msg = format_lazy("{} {}", msg, _("You may edit it again below."))
             self.message_user(request, format_html(msg, **msg_dict), messages.SUCCESS)
             if post_url_continue is None:
@@ -279,10 +277,9 @@ class MultiDBModelAdmin(admin.ModelAdmin):
 
         elif "_addanother" in request.POST:
             msg = format_html(
-                # fmt: off
-                # Translators: Translation included with Django
-                _('The {name} "{obj}" was added successfully. You may add another {name} below.'),
-                # fmt: on
+                _(
+                    'The {name} "{obj}" was added successfully. You may add another {name} below.'
+                ),
                 **msg_dict
             )
             self.message_user(request, msg, messages.SUCCESS)
@@ -295,9 +292,7 @@ class MultiDBModelAdmin(admin.ModelAdmin):
 
         else:
             msg = format_html(
-                # Translators: Translation included with Django
-                _('The {name} "{obj}" was added successfully.'),
-                **msg_dict
+                _('The {name} "{obj}" was added successfully.'), **msg_dict
             )
             self.message_user(request, msg, messages.SUCCESS)
             return self.response_post_save_add(request, obj)
@@ -376,10 +371,9 @@ class MultiDBModelAdmin(admin.ModelAdmin):
         }
         if "_continue" in request.POST:
             msg = format_html(
-                # fmt: off
-                # Translators: Translation included with Django
-                _('The {name} "{obj}" was changed successfully. You may edit it again below.'),
-                # fmt: on
+                _(
+                    'The {name} "{obj}" was changed successfully. You may edit it again below.'
+                ),
                 **msg_dict
             )
             self.message_user(request, msg, messages.SUCCESS)
@@ -392,10 +386,9 @@ class MultiDBModelAdmin(admin.ModelAdmin):
 
         elif "_saveasnew" in request.POST:
             msg = format_html(
-                # fmt: off
-                # Translators: Translation included with Django
-                _('The {name} "{obj}" was added successfully. You may edit it again below.'),
-                # fmt: on
+                _(
+                    'The {name} "{obj}" was added successfully. You may edit it again below.'
+                ),
                 **msg_dict
             )
             self.message_user(request, msg, messages.SUCCESS)
@@ -412,10 +405,9 @@ class MultiDBModelAdmin(admin.ModelAdmin):
 
         elif "_addanother" in request.POST:
             msg = format_html(
-                # fmt: off
-                # Translators: Translation included with Django
-                _('The {name} "{obj}" was changed successfully. You may add another {name} below.'),
-                # fmt: on
+                _(
+                    'The {name} "{obj}" was changed successfully. You may add another {name} below.'
+                ),
                 **msg_dict
             )
             self.message_user(request, msg, messages.SUCCESS)
@@ -431,9 +423,7 @@ class MultiDBModelAdmin(admin.ModelAdmin):
 
         else:
             msg = format_html(
-                # Translators: Translation included with Django
-                _('The {name} "{obj}" was changed successfully.'),
-                **msg_dict
+                _('The {name} "{obj}" was changed successfully.'), **msg_dict
             )
             self.message_user(request, msg, messages.SUCCESS)
             return self.response_post_save_change(request, obj)
@@ -446,7 +436,6 @@ class MultiDBModelAdmin(admin.ModelAdmin):
         new_extra_context["title"] = (
             force_text(self.model._meta.verbose_name) + " " + unquote(object_id)
         )
-        # Translators: Translation included with Django
         new_extra_context["post_title"] = _("edit")
         return super().change_view(request, object_id, form_url, new_extra_context)
 
@@ -532,7 +521,6 @@ class MultiDBModelAdmin(admin.ModelAdmin):
 
         self.message_user(
             request,
-            # Translators: Translation included with Django
             _('The %(name)s "%(obj)s" was deleted successfully.')
             % {"name": opts.verbose_name, "obj": obj_display},
             messages.SUCCESS,
@@ -622,10 +610,8 @@ class MultiDBModelAdmin(admin.ModelAdmin):
         object_name = str(opts.verbose_name)
 
         if perms_needed or protected:
-            # Translators: Translation included with Django
             title = _("Cannot delete %(name)s") % {"name": object_name}
         else:
-            # Translators: Translation included with Django
             title = _("Are you sure?")
 
         context = {
@@ -679,7 +665,6 @@ class MultiDBModelAdmin(admin.ModelAdmin):
         context = {
             **self.admin_site.each_context(request),
             "title": force_text(opts.verbose_name) + " " + unquote(object_id),
-            # Translators: Translation included with Django
             "post_title": _("Change history"),
             "action_list": action_list,
             "module_name": str(capfirst(opts.verbose_name_plural)),
@@ -725,7 +710,6 @@ class MultiDBTabularInline(admin.TabularInline):
 
 
 class MultiDBUserCreationForm(UserCreationForm):
-    # Translators: Translation included with Django
     email = forms.EmailField(required=True, help_text=_("Required."))
     first_name = forms.CharField(
         required=True, max_length=30, help_text=_("Required. Max 30 characters.")

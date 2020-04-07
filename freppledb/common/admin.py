@@ -37,7 +37,6 @@ class MyUserAdmin(UserAdmin, MultiDBModelAdmin):
             _("Personal info"),
             {"fields": ("username", ("first_name", "last_name"), "email")},
         ),
-        # Translators: Translation included with Django
         (_("password"), {"fields": ("password1", "password2")}),
         (_("scenario access"), {"fields": ("scenarios",)}),
     )
@@ -45,7 +44,6 @@ class MyUserAdmin(UserAdmin, MultiDBModelAdmin):
     change_user_password_template = "auth/change_password.html"
     fieldsets = (
         (None, {"fields": ("username", "password")}),
-        # Translators: Translation included with Django
         (_("Personal info"), {"fields": ("first_name", "last_name", "email")}),
         (
             _("Permissions in this scenario"),
@@ -66,7 +64,6 @@ class MyUserAdmin(UserAdmin, MultiDBModelAdmin):
             "label": _("comments"),
             "view": "admin:common_user_comment",
         },
-        # Translators: Translation included with Django
         {"name": "history", "label": _("History"), "view": "admin:common_user_history"},
     ]
 
@@ -104,7 +101,6 @@ class MyGroupAdmin(MultiDBModelAdmin):
             "label": _("comments"),
             "view": "admin:auth_group_comment",
         },
-        # Translators: Translation included with Django
         {"name": "history", "label": _("History"), "view": "admin:auth_group_history"},
     ]
 
@@ -150,7 +146,6 @@ class Parameter_admin(MultiDBModelAdmin):
             "label": _("comments"),
             "view": "admin:common_parameter_comment",
         },
-        # Translators: Translation included with Django
         {
             "name": "history",
             "label": _("History"),
@@ -193,7 +188,6 @@ class BucketDetail_admin(MultiDBModelAdmin):
             "label": _("comments"),
             "view": "admin:common_bucketdetail_comment",
         },
-        # Translators: Translation included with Django
         {
             "name": "history",
             "label": _("History"),
@@ -222,7 +216,6 @@ class Bucket_admin(MultiDBModelAdmin):
             "label": _("comments"),
             "view": "admin:common_bucket_comment",
         },
-        # Translators: Translation included with Django
         {
             "name": "history",
             "label": _("History"),

@@ -13,11 +13,8 @@
           <table class="table table-condensed" id="change-history">
             <thead>
             <tr>
-                {% comment %}Translators: Translation included with Django {% endcomment %}
                 <th scope="col">{% trans 'Date/time' %}</th>
-                {% comment %}Translators: Translation included with Django {% endcomment %}
                 <th scope="col">{% trans 'User' %}</th>
-                {% comment %}Translators: Translation included with Django {% endcomment %}
                 <th scope="col">{% trans 'Action' %}</th>
             </tr>
             </thead>
@@ -35,7 +32,6 @@
       </div>
 
 {% else %}
-{% comment %}Translators: Translation included with Django {% endcomment %}
     <p>{% trans "This object doesn't have a change history. It probably wasn't added via this admin site." %}</p>
 {% endif %}
 </div>

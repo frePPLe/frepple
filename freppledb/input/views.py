@@ -1227,7 +1227,6 @@ class BufferList(GridReport):
     rows = (
         GridFieldInteger(
             "id",
-            # . Translators: Translation included with Django
             title=_("identifier"),
             key=True,
             formatter="detail",
@@ -1369,7 +1368,6 @@ class SetupMatrixList(GridReport):
     help_url = "user-guide/model-reference/setup-matrices.html"
 
     rows = (
-        # . Translators: Translation included with Django
         GridFieldText(
             "name",
             title=_("name"),
@@ -1427,7 +1425,6 @@ class ResourceList(GridReport):
     help_url = "user-guide/modeling-wizard/manufacturing-capacity/resources.html"
 
     rows = (
-        # . Translators: Translation included with Django
         GridFieldText(
             "name",
             title=_("name"),
@@ -1558,7 +1555,6 @@ class LocationList(GridReport):
     help_url = "user-guide/modeling-wizard/master-data/locations.html"
 
     rows = (
-        # . Translators: Translation included with Django
         GridFieldText(
             "name",
             title=_("name"),
@@ -1596,7 +1592,6 @@ class CustomerList(GridReport):
     help_url = "user-guide/modeling-wizard/master-data/customers.html"
 
     rows = (
-        # . Translators: Translation included with Django
         GridFieldText(
             "name",
             title=_("name"),
@@ -1627,7 +1622,6 @@ class SupplierList(GridReport):
     help_url = "user-guide/modeling-wizard/purchasing/suppliers.html"
 
     rows = (
-        # . Translators: Translation included with Django
         GridFieldText(
             "name",
             title=_("name"),
@@ -2035,7 +2029,6 @@ class ItemList(GridReport):
     help_url = "user-guide/modeling-wizard/master-data/items.html"
 
     rows = (
-        # . Translators: Translation included with Django
         GridFieldText(
             "name",
             title=_("name"),
@@ -2068,7 +2061,6 @@ class SkillList(GridReport):
     help_url = "user-guide/model-reference/skills.html"
 
     rows = (
-        # . Translators: Translation included with Django
         GridFieldText(
             "name",
             title=_("name"),
@@ -2172,7 +2164,6 @@ class OperationResourceList(GridReport):
         GridFieldDateTime(
             "effective_end", title=_("effective end"), initially_hidden=True
         ),
-        # . Translators: Translation included with Django
         GridFieldText("name", title=_("name"), initially_hidden=True),
         GridFieldInteger("priority", title=_("priority"), initially_hidden=True),
         GridFieldText("setup", title=_("setup"), initially_hidden=True),
@@ -2409,7 +2400,6 @@ class OperationMaterialList(GridReport):
         GridFieldDateTime(
             "effective_end", title=_("effective end"), initially_hidden=True
         ),
-        # . Translators: Translation included with Django
         GridFieldText("name", title=_("name"), initially_hidden=True),
         GridFieldInteger("priority", title=_("priority"), initially_hidden=True),
         GridFieldChoice(
@@ -2594,7 +2584,6 @@ class DemandList(GridReport):
     help_url = "user-guide/modeling-wizard/master-data/sales-orders.html"
 
     rows = (
-        # . Translators: Translation included with Django
         GridFieldText(
             "name",
             title=_("name"),
@@ -2859,7 +2848,6 @@ class CalendarList(GridReport):
     help_url = "user-guide/model-reference/calendars.html"
 
     rows = (
-        # . Translators: Translation included with Django
         GridFieldText(
             "name",
             title=_("name"),
@@ -2902,19 +2890,12 @@ class CalendarBucketList(GridReport):
         GridFieldDateTime("enddate", title=_("end date")),
         GridFieldNumber("value", title=_("value")),
         GridFieldInteger("priority", title=_("priority")),
-        # . Translators: Translation included with Django
         GridFieldBool("monday", title=_("Monday")),
-        # . Translators: Translation included with Django
         GridFieldBool("tuesday", title=_("Tuesday")),
-        # . Translators: Translation included with Django
         GridFieldBool("wednesday", title=_("Wednesday")),
-        # . Translators: Translation included with Django
         GridFieldBool("thursday", title=_("Thursday")),
-        # . Translators: Translation included with Django
         GridFieldBool("friday", title=_("Friday")),
-        # . Translators: Translation included with Django
         GridFieldBool("saturday", title=_("Saturday")),
-        # . Translators: Translation included with Django
         GridFieldBool("sunday", title=_("Sunday")),
         GridFieldTime("starttime", title=_("start time")),
         GridFieldTime("endtime", title=_("end time")),
@@ -2933,7 +2914,6 @@ class OperationList(GridReport):
     help_url = "user-guide/modeling-wizard/manufacturing-bom/operations.html"
 
     rows = (
-        # . Translators: Translation included with Django
         GridFieldText(
             "name",
             title=_("name"),
@@ -4904,7 +4884,6 @@ class DeliveryOrderList(GridReport):
     rows = (
         GridFieldText(
             "reference",
-            # . Translators: Translation included with Django
             title=_("reference"),
             key=True,
             formatter="detail",
@@ -5242,7 +5221,6 @@ class InventoryDetail(OperationPlanMixin, GridReport):
             return {"active_tab": "plandetail", "model": OperationPlanMaterial}
 
     rows = (
-        # . Translators: Translation included with Django
         GridFieldInteger(
             "id",
             title=_("identifier"),

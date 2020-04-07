@@ -114,7 +114,6 @@ class TaskReport(GridReport):
 
     rows = (
         GridFieldInteger("id", title=_("identifier"), key=True),
-        # . Translators: Translation included with Django
         GridFieldText("name", title=_("name"), editable=False, align="center"),
         GridFieldLocalDateTime(
             "submitted", title=_("submitted"), editable=False, align="center"
@@ -148,7 +147,6 @@ class TaskReport(GridReport):
             formatter="longstring",
         ),
         GridFieldText("arguments", title=_("arguments"), editable=False),
-        # . Translators: Translation included with Django
         GridFieldText(
             "user",
             title=_("user"),

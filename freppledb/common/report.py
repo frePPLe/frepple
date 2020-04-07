@@ -395,13 +395,7 @@ class GridFieldBoolNullable(GridFieldChoice):
     width = 60
 
     def __init__(self, name, **kwargs):
-        kwargs["choices"] = (
-            ("", ""),
-            # . Translators: Translation included with Django
-            ("False", _("No")),
-            # . Translators: Translation included with Django
-            ("True", _("Yes")),
-        )
+        kwargs["choices"] = (("", ""), ("False", _("No")), ("True", _("Yes")))
         super().__init__(name, **kwargs)
 
 
@@ -1734,7 +1728,6 @@ class GridReport(View):
                                 object_id=obj.pk,
                                 object_repr=force_text(obj),
                                 action_flag=CHANGE,
-                                # . Translators: Translation included with Django
                                 change_message=_("Changed %s.")
                                 % get_text_list(form.changed_data, _("and")),
                             ).save(using=request.database)

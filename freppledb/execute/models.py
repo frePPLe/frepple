@@ -37,7 +37,6 @@ class Task(models.Model):
 
     # Database fields
     id = models.AutoField(_("identifier"), primary_key=True, editable=False)
-    # . Translators: Translation included with Django
     name = models.CharField(_("name"), max_length=50, db_index=True, editable=False)
     submitted = models.DateTimeField(_("submitted"), editable=False)
     started = models.DateTimeField(_("started"), blank=True, null=True, editable=False)
@@ -50,7 +49,6 @@ class Task(models.Model):
     status = models.CharField(_("status"), max_length=20, editable=False)
     message = models.TextField(_("message"), max_length=200, null=True, editable=False)
     logfile = models.TextField(_("log file"), max_length=200, null=True, editable=False)
-    # . Translators: Translation included with Django
     user = models.ForeignKey(
         User,
         verbose_name=_("user"),

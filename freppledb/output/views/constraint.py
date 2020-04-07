@@ -95,7 +95,6 @@ class BaseReport(GridReport):
     detail_post_title = _("constrained demand")
     detailmodel = None
     rows = (
-        # . Translators: Translation included with Django
         GridFieldInteger("id", title=_("id"), key=True, editable=False, hidden=True),
         GridFieldText(
             "demand",
@@ -107,7 +106,6 @@ class BaseReport(GridReport):
         GridFieldText(
             "entity", title=_("entity"), editable=False, width=80, align="center"
         ),
-        # . Translators: Translation included with Django
         GridFieldText(
             "name", title=_("name"), editable=False, width=100, align="center"
         ),
@@ -124,14 +122,17 @@ class BaseReport(GridReport):
     def extra_context(reportclass, request, *args, **kwargs):
         if args and args[0] and reportclass.detailmodel:
             request.session["lasttab"] = "constraint"
-            if reportclass.detailmodel._meta.model_name == 'buffer' and ' @ ' not in args[0]:
-              b = Buffer.objects.get(id=args[0])
-              bufferName = b.item.name + ' @ ' + b.location.name
+            if (
+                reportclass.detailmodel._meta.model_name == "buffer"
+                and " @ " not in args[0]
+            ):
+                b = Buffer.objects.get(id=args[0])
+                bufferName = b.item.name + " @ " + b.location.name
             return {
                 "active_tab": "constraint",
                 "title": force_text(reportclass.detailmodel._meta.verbose_name)
                 + " "
-                + (bufferName if 'bufferName' in vars() else args[0]),
+                + (bufferName if "bufferName" in vars() else args[0]),
                 "post_title": reportclass.detail_post_title,
             }
         else:
@@ -164,11 +165,11 @@ class ReportByBuffer(BaseReport):
     @classmethod
     def basequeryset(reportclass, request, *args, **kwargs):
         if args and args[0]:
-            if not ' @ ' in args[0]:
-              b = Buffer.objects.get(id=args[0])
-              bufferName = b.item.name + ' @ ' + b.location.name
+            if not " @ " in args[0]:
+                b = Buffer.objects.get(id=args[0])
+                bufferName = b.item.name + " @ " + b.location.name
             else:
-              bufferName = args[0]
+                bufferName = args[0]
             request.session["lasttab"] = "constraint"
             return Constraint.objects.all().filter(
                 owner__exact=bufferName, entity__exact="material"

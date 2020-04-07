@@ -147,7 +147,6 @@ class RecentActionsWidget(Widget):
                     '<span class="small">%s</span><br>'
                     % force_text(_("Unknown content"))
                 )
-        # . Translators: Translation included with Django
         return result and "\n".join(result) or force_text(_("None available"))
 
 
@@ -197,7 +196,6 @@ class RecentCommentsWidget(Widget):
                 + "</td></tr>"
             )
         result.append("</tbody></table></div>")
-        # . Translators: Translation included with Django
         return "\n".join(result) if result else force_text(_("None available"))
 
     javascript = """

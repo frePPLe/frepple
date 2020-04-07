@@ -112,25 +112,15 @@ TIME_ZONE = "Europe/Brussels"
 # You can see the list supported by Django at:
 #    https://github.com/django/django/blob/master/django/conf/global_settings.py
 LANGUAGES = (
-    # Translators: Translation included with Django
     ("en", _("English")),
-    # Translators: Translation included with Django
     ("fr", _("French")),
-    # Translators: Translation included with Django
     ("de", _("German")),
-    # Translators: Translation included with Django
     ("it", _("Italian")),
-    # Translators: Translation included with Django
     ("jp", _("Japanese")),
-    # Translators: Translation included with Django
     ("nl", _("Dutch")),
-    # Translators: Translation included with Django
     ("pt", _("Portuguese")),
-    # Translators: Translation included with Django
     ("pt-br", _("Brazilian Portuguese")),
-    # Translators: Translation included with Django
     ("zh-cn", _("Simplified Chinese")),
-    # Translators: Translation included with Django
     ("zh-tw", _("Traditional Chinese")),
 )
 

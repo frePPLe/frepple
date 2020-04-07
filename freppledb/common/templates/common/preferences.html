@@ -96,14 +96,11 @@
 
     <div class="row" style="padding-bottom: 20px;">
       <div class="col-xs-3" style="max-width:150px; text-align: right">
-        {% comment %}Translators: Translation included with Django {% endcomment %}
         <label class="control-label" for="id_cur_password">{% trans 'Change password'|capfirst%}:</label>
       </div>
       <div class="col-xs-9" style="max-width:260px">
-
-        {% comment %}Translators: Translation included with Django {% endcomment %}
-        <input class="form-control" id="id_cur_password" name="cur_password" type="password" placeholder="{% trans " Old password "|escape %}" style="margin-bottom: 10px;"> {% comment %}Translators: Translation included with Django {% endcomment %}
-        <input class="form-control" id="id_new_password1" name="new_password1" type="password" placeholder="{% trans " New password "|escape %}" style="margin-bottom: 10px;"> {% comment %}Translators: Translation included with Django {% endcomment %}
+        <input class="form-control" id="id_cur_password" name="cur_password" type="password" placeholder="{% trans " Old password "|escape %}" style="margin-bottom: 10px;">
+        <input class="form-control" id="id_new_password1" name="new_password1" type="password" placeholder="{% trans " New password "|escape %}" style="margin-bottom: 10px;">
         <input class="form-control" id="id_new_password2" name="new_password2" type="password" placeholder="{% trans " New password confirmation "|escape %}" style="margin-bottom: 10px;">
       </div>
       <div class="col-xs-12">
@@ -119,7 +116,6 @@
       <div class="col-xs-3" style="max-width:150px; text-align: right">
       </div>
       <div class="col-xs-9" style="max-width:260px">
-        {% comment %}Translators: Translation included with Django {% endcomment %}
         <input type="submit" value="{% trans "Save" %}" class="btn btn-primary">
       </div>
     </div>

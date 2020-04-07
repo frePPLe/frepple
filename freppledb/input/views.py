@@ -411,7 +411,10 @@ class PathReport(GridReport):
       null,
       null,
       null,
-      null
+      null,
+      jsonb_build_object( 'operation_min', itemsupplier.sizeminimum,
+                               'operation_multiple', itemsupplier.sizemultiple,
+                               'operation_max', itemsupplier.sizemaximum) as sizes
       from itemsupplier
       inner join item i_parent on i_parent.name = itemsupplier.item_id
       inner join item on item.name = %s and item.lft between i_parent.lft and i_parent.rght
@@ -428,7 +431,7 @@ class PathReport(GridReport):
             cursor.execute(query, (item_name,) * 7)
 
         for i in cursor.fetchall():
-            for j in reportclass.processRecord(i, request, depth, downstream):
+            for j in reportclass.processRecord(i, request, depth, downstream, None):
                 yield j
 
     @classmethod
@@ -594,7 +597,7 @@ class PathReport(GridReport):
         cursor.execute(query, (resource_name,) * 4)
 
         for i in cursor.fetchall():
-            for j in reportclass.processRecord(i, request, depth, downstream):
+            for j in reportclass.processRecord(i, request, depth, downstream, None):
                 yield j
 
     @classmethod
@@ -678,11 +681,13 @@ class PathReport(GridReport):
         cursor.execute(query, (operation_name,) * 3)
 
         for i in cursor.fetchall():
-            for j in reportclass.processRecord(i, request, depth, downstream):
+            for j in reportclass.processRecord(i, request, depth, downstream, None):
                 yield j
 
     @classmethod
-    def getOperationFromBuffer(reportclass, request, buffer_name, downstream, depth):
+    def getOperationFromBuffer(
+        reportclass, request, buffer_name, downstream, depth, previousOperation
+    ):
         cursor = connections[request.database].cursor()
         item = buffer_name[0 : buffer_name.find(" @ ")]
         location = buffer_name[buffer_name.find(" @ ") + 3 :]
@@ -882,18 +887,19 @@ class PathReport(GridReport):
             )
 
         for i in cursor.fetchall():
-            for j in reportclass.processRecord(i, request, depth, downstream):
+            for j in reportclass.processRecord(
+                i, request, depth, downstream, previousOperation
+            ):
                 yield j
 
     @classmethod
-    def processRecord(reportclass, i, request, depth, downstream):
+    def processRecord(reportclass, i, request, depth, downstream, previousOperation):
 
         # First can we go further ?
         if len(reportclass.node_count) > 400:
             return
 
-        # do we <have a grandparentoperation
-        print(i[14])
+        # do we have a grandparentoperation
         if i[11] and not i[11] in reportclass.operation_dict:
             reportclass.operation_id = reportclass.operation_id + 1
             reportclass.operation_dict[i[11]] = reportclass.operation_id
@@ -915,7 +921,11 @@ class PathReport(GridReport):
                 "duration_per": None,
                 "quantity": 1,
                 "buffers": None,
-                "parent": None,
+                "parent": (
+                    reportclass.operation_dict[previousOperation]
+                    if previousOperation
+                    else None
+                ),
                 "leaf": "false",
                 "expanded": "true",
                 "numsuboperations": reportclass.suboperations_count_dict[i[11]],
@@ -956,7 +966,13 @@ class PathReport(GridReport):
                 "duration_per": None,
                 "quantity": 1,
                 "buffers": None,
-                "parent": None,
+                "parent": reportclass.operation_dict[i[11]]
+                if i[11]
+                else (
+                    reportclass.operation_dict[previousOperation]
+                    if previousOperation
+                    else None
+                ),
                 "leaf": "false",
                 "expanded": "true",
                 "numsuboperations": reportclass.suboperations_count_dict[i[8]],
@@ -999,8 +1015,24 @@ class PathReport(GridReport):
                 "duration_per": i[7],
                 "quantity": 1,
                 "buffers": tuple(i[4].items()) if i[4] else None,
-                "parent": reportclass.operation_dict[i[8]] if i[8] else None,
-                "leaf": "true",
+                "parent": reportclass.operation_dict[i[8]]
+                if i[8]
+                else (
+                    reportclass.operation_dict[previousOperation]
+                    if previousOperation
+                    else None
+                ),
+                "leaf": (
+                    "false"
+                    if i[4] and len([(k, v) for k, v in i[4].items() if v < 0]) > 0
+                    else "true"
+                )
+                if not downstream
+                else (
+                    "false"
+                    if i[4] and len([(k, v) for k, v in i[4].items() if v > 0]) > 0
+                    else "true"
+                ),
                 "expanded": "true",
                 "numsuboperations": 0,
                 "realdepth": -depth if reportclass.downstream else depth,
@@ -1017,17 +1049,18 @@ class PathReport(GridReport):
 
         if i[4]:
             for buffer, quantity in tuple(i[4].items()):
+
                 # I might already have visisted that buffer
                 if buffer in reportclass.node_count:
                     continue
                 reportclass.node_count.add(buffer)
                 if float(quantity) < 0 and not downstream:
                     yield from reportclass.getOperationFromBuffer(
-                        request, buffer, downstream, depth + 1
+                        request, buffer, downstream, depth + 1, i[0]
                     )
                 elif float(quantity) > 0 and downstream:
                     yield from reportclass.getOperationFromBuffer(
-                        request, buffer, downstream, depth + 1
+                        request, buffer, downstream, depth + 1, i[0]
                     )
 
     @classmethod
@@ -1067,7 +1100,7 @@ class PathReport(GridReport):
                 buffer_name = "%s @ %s" % (b.item.name, b.location.name)
 
             for i in reportclass.getOperationFromBuffer(
-                request, buffer_name, reportclass.downstream, depth=0
+                request, buffer_name, reportclass.downstream, 0, None
             ):
                 yield i
         elif str(reportclass.objecttype._meta) == "input.demand":
@@ -1079,7 +1112,11 @@ class PathReport(GridReport):
                 buffer_name = "%s @ %s" % (d.item.name, d.location.name)
 
                 for i in reportclass.getOperationFromBuffer(
-                    request, buffer_name, reportclass.downstream, depth=0
+                    request,
+                    buffer_name,
+                    reportclass.downstream,
+                    depth=0,
+                    previousOperation=None,
                 ):
                     yield i
             else:

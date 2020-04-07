@@ -40,7 +40,6 @@ searchmode = (
 
 class Calendar(AuditModel):
     # Database fields
-    # . Translators: Translation included with Django
     name = models.CharField(_("name"), max_length=300, primary_key=True)
     description = models.CharField(
         _("description"), max_length=500, null=True, blank=True
@@ -75,7 +74,6 @@ class CalendarBucket(AuditModel):
 
     # Database fields
     id = models.AutoField(_("identifier"), primary_key=True)
-    # . Translators: Translation included with Django
     calendar = models.ForeignKey(
         Calendar,
         verbose_name=_("calendar"),
@@ -90,20 +88,12 @@ class CalendarBucket(AuditModel):
         _("value"), default="0.00", blank=True, max_digits=20, decimal_places=8
     )
     priority = models.IntegerField(_("priority"), default=0, blank=True, null=True)
-
-    # . Translators: Translation included with Django
     monday = models.BooleanField(_("Monday"), blank=True, default=True)
-    # . Translators: Translation included with Django
     tuesday = models.BooleanField(_("Tuesday"), blank=True, default=True)
-    # . Translators: Translation included with Django
     wednesday = models.BooleanField(_("Wednesday"), blank=True, default=True)
-    # . Translators: Translation included with Django
     thursday = models.BooleanField(_("Thursday"), blank=True, default=True)
-    # . Translators: Translation included with Django
     friday = models.BooleanField(_("Friday"), blank=True, default=True)
-    # . Translators: Translation included with Django
     saturday = models.BooleanField(_("Saturday"), blank=True, default=True)
-    # . Translators: Translation included with Django
     sunday = models.BooleanField(_("Sunday"), blank=True, default=True)
     starttime = models.TimeField(
         _("start time"), blank=True, null=True, default=time(0, 0, 0)
@@ -238,7 +228,6 @@ class Operation(AuditModel):
     )
 
     # Database fields
-    # . Translators: Translation included with Django
     name = models.CharField(_("name"), max_length=300, primary_key=True)
     type = models.CharField(
         _("type"),
@@ -805,11 +794,7 @@ class SetupRule(AuditModel):
 class Skill(AuditModel):
     # Database fields
     name = models.CharField(
-        # . Translators: Translation included with Django
-        _("name"),
-        max_length=300,
-        primary_key=True,
-        help_text=_("Unique identifier"),
+        _("name"), max_length=300, primary_key=True, help_text=_("Unique identifier")
     )
 
     # Methods
@@ -938,7 +923,6 @@ class OperationMaterial(AuditModel):
         _("effective end"), null=True, blank=True, help_text=_("Validity end date")
     )
     name = models.CharField(
-        # . Translators: Translation included with Django
         _("name"),
         max_length=300,
         null=True,
@@ -1054,7 +1038,6 @@ class OperationResource(AuditModel):
         _("effective end"), null=True, blank=True, help_text=_("Validity end date")
     )
     name = models.CharField(
-        # . Translators: Translation included with Django
         _("name"),
         max_length=300,
         null=True,

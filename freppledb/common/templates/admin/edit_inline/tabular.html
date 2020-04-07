@@ -23,7 +23,6 @@
          </th>
        {% endif %}
      {% endfor %}
-     {% comment %}Translators: Translation included with Django {% endcomment %}
      {% if inline_admin_formset.formset.can_delete %}<th>{% trans "Delete?"|capfirst %}</th>{% endif %}
      </tr></thead>
 
@@ -39,12 +38,10 @@
         <td class="original">
           {% if inline_admin_form.original or inline_admin_form.show_url %}<p>
           {% if inline_admin_form.original %} {{ inline_admin_form.original }}
-          {% comment %}Translators: Translation included with Django {% endcomment %}
           {% if inline_admin_form.model_admin.show_change_link and inline_admin_form.model_admin.has_registered_model %}<a href="{% url inline_admin_form.model_admin.opts|admin_urlname:'change' inline_admin_form.original.pk|admin_urlquote %}" class="inlinechangelink">{% trans "Change" %}</a>{% endif %}
 
           {% endif %}
           {% if inline_admin_form.show_url %}
-          {% comment %}Translators: Translation included with Django {% endcomment %}
           <a href="{{ inline_admin_form.absolute_url }}">{% trans "View on site" %}</a>{% endif %}
             </p>{% endif %}
           {% if inline_admin_form.needs_explicit_pk_field %}{{ inline_admin_form.pk_field.field }}{% endif %}
@@ -138,11 +135,9 @@
         }
         $(rows).formset({
             prefix: "{{ inline_admin_formset.formset.prefix }}",
-            {% comment %}Translators: Translation included with Django {% endcomment %}
             addText: "{% blocktrans with verbose_name=inline_admin_formset.opts.verbose_name|capfirst %}Add another {{ verbose_name }}{% endblocktrans %}",
             formCssClass: "dynamic-{{ inline_admin_formset.formset.prefix }}",
             deleteCssClass: "inline-deletelink",
-            {% comment %}Translators: Translation included with Django {% endcomment %}
             deleteText: "{% trans "Remove" %}",
             emptyCssClass: "empty-form",
             removed: alternatingRows,

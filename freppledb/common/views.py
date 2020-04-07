@@ -91,12 +91,11 @@ def cockpit(request):
 
 def handler404(request, exception):
     """
-  Custom error handler which redirects to the main page rather than displaying the 404 page.
-  """
+    Custom error handler which redirects to the main page rather than displaying the 404 page.
+    """
     messages.add_message(
         request,
         messages.ERROR,
-        # . Translators: Translation included with Django
         force_text(
             _("Page not found") + ": " + request.prefix + request.get_full_path()
         ),
@@ -138,17 +137,14 @@ class PreferencesForm(forms.Form):
         choices=[(i, capfirst(i)) for i in settings.THEMES],
     )
     cur_password = forms.CharField(
-        # . Translators: Translation included with Django
         label=_("Change password"),
         required=False,
-        # . Translators: Translation included with Django
         help_text=_("Old password"),
         widget=forms.PasswordInput(),
     )
     new_password1 = forms.CharField(
         label="",
         required=False,
-        # . Translators: Translation included with Django
         help_text=password_validators_help_text_html(
             get_password_validators(settings.AUTH_PASSWORD_VALIDATORS)
         ),
@@ -157,7 +153,6 @@ class PreferencesForm(forms.Form):
     new_password2 = forms.CharField(
         label="",
         required=False,
-        # . Translators: Translation included with Django
         help_text=_("New password confirmation"),
         widget=forms.PasswordInput(),
     )
@@ -176,12 +171,11 @@ class PreferencesForm(forms.Form):
             raise forms.ValidationError("Minimum page size is 25.")
         if newdata["cur_password"]:
             if not self.user.check_password(newdata["cur_password"]):
-                # fmt: off
                 raise forms.ValidationError(
-                    # . Translators: Translation included with Django
-                    _("Your old password was entered incorrectly. Please enter it again.")
+                    _(
+                        "Your old password was entered incorrectly. Please enter it again."
+                    )
                 )
-                # fmt: on
             # Validate_password raises a ValidationError
             validate_password(
                 newdata["new_password1"],
@@ -189,7 +183,6 @@ class PreferencesForm(forms.Form):
                 get_password_validators(settings.AUTH_PASSWORD_VALIDATORS),
             )
             if newdata["new_password1"] != newdata["new_password2"]:
-                # . Translators: Translation included with Django
                 raise forms.ValidationError("The two password fields didn't match.")
 
 
@@ -315,10 +308,9 @@ def login(request, extra_context=None):
 
 class UserList(GridReport):
     """
-  A list report to show users.
-  """
+    A list report to show users.
+    """
 
-    # . Translators: Translation included with Django
     title = _("users")
     basequeryset = User.objects.all()
     model = User
@@ -329,7 +321,6 @@ class UserList(GridReport):
     )
 
     rows = (
-        # . Translators: Translation included with Django
         GridFieldInteger(
             "id",
             title=_("id"),
@@ -337,31 +328,22 @@ class UserList(GridReport):
             formatter="admin",
             extra='"role":"common/user"',
         ),
-        # . Translators: Translation included with Django
         GridFieldText("username", title=_("username")),
-        # . Translators: Translation included with Django
         GridFieldText("email", title=_("email address"), formatter="email", width=200),
-        # . Translators: Translation included with Django
         GridFieldText("first_name", title=_("first name")),
-        # . Translators: Translation included with Django
         GridFieldText("last_name", title=_("last name")),
-        # . Translators: Translation included with Django
         GridFieldBool("is_active", title=_("active")),
-        # . Translators: Translation included with Django
         GridFieldBool("is_superuser", title=_("superuser status"), width=120),
-        # . Translators: Translation included with Django
         GridFieldDateTime("date_joined", title=_("date joined"), editable=False),
-        # . Translators: Translation included with Django
         GridFieldDateTime("last_login", title=_("last login"), editable=False),
     )
 
 
 class GroupList(GridReport):
     """
-  A list report to show groups.
-  """
+    A list report to show groups.
+    """
 
-    # . Translators: Translation included with Django
     title = _("groups")
     basequeryset = Group.objects.all()
     model = Group
@@ -379,15 +361,14 @@ class GroupList(GridReport):
             formatter="detail",
             extra='"role":"auth/group"',
         ),
-        # . Translators: Translation included with Django
         GridFieldText("name", title=_("name"), width=200),
     )
 
 
 class ParameterList(GridReport):
     """
-  A list report to show all configurable parameters.
-  """
+    A list report to show all configurable parameters.
+    """
 
     title = _("parameters")
     basequeryset = Parameter.objects.all()
@@ -397,7 +378,6 @@ class ParameterList(GridReport):
     help_url = "user-guide/model-reference/parameters.html"
 
     rows = (
-        # . Translators: Translation included with Django
         GridFieldText(
             "name",
             title=_("name"),
@@ -414,8 +394,8 @@ class ParameterList(GridReport):
 
 class CommentList(GridReport):
     """
-  A list report to display all comments.
-  """
+    A list report to display all comments.
+    """
 
     template = "common/commentlist.html"
     title = _("comments")
@@ -429,7 +409,6 @@ class CommentList(GridReport):
     rows = (
         GridFieldInteger("id", title=_("identifier"), key=True),
         GridFieldLastModified("lastmodified"),
-        # . Translators: Translation included with Django
         GridFieldText(
             "user",
             title=_("user"),
@@ -473,7 +452,6 @@ class BucketList(GridReport):
     frozenColumns = 1
     help_url = "user-guide/model-reference/buckets.html"
     rows = (
-        # . Translators: Translation included with Django
         GridFieldText(
             "name",
             title=_("name"),
@@ -510,7 +488,6 @@ class BucketDetailList(GridReport):
         ),
         GridFieldDateTime("startdate", title=_("start date")),
         GridFieldDateTime("enddate", title=_("end date")),
-        # . Translators: Translation included with Django
         GridFieldText("name", title=_("name")),
         GridFieldText("source", title=_("source")),
         GridFieldLastModified("lastmodified"),

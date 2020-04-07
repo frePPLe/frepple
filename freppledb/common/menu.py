@@ -89,7 +89,6 @@ docurl = "%s/docs/%s.%s/index.html" % (
     versionnumber[0],
     versionnumber[1],
 )
-# . Translators: Translation included with Django
 menu.addItem(
     "help",
     "documentation",

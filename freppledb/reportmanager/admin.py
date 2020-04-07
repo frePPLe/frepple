@@ -45,7 +45,6 @@ class SQLReport_admin(MultiDBModelAdmin):
         },
         {
             "name": "history",
-            # . Translators: Translation included with Django
             "label": _("History"),
             "view": "admin:reportmanager_sqlreport_history",
         },

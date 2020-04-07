@@ -30,7 +30,6 @@ class SQLReport(AuditModel):
     )
     user = models.ForeignKey(
         User,
-        # Translators: Translation included with Django
         verbose_name=_("user"),
         blank=False,
         null=True,

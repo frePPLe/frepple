@@ -271,7 +271,6 @@ class ReportManager(GridReport):
             messages.add_message(
                 request,
                 messages.INFO,
-                # Translators: Translation included with Django
                 _('The %(name)s "%(obj)s" was deleted successfully.')
                 % {"name": _("my report"), "obj": pk},
             )

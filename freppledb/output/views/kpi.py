@@ -35,7 +35,6 @@ class Report(GridReport):
             editable=False,
             align="center",
         ),
-        # . Translators: Translation included with Django
         GridFieldText(
             "name", title=_("name"), sortable=False, editable=False, align="center"
         ),

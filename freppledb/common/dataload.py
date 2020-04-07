@@ -373,7 +373,6 @@ def _parseData(model, data, rowmapper, user, database, ping):
             if required_fields:
                 # We are missing some required fields
                 errors += 1
-                # . Translators: Translation included with django
                 yield (
                     ERROR,
                     None,
@@ -485,7 +484,6 @@ def _parseData(model, data, rowmapper, user, database, ping):
                                     object_id=obj.pk,
                                     object_repr=force_text(obj)[:200],
                                     action_flag=it and CHANGE or ADDITION,
-                                    # . Translators: Translation included with Django
                                     change_message="Changed %s."
                                     % get_text_list(form.changed_data, "and"),
                                 )
@@ -578,22 +576,20 @@ class BulkForeignKeyFormField(forms.fields.Field):
             try:
                 return self.cache[value]
             except KeyError:
-                # fmt: off
                 raise forms.ValidationError(
-                    # . Translators: Translation included with Django
-                    _("Select a valid choice. That choice is not one of the available choices.")
+                    _(
+                        "Select a valid choice. That choice is not one of the available choices."
+                    )
                 )
-                # fmt: on
         else:
             try:
                 return self.queryset.get(pk=value)
             except self.model.DoesNotExist:
-                # fmt: off
                 raise forms.ValidationError(
-                    # . Translators: Translation included with Django
-                    _("Select a valid choice. That choice is not one of the available choices.")
+                    _(
+                        "Select a valid choice. That choice is not one of the available choices."
+                    )
                 )
-                # fmt: on
 
     def has_changed(self, initial, data):
         return initial != data

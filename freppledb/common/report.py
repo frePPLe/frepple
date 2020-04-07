@@ -63,7 +63,7 @@ from django.core.exceptions import ValidationError
 from django.core.management.color import no_style
 from django.db import connections, transaction, models
 from django.db.models.fields import CharField, AutoField
-from django.db.models.fields.related import RelatedField
+from django.db.models.fields.related import RelatedField, ForeignKey
 from django.forms.models import modelform_factory
 from django.http import Http404, HttpResponse, StreamingHttpResponse
 from django.http import (
@@ -395,13 +395,7 @@ class GridFieldBoolNullable(GridFieldChoice):
     width = 60
 
     def __init__(self, name, **kwargs):
-        kwargs["choices"] = (
-            ("", ""),
-            # . Translators: Translation included with Django
-            ("False", _("No")),
-            # . Translators: Translation included with Django
-            ("True", _("Yes")),
-        )
+        kwargs["choices"] = (("", ""), ("False", _("No")), ("True", _("Yes")))
         super().__init__(name, **kwargs)
 
 
@@ -903,6 +897,15 @@ class GridReport(View):
             cell = WriteOnlyCell(ws, value=force_text(f.title).title())
             if f.editable or f.key:
                 cell.style = "headerstyle"
+                fname = getattr(f, "field_name", f.name)
+                if not f.key and f.formatter == "detail" and fname.endswith("__name"):
+                    cell.comment = CellComment(
+                        force_text(
+                            _("Values in this fields must exist in the %s table")
+                            % force_text(_(fname[:-6]))
+                        ),
+                        "Author",
+                    )
             else:
                 cell.style = "readlonlyheaderstyle"
                 if not comment:
@@ -1725,7 +1728,6 @@ class GridReport(View):
                                 object_id=obj.pk,
                                 object_repr=force_text(obj),
                                 action_flag=CHANGE,
-                                # . Translators: Translation included with Django
                                 change_message=_("Changed %s.")
                                 % get_text_list(form.changed_data, _("and")),
                             ).save(using=request.database)
@@ -2959,6 +2961,19 @@ class GridPivot(GridReport):
                 cell = WriteOnlyCell(ws, value=force_text(f.title).title())
                 if f.editable or f.key:
                     cell.style = "headerstyle"
+                    fname = getattr(f, "field_name", f.name)
+                    if (
+                        not f.key
+                        and f.formatter == "detail"
+                        and fname.endswith("__name")
+                    ):
+                        cell.comment = CellComment(
+                            force_text(
+                                _("Values in this fields must exist in the %s table")
+                                % force_text(_(fname[:-6]))
+                            ),
+                            "Author",
+                        )
                 else:
                     cell.style = "readlonlyheaderstyle"
                     if not comment:
@@ -2971,6 +2986,15 @@ class GridPivot(GridReport):
             cell = WriteOnlyCell(ws, value=capfirst(force_text(_("bucket"))))
             if f.editable or f.key:
                 cell.style = "headerstyle"
+                fname = getattr(f, "field_name", f.name)
+                if not f.key and f.formatter == "detail" and fname.endswith("__name"):
+                    cell.comment = CellComment(
+                        force_text(
+                            _("Values in this fields must exist in the %s table")
+                            % force_text(_(fname[:-6]))
+                        ),
+                        "Author",
+                    )
             else:
                 cell.style = "readlonlyheaderstyle"
                 if not comment:
@@ -3261,6 +3285,18 @@ def exportWorkbook(request):
                     cell = WriteOnlyCell(ws, value=force_text(i.verbose_name).title())
                     if i.editable:
                         cell.style = "headerstyle"
+                        if isinstance(i, ForeignKey):
+                            cell.comment = CellComment(
+                                force_text(
+                                    _(
+                                        "Values in this fields must exist in the %s table"
+                                    )
+                                    % force_text(
+                                        i.remote_field.model._meta.verbose_name
+                                    )
+                                ),
+                                "Author",
+                            )
                     else:
                         cell.style = "readlonlyheaderstyle"
                         if not comment:
@@ -3287,6 +3323,18 @@ def exportWorkbook(request):
                         )
                         if i.editable:
                             cell.style = "headerstyle"
+                            if isinstance(i, ForeignKey):
+                                cell.comment = CellComment(
+                                    force_text(
+                                        _(
+                                            "Values in this fields must exist in the %s table"
+                                        )
+                                        % force_text(
+                                            i.remote_field.model._meta.verbose_name
+                                        )
+                                    ),
+                                    "Author",
+                                )
                         else:
                             cell.style = "readlonlyheaderstyle"
                             if not comment:

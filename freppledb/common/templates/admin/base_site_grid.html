@@ -241,7 +241,6 @@ $(function() {
 <div id="save_undo" class="col-xs-5 form-inline">
 {% block save_undo_buttons %}
 {% if not is_popup and reportclass.editable and haschangeperm %}
-{% comment %}Translators: Translation included with Django {% endcomment %}
 <input type="submit" value="{% filter force_escape|upper %}{% trans "Save" %}{% endfilter %}" class="btn btn-primary"  disabled role="button" id="save" onclick="upload.save()" title="{% trans 'save changes'|capfirst|force_escape %}">
 <input type="submit" value="{% filter force_escape|upper %}{% trans "Undo" %}{% endfilter %}" class="btn btn-primary"  disabled role="button" id="undo" onclick="upload.undo()" title="{% trans 'undo changes'|capfirst|force_escape %}">
 {% if actions %}
@@ -277,7 +276,6 @@ $(function() {
     {% endfor %}
     <li role="separator" class="divider"></li>
     {% endif %}
-    {% comment %}Translators: Translation included with Django {% endcomment %}
     <li><a><button id="favoritesave" onclick="favorite.save()" type="button" class="btn btn-primary btn-xs disabled">{% trans "save"|capfirst %}</button>
     <input id="favoritename" oninput="favorite.check()" type="text" size="15"></a>
     </li>

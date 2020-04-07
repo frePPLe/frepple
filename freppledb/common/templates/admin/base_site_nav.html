@@ -57,7 +57,6 @@ $(function() {
 			  {% endfor %}
 			</ul>
 
-			{% comment %}Translators: Translation included with Django{% endcomment %}
 			<form class="navbar-form navbar-left" role="search">
 				<div class="form-group">
 				  <input id="search" class="form-control typeahead" type="text" placeholder="&#xf002; {% trans 'Search' %}">
@@ -66,12 +65,10 @@ $(function() {
 
           {% if not request.session.navbar and user.is_authenticated and user.is_staff %}<ul class="nav navbar-nav navbar-right">
 		    <li class="dropdown">
-		    {% comment %}Translators: Translation included with Django{% endcomment %}
 		    <a href="#" class="dropdown-toggle" style="
     padding-right: 20px;" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{% trans 'user'|capfirst %} {% firstof user.first_name user.username %}</a>
 				<ul class="dropdown-menu">
 				  <li><a href="{{request.prefix}}/preferences/">{% trans 'preferences'|capfirst %}</a></li>
-				  {% comment %}Translators: Translation included with Django{% endcomment %}
 				  <li><a href="/data/logout/?next=/">{% trans 'log out'|capfirst %}</a></li>
 				</ul>
 			  </li></ul>

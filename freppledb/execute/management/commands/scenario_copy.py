@@ -393,7 +393,6 @@ class Command(BaseCommand):
         </div></div>
         <table id="scenarios">
           <tr>
-            {% comment %}Translators: Translation included with Django {% endcomment %}
             <th style="padding:5px 10px 5px 10px; text-align: center">{% trans 'scenario'|capfirst %}</th>
             <th style="padding:5px 10px 5px 10px; text-align: center">{% trans 'action'|capfirst %}</th>
             <th style="padding:5px 10px 5px 10px; text-align: center">

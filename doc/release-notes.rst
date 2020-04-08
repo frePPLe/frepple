@@ -1,6 +1,14 @@
 Release notes
 -------------
 
+6.5.0 (Upcoming release)
+========================
+
+.. rubric:: User interface
+
+- | Supply path: Alternate operation with low priority (less preferred) will be displayed in light-blue.
+
+
 6.4.0 (2020/04/04)
 ==================
 

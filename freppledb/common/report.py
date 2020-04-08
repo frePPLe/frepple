@@ -906,6 +906,14 @@ class GridReport(View):
                         ),
                         "Author",
                     )
+                elif isinstance(f, GridFieldChoice):
+                    cell.comment = CellComment(
+                        force_text(
+                            _("Accepted values are: %s")
+                            % ", ".join([c[0] for c in f.choices])
+                        ),
+                        "Author",
+                    )
             else:
                 cell.style = "readlonlyheaderstyle"
                 if not comment:
@@ -2974,6 +2982,14 @@ class GridPivot(GridReport):
                             ),
                             "Author",
                         )
+                    elif isinstance(f, GridFieldChoice):
+                        cell.comment = CellComment(
+                            force_text(
+                                _("Accepted values are: %s")
+                                % ", ".join([c[0] for c in f.choices])
+                            ),
+                            "Author",
+                        )
                 else:
                     cell.style = "readlonlyheaderstyle"
                     if not comment:
@@ -2992,6 +3008,14 @@ class GridPivot(GridReport):
                         force_text(
                             _("Values in this fields must exist in the %s table")
                             % force_text(_(fname[:-6]))
+                        ),
+                        "Author",
+                    )
+                elif isinstance(f, GridFieldChoice):
+                    cell.comment = CellComment(
+                        force_text(
+                            _("Accepted values are: %s")
+                            % ", ".join([c[0] for c in f.choices])
                         ),
                         "Author",
                     )
@@ -3297,6 +3321,14 @@ def exportWorkbook(request):
                                 ),
                                 "Author",
                             )
+                        elif i.choices:
+                            cell.comment = CellComment(
+                                force_text(
+                                    _("Accepted values are: %s")
+                                    % ", ".join([c[0] for c in i.choices])
+                                ),
+                                "Author",
+                            )
                     else:
                         cell.style = "readlonlyheaderstyle"
                         if not comment:
@@ -3335,6 +3367,14 @@ def exportWorkbook(request):
                                     ),
                                     "Author",
                                 )
+                        elif i.choices:
+                            cell.comment = CellComment(
+                                force_text(
+                                    _("Accepted values are: %s")
+                                    % ", ".join([c[0] for c in i.choices])
+                                ),
+                                "Author",
+                            )
                         else:
                             cell.style = "readlonlyheaderstyle"
                             if not comment:

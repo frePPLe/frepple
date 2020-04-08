@@ -85,7 +85,7 @@ function tick(e)
   // Bring operations vertically closer to the center and
   // horizontally close to the position linked to their level.
   shapes.attr('transform', function(d, i) {
-    if (d.type == 'operation' || d.type == 'routing' || d.type == 'split' || d.type == 'alternate' || d.type == 'buffer')
+    if (d.type == 'operation' || d.type == 'operation_alternate' || d.type == 'routing' || d.type == 'split' || d.type == 'alternate' || d.type == 'buffer')
     {
       if (d.parent >= 0)
       {
@@ -318,7 +318,7 @@ function drawGraph(jsondata)
     //.call(force.drag);
 
   // Show node IDs
-  g.filter( function(d, i) {return d.type != 'operation' || d.suboperindex <= 0;} )
+  g.filter( function(d, i) {return (d.type != 'operation' && d.type != 'operation_alternate')|| d.suboperindex <= 0;} )
    .append('svg:text')
    .attr('x', 0)
    .attr('y', 4)

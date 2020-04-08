@@ -1037,6 +1037,8 @@ class PathReport(GridReport):
                 "sizemaximum": i[14]["operation_max"],
                 "sizemultiple": i[14]["operation_multiple"],
                 "alternate": "false",
+                "alternate_priority": (i[13] or i[10] or i[3] or 999),
+                "alternate_operation": (i[11] or i[8] or i[0]),
             }
             reportclass.node_count.add(i[0])
             yield operation
@@ -1165,25 +1167,33 @@ class PathReport(GridReport):
                 i["leaf"] = "false"
 
         # post-process results for alternate operations
-        # a first loop to create a dict (produced_buffer, min(priority))
+        # a first loop to find the min priority
         d = {}
         for i in results:
             if i["buffers"]:
                 for j in i["buffers"]:
                     if j[1] > 0:
                         d[j[0]] = (
-                            (i["priority"] or 999)
+                            i["alternate_priority"]
                             if j[0] not in d
-                            else min((i["priority"] or 999), d[j[0]])
+                            else min(i["alternate_priority"], d[j[0]])
                         )
-
-        # a second loop to set the alternate field
+        # a second loop to find alternate operations
+        alternate_ops = []
         for i in results:
             if i["buffers"]:
                 for j in i["buffers"]:
-                    if j[1] > 0 and (i["priority"] or 999) > d[j[0]]:
-                        i["alternate"] = "true"
+                    if j[1] > 0 and i["alternate_priority"] > d[j[0]]:
+                        alternate_ops.append(i["alternate_operation"])
 
+        # a third loop to set the alternate flag
+        for i in results:
+            if i["type"] not in ("purchase", "distribution", "time_per", "fixed_time"):
+                continue
+            if (i["operation"] in alternate_ops and not i["parentoper"]) or (
+                i["parentoper"] and i["parentoper"] in alternate_ops
+            ):
+                i["alternate"] = "true"
         return results
 
 

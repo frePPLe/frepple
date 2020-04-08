@@ -423,7 +423,9 @@ class PathReport(GridReport):
       """
             )
 
-        query = query + " order by 4"
+        query = (
+            query + " order by grandparentoperation, parentoperation, sibling_priority"
+        )
 
         if downstream:
             cursor.execute(query, (item_name,) * 2)
@@ -585,7 +587,7 @@ class PathReport(GridReport):
       inner join item on item.lft between i_parent.lft and i_parent.rght
       inner join location on location.lft = location.rght - 1
       where location_id is null and itemsupplier.resource_id = %%s
-      order by 4
+      order by grandparentoperation, parentoperation, sibling_priority
       """ % (
             "operationresource.resource_id = %s"
             if downstream == False
@@ -675,7 +677,7 @@ class PathReport(GridReport):
       and (operation.name = %s or parentoperation.name = %s or grandparentoperation.name = %s)
       group by operation.name, parentoperation.name, sibling.name, grandparentoperation.name
       ) t
-      order by 4
+      order by grandparentoperation, parentoperation, sibling_priority
       """
 
         cursor.execute(query, (operation_name,) * 3)
@@ -864,7 +866,9 @@ class PathReport(GridReport):
       """
             )
 
-        query = query + " order by 4"
+        query = (
+            query + " order by grandparentoperation, parentoperation, sibling_priority"
+        )
 
         if downstream:
             cursor.execute(query, (location, item, item, location))
@@ -1022,17 +1026,7 @@ class PathReport(GridReport):
                     if previousOperation
                     else None
                 ),
-                "leaf": (
-                    "false"
-                    if i[4] and len([(k, v) for k, v in i[4].items() if v < 0]) > 0
-                    else "true"
-                )
-                if not downstream
-                else (
-                    "false"
-                    if i[4] and len([(k, v) for k, v in i[4].items() if v > 0]) > 0
-                    else "true"
-                ),
+                "leaf": "false",
                 "expanded": "true",
                 "numsuboperations": 0,
                 "realdepth": -depth if reportclass.downstream else depth,
@@ -1091,6 +1085,8 @@ class PathReport(GridReport):
         # in the case of downstream raw material.
         reportclass.node_count = set()
 
+        results = []
+
         if str(reportclass.objecttype._meta) == "input.buffer":
             buffer_name = basequery.query.get_compiler(basequery.db).as_sql(
                 with_col_aliases=False
@@ -1102,7 +1098,7 @@ class PathReport(GridReport):
             for i in reportclass.getOperationFromBuffer(
                 request, buffer_name, reportclass.downstream, 0, None
             ):
-                yield i
+                results.append(i)
         elif str(reportclass.objecttype._meta) == "input.demand":
             demand_name = basequery.query.get_compiler(basequery.db).as_sql(
                 with_col_aliases=False
@@ -1118,14 +1114,14 @@ class PathReport(GridReport):
                     depth=0,
                     previousOperation=None,
                 ):
-                    yield i
+                    results.append(i)
             else:
                 operation_name = d.operation.name
 
                 for i in reportclass.getOperationFromName(
                     request, operation_name, reportclass.downstream, depth=0
                 ):
-                    yield i
+                    results.append(i)
         elif str(reportclass.objecttype._meta) == "input.resource":
             resource_name = basequery.query.get_compiler(basequery.db).as_sql(
                 with_col_aliases=False
@@ -1134,7 +1130,7 @@ class PathReport(GridReport):
             for i in reportclass.getOperationFromResource(
                 request, resource_name, reportclass.downstream, depth=0
             ):
-                yield i
+                results.append(i)
         elif str(reportclass.objecttype._meta) == "input.operation":
             operation_name = basequery.query.get_compiler(basequery.db).as_sql(
                 with_col_aliases=False
@@ -1143,7 +1139,7 @@ class PathReport(GridReport):
             for i in reportclass.getOperationFromName(
                 request, operation_name, reportclass.downstream, depth=0
             ):
-                yield i
+                results.append(i)
         elif str(reportclass.objecttype._meta) == "input.item":
             item_name = basequery.query.get_compiler(basequery.db).as_sql(
                 with_col_aliases=False
@@ -1152,9 +1148,19 @@ class PathReport(GridReport):
             for i in reportclass.getOperationFromItem(
                 request, item_name, reportclass.downstream, depth=0
             ):
-                yield i
+                results.append(i)
         else:
             raise Exception("Supply path for an unknown entity")
+
+        # post-process results to calculate leaf field
+        parents = [i["parent"] for i in results if i["parent"]]
+        for i in results:
+            if i["type"] in ["time_per", "fixed_time", "purchase", "distribution"]:
+                i["leaf"] = "true" if i["id"] not in parents else "false"
+            else:
+                i["leaf"] = "false"
+
+        return results
 
 
 class UpstreamDemandPath(PathReport):

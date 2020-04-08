@@ -202,6 +202,7 @@ class PathReport(GridReport):
         GridFieldText("parent", editable=False, sortable=False, hidden=True),
         GridFieldText("leaf", editable=False, sortable=False, hidden=True),
         GridFieldText("expanded", editable=False, sortable=False, hidden=True),
+        GridFieldText("alternate", editable=False, sortable=False, hidden=True),
     )
 
     # Attributes to be specified by the subclasses
@@ -331,7 +332,7 @@ class PathReport(GridReport):
       select 'Ship '||item.name||' from '||itemdistribution.origin_id||' to '||itemdistribution.location_id,    
       itemdistribution.location_id,
       'distribution' as type,
-      null as priority,
+      priority,
       jsonb_build_object(item.name||' @ '||itemdistribution.origin_id, -1,
                          item.name||' @ '||itemdistribution.location_id, 1) as operation_om,                      
       case when itemdistribution.resource_id is not null 
@@ -378,7 +379,7 @@ class PathReport(GridReport):
       select 'Purchase '||item.name||' @ '|| location.name||' from '||itemsupplier.supplier_id,
       location.name as location_id,
       'purchase' as type,
-      null as priority,
+      priority,
       jsonb_build_object(item.name||' @ '|| location.name,1),
       case when itemsupplier.resource_id is not null then jsonb_build_object(itemsupplier.resource_id, itemsupplier.resource_qty) else '{}'::jsonb end resources,
       itemsupplier.leadtime as duration,
@@ -401,7 +402,7 @@ class PathReport(GridReport):
       select 'Purchase '||item.name||' @ '|| location.name||' from '||itemsupplier.supplier_id,
       location.name as location_id,
       'purchase' as type,
-      null as priority,
+      priority,
       jsonb_build_object(item.name||' @ '|| location.name,1),
       case when itemsupplier.resource_id is not null then jsonb_build_object(itemsupplier.resource_id, itemsupplier.resource_qty) else '{}'::jsonb end resources,
       itemsupplier.leadtime as duration,
@@ -518,7 +519,7 @@ class PathReport(GridReport):
       select 'Ship '||item.name||' from '||itemdistribution.origin_id||' to '||itemdistribution.location_id,    
       itemdistribution.location_id,
       'distribution' as type,
-      null as priority,
+      priority,
       jsonb_build_object(item.name||' @ '||itemdistribution.origin_id, -1,
                          item.name||' @ '||itemdistribution.location_id, 1) as operation_om,                      
       case when itemdistribution.resource_id is not null 
@@ -544,7 +545,7 @@ class PathReport(GridReport):
       select 'Purchase '||item.name||' @ '|| location.name||' from '||itemsupplier.supplier_id,
       location.name as location_id,
       'purchase' as type,
-      null as priority,
+      priority,
       jsonb_build_object(item.name||' @ '|| location.name,1),
       case when itemsupplier.resource_id is not null then jsonb_build_object(itemsupplier.resource_id, itemsupplier.resource_qty) else '{}'::jsonb end resources,
       itemsupplier.leadtime as duration,
@@ -568,7 +569,7 @@ class PathReport(GridReport):
       select 'Purchase '||item.name||' @ '|| location.name||' from '||itemsupplier.supplier_id,
       location.name as location_id,
       'purchase' as type,
-      null as priority,
+      priority,
       jsonb_build_object(item.name||' @ '|| location.name,1),
       case when itemsupplier.resource_id is not null then jsonb_build_object(itemsupplier.resource_id, itemsupplier.resource_qty) else '{}'::jsonb end resources,
       itemsupplier.leadtime as duration,
@@ -771,7 +772,7 @@ class PathReport(GridReport):
       select 'Ship '||item.name||' from '||itemdistribution.origin_id||' to '||itemdistribution.location_id,    
       itemdistribution.location_id,
       'distribution' as type,
-      null as priority,
+      priority,
       jsonb_build_object(item.name||' @ '||itemdistribution.origin_id, -1,
                          item.name||' @ '||itemdistribution.location_id, 1) as operation_om,                      
       case when itemdistribution.resource_id is not null 
@@ -821,7 +822,7 @@ class PathReport(GridReport):
       select 'Purchase '||item.name||' @ '|| location.name||' from '||itemsupplier.supplier_id,
       location.name as location_id,
       'purchase' as type,
-      null as priority,
+      priority,
       jsonb_build_object(item.name||' @ '|| location.name,1),
       case when itemsupplier.resource_id is not null then jsonb_build_object(itemsupplier.resource_id, itemsupplier.resource_qty) else '{}'::jsonb end resources,
       itemsupplier.leadtime as duration,
@@ -844,7 +845,7 @@ class PathReport(GridReport):
       select 'Purchase '||item.name||' @ '|| location.name||' from '||itemsupplier.supplier_id,
       location.name as location_id,
       'purchase' as type,
-      null as priority,
+      priority,
       jsonb_build_object(item.name||' @ '|| location.name,1),
       case when itemsupplier.resource_id is not null then jsonb_build_object(itemsupplier.resource_id, itemsupplier.resource_qty) else '{}'::jsonb end resources,
       itemsupplier.leadtime as duration,
@@ -937,6 +938,7 @@ class PathReport(GridReport):
                 "sizeminimum": i[14]["grandparentoperation_min"],
                 "sizemaximum": i[14]["grandparentoperation_max"],
                 "sizemultiple": i[14]["grandparentoperation_multiple"],
+                "alternate": "false",
             }
             reportclass.node_count.add(i[11])
             yield grandparentoperation
@@ -984,6 +986,7 @@ class PathReport(GridReport):
                 "sizeminimum": i[14]["parentoperation_min"],
                 "sizemaximum": i[14]["parentoperation_max"],
                 "sizemultiple": i[14]["parentoperation_multiple"],
+                "alternate": "false",
             }
             reportclass.node_count.add(i[8])
             yield parentoperation
@@ -1033,6 +1036,7 @@ class PathReport(GridReport):
                 "sizeminimum": i[14]["operation_min"],
                 "sizemaximum": i[14]["operation_max"],
                 "sizemultiple": i[14]["operation_multiple"],
+                "alternate": "false",
             }
             reportclass.node_count.add(i[0])
             yield operation
@@ -1159,6 +1163,26 @@ class PathReport(GridReport):
                 i["leaf"] = "true" if i["id"] not in parents else "false"
             else:
                 i["leaf"] = "false"
+
+        # post-process results for alternate operations
+        # a first loop to create a dict (produced_buffer, min(priority))
+        d = {}
+        for i in results:
+            if i["buffers"]:
+                for j in i["buffers"]:
+                    if j[1] > 0:
+                        d[j[0]] = (
+                            (i["priority"] or 999)
+                            if j[0] not in d
+                            else min((i["priority"] or 999), d[j[0]])
+                        )
+
+        # a second loop to set the alternate field
+        for i in results:
+            if i["buffers"]:
+                for j in i["buffers"]:
+                    if j[1] > 0 and (i["priority"] or 999) > d[j[0]]:
+                        i["alternate"] = "true"
 
         return results
 

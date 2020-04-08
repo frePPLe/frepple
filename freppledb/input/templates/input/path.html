@@ -150,14 +150,24 @@ function drawGraph(jsondata)
     if ('parentoper' in jsondata['rows'][oper])
       parentoper = operations[jsondata['rows'][oper]['parentoper']];
     var nodetype = 'operation';
+    if (jsondata['rows'][oper]['alternate'] == 'true')
+    	nodetype = 'operation_alternate';
     if (jsondata['rows'][oper]['type'] == 'alternate'
       || jsondata['rows'][oper]['type'] == 'routing'
       || jsondata['rows'][oper]['type'] == 'split')
       nodetype = jsondata['rows'][oper]['type'];
-    else if (jsondata['rows'][oper]['type'] == 'purchase')
-      nodetype = 'itemsupplier';
-    else if (jsondata['rows'][oper]['type'] == 'distribution')
-      nodetype = 'itemdistribution';
+    else if (jsondata['rows'][oper]['type'] == 'purchase') {
+    	if (jsondata['rows'][oper]['alternate'] == 'true')
+          nodetype = 'itemsupplier_alternate';
+    	else
+    	  nodetype = 'itemsupplier';
+    }
+    else if (jsondata['rows'][oper]['type'] == 'distribution') {
+    	if (jsondata['rows'][oper]['alternate'] == 'true')
+            nodetype = 'itemdistribution_alternate';
+      	else
+      	  nodetype = 'itemdistribution';
+    }
     var numsuboperations = 0;
     if ('numsuboperations' in jsondata['rows'][oper])
       numsuboperations = Math.abs(parseInt(jsondata['rows'][oper]['numsuboperations']));
@@ -172,7 +182,7 @@ function drawGraph(jsondata)
        suboperindex: parseInt(jsondata['rows'][oper]['suboperation']),
        numsuboperations: numsuboperations,
        y: 1000 + count,
-       charge: parentoper>-1 ? 0 : -200
+       charge: parentoper>-1 ? 0 : -200,
        }) - 1;
     operations[jsondata['rows'][oper]['operation']] = count;
 
@@ -402,6 +412,14 @@ ExpandColClick: true,
   </rect>
   <rect id="itemdistribution" class="itemdistribution" width="100" height="25" x="-50" y="-9" rx="2" ry="2"
     style="cursor: pointer; fill: #1f77b4;">
+  <rect id="operation_alternate" class="operation_alternate" width="100" height="25" x="-50" y="-9" rx="2" ry="2"
+    style="cursor: pointer; fill: #30fff8;">
+  </rect>
+  <rect id="itemsupplier_alternate" class="itemsupplier_alternate" width="100" height="25" x="-50" y="-9" rx="2" ry="2"
+    style="cursor: pointer; fill: #30fff8;">
+  </rect>
+  <rect id="itemdistribution_alternate" class="itemdistribution_alternate" width="100" height="25" x="-50" y="-9" rx="2" ry="2"
+    style="cursor: pointer; fill: #30fff8;">
   </rect>
   <rect id="routing" class="routing" width="110" height="25" x="-55" y="-9" rx="2" ry="2"
     style="cursor: pointer; fill: #ffffff; stroke: black; vector-effect: non-scaling-stroke;">

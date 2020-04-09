@@ -1339,6 +1339,8 @@ class PathReport(GridReport):
                 i["parentoper"] and i["parentoper"] in alternate_ops
             ):
                 i["alternate"] = "true"
+
+        for i in results:
             yield i
 
 

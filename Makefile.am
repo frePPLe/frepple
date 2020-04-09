@@ -11,7 +11,7 @@ EXTRA_DIST = AUTHORS COPYING CONTRIBUTING.md README.md SECURITY.md Makefile.am M
 
 AUTOMAKE_OPTIONS = foreign
 
-.PHONY: $(.PHONY) migrate check runserver international pep8
+.PHONY: $(.PHONY) migrate check runserver collect-translations compile-translations
 
 install-data-local: setup.py
 	echo "Installing Django web application"; \
@@ -50,11 +50,101 @@ check:
 runserver:
 	./frepplectl.py runserver
 
-international:
-	cd freppledb; django-admin.py makemessages -a -d django
-	cd freppledb; django-admin.py makemessages -a -d djangojs
-	find .  -name '*.po' -exec msggrep -X -e 'Translators: Translation included with Django' --invert-match  {} -o tmp.po \; -exec mv tmp.po {} \;
-	cd freppledb; django-admin.py compilemessages
+# Translations process:
+# 1) Run "make extra-translations" to get all translatable strings from thr source code.
+# 2) Translate all strings local/<LANGUAGE>/<LANGUAGE>.po file. The real work!
+# 3) Run "make compile-translations" to merge the translations into the right places.
 
-pep8:
-	flake8 freppledb --ignore=E121,E111,E501,E303,E201,E202,E123
+extract-translations:
+	## extract django
+	./frepplectl.py makemessages --no-wrap -a -d django
+	./frepplectl.py makemessages --no-wrap -a -d djangojs
+
+	## extract angular
+	if test -n '$(NPM)' && test -n '$(GRUNT)'; then \
+	  grunt nggettext_extract; \
+	fi
+
+	## Preparation for each language
+	set django=/cygdrive/c/develop/python36/Lib/site-packages/django; \
+	for language in $( ls freppledb/locale ) \
+	do \
+	  ## Build a compendium with known translations \
+	  msgcat --use-first $(django)/conf/locale/$language/LC_MESSAGES/django.po \
+	    $(django)/contrib/admin/locale/$language/LC_MESSAGES/django.po \
+	    $(django)/contrib/admin/locale/$language/LC_MESSAGES/djangojs.po \
+	    $(django)/contrib/admindocs/locale/$language/LC_MESSAGES/django.po \
+	    $(django)/contrib/auth/locale/$language/LC_MESSAGES/django.po \
+	    $(django)/contrib/contenttypes/locale/$language/LC_MESSAGES/django.po \
+	    $(django)/contrib/flatpages/locale/$language/LC_MESSAGES/django.po \
+	    $(django)/contrib/gis/locale/$language/LC_MESSAGES/django.po \
+	    $(django)/contrib/humanize/locale/$language/LC_MESSAGES/django.po \
+	    $(django)/contrib/postgres/locale/$language/LC_MESSAGES/django.po \
+	    $(django)/contrib/redirects/locale/$language/LC_MESSAGES/django.po \
+	    $(django)/contrib/sessions/locale/$language/LC_MESSAGES/django.po \
+	    $(django)/contrib/sites/locale/$language/LC_MESSAGES/django.po \
+	    | msgattrib --translated --no-fuzzy -o freppledb/locale/$language/djangocompendium.po; \
+	  ## Combine all frepple strings coming from django, djangojs and angular \
+	  msgcat --use-first freppledb/locale/$language/LC_MESSAGES/djangojs.po \
+	    freppledb/locale/$language/LC_MESSAGES/django.po \
+	    freppledb/common/static/common/po/$language.po \
+	    freppledb/common/static/common/po/template.pot \
+	    -o freppledb/locale/$language/$language.po; \
+	  ## Pick up known translations from the compendium \
+	  cp freppledb/locale/$language/$language.po freppledb/locale/$language/$language.pot; \
+	  msgmerge --silent \
+	    --compendium freppledb/locale/$language/djangocompendium.po \
+	    freppledb/locale/$language/$language.po \
+	    freppledb/locale/$language/$language.pot \
+	    -o freppledb/locale/$language/$language.po;
+	  rm freppledb/locale/$language/$language.pot freppledb/locale/$language/djangocompendium.po; \
+	done
+
+compile-translations:
+  
+	## Preparation for each language
+	django=/cygdrive/c/develop/python36/Lib/site-packages/django
+	for language in $( ls freppledb/locale )
+	do
+	  ## Build a compendium with all translated frepple strings
+	  msgattrib --translated --no-fuzzy \
+	    freppledb/locale/$language/$language.po \
+	    -o freppledb/locale/$language/frepplecompendium.po
+	    
+	  ## Update djangojs file from our compendium
+	  mv freppledb/locale/$language/LC_MESSAGES/djangojs.po  freppledb/locale/$language/LC_MESSAGES/djangojs.old.po  
+	  msgmerge --silent --compendium \
+	    freppledb/locale/$language/frepplecompendium.po \
+	    freppledb/locale/$language/$language.po \
+	    freppledb/locale/$language/LC_MESSAGES/djangojs.old.po \
+	    | msgattrib --no-obsolete --no-fuzzy -o freppledb/locale/$language/LC_MESSAGES/djangojs.po  
+	  rm freppledb/locale/$language/LC_MESSAGES/djangojs.old.po
+	
+	  ## Update django file from our compendium
+	  mv freppledb/locale/$language/LC_MESSAGES/django.po freppledb/locale/$language/LC_MESSAGES/django.old.po 
+	  msgmerge --silent --compendium \
+	    freppledb/locale/$language/frepplecompendium.po \
+	    freppledb/locale/$language/$language.po \
+	    freppledb/locale/$language/LC_MESSAGES/django.old.po \
+	    | msgattrib --no-obsolete --no-fuzzy -o freppledb/locale/$language/LC_MESSAGES/django.po
+	  rm freppledb/locale/$language/LC_MESSAGES/django.old.po
+	
+	  ## Update angular file from our compendium
+	  mv freppledb/common/static/common/po/$language.po freppledb/common/static/common/po/$language.old.po 
+	  msgmerge --silent --compendium \
+	    freppledb/locale/$language/frepplecompendium.po \
+	    freppledb/locale/$language/$language.po \
+	    freppledb/common/static/common/po/$language.old.po \
+	    | msgattrib --no-obsolete --no-fuzzy -o freppledb/common/static/common/po/$language.po
+	  rm freppledb/common/static/common/po/$language.old.po
+	
+	  rm freppledb/locale/$language/frepplecompendium.po
+	done
+
+	## compile django 
+	./frepplectl.py compilemessages
+
+	## compile angular
+	if test -n '$(NPM)' && test -n '$(GRUNT)'; then \
+	  grunt nggettext_compile \
+	fi

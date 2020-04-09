@@ -231,6 +231,8 @@ AC_MSG_RESULT([yes])
 AC_CHECK_PROGS(DOCKER, docker)
 AM_CONDITIONAL(DOCKER, [test x$DOCKER != x])
 AC_CHECK_PROGS(GPG, gpg)
+AC_CHECK_PROGS(NPM, npm)
+AC_CHECK_PROGS(GRUNT, grunt)
 
 #
 # Check whether we are running on a Windows operating system

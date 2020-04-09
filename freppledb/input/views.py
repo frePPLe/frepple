@@ -1339,7 +1339,7 @@ class PathReport(GridReport):
                 i["parentoper"] and i["parentoper"] in alternate_ops
             ):
                 i["alternate"] = "true"
-        return results
+            yield i
 
 
 class UpstreamDemandPath(PathReport):

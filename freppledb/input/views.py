@@ -149,6 +149,20 @@ class PathReport(GridReport):
             formatter="detail",
             extra='"role":"input/operation"',
         ),
+        GridFieldText(
+            "item",
+            title=_("item"),
+            editable=False,
+            sortable=False,
+            formatter="detail",
+            extra='"role":"input/item"',
+        ),
+        GridFieldText(
+            "description",
+            title=format_lazy("{} - {}", _("item"), _("description")),
+            editable=False,
+            sortable=False,
+        ),
         GridFieldNumber(
             "priority", title=_("priority"), editable=False, sortable=False
         ),
@@ -271,7 +285,13 @@ class PathReport(GridReport):
       grandparentoperation,
       grandparentoperation_type,
       grandparentoperation_priority,
-      sizes
+      sizes,
+      grandparentitem_name,
+      parentitem_name,
+      item_name,
+      grandparentitem_description,
+      parentitem_description,
+      item_description
        from
       (
       select operation.name as operation, 
@@ -314,7 +334,13 @@ class PathReport(GridReport):
                                'parentoperation_max', parentoperation.sizemaximum,
                                'grandparentoperation_min', grandparentoperation.sizeminimum, 
                                'grandparentoperation_multiple', grandparentoperation.sizemultiple,
-                               'grandparentoperation_max', grandparentoperation.sizemaximum) as sizes
+                               'grandparentoperation_max', grandparentoperation.sizemaximum) as sizes,
+           grandparentitem.name as grandparentitem_name,
+           parentitem.name as parentitem_name,
+           item.name as item_name,
+           grandparentitem.description as grandparentitem_description,
+           parentitem.description as parentitem_description,
+           item.description as item_description
       from operation
       left outer join operationmaterial on operationmaterial.operation_id = operation.name
       left outer join operationresource on operationresource.operation_id = operation.name
@@ -323,9 +349,14 @@ class PathReport(GridReport):
       left outer join operation sibling on sibling.owner_id = parentoperation.name
       left outer join operationmaterial siblingoperationmaterial on siblingoperationmaterial.operation_id = sibling.name
       left outer join operationresource siblingoperationresource on siblingoperationresource.operation_id = sibling.name
+      left outer join item grandparentitem on grandparentitem.name = grandparentoperation.item_id
+      left outer join item parentitem on parentitem.name = parentoperation.item_id
+      left outer join item on item.name = coalesce(operation.item_id, 
+                                                   (select item_id from operationmaterial where operation_id = operation.name and quantity > 0 limit 1))
       where operation.type in ('time_per','fixed_time')
       %s
-      group by operation.name, parentoperation.name, sibling.name, grandparentoperation.name
+      group by operation.name, parentoperation.name, sibling.name, grandparentoperation.name,
+      grandparentitem.name, parentitem.name, item.name, grandparentitem.description, parentitem.description, item.description
       ) t
       union all
       -- DISTRIBUTION OPERATIONS
@@ -348,7 +379,13 @@ class PathReport(GridReport):
       null,
       jsonb_build_object( 'operation_min', itemdistribution.sizeminimum,
                                'operation_multiple', itemdistribution.sizemultiple,
-                               'operation_max', itemdistribution.sizemaximum) as sizes
+                               'operation_max', itemdistribution.sizemaximum) as sizes,
+      null,
+      null,
+      item.name,
+      null,
+      null,
+      item.description
       from itemdistribution
       inner join item parent on parent.name = itemdistribution.item_id
       inner join item on item.name = %%s and item.lft between parent.lft and parent.rght 
@@ -392,7 +429,13 @@ class PathReport(GridReport):
       null,
       jsonb_build_object( 'operation_min', itemsupplier.sizeminimum,
                                'operation_multiple', itemsupplier.sizemultiple,
-                               'operation_max', itemsupplier.sizemaximum) as sizes
+                               'operation_max', itemsupplier.sizemaximum) as sizes,
+      null,
+      null,
+      item.name,
+      null,
+      null,
+      item.description
       from itemsupplier
       inner join item i_parent on i_parent.name = itemsupplier.item_id
       inner join item on item.name = %s and item.lft between i_parent.lft and i_parent.rght
@@ -415,7 +458,13 @@ class PathReport(GridReport):
       null,
       jsonb_build_object( 'operation_min', itemsupplier.sizeminimum,
                                'operation_multiple', itemsupplier.sizemultiple,
-                               'operation_max', itemsupplier.sizemaximum) as sizes
+                               'operation_max', itemsupplier.sizemaximum) as sizes,
+      null,
+      null,
+      item.name,
+      null,
+      null,
+      item.description
       from itemsupplier
       inner join item i_parent on i_parent.name = itemsupplier.item_id
       inner join item on item.name = %s and item.lft between i_parent.lft and i_parent.rght
@@ -459,7 +508,14 @@ class PathReport(GridReport):
       grandparentoperation,
       grandparentoperation_type,
       grandparentoperation_priority,
-      sizes from
+      sizes,
+      grandparentitem_name,
+      parentitem_name,
+      item_name,
+      grandparentitem_description,
+      parentitem_description,
+      item_description
+       from
       (
       select operation.name as operation, 
            operation.type operation_type,
@@ -501,7 +557,13 @@ class PathReport(GridReport):
                                'parentoperation_max', parentoperation.sizemaximum,
                                'grandparentoperation_min', grandparentoperation.sizeminimum, 
                                'grandparentoperation_multiple', grandparentoperation.sizemultiple,
-                               'grandparentoperation_max', grandparentoperation.sizemaximum) as sizes
+                               'grandparentoperation_max', grandparentoperation.sizemaximum) as sizes,
+           grandparentitem.name as grandparentitem_name,
+           parentitem.name as parentitem_name,
+           item.name as item_name,
+           grandparentitem.description as grandparentitem_description,
+           parentitem.description as parentitem_description,
+           item.description as item_description
       from operation
       left outer join operationmaterial on operationmaterial.operation_id = operation.name
       left outer join operationresource on operationresource.operation_id = operation.name
@@ -510,9 +572,14 @@ class PathReport(GridReport):
       left outer join operation sibling on sibling.owner_id = parentoperation.name      
       left outer join operationmaterial siblingoperationmaterial on siblingoperationmaterial.operation_id = sibling.name
       left outer join operationresource siblingoperationresource on siblingoperationresource.operation_id = sibling.name
+      left outer join item grandparentitem on grandparentitem.name = grandparentoperation.item_id
+      left outer join item parentitem on parentitem.name = parentoperation.item_id
+      left outer join item on item.name = coalesce(operation.item_id, 
+                                                   (select item_id from operationmaterial where operation_id = operation.name and quantity > 0 limit 1))
       where operation.type in ('time_per','fixed_time')
       and %s
-      group by operation.name, parentoperation.name, sibling.name, grandparentoperation.name
+      group by operation.name, parentoperation.name, sibling.name, grandparentoperation.name,
+      grandparentitem.name, parentitem.name, item.name, grandparentitem.description, parentitem.description, item.description
       ) t
       union all
       -- DISTRIBUTION OPERATIONS
@@ -535,7 +602,13 @@ class PathReport(GridReport):
       null,
       jsonb_build_object( 'operation_min', itemdistribution.sizeminimum,
                                'operation_multiple', itemdistribution.sizemultiple,
-                               'operation_max', itemdistribution.sizemaximum) as sizes
+                               'operation_max', itemdistribution.sizemaximum) as sizes,
+      null,
+      null,
+      item.name,
+      null,
+      null,
+      item.description
       from itemdistribution
       inner join item parent on parent.name = itemdistribution.item_id
       inner join item on item.lft between parent.lft and parent.rght 
@@ -558,7 +631,13 @@ class PathReport(GridReport):
       null,
       jsonb_build_object( 'operation_min', itemsupplier.sizeminimum,
                                'operation_multiple', itemsupplier.sizemultiple,
-                               'operation_max', itemsupplier.sizemaximum) as sizes
+                               'operation_max', itemsupplier.sizemaximum) as sizes,
+      null,
+      null,
+      item.name,
+      null,
+      null,
+      item.description
       from itemsupplier
       inner join item i_parent on i_parent.name = itemsupplier.item_id
       inner join item on item.lft between i_parent.lft and i_parent.rght
@@ -582,7 +661,13 @@ class PathReport(GridReport):
       null,
       jsonb_build_object( 'operation_min', itemsupplier.sizeminimum,
                                'operation_multiple', itemsupplier.sizemultiple,
-                               'operation_max', itemsupplier.sizemaximum) as sizes
+                               'operation_max', itemsupplier.sizemaximum) as sizes,
+      null,
+      null,
+      item.name,
+      null,
+      null,
+      item.description
       from itemsupplier
       inner join item i_parent on i_parent.name = itemsupplier.item_id
       inner join item on item.lft between i_parent.lft and i_parent.rght
@@ -623,7 +708,14 @@ class PathReport(GridReport):
       grandparentoperation,
       grandparentoperation_type,
       grandparentoperation_priority,
-      sizes from
+      sizes,
+      grandparentitem_name,
+      parentitem_name,
+      item_name,
+      grandparentitem_description,
+      parentitem_description,
+      item_description
+       from
       (
       select operation.name as operation, 
            operation.type operation_type,
@@ -665,7 +757,13 @@ class PathReport(GridReport):
                                'parentoperation_max', parentoperation.sizemaximum,
                                'grandparentoperation_min', grandparentoperation.sizeminimum, 
                                'grandparentoperation_multiple', grandparentoperation.sizemultiple,
-                               'grandparentoperation_max', grandparentoperation.sizemaximum) as sizes
+                               'grandparentoperation_max', grandparentoperation.sizemaximum) as sizes,
+           grandparentitem.name as grandparentitem_name,
+           parentitem.name as parentitem_name,
+           item.name as item_name,
+           grandparentitem.description as grandparentitem_description,
+           parentitem.description as parentitem_description,
+           item.description as item_description
       from operation
       left outer join operationmaterial on operationmaterial.operation_id = operation.name
       left outer join operationresource on operationresource.operation_id = operation.name
@@ -674,9 +772,14 @@ class PathReport(GridReport):
       left outer join operation sibling on sibling.owner_id = parentoperation.name
       left outer join operationmaterial siblingoperationmaterial on siblingoperationmaterial.operation_id = sibling.name
       left outer join operationresource siblingoperationresource on siblingoperationresource.operation_id = sibling.name
+      left outer join item grandparentitem on grandparentitem.name = grandparentoperation.item_id
+      left outer join item parentitem on parentitem.name = parentoperation.item_id
+      left outer join item on item.name = coalesce(operation.item_id, 
+                                                   (select item_id from operationmaterial where operation_id = operation.name and quantity > 0 limit 1))
       where operation.type in ('time_per','fixed_time')
       and (operation.name = %s or parentoperation.name = %s or grandparentoperation.name = %s)
-      group by operation.name, parentoperation.name, sibling.name, grandparentoperation.name
+      group by operation.name, parentoperation.name, sibling.name, grandparentoperation.name,
+      grandparentitem.name, parentitem.name, item.name, grandparentitem.description, parentitem.description, item.description
       ) t
       order by grandparentoperation, parentoperation, sibling_priority
       """
@@ -711,7 +814,14 @@ class PathReport(GridReport):
       grandparentoperation,
       grandparentoperation_type,
       grandparentoperation_priority,
-      sizes from
+      sizes,
+      grandparentitem_name,
+      parentitem_name,
+      item_name,
+      grandparentitem_description,
+      parentitem_description,
+      item_description
+       from
       (
       select operation.name as operation, 
            operation.type operation_type,
@@ -753,7 +863,13 @@ class PathReport(GridReport):
                                'parentoperation_max', parentoperation.sizemaximum,
                                'grandparentoperation_min', grandparentoperation.sizeminimum, 
                                'grandparentoperation_multiple', grandparentoperation.sizemultiple,
-                               'grandparentoperation_max', grandparentoperation.sizemaximum) as sizes
+                               'grandparentoperation_max', grandparentoperation.sizemaximum) as sizes,
+           grandparentitem.name as grandparentitem_name,
+           parentitem.name as parentitem_name,
+           item.name as item_name,
+           grandparentitem.description as grandparentitem_description,
+           parentitem.description as parentitem_description,
+           item.description as item_description
       from operation
       left outer join operationmaterial on operationmaterial.operation_id = operation.name
       left outer join operationresource on operationresource.operation_id = operation.name
@@ -762,10 +878,15 @@ class PathReport(GridReport):
       left outer join operation sibling on sibling.owner_id = parentoperation.name
       left outer join operationmaterial siblingoperationmaterial on siblingoperationmaterial.operation_id = sibling.name
       left outer join operationresource siblingoperationresource on siblingoperationresource.operation_id = sibling.name
+      left outer join item grandparentitem on grandparentitem.name = grandparentoperation.item_id
+      left outer join item parentitem on parentitem.name = parentoperation.item_id
+      left outer join item on item.name = coalesce(operation.item_id, 
+                                                   (select item_id from operationmaterial where operation_id = operation.name and quantity > 0 limit 1))
       where operation.type in ('time_per','fixed_time')
       and operation.location_id = %%s
       %s
-      group by operation.name, parentoperation.name, sibling.name, grandparentoperation.name
+      group by operation.name, parentoperation.name, sibling.name, grandparentoperation.name,
+      grandparentitem.name, parentitem.name, item.name, grandparentitem.description, parentitem.description, item.description
       ) t
       union all
       -- DISTRIBUTION OPERATIONS
@@ -788,7 +909,13 @@ class PathReport(GridReport):
       null,
       jsonb_build_object( 'operation_min', itemdistribution.sizeminimum,
                                'operation_multiple', itemdistribution.sizemultiple,
-                               'operation_max', itemdistribution.sizemaximum) as sizes
+                               'operation_max', itemdistribution.sizemaximum) as sizes,
+      null,
+      null,
+      item.name,
+      null,
+      null,
+      item.description
       from itemdistribution
       inner join item parent on parent.name = itemdistribution.item_id
       inner join item on item.name = %%s and item.lft between parent.lft and parent.rght 
@@ -835,7 +962,13 @@ class PathReport(GridReport):
       null,
       jsonb_build_object( 'operation_min', itemsupplier.sizeminimum,
                                'operation_multiple', itemsupplier.sizemultiple,
-                               'operation_max', itemsupplier.sizemaximum) as sizes
+                               'operation_max', itemsupplier.sizemaximum) as sizes,
+      null,
+      null,
+      item.name,
+      null,
+      null,
+      item.description
       from itemsupplier
       inner join item i_parent on i_parent.name = itemsupplier.item_id
       inner join item on item.name = %s and item.lft between i_parent.lft and i_parent.rght
@@ -858,7 +991,13 @@ class PathReport(GridReport):
       null,
       jsonb_build_object( 'operation_min', itemsupplier.sizeminimum,
                                'operation_multiple', itemsupplier.sizemultiple,
-                               'operation_max', itemsupplier.sizemaximum) as sizes
+                               'operation_max', itemsupplier.sizemaximum) as sizes,
+      null,
+      null,
+      item.name,
+      null,
+      null,
+      item.description
       from itemsupplier
       inner join item i_parent on i_parent.name = itemsupplier.item_id
       inner join item on item.name = %s and item.lft between i_parent.lft and i_parent.rght
@@ -918,6 +1057,8 @@ class PathReport(GridReport):
                 "operation": i[11],
                 "priority": i[13],
                 "type": i[12],
+                "item": i[15],
+                "description": i[18],
                 "location": i[1],
                 "resources": None,
                 "parentoper": None,
@@ -963,6 +1104,8 @@ class PathReport(GridReport):
                 "id": reportclass.operation_id,
                 "operation": i[8],
                 "type": i[9],
+                "item": i[16],
+                "description": i[19],
                 "priority": i[10],
                 "location": i[1],
                 "resources": None,
@@ -1008,6 +1151,8 @@ class PathReport(GridReport):
                 "operation": i[0],
                 "priority": i[3],
                 "type": i[2],
+                "item": i[17],
+                "description": i[20],
                 "location": i[1],
                 "resources": tuple(i[5].items()) if i[5] else None,
                 "parentoper": i[8],

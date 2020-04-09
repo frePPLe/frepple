@@ -72,7 +72,7 @@ function clickedShaped(d)
   	)
     return; // Don't show links for non existing operations
   window.open(
-  	url_prefix + '/detail/input/' + d.type + '/' + admin_escape(d.name) +'/',
+  	url_prefix + '/detail/input/' + d.type.replace('_alternate', '') + '/' + admin_escape(d.name) +'/',
   	"_self"
   	);
 }

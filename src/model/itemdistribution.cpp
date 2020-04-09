@@ -176,8 +176,12 @@ Operation* OperationItemDistribution::findOrCreate(ItemDistribution* itemdist,
         "Source and destination of an OperationItemDistribution must be "
         "different");
   stringstream o;
-  o << "Ship " << dest->getItem()->getName() << " from "
-    << src->getLocation()->getName() << " to "
+  o << "Ship " << dest->getItem()->getName();
+  if (src->getBatch())
+    o << " @ " << src->getBatch();
+  else if (dest->getBatch())
+    o << " @ " << dest->getBatch();
+  o << " from " << src->getLocation()->getName() << " to "
     << dest->getLocation()->getName();
   auto oper = Operation::find(o.str());
   if (oper) {
@@ -206,6 +210,8 @@ OperationItemDistribution::OperationItemDistribution(ItemDistribution* i,
   stringstream o;
   auto item = dest ? dest->getItem() : src->getItem();
   o << "Ship " << item->getName();
+  if (src && src->getBatch()) o << " @ " << src->getBatch();
+  else if (dest && dest->getBatch()) o << " @ " << dest->getBatch();
   if (src && src->getLocation()) o << " from " << src->getLocation()->getName();
   if (dest && dest->getLocation())
     o << " to " << dest->getLocation()->getName();

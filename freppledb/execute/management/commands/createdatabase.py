@@ -22,8 +22,6 @@ from django.core.management.base import BaseCommand, CommandError
 class Command(BaseCommand):
     help = """
     Create the PostgreSQL databases for frePPLe.
-
-    The data
     """
 
     def add_arguments(self, parser):

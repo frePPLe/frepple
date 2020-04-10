@@ -30,7 +30,7 @@ The data files to be imported must meet the following criteria:
   
 The export can be customized, i.e. export only the relevant data and with the 
 a specific format (file names, dates, separators, ...). The customization is 
-done by copying the frepple_exporttofolder.py file and updating the SQL 
+done by copying the exporttofolder.py file and updating the SQL 
 statements it contains.
 
 The export and import can be run in 2 ways:
@@ -43,6 +43,6 @@ The export and import can be run in 2 ways:
 
   ::
   
-     frepplectl frepple_exporttofolder
+     frepplectl exporttofolder
      
-     frepplectl frepple_importfromfolder
+     frepplectl importfromfolder

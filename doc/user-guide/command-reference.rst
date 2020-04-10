@@ -88,16 +88,10 @@ This command is available in the user interface, the command line and the web AP
 * Command line::
 
     frepplectl runplan --constraints=15 --plantype=1 --env=fcst,invplan,balancing,supply
-    
-    Deprecated:
-    frepplectl frepple_run --constraints=15 --plantype=1 --env=fcst,invplan,balancing,supply
 
 * Web API::
 
     POST /execute/api/runplan/?constraint=15&plantype=1&env=fcst,invplan,balancing,supply
-    
-    Deprecated:
-    POST /execute/api/frepple_run/?constraint=15&plantype=1&env=fcst,invplan,balancing,supply
 
 .. _exportworkbook:
 
@@ -169,17 +163,11 @@ This command is available in the user interface, the command line and the web AP
 * Command line::
 
     frepplectl exporttofolder
-    
-    Deprecated:
-    frepplectl frepple_exporttofolder
 
 * Web API::
     
     Export the planning result files:
     POST /execute/api/exportfromfolder/
-  
-    Export the planning result files - deprecated:
-    POST /execute/api/frepple_exportfromfolder/
 
     Retrieve one of the exported files:
     GET /execute/uploadtofolder/1/<filename>/
@@ -289,9 +277,6 @@ This command is available in the user interface, the command line and the web AP
 * Command line::
 
     frepplectl importfromfolder
-    
-    Deprecated:
-    frepplectl frepple_importfromfolder
 
 * Web API::
 
@@ -300,9 +285,6 @@ This command is available in the user interface, the command line and the web AP
     
     Import the data files:
     POST /execute/api/importfromfolder/
-  
-    Import the data files - deprecated:
-    POST /execute/api/frepple_importfromfolder/
   
 .. _runwebservice:
 
@@ -346,9 +328,6 @@ This command is available in the user interface, the command line and the web AP
 * Command line::
 
     frepplectl scenario_copy [--force --promote] db1 db2
-    
-    Deprecated:
-    frepplectl frepple_copy db1 db2
 
 * Web API::
 
@@ -357,10 +336,6 @@ This command is available in the user interface, the command line and the web AP
     
     To promote a scenario into Production (where db2 must be Production):
     * POST /execute/api/scenario_copy/?promote=1&source=db1&destination=db2
-    
-    Deprecated:
-    POST /execute/api/frepple_copy/?copy=1&source=db1&destination=db2&force=1
-
 
 .. _backup:
 
@@ -388,16 +363,10 @@ This command is available in the user interface, the command line and the web AP
 * Command line::
 
     frepplectl backup
-    
-    Deprecated:
-    frepplectl frepple_backup
 
 * Web API::
   
     POST /execute/api/backup/
-   
-    Deprecated:
-    POST /execute/api/frepple_backup/
    
 .. _empty:
 
@@ -417,17 +386,10 @@ This command is available in the user interface, the command line and the web AP
 * Command line::
 
     frepplectl empty --models=input.demand,input.operationplan
-    
-    Deprecated:
-    frepplectl frepple_flush --models=input.demand,input.operationplan
 
 * Web API::
 
     POST /execute/api/empty/?models=input.demand,input.operationplan
-  
-    Deprecated:
-    POST /execute/api/frepple_flush/?models=input.demand,input.operationplan
-
 
 Administrator commands
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -524,16 +486,11 @@ This command is available in the user interface, the command line and the web AP
 * Command line::
 
     frepplectl createbuckets --start=2012-01-01 --end=2020-01-01 --weekstart=1
-    
-    Deprecated:
-    frepplectl frepple_createbuckets --start=2012-01-01 --end=2020-01-01 --weekstart=1
 
 * Web API::
    
     POST /execute/api/createbuckets/?start=2012-01-01&end=2020-01-01&weekstart=1
     
-    Deprecated:
-    POST /execute/api/frepple_createbuckets/?start=2012-01-01&end=2020-01-01&weekstart=1
 
 .. _createdatabase:
 
@@ -583,10 +540,6 @@ This command is available on the command line only:
 ::
 
     frepplectl restore database_dump_file
-    
-    Deprecated:
-    frepplectl frepple_restore database_dump_file
-
 
 .. _createsuperuser: 
 
@@ -672,6 +625,7 @@ This command runs an interactive SQL session on the PostgreSQL database.
 
     frepplectl dbshell --database=default
 
+
 .. _shell:
 
 Python command prompt
@@ -725,9 +679,6 @@ For a more scalable solution, deploying frePPLe on Apache with mod_wsgi is requi
 
     frepplectl runwebserver
 
-    Deprecated:
-    frepplectl frepple_runserver
-
 
 .. _runserver:
 
@@ -761,9 +712,6 @@ easily be updated to create sample models in the structure you wish.
 ::
 
     frepplectl createmodel --level=3 --cluster=100 --demand=10 
-    
-    Deprecated:
-    frepplectl frepple_createmodel --level=3 --cluster=100 --demand=10
 
 
 .. _forecast_simulation:
@@ -785,9 +733,6 @@ easily be updated to perform more advanced forecast accuracy studies.
 ::
 
     frepplectl forecast_simulation
-    
-    Deprecated:
-    frepplectl frepple_forecastsimulation
 
 
 .. _simulation:
@@ -832,7 +777,4 @@ and collect the performance metrics that are relevant.
 ::
 
     frepplectl simulation
-    
-    Deprecated:
-    frepplectl frepple_simulation
   

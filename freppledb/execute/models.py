@@ -14,9 +14,13 @@
 # You should have received a copy of the GNU Affero General Public
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
+
+from datetime import datetime, timedelta
+
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
+from freppledb.common.fields import JSONBField
 from freppledb.common.models import User
 
 import logging
@@ -55,6 +59,7 @@ class Task(models.Model):
         blank=True,
         null=True,
         editable=False,
+        related_name="tasks",
         on_delete=models.CASCADE,
     )
     processid = models.IntegerField("processid", editable=False, null=True)
@@ -73,3 +78,43 @@ class Task(models.Model):
         # Add record to the database
         # Check if a worker is present. If not launch one.
         return 1
+
+
+class ScheduledTask(models.Model):
+
+    # Database fields
+    name = models.CharField("name", primary_key=True, max_length=300, db_index=True)
+    next_run = models.DateTimeField("nextrun", blank=True, null=True, db_index=True)
+    user = models.ForeignKey(
+        User,
+        blank=False,
+        null=True,
+        editable=False,
+        related_name="schedules",
+        on_delete=models.CASCADE,
+    )
+    email_failure = models.CharField(
+        "email_failure", max_length=300, null=True, blank=True
+    )
+    email_success = models.CharField(
+        "email_success", max_length=300, null=True, blank=True
+    )
+    data = JSONBField(default="{}", null=True, blank=True)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        db_table = "execute_schedule"
+        verbose_name_plural = _("scheduled tasks")
+        verbose_name = _("scheduled task")
+
+    def computeNextRun(self, now=None):
+        if now:
+            self.next_run = now + timedelta(seconds=600)
+        else:
+            self.next_run = datetime.now() + timedelta(seconds=600)
+
+    def save(self, *args, **kwargs):
+        self.computeNextRun()
+        super().save(*args, **kwargs)

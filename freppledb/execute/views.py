@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2007-2013 by frePPLe bvba
+# Copyright (C) 2007-2020 by frePPLe bvba
 #
 # This library is free software; you can redistribute it and/or modify it
 # under the terms of the GNU Affero General Public License as published
@@ -16,13 +16,11 @@
 #
 
 from datetime import datetime
-import json
-import os
-from subprocess import Popen
-import sys
-import re
 from importlib import import_module
+import json
 import operator
+import os
+import re
 
 from django.conf import settings
 from django.views import static
@@ -61,7 +59,7 @@ from freppledb.common.report import (
     GridFieldText,
     GridFieldInteger,
 )
-from freppledb.execute.management.commands.runworker import checkActive
+from .management.commands.runworker import launchWorker
 
 import logging
 
@@ -484,47 +482,9 @@ def wrapTask(request, action):
             task.arguments = " ".join(arguments)
         task.save(using=request.database)
 
-    # Launch a worker process, making sure it inherits the right
-    # environment variables from this parent
-    os.environ["FREPPLE_CONFIGDIR"] = settings.FREPPLE_CONFIGDIR
-    if task and not checkActive(worker_database):
-        if os.path.isfile(os.path.join(settings.FREPPLE_APP, "frepplectl.py")):
-            if "python" in sys.executable:
-                # Development layout
-                Popen(
-                    [
-                        sys.executable,  # Python executable
-                        os.path.join(settings.FREPPLE_APP, "frepplectl.py"),
-                        "runworker",
-                        "--database=%s" % worker_database,
-                    ]
-                )
-            else:
-                # Deployment on Apache web server
-                Popen(
-                    [
-                        "python",
-                        os.path.join(settings.FREPPLE_APP, "frepplectl.py"),
-                        "runworker",
-                        "--database=%s" % worker_database,
-                    ],
-                    creationflags=0x08000000,
-                )
-        elif sys.executable.find("freppleserver.exe") >= 0:
-            # Py2exe executable
-            Popen(
-                [
-                    sys.executable.replace(
-                        "freppleserver.exe", "frepplectl.exe"
-                    ),  # frepplectl executable
-                    "runworker",
-                    "--database=%s" % worker_database,
-                ],
-                creationflags=0x08000000,
-            )  # Do not create a console window
-        else:
-            # Linux standard installation
-            Popen(["frepplectl", "runworker", "--database=%s" % worker_database])
+    # Launch a worker process
+    if task:
+        launchWorker(database=worker_database)
     return task
 
 

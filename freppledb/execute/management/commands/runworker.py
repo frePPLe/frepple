@@ -17,15 +17,16 @@
 
 from datetime import datetime, timedelta
 import logging
+from multiprocessing import Process
+import operator
 import os
 import shlex
-import time
-import operator
-from multiprocessing import Process
+from subprocess import Popen
+import sys
 from threading import Thread
+import time
 
 from django.conf import settings
-from django.core import management
 from django.core.management import get_commands
 from django.core.management.base import BaseCommand, CommandError
 from django.db import DEFAULT_DB_ALIAS, connections
@@ -68,6 +69,123 @@ def checkActive(database=DEFAULT_DB_ALIAS):
         ) <= timedelta(0, 5)
     except Exception:
         return False
+
+
+def launchWorker(database=DEFAULT_DB_ALIAS):
+    os.environ["FREPPLE_CONFIGDIR"] = settings.FREPPLE_CONFIGDIR
+    if checkActive(database):
+        if os.path.isfile(os.path.join(settings.FREPPLE_APP, "frepplectl.py")):
+            if "python" in sys.executable:
+                # Development layout
+                Popen(
+                    [
+                        sys.executable,  # Python executable
+                        os.path.join(settings.FREPPLE_APP, "frepplectl.py"),
+                        "runworker",
+                        "--database=%s" % database,
+                    ]
+                )
+            else:
+                # Deployment on Apache web server
+                Popen(
+                    [
+                        "python",
+                        os.path.join(settings.FREPPLE_APP, "frepplectl.py"),
+                        "runworker",
+                        "--database=%s" % database,
+                    ],
+                    creationflags=0x08000000,
+                )
+        elif sys.executable.find("freppleserver.exe") >= 0:
+            # Py2exe executable
+            Popen(
+                [
+                    sys.executable.replace(
+                        "freppleserver.exe", "frepplectl.exe"
+                    ),  # frepplectl executable
+                    "runworker",
+                    "--database=%s" % database,
+                ],
+                creationflags=0x08000000,
+            )  # Do not create a console window
+        else:
+            # Linux standard installation
+            Popen(["frepplectl", "runworker", "--database=%s" % database])
+
+
+def runTask(task, database):
+    task.started = datetime.now()
+    # Verify the command exists
+    exists = False
+    for commandname in get_commands():
+        if commandname == task.name:
+            exists = True
+            break
+
+    if not exists:
+        # No such task exists
+        logger.error("Task %s not recognized" % task.name)
+        task.status = "Failed"
+        task.processid = None
+        task.save(using=database)
+    else:
+        # Close all database connections to assure the parent and child
+        # process don't share them.
+        connections.close_all()
+        # Spawn a new command process
+        args = []
+        kwargs = {"database": database, "task": task.id, "verbosity": 0}
+        background = "background" in task.arguments if task.arguments else False
+        if task.arguments:
+            for i in shlex.split(task.arguments):
+                if "=" in i:
+                    key, val = i.split("=")
+                    kwargs[key.strip("--").replace("-", "_")] = val
+                else:
+                    args.append(i)
+        child = Process(
+            target=runCommand,
+            args=(task.name, *args),
+            kwargs=kwargs,
+            name="frepplectl %s" % task.name,
+        )
+        child.start()
+
+        # Normally, the child will update the processid.
+        # Just to make sure, we do it also here.
+        task.processid = child.pid
+        task.save(update_fields=["processid"], using=database)
+
+        # Wait for the child to finish
+        child.join()
+
+        # Read the task again from the database and update it
+        task = Task.objects.all().using(database).get(pk=task.id)
+        task.processid = None
+        if (
+            task.status not in ("Done", "Failed")
+            or not task.finished
+            or not task.started
+        ):
+            now = datetime.now()
+            if not task.started:
+                task.started = now
+            if not background:
+                if not task.finished:
+                    task.finished = now
+                if task.status not in ("Done", "Failed"):
+                    task.status = "Done"
+            task.save(using=database)
+        if "FREPPLE_TEST" not in os.environ:
+            logger.info(
+                "Worker %s for database '%s' finished task %d at %s: success"
+                % (
+                    os.getpid(),
+                    settings.DATABASES[database]["NAME"],
+                    task.id,
+                    datetime.now(),
+                )
+            )
 
 
 class Command(BaseCommand):
@@ -163,81 +281,7 @@ class Command(BaseCommand):
                             datetime.now(),
                         )
                     )
-                background = False
-                task.started = datetime.now()
-                # Verify the command exists
-                exists = False
-                for commandname in get_commands():
-                    if commandname == task.name:
-                        exists = True
-                        break
-
-                if not exists:
-                    # No such task exists
-                    logger.error("Task %s not recognized" % task.name)
-                    task.status = "Failed"
-                    task.processid = None
-                    task.save(using=database)
-                else:
-                    # Close all database connections to assure the parent and child
-                    # process don't share them.
-                    connections.close_all()
-                    # Spawn a new command process
-                    args = []
-                    kwargs = {"database": database, "task": task.id, "verbosity": 0}
-                    background = (
-                        "background" in task.arguments if task.arguments else False
-                    )
-                    if task.arguments:
-                        for i in shlex.split(task.arguments):
-                            if "=" in i:
-                                key, val = i.split("=")
-                                kwargs[key.strip("--").replace("-", "_")] = val
-                            else:
-                                args.append(i)
-                    child = Process(
-                        target=runCommand,
-                        args=(task.name, *args),
-                        kwargs=kwargs,
-                        name="frepplectl %s" % task.name,
-                    )
-                    child.start()
-
-                    # Normally, the child will update the processid.
-                    # Just to make sure, we do it also here.
-                    task.processid = child.pid
-                    task.save(update_fields=["processid"], using=database)
-
-                    # Wait for the child to finish
-                    child.join()
-
-                    # Read the task again from the database and update it
-                    task = Task.objects.all().using(database).get(pk=task.id)
-                    task.processid = None
-                    if (
-                        task.status not in ("Done", "Failed")
-                        or not task.finished
-                        or not task.started
-                    ):
-                        now = datetime.now()
-                        if not task.started:
-                            task.started = now
-                        if not background:
-                            if not task.finished:
-                                task.finished = now
-                            if task.status not in ("Done", "Failed"):
-                                task.status = "Done"
-                        task.save(using=database)
-                    if "FREPPLE_TEST" not in os.environ:
-                        logger.info(
-                            "Worker %s for database '%s' finished task %d at %s: success"
-                            % (
-                                os.getpid(),
-                                settings.DATABASES[database]["NAME"],
-                                task.id,
-                                datetime.now(),
-                            )
-                        )
+                runTask(task, database)
             except Exception as e:
                 # Read the task again from the database and update.
                 task = Task.objects.all().using(database).get(pk=task.id)

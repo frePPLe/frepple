@@ -10,11 +10,13 @@
 
 from datetime import datetime
 import os
+import re
 from subprocess import call
 
 from django.conf import settings
+from django.core.mail import EmailMessage
 from django.core.management.base import BaseCommand, CommandError
-from django.db import transaction, DEFAULT_DB_ALIAS, connections
+from django.db import transaction, DEFAULT_DB_ALIAS
 from django.db.models import Min
 from django.utils.translation import gettext_lazy as _
 
@@ -157,19 +159,66 @@ class Command(BaseCommand):
             task.finished = datetime.now()
             task.save(using=database)
 
-            # TODO Email on success
+            # Email on success
+            if schedule.email_success:
+                correctedRecipients = []
+                for r in schedule.email_success.split(","):
+                    r = r.strip()
+                    if r and re.fullmatch(r"[^@]+@[^@]+\.[^@]+", r):
+                        correctedRecipients.append(r.strip())
+                if not settings.EMAIL_HOST:
+                    task.message = (
+                        "Can't send success e-mail: missing SMTP configuration"
+                    )
+                    task.save(using=database)
+                elif not correctedRecipients:
+                    task.message = "Can't send success e-mail: invalid recipients"
+                    task.save(using=database)
+                else:
+                    try:
+                        EmailMessage(
+                            subject="FrePPLe successfully executed %s" % schedule.name,
+                            body="Task %s completed succesfully" % task.id,
+                            to=correctedRecipients,
+                        ).send()
+                    except Exception as e:
+                        task.message = "Can't send failure e-mail: %s" % e
+                        task.save(using=database)
 
         except Exception as e:
             if task:
-
-                # TODO Email on failure
-
                 task = Task.objects.all().using(database).get(pk=task.id)
                 task.status = "Failed"
                 task.message = "%s" % e
                 task.finished = datetime.now()
                 task.processid = None
                 task.save(using=database)
+
+                # Email on failure
+                if schedule.email_failure:
+                    correctedRecipients = []
+                    for r in schedule.email_failure.split(","):
+                        r = r.strip()
+                        if r and re.fullmatch(r"[^@]+@[^@]+\.[^@]+", r):
+                            correctedRecipients.append(r.strip())
+                    if not settings.EMAIL_HOST:
+                        task.message = (
+                            "Can't send failure e-mail: missing SMTP configuration"
+                        )
+                        task.save(using=database)
+                    elif not correctedRecipients:
+                        task.message = "Can't send failure e-mail: invalid recipients"
+                        task.save(using=database)
+                    else:
+                        try:
+                            EmailMessage(
+                                subject="FrePPLe failed executing %s" % schedule.name,
+                                body="Task %s failed: %s" % (task.id, e),
+                                to=correctedRecipients,
+                            ).send()
+                        except Exception as e:
+                            task.message = "Can't send failure e-mail: %s" % e
+                            task.save(using=database)
             raise e
 
         finally:

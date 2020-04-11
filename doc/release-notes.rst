@@ -8,6 +8,10 @@ Release notes
 
 - | Supply path: Alternate operation with low priority (less preferred) will be displayed in light-blue.
 
+.. rubric:: Integration
+
+- A `task scheduler <user-guide/command-reference.html#scheduletasks>`_ allows users to
+  a series of tasks automatically based on schedule.
 
 6.4.0 (2020/04/04)
 ==================

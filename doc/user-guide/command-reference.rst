@@ -16,6 +16,7 @@ This section provides an overview of the available actions:
 * Planning workflows
 
   * :ref:`runplan`
+  * :ref:`scheduletasks`
   * :ref:`exportworkbook`
   * :ref:`importworkbook`
   * :ref:`exporttofolder`
@@ -92,6 +93,31 @@ This command is available in the user interface, the command line and the web AP
 * Web API::
 
     POST /execute/api/runplan/?constraint=15&plantype=1&env=fcst,invplan,balancing,supply
+
+.. _scheduletasks:
+
+Group and schedule tasks
+------------------------
+
+With this option a user can execute a sequence of steps together as a group.
+
+The execution of the task group can be triggered manually. Or it can be scheduled automatically
+based on a predefined schedule.
+
+Optionally, a email can be sent out upon failure or success of the execution. 
+
+* Execution screen:  
+  
+  .. image:: TODO
+     :alt: Execution screen - Group and schedule tasks
+
+* Command line::
+
+    frepplectl scheduletasks --schedule=my_task_sequence
+
+* Web API::
+
+    POST /execute/api/scheduletasks/?schedule=my_task_sequence
 
 .. _exportworkbook:
 

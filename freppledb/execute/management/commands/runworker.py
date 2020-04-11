@@ -73,7 +73,7 @@ def checkActive(database=DEFAULT_DB_ALIAS):
 
 def launchWorker(database=DEFAULT_DB_ALIAS):
     os.environ["FREPPLE_CONFIGDIR"] = settings.FREPPLE_CONFIGDIR
-    if checkActive(database):
+    if not checkActive(database):
         if os.path.isfile(os.path.join(settings.FREPPLE_APP, "frepplectl.py")):
             if "python" in sys.executable:
                 # Development layout

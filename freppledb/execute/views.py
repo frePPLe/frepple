@@ -299,7 +299,7 @@ def wrapTask(request, action):
     args = request.POST or request.GET
 
     # A
-    if action in ("frepple_run", "runplan"):
+    if action == "runplan":
         if not request.user.has_perm("auth.generate_plan"):
             raise Exception("Missing execution privileges")
         constraint = 0
@@ -351,7 +351,7 @@ def wrapTask(request, action):
             )
             task.save(using=request.database)
     # E
-    elif action in ("frepple_copy", "scenario_copy"):
+    elif action == "scenario_copy":
         worker_database = DEFAULT_DB_ALIAS
         if "copy" in args:
             if not request.user.has_perm("auth.copy_scenario"):

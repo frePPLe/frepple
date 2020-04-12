@@ -18,6 +18,7 @@ import base64
 import email
 import jwt
 import os
+import ssl
 import time
 import logging
 from urllib.request import urlopen, HTTPError, Request
@@ -61,7 +62,7 @@ class OdooReadData(PlanTask):
 
     description = "Load Odoo data"
     sequence = 119
-    label = ("odoo_read_1", _("Read Odoo data"))
+    label = ("odoo_read_1", _("Read MES data"))
 
     @classmethod
     def getWeight(cls, database=DEFAULT_DB_ALIAS, **kwargs):
@@ -158,7 +159,8 @@ class OdooReadData(PlanTask):
             raise e
 
         # Download and parse XML data
-        with urlopen(request) as f:
+        context = ssl._create_unverified_context()
+        with urlopen(request,  context=context) as f:
             frepple.readXMLdata(f.read().decode("utf-8"), False, False)
 
         # Assure single root hierarchies
@@ -207,9 +209,9 @@ class OdooWritePlan(PlanTask):
       project tasks, etc...
   """
 
-    description = "Write results to Odoo"
+    description = "Write results to MES"
     sequence = 390
-    label = ("odoo_write", _("Write results to Odoo"))
+    label = ("odoo_write", _("Write results to MES"))
 
     @classmethod
     def getWeight(cls, database=DEFAULT_DB_ALIAS, **kwargs):

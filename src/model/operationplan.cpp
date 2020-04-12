@@ -568,8 +568,7 @@ Object* OperationPlan::createOperationPlan(const MetaClass* cat,
     Buffer* destbuffer = nullptr;
     Item::bufferIterator buf_iter(static_cast<Item*>(itemval));
     while (Buffer* tmpbuf = buf_iter.next()) {
-      if (tmpbuf->getLocation() == static_cast<Location*>(locval) &&
-          tmpbuf->getBatch() == batch) {
+      if (tmpbuf->getLocation() == static_cast<Location*>(locval)) {
         if (destbuffer) {
           stringstream o;
           o << "Multiple buffers found for item '"
@@ -583,7 +582,7 @@ Object* OperationPlan::createOperationPlan(const MetaClass* cat,
     if (!destbuffer)
       // Create the destination buffer
       destbuffer = Buffer::findOrCreate(static_cast<Item*>(itemval),
-                                        static_cast<Location*>(locval), batch);
+                                        static_cast<Location*>(locval));
 
     // Create new operation if not found
     oper = Operation::find("Ship " + static_cast<Item*>(itemval)->getName() +
@@ -603,6 +602,13 @@ Object* OperationPlan::createOperationPlan(const MetaClass* cat,
       throw DataException("Missing operation field");
 
     // Create an operationplan
+    if (static_cast<Operation*>(oper)->getItem() &&
+        static_cast<Operation*>(oper)->getLocation()) {
+      auto buf =
+          Buffer::findOrCreate(static_cast<Operation*>(oper)->getItem(),
+                               static_cast<Operation*>(oper)->getLocation());
+      buf->correctProducingFlow(static_cast<Operation*>(oper));
+    }
     opplan = static_cast<Operation*>(oper)->createOperationPlan(
         quantity, start, end, batch, nullptr, nullptr, 0, false, id);
     if (!opplan->getType().raiseEvent(opplan, SIG_ADD)) {
@@ -1896,7 +1902,7 @@ PyObject* OperationPlan::create(PyTypeObject* pytype, PyObject* args,
             !attr.isA(Tags::reference) && !attr.isA(Tags::action) &&
             !attr.isA(Tags::type) && !attr.isA(Tags::start) &&
             !attr.isA(Tags::end) && !attr.isA(Tags::quantity) &&
-            !attr.isA(Tags::create)) {
+            !attr.isA(Tags::create) && !attr.isA(Tags::batch)) {
           const MetaFieldBase* fmeta = x->getType().findField(attr.getHash());
           if (!fmeta && x->getType().category)
             fmeta = x->getType().category->findField(attr.getHash());

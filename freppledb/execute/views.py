@@ -320,7 +320,7 @@ def wrapTask(request, action):
             task.arguments = "%s --env=%s" % (task.arguments, ",".join(env))
         task.save(using=request.database)
     # C
-    elif action in ("frepple_flush", "empty"):
+    elif action == "empty":
         if not request.user.has_perm("auth.run_db"):
             raise Exception("Missing execution privileges")
         task = Task(name="empty", submitted=now, status="Waiting", user=request.user)
@@ -407,7 +407,7 @@ def wrapTask(request, action):
         else:
             raise Exception("Invalid scenario task")
     # G
-    elif action in ("frepple_createbuckets", "createbuckets"):
+    elif action == "createbuckets":
         if not request.user.has_perm("auth.run_db"):
             raise Exception("Missing execution privileges")
         task = Task(

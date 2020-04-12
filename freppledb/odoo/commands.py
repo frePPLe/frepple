@@ -319,7 +319,22 @@ class OdooWritePlan(PlanTask):
                     ):
                         continue
                     cls.exported.append(i)
-                    yield '<operationplan id="%s" ordertype="MO" item=%s location=%s operation=%s start="%s" end="%s" quantity="%s" location_id=%s item_id=%s criticality="%d"/>' % (
+                    res = set()
+                    try:
+                        for j in i.loadplans:
+                            res.add(j.resource.name)
+                        logger.info(res)
+                        resource = i.resource
+                    except:
+                        pass
+                    demand = {}
+                    demand_str = ''
+                    for d in i.pegging_demand:
+                        demand[d.demand] = d.quantity
+                        demand_str += '%s:%s, ' % (d.demand, d.quantity)
+                    if demand_str:
+                        demand_str = demand_str[:-2]
+                    yield '<operationplan id="%s" ordertype="MO" item=%s location=%s operation=%s start="%s" end="%s" quantity="%s" location_id=%s item_id=%s criticality="%d" resource=%s demand=%s/>' % (
                         i.id,
                         quoteattr(i.operation.item.name),
                         quoteattr(i.operation.location.name),
@@ -330,6 +345,8 @@ class OdooWritePlan(PlanTask):
                         quoteattr(i.operation.location.subcategory),
                         quoteattr(i.operation.item.subcategory),
                         int(i.criticality),
+                        quoteattr(','.join(res)),
+                        quoteattr(demand_str),
                     )
             yield "</operationplans>"
             yield "</plan>"

@@ -174,6 +174,10 @@ class cleanStatic(PlanTask):
                 (source, cls.timestamp),
             )
             cursor.execute(
+                "delete from calendarbucket where source = %s and lastmodified <> %s",
+                (source, cls.timestamp),
+            )
+            cursor.execute(
                 "delete from calendar where source = %s and lastmodified <> %s",
                 (source, cls.timestamp),
             )

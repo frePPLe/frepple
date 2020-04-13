@@ -80,7 +80,6 @@ msgid "Click to select record"
 msgstr "レコードを選択するにはクリックしてください"
 
 #: common/static/js/frepple.js:653 common/static/js/frepple.min.js:11
-#| msgid "Selected options"
 msgid "Select action"
 msgstr ""
 
@@ -129,7 +128,7 @@ msgstr "リセット"
 
 #: common/static/js/frepple.js:861 common/static/js/frepple.min.js:11
 msgid "Error retrieving data"
-msgstr ""
+msgstr "データ取得エラー"
 
 #: common/static/js/frepple.js:1066 common/static/js/frepple.js:2195
 #: common/static/js/frepple.min.js:11
@@ -211,7 +210,7 @@ msgstr ""
 
 #: common/static/js/frepple.js:1533 common/static/js/frepple.min.js:11
 msgid "days"
-msgstr ""
+msgstr "日"
 
 #: common/static/js/frepple.js:1569 common/static/js/frepple.min.js:11
 msgid "Filtered where"
@@ -375,70 +374,4 @@ msgstr ""
 #: input/static/js/frepple-operationplandetail.min.js:11
 #: input/static/operationplandetail/src/supplypositionpanelDrv.js:63
 msgid "current onhand"
-msgstr ""
-
-#~ msgid "Show hints"
-#~ msgstr "ヒントを表示"
-
-#~ msgid "Guided tour"
-#~ msgstr "ガイド付きツアー"
-
-#~ msgid "Previous"
-#~ msgstr "前へ"
-
-#~ msgid "Play"
-#~ msgstr "再生"
-
-#~ msgid "Next"
-#~ msgstr "次へ"
-
-#~ msgid "Pause"
-#~ msgstr "一時停止"
-
-#~ msgid "Importing... pressing Close button will not stop the process."
-#~ msgstr "インポートしています... 閉じるボタンを押しても処理は停止しません。"
-
-#~ msgid "%s allocated out of %s"
-#~ msgstr "%s のうち %s が割り当て済み"
-
-#~ msgid "remove this demand from planning"
-#~ msgstr "この需要を計画から削除"
-
-#~ msgid "Plan selected demands backward from their due date"
-#~ msgstr "選択された需要を納期日付からバックワード方式で計画する"
-
-#~ msgid "Plan selected demands forward from the current date"
-#~ msgstr "選択された需要を現在日付からフォワード方式で計画する"
-
-#~ msgid "customize"
-#~ msgstr "カスタマイズ"
-
-#~ msgid "out of"
-#~ msgstr "の外へ"
-
-#, fuzzy
-#~| msgid "Stop"
-#~ msgid "to"
-#~ msgstr "停止"
-
-#, fuzzy
-#~| msgid "Error deleting data"
-#~ msgid "error exporting data"
-#~ msgstr "データの削除エラー"
-
-#, fuzzy
-#~| msgid "Error deleting data"
-#~ msgid "Error getting quote info"
-#~ msgstr "データの削除エラー"
-
-#~ msgid "Table"
-#~ msgstr "テーブル"
-
-#~ msgid "List"
-#~ msgstr "リスト"
-
-#~ msgid "Import data"
-#~ msgstr "データをインポート"
-
-#~ msgid "Application tour"
-#~ msgstr "アプリケーションツアー"
+msgstr "現在の在庫"

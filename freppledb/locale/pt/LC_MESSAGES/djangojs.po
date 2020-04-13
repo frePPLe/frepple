@@ -1,43 +1,38 @@
-#
-# Copyright (C) 2007-2012 by Johan De Taeye
-#
+# Copyright (C) 2015-2016 by frePPLe bvba
 # This library is free software; you can redistribute it and/or modify it
 # under the terms of the GNU Affero General Public License as published
 # by the Free Software Foundation; either version 3 of the License, or
 # (at your option) any later version.
-#
 # This library is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero
 # General Public License for more details.
-#
 # You should have received a copy of the GNU Affero General Public
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
-#
-# Joao Ranita <jranita@frepple.com>, 2015.
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-04-04 12:06+0200\n"
-"PO-Revision-Date: 2020-04-04 12:52+0200\n"
+"PO-Revision-Date: 2018-08-24 10:49+0200\n"
 "Last-Translator: Joao Ranita <jranita@frepple.com>\n"
 "Language-Team: frepple\n"
-"Language: zh_CN\n"
+"Language: pt\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Poedit 2.0.6\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 2.1.1\n"
+"X-Poedit-SourceCharset: UTF-8\n"
 
 #: common/static/js/frepple.js:187 common/static/js/frepple.js:282
 #: common/static/js/frepple.min.js:11
 msgid "There are unsaved changes on this page."
-msgstr "此页面有未保存的变动。"
+msgstr "Existem alterações por gravar nesta página."
 
 #: common/static/js/frepple.js:251 common/static/js/frepple.min.js:11
 msgid "Error saving data"
-msgstr "保存数据出错。"
+msgstr "Erro ao guardar dados"
 
 #: common/static/js/frepple.js:257 common/static/js/frepple.js:784
 #: common/static/js/frepple.js:1876 common/static/js/frepple.js:2040
@@ -46,16 +41,16 @@ msgstr "保存数据出错。"
 #: forecast/static/forecast/src/forecast.js:875
 #: forecast/static/js/frepple-forecast.min.js:11
 msgid "Close"
-msgstr "关闭"
+msgstr "Fechar"
 
 #: common/static/js/frepple.js:279 common/static/js/frepple.min.js:11
 msgid "Save or cancel your changes first"
-msgstr "先保存或取消你的变动。"
+msgstr "Guarde ou cancele as alterações primeiro"
 
 #: common/static/js/frepple.js:285 common/static/js/frepple.js:2298
 #: common/static/js/frepple.min.js:11
 msgid "Save"
-msgstr "保存"
+msgstr "Guardar"
 
 #: common/static/js/frepple.js:286 common/static/js/frepple.js:796
 #: common/static/js/frepple.js:1137 common/static/js/frepple.js:1160
@@ -66,163 +61,157 @@ msgstr "保存"
 #: forecast/static/forecast/src/forecast.js:902
 #: forecast/static/js/frepple-forecast.min.js:11
 msgid "Cancel"
-msgstr "取消"
+msgstr "Cancelar"
 
 #: common/static/js/frepple.js:522 common/static/js/frepple.min.js:11
 msgid "days early"
-msgstr "提早的天数"
+msgstr "dias de adianto"
 
 #: common/static/js/frepple.js:524 common/static/js/frepple.min.js:11
 msgid "on time"
-msgstr "准时"
+msgstr "a tempo"
 
 #: common/static/js/frepple.js:527 common/static/js/frepple.js:529
 #: common/static/js/frepple.min.js:11
 msgid "days late"
-msgstr "延迟的天数"
+msgstr "dias de atraso"
 
 #: common/static/js/frepple.js:638 common/static/js/frepple.min.js:11
 msgid "Click to select record"
-msgstr "单击以选择记录"
-
-#: common/static/js/frepple.js:653 common/static/js/frepple.min.js:11
-#| msgid "Selected options"
-msgid "Select action"
-msgstr ""
+msgstr "Clicar para seleccionar registo"
 
 #: common/static/js/frepple.js:686 common/static/js/frepple.min.js:11
 msgid "Selected options"
-msgstr "选定的选项"
+msgstr "Opções seleccionadas"
 
 #: common/static/js/frepple.js:693 common/static/js/frepple.min.js:11
 msgid "Available options"
-msgstr "可用的选项"
+msgstr "Opções disponíveis"
 
 #: common/static/js/frepple.js:736 common/static/js/frepple.min.js:11
 #: forecast/static/forecast/src/forecast.js:884
 #: forecast/static/js/frepple-forecast.min.js:11
 msgid "Selected Cross"
-msgstr "选定的交叉"
+msgstr "Cruzamento seleccionado"
 
 #: common/static/js/frepple.js:746 common/static/js/frepple.min.js:11
 #: forecast/static/forecast/src/forecast.js:892
 #: forecast/static/js/frepple-forecast.min.js:11
 msgid "Available Cross"
-msgstr "可用的交叉"
+msgstr "Cruzamentos disponíveis"
 
 #: common/static/js/frepple.js:768 common/static/js/frepple.min.js:11
 msgid "Frozen columns"
-msgstr "冻结的列"
+msgstr "Colunas fixas"
 
 #: common/static/js/frepple.js:787 common/static/js/frepple.js:2396
 #: common/static/js/frepple.min.js:11
 #: forecast/static/forecast/src/forecast.js:878
 #: forecast/static/js/frepple-forecast.min.js:11
 msgid "Customize"
-msgstr "定制"
+msgstr "Customizar"
 
 #: common/static/js/frepple.js:795 common/static/js/frepple.min.js:11
 #: forecast/static/forecast/src/forecast.js:901
 #: forecast/static/js/frepple-forecast.min.js:11
 msgid "OK"
-msgstr "确定"
+msgstr "OK"
 
 #: common/static/js/frepple.js:797 common/static/js/frepple.min.js:11
 #: forecast/static/forecast/src/forecast.js:903
 #: forecast/static/js/frepple-forecast.min.js:11
 msgid "Reset"
-msgstr "重置"
+msgstr "Reset"
 
 #: common/static/js/frepple.js:861 common/static/js/frepple.min.js:11
 msgid "Error retrieving data"
-msgstr ""
+msgstr "Erro ao extrair dados"
 
 #: common/static/js/frepple.js:1066 common/static/js/frepple.js:2195
 #: common/static/js/frepple.min.js:11
 msgid "Error saving report settings"
-msgstr "保存报表设置出错"
+msgstr "Erro ao guardar definições do relatório"
 
 #: common/static/js/frepple.js:1125 common/static/js/frepple.js:1146
 #: common/static/js/frepple.min.js:11
 msgid "Export CSV or Excel file"
-msgstr "出口CSV或Excel文件"
+msgstr "Exportar ficheiro Excel ou CSV"
 
 #: common/static/js/frepple.js:1128 common/static/js/frepple.js:1149
 #: common/static/js/frepple.min.js:11
 msgid "Export format"
-msgstr "导出格式"
+msgstr "Formato de exportação"
 
 #: common/static/js/frepple.js:1130 common/static/js/frepple.js:1152
 #: common/static/js/frepple.min.js:11
 msgid "Spreadsheet list"
-msgstr "Excel列表"
+msgstr "Lista de folha de cálculo"
 
 #: common/static/js/frepple.js:1131 common/static/js/frepple.js:1154
 #: common/static/js/frepple.min.js:11
 msgid "CSV list"
-msgstr "CSV列表"
+msgstr "Lista CSV"
 
 #: common/static/js/frepple.js:1136 common/static/js/frepple.js:1159
 #: common/static/js/frepple.js:1398 common/static/js/frepple.min.js:11
 msgid "Export"
-msgstr "输出"
+msgstr "Exportar"
 
 #: common/static/js/frepple.js:1151 common/static/js/frepple.min.js:11
 msgid "Spreadsheet table"
-msgstr "Excel表"
+msgstr "Tabela de folha de cálculo"
 
 #: common/static/js/frepple.js:1153 common/static/js/frepple.min.js:11
 msgid "CSV table"
-msgstr "CSV表"
+msgstr "Tabela CSV"
 
 #: common/static/js/frepple.js:1271 common/static/js/frepple.min.js:11
 msgid "Delete data"
-msgstr "删除资料"
+msgstr "Apagar dados"
 
 #: common/static/js/frepple.js:1274 common/static/js/frepple.min.js:11
 #, javascript-format
 msgid "You are about to delete %s objects AND ALL RELATED RECORDS!"
-msgstr "你将会删除 %s 对象和所有相关的数据记录！"
+msgstr "Está prestes a apagar %s objects E TODOS OS REGISTOS RELACIONADOS!"
 
 #: common/static/js/frepple.js:1277 common/static/js/frepple.js:1326
 #: common/static/js/frepple.js:1859 common/static/js/frepple.js:1944
 #: common/static/js/frepple.min.js:11
 msgid "Confirm"
-msgstr "确定"
+msgstr "Confirmar"
 
 #: common/static/js/frepple.js:1299 common/static/js/frepple.min.js:11
 msgid "Error deleting data"
-msgstr "删除数据错误"
+msgstr "Erro ao apagar dados"
 
 #: common/static/js/frepple.js:1320 common/static/js/frepple.min.js:11
 msgid "Copy data"
-msgstr "复制数据"
+msgstr "Copiar dados"
 
 #: common/static/js/frepple.js:1323 common/static/js/frepple.min.js:11
 #, javascript-format
 msgid "You are about to duplicate %s objects"
-msgstr "你将会复制% s对象"
+msgstr "Está prestes a duplicar %s objectos"
 
 #: common/static/js/frepple.js:1348 common/static/js/frepple.min.js:11
 msgid "Error copying data"
-msgstr "复制数据出错"
+msgstr "Erro ao copiar dados"
 
 #: common/static/js/frepple.js:1376 common/static/js/frepple.min.js:11
 msgid "Export Plan"
-msgstr "导出计划"
+msgstr "Exportar Plano"
 
 #: common/static/js/frepple.js:1500 common/static/js/frepple.min.js:11
 msgid "within"
 msgstr ""
 
 #: common/static/js/frepple.js:1533 common/static/js/frepple.min.js:11
-#| msgid "days late"
 msgid "days"
-msgstr ""
+msgstr "dias"
 
 #: common/static/js/frepple.js:1569 common/static/js/frepple.min.js:11
 msgid "Filtered where"
-msgstr "过滤条件："
+msgstr "Filtrado por"
 
 #: common/static/js/frepple.js:1676 common/static/js/frepple.min.js:11
 msgid "Click ok to confirm deleting the favorite"
@@ -231,278 +220,156 @@ msgstr ""
 #: common/static/js/frepple.js:1853 common/static/js/frepple.js:1938
 #: common/static/js/frepple.min.js:11
 msgid "export"
-msgstr "导出"
+msgstr "exportar"
 
 #: common/static/js/frepple.js:1856 common/static/js/frepple.min.js:11
 msgid "export selected records"
-msgstr ""
+msgstr "exportar registos seleccionados"
 
 #: common/static/js/frepple.js:1866 common/static/js/frepple.js:2032
 #: common/static/js/frepple.min.js:11
 msgid "connecting"
-msgstr ""
+msgstr "conectando"
 
 #: common/static/js/frepple.js:1875 common/static/js/frepple.js:2039
 #: common/static/js/frepple.min.js:11
 msgid "Export successful"
-msgstr "导出成功"
+msgstr "Exportação bem sucedida"
 
 #: common/static/js/frepple.js:1898 common/static/js/frepple.js:1900
 #: common/static/js/frepple.js:2051 common/static/js/frepple.min.js:11
 msgid "Error during export"
-msgstr "误差在输出时候"
+msgstr "Erro ao exportar dados"
 
 #: common/static/js/frepple.js:1901 common/static/js/frepple.min.js:11
 msgid "retry"
-msgstr "重审"
+msgstr "tentar de novo"
 
 #: common/static/js/frepple.js:2054 common/static/js/frepple.js:2087
 #: common/static/js/frepple.min.js:11
 msgid "Retry"
-msgstr "重审"
+msgstr "Tentar de novo"
 
 #: common/static/js/frepple.js:2083 common/static/js/frepple.min.js:11
 msgid "Error getting data"
-msgstr "获取数据错误"
+msgstr "Erro ao ler os dados"
 
 #: common/static/js/frepple.js:2243 common/static/js/frepple.min.js:11
 msgid "Customize a dashboard row"
-msgstr "自定义仪表板行"
+msgstr "Personalizar uma secção"
 
 #: common/static/js/frepple.js:2249 common/static/js/frepple.min.js:11
 msgid "Name"
-msgstr "名称"
+msgstr "Nome"
 
 #: common/static/js/frepple.js:2255 common/static/js/frepple.min.js:11
 msgid "Layout"
-msgstr "布置"
+msgstr "Disposição"
 
 #: common/static/js/frepple.js:2261 common/static/js/frepple.min.js:11
 msgid "Single column"
-msgstr "单列"
+msgstr "Uma coluna"
 
 #: common/static/js/frepple.js:2264 common/static/js/frepple.min.js:11
 msgid "Two columns"
-msgstr "两列"
+msgstr "Duas colunas"
 
 #: common/static/js/frepple.js:2271 common/static/js/frepple.min.js:11
 msgid "Three columns"
-msgstr "三列"
+msgstr "Três colunas"
 
 #: common/static/js/frepple.js:2275 common/static/js/frepple.min.js:11
 msgid "Four columns"
-msgstr "四列"
+msgstr "Quatro colunas"
 
 #: common/static/js/frepple.js:2281 common/static/js/frepple.min.js:11
 msgid "Add widget"
-msgstr "添加小插件"
+msgstr "Adicionar widget"
 
 #: common/static/js/frepple.js:2299 common/static/js/frepple.min.js:11
 msgid "Delete"
-msgstr "删除"
+msgstr "Apagar"
 
 #: common/static/js/frepple.js:2301 common/static/js/frepple.min.js:11
 msgid "Add new below"
-msgstr "在下面添加新记录"
+msgstr "Adicionar secção em baixo"
 
 #: common/static/js/frepple.js:2302 common/static/js/frepple.min.js:11
 msgid "Add new above"
-msgstr "在上面添加新记录"
+msgstr "Adicionar secção acima"
 
 #: common/static/js/frepple.js:2563 common/static/js/frepple.min.js:11
 msgid "Installed apps"
-msgstr "已安装的应用程序"
+msgstr "Apps instaladas"
 
 #: common/static/js/frepple.js:2583 common/static/js/frepple.min.js:11
 msgid "Error reading version information"
-msgstr "读取版本信息的错误"
+msgstr "Erro ao ler informação da versão"
 
 #: common/static/js/frepple.js:2607 common/static/js/frepple.min.js:11
 msgid "Import CSV or Excel file"
-msgstr "导入CSV或Excel文件"
+msgstr "Importar ficheiro Excel ou CSV"
 
 #: common/static/js/frepple.js:2613 common/static/js/frepple.min.js:11
 msgid "Load an Excel file or a CSV-formatted text file."
-msgstr "载入一个的Excel档或CSV-formatted格式的文字档。"
+msgstr "Carregar dados de ficheiro Excel ou CSV."
 
 #: common/static/js/frepple.js:2614 common/static/js/frepple.min.js:11
 msgid "The first row should contain the field names."
-msgstr "第一行包含了字段名。"
+msgstr "A primeira linha deve conter os nomes dos campos."
 
 #: common/static/js/frepple.js:2616 common/static/js/frepple.min.js:11
 msgid "First delete all existing records AND ALL RELATED TABLES"
-msgstr "首先删除所有存在的记录和所有相关的表。"
+msgstr ""
+"Primeiro apague todos os registos existentes E TODAS AS TABELAS RELACIONADAS"
 
 #: common/static/js/frepple.js:2623 common/static/js/frepple.min.js:11
 msgid "files selected"
-msgstr ""
+msgstr "ficheiros seleccionados"
 
 #: common/static/js/frepple.js:2626 common/static/js/frepple.min.js:11
 msgid "Select files"
-msgstr ""
+msgstr "Seleccionar ficheiros"
 
 #: common/static/js/frepple.js:2629 common/static/js/frepple.min.js:11
 msgid "or drop them here"
-msgstr ""
+msgstr "ou arrastar para aqui"
 
 #: common/static/js/frepple.js:2638 common/static/js/frepple.min.js:11
 msgid "Data file"
-msgstr "数据文件"
+msgstr "Ficheiro de dados"
 
 #: common/static/js/frepple.js:2647 common/static/js/frepple.min.js:11
 msgid "Import"
-msgstr "导入"
+msgstr "Importar"
 
 #: common/static/js/frepple.js:2648 common/static/js/frepple.min.js:11
 msgid "Cancel Import"
-msgstr "取消导入"
+msgstr "Cancelar Importação"
 
 #: common/static/js/frepple.js:2650 common/static/js/frepple.min.js:11
 msgid "Copy to Clipboard"
-msgstr "复制到剪贴板"
+msgstr "Copiar para área de transferência"
 
 #: common/static/js/frepple.js:2714 common/static/js/frepple.min.js:11
 msgid "Importing..."
-msgstr "导入中…"
+msgstr "Importando..."
 
 #: common/static/js/frepple.js:2733 common/static/js/frepple.min.js:11
 msgid "Canceled"
-msgstr "已取消"
+msgstr "Cancelado"
 
 #: input/static/js/frepple-operationplandetail.min.js:11
 #: input/static/operationplandetail/src/supplypositionpanelDrv.js:22
 msgid "inventory status"
-msgstr "库存状态"
+msgstr "estado do inventário"
 
 #: input/static/js/frepple-operationplandetail.min.js:11
 #: input/static/operationplandetail/src/supplypositionpanelDrv.js:29
 msgid "onhand at lead time"
-msgstr "交货期末库存"
+msgstr "em mãos no tempo de espera"
 
 #: input/static/js/frepple-operationplandetail.min.js:11
 #: input/static/operationplandetail/src/supplypositionpanelDrv.js:63
 msgid "current onhand"
-msgstr "当前库存"
-
-#~ msgid "Show hints"
-#~ msgstr "显示提示"
-
-#~ msgid "Guided tour"
-#~ msgstr "导游服务"
-
-#~ msgid "Previous"
-#~ msgstr "前一个"
-
-#~ msgid "Play"
-#~ msgstr "播放"
-
-#~ msgid "Next"
-#~ msgstr "下一个"
-
-#~ msgid "Pause"
-#~ msgstr "暂停"
-
-#~ msgid "unused"
-#~ msgstr "未使用的"
-
-#~ msgid "Importing... pressing Close button will not stop the process."
-#~ msgstr "导入中…按关闭按钮不会停止进程。"
-
-#~ msgid "problems"
-#~ msgstr "问题"
-
-#~ msgid "start"
-#~ msgstr "开始"
-
-#~ msgid "end"
-#~ msgstr "结束"
-
-#~ msgid "no problems"
-#~ msgstr "没有任何问题"
-
-#~ msgid "resource"
-#~ msgstr "资源"
-
-#~ msgid "quantity"
-#~ msgstr "数量"
-
-#~ msgid "no resources"
-#~ msgstr "没有资源"
-
-#~ msgid "buffer"
-#~ msgstr "库存"
-
-#~ msgid "date"
-#~ msgstr "日期"
-
-#~ msgid "no movements"
-#~ msgstr "没有移动"
-
-#~ msgid "demand"
-#~ msgstr "需求"
-
-#~ msgid "no demands"
-#~ msgstr "没有需求"
-
-#~ msgid "Manufacturing Order"
-#~ msgstr "生产订单"
-
-#~ msgid "Purchase Order"
-#~ msgstr "采购订单"
-
-#~ msgid "Distribution Order"
-#~ msgstr "配送订单"
-
-#~ msgid "Stock"
-#~ msgstr "库存"
-
-#~ msgid "Delivery"
-#~ msgstr "交货"
-
-#~ msgid "%s allocated out of %s"
-#~ msgstr "%s 分配出 %s"
-
-#~ msgid "remove this demand from planning"
-#~ msgstr "从规划中删除这种需求"
-
-#~ msgid "Plan selected demands backward from their due date"
-#~ msgstr "从它的截止日期逆向计划选定的需求"
-
-#~ msgid "Plan selected demands forward from the current date"
-#~ msgstr "从它的截止日期预先计划选定的需求"
-
-#~ msgid "out of"
-#~ msgstr "分配出"
-
-#~ msgid "Add"
-#~ msgstr "增加"
-
-#~ msgid "Stop"
-#~ msgstr "停止"
-
-#, fuzzy
-#~| msgid "Export"
-#~ msgid "export: OK"
-#~ msgstr "导出"
-
-#, fuzzy
-#~| msgid "Error deleting data"
-#~ msgid "error exporting data"
-#~ msgstr "删除数据出错"
-
-#, fuzzy
-#~| msgid "Error deleting data"
-#~ msgid "Error getting quote info"
-#~ msgstr "删除数据出错"
-
-#~ msgid "Table"
-#~ msgstr "表"
-
-#~ msgid "List"
-#~ msgstr "列表"
-
-#~ msgid "Import data"
-#~ msgstr "导入数据"
-
-#~ msgid "Application tour"
-#~ msgstr "应用程序之旅"
+msgstr "em mãos agora"

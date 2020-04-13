@@ -1,21 +1,33 @@
+# Copyright (C) 2007-2012 by frePPLe bvba
+# This library is free software; you can redistribute it and/or modify it
+# under the terms of the GNU Affero General Public License as published
+# by the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero
+# General Public License for more details.
+# You should have received a copy of the GNU Affero General Public
+# License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: \n"
-"Last-Translator: \n"
-"Language-Team: \n"
+"PO-Revision-Date: 2020-04-04 11:54+0200\n"
+"Last-Translator: Joao Ranita <jranita@frepple.com>\n"
+"Language-Team: frepple\n"
 "Language: nl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.0.6\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 2.0.6\n"
 
 #: freppledb/planningboard/static/planningboard/src/ganttchart.js:518
 #: freppledb/planningboard/static/planningboard/src/ganttchart.js:551
 msgid "%s allocated out of %s"
-msgstr "%s toegekend uit %s"
+msgstr "%s allocated out of %s"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1262
 #: freppledb/planningboard/static/planningboard/planningboard.html:1283
@@ -131,7 +143,7 @@ msgstr "Levering"
 
 #: freppledb/forecast/static/forecast/src/forecastgridDrv.js:36
 msgid "Demand outlier"
-msgstr "Uitzonderlijke vraag"
+msgstr "Exceptionele vraag"
 
 #: freppledb/input/static/operationplandetail/src/operationplanpanelDrv.js:32
 msgid "Distribution Order"
@@ -281,7 +293,7 @@ msgstr "Verwijder deze order uit het plan"
 
 #: freppledb/forecast/static/forecast/src/forecast.js:903
 msgid "Reset"
-msgstr "Reset"
+msgstr "Herstel"
 
 #: freppledb/forecast/static/forecast/forecast.html:153
 #: freppledb/forecast/static/forecast/forecast.html:454
@@ -320,7 +332,7 @@ msgstr "Selecteer panel sequentie"
 
 #: freppledb/forecast/static/forecast/src/forecast.js:884
 msgid "Selected Cross"
-msgstr "Geselecteerd kruis"
+msgstr "Geselecteerde kruis"
 
 #: freppledb/forecast/static/forecast/forecast.html:417
 msgid "Selected forecast method"
@@ -457,7 +469,7 @@ msgstr "commentaar"
 #: freppledb/planningboard/static/planningboard/planningboard.html:567
 #: freppledb/planningboard/static/planningboard/planningboard.html:692
 msgid "completed"
-msgstr "klaar"
+msgstr "complete"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:241
 msgid "completed: {{aggregatedoperationplans.status.completed }}"
@@ -535,7 +547,7 @@ msgstr "datum"
 #: freppledb/planningboard/static/planningboard/planningboard.html:1504
 #: freppledb/planningboard/static/planningboard/planningboard.html:1539
 msgid "default"
-msgstr "default"
+msgstr "standaard"
 
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:104
 #: freppledb/planningboard/static/planningboard/planningboard.html:21
@@ -549,7 +561,7 @@ msgstr "vertraging"
 
 #: freppledb/planningboard/static/planningboard/src/grid.js:149
 msgid "delivery date"
-msgstr "leverdatum"
+msgstr "geplaned leverdatum"
 
 #: freppledb/planningboard/static/planningboard/src/grid.js:139
 msgid "delivery quantity"
@@ -560,7 +572,7 @@ msgstr "leverhoeveelheid"
 #: freppledb/planningboard/static/planningboard/planningboard.html:188
 #: freppledb/planningboard/static/planningboard/planningboard.html:762
 msgid "demand"
-msgstr "order"
+msgstr "verkooporder"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1206
 msgid "demands"
@@ -656,15 +668,15 @@ msgstr "forecast"
 
 #: freppledb/forecast/static/forecast/src/displayForecastGraph.js:198
 msgid "forecast baseline"
-msgstr "basisforecast"
+msgstr "forecast baseline"
 
 #: freppledb/forecast/static/forecast/src/displayForecastGraph.js:206
 msgid "forecast consumed"
-msgstr "geconsummeerde forecast"
+msgstr "geconsumeerde forecast"
 
 #: freppledb/forecast/static/forecast/src/displayForecastGraph.js:204
 msgid "forecast net"
-msgstr "net forecast"
+msgstr "netto forecast"
 
 #: freppledb/forecast/static/forecast/src/displayForecastGraph.js:200
 msgid "forecast override"
@@ -864,7 +876,7 @@ msgstr "voorraad"
 
 #: freppledb/input/static/operationplandetail/src/supplypositionpanelDrv.js:29
 msgid "onhand at lead time"
-msgstr "levertijd voorraad"
+msgstr "voorraad na de lead time"
 
 #: freppledb/forecast/static/forecast/src/displayForecastGraph.js:194
 #: freppledb/forecast/static/forecast/src/displayForecastGraph.js:215
@@ -1010,7 +1022,7 @@ msgstr "verwijder deze order uit het plan"
 #: freppledb/planningboard/static/planningboard/planningboard.html:164
 #: freppledb/planningboard/static/planningboard/planningboard.html:189
 msgid "resource"
-msgstr "machine"
+msgstr "resource"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1016
 msgid "resources"
@@ -1018,7 +1030,7 @@ msgstr "machines"
 
 #: freppledb/input/static/operationplandetail/src/networkstatusDrv.js:46
 msgid "sales orders"
-msgstr "klantenorders"
+msgstr "verkooporders"
 
 #: freppledb/forecast/static/forecast/forecast.html:74
 msgid "save"
@@ -1125,42 +1137,3 @@ msgstr "{{ aggregatedoperationplans.count }} geselecteerd"
 #: freppledb/forecast/static/forecast/forecast.html:316
 msgid "{{m.label}}"
 msgstr ""
-
-#~ msgid "Display quantity"
-#~ msgstr "Toon in eenheden"
-
-#~ msgid "Display value"
-#~ msgstr "Toon in waarde"
-
-#~ msgid "orders adjustment 1 years ago"
-#~ msgstr "order correctie 1 jaar geleden"
-
-#~ msgid "orders adjustment 2 years ago"
-#~ msgstr "order correctie 2 jaar geleden"
-
-#~ msgid "orders adjustment 3 years ago"
-#~ msgstr "order correctie 3 jaar geleden"
-
-#~ msgid "total forecast"
-#~ msgstr "totale forecast"
-
-#~ msgid "total orders 1 years ago"
-#~ msgstr "totale orders 1 jaar geleden"
-
-#~ msgid "total orders 2 years ago"
-#~ msgstr "totale orders 2 jaar geleden"
-
-#~ msgid "total orders 3 years ago"
-#~ msgstr "totale orders 3 jaar geleden"
-
-#~ msgid "Resolve constraints during plan changes by moving to earlier dates"
-#~ msgstr "Los conflicten op door te verschuiven naar vroegere data"
-
-#~ msgid "Resolve constraints during plan changes by moving to later dates"
-#~ msgstr "Los conflicten op door te verschuiven naar latere data"
-
-#~ msgid "buffers"
-#~ msgstr "buffers"
-
-#~ msgid "id"
-#~ msgstr "id"

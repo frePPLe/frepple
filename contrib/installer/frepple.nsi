@@ -393,13 +393,13 @@ Section -Post
       StrCpy $6 "ru"
       Goto ok2
     StrCmp $6 "Simplified Chinese" 0 +3
-      StrCpy $6 "zh-cn"
+      StrCpy $6 "zh-hans"
       Goto ok2
     StrCmp $6 "Spanish" 0 +3
       StrCpy $6 "es"
       Goto ok2
     StrCmp $6 "Traditional Chinese" 0 +3
-      StrCpy $6 "zh-tw"
+      StrCpy $6 "zh-hant"
       Goto ok2
     MessageBox MB_ICONEXCLAMATION|MB_OK "Invalid language selection $6!"
     ok2:

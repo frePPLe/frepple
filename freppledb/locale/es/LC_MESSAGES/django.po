@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-04-04 12:06+0200\n"
-"PO-Revision-Date: 2020-04-04 12:10+0200\n"
+"PO-Revision-Date: 2020-04-04 12:08+0200\n"
 "Last-Translator: Joao Ranita <jranita@frepple.com>\n"
 "Language-Team: frepple\n"
 "Language: es\n"
@@ -23,15 +23,12 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Poedit 2.0.6\n"
-"X-Poedit-Basepath: ../../..\n"
-"X-Poedit-SearchPath-0: .\n"
 
 #: admin.py:25
 msgid "This user is inactive."
 msgstr ""
 
 #: common/admin.py:35
-#| msgid "scenarios"
 msgid "scenario access"
 msgstr ""
 
@@ -78,7 +75,7 @@ msgstr "Saltando campo desconocido %(column)s"
 #: common/dataload.py:377 forecast/models.py:563
 #, python-format
 msgid "Some keys were missing: %(keys)s"
-msgstr ""
+msgstr "Faltan algunas claves: %(keys)s"
 
 #: common/dataload.py:450
 msgid "Key fields not unique"
@@ -94,9 +91,8 @@ msgstr ""
 "registros, %(errors)d errores, %(warnings)d advertencia"
 
 #: common/menu.py:91
-#| msgid "location"
 msgid "Documentation"
-msgstr ""
+msgstr "Documentación"
 
 #: common/menu.py:100
 msgid "REST API help"
@@ -246,8 +242,8 @@ msgstr "valor"
 #: output/views/operation.py:479 output/views/operation.py:520
 #: output/views/operation.py:785 output/views/operation.py:837
 #: output/views/operation.py:878 output/views/problem.py:78
-#: output/views/resource.py:48 output/views/resource.py:137 quoting/views.py:84
-#: reportmanager/models.py:22
+#: output/views/resource.py:48 output/views/resource.py:137
+#: quoting/views.py:84 reportmanager/models.py:22
 #: reportmanager/templates/reportmanager/reportmanager.html:252
 #: reportmanager/templates/reportmanager/reportmanager.html:256
 #: reportmanager/views.py:116
@@ -387,7 +383,6 @@ msgstr "fechas de intervalo"
 #: common/report.py:906 common/report.py:2965 common/report.py:2977
 #: common/report.py:3004 common/report.py:3290 common/report.py:3316
 #: common/report.py:3336 reportmanager/views.py:585
-#| msgid "Read"
 msgid "Read only"
 msgstr ""
 
@@ -461,7 +456,7 @@ msgstr ""
 #: common/report.py:2664 common/report.py:2807 common/report.py:2859
 #: common/report.py:2992
 msgid "title"
-msgstr ""
+msgstr "título"
 
 #: common/report.py:2679 common/report.py:3009 forecast/models.py:358
 #: forecast/models.py:472
@@ -661,7 +656,6 @@ msgid "Your license expires in %(x)s days"
 msgstr ""
 
 #: common/templates/admin/base_site_nav.html:85
-#| msgid "days"
 msgid "days left"
 msgstr ""
 
@@ -702,7 +696,7 @@ msgstr ""
 #: common/templates/admin/subtemplate_inventorystatus.html:127
 #: inventoryplanning/models.py:407
 msgid "onhand at lead time"
-msgstr ""
+msgstr "a mano en lead time"
 
 #: common/templates/admin/subtemplate_inventorystatus.html:160
 msgid "current onhand"
@@ -722,7 +716,7 @@ msgstr "de"
 
 #: common/templates/admin/subtemplate_timebuckets.html:42
 msgid "to"
-msgstr "a"
+msgstr "hasta"
 
 #: common/templates/admin/subtemplate_timebuckets.html:59
 #: common/templates/admin/subtemplate_timebuckets.html:65
@@ -751,7 +745,7 @@ msgstr "después de fecha planificada corriente"
 
 #: common/templates/admin/subtemplate_timebuckets.html:77 execute/views.py:766
 msgid "OK"
-msgstr "Aceptar"
+msgstr "OK"
 
 #: common/templates/admin/subtemplate_timebuckets.html:78
 #: executesql/templates/executesql/executesql.html:110
@@ -1196,7 +1190,7 @@ msgstr ""
 #: execute/management/commands/exporttofolder.py:624
 #: execute/management/commands/importfromfolder.py:769
 msgid "Close"
-msgstr ""
+msgstr "Cerrar"
 
 #: execute/management/commands/exporttofolder.py:625
 #: execute/management/commands/importfromfolder.py:770
@@ -1451,7 +1445,6 @@ msgid "autorefresh"
 msgstr "autoactualizar"
 
 #: execute/templates/execute/execute.html:196
-#| msgid "launch new tasks"
 msgid "launch tasks"
 msgstr ""
 
@@ -1507,12 +1500,10 @@ msgid "Generate a constrained plan"
 msgstr "Genrear un plan con restriciones"
 
 #: executesql/menu.py:16 reportmanager/menu.py:51 reportmanager/models.py:40
-#| msgid "customers"
 msgid "my reports"
 msgstr ""
 
 #: executesql/menu.py:22
-#| msgid "Execute"
 msgid "Execute SQL"
 msgstr ""
 
@@ -1525,13 +1516,14 @@ msgid "Planning parameters"
 msgstr "Parámetros de Planificación"
 
 #: forecast/admin.py:61 input/admin.py:276 input/admin.py:467
-#: input/admin.py:538 input/admin.py:702 input/admin.py:1056 input/views.py:201
-#: input/views.py:284
+#: input/admin.py:538 input/admin.py:702 input/admin.py:1056
+#: input/views.py:201 input/views.py:284
 msgid "supply path"
 msgstr "ruta de suministro"
 
 #: forecast/admin.py:64 forecast/views.py:482 input/admin.py:278
-#: input/admin.py:471 input/admin.py:540 input/admin.py:706 input/admin.py:1062
+#: input/admin.py:471 input/admin.py:540 input/admin.py:706
+#: input/admin.py:1062
 #: inventoryplanning/templates/inventoryplanning/drp.html:2472
 #: output/views/buffer.py:328 output/views/demand.py:35
 #: output/views/demand.py:88 output/views/demand.py:279
@@ -1570,17 +1562,14 @@ msgid "Generate forecast"
 msgstr "Calcular pronóstico"
 
 #: forecast/management/commands/measure_copy.py:199
-#| msgid "scenario management"
 msgid "measure management"
 msgstr ""
 
 #: forecast/management/commands/measure_copy.py:258
-#| msgid "resource queue"
 msgid "Copy source measure"
 msgstr ""
 
 #: forecast/management/commands/measure_copy.py:258
-#| msgid "destination"
 msgid "to destination measure"
 msgstr ""
 
@@ -1967,12 +1956,10 @@ msgid "orders adjustment 3 years ago"
 msgstr "ajuste de órdenes hace 3 años"
 
 #: forecast/models.py:747
-#| msgid "total orders 3 years ago"
 msgid "total orders value 3 years ago"
 msgstr ""
 
 #: forecast/models.py:757
-#| msgid "orders adjustment 3 years ago"
 msgid "orders adjustment value 3 years ago"
 msgstr ""
 
@@ -1985,32 +1972,26 @@ msgid "orders adjustment 2 years ago"
 msgstr "ajuste de órdenes hace 2 años"
 
 #: forecast/models.py:785
-#| msgid "total orders 2 years ago"
 msgid "total orders value 2 years ago"
 msgstr ""
 
 #: forecast/models.py:795
-#| msgid "orders adjustment 2 years ago"
 msgid "orders adjustment value 2 years ago"
 msgstr ""
 
 #: forecast/models.py:805
-#| msgid "total orders 1 year ago"
 msgid "total orders 1 years ago"
-msgstr ""
+msgstr "total de órdenes hace 1 año"
 
 #: forecast/models.py:814
-#| msgid "orders adjustment 1 year ago"
 msgid "orders adjustment 1 years ago"
-msgstr ""
+msgstr "ajuste de órdenes hace 1 año"
 
 #: forecast/models.py:823
-#| msgid "total orders 1 year ago"
 msgid "total orders value 1 years ago"
 msgstr ""
 
 #: forecast/models.py:833
-#| msgid "orders adjustment 1 year ago"
 msgid "orders adjustment value 1 years ago"
 msgstr ""
 
@@ -2122,17 +2103,14 @@ msgid "total supply value"
 msgstr ""
 
 #: forecast/models.py:1010
-#| msgid "Aggregate"
 msgid "aggregate"
-msgstr ""
+msgstr "agregada"
 
 #: forecast/models.py:1011
-#| msgid "location"
 msgid "local"
 msgstr ""
 
 #: forecast/models.py:1012
-#| msgid "computed safety stock"
 msgid "computed"
 msgstr ""
 
@@ -2141,7 +2119,6 @@ msgid "hide"
 msgstr ""
 
 #: forecast/models.py:1015
-#| msgid "Invalid number"
 msgid "number"
 msgstr ""
 
@@ -2154,7 +2131,6 @@ msgid "label"
 msgstr "etiqueta"
 
 #: forecast/models.py:1026
-#| msgid "Language of the user interface"
 msgid "Label to be displayed in the user interface"
 msgstr ""
 
@@ -2173,7 +2149,8 @@ msgstr ""
 #: inventoryplanning/templates/inventoryplanning/drp.html:162
 #: inventoryplanning/templates/inventoryplanning/drp.html:1996
 #: output/views/buffer.py:173 output/views/operation.py:77
-#: output/views/pegging.py:50 output/views/resource.py:69 output/widget.py:1504
+#: output/views/pegging.py:50 output/views/resource.py:69
+#: output/widget.py:1504
 msgid "type"
 msgstr "tipo"
 
@@ -2186,12 +2163,10 @@ msgid "mode in past periods"
 msgstr ""
 
 #: forecast/models.py:1056 forecast/views.py:163
-#| msgid "computed safety stock"
 msgid "compute expression"
 msgstr ""
 
 #: forecast/models.py:1060
-#| msgid "forecast consumed value"
 msgid "Formula to compute values"
 msgstr ""
 
@@ -2213,8 +2188,6 @@ msgstr ""
 
 #: forecast/models.py:1076 forecast/views.py:160
 #: reportmanager/templates/reportmanager/reportmanager.html:211
-#| msgctxt "forecast method"
-#| msgid "Normal"
 msgid "format"
 msgstr ""
 
@@ -2224,7 +2197,6 @@ msgid "default value"
 msgstr "valor por defecto"
 
 #: forecast/models.py:1093 forecast/views.py:165
-#| msgid "forecast override value"
 msgid "override measure"
 msgstr ""
 
@@ -2251,7 +2223,6 @@ msgstr "pronóstico total"
 #: inventoryplanning/templates/inventoryplanning/drp.html:1593
 #: inventoryplanning/templates/inventoryplanning/drp.html:1629
 #: inventoryplanning/templates/inventoryplanning/drp.html:1706
-#| msgid "net forecast"
 msgid "past forecast"
 msgstr ""
 
@@ -2452,12 +2423,10 @@ msgid "distribution orders"
 msgstr "órdenes de distribución"
 
 #: input/admin.py:387
-#| msgid "Child operation"
 msgid "child operation"
 msgstr ""
 
 #: input/admin.py:388
-#| msgid "Child operation"
 msgid "child suboperations"
 msgstr ""
 
@@ -2466,7 +2435,6 @@ msgid "planning parameters"
 msgstr "parámetros de planificación"
 
 #: input/admin.py:446
-#| msgid "alternates"
 msgid "alternate selection"
 msgstr ""
 
@@ -2489,7 +2457,6 @@ msgid "alternates"
 msgstr "sustitutos"
 
 #: input/admin.py:1087
-#| msgid "computed safety stock"
 msgid "computed fields"
 msgstr ""
 
@@ -2547,12 +2514,10 @@ msgid "customers"
 msgstr "clientes"
 
 #: input/models.py:190
-#| msgid "safety stock"
 msgid "make to stock"
 msgstr ""
 
 #: input/models.py:191
-#| msgid "sales order"
 msgid "make to order"
 msgstr ""
 
@@ -2837,7 +2802,7 @@ msgstr "Ventana de proceso por lotes para agrupar reabastecimientos en lotes"
 #: inventoryplanning/templates/inventoryplanning/drp.html:1742
 #: output/views/buffer.py:139
 msgid "buffer"
-msgstr "reserva"
+msgstr "inventario"
 
 #: input/models.py:578 input/views.py:1180
 msgid "buffers"
@@ -2854,7 +2819,6 @@ msgstr "matrices de configuración"
 
 #: input/models.py:631 input/views.py:1416 input/views.py:6164
 #: output/views/resource.py:76
-#| msgid "constrained by"
 msgid "constrained"
 msgstr ""
 
@@ -3131,7 +3095,6 @@ msgid "A multiple purchasing quantity"
 msgstr "Una cantidad de compra multiple"
 
 #: input/models.py:1208
-#| msgid "A minimum purchasing quantity"
 msgid "A maximum purchasing quantity"
 msgstr ""
 
@@ -3193,7 +3156,6 @@ msgid "A multiple shipping quantity"
 msgstr "Cantidad multiple de envío"
 
 #: input/models.py:1339
-#| msgid "A minimum shipping quantity"
 msgid "A maximum shipping quantity"
 msgstr ""
 
@@ -3368,7 +3330,7 @@ msgstr "destino"
 #: output/views/constraint.py:28 output/views/constraint.py:95
 #: output/views/demand.py:65
 msgid "demand"
-msgstr ""
+msgstr "demanda"
 
 #: input/models.py:1686
 msgid "Due date of the demand/forecast"
@@ -3383,17 +3345,14 @@ msgid "operationplans"
 msgstr "plan de Operaciones"
 
 #: input/models.py:1915
-#| msgid "locked starts"
 msgid "load status"
 msgstr ""
 
 #: input/models.py:1920
-#| msgid "Status of the order"
 msgid "Status of the resource assignment"
 msgstr ""
 
 #: input/models.py:1945 input/models.py:1946 input/views.py:5747
-#| msgid "resource skill"
 msgid "resource detail"
 msgstr ""
 
@@ -3404,7 +3363,6 @@ msgid "period of cover"
 msgstr "período de cobertura"
 
 #: input/models.py:1992 input/views.py:5738
-#| msgid "material alerts"
 msgid "material status"
 msgstr ""
 
@@ -3413,7 +3371,6 @@ msgid "status of the material production or consumption"
 msgstr ""
 
 #: input/models.py:2023 input/models.py:2024
-#| msgid "Inventory detail report"
 msgid "inventory detail"
 msgstr ""
 
@@ -3510,7 +3467,6 @@ msgid "materials"
 msgstr "materiales"
 
 #: input/views.py:3620
-#| msgid "setup"
 msgid "setups"
 msgstr ""
 
@@ -3578,7 +3534,6 @@ msgid "delivered from %(loc)s between %(date1)s and %(date2)s"
 msgstr ""
 
 #: input/views.py:5325
-#| msgid "Inventory detail report"
 msgid "Inventory detail"
 msgstr ""
 
@@ -3742,12 +3697,10 @@ msgid "segment"
 msgstr "segmento"
 
 #: inventoryplanning/models.py:191
-#| msgid "inventory item"
 msgid "inventory policy"
 msgstr ""
 
 #: inventoryplanning/models.py:192 inventoryplanning/views.py:177
-#| msgid "inventory item"
 msgid "inventory policies"
 msgstr ""
 
@@ -3944,7 +3897,7 @@ msgstr "¿Quieres guardar los cambios primero?"
 #: inventoryplanning/templates/inventoryplanning/drp.html:319
 #: inventoryplanning/templates/inventoryplanning/drp.html:887
 msgid "Error retrieving data"
-msgstr "Error al obtener los datos"
+msgstr "Error al leer los datos"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:1432
 #: output/templates/output/buffer.html:292
@@ -4233,32 +4186,26 @@ msgid "admin"
 msgstr "administrador"
 
 #: metrics/attributes.py:19
-#| msgid "Due date of the demand"
 msgid "count of late demands"
 msgstr ""
 
 #: metrics/attributes.py:20
-#| msgid "Due date of the demand"
 msgid "quantity of late demands"
 msgstr ""
 
 #: metrics/attributes.py:21
-#| msgid "Due date of the demand"
 msgid "value of late demand"
 msgstr ""
 
 #: metrics/attributes.py:24
-#| msgid "constrained demand"
 msgid "count of unplanned demands"
 msgstr ""
 
 #: metrics/attributes.py:31
-#| msgid "Quantity planned for delivery"
 msgid "quantity of unplanned demands"
 msgstr ""
 
 #: metrics/attributes.py:38
-#| msgid "clear the plan of selected demands"
 msgid "value of unplanned demands"
 msgstr ""
 
@@ -4349,7 +4296,6 @@ msgid "consumed by SO"
 msgstr ""
 
 #: output/templates/output/buffer.html:182 output/views/buffer.py:276
-#| msgid "consumed"
 msgid "consumed by Fcst"
 msgstr ""
 
@@ -4595,7 +4541,6 @@ msgid "Demand plan"
 msgstr "Plan de demanda"
 
 #: output/views/pegging.py:63
-#| msgid "resource quantity"
 msgid "required quantity"
 msgstr ""
 
@@ -4779,12 +4724,10 @@ msgstr "cotizaciones"
 #: reportmanager/models.py:20
 #: reportmanager/templates/reportmanager/reportmanager.html:276
 #: reportmanager/views.py:117
-#| msgid "query"
 msgid "SQL query"
 msgstr ""
 
 #: reportmanager/models.py:39 reportmanager/views.py:269
-#| msgid "Demand report"
 msgid "my report"
 msgstr ""
 
@@ -4806,17 +4749,14 @@ msgid "schema"
 msgstr ""
 
 #: reportmanager/templates/reportmanager/schema.html:8
-#| msgid "Table"
 msgid "table"
 msgstr ""
 
 #: reportmanager/views.py:103
-#| msgid "customers"
 msgid "custom reports"
 msgstr ""
 
 #: reportmanager/views.py:137 reportmanager/views.py:206
-#| msgid "Forecast editor"
 msgid "report editor"
 msgstr ""
 
@@ -4835,1305 +4775,3 @@ msgstr ""
 #: wizard/templates/wizard/index.html:48
 msgid "dashboard"
 msgstr ""
-
-#, fuzzy
-#~| msgid "customer"
-#~ msgid "custom"
-#~ msgstr "cliente"
-
-#, fuzzy
-#~| msgid "Forecast error"
-#~ msgid "hasForecastRecord"
-#~ msgstr "Error de pronóstico"
-
-#, fuzzy
-#~| msgid "customer"
-#~ msgid "custom report"
-#~ msgstr "cliente"
-
-#~ msgid "Show hints"
-#~ msgstr "Mostrar sugerencias"
-
-#~ msgid "Guided tour"
-#~ msgstr "Demostración guiada"
-
-#~ msgid "total orders value"
-#~ msgstr "valor total de órdenes"
-
-#~ msgid "orders adjustment value"
-#~ msgstr "valor ajuste órdenes"
-
-#~ msgid "open orders value"
-#~ msgstr "valor de órdenes de venta abiertas"
-
-#~ msgid "planned orders value"
-#~ msgstr "valor órdenes planificadas"
-
-#~ msgid "forecast baseline value"
-#~ msgstr "valor pronóstico base"
-
-#~ msgid "forecast total value"
-#~ msgstr "valor pronóstico total"
-
-#~ msgid "forecast net value"
-#~ msgstr "valor pronóstico neto"
-
-#~ msgid "planned forecast value"
-#~ msgstr "valor pronóstico planeado"
-
-#~ msgid "total forecast"
-#~ msgstr "pronóstico total"
-
-#~ msgid ""
-#~ "First, enter a username and password. Then, you'll be able to edit more "
-#~ "user options."
-#~ msgstr ""
-#~ "Primero escribe tu nombre de usuario y contraseña. Después puedes cambiar "
-#~ "mas opciones de usuario."
-
-#~ msgid "Enter a username and password."
-#~ msgstr "Introducir nombre de usuario y contraseña."
-
-#~ msgid "Material: respect procurement limits"
-#~ msgstr "Material: respetar límites de compra"
-
-#~ msgid "Unique identifier of an operationplan"
-#~ msgstr "Identificador único de un plan de operación"
-
-#~ msgid "External reference of this order"
-#~ msgstr "Referencia externa de esta orden"
-
-#~ msgid "Status of the OperationPlanResource"
-#~ msgstr "Estado del recurso de plan de operaciones"
-
-#~ msgid "operationplan resource"
-#~ msgstr "recurso plan de operaciones"
-
-#~ msgid "operationplan resources"
-#~ msgstr "recursos plan de operación"
-
-#~ msgid "operationplan material"
-#~ msgstr "material de plan de operación"
-
-#~ msgid "operationplan materials"
-#~ msgstr "materiales plan de operación"
-
-#~ msgid "due date"
-#~ msgstr "fecha límite"
-
-#~ msgid "inventory planning parameter"
-#~ msgstr "parámetro de planeación de inventario"
-
-#~ msgid "inventory planning parameters"
-#~ msgstr "parámetros de planeación de inventario"
-
-#~ msgid "Resource detail report"
-#~ msgstr "Informe detallado de recursos"
-
-#, fuzzy
-#~| msgid "overall progress"
-#~ msgid "Total in Progress"
-#~ msgstr "progreso general"
-
-#, fuzzy
-#~| msgid "quantity demand"
-#~ msgid "quantity_fixed"
-#~ msgstr "waarde"
-
-#, fuzzy
-#~| msgid "Sets safety stock to 0 and reorder quantity to 1"
-#~ msgid "Do not stock: sets safety stock to 0 and reorder quantity to 1"
-#~ msgstr "Impone 0 en inventario de seguridad y 1 en cantidad de reorden"
-
-#, fuzzy
-#~| msgid "priority"
-#~ msgid "priority_push"
-#~ msgstr "prioridad"
-
-#, fuzzy
-#~| msgid "period of cover"
-#~ msgid "periodofcover"
-#~ msgstr "período de cobertura"
-
-#~ msgid "Status of the OperationPlanMaterial"
-#~ msgstr "Estado del plan de operación"
-
-#, fuzzy
-#~| msgid "priority"
-#~ msgid "priority push"
-#~ msgstr "prioridad"
-
-#, fuzzy
-#~| msgid "delivery date"
-#~ msgid "Delivery orders"
-#~ msgstr "operación de entrega"
-
-#~ msgid ""
-#~ "Create time buckets for reporting.</p>\n"
-#~ "              <label class=\"control-label\">Start date: <input class="
-#~ "\"vDateField form-control\" id=\"start\" name=\"start\" type=\"text\" "
-#~ "size=\"12\"/></label>\n"
-#~ "              <label class=\"control-label\">End date: <input class="
-#~ "\"vDateField form-control\" id=\"end\" name=\"end\" type=\"text\" size="
-#~ "\"12\"/></label><br>\n"
-#~ "             <label class=\"control-label\" for=\"weekstart1\">Week "
-#~ "starts on:</label>\n"
-#~ "             <div class=\"dropdown dropdown-submit-input\">\n"
-#~ "                     <button class=\"btn btn-default dropdown-toggle form-"
-#~ "control\"  id=\"weekstart1\" value=\"1\" type=\"button\" data-toggle="
-#~ "\"dropdown\">Monday&nbsp;&nbsp;<span class=\"caret\"></span>\n"
-#~ "                     </button>\n"
-#~ "                     <ul class=\"dropdown-menu col-xs-12\" aria-"
-#~ "labelledby=\"weekstart1\" id=\"weekstartul\">\n"
-#~ "                        <li><a>Sunday</a></li>\n"
-#~ "                        <li><a>Monday</a></li>\n"
-#~ "                        <li><a>Tuesday</a></li>\n"
-#~ "                        <li><a>Wednesday</a></li>\n"
-#~ "                        <li><a>Thursday</a></li>\n"
-#~ "                        <li><a>Friday</a></li>\n"
-#~ "                        <li><a>Saturday</a></li>\n"
-#~ "                     </ul>\n"
-#~ "             </div>"
-#~ msgstr ""
-#~ "Crear intervalos de tiempo para informes.</p>\n"
-#~ "\t\t\t\t\t\t\t\t<label class=\"control-label\">Fecha de Inicio: <input "
-#~ "class=\"vDateField form-control\" id=\"start\" name=\"start\" type=\"text"
-#~ "\" size=\"12\"/></label>\n"
-#~ "\t\t\t\t\t\t\t\t<label class=\"control-label\">Fecha fin: <input class="
-#~ "\"vDateField form-control\" id=\"end\" name=\"end\" type=\"text\" size="
-#~ "\"12\"/></label><br>\n"
-#~ "               <label class=\"control-label\" for=\"weekstart1\">Semana "
-#~ "empieza el:</label>\n"
-#~ "               <div class=\"dropdown dropdown-submit-input\">\n"
-#~ "                       <button class=\"btn btn-default dropdown-toggle "
-#~ "form-control\"  id=\"weekstart1\" value=\"1\" type=\"button\" data-toggle="
-#~ "\"dropdown\">Lunes&nbsp;&nbsp;<span class=\"caret\"></span>\n"
-#~ "                       </button>\n"
-#~ "                       <ul class=\"dropdown-menu col-xs-12\" aria-"
-#~ "labelledby=\"weekstart1\" id=\"weekstartul\">\n"
-#~ "                          <li><a>Domingo</a></li>\n"
-#~ "                          <li><a>Lunes</a></li>\n"
-#~ "                          <li><a>Martes</a></li>\n"
-#~ "                          <li><a>Miércoles</a></li>\n"
-#~ "                          <li><a>Jueves</a></li>\n"
-#~ "                          <li><a>Viernes</a></li>\n"
-#~ "                          <li><a>Sábado</a></li>\n"
-#~ "                       </ul>\n"
-#~ "               </div>\n"
-#~ "\n"
-#~ "\t\t\t\t\t\t\t"
-
-#~ msgid ""
-#~ "Load frePPLe from the database and live data sources...<br>and create a "
-#~ "plan in frePPLe...<br>and export results."
-#~ msgstr ""
-#~ "Cargar datos de la base de datos y fuentes de datos en vivo en frePPLe..."
-#~ "<br>y crear un plan en frePPLe…<br>y exportar resultados."
-
-#~ msgid "Fixed start"
-#~ msgstr "Inicio fijo"
-
-#~ msgid "Fixed end"
-#~ msgstr "Fin fijo"
-
-#~ msgid "customer shipment"
-#~ msgstr "envío al cliente"
-
-#~ msgid "customer shipments"
-#~ msgstr "envíos a clientes"
-
-#~ msgid "Demand plan detail"
-#~ msgstr "Detalle de plan de demanda"
-
-#, fuzzy
-#~| msgid "proposed starts"
-#~ msgid "proposed receipt"
-#~ msgstr "inicios propuestos"
-
-#, fuzzy
-#~| msgid "total forecast"
-#~ msgid "total receipt"
-#~ msgstr "pronóstico total"
-
-#~ msgid "planned forecast"
-#~ msgstr "pronóstico planeado"
-
-#~ msgid "No time field specified"
-#~ msgstr "Campo de tiempo no especificado"
-
-#~ msgid "No adjustment field specified"
-#~ msgstr "Campo de ajuste no especificado"
-
-#~ msgid ""
-#~ "Recognized fields for list layout: forecast, bucket, start date, end "
-#~ "date, forecast override, orders adjustment"
-#~ msgstr ""
-#~ "Campos reconocidos para diseño de lista: pronóstico, intervalo, fecha "
-#~ "inicio, fecha fin, cambiar previsión, ajuste de ordenes"
-
-#~ msgid ""
-#~ "Recognized fields for pivot layout: forecast, data field, [bucket names*]"
-#~ msgstr ""
-#~ "Campos reconocidos diseño pivote: pronóstico, fecha, [bucket names*]"
-
-#~ msgid "Invalid number: %(value)s"
-#~ msgstr "Número no válido: %(value)s"
-
-#~ msgid "No time bucket specified"
-#~ msgstr "Ningún intervalo de tiempo especificado"
-
-#~ msgid "Row %(rownum)s: %(message)s"
-#~ msgstr "Fila %(rownum)s: %(message)s"
-
-#~ msgid "Uploaded data successfully: processed %d records"
-#~ msgstr "Datos descargados con éxito: %d registros procesados"
-
-#~ msgid "Export data to %(erp)"
-#~ msgstr "Exportar datos a %(erp)s"
-
-#~ msgid "Operation report"
-#~ msgstr "Informe de operaciones"
-
-#, fuzzy
-#~| msgid "Import data from %(erp)s"
-#~ msgid "Import data from Openbravo"
-#~ msgstr "Importar datos de %(erp)s"
-
-#, fuzzy
-#~| msgid "Log file"
-#~ msgid "logfile"
-#~ msgstr "Archivo de registro"
-
-#, fuzzy
-#~| msgid "finished"
-#~ msgid "Finished"
-#~ msgstr "terminado"
-
-#, fuzzy
-#~| msgid "Import data from %(erp)s"
-#~ msgid "Import data from Odoo"
-#~ msgstr "Importar datos de %(erp)s"
-
-#, fuzzy
-#~| msgid "export to openbravo"
-#~ msgid "Export data to Openbravo"
-#~ msgstr "exportar a openbravo"
-
-#~ msgid "last refresh"
-#~ msgstr "última actualización"
-
-#~ msgid "Wizard to load your data"
-#~ msgstr "Asistente de modelización"
-
-#~ msgid "progress"
-#~ msgstr "progreso del asistente"
-
-#~ msgid "Model completion level"
-#~ msgstr "Nivel de finalización del modelo"
-
-#~ msgid "wizard URL"
-#~ msgstr "asistente URL"
-
-#~ msgid "Skipping field %(column)s"
-#~ msgstr "Saltando campo %(column)s"
-
-#~ msgid "Row %(rownum)s field %(field)s: %(data)s: %(message)s"
-#~ msgstr "Fila %(rownum)s campo %(field)s: %(data)s: %(message)s"
-
-#~ msgid "Exception during upload: %(message)s"
-#~ msgstr "Excepción durante la subida: %(message)s"
-
-#~ msgid ""
-#~ "Uploaded data successfully: changed %(changed)d and added %(added)d "
-#~ "records"
-#~ msgstr ""
-#~ "Datos cargados correctamente: cambiado %(changed)d y agregado %(added)d "
-#~ "registros"
-
-#~ msgid "More records exists. Only %(limit)s are shown."
-#~ msgstr "Más registros existen. Sólo %(limit)s se muestran."
-
-#~ msgid ""
-#~ "Welcome to frePPLe, the world's leading open source production planning "
-#~ "tool!<br/><br/>\n"
-#~ "How to get started?\n"
-#~ "<ol><li>Start the <span class=\"underline\"><a href=\"javascript:void(0);"
-#~ "\" onclick=\"tour.start('0,0,0'); return false;\">guided tour</a></span></"
-#~ "li>\n"
-#~ "<li>Check out the <span class=\"underline\"><a href=\"%(docurl)s\" target="
-#~ "\"_blank\">documentation</a></span></li>\n"
-#~ "<li>Visit and join the <span class=\"underline\"><a href=\"http://groups."
-#~ "google.com/group/frepple-users\" target=\"_blank\">user community</a></"
-#~ "span></li>\n"
-#~ "<li><span class=\"underline\"><a href=\"https://frepple.com/contact/\" "
-#~ "target=\"_blank\">Contact us</a></span></li>\n"
-#~ "</ol>\n"
-#~ msgstr ""
-#~ "Bienvenido a frePPLe, la principal herramienta de planificación de "
-#~ "producción de código abierto del mundo!<br/><br/>\n"
-#~ "¿Cómo empezar?\n"
-#~ "<ol><li>Inicie la <span class=\"underline\"><a href=\"javascript:void(0);"
-#~ "\" onclick=\"tour.start('0,0,0'); return false;\">visita guiada</a></"
-#~ "span></li>\n"
-#~ "<li>Echa un vistazo a la <span class=\"underline\"><a href=\"%(docurl)s\" "
-#~ "target=\"_blank\">documentation</a>documentación</a></span></li>\n"
-#~ "<li>Puedes visitar y unirte a la<span class=\"underline\"><a href="
-#~ "\"http://groups.google.com/group/frepple-users\" target=\"_blank"
-#~ "\">comunidad de usuarios</a></span></li>\n"
-#~ "<li><span class=\"underline\"><a href=\"http://frepple.com/contact/\" "
-#~ "target=\"_blank\">Puedes contactarnos</a></span></li>\n"
-#~ "</ol>\n"
-
-#~ msgid "Get started quick and easy to fill out the data tables"
-#~ msgstr ""
-#~ "Empieza a trabajar rápido y fácil para llenar la información de las tablas"
-
-#~ msgid "Start the web service."
-#~ msgstr "Iniciar servicio web."
-
-#~ msgid "Stop"
-#~ msgstr "Detener"
-
-#~ msgid "Stop the web service."
-#~ msgstr "Detener servicio web."
-
-#~ msgid "Export frePPLe plan to the ERP."
-#~ msgstr "Exportar plan de frePPLe a ERP."
-
-#~ msgid ""
-#~ "<label data-toggle=\"tooltip\" data-placement=\"bottom\" data-original-"
-#~ "title=\"Filter parameters define which transactions are getting exported"
-#~ "\">"
-#~ msgstr ""
-#~ "<label data-toggle=\"tooltip\" data-placement=\"bottom\" data-original-"
-#~ "title=\"Los parámetros de filtro definen qué transacciones se exportan\">"
-
-#~ msgid "Apply filter parameters."
-#~ msgstr "Aplicar filtros de los parámetros"
-
-#~ msgid "Import Odoo data into frePPLe."
-#~ msgstr "Importar los datos de Odoo en frePPLe."
-
-#~ msgid "forecast adjustment"
-#~ msgstr "ajuste de pronóstico"
-
-#~ msgid "stockout risk"
-#~ msgstr "riesgo de agotamiento de existencias"
-
-#~ msgid ""
-#~ "Display how well the current inventory position covers the forecasted "
-#~ "demand"
-#~ msgstr ""
-#~ "Mostrar cómo la posición del inventario actual cubre el pronóstico de la "
-#~ "demanda"
-
-#~ msgid "price"
-#~ msgstr "precio"
-
-#~ msgid "Selling price of the item"
-#~ msgstr "Precio de venta del ítem"
-
-#~ msgid "Default"
-#~ msgstr "Por defecto"
-
-#~ msgid "Infinite"
-#~ msgstr "Infinito"
-
-#~ msgid "Use this forecast for planning"
-#~ msgstr "Use este pronóstico para planificar"
-
-#~ msgid "Distribution planning"
-#~ msgstr "Planificación de distribución"
-
-#~ msgid "Reorder quantity"
-#~ msgstr "Cantidad de reorden"
-
-#~ msgid "ROQ type"
-#~ msgstr "REAP tipo"
-
-#~ msgid "ROQ multiple quantity"
-#~ msgstr "REAP cantidad compra multiple"
-
-#~ msgid "safety stock type"
-#~ msgstr "Tipo de inventario de seguridad"
-
-#~ msgid "safety stock multiple quantity"
-#~ msgstr "inventario de seguridad de cantidad multiple"
-
-#~ msgid "starting inventory"
-#~ msgstr "inventario inicial"
-
-#~ msgid "ending inventory"
-#~ msgstr "inventario final"
-
-#~ msgctxt "forecast method"
-#~ msgid "Manual"
-#~ msgstr "Manual"
-
-#~ msgid "don't stock"
-#~ msgstr "no hacer inventario"
-
-#~ msgid "Inventory by location"
-#~ msgstr "Inventario por ubicación"
-
-#~ msgid "Quotes"
-#~ msgstr "Cotizaciones"
-
-#~ msgid "Alternates"
-#~ msgstr "Alternativas"
-
-#~ msgid "Demands"
-#~ msgstr "demandas"
-
-#~ msgid "Free"
-#~ msgstr "Libre"
-
-#~ msgid "Busy"
-#~ msgstr "Ocupado"
-
-#~ msgid "Cockpit"
-#~ msgstr "Cockpit"
-
-#~ msgid "Language"
-#~ msgstr "Idioma"
-
-#~ msgid "Safety stock"
-#~ msgstr "Inventario de seguridad"
-
-#~ msgid "Buckets"
-#~ msgstr "Intervalos"
-
-#~ msgid "Supply path"
-#~ msgstr "Ruta de suministro"
-
-#~ msgid "Where Used"
-#~ msgstr "Dónde se utiliza"
-
-#~ msgid "Supply Path"
-#~ msgstr "Ruta de Suministro"
-
-#~ msgid "Expected format \"DD HH:MM:SS\", \"HH:MM:SS\", \"MM:SS\" or \"SS\""
-#~ msgstr "Formato esperado \"DD HH:MM:SS\", \"HH:MM:SS\", \"MM:SS\" o \"SS\""
-
-#~ msgid ""
-#~ "<span data-toggle=\"tooltip\" data-placement=\"top\" title = \"Compute "
-#~ "the statistical sales forecast\" >Generate forecast</span>"
-#~ msgstr ""
-#~ "<span data-toggle=\"tooltip\" data-placement=\"top\" title = \"Calcular "
-#~ "la previsión estadística de ventas\" >Generar previsión</span>"
-
-#~ msgid ""
-#~ "<span data-toggle=\"tooltip\" data-placement=\"top\" title=\"Compute the "
-#~ "safety stock and reorder points\">Generate inventory planning parameters</"
-#~ "span>"
-#~ msgstr ""
-#~ "<span data-toggle=\"tooltip\" data-placement=\"top\"  title=\"Calcular "
-#~ "inventario de seguridad y puntos de creacción de nuevas órdenes\">Generar "
-#~ "parametros de planificación de inventario</span>"
-
-#~ msgid ""
-#~ "<span data-toggle=\"tooltip\" data-placement=\"top\" title=\"Scan for "
-#~ "expected inventory stockouts\">Evaluate stock position</span>"
-#~ msgstr ""
-#~ "<span data-toggle=\"tooltip\" data-placement=\"top\" title=\"Buscar "
-#~ "agotamientos de inventario previstos\">Evaluar posición de stock</span>"
-
-#~ msgid ""
-#~ "<b data-toggle=\"tooltip\" data-placement=\"top\" data-html=\"true\" "
-#~ "title=\"The planning engine is normally shut down after generating the "
-#~ "plan.<br>With this option you can keep the plan active in memory as a web "
-#~ "service, which is used for order quoting and interactive planning.\">Web "
-#~ "service</b>"
-#~ msgstr ""
-#~ "<b data-toggle=\"tooltip\" data-placement=\"top\" data-html=\"true\" "
-#~ "title = \"El motor de la planificación es normalmente cerrado después de "
-#~ "generar el plan.<br>Con esta opción se puede mantener el plan activo en "
-#~ "la memoria como un servicio web, que se utiliza para la cotización de "
-#~ "órdenes y la planificación interactiva.\" > Servicio web </ b>"
-
-#~ msgid "Keep active in memory"
-#~ msgstr "Mantenerse activo en la memoria"
-
-#~ msgid ""
-#~ "\n"
-#~ "\t\t\t\t              <b data-toggle=\"tooltip\" data-html=\"true\" data-"
-#~ "original-title=\"A live data source allows your frePPLe plan to be 100%% "
-#~ "in sync with data in an external system.<br>\n"
-#~ "FrePPLe will read data from them before planning.<br>\n"
-#~ "And after the plan is generated frePPLe directly exports the results to "
-#~ "them.<br>\n"
-#~ "FrePPLe also saves a copy of the data in its own database for reporting."
-#~ "\">Live data sources</b>\n"
-#~ "\t\t\t\t          "
-#~ msgstr ""
-#~ "\n"
-#~ "\t\t\t\t              <b data-toggle=\"tooltip\" data-html=\"true\" data-"
-#~ "original-title=\"Una fuente de datos en vivo permite a sus planes estar "
-#~ "100%% en sincronía con los datos en un sistema externo.<br>\n"
-#~ "FrePPLe leerá datos de ellos antes de la planificación.<br>\n"
-#~ "Y después de que el plan de es generada frePPLe exporta directamente los "
-#~ "resultados para ellos.<br>\n"
-#~ "FrePPLe también guarda una copia de los datos en su propia base de datos "
-#~ "para los informes.\">Fuentes de datos en vivo</ b>\n"
-#~ "\t\t\t\t          "
-
-#~ msgid "read"
-#~ msgstr "leer"
-
-#~ msgid "write"
-#~ msgstr "escribir"
-
-#~ msgid "forecast editor"
-#~ msgstr "editor de previsiones"
-
-#~ msgid "Missing primary key field %(key)s"
-#~ msgstr "Falta campo de clave principal %(key)s"
-
-#~ msgid "Planning parameters for procurement buffers"
-#~ msgstr "Parámetros de planeación para los colchones de compra"
-
-#~ msgid "gantt chart"
-#~ msgstr "diagrama de gantt"
-
-#~ msgid "Default operation used to ship a demand for this item"
-#~ msgstr ""
-#~ "Operación por defecto utilizada para enviar una demanda para este artículo"
-
-#~ msgid "Procure"
-#~ msgstr "Procurar"
-
-#~ msgid "Operation to replenish the buffer"
-#~ msgstr "Operación para rellenar la reserva"
-
-#~ msgid "leadtime"
-#~ msgstr "Tiempos de espera"
-
-#~ msgid "Leadtime for supplier of a procure buffer"
-#~ msgstr "Plazo de proveedor de una reserva"
-
-#~ msgid "min_inventory"
-#~ msgstr "inventario_mínimo"
-
-#~ msgid "Inventory level that triggers replenishment of a procure buffer"
-#~ msgstr "Nivel de inventario que desencadena la reposición de una reserva"
-
-#~ msgid "max_inventory"
-#~ msgstr "inventario_máximo"
-
-#~ msgid "Inventory level to which a procure buffer is replenished"
-#~ msgstr "Nivel de inventario a la que se repone una reserva de adquisición"
-
-#~ msgid "Minimum time interval between replenishments of a procure buffer"
-#~ msgstr ""
-#~ "Intervalo de tiempo mínimo entre reposiciones de una reserva de "
-#~ "adquisición"
-
-#~ msgid "max_interval"
-#~ msgstr "intervalo_máximo"
-
-#~ msgid "Maximum time interval between replenishments of a procure buffer"
-#~ msgstr ""
-#~ "Intervalo de tiempo máximo entre reposiciones de una reserva de "
-#~ "adquisición"
-
-#~ msgid "size_minimum"
-#~ msgstr "tamaño_mínimo"
-
-#~ msgid "Minimum size of replenishments of a procure buffer"
-#~ msgstr "Tamaño mínimo de los rellenos de una reserva de adquisición"
-
-#~ msgid "size_multiple"
-#~ msgstr "tamaño_múltiple"
-
-#~ msgid "Replenishments of a procure buffer are a multiple of this quantity"
-#~ msgstr "Reposiciones de una reserva son múltiplos de esta cantidad"
-
-#~ msgid "size_maximum"
-#~ msgstr "tamaño_máximo"
-
-#~ msgid "Maximum size of replenishments of a procure buffer"
-#~ msgstr "Tamaño máximo de los rellenos de una reservas procurar"
-
-#~ msgid "Optional name of this flow"
-#~ msgstr "Nombre opcional de este flujo"
-
-#~ msgid "Puts the flow in a group of alternate flows"
-#~ msgstr "Pone el flujo en un grupo de flujos alternativos"
-
-#~ msgid "Priority of this flow in a group of alternates"
-#~ msgstr "Prioridad de este flujo en un grupo de alternos"
-
-#~ msgid "flow"
-#~ msgstr "flujo"
-
-#~ msgid "flows"
-#~ msgstr "flujos"
-
-#~ msgid "Puts the load in a group of alternate loads"
-#~ msgstr "Pone la carga en un grupo de cargas alternas"
-
-#~ msgid "loads"
-#~ msgstr "cargas"
-
-#~ msgid "consume material"
-#~ msgstr "consumir materiales"
-
-#~ msgid "Consume material at origin location"
-#~ msgstr "Consumir materiales en la ubicación de origen"
-
-#~ msgid "export to odoo"
-#~ msgstr "exportar a oodo"
-
-#~ msgid "incremental export to openbravo"
-#~ msgstr "exportación incremental a openbravo"
-
-#~ msgid "locked"
-#~ msgstr "bloqueado"
-
-#~ msgid "loadplan"
-#~ msgstr "plan de carga"
-
-#~ msgid "loadplans"
-#~ msgstr "planes de carga"
-
-#~ msgid "flowplan"
-#~ msgstr "plan de flujo"
-
-#~ msgid "flowplans"
-#~ msgstr "planes de flujo"
-
-#~ msgid "demand pegging"
-#~ msgstr "origen de la demanda"
-
-#~ msgid "demand peggings"
-#~ msgstr "origenes de la demanda"
-
-#~ msgid "locked ends"
-#~ msgstr "fines trabados"
-
-#~ msgid "new starts"
-#~ msgstr "nuevas inicias"
-
-#~ msgid "new ends"
-#~ msgstr "nuevos fines"
-
-#~ msgctxt "Gantt"
-#~ msgid "move out"
-#~ msgstr "salir de"
-
-#~ msgid "reset"
-#~ msgstr "restaurar"
-
-#~ msgid "Operation detail report"
-#~ msgstr "Informe de detalle de operaciones"
-
-#~ msgid "Resource Gantt report"
-#~ msgstr "Informe de Recursos (Gantt)"
-
-#~ msgid "Planning board"
-#~ msgstr "Tabla de planificación"
-
-#~ msgid "move out"
-#~ msgstr "salir de"
-
-#~ msgid "chart"
-#~ msgstr "diagrama"
-
-#~ msgid "plan selected demands backward from their due date"
-#~ msgstr "planificación de las demandas seleccionadas antes de fecha limite"
-
-#~ msgid "plan selected demands forward from the current date"
-#~ msgstr ""
-#~ "planificación de las demandas seleccionadas después de la fecha de hoy"
-
-#~ msgid "Add to the graph"
-#~ msgstr "Añadir al gráfico"
-
-#~ msgid "send"
-#~ msgstr "enviar"
-
-#~ msgid "deliveries"
-#~ msgstr "entregas"
-
-#~ msgid "Time"
-#~ msgstr "Tiempo"
-
-#~ msgid "confirm"
-#~ msgstr "confirmar"
-
-#~ msgid "forecast demand"
-#~ msgstr "pronóstico demanda"
-
-#~ msgid "forecast demands"
-#~ msgstr "pronóstico demandas"
-
-#~ msgid "forecasted demand"
-#~ msgstr "previsión de demanda"
-
-#~ msgid "Demand List"
-#~ msgstr "Lista de órdenes"
-
-#~ msgid "pegging"
-#~ msgstr "fijación "
-
-#~ msgid "Theme for the user interface"
-#~ msgstr "Tema para la interfaz de usuario"
-
-#~ msgid "constrained operation"
-#~ msgstr "opreración restringida"
-
-#~ msgid "Available datasets:"
-#~ msgstr "Series de datos disponibles:"
-
-#~ msgid ""
-#~ "Create time buckets for reporting.<br>\n"
-#~ "Start date: <input class=\"date\" name=\"start\" type=\"text\" maxlength="
-#~ "\"5\" size=\"12\"/><br>\n"
-#~ "End date: <input class=\"date\" name=\"end\" type=\"text\" maxlength="
-#~ "\"5\" size=\"12\"/><br>\n"
-#~ "Week starts on: <select name=\"weekstart\">\n"
-#~ "<option value=\"0\">Sunday</option>\n"
-#~ "<option value=\"1\" selected=\"selected\">Monday</option>\n"
-#~ "<option value=\"2\">Tuesday</option>\n"
-#~ "<option value=\"3\">Wednesday</option>\n"
-#~ "<option value=\"4\">Thursday</option>\n"
-#~ "<option value=\"5\">Friday</option>\n"
-#~ "<option value=\"6\">Saturday</option>\n"
-#~ "</select>\n"
-#~ msgstr ""
-#~ "Crear intervalos de tiempo para informes.<br>\n"
-#~ "Fecha de inicio: <input class=\"date\" name=\"start\" type=\"text\" "
-#~ "maxlength=\"5\" size=\"12\"/><br>\n"
-#~ "Fecha de fin: <input class=\"date\" name=\"end\" type=\"text\" maxlength="
-#~ "\"5\" size=\"12\"/><br>\n"
-#~ "La semana empieza el: <select name=\"weekstart\">\n"
-#~ "<option value=\"0\">Domingo</option>\n"
-#~ "<option value=\"1\" selected=\"selected\">Lunes</option>\n"
-#~ "<option value=\"2\">Martes</option>\n"
-#~ "<option value=\"3\">Miércoles</option>\n"
-#~ "<option value=\"4\">Jueves</option>\n"
-#~ "<option value=\"5\">Viernes</option>\n"
-#~ "<option value=\"6\">Sábado</option>\n"
-#~ "</select>\n"
-
-#~ msgid "Generate model"
-#~ msgstr "Generar modelo"
-
-#~ msgid ""
-#~ "Create a sample model in the database.<br>\n"
-#~ "The parameters control the size and complexity.<br>\n"
-#~ "Number of end items: <input id=\"create0\" name=\"clusters\" type=\"text"
-#~ "\" maxlength=\"5\" size=\"5\" value=\"100\" onchange=\"calcUtil()\"/"
-#~ "><br>\n"
-#~ "<b>Demand:</b><br>\n"
-#~ "&nbsp;&nbsp;Monthly forecast per end item: <input id=\"create1\" name="
-#~ "\"fcst\" type=\"text\" maxlength=\"4\" size=\"4\" value=\"50\" onchange="
-#~ "\"calcUtil()\"/><br>\n"
-#~ "&nbsp;&nbsp;Demands per end item: <input id=\"create2\" name=\"demands\" "
-#~ "type=\"text\" maxlength=\"4\" size=\"4\" value=\"30\" onchange="
-#~ "\"calcUtil()\"/><br>\n"
-#~ "&nbsp;&nbsp;Average delivery lead time: <input id=\"create3\" name="
-#~ "\"deliver_lt\" type=\"text\" maxlength=\"4\" size=\"4\" value=\"30\" "
-#~ "onchange=\"calcUtil()\"/> days<br>\n"
-#~ "<b>Raw Materials:</b><br>\n"
-#~ "&nbsp;&nbsp;Depth of bill-of-material: <input id=\"create4\" name=\"levels"
-#~ "\" type=\"text\" maxlength=\"2\" size=\"2\" value=\"5\" onchange="
-#~ "\"calcUtil()\"/><br>\n"
-#~ "&nbsp;&nbsp;Total number of components: <input id=\"create5\" name="
-#~ "\"components\" type=\"text\" maxlength=\"5\" size=\"5\" value=\"200\" "
-#~ "onchange=\"calcUtil()\"/><br>\n"
-#~ "&nbsp;&nbsp;Number of components per end item: <input id=\"create6\" name="
-#~ "\"components_per\" type=\"text\" maxlength=\"5\" size=\"5\" value=\"4\" "
-#~ "onchange=\"calcUtil()\"/><br>\n"
-#~ "&nbsp;&nbsp;Average procurement lead time: <input id=\"create7\" name="
-#~ "\"procure_lt\" type=\"text\" maxlength=\"4\" size=\"4\" value=\"40\" "
-#~ "onchange=\"calcUtil()\"/> days<br>\n"
-#~ "<b>Capacity:</b><br>\n"
-#~ "&nbsp;&nbsp;Number of resources: <input id=\"create8\" name=\"rsrc_number"
-#~ "\" type=\"text\" maxlength=\"3\" size=\"3\" value=\"60\" onchange="
-#~ "\"calcUtil()\"/><br>\n"
-#~ "&nbsp;&nbsp;Size of each resource: <input id=\"create9\" name=\"rsrc_size"
-#~ "\" type=\"text\" maxlength=\"3\" size=\"3\" value=\"5\" onchange="
-#~ "\"calcUtil()\"/><br>\n"
-#~ "&nbsp;&nbsp;Expected average resource utilization: <span id=\"util"
-#~ "\">76.7</span>&#37;<br>\n"
-#~ msgstr ""
-#~ "Crear un modelo sencillo en la base de datos.<br>\n"
-#~ "Los parametros controlan tamaño y complejidad.<br>\n"
-#~ "Número de articulos finales: <input id=\"create0\" name=\"clusters\" type="
-#~ "\"text\" maxlength=\"5\" size=\"5\" value=\"100\" onchange=\"calcUtil()\"/"
-#~ "><br>\n"
-#~ "<b>Demanda:</b><br>\n"
-#~ "&nbsp;&nbsp;Prevision mensual por articulo final: <input id=\"create1\" "
-#~ "name=\"fcst\" type=\"text\" maxlength=\"4\" size=\"4\" value=\"50\" "
-#~ "onchange=\"calcUtil()\"/><br>\n"
-#~ "&nbsp;&nbsp;Demandas por articulo final: <input id=\"create2\" name="
-#~ "\"demands\" type=\"text\" maxlength=\"4\" size=\"4\" value=\"30\" "
-#~ "onchange=\"calcUtil()\"/><br>\n"
-#~ "&nbsp;&nbsp;Tiempo médio de entrega: <input id=\"create3\" name="
-#~ "\"deliver_lt\" type=\"text\" maxlength=\"4\" size=\"4\" value=\"30\" "
-#~ "onchange=\"calcUtil()\"/> days<br>\n"
-#~ "<b>Materias primas:</b><br>\n"
-#~ "&nbsp;&nbsp;Profundidad de la lista de materiales: <input id=\"create4\" "
-#~ "name=\"levels\" type=\"text\" maxlength=\"2\" size=\"2\" value=\"5\" "
-#~ "onchange=\"calcUtil()\"/><br>\n"
-#~ "&nbsp;&nbsp;Número total de componentes: <input id=\"create5\" name="
-#~ "\"components\" type=\"text\" maxlength=\"5\" size=\"5\" value=\"200\" "
-#~ "onchange=\"calcUtil()\"/><br>\n"
-#~ "&nbsp;&nbsp;Número de componentes por articulo final: <input id="
-#~ "\"create6\" name=\"components_per\" type=\"text\" maxlength=\"5\" size="
-#~ "\"5\" value=\"4\" onchange=\"calcUtil()\"/><br>\n"
-#~ "&nbsp;&nbsp;Tiempo médio de adquisición: <input id=\"create7\" name="
-#~ "\"procure_lt\" type=\"text\" maxlength=\"4\" size=\"4\" value=\"40\" "
-#~ "onchange=\"calcUtil()\"/> días<br>\n"
-#~ "<b>Capacidad:</b><br>\n"
-#~ "&nbsp;&nbsp;Número de recursos: <input id=\"create8\" name=\"rsrc_number"
-#~ "\" type=\"text\" maxlength=\"3\" size=\"3\" value=\"60\" onchange="
-#~ "\"calcUtil()\"/><br>\n"
-#~ "&nbsp;&nbsp;Tamaño de cada recurso: <input id=\"create9\" name=\"rsrc_size"
-#~ "\" type=\"text\" maxlength=\"3\" size=\"3\" value=\"5\" onchange="
-#~ "\"calcUtil()\"/><br>\n"
-#~ "&nbsp;&nbsp;Utilización média expectada de recursos: <span id=\"util"
-#~ "\">76.7</span>&#37;<br>\n"
-
-#~ msgid "Export as CSV or Excel file"
-#~ msgstr "Exportar como CSV o archivo de Excel"
-
-#~ msgctxt "forecast method"
-#~ msgid "automatic"
-#~ msgstr "automático"
-
-#~ msgctxt "forecast method"
-#~ msgid "constant"
-#~ msgstr "constante"
-
-#~ msgctxt "forecast method"
-#~ msgid "trend"
-#~ msgstr "tendencia"
-
-#~ msgctxt "forecast method"
-#~ msgid "seasonal"
-#~ msgstr "temporal"
-
-#~ msgctxt "forecast method"
-#~ msgid "intermittent"
-#~ msgstr "intermitente"
-
-#~ msgctxt "forecast method"
-#~ msgid "moving average"
-#~ msgstr "média móvil"
-
-#~ msgctxt "forecast method"
-#~ msgid "manual"
-#~ msgstr "manual"
-
-#~ msgid "statistical distribution"
-#~ msgstr "distribución estadística"
-
-#~ msgid "automatic"
-#~ msgstr "automático"
-
-#~ msgctxt "statistical distribution"
-#~ msgid "normal"
-#~ msgstr "normal"
-
-#~ msgctxt "statistical distribution"
-#~ msgid "poisson"
-#~ msgstr "poisson"
-
-#~ msgctxt "statistical distribution"
-#~ msgid "negative binomial"
-#~ msgstr "binomial negativa"
-
-#~ msgid ""
-#~ "Make a GET request on the %(model)s object with the format set to "
-#~ "%(rqformat)s"
-#~ msgstr "Hacer pedido GET en el objeto %(model)s con formato %(rqformat)s"
-
-#~ msgid "Make a GET request on the %(model)s object"
-#~ msgstr "Hacer pedido GET para ler objeto(s) %(model)s"
-
-#~ msgid ""
-#~ "Make a POST request in raw format to create one or more new %(model)s "
-#~ "objects"
-#~ msgstr ""
-#~ "Hacer pedido POST en formato RAW para criar uno o mas nuevos objetos "
-#~ "%(model)s"
-
-#~ msgid "Safety stock type"
-#~ msgstr "tipo de inventario de seguridad"
-
-#~ msgid "Inquiry"
-#~ msgstr "Indagación"
-
-#~ msgid "Quote"
-#~ msgstr "Cotización"
-
-#~ msgid "Open"
-#~ msgstr "Abierto"
-
-#~ msgid "Proposed"
-#~ msgstr "Propuesto"
-
-#~ msgid "plandetails"
-#~ msgstr "detalle del plan"
-
-#~ msgid "Constraint Report"
-#~ msgstr "Informe de restricciones"
-
-#~ msgid "Problem Report"
-#~ msgstr "Informe de problemas"
-
-#, fuzzy
-#~| msgid "resource"
-#~ msgid "Resource"
-#~ msgstr "recurso"
-
-#, fuzzy
-#~| msgid "buffer"
-#~ msgid "Buffer"
-#~ msgstr "reserva"
-
-#, fuzzy
-#~| msgid "operation"
-#~ msgid "Operation"
-#~ msgstr "operación"
-
-#~ msgid "Edit"
-#~ msgstr "Editar"
-
-#~ msgid "Comments"
-#~ msgstr "Comentarios"
-
-#~ msgid "Plan"
-#~ msgstr "Plan"
-
-#~ msgid "Constraints"
-#~ msgstr "Restricciones"
-
-#~ msgid "Copy"
-#~ msgstr "Copiar"
-
-#, fuzzy
-#~| msgid "location"
-#~ msgid "Select action"
-#~ msgstr "ubicación"
-
-#~ msgid "Edit availability"
-#~ msgstr "Editar disponibilidad"
-
-#~ msgid "Input"
-#~ msgstr "Entrada"
-
-#~ msgid "Reports"
-#~ msgstr "Informes"
-
-#~ msgid "telescope"
-#~ msgstr "telescopio"
-
-#~ msgid "Parameter List"
-#~ msgstr "Lista de parámetros"
-
-#~ msgid "Bucket List"
-#~ msgstr "Lista de intervalo"
-
-#~ msgid "Bucket Detail List"
-#~ msgstr "Detalle de lista intervalo"
-
-#~ msgid "Forecast List"
-#~ msgstr "Lista de pronósticos"
-
-#~ msgid "Forecasted Demand List"
-#~ msgstr "Lista de demandas pronosticadas"
-
-#~ msgid "carrying cost"
-#~ msgstr "los gastos de almacenamiento"
-
-#~ msgid ""
-#~ "Cost of holding inventory in this buffer, expressed as an annual "
-#~ "percentage of the item price."
-#~ msgstr ""
-#~ "El costo de mantener inventario en esta reserva, expresado como un "
-#~ "porcentaje anual del precio del artículo."
-
-#~ msgid "Prevent or allow changes"
-#~ msgstr "Prevenir o permitir cambios"
-
-#~ msgid "Setup Matrix List"
-#~ msgstr "Lista matrices de preparación"
-
-#~ msgid "Resource List"
-#~ msgstr "Lista de recursos"
-
-#~ msgid "Customer List"
-#~ msgstr "Lista de clientes"
-
-#~ msgid "Item List"
-#~ msgstr "Lista de artículos"
-
-#~ msgid "Skill List"
-#~ msgstr "Lista de habilidades"
-
-#~ msgid "Resource skill List"
-#~ msgstr "Lista de habilidad recursos"
-
-#~ msgid "Load List"
-#~ msgstr "Lista de cargas"
-
-#~ msgid "Flow List"
-#~ msgstr "Lista de flujos"
-
-#~ msgid "Calendar Bucket List"
-#~ msgstr "Lista de intervalo"
-
-#~ msgid "Operation List"
-#~ msgstr "Lista de operaciones"
-
-#~ msgid "Suboperation List"
-#~ msgstr "Lista de Suboperaciones"
-
-#~ msgid "Operationplan List"
-#~ msgstr "Lista de planes de operaciones"
-
-#~ msgid "Display a list of customer orders and their shipping date"
-#~ msgstr "Muestre una lista de órdenes de cliente y su fecha de envío"
-
-#~ msgid "Pegging report"
-#~ msgstr "Informe de pegging"
-
-#~ msgid ""
-#~ "File upload aborted with errors: changed %(changed)d and added %(added)d "
-#~ "records"
-#~ msgstr ""
-#~ "Errores al cargar archivo: ha cambiado %(changed)d registros y agregado "
-#~ "%(added)d registros"
-
-#~ msgid ""
-#~ "Uploaded file processed with warnings: changed %(changed)d and added "
-#~ "%(added)d records"
-#~ msgstr ""
-#~ "Ha processado con advertencias el archivo cargado: ha cambiado "
-#~ "%(changed)d registros y ha agregado %(added)d registros"
-
-#~ msgid "seconds"
-#~ msgstr "segundos"
-
-#~ msgid "minutes"
-#~ msgstr "minutos"
-
-#~ msgid "Application tour"
-#~ msgstr "Demostración"
-
-#~ msgid "Give us feedback!"
-#~ msgstr "Envíenos sus comentarios!"
-
-#~ msgid "graph"
-#~ msgstr "grafiek"
-
-#~ msgid "pre-op time"
-#~ msgstr "pre-operatie tijd"
-
-#~ msgid ""
-#~ "A delay time to be respected as a soft constraint before starting the "
-#~ "operation"
-#~ msgstr ""
-#~ "Een wachttijd voor de start van een operatie die wordt gerespecteerd als "
-#~ "een soft constraint"
-
-#~ msgid "consuming date"
-#~ msgstr "consumptiedatum"
-
-#~ msgid "producing operationplan"
-#~ msgstr "productie operatie"
-
-#~ msgid "quantity buffer"
-#~ msgstr "waarde"
-
-#, fuzzy
-#~ msgid ""
-#~ "frePPLe needs Adobe Flash Player to display graphs. If you're unable to "
-#~ "see\n"
-#~ "\t  the chart here, it means that your browser does not seem to have the "
-#~ "Flash Player\n"
-#~ "\t  installed.<br/>\n"
-#~ "\t  You can downloaded it <a href=\"http://www.adobe.com/products/"
-#~ "flashplayer/\" target=\"_blank\"><u>here</u></a> for free."
-#~ msgstr ""
-#~ "frePPLe gebruikt Adobe Flash Player om grafieken weer te geven. Wanneer "
-#~ "hier geen grafiek \n"
-#~ "\t  wordt getoond heb je waarschijnlijk de Flash Player niet "
-#~ "geinstalleerd<br/>\n"
-#~ "\t  Je kan deze gratis downloaden van <a href=\"http://www.adobe.com/"
-#~ "products/flashplayer/\" target=\"_blank\"><u>deze site</u></a>."
-
-#~ msgid "Problems"
-#~ msgstr "Problemas"
-
-#~ msgid "log entries"
-#~ msgstr "entradas en registro"
-
-#~ msgid "log entry"
-#~ msgstr "entrada en registro"
-
-#~ msgid "Only POST method allowed"
-#~ msgstr "Sólo POST es permitido"
-
-#~ msgid "Failure during database erasing: %(msg)s"
-#~ msgstr "Error al vaciar base de datos: %(msg)s"
-
-#~ msgid "Created sample model in the database"
-#~ msgstr "Modelo muestra creado en la base de datos"
-
-#~ msgid "Failure during sample model creation: %(msg)s"
-#~ msgstr "Problema al crear el modelo muestra: %(msg)s"
-
-#~ msgid "Successfully created a plan"
-#~ msgstr "Ha creado con éxito un plan"
-
-#~ msgid "Missing dataset name"
-#~ msgstr "Conjunto de datos sin nombre"
-
-#~ msgid "Loaded dataset"
-#~ msgstr "Conjunto de datos cargado"
-
-#~ msgid "Error while loading dataset: %(msg)s"
-#~ msgstr "Error al cargar conjunto de datos: %(msg)s"
-
-#~ msgid "Command log"
-#~ msgstr "Historico de mandos"
-
-#~ msgid "Updated scenario '%(scenario)s'"
-#~ msgstr "Scenario '%(scenario)s' updated"
-
-#~ msgid "Successfully copied scenario '%(source)s' to '%(destination)s'"
-#~ msgstr ""
-#~ "Ha copiado con éxito desde escenario '%(source)s' hacie '%(destination)s'"
-
-#~ msgid "Failure copying scenario '%(source)s' to '%(destination)s'"
-#~ msgstr ""
-#~ "Error al copiar desde escenario '%(source)s' hacie '%(destination)s'"
-
-#~ msgid "Released scenario '%(scenario)s'"
-#~ msgstr "Scenario '%(scenario)s' vrijgegeven"
-
-#~ msgid "Invalid action"
-#~ msgstr "Acción no válida"
-
-#~ msgid "Start copying database '%(source)s' to '%(destination)s'"
-#~ msgstr "Empezar a copiar datos desde '%(source)s' hacie '%(destination)s'"
-
-#~ msgid "Finished copying database '%(source)s' to '%(destination)s'"
-#~ msgstr ""
-#~ "Ha finalizado copiar datos desde '%(source)s' hacie '%(destination)s'"
-
-#~ msgid "Failed copying database '%(source)s' to '%(destination)s'"
-#~ msgstr "Error al copiar datos desde '%(source)s' hacie '%(destination)s'"
-
-#~ msgid "Start initializing dates"
-#~ msgstr "Empezar inicialización de fechas"
-
-#~ msgid "Finished initializing dates"
-#~ msgstr "Ha finalizado inicialización de fechas"
-
-#~ msgid "Failure initializing dates"
-#~ msgstr "Problema con inicialización de fechas"
-
-#~ msgid "Start creating sample model with parameters"
-#~ msgstr "Empezar creación modelo muestra con parámetros"
-
-#~ msgid "Finished creating sample model"
-#~ msgstr "Ha finalizado creación modelo muestra"
-
-#~ msgid "Failure creating sample model"
-#~ msgstr "Problema con creación modelo muestra"
-
-#~ msgid "Start erasing the database"
-#~ msgstr "Empezar a vaciar base de datos"
-
-#~ msgid "Finished erasing the database"
-#~ msgstr "Ha finalizado vaciar base de datos"
-
-#~ msgid "Failed erasing the database"
-#~ msgstr "Problema al vaciar base de datos"
-
-#~ msgid "Loading XML data file in the database"
-#~ msgstr "Cargar un archivo de datos XML en la base de datos"
-
-#~ msgid "Finished loading XML data file in the database"
-#~ msgstr "Ha finalizado de cargar un archivo de datos XML en la base de datos"
-
-#~ msgid "Failure loading XML data file in the database"
-#~ msgstr "Error al cargar un archivo de datos XML en la base de datos"
-
-#~ msgid ""
-#~ "Start creating frePPLe plan of type %(plantype)d and constraints "
-#~ "%(constraint)d"
-#~ msgstr "Empezar a crear plan frePPLe de tipo %(plantype)d y %(constraint)d"
-
-#~ msgid "Finished creating frePPLe plan"
-#~ msgstr "Ha finalizado de crear plan frePPLe"
-
-#~ msgid "Failure when creating frePPLe plan"
-#~ msgstr "Problema al crear plan frePPLe"
-
-#~ msgid "duration_per"
-#~ msgstr "duración por"
-
-#~ msgid "total quantity"
-#~ msgstr "cantidad total"
-
-#~ msgid "percent_used"
-#~ msgstr "porcentage de utilización"
-
-#~ msgid "Demand detail report"
-#~ msgstr "Detalle de plan de demanda"
-
-#~ msgid "Tools"
-#~ msgstr "Herramientas"
-
-#~ msgid "Log"
-#~ msgstr "Historico"
-
-#~ msgid "Action Type"
-#~ msgstr "Tipo de acción"
-
-#~ msgid "Create"
-#~ msgstr "Crear"
-
-#~ msgid "Run"
-#~ msgstr "Executar"
-
-#~ msgid "Database"
-#~ msgstr "Base de datos"
-
-#~ msgid ""
-#~ "<th scope=\"row\" style=\"vertical-align:middle; padding: 15px"
-#~ "\"><a>Erase</a></th>\n"
-#~ "<td>Erase all data from the database.</td>\n"
-#~ "<td><input id=\"erase\" type=\"submit\" value=\"Erase\" /></td>"
-#~ msgstr ""
-#~ "<th scope=\"row\" style=\"vertical-align:middle; padding: 15px"
-#~ "\"><a>Borrar</a></th>\n"
-#~ "<td>Borrar todos los datos en la base de datos.</td>\n"
-#~ "<td><input id=\"erase\" type=\"submit\" value=\"Borrar\" /></td>"
-
-#~ msgid "Load"
-#~ msgstr "Cargar"
-
-#~ msgid "Model generator"
-#~ msgstr "Generador de modelos"
-
-#~ msgid "Time bucket size for reports"
-#~ msgstr "Tamaño de intervalo de tiempo para informes"
-
-#~ msgid "Start date for filtering report data"
-#~ msgstr "Fecha de inicio para filtrar datos de informes"
-
-#~ msgid "frePPLe recent changes"
-#~ msgstr "cambios recientes en frePPLe"
-
-#~ msgid "Changed %(name)s \"%(object)s\"."
-#~ msgstr "Cambio en %(name)s \"%(object)s\"."
-
-#~ msgid "Demand and supply"
-#~ msgstr "Demanda y oferta"

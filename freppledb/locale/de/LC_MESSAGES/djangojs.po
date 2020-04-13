@@ -15,15 +15,15 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-04-04 12:06+0200\n"
-"PO-Revision-Date: 2020-04-04 12:07+0200\n"
+"PO-Revision-Date: 2020-04-13 18:37+0200\n"
 "Last-Translator: Joao Ranita <jranita@frepple.com>\n"
 "Language-Team: klaus\n"
-"Language: de_DE\n"
+"Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 2.0.6\n"
+"X-Generator: Poedit 2.0.1\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 
 #: common/static/js/frepple.js:187 common/static/js/frepple.js:282
@@ -82,7 +82,6 @@ msgid "Click to select record"
 msgstr "Zum Bearbeiten klicken"
 
 #: common/static/js/frepple.js:653 common/static/js/frepple.min.js:11
-#| msgid "Selected options"
 msgid "Select action"
 msgstr ""
 
@@ -213,7 +212,7 @@ msgstr ""
 
 #: common/static/js/frepple.js:1533 common/static/js/frepple.min.js:11
 msgid "days"
-msgstr ""
+msgstr "Tage"
 
 #: common/static/js/frepple.js:1569 common/static/js/frepple.min.js:11
 msgid "Filtered where"
@@ -378,87 +377,3 @@ msgstr ""
 #: input/static/operationplandetail/src/supplypositionpanelDrv.js:63
 msgid "current onhand"
 msgstr "vorhanden"
-
-#~ msgid "Show hints"
-#~ msgstr "Hinweise anzeigen"
-
-#~ msgid "Guided tour"
-#~ msgstr "Geführte Tour"
-
-#~ msgid "Previous"
-#~ msgstr "Zurück"
-
-#~ msgid "Play"
-#~ msgstr "Abspielen"
-
-#~ msgid "Next"
-#~ msgstr "Weiter"
-
-#~ msgid "Pause"
-#~ msgstr "Pause"
-
-#~ msgid "Importing... pressing Close button will not stop the process."
-#~ msgstr "Laden... Drücken von \"Close\" wird den Prozess nicht stoppen"
-
-#~ msgid "problems"
-#~ msgstr "Probleme"
-
-#~ msgid "start"
-#~ msgstr "Start"
-
-#~ msgid "end"
-#~ msgstr "Ende"
-
-#~ msgid "no problems"
-#~ msgstr "Keine Probleme"
-
-#~ msgid "resource"
-#~ msgstr "Ressource"
-
-#~ msgid "quantity"
-#~ msgstr "Menge"
-
-#~ msgid "no resources"
-#~ msgstr "Keine Ressourcen verfügbar"
-
-#~ msgid "buffer"
-#~ msgstr "Puffer"
-
-#~ msgid "date"
-#~ msgstr "Datum"
-
-#~ msgid "no movements"
-#~ msgstr "keine Bewegungen"
-
-#~ msgid "demand"
-#~ msgstr "Nachfrage"
-
-#~ msgid "no demands"
-#~ msgstr "keine Anforderungen"
-
-#~ msgid "Manufacturing Order"
-#~ msgstr "Produktionsauftrag"
-
-#~ msgid "Purchase Order"
-#~ msgstr "Bestellung"
-
-#~ msgid "Distribution Order"
-#~ msgstr "Lieferauftrag"
-
-#~ msgid "Stock"
-#~ msgstr "Lager"
-
-#~ msgid "Delivery"
-#~ msgstr "Lieferung"
-
-#~ msgid "%s allocated out of %s"
-#~ msgstr "%s bereitgestellt von %s"
-
-#~ msgid "remove this demand from planning"
-#~ msgstr "Diesen Anforderung aus Planung entfernen"
-
-#~ msgid "Plan selected demands backward from their due date"
-#~ msgstr "Ausgewählte Forderungen vom Fälligkeitszeitpunkt rückplanen"
-
-#~ msgid "Plan selected demands forward from the current date"
-#~ msgstr "Ausgewählte Forderungen vom aktuellen Zeitpunkt vorwärts planen"

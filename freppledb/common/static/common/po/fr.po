@@ -1,16 +1,28 @@
+# Copyright (C) 2013-2016 by frePPLe bvba
+# This library is free software; you can redistribute it and/or modify it
+# under the terms of the GNU Affero General Public License as published
+# by the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero
+# General Public License for more details.
+# You should have received a copy of the GNU Affero General Public
+# License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: \n"
-"Last-Translator: \n"
-"Language-Team: \n"
+"PO-Revision-Date: 2019-11-15 07:40+0100\n"
+"Last-Translator: Joao Ranita <jranita@frepple.com>\n"
+"Language-Team: frepple\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.0.6\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Generator: Poedit 2.2.4\n"
 
 #: freppledb/planningboard/static/planningboard/src/ganttchart.js:518
 #: freppledb/planningboard/static/planningboard/src/ganttchart.js:551
@@ -80,11 +92,11 @@ msgstr ""
 
 #: freppledb/forecast/static/forecast/src/forecast.js:892
 msgid "Available Cross"
-msgstr ""
+msgstr "Croix disponible"
 
 #: freppledb/forecast/static/forecast/src/forecast.js:902
 msgid "Cancel"
-msgstr ""
+msgstr "Annuler"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1265
 msgid "Clear the plan of selected demands"
@@ -92,11 +104,11 @@ msgstr "Effacer le plan des demandes sélectionnées"
 
 #: freppledb/forecast/static/forecast/src/forecast.js:875
 msgid "Close"
-msgstr ""
+msgstr "Fermer"
 
 #: freppledb/forecast/static/forecast/forecast.html:62
 msgid "Configure time buckets"
-msgstr "Configurer les périodes temporelles"
+msgstr "Configure les périodes temporelles"
 
 #: freppledb/forecast/static/forecast/forecast.html:388
 msgid "Constant"
@@ -116,7 +128,7 @@ msgstr "Configuration de la couleur de la criticité"
 #: freppledb/forecast/static/forecast/forecast.html:79
 #: freppledb/forecast/static/forecast/src/forecast.js:878
 msgid "Customize"
-msgstr ""
+msgstr "Personaliser"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1360
 msgid "Delay color setup"
@@ -138,7 +150,7 @@ msgstr "Ordre de Distribution"
 #: freppledb/input/static/operationplandetail/operationplandetail.html:53
 #: freppledb/planningboard/static/planningboard/planningboard.html:133
 msgid "Do you want to save your changes first?"
-msgstr "Voulez-vous au préalable sauvegarder vos changements ?"
+msgstr "Voulez-vous d'abord enregistrer vos modifications?"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:264
 #: freppledb/planningboard/static/planningboard/planningboard.html:343
@@ -201,7 +213,7 @@ msgstr "Pas de plan"
 
 #: freppledb/forecast/static/forecast/src/forecast.js:901
 msgid "OK"
-msgstr ""
+msgstr "OK"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1482
 msgid "Operation category color setup"
@@ -281,7 +293,7 @@ msgstr "Supprimer cette commande du planning"
 
 #: freppledb/forecast/static/forecast/src/forecast.js:903
 msgid "Reset"
-msgstr ""
+msgstr "Réinitialiser"
 
 #: freppledb/forecast/static/forecast/forecast.html:153
 #: freppledb/forecast/static/forecast/forecast.html:454
@@ -311,7 +323,6 @@ msgstr ""
 "niveau unique pièce/emplacement/client"
 
 #: freppledb/forecast/static/forecast/forecast.html:49
-#| msgid "Select panel sequence"
 msgid "Select panel measure"
 msgstr ""
 
@@ -321,7 +332,7 @@ msgstr "Sélectionner la séquence des panneaux"
 
 #: freppledb/forecast/static/forecast/src/forecast.js:884
 msgid "Selected Cross"
-msgstr ""
+msgstr "Croix sélectionnée"
 
 #: freppledb/forecast/static/forecast/forecast.html:417
 msgid "Selected forecast method"
@@ -398,7 +409,7 @@ msgstr "action"
 
 #: freppledb/forecast/static/forecast/forecast.html:375
 msgid "aggregate"
-msgstr "agrégé"
+msgstr "aggrégé"
 
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:122
 #: freppledb/planningboard/static/planningboard/planningboard.html:433
@@ -458,7 +469,7 @@ msgstr "commentaires"
 #: freppledb/planningboard/static/planningboard/planningboard.html:567
 #: freppledb/planningboard/static/planningboard/planningboard.html:692
 msgid "completed"
-msgstr ""
+msgstr "terminé"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:241
 msgid "completed: {{aggregatedoperationplans.status.completed }}"
@@ -499,7 +510,7 @@ msgstr "criticalité"
 
 #: freppledb/input/static/operationplandetail/src/supplypositionpanelDrv.js:63
 msgid "current onhand"
-msgstr "disponible actuellement"
+msgstr "stock actuel"
 
 #: freppledb/forecast/static/forecast/forecast.html:202
 #: freppledb/planningboard/static/planningboard/planningboard.html:838
@@ -536,7 +547,7 @@ msgstr "date"
 #: freppledb/planningboard/static/planningboard/planningboard.html:1504
 #: freppledb/planningboard/static/planningboard/planningboard.html:1539
 msgid "default"
-msgstr "Défaut"
+msgstr "standard"
 
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:104
 #: freppledb/planningboard/static/planningboard/planningboard.html:21
@@ -610,7 +621,7 @@ msgstr "date de fin effective"
 
 #: freppledb/input/static/operationplandetail/src/supplyinformationDrv.js:46
 msgid "effective start"
-msgstr "date de début effective"
+msgstr "date de démarrage effective"
 
 #: freppledb/input/static/operationplandetail/src/problemspanelDrv.js:36
 #: freppledb/planningboard/static/planningboard/planningboard.html:1144
@@ -636,7 +647,7 @@ msgstr "stock attendu"
 
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:126
 msgid "export"
-msgstr ""
+msgstr "exporter"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:65
 msgid "export as Excel file"
@@ -661,19 +672,19 @@ msgstr "prévision de base"
 
 #: freppledb/forecast/static/forecast/src/displayForecastGraph.js:206
 msgid "forecast consumed"
-msgstr ""
+msgstr "prévision consommée"
 
 #: freppledb/forecast/static/forecast/src/displayForecastGraph.js:204
 msgid "forecast net"
-msgstr ""
+msgstr "prévision nette"
 
 #: freppledb/forecast/static/forecast/src/displayForecastGraph.js:200
 msgid "forecast override"
-msgstr "ajustage de prévision"
+msgstr "ajustement de prévision"
 
 #: freppledb/forecast/static/forecast/src/displayForecastGraph.js:202
 msgid "forecast total"
-msgstr ""
+msgstr "prévision totale"
 
 #: freppledb/input/static/operationplandetail/operationplandetail.html:49
 #: freppledb/planningboard/static/planningboard/planningboard.html:129
@@ -728,7 +739,7 @@ msgstr "articles"
 
 #: freppledb/input/static/operationplandetail/src/supplyinformationDrv.js:38
 msgid "lead time"
-msgstr "temps d'approvisionnement"
+msgstr "délai d'obtention"
 
 #: freppledb/forecast/static/forecast/forecast.html:218
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:48
@@ -760,7 +771,7 @@ msgstr "ordres de fabrication"
 #: freppledb/planningboard/static/planningboard/planningboard.html:1083
 #: freppledb/planningboard/static/planningboard/planningboard.html:187
 msgid "material"
-msgstr ""
+msgstr "matière"
 
 #: freppledb/quoting/static/quoting/quoting.html:85
 msgid "maximum lateness (in days)"
@@ -816,7 +827,7 @@ msgstr "nouveau commentaire pièce"
 
 #: freppledb/forecast/static/forecast/forecast.html:243
 msgid "new item-location comment"
-msgstr "nouveua commentaire emplacement-pièce"
+msgstr "nouveau commentaire emplacement-pièce"
 
 #: freppledb/forecast/static/forecast/forecast.html:244
 msgid "new location comment"
@@ -863,12 +874,12 @@ msgstr "disponible"
 
 #: freppledb/input/static/operationplandetail/src/supplypositionpanelDrv.js:29
 msgid "onhand at lead time"
-msgstr "stock au temps de réapprovisonnement"
+msgstr "stock au temps d'approvisionnement"
 
 #: freppledb/forecast/static/forecast/src/displayForecastGraph.js:194
 #: freppledb/forecast/static/forecast/src/displayForecastGraph.js:215
 msgid "open orders"
-msgstr "commandes ouvertes"
+msgstr "Ordres ouverts"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1131
 msgid "operation"
@@ -884,7 +895,7 @@ msgstr "sous-catégorie"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1122
 msgid "operationplans"
-msgstr "opérations planifiée"
+msgstr "opérations planifiées"
 
 #: freppledb/quoting/static/quoting/quoting.html:117
 msgid "operations"
@@ -897,7 +908,7 @@ msgstr "date de commande"
 #: freppledb/forecast/static/forecast/src/displayForecastGraph.js:196
 #: freppledb/forecast/static/forecast/src/displayForecastGraph.js:217
 msgid "orders adjustment"
-msgstr ""
+msgstr "ajustement des commandes"
 
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:52
 #: freppledb/input/static/operationplandetail/src/supplyinformationDrv.js:36
@@ -907,7 +918,7 @@ msgstr "origine"
 
 #: freppledb/input/static/operationplandetail/src/networkstatusDrv.js:44
 msgid "overdue sales orders"
-msgstr "overdue sales orders"
+msgstr "commandes en retard"
 
 #: freppledb/forecast/static/forecast/forecast.html:367
 msgid "parameters"
@@ -915,7 +926,7 @@ msgstr "paramètres"
 
 #: freppledb/forecast/static/forecast/src/displayForecastGraph.js:219
 msgid "past forecast"
-msgstr ""
+msgstr "prévision passée"
 
 #: freppledb/input/static/operationplandetail/src/supplyinformationDrv.js:32
 #: freppledb/planningboard/static/planningboard/planningboard.html:24
@@ -1003,7 +1014,7 @@ msgstr "supprimer la ligne"
 
 #: freppledb/planningboard/static/planningboard/src/planningboard.js:234
 msgid "remove this demand from planning"
-msgstr "supprimer cette commande du planning"
+msgstr "Supprimer cette commande du planning"
 
 #: freppledb/input/static/operationplandetail/src/resourcespanelDrv.js:28
 #: freppledb/planningboard/static/planningboard/planningboard.html:164
@@ -1025,7 +1036,7 @@ msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1028
 msgid "setup"
-msgstr "configuration"
+msgstr "setup"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:385
 #: freppledb/planningboard/static/planningboard/planningboard.html:513
@@ -1043,7 +1054,7 @@ msgstr "taille minimum"
 
 #: freppledb/input/static/operationplandetail/src/supplyinformationDrv.js:44
 msgid "size multiple"
-msgstr "taille multiple"
+msgstr "taille de lot"
 
 #: freppledb/input/static/operationplandetail/src/problemspanelDrv.js:34
 #: freppledb/planningboard/static/planningboard/planningboard.html:1139
@@ -1093,7 +1104,7 @@ msgstr "information de réapprovisionnement"
 #: freppledb/forecast/static/forecast/src/displayForecastGraph.js:192
 #: freppledb/forecast/static/forecast/src/displayForecastGraph.js:213
 msgid "total orders"
-msgstr "commandes totales"
+msgstr "Total des ordres"
 
 #: freppledb/input/static/operationplandetail/src/supplyinformationDrv.js:34
 msgid "types"
@@ -1124,49 +1135,3 @@ msgstr ""
 #: freppledb/forecast/static/forecast/forecast.html:316
 msgid "{{m.label}}"
 msgstr ""
-
-#~ msgid "Display quantity"
-#~ msgstr "Afficher unités"
-
-#~ msgid "Display value"
-#~ msgstr "Afficher valeur"
-
-#~ msgid "orders adjustment 1 years ago"
-#~ msgstr "ajustements des commandes il y a 1 an"
-
-#~ msgid "orders adjustment 2 years ago"
-#~ msgstr "ajustements des commandes il y a 2 ans"
-
-#~ msgid "orders adjustment 3 years ago"
-#~ msgstr "ajustements des commandes il y a 3 ans"
-
-#~ msgid "total forecast"
-#~ msgstr "prévision totale"
-
-#~ msgid "total orders 1 years ago"
-#~ msgstr "commandes totales il y a 1 an"
-
-#~ msgid "total orders 2 years ago"
-#~ msgstr "commandes totales il y a 2 ans"
-
-#~ msgid "total orders 3 years ago"
-#~ msgstr "commandes totales il y a 3 ans"
-
-#~ msgid "Resolve constraints during plan changes by moving to earlier dates"
-#~ msgstr ""
-#~ "Résoudre les contraintes lors du changement de plan en déplaçant vers des "
-#~ "dates antérieures"
-
-#~ msgid "Resolve constraints during plan changes by moving to later dates"
-#~ msgstr ""
-#~ "Résoudre les contraintes lors du changement de plan en déplaçant vers des "
-#~ "dates postérieures"
-
-#~ msgid "buffers"
-#~ msgstr "SKUs"
-
-#~ msgid "id"
-#~ msgstr "id"
-
-#~ msgid "chart"
-#~ msgstr "graphique"

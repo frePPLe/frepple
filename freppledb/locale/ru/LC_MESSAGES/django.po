@@ -2,7 +2,7 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# 
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
@@ -237,8 +237,8 @@ msgstr "значение"
 #: output/views/operation.py:479 output/views/operation.py:520
 #: output/views/operation.py:785 output/views/operation.py:837
 #: output/views/operation.py:878 output/views/problem.py:78
-#: output/views/resource.py:48 output/views/resource.py:137 quoting/views.py:84
-#: reportmanager/models.py:22
+#: output/views/resource.py:48 output/views/resource.py:137
+#: quoting/views.py:84 reportmanager/models.py:22
 #: reportmanager/templates/reportmanager/reportmanager.html:252
 #: reportmanager/templates/reportmanager/reportmanager.html:256
 #: reportmanager/views.py:116
@@ -696,11 +696,11 @@ msgstr ""
 #: common/templates/admin/subtemplate_inventorystatus.html:127
 #: inventoryplanning/models.py:407
 msgid "onhand at lead time"
-msgstr "наличие во время"
+msgstr "наличие к сроку"
 
 #: common/templates/admin/subtemplate_inventorystatus.html:160
 msgid "current onhand"
-msgstr "наличие сейчас"
+msgstr "текущее наличие"
 
 #: common/templates/admin/subtemplate_timebuckets.html:8
 msgid "time buckets"
@@ -1361,7 +1361,7 @@ msgstr "Удалить файл"
 #: execute/management/commands/exporttofolder.py:630
 #: execute/management/commands/importfromfolder.py:775
 msgid "Confirm"
-msgstr "Подтвердить"
+msgstr "Выполнить"
 
 #: execute/management/commands/exportworkbook.py:128
 msgid "Export a spreadsheet"
@@ -1530,12 +1530,6 @@ msgstr "обновить"
 msgid "Update description of selected scenarios"
 msgstr "Обновите описание выбранных сценариев"
 
-#: execute/management/commands/scenario_copy.py:474
-#, fuzzy
-#| msgid "You will lose ALL data in this scenario!"
-msgid "Release: You will lose ALL data in this scenario!"
-msgstr "Вы потеряете ВСЕ данные в этом сценарии!"
-
 #: execute/management/commands/scenario_copy.py:475
 msgid "Promote: All data will be copied to Production"
 msgstr ""
@@ -1645,7 +1639,6 @@ msgid "Generate a constrained plan"
 msgstr "Расчет плана с ограничениями"
 
 #: executesql/menu.py:16 reportmanager/menu.py:51 reportmanager/models.py:40
-#| msgid "customers"
 msgid "my reports"
 msgstr ""
 
@@ -1662,13 +1655,14 @@ msgid "Planning parameters"
 msgstr "параметры планирования"
 
 #: forecast/admin.py:61 input/admin.py:276 input/admin.py:467
-#: input/admin.py:538 input/admin.py:702 input/admin.py:1056 input/views.py:201
-#: input/views.py:284
+#: input/admin.py:538 input/admin.py:702 input/admin.py:1056
+#: input/views.py:201 input/views.py:284
 msgid "supply path"
 msgstr "цепь поставок"
 
 #: forecast/admin.py:64 forecast/views.py:482 input/admin.py:278
-#: input/admin.py:471 input/admin.py:540 input/admin.py:706 input/admin.py:1062
+#: input/admin.py:471 input/admin.py:540 input/admin.py:706
+#: input/admin.py:1062
 #: inventoryplanning/templates/inventoryplanning/drp.html:2472
 #: output/views/buffer.py:328 output/views/demand.py:35
 #: output/views/demand.py:88 output/views/demand.py:279
@@ -1707,17 +1701,14 @@ msgid "Generate forecast"
 msgstr "Сформировать прогноз"
 
 #: forecast/management/commands/measure_copy.py:199
-#| msgid "scenario management"
 msgid "measure management"
 msgstr ""
 
 #: forecast/management/commands/measure_copy.py:258
-#| msgid "resource queue"
 msgid "Copy source measure"
 msgstr ""
 
 #: forecast/management/commands/measure_copy.py:258
-#| msgid "destination"
 msgid "to destination measure"
 msgstr ""
 
@@ -2096,63 +2087,27 @@ msgstr "Не найдено редактируемых полей"
 
 #: forecast/models.py:729
 msgid "total orders 3 years ago"
-msgstr "все заказы за три года"
+msgstr "итого заказов за 3 года"
 
 #: forecast/models.py:738
 msgid "orders adjustment 3 years ago"
-msgstr "корректировка заказов за три прошлых года"
-
-#: forecast/models.py:747
-#, fuzzy
-#| msgid "total orders 3 years ago"
-msgid "total orders value 3 years ago"
-msgstr "все заказы за три года"
-
-#: forecast/models.py:757
-#, fuzzy
-#| msgid "orders adjustment 3 years ago"
-msgid "orders adjustment value 3 years ago"
-msgstr "корректировка заказов за три прошлых года"
+msgstr "корректировка заказов за 3 года"
 
 #: forecast/models.py:767
 msgid "total orders 2 years ago"
-msgstr "все заказы за два года"
+msgstr "итого заказов за 2 года"
 
 #: forecast/models.py:776
 msgid "orders adjustment 2 years ago"
-msgstr "корректировка заказов за два прошлых года"
-
-#: forecast/models.py:785
-#, fuzzy
-#| msgid "total orders 2 years ago"
-msgid "total orders value 2 years ago"
-msgstr "все заказы за два года"
-
-#: forecast/models.py:795
-#, fuzzy
-#| msgid "orders adjustment 2 years ago"
-msgid "orders adjustment value 2 years ago"
-msgstr "корректировка заказов за два прошлых года"
+msgstr "корректировка заказов за 2 года"
 
 #: forecast/models.py:805
 msgid "total orders 1 years ago"
-msgstr "все заказов за прошлый год"
+msgstr "итого заказов за 1 год"
 
 #: forecast/models.py:814
 msgid "orders adjustment 1 years ago"
-msgstr "корректировка заказов за прошлый год"
-
-#: forecast/models.py:823
-#, fuzzy
-#| msgid "total orders 1 years ago"
-msgid "total orders value 1 years ago"
-msgstr "все заказов за прошлый год"
-
-#: forecast/models.py:833
-#, fuzzy
-#| msgid "orders adjustment 1 years ago"
-msgid "orders adjustment value 1 years ago"
-msgstr "корректировка заказов за прошлый год"
+msgstr "корректировка заказов за 1 год"
 
 #: forecast/models.py:844 forecast/templates/forecast/forecast.html:256
 #: inventoryplanning/templates/inventoryplanning/drp.html:1566
@@ -2161,7 +2116,7 @@ msgstr "корректировка заказов за прошлый год"
 #: inventoryplanning/templates/inventoryplanning/drp.html:1623
 #: inventoryplanning/templates/inventoryplanning/drp.html:1704
 msgid "total orders"
-msgstr "Заказы всего"
+msgstr "итого заказов"
 
 #: forecast/models.py:852 forecast/templates/forecast/forecast.html:255
 #: inventoryplanning/templates/inventoryplanning/drp.html:1568
@@ -2170,7 +2125,7 @@ msgstr "Заказы всего"
 #: inventoryplanning/templates/inventoryplanning/drp.html:1625
 #: inventoryplanning/templates/inventoryplanning/drp.html:1703
 msgid "open orders"
-msgstr "открытые заказы"
+msgstr "закаы открытые"
 
 #: forecast/models.py:860
 #: inventoryplanning/templates/inventoryplanning/drp.html:1570
@@ -2262,17 +2217,14 @@ msgid "total supply value"
 msgstr "стоимость общей поставки"
 
 #: forecast/models.py:1010
-#| msgid "Aggregate"
 msgid "aggregate"
-msgstr ""
+msgstr "совокупный"
 
 #: forecast/models.py:1011
-#| msgid "location"
 msgid "local"
 msgstr ""
 
 #: forecast/models.py:1012
-#| msgid "completed"
 msgid "computed"
 msgstr ""
 
@@ -2281,7 +2233,6 @@ msgid "hide"
 msgstr ""
 
 #: forecast/models.py:1015
-#| msgid "Invalid number"
 msgid "number"
 msgstr ""
 
@@ -2312,7 +2263,8 @@ msgstr ""
 #: inventoryplanning/templates/inventoryplanning/drp.html:162
 #: inventoryplanning/templates/inventoryplanning/drp.html:1996
 #: output/views/buffer.py:173 output/views/operation.py:77
-#: output/views/pegging.py:50 output/views/resource.py:69 output/widget.py:1504
+#: output/views/pegging.py:50 output/views/resource.py:69
+#: output/widget.py:1504
 msgid "type"
 msgstr "тип"
 
@@ -2325,12 +2277,10 @@ msgid "mode in past periods"
 msgstr ""
 
 #: forecast/models.py:1056 forecast/views.py:163
-#| msgid "computed fields"
 msgid "compute expression"
 msgstr ""
 
 #: forecast/models.py:1060
-#| msgid "forecast consumed value"
 msgid "Formula to compute values"
 msgstr ""
 
@@ -2347,15 +2297,11 @@ msgid "initially hidden"
 msgstr ""
 
 #: forecast/models.py:1073
-#| msgid ""
-#| "controls whether or not this resource is planned in finite capacity mode"
 msgid "controls whether or not this measure is visible by default"
 msgstr ""
 
 #: forecast/models.py:1076 forecast/views.py:160
 #: reportmanager/templates/reportmanager/reportmanager.html:211
-#| msgctxt "forecast method"
-#| msgid "Normal"
 msgid "format"
 msgstr ""
 
@@ -2365,7 +2311,6 @@ msgid "default value"
 msgstr "значение по умолчанию"
 
 #: forecast/models.py:1093 forecast/views.py:165
-#| msgid "forecast override value"
 msgid "override measure"
 msgstr ""
 
@@ -2457,7 +2402,6 @@ msgid "forecast report"
 msgstr "Сводный прогноз"
 
 #: forecast/views.py:264
-#| msgid "Forecast method"
 msgid "forecast method"
 msgstr ""
 
@@ -2544,7 +2488,7 @@ msgstr "дата"
 #: output/widget.py:1222 output/widget.py:1279 output/widget.py:1336
 #: output/widget.py:1399 output/widget.py:1454 quoting/views.py:88
 msgid "quantity"
-msgstr "колич."
+msgstr "количество"
 
 #: input/admin.py:43
 msgid "repeating pattern"
@@ -2684,12 +2628,10 @@ msgid "customers"
 msgstr "клиенты"
 
 #: input/models.py:190
-#| msgid "safety stock"
 msgid "make to stock"
 msgstr ""
 
 #: input/models.py:191
-#| msgid "sales order"
 msgid "make to order"
 msgstr ""
 
@@ -3503,7 +3445,7 @@ msgstr "получатель"
 #: output/views/constraint.py:28 output/views/constraint.py:95
 #: output/views/demand.py:65
 msgid "demand"
-msgstr "потребность"
+msgstr "спрос"
 
 #: input/models.py:1686
 msgid "Due date of the demand/forecast"
@@ -3625,7 +3567,7 @@ msgstr "потребляется в %(loc)s между %(date1)s и %(date2)s"
 #: inventoryplanning/views.py:466 inventoryplanning/widget.py:24
 #: output/widget.py:1455
 msgid "inventory status"
-msgstr "состояние запасов"
+msgstr "состояние запаса"
 
 #: input/views.py:3558 input/views.py:5972
 msgid "net duration"
@@ -4477,7 +4419,6 @@ msgid "consumed by SO"
 msgstr "исполняется SO"
 
 #: output/templates/output/buffer.html:182 output/views/buffer.py:276
-#| msgid "consumed by MO"
 msgid "consumed by Fcst"
 msgstr ""
 
@@ -4723,7 +4664,6 @@ msgid "Demand plan"
 msgstr "План спроса"
 
 #: output/views/pegging.py:63
-#| msgid "resource quantity"
 msgid "required quantity"
 msgstr ""
 
@@ -4907,12 +4847,10 @@ msgstr "квоты"
 #: reportmanager/models.py:20
 #: reportmanager/templates/reportmanager/reportmanager.html:276
 #: reportmanager/views.py:117
-#| msgid "query"
 msgid "SQL query"
 msgstr ""
 
 #: reportmanager/models.py:39 reportmanager/views.py:269
-#| msgid "Demand report"
 msgid "my report"
 msgstr ""
 
@@ -4934,17 +4872,14 @@ msgid "schema"
 msgstr ""
 
 #: reportmanager/templates/reportmanager/schema.html:8
-#| msgid "data tables"
 msgid "table"
 msgstr ""
 
 #: reportmanager/views.py:103
-#| msgid "customers"
 msgid "custom reports"
 msgstr ""
 
 #: reportmanager/views.py:137 reportmanager/views.py:206
-#| msgid "Forecast editor"
 msgid "report editor"
 msgstr ""
 
@@ -4963,396 +4898,3 @@ msgstr "мастер загрузки данных"
 #: wizard/templates/wizard/index.html:48
 msgid "dashboard"
 msgstr "Дашборд"
-
-#, fuzzy
-#~| msgid "customer"
-#~ msgid "custom"
-#~ msgstr "клиент"
-
-#, fuzzy
-#~| msgid "Forecast error"
-#~ msgid "hasForecastRecord"
-#~ msgstr "ошибка прогноза"
-
-#, fuzzy
-#~| msgid "customer"
-#~ msgid "custom report"
-#~ msgstr "клиент"
-
-#~ msgid "Show hints"
-#~ msgstr "Показать подсказки"
-
-#~ msgid "Guided tour"
-#~ msgstr "Помошник"
-
-#~ msgid "total orders value"
-#~ msgstr "общая стоимость заказов"
-
-#~ msgid "orders adjustment value"
-#~ msgstr "стоимость корректировки заказов"
-
-#~ msgid "open orders value"
-#~ msgstr "стоимость открытых заказов"
-
-#~ msgid "planned orders value"
-#~ msgstr "стоимость плановых заказов"
-
-#~ msgid "forecast baseline value"
-#~ msgstr "стоимсоть в базовом прогнозе"
-
-#~ msgid "forecast total value"
-#~ msgstr "стоимость общего прогноза"
-
-#~ msgid "forecast net value"
-#~ msgstr "стоимость чистого прогноза"
-
-#~ msgid "planned forecast value"
-#~ msgstr "плановое значение прогноза"
-
-#~ msgid "planned net forecast value"
-#~ msgstr "стоимость в чистом прогнозе"
-
-#~ msgid "total forecast"
-#~ msgstr "общий прогноз"
-
-#~ msgid "Path to unlock features"
-#~ msgstr "мастер конфигурирования"
-
-#~ msgid ""
-#~ "First, enter a username and password. Then, you'll be able to edit more "
-#~ "user options."
-#~ msgstr ""
-#~ "Для продолжения редактирования, нужно ввести имя пользователя и пароль. "
-
-#~ msgid "Enter a username and password."
-#~ msgstr "Введите имя пользователя и пароль."
-
-#~ msgid "Happy about frePPLe?"
-#~ msgstr "отзыв о программе"
-
-#~ msgid "Help us improve frePPle"
-#~ msgstr "Помогите нам улучшить frePPle"
-
-#~ msgid ""
-#~ "Click on a smiley and write your comments to help us improve frePPLe!"
-#~ msgstr ""
-#~ "Нажмите на смайлик и напишите свои комментарии, чтобы помочь нам улучшить "
-#~ "frePPLe!"
-
-#~ msgid "Send comments"
-#~ msgstr "Отправить комментарии"
-
-#~ msgid "Fill out the data tables and access new features."
-#~ msgstr "Заполните таблицы данных и получите доступ к новым функциям."
-
-#~ msgid "Material: respect procurement limits"
-#~ msgstr "Материал: соблюдать лимиты закупок"
-
-#~ msgid "Forecast or item+location+customer not found"
-#~ msgstr "Прогноз или позиция+местоположение+клиент не найдены"
-
-#~ msgid "Unique identifier of an operationplan"
-#~ msgstr "Уникальный идентификатор операции по графику"
-
-#~ msgid "External reference of this order"
-#~ msgstr "внешняя ссылка на заказ"
-
-#~ msgid "Status of the OperationPlanResource"
-#~ msgstr "состояние ресурса в плане операций"
-
-#~ msgid "operationplan resource"
-#~ msgstr "ресурс в плане операций"
-
-#~ msgid "operationplan resources"
-#~ msgstr "ресурсы в плане операций"
-
-#~ msgid "operationplan material"
-#~ msgstr "материал в плане операций"
-
-#~ msgid "operationplan materials"
-#~ msgstr "материалы в плане операций"
-
-#~ msgid "due date"
-#~ msgstr "срок"
-
-#~ msgid "inventory planning parameter"
-#~ msgstr "параметр планирования запаса"
-
-#~ msgid "inventory planning parameters"
-#~ msgstr "параметры планирования запасов"
-
-#~ msgid "Resource detail report"
-#~ msgstr "План ресурсов"
-
-#~ msgid ""
-#~ "Create time buckets for reporting.</p>\n"
-#~ "              <label class=\"control-label\">Start date: <input class="
-#~ "\"vDateField form-control\" id=\"start\" name=\"start\" type=\"text\" "
-#~ "size=\"12\"/></label>\n"
-#~ "              <label class=\"control-label\">End date: <input class="
-#~ "\"vDateField form-control\" id=\"end\" name=\"end\" type=\"text\" size="
-#~ "\"12\"/></label><br>\n"
-#~ "             <label class=\"control-label\" for=\"weekstart1\">Week "
-#~ "starts on:</label>\n"
-#~ "             <div class=\"dropdown dropdown-submit-input\">\n"
-#~ "                     <button class=\"btn btn-default dropdown-toggle form-"
-#~ "control\"  id=\"weekstart1\" value=\"1\" type=\"button\" data-toggle="
-#~ "\"dropdown\">Monday&nbsp;&nbsp;<span class=\"caret\"></span>\n"
-#~ "                     </button>\n"
-#~ "                     <ul class=\"dropdown-menu col-xs-12\" aria-"
-#~ "labelledby=\"weekstart1\" id=\"weekstartul\">\n"
-#~ "                        <li><a>Sunday</a></li>\n"
-#~ "                        <li><a>Monday</a></li>\n"
-#~ "                        <li><a>Tuesday</a></li>\n"
-#~ "                        <li><a>Wednesday</a></li>\n"
-#~ "                        <li><a>Thursday</a></li>\n"
-#~ "                        <li><a>Friday</a></li>\n"
-#~ "                        <li><a>Saturday</a></li>\n"
-#~ "                     </ul>\n"
-#~ "             </div>"
-#~ msgstr ""
-#~ "Создание групп периодов времени.</p>\n"
-#~ "\t\t\t\t\t\t\t\t<label class=\"control-label\">Дата начала: <input class="
-#~ "\"vDateField form-control\" id=\"start\" name=\"start\" type=\"text\" "
-#~ "size=\"12\"/></label>\n"
-#~ "\t\t\t\t\t\t\t\t<label class=\"control-label\">Дата окончания: <input "
-#~ "class=\"vDateField form-control\" id=\"end\" name=\"end\" type=\"text\" "
-#~ "size=\"12\"/></label><br>\n"
-#~ "               <label class=\"control-label\" for=\"weekstart1\">Неделя "
-#~ "начинается:</label>\n"
-#~ "               <div class=\"dropdown dropdown-submit-input\">\n"
-#~ "                       <button class=\"btn btn-default dropdown-toggle "
-#~ "form-control\"  id=\"weekstart1\" value=\"1\" type=\"button\" data-toggle="
-#~ "\"dropdown\">понедельник&nbsp;&nbsp;<span class=\"caret\"></span>\n"
-#~ "                       </button>\n"
-#~ "                       <ul class=\"dropdown-menu col-xs-12\" aria-"
-#~ "labelledby=\"weekstart1\" id=\"weekstartul\">\n"
-#~ "                          <li><a>воскресенье</a></li>\n"
-#~ "                          <li><a>понедельник</a></li>\n"
-#~ "                          <li><a>вторник</a></li>\n"
-#~ "                          <li><a>среда</a></li>\n"
-#~ "                          <li><a>четверг</a></li>\n"
-#~ "                          <li><a>пятница</a></li>\n"
-#~ "                          <li><a>суббота</a></li>\n"
-#~ "                       </ul>\n"
-#~ "               </div>\n"
-#~ "\n"
-#~ "\t\t\t\t\t\t\t"
-
-#~ msgid ""
-#~ "Load frePPLe from the database and live data sources...<br>and create a "
-#~ "plan in frePPLe...<br>and export results."
-#~ msgstr ""
-#~ "Загрузить frePPLe из базы данных и источников данных в реальном "
-#~ "времени ...<br>и создать план в frePPLe...<br>с экспортом результатов."
-
-#~ msgid "Fixed start"
-#~ msgstr "Фикс. начало"
-
-#~ msgid "Fixed end"
-#~ msgstr "Фикс. завершение"
-
-#~ msgid "customer shipment"
-#~ msgstr "отгрузка клиенту"
-
-#~ msgid "Status of the OperationPlanMaterial"
-#~ msgstr "состояние материала в плане операций"
-
-#~ msgid "customer shipments"
-#~ msgstr "поставки клиентам"
-
-#~ msgid "Sets safety stock to 0 and reorder quantity to 1"
-#~ msgstr "страховой запас  0,  количество  перезаказа 1"
-
-#~ msgid "Demand plan detail"
-#~ msgstr "План продаж"
-
-#, fuzzy
-#~| msgid "proposed starts"
-#~ msgid "proposed receipt"
-#~ msgstr "предл. начало"
-
-#, fuzzy
-#~| msgid "total forecast"
-#~ msgid "total receipt"
-#~ msgstr "общий прогноз"
-
-#~ msgid "planned forecast"
-#~ msgstr "плановый прогноз"
-
-#~ msgid "No time field specified"
-#~ msgstr "не указано поле времени"
-
-#~ msgid "No adjustment field specified"
-#~ msgstr "Поле настройки не указано"
-
-#~ msgid ""
-#~ "Recognized fields for list layout: forecast, bucket, start date, end "
-#~ "date, forecast override, orders adjustment"
-#~ msgstr ""
-#~ "список полей для макета: прогноз, период, дата начала, дата окончания, "
-#~ "переопределение прогноза, корректировка заказов"
-
-#~ msgid ""
-#~ "Recognized fields for pivot layout: forecast, data field, [bucket names*]"
-#~ msgstr "поля для сводной схемы: прогноз, поле данных, [названия периодов *]"
-
-#~ msgid "Invalid number: %(value)s"
-#~ msgstr "не верный номер: %(value)s"
-
-#~ msgid "No time bucket specified"
-#~ msgstr "не указано поле времени"
-
-#~ msgid "Row %(rownum)s: %(message)s"
-#~ msgstr "Строка %(rownum)s: %(message)s"
-
-#~ msgid "Uploaded data successfully: processed %d records"
-#~ msgstr "Успешно загруженные данные: обработано %d записей"
-
-#~ msgid "Operation report"
-#~ msgstr "План операций"
-
-#, fuzzy
-#~| msgid "Import data from %(erp)s"
-#~ msgid "Import data from Openbravo"
-#~ msgstr "Импорт данных из %(erp)s"
-
-#, fuzzy
-#~| msgid "Log file"
-#~ msgid "logfile"
-#~ msgstr "Лог-файл"
-
-#~ msgid "Finished"
-#~ msgstr "закончено"
-
-#, fuzzy
-#~| msgid "Import data from %(erp)s"
-#~ msgid "Import data from Odoo"
-#~ msgstr "Импорт данных из %(erp)s"
-
-#, fuzzy
-#~| msgid "Import data from %(erp)s"
-#~ msgid "Export data to Openbravo"
-#~ msgstr "Импорт данных из %(erp)s"
-
-#~ msgid "last refresh"
-#~ msgstr "последнее обновление"
-
-#~ msgid "More records exists. Only %(limit)s are shown."
-#~ msgstr "записей много, показаны только %(limit)s из них."
-
-#~ msgid "close window"
-#~ msgstr "закрыть окно"
-
-#~ msgid "copy to clipboard"
-#~ msgstr "скопировать в буфер обмена"
-
-#~ msgid "cancel import"
-#~ msgstr "отменить импорт"
-
-#~ msgid "cancel upload"
-#~ msgstr "отменить загрузку"
-
-#~ msgid "Start the web service."
-#~ msgstr "Пуск веб-сервиса"
-
-#~ msgid "Stop"
-#~ msgstr "Останов"
-
-#~ msgid "Stop the web service."
-#~ msgstr "Останов веб-сервиса"
-
-#~ msgid "Export frePPLe plan to the ERP."
-#~ msgstr "Экспорт плана frePPLe в ERP"
-
-#~ msgid ""
-#~ "<label data-toggle=\"tooltip\" data-placement=\"bottom\" data-original-"
-#~ "title=\"Filter parameters define which transactions are getting exported"
-#~ "\">"
-#~ msgstr ""
-#~ "<label data-toggle=\"tooltip\" data-placement=\"bottom\" data-original-"
-#~ "title=\"Параметр фильтра определяют, какие операции будут экспортированы"
-#~ "\">"
-
-#~ msgid "Apply filter parameters."
-#~ msgstr "Применить настройки фильтра."
-
-#~ msgid "Import Odoo data into frePPLe."
-#~ msgstr "Импорт данных из Odoo в frePPLe."
-
-#~ msgid "Extension must be .csv, .csv.gz, .cpy, .cpy.gz, .sql or .sql.gz"
-#~ msgstr ""
-#~ "Расширение должно быть .csv, .csv.gz, .cpy, .cpy.gz, .sql или .sql.gz"
-
-#~ msgid "forecast adjustment"
-#~ msgstr "корректировка прогноза"
-
-#~ msgid "Wizard to load your data"
-#~ msgstr "Мастер загрузки данных"
-
-#~ msgid "progress"
-#~ msgstr "прогресс"
-
-#~ msgid "Model completion level"
-#~ msgstr "Уровень готовности модели"
-
-#~ msgid "wizard URL"
-#~ msgstr "Мастер URL"
-
-#~ msgid "Skipping field %(column)s"
-#~ msgstr "пропуск поля %(column)s"
-
-#~ msgid "Row %(rownum)s field %(field)s: %(data)s: %(message)s"
-#~ msgstr "Строка%(rownum)s поле %(field)s: %(data)s: %(message)s"
-
-#~ msgid "Exception during upload: %(message)s"
-#~ msgstr "Исключение при загрузке : %(message)s"
-
-#~ msgid ""
-#~ "Uploaded data successfully: changed %(changed)d and added %(added)d "
-#~ "records"
-#~ msgstr ""
-#~ "Данныке успешно загружены: изменения %(changed)d добавлено %(added)d"
-
-#~ msgid ""
-#~ "Welcome to frePPLe, the world's leading open source production planning "
-#~ "tool!<br/><br/>\n"
-#~ "How to get started?\n"
-#~ "<ol><li>Start the <span class=\"underline\"><a href=\"javascript:void(0);"
-#~ "\" onclick=\"tour.start('0,0,0'); return false;\">guided tour</a></span></"
-#~ "li>\n"
-#~ "<li>Check out the <span class=\"underline\"><a href=\"%(docurl)s\" target="
-#~ "\"_blank\">documentation</a></span></li>\n"
-#~ "<li>Visit and join the <span class=\"underline\"><a href=\"http://groups."
-#~ "google.com/group/frepple-users\" target=\"_blank\">user community</a></"
-#~ "span></li>\n"
-#~ "<li><span class=\"underline\"><a href=\"https://frepple.com/contact/\" "
-#~ "target=\"_blank\">Contact us</a></span></li>\n"
-#~ "</ol>\n"
-#~ msgstr ""
-#~ "Добро пожаловать в frePPLe, ведущий в мире инструмент для планирования "
-#~ "производства с открытым исходным кодом!<br/><br/>\n"
-#~ "Как быстро начать?\n"
-#~ "<ol><li>запуск <span class=\"underline\"><a href=\"javascript:void(0);\" "
-#~ "onclick=\"tour.start('0,0,0'); return false;\">помошника </a></span></"
-#~ "li>\n"
-#~ "<li>открыть <span class=\"underline\"><a href=\"%(docurl)s\" target="
-#~ "\"_blank\">документацию</a></span></li>\n"
-#~ "<li>посетить <span class=\"underline\"><a href=\"http://groups.google.com/"
-#~ "group/frepple-users\" target=\"_blank\">сообщество пользователей</a></"
-#~ "span></li>\n"
-#~ "<li><span class=\"underline\"><a href=\"https://frepple.com/contact/\" "
-#~ "target=\"_blank\">контакты разработчика</a></span></li>\n"
-#~ "</ol>\n"
-
-#~ msgid "Get started quick and easy to fill out the data tables"
-#~ msgstr "Начните быстро и легко заполнив данные в таблицы"
-
-#~ msgid "stockout risk"
-#~ msgstr "риск дефицита"
-
-#~ msgid ""
-#~ "Display how well the current inventory position covers the forecasted "
-#~ "demand"
-#~ msgstr ""
-#~ "Показать, насколько текущая позиция запасов покрывает прогнозируемый спрос"

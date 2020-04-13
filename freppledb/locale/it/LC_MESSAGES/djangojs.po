@@ -81,7 +81,6 @@ msgid "Click to select record"
 msgstr "Clicca per selezionare la riga"
 
 #: common/static/js/frepple.js:653 common/static/js/frepple.min.js:11
-#| msgid "Selected options"
 msgid "Select action"
 msgstr ""
 
@@ -130,7 +129,7 @@ msgstr "Ripristinare"
 
 #: common/static/js/frepple.js:861 common/static/js/frepple.min.js:11
 msgid "Error retrieving data"
-msgstr ""
+msgstr "Errore nel recuperare i dati"
 
 #: common/static/js/frepple.js:1066 common/static/js/frepple.js:2195
 #: common/static/js/frepple.min.js:11
@@ -212,7 +211,7 @@ msgstr ""
 
 #: common/static/js/frepple.js:1533 common/static/js/frepple.min.js:11
 msgid "days"
-msgstr ""
+msgstr "giorni"
 
 #: common/static/js/frepple.js:1569 common/static/js/frepple.min.js:11
 msgid "Filtered where"
@@ -376,88 +375,4 @@ msgstr ""
 #: input/static/js/frepple-operationplandetail.min.js:11
 #: input/static/operationplandetail/src/supplypositionpanelDrv.js:63
 msgid "current onhand"
-msgstr ""
-
-#~ msgid "Show hints"
-#~ msgstr "Mostra suggerimenti"
-
-#~ msgid "Guided tour"
-#~ msgstr "Tour guidato"
-
-#~ msgid "Previous"
-#~ msgstr "Precedente"
-
-#~ msgid "Play"
-#~ msgstr "Play"
-
-#~ msgid "Next"
-#~ msgstr "Successivo"
-
-#~ msgid "Pause"
-#~ msgstr "Pausa"
-
-#~ msgid "Importing... pressing Close button will not stop the process."
-#~ msgstr "Importazione .... premendo il pulsante close non fermerai l'elaborazione"
-
-#~ msgid "problems"
-#~ msgstr "problemi"
-
-#~ msgid "start"
-#~ msgstr "inizio"
-
-#~ msgid "end"
-#~ msgstr "fine"
-
-#~ msgid "no problems"
-#~ msgstr "senza problemi"
-
-#~ msgid "resource"
-#~ msgstr "risorsa"
-
-#~ msgid "quantity"
-#~ msgstr "quantità"
-
-#~ msgid "no resources"
-#~ msgstr "senza risorse"
-
-#~ msgid "buffer"
-#~ msgstr "buffer"
-
-#~ msgid "date"
-#~ msgstr "data"
-
-#~ msgid "no movements"
-#~ msgstr "senza movimentazioni"
-
-#~ msgid "demand"
-#~ msgstr "ordine"
-
-#~ msgid "no demands"
-#~ msgstr "senza ordini"
-
-#~ msgid "Manufacturing Order"
-#~ msgstr "Ordine di Produzione"
-
-#~ msgid "Purchase Order"
-#~ msgstr "Ordine di Acquisto"
-
-#~ msgid "Distribution Order"
-#~ msgstr "Ordine di Distribuzione"
-
-#~ msgid "Stock"
-#~ msgstr "Stock"
-
-#~ msgid "Delivery"
-#~ msgstr "Consegna"
-
-#~ msgid "%s allocated out of %s"
-#~ msgstr "%s allocati fuori da %s"
-
-#~ msgid "remove this demand from planning"
-#~ msgstr "rimuovi questa domanda dalla pianificazione"
-
-#~ msgid "Plan selected demands backward from their due date"
-#~ msgstr "Pianifica le domande selezionate a ritroso dalla loro data di scadenza"
-
-#~ msgid "Plan selected demands forward from the current date"
-#~ msgstr "Pianifica le domande selezionate in avanti dalla data corrente"
+msgstr "scorte attuali"

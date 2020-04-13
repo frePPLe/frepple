@@ -81,7 +81,6 @@ msgid "Click to select record"
 msgstr "Clicar para seleccionar registo"
 
 #: common/static/js/frepple.js:653 common/static/js/frepple.min.js:11
-#| msgid "Selected options"
 msgid "Select action"
 msgstr ""
 
@@ -211,9 +210,8 @@ msgid "within"
 msgstr ""
 
 #: common/static/js/frepple.js:1533 common/static/js/frepple.min.js:11
-#| msgid "days late"
 msgid "days"
-msgstr ""
+msgstr "dias"
 
 #: common/static/js/frepple.js:1569 common/static/js/frepple.min.js:11
 msgid "Filtered where"
@@ -326,7 +324,8 @@ msgstr "A primeira linha deve conter os nomes dos campos."
 
 #: common/static/js/frepple.js:2616 common/static/js/frepple.min.js:11
 msgid "First delete all existing records AND ALL RELATED TABLES"
-msgstr "Primeiro apague todos os registos existentes E TODAS AS TABELAS RELACIONADAS"
+msgstr ""
+"Primeiro apague todos os registos existentes E TODAS AS TABELAS RELACIONADAS"
 
 #: common/static/js/frepple.js:2623 common/static/js/frepple.min.js:11
 msgid "files selected"
@@ -378,166 +377,3 @@ msgstr "em mãos no tempo de espera"
 #: input/static/operationplandetail/src/supplypositionpanelDrv.js:63
 msgid "current onhand"
 msgstr "em mãos agora"
-
-#~ msgid "Show hints"
-#~ msgstr "Mostrar sugestões"
-
-#~ msgid "Guided tour"
-#~ msgstr "Visita guiada"
-
-#~ msgid "Previous"
-#~ msgstr "Anterior"
-
-#~ msgid "Play"
-#~ msgstr "Play"
-
-#~ msgid "Next"
-#~ msgstr "Próximo"
-
-#~ msgid "Pause"
-#~ msgstr "Pausa"
-
-#~ msgid "unused"
-#~ msgstr "sem utilização"
-
-#~ msgid "Importing... pressing Close button will not stop the process."
-#~ msgstr "Importando... clicar Fechar não vai parar o processo."
-
-#~ msgid "problems"
-#~ msgstr "problemas"
-
-#~ msgid "start"
-#~ msgstr "início"
-
-#~ msgid "end"
-#~ msgstr "fim"
-
-#~ msgid "no problems"
-#~ msgstr "sem problemas"
-
-#~ msgid "resource"
-#~ msgstr "recurso"
-
-#~ msgid "quantity"
-#~ msgstr "quantidade"
-
-#~ msgid "no resources"
-#~ msgstr "sem recursos"
-
-#~ msgid "buffer"
-#~ msgstr "reserva"
-
-#~ msgid "date"
-#~ msgstr "data"
-
-#~ msgid "no movements"
-#~ msgstr "sem movimentos"
-
-#~ msgid "demand"
-#~ msgstr "ordem de venda"
-
-#~ msgid "no demands"
-#~ msgstr "sem ordens de venda"
-
-#~ msgid "Manufacturing Order"
-#~ msgstr "Ordem de Produção"
-
-#~ msgid "Purchase Order"
-#~ msgstr "Ordem de Compra"
-
-#~ msgid "Distribution Order"
-#~ msgstr "Ordem de Distribuição"
-
-#~ msgid "Stock"
-#~ msgstr "Estoque"
-
-#~ msgid "Delivery"
-#~ msgstr "Entrega"
-
-#~ msgid "%s allocated out of %s"
-#~ msgstr "%s alocados fora de %s"
-
-#~ msgid "remove this demand from planning"
-#~ msgstr "retirar esta venda do plano"
-
-#~ msgid "Plan selected demands backward from their due date"
-#~ msgstr "Planejar o mais tarde possível"
-
-#~ msgid "Plan selected demands forward from the current date"
-#~ msgstr "Planejar o mais cedo possível"
-
-#~ msgid "The database returned"
-#~ msgstr "A base de dados devolveu "
-
-#~ msgid "customize"
-#~ msgstr "personalizar"
-
-#~ msgid "out of"
-#~ msgstr "fora de"
-
-#~ msgid "Time buckets"
-#~ msgstr "Intervalos de tempo"
-
-#~ msgid "Bucket size"
-#~ msgstr "Dimensão do intervalo"
-
-#~ msgid "to"
-#~ msgstr "até"
-
-#~ msgid "weeks"
-#~ msgstr "semanas"
-
-#~ msgid "months"
-#~ msgstr "meses"
-
-#~ msgid "After plan current date"
-#~ msgstr "Após a data corrente do plano"
-
-#~| msgid "Delete data"
-#~ msgid "Delete row"
-#~ msgstr "Apagar secção"
-
-#~ msgid "Add new row below"
-#~ msgstr "Adicionar secção em baixo"
-
-#~ msgid "Add new row above"
-#~ msgstr "Adicionar secção acima"
-
-#~ msgid "Add"
-#~ msgstr "Adicionar"
-
-#~ msgid "cancel"
-#~ msgstr "cancelar"
-
-#~ msgid "reset"
-#~ msgstr "reset"
-
-#~ msgid "export: OK"
-#~ msgstr "exportar: OK"
-
-#~ msgid "data exported to openbravo"
-#~ msgstr "dados exportados para o openbravo"
-
-#~ msgid "error exporting data"
-#~ msgstr "erro ao exportar dados"
-
-#~ msgid "Uploading spreadsheet"
-#~ msgstr "A carregar folha de cálculo"
-
-#~ msgid "Admin"
-#~ msgstr "Admin"
-
-#~ msgid "Unsaved changes"
-#~ msgstr "Alterações não gravadas"
-
-#~ msgid "proposed"
-#~ msgstr "proposta"
-
-#~ msgid "closed"
-#~ msgstr "fechada"
-
-#~ msgid "Error"
-#~ msgstr "erro"
-
-#~ msgid "Error getting quote info"
-#~ msgstr "Erro ao carregar informação de cotação"

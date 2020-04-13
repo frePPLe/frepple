@@ -66,7 +66,7 @@ extract-translations:
 	fi
 
 	## Preparation for each language
-	django=/cygdrive/c/develop/python36/Lib/site-packages/django; \
+	django=`python3 -c "import django; import os; print(os.path.dirname(django.__file__))"`; \
 	for language in $$( ls freppledb/locale ); \
 	do \
 	  ## Build a compendium with known translations
@@ -87,7 +87,7 @@ extract-translations:
 	  ## Combine all frepple strings coming from django, djangojs and angular
 	  msgcat --use-first freppledb/locale/$$language/LC_MESSAGES/djangojs.po \
 	    freppledb/locale/$$language/LC_MESSAGES/django.po \
-	    freppledb/common/static/common/po/$$language.po \
+	    freppledb/common/static/common/po/$$( echo $$language | tr _ - ).po \
 	    freppledb/common/static/common/po/template.pot \
 	    -o freppledb/locale/$$language/$$language.po; \
 	  ## Pick up known translations from the compendium
@@ -128,14 +128,14 @@ compile-translations:
 	    | msgattrib --no-obsolete --no-fuzzy -o freppledb/locale/$$language/LC_MESSAGES/django.po; \
 	  rm freppledb/locale/$$language/LC_MESSAGES/django.old.po; \
 	  ## Update angular file from our compendium
-	  mv freppledb/common/static/common/po/$$language.po \
-	     freppledb/common/static/common/po/$$language.old.po; \
+	  mv freppledb/common/static/common/po/$$( echo $$language | tr _ - ).po \
+	     freppledb/common/static/common/po/$$( echo $$language | tr _ - ).old.po; \
 	  msgmerge --silent --compendium \
 	    freppledb/locale/$$language/frepplecompendium.po \
 	    freppledb/locale/$$language/$$language.po \
-	    freppledb/common/static/common/po/$$language.old.po \
-	    | msgattrib --no-obsolete --no-fuzzy -o freppledb/common/static/common/po/$$language.po; \
-	  rm freppledb/common/static/common/po/$$language.old.po; \
+	    freppledb/common/static/common/po/$$( echo $$language | tr _ - ).old.po \
+	    | msgattrib --no-obsolete --no-fuzzy -o freppledb/common/static/common/po/$$( echo $$language | tr _ - ).po; \
+	  rm freppledb/common/static/common/po/$$( echo $$language | tr _ - ).old.po; \
 	  rm freppledb/locale/$$language/frepplecompendium.po; \
 	done
 
@@ -144,5 +144,5 @@ compile-translations:
 
 	## compile angular
 	if test -n '$(NPM)' && test -n '$(GRUNT)'; then \
-	  grunt nggettext_compile \
+	  grunt nggettext_compile; \
 	fi

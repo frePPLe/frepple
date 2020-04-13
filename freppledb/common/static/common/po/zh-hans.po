@@ -1,17 +1,34 @@
+# 
+# Copyright (C) 2007-2012 by Johan De Taeye
+# 
+# This library is free software; you can redistribute it and/or modify it
+# under the terms of the GNU Affero General Public License as published
+# by the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+# 
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero
+# General Public License for more details.
+# 
+# You should have received a copy of the GNU Affero General Public
+# License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# 
+# Joao Ranita <jranita@frepple.com>, 2015.
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: \n"
-"Last-Translator: \n"
-"Language-Team: \n"
-"Language: zh_TW\n"
+"PO-Revision-Date: 2020-04-04 12:52+0200\n"
+"Last-Translator: Joao Ranita <jranita@frepple.com>\n"
+"Language-Team: frepple\n"
+"Language: zh_CN\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.0.6\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Poedit 2.0.6\n"
 
 #: freppledb/planningboard/static/planningboard/src/ganttchart.js:518
 #: freppledb/planningboard/static/planningboard/src/ganttchart.js:551
@@ -22,7 +39,7 @@ msgstr "%s 分配出 %s"
 #: freppledb/planningboard/static/planningboard/planningboard.html:1283
 #: freppledb/planningboard/static/planningboard/planningboard.html:1301
 msgid "Add to the graph"
-msgstr "添加到图表"
+msgstr "添加到圖表"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1488
 msgid ""
@@ -31,8 +48,8 @@ msgid ""
 "operation table.\n"
 "                        <br><br>"
 msgstr ""
-"一個操作獲得其類別的顏色。<br>\n"
-"                        操作類別應填寫操作表上\n"
+"一个操作获得其类别的颜色。<br>\n"
+"                        操作类别应填写操作表上。\n"
 "                        <br><br>"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1523
@@ -42,8 +59,8 @@ msgid ""
 "operation table.\n"
 "                        <br><br>"
 msgstr ""
-"一個操作獲得其子類別的顏色。<br>\n"
-"                        操作子類別應填寫操作表上\n"
+"一个操作获得其子类别的颜色。<br>\n"
+"                        操作子类别应填写操作表上。\n"
 "                        <br><br>"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1420
@@ -53,8 +70,8 @@ msgid ""
 "table.\n"
 "                        <br><br>"
 msgstr ""
-"一個操作獲得顏色它所生成項目的類別。<br>\n"
-"                        項目類別應填寫在項目表中。\n"
+"一个操作获得颜色它所生成项目的类别。<br>\n"
+"                        项目类别应填写在项目表中。\n"
 "                        <br><br>"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1454
@@ -64,8 +81,8 @@ msgid ""
 "table.\n"
 "                        <br><br>"
 msgstr ""
-"一個操作獲得顏色它所生成項目的字類別。<br>\n"
-"                        項目子類別應填寫在項目表中。\n"
+"一个操作获得颜色它所生成项目的子类别。<br>\n"
+"                        项目子类别应填写在项目表中。\n"
 "                        <br><br>"
 
 #: freppledb/forecast/static/forecast/forecast.html:304
@@ -74,7 +91,7 @@ msgstr ""
 
 #: freppledb/forecast/static/forecast/forecast.html:383
 msgid "Automatic"
-msgstr "自動"
+msgstr "自动"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:47
 msgid "Automatically resolve infeasiblities in the plan"
@@ -86,34 +103,34 @@ msgstr "可用的交叉"
 
 #: freppledb/forecast/static/forecast/src/forecast.js:902
 msgid "Cancel"
-msgstr ""
+msgstr "取消"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1265
 msgid "Clear the plan of selected demands"
-msgstr "刪除所選需求的計劃"
+msgstr "删除所选需求的计划"
 
 #: freppledb/forecast/static/forecast/src/forecast.js:875
 msgid "Close"
-msgstr ""
+msgstr "关闭"
 
 #: freppledb/forecast/static/forecast/forecast.html:62
 msgid "Configure time buckets"
-msgstr "配置時間段"
+msgstr "配置日期类型"
 
 #: freppledb/forecast/static/forecast/forecast.html:388
 msgid "Constant"
-msgstr "常數"
+msgstr "常数"
 
 #: freppledb/forecast/static/forecast/forecast.html:455
 #: freppledb/input/static/operationplandetail/operationplandetail.html:62
 #: freppledb/planningboard/static/planningboard/planningboard.html:142
 #: freppledb/quoting/static/quoting/quoting.html:227
 msgid "Continue"
-msgstr "繼續"
+msgstr "继续"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1332
 msgid "Criticality color setup"
-msgstr "關鍵顏色設置"
+msgstr "关键颜色设置"
 
 #: freppledb/forecast/static/forecast/forecast.html:79
 #: freppledb/forecast/static/forecast/src/forecast.js:878
@@ -122,25 +139,25 @@ msgstr "定制"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1360
 msgid "Delay color setup"
-msgstr "延遲的顏色設置"
+msgstr "延迟的颜色设置"
 
 #: freppledb/input/static/operationplandetail/src/operationplanpanelDrv.js:34
 msgid "Delivery"
-msgstr "交付"
+msgstr "交货"
 
 #: freppledb/forecast/static/forecast/src/forecastgridDrv.js:36
 msgid "Demand outlier"
-msgstr "需求異常值"
+msgstr "需求异常值"
 
 #: freppledb/input/static/operationplandetail/src/operationplanpanelDrv.js:32
 msgid "Distribution Order"
-msgstr "配送訂單"
+msgstr "配送订单"
 
 #: freppledb/forecast/static/forecast/forecast.html:450
 #: freppledb/input/static/operationplandetail/operationplandetail.html:53
 #: freppledb/planningboard/static/planningboard/planningboard.html:133
 msgid "Do you want to save your changes first?"
-msgstr "你要保存更改嗎?"
+msgstr "先要保存更改吗?"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:264
 #: freppledb/planningboard/static/planningboard/planningboard.html:343
@@ -148,7 +165,7 @@ msgstr "你要保存更改嗎?"
 #: freppledb/planningboard/static/planningboard/planningboard.html:591
 #: freppledb/planningboard/static/planningboard/planningboard.html:717
 msgid "Duplicate"
-msgstr "重复"
+msgstr "重複"
 
 #: freppledb/quoting/static/quoting/quoting.html:30
 #: freppledb/quoting/static/quoting/quoting.html:43
@@ -158,85 +175,85 @@ msgstr ""
 
 #: freppledb/forecast/static/forecast/forecast.html:426
 msgid "Estimated forecast error"
-msgstr "估計預报錯誤"
+msgstr "估计预报错误"
 
 #: freppledb/forecast/static/forecast/forecast.html:372
 msgid "Forecast method"
-msgstr "預报方法"
+msgstr "预测方法"
 
 #: freppledb/forecast/static/forecast/forecast.html:82
 #: freppledb/planningboard/static/planningboard/planningboard.html:71
 msgid "Help"
-msgstr "幫助"
+msgstr "帮助"
 
 #: freppledb/forecast/static/forecast/forecast.html:400
 msgid "Intermittent"
-msgstr "間歇的"
+msgstr "间歇的"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1414
 msgid "Item category color setup"
-msgstr "項目類別顏色設置"
+msgstr "项目类别颜色设置"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1448
 msgid "Item subcategory color setup"
-msgstr "項目子類別顏色設置"
+msgstr "项目子类别颜色设置"
 
 #: freppledb/forecast/static/forecast/forecast.html:408
 msgid "Manual"
-msgstr "手動"
+msgstr "手动"
 
 #: freppledb/input/static/operationplandetail/src/operationplanpanelDrv.js:30
 msgid "Manufacturing Order"
-msgstr "生產單"
+msgstr "生产订单"
 
 #: freppledb/forecast/static/forecast/forecast.html:404
 msgid "Moving average"
-msgstr "移動平均數"
+msgstr "移动平均数"
 
 #: freppledb/forecast/static/forecast/forecast.html:247
 msgid "No comments yet"
-msgstr "還沒有註釋"
+msgstr "还没有注释"
 
 #: freppledb/quoting/static/quoting/quoting.html:139
 msgid "No plan yet"
-msgstr "還沒有計劃"
+msgstr "还没有计划"
 
 #: freppledb/forecast/static/forecast/src/forecast.js:901
 msgid "OK"
-msgstr "確定"
+msgstr "确定"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1482
 msgid "Operation category color setup"
-msgstr "操作類別的顏色設置"
+msgstr "操作类别的颜色设置"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1517
 msgid "Operation subcategory color setup"
-msgstr "操作子類別的顏色設置"
+msgstr "操作子类别的颜色设置"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:302
 msgid "Operationplan"
-msgstr "工序計劃"
+msgstr "操作计划"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1256
 #: freppledb/planningboard/static/planningboard/planningboard.html:818
 #: freppledb/planningboard/static/planningboard/src/planningboard.js:235
 msgid "Plan selected demands backward from their due date"
-msgstr "從它的截止日期逆向計劃選定的需求"
+msgstr "从它的截止日期逆向计划选定的需求"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1259
 #: freppledb/planningboard/static/planningboard/planningboard.html:821
 #: freppledb/planningboard/static/planningboard/src/planningboard.js:236
 msgid "Plan selected demands forward from the current date"
-msgstr "從它的截止日期預先計劃選定的需求"
+msgstr "从它的截止日期预先计划选定的需求"
 
 #: freppledb/input/static/operationplandetail/operationplandetail.html:57
 #: freppledb/planningboard/static/planningboard/planningboard.html:137
 msgid "Please be patient, the chart may take some time to complete."
-msgstr "請耐心等待，圖表可能需要一段時間才能完成。"
+msgstr "请耐心等待，图表可能需要一段时间才能完成。"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1387
 msgid "Priority color setup"
-msgstr "優先的顏色設置"
+msgstr "优先的颜色设置"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1392
 msgid ""
@@ -246,21 +263,21 @@ msgid ""
 "value the lower the priority.\n"
 "                        <br><br>"
 msgstr ""
-"優先級是一個需求屬性，在需求表中。優先級值將對計劃結果產生影響。<br>\n"
-"                       最高優先級值是0，值越大優先級越低。\n"
+"优先级是一个需求属性，在需求表中。优先级值将对计划结果产生影响。<br>\n"
+"                       最高优先级值是0，值越大优先级越低。\n"
 "                        <br><br>"
 
 #: freppledb/input/static/operationplandetail/src/operationplanpanelDrv.js:31
 msgid "Purchase Order"
-msgstr "採購訂單"
+msgstr "采购订单"
 
 #: freppledb/quoting/static/quoting/quoting.html:223
 msgid "Quoting error"
-msgstr "報價錯誤"
+msgstr "报价错误"
 
 #: freppledb/forecast/static/forecast/forecast.html:156
 msgid "Recalculate"
-msgstr "重新計算"
+msgstr "重新计算"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:267
 #: freppledb/planningboard/static/planningboard/planningboard.html:346
@@ -268,15 +285,15 @@ msgstr "重新計算"
 #: freppledb/planningboard/static/planningboard/planningboard.html:594
 #: freppledb/planningboard/static/planningboard/planningboard.html:720
 msgid "Remove"
-msgstr "刪除"
+msgstr "删除"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:815
 msgid "Remove this demand from planning"
-msgstr "從規劃中刪除這種需求"
+msgstr "从规划中删除这种需求"
 
 #: freppledb/forecast/static/forecast/src/forecast.js:903
 msgid "Reset"
-msgstr ""
+msgstr "重置"
 
 #: freppledb/forecast/static/forecast/forecast.html:153
 #: freppledb/forecast/static/forecast/forecast.html:454
@@ -288,41 +305,40 @@ msgstr "保存"
 
 #: freppledb/forecast/static/forecast/forecast.html:153
 msgid "Save changes to the database"
-msgstr "先保存或取消你的變動。"
+msgstr "先保存或取消你的变动。"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:153
 msgid "Save plan from memory to the database"
-msgstr "將計劃從內存保存到數據庫"
+msgstr "将计划从内存保存到数据库"
 
 #: freppledb/forecast/static/forecast/forecast.html:396
 msgid "Seasonal"
-msgstr "週期性的"
+msgstr "周期性的"
 
 #: freppledb/forecast/static/forecast/forecast.html:376
 msgid ""
 "Select forecast method, only possible at single item/location/customer level"
-msgstr "選擇預報方法，只可能在單個產品/地點/客戶級別"
+msgstr "选择预报方法，只可能在单个产品/地点/客户级别"
 
 #: freppledb/forecast/static/forecast/forecast.html:49
-#| msgid "Select panel sequence"
 msgid "Select panel measure"
 msgstr ""
 
 #: freppledb/forecast/static/forecast/forecast.html:5
 msgid "Select panel sequence"
-msgstr "選擇面板序列"
+msgstr "选择面板序列"
 
 #: freppledb/forecast/static/forecast/src/forecast.js:884
 msgid "Selected Cross"
-msgstr "選定的交叉"
+msgstr "选定的交叉"
 
 #: freppledb/forecast/static/forecast/forecast.html:417
 msgid "Selected forecast method"
-msgstr "已選擇預报的方法"
+msgstr "已选择预报的方法"
 
 #: freppledb/forecast/static/forecast/forecast.html:156
 msgid "Simulate changes without saving"
-msgstr "不保存的模擬改變"
+msgstr "不保存的模拟改变"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:270
 #: freppledb/planningboard/static/planningboard/planningboard.html:349
@@ -330,16 +346,16 @@ msgstr "不保存的模擬改變"
 #: freppledb/planningboard/static/planningboard/planningboard.html:597
 #: freppledb/planningboard/static/planningboard/planningboard.html:723
 msgid "Split in half"
-msgstr "分成兩半"
+msgstr "分成两半"
 
 #: freppledb/input/static/operationplandetail/src/operationplanpanelDrv.js:33
 msgid "Stock"
-msgstr "不需要放庫存"
+msgstr "库存"
 
 #: freppledb/input/static/operationplandetail/operationplandetail.html:56
 #: freppledb/planningboard/static/planningboard/planningboard.html:136
 msgid "The Gantt chart is limited to {{rowlimit}} rows."
-msgstr "甘特圖僅限於{{rowlimit}}行。"
+msgstr "甘特图仅限于{{rowlimit}}行。"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1337
 msgid ""
@@ -351,10 +367,10 @@ msgid ""
 "not immediately impact the delivery of any demand.\n"
 "                        <br><br>"
 msgstr ""
-"操作計劃的關鍵性測量可用的鬆弛時間直到客戶需求交付期。<br>\n"
-"                        關鍵性為0表示這個訂單是在一個或多個要求的關鍵路徑上。"
+"操作计划的关键性测量可用的松弛时间直到客户需求交付期。<br>\n"
+"                        关键性为0表示这个订单是在一个或多个要求的关键路径上。"
 "<br>\n"
-"                        較高的關鍵值表明延遲不會立即影響任何需求的交付。\n"
+"                        较高的关键值表明延迟不会立即影响任何需求的交付。\n"
 "                        <br><br>"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1365
@@ -365,37 +381,37 @@ msgid ""
 "operations still required to produce the finished end item.\n"
 "                        <br><br>"
 msgstr ""
-"操作計劃的延遲將其結束日期與提供的客戶需求的交貨期進行比較。<br>\n"
-"                        這也考慮到後續操作的持續時間還需要生產完成的最終項"
+"操作计划的延迟将其结束日期与提供的客户需求的交货期进行比较。<br>\n"
+"                        这也考虑到后续操作的持续时间还需要生产完成的最终項"
 "目。\n"
 "                        <br><br>"
 
 #: freppledb/forecast/static/forecast/forecast.html:392
 msgid "Trend"
-msgstr "趨勢"
+msgstr "趋势"
 
 #: freppledb/forecast/static/forecast/forecast.html:154
 msgid "Undo"
-msgstr "撤銷"
+msgstr "撤销"
 
 #: freppledb/forecast/static/forecast/forecast.html:154
 msgid "Undo changes"
-msgstr "取消更改"
+msgstr "取消更改 "
 
 #: freppledb/planningboard/static/planningboard/src/grid.js:45
 msgid "action"
-msgstr "動作"
+msgstr "动作"
 
 #: freppledb/forecast/static/forecast/forecast.html:375
 msgid "aggregate"
-msgstr "總計"
+msgstr "总计"
 
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:122
 #: freppledb/planningboard/static/planningboard/planningboard.html:433
 #: freppledb/planningboard/static/planningboard/planningboard.html:559
 #: freppledb/planningboard/static/planningboard/planningboard.html:683
 msgid "approved"
-msgstr "經核准的"
+msgstr "经核准的"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:235
 msgid "approved: {{aggregatedoperationplans.status.approved }}"
@@ -404,12 +420,12 @@ msgstr ""
 #: freppledb/forecast/static/forecast/forecast.html:164
 #: freppledb/planningboard/static/planningboard/planningboard.html:158
 msgid "attributes"
-msgstr "屬性"
+msgstr "属性"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:167
 #: freppledb/planningboard/static/planningboard/planningboard.html:190
 msgid "buffer"
-msgstr "緩衝"
+msgstr "库存"
 
 #: freppledb/quoting/static/quoting/quoting.html:98
 msgid "cancel"
@@ -418,14 +434,14 @@ msgstr "取消"
 #: freppledb/planningboard/static/planningboard/src/grid.js:274
 #: freppledb/planningboard/static/planningboard/src/grid.js:335
 msgid "category"
-msgstr "類別"
+msgstr "类别"
 
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:125
 #: freppledb/planningboard/static/planningboard/planningboard.html:448
 #: freppledb/planningboard/static/planningboard/planningboard.html:572
 #: freppledb/planningboard/static/planningboard/planningboard.html:697
 msgid "closed"
-msgstr "已結束"
+msgstr "已结束"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:244
 msgid "closed: {{aggregatedoperationplans.status.closed }}"
@@ -433,15 +449,15 @@ msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:11
 msgid "color by"
-msgstr "顏色的"
+msgstr "颜色的"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:173
 msgid "colors"
-msgstr "顏色"
+msgstr "颜色"
 
 #: freppledb/forecast/static/forecast/forecast.html:170
 msgid "comments"
-msgstr "註釋"
+msgstr "评论"
 
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:124
 #: freppledb/planningboard/static/planningboard/planningboard.html:443
@@ -456,18 +472,18 @@ msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:68
 msgid "configure time buckets"
-msgstr "配置時間段"
+msgstr "配置时间表"
 
 #: freppledb/quoting/static/quoting/quoting.html:100
 msgid "confirm"
-msgstr "確定"
+msgstr "确认"
 
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:123
 #: freppledb/planningboard/static/planningboard/planningboard.html:438
 #: freppledb/planningboard/static/planningboard/planningboard.html:563
 #: freppledb/planningboard/static/planningboard/planningboard.html:688
 msgid "confirmed"
-msgstr "已確定"
+msgstr "已确定"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:238
 msgid "confirmed: {{aggregatedoperationplans.status.confirmed }}"
@@ -475,7 +491,7 @@ msgstr ""
 
 #: freppledb/input/static/operationplandetail/src/supplyinformationDrv.js:40
 msgid "cost"
-msgstr ""
+msgstr "成本"
 
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:97
 #: freppledb/planningboard/static/planningboard/planningboard.html:18
@@ -485,32 +501,32 @@ msgstr ""
 #: freppledb/planningboard/static/planningboard/planningboard.html:742
 #: freppledb/planningboard/static/planningboard/planningboard.html:795
 msgid "criticality"
-msgstr "危急程度"
+msgstr "影响程度"
 
 #: freppledb/input/static/operationplandetail/src/supplypositionpanelDrv.js:63
 msgid "current onhand"
-msgstr "目前的現有量"
+msgstr "当前库存"
 
 #: freppledb/forecast/static/forecast/forecast.html:202
 #: freppledb/planningboard/static/planningboard/planningboard.html:838
 #: freppledb/planningboard/static/planningboard/src/grid.js:89
 #: freppledb/quoting/static/quoting/quoting.html:40
 msgid "customer"
-msgstr "客戶"
+msgstr "客户"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:195
 msgid "customer delivery"
-msgstr "客戶交期"
+msgstr "客户交期"
 
 #: freppledb/forecast/static/forecast/forecast.html:120
 msgid "customers"
-msgstr "客戶"
+msgstr "客户"
 
 #: freppledb/forecast/static/forecast/forecast.html:447
 #: freppledb/input/static/operationplandetail/operationplandetail.html:50
 #: freppledb/planningboard/static/planningboard/planningboard.html:130
 msgid "database transaction failed"
-msgstr "數據庫事務失敗"
+msgstr "数据库事务失败"
 
 #: freppledb/input/static/operationplandetail/src/bufferspanelDrv.js:37
 #: freppledb/planningboard/static/planningboard/planningboard.html:1098
@@ -526,7 +542,7 @@ msgstr "日期"
 #: freppledb/planningboard/static/planningboard/planningboard.html:1504
 #: freppledb/planningboard/static/planningboard/planningboard.html:1539
 msgid "default"
-msgstr ""
+msgstr "默认"
 
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:104
 #: freppledb/planningboard/static/planningboard/planningboard.html:21
@@ -540,11 +556,11 @@ msgstr "延期"
 
 #: freppledb/planningboard/static/planningboard/src/grid.js:149
 msgid "delivery date"
-msgstr "交貨日期"
+msgstr "交货日期"
 
 #: freppledb/planningboard/static/planningboard/src/grid.js:139
 msgid "delivery quantity"
-msgstr "交貨數量"
+msgstr "交货数量"
 
 #: freppledb/input/static/operationplandetail/src/demandpeggingpanelDrv.js:28
 #: freppledb/planningboard/static/planningboard/planningboard.html:161
@@ -555,7 +571,7 @@ msgstr "需求"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1206
 msgid "demands"
-msgstr ""
+msgstr "需求"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:368
 #: freppledb/planningboard/static/planningboard/planningboard.html:492
@@ -569,15 +585,15 @@ msgstr "描述"
 
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:57
 msgid "destination"
-msgstr "目標"
+msgstr "转入地点"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:193
 msgid "distribution order"
-msgstr "配送訂單"
+msgstr "配送订单"
 
 #: freppledb/input/static/operationplandetail/src/networkstatusDrv.js:40
 msgid "distribution orders"
-msgstr ""
+msgstr "配送订单"
 
 #: freppledb/input/static/operationplandetail/src/demandpeggingpanelDrv.js:35
 #: freppledb/planningboard/static/planningboard/planningboard.html:1218
@@ -596,11 +612,11 @@ msgstr ""
 
 #: freppledb/input/static/operationplandetail/src/supplyinformationDrv.js:48
 msgid "effective end"
-msgstr ""
+msgstr "生效结束"
 
 #: freppledb/input/static/operationplandetail/src/supplyinformationDrv.js:46
 msgid "effective start"
-msgstr ""
+msgstr "生效开始"
 
 #: freppledb/input/static/operationplandetail/src/problemspanelDrv.js:36
 #: freppledb/planningboard/static/planningboard/planningboard.html:1144
@@ -612,21 +628,21 @@ msgstr ""
 #: freppledb/planningboard/static/planningboard/planningboard.html:992
 #: freppledb/planningboard/static/planningboard/src/ganttchart.js:1092
 msgid "end"
-msgstr "結束"
+msgstr "结束"
 
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:76
 #: freppledb/quoting/static/quoting/quoting.html:133
 #: freppledb/quoting/static/quoting/quoting.html:177
 msgid "end date"
-msgstr "結束日期"
+msgstr "结束日期"
 
 #: freppledb/input/static/operationplandetail/src/bufferspanelDrv.js:35
 msgid "expected onhand"
-msgstr ""
+msgstr "预计数量"
 
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:126
 msgid "export"
-msgstr "導出"
+msgstr "导出"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:65
 msgid "export as Excel file"
@@ -643,53 +659,53 @@ msgstr "可行性"
 #: freppledb/forecast/static/forecast/forecast.html:139
 #: freppledb/forecast/static/forecast/forecast.html:167
 msgid "forecast"
-msgstr "預报"
+msgstr "预测"
 
 #: freppledb/forecast/static/forecast/src/displayForecastGraph.js:198
 msgid "forecast baseline"
-msgstr "預报基線"
+msgstr "预测基线"
 
 #: freppledb/forecast/static/forecast/src/displayForecastGraph.js:206
 msgid "forecast consumed"
-msgstr ""
+msgstr "预测消耗"
 
 #: freppledb/forecast/static/forecast/src/displayForecastGraph.js:204
 msgid "forecast net"
-msgstr ""
+msgstr "预测淨数"
 
 #: freppledb/forecast/static/forecast/src/displayForecastGraph.js:200
 msgid "forecast override"
-msgstr "預报忽视"
+msgstr "预测覆盖"
 
 #: freppledb/forecast/static/forecast/src/displayForecastGraph.js:202
 msgid "forecast total"
-msgstr ""
+msgstr "预测总数"
 
 #: freppledb/input/static/operationplandetail/operationplandetail.html:49
 #: freppledb/planningboard/static/planningboard/planningboard.html:129
 msgid "gantt chart rows limit"
-msgstr "甘特圖行數限制"
+msgstr "甘特图行数限制"
 
 #: freppledb/forecast/static/forecast/forecast.html:173
 msgid "history"
-msgstr "歷史"
+msgstr "历史"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:482
 msgid "identifier"
-msgstr "標識符"
+msgstr "标识符"
 
 #: freppledb/quoting/static/quoting/quoting.html:94
 msgid "inquiry"
-msgstr "查詢"
+msgstr "查询"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:194
 msgid "inventory"
-msgstr "庫存"
+msgstr "库存"
 
 #: freppledb/input/static/operationplandetail/src/supplypositionpanelDrv.js:22
 #: freppledb/planningboard/static/planningboard/planningboard.html:27
 msgid "inventory status"
-msgstr "庫存狀況"
+msgstr "库存状态"
 
 #: freppledb/forecast/static/forecast/forecast.html:186
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:40
@@ -702,23 +718,23 @@ msgstr "庫存狀況"
 #: freppledb/planningboard/static/planningboard/src/grid.js:78
 #: freppledb/quoting/static/quoting/quoting.html:27
 msgid "item"
-msgstr "產品"
+msgstr "对象"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:30
 msgid "item category"
-msgstr "項目類別"
+msgstr "项目类别"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:33
 msgid "item subcategory"
-msgstr "項目子類別"
+msgstr "项目子类别"
 
 #: freppledb/forecast/static/forecast/forecast.html:107
 msgid "items"
-msgstr "產品"
+msgstr "产品"
 
 #: freppledb/input/static/operationplandetail/src/supplyinformationDrv.js:38
 msgid "lead time"
-msgstr ""
+msgstr "交货提前期"
 
 #: freppledb/forecast/static/forecast/forecast.html:218
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:48
@@ -732,29 +748,29 @@ msgstr ""
 #: freppledb/planningboard/static/planningboard/src/grid.js:67
 #: freppledb/quoting/static/quoting/quoting.html:53
 msgid "location"
-msgstr "位置"
+msgstr "地点"
 
 #: freppledb/forecast/static/forecast/forecast.html:94
 msgid "locations"
-msgstr "位置"
+msgstr "地点"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:191
 msgid "manufacturing order"
-msgstr "生產單"
+msgstr "生产单"
 
 #: freppledb/input/static/operationplandetail/src/networkstatusDrv.js:42
 msgid "manufacturing orders"
-msgstr ""
+msgstr "生产单"
 
 #: freppledb/input/static/operationplandetail/src/bufferspanelDrv.js:28
 #: freppledb/planningboard/static/planningboard/planningboard.html:1083
 #: freppledb/planningboard/static/planningboard/planningboard.html:187
 msgid "material"
-msgstr ""
+msgstr "物料"
 
 #: freppledb/quoting/static/quoting/quoting.html:85
 msgid "maximum lateness (in days)"
-msgstr "最大延遲時間(天數)"
+msgstr "最大延迟时间(天数)"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:170
 msgid "messages"
@@ -762,7 +778,7 @@ msgstr "消息"
 
 #: freppledb/quoting/static/quoting/quoting.html:73
 msgid "minimum shipment"
-msgstr "计划这需求时的最低出货量"
+msgstr "最低出货量"
 
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:19
 msgid "multiple selected"
@@ -790,7 +806,7 @@ msgstr ""
 #: freppledb/planningboard/static/planningboard/src/grid.js:55
 #: freppledb/quoting/static/quoting/quoting.html:15
 msgid "name"
-msgstr "名稱"
+msgstr "名称"
 
 #: freppledb/input/static/operationplandetail/src/networkstatusDrv.js:29
 msgid "network status"
@@ -798,27 +814,27 @@ msgstr ""
 
 #: freppledb/forecast/static/forecast/forecast.html:245
 msgid "new customer comment"
-msgstr "新客戶的註釋"
+msgstr "新客户的注释"
 
 #: freppledb/forecast/static/forecast/forecast.html:242
 msgid "new item comment"
-msgstr "新产品的註釋"
+msgstr "新产品的注释"
 
 #: freppledb/forecast/static/forecast/forecast.html:243
 msgid "new item-location comment"
-msgstr "新產品 - 地點的註釋"
+msgstr "新产品-地点的注释"
 
 #: freppledb/forecast/static/forecast/forecast.html:244
 msgid "new location comment"
-msgstr "新地點的註釋"
+msgstr "新地点的注释"
 
 #: freppledb/input/static/operationplandetail/src/demandpeggingpanelDrv.js:44
 msgid "no demands"
-msgstr "沒有需求"
+msgstr "没有需求"
 
 #: freppledb/input/static/operationplandetail/src/bufferspanelDrv.js:44
 msgid "no movements"
-msgstr "沒有移動"
+msgstr "没有移动"
 
 #: freppledb/input/static/operationplandetail/src/networkstatusDrv.js:53
 msgid "no network information"
@@ -827,11 +843,11 @@ msgstr ""
 #: freppledb/input/static/operationplandetail/src/problemspanelDrv.js:43
 #: freppledb/planningboard/static/planningboard/planningboard.html:998
 msgid "no problems"
-msgstr "沒有問題"
+msgstr "没有任何问题"
 
 #: freppledb/input/static/operationplandetail/src/resourcespanelDrv.js:40
 msgid "no resources"
-msgstr "沒有資源"
+msgstr "没有资源"
 
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:18
 msgid "no selection"
@@ -849,16 +865,16 @@ msgstr ""
 #: freppledb/planningboard/static/planningboard/planningboard.html:966
 #: freppledb/planningboard/static/planningboard/src/ganttchart.js:1094
 msgid "onhand"
-msgstr "現有庫存量"
+msgstr "现有库存量"
 
 #: freppledb/input/static/operationplandetail/src/supplypositionpanelDrv.js:29
 msgid "onhand at lead time"
-msgstr "在交貨時間的現有量"
+msgstr "交货期末库存"
 
 #: freppledb/forecast/static/forecast/src/displayForecastGraph.js:194
 #: freppledb/forecast/static/forecast/src/displayForecastGraph.js:215
 msgid "open orders"
-msgstr "打開訂單"
+msgstr "未完成订单"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1131
 msgid "operation"
@@ -866,19 +882,19 @@ msgstr "操作"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:36
 msgid "operation category"
-msgstr "操作類別"
+msgstr "操作类别"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:39
 msgid "operation subcategory"
-msgstr "操作子類別"
+msgstr "操作子类别"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1122
 msgid "operationplans"
-msgstr ""
+msgstr "操作计划"
 
 #: freppledb/quoting/static/quoting/quoting.html:117
 msgid "operations"
-msgstr "工序"
+msgstr "操作"
 
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:64
 msgid "ordering date"
@@ -887,21 +903,22 @@ msgstr ""
 #: freppledb/forecast/static/forecast/src/displayForecastGraph.js:196
 #: freppledb/forecast/static/forecast/src/displayForecastGraph.js:217
 msgid "orders adjustment"
-msgstr ""
+msgstr "订单调整"
 
+# "origin" translation must be different from "source" translation
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:52
 #: freppledb/input/static/operationplandetail/src/supplyinformationDrv.js:36
 #: freppledb/planningboard/static/planningboard/planningboard.html:606
 msgid "origin"
-msgstr "來源"
+msgstr "转出地点"
 
 #: freppledb/input/static/operationplandetail/src/networkstatusDrv.js:44
 msgid "overdue sales orders"
-msgstr ""
+msgstr "过期的销售订单"
 
 #: freppledb/forecast/static/forecast/forecast.html:367
 msgid "parameters"
-msgstr "參數"
+msgstr "参数"
 
 #: freppledb/forecast/static/forecast/src/displayForecastGraph.js:219
 msgid "past forecast"
@@ -912,20 +929,20 @@ msgstr ""
 #: freppledb/planningboard/static/planningboard/planningboard.html:883
 #: freppledb/planningboard/static/planningboard/src/grid.js:100
 msgid "priority"
-msgstr "優先權"
+msgstr "优先级"
 
 #: freppledb/input/static/operationplandetail/src/problemspanelDrv.js:29
 #: freppledb/planningboard/static/planningboard/planningboard.html:980
 #: freppledb/quoting/static/quoting/quoting.html:165
 msgid "problems"
-msgstr "問題"
+msgstr "问题"
 
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:121
 #: freppledb/planningboard/static/planningboard/planningboard.html:428
 #: freppledb/planningboard/static/planningboard/planningboard.html:554
 #: freppledb/planningboard/static/planningboard/planningboard.html:678
 msgid "proposed"
-msgstr "提議"
+msgstr "提议"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:232
 msgid "proposed: {{aggregatedoperationplans.status.proposed }}"
@@ -933,11 +950,11 @@ msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:192
 msgid "purchase order"
-msgstr "採購訂單"
+msgstr "采购订单"
 
 #: freppledb/input/static/operationplandetail/src/networkstatusDrv.js:38
 msgid "purchase orders"
-msgstr ""
+msgstr "采购订单"
 
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:89
 #: freppledb/input/static/operationplandetail/src/bufferspanelDrv.js:33
@@ -960,11 +977,11 @@ msgstr ""
 #: freppledb/quoting/static/quoting/quoting.html:127
 #: freppledb/quoting/static/quoting/quoting.html:67
 msgid "quantity"
-msgstr "數量"
+msgstr "数量"
 
 #: freppledb/quoting/static/quoting/quoting.html:96
 msgid "quote"
-msgstr "引用"
+msgstr "报价"
 
 #: freppledb/quoting/static/quoting/quoting.html:8
 msgid "quote form"
@@ -981,7 +998,7 @@ msgstr ""
 #: freppledb/planningboard/static/planningboard/planningboard.html:612
 #: freppledb/planningboard/static/planningboard/src/ganttchart.js:1090
 msgid "reference"
-msgstr "參考"
+msgstr "参考"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:62
 msgid "remove all rows"
@@ -989,25 +1006,25 @@ msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:59
 msgid "remove row"
-msgstr "刪除行"
+msgstr "删除行"
 
 #: freppledb/planningboard/static/planningboard/src/planningboard.js:234
 msgid "remove this demand from planning"
-msgstr "從規劃中刪除這種需求"
+msgstr "从规划中删除这种需求"
 
 #: freppledb/input/static/operationplandetail/src/resourcespanelDrv.js:28
 #: freppledb/planningboard/static/planningboard/planningboard.html:164
 #: freppledb/planningboard/static/planningboard/planningboard.html:189
 msgid "resource"
-msgstr "資源"
+msgstr "资源"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1016
 msgid "resources"
-msgstr ""
+msgstr "资源"
 
 #: freppledb/input/static/operationplandetail/src/networkstatusDrv.js:46
 msgid "sales orders"
-msgstr ""
+msgstr "销售订单"
 
 #: freppledb/forecast/static/forecast/forecast.html:74
 msgid "save"
@@ -1015,7 +1032,7 @@ msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1028
 msgid "setup"
-msgstr ""
+msgstr "换线准备"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:385
 #: freppledb/planningboard/static/planningboard/planningboard.html:513
@@ -1029,11 +1046,11 @@ msgstr ""
 
 #: freppledb/input/static/operationplandetail/src/supplyinformationDrv.js:42
 msgid "size minimum"
-msgstr ""
+msgstr "最小量"
 
 #: freppledb/input/static/operationplandetail/src/supplyinformationDrv.js:44
 msgid "size multiple"
-msgstr ""
+msgstr "大小的倍数"
 
 #: freppledb/input/static/operationplandetail/src/problemspanelDrv.js:34
 #: freppledb/planningboard/static/planningboard/planningboard.html:1139
@@ -1045,13 +1062,13 @@ msgstr ""
 #: freppledb/planningboard/static/planningboard/planningboard.html:989
 #: freppledb/planningboard/static/planningboard/src/ganttchart.js:1091
 msgid "start"
-msgstr "開啟"
+msgstr "开始"
 
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:63
 #: freppledb/quoting/static/quoting/quoting.html:130
 #: freppledb/quoting/static/quoting/quoting.html:174
 msgid "start date"
-msgstr "開始日期"
+msgstr "开始日期"
 
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:118
 #: freppledb/planningboard/static/planningboard/planningboard.html:228
@@ -1060,12 +1077,12 @@ msgstr "開始日期"
 #: freppledb/planningboard/static/planningboard/planningboard.html:674
 #: freppledb/quoting/static/quoting/quoting.html:91
 msgid "status"
-msgstr "狀況"
+msgstr "状态"
 
 #: freppledb/planningboard/static/planningboard/src/grid.js:283
 #: freppledb/planningboard/static/planningboard/src/grid.js:344
 msgid "subcategory"
-msgstr "子類別"
+msgstr "子类别"
 
 #: freppledb/input/static/operationplandetail/src/networkstatusDrv.js:61
 msgid "superseded"
@@ -1074,7 +1091,7 @@ msgstr ""
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:44
 #: freppledb/planningboard/static/planningboard/planningboard.html:498
 msgid "supplier"
-msgstr "供應商"
+msgstr "供应商"
 
 #: freppledb/input/static/operationplandetail/src/supplyinformationDrv.js:29
 msgid "supply information"
@@ -1083,7 +1100,7 @@ msgstr ""
 #: freppledb/forecast/static/forecast/src/displayForecastGraph.js:192
 #: freppledb/forecast/static/forecast/src/displayForecastGraph.js:213
 msgid "total orders"
-msgstr "全部訂單"
+msgstr "订单总数"
 
 #: freppledb/input/static/operationplandetail/src/supplyinformationDrv.js:34
 msgid "types"
@@ -1097,7 +1114,7 @@ msgstr "不保存更改"
 
 #: freppledb/quoting/static/quoting/quoting.html:193
 msgid "why short or late?"
-msgstr "為什麼短缺或遲?"
+msgstr "为何短缺或延迟?"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:53
 msgid "zoom in"
@@ -1105,7 +1122,7 @@ msgstr "放大"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:56
 msgid "zoom out"
-msgstr "縮小"
+msgstr "缩小"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:196
 msgid "{{ aggregatedoperationplans.count }} selected"
@@ -1114,212 +1131,3 @@ msgstr ""
 #: freppledb/forecast/static/forecast/forecast.html:316
 msgid "{{m.label}}"
 msgstr ""
-
-#~ msgid "Display quantity"
-#~ msgstr "顯示數量"
-
-#~ msgid "Display value"
-#~ msgstr "顯示值"
-
-#~ msgid "orders adjustment 1 years ago"
-#~ msgstr "1年前的訂單調整"
-
-#~ msgid "orders adjustment 2 years ago"
-#~ msgstr "2年前的訂單調整"
-
-#~ msgid "orders adjustment 3 years ago"
-#~ msgstr "3年前的訂單調整"
-
-#~ msgid "total forecast"
-#~ msgstr "總的預報"
-
-#~ msgid "total orders 1 years ago"
-#~ msgstr "1年前的總訂單"
-
-#~ msgid "total orders 2 years ago"
-#~ msgstr "2年前的總訂單"
-
-#~ msgid "total orders 3 years ago"
-#~ msgstr "3年前的總訂單"
-
-#~ msgid "Resolve constraints during plan changes by moving to earlier dates"
-#~ msgstr "在計劃更改期間，通過移動到較早的日期來解決約束"
-
-#~ msgid "Resolve constraints during plan changes by moving to later dates"
-#~ msgstr "在計劃更改期間，通過移動到更晚的日期來解決約束"
-
-#~ msgid "id"
-#~ msgstr "id"
-
-#~ msgid "There are unsaved changes on this page."
-#~ msgstr "此頁面有未保存的變動。"
-
-#~ msgid "Error saving data"
-#~ msgstr "保存資料出錯。"
-
-#~ msgid "Click to select record"
-#~ msgstr "單擊以選擇記錄"
-
-#~ msgid "Selected options"
-#~ msgstr "選定的選項"
-
-#~ msgid "Available options"
-#~ msgstr "可用的選項"
-
-#~ msgid "Frozen columns"
-#~ msgstr "凍結的列"
-
-#~ msgid "Export format"
-#~ msgstr "匯出格式"
-
-#~ msgid "Spreadsheet list"
-#~ msgstr "試算表列表"
-
-#~ msgid "CSV list"
-#~ msgstr "CSV列表"
-
-#~ msgid "Export"
-#~ msgstr "導出"
-
-#~ msgid "Spreadsheet table"
-#~ msgstr "電子表格表"
-
-#~ msgid "CSV table"
-#~ msgstr "CSV表"
-
-#~ msgid "Delete data"
-#~ msgstr "刪除資料"
-
-#~ msgid "You are about to delete %s objects AND ALL RELATED RECORDS!"
-#~ msgstr "你將會刪除 %s 對象和所有相關的數據記錄！"
-
-#~ msgid "Confirm"
-#~ msgstr "確定"
-
-#~ msgid "Copy data"
-#~ msgstr "複製數據"
-
-#~ msgid "You are about to duplicate %s objects"
-#~ msgstr "你將會複製% s對象"
-
-#~ msgid "Error copying data"
-#~ msgstr "複製數據出錯"
-
-#~ msgid "Export Plan"
-#~ msgstr "導出計劃"
-
-#~ msgid "Filtered where"
-#~ msgstr "過濾哪裡"
-
-#~ msgid "export selected records to "
-#~ msgstr "導出選定記錄到"
-
-#~ msgid "connecting to "
-#~ msgstr "現在連接至"
-
-#~ msgid "Export successful"
-#~ msgstr "輸出成功"
-
-#~ msgid "Error during export"
-#~ msgstr "误差在输出时候"
-
-#~ msgid "retry"
-#~ msgstr "重審"
-
-#~ msgid "Retry"
-#~ msgstr "重審"
-
-#~ msgid "Error getting data"
-#~ msgstr "獲取數據錯誤"
-
-#~ msgid "Customize a dashboard row"
-#~ msgstr "自定義儀表板行"
-
-#~ msgid "Name"
-#~ msgstr "名稱"
-
-#~ msgid "Layout"
-#~ msgstr "佈置"
-
-#~ msgid "Single column"
-#~ msgstr "單列"
-
-#~ msgid "Two columns"
-#~ msgstr "兩列"
-
-#~ msgid "Three columns"
-#~ msgstr "三列"
-
-#~ msgid "Four columns"
-#~ msgstr "四列"
-
-#~ msgid "Add widget"
-#~ msgstr "添加小工"
-
-#~ msgid "Delete"
-#~ msgstr "刪除"
-
-#~ msgid "Add new below"
-#~ msgstr "添加新在下面"
-
-#~ msgid "Add new above"
-#~ msgstr "添加新在上面"
-
-#~ msgid "Installed apps"
-#~ msgstr "已安裝的應用程序"
-
-#~ msgid "Import CSV or Excel file"
-#~ msgstr "導入CSV或Excel文件"
-
-#~ msgid "Load an Excel file or a CSV-formatted text file."
-#~ msgstr "載入一個Excel檔或CSV-formatted文字檔。"
-
-#~ msgid "The first row should contain the field names."
-#~ msgstr "第一行包含了欄位名。"
-
-#~ msgid "First delete all existing records AND ALL RELATED TABLES"
-#~ msgstr "首先刪除所有存在的記錄和所有相關的表。"
-
-#~ msgid "Data file"
-#~ msgstr "數據文件"
-
-#~ msgid "Import"
-#~ msgstr "導入"
-
-#~ msgid "Importing... pressing Close button will not stop the process."
-#~ msgstr "導入中…按關閉按鈕不會停止進程。"
-
-#~ msgid "Show hints"
-#~ msgstr "顯示提示"
-
-#~ msgid "Guided tour"
-#~ msgstr "導遊服務"
-
-#~ msgid "Previous"
-#~ msgstr "前一個"
-
-#~ msgid "Play"
-#~ msgstr "播放"
-
-#~ msgid "Next"
-#~ msgstr "下一個"
-
-#~ msgid "Pause"
-#~ msgstr "暫停"
-
-#~ msgid "out of"
-#~ msgstr "分配出"
-
-#~ msgid "Error saving report settings"
-#~ msgstr "保存報表設置出錯"
-
-#~ msgid "Add"
-#~ msgstr "增加"
-
-#~ msgid "Stop"
-#~ msgstr "停止"
-
-#, fuzzy
-#~| msgid "customer"
-#~ msgid "customize"
-#~ msgstr "客戶"

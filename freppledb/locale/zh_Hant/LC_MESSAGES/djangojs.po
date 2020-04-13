@@ -1,19 +1,19 @@
-#
+# 
 # Copyright (C) 2007 by Johan De Taeye
-#
+# 
 # This library is free software; you can redistribute it and/or modify it
 # under the terms of the GNU Affero General Public License as published
 # by the Free Software Foundation; either version 3 of the License, or
 # (at your option) any later version.
-#
+# 
 # This library is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero
 # General Public License for more details.
-#
+# 
 # You should have received a copy of the GNU Affero General Public
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
-#
+# 
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
@@ -84,7 +84,6 @@ msgid "Click to select record"
 msgstr "單擊以選擇記錄"
 
 #: common/static/js/frepple.js:653 common/static/js/frepple.min.js:11
-#| msgid "Selected options"
 msgid "Select action"
 msgstr ""
 
@@ -133,7 +132,7 @@ msgstr "重置"
 
 #: common/static/js/frepple.js:861 common/static/js/frepple.min.js:11
 msgid "Error retrieving data"
-msgstr ""
+msgstr "恢復數據錯誤"
 
 #: common/static/js/frepple.js:1066 common/static/js/frepple.js:2195
 #: common/static/js/frepple.min.js:11
@@ -214,9 +213,8 @@ msgid "within"
 msgstr ""
 
 #: common/static/js/frepple.js:1533 common/static/js/frepple.min.js:11
-#| msgid "days late"
 msgid "days"
-msgstr ""
+msgstr "天"
 
 #: common/static/js/frepple.js:1569 common/static/js/frepple.min.js:11
 msgid "Filtered where"
@@ -381,104 +379,3 @@ msgstr "在交貨期的現有量"
 #: input/static/operationplandetail/src/supplypositionpanelDrv.js:63
 msgid "current onhand"
 msgstr "目前的现有量"
-
-#~ msgid "Show hints"
-#~ msgstr "顯示提示"
-
-#~ msgid "Guided tour"
-#~ msgstr "導遊服務"
-
-#~ msgid "Previous"
-#~ msgstr "前一個"
-
-#~ msgid "Play"
-#~ msgstr "播放"
-
-#~ msgid "Next"
-#~ msgstr "下一個"
-
-#~ msgid "Pause"
-#~ msgstr "暫停"
-
-#~ msgid "unused"
-#~ msgstr "未使用的"
-
-#~ msgid "Importing... pressing Close button will not stop the process."
-#~ msgstr "導入中…按關閉按鈕不會停止進程。"
-
-#~ msgid "problems"
-#~ msgstr "問題"
-
-#~ msgid "start"
-#~ msgstr "開始"
-
-#~ msgid "end"
-#~ msgstr "結束"
-
-#~ msgid "no problems"
-#~ msgstr "沒有任何問題"
-
-#~ msgid "resource"
-#~ msgstr "資源"
-
-#~ msgid "quantity"
-#~ msgstr "數量"
-
-#~ msgid "no resources"
-#~ msgstr "沒有資源"
-
-#~ msgid "buffer"
-#~ msgstr "庫存"
-
-#~ msgid "date"
-#~ msgstr "日期"
-
-#~ msgid "no movements"
-#~ msgstr "沒有移動"
-
-#~ msgid "demand"
-#~ msgstr "需求"
-
-#~ msgid "no demands"
-#~ msgstr "沒有需求"
-
-#~ msgid "Manufacturing Order"
-#~ msgstr "生產單"
-
-#~ msgid "Purchase Order"
-#~ msgstr "採購訂單"
-
-#~ msgid "Distribution Order"
-#~ msgstr "配送訂單"
-
-#~ msgid "Stock"
-#~ msgstr "不需要放庫存"
-
-#~ msgid "Delivery"
-#~ msgstr "交付"
-
-#~ msgid "%s allocated out of %s"
-#~ msgstr "%s 分配出 %s"
-
-#~ msgid "remove this demand from planning"
-#~ msgstr "從規劃中刪除這種需求"
-
-#~ msgid "Plan selected demands backward from their due date"
-#~ msgstr "從它的截止日期逆向計劃選定的需求"
-
-#~ msgid "Plan selected demands forward from the current date"
-#~ msgstr "從它的截止日期預先計劃選定的需求"
-
-#, fuzzy
-#~| msgid "Customize"
-#~ msgid "customize"
-#~ msgstr "定制"
-
-#~ msgid "out of"
-#~ msgstr "分配出"
-
-#~ msgid "Add"
-#~ msgstr "增加"
-
-#~ msgid "Stop"
-#~ msgstr "停止"

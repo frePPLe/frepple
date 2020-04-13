@@ -200,8 +200,8 @@ LANGUAGES = (
     ("pt-br", _("Brazilian Portuguese")),
     ("ru", _("Russian")),
     ("es", _("Spanish")),
-    ("zh-cn", _("Simplified Chinese")),
-    ("zh-tw", _("Traditional Chinese")),
+    ("zh-hans", _("Simplified Chinese")),
+    ("zh-hant", _("Traditional Chinese")),
 )
 
 # The remember-me checkbox on the login page allows to keep a session cookie

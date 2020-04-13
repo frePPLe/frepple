@@ -80,7 +80,6 @@ msgid "Click to select record"
 msgstr "Hacer clic para seleccionar registro"
 
 #: common/static/js/frepple.js:653 common/static/js/frepple.min.js:11
-#| msgid "Selected options"
 msgid "Select action"
 msgstr ""
 
@@ -212,7 +211,7 @@ msgstr ""
 
 #: common/static/js/frepple.js:1533 common/static/js/frepple.min.js:11
 msgid "days"
-msgstr ""
+msgstr "días"
 
 #: common/static/js/frepple.js:1569 common/static/js/frepple.min.js:11
 msgid "Filtered where"
@@ -373,140 +372,9 @@ msgstr "estado del inventario"
 #: input/static/js/frepple-operationplandetail.min.js:11
 #: input/static/operationplandetail/src/supplypositionpanelDrv.js:29
 msgid "onhand at lead time"
-msgstr ""
+msgstr "a mano en lead time"
 
 #: input/static/js/frepple-operationplandetail.min.js:11
 #: input/static/operationplandetail/src/supplypositionpanelDrv.js:63
 msgid "current onhand"
-msgstr ""
-
-#~ msgid "Show hints"
-#~ msgstr "Mostrar sugerencias"
-
-#~ msgid "Guided tour"
-#~ msgstr "Demostración guiada"
-
-#~ msgid "Previous"
-#~ msgstr "Anterior"
-
-#~ msgid "Play"
-#~ msgstr "Reproducir"
-
-#~ msgid "Next"
-#~ msgstr "Siguiente"
-
-#~ msgid "Pause"
-#~ msgstr "Detener"
-
-#~ msgid "Importing... pressing Close button will not stop the process."
-#~ msgstr "Importando… presionar el botón Cerrar no termina el proceso."
-
-#~ msgid "problems"
-#~ msgstr "problemas"
-
-#~ msgid "start"
-#~ msgstr "inicio"
-
-#~ msgid "end"
-#~ msgstr "fin"
-
-#~ msgid "no problems"
-#~ msgstr "no hay problemas"
-
-#~ msgid "resource"
-#~ msgstr "recurso"
-
-#~ msgid "quantity"
-#~ msgstr "cantidad"
-
-#~ msgid "no resources"
-#~ msgstr "sin recursos"
-
-#~ msgid "buffer"
-#~ msgstr "inventario"
-
-#~ msgid "date"
-#~ msgstr "fecha"
-
-#~ msgid "no movements"
-#~ msgstr "sin movimientos"
-
-#~ msgid "demand"
-#~ msgstr "demanda"
-
-#~ msgid "no demands"
-#~ msgstr "sin demandas"
-
-#~ msgid "Manufacturing Order"
-#~ msgstr "Orden de Producción"
-
-#~ msgid "Purchase Order"
-#~ msgstr "Orden de Compra"
-
-#~ msgid "Distribution Order"
-#~ msgstr "Orden de Distribución"
-
-#~ msgid "Stock"
-#~ msgstr "Inventario"
-
-#~ msgid "Delivery"
-#~ msgstr "Entrega"
-
-#~ msgid "%s allocated out of %s"
-#~ msgstr "%s asignado fuera de %s"
-
-#~ msgid "remove this demand from planning"
-#~ msgstr "eliminar esta demanda de la planificación"
-
-#~ msgid "Plan selected demands backward from their due date"
-#~ msgstr "Planifique las demandas seleccionadas desde su fecha de vencimiento"
-
-#~ msgid "Plan selected demands forward from the current date"
-#~ msgstr "Planifique las demandas seleccionadas a partir de la fecha actual"
-
-#~ msgid "customize"
-#~ msgstr "personalizar"
-
-#~ msgid "The database returned"
-#~ msgstr "La base de datos devolvió"
-
-#~ msgid "out of"
-#~ msgstr "fuera de"
-
-#~ msgid "Time buckets"
-#~ msgstr "Intervalos de tiempo"
-
-#~ msgid "Bucket size"
-#~ msgstr "Tamaño del intervalo"
-
-#~| msgid "Stop"
-#~ msgid "to"
-#~ msgstr "hasta"
-
-#~ msgid "weeks"
-#~ msgstr "semanas"
-
-#~ msgid "months"
-#~ msgstr "meses"
-
-#~ msgid "After plan current date"
-#~ msgstr "después de fecha planificada corriente"
-
-#~| msgid "Delete data"
-#~ msgid "Delete row"
-#~ msgstr "Eliminar"
-
-#~ msgid "Add new row below"
-#~ msgstr "Añadir nueva sección abajo"
-
-#~ msgid "Add new row above"
-#~ msgstr "Añadir nueva sección arriba"
-
-#~ msgid "Add"
-#~ msgstr "Añadir"
-
-#~ msgid "reset"
-#~ msgstr "restaurar"
-
-#~ msgid "cancel"
-#~ msgstr "cancelar"
+msgstr "inventario actual"

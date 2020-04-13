@@ -304,6 +304,7 @@ class Scenario(models.Model):
         _("status"), max_length=10, null=False, blank=False, choices=scenarioStatus
     )
     lastrefresh = models.DateTimeField(_("last refreshed"), null=True, editable=False)
+    help_url = models.URLField("help", null=True, editable=False)
 
     def __str__(self):
         return self.name

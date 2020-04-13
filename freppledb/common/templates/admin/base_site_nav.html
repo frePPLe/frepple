@@ -92,7 +92,12 @@ $(function() {
 					{{ request.scenario.description }}&nbsp;<span class="caret"></span>
 					</button>
 					<ul class="dropdown-menu" aria-labelledby="database">
-					{% for sc in user.scenarios|sortList %}<li><a data-database="{{ sc.name }}">{{ sc.description }}</a></li>{% endfor %}
+					{% for sc in user.scenarios|sortList %}<li>
+					  <a data-database="{{ sc.name }}">{{ sc.description }}
+					  {% if sc.help_url %}
+					  <span onclick="window.open('{{sc.help_url|safe}}'); event.stopPropagation()" style="float:right" class="fa fa-question-circle"></span>
+					  {% endif %}</a>
+					  </li>{% endfor %}
 					</ul>
 				{% endif %}
 				</div>

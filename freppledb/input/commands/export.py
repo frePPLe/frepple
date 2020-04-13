@@ -999,8 +999,8 @@ class exportDemands(PlanTask):
                     i.maxlateness,
                     i.category,
                     i.subcategory,
-                    i.description,
                     i.source,
+                    i.description,
                     cls.timestamp,
                     i.status,
                 ]

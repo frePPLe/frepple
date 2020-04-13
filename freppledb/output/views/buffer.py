@@ -367,7 +367,7 @@ class OverviewReport(GridPivot):
              on operationplanmaterial.operationplan_id = operationplan.reference
            where operationplanmaterial.item_id = item.name
              and operationplanmaterial.location_id = location.name
-             and operationplan.batch is not distinct from opplanmat.batch
+             and (item.type is distinct from 'make to order' or operationplan.batch is not distinct from opplanmat.batch)
              and flowdate < greatest(d.startdate,%%s)
            order by flowdate desc, id desc limit 1) startoh,
            d.bucket,
@@ -391,7 +391,7 @@ class OverviewReport(GridPivot):
                  from buffer
                  where item_id = item.name
                  and location_id = location.name
-                 and buffer.batch is not distinct from opplanmat.batch
+                 and (item.type is distinct from 'make to order' or buffer.batch is not distinct from opplanmat.batch)
                  )
                and greatest(d.startdate,%%s) >= startdate
                and greatest(d.startdate,%%s) < enddate
@@ -403,7 +403,7 @@ class OverviewReport(GridPivot):
                  from buffer
                  where item_id = item.name
                  and location_id = location.name
-                 and buffer.batch is not distinct from opplanmat.batch
+                 and (item.type is distinct from 'make to order' or buffer.batch is not distinct from opplanmat.batch)
                  )
               )
             ) as safetystock
@@ -412,7 +412,7 @@ class OverviewReport(GridPivot):
             from buffer
             where item_id = item.name
             and location_id = location.name
-            and buffer.batch is not distinct from opplanmat.batch
+            and (item.type is distinct from 'make to order' or buffer.batch is not distinct from opplanmat.batch)
             ) t
             where t.safetystock is not null
             order by priority
@@ -438,7 +438,7 @@ class OverviewReport(GridPivot):
                or (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate))
              where opm.item_id = item.name
                and opm.location_id = location.name
-               and operationplan.batch is not distinct from opplanmat.batch
+               and (item.type is distinct from 'make to order' or operationplan.batch is not distinct from opplanmat.batch)
            ) ongoing
            from
            (%s) opplanmat

@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-04-04 12:06+0200\n"
-"PO-Revision-Date: 2020-04-04 11:54+0200\n"
+"PO-Revision-Date: 2020-04-14 14:35+0200\n"
 "Last-Translator: Joao Ranita <jranita@frepple.com>\n"
 "Language-Team: frepple\n"
 "Language: nl\n"
@@ -22,7 +22,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 2.0.6\n"
+"X-Generator: Poedit 2.0.1\n"
 
 #: common/static/js/frepple.js:187 common/static/js/frepple.js:282
 #: common/static/js/frepple.min.js:11
@@ -595,8 +595,7 @@ msgstr "waarde"
 #: output/views/operation.py:479 output/views/operation.py:520
 #: output/views/operation.py:785 output/views/operation.py:837
 #: output/views/operation.py:878 output/views/problem.py:78
-#: output/views/resource.py:48 output/views/resource.py:137
-#: quoting/views.py:84 reportmanager/models.py:22
+#: output/views/resource.py:48 output/views/resource.py:137 quoting/views.py:84
 #: reportmanager/templates/reportmanager/reportmanager.html:252
 #: reportmanager/templates/reportmanager/reportmanager.html:256
 #: reportmanager/views.py:116
@@ -1516,16 +1515,16 @@ msgstr ""
 "          <div class=\"dropdown dropdown-submit-input\">\n"
 "            <button class=\"btn btn-default dropdown-toggle form-control\"  "
 "id=\"weekstart1\" value=\"1\" type=\"button\" data-toggle=\"dropdown"
-"\">Monday&nbsp;&nbsp;<span class=\"caret\"></span></button>\n"
+"\">Maandag&nbsp;&nbsp;<span class=\"caret\"></span></button>\n"
 "            <ul class=\"dropdown-menu col-xs-12\" aria-labelledby="
 "\"weekstart1\" id=\"weekstartul\">\n"
-"              <li><a>Sunday</a></li>\n"
-"              <li><a>Monday</a></li>\n"
-"              <li><a>Tuesday</a></li>\n"
-"              <li><a>Wednesday</a></li>\n"
-"              <li><a>Thursday</a></li>\n"
-"              <li><a>Friday</a></li>\n"
-"              <li><a>Saturday</a></li>\n"
+"              <li><a>Zondag</a></li>\n"
+"              <li><a>Maandag</a></li>\n"
+"              <li><a>Dinsdag</a></li>\n"
+"              <li><a>Woensdag</a></li>\n"
+"              <li><a>Donderdag</a></li>\n"
+"              <li><a>Vrijdag</a></li>\n"
+"              <li><a>Zaterdag</a></li>\n"
 "            </ul>\n"
 "          </div>\n"
 "          </div>\n"
@@ -1981,14 +1980,12 @@ msgid "Planning parameters"
 msgstr "Planning parameters"
 
 #: forecast/admin.py:61 input/admin.py:276 input/admin.py:467
-#: input/admin.py:538 input/admin.py:702 input/admin.py:1056
-#: input/views.py:201 input/views.py:284
+#: input/admin.py:538 input/admin.py:702 input/admin.py:1056 input/views.py:201
 msgid "supply path"
 msgstr "supply pad"
 
 #: forecast/admin.py:64 forecast/views.py:482 input/admin.py:278
-#: input/admin.py:471 input/admin.py:540 input/admin.py:706
-#: input/admin.py:1062
+#: input/admin.py:471 input/admin.py:540 input/admin.py:706 input/admin.py:1062
 #: inventoryplanning/templates/inventoryplanning/drp.html:2472
 #: output/views/buffer.py:328 output/views/demand.py:35
 #: output/views/demand.py:88 output/views/demand.py:279
@@ -2613,8 +2610,7 @@ msgstr "Label gebuik in all schermen"
 #: inventoryplanning/templates/inventoryplanning/drp.html:162
 #: inventoryplanning/templates/inventoryplanning/drp.html:1996
 #: output/views/buffer.py:173 output/views/operation.py:77
-#: output/views/pegging.py:50 output/views/resource.py:69
-#: output/widget.py:1504
+#: output/views/pegging.py:50 output/views/resource.py:69 output/widget.py:1504
 msgid "type"
 msgstr "type"
 

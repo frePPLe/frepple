@@ -23,7 +23,7 @@ from django.core.management.base import BaseCommand, CommandError
 from django.conf import settings
 from django.db import DEFAULT_DB_ALIAS
 from django.utils.translation import gettext_lazy as _
-from django.template import Template, RequestContext
+from django.template.loader import render_to_string
 
 from freppledb.execute.models import Task
 from freppledb.common.models import User, Scenario
@@ -299,186 +299,14 @@ class Command(BaseCommand):
         Scenario.syncWithSettings()
 
         scenarios = Scenario.objects.using(DEFAULT_DB_ALIAS)
-        if scenarios.count() > 1:
-            javascript = """
-                $(".scenariorelease").on("click", function(event) {
-                  event.preventDefault();
-                  var target = "/" + $(this).attr("data-target");
-                  if (target == "/default")
-                    target = "";
-                  $.ajax({
-                   url: target + "/execute/launch/scenario_copy/",
-                   type: 'POST',
-                   data: {release: 1},
-                   complete: function() {
-                     $("#scenariotoast").addClass("show");
-                     $("#scenariotoast span").text("Scenario released");
-                     setTimeout(function(){$("#scenariotoast").removeClass("show") }, 3000);
-                     if (target == url_prefix) window.location.href = "/"; }
-                   });
-                });
-                $(".scenariopromote").on("click", function(event) {
-                  event.preventDefault();
-                  var source = "/" + $(this).attr("data-source");
-                  $.ajax({
-                   url: source + "/execute/launch/scenario_copy/",
-                   type: 'POST',
-                   data: {
-                     promote: 1,
-                     source: $(this).attr("data-source"),
-                     destination: $(this).attr("data-target")
-                     },
-                   success: function() {
-                     $("#scenariotoast").addClass("show");
-                     $("#scenariotoast span").text("Launched promotion task");
-                     setTimeout(function(){$("#scenariotoast").removeClass("show") }, 3000);
-                   }});
-                });
-                $(".scenariocopy").on("click", function(event) {
-                  event.preventDefault();
-                  var source = "/" + $(this).attr("data-source");
-                  if (source == "/default")
-                    source = "";
-                  $.ajax({
-                   url: source + "/execute/launch/scenario_copy/",
-                   type: 'POST',
-                   data: {
-                     copy: 1,
-                     source: $(this).attr("data-source"),
-                     destination: $(this).attr("data-target")
-                     },
-                   success: function() {
-                     $("#scenariotoast").addClass("show");
-                     $("#scenariotoast span").text("Launched copy task");
-                     setTimeout(function(){$("#scenariotoast").removeClass("show") }, 3000);
-                   }});
-                });
-                $(".scenariolabel").on("change", function(event) {
-                  event.preventDefault();
-                  var target = "/" + $(this).attr("data-target");
-                  if (target == "/default")
-                    target = "";
-                  $.ajax({
-                   url: target + "/execute/launch/scenario_copy/",
-                   type: 'POST',
-                   data: {
-                     update: 1,
-                     description: $(this).val()
-                     },
-                   success: function() {
-                     $("#scenariotoast").addClass("show");
-                     $("#scenariotoast span").text("Updated description");
-                     setTimeout(function(){
-                       $("#scenariotoast").removeClass("show");
-                       }, 3000);
-                    }
-                   });
-                });
-                """
-            context = RequestContext(
-                request,
-                {
-                    "javascript": javascript,
-                    "scenarios": scenarios,
-                    "DEFAULT_DB_ALIAS": DEFAULT_DB_ALIAS,
-                    "current_database": request.database,
-                },
-            )
-
-            template = Template(
-                """
-        {% load i18n %}
-        <div id="scenariotoast" class="toast"><div style="position: relative; left: -50%">
-          <h1><span class="btn btn-primary"></span></h1>
-        </div></div>
-        <table id="scenarios">
-          <tr>
-            <th style="padding:5px 10px 5px 10px; text-align: center">{% trans 'scenario'|capfirst %}</th>
-            <th style="padding:5px 10px 5px 10px; text-align: center">{% trans 'action'|capfirst %}</th>
-            <th style="padding:5px 10px 5px 10px; text-align: center">
-              <span data-toggle="tooltip" data-placement="top" data-html="true"
-                data-original-title="<b>In use</b>: Contains data<br><b>Free</b>: Available to copy data into<br><b>Busy</b>: Data copy in progress">
-              {% trans 'status'|capfirst %}
-              <span class="fa fa-question-circle"></span>
-              </span>
-            </th>
-            <th style="padding:5px 10px 5px 10px; text-align: center">
-              <span data-toggle="tooltip" data-placement="top" data-original-title="Label shown in the scenario dropdown list">
-              {% trans 'label'|capfirst %}
-              <span class="fa fa-question-circle"></span>
-              </span></th>
-            <th style="padding:5px 10px 5px 10px; text-align: center">
-              <span data-toggle="tooltip" data-placement="top" data-original-title="Date of the last action">
-              {% trans 'last modified'|capfirst %}
-              <span class="fa fa-question-circle"></span>
-              </span>
-            </th>
-          </tr>
-          {% for j in scenarios %}
-          <tr>
-            <td style="padding:5px">
-              <strong>{{j.name|capfirst}}</strong>
-            </td>
-            <td style="padding:5px 10px 5px 10px">
-               {% if j.name != DEFAULT_DB_ALIAS and j.status == 'Free' and perms.common.copy_scenario %}
-               <div class="btn-group btn-block">
-               <button class="btn btn-block btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
-                 {% trans 'manage'|capfirst %}&nbsp;<span class="caret"></span>
-               </button>
-               <ul class="dropdown-menu" rol="menu">
-                 <li><a class="scenariocopy" href="#" data-source="{{ current_database }}" data-target="{{ j.name }}">
-                   Copy from {{ current_database }}
-                 </a></li>                 
-               </ul>
-               </div>
-               {% elif j.name != DEFAULT_DB_ALIAS and j.status == 'In use'%}
-               {% if perms.common.release_scenario or perms.common.promote_scenario  %}
-               <div class="btn-group btn-block">
-               <button class="btn btn-block btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
-                 {% trans 'manage'|capfirst %}&nbsp;<span class="caret"></span>
-               </button>
-               <ul class="dropdown-menu" rol="menu">
-                 {% if perms.common.release_scenario %}
-                 <li><a class="scenariorelease" href="#" data-target="{{ j.name }}">
-                 {% trans "Release: You will lose ALL data in this scenario!" %}
-                 </a></li>
-                 {% endif %}
-                 {% if perms.common.promote_scenario and current_database == j.name %}
-                 <li><a class="scenariopromote" href="#" data-source="{{ j.name }}" data-target="{{ DEFAULT_DB_ALIAS }}" >
-                 {% trans "Promote: All data will be copied to Production" %}
-                 </a></li>
-                 {% endif %}
-               </ul>
-               </div>
-               {% endif %}
-               {% endif %}
-            </td>
-            {% with mystatus=j.status|lower %}
-            <td style="padding:5px 10px 5px 10px; text-align: center">{% trans mystatus|capfirst %}</td>
-            {% endwith %}
-            <td style="padding:5px 10px 5px 10px">
-              <input class="scenariolabel" type="text" size="20" data-target="{{ j.name }}"
-              value="{% if j.description %}{{j.description|escape}}{% else %}{{ j.name }}{% endif %}">
-            </td>
-            <td style="padding:5px 10px 5px 10px; text-align: center">{{j.lastrefresh|date:"Y-m-d G:i:s"}}</td>
-          </tr>
-          {% endfor %}
-        </table>
-        <script>{{ javascript|safe }}</script>
-      """
-            )
-            return template.render(context)
-            # A list of translation strings from the above
-            translated = (
-                _("copy"),
-                _("release"),
-                _("promote"),
-                _("release selected scenarios"),
-                _("into selected scenarios"),
-                _("update"),
-                _("Update description of selected scenarios"),
-                _("Release: You will lose ALL data in this scenario!"),
-                _("Promote: All data will be copied to Production"),
-            )
-        else:
+        if scenarios.count() <= 1:
             return None
+        return render_to_string(
+            "commands/scenario_copy.html",
+            {
+                "scenarios": scenarios,
+                "DEFAULT_DB_ALIAS": DEFAULT_DB_ALIAS,
+                "current_database": request.database,
+            },
+            request=request,
+        )

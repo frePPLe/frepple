@@ -18,8 +18,7 @@ from django.core.mail import EmailMessage
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction, DEFAULT_DB_ALIAS
 from django.db.models import Min
-from django.template import Template, RequestContext
-from django.utils.encoding import force_text
+from django.template.loader import render_to_string
 from django.utils.translation import gettext_lazy as _
 
 from ...models import ScheduledTask, Task
@@ -315,47 +314,14 @@ class Command(BaseCommand):
 
     # accordion template
     title = _("Group and schedule tasks")
-    index = 1000
+    index = 500
 
     help_url = "user-guide/command-reference.html#scheduletasks"
 
     @staticmethod
     def getHTML(request):
-        context = RequestContext(
-            request, {"schedules": ScheduledTask.objects.all().using(request.database)}
+        return render_to_string(
+            "commands/scheduletasks.html",
+            {"schedules": ScheduledTask.objects.all().using(request.database)},
+            request=request,
         )
-        template = Template(
-            """
-            {% load i18n %}
-              <table>
-              <th>
-              <tr>
-              <td></td>
-              <td><strong>{% trans "name"|capfirst %}</strong></td>
-              <td><strong>{% trans "next run"|capfirst %}</strong></td>
-              {% if user.is_superuser %}<td><strong>{% trans 'edit'|capfirst %}</strong></td>{% endif %}
-              </tr>
-              </th
-              {% for schedule in schedules %}
-              <tr>
-                <td style="vertical-align:top; padding: 15px">
-                  <form role="form" method="post" action="{{request.prefix}}/execute/launch/scheduletasks/">{% csrf_token %}
-                  <button type="submit" class="btn btn-primary">{% trans "launch"|capfirst %}</button>
-                  <input type="hidden" name="schedule" value="{{ schedule.name}}">
-                  </form>
-                </td>
-                <td  style="padding: 15px;">{{ schedule.name }}</td>
-                <td  style="padding: 15px;">{% if schedule.next_run %}{{ schedule.next_run }}{% endif %}</td>
-                {% if user.is_superuser %}
-                <td  style="padding: 15px;">
-                <a onclick="$(this).next().toggle(400); console.log('ppp', event.target)">
-                <span class="fa fa-edit"></span>
-                </a><div>aaa<div></td>
-                {% endif %}
-              </tr>
-              {% endfor %}
-              </table>
-            </form>
-              """
-        )
-        return template.render(context)

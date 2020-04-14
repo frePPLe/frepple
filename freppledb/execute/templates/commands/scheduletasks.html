@@ -1,0 +1,100 @@
+{% load i18n %}
+<table style="width:100%">
+<th>
+<tr>
+<td></td>
+<td><strong>{% trans "name"|capfirst %}</strong></td>
+<td><strong>{% trans "next run"|capfirst %}</strong></td>
+{% if user.is_superuser %}<td><strong>{% trans 'edit'|capfirst %}</strong></td>{% endif %}
+</tr>
+</th>
+{% for schedule in schedules %}
+<tr>
+  <td style="vertical-align:top; padding: 15px">
+    <form role="form" method="post" action="{{request.prefix}}/execute/launch/scheduletasks/">{% csrf_token %}
+    <button type="submit" class="btn btn-primary">{% trans "launch"|capfirst %}</button>
+    <input type="hidden" name="schedule" value="{{ schedule.name}}">
+    </form>
+  </td>
+  <td  style="padding: 15px;">{{ schedule.name }}</td>
+  <td  style="padding: 15px;">{% if schedule.next_run %}{{ schedule.next_run }}{% endif %}</td>
+
+  {% if user.is_superuser %}
+  <td  style="padding: 15px;">
+  <a onclick="$(this).parents('tr').next().toggle(400); console.log('ppp', $(this).parents('tr'))">
+  <span class="fa fa-edit"></span>
+  <span class="fa fa-trash-o"></span>
+  </a></td>
+  </tr><tr style="display:none">
+  <td></td>
+  <td colspan="3">
+     <form class="form-horizontal">
+       <div class="form-group">
+         <label for="schedule-{{forloop.counter}}-name" class="col-sm-3 control-label">{% trans "name"|capfirst %}</label>
+         <div class="col-sm-9">
+           <input type="text" class="form-control" id="schedule-{{forloop.counter}}-name"
+             value="{{schedule.name}}" placeholder="{% trans "unique name"|capfirst %}">
+         </div>
+       </div>
+       <div class="form-group">
+         <label class="col-sm-3 control-label">{% trans "tasks"|capfirst %}</label>
+         <div class="col-sm-9">
+         {% for t in schedule.data.tasks %}
+         
+         {% endfor %}
+         </div>
+       </div>
+ 		   <div class="form-group">
+         <label for="schedule-{{forloop.counter}}-start" class="col-sm-3 control-label">{% trans "start time"|capfirst %}</label>
+         <div class="col-sm-9">
+           <input type="text" class="form-control" id="schedule-{{forloop.counter}}-at"
+             value="{{schedule.data.starttime}}" placeholder="HH:MM:SS">
+         </div>
+       </div>
+       <div class="form-group">
+         <label class="col-sm-3 control-label">{% trans "weekly schedule"|capfirst %}</label>
+		     <div class="col-sm-9">
+					 <label class="checkbox-inline">
+					   <input type="checkbox" id="inlineCheckbox1" value="1" {% if schedule.data.monday %}checked{% endif %}>{% trans "Mon" %}
+					 </label>
+           <label class="checkbox-inline">
+             <input type="checkbox" id="inlineCheckbox1" value="2" {% if schedule.data.tuesday %}checked{% endif %}>{% trans "Tue" %}
+           </label>
+           <label class="checkbox-inline">
+             <input type="checkbox" id="inlineCheckbox1" value="3" {% if schedule.data.wednesday %}checked{% endif %}>{% trans "Wed" %}
+           </label>
+           <label class="checkbox-inline">
+             <input type="checkbox" id="inlineCheckbox1" value="4" {% if schedule.data.thursday %}checked{% endif %}>{% trans "Thu" %}
+           </label>
+           <label class="checkbox-inline">
+             <input type="checkbox" id="inlineCheckbox1" value="5" {% if schedule.data.friday %}checked{% endif %}>{% trans "Fri" %}
+           </label>
+           <label class="checkbox-inline">
+             <input type="checkbox" id="inlineCheckbox1" value="6" {% if schedule.data.saturday %}checked{% endif %}>{% trans "Sat" %}
+           </label>
+           <label class="checkbox-inline">
+             <input type="checkbox" id="inlineCheckbox1" value="7" {% if schedule.data.sunday %}checked{% endif %}>{% trans "Sun" %}
+           </label>
+		     </div>
+		   </div>       
+       <div class="form-group">
+         <label for="schedule-{{forloop.counter}}-email-success" class="col-sm-3 control-label">{% trans "email on success"|capfirst %}</label>
+         <div class="col-sm-9">
+           <input type="email" class="form-control" id="schedule-{{forloop.counter}}-email-success"
+              value="{{schedule.email_success}}" placeholder="{% trans "list of emails, separated by commas"|capfirst %}">
+         </div>
+       </div>
+       <div class="form-group">
+         <label for="schedule-{{forloop.counter}}-email-failure" class="col-sm-3 control-label">{% trans "email on failure"|capfirst %}</label>
+         <div class="col-sm-9">
+           <input type="email" class="form-control" id="schedule-{{forloop.counter}}-email-success"
+             value="{{schedule.email_failure}}" placeholder="{% trans "list of emails, separated by commas"|capfirst %}">
+         </div>
+       </div>                
+      </form>
+   </td>
+   {% endif %}
+
+</tr>
+{% endfor %}
+</table>

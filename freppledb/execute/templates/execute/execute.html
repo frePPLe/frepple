@@ -194,7 +194,7 @@ loadComplete : function(data) {
   <h1>{% trans "launch tasks"|capfirst %}</h1>
 </div></div>
 <div class="row">
-	<div id="tasks" class="panel-group col-md-12" role="tablist" aria-multiselectable="true" style="max-width:700px; min-width: 600px">
+	<div id="tasks" class="panel-group col-md-12" role="tablist" aria-multiselectable="true" style="max-width:900px; min-width: 600px">
 	{% if perms.auth.generate_plan or perms.auth.copy_scenario or perms.auth.release_scenario or perms.auth.promote_scenario or perms.auth.run_db %}
 	<!--User has some permissions -->
     {% for command in commandlist %}

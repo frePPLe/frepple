@@ -115,13 +115,16 @@ LANGUAGES = (
     ("en", _("English")),
     ("fr", _("French")),
     ("de", _("German")),
+    ("he", _("Hebrew")),
     ("it", _("Italian")),
-    ("jp", _("Japanese")),
+    ("ja", _("Japanese")),
     ("nl", _("Dutch")),
     ("pt", _("Portuguese")),
     ("pt-br", _("Brazilian Portuguese")),
-    ("zh-cn", _("Simplified Chinese")),
-    ("zh-tw", _("Traditional Chinese")),
+    ("ru", _("Russian")),
+    ("es", _("Spanish")),
+    ("zh-hans", _("Simplified Chinese")),
+    ("zh-hant", _("Traditional Chinese")),
 )
 
 # The default redirects URLs not ending with a slash.

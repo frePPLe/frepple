@@ -8,6 +8,9 @@ Release notes
 
 - | Supply path: Alternate operation with low priority (less preferred) will be displayed in light-blue.
 
+- | Simplified the process of 
+    `translating the user interface <developer-guide/translating-the-user-interface.html>`_.
+
 .. rubric:: Integration
 
 - A `task scheduler <user-guide/command-reference.html#scheduletasks>`_ allows users to

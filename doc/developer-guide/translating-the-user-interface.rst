@@ -20,20 +20,36 @@ For translators
 
 **2. Start translating**
 
-  Pick up file *<LANGUAGE>/<LANGUAGE>.po* from the github source code repository
-  https://github.com/frePPLe/frepple/tree/master/freppledb/locale. All terms to be
-  translated are present in this single file. (Ignore the LC_MESSAGES
-  subfolder)
+  Pick up file the translation file of the language you wish to update from the github
+  source code repository. All terms to be translated are collected in this single file. 
+
+   - French: https://raw.githubusercontent.com/frePPLe/frepple/master/freppledb/locale/fr/fr.po
+   - German: https://raw.githubusercontent.com/frePPLe/frepple/master/freppledb/locale/de/de.po
+   - Hebrew: https://raw.githubusercontent.com/frePPLe/frepple/master/freppledb/locale/he/he.po
+   - Italian: https://raw.githubusercontent.com/frePPLe/frepple/master/freppledb/locale/it/it.po
+   - Japanese: https://raw.githubusercontent.com/frePPLe/frepple/master/freppledb/locale/ja/ja.po
+   - Dutch: https://raw.githubusercontent.com/frePPLe/frepple/master/freppledb/locale/nl/nl.po
+   - Portuguese: https://raw.githubusercontent.com/frePPLe/frepple/master/freppledb/locale/pt/pt.po
+   - Brazilian Portuguese: https://raw.githubusercontent.com/frePPLe/frepple/master/freppledb/locale/pt-br/pt-br.po
+   - Russian: https://raw.githubusercontent.com/frePPLe/frepple/master/freppledb/locale/ru/ru.po
+   - Spanish: https://raw.githubusercontent.com/frePPLe/frepple/master/freppledb/locale/es/es.po
+   - Simplified Chinese: https://raw.githubusercontent.com/frePPLe/frepple/master/freppledb/locale/zh-hans/zh-hans.po
+   - Traditional Chinese: https://raw.githubusercontent.com/frePPLe/frepple/master/freppledb/locale/zh-hant/zh-hant.po
 
   Open the file with the editor you installed in step 1, and start translating.
-   
-  Some strings may include HTML tags or Python code, i.e.:
+
+  Some strings may include HTML tags or Python code, e.g.:
 
        %(title)s for %(entity)s
 
   In this case just copy the entire string and translate "for", resulting in:
 
        %(title)s para %(entity)s
+
+**3. Submit your translation**
+
+  You can submit your translation a) either with a pull request on github, or b) by posting the file to the
+  `frePPLe user group <https://groups.google.com/forum/#!forum/frepple-users>`_.
 
 For developers
 --------------

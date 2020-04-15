@@ -39,7 +39,7 @@ import math
 import operator
 import json
 import re
-from time import timezone
+from time import timezone, daylight
 from io import StringIO, BytesIO
 import urllib
 from openpyxl import load_workbook, Workbook
@@ -726,7 +726,9 @@ class GridReport(View):
         """
         Return the difference between the end user's UTC offset and the server's UTC offset
         """
-        return timedelta(seconds=timezone - int(request.COOKIES.get("tzoffset", 0)))
+        return timedelta(
+            seconds=timezone - int(request.COOKIES.get("tzoffset", 0) - daylight * 3600)
+        )
 
     @classmethod
     def has_permission(cls, user):

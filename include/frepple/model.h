@@ -3143,7 +3143,7 @@ inline ostream& operator<<(ostream& os, const OperationPlan* o) {
     if (o->getProposed())
       os << ")";
     else
-      os << ", " << o->getStatus() << ")" << endl;
+      os << ", " << o->getStatus() << ")";
   } else
     os << "nullptr";
   return os;

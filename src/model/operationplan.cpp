@@ -1045,6 +1045,10 @@ void OperationPlan::setOwner(OperationPlan* o, bool fast) {
   // Special case: the same owner is set twice
   if (owner == o) return;
   if (o) {
+    // Check if the parent operation can have children
+    if (!o->getOperation()
+             ->hasType<OperationAlternate, OperationSplit, OperationRouting>())
+      throw DataException("Invalid parent operationplan");
     // Register with the new owner
     o->getOperation()->addSubOperationPlan(o, this, fast);
     if (o->getBatch())

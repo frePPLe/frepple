@@ -1705,6 +1705,10 @@ class loadOperationPlans(LoadTask):
                             try:
                                 opplan.owner = frepple.operationplan(reference=i[6])
                             except Exception:
+                                logger.error(
+                                    "Reference %s: Can't set owner field to %s"
+                                    % (i[1], i[6])
+                                )
                                 pass
                         if i[9]:
                             opplan.demand = frepple.demand(name=i[9])

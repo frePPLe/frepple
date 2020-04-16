@@ -727,7 +727,7 @@ class GridReport(View):
         Return the difference between the end user's UTC offset and the server's UTC offset
         """
         return timedelta(
-            seconds=timezone - int(request.COOKIES.get("tzoffset", 0) - daylight * 3600)
+            seconds=timezone - int(request.COOKIES.get("tzoffset", 0)) - daylight * 3600
         )
 
     @classmethod

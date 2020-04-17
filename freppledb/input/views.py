@@ -5346,7 +5346,7 @@ class DeliveryOrderList(GridReport):
             path = request.path.split("/")[4]
             if path == "consumed":
                 return q.filter(
-                    item__name=args[0],
+                    demand__item__name=args[0],
                     location__name=args[1],
                     enddate__gte=args[2],
                     enddate__lt=args[3],
@@ -5359,7 +5359,7 @@ class DeliveryOrderList(GridReport):
                 except Item.DoesNotExist:
                     lft = 1
                     rght = 1
-                q = q.filter(item__lft__gte=lft, item__rght__lte=rght)
+                q = q.filter(demand__item__lft__gte=lft, demand__item__rght__lte=rght)
 
         return q
 

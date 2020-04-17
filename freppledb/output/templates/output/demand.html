@@ -124,12 +124,12 @@ function drawGraphs(jsondata)
 	          d3.select("#tooltip").style('display', 'none');
 	
 	          window.location = "{{ request.prefix }}"
-	            +"/data/input/demand/item/"
-	            + admin_escape(d['item'])
-	            +"/" + admin_escape("open,quote")
-	            +"/" + timebuckets[d['bucket']]['startdate']
-	            +"/" + timebuckets[d['bucket']]['enddate']
-	            + "/";
+	            +"/data/input/demand"	            
+	            +"/?noautofilter&o=5a&" + 
+	            "due__gte=" + timebuckets[d['bucket']]['startdate']
+	            +"&due__lt=" + timebuckets[d['bucket']]['enddate']
+	            +"&item=" + admin_escape(d['item'])
+	            +"&status_in=open,quote";
 	
 	          var coord = d3.mouse(document.body);
 	          d3.event.stopPropagation();
@@ -229,22 +229,21 @@ function crosses (cellvalue, options, rowdata)
     {
       case 0:
         if (cellvalue[cross_idx[i]] != 0.0)
-          result += grid.formatNumber(cellvalue[cross_idx[i]]) + '<a href="{{request.prefix}}/data/input/demand/item/' +
+          result += grid.formatNumber(cellvalue[cross_idx[i]]) + '<a href="{{request.prefix}}/data/input/deliveryorder/item/' +
             admin_escape(rowdata['item']) +
-            '/' + admin_escape('open,quote') +
-            '/' + options['colModel']['startdate'] +
-            '/' + options['colModel']['enddate'] +
-            '/">&nbsp;<span class="context cross fa fa-caret-right"></span></a><br>';
+            '/?noautofilter&amp;o=5a&amp;demand__due__gte=' + options['colModel']['startdate'] +
+            '&amp;demand__due__lt=' + options['colModel']['enddate'] +
+            '">&nbsp;<span class="context cross fa fa-caret-right"></span></a><br>';
         else
           result += '0<br>';
         break;
       case 1:
         if (cellvalue[cross_idx[i]] != 0.0)
-          result += grid.formatNumber(cellvalue[cross_idx[i]]) + '<a href="{{request.prefix}}/data/input/deliveryorder/item/' +
-            admin_escape(rowdata['item']) +
-            '/?noautofilter&amp;o=5a&amp;enddate__gte=' + options['colModel']['startdate'] +
-            '&amp;enddate__lt=' + options['colModel']['enddate'] +
-            '">&nbsp;<span class="context cross fa fa-caret-right"></span></a><br>';
+          result += grid.formatNumber(cellvalue[cross_idx[i]]) + '<a href="{{request.prefix}}/data/input/demand/?noautofilter&amp;o=5a' +            
+            '&amp;due__gte=' + options['colModel']['startdate'] +
+            '&amp;due__lt=' + options['colModel']['enddate'] +
+            '&amp;item=' + admin_escape(rowdata['item']) + 
+            '&amp;status_in=' + admin_escape('quote,open') + '">&nbsp;<span class="context cross fa fa-caret-right"></span></a><br>';
         else
           result += '0<br>';
         break;

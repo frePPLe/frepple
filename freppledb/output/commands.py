@@ -537,7 +537,15 @@ class ExportOperationPlans(PlanTask):
                         clean_value(j.owner.reference)
                         if j.owner and not j.owner.operation.hidden
                         else "\\N",
-                        clean_value(i.item.name) if i.item else "\\N",
+                        clean_value(i.item.name)
+                        if i.item
+                        else (
+                            clean_value(j.demand.item.name)
+                            if j.demand and j.demand.item
+                            else clean_value(j.owner.demand.item.name)
+                            if j.owner and j.owner.demand and j.owner.demand.item
+                            else "\\N"
+                        ),
                         "\\N",
                         "\\N",
                         clean_value(i.location.name) if i.location else "\\N",

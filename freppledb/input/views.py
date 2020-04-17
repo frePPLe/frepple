@@ -20,6 +20,7 @@ from dateutil.parser import parse
 import json
 
 from django.conf import settings
+from django.contrib.admin.utils import unquote
 from django.contrib.admin.views.decorators import staff_member_required
 from django.db import connections
 from django.db.models.functions import Cast
@@ -2802,42 +2803,38 @@ class OperationMaterialList(GridReport):
 class DemandList(GridReport):
     template = "input/demand.html"
     title = _("sales orders")
+    basequeryset = Demand.objects.all()
     model = Demand
     frozenColumns = 1
     help_url = "user-guide/modeling-wizard/master-data/sales-orders.html"
 
     @classmethod
-    def extra_context(reportclass, request, *args, **kwargs):
-        return {"model": Demand, "title": force_text(Demand._meta.verbose_name)}
-
-    @classmethod
     def basequeryset(reportclass, request, *args, **kwargs):
+
         q = Demand.objects.all()
-        if args and args[0] and len(args[0].split("/")) == 4:
-            path = request.path.split("/")[4]
-            if path == "item":
-                l = args[0].split("/")
-                tmp_item = l[0]
-                tmp_status = l[1]
-                tmp_startdate = l[2]
-                tmp_enddate = l[3]
-                left = (
-                    Item.objects.using(request.database)
-                    .values("lft")
-                    .get(name=tmp_item)["lft"]
-                )
-                right = (
-                    Item.objects.using(request.database)
-                    .values("rght")
-                    .get(name=tmp_item)["rght"]
-                )
-                q = (
-                    q.filter(due__gte=tmp_startdate)
-                    .filter(due__lt=tmp_enddate)
-                    .filter(status__in=tmp_status.split(","))
-                    .filter(item__lft__gte=left)
-                    .filter(item__lft__lte=right)
-                )
+
+        if "item" in request.GET:
+            item = Item.objects.using(request.database).get(
+                name__exact=unquote(request.GET["item"])
+            )
+            q = q.filter(item__lft__gte=item.lft, item__lft__lt=item.rght)
+        if "location" in request.GET:
+            location = Location.objects.using(request.database).get(
+                name__exact=unquote(request.GET["location"])
+            )
+            q = q.filter(
+                location__lft__gte=location.lft, location__lft__lt=location.rght
+            )
+        if "customer" in request.GET:
+            customer = Customer.objects.using(request.database).get(
+                name__exact=unquote(request.GET["customer"])
+            )
+            q = q.filter(customer_lft__gte=customer.lft, customer_lft__lt=customer.rght)
+        if "status_in" in request.GET:
+            status = unquote(request.GET["status_in"])
+
+            q = q.filter(status__in=status.split(","))
+
         return q
 
     rows = (
@@ -5160,7 +5157,7 @@ class DeliveryOrderList(GridReport):
         GridFieldText(
             "item",
             title=_("item"),
-            field_name="demand__item__name",
+            field_name="item__name",
             formatter="detail",
             extra='"role":"input/item"',
         ),
@@ -5346,7 +5343,7 @@ class DeliveryOrderList(GridReport):
             path = request.path.split("/")[4]
             if path == "consumed":
                 return q.filter(
-                    demand__item__name=args[0],
+                    item__name=args[0],
                     location__name=args[1],
                     enddate__gte=args[2],
                     enddate__lt=args[3],
@@ -5359,7 +5356,7 @@ class DeliveryOrderList(GridReport):
                 except Item.DoesNotExist:
                     lft = 1
                     rght = 1
-                q = q.filter(demand__item__lft__gte=lft, demand__item__rght__lte=rght)
+                q = q.filter(item__lft__gte=lft, item__rght__lte=rght)
 
         return q
 

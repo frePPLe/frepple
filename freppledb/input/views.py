@@ -2802,10 +2802,43 @@ class OperationMaterialList(GridReport):
 class DemandList(GridReport):
     template = "input/demand.html"
     title = _("sales orders")
-    basequeryset = Demand.objects.all()
     model = Demand
     frozenColumns = 1
     help_url = "user-guide/modeling-wizard/master-data/sales-orders.html"
+
+    @classmethod
+    def extra_context(reportclass, request, *args, **kwargs):
+        return {"model": Demand, "title": force_text(Demand._meta.verbose_name)}
+
+    @classmethod
+    def basequeryset(reportclass, request, *args, **kwargs):
+        q = Demand.objects.all()
+        if args and args[0] and len(args[0].split("/")) == 4:
+            path = request.path.split("/")[4]
+            if path == "item":
+                l = args[0].split("/")
+                tmp_item = l[0]
+                tmp_status = l[1]
+                tmp_startdate = l[2]
+                tmp_enddate = l[3]
+                left = (
+                    Item.objects.using(request.database)
+                    .values("lft")
+                    .get(name=tmp_item)["lft"]
+                )
+                right = (
+                    Item.objects.using(request.database)
+                    .values("rght")
+                    .get(name=tmp_item)["rght"]
+                )
+                q = (
+                    q.filter(due__gte=tmp_startdate)
+                    .filter(due__lt=tmp_enddate)
+                    .filter(status__in=tmp_status.split(","))
+                    .filter(item__lft__gte=left)
+                    .filter(item__lft__lte=right)
+                )
+        return q
 
     rows = (
         GridFieldText(

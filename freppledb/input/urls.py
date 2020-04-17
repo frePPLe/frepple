@@ -51,6 +51,11 @@ urlpatterns = [
         name="input_demand_changelist",
     ),
     url(
+        r"^data/input/demand/item/(.+)/$",
+        freppledb.input.views.DemandList.as_view(),
+        name="input_demand_by_item",
+    ),
+    url(
         r"^data/input/item/$",
         freppledb.input.views.ItemList.as_view(),
         name="input_item_changelist",

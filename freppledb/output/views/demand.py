@@ -153,15 +153,9 @@ class OverviewReport(GridPivot):
       sum(coalesce((select sum(quantity) from demand
        where demand.item_id = child.name and status in ('open','quote') and due >= greatest(%%s,d.startdate) and due < d.enddate),0)) orders,
       sum(coalesce((select sum(operationplan.quantity) from operationplan
-       where operationplan.item_id = child.name 
-       and operationplan.demand_id is not null 
-       and operationplan.enddate >= greatest(%%s,d.startdate) and operationplan.enddate < d.enddate),0)) 
-       + 
-       sum(coalesce((select sum(operationplan.quantity) from operationplan
-       inner join operationmaterial on operationmaterial.operation_id = operationplan.operation_id
-       and operationmaterial.item_id = child.name
-       where operationplan.item_id is null 
-       and operationplan.demand_id is not null 
+       inner join demand on demand.name = operationplan.demand_id       
+       where operationplan.demand_id is not null
+       and demand.item_id = child.name
        and operationplan.enddate >= greatest(%%s,d.startdate) and operationplan.enddate < d.enddate),0)) planned
       from (%s) parent
       inner join item child on child.lft between parent.lft and parent.rght
@@ -187,7 +181,7 @@ class OverviewReport(GridPivot):
         with connections[request.database].chunked_cursor() as cursor_chunked:
             cursor_chunked.execute(
                 query,
-                (request.report_startdate,) * 3
+                (request.report_startdate,) * 2  # orders + planned
                 + baseparams  # orders planned
                 + (
                     request.report_bucket,

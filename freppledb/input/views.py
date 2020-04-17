@@ -5160,7 +5160,7 @@ class DeliveryOrderList(GridReport):
         GridFieldText(
             "item",
             title=_("item"),
-            field_name="item__name",
+            field_name="demand__item__name",
             formatter="detail",
             extra='"role":"input/item"',
         ),

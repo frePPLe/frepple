@@ -1544,7 +1544,7 @@ class GridReport(View):
                 "sidx": sidx,
                 "default_sort": cls.defaultSortString(request),
                 "is_popup": is_popup,
-                "filters": filters,
+                "filters": json.loads(filters) if filters else None,
                 "args": args,
                 "bucketnames": bucketnames,
                 "model": cls.model,
@@ -2258,13 +2258,18 @@ class GridReport(View):
         # Django-style filtering (which uses URL parameters) are converted to a jqgrid filter expression
         filtered = False
         filters = ['{"groupOp":"AND","rules":[']
+        first = True
         for i, j in request.GET.items():
             for r in request.rows:
                 if r.field_name and i.startswith(r.field_name):
                     operator = (i == r.field_name) and "exact" or i[i.rfind("_") + 1 :]
                     try:
+                        if first:
+                            first = False
+                        else:
+                            filters.append(",")
                         filters.append(
-                            '{"field":"%s","op":"%s","data":"%s"},'
+                            '{"field":"%s","op":"%s","data":"%s"}'
                             % (
                                 r.field_name,
                                 cls._filter_map_django_jqgrid[operator],

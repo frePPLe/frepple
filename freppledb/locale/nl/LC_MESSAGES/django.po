@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-04-04 12:06+0200\n"
-"PO-Revision-Date: 2020-04-16 13:33+0200\n"
+"PO-Revision-Date: 2020-04-18 18:12+0200\n"
 "Last-Translator: Joao Ranita <jranita@frepple.com>\n"
 "Language-Team: frepple\n"
 "Language: nl\n"
@@ -3393,7 +3393,7 @@ msgstr "Geplande shipping hoeveelheid"
 
 #: input/models.py:1515 input/views.py:2601
 msgid "delivery date"
-msgstr "geplaned leverdatum"
+msgstr "geplande leverdatum"
 
 #: input/models.py:1516
 msgid "Delivery date of the demand"

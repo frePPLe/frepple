@@ -2,13 +2,13 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-# 
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-04-04 12:06+0200\n"
-"PO-Revision-Date: 2020-04-04 12:50+0200\n"
+"PO-Revision-Date: 2020-04-17 21:16+0300\n"
 "Last-Translator: \n"
 "Language-Team: Michael Nasonov <info@ivc-inform.ru>\n"
 "Language: ru\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
 "%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
-"X-Generator: Poedit 2.0.6\n"
+"X-Generator: Poedit 1.8.11\n"
 
 #: common/static/js/frepple.js:187 common/static/js/frepple.js:282
 #: common/static/js/frepple.min.js:11
@@ -213,7 +213,7 @@ msgstr "фильтр по"
 
 #: common/static/js/frepple.js:1676 common/static/js/frepple.min.js:11
 msgid "Click ok to confirm deleting the favorite"
-msgstr ""
+msgstr "Нажмите кнопку ОК, чтобы подтвердить удаление избранного"
 
 #: common/static/js/frepple.js:1853 common/static/js/frepple.js:1938
 #: common/static/js/frepple.min.js:11
@@ -589,8 +589,7 @@ msgstr "значение"
 #: output/views/operation.py:479 output/views/operation.py:520
 #: output/views/operation.py:785 output/views/operation.py:837
 #: output/views/operation.py:878 output/views/problem.py:78
-#: output/views/resource.py:48 output/views/resource.py:137
-#: quoting/views.py:84 reportmanager/models.py:22
+#: output/views/resource.py:48 output/views/resource.py:137 quoting/views.py:84
 #: reportmanager/templates/reportmanager/reportmanager.html:252
 #: reportmanager/templates/reportmanager/reportmanager.html:256
 #: reportmanager/views.py:116
@@ -731,7 +730,7 @@ msgstr "даты периода"
 #: common/report.py:3004 common/report.py:3290 common/report.py:3316
 #: common/report.py:3336 reportmanager/views.py:585
 msgid "Read only"
-msgstr ""
+msgstr "только чтение"
 
 #: common/report.py:1512
 #, python-format
@@ -920,7 +919,7 @@ msgstr "фильтр"
 #: common/templates/admin/base_site_gridpivot.html:181
 #: inventoryplanning/templates/inventoryplanning/drp.html:2411
 msgid "favorites"
-msgstr ""
+msgstr "избранное"
 
 #: common/templates/admin/base_site_grid.html:313
 msgid "Create new object"
@@ -1584,17 +1583,19 @@ msgstr "Удаление из выбранных таблиц в базе дан
 
 #: execute/management/commands/emailreport.py:230
 msgid "Email exported reports"
-msgstr ""
+msgstr "Отправка отчетов по электронной почте"
 
 #: execute/management/commands/emailreport.py:391
 msgid "email"
-msgstr ""
+msgstr "эл.почта"
 
 #: execute/management/commands/emailreport.py:393
 msgid ""
 "Emails the selected reports to a comma separated list of recipients. Files "
 "are zipped and attached to email."
 msgstr ""
+"Отправляет выбранные отчеты по электронной почте в список получателей через "
+"запятую. Файлы заархивированы и прикреплены к электронной почте."
 
 #: execute/management/commands/emailreport.py:395
 #: execute/management/commands/exporttofolder.py:616
@@ -1610,11 +1611,11 @@ msgstr "размер"
 
 #: execute/management/commands/emailreport.py:397
 msgid "please correct invalid email addresses"
-msgstr ""
+msgstr "пожалуйста, исправьте неверные адреса электронной почты"
 
 #: execute/management/commands/emailreport.py:398
 msgid "please enter email addresses"
-msgstr ""
+msgstr "пожалуйста, введите адреса электронной почты"
 
 #: execute/management/commands/empty.py:300
 msgid "Empty the database"
@@ -1825,7 +1826,7 @@ msgstr "сброс"
 
 #: execute/management/commands/scenario_copy.py:469
 msgid "promote"
-msgstr ""
+msgstr "продвигать"
 
 #: execute/management/commands/scenario_copy.py:470
 msgid "release selected scenarios"
@@ -1845,7 +1846,7 @@ msgstr "Обновите описание выбранных сценариев"
 
 #: execute/management/commands/scenario_copy.py:475
 msgid "Promote: All data will be copied to Production"
-msgstr ""
+msgstr "Продвижение: все данные будут скопированы в производство"
 
 #: execute/menu.py:20 execute/widget.py:20
 msgid "Execute"
@@ -1953,7 +1954,7 @@ msgstr "Расчет плана с ограничениями"
 
 #: executesql/menu.py:16 reportmanager/menu.py:51 reportmanager/models.py:40
 msgid "my reports"
-msgstr ""
+msgstr "мои отчеты"
 
 #: executesql/menu.py:22
 msgid "Execute SQL"
@@ -1968,14 +1969,12 @@ msgid "Planning parameters"
 msgstr "параметры планирования"
 
 #: forecast/admin.py:61 input/admin.py:276 input/admin.py:467
-#: input/admin.py:538 input/admin.py:702 input/admin.py:1056
-#: input/views.py:201 input/views.py:284
+#: input/admin.py:538 input/admin.py:702 input/admin.py:1056 input/views.py:201
 msgid "supply path"
 msgstr "цепь поставок"
 
 #: forecast/admin.py:64 forecast/views.py:482 input/admin.py:278
-#: input/admin.py:471 input/admin.py:540 input/admin.py:706
-#: input/admin.py:1062
+#: input/admin.py:471 input/admin.py:540 input/admin.py:706 input/admin.py:1062
 #: inventoryplanning/templates/inventoryplanning/drp.html:2472
 #: output/views/buffer.py:328 output/views/demand.py:35
 #: output/views/demand.py:88 output/views/demand.py:279
@@ -2015,15 +2014,15 @@ msgstr "Сформировать прогноз"
 
 #: forecast/management/commands/measure_copy.py:199
 msgid "measure management"
-msgstr ""
+msgstr "управление мерами"
 
 #: forecast/management/commands/measure_copy.py:258
 msgid "Copy source measure"
-msgstr ""
+msgstr "Копировать меру"
 
 #: forecast/management/commands/measure_copy.py:258
 msgid "to destination measure"
-msgstr ""
+msgstr "назначть для меры"
 
 #: forecast/menu.py:32 forecast/templates/forecast.html:4
 #: forecast/views.py:2050 input/views.py:107
@@ -2535,23 +2534,23 @@ msgstr "совокупный"
 
 #: forecast/models.py:1011
 msgid "local"
-msgstr ""
+msgstr "локальный"
 
 #: forecast/models.py:1012
 msgid "computed"
-msgstr ""
+msgstr "вычисленное"
 
 #: forecast/models.py:1014
 msgid "hide"
-msgstr ""
+msgstr "скрывать"
 
 #: forecast/models.py:1015
 msgid "number"
-msgstr ""
+msgstr "число"
 
 #: forecast/models.py:1015
 msgid "currency"
-msgstr ""
+msgstr "валюта"
 
 #: forecast/models.py:1022 forecast/views.py:150
 msgid "label"
@@ -2559,7 +2558,7 @@ msgstr "метка"
 
 #: forecast/models.py:1026
 msgid "Label to be displayed in the user interface"
-msgstr ""
+msgstr "Метка для отображения в пользовательском интерфейсе"
 
 #: forecast/models.py:1032 forecast/views.py:152 input/models.py:213
 #: input/models.py:240 input/models.py:506 input/models.py:623
@@ -2576,47 +2575,46 @@ msgstr ""
 #: inventoryplanning/templates/inventoryplanning/drp.html:162
 #: inventoryplanning/templates/inventoryplanning/drp.html:1996
 #: output/views/buffer.py:173 output/views/operation.py:77
-#: output/views/pegging.py:50 output/views/resource.py:69
-#: output/widget.py:1504
+#: output/views/pegging.py:50 output/views/resource.py:69 output/widget.py:1504
 msgid "type"
 msgstr "тип"
 
 #: forecast/models.py:1040 forecast/views.py:157
 msgid "mode in future periods"
-msgstr ""
+msgstr "режим в будущих периодах"
 
 #: forecast/models.py:1048 forecast/views.py:154
 msgid "mode in past periods"
-msgstr ""
+msgstr "режим в прошлые периоды"
 
 #: forecast/models.py:1056 forecast/views.py:163
 msgid "compute expression"
-msgstr ""
+msgstr "вычислить выражение"
 
 #: forecast/models.py:1060
 msgid "Formula to compute values"
-msgstr ""
+msgstr "Формула для вычисления значений"
 
 #: forecast/models.py:1063 forecast/views.py:164
 msgid "update expression"
-msgstr ""
+msgstr "обновить выражение"
 
 #: forecast/models.py:1067
 msgid "Formula executed when updating this field"
-msgstr ""
+msgstr "Формула выполняется при обновлении этого поля"
 
 #: forecast/models.py:1070 forecast/views.py:159
 msgid "initially hidden"
-msgstr ""
+msgstr "изначально скрытый"
 
 #: forecast/models.py:1073
 msgid "controls whether or not this measure is visible by default"
-msgstr ""
+msgstr "определяет, будет ли эта мера видимой по умолчанию"
 
 #: forecast/models.py:1076 forecast/views.py:160
 #: reportmanager/templates/reportmanager/reportmanager.html:211
 msgid "format"
-msgstr ""
+msgstr "формат"
 
 #: forecast/models.py:1085 forecast/views.py:162 input/models.py:51
 #: input/views.py:2835
@@ -2625,19 +2623,19 @@ msgstr "значение по умолчанию"
 
 #: forecast/models.py:1093 forecast/views.py:165
 msgid "override measure"
-msgstr ""
+msgstr "переопределить меру"
 
 #: forecast/models.py:1118
 msgid "Measure name can only be alphanumeric"
-msgstr ""
+msgstr "Название меры может быть только буквенно-цифровым"
 
 #: forecast/models.py:1122
 msgid "measure"
-msgstr ""
+msgstr "мера"
 
 #: forecast/models.py:1123 forecast/views.py:137
 msgid "measures"
-msgstr ""
+msgstr "меры"
 
 #: forecast/templates/forecast/forecast.html:257
 #: inventoryplanning/templates/inventoryplanning/drp.html:1576
@@ -2716,7 +2714,7 @@ msgstr "Сводный прогноз"
 
 #: forecast/views.py:264
 msgid "forecast method"
-msgstr ""
+msgstr "метод прогноза"
 
 #: forecast/views.py:271
 #: inventoryplanning/templates/inventoryplanning/drp.html:2583
@@ -2942,11 +2940,11 @@ msgstr "клиенты"
 
 #: input/models.py:190
 msgid "make to stock"
-msgstr ""
+msgstr "режим MTS"
 
 #: input/models.py:191
 msgid "make to order"
-msgstr ""
+msgstr "режим MTO"
 
 #: input/models.py:210
 msgid "Cost of the item"
@@ -3184,7 +3182,7 @@ msgstr "Инфин."
 #: input/views.py:4964 input/views.py:5008 input/views.py:5419
 #: input/views.py:5582 input/views.py:5985 output/views/buffer.py:159
 msgid "batch"
-msgstr ""
+msgstr "партия"
 
 #: input/models.py:531 input/models.py:1983 input/views.py:1214
 #: inventoryplanning/models.py:404
@@ -3371,7 +3369,7 @@ msgstr "Стоимость конверсии"
 
 #: input/models.py:783
 msgid "Extra resource used during this changeover"
-msgstr ""
+msgstr "Дополнительный ресурс, использованный во время этой замены"
 
 #: input/models.py:805
 msgid "setup matrix rule"
@@ -3653,7 +3651,7 @@ msgstr "Состояние спроса. Планируется спрос то�
 
 #: input/models.py:1502 input/models.py:1628
 msgid "MTO batch name"
-msgstr ""
+msgstr "Название партии MTO"
 
 #: input/models.py:1504 input/models.py:1602 input/views.py:2593
 #: input/views.py:3584 input/views.py:4173 input/views.py:4697
@@ -4720,7 +4718,7 @@ msgstr "исполняется SO"
 
 #: output/templates/output/buffer.html:182 output/views/buffer.py:276
 msgid "consumed by Fcst"
-msgstr ""
+msgstr "потребляется прогнозом"
 
 #: output/templates/output/buffer.html:185 output/views/buffer.py:272
 msgid "consumed by DO"
@@ -4965,7 +4963,7 @@ msgstr "План спроса"
 
 #: output/views/pegging.py:63
 msgid "required quantity"
-msgstr ""
+msgstr "необходимое количество"
 
 #: output/views/problem.py:55
 msgid "Problem report"
@@ -5148,40 +5146,40 @@ msgstr "квоты"
 #: reportmanager/templates/reportmanager/reportmanager.html:276
 #: reportmanager/views.py:117
 msgid "SQL query"
-msgstr ""
+msgstr "SQL запрос"
 
 #: reportmanager/models.py:39 reportmanager/views.py:269
 msgid "my report"
-msgstr ""
+msgstr "мой отчет"
 
 #: reportmanager/templates/reportmanager/reportmanager.html:133
 msgid "The report was saved successfully."
-msgstr ""
+msgstr "Отчет был успешно сохранен."
 
 #: reportmanager/templates/reportmanager/reportmanager.html:210
 msgid "test"
-msgstr ""
+msgstr "тест"
 
 #: reportmanager/templates/reportmanager/reportmanager.html:263
 #: reportmanager/views.py:118
 msgid "public"
-msgstr ""
+msgstr "публ."
 
 #: reportmanager/templates/reportmanager/reportmanager.html:283
 msgid "schema"
-msgstr ""
+msgstr "схема"
 
 #: reportmanager/templates/reportmanager/schema.html:8
 msgid "table"
-msgstr ""
+msgstr "таблица"
 
 #: reportmanager/views.py:103
 msgid "custom reports"
-msgstr ""
+msgstr "пользовательский отчет"
 
 #: reportmanager/views.py:137 reportmanager/views.py:206
 msgid "report editor"
-msgstr ""
+msgstr "редактор отчета"
 
 #: settings.py:323
 msgid "activity"
@@ -5262,11 +5260,11 @@ msgstr ""
 
 #: freppledb/forecast/static/forecast/forecast.html:304
 msgid "Apply"
-msgstr ""
+msgstr "Применить"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:47
 msgid "Automatically resolve infeasiblities in the plan"
-msgstr ""
+msgstr "Автоматически устранять ошибки в плане"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1265
 msgid "Clear the plan of selected demands"
@@ -5311,7 +5309,7 @@ msgstr "Дублировать"
 #: freppledb/quoting/static/quoting/quoting.html:43
 #: freppledb/quoting/static/quoting/quoting.html:56
 msgid "Enter your search terms"
-msgstr ""
+msgstr "Введите условия поиска"
 
 #: freppledb/forecast/static/forecast/forecast.html:426
 msgid "Estimated forecast error"
@@ -5435,7 +5433,7 @@ msgstr ""
 
 #: freppledb/forecast/static/forecast/forecast.html:49
 msgid "Select panel measure"
-msgstr ""
+msgstr "Выберите панель меры"
 
 #: freppledb/forecast/static/forecast/forecast.html:5
 msgid "Select panel sequence"
@@ -5512,11 +5510,11 @@ msgstr "действие"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:235
 msgid "approved: {{aggregatedoperationplans.status.approved }}"
-msgstr ""
+msgstr "одобрено: {{aggregatedoperationplans.status.approved }}"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:244
 msgid "closed: {{aggregatedoperationplans.status.closed }}"
-msgstr ""
+msgstr "закрыто: {{aggregatedoperationplans.status.closed }}"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:11
 msgid "color by"
@@ -5528,7 +5526,7 @@ msgstr "цвета"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:241
 msgid "completed: {{aggregatedoperationplans.status.completed }}"
-msgstr ""
+msgstr "завершено: {{aggregatedoperationplans.status.completed }}"
 
 #: freppledb/quoting/static/quoting/quoting.html:100
 msgid "confirm"
@@ -5536,7 +5534,7 @@ msgstr "выполнить"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:238
 msgid "confirmed: {{aggregatedoperationplans.status.confirmed }}"
-msgstr ""
+msgstr "утверждено: {{aggregatedoperationplans.status.confirmed }}"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:195
 msgid "customer delivery"
@@ -5558,7 +5556,7 @@ msgstr "срок"
 
 #: freppledb/forecast/static/forecast/forecast.html:298
 msgid "edit"
-msgstr ""
+msgstr "изменить"
 
 #: freppledb/input/static/operationplandetail/src/problemspanelDrv.js:36
 #: freppledb/planningboard/static/planningboard/planningboard.html:1144
@@ -5574,7 +5572,7 @@ msgstr "окончание"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:65
 msgid "export as Excel file"
-msgstr ""
+msgstr "экспортировать как файл Excel"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:15
 msgid "feasibility"
@@ -5611,7 +5609,7 @@ msgstr "сообщения"
 
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:19
 msgid "multiple selected"
-msgstr ""
+msgstr "выбор нескольких"
 
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:26
 #: freppledb/input/static/operationplandetail/src/bufferspanelDrv.js:31
@@ -5655,7 +5653,7 @@ msgstr "нет движения"
 
 #: freppledb/input/static/operationplandetail/src/networkstatusDrv.js:53
 msgid "no network information"
-msgstr ""
+msgstr "нет информации о сети"
 
 #: freppledb/input/static/operationplandetail/src/problemspanelDrv.js:43
 #: freppledb/planningboard/static/planningboard/planningboard.html:998
@@ -5668,11 +5666,11 @@ msgstr "нет ресурсов"
 
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:18
 msgid "no selection"
-msgstr ""
+msgstr "нет выбора"
 
 #: freppledb/input/static/operationplandetail/src/supplyinformationDrv.js:55
 msgid "no supply information"
-msgstr ""
+msgstr "нет информации о поставке"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:36
 msgid "operation category"
@@ -5684,7 +5682,7 @@ msgstr "подкатегория операции"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:232
 msgid "proposed: {{aggregatedoperationplans.status.proposed }}"
-msgstr ""
+msgstr "предложено: {{aggregatedoperationplans.status.proposed }}"
 
 #: freppledb/quoting/static/quoting/quoting.html:8
 msgid "quote form"
@@ -5700,7 +5698,7 @@ msgstr "ссылка"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:62
 msgid "remove all rows"
-msgstr ""
+msgstr "удалить все строки"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:59
 msgid "remove row"
@@ -5712,7 +5710,7 @@ msgstr "убрать позицию спроса из плана"
 
 #: freppledb/forecast/static/forecast/forecast.html:74
 msgid "save"
-msgstr ""
+msgstr "сохранить"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:385
 #: freppledb/planningboard/static/planningboard/planningboard.html:513
@@ -5734,7 +5732,7 @@ msgstr "начало"
 
 #: freppledb/input/static/operationplandetail/src/supplyinformationDrv.js:29
 msgid "supply information"
-msgstr ""
+msgstr "Информация о поставке"
 
 #: freppledb/input/static/operationplandetail/src/supplyinformationDrv.js:34
 msgid "types"
@@ -5748,18 +5746,18 @@ msgstr "несохраненные изменения"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:196
 msgid "{{ aggregatedoperationplans.count }} selected"
-msgstr ""
+msgstr "{{ aggregatedoperationplans.count }} выбрано"
 
 #: freppledb/forecast/static/forecast/forecast.html:316
 msgid "{{m.label}}"
-msgstr ""
+msgstr "{{m.label}}"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1268
 #: freppledb/planningboard/static/planningboard/planningboard.html:1303
 #: freppledb/planningboard/static/planningboard/planningboard.html:1330
 msgid "Enter name"
-msgstr ""
+msgstr "Введите имя"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1329
 msgid "search"
-msgstr ""
+msgstr "Поиск"

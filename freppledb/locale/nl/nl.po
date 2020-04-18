@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-04-04 12:06+0200\n"
-"PO-Revision-Date: 2020-04-14 14:35+0200\n"
+"PO-Revision-Date: 2020-04-16 13:33+0200\n"
 "Last-Translator: Joao Ranita <jranita@frepple.com>\n"
 "Language-Team: frepple\n"
 "Language: nl\n"
@@ -4964,7 +4964,7 @@ msgstr "Constraint rapport"
 
 #: output/views/demand.py:34 output/views/demand.py:224
 msgid "Demand report"
-msgstr "Vraag rapport"
+msgstr "Vraagrapport"
 
 #: output/views/demand.py:254
 msgid "net forecast"

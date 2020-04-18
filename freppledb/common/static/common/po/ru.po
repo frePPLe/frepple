@@ -1,14 +1,20 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-# 
+# Copyright (C) 2007-2020 by frePPLe bvba
+# This library is free software; you can redistribute it and/or modify it
+# under the terms of the GNU Affero General Public License as published
+# by the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero
+# General Public License for more details.
+# You should have received a copy of the GNU Affero General Public
+# License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2020-04-04 12:50+0200\n"
+"PO-Revision-Date: 2020-04-18 08:25+0200\n"
 "Last-Translator: \n"
 "Language-Team: Michael Nasonov <info@ivc-inform.ru>\n"
 "Language: ru\n"
@@ -17,7 +23,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
 "%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
-"X-Generator: Poedit 2.0.6\n"
+"X-Generator: Poedit 2.0.1\n"
 
 #: freppledb/planningboard/static/planningboard/src/ganttchart.js:518
 #: freppledb/planningboard/static/planningboard/src/ganttchart.js:551
@@ -82,7 +88,7 @@ msgstr ""
 
 #: freppledb/forecast/static/forecast/forecast.html:304
 msgid "Apply"
-msgstr ""
+msgstr "Применить"
 
 #: freppledb/forecast/static/forecast/forecast.html:383
 msgid "Automatic"
@@ -90,7 +96,7 @@ msgstr "Автоматический"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:47
 msgid "Automatically resolve infeasiblities in the plan"
-msgstr ""
+msgstr "Автоматически устранять ошибки в плане"
 
 #: freppledb/forecast/static/forecast/src/forecast.js:892
 msgid "Available Cross"
@@ -166,7 +172,7 @@ msgstr "Дублировать"
 #: freppledb/quoting/static/quoting/quoting.html:43
 #: freppledb/quoting/static/quoting/quoting.html:56
 msgid "Enter your search terms"
-msgstr ""
+msgstr "Введите условия поиска"
 
 #: freppledb/forecast/static/forecast/forecast.html:426
 msgid "Estimated forecast error"
@@ -323,7 +329,7 @@ msgstr ""
 
 #: freppledb/forecast/static/forecast/forecast.html:49
 msgid "Select panel measure"
-msgstr ""
+msgstr "Выберите панель меры"
 
 #: freppledb/forecast/static/forecast/forecast.html:5
 msgid "Select panel sequence"
@@ -419,7 +425,7 @@ msgstr "утвержден"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:235
 msgid "approved: {{aggregatedoperationplans.status.approved }}"
-msgstr ""
+msgstr "одобрено: {{aggregatedoperationplans.status.approved }}"
 
 #: freppledb/forecast/static/forecast/forecast.html:164
 #: freppledb/planningboard/static/planningboard/planningboard.html:158
@@ -449,7 +455,7 @@ msgstr "закрыт"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:244
 msgid "closed: {{aggregatedoperationplans.status.closed }}"
-msgstr ""
+msgstr "закрыто: {{aggregatedoperationplans.status.closed }}"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:11
 msgid "color by"
@@ -472,7 +478,7 @@ msgstr "выполнено"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:241
 msgid "completed: {{aggregatedoperationplans.status.completed }}"
-msgstr ""
+msgstr "завершено: {{aggregatedoperationplans.status.completed }}"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:68
 msgid "configure time buckets"
@@ -491,7 +497,7 @@ msgstr "исполняется"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:238
 msgid "confirmed: {{aggregatedoperationplans.status.confirmed }}"
-msgstr ""
+msgstr "утверждено: {{aggregatedoperationplans.status.confirmed }}"
 
 #: freppledb/input/static/operationplandetail/src/supplyinformationDrv.js:40
 msgid "cost"
@@ -612,7 +618,7 @@ msgstr "срок"
 
 #: freppledb/forecast/static/forecast/forecast.html:298
 msgid "edit"
-msgstr ""
+msgstr "изменить"
 
 #: freppledb/input/static/operationplandetail/src/supplyinformationDrv.js:48
 msgid "effective end"
@@ -650,11 +656,11 @@ msgstr "экспорт"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:65
 msgid "export as Excel file"
-msgstr ""
+msgstr "экспортировать как файл Excel"
 
 #: freppledb/forecast/static/forecast/forecast.html:65
 msgid "favorites"
-msgstr ""
+msgstr "избранное"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:15
 msgid "feasibility"
@@ -786,7 +792,7 @@ msgstr "отгрузка мин."
 
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:19
 msgid "multiple selected"
-msgstr ""
+msgstr "выбор нескольких"
 
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:26
 #: freppledb/input/static/operationplandetail/src/bufferspanelDrv.js:31
@@ -842,7 +848,7 @@ msgstr "нет движения"
 
 #: freppledb/input/static/operationplandetail/src/networkstatusDrv.js:53
 msgid "no network information"
-msgstr ""
+msgstr "нет информации о сети"
 
 #: freppledb/input/static/operationplandetail/src/problemspanelDrv.js:43
 #: freppledb/planningboard/static/planningboard/planningboard.html:998
@@ -855,11 +861,11 @@ msgstr "нет ресурсов"
 
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:18
 msgid "no selection"
-msgstr ""
+msgstr "нет выбора"
 
 #: freppledb/input/static/operationplandetail/src/supplyinformationDrv.js:55
 msgid "no supply information"
-msgstr ""
+msgstr "нет информации о поставке"
 
 #: freppledb/input/static/operationplandetail/src/networkstatusDrv.js:36
 #: freppledb/planningboard/static/planningboard/planningboard.html:1095
@@ -949,7 +955,7 @@ msgstr "сформирован"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:232
 msgid "proposed: {{aggregatedoperationplans.status.proposed }}"
-msgstr ""
+msgstr "предложено: {{aggregatedoperationplans.status.proposed }}"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:192
 msgid "purchase order"
@@ -1005,7 +1011,7 @@ msgstr "ссылка"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:62
 msgid "remove all rows"
-msgstr ""
+msgstr "удалить все строки"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:59
 msgid "remove row"
@@ -1031,7 +1037,7 @@ msgstr "заказы на продажу"
 
 #: freppledb/forecast/static/forecast/forecast.html:74
 msgid "save"
-msgstr ""
+msgstr "сохранить"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1028
 msgid "setup"
@@ -1098,7 +1104,7 @@ msgstr "поставщик"
 
 #: freppledb/input/static/operationplandetail/src/supplyinformationDrv.js:29
 msgid "supply information"
-msgstr ""
+msgstr "Информация о поставке"
 
 #: freppledb/forecast/static/forecast/src/displayForecastGraph.js:192
 #: freppledb/forecast/static/forecast/src/displayForecastGraph.js:213
@@ -1129,8 +1135,8 @@ msgstr "уменьшить"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:196
 msgid "{{ aggregatedoperationplans.count }} selected"
-msgstr ""
+msgstr "{{ aggregatedoperationplans.count }} выбрано"
 
 #: freppledb/forecast/static/forecast/forecast.html:316
 msgid "{{m.label}}"
-msgstr ""
+msgstr "{{m.label}}"

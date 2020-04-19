@@ -27,7 +27,7 @@ from django.utils.translation import gettext_lazy as _
 from django.utils.encoding import force_text
 from django.template import Template, RequestContext
 
-from freppledb.common.commands import PlanTaskRegistry
+import freppledb.common.commands
 from freppledb.common.models import User
 from freppledb.execute.models import Task
 from freppledb import VERSION
@@ -151,7 +151,7 @@ class Command(BaseCommand):
 
             # Reset environment variables
             # TODO avoid having to delete the environment variables. Use options directly?
-            for label in PlanTaskRegistry.getLabels():
+            for label in freppledb.common.commands.PlanTaskRegistry.getLabels():
                 if "env" in options:
                     # Options specified
                     if label[0] in os.environ:
@@ -186,8 +186,6 @@ class Command(BaseCommand):
             task.save(using=database)
 
             # Locate commands.py
-            import freppledb.common.commands
-
             cmd = freppledb.common.commands.__file__
 
             def setlimits():
@@ -292,8 +290,7 @@ class Command(BaseCommand):
 
         if request.user.has_perm("auth.generate_plan"):
             # Collect optional tasks
-            planning_options = PlanTaskRegistry.getLabels()
-
+            planning_options = freppledb.common.commands.PlanTaskRegistry.getLabels()
             plantype = "2"
             constraint = 15
             current_options = [i[0] for i in planning_options]

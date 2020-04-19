@@ -456,9 +456,9 @@ class exporter(object):
             self.product_templates[i["id"]] = i
 
         # Read the stock location routes
-        rts = self.env["stock.location.route"]
-        fields = ["name"]
-        recs = rts.search([])
+        # rts = self.env["stock.location.route"]
+        # fields = ["name"]
+        # recs = rts.search([])
 
         # Read the suppliers
         m = self.env["res.partner"]

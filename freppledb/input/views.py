@@ -2803,7 +2803,6 @@ class OperationMaterialList(GridReport):
 class DemandList(GridReport):
     template = "input/demand.html"
     title = _("sales orders")
-    basequeryset = Demand.objects.all()
     model = Demand
     frozenColumns = 1
     help_url = "user-guide/modeling-wizard/master-data/sales-orders.html"

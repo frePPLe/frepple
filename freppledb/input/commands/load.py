@@ -1709,7 +1709,6 @@ class loadOperationPlans(LoadTask):
                                     "Reference %s: Can't set owner field to %s"
                                     % (i[1], i[6])
                                 )
-                                pass
                         if i[9]:
                             opplan.demand = frepple.demand(name=i[9])
                 except Exception as e:

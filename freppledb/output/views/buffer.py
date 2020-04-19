@@ -35,8 +35,8 @@ from freppledb.common.report import (
 
 class OverviewReport(GridPivot):
     """
-  A report showing the inventory profile of buffers.
-  """
+    A report showing the inventory profile of buffers.
+    """
 
     template = "output/buffer.html"
     title = _("Inventory report")
@@ -329,7 +329,6 @@ class OverviewReport(GridPivot):
 
     @classmethod
     def query(reportclass, request, basequery, sortsql="1 asc"):
-        cursor = connections[request.database].cursor()
         basesql, baseparams = basequery.query.get_compiler(basequery.db).as_sql(
             with_col_aliases=False
         )

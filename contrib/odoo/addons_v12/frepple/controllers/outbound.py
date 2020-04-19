@@ -319,7 +319,6 @@ class exporter(object):
             yield "</locations>\n"
 
             # Populate a mapping location-to-warehouse name for later lookups
-            fields = ["child_ids"]
             parent_loc = {}
             m = self.env["stock.location"]
             recs = m.search([])

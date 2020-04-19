@@ -751,8 +751,9 @@ class ExportOperationPlanMaterials(PlanTask):
             if cluster != -1 and cluster != i.cluster:
                 continue
             for j in i.flowplans:
-                # if the record is confirmed, it is already in the table.
-                if not j.operationplan.reference:
+                if not j.quantity:
+                    continue
+                elif not j.operationplan.reference:
                     logger.error(
                         "Warning: skip exporting uninitialized operationplan %s %s %s %s"
                         % (
@@ -828,7 +829,7 @@ class ExportOperationPlanResources(PlanTask):
             for j in i.loadplans:
                 if j.quantity >= 0:
                     continue
-                if not j.operationplan.reference:
+                elif not j.operationplan.reference:
                     logger.warn(
                         "Warning: skip exporting uninitialized operationplan: %s %s %s %s"
                         % (

@@ -180,6 +180,16 @@ class exporter(object):
             return qty
         return qty * self.uom[uom_id]["factor"]
 
+    def convert_float_time(self, float_time):
+        """
+        Convert Odoo float time to ISO 8601 duration.
+        """
+        return "PT%dH%dM%dS" % (
+            int(float_time),  # duration: hours
+            int((float_time*60) % 60),  # duration: minutes
+            int((float_time*3600) % 60 % 60),  # duration: seconds
+        )
+
     def export_calendar(self):
         """
         Build a calendar with a) holidays and b) working hours.
@@ -628,9 +638,9 @@ class exporter(object):
                 # CASE 1: A single operation used for the BOM
                 # All routing steps are collapsed in a single operation.
                 #
-                yield '<operation name=%s size_multiple="1" duration="PT%dH" posttime="P%dD" xsi:type="operation_fixed_time">\n' "<item name=%s/><location name=%s/>\n" % (
+                yield '<operation name=%s size_multiple="1" duration="%s" posttime="P%dD" xsi:type="operation_fixed_time">\n' "<item name=%s/><location name=%s/>\n" % (
                     quoteattr(operation),
-                    int(
+                    self.convert_float_time(
                         self.product_templates[i["product_tmpl_id"][0]]["produce_delay"]
                     ),
                     self.manufacturing_lead,
@@ -715,10 +725,10 @@ class exporter(object):
                 yield "<suboperations>"
                 steplist = mrp_routing_workcenters[i["routing_id"][0]]
                 for step in steplist:
-                    yield '<suboperation priority="%s">' '<operation name=%s duration="PT%dH" xsi:type="operation_fixed_time">\n' "<location name=%s/>\n" '<loads><load quantity="%f"><resource name=%s/></load></loads>\n' % (
+                    yield '<suboperation priority="%s">' '<operation name=%s duration="%s" xsi:type="operation_fixed_time">\n' "<location name=%s/>\n" '<loads><load quantity="%f"><resource name=%s/></load></loads>\n' % (
                         step[2],
                         quoteattr("%s - %s" % (operation, step[2])),
-                        int(step[1]),
+                        self.convert_float_time(step[1]),
                         quoteattr(location),
                         step[1],
                         quoteattr(step[0]),

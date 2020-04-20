@@ -33,6 +33,7 @@ from django.template import Template, RequestContext
 from freppledb.execute.models import Task
 from freppledb.common.middleware import _thread_locals
 from freppledb.common.models import User
+from freppledb.common.report import GridReport
 from freppledb import VERSION
 
 
@@ -254,6 +255,7 @@ class Command(BaseCommand):
                     settings.DATABASES[request.database]["FILEUPLOADFOLDER"], "export"
                 )
                 if os.path.isdir(exportfolder):
+                    tzoffset = GridReport.getTimezoneOffset(request)
                     for file in os.listdir(exportfolder):
                         if file.endswith((".csv", ".csv.gz", ".log")):
                             all_reports.append(file)
@@ -261,11 +263,12 @@ class Command(BaseCommand):
                                 [
                                     file,
                                     strftime(
-                                        "%Y-%m-%d %I:%M%p",
+                                        "%Y-%m-%d %H:%M:%S",
                                         localtime(
                                             os.stat(
                                                 os.path.join(exportfolder, file)
                                             ).st_mtime
+                                            + tzoffset.total_seconds()
                                         ),
                                     ),
                                     sizeof_fmt(

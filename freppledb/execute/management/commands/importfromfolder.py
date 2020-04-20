@@ -565,6 +565,7 @@ class Command(BaseCommand):
             if "FILEUPLOADFOLDER" in settings.DATABASES[request.database]:
                 uploadfolder = settings.DATABASES[request.database]["FILEUPLOADFOLDER"]
                 if os.path.isdir(uploadfolder):
+                    tzoffset = GridReport.getTimezoneOffset(request)
                     for file in os.listdir(uploadfolder):
                         if file.endswith(
                             (
@@ -586,6 +587,7 @@ class Command(BaseCommand):
                                             os.stat(
                                                 os.path.join(uploadfolder, file)
                                             ).st_mtime
+                                            + tzoffset.total_seconds()
                                         ),
                                     ),
                                     sizeof_fmt(

@@ -2034,6 +2034,46 @@ class ItemSupplierList(GridReport):
             initially_hidden=True,
             editable=False,
         ),
+        # Optional fields referencing the supplier
+        GridFieldText(
+            "supplier__description",
+            title=format_lazy("{} - {}", _("supplier"), _("description")),
+            initially_hidden=True,
+            editable=False,
+        ),
+        GridFieldText(
+            "supplier__category",
+            title=format_lazy("{} - {}", _("supplier"), _("category")),
+            initially_hidden=True,
+            editable=False,
+        ),
+        GridFieldText(
+            "supplier__subcategory",
+            title=format_lazy("{} - {}", _("supplier"), _("subcategory")),
+            initially_hidden=True,
+            editable=False,
+        ),
+        GridFieldText(
+            "supplier__available",
+            title=format_lazy("{} - {}", _("supplier"), _("available")),
+            field_name="supplier__available__name",
+            formatter="detail",
+            extra='"role":"input/calendar"',
+            initially_hidden=True,
+            editable=False,
+        ),
+        GridFieldText(
+            "supplier__source",
+            title=format_lazy("{} - {}", _("supplier"), _("source")),
+            initially_hidden=True,
+            editable=False,
+        ),
+        GridFieldLastModified(
+            "supplier__lastmodified",
+            title=format_lazy("{} - {}", _("supplier"), _("last modified")),
+            initially_hidden=True,
+            editable=False,
+        ),
     )
 
 

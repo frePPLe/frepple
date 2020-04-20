@@ -550,6 +550,7 @@ class exportSetupMatrices(PlanTask):
     def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
         import frepple
 
+        source = kwargs.get("source", None)
         attrs = [f[0] for f in getAttributes(SetupMatrix)]
 
         def getData():

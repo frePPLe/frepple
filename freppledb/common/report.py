@@ -903,7 +903,7 @@ class GridReport(View):
                 if not f.key and f.formatter == "detail" and fname.endswith("__name"):
                     cell.comment = CellComment(
                         force_text(
-                            _("Values in this fields must exist in the %s table")
+                            _("Values in this field must exist in the %s table")
                             % force_text(_(fname[:-6]))
                         ),
                         "Author",
@@ -2984,7 +2984,7 @@ class GridPivot(GridReport):
                     ):
                         cell.comment = CellComment(
                             force_text(
-                                _("Values in this fields must exist in the %s table")
+                                _("Values in this field must exist in the %s table")
                                 % force_text(_(fname[:-6]))
                             ),
                             "Author",
@@ -3013,7 +3013,7 @@ class GridPivot(GridReport):
                 if not f.key and f.formatter == "detail" and fname.endswith("__name"):
                     cell.comment = CellComment(
                         force_text(
-                            _("Values in this fields must exist in the %s table")
+                            _("Values in this field must exist in the %s table")
                             % force_text(_(fname[:-6]))
                         ),
                         "Author",
@@ -3319,9 +3319,7 @@ def exportWorkbook(request):
                         if isinstance(i, ForeignKey):
                             cell.comment = CellComment(
                                 force_text(
-                                    _(
-                                        "Values in this fields must exist in the %s table"
-                                    )
+                                    _("Values in this field must exist in the %s table")
                                     % force_text(
                                         i.remote_field.model._meta.verbose_name
                                     )
@@ -3366,7 +3364,7 @@ def exportWorkbook(request):
                                 cell.comment = CellComment(
                                     force_text(
                                         _(
-                                            "Values in this fields must exist in the %s table"
+                                            "Values in this field must exist in the %s table"
                                         )
                                         % force_text(
                                             i.remote_field.model._meta.verbose_name

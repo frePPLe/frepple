@@ -2979,6 +2979,8 @@ class DemandList(GridReport):
             field_name="item__owner__name",
             initially_hidden=True,
             editable=False,
+            formatter="detail",
+            extra='"role":"input/item"',
         ),
         GridFieldCurrency(
             "item__cost",

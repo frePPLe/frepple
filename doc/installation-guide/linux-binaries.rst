@@ -61,7 +61,7 @@ Here are the steps to get a fully working environment.
 
        client_encoding: 'UTF8',
        default_transaction_isolation: 'read committed',
-       timezone: 'UTC' when USE_TZ is True, value of TIME_ZONE otherwise.
+       timezone: 'Europe/Brussels'  # Value of TIME_ZONE in your djangosettings.py file
 
    FrePPLe can communicate with the PostgreSQL server using either a) Unix
    domain sockets ('local' in pg_hba.conf) or b) TCP IP4 or IP6 sockets.

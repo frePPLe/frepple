@@ -9,12 +9,14 @@
 #
 
 from datetime import datetime
+from importlib import import_module
 import os
 import re
 from subprocess import call
 
 from django.conf import settings
 from django.core.mail import EmailMessage
+from django.core.management import get_commands
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction, DEFAULT_DB_ALIAS
 from django.db.models import Min
@@ -320,8 +322,28 @@ class Command(BaseCommand):
 
     @staticmethod
     def getHTML(request):
+        commands = {}
+        for commandname, appname in get_commands().items():
+            if commandname != "scheduletasks":
+                try:
+                    cmd = getattr(
+                        import_module(
+                            "%s.management.commands.%s" % (appname, commandname)
+                        ),
+                        "Command",
+                    )
+                    if getattr(cmd, "index", -1) >= 0 and getattr(cmd, "getHTML", None):
+                        commands[cmd.index] = commandname
+                except Exception:
+                    pass
+        commands = [commands[i] for i in sorted(commands)]
         return render_to_string(
             "commands/scheduletasks.html",
-            {"schedules": ScheduledTask.objects.all().using(request.database)},
+            {
+                "schedules": ScheduledTask.objects.all()
+                .using(request.database)
+                .order_by("name"),
+                "commands": commands,
+            },
             request=request,
         )

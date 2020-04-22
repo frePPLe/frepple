@@ -46,9 +46,9 @@ from django.utils.encoding import force_text
 from django.utils.text import capfirst
 from django.core.management import get_commands
 
-from freppledb.execute.models import Task
+from freppledb.execute.models import Task, ScheduledTask
 from freppledb.common.auth import basicauthentication
-from freppledb.common.models import Scenario
+from freppledb.common.models import Scenario, User
 from freppledb.common.report import (
     exportWorkbook,
     importWorkbook,
@@ -749,3 +749,57 @@ class FileManager:
         except Exception as e:
             logger.error("Failed file download: %s" % e)
             return HttpResponseNotFound(force_text(_("Error downloading file")))
+
+
+@staff_member_required
+@never_cache
+def scheduletasks(request):
+    if not request.is_ajax() or request.method not in ("POST", "DELETE"):
+        return HttpResponseNotAllowed("Only post and delete ajax requests are allowed")
+    try:
+        data = json.loads(request.body.decode(request.encoding))
+        name = data.get("name", None)
+        if not name:
+            raise Http404("Missing name attribute")
+        elif request.method == "POST":
+            if not request.user.has_perm("execute.add_scheduledtask"):
+                return HttpResponseNotAllowed("Couldn't add or update scheduled task")
+            obj, created = ScheduledTask.objects.using(request.database).get_or_create(
+                name=name
+            )
+            if created:
+                obj.user = request.user
+            elif (
+                not request.user.is_superuser
+                and obj.user.username != request.user.username
+            ):
+                return HttpResponseServerError(
+                    "This task can only be updated by superusers and %s"
+                    % obj.user.username
+                )
+            fld = data.get("email_failure", None)
+            if fld:
+                obj.email_failure = fld
+            fld = data.get("email_success", None)
+            if fld:
+                obj.email_success = fld
+            fld = data.get("data", None)
+            if isinstance(fld, dict):
+                obj.data = data
+            obj.save(using=request.database)
+            return HttpResponse(content="OK")
+        elif request.method == "DELETE":
+            print(name, data)
+            if not request.user.has_perm("execute.delete_scheduledtask"):
+                return HttpResponseNotAllowed("Couldn't delete scheduled task")
+            elif (
+                ScheduledTask.objects.using(request.database)
+                .filter(name=name)
+                .delete()[0]
+            ):
+                return HttpResponse(content="OK")
+            else:
+                return HttpResponseNotAllowed("Couldn't delete scheduled task")
+    except Exception as e:
+        logger.error("Error updating scheduled task: %s" % e)
+        return HttpResponseNotAllowed("Error updating scheduled task")

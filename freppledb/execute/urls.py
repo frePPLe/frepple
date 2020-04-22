@@ -60,4 +60,9 @@ urlpatterns = [
         freppledb.execute.views.FileManager.deleteFilefromFolder,
         name="delete_file_from_folder",
     ),
+    url(
+        r"^execute/scheduletasks/$",
+        freppledb.execute.views.scheduletasks,
+        name="scheduletasks",
+    ),
 ]

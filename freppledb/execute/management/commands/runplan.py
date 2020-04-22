@@ -245,14 +245,22 @@ class Command(BaseCommand):
             if options["background"]:
                 # Execute as background process on Windows
                 if os.name == "nt":
-                    subprocess.Popen(["frepple", cmd], creationflags=0x08000000)
+                    startupinfo = subprocess.STARTUPINFO()
+                    startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+                    subprocess.Popen(
+                        ["frepple", cmd],
+                        creationflags=0x08000000,
+                        startupinfo=startupinfo,
+                    )
                 else:
                     # Execute as background process on Linux
                     subprocess.Popen(["frepple", cmd], preexec_fn=setlimits)
             else:
                 if os.name == "nt":
                     # Execute in foreground on Windows
-                    ret = subprocess.call(["frepple", cmd])
+                    startupinfo = subprocess.STARTUPINFO()
+                    startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+                    ret = subprocess.call(["frepple", cmd], startupinfo=startupinfo)
                 else:
                     # Execute in foreground on Linux
                     ret = subprocess.call(["frepple", cmd], preexec_fn=setlimits)

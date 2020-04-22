@@ -13,6 +13,7 @@ from importlib import import_module
 import os
 import re
 from subprocess import call
+import sys
 
 from django.conf import settings
 from django.core.mail import EmailMessage
@@ -250,11 +251,11 @@ class Command(BaseCommand):
                 .select_for_update(skip_locked=True)
             ):
                 Task(
-                    name="schedule",
+                    name="scheduletasks",
                     submitted=now,
                     status="Waiting",
                     user=schedule.user,
-                    arguments=schedule.name,
+                    arguments="--schedule='%s'" % schedule.name,
                 ).save(using=database)
                 schedule.computeNextRun(now)
                 schedule.save(using=database)
@@ -270,27 +271,36 @@ class Command(BaseCommand):
             .filter(next_run__isnull=False)
             .aggregate(Min("next_run"))
         )["next_run__min"]
-        if earliest_next:
+        if earliest_next and earliest_next > now:
             if os.name == "nt":
-                import locale
-
-                locale.setlocale()
+                # TODO For multi-tenancy possible we would also need to set the
+                # FREPPLE_CONFIGDIR environment variable. It seems that isn't
+                # possible with the Windows task scheduler.
+                if "python" in sys.executable:
+                    # Development layout
+                    cmd = "%s %s scheduletasks --database=%s" % (
+                        sys.executable.replace("python.exe", "pythonw.exe"),
+                        os.path.abspath(sys.argv[0]),
+                        database,
+                    )
+                else:
+                    # Windows installer
+                    cmd = "%s scheduletasks --database=%s" % (sys.executable, database)
                 call(
                     [
                         "schtasks",
                         "/create",
                         "/tn",
-                        "frepple scheduler",
+                        "frePPLe scheduler on %s" % database,
                         "/sc",
                         "once",
                         "/st",
                         earliest_next.strftime("%H:%M"),
                         "/sd",
-                        earliest_next.strftime(
-                            "%y-%m-%d"
-                        ),  # TODO needs to be locale specific :-(
+                        earliest_next.strftime("%m/%d/%Y"),
+                        "/f",
                         "/tr",
-                        "frepplectl scheduletasks --database=%s" % database,
+                        cmd,
                     ]
                 )
             else:

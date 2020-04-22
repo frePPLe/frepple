@@ -12,6 +12,7 @@ from datetime import datetime
 from importlib import import_module
 import os
 import re
+from shutil import which
 from subprocess import call
 import sys
 
@@ -272,6 +273,7 @@ class Command(BaseCommand):
             .aggregate(Min("next_run"))
         )["next_run__min"]
         if earliest_next and earliest_next > now:
+            retcode = 0
             if os.name == "nt":
                 # TODO For multi-tenancy possible we would also need to set the
                 # FREPPLE_CONFIGDIR environment variable. It seems that isn't
@@ -286,7 +288,7 @@ class Command(BaseCommand):
                 else:
                     # Windows installer
                     cmd = "%s scheduletasks --database=%s" % (sys.executable, database)
-                call(
+                retcode = call(
                     [
                         "schtasks",
                         "/create",
@@ -307,22 +309,28 @@ class Command(BaseCommand):
                 my_env = os.environ.copy()
                 my_env["FREPPLE_CONFIGDIR"] = settings.FREPPLE_CONFIGDIR
                 try:
-                    retcode = call(
-                        [
-                            "at",
-                            earliest_next.strftime("%H:%M %y-%m-%d"),
-                            "frepplectl",
-                            "scheduletasks",
-                            "--database=%s" % database,
-                        ],
-                        env=my_env,
-                    )
-                    if retcode < 0:
-                        raise CommandError(
-                            "Non-zero exit code when scheduling the task"
+                    if which("frepplectl"):
+                        retcode = call(
+                            "echo frepplectl scheduletasks --database=%s | at %s"
+                            % (database, earliest_next.strftime("%H:%M %y-%m-%d")),
+                            env=my_env,
+                            shell=True,
+                        )
+                    else:
+                        retcode = call(
+                            "echo %s scheduletasks --database=%s | at %s"
+                            % (
+                                os.path.abspath(sys.argv[0]),
+                                database,
+                                earliest_next.strftime("%H:%M %y-%m-%d"),
+                            ),
+                            env=my_env,
+                            shell=True,
                         )
                 except OSError as e:
                     raise CommandError("Can't schedule the task: %s" % e)
+            if retcode < 0:
+                raise CommandError("Non-zero exit code when scheduling the task")
 
     # accordion template
     title = _("Group and schedule tasks")

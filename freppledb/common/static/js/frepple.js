@@ -392,8 +392,8 @@ jQuery.extend($.fn.fmatter, {
     if (cellvalue === undefined || cellvalue === '' || cellvalue === null)
       return '';
     if (options['colModel']['popup'] || rowdata.showdrilldown === '0')
-      return cellvalue;
-    return cellvalue 
+      return $.jgrid.htmlEncode(cellvalue);
+    return $.jgrid.htmlEncode(cellvalue) 
       + "<a href='" + url_prefix + "/data/" + options.colModel.role + "/" + admin_escape(cellvalue) 
       + "/change/' onclick='event.stopPropagation()'><span class='leftpadding fa fa-caret-right'></span></a>";
   },
@@ -402,17 +402,17 @@ jQuery.extend($.fn.fmatter, {
     if (cellvalue === undefined || cellvalue === '' || cellvalue === null)
       return '';
     if (options['colModel']['popup'] || rowdata.showdrilldown === '0')
-      return cellvalue;
+      return $.jgrid.htmlEncode(cellvalue);
     if (options.colModel.name == "operation") {
     	if (rowdata.hasOwnProperty('type') 
     			&& (rowdata.type === 'PO' || rowdata.type === 'DO' || rowdata.type === 'DLVR' || rowdata.type === 'STCK' ))
-          return cellvalue; //don't show links for non existing operations
+          return $.jgrid.htmlEncode(cellvalue); //don't show links for non existing operations
       if (rowdata.hasOwnProperty('operationplan__type')
       		&& (rowdata.operationplan__type === 'PO' || rowdata.operationplan__type === 'DO' 
       			|| rowdata.operationplan__type === 'DLVR' || rowdata.operationplan__type === 'STCK' ))
-          return cellvalue; //don't show links for non existing operations
-    }
-    return cellvalue 
+          return $.jgrid.htmlEncode(cellvalue); //don't show links for non existing operations
+    }    
+    return $.jgrid.htmlEncode(cellvalue) 
       + "<a href=\"" + url_prefix + "/detail/" + options.colModel.role + "/" + admin_escape(cellvalue) 
       + "/\" onclick='event.stopPropagation()'><span class='leftpadding fa fa-caret-right'></span></a>";
   },
@@ -428,7 +428,7 @@ jQuery.extend($.fn.fmatter, {
     {
       if (result != '')
       	result += ', ';
-        result += cellvalue[i][0] + " : " + cellvalue[i][1] 
+        result += cellvalue[i][0] + " : " + $.jgrid.htmlEncode(cellvalue[i][1])
           + "<a href=\"" + url_prefix + "/detail/input/demand/" + admin_escape(cellvalue[i][1])
           + "/\" onclick='event.stopPropagation()'><span class='leftpadding fa fa-caret-right' role='input/demand'></span></a>";
     }
@@ -446,7 +446,7 @@ jQuery.extend($.fn.fmatter, {
     {
       if (result != '')
       	result += ', ';
-      result += '<span><span class="listdetailkey">' + cellvalue[i][0] 
+      result += '<span><span class="listdetailkey">' + $.jgrid.htmlEncode(cellvalue[i][0])
         + "</span><a href=\"" + url_prefix + "/detail/" + options.colModel.role 
         + "/" + admin_escape(cellvalue[i][0]) 
         + "/\" onclick='event.stopPropagation()'><span class='leftpadding fa fa-caret-right' role='" 

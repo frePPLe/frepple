@@ -172,6 +172,17 @@ converts to the reference unit of the uom category.
         return qty * self.uom[uom_id]['factor']
 
 
+    def convert_float_time(self, float_time):
+        """
+        Convert Odoo float time to ISO 8601 duration.
+        """
+        return "PT%dH%dM%dS" % (
+            int(float_time),  # duration: hours
+            int((float_time*60) % 60),  # duration: minutes
+            int((float_time*3600) % 60 % 60),  # duration: seconds
+        )
+
+
     def export_calendar(self):
         '''
 Build a calendar with a) holidays and b) working hours.
@@ -568,9 +579,9 @@ Mapping:
             yield '<buffer name=%s><item name=%s/><location name=%s/>\n' % (
                 quoteattr(buf_name), quoteattr(product_buf['name']), quoteattr(location)
             )
-            yield '<producing name=%s size_multiple="%s" duration="PT%dH" posttime="P%dD" xsi:type="operation_fixed_time"><location name=%s/>\n' % (
+            yield '<producing name=%s size_multiple="%s" duration="%s" posttime="P%dD" xsi:type="operation_fixed_time"><location name=%s/>\n' % (
                 quoteattr(operation), (i['product_rounding'] * uom_factor) or 1,
-                int(self.product_templates[self.product_product[i['product_tmpl_id'][0]]['template']]['produce_delay']),
+                self.convert_float_time(self.product_templates[self.product_product[i['product_tmpl_id'][0]]['template']]['produce_delay']),
                 self.manufacturing_lead,
                 quoteattr(location)
             )

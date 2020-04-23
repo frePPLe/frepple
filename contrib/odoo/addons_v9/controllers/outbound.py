@@ -167,6 +167,17 @@ class exporter(object):
         return qty * self.uom[uom_id]['factor']
 
 
+    def convert_float_time(self, float_time):
+        """
+        Convert Odoo float time to ISO 8601 duration.
+        """
+        return "PT%dH%dM%dS" % (
+            int(float_time),  # duration: hours
+            int((float_time*60) % 60),  # duration: minutes
+            int((float_time*3600) % 60 % 60),  # duration: seconds
+        )
+
+
     def export_calendar(self):
         '''
         Build a calendar with a) holidays and b) working hours.
@@ -559,10 +570,10 @@ class exporter(object):
                 # CASE 1: A single operation used for the BOM
                 # All routing steps are collapsed in a single operation.
                 #
-                yield '<operation name=%s size_multiple="%s" duration="PT%dH" posttime="P%dD"%s%s xsi:type="operation_fixed_time">\n' \
+                yield '<operation name=%s size_multiple="%s" duration="%s" posttime="P%dD"%s%s xsi:type="operation_fixed_time">\n' \
                   '<item name=%s/><location name=%s/>\n' % (
                     quoteattr(operation), (i['product_rounding'] * uom_factor) or 1,
-                    int(self.product_templates[self.product_product[i['product_tmpl_id'][0]]['template']]['produce_delay']),
+                    self.convert_float_time(self.product_templates[self.product_product[i['product_tmpl_id'][0]]['template']]['produce_delay']),
                     self.manufacturing_lead,
                     (' effective_start="%s"' % i['date_start']) if i['date_start'] else '',
                     (' effective_end="%s"' % i['date_stop']) if i['date_stop'] else '',
@@ -640,21 +651,21 @@ class exporter(object):
                 for step in steplist:
                     # Section to use when modeling bucketized resources
                     # yield '<suboperation priority="%s">' \
-                    #      '<operation name=%s duration="PT%dH" xsi:type="operation_fixed_time">\n' \
+                    #      '<operation name=%s duration="%s" xsi:type="operation_fixed_time">\n' \
                     #      '<location name=%s/>\n' \
                     #      '<loads><load quantity="1"><resource name=%s/></load></loads>\n' % (
                     #        step[2],
                     #        quoteattr("%s - %s" % (operation, step[2])),
-                    #        int(step[1]), quoteattr(location),
+                    #        self.convert_float_time(step[1]), quoteattr(location),
                     #        step[1], quoteattr(step[0])
                     #        )
                     yield '<suboperation priority="%s">' \
-                          '<operation name=%s duration="PT%dH" xsi:type="operation_time_per">\n' \
+                          '<operation name=%s duration="%s" xsi:type="operation_time_per">\n' \
                           '<location name=%s/>\n' \
                           '<loads><load quantity="1"><resource name=%s/></load></loads>\n' % (
                             step[2],
                             quoteattr("%s - %s" % (operation, step[2])),
-                            step[1], quoteattr(location),
+                            self.convert_float_time(step[1]), quoteattr(location),
                             quoteattr(step[0])
                             )
                     if step[2] == steplist[-1][2]:
@@ -705,7 +716,7 @@ class exporter(object):
                             )
                         yield '</flows>\n'
                     # Comment the next line when modeling bucketized resources
-                    yield '<duration_per>PT%dH</duration_per>' % int(step[1])
+                    yield '<duration_per>%s</duration_per>' % self.convert_float_time(step[1])
                     yield '</operation></suboperation>\n'
                 yield '</suboperations>\n'
             yield '</operation>\n'

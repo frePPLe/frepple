@@ -468,6 +468,15 @@ jQuery.extend($.fn.fmatter, {
     }
   },
 
+  selectbutton : function(cellvalue, options, rowdata) {
+    if (cellvalue) 
+    	return '<button onClick="opener.dismissRelatedLookupPopup(window, grid.selected)" class="btn btn-primary btn-xs">'
+    	  + gettext('select')
+    	  + '</button>';
+    else
+    	return "";
+  },
+
   color : function (cellvalue, options, rowdata) {
     // cellvalue contains computed_color field used only for sorting
 	  // color field is the field to be read here
@@ -610,7 +619,7 @@ var grid = {
      if (grid.selected != undefined)
        $(this).jqGrid('setCell', grid.selected, 'select', null);
      grid.selected = id;
-     $(this).jqGrid('setCell', id, 'select', '<input type="checkbox" onClick="opener.dismissRelatedLookupPopup(window, grid.selected);" class="btn btn-primary" style="width: 18px; height: 18px;" data-toggle="tooltip" title="'+gettext('Click to select record')+'"></input>');
+     $(this).jqGrid('setCell', id, 'select', true);
    },
 
    runAction: function(next_action) {

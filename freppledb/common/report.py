@@ -830,7 +830,7 @@ class GridReport(View):
         result = []
         if is_popup:
             result.append(
-                '{"name":"select","label":gettext("Select"),"width":75,"align":"center","sortable":false,"search":false}'
+                '{"name":"select","label":gettext("Select"),"width":75,"align":"center","formatter":"selectbutton","sortable":false,"search":false}'
             )
         count = -1
         for (index, hidden, width) in rows:

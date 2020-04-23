@@ -1063,7 +1063,7 @@ void OperationPlan::setOwner(OperationPlan* o, bool fast) {
 void OperationPlan::setStart(Date d, bool force, bool preferEnd) {
   // Confirmed opplans don't move
   if (getConfirmed()) {
-    if (force) setStartAndEnd(d, getEnd());
+    if (force) setStartAndEnd(d, getEnd() > d ? getEnd() : d);
     return;
   }
 
@@ -1090,7 +1090,7 @@ void OperationPlan::setStart(Date d, bool force, bool preferEnd) {
 void OperationPlan::setEnd(Date d, bool force) {
   // Locked opplans don't move
   if (getConfirmed()) {
-    if (force) setStartAndEnd(getStart(), d);
+    if (force) setStartAndEnd(getStart() < d ? getStart() : d, d);
     return;
   }
 
@@ -1632,8 +1632,7 @@ void OperationPlan::propagateStatus(bool log) {
       logger << "    Adjusting end date to " << Plan::instance().getCurrent()
              << endl;
     }
-    setOperationPlanParameters(quantity, Date::infinitePast,
-                               Plan::instance().getCurrent(), false);
+    setEnd(Plan::instance().getCurrent(), true);
   }
 
   if (getOwner() && getOwner()->getOperation()->hasType<OperationRouting>()) {

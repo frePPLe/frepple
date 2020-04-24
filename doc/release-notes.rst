@@ -20,6 +20,11 @@ Release notes
 - A `task scheduler <user-guide/command-reference.html#scheduletasks>`_ allows users to
   a series of tasks automatically based on schedule.
 
+.. rubric:: Odoo connector
+
+- Various fixes contributed by Robinhli, Jiří Kuneš and Kay Häusler. Many thanks to our 
+  user community!
+
 6.4.0 (2020/04/04)
 ==================
 

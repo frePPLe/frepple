@@ -57,7 +57,7 @@ class importer(object):
             recs = mfg_order.search(
                 [
                     "|",
-                    ("state", "=", "draft"),
+                    ("state", "=", "confirmed"),
                     ("state", "=", "cancel"),
                     ("origin", "=", "frePPLe"),
                 ]

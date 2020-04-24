@@ -712,7 +712,7 @@ class exportSetupRules(PlanTask):
                 """insert into setuprule
                 (setupmatrix_id,priority,fromsetup,tosetup,duration,cost,resource_id,source,lastmodified%s)
                 values(%%s,%%s,%%s,%%s,%%s * interval '1 second',%%s,%%s,%%s,%%s%s)
-                on conflict (matrix_id, priority)
+                on conflict (setupmatrix_id, priority)
                 do update set
                   fromsetup=excluded.fromsetup,
                   tosetup=excluded.tosetup,

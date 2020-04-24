@@ -5557,7 +5557,7 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand {
 };
 
 /* An specific changeover rule in a setup matrix. */
-class SetupMatrixRule : public Object {
+class SetupMatrixRule : public Object, public HasSource {
   friend class SetupMatrix;
 
  public:
@@ -5648,6 +5648,7 @@ class SetupMatrixRule : public Object {
     m->addPointerField<Cls, SetupMatrix>(
         Tags::setupmatrix, &Cls::getSetupMatrix, &Cls::setSetupMatrix,
         DONT_SERIALIZE + PARENT);
+    HasSource::registerFields<Cls>(m);
   }
 
   /* Returns true if this rule matches with the from-setup and to-setup being

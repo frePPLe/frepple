@@ -2931,8 +2931,13 @@ class Operation : public HasName<Operation>,
   /* Removes a super-operation from the list. */
   void removeSuperOperation(Operation*);
 
-  /* Return the release fence of this operation. */
+  /* Return the release fence, expressed in calendar days, of this operation. */
   Duration getFence() const { return fence; }
+
+  /* Return the release fence, expressed in available time, of this operation.
+   * The difference with the previous method is that it considers the working
+   * hour and holiday calendars. */
+  Date getFence(OperationPlan* opplan) const;
 
   /* Update the release fence of this operation. */
   void setFence(Duration t) {
@@ -8127,10 +8132,9 @@ class ProblemBeforeFence : public Problem {
   const DateRange getDates() const {
     if (oper) return DateRange(start, end);
     OperationPlan* o = static_cast<OperationPlan*>(owner);
-    if (o->getEnd() >
-        Plan::instance().getCurrent() + o->getOperation()->getFence())
-      return DateRange(o->getStart(), Plan::instance().getCurrent() +
-                                          o->getOperation()->getFence());
+    auto tmp = o->getOperation()->getFence(o);
+    if (o->getEnd() > tmp)
+      return DateRange(o->getStart(), tmp);
     else
       return o->getDates();
   }

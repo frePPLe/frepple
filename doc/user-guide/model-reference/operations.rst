@@ -113,7 +113,8 @@ subcategory            string            Free format subcategory.
 
 fence                  duration          Time window from the current date of the plan during
                                          which all manufacturing orders are expected to be
-                                         frozen/released.
+                                         frozen/released. The duration refers to available time (i.e.
+                                         respecting the working hours and holiday calendars mentioned above).
                                          
                                          When the 'FENCE' constraint is enabled in the solver, it
                                          won't create any new operation plans in this time fence.

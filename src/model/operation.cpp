@@ -174,6 +174,19 @@ OperationPlan::iterator Operation::getOperationPlans() const {
   return OperationPlan::iterator(this);
 }
 
+Date Operation::getFence(OperationPlan* opplan) const {
+  if (fence > 0L)
+    return calculateOperationTime(opplan, Plan::instance().getCurrent(), fence,
+                                  true)
+        .getEnd();
+  else if (fence < 0L)
+    return calculateOperationTime(opplan, Plan::instance().getCurrent(), -fence,
+                                  false)
+        .getStart();
+  else
+    return Plan::instance().getCurrent();
+}
+
 OperationPlan* Operation::createOperationPlan(double q, Date s, Date e,
                                               const PooledString& batch,
                                               Demand* l, OperationPlan* ow,

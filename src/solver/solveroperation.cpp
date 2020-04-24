@@ -54,7 +54,8 @@ void SolverCreate::checkOperationCapacity(OperationPlan* opplan,
     first = true;
     for (auto h = opplan->beginLoadPlans();
          h != opplan->endLoadPlans() && opplan->getDates() == orig; ++h) {
-      if (!h->getLoad() || h->getLoad()->getQuantity() == 0.0 || h->getQuantity() == 0.0) {
+      if (!h->getLoad() || h->getLoad()->getQuantity() == 0.0 ||
+          h->getQuantity() == 0.0) {
         // Empty load or loadplan (eg when load is not effective)
         first = false;
         continue;
@@ -449,7 +450,7 @@ bool SolverCreate::checkOperationLeadTime(OperationPlan* opplan,
   Date threshold = Plan::instance().getCurrent();
   if (isFenceConstrained() &&
       (!isLeadTimeConstrained() || opplan->getOperation()->getFence() > 0L))
-    threshold += opplan->getOperation()->getFence();
+    threshold = opplan->getOperation()->getFence(opplan);
 
   // Compare the operation plan start with the threshold date
   if (opplan->getStart() >= threshold)

@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<name>actual plan</name>
+	<description>
+		This test verifies that operation fences are used
+		correctly as
+		constraints.
+	</description>
+	<current>2020-01-01T00:00:00</current>
+	<calendars>
+		<calendar name="working hours">
+			<default>0</default>
+			<buckets>
+			   <!-- 2 + 4 + 8 + 16 + 32 = 62 = effective monday through friday from 9am till 5pm -->
+				<bucket days="62" value="1" starttime="PT9H" endtime="PT17H" />
+			</buckets>
+		</calendar>
+	</calendars>
+	<operations>
+		<operation name="make end item"
+			xsi:type="operation_fixed_time">
+			<location name="factory" />
+			<item name="end item" />
+			<duration>P7D</duration>
+			<fence>-P4D</fence>
+		</operation>
+		<operation name="make subassembly"
+			xsi:type="operation_fixed_time">
+			<location name="factory" />
+			<item name="subassembly" />
+			<duration>P5D</duration>
+			<fence>P4D</fence>
+		</operation>
+	</operations>
+	<buffers>
+		<buffer name="subassembly @ factory">
+			<producing name="make subassembly" />
+			<item name="subassembly" />
+			<location name="factory" />
+			<onhand>15</onhand>
+		</buffer>
+	</buffers>
+	<flows>
+		<flow xsi:type="flow_start">
+			<operation name="make end item" />
+			<item name="subassembly" />
+			<quantity>-1</quantity>
+		</flow>
+		<flow xsi:type="flow_end">
+			<operation name="make subassembly" />
+			<item name="subassembly" />
+			<quantity>1</quantity>
+		</flow>
+	</flows>
+	<demands>
+		<demand name="order 1">
+			<quantity>10</quantity>
+			<due>2019-12-01T00:00:00</due>
+			<priority>1</priority>
+			<item name="end item" />
+			<location name="factory" />
+			<operation name="make end item" />
+		</demand>
+		<demand name="order 2">
+			<quantity>10</quantity>
+			<due>2019-12-01T00:00:00</due>
+			<priority>2</priority>
+			<item name="end item" />
+			<location name="factory" />
+			<operation name="make end item" />
+		</demand>
+	</demands>
+
+<?python
+print("CREATING CONSTRAINED PLAN WITHOUT AVAILABILITY CALENDAR")
+# Note that lead time isn't active as constraint
+frepple.solver_mrp(plantype=1, constraints=12, loglevel=2).solve()
+frepple.saveplan("output.1.xml")
+print("CREATING CONSTRAINED PLAN WITH AVAILABILITY CALENDAR")
+frepple.location(name="factory").available = frepple.calendar(name="working hours")
+frepple.solver_mrp(plantype=1, constraints=12, loglevel=2).solve()
+frepple.saveplan("output.2.xml")
+?>
+
+</plan>

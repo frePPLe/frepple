@@ -298,6 +298,7 @@ AC_CONFIG_FILES([
   test/constraints_combined_2/Makefile
   test/constraints_leadtime_1/Makefile
   test/constraints_leadtime_2/Makefile
+  test/constraints_leadtime_3/Makefile
   test/constraints_material_1/Makefile
   test/constraints_material_2/Makefile
   test/constraints_material_3/Makefile

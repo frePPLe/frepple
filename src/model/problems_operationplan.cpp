@@ -44,14 +44,11 @@ void OperationPlan::updateProblems() {
     // Note that we either detect of beforeCurrent or a beforeFence problem,
     // never both simultaneously.
     if (getConfirmed()) {
-      if (dates.getEnd() < Plan::instance().getCurrent())
-        needsBeforeCurrent = true;
+      if (getEnd() < Plan::instance().getCurrent()) needsBeforeCurrent = true;
     } else {
-      if (dates.getStart() < Plan::instance().getCurrent())
+      if (getStart() < Plan::instance().getCurrent())
         needsBeforeCurrent = true;
-      else if (dates.getStart() <
-                   Plan::instance().getCurrent() + oper->getFence() &&
-               getProposed())
+      else if (getProposed() && getStart() < oper->getFence(this))
         needsBeforeFence = true;
     }
   }
@@ -157,19 +154,17 @@ bool OperationPlan::updateFeasible() {
     // Before current and before fence problems are only detected on child
     // operationplans
     if (getConfirmed()) {
-      if (dates.getEnd() < Plan::instance().getCurrent()) {
+      if (getEnd() < Plan::instance().getCurrent()) {
         // Before current violation
         setFeasible(false);
         return false;
       }
     } else {
-      if (dates.getStart() < Plan::instance().getCurrent()) {
+      if (getStart() < Plan::instance().getCurrent()) {
         // Before current violation
         setFeasible(false);
         return false;
-      } else if (dates.getStart() <
-                     Plan::instance().getCurrent() + oper->getFence() &&
-                 getProposed()) {
+      } else if (getProposed() && getStart() < oper->getFence(this)) {
         // Before fence violation
         setFeasible(false);
         return false;

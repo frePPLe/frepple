@@ -4,6 +4,10 @@ Release notes
 6.5.0 (Upcoming release)
 ========================
 
+.. rubric:: Production planning
+
+- | The release fence of operations is now expressed in available time, rather than calendar time.
+
 .. rubric:: User interface
 
 - | Supply path: Alternate operation with low priority (less preferred) will be displayed in light-blue.

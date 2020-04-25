@@ -270,6 +270,10 @@ msgstr ""
 msgid "Save plan from memory to the database"
 msgstr ""
 
+#: freppledb/planningboard/static/planningboard/planningboard.html:1329
+msgid "Search"
+msgstr ""
+
 #: freppledb/forecast/static/forecast/forecast.html:396
 msgid "Seasonal"
 msgstr ""
@@ -969,10 +973,6 @@ msgstr ""
 #: freppledb/forecast/static/forecast/forecast.html:74
 #: freppledb/planningboard/static/planningboard/planningboard.html:54
 msgid "save"
-msgstr ""
-
-#: freppledb/planningboard/static/planningboard/planningboard.html:1329
-msgid "search"
 msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1039

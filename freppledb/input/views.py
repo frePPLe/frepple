@@ -169,21 +169,21 @@ class PathReport(GridReport):
         ),
         GridFieldNumber(
             "sizeminimum",
-            title=_("Size Minimum"),
+            title=_("size minimum"),
             editable=False,
             sortable=False,
             initially_hidden=True,
         ),
         GridFieldNumber(
             "sizemultiple",
-            title=_("Size Multiple"),
+            title=_("size multiple"),
             editable=False,
             sortable=False,
             initially_hidden=True,
         ),
         GridFieldNumber(
             "sizemaximum",
-            title=_("Size Maximum"),
+            title=_("size maximum"),
             editable=False,
             sortable=False,
             initially_hidden=True,
@@ -269,7 +269,7 @@ class PathReport(GridReport):
     @classmethod
     def getOperationFromItem(reportclass, request, item_name, downstream, depth):
         cursor = connections[request.database].cursor()
-        query = """      
+        query = """
       -- MANUFACTURING OPERATIONS
       select distinct 
       case when parentoperation is null then operation else sibling end,

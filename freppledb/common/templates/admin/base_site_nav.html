@@ -69,7 +69,7 @@ $(function() {
     padding-right: 20px;" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{% trans 'user'|capfirst %} {% firstof user.first_name user.username %}</a>
 				<ul class="dropdown-menu">
 				  <li><a href="{{request.prefix}}/preferences/">{% trans 'preferences'|capfirst %}</a></li>
-				  <li><a href="/data/logout/?next=/">{% trans 'log out'|capfirst %}</a></li>
+				  <li><a href="/data/logout/?next=/">{% trans 'Log out'|capfirst %}</a></li>
 				</ul>
 			  </li></ul>
           {% endif %}

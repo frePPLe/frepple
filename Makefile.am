@@ -57,8 +57,8 @@ runserver:
 
 extract-translations:
 	## extract django
-	./frepplectl.py makemessages --ignore node_modules --no-wrap -a -d django
-	./frepplectl.py makemessages --ignore node_modules --no-wrap -a -d djangojs
+	cd freppledb; django-admin.py makemessages --ignore node_modules --no-wrap -a -d django
+	cd freppledb; django-admin.py makemessages --ignore node_modules --no-wrap -a -d djangojs
 
 	## extract angular
 	if test -n '$(NPM)' && test -n '$(GRUNT)'; then \
@@ -85,19 +85,19 @@ extract-translations:
 	    $$django/contrib/sites/locale/$$language/LC_MESSAGES/django.po \
 	    | msgattrib --translated --no-fuzzy -o freppledb/locale/$$language/djangocompendium.po; \
 	  ## Combine all frepple strings coming from django, djangojs and angular
+	  mv freppledb/locale/$$language/$$language.po freppledb/locale/$$language/$$language_old.po; \
 	  msgcat --use-first freppledb/locale/$$language/LC_MESSAGES/djangojs.po \
 	    freppledb/locale/$$language/LC_MESSAGES/django.po \
 	    freppledb/common/static/common/po/$$( echo $$language | tr _ - ).po \
 	    freppledb/common/static/common/po/template.pot \
 	    -o freppledb/locale/$$language/$$language.po; \
 	  ## Pick up known translations from the compendium
-	  cp freppledb/locale/$$language/$$language.po freppledb/locale/$$language/$$language.pot; \
 	  msgmerge --silent \
 	    --compendium freppledb/locale/$$language/djangocompendium.po \
+	    freppledb/locale/$$language/$$language_old.po \
 	    freppledb/locale/$$language/$$language.po \
-	    freppledb/locale/$$language/$$language.pot \
 	    -o freppledb/locale/$$language/$$language.po; \
-	  rm freppledb/locale/$$language/$$language.pot freppledb/locale/$$language/djangocompendium.po; \
+	  rm freppledb/locale/$$language/$$language_old.po freppledb/locale/$$language/djangocompendium.po; \
 	done
 
 compile-translations:

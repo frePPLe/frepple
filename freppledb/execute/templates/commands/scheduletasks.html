@@ -5,7 +5,7 @@
 <td></td>
 <td><strong>{% trans "name"|capfirst %}</strong></td>
 <td><strong>{% trans "next run"|capfirst %}</strong></td>
-{% if perms.execute.change_scheduledtask %}<td><strong>{% trans 'edit'|capfirst %}</strong></td>{% endif %}
+{% if perms.execute.change_scheduledtask %}<td></td>{% endif %}
 </tr>
 </th>
 {% for schedule in schedules %}
@@ -21,11 +21,15 @@
 
   {% if perms.execute.change_scheduledtask %}
   <td style="padding: 15px">
-  <button class="btn btn-xs btn-primary" onclick="editOrSaveScheduledTask(this, event)">  
-  <span class="fa fa-edit" data-toggle="tooltip" 
-    data-placement="top" data-original-title="{% trans "edit"|capfirst %}"></span>
+  <button class="btn btn-xs btn-primary" onclick="seeScheduledTask(this, event)">  
+  <span class="fa fa-caret-down" data-toggle="tooltip" 
+    data-placement="top" data-original-title="{% trans "see detail"|capfirst %}"></span>
   </button>
-  <button class="btn btn-xs btn-primary" onclick="deleteScheduledTask(this, event)">
+  <button class="btn btn-xs btn-danger hidden" onclick="saveScheduledTask(this, event)">
+  <span class="fa fa-save" data-toggle="tooltip" data-placement="top" 
+    data-original-title="{% trans "save"|capfirst %}"></span>
+  </button>  
+  <button class="btn btn-xs btn-primary hidden" onclick="deleteScheduledTask(this, event)">
   <span class="fa fa-trash-o" data-toggle="tooltip" data-placement="top" 
     data-original-title="{% trans "Delete" %}"></span>
   </button>
@@ -39,7 +43,7 @@
          <label for="schedule-{{forloop.counter}}-name" class="col-sm-3 control-label">{% trans "name"|capfirst %}</label>
          <div class="col-sm-9">
            <input type="text" class="form-control" id="schedule-{{forloop.counter}}-name"
-             value="{{schedule.name}}" placeholder="{% trans "unique name"|capfirst %}">
+             data-field="name" value="{{schedule.name}}" placeholder="{% trans "unique name"|capfirst %}">
          </div>
        </div>
        <div class="form-group">
@@ -49,10 +53,11 @@
          <div class="row" data-taskno="{{ forloop.counter }}">
          <div class="col-xs-3">
             <div class="btn-group btn-block">
-            <button class="btn btn-block btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
+            <button data-field="task-name" data-name="{{ t.name }}" type="button"
+              class="btn btn-block btn-primary dropdown-toggle" data-toggle="dropdown">
               {{ t.name }}&nbsp;<span class="caret"></span>
             </button>
-            <ul class="dropdown-menu" rol="menu">
+            <ul class="dropdown-menu" role="menu">
               {% for c in commands %}
               <li><a href="#" onclick="setTaskType(this, event)">{{c}}</a></li>
               {% endfor %}
@@ -60,10 +65,10 @@
             </div>
          </div>
          <div class="col-xs-7">
-         <input type="text" placeholder="{% trans "Arguments" %}" value="{{ t.arguments }}">
+         <input data-field="task-arguments" type="text" placeholder="{% trans "Arguments" %}" value="{{ t.arguments }}">
          </div>
          <div class="col-xs-1">
-         <input type="checkbox" value="1" {% if t.abort_on_failure %}checked{% endif %}
+         <input data-field="task-abort-on-failure" type="checkbox" value="1" {% if t.abort_on_failure %}checked{% endif %}
            data-toggle="tooltip" data-placement="top" data-original-title="{% trans "abort on failure"|capfirst %}">
          </div>
          <div class="col-xs-1">
@@ -88,39 +93,39 @@
          <label for="schedule-{{forloop.counter}}-start" class="col-sm-3 control-label">{% trans "start time"|capfirst %}</label>
          <div class="col-sm-9">
            <input type="text" class="form-control" id="schedule-{{forloop.counter}}-at"
-             placeholder="HH:MM:SS" value="{{schedule.data.starttime|timeformat}}">
+             data-field="starttime" placeholder="HH:MM:SS" value="{{schedule.data.starttime|timeformat}}">
          </div>
        </div>
        <div class="form-group">
          <label class="col-sm-3 control-label">{% trans "weekly schedule"|capfirst %}</label>
 		     <div class="col-sm-9">
 					 <label class="checkbox-inline">
-					   <input type="checkbox" id="inlineCheckbox1" {% if schedule.data.monday %}checked {% endif %}value="0">{% trans "Mon" %}
+					   <input data-field="monday" type="checkbox" {% if schedule.data.monday %}checked{% endif %}>{% trans "Mon" %}
 					 </label>
            <label class="checkbox-inline">
-             <input type="checkbox" id="inlineCheckbox1" {% if schedule.data.tuesday %}checked {% endif %}value="1">{% trans "Tue" %}
+             <input data-field="tuesday" type="checkbox" {% if schedule.data.tuesday %}checked{% endif %}>{% trans "Tue" %}
            </label>
            <label class="checkbox-inline">
-             <input type="checkbox" id="inlineCheckbox1" {% if schedule.data.wednesday %}checked {% endif %}value="2">{% trans "Wed" %}
+             <input data-field="wednesday" type="checkbox" {% if schedule.data.wednesday %}checked{% endif %}>{% trans "Wed" %}
            </label>
            <label class="checkbox-inline">
-             <input type="checkbox" id="inlineCheckbox1" {% if schedule.data.thursday %}checked {% endif %}value="3">{% trans "Thu" %}
+             <input data-field="thursday" type="checkbox" {% if schedule.data.thursday %}checked{% endif %}>{% trans "Thu" %}
            </label>
            <label class="checkbox-inline">
-             <input type="checkbox" id="inlineCheckbox1" {% if schedule.data.friday %}checked {% endif %}value="4">{% trans "Fri" %}
+             <input data-field="friday" type="checkbox" {% if schedule.data.friday %}checked{% endif %}>{% trans "Fri" %}
            </label>
            <label class="checkbox-inline">
-             <input type="checkbox" id="inlineCheckbox1" {% if schedule.data.saturday %}checked {% endif %}value="5">{% trans "Sat" %}
+             <input data-field="staturday" type="checkbox" {% if schedule.data.saturday %}checked{% endif %}>{% trans "Sat" %}
            </label>
            <label class="checkbox-inline">
-             <input type="checkbox" id="inlineCheckbox1" {% if schedule.data.sunday %}checked {% endif %}value="6">{% trans "Sun" %}
+             <input data-field="sunday" type="checkbox" {% if schedule.data.sunday %}checked{% endif %}>{% trans "Sun" %}
            </label>
 		     </div>
 		   </div>       
        <div class="form-group">
          <label for="schedule-{{forloop.counter}}-email-success" class="col-sm-3 control-label">{% trans "email on success"|capfirst %}</label>
          <div class="col-sm-9">
-           <input type="email" class="form-control" id="schedule-{{forloop.counter}}-email-success"
+           <input type="email" class="form-control" id="schedule-{{forloop.counter}}-email-success" data-field="email_success"
               placeholder="{% trans "list of emails, separated by commas"|capfirst %}" value="{{schedule.email_success}}">
          </div>
        </div>
@@ -129,7 +134,7 @@
          <div class="col-sm-9">
            <input type="email" class="form-control" id="schedule-{{forloop.counter}}-email-success"
              placeholder="{% trans "list of emails, separated by commas"|capfirst %}"
-             value="{{schedule.email_failure}}">
+              data-field="email_failure" value="{{schedule.email_failure}}">
          </div>
        </div>                
       </form>
@@ -155,7 +160,8 @@
 function setTaskType(el, event) {
 	var tgt = $(el);
 	var parent = tgt.parents("ul").prev();
-	parent.html(tgt.html() + '&nbsp;<span class="caret"></span>');	
+	parent.html(tgt.html() + '&nbsp;<span class="caret"></span>');
+	parent.attr("data-name", tgt.html()); 
 	event.preventDefault();
 }
 
@@ -191,21 +197,74 @@ function addTask(el, event) {
   </div>
   </div>
   */
-  console.log("----");
+  // TODO
   event.preventDefault();  
 }
 
 function addScheduledTask(el, event) {
-  console.log("---ssss-");
+  // TODO
   event.preventDefault();
 }
 
-function editOrSaveScheduledTask(el, event) {
+function seeScheduledTask(el, event) {
 	var tgt = $(el);
-	//if (tgt.hasClass("fa-edit"))
-    $(el).parents('tr').next().toggle(400);
-	//else if (tgt.hasClass("fa-save")) {
-	//}
+	tgt.parents('tr').next().toggle(400);
+	tgt.next().toggleClass("hidden");
+  tgt.next().next().toggleClass("hidden");
+	tgt.find("span").toggleClass("fa-caret-down fa-caret-up");
+  event.preventDefault();
+}
+
+function saveScheduledTask(el, event) {
+  var tgt = $(el);
+  var form = tgt.parents('tr').next();
+  var starttime = new moment(form.find("[data-field='starttime']").val(), "HH:mm:ss");
+  var tasks = [];
+  form.find("[data-taskno]").each(function(i, el){
+  	var t = $(this);
+  	tasks.push({
+  		"name": t.find("[data-field='task-name']").attr("data-name"),
+  		"arguments": t.find("[data-field='task-arguments']").val(),
+  		"abort_on_failure": t.find("[data-field='task-abort-on-failure']").is(":checked")
+  	});
+  });
+  $.ajax({
+    url: url_prefix + "/execute/scheduletasks/",
+    type: 'POST',
+    data: JSON.stringify({
+      "name": form.find("[data-field='name']").val(),
+      "email_failure": form.find("[data-field='email_failure']").val(),
+      "email_success": form.find("[data-field='email_success']").val(),
+      "data": {
+        "starttime": starttime.hours() * 3600 + starttime.minutes() * 60 + starttime.seconds(),
+        "monday": form.find("[data-field='monday']").is(":checked"),      
+        "tuesday": form.find("[data-field='tuesday']").is(":checked"),      
+        "wednesday": form.find("[data-field='wednesday']").is(":checked"),      
+        "thursday": form.find("[data-field='thursday']").is(":checked"),      
+        "friday": form.find("[data-field='friday']").is(":checked"),      
+        "saturday": form.find("[data-field='saturday']").is(":checked"),      
+        "sunday": form.find("[data-field='sunday']").is(":checked"),
+        "tasks": tasks
+        }
+    }),
+    error: function(jqXHR, status, errorThrown) {
+      $('#popup').html('<div class="modal-dialog">'+
+          '<div class="modal-content">'+
+            '<div class="modal-header bg-danger">'+
+              '<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true" class="fa fa-times"></span></button>'+
+              '<h4 class="modal-title">'+ gettext("Error")+'</h4>'+
+            '</div>'+
+            '<div class="modal-body">'+
+              '<p>'+errorThrown+'</p>'+
+            '</div>'+
+            '<div class="modal-footer">'+
+              '<input type="submit" id="cancelbutton" role="button" class="btn btn-primary pull-right" data-dismiss="modal" value="'+gettext('Close')+'">'+
+            '</div>'+
+          '</div>'+
+      '</div>' )
+      .modal('show');
+    }
+    });
   event.preventDefault();
 }
 
@@ -227,7 +286,7 @@ function deleteScheduledTask(el, event) {
           '<div class="modal-content">'+
             '<div class="modal-header bg-danger">'+
               '<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true" class="fa fa-times"></span></button>'+
-              '<h4 class="modal-title">'+ gettext("Error deleting scheduled task")+'</h4>'+
+              '<h4 class="modal-title">'+ gettext("Error")+'</h4>'+
             '</div>'+
             '<div class="modal-body">'+
               '<p>'+errorThrown+'</p>'+

@@ -785,7 +785,7 @@ def scheduletasks(request):
                 obj.email_success = fld
             fld = data.get("data", None)
             if isinstance(fld, dict):
-                obj.data = data
+                obj.data = fld
             obj.save(using=request.database)
             return HttpResponse(content="OK")
         elif request.method == "DELETE":
@@ -801,4 +801,4 @@ def scheduletasks(request):
                 return HttpResponseNotAllowed("Couldn't delete scheduled task")
     except Exception as e:
         logger.error("Error updating scheduled task: %s" % e)
-        return HttpResponseNotAllowed("Error updating scheduled task")
+        return HttpResponseServerError("Error updating scheduled task")

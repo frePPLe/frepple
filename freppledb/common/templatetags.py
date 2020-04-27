@@ -705,10 +705,16 @@ jsonfilter.is_safe = True
 
 @register.filter(name="timeformat")
 def timeformatfilter(a):
-    t = time(
-        hour=int(a / 3600), minute=int(int(a % 3600) / 60), second=a % 60, microsecond=0
-    )
-    return mark_safe(t.isoformat(timespec="seconds"))
+    if a:
+        t = time(
+            hour=int(a / 3600),
+            minute=int(int(a % 3600) / 60),
+            second=a % 60,
+            microsecond=0,
+        )
+        return mark_safe(t.isoformat(timespec="seconds"))
+    else:
+        return mark_safe("00:00:00")
 
 
 timeformatfilter.is_safe = True

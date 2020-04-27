@@ -546,7 +546,7 @@ def DownloadLogFile(request, taskid):
     #   filename = 'frepple_%s.log' % request.database
     filename = Task.objects.using(request.database).get(id=taskid).logfile
     if not filename.lower().endswith(".log"):
-        return HttpResponseNotFound(force_text(_("Error downloading file")))
+        return HttpResponseNotFound(force_text(_("Error")))
     return sendStaticFile(request, filename, settings.FREPPLE_LOGDIR)
 
 
@@ -559,7 +559,7 @@ def logfile(request, taskid):
     try:
         filename = Task.objects.using(request.database).get(id=taskid).logfile
         if not filename.lower().endswith(".log"):
-            return HttpResponseNotFound(force_text(_("Error downloading file")))
+            return HttpResponseNotFound(force_text(_("Error")))
 
         f = open(os.path.join(settings.FREPPLE_LOGDIR, filename), "rb")
     except Exception:
@@ -748,7 +748,7 @@ class FileManager:
             return sendStaticFile(request, clean_filename, folder)
         except Exception as e:
             logger.error("Failed file download: %s" % e)
-            return HttpResponseNotFound(force_text(_("Error downloading file")))
+            return HttpResponseNotFound(force_text(_("Error")))
 
 
 @staff_member_required

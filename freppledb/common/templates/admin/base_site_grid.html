@@ -85,7 +85,7 @@ $(function() {
         $('#grid').clearGridData();
       }
       else
-        $('#curfilter').html("{{_('Error retrieving report data')|escapejs}}" + ":&nbsp;" + xhr.status + "&nbsp;" + xhr.statusText);
+        $('#curfilter').html("{{_('Error')|escapejs}}" + ":&nbsp;" + xhr.status + "&nbsp;" + xhr.statusText);
     },{% if reportclass.editable and reportclass.multiselect and not is_popup and hasaddperm %}
     multiselect: true,
     multiboxonly: true,

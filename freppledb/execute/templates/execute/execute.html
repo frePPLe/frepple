@@ -84,7 +84,7 @@
           },
           error: function (result, stat, errorThrown) {
             $('#popup .modal-body p').html(result.responseText);
-            $('#popup .modal-title').html(gettext("Error canceling data"));
+            $('#popup .modal-title').html(gettext("Error"));
             $('#confirmbutton').prop("disabled", true).hide();
             }
         })

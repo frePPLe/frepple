@@ -248,7 +248,7 @@ var upload = {
                       '<div class="modal-content">'+
                         '<div class="modal-header bg-danger">'+
                           '<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true" class="fa fa-times"></span></button>'+
-                          '<h4 class="modal-title">'+ gettext("Error saving data")+'</h4>'+
+                          '<h4 class="modal-title">'+ gettext("Error")+'</h4>'+
                         '</div>'+
                         '<div class="modal-body">'+
                           '<p>'+result.responseText+'</p>'+
@@ -843,7 +843,7 @@ var grid = {
              '<div class="modal-content">'+
              '<div class="modal-header">'+
                '<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true" class="fa fa-times"></span></button>'+
-               '<h4 class="modal-title">' + gettext("Error retrieving data") + '</h4>'+
+               '<h4 class="modal-title">' + gettext("Error") + '</h4>'+
              '</div>'+
              '<div class="modal-body">'+
                '<p>'+result.responseText + "  " + stat + errorThrown+'</p>'+
@@ -1048,7 +1048,7 @@ var grid = {
             '<div class="modal-content">'+
             '<div class="modal-header">'+
               '<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true" class="fa fa-times"></span></button>'+
-              '<h4 class="modal-title">' + gettext("Error saving report settings") + '</h4>'+
+              '<h4 class="modal-title">' + gettext("Error") + '</h4>'+
             '</div>'+
             '<div class="modal-body">'+
               '<p>'+result.responseText + "  " + stat + errorThrown+'</p>'+
@@ -1281,7 +1281,7 @@ var grid = {
                    },
                  error: function (result, stat, errorThrown) {
                $('#popup .modal-body p').html(result.responseText);
-               $('#popup .modal-title').html(gettext("Error deleting data"));
+               $('#popup .modal-title').html(gettext("Error"));
                $('#popup .modal-header').addClass('bg-danger');
                $('#delbutton').prop("disabled", true).hide();
                    }
@@ -1330,7 +1330,7 @@ var grid = {
                    },
                  error: function (result, stat, errorThrown) {
            $('#popup .modal-body p').html(result.responseText);
-           $('#popup .modal-title').html(gettext("Error copying data"));
+           $('#popup .modal-title').html(gettext("Error"));
            $('#popup .modal-header').addClass('bg-danger');
            $('#copybutton').prop("disabled", true).hide();
                    }
@@ -1871,10 +1871,10 @@ var ERPconnection = {
 
           },
           error: function (result, stat, errorThrown) {
-            fmts = ngettext("Error during export");
-            $('#popup .modal-title').html(gettext("Error during export"));
+            fmts = gettext("Error");
+            $('#popup .modal-title').html(fmts);
             $('#popup .modal-header').addClass('bg-danger');
-            $('#popup .modal-body p').html(gettext("Error during export") + ':' + result.responseText);
+            $('#popup .modal-body p').html(fmts + ':' + result.responseText);
             $('#button_export').text(gettext('retry'));
           }
         });
@@ -2055,8 +2055,7 @@ var ERPconnection = {
           $("#actions1").html($("#actionsul").children().first().text() + '  <span class="caret"></span>');
         },
         error: function (result, stat, errorThrown) {
-          var fmts = gettext("Error getting data");
-          $('#popup .modal-title').html(fmts);
+          $('#popup .modal-title').html(gettext("Error"));
           $('#popup .modal-header').addClass('bg-danger');
           $('#popup .modal-body').css({'overflow-y':'auto'}).html('<div style="overflow-y:auto; height: 300px; resize: vertical">' + result.responseText + '</div>');
           $('#button_export').val(gettext('Retry'));
@@ -2167,7 +2166,7 @@ var dashboard = {
             '<div class="modal-content">'+
             '<div class="modal-header">'+
               '<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true" class="fa fa-times"></span></button>'+
-              '<h4 class="modal-title">' + gettext("Error saving report settings") + '</h4>'+
+              '<h4 class="modal-title">' + gettext("Error") + '</h4>'+
             '</div>'+
             '<div class="modal-body">'+
               '<p>'+result.responseText + "  " + stat + errorThrown+'</p>'+
@@ -2555,7 +2554,7 @@ function about_show()
                     '<h4 class="modal-title">About frePPLe</h4>'+
                   '</div>'+
                   '<div class="modal-body">'+
-                    '<p>' + gettext("Error reading version information") + '</p>'+
+                    '<p>' + gettext("Error") + '</p>'+
                   '</div>'+
                 '</div>'+
             '</div>' )

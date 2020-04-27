@@ -110,10 +110,61 @@ class ScheduledTask(models.Model):
         verbose_name = _("scheduled task")
 
     def computeNextRun(self, now=None):
-        if now:
-            self.next_run = now + timedelta(seconds=600)
-        else:
-            self.next_run = datetime.now() + timedelta(seconds=600)
+        weekdays = [
+            "monday",
+            "tuesday",
+            "wednesday",
+            "thursday",
+            "friday",
+            "saturday",
+            "sunday",
+        ]
+        if not now:
+            now = datetime.now()
+        time_of_day = now.hour * 3600 + now.minute * 60 + now.second
+        starttime = int(self.data.get("starttime", 0))
+        weekday = now.weekday()
+        # Loop over current + next 7 days
+        for n in range(8):
+            if n == 0 and time_of_day > starttime:
+                # Too late to start today
+                continue
+            elif self.data.get(weekdays[weekday], False):
+                self.next_run = (now + timedelta(days=n)).replace(
+                    hour=int(starttime / 3600),
+                    minute=int(int(starttime % 3600) / 60),
+                    second=starttime % 60,
+                    microsecond=0,
+                )
+                return
+            else:
+                weekday = (weekday + 1) % 7
+        self.next_run = None
+
+    def adjustForTimezone(self, offset):
+        self.data["starttime"] = self.data.get("starttime", 0) + offset
+        if self.data["starttime"] < 0:
+            # Starts the previous day!
+            self.data["starttime"] += 24 * 3600
+            tmp = self.data.get("monday", False)
+            self.data["monday"] = self.data.get("tuesday", False)
+            self.data["tuesday"] = self.data.get("wednesday", False)
+            self.data["wednesday"] = self.data.get("thursday", False)
+            self.data["thursday"] = self.data.get("friday", False)
+            self.data["friday"] = self.data.get("saturday", False)
+            self.data["saturday"] = self.data.get("sunday", False)
+            self.data["sunday"] = tmp
+        elif self.data["starttime"] > 24 * 3600:
+            # Starts the next day!
+            self.data["starttime"] -= 24 * 3600
+            tmp = self.data.get("sunday", False)
+            self.data["sunday"] = self.data.get("saturday", False)
+            self.data["saturday"] = self.data.get("friday", False)
+            self.data["friday"] = self.data.get("thursday", False)
+            self.data["thursday"] = self.data.get("wednesday", False)
+            self.data["wednesday"] = self.data.get("tuesday", False)
+            self.data["tuesday"] = self.data.get("monday", False)
+            self.data["monday"] = tmp
 
     def save(self, *args, **kwargs):
         self.computeNextRun()

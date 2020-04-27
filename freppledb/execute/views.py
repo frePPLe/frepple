@@ -789,7 +789,6 @@ def scheduletasks(request):
             obj.save(using=request.database)
             return HttpResponse(content="OK")
         elif request.method == "DELETE":
-            print(name, data)
             if not request.user.has_perm("execute.delete_scheduledtask"):
                 return HttpResponseNotAllowed("Couldn't delete scheduled task")
             elif (

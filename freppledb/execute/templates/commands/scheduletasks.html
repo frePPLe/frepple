@@ -88,32 +88,32 @@
          <label for="schedule-{{forloop.counter}}-start" class="col-sm-3 control-label">{% trans "start time"|capfirst %}</label>
          <div class="col-sm-9">
            <input type="text" class="form-control" id="schedule-{{forloop.counter}}-at"
-             placeholder="HH:MM:SS">
+             placeholder="HH:MM:SS" value="{{schedule.data.starttime|timeformat}}">
          </div>
        </div>
        <div class="form-group">
          <label class="col-sm-3 control-label">{% trans "weekly schedule"|capfirst %}</label>
 		     <div class="col-sm-9">
 					 <label class="checkbox-inline">
-					   <input type="checkbox" id="inlineCheckbox1" value="1">{% trans "Mon" %}
+					   <input type="checkbox" id="inlineCheckbox1" {% if schedule.data.monday %}checked {% endif %}value="0">{% trans "Mon" %}
 					 </label>
            <label class="checkbox-inline">
-             <input type="checkbox" id="inlineCheckbox1" value="2">{% trans "Tue" %}
+             <input type="checkbox" id="inlineCheckbox1" {% if schedule.data.tuesday %}checked {% endif %}value="1">{% trans "Tue" %}
            </label>
            <label class="checkbox-inline">
-             <input type="checkbox" id="inlineCheckbox1" value="3">{% trans "Wed" %}
+             <input type="checkbox" id="inlineCheckbox1" {% if schedule.data.wednesday %}checked {% endif %}value="2">{% trans "Wed" %}
            </label>
            <label class="checkbox-inline">
-             <input type="checkbox" id="inlineCheckbox1" value="4">{% trans "Thu" %}
+             <input type="checkbox" id="inlineCheckbox1" {% if schedule.data.thursday %}checked {% endif %}value="3">{% trans "Thu" %}
            </label>
            <label class="checkbox-inline">
-             <input type="checkbox" id="inlineCheckbox1" value="5">{% trans "Fri" %}
+             <input type="checkbox" id="inlineCheckbox1" {% if schedule.data.friday %}checked {% endif %}value="4">{% trans "Fri" %}
            </label>
            <label class="checkbox-inline">
-             <input type="checkbox" id="inlineCheckbox1" value="6">{% trans "Sat" %}
+             <input type="checkbox" id="inlineCheckbox1" {% if schedule.data.saturday %}checked {% endif %}value="5">{% trans "Sat" %}
            </label>
            <label class="checkbox-inline">
-             <input type="checkbox" id="inlineCheckbox1" value="7">{% trans "Sun" %}
+             <input type="checkbox" id="inlineCheckbox1" {% if schedule.data.sunday %}checked {% endif %}value="6">{% trans "Sun" %}
            </label>
 		     </div>
 		   </div>       
@@ -121,14 +121,15 @@
          <label for="schedule-{{forloop.counter}}-email-success" class="col-sm-3 control-label">{% trans "email on success"|capfirst %}</label>
          <div class="col-sm-9">
            <input type="email" class="form-control" id="schedule-{{forloop.counter}}-email-success"
-              placeholder="{% trans "list of emails, separated by commas"|capfirst %}">
+              placeholder="{% trans "list of emails, separated by commas"|capfirst %}" value="{{schedule.email_success}}">
          </div>
        </div>
        <div class="form-group">
          <label for="schedule-{{forloop.counter}}-email-failure" class="col-sm-3 control-label">{% trans "email on failure"|capfirst %}</label>
          <div class="col-sm-9">
            <input type="email" class="form-control" id="schedule-{{forloop.counter}}-email-success"
-             placeholder="{% trans "list of emails, separated by commas"|capfirst %}">
+             placeholder="{% trans "list of emails, separated by commas"|capfirst %}"
+             value="{{schedule.email_failure}}">
          </div>
        </div>                
       </form>
@@ -210,7 +211,7 @@ function editOrSaveScheduledTask(el, event) {
 
 function deleteScheduledTask(el, event) {
   event.preventDefault();
-	var name = $(el).parents("tr").attr("data-schedule-name")};
+	var name = $(el).parents("tr").attr("data-schedule-name");
   $.ajax({
     url: url_prefix + "/execute/scheduletasks/",
     type: 'DELETE',

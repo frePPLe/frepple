@@ -15,6 +15,7 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+from datetime import time
 from decimal import Decimal
 import json
 
@@ -700,3 +701,14 @@ def jsonfilter(a):
 
 
 jsonfilter.is_safe = True
+
+
+@register.filter(name="timeformat")
+def timeformatfilter(a):
+    t = time(
+        hour=int(a / 3600), minute=int(int(a % 3600) / 60), second=a % 60, microsecond=0
+    )
+    return mark_safe(t.isoformat(timespec="seconds"))
+
+
+timeformatfilter.is_safe = True

@@ -44,7 +44,7 @@ from django.http import (
 from django.contrib import messages
 from django.utils.encoding import force_text
 from django.utils.text import capfirst
-from django.core.management import get_commands
+from django.core.management import get_commands, call_command
 
 from freppledb.execute.models import Task, ScheduledTask
 from freppledb.common.auth import basicauthentication
@@ -787,6 +787,7 @@ def scheduletasks(request):
             if isinstance(fld, dict):
                 obj.data = fld
             obj.save(using=request.database)
+            call_command("scheduletasks", database=request.database)
             return HttpResponse(content="OK")
         elif request.method == "DELETE":
             if not request.user.has_perm("execute.delete_scheduledtask"):

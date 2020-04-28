@@ -1111,7 +1111,7 @@ class loadSetupMatrices(LoadTask):
                         priority=i[1],
                         fromsetup=i[2],
                         tosetup=i[3],
-                        duration=i[4].total_seconds(),
+                        duration=i[4].total_seconds() if i[4] else 0,
                         cost=i[5],
                         source=i[6],
                     )

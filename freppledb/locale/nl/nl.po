@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-04-25 13:07+0200\n"
-"PO-Revision-Date: 2020-04-25 13:04+0200\n"
+"PO-Revision-Date: 2020-04-28 10:23+0200\n"
 "Last-Translator: Joao Ranita <jranita@frepple.com>\n"
 "Language-Team: frepple\n"
 "Language: nl\n"
@@ -4408,7 +4408,7 @@ msgstr "Status van de resourceallocatie"
 
 #: input/models.py:1928 input/models.py:1929 input/views.py:6144
 msgid "resource detail"
-msgstr "resourcedetail"
+msgstr "capaciteitsdetail"
 
 #: input/models.py:1972 input/views.py:5955 inventoryplanning/models.py:35
 #: inventoryplanning/templates/inventoryplanning/drp.html:2705

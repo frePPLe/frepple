@@ -445,7 +445,9 @@ class Command(BaseCommand):
                 if os.path.isdir(exportfolder):
                     tzoffset = GridReport.getTimezoneOffset(request)
                     for file in os.listdir(exportfolder):
-                        if file.endswith((".csv", ".csv.gz", ".log")):
+                        if file.endswith(
+                            (".xlsx", ".xlsx.gz", ".csv", ".csv.gz", ".log")
+                        ):
                             filesexported.append(
                                 [
                                     file,

@@ -788,7 +788,11 @@ def scheduletasks(request):
                 obj.data = fld
             obj.save(using=request.database)
             call_command("scheduletasks", database=request.database)
-            return HttpResponse(content="OK")
+            return HttpResponse(
+                content=obj.next_run.strftime("%Y-%m-%d %H:%M:%S")
+                if obj.next_run
+                else ""
+            )
         elif request.method == "DELETE":
             if not request.user.has_perm("execute.delete_scheduledtask"):
                 return HttpResponseNotAllowed("Couldn't delete scheduled task")

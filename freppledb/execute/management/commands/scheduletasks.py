@@ -362,13 +362,15 @@ class Command(BaseCommand):
                 except Exception:
                     pass
         commands = [commands[i] for i in sorted(commands)]
+        schedules = [
+            s
+            for s in ScheduledTask.objects.all()
+            .using(request.database)
+            .order_by("name")
+        ]
+        schedules.append(ScheduledTask())  # Empty template
         return render_to_string(
             "commands/scheduletasks.html",
-            {
-                "schedules": ScheduledTask.objects.all()
-                .using(request.database)
-                .order_by("name"),
-                "commands": commands,
-            },
+            {"schedules": schedules, "commands": commands},
             request=request,
         )

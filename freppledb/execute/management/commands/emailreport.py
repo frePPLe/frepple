@@ -278,7 +278,7 @@ class Command(BaseCommand):
                                             os.path.join(exportfolder, file)
                                         ).st_size
                                     ),
-                                    file.split(".")[0],
+                                    file.replace(".", "\\\\."),
                                 ]
                             )
 
@@ -319,7 +319,7 @@ class Command(BaseCommand):
             <tr data-file="{{j.0}}">
               <td></td>
               <td>
-                  <input type="checkbox" id="{{j.3}}" checked>
+                  <input type="checkbox" id="{{j.0}}" checked>
                   {{j.0}}
               </td>
               <td>{{j.2}}</td>

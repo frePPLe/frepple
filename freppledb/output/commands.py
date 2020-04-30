@@ -539,13 +539,13 @@ class ExportOperationPlans(PlanTask):
                         else "\\N",
                         clean_value(i.item.name)
                         if i.item
-                        else (
-                            clean_value(j.demand.item.name)
-                            if j.demand and j.demand.item
-                            else clean_value(j.owner.demand.item.name)
-                            if j.owner and j.owner.demand and j.owner.demand.item
-                            else "\\N"
-                        ),
+                        else clean_value(i.owner.item.name)
+                        if i.owner and i.owner.item
+                        else clean_value(j.demand.item.name)
+                        if j.demand and j.demand.item
+                        else clean_value(j.owner.demand.item.name)
+                        if j.owner and j.owner.demand and j.owner.demand.item
+                        else "\\N",
                         "\\N",
                         "\\N",
                         clean_value(i.location.name) if i.location else "\\N",

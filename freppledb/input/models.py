@@ -2168,6 +2168,8 @@ class ManufacturingOrder(OperationPlan):
         self.supplier = self.origin = self.destination = None
         if self.operation:
             self.item = self.operation.item
+            if not self.item and self.operation.owner:
+                self.item = self.operation.owner.item
             self.location = self.operation.location
         super().save(*args, **kwargs)
 

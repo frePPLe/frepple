@@ -3830,7 +3830,7 @@ class ManufacturingOrderList(OperationPlanMixin, GridReport):
         ),
         GridFieldNumber("color", hidden=True),
         GridFieldText(
-            "operation__item__name",
+            "item__name",
             title=_("item"),
             formatter="detail",
             extra='"role":"input/item"',
@@ -5955,14 +5955,14 @@ class ResourceDetail(OperationPlanMixin, GridReport):
             extra='"formatoptions":{"defaultValue":""}, "summaryType":"min"',
         ),
         GridFieldText(
-            "operationplan__operation__item",
+            "operationplan__item",
             title=_("item"),
             editable=False,
             formatter="detail",
             extra='"role":"input/item"',
         ),
         GridFieldText(
-            "operationplan__operation__location",
+            "operationplan__location",
             title=_("location"),
             editable=False,
             formatter="detail",

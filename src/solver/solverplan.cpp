@@ -213,7 +213,9 @@ void SolverCreate::SolverData::commit() {
         // Determine the quantity to be planned and the date for the planning
         // loop
         double plan_qty = (*i)->getQuantity() - (*i)->getPlannedQuantity();
-        if ((*i)->getDue() == Date::infiniteFuture) continue;
+        if ((*i)->getDue() == Date::infiniteFuture ||
+            (*i)->getDue() == Date::infinitePast)
+          continue;
 
         // Select delivery operation
         Operation* deliveryoper = (*i)->getDeliveryOperation();

@@ -127,16 +127,6 @@ class ScheduledTask(models.Model):
             weekday = now.weekday()
             # Loop over current + next 7 days
             for n in range(8):
-                print(
-                    n,
-                    now.weekday(),
-                    weekday,
-                    now,
-                    now + timedelta(days=n),
-                    weekdays[weekday],
-                    self.data.get(weekdays[weekday], False),
-                    self.data,
-                )
                 if n == 0 and time_of_day > starttime:
                     # Too late to start today
                     weekday = (weekday + 1) % 7

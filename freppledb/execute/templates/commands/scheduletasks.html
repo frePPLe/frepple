@@ -1,52 +1,53 @@
 {% load i18n %}
-<table style="width:100%">
-<th>
-<tr>
-<td></td>
-<td><strong>{% trans "name"|capfirst %}</strong></td>
-<td><strong>{% trans "next run"|capfirst %}</strong></td>
-{% if perms.execute.change_scheduledtask %}<td></td>{% endif %}
-</tr>
-</th>
+<div class="row">
+<div class="col-sm-offset-2 col-sm-9"><p>{% trans "Run a sequence of tasks, and schedule it to run automatically." %}</p></div>
+</div>
+<div class="row">
+<div class="col-sm-2"></div>
+<div class="col-sm-6"><p><strong>{% trans "name"|capfirst %}</strong></p></div>
+<div class="col-sm-3"><p><strong>{% trans "next scheduled run"|capfirst %}</strong></p></div>
+</div>
 {% for schedule in schedules %}
 {% if schedule.name %}
-<tr data-schedule-name="{{ schedule.name }}">
-  <td style="vertical-align:top; padding: 15px">
+<div class="row" data-schedule-name="{{ schedule.name }}" style="padding-top:5px; padding-bottom:5px">
+  <div class="col-sm-2 text-center">
     <form role="form" method="post" action="{{request.prefix}}/execute/launch/scheduletasks/">{% csrf_token %}
-    <button type="submit" class="btn btn-primary">{% trans "launch"|capfirst %}</button>
+    <button type="submit" class="btn btn-primary btn-block">{% trans "launch"|capfirst %}</button>
     <input type="hidden" name="schedule" value="{{schedule.name}}">
     </form>
-  </td>
-  <td style="padding: 15px">{{ schedule.name }}</td>
-  <td data-field="next-run" style="padding: 15px">{% if schedule.next_run %}{{ schedule.next_run|date:"Y-m-d H:i:s" }}{% endif %}</td>
+  </div>
+  <div class="col-sm-6">{{ schedule.name }}</div>
+  <div class="col-sm-3" data-field="next-run">
+  {% if schedule.next_run and schedule.next_run > now %}{{ schedule.next_run|date:"Y-m-d H:i:s" }}{% endif %}
+  </div>
   {% if perms.execute.change_scheduledtask %}
-  <td style="padding: 15px">
+  <div class="col-sm-1 text-center">
   <button class="btn btn-xs btn-primary" onclick="editScheduledTask(this, event)">{% trans "Edit" %}</button>
-  </td>
-</tr>
-<tr data-schedule-name="{{ schedule.name }}" style="display:none">
+  </div>
+</div>
+<div class="row" data-schedule-name="{{ schedule.name }}" style="display:none; padding-top:5px; padding-bottom:5px">
   {% endif %}
 {% else %}
-<tr id="scheduledtask_template" class="hidden" >
+<div class="row hidden" id="scheduledtask_template">
 {% endif %}
  {% if perms.execute.change_scheduledtask %}
-  <td>
+  <div class="col-sm-2 text-center">
   <div>
-    <button class="btn btn-primary" onclick="saveScheduledTask(this, event)">
+    <button class="btn btn-primary btn-block" style="margin-bottom:10px" onclick="saveScheduledTask(this, event)">
     {% trans "Save" %}</button>
   </div>
   <div>  
-    <button class="btn btn-primary" onclick="deleteScheduledTask(this, event)">
+    <button class="btn btn-primary btn-block" style="margin-bottom:10px" onclick="deleteScheduledTask(this, event)">
     {% trans "Delete" %}
     </button>
   </div>  
   <div>  
-    <button class="btn btn-primary" onclick="closeScheduledTask(this, event)">
+    <button class="btn btn-primary btn-block" onclick="closeScheduledTask(this, event)">
     {% trans "Close" %}
     </button>
   </div>    
-  </td>
-  <td colspan="3">
+  </div>
+  <div class="col-sm-10">
      <form class="form-horizontal">
        <div class="form-group">
          <label for="schedule-{{forloop.counter}}-name" class="col-sm-3 control-label">{% trans "name"|capfirst %}</label>
@@ -90,7 +91,7 @@
          {% endfor %}
          <!-- extra empty row for new tasks -->
          <div id="addScheduledTask" class="row">
-         <div class="col-xs-1 pull-right">
+         <div class="col-xs-offset-1 col-xs-1 text-center">
          <button class="btn btn-xs btn-primary" onclick="addTask(this, event)">
          <span class="fa fa-plus" data-toggle="tooltip" data-placement="top" data-original-title="{% trans "Add" %}"></span>
          </button>
@@ -148,22 +149,18 @@
          </div>
        </div>                
       </form>
-   </td>
+   </div>
    {% endif %}
-</tr>
+</div>
 {% endfor %}
 {% if perms.execute.add_scheduledtask %}
-<tr>
-<td></td>
-<td></td>
-<td></td>
-<td>
+<div class="row" style="padding-top:5px; padding-bottom:5px">
+<div class="col-sm-offset-11 col-sm-1 text-center">
 <button class="btn btn-xs btn-primary" onclick="addScheduledTask(this, event)">
 <span class="fa fa-plus" data-toggle="tooltip" data-placement="top" data-original-title="{% trans "Add" %}"></span>
 </button>
-</td>
-</tr>
-</table>
+</div>
+</div>
 <div id="scheduledtask_tasktemplate" class="hidden row data-task">
          <div class="col-xs-4">
             <div class="btn-group btn-block">
@@ -219,28 +216,28 @@ function addTask(el, event) {
 function addScheduledTask(el, event) {
   var newrow = $("#scheduledtask_template").clone();
   newrow.removeAttr("id");
-  newrow.insertBefore($(el).closest("tr"));
+  newrow.insertBefore($(el).closest(".row"));
   newrow.toggleClass("hidden");
   event.preventDefault();
 }
 
 function editScheduledTask(el, event) {
   var tgt = $(el);
-  tgt.parents('tr').toggle(400);
-  tgt.parents('tr').next().toggle(400);
+  tgt.closest('.row').toggle();
+  tgt.closest('.row').next().toggle();
   event.preventDefault();
 }
 
 function closeScheduledTask(el, event) {
   var tgt = $(el);
-  tgt.parents('tr').toggle(400);
-  tgt.parents('tr').prev().toggle(400);
+  tgt.closest('.row').toggle();
+  tgt.closest('.row').prev().toggle();
   event.preventDefault();
 }
 
 function saveScheduledTask(el, event) {
   var tgt = $(el);
-  var form = tgt.parents('tr');
+  var form = tgt.closest('.row');
   var starttime = new moment(form.find("[data-field='starttime']").val(), "HH:mm:ss");
   var tasks = [];
   form.find(".data-task").each(function(i, el){
@@ -274,9 +271,9 @@ function saveScheduledTask(el, event) {
     }),
     success: function(data) {
       var tgt = $(el);
-      tgt.parents('tr').toggle(400);
-      tgt.parents('tr').prev().toggle(400);
-      tgt.parents('tr').prev().find("td[data-field='next-run']").html(data);
+      tgt.closest('.row').toggle();
+      tgt.closest('.row').prev().toggle();
+      tgt.closest('.row').prev().find("td[data-field='next-run']").html(data);
     },
     error: function(jqXHR, status, errorThrown) {
       $('#popup').html('<div class="modal-dialog">'+
@@ -301,13 +298,13 @@ function saveScheduledTask(el, event) {
 
 function deleteScheduledTask(el, event) {
   event.preventDefault();
-	var name = $(el).parents("tr").attr("data-schedule-name");
+	var name = $(el).closest(".row").attr("data-schedule-name");
   $.ajax({
     url: url_prefix + "/execute/scheduletasks/",
     type: 'DELETE',
     data: JSON.stringify({name: name}),
     success: function() {
-    	var row = $(el).parents("tr");
+    	var row = $(el).closest(".row");
     	if (row.next().attr("data-schedule-name") === name)
     	   row.next().remove();
     	row.remove();

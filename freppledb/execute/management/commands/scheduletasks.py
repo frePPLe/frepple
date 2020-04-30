@@ -371,6 +371,6 @@ class Command(BaseCommand):
         schedules.append(ScheduledTask())  # Empty template
         return render_to_string(
             "commands/scheduletasks.html",
-            {"schedules": schedules, "commands": commands},
+            {"schedules": schedules, "commands": commands, "now": datetime.now()},
             request=request,
         )

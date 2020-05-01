@@ -151,7 +151,7 @@ class Command(BaseCommand):
                 # Check the status
                 steptask = Task.objects.all().using(database).get(pk=steptask.id)
                 if steptask.status == "Failed":
-                    failed.append(steptask.id)
+                    failed.append(str(steptask.id))
                     if step.get("abort_on_failure", False):
                         task.message = "Failed at step %s of %s" % (idx, len(tasklist))
                         task.status = "Failed"

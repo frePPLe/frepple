@@ -92,7 +92,7 @@
          </div>
          {% endfor %}
          <!-- extra empty row for new tasks -->
-         <div id="addScheduledTask" class="form-group" style="padding-top:5px">
+         <div id="addScheduledTask" class="form-group">
          <div class="col-sm-1 pull-right">
          <button class="btn btn-xs btn-primary" onclick="addTask(this, event)">
          <span class="fa fa-plus" data-toggle="tooltip" data-placement="top" data-original-title="{% trans "Add" %}"></span>
@@ -156,7 +156,7 @@
 </div>
 {% endfor %}
 {% if perms.execute.add_scheduledtask %}
-<div class="row" style="padding-top:5px; padding-bottom:5px">
+<div class="row">
 <div class="col-sm-offset-11 col-sm-1 text-center">
 <button class="btn btn-xs btn-primary" onclick="addScheduledTask(this, event)">
 <span class="fa fa-plus" data-toggle="tooltip" data-placement="top" data-original-title="{% trans "Add" %}"></span>
@@ -283,8 +283,8 @@ function saveScheduledTask(el, event) {
     	  newrow.removeClass("hidden").toggle();    	  
     	}    	  
     	form.prev().toggle();
-      form.prev().find("[data-field='next-run']").html(data);
-      form.prev().find("[data-field='name']").html(schedname);
+      form.prev().find("[data-field='next-run']").text(data);
+      form.prev().find("[data-field='name']").text(schedname);
       form.prev().find("input[name='schedule']").val(schedname);
       form.prev().attr("data-schedule-name", schedname);
       form.attr("data-schedule-name", schedname);

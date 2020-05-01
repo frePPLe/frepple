@@ -21,6 +21,7 @@ import json
 import operator
 import os
 import re
+import shlex
 
 from django.conf import settings
 from django.views import static
@@ -474,7 +475,7 @@ def wrapTask(request, action):
         arguments = []
         for arg, val in args.lists():
             if arg != "csrfmiddlewaretoken":
-                arguments.append("--%s=%s" % (arg, ",".join(val)))
+                arguments.append("--%s=%s" % (arg, shlex.quote(",".join(val))))
         task = Task(name=action, submitted=now, status="Waiting", user=request.user)
         if arguments:
             task.arguments = " ".join(arguments)

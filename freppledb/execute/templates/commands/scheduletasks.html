@@ -8,47 +8,49 @@
 <div class="col-sm-3"><p><strong>{% trans "next scheduled run"|capfirst %}</strong></p></div>
 </div>
 {% for schedule in schedules %}
-{% if schedule.name %}
-<div class="row" data-schedule-name="{{ schedule.name }}" style="padding-top:5px; padding-bottom:5px">
+<div class="row{% if not schedule.name %} hidden" id="scheduledtask_headertemplate{% endif %}" data-schedule-name="{{ schedule.name }}" style="padding-top:5px; padding-bottom:5px">
   <div class="col-sm-2 text-center">
     <form role="form" method="post" action="{{request.prefix}}/execute/launch/scheduletasks/">{% csrf_token %}
     <button type="submit" class="btn btn-primary btn-block">{% trans "launch"|capfirst %}</button>
     <input type="hidden" name="schedule" value="{{schedule.name}}">
     </form>
   </div>
-  <div class="col-sm-6">{{ schedule.name }}</div>
-  <div class="col-sm-3" data-field="next-run">
+  <div class="col-sm-6" data-field="name" style="padding-top:6px; padding-bottom:6px">{{ schedule.name }}</div>
+  <div class="col-sm-3" data-field="next-run" style="padding-top:6px; padding-bottom:6px">
   {% if schedule.next_run and schedule.next_run > now %}{{ schedule.next_run|date:"Y-m-d H:i:s" }}{% endif %}
   </div>
   {% if perms.execute.change_scheduledtask %}
-  <div class="col-sm-1 text-center">
-  <button class="btn btn-xs btn-primary" onclick="editScheduledTask(this, event)">{% trans "Edit" %}</button>
+  <div class="col-sm-1 text-center" style="padding-top:6px; padding-bottom:6px">
+  <button class="btn btn-xs btn-primary" onclick="editScheduledTask(this, event)">
+  <span class="fa fa-edit" data-toggle="tooltip" 
+    data-placement="top" data-original-title="{% trans "Edit" %}"></span>
+  </button>
   </div>
-</div>
-<div class="row" data-schedule-name="{{ schedule.name }}" style="display:none; padding-top:5px; padding-bottom:5px">
   {% endif %}
-{% else %}
-<div class="row hidden" id="scheduledtask_template">
-{% endif %}
- {% if perms.execute.change_scheduledtask %}
+</div>
+{% if perms.execute.change_scheduledtask %}
+<div class="row{% if not schedule.name %} hidden" id="scheduledtask_template{% endif%}" data-schedule-name="{{ schedule.name }}"
+  style="display:none; padding:10px; border-style:solid; border-radius:10px; border-width:1px; margin:10px 0 10px 0">
   <div class="col-sm-2 text-center">
-  <div>
-    <button class="btn btn-primary btn-block" style="margin-bottom:10px" onclick="saveScheduledTask(this, event)">
-    {% trans "Save" %}</button>
-  </div>
-  <div>  
-    <button class="btn btn-primary btn-block" style="margin-bottom:10px" onclick="deleteScheduledTask(this, event)">
-    {% trans "Delete" %}
-    </button>
-  </div>  
-  <div>  
-    <button class="btn btn-primary btn-block" onclick="closeScheduledTask(this, event)">
-    {% trans "Close" %}
-    </button>
-  </div>    
+    <div>
+      <button class="btn btn-primary btn-block" style="margin-bottom:20px; margin-top: 15px" onclick="saveScheduledTask(this, event)">
+      {% trans "Save" %}</button>
+    </div>
+    <div>  
+      <button class="btn btn-primary btn-block" onclick="deleteScheduledTask(this, event)">
+      {% trans "Delete" %}
+      </button>
+    </div>
   </div>
   <div class="col-sm-10">
-     <form class="form-horizontal">
+    <div class="row" style="padding-bottom:10px">
+       <div style="float:right">
+         <button type="button" class="close" onclick="closeScheduledTask(this, event)">
+         <span aria-hidden="true" class="fa fa-times"></span>
+         </button>
+      </div>
+    </div>    
+    <div class="form-horizontal">
        <div class="form-group">
          <label for="schedule-{{forloop.counter}}-name" class="col-sm-3 control-label">{% trans "name"|capfirst %}</label>
          <div class="col-sm-9">
@@ -60,7 +62,7 @@
          <label class="col-sm-3 control-label">{% trans "tasks"|capfirst %}</label>
          <div class="col-sm-9">
          {% for t in schedule.data.tasks %}
-         <div class="row data-task">
+         <div class="form-group data-task">
          <div class="col-xs-4">
             <div class="btn-group btn-block">
             <button data-field="task-name" data-name="{{ t.name }}" type="button"
@@ -75,11 +77,11 @@
             </div>
          </div>
          <div class="col-xs-6">
-         <input data-field="task-arguments" type="text" placeholder="{% trans "Arguments" %}" value="{{ t.arguments }}">
+         <input data-field="task-arguments" class="form-control" type="text" placeholder="{% trans "Arguments" %}" value="{{ t.arguments }}">
          </div>
          <div class="col-xs-1">
          <input data-field="task-abort-on-failure" type="checkbox" value="1" {% if t.abort_on_failure %}checked{% endif %}
-           data-toggle="tooltip" data-placement="top" data-original-title="{% trans "abort on failure"|capfirst %}">
+           class="form-check-input" data-toggle="tooltip" data-placement="top" data-original-title="{% trans "abort on failure"|capfirst %}">
          </div>
          <div class="col-xs-1">
          <button class="btn btn-xs btn-primary" onclick="deleteTask(this, event)">         
@@ -90,8 +92,8 @@
          </div>
          {% endfor %}
          <!-- extra empty row for new tasks -->
-         <div id="addScheduledTask" class="row">
-         <div class="col-xs-offset-1 col-xs-1 text-center">
+         <div id="addScheduledTask" class="form-group" style="padding-top:5px">
+         <div class="col-sm-1 pull-right">
          <button class="btn btn-xs btn-primary" onclick="addTask(this, event)">
          <span class="fa fa-plus" data-toggle="tooltip" data-placement="top" data-original-title="{% trans "Add" %}"></span>
          </button>
@@ -147,8 +149,8 @@
              placeholder="{% trans "list of emails, separated by commas"|capfirst %}" data-field="email_failure"
               {% if schedule.email_failure %}value="{{schedule.email_failure}}"{% endif %}>
          </div>
-       </div>                
-      </form>
+       </div>
+    </div>
    </div>
    {% endif %}
 </div>
@@ -161,7 +163,7 @@
 </button>
 </div>
 </div>
-<div id="scheduledtask_tasktemplate" class="hidden row data-task">
+<div id="scheduledtask_tasktemplate" class="hidden form-group data-task">
          <div class="col-xs-4">
             <div class="btn-group btn-block">
             <button data-field="task-name" type="button"
@@ -176,7 +178,7 @@
             </div>
          </div>
          <div class="col-xs-6">
-         <input data-field="task-arguments" type="text" placeholder="{% trans "Arguments" %}">
+         <input data-field="task-arguments" class="form-control" type="text" placeholder="{% trans "Arguments" %}">
          </div>
          <div class="col-xs-1">
          <input data-field="task-abort-on-failure" type="checkbox" value="1"
@@ -208,7 +210,7 @@ function deleteTask(el, event) {
 function addTask(el, event) {
 	var newrow = $("#scheduledtask_tasktemplate").clone();
   newrow.removeAttr("id");
-	newrow.insertBefore($(el).closest(".row"));
+	newrow.insertBefore($(el).closest(".form-group"));
   newrow.toggleClass("hidden");
   event.preventDefault();
 }
@@ -217,7 +219,7 @@ function addScheduledTask(el, event) {
   var newrow = $("#scheduledtask_template").clone();
   newrow.removeAttr("id");
   newrow.insertBefore($(el).closest(".row"));
-  newrow.toggleClass("hidden");
+  newrow.removeClass("hidden").toggle();
   event.preventDefault();
 }
 
@@ -229,15 +231,15 @@ function editScheduledTask(el, event) {
 }
 
 function closeScheduledTask(el, event) {
-  var tgt = $(el);
-  tgt.closest('.row').toggle();
-  tgt.closest('.row').prev().toggle();
+  var row = $(el).closest('[data-schedule-name]');
+  row.toggle();
+  row.prev().toggle();
   event.preventDefault();
 }
 
 function saveScheduledTask(el, event) {
   var tgt = $(el);
-  var form = tgt.closest('.row');
+  var form = tgt.closest('[data-schedule-name]');
   var starttime = new moment(form.find("[data-field='starttime']").val(), "HH:mm:ss");
   var tasks = [];
   form.find(".data-task").each(function(i, el){
@@ -250,11 +252,14 @@ function saveScheduledTask(el, event) {
   		  "abort_on_failure": t.find("[data-field='task-abort-on-failure']").is(":checked")
   	  });
   });
+  var schedname = form.find("[data-field='name']").val();
+  var oldschedname = form.attr("data-schedule-name");
   $.ajax({
     url: url_prefix + "/execute/scheduletasks/",
     type: 'POST',
     data: JSON.stringify({
-      "name": form.find("[data-field='name']").val(),
+      "name": schedname,
+      "oldname": oldschedname,
       "email_failure": form.find("[data-field='email_failure']").val(),
       "email_success": form.find("[data-field='email_success']").val(),
       "data": {
@@ -270,10 +275,20 @@ function saveScheduledTask(el, event) {
         }
     }),
     success: function(data) {
-      var tgt = $(el);
-      tgt.closest('.row').toggle();
-      tgt.closest('.row').prev().toggle();
-      tgt.closest('.row').prev().find("td[data-field='next-run']").html(data);
+    	if (oldschedname === "") {
+    	  // Added new schedule
+    	  var newrow = $("#scheduledtask_headertemplate").clone();
+    	  newrow.removeAttr("id");
+    	  newrow.insertBefore(form);
+    	  newrow.removeClass("hidden").toggle();    	  
+    	}    	  
+    	form.prev().toggle();
+      form.prev().find("[data-field='next-run']").html(data);
+      form.prev().find("[data-field='name']").html(schedname);
+      form.prev().find("input[name='schedule']").val(schedname);
+      form.prev().attr("data-schedule-name", schedname);
+      form.attr("data-schedule-name", schedname);
+      form.toggle();
     },
     error: function(jqXHR, status, errorThrown) {
       $('#popup').html('<div class="modal-dialog">'+
@@ -283,7 +298,7 @@ function saveScheduledTask(el, event) {
               '<h4 class="modal-title">'+ gettext("Error")+'</h4>'+
             '</div>'+
             '<div class="modal-body">'+
-              '<p>'+errorThrown+'</p>'+
+              '<p>'+jqXHR.responseText+'</p>'+
             '</div>'+
             '<div class="modal-footer">'+
               '<input type="submit" id="cancelbutton" role="button" class="btn btn-primary pull-right" data-dismiss="modal" value="'+gettext('Close')+'">'+
@@ -298,16 +313,14 @@ function saveScheduledTask(el, event) {
 
 function deleteScheduledTask(el, event) {
   event.preventDefault();
-	var name = $(el).closest(".row").attr("data-schedule-name");
+	var sched = $(el).closest("[data-schedule-name]");
   $.ajax({
     url: url_prefix + "/execute/scheduletasks/",
     type: 'DELETE',
-    data: JSON.stringify({name: name}),
+    data: JSON.stringify({name: sched.attr("data-schedule-name")}),
     success: function() {
-    	var row = $(el).closest(".row");
-    	if (row.next().attr("data-schedule-name") === name)
-    	   row.next().remove();
-    	row.remove();
+    	sched.prev().remove();
+    	sched.remove();
     },
     error: function(jqXHR, status, errorThrown) {
     	$('#popup').html('<div class="modal-dialog">'+
@@ -317,7 +330,7 @@ function deleteScheduledTask(el, event) {
               '<h4 class="modal-title">'+ gettext("Error")+'</h4>'+
             '</div>'+
             '<div class="modal-body">'+
-              '<p>'+errorThrown+'</p>'+
+              '<p>'+jqXHR.responseText+'</p>'+
             '</div>'+
             '<div class="modal-footer">'+
               '<input type="submit" id="cancelbutton" role="button" class="btn btn-primary pull-right" data-dismiss="modal" value="'+gettext('Close')+'">'+

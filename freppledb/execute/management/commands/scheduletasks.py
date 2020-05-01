@@ -368,7 +368,7 @@ class Command(BaseCommand):
             .using(request.database)
             .order_by("name")
         ]
-        schedules.append(ScheduledTask())  # Empty template
+        schedules.append(ScheduledTask())  # Add an empty template
         return render_to_string(
             "commands/scheduletasks.html",
             {"schedules": schedules, "commands": commands, "now": datetime.now()},

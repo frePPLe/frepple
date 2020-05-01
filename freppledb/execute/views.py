@@ -35,8 +35,6 @@ from django.http import (
     HttpResponseRedirect,
     HttpResponseServerError,
     HttpResponse,
-)
-from django.http import (
     HttpResponseNotFound,
     StreamingHttpResponse,
     HttpResponseNotAllowed,
@@ -758,14 +756,15 @@ def scheduletasks(request):
         return HttpResponseNotAllowed("Only post and delete ajax requests are allowed")
     try:
         data = json.loads(request.body.decode(request.encoding))
+        oldname = data.get("oldname", None)
         name = data.get("name", None)
-        if not name:
-            raise Http404("Missing name attribute")
+        if not name and not oldname:
+            return HttpResponse("Missing name attribute", status=400)
         elif request.method == "POST":
             if not request.user.has_perm("execute.add_scheduledtask"):
-                return HttpResponseNotAllowed("Couldn't add or update scheduled task")
+                return HttpResponse("Couldn't add or update scheduled task", status=401)
             obj, created = ScheduledTask.objects.using(request.database).get_or_create(
-                name=name
+                name=oldname if oldname else name
             )
             if created:
                 obj.user = request.user
@@ -773,9 +772,10 @@ def scheduletasks(request):
                 not request.user.is_superuser
                 and obj.user.username != request.user.username
             ):
-                return HttpResponseServerError(
+                return HttpResponse(
                     "This task can only be updated by superusers and %s"
-                    % obj.user.username
+                    % obj.user.username,
+                    status=401,
                 )
             fld = data.get("email_failure", None)
             if fld:
@@ -786,6 +786,12 @@ def scheduletasks(request):
             fld = data.get("data", None)
             if isinstance(fld, dict):
                 obj.data = fld
+            if oldname and name and oldname != name:
+                # Rename the task
+                obj.name = name
+                ScheduledTask.objects.using(request.database).filter(
+                    name=oldname
+                ).delete()
             obj.save(using=request.database)
             call_command("scheduletasks", database=request.database)
             return HttpResponse(
@@ -795,7 +801,7 @@ def scheduletasks(request):
             )
         elif request.method == "DELETE":
             if not request.user.has_perm("execute.delete_scheduledtask"):
-                return HttpResponseNotAllowed("Couldn't delete scheduled task")
+                return HttpResponse("Couldn't delete scheduled task", status=401)
             elif (
                 ScheduledTask.objects.using(request.database)
                 .filter(name=name)
@@ -803,7 +809,7 @@ def scheduletasks(request):
             ):
                 return HttpResponse(content="OK")
             else:
-                return HttpResponseNotAllowed("Couldn't delete scheduled task")
+                return HttpResponse("Couldn't delete scheduled task", status=400)
     except Exception as e:
         logger.error("Error updating scheduled task: %s" % e)
         return HttpResponseServerError("Error updating scheduled task")

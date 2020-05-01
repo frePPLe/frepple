@@ -120,26 +120,28 @@ class ScheduledTask(models.Model):
                 "saturday",
                 "sunday",
             ]
-            if not now:
-                now = datetime.now()
-            time_of_day = now.hour * 3600 + now.minute * 60 + now.second
-            starttime = int(self.data.get("starttime", 0))
-            weekday = now.weekday()
-            # Loop over current + next 7 days
-            for n in range(8):
-                if n == 0 and time_of_day > starttime:
-                    # Too late to start today
-                    weekday = (weekday + 1) % 7
-                elif self.data.get(weekdays[weekday], False):
-                    self.next_run = (now + timedelta(days=n)).replace(
-                        hour=int(starttime / 3600),
-                        minute=int(int(starttime % 3600) / 60),
-                        second=starttime % 60,
-                        microsecond=0,
-                    )
-                    return
-                else:
-                    weekday = (weekday + 1) % 7
+            starttime = self.data.get("starttime", -1)
+            if starttime is not None and starttime >= 0:
+                starttime = int(starttime)
+                if not now:
+                    now = datetime.now()
+                time_of_day = now.hour * 3600 + now.minute * 60 + now.second
+                weekday = now.weekday()
+                # Loop over current + next 7 days
+                for n in range(8):
+                    if n == 0 and time_of_day > starttime:
+                        # Too late to start today
+                        weekday = (weekday + 1) % 7
+                    elif self.data.get(weekdays[weekday], False):
+                        self.next_run = (now + timedelta(days=n)).replace(
+                            hour=int(starttime / 3600),
+                            minute=int(int(starttime % 3600) / 60),
+                            second=starttime % 60,
+                            microsecond=0,
+                        )
+                        return
+                    else:
+                        weekday = (weekday + 1) % 7
         self.next_run = None
 
     def adjustForTimezone(self, offset):

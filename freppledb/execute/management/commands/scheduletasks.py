@@ -153,10 +153,14 @@ class Command(BaseCommand):
                 if steptask.status == "Failed":
                     failed.append(str(steptask.id))
                     if step.get("abort_on_failure", False):
+                        task = Task.objects.all().using(database).get(pk=task.id)
                         task.message = "Failed at step %s of %s" % (idx, len(tasklist))
                         task.status = "Failed"
                         task.finished = datetime.now()
-                        task.save(using=database)
+                        task.save(
+                            using=database,
+                            update_fields=["message", "status", "finished"],
+                        )
                         raise Exception(task.message)
                 idx += 1
 
@@ -170,7 +174,10 @@ class Command(BaseCommand):
                 task.status = "Done"
                 task.message = ""
             task.finished = datetime.now()
-            task.save(using=database)
+            task.save(
+                using=database,
+                update_fields=["message", "status", "finished", "processid"],
+            )
 
             # Email on success
             if schedule.email_success:
@@ -183,10 +190,16 @@ class Command(BaseCommand):
                     task.message = (
                         "Can't send success e-mail: missing SMTP configuration"
                     )
-                    task.save(using=database)
+                    task.save(
+                        using=database,
+                        update_fields=["message", "status", "finished", "processid"],
+                    )
                 elif not correctedRecipients:
                     task.message = "Can't send success e-mail: invalid recipients"
-                    task.save(using=database)
+                    task.save(
+                        using=database,
+                        update_fields=["message", "status", "finished", "processid"],
+                    )
                 else:
                     try:
                         EmailMessage(
@@ -196,7 +209,15 @@ class Command(BaseCommand):
                         ).send()
                     except Exception as e:
                         task.message = "Can't send failure e-mail: %s" % e
-                        task.save(using=database)
+                        task.save(
+                            using=database,
+                            update_fields=[
+                                "message",
+                                "status",
+                                "finished",
+                                "processid",
+                            ],
+                        )
 
         except Exception as e:
             if task:
@@ -205,7 +226,10 @@ class Command(BaseCommand):
                 task.message = "%s" % e
                 task.finished = datetime.now()
                 task.processid = None
-                task.save(using=database)
+                task.save(
+                    using=database,
+                    update_fields=["message", "status", "finished", "processid"],
+                )
 
                 # Email on failure
                 if schedule.email_failure:
@@ -218,10 +242,26 @@ class Command(BaseCommand):
                         task.message = (
                             "Can't send failure e-mail: missing SMTP configuration"
                         )
-                        task.save(using=database)
+                        task.save(
+                            using=database,
+                            update_fields=[
+                                "message",
+                                "status",
+                                "finished",
+                                "processid",
+                            ],
+                        )
                     elif not correctedRecipients:
                         task.message = "Can't send failure e-mail: invalid recipients"
-                        task.save(using=database)
+                        task.save(
+                            using=database,
+                            update_fields=[
+                                "message",
+                                "status",
+                                "finished",
+                                "processid",
+                            ],
+                        )
                     else:
                         try:
                             EmailMessage(
@@ -231,7 +271,15 @@ class Command(BaseCommand):
                             ).send()
                         except Exception as e:
                             task.message = "Can't send failure e-mail: %s" % e
-                            task.save(using=database)
+                            task.save(
+                                using=database,
+                                update_fields=[
+                                    "message",
+                                    "status",
+                                    "finished",
+                                    "processid",
+                                ],
+                            )
             raise e
 
         finally:
@@ -285,6 +333,9 @@ class Command(BaseCommand):
                 # TODO For multi-tenancy possible we would also need to set the
                 # FREPPLE_CONFIGDIR environment variable. It seems that isn't
                 # possible with the Windows task scheduler.
+                # TODO The task scheduler has a more powerful XML interface that
+                # allows to define eg wake up of computer, run when not logged on,
+                # priviliges, etc
                 if "python" in sys.executable:
                     # Development layout
                     cmd = "%s %s scheduletasks --database=%s" % (
@@ -371,6 +422,6 @@ class Command(BaseCommand):
         schedules.append(ScheduledTask())  # Add an empty template
         return render_to_string(
             "commands/scheduletasks.html",
-            {"schedules": schedules, "commands": commands, "now": datetime.now()},
+            {"schedules": schedules, "commands": commands},
             request=request,
         )

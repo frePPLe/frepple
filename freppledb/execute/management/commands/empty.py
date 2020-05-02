@@ -246,6 +246,7 @@ class Command(BaseCommand):
             tables.discard("common_preference")
             tables.discard("django_content_type")
             tables.discard("execute_log")
+            tables.discard("execute_schedule")
             tables.discard("common_scenario")
 
             # Delete all records from the tables.

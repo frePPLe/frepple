@@ -793,6 +793,7 @@ def scheduletasks(request):
                 ScheduledTask.objects.using(request.database).filter(
                     name=oldname
                 ).delete()
+            obj.adjustForTimezone(-GridReport.getTimezoneOffset(request))
             obj.save(using=request.database)
             call_command("scheduletasks", database=request.database)
             return HttpResponse(

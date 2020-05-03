@@ -145,6 +145,9 @@ class ScheduledTask(models.Model):
         self.next_run = None
 
     def adjustForTimezone(self, offset):
+        if isinstance(offset, timedelta):
+            offset = int(offset.total_seconds())
+        self.next_run += timedelta(seconds=offset)
         self.data["starttime"] = self.data.get("starttime", 0) + offset
         if self.data["starttime"] < 0:
             # Starts the previous day!
@@ -168,6 +171,7 @@ class ScheduledTask(models.Model):
             self.data["wednesday"] = self.data.get("tuesday", False)
             self.data["tuesday"] = self.data.get("monday", False)
             self.data["monday"] = tmp
+        return self
 
     def save(self, *args, **kwargs):
         self.computeNextRun()

@@ -36,6 +36,7 @@ from ...models import ScheduledTask, Task
 from freppledb import VERSION
 from freppledb.common.middleware import _thread_locals
 from freppledb.common.models import User
+from freppledb.common.report import GridReport
 from .runworker import launchWorker, runTask
 
 
@@ -414,7 +415,7 @@ class Command(BaseCommand):
                     pass
         commands = [commands[i] for i in sorted(commands)]
         schedules = [
-            s
+            s.adjustForTimezone(GridReport.getTimezoneOffset(request))
             for s in ScheduledTask.objects.all()
             .using(request.database)
             .order_by("name")

@@ -79,10 +79,10 @@ PyObject *readXMLfile(PyObject *self, PyObject *args) {
 PyObject *readXMLdata(PyObject *self, PyObject *args) {
   // Pick up arguments
   char *data;
-  int validate(1), validate_only(0);
+  int validate(1), validate_only(0), loglevel(0);
   PyObject *userexit = nullptr;
-  int ok = PyArg_ParseTuple(args, "s|iiO:readXMLdata", &data, &validate,
-                            &validate_only, &userexit);
+  int ok = PyArg_ParseTuple(args, "s|iiiO:readXMLdata", &data, &validate,
+                            &validate_only, &loglevel, &userexit);
   if (!ok) return nullptr;
 
   // Free Python interpreter for other threads
@@ -93,6 +93,7 @@ PyObject *readXMLdata(PyObject *self, PyObject *args) {
     if (!data) throw DataException("No input data");
     XMLInputString p(data);
     if (userexit) p.setUserExit(userexit);
+    if (loglevel) p.setLogLevel(1);
     if (validate_only != 0)
       p.parse(nullptr, true);
     else

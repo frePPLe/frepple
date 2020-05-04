@@ -22,6 +22,8 @@
 #ifndef FREPPLE_XML_H
 #define FREPPLE_XML_H
 
+#include "frepple/utils.h"
+
 // Header files for the Xerces-c XML parser.
 #include <xercesc/util/XercesVersion.hpp>
 #if _XERCES_VERSION < 30200
@@ -134,6 +136,8 @@ class XMLInput : public DataInput,
    */
   unsigned short ignore = 0;
 
+  short loglevel = 0;
+
   /* A buffer used for transcoding XML data. */
   char encodingbuffer[4 * 1024];
 
@@ -200,6 +204,10 @@ class XMLInput : public DataInput,
    * False indicates that the processing of the XML stream is aborted.
    */
   bool getAbortOnDataError() const { return abortOnDataException; }
+
+  void setLogLevel(short v) { loglevel = v; }
+
+  short getLogLevel(short v) { return loglevel; }
 
   /* Transcode the Xerces XML characters to our UTF8 encoded buffer. */
   char* transcodeUTF8(const XMLCh*);

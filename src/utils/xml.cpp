@@ -19,14 +19,10 @@
  ***************************************************************************/
 
 #define FREPPLE_CORE
-#include <sys/stat.h>
-#include "frepple/utils.h"
 
 #include "frepple/xml.h"
 
-/* Uncomment the next line to create a lot of debugging messages during
- * the parsing of XML-data. */
-//#define PARSE_DEBUG
+#include <sys/stat.h>
 
 // With VC++ we use the Win32 functions to browse a directory
 #ifdef _MSC_VER
@@ -128,14 +124,13 @@ void XMLInput::startElement(const XMLCh* const uri, const XMLCh* const ename,
   data[++dataindex].value.setString("");
   reading = true;
 
-#ifdef PARSE_DEBUG
-  logger << "Start XML element #" << dataindex << " '" << ename_utf8
-         << "' for object #" << objectindex << " ("
-         << ((objectindex >= 0 && objects[objectindex].cls)
-                 ? objects[objectindex].cls->type
-                 : "none")
-         << ")" << endl;
-#endif
+  if (loglevel)
+    logger << "Start XML element #" << dataindex << " '" << ename_utf8
+           << "' for object #" << objectindex << " ("
+           << ((objectindex >= 0 && objects[objectindex].cls)
+                   ? objects[objectindex].cls->type
+                   : "none")
+           << ")" << endl;
 
   // Look up the field
   data[dataindex].hash = Keyword::hash(ename_utf8);
@@ -156,11 +151,9 @@ void XMLInput::startElement(const XMLCh* const uri, const XMLCh* const ename,
     objects[objectindex].hash = data[dataindex].hash;
     reading = false;
 
-// Debugging message
-#ifdef PARSE_DEBUG
-    logger << "Starting object #" << objectindex << " ("
-           << objects[objectindex].cls->type << ")" << endl;
-#endif
+    if (loglevel)
+      logger << "Starting object #" << objectindex << " ("
+             << objects[objectindex].cls->type << ")" << endl;
 
     if (!objects[objectindex].cls->category) {
       // Category metadata passed: replace it with the concrete type
@@ -279,11 +272,9 @@ void XMLInput::startElement(const XMLCh* const uri, const XMLCh* const ename,
     objects[objectindex].hash = Keyword::hash(ename_utf8);
     reading = false;
 
-// Debugging message
-#ifdef PARSE_DEBUG
-    logger << "Starting object #" << objectindex << " ("
-           << objects[objectindex].cls->type << ")" << endl;
-#endif
+    if (loglevel)
+      logger << "Starting object #" << objectindex << " ("
+             << objects[objectindex].cls->type << ")" << endl;
 
     if (!objects[objectindex].cls->category) {
       // Category metadata passed: replace it with the concrete type
@@ -362,25 +353,23 @@ void XMLInput::endElement(const XMLCh* const uri, const XMLCh* const ename,
     return;
   }
 
-#ifdef PARSE_DEBUG
-  logger << "End XML element #" << dataindex << " '" << ename_utf8
-         << "' for object #" << objectindex << " ("
-         << ((objectindex >= 0 && objects[objectindex].cls)
-                 ? objects[objectindex].cls->type
-                 : "none")
-         << ")" << endl;
-#endif
+  if (loglevel)
+    logger << "End XML element #" << dataindex << " '" << ename_utf8
+           << "' for object #" << objectindex << " ("
+           << ((objectindex >= 0 && objects[objectindex].cls)
+                   ? objects[objectindex].cls->type
+                   : "none")
+           << ")" << endl;
 
   // Ignore content between tags
   reading = false;
 
   if (objectindex == 0 && objects[objectindex].object && dataindex >= 0 &&
       data[dataindex].field && !data[dataindex].field->isGroup()) {
-// Immediately process updates to the root object
-#ifdef PARSE_DEBUG
-    logger << "Updating field " << data[dataindex].field->getName().getName()
-           << " on the root object" << endl;
-#endif
+    // Immediately process updates to the root object
+    if (loglevel)
+      logger << "Updating field " << data[dataindex].field->getName().getName()
+             << " on the root object" << endl;
     data[dataindex].field->setField(objects[objectindex].object,
                                     data[dataindex].value, getCommandManager());
     --dataindex;
@@ -557,10 +546,10 @@ void XMLInput::endElement(const XMLCh* const uri, const XMLCh* const ename,
     // Root object never gets created
     if (!objectindex) return;
 
-#ifdef PARSE_DEBUG
-    logger << "Creating object " << objects[objectindex].cls->type << endl;
-    dict.print();
-#endif
+    if (loglevel) {
+      logger << "Creating object " << objects[objectindex].cls->type << endl;
+      dict.print();
+    }
 
     // Call the object factory for the category and pass all field values
     // in a dictionary.
@@ -706,11 +695,9 @@ void XMLInput::parse(xercesc::InputSource& in, Object* pRoot, bool validate) {
       objects[0].object = pRoot;
       objects[0].cls = &pRoot->getType();
       objects[0].hash = pRoot->getType().typetag->getHash();
-
-#ifdef PARSE_DEBUG
-      logger << "Starting root object #" << objectindex << " ("
-             << objects[objectindex].cls->type << ")" << endl;
-#endif
+      if (loglevel)
+        logger << "Starting root object #" << objectindex << " ("
+               << objects[objectindex].cls->type << ")" << endl;
     } else {
       // Don't process any of the input data. We'll just let the parser
       // check the validity of the XML document.

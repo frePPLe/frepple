@@ -158,8 +158,12 @@ class OdooReadData(PlanTask):
             raise e
 
         # Download and parse XML data
+        try:
+            loglevel = int(Parameter.getValue("odoo.loglevel", database, "0"))
+        except Exception:
+            loglevel = 0
         with urlopen(request) as f:
-            frepple.readXMLdata(f.read().decode("utf-8"), False, False)
+            frepple.readXMLdata(f.read().decode("utf-8"), False, False, loglevel)
 
         # Assure single root hierarchies
         for r in frepple.items():

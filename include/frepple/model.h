@@ -9335,6 +9335,7 @@ PyObject* readXMLfile(PyObject*, PyObject*);
  * 100% guarantee on the validity of the input data.
  *   - Optional validate_only flag, which allows us to validate the data but
  *     skip any processing.
+ *   - Optional loglevel flag, which writes out a verbose trace of the parsing.
  */
 PyObject* readXMLdata(PyObject*, PyObject*);
 

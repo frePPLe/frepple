@@ -310,6 +310,7 @@ void SolverCreate::solve(const Load* l, void* v) {
 
     // 4a) Switch to this load
     if (lplan->getLoad() != curload) lplan->setLoad(const_cast<Load*>(curload));
+    lplan->getOperationPlan()->setQuantity(originalOpplan.quantity);
     lplan->getOperationPlan()->setEnd(originalOpplan.end);
     data->state->q_qty = lplan->getQuantity();
     data->state->q_date = lplan->getDate();

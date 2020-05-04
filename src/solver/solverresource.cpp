@@ -287,16 +287,21 @@ void SolverCreate::solve(const Resource* res, void* v) {
 
       // Found a date with available capacity
       if (HasOverload && newDate) {
-        // Multiple operations could be executed in parallel
-        double parallelOps =
-            allowSplits && curMax
-                ? ceil(curMax / data->state->q_loadplan->getQuantity() -
-                       ROUNDING_ERROR)
-                : 1.0;
-        // Move the operationplan to the new date
-        data->state->q_operationplan->setOperationPlanParameters(
-            data->state->q_qty_min / parallelOps, newDate, Date::infinitePast,
-            true, true, false);
+        if (getAllowSplits()) {
+          // Multiple operations could be executed in parallel
+          double parallelOps =
+              curMax ? ceil(curMax / data->state->q_loadplan->getQuantity() -
+                            ROUNDING_ERROR)
+                     : 1.0;
+          // Move the operationplan to the new date
+          data->state->q_operationplan->setOperationPlanParameters(
+              data->state->q_qty_min / parallelOps, newDate, Date::infinitePast,
+              true, true, false);
+        } else {
+          data->state->q_operationplan->setOperationPlanParameters(
+              currentOpplan.quantity, newDate, Date::infinitePast, true, true,
+              false);
+        }
         HasOverload = true;
         if (data->state->q_operationplan->getStart() < newDate ||
             !data->state->q_operationplan->getQuantity() ||

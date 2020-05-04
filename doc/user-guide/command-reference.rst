@@ -108,7 +108,7 @@ Optionally, a email can be sent out upon failure or success of the execution.
 
 * Execution screen:  
   
-  .. image:: TODO
+  .. image:: /user-guide/user-interface/_images/execution-scheduletasks.png
      :alt: Execution screen - Group and schedule tasks
 
 * Command line::

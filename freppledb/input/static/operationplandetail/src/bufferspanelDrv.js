@@ -36,7 +36,9 @@ function showbufferspanelDrv($window, gettextCatalog) {
                       gettextCatalog.getString("material")+
                     '</h4></div>'+
                     '<table class="table table-condensed table-hover"><thead style="display: none;"><tr><td>' +
-                      '<b style="text-transform: capitalize;">'+gettextCatalog.getString("name")+'</b>' +
+                      '<b style="text-transform: capitalize;">'+gettextCatalog.getString("item")+'</b>' +
+                    '</td><td>' +
+                      '<b style="text-transform: capitalize;">'+gettextCatalog.getString("location")+'</b>' +
                     '</td><td>' +
                       '<b style="text-transform: capitalize;">'+gettextCatalog.getString("quantity")+'</b>' +
                     '</td><td>' +
@@ -52,12 +54,19 @@ function showbufferspanelDrv($window, gettextCatalog) {
       var rows='<tr><td colspan="3">'+gettextCatalog.getString('no movements')+'<td></tr>';
 
       if (typeof scope.operationplan !== 'undefined') {
-        if (scope.operationplan.hasOwnProperty('flowplans')) {
+        if (scope.operationplan.hasOwnProperty('flowplans')) {        	
           rows='';
           angular.forEach(scope.operationplan.flowplans, function(theflow) {
-            rows += '<tr><td>'+theflow.buffer.name+'</td><td>'+
-            grid.formatNumber(theflow.quantity)+'</td><td>'+grid.formatNumber(theflow.onhand)+'</td><td>'+
-            theflow.date+'</td></tr>';
+            rows += '<tr><td>' + $.jgrid.htmlEncode(theflow.buffer.item)
+              + "<a href=\"" + url_prefix + "/detail/input/item/" + admin_escape(theflow.buffer.item) 
+              + "/\" onclick='event.stopPropagation()'><span class='leftpadding fa fa-caret-right'></span></a>"
+              + '</td><td>' + $.jgrid.htmlEncode(theflow.buffer.location)
+              + "<a href=\"" + url_prefix + "/detail/input/location/" + admin_escape(theflow.buffer.location) 
+              + "/\" onclick='event.stopPropagation()'><span class='leftpadding fa fa-caret-right'></span></a>"
+              + '</td><td>' + grid.formatNumber(theflow.quantity)
+              + '</td><td>' + grid.formatNumber(theflow.onhand)
+              + '</td><td>' + theflow.date
+              + '</td></tr>';
           });
           angular.element(document).find('#attributes-operationflowplans thead').css('display','table-header-group');
         }

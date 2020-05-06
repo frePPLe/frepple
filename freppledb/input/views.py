@@ -6494,22 +6494,19 @@ class OperationPlanDetail(View):
                                 .only("name", "item", "due")
                                 .get(name=d)
                             )
-                            dmd = obj.name
-                            due = obj.due.strftime("%Y-%m-%dT%H:%M:%S")
-                            item = obj.item.name
+                            res["pegging_demand"].append(
+                                {
+                                    "demand": {
+                                        "name": obj.name,
+                                        "item": {"name": obj.item.name},
+                                        "due": obj.due.strftime("%Y-%m-%dT%H:%M:%S"),
+                                    },
+                                    "quantity": q,
+                                }
+                            )
                         except Demand.DoesNotExist:
                             # Looks like this demand was deleted since the plan was generated
                             continue
-                        res["pegging_demand"].append(
-                            {
-                                "demand": {
-                                    "name": dmd,
-                                    "item": {"name": item},
-                                    "due": due,
-                                },
-                                "quantity": q,
-                            }
-                        )
                     res["pegging_demand"].sort(
                         key=lambda f: (f["demand"]["name"], f["demand"]["due"])
                     )
@@ -6534,7 +6531,8 @@ class OperationPlanDetail(View):
                                 "quantity": float(m["quantity"]),
                                 "onhand": float(m["onhand"] or 0),
                                 "buffer": {
-                                    "name": "%s @ %s" % (m["item_id"], m["location_id"])
+                                    "item": m["item_id"],
+                                    "location": m["location_id"],
                                 },
                             }
                         )

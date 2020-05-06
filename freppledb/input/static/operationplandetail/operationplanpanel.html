@@ -26,8 +26,16 @@
         <b id="thead1" style="text-transform: capitalize">{{ 'name'|translate }}&nbsp;</b>
       </td>
       <td>
-        <b style="text-transform: capitalize" data-ng-if="operationplan.hasOwnProperty('operation')">{{operationplan.operation.name}}</b>
-        <b style="text-transform: capitalize" data-ng-if="!operationplan.hasOwnProperty('operation')">{{operationplan.name}}</b>
+        <b style="text-transform: capitalize" data-ng-if="operationplan.hasOwnProperty('operation')">{{operationplan.operation.name}}
+        <a href="/detail/input/operation/key/" role="input/operation" onclick="opendetail(event)">
+           <span class="fa fa-caret-right"></span>
+        </a>
+        </b>
+        <b style="text-transform: capitalize" data-ng-if="!operationplan.hasOwnProperty('operation')">{{operationplan.name}}
+        <a href="/detail/input/operation/key/" role="input/operation" onclick="opendetail(event)">
+           <span class="fa fa-caret-right"></span>
+        </a>
+        </b>
       </td>
     </tr>
   </thead>
@@ -38,26 +46,46 @@
     </tr>
     <tr data-ng-if="operationplan.item !== null && operationplan.id !== -1">
       <td><b style="text-transform: capitalize" translate>item</b></td>
-      <td id="itemrow">{{operationplan.item}}</td>
+      <td id="itemrow">{{operationplan.item}}
+        <a href="/detail/input/item/key/" role="input/item" onclick="opendetail(event)">
+           <span class="fa fa-caret-right"></span>
+        </a>
+      </td>
     </tr>
     <tr ng-if="operationplan.supplier !== null && operationplan.id !== undefined && operationplan.id !== -1">
       <td><b style="text-transform: capitalize">{{'supplier'|translate}}</b></td>
-      <td id="supplierrow">{{operationplan.supplier}}</td>
+      <td id="supplierrow">{{operationplan.supplier}}
+        <a href="/detail/input/supplier/key/" role="input/supplier" onclick="opendetail(event)">
+           <span class="fa fa-caret-right"></span>
+        </a>
+      </td>
     </tr>
     <tr ng-if="operationplan.location !== null && operationplan.id !== -1">
       <td><b style="text-transform: capitalize">{{'location'|translate}}</b></td>
-      <td id="locationrow">{{operationplan.location}}</td>
+      <td id="locationrow">{{operationplan.location}}
+        <a href="/detail/input/location/key/" role="input/location" onclick="opendetail(event)">
+           <span class="fa fa-caret-right"></span>
+        </a>
+      </td>
     </tr>
     <tr ng-if="operationplan.origin !== null && operationplan.id !== undefined && operationplan.id !== -1">
       <td><b style="text-transform: capitalize">{{'origin'|translate}}</b></td>
-      <td id="originrow">{{operationplan.origin}}</td>
+      <td id="originrow">{{operationplan.origin}}
+        <a href="/detail/input/location/key/" role="input/location" onclick="opendetail(event)">
+           <span class="fa fa-caret-right"></span>
+        </a>
+      </td>
     </tr>
     <tr ng-if="operationplan.destination !== null && operationplan.id !== undefined && operationplan.id !== -1">
       <td>
       <b data-ng-if="operationplan.type !== 'STCK'" style="text-transform: capitalize;">{{'destination'|translate}}</b>
       <b data-ng-if="operationplan.type === 'STCK'" style="text-transform: capitalize;">{{'location'|translate}}</b>
       </td>
-      <td id="destinationrow">{{operationplan.destination}}</td>
+      <td id="destinationrow">{{operationplan.destination}}
+        <a href="/detail/input/location/key/" role="input/location" onclick="opendetail(event)">
+           <span class="fa fa-caret-right"></span>
+        </a>
+      </td>
     </tr>
     <tr data-ng-if="operationplan.type !== 'STCK'">
       <td><b style="text-transform: capitalize" data-ng-if="operationplan.type == 'MO'">{{'start date'|translate}}</b>
@@ -98,7 +126,7 @@
         <small data-ng-if="operationplan.colmodel.criticality">({{ operationplan.colmodel.criticality.type|translate }})</small>
         <small data-ng-if="operationplan.colmodel.operationplan__criticality">({{ operationplan.colmodel.operationplan__criticality.type|translate }})</small>
       </td>
-      <td id="criticalityrow">{{operationplan.criticality}}</td>
+      <td id="criticalityrow">{{operationplan.criticality | number:0}}</td>
     </tr>
     <tr data-ng-if="operationplan.type !== 'STCK'">
       <td><b style="text-transform: capitalize;">{{'delay'|translate}}</b>&nbsp;

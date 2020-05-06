@@ -64,18 +64,23 @@ function shownetworkstatusDrv($window, gettextCatalog) {
         if (scope.operationplan.hasOwnProperty('network')) {
           rows='';
           angular.forEach(scope.operationplan.network, function(thenetwork) {
-            rows += '<tr><td>' + thenetwork[0];
+            rows += '<tr><td>' + $.jgrid.htmlEncode(thenetwork[0])
+              + "<a href=\"" + url_prefix + "/detail/input/item/" + admin_escape(thenetwork[0]) 
+              + "/\" onclick='event.stopPropagation()'><span class='leftpadding fa fa-caret-right'></span></a>";
             if (thenetwork[1] === true) {
               rows += '<small>'+gettextCatalog.getString('superseded')+'</small>';
             }
-            rows += '</td><td>'+
-              grid.formatNumber(thenetwork[2]) + '</td><td>'+
-              grid.formatNumber(thenetwork[3]) + '</td><td>'+
-              grid.formatNumber(thenetwork[4]) + '</td><td>'+
-              grid.formatNumber(thenetwork[5]) + '</td><td>'+
-              grid.formatNumber(thenetwork[6]) + '</td><td>'+
-              grid.formatNumber(thenetwork[7]) + '</td><td>'+
-              grid.formatNumber(thenetwork[8]) + '</td></tr>';
+            rows += '</td><td>'
+            	+ $.jgrid.htmlEncode(thenetwork[2]) 
+            	+ "<a href=\"" + url_prefix + "/detail/input/location/" + admin_escape(thenetwork[2]) 
+              + "/\" onclick='event.stopPropagation()'><span class='leftpadding fa fa-caret-right'></span></a>"
+              + '</td><td>'
+              + grid.formatNumber(thenetwork[3]) + '</td><td>'
+              + grid.formatNumber(thenetwork[4]) + '</td><td>'
+              + grid.formatNumber(thenetwork[5]) + '</td><td>'
+              + grid.formatNumber(thenetwork[6]) + '</td><td>'
+              + grid.formatNumber(thenetwork[7]) + '</td><td>'
+              + grid.formatNumber(thenetwork[8]) + '</td></tr>';
           });
         }
       }

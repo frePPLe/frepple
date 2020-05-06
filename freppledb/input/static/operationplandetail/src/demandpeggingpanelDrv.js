@@ -55,10 +55,16 @@ function showoperationpeggingpanelDrv($window, gettextCatalog) {
         if (scope.operationplan.hasOwnProperty('pegging_demand')) {
           rows='';
           angular.forEach(scope.operationplan.pegging_demand, function(thedemand) {
-            rows += '<tr><td>' + thedemand.demand.name +
-              '</td><td>' + thedemand.demand.item.name +
-              '</td><td>' + thedemand.demand.due +
-              '</td><td>' + grid.formatNumber(thedemand.quantity) + '</td></tr>';
+            rows += '<tr><td>' + $.jgrid.htmlEncode(thedemand.demand.name)
+              + "<a href=\"" + url_prefix 
+              + (thedemand.demand.forecast ? "/detail/forecast/forecast/" : "/detail/input/demand/")
+              + admin_escape(thedemand.demand.name) 
+              + "/\" onclick='event.stopPropagation()'><span class='leftpadding fa fa-caret-right'></span></a>"
+              + '</td><td>' + $.jgrid.htmlEncode(thedemand.demand.item.name)
+              + "<a href=\"" + url_prefix + "/detail/input/item/" + admin_escape(thedemand.demand.item.name) 
+              + "/\" onclick='event.stopPropagation()'><span class='leftpadding fa fa-caret-right'></span></a>"
+              + '</td><td>' + thedemand.demand.due
+              + '</td><td>' + grid.formatNumber(thedemand.quantity) + '</td></tr>';
           });
         }
       }

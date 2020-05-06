@@ -51,20 +51,22 @@ function showresourcespanelDrv($window, gettextCatalog) {
           rows='';
           angular.forEach(scope.operationplan.loadplans, function(theresource) {
           	if (!theresource.hasOwnProperty('alternates'))
-              rows += '<tr><td>' + theresource.resource.name + '</td>'
-                + '<td>'+theresource.quantity+'</td></tr>';
+              rows += '<tr><td>' + $.jgrid.htmlEncode(theresource.resource.name) 
+                + "<a href=\"" + url_prefix + "/detail/input/resource/" + admin_escape(theresource.resource.name) 
+                + "/\" onclick='event.stopPropagation()'><span class='leftpadding fa fa-caret-right'></span></a></td>"
+                + '<td>' + grid.formatNumber(theresource.quantity) + '</td></tr>';
           	else {
           		rows += '<tr><td style="white-space: nowrap;"><div class="dropdown dropdown-submit-input">' 
           			+ '<button class="btn btn-default" data-toggle="dropdown" type="button" style="text-transform: capitalize; min-width: 150px">'
-          			+ theresource.resource.name
+          			+ $.jgrid.htmlEncode(theresource.resource.name)
           			+ '</button>'
           			+ '<ul class="dropdown-menu">'
                 + '<li><a role="menuitem" class="alternateresource" style="text-transform: capitalize">'
-                + theresource.resource.name
+                + $.jgrid.htmlEncode(theresource.resource.name)
                 + '</a></li>';          			
           		angular.forEach(theresource.alternates, function(thealternate) {
                 rows += '<li><a role="menuitem" class="alternateresource" style="text-transform: capitalize">'
-                	+ thealternate.name
+                	+ $.jgrid.htmlEncode(thealternate.name)
                 	+ '</a></li>';
           		});
           		rows += '</ul></td><td>' + grid.formatNumber(theresource.quantity) + '</td></tr>';

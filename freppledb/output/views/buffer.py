@@ -46,17 +46,16 @@ class OverviewReport(GridPivot):
         if len(args) and args[0]:
             i_b_l = args[0].split(" @ ")
             if len(i_b_l) == 1:
-                return Buffer.objects.filter(id=args[0])
+                return Buffer.objects.filter(id=args[0]).annotate(
+                    buffer=RawSQL("item_id||' @ '||location_id", ())
+                )
             elif len(i_b_l) == 2:
                 return (
                     OperationPlanMaterial.objects.values(
                         "item", "item__type", "location", "operationplan__batch"
                     )
                     .filter(
-                        (
-                            (Q(item__type="make to stock") | Q(item__type__isnull=True))
-                            & Q(operationplan__batch__isnull=True)
-                        )
+                        ((Q(item__type="make to stock") | Q(item__type__isnull=True)))
                         | (
                             Q(item__type="make to order")
                             & Q(operationplan__batch__isnull=False)
@@ -83,10 +82,7 @@ class OverviewReport(GridPivot):
                         "item", "location", "item__type", "operationplan__batch"
                     )
                     .filter(
-                        (
-                            (Q(item__type="make to stock") | Q(item__type__isnull=True))
-                            & Q(operationplan__batch__isnull=True)
-                        )
+                        ((Q(item__type="make to stock") | Q(item__type__isnull=True)))
                         | (
                             Q(item__type="make to order")
                             & Q(operationplan__batch__isnull=False)
@@ -116,10 +112,7 @@ class OverviewReport(GridPivot):
                 )
                 .distinct()
                 .filter(
-                    (
-                        (Q(item__type="make to stock") | Q(item__type__isnull=True))
-                        & Q(operationplan__batch__isnull=True)
-                    )
+                    ((Q(item__type="make to stock") | Q(item__type__isnull=True)))
                     | (
                         Q(item__type="make to order")
                         & Q(operationplan__batch__isnull=False)
@@ -354,7 +347,7 @@ class OverviewReport(GridPivot):
            location.owner_id,
            location.source,
            location.lastmodified,
-           batch,
+           case when item.type = 'make to order' then batch else null end as batch,
            %s
            (select jsonb_build_object(
                'onhand', onhand,

@@ -5477,13 +5477,11 @@ class InventoryDetail(OperationPlanMixin, GridReport):
             if len(i_b_l) == 1:
                 buffer = Buffer.objects.get(id=args[0])
                 base = OperationPlanMaterial.objects.filter(
-                    item=buffer.item.name,
-                    location=buffer.location.name,
-                    operationplan__batch__isnull=True,
+                    item=buffer.item.name, location=buffer.location.name
                 )
             elif len(i_b_l) == 2:
                 base = OperationPlanMaterial.objects.filter(
-                    item=i_b_l[0], location=i_b_l[1], operationplan__batch__isnull=True
+                    item=i_b_l[0], location=i_b_l[1]
                 )
             else:
                 base = OperationPlanMaterial.objects.filter(

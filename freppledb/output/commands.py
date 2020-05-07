@@ -804,21 +804,6 @@ class ExportOperationPlanMaterials(PlanTask):
         if len(updates) > 0:
             cursor.execute("\n".join(updates))
 
-        # correct on hand for non-MTO items
-        cursor.execute(
-            """
-            with cte as (
-           select id, sum(quantity) over(partition by item_id, location_id order by flowdate) as onhand from operationplanmaterial
-           inner join item on item.name = operationplanmaterial.item_id
-           where item.type is distinct from 'make to order'
-           )
-           update operationplanmaterial set onhand = cte.onhand
-           from cte
-           where operationplanmaterial.id = cte.id
-           and operationplanmaterial.onhand != cte.onhand
-        """
-        )
-
 
 @PlanTaskRegistry.register
 class ExportOperationPlanResources(PlanTask):

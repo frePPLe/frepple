@@ -358,7 +358,9 @@ function crosses (cellvalue, options, rowdata)
               admin_escape(rowdata['location']) + "/" +
               options['colModel']['startdate'] + "/" +
               options['colModel']['enddate'] + "/" +
-              "?noautofilter'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
+              "?noautofilter" +  
+              (rowdata['batch'] == undefined || rowdata['batch'] == ""? "":"&batch=" + admin_escape(rowdata['batch'])) +
+              "'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
           result += '0<br>';
         break;
@@ -369,7 +371,9 @@ function crosses (cellvalue, options, rowdata)
               admin_escape(rowdata['location']) + "/" +
               options['colModel']['startdate'] + "/" +
               options['colModel']['enddate'] + "/" +
-              "?noautofilter'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
+              "?noautofilter" +
+              (rowdata['batch'] == undefined || rowdata['batch'] == ""? "":"&batch=" + admin_escape(rowdata['batch'])) +
+              "'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
           result += '0<br>';
         break;
@@ -380,7 +384,9 @@ function crosses (cellvalue, options, rowdata)
               admin_escape(rowdata['location']) + "/" +
               options['colModel']['startdate'] + "/" +
               options['colModel']['enddate'] + "/" +
-              "?noautofilter" + "&amp;orders=True" +"'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
+              "?noautofilter" + 
+              (rowdata['batch'] == undefined || rowdata['batch'] == ""? "":"&batch=" + admin_escape(rowdata['batch'])) +
+              "&amp;orders=True" +"'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
           result += '0<br>';
         break;
@@ -391,7 +397,9 @@ function crosses (cellvalue, options, rowdata)
               admin_escape(rowdata['location']) + "/" +
               options['colModel']['startdate'] + "/" +
               options['colModel']['enddate'] + "/" +
-              "?noautofilter" + "&amp;orders=False" +"'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
+              "?noautofilter" + 
+              (rowdata['batch'] == undefined || rowdata['batch'] == ""? "":"&batch=" + admin_escape(rowdata['batch'])) +
+              "&amp;orders=False" +"'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
           result += '0<br>';
         break;
@@ -412,7 +420,9 @@ function crosses (cellvalue, options, rowdata)
               admin_escape(rowdata['location']) + "/" +
               options['colModel']['startdate'] + "/" +
               options['colModel']['enddate'] + "/" +
-              "?noautofilter'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
+              "?noautofilter" +
+              (rowdata['batch'] == undefined || rowdata['batch'] == ""? "":"&batch=" + admin_escape(rowdata['batch'])) +
+              "'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
           result += '0<br>';
         break;
@@ -423,7 +433,9 @@ function crosses (cellvalue, options, rowdata)
               admin_escape(rowdata['location']) + "/" +
               options['colModel']['startdate'] + "/" +
               options['colModel']['enddate'] + "/" +
-              "?noautofilter'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
+              "?noautofilter" +
+              (rowdata['batch'] == undefined || rowdata['batch'] == ""? "":"&batch=" + admin_escape(rowdata['batch'])) +
+              "'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
           result += '0<br>';
         break;
@@ -434,7 +446,9 @@ function crosses (cellvalue, options, rowdata)
               admin_escape(rowdata['location']) + "/" +
               options['colModel']['startdate'] + "/" +
               options['colModel']['enddate'] + "/" +
-              "?noautofilter'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
+              "?noautofilter" +
+              (rowdata['batch'] == undefined || rowdata['batch'] == ""? "":"&batch=" + admin_escape(rowdata['batch'])) +
+              "'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
           result += '0<br>';
         break;
@@ -443,7 +457,9 @@ function crosses (cellvalue, options, rowdata)
            result += grid.formatNumber(cellvalue[id_by_field['work_in_progress_mo']]) + "<a href='{{request.prefix}}/data/input/manufacturingorder/operationplanmaterial/" +
               admin_escape(rowdata['item']) + "/" + admin_escape(rowdata['location']) +
               "/" + options['colModel']['enddate'] +
-              "/?noautofilter'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
+              "/?noautofilter" +
+              (rowdata['batch'] == undefined || rowdata['batch'] == ""? "":"&batch=" + admin_escape(rowdata['batch'])) +
+              "'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
           result += '0<br>';
         break;
@@ -452,7 +468,9 @@ function crosses (cellvalue, options, rowdata)
            result += grid.formatNumber(cellvalue[id_by_field['on_order_po']]) + "<a href='{{request.prefix}}/data/input/purchaseorder/operationplanmaterial/" +
               admin_escape(rowdata['item']) + "/" + admin_escape(rowdata['location']) +
               "/" + options['colModel']['enddate'] +
-              "/?noautofilter'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
+              "/?noautofilter" +
+              (rowdata['batch'] == undefined || rowdata['batch'] == ""? "":"&batch=" + admin_escape(rowdata['batch'])) +
+              "'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
           result += '0<br>';
         break;
@@ -461,7 +479,9 @@ function crosses (cellvalue, options, rowdata)
            result += grid.formatNumber(cellvalue[id_by_field['in_transit_do']]) + "<a href='{{request.prefix}}/data/input/distributionorder/operationplanmaterial/" +
               admin_escape(rowdata['item']) + "/" + admin_escape(rowdata['location']) +
               "/" + options['colModel']['enddate'] +
-              "/?noautofilter'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
+              "/?noautofilter" +
+              (rowdata['batch'] == undefined || rowdata['batch'] == ""? "":"&batch=" + admin_escape(rowdata['batch'])) +
+              "'>&nbsp;<span class='context cross fa fa-caret-right'></span></a><br>";
         else
           result += '0<br>';
         break;

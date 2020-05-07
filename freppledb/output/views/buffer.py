@@ -46,8 +46,19 @@ class OverviewReport(GridPivot):
         if len(args) and args[0]:
             i_b_l = args[0].split(" @ ")
             if len(i_b_l) == 1:
-                return Buffer.objects.filter(id=args[0]).annotate(
-                    buffer=RawSQL("item_id||' @ '||location_id", ())
+                b = Buffer.objects.values("item", "location").get(id=args[0])
+                return (
+                    OperationPlanMaterial.objects.values(
+                        "item", "item__type", "location", "operationplan__batch"
+                    )
+                    .filter(item=b["item"], location=b["location"])
+                    .annotate(
+                        buffer=RawSQL("%s||' @ '||%s", (b["item"], b["location"])),
+                        opplan_batch=RawSQL(
+                            "case when item.type is distinct from 'make to order' then '' else operationplan.batch end",
+                            (),
+                        ),
+                    )
                 )
             elif len(i_b_l) == 2:
                 return (
@@ -73,7 +84,11 @@ class OverviewReport(GridPivot):
                             "(case when item.type is distinct from 'make to order' then '' else ' @ ' || operationplan.batch end) "
                             "|| ' @ ' || operationplanmaterial.location_id",
                             (),
-                        )
+                        ),
+                        opplan_batch=RawSQL(
+                            "case when item.type is distinct from 'make to order' then '' else operationplan.batch end",
+                            (),
+                        ),
                     )
                 )
             else:
@@ -99,7 +114,11 @@ class OverviewReport(GridPivot):
                             "(case when item.type is distinct from 'make to order' then '' else ' @ ' || operationplan.batch end) "
                             "|| ' @ ' || operationplanmaterial.location_id",
                             (),
-                        )
+                        ),
+                        opplan_batch=RawSQL(
+                            "case when item.type is distinct from 'make to order' then '' else operationplan.batch end",
+                            (),
+                        ),
                     )
                 )
         else:
@@ -124,7 +143,11 @@ class OverviewReport(GridPivot):
                         "(case when item.type is distinct from 'make to order' then '' else ' @ ' || operationplan.batch end) "
                         "|| ' @ ' || operationplanmaterial.location_id",
                         (),
-                    )
+                    ),
+                    opplan_batch=RawSQL(
+                        "case when item.type is distinct from 'make to order' then '' else operationplan.batch end",
+                        (),
+                    ),
                 )
             )
 
@@ -152,13 +175,6 @@ class OverviewReport(GridPivot):
             field_name="location__name",
             formatter="detail",
             extra='"role":"input/location"',
-        ),
-        GridFieldText(
-            "batch",
-            title=_("batch"),
-            field_name="operationplan_batch",
-            editable=False,
-            initially_hidden=True,
         ),
         # Optional fields referencing the item
         GridFieldText(
@@ -259,6 +275,13 @@ class OverviewReport(GridPivot):
             initially_hidden=True,
             editable=False,
         ),
+        GridFieldText(
+            "batch",
+            title=_("batch"),
+            field_name="opplan_batch",
+            editable=False,
+            initially_hidden=True,
+        ),
     )
 
     crosses = (
@@ -347,7 +370,7 @@ class OverviewReport(GridPivot):
            location.owner_id,
            location.source,
            location.lastmodified,
-           case when item.type = 'make to order' then batch else null end as batch,
+           opplanmat.opplan_batch,
            %s
            (select jsonb_build_object(
                'onhand', onhand,
@@ -462,6 +485,7 @@ class OverviewReport(GridPivot):
            location.owner_id,
            location.source,
            location.lastmodified,
+           opplanmat.opplan_batch,
            d.bucket,
            d.startdate,
            d.enddate

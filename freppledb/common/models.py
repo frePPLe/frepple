@@ -287,7 +287,7 @@ class Parameter(AuditModel):
     @staticmethod
     def getValue(key, database=DEFAULT_DB_ALIAS, default=None):
         try:
-            return Parameter.objects.using(database).get(pk=key).value
+            return Parameter.objects.using(database).only("value").get(pk=key).value
         except Exception:
             return default
 

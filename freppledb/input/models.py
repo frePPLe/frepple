@@ -19,6 +19,7 @@ import ast
 from datetime import datetime, time
 from decimal import Decimal
 
+from django.core.cache import cache
 from django.db import models, DEFAULT_DB_ALIAS
 from django.db.models.fields.related import RelatedField
 from django.forms.models import modelform_factory
@@ -27,7 +28,12 @@ from django.utils.translation import gettext_lazy as _
 from django.utils.text import format_lazy
 
 from freppledb.common.fields import JSONBField, AliasDateTimeField
-from freppledb.common.models import HierarchyModel, AuditModel, MultiDBManager
+from freppledb.common.models import (
+    HierarchyModel,
+    AuditModel,
+    MultiDBManager,
+    Parameter,
+)
 
 
 searchmode = (
@@ -1677,26 +1683,35 @@ class OperationPlan(AuditModel):
         state = getattr(self, "_state", None)
         db = state.db if state else DEFAULT_DB_ALIAS
 
+        # Get the parameter that controls whether completed operations are
+        # allowed to have dates in the future
+        completed_allow_future = cache.get("completed_allow_future_%s" % db, None)
+        if completed_allow_future is None:
+            completed_allow_future = (
+                Parameter.getValue("COMPLETED.allow_future", db, "false").lower()
+                == "true"
+            )
+            cache.set(
+                "completed_allow_future_%s" % db, completed_allow_future, timeout=60
+            )
+
         # Assure that all child operationplans also get the same status
         now = datetime.now()
         if self.type not in ("DO", "PO"):
             for subop in self.xchildren.all().using(db):
                 if subop.status != self.status:
-                    if subop.enddate > now:
-                        subop.enddate = now
-                    if subop.startdate > now:
-                        subop.startdate = now
                     subop.status = self.status
-                    subop.save(update_fields=["status", "startdate", "enddate"])
+                    subop.save(update_fields=["status"])
 
         if self.status not in ("completed", "closed"):
             return
 
         # Assure the start and end are in the past
-        if self.enddate > now:
-            self.enddate = now
-        if self.startdate > now:
-            self.startdate = now
+        if not completed_allow_future:
+            if self.enddate > now:
+                self.enddate = now
+            if self.startdate > now:
+                self.startdate = now
 
         if self.type == "MO" and self.owner and self.owner.operation.type == "routing":
             # Assure that previous routing steps are also marked closed or completed
@@ -1717,10 +1732,11 @@ class OperationPlan(AuditModel):
                     and steps.get(subop.operation, 0) < myprio
                 ):
                     subop.status = self.status
-                    if subop.enddate > now:
-                        subop.enddate = now
-                    if subop.startdate > now:
-                        subop.startdate = now
+                    if not completed_allow_future:
+                        if subop.enddate > now:
+                            subop.enddate = now
+                        if subop.startdate > now:
+                            subop.startdate = now
                     subop.save(update_fields=["status", "startdate", "enddate"])
 
             # Assure that the parent is at least approved
@@ -1736,25 +1752,27 @@ class OperationPlan(AuditModel):
                     all_steps_closed = False
             if all_steps_closed and self.owner.status != "closed":
                 self.owner.status = "closed"
-                if self.owner.enddate > now:
-                    self.owner.enddate = now
-                if self.owner.startdate > now:
-                    self.owner.startdate = now
+                if not completed_allow_future:
+                    if self.owner.enddate > now:
+                        self.owner.enddate = now
+                    if self.owner.startdate > now:
+                        self.owner.startdate = now
                 self.owner.save(
                     update_fields=["status", "startdate", "enddate"], using=db
                 )
             elif all_steps_completed and self.owner.status != "completed":
                 self.owner.status = "completed"
-                if self.owner.enddate > now:
-                    self.owner.enddate = now
-                if self.owner.startdate > now:
-                    self.owner.startdate = now
+                if not completed_allow_future:
+                    if self.owner.enddate > now:
+                        self.owner.enddate = now
+                    if self.owner.startdate > now:
+                        self.owner.startdate = now
                 self.owner.save(
                     update_fields=["status", "startdate", "enddate"], using=db
                 )
             elif self.owner.status == "proposed":
                 self.owner.status = "approved"
-                if self.owner.startdate > now:
+                if not completed_allow_future and self.owner.startdate > now:
                     self.owner.startdate = now
                 self.owner.save(update_fields=["status", "startdate"], using=db)
 
@@ -1764,7 +1782,7 @@ class OperationPlan(AuditModel):
         for opplanmat in self.materials.all().using(db):
             # Assure the material production and consumption are in the past
             # We are not correcting the expected onhand. The next plan generation will do that.
-            if opplanmat.flowdate > now:
+            if not completed_allow_future and opplanmat.flowdate > now:
                 opplanmat.flowdate = now
                 opplanmat.save(using=db)
             # Check that upstream buffers have enough supply in the closed status

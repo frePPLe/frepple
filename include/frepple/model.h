@@ -7860,6 +7860,8 @@ class Plan : public Plannable, public Object {
   /* A calendar to which all operationplans will align. */
   Calendar* cal;
 
+  bool completed_allow_future = false;
+
   /* Pointer to the singleton plan object. */
   static Plan* thePlan;
 
@@ -7909,6 +7911,10 @@ class Plan : public Plannable, public Object {
 
   /* Updates the description of the plan. */
   void setDescription(const string& str) { descr = str; }
+
+  bool getCompletedAllowFuture() const { return completed_allow_future; }
+
+  void setCompletedAllowFuture(bool b) { completed_allow_future = b; }
 
   void setLogFile(const string& s) { Environment::setLogFile(s); }
 
@@ -7979,6 +7985,9 @@ class Plan : public Plannable, public Object {
                             DONT_SERIALIZE);
     m->addPointerField<Cls, Calendar>(Tags::calendar, &Cls::getCalendar,
                                       &Cls::setCalendar, DONT_SERIALIZE);
+    m->addBoolField<Plan>(
+        Tags::completed_allow_future, &Plan::getCompletedAllowFuture,
+        &Plan::setCompletedAllowFuture, BOOL_FALSE, DONT_SERIALIZE);
     Plannable::registerFields<Plan>(m);
     m->addIteratorField<Plan, Location::iterator, Location>(
         Tags::locations, Tags::location, &Plan::getLocations,

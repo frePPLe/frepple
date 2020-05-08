@@ -1623,7 +1623,8 @@ void OperationPlan::propagateStatus(bool log) {
   bool firstlog = true;
 
   // Assure the start and end date are in the past
-  if (getEnd() > Plan::instance().getCurrent()) {
+  if (!Plan::instance().getCompletedAllowFuture() &&
+      getEnd() > Plan::instance().getCurrent()) {
     if (log) {
       if (firstlog) {
         firstlog = false;

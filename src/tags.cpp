@@ -44,6 +44,7 @@ const Keyword Tags::category("category");
 const Keyword Tags::closed("closed");
 const Keyword Tags::cluster("cluster");
 const Keyword Tags::completed("completed");
+const Keyword Tags::completed_allow_future("completed_allow_future");
 const Keyword Tags::confirmed("confirmed");
 const Keyword Tags::constraints("constraints");
 const Keyword Tags::constrained("constrained");

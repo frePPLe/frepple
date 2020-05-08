@@ -72,6 +72,10 @@ plan.webservice             | Specifies whether we keep the plan in memory as a 
 COMPLETED.consume_material  | Determines whether completed manufacturing orders consume material 
                               or not.
                             | Default is true.
+COMPLETED.allow_future      | We assume that completed operations are always ending in the past.
+                              The planning engine will automatically adjust the end date to enforce
+                              this rule, unless this parameter is set to true.
+                            | Default is false.                            
 WIP.consume_material        | Determines whether confirmed manufacturing orders consume material 
                               or not.
                             | Default is true.

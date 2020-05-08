@@ -45,6 +45,7 @@ class Tags {
   static const Keyword closed;
   static const Keyword cluster;
   static const Keyword completed;
+  static const Keyword completed_allow_future;
   static const Keyword confirmed;
   static const Keyword constraints;
   static const Keyword constrained;

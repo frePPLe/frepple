@@ -222,38 +222,52 @@ Object* Flow::finder(const DataValueDict& d) {
   return nullptr;
 }
 
-pair<Date, double> Flow::getFlowplanDateQuantity(const FlowPlan* fl) const {
+pair<Date, double> FlowStart::getFlowplanDateQuantity(
+    const FlowPlan* fl) const {
+  auto offset = fl->getFlow()->getOffset();
+  auto dt = fl->getOperationPlan()->getSetupEnd();
+  if (offset) {
+    DateRange d = getOperation()->calculateOperationTime(
+        fl->getOperationPlan(), dt, offset, true, nullptr, offset > 0L);
+    dt = offset > 0L ? d.getEnd() : d.getStart();
+  }
+
   if (isConsumer() && !fl->getOperationPlan()->getConsumeMaterial())
-    return make_pair(fl->getOperationPlan()->getSetupEnd(), 0.0);
+    return make_pair(dt, 0.0);
   else if (isProducer() && !fl->getOperationPlan()->getProduceMaterial())
-    return make_pair(fl->getOperationPlan()->getSetupEnd(), 0.0);
+    return make_pair(dt, 0.0);
   else if (fl->getConfirmed())
-    return make_pair(fl->getOperationPlan()->getSetupEnd(), fl->getQuantity());
+    return make_pair(dt, fl->getQuantity());
   else
     return make_pair(
-        fl->getOperationPlan()->getSetupEnd(),
-        getEffective().within(fl->getDate()) &&
-                fl->getOperationPlan()->getQuantity()
-            ? getQuantityFixed() +
-                  fl->getOperationPlan()->getQuantity() * getQuantity()
-            : 0.0);
+        dt, getEffective().within(fl->getDate()) &&
+                    fl->getOperationPlan()->getQuantity()
+                ? getQuantityFixed() +
+                      fl->getOperationPlan()->getQuantity() * getQuantity()
+                : 0.0);
 }
 
 pair<Date, double> FlowEnd::getFlowplanDateQuantity(const FlowPlan* fl) const {
+  auto offset = fl->getFlow()->getOffset();
+  auto dt = fl->getOperationPlan()->getEnd();
+  if (offset) {
+    DateRange d = getOperation()->calculateOperationTime(
+        fl->getOperationPlan(), dt, offset, true, nullptr, offset < 0L);
+    dt = offset > 0L ? d.getEnd() : d.getStart();
+  }
   if (isConsumer() && !fl->getOperationPlan()->getConsumeMaterial())
-    return make_pair(fl->getOperationPlan()->getEnd(), 0.0);
+    return make_pair(dt, 0.0);
   else if (isProducer() && !fl->getOperationPlan()->getProduceMaterial())
-    return make_pair(fl->getOperationPlan()->getEnd(), 0.0);
+    return make_pair(dt, 0.0);
   else if (fl->getConfirmed())
-    return make_pair(fl->getOperationPlan()->getEnd(), fl->getQuantity());
+    return make_pair(dt, fl->getQuantity());
   else
     return make_pair(
-        fl->getOperationPlan()->getEnd(),
-        getEffective().within(fl->getDate()) &&
-                fl->getOperationPlan()->getQuantity()
-            ? getQuantityFixed() +
-                  fl->getOperationPlan()->getQuantity() * getQuantity()
-            : 0.0);
+        dt, getEffective().within(fl->getDate()) &&
+                    fl->getOperationPlan()->getQuantity()
+                ? getQuantityFixed() +
+                      fl->getOperationPlan()->getQuantity() * getQuantity()
+                : 0.0);
 }
 
 pair<Date, double> FlowTransferBatch::getFlowplanDateQuantity(
@@ -354,6 +368,46 @@ pair<Date, double> FlowTransferBatch::getFlowplanDateQuantity(
             .getEnd(),
         total_quantity < -batch_quantity ? -batch_quantity : total_quantity);
   }
+}
+
+Date FlowEnd::computeFlowToOperationDate(const OperationPlan* opplan, Date d) {
+  if (!getOffset()) return d;
+  DateRange dr = getOperation()->calculateOperationTime(
+      opplan, d, getOffset(), false, nullptr, getOffset() < 0L);
+  return dr.getStart();
+}
+
+Date FlowEnd::computeOperationToFlowDate(const OperationPlan* opplan, Date d) {
+  if (!getOffset()) return d;
+  DateRange dr = getOperation()->calculateOperationTime(
+      opplan, d, getOffset(), true, nullptr, getOffset() < 0L);
+  return dr.getEnd();
+}
+
+Date FlowStart::computeFlowToOperationDate(const OperationPlan* opplan,
+                                           Date d) {
+  if (!getOffset()) return d;
+  DateRange dr = getOperation()->calculateOperationTime(
+      opplan, d, getOffset(), true, nullptr, getOffset() > 0L);
+  return dr.getEnd();
+}
+
+Date FlowStart::computeOperationToFlowDate(const OperationPlan* opplan,
+                                           Date d) {
+  if (!getOffset()) return d;
+  DateRange dr = getOperation()->calculateOperationTime(
+      opplan, d, getOffset(), false, nullptr, getOffset() > 0L);
+  return dr.getStart();
+}
+
+Date FlowTransferBatch::computeFlowToOperationDate(const OperationPlan* o,
+                                                   Date d) {
+  throw LogicException("Method not implemented for transfer batch flows");
+}
+
+Date FlowTransferBatch::computeOperationToFlowDate(const OperationPlan* o,
+                                                   Date d) {
+  throw LogicException("Method not implemented for transfer batch flows");
 }
 
 }  // namespace frepple

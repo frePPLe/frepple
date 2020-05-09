@@ -649,12 +649,16 @@ OperationPlan* SolverCreate::createOperation(const Operation* oper,
   double flow_qty_per = 0.0;
   double flow_qty_fixed = 0.0;
   bool transferbatch_flow = false;
+  Flow* producing_flow = nullptr;
   if (data->state->curBuffer) {
-    Flow* f = oper->findFlow(data->state->curBuffer, data->state->q_date);
-    if (f && f->isProducer()) {
-      flow_qty_per += f->getQuantity();
-      flow_qty_fixed += f->getQuantityFixed();
-      if (f->hasType<FlowTransferBatch>()) transferbatch_flow = true;
+    producing_flow =
+        oper->findFlow(data->state->curBuffer, data->state->q_date);
+    if (producing_flow && producing_flow->isProducer()) {
+      flow_qty_per += producing_flow->getQuantity();
+      flow_qty_fixed += producing_flow->getQuantityFixed();
+      producing_flow = producing_flow;
+      if (producing_flow->hasType<FlowTransferBatch>())
+        transferbatch_flow = true;
     } else {
       // The producing operation doesn't have a valid flow into the current
       // buffer. Either it is missing or it is producing a negative quantity.
@@ -775,6 +779,16 @@ OperationPlan* SolverCreate::createOperation(const Operation* oper,
                                ? data->planningDemand->getConstraints().top()
                                : nullptr;
 
+  // Subtract offset between operationplan end and flowplan date
+  if (producing_flow && producing_flow->getOffset()) {
+    if (getLogLevel() > 1)
+      logger << indentlevel << "Adjusting requirement date from "
+             << data->state->q_date;
+    data->state->q_date = data->state->q_date_max =
+        producing_flow->computeFlowToOperationDate(z, data->state->q_date);
+    if (getLogLevel() > 1) logger << " to " << data->state->q_date << endl;
+  }
+
   // Align the date to the specified calendar.
   // This alignment is a soft constraint: q_date_max is already set earlier and
   // remains unchanged at the true requirement date.
@@ -845,6 +859,17 @@ OperationPlan* SolverCreate::createOperation(const Operation* oper,
   // Multiply the operation reply with the flow quantity to get a final reply
   if (data->state->curBuffer && data->state->a_qty)
     data->state->a_qty = data->state->a_qty * flow_qty_per + flow_qty_fixed;
+
+  // Add offset between operationplan end and flowplan date
+  if (data->state->a_date != Date::infiniteFuture && !data->state->a_qty &&
+      producing_flow && producing_flow->getOffset()) {
+    if (getLogLevel() > 1)
+      logger << indentlevel << "Adjusting answer date from "
+             << data->state->a_date;
+    data->state->a_date =
+        producing_flow->computeOperationToFlowDate(z, data->state->a_date);
+    if (getLogLevel() > 1) logger << " to " << data->state->a_date << endl;
+  }
 
   // Ignore any constraints if we get a complete reply.
   // Sometimes constraints are flagged due to a pre- or post-operation time.

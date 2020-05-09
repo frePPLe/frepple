@@ -8,6 +8,13 @@ Release notes
 
 - | The release fence of operations is now expressed in available time, rather than calendar time.
 
+- | Material production or consumption can now be offset with a certain time from
+    the start or end of a manufacturing order.
+  | This can be used to model a cooldown, drying or testing time: Material is only produced a
+    certain amount of time after the end of the manufacturing order.
+  | It can also be used to model a material preparation or picking time: Material is consumed
+    a certain amount of time before the start of the manufacturing order.
+
 .. rubric:: User interface
 
 - | Supply path: Alternate operation with low priority (less preferred) will be displayed in light-blue.

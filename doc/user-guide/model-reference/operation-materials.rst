@@ -66,7 +66,15 @@ transferbatch   double            | Batch size by in which material is produced 
                                     consume at the start when the quantity is negative.
                                   | To protect against a big impact on performance and 
                                     memory footprint we limit the number of material transfer
-                                    batches to 50 per manufacturing order.                            
+                                    batches to 50 per manufacturing order.
+offset          duration          | Time offset relative to the start or end date of the manufacturing
+                                    order for the material production or consumption.
+                                  | Eg offset is 1 day for a flow of type 'end'
+                                    -> Material is produced 1 day after the end of the manufacturing order
+                                    -> This can be used to model a cooldown, drying or testing time. 
+                                  | Eg offset is -1 day for a flow of type 'start'
+                                    -> Material is consumed 1 day before the start of the manufacturing order
+                                    -> This can be used to model a material preparation or picking time. 
 effective_start dateTime          | Date after which the material consumption is valid.
                                   | Before this date the planned quantity is always 0.
 effective_end   dateTime          | Date at which the material consumption becomes invalid.

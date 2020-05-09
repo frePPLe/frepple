@@ -2084,6 +2084,9 @@ class OperationPlan : public Object,
    */
   void deactivate();
 
+  /* Convert a proposed end date to the date when material is produced. */
+  Date computeOperationToFlowDate(Date) const;
+
   /* This method links the operationplan in the list of all operationplans
    * maintained on the operation.
    * In most cases calling this method is not required since it included
@@ -2671,7 +2674,8 @@ class Operation : public HasName<Operation>,
    */
   DateRange calculateOperationTime(const OperationPlan* opplan, Date thedate,
                                    Duration duration, bool forward,
-                                   Duration* actualduration = nullptr) const;
+                                   Duration* actualduration = nullptr,
+                                   bool considerResourceCalendars = true) const;
 
   /* Calculates the effective, available time between two dates.
    *
@@ -2686,8 +2690,8 @@ class Operation : public HasName<Operation>,
    *             amount of available time found.
    */
   DateRange calculateOperationTime(const OperationPlan* opplan, Date start,
-                                   Date end,
-                                   Duration* actualduration = nullptr) const;
+                                   Date end, Duration* actualduration = nullptr,
+                                   bool considerResourceCalendars = true) const;
 
   /* This method stores ALL logic the operation needs to compute the
    * correct relationship between the quantity, startdate and enddate
@@ -2890,8 +2894,8 @@ class Operation : public HasName<Operation>,
    * iterators related to an operation.
    */
   unsigned short collectCalendars(Calendar::EventIterator[], Date,
-                                  const OperationPlan*,
-                                  bool forward = true) const;
+                                  const OperationPlan*, bool forward = true,
+                                  bool considerResourceCalendars = true) const;
 
   virtual void solve(Solver& s, void* v = nullptr) const { s.solve(this, v); }
 
@@ -5103,6 +5107,14 @@ class Flow : public Object,
       throw DataException("Quantity and quantity_fixed must have equal sign");
   }
 
+  Duration getOffset() const { return offset; }
+
+  void setOffset(Duration s) { offset = s; }
+
+  virtual Date computeFlowToOperationDate(const OperationPlan*, Date) = 0;
+
+  virtual Date computeOperationToFlowDate(const OperationPlan*, Date) = 0;
+
   /* Returns the buffer. */
   Buffer* getBuffer() const {
     Buffer* b = getPtrB();
@@ -5169,7 +5181,7 @@ class Flow : public Object,
 
   /* This method holds the logic the compute the date and quantity of a
    * flowplan. */
-  virtual pair<Date, double> getFlowplanDateQuantity(const FlowPlan*) const;
+  virtual pair<Date, double> getFlowplanDateQuantity(const FlowPlan*) const = 0;
 
   static int initialize();
 
@@ -5192,6 +5204,7 @@ class Flow : public Object,
                            &Cls::setQuantity);
     m->addDoubleField<Cls>(Tags::quantity_fixed, &Cls::getQuantityFixed,
                            &Cls::setQuantityFixed);
+    m->addDurationField<Cls>(Tags::offset, &Cls::getOffset, &Cls::setOffset);
     m->addIntField<Cls>(Tags::priority, &Cls::getPriority, &Cls::setPriority,
                         1);
     m->addStringRefField<Cls>(Tags::name, &Cls::getName, &Cls::setName);
@@ -5232,6 +5245,9 @@ class Flow : public Object,
   /* Mode to select the preferred alternates. */
   SearchMode search = PRIORITY;
 
+  /* Offset from the start or end of the operation. */
+  Duration offset;
+
   static PyObject* create(PyTypeObject* pytype, PyObject*, PyObject*);
 };
 
@@ -5246,6 +5262,12 @@ class FlowStart : public Flow {
 
   /* This constructor is called from the plan begin_element function. */
   explicit FlowStart() {}
+
+  virtual pair<Date, double> getFlowplanDateQuantity(const FlowPlan*) const;
+
+  virtual Date computeFlowToOperationDate(const OperationPlan*, Date);
+
+  virtual Date computeOperationToFlowDate(const OperationPlan*, Date);
 
   virtual const MetaClass& getType() const { return *metadata; }
   static const MetaClass* metadata;
@@ -5267,6 +5289,10 @@ class FlowEnd : public Flow {
   /* This method holds the logic the compute the date and quantity of a
    * flowplan. */
   virtual pair<Date, double> getFlowplanDateQuantity(const FlowPlan*) const;
+
+  virtual Date computeFlowToOperationDate(const OperationPlan*, Date);
+
+  virtual Date computeOperationToFlowDate(const OperationPlan*, Date);
 
   virtual void solve(Solver& s, void* v = nullptr) const { s.solve(this, v); }
 
@@ -5301,6 +5327,10 @@ class FlowTransferBatch : public Flow {
           "Transfer batch size must be greater than or equal to 0");
     transferbatch = d;
   }
+
+  virtual Date computeFlowToOperationDate(const OperationPlan*, Date);
+
+  virtual Date computeOperationToFlowDate(const OperationPlan*, Date);
 
   template <class Cls>
   static inline void registerFields(MetaClass* m) {
@@ -5396,6 +5426,14 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand {
    * The new flow must belong to the same operation.
    */
   void setItem(Item*);
+
+  inline Date computeFlowToOperationDate(Date d) {
+    return fl->computeFlowToOperationDate(oper, d);
+  }
+
+  inline Date computeOperationToFlowDate(Date d) {
+    return fl->computeOperationToFlowDate(oper, d);
+  }
 
   /* Update the operationplan.
    * This can only be called once.

@@ -321,6 +321,7 @@ AC_CONFIG_FILES([
   test/flow_alternate_3/Makefile
   test/flow_effective/Makefile
   test/flow_fixed/Makefile
+  test/flow_offset/Makefile
   test/flow_transferbatch/Makefile
   test/global_purchase/Makefile
   test/jobshop/Makefile

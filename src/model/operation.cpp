@@ -200,16 +200,22 @@ OperationPlan* Operation::createOperationPlan(double q, Date s, Date e,
   return opplan;
 }
 
-DateRange Operation::calculateOperationTime(const OperationPlan* opplan,
-                                            Date thedate, Duration duration,
-                                            bool forward,
-                                            Duration* actualduration) const {
+DateRange Operation::calculateOperationTime(
+    const OperationPlan* opplan, Date thedate, Duration duration, bool forward,
+    Duration* actualduration, bool considerResourceCalendars) const {
+  // Account for negative durations
+  if (duration < 0L) {
+    forward = !forward;
+    duration = -duration;
+  }
+
   // Default actual duration
   if (actualduration) *actualduration = duration;
 
   // Collect calendars
   Calendar::EventIterator cals[10];
-  auto numCalendars = collectCalendars(cals, thedate, opplan, forward);
+  auto numCalendars = collectCalendars(cals, thedate, opplan, forward,
+                                       considerResourceCalendars);
 
   // First case: no calendars at all
   if (!numCalendars)
@@ -440,10 +446,9 @@ DateRange Operation::calculateOperationTime(const OperationPlan* opplan,
   return result;
 }
 
-unsigned short Operation::collectCalendars(Calendar::EventIterator cals[],
-                                           Date start,
-                                           const OperationPlan* opplan,
-                                           bool forward) const {
+unsigned short Operation::collectCalendars(
+    Calendar::EventIterator cals[], Date start, const OperationPlan* opplan,
+    bool forward, bool considerResourceCalendars) const {
   unsigned short calcount = 0;
   // a) operation
   if (available)
@@ -452,6 +457,8 @@ unsigned short Operation::collectCalendars(Calendar::EventIterator cals[],
   if (loc && loc->getAvailable() && getAvailable() != loc->getAvailable())
     cals[calcount++] =
         Calendar::EventIterator(loc->getAvailable(), start, forward);
+
+  if (!considerResourceCalendars) return calcount;
 
   if (opplan && opplan->getLoadPlans() != opplan->endLoadPlans()) {
     // Iterate over loadplans
@@ -535,9 +542,9 @@ unsigned short Operation::collectCalendars(Calendar::EventIterator cals[],
   return calcount;
 }
 
-DateRange Operation::calculateOperationTime(const OperationPlan* opplan,
-                                            Date start, Date end,
-                                            Duration* actualduration) const {
+DateRange Operation::calculateOperationTime(
+    const OperationPlan* opplan, Date start, Date end, Duration* actualduration,
+    bool considerResourceCalendars) const {
   // Switch start and end if required
   if (end < start) {
     Date tmp = start;
@@ -550,7 +557,8 @@ DateRange Operation::calculateOperationTime(const OperationPlan* opplan,
 
   // Build a list of involved calendars
   Calendar::EventIterator cals[10];
-  auto numCalendars = collectCalendars(cals, start, opplan);
+  auto numCalendars =
+      collectCalendars(cals, start, opplan, considerResourceCalendars);
 
   // First case: no calendars at all
   if (!numCalendars) {

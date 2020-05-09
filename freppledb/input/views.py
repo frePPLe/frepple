@@ -6593,7 +6593,11 @@ class OperationPlanDetail(View):
                select name from item where name = %s
                )
             select
-              items.name, false, location.name, onhand.qty, orders_plus.PO,
+              items.name, 
+              false,
+              location.name, 
+              coalesce(onhand.qty,0) + coalesce(completed.quantity,0),
+              orders_plus.PO,
               coalesce(orders_plus.DO, 0) - coalesce(orders_minus.DO, 0),
               orders_plus.MO, sales.BO, sales.SO
             from items
@@ -6604,6 +6608,14 @@ class OperationPlanDetail(View):
               inner join items on items.name = buffer.item_id
               ) onhand
             on onhand.item_id = items.name and onhand.location_id = location.name
+            left outer join (
+               select opm.item_id, opm.location_id, sum(opm.quantity) as quantity
+               from operationplanmaterial opm
+               inner join operationplan op on opm.operationplan_id = op.reference
+               where op.status = 'completed'
+               group by opm.item_id, opm.location_id
+            ) completed
+            on completed.item_id = items.name and completed.location_id = location.name
             left outer join (
               select item_id, coalesce(location_id, destination_id) as location_id,
               sum(case when type = 'MO' then quantity end) as MO,
@@ -6636,7 +6648,7 @@ class OperationPlanDetail(View):
               ) sales
             on sales.item_id = items.name and sales.location_id = location.name
             where
-              onhand.qty is not null
+              (coalesce(onhand.qty,0) + coalesce(completed.quantity,0)) > 0
               or orders_plus.MO is not null
               or orders_plus.PO is not null
               or orders_plus.DO is not null

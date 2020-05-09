@@ -14,6 +14,9 @@ Release notes
 
 - | Simplified the process of 
     `translating the user interface <developer-guide/translating-the-user-interface.html>`_.
+    
+- | Network status: Completed operations are taken into account to calculate the on hand column
+    of the network status widget.
 
 .. rubric:: Integration
 

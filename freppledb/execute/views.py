@@ -796,6 +796,7 @@ def scheduletasks(request):
             obj.adjustForTimezone(-GridReport.getTimezoneOffset(request))
             obj.save(using=request.database)
             call_command("scheduletasks", database=request.database)
+            obj.adjustForTimezone(GridReport.getTimezoneOffset(request))
             return HttpResponse(
                 content=obj.next_run.strftime("%Y-%m-%d %H:%M:%S")
                 if obj.next_run

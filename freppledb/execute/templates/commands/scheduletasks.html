@@ -105,7 +105,8 @@
          <label for="schedule-{{forloop.counter}}-start" class="col-sm-3 control-label">{% trans "start time"|capfirst %}</label>
          <div class="col-sm-9">
            <input type="text" class="form-control" id="schedule-{{forloop.counter}}-at"
-             data-field="starttime" placeholder="HH:MM:SS" value="{{schedule.data.starttime|timeformat}}">
+             data-field="starttime" placeholder="HH:MM:SS"
+             {% if schedule.data.starttime < 86400 and schedule.data.starttime > 0 %}value="{{schedule.data.starttime|timeformat}}"{% endif %}>
          </div>
        </div>
        <div class="form-group">

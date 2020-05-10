@@ -1303,7 +1303,7 @@ class loadOperationMaterials(LoadTask):
                 """
                 SELECT
                   operation_id, item_id, quantity, type, effective_start, effective_end,
-                  name, priority, search, source, transferbatch, quantity_fixed, offset
+                  name, priority, search, source, transferbatch, quantity_fixed, "offset"
                 FROM operationmaterial %s
                 ORDER BY operation_id, priority, item_id
                 """

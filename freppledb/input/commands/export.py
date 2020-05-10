@@ -1254,7 +1254,7 @@ class exportOperationMaterials(PlanTask):
                 """
                 insert into operationmaterial
                 (operation_id,item_id,effective_start,quantity,type,effective_end,
-                name,priority,search,source,transferbatch,offset,lastmodified%s)
+                name,priority,search,source,transferbatch,"offset",lastmodified%s)
                 values(%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s%s)
                 on conflict (operation_id, item_id, effective_start)
                 do update set
@@ -1266,7 +1266,7 @@ class exportOperationMaterials(PlanTask):
                   search=excluded.search,
                   source=excluded.source,
                   transferbatch=excluded.transferbatch,
-                  offset=excluded.offset,
+                  "offset"=excluded."offset",
                   lastmodified=excluded.lastmodified
                   %s
                 """

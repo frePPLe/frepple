@@ -147,30 +147,32 @@ class ScheduledTask(models.Model):
     def adjustForTimezone(self, offset):
         if isinstance(offset, timedelta):
             offset = int(offset.total_seconds())
-        self.next_run += timedelta(seconds=offset)
-        self.data["starttime"] = self.data.get("starttime", 0) + offset
-        if self.data["starttime"] < 0:
-            # Starts the previous day!
-            self.data["starttime"] += 24 * 3600
-            tmp = self.data.get("monday", False)
-            self.data["monday"] = self.data.get("tuesday", False)
-            self.data["tuesday"] = self.data.get("wednesday", False)
-            self.data["wednesday"] = self.data.get("thursday", False)
-            self.data["thursday"] = self.data.get("friday", False)
-            self.data["friday"] = self.data.get("saturday", False)
-            self.data["saturday"] = self.data.get("sunday", False)
-            self.data["sunday"] = tmp
-        elif self.data["starttime"] > 24 * 3600:
-            # Starts the next day!
-            self.data["starttime"] -= 24 * 3600
-            tmp = self.data.get("sunday", False)
-            self.data["sunday"] = self.data.get("saturday", False)
-            self.data["saturday"] = self.data.get("friday", False)
-            self.data["friday"] = self.data.get("thursday", False)
-            self.data["thursday"] = self.data.get("wednesday", False)
-            self.data["wednesday"] = self.data.get("tuesday", False)
-            self.data["tuesday"] = self.data.get("monday", False)
-            self.data["monday"] = tmp
+        if self.next_run:
+            self.next_run += timedelta(seconds=offset)
+        if self.data:
+            self.data["starttime"] = self.data.get("starttime", 0) + offset
+            if self.data["starttime"] < 0:
+                # Starts the previous day!
+                self.data["starttime"] += 24 * 3600
+                tmp = self.data.get("monday", False)
+                self.data["monday"] = self.data.get("tuesday", False)
+                self.data["tuesday"] = self.data.get("wednesday", False)
+                self.data["wednesday"] = self.data.get("thursday", False)
+                self.data["thursday"] = self.data.get("friday", False)
+                self.data["friday"] = self.data.get("saturday", False)
+                self.data["saturday"] = self.data.get("sunday", False)
+                self.data["sunday"] = tmp
+            elif self.data["starttime"] > 24 * 3600:
+                # Starts the next day!
+                self.data["starttime"] -= 24 * 3600
+                tmp = self.data.get("sunday", False)
+                self.data["sunday"] = self.data.get("saturday", False)
+                self.data["saturday"] = self.data.get("friday", False)
+                self.data["friday"] = self.data.get("thursday", False)
+                self.data["thursday"] = self.data.get("wednesday", False)
+                self.data["wednesday"] = self.data.get("tuesday", False)
+                self.data["tuesday"] = self.data.get("monday", False)
+                self.data["monday"] = tmp
         return self
 
     def save(self, *args, **kwargs):

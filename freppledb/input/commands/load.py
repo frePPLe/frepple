@@ -1335,7 +1335,7 @@ class loadOperationMaterials(LoadTask):
                             curflow.transferbatch = i[10]
                     else:
                         if i[12]:
-                            curflow.offset = i[12]
+                            curflow.offset = i[12].total_seconds()
                 except Exception as e:
                     logger.error("**** %s ****" % e)
             logger.info(

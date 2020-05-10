@@ -5,9 +5,10 @@
 		This test verifies the solver behavior with offsets on material flows:
 		- 1: simplest case
 		- 2: same as 1, but with a working hour calendar hour calendar
-    - 3: same as 1, but with a extra offset on the raw material consumption 
-    - 4: same as 2, but with a extra offset on the raw material consumption
-    - 5: same as 1, but with a negative offset on the producing operation
+		- 3: same as 1, but with a negative offset on the raw material consumption
+		- 4: same as 2, but with a negative offset on the raw material consumption
+		- 5: same as 1, but with a negative offset on the producing material
+		- 6: same as 1, but with a positive offset on the consuming material
 	</description>
 	<current>2020-01-01T00:00:00</current>
 
@@ -110,22 +111,22 @@
 					<quantity>-2</quantity>
 				</flow>
 			</flows>
-      <loads>
-        <load>
-          <resource name="2. resource">
-            <location name="2. factory" />
-            <available name="2. resource availability">
-              <default>0</default>
-              <buckets>
-                <!-- 9am till 5pm -->
-                <bucket starttime="PT9H" endtime="PT17H" value="1" />
-              </buckets>
-            </available>
-            <maximum>10</maximum>
-          </resource>
-          <quantity>1</quantity>
-        </load>
-      </loads>      
+			<loads>
+				<load>
+					<resource name="2. resource">
+						<location name="2. factory" />
+						<available name="2. resource availability">
+							<default>0</default>
+							<buckets>
+								<!-- 9am till 5pm -->
+								<bucket starttime="PT9H" endtime="PT17H" value="1" />
+							</buckets>
+						</available>
+						<maximum>10</maximum>
+					</resource>
+					<quantity>1</quantity>
+				</load>
+			</loads>
 		</operation>
 		<operation name="2. produce intermediate item">
 			<item name="2. intermediate item" />
@@ -164,232 +165,304 @@
 		</demand>
 	</demands>
 
-  <!-- Case 3 -->
-  <operations>
-    <operation name="3. produce end item">
-      <item name="3. end item" />
-      <location name="3. factory" />
-      <duration>P3D</duration>
-      <flows>
-        <flow xsi:type="flow_end">
-          <item name="3. end item" />
-          <quantity>1</quantity>
-          <offset>P3D</offset>
-        </flow>
-        <flow xsi:type="flow_start">
-          <item name="3. intermediate item" />
-          <quantity>-2</quantity>
-        </flow>
-      </flows>
-      <loads>
-        <load>
-          <resource name="3. resource">
-            <location name="3. factory" />
-            <available name="3. resource availability">
-              <default>0</default>
-              <buckets>
-                <!-- 9am till 5pm -->
-                <bucket starttime="PT9H" endtime="PT17H" value="1" />
-              </buckets>
-            </available>
-            <maximum>10</maximum>
-          </resource>
-          <quantity>1</quantity>
-        </load>
-      </loads>
-    </operation>
-    <operation name="3. produce intermediate item">
-      <item name="3. intermediate item" />
-      <location name="3. factory" />
-      <duration>P1D</duration>
-      <flows>
-        <flow xsi:type="flow_end">
-          <item name="3. intermediate item" />
-          <quantity>1</quantity>
-          <offset>P3D</offset>
-        </flow>
-        <flow xsi:type="flow_start">
-          <item name="3. raw material" />
-          <offset>-P1D</offset>
-          <quantity>-3</quantity>
-        </flow>
-      </flows>
-    </operation>
-  </operations>
-  <suppliers>
-    <supplier name="3. supplier">
-      <itemsuppliers>
-        <itemsupplier>
-          <item name="3. raw material" />
-          <leadtime>P7D</leadtime>
-        </itemsupplier>
-      </itemsuppliers>
-    </supplier>
-  </suppliers>
-  <demands>
-    <demand name="3. order 1">
-      <quantity>1</quantity>
-      <due>2020-01-03T00:00:00</due>
-      <priority>11</priority>
-      <item name="3. end item" />
-      <location name="3. factory" />
-    </demand>
-  </demands>
+	<!-- Case 3 -->
+	<operations>
+		<operation name="3. produce end item">
+			<item name="3. end item" />
+			<location name="3. factory" />
+			<duration>P3D</duration>
+			<flows>
+				<flow xsi:type="flow_end">
+					<item name="3. end item" />
+					<quantity>1</quantity>
+					<offset>P3D</offset>
+				</flow>
+				<flow xsi:type="flow_start">
+					<item name="3. intermediate item" />
+					<quantity>-2</quantity>
+				</flow>
+			</flows>
+			<loads>
+				<load>
+					<resource name="3. resource">
+						<location name="3. factory" />
+						<available name="3. resource availability">
+							<default>0</default>
+							<buckets>
+								<!-- 9am till 5pm -->
+								<bucket starttime="PT9H" endtime="PT17H" value="1" />
+							</buckets>
+						</available>
+						<maximum>10</maximum>
+					</resource>
+					<quantity>1</quantity>
+				</load>
+			</loads>
+		</operation>
+		<operation name="3. produce intermediate item">
+			<item name="3. intermediate item" />
+			<location name="3. factory" />
+			<duration>P1D</duration>
+			<flows>
+				<flow xsi:type="flow_end">
+					<item name="3. intermediate item" />
+					<quantity>1</quantity>
+					<offset>P3D</offset>
+				</flow>
+				<flow xsi:type="flow_start">
+					<item name="3. raw material" />
+					<offset>-P1D</offset>
+					<quantity>-3</quantity>
+				</flow>
+			</flows>
+		</operation>
+	</operations>
+	<suppliers>
+		<supplier name="3. supplier">
+			<itemsuppliers>
+				<itemsupplier>
+					<item name="3. raw material" />
+					<leadtime>P7D</leadtime>
+				</itemsupplier>
+			</itemsuppliers>
+		</supplier>
+	</suppliers>
+	<demands>
+		<demand name="3. order 1">
+			<quantity>1</quantity>
+			<due>2020-01-03T00:00:00</due>
+			<priority>11</priority>
+			<item name="3. end item" />
+			<location name="3. factory" />
+		</demand>
+	</demands>
 
-  <!-- Case 4 -->
-  <locations>
-    <location name="4. factory">
-      <available name="4. working days">
-        <default>1</default>
-        <buckets>
-          <!-- 64 + 1 = effective on saturday and sunday -->
-          <bucket days="65" value="0" />
-        </buckets>
-      </available>
-    </location>
-  </locations>
-  <operations>
-    <operation name="4. produce end item">
-      <item name="4. end item" />
-      <location name="4. factory" />
-      <duration>P3D</duration>
-      <flows>
-        <flow xsi:type="flow_end">
-          <item name="4. end item" />
-          <quantity>1</quantity>
-          <offset>P3D</offset>
-        </flow>
-        <flow xsi:type="flow_start">
-          <item name="4. intermediate item" />
-          <quantity>-2</quantity>
-        </flow>
-      </flows>
-      <loads>
-        <load>
-          <resource name="4. resource">
-            <location name="4. factory" />
-            <available name="4. resource availability">
-              <default>0</default>
-              <buckets>
-                <!-- 9am till 5pm -->
-                <bucket starttime="PT9H" endtime="PT17H" value="1" />
-              </buckets>
-            </available>
-            <maximum>10</maximum>
-          </resource>
-          <quantity>1</quantity>
-        </load>
-      </loads>      
-    </operation>
-    <operation name="4. produce intermediate item">
-      <item name="4. intermediate item" />
-      <location name="4. factory" />
-      <duration>P1D</duration>
-      <flows>
-        <flow xsi:type="flow_end">
-          <item name="4. intermediate item" />
-          <quantity>1</quantity>
-          <offset>P3D</offset>
-        </flow>
-        <flow xsi:type="flow_start">
-          <item name="4. raw material" />
-          <offset>-P1D</offset>
-          <quantity>-3</quantity>
-        </flow>
-      </flows>
-    </operation>
-  </operations>
-  <suppliers>
-    <supplier name="4. supplier">
-      <itemsuppliers>
-        <itemsupplier>
-          <item name="4. raw material" />
-          <leadtime>P7D</leadtime>
-        </itemsupplier>
-      </itemsuppliers>
-    </supplier>
-  </suppliers>
-  <demands>
-    <demand name="4. order 1">
-      <quantity>1</quantity>
-      <due>2020-01-03T00:00:00</due>
-      <priority>11</priority>
-      <item name="4. end item" />
-      <location name="4. factory" />
-    </demand>
-  </demands>
+	<!-- Case 4 -->
+	<locations>
+		<location name="4. factory">
+			<available name="4. working days">
+				<default>1</default>
+				<buckets>
+					<!-- 64 + 1 = effective on saturday and sunday -->
+					<bucket days="65" value="0" />
+				</buckets>
+			</available>
+		</location>
+	</locations>
+	<operations>
+		<operation name="4. produce end item">
+			<item name="4. end item" />
+			<location name="4. factory" />
+			<duration>P3D</duration>
+			<flows>
+				<flow xsi:type="flow_end">
+					<item name="4. end item" />
+					<quantity>1</quantity>
+					<offset>P3D</offset>
+				</flow>
+				<flow xsi:type="flow_start">
+					<item name="4. intermediate item" />
+					<quantity>-2</quantity>
+				</flow>
+			</flows>
+			<loads>
+				<load>
+					<resource name="4. resource">
+						<location name="4. factory" />
+						<available name="4. resource availability">
+							<default>0</default>
+							<buckets>
+								<!-- 9am till 5pm -->
+								<bucket starttime="PT9H" endtime="PT17H" value="1" />
+							</buckets>
+						</available>
+						<maximum>10</maximum>
+					</resource>
+					<quantity>1</quantity>
+				</load>
+			</loads>
+		</operation>
+		<operation name="4. produce intermediate item">
+			<item name="4. intermediate item" />
+			<location name="4. factory" />
+			<duration>P1D</duration>
+			<flows>
+				<flow xsi:type="flow_end">
+					<item name="4. intermediate item" />
+					<quantity>1</quantity>
+					<offset>P3D</offset>
+				</flow>
+				<flow xsi:type="flow_start">
+					<item name="4. raw material" />
+					<offset>-P1D</offset>
+					<quantity>-3</quantity>
+				</flow>
+			</flows>
+		</operation>
+	</operations>
+	<suppliers>
+		<supplier name="4. supplier">
+			<itemsuppliers>
+				<itemsupplier>
+					<item name="4. raw material" />
+					<leadtime>P7D</leadtime>
+				</itemsupplier>
+			</itemsuppliers>
+		</supplier>
+	</suppliers>
+	<demands>
+		<demand name="4. order 1">
+			<quantity>1</quantity>
+			<due>2020-01-03T00:00:00</due>
+			<priority>11</priority>
+			<item name="4. end item" />
+			<location name="4. factory" />
+		</demand>
+	</demands>
 
-  <!-- Case 5 
-  <operations>
-    <operation name="5. produce end item">
-      <item name="5. end item" />
-      <location name="5. factory" />
-      <duration>P3D</duration>
-      <flows>
-        <flow xsi:type="flow_end">
-          <item name="5. end item" />
-          <quantity>1</quantity>
-          <offset>-P1D</offset>
-        </flow>
-        <flow xsi:type="flow_start">
-          <item name="5. intermediate item" />
-          <quantity>-2</quantity>
-        </flow>
-      </flows>
-      <loads>
-        <load>
-          <resource name="5. resource">
-            <location name="5. factory" />
-            <available name="5. resource availability">
-              <default>0</default>
-              <buckets>
-                <!- - 9am till 5pm - ->
-                <bucket starttime="PT9H" endtime="PT17H" value="1" />
-              </buckets>
-            </available>
-            <maximum>10</maximum>
-          </resource>
-          <quantity>1</quantity>
-        </load>
-      </loads>
-    </operation>
-    <operation name="5. produce intermediate item">
-      <item name="5. intermediate item" />
-      <location name="5. factory" />
-      <duration>P1D</duration>
-      <flows>
-        <flow xsi:type="flow_end">
-          <item name="5. intermediate item" />
-          <quantity>1</quantity>
-          <offset>-P1D</offset>
-        </flow>
-        <flow xsi:type="flow_start">
-          <item name="5. raw material" />
-          <quantity>-3</quantity>
-        </flow>
-      </flows>
-    </operation>
-  </operations>
-  <suppliers>
-    <supplier name="5. supplier">
-      <itemsuppliers>
-        <itemsupplier>
-          <item name="5. raw material" />
-          <leadtime>P7D</leadtime>
-        </itemsupplier>
-      </itemsuppliers>
-    </supplier>
-  </suppliers>
-  <demands>
-    <demand name="5. order 1">
-      <quantity>1</quantity>
-      <due>2020-01-03T00:00:00</due>
-      <priority>11</priority>
-      <item name="5. end item" />
-      <location name="5. factory" />
-    </demand>
-  </demands>
--->
+	<!-- Case 5 -->
+	<operations>
+		<operation name="5. produce end item">
+			<item name="5. end item" />
+			<location name="5. factory" />
+			<duration>P3D</duration>
+			<flows>
+				<flow xsi:type="flow_end">
+					<item name="5. end item" />
+					<quantity>1</quantity>
+					<offset>-P1D</offset>
+				</flow>
+				<flow xsi:type="flow_start">
+					<item name="5. intermediate item" />
+					<quantity>-2</quantity>
+				</flow>
+			</flows>
+			<loads>
+				<load>
+					<resource name="5. resource">
+						<location name="5. factory" />
+						<available name="5. resource availability">
+							<default>0</default>
+							<buckets>
+								<!-- 9am till 5pm -->
+								<bucket starttime="PT9H" endtime="PT17H" value="1" />
+							</buckets>
+						</available>
+						<maximum>10</maximum>
+					</resource>
+					<quantity>1</quantity>
+				</load>
+			</loads>
+		</operation>
+		<operation name="5. produce intermediate item">
+			<item name="5. intermediate item" />
+			<location name="5. factory" />
+			<duration>P1D</duration>
+			<flows>
+				<flow xsi:type="flow_end">
+					<item name="5. intermediate item" />
+					<quantity>1</quantity>
+					<offset>-P1D</offset>
+				</flow>
+				<flow xsi:type="flow_start">
+					<item name="5. raw material" />
+					<quantity>-3</quantity>					
+				</flow>
+			</flows>
+		</operation>
+	</operations>
+	<suppliers>
+		<supplier name="5. supplier">
+			<itemsuppliers>
+				<itemsupplier>
+					<item name="5. raw material" />
+					<leadtime>P7D</leadtime>
+				</itemsupplier>
+			</itemsuppliers>
+		</supplier>
+	</suppliers>
+	<demands>
+		<demand name="5. order 1">
+			<quantity>1</quantity>
+			<due>2020-01-03T00:00:00</due>
+			<priority>11</priority>
+			<item name="5. end item" />
+			<location name="5. factory" />
+		</demand>
+	</demands>
+
+	<!-- Case 6 -->
+	<operations>
+		<operation name="6. produce end item">
+			<item name="6. end item" />
+			<location name="6. factory" />
+			<duration>P3D</duration>
+			<flows>
+				<flow xsi:type="flow_end">
+					<item name="6. end item" />
+					<quantity>1</quantity>
+					<offset>-P1D</offset>
+				</flow>
+				<flow xsi:type="flow_start">
+					<item name="6. intermediate item" />
+					<quantity>-2</quantity>
+				</flow>
+			</flows>
+			<loads>
+				<load>
+					<resource name="6. resource">
+						<location name="6. factory" />
+						<available name="6. resource availability">
+							<default>0</default>
+							<buckets>
+								<!-- 9am till 5pm -->
+								<bucket starttime="PT9H" endtime="PT17H" value="1" />
+							</buckets>
+						</available>
+						<maximum>10</maximum>
+					</resource>
+					<quantity>1</quantity>
+				</load>
+			</loads>
+		</operation>
+		<operation name="6. produce intermediate item">
+			<item name="6. intermediate item" />
+			<location name="6. factory" />
+			<duration>P1D</duration>
+			<flows>
+				<flow xsi:type="flow_end">
+					<item name="6. intermediate item" />
+					<quantity>1</quantity>
+					<offset>-P1D</offset>
+				</flow>
+				<flow xsi:type="flow_start">
+					<item name="6. raw material" />
+					<quantity>-3</quantity>
+					<offset>P1D</offset>
+				</flow>
+			</flows>
+		</operation>
+	</operations>
+	<suppliers>
+		<supplier name="6. supplier">
+			<itemsuppliers>
+				<itemsupplier>
+					<item name="6. raw material" />
+					<leadtime>P7D</leadtime>
+				</itemsupplier>
+			</itemsuppliers>
+		</supplier>
+	</suppliers>
+	<demands>
+		<demand name="6. order 1">
+			<quantity>1</quantity>
+			<due>2020-01-03T00:00:00</due>
+			<priority>11</priority>
+			<item name="6. end item" />
+			<location name="6. factory" />
+		</demand>
+	</demands>
+
 <?python
 print("CREATING CONSTRAINED PLAN")
 frepple.solver_mrp(plantype=1, constraints=15, loglevel=2, plansafetystockfirst=True).solve()

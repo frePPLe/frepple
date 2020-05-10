@@ -74,7 +74,7 @@ offset          duration          | Time offset relative to the start or end dat
                                     -> This can be used to model a cooldown, drying or testing time. 
                                   | Eg offset is -1 day for a flow of type 'start'
                                     -> Material is consumed 1 day before the start of the manufacturing order
-                                    -> This can be used to model a material preparation or picking time. 
+                                    -> This can be used to model a material preparation or picking time.
 effective_start dateTime          | Date after which the material consumption is valid.
                                   | Before this date the planned quantity is always 0.
 effective_end   dateTime          | Date at which the material consumption becomes invalid.

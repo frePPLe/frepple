@@ -958,6 +958,12 @@ class OperationMaterial(AuditModel):
         blank=True,
         help_text=_("Batch size by in which material is produced or consumed"),
     )
+    offset = models.DurationField(
+        _("offset"),
+        null=True,
+        blank=True,
+        help_text=_("Time offset from the start or end to consume or produce material"),
+    )
 
     class Manager(MultiDBManager):
         def get_by_natural_key(self, operation, item, effective_start):

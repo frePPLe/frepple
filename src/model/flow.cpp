@@ -374,40 +374,40 @@ Date FlowEnd::computeFlowToOperationDate(const OperationPlan* opplan, Date d) {
   if (!getOffset()) return d;
   DateRange dr = getOperation()->calculateOperationTime(
       opplan, d, getOffset(), false, nullptr, getOffset() < 0L);
-  return dr.getStart();
+  return getOffset() > 0L ? dr.getStart() : dr.getEnd();
 }
 
 Date FlowEnd::computeOperationToFlowDate(const OperationPlan* opplan, Date d) {
   if (!getOffset()) return d;
   DateRange dr = getOperation()->calculateOperationTime(
       opplan, d, getOffset(), true, nullptr, getOffset() < 0L);
-  return dr.getEnd();
+  return getOffset() > 0L ? dr.getEnd() : dr.getStart();
 }
 
 Date FlowStart::computeFlowToOperationDate(const OperationPlan* opplan,
                                            Date d) {
   if (!getOffset()) return d;
   DateRange dr = getOperation()->calculateOperationTime(
-      opplan, d, getOffset(), true, nullptr, getOffset() > 0L);
-  return dr.getEnd();
+      opplan, d, getOffset(), false, nullptr, getOffset() > 0L);
+  return getOffset() > 0L ? dr.getStart() : dr.getEnd();
 }
 
 Date FlowStart::computeOperationToFlowDate(const OperationPlan* opplan,
                                            Date d) {
   if (!getOffset()) return d;
   DateRange dr = getOperation()->calculateOperationTime(
-      opplan, d, getOffset(), false, nullptr, getOffset() > 0L);
-  return dr.getStart();
+      opplan, d, getOffset(), true, nullptr, getOffset() > 0L);
+  return getOffset() > 0L ? dr.getEnd() : dr.getStart();
 }
 
 Date FlowTransferBatch::computeFlowToOperationDate(const OperationPlan* o,
                                                    Date d) {
-  throw LogicException("Method not implemented for transfer batch flows");
+  return d;
 }
 
 Date FlowTransferBatch::computeOperationToFlowDate(const OperationPlan* o,
                                                    Date d) {
-  throw LogicException("Method not implemented for transfer batch flows");
+  return d;
 }
 
 }  // namespace frepple

@@ -285,7 +285,8 @@ bool SolverCreate::checkOperation(OperationPlan* opplan,
             // for capacity constraints, this is not included.
             if (data.state->a_date < Date::infiniteFuture) {
               OperationPlanState at = opplan->setOperationPlanParameters(
-                  getAllowSplits() ? 0.01 : orig_opplan_qty, data.state->a_date,
+                  getAllowSplits() ? 0.01 : orig_opplan_qty,
+                  g->computeFlowToOperationDate(data.state->a_date),
                   Date::infinitePast, false, false, false);
               if (at.end < matnext.getEnd())
                 matnext = DateRange(at.start, at.end);

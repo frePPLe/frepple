@@ -2683,6 +2683,7 @@ class OperationMaterialList(GridReport):
         GridFieldNumber(
             "transferbatch", title=_("transfer batch quantity"), initially_hidden=True
         ),
+        GridFieldDuration("offset", title=_("offset"), initially_hidden=True),
         GridFieldNumber("quantity_fixed", title=_("fixed quantity")),
         # Operation fields
         GridFieldText(

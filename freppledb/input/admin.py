@@ -241,6 +241,7 @@ class OperationMaterial_inline(MultiDBTabularInline):
         "quantity_fixed",
         "type",
         "transferbatch",
+        "offset",
         "effective_start",
         "effective_end",
     )
@@ -752,6 +753,7 @@ class OperationMaterial_admin(MultiDBModelAdmin):
                     "quantity",
                     "quantity_fixed",
                     "transferbatch",
+                    "offset",
                     ("effective_start", "effective_end"),
                 )
             },

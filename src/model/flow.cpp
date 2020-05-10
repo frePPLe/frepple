@@ -226,12 +226,11 @@ pair<Date, double> FlowStart::getFlowplanDateQuantity(
     const FlowPlan* fl) const {
   auto offset = fl->getFlow()->getOffset();
   auto dt = fl->getOperationPlan()->getSetupEnd();
-  if (offset) {
+  if (offset && !fl->getOperationPlan()->getCompleted()) {
     DateRange d = getOperation()->calculateOperationTime(
         fl->getOperationPlan(), dt, offset, true, nullptr, offset > 0L);
     dt = offset > 0L ? d.getEnd() : d.getStart();
   }
-
   if (isConsumer() && !fl->getOperationPlan()->getConsumeMaterial())
     return make_pair(dt, 0.0);
   else if (isProducer() && !fl->getOperationPlan()->getProduceMaterial())
@@ -250,7 +249,7 @@ pair<Date, double> FlowStart::getFlowplanDateQuantity(
 pair<Date, double> FlowEnd::getFlowplanDateQuantity(const FlowPlan* fl) const {
   auto offset = fl->getFlow()->getOffset();
   auto dt = fl->getOperationPlan()->getEnd();
-  if (offset) {
+  if (offset && !fl->getOperationPlan()->getCompleted()) {
     DateRange d = getOperation()->calculateOperationTime(
         fl->getOperationPlan(), dt, offset, true, nullptr, offset < 0L);
     dt = offset > 0L ? d.getEnd() : d.getStart();
@@ -371,14 +370,14 @@ pair<Date, double> FlowTransferBatch::getFlowplanDateQuantity(
 }
 
 Date FlowEnd::computeFlowToOperationDate(const OperationPlan* opplan, Date d) {
-  if (!getOffset()) return d;
+  if (!getOffset() || (opplan && opplan->getCompleted())) return d;
   DateRange dr = getOperation()->calculateOperationTime(
       opplan, d, getOffset(), false, nullptr, getOffset() < 0L);
   return getOffset() > 0L ? dr.getStart() : dr.getEnd();
 }
 
 Date FlowEnd::computeOperationToFlowDate(const OperationPlan* opplan, Date d) {
-  if (!getOffset()) return d;
+  if (!getOffset() || (opplan && opplan->getCompleted())) return d;
   DateRange dr = getOperation()->calculateOperationTime(
       opplan, d, getOffset(), true, nullptr, getOffset() < 0L);
   return getOffset() > 0L ? dr.getEnd() : dr.getStart();
@@ -386,7 +385,7 @@ Date FlowEnd::computeOperationToFlowDate(const OperationPlan* opplan, Date d) {
 
 Date FlowStart::computeFlowToOperationDate(const OperationPlan* opplan,
                                            Date d) {
-  if (!getOffset()) return d;
+  if (!getOffset() || (opplan && opplan->getCompleted())) return d;
   DateRange dr = getOperation()->calculateOperationTime(
       opplan, d, getOffset(), false, nullptr, getOffset() > 0L);
   return getOffset() > 0L ? dr.getStart() : dr.getEnd();
@@ -394,7 +393,7 @@ Date FlowStart::computeFlowToOperationDate(const OperationPlan* opplan,
 
 Date FlowStart::computeOperationToFlowDate(const OperationPlan* opplan,
                                            Date d) {
-  if (!getOffset()) return d;
+  if (!getOffset() || (opplan && opplan->getCompleted())) return d;
   DateRange dr = getOperation()->calculateOperationTime(
       opplan, d, getOffset(), true, nullptr, getOffset() > 0L);
   return getOffset() > 0L ? dr.getEnd() : dr.getStart();

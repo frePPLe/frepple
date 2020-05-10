@@ -25,11 +25,11 @@ def populateColumns(apps, schema_editor):
     reportmodel = apps.get_model("reportmanager", "SQLReport")
     columnmodel = apps.get_model("reportmanager", "SQLColumn")
     db = schema_editor.connection.alias
-    with connections[db].cursor() as cursor:
-        for rep in reportmodel.objects.all().using(db):
-            # The query is wrapped in a dummy filter, to avoid executing the
-            # inner real query. It still generates the list of all columns.
-            try:
+    for rep in reportmodel.objects.all().using(db):
+        try:
+            with connections[db].cursor() as cursor:
+                # The query is wrapped in a dummy filter, to avoid executing the
+                # inner real query. It still generates the list of all columns.
                 cursor.execute("select * from (%s) as Q where false" % rep.sql)
                 seq = 1
                 for f in cursor.description:
@@ -49,8 +49,8 @@ def populateColumns(apps, schema_editor):
                         using=db
                     )
                     seq += 1
-            except Exception:
-                print("Error migrating report %s" % rep.name)
+        except Exception:
+            print("Error migrating report %s" % rep.name)
 
 
 class Migration(migrations.Migration):

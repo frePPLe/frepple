@@ -49,10 +49,10 @@ class SQLReport(AuditModel):
             db = getattr(_thread_locals, "database", DEFAULT_DB_ALIAS)
         SQLColumn.objects.filter(report=self).using(db).delete()
         if self.sql:
-            with connections[db].cursor() as cursor:
-                # The query is wrapped in a dummy filter, to avoid executing the
-                # inner real query. It still generates the list of all columns.
-                try:
+            try:
+                with connections[db].cursor() as cursor:
+                    # The query is wrapped in a dummy filter, to avoid executing the
+                    # inner real query. It still generates the list of all columns.
                     cursor.execute("select * from (%s) as Q where false" % self.sql)
                     seq = 1
                     for f in cursor.description:
@@ -72,8 +72,8 @@ class SQLReport(AuditModel):
                             report=self, sequence=seq, name=f[0], format=fmt
                         ).save(using=db)
                         seq += 1
-                except Exception:
-                    pass
+            except Exception:
+                pass
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)

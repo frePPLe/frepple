@@ -106,6 +106,12 @@ based on a predefined schedule.
 
 Optionally, a email can be sent out upon failure or success of the execution. 
 
+For this task to be available some configuration may be required. On Windows this task
+is a front-end for the Windows Task Scheduler, and you need to assure the user running
+the web server has access to use it. On Linux this task is a front-end for the at-command,
+and you need to edit the /etc/at.allow or /etc/at.deny file to grant access for the user
+running the apache web server.
+
 * Execution screen:  
   
   .. image:: /user-guide/user-interface/_images/execution-scheduletasks.png

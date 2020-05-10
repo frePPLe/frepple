@@ -34,6 +34,13 @@ BUFFER	6. intermediate item @ 6. factory	2020-01-07T09:00:00	2	2
 BUFFER	6. intermediate item @ 6. factory	2020-01-07T09:00:00	-2	0
 BUFFER	6. raw material @ 6. factory	2020-01-08T09:00:00	6	6
 BUFFER	6. raw material @ 6. factory	2020-01-08T09:00:00	-6	0
+BUFFER	7. intermediate item @ 7. factory	2019-12-03T00:00:00	4	4
+BUFFER	7. intermediate item @ 7. factory	2020-01-07T00:00:00	4	8
+BUFFER	7. intermediate item @ 7. factory	2020-02-07T00:00:00	4	12
+BUFFER	7. raw material @ 7. factory	2019-12-01T00:00:00	100	100
+BUFFER	7. raw material @ 7. factory	2019-12-02T00:00:00	-12	88
+BUFFER	7. raw material @ 7. factory	2020-01-03T00:00:00	-12	76
+BUFFER	7. raw material @ 7. factory	2020-02-03T00:00:00	-12	64
 DEMAND	1. order 1	2020-01-23T17:00:00	1
 DEMAND	2. order 1	2020-01-29T17:00:00	1
 DEMAND	3. order 1	2020-01-24T17:00:00	1
@@ -64,12 +71,20 @@ OPERATION	5. produce end item	2020-01-08T09:00:00	2020-01-16T17:00:00	1
 OPERATION	5. produce intermediate item	2020-01-08T09:00:00	2020-01-09T09:00:00	2
 OPERATION	6. produce end item	2020-01-07T09:00:00	2020-01-15T17:00:00	1
 OPERATION	6. produce intermediate item	2020-01-07T09:00:00	2020-01-08T09:00:00	2
+OPERATION	7. produce intermediate item	2019-12-02T00:00:00	2019-12-03T00:00:00	4	completed
+OPERATION	7. produce intermediate item	2020-01-03T00:00:00	2020-01-04T00:00:00	4	approved
+OPERATION	7. produce intermediate item	2020-02-03T00:00:00	2020-02-04T00:00:00	4	confirmed
 OPERATION	Purchase 1. raw material @ 1. factory from 1. supplier	2020-01-01T09:00:00	2020-01-08T09:00:00	6
 OPERATION	Purchase 2. raw material @ 2. factory from 2. supplier	2020-01-01T09:00:00	2020-01-08T09:00:00	6
 OPERATION	Purchase 3. raw material @ 3. factory from 3. supplier	2020-01-01T09:00:00	2020-01-08T09:00:00	6
 OPERATION	Purchase 4. raw material @ 4. factory from 4. supplier	2020-01-01T09:00:00	2020-01-08T09:00:00	6
 OPERATION	Purchase 5. raw material @ 5. factory from 5. supplier	2020-01-01T09:00:00	2020-01-08T09:00:00	6
 OPERATION	Purchase 6. raw material @ 6. factory from 6. supplier	2020-01-01T09:00:00	2020-01-08T09:00:00	6
+OPERATION	Purchase 7. raw material @ 7. factory from 7. supplier	2019-11-24T00:00:00	2019-12-01T00:00:00	100	completed
+PROBLEM	material excess	Buffer '7. intermediate item @ 7. factory' has material excess of 12	2019-12-03T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	material excess	Buffer '7. raw material @ 7. factory' has material excess of 100	2019-12-01T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	before current	Operation '7. produce intermediate item' planned in the past	2019-12-03T00:00:00 / 2020-01-01T00:00:00
+PROBLEM	before current	Operation 'Purchase 7. raw material @ 7. factory from 7. supplier' planned in the past	2019-12-01T00:00:00 / 2020-01-01T00:00:00
 PROBLEM	late	1 units of demand '1. order 1' planned up to 20.7 days after its due date	2020-01-03T00:00:00 / 2020-01-23T17:00:00
 PROBLEM	late	1 units of demand '2. order 1' planned up to 26.7 days after its due date	2020-01-03T00:00:00 / 2020-01-29T17:00:00
 PROBLEM	late	1 units of demand '3. order 1' planned up to 21.7 days after its due date	2020-01-03T00:00:00 / 2020-01-24T17:00:00

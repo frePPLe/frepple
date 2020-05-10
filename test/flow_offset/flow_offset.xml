@@ -9,6 +9,7 @@
 		- 4: same as 2, but with a negative offset on the raw material consumption
 		- 5: same as 1, but with a negative offset on the producing material
 		- 6: same as 1, but with a positive offset on the consuming material
+		- 7: test approved, confirmed and completed manufacturing orders
 	</description>
 	<current>2020-01-01T00:00:00</current>
 
@@ -463,6 +464,94 @@
 		</demand>
 	</demands>
 
+  <!-- Case 7 -->
+  <operations>
+    <operation name="7. produce end item">
+      <item name="7. end item" />
+      <location name="7. factory" />
+      <duration>P3D</duration>
+      <flows>
+        <flow xsi:type="flow_end">
+          <item name="7. end item" />
+          <quantity>1</quantity>
+          <offset>P3D</offset>
+        </flow>
+        <flow xsi:type="flow_start">
+          <item name="7. intermediate item" />
+          <quantity>-2</quantity>
+        </flow>
+      </flows>
+      <loads>
+        <load>
+          <resource name="7. resource">
+            <location name="7. factory" />
+            <available name="7. resource availability">
+              <default>0</default>
+              <buckets>
+                <!-- 9am till 5pm -->
+                <bucket starttime="PT9H" endtime="PT17H" value="1" />
+              </buckets>
+            </available>
+            <maximum>10</maximum>
+          </resource>
+          <quantity>1</quantity>
+        </load>
+      </loads>
+    </operation>
+    <operation name="7. produce intermediate item">
+      <item name="7. intermediate item" />
+      <location name="7. factory" />
+      <duration>P1D</duration>
+      <flows>
+        <flow xsi:type="flow_end">
+          <item name="7. intermediate item" />
+          <quantity>1</quantity>
+          <offset>P3D</offset>
+        </flow>
+        <flow xsi:type="flow_start">
+          <item name="7. raw material" />
+          <quantity>-3</quantity>
+        </flow>
+      </flows>
+    </operation>
+  </operations>
+  <suppliers>
+    <supplier name="7. supplier">
+      <itemsuppliers>
+        <itemsupplier>
+          <item name="7. raw material" />
+          <leadtime>P7D</leadtime>
+        </itemsupplier>
+      </itemsuppliers>
+    </supplier>
+  </suppliers>
+  <operationplans>
+    <operationplan ordertype="PO" end="2019-12-01T00:00:00"
+      quantity="100" status="completed">
+      <item name="7. raw material"/>
+      <location name="7. factory"/>
+      <supplier name="7. supplier"/>
+    </operationplan>    
+    <operationplan reference="7. approved MO">
+       <operation name="7. produce intermediate item" />
+       <quantity>4</quantity>
+       <status>approved</status>
+       <start>2020-01-03T00:00:00</start>
+    </operationplan>
+    <operationplan reference="7. confirmed MO">
+       <operation name="7. produce intermediate item" />
+       <quantity>4</quantity>
+       <status>confirmed</status>
+       <start>2020-02-03T00:00:00</start>
+    </operationplan>
+    <operationplan reference="7. completed MO">
+       <operation name="7. produce intermediate item" />
+       <quantity>4</quantity>
+       <status>completed</status>
+       <end>2019-12-03T00:00:00</end>
+    </operationplan>
+  </operationplans>
+  
 <?python
 print("CREATING CONSTRAINED PLAN")
 frepple.solver_mrp(plantype=1, constraints=15, loglevel=2, plansafetystockfirst=True).solve()

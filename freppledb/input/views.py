@@ -153,8 +153,15 @@ def search(request):
                 result.extend(
                     [
                         {
-                            "url": "/detail/%s/%s/"
+                            "url": (
+                                "/data/%s/%s/?noautofilter&parentreference="
+                                if issubclass(cls, OperationPlan)
+                                else "/detail/%s/%s/"
+                            )
                             % (cls._meta.app_label, cls._meta.object_name.lower()),
+                            "removeTrailingSlash": True
+                            if issubclass(cls, OperationPlan)
+                            else False,
                             "value": i[0],
                             "display": "%s%s"
                             % (
@@ -165,7 +172,6 @@ def search(request):
                         for i in query[:10]
                     ]
                 )
-    print(result)
     # Construct reply
     return HttpResponse(
         content_type="application/json; charset=%s" % settings.DEFAULT_CHARSET,
@@ -3598,6 +3604,14 @@ class OperationPlanMixin:
 
     @classmethod
     def operationplanExtraBasequery(cls, query, request):
+
+        # special keyword superop used for search field of operationplan
+        if "parentreference" in request.GET:
+            parentreference = request.GET["parentreference"]
+            query = query.filter(
+                Q(reference=parentreference) | Q(owner__reference=parentreference)
+            )
+
         if "freppledb.inventoryplanning" in settings.INSTALLED_APPS:
             segmentname = request.prefs.get("segment", None) if request.prefs else None
             if segmentname:
@@ -5441,6 +5455,12 @@ class DeliveryOrderList(GridReport):
     def basequeryset(reportclass, request, *args, **kwargs):
 
         q = DeliveryOrder.objects.all()
+
+        # special keyword superop used for search field of operationplan
+        if "parentreference" in request.GET:
+            parentreference = request.GET["parentreference"]
+            q = q.filter(reference=parentreference)
+
         if args and args[0]:
             path = request.path.split("/")[4]
             if path == "consumed":

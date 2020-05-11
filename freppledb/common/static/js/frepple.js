@@ -2451,7 +2451,9 @@ $(function() {
             + $.jgrid.htmlEncode(data.label) 
             + '</p><li  role="separator" class="divider"></li></span>';
         else
-          return '<li><a style="display: block" href="'+ url_prefix + data.url + admin_escape(data.value) + '/" >' 
+          return '<li><a style="display: block" href="'+ url_prefix + data.url + admin_escape(data.value) + 
+          (data.removeTrailingSlash?"":"/") +
+          '" >' 
             + $.jgrid.htmlEncode(data.display) + '</a></li>';
       },
     }

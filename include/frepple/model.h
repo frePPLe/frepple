@@ -5427,11 +5427,11 @@ class FlowPlan : public TimeLine<FlowPlan>::EventChangeOnhand {
    */
   void setItem(Item*);
 
-  inline Date computeFlowToOperationDate(Date d) {
+  inline Date computeFlowToOperationDate(Date d) const {
     return fl->computeFlowToOperationDate(oper, d);
   }
 
-  inline Date computeOperationToFlowDate(Date d) {
+  inline Date computeOperationToFlowDate(Date d) const {
     return fl->computeOperationToFlowDate(oper, d);
   }
 

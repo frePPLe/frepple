@@ -146,10 +146,17 @@ void LoadPlan::setResource(Resource* newres, bool check, bool use_start) {
   if (!newres) throw DataException("Can't switch to nullptr resource");
   if (!getLoad()) throw DataException("Can't switch setup resources");
   if (check) {
-    // New resource must be a subresource of the load's resource.
+    // New resource must be a subresource of the load's resource, or have the
+    // load name.
     bool ok = false;
-    for (const Resource* i = newres; i && !ok; i = i->getOwner())
-      if (i == getLoad()->getResource()) ok = true;
+    for (auto lditer = getOperationPlan()->getOperation()->getLoads().begin();
+         lditer != getOperationPlan()->getOperation()->getLoads().end() && !ok;
+         ++lditer) {
+      if ((getLoad()->getName().empty() ||
+           lditer->getName() == getLoad()->getName()) &&
+          newres->getTop() == lditer->getResource()->getTop())
+        ok = true;
+    }
     if (!ok)
       throw DataException(
           "Resource isn't matching the resource specified on the load");
@@ -375,20 +382,31 @@ PyObject* LoadPlan::create(PyTypeObject* pytype, PyObject* args,
       throw DataException("Invalid resource field");
     Resource* res = static_cast<Resource*>(resobject);
 
-    // Find the load on the operationplan that has the same top resource.
+    // Find the load on the operationplan that has the same top resource
+    // and the same alternate.
     // If multiple exist, we pick up the first one.
     // If none is found, we throw a data error.
-    auto ldplniter = opplan->getLoadPlans();
-    LoadPlan* ldpln;
-    while ((ldpln = ldplniter.next())) {
-      if (ldpln->getResource()->getTop() == res->getTop()) {
-        ldpln->setResource(res);
-        PyObject* statusobject = PyDict_GetItemString(kwds, "status");
-        if (statusobject) {
-          PythonData status(statusobject);
-          ldpln->setStatus(status.getString());
+    LoadPlan* ldpln = nullptr;
+    bool ok = false;
+    for (auto lditer = opplan->getOperation()->getLoads().begin();
+         lditer != opplan->getOperation()->getLoads().end() && !ok; ++lditer) {
+      if (lditer->getResource()->getTop() == res->getTop()) {
+        auto ldplniter = opplan->getLoadPlans();
+        while (!ok && (ldpln = ldplniter.next())) {
+          if ((lditer->getName().empty() &&
+               ldpln->getResource()->getTop() == res->getTop()) ||
+              (!lditer->getName().empty() &&
+               lditer->getName() == ldpln->getLoad()->getName())) {
+            ldpln->setResource(res);
+            ok = true;
+            PyObject* statusobject = PyDict_GetItemString(kwds, "status");
+            if (statusobject) {
+              PythonData status(statusobject);
+              ldpln->setStatus(status.getString());
+            }
+            break;
+          }
         }
-        break;
       }
     }
 

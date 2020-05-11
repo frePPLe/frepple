@@ -267,7 +267,7 @@ class ModelTabs(Node):
                             continue
                 # Append to the results
                 result.append(
-                    '<li %srole="presentation"><a class="ui-tabs-anchor" href="%s%s" target="_self">%s</a></li>'
+                    '<li %srole="presentation"><a class="ui-tabs-anchor" href="%s%s?noautofilter" target="_self">%s</a></li>'
                     % (
                         'class="active" ' if active_tab == tab["name"] else "",
                         context["request"].prefix,

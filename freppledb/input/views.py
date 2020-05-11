@@ -22,6 +22,7 @@ import json
 from django.conf import settings
 from django.contrib.admin.utils import unquote
 from django.contrib.admin.views.decorators import staff_member_required
+from django.core.exceptions import FieldDoesNotExist
 from django.db import connections
 from django.db.models.functions import Cast
 from django.db.models import Q, F, FloatField, DateTimeField, DurationField
@@ -79,12 +80,23 @@ def search(request):
         if request.user.has_perm(
             "%s.view_%s" % (cls._meta.app_label, cls._meta.object_name.lower())
         ) and isinstance(cls._meta.pk, CharField):
-            query = (
-                cls.objects.using(request.database)
-                .filter(pk__icontains=term)
-                .order_by("pk")
-                .values_list("pk")
-            )
+            descriptionExists = True
+            try:
+                cls._meta.get_field("description")
+                query = (
+                    cls.objects.using(request.database)
+                    .filter(Q(pk__icontains=term) | Q(description__icontains=term))
+                    .order_by("pk")
+                    .values_list("pk")
+                )
+            except FieldDoesNotExist:
+                descriptionExists = False
+                query = (
+                    cls.objects.using(request.database)
+                    .filter(pk__icontains=term)
+                    .order_by("pk")
+                    .values_list("pk")
+                )
             count = len(query)
             if count > 0:
                 result.append(

@@ -1331,6 +1331,7 @@ class PathReport(GridReport):
                     reportclass.downstream,
                     depth=0,
                     previousOperation=None,
+                    bom_quantity=1,
                 ):
                     results.append(i)
             else:

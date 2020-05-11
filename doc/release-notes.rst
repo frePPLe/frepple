@@ -24,6 +24,9 @@ Release notes
     
 - | Network status: Completed operations are taken into account to calculate the on hand column
     of the network status widget.
+    
+- | Search box: The search box in the menu looks also for a match in the description field. If
+    a description exists, it is now displayed next to the name of the object. 
 
 .. rubric:: Integration
 

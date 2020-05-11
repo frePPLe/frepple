@@ -87,7 +87,7 @@ def search(request):
                     cls.objects.using(request.database)
                     .filter(Q(pk__icontains=term) | Q(description__icontains=term))
                     .order_by("pk")
-                    .values_list("pk")
+                    .values_list("pk", "description")
                 )
             except FieldDoesNotExist:
                 descriptionExists = False
@@ -121,6 +121,11 @@ def search(request):
                             "url": "/detail/%s/%s/"
                             % (cls._meta.app_label, cls._meta.object_name.lower()),
                             "value": i[0],
+                            "display": "%s%s"
+                            % (
+                                i[0],
+                                " %s" % (i[1],) if descriptionExists and i[1] else "",
+                            ),
                         }
                         for i in query[:10]
                     ]

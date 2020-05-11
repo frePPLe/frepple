@@ -19,14 +19,17 @@ Release notes
 
 - | Supply path: Alternate operation with low priority (less preferred) will be displayed in light-blue.
 
-- | Simplified the process of 
-    `translating the user interface <developer-guide/translating-the-user-interface.html>`_.
-    
+- | Simplified the tabs on the item screen to ease navigation and give quick access to the
+    inventory report for that item.
+
 - | Network status: Completed operations are taken into account to calculate the on hand column
     of the network status widget.
     
 - | Search box: The search box in the menu looks also for a match in the description field. If
     a description exists, it is now displayed next to the name of the object. 
+
+- | Simplified the process of 
+    `translating the user interface <developer-guide/translating-the-user-interface.html>`_.
 
 .. rubric:: Integration
 

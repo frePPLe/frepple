@@ -517,6 +517,11 @@ class GridReport(View):
     # Allow to exclude time buckets in the past
     showOnlyFutureTimeBuckets = False
 
+    # Default logic: if there is an argument to the report, we always show table + graph
+    # New logic: if there is an argument, we can still choose whether or not to use table and/or graph
+    # Not very clean, but doing otherwise is backward incompatible and needs changing quite some templates :-(
+    new_arg_logic = False
+
     # Allow this report to automatically restore the previous filter
     # (unless a filter is already applied explicitly in the URL of course)
     autofilter = True
@@ -1499,7 +1504,7 @@ class GridReport(View):
                     ]
                 )
                 cross_list = cls._render_cross(request)
-            if args:
+            if args and not cls.new_arg_logic:
                 mode = "table"
             else:
                 mode = request.GET.get("mode", None)
@@ -2603,9 +2608,7 @@ class GridPivot(GridReport):
             if isinstance(cls.basequeryset, collections.Callable):
                 query = cls.query(
                     request,
-                    cls.basequeryset(request, *args, **kwargs)
-                    .filter(pk__exact=args[0])
-                    .using(request.database),
+                    cls.basequeryset(request, *args, **kwargs).using(request.database),
                     sortsql="1 asc",
                 )
             else:
@@ -2921,9 +2924,7 @@ class GridPivot(GridReport):
             if isinstance(cls.basequeryset, collections.Callable):
                 query = cls.query(
                     request,
-                    cls.basequeryset(request, *args, **kwargs)
-                    .filter(pk__exact=args[0])
-                    .using(request.database),
+                    cls.basequeryset(request, *args, **kwargs).using(request.database),
                     sortsql="1 asc",
                 )
             else:

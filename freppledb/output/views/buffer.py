@@ -40,28 +40,17 @@ class OverviewReport(GridPivot):
 
     template = "output/buffer.html"
     title = _("Inventory report")
+    new_arg_logic = True
 
     @classmethod
     def basequeryset(reportclass, request, *args, **kwargs):
+        if hasattr(request, "basequeryset"):
+            return request.basequeryset
         if len(args) and args[0]:
-            i_b_l = args[0].split(" @ ")
-            if len(i_b_l) == 1:
-                b = Buffer.objects.values("item", "location").get(id=args[0])
-                return (
-                    OperationPlanMaterial.objects.values(
-                        "item", "item__type", "location", "operationplan__batch"
-                    )
-                    .filter(item=b["item"], location=b["location"])
-                    .annotate(
-                        buffer=RawSQL("%s||' @ '||%s", (b["item"], b["location"])),
-                        opplan_batch=RawSQL(
-                            "case when item.type is distinct from 'make to order' then '' else operationplan.batch end",
-                            (),
-                        ),
-                    )
-                )
-            elif len(i_b_l) == 2:
-                return (
+            if request.path_info.startswith(
+                "/buffer/item/"
+            ) or request.path_info.startswith("/detail/input/item/"):
+                request.basequeryset = (
                     OperationPlanMaterial.objects.values(
                         "item", "item__type", "location", "operationplan__batch"
                     )
@@ -71,8 +60,7 @@ class OverviewReport(GridPivot):
                             Q(item__type="make to order")
                             & Q(operationplan__batch__isnull=False)
                         ),
-                        item__name=i_b_l[0],
-                        location__name=i_b_l[1],
+                        item__name=args[0],
                     )
                     .order_by(
                         "item_id", "item__type", "location_id", "operationplan__batch"
@@ -92,37 +80,98 @@ class OverviewReport(GridPivot):
                     )
                 )
             else:
-                return (
-                    OperationPlanMaterial.objects.values(
-                        "item", "location", "item__type", "operationplan__batch"
+                i_b_l = args[0].split(" @ ")
+                if len(i_b_l) == 1:
+                    b = Buffer.objects.values("item", "location").get(id=args[0])
+                    request.basequeryset = (
+                        OperationPlanMaterial.objects.values(
+                            "item", "item__type", "location", "operationplan__batch"
+                        )
+                        .filter(item=b["item"], location=b["location"])
+                        .annotate(
+                            buffer=RawSQL("%s||' @ '||%s", (b["item"], b["location"])),
+                            opplan_batch=RawSQL(
+                                "case when item.type is distinct from 'make to order' then '' else operationplan.batch end",
+                                (),
+                            ),
+                        )
                     )
-                    .filter(
-                        ((Q(item__type="make to stock") | Q(item__type__isnull=True)))
-                        | (
-                            Q(item__type="make to order")
-                            & Q(operationplan__batch__isnull=False)
-                        ),
-                        item__name=i_b_l[0],
-                        location__name=i_b_l[2],
-                        operationplan__batch=i_b_l[1],
+                elif len(i_b_l) == 2:
+                    request.basequeryset = (
+                        OperationPlanMaterial.objects.values(
+                            "item", "item__type", "location", "operationplan__batch"
+                        )
+                        .filter(
+                            (
+                                (
+                                    Q(item__type="make to stock")
+                                    | Q(item__type__isnull=True)
+                                )
+                            )
+                            | (
+                                Q(item__type="make to order")
+                                & Q(operationplan__batch__isnull=False)
+                            ),
+                            item__name=i_b_l[0],
+                            location__name=i_b_l[1],
+                        )
+                        .order_by(
+                            "item_id",
+                            "item__type",
+                            "location_id",
+                            "operationplan__batch",
+                        )
+                        .distinct()
+                        .annotate(
+                            buffer=RawSQL(
+                                "operationplanmaterial.item_id || "
+                                "(case when item.type is distinct from 'make to order' then '' else ' @ ' || operationplan.batch end) "
+                                "|| ' @ ' || operationplanmaterial.location_id",
+                                (),
+                            ),
+                            opplan_batch=RawSQL(
+                                "case when item.type is distinct from 'make to order' then '' else operationplan.batch end",
+                                (),
+                            ),
+                        )
                     )
-                    .order_by("item_id", "location_id", "operationplan__batch")
-                    .distinct()
-                    .annotate(
-                        buffer=RawSQL(
-                            "operationplanmaterial.item_id || "
-                            "(case when item.type is distinct from 'make to order' then '' else ' @ ' || operationplan.batch end) "
-                            "|| ' @ ' || operationplanmaterial.location_id",
-                            (),
-                        ),
-                        opplan_batch=RawSQL(
-                            "case when item.type is distinct from 'make to order' then '' else operationplan.batch end",
-                            (),
-                        ),
+                else:
+                    request.basequeryset = (
+                        OperationPlanMaterial.objects.values(
+                            "item", "location", "item__type", "operationplan__batch"
+                        )
+                        .filter(
+                            (
+                                (
+                                    Q(item__type="make to stock")
+                                    | Q(item__type__isnull=True)
+                                )
+                            )
+                            | (
+                                Q(item__type="make to order")
+                                & Q(operationplan__batch__isnull=False)
+                            ),
+                            item__name=i_b_l[0],
+                            location__name=i_b_l[2],
+                            operationplan__batch=i_b_l[1],
+                        )
+                        .order_by("item_id", "location_id", "operationplan__batch")
+                        .distinct()
+                        .annotate(
+                            buffer=RawSQL(
+                                "operationplanmaterial.item_id || "
+                                "(case when item.type is distinct from 'make to order' then '' else ' @ ' || operationplan.batch end) "
+                                "|| ' @ ' || operationplanmaterial.location_id",
+                                (),
+                            ),
+                            opplan_batch=RawSQL(
+                                "case when item.type is distinct from 'make to order' then '' else operationplan.batch end",
+                                (),
+                            ),
+                        )
                     )
-                )
         else:
-            return (
+            request.basequeryset = (
                 OperationPlanMaterial.objects.values(
                     "item", "location", "item__type", "operationplan__batch"
                 )
@@ -150,6 +199,7 @@ class OverviewReport(GridPivot):
                     ),
                 )
             )
+        return request.basequeryset
 
     model = OperationPlanMaterial
     default_sort = (1, "asc", 2, "asc")
@@ -323,23 +373,40 @@ class OverviewReport(GridPivot):
 
     @classmethod
     def extra_context(reportclass, request, *args, **kwargs):
+        if not hasattr(request, "basequeryset"):
+            reportclass.basequeryset(request, *args, **kwargs)
         if args and args[0]:
-            request.session["lasttab"] = "plan"
-
-            index = args[0].find(" @ ")
-            if index == -1:
-                buffer = Buffer.objects.get(id=args[0])
-
-            return {
-                "title": force_text(Buffer._meta.verbose_name)
-                + " "
-                + (
-                    args[0]
-                    if index != -1
-                    else buffer.item.name + " @ " + buffer.location.name
-                ),
-                "post_title": _("plan"),
-            }
+            if request.path_info.startswith(
+                "/buffer/item/"
+            ) or request.path_info.startswith("/detail/input/item/"):
+                request.session["lasttab"] = "inventory"
+                r = {
+                    "title": force_text(Item._meta.verbose_name) + " " + args[0],
+                    "post_title": _("inventory"),
+                    "active_tab": "inventory",
+                }
+                if request.basequeryset.using(request.database).count() <= 1:
+                    r["args"] = args
+                    r["mode"] = "table"
+                else:
+                    r["args"] = None
+                return r
+            else:
+                request.session["lasttab"] = "plan"
+                index = args[0].find(" @ ")
+                if index == -1:
+                    buffer = Buffer.objects.get(id=args[0])
+                return {
+                    "title": force_text(Buffer._meta.verbose_name)
+                    + " "
+                    + (
+                        args[0]
+                        if index != -1
+                        else buffer.item.name + " @ " + buffer.location.name
+                    ),
+                    "post_title": _("plan"),
+                    "active_tab": "plan",
+                }
         else:
             return {}
 

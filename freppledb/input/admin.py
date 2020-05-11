@@ -285,24 +285,14 @@ class Item_admin(MultiDBModelAdmin):
         {"name": "whereused", "label": _("where used"), "view": "whereused_item"},
         {"name": "plan", "label": _("plan"), "view": "output_demand_plandetail"},
         {
-            "name": "deliveryorders",
-            "label": _("delivery orders"),
-            "view": "input_deliveryorder_by_item",
+            "name": "inventory",
+            "label": _("inventory"),
+            "view": "output_buffer_plandetail_by_item",
         },
         {
-            "name": "manufacturingorders",
-            "label": _("manufacturing orders"),
-            "view": "input_manufacturingorder_by_item",
-        },
-        {
-            "name": "purchaseorders",
-            "label": _("purchase orders"),
-            "view": "input_purchaseorder_by_item",
-        },
-        {
-            "name": "distributionorders",
-            "label": _("distribution orders"),
-            "view": "input_distributionorder_by_item",
+            "name": "inventorydetail",
+            "label": _("inventory detail"),
+            "view": "input_flowplan_plandetail_by_item",
         },
         {
             "name": "comments",

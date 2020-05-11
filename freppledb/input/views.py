@@ -3613,23 +3613,6 @@ class OperationPlanMixin:
                 Q(reference=parentreference) | Q(owner__reference=parentreference)
             )
 
-        if "freppledb.inventoryplanning" in settings.INSTALLED_APPS:
-            segmentname = request.prefs.get("segment", None) if request.prefs else None
-            if segmentname:
-                try:
-                    segment = (
-                        Segment.objects.all()
-                        .using(request.database)
-                        .get(pk=segmentname)
-                    )
-                    query = query.extra(
-                        where=[
-                            "exists ( %s and operationplan.item_id = item.name and operationplan.destination_id = location.name)"
-                            % segment.getQuery()
-                        ]
-                    )
-                except Segment.DoesNotExist:
-                    pass
         if "freppledb.forecast" in settings.INSTALLED_APPS:
             return query.annotate(
                 demands=RawSQL(
@@ -5547,20 +5530,25 @@ class InventoryDetail(OperationPlanMixin, GridReport):
     @classmethod
     def basequeryset(reportclass, request, *args, **kwargs):
         if len(args) and args[0]:
-            i_b_l = args[0].split(" @ ")
-            if len(i_b_l) == 1:
-                buffer = Buffer.objects.get(id=args[0])
-                base = OperationPlanMaterial.objects.filter(
-                    item=buffer.item.name, location=buffer.location.name
-                )
-            elif len(i_b_l) == 2:
-                base = OperationPlanMaterial.objects.filter(
-                    item=i_b_l[0], location=i_b_l[1]
-                )
+            if request.path_info.startswith(
+                "/flowplan/item/"
+            ) or request.path_info.startswith("/detail/input/item/"):
+                base = OperationPlanMaterial.objects.filter(item=args[0])
             else:
-                base = OperationPlanMaterial.objects.filter(
-                    item=i_b_l[0], location=i_b_l[2], operationplan__batch=i_b_l[1]
-                )
+                i_b_l = args[0].split(" @ ")
+                if len(i_b_l) == 1:
+                    buffer = Buffer.objects.get(id=args[0])
+                    base = OperationPlanMaterial.objects.filter(
+                        item=buffer.item.name, location=buffer.location.name
+                    )
+                elif len(i_b_l) == 2:
+                    base = OperationPlanMaterial.objects.filter(
+                        item=i_b_l[0], location=i_b_l[1]
+                    )
+                else:
+                    base = OperationPlanMaterial.objects.filter(
+                        item=i_b_l[0], location=i_b_l[2], operationplan__batch=i_b_l[1]
+                    )
         else:
             base = OperationPlanMaterial.objects
         base = reportclass.operationplanExtraBasequery(base, request)
@@ -5573,25 +5561,36 @@ class InventoryDetail(OperationPlanMixin, GridReport):
     @classmethod
     def extra_context(reportclass, request, *args, **kwargs):
         if args and args[0]:
-            request.session["lasttab"] = "plandetail"
-            dlmtr = args[0].find(" @ ")
-            if dlmtr != -1:
-                item = args[0][:dlmtr]
-                location = args[0][dlmtr + 3 :]
+            if request.path_info.startswith(
+                "/flowplan/item/"
+            ) or request.path_info.startswith("/detail/input/item/"):
+                request.session["lasttab"] = "inventorydetail"
+                return {
+                    "active_tab": "inventorydetail",
+                    "model": Item,
+                    "title": force_text(Item._meta.verbose_name) + " " + args[0],
+                    "post_title": _("inventory detail"),
+                }
             else:
-                buffer = Buffer.objects.get(id=args[0])
-                item = buffer.item.name
-                location = buffer.location.name
-            return {
-                "active_tab": "plandetail",
-                "model": Buffer,
-                "title": force_text(Buffer._meta.verbose_name)
-                + " "
-                + item
-                + " @ "
-                + location,
-                "post_title": _("plan detail"),
-            }
+                request.session["lasttab"] = "plandetail"
+                dlmtr = args[0].find(" @ ")
+                if dlmtr != -1:
+                    item = args[0][:dlmtr]
+                    location = args[0][dlmtr + 3 :]
+                else:
+                    buffer = Buffer.objects.get(id=args[0])
+                    item = buffer.item.name
+                    location = buffer.location.name
+                return {
+                    "active_tab": "plandetail",
+                    "model": Buffer,
+                    "title": force_text(Buffer._meta.verbose_name)
+                    + " "
+                    + item
+                    + " @ "
+                    + location,
+                    "post_title": _("plan detail"),
+                }
         else:
             return {"active_tab": "plandetail", "model": OperationPlanMaterial}
 

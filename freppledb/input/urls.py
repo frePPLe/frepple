@@ -236,6 +236,11 @@ urlpatterns = [
         name="input_deliveryorder_changelist",
     ),
     url(
+        r"^flowplan/item/(.+)/$",
+        freppledb.input.views.InventoryDetail.as_view(),
+        name="input_flowplan_plandetail_by_item",
+    ),
+    url(
         r"^flowplan/(.+)/$",
         freppledb.input.views.InventoryDetail.as_view(),
         name="input_flowplan_plandetail",

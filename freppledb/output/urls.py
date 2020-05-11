@@ -31,6 +31,11 @@ autodiscover = True
 
 urlpatterns = [
     url(
+        r"^buffer/item/(.+)/$",
+        freppledb.output.views.buffer.OverviewReport.as_view(),
+        name="output_buffer_plandetail_by_item",
+    ),
+    url(
         r"^buffer/(.+)/$",
         freppledb.output.views.buffer.OverviewReport.as_view(),
         name="output_buffer_plandetail",

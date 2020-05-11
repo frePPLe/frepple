@@ -114,7 +114,7 @@ class Command(BaseCommand):
                 task.started
                 or task.finished
                 or task.status != "Waiting"
-                or task.name not in ("frepple_copy", "scenario_copy")
+                or task.name != "scenario_copy"
             ):
                 raise CommandError("Invalid task identifier")
             task.status = "0%"

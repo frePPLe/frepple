@@ -363,7 +363,7 @@ class OverviewReport(GridPivot):
                     "available_calendar": row[18],
                     "owner": row[19],
                     "bucket": row[numfields - 6],
-                    "startdate": row[numfields - 5].date(),
+                    "startdate": row[numfields - 5],
                     "available": row[numfields - 4],
                     "unavailable": row[numfields - 3],
                     "load": row[numfields - 2],

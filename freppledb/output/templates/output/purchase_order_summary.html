@@ -332,7 +332,7 @@ function crosses (cellvalue, options, rowdata)
             + '&amp;location__name=' + admin_escape(rowdata['location']) 
             + '&amp;supplier__name=' + admin_escape(rowdata['supplier'])                
             + '&startdate__lt=' + options['colModel']['enddate']
-            + '&amp;startdate__gte=' + options['colModel']['enddate']
+            + '&amp;enddate__gte=' + options['colModel']['enddate']
             + '">&nbsp;<span class="context cross fa fa-caret-right"></span></a><br>';
         else
           result += '0<br>';

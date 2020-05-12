@@ -387,8 +387,8 @@ function crosses (cellvalue, options, rowdata)
           result += grid.formatNumber(cellvalue[2]) +
             '<a href="{{ request.prefix }}/data/input/manufacturingorder/?noautofilter' +
             '&amp;operation__name=' + admin_escape(rowdata['operation']) +
-            '&amp;enddate__gt=' + options['colModel']['startdate'] +
-            '&amp;enddate__lte=' + options['colModel']['enddate'] +
+            '&amp;enddate__gte=' + options['colModel']['startdate'] +
+            '&amp;enddate__lt=' + options['colModel']['enddate'] +
             '&amp;status=proposed">&nbsp;<span class="context cross fa fa-caret-right"></span></a><br>';
         else
           result += '0<br>';
@@ -398,8 +398,8 @@ function crosses (cellvalue, options, rowdata)
           result += grid.formatNumber(cellvalue[3]) +
             '<a href="{{ request.prefix }}/data/input/manufacturingorder/?noautofilter' +
             '&amp;operation__name=' + admin_escape(rowdata['operation']) +
-            '&amp;enddate__gt=' + options['colModel']['startdate'] +
-            '&amp;enddate__lte=' + options['colModel']['enddate'] +
+            '&amp;enddate__gte=' + options['colModel']['startdate'] +
+            '&amp;enddate__lt=' + options['colModel']['enddate'] +
             '">&nbsp;<span class="context cross fa fa-caret-right"></span></a><br>';
         else
           result += '0<br>';

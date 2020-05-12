@@ -2461,16 +2461,6 @@ class GridPivot(GridReport):
                 count += 1
             except IndexError:
                 pass
-        if mode == "graph":
-            result.append(
-                '{"name":"graph","index":"graph","editable":false,"label":" ","title":false,'
-                '"sortable":false,"formatter":"graph","searchoptions":{"searchhidden": true},"fixed":false}'
-            )
-        else:
-            result.append(
-                '{"name":"columns","label":" ","sortable":false,"width":150,"align":"left",'
-                '"formatter":grid.pivotcolumns,"search":false,"frozen":true,"title":false }'
-            )
         return ",\n".join(result)
 
     @classmethod

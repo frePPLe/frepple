@@ -39,9 +39,12 @@ $(function() {
 	  datatype: "json",
 	  jsonReader : {repeatitems:false},
    	colModel:[
-      {{colmodel|safe}}{% if mode == "table" %},
+      {{colmodel|safe}},{% if mode == "table" %}
+      {"name":"columns","label":" ","sortable":false,"width":150,"align":"left","formatter":grid.pivotcolumns,"search":false,"frozen":true,"title":false },
       {% for f in request.report_bucketlist %}{% if not forloop.first %},
       {% endif %}{ name:'{{f.name|safe}}',startdate:'{{f.startdate|date:"Y-m-d"}}',enddate:'{{f.enddate|date:"Y-m-d"}}',sortable:false,width:90,align:'center',formatter:crosses,search:false,title:false }{% endfor %}
+      {% else %}
+      {"name":"graph","index":"graph","editable":false,"label":" ","title":false,"sortable":false,"formatter":"graph","searchoptions":{"searchhidden": true},"fixed":false}
       {% endif %}],{% if reportclass.editable and haschangeperm %}
     cellsubmit: 'clientArray',
     editurl: location.pathname,

@@ -541,17 +541,29 @@ PyObject* LoadPlanIterator::iternext() {
 }
 
 LoadPlan::AlternateIterator::AlternateIterator(const LoadPlan* o) : ldplan(o) {
-  if (ldplan->getLoad() && ldplan->getLoad()->getResource()->isGroup()) {
-    for (Resource::memberRecursiveIterator i(ldplan->getLoad()->getResource());
-         !i.empty(); ++i) {
-      if (ldplan->getResource() == &*i || i->isGroup()) continue;
-      Skill* sk = ldplan->getLoad()->getSkill();
-      if (!sk || i->hasSkill(sk, ldplan->getDate(), ldplan->getDate())) {
-        auto my_eff = i->getEfficiencyCalendar()
-                          ? i->getEfficiencyCalendar()->getValue(
-                                ldplan->getOperationPlan()->getStart())
-                          : i->getEfficiency();
-        if (my_eff > 0.0) resources.push_back(&*i);
+  // There are 2 types of alternates:
+  // - loads with the same name
+  // - subresources of a resource group
+  auto l = ldplan->getLoad();
+  if (l) {
+    for (auto lditer = l->getOperation()->getLoads().begin();
+         lditer != l->getOperation()->getLoads().end(); ++lditer) {
+      if (l->getName().empty()) {
+        if (l != &*lditer || !l->getResource()->isGroup()) continue;
+      } else {
+        if (l->getName() != lditer->getName()) continue;
+      }
+      for (Resource::memberRecursiveIterator i(lditer->getResource());
+           !i.empty(); ++i) {
+        if (ldplan->getResource() == &*i || i->isGroup()) continue;
+        Skill* sk = lditer->getSkill();
+        if (!sk || i->hasSkill(sk, ldplan->getDate(), ldplan->getDate())) {
+          auto my_eff = i->getEfficiencyCalendar()
+                            ? i->getEfficiencyCalendar()->getValue(
+                                  ldplan->getOperationPlan()->getStart())
+                            : i->getEfficiency();
+          if (my_eff > 0.0) resources.push_back(&*i);
+        }
       }
     }
   }

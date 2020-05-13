@@ -46,159 +46,65 @@ class OverviewReport(GridPivot):
     def basequeryset(reportclass, request, *args, **kwargs):
         if hasattr(request, "basequeryset"):
             return request.basequeryset
+
+        item = None
+        location = None
+        batch = None
+
         if len(args) and args[0]:
             if request.path_info.startswith(
                 "/buffer/item/"
             ) or request.path_info.startswith("/detail/input/item/"):
-                request.basequeryset = (
-                    OperationPlanMaterial.objects.values(
-                        "item", "item__type", "location", "operationplan__batch"
-                    )
-                    .filter(
-                        ((Q(item__type="make to stock") | Q(item__type__isnull=True)))
-                        | (
-                            Q(item__type="make to order")
-                            & Q(operationplan__batch__isnull=False)
-                        ),
-                        item__name=args[0],
-                    )
-                    .order_by(
-                        "item_id", "item__type", "location_id", "operationplan__batch"
-                    )
-                    .distinct()
-                    .annotate(
-                        buffer=RawSQL(
-                            "operationplanmaterial.item_id || "
-                            "(case when item.type is distinct from 'make to order' then '' else ' @ ' || operationplan.batch end) "
-                            "|| ' @ ' || operationplanmaterial.location_id",
-                            (),
-                        ),
-                        opplan_batch=RawSQL(
-                            "case when item.type is distinct from 'make to order' then '' else operationplan.batch end",
-                            (),
-                        ),
-                    )
-                )
+                item = args[0]
             else:
                 i_b_l = args[0].split(" @ ")
                 if len(i_b_l) == 1:
                     b = Buffer.objects.values("item", "location").get(id=args[0])
-                    request.basequeryset = (
-                        OperationPlanMaterial.objects.values(
-                            "item", "item__type", "location", "operationplan__batch"
-                        )
-                        .filter(item=b["item"], location=b["location"])
-                        .annotate(
-                            buffer=RawSQL("%s||' @ '||%s", (b["item"], b["location"])),
-                            opplan_batch=RawSQL(
-                                "case when item.type is distinct from 'make to order' then '' else operationplan.batch end",
-                                (),
-                            ),
-                        )
-                    )
+                    item = b["item"]
+                    location = b["location"]
                 elif len(i_b_l) == 2:
-                    request.basequeryset = (
-                        OperationPlanMaterial.objects.values(
-                            "item", "item__type", "location", "operationplan__batch"
-                        )
-                        .filter(
-                            (
-                                (
-                                    Q(item__type="make to stock")
-                                    | Q(item__type__isnull=True)
-                                )
-                            )
-                            | (
-                                Q(item__type="make to order")
-                                & Q(operationplan__batch__isnull=False)
-                            ),
-                            item__name=i_b_l[0],
-                            location__name=i_b_l[1],
-                        )
-                        .order_by(
-                            "item_id",
-                            "item__type",
-                            "location_id",
-                            "operationplan__batch",
-                        )
-                        .distinct()
-                        .annotate(
-                            buffer=RawSQL(
-                                "operationplanmaterial.item_id || "
-                                "(case when item.type is distinct from 'make to order' then '' else ' @ ' || operationplan.batch end) "
-                                "|| ' @ ' || operationplanmaterial.location_id",
-                                (),
-                            ),
-                            opplan_batch=RawSQL(
-                                "case when item.type is distinct from 'make to order' then '' else operationplan.batch end",
-                                (),
-                            ),
-                        )
-                    )
+                    item = i_b_l[0]
+                    location = i_b_l[1]
                 else:
-                    request.basequeryset = (
-                        OperationPlanMaterial.objects.values(
-                            "item", "location", "item__type", "operationplan__batch"
-                        )
-                        .filter(
-                            (
-                                (
-                                    Q(item__type="make to stock")
-                                    | Q(item__type__isnull=True)
-                                )
-                            )
-                            | (
-                                Q(item__type="make to order")
-                                & Q(operationplan__batch__isnull=False)
-                            ),
-                            item__name=i_b_l[0],
-                            location__name=i_b_l[2],
-                            operationplan__batch=i_b_l[1],
-                        )
-                        .order_by("item_id", "location_id", "operationplan__batch")
-                        .distinct()
-                        .annotate(
-                            buffer=RawSQL(
-                                "operationplanmaterial.item_id || "
-                                "(case when item.type is distinct from 'make to order' then '' else ' @ ' || operationplan.batch end) "
-                                "|| ' @ ' || operationplanmaterial.location_id",
-                                (),
-                            ),
-                            opplan_batch=RawSQL(
-                                "case when item.type is distinct from 'make to order' then '' else operationplan.batch end",
-                                (),
-                            ),
-                        )
-                    )
-        else:
-            request.basequeryset = (
-                OperationPlanMaterial.objects.values(
-                    "item", "location", "item__type", "operationplan__batch"
-                )
-                .order_by(
-                    "item_id", "location_id", "item__type", "operationplan__batch"
-                )
-                .distinct()
-                .filter(
-                    ((Q(item__type="make to stock") | Q(item__type__isnull=True)))
-                    | (
-                        Q(item__type="make to order")
-                        & Q(operationplan__batch__isnull=False)
-                    )
-                )
-                .annotate(
-                    buffer=RawSQL(
-                        "operationplanmaterial.item_id || "
-                        "(case when item.type is distinct from 'make to order' then '' else ' @ ' || operationplan.batch end) "
-                        "|| ' @ ' || operationplanmaterial.location_id",
-                        (),
-                    ),
-                    opplan_batch=RawSQL(
-                        "case when item.type is distinct from 'make to order' then '' else operationplan.batch end",
-                        (),
-                    ),
-                )
+                    item = i_b_l[0]
+                    location = i_b_l[2]
+                    batch = i_b_l[1]
+
+        request.basequeryset = OperationPlanMaterial.objects.values(
+            "item", "location", "item__type"
+        ).filter(
+            ((Q(item__type="make to stock") | Q(item__type__isnull=True)))
+            | (Q(item__type="make to order") & Q(operationplan__batch__isnull=False))
+        )
+
+        if item:
+            request.basequeryset = request.basequeryset.filter(item=item)
+
+        if location:
+            request.basequeryset = request.basequeryset.filter(location=location)
+
+        if batch:
+            request.basequeryset = request.basequeryset.filter(
+                operationplan__batch=batch
             )
+
+        request.basequeryset = (
+            request.basequeryset.distinct()
+            .annotate(
+                buffer=RawSQL(
+                    "operationplanmaterial.item_id || "
+                    "(case when item.type is distinct from 'make to order' then '' else ' @ ' || operationplan.batch end) "
+                    "|| ' @ ' || operationplanmaterial.location_id",
+                    (),
+                ),
+                opplan_batch=RawSQL(
+                    "case when item.type is distinct from 'make to order' then '' else operationplan.batch end",
+                    (),
+                ),
+            )
+            .distinct()
+        )
+
         return request.basequeryset
 
     model = OperationPlanMaterial
@@ -449,7 +355,7 @@ class OverviewReport(GridPivot):
              on operationplanmaterial.operationplan_id = operationplan.reference
            where operationplanmaterial.item_id = item.name
              and operationplanmaterial.location_id = location.name
-             and (item.type is distinct from 'make to order' or operationplan.batch is not distinct from opplanmat.batch)
+             and (item.type is distinct from 'make to order' or operationplan.batch is not distinct from opplanmat.opplan_batch)
              and flowdate < greatest(d.startdate,%%s)
            order by flowdate desc, id desc limit 1) startoh,
            d.bucket,
@@ -473,7 +379,7 @@ class OverviewReport(GridPivot):
                  from buffer
                  where item_id = item.name
                  and location_id = location.name
-                 and (item.type is distinct from 'make to order' or buffer.batch is not distinct from opplanmat.batch)
+                 and (item.type is distinct from 'make to order' or buffer.batch is not distinct from opplanmat.opplan_batch)
                  )
                and greatest(d.startdate,%%s) >= startdate
                and greatest(d.startdate,%%s) < enddate
@@ -485,7 +391,7 @@ class OverviewReport(GridPivot):
                  from buffer
                  where item_id = item.name
                  and location_id = location.name
-                 and (item.type is distinct from 'make to order' or buffer.batch is not distinct from opplanmat.batch)
+                 and (item.type is distinct from 'make to order' or buffer.batch is not distinct from opplanmat.opplan_batch)
                  )
               )
             ) as safetystock
@@ -494,7 +400,7 @@ class OverviewReport(GridPivot):
             from buffer
             where item_id = item.name
             and location_id = location.name
-            and (item.type is distinct from 'make to order' or buffer.batch is not distinct from opplanmat.batch)
+            and (item.type is distinct from 'make to order' or buffer.batch is not distinct from opplanmat.opplan_batch)
             ) t
             where t.safetystock is not null
             order by priority
@@ -520,7 +426,7 @@ class OverviewReport(GridPivot):
                or (opm.flowdate >= greatest(d.startdate,%%s) and opm.flowdate < d.enddate))
              where opm.item_id = item.name
                and opm.location_id = location.name
-               and (item.type is distinct from 'make to order' or operationplan.batch is not distinct from opplanmat.batch)
+               and (item.type is distinct from 'make to order' or operationplan.batch is not distinct from opplanmat.opplan_batch)
            ) ongoing
            from
            (%s) opplanmat
@@ -536,7 +442,6 @@ class OverviewReport(GridPivot):
            opplanmat.buffer,
            item.name,
            location.name,
-           opplanmat.batch,
            item.description,
            item.type,
            item.category,

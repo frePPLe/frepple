@@ -2158,20 +2158,40 @@ class ManufacturingOrder(OperationPlan):
             def save(self, commit=True):
                 instance = super(MO_form, self).save(commit=False)
                 try:
+                    opreslist = [
+                        r
+                        for r in instance.operation.operationresources.all().select_related(
+                            "resource"
+                        )
+                    ]
                     for res in self.cleaned_data["resource"]:
+                        newopres = None
+                        for o in opreslist:
+                            if o.resource.lft <= res.lft < o.resource.rght:
+                                newopres = o
+                                break
                         for opplanres in instance.resources.all().select_related(
                             "resource"
                         ):
-                            top_rsrc = (
-                                Resource.objects.all()
-                                .using(database)
-                                .get(
-                                    lvl=0,
-                                    lft__lte=opplanres.resource.lft,
-                                    rght__gte=opplanres.resource.rght,
+                            oldopres = None
+                            for o in opreslist:
+                                if (
+                                    o.resource.lft
+                                    <= opplanres.resource.lft
+                                    < o.resource.rght
+                                ):
+                                    oldopres = o
+                                    break
+                            if (
+                                oldopres
+                                and newopres
+                                and (
+                                    oldopres.id == newopres.id
+                                    or (
+                                        oldopres.name == newopres.name and newopres.name
+                                    )
                                 )
-                            )
-                            if top_rsrc == res.top_rsrc:
+                            ):
                                 opplanres.resource = res
                                 opplanres.save(using=database)
                                 break

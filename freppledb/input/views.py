@@ -6617,20 +6617,29 @@ class OperationPlanDetail(View):
                     if opplan.operation:
                         cursor.execute(
                             """
-              with req as (
-                select resource_id, resource.lft, resource.rght, skill_id
-                from operationresource
-                inner join resource on resource.name = operationresource.resource_id
-                where operation_id = %s
-                )
-              select req.resource_id, resource.name from req
-              inner join resource on resource.lft between req.lft and req.rght and resource.rght = resource.lft + 1
-              where (req.skill_id is null or exists (
-                select 1 from resourceskill
-                where resourceskill.resource_id = resource.name
-                  and resourceskill.skill_id = req.skill_id
-                ))
-              """,
+                            select res_children.name, alt_res_children.name
+                            from operationresource
+                            inner join resource
+                              on  resource.name = operationresource.resource_id
+                            inner join resource res_children
+                              on  res_children.lft between resource.lft and resource.rght
+                              and res_children.rght = res_children.lft + 1
+                            inner join operationresource alt_opres
+                              on ((operationresource.name is not null and operationresource.name = alt_opres.name)
+                              or (operationresource.name is null and operationresource.id = alt_opres.id))
+                              and operationresource.operation_id = alt_opres.operation_id
+                            inner join resource alt_res
+                              on alt_opres.resource_id = alt_res.name
+                            inner join resource alt_res_children
+                               on alt_res_children.lft between alt_res.lft and alt_res.rght
+                               and alt_res_children.rght = alt_res_children.lft + 1
+                            where (operationresource.skill_id is null or exists (
+                               select 1 from resourceskill
+                               where resourceskill.resource_id = alt_res_children.name
+                               and resourceskill.skill_id = alt_opres.skill_id
+                               ))
+                            and operationresource.operation_id = %s
+                            """,
                             (opplan.operation.name,),
                         )
                         for i in cursor.fetchall():
@@ -6662,75 +6671,75 @@ class OperationPlanDetail(View):
                 if opplan.item_id:
                     cursor.execute(
                         """
-            with items as (
-               select name from item where name = %s
-               )
-            select
-              items.name, 
-              false,
-              location.name, 
-              coalesce(onhand.qty,0) + coalesce(completed.quantity,0),
-              orders_plus.PO,
-              coalesce(orders_plus.DO, 0) - coalesce(orders_minus.DO, 0),
-              orders_plus.MO, sales.BO, sales.SO
-            from items
-            cross join location
-            left outer join (
-              select item_id, location_id, onhand as qty
-              from buffer
-              inner join items on items.name = buffer.item_id
-              ) onhand
-            on onhand.item_id = items.name and onhand.location_id = location.name
-            left outer join (
-               select opm.item_id, opm.location_id, sum(opm.quantity) as quantity
-               from operationplanmaterial opm
-               inner join operationplan op on opm.operationplan_id = op.reference
-               where op.status = 'completed'
-               group by opm.item_id, opm.location_id
-            ) completed
-            on completed.item_id = items.name and completed.location_id = location.name
-            left outer join (
-              select item_id, coalesce(location_id, destination_id) as location_id,
-              sum(case when type = 'MO' then quantity end) as MO,
-              sum(case when type = 'PO' then quantity end) as PO,
-              sum(case when type = 'DO' then quantity end) as DO
-              from operationplan
-              inner join items on items.name = operationplan.item_id
-              and status in ('approved', 'confirmed')
-              group by item_id, coalesce(location_id, destination_id)
-              ) orders_plus
-            on orders_plus.item_id = items.name and orders_plus.location_id = location.name
-            left outer join (
-              select item_id, origin_id as location_id,
-              sum(quantity) as DO
-              from operationplan
-              inner join items on items.name = operationplan.item_id
-              and status in ('approved', 'confirmed')
-              and type = 'DO'
-              group by item_id, origin_id
-              ) orders_minus
-            on orders_minus.item_id = items.name and orders_minus.location_id = location.name
-            left outer join (
-              select item_id, location_id,
-              sum(case when due < %s then quantity end) as BO,
-              sum(case when due >= %s then quantity end) as SO
-              from demand
-              inner join items on items.name = demand.item_id
-              where status in ('open', 'quote')
-              group by item_id, location_id
-              ) sales
-            on sales.item_id = items.name and sales.location_id = location.name
-            where
-              (coalesce(onhand.qty,0) + coalesce(completed.quantity,0)) > 0
-              or orders_plus.MO is not null
-              or orders_plus.PO is not null
-              or orders_plus.DO is not null
-              or orders_minus.DO is not null
-              or sales.BO is not null
-              or sales.SO is not null
-              or (items.name = %s and location.name = %s)
-            order by items.name, location.name
-            """,
+                        with items as (
+                           select name from item where name = %s
+                           )
+                        select
+                          items.name,
+                          false,
+                          location.name,
+                          coalesce(onhand.qty,0) + coalesce(completed.quantity,0),
+                          orders_plus.PO,
+                          coalesce(orders_plus.DO, 0) - coalesce(orders_minus.DO, 0),
+                          orders_plus.MO, sales.BO, sales.SO
+                        from items
+                        cross join location
+                        left outer join (
+                          select item_id, location_id, onhand as qty
+                          from buffer
+                          inner join items on items.name = buffer.item_id
+                          ) onhand
+                        on onhand.item_id = items.name and onhand.location_id = location.name
+                        left outer join (
+                           select opm.item_id, opm.location_id, sum(opm.quantity) as quantity
+                           from operationplanmaterial opm
+                           inner join operationplan op on opm.operationplan_id = op.reference
+                           where op.status = 'completed'
+                           group by opm.item_id, opm.location_id
+                        ) completed
+                        on completed.item_id = items.name and completed.location_id = location.name
+                        left outer join (
+                          select item_id, coalesce(location_id, destination_id) as location_id,
+                          sum(case when type = 'MO' then quantity end) as MO,
+                          sum(case when type = 'PO' then quantity end) as PO,
+                          sum(case when type = 'DO' then quantity end) as DO
+                          from operationplan
+                          inner join items on items.name = operationplan.item_id
+                          and status in ('approved', 'confirmed')
+                          group by item_id, coalesce(location_id, destination_id)
+                          ) orders_plus
+                        on orders_plus.item_id = items.name and orders_plus.location_id = location.name
+                        left outer join (
+                          select item_id, origin_id as location_id,
+                          sum(quantity) as DO
+                          from operationplan
+                          inner join items on items.name = operationplan.item_id
+                          and status in ('approved', 'confirmed')
+                          and type = 'DO'
+                          group by item_id, origin_id
+                          ) orders_minus
+                        on orders_minus.item_id = items.name and orders_minus.location_id = location.name
+                        left outer join (
+                          select item_id, location_id,
+                          sum(case when due < %s then quantity end) as BO,
+                          sum(case when due >= %s then quantity end) as SO
+                          from demand
+                          inner join items on items.name = demand.item_id
+                          where status in ('open', 'quote')
+                          group by item_id, location_id
+                          ) sales
+                        on sales.item_id = items.name and sales.location_id = location.name
+                        where
+                          (coalesce(onhand.qty,0) + coalesce(completed.quantity,0)) > 0
+                          or orders_plus.MO is not null
+                          or orders_plus.PO is not null
+                          or orders_plus.DO is not null
+                          or orders_minus.DO is not null
+                          or sales.BO is not null
+                          or sales.SO is not null
+                          or (items.name = %s and location.name = %s)
+                        order by items.name, location.name
+                        """,
                         (
                             opplan.item_id,
                             current_date,

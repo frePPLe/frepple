@@ -2469,63 +2469,47 @@ class GridPivot(GridReport):
         request.prefs = request.user.getPreference(
             cls.getKey(), database=request.database
         )
-        if args and args[0]:
-            page = 1
-            recs = 1
-            total_pages = 1
-            if isinstance(cls.basequeryset, collections.Callable):
-                query = cls.query(
-                    request,
-                    cls.basequeryset(request, *args, **kwargs).using(request.database),
-                    sortsql="1 asc",
+
+        page = "page" in request.GET and int(request.GET["page"]) or 1
+        if isinstance(cls.basequeryset, collections.Callable):
+            recs = (
+                cls.filter_items(
+                    request, cls.basequeryset(request, *args, **kwargs), False
                 )
-            else:
-                query = cls.query(
-                    request,
-                    cls.basequeryset.filter(pk__exact=args[0]).using(request.database),
-                    sortsql="1 asc",
-                )
+                .using(request.database)
+                .count()
+            )
         else:
-            page = "page" in request.GET and int(request.GET["page"]) or 1
-            if isinstance(cls.basequeryset, collections.Callable):
-                recs = (
+            recs = (
+                cls.filter_items(request, cls.basequeryset)
+                .using(request.database)
+                .count()
+            )
+        total_pages = math.ceil(float(recs) / request.pagesize)
+        if page > total_pages:
+            page = total_pages
+        if page < 1:
+            page = 1
+        cnt = (page - 1) * request.pagesize + 1
+        if isinstance(cls.basequeryset, collections.Callable):
+            query = cls.query(
+                request,
+                cls._apply_sort(
+                    request,
                     cls.filter_items(
                         request, cls.basequeryset(request, *args, **kwargs), False
-                    )
-                    .using(request.database)
-                    .count()
-                )
-            else:
-                recs = (
-                    cls.filter_items(request, cls.basequeryset)
-                    .using(request.database)
-                    .count()
-                )
-            total_pages = math.ceil(float(recs) / request.pagesize)
-            if page > total_pages:
-                page = total_pages
-            if page < 1:
-                page = 1
-            cnt = (page - 1) * request.pagesize + 1
-            if isinstance(cls.basequeryset, collections.Callable):
-                query = cls.query(
-                    request,
-                    cls._apply_sort(
-                        request,
-                        cls.filter_items(
-                            request, cls.basequeryset(request, *args, **kwargs), False
-                        ),
-                    ).using(request.database)[cnt - 1 : cnt + request.pagesize],
-                    sortsql=cls._apply_sort_index(request),
-                )
-            else:
-                query = cls.query(
-                    request,
-                    cls._apply_sort(
-                        request, cls.filter_items(request, cls.basequeryset)
-                    ).using(request.database)[cnt - 1 : cnt + request.pagesize],
-                    sortsql=cls._apply_sort_index(request),
-                )
+                    ),
+                ).using(request.database)[cnt - 1 : cnt + request.pagesize],
+                sortsql=cls._apply_sort_index(request),
+            )
+        else:
+            query = cls.query(
+                request,
+                cls._apply_sort(
+                    request, cls.filter_items(request, cls.basequeryset)
+                ).using(request.database)[cnt - 1 : cnt + request.pagesize],
+                sortsql=cls._apply_sort_index(request),
+            )
 
         # Generate header of the output
         yield '{"total":%d,\n' % total_pages

@@ -88,22 +88,18 @@ class OverviewReport(GridPivot):
                 operationplan__batch=batch
             )
 
-        request.basequeryset = (
-            request.basequeryset.distinct()
-            .annotate(
-                buffer=RawSQL(
-                    "operationplanmaterial.item_id || "
-                    "(case when item.type is distinct from 'make to order' then '' else ' @ ' || operationplan.batch end) "
-                    "|| ' @ ' || operationplanmaterial.location_id",
-                    (),
-                ),
-                opplan_batch=RawSQL(
-                    "case when item.type is distinct from 'make to order' then '' else operationplan.batch end",
-                    (),
-                ),
-            )
-            .distinct()
-        )
+        request.basequeryset = request.basequeryset.annotate(
+            buffer=RawSQL(
+                "operationplanmaterial.item_id || "
+                "(case when item.type is distinct from 'make to order' then '' else ' @ ' || operationplan.batch end) "
+                "|| ' @ ' || operationplanmaterial.location_id",
+                (),
+            ),
+            opplan_batch=RawSQL(
+                "case when item.type is distinct from 'make to order' then '' else operationplan.batch end",
+                (),
+            ),
+        ).distinct()
 
         return request.basequeryset
 

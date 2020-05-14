@@ -2266,8 +2266,10 @@ class GridReport(View):
         first = True
         for i, j in request.GET.items():
             for r in request.rows:
-                if r.field_name and i.startswith(r.field_name):
-                    operator = (i == r.field_name) and "exact" or i[i.rfind("_") + 1 :]
+                if r.field_name and (
+                    (i == r.field_name) or i.startswith(r.field_name + "__")
+                ):
+                    operator = (i == r.field_name) and "exact" or i[i.rfind("__") + 2 :]
                     try:
                         if first:
                             first = False

@@ -2472,44 +2472,25 @@ class GridPivot(GridReport):
 
         page = "page" in request.GET and int(request.GET["page"]) or 1
         if isinstance(cls.basequeryset, collections.Callable):
-            recs = (
-                cls.filter_items(
-                    request, cls.basequeryset(request, *args, **kwargs), False
-                )
-                .using(request.database)
-                .count()
-            )
+            base = cls.basequeryset(request, *args, **kwargs)
         else:
-            recs = (
-                cls.filter_items(request, cls.basequeryset)
-                .using(request.database)
-                .count()
-            )
+            base = cls.basequeryset
+        if args and args[0] and not cls.new_arg_logic:
+            base = base.filter(pk__exact=args[0])
+        recs = cls.filter_items(request, base, False).using(request.database).count()
         total_pages = math.ceil(float(recs) / request.pagesize)
         if page > total_pages:
             page = total_pages
         if page < 1:
             page = 1
         cnt = (page - 1) * request.pagesize + 1
-        if isinstance(cls.basequeryset, collections.Callable):
-            query = cls.query(
-                request,
-                cls._apply_sort(
-                    request,
-                    cls.filter_items(
-                        request, cls.basequeryset(request, *args, **kwargs), False
-                    ),
-                ).using(request.database)[cnt - 1 : cnt + request.pagesize],
-                sortsql=cls._apply_sort_index(request),
-            )
-        else:
-            query = cls.query(
-                request,
-                cls._apply_sort(
-                    request, cls.filter_items(request, cls.basequeryset)
-                ).using(request.database)[cnt - 1 : cnt + request.pagesize],
-                sortsql=cls._apply_sort_index(request),
-            )
+        query = cls.query(
+            request,
+            cls._apply_sort(request, cls.filter_items(request, base, False)).using(
+                request.database
+            )[cnt - 1 : cnt + request.pagesize],
+            sortsql=cls._apply_sort_index(request),
+        )
 
         # Generate header of the output
         yield '{"total":%d,\n' % total_pages
@@ -2580,9 +2561,10 @@ class GridPivot(GridReport):
             )
         if args and args[0]:
             if isinstance(cls.basequeryset, collections.Callable):
+                b = cls.basequeryset(request, *args, **kwargs).using(request.database)
                 query = cls.query(
                     request,
-                    cls.basequeryset(request, *args, **kwargs).using(request.database),
+                    b if cls.new_arg_logic else b.filter(pk__exact=args[0]),
                     sortsql="1 asc",
                 )
             else:
@@ -2896,9 +2878,10 @@ class GridPivot(GridReport):
         listformat = request.GET.get("format", "spreadsheetlist") == "spreadsheetlist"
         if args and args[0]:
             if isinstance(cls.basequeryset, collections.Callable):
+                b = cls.basequeryset(request, *args, **kwargs).using(request.database)
                 query = cls.query(
                     request,
-                    cls.basequeryset(request, *args, **kwargs).using(request.database),
+                    b if cls.new_arg_logic else b.filter(pk__exact=args[0]),
                     sortsql="1 asc",
                 )
             else:

@@ -7,5 +7,5 @@ Demand represent independent requirements. They typically consist of customer or
 .. toctree::
    :maxdepth: 1
 
-   policies
-   priorities
+   demand-policies
+   demand-priorities

@@ -380,7 +380,8 @@ class GridFieldChoice(GridField):
         super().__init__(name, **kwargs)
         e = ['"formatter":"select", "edittype":"select", "editoptions":{"value":"']
         first = True
-        for i in kwargs["choices"]:
+        self.choices = kwargs.get("choices", [])
+        for i in self.choices:
             if first:
                 first = False
                 e.append("%s:" % i[0])
@@ -389,6 +390,14 @@ class GridFieldChoice(GridField):
             e.append(i[1])
         e.append('"}')
         self.extra = format_lazy("{}" * len(e), *e)
+
+    def validateValues(self, data):
+        result = []
+        for f in data.split(","):
+            for c in self.choices:
+                if f == c[0] or f == force_text(c[1]):
+                    result.append(c[0])
+        return ",".join(result)
 
 
 class GridFieldBoolNullable(GridFieldChoice):
@@ -2301,11 +2310,18 @@ class GridReport(View):
                 if data == "" and not isinstance(
                     reportrow, (GridFieldText, GridFieldChoice)
                 ):
-                    # Filter value specified, which makes the filter invalid
+                    # No filter value specified, which makes the filter invalid
                     continue
-                q_filters.append(
-                    cls._filter_map_jqgrid_django[op](q_filters, reportrow, data)
-                )
+                else:
+                    q_filters.append(
+                        cls._filter_map_jqgrid_django[op](
+                            q_filters,
+                            reportrow,
+                            reportrow.validateValues(data)
+                            if isinstance(reportrow, GridFieldChoice)
+                            else data,
+                        )
+                    )
             except Exception:
                 pass  # Silently ignore invalid filters
         if "groups" in filterdata:
@@ -2357,9 +2373,17 @@ class GridReport(View):
         if plus_django_style:
             for i, j in request.GET.items():
                 for r in request.rows:
-                    if r.name and i.startswith(r.field_name):
+                    if r.name and (
+                        i == r.field_name or i.startswith(r.field_name + "__")
+                    ):
                         try:
-                            items = items.filter(**{i: unquote(j)})
+                            items = items.filter(
+                                **{
+                                    i: r.validateValues(unquote(j))
+                                    if isinstance(r, GridFieldChoice)
+                                    else unquote(j)
+                                }
+                            )
                         except Exception:
                             pass  # silently ignore invalid filters
         return items

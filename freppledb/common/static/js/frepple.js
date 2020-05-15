@@ -2452,7 +2452,7 @@ $(function() {
             + '</p><li  role="separator" class="divider"></li></span>';
         else
           return '<li><a style="display: block" href="'+ url_prefix + data.url + admin_escape(data.value) + 
-          (data.removeTrailingSlash?"":"/") +
+          (data.removeTrailingSlash?"":"/?noautofilter") +
           '" >' 
             + $.jgrid.htmlEncode(data.display) + '</a></li>';
       },

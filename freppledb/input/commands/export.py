@@ -889,6 +889,7 @@ class exportOperationResources(PlanTask):
                   name=excluded.name,
                   priority=excluded.priority,
                   search=excluded.search,
+                  skill_id=excluded.skill_id,
                   source=excluded.source,
                   lastmodified=excluded.lastmodified
                   %s

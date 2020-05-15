@@ -8916,6 +8916,10 @@ class PeggingIterator : public Object {
                : const_cast<OperationPlan*>(states.back().opplan);
   }
 
+  Duration getGap() const {
+    return second_pass ? states_sorted.front().gap : states.back().gap;
+  }
+
   /* Destructor. */
   virtual ~PeggingIterator() {}
 
@@ -8950,7 +8954,7 @@ class PeggingIterator : public Object {
   PeggingIterator* next();
 
   /* Add an entry on the stack. */
-  void updateStack(const OperationPlan*, double, double, short);
+  void updateStack(const OperationPlan*, double, double, short, Duration);
 
   /* Initialize the class. */
   static int initialize();
@@ -8976,17 +8980,19 @@ class PeggingIterator : public Object {
     double quantity;
     double offset;
     short level;
+    Duration gap;
 
     // Constructor
-    state(const OperationPlan* op, double q, double o, short l)
-        : opplan(op), quantity(q), offset(o), level(l){};
+    state(const OperationPlan* op, double q, double o, short l, Duration g)
+        : opplan(op), quantity(q), offset(o), level(l), gap(g){};
 
     // Copy constructor
     state(const state& o)
         : opplan(o.opplan),
           quantity(o.quantity),
           offset(o.offset),
-          level(o.level){};
+          level(o.level),
+          gap(o.gap){};
 
     // Comparison operator
     bool operator<(const state& other) const {

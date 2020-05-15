@@ -68,9 +68,11 @@ PeggingIterator::PeggingIterator(const PeggingIterator& c)
       second_pass(c.second_pass) {
   initType(metadata);
   for (auto i = c.states.begin(); i != c.states.end(); ++i)
-    states.push_back(state(i->opplan, i->quantity, i->offset, i->level));
+    states.push_back(
+        state(i->opplan, i->quantity, i->offset, i->level, i->gap));
   for (auto i = c.states_sorted.begin(); i != c.states_sorted.end(); ++i)
-    states_sorted.push_back(state(i->opplan, i->quantity, i->offset, i->level));
+    states_sorted.push_back(
+        state(i->opplan, i->quantity, i->offset, i->level, i->gap));
 }
 
 PeggingIterator& PeggingIterator::operator=(const PeggingIterator& c) {
@@ -79,9 +81,11 @@ PeggingIterator& PeggingIterator::operator=(const PeggingIterator& c) {
   first = c.first;
   second_pass = c.second_pass;
   for (auto i = c.states.begin(); i != c.states.end(); ++i)
-    states.push_back(state(i->opplan, i->quantity, i->offset, i->level));
+    states.push_back(
+        state(i->opplan, i->quantity, i->offset, i->level, i->gap));
   for (auto i = c.states_sorted.begin(); i != c.states_sorted.end(); ++i)
-    states_sorted.push_back(state(i->opplan, i->quantity, i->offset, i->level));
+    states_sorted.push_back(
+        state(i->opplan, i->quantity, i->offset, i->level, i->gap));
   return *this;
 }
 
@@ -94,7 +98,7 @@ PeggingIterator::PeggingIterator(const Demand* d)
   const Demand::OperationPlanList& deli = d->getDelivery();
   for (auto opplaniter = deli.begin(); opplaniter != deli.end(); ++opplaniter) {
     OperationPlan* t = (*opplaniter)->getTopOwner();
-    updateStack(t, t->getQuantity(), 0.0, 0);
+    updateStack(t, t->getQuantity(), 0.0, 0, 0L);
   }
 
   // Bring all pegging information to a second stack.
@@ -114,8 +118,8 @@ PeggingIterator::PeggingIterator(const Demand* d)
       }
     if (!found)
       // New element in sorted stack
-      states_sorted.push_back(
-          state(curtop.opplan, curtop.quantity, curtop.offset, curtop.level));
+      states_sorted.push_back(state(curtop.opplan, curtop.quantity,
+                                    curtop.offset, curtop.level, curtop.gap));
 
     if (downstream)
       ++*this;
@@ -132,10 +136,10 @@ PeggingIterator::PeggingIterator(const OperationPlan* opplan, bool b)
   initType(metadata);
   if (!opplan) return;
   if (opplan->getTopOwner()->getOperation()->hasType<OperationSplit>())
-    updateStack(opplan, opplan->getQuantity(), 0.0, 0);
+    updateStack(opplan, opplan->getQuantity(), 0.0, 0, 0L);
   else
     updateStack(opplan->getTopOwner(), opplan->getTopOwner()->getQuantity(),
-                0.0, 0);
+                0.0, 0, 0L);
 }
 
 PeggingIterator::PeggingIterator(FlowPlan* fp, bool b)
@@ -143,7 +147,7 @@ PeggingIterator::PeggingIterator(FlowPlan* fp, bool b)
   initType(metadata);
   if (!fp) return;
   updateStack(fp->getOperationPlan()->getTopOwner(),
-              fp->getOperationPlan()->getQuantity(), 0.0, 0);
+              fp->getOperationPlan()->getQuantity(), 0.0, 0, 0L);
 }
 
 PeggingIterator::PeggingIterator(LoadPlan* lp, bool b)
@@ -151,7 +155,7 @@ PeggingIterator::PeggingIterator(LoadPlan* lp, bool b)
   initType(metadata);
   if (!lp) return;
   updateStack(lp->getOperationPlan()->getTopOwner(),
-              lp->getOperationPlan()->getQuantity(), 0.0, 0);
+              lp->getOperationPlan()->getQuantity(), 0.0, 0, 0L);
 }
 
 PeggingIterator& PeggingIterator::operator--() {
@@ -232,7 +236,7 @@ void PeggingIterator::followPegging(const OperationPlan* op, double qty,
   // parent and child operationplan.
   for (OperationPlan::iterator j(op); j != OperationPlan::end(); ++j)
     updateStack(&*j, qty * j->getQuantity() / op->getQuantity(),
-                offset * j->getQuantity() / op->getQuantity(), lvl + 1);
+                offset * j->getQuantity() / op->getQuantity(), lvl + 1, 0L);
 }
 
 PeggingIterator* PeggingIterator::next() {
@@ -249,7 +253,7 @@ PeggingIterator* PeggingIterator::next() {
 }
 
 void PeggingIterator::updateStack(const OperationPlan* op, double qty, double o,
-                                  short lvl) {
+                                  short lvl, Duration gap) {
   // Avoid very small pegging quantities
   if (qty < ROUNDING_ERROR) return;
 
@@ -260,10 +264,11 @@ void PeggingIterator::updateStack(const OperationPlan* op, double qty, double o,
     t.quantity = qty;
     t.offset = o;
     t.level = lvl;
+    t.gap = gap;
     first = false;
   } else
     // We need to create a new element on the stack
-    states.push_back(state(op, qty, o, lvl));
+    states.push_back(state(op, qty, o, lvl, gap));
 }
 
 PeggingDemandIterator::PeggingDemandIterator(const PeggingDemandIterator& c) {

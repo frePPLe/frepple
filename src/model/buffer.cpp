@@ -549,7 +549,8 @@ void Buffer::followPegging(PeggingIterator& iter, FlowPlan* curflowplan,
             topopplan = opplan;
           iter.updateStack(
               topopplan, topopplan->getQuantity() * newqty / f->getQuantity(),
-              topopplan->getQuantity() * newoffset / f->getQuantity(), lvl);
+              topopplan->getQuantity() * newoffset / f->getQuantity(), lvl,
+              curflowplan->getDate() - f->getDate());
         }
         ++f;
       }
@@ -579,7 +580,8 @@ void Buffer::followPegging(PeggingIterator& iter, FlowPlan* curflowplan,
             topopplan = opplan;
           iter.updateStack(
               topopplan, topopplan->getQuantity() * newqty / f->getQuantity(),
-              topopplan->getQuantity() * newoffset / f->getQuantity(), lvl);
+              topopplan->getQuantity() * newoffset / f->getQuantity(), lvl,
+              curflowplan->getDate() - f->getDate());
         }
         --f;
       }
@@ -624,7 +626,8 @@ void Buffer::followPegging(PeggingIterator& iter, FlowPlan* curflowplan,
             topopplan = opplan;
           iter.updateStack(
               topopplan, -topopplan->getQuantity() * newqty / f->getQuantity(),
-              -topopplan->getQuantity() * newoffset / f->getQuantity(), lvl);
+              -topopplan->getQuantity() * newoffset / f->getQuantity(), lvl,
+              f->getDate() - curflowplan->getDate());
         }
         ++f;
       }
@@ -652,7 +655,8 @@ void Buffer::followPegging(PeggingIterator& iter, FlowPlan* curflowplan,
             topopplan = opplan;
           iter.updateStack(
               topopplan, -topopplan->getQuantity() * newqty / f->getQuantity(),
-              -topopplan->getQuantity() * newoffset / f->getQuantity(), lvl);
+              -topopplan->getQuantity() * newoffset / f->getQuantity(), lvl,
+              f->getDate() - curflowplan->getDate());
         }
         --f;
       }

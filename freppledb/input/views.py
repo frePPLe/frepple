@@ -72,41 +72,6 @@ def search(request):
     term = request.GET.get("term").strip()
     result = []
 
-    # special case for Buffer objects that we want to add
-    buffers = (
-        Buffer.objects.using(request.database)
-        .annotate(name=RawSQL("item_id||' @ '||location_id", ()))
-        .filter(Q(name__icontains=term) | Q(item__description__icontains=term))
-        .order_by("name")
-        .values_list("id", "name", "item__description")
-    )
-    count = len(buffers)
-    if count > 0:
-        result.append(
-            {
-                "value": None,
-                "label": (
-                    ungettext(
-                        "%(name)s - %(count)d match",
-                        "%(name)s - %(count)d matches",
-                        count,
-                    )
-                    % {"name": force_text(_("Buffer")), "count": count}
-                ).capitalize(),
-            }
-        )
-        result.extend(
-            [
-                {
-                    "url": "/detail/%s/%s/"
-                    % (Buffer._meta.app_label, Buffer._meta.object_name.lower()),
-                    "value": "%d" % (i[0],),
-                    "display": "%s%s" % (i[1], " %s" % (i[2],) if i[2] else ""),
-                }
-                for i in buffers[:10]
-            ]
-        )
-
     # Loop over all models in the data_site
     # We are interested in models satisfying these criteria:
     #  - primary key is of type text

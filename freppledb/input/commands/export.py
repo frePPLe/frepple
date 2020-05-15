@@ -866,6 +866,7 @@ class exportOperationResources(PlanTask):
                         i.priority,
                         i.search if i.search != "PRIORITY" else None,
                         i.source,
+                        i.skill.name if i.skill else None,
                         cls.timestamp,
                     ]
                     for a in attrs:
@@ -878,8 +879,8 @@ class exportOperationResources(PlanTask):
                 """
                 insert into operationresource
                 (operation_id,resource_id,effective_start,effective_end,
-                quantity,setup,name,priority,search,source,lastmodified%s)
-                values(%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s%s)
+                quantity,setup,name,priority,search,source,skill_id,lastmodified%s)
+                values(%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s%s)
                 on conflict (operation_id, resource_id, effective_start)
                 do update set
                   effective_end=excluded.effective_end,

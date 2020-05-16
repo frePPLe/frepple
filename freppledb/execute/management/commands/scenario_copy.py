@@ -25,7 +25,7 @@ from django.db import DEFAULT_DB_ALIAS
 from django.utils.translation import gettext_lazy as _
 from django.template.loader import render_to_string
 
-from freppledb.execute.models import Task
+from freppledb.execute.models import Task, ScheduledTask
 from freppledb.common.models import User, Scenario
 from freppledb import VERSION
 
@@ -270,6 +270,20 @@ class Command(BaseCommand):
             # This is needed for situations where the same source is copied to
             # multiple destinations at the same moment.
             Task.objects.all().using(destination).filter(id__gt=task.id).delete()
+
+            # Don't automate any task in the new copy
+            if not promote:
+                for i in ScheduledTask.objects.all().using(destination):
+                    i.next_run = None
+                    i.data.pop("starttime", None)
+                    i.data.pop("monday", None)
+                    i.data.pop("tuesday", None)
+                    i.data.pop("wednesday", None)
+                    i.data.pop("thursday", None)
+                    i.data.pop("friday", None)
+                    i.data.pop("saturday", None)
+                    i.data.pop("sunday", None)
+                    i.save(using=destination, None)
 
         except Exception as e:
             if task:

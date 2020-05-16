@@ -283,7 +283,7 @@ class Command(BaseCommand):
                     i.data.pop("friday", None)
                     i.data.pop("saturday", None)
                     i.data.pop("sunday", None)
-                    i.save(using=destination, None)
+                    i.save(using=destination)
 
         except Exception as e:
             if task:

@@ -236,6 +236,11 @@ class Command(BaseCommand):
                 tables.add("out_resourceplan")
             if "demand" in tables and "out_constraint" not in tables:
                 tables.add("out_constraint")
+            if (
+                "reportmanager_report" in tables
+                and "reportmanager_column" not in tables
+            ):
+                tables.add("reportmanager_column")
             tables.discard("auth_group_permissions")
             tables.discard("auth_permission")
             tables.discard("auth_group")

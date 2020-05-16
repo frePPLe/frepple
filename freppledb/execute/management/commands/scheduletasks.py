@@ -339,7 +339,10 @@ class Command(BaseCommand):
                     )
                 else:
                     # Windows installer
-                    cmd = "%s scheduletasks --database=%s" % (sys.executable, database)
+                    cmd = '"%s" scheduletasks --database=%s' % (
+                        sys.executable.replace("freppleserver.exe", "frepplectl.exe"),
+                        database,
+                    )
                 retcode = call(
                     [
                         "schtasks",

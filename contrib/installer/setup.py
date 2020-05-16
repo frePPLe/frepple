@@ -158,7 +158,7 @@ cx_Freeze.setup(
         # A console application
         cx_Freeze.Executable(
             "frepplectl.py",
-            base="Console",
+            base="Win32GUI",
             icon=os.path.join("..", "..", "src", "frepple.ico"),
         ),
         # A Windows service

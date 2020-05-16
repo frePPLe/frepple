@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     "name": "frePPLe connector",
-    "version": "6.5.0",
+    "version": "6.6.0",
     "category": "Manufacturing",
     "summary": "Advanced planning and scheduling",
     "author": "frePPLe",

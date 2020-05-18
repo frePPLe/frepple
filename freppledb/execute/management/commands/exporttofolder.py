@@ -198,7 +198,10 @@ class Command(BaseCommand):
             logger.addHandler(handler)
             logger.propagate = False
         except Exception as e:
-            print("%s Failed to open logfile %s: %s" % (datetime.now(), logfile, e))
+            print(
+                "%s Failed to open logfile %s: %s"
+                % (datetime.now().replace(microsecond=0), logfile, e)
+            )
 
         task = None
         errors = 0
@@ -252,7 +255,10 @@ class Command(BaseCommand):
                         if exception.errno != errno.EEXIST:
                             raise
 
-                logger.info("%s Started export to folder\n" % datetime.now())
+                logger.info(
+                    "%s Started export to folder\n"
+                    % datetime.now().replace(microsecond=0)
+                )
 
                 cursor = connections[self.database].cursor()
 
@@ -286,7 +292,10 @@ class Command(BaseCommand):
                         )
 
                     # Report progress
-                    logger.info("%s Started export of %s" % (datetime.now(), filename))
+                    logger.info(
+                        "%s Started export of %s"
+                        % (datetime.now().replace(microsecond=0), filename)
+                    )
                     if task:
                         task.message = "Exporting %s" % filename
                         task.save(using=self.database)
@@ -370,7 +379,7 @@ class Command(BaseCommand):
                         errors += 1
                         logger.error(
                             "%s Failed to export to %s: %s"
-                            % (datetime.now(), filename, e)
+                            % (datetime.now().replace(microsecond=0), filename, e)
                         )
                         if task:
                             task.message = "Failed to export %s" % filename
@@ -378,7 +387,10 @@ class Command(BaseCommand):
                     task.status = str(int(i / cnt * 100)) + "%"
                     task.save(using=self.database)
 
-                logger.info("%s Exported %s file(s)\n" % (datetime.now(), cnt - errors))
+                logger.info(
+                    "%s Exported %s file(s)\n"
+                    % (datetime.now().replace(microsecond=0), cnt - errors)
+                )
 
                 for stmt in self.post_sql_statements:
                     try:
@@ -393,18 +405,25 @@ class Command(BaseCommand):
 
             else:
                 errors += 1
-                logger.error("%s Failed, folder does not exist" % datetime.now())
+                logger.error(
+                    "%s Failed, folder does not exist"
+                    % datetime.now().replace(microsecond=0)
+                )
                 task.message = "Destination folder does not exist"
                 task.save(using=self.database)
 
         except Exception as e:
-            logger.error("%s Failed to export: %s" % (datetime.now(), e))
+            logger.error(
+                "%s Failed to export: %s" % (datetime.now().replace(microsecond=0), e)
+            )
             errors += 1
             if task:
                 task.message = "Failed to export"
 
         finally:
-            logger.info("%s End of export to folder\n" % datetime.now())
+            logger.info(
+                "%s End of export to folder\n" % datetime.now().replace(microsecond=0)
+            )
             if task:
                 if not errors:
                     task.status = "100%"

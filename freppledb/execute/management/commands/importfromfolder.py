@@ -181,7 +181,7 @@ class Command(BaseCommand):
                         )
                     ):
                         continue
-                    filename0 = ifile.split(".")[0]
+                    filename0 = ifile.split(".")[0].split(" (")[0]
 
                     model = None
                     contenttype_id = None

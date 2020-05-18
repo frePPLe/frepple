@@ -255,7 +255,7 @@ The data files to be imported must meet the following criteria:
   | This is important for frePPLe to understand the correct processing order of the files.
   
 * | Multiple files for the same entity can be provided. They will be processed in alphabetical order:
-    eg demand.1.csv, demand.2.csv, demand.extra.xlsx, demand.postprocessing.sql 
+    eg "demand (1).xlsx", "demand (2).csv", "demand.1.csv", "demand.2.csv", "demand.extra.xlsx", "demand.postprocessing.sql" 
 
 * | The first line of the file should contain the field names. The field name can be in English
     or the default language configured with the LANGUAGE_CODE setting.

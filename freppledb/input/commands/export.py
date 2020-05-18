@@ -49,6 +49,10 @@ logger = logging.getLogger(__name__)
 default_start = datetime(1971, 1, 1)
 default_end = datetime(2030, 12, 31)
 
+map_search = {0: 'PRIORITY',
+              1: 'MINCOST',
+              2: 'MINPENALTY',
+              3: 'MINCOSTPENALTY', }
 
 def SQL4attributes(attrs, with_on_conflict=True):
     """ Snippet is used many times in this file"""
@@ -459,7 +463,7 @@ class exportOperations(PlanTask):
                     else None,
                     i.location and i.location.name or None,
                     round(i.cost, 8),
-                    i.search,
+                    map_search[i.search],
                     i.description,
                     i.category,
                     i.subcategory,
@@ -864,7 +868,7 @@ class exportOperationResources(PlanTask):
                         i.setup,
                         i.name,
                         i.priority,
-                        i.search if i.search != "PRIORITY" else None,
+                        map_search[i.search] if map_search[i.search] != "PRIORITY" else None,
                         i.source,
                         i.skill.name if i.skill else None,
                         cls.timestamp,

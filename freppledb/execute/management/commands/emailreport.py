@@ -337,7 +337,7 @@ class Command(BaseCommand):
           <input type="hidden" name="report" id="report" value="{{all_reports}}">
         </form>
         <script>
-        function validateButton() {
+        function validateEmailButton() {
             var reports = "";
             var first = true;
             {% for j in filesexported %}
@@ -369,14 +369,14 @@ class Command(BaseCommand):
 
         }
         $("#emails").on('input', function () {
-            validateButton();
+            validateEmailButton();
         });
         $("#allcheckboxes").on("click", function(event) {
             var isChecked = $('#allcheckboxes').is(':checked');
             {% for j in filesexported %}
             $("#{{j.3}}").prop("checked", isChecked);
             {% endfor %}
-            validateButton();
+            validateEmailButton();
         });
         {% for j in filesexported %}
         $("#{{j.3}}").on("click", function(event) {
@@ -385,7 +385,7 @@ class Command(BaseCommand):
               allChecked = allChecked && $('#{{j.3}}').is(':checked');
             {% endfor %}
             $("#allcheckboxes").prop("checked", allChecked);
-            validateButton();
+            validateEmailButton();
         });
         {% endfor %}
         </script>

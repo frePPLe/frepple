@@ -85,7 +85,7 @@ Production planning & scheduling
 |                                         |   shortages.                                                               |                                                                               |
 +-----------------------------------------+----------------------------------------------------------------------------+-------------------------------------------------------------------------------+
 | **Fast heuristic solver                 | FrePPLe uses a heuristic planning algorithm, that can provide constrained  | - Doc :doc:`developer-guide/planning-algorithm`                               |
-| algorithm**                             | and unconstrained plans.                                                   | - Example :doc:`user-guide/examples/demand/priorities`                        |
+| algorithm**                             | and unconstrained plans.                                                   | - Example :doc:`user-guide/examples/demand/demand-priorities`                 |
 |                                         |                                                                            |                                                                               |
 |                                         | The algorithm goes through the following loop:                             |                                                                               |
 |                                         |                                                                            |                                                                               |

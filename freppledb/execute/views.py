@@ -17,11 +17,13 @@
 
 from datetime import datetime
 from importlib import import_module
+from io import BytesIO
 import json
 import operator
 import os
 import re
 import shlex
+from zipfile import ZipFile, ZIP_DEFLATED
 
 from django.conf import settings
 from django.views import static
@@ -47,7 +49,7 @@ from django.core.management import get_commands, call_command
 
 from freppledb.execute.models import Task, ScheduledTask
 from freppledb.common.auth import basicauthentication
-from freppledb.common.models import Scenario, User
+from freppledb.common.models import Scenario, Parameter
 from freppledb.common.report import (
     exportWorkbook,
     importWorkbook,
@@ -602,13 +604,15 @@ class FileManager:
     - 1: export subdirectory of the file upload folder
     """
 
+    all_extensions = (".xlsx", ".csv", ".csv.gz", ".cpy", ".cpy.gz", ".sql", ".sql.gz")
+
     @staticmethod
     def getFolderInfo(request, foldercode):
         if foldercode == "0":
             # File upload folder
             return (
                 settings.DATABASES[request.database]["FILEUPLOADFOLDER"],
-                (".xlsx", ".csv", ".csv.gz", ".cpy", ".cpy.gz", ".sql", ".sql.gz"),
+                FileManager.all_extensions,
             )
         elif foldercode == "1":
             # Export folder
@@ -693,9 +697,8 @@ class FileManager:
                 ["delete"], content="Only DELETE request method is allowed"
             )
         folder, extensions = FileManager.getFolderInfo(request, foldercode)
-
         if extensions is None:
-            extensions = (".csv", ".csv.gz", ".log")
+            extensions = FileManager.all_extensions
 
         fileerrors = force_text(_("Error deleting file"))
         errorcount = 0
@@ -735,19 +738,39 @@ class FileManager:
     @basicauthentication(allow_logged_in=True)
     @staff_member_required
     @never_cache
-    def downloadFilefromFolder(request, foldercode, filename):
+    def downloadFilefromFolder(request, foldercode, filename=None):
         if request.method != "GET":
             return HttpResponseNotAllowed(
                 ["get"], content="Only GET request method is allowed"
             )
-        folder = FileManager.getFolderInfo(request, foldercode)[0]
-
+        folder, extensions = FileManager.getFolderInfo(request, foldercode)
+        if not extensions:
+            extensions = FileManager.all_extensions
+        if filename:
+            # Download a single file
         try:
             clean_filename = filename.split("/")[0]
             return sendStaticFile(request, clean_filename, folder)
         except Exception as e:
             logger.error("Failed file download: %s" % e)
             return HttpResponseNotFound(force_text(_("Error")))
+        else:
+            # Download all files
+            b = BytesIO()
+            with ZipFile(file=b, mode="w", compression=ZIP_DEFLATED) as zf:
+                if os.path.isdir(folder):
+                    for filename in os.listdir(folder):
+                        fullfilename = os.path.join(folder, filename)
+                        if filename.endswith(extensions) and os.access(
+                            fullfilename, os.R_OK
+                        ):
+                            zf.write(
+                                filename=fullfilename,
+                                arcname=os.path.basename(filename),
+                            )
+            response = HttpResponse(b.getvalue(), content_type="application/zip")
+            response["Content-Disposition"] = 'attachment; filename="frepple.zip"'
+            return response
 
 
 @staff_member_required

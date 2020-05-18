@@ -748,12 +748,12 @@ class FileManager:
             extensions = FileManager.all_extensions
         if filename:
             # Download a single file
-        try:
-            clean_filename = filename.split("/")[0]
-            return sendStaticFile(request, clean_filename, folder)
-        except Exception as e:
-            logger.error("Failed file download: %s" % e)
-            return HttpResponseNotFound(force_text(_("Error")))
+            try:
+                clean_filename = filename.split("/")[0]
+                return sendStaticFile(request, clean_filename, folder)
+            except Exception as e:
+                logger.error("Failed file download: %s" % e)
+                return HttpResponseNotFound(force_text(_("Error")))
         else:
             # Download all files
             b = BytesIO()

@@ -272,13 +272,20 @@ pair<Date, double> FlowEnd::getFlowplanDateQuantity(const FlowPlan* fl) const {
 pair<Date, double> FlowTransferBatch::getFlowplanDateQuantity(
     const FlowPlan* fl) const {
   double batch_quantity = getTransferBatch();
-  if (!batch_quantity ||
-      fl->getOperationPlan()->getSetupEnd() == fl->getOperationPlan()->getEnd())
+  if (!batch_quantity || fl->getOperationPlan()->getSetupEnd() ==
+                             fl->getOperationPlan()->getEnd()) {
     // Default to a simple flowplan at the start or end
-    return make_pair(isConsumer() ? fl->getOperationPlan()->getSetupEnd()
-                                  : fl->getOperationPlan()->getEnd(),
-                     getQuantityFixed() +
-                         getQuantity() * fl->getOperationPlan()->getQuantity());
+    if (isConsumer() && !fl->getOperationPlan()->getConsumeMaterial())
+      return make_pair(fl->getOperationPlan()->getSetupEnd(), 0.0);
+    else if (isProducer() && !fl->getOperationPlan()->getProduceMaterial())
+      return make_pair(fl->getOperationPlan()->getEnd(), 0.0);
+    else
+      return make_pair(
+          isConsumer() ? fl->getOperationPlan()->getSetupEnd()
+                       : fl->getOperationPlan()->getEnd(),
+          getQuantityFixed() +
+              getQuantity() * fl->getOperationPlan()->getQuantity());
+  }
 
   // Compute the number of batches
   double total_quantity = getQuantityFixed() +

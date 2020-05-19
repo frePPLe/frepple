@@ -26,9 +26,9 @@ E - assembly,2020-03-04 00:00:00,2020-03-05 00:00:00,40.0,yellow
 E - end item,2020-03-05 00:00:00,2020-03-06 00:00:00,40.0,yellow
 E - subassembly,2020-03-03 00:00:00,2020-03-04 00:00:00,40.0,yellow
 Inventory A - component 1 @ factory A,1971-01-01 00:00:00,1971-01-01 00:00:00,5.0
-Inventory B - component 1 - B - order X @ factory B,1971-01-01 00:00:00,1971-01-01 00:00:00,100.0
-Inventory E - end item - green @ factory E,1971-01-01 00:00:00,1971-01-01 00:00:00,100.0
-Inventory E - end item - yellow @ factory E,1971-01-01 00:00:00,1971-01-01 00:00:00,5.0
+Inventory B - component 1 - B - order X @ factory B,1971-01-01 00:00:00,1971-01-01 00:00:00,100.0,B - order X
+Inventory E - end item - green @ factory E,1971-01-01 00:00:00,1971-01-01 00:00:00,100.0,green
+Inventory E - end item - yellow @ factory E,1971-01-01 00:00:00,1971-01-01 00:00:00,5.0,yellow
 Purchase A - component 1 @ factory A from My Supplier,2020-02-26 00:00:00,2020-03-04 00:00:00,30.0
 Purchase A - component 2 @ factory A from My Supplier,2020-02-25 00:00:00,2020-03-03 00:00:00,30.0
 Purchase A - component 3 @ factory A from My Supplier,2020-02-24 00:00:00,2020-03-02 00:00:00,30.0

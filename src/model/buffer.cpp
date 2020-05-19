@@ -52,6 +52,8 @@ int Buffer::initialize() {
   PythonType& x = FreppleCategory<Buffer>::getPythonType();
   x.addMethod("decoupledLeadTime", &getDecoupledLeadTimePython, METH_VARARGS,
               "return the decoupled lead time");
+  x.addMethod("availableonhand", &availableOnhandPython, METH_VARARGS,
+              "return the available onhand at a specific date");
   x.addMethod("inspect", inspectPython, METH_VARARGS,
               "debugging function to print the inventory profile");
   return FreppleCategory<Buffer>::initialize();
@@ -1189,6 +1191,27 @@ PyObject* Buffer::getDecoupledLeadTimePython(PyObject* self, PyObject* args) {
   try {
     Duration lt = static_cast<Buffer*>(self)->getDecoupledLeadTime(qty, true);
     return PythonData(lt);
+  } catch (...) {
+    PythonType::evalException();
+    return nullptr;
+  }
+}
+
+PyObject* Buffer::availableOnhandPython(PyObject* self, PyObject* args) {
+  PyObject* dateobj = nullptr;
+  int ok = PyArg_ParseTuple(args, "|O:availableonhand", &dateobj);
+  if (!ok) return nullptr;
+
+  try {
+    Date refdate;
+    if (dateobj) {
+      PythonData tmp(dateobj);
+      refdate = tmp.getDate();
+    } else
+      refdate = Plan::instance().getCurrent();
+    auto available = static_cast<Buffer*>(self)->getOnHand(
+        refdate, Date::infiniteFuture, true);
+    return PythonData(available);
   } catch (...) {
     PythonType::evalException();
     return nullptr;

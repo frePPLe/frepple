@@ -4574,6 +4574,10 @@ class Buffer : public HasHierarchy<Buffer>,
 
   static PyObject* getDecoupledLeadTimePython(PyObject* self, PyObject* args);
 
+  /* Returns the minimum onhand between the argument date and infinite future.
+   * This inventory is freely available and unallocated. */
+  static PyObject* availableOnhandPython(PyObject* self, PyObject* args);
+
   /* Returns the operation that is used to supply extra supply into this
    * buffer. */
   Operation* getProducingOperation() const {

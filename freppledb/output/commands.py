@@ -437,7 +437,7 @@ class ExportOperationPlans(PlanTask):
                         else "\\N",
                         color,
                         clean_value(j.reference),
-                        "\\N",
+                        clean_value(j.batch),
                     )
                 elif isinstance(i, frepple.operation_itemdistribution):
                     # Export DO

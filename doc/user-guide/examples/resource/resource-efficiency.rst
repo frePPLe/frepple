@@ -66,7 +66,7 @@ When executing a constrained supply planning, frePPLe will create 2 manufacturin
 to plan the 2 sales orders (one sales order for 250 square tables and another one for 250 round tables).
 
 Both resources will be used and we can now have a look at the manufacturing order durations in the 
-`Resource Detail <https://demo.frepple.com/resource-efficiency/loadplan/>`_ report:
+`Resource Detail <https://demo.frepple.com/resource-efficiency/data/input/operationplanresource/>`_ report:
 
 .. image:: _images/resourcedetail.png
    :alt: Resource detail report.

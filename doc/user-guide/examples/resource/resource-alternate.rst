@@ -96,7 +96,7 @@ Here is a step by step guide to explore the example:
      to make some demands late. You will see the alternates *machine B* and *Antonio* start
      to be used.
 
-  | The `resource detail report <https://demo.frepple.com/resource-alternate/loadplan/>`_
+  | The `resource detail report <https://demo.frepple.com/resource-alternate/data/input/operationplanresource/>`_
     and `plan editor <https://demo.frepple.com/resource-alternate/planningboard/>`_
     are good places to review the machine and operator assignments. You can also use this report
     to manually adjust the assignments. Note that operator "Philippe" and "machine C"

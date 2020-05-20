@@ -57,7 +57,7 @@ The example models shows both modeling constructs:
 
   | In the generated plan you'll see that the preferred component C-alt is purchased after its long
     lead time. Until then we need to buy component C to meet our demand.
-  | In the `inventory detail report <https://demo.frepple.com/alternate-materials/flowplan/>`_ 
+  | In the `inventory detail report <https://demo.frepple.com/alternate-materials/data/input/operationplanmaterial/>`_ 
     you can review the inventory changes of all items. You can see that manufacturing order 5 for
     operation "Make X version 2" uses item C, while the manufacturing order 6 uses item C-alt. 
   

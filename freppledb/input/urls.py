@@ -236,29 +236,29 @@ urlpatterns = [
         name="input_deliveryorder_changelist",
     ),
     url(
-        r"^flowplan/item/(.+)/$",
+        r"^data/input/operationplanmaterial/item/(.+)/$",
         freppledb.input.views.InventoryDetail.as_view(),
-        name="input_flowplan_plandetail_by_item",
+        name="input_operationplanmaterial_plandetail_by_item",
     ),
     url(
-        r"^flowplan/(.+)/$",
+        r"^data/input/operationplanmaterial/buffer/(.+)/$",
         freppledb.input.views.InventoryDetail.as_view(),
-        name="input_flowplan_plandetail",
+        name="input_operationplanmaterial_plandetail_by_buffer",
     ),
     url(
-        r"^flowplan/$",
+        r"^data/input/operationplanmaterial/$",
         freppledb.input.views.InventoryDetail.as_view(),
-        name="input_flowplan_plan",
+        name="input_operationplanmaterial_plan",
     ),
     url(
-        r"^loadplan/(.+)/$",
+        r"^data/input/operationplanresource/resource/(.+)/$",
         freppledb.input.views.ResourceDetail.as_view(),
-        name="input_loadplan_plandetail",
+        name="input_operationplanresource_plandetail",
     ),
     url(
-        r"^loadplan/$",
+        r"^data/input/operationplanresource/$",
         freppledb.input.views.ResourceDetail.as_view(),
-        name="input_loadplan_plan",
+        name="input_operationplanresource_plan",
     ),
     # Special reports
     url(

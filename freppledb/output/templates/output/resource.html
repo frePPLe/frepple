@@ -192,7 +192,7 @@ function drawGraphs(jsondata)
 	          d3.select("#tooltip").style('display', 'none');
 	
 	          window.location = url_prefix
-	            + "/loadplan/"
+	            + "/data/input/operationplanresource/resource/"
 	            + admin_escape(d['resource'])
 	            + "/?noautofilter&operationplan__startdate__lt=" + timebuckets[d['bucket']]['enddate']
 	            + (typeof d['type'] !== 'undefined' && d['type'].includes('bucket') ?
@@ -305,7 +305,7 @@ function crosses (cellvalue, options, rowdata)
       case 3:
         if (cellvalue[3] != 0.0)
           result += grid.formatNumber(cellvalue[3]) +
-            '<a href="{{request.prefix}}/loadplan/' +
+            '<a href="{{request.prefix}}/data/input/operationplanresource/resource/' +
             admin_escape(rowdata['resource']) +
             '/?noautofilter&amp;operationplan__startdate__lt=' + options['colModel']['enddate'] +
             (typeof rowdata['type'] !== 'undefined' && rowdata['type'].includes('bucket') ?

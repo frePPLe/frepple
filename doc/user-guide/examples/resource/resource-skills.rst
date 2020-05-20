@@ -54,7 +54,7 @@ Here is a step by step guide to explore the example:
   .. image:: _images/resource-skills-3.png
      :alt: Resource skills
 
-* | The `resource detail report <https://demo.frepple.com/resource-skills/loadplan/>`_
+* | The `resource detail report <https://demo.frepple.com/resource-skills/data/input/operationplanresource/>`_
     shows the assignment of resources (either a machine or an operator) to manufacturing orders.
   
   | In the screenshot below, you can see that the manufacuturing order with reference 6

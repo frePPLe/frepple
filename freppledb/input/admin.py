@@ -292,7 +292,7 @@ class Item_admin(MultiDBModelAdmin):
         {
             "name": "inventorydetail",
             "label": _("inventory detail"),
-            "view": "input_flowplan_plandetail_by_item",
+            "view": "input_operationplanmaterial_plandetail_by_item",
         },
         {
             "name": "comments",
@@ -538,7 +538,7 @@ class Buffer_admin(MultiDBModelAdmin):
         {
             "name": "plandetail",
             "label": _("plan detail"),
-            "view": "input_flowplan_plandetail",
+            "view": "input_operationplanmaterial_plandetail_by_buffer",
         },
         {
             "name": "constraint",
@@ -704,7 +704,7 @@ class Resource_admin(MultiDBModelAdmin):
         {
             "name": "plandetail",
             "label": _("plan detail"),
-            "view": "input_loadplan_plandetail",
+            "view": "input_operationplanresource_plandetail",
         },
         {
             "name": "constraint",

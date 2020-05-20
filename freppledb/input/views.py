@@ -5496,10 +5496,13 @@ class InventoryDetail(OperationPlanMixin, GridReport):
     def basequeryset(reportclass, request, *args, **kwargs):
         if len(args) and args[0]:
             if request.path_info.startswith(
-                "/flowplan/item/"
+                "/data/input/operationplanmaterial/item/"
             ) or request.path_info.startswith("/detail/input/item/"):
                 base = OperationPlanMaterial.objects.filter(item=args[0])
-            else:
+
+            elif request.path_info.startswith(
+                "/data/input/operationplanmaterial/buffer/"
+            ):
                 i_b_l = args[0].split(" @ ")
                 if len(i_b_l) == 1:
                     buffer = Buffer.objects.get(id=args[0])
@@ -5527,7 +5530,7 @@ class InventoryDetail(OperationPlanMixin, GridReport):
     def extra_context(reportclass, request, *args, **kwargs):
         if args and args[0]:
             if request.path_info.startswith(
-                "/flowplan/item/"
+                "/data/input/operationplanmaterial/item/"
             ) or request.path_info.startswith("/detail/input/item/"):
                 request.session["lasttab"] = "inventorydetail"
                 return {
@@ -5536,7 +5539,9 @@ class InventoryDetail(OperationPlanMixin, GridReport):
                     "title": force_text(Item._meta.verbose_name) + " " + args[0],
                     "post_title": _("inventory detail"),
                 }
-            else:
+            elif request.path_info.startswith(
+                "/data/input/operationplanmaterial/buffer/"
+            ):
                 request.session["lasttab"] = "plandetail"
                 dlmtr = args[0].find(" @ ")
                 if dlmtr != -1:

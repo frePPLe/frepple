@@ -55,7 +55,7 @@ class OutputTest(TestCase):
                 "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
             )
         )
-        response = self.client.get("/flowplan/?format=json")
+        response = self.client.get("/data/input/operationplanmaterial/?format=json")
         self.checkResponse(response)
 
     # Resource
@@ -75,7 +75,7 @@ class OutputTest(TestCase):
                 "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
             )
         )
-        response = self.client.get("/loadplan/?format=json")
+        response = self.client.get("/data/input/operationplanresource/?format=json")
         self.checkResponse(response)
 
     # Demand

@@ -1232,7 +1232,7 @@ class ResourceQueueWidget(Widget):
     tooltip = _("Display planned activities for the resources")
     permissions = (("view_resource_report", "Can view resource report"),)
     asynchronous = True
-    url = "/loadplan/?sidx=startdate&sord=asc"
+    url = "/data/input/operationplanresource/?sidx=startdate&sord=asc"
     exporturl = True
     limit = 20
 
@@ -1269,7 +1269,7 @@ class ResourceQueueWidget(Widget):
             .order_by("startdate")[:limit]
         ):
             result.append(
-                '<tr%s><td class="underline"><a href="%s/loadplan/?noautofilter&resource=%s&sidx=startdate&sord=asc">%s</a></td><td>%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td></tr>'
+                '<tr%s><td class="underline"><a href="%s/data/input/operationplanresource/?noautofilter&resource=%s&sidx=startdate&sord=asc">%s</a></td><td>%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td><td class="aligncenter">%s</td></tr>'
                 % (
                     alt and ' class="altRow"' or "",
                     request.prefix,

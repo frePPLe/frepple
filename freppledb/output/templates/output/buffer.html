@@ -149,7 +149,7 @@ function drawGraphs(jsondata)
 	          d3.select("#tooltip").style('display', 'none');
 	
 	          window.location = url_prefix
-	            + "/flowplan/"
+	            + "/data/input/operationplanmaterial/buffer/"
 	            + admin_escape(d['buffer'])
 	            + "/?noautofilter&flowdate__gte=" + timebuckets[d['bucket']]['startdate']
 	            + "&flowdate__lt=" + timebuckets[d['bucket']]['enddate'];
@@ -343,7 +343,7 @@ function crosses (cellvalue, options, rowdata)
         break;
       case 'consumed':
         if (cellvalue[id_by_field['consumed']] != 0.0)
-           result += grid.formatNumber(cellvalue[id_by_field['consumed']]) + "<a href='{{request.prefix}}/flowplan/" +
+           result += grid.formatNumber(cellvalue[id_by_field['consumed']]) + "<a href='{{request.prefix}}/data/input/operationplanmaterial/buffer/" +
               admin_escape(rowdata['buffer']) +
               "/?flowdate__gte=" + options['colModel']['startdate'] +
               "&amp;flowdate__lt=" + options['colModel']['enddate'] +
@@ -405,7 +405,7 @@ function crosses (cellvalue, options, rowdata)
         break;
       case 'produced':
         if (cellvalue[id_by_field['produced']] != 0.0)
-           result += grid.formatNumber(cellvalue[id_by_field['produced']]) + "<a href='{{request.prefix}}/flowplan/" +
+           result += grid.formatNumber(cellvalue[id_by_field['produced']]) + "<a href='{{request.prefix}}/data/input/operationplanmaterial/buffer/" +
               admin_escape(rowdata['buffer']) +
               "/?flowdate__gte=" + options['colModel']['startdate'] +
               "&amp;flowdate__lt=" + options['colModel']['enddate'] +

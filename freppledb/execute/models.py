@@ -149,8 +149,8 @@ class ScheduledTask(models.Model):
             offset = int(offset.total_seconds())
         if self.next_run:
             self.next_run += timedelta(seconds=offset)
-        if self.data:
-            self.data["starttime"] = self.data.get("starttime", 0) + offset
+        if self.data and self.data.get("starttime", None) is not None:
+            self.data["starttime"] += offset
             if self.data["starttime"] < 0:
                 # Starts the previous day!
                 self.data["starttime"] += 24 * 3600

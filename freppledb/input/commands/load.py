@@ -1337,7 +1337,7 @@ class loadOperationMaterials(LoadTask):
                         curflow.effective_end = i[5]
                     if i[6]:
                         curflow.name = i[6]
-                    if i[7]:
+                    if i[7] is not None:
                         curflow.priority = i[7]
                     if i[8]:
                         curflow.search = i[8]
@@ -1427,7 +1427,7 @@ class loadOperationResources(LoadTask):
                         curload.effective_end = i[4]
                     if i[5]:
                         curload.name = i[5]
-                    if i[6]:
+                    if i[6] is not None:
                         curload.priority = i[6]
                     if i[7]:
                         curload.setup = i[7]

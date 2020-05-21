@@ -151,7 +151,6 @@ void FlowPlan::updateBatch() {
   if (buf) {
     buf->flowplans.erase(this);
     buf->setChanged();
-    buf->flowplans.check();
   }
 
   // Insert in the new buffer
@@ -163,7 +162,6 @@ void FlowPlan::updateBatch() {
     buf = fl->getBuffer();
   buf->flowplans.insert(this, getQuantity(), getDate());
   buf->setChanged();
-  buf->flowplans.check();
 }
 
 void FlowPlan::setFlow(Flow* newfl) {

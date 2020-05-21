@@ -1144,6 +1144,12 @@ class loadResources(LoadTask):
         else:
             filter_where = ""
 
+        attrs = [f[0] for f in getAttributes(Resource)]
+        if attrs:
+            attrsql = ", %s" % ", ".join(attrs)
+        else:
+            attrsql = ""
+
         with connections[database].chunked_cursor() as cursor:
             cnt = 0
             starttime = time()
@@ -1154,11 +1160,12 @@ class loadResources(LoadTask):
                   name, description, maximum, maximum_calendar_id, location_id, type,
                   cost, maxearly, setup, setupmatrix_id, category, subcategory,
                   owner_id, source, available_id, efficiency, efficiency_calendar_id,
-                  coalesce(constrained, true)
+                  coalesce(constrained, true) %s
                 FROM %s %s
                 ORDER BY lvl ASC, name
                 """
                 % (
+                    attrsql,
                     connections[cursor.db.alias].ops.quote_name("resource"),
                     filter_where,
                 )
@@ -1225,6 +1232,10 @@ class loadResources(LoadTask):
                             frepple.calendar(name=convert2cal, action="C"),
                             False,  # Debug flag
                         )
+                    idx = 18
+                    for a in attrs:
+                        setattr(x, a, i[idx])
+                        idx += 1
                 except Exception as e:
                     logger.error("**** %s ****" % e)
             logger.info(

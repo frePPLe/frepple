@@ -1,0 +1,9 @@
+{% load i18n %}
+<form role="form" method="post" action="{{request.prefix}}/execute/launch/backup/">{% csrf_token %}
+  <table>
+  <tr>
+    <td style="padding: 0 15px"><button  class="btn btn-primary" type="submit" value="{% trans "launch"|capfirst %}">{% trans "launch"|capfirst %}</button></td>
+    <td style="padding: 0 15px">{% trans "Dump the database contents to a file." %}</td>
+  </tr>
+  </table>
+</form>

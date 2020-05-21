@@ -24,7 +24,7 @@ from django.core.management.base import BaseCommand, CommandError
 from django.conf import settings
 from django.db import DEFAULT_DB_ALIAS
 from django.utils.translation import gettext_lazy as _
-from django.template import Template, RequestContext
+from django.template.loader import render_to_string
 
 from freppledb.execute.models import Task
 from freppledb.common.models import User
@@ -33,15 +33,15 @@ from freppledb import VERSION
 
 class Command(BaseCommand):
     help = """
-  This command creates a database dump of the frePPLe database.
+      This command creates a database dump of the frePPLe database.
 
-  It also removes dumps older than a month to limit the disk space usage.
-  If you want to keep dumps for a longer period of time, you'll need to
-  copy the dumps to a different location.
+      It also removes dumps older than a month to limit the disk space usage.
+      If you want to keep dumps for a longer period of time, you'll need to
+      copy the dumps to a different location.
 
-  The pg_dump command needs to be in the path, otherwise this command
-  will fail.
-  """
+      The pg_dump command needs to be in the path, otherwise this command
+      will fail.
+      """
 
     requires_system_checks = False
 
@@ -172,25 +172,7 @@ class Command(BaseCommand):
 
     @staticmethod
     def getHTML(request):
-
         if request.user.has_perm("auth.run_db"):
-            context = RequestContext(request)
-
-            template = Template(
-                """
-        {% load i18n %}
-        <form role="form" method="post" action="{{request.prefix}}/execute/launch/backup/">{% csrf_token %}
-          <table>
-          <tr>
-            <td  style="padding: 0px 15px;"><button  class="btn btn-primary" type="submit" value="{% trans "launch"|capfirst %}">{% trans "launch"|capfirst %}</button></td>
-            <td  style="padding: 0px 15px;">{% trans "Dump the database contents to a file." %}</td>
-          </tr>
-          </table>
-        </form>
-        """
-            )
-            return template.render(context)
-            # A list of translation strings from the above
-            translated = (_("launch"), _("Dump the database contents to a file."))
+            return render_to_string("commands/backup.html", request=request)
         else:
             return None

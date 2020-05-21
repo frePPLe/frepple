@@ -1,0 +1,49 @@
+{% load i18n %}
+{% if perms.auth.run_db %}
+<form class="form" role="form" method="post"
+  onsubmit="return $('#loaddatafile').val() != ''"
+  action="{{request.prefix}}/execute/launch/loaddata/">{% csrf_token %}
+<table>
+  <tr>
+    <td style="padding:15px; vertical-align:top">
+      <button  class="btn btn-primary" id="load" type="submit" value="{% trans "launch"|capfirst %}">
+        {% trans "launch"|capfirst %}
+      </button>
+    </td>
+    <td style="padding:15px">
+      <div class="dropdown dropdown-submit-input">
+        <p>{% trans "Load one of the available datasets." %}</p>
+        <button class="btn btn-default dropdown-toggle form-control" id="entity" type="button" data-toggle="dropdown">-&nbsp;&nbsp;<span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu col-xs-12" aria-labelledby="entity" id="entityul">
+          {% for i in fixtures %}<li><a>{{i}}</a></li>{% endfor %}
+        </ul>
+      </div>
+    </td>
+    <td style="padding:15px">
+      <div>
+        <ul class="checkbox">
+          <li><input type="checkbox" id="loaddatacb1" onclick="checkbox_changed(this)" checked />
+          <label for="loaddatacb1">{% trans "Execute plan after loading is done" %}</label></li>
+        </ul>
+      </div>
+    </td>
+  </tr>
+</table>
+<input type="hidden" name="fixture" id="loaddatafile" value="">
+<input type="hidden" name="regenerateplan" id="regeneratevar" value="true">
+</form>
+<script>
+$(function() {
+  $("#entityul li a").click(function(){
+    $("#entity").html($(this).text() + ' <span class="caret"></span>');
+    $("#loaddatafile").val($(this).text());
+  });
+});
+function checkbox_changed(checkbox) {
+  $("#regeneratevar").val(checkbox.checked);
+};
+</script>
+{% else %}
+  {% trans "Sorry, You don't have any execute permissions..." %}
+{% endif %}

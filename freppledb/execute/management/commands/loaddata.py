@@ -24,7 +24,7 @@ from django.conf import settings
 from django.core.management.base import CommandError
 from django.core.management.commands import loaddata
 from django.db import connections, transaction
-from django.template import Template, RequestContext
+from django.template.loader import render_to_string
 from django.utils.translation import gettext_lazy as _
 
 from freppledb.common.models import User, Parameter
@@ -35,8 +35,6 @@ from freppledb.execute.models import Task
 class Command(loaddata.Command):
     @staticmethod
     def getHTML(request):
-        #  here is the code for the accordion menu
-
         # Loop over all fixtures of all apps and directories
         fixtures = set()
         folders = list(settings.FIXTURE_DIRS)
@@ -55,70 +53,8 @@ class Command(loaddata.Command):
                 pass  # Silently ignore failures
         fixtures = sorted(fixtures)
 
-        javascript = """
-          $("#entityul li a").click(function(){
-            $("#entity").html($(this).text() + ' <span class="caret"></span>');
-            $("#loaddatafile").val($(this).text());
-          });
-          function checkbox_changed(checkbox) {
-            $("#regeneratevar").val(checkbox.checked);
-          };
-          """
-
-        context = RequestContext(
-            request, {"fixtures": fixtures, "javascript": javascript}
-        )
-
-        template = Template(
-            """
-      {% load i18n %}
-      {% if perms.auth.run_db %}
-      <form class="form" role="form" method="post"
-        onsubmit="return $('#loaddatafile').val() != ''"
-        action="{{request.prefix}}/execute/launch/loaddata/">{% csrf_token %}
-      <table>
-        <tr>
-          <td style="padding:15px; vertical-align:top">
-            <button  class="btn btn-primary" id="load" type="submit" value="{% trans "launch"|capfirst %}">
-              {% trans "launch"|capfirst %}
-            </button>
-          </td>
-          <td style="padding:15px">
-            <div class="dropdown dropdown-submit-input">
-              <p>{% trans "Load one of the available datasets." %}</p>
-              <button class="btn btn-default dropdown-toggle form-control" id="entity" type="button" data-toggle="dropdown">-&nbsp;&nbsp;<span class="caret"></span>
-              </button>
-              <ul class="dropdown-menu col-xs-12" aria-labelledby="entity" id="entityul">
-                {% for i in fixtures %}<li><a>{{i}}</a></li>{% endfor %}
-              </ul>
-            </div>
-          </td>
-          <td style="padding:15px">
-            <div>
-              <ul class="checkbox">
-                <li><input type="checkbox" id="loaddatacb1" onclick="checkbox_changed(this)" checked />
-                <label for="loaddatacb1">{% trans "Execute plan after loading is done" %}</label></li>
-              </ul>
-            </div>
-          </td>
-        </tr>
-      </table>
-      <input type="hidden" name="fixture" id="loaddatafile" value="">
-      <input type="hidden" name="regenerateplan" id="regeneratevar" value="true">
-      </form>
-      <script>{{ javascript|safe }}</script>
-      {% else %}
-        {% trans "Sorry, You don't have any execute permissions..." %}
-      {% endif %}
-    """
-        )
-        return template.render(context)
-        # A list of translation strings from the above
-        translated = (
-            _("launch"),
-            _("Load one of the available datasets."),
-            _("Sorry, You don't have any execute permissions..."),
-            _("Execute plan after loading is done"),
+        return render_to_string(
+            "commands/loaddata.html", {"fixtures": fixtures}, request=request
         )
 
     title = _("Load a dataset")

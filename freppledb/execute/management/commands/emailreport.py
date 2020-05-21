@@ -28,7 +28,7 @@ from django.core.mail import EmailMessage
 from django.conf import settings
 from django.db import DEFAULT_DB_ALIAS
 from django.utils.translation import gettext_lazy as _
-from django.template import Template, RequestContext
+from django.template.loader import render_to_string
 
 from freppledb.execute.models import Task
 from freppledb.common.middleware import _thread_locals
@@ -236,172 +236,57 @@ class Command(BaseCommand):
     def getHTML(request):
 
         if (
-            "FILEUPLOADFOLDER" in settings.DATABASES[request.database]
-            and request.user.is_superuser
+            "FILEUPLOADFOLDER" not in settings.DATABASES[request.database]
+            or not request.user.is_superuser
         ):
-            # Function to convert from bytes to human readabl format
-            def sizeof_fmt(num):
-                for unit in ["", "Ki", "Mi", "Gi", "Ti", "Pi", "Ei", "Zi"]:
-                    if abs(num) < 1024.0:
-                        return "%3.1f%sB" % (num, unit)
-                    num /= 1024.0
-                return "%.1f%sB" % (num, "Yi")
+            return None
 
-            # List available data files
-            filesexported = []
-            all_reports = []
-            if "FILEUPLOADFOLDER" in settings.DATABASES[request.database]:
-                exportfolder = os.path.join(
-                    settings.DATABASES[request.database]["FILEUPLOADFOLDER"], "export"
-                )
-                if os.path.isdir(exportfolder):
-                    tzoffset = GridReport.getTimezoneOffset(request)
-                    for file in os.listdir(exportfolder):
-                        if file.endswith(
-                            (".xlsx", ".xlsx.gz", ".csv", ".csv.gz", ".log")
-                        ):
-                            all_reports.append(file)
-                            filesexported.append(
-                                [
-                                    file,
-                                    strftime(
-                                        "%Y-%m-%d %H:%M:%S",
-                                        localtime(
-                                            os.stat(
-                                                os.path.join(exportfolder, file)
-                                            ).st_mtime
-                                            + tzoffset.total_seconds()
-                                        ),
-                                    ),
-                                    sizeof_fmt(
+        # Function to convert from bytes to human readabl format
+        def sizeof_fmt(num):
+            for unit in ["", "Ki", "Mi", "Gi", "Ti", "Pi", "Ei", "Zi"]:
+                if abs(num) < 1024.0:
+                    return "%3.1f%sB" % (num, unit)
+                num /= 1024.0
+            return "%.1f%sB" % (num, "Yi")
+
+        # List available data files
+        filesexported = []
+        all_reports = []
+        if "FILEUPLOADFOLDER" in settings.DATABASES[request.database]:
+            exportfolder = os.path.join(
+                settings.DATABASES[request.database]["FILEUPLOADFOLDER"], "export"
+            )
+            if os.path.isdir(exportfolder):
+                tzoffset = GridReport.getTimezoneOffset(request)
+                for file in os.listdir(exportfolder):
+                    if file.endswith((".xlsx", ".xlsx.gz", ".csv", ".csv.gz", ".log")):
+                        all_reports.append(file)
+                        filesexported.append(
+                            [
+                                file,
+                                strftime(
+                                    "%Y-%m-%d %H:%M:%S",
+                                    localtime(
                                         os.stat(
                                             os.path.join(exportfolder, file)
-                                        ).st_size
+                                        ).st_mtime
+                                        + tzoffset.total_seconds()
                                     ),
-                                    file.replace(".", "\\\\."),
-                                ]
-                            )
+                                ),
+                                sizeof_fmt(
+                                    os.stat(os.path.join(exportfolder, file)).st_size
+                                ),
+                                file.replace(".", "\\\\."),
+                            ]
+                        )
 
-            context = RequestContext(
-                request,
-                {
-                    "filesexported": filesexported,
-                    "user_email": request.user.email,
-                    "all_reports": ",".join(map(str, all_reports)),
-                    "initially_disabled": "" if len(all_reports) > 0 else "disabled",
-                },
-            )
-
-            template = Template(
-                """
-        {% load i18n %}
-        <form role="form" method="post" action="{{request.prefix}}/execute/launch/emailreport/">{% csrf_token %}
-          <table>
-            <tr>
-              <td style="vertical-align:top; padding-left: 15px">
-                <button type="submit" class="btn btn-primary" id="emailreport" value="email" {{initially_disabled}}>{% trans "email"|capfirst %}</button>
-              </td>
-              <td colspan='5' style="padding-left: 15px;">
-                <p>{% trans "Emails the selected reports to a comma separated list of recipients. Files are zipped and attached to email." %}</p>
-              </td>
-            </tr>
-            <tr>
-              <td></td>
-              <td><div>
-                   <input type="checkbox" id="allcheckboxes" checked>
-                   <strong>{% trans 'file name'|capfirst %}</strong></td>
-                   </div>
-              <td><strong>{% trans 'size'|capfirst %}</strong></td>
-              <td><strong>{% trans 'last modified'|capfirst %}</strong></td>
-              <td></td>
-            </tr></form>
-            {% for j in filesexported %}
-            <tr data-file="{{j.0}}">
-              <td></td>
-              <td>
-                  <input type="checkbox" id="{{j.0}}" checked>
-                  {{j.0}}
-              </td>
-              <td>{{j.2}}</td>
-              <td>{{j.1}}</td>
-            </tr>
-            {% endfor %}
-            <tr>
-                <td style="padding-left:15px; padding-top:10px"><strong>{% trans 'emails'|capfirst %}:</strong>
-                </td>
-                <td style="padding-top:10px" colspan="3">
-                <input type="email" class="form-control" id="emails" name="recipient" multiple value="{{user_email}}">
-                </td>
-            </tr>
-          </table>
-          <input type="hidden" name="report" id="report" value="{{all_reports}}">
-        </form>
-        <script>
-        function validateEmailButton() {
-            var reports = "";
-            var first = true;
-            {% for j in filesexported %}
-              if ($('#{{j.3}}').is(':checked')) {
-                  if (first) {
-                    reports = reports + "{{j.0}}";
-                    first = false
-                  }
-                  else {
-                    reports = reports + ",{{j.0}}";
-                  }
-              }
-            {% endfor %}
-            $("#report").val(reports);
-            var oneChecked = false;
-            {% for j in filesexported %}
-              oneChecked = oneChecked || $('#{{j.3}}').is(':checked');
-            {% endfor %}
-            var testEmail = /^([\w+-.%]+@[\w-.]+\.[A-Za-z]{2,},?)+$/;
-            emails_ok = $("#emails").val() != '' && testEmail.test($("#emails").val());
-            if (!emails_ok) {
-               $("#emails").attr('data-original-title', '{% trans 'please correct invalid email addresses'|capfirst %}');
-               $('#emails').tooltip('show');
-            }
-            else {
-               $("#emails").tooltip('hide').attr('data-original-title', '{% trans 'please enter email addresses'|capfirst %}');
-            }
-            $('#emailreport').prop('disabled', !(oneChecked && emails_ok));
-
-        }
-        $("#emails").on('input', function () {
-            validateEmailButton();
-        });
-        $("#allcheckboxes").on("click", function(event) {
-            var isChecked = $('#allcheckboxes').is(':checked');
-            {% for j in filesexported %}
-            $("#{{j.3}}").prop("checked", isChecked);
-            {% endfor %}
-            validateEmailButton();
-        });
-        {% for j in filesexported %}
-        $("#{{j.3}}").on("click", function(event) {
-            var allChecked = true;
-            {% for j in filesexported %}
-              allChecked = allChecked && $('#{{j.3}}').is(':checked');
-            {% endfor %}
-            $("#allcheckboxes").prop("checked", allChecked);
-            validateEmailButton();
-        });
-        {% endfor %}
-        </script>
-        """
-            )
-            return template.render(context)
-            # A list of translation strings from the above
-            translated = (
-                _("email"),
-                _(
-                    "Emails the selected reports to a comma separated list of recipients. Files are zipped and attached to email."
-                ),
-                _("file name"),
-                _("size"),
-                _("please correct invalid email addresses"),
-                _("please enter email addresses"),
-            )
-        else:
-            return None
+        return render_to_string(
+            "commands/emailreport.html",
+            {
+                "filesexported": filesexported,
+                "user_email": request.user.email,
+                "all_reports": ",".join(map(str, all_reports)),
+                "initially_disabled": "" if len(all_reports) > 0 else "disabled",
+            },
+            request=request,
+        )

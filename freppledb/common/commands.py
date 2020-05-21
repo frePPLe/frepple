@@ -275,6 +275,7 @@ class PlanTaskSequence(PlanTask):
             if i.sequence == sequence:
                 self.steps.remove(i)
                 return
+            i._remove(sequence)
 
 
 class PlanTaskParallel(PlanTask):

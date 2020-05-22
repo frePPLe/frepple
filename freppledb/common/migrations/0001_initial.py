@@ -21,8 +21,6 @@ import django.core.validators
 from django.db import models, migrations
 import django.utils.timezone
 
-from django.contrib.contenttypes.models import ContentType
-
 
 class Migration(migrations.Migration):
 

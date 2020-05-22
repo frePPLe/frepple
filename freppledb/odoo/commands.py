@@ -341,7 +341,7 @@ class OdooWritePlan(PlanTask):
                     try:
                         for j in i.loadplans:
                             res.add(j.resource.name)
-                    except:
+                    except Exception:
                         pass
                     demand = {}
                     demand_str = ""

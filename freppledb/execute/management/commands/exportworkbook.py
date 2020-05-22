@@ -15,29 +15,36 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-import os
-import sys
-from datetime import datetime
-import subprocess
-
-from django.core.management.base import BaseCommand, CommandError
-from django.db import DEFAULT_DB_ALIAS
-from django.conf import settings
+from django.core.management.base import BaseCommand
 from django.utils.translation import gettext_lazy as _
-from django.template import Template, RequestContext
+from django.template.loader import render_to_string
 
-from freppledb.execute.models import Task
-from freppledb.common.models import User
 from freppledb import VERSION
 
 
 class Command(BaseCommand):
 
-    # help = "Loads an XML file into the frePPLe database"
-    help = "command not implemented yet"
+    help = """
+       This command exports data in a spreadsheet. It is only available only
+       from the user interface.
 
-    # requires_system_checks = False
-    #
+       TODO implement a command line version of this command. Also unify that
+       command with the view function that is serving the spreadsheet from the
+       user interface.
+       """
+
+    def get_version(self):
+        return VERSION
+
+    requires_system_checks = False
+    title = _("Export a spreadsheet")
+    index = 1000
+    help_url = "user-guide/command-reference.html#exportworkbook"
+
+    @staticmethod
+    def getHTML(request):
+        return render_to_string("commands/exportworkbook.html", request=request)
+
     # def add_arguments(self, parser):
     #   parser.add_argument(
     #     '--user', help='User running the command'
@@ -54,12 +61,7 @@ class Command(BaseCommand):
     #     'file', nargs='+',
     #     help='spreadsheet file name'
     #     )
-    #
-    #
-    # def get_version(self):
-    #   return VERSION
-    #
-    #
+
     # def handle(self, **options):
     #   # Pick up the options
     #   database = options['database']
@@ -130,93 +132,3 @@ class Command(BaseCommand):
     #   finally:
     #     if task:
     #       task.save(using=database)
-
-    # accordion template
-    title = _("Export a spreadsheet")
-    index = 1000
-    help_url = "user-guide/command-reference.html#exportworkbook"
-
-    @staticmethod
-    def getHTML(request):
-
-        javascript = """
-      $(".chck_all").click( function() {
-        if ($(this).prop("name") === "alldata") {
-          $(".chck_entity[data-tables='data']").prop("checked", $(this).prop("checked"));
-        } else if ($(this).prop("name") === "alladmin") {
-          $(".chck_entity[data-tables='admin']").prop("checked", $(this).prop("checked"));
-        }
-      });
-      $(".chck_entity").click( function() {
-        if ($(this).attr("data-tables") === "data") {
-          $(".chck_all[name='alldata']").prop("checked",$(".chck_entity[data-tables='data']:not(:checked)").length === 0);
-        } else if ($(this).attr("data-tables") === "admin") {
-          $(".chck_all[name='alladmin']").prop("checked",$(".chck_entity[data-tables='admin']:not(:checked)").length === 0);
-        }
-      });
-      """
-        context = RequestContext(request, {"javascript": javascript})
-
-        template = Template(
-            """
-      {% load i18n %}
-      {% getMenu as menu %}
-      <form role="form" method="post" action="{{request.prefix}}/execute/launch/exportworkbook/">{% csrf_token %}
-        <table>
-        <tr>
-          <td style="vertical-align:top; padding: 15px">
-              <button type="submit" class="btn btn-primary" id="export" value="{% trans "export"|capfirst %}" >{% trans "export"|capfirst %}</button>
-          </td>
-          <td style="padding: 15px;">
-           <p>
-            {% blocktrans %}Download all input data in a single spreadsheet.<br>Optionally, you can make the data anonymous during the export to hide sensitive company data.{% endblocktrans %}
-            &nbsp;<input style="margin: 0; display:inline-block; vertical-align: middle" type="checkbox" name="anonymous" value="0"></strong>
-            <br>
-           </p>
-            {% getMenu as menu %}
-            <p>
-            <label>
-              <input class="chck_all check" type="checkbox" name="alldata" value="1">&nbsp;<strong>{%trans 'data tables'|upper%}</strong>
-            </label><br>
-            {% for group in menu %}
-              {% for item in group.1 %}
-                {% if item.1.model and not item.1.excludeFromBulkOperations and not item.1.admin %}
-                  <label for="chbx_{{ item.1.model | model_name }}">
-                    <input class="chck_entity check" data-tables="data" type="checkbox" name="entities" value="{{ item.1.model | model_name }}"{% if item.3 %} checked=""{% endif %} id="chbx_{{ item.1.model | model_name }}">
-                      {{ group.0 }} - {{ item.0 }}
-                  </label><br>
-                {% endif %}
-              {% endfor %}
-            {% endfor %}
-            <label>
-              <input class="chck_all check" type="checkbox" checked name="alladmin" value="1">&nbsp;<strong>{%trans 'admin tables'|upper%}</strong>
-            </label><br>
-            {% for group in menu %}
-              {% for item in group.1 %}
-                {% if item.1.model and not item.1.excludeFromBulkOperations and item.1.admin %}
-                  <label for="chbx_{{ item.1.model | model_name }}">
-                    <input class="chck_entity check" data-tables="admin" type="checkbox" name="entities" value="{{ item.1.model | model_name }}"{% if item.3 %} checked=""{% endif %} id="chbx_{{ item.1.model | model_name }}">
-                      {{ group.0 }} - {{ item.0 }}
-                  </label><br>
-                {% endif %}
-              {% endfor %}
-            {% endfor %}
-            </p>
-          </td>
-        </tr>
-        </table>
-      </form>
-      <script>{{ javascript|safe }}</script>
-    """
-        )
-        return template.render(context)
-        # A list of translation strings from the above
-        translated = (
-            _("export"),
-            _("Download all input data in a single spreadsheet."),
-            _("data tables"),
-            _("admin tables"),
-            _(
-                "Download all input data in a single spreadsheet.<br>Optionally, you can make the data anonymous during the export to hide sensitive company data."
-            ),
-        )

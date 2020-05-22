@@ -34,8 +34,9 @@ from ...utils import getERPconnection
 
 class Command(BaseCommand):
     help = """
-  Update the ERP system with frePPLe planning information.
-  """
+      Update the ERP system with frePPLe planning information.
+      """
+
     # For the display in the execution screen
     title = _("Export data to %(erp)s") % {"erp": "erp"}
 

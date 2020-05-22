@@ -34,8 +34,8 @@ from ...utils import getERPconnection
 
 class Command(BaseCommand):
     help = """
-  Extract a set of flat files from an ERP system.
-  """
+      Extract a set of flat files from an ERP system.
+      """
 
     # Generate .csv or .cpy files:
     #  - csv files are thoroughly validated and load slower

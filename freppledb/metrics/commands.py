@@ -17,7 +17,6 @@
 
 import os
 
-from django.conf import settings
 from django.db import connections, DEFAULT_DB_ALIAS
 
 from freppledb.common.commands import PlanTaskRegistry, PlanTask

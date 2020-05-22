@@ -29,7 +29,7 @@ from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 from django.utils.text import capfirst
 from django.utils.encoding import force_text
-from django.template import Template, RequestContext
+from django.template.loader import render_to_string
 
 from freppledb import VERSION
 from freppledb.common.middleware import _thread_locals
@@ -318,68 +318,4 @@ class Command(BaseCommand):
 
     @staticmethod
     def getHTML(request):
-
-        context = RequestContext(request, {})
-
-        template = Template(
-            """
-      {% load i18n %}
-      <table>
-        <tr>
-          <td style="vertical-align:top; padding: 15px">
-            <button type="submit" class="btn btn-primary" id="import" onclick="import_show('{% trans "Import a spreadsheet" %}',null,true,uploadspreadsheetajax)" value="{% trans "import"|capfirst %}">{% trans "import"|capfirst %}</button>
-          </td>
-          <td style="padding: 15px 15px 0 15px">
-            <p>{% trans "Import input data from a spreadsheet.</p><p>The spreadsheet must match the structure exported with the task above." %}</p>
-          </td>
-        </tr>
-      </table>
-      <script>
-      var xhr = {abort: function () {}};
-
-      var uploadspreadsheetajax = {
-        url: '{{request.prefix}}/execute/launch/importworkbook/',
-        success: function (data) {
-          var el = $('#uploadResponse');
-          el.html(data);
-          if (el.attr('data-scrolled')!== "true") {
-            el.scrollTop(el[0].scrollHeight - el.height());
-          }
-          $('#cancelbutton').html("{% trans 'Close' %}");
-          $('#importbutton').hide();
-          $("#animatedcog").css('visibility','hidden');
-          $('#cancelimportbutton').hide();
-          if (document.queryCommandSupported('copy')) {
-            $('#copytoclipboard').show();
-          }
-          $("#grid").trigger("reloadGrid");
-        },
-        xhrFields: {
-          onprogress: function (e) {
-            var el = $('#uploadResponse');
-            el.html(e.currentTarget.response);
-            if (el.attr('data-scrolled')!== "true") {
-              el.attr('data-scrolled', el[0].scrollHeight - el.height());
-              el.scrollTop(el[0].scrollHeight - el.height());
-            }
-          }
-        },
-        error: function() {
-          $('#cancelimportbutton').hide();
-          $('#copytoclipboard').show();
-          $("#animatedcog").css('visibility','hidden');
-          $("#uploadResponse").scrollTop($("#uploadResponse")[0].scrollHeight);
-        }
-      };
-      </script>
-    """
-        )
-        return template.render(context)
-        # A list of translation strings from the above
-        translated = (
-            _("import"),
-            _("Import a spreadsheet"),
-            _(
-                "Import input data from a spreadsheet.</p><p>The spreadsheet must match the structure exported with the task above."
-            ),
-        )
+        return render_to_string("commands/importworkbook.html", request=request)

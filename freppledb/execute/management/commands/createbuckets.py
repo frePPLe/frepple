@@ -21,9 +21,8 @@ from datetime import timedelta, datetime, date
 from django.core.management.base import BaseCommand, CommandError
 from django.db import connections, DEFAULT_DB_ALIAS, transaction
 from django.conf import settings
-from django.utils.encoding import force_text
 from django.utils.translation import gettext_lazy as _
-from django.template import Template, RequestContext
+from django.template.loader import render_to_string
 
 from freppledb.common.models import Bucket, BucketDetail
 from freppledb.execute.models import Task
@@ -34,8 +33,8 @@ from freppledb import VERSION
 class Command(BaseCommand):
 
     help = """
-  This command initializes the date bucketization table in the database.
-  """
+      This command initializes the date bucketization table in the database.
+      """
 
     requires_system_checks = False
 
@@ -290,126 +289,7 @@ class Command(BaseCommand):
 
     @staticmethod
     def getHTML(request):
-
         if request.user.has_perm("auth.run_db"):
-            javascript = """
-        iconslist = {
-            time: 'fa fa-clock-o',
-            date: 'fa fa-calendar',
-            up: 'fa fa-chevron-up',
-            down: 'fa fa-chevron-down',
-            previous: 'fa fa-chevron-left',
-            next: 'fa fa-chevron-right',
-            today: 'fa fa-bullseye',
-            clear: 'fa fa-trash',
-            close: 'fa fa-close'
-          };
-        // Date picker
-        $(".vDateField").on('focusin', function() {
-          $(this).parent().css('position', 'relative');
-          $(this).datetimepicker({format: 'YYYY-MM-DD', calendarWeeks: true, icons: iconslist, locale: document.documentElement.lang});
-        });
-
-        $("#weekstartul li a").click(function(){
-          $("#weekstart1").html($(this).text() + ' <span class="caret"></span>');
-          $("#weekstart").val($(this).parent().index());
-        });
-      """
-            context = RequestContext(request, {"javascript": javascript})
-
-            template = Template(
-                """
-        {%% load i18n %%}
-        <form class="form-horizontal" role="form" method="post" action="{{request.prefix}}/execute/launch/createbuckets/">{%% csrf_token %%}
-        <input type="hidden" name="weekstart" id="weekstart" value="1">
-        <table>
-          <tr>
-            <td style="vertical-align:top; padding: 15px">
-              <button class="btn btn-primary" type="submit" value="{%% trans "launch"|capfirst %%}">{%% trans "launch"|capfirst %%}</button>
-            </td>
-            <td style="padding: 15px; width:99%%">
-            %s
-            </td>
-          </tr>
-        </table>
-        </form>
-        <script>{{ javascript|safe }}</script>
-      """
-                % (
-                    force_text(
-                        _(
-                            """<p>Create time buckets for reporting.</p>
-          <div class="form-group">
-          <label class="col-sm-3 control-label">Start date</label>
-          <div class="col-sm-9">
-          <input class="vDateField form-control" id="start" name="start" type="text" size="12" value="2014-01-01"/>
-          </div>
-          </div>
-          <div class="form-group">
-          <label class="col-sm-3 control-label">End date</label>
-          <div class="col-sm-9">
-          <input class="vDateField form-control" id="end" name="end" type="text" size="12" value="2022-01-01"/>
-          </div>
-          </div>
-          <div class="form-group">
-          <label class="col-sm-3 control-label" for="weekstart1">Week starts on</label>
-          <div class="col-sm-9">
-          <div class="dropdown dropdown-submit-input">
-            <button class="btn btn-default dropdown-toggle form-control"  id="weekstart1" value="1" type="button" data-toggle="dropdown">Monday&nbsp;&nbsp;<span class="caret"></span></button>
-            <ul class="dropdown-menu col-xs-12" aria-labelledby="weekstart1" id="weekstartul">
-              <li><a>Sunday</a></li>
-              <li><a>Monday</a></li>
-              <li><a>Tuesday</a></li>
-              <li><a>Wednesday</a></li>
-              <li><a>Thursday</a></li>
-              <li><a>Friday</a></li>
-              <li><a>Saturday</a></li>
-            </ul>
-          </div>
-          </div>
-          </div>
-          <div class="form-group">
-          <label class="col-sm-3 control-label">Day name</label>
-          <div class="col-sm-9">
-          <input class="form-control" name="format-day" type="text" size="12" value="%Y-%m-%d"/>
-          </div>
-          </div>
-          <div class="form-group">
-          <label class="col-sm-3 control-label">Week name</label>
-          <div class="col-sm-9">
-          <input class="form-control" name="format-week" type="text" size="12" value="%y W%W"/>
-          </div>
-          </div>
-          <div class="form-group">
-          <label class="col-sm-3 control-label">Month name</label>
-          <div class="col-sm-9">
-          <input class="form-control" name="format-month" type="text" size="12" value="%b %y"/>
-          </div>
-          </div>
-          <div class="form-group">
-          <label class="col-sm-3 control-label">Quarter name</label>
-          <div class="col-sm-9">
-          <input class="form-control" name="format-quarter" type="text" size="12" value="%y Q%q"/>
-          </div>
-          </div>
-          <div class="form-group">
-          <label class="col-sm-3 control-label">Year name</label>
-          <div class="col-sm-9">
-          <input class="form-control" name="format-year" type="text" size="12" value="%Y"/>
-          </div>
-          </div>
-          """
-                        )
-                    )
-                )
-            )
-            return template.render(context)
-            # A list of translation strings from the above
-            translated = (
-                _("launch"),
-                _("data tables"),
-                _("admin tables"),
-                _("Erase selected tables."),
-            )
+            return render_to_string("commands/createbuckets.html", request=request)
         else:
             return None

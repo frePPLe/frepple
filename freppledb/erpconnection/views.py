@@ -15,22 +15,11 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-import base64
-import email
 import json
-import jwt
-import time
-from urllib.request import urlopen, HTTPError, Request
-from xml.sax.saxutils import quoteattr
 
-from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseServerError
-from django.utils.translation import gettext_lazy as _
 from django.views.decorators.csrf import csrf_protect
-
-from freppledb.input.models import PurchaseOrder, DistributionOrder, OperationPlan
-from freppledb.common.models import Parameter
 
 import logging
 

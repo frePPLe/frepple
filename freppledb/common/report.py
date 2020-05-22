@@ -395,7 +395,7 @@ class GridFieldChoice(GridField):
         result = []
         for f in data.split(","):
             for c in self.choices:
-                if f == c[0] or f == force_text(c[1]):
+                if f.lower() in (c[0].lower(), force_text(c[1]).lower()):
                     result.append(c[0])
         return ",".join(result)
 

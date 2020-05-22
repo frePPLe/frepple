@@ -99,23 +99,29 @@ class OdooReadData(PlanTask):
         odoo_url = Parameter.getValue("odoo.url", database)
         odoo_company = Parameter.getValue("odoo.company", database)
         ok = True
-        if not odoo_user:
+
+        # Set debugFile=PathToXmlFile if you want frePPLe to read that file
+        # rather than the data at url
+        # else leave it to False
+        debugFile = False  # "c:/temp/frepple_data.xml"
+
+        if not odoo_user and not debugFile:
             logger.error("Missing or invalid parameter odoo.user")
             ok = False
-        if not odoo_password:
+        if not odoo_password and not debugFile:
             logger.error("Missing or invalid parameter odoo.password")
             ok = False
-        if not odoo_db:
+        if not odoo_db and not debugFile:
             logger.error("Missing or invalid parameter odoo.db")
             ok = False
-        if not odoo_url:
+        if not odoo_url and not debugFile:
             logger.error("Missing or invalid parameter odoo.url")
             ok = False
-        if not odoo_company:
+        if not odoo_company and not debugFile:
             logger.error("Missing or invalid parameter odoo.company")
             ok = False
         odoo_language = Parameter.getValue("odoo.language", database, "en_US")
-        if not ok:
+        if not ok and not debugFile:
             raise Exception("Odoo connector not configured correctly")
 
         # Assign to single roots
@@ -136,34 +142,42 @@ class OdooReadData(PlanTask):
                 break
 
         # Connect to the odoo URL to GET data
-        url = "%sfrepple/xml?%s" % (
-            odoo_url,
-            urlencode(
-                {
-                    "database": odoo_db,
-                    "language": odoo_language,
-                    "company": odoo_company,
-                    "mode": cls.mode,
-                }
-            ),
-        )
-        try:
-            request = Request(url)
-            encoded = base64.encodestring(
-                ("%s:%s" % (odoo_user, odoo_password)).encode("utf-8")
-            )[:-1]
-            request.add_header("Authorization", "Basic %s" % encoded.decode("ascii"))
-        except HTTPError as e:
-            logger.error("Error connecting to odoo at %s: %s" % (url, e))
-            raise e
-
-        # Download and parse XML data
         try:
             loglevel = int(Parameter.getValue("odoo.loglevel", database, "0"))
         except Exception:
             loglevel = 0
-        with urlopen(request) as f:
-            frepple.readXMLdata(f.read().decode("utf-8"), False, False, loglevel)
+
+        if not debugFile:
+            url = "%sfrepple/xml?%s" % (
+                odoo_url,
+                urlencode(
+                    {
+                        "database": odoo_db,
+                        "language": odoo_language,
+                        "company": odoo_company,
+                        "mode": cls.mode,
+                    }
+                ),
+            )
+            try:
+                request = Request(url)
+                encoded = base64.encodestring(
+                    ("%s:%s" % (odoo_user, odoo_password)).encode("utf-8")
+                )[:-1]
+                request.add_header(
+                    "Authorization", "Basic %s" % encoded.decode("ascii")
+                )
+            except HTTPError as e:
+                logger.error("Error connecting to odoo at %s: %s" % (url, e))
+                raise e
+
+            # Download and parse XML data
+            with urlopen(request) as f:
+                frepple.readXMLdata(f.read().decode("utf-8"), False, False, loglevel)
+        else:
+            # Download and parse XML data
+            with open(debugFile) as f:
+                frepple.readXMLdata(f.read(), False, False, loglevel)
 
         # Assure single root hierarchies
         for r in frepple.items():

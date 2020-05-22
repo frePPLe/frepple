@@ -6531,10 +6531,16 @@ class Load : public Object,
    */
   Load* getAlternate() const {
     if (getName().empty() || !getOperation()) return nullptr;
+    Load* first_zero = nullptr;
     for (auto h = getOperation()->getLoads().begin();
-         h != getOperation()->getLoads().end() && this != &*h; ++h)
-      if (getName() == h->getName()) return const_cast<Load*>(&*h);
-    return nullptr;
+         h != getOperation()->getLoads().end(); ++h)
+      if (getName() == h->getName()) {
+        if (h->getPriority())
+          return (this == &*h) ? nullptr : const_cast<Load*>(&*h);
+        else if (!first_zero)
+          first_zero = const_cast<Load*>(&*h);
+      }
+    return (this == first_zero) ? nullptr : first_zero;
   }
 
   /* Return whether the load has alternates. */

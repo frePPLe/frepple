@@ -24,7 +24,11 @@
 namespace frepple {
 
 bool sortLoad(const Load* lhs, const Load* rhs) {
-  return lhs->getPriority() < rhs->getPriority();
+  auto l = lhs->getPriority();
+  auto r = rhs->getPriority();
+  if (!l) l = INT_MAX;
+  if (!r) r = INT_MAX;
+  return l < r;
 }
 
 void SolverCreate::chooseResource(

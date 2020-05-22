@@ -765,7 +765,7 @@ class ExportOperationPlanMaterials(PlanTask):
                     )
                 else:
                     yield "%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\n" % (
-                        clean_value(j.operationplan.id),
+                        clean_value(j.operationplan.reference),
                         clean_value(j.buffer.item.name),
                         clean_value(j.buffer.location.name),
                         round(j.quantity, 8),

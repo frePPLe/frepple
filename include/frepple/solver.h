@@ -344,6 +344,27 @@ class SolverCreate : public Solver {
     erasePreviousFirst = other.erasePreviousFirst;
   }
 
+  /* Copy assignment operator. */
+  SolverCreate& operator=(const SolverCreate& other) {
+    plantype = other.plantype;
+    lazydelay = other.lazydelay;
+    administrativeleadtime = other.administrativeleadtime;
+    minimumdelay = other.minimumdelay;
+    autofence = other.autofence;
+    iteration_threshold = other.iteration_threshold;
+    iteration_accuracy = other.iteration_accuracy;
+    iteration_max = other.iteration_max;
+    resource_iteration_max = other.resource_iteration_max;
+    userexit_flow = other.userexit_flow;
+    userexit_demand = other.userexit_demand;
+    userexit_buffer = other.userexit_buffer;
+    userexit_resource = other.userexit_resource;
+    userexit_operation = other.userexit_operation;
+    planSafetyStockFirst = other.planSafetyStockFirst;
+    erasePreviousFirst = other.erasePreviousFirst;
+    return *this;
+  }
+
   /* Destructor. */
   virtual ~SolverCreate() {}
 

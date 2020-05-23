@@ -1139,69 +1139,6 @@ void OperationPlan::resizeFlowLoadPlans() {
   if (dmd) dmd->setChanged();
 }
 
-OperationPlan::OperationPlan(const OperationPlan& src, bool init) {
-  if (src.owner)
-    throw LogicException(
-        "Can't copy suboperationplans. Copy the owner instead.");
-
-  // Copy all fields, except identifier and reference.
-  // A new identifier will be generated when we activate the operationplan.
-  // The reference remains blank.
-  quantity = src.quantity;
-  flags = src.flags;
-  dmd = src.dmd;
-  oper = src.oper;
-  firstflowplan = nullptr;
-  firstloadplan = nullptr;
-  dates = src.dates;
-  prev = nullptr;
-  next = nullptr;
-  owner = nullptr;
-  firstsubopplan = nullptr;
-  lastsubopplan = nullptr;
-  nextsubopplan = nullptr;
-  prevsubopplan = nullptr;
-  initType(metadata);
-
-  // Clone the suboperationplans
-  for (OperationPlan::iterator x(&src); x != end(); ++x)
-    new OperationPlan(*x, this);
-
-  // Activate
-  if (init) activate();
-}
-
-OperationPlan::OperationPlan(const OperationPlan& src,
-                             OperationPlan* newOwner) {
-  if (!newOwner)
-    throw LogicException("No new owner passed in private copy constructor.");
-
-  // Copy all fields, except the identifier can't be inherited.
-  // A new identifier will be generated when we activate the operationplan
-  quantity = src.quantity;
-  flags = src.flags;
-  dmd = src.dmd;
-  oper = src.oper;
-  firstflowplan = nullptr;
-  firstloadplan = nullptr;
-  dates = src.dates;
-  prev = nullptr;
-  next = nullptr;
-  owner = nullptr;
-  firstsubopplan = nullptr;
-  lastsubopplan = nullptr;
-  nextsubopplan = nullptr;
-  prevsubopplan = nullptr;
-  initType(metadata);
-
-  // Set owner
-  setOwner(newOwner);
-
-  // Clone the suboperationplans
-  for (OperationPlan::iterator x(&src); x != end(); ++x)
-    new OperationPlan(*x, this);
-}
-
 bool OperationPlan::mergeIfPossible() {
   // Verify a merge with another operationplan.
   // TODO The logic duplicates much of OperationFixedTime::extraInstantiate.

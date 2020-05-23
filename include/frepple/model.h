@@ -1561,7 +1561,8 @@ class SetupEvent : public TimeLine<LoadPlan>::Event {
 class OperationPlan : public Object,
                       public HasProblems,
                       public HasSource,
-                      private Tree::TreeNode {
+                      private Tree::TreeNode,
+                      public NonCopyable {
   friend class FlowPlan;
   friend class LoadPlan;
   friend class Demand;
@@ -2166,12 +2167,6 @@ class OperationPlan : public Object,
    */
   bool operator<(const OperationPlan& a) const;
 
-  /* Copy constructor.
-   * If the optional argument is false, the new copy is not initialized
-   * and won't have flowplans and loadplans.
-   */
-  OperationPlan(const OperationPlan&, bool = true);
-
   /* Return the total quantity which this operationplan, its children
    * and its parents produce or consume from a given buffer.
    */
@@ -2318,13 +2313,6 @@ class OperationPlan : public Object,
  private:
   /* A tree structure with all operationplans to allow a fast lookup by id. */
   static Tree st;
-
-  /* Private copy constructor.
-   * It is used in the public copy constructor to make a deep clone of
-   * suboperationplans.
-   * @see OperationPlan(const OperationPlan&, bool = true)
-   */
-  OperationPlan(const OperationPlan&, OperationPlan*);
 
   /* Updates the operationplan based on the latest information of quantity,
    * date and locked flag.
@@ -9003,6 +8991,16 @@ class PeggingIterator : public Object {
           offset(o.offset),
           level(o.level),
           gap(o.gap){};
+
+    // Copy assignment operator
+    state& operator=(const state& o) {
+      opplan = o.opplan;
+      quantity = o.quantity;
+      offset = o.offset;
+      level = o.level;
+      gap = o.gap;
+      return *this;
+    }
 
     // Comparison operator
     bool operator<(const state& other) const {

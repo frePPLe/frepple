@@ -1868,10 +1868,9 @@ var ERPconnection = {
 
           },
           error: function (result, stat, errorThrown) {
-            fmts = gettext("Error");
-            $('#popup .modal-title').html(fmts);
+            $('#popup .modal-title').html(gettext("Error"));
             $('#popup .modal-header').addClass('bg-danger');
-            $('#popup .modal-body p').html(fmts + ':' + result.responseText);
+            $('#popup .modal-body p').html(result.responseText);
             $('#button_export').text(gettext('retry'));
           }
         });
@@ -2020,7 +2019,6 @@ var ERPconnection = {
                 };
               },
               error: function (result, stat, errorThrown) {
-                var fmts = ngettext("Error during export");
                 $('#popup .modal-title').html(gettext("Error during export"));
                 $('#popup .modal-header').addClass('bg-danger');
                 $('#popup .modal-body').css({'overflow-y':'auto'}).html('<div style="overflow-y:auto; height: 300px; resize: vertical">' + result.responseText + '</div>');

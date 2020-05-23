@@ -281,7 +281,7 @@ void SolverCreate::solve(const Load* l, void* v) {
   SearchMode search = l->getSearch();
   for (auto i = l->getOperation()->getLoads().begin();
        i != l->getOperation()->getLoads().end(); ++i)
-    if ((i->getAlternate() == x || &*i == x) &&
+    if ((i->getAlternate() == x || &*i == x) && i->getPriority() &&
         i->getEffective().within(data->state->q_loadplan->getDate()))
       thealternates.push_back(&*i);
 

@@ -36,13 +36,14 @@ class AttributeMigration(migrations.Migration):
         self.real_app_label = app_label
 
     def __eq__(self, other):
-        if isinstance(other, AttributeMigration):
-            return (
-                migrations.Migration.__eq__(self, other)
-                and self.extends_app_label == other.extends_app_label
-            )
-        else:
-            return False
+        return (
+            isinstance(other, AttributeMigration)
+            and migrations.Migration.__eq__(self, other)
+            and self.extends_app_label == other.extends_app_label
+        )
+
+    def __hash__(self):
+        return hash("%s.%s.%s" % (self.app_label, self.name, self.extends_app_label))
 
     def mutate_state(self, project_state, preserve=True):
         self.app_label = self.extends_app_label

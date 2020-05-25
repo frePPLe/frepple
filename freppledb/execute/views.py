@@ -675,10 +675,17 @@ class FileManager:
                         for chunk in content.chunks():
                             thetarget.write(chunk)
 
-                    response.write(force_text("%s: %s\n" % (clean_filename, _("OK"))))
+                    response.write(
+                        force_text(
+                            "%s: <strong>%s</strong><br>" % (clean_filename, _("OK"))
+                        )
+                    )
                 except Exception as e:
                     logger.error("Failed file upload: %s" % e)
-                    response.write("%s: %s\n" % (clean_filename, _("Upload failed")))
+                    response.write(
+                        "%s: <strong>%s</strong><br>"
+                        % (clean_filename, _("Upload failed"))
+                    )
                     errorcount += 1
             response.write(force_text("%s" % capfirst(_("finished"))))
         if errorcount:

@@ -533,7 +533,9 @@ def detail(request, app, model, object_id):
         url = reverse(newtab["view"], args=("dummy",))
         newtab["viewfunc"] = resolve(url).func
 
-    # Open the tab
+    # Open the tab, enforcing the noautofilter behavior
+    request.GET = request.GET.copy()
+    request.GET["noautofilter"] = True
     return newtab["viewfunc"](request, object_id)
 
 

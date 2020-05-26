@@ -6734,6 +6734,58 @@ class OperationPlanDetail(View):
                             ]
                         )
 
+                # Downstream operationplans
+
+                cursor.execute(
+                    """
+                with cte as
+                (
+                select (value->>0)::int as level, 
+                value->>1 as reference, 
+                sum((value->>2)::numeric) as quantity 
+                from jsonb_array_elements((select plan->'downstream_opplans' from operationplan where reference = %s))
+                group by (value->>0)::int, value->>1
+                )
+                select cte.level, 
+                cte.reference, 
+                operationplan.type,
+                case when operationplan.type = 'PO' then 'Purchase '||operationplan.item_id||' @ '||operationplan.location_id||' from '||operationplan.supplier_id
+                     when operationplan.type = 'DO' then 'Ship '||operationplan.item_id||' from '||operationplan.origin_id||' to '||operationplan.destination_id
+                     when operationplan.demand_id is not null then 'Deliver '||operationplan.item_id||' @ '||operationplan.location_id
+                else operationplan.operation_id end,
+                operationplan.status,
+                operationplan.plan->>'pegging',
+                operationplan.item_id,
+                coalesce(operationplan.location_id, operationplan.destination_id), 
+                to_char(operationplan.startdate,'YYYY-MM-DD hh24:mi:ss'), 
+                to_char(operationplan.enddate,'YYYY-MM-DD hh24:mi:ss'), 
+                trim(trailing '.' from (trim(trailing '0' from round(cte.quantity,8)::text)))||'/'||
+                trim(trailing '.' from (trim(trailing '0' from round(operationplan.quantity,8)::text)))
+                from cte
+                inner join operationplan on operationplan.reference = cte.reference
+                order by cte.level, operationplan.startdate, operationplan.item_id, operationplan.location_id
+                """,
+                    (opplan.reference,),
+                )
+
+                res["downstreamoperationplans"] = []
+                for a in cursor.fetchall():
+                    res["downstreamoperationplans"].append(
+                        [
+                            a[0],  # level
+                            a[1],  # reference
+                            a[2],  # type
+                            a[3],  # operation
+                            a[4],  # status
+                            a[5],  # demands
+                            a[6],  # item
+                            a[7],  # location
+                            a[8],  # startdate
+                            a[9],  # enddate
+                            a[10],  # quantity,
+                        ]
+                    )
+
                 # Final result
                 if first:
                     yield "[%s" % json.dumps(res)

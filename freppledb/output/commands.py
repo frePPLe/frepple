@@ -366,6 +366,16 @@ class ExportOperationPlans(PlanTask):
             "pegging": {
                 j.demand.name: round(j.quantity, 8) for j in opplan.pegging_demand
             },
+            "downstream_opplans": [
+                (j.level, j.operationplan.reference, j.quantity)
+                for j in opplan.pegging_downstream
+                if j.level != 0
+            ],
+            "upstream_opplans": [
+                (j.level, j.operationplan.reference, j.quantity)
+                for j in opplan.pegging_upstream
+                if j.level != 0
+            ],
             "unavailable": unavail,
             "interruptions": [
                 (

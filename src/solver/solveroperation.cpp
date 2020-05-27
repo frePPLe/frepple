@@ -974,12 +974,16 @@ void SolverCreate::solve(const OperationRouting* oper, void* v) {
   // Multiple suboperations can all produce into the buffer.
   double flow_qty_per = 0.0;
   double flow_qty_fixed = 0.0;
+  Flow* offset_flow = nullptr;
   if (data->state->curBuffer) {
     Flow* f = oper->findFlow(data->state->curBuffer, data->state->q_date);
     if (f && f->isProducer()) {
       // Flow on routing operation
       flow_qty_per += f->getQuantity();
       flow_qty_fixed += f->getQuantityFixed();
+      if (f->getOffset() &&
+          (!offset_flow || offset_flow->getOffset() < f->getOffset()))
+        offset_flow = &*f;
       logger << "Deprecation warning: routing operation '" << oper
              << "' shouldn't produce material" << endl;
     }
@@ -991,6 +995,9 @@ void SolverCreate::solve(const OperationRouting* oper, void* v) {
         // Flow on routing steps
         flow_qty_per += f->getQuantity();
         flow_qty_fixed += f->getQuantityFixed();
+        if (f->getOffset() &&
+            (!offset_flow || offset_flow->getOffset() < f->getOffset()))
+          offset_flow = &*f;
       }
     }
     if (!flow_qty_fixed && !flow_qty_per) {
@@ -1041,6 +1048,17 @@ void SolverCreate::solve(const OperationRouting* oper, void* v) {
       data->state->curDemand, data->state->curBatch,
       data->state->curOwnerOpplan, false, false);
   data->state->curDemand = nullptr;
+
+  // Subtract offset between operationplan end and flowplan date
+  if (offset_flow) {
+    if (getLogLevel() > 1)
+      logger << indentlevel << "Adjusting requirement date from "
+             << data->state->q_date;
+    data->state->q_date = offset_flow->computeFlowToOperationDate(
+        a->getOperationPlan(), data->state->q_date);
+    a->getOperationPlan()->setEnd(data->state->q_date);
+    if (getLogLevel() > 1) logger << " to " << data->state->q_date << endl;
+  }
 
   // Quantity can be changed because of size constraints on the top operation
   a_qty = a->getOperationPlan()->getQuantity();
@@ -1133,6 +1151,17 @@ void SolverCreate::solve(const OperationRouting* oper, void* v) {
   // Make other operationplans don't take this one as owner any more.
   // We restore the previous owner, which could be nullptr.
   data->state->curOwnerOpplan = prev_owner_opplan;
+
+  // Add offset between operationplan end and flowplan date
+  if (data->state->a_date != Date::infiniteFuture && !data->state->a_qty &&
+      offset_flow) {
+    if (getLogLevel() > 1)
+      logger << indentlevel << "Adjusting answer date from "
+             << data->state->a_date;
+    data->state->a_date = offset_flow->computeOperationToFlowDate(
+        a->getOperationPlan(), data->state->a_date);
+    if (getLogLevel() > 1) logger << " to " << data->state->a_date << endl;
+  }
 
   if (data->state->a_qty == 0.0 && data->state->a_date <= top_q_date) {
     // At least one of the steps is late, but the reply date at the overall

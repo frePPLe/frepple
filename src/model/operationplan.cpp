@@ -1387,7 +1387,7 @@ double OperationPlan::isExcess(bool use_zero) const {
 
   // Recursive call for suboperationplans
   double opplan_excess_qty = getQuantity();
-  for (OperationPlan* subopplan = firstsubopplan; subopplan;
+  for (auto subopplan = firstsubopplan; subopplan;
        subopplan = subopplan->nextsubopplan) {
     auto tmp = subopplan->isExcess(use_zero);
     if (tmp < opplan_excess_qty) opplan_excess_qty = tmp;
@@ -1402,10 +1402,10 @@ double OperationPlan::isExcess(bool use_zero) const {
 
     // Find the total produced quantity, including all suboperationplans
     double flpln_excess_qty = i->getQuantity();
-    for (OperationPlan* subopplan = firstsubopplan; subopplan;
+    for (auto subopplan = firstsubopplan; subopplan;
          subopplan = subopplan->nextsubopplan)
-      for (OperationPlan::FlowPlanIterator k = subopplan->beginFlowPlans();
-           k != subopplan->endFlowPlans(); ++k)
+      for (auto k = subopplan->beginFlowPlans(); k != subopplan->endFlowPlans();
+           ++k)
         if (k->getBuffer() == i->getBuffer())
           flpln_excess_qty += k->getQuantity();
     if (flpln_excess_qty <= 0) continue;
@@ -1452,9 +1452,7 @@ double OperationPlan::isExcess(bool use_zero) const {
   }
 
   // Handle operationplan already being deleted by a deleteOperation command
-  if (!hasFlowplans &&
-      getOperation()->getFlows().begin() != getOperation()->getFlows().end())
-    return 0.0;
+  if (!hasFlowplans && !getOperation()->getFlows().empty()) return 0.0;
 
   // If we remove/reduce this operationplan the onhand in all buffers remains
   // positive.

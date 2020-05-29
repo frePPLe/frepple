@@ -5053,6 +5053,10 @@ class Flow : public Object,
    */
   void setOperation(Operation* o) {
     if (!o) return;
+    if (o->hasType<OperationAlternate>()) {
+      logger << "Deprecation warning: alternate operation '" << o
+             << "' shouldn't consume or produce material" << endl;
+    }
     setPtrA(o, o->getFlows());
     // Note: This MTO update is called for every flow that is created.
     // For models with many flows per operation this makes up some overhead that

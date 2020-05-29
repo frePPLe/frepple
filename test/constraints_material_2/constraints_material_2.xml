@@ -261,7 +261,12 @@
         <quantity>1</quantity>
       </flow>
       <flow xsi:type="flow_end">
-        <operation name="make 5" />
+        <operation name="make 5 from 5a" />
+        <buffer name="buffer 5" />
+        <quantity>5</quantity>
+      </flow>
+      <flow xsi:type="flow_end">
+        <operation name="make 5 from 5b" />
         <buffer name="buffer 5" />
         <quantity>5</quantity>
       </flow>

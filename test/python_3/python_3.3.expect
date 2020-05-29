@@ -5,7 +5,7 @@
 	<name>locA</name>
 </location>
 <operationplan>
-	<reference>18</reference>
+	<reference>15</reference>
 	<operation xsi:type="operation_routing">
 		<name>make item</name>
 	</operation>
@@ -64,4 +64,10 @@
 	<start>2009-02-15T09:00:00</start>
 	<end>2009-03-01T20:00:00</end>
 	<weight>20</weight>
+</problem>
+<problem>
+	<name>material excess</name>
+	<description>Buffer &apos;end item&apos; has material excess of 9</description>
+	<start>2011-01-01T00:00:00</start>
+	<weight>9</weight>
 </problem>

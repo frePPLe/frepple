@@ -1209,19 +1209,6 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v) {
   // Make sure sub-operationplans know their owner & store the previous value
   OperationPlan* prev_owner_opplan = data->state->curOwnerOpplan;
 
-  // Find the flow into the requesting buffer for the quantity-per
-  double top_flow_qty_per = 0.0;
-  double top_flow_qty_fixed = 0.0;
-  if (buf) {
-    Flow* f = oper->findFlow(buf, data->state->q_date);
-    if (f && f->isProducer()) {
-      top_flow_qty_per += f->getQuantity();
-      top_flow_qty_fixed += f->getQuantityFixed();
-      logger << "Deprecation warning: alternate operation '" << oper
-             << "' shouldn't produce material" << endl;
-    }
-  }
-
   // Control the planning mode
   bool originalPlanningMode = data->constrainedPlanning;
   data->constrainedPlanning = true;
@@ -1244,6 +1231,7 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v) {
   SubOperation* firstAlternate = nullptr;
   double firstFlowPer;
   double firstFlowFixed;
+  Duration firstFlowOffset;
   while (a_qty > 0) {
     // Evaluate all alternates
     double bestAlternateValue = DBL_MAX;
@@ -1251,6 +1239,7 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v) {
     Operation* bestAlternateSelection = nullptr;
     double bestFlowPer = 0.0;
     double bestFlowFixed = 0.0;
+    Duration bestFlowOffset;
     Date bestQDate;
     for (auto altIter = oper->getSubOperations().begin();
          altIter != oper->getSubOperations().end();) {
@@ -1285,12 +1274,14 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v) {
       // since the flow could already exist on the top operationplan
       double sub_flow_qty_per = 0.0;
       double sub_flow_qty_fixed = 0.0;
+      Duration sub_flow_offset;
       if (buf) {
         // Flow quantity on the suboperation
         Flow* f = (*altIter)->getOperation()->findFlow(buf, ask_date);
         if (f && f->isProducer()) {
           sub_flow_qty_per = f->getQuantity();
           sub_flow_qty_fixed = f->getQuantityFixed();
+          sub_flow_offset = f->getOffset();
         }
 
         // Flow quantity on the suboperations of a routing suboperation
@@ -1302,15 +1293,14 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v) {
             if (g && g->isProducer()) {
               sub_flow_qty_per += g->getQuantity();
               sub_flow_qty_fixed += g->getQuantityFixed();
+              sub_flow_offset = g->getOffset();
             }
           }
         }
 
-        if (!sub_flow_qty_fixed && !sub_flow_qty_per && !top_flow_qty_fixed &&
-            !top_flow_qty_per) {
-          // Neither the top nor the sub operation have a flow in the buffer,
-          // we're in trouble...
-          // Restore the planning mode
+        if (!sub_flow_qty_fixed && !sub_flow_qty_per) {
+          // The sub operation doesn't have a flow in the buffer, we're in
+          // trouble... Restore the planning mode
           data->constrainedPlanning = originalPlanningMode;
           string msg = "Operation doesn't produce into " + buf->getName();
           if (data->logConstraints && data->planningDemand) {
@@ -1349,8 +1339,9 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v) {
       // Remember the first alternate
       if (!firstAlternate) {
         firstAlternate = *altIter;
-        firstFlowPer = sub_flow_qty_per + top_flow_qty_per;
-        firstFlowFixed = sub_flow_qty_fixed + top_flow_qty_fixed;
+        firstFlowPer = sub_flow_qty_per;
+        firstFlowFixed = sub_flow_qty_fixed;
+        firstFlowOffset = sub_flow_offset;
       }
 
       // Constraint tracking
@@ -1382,8 +1373,8 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v) {
       data->state->curBuffer =
           nullptr;  // Because we already took care of it... @todo not correct
                     // if the suboperation is again a owning operation
-      auto flow_per = sub_flow_qty_per + top_flow_qty_per;
-      auto flow_fixed = sub_flow_qty_fixed + top_flow_qty_fixed;
+      auto flow_per = sub_flow_qty_per;
+      auto flow_fixed = sub_flow_qty_fixed;
       if (!flow_per || a_qty < flow_fixed + ROUNDING_ERROR)
         // The minimum operation size will suffice
         data->state->q_qty = 0.001;
@@ -1453,8 +1444,7 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v) {
         data->state->curOwnerOpplan->createFlowLoads();
         checkOperation(data->state->curOwnerOpplan, *data);
         data->state->a_qty =
-            (sub_flow_qty_fixed + top_flow_qty_fixed) +
-            data->state->a_qty * (sub_flow_qty_per + top_flow_qty_per);
+            sub_flow_qty_fixed + data->state->a_qty * sub_flow_qty_per;
 
         // Combine the reply date of the top-opplan with the alternate check: we
         // need to return the minimum next-date.
@@ -1512,8 +1502,9 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v) {
           bestAlternateValue = val;
           bestAlternateSelection = (*altIter)->getOperation();
           bestAlternateQuantity = data->state->a_qty;
-          bestFlowPer = sub_flow_qty_per + top_flow_qty_per;
-          bestFlowFixed = sub_flow_qty_fixed + top_flow_qty_fixed;
+          bestFlowPer = sub_flow_qty_per;
+          bestFlowFixed = sub_flow_qty_fixed;
+          bestFlowOffset = sub_flow_offset;
           bestQDate = ask_date;
         }
         // This was only an evaluation

@@ -136,6 +136,14 @@
 	<operations>
 		<operation>
 			<name>buy item</name>
+			<flows>
+				<flow xsi:type="flow_end">
+					<item>
+						<name>end item</name>
+					</item>
+					<quantity>1</quantity>
+				</flow>
+			</flows>
 			<duration>P1D</duration>
 		</operation>
 		<operation>
@@ -152,6 +160,14 @@
 		</operation>
 		<operation xsi:type="operation_routing">
 			<name>make item</name>
+			<flows>
+				<flow xsi:type="flow_end">
+					<item>
+						<name>end item</name>
+					</item>
+					<quantity>1</quantity>
+				</flow>
+			</flows>
 			<suboperations>
 				<suboperation>
 					<operation>
@@ -190,14 +206,6 @@
 		</operation>
 		<operation xsi:type="operation_alternate">
 			<name>make or buy item</name>
-			<flows>
-				<flow xsi:type="flow_end">
-					<item>
-						<name>end item</name>
-					</item>
-					<quantity>1</quantity>
-				</flow>
-			</flows>
 			<suboperations>
 				<suboperation>
 					<operation xsi:type="operation_routing">
@@ -301,7 +309,7 @@
 			<quantity>10</quantity>
 		</operationplan>
 		<operationplan>
-			<reference>15</reference>
+			<reference>9</reference>
 			<operation xsi:type="operation_routing">
 				<name>make item</name>
 			</operation>
@@ -309,11 +317,11 @@
 			<end>2009-02-15T09:00:00</end>
 			<quantity>10</quantity>
 			<owner>
-				<reference>9</reference>
+				<reference>16</reference>
 			</owner>
 		</operationplan>
 		<operationplan>
-			<reference>16</reference>
+			<reference>10</reference>
 			<operation xsi:type="operation_routing">
 				<name>make item</name>
 			</operation>
@@ -321,11 +329,11 @@
 			<end>2009-02-22T09:00:00</end>
 			<quantity>10</quantity>
 			<owner>
-				<reference>10</reference>
+				<reference>17</reference>
 			</owner>
 		</operationplan>
 		<operationplan>
-			<reference>17</reference>
+			<reference>12</reference>
 			<operation xsi:type="operation_routing">
 				<name>make item</name>
 			</operation>
@@ -333,11 +341,11 @@
 			<end>2009-03-01T09:00:00</end>
 			<quantity>10</quantity>
 			<owner>
-				<reference>12</reference>
+				<reference>18</reference>
 			</owner>
 		</operationplan>
 		<operationplan>
-			<reference>18</reference>
+			<reference>15</reference>
 			<operation xsi:type="operation_routing">
 				<name>make item</name>
 			</operation>
@@ -355,7 +363,7 @@
 			<end>2009-02-12T09:00:00</end>
 			<quantity>10</quantity>
 			<owner>
-				<reference>15</reference>
+				<reference>9</reference>
 			</owner>
 		</operationplan>
 		<operationplan>
@@ -367,7 +375,7 @@
 			<end>2009-02-19T09:00:00</end>
 			<quantity>10</quantity>
 			<owner>
-				<reference>16</reference>
+				<reference>10</reference>
 			</owner>
 		</operationplan>
 		<operationplan>
@@ -379,7 +387,7 @@
 			<end>2009-02-26T09:00:00</end>
 			<quantity>10</quantity>
 			<owner>
-				<reference>17</reference>
+				<reference>12</reference>
 			</owner>
 		</operationplan>
 		<operationplan>
@@ -392,7 +400,7 @@
 			<quantity>9</quantity>
 			<status>confirmed</status>
 			<owner>
-				<reference>18</reference>
+				<reference>15</reference>
 			</owner>
 		</operationplan>
 		<operationplan>
@@ -404,7 +412,7 @@
 			<end>2009-02-15T09:00:00</end>
 			<quantity>10</quantity>
 			<owner>
-				<reference>15</reference>
+				<reference>9</reference>
 			</owner>
 		</operationplan>
 		<operationplan>
@@ -416,7 +424,7 @@
 			<end>2009-02-22T09:00:00</end>
 			<quantity>10</quantity>
 			<owner>
-				<reference>16</reference>
+				<reference>10</reference>
 			</owner>
 		</operationplan>
 		<operationplan>
@@ -428,7 +436,7 @@
 			<end>2009-03-01T09:00:00</end>
 			<quantity>10</quantity>
 			<owner>
-				<reference>17</reference>
+				<reference>12</reference>
 			</owner>
 		</operationplan>
 		<operationplan>
@@ -441,11 +449,11 @@
 			<quantity>9</quantity>
 			<status>confirmed</status>
 			<owner>
-				<reference>18</reference>
+				<reference>15</reference>
 			</owner>
 		</operationplan>
 		<operationplan>
-			<reference>9</reference>
+			<reference>16</reference>
 			<operation xsi:type="operation_alternate">
 				<name>make or buy item</name>
 			</operation>
@@ -455,7 +463,7 @@
 			<ordertype>ALT</ordertype>
 		</operationplan>
 		<operationplan>
-			<reference>10</reference>
+			<reference>17</reference>
 			<operation xsi:type="operation_alternate">
 				<name>make or buy item</name>
 			</operation>
@@ -465,7 +473,7 @@
 			<ordertype>ALT</ordertype>
 		</operationplan>
 		<operationplan>
-			<reference>12</reference>
+			<reference>18</reference>
 			<operation xsi:type="operation_alternate">
 				<name>make or buy item</name>
 			</operation>

@@ -7,8 +7,7 @@
     - case 2: fixed producing flow with date effectivity
     - case 3: fixed producing flow on routing operation
     - case 4: fixed producing flow on routing operation, with flows on top- and suboperation
-    - case 5: fixed producing flow on alternate operation
-    - case 6: fixed producing flow on alternate operation, with flows on top- and suboperation
+    - case 5: fixed producing flow on alternate suboperations
   </description>
   <current>2013-01-01T00:00:00</current>
 
@@ -297,89 +296,20 @@
   </demands>
 
   <!--
-    Case 5: fixed flow on an alternate operation.
-  -->
-  <buffers>
-    <buffer name="5. end item">
-      <item name="5. end item"/>
-      <onhand>3</onhand>
-      <producing name="5. make end item" xsi:type="operation_alternate">
-        <flows>
-          <flow xsi:type="flow_end">
-            <buffer name="5. end item"/>
-            <quantity_fixed>3</quantity_fixed>
-          </flow>
-        </flows>
-        <suboperations>
-          <suboperation>
-            <operation name="5. make end item - alternate 1" xsi:type="operation_fixed_time" duration="P2D"/>
-            <priority>1</priority>
-          </suboperation>
-          <suboperation>
-            <operation name="5. make end item - alternate 2" xsi:type="operation_fixed_time" duration="P2D"/>
-            <priority>2</priority>
-          </suboperation>
-          <suboperation>
-            <operation name="5. make end item - alternate 3" xsi:type="operation_fixed_time" duration="P2D"/>
-            <priority>3</priority>
-          </suboperation>
-        </suboperations>
-      </producing>
-    </buffer>
-  </buffers>
-  <demands>
-    <demand name="5. order 1">
-      <quantity>10</quantity>
-      <due>2013-01-20T00:00:00</due>
-      <priority>11</priority>
-      <item name="5. end item"/>
-      <operation name="5. deliver end item" xsi:type="operation_fixed_time">
-          <flows>
-            <flow xsi:type="flow_start">
-              <buffer name="5. end item"/>
-              <quantity>-1</quantity>
-            </flow>
-          </flows>
-          <duration>P1D</duration>
-      </operation>
-    </demand>
-    <demand name="5. order 2">
-      <quantity>5</quantity>
-      <due>2013-02-07T00:00:00</due>
-      <priority>12</priority>
-      <item name="5. end item"/>
-      <operation name="5. deliver end item"/>
-    </demand>
-    <demand name="5. order 3">
-      <quantity>7</quantity>
-      <due>2013-02-20T00:00:00</due>
-      <priority>13</priority>
-      <item name="5. end item"/>
-      <operation name="5. deliver end item"/>
-    </demand>
-  </demands>
-
-  <!--
-    Case 6: fixed flow on an alternate operation and its alternate.
+    Case 5: fixed flow on an alternate suboperations.
   -->
   <buffers>
     <buffer name="6. end item">
       <item name="6. end item"/>
       <onhand>3</onhand>
       <producing name="6. make end item" xsi:type="operation_alternate">
-        <flows>
-          <flow xsi:type="flow_end">
-            <buffer name="6. end item"/>
-            <quantity_fixed>1</quantity_fixed>
-          </flow>
-        </flows>
         <suboperations>
           <suboperation>
             <operation name="6. make end item - alternate 1" xsi:type="operation_fixed_time" duration="P2D">
               <flows>
                 <flow xsi:type="flow_end">
                   <buffer name="6. end item"/>
-                  <quantity_fixed>1</quantity_fixed>
+                  <quantity_fixed>2</quantity_fixed>
                 </flow>
               </flows>
             </operation>
@@ -390,7 +320,7 @@
               <flows>
                 <flow xsi:type="flow_end">
                   <buffer name="6. end item"/>
-                  <quantity_fixed>4</quantity_fixed>
+                  <quantity_fixed>5</quantity_fixed>
                 </flow>
               </flows>
             </operation>
@@ -401,7 +331,7 @@
               <flows>
                 <flow xsi:type="flow_end">
                   <buffer name="6. end item"/>
-                  <quantity_fixed>5</quantity_fixed>
+                  <quantity_fixed>6</quantity_fixed>
                 </flow>
               </flows>
             </operation>

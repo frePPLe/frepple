@@ -234,7 +234,12 @@ frepple.readXMLdata('''<?xml version="1.0" encoding="UTF-8" ?>
       <quantity>-1</quantity>
     </flow>
     <flow xsi:type="flow_end">
-      <operation name="make or buy item" />
+      <operation name="make item" />
+      <buffer name="end item" />
+      <quantity>1</quantity>
+    </flow>
+    <flow xsi:type="flow_end">
+      <operation name="buy item" />
       <buffer name="end item" />
       <quantity>1</quantity>
     </flow>

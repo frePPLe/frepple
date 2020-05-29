@@ -59,19 +59,23 @@ Echoing buffers:
   Buffer: buffer2 None None None buffer1
   Buffer: end item None None None None
     Flow: delivery end item -1.0 1971-01-01 00:00:00 2030-12-31 00:00:00
-    Flow: make or buy item 1.0 1971-01-01 00:00:00 2030-12-31 00:00:00
-    Flowplan: 9 make or buy item 10.0 2009-02-15 09:00:00
-    Flowplan: 10 make or buy item 10.0 2009-02-22 09:00:00
+    Flow: make item 1.0 1971-01-01 00:00:00 2030-12-31 00:00:00
+    Flow: buy item 1.0 1971-01-01 00:00:00 2030-12-31 00:00:00
+    Flowplan: 9 make item 10.0 2009-02-15 09:00:00
+    Flowplan: 10 make item 10.0 2009-02-22 09:00:00
     Flowplan: 11 delivery end item -10.0 2009-03-01 08:30:00
-    Flowplan: 12 make or buy item 10.0 2009-03-01 09:00:00
+    Flowplan: 12 make item 10.0 2009-03-01 09:00:00
     Flowplan: 13 delivery end item -10.0 2009-03-01 09:00:00
     Flowplan: 14 delivery end item -10.0 2009-03-01 20:00:00
+    Flowplan: 15 make item 9.0 2011-01-01 00:00:00
 
 Echoing operations:
   Operation: buy item None None None
+    Flow: end item 1.0 1971-01-01 00:00:00 2030-12-31 00:00:00
   Operation: delivery end item None None None
     Flow: end item -1.0 1971-01-01 00:00:00 2030-12-31 00:00:00
   Operation: make item None None None
+    Flow: end item 1.0 1971-01-01 00:00:00 2030-12-31 00:00:00
     Suboperation: make item - step 1 1 1971-01-01 00:00:00 2030-12-31 00:00:00
     Suboperation: make item - step 2 2 1971-01-01 00:00:00 2030-12-31 00:00:00
   Operation: make item - step 1 None None None
@@ -79,7 +83,6 @@ Echoing operations:
   Operation: make item - step 2 None None None
     Load: Resource 1.0 1971-01-01 00:00:00 2030-12-31 00:00:00
   Operation: make or buy item None None None
-    Flow: end item 1.0 1971-01-01 00:00:00 2030-12-31 00:00:00
     Suboperation: make item 1 1971-01-01 00:00:00 2030-12-31 00:00:00
     Suboperation: buy item 2 1971-01-01 00:00:00 2030-12-31 00:00:00
 
@@ -126,3 +129,4 @@ Printing problems
   Problem: material invalid data No replenishment defined for 'buffer1' 1971-01-01 00:00:00 2030-12-31 00:00:00 1.0
   Problem: material invalid data No replenishment defined for 'buffer2' 1971-01-01 00:00:00 2030-12-31 00:00:00 1.0
   Problem: material material excess Buffer 'end item' has material excess of 20 2009-02-15 09:00:00 2009-03-01 20:00:00 20.0
+  Problem: material material excess Buffer 'end item' has material excess of 9 2011-01-01 00:00:00 2030-12-31 00:00:00 9.0

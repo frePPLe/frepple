@@ -6742,9 +6742,9 @@ class OperationPlanDetail(View):
                 (
                 select (value->>0)::int as level, 
                 value->>1 as reference, 
-                sum((value->>2)::numeric) as quantity 
+                (value->>2)::numeric as quantity,
+                row_number() over() as rownum
                 from jsonb_array_elements((select plan->'downstream_opplans' from operationplan where reference = %s))
-                group by (value->>0)::int, value->>1
                 )
                 select cte.level, 
                 cte.reference, 
@@ -6763,13 +6763,18 @@ class OperationPlanDetail(View):
                 trim(trailing '.' from (trim(trailing '0' from round(operationplan.quantity,8)::text)))
                 from cte
                 inner join operationplan on operationplan.reference = cte.reference
-                order by cte.level, operationplan.startdate, operationplan.item_id, operationplan.location_id
+                order by cte.rownum
                 """,
                     (opplan.reference,),
                 )
 
                 res["downstreamoperationplans"] = []
+                last_index = {}
                 for a in cursor.fetchall():
+                    parent_reference = (
+                        last_index[a[0] - 1] if a[0] - 1 in last_index else None
+                    )
+                    last_index[a[0]] = a[1]
                     res["downstreamoperationplans"].append(
                         [
                             a[0],  # level
@@ -6783,9 +6788,9 @@ class OperationPlanDetail(View):
                             a[8],  # startdate
                             a[9],  # enddate
                             a[10],  # quantity,
+                            parent_reference or "",  # used for tree view
                         ]
                     )
-
                 # Final result
                 if first:
                     yield "[%s" % json.dumps(res)

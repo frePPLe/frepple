@@ -1,6 +1,16 @@
 Release notes
 -------------
 
+6.6.0 (Upcoming release)
+========================
+
+.. rubric:: User interface
+
+- | Revamped the workflow to identify items with many late demands. A new widget on the
+    cockpit "analyze late demand" displays a top 20 of items with late demand. From there
+    you can drill down into the "demand report" of an item to review the backlog situation
+    and the constraints causing the lateness.
+
 6.5.0 (2020/05/16)
 ==================
 

@@ -406,8 +406,10 @@ DEFAULT_DASHBOARD = [
             {
                 "width": 9,
                 "widgets": [
-                    ("late_orders", {"limit": 20}),
-                    ("short_orders", {"limit": 20}),
+                    (
+                        "analysis_demand_problems",
+                        {"top": 20, "orderby": "latedemandvalue"},
+                    ),
                 ],
             },
             {

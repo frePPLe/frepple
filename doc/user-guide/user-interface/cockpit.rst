@@ -62,6 +62,9 @@ The following widgets are currently available:
 * | **Alerts**
   | Shows a summary of the exceptions and problem areas.
 
+* | **Anlayze late demands**
+  | Shows a short list of items with the most late demands.
+
 * | **Late orders**
   | Shows the most urgent orders that are planned late.
 

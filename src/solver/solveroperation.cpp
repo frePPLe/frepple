@@ -1229,17 +1229,13 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v) {
   Date a_date = Date::infiniteFuture;
   Date ask_date;
   SubOperation* firstAlternate = nullptr;
-  double firstFlowPer;
-  double firstFlowFixed;
-  Duration firstFlowOffset;
+  Flow* firstFlow = nullptr;
   while (a_qty > 0) {
     // Evaluate all alternates
     double bestAlternateValue = DBL_MAX;
     double bestAlternateQuantity = 0;
     Operation* bestAlternateSelection = nullptr;
-    double bestFlowPer = 0.0;
-    double bestFlowFixed = 0.0;
-    Duration bestFlowOffset;
+    Flow* bestFlow = nullptr;
     Date bestQDate;
     for (auto altIter = oper->getSubOperations().begin();
          altIter != oper->getSubOperations().end();) {
@@ -1272,17 +1268,11 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v) {
 
       // Find the flow into the requesting buffer. It may or may not exist,
       // since the flow could already exist on the top operationplan
-      double sub_flow_qty_per = 0.0;
-      double sub_flow_qty_fixed = 0.0;
-      Duration sub_flow_offset;
+      Flow* sub_flow = nullptr;
       if (buf) {
         // Flow quantity on the suboperation
-        Flow* f = (*altIter)->getOperation()->findFlow(buf, ask_date);
-        if (f && f->isProducer()) {
-          sub_flow_qty_per = f->getQuantity();
-          sub_flow_qty_fixed = f->getQuantityFixed();
-          sub_flow_offset = f->getOffset();
-        }
+        sub_flow = (*altIter)->getOperation()->findFlow(buf, ask_date);
+        if (sub_flow && !sub_flow->isProducer()) sub_flow = nullptr;
 
         // Flow quantity on the suboperations of a routing suboperation
         if ((*altIter)->getOperation()->hasType<OperationRouting>()) {
@@ -1290,15 +1280,11 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v) {
               (*altIter)->getOperation()->getSubOperations());
           while (SubOperation* o = subiter.next()) {
             Flow* g = o->getOperation()->findFlow(buf, ask_date);
-            if (g && g->isProducer()) {
-              sub_flow_qty_per += g->getQuantity();
-              sub_flow_qty_fixed += g->getQuantityFixed();
-              sub_flow_offset = g->getOffset();
-            }
+            if (g && g->isProducer()) sub_flow = g;
           }
         }
 
-        if (!sub_flow_qty_fixed && !sub_flow_qty_per) {
+        if (!sub_flow->getQuantityFixed() && !sub_flow->getQuantity()) {
           // The sub operation doesn't have a flow in the buffer, we're in
           // trouble... Restore the planning mode
           data->constrainedPlanning = originalPlanningMode;
@@ -1332,16 +1318,12 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v) {
                                    "operation", Date::infinitePast,
                                    Date::infiniteFuture, 1.0);
         }
-      } else
-        // We have a alternate operation as the delivery operation of a demand
-        sub_flow_qty_per = 1.0;
+      }
 
       // Remember the first alternate
       if (!firstAlternate) {
         firstAlternate = *altIter;
-        firstFlowPer = sub_flow_qty_per;
-        firstFlowFixed = sub_flow_qty_fixed;
-        firstFlowOffset = sub_flow_offset;
+        firstFlow = sub_flow;
       }
 
       // Constraint tracking
@@ -1373,13 +1355,25 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v) {
       data->state->curBuffer =
           nullptr;  // Because we already took care of it... @todo not correct
                     // if the suboperation is again a owning operation
-      auto flow_per = sub_flow_qty_per;
-      auto flow_fixed = sub_flow_qty_fixed;
-      if (!flow_per || a_qty < flow_fixed + ROUNDING_ERROR)
+      if (!sub_flow)
+        data->state->q_qty = a_qty;
+      else if (!sub_flow->getQuantity() ||
+               a_qty < sub_flow->getQuantityFixed() + ROUNDING_ERROR)
         // The minimum operation size will suffice
         data->state->q_qty = 0.001;
       else
-        data->state->q_qty = (a_qty - flow_fixed) / flow_per;
+        data->state->q_qty =
+            (a_qty - sub_flow->getQuantityFixed()) / sub_flow->getQuantity();
+
+      // Subtract offset between operationplan end and flowplan date
+      if (sub_flow && sub_flow->getOffset()) {
+        if (getLogLevel() > 1)
+          logger << indentlevel << "Adjusting requirement date from "
+                 << data->state->q_date;
+        data->state->q_date = data->state->q_date_max =
+            sub_flow->computeFlowToOperationDate(nullptr, data->state->q_date);
+        if (getLogLevel() > 1) logger << " to " << data->state->q_date << endl;
+      }
 
       // Solve constraints on the sub operationplan
       double beforeCost = data->state->a_cost;
@@ -1429,10 +1423,6 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v) {
         data->state->a_penalty = beforePenalty;
       }
 
-      // Keep the lowest of all next-date answers on the effective alternates
-      if (data->state->a_date < a_date && data->state->a_date > ask_date)
-        a_date = data->state->a_date;
-
       // Now solve for loads and flows of the top operationplan.
       // Only now we know how long that top-operation lasts in total.
       if (data->state->a_qty > ROUNDING_ERROR) {
@@ -1443,14 +1433,25 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v) {
         data->state->q_date_max = origQDate;
         data->state->curOwnerOpplan->createFlowLoads();
         checkOperation(data->state->curOwnerOpplan, *data);
-        data->state->a_qty =
-            sub_flow_qty_fixed + data->state->a_qty * sub_flow_qty_per;
-
-        // Combine the reply date of the top-opplan with the alternate check: we
-        // need to return the minimum next-date.
-        if (data->state->a_date < a_date && data->state->a_date > ask_date)
-          a_date = data->state->a_date;
+        if (sub_flow)
+          data->state->a_qty = sub_flow->getQuantityFixed() +
+                               data->state->a_qty * sub_flow->getQuantity();
       }
+
+      // Add offset between operationplan end and flowplan date
+      if (data->state->a_date != Date::infiniteFuture && sub_flow &&
+          sub_flow->getOffset()) {
+        if (getLogLevel() > 1)
+          logger << indentlevel << "Adjusting answer date from "
+                 << data->state->a_date;
+        data->state->a_date =
+            sub_flow->computeOperationToFlowDate(nullptr, data->state->a_date);
+        if (getLogLevel() > 1) logger << " to " << data->state->a_date << endl;
+      }
+
+      // Keep the lowest of all next-date answers on the effective alternates
+      if (data->state->a_date < a_date && data->state->a_date > ask_date)
+        a_date = data->state->a_date;
 
       // Message
       if (loglevel && search != PRIORITY) {
@@ -1502,9 +1503,7 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v) {
           bestAlternateValue = val;
           bestAlternateSelection = (*altIter)->getOperation();
           bestAlternateQuantity = data->state->a_qty;
-          bestFlowPer = sub_flow_qty_per;
-          bestFlowFixed = sub_flow_qty_fixed;
-          bestFlowOffset = sub_flow_offset;
+          bestFlow = sub_flow;
           bestQDate = ask_date;
         }
         // This was only an evaluation
@@ -1539,10 +1538,14 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v) {
       if (!prev_owner_opplan) data->getCommandManager()->add(a);
 
       // Recreate the ask
-      if (!bestFlowPer || a_qty < bestFlowFixed + ROUNDING_ERROR)
+      if (!bestFlow)
+        data->state->q_qty = a_qty;
+      else if (!bestFlow->getQuantity() ||
+               a_qty < bestFlow->getQuantityFixed() + ROUNDING_ERROR)
         data->state->q_qty = 0.001;
       else
-        data->state->q_qty = (a_qty - bestFlowFixed) / bestFlowPer;
+        data->state->q_qty =
+            (a_qty - bestFlow->getQuantityFixed()) / bestFlow->getQuantity();
       data->state->q_date = bestQDate;
       data->state->q_date_max = bestQDate;
       data->state->curDemand = nullptr;
@@ -1567,10 +1570,13 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v) {
       if (data->state->a_qty < ROUNDING_ERROR)
         data->state->a_qty = 0.0;
       else
-        data->state->a_qty = bestFlowFixed + data->state->a_qty * bestFlowPer;
+        data->state->a_qty = bestFlow->getQuantityFixed() +
+                             data->state->a_qty * bestFlow->getQuantity();
 
       // Combine the reply date of the top-opplan with the alternate check: we
       // need to return the minimum next-date.
+      logger << "----dddd " << data->state->a_date << "    " << a_date << "   "
+             << ask_date << endl;
       if (data->state->a_date < a_date && data->state->a_date > ask_date)
         a_date = data->state->a_date;
 
@@ -1630,10 +1636,14 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v) {
       if (!prev_owner_opplan) data->getCommandManager()->add(a);
 
       // Recreate the ask
-      if (!firstFlowPer || a_qty < firstFlowFixed + ROUNDING_ERROR)
+      if (!firstFlow)
+        data->state->q_qty = a_qty;
+      else if (!firstFlow->getQuantity() ||
+               a_qty < firstFlow->getQuantityFixed() + ROUNDING_ERROR)
         data->state->q_qty = 0.001;
       else
-        data->state->q_qty = (a_qty - firstFlowFixed) / firstFlowPer;
+        data->state->q_qty =
+            (a_qty - firstFlow->getQuantityFixed()) / firstFlow->getQuantity();
       data->state->q_date = origQDate;
       data->state->q_date_max = origQDate;
       data->state->curDemand = nullptr;
@@ -1653,9 +1663,13 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v) {
       checkOperation(data->state->curOwnerOpplan, *data);
 
       // Repeat until we have all material we need (or not making any progress)
-      auto tmp = data->state->a_qty * firstFlowPer + firstFlowFixed;
-      if (!tmp) break;
-      a_qty -= tmp;
+      if (firstFlow) {
+        auto tmp = data->state->a_qty * firstFlow->getQuantity() +
+                   firstFlow->getQuantityFixed();
+        if (!tmp) break;
+        a_qty -= tmp;
+      } else
+        a_qty -= data->state->a_qty;
     }
 
     // Fully planned

@@ -2,14 +2,23 @@
 <plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<name>Test model for fixed flows</name>
 	<description>
-		This test verifies the solver behavior with offsets on material flows:
+		This test verifies the solver behavior with offsets on
+		material flows:
 		- 1: simplest case
-		- 2: same as 1, but with a working hour calendar hour calendar
-		- 3: same as 1, but with a negative offset on the raw material consumption
-		- 4: same as 2, but with a negative offset on the raw material consumption
-		- 5: same as 1, but with a negative offset on the producing material
-		- 6: same as 1, but with a positive offset on the consuming material
-		- 7: test approved, confirmed and completed manufacturing orders
+		- 2: same as 1, but with a working
+		hour calendar hour calendar
+		- 3: same as 1, but with a negative offset
+		on the raw material consumption
+		- 4: same as 2, but with a negative
+		offset on the raw material consumption
+		- 5: same as 1, but with a
+		negative offset on the producing material
+		- 6: same as 1, but with a
+		positive offset on the consuming material
+		- 7: test approved, confirmed
+		and completed manufacturing orders
+		- 8: case with alternate and routing
+		operations
 	</description>
 	<current>2020-01-01T00:00:00</current>
 
@@ -367,7 +376,7 @@
 				</flow>
 				<flow xsi:type="flow_start">
 					<item name="5. raw material" />
-					<quantity>-3</quantity>					
+					<quantity>-3</quantity>
 				</flow>
 			</flows>
 		</operation>
@@ -464,93 +473,198 @@
 		</demand>
 	</demands>
 
-  <!-- Case 7 -->
-  <operations>
-    <operation name="7. produce end item">
-      <item name="7. end item" />
-      <location name="7. factory" />
-      <duration>P3D</duration>
-      <flows>
-        <flow xsi:type="flow_end">
-          <item name="7. end item" />
-          <quantity>1</quantity>
-          <offset>P3D</offset>
-        </flow>
-        <flow xsi:type="flow_start">
-          <item name="7. intermediate item" />
-          <quantity>-2</quantity>
-        </flow>
-      </flows>
-      <loads>
-        <load>
-          <resource name="7. resource">
-            <location name="7. factory" />
-            <available name="7. resource availability">
-              <default>0</default>
-              <buckets>
-                <!-- 9am till 5pm -->
-                <bucket starttime="PT9H" endtime="PT17H" value="1" />
-              </buckets>
-            </available>
-            <maximum>10</maximum>
-          </resource>
-          <quantity>1</quantity>
-        </load>
-      </loads>
-    </operation>
-    <operation name="7. produce intermediate item">
-      <item name="7. intermediate item" />
-      <location name="7. factory" />
-      <duration>P1D</duration>
-      <flows>
-        <flow xsi:type="flow_end">
-          <item name="7. intermediate item" />
-          <quantity>1</quantity>
-          <offset>P3D</offset>
-        </flow>
-        <flow xsi:type="flow_start">
-          <item name="7. raw material" />
-          <quantity>-3</quantity>
-        </flow>
-      </flows>
-    </operation>
-  </operations>
-  <suppliers>
-    <supplier name="7. supplier">
-      <itemsuppliers>
-        <itemsupplier>
-          <item name="7. raw material" />
-          <leadtime>P7D</leadtime>
-        </itemsupplier>
-      </itemsuppliers>
-    </supplier>
-  </suppliers>
-  <operationplans>
-    <operationplan ordertype="PO" end="2019-12-01T00:00:00"
-      quantity="100" status="completed">
-      <item name="7. raw material"/>
-      <location name="7. factory"/>
-      <supplier name="7. supplier"/>
-    </operationplan>    
-    <operationplan reference="7. approved MO">
-       <operation name="7. produce intermediate item" />
-       <quantity>4</quantity>
-       <status>approved</status>
-       <start>2020-01-03T00:00:00</start>
-    </operationplan>
-    <operationplan reference="7. confirmed MO">
-       <operation name="7. produce intermediate item" />
-       <quantity>4</quantity>
-       <status>confirmed</status>
-       <start>2020-02-03T00:00:00</start>
-    </operationplan>
-    <operationplan reference="7. completed MO">
-       <operation name="7. produce intermediate item" />
-       <quantity>4</quantity>
-       <status>completed</status>
-       <end>2019-12-03T00:00:00</end>
-    </operationplan>
-  </operationplans>
+	<!-- Case 7 -->
+	<operations>
+		<operation name="7. produce end item">
+			<item name="7. end item" />
+			<location name="7. factory" />
+			<duration>P3D</duration>
+			<flows>
+				<flow xsi:type="flow_end">
+					<item name="7. end item" />
+					<quantity>1</quantity>
+					<offset>P3D</offset>
+				</flow>
+				<flow xsi:type="flow_start">
+					<item name="7. intermediate item" />
+					<quantity>-2</quantity>
+				</flow>
+			</flows>
+			<loads>
+				<load>
+					<resource name="7. resource">
+						<location name="7. factory" />
+						<available name="7. resource availability">
+							<default>0</default>
+							<buckets>
+								<!-- 9am till 5pm -->
+								<bucket starttime="PT9H" endtime="PT17H" value="1" />
+							</buckets>
+						</available>
+						<maximum>10</maximum>
+					</resource>
+					<quantity>1</quantity>
+				</load>
+			</loads>
+		</operation>
+		<operation name="7. produce intermediate item">
+			<item name="7. intermediate item" />
+			<location name="7. factory" />
+			<duration>P1D</duration>
+			<flows>
+				<flow xsi:type="flow_end">
+					<item name="7. intermediate item" />
+					<quantity>1</quantity>
+					<offset>P3D</offset>
+				</flow>
+				<flow xsi:type="flow_start">
+					<item name="7. raw material" />
+					<quantity>-3</quantity>
+				</flow>
+			</flows>
+		</operation>
+	</operations>
+	<suppliers>
+		<supplier name="7. supplier">
+			<itemsuppliers>
+				<itemsupplier>
+					<item name="7. raw material" />
+					<leadtime>P7D</leadtime>
+				</itemsupplier>
+			</itemsuppliers>
+		</supplier>
+	</suppliers>
+	<operationplans>
+		<operationplan ordertype="PO" end="2019-12-01T00:00:00"
+			quantity="100" status="completed">
+			<item name="7. raw material" />
+			<location name="7. factory" />
+			<supplier name="7. supplier" />
+		</operationplan>
+		<operationplan reference="7. approved MO">
+			<operation name="7. produce intermediate item" />
+			<quantity>4</quantity>
+			<status>approved</status>
+			<start>2020-01-03T00:00:00</start>
+		</operationplan>
+		<operationplan reference="7. confirmed MO">
+			<operation name="7. produce intermediate item" />
+			<quantity>4</quantity>
+			<status>confirmed</status>
+			<start>2020-02-03T00:00:00</start>
+		</operationplan>
+		<operationplan reference="7. completed MO">
+			<operation name="7. produce intermediate item" />
+			<quantity>4</quantity>
+			<status>completed</status>
+			<end>2019-12-03T00:00:00</end>
+		</operationplan>
+	</operationplans>
+
+	<!-- Case 8 -->
+	<operations>
+		<operation name="8. produce end item - alt 1"
+			xsi:type="operation_time_per" duration_per="P4D">
+			<item name="8. end item" />
+			<location name="8. factory" />
+			<priority>1</priority>
+			<flows>
+				<flow xsi:type="flow_end">
+					<item name="8. end item" />
+					<quantity>1</quantity>
+					<offset>P3D</offset>
+				</flow>
+			</flows>
+			<loads>
+				<load>
+					<resource name="8. resource - alt 1">
+						<location name="8. factory" />
+						<maximum>1</maximum>
+					</resource>
+					<quantity>1</quantity>
+				</load>
+			</loads>
+		</operation>
+		<operation name="8. produce end item - alt 2"
+			xsi:type="operation_routing">
+			<item name="8. end item" />
+			<location name="8. factory" />
+			<priority>2</priority>
+			<suboperations>
+				<suboperation>
+					<operation name="8. produce end item - alt 2 - step A"
+						duration="P1D">
+						<location name="8. factory" />
+						<flows>
+							<flow xsi:type="flow_start">
+								<item name="8. intermediate item" />
+								<quantity>-1</quantity>
+							</flow>
+						</flows>
+					</operation>
+					<priority>2</priority>
+				</suboperation>
+				<suboperation>
+					<operation name="8. produce end item - alt 2 - step B"
+						duration="P1D">
+						<location name="8. factory" />
+						<flows>
+							<flow xsi:type="flow_end">
+								<item name="8. end item" />
+								<quantity>1</quantity>
+								<offset>P4D</offset>
+							</flow>
+						</flows>
+						<loads>
+							<load>
+								<resource name="8. resource - alt 2">
+									<location name="8. factory" />
+									<maximum>1</maximum>
+								</resource>
+								<quantity>1</quantity>
+							</load>
+						</loads>
+					</operation>
+					<priority>2</priority>
+				</suboperation>
+			</suboperations>
+		</operation>
+		<operation name="8. produce intermediate item">
+			<item name="8. intermediate item" />
+			<location name="8. factory" />
+			<duration>P1D</duration>
+			<flows>
+				<flow xsi:type="flow_end">
+					<item name="8. intermediate item" />
+					<quantity>1</quantity>
+					<offset>P3D</offset>
+				</flow>
+				<flow xsi:type="flow_start">
+					<item name="8. raw material" />
+					<quantity>-3</quantity>
+				</flow>
+			</flows>
+		</operation>
+	</operations>
+	<suppliers>
+		<supplier name="8. supplier">
+			<itemsuppliers>
+				<itemsupplier>
+					<item name="8. raw material" />
+					<leadtime>P7D</leadtime>
+				</itemsupplier>
+			</itemsuppliers>
+		</supplier>
+	</suppliers>
+	<demands>
+		<demand name="8. order 1">
+			<quantity>10</quantity>
+			<due>2020-01-10T00:00:00</due>
+			<priority>11</priority>
+			<item name="8. end item" />
+			<location name="8. factory" />
+		</demand>
+	</demands>
   
 <?python
 print("CREATING CONSTRAINED PLAN")

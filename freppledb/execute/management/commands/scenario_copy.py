@@ -21,7 +21,7 @@ from datetime import datetime
 
 from django.core.management.base import BaseCommand, CommandError
 from django.conf import settings
-from django.db import DEFAULT_DB_ALIAS
+from django.db import DEFAULT_DB_ALIAS, connections
 from django.utils.translation import gettext_lazy as _
 from django.template.loader import render_to_string
 
@@ -315,12 +315,52 @@ class Command(BaseCommand):
         scenarios = Scenario.objects.using(DEFAULT_DB_ALIAS)
         if scenarios.count() <= 1:
             return None
+
+        release_perm = []
+        copy_perm = []
+        promote_perm = []
+        active_scenarios = []
+        free_scenarios = []
+        in_use_scenarios = []
+
+        for scenario in scenarios:
+            try:
+
+                if scenario.status != "Free":
+                    in_use_scenarios.append(scenario.name)
+                else:
+                    free_scenarios.append(scenario.name)
+
+                user = User.objects.using(scenario.name).get(
+                    username=request.user.username
+                )
+
+                if user.has_perm("common.release_scenario"):
+                    release_perm.append(scenario.name)
+                if user.has_perm("common.promote_scenario"):
+                    promote_perm.append(scenario.name)
+                if user.has_perm("common.copy_scenario"):
+                    copy_perm.append(scenario.name)
+                if user.is_active == True:
+                    active_scenarios.append(scenario.name)
+            except Exception as e:
+                # user does not exist in scenario? silently pass
+                pass
+
+        # If all scenarios are in use and user is inactive in all of them then he won't see the scenario management menu
+        if len(free_scenarios) == 0 and len(active_scenarios) == 1:
+            return None
+
         return render_to_string(
             "commands/scenario_copy.html",
             {
                 "scenarios": scenarios,
                 "DEFAULT_DB_ALIAS": DEFAULT_DB_ALIAS,
                 "current_database": request.database,
+                "release_perm": release_perm,
+                "copy_perm": copy_perm,
+                "promote_perm": promote_perm,
+                "active_scenarios": active_scenarios,
             },
             request=request,
         )

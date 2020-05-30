@@ -993,21 +993,12 @@ class DateDetail {
     val = -1;
   }
 
-  /* Add a number of days. */
+  /* Add a number of days.
+   * Changes in daylight saving time are ignored. */
   void addDays(int days) {
-    time_info.tm_mday += days;
-    val = -1;
-  }
-
-  /* Add a number of days, and set the seconds in that day.
-   * The argument offset within the day is interpreted in a DST-insenstive way.
-   */
-  void addDays(int days, int sec) {
     if (val < 0) normalize();
     time_info.tm_mday += days;
-    time_info.tm_hour = sec / 3600;
-    time_info.tm_min = (sec - time_info.tm_hour * 3600) / 60;
-    time_info.tm_sec = sec - time_info.tm_min * 60 - time_info.tm_hour * 3600;
+    time_info.tm_isdst = -1;
     val = -1;
   }
 };

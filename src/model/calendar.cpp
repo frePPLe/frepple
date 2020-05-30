@@ -585,9 +585,12 @@ void Calendar::buildEventList(Date includedate) {
         if (!b->starttime && b->endtime == Duration(86400L)) {
           // The next event is the start of the next ineffective day
           tmp -= ref_time;
-          while ((b->days & (1 << ref_weekday)) && tmp != Date::infiniteFuture) {
+          while ((b->days & (1 << ref_weekday)) &&
+                 tmp != Date::infiniteFuture) {
             if (++ref_weekday > 6) ref_weekday = 0;
-            tmp += Duration(86400L);
+            DateDetail t = tmp;
+            t.addDays(1);
+            tmp = t;
           }
         } else
           // The next event is the end date on the current day
@@ -610,12 +613,16 @@ void Calendar::buildEventList(Date includedate) {
         tmp += b->starttime - ref_time;
         if (ref_time >= b->endtime && (b->days & (1 << ref_weekday))) {
           if (++ref_weekday > 6) ref_weekday = 0;
-          tmp += Duration(86400L);
+          DateDetail t = tmp;
+          t.addDays(1);
+          tmp = t;
         }
         while (!(b->days & (1 << ref_weekday)) && tmp != Date::infiniteFuture &&
                tmp <= b->enddate) {
           if (++ref_weekday > 6) ref_weekday = 0;
-          tmp += Duration(86400L);
+          DateDetail t = tmp;
+          t.addDays(1);
+          tmp = t;
         }
         if (tmp < b->startdate) tmp = b->startdate;
         if (tmp >= b->enddate) continue;

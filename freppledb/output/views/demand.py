@@ -71,7 +71,7 @@ class OverviewReport(GridPivot):
         ("demand", {"title": _("demand")}),
         ("supply", {"title": _("supply")}),
         ("backlog", {"title": _("backlog")}),
-        ("reasons", {"title": "reasons"}),
+        ("reasons", {"title": _("reasons"), "visible": False}),
     )
     help_url = "user-guide/user-interface/plan-analysis/demand-report.html"
 

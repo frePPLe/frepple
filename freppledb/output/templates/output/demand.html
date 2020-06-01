@@ -40,7 +40,7 @@ function drawGraphs(jsondata)
     .rangeRoundBands([0, width], .1);
   var x_width = x.rangeBand();
   {% if mode == "graph" and not args.0 %}graph.header(margin.left, x);{% endif %}
-  
+
   // Define Y-axis
   var y = d3.scale.linear().rangeRound([height, 0]);
 
@@ -69,7 +69,8 @@ function drawGraphs(jsondata)
         'bucket': bckt,
         'demand': tmp[0],
         'supply': tmp[1],
-        'backlog': tmp[2]
+        'backlog': tmp[2],
+        'reasons': tmp[3]
         });
       if (tmp[2] < min_y && 2 in fields)
         min_y = tmp[2];
@@ -134,19 +135,24 @@ function drawGraphs(jsondata)
 	          var coord = d3.mouse(document.body);
 	          d3.event.stopPropagation();
 	        })
-	      .on("mouseenter", function(d) {
-	        graph.showTooltip(
-	          '<div class="panel-heading" style="text-align:center; font-weight:bold">'
-	          + timebuckets[d['bucket']]['name'] + '</div>'
-	          + '<table><tr><td>{{_('demand')|capfirst}}</td><td style="text-align:center">'
-	          + grid.formatNumber(d['demand'])
-	          + '</td></tr><tr><td>{{_('supply')|capfirst}}</td><td style="text-align:center">'
-	          + grid.formatNumber(d['supply'])
-	          + '</td></tr><tr><td>{{_('backlog')|capfirst}}</td><td style="text-align:center">'
-	          + grid.formatNumber(d['backlog'])
-	          + '</td></tr></table>'
-	          );
-	        })
+         .on("mouseenter", function(d) {
+           var txt = '<div class="panel-heading" style="text-align:center; font-weight:bold">'
+             + timebuckets[d['bucket']]['name'] + '</div>'
+             + '<table><tr><td>{{_('demand')|capfirst}}</td><td style="text-align:center">'
+             + grid.formatNumber(d['demand'])
+             + '</td></tr><tr><td>{{_('supply')|capfirst}}</td><td style="text-align:center">'
+             + grid.formatNumber(d['supply'])
+             + '</td></tr><tr><td>{{_('backlog')|capfirst}}</td><td style="text-align:center">'
+             + grid.formatNumber(d['backlog'])
+             + '</td></tr></table>';
+           if (d['reasons']) {
+             txt += '<div class="panel-heading" style="text-align:center; font-weight:bold">'
+               + '{{_('constraints')|capfirst}}</div>';
+             for (var r of d['reasons'])              
+               txt += r[0] + ' - ' + r[1] + '<br>';
+           }
+           graph.showTooltip(txt);
+           })
 	      .on("mouseleave", graph.hideTooltip)
 	      .on("mousemove", graph.moveTooltip);	      
       });

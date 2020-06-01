@@ -71,6 +71,7 @@ class OverviewReport(GridPivot):
         ("demand", {"title": _("demand")}),
         ("supply", {"title": _("supply")}),
         ("backlog", {"title": _("backlog")}),
+        ("reasons", {"title": "reasons"}),
     )
     help_url = "user-guide/user-interface/plan-analysis/demand-report.html"
 
@@ -80,7 +81,7 @@ class OverviewReport(GridPivot):
             reportclass._attributes_added = 2
             reportclass.attr_sql = ""
             # Adding custom item attributes
-            for f in getAttributeFields(Item, initially_hidden=True):
+            for f in getAttributeFields(Item, initially_hidden=False):
                 f.editable = False
                 reportclass.rows += (f,)
                 reportclass.attr_sql += "parent.%s, " % f.name.split("__")[-1]
@@ -169,7 +170,18 @@ class OverviewReport(GridPivot):
             and operationplan.demand_id is not null
             and operationplan.enddate >= greatest(%%s,d.startdate)
             and operationplan.enddate < d.enddate
-            ),0)) planned
+            ),0)) planned,
+          (select json_agg(json_build_array(f1,f2)) from
+            (select distinct out_constraint.name as f1, out_constraint.owner as f2
+            from out_constraint
+            --inner join item child on child.lft between parent.lft and parent.rght
+            inner join demand on out_constraint.demand = demand.name
+            and demand.item_id = parent.name
+            and
+             demand.deliverydate >= greatest('2020-06-01T00:00:00'::timestamp,d.startdate)
+            and demand.due < d.enddate
+            ) cte_reasons
+          ) reasons
           from (%s) parent
           cross join (
                        select name as bucket, startdate, enddate
@@ -207,7 +219,7 @@ class OverviewReport(GridPivot):
                 if row[0] != previtem:
                     backlog = startbacklogdict.get(row[0], 0)
                     previtem = row[0]
-                backlog += float(row[numfields - 2]) - float(row[numfields - 1])
+                backlog += float(row[numfields - 3]) - float(row[numfields - 2])
                 res = {
                     "item": row[0],
                     "description": row[1],
@@ -217,11 +229,12 @@ class OverviewReport(GridPivot):
                     "cost": row[5],
                     "source": row[6],
                     "lastmodified": row[7],
-                    "bucket": row[numfields - 5],
-                    "startdate": row[numfields - 4].date(),
-                    "enddate": row[numfields - 3].date(),
-                    "demand": row[numfields - 2],
-                    "supply": row[numfields - 1],
+                    "bucket": row[numfields - 6],
+                    "startdate": row[numfields - 5].date(),
+                    "enddate": row[numfields - 4].date(),
+                    "demand": row[numfields - 3],
+                    "supply": row[numfields - 2],
+                    "reasons": json.dumps(row[numfields - 1]),
                     "backlog": backlog,
                 }
                 idx = 8

@@ -23,9 +23,9 @@ from django.utils.translation import gettext_lazy as _
 registerAttribute(
     "freppledb.input.models.Item",
     [
-        ("latedemandcount", _("count of late demands"), "integer", False, True),
-        ("latedemandquantity", _("quantity of late demands"), "number", False, True),
-        ("latedemandvalue", _("value of late demand"), "number", False, True),
+        ("latedemandcount", _("count of late demands"), "integer", False, False),
+        ("latedemandquantity", _("quantity of late demands"), "number", False, False),
+        ("latedemandvalue", _("value of late demand"), "number", False, False),
         (
             "unplanneddemandcount",
             _("count of unplanned demands"),

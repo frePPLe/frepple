@@ -49,16 +49,16 @@ class GetPlanMetrics(PlanTask):
                     """
                     create temporary table item_hierarchy (parent character varying(300),
                                                            child character varying(300));
-                    
+
                     insert into item_hierarchy
                     select parent.name, item.name from item
                     inner join item parent on item.lft > parent.lft and item.lft < parent.rght;
-                    
+
                     create index on item_hierarchy (child);
-                    
+
                     create temporary table out_problem_tmp
-                    as 
-                    select item.name as item_id, out_problem.name, out_problem.weight, out_problem.weight*coalesce(item.cost,0) as weight_cost 
+                    as
+                    select item.name as item_id, out_problem.name, out_problem.weight, out_problem.weight*coalesce(item.cost,0) as weight_cost
                      from out_problem
                     inner join demand on demand.name = out_problem.owner
                     inner join item on item.name = demand.item_id
@@ -69,7 +69,7 @@ class GetPlanMetrics(PlanTask):
                 cursor.execute(
                     """
                     create temporary table metrics as
-                    select item.name as item_id, 
+                    select item.name as item_id,
                     sum(case when out_problem_tmp.name = 'late' then 1 else 0 end) as latedemandcount,
                     sum(case when out_problem_tmp.name = 'late' then out_problem_tmp.weight else 0 end) as latedemandquantity,
                     sum(case when out_problem_tmp.name = 'late' then out_problem_tmp.weight_cost else 0 end) as latedemandvalue,
@@ -80,9 +80,9 @@ class GetPlanMetrics(PlanTask):
                     left outer join out_problem_tmp on out_problem_tmp.item_id = item.name
                     where item.lft = item.rght - 1
                     group by item.name;
-                    
+
                     create unique index on metrics (item_id);
-                    
+
                     insert into metrics
                     select parent,
                     sum(latedemandcount),
@@ -93,7 +93,7 @@ class GetPlanMetrics(PlanTask):
                     sum(unplanneddemandvalue)
                     from metrics
                     inner join item_hierarchy on item_hierarchy.child = metrics.item_id
-                    group by parent;                    
+                    group by parent;
                 """
                 )
 

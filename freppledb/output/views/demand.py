@@ -33,8 +33,8 @@ from freppledb.common.report import GridFieldCurrency, GridFieldLastModified
 
 class OverviewReport(GridPivot):
     """
-  A report showing the independent demand for each item.
-  """
+    A report showing the independent demand for each item.
+    """
 
     template = "output/demand.html"
     title = _("Demand report")
@@ -108,24 +108,26 @@ class OverviewReport(GridPivot):
         # Execute a query to get the backlog at the start of the horizon
         startbacklogdict = {}
         query = """
-      select name, sum(qty) from
-        (
-        select item.name, sum(demand.quantity) qty from (%s) item
-        inner join item child on child.lft between item.lft and item.rght
-        inner join demand on demand.item_id = child.name and demand.status in ('open','quote') and due < %%s
-        group by item.name
-        union all
-        select item.name, sum(operationplanmaterial.quantity) qty
-        from (%s) item
-        inner join item child on child.lft between item.lft and item.rght
-        inner join operationplanmaterial on operationplanmaterial.item_id = child.name
-        inner join operationplan on operationplan.reference = operationplanmaterial.operationplan_id
-          and operationplan.demand_id is not null
-          and operationplan.enddate < %%s
-        group by item.name
-        ) t
-        group by name
-      """ % (
+          select name, sum(qty) from
+            (
+            select item.name, sum(demand.quantity) qty from (%s) item
+            inner join item child on child.lft between item.lft and item.rght
+            inner join demand on demand.item_id = child.name
+            and demand.status in ('open','quote')
+            and due < %%s
+            group by item.name
+            union all
+            select item.name, sum(operationplanmaterial.quantity) qty
+            from (%s) item
+            inner join item child on child.lft between item.lft and item.rght
+            inner join operationplanmaterial on operationplanmaterial.item_id = child.name
+            inner join operationplan on operationplan.reference = operationplanmaterial.operationplan_id
+              and operationplan.demand_id is not null
+              and operationplan.enddate < %%s
+            group by item.name
+            ) t
+            group by name
+        """ % (
             basesql,
             basesql,
         )
@@ -143,34 +145,43 @@ class OverviewReport(GridPivot):
 
         # Execute the query
         query = """
-      select
-      parent.name, parent.description, parent.category, parent.subcategory,
-      parent.owner_id, parent.cost, parent.source, parent.lastmodified,
-      %s
-      d.bucket,
-      d.startdate,
-      d.enddate,
-      sum(coalesce((select sum(quantity) from demand
-       where demand.item_id = child.name and status in ('open','quote') and due >= greatest(%%s,d.startdate) and due < d.enddate),0)) orders,
-      sum(coalesce((select sum(operationplan.quantity) from operationplan
-       inner join demand on demand.name = operationplan.demand_id       
-       where operationplan.demand_id is not null
-       and demand.item_id = child.name
-       and operationplan.enddate >= greatest(%%s,d.startdate) and operationplan.enddate < d.enddate),0)) planned
-      from (%s) parent
-      inner join item child on child.lft between parent.lft and parent.rght
-      cross join (
-                   select name as bucket, startdate, enddate
-                   from common_bucketdetail
-                   where bucket_id = %%s and enddate > %%s and startdate < %%s
-                   ) d
-      group by
-        parent.name, parent.description, parent.category, parent.subcategory,
-        parent.owner_id, parent.cost, parent.source, parent.lastmodified,
-        %s
-        d.bucket, d.startdate, d.enddate
-      order by %s, d.startdate
-    """ % (
+          select
+          parent.name, parent.description, parent.category, parent.subcategory,
+          parent.owner_id, parent.cost, parent.source, parent.lastmodified,
+          %s
+          d.bucket,
+          d.startdate,
+          d.enddate,
+          sum(coalesce((
+            select sum(quantity)
+            from demand
+            inner join item child on child.lft between parent.lft and parent.rght
+            where demand.item_id = child.name
+            and status in ('open','quote')
+            and due >= greatest(%%s,d.startdate)
+            and due < d.enddate
+            ),0)) orders,
+          sum(coalesce((
+            select sum(operationplan.quantity)
+            from operationplan
+            inner join item child on child.lft between parent.lft and parent.rght
+            where operationplan.item_id = child.name
+            and operationplan.enddate >= greatest(%%s,d.startdate)
+            and operationplan.enddate < d.enddate
+            ),0)) planned
+          from (%s) parent
+          cross join (
+                       select name as bucket, startdate, enddate
+                       from common_bucketdetail
+                       where bucket_id = %%s and enddate > %%s and startdate < %%s
+                       ) d
+          group by
+            parent.name, parent.description, parent.category, parent.subcategory,
+            parent.owner_id, parent.cost, parent.source, parent.lastmodified, parent.lft, parent.rght,
+            %s
+            d.bucket, d.startdate, d.enddate
+          order by %s, d.startdate
+        """ % (
             reportclass.attr_sql,
             basesql,
             reportclass.attr_sql,

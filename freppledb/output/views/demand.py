@@ -166,6 +166,7 @@ class OverviewReport(GridPivot):
             from operationplan
             inner join item child on child.lft between parent.lft and parent.rght
             where operationplan.item_id = child.name
+            and operationplan.demand_id is not null
             and operationplan.enddate >= greatest(%%s,d.startdate)
             and operationplan.enddate < d.enddate
             ),0)) planned

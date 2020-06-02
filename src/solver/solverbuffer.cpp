@@ -165,16 +165,16 @@ void SolverCreate::solve(const Buffer* b, void* v) {
               continue;
             auto tmp = scanner->getOperationPlan();
             if (tmp && (tmp->getConfirmed() || tmp->getApproved())) {
+              if (firstmsg1 && data->logConstraints && data->planningDemand)
+                data->planningDemand->getConstraints().push(
+                    ProblemAwaitSupply::metadata, b, theDate,
+                    scanner->getDate(), theDelta);
               if (getLogLevel() > 1 && firstmsg1) {
                 logger << indentlevel
-                       << "Refuse to create extra supply because confirmed "
-                          "supply is already available at "
+                       << "Refuse to create extra supply because confirmed or "
+                          "approved supply is already available at "
                        << scanner->getDate() << endl;
                 firstmsg1 = false;
-                if (data->logConstraints && data->planningDemand)
-                  data->planningDemand->getConstraints().push(
-                      ProblemAwaitSupply::metadata, b, theDate,
-                      scanner->getDate(), theDelta);
               }
               supply_exists_already = true;
               if (shortage < -prev->getOnhand()) shortage = -prev->getOnhand();
@@ -236,17 +236,18 @@ void SolverCreate::solve(const Buffer* b, void* v) {
                 continue;
               auto tmp = scanner->getOperationPlan();
               if (tmp && (tmp->getConfirmed() || tmp->getApproved())) {
+                if (firstmsg3 && data->logConstraints && data->planningDemand)
+                  data->planningDemand->getConstraints().push(
+                      ProblemAwaitSupply::metadata, b, theDate,
+                      scanner->getDate(), theDelta);
                 if (getLogLevel() > 1 && firstmsg3) {
                   logger << indentlevel
                          << "Refuse to create extra supply because confirmed "
-                            "supply is already available on alternate material "
+                            "or approved supply is already available on "
+                            "alternate material "
                          << h->getBuffer()->getItem() << " at "
                          << scanner->getDate() << endl;
                   firstmsg3 = false;
-                  if (data->logConstraints && data->planningDemand)
-                    data->planningDemand->getConstraints().push(
-                        ProblemAwaitSupply::metadata, b, theDate,
-                        scanner->getDate(), theDelta);
                 }
                 if (shortage < -prev->getOnhand())
                   shortage = -prev->getOnhand();

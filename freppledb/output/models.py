@@ -42,7 +42,9 @@ class Problem(models.Model):
 
 class Constraint(models.Model):
     # Database fields
-    demand = models.CharField(_("demand"), max_length=300, db_index=True)
+    demand = models.CharField(_("demand"), max_length=300, null=True, db_index=True)
+    forecast = models.CharField(_("forecast"), max_length=300, null=True, db_index=True)
+    item = models.CharField(_("item"), max_length=300, null=True, db_index=True)
     entity = models.CharField(_("entity"), max_length=15, db_index=True)
     owner = models.CharField(_("owner"), max_length=300, db_index=True)
     name = models.CharField(_("name"), max_length=20, db_index=True)
@@ -56,7 +58,7 @@ class Constraint(models.Model):
 
     class Meta:
         db_table = "out_constraint"
-        ordering = ["demand", "startdate"]
+        ordering = ["item", "startdate"]
         verbose_name = _("constraint")
         verbose_name_plural = _("constraints")
         default_permissions = []

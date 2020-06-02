@@ -311,8 +311,14 @@ class ExportConstraints(PlanTask):
             if cluster != -1 and cluster != d.cluster:
                 continue
             for i in d.constraints:
-                yield "%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\n" % (
-                    clean_value(d.name),
+                yield "%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\n" % (
+                    clean_value(d.name)
+                    if isinstance(d, frepple.demand_default)
+                    else "\\N",
+                    "\\N"
+                    if isinstance(d, frepple.demand_default)
+                    else clean_value(d.owner.name),
+                    clean_value(d.item.name),
                     clean_value(i.entity),
                     clean_value(i.name),
                     isinstance(i.owner, frepple.operationplan)
@@ -332,6 +338,8 @@ class ExportConstraints(PlanTask):
             "out_constraint",
             columns=(
                 "demand",
+                "forecast",
+                "item",
                 "entity",
                 "name",
                 "owner",

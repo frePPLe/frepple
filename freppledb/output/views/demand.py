@@ -174,12 +174,10 @@ class OverviewReport(GridPivot):
           (select json_agg(json_build_array(f1,f2)) from
             (select distinct out_constraint.name as f1, out_constraint.owner as f2
             from out_constraint
-            --inner join item child on child.lft between parent.lft and parent.rght
-            inner join demand on out_constraint.demand = demand.name
-            and demand.item_id = parent.name
-            and
-             demand.deliverydate >= greatest('2020-06-01T00:00:00'::timestamp,d.startdate)
-            and demand.due < d.enddate
+            inner join item child on child.lft between parent.lft and parent.rght
+            and out_constraint.item = child.name
+            and out_constraint.enddate >= greatest(%%s,d.startdate)
+            and out_constraint.startdate < d.enddate
             ) cte_reasons
           ) reasons
           from (%s) parent

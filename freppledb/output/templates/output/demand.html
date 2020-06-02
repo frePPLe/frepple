@@ -147,9 +147,10 @@ function drawGraphs(jsondata)
              + '</td></tr></table>';
            if (d['reasons']) {
              txt += '<div class="panel-heading" style="text-align:center; font-weight:bold">'
-               + '{{_('constraints')|capfirst}}</div>';
-             for (var r of d['reasons'])              
-               txt += r[0] + ' - ' + r[1] + '<br>';
+               + '{{_('constraints')|capfirst}}</div><table style="white-space:nowrap">';
+             for (var r of d['reasons'])
+               txt += '<tr><td>' + r[0] + '</td><td>' + r[1] + '</td></tr>';
+             txt += '</table>';
            }
            graph.showTooltip(txt);
            })

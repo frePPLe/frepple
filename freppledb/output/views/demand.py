@@ -174,10 +174,15 @@ class OverviewReport(GridPivot):
           (select json_agg(json_build_array(f1,f2)) from
             (select distinct out_constraint.name as f1, out_constraint.owner as f2
             from out_constraint
-            inner join item child on child.lft between parent.lft and parent.rght
+            inner join item child
+              on child.lft between parent.lft and parent.rght
+            inner join operationplan
+              on operationplan.demand_id = out_constraint.demand
+              and operationplan.due is not null
             and out_constraint.item = child.name
-            and out_constraint.enddate >= greatest(%%s,d.startdate)
-            and out_constraint.startdate < d.enddate
+            and operationplan.enddate >= greatest(%%s,d.startdate)
+            and operationplan.due < d.enddate
+            limit 20
             ) cte_reasons
           ) reasons
           from (%s) parent

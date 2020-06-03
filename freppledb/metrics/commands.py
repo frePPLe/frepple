@@ -70,12 +70,12 @@ class GetPlanMetrics(PlanTask):
                     """
                     create temporary table metrics as
                     select item.name as item_id,
-                    sum(case when out_problem_tmp.name = 'late' then 1 else 0 end) as latedemandcount,
-                    sum(case when out_problem_tmp.name = 'late' then out_problem_tmp.weight else 0 end) as latedemandquantity,
-                    sum(case when out_problem_tmp.name = 'late' then out_problem_tmp.weight_cost else 0 end) as latedemandvalue,
-                    sum(case when out_problem_tmp.name = 'unplanned' then 1 else 0 end) as unplanneddemandcount,
-                    sum(case when out_problem_tmp.name = 'unplanned' then out_problem_tmp.weight else 0 end) as unplanneddemandquantity,
-                    sum(case when out_problem_tmp.name = 'unplanned' then out_problem_tmp.weight_cost else 0 end) as unplanneddemandvalue
+                    coalesce(sum(case when out_problem_tmp.name = 'late' then 1 end),0) as latedemandcount,
+                    coalesce(sum(case when out_problem_tmp.name = 'late' then out_problem_tmp.weight end),0) as latedemandquantity,
+                    coalesce(sum(case when out_problem_tmp.name = 'late' then out_problem_tmp.weight_cost end),0) as latedemandvalue,
+                    coalesce(sum(case when out_problem_tmp.name = 'unplanned' then 1 end),0) as unplanneddemandcount,
+                    coalesce(sum(case when out_problem_tmp.name = 'unplanned' then out_problem_tmp.weight end),0) as unplanneddemandquantity,
+                    coalesce(sum(case when out_problem_tmp.name = 'unplanned' then out_problem_tmp.weight_cost end),0) as unplanneddemandvalue
                     from item
                     left outer join out_problem_tmp on out_problem_tmp.item_id = item.name
                     where item.lft = item.rght - 1
@@ -85,14 +85,14 @@ class GetPlanMetrics(PlanTask):
 
                     insert into metrics
                     select parent,
-                    sum(latedemandcount),
-                    sum(latedemandquantity),
-                    sum(latedemandvalue),
-                    sum(unplanneddemandcount),
-                    sum(unplanneddemandquantity),
-                    sum(unplanneddemandvalue)
-                    from metrics
-                    inner join item_hierarchy on item_hierarchy.child = metrics.item_id
+                    coalesce(sum(latedemandcount),0),
+                    coalesce(sum(latedemandquantity),0),
+                    coalesce(sum(latedemandvalue),0),
+                    coalesce(sum(unplanneddemandcount),0),
+                    coalesce(sum(unplanneddemandquantity),0),
+                    coalesce(sum(unplanneddemandvalue),0)
+                    from item_hierarchy
+                    left outer join metrics on item_hierarchy.child = metrics.item_id
                     group by parent;
                 """
                 )
@@ -122,7 +122,7 @@ class GetPlanMetrics(PlanTask):
                     drop table item_hierarchy;
                     drop table out_problem_tmp;
                     drop table metrics;
-                """
+                    """
                 )
 
             except Exception as e:
@@ -135,22 +135,23 @@ class GetPlanMetrics(PlanTask):
 
                 cursor.execute(
                     """
-                with resource_hierarchy as (select child.name child, parent.name parent
-                from resource child
-                inner join resource parent on child.lft between parent.lft and parent.rght
-                where child.lft = child.rght-1),          
-                cte as (
-                    select parent, count(out_problem.id) as overloadcount from resource_hierarchy
-                    left outer join out_problem on out_problem.name = 'overload' 
-                                                   and out_problem.owner = resource_hierarchy.child                                           
-                    group by parent
-                )
-                update resource
-                set overloadcount = cte.overloadcount
-                from cte
-                where cte.parent = resource.name
-                and resource.overloadcount is distinct from cte.overloadcount;
-                """
+                    with resource_hierarchy as (select child.name child, parent.name parent
+                    from resource child
+                    inner join resource parent on child.lft between parent.lft and parent.rght
+                    where child.lft = child.rght-1),
+                    cte as (
+                        select parent, count(out_problem.id) as overloadcount from resource_hierarchy
+                        left outer join out_problem
+                          on out_problem.name = 'overload'
+                          and out_problem.owner = resource_hierarchy.child
+                        group by parent
+                    )
+                    update resource
+                    set overloadcount = cte.overloadcount
+                    from cte
+                    where cte.parent = resource.name
+                    and resource.overloadcount is distinct from cte.overloadcount;
+                    """
                 )
 
             except Exception as e:

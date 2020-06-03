@@ -208,7 +208,7 @@ class OverviewReport(GridPivot):
         with connections[request.database].chunked_cursor() as cursor_chunked:
             cursor_chunked.execute(
                 query,
-                (request.report_startdate,) * 2  # orders + planned
+                (request.report_startdate,) * 3  # orders + planned + constraints
                 + baseparams  # orders planned
                 + (
                     request.report_bucket,

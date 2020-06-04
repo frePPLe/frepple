@@ -1001,7 +1001,8 @@ class SolverCreate : public Solver {
                                  bool propagate = true,
                                  bool start_or_end = true,
                                  double* qty_per = nullptr,
-                                 double* qty_fixed = nullptr);
+                                 double* qty_fixed = nullptr,
+                                 bool use_offset = true);
 
   /* This function will check all constraints for an operationplan
    * and propagate it upstream. The check does NOT check eventual

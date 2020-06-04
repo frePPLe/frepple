@@ -640,8 +640,8 @@ void SolverCreate::solve(const Operation* oper, void* v) {
 OperationPlan* SolverCreate::createOperation(const Operation* oper,
                                              SolverCreate::SolverData* data,
                                              bool propagate, bool start_or_end,
-                                             double* qty_per,
-                                             double* qty_fixed) {
+                                             double* qty_per, double* qty_fixed,
+                                             bool use_offset) {
   OperationPlan* z = nullptr;
 
   // Find the flow for the quantity-per. This can throw an exception if no
@@ -781,7 +781,7 @@ OperationPlan* SolverCreate::createOperation(const Operation* oper,
                                : nullptr;
 
   // Subtract offset between operationplan end and flowplan date
-  if (producing_flow && producing_flow->getOffset()) {
+  if (use_offset && producing_flow && producing_flow->getOffset()) {
     if (getLogLevel() > 1)
       logger << indentlevel << "Adjusting requirement date from "
              << data->state->q_date;
@@ -862,8 +862,8 @@ OperationPlan* SolverCreate::createOperation(const Operation* oper,
     data->state->a_qty = data->state->a_qty * flow_qty_per + flow_qty_fixed;
 
   // Add offset between operationplan end and flowplan date
-  if (data->state->a_date != Date::infiniteFuture && !data->state->a_qty &&
-      producing_flow && producing_flow->getOffset()) {
+  if (use_offset && data->state->a_date != Date::infiniteFuture &&
+      !data->state->a_qty && producing_flow && producing_flow->getOffset()) {
     if (getLogLevel() > 1)
       logger << indentlevel << "Adjusting answer date from "
              << data->state->a_date;

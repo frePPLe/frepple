@@ -348,7 +348,7 @@ class Command(BaseCommand):
                                 )
                             elif filename.endswith(".csv"):
                                 for r in reportclass._generate_csv_data(
-                                    request, **cfg.get("data", {})
+                                    request, None, **cfg.get("data", {})
                                 ):
                                     datafile.write(
                                         r.encode(settings.CSV_CHARSET)

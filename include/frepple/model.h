@@ -128,7 +128,7 @@ class CalendarBucket : public Object, public NonCopyable, public HasSource {
   /* Weekdays on which the entry is effective.
    * - Bit 0: Sunday
    * - Bit 1: Monday
-   * - Bit 2: Tueday
+   * - Bit 2: Tuesday
    * - Bit 3: Wednesday
    * - Bit 4: Thursday
    * - Bit 5: Friday

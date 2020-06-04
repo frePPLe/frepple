@@ -344,7 +344,7 @@ class Command(BaseCommand):
                             datafile = open(os.path.join(exportFolder, filename), "wb")
                             if filename.endswith(".xlsx"):
                                 reportclass._generate_spreadsheet_data(
-                                    request, datafile, **cfg.get("data", {})
+                                    request, None, datafile, **cfg.get("data", {})
                                 )
                             elif filename.endswith(".csv"):
                                 for r in reportclass._generate_csv_data(

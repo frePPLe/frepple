@@ -13,6 +13,9 @@ Release notes
     
 - | Scenario management: Logged user won't see anymore in the scenario management screen 
     in use scenarios where he/she is not active.
+    
+- | Export dialog: Addition of scenarios in the dialog so that user can export current view and 
+    scenarios (for which user has permission) in the same spreadsheet/csv file.
 
 6.5.0 (2020/05/16)
 ==================

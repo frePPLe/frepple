@@ -205,7 +205,7 @@ $(function() {
         <span id="csvimport" data-toggle="tooltip" data-placement="top" title="{% trans 'import CSV or Excel file'|capfirst|force_escape %}" class="fa fa-arrow-up"></span>
 	    </button>
   {% endif %}
-		  <button class="btn btn-xs btn-primary" onclick="grid.showExport(false)" >
+		  <button class="btn btn-xs btn-primary" onclick="grid.showExport(false,{{ scenario_permissions }})" >
 		    <span data-toggle="tooltip" data-placement="top" title="{% trans 'export as CSV or Excel file'|capfirst|force_escape %}" class="fa fa-arrow-down"></span>
 		  </button>
       <button class="btn btn-xs btn-primary" onclick="grid.showCustomize(true);">

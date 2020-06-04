@@ -1093,13 +1093,29 @@ var grid = {
 	  $("#" + iRow + '_' + cellname).select();
   },
 
-  showExport: function(only_list)
+  showExport: function(only_list, scenario_permissions)
   {
     $('#timebuckets').modal('hide');
     $.jgrid.hideModal("#searchmodfbox_grid");
-    // The argument is true when we show a "list" report.
+
+// Prepare upfront the html for the scenarios to export
+    if (scenario_permissions.length > 0) {
+    	var cb = "";
+    	for (i = 0 ; i < scenario_permissions.length ; i++) {
+    		cb += 
+    			'<div class="form-check">' +
+    			'<input class="form-check-input" type="checkbox" value="" id="'+ scenario_permissions[i][0] +'"' + (scenario_permissions[i][2] == 1 ?"checked disabled":"") + '>' +
+    			'&nbsp;&nbsp;&nbsp;<label class="form-check-label" for="defaultCheck1">' +
+    			gettext(scenario_permissions[i][1]) +
+    		    '</label>' +
+    		    '</div>';
+    	}
+    }
+    
+    
+    // The only_list argument is true when we show a "list" report.
     // It is false for "table" reports.
-    if (only_list)
+    if (only_list && scenario_permissions.length > 1)
       $('#popup').html('<div class="modal-dialog" style="width: 350px;">'+
           '<div class="modal-content">'+
             '<div class="modal-header">'+
@@ -1107,46 +1123,144 @@ var grid = {
               '<h4 class="modal-title text-capitalize-first">'+gettext("Export CSV or Excel file")+'</h4>'+
             '</div>'+
             '<div class="modal-body">'+
-              '<label class="control-label">' + gettext("Export format") +
+            '<table class="table table-borderless">' +
+            '<thead>' +
+              '<tr>' +
+                '<th scope="col">' + gettext("Export format") + '</th>' +
+                '<th scope="col">' + gettext("Scenarios to export") + '</th>' +
+              '</tr>' +
+            '</thead>' +
+            '<tbody>' +
+              '<tr>' +
+                '<td>' + 
                 '<div class="radio" name="csvformat" id="csvformat" value="spreadsheetlist">' +
-                  '&nbsp;&nbsp;&nbsp;&nbsp;<label><input type="radio" name="csvformat" value="spreadsheetlist" checked="">' + gettext("Spreadsheet list") + '</label><br>' +
-                  '&nbsp;&nbsp;&nbsp;&nbsp;<label><input type="radio" name="csvformat" value="csvlist">' + gettext("CSV list") + '</label><br>' +
+                '<label><input type="radio" name="csvformat" value="spreadsheetlist" checked="">' + gettext("Spreadsheet list") + '</label><br>' +
+                '<label><input type="radio" name="csvformat" value="csvlist">' + gettext("CSV list") + '</label><br>' +
                 '</div>' +
-              '</label>' +
+                '</td>' +
+                '<td>' +
+                '<div class="check" name="scenarios" id="scenarios" value="default">' +
+                cb +                 
+               '</div>' +
+                '</td>' +
+              '</tr>' +
+            '</tbody>' +
+          '</table>' +
             '</div>'+
             '<div class="modal-footer">'+
-              '<input type="submit" id="exportbutton" role="button" class="btn btn-danger pull-left" value="'+gettext('Export')+'">'+
-              '<input type="submit" id="cancelbutton" role="button" class="btn btn-primary pull-right" data-dismiss="modal" value="'+gettext('Cancel')+'">'+
+              '<input type="submit" id="exportbutton" role="button" class="btn btn-primary pull-right" value="'+gettext('Export')+'">'+
+              '<input type="submit" id="cancelbutton" role="button" class="btn btn-primary pull-left" data-dismiss="modal" value="'+gettext('Cancel')+'">'+
             '</div>'+
           '</div>'+
       '</div>' )
       .modal('show');
-    else
-      $('#popup').html('<div class="modal-dialog" style="width: 350px;">'+
-          '<div class="modal-content">'+
-            '<div class="modal-header">'+
-              '<h4 class="modal-title">'+gettext("Export CSV or Excel file")+'</h4>'+
-            '</div>'+
-            '<div class="modal-body">'+
-              '<label class="control-label">' + gettext("Export format") +
-                '<div class="radio" name="csvformat" id="csvformat" value="spreadsheettable">' +
-                  '&nbsp;&nbsp;&nbsp;&nbsp;<label><input type="radio" name="csvformat" value="spreadsheettable" checked="">' + gettext("Spreadsheet table") + '</label><br>' +
-                  '&nbsp;&nbsp;&nbsp;&nbsp;<label><input type="radio" name="csvformat" value="spreadsheetlist">' + gettext("Spreadsheet list") + '</label><br>' +
-                  '&nbsp;&nbsp;&nbsp;&nbsp;<label><input type="radio" name="csvformat" value="csvtable">' + gettext("CSV table") + '</label><br>' +
-                  '&nbsp;&nbsp;&nbsp;&nbsp;<label><input type="radio" name="csvformat" value="csvlist">' + gettext("CSV list") + '</label><br>' +
-                '</div>' +
-              '</label>' +
-            '</div>'+
-            '<div class="modal-footer">'+
-              '<input type="submit" id="exportbutton" role="button" class="btn btn-danger pull-left" value="'+gettext('Export')+'">'+
-              '<input type="submit" id="cancelbutton" role="button" class="btn btn-primary pull-right" data-dismiss="modal" value="'+gettext('Cancel')+'">'+
-            '</div>'+
-          '</div>'+
-      '</div>' )
-      .modal('show');
+    else if (!only_list && scenario_permissions.length > 1)
+        $('#popup').html('<div class="modal-dialog" style="width: 350px;">'+
+                '<div class="modal-content">'+
+                  '<div class="modal-header">'+
+                  '<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true" class="fa fa-times"></span></button>'+
+                    '<h4 class="modal-title text-capitalize-first">'+gettext("Export CSV or Excel file")+'</h4>'+
+                  '</div>'+
+                  '<div class="modal-body">'+
+                  '<table class="table table-borderless">' +
+                  '<thead>' +
+                    '<tr>' +
+                      '<th scope="col">' + gettext("Export format") + '</th>' +
+                      '<th scope="col">' + gettext("Scenarios to export") + '</th>' +
+                    '</tr>' +
+                  '</thead>' +
+                  '<tbody>' +
+                    '<tr>' +
+                      '<td>' + 
+                      '<div class="radio" name="csvformat" id="csvformat" value="spreadsheetlist">' +
+                      '<label><input type="radio" name="csvformat" value="spreadsheettable" checked="">' + gettext("Spreadsheet table") + '</label><br>' +
+                      '<label><input type="radio" name="csvformat" value="spreadsheetlist">' + gettext("Spreadsheet list") + '</label><br>' +
+                      '<label><input type="radio" name="csvformat" value="csvtable">' + gettext("CSV table") + '</label><br>' +
+                      '<label><input type="radio" name="csvformat" value="csvlist">' + gettext("CSV list") + '</label><br>' +
+                      '</div>' +
+                      '</td>' +
+                      '<td>' +
+                      '<div class="check" name="scenarios" id="scenarios" value="default">' +
+                      cb +                 
+                     '</div>' +
+                      '</td>' +
+                    '</tr>' +
+                  '</tbody>' +
+                '</table>' +
+                  '</div>'+
+                  '<div class="modal-footer">'+
+                    '<input type="submit" id="exportbutton" role="button" class="btn btn-primary pull-right" value="'+gettext('Export')+'">'+
+                    '<input type="submit" id="cancelbutton" role="button" class="btn btn-primary pull-left" data-dismiss="modal" value="'+gettext('Cancel')+'">'+
+                  '</div>'+
+                '</div>'+
+            '</div>' )
+            .modal('show');
+    else if (only_list && scenario_permissions.length <= 1)
+        $('#popup').html('<div class="modal-dialog" style="width: 350px;">'+
+                '<div class="modal-content">'+
+                  '<div class="modal-header">'+
+                  '<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true" class="fa fa-times"></span></button>'+
+                    '<h4 class="modal-title text-capitalize-first">'+gettext("Export CSV or Excel file")+'</h4>'+
+                  '</div>'+
+                  '<div class="modal-body">'+
+                    '<label class="control-label">' + gettext("Export format") +
+                      '<div class="radio" name="csvformat" id="csvformat" value="spreadsheetlist">' +
+                        '&nbsp;&nbsp;&nbsp;&nbsp;<label><input type="radio" name="csvformat" value="spreadsheetlist" checked="">' + gettext("Spreadsheet list") + '</label><br>' +
+                        '&nbsp;&nbsp;&nbsp;&nbsp;<label><input type="radio" name="csvformat" value="csvlist">' + gettext("CSV list") + '</label><br>' +
+                      '</div>' +
+                    '</label>' +
+                  '</div>'+
+                  '<div class="modal-footer">'+
+                    '<input type="submit" id="exportbutton" role="button" class="btn btn-primary pull-right" value="'+gettext('Export')+'">'+
+                    '<input type="submit" id="cancelbutton" role="button" class="btn btn-primary pull-left" data-dismiss="modal" value="'+gettext('Cancel')+'">'+
+                  '</div>'+
+                '</div>'+
+            '</div>' )
+            .modal('show');
+    else if (!only_list && scenario_permissions.length <= 1)
+    	$('#popup').html('<div class="modal-dialog" style="width: 350px;">'+
+    	          '<div class="modal-content">'+
+    	            '<div class="modal-header">'+
+    	              '<h4 class="modal-title">'+gettext("Export CSV or Excel file")+'</h4>'+
+    	            '</div>'+
+    	            '<div class="modal-body">'+
+    	              '<label class="control-label">' + gettext("Export format") +
+    	                '<div class="radio" name="csvformat" id="csvformat" value="spreadsheettable">' +
+    	                  '&nbsp;&nbsp;&nbsp;&nbsp;<label><input type="radio" name="csvformat" value="spreadsheettable" checked="">' + gettext("Spreadsheet table") + '</label><br>' +
+    	                  '&nbsp;&nbsp;&nbsp;&nbsp;<label><input type="radio" name="csvformat" value="spreadsheetlist">' + gettext("Spreadsheet list") + '</label><br>' +
+    	                  '&nbsp;&nbsp;&nbsp;&nbsp;<label><input type="radio" name="csvformat" value="csvtable">' + gettext("CSV table") + '</label><br>' +
+    	                  '&nbsp;&nbsp;&nbsp;&nbsp;<label><input type="radio" name="csvformat" value="csvlist">' + gettext("CSV list") + '</label><br>' +
+    	                '</div>' +
+    	              '</label>' +
+    	            '</div>'+
+    	            '<div class="modal-footer">'+
+    	              '<input type="submit" id="exportbutton" role="button" class="btn btn-primary pull-right" value="'+gettext('Export')+'">'+
+    	              '<input type="submit" id="cancelbutton" role="button" class="btn btn-primary pull-left" data-dismiss="modal" value="'+gettext('Cancel')+'">'+
+    	            '</div>'+
+    	          '</div>'+
+    	      '</div>' )
+    	      .modal('show');
+    
+    
     $('#exportbutton').on('click', function() {
       // Fetch the report data
       var url = (location.href.indexOf("#") != -1 ? location.href.substr(0,location.href.indexOf("#")) : location.href);
+      var scenarios = "";
+      if (scenario_permissions.length > 1) {
+	      var scenarios = "";
+	      firstTime = true;
+	      for (i = 0 ; i < scenario_permissions.length; i++) {
+	    	  if ($('#' + scenario_permissions[i][0]).is(":checked")) {
+	    	  	if (firstTime)
+	    	  		firstTime = false;
+	    	  	else
+	    	  		scenarios += ",";
+	    	  			
+	    	    scenarios += scenario_permissions[i][0]
+	    	  }
+	      }
+      }
+      
       if (location.search.length > 0)
         // URL already has arguments
         url += "&format=" + $('#csvformat input:radio:checked').val();
@@ -1156,6 +1270,11 @@ var grid = {
       else
         // This is the first argument for the URL
         url += "?format=" + $('#csvformat input:radio:checked').val();
+      
+      // Append scenarios if needed
+      if (scenario_permissions.length > 1)
+    	  url += "&scenarios=" + scenarios;
+      
       // Append current filter and sort settings to the URL
       var postdata = $("#grid").jqGrid('getGridParam', 'postData');
       url +=  "&" + jQuery.param(postdata);
@@ -2618,9 +2737,9 @@ function import_show(title, paragraph, multiple, fxhr, initialDropped)
           '</div>'+
         '</div>'+
         '<div class="modal-footer">'+
-            '<input type="submit" id="importbutton" role="button" class="btn btn-danger pull-left" value="'+gettext('Import')+'">'+
-            '<input type="submit" id="cancelimportbutton" role="button" class="btn btn-danger pull-left" value="'+gettext('Cancel Import')+'" style="display: none;">'+
-            '<input type="submit" id="cancelbutton" role="button" class="btn btn-primary pull-right" data-dismiss="modal" value="'+gettext('Close')+'">'+
+            '<input type="submit" id="importbutton" role="button" class="btn btn-primary pull-right" value="'+gettext('Import')+'">'+
+            '<input type="submit" id="cancelimportbutton" role="button" class="btn btn-primary pull-left" value="'+gettext('Cancel Import')+'" style="display: none;">'+
+            '<input type="submit" id="cancelbutton" role="button" class="btn btn-primary pull-left" data-dismiss="modal" value="'+gettext('Close')+'">'+
             '<input type="submit" id="copytoclipboard" role="button" class="btn btn-primary pull-left" value="'+gettext('Copy to Clipboard')+'" style="display: none;">' +
         '</div>'+
       '</div>'+

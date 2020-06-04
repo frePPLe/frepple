@@ -43,3 +43,16 @@ into a single Excel workbook.
 
 .. image:: ../_images/exporting-data.png
    :alt: Exporting data
+
+If the user has permissions on other scenarios for the view he/she is trying to export, 
+another window dialog will be displayed with these scenarios. 
+
+By default only current 
+scenario will be selected and the user cannot disable this selection. 
+
+If the user selects extra scenarios then the generated spreadsheet or CSV file will contain
+data for all selected scenarios. An extra column "scenario" is added in the file to clearly
+identify to which scenario a data row belongs to.
+   
+.. image:: ../_images/exporting-data-scenarios.png
+   :alt: Exporting data

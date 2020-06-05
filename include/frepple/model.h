@@ -4759,10 +4759,18 @@ class Buffer : public HasHierarchy<Buffer>,
     m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, &Cls::setHidden,
                          BOOL_FALSE, DONT_SERIALIZE);
     HasLevel::registerFields<Cls>(m);
+    m->addBoolField<Cls>(Tags::ip_flag, &Cls::getIPFlag, &Cls::setIPFlag,
+                         BOOL_FALSE);
   }
 
   /* A dummy producing operation to mark uninitialized ones. */
   static OperationFixedTime* uninitializedProducing;
+
+  /* Returns true if this buffer is a decoupling point. */
+  bool getIPFlag() const { return ip_data; }
+
+  /* Marks a buffer as a decoupling point. */
+  void setIPFlag(bool b) { ip_data = b; }
 
  private:
   /* A constant defining the default max inventory target.\\
@@ -4828,6 +4836,9 @@ class Buffer : public HasHierarchy<Buffer>,
   /* A flag that marks whether this buffer represents a tool or not. */
   static const unsigned short TOOL = 1;
   unsigned short flags = 0;
+
+  /* Marks decoupling points. */
+  bool ip_data = false;
 };
 
 /* An internally generated operation to represent inventory. */

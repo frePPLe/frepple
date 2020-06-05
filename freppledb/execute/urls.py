@@ -51,14 +51,14 @@ urlpatterns = [
         name="copy_file_to_folder",
     ),
     url(
-        r"^execute/downloadfromfolder/(.+)/$",
-        freppledb.execute.views.FileManager.downloadFilefromFolder,
-        name="download_all_files_from_folder",
-    ),
-    url(
         r"^execute/downloadfromfolder/(.+)/(.+)/$",
         freppledb.execute.views.FileManager.downloadFilefromFolder,
         name="download_file_from_folder",
+    ),
+    url(
+        r"^execute/downloadfromfolder/(.+)/$",
+        freppledb.execute.views.FileManager.downloadFilefromFolder,
+        name="download_all_files_from_folder",
     ),
     url(
         r"^execute/deletefromfolder/(.+)/(.+)/$",

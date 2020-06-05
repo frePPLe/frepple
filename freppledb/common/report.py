@@ -872,12 +872,13 @@ class GridReport(View):
         return ",\n".join(result)
 
     @classmethod
-    def _generate_spreadsheet_data(cls, request, scenarios, output, *args, **kwargs):
+    def _generate_spreadsheet_data(
+        cls, request, scenario_list, output, *args, **kwargs
+    ):
         # Create a workbook
         wb = Workbook(write_only=True)
         title = force_text(cls.model and cls.model._meta.verbose_name or cls.title)
         ws = wb.create_sheet(title=title)
-        scenario_list = scenarios.split(",") if scenarios else [request.database]
 
         # Create a named style for the header row
         headerstyle = NamedStyle(name="headerstyle")
@@ -994,9 +995,7 @@ class GridReport(View):
         wb.save(output)
 
     @classmethod
-    def _generate_csv_data(cls, request, scenarios, *args, **kwargs):
-
-        scenario_list = scenarios.split(",") if scenarios else [request.database]
+    def _generate_csv_data(cls, request, scenario_list, *args, **kwargs):
 
         sf = StringIO()
         decimal_separator = get_format("DECIMAL_SEPARATOR", request.LANGUAGE_CODE, True)
@@ -1517,49 +1516,23 @@ class GridReport(View):
         request.prefs = request.user.getPreference(reportkey, database=request.database)
         if request.prefs:
             kwargs["preferences"] = request.prefs
-        if not fmt:
-            # Return HTML page
 
-            # scenario_permissions is used to display multiple scenarios in the export dialog
+        # scenario_permissions is used to display multiple scenarios in the export dialog
+
+        scenario_permissions = []
+        if len(request.user.scenarios) > 1:
             original_database = request.database
-            scenarios = Scenario.objects.using(DEFAULT_DB_ALIAS)
-            scenario_permissions = []
-            if scenarios.count() > 1:
-                for scenario in scenarios:
+            for scenario in request.user.scenarios:
+                try:
+
                     # request.database needs to be changed for has_perm to work properly
                     request.database = scenario.name
-                    if scenario.status == "Free":
-                        continue
+
                     user = User.objects.using(scenario.name).get(
                         username=request.user.username
                     )
 
-                    # user needs to have permissions in scenario
-                    # reports have special permissions
-                    if cls.permissions:
-                        hasAll = True
-                        for p in cls.permissions:
-                            hasAll = hasAll and user.has_perm("%s.%s" % ("auth", p[0]))
-
-                        if hasAll:
-                            scenario_permissions.append(
-                                [
-                                    scenario.name,
-                                    scenario.description
-                                    if scenario.description
-                                    else scenario.name,
-                                    1 if request.database == original_database else 0,
-                                ]
-                            )
-                    # this is for regular views
-                    elif user.has_perm(
-                        "%s.%s"
-                        % (
-                            cls.model._meta.app_label,
-                            get_permission_codename("view", cls.model._meta),
-                        )
-                    ):
-
+                    if cls.has_permission(user):
                         scenario_permissions.append(
                             [
                                 scenario.name,
@@ -1569,8 +1542,14 @@ class GridReport(View):
                                 1 if request.database == original_database else 0,
                             ]
                         )
+                except Exception:
+                    pass
+
             # reverting to original request database as permissions are checked
             request.database = original_database
+
+        if not fmt:
+            # Return HTML page
 
             if not hasattr(request, "crosses"):
                 cross_idx = None
@@ -1685,9 +1664,17 @@ class GridReport(View):
         elif fmt in ("spreadsheetlist", "spreadsheettable", "spreadsheet"):
 
             scenarios = request.GET.get("scenarios", None)
+            scenario_list = scenarios.split(",") if scenarios else [request.database]
+            # Make sure scenarios are in the scenario_permissions list
+            if scenarios:
+                accepted_scenarios = [t[0] for t in scenario_permissions]
+                scenario_list = [x for x in scenario_list if x in accepted_scenarios]
+
             # Return an excel spreadsheet
             output = BytesIO()
-            cls._generate_spreadsheet_data(request, scenarios, output, *args, **kwargs)
+            cls._generate_spreadsheet_data(
+                request, scenario_list, output, *args, **kwargs
+            )
             response = HttpResponse(
                 content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
                 content=output.getvalue(),
@@ -1703,12 +1690,17 @@ class GridReport(View):
         elif fmt in ("csvlist", "csvtable", "csv"):
 
             scenarios = request.GET.get("scenarios", None)
+            scenario_list = scenarios.split(",") if scenarios else [request.database]
+            # Make sure scenarios are in the scenario_permissions list
+            if scenarios:
+                accepted_scenarios = [t[0] for t in scenario_permissions]
+                scenario_list = [x for x in scenario_list if x in accepted_scenarios]
 
             # Return CSV data to export the data
             response = StreamingHttpResponse(
                 content_type="text/csv; charset=%s" % settings.CSV_CHARSET,
                 streaming_content=cls._generate_csv_data(
-                    request, scenarios, *args, **kwargs
+                    request, scenario_list, *args, **kwargs
                 ),
             )
             # Filename parameter is encoded as specified in rfc5987
@@ -2654,9 +2646,7 @@ class GridPivot(GridReport):
         yield "".join(r)
 
     @classmethod
-    def _generate_csv_data(cls, request, scenarios, *args, **kwargs):
-
-        scenario_list = scenarios.split(",") if scenarios else [request.database]
+    def _generate_csv_data(cls, request, scenario_list, *args, **kwargs):
 
         sf = StringIO()
         decimal_separator = get_format("DECIMAL_SEPARATOR", request.LANGUAGE_CODE, True)
@@ -3001,11 +2991,12 @@ class GridPivot(GridReport):
                         yield sf.getvalue()
 
     @classmethod
-    def _generate_spreadsheet_data(cls, request, scenarios, output, *args, **kwargs):
+    def _generate_spreadsheet_data(
+        cls, request, scenario_list, output, *args, **kwargs
+    ):
         # Create a workbook
         wb = Workbook(write_only=True)
         ws = wb.create_sheet(title=force_text(cls.model._meta.verbose_name))
-        scenario_list = scenarios.split(",") if scenarios else [request.database]
 
         # Create a named style for the header row
         headerstyle = NamedStyle(name="headerstyle")

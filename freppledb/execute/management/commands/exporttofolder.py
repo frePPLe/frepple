@@ -344,11 +344,14 @@ class Command(BaseCommand):
                             datafile = open(os.path.join(exportFolder, filename), "wb")
                             if filename.endswith(".xlsx"):
                                 reportclass._generate_spreadsheet_data(
-                                    request, None, datafile, **cfg.get("data", {})
+                                    request,
+                                    [request.database],
+                                    datafile,
+                                    **cfg.get("data", {})
                                 )
                             elif filename.endswith(".csv"):
                                 for r in reportclass._generate_csv_data(
-                                    request, None, **cfg.get("data", {})
+                                    request, [request.database], **cfg.get("data", {})
                                 ):
                                     datafile.write(
                                         r.encode(settings.CSV_CHARSET)

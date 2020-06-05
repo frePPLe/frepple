@@ -1,0 +1,41 @@
+<div class="panel-heading">
+<h4 class="panel-title" style="text-transform: capitalize">{{ 'downstream operations'|translate }}</h4>
+</div>
+<table class="table table-condensed table-hover"><thead><tr>
+<td><b style="text-transform: capitalize">{{ 'level'|translate }}</b></td>
+<td><b style="text-transform: capitalize">{{ 'reference'|translate }}</b></td>
+<td><b style="text-transform: capitalize">{{ 'type'|translate }}</b></td>
+<td><b style="text-transform: capitalize">{{ 'operation'|translate }}</b></td>
+<td><b style="text-transform: capitalize">{{ 'status'|translate }}</b></td>
+<td><b style="text-transform: capitalize">{{ 'item'|translate }}</b></td>
+<td><b style="text-transform: capitalize">{{ 'location'|translate }}</b></td>
+<td><b style="text-transform: capitalize">{{ 'start date'|translate }}</b></td>
+<td><b style="text-transform: capitalize">{{ 'end date'|translate }}</b></td>
+<td><b style="text-transform: capitalize">{{ 'quantity'|translate }}</b></td>
+</tr></thead>
+<tbody>
+<tr data-ng-if="!operationplan.downstreamoperationplans"><td colspan="8">{{ 'no downstream operationplans information'|translate }}</td></tr>
+<tr data-ng-if="operationplan.downstreamoperationplans && peg[10] != 2" data-ng-repeat="peg in operationplan.downstreamoperationplans track by $index">
+<td>
+<span data-ng-if="peg[10] == 0" class="fa fa-fw fa-caret-right" data-ng-click='expandOrCollapse($index)'></span>
+<span data-ng-if="peg[10] == 1" class="fa fa-fw fa-caret-down" data-ng-click='expandOrCollapse($index)'></span>
+&nbsp;{{peg[0]}}</td>
+<td>{{peg[1]}}</td>  
+<td data-ng-if="peg[2] == 'MO'">{{peg[2]}}</td>  
+<td data-ng-if="peg[2] == 'DLVR'">{{peg[2]}}</td>  
+<td data-ng-if="peg[2] == 'PO'">{{peg[2]}}</td>  
+<td data-ng-if="peg[2] == 'DO'">{{peg[2]}}</td>  
+<td data-ng-if="peg[2] == 'MO'">{{peg[3]}}<a href="/detail/input/operation/key/" role="input/operation" onclick="opendetail(event)">
+  <span class="fa fa-caret-right"></span></a></td>  
+<td data-ng-if="peg[2] != 'MO'">{{peg[3]}}</td>  
+<td>{{peg[4]}}</td>
+<td>{{peg[5]}}<a href="/detail/input/item/key/" role="input/item" onclick="opendetail(event)">
+  <span class="fa fa-caret-right"></span></a></td>  
+<td>{{peg[6]}}<a href="/detail/input/location/key/" role="input/location" onclick="opendetail(event)">
+  <span class="fa fa-caret-right"></span></a></td>  
+<td>{{peg[7]}}</td>  
+<td>{{peg[8]}}</td>  
+<td>{{peg[9]}}</td>
+</tr>
+</tbody>
+</table>

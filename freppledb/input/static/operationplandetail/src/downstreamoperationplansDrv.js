@@ -27,86 +27,33 @@ function showdownstreamoperationplansDrv($window, gettextCatalog) {
   var directive = {
     restrict: 'EA',
     scope: {operationplan: '=data'},
+    templateUrl: '/static/operationplandetail/downstreamoperationplans.html',
     link: linkfunc
   };
   return directive;
 
   function linkfunc(scope, elem, attrs) {
-    var template =  '<div class="panel-heading"><h4 class="panel-title" style="text-transform: capitalize">'+
-                      gettextCatalog.getString("downstream operations")+
-                    '</h4></div>'+
-                    '<table class="table table-condensed table-hover"><thead><tr><td>' +
-                      '<b style="text-transform: capitalize;">'+gettextCatalog.getString("level")+'</b>' +
-                    '</td><td>' +
-                      '<b style="text-transform: capitalize;">'+gettextCatalog.getString("reference")+'</b>' +
-                    '</td><td>' +
-                      '<b style="text-transform: capitalize;">'+gettextCatalog.getString("type")+'</b>' +
-                    '</td><td>' +
-                      '<b style="text-transform: capitalize;">'+gettextCatalog.getString("operation")+'</b>' +
-                    '</td><td>' +
-                    '<b style="text-transform: capitalize;">'+gettextCatalog.getString("status")+'</b>' +
-                    '</td><td>' +
-                      '<b style="text-transform: capitalize;">'+gettextCatalog.getString("demands")+'</b>' +
-                    '</td><td>' +
-                      '<b style="text-transform: capitalize;">'+gettextCatalog.getString("item")+'</b>' +
-                    '</td><td>' +
-                      '<b style="text-transform: capitalize;">'+gettextCatalog.getString("location")+'</b>' +
-                    '</td><td>' +
-                      '<b style="text-transform: capitalize;">'+gettextCatalog.getString("start date")+'</b>' +
-                    '</td><td>' +
-                      '<b style="text-transform: capitalize;">'+gettextCatalog.getString("end date")+'</b>' +
-                    '</td><td>' +
-                      '<b style="text-transform: capitalize;">'+gettextCatalog.getString("quantity")+'</b>' +
-                    '</td></tr></thead>' +
-                    '<tbody></tbody>' +
-                  '</table>';
-
-
-    
-    scope.$watchGroup(['operationplan.id','operationplan.downstreamoperationplans.length'], function (newValue,oldValue) {
-      angular.element(document).find('#attributes-downstreamoperationplans').empty().append(template);
-      var rows = '<tr><td colspan="8">'+gettextCatalog.getString('no downstream operationplans information')+'</td></tr>';
-      var orderType = "";
-      if (typeof scope.operationplan !== 'undefined') {
-        if (scope.operationplan.hasOwnProperty('downstreamoperationplans')) {
-          rows='';
-          angular.forEach(scope.operationplan.downstreamoperationplans, function(thedownstreamoperationplans) {        	  
-	  		  if (thedownstreamoperationplans[2] == "MO")
-	  			  orderType = "manufacturingorder";
-	  		  else if (thedownstreamoperationplans[2] == "PO")
-	  			  orderType = "purchaseorder";
-	  		  else if (thedownstreamoperationplans[2] == "DO")
-	  			  orderType = "distributionorder";
-	  		  else if (thedownstreamoperationplans[2] == "DLVR")
-	  		  	  orderType = "deliveryorder";
-  		  
-        	  rows += '<tr><td>'
-              + grid.formatNumber(thedownstreamoperationplans[0]) + '</td><td>'
-          	  + $.jgrid.htmlEncode(thedownstreamoperationplans[1])
-        	  + "<a href=\"" + url_prefix + "/data/input/" + orderType
-        	  + "/?noautofilter&parentreference=" + admin_escape(thedownstreamoperationplans[1]) 
-              + "\" onclick='event.stopPropagation()'><span class='leftpadding fa fa-caret-right'></span></a>"
-              + '</td><td>'
-              +  $.jgrid.htmlEncode(thedownstreamoperationplans[2]) + '</td><td>'  
-              +  $.jgrid.htmlEncode(thedownstreamoperationplans[3]) + '</td><td>'
-              +  $.jgrid.htmlEncode(thedownstreamoperationplans[4]) + '</td><td>'
-              +  $.jgrid.htmlEncode(thedownstreamoperationplans[5]) + '</td><td>'
-          	  + $.jgrid.htmlEncode(thedownstreamoperationplans[6])
-        	  + "<a href=\"" + url_prefix + "/detail/input/item/" + admin_escape(thedownstreamoperationplans[6]) 
-              + "/\" onclick='event.stopPropagation()'><span class='leftpadding fa fa-caret-right'></span></a>"
-              + '</td><td>'
-          	  + $.jgrid.htmlEncode(thedownstreamoperationplans[7])
-        	  + "<a href=\"" + url_prefix + "/detail/input/location/" + admin_escape(thedownstreamoperationplans[7]) 
-              + "/\" onclick='event.stopPropagation()'><span class='leftpadding fa fa-caret-right'></span></a>"
-              + '</td><td>'
-              +  $.jgrid.htmlEncode(thedownstreamoperationplans[8]) + '</td><td>'
-              +  $.jgrid.htmlEncode(thedownstreamoperationplans[9]) + '</td><td>'
-              +  $.jgrid.htmlEncode(thedownstreamoperationplans[10]) + '</td></tr>';
-          });
-        }
-      }
-      angular.element(document).find('#attributes-downstreamoperationplans tbody').append(rows);
-    }); //watch end
-
+  	
+  	function expandOrCollapse(i) {
+  		// 0: collapsed, 1: expanded, 2: hidden
+  		var j = i + 1;
+  		var mylevel = scope.operationplan.downstreamoperationplans[i][0];
+  		if (scope.operationplan.downstreamoperationplans[i][10] == 0)
+  			scope.operationplan.downstreamoperationplans[i][10] = 1;
+  		else
+  			scope.operationplan.downstreamoperationplans[i][10] = 0;  		
+  		while (j < scope.operationplan.downstreamoperationplans.length) {
+  			if (scope.operationplan.downstreamoperationplans[j][0] <= mylevel)
+  				break;
+  			else if (scope.operationplan.downstreamoperationplans[j][0] == mylevel + 1
+  				&& scope.operationplan.downstreamoperationplans[i][10] == 1)
+  	  		scope.operationplan.downstreamoperationplans[j][10] = 0;
+    		else if (scope.operationplan.downstreamoperationplans[j][0] > mylevel + 1
+    			|| scope.operationplan.downstreamoperationplans[i][10] == 0)
+      	  scope.operationplan.downstreamoperationplans[j][10] = 2;
+  			++j;
+  		}
+  	}
+    scope.expandOrCollapse = expandOrCollapse;
   } //link end
 } //directive end

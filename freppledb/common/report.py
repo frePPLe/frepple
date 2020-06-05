@@ -1521,31 +1521,56 @@ class GridReport(View):
             # Return HTML page
 
             # scenario_permissions is used to display multiple scenarios in the export dialog
+            original_database = request.database
             scenarios = Scenario.objects.using(DEFAULT_DB_ALIAS)
             scenario_permissions = []
             if scenarios.count() > 1:
                 for scenario in scenarios:
+                    # request.database needs to be changed for has_perm to work properly
+                    request.database = scenario.name
                     if scenario.status == "Free":
                         continue
                     user = User.objects.using(scenario.name).get(
                         username=request.user.username
                     )
-                    if user.has_perm(
+
+                    # user needs to have permissions in scenario
+                    # reports have special permissions
+                    if cls.permissions:
+                        hasAll = True
+                        for p in cls.permissions:
+                            hasAll = hasAll and user.has_perm("%s.%s" % ("auth", p[0]))
+
+                        if hasAll:
+                            scenario_permissions.append(
+                                [
+                                    scenario.name,
+                                    scenario.description
+                                    if scenario.description
+                                    else scenario.name,
+                                    1 if request.database == original_database else 0,
+                                ]
+                            )
+                    # this is for regular views
+                    elif user.has_perm(
                         "%s.%s"
                         % (
                             cls.model._meta.app_label,
                             get_permission_codename("view", cls.model._meta),
                         )
                     ):
+
                         scenario_permissions.append(
                             [
                                 scenario.name,
                                 scenario.description
                                 if scenario.description
                                 else scenario.name,
-                                1 if request.database == scenario.name else 0,
+                                1 if request.database == original_database else 0,
                             ]
                         )
+            # reverting to original request database as permissions are checked
+            request.database = original_database
 
             if not hasattr(request, "crosses"):
                 cross_idx = None

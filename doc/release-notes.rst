@@ -13,7 +13,7 @@ Release notes
     cockpit "analyze late demand" displays a top 20 of items with late demand. From there
     you can drill down into the "demand report" of an item to review the backlog situation
     and the constraints causing the lateness.
-    
+
 - | Scenario management: Logged user won't see anymore in the scenario management screen 
     in use scenarios where he/she is not active.
     

@@ -953,6 +953,10 @@ class SolverCreate : public Solver {
     /* Flags whether or not constraints are being tracked. */
     bool logConstraints;
 
+    /* Flags whether a resource in the supply path did hit its max_earlylimit.
+     * This is then used to replan at a different date. */
+    Duration hitMaxEarly;
+
     /* Simplistic flag to trace the costs being considered for alternate
      * selection. */
     bool logcosts = false;  // SET TO TRUE AND RECOMPILE TO ACTIVATE EXTRA

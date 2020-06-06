@@ -1,0 +1,712 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<name>Test keeping operations together with max-early</name>
+	<description>
+		The maxearly flag on resources can be used to keep the flow
+		between decoupling points smooth, and following the pace of
+		the bottleneck.
+	</description>
+	<current>2020-01-01T00:00:00</current>
+
+	<!-- TEST 1:
+	Models a line sequence of 6 operation steps. 
+	Bottlenecks are step 1 and 5.
+	Inventory builds up at the stages 1, 5 and 6 because the non-bottleneck steps
+	are planned JIT on the requirement date. 
+	-->
+	<operations>
+		<operation name="1. make item 1"
+			xsi:type="operation_fixed_time">
+			<size_multiple>1</size_multiple>
+			<item name="1. item 1" />
+			<location name="factory" />
+			<flows>
+				<flow xsi:type="flow_end">
+					<buffer name="1. item 1 @ factory">
+						<item name="1. item 1" />
+						<location name="factory" />
+					</buffer>
+					<quantity>1</quantity>
+				</flow>
+			</flows>
+			<loads>
+				<load>
+					<resource name="1. Resource 1">
+						<maximum>1</maximum>
+					</resource>
+					<quantity>1</quantity>
+				</load>
+			</loads>
+			<duration>P20D</duration>
+		</operation>
+		<operation name="1. make item 2"
+			xsi:type="operation_fixed_time">
+			<size_multiple>1</size_multiple>
+			<item name="1. item 2" />
+			<location name="factory" />
+			<flows>
+				<flow xsi:type="flow_end">
+					<buffer name="1. item 2 @ factory">
+						<item name="1. item 2" />
+						<location name="factory" />
+					</buffer>
+					<quantity>1</quantity>
+				</flow>
+				<flow xsi:type="flow_start">
+					<buffer name="1. item 1 @ factory">
+						<item name="1. item 1" />
+						<location name="factory" />
+					</buffer>
+					<quantity>-1</quantity>
+				</flow>
+			</flows>
+			<loads>
+				<load>
+					<resource name="1. Resource 2">
+						<maximum>1</maximum>
+					</resource>
+					<quantity>1</quantity>
+				</load>
+			</loads>
+			<duration>P3D</duration>
+		</operation>
+		<operation name="1. make item 3"
+			xsi:type="operation_fixed_time">
+			<size_multiple>1</size_multiple>
+			<item name="1. item 3" />
+			<location name="factory" />
+			<flows>
+				<flow xsi:type="flow_end">
+					<buffer name="1. item 3 @ factory">
+						<item name="1. item 3" />
+						<location name="factory" />
+					</buffer>
+					<quantity>1</quantity>
+				</flow>
+				<flow xsi:type="flow_start">
+					<buffer name="1. item 2 @ factory">
+						<item name="1. item 2" />
+						<location name="factory" />
+					</buffer>
+					<quantity>-1</quantity>
+				</flow>
+			</flows>
+			<loads>
+				<load>
+					<resource name="1. Resource 3">
+						<maxearly>P28D</maxearly>
+						<maximum>1</maximum>
+					</resource>
+					<quantity>1</quantity>
+				</load>
+			</loads>
+			<duration>P1D</duration>
+		</operation>
+		<operation name="1. make item 4"
+			xsi:type="operation_fixed_time">
+			<size_multiple>1</size_multiple>
+			<item name="1. item 4" />
+			<location name="factory" />
+			<flows>
+				<flow xsi:type="flow_end">
+					<buffer name="1. item 4 @ factory">
+						<item name="1. item 4" />
+						<location name="factory" />
+					</buffer>
+					<quantity>1</quantity>
+				</flow>
+				<flow xsi:type="flow_start">
+					<buffer name="1. item 3 @ factory">
+						<item name="1. item 3" />
+						<location name="factory" />
+					</buffer>
+					<quantity>-1</quantity>
+				</flow>
+			</flows>
+			<loads>
+				<load>
+					<resource name="1. Resource 4">
+						<maximum>1</maximum>
+					</resource>
+					<quantity>1</quantity>
+				</load>
+			</loads>
+			<duration>P2D</duration>
+		</operation>
+		<operation name="1. make item 5"
+			xsi:type="operation_fixed_time">
+			<size_multiple>1</size_multiple>
+			<priority>2</priority>
+			<item name="1. item 5" />
+			<location name="factory" />
+			<flows>
+				<flow xsi:type="flow_end">
+					<buffer name="1. item 5 @ factory">
+						<item name="1. item 5" />
+						<location name="factory" />
+					</buffer>
+					<quantity>1</quantity>
+				</flow>
+				<flow xsi:type="flow_start">
+					<buffer name="1. item 4 @ factory">
+						<item name="1. item 4" />
+						<location name="factory" />
+					</buffer>
+					<quantity>-1</quantity>
+				</flow>
+			</flows>
+			<loads>
+				<load>
+					<resource name="1. Resource 5">
+						<maximum>1</maximum>
+					</resource>
+					<quantity>1</quantity>
+				</load>
+			</loads>
+			<duration>P10D</duration>
+		</operation>
+		<operation name="1. make item 6"
+			xsi:type="operation_fixed_time">
+			<size_multiple>1</size_multiple>
+			<item name="1. item 6" />
+			<location name="factory" />
+			<flows>
+				<flow xsi:type="flow_end">
+					<buffer name="1. item 6 @ factory">
+						<item name="1. item 6" />
+						<location name="factory" />
+					</buffer>
+					<quantity>1</quantity>
+				</flow>
+				<flow xsi:type="flow_start">
+					<buffer name="1. item 5 @ factory">
+						<item name="1. item 5" />
+						<location name="factory" />
+					</buffer>
+					<quantity>-1</quantity>
+				</flow>
+			</flows>
+			<loads>
+				<load>
+					<resource name="1. Resource 6">
+						<maximum>1</maximum>
+					</resource>
+					<quantity>1</quantity>
+				</load>
+			</loads>
+			<duration>P2D</duration>
+		</operation>
+	</operations>
+  <suppliers>
+    <supplier name="3. Supplier">
+      <itemsuppliers>
+        <itemsupplier>
+          <item name="3. item 5"/>
+          <leadtime>P400D</leadtime>
+          <priority>1</priority>
+        </itemsupplier>
+      </itemsuppliers>
+    </supplier>
+  </suppliers>	
+	<demands>
+		<demand name="1. order A">
+			<quantity>10</quantity>
+			<due>2020-08-01T00:00:00</due>
+			<priority>1</priority>
+			<item name="1. item 6" />
+			<location name="factory" />
+		</demand>
+		<demand name="1. order B">
+			<quantity>10</quantity>
+			<due>2020-08-01T00:00:00</due>
+			<priority>1</priority>
+			<item name="1. item 6" />
+			<location name="factory" />
+		</demand>
+		<demand name="1. order C">
+			<quantity>10</quantity>
+			<due>2020-08-01T00:00:00</due>
+			<priority>1</priority>
+			<item name="1. item 6" />
+			<location name="factory" />
+		</demand>
+		<demand name="1. order D">
+			<quantity>10</quantity>
+			<due>2020-08-01T00:00:00</due>
+			<priority>1</priority>
+			<item name="1. item 6" />
+			<location name="factory" />
+		</demand>
+	</demands>
+
+	<!-- TEST 2:
+	Operation times and resource are the same as in the previous case.
+	The operations are now planned such that inventory is kept in the buffers 3 and 6.
+	These buffers are marked as decouping points. The material flow between the decoupling
+	points is planned smooth and without any delays.
+	-->
+	<operations>
+		<operation name="2. make item 1"
+			xsi:type="operation_fixed_time">
+			<size_multiple>1</size_multiple>
+			<item name="2. item 1" />
+			<location name="factory" />
+			<flows>
+				<flow xsi:type="flow_end">
+					<buffer name="2. item 1 @ factory">
+						<item name="2. item 1" />
+						<location name="factory" />
+					</buffer>
+					<quantity>1</quantity>
+				</flow>
+			</flows>
+			<loads>
+				<load>
+					<resource name="2. Resource 1">
+						<maxearly>P0D</maxearly>
+						<maximum>1</maximum>
+					</resource>
+					<quantity>1</quantity>
+				</load>
+			</loads>
+			<duration>P20D</duration>
+		</operation>
+		<operation name="2. make item 2"
+			xsi:type="operation_fixed_time">
+			<size_multiple>1</size_multiple>
+			<item name="2. item 2" />
+			<location name="factory" />
+			<flows>
+				<flow xsi:type="flow_end">
+					<buffer name="2. item 2 @ factory">
+						<item name="2. item 2" />
+						<location name="factory" />
+					</buffer>
+					<quantity>1</quantity>
+				</flow>
+				<flow xsi:type="flow_start">
+					<buffer name="2. item 1 @ factory">
+						<item name="2. item 1" />
+						<location name="factory" />
+					</buffer>
+					<quantity>-1</quantity>
+				</flow>
+			</flows>
+			<loads>
+				<load>
+					<resource name="2. Resource 2">
+						<maxearly>P0D</maxearly>
+						<maximum>1</maximum>
+					</resource>
+					<quantity>1</quantity>
+				</load>
+			</loads>
+			<duration>P3D</duration>
+		</operation>
+		<operation name="2. make item 3"
+			xsi:type="operation_fixed_time">
+			<size_multiple>1</size_multiple>
+			<item name="2. item 3" />
+			<location name="factory" />
+			<flows>
+				<flow xsi:type="flow_end">
+					<buffer name="2. item 3 @ factory">
+						<item name="2. item 3" />
+						<location name="factory" />
+					</buffer>
+					<quantity>1</quantity>
+				</flow>
+				<flow xsi:type="flow_start">
+					<buffer name="2. item 2 @ factory">
+						<item name="2. item 2" />
+						<location name="factory" />
+					</buffer>
+					<quantity>-1</quantity>
+				</flow>
+			</flows>
+			<loads>
+				<load>
+					<resource name="2. Resource 3">
+						<maxearly>P0D</maxearly>
+						<maximum>1</maximum>
+					</resource>
+					<quantity>1</quantity>
+				</load>
+			</loads>
+			<duration>P1D</duration>
+		</operation>
+		<operation name="2. make item 4"
+			xsi:type="operation_fixed_time">
+			<size_multiple>1</size_multiple>
+			<item name="2. item 4" />
+			<location name="factory" />
+			<flows>
+				<flow xsi:type="flow_end">
+					<buffer name="2. item 4 @ factory">
+						<item name="2. item 4" />
+						<location name="factory" />
+					</buffer>
+					<quantity>1</quantity>
+				</flow>
+				<flow xsi:type="flow_start">
+					<buffer name="2. item 3 @ factory">
+						<item name="2. item 3" />
+						<location name="factory" />
+					</buffer>
+					<quantity>-1</quantity>
+				</flow>
+			</flows>
+			<loads>
+				<load>
+					<resource name="2. Resource 4">
+						<maxearly>P0D</maxearly>
+						<maximum>1</maximum>
+					</resource>
+					<quantity>1</quantity>
+				</load>
+			</loads>
+			<duration>P2D</duration>
+		</operation>
+		<operation name="2. make item 5"
+			xsi:type="operation_fixed_time">
+			<size_multiple>1</size_multiple>
+			<item name="2. item 5" />
+			<location name="factory" />
+			<flows>
+				<flow xsi:type="flow_end">
+					<buffer name="2. item 5 @ factory">
+						<item name="2. item 5" />
+						<location name="factory" />
+					</buffer>
+					<quantity>1</quantity>
+				</flow>
+				<flow xsi:type="flow_start">
+					<buffer name="2. item 4 @ factory">
+						<item name="2. item 4" />
+						<location name="factory" />
+					</buffer>
+					<quantity>-1</quantity>
+				</flow>
+			</flows>
+			<loads>
+				<load>
+					<resource name="2. Resource 5">
+						<maxearly>P0D</maxearly>
+						<maximum>1</maximum>
+					</resource>
+					<quantity>1</quantity>
+				</load>
+			</loads>
+			<duration>P10D</duration>
+		</operation>
+		<operation name="2. make item 6"
+			xsi:type="operation_fixed_time">
+			<size_multiple>1</size_multiple>
+			<item name="2. item 6" />
+			<location name="factory" />
+			<flows>
+				<flow xsi:type="flow_end">
+					<buffer name="2. item 6 @ factory">
+						<item name="2. item 6" />
+						<location name="factory" />
+					</buffer>
+					<quantity>1</quantity>
+				</flow>
+				<flow xsi:type="flow_start">
+					<buffer name="2. item 5 @ factory">
+						<item name="2. item 5" />
+						<location name="factory" />
+					</buffer>
+					<quantity>-1</quantity>
+				</flow>
+			</flows>
+			<loads>
+				<load>
+					<resource name="2. Resource 6">
+						<maxearly>P0D</maxearly>
+						<maximum>1</maximum>
+					</resource>
+					<quantity>1</quantity>
+				</load>
+			</loads>
+			<duration>P2D</duration>
+		</operation>
+	</operations>
+	<demands>
+		<demand name="2. order A">
+			<quantity>10</quantity>
+			<minshipment>1</minshipment>
+			<due>2020-08-01T00:00:00</due>
+			<item name="2. item 6" />
+			<location name="factory" />
+		</demand>
+		<demand name="2. order B">
+			<quantity>10</quantity>
+			<due>2020-08-01T00:00:00</due>
+			<item name="2. item 6" />
+			<location name="factory" />
+		</demand>
+		<demand name="2. order C">
+			<quantity>10</quantity>
+			<due>2020-08-01T00:00:00</due>
+			<item name="2. item 6" />
+			<location name="factory" />
+		</demand>
+		<demand name="2. order D">
+			<quantity>10</quantity>
+			<due>2020-08-01T00:00:00</due>
+			<item name="2. item 6" />
+			<location name="factory" />
+		</demand>
+	</demands>
+
+  <!-- TEST 3:
+  Same as previous, but with an alternate and routing operation involved.
+  -->
+  <operations>
+    <operation name="3. make item 1"
+      xsi:type="operation_routing">
+      <size_multiple>1</size_multiple>
+      <item name="3. item 1" />
+      <location name="factory" />
+      <suboperations>
+        <suboperation>
+          <operation name="3. make item 1 step 1" xsi:type="operation_fixed_time" duration="P2D">
+            <location name="factory"/>
+          </operation>
+          <priority>1</priority>
+        </suboperation>
+        <suboperation>
+          <operation name="3. make item 1 step 2" xsi:type="operation_fixed_time" duration="P18D">
+            <location name="factory"/>
+			      <flows>
+			        <flow xsi:type="flow_end">
+			          <buffer name="3. item 1 @ factory">
+			            <item name="3. item 1" />
+			            <location name="factory" />
+			          </buffer>
+			          <quantity>1</quantity>
+			        </flow>
+			      </flows>
+			      <loads>
+			        <load>
+			          <resource name="3. Resource 1">
+			            <maxearly>P0D</maxearly>
+			            <maximum>1</maximum>
+			          </resource>
+			          <quantity>1</quantity>
+			        </load>
+			      </loads>            
+          </operation>
+          <priority>2</priority>
+        </suboperation>
+      </suboperations>
+    </operation>
+    <operation name="3. make item 2"
+      xsi:type="operation_fixed_time">
+      <size_multiple>1</size_multiple>
+      <item name="3. item 2" />
+      <location name="factory" />
+      <flows>
+        <flow xsi:type="flow_end">
+          <buffer name="3. item 2 @ factory">
+            <item name="3. item 2" />
+            <location name="factory" />
+          </buffer>
+          <quantity>1</quantity>
+        </flow>
+        <flow xsi:type="flow_start">
+          <buffer name="3. item 1 @ factory">
+            <item name="3. item 1" />
+            <location name="factory" />
+          </buffer>
+          <quantity>-1</quantity>
+        </flow>
+      </flows>
+      <loads>
+        <load>
+          <resource name="3. Resource 2">
+            <maxearly>P0D</maxearly>
+            <maximum>1</maximum>
+          </resource>
+          <quantity>1</quantity>
+        </load>
+      </loads>
+      <duration>P3D</duration>
+    </operation>
+    <operation name="3. make item 3"
+      xsi:type="operation_fixed_time">
+      <size_multiple>1</size_multiple>
+      <item name="3. item 3" />
+      <location name="factory" />
+      <flows>
+        <flow xsi:type="flow_end">
+          <buffer name="3. item 3 @ factory">
+            <item name="3. item 3" />
+            <location name="factory" />
+          </buffer>
+          <quantity>1</quantity>
+        </flow>
+        <flow xsi:type="flow_start">
+          <buffer name="3. item 2 @ factory">
+            <item name="3. item 2" />
+            <location name="factory" />
+          </buffer>
+          <quantity>-1</quantity>
+        </flow>
+      </flows>
+      <loads>
+        <load>
+          <resource name="3. Resource 3">
+            <maxearly>P0D</maxearly>
+            <maximum>1</maximum>
+          </resource>
+          <quantity>1</quantity>
+        </load>
+      </loads>
+      <duration>P1D</duration>
+    </operation>
+    <operation name="3. make item 4"
+      xsi:type="operation_fixed_time">
+      <size_multiple>1</size_multiple>
+      <item name="3. item 4" />
+      <location name="factory" />
+      <flows>
+        <flow xsi:type="flow_end">
+          <buffer name="3. item 4 @ factory">
+            <item name="3. item 4" />
+            <location name="factory" />
+          </buffer>
+          <quantity>1</quantity>
+        </flow>
+        <flow xsi:type="flow_start">
+          <buffer name="3. item 3 @ factory">
+            <item name="3. item 3" />
+            <location name="factory" />
+          </buffer>
+          <quantity>-1</quantity>
+        </flow>
+      </flows>
+      <loads>
+        <load>
+          <resource name="3. Resource 4">
+            <maxearly>P0D</maxearly>
+            <maximum>1</maximum>
+          </resource>
+          <quantity>1</quantity>
+        </load>
+      </loads>
+      <duration>P2D</duration>
+    </operation>
+    <operation name="3. make item 5"
+      xsi:type="operation_fixed_time">
+      <size_multiple>1</size_multiple>
+      <item name="3. item 5" />
+      <location name="factory" />
+      <flows>
+        <flow xsi:type="flow_end">
+          <buffer name="3. item 5 @ factory">
+            <item name="3. item 5" />
+            <location name="factory" />
+          </buffer>
+          <quantity>1</quantity>
+        </flow>
+        <flow xsi:type="flow_start">
+          <buffer name="3. item 4 @ factory">
+            <item name="3. item 4" />
+            <location name="factory" />
+          </buffer>
+          <quantity>-1</quantity>
+        </flow>
+      </flows>
+      <loads>
+        <load>
+          <resource name="3. Resource 5">
+            <maxearly>P0D</maxearly>
+            <maximum>1</maximum>
+          </resource>
+          <quantity>1</quantity>
+        </load>
+      </loads>
+      <duration>P10D</duration>
+    </operation>
+    <operation name="3. make item 6"
+      xsi:type="operation_fixed_time">
+      <size_multiple>1</size_multiple>
+      <item name="3. item 6" />
+      <location name="factory" />
+      <flows>
+        <flow xsi:type="flow_end">
+          <buffer name="3. item 6 @ factory">
+            <item name="3. item 6" />
+            <location name="factory" />
+          </buffer>
+          <quantity>1</quantity>
+        </flow>
+        <flow xsi:type="flow_start">
+          <buffer name="3. item 5 @ factory">
+            <item name="3. item 5" />
+            <location name="factory" />
+          </buffer>
+          <quantity>-1</quantity>
+        </flow>
+      </flows>
+      <loads>
+        <load>
+          <resource name="3. Resource 6">
+            <maxearly>P0D</maxearly>
+            <maximum>1</maximum>
+          </resource>
+          <quantity>1</quantity>
+        </load>
+      </loads>
+      <duration>P2D</duration>
+    </operation>
+  </operations>
+  <demands>
+    <demand name="3. order A">
+      <quantity>10</quantity>
+      <minshipment>1</minshipment>
+      <due>2020-08-01T00:00:00</due>
+      <item name="3. item 6" />
+      <location name="factory" />
+    </demand>
+    <demand name="3. order B">
+      <quantity>10</quantity>
+      <due>2020-08-01T00:00:00</due>
+      <item name="3. item 6" />
+      <location name="factory" />
+    </demand>
+    <demand name="3. order C">
+      <quantity>10</quantity>
+      <due>2020-08-01T00:00:00</due>
+      <item name="3. item 6" />
+      <location name="factory" />
+    </demand>
+    <demand name="3. order D">
+      <quantity>10</quantity>
+      <due>2020-08-01T00:00:00</due>
+      <item name="3. item 6" />
+      <location name="factory" />
+    </demand>
+  </demands>
+
+<?python
+
+# Mark the decoupling points
+frepple.buffer(name="1. item 3 @ factory").ip_flag = True
+frepple.buffer(name="2. item 3 @ factory").ip_flag = True
+frepple.buffer(name="3. item 3 @ factory").ip_flag = True
+frepple.buffer(name="1. item 6 @ factory").ip_flag = True
+frepple.buffer(name="2. item 6 @ factory").ip_flag = True
+frepple.buffer(name="3. item 6 @ factory").ip_flag = True
+
+print("CREATING CONSTRAINED PLAN")
+frepple.solver_mrp(plantype=1, constraints=15, loglevel=2, minimumdelay=86400).solve()
+frepple.saveplan("output.1.xml")
+print("CREATING UNCONSTRAINED PLAN")
+frepple.solver_mrp(plantype=2, constraints=15, loglevel=2, minimumdelay=86400).solve()
+frepple.saveplan("output.2.xml")
+?>
+
+</plan>

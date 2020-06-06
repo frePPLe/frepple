@@ -37,9 +37,10 @@ DECLARE_EXPORT(void) FreppleInitialize(bool procesInitializationFiles) {
   LibraryModel::initialize();
   LibrarySolver::initialize();
 
-  if (!procesInitializationFiles) return;
+
 
   // Search for the initialization PY file
+  if (!procesInitializationFiles) return;
   string init = Environment::searchFile("init.py");
   if (!init.empty()) {
     // Execute the commands in the file

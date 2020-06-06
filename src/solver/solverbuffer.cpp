@@ -269,33 +269,53 @@ void SolverCreate::solve(const Buffer* b, void* v) {
         // and we want our flowplan to try to repair the previous problems
         // if it can...
         bool loop = true;
+        auto prev_hitMaxEarly = data->hitMaxEarly;
         while (b->getProducingOperation() && theDate >= requested_date &&
                loop && (theDate >= noSupplyBefore || hasTransferbatching)) {
-          // Create supply
-          data->state->curBuffer = const_cast<Buffer*>(b);
-          data->state->q_qty = -theDelta;
-          data->state->q_date = theDate;
+          Duration repeat_early;
+          do {
+            // Create supply
+            data->state->curBuffer = const_cast<Buffer*>(b);
+            data->state->q_qty = -theDelta;
+            data->state->q_date = theDate - repeat_early;
 
-          // Check whether this date doesn't match with the requested date.
-          // See a bit further why this is required.
-          if (data->state->q_date == requested_date)
-            tried_requested_date = true;
+            if (b->getIPFlag())
+              // Detect whether any resource did hit its max-early limit
+              data->hitMaxEarly = -1L;
 
-          // Make sure the new operationplans don't inherit an owner.
-          // When an operation calls the solve method of suboperations, this
-          // field is used to pass the information about the owner
-          // operationplan down. When solving for buffers we must make sure
-          // NOT to pass owner information. At the end of solving for a buffer
-          // we need to restore the original settings...
-          data->state->curOwnerOpplan = nullptr;
+            // Check whether this date doesn't match with the requested date.
+            // See a bit further why this is required.
+            if (data->state->q_date == requested_date)
+              tried_requested_date = true;
 
-          // Producer needs to propagate the batch of this buffer
-          data->state->curBatch = b->getBatch();
+            // Make sure the new operationplans don't inherit an owner.
+            // When an operation calls the solve method of suboperations, this
+            // field is used to pass the information about the owner
+            // operationplan down. When solving for buffers we must make sure
+            // NOT to pass owner information. At the end of solving for a buffer
+            // we need to restore the original settings...
+            data->state->curOwnerOpplan = nullptr;
 
-          // Note that the supply created with the next line changes the
-          // onhand value at all later dates!
-          b->getProducingOperation()->solve(*this, v);
-          data->recent_buffers = tmp_recent_buffers;
+            // Producer needs to propagate the batch of this buffer
+            data->state->curBatch = b->getBatch();
+
+            // Note that the supply created with the next line changes the
+            // onhand value at all later dates!
+            b->getProducingOperation()->solve(*this, v);
+            data->recent_buffers = tmp_recent_buffers;
+
+            if (b->getIPFlag() && data->hitMaxEarly >= 0L &&
+                !data->state->a_qty) {
+              if (data->hitMaxEarly > getMinimumDelay())
+                repeat_early += data->hitMaxEarly;
+              else if (getMinimumDelay())
+                repeat_early += getMinimumDelay();
+              else
+                repeat_early += Duration(3600L);
+            } else
+              repeat_early = 0L;
+          } while (repeat_early);
+          if (b->getIPFlag()) data->hitMaxEarly = prev_hitMaxEarly;
 
           // Evaluate the reply date. The variable extraSupplyDate will store
           // the date when the producing operation tells us it can get extra

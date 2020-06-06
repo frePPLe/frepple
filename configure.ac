@@ -279,7 +279,7 @@ AM_CONDITIONAL(CYGWIN, test x$host_os = xcygwin)
 AC_CONFIG_FILES([ Makefile bin/Makefile doc/Makefile ])
 AC_CONFIG_FILES([ include/Makefile include/frepple/Makefile ])
 AC_CONFIG_FILES([ src/Makefile src/model/Makefile src/solver/Makefile src/utils/Makefile ])
-AC_CONFIG_FILES([ 
+AC_CONFIG_FILES([
   contrib/Makefile
   contrib/debian/Makefile
   contrib/installer/Makefile
@@ -310,6 +310,7 @@ AC_CONFIG_FILES([
   test/constraints_resource_5/Makefile
   test/constraints_resource_6/Makefile
   test/constraints_resource_7/Makefile
+  test/constraints_resource_8/Makefile
   test/criticality/Makefile
   test/custom_fields/Makefile
   test/datetime/Makefile

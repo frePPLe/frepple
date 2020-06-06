@@ -193,9 +193,12 @@ void SolverCreate::solve(const Resource* res, void* v) {
             // Note that the check function can update the answered date
             // and quantity
             checkOperationLeadTime(data->state->q_operationplan, *data, false);
-        } else
+        } else {
           // No earlier capacity found: get out of the loop
           data->state->a_qty = 0.0;
+          if (res->getMaxEarly() > data->hitMaxEarly)
+            data->hitMaxEarly = res->getMaxEarly();
+        }
       }  // End of if-statement, solve by moving earlier
     } while (HasOverload && data->state->a_qty != 0.0);
 
@@ -772,9 +775,12 @@ void SolverCreate::solve(const ResourceBuckets* res, void* v) {
               }
             }
           }
-        } else
+        } else {
           // No earlier capacity found: get out of the loop
           data->state->a_qty = 0.0;
+          if (data->hitMaxEarly < res->getMaxEarly())
+            data->hitMaxEarly = res->getMaxEarly();
+        }
       }  // End of if-statement, solve by moving earlier
     } while (overloadQty < -ROUNDING_ERROR && data->state->a_qty != 0.0);
 

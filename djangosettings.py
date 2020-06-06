@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2007-2015 by frePPLe bvba
+# Copyright (C) 2007-2015 by frePPLe bv
 #
 # This library is free software; you can redistribute it and/or modify it
 # under the terms of the GNU Affero General Public License as published
@@ -409,7 +409,7 @@ DEFAULT_DASHBOARD = [
                     (
                         "analysis_demand_problems",
                         {"top": 20, "orderby": "latedemandvalue"},
-                    ),
+                    )
                 ],
             },
             {

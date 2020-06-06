@@ -18,7 +18,7 @@ The frePPLe software has dual licensing, which means:
     commercial license.
   | The source code of the extensions is not redistributed.
 
-* | You can also purchase a **commercial OEM license** from frePPLe bvba if
+* | You can also purchase a **commercial OEM license** from frePPLe bv if
     you do not wish to be bound by the terms of the AGPL.
   | With this license you have the right to create frePPle-based products and
     services that can remain proprietary and protected.

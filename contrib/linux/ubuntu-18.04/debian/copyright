@@ -1,11 +1,11 @@
 
 Upstream Author(s):
 
-    frePPLe bvba
+    frePPLe bv
 
 Copyright:
 
-    2009-2017 by frePPLe bvba
+    2009-2017 by frePPLe bv
 
 License:
 
@@ -25,5 +25,5 @@ License:
 On Debian systems, the complete text of the GNU Affero General
 Public License can be found in `/usr/share/common-licenses/AGPL-3'.
 
-The Debian packaging is copyright 2012, frepple bvba <jdetaeye@frepple.com> and
+The Debian packaging is copyright 2012, frePPLe bv <jdetaeye@frepple.com> and
 is licensed under the AGPL, see `/usr/share/common-licenses/AGPL-3'.

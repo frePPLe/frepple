@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2016 by frePPLe bvba
+# Copyright (C) 2016 by frePPLe bv
 #
 # This library is free software; you can redistribute it and/or modify it
 # under the terms of the GNU Affero General Public License as published

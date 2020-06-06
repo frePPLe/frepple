@@ -1,4 +1,4 @@
-/* Copyright (C) 2015 by frePPLe bvba
+/* Copyright (C) 2015 by frePPLe bv
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Affero General Public License as published
@@ -137,7 +137,7 @@ module.exports = function (grunt) {
       options: {
         sourceMap: true,
         banner: '/* frePPLe <%= pkg.version %>\n' +
-          'Copyright (C) 2010-2019 by frePPLe bvba\n\n' +
+          'Copyright (C) 2010-2019 by frePPLe bv\n\n' +
           'This library is free software; you can redistribute it and/or modify it\n' +
           'under the terms of the GNU Affero General Public License as published\n' +
           'by the Free Software Foundation; either version 3 of the License, or\n' +

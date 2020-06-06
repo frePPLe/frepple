@@ -32,7 +32,6 @@ function showproblemspanelDrv($window, gettextCatalog) {
   return directive;
 
   function linkfunc(scope, elem, attrs) {
-    var rows='';
     var template =  '<div class="panel-heading"><h4 class="panel-title" style="text-transform: capitalize">'+
                       gettextCatalog.getString("problems")+
                     '</h4></div>'+
@@ -62,7 +61,6 @@ function showproblemspanelDrv($window, gettextCatalog) {
         }
       }
       angular.element(document).find('#attributes-operationproblems tbody').append(rows);
-      //elem.after(transclude());
     }); //watch end
 
   } //link end

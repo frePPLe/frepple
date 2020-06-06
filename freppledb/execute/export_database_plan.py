@@ -42,7 +42,7 @@ logger = logging.getLogger(__name__)
 
 def clean_value(value):
     if value is None:
-        return r"\N"
+        return "\\N"
     elif "\n" in value or "\\" in value:
         return value.replace("\n", "\\n").replace("\\", "\\\\")
     else:

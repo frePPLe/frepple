@@ -32,7 +32,6 @@ function showsupplyinformationDrv($window, gettextCatalog) {
   return directive;
 
   function linkfunc(scope, elem, attrs) {
-    var rows='';
     var template =  '<div class="panel-heading"><h4 class="panel-title" style="text-transform: capitalize">'+
                       gettextCatalog.getString("supply information")+
                     '</h4></div>'+

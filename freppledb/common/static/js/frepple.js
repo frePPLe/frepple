@@ -1247,8 +1247,7 @@ var grid = {
       var url = (location.href.indexOf("#") != -1 ? location.href.substr(0,location.href.indexOf("#")) : location.href);
       var scenarios = "";
       if (scenario_permissions.length > 1) {
-	      var scenarios = "";
-	      firstTime = true;
+	      var firstTime = true;
 	      for (i = 0 ; i < scenario_permissions.length; i++) {
 	    	  if ($('#' + scenario_permissions[i][0]).is(":checked")) {
 	    	  	if (firstTime)
@@ -1256,7 +1255,7 @@ var grid = {
 	    	  	else
 	    	  		scenarios += ",";
 	    	  			
-	    	    scenarios += scenario_permissions[i][0]
+	    	    scenarios += scenario_permissions[i][0];
 	    	  }
 	      }
       }

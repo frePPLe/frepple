@@ -303,7 +303,7 @@ inspiration for your own deployments.
   # configuration to match the available hardware.
   sudo apt-get -y install postgresql
   sudo su - postgres
-  psql template1 -c "create user frepple with password 'frepple'"
+  psql template1 -c "create user frepple with password 'frepple' createrole"
   psql template1 -c "create database frepple encoding 'utf-8' owner frepple"
   psql template1 -c "create database scenario1 encoding 'utf-8' owner frepple"
   psql template1 -c "create database scenario2 encoding 'utf-8' owner frepple"
@@ -374,7 +374,7 @@ inspiration for your own deployments.
   sudo service postgresql initdb
   sudo service postgresql start
   sudo su - postgres
-  psql -dpostgres -c "create user frepple with password 'frepple'"
+  psql -dpostgres -c "create user frepple with password 'frepple' createrole"
   psql -dpostgres -c "create database frepple encoding 'utf-8' owner frepple"
   psql -dpostgres -c "create database scenario1 encoding 'utf-8' owner frepple"
   psql -dpostgres -c "create database scenario2 encoding 'utf-8' owner frepple"
@@ -434,7 +434,7 @@ You can use it as a guideline and inspiration for your own deployments.
   exit
   sudo systemctl restart postgresql
   su - postgres
-  psql -dpostgres -c "create user frepple with password 'frepple'"
+  psql -dpostgres -c "create user frepple with password 'frepple' createrole"
   psql -dpostgres -c "create database frepple encoding 'utf-8' owner frepple"
   psql -dpostgres -c "create database scenario1 encoding 'utf-8' owner frepple"
   psql -dpostgres -c "create database scenario2 encoding 'utf-8' owner frepple"

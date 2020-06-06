@@ -774,9 +774,9 @@ var grid = {
             row2 +
           '</div>' +
           '<div class="modal-footer">'+
-            '<input type="submit" id="okCustbutton" role="button" class="btn btn-danger pull-left" value="'+gettext("OK")+'">'+
-            '<input type="submit" id="cancelCustbutton" role="button" class="btn btn-primary pull-right" data-dismiss="modal" value="'+gettext('Cancel')+'">'+
-            '<input type="submit" id="resetCustbutton" role="button" class="btn btn-primary pull-right" value="'+gettext('Reset')+'">'+
+            '<input type="submit" id="okCustbutton" role="button" class="btn btn-primary pull-right" value="'+gettext("OK")+'">'+
+            '<input type="submit" id="cancelCustbutton" role="button" class="btn btn-primary pull-left" data-dismiss="modal" value="'+gettext('Cancel')+'">'+
+            '<input type="submit" id="resetCustbutton" role="button" class="btn btn-primary pull-left" value="'+gettext('Reset')+'">'+
           '</div>'+
         '</div>'+
       '</div>' )
@@ -1374,8 +1374,8 @@ var grid = {
                  '<p>'+interpolate(gettext('You are about to delete %s objects AND ALL RELATED RECORDS!'), [sel.length], false)+'</p>'+
                '</div>'+
                '<div class="modal-footer">'+
-                 '<input type="submit" id="delbutton" role="button" class="btn btn-danger pull-left" value="'+gettext('Confirm')+'">'+
-                 '<input type="submit" id="cancelbutton" role="button" class="btn btn-primary pull-right" data-dismiss="modal" value="'+gettext('Cancel')+'">'+
+                 '<input type="submit" id="delbutton" role="button" class="btn btn-primary pull-right" value="'+gettext('Confirm')+'">'+
+                 '<input type="submit" id="cancelbutton" role="button" class="btn btn-primary pull-left" data-dismiss="modal" value="'+gettext('Cancel')+'">'+
                '</div>'+
              '</div>'+
          '</div>' )
@@ -1423,8 +1423,8 @@ var grid = {
                    '<p>'+interpolate(gettext('You are about to duplicate %s objects'), [sel.length], false)+'</p>'+
                    '</div>'+
                    '<div class="modal-footer">'+
-                     '<input type="submit" id="copybutton" role="button" class="btn btn-danger pull-left" value="'+gettext('Confirm')+'">'+
-                     '<input type="submit" id="cancelbutton" role="button" class="btn btn-primary pull-right" data-dismiss="modal" value="'+gettext('Cancel')+'">'+
+                     '<input type="submit" id="copybutton" role="button" class="btn btn-primary pull-right" value="'+gettext('Confirm')+'">'+
+                     '<input type="submit" id="cancelbutton" role="button" class="btn btn-primary pull-left" data-dismiss="modal" value="'+gettext('Cancel')+'">'+
                    '</div>'+
                  '</div>'+
              '</div>' )
@@ -1452,78 +1452,6 @@ var grid = {
        })
      })
    }
-  },
-
-  showPlanExportModal: function ()
-  {
-      $('#timebuckets').modal('hide');
-      $.jgrid.hideModal("#searchmodfbox_grid");
-      var tableheadercontent = '';
-      var tablebodycontent = '';
-      for (var i = 0; i < data.labels.length; i++)
-	      tableheadercontent += '<th>'+gettext(data.labels[i])+'</th>';
-      for (i = 0; i<data.values.length; i++) {
-	      tablebodycontent += '<tr><td><input id="cb_modaltable-'+i+'" class="cbox" type="checkbox" aria-checked="false"></td>';
-	      for (var j = 0; j<data.values[i].length; j++)
-	        tablebodycontent += '<td>'+gettext(data.values[i][j])+'</td>';
-        tablebodycontent += '</tr>';
-      };
-
-      $('#popup').html('<div class="modal-dialog">'+
-        '<div class="modal-content">'+
-          '<div class="modal-header">'+
-            '<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true" class="fa fa-times"></span></button>'+
-            '<h4 class="modal-title text-capitalize-first">'+gettext("Export Plan")+'</h4>'+
-          '</div>'+
-          '<div class="modal-body">'+
-            '<div class="table-responsive">'+
-              '<table class="table-condensed table-hover" id="forecastexporttable">'+
-                '<thead class="thead-default">'+
-                  '<tr>'+
-                    '<th>'+
-                      '<input id="cb_modaltableall" class="cbox" type="checkbox" aria-checked="false">'+
-                    '</th>'+
-                    tableheadercontent+
-                  '</tr>'+
-                '</thead>'+
-                '<tbody>'+
-                  '<tr>'+
-                    tablebodycontent+
-                  '</tr>'+
-                '</tbody>'+
-              '</table>'+
-            '</div>'+
-          '</div>'+
-          '<div class="modal-footer">'+
-            '<input type="submit" id="exportbutton" role="button" class="btn btn-danger pull-left" value="'+gettext('Export')+'">'+
-            '<input type="submit" id="cancelbutton" role="button" class="btn btn-primary pull-right" data-dismiss="modal" value="'+gettext('Cancel')+'">'+
-          '</div>'+
-          '</div>'+
-          '</div>' ).modal('show');
-    $('#exportbutton').on('click', function() {
-      $('#popup').modal('hide');
-    });
-    $('#cancelbutton').on('click', function() {
-      $('#popup').modal('hide');
-    });
-    $('#cb_modaltableall').on('click', function() {
-      if ($("#cb_modaltableall").is(':checked')) {
-          $("#forecastexporttable input[type=checkbox]").each(function () {
-              $(this).prop("checked", true);
-          });
-          $("#forecastexporttable tr").each(function () {
-              $(this).addClass("selected");
-          });
-      } else {
-	  $("#forecastexporttable input[type=checkbox]").each(function () {
-              $(this).prop("checked", false);
-          });
-	  $("#forecastexporttable tr.selected").each(function () {
-              $(this).removeClass("selected");
-          });
-      };
-
-    });
   },
 
   // Display filter dialog
@@ -1948,8 +1876,8 @@ var ERPconnection = {
           '<p class="text-capitalize-first">' + gettext("export selected records") + '</p>'+
           '</div>'+
           '<div class="modal-footer">'+
-          '<input type="submit" id="button_export" role="button" class="btn btn-danger pull-left" value="'+gettext('Confirm')+'">'+
-          '<input type="submit" id="cancelbutton" role="button" class="btn btn-primary pull-right" data-dismiss="modal" value="'+gettext('Cancel')+'">'+
+          '<input type="submit" id="button_export" role="button" class="btn btn-primary pull-right" value="'+gettext('Confirm')+'">'+
+          '<input type="submit" id="cancelbutton" role="button" class="btn btn-primary pull-left" data-dismiss="modal" value="'+gettext('Cancel')+'">'+
           '</div>'+
           '</div>'+
       '</div>' ).modal('show');
@@ -2031,8 +1959,8 @@ var ERPconnection = {
 
           '</div>'+
           '<div class="modal-footer">'+
-          '<input type="submit" id="button_export" role="button" class="btn btn-danger pull-left" disabled value="'+gettext('Confirm')+'">'+
-          '<input type="submit" id="cancelbutton" role="button" class="btn btn-primary pull-right" data-dismiss="modal" value="'+gettext('Cancel')+'">'+
+          '<input type="submit" id="button_export" role="button" class="btn btn-primary pull-right" disabled value="'+gettext('Confirm')+'">'+
+          '<input type="submit" id="cancelbutton" role="button" class="btn btn-primary pull-left" data-dismiss="modal" value="'+gettext('Cancel')+'">'+
           '</div>'+
           '</div>'+
       '</div>' );
@@ -2382,11 +2310,11 @@ var dashboard = {
 
      '</form></div>' +
      '<div class="modal-footer">' +
-       '<input type="submit" role="button" onclick=\'dashboard.saveCustomization("' + rowname + '")\' class="btn btn-danger pull-left" value="' + gettext('Save') + '">' +
-       '<input type="submit" role="button" onclick=\'dashboard.deleteRow("' + rowname + '")\' class="btn btn-danger pull-left" value="' + gettext('Delete') + '">' +
-       '<input type="submit" role="button" onclick=\'$("#popup").modal("hide")\' class="btn btn-primary pull-right" data-dismiss="modal" value="' + gettext('Cancel') + '">' +
-       '<input type="submit" role="button" onclick=\'dashboard.addRow("' + rowname + '", false)\' class="btn btn-primary pull-right" value="' + gettext('Add new below') + '">' +
-       '<input type="submit" role="button" onclick=\'dashboard.addRow("' + rowname + '", true)\' class="btn btn-primary pull-right" value="' + gettext('Add new above') + '">' +
+     '<input type="submit" role="button" onclick=\'$("#popup").modal("hide")\' class="btn btn-primary pull-left" data-dismiss="modal" value="' + gettext('Cancel') + '">' +
+     '<input type="submit" role="button" onclick=\'dashboard.saveCustomization("' + rowname + '")\' class="btn btn-primary pull-right" value="' + gettext('Save') + '">' +
+     '<input type="submit" role="button" onclick=\'dashboard.addRow("' + rowname + '", false)\' class="btn btn-primary pull-right" value="' + gettext('Add new below') + '">' +
+     '<input type="submit" role="button" onclick=\'dashboard.addRow("' + rowname + '", true)\' class="btn btn-primary pull-right" value="' + gettext('Add new above') + '">' +
+     '<input type="submit" role="button" onclick=\'dashboard.deleteRow("' + rowname + '")\' class="btn btn-primary pull-right" value="' + gettext('Delete') + '">' +
      '</div>' +
 
      '</div></div></div>';

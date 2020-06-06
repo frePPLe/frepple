@@ -6,6 +6,9 @@ Release notes
 
 .. rubric:: User interface
 
+- | Some dialog boxes had the confirmation button on the left, some had it on the right.
+    We now consistently place the confirmation button always on the right.
+
 - | Revamped the workflow to identify items with many late demands. A new widget on the
     cockpit "analyze late demand" displays a top 20 of items with late demand. From there
     you can drill down into the "demand report" of an item to review the backlog situation

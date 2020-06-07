@@ -279,9 +279,8 @@ void SolverCreate::solve(const Buffer* b, void* v) {
             data->state->q_qty = -theDelta;
             data->state->q_date = theDate - repeat_early;
 
-            if (b->getIPFlag())
-              // Detect whether any resource did hit its max-early limit
-              data->hitMaxEarly = -1L;
+            // Detect whether any resource did hit its max-early limit
+            data->hitMaxEarly = -1L;
 
             // Check whether this date doesn't match with the requested date.
             // See a bit further why this is required.
@@ -306,17 +305,27 @@ void SolverCreate::solve(const Buffer* b, void* v) {
 
             if (b->getIPFlag() && data->hitMaxEarly >= 0L &&
                 !data->state->a_qty) {
-              if (data->hitMaxEarly > getMinimumDelay())
+              if (data->hitMaxEarly == Duration::MAX)
+                break;
+              else if (data->hitMaxEarly > getMinimumDelay())
                 repeat_early += data->hitMaxEarly;
               else if (getMinimumDelay())
                 repeat_early += getMinimumDelay();
               else
-                repeat_early += Duration(3600L);
+                repeat_early += Duration(86400L);
             } else
-              repeat_early = 0L;
-          } while (repeat_early);
-          if (b->getIPFlag()) data->hitMaxEarly = prev_hitMaxEarly;
-
+              break;
+          } while (true);
+          if (b->getIPFlag())
+            data->hitMaxEarly = prev_hitMaxEarly;
+          else if (!data->state->a_qty) {
+            if (data->hitMaxEarly == Duration(-1L))
+              // O reply isn't caused by max-early
+              data->hitMaxEarly = Duration::MAX;
+            else if (data->hitMaxEarly < prev_hitMaxEarly)
+              // more constrained be max_early than found so far
+              data->hitMaxEarly = prev_hitMaxEarly;
+          }
           // Evaluate the reply date. The variable extraSupplyDate will store
           // the date when the producing operation tells us it can get extra
           // supply.
@@ -565,6 +574,7 @@ void SolverCreate::solveSafetyStock(const Buffer* b, void* v) {
       }
 
       Duration repeat_early;
+      Duration prev_hitMaxEarly = data->hitMaxEarly;
       do {
         if (b->getIPFlag())
           // Detect whether any resource did hit its max-early limit
@@ -647,15 +657,20 @@ void SolverCreate::solveSafetyStock(const Buffer* b, void* v) {
         }
 
         if (b->getIPFlag() && data->hitMaxEarly >= 0L && !data->state->a_qty) {
+          if (data->hitMaxEarly == Duration::MAX) break;
           if (data->hitMaxEarly > getMinimumDelay())
             repeat_early += data->hitMaxEarly;
           else if (getMinimumDelay())
             repeat_early += getMinimumDelay();
           else
-            repeat_early += Duration(3600L);
+            repeat_early += Duration(86400L);
         } else
-          repeat_early = 0L;
-      } while (repeat_early);
+          break;
+      } while (true);
+      if (b->getIPFlag())
+        data->hitMaxEarly = prev_hitMaxEarly;
+      else if (!data->state->a_qty && data->hitMaxEarly == Duration(-1L))
+        data->hitMaxEarly = Duration::MAX;
     }
 
     // We have reached the end of the flowplans. Breaking out of the loop

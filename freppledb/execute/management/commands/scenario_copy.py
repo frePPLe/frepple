@@ -21,7 +21,7 @@ from datetime import datetime
 
 from django.core.management.base import BaseCommand, CommandError
 from django.conf import settings
-from django.db import DEFAULT_DB_ALIAS, connections
+from django.db import DEFAULT_DB_ALIAS
 from django.utils.translation import gettext_lazy as _
 from django.template.loader import render_to_string
 
@@ -183,12 +183,12 @@ class Command(BaseCommand):
                 and ("-p %s " % settings.DATABASES[source]["PORT"])
                 or "",
                 """
-                -T common_user 
-                -T common_scenario 
-                -T auth_group 
-                -T auth_group_permission 
-                -T auth_permission 
-                -T common_user_groups 
+                -T common_user
+                -T common_scenario
+                -T auth_group
+                -T auth_group_permission
+                -T auth_permission
+                -T common_user_groups
                 -T common_user_user_permissions
                 -T common_preferences
                 -T reportmanager_report
@@ -341,9 +341,9 @@ class Command(BaseCommand):
                     promote_perm.append(scenario.name)
                 if user.has_perm("common.copy_scenario"):
                     copy_perm.append(scenario.name)
-                if user.is_active == True:
+                if user.is_active:
                     active_scenarios.append(scenario.name)
-            except Exception as e:
+            except Exception:
                 # user does not exist in scenario? silently pass
                 pass
 

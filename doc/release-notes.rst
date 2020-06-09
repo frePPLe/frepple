@@ -19,6 +19,10 @@ Release notes
     
 - | Export dialog: Addition of scenarios in the dialog so that user can export current view and 
     scenarios (for which user has permission) in the same spreadsheet/csv file.
+    
+- | MO/PO/DO detail: Addition of upstream and downstream operationplan widgets. If clicking on a single
+    MO/PO/DO, 2 new widgets are displayed to track the material and understand how it has been
+    produced/replenished (upstream widget) and where it will be consumed/delivered (downstream widget).    
 
 6.5.0 (2020/05/16)
 ==================

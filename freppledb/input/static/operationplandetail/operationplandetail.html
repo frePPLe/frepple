@@ -3,6 +3,7 @@
 #attributes-supplyinformation thead tr td,
 #attributes-networkstatus thead tr td,
 #attributes-downstreamoperationplans thead tr td,
+#attributes-upstreamoperationplans thead tr td,
 #attributes-operationproblems thead tr td,
 #attributes-operationresources thead tr td,
 #attributes-operationflowplans thead tr td,
@@ -36,7 +37,12 @@
     <div class="col-xs-12">
       <div class="panel panel-default" id="attributes-downstreamoperationplans" data-ng-if="operationplan.downstreamoperationplans !== undefined" data="operationplan" showdownstreamoperationplans-drv style="margin-bottom: 18px;"></div>
     </div>
-  </div>  
+  </div>
+  <div class="row">
+    <div class="col-xs-12">
+      <div class="panel panel-default" id="attributes-upstreamoperationplans" data-ng-if="operationplan.upstreamoperationplans !== undefined" data="operationplan" showupstreamoperationplans-drv style="margin-bottom: 18px;"></div>
+    </div>
+  </div>    
   <!-- row end  -->
   <div class="row">
     <div class="col-xs-12">

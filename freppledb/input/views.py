@@ -6744,14 +6744,14 @@ class OperationPlanDetail(View):
                 value->>1 as reference,
                 (value->>2)::numeric as quantity,
                 row_number() over() as rownum
-                from jsonb_array_elements((select plan->'downstream_opplans' from operationplan where reference = %s))
+                from jsonb_array_elements((select plan->'downstream_opplans' from operationplan where reference = %%s))
                 )
                 select cte.level,
                 cte.reference,
                 operationplan.type,
                 case when operationplan.type = 'PO' then 'Purchase '||operationplan.item_id||' @ '||operationplan.location_id||' from '||operationplan.supplier_id
                      when operationplan.type = 'DO' then 'Ship '||operationplan.item_id||' from '||operationplan.origin_id||' to '||operationplan.destination_id
-                     when operationplan.demand_id is not null then 'Deliver '||operationplan.item_id||' @ '||operationplan.location_id
+                     %s
                 else operationplan.operation_id end,
                 operationplan.status,
                 operationplan.item_id,
@@ -6763,7 +6763,14 @@ class OperationPlanDetail(View):
                 from cte
                 inner join operationplan on operationplan.reference = cte.reference
                 order by cte.rownum
-                """,
+                """
+                    % (
+                        "when operationplan.demand_id is not null then 'Deliver '||operationplan.demand_id"
+                        if "freppledb.forecast" not in settings.INSTALLED_APPS
+                        else """
+                        when coalesce(operationplan.demand_id, operationplan.forecast_id) is not null then 'Deliver '||coalesce(operationplan.demand_id, operationplan.forecast_id)
+                        """
+                    ),
                     (opplan.reference,),
                 )
 
@@ -6784,6 +6791,57 @@ class OperationPlanDetail(View):
                             0 if a[0] == 1 else 2,
                         ]
                     )
+
+                # Upstream operationplans
+
+                cursor.execute(
+                    """
+                with cte as
+                (
+                select (value->>0)::int as level,
+                value->>1 as reference,
+                (value->>2)::numeric as quantity,
+                row_number() over() as rownum
+                from jsonb_array_elements((select plan->'upstream_opplans' from operationplan where reference = %s))
+                )
+                select cte.level,
+                cte.reference,
+                operationplan.type,
+                case when operationplan.type = 'PO' then 'Purchase '||operationplan.item_id||' @ '||operationplan.location_id||' from '||operationplan.supplier_id
+                     when operationplan.type = 'DO' then 'Ship '||operationplan.item_id||' from '||operationplan.origin_id||' to '||operationplan.destination_id
+                else operationplan.operation_id end,
+                operationplan.status,
+                operationplan.item_id,
+                coalesce(operationplan.location_id, operationplan.destination_id),
+                case when operationplan.type = 'STCK' then '' else to_char(operationplan.startdate,'YYYY-MM-DD hh24:mi:ss') end,
+                case when operationplan.type = 'STCK' then '' else to_char(operationplan.enddate,'YYYY-MM-DD hh24:mi:ss') end,
+                trim(trailing '.' from (trim(trailing '0' from round(cte.quantity,8)::text)))||'/'||
+                trim(trailing '.' from (trim(trailing '0' from round(operationplan.quantity,8)::text)))
+                from cte
+                inner join operationplan on operationplan.reference = cte.reference
+                order by cte.rownum
+                """,
+                    (opplan.reference,),
+                )
+
+                res["upstreamoperationplans"] = []
+                for a in cursor.fetchall():
+                    res["upstreamoperationplans"].append(
+                        [
+                            a[0],  # level
+                            a[1],  # reference
+                            a[2],  # type
+                            a[3] or "",  # operation (null if optype is STCK)
+                            a[4],  # status
+                            a[5],  # item
+                            a[6],  # location
+                            a[7],  # startdate
+                            a[8],  # enddate
+                            a[9],  # quantity,
+                            0 if a[0] == 1 else 2,
+                        ]
+                    )
+
                 # Final result
                 if first:
                     yield "[%s" % json.dumps(res)

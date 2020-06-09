@@ -6774,26 +6774,24 @@ class OperationPlanDetail(View):
                     (opplan.reference,),
                 )
 
-                res["downstreamoperationplans"] = []
-                for a in cursor.fetchall():
-                    res["downstreamoperationplans"].append(
-                        [
-                            a[0],  # level
-                            a[1],  # reference
-                            a[2],  # type
-                            a[3],  # operation
-                            a[4],  # status
-                            a[5],  # item
-                            a[6],  # location
-                            a[7],  # startdate
-                            a[8],  # enddate
-                            a[9],  # quantity,
-                            0 if a[0] == 1 else 2,
-                        ]
-                    )
-
-                if len(res["downstreamoperationplans"]) == 0:
-                    del res["downstreamoperationplans"]
+                if cursor.rowcount > 0:
+                    res["downstreamoperationplans"] = []
+                    for a in cursor.fetchall():
+                        res["downstreamoperationplans"].append(
+                            [
+                                a[0],  # level
+                                a[1],  # reference
+                                a[2],  # type
+                                a[3],  # operation
+                                a[4],  # status
+                                a[5],  # item
+                                a[6],  # location
+                                a[7],  # startdate
+                                a[8],  # enddate
+                                a[9],  # quantity,
+                                0 if a[0] == 1 else 2,
+                            ]
+                        )
 
                 # Upstream operationplans
 
@@ -6827,26 +6825,24 @@ class OperationPlanDetail(View):
                     (opplan.reference,),
                 )
 
-                res["upstreamoperationplans"] = []
-                for a in cursor.fetchall():
-                    res["upstreamoperationplans"].append(
-                        [
-                            a[0],  # level
-                            a[1],  # reference
-                            a[2],  # type
-                            a[3] or "",  # operation (null if optype is STCK)
-                            a[4],  # status
-                            a[5],  # item
-                            a[6],  # location
-                            a[7],  # startdate
-                            a[8],  # enddate
-                            a[9],  # quantity,
-                            0 if a[0] == 1 else 2,
-                        ]
-                    )
-
-                if len(res["upstreamoperationplans"]) == 0:
-                    del res["upstreamoperationplans"]
+                if cursor.rowcount > 0:
+                    res["upstreamoperationplans"] = []
+                    for a in cursor.fetchall():
+                        res["upstreamoperationplans"].append(
+                            [
+                                a[0],  # level
+                                a[1],  # reference
+                                a[2],  # type
+                                a[3] or "",  # operation (null if optype is STCK)
+                                a[4],  # status
+                                a[5],  # item
+                                a[6],  # location
+                                a[7],  # startdate
+                                a[8],  # enddate
+                                a[9],  # quantity,
+                                0 if a[0] == 1 else 2,
+                            ]
+                        )
 
                 # Final result
                 if first:

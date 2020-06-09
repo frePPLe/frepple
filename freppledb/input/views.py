@@ -6792,6 +6792,9 @@ class OperationPlanDetail(View):
                         ]
                     )
 
+                if len(res["downstreamoperationplans"]) == 0:
+                    del res["downstreamoperationplans"]
+
                 # Upstream operationplans
 
                 cursor.execute(
@@ -6841,6 +6844,9 @@ class OperationPlanDetail(View):
                             0 if a[0] == 1 else 2,
                         ]
                     )
+
+                if len(res["upstreamoperationplans"]) == 0:
+                    del res["upstreamoperationplans"]
 
                 # Final result
                 if first:

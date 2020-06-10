@@ -68,7 +68,7 @@ class OverviewReport(GridPivot):
         GridFieldLastModified("lastmodified", initially_hidden=True),
     )
     crosses = (
-        ("demand", {"title": _("demand")}),
+        ("demand", {"title": _("sales orders")}),
         ("supply", {"title": _("supply")}),
         ("backlog", {"title": _("backlog")}),
         ("reasons", {"title": _("reasons"), "visible": False}),

@@ -120,14 +120,14 @@ function drawGraphs(jsondata)
 	      .attr("width", x_width)
 	      .attr("fill-opacity", 0)
 	      .on("click", function(d) {
-	          if (d3.event.defaultPrevented || d['demand'] == 0)
+	          if (d3.event.defaultPrevented || (d['demand'] == 0 && d['backlog'] == 0))
 	            return;
 	          d3.select("#tooltip").style('display', 'none');
 	
 	          window.location = "{{ request.prefix }}"
 	            +"/data/input/demand"	            
 	            +"/?noautofilter&o=5a&" + 
-	            "due__gte=" + timebuckets[d['bucket']]['startdate']
+	            "deliverydate__gte=" + timebuckets[d['bucket']]['startdate']
 	            +"&due__lt=" + timebuckets[d['bucket']]['enddate']
 	            +"&item=" + admin_escape(d['item'])
 	            +"&status_in=open,quote";
@@ -138,7 +138,7 @@ function drawGraphs(jsondata)
          .on("mouseenter", function(d) {
            var txt = '<div class="panel-heading" style="text-align:center; font-weight:bold">'
              + timebuckets[d['bucket']]['name'] + '</div>'
-             + '<table><tr><td>{{_('demand')|capfirst}}</td><td style="text-align:center">'
+             + '<table><tr><td>{{_('sales orders')|capfirst}}</td><td style="text-align:center">'
              + grid.formatNumber(d['demand'])
              + '</td></tr><tr><td>{{_('supply')|capfirst}}</td><td style="text-align:center">'
              + grid.formatNumber(d['supply'])
@@ -200,7 +200,7 @@ function drawGraphs(jsondata)
     // Display legend
     var legend = svg.append("g");
     var codes = [
-      [1, "{{_('demand')|capfirst}}", "#2B95EC"],
+      [1, "{{_('sales orders')|capfirst}}", "#2B95EC"],
       [2, "{{_('supply')|capfirst}}", "#F6BD0F"],
       [3, "{{_('backlog')|capfirst}}", "#8BBA00"]
       ];
@@ -236,18 +236,18 @@ function crosses (cellvalue, options, rowdata)
     {
       case 0:
         if (cellvalue[cross_idx[i]] != 0.0)
-          result += grid.formatNumber(cellvalue[cross_idx[i]]) + '<a href="{{request.prefix}}/data/input/deliveryorder/item/' +
-            admin_escape(rowdata['item']) +
-            '/?noautofilter&amp;o=5a&amp;demand__due__gte=' + options['colModel']['startdate'] +
-            '&amp;demand__due__lt=' + options['colModel']['enddate'] +
-            '">&nbsp;<span class="context cross fa fa-caret-right"></span></a><br>';
+          result += grid.formatNumber(cellvalue[cross_idx[i]]) + '<a href="{{request.prefix}}/data/input/demand/?noautofilter' +            
+            '&amp;due__gte=' + options['colModel']['startdate'] +
+            '&amp;due__lt=' + options['colModel']['enddate'] +
+            '&amp;item=' + admin_escape(rowdata['item']) + 
+            '&amp;status_in=' + admin_escape('quote,open') + '">&nbsp;<span class="context cross fa fa-caret-right"></span></a><br>';
         else
           result += '0<br>';
         break;
-      case 1:
+      case 2:
         if (cellvalue[cross_idx[i]] != 0.0)
-          result += grid.formatNumber(cellvalue[cross_idx[i]]) + '<a href="{{request.prefix}}/data/input/demand/?noautofilter&amp;o=5a' +            
-            '&amp;due__gte=' + options['colModel']['startdate'] +
+          result += grid.formatNumber(cellvalue[cross_idx[i]]) + '<a href="{{request.prefix}}/data/input/demand/?noautofilter' +            
+            '&amp;deliverydate__gte=' + options['colModel']['enddate'] +
             '&amp;due__lt=' + options['colModel']['enddate'] +
             '&amp;item=' + admin_escape(rowdata['item']) + 
             '&amp;status_in=' + admin_escape('quote,open') + '">&nbsp;<span class="context cross fa fa-caret-right"></span></a><br>';

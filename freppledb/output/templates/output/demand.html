@@ -126,11 +126,10 @@ function drawGraphs(jsondata)
 	
 	          window.location = "{{ request.prefix }}"
 	            +"/data/input/demand"	            
-	            +"/?noautofilter&o=5a&" + 
-	            "deliverydate__gte=" + timebuckets[d['bucket']]['startdate']
-	            +"&due__lt=" + timebuckets[d['bucket']]['enddate']
-	            +"&item=" + admin_escape(d['item'])
-	            +"&status_in=open,quote";
+	            +"/?noautofilter&amp;deliverydate__gte=" + timebuckets[d['bucket']]['startdate']
+	            +"&amp;due__lt=" + timebuckets[d['bucket']]['enddate']
+	            +"&amp;item=" + admin_escape(d['item'])
+	            +"&amp;status__in=open,quote";
 	
 	          var coord = d3.mouse(document.body);
 	          d3.event.stopPropagation();
@@ -240,7 +239,7 @@ function crosses (cellvalue, options, rowdata)
             '&amp;due__gte=' + options['colModel']['startdate'] +
             '&amp;due__lt=' + options['colModel']['enddate'] +
             '&amp;item=' + admin_escape(rowdata['item']) + 
-            '&amp;status_in=' + admin_escape('quote,open') + '">&nbsp;<span class="context cross fa fa-caret-right"></span></a><br>';
+            '&amp;status__in=' + admin_escape('quote,open') + '">&nbsp;<span class="context cross fa fa-caret-right"></span></a><br>';
         else
           result += '0<br>';
         break;
@@ -250,7 +249,7 @@ function crosses (cellvalue, options, rowdata)
             '&amp;deliverydate__gte=' + options['colModel']['enddate'] +
             '&amp;due__lt=' + options['colModel']['enddate'] +
             '&amp;item=' + admin_escape(rowdata['item']) + 
-            '&amp;status_in=' + admin_escape('quote,open') + '">&nbsp;<span class="context cross fa fa-caret-right"></span></a><br>';
+            '&amp;status__in=' + admin_escape('quote,open') + '">&nbsp;<span class="context cross fa fa-caret-right"></span></a><br>';
         else
           result += '0<br>';
         break;

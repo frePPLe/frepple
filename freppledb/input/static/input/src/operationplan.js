@@ -30,29 +30,6 @@ function OperationPlanFactory($http, getURLprefix, Operation, Location, Item) {
   }
 
   function extend(data) {
-    angular.forEach(data, function(value, key) {
-      switch (key) {
-        case "operation":
-          if (value && !(value instanceof Operation)) {
-            data['operation'] = new Operation(value);
-          }
-          break;
-
-        case "location":
-          if (value && !(value instanceof Location)) {
-            data['demand'] = new Location(value);
-          }
-          break;
-  
-        /*
-        case "item":
-          if (value && !(value instanceof Item)) {
-            data['item'] = new Item(value);
-          }
-          break;
-        */
-      }
-    });
     angular.extend(this, data);
   }
 

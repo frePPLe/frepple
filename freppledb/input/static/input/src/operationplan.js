@@ -43,12 +43,14 @@ function OperationPlanFactory($http, getURLprefix, Operation, Location, Item) {
             data['demand'] = new Location(value);
           }
           break;
-
+  
+        /*
         case "item":
           if (value && !(value instanceof Item)) {
             data['item'] = new Item(value);
           }
           break;
+        */
       }
     });
     angular.extend(this, data);

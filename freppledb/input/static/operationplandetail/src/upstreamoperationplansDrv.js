@@ -35,7 +35,7 @@ function showupstreamoperationplansDrv($window, gettextCatalog) {
   function linkfunc(scope, elem, attrs) {
   	
   	function expandOrCollapse(i) {
-  		// 0: collapsed, 1: expanded, 2: hidden
+  		// 0: collapsed, 1: expanded, 2: hidden, 3: leaf
   		var j = i + 1;
   		var mylevel = scope.operationplan.upstreamoperationplans[i][0];
   		if (scope.operationplan.upstreamoperationplans[i][10] == 0)
@@ -45,12 +45,15 @@ function showupstreamoperationplansDrv($window, gettextCatalog) {
   		while (j < scope.operationplan.upstreamoperationplans.length) {
   			if (scope.operationplan.upstreamoperationplans[j][0] <= mylevel)
   				break;
+    		else if (scope.operationplan.upstreamoperationplans[j][0] > mylevel + 1
+      			|| scope.operationplan.upstreamoperationplans[i][10] == 0)
+        	  scope.operationplan.upstreamoperationplans[j][10] = 2;
+    		else if (j == scope.operationplan.upstreamoperationplans.length - 1 ||
+  					scope.operationplan.upstreamoperationplans[j][0] >= scope.operationplan.upstreamoperationplans[j+1][0])
+  				scope.operationplan.upstreamoperationplans[j][10] = 3;  			
   			else if (scope.operationplan.upstreamoperationplans[j][0] == mylevel + 1
   				&& scope.operationplan.upstreamoperationplans[i][10] == 1)
   	  		scope.operationplan.upstreamoperationplans[j][10] = 0;
-    		else if (scope.operationplan.upstreamoperationplans[j][0] > mylevel + 1
-    			|| scope.operationplan.upstreamoperationplans[i][10] == 0)
-      	  scope.operationplan.upstreamoperationplans[j][10] = 2;
   			++j;
   		}
   	}

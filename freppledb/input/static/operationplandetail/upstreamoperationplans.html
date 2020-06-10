@@ -19,6 +19,7 @@
 <td>
 <span data-ng-if="peg[10] == 0" class="fa fa-fw fa-caret-right" data-ng-click='expandOrCollapse($index)'></span>
 <span data-ng-if="peg[10] == 1" class="fa fa-fw fa-caret-down" data-ng-click='expandOrCollapse($index)'></span>
+<span data-ng-if="peg[10] == 3" class="fa fa-fw fa-circle-thin"></span>
 &nbsp;{{peg[0]}}</td>
 
 <td data-ng-if="peg[2] == 'MO'">{{peg[1]}}<a href="/data/input/manufacturingorder/?noautofilter&parentreference={{peg[1]}}" onclick="opendetail(event)">

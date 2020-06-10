@@ -6768,7 +6768,7 @@ class OperationPlanDetail(View):
                         "when operationplan.demand_id is not null then 'Deliver '||operationplan.demand_id"
                         if "freppledb.forecast" not in settings.INSTALLED_APPS
                         else """
-                        when coalesce(operationplan.demand_id, operationplan.forecast_id) is not null then 'Deliver '||coalesce(operationplan.demand_id, operationplan.forecast_id)
+                        when coalesce(operationplan.demand_id, operationplan.forecast) is not null then 'Deliver '||coalesce(operationplan.demand_id, operationplan.forecast)
                         """
                     ),
                     (opplan.reference,),

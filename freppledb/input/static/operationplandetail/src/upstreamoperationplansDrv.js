@@ -58,5 +58,7 @@ function showupstreamoperationplansDrv($window, gettextCatalog) {
   		}
   	}
     scope.expandOrCollapse = expandOrCollapse;
+    
+    scope.url_prefix = url_prefix;
   } //link end
 } //directive end

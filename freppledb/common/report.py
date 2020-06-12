@@ -2384,9 +2384,7 @@ class GridReport(View):
             try:
                 op, field, data = rule["op"], rule["field"], rule["data"]
                 reportrow = cls._getRowByName(request, field)
-                if data == "" and not isinstance(
-                    reportrow, (GridFieldText, GridFieldChoice)
-                ):
+                if data == "":
                     # No filter value specified, which makes the filter invalid
                     continue
                 else:

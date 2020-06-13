@@ -26,13 +26,13 @@
     </th>
   </tr>
   {% for j in scenarios %}
-  {% if j.status == 'Free' or j.name in active_scenarios %}
+  {% if j.name in free_scenarios or j.name in active_scenarios %}
   <tr>
     <td style="padding:5px">
       <strong>{{j.name|capfirst}}</strong>
     </td>
     <td style="padding:5px 10px 5px 10px">
-       {% if j.name != DEFAULT_DB_ALIAS and j.status == 'Free' and perms.common.copy_scenario %}
+       {% if j.name != DEFAULT_DB_ALIAS and j.name in free_scenarios and perms.common.copy_scenario %}
        <div class="btn-group btn-block">
        <button class="btn btn-block btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
          {% trans 'manage'|capfirst %}&nbsp;<span class="caret"></span>
@@ -65,9 +65,11 @@
        {% endif %}
        {% endif %}
     </td>
-    {% with mystatus=j.status|lower %}
-    <td style="padding:5px 10px 5px 10px; text-align: center">{% trans mystatus|capfirst %}</td>
-    {% endwith %}
+    {% if j.name in free_scenarios %}
+    <td style="padding:5px 10px 5px 10px; text-align: center">{% trans 'Free' %}</td>
+    {% else %}
+    <td style="padding:5px 10px 5px 10px; text-align: center">{% trans j.status|lower|capfirst %}</td>
+    {% endif %}
     <td style="padding:5px 10px 5px 10px">
       <input class="scenariolabel" type="text" data-target="{{ j.name }}"
       value="{% if j.description %}{{j.description|escape}}{% else %}{{ j.name }}{% endif %}">

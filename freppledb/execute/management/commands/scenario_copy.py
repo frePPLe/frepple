@@ -326,14 +326,14 @@ class Command(BaseCommand):
         for scenario in scenarios:
             try:
 
+                user = User.objects.using(scenario.name).get(
+                    username=request.user.username
+                )
+
                 if scenario.status != "Free":
                     in_use_scenarios.append(scenario.name)
                 else:
                     free_scenarios.append(scenario.name)
-
-                user = User.objects.using(scenario.name).get(
-                    username=request.user.username
-                )
 
                 if user.has_perm("common.release_scenario"):
                     release_perm.append(scenario.name)
@@ -344,8 +344,9 @@ class Command(BaseCommand):
                 if user.is_active:
                     active_scenarios.append(scenario.name)
             except Exception:
-                # user does not exist in scenario? silently pass
-                pass
+                # database schema is not properly created, scenario is free
+                free_scenarios.append(scenario.name)
+                active_scenarios.append(scenario.name)
 
         # If all scenarios are in use and user is inactive in all of them then he won't see the scenario management menu
         if len(free_scenarios) == 0 and len(active_scenarios) == 1:
@@ -361,6 +362,7 @@ class Command(BaseCommand):
                 "copy_perm": copy_perm,
                 "promote_perm": promote_perm,
                 "active_scenarios": active_scenarios,
+                "free_scenarios": free_scenarios,
             },
             request=request,
         )

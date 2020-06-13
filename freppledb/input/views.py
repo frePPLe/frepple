@@ -6512,6 +6512,9 @@ class OperationPlanDetail(View):
                     "end": opplan.enddate.strftime("%Y-%m-%dT%H:%M:%S")
                     if opplan.enddate
                     else None,
+                    "setupend": opplan.plan["setupend"].replace(" ", "T")
+                    if "setupend" in opplan.plan
+                    else None,
                     "quantity": float(opplan.quantity),
                     "criticality": float(opplan.criticality)
                     if opplan.criticality

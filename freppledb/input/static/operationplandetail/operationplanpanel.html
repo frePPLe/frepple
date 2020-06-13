@@ -100,6 +100,12 @@
         <input id="setStart" type="text" size="9" class="vDateField form-control" value="{{operationplan.start|formatdate}}" disabled>
       </td>
     </tr>
+    <tr data-ng-if="operationplan.setupend">
+      <td><b style="text-transform: capitalize">{{'setup end date'|translate}}</b></td>
+      <td>
+        <input type="text" size="9" class="vDateField form-control" value="{{operationplan.setupend|formatdate}}" disabled>
+      </td>
+    </tr>    
     <tr data-ng-if="operationplan.type !== 'STCK'">
       <td><b style="text-transform: capitalize;" ng-if="operationplan.type == 'MO'">{{'end date'|translate}}</b>
         <b style="text-transform: capitalize;" ng-if="operationplan.type == 'PO'">{{'receipt date'|translate}}</b>

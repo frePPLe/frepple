@@ -1741,8 +1741,7 @@ class ResourceList(GridReport):
             "efficiency",
             title=_("efficiency %"),
             initially_hidden=True,
-            formatter="currency",
-            extra='"formatoptions":{"suffix":" %","defaultValue":"100.00"}',
+            formatter="percentage",
         ),
         GridFieldText(
             "efficiency_calendar",

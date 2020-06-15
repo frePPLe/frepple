@@ -383,7 +383,7 @@ function formatDuration(cellvalue, options, rowdata) {
 jQuery.extend($.fn.fmatter, {
   percentage : function(cellvalue, options, rowdata) {
     if (cellvalue === undefined || cellvalue === '' || cellvalue === null) return '';
-    return cellvalue + "%";
+    return grid.formatNumber(cellvalue) + "%";
   },
 
   duration : formatDuration,
@@ -521,7 +521,7 @@ jQuery.extend($.fn.fmatter, {
 
 jQuery.extend($.fn.fmatter.percentage, {
     unformat : function(cellvalue, options, cell) {
-      return cellvalue;
+      return cellvalue.replace("%", "");
       }
 });
 

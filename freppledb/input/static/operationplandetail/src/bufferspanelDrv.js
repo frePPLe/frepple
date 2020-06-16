@@ -31,11 +31,11 @@ function showbufferspanelDrv($window, gettextCatalog) {
   };
   return directive;
 
-  function linkfunc(scope, elem, attrs, transclude) {
+  function linkfunc(scope, elem, attrs) {
     var template =  '<div class="panel-heading"><h4 class="panel-title" style="text-transform: capitalize">'+
                       gettextCatalog.getString("material")+
                     '</h4></div>'+
-                    '<table class="table table-condensed table-hover"><thead style="display: none;"><tr><td>' +
+                    '<table class="table table-condensed table-hover"><thead><tr><td>' +
                       '<b style="text-transform: capitalize;">'+gettextCatalog.getString("item")+'</b>' +
                     '</td><td>' +
                       '<b style="text-transform: capitalize;">'+gettextCatalog.getString("location")+'</b>' +
@@ -49,7 +49,7 @@ function showbufferspanelDrv($window, gettextCatalog) {
                     '<tbody></tbody>' +
                     '</table>';
 
-    scope.$watchGroup(['operationplan.id','operationplan.flowplans.length'], function (newValue,oldValue) {
+    function redraw() {    
       angular.element(document).find('#attributes-operationflowplans').empty().append(template);
       var rows='<tr><td colspan="3">'+gettextCatalog.getString('no movements')+'<td></tr>';
 
@@ -57,10 +57,30 @@ function showbufferspanelDrv($window, gettextCatalog) {
         if (scope.operationplan.hasOwnProperty('flowplans')) {        	
           rows='';
           angular.forEach(scope.operationplan.flowplans, function(theflow) {
-            rows += '<tr><td>' + $.jgrid.htmlEncode(theflow.buffer.item)
+            rows += '' 
+              if (!theflow.hasOwnProperty('alternates')) {	
+              rows +=  '<tr><td>' + $.jgrid.htmlEncode(theflow.buffer.item)
               + "<a href=\"" + url_prefix + "/detail/input/item/" + admin_escape(theflow.buffer.item) 
               + "/\" onclick='event.stopPropagation()'><span class='leftpadding fa fa-caret-right'></span></a>"
-              + '</td><td>' + $.jgrid.htmlEncode(theflow.buffer.location)
+              + '</td>'
+              }
+              else {
+            	  rows += '<td style="white-space: nowrap;"><div class="dropdown dropdown-submit-input">' 
+            			+ '<button class="btn btn-default" data-toggle="dropdown" type="button" style="text-transform: capitalize; min-width: 150px">'
+            			+ $.jgrid.htmlEncode(theflow.buffer.item)
+            			+ '</button>'
+            			+ '<ul class="dropdown-menu">'
+                  + '<li><a role="menuitem" class="alternateitem" style="text-transform: capitalize">'
+                  + $.jgrid.htmlEncode(theflow.buffer.item)
+                  + '</a></li>';          			
+            		angular.forEach(theflow.alternates, function(thealternate) {
+                  rows += '<li><a role="menuitem" class="alternateitem" style="text-transform: capitalize">'
+                  	+ $.jgrid.htmlEncode(thealternate)
+                  	+ '</a></li>';
+            		});
+            		rows += '</ul></td>';
+              }
+              rows += '<td>' + $.jgrid.htmlEncode(theflow.buffer.location)
               + "<a href=\"" + url_prefix + "/detail/input/location/" + admin_escape(theflow.buffer.location) 
               + "/\" onclick='event.stopPropagation()'><span class='leftpadding fa fa-caret-right'></span></a>"
               + '</td><td>' + grid.formatNumber(theflow.quantity)
@@ -71,9 +91,50 @@ function showbufferspanelDrv($window, gettextCatalog) {
           angular.element(document).find('#attributes-operationflowplans thead').css('display','table-header-group');
         }
       }
-
       angular.element(document).find('#attributes-operationflowplans tbody').append(rows);
+      angular.element(document).find('#attributes-operationflowplans a.alternateitem').bind('click', function() {
+        	var newitem = $(this).html();
+        	var curitem = $(this).parent().parent().prev().html();
+        	if (newitem != curitem) {
+        		angular.forEach(scope.operationplan.flowplans, function(theflow) {
+        			if (theflow.buffer.item == curitem) {
+        				// Update the assigned item
+        				theflow.buffer.item = newitem;
+        				// Update the alternate list
+        				angular.forEach(theflow.alternates, function(thealternate) {
+        					if (thealternate === newitem)
+        						thealternate = curitem;
+        				});
+        				// Redraw the directive
+        				redraw();
+        				// Update the grid
+        				var grid = angular.element(document).find("#grid");
+        				var selrow = grid.jqGrid('getGridParam', 'selarrrow');
+        				var colmodel = grid.jqGrid ('getGridParam', 'colModel').find(function(i){ return i.name == "material"});
+        				var cell = grid.jqGrid('getCell', selrow, 'material');      				
+        				if (colmodel.formatter == 'detail' && cell == curitem) {
+        			    grid.jqGrid("setCell", selrow, "material", newitem, "dirty-cell");
+        			    grid.jqGrid("setRowData", selrow, false, "edited");
+        			    angular.element(document).find("#save").removeClass("btn-primary btn-danger").addClass("btn-danger").prop("disabled", false);
+        			    angular.element(document).find("#undo").removeClass("btn-primary btn-danger").addClass("btn-danger").prop("disabled", false);
+        				}
+        				else if (colmodel.formatter == 'listdetail'){
+        					var items = [];
+        					angular.forEach(scope.operationplan.flowplans, function(theflowplan) {
+        					   items.push([theflowplan.buffer.item, theflowplan.quantity]);
+        					});
+        			    grid.jqGrid("setCell", selrow, "material", items, "dirty-cell");
+        			    grid.jqGrid("setRowData", selrow, false, "edited");
+        			    angular.element(document).find("#save").removeClass("btn-primary btn-danger").addClass("btn-danger").prop("disabled", false);
+        			    angular.element(document).find("#undo").removeClass("btn-primary btn-danger").addClass("btn-danger").prop("disabled", false);
+        				}
+        				return false;
+          			}
+          		});
+          	}
+          });
       //elem.after(transclude());
-    }); //watch end
+    };    
+    scope.$watchGroup(['operationplan.id','operationplan.flowplans.length'], redraw);
   } //link end
 } //directive end

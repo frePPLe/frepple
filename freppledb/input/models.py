@@ -2118,22 +2118,22 @@ class ManufacturingOrder(OperationPlan):
 
     @classmethod
     def getModelForm(cls, fields, database=DEFAULT_DB_ALIAS):
-
         template = modelform_factory(
             cls,
-            fields=[i for i in fields if i != "resource"],
+            fields=[i for i in fields if i != "resource" and i != "material"],
             formfield_callback=lambda f: (
                 isinstance(f, RelatedField) and f.formfield(using=database)
             )
             or f.formfield(),
         )
 
-        if "resource" not in fields:
+        if "resource" not in fields and "material" not in fields:
             return template
 
         # Return a form class with an extra field
         class MO_form(template):
-            resource = forms.CharField()
+            resource = forms.CharField() if "resource" in fields else None
+            material = forms.CharField() if "material" in fields else None
 
             def clean_resource(self):
                 try:
@@ -2155,50 +2155,115 @@ class ManufacturingOrder(OperationPlan):
                 except Exception:
                     raise forms.ValidationError("Invalid resource")
 
+            def clean_material(self):
+                try:
+                    cleaned = []
+                    for res in ast.literal_eval(self.cleaned_data["material"]):
+                        if isinstance(res, str):
+                            rsrc = Item.objects.all().using(database).get(name=res)
+                        else:
+                            rsrc = Item.objects.all().using(database).get(name=res[0])
+                        cleaned.append(rsrc)
+                        rsrc.top_rsrc = (
+                            Item.objects.all()
+                            .using(database)
+                            .get(lvl=0, lft__lte=rsrc.lft, rght__gte=rsrc.rght)
+                        )
+                    return cleaned
+                except Exception:
+                    raise forms.ValidationError("Invalid item")
+
             def save(self, commit=True):
                 instance = super(MO_form, self).save(commit=False)
-                try:
-                    opreslist = [
-                        r
-                        for r in instance.operation.operationresources.all().select_related(
-                            "resource"
-                        )
-                    ]
-                    for res in self.cleaned_data["resource"]:
-                        newopres = None
-                        for o in opreslist:
-                            if o.resource.lft <= res.lft < o.resource.rght:
-                                newopres = o
-                                break
-                        for opplanres in instance.resources.all().select_related(
-                            "resource"
-                        ):
-                            oldopres = None
+
+                if "resource" in fields:
+                    try:
+                        opreslist = [
+                            r
+                            for r in instance.operation.operationresources.all().select_related(
+                                "resource"
+                            )
+                        ]
+                        for res in self.cleaned_data["resource"]:
+                            newopres = None
                             for o in opreslist:
-                                if (
-                                    o.resource.lft
-                                    <= opplanres.resource.lft
-                                    < o.resource.rght
-                                ):
-                                    oldopres = o
+                                if o.resource.lft <= res.lft < o.resource.rght:
+                                    newopres = o
                                     break
-                            if (
-                                oldopres
-                                and newopres
-                                and (
-                                    oldopres.id == newopres.id
-                                    or (
-                                        oldopres.name == newopres.name and newopres.name
-                                    )
-                                )
+                            for opplanres in instance.resources.all().select_related(
+                                "resource"
                             ):
-                                opplanres.resource = res
-                                opplanres.save(using=database)
-                                break
-                except Exception:
-                    pass
-                if commit:
-                    instance.save()
+                                oldopres = None
+                                for o in opreslist:
+                                    if (
+                                        o.resource.lft
+                                        <= opplanres.resource.lft
+                                        < o.resource.rght
+                                    ):
+                                        oldopres = o
+                                        break
+                                if (
+                                    oldopres
+                                    and newopres
+                                    and (
+                                        oldopres.id == newopres.id
+                                        or (
+                                            oldopres.name == newopres.name
+                                            and newopres.name
+                                        )
+                                    )
+                                ):
+                                    opplanres.resource = res
+                                    opplanres.save(using=database)
+                                    break
+                    except Exception:
+                        pass
+                    if commit:
+                        instance.save()
+
+                if "material" in fields:
+                    try:
+                        opmatlist = [
+                            r
+                            for r in instance.operation.operationmaterials.all().select_related(
+                                "item"
+                            )
+                        ]
+                        for mat in self.cleaned_data["material"]:
+                            newopmat = None
+                            for o in opmatlist:
+                                if o.item.lft <= mat.lft < o.item.rght:
+                                    newopmat = o
+                                    break
+                            for (
+                                opplanmat
+                            ) in instance.materials.all().select_related(  # items ?
+                                "item"
+                            ):
+                                oldopmat = None
+                                for o in opmatlist:
+                                    if o.item.lft <= opplanmat.item.lft < o.item.rght:
+                                        oldopmat = o
+                                        break
+                                if (
+                                    oldopmat
+                                    and newopmat
+                                    and (
+                                        oldopmat.id == newopmat.id
+                                        or (
+                                            oldopmat.name == newopmat.name
+                                            and newopmat.name
+                                        )
+                                    )
+                                ):
+                                    opplanmat.item = mat
+                                    opplanmat.save(using=database)
+                                    break
+                    except Exception:
+                        pass
+                    if commit:
+                        instance.save()
+
                 return instance
 
         return MO_form

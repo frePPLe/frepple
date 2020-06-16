@@ -6563,6 +6563,23 @@ class OperationPlanDetail(View):
 
                 # Information on materials
                 if view_OpplanMaterial:
+                    # Retrieve information about eventual alternates
+                    alts = {}
+                    if opplan.operation:
+                        cursor.execute(
+                            """
+                            select a.item_id, b.item_id
+                            from operationmaterial a 
+                            inner join operationmaterial b on a.operation_id = b.operation_id and a.name = b.name
+                            where a.operation_id = %s
+                            and a.id != b.id
+                            """,
+                            (opplan.operation.name,),
+                        )
+                        for i in cursor.fetchall():
+                            if i[0] not in alts:
+                                alts[i[0]] = set()
+                            alts[i[0]].add(i[1])
                     firstmat = True
                     for m in opplanmats:
                         if m["operationplan_id"] != opplan.reference:
@@ -6570,17 +6587,19 @@ class OperationPlanDetail(View):
                         if firstmat:
                             firstmat = False
                             res["flowplans"] = []
-                        res["flowplans"].append(
-                            {
-                                "date": m["flowdate"].strftime("%Y-%m-%dT%H:%M:%S"),
-                                "quantity": float(m["quantity"]),
-                                "onhand": float(m["onhand"] or 0),
-                                "buffer": {
-                                    "item": m["item_id"],
-                                    "location": m["location_id"],
-                                },
-                            }
-                        )
+                        flowplan = {
+                            "date": m["flowdate"].strftime("%Y-%m-%dT%H:%M:%S"),
+                            "quantity": float(m["quantity"]),
+                            "onhand": float(m["onhand"] or 0),
+                            "buffer": {
+                                "item": m["item_id"],
+                                "location": m["location_id"],
+                            },
+                        }
+                        # List matching alternates
+                        if m["item_id"] in alts:
+                            flowplan["alternates"] = list(alts[m["item_id"]])
+                        res["flowplans"].append(flowplan)
 
                 # Information on resources
                 if view_OpplanResource:

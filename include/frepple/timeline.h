@@ -107,7 +107,7 @@ class TimeLine {
       const Event* tmp = this;
       while (tmp && tmp->dt == dt) {
         if (!tmp->prev)
-          return tmp->oh;
+          return 0.0;
         else
           tmp = tmp->prev;
       }

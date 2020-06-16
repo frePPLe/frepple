@@ -3742,12 +3742,10 @@ class Tree : public NonCopyable {
     return a.compare(b);
   }
 
-  static inline bool isnull(const string& a) { return a.empty(); }
-
   /* Renames an existing node, and adjusts its position in the tree. */
   void rename(TreeNode* obj, const string& newname, TreeNode* hint = nullptr) {
     if (obj->nm == newname) return;
-    if (isnull(obj->nm)) {
+    if (!obj->nm.empty()) {
       bool found;
       findLowerBound(newname, &found);
       if (found) {

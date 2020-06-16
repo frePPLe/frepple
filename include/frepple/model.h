@@ -1996,9 +1996,12 @@ class OperationPlan : public Object,
 
   /* Update the external identifier. */
   void setReference(const string& s) {
-    setName(s);
-    assignReference();
-    setActivated(true);
+    if (getName().empty()) {
+      setName(s);
+      assignReference();
+      setActivated(true);
+    } else
+      st.rename(this, s);
   }
 
   void setRawReference(const string& s) { setName(s); }

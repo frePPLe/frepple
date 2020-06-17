@@ -1365,7 +1365,8 @@ class ManufacturingOrderSerializer(BulkSerializerMixin, ModelSerializer):
         mo = super().create(validated_data)
         if opplanreslist:
             self._processOperationPlanResource(mo, opplanreslist)
-        # TODO materials are read-only for now
+        if opplanmatlist:
+            self._processOperationPlanMaterial(mo, opplanmatlist)
         return mo
 
     def update(self, instance, validated_data):
@@ -1375,7 +1376,8 @@ class ManufacturingOrderSerializer(BulkSerializerMixin, ModelSerializer):
         mo = super().update(instance, validated_data)
         if opplanreslist:
             self._processOperationPlanResource(mo, opplanreslist)
-        # TODO materials are read-only for now
+        if opplanmatlist:
+            self._processOperationPlanMaterial(mo, opplanmatlist)
         return mo
 
     def _processOperationPlanResource(self, mo, opplanreslist):
@@ -1429,6 +1431,69 @@ class ManufacturingOrderSerializer(BulkSerializerMixin, ModelSerializer):
                             ).save(using=database)
                     except Exception as e:
                         logger.error("REST API error saving manufacturing order:", e)
+
+    def _processOperationPlanMaterial(self, mo, opplanmatlist):
+        database = mo._state.db
+
+        # prepare a dict from operationmaterial records
+        # where key is name and value is list of items
+
+        qs = (
+            freppledb.input.models.OperationMaterial.objects.all()
+            .using(database)
+            .filter(operation=mo.operation)
+            .filter(name__isnull=False)
+            .values("name", "item")
+        )
+        dict = {}
+        for rec in qs:
+            if rec["name"] not in dict:
+                dict[rec["name"]] = [rec["item"]]
+            else:
+                dict[rec["name"]].append(rec["item"])
+
+        # iterate over the opplanmatlist records to see if there are alternates
+        for rec in opplanmatlist:
+            if "item" in rec:
+                try:
+                    Found = False
+                    for opplanmat in mo.materials.all().using(database):
+                        # find lists where item is:
+
+                        for k in dict.keys():
+                            if (
+                                rec["item"].name in dict[k]
+                                and opplanmat.item.name in dict[k]
+                            ) or rec["item"].name == opplanmat.item.name:
+
+                                opplanmat.item = rec["item"]
+                                if "quantity" in rec:
+                                    opplanmat.quantity = rec["quantity"]
+                                if "flowdate" in rec:
+                                    opplanmat.flowdate = rec["flowdate"]
+                                opplanmat.save(
+                                    using=database,
+                                    update_fields=["item", "quantity", "flowdate"],
+                                )
+                                Found = True
+                                break
+                        if Found:
+                            break
+
+                    if not Found:
+                        freppledb.input.models.OperationPlanMaterial(
+                            operationplan=mo,
+                            item=rec["item"],
+                            quantity=rec.get("quantity", 1),
+                            flowdate=rec.get(
+                                "flowdate",
+                                mo.enddate
+                                if rec.get("quantity", 1) > 0
+                                else mo.startdate,
+                            ),
+                        ).save(using=database)
+                except Exception as e:
+                    logger.error("REST API error saving manufacturing order:", e)
 
     class Meta:
         model = freppledb.input.models.ManufacturingOrder

@@ -16,7 +16,7 @@
   <h4 class="panel-title">
   <span data-ng-if="operationplan.type" style="text-transform: capitalize">{{ opptype[operationplan.type] }}</span>
   <span data-ng-if="!operationplan.id" style="text-transform: capitalize">{{ 'no selection'|translate }}</span>
-  <span data-ng-if="operationplan.id == -1" style="text-transform: capitalize">{{ 'multiple selected'|translate }}</span>
+  <span data-ng-if="operationplan.id == -1" style="text-transform: capitalize">{{ 'selected' | translate }}&nbsp;{{ operationplan.count }}</span>
   </h4>
 </div>
 <table class="table table-condensed table-hover" id="opplan-attributes-drvtable">

@@ -148,6 +148,7 @@ function operationplanCtrl($scope, OperationPlan) {
     aggregatedopplan.start = aggregatedopplan.startdate;
     aggregatedopplan.end = aggregatedopplan.enddate;
     aggregatedopplan.id = -1;
+    aggregatedopplan.count = selectionData.length;
     aggregatedopplan.type = selectionData[0].type;
     $scope.$apply(function(){ $scope.operationplan.extend(aggregatedopplan); });
   }

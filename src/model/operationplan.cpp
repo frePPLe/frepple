@@ -1901,12 +1901,9 @@ double OperationPlan::getCriticality() const {
 
   // Handle an upstream operationplan
   Duration minslack = 86313600L;  // 999 days in seconds
-  vector<const OperationPlan*> opplans(HasLevel::getNumberOfLevels() + 5);
   vector<Duration> gaps(HasLevel::getNumberOfLevels() + 5);
   for (PeggingIterator p(const_cast<OperationPlan*>(this)); p; ++p) {
     unsigned int lvl = p.getLevel();
-    if (lvl >= opplans.size()) opplans.resize(lvl + 5);
-    opplans[lvl] = p.getOperationPlan();
     if (lvl >= gaps.size()) gaps.resize(lvl + 5);
     gaps[lvl] = p.getGap();
     const OperationPlan* m = p.getOperationPlan();
@@ -1936,38 +1933,16 @@ Duration OperationPlan::getDelay() const {
 
   // Handle an upstream operationplan
   Duration maxdelay = Duration::MIN;
-  vector<const OperationPlan*> opplans(HasLevel::getNumberOfLevels() + 5);
+  vector<Duration> gaps(HasLevel::getNumberOfLevels() + 5);
   for (PeggingIterator p(const_cast<OperationPlan*>(this)); p; ++p) {
     unsigned int lvl = p.getLevel();
-    if (lvl >= opplans.size()) opplans.resize(lvl + 5);
-    opplans[lvl] = p.getOperationPlan();
+    if (lvl >= gaps.size()) gaps.resize(lvl + 5);
+    gaps[lvl] = p.getGap();
     const OperationPlan* m = p.getOperationPlan();
     if (m && m->getTopOwner()->getDemand()) {
-      // Reached a demand. Get the total delay now.
-      Duration mydelay = getEnd() - m->getTopOwner()->getDemand()->getDue();
-      for (unsigned int i = 0; i < lvl; i++) {
-        if (opplans[i]->getOwner())
-          // Don't count operation times on child operationplans
-          continue;
-        Date offset_after = opplans[i]->getEnd();
-        Date offset_before = opplans[i]->getStart();
-        for (auto flpln = opplans[i]->beginFlowPlans();
-             flpln != opplans[i]->endFlowPlans(); ++flpln) {
-          if (flpln->getQuantity() > 0.0 &&
-              flpln->getFlow()->hasType<FlowEnd>() &&
-              flpln->getDate() > offset_after)
-            offset_after = flpln->getDate();
-          else if (flpln->getQuantity() < 0.0 &&
-                   flpln->getFlow()->hasType<FlowStart>() &&
-                   flpln->getDate() < offset_before)
-            offset_before = flpln->getDate();
-        }
-        if (opplans[i] != this)
-          // Consider both the operation duration and material time before it
-          mydelay -= (opplans[i]->getEnd() - offset_before);
-        // Consider the material time after the operation
-        mydelay += (offset_after - opplans[i]->getEnd());
-      }
+      // Reached a demand. All time is processing except the gaps
+      Duration mydelay = m->getEnd() - m->getTopOwner()->getDemand()->getDue();
+      for (unsigned int i = 1; i <= lvl; i++) mydelay -= gaps[i];
       if (mydelay > maxdelay) maxdelay = mydelay;
     }
   }

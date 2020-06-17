@@ -104,38 +104,46 @@ $(function() {
             // get id of the previous selected row
             startId = $this.jqGrid('getGridParam', 'selrow'),
             startRow, endRow, iStart, iEnd, i;
+    	var selectedRows = $this.jqGrid('getGridParam', 'selarrrow').length;
 
-        if (!e.shiftKey) {
+        if (!e.shiftKey && !e.ctrlKey) {
+        	$this.jqGrid('resetSelection');
+        	if (rowid == startId && selectedRows > 0)
+        		return false;
             return true;
-        } else if (startId) {
-			
-        	startRow = rows.namedItem(startId);
-            endRow = rows.namedItem(rowid);
-            rowidIndex = endRow.rowIndex;
-        	var selRowIds = $this.jqGrid("getGridParam", "selarrrow");
-        	iStart = startRow.rowIndex;
-            iEnd = endRow.rowIndex;
-                
-            if (iStart == iEnd) {
-            	if ($.inArray(rows[iStart].id, selRowIds) >= 0) {
-        			$this.jqGrid('setSelection', rows[iStart].id, false);
-        		}
-            }
-                
-            for (i = Math.min(iStart, iEnd); i <= Math.max(iStart, iEnd); i++) {                   
-                if (i != rowidIndex) {
-             	if ($.inArray(rows[i].id, selRowIds) < 0) {
-                 	$this.jqGrid('setSelection', rows[i].id, false);                    
-                 }
-                }
-            	else {
-            		if ($.inArray(rows[i].id, selRowIds) >= 0) {
-            			$this.jqGrid('setSelection', rows[i].id, false);
-            		}
-            	}
-            }
-        }
+        } else if (e.shiftKey) {
+        	if (startId) {			
+	        	startRow = rows.namedItem(startId);
+	            endRow = rows.namedItem(rowid);
+	            rowidIndex = endRow.rowIndex;
+	        	var selRowIds = $this.jqGrid("getGridParam", "selarrrow");
+	        	iStart = startRow.rowIndex;
+	            iEnd = endRow.rowIndex;
+	                
+	            if (iStart == iEnd) {
+	            	if ($.inArray(rows[iStart].id, selRowIds) >= 0) {
+	        			$this.jqGrid('setSelection', rows[iStart].id, false);
+	        		}
+	            }
+	                
+	            for (i = Math.min(iStart, iEnd); i <= Math.max(iStart, iEnd); i++) {                   
+	                if (i != rowidIndex) {
+	             	if ($.inArray(rows[i].id, selRowIds) < 0) {
+	                 	$this.jqGrid('setSelection', rows[i].id, false);                    
+	                 }
+	                }
+	            	else {
+	            		if ($.inArray(rows[i].id, selRowIds) >= 0) {
+	            			$this.jqGrid('setSelection', rows[i].id, false);
+	            		}
+	            	}
+	            }
+	        }
         return true;
+        }
+        else if (e.ctrlKey) {        	
+        	return true;
+        }
     },{% endif %}
     loadComplete: function() {
       $(".invStatus").each( function(value) {

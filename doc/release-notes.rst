@@ -24,6 +24,10 @@ Release notes
     widgets. When selecting a row, 2 new widgets are displayed to track the source and destination of the material.
     It shows how it has been produced/replenished (upstream widget) and where it will be
     consumed/delivered (downstream widget).    
+    
+- | There is a change in how rows are selected in Manufacturing Order, Purchase Order, Delivery Order 
+    and Distribution Order screens. Clicking on a row will unselect already selected rows unless the shift key
+    is pressed (for range selection) or the ctrl key (for additional selection).
 
 6.5.0 (2020/05/16)
 ==================

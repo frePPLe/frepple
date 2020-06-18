@@ -25,9 +25,9 @@ Release notes
     It shows how it has been produced/replenished (upstream widget) and where it will be
     consumed/delivered (downstream widget).    
     
-- | There is a change in how rows are selected in Manufacturing Order, Purchase Order, Delivery Order 
-    and Distribution Order screens. Clicking on a row will unselect already selected rows unless the shift key
-    is pressed (for range selection) or the ctrl key (for additional selection).
+- | There is a change in how rows are selected in grids where multiple selection is allowed. 
+    Clicking on a the checkbox of a row will extend existing selction to that new row. Clicking anywhere else in the
+    row will reset existing selection and only that new row will be selected.
 
 6.5.0 (2020/05/16)
 ==================

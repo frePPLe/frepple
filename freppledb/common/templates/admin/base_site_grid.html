@@ -94,11 +94,6 @@ $(function() {
       var selection = $(this).jqGrid('getGridParam','selarrrow').slice(); //this makes this list a static list of values
       grid.markSelectedRow(selection.length);
     },
-    onCellSelect: function(owid,iCol,cellcontent,e) {
-    	if (iCol > 0)
-    		$(this).jqGrid('resetSelection');
-    	return true;
-    },
     formatCell: function(rowid, cellname, value, iRow, iCol) {
       editrow = iRow;
       editcol = iCol;

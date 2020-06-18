@@ -5522,7 +5522,25 @@ class InventoryDetail(OperationPlanMixin, GridReport):
         return base.select_related().annotate(
             feasible=RawSQL(
                 "coalesce((operationplan.plan->>'feasible')::boolean, true)", []
-            )
+            ),
+            inventory_item=RawSQL("operationplan.plan->'item'", []),
+            computed_color=RawSQL(
+                """
+                case when operationplan.type = 'DLVR' then 999999
+                - extract(epoch from operationplan.delay)/86400.0
+                when operationplan.type = 'STCK' then null
+                when operationplan.color >= 999999 and operationplan.plan ? 'item' then
+                999999
+                - extract(epoch from operationplan.delay)/86400.0
+                + 1000000
+                when operationplan.color >= 999999 and not(operationplan.plan ? 'item') then
+                999999
+                - extract(epoch from operationplan.delay)/86400.0
+                else operationplan.color
+                end
+                """,
+                [],
+            ),
         )
 
     @classmethod
@@ -5597,13 +5615,14 @@ class InventoryDetail(OperationPlanMixin, GridReport):
             initially_hidden=True,
         ),
         GridFieldText(
-            "operationplan__color",
+            "computed_color",
             title=_("inventory status"),
             formatter="color",
             width="125",
             editable=False,
             extra='"formatoptions":{"defaultValue":""}, "summaryType":"min"',
         ),
+        GridFieldNumber("color", field_name="operationplan__color", hidden=True),
         GridFieldText(
             "operationplan__type",
             title=_("type"),
@@ -5893,13 +5912,6 @@ class InventoryDetail(OperationPlanMixin, GridReport):
             initially_hidden=True,
             editable=False,
         ),
-        GridFieldBool(
-            "feasible",
-            title=_("feasible"),
-            editable=False,
-            initially_hidden=True,
-            search=False,
-        ),
         GridFieldChoice(
             "status",
             title=_("material status"),
@@ -5945,6 +5957,21 @@ class ResourceDetail(OperationPlanMixin, GridReport):
             setup_duration=RawSQL("(operationplan.plan->>'setup')", []),
             feasible=RawSQL(
                 "coalesce((operationplan.plan->>'feasible')::boolean, true)", []
+            ),
+            inventory_item=RawSQL("operationplan.plan->'item'", []),
+            computed_color=RawSQL(
+                """
+                case when operationplan.color >= 999999 and operationplan.plan ? 'item' then
+                999999
+                - extract(epoch from operationplan.delay)/86400.0
+                + 1000000
+                when operationplan.color >= 999999 and not(operationplan.plan ? 'item') then
+                999999
+                - extract(epoch from operationplan.delay)/86400.0
+                else operationplan.color
+                end
+                """,
+                [],
             ),
         )
 
@@ -5995,13 +6022,14 @@ class ResourceDetail(OperationPlanMixin, GridReport):
         ),
         GridFieldText("operationplan__reference", title=_("reference"), editable=False),
         GridFieldText(
-            "operationplan__color",
+            "computed_color",
             title=_("inventory status"),
             formatter="color",
             width="125",
             editable=False,
             extra='"formatoptions":{"defaultValue":""}, "summaryType":"min"',
         ),
+        GridFieldNumber("color", field_name="operationplan__color", hidden=True),
         GridFieldText(
             "operationplan__item",
             title=_("item"),
@@ -6433,6 +6461,15 @@ class ResourceDetail(OperationPlanMixin, GridReport):
             title=format_lazy(
                 "{} - {} - {}", _("resource"), _("location"), _("source")
             ),
+        ),
+        GridFieldText(
+            "inventory_item",
+            title=_("inventory_item"),
+            field_name="inventory_item",
+            editable=False,
+            formatter="detail",
+            extra='"role":"input/item"',
+            initially_hidden=True,
         ),
         # Status field currently not used
         # GridFieldChoice('status', title=_('load status'), choices=OperationPlanResource.OPRstatus),

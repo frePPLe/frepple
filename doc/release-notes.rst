@@ -31,7 +31,7 @@ Release notes
     consumed/delivered (downstream widget).    
     
 - | There is a change in how rows are selected in grids where multiple selection is allowed. 
-    Clicking on a the checkbox of a row will extend existing selction to that new row. Clicking anywhere else in the
+    Clicking on a the checkbox of a row will extend existing selection to that new row. Clicking anywhere else in the
     row will reset existing selection and only that new row will be selected.
 
 6.5.0 (2020/05/16)

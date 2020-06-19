@@ -2158,17 +2158,12 @@ class ManufacturingOrder(OperationPlan):
             def clean_material(self):
                 try:
                     cleaned = []
-                    for res in ast.literal_eval(self.cleaned_data["material"]):
-                        if isinstance(res, str):
-                            rsrc = Item.objects.all().using(database).get(name=res)
+                    for item in ast.literal_eval(self.cleaned_data["material"]):
+                        if isinstance(item, str):
+                            clean = Item.objects.all().using(database).get(name=item)
                         else:
-                            rsrc = Item.objects.all().using(database).get(name=res[0])
-                        cleaned.append(rsrc)
-                        rsrc.top_rsrc = (
-                            Item.objects.all()
-                            .using(database)
-                            .get(lvl=0, lft__lte=rsrc.lft, rght__gte=rsrc.rght)
-                        )
+                            clean = Item.objects.all().using(database).get(name=item[0])
+                        cleaned.append(clean)
                     return cleaned
                 except Exception:
                     raise forms.ValidationError("Invalid item")
@@ -2224,40 +2219,33 @@ class ManufacturingOrder(OperationPlan):
                 if "material" in fields:
                     try:
                         opmatlist = [
-                            r
-                            for r in instance.operation.operationmaterials.all().select_related(
-                                "item"
-                            )
+                            opmat
+                            for opmat in instance.operation.operationmaterials.all()
                         ]
+
+                        dict = {}
+                        for rec in opmatlist:
+                            if rec.name:
+                                if rec.name not in dict:
+                                    dict[rec.name] = [rec.item.name]
+                                else:
+                                    dict[rec.name].append(rec.item.name)
+
                         for mat in self.cleaned_data["material"]:
-                            newopmat = None
-                            for o in opmatlist:
-                                if o.item.lft <= mat.lft < o.item.rght:
-                                    newopmat = o
-                                    break
-                            for (
-                                opplanmat
-                            ) in instance.materials.all().select_related(  # items ?
-                                "item"
-                            ):
-                                oldopmat = None
-                                for o in opmatlist:
-                                    if o.item.lft <= opplanmat.item.lft < o.item.rght:
-                                        oldopmat = o
+
+                            Found = False
+                            for opplanmat in instance.materials.all().using(database):
+                                # find lists where item is:
+                                for k in dict.keys():
+                                    if (
+                                        mat.name in dict[k]
+                                        and opplanmat.item.name in dict[k]
+                                    ) or mat.name == opplanmat.item.name:
+                                        opplanmat.item = mat
+                                        opplanmat.save(using=database)
+                                        Found = True
                                         break
-                                if (
-                                    oldopmat
-                                    and newopmat
-                                    and (
-                                        oldopmat.id == newopmat.id
-                                        or (
-                                            oldopmat.name == newopmat.name
-                                            and newopmat.name
-                                        )
-                                    )
-                                ):
-                                    opplanmat.item = mat
-                                    opplanmat.save(using=database)
+                                if Found:
                                     break
                     except Exception:
                         pass

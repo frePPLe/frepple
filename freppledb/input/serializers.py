@@ -1382,6 +1382,7 @@ class ManufacturingOrderSerializer(BulkSerializerMixin, ModelSerializer):
 
     def _processOperationPlanResource(self, mo, opplanreslist):
         database = mo._state.db
+        # TODO: check if top loop (line just below) is needed
         for opplanres in opplanreslist:
             for rec in opplanreslist:
                 if "resource" in rec:

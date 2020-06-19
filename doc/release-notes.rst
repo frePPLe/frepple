@@ -4,6 +4,11 @@ Release notes
 6.6.0 (Upcoming release)
 ========================
 
+.. rubric:: Production planning
+
+- | Implemented user interface and REST API to switch to manufacturing orders to 
+    alternate materials.
+
 .. rubric:: User interface
 
 - | Some dialog boxes had the confirmation button on the left, some had it on the right.

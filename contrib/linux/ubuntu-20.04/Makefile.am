@@ -5,7 +5,7 @@
 EXTRA_DIST = dockerfile debian
 CLEANFILES = *.rpm *.gz requirements.txt *.deb
 
-TAGNAME = ubuntu-18.04
+TAGNAME = ubuntu-20.04
 BUILD = 1
 
 $(top_builddir)/frepple-$(VERSION).tar.gz: 

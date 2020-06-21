@@ -221,16 +221,6 @@ void PythonInterpreter::initialize() {
   if (nok) throw RuntimeException("Can't initialize Python interpreter");
 }
 
-void PythonInterpreter::finalize() {
-  // Only valid if this is an embedded interpreter
-  if (!mainThreadState) return;
-
-  // Swap to the main thread and exit
-  PyEval_AcquireLock();
-  PyEval_RestoreThread(mainThreadState);
-  Py_Finalize();
-}
-
 void PythonInterpreter::execute(const char* cmd) {
   // Capture global lock
   PyGILState_STATE state = PyGILState_Ensure();

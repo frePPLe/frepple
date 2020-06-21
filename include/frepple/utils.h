@@ -440,9 +440,6 @@ class PythonInterpreter {
   /* Initializes the interpreter. */
   static void initialize();
 
-  /* Finalizes the interpreter. */
-  static void finalize();
-
   /* Execute some python code. */
   static void execute(const char*);
 

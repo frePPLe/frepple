@@ -1,0 +1,19 @@
+#!/usr/bin/make -f
+
+# Uncomment to see verbose output
+#export DH_VERBOSE=1
+
+DEB_PYTHON3_MODULE_PACKAGES = freppledb
+DEB_PYTHON_SETUP_CMD = setup.py
+DEB_MAKE_CHECK_TARGET = check
+DEB_BUILD_OPTIONS = parallel=2
+DEB_CONFIGURE_EXTRA_FLAGS = --disable-static --disable-dependency-tracking --enable-doc PYFLAGS='--install-layout=deb' TESTARGS='--regression'
+
+include /usr/share/cdbs/1/rules/debhelper.mk
+include /usr/share/cdbs/1/class/autotools.mk
+include /usr/share/cdbs/1/class/python-distutils.mk
+
+install/frepple::
+	# Install apache configuration
+	mkdir -p $(CURDIR)/debian/tmp/etc/apache2/sites-available
+	install -m 644 debian/httpd.conf $(CURDIR)/debian/tmp/etc/apache2/sites-available/frepple.conf

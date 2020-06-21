@@ -206,7 +206,12 @@ if test x$PYTHON_CONFIG = xnotavailable
 then
   AC_MSG_ERROR([This package requires the Python 3 development libraries.])
 fi
-LIBS="$($PYTHON_CONFIG --ldflags) $LIBS"
+if test $($PYTHON -c "import sys; print('higher' if sys.hexversion >= 0x030800F0 else 'lower')") = higher
+then
+  LIBS="$($PYTHON_CONFIG --ldflags --embed) $LIBS"
+else
+  LIBS="$($PYTHON_CONFIG --ldflags) $LIBS"
+fi
 CPPFLAGS="$($PYTHON_CONFIG --includes) $CPPFLAGS"
 AC_CHECK_HEADER([Python.h], [],
 [AC_MSG_ERROR([
@@ -290,6 +295,7 @@ AC_CONFIG_FILES([
   contrib/linux/opensuse-15.1/Makefile
   contrib/linux/rhel-8/Makefile
   contrib/linux/ubuntu-18.04/Makefile
+  contrib/linux/ubuntu-20.04/Makefile
   ])
 AC_CONFIG_FILES([
   test/Makefile

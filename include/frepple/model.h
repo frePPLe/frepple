@@ -2781,6 +2781,9 @@ class Operation : public HasName<Operation>,
   /* Updates the availability calendar of the operation. */
   void setAvailable(Calendar* b) { available = b; }
 
+  /* Returns the minimum maxearly of any load. */
+  virtual Duration getMaxEarly() const;
+
   /* Returns an reference to the list of flows.
    * TODO get rid of this method.
    */
@@ -3525,6 +3528,9 @@ class OperationRouting : public Operation {
 
   virtual bool hasSubOperations() const { return true; }
 
+  /* Returns the minimum maxearly of any load. */
+  virtual Duration getMaxEarly() const;
+
   /* A operation of this type enforces the following rules on its
    * operationplans:
    *  - If an end date is given, sequentially use this method on the
@@ -3612,6 +3618,9 @@ class OperationSplit : public Operation {
 
   virtual bool hasSubOperations() const { return true; }
 
+  /* Returns the minimum maxearly of any load. */
+  virtual Duration getMaxEarly() const;
+
   /* A operation of this type enforces the following rules on its
    * operationplans:
    *  - Very simple, accept any value. Ignore any lot size constraints
@@ -3684,6 +3693,9 @@ class OperationAlternate : public Operation {
   ~OperationAlternate();
 
   virtual bool hasSubOperations() const { return true; }
+
+  /* Returns the minimum maxearly of any load. */
+  virtual Duration getMaxEarly() const;
 
   virtual string getOrderType() const { return "ALT"; }
 

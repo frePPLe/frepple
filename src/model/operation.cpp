@@ -187,6 +187,46 @@ Date Operation::getFence(OperationPlan* opplan) const {
     return Plan::instance().getCurrent();
 }
 
+Duration Operation::getMaxEarly() const {
+  Duration tmp = Duration::MAX;
+  for (auto ld = getLoads().begin(); ld != getLoads().end(); ++ld)
+    if (ld->getResource() && ld->getResource()->getMaxEarly() < tmp)
+      tmp = ld->getResource()->getMaxEarly();
+  return tmp;
+}
+
+Duration OperationAlternate::getMaxEarly() const {
+  Duration tmp = Operation::getMaxEarly();
+  for (auto sub = getSubOperations().begin(); sub != getSubOperations().end();
+       ++sub) {
+    auto t = (*sub)->getOperation()->getMaxEarly();
+    // Note: skipping 0-priority
+    if ((*sub)->getPriority() && t < tmp) tmp = t;
+  }
+  return tmp;
+}
+
+Duration OperationSplit::getMaxEarly() const {
+  Duration tmp = Operation::getMaxEarly();
+  for (auto sub = getSubOperations().begin(); sub != getSubOperations().end();
+       ++sub) {
+    auto t = (*sub)->getOperation()->getMaxEarly();
+    // Note: skipping 0-priority
+    if ((*sub)->getPriority() && t < tmp) tmp = t;
+  }
+  return tmp;
+}
+
+Duration OperationRouting::getMaxEarly() const {
+  Duration tmp = Operation::getMaxEarly();
+  for (auto sub = getSubOperations().begin(); sub != getSubOperations().end();
+       ++sub) {
+    auto t = (*sub)->getOperation()->getMaxEarly();
+    if (t < tmp) tmp = t;
+  }
+  return tmp;
+}
+
 OperationPlan* Operation::createOperationPlan(double q, Date s, Date e,
                                               const PooledString& batch,
                                               Demand* l, OperationPlan* ow,

@@ -151,7 +151,16 @@ class Command(BaseCommand):
             if sourcescenario.status != "In use":
                 raise CommandError("Source scenario is not in use")
             if destinationscenario.status != "Free" and not force and not promote:
-                raise CommandError("Destination scenario is not free")
+                # make sure destination scenario is properly built otherwise it is considered Free
+                scenario_is_free = False
+                try:
+                    l = len(
+                        User.objects.using(destination).all()
+                    )  # fails if scenario not properly built
+                except Exception:
+                    scenario_is_free = True
+                if not scenario_is_free:
+                    raise CommandError("Destination scenario is not free")
             if promote and (
                 destination != DEFAULT_DB_ALIAS or source == DEFAULT_DB_ALIAS
             ):

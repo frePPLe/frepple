@@ -416,16 +416,20 @@ class ExportOperationPlans(PlanTask):
         for i in frepple.operations():
             if cluster != -1 and cluster != i.cluster:
                 continue
+
+            # variable used to make sure only first proposed operationplan has its color set.
+            proposedFound = False
+
             for j in i.operationplans:
                 delay = j.delay
-                color = 100 - delay / 86400
+                status = j.status
 
                 if isinstance(i, frepple.operation_inventory):
                     # Export inventory
                     yield "%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\n" % (
                         clean_value(i.name),
                         "STCK",
-                        j.status,
+                        status,
                         round(j.quantity, 8),
                         str(j.start),
                         str(j.end),
@@ -453,7 +457,7 @@ class ExportOperationPlans(PlanTask):
                         else j.owner.demand.due
                         if j.owner and j.owner.demand
                         else "\\N",
-                        color,
+                        "\\N",  # color is empty for stock
                         clean_value(j.reference),
                         clean_value(j.batch),
                     )
@@ -462,7 +466,7 @@ class ExportOperationPlans(PlanTask):
                     yield "%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\n" % (
                         clean_value(i.name),
                         "DO",
-                        j.status,
+                        status,
                         round(j.quantity, 8),
                         str(j.start),
                         str(j.end),
@@ -496,7 +500,9 @@ class ExportOperationPlans(PlanTask):
                         else j.owner.demand.due
                         if j.owner and j.owner.demand
                         else "\\N",
-                        color,
+                        100 - delay / 86400
+                        if proposedFound == False
+                        else "\\N",  # color
                         clean_value(j.reference),
                         clean_value(j.batch),
                     )
@@ -505,7 +511,7 @@ class ExportOperationPlans(PlanTask):
                     yield "%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\n" % (
                         clean_value(i.name),
                         "PO",
-                        j.status,
+                        status,
                         round(j.quantity, 8),
                         str(j.start),
                         str(j.end),
@@ -533,7 +539,9 @@ class ExportOperationPlans(PlanTask):
                         else j.owner.demand.due
                         if j.owner and j.owner.demand
                         else "\\N",
-                        color,
+                        100 - delay / 86400
+                        if proposedFound == False
+                        else "\\N",  # color
                         clean_value(j.reference),
                         clean_value(j.batch),
                     )
@@ -542,7 +550,7 @@ class ExportOperationPlans(PlanTask):
                     yield "%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\n" % (
                         clean_value(i.name),
                         "MO",
-                        j.status,
+                        status,
                         round(j.quantity, 8),
                         str(j.start),
                         str(j.end),
@@ -578,7 +586,9 @@ class ExportOperationPlans(PlanTask):
                         else j.owner.demand.due
                         if j.owner and j.owner.demand
                         else "\\N",
-                        color,
+                        100 - delay / 86400
+                        if proposedFound == False
+                        else "\\N",  # color
                         clean_value(j.reference),
                         clean_value(j.batch),
                     )
@@ -587,7 +597,7 @@ class ExportOperationPlans(PlanTask):
                     yield "%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\v%s\n" % (
                         clean_value(i.name),
                         "DLVR",
-                        j.status,
+                        status,
                         round(j.quantity, 8),
                         str(j.start),
                         str(j.end),
@@ -615,10 +625,13 @@ class ExportOperationPlans(PlanTask):
                         else j.owner.demand.due
                         if j.owner and j.owner.demand
                         else "\\N",
-                        color,
+                        "\\N",  # color is empty for deliver operation
                         clean_value(j.reference),
                         clean_value(j.batch),
                     )
+
+                if status == "proposed":
+                    proposedFound = True
 
     @classmethod
     def run(cls, cluster=-1, database=DEFAULT_DB_ALIAS, **kwargs):

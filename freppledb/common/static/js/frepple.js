@@ -475,7 +475,11 @@ jQuery.extend($.fn.fmatter, {
   },
 
   color : function (cellvalue, options, rowdata) {
-      // Ignores color field and read the delay field
+      
+	  if (rowdata.color === undefined || rowdata.color === '')
+		  return '';
+		  
+	  // Ignores color field and read the delay field
       var thedelay = Math.round(parseInt(rowdata.delay)/8640)/10;
       if (parseInt(rowdata.criticality) === 999 || parseInt(rowdata.operationplan__criticality) === 999) {
         return '';

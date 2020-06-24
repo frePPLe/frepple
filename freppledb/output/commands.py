@@ -423,6 +423,7 @@ class ExportOperationPlans(PlanTask):
             for j in i.operationplans:
                 delay = j.delay
                 status = j.status
+                color = 100 - delay / 86400
 
                 if isinstance(i, frepple.operation_inventory):
                     # Export inventory
@@ -500,8 +501,9 @@ class ExportOperationPlans(PlanTask):
                         else j.owner.demand.due
                         if j.owner and j.owner.demand
                         else "\\N",
-                        100 - delay / 86400
-                        if proposedFound == False
+                        color
+                        if (proposedFound is False and status == "proposed")
+                        or status in ("confirmed", "approved")
                         else "\\N",  # color
                         clean_value(j.reference),
                         clean_value(j.batch),
@@ -539,8 +541,9 @@ class ExportOperationPlans(PlanTask):
                         else j.owner.demand.due
                         if j.owner and j.owner.demand
                         else "\\N",
-                        100 - delay / 86400
-                        if proposedFound == False
+                        color
+                        if (proposedFound is False and status == "proposed")
+                        or status in ("confirmed", "approved")
                         else "\\N",  # color
                         clean_value(j.reference),
                         clean_value(j.batch),
@@ -586,8 +589,9 @@ class ExportOperationPlans(PlanTask):
                         else j.owner.demand.due
                         if j.owner and j.owner.demand
                         else "\\N",
-                        100 - delay / 86400
-                        if proposedFound == False
+                        color
+                        if (proposedFound is False and status == "proposed")
+                        or status in ("confirmed", "approved")
                         else "\\N",  # color
                         clean_value(j.reference),
                         clean_value(j.batch),

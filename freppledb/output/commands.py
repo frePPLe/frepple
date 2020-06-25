@@ -419,6 +419,7 @@ class ExportOperationPlans(PlanTask):
 
             # variable used to make sure only first proposed operationplan has its color set.
             proposedFound = False
+            proposedFoundDate = None
 
             for j in i.operationplans:
                 delay = j.delay
@@ -503,6 +504,7 @@ class ExportOperationPlans(PlanTask):
                         else "\\N",
                         color
                         if (proposedFound is False and status == "proposed")
+                        or (status == "proposed" and j.start == proposedFoundDate)
                         or status in ("confirmed", "approved")
                         else "\\N",  # color
                         clean_value(j.reference),
@@ -543,6 +545,7 @@ class ExportOperationPlans(PlanTask):
                         else "\\N",
                         color
                         if (proposedFound is False and status == "proposed")
+                        or (status == "proposed" and j.start == proposedFoundDate)
                         or status in ("confirmed", "approved")
                         else "\\N",  # color
                         clean_value(j.reference),
@@ -591,6 +594,7 @@ class ExportOperationPlans(PlanTask):
                         else "\\N",
                         color
                         if (proposedFound is False and status == "proposed")
+                        or (status == "proposed" and j.start == proposedFoundDate)
                         or status in ("confirmed", "approved")
                         else "\\N",  # color
                         clean_value(j.reference),
@@ -636,6 +640,7 @@ class ExportOperationPlans(PlanTask):
 
                 if status == "proposed":
                     proposedFound = True
+                    proposedFoundDate = j.start
 
     @classmethod
     def run(cls, cluster=-1, database=DEFAULT_DB_ALIAS, **kwargs):

@@ -24,7 +24,6 @@ function themeconfig(themefolder, themename) {
         'node_modules/bootstrap/less' // bootstrap folder
         ],
       strictMath: true,
-      sourceMap: true,
       compress: true,
       relativeUrls: true,
       plugins: [

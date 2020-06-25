@@ -873,14 +873,17 @@ var grid = {
       if (pivot) {
         for (var i in colModel)
           if ("counter" in colModel[i])
-            numfrozen = i+1;
+            numfrozen = parseInt(i)+1;
           else
-            perm.push(parseInt(i,10));
+            perm.push(parseInt(i));
       }
       else
         numfrozen = parseInt($("#frozen").val());
       for (var i in hiddenrows)
         perm.push(hiddenrows[i]);
+      for (var i in colModel)
+        if ("alwayshidden" in colModel[i])
+        	perm.push(parseInt(i));
       $("#grid").jqGrid("remapColumns", perm, true);
       var skipped = 0;
       for (var i in colModel)

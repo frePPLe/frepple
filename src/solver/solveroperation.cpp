@@ -404,7 +404,8 @@ bool SolverCreate::checkOperation(OperationPlan* opplan,
     // The operationplan was moved early (because of a resource constraint)
     // and we can't properly trust the reply date in such cases...
     // We want to enforce rechecking the next date.
-    if (getLogLevel() > 1) logger << indentlevel << "Recheck capacity" << endl;
+    if (getLogLevel() > 1)
+      logger << indentlevel << "  Recheck capacity" << endl;
 
     // Move the operationplan to the next date where the material is feasible
     opplan->setOperationPlanParameters(
@@ -872,7 +873,7 @@ OperationPlan* SolverCreate::createOperation(const Operation* oper,
   if (use_offset && data->state->a_date != Date::infiniteFuture &&
       !data->state->a_qty && producing_flow && producing_flow->getOffset()) {
     if (getLogLevel() > 1)
-      logger << indentlevel << "Adjusting answer date from "
+      logger << indentlevel << "  Adjusting answer date from "
              << data->state->a_date;
     data->state->a_date =
         producing_flow->computeOperationToFlowDate(z, data->state->a_date);
@@ -1163,7 +1164,7 @@ void SolverCreate::solve(const OperationRouting* oper, void* v) {
   if (data->state->a_date != Date::infiniteFuture && !data->state->a_qty &&
       offset_flow) {
     if (getLogLevel() > 1)
-      logger << indentlevel << "Adjusting answer date from "
+      logger << indentlevel << "  Adjusting answer date from "
              << data->state->a_date;
     data->state->a_date = offset_flow->computeOperationToFlowDate(
         a->getOperationPlan(), data->state->a_date);
@@ -1449,7 +1450,7 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v) {
       if (data->state->a_date != Date::infiniteFuture && sub_flow &&
           sub_flow->getOffset()) {
         if (getLogLevel() > 1)
-          logger << indentlevel << "Adjusting answer date from "
+          logger << indentlevel << "  Adjusting answer date from "
                  << data->state->a_date;
         data->state->a_date =
             sub_flow->computeOperationToFlowDate(nullptr, data->state->a_date);

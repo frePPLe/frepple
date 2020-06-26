@@ -252,7 +252,7 @@ void SolverCreate::chooseResource(
 
     if (loglevel > 1)
       logger << indentlevel
-             << "Alternate load doesn't find supply on any alternate: "
+             << "  Alternate load doesn't find supply on any alternate: "
              << "not available before " << data->state->a_date << endl;
   }
 }
@@ -469,7 +469,7 @@ void SolverCreate::solve(const Load* l, void* v) {
 
   if (loglevel > 1)
     logger << indentlevel
-           << "Alternate load doesn't find supply on any alternate: "
+           << "  Alternate load doesn't find supply on any alternate: "
            << "not available before " << data->state->a_date << endl;
 }
 

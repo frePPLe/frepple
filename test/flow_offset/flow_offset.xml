@@ -17,8 +17,8 @@
 		positive offset on the consuming material
 		- 7: test approved, confirmed
 		and completed manufacturing orders
-		- 8: case with alternate and routing
-		operations
+		- 8: case with alternate and routing operations
+		- 9: case with material being consumed at the end
 	</description>
 	<current>2020-01-01T00:00:00</current>
 
@@ -665,6 +665,63 @@
 			<location name="8. factory" />
 		</demand>
 	</demands>
+
+  <!-- Case 9 -->
+  <operations>
+    <operation name="9. produce end item">
+      <item name="9. end item" />
+      <location name="9. factory" />
+      <duration>P3D</duration>
+      <flows>
+        <flow xsi:type="flow_end">
+          <item name="9. end item" />
+          <quantity>1</quantity>
+          <offset>P3D</offset>
+        </flow>
+        <flow xsi:type="flow_start">
+          <item name="9. component 1" />
+          <quantity>-2</quantity>
+        </flow>
+        <flow xsi:type="flow_end">
+          <item name="9. component 2" />
+          <offset>-P1D</offset>
+          <quantity>-2</quantity>
+        </flow>
+      </flows>
+      <loads>
+        <load>
+          <resource name="9. resource">
+            <location name="9. factory" />
+            <maximum>10</maximum>
+          </resource>
+          <quantity>1</quantity>
+        </load>
+      </loads>
+    </operation>
+  </operations>
+  <suppliers>
+    <supplier name="9. supplier">
+      <itemsuppliers>
+        <itemsupplier>
+          <item name="9. component 1" />
+          <leadtime>P0D</leadtime>
+        </itemsupplier>
+        <itemsupplier>
+          <item name="9. component 2" />
+          <leadtime>P10D</leadtime>
+        </itemsupplier>
+      </itemsuppliers>
+    </supplier>
+  </suppliers>
+  <demands>
+    <demand name="9. order 1">
+      <quantity>1</quantity>
+      <due>2020-01-01T00:00:00</due>
+      <priority>11</priority>
+      <item name="9. end item" />
+      <location name="9. factory" />
+    </demand>
+  </demands>
   
 <?python
 print("CREATING CONSTRAINED PLAN")

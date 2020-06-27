@@ -284,24 +284,22 @@ bool SolverCreate::checkOperation(OperationPlan* opplan,
             // material constraints. If the operationplan is moved early or late
             // for capacity constraints, this is not included.
             if (data.state->a_date < Date::infiniteFuture) {
-              if (g->getFlow()->hasType<FlowEnd>()) {
-                OperationPlanState at = opplan->setOperationPlanParameters(
-                    getAllowSplits() ? 0.01 : orig_opplan_qty,
-                    Date::infinitePast, g->computeFlowToOperationDate(data.state->a_date),
-                    false, false, false);
-                if (at.end < matnext.getEnd())
-                  matnext = DateRange(at.start, at.end);
-              } else {
-                OperationPlanState at = opplan->setOperationPlanParameters(
-                    getAllowSplits() ? 0.01 : orig_opplan_qty,
-                    g->computeFlowToOperationDate(data.state->a_date),
-                    Date::infinitePast, false, false, false);
-                if (at.end < matnext.getEnd())
-                  matnext = DateRange(at.start, at.end);
-              }
-              // xxxif (matnext.getEnd() <= orig_q_date) logger << "STRANGE" <<
-              // matnext << "  " << orig_q_date << "  " << at.second << "  " <<
-              // opplan->getQuantity() << endl;
+              OperationPlanState at =
+                  g->getFlow()->hasType<FlowEnd>()
+                      ? opplan->setOperationPlanParameters(
+                            getAllowSplits() ? 0.01 : orig_opplan_qty,
+                            Date::infinitePast,
+                            g->computeFlowToOperationDate(data.state->a_date),
+                            false, false, false)
+                      : opplan->setOperationPlanParameters(
+                            getAllowSplits() ? 0.01 : orig_opplan_qty,
+                            g->computeFlowToOperationDate(data.state->a_date),
+                            Date::infinitePast, false, false, false);
+              if (at.end < matnext.getEnd())
+                matnext = DateRange(at.start, at.end);
+              // xxxif (matnext.getEnd() <= orig_q_date) logger << "STRANGE"
+              // << matnext << "  " << orig_q_date << "  " << at.second << "
+              // " << opplan->getQuantity() << endl;
             }
 
             // Jump out of the loop if the answered quantity is 0.

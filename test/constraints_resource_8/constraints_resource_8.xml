@@ -702,10 +702,10 @@ frepple.buffer(name="2. item 6 @ factory").ip_flag = True
 frepple.buffer(name="3. item 6 @ factory").ip_flag = True
 
 print("CREATING CONSTRAINED PLAN")
-frepple.solver_mrp(plantype=1, constraints=15, loglevel=2, minimumdelay=86400).solve()
+frepple.solver_mrp(plantype=1, constraints=15, loglevel=2, minimumdelay=2*24*3600).solve()
 frepple.saveplan("output.1.xml")
 print("CREATING UNCONSTRAINED PLAN")
-frepple.solver_mrp(plantype=2, constraints=15, loglevel=2, minimumdelay=86400).solve()
+frepple.solver_mrp(plantype=2, constraints=15, loglevel=2, minimumdelay=2*24*3600).solve()
 frepple.saveplan("output.2.xml")
 ?>
 

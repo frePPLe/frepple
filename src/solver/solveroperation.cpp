@@ -205,6 +205,7 @@ bool SolverCreate::checkOperation(OperationPlan* opplan,
   bool tmp_forceLate = data.state->forceLate;
   bool isPlannedEarly;
   DateRange matnext;
+  bool flow_at_start = true;
 
   // Loop till everything is okay. During this loop the quantity and date of the
   // operationplan can be updated, but it cannot be split or deleted.
@@ -247,8 +248,7 @@ bool SolverCreate::checkOperation(OperationPlan* opplan,
     a_qty = opplan->getQuantity();
     a_date = data.state->q_date;
     incomplete = false;
-    matnext.setStart(Date::infinitePast);
-    matnext.setEnd(Date::infiniteFuture);
+    matnext.setStartAndEnd(Date::infinitePast, Date::infiniteFuture);
 
     // Loop through all flowplans, if propagation is required  // @todo need
     // some kind of coordination run here!!! see test alternate_flow_1
@@ -295,11 +295,9 @@ bool SolverCreate::checkOperation(OperationPlan* opplan,
                             getAllowSplits() ? 0.01 : orig_opplan_qty,
                             g->computeFlowToOperationDate(data.state->a_date),
                             Date::infinitePast, false, false, false);
-              if (at.end < matnext.getEnd())
+              if (at.end < matnext.getEnd()) {
                 matnext = DateRange(at.start, at.end);
-              // xxxif (matnext.getEnd() <= orig_q_date) logger << "STRANGE"
-              // << matnext << "  " << orig_q_date << "  " << at.second << "
-              // " << opplan->getQuantity() << endl;
+                flow_at_start = !g->getFlow()->hasType<FlowEnd>();
             }
 
             // Jump out of the loop if the answered quantity is 0.
@@ -408,11 +406,18 @@ bool SolverCreate::checkOperation(OperationPlan* opplan,
       logger << indentlevel << "  Recheck capacity" << endl;
 
     // Move the operationplan to the next date where the material is feasible
+    if (flow_at_start)
     opplan->setOperationPlanParameters(
         orig_opplan_qty,
         matnext.getStart() > orig_dates.getStart() ? matnext.getStart()
                                                    : orig_dates.getStart(),
         Date::infinitePast, true, true, false);
+    else
+      opplan->setOperationPlanParameters(orig_opplan_qty, Date::infinitePast,
+                                         matnext.getEnd() > orig_dates.getEnd()
+                                             ? matnext.getEnd()
+                                             : orig_dates.getEnd(),
+                                         true, true, false);
 
     // Move the operationplan to a later date where it is feasible.
     data.state->forceLate = true;

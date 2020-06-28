@@ -273,6 +273,8 @@ void SolverCreate::solve(const Buffer* b, void* v) {
         while (b->getProducingOperation() && theDate >= requested_date &&
                loop && (theDate >= noSupplyBefore || hasTransferbatching)) {
           Duration repeat_early;
+          Date prev_date = Date::infiniteFuture;
+          short prev_stuck = 0;
           do {
             // Create supply
             data->state->curBuffer = const_cast<Buffer*>(b);
@@ -300,8 +302,17 @@ void SolverCreate::solve(const Buffer* b, void* v) {
 
             // Note that the supply created with the next line changes the
             // onhand value at all later dates!
+            auto cycle = data->getCommandManager()->setBookmark();
             b->getProducingOperation()->solve(*this, v);
             data->recent_buffers = tmp_recent_buffers;
+
+            // Evaluate the reply date. The variable extraSupplyDate will store
+            // the date when the producing operation tells us it can get extra
+            // supply.
+            if (data->state->a_date < extraSupplyDate &&
+                data->state->a_date > requested_date) {
+              extraSupplyDate = data->state->a_date;
+            }
 
             if (b->getIPFlag() && data->hitMaxEarly >= 0L &&
                 !data->state->a_qty) {
@@ -313,6 +324,10 @@ void SolverCreate::solve(const Buffer* b, void* v) {
                 repeat_early += getMinimumDelay();
               else
                 repeat_early += Duration(86400L);
+              data->getCommandManager()->rollback(cycle);
+              // This ain't very clean
+              if (data->state->a_date == prev_date && ++prev_stuck > 30) break;
+              prev_date = data->state->a_date;
             } else
               break;
           } while (true);
@@ -323,15 +338,9 @@ void SolverCreate::solve(const Buffer* b, void* v) {
               // O reply isn't caused by max-early
               data->hitMaxEarly = Duration::MAX;
             else if (data->hitMaxEarly < prev_hitMaxEarly)
-              // more constrained be max_early than found so far
+              // more constrained by max_early than found so far
               data->hitMaxEarly = prev_hitMaxEarly;
           }
-          // Evaluate the reply date. The variable extraSupplyDate will store
-          // the date when the producing operation tells us it can get extra
-          // supply.
-          if (data->state->a_date < extraSupplyDate &&
-              data->state->a_date > requested_date)
-            extraSupplyDate = data->state->a_date;
 
           // Prevent asking again at a time which we already know to be
           // infeasible

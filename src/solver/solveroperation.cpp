@@ -298,6 +298,7 @@ bool SolverCreate::checkOperation(OperationPlan* opplan,
               if (at.end < matnext.getEnd()) {
                 matnext = DateRange(at.start, at.end);
                 flow_at_start = !g->getFlow()->hasType<FlowEnd>();
+              }
             }
 
             // Jump out of the loop if the answered quantity is 0.
@@ -407,11 +408,11 @@ bool SolverCreate::checkOperation(OperationPlan* opplan,
 
     // Move the operationplan to the next date where the material is feasible
     if (flow_at_start)
-    opplan->setOperationPlanParameters(
-        orig_opplan_qty,
-        matnext.getStart() > orig_dates.getStart() ? matnext.getStart()
-                                                   : orig_dates.getStart(),
-        Date::infinitePast, true, true, false);
+      opplan->setOperationPlanParameters(
+          orig_opplan_qty,
+          matnext.getStart() > orig_dates.getStart() ? matnext.getStart()
+                                                     : orig_dates.getStart(),
+          Date::infinitePast, true, true, false);
     else
       opplan->setOperationPlanParameters(orig_opplan_qty, Date::infinitePast,
                                          matnext.getEnd() > orig_dates.getEnd()

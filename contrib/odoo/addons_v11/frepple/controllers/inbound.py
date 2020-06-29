@@ -87,7 +87,7 @@ class importer(object):
                                 "origin": "frePPLe",
                             }
                         )
-                        po_line = proc_orderline.create(
+                        proc_orderline.create(
                             {
                                 "order_id": po.id,
                                 "product_id": int(item_id),

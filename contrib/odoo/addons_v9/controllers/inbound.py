@@ -103,7 +103,7 @@ class importer(object):
                                 "origin": "frePPLe",
                             }
                         )
-                        po_line = purch_orderline.create(
+                        purch_orderline.create(
                             {
                                 "order_id": po,
                                 "product_id": int(item_id),

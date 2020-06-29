@@ -187,8 +187,8 @@ class exporter(object):
         """
         return "PT%dH%dM%dS" % (
             int(float_time),  # duration: hours
-            int((float_time*60) % 60),  # duration: minutes
-            int((float_time*3600) % 60 % 60),  # duration: seconds
+            int((float_time * 60) % 60),  # duration: minutes
+            int((float_time * 3600) % 60 % 60),  # duration: seconds
         )
 
     def export_calendar(self):
@@ -472,21 +472,17 @@ class exporter(object):
         recs = rts.search([])
         stock_location_routes = {}
         buy_route = None
-        mfg_route = None
         for i in recs.read(fields):
             stock_location_routes[i["id"]] = i
             if i["name"] == "Buy":
                 # Recognize items that can be purchased
                 buy_route = i["id"]
-            if i["name"] == "Manufacture":
-                mfg_route = i["id"]
 
         # Read the products
         m = self.env["product.product"]
         recs = m.search([])
         s = self.env["product.supplierinfo"]
         s_fields = ["name", "delay", "min_qty", "date_end", "date_start", "price"]
-        supplier = {}
         if recs:
             yield "<!-- products -->\n"
             yield "<items>\n"
@@ -621,7 +617,6 @@ class exporter(object):
                     "skipping %s %s" % (i["product_tmpl_id"][0], i["routing_id"])
                 )
                 continue
-            buf_name = u"%s @ %s" % (product_buf["name"], location)
             uom_factor = self.convert_qty_uom(
                 1.0, i["product_uom_id"][0], i["product_tmpl_id"][0]
             )
@@ -1084,7 +1079,7 @@ class exporter(object):
                     )
                 except Exception:
                     continue
-                if not location or not operation in self.operations:
+                if not location or operation not in self.operations:
                     continue
                 qty = self.convert_qty_uom(
                     i["product_qty"], i["product_uom_id"][0], i["product_id"][0]

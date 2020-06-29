@@ -27,32 +27,27 @@ logger = logging.getLogger(__name__)
 
 
 class frepple_plan(osv.osv_memory):
-  _name = 'frepple.plan'
-  _description = 'Create a material and capacity constrained plan'
+    _name = "frepple.plan"
+    _description = "Create a material and capacity constrained plan"
 
-  _columns = {
-    'company': fields.many2one('res.company', 'Company')
-    }
+    _columns = {"company": fields.many2one("res.company", "Company")}
 
+    def run_frepple(self, cr, uid, cmdline, context=None):
+        """
+        Action triggered from the scheduler, or launched in a seperate thread
+        when planning is triggered manually.
+        """
+        logger.info("Start frePPLe planning")
+        subprocess.call(cmdline, shell=True)
+        logger.info("Finished frePPLe planning")
 
-  def run_frepple(self, cr, uid, cmdline, context=None):
-    '''
-    Action triggered from the scheduler, or launched in a seperate thread
-    when planning is triggered manually.
-    '''
-    logger.info("Start frePPLe planning")
-    status = subprocess.call(cmdline, shell=True)
-    logger.info("Finished frePPLe planning")
-
-
-  def generate_plan(self, cr, uid, ids, context=None):
-    for proc in self.browse(cr, uid, ids, context=context):
-      threaded_calculation = threading.Thread(
-        target=self.run_frepple,
-        args=(cr, uid, proc.company.cmdline)
-        )
-      threaded_calculation.start()
-    return {'type': 'ir.actions.act_window_close'}
+    def generate_plan(self, cr, uid, ids, context=None):
+        for proc in self.browse(cr, uid, ids, context=context):
+            threaded_calculation = threading.Thread(
+                target=self.run_frepple, args=(cr, uid, proc.company.cmdline)
+            )
+            threaded_calculation.start()
+        return {"type": "ir.actions.act_window_close"}
 
 
 frepple_plan()

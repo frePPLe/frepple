@@ -1080,10 +1080,10 @@ var grid = {
     $('#timebuckets').modal('hide');
     $.jgrid.hideModal("#searchmodfbox_grid");
 
-// Prepare upfront the html for the scenarios to export
+    // Prepare upfront the html for the scenarios to export
     if (scenario_permissions.length > 0) {
     	var cb = "";
-    	for (i = 0 ; i < scenario_permissions.length ; i++) {
+    	for (var i = 0 ; i < scenario_permissions.length ; i++) {
     		cb += 
     			'<div class="form-check">' +
     			'<input class="form-check-input" type="checkbox" value="" id="'+ scenario_permissions[i][0] +'"' + (scenario_permissions[i][2] == 1 ?"checked disabled":"") + '>' +
@@ -1093,7 +1093,6 @@ var grid = {
     		    '</div>';
     	}
     }
-    
     
     // The only_list argument is true when we show a "list" report.
     // It is false for "table" reports.
@@ -1230,7 +1229,7 @@ var grid = {
       var scenarios = "";
       if (scenario_permissions.length > 1) {
 	      var firstTime = true;
-	      for (i = 0 ; i < scenario_permissions.length; i++) {
+	      for (var i = 0 ; i < scenario_permissions.length; i++) {
 	    	  if ($('#' + scenario_permissions[i][0]).is(":checked")) {
 	    	  	if (firstTime)
 	    	  		firstTime = false;

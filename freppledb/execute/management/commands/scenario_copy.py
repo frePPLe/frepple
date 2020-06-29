@@ -154,9 +154,9 @@ class Command(BaseCommand):
                 # make sure destination scenario is properly built otherwise it is considered Free
                 scenario_is_free = False
                 try:
-                    l = len(
-                        User.objects.using(destination).all()
-                    )  # fails if scenario not properly built
+                    User.objects.using(
+                        destination
+                    ).all().count()  # fails if scenario not properly built
                 except Exception:
                     scenario_is_free = True
                 if not scenario_is_free:

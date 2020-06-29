@@ -91,7 +91,6 @@ from freppledb.common.models import (
     BucketDetail,
     Bucket,
     HierarchyModel,
-    Scenario,
 )
 from freppledb.common.dataload import parseExcelWorksheet, parseCSVdata
 from freppledb.admin import data_site

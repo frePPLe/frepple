@@ -25,30 +25,30 @@ logger = logging.getLogger(__name__)
 
 
 class frepple_plan(models.TransientModel):
-    '''Frepple plan'''
+    """Frepple plan"""
 
-    _name = 'frepple.plan'
-    _description = 'Create a material and capacity constrained plan'
+    _name = "frepple.plan"
+    _description = "Create a material and capacity constrained plan"
 
-    company = fields.Many2one('res.company', string='Company', index=True)
+    company = fields.Many2one("res.company", string="Company", index=True)
 
     @api.model
     def run_frepple(self, cmdline):
-        '''
+        """
         Action triggered from the scheduler, or launched in a seperate thread
         when planning is triggered manually.
-        '''
+        """
         logger.info("Start frePPLe planning")
-        status = subprocess.call(cmdline, shell=True)
+        subprocess.call(cmdline, shell=True)
         logger.info("Finished frePPLe planning")
 
     @api.multi
     def generate_plan(self):
-        ''' Generate plan '''
+        """ Generate plan """
         for proc in self:
             threaded_calculation = threading.Thread(
                 target=self.run_frepple,
-                args=(self.cr, self.user.id, proc.company.cmdline)
-                )
+                args=(self.cr, self.user.id, proc.company.cmdline),
+            )
             threaded_calculation.start()
-        return {'type': 'ir.actions.act_window_close'}
+        return {"type": "ir.actions.act_window_close"}

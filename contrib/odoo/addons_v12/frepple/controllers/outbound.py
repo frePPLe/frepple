@@ -186,8 +186,8 @@ class exporter(object):
         """
         return "PT%dH%dM%dS" % (
             int(float_time),  # duration: hours
-            int((float_time*60) % 60),  # duration: minutes
-            int((float_time*3600) % 60 % 60),  # duration: seconds
+            int((float_time * 60) % 60),  # duration: minutes
+            int((float_time * 3600) % 60 % 60),  # duration: seconds
         )
 
     def export_calendar(self):
@@ -470,15 +470,8 @@ class exporter(object):
         fields = ["name"]
         recs = rts.search([])
         stock_location_routes = {}
-        buy_route = None
-        mfg_route = None
         for i in recs.read(fields):
             stock_location_routes[i["id"]] = i
-            if i["name"] and i["name"].lower().startswith("buy"):
-                # Recognize items that can be purchased
-                buy_route = i["id"]
-            if i["name"] and i["name"].lower().startswith("manufacture"):
-                mfg_route = i["id"]
 
         # Read the products
         m = self.env["product.product"]
@@ -518,7 +511,6 @@ class exporter(object):
                         s["price"],
                     )
                 ]
-        supplier = {}
         if recs:
             yield "<!-- products -->\n"
             yield "<items>\n"

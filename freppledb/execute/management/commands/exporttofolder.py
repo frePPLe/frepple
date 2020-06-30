@@ -87,7 +87,7 @@ class Command(BaseCommand):
           to_char(startdate,'YYYY-MM-DD HH24:MI:SS') as startdate,
           to_char(enddate,'YYYY-MM-DD HH24:MI:SS') as enddate,
           criticality, EXTRACT(EPOCH FROM delay) as delay,
-          operation_id, owner_id, plan, item_id
+          operation_id, owner_id, plan, item_id, batch
           from operationplan where status <> 'confirmed' and type='MO')
           TO STDOUT WITH CSV HEADER""",
         },

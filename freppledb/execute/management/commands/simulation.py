@@ -26,6 +26,7 @@ from django.db import transaction, DEFAULT_DB_ALIAS
 from django.db.models import Sum, Max, Count, F
 
 from freppledb import VERSION
+from freppledb.common.middleware import _thread_locals
 from freppledb.common.models import User, Parameter
 from freppledb.execute.models import Task
 from freppledb.input.models import (
@@ -147,6 +148,7 @@ class Command(BaseCommand):
         param = None
         try:
             # Initialize the task
+            setattr(_thread_locals, "database", database)
             if options["task"]:
                 try:
                     task = Task.objects.all().using(database).get(pk=options["task"])
@@ -350,6 +352,7 @@ class Command(BaseCommand):
             # Final task status
             if task:
                 task.save(using=database)
+            setattr(_thread_locals, "database", None)
 
 
 class Simulator(object):

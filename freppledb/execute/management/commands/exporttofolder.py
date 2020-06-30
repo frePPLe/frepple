@@ -29,6 +29,7 @@ from django.template.loader import render_to_string
 from django.test import RequestFactory
 from django.utils.translation import gettext_lazy as _
 
+from freppledb.common.middleware import _thread_locals
 from freppledb.common.models import User
 from freppledb.common.report import GridReport
 from freppledb import VERSION
@@ -207,6 +208,7 @@ class Command(BaseCommand):
         errors = 0
         try:
             # Initialize the task
+            setattr(_thread_locals, "database", self.database)
             if options["task"]:
                 try:
                     task = (
@@ -437,6 +439,7 @@ class Command(BaseCommand):
                 task.finished = datetime.now()
                 task.processid = None
                 task.save(using=self.database)
+            setattr(_thread_locals, "database", None)
 
     # accordion template
     title = _("Export plan result to folder")

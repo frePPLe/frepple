@@ -28,6 +28,7 @@ from django.utils.encoding import force_text
 from django.template import Template, RequestContext
 
 import freppledb.common.commands
+from freppledb.common.middleware import _thread_locals
 from freppledb.common.models import User
 from freppledb.execute.models import Task
 from freppledb import VERSION
@@ -112,6 +113,7 @@ class Command(BaseCommand):
         task = None
         try:
             # Initialize the task
+            setattr(_thread_locals, "database", database)
             if "task" in options and options["task"]:
                 try:
                     task = Task.objects.all().using(database).get(pk=options["task"])
@@ -286,6 +288,9 @@ class Command(BaseCommand):
                 task.processid = None
                 task.save(using=database)
             raise e
+
+        finally:
+            setattr(_thread_locals, "database", None)
 
     # accordion template
     title = _("Create a plan")

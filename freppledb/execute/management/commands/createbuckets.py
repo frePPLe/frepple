@@ -24,6 +24,7 @@ from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 from django.template.loader import render_to_string
 
+from freppledb.common.middleware import _thread_locals
 from freppledb.common.models import Bucket, BucketDetail
 from freppledb.execute.models import Task
 from freppledb.common.models import User
@@ -125,6 +126,7 @@ class Command(BaseCommand):
         task = None
         try:
             # Initialize the task
+            setattr(_thread_locals, "database", None)
             if options["task"]:
                 if options["task"] > 0:
                     try:
@@ -281,6 +283,7 @@ class Command(BaseCommand):
                 task.processid = None
                 task.save(using=database)
             settings.DEBUG = tmp_debug
+            setattr(_thread_locals, "database", None)
 
     # accordion template
     title = _("Generate buckets")

@@ -1,6 +1,16 @@
 Release notes
 -------------
 
+6.7.0 (Upcoming release)
+========================
+
+.. rubric:: User interface
+
+- | The search box now allows you to open the search results in a new browser tab. Using
+    different browser tabs is very handy when you don't like to lose the previous screen.
+  | You can already achieve this on all links by using the right-click menu of your
+    browser. We made that a bit easier now in the search box.
+
 6.6.0 (2020/06/19)
 ==================
 

@@ -226,7 +226,8 @@ div.tt-menu.tt-open {
 div.tt-dataset.tt-dataset-search {
   background-color: @dropdown-bg;
   li.tt-suggestion.tt-selectable {
-    padding-bottom: 5px;
+    padding-bottom: 2px;
+    padding-top: 2px;
     background-color: @dropdown-bg;
     line-height: @line-height-base;
     display: block;
@@ -240,7 +241,21 @@ div.tt-dataset.tt-dataset-search {
       text-align: left;
     }
   }
-
+  
+  li.tt-suggestion.tt-selectable a {
+    display: block;
+    white-space: nowrap;
+    overflow:hidden;
+  }
+  
+  li.tt-suggestion.tt-selectable div {
+    position: relative;
+    top: -1em;
+    margin-top: -4px;
+    margin-right: 5px;
+    float:right;
+  } 
+  
   li.tt-suggestion.tt-selectable:hover {
     background-color: @dropdown-link-hover-bg;
     a:link:hover {

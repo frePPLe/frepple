@@ -421,7 +421,7 @@ jQuery.extend($.fn.fmatter, {
     if (cellvalue === undefined || cellvalue === '')
     	return '';
     if (options['colModel']['popup'])
-    	return cellvalue;
+    	return $.jgrid.htmlEncode(cellvalue);
     var result = '';
     var count = cellvalue.length;
     for (var i = 0; i < count; i++)
@@ -621,11 +621,10 @@ var grid = {
     var result = '';
     for (var i of cross_idx)
     {
-      if (result != '') result += '<br>';
-      if (cross[cross_idx[i]]['editable'])
-        result += '<span class="editablepivotcol">' + cross[cross_idx[i]]['name'] + '</span>';
+      if (cross[i]['editable'])
+        result += '<span class="editablepivotcol">' + cross[i]['name'] + '</span>';
       else
-        result += cross[cross_idx[i]]['name'];
+        result += cross[i]['name'] + '<br>';
     }
     return result;
   },
@@ -1640,7 +1639,11 @@ var favorite = {
 		
 	  check: function() {
 	  	var fav = $("#favoritename").val();
-	  	if (fav.length > 0 && !(fav in favorites)) {
+	  	if (fav.length > 0 && (
+	  			(typeof favorites !== 'undefined' && !(fav in favorites))
+	  			|| (typeof preferences !== 'undefined' && !("favorites" in preferences))
+	  			|| (typeof preferences !== 'undefined' && "favorites" in preferences && !(fav in preferences.favorites))
+	  			)) {
 	      $("#favoritesave").removeClass("disabled");
 	  	  return true;
 	  	}
@@ -2475,11 +2478,13 @@ $(function() {
           return '<span><p style="margin-top: 5px; margin-bottom: 1px;">' 
             + $.jgrid.htmlEncode(data.label) 
             + '</p><li  role="separator" class="divider"></li></span>';
-        else
-          return '<li><a style="display: block" href="'+ url_prefix + data.url + admin_escape(data.value) + 
-          (data.removeTrailingSlash?"":"/?noautofilter") +
-          '" >' 
-            + $.jgrid.htmlEncode(data.display) + '</a></li>';
+        var href = url_prefix + data.url + admin_escape(data.value);
+        if (!data.removeTrailingSlash) href += "/?noautofilter"; 
+        return '<li><a href="'+ href + '" >' 
+            + $.jgrid.htmlEncode(data.display) 
+            + '</a><div class="tt-external"><a target="_blank" href="' + href + '">'
+            + '<i class="fa fa-external-link" aria-hidden="true"></i>'
+            + '</a></div></li>';
       },
     }
   });

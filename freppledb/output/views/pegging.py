@@ -300,7 +300,9 @@ class ReportByDemand(GridReport):
                                 "enddate": str(rec[6]),
                                 "status": rec[8],
                                 "reference": rec[13],
-                                "color": round(rec[12]),
+                                "color": round(rec[12])
+                                if rec[12] is not None
+                                else None,
                                 "type": rec[10],
                                 "item": rec[14],
                                 "location": rec[15],
@@ -331,7 +333,7 @@ class ReportByDemand(GridReport):
                             "enddate": str(rec[6]),
                             "status": rec[8],
                             "reference": rec[13],
-                            "color": round(rec[12]),
+                            "color": round(rec[12]) if rec[12] is not None else None,
                             "type": rec[10],
                             "item": rec[14],
                             "location": rec[15],

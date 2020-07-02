@@ -29,7 +29,6 @@ It provides the following functionality:
 """
 
 import codecs
-import collections
 import csv
 from datetime import date, datetime, timedelta, time
 from decimal import Decimal
@@ -270,7 +269,7 @@ class GridField(object):
         if self.searchoptions:
             o.append(',"searchoptions":%s' % self.searchoptions)
         if self.extra:
-            if isinstance(self.extra, collections.Callable):
+            if callable(self.extra):
                 o.append(",%s" % force_text(self.extra()))
             else:
                 o.append(",%s" % force_text(self.extra))
@@ -566,7 +565,7 @@ class GridReport(View):
         a format that is understood uniformly across different regions in the
         world.
         """
-        if isinstance(value, collections.Callable):
+        if callable(value):
             value = value()
         if isinstance(value, numericTypes):
             return (
@@ -674,13 +673,13 @@ class GridReport(View):
         # Select the bucket size
         if not cls.maxBucketLevel:
             maxlvl = 999
-        elif isinstance(cls.maxBucketLevel, collections.Callable):
+        elif callable(cls.maxBucketLevel):
             maxlvl = cls.maxBucketLevel(request)
         else:
             maxlvl = cls.maxBucketLevel
         if not cls.minBucketLevel:
             minlvl = -999
-        elif isinstance(cls.minBucketLevel, collections.Callable):
+        elif callable(cls.minBucketLevel):
             minlvl = cls.minBucketLevel(request)
         else:
             minlvl = cls.minBucketLevel
@@ -1329,7 +1328,7 @@ class GridReport(View):
         if not fields:
             raise Exception("No fields gives")
         if not hasattr(request, "query"):
-            if isinstance(cls.basequeryset, collections.Callable):
+            if callable(cls.basequeryset):
                 request.query = cls.filter_items(
                     request, cls.basequeryset(request, *args, **kwargs), False
                 ).using(request.database)
@@ -1354,7 +1353,7 @@ class GridReport(View):
     @classmethod
     def count_query(cls, request, *args, **kwargs):
         if not hasattr(request, "query"):
-            if isinstance(cls.basequeryset, collections.Callable):
+            if callable(cls.basequeryset):
                 request.query = cls.filter_items(
                     request, cls.basequeryset(request, *args, **kwargs), False
                 ).using(request.database)
@@ -1482,13 +1481,13 @@ class GridReport(View):
             cls.getBuckets(request, args, kwargs)
             bucketnames = Bucket.objects.using(request.database)
             if cls.maxBucketLevel:
-                if isinstance(cls.maxBucketLevel, collections.Callable):
+                if callable(cls.maxBucketLevel):
                     maxlvl = cls.maxBucketLevel(request)
                     bucketnames = bucketnames.filter(level__lte=maxlvl)
                 else:
                     bucketnames = bucketnames.filter(level__lte=cls.maxBucketLevel)
             if cls.minBucketLevel:
-                if isinstance(cls.minBucketLevel, collections.Callable):
+                if callable(cls.minBucketLevel):
                     minlvl = cls.minBucketLevel(request)
                     bucketnames = bucketnames.filter(level__gte=minlvl)
                 else:
@@ -2552,7 +2551,7 @@ class GridPivot(GridReport):
     @classmethod
     def count_query(cls, request, *args, **kwargs):
         if not hasattr(request, "basequery"):
-            if isinstance(cls.basequeryset, collections.Callable):
+            if callable(cls.basequeryset):
                 request.basequery = cls.basequeryset(request, *args, **kwargs)
             else:
                 request.basequery = cls.basequeryset
@@ -2569,7 +2568,7 @@ class GridPivot(GridReport):
         if not fields:
             raise Exception("No fields for pivot report")
         if not hasattr(request, "basequery"):
-            if isinstance(cls.basequeryset, collections.Callable):
+            if callable(cls.basequeryset):
                 request.basequery = cls.basequeryset(request, *args, **kwargs)
             else:
                 request.basequery = cls.basequeryset

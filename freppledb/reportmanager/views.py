@@ -150,85 +150,127 @@ class ReportManager(GridReport):
     title = _("report editor")
     template = "reportmanager/reportmanager.html"
     reportkey = "reportmanager.reportmanager"
+    help_url = "user-guide/user-interface/report-manager.html"
+    default_sort = ""
 
     @classmethod
     def has_permission(cls, user):
         return user.has_perm("reportmanager.view_sqlreport")
 
     @classmethod
-    def get(cls, request, *args, **kwargs):
-        request.prefs = request.user.getPreference(
-            cls.reportkey, database=request.database
-        )
+    def data_query(cls, request, *args, **kwargs):
+        # Main query that will return all data records.
+        # It implements filtering, paging and sorting.
+        conn = None
+        if not hasattr(request, "report"):
+            request.report = (
+                SQLReport.objects.all().using(request.database).get(pk=args[0])
+            )
+        try:
+            conn = create_connection(request.database)
+            with conn.cursor() as cursor:
+                sqlrole = settings.DATABASES[request.database].get(
+                    "SQL_ROLE", "report_role"
+                )
+                if sqlrole:
+                    cursor.execute("set role %s" % (sqlrole,))
+                cursor.execute(
+                    request.report.sql
+                )  # xxx query may require arguments for filtering!!!!
+                for rec in cursor.fetchall():
+                    result = {}
+                    idx = 0
+                    for f in request.rows:
+                        result[f.name] = rec[idx]
+                        idx += 1
+                    yield result
+        finally:
+            if conn:
+                conn.close()
+
+    @classmethod
+    def count_query(cls, request, *args, **kwargs):
+        # Query that returns the number of records in the report.
+        # It implements filtering, but no paging or sorting.
+        conn = None
+        if not hasattr(request, "report"):
+            request.report = (
+                SQLReport.objects.all().using(request.database).get(pk=args[0])
+            )
+        try:
+            conn = create_connection(request.database)
+            with conn.cursor() as cursor:
+                sqlrole = settings.DATABASES[request.database].get(
+                    "SQL_ROLE", "report_role"
+                )
+                if sqlrole:
+                    cursor.execute("set role %s" % (sqlrole,))
+                cursor.execute(
+                    "select count(*) from (" + request.report.sql + ") t_subquery"
+                )  # xxx query may require arguments for filtering!!!!
+                return cursor.fetchone()[0]
+        finally:
+            if conn:
+                conn.close()
+
+    def rows(self, request, *args, **kwargs):
+        cols = []
         if args:
-            report = SQLReport.objects.using(request.database).get(pk=args[0])
+            for c in (
+                SQLColumn.objects.using(request.database)
+                .filter(report=args[0])
+                .order_by("sequence")
+            ):
+                if c.format == "number":
+                    cols.append(GridFieldNumber(_(c.name)))
+                elif c.format == "datetime":
+                    cols.append(GridFieldDateTime(_(c.name)))
+                elif c.format == "date":
+                    cols.append(GridFieldDate(_(c.name)))
+                elif c.format == "integer":
+                    cols.append(GridFieldInteger(_(c.name)))
+                elif c.format == "duration":
+                    cols.append(GridFieldDuration(_(c.name)))
+                elif c.format == "text":
+                    cols.append(GridFieldText(_(c.name)))
+                elif c.format == "character":
+                    cols.append(GridFieldText(_(c.name)))
+                elif c.format == "bool":
+                    cols.append(GridFieldBool(_(c.name)))
+                elif c.format == "currency":
+                    cols.append(GridFieldCurrency(_(c.name)))
+        return cols
+
+    @classmethod
+    def getKey(cls, request, *args, **kwargs):
+        if args:
+            return "%s.%s.%s" % (cls.__module__, cls.__name__, args[0])
+        else:
+            return "%s.%s" % (cls.__module__, cls.__name__)
+
+    @classmethod
+    def get(cls, request, *args, **kwargs):
+        # Extra permission check
+        if args:
+            request.report = SQLReport.objects.using(request.database).get(pk=args[0])
             if not cls.has_permission(request.user) or (
-                not report.public and report.user.id != request.user.id
+                not request.report.public and request.report.user.id != request.user.id
             ):
                 return HttpResponseForbidden("You're not the owner of this report")
         else:
-            report = None
+            request.report = None
             if not request.user.has_perm("reportmanager.add_sqlreport"):
                 return HttpResponseForbidden("<h1>%s</h1>" % _("Permission denied"))
 
-        if report:
-            fmt = request.GET.get("format", None)
-            if fmt in ("spreadsheetlist", "spreadsheet"):
-                # Return an excel spreadsheet
-                out = BytesIO()
-                cls._generate_spreadsheet_data(request, out, report, *args, **kwargs)
-                response = HttpResponse(
-                    content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                    content=out.getvalue(),
-                )
-                # Filename parameter is encoded as specified in rfc5987
-                response["Content-Disposition"] = (
-                    "attachment; filename*=utf-8''%s.xlsx"
-                    % urllib.parse.quote(report.name)
-                )
-                response["Cache-Control"] = "no-cache, no-store"
-                return response
-            elif fmt in ("csvlist", "csv"):
-                # Return CSV file
-                response = StreamingHttpResponse(
-                    content_type="text/csv; charset=%s" % settings.CSV_CHARSET,
-                    streaming_content=cls._generate_csv_data(
-                        request, report, *args, **kwargs
-                    ),
-                )
-                # Filename parameter is encoded as specified in rfc5987
-                response["Content-Disposition"] = (
-                    "attachment; filename*=utf-8''%s.csv"
-                    % urllib.parse.quote(report.name)
-                )
-                response["Cache-Control"] = "no-cache, no-store"
-                return response
-            elif fmt == "json":
-                # Return json
-                return StreamingHttpResponse(
-                    content_type="application/json; charset=%s"
-                    % settings.DEFAULT_CHARSET,
-                    streaming_content=cls._generate_json_data(
-                        database=request.database, sql=report.sql
-                    ),
-                )
-        return render(
-            request,
-            cls.template,
-            {
-                "title": report.name if report else _("report editor"),
-                "report": report,
-                "reportkey": "%s.%s" % (cls.reportkey, report.id)
-                if report
-                else cls.reportkey,
-            },
-        )
+        # Default logic
+        return super().get(request, *args, **kwargs)
 
-    @method_decorator(staff_member_required)
-    @method_decorator(csrf_protect)
-    @method_decorator(never_cache)
-    def dispatch(self, *args, **kwargs):
-        return super().dispatch(*args, **kwargs)
+    @classmethod
+    def extra_context(cls, request, *args, **kwargs):
+        return {
+            "title": request.report.name if request.report else cls.title,
+            "report": getattr(request, "report", None),
+        }
 
     @classmethod
     def post(cls, request, *args, **kwargs):
@@ -292,336 +334,3 @@ class ReportManager(GridReport):
 
         else:
             return HttpResponseNotAllowed("Unknown post request")
-
-    @classmethod
-    def getColModel(cls, name, oid, counter):
-        colmodel = {
-            "name": name,
-            "index": name,
-            "label": capfirst(name),
-            "editable": False,
-            "title": False,
-            "counter": counter,
-        }
-        if oid == 1700:
-            # Numeric field
-            colmodel.update(
-                {
-                    "align": "center",
-                    "formatter": "number",
-                    "searchrules": {"number": True},
-                    "searchoptions": {
-                        "sopt": ["eq", "ne", "in", "ni", "lt", "le", "gt", "ge"],
-                        "searchhidden": True,
-                    },
-                    "formatoptions": {"defaultValue": "", "decimalPlaces": "auto"},
-                    "width": 70,
-                }
-            )
-        elif oid == 1184:
-            # Datetime field
-            colmodel.update(
-                {
-                    "align": "center",
-                    "formatter": "date",
-                    "searchoptions": {
-                        "sopt": [
-                            "cn",
-                            "em",
-                            "nm",
-                            "in",
-                            "ni",
-                            "eq",
-                            "bw",
-                            "ew",
-                            "bn",
-                            "nc",
-                            "en",
-                            "win",
-                        ],
-                        "searchhidden": True,
-                    },
-                    "formatoptions": {
-                        "srcformat": "Y-m-d H:i:s",
-                        "newformat": "Y-m-d H:i:s",
-                    },
-                    "width": 140,
-                }
-            )
-        elif oid == 23:
-            # Integer
-            colmodel.update(
-                {
-                    "align": "center",
-                    "formatter": "integer",
-                    "searchrules": {"integer": True},
-                    "searchoptions": {
-                        "sopt": ["eq", "ne", "in", "ni", "lt", "le", "gt", "ge"],
-                        "searchhidden": True,
-                    },
-                    "formatoptions": {"defaultValue": ""},
-                    "width": 70,
-                }
-            )
-        elif oid == 1186:
-            # Duration field
-            colmodel.update(
-                {
-                    "align": "center",
-                    "formatter": "duration",
-                    "searchoptions": {
-                        "sopt": ["eq", "ne", "in", "ni", "lt", "le", "gt", "ge"],
-                        "searchhidden": True,
-                    },
-                    "width": 80,
-                }
-            )
-        elif oid == 1043:
-            # Text field
-            colmodel.update(
-                {
-                    "align": "left",
-                    "searchoptions": {
-                        "sopt": [
-                            "cn",
-                            "nc",
-                            "eq",
-                            "ne",
-                            "lt",
-                            "le",
-                            "gt",
-                            "ge",
-                            "bw",
-                            "bn",
-                            "in",
-                            "ni",
-                            "ew",
-                            "en",
-                        ],
-                        "searchhidden": True,
-                    },
-                    "width": 200,
-                }
-            )
-            if name in ("item", "item_id"):
-                colmodel.update({"formatter": "detail", "role": "input/item"})
-            elif name in ("location", "location_id"):
-                colmodel.update({"formatter": "detail", "role": "input/location"})
-            elif name in ("supplier", "supplier_id"):
-                colmodel.update({"formatter": "detail", "role": "input/supplier"})
-            elif name in ("resource", "resource_id"):
-                colmodel.update({"formatter": "detail", "role": "input/resource"})
-            elif name in ("customer", "customer_id"):
-                colmodel.update({"formatter": "detail", "role": "input/customer"})
-            elif name in ("demand", "demand_id"):
-                colmodel.update({"formatter": "detail", "role": "input/demand"})
-        else:
-            # Text, jsonb and any other unknown field
-            colmodel.update(
-                {
-                    "align": "left",
-                    "searchoptions": {
-                        "sopt": [
-                            "cn",
-                            "nc",
-                            "eq",
-                            "ne",
-                            "lt",
-                            "le",
-                            "gt",
-                            "ge",
-                            "bw",
-                            "bn",
-                            "in",
-                            "ni",
-                            "ew",
-                            "en",
-                        ],
-                        "searchhidden": True,
-                    },
-                    "width": 200,
-                }
-            )
-        return colmodel
-
-    @staticmethod
-    def getSQL(sql):
-        # TODO optionally wrap in another query that can be filtered, paged and sorted
-        return sqlparse.split(sql)[0] if sql else ""
-
-    @classmethod
-    def _generate_json_data(cls, database, sql):
-        conn = None
-        try:
-            conn = create_connection(database)
-            with conn.cursor() as cursor:
-                sqlrole = settings.DATABASES[database].get("SQL_ROLE", "report_role")
-                if sqlrole:
-                    cursor.execute("set role %s" % (sqlrole,))
-                cursor.execute(sql=cls.getSQL(sql))
-                if cursor.description:
-                    counter = 0
-                    columns = []
-                    colmodel = []
-                    for f in cursor.description:
-                        columns.append(f[0])
-                        colmodel.append(cls.getColModel(f[0], f[1], counter))
-                        counter += 1
-
-                    yield """{
-                                    "rowcount": %s,
-                                    "status": "ok",
-                                    "columns": %s,
-                                    "colmodel": %s,
-                                    "data": [
-                                    """ % (
-                        cursor.rowcount,
-                        json.dumps(columns),
-                        json.dumps(colmodel),
-                    )
-                    first = True
-                    for result in cursor.fetchall():
-                        if first:
-                            yield json.dumps(
-                                dict(
-                                    zip(
-                                        columns,
-                                        [
-                                            i
-                                            if i is None
-                                            else i.total_seconds()
-                                            if isinstance(i, timedelta)
-                                            else str(i)
-                                            for i in result
-                                        ],
-                                    )
-                                )
-                            )
-                            first = False
-                        else:
-                            yield ",%s" % json.dumps(
-                                dict(
-                                    zip(
-                                        columns,
-                                        [
-                                            i
-                                            if i is None
-                                            else i.total_seconds()
-                                            if isinstance(i, timedelta)
-                                            else str(i)
-                                            for i in result
-                                        ],
-                                    )
-                                )
-                            )
-                    yield "]}"
-                elif cursor.rowcount:
-                    yield '{"rowcount": %s, "status": "Updated %s rows"}' % (
-                        cursor.rowcount,
-                        cursor.rowcount,
-                    )
-                else:
-                    yield '{"rowcount": %s, "status": "Done"}' % cursor.rowcount
-        except GeneratorExit:
-            pass
-        except Exception as e:
-            yield json.dumps({"status": str(e)})
-        finally:
-            if conn:
-                conn.close()
-
-    @classmethod
-    def _generate_csv_data(cls, request, report, *args, **kwargs):
-        sf = StringIO()
-        decimal_separator = get_format("DECIMAL_SEPARATOR", request.LANGUAGE_CODE, True)
-        if decimal_separator == ",":
-            writer = csv.writer(sf, quoting=csv.QUOTE_NONNUMERIC, delimiter=";")
-        else:
-            writer = csv.writer(sf, quoting=csv.QUOTE_NONNUMERIC, delimiter=",")
-
-        # Write a Unicode Byte Order Mark header, aka BOM (Excel needs it to open UTF-8 file properly)
-        yield cls.getBOM(settings.CSV_CHARSET)
-
-        # Run the query
-        conn = None
-        try:
-            conn = create_connection(request.database)
-            with conn.cursor() as cursor:
-                sqlrole = settings.DATABASES[request.database].get(
-                    "SQL_ROLE", "report_role"
-                )
-                if sqlrole:
-                    cursor.execute("set role %s" % (sqlrole,))
-                cursor.execute(sql=cls.getSQL(report.sql))
-                if cursor.description:
-                    # Write header row
-                    writer.writerow([f[0] for f in cursor.description])
-                    yield sf.getvalue()
-
-                # Write all output rows
-                for result in cursor.fetchall():
-                    # Clear the return string buffer
-                    sf.seek(0)
-                    sf.truncate(0)
-                    writer.writerow(
-                        [
-                            cls._getCSVValue(
-                                i, request=request, decimal_separator=decimal_separator
-                            )
-                            for i in result
-                        ]
-                    )
-                    yield sf.getvalue()
-        except GeneratorExit:
-            pass
-        finally:
-            if conn:
-                conn.close()
-
-    @classmethod
-    def _generate_spreadsheet_data(cls, request, out, report, *args, **kwargs):
-        # Create a workbook
-        wb = Workbook(write_only=True)
-        ws = wb.create_sheet(title=report.name)
-
-        # Create a named style for the header row
-        readlonlyheaderstyle = NamedStyle(name="readlonlyheaderstyle")
-        readlonlyheaderstyle.fill = PatternFill(fill_type="solid", fgColor="d0ebfb")
-        wb.add_named_style(readlonlyheaderstyle)
-
-        # Run the query
-        conn = None
-        try:
-            conn = create_connection(request.database)
-            comment = CellComment(
-                force_text(_("Read only")), "Author", height=20, width=80
-            )
-            with conn.cursor() as cursor:
-                sqlrole = settings.DATABASES[request.database].get(
-                    "SQL_ROLE", "report_role"
-                )
-                if sqlrole:
-                    cursor.execute("set role %s" % (sqlrole,))
-                cursor.execute(sql=cls.getSQL(report.sql))
-                if cursor.description:
-                    # Write header row
-                    header = []
-                    for f in cursor.description:
-                        cell = WriteOnlyCell(ws, value=f[0])
-                        cell.style = "readlonlyheaderstyle"
-                        cell.comment = comment
-                        header.append(cell)
-                    ws.append(header)
-
-                    # Add an auto-filter to the table
-                    ws.auto_filter.ref = "A1:%s1048576" % get_column_letter(len(header))
-
-                # Write all output rows
-                for result in cursor.fetchall():
-                    ws.append([_getCellValue(i, request=request) for i in result])
-
-            # Write the spreadsheet
-            wb.save(out)
-        finally:
-            if conn:
-                conn.close()

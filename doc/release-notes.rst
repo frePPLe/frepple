@@ -6,10 +6,14 @@ Release notes
 
 .. rubric:: User interface
 
-- | The search box now allows you to open the search results in a new browser tab. Using
-    different browser tabs is very handy when you don't like to lose the previous screen.
+- | The `search box <user-guide/user-interface/getting-around/navigation.html>`_ now allows
+    you to open the search results in a new browser tab. Using different browser tabs is very
+    handy when you don't like to lose the previous screen.
   | You can already achieve this on all links by using the right-click menu of your
     browser. We made that a bit easier now in the search box.
+    
+- | `Custom reports <user-guide/user-interface/report-manager.html>`_ now support filtering,
+    sorting, customization and favorites. Just as all other screens.
 
 6.6.0 (2020/06/19)
 ==================

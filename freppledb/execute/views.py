@@ -19,13 +19,23 @@ from datetime import datetime
 from importlib import import_module
 from io import BytesIO
 import json
+from openpyxl import load_workbook, Workbook
+from openpyxl.utils import get_column_letter
+from openpyxl.cell import WriteOnlyCell
+from openpyxl.styles import NamedStyle, PatternFill
+from openpyxl.comments import Comment as CellComment
 import operator
 import os
 import re
 import shlex
 from zipfile import ZipFile, ZIP_DEFLATED
 
+from django.apps import apps
 from django.conf import settings
+from django.contrib.auth import get_permission_codename
+from django.contrib.contenttypes.models import ContentType
+from django.db import transaction
+from django.db.models.fields.related import ForeignKey
 from django.views import static
 from django.views.decorators.cache import never_cache
 from django.shortcuts import render
@@ -47,19 +57,22 @@ from django.utils.encoding import force_text
 from django.utils.text import capfirst
 from django.core.management import get_commands, call_command
 
-from freppledb.execute.models import Task, ScheduledTask
+from freppledb.admin import data_site
 from freppledb.common.auth import basicauthentication
-from freppledb.common.models import Scenario, Parameter
+from freppledb.common.dataload import parseExcelWorksheet
+from freppledb.common.models import Scenario, HierarchyModel
 from freppledb.common.report import (
-    exportWorkbook,
-    importWorkbook,
     GridFieldDuration,
     GridFieldBool,
     GridFieldLocalDateTime,
     GridReport,
     GridFieldText,
     GridFieldInteger,
+    EXCLUDE_FROM_BULK_OPERATIONS,
+    _getCellValue,
+    matchesModelName,
 )
+from .models import Task, ScheduledTask
 from .management.commands.runworker import launchWorker
 
 import logging
@@ -846,3 +859,349 @@ def scheduletasks(request):
     except Exception as e:
         logger.error("Error updating scheduled task: %s" % e)
         return HttpResponseServerError("Error updating scheduled task")
+
+
+def exportWorkbook(request):
+    # Create a workbook
+    wb = Workbook(write_only=True)
+
+    # Create a named style for the header row
+    headerstyle = NamedStyle(name="headerstyle")
+    headerstyle.fill = PatternFill(fill_type="solid", fgColor="70c4f4")
+    wb.add_named_style(headerstyle)
+    readlonlyheaderstyle = NamedStyle(name="readlonlyheaderstyle")
+    readlonlyheaderstyle.fill = PatternFill(fill_type="solid", fgColor="d0ebfb")
+    wb.add_named_style(readlonlyheaderstyle)
+
+    # Loop over all selected entity types
+    exportConfig = {"anonymous": request.POST.get("anonymous", False)}
+    ok = False
+    for entity_name in request.POST.getlist("entities"):
+        try:
+            # Initialize
+            (app_label, model_label) = entity_name.split(".")
+            model = apps.get_model(app_label, model_label)
+            # Verify access rights
+            permname = get_permission_codename("change", model._meta)
+            if not request.user.has_perm("%s.%s" % (app_label, permname)):
+                continue
+
+            # Never export some special administrative models
+            if model in EXCLUDE_FROM_BULK_OPERATIONS:
+                continue
+
+            # Create sheet
+            ok = True
+            ws = wb.create_sheet(title=force_text(model._meta.verbose_name))
+
+            # Build a list of fields and properties
+            fields = []
+            modelfields = []
+            header = []
+            source = False
+            lastmodified = False
+            owner = False
+            comment = None
+            try:
+                # The admin model of the class can define some fields to exclude from the export
+                exclude = data_site._registry[model].exclude
+            except Exception:
+                exclude = None
+            for i in model._meta.fields:
+                if i.name in ["lft", "rght", "lvl"]:
+                    continue  # Skip some fields of HierarchyModel
+                elif i.name == "source":
+                    source = i  # Put the source field at the end
+                elif i.name == "lastmodified":
+                    lastmodified = i  # Put the last-modified field at the very end
+                elif not (exclude and i.name in exclude):
+                    fields.append(i.column)
+                    modelfields.append(i)
+                    cell = WriteOnlyCell(ws, value=force_text(i.verbose_name).title())
+                    if i.editable:
+                        cell.style = "headerstyle"
+                        if isinstance(i, ForeignKey):
+                            cell.comment = CellComment(
+                                force_text(
+                                    _("Values in this field must exist in the %s table")
+                                    % force_text(
+                                        i.remote_field.model._meta.verbose_name
+                                    )
+                                ),
+                                "Author",
+                            )
+                        elif i.choices:
+                            cell.comment = CellComment(
+                                force_text(
+                                    _("Accepted values are: %s")
+                                    % ", ".join([c[0] for c in i.choices])
+                                ),
+                                "Author",
+                            )
+                    else:
+                        cell.style = "readlonlyheaderstyle"
+                        if not comment:
+                            comment = CellComment(
+                                force_text(_("Read only")),
+                                "Author",
+                                height=20,
+                                width=80,
+                            )
+                        cell.comment = comment
+                    header.append(cell)
+                    if i.name == "owner":
+                        owner = True
+            if hasattr(model, "propertyFields"):
+                if callable(model.propertyFields):
+                    props = model.propertyFields(request)
+                else:
+                    props = model.propertyFields
+                for i in props:
+                    if i.export:
+                        fields.append(i.name)
+                        cell = WriteOnlyCell(
+                            ws, value=force_text(i.verbose_name).title()
+                        )
+                        if i.editable:
+                            cell.style = "headerstyle"
+                            if isinstance(i, ForeignKey):
+                                cell.comment = CellComment(
+                                    force_text(
+                                        _(
+                                            "Values in this field must exist in the %s table"
+                                        )
+                                        % force_text(
+                                            i.remote_field.model._meta.verbose_name
+                                        )
+                                    ),
+                                    "Author",
+                                )
+                        elif i.choices:
+                            cell.comment = CellComment(
+                                force_text(
+                                    _("Accepted values are: %s")
+                                    % ", ".join([c[0] for c in i.choices])
+                                ),
+                                "Author",
+                            )
+                        else:
+                            cell.style = "readlonlyheaderstyle"
+                            if not comment:
+                                comment = CellComment(
+                                    force_text(_("Read only")),
+                                    "Author",
+                                    height=20,
+                                    width=80,
+                                )
+                            cell.comment = comment
+                        header.append(cell)
+                        modelfields.append(i)
+            if source:
+                fields.append("source")
+                cell = WriteOnlyCell(ws, value=force_text(_("source")).title())
+                cell.style = "headerstyle"
+                header.append(cell)
+                modelfields.append(source)
+            if lastmodified:
+                fields.append("lastmodified")
+                cell = WriteOnlyCell(ws, value=force_text(_("last modified")).title())
+                cell.style = "readlonlyheaderstyle"
+                if not comment:
+                    comment = CellComment(
+                        force_text(_("Read only")), "Author", height=20, width=80
+                    )
+                cell.comment = comment
+                header.append(cell)
+                modelfields.append(lastmodified)
+
+            # Write a formatted header row
+            ws.append(header)
+
+            # Add an auto-filter to the table
+            ws.auto_filter.ref = "A1:%s1048576" % get_column_letter(len(header))
+
+            # Use the default manager
+            if issubclass(model, HierarchyModel):
+                model.rebuildHierarchy(database=request.database)
+                query = (
+                    model.objects.all().using(request.database).order_by("lvl", "pk")
+                )
+            elif owner:
+                # First export records with empty owner field
+                query = (
+                    model.objects.all().using(request.database).order_by("-owner", "pk")
+                )
+            else:
+                query = model.objects.all().using(request.database).order_by("pk")
+
+            # Special annotation of the export query
+            if hasattr(model, "export_objects"):
+                query = model.export_objects(query, request)
+
+            # Loop over all records
+            for rec in query.values_list(*fields):
+                cells = []
+                fld = 0
+                for f in rec:
+                    cells.append(
+                        _getCellValue(
+                            f, field=modelfields[fld], exportConfig=exportConfig
+                        )
+                    )
+                    fld += 1
+                ws.append(cells)
+        except Exception:
+            pass  # Silently ignore the error and move on to the next entity.
+
+    # Not a single entity to export
+    if not ok:
+        raise Exception(_("Nothing to export"))
+
+    # Write the excel from memory to a string and then to a HTTP response
+    output = BytesIO()
+    wb.save(output)
+    response = HttpResponse(
+        content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        content=output.getvalue(),
+    )
+    response["Content-Disposition"] = 'attachment; filename="frepple.xlsx"'
+    response["Cache-Control"] = "no-cache, no-store"
+    return response
+
+
+def importWorkbook(request):
+    """
+    This method reads a spreadsheet in Office Open XML format (typically with
+    the extension .xlsx or .ods).
+    Each entity has a tab in the spreadsheet, and the first row contains
+    the fields names.
+    """
+    # Build a list of all contenttypes
+    all_models = [
+        (ct.model_class(), ct.pk)
+        for ct in ContentType.objects.all()
+        if ct.model_class()
+    ]
+    try:
+        # Find all models in the workbook
+        for filename, file in request.FILES.items():
+            yield "<strong>" + force_text(
+                _("Processing file")
+            ) + " " + filename + "</strong><br>"
+            if filename.endswith(".xls"):
+                yield _(
+                    "Files in the old .XLS excel format can't be read.<br>Please convert them to the new .XLSX format."
+                )
+                continue
+            elif (
+                file.content_type
+                != "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            ):
+                yield _("Unsupported file format.")
+                continue
+            wb = load_workbook(filename=file, read_only=True, data_only=True)
+            models = []
+            for ws_name in wb.sheetnames:
+                # Find the model
+                model = None
+                contenttype_id = None
+                for m, ct in all_models:
+                    if matchesModelName(ws_name, m):
+                        model = m
+                        contenttype_id = ct
+                        break
+                if not model or model in EXCLUDE_FROM_BULK_OPERATIONS:
+                    yield '<div class="alert alert-warning">' + force_text(
+                        _("Ignoring data in worksheet: %s") % ws_name
+                    ) + "</div>"
+                elif not request.user.has_perm(
+                    "%s.%s"
+                    % (
+                        model._meta.app_label,
+                        get_permission_codename("add", model._meta),
+                    )
+                ):
+                    # Check permissions
+                    yield '<div class="alert alert-danger">' + force_text(
+                        _("You don't permissions to add: %s") % ws_name
+                    ) + "</div>"
+                else:
+                    deps = set([model])
+                    GridReport.dependent_models(model, deps)
+                    models.append((ws_name, model, contenttype_id, deps))
+
+            # Sort the list of models, based on dependencies between models
+            models = GridReport.sort_models(models)
+
+            # Process all rows in each worksheet
+            for ws_name, model, contenttype_id, dependencies in models:
+                with transaction.atomic(using=request.database):
+                    yield "<strong>" + force_text(
+                        _("Processing data in worksheet: %s") % ws_name
+                    ) + "</strong><br>"
+                    yield (
+                        '<div class="table-responsive">'
+                        '<table class="table table-condensed" style="white-space: nowrap;"><tbody>'
+                    )
+                    numerrors = 0
+                    numwarnings = 0
+                    firsterror = True
+                    ws = wb[ws_name]
+                    for error in parseExcelWorksheet(
+                        model,
+                        ws,
+                        user=request.user,
+                        database=request.database,
+                        ping=True,
+                    ):
+                        if error[0] == logging.DEBUG:
+                            # Yield some result so we can detect disconnect clients and interrupt the upload
+                            yield " "
+                            continue
+                        if firsterror and error[0] in (logging.ERROR, logging.WARNING):
+                            yield '<tr><th class="sr-only">%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s%s%s</th></tr>' % (
+                                capfirst(_("worksheet")),
+                                capfirst(_("row")),
+                                capfirst(_("field")),
+                                capfirst(_("value")),
+                                capfirst(_("error")),
+                                " / ",
+                                capfirst(_("warning")),
+                            )
+                            firsterror = False
+                        if error[0] == logging.ERROR:
+                            yield '<tr><td class="sr-only">%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s: %s</td></tr>' % (
+                                ws_name,
+                                error[1] if error[1] else "",
+                                error[2] if error[2] else "",
+                                error[3] if error[3] else "",
+                                capfirst(_("error")),
+                                error[4],
+                            )
+                            numerrors += 1
+                        elif error[1] == logging.WARNING:
+                            yield '<tr><td class="sr-only">%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s: %s</td></tr>' % (
+                                ws_name,
+                                error[1] if error[1] else "",
+                                error[2] if error[2] else "",
+                                error[3] if error[3] else "",
+                                capfirst(_("warning")),
+                                error[4],
+                            )
+                            numwarnings += 1
+                        else:
+                            yield '<tr class=%s><td class="sr-only">%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>' % (
+                                "danger" if numerrors > 0 else "success",
+                                ws_name,
+                                error[1] if error[1] else "",
+                                error[2] if error[2] else "",
+                                error[3] if error[3] else "",
+                                error[4],
+                            )
+                    yield "</tbody></table></div>"
+            yield "<div><strong>%s</strong><br><br></div>" % _("Done")
+    except GeneratorExit:
+        logger.warning("Connection Aborted")
+    except Exception as e:
+        yield "Import aborted: %s" % e
+        logger.error("Exception importing workbook: %s" % e)

@@ -51,7 +51,7 @@ from django.utils.translation import gettext as _
 from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_protect
 
-from freppledb.reportmanager.models import SQLReport
+from freppledb.reportmanager.models import SQLReport, SQLColumn
 from freppledb.common.report import (
     create_connection,
     GridReport,
@@ -60,6 +60,12 @@ from freppledb.common.report import (
     GridFieldLastModified,
     GridFieldBoolNullable,
     GridFieldInteger,
+    GridFieldBool,
+    GridFieldNumber,
+    GridFieldDuration,
+    GridFieldCurrency,
+    GridFieldDateTime,
+    GridFieldDate,
 )
 from .admin import SQLReportForm
 

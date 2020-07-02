@@ -51,7 +51,6 @@ from openpyxl.comments import Comment as CellComment
 
 from django.db.models import Model
 from django.db.utils import DEFAULT_DB_ALIAS, load_backend
-from django.apps import apps
 from django.contrib.auth.models import Group
 from django.contrib.auth import get_permission_codename
 from django.conf import settings
@@ -63,14 +62,10 @@ from django.core.exceptions import ValidationError
 from django.core.management.color import no_style
 from django.db import connections, transaction, models
 from django.db.models.fields import CharField, AutoField
-from django.db.models.fields.related import RelatedField, ForeignKey
+from django.db.models.fields.related import RelatedField
 from django.forms.models import modelform_factory
-from django.http import Http404, HttpResponse, StreamingHttpResponse
-from django.http import (
-    HttpResponseForbidden,
-    HttpResponseNotAllowed,
-    HttpResponseNotFound,
-)
+from django.http import HttpResponse, StreamingHttpResponse, HttpResponseNotFound
+from django.http import Http404, HttpResponseNotAllowed, HttpResponseForbidden
 from django.shortcuts import render
 from django.utils import translation
 from django.utils.decorators import method_decorator
@@ -93,7 +88,6 @@ from freppledb.common.models import (
     HierarchyModel,
 )
 from freppledb.common.dataload import parseExcelWorksheet, parseCSVdata
-from freppledb.admin import data_site
 
 
 logger = logging.getLogger(__name__)
@@ -561,7 +555,7 @@ class GridReport(View):
     _attributes_added = False
 
     @classmethod
-    def getKey(cls):
+    def getKey(cls, request, *args, **kwargs):
         return "%s.%s" % (cls.__module__, cls.__name__)
 
     @classmethod
@@ -777,12 +771,12 @@ class GridReport(View):
         # Set row and cross attributes on the request
         if hasattr(self, "rows"):
             if callable(self.rows):
-                request.rows = self.rows(request)
+                request.rows = self.rows(request, *args, **kwargs)
             else:
                 request.rows = self.rows
         if hasattr(self, "crosses"):
             if callable(self.crosses):
-                request.crosses = self.crosses(request)
+                request.crosses = self.crosses(request, *args, **kwargs)
             else:
                 request.crosses = self.crosses
 
@@ -831,7 +825,9 @@ class GridReport(View):
             return rows
 
     @classmethod
-    def _render_colmodel(cls, request, is_popup=False, prefs=None, mode="graph"):
+    def _render_colmodel(
+        cls, request, is_popup=False, prefs=None, mode="graph", *args, **kwargs
+    ):
         if not prefs:
             frozencolumns = cls.frozenColumns
             rows = [
@@ -866,7 +862,8 @@ class GridReport(View):
                 )
             except IndexError:
                 logger.warning(
-                    "Invalid preference value for %s: %s" % (cls.getKey(), prefs)
+                    "Invalid preference value for %s: %s"
+                    % (cls.getKey(request, *args, **kwargs), prefs)
                 )
         return ",\n".join(result)
 
@@ -890,7 +887,7 @@ class GridReport(View):
         # Choose fields to export and write the title row
         if not hasattr(request, "prefs"):
             request.prefs = request.user.getPreference(
-                cls.getKey(), database=request.database
+                cls.getKey(request, *args, **kwargs), database=request.database
             )
         if request.prefs and request.prefs.get("rows", None):
             # Customized settings
@@ -906,7 +903,6 @@ class GridReport(View):
                 for i in request.rows
                 if i.field_name and not i.hidden and not i.initially_hidden
             ]
-        field_names = [f.field_name for f in fields]
 
         # Write a formatted header row
         header = []
@@ -949,46 +945,31 @@ class GridReport(View):
         # Add an auto-filter to the table
         ws.auto_filter.ref = "A1:%s1048576" % get_column_letter(len(header))
 
-        for scenario in scenario_list:
+        original_database = request.database
+        try:
+            for scenario in scenario_list:
 
-            request.database = scenario
+                request.database = scenario
 
-            # Loop over all records
-            if isinstance(cls.basequeryset, collections.Callable):
-                query = cls._apply_sort(
-                    request,
-                    cls.filter_items(
-                        request, cls.basequeryset(request, *args, **kwargs), False
-                    ).using(request.database),
-                )
-            else:
-                query = cls._apply_sort(
-                    request,
-                    cls.filter_items(request, cls.basequeryset).using(request.database),
-                )
-            for row in (
-                hasattr(cls, "query")
-                and cls.query(request, query)
-                or query.values(*field_names)
-            ):
-                if hasattr(row, "__getitem__"):
-                    l = [
-                        _getCellValue(row[f.field_name], field=f, request=request)
-                        for f in fields
-                    ]
+                # Loop over all records
+                for row in cls.data_query(request, *args, fields=fields, **kwargs):
+                    if hasattr(row, "__getitem__"):
+                        r = [
+                            _getCellValue(row[f.field_name], field=f, request=request)
+                            for f in fields
+                        ]
+                    else:
+                        r = [
+                            _getCellValue(
+                                getattr(row, f.field_name), field=f, request=request
+                            )
+                            for f in fields
+                        ]
                     if len(scenario_list) > 1:
-                        l.insert(0, scenario)
-                    ws.append(l)
-                else:
-                    l = [
-                        _getCellValue(
-                            getattr(row, f.field_name), field=f, request=request
-                        )
-                        for f in fields
-                    ]
-                    if len(scenario_list) > 1:
-                        l.insert(0, scenario)
-                    ws.append(l)
+                        r.insert(0, scenario)
+                    ws.append(r)
+        finally:
+            request.database = original_database
 
         # Write the spreadsheet
         wb.save(output)
@@ -1011,12 +992,12 @@ class GridReport(View):
         # Choose fields to export
         if not hasattr(request, "prefs"):
             request.prefs = request.user.getPreference(
-                cls.getKey(), database=request.database
+                cls.getKey(request, *args, **kwargs), database=request.database
             )
         if request.prefs and request.prefs.get("rows", None):
             # Customized settings
             custrows = cls._validate_rows(request, request.prefs["rows"])
-            l = [
+            r = [
                 force_text(
                     request.rows[f[0]].title,
                     encoding=settings.CSV_CHARSET,
@@ -1026,8 +1007,8 @@ class GridReport(View):
                 if not f[1] and not request.rows[f[0]].hidden
             ]
             if len(scenario_list) > 1:
-                l.insert(0, _("scenario"))
-            writer.writerow(l)
+                r.insert(0, _("scenario"))
+            writer.writerow(r)
             fields = [
                 request.rows[f[0]]
                 for f in custrows
@@ -1035,7 +1016,7 @@ class GridReport(View):
             ]
         else:
             # Default settings
-            l = [
+            r = [
                 force_text(
                     f.title, encoding=settings.CSV_CHARSET, errors="ignore"
                 ).title()
@@ -1043,8 +1024,8 @@ class GridReport(View):
                 if f.title and not f.hidden and not f.initially_hidden
             ]
             if len(scenario_list) > 1:
-                l.insert(0, _("scenario"))
-            writer.writerow(l)
+                r.insert(0, _("scenario"))
+            writer.writerow(r)
             fields = [
                 i
                 for i in request.rows
@@ -1054,61 +1035,44 @@ class GridReport(View):
         # Write a header row
         yield sf.getvalue()
 
-        for scenario in scenario_list:
+        # Write the report content
+        original_database = request.database
+        try:
+            for scenario in scenario_list:
+                request.database = scenario
 
-            request.database = scenario
-
-            # Write the report content
-            if isinstance(cls.basequeryset, collections.Callable):
-                query = cls._apply_sort(
-                    request,
-                    cls.filter_items(
-                        request, cls.basequeryset(request, *args, **kwargs), False
-                    ).using(request.database),
-                )
-            else:
-                query = cls._apply_sort(
-                    request,
-                    cls.filter_items(request, cls.basequeryset).using(request.database),
-                )
-            for row in (
-                hasattr(cls, "query")
-                and cls.query(request, query)
-                or query.values(*[i.field_name for i in fields])
-            ):
-                # Clear the return string buffer
-                sf.seek(0)
-                sf.truncate(0)
-                # Build the return value, encoding all output
-                if hasattr(row, "__getitem__"):
-                    l = [
-                        cls._getCSVValue(
-                            row[f.field_name],
-                            field=f,
-                            request=request,
-                            decimal_separator=decimal_separator,
-                        )
-                        for f in fields
-                    ]
+                for row in cls.data_query(request, *args, fields=fields, **kwargs):
+                    # Clear the return string buffer
+                    sf.seek(0)
+                    sf.truncate(0)
+                    # Build the return value, encoding all output
+                    if hasattr(row, "__getitem__"):
+                        r = [
+                            cls._getCSVValue(
+                                row[f.field_name],
+                                field=f,
+                                request=request,
+                                decimal_separator=decimal_separator,
+                            )
+                            for f in fields
+                        ]
+                    else:
+                        r = [
+                            cls._getCSVValue(
+                                getattr(row, f.field_name),
+                                field=f,
+                                request=request,
+                                decimal_separator=decimal_separator,
+                            )
+                            for f in fields
+                        ]
                     if len(scenario_list) > 1:
-                        l.insert(0, scenario)
-                    writer.writerow(l)
-
-                else:
-                    l = [
-                        cls._getCSVValue(
-                            getattr(row, f.field_name),
-                            field=f,
-                            request=request,
-                            decimal_separator=decimal_separator,
-                        )
-                        for f in fields
-                    ]
-                    if len(scenario_list) > 1:
-                        l.insert(0, scenario)
-                    writer.writerow(l)
-                # Return string
-                yield sf.getvalue()
+                        r.insert(0, scenario)
+                    writer.writerow(r)
+                    # Return string
+                    yield sf.getvalue()
+        finally:
+            request.database = original_database
 
     @classmethod
     def getSortName(cls, request):
@@ -1361,35 +1325,62 @@ class GridReport(View):
             return "%s asc" % sort
 
     @classmethod
-    def count_query_elements(cls, database, query):
-        cursor = connections[database].cursor()
-        cursor.execute(
-            "select count(*) from ("
-            + query.get_compiler(database).as_sql(with_col_aliases=False)[0]
-            + ") t_subquery",
-            query.get_compiler(database).as_sql(with_col_aliases=False)[1],
-        )
-        return cursor.fetchone()[0]
+    def data_query(cls, request, fields=None, page=None, *args, **kwargs):
+        if not fields:
+            raise Exception("No fields gives")
+        if not hasattr(request, "query"):
+            if isinstance(cls.basequeryset, collections.Callable):
+                request.query = cls.filter_items(
+                    request, cls.basequeryset(request, *args, **kwargs), False
+                ).using(request.database)
+            else:
+                request.query = cls.filter_items(request, cls.basequeryset).using(
+                    request.database
+                )
+        query = cls._apply_sort(request, request.query)
+        if page:
+            cnt = (page - 1) * request.pagesize + 1
+            if hasattr(cls, "query"):
+                return cls.query(request, query[cnt - 1 : cnt + request.pagesize])
+            else:
+                return query[cnt - 1 : cnt + request.pagesize].values(*fields)
+        else:
+            if hasattr(cls, "query"):
+                return cls.query(request, query)
+            else:
+                fields = [i.field_name for i in request.rows if i.field_name]
+                return query.values(*fields)
+
+    @classmethod
+    def count_query(cls, request, *args, **kwargs):
+        if not hasattr(request, "query"):
+            if isinstance(cls.basequeryset, collections.Callable):
+                request.query = cls.filter_items(
+                    request, cls.basequeryset(request, *args, **kwargs), False
+                ).using(request.database)
+            else:
+                request.query = cls.filter_items(request, cls.basequeryset).using(
+                    request.database
+                )
+        with connections[request.database].cursor() as cursor:
+            tmp = request.query.query.get_compiler(request.database).as_sql(
+                with_col_aliases=False
+            )
+            cursor.execute("select count(*) from (" + tmp[0] + ") t_subquery", tmp[1])
+            return cursor.fetchone()[0]
 
     @classmethod
     def _generate_json_data(cls, request, *args, **kwargs):
-        page = "page" in request.GET and int(request.GET["page"]) or 1
         request.prefs = request.user.getPreference(
-            cls.getKey(), database=request.database
+            cls.getKey(request, *args, **kwargs), database=request.database
         )
-        if isinstance(cls.basequeryset, collections.Callable):
-            query = cls.filter_items(
-                request, cls.basequeryset(request, *args, **kwargs), False
-            ).using(request.database)
-        else:
-            query = cls.filter_items(request, cls.basequeryset).using(request.database)
-        recs = cls.count_query_elements(request.database, query.query)
+        recs = cls.count_query(request, *args, **kwargs)
+        page = "page" in request.GET and int(request.GET["page"]) or 1
         total_pages = math.ceil(float(recs) / request.pagesize)
         if page > total_pages:
             page = total_pages
         if page < 1:
             page = 1
-        query = cls._apply_sort(request, query)
 
         yield '{"total":%d,\n' % total_pages
         yield '"page":%d,\n' % page
@@ -1400,16 +1391,11 @@ class GridReport(View):
             if tmp:
                 yield tmp
         yield '"rows":[\n'
-        cnt = (page - 1) * request.pagesize + 1
-        first = True
 
         # GridReport
+        first = True
         fields = [i.field_name for i in request.rows if i.field_name]
-        for i in (
-            hasattr(cls, "query")
-            and cls.query(request, query[cnt - 1 : cnt + request.pagesize])
-            or query[cnt - 1 : cnt + request.pagesize].values(*fields)
-        ):
+        for i in cls.data_query(request, *args, fields=fields, page=page, **kwargs):
             if first:
                 r = ["{"]
                 first = False
@@ -1511,13 +1497,12 @@ class GridReport(View):
         else:
             bucketnames = None
         fmt = request.GET.get("format", None)
-        reportkey = cls.getKey()
+        reportkey = cls.getKey(request, *args, **kwargs)
         request.prefs = request.user.getPreference(reportkey, database=request.database)
         if request.prefs:
             kwargs["preferences"] = request.prefs
 
         # scenario_permissions is used to display multiple scenarios in the export dialog
-
         scenario_permissions = []
         if len(request.user.scenarios) > 1:
             original_database = request.database
@@ -1549,7 +1534,6 @@ class GridReport(View):
 
         if not fmt:
             # Return HTML page
-
             if not hasattr(request, "crosses"):
                 cross_idx = None
                 cross_list = None
@@ -1603,7 +1587,7 @@ class GridReport(View):
                 "preferences": request.prefs,
                 "reportkey": reportkey,
                 "colmodel": cls._render_colmodel(
-                    request, is_popup, request.prefs, mode
+                    request, is_popup, request.prefs, mode, *args, **kwargs
                 ),
                 "cross_idx": cross_idx,
                 "cross_list": cross_list,
@@ -2505,7 +2489,9 @@ class GridPivot(GridReport):
         return ",\n".join(result)
 
     @classmethod
-    def _render_colmodel(cls, request, is_popup=False, prefs=None, mode="graph"):
+    def _render_colmodel(
+        cls, request, is_popup=False, prefs=None, mode="graph", *args, **kwargs
+    ):
         if prefs and "rows" in prefs:
             # Validate the preferences to 1) map from name to index, 2) assure all rows
             # are included, 3) ignore non-existing fields
@@ -2564,33 +2550,62 @@ class GridPivot(GridReport):
         return ",\n".join(result)
 
     @classmethod
+    def count_query(cls, request, *args, **kwargs):
+        if not hasattr(request, "basequery"):
+            if args and args[0] and not cls.new_arg_logic:
+                request.basequery = request.basequery.filter(pk__exact=args[0])
+            elif isinstance(cls.basequeryset, collections.Callable):
+                request.basequery = cls.basequeryset(request, *args, **kwargs)
+            else:
+                request.basequery = cls.basequeryset
+        return (
+            cls.filter_items(request, request.basequery, False)
+            .using(request.database)
+            .count()
+        )
+
+    @classmethod
+    def data_query(cls, request, page=None, fields=None, *args, **kwargs):
+        if not fields:
+            raise Exception("No fields for pivot report")
+        if not hasattr(request, "basequery"):
+            if args and args[0] and not cls.new_arg_logic:
+                request.basequery = request.basequery.filter(pk__exact=args[0])
+            elif isinstance(cls.basequeryset, collections.Callable):
+                request.basequery = cls.basequeryset(request, *args, **kwargs)
+            else:
+                request.basequery = cls.basequeryset
+        if page:
+            cnt = (page - 1) * request.pagesize + 1
+            return cls.query(
+                request,
+                cls._apply_sort(
+                    request, cls.filter_items(request, request.basequery, False)
+                ).using(request.database)[cnt - 1 : cnt + request.pagesize],
+                sortsql=cls._apply_sort_index(request),
+            )
+        else:
+            return cls.query(
+                request,
+                cls._apply_sort(
+                    request, cls.filter_items(request, request.basequery, False)
+                ).using(request.database),
+                sortsql=cls._apply_sort_index(request),
+            )
+
+    @classmethod
     def _generate_json_data(cls, request, *args, **kwargs):
         # Prepare the query
         request.prefs = request.user.getPreference(
-            cls.getKey(), database=request.database
+            cls.getKey(request, *args, **kwargs), database=request.database
         )
-
+        recs = cls.count_query(request, *args, **kwargs)
         page = "page" in request.GET and int(request.GET["page"]) or 1
-        if isinstance(cls.basequeryset, collections.Callable):
-            base = cls.basequeryset(request, *args, **kwargs)
-        else:
-            base = cls.basequeryset
-        if args and args[0] and not cls.new_arg_logic:
-            base = base.filter(pk__exact=args[0])
-        recs = cls.filter_items(request, base, False).using(request.database).count()
         total_pages = math.ceil(float(recs) / request.pagesize)
         if page > total_pages:
             page = total_pages
         if page < 1:
             page = 1
-        cnt = (page - 1) * request.pagesize + 1
-        query = cls.query(
-            request,
-            cls._apply_sort(request, cls.filter_items(request, base, False)).using(
-                request.database
-            )[cnt - 1 : cnt + request.pagesize],
-            sortsql=cls._apply_sort_index(request),
-        )
 
         # Generate header of the output
         yield '{"total":%d,\n' % total_pages
@@ -2601,7 +2616,8 @@ class GridPivot(GridReport):
         # Generate output
         currentkey = None
         r = []
-        for i in query:
+        fields = [i.field_name for i in request.rows if i.field_name]
+        for i in cls.data_query(request, page=page, fields=fields, *args, **kwargs):
             # We use the first field in the output to recognize new rows.
             if currentkey != i[request.rows[0].name]:
                 # New line
@@ -2655,16 +2671,14 @@ class GridPivot(GridReport):
             translation.activate(request.LANGUAGE_CODE)
         listformat = request.GET.get("format", "csvlist") == "csvlist"
 
-        # Prepare the query
-        if not hasattr(request, "prefs"):
-            request.prefs = request.user.getPreference(
-                cls.getKey(), database=request.database
-            )
-
         # Write a Unicode Byte Order Mark header, aka BOM (Excel needs it to open UTF-8 file properly)
         yield cls.getBOM(settings.CSV_CHARSET)
 
         # Pick up the preferences
+        if not hasattr(request, "prefs"):
+            request.prefs = request.user.getPreference(
+                cls.getKey(request, *args, **kwargs), database=request.database
+            )
         if request.prefs and "rows" in request.prefs:
             myrows = [
                 request.rows[f[0]]
@@ -2685,203 +2699,219 @@ class GridPivot(GridReport):
         else:
             mycrosses = [f for f in request.crosses if f[1].get("visible", True)]
 
-        headerWritten = False
-        for scenario in scenario_list:
-
-            request.database = scenario
-
-            if args and args[0]:
-                if isinstance(cls.basequeryset, collections.Callable):
-                    b = cls.basequeryset(request, *args, **kwargs).using(
-                        request.database
+        # Write a header row
+        fields = [
+            force_text(f.title, encoding=settings.CSV_CHARSET, errors="ignore").title()
+            for f in myrows
+            if f.name
+        ]
+        if listformat:
+            fields.extend(
+                [
+                    capfirst(
+                        force_text(
+                            _("bucket"), encoding=settings.CSV_CHARSET, errors="ignore"
+                        )
                     )
-                    query = cls.query(
-                        request,
-                        b if cls.new_arg_logic else b.filter(pk__exact=args[0]),
-                        sortsql="1 asc",
-                    )
-                else:
-                    query = cls.query(
-                        request,
-                        cls.basequeryset.filter(pk__exact=args[0]).using(
-                            request.database
-                        ),
-                        sortsql="1 asc",
-                    )
-            elif isinstance(cls.basequeryset, collections.Callable):
-                query = cls.query(
-                    request,
-                    cls.filter_items(
-                        request, cls.basequeryset(request, *args, **kwargs), False
-                    ).using(request.database),
-                    sortsql=cls._apply_sort_index(request),
-                )
-            else:
-                query = cls.query(
-                    request,
-                    cls.filter_items(request, cls.basequeryset).using(request.database),
-                    sortsql=cls._apply_sort_index(request),
-                )
-
-            # Write a header row
-            if not headerWritten:
-                headerWritten = True
-                fields = [
-                    force_text(
-                        f.title, encoding=settings.CSV_CHARSET, errors="ignore"
-                    ).title()
-                    for f in myrows
-                    if f.name
                 ]
-                if listformat:
-                    fields.extend(
-                        [
-                            capfirst(
-                                force_text(
-                                    _("bucket"),
-                                    encoding=settings.CSV_CHARSET,
-                                    errors="ignore",
+            )
+            fields.extend(
+                [
+                    capfirst(
+                        force_text(
+                            _(
+                                (
+                                    f[1]["title"](request)
+                                    if callable(f[1]["title"])
+                                    else f[1]["title"]
                                 )
-                            )
-                        ]
+                                if "title" in f[1]
+                                else f[0]
+                            ),
+                            encoding=settings.CSV_CHARSET,
+                            errors="ignore",
+                        )
                     )
-                    fields.extend(
-                        [
-                            capfirst(
-                                force_text(
-                                    _(
-                                        (
-                                            f[1]["title"](request)
-                                            if callable(f[1]["title"])
-                                            else f[1]["title"]
-                                        )
-                                        if "title" in f[1]
-                                        else f[0]
-                                    ),
-                                    encoding=settings.CSV_CHARSET,
-                                    errors="ignore",
-                                )
-                            )
-                            for f in mycrosses
-                        ]
+                    for f in mycrosses
+                ]
+            )
+        else:
+            fields.extend(
+                [
+                    capfirst(
+                        force_text(
+                            _("data field"),
+                            encoding=settings.CSV_CHARSET,
+                            errors="ignore",
+                        )
                     )
-                else:
-                    fields.extend(
-                        [
-                            capfirst(
-                                force_text(
-                                    _("data field"),
-                                    encoding=settings.CSV_CHARSET,
-                                    errors="ignore",
-                                )
-                            )
-                        ]
+                ]
+            )
+            fields.extend(
+                [
+                    force_text(
+                        b["name"], encoding=settings.CSV_CHARSET, errors="ignore"
                     )
-                    fields.extend(
-                        [
-                            force_text(
-                                b["name"],
-                                encoding=settings.CSV_CHARSET,
-                                errors="ignore",
-                            )
-                            for b in request.report_bucketlist
-                        ]
-                    )
-                if len(scenario_list) > 1:
-                    fields.insert(0, _("scenario"))
-                writer.writerow(fields)
-                yield sf.getvalue()
+                    for b in request.report_bucketlist
+                ]
+            )
+        if len(scenario_list) > 1:
+            fields.insert(0, _("scenario"))
+        writer.writerow(fields)
+        yield sf.getvalue()
 
-            # Write the report content
-            if listformat:
-                for row in query:
-                    # Clear the return string buffer
-                    sf.seek(0)
-                    sf.truncate(0)
-                    # Data for rows
-                    if hasattr(row, "__getitem__"):
-                        fields = [
-                            cls._getCSVValue(
-                                row[f.name],
-                                field=f,
-                                request=request,
-                                decimal_separator=decimal_separator,
+        # Write the report content
+        orginal_database = request.database
+        try:
+            for scenario in scenario_list:
+                request.database = scenario
+                query = cls.data_query(request, fields=fields, *args, **kwargs)
+
+                if listformat:
+                    for row in query:
+                        # Clear the return string buffer
+                        sf.seek(0)
+                        sf.truncate(0)
+                        # Data for rows
+                        if hasattr(row, "__getitem__"):
+                            fields = [
+                                cls._getCSVValue(
+                                    row[f.name],
+                                    field=f,
+                                    request=request,
+                                    decimal_separator=decimal_separator,
+                                )
+                                for f in myrows
+                                if f.name
+                            ]
+                            fields.extend(
+                                [
+                                    force_text(
+                                        row["bucket"],
+                                        encoding=settings.CSV_CHARSET,
+                                        errors="ignore",
+                                    )
+                                ]
                             )
-                            for f in myrows
-                            if f.name
-                        ]
-                        fields.extend(
-                            [
-                                force_text(
-                                    row["bucket"],
-                                    encoding=settings.CSV_CHARSET,
-                                    errors="ignore",
-                                )
-                            ]
-                        )
-                        fields.extend(
-                            [
-                                force_text(
-                                    cls._localize(row[f[0]], decimal_separator),
-                                    encoding=settings.CSV_CHARSET,
-                                    errors="ignore",
-                                )
-                                if row[f[0]] is not None
-                                else ""
-                                for f in mycrosses
-                            ]
-                        )
-                    else:
-                        fields = [
-                            cls._getCSVValue(
-                                getattr(row, f.name),
-                                field=f,
-                                request=request,
-                                decimal_separator=decimal_separator,
+                            fields.extend(
+                                [
+                                    force_text(
+                                        cls._localize(row[f[0]], decimal_separator),
+                                        encoding=settings.CSV_CHARSET,
+                                        errors="ignore",
+                                    )
+                                    if row[f[0]] is not None
+                                    else ""
+                                    for f in mycrosses
+                                ]
                             )
-                            for f in myrows
-                            if f.name
-                        ]
-                        fields.extend(
-                            [
-                                force_text(
-                                    getattr(row, "bucket"),
-                                    encoding=settings.CSV_CHARSET,
-                                    errors="ignore",
+                        else:
+                            fields = [
+                                cls._getCSVValue(
+                                    getattr(row, f.name),
+                                    field=f,
+                                    request=request,
+                                    decimal_separator=decimal_separator,
                                 )
+                                for f in myrows
+                                if f.name
                             ]
-                        )
-                        fields.extend(
-                            [
-                                force_text(
-                                    cls._localize(
-                                        getattr(row, f[0]), decimal_separator
-                                    ),
-                                    encoding=settings.CSV_CHARSET,
-                                    errors="ignore",
+                            fields.extend(
+                                [
+                                    force_text(
+                                        getattr(row, "bucket"),
+                                        encoding=settings.CSV_CHARSET,
+                                        errors="ignore",
+                                    )
+                                ]
+                            )
+                            fields.extend(
+                                [
+                                    force_text(
+                                        cls._localize(
+                                            getattr(row, f[0]), decimal_separator
+                                        ),
+                                        encoding=settings.CSV_CHARSET,
+                                        errors="ignore",
+                                    )
+                                    if getattr(row, f[0]) is not None
+                                    else ""
+                                    for f in mycrosses
+                                ]
+                            )
+                        # Return string
+                        if len(scenario_list) > 1:
+                            fields.insert(0, scenario)
+                        writer.writerow(fields)
+                        yield sf.getvalue()
+                else:
+                    currentkey = None
+                    row_of_buckets = None
+                    for row in query:
+                        # We use the first field in the output to recognize new rows.
+                        if not currentkey:
+                            currentkey = row[request.rows[0].name]
+                            row_of_buckets = [row]
+                        elif currentkey == row[request.rows[0].name]:
+                            row_of_buckets.append(row)
+                        else:
+                            # Write an entity
+                            for cross in mycrosses:
+                                # Clear the return string buffer
+                                sf.seek(0)
+                                sf.truncate(0)
+                                fields = [
+                                    cls._getCSVValue(
+                                        row_of_buckets[0][s.name],
+                                        field=s,
+                                        request=request,
+                                        decimal_separator=decimal_separator,
+                                    )
+                                    for s in myrows
+                                    if s.name
+                                ]
+                                fields.extend(
+                                    [
+                                        force_text(
+                                            capfirst(
+                                                _(
+                                                    (
+                                                        cross[1]["title"](request)
+                                                        if callable(cross[1]["title"])
+                                                        else cross[1]["title"]
+                                                    )
+                                                    if "title" in cross[1]
+                                                    else cross[0]
+                                                )
+                                            ),
+                                            encoding=settings.CSV_CHARSET,
+                                            errors="ignore",
+                                        )
+                                    ]
                                 )
-                                if getattr(row, f[0]) is not None
-                                else ""
-                                for f in mycrosses
-                            ]
-                        )
-                    # Return string
-                    if len(scenario_list) > 1:
-                        fields.insert(0, scenario)
-                    writer.writerow(fields)
-                    yield sf.getvalue()
-            else:
-                currentkey = None
-                row_of_buckets = None
-                for row in query:
-                    # We use the first field in the output to recognize new rows.
-                    if not currentkey:
-                        currentkey = row[request.rows[0].name]
-                        row_of_buckets = [row]
-                    elif currentkey == row[request.rows[0].name]:
-                        row_of_buckets.append(row)
-                    else:
-                        # Write an entity
+                                fields.extend(
+                                    [
+                                        force_text(
+                                            cls._localize(
+                                                bucket[cross[0]], decimal_separator
+                                            ),
+                                            encoding=settings.CSV_CHARSET,
+                                            errors="ignore",
+                                        )
+                                        if bucket[cross[0]] is not None
+                                        else ""
+                                        for bucket in row_of_buckets
+                                    ]
+                                )
+                                # Return string
+                                if len(scenario_list) > 1:
+                                    fields.insert(0, scenario)
+                                writer.writerow(fields)
+                                yield sf.getvalue()
+                            currentkey = row[request.rows[0].name]
+                            row_of_buckets = [row]
+                    # Write the last entity
+                    if row_of_buckets:
                         for cross in mycrosses:
                             # Clear the return string buffer
                             sf.seek(0)
@@ -2924,8 +2954,6 @@ class GridPivot(GridReport):
                                         encoding=settings.CSV_CHARSET,
                                         errors="ignore",
                                     )
-                                    if bucket[cross[0]] is not None
-                                    else ""
                                     for bucket in row_of_buckets
                                 ]
                             )
@@ -2934,58 +2962,8 @@ class GridPivot(GridReport):
                                 fields.insert(0, scenario)
                             writer.writerow(fields)
                             yield sf.getvalue()
-                        currentkey = row[request.rows[0].name]
-                        row_of_buckets = [row]
-                # Write the last entity
-                if row_of_buckets:
-                    for cross in mycrosses:
-                        # Clear the return string buffer
-                        sf.seek(0)
-                        sf.truncate(0)
-                        fields = [
-                            cls._getCSVValue(
-                                row_of_buckets[0][s.name],
-                                field=s,
-                                request=request,
-                                decimal_separator=decimal_separator,
-                            )
-                            for s in myrows
-                            if s.name
-                        ]
-                        fields.extend(
-                            [
-                                force_text(
-                                    capfirst(
-                                        _(
-                                            (
-                                                cross[1]["title"](request)
-                                                if callable(cross[1]["title"])
-                                                else cross[1]["title"]
-                                            )
-                                            if "title" in cross[1]
-                                            else cross[0]
-                                        )
-                                    ),
-                                    encoding=settings.CSV_CHARSET,
-                                    errors="ignore",
-                                )
-                            ]
-                        )
-                        fields.extend(
-                            [
-                                force_text(
-                                    cls._localize(bucket[cross[0]], decimal_separator),
-                                    encoding=settings.CSV_CHARSET,
-                                    errors="ignore",
-                                )
-                                for bucket in row_of_buckets
-                            ]
-                        )
-                        # Return string
-                        if len(scenario_list) > 1:
-                            fields.insert(0, scenario)
-                        writer.writerow(fields)
-                        yield sf.getvalue()
+        finally:
+            request.database = orginal_database
 
     @classmethod
     def _generate_spreadsheet_data(
@@ -3003,241 +2981,231 @@ class GridPivot(GridReport):
         readlonlyheaderstyle.fill = PatternFill(fill_type="solid", fgColor="d0ebfb")
         wb.add_named_style(readlonlyheaderstyle)
 
-        # Prepare the query
+        # Pick up the preferences
+        listformat = request.GET.get("format", "spreadsheetlist") == "spreadsheetlist"
         if not hasattr(request, "prefs"):
             request.prefs = request.user.getPreference(
-                cls.getKey(), database=request.database
+                cls.getKey(request, *args, **kwargs), database=request.database
             )
-        listformat = request.GET.get("format", "spreadsheetlist") == "spreadsheetlist"
-        headerWritten = False
-        for scenario in scenario_list:
+        if request.prefs and "rows" in request.prefs:
+            myrows = [
+                request.rows[f[0]]
+                for f in cls._validate_rows(request, request.prefs["rows"])
+                if not f[1]
+            ]
+        else:
+            myrows = [
+                f
+                for f in request.rows
+                if f.name and not f.initially_hidden and not f.hidden
+            ]
+        if request.prefs and "crosses" in request.prefs:
+            mycrosses = [
+                request.crosses[f]
+                for f in cls._validate_crosses(request, request.prefs["crosses"])
+            ]
+        else:
+            mycrosses = [f for f in request.crosses if f[1].get("visible", True)]
 
-            request.database = scenario
-
-            if args and args[0]:
-                if isinstance(cls.basequeryset, collections.Callable):
-                    b = cls.basequeryset(request, *args, **kwargs).using(
-                        request.database
-                    )
-                    query = cls.query(
-                        request,
-                        b if cls.new_arg_logic else b.filter(pk__exact=args[0]),
-                        sortsql="1 asc",
-                    )
-                else:
-                    query = cls.query(
-                        request,
-                        cls.basequeryset.filter(pk__exact=args[0]).using(
-                            request.database
-                        ),
-                        sortsql="1 asc",
-                    )
-            elif isinstance(cls.basequeryset, collections.Callable):
-                query = cls.query(
-                    request,
-                    cls.filter_items(
-                        request, cls.basequeryset(request, *args, **kwargs), False
-                    ).using(request.database),
-                    sortsql=cls._apply_sort_index(request),
-                )
-            else:
-                query = cls.query(
-                    request,
-                    cls.filter_items(request, cls.basequeryset).using(request.database),
-                    sortsql=cls._apply_sort_index(request),
-                )
-
-            # Pick up the preferences
-            if request.prefs and "rows" in request.prefs:
-                myrows = [
-                    request.rows[f[0]]
-                    for f in cls._validate_rows(request, request.prefs["rows"])
-                    if not f[1]
-                ]
-            else:
-                myrows = [
-                    f
-                    for f in request.rows
-                    if f.name and not f.initially_hidden and not f.hidden
-                ]
-            if request.prefs and "crosses" in request.prefs:
-                mycrosses = [
-                    request.crosses[f]
-                    for f in cls._validate_crosses(request, request.prefs["crosses"])
-                ]
-            else:
-                mycrosses = [f for f in request.crosses if f[1].get("visible", True)]
-
-            # Write a header row
-            if not headerWritten:
-                headerWritten = True
-                fields = []
-                comment = None
-                for f in myrows:
-                    if f.name:
-                        cell = WriteOnlyCell(ws, value=force_text(f.title).title())
-                        if f.editable or f.key:
-                            cell.style = "headerstyle"
-                            fname = getattr(f, "field_name", f.name)
-                            if (
-                                not f.key
-                                and f.formatter == "detail"
-                                and fname.endswith("__name")
-                            ):
-                                cell.comment = CellComment(
-                                    force_text(
-                                        _(
-                                            "Values in this field must exist in the %s table"
-                                        )
-                                        % force_text(_(fname[:-6]))
-                                    ),
-                                    "Author",
-                                )
-                            elif isinstance(f, GridFieldChoice):
-                                cell.comment = CellComment(
-                                    force_text(
-                                        _("Accepted values are: %s")
-                                        % ", ".join([c[0] for c in f.choices])
-                                    ),
-                                    "Author",
-                                )
-                        else:
-                            cell.style = "readlonlyheaderstyle"
-                            if not comment:
-                                comment = CellComment(
-                                    force_text(_("Read only")),
-                                    "Author",
-                                    height=20,
-                                    width=80,
-                                )
-                            cell.comment = comment
-                        fields.append(cell)
-                if listformat:
-                    cell = WriteOnlyCell(ws, value=capfirst(force_text(_("bucket"))))
-                    if f.editable or f.key:
-                        cell.style = "headerstyle"
-                        fname = getattr(f, "field_name", f.name)
-                        if (
-                            not f.key
-                            and f.formatter == "detail"
-                            and fname.endswith("__name")
-                        ):
-                            cell.comment = CellComment(
-                                force_text(
-                                    _("Values in this field must exist in the %s table")
-                                    % force_text(_(fname[:-6]))
-                                ),
-                                "Author",
-                            )
-                        elif isinstance(f, GridFieldChoice):
-                            cell.comment = CellComment(
-                                force_text(
-                                    _("Accepted values are: %s")
-                                    % ", ".join([c[0] for c in f.choices])
-                                ),
-                                "Author",
-                            )
-                    else:
-                        cell.style = "readlonlyheaderstyle"
-                        if not comment:
-                            comment = CellComment(
-                                force_text(_("Read only")),
-                                "Author",
-                                height=20,
-                                width=80,
-                            )
-                        cell.comment = comment
-                    fields.append(cell)
-                    for f in mycrosses:
-                        cell = WriteOnlyCell(
-                            ws,
-                            value=capfirst(
-                                force_text(
-                                    _(
-                                        (
-                                            f[1]["title"](request)
-                                            if callable(f[1]["title"])
-                                            else f[1]["title"]
-                                        )
-                                        if "title" in f[1]
-                                        else f[0]
-                                    )
-                                )
+        # Write a header row
+        fields = []
+        comment = None
+        for f in myrows:
+            if f.name:
+                cell = WriteOnlyCell(ws, value=force_text(f.title).title())
+                if f.editable or f.key:
+                    cell.style = "headerstyle"
+                    fname = getattr(f, "field_name", f.name)
+                    if (
+                        not f.key
+                        and f.formatter == "detail"
+                        and fname.endswith("__name")
+                    ):
+                        cell.comment = CellComment(
+                            force_text(
+                                _("Values in this field must exist in the %s table")
+                                % force_text(_(fname[:-6]))
                             ),
+                            "Author",
                         )
-                        if f[1].get("editable", False):
-                            cell.style = "headerstyle"
-                        else:
-                            cell.style = "readlonlyheaderstyle"
-                            if not comment:
-                                comment = CellComment(
-                                    force_text(_("Read only")),
-                                    "Author",
-                                    height=20,
-                                    width=80,
-                                )
-                            cell.comment = comment
-                        fields.append(cell)
+                    elif isinstance(f, GridFieldChoice):
+                        cell.comment = CellComment(
+                            force_text(
+                                _("Accepted values are: %s")
+                                % ", ".join([c[0] for c in f.choices])
+                            ),
+                            "Author",
+                        )
                 else:
-                    cell = WriteOnlyCell(ws, value=capfirst(_("data field")))
                     cell.style = "readlonlyheaderstyle"
-                    fields.append(cell)
-                    for b in request.report_bucketlist:
-                        cell = WriteOnlyCell(ws, value=str(b["name"]))
-                        cell.style = "readlonlyheaderstyle"
-                        fields.append(cell)
-
-                if len(scenario_list) > 1:
-                    cell = WriteOnlyCell(ws, value=capfirst(_("scenario")))
-                    cell.style = "readlonlyheaderstyle"
-                    fields.insert(0, cell)
-
-                ws.append(fields)
-
-                # Add an auto-filter to the table
-                ws.auto_filter.ref = "A1:%s1048576" % get_column_letter(len(fields))
-
-            # Write the report content
-            if listformat:
-                for row in query:
-                    # Append a row
-                    if hasattr(row, "__getitem__"):
-                        fields = [
-                            _getCellValue(row[f.name], field=f, request=request)
-                            for f in myrows
-                            if f.name
-                        ]
-                        fields.extend([_getCellValue(row["bucket"])])
-                        fields.extend([_getCellValue(row[f[0]]) for f in mycrosses])
-                    else:
-                        fields = [
-                            _getCellValue(
-                                getattr(row, f.name), field=f, request=request
-                            )
-                            for f in myrows
-                            if f.name
-                        ]
-                        fields.extend([_getCellValue(getattr(row, "bucket"))])
-                        fields.extend(
-                            [_getCellValue(getattr(row, f[0])) for f in mycrosses]
+                    if not comment:
+                        comment = CellComment(
+                            force_text(_("Read only")), "Author", height=20, width=80
                         )
-                    if len(scenario_list) > 1:
-                        fields.insert(0, scenario)
-                    ws.append(fields)
+                    cell.comment = comment
+                fields.append(cell)
+        if listformat:
+            cell = WriteOnlyCell(ws, value=capfirst(force_text(_("bucket"))))
+            if f.editable or f.key:
+                cell.style = "headerstyle"
+                fname = getattr(f, "field_name", f.name)
+                if not f.key and f.formatter == "detail" and fname.endswith("__name"):
+                    cell.comment = CellComment(
+                        force_text(
+                            _("Values in this field must exist in the %s table")
+                            % force_text(_(fname[:-6]))
+                        ),
+                        "Author",
+                    )
+                elif isinstance(f, GridFieldChoice):
+                    cell.comment = CellComment(
+                        force_text(
+                            _("Accepted values are: %s")
+                            % ", ".join([c[0] for c in f.choices])
+                        ),
+                        "Author",
+                    )
             else:
-                currentkey = None
-                row_of_buckets = None
-                for row in query:
-                    # We use the first field in the output to recognize new rows.
-                    if not currentkey:
-                        currentkey = row[request.rows[0].name]
-                        row_of_buckets = [row]
-                    elif currentkey == row[request.rows[0].name]:
-                        row_of_buckets.append(row)
-                    else:
-                        # Write a row
+                cell.style = "readlonlyheaderstyle"
+                if not comment:
+                    comment = CellComment(
+                        force_text(_("Read only")), "Author", height=20, width=80
+                    )
+                cell.comment = comment
+            fields.append(cell)
+            for f in mycrosses:
+                cell = WriteOnlyCell(
+                    ws,
+                    value=capfirst(
+                        force_text(
+                            _(
+                                (
+                                    f[1]["title"](request)
+                                    if callable(f[1]["title"])
+                                    else f[1]["title"]
+                                )
+                                if "title" in f[1]
+                                else f[0]
+                            )
+                        )
+                    ),
+                )
+                if f[1].get("editable", False):
+                    cell.style = "headerstyle"
+                else:
+                    cell.style = "readlonlyheaderstyle"
+                    if not comment:
+                        comment = CellComment(
+                            force_text(_("Read only")), "Author", height=20, width=80
+                        )
+                    cell.comment = comment
+                fields.append(cell)
+        else:
+            cell = WriteOnlyCell(ws, value=capfirst(_("data field")))
+            cell.style = "readlonlyheaderstyle"
+            fields.append(cell)
+            for b in request.report_bucketlist:
+                cell = WriteOnlyCell(ws, value=str(b["name"]))
+                cell.style = "readlonlyheaderstyle"
+                fields.append(cell)
+
+        if len(scenario_list) > 1:
+            cell = WriteOnlyCell(ws, value=capfirst(_("scenario")))
+            cell.style = "readlonlyheaderstyle"
+            fields.insert(0, cell)
+
+        ws.append(fields)
+
+        # Add an auto-filter to the table
+        ws.auto_filter.ref = "A1:%s1048576" % get_column_letter(len(fields))
+
+        # Write the report content
+        original_database = request.database
+        try:
+            for scenario in scenario_list:
+                request.database = scenario
+                query = cls.data_query(request, fields=fields, *args, **kwargs)
+
+                if listformat:
+                    for row in query:
+                        # Append a row
+                        if hasattr(row, "__getitem__"):
+                            fields = [
+                                _getCellValue(row[f.name], field=f, request=request)
+                                for f in myrows
+                                if f.name
+                            ]
+                            fields.extend([_getCellValue(row["bucket"])])
+                            fields.extend([_getCellValue(row[f[0]]) for f in mycrosses])
+                        else:
+                            fields = [
+                                _getCellValue(
+                                    getattr(row, f.name), field=f, request=request
+                                )
+                                for f in myrows
+                                if f.name
+                            ]
+                            fields.extend([_getCellValue(getattr(row, "bucket"))])
+                            fields.extend(
+                                [_getCellValue(getattr(row, f[0])) for f in mycrosses]
+                            )
+                        if len(scenario_list) > 1:
+                            fields.insert(0, scenario)
+                        ws.append(fields)
+                else:
+                    currentkey = None
+                    row_of_buckets = None
+                    for row in query:
+                        # We use the first field in the output to recognize new rows.
+                        if not currentkey:
+                            currentkey = row[request.rows[0].name]
+                            row_of_buckets = [row]
+                        elif currentkey == row[request.rows[0].name]:
+                            row_of_buckets.append(row)
+                        else:
+                            # Write a row
+                            for cross in mycrosses:
+                                if not cross[1].get("visible", True):
+                                    continue
+                                fields = [
+                                    _getCellValue(
+                                        row_of_buckets[0][s.name],
+                                        field=s,
+                                        request=request,
+                                    )
+                                    for s in myrows
+                                    if s.name
+                                ]
+                                fields.extend(
+                                    [
+                                        _getCellValue(
+                                            (
+                                                capfirst(
+                                                    cross[1]["title"](request)
+                                                    if callable(cross[1]["title"])
+                                                    else cross[1]["title"]
+                                                )
+                                            )
+                                            if "title" in cross[1]
+                                            else capfirst(cross[0])
+                                        )
+                                    ]
+                                )
+                                fields.extend(
+                                    [
+                                        _getCellValue(bucket[cross[0]])
+                                        for bucket in row_of_buckets
+                                    ]
+                                )
+                                if len(scenario_list) > 1:
+                                    fields.insert(0, scenario)
+                                ws.append(fields)
+                            currentkey = row[request.rows[0].name]
+                            row_of_buckets = [row]
+                    # Write the last row
+                    if row_of_buckets:
                         for cross in mycrosses:
-                            if not cross[1].get("visible", True):
+                            if cross[1].get("visible", False):
                                 continue
                             fields = [
                                 _getCellValue(
@@ -3270,44 +3238,8 @@ class GridPivot(GridReport):
                             if len(scenario_list) > 1:
                                 fields.insert(0, scenario)
                             ws.append(fields)
-                        currentkey = row[request.rows[0].name]
-                        row_of_buckets = [row]
-                # Write the last row
-                if row_of_buckets:
-                    for cross in mycrosses:
-                        if cross[1].get("visible", False):
-                            continue
-                        fields = [
-                            _getCellValue(
-                                row_of_buckets[0][s.name], field=s, request=request
-                            )
-                            for s in myrows
-                            if s.name
-                        ]
-                        fields.extend(
-                            [
-                                _getCellValue(
-                                    (
-                                        capfirst(
-                                            cross[1]["title"](request)
-                                            if callable(cross[1]["title"])
-                                            else cross[1]["title"]
-                                        )
-                                    )
-                                    if "title" in cross[1]
-                                    else capfirst(cross[0])
-                                )
-                            ]
-                        )
-                        fields.extend(
-                            [
-                                _getCellValue(bucket[cross[0]])
-                                for bucket in row_of_buckets
-                            ]
-                        )
-                        if len(scenario_list) > 1:
-                            fields.insert(0, scenario)
-                        ws.append(fields)
+        finally:
+            request.database = original_database
 
         # Write the spreadsheet
         wb.save(output)
@@ -3389,349 +3321,3 @@ def _getCellValue(data, field=None, exportConfig=None, request=None):
             _buildMaskedNames(model, exportConfig)
         # Return the mapped value
         return exportConfig[modelname].get(data, "unknown")
-
-
-def exportWorkbook(request):
-    # Create a workbook
-    wb = Workbook(write_only=True)
-
-    # Create a named style for the header row
-    headerstyle = NamedStyle(name="headerstyle")
-    headerstyle.fill = PatternFill(fill_type="solid", fgColor="70c4f4")
-    wb.add_named_style(headerstyle)
-    readlonlyheaderstyle = NamedStyle(name="readlonlyheaderstyle")
-    readlonlyheaderstyle.fill = PatternFill(fill_type="solid", fgColor="d0ebfb")
-    wb.add_named_style(readlonlyheaderstyle)
-
-    # Loop over all selected entity types
-    exportConfig = {"anonymous": request.POST.get("anonymous", False)}
-    ok = False
-    for entity_name in request.POST.getlist("entities"):
-        try:
-            # Initialize
-            (app_label, model_label) = entity_name.split(".")
-            model = apps.get_model(app_label, model_label)
-            # Verify access rights
-            permname = get_permission_codename("change", model._meta)
-            if not request.user.has_perm("%s.%s" % (app_label, permname)):
-                continue
-
-            # Never export some special administrative models
-            if model in EXCLUDE_FROM_BULK_OPERATIONS:
-                continue
-
-            # Create sheet
-            ok = True
-            ws = wb.create_sheet(title=force_text(model._meta.verbose_name))
-
-            # Build a list of fields and properties
-            fields = []
-            modelfields = []
-            header = []
-            source = False
-            lastmodified = False
-            owner = False
-            comment = None
-            try:
-                # The admin model of the class can define some fields to exclude from the export
-                exclude = data_site._registry[model].exclude
-            except Exception:
-                exclude = None
-            for i in model._meta.fields:
-                if i.name in ["lft", "rght", "lvl"]:
-                    continue  # Skip some fields of HierarchyModel
-                elif i.name == "source":
-                    source = i  # Put the source field at the end
-                elif i.name == "lastmodified":
-                    lastmodified = i  # Put the last-modified field at the very end
-                elif not (exclude and i.name in exclude):
-                    fields.append(i.column)
-                    modelfields.append(i)
-                    cell = WriteOnlyCell(ws, value=force_text(i.verbose_name).title())
-                    if i.editable:
-                        cell.style = "headerstyle"
-                        if isinstance(i, ForeignKey):
-                            cell.comment = CellComment(
-                                force_text(
-                                    _("Values in this field must exist in the %s table")
-                                    % force_text(
-                                        i.remote_field.model._meta.verbose_name
-                                    )
-                                ),
-                                "Author",
-                            )
-                        elif i.choices:
-                            cell.comment = CellComment(
-                                force_text(
-                                    _("Accepted values are: %s")
-                                    % ", ".join([c[0] for c in i.choices])
-                                ),
-                                "Author",
-                            )
-                    else:
-                        cell.style = "readlonlyheaderstyle"
-                        if not comment:
-                            comment = CellComment(
-                                force_text(_("Read only")),
-                                "Author",
-                                height=20,
-                                width=80,
-                            )
-                        cell.comment = comment
-                    header.append(cell)
-                    if i.name == "owner":
-                        owner = True
-            if hasattr(model, "propertyFields"):
-                if callable(model.propertyFields):
-                    props = model.propertyFields(request)
-                else:
-                    props = model.propertyFields
-                for i in props:
-                    if i.export:
-                        fields.append(i.name)
-                        cell = WriteOnlyCell(
-                            ws, value=force_text(i.verbose_name).title()
-                        )
-                        if i.editable:
-                            cell.style = "headerstyle"
-                            if isinstance(i, ForeignKey):
-                                cell.comment = CellComment(
-                                    force_text(
-                                        _(
-                                            "Values in this field must exist in the %s table"
-                                        )
-                                        % force_text(
-                                            i.remote_field.model._meta.verbose_name
-                                        )
-                                    ),
-                                    "Author",
-                                )
-                        elif i.choices:
-                            cell.comment = CellComment(
-                                force_text(
-                                    _("Accepted values are: %s")
-                                    % ", ".join([c[0] for c in i.choices])
-                                ),
-                                "Author",
-                            )
-                        else:
-                            cell.style = "readlonlyheaderstyle"
-                            if not comment:
-                                comment = CellComment(
-                                    force_text(_("Read only")),
-                                    "Author",
-                                    height=20,
-                                    width=80,
-                                )
-                            cell.comment = comment
-                        header.append(cell)
-                        modelfields.append(i)
-            if source:
-                fields.append("source")
-                cell = WriteOnlyCell(ws, value=force_text(_("source")).title())
-                cell.style = "headerstyle"
-                header.append(cell)
-                modelfields.append(source)
-            if lastmodified:
-                fields.append("lastmodified")
-                cell = WriteOnlyCell(ws, value=force_text(_("last modified")).title())
-                cell.style = "readlonlyheaderstyle"
-                if not comment:
-                    comment = CellComment(
-                        force_text(_("Read only")), "Author", height=20, width=80
-                    )
-                cell.comment = comment
-                header.append(cell)
-                modelfields.append(lastmodified)
-
-            # Write a formatted header row
-            ws.append(header)
-
-            # Add an auto-filter to the table
-            ws.auto_filter.ref = "A1:%s1048576" % get_column_letter(len(header))
-
-            # Use the default manager
-            if issubclass(model, HierarchyModel):
-                model.rebuildHierarchy(database=request.database)
-                query = (
-                    model.objects.all().using(request.database).order_by("lvl", "pk")
-                )
-            elif owner:
-                # First export records with empty owner field
-                query = (
-                    model.objects.all().using(request.database).order_by("-owner", "pk")
-                )
-            else:
-                query = model.objects.all().using(request.database).order_by("pk")
-
-            # Special annotation of the export query
-            if hasattr(model, "export_objects"):
-                query = model.export_objects(query, request)
-
-            # Loop over all records
-            for rec in query.values_list(*fields):
-                cells = []
-                fld = 0
-                for f in rec:
-                    cells.append(
-                        _getCellValue(
-                            f, field=modelfields[fld], exportConfig=exportConfig
-                        )
-                    )
-                    fld += 1
-                ws.append(cells)
-        except Exception:
-            pass  # Silently ignore the error and move on to the next entity.
-
-    # Not a single entity to export
-    if not ok:
-        raise Exception(_("Nothing to export"))
-
-    # Write the excel from memory to a string and then to a HTTP response
-    output = BytesIO()
-    wb.save(output)
-    response = HttpResponse(
-        content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-        content=output.getvalue(),
-    )
-    response["Content-Disposition"] = 'attachment; filename="frepple.xlsx"'
-    response["Cache-Control"] = "no-cache, no-store"
-    return response
-
-
-def importWorkbook(request):
-    """
-    This method reads a spreadsheet in Office Open XML format (typically with
-    the extension .xlsx or .ods).
-    Each entity has a tab in the spreadsheet, and the first row contains
-    the fields names.
-    """
-    # Build a list of all contenttypes
-    all_models = [
-        (ct.model_class(), ct.pk)
-        for ct in ContentType.objects.all()
-        if ct.model_class()
-    ]
-    try:
-        # Find all models in the workbook
-        for filename, file in request.FILES.items():
-            yield "<strong>" + force_text(
-                _("Processing file")
-            ) + " " + filename + "</strong><br>"
-            if filename.endswith(".xls"):
-                yield _(
-                    "Files in the old .XLS excel format can't be read.<br>Please convert them to the new .XLSX format."
-                )
-                continue
-            elif (
-                file.content_type
-                != "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-            ):
-                yield _("Unsupported file format.")
-                continue
-            wb = load_workbook(filename=file, read_only=True, data_only=True)
-            models = []
-            for ws_name in wb.sheetnames:
-                # Find the model
-                model = None
-                contenttype_id = None
-                for m, ct in all_models:
-                    if matchesModelName(ws_name, m):
-                        model = m
-                        contenttype_id = ct
-                        break
-                if not model or model in EXCLUDE_FROM_BULK_OPERATIONS:
-                    yield '<div class="alert alert-warning">' + force_text(
-                        _("Ignoring data in worksheet: %s") % ws_name
-                    ) + "</div>"
-                elif not request.user.has_perm(
-                    "%s.%s"
-                    % (
-                        model._meta.app_label,
-                        get_permission_codename("add", model._meta),
-                    )
-                ):
-                    # Check permissions
-                    yield '<div class="alert alert-danger">' + force_text(
-                        _("You don't permissions to add: %s") % ws_name
-                    ) + "</div>"
-                else:
-                    deps = set([model])
-                    GridReport.dependent_models(model, deps)
-                    models.append((ws_name, model, contenttype_id, deps))
-
-            # Sort the list of models, based on dependencies between models
-            models = GridReport.sort_models(models)
-
-            # Process all rows in each worksheet
-            for ws_name, model, contenttype_id, dependencies in models:
-                with transaction.atomic(using=request.database):
-                    yield "<strong>" + force_text(
-                        _("Processing data in worksheet: %s") % ws_name
-                    ) + "</strong><br>"
-                    yield (
-                        '<div class="table-responsive">'
-                        '<table class="table table-condensed" style="white-space: nowrap;"><tbody>'
-                    )
-                    numerrors = 0
-                    numwarnings = 0
-                    firsterror = True
-                    ws = wb[ws_name]
-                    for error in parseExcelWorksheet(
-                        model,
-                        ws,
-                        user=request.user,
-                        database=request.database,
-                        ping=True,
-                    ):
-                        if error[0] == logging.DEBUG:
-                            # Yield some result so we can detect disconnect clients and interrupt the upload
-                            yield " "
-                            continue
-                        if firsterror and error[0] in (logging.ERROR, logging.WARNING):
-                            yield '<tr><th class="sr-only">%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s%s%s</th></tr>' % (
-                                capfirst(_("worksheet")),
-                                capfirst(_("row")),
-                                capfirst(_("field")),
-                                capfirst(_("value")),
-                                capfirst(_("error")),
-                                " / ",
-                                capfirst(_("warning")),
-                            )
-                            firsterror = False
-                        if error[0] == logging.ERROR:
-                            yield '<tr><td class="sr-only">%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s: %s</td></tr>' % (
-                                ws_name,
-                                error[1] if error[1] else "",
-                                error[2] if error[2] else "",
-                                error[3] if error[3] else "",
-                                capfirst(_("error")),
-                                error[4],
-                            )
-                            numerrors += 1
-                        elif error[1] == logging.WARNING:
-                            yield '<tr><td class="sr-only">%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s: %s</td></tr>' % (
-                                ws_name,
-                                error[1] if error[1] else "",
-                                error[2] if error[2] else "",
-                                error[3] if error[3] else "",
-                                capfirst(_("warning")),
-                                error[4],
-                            )
-                            numwarnings += 1
-                        else:
-                            yield '<tr class=%s><td class="sr-only">%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>' % (
-                                "danger" if numerrors > 0 else "success",
-                                ws_name,
-                                error[1] if error[1] else "",
-                                error[2] if error[2] else "",
-                                error[3] if error[3] else "",
-                                error[4],
-                            )
-                    yield "</tbody></table></div>"
-            yield "<div><strong>%s</strong><br><br></div>" % _("Done")
-    except GeneratorExit:
-        logger.warning("Connection Aborted")
-    except Exception as e:
-        yield "Import aborted: %s" % e
-        logger.error("Exception importing workbook: %s" % e)

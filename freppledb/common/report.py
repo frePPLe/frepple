@@ -1325,7 +1325,7 @@ class GridReport(View):
             return "%s asc" % sort
 
     @classmethod
-    def data_query(cls, request, fields=None, page=None, *args, **kwargs):
+    def data_query(cls, request, *args, fields=None, page=None, **kwargs):
         if not fields:
             raise Exception("No fields gives")
         if not hasattr(request, "query"):
@@ -2565,7 +2565,7 @@ class GridPivot(GridReport):
         )
 
     @classmethod
-    def data_query(cls, request, page=None, fields=None, *args, **kwargs):
+    def data_query(cls, request, *args, page=None, fields=None, **kwargs):
         if not fields:
             raise Exception("No fields for pivot report")
         if not hasattr(request, "basequery"):
@@ -2617,7 +2617,7 @@ class GridPivot(GridReport):
         currentkey = None
         r = []
         fields = [i.field_name for i in request.rows if i.field_name]
-        for i in cls.data_query(request, page=page, fields=fields, *args, **kwargs):
+        for i in cls.data_query(request, *args, page=page, fields=fields, **kwargs):
             # We use the first field in the output to recognize new rows.
             if currentkey != i[request.rows[0].name]:
                 # New line
@@ -2765,7 +2765,7 @@ class GridPivot(GridReport):
         try:
             for scenario in scenario_list:
                 request.database = scenario
-                query = cls.data_query(request, fields=fields, *args, **kwargs)
+                query = cls.data_query(request, *args, fields=fields, **kwargs)
 
                 if listformat:
                     for row in query:
@@ -3124,7 +3124,7 @@ class GridPivot(GridReport):
         try:
             for scenario in scenario_list:
                 request.database = scenario
-                query = cls.data_query(request, fields=fields, *args, **kwargs)
+                query = cls.data_query(request, *args, fields=fields, **kwargs)
 
                 if listformat:
                     for row in query:

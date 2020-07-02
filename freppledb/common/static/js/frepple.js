@@ -1086,7 +1086,7 @@ var grid = {
     		cb += 
     			'<div class="form-check">' +
     			'<input class="form-check-input" type="checkbox" value="" id="'+ scenario_permissions[i][0] +'"' + (scenario_permissions[i][2] == 1 ?"checked disabled":"") + '>' +
-    			'&nbsp;&nbsp;&nbsp;<label class="form-check-label" for="defaultCheck1">' +
+    			'&nbsp;&nbsp;&nbsp;<label class="form-check-label" for="'+ scenario_permissions[i][0] +'">' +
     			gettext(scenario_permissions[i][1]) +
     		    '</label>' +
     		    '</div>';

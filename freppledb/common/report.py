@@ -2552,12 +2552,12 @@ class GridPivot(GridReport):
     @classmethod
     def count_query(cls, request, *args, **kwargs):
         if not hasattr(request, "basequery"):
-            if args and args[0] and not cls.new_arg_logic:
-                request.basequery = request.basequery.filter(pk__exact=args[0])
-            elif isinstance(cls.basequeryset, collections.Callable):
+            if isinstance(cls.basequeryset, collections.Callable):
                 request.basequery = cls.basequeryset(request, *args, **kwargs)
             else:
                 request.basequery = cls.basequeryset
+            if args and args[0] and not cls.new_arg_logic:
+                request.basequery = request.basequery.filter(pk__exact=args[0])
         return (
             cls.filter_items(request, request.basequery, False)
             .using(request.database)
@@ -2569,12 +2569,12 @@ class GridPivot(GridReport):
         if not fields:
             raise Exception("No fields for pivot report")
         if not hasattr(request, "basequery"):
-            if args and args[0] and not cls.new_arg_logic:
-                request.basequery = request.basequery.filter(pk__exact=args[0])
-            elif isinstance(cls.basequeryset, collections.Callable):
+            if isinstance(cls.basequeryset, collections.Callable):
                 request.basequery = cls.basequeryset(request, *args, **kwargs)
             else:
                 request.basequery = cls.basequeryset
+            if args and args[0] and not cls.new_arg_logic:
+                request.basequery = request.basequery.filter(pk__exact=args[0])
         if page:
             cnt = (page - 1) * request.pagesize + 1
             return cls.query(

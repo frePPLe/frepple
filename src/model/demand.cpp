@@ -82,6 +82,9 @@ Demand::~Demand() {
       dmd->nextItemDemand = nextItemDemand;
     }
   }
+
+  // Decrement demand count on the customer
+  if (cust) cust->decNumberOfDemands();
 }
 
 void Demand::deleteOperationPlans(bool deleteLocked, CommandManager* cmds) {

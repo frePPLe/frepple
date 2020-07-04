@@ -1278,6 +1278,15 @@ class Customer : public HasHierarchy<Customer>, public HasDescription {
     m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, &Cls::setHidden,
                          BOOL_FALSE, DONT_SERIALIZE);
   }
+
+  int getNumberOfDemands() const { return numDemands; }
+
+  void incNumberOfDemands() { ++numDemands; }
+
+  void decNumberOfDemands() { --numDemands; }
+
+ private:
+  int numDemands = 0;
 };
 
 /* This class implements the abstract Customer class. */
@@ -7125,7 +7134,9 @@ class Demand : public HasHierarchy<Demand>,
 
   /* Updates the customer. */
   virtual void setCustomer(Customer* c) {
+    if (cust) cust->decNumberOfDemands();
     cust = c;
+    cust->incNumberOfDemands();
     setChanged();
   }
 

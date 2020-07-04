@@ -7136,7 +7136,7 @@ class Demand : public HasHierarchy<Demand>,
   virtual void setCustomer(Customer* c) {
     if (cust) cust->decNumberOfDemands();
     cust = c;
-    cust->incNumberOfDemands();
+    if (cust) cust->incNumberOfDemands();
     setChanged();
   }
 

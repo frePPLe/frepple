@@ -209,6 +209,7 @@ class Tags {
   static const Keyword userexit_buffer;
   static const Keyword userexit_demand;
   static const Keyword userexit_flow;
+  static const Keyword userexit_nextdemand;
   static const Keyword userexit_operation;
   static const Keyword userexit_resource;
   static const Keyword value;

@@ -337,6 +337,7 @@ class SolverCreate : public Solver {
     resource_iteration_max = other.resource_iteration_max;
     userexit_flow = other.userexit_flow;
     userexit_demand = other.userexit_demand;
+    userexit_nextdemand = other.userexit_nextdemand;
     userexit_buffer = other.userexit_buffer;
     userexit_resource = other.userexit_resource;
     userexit_operation = other.userexit_operation;
@@ -357,6 +358,7 @@ class SolverCreate : public Solver {
     resource_iteration_max = other.resource_iteration_max;
     userexit_flow = other.userexit_flow;
     userexit_demand = other.userexit_demand;
+    userexit_nextdemand = other.userexit_nextdemand;
     userexit_buffer = other.userexit_buffer;
     userexit_resource = other.userexit_resource;
     userexit_operation = other.userexit_operation;
@@ -544,34 +546,28 @@ class SolverCreate : public Solver {
    */
   void setResourceIterationMax(unsigned long d) { resource_iteration_max = d; }
 
-  /* Specify a Python function that is called before solving a flow. */
   void setUserExitFlow(PythonFunction n) { userexit_flow = n; }
 
-  /* Return the Python function that is called before solving a flow. */
   PythonFunction getUserExitFlow() const { return userexit_flow; }
 
-  /* Specify a Python function that is called before solving a demand. */
   void setUserExitDemand(PythonFunction n) { userexit_demand = n; }
 
-  /* Return the Python function that is called before solving a demand. */
   PythonFunction getUserExitDemand() const { return userexit_demand; }
 
-  /* Specify a Python function that is called before solving a buffer. */
+  void setUserExitNextDemand(PythonFunction n) { userexit_nextdemand = n; }
+
+  PythonFunction getUserExitNextDemand() const { return userexit_nextdemand; }
+
   void setUserExitBuffer(PythonFunction n) { userexit_buffer = n; }
 
-  /* Return the Python function that is called before solving a buffer. */
   PythonFunction getUserExitBuffer() const { return userexit_buffer; }
 
-  /* Specify a Python function that is called before solving a resource. */
   void setUserExitResource(PythonFunction n) { userexit_resource = n; }
 
-  /* Return the Python function that is called before solving a resource. */
   PythonFunction getUserExitResource() const { return userexit_resource; }
 
-  /* Specify a Python function that is called before solving a operation. */
   void setUserExitOperation(PythonFunction n) { userexit_operation = n; }
 
-  /* Return the Python function that is called before solving a operation. */
   PythonFunction getUserExitOperation() const { return userexit_operation; }
 
   /* Python method for running the solver. */
@@ -737,6 +733,12 @@ class SolverCreate : public Solver {
    * value is not used.
    */
   PythonFunction userexit_demand;
+
+  /* A Python callback function to customize the ordering of the demands to be
+   * for the planning algorithm. The return value is a demand that must belong
+   * to cluster passed as argument.
+   */
+  PythonFunction userexit_nextdemand;
 
   /* A Python callback function that is called for each buffer. The return
    * value is not used.

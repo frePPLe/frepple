@@ -4,6 +4,11 @@ Release notes
 6.7.0 (Upcoming release)
 ========================
 
+.. rubric:: Production planning
+
+- | Advanced customization: Some python code can now customize the sequence in which
+    demands are prioritized and planned.
+
 .. rubric:: User interface
 
 - | The `search box <user-guide/user-interface/getting-around/navigation.html>`_ now allows

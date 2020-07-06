@@ -141,8 +141,10 @@ bool SolverCreate::demand_comparison(const Demand* l1, const Demand* l2) {
     return l1->getPriority() < l2->getPriority();
   else if (l1->getDue() != l2->getDue())
     return l1->getDue() < l2->getDue();
-  else
+  else if (l1->getQuantity() != l2->getQuantity())
     return l1->getQuantity() < l2->getQuantity();
+  else
+    return l1->getName() < l2->getName();
 }
 
 void SolverCreate::SolverData::push(double q, Date d, bool full) {
@@ -273,7 +275,8 @@ void SolverCreate::SolverData::commit() {
       // Sort the demands of this problem.
       // We use a stable sort to get reproducible results between platforms
       // and STL implementations.
-      stable_sort(demands->begin(), demands->end(), demand_comparison);
+      if (!solver->userexit_nextdemand)
+        stable_sort(demands->begin(), demands->end(), demand_comparison);
 
       // Solve for safety stock in buffers.
       if (solver->getPlanSafetyStockFirst()) {
@@ -286,38 +289,56 @@ void SolverCreate::SolverData::commit() {
       // Loop through the list of all demands in this planning problem
       safety_stock_planning = false;
       constrainedPlanning = (solver->getPlanType() == 1);
-      for (auto i = demands->begin(); i != demands->end(); ++i) {
+      Demand* curdmd;
+      auto iterdmd = demands->begin();
+      do {
+        // Find the next demand to plan
+        if (solver->userexit_nextdemand) {
+          auto obj =
+              solver->userexit_nextdemand.call(PythonData(cluster)).getObject();
+          if (!obj)
+            break;
+          else if (obj->getType().category != Demand::metadata)
+            curdmd = static_cast<Demand*>(obj);
+          else
+            throw DataException("User exit nextdemand must return a demand");
+        } else if (++iterdmd == demands->end())
+          break;
+        else
+          curdmd = *iterdmd;
+
+        // Plan the demand
         iteration_count = 0;
         try {
-          // Plan the demand
-          (*i)->solve(*solver, this);
+          curdmd->solve(*solver, this);
         } catch (...) {
           // Log the exception as the only reason for the demand not being
           // planned
-          (*i)->getConstraints().clear();
+          curdmd->getConstraints().clear();
           // Error message
           logger << "Error: Caught an exception while solving demand '"
-                 << (*i)->getName() << "':" << endl;
+                 << curdmd << "':" << endl;
           try {
             throw;
           } catch (const bad_exception&) {
-            (*i)->getConstraints().push(new ProblemInvalidData(
-                (*i), "Error: bad exception", "demand", (*i)->getDue(),
-                (*i)->getDue(), (*i)->getQuantity(), false));
+            curdmd->getConstraints().push(new ProblemInvalidData(
+                curdmd, "Error: bad exception", "demand", curdmd->getDue(),
+                curdmd->getDue(), curdmd->getQuantity(), false));
             logger << "  bad exception" << endl;
           } catch (const exception& e) {
-            (*i)->getConstraints().push(new ProblemInvalidData(
-                (*i), "Error: " + string(e.what()), "demand", (*i)->getDue(),
-                (*i)->getDue(), (*i)->getQuantity(), false));
+            curdmd->getConstraints().push(new ProblemInvalidData(
+                curdmd, "Error: " + string(e.what()), "demand",
+                curdmd->getDue(), curdmd->getDue(), curdmd->getQuantity(),
+                false));
             logger << "  " << e.what() << endl;
           } catch (...) {
-            (*i)->getConstraints().push(new ProblemInvalidData(
-                (*i), "Error: unknown type", "demand", (*i)->getDue(),
-                (*i)->getDue(), (*i)->getQuantity(), false));
+            curdmd->getConstraints().push(new ProblemInvalidData(
+                curdmd, "Error: unknown type", "demand", curdmd->getDue(),
+                curdmd->getDue(), curdmd->getQuantity(), false));
             logger << "  Unknown type" << endl;
           }
         }
-      }
+      } while (true);
 
       // Completely recreate all purchasing operation plans
       for (auto o = purchase_buffers.begin(); o != purchase_buffers.end();
@@ -446,6 +467,8 @@ void SolverCreate::SolverData::solveSafetyStock(SolverCreate* solver) {
 void SolverCreate::update_user_exits() {
   setUserExitBuffer(getPyObjectProperty(Tags::userexit_buffer.getName()));
   setUserExitDemand(getPyObjectProperty(Tags::userexit_demand.getName()));
+  setUserExitNextDemand(
+      getPyObjectProperty(Tags::userexit_nextdemand.getName()));
   setUserExitFlow(getPyObjectProperty(Tags::userexit_flow.getName()));
   setUserExitOperation(getPyObjectProperty(Tags::userexit_operation.getName()));
   setUserExitResource(getPyObjectProperty(Tags::userexit_resource.getName()));
@@ -468,13 +491,13 @@ void SolverCreate::solve(void* v) {
       if (i->getQuantity() > 0 &&
           (i->getStatus() == Demand::OPEN || i->getStatus() == Demand::QUOTE))
         demands_per_cluster[0].push_back(&*i);
-  } else if (cluster == -1) {
+  } else if (cluster == -1 && !userexit_nextdemand) {
     // Many clusters to solve
     for (auto i = Demand::begin(); i != Demand::end(); ++i)
       if (i->getQuantity() > 0 &&
           (i->getStatus() == Demand::OPEN || i->getStatus() == Demand::QUOTE))
         demands_per_cluster[i->getCluster()].push_back(&*i);
-  } else {
+  } else if (!userexit_nextdemand) {
     // Only a single cluster to plan
     for (auto i = Demand::begin(); i != Demand::end(); ++i)
       if (i->getCluster() == cluster && i->getQuantity() > 0 &&

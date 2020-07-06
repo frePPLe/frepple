@@ -210,6 +210,7 @@ const Keyword Tags::unavailable("unavailable");
 const Keyword Tags::userexit_buffer("userexit_buffer");
 const Keyword Tags::userexit_demand("userexit_demand");
 const Keyword Tags::userexit_flow("userexit_flow");
+const Keyword Tags::userexit_nextdemand("userexit_nextdemand");
 const Keyword Tags::userexit_operation("userexit_operation");
 const Keyword Tags::userexit_resource("userexit_resource");
 const Keyword Tags::value("value");

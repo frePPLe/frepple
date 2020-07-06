@@ -132,6 +132,32 @@ class SupplyPlanning(PlanTask):
         else:
             cls.solver.loglevel = 0
 
+    def DISABLED_nextDemand(cls, cluster):
+        # Build the list of demands to plan when accessed for the first time
+        if not hasattr(cls, "demandlist"):
+            import frepple
+
+            cls.demandlist = {}
+            for d in frepple.demands():
+                if d.quantity > 0 and d.status in ("open", "quote"):
+                    if d.cluster in cls.demandlist:
+                        cls.demandlist[d.cluster].append(d)
+                    else:
+                        cls.demandlist[d.cluster] = [d]
+            for cl in cls.demandlist:
+                cls.demandlist[cl].sort(
+                    key=lambda d: (d.priority, d.due, d.quantity, d.name)
+                )
+                for d in cls.demandlist[cl]:
+                    print("sorted", cl, d.priority, d.due, d.quantity, d.name)
+
+        # Pop a demand from the list on every call
+        print("asked next demand for", cls.demandlist[cluster])
+        if cls.demandlist.get(cluster, None):
+            return cls.demandlist[cluster].pop(0)
+        else:
+            return None
+
     @classmethod
     def DISABLED_debugOperation(cls, oper, mode):
         return
@@ -186,6 +212,8 @@ class SupplyPlanning(PlanTask):
             cls.solver.userexit_demand = cls.debugDemand
         if hasattr(cls, "debugOperation"):
             cls.solver.userexit_operation = cls.debugOperation
+            if hasattr(cls, "nextDemand"):
+                cls.solver.userexit_nextdemand = cls.nextDemand
         logger.info("Plan type: %s" % plantype)
         logger.info("Constraints: %s" % constraint)
         cls.solver.solve()

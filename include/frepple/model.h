@@ -5888,7 +5888,9 @@ class SetupMatrix : public HasName<SetupMatrix>, public HasSource {
    * to a dummy changeover with a very high cost and duration is returned.
    */
   SetupMatrixRule* calculateSetup(const PooledString&, const PooledString&,
-                                  Resource*) const;
+                                  Resource* = nullptr) const;
+
+  static PyObject* calculateSetupPython(PyObject*, PyObject*);
 
  private:
   /* Head of the list of rules. */

@@ -35,7 +35,9 @@ int SetupMatrix::initialize() {
   metadata = MetaCategory::registerCategory<SetupMatrix>(
       "setupmatrix", "setupmatrices", reader, finder);
   registerFields<SetupMatrix>(const_cast<MetaCategory*>(metadata));
-
+  FreppleCategory<SetupMatrix>::getPythonType().addMethod(
+      "calculatesetup", &SetupMatrix::calculateSetupPython, METH_VARARGS,
+      "Return the setup time between the 2 setups passed as argument");
   // Initialize the Python class
   return FreppleCategory<SetupMatrix>::initialize();
 }
@@ -286,14 +288,38 @@ SetupMatrixRule* SetupMatrix::calculateSetup(const PooledString& oldsetup,
     }
 
   // No matching rule was found - create a invalid-data problem
-  stringstream o;
-  o << "No conversion from '" << oldsetup << "' to '" << newsetup
-    << "' defined in setup matrix '" << getName() << "'";
-  new ProblemInvalidData(res, o.str(), "resource", Date::infinitePast,
-                         Date::infiniteFuture, 1, true);
+  if (res) {
+    stringstream o;
+    o << "No conversion from '" << oldsetup << "' to '" << newsetup
+      << "' defined in setup matrix '" << getName() << "'";
+    new ProblemInvalidData(res, o.str(), "resource", Date::infinitePast,
+                           Date::infiniteFuture, 1, true);
+  }
   auto norule = const_cast<SetupMatrixRuleDefault*>(&ChangeOverNotAllowed);
   const_cast<cachedrules&>(cachedChangeovers)[key] = norule;
   return norule;
+}
+
+PyObject* SetupMatrix::calculateSetupPython(PyObject* self, PyObject* args) {
+  // Pick up the 2 setup arguments
+  char* pysetup_1;
+  char* pysetup_2;
+  int ok = PyArg_ParseTuple(args, "|ss:calculateSetup", &pysetup_1, &pysetup_2);
+  if (!ok) return nullptr;
+
+  try {
+    PooledString setup_1(pysetup_1);
+    PooledString setup_2(pysetup_2);
+    auto tmp =
+        static_cast<SetupMatrix*>(self)->calculateSetup(setup_1, setup_2);
+    if (tmp)
+      return PythonData(tmp->getDuration());
+    else
+      return PythonData(0);
+  } catch (...) {
+    PythonType::evalException();
+    return nullptr;
+  }
 }
 
 }  // namespace frepple

@@ -296,9 +296,9 @@ void SolverCreate::SolverData::commit() {
         if (solver->userexit_nextdemand) {
           auto obj =
               solver->userexit_nextdemand.call(PythonData(cluster)).getObject();
-          if (!obj)
+          if (!obj || obj == Py_None)
             break;
-          else if (obj->getType().category != Demand::metadata)
+          else if (obj->getType().category == Demand::metadata)
             curdmd = static_cast<Demand*>(obj);
           else
             throw DataException("User exit nextdemand must return a demand");

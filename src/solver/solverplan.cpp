@@ -302,10 +302,12 @@ void SolverCreate::SolverData::commit() {
             curdmd = static_cast<Demand*>(obj);
           else
             throw DataException("User exit nextdemand must return a demand");
-        } else if (++iterdmd == demands->end())
+        } else if (iterdmd == demands->end())
           break;
-        else
+        else {
           curdmd = *iterdmd;
+          ++iterdmd;
+        }
 
         // Plan the demand
         iteration_count = 0;

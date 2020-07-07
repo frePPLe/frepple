@@ -82,9 +82,7 @@ class LocaleMiddleware(DjangoLocaleMiddleware):
                 user.backend = settings.AUTHENTICATION_BACKENDS[0]
                 login(request, user)
                 user.scenarios = [
-                    Scenario.objects.using(DEFAULT_DB_ALIAS).get(
-                        Q(status="In use") | Q(name=request.database)
-                    )
+                    Scenario.objects.using(DEFAULT_DB_ALIAS).get(name=request.database)
                 ]
                 request.user = user
                 request.session["navbar"] = decoded.get("navbar", True)

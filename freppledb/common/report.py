@@ -297,7 +297,7 @@ class GridFieldDateTime(GridField):
     formatter = "date"
     extra = '"formatoptions":{"srcformat":"Y-m-d H:i:s","newformat":"Y-m-d H:i:s"}'
     searchoptions = (
-        '{"sopt":["cn","eq","lt","le","gt","ge","win"],"searchhidden": true}'
+        '{"sopt":["cn","eq","ne","lt","le","gt","ge","win"],"searchhidden": true}'
     )
     width = 140
 
@@ -311,7 +311,9 @@ class GridFieldTime(GridField):
 class GridFieldDate(GridField):
     formatter = "date"
     extra = '"formatoptions":{"srcformat":"Y-m-d","newformat":"Y-m-d"}'
-    searchoptions = '{"sopt":["cn","eq","lt","le","gt","ge","win"],"searchhidden":true}'
+    searchoptions = (
+        '{"sopt":["cn","eq","ne","lt","le","gt","ge","win"],"searchhidden":true}'
+    )
     width = 140
 
 
@@ -1218,7 +1220,7 @@ class GridReport(View):
             # 2) Sorting order from the preferences
             sortname = "%s %s" % (
                 request.prefs.get("sidx", ""),
-                request.GET.get("sord", "asc"),
+                request.prefs.get("sord", "asc"),
             )
         if not sortname or sortname == " asc":
             # 3) Default sort order

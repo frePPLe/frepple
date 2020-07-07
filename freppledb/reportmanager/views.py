@@ -142,7 +142,14 @@ class ReportManager(GridReport):
     @staticmethod
     def _filter_ne(reportrow, field, data):
         if isinstance(
-            reportrow, (GridFieldCurrency, GridFieldInteger, GridFieldNumber)
+            reportrow,
+            (
+                GridFieldCurrency,
+                GridFieldInteger,
+                GridFieldNumber,
+                GridFieldDate,
+                GridFieldDateTime,
+            ),
         ):
             return ('"%s" is distinct from %%s' % field, [smart_str(data).strip()])
         else:
@@ -180,18 +187,19 @@ class ReportManager(GridReport):
     @staticmethod
     def _filter_in(reportrow, field, data):
         args = smart_str(data).strip().split(",")
-        print(
-            "---",
-            args,
-            len(args),
-            '"%s" in (%s)' % (field, ",".join(["%s" * len(args)])),
-        )
         return ('"%s" in (%s)' % (field, ",".join(["%s"] * len(args))), args)
 
     @staticmethod
     def _filter_eq(reportrow, field, data):
         if isinstance(
-            reportrow, (GridFieldCurrency, GridFieldInteger, GridFieldNumber)
+            reportrow,
+            (
+                GridFieldCurrency,
+                GridFieldInteger,
+                GridFieldNumber,
+                GridFieldDate,
+                GridFieldDateTime,
+            ),
         ):
             return ('"%s" = %%s' % field, [smart_str(data).strip()])
         else:
@@ -311,14 +319,13 @@ class ReportManager(GridReport):
             #                             else data,
             #                         )
             #                     )
-            except Exception as e:
-                print("bollowkc", e)
+            except Exception:
                 pass  # Silently ignore invalid filters
         if "groups" in filterdata:
             for group in filterdata["groups"]:
                 try:
                     z = cls._getFilter_internal(request, group)
-                    if z:
+                    if z[0]:
                         q_filters[0].append("(%s)" % z[0])
                         q_filters[1].extend(z[1])
                 except Exception:
@@ -363,7 +370,7 @@ class ReportManager(GridReport):
         return ("", [])
 
     @classmethod
-    def data_query(cls, request, *args, **kwargs):
+    def data_query(cls, request, *args, page=None, **kwargs):
         # Main query that will return all data records.
         # It implements filtering, paging and sorting.
         conn = None
@@ -382,10 +389,15 @@ class ReportManager(GridReport):
                 if not hasattr(request, "filter"):
                     request.filter = cls.getFilter(request, *args, **kwargs)
                 cursor.execute(
-                    "select * from (%s) t_subquery %s"
+                    "select * from (%s) t_subquery %s order by %s %s %s"
                     % (
                         request.report.sql,
                         "where %s" % request.filter[0] if request.filter[0] else "",
+                        cls._apply_sort_index(request),
+                        ("offset %s" % ((page - 1) * request.pagesize + 1))
+                        if page and page > 1
+                        else "",
+                        "limit %s" % request.pagesize if page else "",
                     ),
                     request.filter[1],
                 )
@@ -419,14 +431,6 @@ class ReportManager(GridReport):
                     cursor.execute("set role %s" % (sqlrole,))
                 if not hasattr(request, "filter"):
                     request.filter = cls.getFilter(request, *args, **kwargs)
-                print(
-                    "select count(*) from (%s) t_subquery %s"
-                    % (
-                        request.report.sql,
-                        "where %s" % request.filter[0] if request.filter[0] else "",
-                    ),
-                    request.filter[1],
-                )
                 cursor.execute(
                     "select count(*) from (%s) t_subquery %s"
                     % (

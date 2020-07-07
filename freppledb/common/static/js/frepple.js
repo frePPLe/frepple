@@ -1080,12 +1080,24 @@ var grid = {
     $.jgrid.hideModal("#searchmodfbox_grid");
 
     // Prepare upfront the html for the scenarios to export
+    // We limit the list of scenarios to 6
     if (scenario_permissions.length > 0) {
     	var cb = "";
-    	for (var i = 0 ; i < scenario_permissions.length ; i++) {
+    	for (var i = 0 ; i < scenario_permissions.length; i++) {
+    		if (scenario_permissions[i][2] == 1)
     		cb += 
     			'<div class="form-check">' +
-    			'<input class="form-check-input" type="checkbox" value="" id="'+ scenario_permissions[i][0] +'"' + (scenario_permissions[i][2] == 1 ?"checked disabled":"") + '>' +
+    			'<input class="form-check-input" type="checkbox" value="" id="'+ scenario_permissions[i][0] +'" checked disabled>' +
+    			'&nbsp;&nbsp;&nbsp;<label class="form-check-label" for="'+ scenario_permissions[i][0] +'">' +
+    			gettext(scenario_permissions[i][1]) +
+    		    '</label>' +
+    		    '</div>';
+    	}
+    	for (var i = 0 ; i < scenario_permissions.length && i < 6; i++) {
+    		if (scenario_permissions[i][2] != 1)
+    		cb += 
+    			'<div class="form-check">' +
+    			'<input class="form-check-input" type="checkbox" value="" id="'+ scenario_permissions[i][0] +'">' +
     			'&nbsp;&nbsp;&nbsp;<label class="form-check-label" for="'+ scenario_permissions[i][0] +'">' +
     			gettext(scenario_permissions[i][1]) +
     		    '</label>' +
@@ -1096,7 +1108,7 @@ var grid = {
     // The only_list argument is true when we show a "list" report.
     // It is false for "table" reports.
     if (only_list && scenario_permissions.length > 1)
-      $('#popup').html('<div class="modal-dialog" style="width: 350px;">'+
+      $('#popup').html('<div class="modal-dialog" style="width: 400px;">'+
           '<div class="modal-content">'+
             '<div class="modal-header">'+
             '<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true" class="fa fa-times"></span></button>'+
@@ -1135,7 +1147,7 @@ var grid = {
       '</div>' )
       .modal('show');
     else if (!only_list && scenario_permissions.length > 1)
-        $('#popup').html('<div class="modal-dialog" style="width: 350px;">'+
+        $('#popup').html('<div class="modal-dialog" style="width: 400px;">'+
                 '<div class="modal-content">'+
                   '<div class="modal-header">'+
                   '<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true" class="fa fa-times"></span></button>'+
@@ -1176,7 +1188,7 @@ var grid = {
             '</div>' )
             .modal('show');
     else if (only_list && scenario_permissions.length <= 1)
-        $('#popup').html('<div class="modal-dialog" style="width: 350px;">'+
+        $('#popup').html('<div class="modal-dialog" style="width: 400px;">'+
                 '<div class="modal-content">'+
                   '<div class="modal-header">'+
                   '<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true" class="fa fa-times"></span></button>'+
@@ -1198,7 +1210,7 @@ var grid = {
             '</div>' )
             .modal('show');
     else if (!only_list && scenario_permissions.length <= 1)
-    	$('#popup').html('<div class="modal-dialog" style="width: 350px;">'+
+    	$('#popup').html('<div class="modal-dialog" style="width: 400px;">'+
     	          '<div class="modal-content">'+
     	            '<div class="modal-header">'+
     	              '<h4 class="modal-title">'+gettext("Export CSV or Excel file")+'</h4>'+

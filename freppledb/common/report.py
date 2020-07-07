@@ -68,7 +68,7 @@ from django.http import Http404, HttpResponseNotAllowed, HttpResponseForbidden
 from django.shortcuts import render
 from django.utils import translation
 from django.utils.decorators import method_decorator
-from django.utils.encoding import smart_str, force_text, force_str
+from django.utils.encoding import smart_str, force_str
 from django.utils.html import escape
 from django.utils.translation import gettext as _
 from django.utils.formats import get_format
@@ -247,7 +247,7 @@ class GridField(object):
                 self.name or "",
                 self.name or "",
                 self.editable and "true" or "false",
-                force_text(self.title).title().replace("'", "\\'"),
+                force_str(self.title).title().replace("'", "\\'"),
                 self.align,
                 self.field_name,
             )
@@ -270,9 +270,9 @@ class GridField(object):
             o.append(',"searchoptions":%s' % self.searchoptions)
         if self.extra:
             if callable(self.extra):
-                o.append(",%s" % force_text(self.extra()))
+                o.append(",%s" % force_str(self.extra()))
             else:
-                o.append(",%s" % force_text(self.extra))
+                o.append(",%s" % force_str(self.extra))
         return "".join(o)
 
     name = None
@@ -388,7 +388,7 @@ class GridFieldChoice(GridField):
         result = []
         for f in data.split(","):
             for c in self.choices:
-                if f.lower() in (c[0].lower(), force_text(c[1]).lower()):
+                if f.lower() in (c[0].lower(), force_str(c[1]).lower()):
                     result.append(c[0])
         return ",".join(result)
 
@@ -650,7 +650,7 @@ class GridReport(View):
                 if not hasattr(request, "tzoffset"):
                     request.tzoffset = GridReport.getTimezoneOffset(request)
                 data += request.tzoffset
-            return force_text(
+            return force_str(
                 cls._localize(data, decimal_separator),
                 encoding=settings.CSV_CHARSET,
                 errors="ignore",
@@ -872,8 +872,12 @@ class GridReport(View):
     ):
         # Create a workbook
         wb = Workbook(write_only=True)
-        title = force_text(cls.model and cls.model._meta.verbose_name or cls.title)
-        ws = wb.create_sheet(title=title)
+        if callable(cls.title):
+            title = cls.title(request, *args, **kwargs)
+        else:
+            title = cls.model._meta.verbose_name_plural if cls.model else cls.title
+        # Excel can't have longer worksheet names
+        ws = wb.create_sheet(title=force_str(title)[:31])
 
         # Create a named style for the header row
         headerstyle = NamedStyle(name="headerstyle")
@@ -907,21 +911,21 @@ class GridReport(View):
         header = []
         comment = None
         for f in fields:
-            cell = WriteOnlyCell(ws, value=force_text(f.title).title())
+            cell = WriteOnlyCell(ws, value=force_str(f.title).title())
             if f.editable or f.key:
                 cell.style = "headerstyle"
                 fname = getattr(f, "field_name", f.name)
                 if not f.key and f.formatter == "detail" and fname.endswith("__name"):
                     cell.comment = CellComment(
-                        force_text(
+                        force_str(
                             _("Values in this field must exist in the %s table")
-                            % force_text(_(fname[:-6]))
+                            % force_str(_(fname[:-6]))
                         ),
                         "Author",
                     )
                 elif isinstance(f, GridFieldChoice):
                     cell.comment = CellComment(
-                        force_text(
+                        force_str(
                             _("Accepted values are: %s")
                             % ", ".join([c[0] for c in f.choices])
                         ),
@@ -931,12 +935,12 @@ class GridReport(View):
                 cell.style = "readlonlyheaderstyle"
                 if not comment:
                     comment = CellComment(
-                        force_text(_("Read only")), "Author", height=20, width=80
+                        force_str(_("Read only")), "Author", height=20, width=80
                     )
                 cell.comment = comment
             header.append(cell)
         if len(scenario_list) > 1:
-            cell = WriteOnlyCell(ws, value=force_text(_("scenario")).title())
+            cell = WriteOnlyCell(ws, value=force_str(_("scenario")).title())
             cell.style = "readlonlyheaderstyle"
             header.insert(0, cell)
         ws.append(header)
@@ -997,7 +1001,7 @@ class GridReport(View):
             # Customized settings
             custrows = cls._validate_rows(request, request.prefs["rows"])
             r = [
-                force_text(
+                force_str(
                     request.rows[f[0]].title,
                     encoding=settings.CSV_CHARSET,
                     errors="ignore",
@@ -1016,7 +1020,7 @@ class GridReport(View):
         else:
             # Default settings
             r = [
-                force_text(
+                force_str(
                     f.title, encoding=settings.CSV_CHARSET, errors="ignore"
                 ).title()
                 for f in request.rows
@@ -1575,13 +1579,10 @@ class GridReport(View):
                 page = 1
             context = {
                 "reportclass": cls,
-                "title": (
-                    args
-                    and args[0]
-                    and _("%(title)s for %(entity)s")
-                    % {"title": force_text(cls.title), "entity": force_text(args[0])}
-                )
-                or cls.title,
+                "title": _("%(title)s for %(entity)s")
+                % {"title": force_str(cls.title), "entity": force_str(args[0])}
+                if args and args[0]
+                else cls.title,
                 "post_title": cls.post_title,
                 "preferences": request.prefs,
                 "reportkey": reportkey,
@@ -1662,7 +1663,10 @@ class GridReport(View):
                 content=output.getvalue(),
             )
             # Filename parameter is encoded as specified in rfc5987
-            title = force_text(cls.model._meta.verbose_name if cls.model else cls.title)
+            if callable(cls.title):
+                title = cls.title(request, *args, **kwargs)
+            else:
+                title = cls.model._meta.verbose_name_plural if cls.model else cls.title
             response["Content-Disposition"] = (
                 "attachment; filename*=utf-8''%s.xlsx"
                 % urllib.parse.quote(force_str(title))
@@ -1686,9 +1690,13 @@ class GridReport(View):
                 ),
             )
             # Filename parameter is encoded as specified in rfc5987
+            if callable(cls.title):
+                title = cls.title(request, *args, **kwargs)
+            else:
+                title = cls.model._meta.verbose_name_plural if cls.model else cls.title
             response["Content-Disposition"] = (
                 "attachment; filename*=utf-8''%s.csv"
-                % urllib.parse.quote(force_str(cls.title.lower()))
+                % urllib.parse.quote(force_str(title))
             )
             response["Cache-Control"] = "no-cache, no-store"
             return response
@@ -1722,8 +1730,8 @@ class GridReport(View):
                             LogEntry(
                                 user_id=request.user.id,
                                 content_type_id=content_type_id,
-                                object_id=force_text(key),
-                                object_repr=force_text(key)[:200],
+                                object_id=force_str(key),
+                                object_repr=force_str(key)[:200],
                                 action_flag=DELETION,
                             ).save(using=request.database)
                             transaction.savepoint_commit(sid)
@@ -1758,7 +1766,7 @@ class GridReport(View):
                                 user_id=request.user.pk,
                                 content_type_id=content_type_id,
                                 object_id=obj.pk,
-                                object_repr=force_text(obj),
+                                object_repr=force_str(obj),
                                 action_flag=ADDITION,
                                 change_message=_("Copied from %s.") % key,
                             ).save(using=request.database)
@@ -1809,7 +1817,7 @@ class GridReport(View):
                                 user_id=request.user.pk,
                                 content_type_id=content_type_id,
                                 object_id=obj.pk,
-                                object_repr=force_text(obj),
+                                object_repr=force_str(obj),
                                 action_flag=CHANGE,
                                 change_message=_("Changed %s.")
                                 % get_text_list(form.changed_data, _("and")),
@@ -1946,7 +1954,7 @@ class GridReport(View):
                     request,
                     messages.INFO,
                     _("Erasing data from %(model)s")
-                    % {"model": force_text(m._meta.verbose_name)},
+                    % {"model": force_str(m._meta.verbose_name)},
                 )
 
         # Finished successfully
@@ -2404,7 +2412,7 @@ class GridReport(View):
         if _filters:
             # Validate complex search JSON data
             try:
-                filters = _filters and json.loads(_filters)
+                filters = json.loads(_filters)
             except ValueError:
                 filters = None
 
@@ -2474,14 +2482,14 @@ class GridPivot(GridReport):
             for key, value in i[1].items():
                 if callable(value):
                     if key == "title":
-                        m["name"] = capfirst(force_text(value(request)))
+                        m["name"] = capfirst(force_str(value(request)))
                     else:
-                        m[key] = force_text(value(request), strings_only=True)
+                        m[key] = force_str(value(request), strings_only=True)
                 else:
                     if key == "title":
-                        m["name"] = capfirst(force_text(value))
+                        m["name"] = capfirst(force_str(value))
                     else:
-                        m[key] = force_text(value, strings_only=True)
+                        m[key] = force_str(value, strings_only=True)
             if "editable" not in m:
                 m["editable"] = False
             result.append(json.dumps(m))
@@ -2700,7 +2708,7 @@ class GridPivot(GridReport):
 
         # Write a header row
         fields = [
-            force_text(f.title, encoding=settings.CSV_CHARSET, errors="ignore").title()
+            force_str(f.title, encoding=settings.CSV_CHARSET, errors="ignore").title()
             for f in myrows
             if f.name
         ]
@@ -2708,7 +2716,7 @@ class GridPivot(GridReport):
             fields.extend(
                 [
                     capfirst(
-                        force_text(
+                        force_str(
                             _("bucket"), encoding=settings.CSV_CHARSET, errors="ignore"
                         )
                     )
@@ -2717,7 +2725,7 @@ class GridPivot(GridReport):
             fields.extend(
                 [
                     capfirst(
-                        force_text(
+                        force_str(
                             _(
                                 (
                                     f[1]["title"](request)
@@ -2738,7 +2746,7 @@ class GridPivot(GridReport):
             fields.extend(
                 [
                     capfirst(
-                        force_text(
+                        force_str(
                             _("data field"),
                             encoding=settings.CSV_CHARSET,
                             errors="ignore",
@@ -2748,9 +2756,7 @@ class GridPivot(GridReport):
             )
             fields.extend(
                 [
-                    force_text(
-                        b["name"], encoding=settings.CSV_CHARSET, errors="ignore"
-                    )
+                    force_str(b["name"], encoding=settings.CSV_CHARSET, errors="ignore")
                     for b in request.report_bucketlist
                 ]
             )
@@ -2785,7 +2791,7 @@ class GridPivot(GridReport):
                             ]
                             fields.extend(
                                 [
-                                    force_text(
+                                    force_str(
                                         row["bucket"],
                                         encoding=settings.CSV_CHARSET,
                                         errors="ignore",
@@ -2794,7 +2800,7 @@ class GridPivot(GridReport):
                             )
                             fields.extend(
                                 [
-                                    force_text(
+                                    force_str(
                                         cls._localize(row[f[0]], decimal_separator),
                                         encoding=settings.CSV_CHARSET,
                                         errors="ignore",
@@ -2817,7 +2823,7 @@ class GridPivot(GridReport):
                             ]
                             fields.extend(
                                 [
-                                    force_text(
+                                    force_str(
                                         getattr(row, "bucket"),
                                         encoding=settings.CSV_CHARSET,
                                         errors="ignore",
@@ -2826,7 +2832,7 @@ class GridPivot(GridReport):
                             )
                             fields.extend(
                                 [
-                                    force_text(
+                                    force_str(
                                         cls._localize(
                                             getattr(row, f[0]), decimal_separator
                                         ),
@@ -2871,7 +2877,7 @@ class GridPivot(GridReport):
                                 ]
                                 fields.extend(
                                     [
-                                        force_text(
+                                        force_str(
                                             capfirst(
                                                 _(
                                                     (
@@ -2890,7 +2896,7 @@ class GridPivot(GridReport):
                                 )
                                 fields.extend(
                                     [
-                                        force_text(
+                                        force_str(
                                             cls._localize(
                                                 bucket[cross[0]], decimal_separator
                                             ),
@@ -2927,7 +2933,7 @@ class GridPivot(GridReport):
                             ]
                             fields.extend(
                                 [
-                                    force_text(
+                                    force_str(
                                         capfirst(
                                             _(
                                                 (
@@ -2946,7 +2952,7 @@ class GridPivot(GridReport):
                             )
                             fields.extend(
                                 [
-                                    force_text(
+                                    force_str(
                                         cls._localize(
                                             bucket[cross[0]], decimal_separator
                                         ),
@@ -2970,7 +2976,12 @@ class GridPivot(GridReport):
     ):
         # Create a workbook
         wb = Workbook(write_only=True)
-        ws = wb.create_sheet(title=force_text(cls.model._meta.verbose_name))
+        if callable(cls.title):
+            title = cls.title(request, *args, **kwargs)
+        else:
+            title = cls.model._meta.verbose_name_plural if cls.model else cls.title
+        # Excel can't have longer worksheet names
+        ws = wb.create_sheet(title=force_str(title)[:31])
 
         # Create a named style for the header row
         headerstyle = NamedStyle(name="headerstyle")
@@ -3011,7 +3022,7 @@ class GridPivot(GridReport):
         comment = None
         for f in myrows:
             if f.name:
-                cell = WriteOnlyCell(ws, value=force_text(f.title).title())
+                cell = WriteOnlyCell(ws, value=force_str(f.title).title())
                 if f.editable or f.key:
                     cell.style = "headerstyle"
                     fname = getattr(f, "field_name", f.name)
@@ -3021,15 +3032,15 @@ class GridPivot(GridReport):
                         and fname.endswith("__name")
                     ):
                         cell.comment = CellComment(
-                            force_text(
+                            force_str(
                                 _("Values in this field must exist in the %s table")
-                                % force_text(_(fname[:-6]))
+                                % force_str(_(fname[:-6]))
                             ),
                             "Author",
                         )
                     elif isinstance(f, GridFieldChoice):
                         cell.comment = CellComment(
-                            force_text(
+                            force_str(
                                 _("Accepted values are: %s")
                                 % ", ".join([c[0] for c in f.choices])
                             ),
@@ -3039,26 +3050,26 @@ class GridPivot(GridReport):
                     cell.style = "readlonlyheaderstyle"
                     if not comment:
                         comment = CellComment(
-                            force_text(_("Read only")), "Author", height=20, width=80
+                            force_str(_("Read only")), "Author", height=20, width=80
                         )
                     cell.comment = comment
                 fields.append(cell)
         if listformat:
-            cell = WriteOnlyCell(ws, value=capfirst(force_text(_("bucket"))))
+            cell = WriteOnlyCell(ws, value=capfirst(force_str(_("bucket"))))
             if f.editable or f.key:
                 cell.style = "headerstyle"
                 fname = getattr(f, "field_name", f.name)
                 if not f.key and f.formatter == "detail" and fname.endswith("__name"):
                     cell.comment = CellComment(
-                        force_text(
+                        force_str(
                             _("Values in this field must exist in the %s table")
-                            % force_text(_(fname[:-6]))
+                            % force_str(_(fname[:-6]))
                         ),
                         "Author",
                     )
                 elif isinstance(f, GridFieldChoice):
                     cell.comment = CellComment(
-                        force_text(
+                        force_str(
                             _("Accepted values are: %s")
                             % ", ".join([c[0] for c in f.choices])
                         ),
@@ -3068,7 +3079,7 @@ class GridPivot(GridReport):
                 cell.style = "readlonlyheaderstyle"
                 if not comment:
                     comment = CellComment(
-                        force_text(_("Read only")), "Author", height=20, width=80
+                        force_str(_("Read only")), "Author", height=20, width=80
                     )
                 cell.comment = comment
             fields.append(cell)
@@ -3076,7 +3087,7 @@ class GridPivot(GridReport):
                 cell = WriteOnlyCell(
                     ws,
                     value=capfirst(
-                        force_text(
+                        force_str(
                             _(
                                 (
                                     f[1]["title"](request)
@@ -3095,7 +3106,7 @@ class GridPivot(GridReport):
                     cell.style = "readlonlyheaderstyle"
                     if not comment:
                         comment = CellComment(
-                            force_text(_("Read only")), "Author", height=20, width=80
+                            force_str(_("Read only")), "Author", height=20, width=80
                         )
                     cell.comment = comment
                 fields.append(cell)

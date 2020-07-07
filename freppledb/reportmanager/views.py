@@ -15,21 +15,12 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-import csv
-from datetime import timedelta
-from io import BytesIO, StringIO
+from datetime import timedelta, date
 import json
 import logging
-from openpyxl import Workbook
-from openpyxl.utils import get_column_letter
-from openpyxl.cell import WriteOnlyCell
-from openpyxl.styles import NamedStyle, PatternFill
-from openpyxl.comments import Comment as CellComment
 import sqlparse
-import urllib
 
 from django.conf import settings
-from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.decorators import permission_required
 from django.contrib import messages
 from django.db import connections
@@ -43,19 +34,14 @@ from django.http import (
     HttpResponseServerError,
 )
 from django.shortcuts import render
-from django.utils.decorators import method_decorator
-from django.utils.encoding import force_text
-from django.utils.formats import get_format
-from django.utils.text import capfirst
+from django.utils.encoding import smart_str
+
 from django.utils.translation import gettext as _
-from django.views.decorators.cache import never_cache
-from django.views.decorators.csrf import csrf_protect
 
 from freppledb.reportmanager.models import SQLReport, SQLColumn
 from freppledb.common.report import (
     create_connection,
     GridReport,
-    _getCellValue,
     GridFieldText,
     GridFieldLastModified,
     GridFieldBoolNullable,
@@ -66,6 +52,7 @@ from freppledb.common.report import (
     GridFieldCurrency,
     GridFieldDateTime,
     GridFieldDate,
+    GridFieldChoice,
 )
 from .admin import SQLReportForm
 
@@ -147,15 +134,233 @@ class ReportList(GridReport):
 
 class ReportManager(GridReport):
 
-    title = _("report editor")
     template = "reportmanager/reportmanager.html"
     reportkey = "reportmanager.reportmanager"
     help_url = "user-guide/user-interface/report-manager.html"
     default_sort = ""
 
+    @staticmethod
+    def _filter_ne(reportrow, field, data):
+        if isinstance(
+            reportrow, (GridFieldCurrency, GridFieldInteger, GridFieldNumber)
+        ):
+            return ('"%s" is distinct from %%s' % field, [smart_str(data).strip()])
+        else:
+            return (
+                'upper("%s") is distinct from upper(%%s)' % field,
+                [smart_str(data).strip()],
+            )
+
+    @staticmethod
+    def _filter_bn(reportrow, field, data):
+        return (
+            'not upper("%s") like upper(%%s)' % field,
+            ["%s%%" % smart_str(data).strip()],
+        )
+
+    @staticmethod
+    def _filter_en(reportrow, field, data):
+        return (
+            'not upper("%s") like upper(%%s)' % field,
+            ["%%%s" % smart_str(data).strip()],
+        )
+
+    @staticmethod
+    def _filter_nc(reportrow, field, data):
+        return (
+            'not upper("%s") like upper(%%s)' % field,
+            ["%%%s%%" % smart_str(data).strip()],
+        )
+
+    @staticmethod
+    def _filter_ni(reportrow, field, data):
+        args = smart_str(data).strip().split(",")
+        return ('"%s" not in (%s)' % (field, ",".join(["%s"] * len(args))), args)
+
+    @staticmethod
+    def _filter_in(reportrow, field, data):
+        args = smart_str(data).strip().split(",")
+        print(
+            "---",
+            args,
+            len(args),
+            '"%s" in (%s)' % (field, ",".join(["%s" * len(args)])),
+        )
+        return ('"%s" in (%s)' % (field, ",".join(["%s"] * len(args))), args)
+
+    @staticmethod
+    def _filter_eq(reportrow, field, data):
+        if isinstance(
+            reportrow, (GridFieldCurrency, GridFieldInteger, GridFieldNumber)
+        ):
+            return ('"%s" = %%s' % field, [smart_str(data).strip()])
+        else:
+            return ('upper("%s") = upper(%%s)' % field, [smart_str(data).strip()])
+
+    @staticmethod
+    def _filter_bw(reportrow, field, data):
+        return (
+            'upper("%s") like upper(%%s)' % field,
+            ["%s%%" % smart_str(data).strip()],
+        )
+
+    @staticmethod
+    def _filter_gt(reportrow, field, data):
+        return ('"%s" > %%s' % field, [smart_str(data).strip()])
+
+    @staticmethod
+    def _filter_gte(reportrow, field, data):
+        return ('"%s" >= %%s' % field, [smart_str(data).strip()])
+
+    @staticmethod
+    def _filter_lt(reportrow, field, data):
+        return ('"%s" < %%s' % field, [smart_str(data).strip()])
+
+    @staticmethod
+    def _filter_lte(reportrow, field, data):
+        return ('"%s" <= %%s' % field, [smart_str(data).strip()])
+
+    @staticmethod
+    def _filter_ew(reportrow, field, data):
+        return (
+            'upper("%s") like upper(%%s)' % field,
+            ["%%%s" % smart_str(data).strip()],
+        )
+
+    @staticmethod
+    def _filter_cn(reportrow, field, data):
+        return (
+            'upper("%s") like upper(%%s)' % field,
+            ["%%%s%%" % smart_str(data).strip()],
+        )
+
+    @staticmethod
+    def _filter_win(reportrow, field, data):
+        return (
+            '"%s" <= %%s' % field,
+            [date.today() + timedelta(int(float(smart_str(data))))],
+        )
+
+    _filter_map_jqgrid_sql = {
+        # jqgrid op: (django_lookup, use_exclude, use_extra_where)
+        "ne": _filter_ne.__func__,
+        "bn": _filter_bn.__func__,
+        "en": _filter_en.__func__,
+        "nc": _filter_nc.__func__,
+        "ni": _filter_ni.__func__,
+        "in": _filter_in.__func__,
+        "eq": _filter_eq.__func__,
+        "bw": _filter_bw.__func__,
+        "gt": _filter_gt.__func__,
+        "ge": _filter_gte.__func__,
+        "lt": _filter_lt.__func__,
+        "le": _filter_lte.__func__,
+        "ew": _filter_ew.__func__,
+        "cn": _filter_cn.__func__,
+        "win": _filter_win.__func__,
+    }
+
+    @classmethod
+    def title(cls, request, *args, **kwargs):
+        if args and args[0]:
+            if not hasattr(request, "report"):
+                request.report = (
+                    SQLReport.objects.all().using(request.database).get(pk=args[0])
+                )
+            return request.report.name
+        else:
+            return _("report editor")
+
     @classmethod
     def has_permission(cls, user):
         return user.has_perm("reportmanager.view_sqlreport")
+
+    @classmethod
+    def _getRowByName(cls, request, name):
+        for i in request.rows:
+            if i.name == name:
+                return i
+        raise KeyError("row doesn't exists")
+
+    @classmethod
+    def _getFilter_internal(cls, request, filterdata, *args, **kwargs):
+        q_filters = [[], []]
+        for rule in filterdata["rules"]:
+            try:
+                op, field, data = rule["op"], rule["field"], rule["data"]
+                reportrow = cls._getRowByName(request, field)
+                if data == "":
+                    # No filter value specified, which makes the filter invalid
+                    continue
+                else:
+                    t = cls._filter_map_jqgrid_sql[op](
+                        reportrow,
+                        field,
+                        reportrow.validateValues(data)
+                        if isinstance(reportrow, GridFieldChoice)
+                        else data,
+                    )
+                    q_filters[0].append(t[0])
+                    q_filters[1].extend(t[1])
+            #                     q_filters.append(
+            #                         cls._filter_map_jqgrid_django[op](
+            #                             q_filters,
+            #                             reportrow,
+            #                             reportrow.validateValues(data)
+            #                             if isinstance(reportrow, GridFieldChoice)
+            #                             else data,
+            #                         )
+            #                     )
+            except Exception as e:
+                print("bollowkc", e)
+                pass  # Silently ignore invalid filters
+        if "groups" in filterdata:
+            for group in filterdata["groups"]:
+                try:
+                    z = cls._getFilter_internal(request, group)
+                    if z:
+                        q_filters[0].append("(%s)" % z[0])
+                        q_filters[1].extend(z[1])
+                except Exception:
+                    pass  # Silently ignore invalid groups
+        if q_filters[0]:
+            if filterdata["groupOp"].upper() == "OR":
+                q_filters[0] = " or ".join(q_filters[0])
+            else:
+                q_filters[0] = " and ".join(q_filters[0])
+        return q_filters
+
+    @classmethod
+    def getFilter(cls, request, *args, **kwargs):
+        # Jqgrid-style advanced filtering
+        _filters = request.GET.get("filters")
+        if _filters:
+            # Validate complex search JSON data
+            try:
+                return cls._getFilter_internal(
+                    request, json.loads(_filters), *args, **kwargs
+                )
+            except ValueError:
+                return ("", [])
+
+        # Django-style filtering, using URL parameters
+        #         if plus_django_style:
+        #             for i, j in request.GET.items():
+        #                 for r in request.rows:
+        #                     if r.name and (
+        #                         i == r.field_name or i.startswith(r.field_name + "__")
+        #                     ):
+        #                         try:
+        #                             items = items.filter(
+        #                                 **{
+        #                                     i: r.validateValues(unquote(j))
+        #                                     if isinstance(r, GridFieldChoice)
+        #                                     else unquote(j)
+        #                                 }
+        #                             )
+        #                         except Exception:
+        #                             pass  # silently ignore invalid filters
+        return ("", [])
 
     @classmethod
     def data_query(cls, request, *args, **kwargs):
@@ -174,9 +379,16 @@ class ReportManager(GridReport):
                 )
                 if sqlrole:
                     cursor.execute("set role %s" % (sqlrole,))
+                if not hasattr(request, "filter"):
+                    request.filter = cls.getFilter(request, *args, **kwargs)
                 cursor.execute(
-                    request.report.sql
-                )  # xxx query may require arguments for filtering!!!!
+                    "select * from (%s) t_subquery %s"
+                    % (
+                        request.report.sql,
+                        "where %s" % request.filter[0] if request.filter[0] else "",
+                    ),
+                    request.filter[1],
+                )
                 for rec in cursor.fetchall():
                     result = {}
                     idx = 0
@@ -205,9 +417,24 @@ class ReportManager(GridReport):
                 )
                 if sqlrole:
                     cursor.execute("set role %s" % (sqlrole,))
+                if not hasattr(request, "filter"):
+                    request.filter = cls.getFilter(request, *args, **kwargs)
+                print(
+                    "select count(*) from (%s) t_subquery %s"
+                    % (
+                        request.report.sql,
+                        "where %s" % request.filter[0] if request.filter[0] else "",
+                    ),
+                    request.filter[1],
+                )
                 cursor.execute(
-                    "select count(*) from (" + request.report.sql + ") t_subquery"
-                )  # xxx query may require arguments for filtering!!!!
+                    "select count(*) from (%s) t_subquery %s"
+                    % (
+                        request.report.sql,
+                        "where %s" % request.filter[0] if request.filter[0] else "",
+                    ),
+                    request.filter[1],
+                )
                 return cursor.fetchone()[0]
         finally:
             if conn:
@@ -222,23 +449,23 @@ class ReportManager(GridReport):
                 .order_by("sequence")
             ):
                 if c.format == "number":
-                    cols.append(GridFieldNumber(_(c.name)))
+                    cols.append(GridFieldNumber(_(c.name), editable=False))
                 elif c.format == "datetime":
-                    cols.append(GridFieldDateTime(_(c.name)))
+                    cols.append(GridFieldDateTime(_(c.name), editable=False))
                 elif c.format == "date":
-                    cols.append(GridFieldDate(_(c.name)))
+                    cols.append(GridFieldDate(_(c.name), editable=False))
                 elif c.format == "integer":
-                    cols.append(GridFieldInteger(_(c.name)))
+                    cols.append(GridFieldInteger(_(c.name), editable=False))
                 elif c.format == "duration":
-                    cols.append(GridFieldDuration(_(c.name)))
+                    cols.append(GridFieldDuration(_(c.name), editable=False))
                 elif c.format == "text":
-                    cols.append(GridFieldText(_(c.name)))
+                    cols.append(GridFieldText(_(c.name), editable=False))
                 elif c.format == "character":
-                    cols.append(GridFieldText(_(c.name)))
+                    cols.append(GridFieldText(_(c.name), editable=False))
                 elif c.format == "bool":
-                    cols.append(GridFieldBool(_(c.name)))
+                    cols.append(GridFieldBool(_(c.name), editable=False))
                 elif c.format == "currency":
-                    cols.append(GridFieldCurrency(_(c.name)))
+                    cols.append(GridFieldCurrency(_(c.name), editable=False))
         return cols
 
     @classmethod

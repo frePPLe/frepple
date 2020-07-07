@@ -187,11 +187,13 @@ class MultiDBMiddleware:
                         request.path_info = request.path_info[len(request.prefix) :]
                         request.path = request.path[len(request.prefix) :]
                         request.database = i
+                        request.user._state.db = i.name
                         return self.get_response(request)
                 except Exception:
                     pass
             request.prefix = ""
             request.database = DEFAULT_DB_ALIAS
+            request.user._state.db = DEFAULT_DB_ALIAS
         else:
             # A list of scenarios is already available
             if request.user.is_anonymous:
@@ -214,6 +216,7 @@ class MultiDBMiddleware:
                     pass
             request.prefix = ""
             request.database = DEFAULT_DB_ALIAS
+            request.user._state.db = DEFAULT_DB_ALIAS
             if default_scenario:
                 request.scenario = default_scenario
             else:

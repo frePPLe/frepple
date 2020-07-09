@@ -38,7 +38,7 @@ from django.utils.encoding import smart_str
 
 from django.utils.translation import gettext as _
 
-from freppledb.reportmanager.models import SQLReport, SQLColumn
+from freppledb.common.models import User
 from freppledb.common.report import (
     create_connection,
     GridReport,
@@ -54,6 +54,7 @@ from freppledb.common.report import (
     GridFieldDate,
     GridFieldChoice,
 )
+from .models import SQLReport, SQLColumn
 from .admin import SQLReportForm
 
 logger = logging.getLogger(__name__)
@@ -99,18 +100,14 @@ def getSchema(request):
 
 
 class ReportList(GridReport):
-    template = "admin/base_site_grid.html"
+    template = "reportmanager/reportlist.html"
     title = _("my reports")
     model = SQLReport
     help_url = "user-guide/user-interface/report-manager.html"
     frozenColumns = 1
     rows = (
         GridFieldInteger(
-            "id",
-            title=_("identifier"),
-            key=True,
-            formatter="detail",
-            extra='"role":"reportmanager/sqlreport"',
+            "id", title=_("identifier"), key=True, extra="formatter:reportlink"
         ),
         GridFieldText("name", title=_("name")),
         GridFieldText("description", title=_("description")),
@@ -284,6 +281,35 @@ class ReportManager(GridReport):
         return user.has_perm("reportmanager.view_sqlreport")
 
     @classmethod
+    def getScenarios(cls, request, *args, **kwargs):
+        """
+        Because your report executes SQL statements on the database, we can
+        only allow you to run on scenarios in which you are a superuser.
+        """
+        scenario_permissions = []
+        if len(request.user.scenarios) > 1:
+            original_database = request.database
+            for scenario in request.user.scenarios:
+                try:
+                    user = User.objects.using(scenario.name).get(
+                        username=request.user.username
+                    )
+
+                    if user.is_superuser:
+                        scenario_permissions.append(
+                            [
+                                scenario.name,
+                                scenario.description
+                                if scenario.description
+                                else scenario.name,
+                                1 if scenario.name == original_database else 0,
+                            ]
+                        )
+                except Exception:
+                    pass
+        return scenario_permissions
+
+    @classmethod
     def _getRowByName(cls, request, name):
         for i in request.rows:
             if i.name == name:
@@ -310,15 +336,6 @@ class ReportManager(GridReport):
                     )
                     q_filters[0].append(t[0])
                     q_filters[1].extend(t[1])
-            #                     q_filters.append(
-            #                         cls._filter_map_jqgrid_django[op](
-            #                             q_filters,
-            #                             reportrow,
-            #                             reportrow.validateValues(data)
-            #                             if isinstance(reportrow, GridFieldChoice)
-            #                             else data,
-            #                         )
-            #                     )
             except Exception:
                 pass  # Silently ignore invalid filters
         if "groups" in filterdata:
@@ -341,7 +358,7 @@ class ReportManager(GridReport):
     def getFilter(cls, request, *args, **kwargs):
         # Jqgrid-style advanced filtering
         _filters = request.GET.get("filters")
-        if _filters:
+        if _filters and _filters != '{"groupOp":"AND","rules":[]}':
             # Validate complex search JSON data
             try:
                 return cls._getFilter_internal(
@@ -351,23 +368,30 @@ class ReportManager(GridReport):
                 return ("", [])
 
         # Django-style filtering, using URL parameters
-        #         if plus_django_style:
-        #             for i, j in request.GET.items():
-        #                 for r in request.rows:
-        #                     if r.name and (
-        #                         i == r.field_name or i.startswith(r.field_name + "__")
-        #                     ):
-        #                         try:
-        #                             items = items.filter(
-        #                                 **{
-        #                                     i: r.validateValues(unquote(j))
-        #                                     if isinstance(r, GridFieldChoice)
-        #                                     else unquote(j)
-        #                                 }
-        #                             )
-        #                         except Exception:
-        #                             pass  # silently ignore invalid filters
-        return ("", [])
+        q_filters = [[], []]
+        for i, j in request.GET.items():
+            for r in request.rows:
+                try:
+                    if not r.name or not j:
+                        continue
+                    elif i == r.field_name:
+                        op = "eq"
+                    elif i.startswith(r.field_name + "__"):
+                        op = i[len(r.field_name + "__") :]
+                    else:
+                        continue
+                    t = cls._filter_map_jqgrid_sql[op](
+                        r,
+                        r.name,
+                        r.validateValues(j) if isinstance(r, GridFieldChoice) else j,
+                    )
+                    q_filters[0].append(t[0])
+                    q_filters[1].extend(t[1])
+                except Exception:
+                    pass  # silently ignore invalid filters
+        if q_filters[0]:
+            q_filters[0] = " and ".join(q_filters[0])
+        return q_filters
 
     @classmethod
     def data_query(cls, request, *args, page=None, **kwargs):
@@ -535,10 +559,13 @@ class ReportManager(GridReport):
             else:
                 f = SQLReportForm(request.POST)
             if f.is_valid():
-                m = f.save(commit=False)
-                m.user = request.user
-                m.save()
-                return JsonResponse({"id": m.id})
+                try:
+                    m = f.save(commit=False)
+                    m.user = request.user
+                    m.save()
+                    return JsonResponse({"id": m.id, "status": "ok"})
+                except Exception as e:
+                    return JsonResponse({"id": m.id, "status": str(e)})
             else:
                 return HttpResponseServerError("Error saving report")
 

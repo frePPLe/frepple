@@ -84,15 +84,18 @@ $(function() {
       data: data,
       async: true,
       success: function(data) {
-        $("#workarea").prepend(
+      	if (data.status == "ok") {
+          $("#reportmanager_save").addClass("btn-primary").removeClass("btn-danger");
+          window.location.href = window.location.href;
+        }
+      	else {
+          $("#workarea").prepend(
             '<div id="save_ok" class="row"><div class="col-md-12" style="margin-top: 5px">' 
-            + '<ul class="alert alert-success"><li>{% trans "The report was saved successfully." %}</li>'
-            + '</ul></div></div>'
+            + '<ul class="alert alert-danger"><li>{% trans "Saving the report failed" %}&nbsp;:&nbsp;' 
+            + data.status
+            + '</li></ul></div></div>'
             );
-        setTimeout(function() {$("#save_ok").remove();}, 3000);
-        $("#reportmanager_save").addClass("btn-primary").removeClass("btn-danger");
-        id = data.id;
-        $("#grid").trigger("reloadGrid");
+      	}
       }
       });
   });

@@ -15,10 +15,12 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-from django.db import models, DEFAULT_DB_ALIAS, connections
+from django.conf import settings
+from django.db import models, DEFAULT_DB_ALIAS
 from django.utils.translation import gettext as _
 
 from freppledb.common.models import AuditModel, User, MultiDBManager
+from freppledb.common.report import create_connection
 
 
 class SQLReport(AuditModel):
@@ -49,13 +51,22 @@ class SQLReport(AuditModel):
             db = getattr(_thread_locals, "database", DEFAULT_DB_ALIAS)
         SQLColumn.objects.filter(report=self).using(db).delete()
         if self.sql:
+            conn = None
             try:
-                with connections[db].cursor() as cursor:
+                conn = create_connection(db)
+                with conn.cursor() as cursor:
+                    sqlrole = settings.DATABASES[db].get("SQL_ROLE", "report_role")
+                    if sqlrole:
+                        cursor.execute("set role %s" % (sqlrole,))
                     # The query is wrapped in a dummy filter, to avoid executing the
                     # inner real query. It still generates the list of all columns.
                     cursor.execute("select * from (%s) as Q where false" % self.sql)
+                    cols = []
                     seq = 1
                     for f in cursor.description:
+                        if f[0] in cols:
+                            raise Exception("Duplicate column name '%s'" % f[0])
+                        cols.append(f[0])
                         if f[1] == 1700:
                             fmt = "number"
                         elif f[1] == 1184:
@@ -72,8 +83,9 @@ class SQLReport(AuditModel):
                             report=self, sequence=seq, name=f[0], format=fmt
                         ).save(using=db)
                         seq += 1
-            except Exception:
-                pass
+            finally:
+                if conn:
+                    conn.close()
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)

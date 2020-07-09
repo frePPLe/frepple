@@ -1,0 +1,13 @@
+{% extends "admin/base_site_grid.html" %}
+{% load i18n %}
+
+{% block extrahead %}{{block.super}}
+<script>
+function reportlink(cellvalue, options, row)
+{
+  return "<a href='" + url_prefix + "/reportmanager/" + cellvalue + "/'>"
+      + cellvalue 
+      + "<span class='leftpadding fa fa-caret-right'></span></a><br>";
+}
+</script>
+{% endblock %}

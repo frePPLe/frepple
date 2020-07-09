@@ -1480,34 +1480,7 @@ class GridReport(View):
         return cross_idx
 
     @classmethod
-    def get(cls, request, *args, **kwargs):
-
-        # Pick up the list of time buckets
-        if cls.hasTimeBuckets:
-            cls.getBuckets(request, args, kwargs)
-            bucketnames = Bucket.objects.using(request.database)
-            if cls.maxBucketLevel:
-                if callable(cls.maxBucketLevel):
-                    maxlvl = cls.maxBucketLevel(request)
-                    bucketnames = bucketnames.filter(level__lte=maxlvl)
-                else:
-                    bucketnames = bucketnames.filter(level__lte=cls.maxBucketLevel)
-            if cls.minBucketLevel:
-                if callable(cls.minBucketLevel):
-                    minlvl = cls.minBucketLevel(request)
-                    bucketnames = bucketnames.filter(level__gte=minlvl)
-                else:
-                    bucketnames = bucketnames.filter(level__gte=cls.minBucketLevel)
-            bucketnames = bucketnames.order_by("-level").values_list("name", flat=True)
-        else:
-            bucketnames = None
-        fmt = request.GET.get("format", None)
-        reportkey = cls.getKey(request, *args, **kwargs)
-        request.prefs = request.user.getPreference(reportkey, database=request.database)
-        if request.prefs:
-            kwargs["preferences"] = request.prefs
-
-        # scenario_permissions is used to display multiple scenarios in the export dialog
+    def getScenarios(cls, request, *args, **kwargs):
         scenario_permissions = []
         if len(request.user.scenarios) > 1:
             original_database = request.database
@@ -1536,6 +1509,41 @@ class GridReport(View):
 
             # reverting to original request database as permissions are checked
             request.database = original_database
+        return scenario_permissions
+
+    @classmethod
+    def get(cls, request, *args, **kwargs):
+
+        # Pick up the list of time buckets
+        if cls.hasTimeBuckets:
+            cls.getBuckets(request, args, kwargs)
+            bucketnames = Bucket.objects.using(request.database)
+            if cls.maxBucketLevel:
+                if callable(cls.maxBucketLevel):
+                    maxlvl = cls.maxBucketLevel(request)
+                    bucketnames = bucketnames.filter(level__lte=maxlvl)
+                else:
+                    bucketnames = bucketnames.filter(level__lte=cls.maxBucketLevel)
+            if cls.minBucketLevel:
+                if callable(cls.minBucketLevel):
+                    minlvl = cls.minBucketLevel(request)
+                    bucketnames = bucketnames.filter(level__gte=minlvl)
+                else:
+                    bucketnames = bucketnames.filter(level__gte=cls.minBucketLevel)
+            bucketnames = bucketnames.order_by("-level").values_list("name", flat=True)
+        else:
+            bucketnames = None
+        fmt = request.GET.get("format", None)
+        reportkey = cls.getKey(request, *args, **kwargs)
+        request.prefs = request.user.getPreference(reportkey, database=request.database)
+        if request.prefs:
+            kwargs["preferences"] = request.prefs
+
+        # scenario_permissions is used to display multiple scenarios in the export dialog
+        if len(request.user.scenarios) > 1:
+            scenario_permissions = cls.getScenarios(request, *args, **kwargs)
+        else:
+            scenario_permissions = []
 
         if not fmt:
             # Return HTML page

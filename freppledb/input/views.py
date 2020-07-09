@@ -160,6 +160,7 @@ class PathReport(GridReport):
     frozenColumns = 0
     editable = False
     default_sort = None
+    isTreeView = True
     multiselect = False
     help_url = "user-guide/user-interface/plan-analysis/supply-path-where-used.html"
 

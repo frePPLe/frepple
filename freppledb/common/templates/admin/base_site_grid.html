@@ -41,7 +41,7 @@ $(function() {
     onSelectRow: null,
     singleSelectClickMode: "toggle",
     multiselect: false, {% endif %}
-    pager: '#gridpager',
+    pager: {% if reportclass.isTreeView %} null {% else %} '#gridpager' {% endif %},
     iconSet: "fontAwesome",
     guiStyle: "bootstrapPrimary",
     viewrecords: true,

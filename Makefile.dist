@@ -32,10 +32,6 @@
 #     - gdb:         Run the gdb debugger
 #  DISTRIBUTION TASKS
 #     - dist:        Creates a source code tarball.
-#  CODE ANALYSIS
-#     - stats:       Runs a simple lines-of-code metric on the source code.
-#     - todo:        Greps for todo items in the source code.
-#     - astyle:      Runs the astyle code beautifier.
 #  CODE MAINTENANCE
 #     - set_release: Updates all references to the release number from an old to a new number.
 #
@@ -113,26 +109,6 @@ profiling_run:
 	export LD_LIBRARY_PATH=$(CURDIR)/src/.libs; \
 	export FREPPLE_LOGFILE=frepple.log; \
 	valgrind --tool=callgrind --dsymutil=yes $(CURDIR)/src/.libs/frepple $(CURDIR)/freppledb/common/commands.py
-
-# A simple way to get some code metrics
-stats:
-	wc -l `find src -name '*.cpp'` \
-		`find contrib -name '*.cpp'` \
-		`find src -name '*.h'` \
-		`find include -name '*.h'` \
-		`find . -name '*.xsd'` \
-		`find . -name '*.nsi'` \
-		`find . -name '*.am'` \
-		`find . -name '*.ac'` | sort -n
-	wc -l `find . -name '*.py'` | sort -n
-	wc -l `find freppledb -name '*.html'` \
-		`find freppledb -name '*.js'` \
-		`find freppledb -name '*.css'` | sort -n
-
-# A simple way to list the todo items
-todo:
-	grep -i todo `find . -name '*.cpp'` `find . -name '*.h'` `find . -name '*.xml'` `find . -name '*.py'` | sort
-	grep -i todo `find . -name '*.cpp'` `find . -name '*.h'` `find . -name '*.xml'` `find . -name '*.py'` | wc
 
 # The release number is (unfortunately) stored in a number of independent places:
 # This make target is used to consistently update all those places.

@@ -2,7 +2,16 @@
 Resource type
 =============
 
-FrePPLe has different resource types:
+Planners can think in different ways on their capacity limits:
+
+* "We can do N jobs at a time"
+
+* "We can produce N units per week (or day, or month)"
+
+* "We have N hours available per week (or day, or month)"
+
+FrePPLe has different resource types that represent these different views on
+the concept of capacity.
 
 * The **default** resource model has a continuous representation of capacity.
 

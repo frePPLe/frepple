@@ -415,7 +415,7 @@ class ReportManager(GridReport):
                 cursor.execute(
                     "select * from (%s) t_subquery %s order by %s %s %s"
                     % (
-                        request.report.sql,
+                        request.report.sql.replace("%", "%%"),
                         "where %s" % request.filter[0] if request.filter[0] else "",
                         cls._apply_sort_index(request),
                         ("offset %s" % ((page - 1) * request.pagesize + 1))
@@ -458,7 +458,7 @@ class ReportManager(GridReport):
                 cursor.execute(
                     "select count(*) from (%s) t_subquery %s"
                     % (
-                        request.report.sql,
+                        request.report.sql.replace("%", "%%"),
                         "where %s" % request.filter[0] if request.filter[0] else "",
                     ),
                     request.filter[1],

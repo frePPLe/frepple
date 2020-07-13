@@ -21,6 +21,13 @@ from django.test import TestCase
 from freppledb.common.models import User
 
 
+def checkResponse(testcase, response):
+    if isinstance(response, StreamingHttpResponse):
+        for rec in response.streaming_content:
+            rec
+    testcase.assertEqual(response.status_code, 200)
+
+
 class DataLoadTest(TestCase):
     def setUp(self):
         # Login

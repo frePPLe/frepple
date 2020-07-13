@@ -18,16 +18,12 @@
 from django.http import StreamingHttpResponse
 from django.test import TestCase
 
+from freppledb.common.tests import checkResponse
+
 
 class OutputTest(TestCase):
 
     fixtures = ["demo"]
-
-    def checkResponse(self, response):
-        if isinstance(response, StreamingHttpResponse):
-            for rec in response.streaming_content:
-                rec
-        self.assertEqual(response.status_code, 200)
 
     def setUp(self):
         # Login
@@ -39,24 +35,24 @@ class OutputTest(TestCase):
         self.assertContains(response, '"records":0,')
         self.assertEqual(response.status_code, 200)
         response = self.client.get("/buffer/?format=csvtable")
-        self.checkResponse(response)
+        checkResponse(self, response)
         self.assertTrue(
             response.__getitem__("Content-Type").startswith("text/csv; charset=")
         )
         response = self.client.get("/buffer/?format=csvlist")
-        self.checkResponse(response)
+        checkResponse(self, response)
         self.assertTrue(
             response.__getitem__("Content-Type").startswith("text/csv; charset=")
         )
         response = self.client.get("/buffer/?format=spreadsheettable")
-        self.checkResponse(response)
+        checkResponse(self, response)
         self.assertTrue(
             response.__getitem__("Content-Type").startswith(
                 "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
             )
         )
         response = self.client.get("/data/input/operationplanmaterial/?format=json")
-        self.checkResponse(response)
+        checkResponse(self, response)
 
     # Resource
     def test_output_resource(self):
@@ -64,19 +60,19 @@ class OutputTest(TestCase):
         self.assertContains(response, '"records":3,')
         self.assertEqual(response.status_code, 200)
         response = self.client.get("/resource/?format=csvtable")
-        self.checkResponse(response)
+        checkResponse(self, response)
         self.assertTrue(
             response.__getitem__("Content-Type").startswith("text/csv; charset=")
         )
         response = self.client.get("/resource/?format=spreadsheetlist")
-        self.checkResponse(response)
+        checkResponse(self, response)
         self.assertTrue(
             response.__getitem__("Content-Type").startswith(
                 "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
             )
         )
         response = self.client.get("/data/input/operationplanresource/?format=json")
-        self.checkResponse(response)
+        checkResponse(self, response)
 
     # Demand
     def test_output_demand(self):
@@ -84,12 +80,12 @@ class OutputTest(TestCase):
         self.assertContains(response, "Demand report")
         self.assertEqual(response.status_code, 200)
         response = self.client.get("/demand/?format=csvlist")
-        self.checkResponse(response)
+        checkResponse(self, response)
         self.assertTrue(
             response.__getitem__("Content-Type").startswith("text/csv; charset=")
         )
         response = self.client.get("/demand/?format=spreadsheettable")
-        self.checkResponse(response)
+        checkResponse(self, response)
         self.assertTrue(
             response.__getitem__("Content-Type").startswith(
                 "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
@@ -102,12 +98,12 @@ class OutputTest(TestCase):
         self.assertContains(response, '"records":0,')
         self.assertEqual(response.status_code, 200)
         response = self.client.get("/operation/?format=csvtable")
-        self.checkResponse(response)
+        checkResponse(self, response)
         self.assertTrue(
             response.__getitem__("Content-Type").startswith("text/csv; charset=")
         )
         response = self.client.get("/operation/?format=spreadsheetlist")
-        self.checkResponse(response)
+        checkResponse(self, response)
         self.assertTrue(
             response.__getitem__("Content-Type").startswith(
                 "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
@@ -120,12 +116,12 @@ class OutputTest(TestCase):
         self.assertContains(response, '"records":4,')
         self.assertEqual(response.status_code, 200)
         response = self.client.get("/purchase/?format=csvtable")
-        self.checkResponse(response)
+        checkResponse(self, response)
         self.assertTrue(
             response.__getitem__("Content-Type").startswith("text/csv; charset=")
         )
         response = self.client.get("/purchase/?format=spreadsheetlist")
-        self.checkResponse(response)
+        checkResponse(self, response)
         self.assertTrue(
             response.__getitem__("Content-Type").startswith(
                 "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
@@ -138,12 +134,12 @@ class OutputTest(TestCase):
         self.assertContains(response, '"records":0,')
         self.assertEqual(response.status_code, 200)
         response = self.client.get("/distribution/?format=csvtable")
-        self.checkResponse(response)
+        checkResponse(self, response)
         self.assertTrue(
             response.__getitem__("Content-Type").startswith("text/csv; charset=")
         )
         response = self.client.get("/distribution/?format=spreadsheetlist")
-        self.checkResponse(response)
+        checkResponse(self, response)
         self.assertTrue(
             response.__getitem__("Content-Type").startswith(
                 "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
@@ -156,12 +152,12 @@ class OutputTest(TestCase):
         self.assertContains(response, '"records":0,')
         self.assertEqual(response.status_code, 200)
         response = self.client.get("/problem/?format=csvlist")
-        self.checkResponse(response)
+        checkResponse(self, response)
         self.assertTrue(
             response.__getitem__("Content-Type").startswith("text/csv; charset=")
         )
         response = self.client.get("/problem/?format=spreadsheetlist")
-        self.checkResponse(response)
+        checkResponse(self, response)
         self.assertTrue(
             response.__getitem__("Content-Type").startswith(
                 "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
@@ -172,7 +168,7 @@ class OutputTest(TestCase):
     def test_output_pegging(self):
         response = self.client.get("/demandpegging/Demand%2001/?format=json")
         self.assertContains(response, '"records":1,')
-        self.checkResponse(response)
+        checkResponse(self, response)
 
     # Constraint
     def test_output_constraint(self):
@@ -180,12 +176,12 @@ class OutputTest(TestCase):
         self.assertContains(response, '"records":0,')
         self.assertEqual(response.status_code, 200)
         response = self.client.get("/constraint/?format=csvlist")
-        self.checkResponse(response)
+        checkResponse(self, response)
         self.assertTrue(
             response.__getitem__("Content-Type").startswith("text/csv; charset=")
         )
         response = self.client.get("/constraint/?format=spreadsheetlist")
-        self.checkResponse(response)
+        checkResponse(self, response)
         self.assertTrue(
             response.__getitem__("Content-Type").startswith(
                 "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
@@ -198,12 +194,12 @@ class OutputTest(TestCase):
         self.assertContains(response, "Performance Indicators")
         self.assertEqual(response.status_code, 200)
         response = self.client.get("/kpi/?format=csvlist")
-        self.checkResponse(response)
+        checkResponse(self, response)
         self.assertTrue(
             response.__getitem__("Content-Type").startswith("text/csv; charset=")
         )
         response = self.client.get("/kpi/?format=spreadsheetlist")
-        self.checkResponse(response)
+        checkResponse(self, response)
         self.assertTrue(
             response.__getitem__("Content-Type").startswith(
                 "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"

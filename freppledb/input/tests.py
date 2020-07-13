@@ -24,6 +24,7 @@ from django.http.response import StreamingHttpResponse
 from django.test import TestCase, TransactionTestCase
 
 from freppledb.common.models import User, Bucket, BucketDetail, Parameter
+from freppledb.common.tests import checkResponse
 from freppledb.input.models import (
     Buffer,
     Calendar,
@@ -105,9 +106,7 @@ class DataLoadTest(TestCase):
             data.write(b"factory 4,\n")
             data.seek(0)
             response = self.client.post("/data/input/location/", {"csv_file": data})
-            for rec in response.streaming_content:
-                rec
-            self.assertEqual(response.status_code, 200)
+            checkResponse(self, response)
         finally:
             data.close()
         self.assertEqual(
@@ -315,9 +314,7 @@ class ExcelTest(TransactionTestCase):
             )
             if not isinstance(response, StreamingHttpResponse):
                 raise Exception("expected a streaming response")
-            for rec in response.streaming_content:
-                rec
-            self.assertEqual(response.status_code, 200)
+            checkResponse(self, response)
 
         # Verify the new content is identical
         self.assertEqual(Buffer.objects.count(), countBuffer)
@@ -396,85 +393,85 @@ class freppleREST(APITestCase):
 
     def test_api_listpages_getapi(self):
         response = self.client.get("/api/")
-        self.assertEqual(response.status_code, 200)
+        checkResponse(self, response)
 
         response = self.client.get("/api/input/demand/")
-        self.assertEqual(response.status_code, 200)
+        checkResponse(self, response)
 
         response = self.client.get("/api/input/item/")
-        self.assertEqual(response.status_code, 200)
+        checkResponse(self, response)
 
         response = self.client.get("/api/input/customer/")
-        self.assertEqual(response.status_code, 200)
+        checkResponse(self, response)
 
         response = self.client.get("/api/input/location/")
-        self.assertEqual(response.status_code, 200)
+        checkResponse(self, response)
 
         response = self.client.get("/api/input/buffer/")
-        self.assertEqual(response.status_code, 200)
+        checkResponse(self, response)
 
         response = self.client.get("/api/input/resource/")
-        self.assertEqual(response.status_code, 200)
+        checkResponse(self, response)
 
         response = self.client.get("/api/input/skill/")
-        self.assertEqual(response.status_code, 200)
+        checkResponse(self, response)
 
         response = self.client.get("/api/input/resourceskill/")
-        self.assertEqual(response.status_code, 200)
+        checkResponse(self, response)
 
         response = self.client.get("/api/input/setupmatrix/")
-        self.assertEqual(response.status_code, 200)
+        checkResponse(self, response)
 
         response = self.client.get("/api/input/purchaseorder/")
-        self.assertEqual(response.status_code, 200)
+        checkResponse(self, response)
 
         response = self.client.get("/api/input/supplier/")
-        self.assertEqual(response.status_code, 200)
+        checkResponse(self, response)
 
         response = self.client.get("/api/input/itemsupplier/")
-        self.assertEqual(response.status_code, 200)
+        checkResponse(self, response)
 
         response = self.client.get("/api/input/distributionorder/")
-        self.assertEqual(response.status_code, 200)
+        checkResponse(self, response)
 
         response = self.client.get("/api/input/itemdistribution/")
-        self.assertEqual(response.status_code, 200)
+        checkResponse(self, response)
 
         response = self.client.get("/api/input/manufacturingorder/")
-        self.assertEqual(response.status_code, 200)
+        checkResponse(self, response)
 
         response = self.client.get("/api/input/calendar/")
-        self.assertEqual(response.status_code, 200)
+        checkResponse(self, response)
 
         response = self.client.get("/api/input/calendarbucket/")
-        self.assertEqual(response.status_code, 200)
+        checkResponse(self, response)
 
         response = self.client.get("/api/input/operation/")
-        self.assertEqual(response.status_code, 200)
+        checkResponse(self, response)
 
         response = self.client.get("/api/input/operationmaterial/")
-        self.assertEqual(response.status_code, 200)
+        checkResponse(self, response)
 
         response = self.client.get("/api/input/operationresource/")
-        self.assertEqual(response.status_code, 200)
+        checkResponse(self, response)
 
         response = self.client.get("/api/input/suboperation/")
-        self.assertEqual(response.status_code, 200)
+        checkResponse(self, response)
 
         response = self.client.get("/api/common/parameter/")
-        self.assertEqual(response.status_code, 200)
+        checkResponse(self, response)
 
         response = self.client.get("/api/common/bucket/")
-        self.assertEqual(response.status_code, 200)
+        checkResponse(self, response)
 
         response = self.client.get("/api/common/bucketdetail/")
-        self.assertEqual(response.status_code, 200)
+        checkResponse(self, response)
 
     def test_api_demand(self):
         response = self.client.get("/api/input/demand/")
-        self.assertEqual(response.status_code, 200)
+        checkResponse(self, response)
         response = self.client.options("/api/input/demand/")
-        self.assertEqual(response.status_code, 200)
+        checkResponse(self, response)
         recordsnumber = Demand.objects.count()
         data = {
             "name": "Order UFO 25",
@@ -558,14 +555,14 @@ class freppleREST(APITestCase):
 
         # Demand GET MULTIPART
         response = self.client.get("/api/input/demand/Order UFO 25/")
-        self.assertEqual(response.status_code, 200)
+        checkResponse(self, response)
         self.assertEqual(Demand.objects.filter(name="Order UFO 25").count(), 1)
         # Demand OPTIONS
         response = self.client.options("/api/input/demand/Order UFO 25/")
-        self.assertEqual(response.status_code, 200)
+        checkResponse(self, response)
         # Demand GET JSON tests
         response = self.client.get("/api/input/demand/Order UFO 26/", format="json")
-        self.assertEqual(response.status_code, 200)
+        checkResponse(self, response)
         self.assertEqual(Demand.objects.filter(name="Order UFO 26").count(), 1)
         # Demand PUT MULTIPART tests
         data = {
@@ -587,7 +584,7 @@ class freppleREST(APITestCase):
         response = self.client.put(
             "/api/input/demand/Order UFO 25/", data, format="json"
         )
-        self.assertEqual(response.status_code, 200)
+        checkResponse(self, response)
         self.assertEqual(Demand.objects.count(), 18)
         self.assertEqual(Demand.objects.filter(description="Put multipart").count(), 1)
         # Demand PUT JSON tests
@@ -610,7 +607,7 @@ class freppleREST(APITestCase):
         response = self.client.put(
             "/api/input/demand/Order UFO 26/", data, format="json"
         )
-        self.assertEqual(response.status_code, 200)
+        checkResponse(self, response)
         self.assertEqual(Demand.objects.count(), recordsnumber + 4)
         self.assertEqual(Demand.objects.filter(description="Put json").count(), 1)
         # Demand PUT FORM tests
@@ -633,7 +630,7 @@ class freppleREST(APITestCase):
         response = self.client.put(
             "/api/input/demand/Order UFO 26/", data, format="json"
         )
-        self.assertEqual(response.status_code, 200)
+        checkResponse(self, response)
         self.assertEqual(Demand.objects.count(), recordsnumber + 4)
         self.assertEqual(Demand.objects.filter(description="Put form").count(), 1)
 
@@ -652,13 +649,13 @@ class freppleREST(APITestCase):
 
     def test_api_customer(self):
         response = self.client.get("/api/input/customer/")
-        self.assertEqual(response.status_code, 200)
+        checkResponse(self, response)
         recordsnumber = Customer.objects.count()
         self.assertEqual(
             Customer.objects.count(), 3
         )  # Different between Enterprise Edition and Community Edition
         response = self.client.options("/api/input/customer/")
-        self.assertEqual(response.status_code, 200)
+        checkResponse(self, response)
         data = {"name": "Customer near Area 51"}
         response = self.client.post("/api/input/customer/", data)
         self.assertEqual(response.status_code, 201)
@@ -684,25 +681,25 @@ class freppleREST(APITestCase):
 
         # Customer GET MULTIPART
         response = self.client.get("/api/input/customer/Customer near Area 51/")
-        self.assertEqual(response.status_code, 200)
+        checkResponse(self, response)
         self.assertEqual(
             Customer.objects.filter(name="Customer near Area 51").count(), 1
         )
         # Customer OPTIONS
         response = self.client.options("/api/input/customer/Customer near Area 51/")
-        self.assertEqual(response.status_code, 200)
+        checkResponse(self, response)
         # Customer GET JSON tests
         response = self.client.get(
             "/api/input/customer/Customer near Area 52/", format="json"
         )
-        self.assertEqual(response.status_code, 200)
+        checkResponse(self, response)
         self.assertEqual(
             Customer.objects.filter(name="Customer near Area 52").count(), 1
         )
         # Customer PUT MULTIPART tests
         data = {"name": "Customer near Area 51", "description": "Patch multipart"}
         response = self.client.patch("/api/input/customer/Customer near Area 51/", data)
-        self.assertEqual(response.status_code, 200)
+        checkResponse(self, response)
         self.assertEqual(Customer.objects.count(), recordsnumber + 4)
         self.assertEqual(
             Customer.objects.filter(description="Patch multipart").count(), 1
@@ -712,7 +709,7 @@ class freppleREST(APITestCase):
         response = self.client.patch(
             "/api/input/customer/Customer near Area 52/", data, format="json"
         )
-        self.assertEqual(response.status_code, 200)
+        checkResponse(self, response)
         self.assertEqual(Customer.objects.count(), recordsnumber + 4)
         self.assertEqual(Customer.objects.filter(description="Patch json").count(), 1)
 
@@ -729,7 +726,7 @@ class freppleREST(APITestCase):
         response = self.client.patch(
             "/api/input/customer/Customer near Area 52/", data, format="json"
         )
-        self.assertEqual(response.status_code, 200)
+        checkResponse(self, response)
         self.assertEqual(Customer.objects.count(), recordsnumber + 4)
         self.assertEqual(Customer.objects.filter(source="Put json").count(), 1)
 
@@ -737,7 +734,7 @@ class freppleREST(APITestCase):
         response = self.client.get(
             "/api/input/customer/?name__contains=Area", format="json"
         )
-        self.assertEqual(response.status_code, 200)
+        checkResponse(self, response)
         self.assertEqual(Customer.objects.filter(name__contains="Area").count(), 4)
 
         # Customer DELETE tests

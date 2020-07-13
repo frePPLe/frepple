@@ -1889,6 +1889,7 @@ class GridReport(View):
                         m2[3].update([m[1]])
 
         # Sort the list of models, based on dependencies between models
+        models.sort(key=lambda m: (m[1].__name__, m[0].upper()))
         cnt = len(models)
         ok = False
         while not ok:
@@ -1910,10 +1911,17 @@ class GridReport(View):
                             j += 1
                             continue
                         models.append(models.pop(i))
-                        j = i
+                        while j < cnt:
+                            if models[i][1] == models[j][1]:
+                                models.append(models.pop(j))
+                            j += 1
                         ok = False
-                    elif models[i][1] == models[j][1] and models[i][0] > models[j][0]:
-                        models.append(models.pop(i))
+                        break
+                    elif (
+                        models[i][1] == models[j][1]
+                        and models[i][0].upper() > models[j][0].upper()
+                    ):
+                        models[i], models[j] = models[j], models[i]
                         ok = False
                     j += 1
         return models

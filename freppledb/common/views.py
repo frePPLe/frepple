@@ -316,9 +316,7 @@ class UserList(GridReport):
     model = User
     frozenColumns = 2
     permissions = (("change_user", "Can change user"),)
-    help_url = (
-        "user-guide/user-interface/getting-around/user-permissions-and-roles.html"
-    )
+    help_url = "user-interface/getting-around/user-permissions-and-roles.html"
 
     rows = (
         GridFieldInteger(
@@ -349,9 +347,7 @@ class GroupList(GridReport):
     model = Group
     frozenColumns = 1
     permissions = (("change_group", "Can change group"),)
-    help_url = (
-        "user-guide/user-interface/getting-around/user-permissions-and-roles.html"
-    )
+    help_url = "user-interface/getting-around/user-permissions-and-roles.html"
 
     rows = (
         GridFieldInteger(
@@ -375,7 +371,7 @@ class ParameterList(GridReport):
     model = Parameter
     adminsite = "admin"
     frozenColumns = 1
-    help_url = "user-guide/model-reference/parameters.html"
+    help_url = "model-reference/parameters.html"
 
     rows = (
         GridFieldText(
@@ -404,7 +400,7 @@ class CommentList(GridReport):
     editable = False
     multiselect = False
     frozenColumns = 0
-    help_url = "user-guide/user-interface/getting-around/comments.html"
+    help_url = "user-interface/getting-around/comments.html"
 
     rows = (
         GridFieldInteger("id", title=_("identifier"), key=True),
@@ -450,7 +446,7 @@ class BucketList(GridReport):
     basequeryset = Bucket.objects.all()
     model = Bucket
     frozenColumns = 1
-    help_url = "user-guide/model-reference/buckets.html"
+    help_url = "model-reference/buckets.html"
     rows = (
         GridFieldText(
             "name",
@@ -475,7 +471,7 @@ class BucketDetailList(GridReport):
     basequeryset = BucketDetail.objects.all()
     model = BucketDetail
     frozenColumns = 2
-    help_url = "user-guide/model-reference/bucket-dates.html"
+    help_url = "model-reference/bucket-dates.html"
     default_sort = (2, "asc", 1, "asc")
     rows = (
         GridFieldInteger("id", title=_("identifier"), key=True, hidden=True),

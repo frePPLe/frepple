@@ -98,7 +98,7 @@ The implementation requires the following steps:
 
 - **Each user accessing frePPLe will still need to be defined in frePPLe** and his/her
   role and permissions will need to be defined. See details: 
-  :doc:`../../user-guide/user-interface/getting-around/user-permissions-and-roles`
+  :doc:`../../user-interface/getting-around/user-permissions-and-roles`
   (As a future enhancement, we could automatically create the user and assign the role. This
   requires the web token frePPLe receive to include the user's role.)
  

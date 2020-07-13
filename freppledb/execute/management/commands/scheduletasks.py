@@ -391,7 +391,7 @@ class Command(BaseCommand):
     title = _("Group and schedule tasks")
     index = 500
 
-    help_url = "user-guide/command-reference.html#scheduletasks"
+    help_url = "command-reference.html#scheduletasks"
 
     @staticmethod
     def getHTML(request):

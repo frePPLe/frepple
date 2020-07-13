@@ -45,9 +45,7 @@ class Report(GridReport):
     default_sort = (1, "asc")
     filterable = False
     multiselect = False
-    help_url = (
-        "user-guide/user-interface/plan-analysis/performance-indicator-report.html"
-    )
+    help_url = "user-interface/plan-analysis/performance-indicator-report.html"
 
     @staticmethod
     def query(request, basequery):

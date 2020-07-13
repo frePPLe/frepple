@@ -40,9 +40,7 @@ class OverviewReport(GridPivot):
     title = _("Manufacturing order summary")
     model = Operation
     permissions = (("view_operation_report", "Can view operation report"),)
-    help_url = (
-        "user-guide/user-interface/plan-analysis/manufacturing-order-summary.html"
-    )
+    help_url = "user-interface/plan-analysis/manufacturing-order-summary.html"
 
     rows = (
         GridFieldText(
@@ -407,7 +405,7 @@ class PurchaseReport(GridPivot):
     title = _("Purchase order summary")
     model = PurchaseOrder
     permissions = (("view_purchaseorder", "Can view purchase order"),)
-    help_url = "user-guide/user-interface/plan-analysis/purchase-order-summary.html"
+    help_url = "user-interface/plan-analysis/purchase-order-summary.html"
 
     rows = (
         GridFieldText(
@@ -765,7 +763,7 @@ class DistributionReport(GridPivot):
     title = _("Distribution order summary")
     model = DistributionOrder
     permissions = (("view_distributionorder", "Can view distribution order"),)
-    help_url = "user-guide/user-interface/plan-analysis/distribution-order-summary.html"
+    help_url = "user-interface/plan-analysis/distribution-order-summary.html"
 
     rows = (
         GridFieldText(

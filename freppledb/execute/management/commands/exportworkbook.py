@@ -39,7 +39,7 @@ class Command(BaseCommand):
     requires_system_checks = False
     title = _("Export a spreadsheet")
     index = 1000
-    help_url = "user-guide/command-reference.html#exportworkbook"
+    help_url = "command-reference.html#exportworkbook"
 
     @staticmethod
     def getHTML(request):

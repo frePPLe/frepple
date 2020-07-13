@@ -1,5 +1,5 @@
 
-DOC_DIRS = developer-guide installation-guide integration-guide user-guide _templates
+DOC_DIRS = developer-guide installation-guide integration-guide examples modeling-wizard model-reference user-interface videos _templates
 DOC_FILES = $(shell find . -type f -name '*.rst') $(shell find . -type f -name '*.png')
 
 EXTRA_DIST = frepple.1 frepplectl.1 frepple.py conf.py build.bat *.rst

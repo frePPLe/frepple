@@ -59,7 +59,7 @@ class Command(loaddata.Command):
 
     title = _("Load a dataset")
     index = 1800
-    help_url = "user-guide/command-reference.html#loaddata"
+    help_url = "command-reference.html#loaddata"
 
     def add_arguments(self, parser):
         super().add_arguments(parser)

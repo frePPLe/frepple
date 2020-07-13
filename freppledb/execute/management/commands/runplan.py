@@ -296,7 +296,7 @@ class Command(BaseCommand):
     title = _("Create a plan")
     index = 0
 
-    help_url = "user-guide/command-reference.html#runplan"
+    help_url = "command-reference.html#runplan"
 
     @staticmethod
     def getHTML(request):

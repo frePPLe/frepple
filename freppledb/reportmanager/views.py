@@ -103,7 +103,7 @@ class ReportList(GridReport):
     template = "reportmanager/reportlist.html"
     title = _("my reports")
     model = SQLReport
-    help_url = "user-guide/user-interface/report-manager.html"
+    help_url = "user-interface/report-manager.html"
     frozenColumns = 1
     rows = (
         GridFieldInteger(
@@ -133,7 +133,7 @@ class ReportManager(GridReport):
 
     template = "reportmanager/reportmanager.html"
     reportkey = "reportmanager.reportmanager"
-    help_url = "user-guide/user-interface/report-manager.html"
+    help_url = "user-interface/report-manager.html"
     default_sort = ""
 
     @staticmethod

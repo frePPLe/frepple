@@ -544,7 +544,7 @@ class Command(BaseCommand):
     # accordion template
     title = _("Import data files from folder")
     index = 1300
-    help_url = "user-guide/command-reference.html#importfromfolder"
+    help_url = "command-reference.html#importfromfolder"
 
     @staticmethod
     def getHTML(request):

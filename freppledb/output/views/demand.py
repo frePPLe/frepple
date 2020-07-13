@@ -73,7 +73,7 @@ class OverviewReport(GridPivot):
         ("backlog", {"title": _("backlog")}),
         ("reasons", {"title": _("reasons"), "visible": False}),
     )
-    help_url = "user-guide/user-interface/plan-analysis/demand-report.html"
+    help_url = "user-interface/plan-analysis/demand-report.html"
 
     @classmethod
     def initialize(reportclass, request):

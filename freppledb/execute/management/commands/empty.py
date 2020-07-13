@@ -294,7 +294,7 @@ class Command(BaseCommand):
 
     title = _("Empty the database")
     index = 1700
-    help_url = "user-guide/command-reference.html#empty"
+    help_url = "command-reference.html#empty"
 
     @staticmethod
     def getHTML(request):

@@ -171,7 +171,7 @@ class Command(BaseCommand):
     title = _("Back up the database")
     index = 1600
 
-    help_url = "user-guide/command-reference.html#backup"
+    help_url = "command-reference.html#backup"
 
     @staticmethod
     def getHTML(request):

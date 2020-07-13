@@ -68,7 +68,7 @@ class Report(GridReport):
     frozenColumns = 0
     editable = False
     multiselect = False
-    help_url = "user-guide/user-interface/plan-analysis/problem-report.html"
+    help_url = "user-interface/plan-analysis/problem-report.html"
     rows = (
         GridFieldInteger("id", title=_("id"), key=True, editable=False, hidden=True),
         GridFieldText(

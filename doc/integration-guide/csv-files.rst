@@ -36,7 +36,7 @@ statements it contains.
 The export and import can be run in 2 ways:
 
 * In the user interface a user can interactively launch the task in 
-  the :doc:`execution screen </user-guide/user-interface/execute>`.
+  the :doc:`execution screen </user-interface/execute>`.
 
 * You can run the task from the command line using the 
   :doc:`frepplectl utility</integration-guide/batch-commands>`.

@@ -38,7 +38,7 @@ class OverviewReport(GridPivot):
     model = Resource
     permissions = (("view_resource_report", "Can view resource report"),)
     editable = False
-    help_url = "user-guide/user-interface/plan-analysis/resource-report.html"
+    help_url = "user-interface/plan-analysis/resource-report.html"
 
     rows = (
         GridFieldText(

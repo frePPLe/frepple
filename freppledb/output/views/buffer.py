@@ -106,7 +106,7 @@ class OverviewReport(GridPivot):
     model = OperationPlanMaterial
     default_sort = (1, "asc", 2, "asc")
     permissions = (("view_inventory_report", "Can view inventory report"),)
-    help_url = "user-guide/user-interface/plan-analysis/inventory-report.html"
+    help_url = "user-interface/plan-analysis/inventory-report.html"
 
     rows = (
         GridFieldText(

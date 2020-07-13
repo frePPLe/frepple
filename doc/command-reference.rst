@@ -7,7 +7,7 @@ database, the input data and/or the output data.
 
 The commands can be accessed in three different ways:
 
-* From the execution screen: :doc:`/user-guide/user-interface/execute`
+* From the execution screen: :doc:`/user-interface/execute`
 * From the command line: :doc:`/integration-guide/batch-commands`
 * Through a web-based API: :doc:`/integration-guide/remote-commands` 
 
@@ -83,7 +83,7 @@ This command is available in the user interface, the command line and the web AP
 
 * Execution screen:  
   
-  .. image:: /user-guide/user-interface/_images/execution-plan.png
+  .. image:: /user-interface/_images/execution-plan.png
      :alt: Execution screen - Plan generation
 
 * Command line::
@@ -114,7 +114,7 @@ running the apache web server.
 
 * Execution screen:  
   
-  .. image:: /user-guide/user-interface/_images/execution-scheduletasks.png
+  .. image:: /user-interface/_images/execution-scheduletasks.png
      :alt: Execution screen - Group and schedule tasks
 
 * Command line::
@@ -147,7 +147,7 @@ This command is available only in the user interface:
 
 * Execution screen:
   
-  .. image:: /user-guide/user-interface/_images/execution-export.png
+  .. image:: /user-interface/_images/execution-export.png
      :alt: Execution screen - Spreadsheet export
 
 .. _importworkbook:
@@ -166,7 +166,7 @@ This command is available only in the user interface:
 
 * Execution screen:
 
-  .. image:: /user-guide/user-interface/_images/execution-import.png
+  .. image:: /user-interface/_images/execution-import.png
      :alt: Execution screen - Spreadsheet import
 
 .. _exporttofolder:
@@ -189,7 +189,7 @@ This command is available in the user interface, the command line and the web AP
 
 * Execution screen:
 
-  .. image:: /user-guide/user-interface/_images/execution-exportplantofolder.png
+  .. image:: /user-interface/_images/execution-exportplantofolder.png
      :alt: Execution screen - Export plan data to folder
 
 * Command line::
@@ -223,7 +223,7 @@ This command is available in the user interface, the command line and the web AP
 
 * Execution screen:
 
-  .. image:: /user-guide/user-interface/_images/execution-emailreport.png
+  .. image:: /user-interface/_images/execution-emailreport.png
      :alt: Execution screen - Email exported reports
 
 * Command line::
@@ -303,7 +303,7 @@ This command is available in the user interface, the command line and the web AP
 
 * Execution screen:  
   
-  .. image:: /user-guide/user-interface/_images/execution-importfilesfromfolder.png
+  .. image:: /user-interface/_images/execution-importfilesfromfolder.png
      :alt: Execution screen - Import data files from folder
 
 * Command line::
@@ -326,7 +326,7 @@ Web service
 In the Enterprise Edition users have the option to start and stop the web service
 which keeps the plan in memory.
 
-.. image:: /user-guide/user-interface/_images/execution-webservice.png
+.. image:: /user-interface/_images/execution-webservice.png
    :alt: Execution screen - Web service
 
 .. _scenario_copy:
@@ -354,7 +354,7 @@ This command is available in the user interface, the command line and the web AP
 
 * Execution screen:  
   
-  .. image:: /user-guide/user-interface/_images/execution-scenarios.png
+  .. image:: /user-interface/_images/execution-scenarios.png
      :alt: Execution screen - what-if scenarios
 
 * Command line::
@@ -389,7 +389,7 @@ This command is available in the user interface, the command line and the web AP
 
 * Execution screen:  
 
-  .. image:: /user-guide/user-interface/_images/execution-backup.png
+  .. image:: /user-interface/_images/execution-backup.png
      :alt: Execution screen - backup
 
 * Command line::
@@ -412,7 +412,7 @@ This command is available in the user interface, the command line and the web AP
 
 * Execution screen:
 
-  .. image:: /user-guide/user-interface/_images/execution-erase.png
+  .. image:: /user-interface/_images/execution-erase.png
      :alt: Execution screen - erase
 
 * Command line::
@@ -445,7 +445,7 @@ This command is available in the user interface, the command line and the web AP
 
 * Execution screen:
 
-  .. image:: /user-guide/user-interface/_images/execution-fixture.png
+  .. image:: /user-interface/_images/execution-fixture.png
      :alt: Execution screen - load a dataset
 
 * Command line::
@@ -512,7 +512,7 @@ This command is available in the user interface, the command line and the web AP
 
 * Execution screen:
 
-  .. image:: /user-guide/user-interface/_images/execution-buckets.png
+  .. image:: /user-interface/_images/execution-buckets.png
      :alt: Execution screen - generate time buckets
    
 * Command line::
@@ -584,7 +584,7 @@ This action is possible in the user interface and the command line:
 
 * User interface:
 
-  See :doc:`/user-guide/user-interface/getting-around/user-permissions-and-roles`
+  See :doc:`/user-interface/getting-around/user-permissions-and-roles`
    
 * Command line::
 
@@ -602,8 +602,8 @@ This action is possible in the user interface and the command line:
 
 * User interface:
 
-  See :doc:`/user-guide/user-interface/getting-around/changing-password` and 
-  :doc:`/user-guide/user-interface/getting-around/user-permissions-and-roles`.
+  See :doc:`/user-interface/getting-around/changing-password` and 
+  :doc:`/user-interface/getting-around/user-permissions-and-roles`.
    
 * Command line::
 

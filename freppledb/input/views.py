@@ -162,7 +162,7 @@ class PathReport(GridReport):
     default_sort = None
     isTreeView = True
     multiselect = False
-    help_url = "user-guide/user-interface/plan-analysis/supply-path-where-used.html"
+    help_url = "user-interface/plan-analysis/supply-path-where-used.html"
 
     rows = (
         GridFieldText("depth", title=_("depth"), editable=False, sortable=False),
@@ -1480,7 +1480,7 @@ class BufferList(GridReport):
     basequeryset = Buffer.objects.all()
     model = Buffer
     frozenColumns = 1
-    help_url = "user-guide/modeling-wizard/master-data/buffers.html"
+    help_url = "modeling-wizard/master-data/buffers.html"
 
     rows = (
         GridFieldInteger(
@@ -1623,7 +1623,7 @@ class SetupMatrixList(GridReport):
     basequeryset = SetupMatrix.objects.all()
     model = SetupMatrix
     frozenColumns = 1
-    help_url = "user-guide/model-reference/setup-matrices.html"
+    help_url = "model-reference/setup-matrices.html"
 
     rows = (
         GridFieldText(
@@ -1643,7 +1643,7 @@ class SetupRuleList(GridReport):
     basequeryset = SetupRule.objects.all()
     model = SetupRule
     frozenColumns = 1
-    help_url = "user-guide/model-reference/setup-matrices.html"
+    help_url = "model-reference/setup-matrices.html"
 
     rows = (
         GridFieldInteger(
@@ -1680,7 +1680,7 @@ class ResourceList(GridReport):
     basequeryset = Resource.objects.all()
     model = Resource
     frozenColumns = 1
-    help_url = "user-guide/modeling-wizard/manufacturing-capacity/resources.html"
+    help_url = "modeling-wizard/manufacturing-capacity/resources.html"
 
     rows = (
         GridFieldText(
@@ -1809,7 +1809,7 @@ class LocationList(GridReport):
     basequeryset = Location.objects.all()
     model = Location
     frozenColumns = 1
-    help_url = "user-guide/modeling-wizard/master-data/locations.html"
+    help_url = "modeling-wizard/master-data/locations.html"
 
     rows = (
         GridFieldText(
@@ -1846,7 +1846,7 @@ class CustomerList(GridReport):
     basequeryset = Customer.objects.all()
     model = Customer
     frozenColumns = 1
-    help_url = "user-guide/modeling-wizard/master-data/customers.html"
+    help_url = "modeling-wizard/master-data/customers.html"
 
     rows = (
         GridFieldText(
@@ -1876,7 +1876,7 @@ class SupplierList(GridReport):
     basequeryset = Supplier.objects.all()
     model = Supplier
     frozenColumns = 1
-    help_url = "user-guide/modeling-wizard/purchasing/suppliers.html"
+    help_url = "modeling-wizard/purchasing/suppliers.html"
 
     rows = (
         GridFieldText(
@@ -1915,7 +1915,7 @@ class ItemSupplierList(GridReport):
     basequeryset = ItemSupplier.objects.all()
     model = ItemSupplier
     frozenColumns = 1
-    help_url = "user-guide/modeling-wizard/purchasing/item-suppliers.html"
+    help_url = "modeling-wizard/purchasing/item-suppliers.html"
 
     rows = (
         GridFieldInteger(
@@ -2114,7 +2114,7 @@ class ItemDistributionList(GridReport):
     basequeryset = ItemDistribution.objects.all()
     model = ItemDistribution
     frozenColumns = 1
-    help_url = "user-guide/modeling-wizard/distribution/item-distributions.html"
+    help_url = "modeling-wizard/distribution/item-distributions.html"
 
     rows = (
         GridFieldInteger(
@@ -2323,7 +2323,7 @@ class ItemList(GridReport):
     model = Item
     frozenColumns = 1
     editable = True
-    help_url = "user-guide/modeling-wizard/master-data/items.html"
+    help_url = "modeling-wizard/master-data/items.html"
 
     rows = (
         GridFieldText(
@@ -2355,7 +2355,7 @@ class SkillList(GridReport):
     basequeryset = Skill.objects.all()
     model = Skill
     frozenColumns = 1
-    help_url = "user-guide/model-reference/skills.html"
+    help_url = "model-reference/skills.html"
 
     rows = (
         GridFieldText(
@@ -2375,7 +2375,7 @@ class ResourceSkillList(GridReport):
     basequeryset = ResourceSkill.objects.all()
     model = ResourceSkill
     frozenColumns = 1
-    help_url = "user-guide/model-reference/resource-skills.html"
+    help_url = "model-reference/resource-skills.html"
 
     rows = (
         GridFieldInteger(
@@ -2416,9 +2416,7 @@ class OperationResourceList(GridReport):
     basequeryset = OperationResource.objects.all()
     model = OperationResource
     frozenColumns = 1
-    help_url = (
-        "user-guide/modeling-wizard/manufacturing-capacity/operation-resources.html"
-    )
+    help_url = "modeling-wizard/manufacturing-capacity/operation-resources.html"
 
     rows = (
         GridFieldInteger(
@@ -2664,7 +2662,7 @@ class OperationMaterialList(GridReport):
     basequeryset = OperationMaterial.objects.all()
     model = OperationMaterial
     frozenColumns = 1
-    help_url = "user-guide/modeling-wizard/manufacturing-bom/operation-materials.html"
+    help_url = "modeling-wizard/manufacturing-bom/operation-materials.html"
 
     rows = (
         GridFieldInteger(
@@ -2878,7 +2876,7 @@ class DemandList(GridReport):
     title = _("sales orders")
     model = Demand
     frozenColumns = 1
-    help_url = "user-guide/modeling-wizard/master-data/sales-orders.html"
+    help_url = "modeling-wizard/master-data/sales-orders.html"
 
     @classmethod
     def basequeryset(reportclass, request, *args, **kwargs):
@@ -3173,7 +3171,7 @@ class CalendarList(GridReport):
     basequeryset = Calendar.objects.all()
     model = Calendar
     frozenColumns = 1
-    help_url = "user-guide/model-reference/calendars.html"
+    help_url = "model-reference/calendars.html"
 
     rows = (
         GridFieldText(
@@ -3197,7 +3195,7 @@ class CalendarBucketList(GridReport):
     basequeryset = CalendarBucket.objects.all()
     model = CalendarBucket
     frozenColumns = 3
-    help_url = "user-guide/model-reference/calendar-buckets.html"
+    help_url = "model-reference/calendar-buckets.html"
 
     rows = (
         GridFieldInteger(
@@ -3239,7 +3237,7 @@ class OperationList(GridReport):
     basequeryset = Operation.objects.all()
     model = Operation
     frozenColumns = 1
-    help_url = "user-guide/modeling-wizard/manufacturing-bom/operations.html"
+    help_url = "modeling-wizard/manufacturing-bom/operations.html"
 
     rows = (
         GridFieldText(
@@ -3311,7 +3309,7 @@ class SubOperationList(GridReport):
     basequeryset = SubOperation.objects.all()
     model = SubOperation
     frozenColumns = 1
-    help_url = "user-guide/model-reference/suboperations.html"
+    help_url = "model-reference/suboperations.html"
 
     rows = (
         GridFieldInteger("id", title=_("identifier"), key=True, initially_hidden=True),
@@ -3649,7 +3647,7 @@ class ManufacturingOrderList(OperationPlanMixin, GridReport):
     multiselect = True
     editable = True
     height = 250
-    help_url = "user-guide/modeling-wizard/manufacturing-bom/manufacturing-orders.html"
+    help_url = "modeling-wizard/manufacturing-bom/manufacturing-orders.html"
 
     @classmethod
     def extra_context(reportclass, request, *args, **kwargs):
@@ -4261,7 +4259,7 @@ class DistributionOrderList(OperationPlanMixin, GridReport):
     multiselect = True
     editable = True
     height = 250
-    help_url = "user-guide/modeling-wizard/distribution/distribution-orders.html"
+    help_url = "modeling-wizard/distribution/distribution-orders.html"
 
     @classmethod
     def extra_context(reportclass, request, *args, **kwargs):
@@ -4722,7 +4720,7 @@ class PurchaseOrderList(OperationPlanMixin, GridReport):
     multiselect = True
     editable = True
     height = 250
-    help_url = "user-guide/modeling-wizard/purchasing/purchase-orders.html"
+    help_url = "modeling-wizard/purchasing/purchase-orders.html"
 
     @classmethod
     def extra_context(reportclass, request, *args, **kwargs):
@@ -5199,7 +5197,7 @@ class DeliveryOrderList(GridReport):
     frozenColumns = 0
     editable = True
     multiselect = True
-    help_url = "user-guide/model-reference/delivery-orders.html"
+    help_url = "model-reference/delivery-orders.html"
     rows = (
         GridFieldText(
             "reference",
@@ -5490,7 +5488,7 @@ class InventoryDetail(OperationPlanMixin, GridReport):
     editable = True
     multiselect = True
     height = 250
-    help_url = "user-guide/user-interface/plan-analysis/inventory-detail-report.html"
+    help_url = "user-interface/plan-analysis/inventory-detail-report.html"
 
     @classmethod
     def basequeryset(reportclass, request, *args, **kwargs):
@@ -5914,7 +5912,7 @@ class ResourceDetail(OperationPlanMixin, GridReport):
     editable = True
     multiselect = True
     height = 250
-    help_url = "user-guide/user-interface/plan-analysis/resource-detail-report.html"
+    help_url = "user-interface/plan-analysis/resource-detail-report.html"
 
     @classmethod
     def basequeryset(reportclass, request, *args, **kwargs):

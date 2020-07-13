@@ -91,7 +91,7 @@ class BaseReport(GridReport):
     frozenColumns = 0
     editable = False
     multiselect = False
-    help_url = "user-guide/user-interface/plan-analysis/constraint-report.html"
+    help_url = "user-interface/plan-analysis/constraint-report.html"
     detail_post_title = _("constrained demand")
     detailmodel = None
     rows = (

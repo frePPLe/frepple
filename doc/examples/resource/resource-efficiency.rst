@@ -30,7 +30,7 @@ been performed with a 100% efficiency resource).
 The modeling outlined in this example applies only to situations where **the same 
 efficiency factor is applicable for all operations** the resource can perform.
 When the **effiency varies by product**, you should use an alternate operation 
-instead (see example on `alternate operations <../../../user-guide/examples/operation/operation-alternate.php>`_).
+instead (see example on `alternate operations <../../../examples/operation/operation-alternate.php>`_).
 
 .. rubric:: Example
 
@@ -43,7 +43,7 @@ instead (see example on `alternate operations <../../../user-guide/examples/oper
 * "new machine" is fast and has 120% of efficiency.
 
 * machine park is the parent resource of both resources and will be used in 
-  `Operation Resources <../../../user-guide/model-reference/operation-resources.php>`_ table.
+  `Operation Resources <../../../model-reference/operation-resources.php>`_ table.
 
 .. image:: _images/resources.png
    :alt: old and new machine resources.
@@ -55,9 +55,9 @@ The 2 assemble operations are time_per operations with a fixed duration of 2 hou
    
 As both "new machine" and "old machine" can be used to assemble the two produced items of the 
 example (a round table or a square table), we need to declare the parent resource
-in the `Operation Resources <../../../user-guide/model-reference/operation-resources.php>`_ table.
+in the `Operation Resources <../../../model-reference/operation-resources.php>`_ table.
 This lets the solver know that any resource of the group can perform the task, 
-see `Resource alternate <../../../user-guide/examples/resource/resource-alternate.php>`_ example for more details.
+see `Resource alternate <../../../examples/resource/resource-alternate.php>`_ example for more details.
 
 .. image:: _images/operationresources.png
    :alt: Operation resources table.

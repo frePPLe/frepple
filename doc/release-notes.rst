@@ -11,13 +11,13 @@ Release notes
 
 .. rubric:: User interface
 
-- | The `search box <user-guide/user-interface/getting-around/navigation.html>`_ now allows
+- | The `search box <user-interface/getting-around/navigation.html>`_ now allows
     you to open the search results in a new browser tab. Using different browser tabs is very
     handy when you don't like to lose the previous screen.
   | You can already achieve this on all links by using the right-click menu of your
     browser. We made that a bit easier now in the search box.
     
-- | `Custom reports <user-guide/user-interface/report-manager.html>`_ now support filtering,
+- | `Custom reports <user-interface/report-manager.html>`_ now support filtering,
     sorting, customization and favorites. Just as all other screens.
 
 6.6.0 (2020/06/19)
@@ -85,7 +85,7 @@ Release notes
 
 .. rubric:: Integration
 
-- A `task scheduler <user-guide/command-reference.html#scheduletasks>`_ allows users to
+- A `task scheduler <command-reference.html#scheduletasks>`_ allows users to
   a series of tasks automatically based on schedule.
 
 .. rubric:: Odoo connector
@@ -99,7 +99,7 @@ Release notes
 .. rubric:: Production planning
 
 - | Simpler and more efficient modeling capabilities for 
-    `make-to-order and configure-to-order supply chains <user-guide/examples/buffer/make-to-order.html>`_.
+    `make-to-order and configure-to-order supply chains <examples/buffer/make-to-order.html>`_.
     The (complete or partial) supply path can now automatically be made specific to a 
     sales order or an item attribute.
   | In earlier releases this was already possible, but required a more complex data interface.
@@ -117,7 +117,7 @@ Release notes
     
 - | Email exported reports: Reports that have been exported using *Export plan result to folder* command can be 
     emailed to one or more recipients with a new command in the 
-    `execute <user-guide/command-reference.html#emailreport>`_ screen.
+    `execute <command-reference.html#emailreport>`_ screen.
 
 6.3.0 (2020/02/28)
 ==================
@@ -132,10 +132,10 @@ Release notes
 
 .. rubric:: User interface
 
-- You can now `save frequently used report settings as a favorite <user-guide/user-interface/getting-around/favorites.html>`_.
+- You can now `save frequently used report settings as a favorite <user-interface/getting-around/favorites.html>`_.
   This can be huge time saver in your daily review of the plan. 
 
-- A new `report manager <user-guide/user-interface/report-manager.html>`_
+- A new `report manager <user-interface/report-manager.html>`_
   app allows power users to define custom reports using SQL. This greatly enhances
   the flexibility to tailor the plan output into reports that match your 
   business process and needs.
@@ -143,13 +143,13 @@ Release notes
 .. rubric:: Integration
 
 - Data files in SQL format can now be processed with the command 
-  `import data files from folder <user-guide/command-reference.html#importfromfolder>`_.
+  `import data files from folder <command-reference.html#importfromfolder>`_.
   For security reasons this functionality is only active when the setting SQL_ROLE is
   set. It should be configured by an administrator to a database role that is correctly
   tuned to a minimal set of privileges.
 
 - Data files in the PostgreSQL COPY format can now be processed with the command 
-  `import data files from folder <user-guide/command-reference.html#importfromfolder>`_.
+  `import data files from folder <command-reference.html#importfromfolder>`_.
   Data files in this format are uploaded MUCH faster.
   
 - Postgresql foreign key constraint on operationplanmaterial and operationplanresource
@@ -227,7 +227,7 @@ Release notes
 - Bug fixes in the solver algorithm when using post-operation times at many 
   places in the supply path.
 
-- The `demand Gantt report <user-guide/user-interface/plan-analysis/demand-gantt-report.html`
+- The `demand Gantt report <user-interface/plan-analysis/demand-gantt-report.html`
   got a long overdue refreshed look and now displays more information.
 
 .. rubric:: User interface
@@ -257,7 +257,7 @@ Release notes
 
 .. rubric:: Development
 
-- A new screen allows to `execute SQL commands on the database <user-guide/user-interface/executesql.html>`_.
+- A new screen allows to `execute SQL commands on the database <user-interface/executesql.html>`_.
   This new app is only intended to facilitate development and testing, and shouldn't be activated in 
   production environments.
 
@@ -267,11 +267,11 @@ Release notes
 .. rubric:: Production planning
 
 - | The name column in the 
-    `buffer table <user-guide/model-reference/buffer.html>`_ is removed. The item and location
+    `buffer table <model-reference/buffer.html>`_ is removed. The item and location
     fields are what uniquely defines a buffer.
   | This data model simplification makes data interfaces simpler and more robust. 
 
-- | Data model simplification: The `suboperation table <user-guide/model-reference/suboperations.html>`_ 
+- | Data model simplification: The `suboperation table <model-reference/suboperations.html>`_ 
     is now deprecated. All data it contained can now be stored in the operation table.
   | This data model simplification makes development of data interfaces easier.
 
@@ -362,14 +362,14 @@ Release notes
 - Bug fix. When using the Empty Database feature on either manufacturing or distribution or delivery or purchase orders
   then all orders (manufacturing + distribution + delivery + purchase) were deleted.
   
-- Bug fix on backlog calculation of the `demand report <user-guide/user-interface/plan-analysis/demand-report.html>`_
+- Bug fix on backlog calculation of the `demand report <user-interface/plan-analysis/demand-report.html>`_
 
 5.2.0 (2019/05/27)
 ==================
 
 .. rubric:: Production planning
 
-- | Modeling simplication: In the `operation material table <user-guide/modeling-wizard/manufacturing-bom/operation-materials.html>`_
+- | Modeling simplication: In the `operation material table <modeling-wizard/manufacturing-bom/operation-materials.html>`_
     you had to always insert both the produced material and consumed materials. 
   | In a lot of models an operation always produces 1 unit of the item. In this type
     of model you can now choose to leave out the records for the produced material. 
@@ -431,9 +431,9 @@ Release notes
 
 .. rubric:: Production planning
 
-- | The identifier of `purchase orders <user-guide/model-reference/purchase-orders.html>`_,
-    `distribution orders <user-guide/model-reference/purchase-orders.html>`_ and
-    `manufacturing orders <user-guide/model-reference/purchase-orders.html>`_, has been removed. 
+- | The identifier of `purchase orders <model-reference/purchase-orders.html>`_,
+    `distribution orders <model-reference/purchase-orders.html>`_ and
+    `manufacturing orders <model-reference/purchase-orders.html>`_, has been removed. 
   | The reference field is now the primary key, and a required input field.
   | The required reference fields is an API-breaking change.
   
@@ -444,8 +444,8 @@ Release notes
     that sufficient upstream material is available. If required the status of feeding purchase orders, 
     distribution orders and manufacturing orders is changed to completed.
 
-- | The `resource detail <user-guide/model-reference/operationplan-resources.html>`_ and 
-    `inventory detail  <user-guide/model-reference/operationplan-materials.html>`_ tables 
+- | The `resource detail <model-reference/operationplan-resources.html>`_ and 
+    `inventory detail  <model-reference/operationplan-materials.html>`_ tables 
     are now editable. 
   | This allows to import detailed information on allocated resources and consumed materials from 
     the ERP system, and model the current work-in-progress in full detail.
@@ -453,7 +453,7 @@ Release notes
     From this release onwards they also contain input information for manufacturing orders 
     in the status approved and confirmed. 
 
-- | The default of the parameter `plan.autoFenceOperations <user-guide/model-reference/parameters.html>`_
+- | The default of the parameter `plan.autoFenceOperations <model-reference/parameters.html>`_
     is changed from 0 to 999.
   | By default, the planning algorithm now waits for any existing confirmed supply before proposing
     a new replenishment.
@@ -496,7 +496,7 @@ Release notes
   to 5 years. This improves the performance of the algorithms in case there are unplannable
   orders.
 
-- A new resource type `time buckets <user-guide/model-reference/resources.html#>`_ is introduced 
+- A new resource type `time buckets <model-reference/resources.html#>`_ is introduced 
   that represents capacity as the number of hours of availability per time bucket.
   
 - The capacity consumption from a bucketized resource now also has a constant component
@@ -515,7 +515,7 @@ Release notes
     This represents a material transfer outside of our supply chain.
 
 - Ability to use powerful regular expressions in the definition of 
-  `setup matrices rules <user-guide/model-reference/setup-matrices.html#>`_ .
+  `setup matrices rules <model-reference/setup-matrices.html#>`_ .
 
 - Bug fix: calculation of operation time for 0-duration operations was wrong in some situations.
 
@@ -532,7 +532,7 @@ Release notes
 - Improved performance and reduced memory footprint when downloading and exporting big reports.
  
 - Added field duration to the
-  `execution screen <user-guide/user-interface/execute.html>`_
+  `execution screen <user-interface/execute.html>`_
 
 - Added tabs to see the manufacturing orders for a specific item, location or operation.
 
@@ -543,8 +543,8 @@ Release notes
 
 .. rubric:: API
 
-- The `database backup command <user-guide/command-reference.html#backup>`_ and
-  `database restore command <user-guide/command-reference.html#restore>`_ now use the 
+- The `database backup command <command-reference.html#backup>`_ and
+  `database restore command <command-reference.html#restore>`_ now use the 
   faster and smaller compressed binary backup format of PostgreSQL. 
 
 4.4.2 (2018/10/20)
@@ -568,16 +568,16 @@ Release notes
 .. rubric:: User interface
 
 - Added field net duration to the
-  `resource detail report <user-guide/user-interface/plan-analysis/resource-detail-report.html>`_
+  `resource detail report <user-interface/plan-analysis/resource-detail-report.html>`_
   
 - Added fields total in progress, work in progress MO, on order PO, in transit DO to the
-  `inventory report <user-guide/user-interface/plan-analysis/inventory-report.html>`_
+  `inventory report <user-interface/plan-analysis/inventory-report.html>`_
   
 - Bug fix: Deleting an object from the edit form in a scenario was incorrectly
   deleting the object in the production instead.
   
-- | The `import data files from folder <user-guide/command-reference.html#importfromfolder>`_
-    and `import a spreadsheet <user-guide/command-reference.html#importworkbook>`_ functionalities
+- | The `import data files from folder <command-reference.html#importfromfolder>`_
+    and `import a spreadsheet <command-reference.html#importworkbook>`_ functionalities
     now ignores spaces, dashes and underscores in the recognition of the content type from the 
     file or worksheet name.
   | So far, only a worksheet called 'sales order' was recognized as containing sales order data.
@@ -598,16 +598,16 @@ Release notes
   based on the start date rather the end date of the operation in question. 
 
 - A new field "feasible" is now added to the
-  `inventory detail report <user-guide/user-interface/plan-analysis/inventory-detail-report.html>`_,
-  `resource detail report <user-guide/user-interface/plan-analysis/resource-detail-report.html>`_,
-  `operation detail report <user-guide/user-interface/plan-analysis/operation-detail-report.html>`_,
-  `purchase order screen <user-guide/model-reference/purchase-orders.html>`_,
-  `distribution order screen <user-guide/model-reference/distribution-orders.html>`_ and
-  `manufacturing order screen <user-guide/model-reference/manufacturing-orders.html>`_.
+  `inventory detail report <user-interface/plan-analysis/inventory-detail-report.html>`_,
+  `resource detail report <user-interface/plan-analysis/resource-detail-report.html>`_,
+  `operation detail report <user-interface/plan-analysis/operation-detail-report.html>`_,
+  `purchase order screen <model-reference/purchase-orders.html>`_,
+  `distribution order screen <model-reference/distribution-orders.html>`_ and
+  `manufacturing order screen <model-reference/manufacturing-orders.html>`_.
   The read-only boolean field indicates whether the order is violating any material, lead time or capacity
   constraints. This is useful in interpreting the results of an unconstrained plan.
   
-- | The criterion for `before current problems <user-guide/user-interface/plan-analysis/problem-report.html>`_
+- | The criterion for `before current problems <user-interface/plan-analysis/problem-report.html>`_
     is updated for confirmed orders. The change should result in less problems that are 
     also more meaningful to the users.
   | For orders in the status approved or proposed a before-current problem is created when
@@ -615,19 +615,19 @@ Release notes
   | For orders in the status confirmed the criterion the problem is now created when the
     end date is in the past, i.e. the order is overdue and should have been finished by now.
 
-- The natural key in the `suboperation table <user-guide/model-reference/suboperations.html>`_
+- The natural key in the `suboperation table <model-reference/suboperations.html>`_
   is changed from operation + suboperation + operation to operation + suboperation +
   effective start date.
 
 .. rubric:: User interface
 
 - Ability to make the data anonymous and obfuscated when 
-  `exporting an Excel workbook <user-guide/command-reference.html#exportworkbook>`_. 
+  `exporting an Excel workbook <command-reference.html#exportworkbook>`_. 
   The names of all entities are obfuscated in the resulting spreadsheet. You will still
   need to carefully review the output to clean out any remaining sensitive data.  
 
 - Ability to customize the names for the time buckets used in the reports.
-  The `time bucket generation command <user-guide/command-reference.html#createbuckets>`_
+  The `time bucket generation command <command-reference.html#createbuckets>`_
   now has extra attributes for setting the name of the daily, weekly, monthly, quarterly
   and yearly buckets.
  
@@ -646,10 +646,10 @@ The Windows installer of this version isn't working correctly due to some packag
 
 .. rubric:: Production planning
   
-- Resources can now have an `efficiency percentage <user-guide/model-reference/resources.html>`_. This allows
+- Resources can now have an `efficiency percentage <model-reference/resources.html>`_. This allows
   the resource to perform an operation faster or slower than the standard operation time.
 
-- The `resource report <user-guide/user-interface/plan-analysis/resource-report.html>`_ now displays the 
+- The `resource report <user-interface/plan-analysis/resource-report.html>`_ now displays the 
   available capacity as a line, replacing the green bar in previous releases to show the free capacity.
 
 - | Performance optimization of the solver algorithm. The solver now passes down the minimum shipment 
@@ -659,11 +659,11 @@ The Windows installer of this version isn't working correctly due to some packag
 
 - Resource build-ahead penalty calculation now also working for 0-cost resources.
 
-- New rows to the `purchase order summary <user-guide/user-interface/plan-analysis/purchase-order-summary.html>`_ 
-  and `distribution order summary <user-guide/user-interface/plan-analysis/distribution-order-summary.html>`_
+- New rows to the `purchase order summary <user-interface/plan-analysis/purchase-order-summary.html>`_ 
+  and `distribution order summary <user-interface/plan-analysis/distribution-order-summary.html>`_
   reports to show the quantity on order or in transit.
 
-- New rows to the `inventory report <user-guide/user-interface/plan-analysis/inventory-report.html>`_
+- New rows to the `inventory report <user-interface/plan-analysis/inventory-report.html>`_
   to show 1) days of cover of the starting inventory, 2) the safety stock and 3) more details
   on the supply and consumption type.
 
@@ -677,10 +677,10 @@ The Windows installer of this version isn't working correctly due to some packag
   deprecated and hasn't been accessible to users for quite some time now. 
   
 - Simpler and more generic modeling of fixed material consumption and production by operations. 
-  The types 'fixed_end' and 'fixed_start' on `operation material <user-guide/model-reference/operation-materials.html>`_
+  The types 'fixed_end' and 'fixed_start' on `operation material <model-reference/operation-materials.html>`_
   records are replaced with a field 'fixed_quantity'.
 
-- Renamed the "demand plan detail" report to `delivery orders <user-guide/model-reference/operation-materials.html>`_,
+- Renamed the "demand plan detail" report to `delivery orders <model-reference/operation-materials.html>`_,
   and enable uploading confirmed or approved shipments to customers as input data.
 
 - | When expanding a confirmed manufacturing order on a routing operation, the automatic creation of the
@@ -708,16 +708,16 @@ The Windows installer of this version isn't working correctly due to some packag
 
 .. rubric:: Production planning
 
-- Added new reports `purchase order summary <user-guide/user-interface/plan-analysis/purchase-order-summary.html>`_ 
-  and `distribution order summary <user-guide/user-interface/plan-analysis/distribution-order-summary.html>`_
+- Added new reports `purchase order summary <user-interface/plan-analysis/purchase-order-summary.html>`_ 
+  and `distribution order summary <user-interface/plan-analysis/distribution-order-summary.html>`_
   to summarize the purchase orders or distribution orders per time bucket.
 
 - For consistency with the previous change, the operation report is renamed 
-  to `manufacturing order summary <user-guide/user-interface/plan-analysis/manufacturing-order-summary.html>`_.
+  to `manufacturing order summary <user-interface/plan-analysis/manufacturing-order-summary.html>`_.
 
 .. rubric:: Integration
 
-- Extended the `exporttofolder <user-guide/command-reference.html#exporttofolder>`_ 
+- Extended the `exporttofolder <command-reference.html#exporttofolder>`_ 
   command to export additional plan results into CSV or Excel files.
 
 - The data type of all numeric fields is changed from 15 digits with 6 decimals

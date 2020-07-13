@@ -27,27 +27,27 @@ Production planning & scheduling
 |                                         | till the finished goods across multiple production locations, warehouses,  |                                                                               |
 |                                         | distribution centers, subcontractors, and suppliers.                       |                                                                               |
 +-----------------------------------------+----------------------------------------------------------------------------+-------------------------------------------------------------------------------+
-| **Capacity planning**                   | FrePPLe's capacity plan provides a timely visibility of upcoming capacity  | - Doc :doc:`user-guide/user-interface/plan-analysis/resource-report` screen   |
+| **Capacity planning**                   | FrePPLe's capacity plan provides a timely visibility of upcoming capacity  | - Doc :doc:`user-interface/plan-analysis/resource-report` screen              |
 |                                         | bottlenecks, giving you the opportunity to evaluate different scenarios.   | - Video                                                                       |
-|                                         | As such, it can be used in mid-term capacity planning processes.           |   :doc:`user-guide/videos/production-planning/identify-bottleneck-resources`  |
+|                                         | As such, it can be used in mid-term capacity planning processes.           |   :doc:`videos/production-planning/identify-bottleneck-resources`             |
 +-----------------------------------------+----------------------------------------------------------------------------+-------------------------------------------------------------------------------+
-| **Production scheduling**               | Use frePPLe to generate detailed short-term production schedules. You can  | - Doc :doc:`user-guide/user-interface/plan-analysis/plan-editor`              |
+| **Production scheduling**               | Use frePPLe to generate detailed short-term production schedules. You can  | - Doc :doc:`user-interface/plan-analysis/plan-editor`                         |
 |                                         | then visualize your plan in an interactive Gantt chart and make final      | - `Live demo <https://demo.frepple.com/planningboard/>`_                      |
 |                                         | adjustments.                                                               | - Video                                                                       |
-|                                         |                                                                            |   :doc:`user-guide/videos/production-planning/optimize-plan-in-gantt-chart`   |
+|                                         |                                                                            |   :doc:`videos/production-planning/optimize-plan-in-gantt-chart`              |
 +-----------------------------------------+----------------------------------------------------------------------------+-------------------------------------------------------------------------------+
-| **Due date quoting                      | Compute a feasible delivery date for a new order on the fly. The promised  | - Doc :doc:`user-guide/user-interface/plan-analysis/quoting-screen`           |
-| at order entry**                        | delivery date considers all capacity and material constraints as well as   | - Video :doc:`user-guide/videos/production-planning/quote-delivery-date`      |
+| **Due date quoting                      | Compute a feasible delivery date for a new order on the fly. The promised  | - Doc :doc:`user-interface/plan-analysis/quoting-screen`                      |
+| at order entry**                        | delivery date considers all capacity and material constraints as well as   | - Video :doc:`videos/production-planning/quote-delivery-date`                 |
 |                                         | reservations for other open sales orders.                                  |                                                                               |
 +-----------------------------------------+----------------------------------------------------------------------------+-------------------------------------------------------------------------------+
-| **Make-to-order,                        | Make-to-order, make-to-stock and assemble-to-order products are all        | - Example :doc:`user-guide/examples/buffer/make-to-order`                     |
+| **Make-to-order,                        | Make-to-order, make-to-stock and assemble-to-order products are all        | - Example :doc:`examples/buffer/make-to-order`                                |
 | make-to-stock and                       | supported.                                                                 |                                                                               |
 | assemble-to-order**                     |                                                                            |                                                                               |
 +-----------------------------------------+----------------------------------------------------------------------------+-------------------------------------------------------------------------------+
-| **Exception based workflows**           | Improve the planner's productivity by focussing the work on problem        | - Video :doc:`user-guide/videos/production-planning/identify-expedite`        |
+| **Exception based workflows**           | Improve the planner's productivity by focussing the work on problem        | - Video :doc:`videos/production-planning/identify-expedite`                   |
 |                                         | areas in the plan.                                                         | - Video                                                                       |
-|                                         |                                                                            |   :doc:`user-guide/videos/production-planning/check-impact-of-rush-orders`    |
-|                                         |                                                                            |   :doc:`user-guide/videos/production-planning/review-late-orders`             |
+|                                         |                                                                            |   :doc:`videos/production-planning/check-impact-of-rush-orders`               |
+|                                         |                                                                            |   :doc:`videos/production-planning/review-late-orders`                        |
 +-----------------------------------------+----------------------------------------------------------------------------+-------------------------------------------------------------------------------+
 | **Theory of constraints**               | A supply chain can only be as fast as the most constraining link.          |                                                                               |
 |                                         |                                                                            |                                                                               |
@@ -71,9 +71,9 @@ Production planning & scheduling
 |                                         | In forward scheduling mode, the planning algorithm tries to deliver each   |                                                                               |
 |                                         | order ASAP.                                                                |                                                                               |
 +-----------------------------------------+----------------------------------------------------------------------------+-------------------------------------------------------------------------------+
-| **Constrained and                       | FrePPLe can generate different plan types:                                 |  - `Plan generation <user-guide/command-reference.html#runplan>`_             |
+| **Constrained and                       | FrePPLe can generate different plan types:                                 |  - `Plan generation <command-reference.html#runplan>`_                        |
 | unconstrained modes**                   |                                                                            |  - Video                                                                      |
-|                                         | - Simple unconstrained plan: similar to a simple MRP run in an ERP. It     |    :doc:`user-guide/videos/production-planning/unconstrained-requirements`    |
+|                                         | - Simple unconstrained plan: similar to a simple MRP run in an ERP. It     |    :doc:`videos/production-planning/unconstrained-requirements`               |
 |                                         |   plans all demands on time but overloads resources and plans operations   |                                                                               |
 |                                         |   in the past.                                                             |                                                                               |
 |                                         | - Fully constrained plans: all constraints are met and demand is planned   |                                                                               |
@@ -85,7 +85,7 @@ Production planning & scheduling
 |                                         |   shortages.                                                               |                                                                               |
 +-----------------------------------------+----------------------------------------------------------------------------+-------------------------------------------------------------------------------+
 | **Fast heuristic solver                 | FrePPLe uses a heuristic planning algorithm, that can provide constrained  | - Doc :doc:`developer-guide/planning-algorithm`                               |
-| algorithm**                             | and unconstrained plans.                                                   | - Example :doc:`user-guide/examples/demand/demand-priorities`                 |
+| algorithm**                             | and unconstrained plans.                                                   | - Example :doc:`examples/demand/demand-priorities`                            |
 |                                         |                                                                            |                                                                               |
 |                                         | The algorithm goes through the following loop:                             |                                                                               |
 |                                         |                                                                            |                                                                               |
@@ -136,27 +136,27 @@ Capacity modeling
 +-----------------------------------------+----------------------------------------------------------------------------+-------------------------------------------------------------------------------+
 | Feature                                 | Description                                                                | Read more                                                                     |
 +=========================================+============================================================================+===============================================================================+
-| **Resource types**                      | Different types of capacity constraints can be modeled:                    | - Doc :doc:`user-guide/model-reference/resources`                             |
-|                                         |                                                                            | - Example :doc:`user-guide/examples/resource/resource-type`                   |
+| **Resource types**                      | Different types of capacity constraints can be modeled:                    | - Doc :doc:`model-reference/resources`                                        |
+|                                         |                                                                            | - Example :doc:`examples/resource/resource-type`                              |
 |                                         | - capacity limit expressed as the number of simultaneous tasks             |                                                                               |
 |                                         | - available capacity expressed as quantity per time bucket                 |                                                                               |
 |                                         | - available capacity expressed as hours per time bucket                    |                                                                               |
 |                                         | - unconstrained infinite-capacity resources or unconstrained)              |                                                                               |
 +-----------------------------------------+----------------------------------------------------------------------------+-------------------------------------------------------------------------------+
-| **Working hours and vacations**         | Define calendars based on working hours, shifts, factory shutdowns,        | - Example :doc:`user-guide/examples/calendar/calendar-working-hours`          |
-|                                         | holiday periods, etc.                                                      | - Video :doc:`user-guide/videos/production-planning/define-operator-shifts`   |
+| **Working hours and vacations**         | Define calendars based on working hours, shifts, factory shutdowns,        | - Example :doc:`examples/calendar/calendar-working-hours`                     |
+|                                         | holiday periods, etc.                                                      | - Video :doc:`videos/production-planning/define-operator-shifts`              |
 +-----------------------------------------+----------------------------------------------------------------------------+-------------------------------------------------------------------------------+
-| **Resource pools**                      | Group identical/similar resources (machines or operators) in an aggegrated | - Example :doc:`user-guide/examples/resource/resource-alternate`              |
+| **Resource pools**                      | Group identical/similar resources (machines or operators) in an aggegrated | - Example :doc:`examples/resource/resource-alternate`                         |
 |                                         | pool of resources.                                                         |                                                                               |
 +-----------------------------------------+----------------------------------------------------------------------------+-------------------------------------------------------------------------------+
-| **Resource skills**                     | Assign skills to machines and operators and set them as necessary to       | - Example :doc:`user-guide/examples/resource/resource-skills`                 |
-|                                         | perform specific operations. As a result, only a subset of the available   | - Doc :doc:`user-guide/model-reference/skills`                                |
-|                                         | resources will be qualified to do the operation.                           | - Doc :doc:`user-guide/model-reference/resource-skills`                       |
+| **Resource skills**                     | Assign skills to machines and operators and set them as necessary to       | - Example :doc:`examples/resource/resource-skills`                            |
+|                                         | perform specific operations. As a result, only a subset of the available   | - Doc :doc:`model-reference/skills`                                           |
+|                                         | resources will be qualified to do the operation.                           | - Doc :doc:`model-reference/resource-skills`                                  |
 +-----------------------------------------+----------------------------------------------------------------------------+-------------------------------------------------------------------------------+
-| **Alternate resources**                 | The planning and scheduling algorithm can choose among alternative         | - Example :doc:`user-guide/examples/resource/resource-alternate`              |
+| **Alternate resources**                 | The planning and scheduling algorithm can choose among alternative         | - Example :doc:`examples/resource/resource-alternate`                         |
 |                                         | resources from a pool. The selection can be priority-based or cost-based.  |                                                                               |
 +-----------------------------------------+----------------------------------------------------------------------------+-------------------------------------------------------------------------------+
-| **Setup matrix**                        | Include changovers in your planning process. Sequence-dependent changeover | - Doc :doc:`user-guide/model-reference/setup-matrices`                        |
+| **Setup matrix**                        | Include changovers in your planning process. Sequence-dependent changeover | - Doc :doc:`model-reference/setup-matrices`                                   |
 |                                         | time corresponds to cleaning, configuration, or tool changing time that is |                                                                               |
 |                                         | required when switching between different resources (machines or           |                                                                               |
 |                                         | operators) during the production process.                                  |                                                                               |
@@ -172,15 +172,15 @@ Routing and bill of materials
 +-----------------------------------------+----------------------------------------------------------------------------+-------------------------------------------------------------------------------+
 | Feature                                 | Description                                                                | Read more                                                                     |
 +=========================================+============================================================================+===============================================================================+
-| **Operation types**                     | Operations of different types can be modeled:                              | - Doc :doc:`user-guide/model-reference/operations`                            |
-|                                         |                                                                            | - Example :doc:`user-guide/examples/operation/operation-type`                 |
+| **Operation types**                     | Operations of different types can be modeled:                              | - Doc :doc:`model-reference/operations`                                       |
+|                                         |                                                                            | - Example :doc:`examples/operation/operation-type`                            |
 |                                         | - operations with a fixed duration, regardless of the quantity.            |                                                                               |
 |                                         | - operations with a variable duration, proportional to the quantity.       |                                                                               |
 |                                         | - routing operations that represent a sequence of operations.              |                                                                               |
 |                                         | - alternate operations that represent a choice among alternatives.         |                                                                               |
 |                                         | - split operations that proportionally distribute across alternatives.     |                                                                               |
 +-----------------------------------------+----------------------------------------------------------------------------+-------------------------------------------------------------------------------+
-| **Alternate operations**                | Products can be manufactured in different ways:                            | - Example :doc:`user-guide/examples/operation/operation-alternate`            |
+| **Alternate operations**                | Products can be manufactured in different ways:                            | - Example :doc:`examples/operation/operation-alternate`                       |
 |                                         |                                                                            |                                                                               |
 |                                         | - multiple routings to produce the same item                               |                                                                               |
 |                                         | - different versions of the bill of material                               |                                                                               |
@@ -191,10 +191,10 @@ Routing and bill of materials
 |                                         | FrePPLe can plan these and automatically make a smart selection between    |                                                                               |
 |                                         | the alternatives. The selection can be priority-based or cost-based.       |                                                                               |
 +-----------------------------------------+----------------------------------------------------------------------------+-------------------------------------------------------------------------------+
-| **Alternate materials**                 | You can plan different versions of a bill of materials and include         | - Example :doc:`user-guide/examples/buffer/alternate-materials`               |
-|                                         | alternate materials in a same bill of material.                            | - Doc :doc:`user-guide/model-reference/operation-materials`                   |
+| **Alternate materials**                 | You can plan different versions of a bill of materials and include         | - Example :doc:`examples/buffer/alternate-materials`                          |
+|                                         | alternate materials in a same bill of material.                            | - Doc :doc:`model-reference/operation-materials`                              |
 +-----------------------------------------+----------------------------------------------------------------------------+-------------------------------------------------------------------------------+
-| **Date effective bill of materials and  | FrePPLe can suggest different versions of the bill of material with        | - Doc :doc:`user-guide/model-reference/operation-materials`                   |
+| **Date effective bill of materials and  | FrePPLe can suggest different versions of the bill of material with        | - Doc :doc:`model-reference/operation-materials`                              |
 | operations**                            | valid start and end dates.                                                 |                                                                               |
 +-----------------------------------------+----------------------------------------------------------------------------+-------------------------------------------------------------------------------+
 | **Co-products**                         | Operations can produce multiple items.                                     |                                                                               |
@@ -204,18 +204,18 @@ Routing and bill of materials
 |                                         | - an operation that produces a by-product in addition to the intended      |                                                                               |
 |                                         |   item.                                                                    |                                                                               |
 +-----------------------------------------+----------------------------------------------------------------------------+-------------------------------------------------------------------------------+
-| **Minimum, maximum,                     | Some operations can only be scheduled within certain quantity constraints. | - Doc :doc:`user-guide/model-reference/operations`                            |
+| **Minimum, maximum,                     | Some operations can only be scheduled within certain quantity constraints. | - Doc :doc:`model-reference/operations`                                       |
 | and multiple operation                  | This applies to purchase orders, distribution orders and manufacturing     |                                                                               |
 | size**                                  | orders.                                                                    |                                                                               |
 +-----------------------------------------+----------------------------------------------------------------------------+-------------------------------------------------------------------------------+
-| **Post-operation delay**                | The plan can include delays between operations. These add buffer time and  | - Example :doc:`user-guide/examples/operation/operation-posttime`             |
+| **Post-operation delay**                | The plan can include delays between operations. These add buffer time and  | - Example :doc:`examples/operation/operation-posttime`                        |
 |                                         | robustness in the schedule to account for unexpected events.               |                                                                               |
 |                                         |                                                                            |                                                                               |
 |                                         | The post-operation delay is a soft constraint, which means we can generate |                                                                               |
 |                                         | plans with a shorter delay if that is required to deliver a customer order |                                                                               |
 |                                         | on time.                                                                   |                                                                               |
 +-----------------------------------------+----------------------------------------------------------------------------+-------------------------------------------------------------------------------+
-| **Transfer batching**                   | Subsequent production steps can overlap. I.e. process 2 can start as       | - Example :doc:`user-guide/examples/buffer/transfer-batch`                    |
+| **Transfer batching**                   | Subsequent production steps can overlap. I.e. process 2 can start as       | - Example :doc:`examples/buffer/transfer-batch`                               |
 |                                         | soon as a certain quantity of process 1 have completed.                    |                                                                               |
 +-----------------------------------------+----------------------------------------------------------------------------+-------------------------------------------------------------------------------+
 
@@ -243,14 +243,14 @@ User interface
 |                                         |                                                                            |                                                                               |
 |                                         | Our user community often contribute translations for other languages.      |                                                                               |                  
 +-----------------------------------------+----------------------------------------------------------------------------+-------------------------------------------------------------------------------+
-| **Excel import and                      | You can easily export the contents of all reports in Excel or CSV.         | - Doc :doc:`user-guide/user-interface/getting-around/exporting-data`          |
-| export**                                |                                                                            | - Doc :doc:`user-guide/user-interface/getting-around/importing-data`          |
+| **Excel import and                      | You can easily export the contents of all reports in Excel or CSV.         | - Doc :doc:`user-interface/getting-around/exporting-data`                     |
+| export**                                |                                                                            | - Doc :doc:`user-interface/getting-around/importing-data`                     |
 +-----------------------------------------+----------------------------------------------------------------------------+-------------------------------------------------------------------------------+
-| **Customizable                          | Each user can customize the reports to his/her needs and taste: visibility | - Doc :doc:`user-guide/user-interface/getting-around/customizing-a-report`    |
+| **Customizable                          | Each user can customize the reports to his/her needs and taste: visibility | - Doc :doc:`user-interface/getting-around/customizing-a-report`               |
 | screens**                               | and order of the columns, column width, sorting and filtering.             |                                                                               |
 +-----------------------------------------+----------------------------------------------------------------------------+-------------------------------------------------------------------------------+
 | **Role-based permissions**              | Specify read, write, and view permissions per user or per user role.       | - Doc                                                                         |
-|                                         |                                                                            |   :doc:`user-guide/user-interface/getting-around/user-permissions-and-roles`  |
+|                                         |                                                                            |   :doc:`user-interface/getting-around/user-permissions-and-roles`             |
 +-----------------------------------------+----------------------------------------------------------------------------+-------------------------------------------------------------------------------+
 |                                         | planning data.                                                             |                                                                               |
 |                                         |                                                                            |                                                                               |
@@ -265,7 +265,7 @@ User interface
 |                                         | - Use scenarios for business units that are completely unrelated           |                                                                               |
 |                                         |   (i.e. no shared materials or resources).                                 |                                                                               |
 +-----------------------------------------+----------------------------------------------------------------------------+-------------------------------------------------------------------------------+
-| **Dashboard for KPIs**                  | The main screen is a dashboard that displays key metrics of the plan.      | - Doc :doc:`user-guide/user-interface/cockpit`                                |
+| **Dashboard for KPIs**                  | The main screen is a dashboard that displays key metrics of the plan.      | - Doc :doc:`user-interface/cockpit`                                           |
 |                                         |                                                                            |                                                                               |
 |                                         | Customize your own dashboard easily to fit your decision process and       |                                                                               |
 |                                         | business KPIs. You can organize the layout to visualize the KPIs that are  |                                                                               |
@@ -284,11 +284,11 @@ Integration
 +-----------------------------------------+----------------------------------------------------------------------------+-------------------------------------------------------------------------------+
 | Feature                                 | Description                                                                | Read more                                                                     |
 +=========================================+============================================================================+===============================================================================+
-| **Integrated data maintenance**         | Data that is not maintained in external systems can be managed in frePPLe. | - Doc :doc:`user-guide/user-interface/data-maintenance`                       |
+| **Integrated data maintenance**         | Data that is not maintained in external systems can be managed in frePPLe. | - Doc :doc:`user-interface/data-maintenance`                                  |
 +-----------------------------------------+----------------------------------------------------------------------------+-------------------------------------------------------------------------------+
-| **Excel import and export**             | Import and export Excel data files for all reports.                        | - Doc :doc:`user-guide/user-interface/getting-around/importing-data`          |
+| **Excel import and export**             | Import and export Excel data files for all reports.                        | - Doc :doc:`user-interface/getting-around/importing-data`                     |
 +-----------------------------------------+----------------------------------------------------------------------------+-------------------------------------------------------------------------------+
-| **CSV import and export**               | Import and export CSV data files for all reports.                          | - Doc :doc:`user-guide/user-interface/getting-around/importing-data`          |
+| **CSV import and export**               | Import and export CSV data files for all reports.                          | - Doc :doc:`user-interface/getting-around/importing-data`                     |
 +-----------------------------------------+----------------------------------------------------------------------------+-------------------------------------------------------------------------------+
 | **REST API**                            | A web-based JSON-REST API allows frePPLe to be integrated online with      | - `Live demo <https://demo.frepple.com/api/>`_                                |
 |                                         | other applications.                                                        |                                                                               |
@@ -377,10 +377,14 @@ Pricing
    :maxdepth: 4
    :hidden:
  
-   user-guide/index
+   user-interface/index
+   modeling-wizard/index
+   model-reference/index
+   command-reference
+   examples/index
+   videos/index   
    installation-guide/index
    integration-guide/index
    developer-guide/index
    license
    release-notes
-   

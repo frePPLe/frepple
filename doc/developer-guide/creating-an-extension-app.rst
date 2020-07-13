@@ -431,7 +431,7 @@ Add demo data
 
 In the subfolder **fixtures** you can define demo datasets that can
 be loaded with the command "frepplectl loaddata" or `interactively
-in the execution screen <user-guide/command-reference.html#loaddata>`_.
+in the execution screen <command-reference.html#loaddata>`_.
 
 Fixtures are text files in JSON format. They can be loaded from the
 command line, from the execution screen (see the "my_app_data" entry in the screenshot below)

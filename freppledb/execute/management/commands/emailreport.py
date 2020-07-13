@@ -230,7 +230,7 @@ class Command(BaseCommand):
     # accordion template
     title = _("Email exported reports")
     index = 1250
-    help_url = "user-guide/command-reference.html#emailreport"
+    help_url = "command-reference.html#emailreport"
 
     @staticmethod
     def getHTML(request):

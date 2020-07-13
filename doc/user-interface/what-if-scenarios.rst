@@ -74,5 +74,5 @@ The list of users and their passwords is always identical in all scenarios.
 
 .. image:: _images/user-list.png
 
-See :doc:`/user-guide/user-interface/getting-around/user-permissions-and-roles`
+See :doc:`/user-interface/getting-around/user-permissions-and-roles`
 for more details on the configuration of access rights.

@@ -199,10 +199,10 @@ This command is available in the user interface, the command line and the web AP
 * Web API::
     
     Export the planning result files:
-    POST /execute/api/exportfromfolder/
+    POST /execute/api/exporttofolder/
 
     Retrieve one of the exported files:
-    GET /execute/uploadtofolder/1/<filename>/
+    GET /execute/downloadfromfolder/1/<filename>/
     
 .. _emailreport:
 

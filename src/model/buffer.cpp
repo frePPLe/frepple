@@ -186,7 +186,7 @@ PyObject* Buffer::inspectPython(PyObject* self, PyObject* args) {
   }
 }
 
-void Buffer::setItem(Item* i) {
+void Buffer::setItem(Item* i, bool recompute) {
   if (it == i)
     // No change
     return;
@@ -212,7 +212,7 @@ void Buffer::setItem(Item* i) {
 
   // Mark changed
   setChanged();
-  HasLevel::triggerLazyRecomputation();
+  if (recompute) HasLevel::triggerLazyRecomputation();
 }
 
 void Buffer::setOnHand(double f) {
@@ -711,8 +711,8 @@ Buffer* Buffer::findOrCreate(Item* itm, Location* loc,
   Buffer* b;
   while ((b = find(o.str()))) o << '*';
   b = new BufferDefault();
-  b->setItem(itm);
-  b->setLocation(loc);
+  b->setItem(itm, !batch);
+  b->setLocation(loc, !batch);
   b->setName(o.str());
   if (batch) {
     b->setBatch(batch);

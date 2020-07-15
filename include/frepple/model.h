@@ -4613,12 +4613,19 @@ class Buffer : public HasHierarchy<Buffer>,
   Item* getItem() const { return it; }
 
   /* Updates the Item stored in this buffer. */
-  void setItem(Item*);
+  void setItem(Item*, bool);
+  void setItem(Item* i) { setItem(i, true); }
 
   /* Returns the Location of this buffer. */
   Location* getLocation() const { return loc; }
 
   /* Updates the location of this buffer. */
+  void setLocation(Location* i, bool recompute) {
+    loc = i;
+    // Trigger level recomputation
+    if (recompute) HasLevel::triggerLazyRecomputation();
+  }
+
   void setLocation(Location* i) {
     loc = i;
     // Trigger level recomputation

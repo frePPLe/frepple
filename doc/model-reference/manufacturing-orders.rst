@@ -12,8 +12,9 @@ system.
 Field            Type              Description
 ================ ================= =================================================================================================================================
 reference        string            | Unique identifier for the manufacturing order.
-                                   | This field will be empty for newly proposed manufacturing orders, but for approved or confirmed manufacturing orders that
-                                     already exist in the ERP system this field should be populated with the identifier the ERP generated.
+                                   | For approved or confirmed manufacturing orders that are imported from your ERP system this field should be 
+                                     populated with the identifier the ERP generated.
+                                   | For manufacturing orders newly proposed by frePPLe, a unique numeric identifier will automatically be generated.
 operation        operation         The operation to perform.
 start date       DateTime          The date when the operation is starting.
 end date         DateTime          The date when the operation is ending.

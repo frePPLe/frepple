@@ -12,8 +12,9 @@ system.
 Field             Type              Description
 ================= ================= =================================================================================================================================
 reference         string            | Unique identifier for the delivery order.
-                                    | This field will be empty for newly proposed delivery orders, but for approved or confirmed purchase orders that
-                                      already exist in the ERP system this field should be populated with the identifier the ERP generated.
+                                    | For approved or confirmed delivery orders that are imported from your ERP system this field should be 
+                                      populated with the identifier the ERP generated.
+                                    | For delivery orders newly proposed by frePPLe, a unique numeric identifier will automatically be generated.
 demand            demand            Name of the demand.
 item              item              | Item being shipped to the customer.
                                     | This is normally the same as the item specified on the sales order, but we

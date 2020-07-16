@@ -35,8 +35,9 @@ The parameters driving the stock rebalancing requests generation are the followi
 Field            Type              Description
 ================ ================= =================================================================================================================================
 reference        string            | Unique identifier for the distribution order.
-                                   | This field will be empty for newly proposed distribution orders, but for approved or confirmed distribution orders that
-                                     already exist in the ERP system this field should be populated with the identifier the ERP generated.
+                                   | For approved or confirmed distribution orders that are imported from your ERP system this field should be 
+                                     populated with the identifier the ERP generated.
+                                   | For distribution orders newly proposed by frePPLe, a unique numeric identifier will automatically be generated.
 item             item              The item being transferred.
 origin           location          | The model location where the item is transferred from.
                                    | When specified, the inventory at this origin location will be decremented

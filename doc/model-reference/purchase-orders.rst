@@ -13,8 +13,9 @@ system.
 Field            Type              Description
 ================ ================= =================================================================================================================================
 reference        string            | Unique identifier for the purchase order.
-                                   | This field will be empty for newly proposed purchase orders, but for approved or confirmed purchase orders that
-                                     already exist in the ERP system this field should be populated with the identifier the ERP generated.
+                                   | For approved or confirmed purchase orders that are imported from your ERP system this field should be 
+                                     populated with the identifier the ERP generated.
+                                   | For purchase orders newly proposed by frePPLe, a unique numeric identifier will automatically be generated.
 item             item              The item being purchased.
 location         location          The location receiving the purchase order.
 supplier         supplier          The supplier shipping the purchase order.

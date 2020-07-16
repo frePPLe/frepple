@@ -27,7 +27,7 @@ frePPLe |release| documentation
 - | :doc:`installation-guide/index`
   | Installation instructions for linux and windows
 - | :doc:`integration-guide/index`
-  | How to integrate with your 
+  | How to integrate with your business applications
 - | :doc:`developer-guide/index`
   | The geek corner
 - | :doc:`license`

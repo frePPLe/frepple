@@ -201,6 +201,7 @@ class Command(BaseCommand):
                 -T common_user_user_permissions
                 -T common_preferences
                 -T reportmanager_report
+                -T execute_schedule
                 """
                 if destination == DEFAULT_DB_ALIAS
                 else "",

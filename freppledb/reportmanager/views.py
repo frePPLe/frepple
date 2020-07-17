@@ -402,39 +402,40 @@ class ReportManager(GridReport):
             request.report = (
                 SQLReport.objects.all().using(request.database).get(pk=args[0])
             )
-        try:
-            conn = create_connection(request.database)
-            with conn.cursor() as cursor:
-                sqlrole = settings.DATABASES[request.database].get(
-                    "SQL_ROLE", "report_role"
-                )
-                if sqlrole:
-                    cursor.execute("set role %s" % (sqlrole,))
-                if not hasattr(request, "filter"):
-                    request.filter = cls.getFilter(request, *args, **kwargs)
-                cursor.execute(
-                    "select * from (%s) t_subquery %s order by %s %s %s"
-                    % (
-                        request.report.sql.replace("%", "%%"),
-                        "where %s" % request.filter[0] if request.filter[0] else "",
-                        cls._apply_sort_index(request),
-                        ("offset %s" % ((page - 1) * request.pagesize + 1))
-                        if page and page > 1
-                        else "",
-                        "limit %s" % request.pagesize if page else "",
-                    ),
-                    request.filter[1],
-                )
-                for rec in cursor.fetchall():
-                    result = {}
-                    idx = 0
-                    for f in request.rows:
-                        result[f.name] = rec[idx]
-                        idx += 1
-                    yield result
-        finally:
-            if conn:
-                conn.close()
+        if request.report and request.report.sql:
+            try:
+                conn = create_connection(request.database)
+                with conn.cursor() as cursor:
+                    sqlrole = settings.DATABASES[request.database].get(
+                        "SQL_ROLE", "report_role"
+                    )
+                    if sqlrole:
+                        cursor.execute("set role %s" % (sqlrole,))
+                    if not hasattr(request, "filter"):
+                        request.filter = cls.getFilter(request, *args, **kwargs)
+                    cursor.execute(
+                        "select * from (%s) t_subquery %s order by %s %s %s"
+                        % (
+                            request.report.sql.replace("%", "%%"),
+                            "where %s" % request.filter[0] if request.filter[0] else "",
+                            cls._apply_sort_index(request),
+                            ("offset %s" % ((page - 1) * request.pagesize + 1))
+                            if page and page > 1
+                            else "",
+                            "limit %s" % request.pagesize if page else "",
+                        ),
+                        request.filter[1],
+                    )
+                    for rec in cursor.fetchall():
+                        result = {}
+                        idx = 0
+                        for f in request.rows:
+                            result[f.name] = rec[idx]
+                            idx += 1
+                        yield result
+            finally:
+                if conn:
+                    conn.close()
 
     @classmethod
     def count_query(cls, request, *args, **kwargs):
@@ -445,28 +446,32 @@ class ReportManager(GridReport):
             request.report = (
                 SQLReport.objects.all().using(request.database).get(pk=args[0])
             )
-        try:
-            conn = create_connection(request.database)
-            with conn.cursor() as cursor:
-                sqlrole = settings.DATABASES[request.database].get(
-                    "SQL_ROLE", "report_role"
-                )
-                if sqlrole:
-                    cursor.execute("set role %s" % (sqlrole,))
-                if not hasattr(request, "filter"):
-                    request.filter = cls.getFilter(request, *args, **kwargs)
-                cursor.execute(
-                    "select count(*) from (%s) t_subquery %s"
-                    % (
-                        request.report.sql.replace("%", "%%"),
-                        "where %s" % request.filter[0] if request.filter[0] else "",
-                    ),
-                    request.filter[1],
-                )
-                return cursor.fetchone()[0]
-        finally:
-            if conn:
-                conn.close()
+        if request.report and request.report.sql:
+            print(request.report and request.report.sql, "))))")
+            try:
+                conn = create_connection(request.database)
+                with conn.cursor() as cursor:
+                    sqlrole = settings.DATABASES[request.database].get(
+                        "SQL_ROLE", "report_role"
+                    )
+                    if sqlrole:
+                        cursor.execute("set role %s" % (sqlrole,))
+                    if not hasattr(request, "filter"):
+                        request.filter = cls.getFilter(request, *args, **kwargs)
+                    cursor.execute(
+                        "select count(*) from (%s) t_subquery %s"
+                        % (
+                            request.report.sql.replace("%", "%%"),
+                            "where %s" % request.filter[0] if request.filter[0] else "",
+                        ),
+                        request.filter[1],
+                    )
+                    return cursor.fetchone()[0]
+            finally:
+                if conn:
+                    conn.close()
+        else:
+            return 0
 
     def rows(self, request, *args, **kwargs):
         cols = []

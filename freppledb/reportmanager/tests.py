@@ -13,6 +13,7 @@ from urllib.parse import quote
 
 from django.test import TransactionTestCase
 
+from freppledb.common.models import User
 from freppledb.common.tests import checkResponse
 from .models import SQLReport, SQLColumn
 
@@ -23,6 +24,8 @@ class ReportManagerTest(TransactionTestCase):
 
     def setUp(self):
         # Login
+        if not User.objects.filter(username="admin").count():
+            User.objects.create_superuser("admin", "your@company.com", "admin")
         self.client.login(username="admin", password="admin")
 
     def test_create_and_edit(self):

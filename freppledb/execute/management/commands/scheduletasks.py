@@ -8,7 +8,7 @@
 # or in the form of compiled binaries.
 
 
-from datetime import datetime
+from datetime import datetime, timedelta
 from importlib import import_module
 import os
 import re
@@ -307,7 +307,7 @@ class Command(BaseCommand):
                     user=schedule.user,
                     arguments="--schedule='%s'" % schedule.name,
                 ).save(using=database)
-                schedule.computeNextRun(now)
+                schedule.computeNextRun(now + timedelta(seconds=1))
                 schedule.save(using=database)
                 created = True
 

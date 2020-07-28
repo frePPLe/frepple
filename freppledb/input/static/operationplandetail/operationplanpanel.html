@@ -44,6 +44,14 @@
       <td><b style="text-transform: capitalize">{{'reference'|translate}}</b></td>
       <td id="referencerow">{{operationplan.reference}}</td>
     </tr>
+    <tr data-ng-if="operationplan.owner !== null && operationplan.id !== -1">
+      <td><b style="text-transform: capitalize">{{'owner'|translate}}</b></td>
+      <td id="ownerrow">{{operationplan.owner}}
+        <a href="/detail/input/manufacturingorder/key/" role="input/manufacturingorder" onclick="opendetail(event)">
+           <span class="fa fa-caret-right"></span>
+        </a>
+      </td>
+    </tr>
     <tr data-ng-if="operationplan.item !== null && operationplan.id !== -1">
       <td><b style="text-transform: capitalize" translate>item</b></td>
       <td id="itemrow">{{operationplan.item}}

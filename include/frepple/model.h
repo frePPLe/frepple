@@ -1818,8 +1818,10 @@ class OperationPlan : public Object,
     else
       flags |= CONSUME_MATERIAL;
     resizeFlowLoadPlans();
+    /* non-confirmed or auto-created subopplans inherit from parent flag */
     for (auto* i = firstsubopplan; i; i = i->nextsubopplan)
-      if (!i->getConfirmed()) i->setConsumeMaterial(b);
+      if (!i->getConfirmed() || (i->getConfirmed() && i->getName().empty())) 
+        i->setConsumeMaterial(b);
   }
 
   /* Update flag which allow/disallows material production. */
@@ -1829,8 +1831,10 @@ class OperationPlan : public Object,
     else
       flags |= PRODUCE_MATERIAL;
     resizeFlowLoadPlans();
+    /* non-confirmed or auto-created subopplans inherit from parent flag */
     for (auto* i = firstsubopplan; i; i = i->nextsubopplan)
-      if (!i->getConfirmed()) i->setProduceMaterial(b);
+      if (!i->getConfirmed() || (i->getConfirmed() && i->getName().empty())) 
+        i->setProduceMaterial(b);
   }
 
   /* Update flag which allow/disallows capacity consumption. */
@@ -1840,8 +1844,10 @@ class OperationPlan : public Object,
     else
       flags |= CONSUME_CAPACITY;
     resizeFlowLoadPlans();
+    /* non-confirmed or auto-created subopplans inherit from parent flag */
     for (auto* i = firstsubopplan; i; i = i->nextsubopplan)
-      if (!i->getConfirmed()) i->setConsumeCapacity(b);
+      if (!i->getConfirmed() || (i->getConfirmed() && i->getName().empty())) 
+        i->setConsumeCapacity(b);
   }
 
   void setFeasible(bool b) {

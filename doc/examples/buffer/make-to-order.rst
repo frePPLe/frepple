@@ -26,7 +26,7 @@ In this example we demonstrate some typical examples:
     
 * The item E shows an **attribute-based** supply path. The finished item
   can be sold in different colors (or size, or any other attribute) and the
-  supply paths per color need to kept seperate.
+  supply paths per color need to be kept seperate.
   
 `Check this feature on a live example <https://demo.frepple.com/make-to-order/data/input/manufacturingorder/>`_
 

@@ -291,7 +291,9 @@ AC_CONFIG_FILES([
   contrib/odoo/Makefile
   contrib/vc/Makefile
   contrib/linux/Makefile
-  contrib/linux/centos-8/Makefile  
+  contrib/linux/alpine-3/Makefile
+  contrib/linux/centos-8/Makefile
+  contrib/linux/debian-10/Makefile
   contrib/linux/opensuse-15.1/Makefile
   contrib/linux/rhel-8/Makefile
   contrib/linux/ubuntu-18.04/Makefile

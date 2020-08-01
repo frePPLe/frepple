@@ -1,0 +1,91 @@
+#
+# Copyright (C) 2020 by frePPLe bv
+#
+# All information contained herein is, and remains the property of frePPLe.
+# You are allowed to use and modify the source code, as long as the software is used
+# within your company.
+# You are not allowed to distribute the software, either in the form of source code
+# or in the form of compiled binaries.
+#
+
+#
+# STAGE 1: Compile and build the application
+#
+
+FROM alpine:3.12 as builder
+
+RUN apk add --update --no-cache --virtual .build-deps \
+  xerces-c xerces-c-dev apache2 apache2-mod-wsgi \
+  python3-dev py3-pip py3-psycopg2 py3-lxml postgresql postgresql-dev \
+  libpq openssl openssl-dev libxml2 py3-sphinx \
+  g++ git wget libtool make automake autoconf
+
+# OPTION 1: BUILDING FROM LOCAL DISTRIBUTION:
+COPY requirements.txt .
+RUN pip3 install -r requirements.txt
+
+COPY *.tar.gz ./
+
+#RUN sed -i 's/local\(\s*\)all\(\s*\)all\(\s*\)peer/local\1all\2all\3\md5/g' /etc/postgresql/12/main/pg_hba.conf && \
+#  /etc/init.d/postgresql start && \
+#  sudo -u postgres psql template1 -c "create role frepple login superuser password 'frepple'" && \
+
+RUN tar -xzf *.tar.gz && \
+  cd $(basename frepple-*) && \
+  mkdir logs && \
+  make -f Makefile.dist prep config clean build && \
+  make install-strip && \
+  cd /usr/local && \
+  tar cfz /frepple_install_files.tgz \
+    lib/python*/site-packages/frepple* \
+    lib/*frepple* \
+    bin/frepple* \
+    etc/frepple
+    
+# OPTION 2: BUILDING FROM GIT REPOSITORY
+# This is useful when using this dockerfile standalone.
+# A trick to force rebuilding from here if there are new commits
+#ADD https://api.github.com/repos/jdetaeye/frepple-enterprise/compare/master...HEAD /dev/null
+#RUN git clone https://github.com/jdetaeye/frepple-enterprise.git frepple && \
+#  pip3 install -r frepple/requirements.txt
+# TODO build from git repo
+
+#
+# STAGE 2: Build the deployment container
+#
+
+FROM alpine:3.12
+
+RUN apk add --update --no-cache --virtual .build-deps \
+  xerces-c apache2 apache2-mod-wsgi \
+  py3-pip py3-psycopg2 py3-lxml postgresql-client \
+  openssl libxml2 && \
+  rm -rf .build-deps
+
+COPY --from=builder /requirements.txt /
+COPY --from=builder /frepple_install_files.tgz /
+
+RUN tar xvfz frepple_install_files.tgz && \
+  pip3 install -r requirements.txt && \
+  rm /requirements.txt /frepple_install_files.tgz
+#  a2enmod expires && \
+#  a2enmod wsgi && \
+#  a2enmod ssl && \
+#  a2ensite default-ssl && \
+#  a2ensite frepple && \
+#  a2enmod proxy && \
+#  a2enmod proxy_wstunnel && \
+#  service apache2 restart && \
+
+EXPOSE 80
+EXPOSE 443
+
+# Update djangosettings
+# TODO update random secret key
+RUN sed -i 's/"HOST": ""/"HOST": "frepple-postgres"/g' /etc/frepple/djangosettings.py
+
+VOLUME ["/var/log/frepple", "/etc/frepple", "/var/log/apache2", "/etc/apache2"]
+
+CMD frepplectl migrate && \
+  rm -f /usr/local/apache2/logs/httpd.pid && \
+  apachectl -DFOREGROUND

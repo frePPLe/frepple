@@ -86,7 +86,6 @@ class BaseReport(GridReport):
     template = "output/constraint.html"
     title = _("Constraint report")
     basequeryset = Constraint.objects.all()
-    model = Constraint
     permissions = (("view_constraint_report", "Can view constraint report"),)
     frozenColumns = 0
     editable = False

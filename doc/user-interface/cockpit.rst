@@ -6,11 +6,7 @@ The cockpit is the home page of the application. Structured as a dashboard it
 provides a number of widgets that a planner uses in his daily planning
 activities. It is an efficient starting point for the common activities.
 
-The cockpit is configurable to meet the requirements and taste of your
-implementation. Customized widgets are also easy develop. In the
-**Community Edition** all users will see the same dashboard. In the
-**Enterprise Edition** every user gets his own dashboard, which he can
-customize interactively.
+The cockpit is configurable by every user to meet his/her requirements and taste.
 
 .. image:: _images/cockpit.png
    :alt: Cockpit
@@ -62,7 +58,7 @@ The following widgets are currently available:
 * | **Alerts**
   | Shows a summary of the exceptions and problem areas.
 
-* | **Anlayze late demands**
+* | **Analyze late demands**
   | Shows a short list of items with the most late demands.
 
 * | **Late orders**

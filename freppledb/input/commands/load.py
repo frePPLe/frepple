@@ -809,7 +809,7 @@ class loadItems(LoadTask):
                         if i[8] == "make to order":
                             x.owner = frepple.item_mto(name=i[2])
                         else:
-                            x.owner = frepple.item_mto(name=i[2])
+                            x.owner = frepple.item_mts(name=i[2])
                     if i[3]:
                         x.cost = i[3]
                     idx = 9

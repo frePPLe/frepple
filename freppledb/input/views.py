@@ -1657,6 +1657,7 @@ class SetupRuleList(GridReport):
         GridFieldText(
             "setupmatrix",
             title=_("setup matrix"),
+            field_name="setupmatrix__name",
             formatter="detail",
             extra='"role":"input/setupmatrix"',
         ),

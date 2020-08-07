@@ -338,14 +338,14 @@ This option allows a user to either create copies of a dataset into a
 what-if scenario or promote the data from a scenario into *Production* database.
 
 When the data is successfully copied, the status changes from 'Free'
-to 'In use'.
+to 'In use'. The access to the newly copied scenario is limited to 1) the
+user who performed the copy plus 2) all superusers of the source scenario.
 
 When the user doesn't need the what-if scenario any more, it can be released
 again.
 
 Releasing a scenario can be done from any scenario while copying and promoting
 actions can only be performed from current scenario to destination scenario. 
-
 
 The label of a scenario, which is displayed in the dropdown list in the 
 upper right hand corner, can also be updated here.

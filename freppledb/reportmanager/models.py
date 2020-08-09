@@ -105,13 +105,13 @@ class SQLColumn(AuditModel):
     id = models.AutoField(_("identifier"), primary_key=True)
     report = models.ForeignKey(
         SQLReport,
-        verbose_name=_("report"),
+        verbose_name="report",
         related_name="columns",
         on_delete=models.CASCADE,
     )
-    sequence = models.IntegerField(_("sequence"), default=1)
-    name = models.CharField(_("name"), max_length=300)
-    format = models.CharField(_("format"), max_length=20, null=True, blank=True)
+    sequence = models.IntegerField("sequence", default=1)
+    name = models.CharField("name", max_length=300)
+    format = models.CharField("format", max_length=20, null=True, blank=True)
 
     class Manager(MultiDBManager):
         def get_by_natural_key(self, report, sequence):
@@ -127,5 +127,5 @@ class SQLColumn(AuditModel):
         db_table = "reportmanager_column"
         ordering = ("report", "sequence")
         unique_together = (("report", "sequence"),)
-        verbose_name = _("report column")
-        verbose_name_plural = _("report columns")
+        verbose_name = "report column"
+        verbose_name_plural = "report columns"

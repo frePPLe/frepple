@@ -139,7 +139,7 @@
          <label for="schedule-{{forloop.counter}}-email-success" class="col-sm-3 control-label">{% trans "email on success"|capfirst %}</label>
          <div class="col-sm-9">
            <input type="email" class="form-control" id="schedule-{{forloop.counter}}-email-success" 
-              placeholder="{% trans "list of emails, separated by commas"|capfirst %}" data-field="email_success" 
+              placeholder="{% trans "List of emails, separated by commas"|capfirst %}" data-field="email_success" 
               {% if schedule.email_success %}value="{{schedule.email_success}}"{% endif %}>
          </div>
        </div>
@@ -147,7 +147,7 @@
          <label for="schedule-{{forloop.counter}}-email-failure" class="col-sm-3 control-label">{% trans "email on failure"|capfirst %}</label>
          <div class="col-sm-9">
            <input type="email" class="form-control" id="schedule-{{forloop.counter}}-email-failure"
-             placeholder="{% trans "list of emails, separated by commas"|capfirst %}" data-field="email_failure"
+             placeholder="{% trans "List of emails, separated by commas"|capfirst %}" data-field="email_failure"
               {% if schedule.email_failure %}value="{{schedule.email_failure}}"{% endif %}>
          </div>
        </div>

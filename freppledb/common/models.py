@@ -15,6 +15,7 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 from datetime import datetime
+import json
 import logging
 from psycopg2.extras import execute_batch
 
@@ -570,52 +571,37 @@ class User(AbstractUser):
             # Delete user preferences
             self.preferences.using(database).filter(user=self, property=prop).delete()
         else:
-            if prop in settings.GLOBAL_PREFERENCES:
-                val_global = {
-                    k: v
-                    for k, v in val.items()
-                    if k in settings.GLOBAL_PREFERENCES[prop]
-                }
-                val_user = {
-                    k: v
-                    for k, v in val.items()
-                    if k not in settings.GLOBAL_PREFERENCES[prop]
-                }
-                if val_global and self.is_superuser:
-                    # A superuser can save global preferences for this property
-                    recs = (
-                        UserPreference.objects.all()
-                        .using(database)
-                        .filter(user__isnull=True, property=prop)
-                        .update(value=val_global)
-                    )
-                    if not recs:
-                        pref = UserPreference(
-                            user=None, property=prop, value=val_global
-                        )
-                        pref.save(using=database)
-                if val_user:
-                    # Everyone can save his personal preferences for this property
-                    recs = (
-                        UserPreference.objects.all()
-                        .using(database)
-                        .filter(user=self, property=prop)
-                        .update(value=val_user)
-                    )
-                    if not recs:
-                        pref = UserPreference(user=self, property=prop, value=val_user)
-                        pref.save(using=database)
-            else:
-                # No global preferences configured for this property
-                recs = (
-                    UserPreference.objects.all()
-                    .using(database)
-                    .filter(user=self, property=prop)
-                    .update(value=val)
-                )
-                if not recs:
-                    pref = UserPreference(user=self, property=prop, value=val)
-                    pref.save(using=database)
+            sql = """
+                insert into common_preference
+                (user_id, property, value)
+                values (%s, %s, %s)
+                on conflict (user_id, property)
+                do update set value = %s
+                """
+            with connections[database].cursor() as cursor:
+                if prop in settings.GLOBAL_PREFERENCES:
+                    val_global = {
+                        k: v
+                        for k, v in val.items()
+                        if k in settings.GLOBAL_PREFERENCES[prop]
+                    }
+                    val_user = {
+                        k: v
+                        for k, v in val.items()
+                        if k not in settings.GLOBAL_PREFERENCES[prop]
+                    }
+                    if val_global and self.is_superuser:
+                        # A superuser can save global preferences for this property
+                        t = json.dumps(val_global)
+                        cursor.execute(sql, [None, prop, t, t])
+                    if val_user:
+                        # Everyone can save his personal preferences for this property
+                        t = json.dumps(val_user)
+                        cursor.execute(sql, [self.id, prop, t, t])
+                else:
+                    # No global preferences configured for this property
+                    t = json.dumps(val)
+                    cursor.execute(sql, (self.id, prop, t, t))
 
 
 class UserPreference(models.Model):

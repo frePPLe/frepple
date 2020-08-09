@@ -20,6 +20,8 @@ Release notes
 - | `Custom reports <user-interface/report-manager.html>`_ now support filtering,
     sorting, customization and favorites. Just as all other screens.
 
+- | Added Ukranian translations. Thanks Michael!
+
 .. rubric:: Odoo integration
 
 - The odoo addon is moved to its own github repository: https://github.com/frePPLe/odoo

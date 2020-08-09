@@ -1,39 +1,31 @@
-# Copyright (C) 2007-2012 by Johan De Taeye, Antonio Mascolo
-# This library is free software; you can redistribute it and/or modify it
-# under the terms of the GNU Affero General Public License as published
-# by the Free Software Foundation; either version 3 of the License, or
-# (at your option) any later version.
-# This library is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero
-# General Public License for more details.
-# You should have received a copy of the GNU Affero General Public
-# License along with this program.  If not, see <http://www.gnu.org/licenses/>.
-# Joao Ranita <jranita@frepple.com>, 2015, 2016.
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-08-09 10:03+0200\n"
-"PO-Revision-Date: 2020-04-13 18:37+0200\n"
-"Last-Translator: Joao Ranita <jranita@frepple.com>\n"
-"Language-Team: klaus\n"
-"Language: de\n"
+"PO-Revision-Date: 2020-08-09 08:23+0200\n"
+"Last-Translator: \n"
+"Language-Team: Michael Nasonov <info@ivc-inform.ru>\n"
+"Language: uk\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 2.0.1\n"
-"X-Poedit-SourceCharset: UTF-8\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"X-Generator: Poedit 2.0.6\n"
 
 #: admin.py:22
 #, python-format
 msgid "Please enter a correct %(username)s and password. Note that both fields may be case-sensitive."
-msgstr "Bitte %(username)s und Passwort eingeben. Beide Felder berücksichtigen die Groß-/Kleinschreibung."
+msgstr "Введіть правильний %(username)s та пароль. Зауважте, що обидва поля можуть бути чутливими до регістру літер."
 
 #: admin.py:24
 msgid "This user is inactive."
-msgstr ""
+msgstr "This user is inactive."
 
 #: archive/models.py:43 common/models.py:621 common/models.py:651
 #: common/models.py:730 common/views.py:348 common/views.py:399
@@ -51,7 +43,7 @@ msgstr ""
 #: reportmanager/models.py:20 reportmanager/models.py:98
 #: reportmanager/views.py:103
 msgid "identifier"
-msgstr ""
+msgstr "ідентифікатор"
 
 #: archive/models.py:61 archive/models.py:87 archive/models.py:129
 #: forecast/models.py:63 forecast/models.py:297 forecast/views.py:77
@@ -123,7 +115,7 @@ msgstr ""
 #: output/widget.py:1275 output/widget.py:1333 output/widget.py:1451
 #: quoting/views.py:64
 msgid "item"
-msgstr "Artikel"
+msgstr "товар"
 
 #: archive/models.py:62 archive/models.py:91 archive/models.py:143
 #: forecast/models.py:66 forecast/models.py:305 forecast/views.py:84
@@ -186,7 +178,7 @@ msgstr "Artikel"
 #: output/views/resource.py:149 output/views/resource.py:155
 #: output/widget.py:76 output/widget.py:155 quoting/views.py:71
 msgid "location"
-msgstr "Standort"
+msgstr "місце розташування"
 
 #: archive/models.py:63 archive/models.py:127 input/models.py:524
 #: input/models.py:1492 input/models.py:1618 input/views.py:1618
@@ -196,7 +188,7 @@ msgstr "Standort"
 #: input/views.py:5496 input/views.py:5948 input/views.py:6112
 #: input/views.py:6524 output/views/buffer.py:226
 msgid "batch"
-msgstr ""
+msgstr "партія"
 
 #: archive/models.py:65 archive/models.py:89 forecast/views.py:395
 #: forecast/views.py:1802 input/models.py:201 input/models.py:326
@@ -215,13 +207,13 @@ msgstr ""
 #: output/views/operation.py:125 output/views/operation.py:443
 #: output/views/operation.py:801 output/views/resource.py:99
 msgid "cost"
-msgstr "Preis"
+msgstr "вартість"
 
 #: archive/models.py:68 input/models.py:526 input/models.py:1990
 #: input/views.py:1619 inventoryplanning/models.py:404
 #: inventoryplanning/templates/inventoryplanning/drp.html:2019
 msgid "onhand"
-msgstr "vorhanden"
+msgstr "під рукою"
 
 #: archive/models.py:71 input/models.py:541 inventoryplanning/models.py:390
 #: inventoryplanning/templates/inventoryplanning/drp.html:227
@@ -231,7 +223,7 @@ msgstr "vorhanden"
 #: inventoryplanning/views.py:498 output/templates/output/buffer.html:190
 #: output/templates/output/buffer.html:286 output/views/buffer.py:237
 msgid "safety stock"
-msgstr "Sicherheitsbestand"
+msgstr "страховий запас"
 
 #: archive/models.py:86 archive/models.py:148 common/models.py:42
 #: common/models.py:266 common/models.py:292 common/models.py:711
@@ -257,7 +249,7 @@ msgstr "Sicherheitsbestand"
 #: reportmanager/templates/reportmanager/reportmanager.html:176
 #: reportmanager/views.py:105
 msgid "name"
-msgstr "Name"
+msgstr "назва"
 
 #: archive/models.py:92 forecast/models.py:60 forecast/models.py:313
 #: forecast/views.py:91 forecast/views.py:332 forecast/views.py:463
@@ -272,13 +264,13 @@ msgstr "Name"
 #: inventoryplanning/templates/inventoryplanning/drp.html:2053
 #: output/widget.py:77 output/widget.py:156 quoting/views.py:78
 msgid "customer"
-msgstr "Kunde"
+msgstr "замовник"
 
 #: archive/models.py:93 archive/models.py:146 input/models.py:1447
 #: input/models.py:1680 input/views.py:3052 output/widget.py:78
 #: output/widget.py:157 quoting/views.py:86
 msgid "due"
-msgstr "fällig"
+msgstr "термін"
 
 #: archive/models.py:94 archive/models.py:115 common/models.py:297
 #: execute/models.py:46 execute/templates/commands/scenario_copy.html:12
@@ -289,7 +281,7 @@ msgstr "fällig"
 #: inventoryplanning/templates/inventoryplanning/drp.html:167
 #: quoting/views.py:100
 msgid "status"
-msgstr "Status"
+msgstr "статус"
 
 #: archive/models.py:95 forecast/models.py:78 forecast/views.py:100
 #: input/models.py:36 input/models.py:92 input/models.py:272
@@ -306,7 +298,7 @@ msgstr "Status"
 #: inventoryplanning/views.py:149 output/views/operation.py:110
 #: quoting/views.py:94
 msgid "priority"
-msgstr "Priorität"
+msgstr "пріоритет"
 
 #: archive/models.py:96 archive/models.py:117 forecast/widget.py:397
 #: input/models.py:902 input/models.py:1034 input/models.py:1468
@@ -321,15 +313,15 @@ msgstr "Priorität"
 #: output/widget.py:1222 output/widget.py:1279 output/widget.py:1336
 #: output/widget.py:1399 output/widget.py:1454 quoting/views.py:87
 msgid "quantity"
-msgstr "Menge"
+msgstr "кількість"
 
 #: archive/models.py:97 input/models.py:1510 input/views.py:3068
 msgid "delivery date"
-msgstr "Lieferung"
+msgstr "Дата доставки"
 
 #: archive/models.py:99 input/models.py:1501 input/views.py:3058
 msgid "planned quantity"
-msgstr "quantità pianificata"
+msgstr "запланована кількість"
 
 #: archive/models.py:114 input/models.py:1551 input/models.py:1903
 #: input/models.py:1982 input/views.py:3975 input/views.py:4570
@@ -337,7 +329,7 @@ msgstr "quantità pianificata"
 #: input/views.py:6367
 #: inventoryplanning/templates/inventoryplanning/drp.html:151
 msgid "reference"
-msgstr ""
+msgstr "рефер."
 
 #: archive/models.py:116 forecast/models.py:1031 forecast/views.py:151
 #: input/models.py:209 input/models.py:235 input/models.py:501
@@ -357,7 +349,7 @@ msgstr ""
 #: output/views/buffer.py:134 output/views/operation.py:75
 #: output/views/pegging.py:50 output/views/resource.py:69 output/widget.py:1504
 msgid "type"
-msgstr "Typ"
+msgstr "тип"
 
 #: archive/models.py:119 common/models.py:735 common/views.py:478
 #: forecast/models.py:319 input/models.py:85 input/models.py:1584
@@ -367,7 +359,7 @@ msgstr "Typ"
 #: output/models.py:21 output/models.py:45 output/views/constraint.py:109
 #: output/views/problem.py:77 output/widget.py:1337
 msgid "start date"
-msgstr "Startdatum"
+msgstr "дата початку"
 
 #: archive/models.py:122 common/models.py:736 common/views.py:479
 #: forecast/models.py:320 input/models.py:87 input/models.py:1587
@@ -377,7 +369,7 @@ msgstr "Startdatum"
 #: output/models.py:22 output/models.py:46 output/views/constraint.py:110
 #: output/views/problem.py:78
 msgid "end date"
-msgstr "Enddatum"
+msgstr "Дата закінчення"
 
 #: archive/models.py:125 forecast/views.py:111 input/models.py:375
 #: input/models.py:411 input/models.py:885 input/models.py:1008
@@ -423,7 +415,7 @@ msgstr "Enddatum"
 #: output/views/operation.py:41 output/views/pegging.py:42
 #: output/widget.py:1396
 msgid "operation"
-msgstr "Tätigkeit"
+msgstr "операція"
 
 #: archive/models.py:126 common/models.py:46 forecast/views.py:388
 #: forecast/views.py:441 forecast/views.py:481 input/models.py:265
@@ -448,19 +440,19 @@ msgstr "Tätigkeit"
 #: output/views/operation.py:808 output/views/problem.py:74
 #: output/views/resource.py:181 quoting/views.py:96
 msgid "owner"
-msgstr "Verantwortlicher"
+msgstr "власник"
 
 #: archive/models.py:131
 #, fuzzy
 #| msgid "items"
 msgid "item cost"
-msgstr "Artikel"
+msgstr "товари"
 
 #: archive/models.py:134
 #, fuzzy
 #| msgid "item suppliers"
 msgid "itemsupplier cost"
-msgstr "Artikel Lieferanten"
+msgstr "постачальники товарів"
 
 #: archive/models.py:137 input/models.py:1303 input/models.py:1637
 #: input/views.py:2252 input/views.py:2382 input/views.py:2388
@@ -476,7 +468,7 @@ msgstr "Artikel Lieferanten"
 #: output/views/operation.py:853 output/views/operation.py:862
 #: output/widget.py:1276 output/widget.py:1334
 msgid "origin"
-msgstr "Ursprung"
+msgstr "походження"
 
 #: archive/models.py:139 input/models.py:1646 input/views.py:4606
 #: input/views.py:4790 input/views.py:4796 input/views.py:4802
@@ -486,7 +478,7 @@ msgstr "Ursprung"
 #: output/views/operation.py:888 output/views/operation.py:894
 #: output/views/operation.py:903 output/widget.py:1277 output/widget.py:1335
 msgid "destination"
-msgstr "Ziel"
+msgstr "одержувач"
 
 #: archive/models.py:142 input/models.py:1142 input/models.py:1170
 #: input/models.py:1656 input/views.py:2053 input/views.py:2180
@@ -499,70 +491,70 @@ msgstr "Ziel"
 #: output/views/operation.py:536 output/views/operation.py:543
 #: output/views/operation.py:549 output/widget.py:1220 output/widget.py:1452
 msgid "supplier"
-msgstr "Lieferant"
+msgstr "постачальник"
 
 #: archive/models.py:145 input/models.py:1673 input/views.py:5456
 #: output/models.py:38 output/templates/output/demand_forecast.html:148
 #: output/templates/output/demand_forecast.html:217
 #: output/views/constraint.py:28 output/views/constraint.py:94
 msgid "demand"
-msgstr "Nachfrage"
+msgstr "попит"
 
 #: archive/widget.py:30
 #, fuzzy
 #| msgid "Inventory status"
 msgid "Inventory history"
-msgstr "Lagerstatus"
+msgstr "Стстус запасу"
 
 #: archive/widget.py:31
 #, fuzzy
 #| msgid "Show the evolution of the SMAPE forecast error"
 msgid "Show the evolution of the on hand history"
-msgstr "Entwicklung des SMAPE Prognose Fehlers"
+msgstr "Показати еволюцію помилки прогнозу SMAPE"
 
 #: archive/widget.py:157
 #, fuzzy
 #| msgid "Demand history outliers"
 msgid "Demand history"
-msgstr "Ausreißer in der Nachfrage Historie"
+msgstr "Попит історії людей, які не користуються"
 
 #: archive/widget.py:158
 #, fuzzy
 #| msgid "Show the evolution of the SMAPE forecast error"
 msgid "Show the evolution of the demand history"
-msgstr "Entwicklung des SMAPE Prognose Fehlers"
+msgstr "Показати еволюцію помилки прогнозу SMAPE"
 
 #: archive/widget.py:284
 #, fuzzy
-#| msgid "purchase orders"
+#| msgid "Purchase order summary"
 msgid "Purchase order history"
-msgstr "Bestellungen"
+msgstr "Підсумок замовлення на купівлю"
 
 #: archive/widget.py:285
 #, fuzzy
 #| msgid "Show the evolution of the SMAPE forecast error"
 msgid "Show the evolution of the purchase order history"
-msgstr "Entwicklung des SMAPE Prognose Fehlers"
+msgstr "Показати еволюцію помилки прогнозу SMAPE"
 
 #: common/admin.py:30 common/admin.py:40
 msgid "Personal info"
-msgstr "Persönliche Informationen"
+msgstr "Особиста інформація"
 
 #: common/admin.py:33
 msgid "password"
-msgstr "Passwort"
+msgstr "пароль"
 
 #: common/admin.py:34
 msgid "scenario access"
-msgstr ""
+msgstr "доступ до сценарію"
 
 #: common/admin.py:42
 msgid "Permissions in this scenario"
-msgstr "Berechtigungen"
+msgstr "Дозволи в цьому сценарії"
 
 #: common/admin.py:45
 msgid "Important dates"
-msgstr "Wichtige Termine"
+msgstr "Важливі дати"
 
 #: common/admin.py:51 common/admin.py:88 common/admin.py:133
 #: common/admin.py:175 common/admin.py:203 common/adminforms.py:432
@@ -578,7 +570,7 @@ msgstr "Wichtige Termine"
 #: reportmanager/admin.py:44
 #: reportmanager/templates/reportmanager/reportmanager.html:153
 msgid "edit"
-msgstr ""
+msgstr "змінити"
 
 #: common/admin.py:57 common/admin.py:94 common/admin.py:139
 #: common/admin.py:181 common/admin.py:209 common/adminforms.py:486
@@ -593,7 +585,7 @@ msgstr ""
 #: inventoryplanning/templates/inventoryplanning/drp.html:2470
 #: reportmanager/admin.py:50
 msgid "comments"
-msgstr "Kommentare"
+msgstr "коментарі"
 
 #: common/admin.py:60 common/admin.py:97 common/admin.py:144
 #: common/admin.py:186 common/admin.py:214 forecast/admin.py:77
@@ -607,125 +599,123 @@ msgstr "Kommentare"
 #: inventoryplanning/templates/inventoryplanning/drp.html:2471
 #: reportmanager/admin.py:55
 msgid "History"
-msgstr "Geschichte"
+msgstr "Історія"
 
 #: common/admin.py:119
 msgid "Invalid date: expecting YYYY-MM-DD HH:MM:SS"
-msgstr "Ungültiges Format (Format: JJJJ-MM-TT HH:MM:SS)"
+msgstr "Недійсна дата: очікується: YYYY-MM-DD HH: MM: SS"
 
 #: common/adminforms.py:259 common/adminforms.py:288
 #, python-brace-format
 msgid "The {name} \"{obj}\" was added successfully."
-msgstr "{name} „{obj}“ wurde erfolgreich hinzugefügt."
+msgstr "{name} \"{obj}\" було успішно додано."
 
 #: common/adminforms.py:261
 msgid "You may edit it again below."
-msgstr "Es kann unten erneut geändert werden."
+msgstr "Ви можете змінити його знову нижче."
 
 #: common/adminforms.py:274
 #, python-brace-format
 msgid "The {name} \"{obj}\" was added successfully. You may add another {name} below."
-msgstr "{name} „{obj}“ wurde erfolgreich hinzugefügt und kann nun unten um ein Weiteres ergänzt werden."
+msgstr "{name} \"{obj}\" було успішно додано. Ви можете додати ще {name} нижче."
 
 #: common/adminforms.py:368
 #, python-brace-format
 msgid "The {name} \"{obj}\" was changed successfully. You may edit it again below."
-msgstr "{name} „{obj}“ wurde erfolgreich geändert und kann unten erneut geändert werden."
+msgstr "{name} \"{obj}\" було успішно змінено. Ви можете змінити його знову нижче."
 
 #: common/adminforms.py:383
 #, python-brace-format
 msgid "The {name} \"{obj}\" was added successfully. You may edit it again below."
-msgstr "{name} „{obj}“ wurde erfolgreich hinzugefügt und kann unten geändert werden."
+msgstr "{name} \"{obj}\" було успішно додано. Ви можете змінити його знову нижче."
 
 #: common/adminforms.py:402
 #, python-brace-format
 msgid "The {name} \"{obj}\" was changed successfully. You may add another {name} below."
-msgstr "{name} „{obj}“ wurde erfolgreich geändert und kann nun unten um ein Weiteres ergänzt werden."
+msgstr "{name} \"{obj}\" було успішно змінено. Ви можете додати ще {name} нижче."
 
 #: common/adminforms.py:419
 #, python-brace-format
 msgid "The {name} \"{obj}\" was changed successfully."
-msgstr "{name} „{obj}“ wurde erfolgreich geändert."
+msgstr "{name} \"{obj}\" було успішно змінено."
 
 #: common/adminforms.py:517 reportmanager/views.py:573
 #, python-format
 msgid "The %(name)s \"%(obj)s\" was deleted successfully."
-msgstr "%(name)s \"%(obj)s\" wurde erfolgreich gelöscht."
+msgstr "%(name)s \"%(obj)s\" було успішно видалено."
 
 #: common/adminforms.py:606
 #, python-format
 msgid "Cannot delete %(name)s"
-msgstr "Kann %(name)s nicht löschen"
+msgstr "Неможливо видалити %(name)s"
 
 #: common/adminforms.py:608
 msgid "Are you sure?"
-msgstr "Sind Sie sicher?"
+msgstr "Ви впевнені?"
 
 #: common/adminforms.py:661
-#, fuzzy
-#| msgid "Change password"
 msgid "Change history"
-msgstr "Passwort ändern"
+msgstr "Історія змін"
 
 #: common/adminforms.py:706
 msgid "Required."
-msgstr ""
+msgstr "Вимагається."
 
 #: common/adminforms.py:708 common/adminforms.py:711
 msgid "Required. Max 30 characters."
-msgstr ""
+msgstr "Вимагається. Максимум 30 символів."
 
 #: common/api/views.py:40
 msgid "REST API Help"
-msgstr "REST-API-Hilfe"
+msgstr "Довідка API REST"
 
 #: common/dataload.py:358 forecast/models.py:531
 #, python-format
 msgid "Skipping unknown field %(column)s"
-msgstr "Überspringe unbekanntes Feld %(column)s"
+msgstr "Пропуск невідомого поля %(column)s"
 
 #: common/dataload.py:376 forecast/models.py:562
 #, python-format
 msgid "Some keys were missing: %(keys)s"
-msgstr "Einige Werte fehlen: %(keys)s"
+msgstr "Деякі ключі були відсутні: %(keys)s"
 
 #: common/dataload.py:449
 msgid "Key fields not unique"
-msgstr "Schlüsselfelder nicht eindeutig"
+msgstr "Ключові поля не унікальні"
 
 #: common/dataload.py:518 forecast/models.py:683
 #, python-format
 msgid "%(rows)d data rows, changed %(changed)d and added %(added)d records, %(errors)d errors, %(warnings)d warnings"
-msgstr "%(rows)d Datensätze,, geändert %(changed)d und hinzugefügt %(added)d Sätze, %(errors)d Fehler, %(warnings)d Warnung"
+msgstr "%(rows)d рядків даних, змінено %(changed)d та додано %(added)d записів, %(errors)d помилок,%(warnings)d попереджень"
 
 #: common/dataload.py:574 common/dataload.py:583
 msgid "Select a valid choice. That choice is not one of the available choices."
-msgstr "Bitte eine gültige Auswahl treffen. Dies ist keine gültige Auswahl."
+msgstr "Виберіть правильний вибір. Цей вибір не є одним із доступних варіантів."
 
 #: common/menu.py:90
 msgid "Documentation"
-msgstr "Dokumentation"
+msgstr "Документація"
 
 #: common/menu.py:99
 msgid "REST API help"
-msgstr "Rest API Hilfe"
+msgstr "довідка API REST"
 
 #: common/menu.py:109
 msgid "frePPLe website"
-msgstr "die FrePPLe Seite besuchen"
+msgstr "сайт frePPLe"
 
 #: common/menu.py:114
 msgid "About frePPLe"
-msgstr "Über Frepple"
+msgstr "Про програму"
 
 #: common/models.py:42 forecast/models.py:1018 input/models.py:807
 #: input/models.py:1554
 msgid "Unique identifier"
-msgstr "Eindeutiges Merkmal"
+msgstr "Унікальний ід."
 
 #: common/models.py:50 input/models.py:1614
 msgid "Hierarchical parent"
-msgstr "Übergeordnet"
+msgstr "Ієрархічний"
 
 #: common/models.py:245 common/views.py:379 common/views.py:453
 #: common/views.py:481 execute/views.py:1044 forecast/views.py:129
@@ -758,7 +748,7 @@ msgstr "Übergeordnet"
 #: output/views/operation.py:457 output/views/operation.py:543
 #: output/views/operation.py:815 reportmanager/views.py:116
 msgid "source"
-msgstr "Quelle"
+msgstr "джерело"
 
 #: common/models.py:248 common/models.py:373 common/models.py:670
 #: common/report.py:342 execute/templates/commands/emailreport.html:19
@@ -784,7 +774,7 @@ msgstr "Quelle"
 #: output/views/operation.py:549 output/views/operation.py:821
 #: output/views/operation.py:862 output/views/operation.py:903
 msgid "last modified"
-msgstr "letzte Änderung"
+msgstr "остання змінена"
 
 #: common/models.py:267 common/report.py:2048 common/report.py:2164
 #: common/views.py:377 execute/management/commands/importworkbook.py:208
@@ -793,7 +783,7 @@ msgstr "letzte Änderung"
 #: inventoryplanning/templates/inventoryplanning/drp.html:209
 #: inventoryplanning/views.py:160 output/views/kpi.py:35
 msgid "value"
-msgstr "Wert"
+msgstr "значення"
 
 #: common/models.py:269 common/models.py:294 common/models.py:713
 #: common/views.py:378 common/views.py:451 forecast/models.py:51
@@ -837,139 +827,139 @@ msgstr "Wert"
 #: reportmanager/templates/reportmanager/reportmanager.html:186
 #: reportmanager/views.py:106
 msgid "description"
-msgstr "Beschreibung"
+msgstr "опис"
 
 #: common/models.py:277
 msgid "parameter"
-msgstr "Parameter"
+msgstr "параметр"
 
 #: common/models.py:278 common/views.py:362
 msgid "parameters"
-msgstr "Parameter"
+msgstr "параметри"
 
 #: common/models.py:289 output/models.py:71
 #: output/templates/output/resource.html:270
 msgid "free"
-msgstr "frei"
+msgstr "вільно"
 
 #: common/models.py:289
 msgid "in use"
-msgstr "in Verwendung"
+msgstr "у вживанні"
 
 #: common/models.py:289
 msgid "busy"
-msgstr "beschaeftigt"
+msgstr "зайнято"
 
 #: common/models.py:299
 msgid "last refreshed"
-msgstr "Letzte Aktualisierung"
+msgstr "востаннє оновлено"
 
 #: common/models.py:339
 msgid "scenarios"
-msgstr "Szenarien"
+msgstr "сценаріїв"
 
 #: common/models.py:340 common/report.py:941 common/report.py:1011
 #: common/report.py:1028 common/report.py:2781 common/report.py:3140
 #: execute/templates/commands/scenario_copy.html:7
 msgid "scenario"
-msgstr "Szenario"
+msgstr "сценарій"
 
 #: common/models.py:346
 msgid "Detect automatically"
-msgstr "Automatisch erkennen"
+msgstr "Виявити автоматично"
 
 #: common/models.py:349 common/templates/common/preferences.html:52
 #: common/views.py:124
 msgid "language"
-msgstr "Sprache"
+msgstr "мова"
 
 #: common/models.py:352 common/templates/common/preferences.html:80
 msgid "theme"
-msgstr "Thema"
+msgstr "тема"
 
 #: common/models.py:358 common/templates/common/preferences.html:70
 msgid "page size"
-msgstr "Seitengröße"
+msgstr "розмір сторінки"
 
 #: common/models.py:531 common/models.py:624 common/models.py:663
 #: common/templates/admin/base_site_nav.html:90 common/views.py:403
 #: execute/models.py:51 execute/views.py:157 reportmanager/models.py:28
 #: reportmanager/views.py:111
 msgid "user"
-msgstr "Benutzer"
+msgstr "користувач"
 
 #: common/models.py:532 common/views.py:307
 msgid "users"
-msgstr "Benutzer"
+msgstr "користувачі"
 
 #: common/models.py:654
 msgid "content type"
-msgstr "Inhaltstyp"
+msgstr "тип вмісту"
 
 #: common/models.py:658 common/views.py:418
 msgid "object id"
-msgstr "Objekt-ID"
+msgstr "ід. об'єкта"
 
 #: common/models.py:660 common/models.py:676 common/views.py:425
 msgid "comment"
-msgstr "Bemerkung"
+msgstr "коментар"
 
 #: common/models.py:708 input/models.py:601
 msgid "day"
-msgstr "Tag"
+msgstr "день"
 
 #: common/models.py:708 input/models.py:602
 msgid "week"
-msgstr "Woche"
+msgstr "тиждень"
 
 #: common/models.py:708 input/models.py:603
 msgid "month"
-msgstr "Monat"
+msgstr "місяць"
 
 #: common/models.py:708
 msgid "quarter"
-msgstr "Quartal"
+msgstr "чверть"
 
 #: common/models.py:708
 msgid "year"
-msgstr "Jahr"
+msgstr "рік"
 
 #: common/models.py:716 common/views.py:452
 msgid "level"
-msgstr "Ebene"
+msgstr "рівень"
 
 #: common/models.py:716
 msgid "Higher values indicate more granular time buckets"
-msgstr "Höhere Werte bedeuten detaiiliertere Zeitraster"
+msgstr "Більш високі значення вказують на більш детальні часові відрізки"
 
 #: common/models.py:723 common/models.py:732 common/report.py:2737
 #: common/report.py:3075 common/views.py:473 forecast/models.py:350
 #: forecast/models.py:464
 msgid "bucket"
-msgstr "Raster"
+msgstr "період"
 
 #: common/models.py:724 common/views.py:438 input/models.py:600
 #: input/models.py:601 input/models.py:602 input/models.py:603
 msgid "buckets"
-msgstr "Raster"
+msgstr "періоди"
 
 #: common/models.py:751
 msgid "bucket date"
-msgstr "Zeitraster"
+msgstr "дата періоду"
 
 #: common/models.py:752 common/views.py:463
 msgid "bucket dates"
-msgstr "Zeitraster"
+msgstr "дати періоду"
 
 #: common/report.py:395
 #: inventoryplanning/templates/inventoryplanning/drp.html:279
 msgid "No"
-msgstr "Nein"
+msgstr "Нi"
 
 #: common/report.py:395
 #: inventoryplanning/templates/inventoryplanning/drp.html:278
 msgid "Yes"
-msgstr "Ja"
+msgstr "Так"
 
 #: common/report.py:754 common/report.py:1719 common/report.py:1722
 #: common/report.py:1946 common/report.py:1998 common/report.py:2108
@@ -983,54 +973,51 @@ msgstr "Ja"
 #: inventoryplanning/views.py:2168 inventoryplanning/views.py:2202
 #: output/views/demand.py:530 planningboard/views.py:176
 #: reportmanager/views.py:511 reportmanager/views.py:531
-#, fuzzy
-#| msgid "Permissions in this scenario"
 msgid "Permission denied"
-msgstr "Berechtigungen"
+msgstr "У дозволі відмовлено"
 
 #: common/report.py:919 common/report.py:3053 common/report.py:3082
 #: execute/views.py:969 execute/views.py:1014
 #, python-format
 msgid "Values in this field must exist in the %s table"
-msgstr ""
+msgstr "Значення в цьому полі повинні існувати в таблиці %s"
 
 #: common/report.py:927 common/report.py:3061 common/report.py:3090
 #: execute/views.py:979 execute/views.py:1025
 #, python-format
 msgid "Accepted values are: %s"
-msgstr ""
+msgstr "Прийняті значення:% s"
 
 #: common/report.py:936 common/report.py:3070 common/report.py:3099
 #: common/report.py:3126 execute/views.py:988 execute/views.py:1034
 #: execute/views.py:1054
 msgid "Read only"
-msgstr ""
+msgstr "Лише для читання"
 
 #: common/report.py:1588
 #, python-format
 msgid "%(title)s for %(entity)s"
-msgstr "%(title)s for %(entity)s"
+msgstr "%(title)s для %(entity)s"
 
 #: common/report.py:1750 common/report.py:1786 common/report.py:1838
 #, python-format
 msgid "Can't find %s"
-msgstr "Kann %s nicht finden"
+msgstr "Не вдається знайти %s"
 
 #: common/report.py:1771
 #, python-format
 msgid "Can't copy %s"
-msgstr "Kann %s nicht kopieren"
+msgstr "Неможливо скопіювати %s"
 
 #: common/report.py:1780
 #, python-format
 msgid "Copied from %s."
-msgstr "Von %s kopiert."
+msgstr "Скопійовано з %s."
 
 #: common/report.py:1831 inventoryplanning/views.py:2150
-#, fuzzy, python-format
-#| msgid "Change"
+#, python-format
 msgid "Changed %s."
-msgstr "Ändern"
+msgstr "Змінено %s."
 
 #: common/report.py:1832
 #: inventoryplanning/templates/inventoryplanning/drp.html:2700
@@ -1039,71 +1026,71 @@ msgstr "Ändern"
 #: inventoryplanning/templates/inventoryplanning/drp.html:2766
 #: inventoryplanning/views.py:2151
 msgid "and"
-msgstr "und"
+msgstr "i"
 
 #: common/report.py:1973
 #, python-format
 msgid "Erasing data from %(model)s"
-msgstr "Lösche Daten von %(model)s"
+msgstr "Видалення даних із %(model)s"
 
 #: common/report.py:1992 common/report.py:2102
 msgid "Invalid upload request"
-msgstr "Hochladen nicht möglich"
+msgstr "Недійсний запит на завантаження"
 
 #: common/report.py:2045 common/report.py:2161
 #: execute/management/commands/importworkbook.py:205 execute/views.py:1206
 msgid "worksheet"
-msgstr ""
+msgstr "робочий лист"
 
 #: common/report.py:2046 common/report.py:2162
 #: execute/management/commands/importworkbook.py:206 execute/views.py:1207
 msgid "row"
-msgstr ""
+msgstr "ряд"
 
 #: common/report.py:2047 common/report.py:2163
 #: execute/management/commands/importworkbook.py:207 execute/views.py:1208
 msgid "field"
-msgstr "Datenfeld"
+msgstr "поле данных"
 
 #: common/report.py:2049 common/report.py:2060 common/report.py:2165
 #: common/report.py:2176 execute/management/commands/importworkbook.py:209
 #: execute/management/commands/importworkbook.py:228 execute/views.py:1210
 #: execute/views.py:1221
 msgid "error"
-msgstr "Fehler"
+msgstr "помилка"
 
 #: common/report.py:2051 common/report.py:2070 common/report.py:2167
 #: common/report.py:2186 execute/management/commands/importworkbook.py:211
 #: execute/management/commands/importworkbook.py:249 execute/views.py:1212
 #: execute/views.py:1231
 msgid "warning"
-msgstr "Warnung"
+msgstr "попередження"
 
 #: common/report.py:2752 common/report.py:2905 common/report.py:2961
 #: common/report.py:3114
 msgid "title"
-msgstr "Titel"
+msgstr "назва"
 
 #: common/report.py:2767 common/report.py:3131 forecast/models.py:357
 #: forecast/models.py:471
 msgid "data field"
-msgstr "Datenfeld"
+msgstr "поле даних"
 
 #: common/templates/404.html:4 common/templates/404.html:8 common/views.py:93
 msgid "Page not found"
-msgstr "Seite nicht gefunden"
+msgstr "Сторінку не знайдено"
 
 #: common/templates/404.html:9
 msgid "We're sorry, but the requested page could not be found."
-msgstr "Es tut uns leid, aber die angeforderte Seite konnte nicht gefunden werden."
+msgstr "На жаль, не вдалося знайти запитувану сторінку."
 
 #: common/templates/500.html:4
 msgid "Server error (500)"
-msgstr "Serverfehler (500)"
+msgstr "Помилка сервера (500)"
 
 #: common/templates/500.html:7
 msgid "Server Error <em>(500)</em>"
-msgstr "Serverfehler <em>(500)</em>"
+msgstr "Помилка сервера <em> (500) </em>"
 
 #: common/templates/500.html:8
 #, python-format
@@ -1111,20 +1098,22 @@ msgid ""
 "Oops, something went wrong.<br>\n"
 "Your administrator can find more information on the error in the log file %(logfile)s"
 msgstr ""
+"Щось пішло не так. <br>\n"
+"Ваш адміністратор може знайти додаткову інформацію про помилку у файлі журналу %(logfile)s"
 
 #: common/templates/admin/auth/user/add_form.html:4
 msgid "Add user - required fields"
-msgstr ""
+msgstr "Додати поля, обов'язкові для користувача"
 
 #: common/templates/admin/base_site_grid.html:25
 #: common/templates/admin/base_site_gridpivot.html:34
 msgid "Error: Missing time buckets or bucket dates"
-msgstr "Fehler: Fehlende Zeit Raster oder Raster Termine"
+msgstr "Ошибка: Отсутствует время или дата периода"
 
 #: common/templates/admin/base_site_grid.html:84
 #: common/templates/admin/base_site_gridpivot.html:90
 msgid "Warning: no data found"
-msgstr "Achtung: keine Daten gefunden"
+msgstr "Попередження: даних не знайдено"
 
 #: common/templates/admin/base_site_grid.html:88
 #: common/templates/admin/base_site_gridpivot.html:94 execute/views.py:606
@@ -1132,7 +1121,7 @@ msgstr "Achtung: keine Daten gefunden"
 #, fuzzy
 #| msgid "error"
 msgid "Error"
-msgstr "Fehler"
+msgstr "помилка"
 
 #: common/templates/admin/base_site_grid.html:256
 #: common/templates/admin/base_site_gridpivot.html:161
@@ -1142,86 +1131,86 @@ msgstr "Fehler"
 #: execute/templates/commands/scheduletasks.html:37
 #: inventoryplanning/templates/inventoryplanning/drp.html:2440
 msgid "Save"
-msgstr "Speichern"
+msgstr "Збережіть"
 
 #: common/templates/admin/base_site_grid.html:256
 #: common/templates/admin/base_site_gridpivot.html:161
 #: inventoryplanning/templates/inventoryplanning/drp.html:2440
 msgid "save changes"
-msgstr "Änderungen speichern"
+msgstr "зберегти зміни"
 
 #: common/templates/admin/base_site_grid.html:257
 #: common/templates/admin/base_site_gridpivot.html:162
 #: inventoryplanning/templates/inventoryplanning/drp.html:2441
 msgid "Undo"
-msgstr "Rückgängig"
+msgstr "Скасувати"
 
 #: common/templates/admin/base_site_grid.html:257
 #: common/templates/admin/base_site_gridpivot.html:162
 #: inventoryplanning/templates/inventoryplanning/drp.html:2441
 msgid "undo changes"
-msgstr "Änderungen rückgängig machen"
+msgstr "скасувати зміни"
 
 #: common/templates/admin/base_site_grid.html:263
 #: inventoryplanning/templates/inventoryplanning/drp.html:2447
 msgid "select action"
-msgstr "Aktion auswählen"
+msgstr "выберите действие"
 
 #: common/templates/admin/base_site_grid.html:277
 #: common/templates/admin/base_site_grid.html:280
 #: inventoryplanning/templates/inventoryplanning/drp.html:2383
 #: inventoryplanning/templates/inventoryplanning/drp.html:2389
 msgid "no segment"
-msgstr "kein Segment"
+msgstr "немає сегменту"
 
 #: common/templates/admin/base_site_grid.html:294
 #: common/templates/admin/base_site_gridpivot.html:179
 #: inventoryplanning/templates/inventoryplanning/drp.html:2408
 msgid "filter data"
-msgstr "Daten filtern"
+msgstr "фільтрувати дані"
 
 #: common/templates/admin/base_site_grid.html:295
 #: common/templates/admin/base_site_gridpivot.html:181
 #: inventoryplanning/templates/inventoryplanning/drp.html:2409
 msgid "favorites"
-msgstr ""
+msgstr "обране"
 
 #: common/templates/admin/base_site_grid.html:306
 #: common/templates/admin/base_site_gridpivot.html:192
 #: inventoryplanning/templates/inventoryplanning/drp.html:2420
 #: reportmanager/templates/reportmanager/reportmanager.html:162
 msgid "save"
-msgstr ""
+msgstr "збережіть"
 
 #: common/templates/admin/base_site_grid.html:311
 msgid "Create new object"
-msgstr "Neues Objekt erstellen"
+msgstr "Створіть новий об’єкт"
 
 #: common/templates/admin/base_site_grid.html:312
 msgid "Copy selected objects"
-msgstr "Ausgewählte Objekte kopieren"
+msgstr "Скопіюйте вибрані об'єкти"
 
 #: common/templates/admin/base_site_grid.html:313
 msgid "Delete selected objects"
-msgstr "Ausgewählte Objekte löschen"
+msgstr "Видалити вибрані об'єкти"
 
 #: common/templates/admin/base_site_grid.html:314
 #: common/templates/index.html:11
 #: inventoryplanning/templates/inventoryplanning/drp.html:2425
 #: wizard/templates/wizard/index.html:57
 msgid "Configure time buckets"
-msgstr "Zeitraster konfigurieren"
+msgstr "налаштувати період часу"
 
 #: common/templates/admin/base_site_grid.html:315
 #: common/templates/admin/base_site_gridpivot.html:205
 msgid "import CSV or Excel file"
-msgstr "CSV- oder Excel-Datei importieren"
+msgstr "імпорт CSV або Excel"
 
 #: common/templates/admin/base_site_grid.html:316
 #: common/templates/admin/base_site_gridpivot.html:209
 #: inventoryplanning/templates/inventoryplanning/drp.html:2426
 msgid "export as CSV or Excel file"
-msgstr "CSV- oder Excel-Datei exportieren"
+msgstr "експортувати у форматі CSV або Excel"
 
 #: common/templates/admin/base_site_grid.html:317
 #: common/templates/admin/base_site_gridpivot.html:212
@@ -1232,186 +1221,186 @@ msgstr "CSV- oder Excel-Datei exportieren"
 #: inventoryplanning/templates/inventoryplanning/drp.html:2641
 #: output/templates/output/pegging.html:270
 msgid "customize"
-msgstr "anpassen"
+msgstr "налаштувати"
 
 #: common/templates/admin/base_site_grid.html:318
 #: common/templates/index.html:16
 #: executesql/templates/executesql/executesql.html:115 menu.py:30
 #: wizard/templates/wizard/index.html:62
 msgid "help"
-msgstr "hilfe"
+msgstr "допомога"
 
 #: common/templates/admin/base_site_gridpivot.html:169
 msgid "display table"
-msgstr "Tabelle anzeigen"
+msgstr "показати таблицю"
 
 #: common/templates/admin/base_site_gridpivot.html:172
 msgid "display graph"
-msgstr "Grafik anzeigen"
+msgstr "графік відображення"
 
 #: common/templates/admin/base_site_gridpivot.html:200
 msgid "configure time buckets"
-msgstr "Zeitraster konfigurieren"
+msgstr "налаштувати період часу"
 
 #: common/templates/admin/base_site_gridpivot.html:215
 msgid "Help"
-msgstr "Hilfe"
+msgstr "Допомога"
 
 #: common/templates/admin/base_site_nav.html:62
 msgid "Search"
-msgstr "Suche"
+msgstr "Пошук"
 
 #: common/templates/admin/base_site_nav.html:70
 #, python-format
 msgid "Your license expired %(x)s days ago"
-msgstr ""
+msgstr "Термін дії вашої ліцензії минув %(x)s днів тому"
 
 #: common/templates/admin/base_site_nav.html:73
 msgid "License expired"
-msgstr ""
+msgstr "Термін дії ліцензії закінчився"
 
 #: common/templates/admin/base_site_nav.html:79
 #, python-format
 msgid "Your license expires in %(x)s days"
-msgstr ""
+msgstr "Термін дії вашої ліцензії закінчується через %(x)s днів"
 
 #: common/templates/admin/base_site_nav.html:84
 msgid "days left"
-msgstr ""
+msgstr "Днів залишилось"
 
 #: common/templates/admin/base_site_nav.html:92
 msgid "preferences"
-msgstr "einstellungen"
+msgstr "уподобання"
 
 #: common/templates/admin/base_site_nav.html:93
 msgid "Log out"
-msgstr "Abmelden"
+msgstr "Вийти"
 
 #: common/templates/admin/base_site_nav.html:102 common/templates/index.html:8
 #: common/templatetags.py:80 common/views.py:76 wizard/views.py:2263
 msgid "cockpit"
-msgstr "Cockpit"
+msgstr "монітор диспетчера"
 
 #: common/templates/admin/base_site_nav.html:111
 msgid "Choose a what-if scenario"
-msgstr ""
+msgstr "Виберіть сценарій що робити «що-якщо»"
 
 #: common/templates/admin/change_form.html:79
 #: common/templates/admin/login.html:109
 #: common/templates/auth/change_password.html:18
 msgid "Please correct the error below."
-msgstr "Bitte den unten aufgeführten Fehler korrigieren."
+msgstr "Виправте помилку нижче."
 
 #: common/templates/admin/change_form.html:80
 #: common/templates/admin/login.html:110
 #: common/templates/auth/change_password.html:19
 msgid "Please correct the errors below."
-msgstr "Bitte die unten aufgeführten Fehler korrigieren."
+msgstr "Виправте наведені нижче помилки."
 
 #: common/templates/admin/delete_confirmation.html:11
 #, python-format
 msgid "Deleting the %(object_name)s '%(escaped_object)s' would result in deleting related objects, but your account doesn't have permission to delete the following types of objects:"
-msgstr "Das Löschen des %(object_name)s \"%(escaped_object)s\" hätte das Löschen davon abhängiger Daten zur Folge, aber Sie haben nicht die nötigen Rechte, um die folgenden davon abhängigen Daten zu löschen:"
+msgstr "Видалення %(object_name)s '%(escaped_object)s' призведе до видалення пов'язаних об’єктів, але ваш обліковий запис не має дозволу на видалення таких типів об'єктів:"
 
 #: common/templates/admin/delete_confirmation.html:18
 #, python-format
 msgid "Deleting the %(object_name)s '%(escaped_object)s' would require deleting the following protected related objects:"
-msgstr "Das Löschen von %(object_name)s „%(escaped_object)s“ würde ein Löschen der folgenden geschützten verwandten Objekte erfordern:"
+msgstr "Видалення %(object_name)s '%(escaped_object)s' вимагатиме видалення таких захищених пов'язаних об'єктів:"
 
 #: common/templates/admin/delete_confirmation.html:25
 #, python-format
 msgid "Are you sure you want to delete the %(object_name)s \"%(escaped_object)s\"? All of the following related items will be deleted:"
-msgstr "Sind Sie sicher, dass Sie %(object_name)s \"%(escaped_object)s\" löschen wollen? Es werden zusätzlich die folgenden davon abhängigen Daten gelöscht:"
+msgstr "Ви впевнені, що хочете видалити  %(object_name)s \"%(escaped_object)s\"?  Усі наступні пов’язані елементи будуть видалені:"
 
 #: common/templates/admin/delete_confirmation.html:27
 msgid "Objects"
-msgstr "Objekte"
+msgstr "Об'єкти"
 
 #: common/templates/admin/delete_confirmation.html:34
 msgid "Yes, I'm sure"
-msgstr "Ja, ich bin sicher"
+msgstr "Так, я впевнений"
 
 #: common/templates/admin/delete_confirmation.html:35
 msgid "No, take me back"
-msgstr "Nein, bitte abbrechen"
+msgstr "Ні, поверніть назад"
 
 #: common/templates/admin/edit_inline/tabular.html:26
 msgid "Delete?"
-msgstr "Löschen?"
+msgstr "Видалити?"
 
 #: common/templates/admin/edit_inline/tabular.html:41
 msgid "Change"
-msgstr "Ändern"
+msgstr "Зміна"
 
 #: common/templates/admin/edit_inline/tabular.html:45
 msgid "View on site"
-msgstr "Auf der Website anzeigen"
+msgstr "подивитися на сайті"
 
 #: common/templates/admin/edit_inline/tabular.html:83
 #, python-format
 msgid "Only %(limit)s out of %(count)s records are shown."
-msgstr ""
+msgstr "Показано лише %(limit)s  із записів %(count)s."
 
 #: common/templates/admin/edit_inline/tabular.html:138
 #, python-format
 msgid "Add another %(verbose_name)s"
-msgstr "%(verbose_name)s hinzufügen"
+msgstr "Додайте ще %(verbose_name)s"
 
 #: common/templates/admin/edit_inline/tabular.html:141
 msgid "Remove"
-msgstr "Entfernen"
+msgstr "Видалити"
 
 #: common/templates/admin/login.html:85
 msgid "Password"
-msgstr "Passwort"
+msgstr "Пароль"
 
 #: common/templates/admin/login.html:90
 msgid "Log in"
-msgstr "Anmelden"
+msgstr "логін"
 
 #: common/templates/admin/login.html:96
 msgid "Remember Me"
-msgstr ""
+msgstr "Пам'ятай мене"
 
 #: common/templates/admin/login.html:100
 msgid "Forgot your password?"
-msgstr ""
+msgstr "Забули свій пароль?"
 
 #: common/templates/admin/login.html:127
 msgid ""
 "The user \"admin\" has password \"admin\".<br>\n"
 "We suggest changing this password."
 msgstr ""
-"Benutzer \"Admin\" hat Passwort \"Admin\".<br>\n"
-"Wir empfehlen Ihnen, dieses Passwort zu ändern."
+"У користувача \"admin\" є пароль \"admin\". <br>\n"
+"Ми пропонуємо змінити цей пароль."
 
 #: common/templates/admin/object_history.html:16
 msgid "Date/time"
-msgstr "Datum/Zeit"
+msgstr "Дата, час"
 
 #: common/templates/admin/object_history.html:17
 msgid "User"
-msgstr "Benutzer"
+msgstr "Користувач"
 
 #: common/templates/admin/object_history.html:18
 msgid "Action"
-msgstr "Aktion"
+msgstr "Дія"
 
 #: common/templates/admin/object_history.html:35
 msgid "This object doesn't have a change history. It probably wasn't added via this admin site."
-msgstr "Dieses Objekt hat keine Änderungsgeschichte. Es wurde möglicherweise nicht über diese Verwaltungsseiten angelegt."
+msgstr "У цього об’єкта немає історії змін. Він, ймовірно, не доданий через цей адміністратор."
 
 #: common/templates/admin/submit_line.html:5
 msgid "Save as new"
-msgstr "Als neu sichern"
+msgstr "Збережіть як нове"
 
 #: common/templates/admin/submit_line.html:6
 msgid "Save and add another"
-msgstr "Sichern und neu hinzufügen"
+msgstr "Збережіть і додайте інший"
 
 #: common/templates/admin/submit_line.html:7
 msgid "Save and continue editing"
-msgstr "Sichern und weiter bearbeiten"
+msgstr "Збережіть і продовжуйте редагування"
 
 #: common/templates/admin/submit_line.html:12
 #: execute/templates/commands/scheduletasks.html:41
@@ -1419,32 +1408,32 @@ msgstr "Sichern und weiter bearbeiten"
 #: execute/templates/commands/scheduletasks.html:191
 #: reportmanager/templates/reportmanager/reportmanager.html:164
 msgid "Delete"
-msgstr "Entfernen"
+msgstr "Видалити"
 
 #: common/templates/admin/subtemplate_inventorystatus.html:127
 #: inventoryplanning/models.py:407
 msgid "onhand at lead time"
-msgstr ""
+msgstr "одразу під час проведення"
 
 #: common/templates/admin/subtemplate_inventorystatus.html:160
 msgid "current onhand"
-msgstr "vorhanden"
+msgstr "поточна наявність"
 
 #: common/templates/admin/subtemplate_timebuckets.html:8
 msgid "time buckets"
-msgstr "Zeitraster"
+msgstr "час періоду"
 
 #: common/templates/admin/subtemplate_timebuckets.html:18
 msgid "bucket size"
-msgstr "Zeitrastergröße"
+msgstr "розмір періоду"
 
 #: common/templates/admin/subtemplate_timebuckets.html:35
 msgid "from"
-msgstr "von"
+msgstr "з"
 
 #: common/templates/admin/subtemplate_timebuckets.html:42
 msgid "to"
-msgstr "bis"
+msgstr "до"
 
 #: common/templates/admin/subtemplate_timebuckets.html:59
 #: common/templates/admin/subtemplate_timebuckets.html:65
@@ -1454,22 +1443,22 @@ msgstr "bis"
 #: output/templates/output/buffer.html:163 output/views/resource.py:258
 #: output/views/resource.py:260
 msgid "days"
-msgstr "Tage"
+msgstr "днів"
 
 #: common/templates/admin/subtemplate_timebuckets.html:60
 #: common/templates/admin/subtemplate_timebuckets.html:66
 #: output/views/resource.py:256
 msgid "weeks"
-msgstr "Wochen"
+msgstr "тижнів"
 
 #: common/templates/admin/subtemplate_timebuckets.html:61
 #: common/templates/admin/subtemplate_timebuckets.html:67
 msgid "months"
-msgstr "Monate"
+msgstr "місяців"
 
 #: common/templates/admin/subtemplate_timebuckets.html:70
 msgid "after plan current date"
-msgstr "nach Plan Tagesdatum"
+msgstr "після поточної дати плану"
 
 #: common/templates/admin/subtemplate_timebuckets.html:77 execute/views.py:736
 msgid "OK"
@@ -1478,96 +1467,94 @@ msgstr "OK"
 #: common/templates/admin/subtemplate_timebuckets.html:78
 #: executesql/templates/executesql/executesql.html:110
 msgid "cancel"
-msgstr "abbrechen"
+msgstr "скасувати"
 
 #: common/templates/auth/change_password.html:22
 #, python-format
 msgid "Enter a new password for the user <strong>%(username)s</strong>."
-msgstr "Bitte geben Sie ein neues Passwort für den Benutzer <strong>%(username)s</strong> ein."
+msgstr "Введіть новий пароль для користувача <strong> %(username)s </strong>."
 
 #: common/templates/auth/change_password.html:48
 #: common/templates/common/preferences.html:99 common/views.py:133
 msgid "Change password"
-msgstr "Passwort ändern"
+msgstr "Змінити пароль"
 
 #: common/templates/common/preferences.html:74
 msgid "Number of records per page"
-msgstr "Anzahl der Datensätze pro Seite"
+msgstr "Кількість записів на сторінці"
 
 #: common/templates/common/preferences.html:102
 #: common/templates/registration/password_change_form.html:21
 #: common/views.py:135
 msgid "Old password"
-msgstr "Altes Passwort"
+msgstr "Старий пароль"
 
 #: common/templates/common/preferences.html:103
 #: common/templates/registration/password_change_form.html:23
 msgid "New password"
-msgstr "Neues Passwort"
+msgstr "Новий пароль"
 
 #: common/templates/common/preferences.html:104 common/views.py:149
 msgid "New password confirmation"
-msgstr "Neues Passwort bestätigen"
+msgstr "Підтвердження нового пароля"
 
 #: common/templates/index.html:95 execute/templates/execute/execute.html:38
 msgid "failed"
-msgstr "fehlgeschlagen"
+msgstr "не вдалося"
 
 #: common/templates/registration/forgotpassword_form.html:90
-#, fuzzy
-#| msgid "submitted"
 msgid "Submit"
-msgstr "eingereicht"
+msgstr "Надіслати"
 
 #: common/templates/registration/password_change_done.html:8
 #: common/templates/registration/password_change_form.html:9
 msgid "Home"
-msgstr "Start"
+msgstr "Головна"
 
 #: common/templates/registration/password_change_done.html:8
 #: common/templates/registration/password_change_form.html:9
 #: common/templates/registration/password_change_form.html:11
 #: common/templates/registration/password_change_form.html:15
 msgid "Password change"
-msgstr "Passwort ändern"
+msgstr "Зміна пароля"
 
 #: common/templates/registration/password_change_done.html:10
 #: common/templates/registration/password_change_done.html:13
 msgid "Password change successful"
-msgstr "Passwort erfolgreich geändert"
+msgstr "Успішна зміна пароля"
 
 #: common/templates/registration/password_change_done.html:14
 msgid "Your password was changed."
-msgstr "Ihr Passwort wurde geändert."
+msgstr "Ваш пароль змінено"
 
 #: common/templates/registration/password_change_form.html:17
 msgid "Please enter your old password, for security's sake, and then enter your new password twice so we can verify you typed it in correctly."
-msgstr "Bitte geben Sie aus Sicherheitsgründen erst Ihr altes Passwort und darunter dann zweimal (um sicherzustellen, dass Sie es korrekt eingegeben haben) das neue Passwort ein."
+msgstr "Будь ласка, введіть свій старий пароль з метою безпеки, а потім введіть новий пароль два рази, щоб ми могли перевірити, чи правильно ви його ввели."
 
 #: common/templates/registration/password_change_form.html:25
 msgid "Confirm password:"
-msgstr "Passwort wiederholen:"
+msgstr "Підтвердьте пароль:"
 
 #: common/templates/registration/password_change_form.html:26
 msgid "Change my password"
-msgstr "Mein Passwort ändern"
+msgstr "Змініть мій пароль"
 
 #: common/templates/rest_framework/api.html:21
 msgid "HTTP request"
-msgstr ""
+msgstr "HTTP-запит"
 
 #: common/templates/rest_framework/api.html:26
 msgid "HTTP response headers"
-msgstr ""
+msgstr "HTTP response headers"
 
 #: common/templates/rest_framework/api.html:37
 msgid "HTTP response content"
-msgstr ""
+msgstr "Вміст відповіді HTTP"
 
 #: common/templates/rest_framework/api.html:49
 #, python-format
 msgid "Make a GET request to read %(model)s object(s)"
-msgstr "Make a GET request to read %(model)s object(s)"
+msgstr "Зробити GET запит на зчитування %(model)s об'єктів"
 
 #: common/templates/rest_framework/api.html:58
 #: common/templates/rest_framework/api.html:59
@@ -1588,37 +1575,37 @@ msgstr "Make a GET request to read %(model)s object(s)"
 #: common/templates/rest_framework/api.html:223
 #, python-format
 msgid "%(http_method)s request"
-msgstr "%(http_method)s request"
+msgstr "%(http_method)s запиту"
 
 #: common/templates/rest_framework/api.html:77
 #, python-format
 msgid "Make an OPTIONS request to see all fields on the %(model)s object"
-msgstr "Make an OPTIONS request to see all fields on the %(model)s object"
+msgstr "Зробіть запит OPTIONS, щоб побачити всі поля на об’єкті %(model)s"
 
 #: common/templates/rest_framework/api.html:102
 #, python-format
 msgid "Make a POST request using a HTML form to create a new %(model)s object"
-msgstr "Make a POST request using a HTML form to create a new %(model)s object"
+msgstr "Створіть запит POST за допомогою форми HTML, щоб створити новий об’єкт %(model)s"
 
 #: common/templates/rest_framework/api.html:129
 #, python-format
 msgid "Make a POST request in raw format to create a new %(model)s object"
-msgstr "Make a POST request in raw format to create a new %(model)s object"
+msgstr "Створіть POST-запит у необробленому форматі, щоб створити новий об’єкт %(model)s"
 
 #: common/templates/rest_framework/api.html:155
 #, python-format
 msgid "Make a PUT request using a HTML form to update one %(model)s object"
-msgstr "Make a PUT request using a HTML form to update one %(model)s object"
+msgstr "Зробіть запит PUT, використовуючи форму HTML для оновлення об'єкта %(model)s"
 
 #: common/templates/rest_framework/api.html:179
 #, python-format
 msgid "Make a PUT or PATCH request in raw format to update one or more existing %(model)s objects"
-msgstr ""
+msgstr "Зробіть запит PUT або PATCH в необробленому форматі, щоб оновити один або кілька існуючих %(model)s об'єктів"
 
 #: common/templates/rest_framework/api.html:214
 #, python-format
 msgid "Make a DELETE request to delete one or more existing %(model)s objects (requires filtering)"
-msgstr "Make a DELETE request to delete one or more existing %(model)s objects (requires filtering)"
+msgstr "Зробити DELETE запит на видалення одного або декількох існуючих об’єктів %(model)s (потрібна фільтрація)"
 
 #: common/templates/rest_framework/index.html:17
 #, python-format
@@ -1648,90 +1635,114 @@ msgid ""
 "</div>\n"
 "</div>\n"
 msgstr ""
+"Ця сторінка допомагає розробникам вчитися і експериментувати с\n"
+"<a style=\"text-decoration:underline\" target=\"_blank\" href=\"https://en.wikipedia.org/wiki/Representational_state_transfer\">REST</a>\n"
+"API для frePPLe.<br>\n"
+"Цей API дозволяє вашій програмі обмінюватися інформацією з frePPLe.<br>\n"
+"<br>\n"
+"Посилання «Список API» виводить вас на сторінку списку об'єктів.<br>\n"
+"а посилання «докладний API» приведе вас до певного об'єкту при введенні первинного ключа об'єкта.<br>\n"
+"на цих сторінках ви зможете виконувати HTTP-запити за допомогою методів GET, POST, OPTIONS, PUT, PATCH та DELETE.<br>\n"
+"Результати можуть відображатися в форматі JSON або у вигляді HTML у вашому браузері.<br>\n"
+"<br>\n"
+"Використовуючи інструмент типу 'wget' або 'curl', ви можете отримати доступ до API з командного рядка.<br>\n"
+"Наприклад, щоб повернути список всіх замовлень клієнта в форматі JSON:<br><br>\n"
+"<div style=\"margin-left:20px\">\n"
+"Using <a style=\"text-decoration:underline\" href=\"https://en.wikipedia.org/wiki/Basic_access_authentication\" target=\"_blank\">basic authentication</a>:<br>\n"
+"<div class=\"well well-sm\" style=\"margin-top:5px\">\n"
+"wget --http-user=%(username)s --http-password=PASSWORD http://127.0.0.1:8000/api/input/demand/<br><br>\n"
+"curl -u %(username)s:PASSWORD http://127.0.0.1:8000/api/input/demand/\n"
+"</div>\n"
+"Using <a style=\"text-decoration:underline\" href=\"https://jwt.io/\" target=\"_blank\">JSON Web Token authentication</a> valid for the next <input id=\"jwt\" type=\"number\" value=\"%(exp)s\" min=\"0\" step=\"1\" style=\"width:4em\"/>  days:<br>\n"
+"<div class=\"well well-sm\" style=\"margin-top:5px\">\n"
+"wget --header 'Authorization: Bearer %(token)s' http://127.0.0.1:8000/api/input/demand/<br><br>\n"
+"curl -H 'Accept: application/json' --header 'Authorization: Bearer %(token)s' http://127.0.0.1:8000/api/input/demand/\n"
+"</div>\n"
+"</div>\n"
 
 #: common/templates/rest_framework/index.html:50
 msgid "List API"
-msgstr "List API"
+msgstr "Список API"
 
 #: common/templates/rest_framework/index.html:50
 msgid "Detail API"
-msgstr "Detail API"
+msgstr "Деталі API"
 
 #: common/views.py:126
 msgid "Page size"
-msgstr "Seitengröße"
+msgstr "Розмір сторінки"
 
 #: common/views.py:128
 msgid "Theme"
-msgstr "Design"
+msgstr "Тема"
 
 #: common/views.py:169
 msgid "Your old password was entered incorrectly. Please enter it again."
-msgstr "Das alte Passwort war falsch. Bitte neu eingeben."
+msgstr "Ваш старий пароль було введено неправильно. Будь ласка, введіть його ще раз."
 
 #: common/views.py:215
 msgid "Successfully updated preferences"
-msgstr "Einstellungen erfolgreich aktualisiert"
+msgstr "Налаштування успішно оновлено"
 
 #: common/views.py:222
 msgid "Failure updating preferences"
-msgstr "Fehler beim Aktualisieren der Einstellungen"
+msgstr "Невдале оновлення налаштувань"
 
 #: common/views.py:237
 msgid "My preferences"
-msgstr "Meine persönlichen Einstellungen"
+msgstr "Мої уподобання"
 
 #: common/views.py:317 output/views/constraint.py:91 output/views/problem.py:66
 msgid "id"
-msgstr ""
+msgstr "ід."
 
 #: common/views.py:322
 msgid "username"
-msgstr "Benutzername"
+msgstr "ім'я користувача"
 
 #: common/views.py:323
 msgid "email address"
-msgstr "E-Mail-Adresse"
+msgstr "адреса електронної пошти"
 
 #: common/views.py:324
 msgid "first name"
-msgstr "Vorname"
+msgstr "ім'я"
 
 #: common/views.py:325
 msgid "last name"
-msgstr "Nachname"
+msgstr "прізвище"
 
 #: common/views.py:326
 msgid "active"
-msgstr "Aktiv"
+msgstr "активний"
 
 #: common/views.py:327
 msgid "superuser status"
-msgstr "Administrator-Status"
+msgstr "статус супер користувача"
 
 #: common/views.py:328
 msgid "date joined"
-msgstr "Mitglied seit"
+msgstr "дата приєдналася"
 
 #: common/views.py:329
 msgid "last login"
-msgstr "Letzte Anmeldung"
+msgstr "останній логін"
 
 #: common/views.py:338
 msgid "groups"
-msgstr "Gruppen"
+msgstr "групи"
 
 #: common/views.py:411
 msgid "model"
-msgstr "Modell"
+msgstr "модель"
 
 #: common/widget.py:28 settings.py:230
 msgid "Welcome"
-msgstr "Willkommen"
+msgstr "Приступити до роботи"
 
 #: common/widget.py:29
 msgid "Some links to get started"
-msgstr "Einige Links für den Einstieg"
+msgstr "Деякі посилання для початку роботи"
 
 #: common/widget.py:46
 #, python-format
@@ -1757,213 +1768,233 @@ msgid ""
 "</a>\n"
 "</div>\n"
 msgstr ""
+"Ласкаво просимо до провідного світового інструменту планування виробництва з відкритим кодом!<br>\n"
+"Клацніть одне із зображень нижче, щоб переглянути основні екрани інтерактивного планування:<br><br>\n"
+"<div style=\"float:left; margin-left:10px; width:30%%; max-width:130px; text-align: center\">\n"
+"<a href=\"%(prefix)s/forecast/editor/\">\n"
+"  <img src=\"/static/img/forecast-editor-thumbnail.png\" style=\"width: 100%%\" alt=\"Forecast Editor\"><br>\n"
+"  <b>Редактор прогнозів</b>\n"
+"</a>\n"
+"</div>\n"
+"<div style=\"float:left; margin-left:10px; width:30%%; max-width:130px; text-align: center\">\n"
+"<a href=\"%(prefix)s/inventoryplanning/drp/\">\n"
+"  <img src=\"/static/img/inventory-planning-thumbnail.png\" style=\"width: 100%%\" alt=\"Inventory Planning\"><br>\n"
+"  <b>План запасів</b>\n"
+"</a>\n"
+"</div>\n"
+"<div style=\"float:left; margin-left:10px; width:30%%; max-width:130px; text-align: center\">\n"
+"<a href=\"%(prefix)s/planningboard/\">\n"
+"  <img src=\"/static/img/plan-editor-thumbnail.png\" style=\"width: 100%%\" alt=\"Plan Editor\"><br>\n"
+"  <b>план виробництва</b>\n"
+"</a>\n"
+"</div>\n"
 
 #: common/widget.py:81
 msgid "News"
-msgstr "Neuigkeiten"
+msgstr "Новини"
 
 #: common/widget.py:82
 msgid "Show the latest news items from the frePPLe website"
-msgstr "Zeigen Sie die neuesten Nachrichten von der FrePPLe website"
+msgstr "Показуйте останні новини з веб-сайту frePPLe"
 
 #: common/widget.py:94
 msgid "My Actions"
-msgstr ""
+msgstr "Мої дії"
 
 #: common/widget.py:95
 msgid "Display a list of the entities you recently changed"
-msgstr "Zeigen Sie eine Liste der Einheiten an, die Sie vor kurzem geändert haben"
+msgstr "Відобразить список суб’єктів, які ви нещодавно змінили"
 
 #: common/widget.py:154 common/widget.py:196
 msgid "Unknown content"
-msgstr "Unbekannter Inhalt"
+msgstr "Невідомий вміст"
 
 #: common/widget.py:156 common/widget.py:205
 msgid "None available"
-msgstr "Keine vorhanden"
+msgstr "Немає в наявності"
 
 #: common/widget.py:165
 msgid "Display a list of recent comments"
-msgstr "Eine Liste der neuesten Kommentare anzeigen"
+msgstr "Показати список останніх коментарів"
 
 #: demandhits/attributes.py:21 demandhits/attributes.py:42
 #, python-format
 msgid "sales orders last %(num)d months"
-msgstr ""
+msgstr "замовлення на продаж за останні %(num)d місяців"
 
 #: demandhits/attributes.py:28 demandhits/attributes.py:49
 #, python-format
 msgid "sales units last %(num)d months"
-msgstr ""
+msgstr "одиниці продажу останні %(num)d місяців"
 
 #: demandhits/attributes.py:35 demandhits/attributes.py:56
 #, python-format
 msgid "sales value last %(num)d months"
-msgstr ""
+msgstr "вартість продажу останній %(num)d місяців"
 
 #: erpconnection/management/commands/erp2frepple.py:41
 #: odoo/management/commands/odoo_import.py:63
 #: openbravo/management/commands/openbravo_import.py:3624
 #, python-format
 msgid "Import data from %(erp)s"
-msgstr "Import Daten von %(erp)s"
+msgstr "Імпорт дані з %(erp)s"
 
 #: erpconnection/management/commands/frepple2erp.py:34
 #: openbravo/management/commands/openbravo_export.py:801
 #, python-format
 msgid "Export data to %(erp)s"
-msgstr "Export Daten nach %(erp)s"
+msgstr "Експорт даних у %(erp)s"
 
 #: execute/commands.py:146
 msgid "Generate supply plan"
-msgstr "Beschaffungsplan generieren"
+msgstr "Створити план поставок"
 
 #: execute/management/commands/backup.py:164
 msgid "Back up the database"
-msgstr "Datenbank Sichern"
+msgstr "Резервне копіювання бази даних"
 
 #: execute/management/commands/createbuckets.py:282
 msgid "Generate buckets"
-msgstr "Zeitraster generieren"
+msgstr "Сформувати періоди часу"
 
 #: execute/management/commands/emailreport.py:224
 msgid "Email exported reports"
-msgstr ""
+msgstr "Експортовані звіти електронною поштою"
 
 #: execute/management/commands/empty.py:315
 msgid "Empty the database"
-msgstr "Datenbank leeren"
+msgstr "Очистіть базу даних"
 
 #: execute/management/commands/exporttofolder.py:473
 msgid "Export plan result to folder"
-msgstr ""
+msgstr "Експорт результату плану в папку"
 
 #: execute/management/commands/exportworkbook.py:33
 msgid "Export a spreadsheet"
-msgstr "Tabelle Exportieren"
+msgstr "Експортуйте електронну таблицю"
 
 #: execute/management/commands/importfromfolder.py:538
 msgid "Import data files from folder"
-msgstr ""
+msgstr "Імпорт файли даних із папки"
 
 #: execute/management/commands/importworkbook.py:147 execute/views.py:1158
 #, python-format
 msgid "Ignoring data in worksheet: %s"
-msgstr "Daten im Arbeitsblatt %s ignorieren"
+msgstr "Ігнорування даних на аркуші: % s"
 
 #: execute/management/commands/importworkbook.py:161 execute/views.py:1169
 #, python-format
 msgid "You don't permissions to add: %s"
-msgstr "Keine Berechtigung, einen neuen Eintrag zu erstellen %s"
+msgstr "Ви не маєте дозволів додавати: %s"
 
 #: execute/management/commands/importworkbook.py:177 execute/views.py:1183
 #, python-format
 msgid "Processing data in worksheet: %s"
-msgstr "Daten werden verarbeitet: %s"
+msgstr "Обробка даних на робочому аркуші: %s"
 
 #: execute/management/commands/importworkbook.py:283
 #: execute/management/commands/importworkbook.py:305 execute/views.py:1245
 msgid "Done"
-msgstr "Fertig"
+msgstr "Зроблено"
 
 #: execute/management/commands/importworkbook.py:308
 #: execute/templates/commands/importworkbook.html:5
 msgid "Import a spreadsheet"
-msgstr "Eine Tabelle importieren"
+msgstr "Імпортуйте електронну таблицю"
 
 #: execute/management/commands/loaddata.py:53
 msgid "Load a dataset"
-msgstr "Ein Dataset laden"
+msgstr "Завантажте набір даних"
 
 #: execute/management/commands/runplan.py:292 execute/widget.py:39
 msgid "Create a plan"
-msgstr "Neuen Plan erstellen"
+msgstr "Створіть план"
 
 #: execute/management/commands/runplan.py:386
 msgid "Load all input data, run the planning algorithm, and export the results."
-msgstr ""
+msgstr "Завантажте всі вхідні дані, запустіть алгоритм планування та експортуйте результати."
 
 #: execute/management/commands/runplan.py:389
 msgid "optional planning steps"
-msgstr "optionale Planungsschritte"
+msgstr "необов'язкові етапи планування"
 
 #: execute/management/commands/runplan.py:390
 msgid "Plan type"
-msgstr "Planungs Typ"
+msgstr "Тип плану"
 
 #: execute/management/commands/runplan.py:393
 msgid "<span data-toggle=\"tooltip\" data-placement=\"top\" data-html=\"true\" data-original-title=\"Generate a supply plan that respects all constraints.<br>In case of shortages the demand is planned late or short.\">Constrained plan</span>"
-msgstr ""
+msgstr "<span data-toggle=\"tooltip\" data-placement=\"top\" data-html=\"true\" data-original-title=\"Сформувати план поставок, який відповідає всім обмеженням<br>У разі недостатньої кількості попит планується із запізненням або частково. \"> План з обмеженнями</span>"
 
 #: execute/management/commands/runplan.py:398
 msgid "<span data-toggle=\"tooltip\" data-placement=\"top\" data-html=\"true\" data-original-title=\"Generate a supply plan that shows material, capacity and operation problems that prevent the demand from being planned in time.<br>The demand is always met completely and on time.\">Unconstrained plan</span>"
-msgstr ""
+msgstr "<span data-toggle=\"tooltip\" data-placement=\"top\" data-html=\"true\" data-original-title=\"Створити план поставок, перевірити проблеми устаткування, потужності і операцій, які перешкоджають запланувати поставки вчасно. <br> Попит повністю спланований для поставок без запізнень \"> План без обмежень</span>"
 
 #: execute/management/commands/runplan.py:401 output/models.py:56
 #: output/templates/output/demand.html:149
 #: output/templates/output/demand_forecast.html:164
 msgid "constraints"
-msgstr "Beschränkungen"
+msgstr "обмеження"
 
 #: execute/management/commands/runplan.py:402
 msgid "Capacity: respect capacity limits"
-msgstr "Kapazität: Kapazitätsgrenzen berücksichtigen"
+msgstr "Потужність: дотримуйтесь меж потужностей"
 
 #: execute/management/commands/runplan.py:403
 msgid "Lead time: do not plan in the past"
-msgstr "Vorbereitungs-und Anlaufzeit: nicht in die Vergangenheit planen"
+msgstr "Тривалість циклу: не планувати в минуле"
 
 #: execute/management/commands/runplan.py:405
 msgid "Release fence: do not plan within the release time window"
-msgstr ""
+msgstr "Кордон плану: не планувати в замороженому періоді"
 
 #: execute/management/commands/scenario_copy.py:307
 msgid "scenario management"
-msgstr "Szenario-Management"
+msgstr "управління сценаріями"
 
 #: execute/management/commands/scheduletasks.py:391
 msgid "Group and schedule tasks"
-msgstr ""
+msgstr "Групові та графікові завдання"
 
 #: execute/menu.py:20 execute/widget.py:20
 msgid "Execute"
-msgstr "Durchführen"
+msgstr "Виконати"
 
 #: execute/models.py:38 execute/models.py:41 execute/views.py:124
 msgid "submitted"
-msgstr "eingereicht"
+msgstr "подано"
 
 #: execute/models.py:39 execute/views.py:127
 msgid "started"
-msgstr "gestartet"
+msgstr "розпочато"
 
 #: execute/models.py:44 execute/views.py:154
 msgid "arguments"
-msgstr "Argumente"
+msgstr "аргументи"
 
 #: execute/models.py:47 execute/views.py:149
 msgid "message"
-msgstr "Nachricht"
+msgstr "повідомлення"
 
 #: execute/models.py:48 execute/views.py:141 execute/views.py:648
 msgid "log file"
-msgstr "Logdatei"
+msgstr "лог-файл"
 
 #: execute/models.py:65 execute/templates/commands/scheduletasks.html:62
 msgid "tasks"
-msgstr "Aufgaben"
+msgstr "завдання"
 
 #: execute/models.py:66
 msgid "task"
-msgstr "Aufgabe"
+msgstr "завдання"
 
 #: execute/models.py:102
 msgid "scheduled tasks"
-msgstr ""
+msgstr "планові завдання"
 
 #: execute/models.py:103
 msgid "scheduled task"
-msgstr ""
+msgstr "планове завдання"
 
 #: execute/templates/commands/backup.html:5
 #: execute/templates/commands/createbuckets.html:7
@@ -1974,119 +2005,120 @@ msgstr ""
 #: executesql/templates/executesql/executesql.html:109
 #: openbravo/management/commands/openbravo_import.py:3657
 msgid "launch"
-msgstr "Einführung"
+msgstr "запуск"
 
 #: execute/templates/commands/backup.html:6
 msgid "Dump the database contents to a file."
-msgstr "Der Inhalt der Datenbank in eine Datei ausgeben."
+msgstr "Експорт бази даних в файл."
 
 #: execute/templates/commands/emailreport.html:6
 msgid "email"
-msgstr ""
+msgstr "ел.пошта"
 
 #: execute/templates/commands/emailreport.html:9
 msgid "Emails the selected reports to a comma separated list of recipients. Files are zipped and attached to email."
-msgstr ""
+msgstr "Виділені звіти надсилає по електронній пошті до списку одержувачів, розділених комами. Файли стискаються та додаються до електронної пошти."
 
 #: execute/templates/commands/emailreport.html:16
 #: execute/templates/commands/exporttofolder.html:14
 #: execute/templates/commands/importfromfolder.html:14
 msgid "file name"
-msgstr ""
+msgstr "ім'я файлу"
 
 #: execute/templates/commands/emailreport.html:18
 #: execute/templates/commands/exporttofolder.html:15
 #: execute/templates/commands/importfromfolder.html:15
 msgid "size"
-msgstr "Größe"
+msgstr "розмір"
 
 #: execute/templates/commands/emailreport.html:34
 #, fuzzy
-#| msgid "email address"
+#| msgid "email"
 msgid "emails"
-msgstr "E-Mail-Adresse"
+msgstr "ел.пошта"
 
 #: execute/templates/commands/emailreport.html:66
 msgid "please correct invalid email addresses"
-msgstr ""
+msgstr "виправте недійсні адреси електронної пошти"
 
 #: execute/templates/commands/emailreport.html:70
 msgid "please enter email addresses"
-msgstr ""
+msgstr "будь ласка, введіть електронні адреси"
 
 #: execute/templates/commands/empty.html:7
 msgid "Erase selected tables."
-msgstr "Ausgewählte Tabellen löschen."
+msgstr "Стерти вибрані таблиці."
 
 #: execute/templates/commands/empty.html:9
 #: execute/templates/commands/exportworkbook.html:18
 msgid "data tables"
-msgstr "Data Tabellen"
+msgstr "таблиці даних"
 
 #: execute/templates/commands/empty.html:19
 #: execute/templates/commands/exportworkbook.html:31
 msgid "admin tables"
-msgstr "Admin Tabellen"
+msgstr "служебні таблици"
 
 #: execute/templates/commands/exporttofolder.html:6
 #: execute/templates/commands/exportworkbook.html:7
 msgid "export"
-msgstr "Exportieren"
+msgstr "експорт"
 
 #: execute/templates/commands/exporttofolder.html:9
 msgid "Exports the plan (purchase orders, distribution orders and manufacturing orders) as a set of CSV files."
-msgstr "Export des Plans  (Bestellungen, Lieferaufträge, Produktionsaufträge) als Set von CSV Dateien."
+msgstr "Експортує план (замовлення на купівлю, замовлення на розповсюдження та виробничі замовлення) у вигляді набору файлів CSV."
 
 #: execute/templates/commands/exporttofolder.html:16
 #: execute/templates/commands/importfromfolder.html:16
 msgid "changed"
-msgstr "zuletzt bearbeitet"
+msgstr "змінився"
 
 #: execute/templates/commands/exporttofolder.html:19
 #: execute/templates/commands/importfromfolder.html:25
 #, fuzzy
-#| msgid "download complete log file"
+#| msgid "Download file"
 msgid "Download all files"
-msgstr "komplette Log-Datei herunterladen"
+msgstr "Завантажити файл"
 
 #: execute/templates/commands/exporttofolder.html:25
 #: execute/templates/commands/importfromfolder.html:31
 msgid "Delete all files"
-msgstr ""
+msgstr "Видалити всі файли"
 
 #: execute/templates/commands/exporttofolder.html:57
 #: execute/templates/commands/importfromfolder.html:102
 msgid "You are about to delete all files"
-msgstr ""
+msgstr "Ви збираєтесь видалити всі файли"
 
 #: execute/templates/commands/exporttofolder.html:61
 #: execute/templates/commands/importfromfolder.html:106
-#, python-format
+#, fuzzy, python-format
+#| msgid "You are about to delete all files"
 msgid "You are about to delete file %%s"
-msgstr ""
+msgstr "Ви збираєтесь видалити всі файли"
 
 #: execute/templates/commands/exporttofolder.html:67
 #: execute/templates/commands/importfromfolder.html:49
 #: execute/templates/commands/importfromfolder.html:112
 msgid "Delete file"
-msgstr ""
+msgstr "Видалити файл"
 
 #: execute/templates/commands/exporttofolder.html:73
 #: execute/templates/commands/importfromfolder.html:118
 msgid "Confirm"
-msgstr "Bestätigen"
+msgstr "Підтвердіть"
 
 #: execute/templates/commands/exporttofolder.html:74
 #: execute/templates/commands/importfromfolder.html:119
 #: execute/templates/execute/execute.html:40
 #: execute/templates/execute/execute.html:46
 msgid "Cancel"
-msgstr "Abbruch"
+msgstr "Скасувати"
 
 #: execute/templates/commands/exporttofolder.html:86
 #: execute/templates/commands/importfromfolder.html:131
 msgid "All data files were deleted"
-msgstr ""
+msgstr "Усі файли даних були видалені"
 
 #: execute/templates/commands/exporttofolder.html:88
 #: execute/templates/commands/importfromfolder.html:133
@@ -2100,7 +2132,7 @@ msgstr ""
 #: execute/templates/commands/importfromfolder.html:156
 #: execute/templates/commands/importworkbook.html:23
 msgid "Close"
-msgstr "Schliessen"
+msgstr "Закрити"
 
 #: execute/templates/commands/exporttofolder.html:98
 #: execute/templates/commands/exporttofolder.html:104
@@ -2113,81 +2145,81 @@ msgstr ""
 
 #: execute/templates/commands/exportworkbook.html:11
 msgid "Download all input data in a single spreadsheet.<br>Optionally, you can make the data anonymous during the export to hide sensitive company data."
-msgstr ""
+msgstr "Завантажте всі вхідні дані в одну електронну таблицю. <br> За бажанням ви можете зробити дані анонімними під час експорту, щоб приховати чутливі дані компанії."
 
 #: execute/templates/commands/importfromfolder.html:6
 #: execute/templates/commands/importworkbook.html:5
 msgid "import"
-msgstr "Importieren"
+msgstr "імпорт"
 
 #: execute/templates/commands/importfromfolder.html:9
 msgid "Import CSV or Excel files from the data folder. The file names must match the names of data objects and the first line in the file must contain the field names."
-msgstr "Importieren Sie CSV- order Excel-Dateien aus dem Datenordner.  Die Dateinamen müssen mit den Namen von Datenobjekten übereinstimmen und die erste Zeile in der Datei muss die Feldnamen enthalten."
+msgstr "Імпортуйте файли CSV або Excel з папки даних. Імена файлів повинні відповідати іменам об'єктів даних, а перший рядок у файлі повинен містити назви полів."
 
 #: execute/templates/commands/importfromfolder.html:18
 msgid "Upload data files"
-msgstr ""
+msgstr "Завантажте файли даних"
 
 #: execute/templates/commands/importfromfolder.html:19
+#, fuzzy
+#| msgid "Import data files from folder"
 msgid "Copy files to folder"
-msgstr ""
+msgstr "Імпорт файли даних із папки"
 
 #: execute/templates/commands/importfromfolder.html:44
 msgid "Download file"
-msgstr ""
+msgstr "Завантажити файл"
 
 #: execute/templates/commands/importworkbook.html:8
 msgid "Import input data from a spreadsheet.</p><p>The spreadsheet must match the structure exported with the task above."
-msgstr "Import der Eingabedaten aus einer Tabelle</p><p>Die Tabelle muss den gleichen Aufbau wie die Export Tabelle haben."
+msgstr "Імпортуйте вхідні дані з електронної таблиці. </p><p>Електронна таблиця повинна відповідати структурі, експортованій із завданням вище."
 
 #: execute/templates/commands/loaddata.html:15
 msgid "Load one of the available datasets."
-msgstr "Ein verfügbares Datenset laden."
+msgstr "Завантажте один із доступних наборів даних."
 
 #: execute/templates/commands/loaddata.html:27
 msgid "Execute plan after loading is done"
-msgstr ""
+msgstr "Виконати план після завантаження"
 
 #: execute/templates/commands/loaddata.html:48
 #: execute/templates/execute/execute.html:221
 msgid "Sorry, You don't have any execute permissions..."
-msgstr "Bedaure,  Sie haben keine Berechtigung hierfür."
+msgstr "Вибачте, у вас немає дозволів на виконання ..."
 
 #: execute/templates/commands/scenario_copy.html:8
 msgid "action"
-msgstr ""
+msgstr "дії"
 
 #: execute/templates/commands/scenario_copy.html:11
 msgid "<b>In use</b>: Contains data<br><b>Free</b>: Available to copy data into<br><b>Busy</b>: Data copy in progress"
-msgstr ""
+msgstr "<b> У користуванні </b>: Містить дані <br> <b> звільнено </b>: Доступно для копіювання даних у <br> <b> Зайнято </b>: Копіювання даних триває"
 
 #: execute/templates/commands/scenario_copy.html:17
 msgid "Label shown in the scenario dropdown list"
-msgstr ""
+msgstr "Мітка, показана у спадному списку сценарію"
 
 #: execute/templates/commands/scenario_copy.html:18 forecast/models.py:1021
 #: forecast/views.py:149
 msgid "label"
-msgstr "Bezeichnung"
+msgstr "мiтка"
 
 #: execute/templates/commands/scenario_copy.html:22
-#, fuzzy
-#| msgid "Duration of the changeover"
 msgid "Date of the last state change"
-msgstr "Umrüstzeit"
+msgstr "Дата останньої зміни стану"
 
 #: execute/templates/commands/scenario_copy.html:38
 #: execute/templates/commands/scenario_copy.html:50
 msgid "manage"
-msgstr ""
+msgstr "керувати"
 
 #: execute/templates/commands/scenario_copy.html:55
 msgid "Release: You will lose ALL data in this scenario!"
-msgstr ""
+msgstr "Реліз: Ви втратите ВСІ дані в цьому сценарії!"
 
 #: execute/templates/commands/scenario_copy.html:60
 msgid "Promote: All data will be copied to Production"
-msgstr ""
+msgstr "Усі дані будуть скопійовані у Виробництво"
 
 #: execute/templates/commands/scenario_copy.html:69
 msgid "Free"
@@ -2198,8 +2230,10 @@ msgid "Run a sequence of tasks, and schedule it to run automatically."
 msgstr ""
 
 #: execute/templates/commands/scheduletasks.html:8
+#, fuzzy
+#| msgid "scheduled task"
 msgid "next scheduled run"
-msgstr ""
+msgstr "планове завдання"
 
 #: execute/templates/commands/scheduletasks.html:26
 msgid "Edit"
@@ -2207,113 +2241,111 @@ msgstr ""
 
 #: execute/templates/commands/scheduletasks.html:58
 msgid "unique name"
-msgstr ""
+msgstr "унікальна назва"
 
 #: execute/templates/commands/scheduletasks.html:80
 #: execute/templates/commands/scheduletasks.html:182
 msgid "Arguments"
-msgstr "Argumente"
+msgstr "Аргументи"
 
 #: execute/templates/commands/scheduletasks.html:84
 #: execute/templates/commands/scheduletasks.html:186
 msgid "abort on failure"
-msgstr ""
+msgstr "аборт при невдачі"
 
 #: execute/templates/commands/scheduletasks.html:98
 #: execute/templates/commands/scheduletasks.html:163
 msgid "Add"
-msgstr "Hinzufügen"
+msgstr "Додайте"
 
 #: execute/templates/commands/scheduletasks.html:105 input/models.py:101
 #: input/views.py:3342
 msgid "start time"
-msgstr "Startzeit"
+msgstr "Час початку"
 
 #: execute/templates/commands/scheduletasks.html:113
 msgid "weekly schedule"
-msgstr ""
+msgstr "тижневий графік"
 
 #: execute/templates/commands/scheduletasks.html:116
 msgid "Mon"
-msgstr "Mo"
+msgstr "Пн."
 
 #: execute/templates/commands/scheduletasks.html:119
 msgid "Tue"
-msgstr "Di"
+msgstr "Вт."
 
 #: execute/templates/commands/scheduletasks.html:122
 msgid "Wed"
-msgstr "Mi"
+msgstr "Ср."
 
 #: execute/templates/commands/scheduletasks.html:125
 msgid "Thu"
-msgstr "Do"
+msgstr "Чт."
 
 #: execute/templates/commands/scheduletasks.html:128
 msgid "Fri"
-msgstr "Fr"
+msgstr "Пт"
 
 #: execute/templates/commands/scheduletasks.html:131
 msgid "Sat"
-msgstr "Sa"
+msgstr "Сб."
 
 #: execute/templates/commands/scheduletasks.html:134
 msgid "Sun"
-msgstr "So"
+msgstr "Вс."
 
 #: execute/templates/commands/scheduletasks.html:139
-#, fuzzy
-#| msgid "email address"
 msgid "email on success"
-msgstr "E-Mail-Adresse"
+msgstr "електронна пошта підтверджена успішно"
 
 #: execute/templates/commands/scheduletasks.html:142
 #: execute/templates/commands/scheduletasks.html:150
+#, fuzzy
+#| msgid "list of emails, separated by commas"
 msgid "List of emails, separated by commas"
-msgstr ""
+msgstr "список електронної пошти,  розділених комами"
 
 #: execute/templates/commands/scheduletasks.html:147
-#, fuzzy
-#| msgid "email address"
 msgid "email on failure"
-msgstr "E-Mail-Adresse"
+msgstr "повідомлення про помилку"
 
 #: execute/templates/execute/execute.html:40
 msgid "waiting"
-msgstr ""
+msgstr "чекання"
 
 #: execute/templates/execute/execute.html:42
 msgid "done"
-msgstr "erledigt"
+msgstr "зроблено"
 
 #: execute/templates/execute/execute.html:44 input/models.py:1424
 #: input/views.py:3278
 msgid "canceled"
-msgstr "storniert"
+msgstr "скасовано"
 
 #: execute/templates/execute/execute.html:54 forecast/models.py:1013
 msgid "view"
-msgstr ""
+msgstr "перегляд"
 
 #: execute/templates/execute/execute.html:186
 msgid "autorefresh"
-msgstr "Automatisch aktualisieren"
+msgstr "автоматичне оновлення"
 
 #: execute/templates/execute/execute.html:194
 msgid "launch tasks"
-msgstr "Neue Aufgaben starten"
+msgstr "завдання запуску"
 
 #: execute/templates/execute/logfrepple.html:4
 msgid "download complete log file"
-msgstr "komplette Log-Datei herunterladen"
+msgstr "завантажити повний файл журналу"
 
 #: execute/views.py:102
 msgid "Task status"
-msgstr "Aufgabenstatus"
+msgstr "Статус завдання"
 
 #: execute/views.py:130 execute/views.py:746
 msgid "finished"
-msgstr "beendet"
+msgstr "закінчив"
 
 #: execute/views.py:164 input/models.py:334 input/models.py:760
 #: input/views.py:312 input/views.py:1774 input/views.py:2609
@@ -2322,72 +2354,72 @@ msgstr "beendet"
 #: input/views.py:6000 input/views.py:6423 input/views.py:6505
 #: output/views/operation.py:77
 msgid "duration"
-msgstr "Dauer"
+msgstr "тривалість"
 
 #: execute/views.py:301
 #, python-format
 msgid "Failure launching action: %(msg)s"
-msgstr "Fehler bei der Durchführung: %(msg)s"
+msgstr "Помилка запуску дії: %(msg)s"
 
 #: execute/views.py:633
 msgid "Displaying only the last 50K from the log file"
-msgstr "Hier sehen Sie die letzten Einträge aus der Log-Datei"
+msgstr "Відображення лише останніх 50K з файлу журналу"
 
 #: execute/views.py:722
 #, python-format
 msgid "Filename extension must be among %(ext)s"
-msgstr ""
+msgstr "Розширення назви файлів має бути серед %(ext)s"
 
 #: execute/views.py:743
 msgid "Upload failed"
-msgstr ""
+msgstr "Помилка завантаження"
 
 #: execute/views.py:766
 msgid "Error deleting file"
-msgstr "Fehler beim Abrufen der Daten"
+msgstr "Помилка видалення файлу"
 
 #: execute/views.py:1101
 msgid "Nothing to export"
-msgstr "Nichts zum Export vorhanden"
+msgstr "Нічого не експортувати"
 
 #: execute/views.py:1132
 msgid "Processing file"
-msgstr ""
+msgstr "Обробка файлу"
 
 #: execute/views.py:1136
 msgid "Files in the old .XLS excel format can't be read.<br>Please convert them to the new .XLSX format."
-msgstr ""
+msgstr "Файли у старому форматі .XLS excel не можна прочитати. <br> Перетворіть їх у новий .XLSX формат."
 
 #: execute/views.py:1143
 msgid "Unsupported file format."
-msgstr ""
+msgstr "Непідтримуваний формат файлу."
 
 #: execute/widget.py:22
 msgid "Generate a constrained plan"
-msgstr "Produktionsplan mit Einschränkungen"
+msgstr "Створіть обмежений план"
 
 #: executesql/menu.py:16 reportmanager/menu.py:51 reportmanager/models.py:91
 #: reportmanager/views.py:97
 msgid "my reports"
-msgstr ""
+msgstr "мої звіти"
 
 #: executesql/menu.py:22
 msgid "Execute SQL"
-msgstr ""
+msgstr "Виконати SQL"
 
 #: executesql/views.py:52
 msgid "Execute SQL statements"
-msgstr ""
+msgstr "Виконати SQL оператори"
 
 #: forecast/admin.py:39
 msgid "Planning parameters"
-msgstr "Planungsparameter"
+msgstr "Параметри планування"
 
 #: forecast/admin.py:61 input/admin.py:277 input/admin.py:458
 #: input/admin.py:529 input/admin.py:693 input/admin.py:1048 input/views.py:243
 #: input/views.py:372
 msgid "supply path"
-msgstr "Lieferkette"
+msgstr "шлях постачання"
 
 #: forecast/admin.py:64 forecast/views.py:566 input/admin.py:279
 #: input/admin.py:462 input/admin.py:531 input/admin.py:697 input/admin.py:1054
@@ -2397,12 +2429,12 @@ msgstr "Lieferkette"
 #: output/views/operation.py:237 output/views/pegging.py:94
 #: output/views/resource.py:222
 msgid "plan"
-msgstr "Plan"
+msgstr "план"
 
 #: forecast/admin.py:67 forecast/views.py:999 input/admin.py:1051
 #: output/views/constraint.py:141
 msgid "why short or late?"
-msgstr "warum kurz- oder langfristig?"
+msgstr "які відхилення?"
 
 #: forecast/attributes.py:17 forecast/models.py:136 forecast/models.py:343
 #: forecast/models.py:457 forecast/views.py:61 forecast/views.py:315
@@ -2410,84 +2442,84 @@ msgstr "warum kurz- oder langfristig?"
 #: inventoryplanning/templates/inventoryplanning/drp.html:2467
 #: output/models.py:39
 msgid "forecast"
-msgstr "Vorschau/Prognose"
+msgstr "прогноз"
 
 #: forecast/attributes.py:23
 msgid "demand_pattern"
-msgstr ""
+msgstr "demand_pattern"
 
 #: forecast/attributes.py:24
 msgid "adi"
-msgstr "adi"
+msgstr "ADI"
 
 #: forecast/attributes.py:25
 msgid "cv2"
-msgstr ""
+msgstr "cv2"
 
 #: forecast/commands.py:857 forecast/commands.py:877 forecast/commands.py:904
 #: forecast/commands.py:987
 msgid "Generate forecast"
-msgstr "Prognose erstellen"
+msgstr "Генеруйте прогноз"
 
 #: forecast/management/commands/measure_copy.py:199
 msgid "measure management"
-msgstr ""
+msgstr "управління мірами"
 
 #: forecast/management/commands/measure_copy.py:258
 msgid "Copy source measure"
-msgstr ""
+msgstr "копіювати міру"
 
 #: forecast/management/commands/measure_copy.py:258
 msgid "to destination measure"
-msgstr ""
+msgstr "до міри призначення"
 
 #: forecast/menu.py:32 forecast/templates/forecast.html:4
 #: forecast/views.py:2118 input/views.py:110
 msgid "Forecast editor"
-msgstr "Prognose bearbeiten"
+msgstr "Редактор прогнозів"
 
 #: forecast/models.py:38
 msgid "Automatic"
-msgstr "Automatisch"
+msgstr "Автоматичний"
 
 #: forecast/models.py:39
 #: inventoryplanning/templates/inventoryplanning/drp.html:2571
 msgctxt "forecast method"
 msgid "Constant"
-msgstr "Konstant"
+msgstr "Постійний"
 
 #: forecast/models.py:40
 #: inventoryplanning/templates/inventoryplanning/drp.html:2572
 msgctxt "forecast method"
 msgid "Trend"
-msgstr "Trend"
+msgstr "Тенденція"
 
 #: forecast/models.py:41
 #: inventoryplanning/templates/inventoryplanning/drp.html:2573
 msgctxt "forecast method"
 msgid "Seasonal"
-msgstr "Saisonal"
+msgstr "Сезонні"
 
 #: forecast/models.py:42
 #: inventoryplanning/templates/inventoryplanning/drp.html:2574
 msgctxt "forecast method"
 msgid "Intermittent"
-msgstr "Periodisch"
+msgstr "Переривчастий"
 
 #: forecast/models.py:43
 #: inventoryplanning/templates/inventoryplanning/drp.html:2575
 msgctxt "forecast method"
 msgid "Moving average"
-msgstr "Gleitender Mittelwert"
+msgstr "Ковзна середня"
 
 #: forecast/models.py:44
 #: inventoryplanning/templates/inventoryplanning/drp.html:2576
 msgid "Manual"
-msgstr "Manuell"
+msgstr "вручну"
 
 #: forecast/models.py:45
 msgid "Aggregate"
-msgstr "Zusammenfassen"
+msgstr "Сукупність"
 
 #: forecast/models.py:54 forecast/views.py:97 forecast/views.py:376
 #: forecast/views.py:420 forecast/views.py:469 forecast/views.py:1799
@@ -2523,7 +2555,7 @@ msgstr "Zusammenfassen"
 #: output/views/operation.py:882 output/views/resource.py:55
 #: output/views/resource.py:143 quoting/views.py:84
 msgid "category"
-msgstr "Kategorie"
+msgstr "категорія"
 
 #: forecast/models.py:57 forecast/views.py:98 forecast/views.py:382
 #: forecast/views.py:426 forecast/views.py:475 forecast/views.py:1800
@@ -2558,146 +2590,146 @@ msgstr "Kategorie"
 #: output/views/operation.py:847 output/views/operation.py:888
 #: output/views/resource.py:62 output/views/resource.py:149 quoting/views.py:85
 msgid "subcategory"
-msgstr "Unterkategorie"
+msgstr "підкатегорія"
 
 #: forecast/models.py:69
 #: inventoryplanning/templates/inventoryplanning/drp.html:2564
 msgid "Forecast method"
-msgstr "Vorhersage-Methode"
+msgstr "Метод прогнозу"
 
 #: forecast/models.py:75
 msgid "Method used to generate a base forecast"
-msgstr "Methode zur Basis-Prognose"
+msgstr "Метод, що використовується для створення базового прогнозу"
 
 #: forecast/models.py:81 input/models.py:1474
 msgid "Priority of the demand (lower numbers indicate more important demands)"
-msgstr "Nachfrage Priorität (je niedriger die Priorität desto wichtiger die Nachfrage)"
+msgstr "Пріоритет попиту (менші цифри вказують на більш важливі вимоги)"
 
 #: forecast/models.py:85 forecast/views.py:105 input/models.py:1478
 #: input/views.py:3093 quoting/views.py:99
 msgid "minimum shipment"
-msgstr "Mindest Liefermenge"
+msgstr "мінімальна відвантаження"
 
 #: forecast/models.py:90 input/models.py:1483
 msgid "Minimum shipment quantity when planning this demand"
-msgstr "Minimale Liefermenge bei der Planung dieser Forderung"
+msgstr "Мінімальна кількість відправки при плануванні цього попиту"
 
 #: forecast/models.py:93 forecast/views.py:102 input/models.py:1486
 #: input/views.py:3090 quoting/views.py:98
 msgid "maximum lateness"
-msgstr "minimale Verspätung"
+msgstr "макс. пізність"
 
 #: forecast/models.py:96 input/models.py:1489
 msgid "Maximum lateness allowed when planning this demand"
-msgstr "Erlaubte Maximalverspätung bei dieser Planung"
+msgstr "Максимальна затримка, дозволена при плануванні цього попиту"
 
 #: forecast/models.py:99 forecast/models.py:1082 forecast/views.py:107
 #: forecast/views.py:160
 msgid "discrete"
-msgstr "diskret"
+msgstr "дискретний"
 
 #: forecast/models.py:99
 msgid "Round forecast numbers to integers"
-msgstr "Runde Prognose Zahlen zu ganzen Zahlen"
+msgstr "Круглі прогнозні числа до цілих чисел"
 
 #: forecast/models.py:102 forecast/views.py:119 forecast/views.py:362
 #: inventoryplanning/templates/inventoryplanning/drp.html:2586
 msgid "estimated forecast error"
-msgstr "geschätzter Prognosefehler"
+msgstr "передбачувана помилка прогнозу"
 
 #: forecast/models.py:109 forecast/views.py:125
 msgid "calculated forecast method"
-msgstr "berechnet Prognose-Methode"
+msgstr "розрахунковий метод прогнозу"
 
 #: forecast/models.py:112
 msgid "calculated standard deviation"
-msgstr "berechnete Standardabweichung"
+msgstr "розраховане стандартне відхилення"
 
 #: forecast/models.py:119 forecast/views.py:108
 msgid "planned"
-msgstr "pianificato"
+msgstr "запланований"
 
 #: forecast/models.py:122
 msgid "Specifies whether this forecast record should be planned"
-msgstr ""
+msgstr "Вказує, чи слід планувати цей прогнозний запис"
 
 #: forecast/models.py:126 input/models.py:1460 input/views.py:3074
 #: quoting/views.py:90
 msgid "delivery operation"
-msgstr "Lieferung"
+msgstr "операція доставки"
 
 #: forecast/models.py:131 input/models.py:1465
 msgid "Operation used to satisfy this demand"
-msgstr "Operation um die Nachfrage zu befriedigen"
+msgstr "Операція, що використовується для задоволення цього попиту"
 
 #: forecast/models.py:137
 msgid "forecasts"
-msgstr "Vorhersage"
+msgstr "прогнози"
 
 #: forecast/models.py:375
 msgid "forecast plan"
-msgstr "Absatzplan"
+msgstr "план прогнозу"
 
 #: forecast/models.py:376
 msgid "forecast plans"
-msgstr "Absatzplan"
+msgstr "плани прогнозiв"
 
 #: forecast/models.py:445
 #, python-format
 msgid "Bucket '%(name)s' not found"
-msgstr "Raster '%(name)s' nicht gefunden"
+msgstr "Період часу '%(name)s' НЕ знайдений"
 
 #: forecast/models.py:578
 msgid "No editable fields found"
-msgstr ""
+msgstr "Не знайдено редагованих полів"
 
 #: forecast/models.py:728
 msgid "total orders 3 years ago"
-msgstr "Bestellungen vor 3 Jahren"
+msgstr "загальних замовлень 3 роки тому"
 
 #: forecast/models.py:737
 msgid "orders adjustment 3 years ago"
-msgstr "Bestellungen Anpassung vor 3 Jahren"
+msgstr "коригування замовлень 3 роки тому"
 
 #: forecast/models.py:746
 msgid "total orders value 3 years ago"
-msgstr ""
+msgstr "разом замовлень 3 рік тому"
 
 #: forecast/models.py:756
 msgid "orders adjustment value 3 years ago"
-msgstr ""
+msgstr "коригування замовлень за 3 роки"
 
 #: forecast/models.py:766
 msgid "total orders 2 years ago"
-msgstr "Bestellungen vor 2 Jahren"
+msgstr "загальних замовлень 2 роки тому"
 
 #: forecast/models.py:775
 msgid "orders adjustment 2 years ago"
-msgstr "Bestellungen Anpassung vor 2 Jahren"
+msgstr "коригування замовлень 2 роки тому"
 
 #: forecast/models.py:784
 msgid "total orders value 2 years ago"
-msgstr ""
+msgstr "разом замовлень 2 рік тому"
 
 #: forecast/models.py:794
 msgid "orders adjustment value 2 years ago"
-msgstr ""
+msgstr "коригування замовлень за 2 роки"
 
 #: forecast/models.py:804
 msgid "total orders 1 years ago"
-msgstr ""
+msgstr "загальних замовлень 1 рiк тому"
 
 #: forecast/models.py:813
 msgid "orders adjustment 1 years ago"
-msgstr ""
+msgstr "коригування замовлень 1 рік тому"
 
 #: forecast/models.py:822
 msgid "total orders value 1 years ago"
-msgstr ""
+msgstr "разом замовлень 1 рік тому"
 
 #: forecast/models.py:832
 msgid "orders adjustment value 1 years ago"
-msgstr ""
+msgstr "зкоригування замовлень за 1 рік"
 
 #: forecast/models.py:843 forecast/templates/forecast/forecast.html:258
 #: inventoryplanning/templates/inventoryplanning/drp.html:1564
@@ -2706,7 +2738,7 @@ msgstr ""
 #: inventoryplanning/templates/inventoryplanning/drp.html:1621
 #: inventoryplanning/templates/inventoryplanning/drp.html:1702
 msgid "total orders"
-msgstr "Gesamtbestellungen"
+msgstr "загальна кількість замовлень"
 
 #: forecast/models.py:851 forecast/templates/forecast/forecast.html:257
 #: inventoryplanning/templates/inventoryplanning/drp.html:1566
@@ -2715,7 +2747,7 @@ msgstr "Gesamtbestellungen"
 #: inventoryplanning/templates/inventoryplanning/drp.html:1623
 #: inventoryplanning/templates/inventoryplanning/drp.html:1701
 msgid "open orders"
-msgstr "Offene Aufträge"
+msgstr "відкриті замовлення"
 
 #: forecast/models.py:859
 #: inventoryplanning/templates/inventoryplanning/drp.html:1568
@@ -2723,48 +2755,48 @@ msgstr "Offene Aufträge"
 #: inventoryplanning/templates/inventoryplanning/drp.html:1604
 #: inventoryplanning/templates/inventoryplanning/drp.html:1625
 msgid "orders adjustment"
-msgstr "Bestellungs-Anpassung"
+msgstr "коригування замовлень"
 
 #: forecast/models.py:867
 #: inventoryplanning/templates/inventoryplanning/drp.html:1570
 #: inventoryplanning/templates/inventoryplanning/drp.html:1606
 msgid "forecast baseline"
-msgstr "Prognose Basis"
+msgstr "базовий прогноз"
 
 #: forecast/models.py:875
 #: inventoryplanning/templates/inventoryplanning/drp.html:1572
 #: inventoryplanning/templates/inventoryplanning/drp.html:1608
 msgid "forecast override"
-msgstr "Vorschau Überschreitung"
+msgstr "перевизначення прогнозу"
 
 #: forecast/models.py:884
 #: inventoryplanning/templates/inventoryplanning/drp.html:1576
 #: inventoryplanning/templates/inventoryplanning/drp.html:1612
 msgid "forecast net"
-msgstr "Prognose Netto"
+msgstr "чистий прогноз"
 
 #: forecast/models.py:892
 #: inventoryplanning/templates/inventoryplanning/drp.html:1578
 #: inventoryplanning/templates/inventoryplanning/drp.html:1614
 msgid "forecast consumed"
-msgstr "Prognose, verbraucht"
+msgstr "споживаний прогноз"
 
 #: forecast/models.py:900 forecast/templates/forecast/forecast.html:260
 msgid "planned orders"
-msgstr "Geplante Aufträge"
+msgstr "планові замовлення"
 
 #: forecast/models.py:908 forecast/templates/forecast/forecast.html:261
 msgid "planned net forecast"
-msgstr "geplante Netto Vorschau"
+msgstr "апланований чистий прогноз"
 
 #: forecast/models.py:917
 msgid "order backlog"
-msgstr ""
+msgstr "відставання замовлення"
 
 #: forecast/models.py:925 output/templates/output/demand_forecast.html:156
 #: output/views/demand.py:285
 msgid "forecast backlog"
-msgstr ""
+msgstr "прогноз відставання"
 
 #: forecast/models.py:933 forecast/templates/forecast/forecast.html:263
 #: output/templates/output/demand.html:144
@@ -2772,162 +2804,162 @@ msgstr ""
 #: output/templates/output/demand_forecast.html:160
 #: output/templates/output/demand_forecast.html:219 output/views/demand.py:67
 msgid "backlog"
-msgstr "Rückstand"
+msgstr "відставання"
 
 #: forecast/models.py:941 inventoryplanning/models.py:456
 #: inventoryplanning/templates/inventoryplanning/drp.html:233
 #: output/views/demand.py:282
 msgid "total demand"
-msgstr "Gesamtbedarf"
+msgstr "загальний попит"
 
 #: forecast/models.py:949
 #: inventoryplanning/templates/inventoryplanning/drp.html:236
 msgid "total supply"
-msgstr "Gesamt Lieferung"
+msgstr "загальна пропозиція"
 
 #: forecast/models.py:957
 msgid "order backlog value"
-msgstr ""
+msgstr "значення відставання замовлення"
 
 #: forecast/models.py:967
 msgid "forecast backlog value"
-msgstr ""
+msgstr "значення відставання прогнозу"
 
 #: forecast/models.py:977
 msgid "backlog value"
-msgstr ""
+msgstr "значення відставання"
 
 #: forecast/models.py:987 inventoryplanning/models.py:465
 msgid "total demand value"
-msgstr "Gesamtbedarf Wert"
+msgstr "загальне значення попиту"
 
 #: forecast/models.py:997
 msgid "total supply value"
-msgstr ""
+msgstr "загальна вартість пропозиції"
 
 #: forecast/models.py:1009
 msgid "aggregate"
-msgstr ""
+msgstr "сукупність"
 
 #: forecast/models.py:1010
 msgid "local"
-msgstr ""
+msgstr "локально"
 
 #: forecast/models.py:1011
 msgid "computed"
-msgstr ""
+msgstr "обчислюється"
 
 #: forecast/models.py:1013
 msgid "hide"
-msgstr ""
+msgstr "приховати"
 
 #: forecast/models.py:1014
 msgid "number"
-msgstr ""
+msgstr "число"
 
 #: forecast/models.py:1014
 msgid "currency"
-msgstr ""
+msgstr "валюта"
 
 #: forecast/models.py:1025
 msgid "Label to be displayed in the user interface"
-msgstr ""
+msgstr "Мітка для відображення в інтерфейсі користувача"
 
 #: forecast/models.py:1039 forecast/views.py:156
 msgid "mode in future periods"
-msgstr ""
+msgstr "режим у майбутніх періодах"
 
 #: forecast/models.py:1047 forecast/views.py:153
 msgid "mode in past periods"
-msgstr ""
+msgstr "режим у минулі періоди"
 
 #: forecast/models.py:1055 forecast/views.py:162
 msgid "compute expression"
-msgstr ""
+msgstr "обчислити вираз"
 
 #: forecast/models.py:1059
 msgid "Formula to compute values"
-msgstr ""
+msgstr "Формула для обчислення значень"
 
 #: forecast/models.py:1062 forecast/views.py:163
 msgid "update expression"
-msgstr ""
+msgstr "оновити вираз"
 
 #: forecast/models.py:1066
 msgid "Formula executed when updating this field"
-msgstr ""
+msgstr "Формула виконується під час оновлення цього поля"
 
 #: forecast/models.py:1069 forecast/views.py:158
 msgid "initially hidden"
-msgstr ""
+msgstr "спочатку приховано"
 
 #: forecast/models.py:1072
 msgid "controls whether or not this measure is visible by default"
-msgstr ""
+msgstr "контролює, чи цей показник видно за замовчуванням"
 
 #: forecast/models.py:1075 forecast/views.py:159
 #: reportmanager/templates/reportmanager/reportmanager.html:163
 msgid "format"
-msgstr ""
+msgstr "формат"
 
 #: forecast/models.py:1084 forecast/views.py:161 input/models.py:56
 #: input/views.py:3303
 msgid "default value"
-msgstr "Standardwert"
+msgstr "значення за замовчуванням"
 
 #: forecast/models.py:1092 forecast/views.py:164
 msgid "override measure"
-msgstr ""
+msgstr "переоцінка міри"
 
 #: forecast/models.py:1117
 msgid "Measure name can only be alphanumeric"
-msgstr ""
+msgstr "Назва заходу може бути лише буквено-цифровою"
 
 #: forecast/models.py:1121
 msgid "measure"
-msgstr ""
+msgstr "міра"
 
 #: forecast/models.py:1122 forecast/views.py:136
 msgid "measures"
-msgstr ""
+msgstr "міри"
 
 #: forecast/templates/forecast/forecast.html:259
 #: inventoryplanning/templates/inventoryplanning/drp.html:1574
 #: inventoryplanning/templates/inventoryplanning/drp.html:1610
 #: inventoryplanning/templates/inventoryplanning/drp.html:1703
 msgid "forecast total"
-msgstr "Prognose Gesamt"
+msgstr "прогноз загальний"
 
 #: forecast/templates/forecast/forecast.html:262
 #: inventoryplanning/templates/inventoryplanning/drp.html:1591
 #: inventoryplanning/templates/inventoryplanning/drp.html:1627
 #: inventoryplanning/templates/inventoryplanning/drp.html:1704
 msgid "past forecast"
-msgstr ""
+msgstr "минулий прогноз"
 
 #: forecast/templates/forecast/forecast.html:378
 #: inventoryplanning/templates/inventoryplanning/drp.html:1082
 #: inventoryplanning/templates/inventoryplanning/drp.html:1096
 #: inventoryplanning/templates/inventoryplanning/drp.html:1110
 msgid "Demand outlier"
-msgstr "Nachfrage Ausreißer"
+msgstr "відхилення попиту"
 
 #: forecast/views.py:99
 msgid "method"
-msgstr "Methode"
+msgstr "метод"
 
 #: forecast/views.py:176
 msgid "forecast report"
-msgstr "Prognosebericht"
+msgstr "Сводний прогноз"
 
 #: forecast/views.py:348
 msgid "forecast method"
-msgstr "metodo di previsione"
+msgstr "метод прогнозу"
 
 #: forecast/views.py:355
 #: inventoryplanning/templates/inventoryplanning/drp.html:2582
 msgid "selected forecast method"
-msgstr "ausgewählte Prognose Methode"
+msgstr "обраний метод прогнозу"
 
 #: forecast/views.py:432 input/models.py:145 input/models.py:355
 #: input/models.py:653 input/models.py:1130 input/views.py:1697
@@ -2944,7 +2976,7 @@ msgstr "ausgewählte Prognose Methode"
 #: output/views/operation.py:853 output/views/operation.py:894
 #: output/views/resource.py:155 output/views/resource.py:190
 msgid "available"
-msgstr "verfügbar"
+msgstr "в наявності"
 
 #: forecast/views.py:980 forecast/views.py:990 input/models.py:1525
 #: input/views.py:2987
@@ -2954,44 +2986,44 @@ msgstr "verfügbar"
 #: output/templates/output/demand_forecast.html:145 output/views/demand.py:65
 #: output/views/demand.py:281
 msgid "sales orders"
-msgstr "Verkaufsaufträge"
+msgstr "замовлення на продаж"
 
 #: forecast/widget.py:34
 msgid "Show the value of all sales order and forecast"
-msgstr "Wert aller Bestellungen und Prognose"
+msgstr "Показать значения заказа клиента и прогноза"
 
 #: forecast/widget.py:222
 msgid "Forecast error"
-msgstr "Prognosefehler"
+msgstr "Помилка прогнозу"
 
 #: forecast/widget.py:223
 msgid "Show the evolution of the SMAPE forecast error"
-msgstr "Entwicklung des SMAPE Prognose Fehlers"
+msgstr "Показати еволюцію помилки прогнозу SMAPE"
 
 #: forecast/widget.py:365
 msgid "Demand history outliers"
-msgstr "Ausreißer in der Nachfrage Historie"
+msgstr "Попит історії людей, які не користуються"
 
 #: forecast/widget.py:366
 msgid "Displays outliers detected in the demand history"
-msgstr "Ausreißer in der Nachfrage Historie anzeigen"
+msgstr "Відображає залишків, виявлених в історії запитів"
 
 #: forecast/widget.py:396 input/models.py:1988 input/views.py:6070
 #: inventoryplanning/templates/inventoryplanning/drp.html:157
 msgid "date"
-msgstr "Datum"
+msgstr "дата"
 
 #: input/admin.py:43
 msgid "repeating pattern"
-msgstr "sich wiederholende Muster"
+msgstr "повторюваний візерунок"
 
 #: input/admin.py:125 input/views.py:4472
 msgid "inbound distribution"
-msgstr ""
+msgstr "вхідний розподіл"
 
 #: input/admin.py:130 input/views.py:4481
 msgid "outbound distribution"
-msgstr ""
+msgstr "вихідний розподіл"
 
 #: input/admin.py:135 input/admin.py:465 input/models.py:2286
 #: input/views.py:3758 input/views.py:3781 input/views.py:3790
@@ -2999,7 +3031,7 @@ msgstr ""
 #: inventoryplanning/templates/inventoryplanning/drp.html:2022
 #: output/widget.py:190
 msgid "manufacturing orders"
-msgstr "Produktionsaufträge"
+msgstr "замовлення в виробництво"
 
 #: input/admin.py:140 input/admin.py:209 input/models.py:2117
 #: input/views.py:4915 input/views.py:4938 input/views.py:4947
@@ -3007,150 +3039,150 @@ msgstr "Produktionsaufträge"
 #: inventoryplanning/templates/inventoryplanning/drp.html:2020
 #: output/widget.py:828
 msgid "purchase orders"
-msgstr "Bestellungen"
+msgstr "замовлення на купівлю"
 
 #: input/admin.py:278 input/admin.py:461 input/admin.py:530 input/admin.py:696
 #: input/views.py:370 input/views.py:1558 input/views.py:1564
 #: input/views.py:1570 input/views.py:1576 input/views.py:1582
 msgid "where used"
-msgstr "wo verwendet"
+msgstr "де використовується"
 
 #: input/admin.py:282 input/admin.py:515 input/models.py:1532 menu.py:24
 #: output/views/buffer.py:290
 msgid "inventory"
-msgstr "Bestand"
+msgstr "запаси"
 
 #: input/admin.py:287 input/models.py:2030 input/models.py:2031
 #: input/views.py:5892
 msgid "inventory detail"
-msgstr ""
+msgstr "запаси детально"
 
 #: input/admin.py:378
 msgid "child operation"
-msgstr ""
+msgstr "дитяча операція"
 
 #: input/admin.py:379
 msgid "child suboperations"
-msgstr ""
+msgstr "дитяча субоперація"
 
 #: input/admin.py:420 input/admin.py:517 input/admin.py:1036
 msgid "planning parameters"
-msgstr "Planungsparameter"
+msgstr "параметри планування"
 
 #: input/admin.py:437
 msgid "alternate selection"
-msgstr ""
+msgstr "альтернативний вибір"
 
 #: input/admin.py:470 input/admin.py:539 input/admin.py:705
 #: output/views/constraint.py:88
 msgid "constrained demand"
-msgstr "eingeschränkte Nachfrage"
+msgstr "обмежений попит"
 
 #: input/admin.py:534 input/admin.py:700 input/views.py:5914
 #: input/views.py:6345
 msgid "plan detail"
-msgstr "Detail Plan"
+msgstr "подробиці плану"
 
 #: input/admin.py:745 input/admin.py:790
 msgid "alternates"
-msgstr "Ersatz"
+msgstr "альтернативи"
 
 #: input/admin.py:1079
 msgid "computed fields"
-msgstr ""
+msgstr "обчислені поля"
 
 #: input/models.py:37
 msgid "minimum cost"
-msgstr "Mindestpreis"
+msgstr "мінімальна вартість"
 
 #: input/models.py:38
 msgid "minimum penalty"
-msgstr "Mindeststrafe"
+msgstr "мінімальний розмір штрафу"
 
 #: input/models.py:39
 msgid "minimum cost plus penalty"
-msgstr "Mindestpreis plus Mindeststrafe"
+msgstr "мінімальна вартість плюс штраф"
 
 #: input/models.py:62
 msgid "Value to be used when no entry is effective"
-msgstr "Wert, wenn kein Eintrag wirksam ist"
+msgstr "Значення, яке слід використовувати, коли жодна запис не є ефективною"
 
 #: input/models.py:70 input/models.py:81 input/views.py:3326
 msgid "calendar"
-msgstr ""
+msgstr "календар"
 
 #: input/models.py:71 input/views.py:3286
 msgid "calendars"
-msgstr ""
+msgstr "календарі"
 
 #: input/models.py:93 input/views.py:3335
 msgid "Monday"
-msgstr "Montag"
+msgstr "Понеділок"
 
 #: input/models.py:94 input/views.py:3336
 msgid "Tuesday"
-msgstr "Dienstag"
+msgstr "Вівторок"
 
 #: input/models.py:95 input/views.py:3337
 msgid "Wednesday"
-msgstr "Mittwoch"
+msgstr "Середа"
 
 #: input/models.py:96 input/views.py:3338
 msgid "Thursday"
-msgstr "Donnerstag"
+msgstr "Четвер"
 
 #: input/models.py:97 input/views.py:3339
 msgid "Friday"
-msgstr "Freitag"
+msgstr "П’ятниця"
 
 #: input/models.py:98 input/views.py:3340
 msgid "Saturday"
-msgstr "Samstag"
+msgstr "Субота"
 
 #: input/models.py:99 input/views.py:3341
 msgid "Sunday"
-msgstr "Sonntag"
+msgstr "Неділя"
 
 #: input/models.py:104 input/views.py:3343
 msgid "end time"
-msgstr "Endzeit"
+msgstr "час завершення"
 
 #: input/models.py:127
 msgid "calendar bucket"
-msgstr "Kalender-Zeitraster"
+msgstr "календарний період"
 
 #: input/models.py:128 input/views.py:3310
 msgid "calendar buckets"
-msgstr "Kalender-Zeitraster"
+msgstr "календарні періоди"
 
 #: input/models.py:149 input/models.py:359 input/models.py:658
 #: input/models.py:1134
 msgid "Calendar defining the working hours and holidays"
-msgstr "Kalender welcher die Arbeitszeit und Ferien an diesem Standort definiert"
+msgstr "Календар, що визначає робочий час та святкові дні"
 
 #: input/models.py:158 input/views.py:1916
 msgid "locations"
-msgstr "Standorte"
+msgstr "місця розташування"
 
 #: input/models.py:180 input/views.py:1953
 msgid "customers"
-msgstr "Kunden"
+msgstr "замовники"
 
 #: input/models.py:186
 msgid "make to stock"
-msgstr ""
+msgstr "режим MTS"
 
 #: input/models.py:187
 msgid "make to order"
-msgstr ""
+msgstr "режим MTO"
 
 #: input/models.py:206
 msgid "Cost of the item"
-msgstr "Kosten des Artikels"
+msgstr "Вартість товару"
 
 #: input/models.py:218 input/views.py:2432
 msgid "items"
-msgstr "Artikel"
+msgstr "товари"
 
 #: input/models.py:225
 msgid "fixed_time"
@@ -3158,23 +3190,23 @@ msgstr "fixed_time"
 
 #: input/models.py:226
 msgid "time_per"
-msgstr "Zeit pro"
+msgstr "time_per"
 
 #: input/models.py:227
 msgid "routing"
-msgstr "Routing"
+msgstr "routing"
 
 #: input/models.py:228
 msgid "alternate"
-msgstr "Ersatz"
+msgstr "альтернатив."
 
 #: input/models.py:229
 msgid "split"
-msgstr "Split"
+msgstr "split"
 
 #: input/models.py:276 input/models.py:1218 input/models.py:1349
 msgid "Priority among all alternates"
-msgstr "Priorität bei allen Alternativen"
+msgstr "Пріоритет серед усіх замін"
 
 #: input/models.py:279 input/models.py:431 input/models.py:843
 #: input/models.py:930 input/models.py:1051 input/models.py:1221
@@ -3186,13 +3218,13 @@ msgstr "Priorität bei allen Alternativen"
 #: inventoryplanning/templates/inventoryplanning/drp.html:2000
 #: output/views/operation.py:114
 msgid "effective start"
-msgstr "effektiv Start"
+msgstr "дата початку"
 
 #: input/models.py:279 input/models.py:431 input/models.py:843
 #: input/models.py:930 input/models.py:1051 input/models.py:1221
 #: input/models.py:1358
 msgid "Validity start date"
-msgstr "Gültigkeitsbeginn"
+msgstr "Дата початку дії"
 
 #: input/models.py:282 input/models.py:434 input/models.py:846
 #: input/models.py:933 input/models.py:1054 input/models.py:1224
@@ -3204,35 +3236,35 @@ msgstr "Gültigkeitsbeginn"
 #: inventoryplanning/templates/inventoryplanning/drp.html:2001
 #: output/views/operation.py:120
 msgid "effective end"
-msgstr "effektiv Ende"
+msgstr "дата завершення"
 
 #: input/models.py:282 input/models.py:434 input/models.py:846
 #: input/models.py:933 input/models.py:1054 input/models.py:1224
 #: input/models.py:1361
 msgid "Validity end date"
-msgstr "Ende der Geltungsdauer"
+msgstr "Дата закінчення терміну дії"
 
 #: input/models.py:285 input/views.py:2621 input/views.py:2861
 #: input/views.py:3386 input/views.py:3498 input/views.py:3609
 #: input/views.py:4162 input/views.py:6010 input/views.py:6433
 #: output/views/operation.py:86
 msgid "release fence"
-msgstr "Freigabe"
+msgstr "кордон випуску"
 
 #: input/models.py:289
 msgid "Operationplans within this time window from the current day are expected to be released to production ERP"
-msgstr "Operationpläne innerhalb dieses Zeitfensters vom aktuellen Datum werden voraussichtlich für das ERP freigegeben"
+msgstr "Плани роботи протягом цього часового вікна з поточного дня, як очікується, будуть випущені до виробництва ERP"
 
 #: input/models.py:293 input/views.py:2627 input/views.py:2867
 #: input/views.py:3387 input/views.py:3504 input/views.py:3615
 #: input/views.py:4167 input/views.py:6015 input/views.py:6438
 #: output/views/operation.py:89
 msgid "post-op time"
-msgstr "Post-Op-Zeit"
+msgstr "post-op time"
 
 #: input/models.py:297
 msgid "A delay time to be respected as a soft constraint after ending the operation"
-msgstr "Eine Verzögerungszeit nach Operationsende, welche als gewisse  Einschränkung berücksichtigt wird"
+msgstr "Час затримки, який слід сприймати як м'яке обмеження після закінчення операції"
 
 #: input/models.py:301 input/models.py:1181 input/models.py:1312
 #: input/views.py:281 input/views.py:2059 input/views.py:2258
@@ -3242,11 +3274,11 @@ msgstr "Eine Verzögerungszeit nach Operationsende, welche als gewisse  Einschr�
 #: inventoryplanning/templates/inventoryplanning/drp.html:1998
 #: output/views/operation.py:93
 msgid "size minimum"
-msgstr "Mindest Menge"
+msgstr "розмір мінімум"
 
 #: input/models.py:307
 msgid "A minimum quantity for operationplans"
-msgstr "Mindestmenge für Tätigkeitsplan"
+msgstr "Мінімальна кількість операційних планів"
 
 #: input/models.py:310 input/models.py:1190 input/models.py:1321
 #: input/views.py:288 input/views.py:2060 input/views.py:2259
@@ -3256,11 +3288,11 @@ msgstr "Mindestmenge für Tätigkeitsplan"
 #: inventoryplanning/templates/inventoryplanning/drp.html:1999
 #: output/views/operation.py:99
 msgid "size multiple"
-msgstr "Mehrfach Menge"
+msgstr "розмір кратний"
 
 #: input/models.py:315
 msgid "A multiple quantity for operationplans"
-msgstr "Vielfachmenge für Tätigkeitsplan"
+msgstr "Кількість для операційних планів"
 
 #: input/models.py:318 input/models.py:1198 input/models.py:1329
 #: input/views.py:295 input/views.py:2061 input/views.py:2260
@@ -3268,30 +3300,30 @@ msgstr "Vielfachmenge für Tätigkeitsplan"
 #: input/views.py:3522 input/views.py:3633 input/views.py:4182
 #: input/views.py:6030 input/views.py:6453 output/views/operation.py:105
 msgid "size maximum"
-msgstr "Maximal Menge"
+msgstr "розмір максимум"
 
 #: input/models.py:323
 msgid "A maximum quantity for operationplans"
-msgstr "Höchstmenge für Tätigkeitsplan"
+msgstr "Максимальна кількість для операційних планів"
 
 #: input/models.py:331
 msgid "Cost per operationplan unit"
-msgstr "Tätigkeitsplan Kosten pro Einzeltätigkeit"
+msgstr "Вартість за операційним планом"
 
 #: input/models.py:337
 msgid "A fixed duration for the operation"
-msgstr "Feste Laufzeit für Tätigkeit"
+msgstr "Фіксована тривалість операції"
 
 #: input/models.py:340 input/views.py:315 input/views.py:2615
 #: input/views.py:2855 input/views.py:3385 input/views.py:3492
 #: input/views.py:3603 input/views.py:4157 input/views.py:6005
 #: input/views.py:6428 output/views/operation.py:81
 msgid "duration per unit"
-msgstr "Dauer pro Einheit"
+msgstr "тривалість на юнит"
 
 #: input/models.py:343
 msgid "A variable duration for the operation"
-msgstr "Variable Dauer pro Tätigkeit"
+msgstr "Змінна тривалість операції"
 
 #: input/models.py:346 input/models.py:950 input/models.py:1078
 #: input/views.py:2577 input/views.py:2675 input/views.py:2812
@@ -3299,31 +3331,31 @@ msgstr "Variable Dauer pro Tätigkeit"
 #: input/views.py:3663 input/views.py:4207 input/views.py:6055
 #: input/views.py:6478 output/views/operation.py:128
 msgid "search mode"
-msgstr "Suchmodus"
+msgstr "режим пошуку"
 
 #: input/models.py:351 input/models.py:955 input/models.py:1083
 msgid "Method to select preferred alternate"
-msgstr "Methode um bevorzugte Alternative auszuwählen"
+msgstr "Метод вибору бажаного альтернативного"
 
 #: input/models.py:362 input/views.py:3421
 msgid "batching window"
-msgstr ""
+msgstr "пакетне вікно"
 
 #: input/models.py:366
 msgid "The solver algorithm will scan for opportunities to create batches within this time window before and after the requirement date"
-msgstr ""
+msgstr "Алгоритм розв’язування сканує можливості для створення пакетів у цьому часовому вікні до та після дати вимоги"
 
 #: input/models.py:376 input/views.py:3352
 msgid "operations"
-msgstr "Tätigkeiten"
+msgstr "операції"
 
 #: input/models.py:413
 msgid "Parent operation"
-msgstr "Übergeordnete Tätigkeit"
+msgstr "Головна операція"
 
 #: input/models.py:420
 msgid "Sequence of this operation among the suboperations. Negative values are ignored."
-msgstr "Reihenfolge dieses Vorgangest innerhalb der Untervorgänge. Negative Werte ignoriert."
+msgstr "Послідовність цієї операції серед субоперацій. Негативні значення ігноруються."
 
 #: input/models.py:425 input/models.py:460 input/views.py:3444
 #: input/views.py:3572 input/views.py:3578 input/views.py:3584
@@ -3333,15 +3365,15 @@ msgstr "Reihenfolge dieses Vorgangest innerhalb der Untervorgänge. Negative Wer
 #: input/views.py:3645 input/views.py:3651 input/views.py:3657
 #: input/views.py:3663 input/views.py:3670 input/views.py:3676
 msgid "suboperation"
-msgstr "Untervorgang"
+msgstr "подоперація"
 
 #: input/models.py:427
 msgid "Child operation"
-msgstr "Untergeordneter Vorgang"
+msgstr "дитяча операція"
 
 #: input/models.py:461 input/views.py:3427
 msgid "suboperations"
-msgstr "untergeordnete Vorgänge"
+msgstr "подоперації"
 
 #: input/models.py:487 input/models.py:599
 #: inventoryplanning/templates/inventoryplanning/drp.html:1781
@@ -3351,97 +3383,97 @@ msgstr "untergeordnete Vorgänge"
 #: inventoryplanning/templates/inventoryplanning/drp.html:2810
 #: inventoryplanning/templates/inventoryplanning/drp.html:2813
 msgid "default"
-msgstr "Vorgabe"
+msgstr "за замовчуванням"
 
 #: input/models.py:487 input/models.py:604
 msgid "infinite"
-msgstr "unendlich"
+msgstr "нескінченний"
 
 #: input/models.py:532
 msgid "current inventory"
-msgstr "Aktueller Bestand"
+msgstr "поточний запас"
 
 #: input/models.py:535 input/models.py:1993 input/views.py:1621
 msgid "minimum"
-msgstr "Minimum"
+msgstr "мінімум"
 
 #: input/models.py:545 input/views.py:1624
 msgid "minimum calendar"
-msgstr "Kalender Minimum"
+msgstr "мінімум календар"
 
 #: input/models.py:549
 msgid "Calendar storing a time-dependent safety stock profile"
-msgstr "Kalender mit zeitabhängigem Sicherheitsbestand"
+msgstr "Календар, що зберігає залежний від часу запас профілю"
 
 #: input/models.py:552
 msgid "min_interval"
-msgstr "Min Interval"
+msgstr "min_interval"
 
 #: input/models.py:555
 msgid "Batching window for grouping replenishments in batches"
-msgstr "Batching window for grouping replenishments in batches"
+msgstr "Пакетне вікно для групування поповнення по партіях"
 
 #: input/models.py:572
 #: inventoryplanning/templates/inventoryplanning/drp.html:1740
 #: output/views/buffer.py:107
 msgid "buffer"
-msgstr "Puffer"
+msgstr "буфер"
 
 #: input/models.py:573 input/views.py:1586
 msgid "buffers"
-msgstr "Puffer"
+msgstr "буфери"
 
 #: input/models.py:588 input/models.py:686 input/models.py:740
 #: input/views.py:1766 input/views.py:1840
 msgid "setup matrix"
-msgstr "Rüstmatrix"
+msgstr "матриця налаштування"
 
 #: input/models.py:589 input/views.py:1729
 msgid "setup matrices"
-msgstr "Rüstmatrix"
+msgstr "матрици налаштування"
 
 #: input/models.py:626 input/views.py:1820 input/views.py:6703
 #: output/views/resource.py:76
 msgid "constrained"
-msgstr ""
+msgstr "обмежений"
 
 #: input/models.py:630
 msgid "controls whether or not this resource is planned in finite capacity mode"
-msgstr ""
+msgstr "контролює, планується чи ні цей ресурс у режимі обмеженої потужності"
 
 #: input/models.py:634 input/views.py:1821 input/views.py:2721
 #: input/views.py:6709 output/views/resource.py:83
 msgid "maximum"
-msgstr "Maximum"
+msgstr "максимум"
 
 #: input/models.py:640
 msgid "Size of the resource"
-msgstr "Ressourcenverfügbarkeit"
+msgstr "Розмір ресурсу"
 
 #: input/models.py:644 input/views.py:1824 input/views.py:2727
 #: input/views.py:6715 output/views/resource.py:90
 msgid "maximum calendar"
-msgstr "Kalender Minimum"
+msgstr "макс. календар"
 
 #: input/models.py:649
 msgid "Calendar defining the resource size varying over time"
-msgstr "Kalender mit Ressourcenverfügbarkeit"
+msgstr "Календар, що визначає розмір ресурсу, що змінюється з часом"
 
 #: input/models.py:674
 msgid "Cost for using 1 unit of the resource for 1 hour"
-msgstr "Kosten für eine Ressourceneinheit pro Stunde"
+msgstr "Вартість використання 1 одиниці ресурсу за 1 годину"
 
 #: input/models.py:677
 msgid "max early"
-msgstr "frühest"
+msgstr "макс. раніше"
 
 #: input/models.py:681
 msgid "Time window before the ask date where we look for available capacity"
-msgstr "Zeitfenster vor dem Nachfrage Zeitpunkt wo wir verfügbare Kapazität suchen"
+msgstr "Часове вікно до дати запиту, де ми шукаємо доступну потужність"
 
 #: input/models.py:691
 msgid "Setup matrix defining the conversion time and cost"
-msgstr "Rüst Matrix welche Umstellungs Zeit und -Kosten definiert"
+msgstr "Матриця налаштування, що визначає час і вартість перетворення"
 
 #: input/models.py:694 input/models.py:1071 input/models.py:1920
 #: input/views.py:1846 input/views.py:2575 input/views.py:2757
@@ -3450,28 +3482,28 @@ msgstr "Rüst Matrix welche Umstellungs Zeit und -Kosten definiert"
 #: output/templates/output/resource.html:268 output/views/resource.py:122
 #: output/views/resource.py:192
 msgid "setup"
-msgstr "Setup"
+msgstr "налаштування"
 
 #: input/models.py:698
 msgid "Setup of the resource at the start of the plan"
-msgstr "Ressourcen Aufstellung zu Planungsbeginn"
+msgstr "Налаштування ресурсу на початку плану"
 
 #: input/models.py:701 input/views.py:1851
 msgid "efficiency %"
-msgstr ""
+msgstr "ефективність %"
 
 #: input/models.py:706
 msgid "Efficiency percentage of the resource"
-msgstr ""
+msgstr "Відсоток ефективності ресурсу"
 
 #: input/models.py:710 input/views.py:1857
 #, python-format
 msgid "efficiency %% calendar"
-msgstr ""
+msgstr "ефективність %% календар"
 
 #: input/models.py:716
 msgid "Calendar defining the efficiency percentage of the resource varying over time"
-msgstr ""
+msgstr "Календар, що визначає відсоток ефективності ресурсу, який змінюється з часом"
 
 #: input/models.py:726 input/models.py:772 input/models.py:826
 #: input/models.py:1017 input/models.py:1228 input/models.py:1365
@@ -3490,114 +3522,112 @@ msgstr ""
 #: output/models.py:61 output/views/pegging.py:56 output/views/resource.py:39
 #: output/widget.py:1395
 msgid "resource"
-msgstr "Ressource"
+msgstr "ресурс"
 
 #: input/models.py:727 input/views.py:1787 input/views.py:4085
 msgid "resources"
-msgstr "Ressourcen"
+msgstr "ресурси"
 
 #: input/models.py:746 input/views.py:1772
 msgid "from setup"
-msgstr "Von Rüstvorgang"
+msgstr "від налаштування"
 
 #: input/models.py:750
 msgid "Name of the old setup (wildcard characters are supported)"
-msgstr "Name des alten Rüstvorgangs ( wildcard wird unterstützt )"
+msgstr "Назва старої установки (підтримуються символи підстановки)"
 
 #: input/models.py:753 input/views.py:1773
 msgid "to setup"
-msgstr "Nach Rüstvorgang"
+msgstr "налаштувати"
 
 #: input/models.py:757
 msgid "Name of the new setup (wildcard characters are supported)"
-msgstr "Name des neuen Rüstvorganges (wildcard wird unterstützt)"
+msgstr "Назва нової установки (підтримуються символи підстановки)"
 
 #: input/models.py:760
 msgid "Duration of the changeover"
-msgstr "Umrüstzeit"
+msgstr "Тривалість переходу"
 
 #: input/models.py:768
 msgid "Cost of the conversion"
-msgstr "Kosten für Umstellung"
+msgstr "Вартість конверсії"
 
 #: input/models.py:778
 msgid "Extra resource used during this changeover"
-msgstr ""
+msgstr "Додатковий ресурс, який використовується під час цієї зміни"
 
 #: input/models.py:800
 msgid "setup matrix rule"
-msgstr "Rüst-Matrix-Regel"
+msgstr "правило матриці настройки"
 
 #: input/models.py:801
 msgid "setup matrix rules"
-msgstr "Rüst-Matrix-Regeln"
+msgstr "правила матриці настройки"
 
 #: input/models.py:816 input/models.py:835 input/models.py:1026
 #: input/views.py:2508 input/views.py:2557
 msgid "skill"
-msgstr "Fähigkeit"
+msgstr "скiл"
 
 #: input/models.py:817 input/views.py:2465
 msgid "skills"
-msgstr "Fähigkeiten"
+msgstr "скiли"
 
 #: input/models.py:853
 msgid "Priority of this skill in a group of alternates"
-msgstr "Priorität dieser Fähigkeit in einer Gruppe von Alternativen"
+msgstr "Пріоритет цієї навички в групі заміни"
 
 #: input/models.py:868
 msgid "resource skill"
-msgstr "Fähigkeit der Ressource"
+msgstr "ресурсни скiл"
 
 #: input/models.py:869 input/views.py:2485
 msgid "resource skills"
-msgstr "Fähigkeiten der Ressource"
+msgstr "ресурсни скiли"
 
 #: input/models.py:876
 msgid "Start"
-msgstr "Start"
+msgstr "початок"
 
 #: input/models.py:877
 msgid "End"
-msgstr "Ende"
+msgstr "завершення"
 
 #: input/models.py:878
 msgid "Batch transfer"
-msgstr ""
+msgstr "партія передачі"
 
 #: input/models.py:908
 msgid "Quantity to consume or produce per operationplan unit"
-msgstr "Menge, die verbraucht oder produziert wird pro Verfahrensschritt"
+msgstr "Кількість, яку потрібно споживати або виробляти за операційним планом"
 
 #: input/models.py:911 input/views.py:2820
 msgid "fixed quantity"
-msgstr ""
+msgstr "фіксована кількість"
 
 #: input/models.py:916
 msgid "Fixed quantity to consume or produce"
-msgstr ""
+msgstr "Фіксована кількість для споживання або виробництва"
 
 #: input/models.py:926
 msgid "Consume/produce material at the start or the end of the operationplan"
-msgstr "Material, welches verbraucht oder produziert wird am Beginn oder Ende der Tätigkeit"
+msgstr "Споживайте / виробляйте матеріал на початку або в кінці плану роботи"
 
 #: input/models.py:940
 msgid "Optional name of this operation material"
-msgstr "Optionaler Name für dieses Material"
+msgstr "Необов’язкова назва цього операційного матеріалу"
 
 #: input/models.py:947
 msgid "Priority of this operation material in a group of alternates"
-msgstr ""
-"Priorität dieses Zwischenproduktes\n"
-" in einer Gruppe von Alternativen"
+msgstr "Пріоритетність даного операційного матеріалу в групі заміни"
 
 #: input/models.py:958 input/views.py:2817
 msgid "transfer batch quantity"
-msgstr ""
+msgstr "кількість передавальної партії"
 
 #: input/models.py:963
 msgid "Batch size by in which material is produced or consumed"
-msgstr ""
+msgstr "Розмір партії, за допомогою якої виробляється або споживається матеріал"
 
 #: input/models.py:966 input/views.py:2819
 msgid "offset"
@@ -3609,355 +3639,356 @@ msgstr ""
 
 #: input/models.py:999
 msgid "operation material"
-msgstr "Zwischenprodukt"
+msgstr "матеріал операції"
 
 #: input/models.py:1000 input/views.py:2772
 msgid "operation materials"
-msgstr "Zwischenprodukte"
+msgstr "матеріали операції"
 
 #: input/models.py:1038
 msgid "Required quantity of the resource"
-msgstr ""
+msgstr "Необхідна кількість ресурсу"
 
 #: input/models.py:1041 input/views.py:2565
 msgid "quantity fixed"
-msgstr ""
+msgstr "кількість фіксована"
 
 #: input/models.py:1047
 msgid "constant part of the capacity consumption (bucketized resources only)"
-msgstr ""
+msgstr "постійна частина споживання потужностей (лише зат. ресурси)"
 
 #: input/models.py:1061
 msgid "Optional name of this load"
-msgstr "Optionaler Name dieser Leistung"
+msgstr "Необов’язкова назва цього навантаження"
 
 #: input/models.py:1068
 msgid "Priority of this load in a group of alternates"
-msgstr "Priorität dieser Leistung in einer Gruppe von Alternativen"
+msgstr "Пріоритет цього навантаження в групі заміни"
 
 #: input/models.py:1075
 msgid "Setup required on the resource for this operation"
-msgstr "Ressourcen Aufstellung für diese Tätigkeit"
+msgstr "На ресурсі необхідна установка для цієї операції"
 
 #: input/models.py:1113
 msgid "operation resource"
-msgstr "Tätigkeits Ressource"
+msgstr "ресурс операції"
 
 #: input/models.py:1114 input/views.py:2526
 msgid "operation resources"
-msgstr "Tätigkeits Ressourcen"
+msgstr "ресурси операції"
 
 #: input/models.py:1143 input/views.py:1983
 msgid "suppliers"
-msgstr "Lieferanten"
+msgstr "постачальників"
 
 #: input/models.py:1178 input/models.py:1309 input/views.py:2058
 #: input/views.py:2257 inventoryplanning/models.py:378
 #: inventoryplanning/templates/inventoryplanning/drp.html:1996
 #: inventoryplanning/views.py:474
 msgid "lead time"
-msgstr "Vorlaufzeit"
+msgstr "тривалість циклу"
 
 #: input/models.py:1178
 msgid "Purchasing lead time"
-msgstr "Vorlaufzeit für Einkauf"
+msgstr "Придбання часу проведення"
 
 #: input/models.py:1187
 msgid "A minimum purchasing quantity"
-msgstr "Mindestmenge Einkauf"
+msgstr "Мінімальна кількість закупівлі"
 
 #: input/models.py:1195
 msgid "A multiple purchasing quantity"
-msgstr "Vielfachmenge Einkauf"
+msgstr "Кілька придбаних кількостей"
 
 #: input/models.py:1203
 msgid "A maximum purchasing quantity"
-msgstr ""
+msgstr "Максимальна кількість закупівлі"
 
 #: input/models.py:1211
 msgid "Purchasing cost per unit"
-msgstr "Einkaufskosten per Einheit"
+msgstr "Вартість придбання за одиницю"
 
 #: input/models.py:1234
 msgid "Resource to model the supplier capacity"
-msgstr "Ressource, um die Kapazität des Lieferanten zu modellieren"
+msgstr "Ресурс для моделювання потужностей постачальника"
 
 #: input/models.py:1237 input/models.py:1374 input/views.py:2080
 #: input/views.py:2282
 msgid "resource quantity"
-msgstr "Ressource Menge"
+msgstr "кількість ресурсів"
 
 #: input/models.py:1243
 msgid "Resource capacity consumed per purchased unit"
-msgstr "Verbrauchte Ressourcenkapazität pro Einkaufs Einheit"
+msgstr "Ємність ресурсу, спожита на придбану одиницю"
 
 #: input/models.py:1246 input/models.py:1383 input/views.py:2064
 #: input/views.py:2266
 msgid "fence"
-msgstr "Horizont"
+msgstr "кордон"
 
 #: input/models.py:1249
 msgid "Frozen fence for creating new procurements"
-msgstr "Fixierungshorizont für neue Beschaffungen"
+msgstr "кордон замороженого періоду для створення нових замовлень"
 
 #: input/models.py:1276
 msgid "item supplier"
-msgstr "Artikellieferant"
+msgstr "постачальник товару"
 
 #: input/models.py:1277 input/views.py:2022
 msgid "item suppliers"
-msgstr "Artikel Lieferanten"
+msgstr "постачальники товарів"
 
 #: input/models.py:1318
 msgid "A minimum shipping quantity"
-msgstr "Mindestversandmenge"
+msgstr "Мінімальна кількість доставки"
 
 #: input/models.py:1326
 msgid "A multiple shipping quantity"
-msgstr "Versand Vielfachmenge"
+msgstr "Кількість доставки кілька разів"
 
 #: input/models.py:1334
 msgid "A maximum shipping quantity"
-msgstr ""
+msgstr "Максимальна кількість доставки"
 
 #: input/models.py:1342
 msgid "Shipping cost per unit"
-msgstr "Versandkosten pro Stück"
+msgstr "Вартість доставки за одиницю"
 
 #: input/models.py:1352 input/views.py:2264
 msgid "push priority"
-msgstr ""
+msgstr "push пріоритет"
 
 #: input/models.py:1355
 msgid "Priority for the push mode"
-msgstr ""
+msgstr "Пріоритет для режиму push"
 
 #: input/models.py:1371
 msgid "Resource to model the distribution capacity"
-msgstr "Ressource um Versand Kapazität zu modellieren"
+msgstr "Ресурс для моделювання ємності розподілу"
 
 #: input/models.py:1380
 msgid "Resource capacity consumed per distributed unit"
-msgstr "Verbrauchte Ressourcenkapazität pro Versand Einheit"
+msgstr "Ємність ресурсу, спожита на розподілену одиницю"
 
 #: input/models.py:1386
 msgid "Frozen fence for creating new shipments"
-msgstr "Fixierungshorizont für neue Versandmengen"
+msgstr "Заморожений період для створення нових поставок"
 
 #: input/models.py:1413
 msgid "item distribution"
-msgstr "Versandartikel"
+msgstr "позиция распределения"
 
 #: input/models.py:1414 input/views.py:2221
 msgid "item distributions"
-msgstr "Versandartikel"
+msgstr "розподіл товару"
 
 #: input/models.py:1420 input/views.py:3254
 msgid "inquiry"
-msgstr "Anfrage"
+msgstr "запит"
 
 #: input/models.py:1421 input/views.py:3260
 msgid "quote"
-msgstr "notierung"
+msgstr "квота"
 
 #: input/models.py:1422 input/views.py:3265
 msgid "open"
-msgstr "offen"
+msgstr "відчинено"
 
 #: input/models.py:1423 input/models.py:1545 input/models.py:1890
 #: input/models.py:1961 input/views.py:3271 input/views.py:4388
 #: input/views.py:4890 input/views.py:5411
 #: inventoryplanning/templates/inventoryplanning/drp.html:2456
 msgid "closed"
-msgstr "abgeschlossen"
+msgstr "зачинено"
 
 #: input/models.py:1447
 msgid "Due date of the demand"
-msgstr "Fälligkeitstermin Bedarfsnachfrage"
+msgstr "термін виконання попиту"
 
 #: input/models.py:1456
 msgid "Status of the demand. Only \"open\" demands are planned"
-msgstr "Status Bedarfsnachfrage. Nur offene Bestellungen werden eingeplant"
+msgstr "Статус попиту. Плануються лише \"відкриті\" вимоги"
 
 #: input/models.py:1497 input/models.py:1623
 msgid "MTO batch name"
-msgstr ""
+msgstr "назва партії MTO"
 
 #: input/models.py:1499 input/models.py:1597 input/views.py:3054
 #: input/views.py:4059 input/views.py:4655 input/views.py:5186
 #: input/views.py:5499 input/views.py:6125 input/views.py:6536
 #: output/widget.py:80
 msgid "delay"
-msgstr "Verzögerung"
+msgstr "затримка"
 
 #: input/models.py:1507
 msgid "Quantity planned for delivery"
-msgstr "Geplante Aufträge"
+msgstr "Кількість, запланована до доставки"
 
 #: input/models.py:1511
 msgid "Delivery date of the demand"
-msgstr "Fälligkeitstermin Bedarfsnachfrage"
+msgstr "Дата доставки попиту"
 
 #: input/models.py:1524
 msgid "sales order"
-msgstr "Verkaufsauftrag"
+msgstr "Замовлення клієнта"
 
 #: input/models.py:1533 input/models.py:2285
 msgid "manufacturing order"
-msgstr "Produktionsauftrag"
+msgstr "замовлення в виробництво"
 
 #: input/models.py:1534 input/models.py:2116
 msgid "purchase order"
-msgstr "Bestellung"
+msgstr "замовлення на придбання"
 
 #: input/models.py:1535 input/models.py:2073
 msgid "distribution order"
-msgstr "Lieferauftrag"
+msgstr "замовлення розподілу"
 
 #: input/models.py:1536 input/models.py:2330
 msgid "delivery order"
-msgstr ""
+msgstr "замовлення на поставку"
 
 #: input/models.py:1541 input/models.py:1888 input/models.py:1959
 #: input/views.py:4360 input/views.py:4862 input/views.py:5383
 #: inventoryplanning/templates/inventoryplanning/drp.html:2454
 msgid "proposed"
-msgstr "vorgeschlagen"
+msgstr "запропоновано"
 
 #: input/models.py:1542 input/views.py:4367 input/views.py:4869
 #: input/views.py:5390
 #: inventoryplanning/templates/inventoryplanning/drp.html:2453
 msgid "approved"
-msgstr "genehmigt"
+msgstr "затверджено"
 
 #: input/models.py:1543 input/models.py:1889 input/models.py:1960
 #: input/views.py:4374 input/views.py:4876 input/views.py:5397
 #: inventoryplanning/templates/inventoryplanning/drp.html:2455
 msgid "confirmed"
-msgstr "bestätigt"
+msgstr "підтверджено"
 
 #: input/models.py:1544 input/views.py:4381 input/views.py:4883
 #: input/views.py:5404
 msgid "completed"
-msgstr ""
+msgstr "виконано"
 
 #: input/models.py:1562
 msgid "Status of the order"
-msgstr "Bestellstatus"
+msgstr "Статус замовлення"
 
 #: input/models.py:1569
 msgid "Order type"
-msgstr "Auftragstyp"
+msgstr "Тип замовлення"
 
 #: input/models.py:1576 inventoryplanning/models.py:409
 msgid "color"
-msgstr "Farbe"
+msgstr "колір"
 
 #: input/models.py:1590 input/views.py:4052 input/views.py:4648
 #: input/views.py:5179 input/views.py:6118 input/views.py:6530
 #: output/widget.py:1223 output/widget.py:1280 output/widget.py:1338
 #: output/widget.py:1400
 msgid "criticality"
-msgstr "kritisch"
+msgstr "критичність"
 
 #: input/models.py:1681
 msgid "Due date of the demand/forecast"
-msgstr "Fälligkeitstermin Bedarf/Prognose"
+msgstr "термін виконання попиту / погашення прогнозу"
 
 #: input/models.py:1880
 msgid "operationplan"
-msgstr "Tätigkeitsplan"
+msgstr "план операцій"
 
 #: input/models.py:1881
 msgid "operationplans"
-msgstr "Tätigkeitspläne"
+msgstr "плану операцій"
 
 #: input/models.py:1922
 msgid "load status"
-msgstr ""
+msgstr "стан завантаження"
 
 #: input/models.py:1927
 msgid "Status of the resource assignment"
-msgstr ""
+msgstr "Статус призначення ресурсу"
 
 #: input/models.py:1952 input/models.py:1953 input/views.py:6270
 msgid "resource detail"
-msgstr ""
+msgstr "детально ресурси"
 
 #: input/models.py:1996 input/views.py:6088 inventoryplanning/models.py:35
 #: inventoryplanning/templates/inventoryplanning/drp.html:2709
 #: inventoryplanning/templates/inventoryplanning/drp.html:2760
 msgid "period of cover"
-msgstr "Deckungszeitraum"
+msgstr "період покриття"
 
 #: input/models.py:1999 input/views.py:6261
 msgid "material status"
-msgstr ""
+msgstr "матеріальний стан"
 
 #: input/models.py:2004
 msgid "status of the material production or consumption"
-msgstr ""
+msgstr "статус матеріального виробництва або споживання"
 
 #: input/models.py:2038 input/views.py:4613
 msgid "shipping date"
-msgstr ""
+msgstr "дата відправлення"
 
 #: input/models.py:2041 input/models.py:2083 input/views.py:4618
 #: input/views.py:5148
 msgid "receipt date"
-msgstr ""
+msgstr "дата отримання"
 
 #: input/models.py:2074 input/views.py:4410 input/views.py:4461
 #: inventoryplanning/templates/inventoryplanning/drp.html:2021
 #: output/widget.py:510
 msgid "distribution orders"
-msgstr "Lieferaufträge"
+msgstr "замовлення розподілу"
 
 #: input/models.py:2080 input/views.py:5143
 msgid "ordering date"
-msgstr ""
+msgstr "дата замовлення"
 
 #: input/models.py:2331 input/views.py:5436 input/views.py:5786
 msgid "delivery orders"
-msgstr "Lieferungen"
+msgstr "замовлення на доставку"
 
 #: input/templates/input/path.html:253
 msgid "Too many objects to display"
-msgstr "Wie viele Einträge zum Anzeigen"
+msgstr "Забагато об'єктів для відображення"
 
 #: input/views.py:106 input/views.py:143 input/views.py:192
 #, python-format
 msgid "%(name)s - %(count)d match"
 msgid_plural "%(name)s - %(count)d matches"
-msgstr[0] "%(name)s - %(count)d match"
-msgstr[1] "%(name)s - %(count)d matches"
+msgstr[0] "%(name)s - %(count)d відповідність"
+msgstr[1] "%(name)s - %(count)d відповідність"
+msgstr[2] "%(name)s - %(count)d відповідність"
 
 #: input/views.py:147 inventoryplanning/views.py:419
 msgid "Inventory planning"
-msgstr "Bestandsplanung und -management"
+msgstr "планування запасів"
 
 #: input/views.py:253 output/views/pegging.py:39
 msgid "depth"
-msgstr "Tiefe"
+msgstr "рівень"
 
 #: input/views.py:1749
 msgid "setup rules"
-msgstr "Rüst-Matrix-Regeln"
+msgstr "правила налаштування"
 
 #: input/views.py:1837 input/views.py:2742 input/views.py:6730
 #: output/views/resource.py:106
 msgid "maxearly"
-msgstr "maxearly"
+msgstr "макс.ран"
 
 #: input/views.py:2748 input/views.py:6736 output/views/resource.py:113
 msgid "setupmatrix"
-msgstr "Rüst Matrix"
+msgstr "матриця переналадок"
 
 #: input/views.py:3064
 #, fuzzy
 #| msgid "Quantity planned for delivery"
 msgid "quantity planned short"
-msgstr "Geplante Aufträge"
+msgstr "Кількість, запланована до доставки"
 
 #: input/views.py:3254 input/views.py:3260 input/views.py:3265
 #: input/views.py:3271 input/views.py:3278 input/views.py:4360
@@ -3968,22 +3999,22 @@ msgstr "Geplante Aufträge"
 #: input/views.py:5404 input/views.py:5411
 #, python-brace-format
 msgid "change status to {status}"
-msgstr "Statusänderung nach {status}"
+msgstr "змінити статус на {status}"
 
 #: input/views.py:3805
 #, python-format
 msgid "work in progress in %(loc)s at %(date)s"
-msgstr ""
+msgstr "в роботі %(loc)s на %(date)s"
 
 #: input/views.py:3815
 #, python-format
 msgid "produced in %(loc)s between %(date1)s and %(date2)s"
-msgstr ""
+msgstr "виробляється %(loc)s мiж %(date1)s та %(date2)s"
 
 #: input/views.py:3825
 #, python-format
 msgid "consumed in %(loc)s between %(date1)s and %(date2)s"
-msgstr ""
+msgstr "споживається в %(loc)s мiж %(date1)s та %(date2)s"
 
 #: input/views.py:3986 input/views.py:4583 input/views.py:5113
 #: input/views.py:5954 input/views.py:6370
@@ -3991,111 +4022,111 @@ msgstr ""
 #: inventoryplanning/views.py:466 inventoryplanning/widget.py:24
 #: output/widget.py:1455
 msgid "inventory status"
-msgstr "Bestandsstatus"
+msgstr "статус запасу"
 
 #: input/views.py:4033 input/views.py:6511
 msgid "net duration"
-msgstr ""
+msgstr "чиста тривалість"
 
 #: input/views.py:4066 input/views.py:4662 input/views.py:5193
 #: input/views.py:6146 input/views.py:6542
 msgid "demands"
-msgstr "Bedarf"
+msgstr "попити"
 
 #: input/views.py:4075
 msgid "materials"
-msgstr "Materialen"
+msgstr "матеріали"
 
 #: input/views.py:4095
 msgid "setups"
-msgstr ""
+msgstr "налаштування"
 
 #: input/views.py:4113 input/views.py:4671 input/views.py:5202
 msgid "inventory item"
-msgstr "Bestand nach Artikel"
+msgstr "Товар запасу"
 
 #: input/views.py:4121 input/views.py:4679 input/views.py:5210
 msgid "inventory location"
-msgstr "Bestand nach Standort"
+msgstr "запаси за місцем"
 
 #: input/views.py:4223
 msgid "setup time"
-msgstr "Rüstmatrix"
+msgstr "час налаштування"
 
 #: input/views.py:4230 input/views.py:6563
 msgid "setup end date"
-msgstr ""
+msgstr "дата завершення налаштування"
 
 #: input/views.py:4237 input/views.py:4689 input/views.py:5219
 #: input/views.py:6155 input/views.py:6576
 msgid "feasible"
-msgstr ""
+msgstr "здійсненний"
 
 #: input/views.py:4337 input/views.py:4838 input/views.py:5360
 msgid "end items"
-msgstr ""
+msgstr "кінцеві елементи"
 
 #: input/views.py:4432
 #, python-format
 msgid "in transit in %(loc)s at %(date)s"
-msgstr ""
+msgstr "в дорозі %(loc)s на %(date)s"
 
 #: input/views.py:4442
 #, python-format
 msgid "received in %(loc)s between %(date1)s and %(date2)s"
-msgstr ""
+msgstr "отримано у %(loc)s мiж %(date1)s та %(date2)s"
 
 #: input/views.py:4452
 #, python-format
 msgid "shipped to %(loc)s between %(date1)s and %(date2)s"
-msgstr ""
+msgstr "відправляється до %(loc)s між %(date1)s та %(date2)s"
 
 #: input/views.py:4640 input/views.py:5171
 msgid "total cost"
-msgstr "Gesamtkosten"
+msgstr "Загальна вартість"
 
 #: input/views.py:4962
 #, python-format
 msgid "on order in %(loc)s at %(date)s"
-msgstr ""
+msgstr "на замовлення у %(loc)s у %(date)s"
 
 #: input/views.py:4972
 #, python-format
 msgid "on order in %(loc)s between %(date1)s and %(date2)s"
-msgstr ""
+msgstr "на замовлення у %(loc)s між %(date1)s та %(date2)s"
 
 #: input/views.py:5482
 msgid "demand quantity"
-msgstr "Bedarfsmenge"
+msgstr "кількість попиту"
 
 #: input/views.py:5778
 #, python-format
 msgid "delivered from %(loc)s between %(date1)s and %(date2)s"
-msgstr ""
+msgstr "доставляється від %(loc)s між %(date1)s та %(date2)s"
 
 #: input/views.py:5819
 msgid "Inventory detail"
-msgstr ""
+msgstr "Запаси детально"
 
 #: input/views.py:6082
 msgid "expected onhand"
-msgstr ""
+msgstr "очікується на руках"
 
 #: input/views.py:6131
 msgid "operationplan quantity"
-msgstr "Tätigkeitsplan Mengen"
+msgstr "кількість в плані операцій"
 
 #: input/views.py:6137 input/views.py:6811
 msgid "inventory_item"
-msgstr "Bestand nach Artikel"
+msgstr "inventory_item"
 
 #: input/views.py:6557
 msgid "load quantity"
-msgstr "Lastmenge"
+msgstr "кількість завантаження"
 
 #: input/views.py:6569
 msgid "setup duration"
-msgstr ""
+msgstr "тривалість установки"
 
 #: inventoryplanning/admin.py:33 inventoryplanning/models.py:393
 #: inventoryplanning/templates/inventoryplanning/drp.html:225
@@ -4104,122 +4135,122 @@ msgstr ""
 #: inventoryplanning/templates/inventoryplanning/drp.html:2729
 #: inventoryplanning/views.py:503
 msgid "reorder quantity"
-msgstr "Nachbestellung"
+msgstr "кількість замовлення ROQ"
 
 #: inventoryplanning/admin.py:42
 msgid "Safety stock quantity"
-msgstr "Sicherheitsbestand"
+msgstr "страховий запас"
 
 #: inventoryplanning/attributes.py:17
 msgid "Successor part"
-msgstr ""
+msgstr "преемник"
 
 #: inventoryplanning/commands.py:686
 msgid "Compute inventory parameters"
-msgstr "Bestandsparameter berechnen"
+msgstr "Оптимальні параметри запасів"
 
 #: inventoryplanning/commands.py:1295
 msgid "Generate inventory rebalancing requests"
-msgstr "Ausgewogenen Nachfragebestand generieren"
+msgstr "Створення запитів на повторну балансування запасів"
 
 #: inventoryplanning/models.py:24
 #: inventoryplanning/templates/inventoryplanning/drp.html:2570
 msgctxt "forecast method"
 msgid "Automatic"
-msgstr "Automatisch"
+msgstr "Автоматичний"
 
 #: inventoryplanning/models.py:25
 msgctxt "forecast method"
 msgid "Normal"
-msgstr "Normal"
+msgstr "Нормальний"
 
 #: inventoryplanning/models.py:26
 msgctxt "forecast method"
 msgid "Poisson"
-msgstr "POISSON"
+msgstr "Пуассон"
 
 #: inventoryplanning/models.py:27
 msgctxt "forecast method"
 msgid "Negative Binomial"
-msgstr "Negativ Binomialverteilt"
+msgstr "Негативний двочлен"
 
 #: inventoryplanning/models.py:33
 msgid "calculated"
-msgstr "berechnet"
+msgstr "розраховано"
 
 #: inventoryplanning/models.py:55 inventoryplanning/models.py:114
 #: inventoryplanning/views.py:208 inventoryplanning/views.py:249
 msgid "ROQ minimum quantity"
-msgstr "ROQ Mindestmenge"
+msgstr "Мінімальна кількість ROQ"
 
 #: inventoryplanning/models.py:62 inventoryplanning/models.py:121
 #: inventoryplanning/views.py:213 inventoryplanning/views.py:255
 msgid "ROQ maximum quantity"
-msgstr "ROQ Höchstmenge"
+msgstr "Максимальна кількість ROQ"
 
 #: inventoryplanning/models.py:69 inventoryplanning/models.py:128
 #: inventoryplanning/views.py:216 inventoryplanning/views.py:262
 msgid "ROQ minimum period of cover"
-msgstr "ROQ Mindestmenge im Deckungszeitraum"
+msgstr "Мінімальний термін покриття ROQ"
 
 #: inventoryplanning/models.py:72 inventoryplanning/models.py:133
 #: inventoryplanning/views.py:217 inventoryplanning/views.py:269
 msgid "ROQ maximum period of cover"
-msgstr "ROQ Höchstmenge im Deckungszeitraum"
+msgstr "Максимальний термін покриття ROQ"
 
 #: inventoryplanning/models.py:75 inventoryplanning/views.py:239
 msgid "lead time deviation"
-msgstr "Vorbereitungs-und Anlaufzeit Abweichung"
+msgstr "відхилення тривалості циклу"
 
 #: inventoryplanning/models.py:78 inventoryplanning/views.py:242
 msgid "demand deviation"
-msgstr "Nachfrage-Abweichung"
+msgstr "відхилення попиту"
 
 #: inventoryplanning/models.py:81 inventoryplanning/models.py:138
 #: inventoryplanning/templates/inventoryplanning/drp.html:2664
 #: inventoryplanning/views.py:236 inventoryplanning/views.py:305
 msgid "service level"
-msgstr "Service-Level"
+msgstr "рівень обслуговування"
 
 #: inventoryplanning/models.py:84 inventoryplanning/models.py:145
 #: inventoryplanning/views.py:220 inventoryplanning/views.py:276
 msgid "safety stock minimum quantity"
-msgstr "minimaler Sicherheitsbestand"
+msgstr "мінімальна кількість страх. запасу"
 
 #: inventoryplanning/models.py:91 inventoryplanning/models.py:152
 #: inventoryplanning/views.py:225 inventoryplanning/views.py:284
 msgid "safety stock maximum quantity"
-msgstr "maximale Sicherheitsbestand"
+msgstr "максимальна кількість страх. запасів"
 
 #: inventoryplanning/models.py:98 inventoryplanning/models.py:159
 #: inventoryplanning/views.py:229 inventoryplanning/views.py:292
 msgid "safety stock minimum period of cover"
-msgstr "minimaler Sicherheitsbestand im Deckungszeitraum"
+msgstr "мінімальний термін дії страх. запасу"
 
 #: inventoryplanning/models.py:101 inventoryplanning/models.py:164
 #: inventoryplanning/views.py:232 inventoryplanning/views.py:299
 msgid "safety stock maximum period of cover"
-msgstr "maximaler Sicherheitsbestand im Deckungszeitraum"
+msgstr "максимальний строк безпеки запасу"
 
 #: inventoryplanning/models.py:104 inventoryplanning/models.py:169
 #: inventoryplanning/models.py:303 inventoryplanning/views.py:245
 #: inventoryplanning/views.py:311
 msgid "Do not stock"
-msgstr "Nicht auf Lager"
+msgstr "без запасу"
 
 #: inventoryplanning/models.py:106 inventoryplanning/models.py:171
 msgid "Enforces a safety stock of 0 and a reorder quantity of 1"
-msgstr "Erzwingt einen Sicherheitsbestand von 0 und einer Bestellmenge von 1"
+msgstr "для страхового запасу встановити 0, для перезаказа 1"
 
 #: inventoryplanning/models.py:109 inventoryplanning/models.py:174
 #: inventoryplanning/models.py:304 inventoryplanning/views.py:246
 #: inventoryplanning/views.py:316
 msgid "Push mode"
-msgstr ""
+msgstr "Push-режим"
 
 #: inventoryplanning/models.py:111 inventoryplanning/models.py:176
 msgid "Activate stock push mode which moves all inventory downstream"
-msgstr ""
+msgstr "Активуйте режим штовхання запасів, який переміщує весь інвентар за течією"
 
 #: inventoryplanning/models.py:114 inventoryplanning/models.py:121
 #: inventoryplanning/models.py:128 inventoryplanning/models.py:133
@@ -4234,19 +4265,19 @@ msgstr ""
 #: inventoryplanning/views.py:299 inventoryplanning/views.py:305
 #: inventoryplanning/views.py:311 inventoryplanning/views.py:316
 msgid "segment"
-msgstr "Segment"
+msgstr "сегмент"
 
 #: inventoryplanning/models.py:191
 msgid "inventory policy"
-msgstr ""
+msgstr "політика запасу"
 
 #: inventoryplanning/models.py:192 inventoryplanning/views.py:177
 msgid "inventory policies"
-msgstr ""
+msgstr "політики запасів"
 
 #: inventoryplanning/models.py:209 inventoryplanning/views.py:122
 msgid "query"
-msgstr "Anfrage"
+msgstr "запит"
 
 #: inventoryplanning/models.py:211
 msgid "sku_count"
@@ -4254,145 +4285,145 @@ msgstr "sku_count"
 
 #: inventoryplanning/models.py:214
 msgid "Number of sku in the segment"
-msgstr "Anzahl der Sku im segment"
+msgstr "Кількість SKU в сегменті"
 
 #: inventoryplanning/models.py:294
 msgid "ROQ Minimum Quantity"
-msgstr "ROQ Mindestmenge"
+msgstr "Мінімальна кількість ROQ"
 
 #: inventoryplanning/models.py:295
 msgid "ROQ Maximum Quantity"
-msgstr "ROQ Höchstmenge"
+msgstr "ROQ Максимальна кількість"
 
 #: inventoryplanning/models.py:296
 msgid "ROQ Minimum Period of Cover (days)"
-msgstr ""
+msgstr "Мінімальний період покриття ROQ (дні)"
 
 #: inventoryplanning/models.py:297
 msgid "ROQ Maximum Period of Cover (days)"
-msgstr ""
+msgstr "ROQ Максимальний період покриття (дні)"
 
 #: inventoryplanning/models.py:298
 msgid "Service Level"
-msgstr "Service-Level"
+msgstr "рівень обслуговування"
 
 #: inventoryplanning/models.py:299
 msgid "Safety Stock Minimum Quantity"
-msgstr "Minimaler Sicherheitsbestand"
+msgstr "мінімальна кількість страх. запасу"
 
 #: inventoryplanning/models.py:300
 msgid "Safety Stock Maximum Quantity"
-msgstr "Maximaler Sicherheitsbestand"
+msgstr "Максимальна кількість страх. запасів"
 
 #: inventoryplanning/models.py:301
 msgid "Safety Stock Minimum Period of Cover (days)"
-msgstr ""
+msgstr "Мінімальний термін дії страх. запасу мінімальний період (дні)"
 
 #: inventoryplanning/models.py:302
 msgid "Safety Stock Maximum Period of Cover (days)"
-msgstr ""
+msgstr "Страховий запас Максимальний період покриття (дні)"
 
 #: inventoryplanning/models.py:310
 msgid "Business Rule"
-msgstr "Geschäftsregel"
+msgstr "бізнес-правило"
 
 #: inventoryplanning/models.py:380
 msgid "calculated reorder quantity"
-msgstr "berechnete Nachbestellmenge"
+msgstr "розрахункова кількість замовлення ROQ"
 
 #: inventoryplanning/models.py:383
 msgid "calculated safety stock"
-msgstr "berechneter Sicherheitsbestand"
+msgstr "розрахований страховой запас"
 
 #: inventoryplanning/models.py:396
 msgid "safety stock value"
-msgstr "Sicherheitsbestand"
+msgstr "вартість страх.запасів"
 
 #: inventoryplanning/models.py:399
 msgid "reorder quantity value"
-msgstr "Nachbestellung"
+msgstr "перередагувати величину кількості (ROQ)"
 
 #: inventoryplanning/models.py:411
 #: inventoryplanning/templates/inventoryplanning/drp.html:2023
 #: inventoryplanning/views.py:513
 msgid "overdue sales orders"
-msgstr "überfällige Kundenaufträge"
+msgstr "прострочені замовлення на продаж"
 
 #: inventoryplanning/models.py:414 inventoryplanning/views.py:518
 msgid "open sales orders"
-msgstr "Offene Aufträge"
+msgstr "відкриті замовлення на продаж"
 
 #: inventoryplanning/models.py:417 inventoryplanning/views.py:533
 msgid "proposed purchases"
-msgstr "geplante Käufe"
+msgstr "запропоновані покупки"
 
 #: inventoryplanning/models.py:420 inventoryplanning/views.py:538
 msgid "proposed transfers"
-msgstr "geplante Übertragungen"
+msgstr "запропоновані трансфери"
 
 #: inventoryplanning/models.py:423 inventoryplanning/views.py:523
 msgid "open purchases"
-msgstr "Offene Aufträge"
+msgstr "відкриті покупки"
 
 #: inventoryplanning/models.py:426 inventoryplanning/views.py:528
 msgid "open transfers"
-msgstr "offene Transfers"
+msgstr "відкриті трансфери"
 
 #: inventoryplanning/models.py:429
 msgid "onhand value"
-msgstr "vorhanden"
+msgstr "цінна вартість"
 
 #: inventoryplanning/models.py:432
 msgid "overdue sales orders value"
-msgstr "überfällige Kundenaufträge Wert"
+msgstr "прострочена вартість замовлень з продажу"
 
 #: inventoryplanning/models.py:435
 msgid "open sales orders value"
-msgstr "offenen Aufträge Wert"
+msgstr "вартість відкритих замовлень на продаж"
 
 #: inventoryplanning/models.py:438
 msgid "proposed purchases value"
-msgstr "geplante Käufe Wert"
+msgstr "пропонована вартість покупок"
 
 #: inventoryplanning/models.py:441
 msgid "proposed transfers value"
-msgstr "geplante Übertragungen Wert"
+msgstr "запропоноване значення переказів"
 
 #: inventoryplanning/models.py:444
 msgid "open purchases value"
-msgstr "offene Einkäufe Wert"
+msgstr "вартість відкритих закупівель"
 
 #: inventoryplanning/models.py:447
 msgid "open transfers value"
-msgstr "offene Transfers Wert"
+msgstr "вартість відкритих переказів"
 
 #: inventoryplanning/models.py:450 inventoryplanning/views.py:488
 msgid "local forecast"
-msgstr "Vorschau"
+msgstr "локальний прогноз"
 
 #: inventoryplanning/models.py:453
 #: inventoryplanning/templates/inventoryplanning/drp.html:232
 #: inventoryplanning/views.py:493
 msgid "dependent demand"
-msgstr "Sekundärbedarf"
+msgstr "залежний попит"
 
 #: inventoryplanning/models.py:459
 msgid "local forecast value"
-msgstr "Vorschau Wert"
+msgstr "вартість локального попиту"
 
 #: inventoryplanning/models.py:462
 msgid "dependent demand value"
-msgstr "Sekundärbedarf Wert"
+msgstr "залежне значення попиту"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:226
 #: inventoryplanning/templates/inventoryplanning/drp.html:1353
 msgid "reorder quantity override"
-msgstr "Nachbestellung überschreiten"
+msgstr "переоформити ROQ"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:228
 #: inventoryplanning/templates/inventoryplanning/drp.html:1357
 msgid "safety stock override"
-msgstr "Sicherheitsbestand überschreiten"
+msgstr "перевизначення страх. запасів"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:229
 #: inventoryplanning/templates/inventoryplanning/drp.html:1359
@@ -4400,109 +4431,109 @@ msgstr "Sicherheitsbestand überschreiten"
 #: output/templates/output/buffer.html:164
 #: output/templates/output/buffer.html:284 output/views/buffer.py:235
 msgid "start inventory"
-msgstr "Anfangsbestand"
+msgstr "початковий запас"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:230
 #: output/templates/output/buffer.html:162 output/views/buffer.py:236
 msgid "start inventory days of cover"
-msgstr ""
+msgstr "початковий запас для покриття в днях"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:231
 msgid "local demand"
-msgstr "lokale Nachfrage"
+msgstr "локальний попит"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:234
 msgid "confirmed supply"
-msgstr "bestätigte Lieferung"
+msgstr "підтверджені поставки"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:235
 msgid "proposed supply"
-msgstr "vorgeschlagene Lieferung"
+msgstr "запропоновані поставки"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:237
 #: inventoryplanning/templates/inventoryplanning/drp.html:1361
 #: output/templates/output/buffer.html:187
 #: output/templates/output/buffer.html:296 output/views/buffer.py:253
 msgid "end inventory"
-msgstr "Endbestand"
+msgstr "кінцевий запас"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:272
 msgid "Unsaved changes"
-msgstr "Ungespeicherte Änderungen"
+msgstr "Незбережені зміни"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:275
 msgid "Do you want to save your changes first?"
-msgstr "Möchten Sie Ihre Änderungen speichern?"
+msgstr "Ви хочете спочатку зберегти свої зміни?"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:317
 #: inventoryplanning/templates/inventoryplanning/drp.html:885
 msgid "Error retrieving data"
-msgstr "Fehler beim Laden der Daten"
+msgstr "Помилка отримання даних"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:1430
 #: output/templates/output/buffer.html:292
 msgid "produced"
-msgstr "produziert"
+msgstr "виробляється"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:1431
 #: output/templates/output/buffer.html:287
 msgid "consumed"
-msgstr "verbraucht"
+msgstr "споживається"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2030
 msgid "superseded"
-msgstr ""
+msgstr "витіснили"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2054
 #: inventoryplanning/templates/inventoryplanning/drp.html:2055
 #: inventoryplanning/templates/inventoryplanning/drp.html:2056
 #, python-format
 msgid "Last %(x)s months"
-msgstr ""
+msgstr "Останні %(x)s місяців"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2367
 #: inventoryplanning/templates/inventoryplanning/drp.html:2374
 msgid "no grouping"
-msgstr "Keine Gruppierung"
+msgstr "немає групування"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2368
 #: inventoryplanning/templates/inventoryplanning/drp.html:2375
 msgid "group by item"
-msgstr "Gruppiert nach Artikel"
+msgstr "по товарах"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2369
 #: inventoryplanning/templates/inventoryplanning/drp.html:2376
 msgid "group by location"
-msgstr "Gruppiert nach Standort"
+msgstr "за місцем"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2402
 msgid "display value"
-msgstr "Anzeigewert"
+msgstr "показати значення"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2405
 msgid "display units"
-msgstr "Anzeigeeinheiten"
+msgstr "показати юніти"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2434
 msgid "detail"
-msgstr "Detail"
+msgstr "докладно"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2442
 msgid "Recalculate"
-msgstr "Neu berechnen"
+msgstr "Перерахувати"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2442
 msgid "simulate changes without saving"
-msgstr "Änderungen simulieren ohne speichern"
+msgstr "моделювати зміни без збереження"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2447
 msgid "no"
-msgstr "nein"
+msgstr "нi"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2451
 #, python-format
 msgid "export to %(erp)s"
-msgstr "exportiere nach %(erp)s"
+msgstr "експорт до %(erp)s"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2453
 #: inventoryplanning/templates/inventoryplanning/drp.html:2454
@@ -4510,67 +4541,67 @@ msgstr "exportiere nach %(erp)s"
 #: inventoryplanning/templates/inventoryplanning/drp.html:2456
 #, python-format
 msgid "change status to %(status)s"
-msgstr "Statusänderung nach %(status)s"
+msgstr "измінити статус на %(status)s"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2466
 msgid "attributes"
-msgstr "Attribute"
+msgstr "атрибути"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2469
 msgid "transactions"
-msgstr "Transaktionen"
+msgstr "транзакцій"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2480
 msgid "Item attributes"
-msgstr "Artikel Attribute"
+msgstr "атрибути товару"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2491
 msgid "Inventory status"
-msgstr "Lagerstatus"
+msgstr "Стстус запасу"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2496
 msgid "Top 5 customers"
-msgstr "Top 5 Kunden"
+msgstr "Топ-5 клієнтів"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2505
 msgid "Buffer attributes"
-msgstr "Puffer Attribute"
+msgstr "Атрибути буфера"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2512
 msgid "Location attributes"
-msgstr "Standort Attribute"
+msgstr "Атрибути місце розташування"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2522
 msgid "Network status"
-msgstr "Bestandsstatus im Netzwerk"
+msgstr "Статус мережі"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2528
 msgid "Supply information"
-msgstr "Liefer Information"
+msgstr "Інформація про поставку"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2558
 msgid "Parameters"
-msgstr "Parameter"
+msgstr "Параметри"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2615
 msgid "new item comment"
-msgstr "Neuer Artikel Kommentar"
+msgstr "новий елемент коментаря"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2616
 msgid "new item-location comment"
-msgstr "Neuer Kommentar Artikel-Standort"
+msgstr "новий коментар до місця розташування"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2617
 msgid "new location comment"
-msgstr "Neuer Kommentar Standort"
+msgstr "новий коментар про місцезнаходження"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2620
 msgid "no comments yet"
-msgstr "noch keine Kommentare"
+msgstr "ще немає коментарів"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2659
 msgid "computed safety stock"
-msgstr "berechneter Sicherheitsbestand"
+msgstr "розрахунковий страховий запас"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2660
 #: inventoryplanning/templates/inventoryplanning/drp.html:2679
@@ -4582,173 +4613,175 @@ msgstr "berechneter Sicherheitsbestand"
 #: output/widget.py:786 output/widget.py:806 output/widget.py:957
 #: output/widget.py:1139 output/widget.py:1155 output/widget.py:1175
 msgid "units"
-msgstr "Einheiten"
+msgstr "юнiти"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2673
 msgid "demand standard deviation"
-msgstr "Nachfrage-Standardabweichung"
+msgstr "Стандартне відхилення попиту"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2682
 msgid "lead time standard deviation"
-msgstr "Anlaufzeit Standardabweichung"
+msgstr "стандартне відхилення тривалості"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2691
 #: inventoryplanning/templates/inventoryplanning/drp.html:2741
 msgid "constrained by"
-msgstr "eingeschränkt durch"
+msgstr "обмежено"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2694
 #: inventoryplanning/templates/inventoryplanning/drp.html:2709
 #: inventoryplanning/templates/inventoryplanning/drp.html:2744
 #: inventoryplanning/templates/inventoryplanning/drp.html:2760
 msgid "between"
-msgstr "zwischen"
+msgstr "мiж"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2734
 msgid "computed economic reorder quantity"
-msgstr "berechnete wirtschaftlichen Nachbestellmenge"
+msgstr "кількість економічного пере-замовлення ROQ"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2780
 msgid "Stocking policy"
-msgstr ""
+msgstr "Політика запасів"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2785
 msgid "<span data-toggle=\"tooltip\" data-placement=\"left\" data-html=\"true\" data-original-title=\"Sets safety stock to 0 and reorder quantity to 1.<br>This item-location will be planned with replenishments matching 1-to-1 with the demand.\" >Do not stock</span>"
-msgstr ""
+msgstr "<span data-toggle=\"tooltip\" data-placement=\"left\" data-html=\"true\" data-original-title=\"Встановлює страховий запас на 0 і кількість замовлення на 1<br>Це місце розташування об'єкта буде сплановано з поповненнями, відповідними 1-к-1 потреби.\">Без запасу</span>"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2795
 #: inventoryplanning/templates/inventoryplanning/drp.html:2814
 msgid "true"
-msgstr "richtig"
+msgstr "істина"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2796
 #: inventoryplanning/templates/inventoryplanning/drp.html:2815
 msgid "false"
-msgstr "falsch"
+msgstr "фальш"
 
 #: inventoryplanning/templates/inventoryplanning/drp.html:2804
 msgid "<span data-toggle=\"tooltip\" data-placement=\"left\" data-html=\"true\" data-original-title=\"In push mode, any excess inventory will be distributed downstream to child locations.\">Activates push mode</span>"
-msgstr ""
+msgstr "<span data-toggle=\"tooltip\" data-placement=\"left\" data-html=\"true\" data-original-title=\"В push-режимі, будь надлишковий запас буде розподілятися всередині мережі між дочірніми місцями розташування\">активізувати push-режим</span>"
 
 #: inventoryplanning/views.py:108
 msgid "segments"
-msgstr "Segmente"
+msgstr "сегменти"
 
 #: inventoryplanning/views.py:123
 msgid "sku count"
-msgstr "sku_count"
+msgstr "кількість SKU"
 
 #: inventoryplanning/views.py:135
 msgid "business rules"
-msgstr "Geschäftsregeln"
+msgstr "бізнес-правили"
 
 #: inventoryplanning/views.py:158
 msgid "business rule"
-msgstr "Geschäftsregel"
+msgstr "бізнес-правило"
 
 #: inventoryplanning/views.py:508
 msgid "on hand"
-msgstr "vorhanden"
+msgstr "під рукою"
 
 #: inventoryplanning/views.py:1309
 msgid "Buy"
-msgstr "Kauf"
+msgstr "вихід"
 
 #: inventoryplanning/views.py:1336
 msgid "Transport"
-msgstr "Transport"
+msgstr "Транспорт"
 
 #: inventoryplanning/views.py:1374
 msgid "Manufacture"
-msgstr "Herstellung"
+msgstr "Виробництво"
 
 #: inventoryplanning/views.py:1934 inventoryplanning/views.py:1978
 msgid "Invalid number"
-msgstr "Ungültige Nummer"
+msgstr "Недійсне число"
 
 #: inventoryplanning/views.py:2173
 msgid "No forecast found"
-msgstr "Keine Prognose gefunden"
+msgstr "Не знайдено прогнозу"
 
 #: inventoryplanning/widget.py:25
 msgid "Display the current status of your current inventory"
-msgstr ""
+msgstr "Показати поточний стан запасів"
 
 #: inventoryplanning/widget.py:132
 msgid "green"
-msgstr "grün"
+msgstr "зелений"
 
 #: inventoryplanning/widget.py:133
 msgid "yellow"
-msgstr "Gelb"
+msgstr "жовтий"
 
 #: inventoryplanning/widget.py:134
 msgid "red"
-msgstr "Rot"
+msgstr "червоний"
 
 #: inventoryplanning/widget.py:151 output/widget.py:1679
 msgid "inventory by location"
-msgstr "Bestand nach Standort"
+msgstr "запаси за місцем"
 
 #: inventoryplanning/widget.py:152 output/widget.py:1680
 msgid "Display the locations with the highest inventory value"
-msgstr "Anzeige der Standorte mit dem höchsten Bestandswert"
+msgstr "Показуйте місця з найбільшою вартістю запасів"
 
 #: menu.py:23 settings.py:243
 msgid "sales"
-msgstr "Verkauf"
+msgstr "продажів"
 
 #: menu.py:25 output/views/constraint.py:30
 msgid "capacity"
-msgstr "Kapazität"
+msgstr "потужності"
 
 #: menu.py:26 settings.py:265
 msgid "purchasing"
-msgstr "Einkauf"
+msgstr "придбання"
 
 #: menu.py:27 settings.py:285
 msgid "distribution"
-msgstr "Lieferung"
+msgstr "розподіл"
 
 #: menu.py:28 settings.py:298
 msgid "manufacturing"
-msgstr "Fertigung"
+msgstr "виробництво"
 
 #: menu.py:29
 msgid "admin"
-msgstr "Administrator"
+msgstr "адмін"
 
 #: metrics/attributes.py:19
 msgid "count of late demands"
-msgstr ""
+msgstr "кількість пізніх вимог"
 
 #: metrics/attributes.py:20 metrics/widget.py:59
 msgid "quantity of late demands"
-msgstr ""
+msgstr "кількість пізніх вимог"
 
 #: metrics/attributes.py:21
 msgid "value of late demand"
-msgstr ""
+msgstr "значення пізнього попиту"
 
 #: metrics/attributes.py:24
 msgid "count of unplanned demands"
-msgstr ""
+msgstr "кількість незапланованих вимог"
 
 #: metrics/attributes.py:31
 msgid "quantity of unplanned demands"
-msgstr ""
+msgstr "кількість незапланованих вимог"
 
 #: metrics/attributes.py:38
 msgid "value of unplanned demands"
-msgstr ""
+msgstr "значення незапланованих вимог"
 
 #: metrics/attributes.py:51
 msgid "count of capacity overload problems"
-msgstr ""
+msgstr "кількість проблем з перевантаженням потужності"
 
 #: metrics/widget.py:31
+#, fuzzy
+#| msgid "value of late demand"
 msgid "analyze late demands"
-msgstr ""
+msgstr "значення пізнього попиту"
 
 #: metrics/widget.py:32
 msgid "Spot the top items with many late demands"
@@ -4756,123 +4789,123 @@ msgstr ""
 
 #: metrics/widget.py:58
 #, fuzzy
-#| msgid "Due date of the demand"
+#| msgid "value of late demand"
 msgid "value of late demands"
-msgstr "Fälligkeitstermin Bedarfsnachfrage"
+msgstr "значення пізнього попиту"
 
 #: metrics/widget.py:60
 #, fuzzy
-#| msgid "Due date of the demand"
+#| msgid "value of late demand"
 msgid "number of late demands"
-msgstr "Fälligkeitstermin Bedarfsnachfrage"
+msgstr "значення пізнього попиту"
 
 #: odoo/commands.py:57
 msgid "Read Odoo data"
-msgstr "Odoo Daten Lesen"
+msgstr "Прочитайте дані Odoo"
 
 #: odoo/commands.py:223
 msgid "Write results to Odoo"
-msgstr "Ergebnisse nach Odoo schreiben"
+msgstr "Напишіть результати на Odoo"
 
 #: odoo/views.py:46
 msgid "Invalid configuration parameters"
-msgstr "Ungültige Konfigurationsparameter"
+msgstr "Недійсні параметри конфігурації"
 
 #: odoo/views.py:173 openbravo/views.py:116
 msgid "No proposed data records selected"
-msgstr "Keine vorgeschlagenen Datensätze ausgewählt"
+msgstr "Не вибрано запропонованих записів даних"
 
 #: openbravo/attributes.py:17
 msgid "vendor item name"
-msgstr "Artikelname beim Lieferanten"
+msgstr "назва товару постачальника"
 
 #: openbravo/management/commands/openbravo_import.py:3658
 msgid "release"
-msgstr "Freigabe"
+msgstr "сброс"
 
 #: openbravo/management/commands/openbravo_import.py:3660
 msgid "Import data changes in the last {{ delta }} days from the ERP into frePPLe."
-msgstr "Import Datenänderungen  der letzten %(delta)s Tage vom ERP in frePPLe."
+msgstr "Імпортуйте зміни даних за останні {{ delta }} днів з ERP в frePPLe."
 
 #: output/models.py:17 output/models.py:41 output/views/constraint.py:100
 #: output/views/problem.py:68
 msgid "entity"
-msgstr "Einheit"
+msgstr "сутність"
 
 #: output/models.py:23 output/models.py:47 output/views/constraint.py:111
 #: output/views/problem.py:79 output/widget.py:1506
 msgid "weight"
-msgstr "Gewicht"
+msgstr "вага"
 
 #: output/models.py:31
 msgid "problem"
-msgstr "Problem"
+msgstr "проблема"
 
 #: output/models.py:32
 msgid "problems"
-msgstr "Probleme"
+msgstr "проблеми"
 
 #: output/models.py:55
 msgid "constraint"
-msgstr "Einschränkung"
+msgstr "обмеження"
 
 #: output/models.py:62 output/widget.py:1397
 msgid "startdate"
-msgstr "Startdatum"
+msgstr "дата початку"
 
 #: output/models.py:67 output/templates/output/resource.html:211
 #: output/templates/output/resource.html:267 output/views/resource.py:191
 msgid "unavailable"
-msgstr "nicht verfügbar"
+msgstr "недоступний"
 
 #: output/models.py:70 output/templates/output/resource.html:215
 #: output/templates/output/resource.html:269 output/views/resource.py:193
 msgid "load"
-msgstr "Leistung"
+msgstr "завантаження"
 
 #: output/templates/output/buffer.html:167 output/views/buffer.py:252
 msgid "produced by PO"
-msgstr ""
+msgstr "виробляється PO"
 
 #: output/templates/output/buffer.html:170 output/views/buffer.py:250
 msgid "produced by MO"
-msgstr ""
+msgstr "виробляється MO"
 
 #: output/templates/output/buffer.html:173 output/views/buffer.py:251
 msgid "produced by DO"
-msgstr ""
+msgstr "виробляється DO"
 
 #: output/templates/output/buffer.html:176 output/views/buffer.py:239
 msgid "consumed by MO"
-msgstr ""
+msgstr "споживається MO"
 
 #: output/templates/output/buffer.html:179 output/views/buffer.py:241
 msgid "consumed by SO"
-msgstr ""
+msgstr "споживається SO"
 
 #: output/templates/output/buffer.html:182 output/views/buffer.py:244
 msgid "consumed by Fcst"
-msgstr ""
+msgstr "споживається за прогнозом"
 
 #: output/templates/output/buffer.html:185 output/views/buffer.py:240
 msgid "consumed by DO"
-msgstr ""
+msgstr "споживається DO"
 
 #: output/templates/output/buffer.html:193 output/views/buffer.py:254
 msgid "total in progress"
-msgstr ""
+msgstr "загальний хід"
 
 #: output/templates/output/buffer.html:196 output/views/buffer.py:255
 msgid "work in progress MO"
-msgstr ""
+msgstr "в роботі MO"
 
 #: output/templates/output/buffer.html:199 output/views/buffer.py:256
 msgid "on order PO"
-msgstr ""
+msgstr "на замовлення PO"
 
 #: output/templates/output/buffer.html:202 output/views/buffer.py:257
 msgid "in transit DO"
-msgstr ""
+msgstr "в дорозі DO"
 
 #: output/templates/output/demand.html:142
 #: output/templates/output/demand.html:203
@@ -4880,419 +4913,419 @@ msgstr ""
 #: output/templates/output/demand_forecast.html:218 output/views/demand.py:66
 #: output/views/demand.py:283
 msgid "supply"
-msgstr "Lieferung"
+msgstr "постачання"
 
 #: output/templates/output/demand_forecast.html:142 output/views/demand.py:280
 msgid "net forecast"
-msgstr "netto Vorschau"
+msgstr "чистий прогноз"
 
 #: output/templates/output/demand_forecast.html:152 output/views/demand.py:284
 #, fuzzy
-#| msgid "sales order"
+#| msgid "order backlog"
 msgid "sales order backlog"
-msgstr "Verkaufsauftrag"
+msgstr "відставання замовлення"
 
 #: output/templates/output/distribution_order_summary.html:214
 #: output/views/operation.py:908
 msgid "proposed shipping"
-msgstr ""
+msgstr "запропонована доставка"
 
 #: output/templates/output/distribution_order_summary.html:216
 #: output/views/operation.py:909
 msgid "total shipping"
-msgstr ""
+msgstr "загальна доставка"
 
 #: output/templates/output/distribution_order_summary.html:218
 #: output/templates/output/purchase_order_summary.html:218
 #: output/views/operation.py:556 output/views/operation.py:910
 msgid "proposed receiving"
-msgstr ""
+msgstr "запропонований прийом"
 
 #: output/templates/output/distribution_order_summary.html:220
 #: output/templates/output/purchase_order_summary.html:220
 #: output/views/operation.py:557 output/views/operation.py:911
 msgid "total receiving"
-msgstr ""
+msgstr "загальний прийом"
 
 #: output/templates/output/distribution_order_summary.html:222
 #: output/views/operation.py:912
 msgid "proposed in transit"
-msgstr ""
+msgstr "запропонований транзитом"
 
 #: output/templates/output/distribution_order_summary.html:224
 #: output/views/operation.py:913
 msgid "total in transit"
-msgstr ""
+msgstr "всього транзитом"
 
 #: output/templates/output/operation.html:281
 #: output/templates/output/operation.html:331 output/views/operation.py:209
 msgid "proposed starts"
-msgstr "geplante Starts"
+msgstr "пропонуєемий запуск"
 
 #: output/templates/output/operation.html:283 output/views/operation.py:210
 msgid "total starts"
-msgstr "Gesamt Starts"
+msgstr "загальний старт"
 
 #: output/templates/output/operation.html:285
 #: output/templates/output/operation.html:333 output/views/operation.py:211
 msgid "proposed ends"
-msgstr "geplante Endtermine"
+msgstr "запропоновано випуск"
 
 #: output/templates/output/operation.html:287 output/views/operation.py:212
 msgid "total ends"
-msgstr "Gesamt Endtermine"
+msgstr "загальний випуск"
 
 #: output/templates/output/operation.html:289
 #: output/templates/output/operation.html:335 output/views/operation.py:213
 msgid "proposed production"
-msgstr ""
+msgstr "запропоноване виробництво"
 
 #: output/templates/output/operation.html:291 output/views/operation.py:214
 msgid "total production"
-msgstr ""
+msgstr "загальне виробництво"
 
 #: output/templates/output/operation.html:330
 msgid "approved and confirmed starts"
-msgstr "genemigte und bestätigte Starttermine"
+msgstr "затверджені та підтверджені запуски"
 
 #: output/templates/output/operation.html:332
 msgid "approved and confirmed ends"
-msgstr "genemigte und bestätigte Endtermine"
+msgstr "затверджені та підтверджені випуски"
 
 #: output/templates/output/operation.html:334
 msgid "approved and confirmed production"
-msgstr "genemigte und bestätigte Starttermine"
+msgstr "затверджене та підтверджене виробництво"
 
 #: output/templates/output/pegging.html:265
 msgid "zoom in"
-msgstr "vergrößern"
+msgstr "збільшувати"
 
 #: output/templates/output/pegging.html:266
 msgid "zoom out"
-msgstr "verkleinern"
+msgstr "зменшення"
 
 #: output/templates/output/pegging.html:267
 msgctxt "Gantt"
 msgid "earlier"
-msgstr "früher"
+msgstr "раніше"
 
 #: output/templates/output/pegging.html:268
 msgctxt "Gantt"
 msgid "later"
-msgstr "später"
+msgstr "пізніше"
 
 #: output/templates/output/pegging.html:269
 msgctxt "Gantt"
 msgid "reset"
-msgstr "zurücksetzen"
+msgstr "сброс"
 
 #: output/templates/output/purchase_order_summary.html:214
 #: output/views/operation.py:554
 msgid "proposed ordering"
-msgstr ""
+msgstr "запропоноване замовлення"
 
 #: output/templates/output/purchase_order_summary.html:216
 #: output/views/operation.py:555
 msgid "total ordering"
-msgstr ""
+msgstr "загальне замовлення"
 
 #: output/templates/output/purchase_order_summary.html:222
 #: output/views/operation.py:558
 msgid "proposed on order"
-msgstr ""
+msgstr "запропоновані на замовлення"
 
 #: output/templates/output/purchase_order_summary.html:224
 #: output/views/operation.py:559
 msgid "total on order"
-msgstr ""
+msgstr "всього в замовлення"
 
 #: output/templates/output/resource.html:271 output/views/constraint.py:35
 msgid "overload"
-msgstr "Überlast"
+msgstr "перевантаження"
 
 #: output/views/buffer.py:36
 msgid "Inventory report"
-msgstr "Bestandsbericht"
+msgstr "план запасів"
 
 #: output/views/buffer.py:238
 msgid "total consumed"
-msgstr ""
+msgstr "всього спожитого"
 
 #: output/views/buffer.py:249
 msgid "total produced"
-msgstr ""
+msgstr "загальна кількість вироблених"
 
 #: output/views/constraint.py:29
 msgid "material"
-msgstr "Material"
+msgstr "матеріал"
 
 #: output/views/constraint.py:36
 msgid "underload"
-msgstr "Unterlast"
+msgstr "недовантаження"
 
 #: output/views/constraint.py:37
 msgid "material excess"
-msgstr "Material Überschuss"
+msgstr "надлишок матеріалу"
 
 #: output/views/constraint.py:38
 msgid "material shortage"
-msgstr "Material Engpass"
+msgstr "дефіцит матеріалу"
 
 #: output/views/constraint.py:39
 msgid "excess"
-msgstr "Überschuss"
+msgstr "надлишок"
 
 #: output/views/constraint.py:40 output/widget.py:158
 msgid "short"
-msgstr "Mangel"
+msgstr "дефіцит"
 
 #: output/views/constraint.py:41
 msgid "early"
-msgstr "früh"
+msgstr "рано"
 
 #: output/views/constraint.py:42
 msgid "late"
-msgstr "spät"
+msgstr "пізно"
 
 #: output/views/constraint.py:43
 msgid "unplanned"
-msgstr "ungeplant"
+msgstr "незаплановано"
 
 #: output/views/constraint.py:44
 msgid "precedence"
-msgstr "Vorrang"
+msgstr "перевага"
 
 #: output/views/constraint.py:45
 msgid "before fence"
-msgstr "vor Freigabe"
+msgstr "до кордону періоду"
 
 #: output/views/constraint.py:46
 msgid "before current"
-msgstr "Vor dem laufenden"
+msgstr "до поточного"
 
 #: output/views/constraint.py:80
 msgid "Constraint report"
-msgstr "Bericht Kapazitätsengpässe"
+msgstr "Звіт про обмеження"
 
 #: output/views/demand.py:34 output/views/demand.py:250
 msgid "Demand report"
-msgstr "Bedarfsbericht"
+msgstr "Звіт про попит"
 
 #: output/views/demand.py:68 output/views/demand.py:287
 #, fuzzy
 #| msgctxt "forecast method"
 #| msgid "Seasonal"
 msgid "reasons"
-msgstr "Saisonal"
+msgstr "Сезонні"
 
 #: output/views/demand.py:286
 #, fuzzy
 #| msgid "backlog"
 msgid "total backlog"
-msgstr "Rückstand"
+msgstr "відставання"
 
 #: output/views/kpi.py:19
 msgid "Performance Indicators"
-msgstr "Leistungsindikatoren"
+msgstr "Показники KPI"
 
 #: output/views/operation.py:33
 msgid "Manufacturing order summary"
-msgstr ""
+msgstr "план виробництва"
 
 #: output/views/operation.py:398
 msgid "Purchase order summary"
-msgstr ""
+msgstr "Підсумок замовлення на купівлю"
 
 #: output/views/operation.py:756
 msgid "Distribution order summary"
-msgstr ""
+msgstr "план розподілу"
 
 #: output/views/pegging.py:29
 msgid "Demand plan"
-msgstr "Bedarfsplan"
+msgstr "План попиту"
 
 #: output/views/pegging.py:63
 msgid "required quantity"
-msgstr ""
+msgstr "необхідна кількість"
 
 #: output/views/problem.py:55
 msgid "Problem report"
-msgstr "Problembericht"
+msgstr "Звіт про проблему"
 
 #: output/views/resource.py:30
 msgid "Resource report"
-msgstr "Ressourcenbericht"
+msgstr "Звіт про ресурси"
 
 #: output/views/resource.py:164 output/views/resource.py:194
 msgid "utilization %"
-msgstr "Nutzungsgrad %"
+msgstr "використано %"
 
 #: output/views/resource.py:172
 msgid "available calendar"
-msgstr ""
+msgstr "доступний календар"
 
 #: output/views/resource.py:254
 msgid "hours"
-msgstr "Std"
+msgstr "години"
 
 #: output/widget.py:36
 msgid "late orders"
-msgstr "Verspätete Bestellungen"
+msgstr "пізні замовлення"
 
 #: output/widget.py:37
 msgid "Shows orders that will be delivered after their due date"
-msgstr "Aufträge, die nach ihrem Fälligkeitsdatum ausgeliefert werden"
+msgstr "Показує замовлення, які будуть доставлені після їх строку"
 
 #: output/widget.py:79
 msgid "planned date"
-msgstr "geplanter Termin"
+msgstr "планова дата"
 
 #: output/widget.py:114
 msgid "short orders"
-msgstr "kurzfristige Bestellungen"
+msgstr "замовлення з дефіцитом"
 
 #: output/widget.py:115
 msgid "Shows orders that are not planned completely"
-msgstr "Aufträge, die nicht vollständig verplant werden"
+msgstr "Показує замовлення, які не плануються повністю"
 
 #: output/widget.py:191
 msgid "Shows manufacturing orders by start date"
-msgstr "Zeigt Fertigungsaufträge nach Startdatum an"
+msgstr "Показує виробничі замовлення за датою початку"
 
 #: output/widget.py:457 output/widget.py:474 output/widget.py:494
 #: output/widget.py:775 output/widget.py:792 output/widget.py:812
 #: output/widget.py:1144 output/widget.py:1161 output/widget.py:1181
 msgid "Review"
-msgstr "Review"
+msgstr "Огляд"
 
 #: output/widget.py:458 output/widget.py:776 output/widget.py:1145
 msgid "confirmed orders"
-msgstr "bestätigte Lieferung"
+msgstr "підтверджені замовлення"
 
 #: output/widget.py:476 output/widget.py:496 output/widget.py:794
 #: output/widget.py:814 output/widget.py:1163 output/widget.py:1183
 #, python-format
 msgid "proposed orders within %(fence)s days"
-msgstr "geplante Aufträge innerhalb %(fence)s Tagen"
+msgstr "запропоновані замовлення протягом %(fence)s днів"
 
 #: output/widget.py:511
 msgid "Shows distribution orders by start date"
-msgstr "Lieferaufträge nach Startdatum sortiert"
+msgstr "Показує розпорядження щодо розповсюдження за датою початку"
 
 #: output/widget.py:829
 msgid "Shows purchase orders by ordering date"
-msgstr "Bestellungen nach Bestelldatum sortiert"
+msgstr "Показує замовлення на купівлю за датою замовлення"
 
 #: output/widget.py:1197
 msgid "purchase queue"
-msgstr "Einkaufskette"
+msgstr "черга на придбання"
 
 #: output/widget.py:1198
 msgid "Display a list of new purchase orders"
-msgstr "Liste der neuen Bestellungen"
+msgstr "Відобразить список нових замовлень на купівлю"
 
 #: output/widget.py:1221 output/widget.py:1278 output/widget.py:1398
 #: output/widget.py:1453
 msgid "enddate"
-msgstr "Enddatum"
+msgstr "Дата закінчення"
 
 #: output/widget.py:1253
 msgid "distribution queue"
-msgstr "Lieferkette"
+msgstr "чергу розподілу"
 
 #: output/widget.py:1254 output/widget.py:1312
 msgid "Display a list of new distribution orders"
-msgstr "Liste der neuen Lieferaufträge"
+msgstr "Відобразить список нових замовлень на розповсюдження"
 
 #: output/widget.py:1311
 msgid "shipping queue"
-msgstr "Versandkette"
+msgstr "черга доставки"
 
 #: output/widget.py:1369
 msgid "resource queue"
-msgstr "Ressourcekette"
+msgstr "черга ресурсів"
 
 #: output/widget.py:1370
 msgid "Display planned activities for the resources"
-msgstr "Anzeige der geplanten Rssource Aktivitäten"
+msgstr "Відображення запланованих заходів для ресурсів"
 
 #: output/widget.py:1433
 msgid "purchase order analysis"
-msgstr "Bestellanalyse"
+msgstr "аналіз замовлень на придбання"
 
 #: output/widget.py:1434
 msgid "Analyse the urgency of existing purchase orders"
-msgstr "Dringlichkeitsanalyse der bestehenden Bestellungen"
+msgstr "Проаналізуйте терміновість існуючих замовлень на купівлю"
 
 #: output/widget.py:1486
 msgid "alerts"
-msgstr "Alarme"
+msgstr "оповіщення"
 
 #: output/widget.py:1487
 msgid "Overview of all alerts in the plan"
-msgstr "Übersicht aller Alarme im Plan"
+msgstr "Огляд усіх сповіщень у плані"
 
 #: output/widget.py:1505
 msgid "count"
-msgstr "Anzahl"
+msgstr "рахувати"
 
 #: output/widget.py:1542
 msgid "demand alerts"
-msgstr "Bedarfs Alarme"
+msgstr "оповіщення про попит"
 
 #: output/widget.py:1552
 msgid "capacity alerts"
-msgstr "Kapazitäts Alarme"
+msgstr "оповіщення потужності"
 
 #: output/widget.py:1562
 msgid "material alerts"
-msgstr "Material Alarme"
+msgstr "матеріальні сповіщення"
 
 #: output/widget.py:1572
 msgid "resource utilization"
-msgstr "Ressourcennutzung"
+msgstr "використання ресурсів"
 
 #: output/widget.py:1573
 msgid "Shows the resources with the highest utilization"
-msgstr "Ressourcen mit höchstem Nutzungsgrad"
+msgstr "Показує ресурси з найбільшою віддачею"
 
 #: output/widget.py:1770
 msgid "inventory by item"
-msgstr "Bestand nach Artikel"
+msgstr "запас товару"
 
 #: output/widget.py:1771
 msgid "Display the items with the highest inventory value"
-msgstr "Artikel mit höchstem Bestandswert"
+msgstr "Відображення елементів з найбільшим значенням запасів"
 
 #: output/widget.py:1858
 msgid "delivery performance"
-msgstr "Lieferleistung"
+msgstr "продуктивність доставки"
 
 #: output/widget.py:1860
 msgid "Shows the percentage of demands that are planned to be shipped completely on time"
-msgstr "Prozentsatz der geplanten Bestellungen, die termingerecht und vollständig versendet werden"
+msgstr "Показує відсоток запитів, які планується повністю поставити вчасно"
 
 #: output/widget.py:1906
 msgid "On time delivery"
-msgstr "Termingerechte Lieferung"
+msgstr "Вчасна доставка"
 
 #: planningboard/menu.py:23 planningboard/views.py:217
 msgid "Plan editor"
-msgstr "Plan-Editor"
+msgstr "Редактор плану"
 
 #: quoting/views.py:44
 msgid "quotes"
-msgstr "Anmerkungen"
+msgstr "квоти"
 
 #: reportmanager/models.py:22
 #: reportmanager/templates/reportmanager/reportmanager.html:206
 #: reportmanager/views.py:107
 msgid "SQL query"
-msgstr ""
+msgstr "SQL запит"
 
 #: reportmanager/models.py:90 reportmanager/views.py:574
 msgid "my report"
-msgstr ""
+msgstr "мій звіт"
 
 #: reportmanager/templates/reportmanager/reportmanager.html:94
 msgid "Saving the report failed"
@@ -5301,71 +5334,71 @@ msgstr ""
 #: reportmanager/templates/reportmanager/reportmanager.html:193
 #: reportmanager/views.py:108
 msgid "public"
-msgstr ""
+msgstr "публ."
 
 #: reportmanager/templates/reportmanager/reportmanager.html:213
 msgid "schema"
-msgstr ""
+msgstr "схема"
 
 #: reportmanager/templates/reportmanager/schema.html:8
 msgid "table"
-msgstr ""
+msgstr "таблиця"
 
 #: reportmanager/views.py:270
 msgid "report editor"
-msgstr ""
+msgstr "редактор звітів"
 
 #: settings.py:108
 msgid "English"
-msgstr "Englisch"
+msgstr "Англійська"
 
 #: settings.py:109
 msgid "French"
-msgstr "Französisch"
+msgstr "Французька"
 
 #: settings.py:110
 msgid "German"
-msgstr "Deutsch"
+msgstr "Німецька"
 
 #: settings.py:111
 msgid "Hebrew"
-msgstr "Hebräisch"
+msgstr "Іврит"
 
 #: settings.py:112
 msgid "Italian"
-msgstr "Italienisch"
+msgstr "Італійська"
 
 #: settings.py:113
 msgid "Japanese"
-msgstr "Japanisch"
+msgstr "Япон."
 
 #: settings.py:114
 msgid "Dutch"
-msgstr "Niederländisch"
+msgstr "Голландська"
 
 #: settings.py:115
 msgid "Portuguese"
-msgstr "Portugiesisch"
+msgstr "Португальська"
 
 #: settings.py:116
 msgid "Brazilian Portuguese"
-msgstr "Brasilianisches Portugiesisch"
+msgstr "Португальська Бразилія"
 
 #: settings.py:117
 msgid "Russian"
-msgstr "Russisch"
+msgstr "російська"
 
 #: settings.py:118
 msgid "Spanish"
-msgstr "Spanisch"
+msgstr "Іспанська"
 
 #: settings.py:119
 msgid "Simplified Chinese"
-msgstr "Vereinfachtes Chinesisch"
+msgstr "Спрощена Китайська"
 
 #: settings.py:120
 msgid "Traditional Chinese"
-msgstr "Traditionelles Chinesisch"
+msgstr "Традиційний китайський"
 
 #: settings.py:121
 msgid "Ukranian"
@@ -5373,71 +5406,76 @@ msgstr ""
 
 #: settings.py:317
 msgid "activity"
-msgstr ""
+msgstr "діяльності"
 
 #: webservice/management/commands/runwebservice.py:79
 msgid "web service"
-msgstr "Webdienst"
+msgstr "веб-сервіс"
 
 #: wizard/templates/wizard/index.html:40
 msgid "data loading wizard"
-msgstr ""
+msgstr "майстер завантаження даних"
 
 #: wizard/templates/wizard/index.html:48
 msgid "dashboard"
-msgstr ""
+msgstr "панель приладів"
 
 #, fuzzy
 #~| msgid "method"
 #~ msgid "out_method"
-#~ msgstr "Methode"
+#~ msgstr "метод"
 
 #, fuzzy
 #~| msgid "forecast report"
 #~ msgid "forecastreport_view"
-#~ msgstr "Prognosebericht"
+#~ msgstr "Сводний прогноз"
 
 #, fuzzy
 #~| msgid "forecast report"
 #~ msgid "forecastreports_view"
-#~ msgstr "Prognosebericht"
+#~ msgstr "Сводний прогноз"
 
 #, fuzzy
 #~| msgid "export"
 #~ msgid "report"
-#~ msgstr "Exportieren"
+#~ msgstr "експорт"
 
 #, fuzzy
 #~| msgid "fence"
 #~ msgid "sequence"
-#~ msgstr "Horizont"
+#~ msgstr "кордон"
+
+#, fuzzy
+#~| msgid "report editor"
+#~ msgid "report column"
+#~ msgstr "редактор звітів"
 
 #, fuzzy
 #~| msgid "Demand report"
 #~ msgid "Archive manager report"
-#~ msgstr "Bedarfsbericht"
+#~ msgstr "Звіт про попит"
 
 #, fuzzy
 #~| msgid "start date"
 #~ msgid "snapshot date"
-#~ msgstr "Startdatum"
+#~ msgstr "дата початку"
 
 #, fuzzy
 #~| msgid "total orders"
 #~ msgid "total records"
-#~ msgstr "Gesamtbestellungen"
+#~ msgstr "загальна кількість замовлень"
 
 #, fuzzy
 #~| msgid "buffers"
 #~ msgid "buffer records"
-#~ msgstr "Puffer"
+#~ msgstr "буфери"
 
 #, fuzzy
 #~| msgid "Demand report"
 #~ msgid "demand records"
-#~ msgstr "Bedarfsbericht"
+#~ msgstr "Звіт про попит"
 
 #, fuzzy
 #~| msgid "operationplans"
 #~ msgid "operationplan records"
-#~ msgstr "Tätigkeitspläne"
+#~ msgstr "плану операцій"

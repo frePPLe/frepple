@@ -125,6 +125,7 @@ LANGUAGES = (
     ("es", _("Spanish")),
     ("zh-hans", _("Simplified Chinese")),
     ("zh-hant", _("Traditional Chinese")),
+    ("uk", _("Ukranian")),
 )
 
 # The default redirects URLs not ending with a slash.

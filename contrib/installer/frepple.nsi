@@ -96,6 +96,7 @@ Page custom FinishOpen FinishLeave
 !insertmacro MUI_LANGUAGE "SimpChinese"
 !insertmacro MUI_LANGUAGE "Spanish"
 !insertmacro MUI_LANGUAGE "TradChinese"
+!insertmacro MUI_LANGUAGE "Ukranian"
 
 ;Version Information
 VIProductVersion "${PRODUCT_VERSION}.0"

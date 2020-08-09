@@ -1,33 +1,27 @@
-# Copyright (C) 2007-2012 by frePPLe bv
-# This library is free software; you can redistribute it and/or modify it
-# under the terms of the GNU Affero General Public License as published
-# by the Free Software Foundation; either version 3 of the License, or
-# (at your option) any later version.
-# This library is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero
-# General Public License for more details.
-# You should have received a copy of the GNU Affero General Public
-# License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-08-09 10:03+0200\n"
-"PO-Revision-Date: 2020-04-28 10:23+0200\n"
-"Last-Translator: Joao Ranita <jranita@frepple.com>\n"
-"Language-Team: frepple\n"
-"Language: nl\n"
+"PO-Revision-Date: 2020-08-09 08:23+0200\n"
+"Last-Translator: \n"
+"Language-Team: Michael Nasonov <info@ivc-inform.ru>\n"
+"Language: uk\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 2.0.1\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"X-Generator: Poedit 2.0.6\n"
 
 #: common/static/js/frepple.js:187 common/static/js/frepple.js:282
 #: common/static/js/frepple.min.js:11
 msgid "There are unsaved changes on this page."
-msgstr "Er zijn onbewaarde wijzigingen op deze pagina."
+msgstr "На цій сторінці є збережені зміни."
 
 #: common/static/js/frepple.js:251 common/static/js/frepple.js:867
 #: common/static/js/frepple.js:1075 common/static/js/frepple.js:1437
@@ -44,16 +38,16 @@ msgstr ""
 #: forecast/static/forecast/src/forecast.js:928
 #: forecast/static/js/frepple-forecast.min.js:11
 msgid "Close"
-msgstr "Sluit"
+msgstr "Закрити"
 
 #: common/static/js/frepple.js:279 common/static/js/frepple.min.js:11
 msgid "Save or cancel your changes first"
-msgstr "Bewaar of annuleer eerst de wijzigingen"
+msgstr "Спершу збережіть або скасуйте зміни"
 
 #: common/static/js/frepple.js:285 common/static/js/frepple.js:2362
 #: common/static/js/frepple.min.js:11
 msgid "Save"
-msgstr "Bewaar"
+msgstr "Збережіть"
 
 #: common/static/js/frepple.js:286 common/static/js/frepple.js:802
 #: common/static/js/frepple.js:1190 common/static/js/frepple.js:1231
@@ -64,59 +58,59 @@ msgstr "Bewaar"
 #: forecast/static/forecast/src/forecast.js:955
 #: forecast/static/js/frepple-forecast.min.js:11
 msgid "Cancel"
-msgstr "Annuleer"
+msgstr "Скасувати"
 
 #: common/static/js/frepple.js:493 common/static/js/frepple.min.js:11
 msgid "select"
-msgstr "selecteer"
+msgstr "виберіть"
 
 #: common/static/js/frepple.js:528 common/static/js/frepple.min.js:11
 msgid "days early"
-msgstr "dagen te vroeg"
+msgstr "дні раніше"
 
 #: common/static/js/frepple.js:530 common/static/js/frepple.min.js:11
 msgid "on time"
-msgstr "op tijd"
+msgstr "вчасно"
 
 #: common/static/js/frepple.js:533 common/static/js/frepple.js:535
 #: common/static/js/frepple.min.js:11
 msgid "days late"
-msgstr "dagen late"
+msgstr "дні пізні"
 
 #: common/static/js/frepple.js:659 common/static/js/frepple.min.js:11
 msgid "Select action"
-msgstr "Selecteer actie"
+msgstr "Виберіть дію"
 
 #: common/static/js/frepple.js:692 common/static/js/frepple.min.js:11
 msgid "Selected options"
-msgstr "Geselecteerde opties"
+msgstr "Вибрані варіанти"
 
 #: common/static/js/frepple.js:699 common/static/js/frepple.min.js:11
 msgid "Available options"
-msgstr "Beschikbare opties"
+msgstr "Доступні варіанти"
 
 #: common/static/js/frepple.js:742 common/static/js/frepple.min.js:11
 #: forecast/static/forecast/src/forecast.js:937
 #: forecast/static/js/frepple-forecast.min.js:11
 msgid "Selected Cross"
-msgstr "Geselecteerde kruis"
+msgstr "Вибраний крос"
 
 #: common/static/js/frepple.js:752 common/static/js/frepple.min.js:11
 #: forecast/static/forecast/src/forecast.js:945
 #: forecast/static/js/frepple-forecast.min.js:11
 msgid "Available Cross"
-msgstr "Beschikbaar kruis"
+msgstr "Доступний крос"
 
 #: common/static/js/frepple.js:774 common/static/js/frepple.min.js:11
 msgid "Frozen columns"
-msgstr "Vastgepinde kolommen"
+msgstr "Заморожені колони"
 
 #: common/static/js/frepple.js:793 common/static/js/frepple.js:2459
 #: common/static/js/frepple.min.js:11
 #: forecast/static/forecast/src/forecast.js:931
 #: forecast/static/js/frepple-forecast.min.js:11
 msgid "Customize"
-msgstr "Personaliseer"
+msgstr "Налаштувати"
 
 #: common/static/js/frepple.js:801 common/static/js/frepple.min.js:11
 #: forecast/static/forecast/src/forecast.js:954
@@ -128,19 +122,19 @@ msgstr "OK"
 #: forecast/static/forecast/src/forecast.js:956
 #: forecast/static/js/frepple-forecast.min.js:11
 msgid "Reset"
-msgstr "Herstel"
+msgstr "Скидання"
 
 #: common/static/js/frepple.js:1161 common/static/js/frepple.js:1200
 #: common/static/js/frepple.js:1241 common/static/js/frepple.js:1262
 #: common/static/js/frepple.min.js:11
 msgid "Export CSV or Excel file"
-msgstr "Exporteer CSV of Excel bestand"
+msgstr "Експорт у файл CSV або Excel"
 
 #: common/static/js/frepple.js:1167 common/static/js/frepple.js:1206
 #: common/static/js/frepple.js:1244 common/static/js/frepple.js:1265
 #: common/static/js/frepple.min.js:11
 msgid "Export format"
-msgstr "Export  formaat"
+msgstr "Формат експорту"
 
 #: common/static/js/frepple.js:1168 common/static/js/frepple.js:1207
 #: common/static/js/frepple.min.js:11
@@ -151,213 +145,213 @@ msgstr ""
 #: common/static/js/frepple.js:1246 common/static/js/frepple.js:1268
 #: common/static/js/frepple.min.js:11
 msgid "Spreadsheet list"
-msgstr "Spreadsheet lijst"
+msgstr "Список електронних таблиць"
 
 #: common/static/js/frepple.js:1176 common/static/js/frepple.js:1217
 #: common/static/js/frepple.js:1247 common/static/js/frepple.js:1270
 #: common/static/js/frepple.min.js:11
 msgid "CSV list"
-msgstr "CSV Lijst"
+msgstr "Список CSV"
 
 #: common/static/js/frepple.js:1189 common/static/js/frepple.js:1230
 #: common/static/js/frepple.js:1252 common/static/js/frepple.js:1275
 #: common/static/js/frepple.min.js:11
 msgid "Export"
-msgstr "Exporteer"
+msgstr "Експорт"
 
 #: common/static/js/frepple.js:1214 common/static/js/frepple.js:1267
 #: common/static/js/frepple.min.js:11
 msgid "Spreadsheet table"
-msgstr "Spreadsheet tabel"
+msgstr "Електронна таблиця"
 
 #: common/static/js/frepple.js:1216 common/static/js/frepple.js:1269
 #: common/static/js/frepple.min.js:11
 msgid "CSV table"
-msgstr "CSV tabel"
+msgstr "таблиця CSV"
 
 #: common/static/js/frepple.js:1409 common/static/js/frepple.min.js:11
 msgid "Delete data"
-msgstr "Verwijder gegevens"
+msgstr "Видалити дані"
 
 #: common/static/js/frepple.js:1412 common/static/js/frepple.min.js:11
 #, javascript-format
 msgid "You are about to delete %s objects AND ALL RELATED RECORDS!"
-msgstr "U staat op het punt %s objecten EN HUN GERELATEERDE RECORDS te verwijderen!"
+msgstr "Ви збираєтесь видалити %s об’єкти та ВСІ ЗВ'ЯЗАНІ ЗАПИСИ!"
 
 #: common/static/js/frepple.js:1415 common/static/js/frepple.js:1464
 #: common/static/js/frepple.js:1925 common/static/js/frepple.js:2009
 #: common/static/js/frepple.min.js:11
 msgid "Confirm"
-msgstr "Bevestig"
+msgstr "Підтвердіть"
 
 #: common/static/js/frepple.js:1458 common/static/js/frepple.min.js:11
 msgid "Copy data"
-msgstr "Kopieer gegevens"
+msgstr "Копіювати дані"
 
 #: common/static/js/frepple.js:1461 common/static/js/frepple.min.js:11
 #, javascript-format
 msgid "You are about to duplicate %s objects"
-msgstr "U staat op het punt %s objecten te kopieren"
+msgstr "Ви збираєтесь дублювати об’єкти %s"
 
 #: common/static/js/frepple.js:1566 common/static/js/frepple.min.js:11
 msgid "within"
-msgstr "binnen"
+msgstr "всередині"
 
 #: common/static/js/frepple.js:1599 common/static/js/frepple.min.js:11
 msgid "days"
-msgstr "dagen"
+msgstr "днів"
 
 #: common/static/js/frepple.js:1635 common/static/js/frepple.min.js:11
 msgid "Filtered where"
-msgstr "Gefilterd waar"
+msgstr "Відфільтровано де"
 
 #: common/static/js/frepple.js:1742 common/static/js/frepple.min.js:11
 msgid "Click ok to confirm deleting the favorite"
-msgstr "Klik ok om de favoriet definitief te verwijderen"
+msgstr "Натисніть ОК, щоб підтвердити видалення вибраного"
 
 #: common/static/js/frepple.js:1919 common/static/js/frepple.js:2003
 #: common/static/js/frepple.min.js:11
 msgid "export"
-msgstr "exporteer"
+msgstr "експорт"
 
 #: common/static/js/frepple.js:1922 common/static/js/frepple.min.js:11
 msgid "export selected records"
-msgstr "exporteer geselecteerde records"
+msgstr "експортувати вибрані записи"
 
 #: common/static/js/frepple.js:1932 common/static/js/frepple.js:2097
 #: common/static/js/frepple.min.js:11
 msgid "connecting"
-msgstr "connecteren"
+msgstr "з'єднання"
 
 #: common/static/js/frepple.js:1941 common/static/js/frepple.js:2104
 #: common/static/js/frepple.min.js:11
 msgid "Export successful"
-msgstr "Export geslaagd"
+msgstr "Експорт вдалий"
 
 #: common/static/js/frepple.js:1966 common/static/js/frepple.min.js:11
 msgid "retry"
-msgstr "probeer opnieuw"
+msgstr "повторити спробу"
 
 #: common/static/js/frepple.js:2115 common/static/js/frepple.min.js:11
 msgid "Error during export"
-msgstr "Fout tijdens exporteren"
+msgstr "Помилка під час експорту"
 
 #: common/static/js/frepple.js:2118 common/static/js/frepple.js:2150
 #: common/static/js/frepple.min.js:11
 msgid "Retry"
-msgstr "Probeer opnieuw"
+msgstr "повторити"
 
 #: common/static/js/frepple.js:2306 common/static/js/frepple.min.js:11
 msgid "Customize a dashboard row"
-msgstr "Personaliseer een dashboardrij"
+msgstr "Налаштуйте рядок інформаційної панелі"
 
 #: common/static/js/frepple.js:2312 common/static/js/frepple.min.js:11
 msgid "Name"
-msgstr "Naam"
+msgstr "Ім'я"
 
 #: common/static/js/frepple.js:2318 common/static/js/frepple.min.js:11
 msgid "Layout"
-msgstr "Layout"
+msgstr "Макет"
 
 #: common/static/js/frepple.js:2324 common/static/js/frepple.min.js:11
 msgid "Single column"
-msgstr "Enkele kolom"
+msgstr "Одинарна колонка"
 
 #: common/static/js/frepple.js:2327 common/static/js/frepple.min.js:11
 msgid "Two columns"
-msgstr "Twee kolommen"
+msgstr "Дві колонки"
 
 #: common/static/js/frepple.js:2334 common/static/js/frepple.min.js:11
 msgid "Three columns"
-msgstr "Drie kolommen"
+msgstr "Три колони"
 
 #: common/static/js/frepple.js:2338 common/static/js/frepple.min.js:11
 msgid "Four columns"
-msgstr "Vier kolommen"
+msgstr "Чотири колони"
 
 #: common/static/js/frepple.js:2344 common/static/js/frepple.min.js:11
 msgid "Add widget"
-msgstr "Voeg widget toe"
+msgstr "Додати віджет"
 
 #: common/static/js/frepple.js:2363 common/static/js/frepple.min.js:11
 msgid "Add new below"
-msgstr "Voeg onderaan toe"
+msgstr "Додайте нове нижче"
 
 #: common/static/js/frepple.js:2364 common/static/js/frepple.min.js:11
 msgid "Add new above"
-msgstr "Voeg bovenaan toe"
+msgstr "Додайте нове вище"
 
 #: common/static/js/frepple.js:2365 common/static/js/frepple.min.js:11
 msgid "Delete"
-msgstr "Verwijder"
+msgstr "Видалити"
 
 #: common/static/js/frepple.js:2633 common/static/js/frepple.min.js:11
 msgid "Installed apps"
-msgstr "Geïnstalleerde apps"
+msgstr "Встановлені додатки"
 
 #: common/static/js/frepple.js:2677 common/static/js/frepple.min.js:11
 msgid "Import CSV or Excel file"
-msgstr "Importeer CSV of Excel bestand"
+msgstr "Імпорт файлу CSV або Excel"
 
 #: common/static/js/frepple.js:2683 common/static/js/frepple.min.js:11
 msgid "Load an Excel file or a CSV-formatted text file."
-msgstr "Laad een Excel bestand of een tekst bestand in CSV-formaat."
+msgstr "Завантажте файл Excel або текстовий файл у форматі CSV."
 
 #: common/static/js/frepple.js:2684 common/static/js/frepple.min.js:11
 msgid "The first row should contain the field names."
-msgstr "De eerste rij moet de veldnamen bevatten."
+msgstr "Перший рядок повинен містити назви полів."
 
 #: common/static/js/frepple.js:2686 common/static/js/frepple.min.js:11
 msgid "First delete all existing records AND ALL RELATED TABLES"
-msgstr "Verwijder eerst alle huidige records EN ALLE GERELATEERDE TABELLEN"
+msgstr "Спочатку видаліть усі існуючі записи та ВСІ ПОВ'ЯЗАНІ ТАБЛИЦІ"
 
 #: common/static/js/frepple.js:2693 common/static/js/frepple.min.js:11
 msgid "files selected"
-msgstr "bestanden geselecteerd"
+msgstr "вибрані файли"
 
 #: common/static/js/frepple.js:2696 common/static/js/frepple.min.js:11
 msgid "Select files"
-msgstr "Selecteer bestanden"
+msgstr "Виберіть файли"
 
 #: common/static/js/frepple.js:2699 common/static/js/frepple.min.js:11
 msgid "or drop them here"
-msgstr "of drop ze hier"
+msgstr "або видалити тут"
 
 #: common/static/js/frepple.js:2708 common/static/js/frepple.min.js:11
 msgid "Data file"
-msgstr "Gegevensbestand"
+msgstr "Файл даних"
 
 #: common/static/js/frepple.js:2717 common/static/js/frepple.min.js:11
 msgid "Import"
-msgstr "Importeer gegevens"
+msgstr "Імпорт"
 
 #: common/static/js/frepple.js:2718 common/static/js/frepple.min.js:11
 msgid "Cancel Import"
-msgstr "Annuleer import"
+msgstr "Скасувати імпорт"
 
 #: common/static/js/frepple.js:2720 common/static/js/frepple.min.js:11
 msgid "Copy to Clipboard"
-msgstr "Kopieer naar klembord"
+msgstr "Копіювати в буфер обміну"
 
 #: common/static/js/frepple.js:2784 common/static/js/frepple.min.js:11
 msgid "Importing..."
-msgstr "Importeren..."
+msgstr "Імпорт ..."
 
 #: common/static/js/frepple.js:2803 common/static/js/frepple.min.js:11
 msgid "Canceled"
-msgstr "Geannuleerd"
+msgstr "Скасовано"
 
 #: input/static/js/frepple-operationplandetail.min.js:11
 #: input/static/operationplandetail/src/supplypositionpanelDrv.js:22
 msgid "inventory status"
-msgstr "voorraad status"
+msgstr "статус запасу"
 
 #: input/static/js/frepple-operationplandetail.min.js:11
 #: input/static/operationplandetail/src/supplypositionpanelDrv.js:29
 msgid "onhand at lead time"
-msgstr "voorraad na de lead time"
+msgstr "одразу під час проведення"
 
 #: input/static/js/frepple-operationplandetail.min.js:11
 #: input/static/operationplandetail/src/supplypositionpanelDrv.js:63
 msgid "current onhand"
-msgstr "huidige voorraad"
+msgstr "поточна наявність"

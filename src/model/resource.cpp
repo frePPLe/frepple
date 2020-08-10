@@ -643,8 +643,7 @@ void Resource::updateSetupTime() const {
       changed = false;
       for (auto qq = getLoadPlans().rbegin();
            qq != getLoadPlans().end() && !changed; --qq)
-        if (qq->getEventType() == 1 && qq->getQuantity() < 0.0 &&
-            !qq->getOperationPlan()->getConfirmed())
+        if (qq->getEventType() == 1 && qq->getQuantity() < 0.0)
           changed = qq->getOperationPlan()->updateSetupTime();
     } while (changed);
   }

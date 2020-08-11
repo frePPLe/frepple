@@ -3653,12 +3653,12 @@ class ManufacturingOrderList(OperationPlanMixin, GridReport):
     @classmethod
     def extra_context(reportclass, request, *args, **kwargs):
         if args and args[0]:
-            request.session["lasttab"] = "manufacturingorders"
+            request.session["lasttab"] = "plandetail"
             paths = request.path.split("/")
             path = paths[4]
             if path == "location" or request.path.startswith("/detail/input/location/"):
                 return {
-                    "active_tab": "manufacturingorders",
+                    "active_tab": "plandetail",
                     "model": Location,
                     "title": force_text(Location._meta.verbose_name) + " " + args[0],
                     "post_title": _("manufacturing orders"),
@@ -3667,21 +3667,21 @@ class ManufacturingOrderList(OperationPlanMixin, GridReport):
                 "/detail/input/operation/"
             ):
                 return {
-                    "active_tab": "manufacturingorders",
+                    "active_tab": "plandetail",
                     "model": Operation,
                     "title": force_text(Operation._meta.verbose_name) + " " + args[0],
                     "post_title": _("manufacturing orders"),
                 }
             elif path == "item" or request.path.startswith("/detail/input/item/"):
                 return {
-                    "active_tab": "manufacturingorders",
+                    "active_tab": "plandetail",
                     "model": Item,
                     "title": force_text(Item._meta.verbose_name) + " " + args[0],
                     "post_title": _("manufacturing orders"),
                 }
             elif path == "operationplanmaterial":
                 return {
-                    "active_tab": "manufacturingorders",
+                    "active_tab": "plandetail",
                     "model": Item,
                     "title": force_text(Item._meta.verbose_name) + " " + args[0],
                     "post_title": force_text(
@@ -3691,7 +3691,7 @@ class ManufacturingOrderList(OperationPlanMixin, GridReport):
                 }
             elif path == "produced":
                 return {
-                    "active_tab": "manufacturingorders",
+                    "active_tab": "plandetail",
                     "model": Item,
                     "title": force_text(Item._meta.verbose_name) + " " + args[0],
                     "post_title": force_text(
@@ -3701,7 +3701,7 @@ class ManufacturingOrderList(OperationPlanMixin, GridReport):
                 }
             elif path == "consumed":
                 return {
-                    "active_tab": "manufacturingorders",
+                    "active_tab": "plandetail",
                     "model": Item,
                     "title": force_text(Item._meta.verbose_name) + " " + args[0],
                     "post_title": force_text(
@@ -3711,8 +3711,15 @@ class ManufacturingOrderList(OperationPlanMixin, GridReport):
                 }
             else:
                 return {"active_tab": "edit", "model": Item}
+        elif "parentreference" in request.GET:
+            return {
+                "active_tab": "plandetail",
+                "title": force_text(ManufacturingOrder._meta.verbose_name)
+                + " "
+                + request.GET["parentreference"],
+            }
         else:
-            return {"active_tab": "manufacturingorders"}
+            return {"active_tab": "plandetail"}
 
     @classmethod
     def basequeryset(reportclass, request, *args, **kwargs):

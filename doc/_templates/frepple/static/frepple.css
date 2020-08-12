@@ -19,6 +19,14 @@ div.body {
 	margin-bottom: 20px;
 }
    
+div.sphinxsidebar ul li.toctree-l1 {
+  display: none;
+}
+
+div.sphinxsidebar ul li.toctree-l1.current {
+  display: list-item;
+}
+
 @font-face {
   font-family: 'Open Sans';
   font-style: normal;

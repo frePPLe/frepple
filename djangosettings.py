@@ -202,7 +202,7 @@ LANGUAGES = (
     ("es", _("Spanish")),
     ("zh-hans", _("Simplified Chinese")),
     ("zh-hant", _("Traditional Chinese")),
-    ("uk", _("Ukranian")),
+    ("uk", _("Ukrainian")),
 )
 
 # The remember-me checkbox on the login page allows to keep a session cookie

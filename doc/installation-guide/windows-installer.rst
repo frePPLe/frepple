@@ -117,6 +117,19 @@ The installer is 64-bit and has been tested on Windows 10.
    Your selections are saved in the file custom/djangosettings.py. The file can
    later be edited with a text editor.
 
+#. **Allow collection of usage info**
+
+   .. image:: _images/wininstall10.png
+      :alt: Allow collection of usage info
+   
+   Optionally you can allows us to collect ananymous data on your usage of frePPLe.
+   
+   Understanding how frepple is used is important to us. It provides us valuable
+   information to guide our roadmap and continue improving the tool. The data is
+   anonymous and will never be shared with third parties.
+   
+   The option is disabled by default. But You're not going to let us down, are you?
+
 #. **Installation**
 
    During the actual installation you can see the list of installed files, and

@@ -73,6 +73,7 @@ SetCompressor /SOLID lzma
 !insertmacro MUI_PAGE_DIRECTORY
 !insertmacro MUI_PAGE_COMPONENTS
 Page custom DatabaseOpen DatabaseLeave
+Page custom SendUsageInfoOpen
 !insertmacro MUI_PAGE_INSTFILES
 Page custom FinishOpen FinishLeave
 
@@ -96,7 +97,7 @@ Page custom FinishOpen FinishLeave
 !insertmacro MUI_LANGUAGE "SimpChinese"
 !insertmacro MUI_LANGUAGE "Spanish"
 !insertmacro MUI_LANGUAGE "TradChinese"
-!insertmacro MUI_LANGUAGE "Ukranian"
+!insertmacro MUI_LANGUAGE "Ukrainian"
 
 ;Version Information
 VIProductVersion "${PRODUCT_VERSION}.0"
@@ -124,6 +125,7 @@ Var seconds
 ; Declare everything that needs to be extracted on startup.
 ; Only useful for BZIP2 compression
 ReserveFile "parameters.ini"
+ReserveFile "sendusage.ini"
 ReserveFile "finish.ini"
 ReserveFile '${NSISDIR}\Plugins\InstallOptions.dll'
 ReserveFile "finish.bmp"
@@ -132,6 +134,7 @@ ReserveFile "finish.bmp"
 Function .onInit
   ; Extract some files used by the installer
   !insertmacro INSTALLOPTIONS_EXTRACT "parameters.ini"
+  !insertmacro INSTALLOPTIONS_EXTRACT "sendusage.ini"
   !insertmacro INSTALLOPTIONS_EXTRACT "finish.ini"
   !insertmacro INSTALLOPTIONS_EXTRACT "finish.bmp"
 
@@ -294,6 +297,12 @@ Function Databaseleave
 FunctionEnd
 
 
+Function SendUsageInfoOpen
+  !insertmacro MUI_HEADER_TEXT "Allow collection of usage info" "Opt-in for anonymous usage data collection"
+  !insertmacro INSTALLOPTIONS_DISPLAY "sendusage.ini"
+FunctionEnd
+
+
 Function FinishOpen
   ; Display the page
   UserInfo::GetAccountType
@@ -402,6 +411,9 @@ Section -Post
     StrCmp $6 "Traditional Chinese" 0 +3
       StrCpy $6 "zh-hant"
       Goto ok2
+    StrCmp $6 "Ukrainian" 0 +3
+      StrCpy $6 "uk"
+      Goto ok2      
     MessageBox MB_ICONEXCLAMATION|MB_OK "Invalid language selection $6!"
     ok2:
     ReadINIStr $1 "$PLUGINSDIR\parameters.ini" "Field 10" "State"  # DB name
@@ -495,6 +507,11 @@ Section -Post
   FileWrite $R4 "    },$\r$\n"
   ${Endif}
   FileWrite $R4 "  }$\r$\n$\r$\n"
+  ; Optionally, write a section to enable usage data collection
+  ReadINIStr $7 "$PLUGINSDIR\sendusage.ini" "Field 1" "State"
+  ${If} $7 == 1
+    FileWrite $R4 "GOOGLE_ANALYTICS = 'UA-1950616-4' $\r$\n$\r$\n"
+  ${EndIf}
   ; Read the third section in settings.py and write unmodified to the output file
   read3_loop:
     FileWrite $R4 "$R5"

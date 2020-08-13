@@ -18,6 +18,16 @@ td > p:last-child {
 div.body {
 	margin-bottom: 20px;
 }
+
+div.sphinxrow {
+  display: flex;  
+}
+
+div.sphinxcolumn {
+  flex: 50%;
+  padding-bottom: 0.5em;
+  padding-top: 0.5em;
+}
    
 div.sphinxsidebar ul li.toctree-l1 {
   display: none;

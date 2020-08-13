@@ -4,6 +4,9 @@ Plan analysis screens
 
 This series of screens is used to review the planning results.
 
+Normally, you will browse through this section directly. Instead, you use the 
+help link on each screen to land on the appropriate page in this section. 
+
 .. toctree::
    :maxdepth: 2
 

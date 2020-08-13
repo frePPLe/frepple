@@ -2,38 +2,80 @@
 frePPLe |release| documentation
 ===============================
 
-**Explore before you get started**:
+**Explore before you get started**
 
-- | :doc:`features`
-  | Browse through all key functionalities
-- | :doc:`videos/index` 
-  | Browse through our collection of youtube videos
-  
-**Get started**:
+.. raw:: html
 
-- | :doc:`modeling-wizard/index`
-  | Guided path to load your first data
-- | :doc:`examples/index`
-  | Browse through our collection of sample models
+    <div class="sphinxrow">
+    <div class="sphinxcolumn">
+    <a class="reference internal" href="features.html"><span class="doc">Key features</span></a><br>
+    Browse through all key functionalities
+    </div>
+    <div class="sphinxcolumn">
+    <a class="reference internal" href="videos/index.html"><span class="doc">Use case videos</span></a><br> 
+    Browse through our collection of youtube videos
+    </div>
+    </div>
 
-**Reference**:
+**Get started**
 
-- | :doc:`user-interface/index`
-  | Documentation of all screens.
-- | :doc:`model-reference/index`
-  | Description all tables
-- | :doc:`command-reference`
-  | Desciption of all commands
-- | :doc:`installation-guide/index`
-  | Installation instructions for linux and windows
-- | :doc:`integration-guide/index`
-  | How to integrate with your business applications
-- | :doc:`developer-guide/index`
-  | The geek corner
-- | :doc:`license`
-  | The lawyer corner
-- | :doc:`release-notes`
-  | What's new and exciting?
+.. raw:: html
+
+    <div class="sphinxrow">
+    <div class="sphinxcolumn">
+    <a class="reference internal" href="modeling-wizard/index.html"><span class="doc">Wizard to load your data</span></a><br>
+    Guided path to load your first data
+    </div>
+    <div class="sphinxcolumn">
+    <a class="reference internal" href="examples/index.html"><span class="doc">Examples</span></a><br> 
+    Browse through our collection of sample models
+    </div>
+    </div>
+
+**Reference**
+
+.. raw:: html
+
+    <div class="sphinxrow">
+    <div class="sphinxcolumn">
+    <a class="reference internal" href="model-reference/index.html"><span class="doc">Table description</span></a><br> 
+    Description all tables and fields
+    </div>
+    <div class="sphinxcolumn">
+    <a class="reference internal" href="user-interface/index.html"><span class="doc">User interface</span></a><br>
+    Documentation of all screens
+    </div>
+    </div>
+    <div class="sphinxrow">
+    <div class="sphinxcolumn">
+    <a class="reference internal" href="command-reference.html"><span class="doc">Tasks</span></a><br>
+    Description of all commands
+    </div>
+    <div class="sphinxcolumn">
+    <a class="reference internal" href="installation-guide/index.html"><span class="doc">Installation guide</span></a><br> 
+    Installation instructions
+    </div>
+    </div>
+    <div class="sphinxrow">
+    <div class="sphinxcolumn">
+    <a class="reference internal" href="integration-guide/index.html"><span class="doc">Integration guide</span></a><br>
+    How to integrate with your business applications
+    </div>
+    <div class="sphinxcolumn">
+    <a class="reference internal" href="developer-guide/index.html"><span class="doc">Developer guide</span></a><br> 
+    How to customize and extend
+    </div>
+    </div>
+    <div class="sphinxrow">
+    <div class="sphinxcolumn">
+    <a class="reference internal" href="license.html"><span class="doc">License</span></a><br>
+    Software license info
+    </div>
+    <div class="sphinxcolumn">
+    <a class="reference internal" href="release-notes.html"><span class="doc">Release notes</span></a><br> 
+    What's new and exciting?
+    </div>
+    </div>
 
 .. toctree::
    :maxdepth: 4

@@ -37,7 +37,6 @@ This section provides an overview of the available actions:
   * :ref:`createsuperuser`
   * :ref:`changepassword`
   * :ref:`flush`
-  * :ref:`loadxml`
   
 * Developer commands
 
@@ -627,20 +626,6 @@ This command is available on the command line only:
 ::
 
     frepplectl flush
-
-
-.. _loadxml: 
-
-Load an XML data file
----------------------
-
-This command loads an XML file into the database. 
-
-This command is available on the command line only:
-
-::
-
-    frepplectl loadxml myfile
 
 
 Developer commands

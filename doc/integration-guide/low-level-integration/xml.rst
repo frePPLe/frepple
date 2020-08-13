@@ -92,4 +92,4 @@ There are plenty of sample XML-files available:
 
 .. _`XML schema`: https://en.wikipedia.org/wiki/XML_schema
 
-.. _`that code`: https://github.com/frePPLe/frePPLe/blob/master/contrib/odoo/addons_v9/controllers/outbound.py
+.. _`that code`: https://github.com/frePPLe/odoo/blob/13.0/frepple/controllers/outbound.py

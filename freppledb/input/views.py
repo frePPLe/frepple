@@ -5598,6 +5598,14 @@ class InventoryDetail(OperationPlanMixin, GridReport):
         ),
         GridFieldText("operationplan__reference", title=_("reference"), editable=False),
         GridFieldText(
+            "owner",
+            title=_("owner"),
+            field_name="operationplan__owner__reference",
+            formatter="detail",
+            extra="role:'input/manufacturingorder'",
+            initially_hidden=True,
+        ),
+        GridFieldText(
             "operationplan__batch",
             title=_("batch"),
             editable=False,
@@ -5996,6 +6004,14 @@ class ResourceDetail(OperationPlanMixin, GridReport):
             extra='"role":"input/resource"',
         ),
         GridFieldText("operationplan__reference", title=_("reference"), editable=False),
+        GridFieldText(
+            "owner",
+            title=_("owner"),
+            field_name="operationplan__owner__reference",
+            formatter="detail",
+            extra="role:'input/manufacturingorder'",
+            initially_hidden=True,
+        ),
         GridFieldText(
             "color",
             title=_("inventory status"),

@@ -1813,35 +1813,38 @@ class OperationPlan : public Object,
 
   /* Update flag which allow/disallows material consumption. */
   void setConsumeMaterial(bool b) {
+    if (!getConfirmed()) return;
     if (b)
       flags &= ~CONSUME_MATERIAL;
     else
       flags |= CONSUME_MATERIAL;
     resizeFlowLoadPlans();
     for (auto* i = firstsubopplan; i; i = i->nextsubopplan)
-      if (!i->getConfirmed()) i->setConsumeMaterial(b);
+      i->setConsumeMaterial(b);
   }
 
   /* Update flag which allow/disallows material production. */
   void setProduceMaterial(bool b) {
+    if (!getConfirmed()) return;
     if (b)
       flags &= ~PRODUCE_MATERIAL;
     else
       flags |= PRODUCE_MATERIAL;
     resizeFlowLoadPlans();
     for (auto* i = firstsubopplan; i; i = i->nextsubopplan)
-      if (!i->getConfirmed()) i->setProduceMaterial(b);
+      i->setProduceMaterial(b);
   }
 
   /* Update flag which allow/disallows capacity consumption. */
   void setConsumeCapacity(bool b) {
+    if (!getConfirmed()) return;
     if (b)
       flags &= ~CONSUME_CAPACITY;
     else
       flags |= CONSUME_CAPACITY;
     resizeFlowLoadPlans();
     for (auto* i = firstsubopplan; i; i = i->nextsubopplan)
-      if (!i->getConfirmed()) i->setConsumeCapacity(b);
+      i->setConsumeCapacity(b);
   }
 
   void setFeasible(bool b) {

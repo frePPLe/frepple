@@ -5,6 +5,7 @@
 {% if mode == "graph" %}
 function drawGraphs(jsondata)
 {
+  $('#curerror').html("");
   var margin = {top: 0, right: 0, bottom: 0, left: 50};
   var width = $("#grid_graph").width() - margin.left - margin.right;
   var height = 80 - margin.top - margin.bottom;

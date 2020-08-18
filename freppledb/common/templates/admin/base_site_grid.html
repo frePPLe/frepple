@@ -22,7 +22,7 @@ var actions = { {% for i in actions %}
 
 $(function() {
   {% if reportclass.hasTimeBuckets and not bucketnames %}
-  $('#curfilter').html("{% trans 'Error: Missing time buckets or bucket dates' %}");
+  $('#curerror').html("{% trans 'Error: Missing time buckets or bucket dates' %}");
 {% else %}
   jQuery("#grid").jqGrid({
    	url: (location.href.indexOf("#") != -1 ? location.href.substr(0,location.href.indexOf("#")) : location.href)
@@ -81,11 +81,11 @@ $(function() {
     loadError: function(xhr,st,err) {
       if (xhr.status == 200)
       {
-        $('#curfilter').html("{{_('Warning: no data found')|escapejs}}");
+        $('#curerror').html("{{_('Warning: no data found')|escapejs}}");
         $('#grid').clearGridData();
       }
       else
-        $('#curfilter').html("{{_('Error')|escapejs}}" + ":&nbsp;" + xhr.status + "&nbsp;" + xhr.statusText);
+        $('#curerror').html("{{_('Error')|escapejs}}" + ":&nbsp;" + xhr.status + "&nbsp;" + xhr.statusText);
     },{% if reportclass.editable and reportclass.multiselect and not is_popup and hasaddperm %}
     multiselect: true,
     multiboxonly: true,
@@ -138,6 +138,7 @@ $(function() {
         return true;
     },{% endif %}
     loadComplete: function() {
+    	$('#curerror').html("");
       $(".invStatus").each( function(value) {
         $(this).parent().css('background',$(this).css('background-color'));
       });

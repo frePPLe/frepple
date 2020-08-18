@@ -174,6 +174,7 @@
 
 {% block extra_grid %}
 loadComplete : function(data) {
+ $('#curerror').html("");
  if (data.lastcompleted != lastcompleted) {
    if (lastcompleted != -1)
      location.reload();

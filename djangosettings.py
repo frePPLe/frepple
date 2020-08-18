@@ -245,6 +245,7 @@ INSTALLED_APPS = (
     "rest_framework",
     "django_admin_bootstrapped",
     "django.contrib.admin",
+    "freppledb.archive",
     # The next two apps allow users to run their own SQL statements on
     # the database, using the SQL_ROLE configured above.
     "freppledb.reportmanager",
@@ -418,6 +419,7 @@ DEFAULT_DASHBOARD = [
                 "widgets": [
                     ("demand_alerts", {}),
                     ("delivery_performance", {"green": 90, "yellow": 80}),
+                    ("archived_demand", {"history": 12}),
                 ],
             },
         ],
@@ -436,6 +438,7 @@ DEFAULT_DASHBOARD = [
             {
                 "width": 3,
                 "widgets": [
+                    ("archived_purchase_order", {"history": 12}),
                     ("inventory_by_location", {"limit": 5}),
                     ("inventory_by_item", {"limit": 10}),
                 ],
@@ -450,6 +453,7 @@ DEFAULT_DASHBOARD = [
                 "widgets": [
                     ("distribution_orders", {"fence1": 7, "fence2": 30}),
                     # ("shipping_queue",{"limit":20}),
+                    ("archived_buffer", {"history": 12}),
                 ],
             }
         ],

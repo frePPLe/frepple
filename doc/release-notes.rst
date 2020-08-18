@@ -11,6 +11,11 @@ Release notes
 
 .. rubric:: User interface
 
+- | New demand history, purchase order history and inventory history widgets on the 
+    `cockpit <user-interface/cockpit.html>`_ screen.
+  | FrePPLe will now record historical plan data. In following releases you can expect
+    historical plan information to start appearing in additional screens.
+     
 - | The `search box <user-interface/getting-around/navigation.html>`_ now allows
     you to open the search results in a new browser tab. Using different browser tabs is very
     handy when you don't like to lose the previous screen.

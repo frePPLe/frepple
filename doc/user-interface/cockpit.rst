@@ -77,6 +77,15 @@ The following widgets are currently available:
   | This widget shows the percentage of order lines that are planned to be
     shipped on time.
 
+* | **Demand history**
+  | Displays the historical evolution of the open sales orders. 
+
+* | **Inventory history**
+  | Displays the historical evolution of the inventory. 
+
+* | **Purchase order history**
+  | Displays the historical evolution of the open purchase orders. 
+
 * | **Inventory by location**
   | This widget shows the locations carrying the most inventory.
 

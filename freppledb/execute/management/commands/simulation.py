@@ -18,6 +18,7 @@
 from datetime import datetime, timedelta
 from dateutil.parser import parse
 import importlib
+import random
 
 from django.conf import settings
 from django.core import management
@@ -360,7 +361,7 @@ class Simulator(object):
         self.database = database
         self.verbosity = verbosity
         self.demand_number = Demand.objects.all().using(self.database).count()
-        self.mo_number = int(
+        self.mo_number = (
             ManufacturingOrder.objects.all()
             .using(self.database)
             .extra(where=["reference ~ '^[0-9]*$'"])
@@ -368,6 +369,8 @@ class Simulator(object):
         )
         if not self.mo_number:
             self.mo_number = 0
+        else:
+            self.mo_number = int(self.mo_number)
         self.mo_number += (
             10000
         )  # A bit of a trick to avoid duplicate references with POs and DOs
@@ -395,7 +398,7 @@ class Simulator(object):
 
         It can be used to gather performance metrics, or initialize some variables.
         """
-        return
+        management.call_command("archive", database=self.database, verbosity=0)
 
     def end_bucket(self, strt, nd):
         """
@@ -470,20 +473,26 @@ class Simulator(object):
                 if not op.operation.location or not fl.item:
                     continue
                 elif fl.type == "end":
-                    buf = (
+                    buf, created = (
                         Buffer.objects.select_for_update()
                         .using(self.database)
-                        .get(item=fl.item, location=op.operation.location)
+                        .get_or_create(item=fl.item, location=op.operation.location)
                     )
-                    buf.onhand += fl.quantity * op.quantity
+                    if created:
+                        buf.onhand = fl.quantity * op.quantity
+                    else:
+                        buf.onhand += fl.quantity * op.quantity
                     buf.save(using=self.database)
                 elif fl.type == "fixed_end":
-                    buf = (
+                    buf, created = (
                         Buffer.objects.select_for_update()
                         .using(self.database)
-                        .get(item=fl.item, location=op.operation.location)
+                        .get_or_create(item=fl.item, location=op.operation.location)
                     )
-                    buf.onhand += fl.quantity
+                    if created:
+                        buf.onhand = fl.quantity
+                    else:
+                        buf.onhand += fl.quantity
                     buf.save(using=self.database)
 
     def create_manufacturing_orders(self, strt, nd):
@@ -507,20 +516,26 @@ class Simulator(object):
                 if not op.operation.location or not fl.item:
                     continue
                 elif fl.type == "start":
-                    buf = (
+                    buf, created = (
                         Buffer.objects.select_for_update()
                         .using(self.database)
-                        .get(item=fl.item, location=op.operation.location)
+                        .get_or_create(item=fl.item, location=op.operation.location)
                     )
-                    buf.onhand += fl.quantity * op.quantity
+                    if created:
+                        buf.onhand = fl.quantity * op.quantity
+                    else:
+                        buf.onhand += fl.quantity * op.quantity
                     buf.save(using=self.database)
                 elif fl.type == "fixed_start":
-                    buf = (
+                    buf, created = (
                         Buffer.objects.select_for_update()
                         .using(self.database)
-                        .get(item=fl.item, location=op.operation.location)
+                        .get_or_create(item=fl.item, location=op.operation.location)
                     )
-                    buf.onhand += fl.quantity
+                    if created:
+                        buf.onhand = fl.quantity
+                    else:
+                        buf.onhand += fl.quantity
                     buf.save(using=self.database)
             op.status = "confirmed"
             op.save(using=self.database)
@@ -542,18 +557,18 @@ class Simulator(object):
                     "      Closing PO %s - %d of %s@%s"
                     % (po.reference, po.quantity, po.item.name, po.location.name)
                 )
-            try:
-                buf = (
-                    Buffer.objects.select_for_update()
-                    .using(self.database)
-                    .get(item=po.item, location=po.location)
-                )
+            buf, created = (
+                Buffer.objects.select_for_update()
+                .using(self.database)
+                .get_or_create(item=po.item, location=po.location)
+            )
+            if created:
+                buf.onhand = po.quantity
+            else:
                 buf.onhand += po.quantity
-                buf.save(using=self.database)
-                po.status = "closed"
-                po.save(using=self.database)
-            except Buffer.DoesNotExist:
-                print("        ERROR: can't find the buffer to receive the PO")
+            buf.save(using=self.database)
+            po.status = "closed"
+            po.save(using=self.database)
 
     def create_purchase_orders(self, strt, nd):
         """
@@ -598,18 +613,16 @@ class Simulator(object):
                         do.destination.name,
                     )
                 )
-            try:
-                buf = (
-                    Buffer.objects.select_for_update()
-                    .using(self.database)
-                    .get(item=do.item, location=do.origin)
-                )
+            buf, created = (
+                Buffer.objects.select_for_update()
+                .using(self.database)
+                .get_or_create(item=do.item, location=do.origin)
+            )
+            if not created:
                 buf.onhand -= do.quantity
                 buf.save(using=self.database)
-                do.status = "confirmed"
-                do.save(using=self.database)
-            except Buffer.DoesNotExist:
-                print("        ERROR: can't find the buffer to create the DO")
+            do.status = "confirmed"
+            do.save(using=self.database)
 
     def receive_distribution_orders(self, strt, nd):
         """
@@ -628,48 +641,74 @@ class Simulator(object):
                     "      Closing DO %s - %d of %s@%s"
                     % (do.reference, do.quantity, do.item.name, do.destination.name)
                 )
-            try:
-                buf = (
-                    Buffer.objects.select_for_update()
-                    .using(self.database)
-                    .get(item=do.item, location=do.destination)
-                )
+            buf, created = (
+                Buffer.objects.select_for_update()
+                .using(self.database)
+                .get_or_create(item=do.item, location=do.destination)
+            )
+            if created:
+                buf.onhand = do.quantity
+            else:
                 buf.onhand += do.quantity
-                buf.save(using=self.database)
-                do.status = "closed"
-                do.save(using=self.database)
-            except Buffer.DoesNotExist:
-                print("        ERROR: can't find the buffer to receive the DO")
+            buf.save(using=self.database)
+            do.status = "closed"
+            do.save(using=self.database)
 
     def generate_customer_demand(self, strt, nd):
         """
         Simulate new customers orders being received.
         This function creates new records in the demand table.
 
-        The default implementation doesn't create any new demands. We only
-        simulate the execution of the current open sales orders.
-
-        A simplistic, hardcoded example of creating demands is shown.
-        TODO A more generic mechanism to have a data-driven automatic demand generation would be nice.
-        Eg use some "template records" in the demand table which we use to
-        automatically create new demands with a specific frequency.
+        The default implementation looks at the forecast quantities.
+        Hardcoded is a demand lead time of 14 days and a uniformly
+        distributed around the forecasted value.
         """
-        return
+        if "freppledb.forecast" in settings.INSTALLED_APPS:
+            from freppledb.forecast.models import Forecast, ForecastPlan
 
-        self.demand_number += 1
-        dmd = Demand.objects.using(self.database).create(
-            name="Demand #%s" % self.demand_number,
-            item=Item.objects.all().using(self.database).get(name="product"),
-            location=Location.objects.all().using(self.database).get(name="factory 1"),
-            quantity=100,
-            status="open",
-            due=strt + timedelta(days=14),
-        )
-        if self.verbosity > 2:
-            print(
-                "      Opening demand %s - %d of %s@%s due on %s"
-                % (dmd.name, dmd.quantity, dmd.item.name, dmd.location.name, dmd.due)
-            )
+            for fcst in (
+                Forecast.objects.all().using(self.database).filter(planned=True)
+            ):
+                fcstqty = 0
+                for fcstpln in (
+                    ForecastPlan.objects.all()
+                    .using(self.database)
+                    .filter(
+                        item=fcst.item,
+                        location=fcst.location,
+                        customer=fcst.customer,
+                        startdate__lte=nd + timedelta(days=14),
+                        enddate__gt=strt + timedelta(days=14),
+                    )
+                ):
+                    fcstqty += (
+                        fcstpln.value.get("forecasttotal", 0)
+                        * (nd - strt).total_seconds()
+                        / (fcstpln.enddate - fcstpln.startdate).total_seconds()
+                    )
+                order_qty = int(random.uniform(0, fcstqty * 2))
+                if order_qty > 0:
+                    self.demand_number += 1
+                    dmd = Demand.objects.using(self.database).create(
+                        name="Demand #%s" % self.demand_number,
+                        item=fcst.item,
+                        location=fcst.location,
+                        customer=fcst.customer,
+                        quantity=order_qty,
+                        status="open",
+                        due=strt + (nd - strt) / 2,
+                    )
+                    if self.verbosity > 2:
+                        print(
+                            "      Opening demand %s - %d of %s@%s due on %s"
+                            % (
+                                dmd.name,
+                                dmd.quantity,
+                                dmd.item.name,
+                                dmd.location.name,
+                                dmd.due,
+                            )
+                        )
 
     def checkAvailable(self, qty, min_qty, oper, consume):
         """
@@ -680,9 +719,9 @@ class Simulator(object):
                 continue
             if not fl.item or not oper.location:
                 continue
-            buf = Buffer.objects.using(self.database).get(
+            buf = Buffer.objects.using(self.database).get_or_create(
                 item=fl.item, location=oper.location
-            )
+            )[0]
             if fl.type in ("start", "end") or not fl.type:
                 if consume:
                     buf.onhand += qty * fl.quantity
@@ -778,7 +817,7 @@ class Simulator(object):
     def ship_customer_demand(self, strt, nd):
         """
         Deliver customer orders to customers.
-    
+
         We search for open demand records with a due date earlier than the end of the bucket.
         The records found are ordered by priority and due date.
         For each record found:
@@ -819,15 +858,13 @@ class Simulator(object):
                     continue
             else:
                 # Case 2: Automatically generated delivery operation
-                try:
-                    buf = (
-                        Buffer.objects.select_for_update()
-                        .using(self.database)
-                        .get(item=dmd.item, location=dmd.location)
-                    )
-                except Buffer.DoesNotExist:
-                    self.checkDemandExpired(dmd, nd)
-                    continue
+                buf, created = (
+                    Buffer.objects.select_for_update()
+                    .using(self.database)
+                    .get_or_create(item=dmd.item, location=dmd.location)
+                )
+                if created:
+                    buf.onhand = 0.0
                 if buf.onhand < (dmd.minshipment or 0):
                     # Not sufficient to ship something
                     self.checkDemandExpired(dmd, nd)

@@ -66,7 +66,7 @@ class MultiDBBackend(ModelBackend):
                 user = User.objects.get(username__iexact=username)
                 if user.check_password(password):
                     return user
-            except User.DoesNotExist:
+            except (User.DoesNotExist, User.MultipleObjectsReturned):
                 # Run the default password hasher once to reduce the timing
                 # difference between an existing and a non-existing user.
                 # See django ticket #20760

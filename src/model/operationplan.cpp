@@ -1476,6 +1476,7 @@ void OperationPlan::setConfirmed(bool b) {
   if (b) {
     flags |= STATUS_CONFIRMED;
     flags &= ~(STATUS_APPROVED + STATUS_COMPLETED + STATUS_CLOSED);
+    if (owner && owner->getProposed()) owner->flags |= STATUS_APPROVED;
   } else {
     // Change to proposed
     flags &= ~(STATUS_CONFIRMED + STATUS_COMPLETED + STATUS_CLOSED);
@@ -1490,6 +1491,7 @@ void OperationPlan::setApproved(bool b) {
   if (b) {
     flags |= STATUS_APPROVED;
     flags &= ~(STATUS_CONFIRMED + STATUS_COMPLETED + STATUS_CLOSED);
+    if (owner && owner->getProposed()) owner->flags |= STATUS_APPROVED;
   } else
     // Change to proposed
     flags &= ~(STATUS_APPROVED + STATUS_CONFIRMED + STATUS_COMPLETED +
@@ -1517,6 +1519,7 @@ void OperationPlan::setCompleted(bool b) {
   if (b) {
     flags |= STATUS_CONFIRMED + STATUS_COMPLETED;
     flags &= ~(STATUS_APPROVED + STATUS_CLOSED);
+    if (owner && owner->getProposed()) owner->flags |= STATUS_APPROVED;
   } else {
     // Change to approved
     flags &= ~(STATUS_CONFIRMED + STATUS_COMPLETED + STATUS_CLOSED);
@@ -1792,6 +1795,8 @@ void OperationPlan::setStatus(const string& s, bool propagate) {
     flags |= STATUS_CONFIRMED + STATUS_CLOSED;
   } else
     throw DataException("invalid operationplan status:" + s);
+  if (!getProposed() && owner && owner->getProposed())
+    owner->flags |= STATUS_APPROVED;
   update();
   for (auto x = firstsubopplan; x; x = x->nextsubopplan)
     x->setStatus(s, propagate);

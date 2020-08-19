@@ -237,7 +237,8 @@ function drawGraphs(jsondata)
     // Display Y-Axis
     var yAxis = d3.svg.axis()
       .scale(y)
-      .orient("left");
+      .orient("left")
+      .tickFormat(d3.format("s"));
     {% if not args.0 %}
     svg.append("g")
       .attr("class", "miniaxis")

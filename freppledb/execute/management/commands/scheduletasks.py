@@ -324,10 +324,10 @@ class Command(BaseCommand):
         # Reschedule to run this task again at the next date
         earliest_next = (
             ScheduledTask.objects.using(database)
-            .filter(next_run__isnull=False)
+            .filter(next_run__isnull=False, next_run__gt=now)
             .aggregate(Min("next_run"))
         )["next_run__min"]
-        if earliest_next and earliest_next > now:
+        if earliest_next:
             retcode = 0
             if os.name == "nt":
                 # TODO For multi-tenancy possible we would also need to set the

@@ -270,7 +270,7 @@ CommandMoveOperationPlan::CommandMoveOperationPlan(OperationPlan *o)
 CommandMoveOperationPlan::CommandMoveOperationPlan(OperationPlan *o,
                                                    Date newstart, Date newend,
                                                    double newQty,
-                                                   bool roundDown)
+                                                   bool roundDown, bool later)
     : opplan(o), state(o), firstCommand(nullptr) {
   if (!opplan) return;
 
@@ -278,7 +278,7 @@ CommandMoveOperationPlan::CommandMoveOperationPlan(OperationPlan *o,
   assert(opplan->getOperation());
   opplan->setOperationPlanParameters(
       newQty == -1.0 ? opplan->getQuantity() : newQty, newstart, newend, true,
-      true, roundDown);
+      true, roundDown, later);
 
   // Construct a subcommand for all suboperationplans
   for (OperationPlan::iterator x(o); x != o->end(); ++x) {

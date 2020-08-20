@@ -1862,7 +1862,7 @@ class OperationPlan : public Object,
 
   inline OperationPlanState setOperationPlanParameters(
       double qty, Date startdate, Date enddate, bool preferEnd = true,
-      bool execute = true, bool roundDown = true);
+      bool execute = true, bool roundDown = true, bool later = false);
 
   /* Fixes the start and end date of an operationplan. Note that this
    * overrules the standard duration given on the operation, i.e. no logic
@@ -2736,8 +2736,8 @@ class Operation : public HasName<Operation>,
    */
   virtual OperationPlanState setOperationPlanParameters(
       OperationPlan* opplan, double qty, Date startdate, Date enddate,
-      bool preferEnd = true, bool execute = true,
-      bool roundDown = true) const = 0;
+      bool preferEnd = true, bool execute = true, bool roundDown = true,
+      bool later = false) const = 0;
 
   /* Updates the quantity of an operationplan.
    * This method considers the lot size constraints and also propagates
@@ -3381,9 +3381,9 @@ class OperationPlanState  // @todo should also be able to remember and restore
 
 inline OperationPlanState OperationPlan::setOperationPlanParameters(
     double qty, Date startdate, Date enddate, bool preferEnd, bool execute,
-    bool roundDown) {
+    bool roundDown, bool later) {
   return getOperation()->setOperationPlanParameters(
-      this, qty, startdate, enddate, preferEnd, execute, roundDown);
+      this, qty, startdate, enddate, preferEnd, execute, roundDown, later);
 }
 
 /* Models an operation that takes a fixed amount of time, independent
@@ -3429,7 +3429,8 @@ class OperationFixedTime : public Operation {
    */
   OperationPlanState setOperationPlanParameters(
       OperationPlan* opplan, double qty, Date startdate, Date enddate,
-      bool preferEnd = true, bool execute = true, bool roundDown = true) const;
+      bool preferEnd = true, bool execute = true, bool roundDown = true,
+      bool later = false) const;
 
   template <class Cls>
   static inline void registerFields(MetaClass* m) {
@@ -3495,7 +3496,8 @@ class OperationTimePer : public Operation {
    */
   OperationPlanState setOperationPlanParameters(
       OperationPlan* opplan, double qty, Date startdate, Date enddate,
-      bool preferEnd = true, bool execute = true, bool roundDown = true) const;
+      bool preferEnd = true, bool execute = true, bool roundDown = true,
+      bool later = false) const;
 
   /* Return the decoupled lead time of this operation. */
   virtual Duration getDecoupledLeadTime(double qty) const;
@@ -3560,7 +3562,8 @@ class OperationRouting : public Operation {
    */
   OperationPlanState setOperationPlanParameters(
       OperationPlan* opplan, double qty, Date startdate, Date enddate,
-      bool preferEnd = true, bool execute = true, bool roundDown = true) const;
+      bool preferEnd = true, bool execute = true, bool roundDown = true,
+      bool later = false) const;
 
   double setOperationPlanQuantity(OperationPlan* oplan, double f,
                                   bool roundDown, bool upd, bool execute,
@@ -3641,7 +3644,8 @@ class OperationSplit : public Operation {
    */
   OperationPlanState setOperationPlanParameters(
       OperationPlan* opplan, double qty, Date startdate, Date enddate,
-      bool preferEnd = true, bool execute = true, bool roundDown = true) const;
+      bool preferEnd = true, bool execute = true, bool roundDown = true,
+      bool later = false) const;
 
   /* Add a new child operationplan.
    * An alternate operationplan plan can have a maximum of 2
@@ -3719,7 +3723,8 @@ class OperationAlternate : public Operation {
    */
   OperationPlanState setOperationPlanParameters(
       OperationPlan* opplan, double qty, Date startdate, Date enddate,
-      bool preferEnd = true, bool execute = true, bool roundDown = true) const;
+      bool preferEnd = true, bool execute = true, bool roundDown = true,
+      bool later = false) const;
 
   /* Add a new child operationplan.
    * An alternate operationplan plan can have a maximum of 2
@@ -8861,7 +8866,8 @@ class CommandMoveOperationPlan : public Command {
    * which indicates to leave the quantity unchanged.
    */
   CommandMoveOperationPlan(OperationPlan* opplanptr, Date newStart, Date newEnd,
-                           double newQty = -1.0, bool roundDown = false);
+                           double newQty = -1.0, bool roundDown = false,
+                           bool later = false);
 
   /* Default constructor. */
   CommandMoveOperationPlan(OperationPlan*);

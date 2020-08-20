@@ -849,7 +849,7 @@ void Operation::deleteOperationPlans(bool deleteLockedOpplans) {
 
 OperationPlanState OperationFixedTime::setOperationPlanParameters(
     OperationPlan* opplan, double q, Date s, Date e, bool preferEnd,
-    bool execute, bool roundDown) const {
+    bool execute, bool roundDown, bool later) const {
   // Invalid call to the function
   if (!opplan || q < 0)
     throw LogicException("Incorrect parameters for fixedtime operationplan");
@@ -919,6 +919,12 @@ OperationPlanState OperationFixedTime::setOperationPlanParameters(
       // Compute backward from the end date
       production_dates = calculateOperationTime(
           opplan, e, production_wanted_duration, false, &production_duration);
+      if (later && production_dates.getEnd() < e) {
+        auto nextok = calculateOperationTime(opplan, e, Duration(1L), true);
+        production_dates = calculateOperationTime(opplan, nextok.getEnd(),
+                                                  production_wanted_duration,
+                                                  false, &production_duration);
+      }
       if (production_duration != production_wanted_duration)
         // Damned, not enough time for the production
         setup_dates =
@@ -1108,7 +1114,7 @@ bool OperationFixedTime::extraInstantiate(OperationPlan* o,
 
 OperationPlanState OperationTimePer::setOperationPlanParameters(
     OperationPlan* opplan, double q, Date s, Date e, bool preferEnd,
-    bool execute, bool roundDown) const {
+    bool execute, bool roundDown, bool later) const {
   // Invalid call to the function.
   if (!opplan || q < 0)
     throw LogicException("Incorrect parameters for timeper operationplan");
@@ -1252,6 +1258,12 @@ OperationPlanState OperationTimePer::setOperationPlanParameters(
       production_wanted_duration = Duration::MAX;
     production_dates = calculateOperationTime(
         opplan, e, production_wanted_duration, false, &production_duration);
+    if (later && production_dates.getEnd() < e) {
+      auto nextok = calculateOperationTime(opplan, e, Duration(1L), true);
+      production_dates = calculateOperationTime(opplan, nextok.getEnd(),
+                                                production_wanted_duration,
+                                                false, &production_duration);
+    }
     if (production_duration == production_wanted_duration) {
       // Size is as desired
       setuptime_required = calculateSetup(opplan, production_dates.getStart());
@@ -1487,7 +1499,7 @@ OperationPlanState OperationTimePer::setOperationPlanParameters(
 
 OperationPlanState OperationRouting::setOperationPlanParameters(
     OperationPlan* opplan, double q, Date s, Date e, bool preferEnd,
-    bool execute, bool roundDown) const {
+    bool execute, bool roundDown, bool later) const {
   // Invalid call to the function
   if (!opplan || q < 0)
     throw LogicException("Incorrect parameters for routing operationplan");
@@ -1518,7 +1530,8 @@ OperationPlanState OperationRouting::setOperationPlanParameters(
     // Case 1: an end date is specified
     for (auto i = opplan->lastsubopplan; i; i = i->prevsubopplan) {
       x = i->setOperationPlanParameters(q, Date::infinitePast, e, preferEnd,
-                                        execute, roundDown);
+                                        execute, roundDown,
+                                        realfirst ? later : false);
       e = x.start;
       if (realfirst) {
         y = x.end;
@@ -1530,7 +1543,8 @@ OperationPlanState OperationRouting::setOperationPlanParameters(
     // Case 2: a start date is specified
     for (auto i = opplan->firstsubopplan; i; i = i->nextsubopplan) {
       x = i->setOperationPlanParameters(q, s, Date::infinitePast, preferEnd,
-                                        execute, roundDown);
+                                        execute, roundDown,
+                                        realfirst ? later : true);
       s = x.end;
       if (realfirst) {
         y = x.start;
@@ -1587,7 +1601,7 @@ SearchMode decodeSearchMode(const string& c) {
 
 OperationPlanState OperationAlternate::setOperationPlanParameters(
     OperationPlan* opplan, double q, Date s, Date e, bool preferEnd,
-    bool execute, bool roundDown) const {
+    bool execute, bool roundDown, bool later) const {
   // Invalid calls to this function
   if (!opplan || q < 0)
     throw LogicException("Incorrect parameters for alternate operationplan");
@@ -1608,8 +1622,8 @@ OperationPlanState OperationAlternate::setOperationPlanParameters(
           s, e, opplan->setQuantity(q, roundDown, false, false));
   } else
     // Pass the call to the sub-operation
-    return x->setOperationPlanParameters(q, s, e, preferEnd, execute,
-                                         roundDown);
+    return x->setOperationPlanParameters(q, s, e, preferEnd, execute, roundDown,
+                                         later);
 }
 
 bool OperationAlternate::extraInstantiate(OperationPlan* o,
@@ -1637,7 +1651,7 @@ bool OperationAlternate::extraInstantiate(OperationPlan* o,
 
 OperationPlanState OperationSplit::setOperationPlanParameters(
     OperationPlan* opplan, double q, Date s, Date e, bool preferEnd,
-    bool execute, bool roundDown) const {
+    bool execute, bool roundDown, bool later) const {
   // Invalid calls to this function
   if (!opplan || q < 0)
     throw LogicException("Incorrect parameters for split operationplan");

@@ -243,6 +243,11 @@ class Command(BaseCommand):
                 and "reportmanager_column" not in tables
             ):
                 tables.add("reportmanager_column")
+            if "freppledb.archive" in settings.INSTALLED_APPS:
+                if "ax_manager" in tables:
+                    tables.add("ax_demand")
+                    tables.add("ax_buffer")
+                    tables.add("ax_operationplan")
             tables.discard("auth_group_permissions")
             tables.discard("auth_permission")
             tables.discard("auth_group")
@@ -299,6 +304,10 @@ class Command(BaseCommand):
     @staticmethod
     def getHTML(request):
         if request.user.has_perm("auth.run_db"):
-            return render_to_string("commands/empty.html", request=request)
+            return render_to_string(
+                "commands/empty.html",
+                {"with_archive_app": "freppledb.archive" in settings.INSTALLED_APPS},
+                request=request,
+            )
         else:
             return None

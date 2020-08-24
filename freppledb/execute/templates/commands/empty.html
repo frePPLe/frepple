@@ -3,8 +3,8 @@
 <form role="form" method="post" action="{{request.prefix}}/execute/launch/empty/">{% csrf_token %}
   <table>
     <tr>
-      <td  style="padding: 15px; vertical-align:top"><button  class="btn btn-primary" type="submit" id="erase" value="{% trans "launch"|capfirst %}">{% trans "launch"|capfirst %}</button></td>
-      <td  style="padding: 15px">{% trans "Erase selected tables." %}<br><br>
+      <td style="padding: 15px; vertical-align:top"><button  class="btn btn-primary" type="submit" id="erase" value="{% trans "launch"|capfirst %}">{% trans "launch"|capfirst %}</button></td>
+      <td style="padding: 15px">{% trans "Erase selected tables." %}<br><br>
         <label>
           <input class="empty_all" type="checkbox" name="alldata" checked value="1">&nbsp;<strong>{%trans 'data tables'|upper%}</strong>
         </label>
@@ -25,6 +25,13 @@
         </label>
         <br>
         {% endif %}{% endfor %}{% endfor %}
+        {% if with_archive_app %}
+        <label>
+          <input class="empty_all" type="checkbox" name="allhistory" value="1">&nbsp;<strong>{%trans 'plan history'|upper%}</strong>
+          <input class="empty_entity hidden" type="checkbox" name="models" data-tables="archive" value="archive.archivemanager">
+        </label>
+        {% endif %}
+        <br>
       </td>
     </tr>
   </table>
@@ -46,6 +53,9 @@ $(".empty_all").click( function() {
     $(".empty_entity[data-tables='data']").prop("checked", $(this).prop("checked"));
   } else if ($(this).prop("name") === "alladmin") {
     $(".empty_entity[data-tables='admin']").prop("checked", $(this).prop("checked"));
+  }
+  else if ($(this).prop("name") === "allhistory") {
+    $(".empty_entity[data-tables='archive']").prop("checked", $(this).prop("checked"));
   }
   });
 $(".empty_entity").click( function() {

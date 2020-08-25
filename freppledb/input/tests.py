@@ -360,6 +360,9 @@ class ExcelTest(TransactionTestCase):
     def test_workbook_hebrew(self):
         self.run_workbook("he")
 
+    def test_workbook_croation(self):
+        self.run_workbook("hr")
+
     def test_workbook_italian(self):
         self.run_workbook("it")
 
@@ -371,6 +374,9 @@ class ExcelTest(TransactionTestCase):
 
     def test_workbook_russian(self):
         self.run_workbook("ru")
+
+    def test_workbook_ukrainian(self):
+        self.run_workbook("uk")
 
     def test_workbook_spanish(self):
         self.run_workbook("es")

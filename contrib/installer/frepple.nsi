@@ -85,6 +85,7 @@ Page custom FinishOpen FinishLeave
 
 ; Language files, sorted alphabetically to avoid a new world war
 !insertmacro MUI_LANGUAGE "English"   ; First option is the default language
+!insertmacro MUI_LANGUAGE "Croatian"
 !insertmacro MUI_LANGUAGE "Dutch"
 !insertmacro MUI_LANGUAGE "French"
 !insertmacro MUI_LANGUAGE "German"
@@ -381,6 +382,9 @@ Section -Post
     StrCmp $6 "English" 0 +3
       StrCpy $6 "en-us"
       Goto ok2
+    StrCmp $6 "Croatian" 0 +3
+      StrCpy $6 "hr"
+      Goto ok2      
     StrCmp $6 "Dutch" 0 +3
       StrCpy $6 "nl"
       Goto ok2

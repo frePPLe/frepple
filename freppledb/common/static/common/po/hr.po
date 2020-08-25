@@ -1,0 +1,758 @@
+# Copyright (C) 2007-2012 by Johan De Taeye, Antonio Mascolo
+# This library is free software; you can redistribute it and/or modify it
+# under the terms of the GNU Affero General Public License as published
+# by the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero
+# General Public License for more details.
+# You should have received a copy of the GNU Affero General Public
+# License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# Blago Čuljak <blago.culjak@hotmail.com>, 2015, 2016.
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: 2020-08-21 13:56+0200\n"
+"Last-Translator: Blago Čuljak <blago.culjak@hotmail.com>\n"
+"Language-Team: klaus\n"
+"Language: hr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 2.0.1\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 2.4.1\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+
+#: freppledb/planningboard/static/planningboard/src/ganttchart.js:518
+#: freppledb/planningboard/static/planningboard/src/ganttchart.js:551
+msgid "%s allocated out of %s"
+msgstr ""
+
+#: freppledb/planningboard/static/planningboard/planningboard.html:1262
+#: freppledb/planningboard/static/planningboard/planningboard.html:1283
+#: freppledb/planningboard/static/planningboard/planningboard.html:1301
+msgid "Add to the graph"
+msgstr ""
+
+#: freppledb/planningboard/static/planningboard/planningboard.html:1488
+msgid ""
+"An operation gets the color of its category.<br>\n"
+"                        The operation categories should be filled in the "
+"operation table.\n"
+"                        <br><br>"
+msgstr ""
+
+#: freppledb/planningboard/static/planningboard/planningboard.html:1523
+msgid ""
+"An operation gets the color of its subcategory.<br>\n"
+"                        The operation subcategories should be filled in the "
+"operation table.\n"
+"                        <br><br>"
+msgstr ""
+
+#: freppledb/planningboard/static/planningboard/planningboard.html:1420
+msgid ""
+"An operation gets the color the category of the item it produces.<br>\n"
+"                        The item categories should be filled in the item "
+"table.\n"
+"                        <br><br>"
+msgstr ""
+
+#: freppledb/planningboard/static/planningboard/planningboard.html:1454
+msgid ""
+"An operation gets the color the subcategory of the item it produces.<br>\n"
+"                        The item subcategories should be filled in the item "
+"table.\n"
+"                        <br><br>"
+msgstr ""
+
+#: freppledb/forecast/static/forecast/forecast.html:383
+msgid "Automatic"
+msgstr "Automatski"
+
+#: freppledb/planningboard/static/planningboard/planningboard.html:47
+msgid "Automatically resolve infeasiblities in the plan"
+msgstr ""
+
+#: freppledb/forecast/static/forecast/src/forecast.js:892
+msgid "Available Cross"
+msgstr "Dostupni križ"
+
+#: freppledb/forecast/static/forecast/src/forecast.js:902
+msgid "Cancel"
+msgstr "Odustani"
+
+#: freppledb/forecast/static/forecast/src/forecast.js:875
+msgid "Close"
+msgstr "Zatvori"
+
+#: freppledb/forecast/static/forecast/forecast.html:62
+msgid "Configure time buckets"
+msgstr "Konfiguriranje vremenskih skupova"
+
+#: freppledb/forecast/static/forecast/forecast.html:455
+#: freppledb/input/static/operationplandetail/operationplandetail.html:62
+#: freppledb/planningboard/static/planningboard/planningboard.html:142
+#: freppledb/quoting/static/quoting/quoting.html:227
+msgid "Continue"
+msgstr ""
+
+#: freppledb/planningboard/static/planningboard/planningboard.html:1332
+msgid "Criticality color setup"
+msgstr ""
+
+#: freppledb/forecast/static/forecast/forecast.html:79
+#: freppledb/forecast/static/forecast/src/forecast.js:878
+msgid "Customize"
+msgstr "Prilagodi"
+
+#: freppledb/planningboard/static/planningboard/planningboard.html:1360
+msgid "Delay color setup"
+msgstr ""
+
+#: freppledb/forecast/static/forecast/src/forecastgridDrv.js:36
+msgid "Demand outlier"
+msgstr "Demand outlier"
+
+#: freppledb/forecast/static/forecast/forecast.html:450
+#: freppledb/input/static/operationplandetail/operationplandetail.html:53
+#: freppledb/planningboard/static/planningboard/planningboard.html:133
+msgid "Do you want to save your changes first?"
+msgstr "Želite li najprije spremiti promjene?"
+
+#: freppledb/planningboard/static/planningboard/planningboard.html:264
+#: freppledb/planningboard/static/planningboard/planningboard.html:343
+#: freppledb/planningboard/static/planningboard/planningboard.html:467
+#: freppledb/planningboard/static/planningboard/planningboard.html:591
+#: freppledb/planningboard/static/planningboard/planningboard.html:717
+msgid "Duplicate"
+msgstr ""
+
+#: freppledb/quoting/static/quoting/quoting.html:30
+#: freppledb/quoting/static/quoting/quoting.html:43
+#: freppledb/quoting/static/quoting/quoting.html:56
+msgid "Enter your search terms"
+msgstr ""
+
+#: freppledb/forecast/static/forecast/forecast.html:372
+msgid "Forecast method"
+msgstr "Metod prognoze"
+
+#: freppledb/forecast/static/forecast/forecast.html:82
+#: freppledb/planningboard/static/planningboard/planningboard.html:71
+msgid "Help"
+msgstr "Pomoć"
+
+#: freppledb/planningboard/static/planningboard/planningboard.html:1414
+msgid "Item category color setup"
+msgstr ""
+
+#: freppledb/planningboard/static/planningboard/planningboard.html:1448
+msgid "Item subcategory color setup"
+msgstr ""
+
+#: freppledb/forecast/static/forecast/forecast.html:408
+msgid "Manual"
+msgstr "Ručno"
+
+#: freppledb/forecast/static/forecast/src/forecast.js:901
+msgid "OK"
+msgstr "OK"
+
+#: freppledb/planningboard/static/planningboard/planningboard.html:1517
+msgid "Operation subcategory color setup"
+msgstr ""
+
+#: freppledb/planningboard/static/planningboard/planningboard.html:1256
+#: freppledb/planningboard/static/planningboard/planningboard.html:818
+#: freppledb/planningboard/static/planningboard/src/planningboard.js:235
+msgid "Plan selected demands backward from their due date"
+msgstr ""
+
+#: freppledb/planningboard/static/planningboard/planningboard.html:1259
+#: freppledb/planningboard/static/planningboard/planningboard.html:821
+#: freppledb/planningboard/static/planningboard/src/planningboard.js:236
+msgid "Plan selected demands forward from the current date"
+msgstr ""
+
+#: freppledb/input/static/operationplandetail/operationplandetail.html:57
+#: freppledb/planningboard/static/planningboard/planningboard.html:137
+msgid "Please be patient, the chart may take some time to complete."
+msgstr ""
+
+#: freppledb/planningboard/static/planningboard/planningboard.html:1392
+msgid ""
+"Priority is a demand property, available in the demands table. The priority "
+"value will have effect in the plan results.<br>\n"
+"                        The highest priority value is 0, and the greater the "
+"value the lower the priority.\n"
+"                        <br><br>"
+msgstr ""
+
+#: freppledb/forecast/static/forecast/forecast.html:156
+msgid "Recalculate"
+msgstr "Preračunaj"
+
+#: freppledb/planningboard/static/planningboard/planningboard.html:815
+msgid "Remove this demand from planning"
+msgstr ""
+
+#: freppledb/forecast/static/forecast/src/forecast.js:903
+msgid "Reset"
+msgstr "Poništi"
+
+#: freppledb/planningboard/static/planningboard/planningboard.html:153
+msgid "Save plan from memory to the database"
+msgstr ""
+
+#: freppledb/forecast/static/forecast/forecast.html:376
+msgid ""
+"Select forecast method, only possible at single item/location/customer level"
+msgstr ""
+
+#: freppledb/forecast/static/forecast/forecast.html:5
+msgid "Select panel sequence"
+msgstr ""
+
+#: freppledb/forecast/static/forecast/src/forecast.js:884
+msgid "Selected Cross"
+msgstr "Izabrani križ"
+
+#: freppledb/planningboard/static/planningboard/planningboard.html:270
+#: freppledb/planningboard/static/planningboard/planningboard.html:349
+#: freppledb/planningboard/static/planningboard/planningboard.html:473
+#: freppledb/planningboard/static/planningboard/planningboard.html:597
+#: freppledb/planningboard/static/planningboard/planningboard.html:723
+msgid "Split in half"
+msgstr ""
+
+#: freppledb/input/static/operationplandetail/src/operationplanpanelDrv.js:33
+msgid "Stock"
+msgstr ""
+
+#: freppledb/input/static/operationplandetail/operationplandetail.html:56
+#: freppledb/planningboard/static/planningboard/planningboard.html:136
+msgid "The Gantt chart is limited to {{rowlimit}} rows."
+msgstr ""
+
+#: freppledb/planningboard/static/planningboard/planningboard.html:1337
+msgid ""
+"The criticality of an operationplan measures the slack time available till "
+"the delivery of the customer demand.<br>\n"
+"                        A criticality of 0 indicates that the order is on "
+"the critical path of one or more demands.<br>\n"
+"                        Higher criticality values indicate that a delay will "
+"not immediately impact the delivery of any demand.\n"
+"                        <br><br>"
+msgstr ""
+
+#: freppledb/planningboard/static/planningboard/planningboard.html:1365
+msgid ""
+"The delay of an operationplan compares its end date with the delivery due "
+"date of the customer demand(s) it feeds.<br>\n"
+"                        This also consider the duration of the follow-up "
+"operations still required to produce the finished end item.\n"
+"                        <br><br>"
+msgstr ""
+
+#: freppledb/forecast/static/forecast/forecast.html:154
+msgid "Undo"
+msgstr "Poništi"
+
+#: freppledb/input/static/operationplandetail/operationplanpanel.html:122
+#: freppledb/planningboard/static/planningboard/planningboard.html:433
+#: freppledb/planningboard/static/planningboard/planningboard.html:559
+#: freppledb/planningboard/static/planningboard/planningboard.html:683
+msgid "approved"
+msgstr "odobreno"
+
+#: freppledb/planningboard/static/planningboard/planningboard.html:235
+msgid "approved: {{aggregatedoperationplans.status.approved }}"
+msgstr ""
+
+#: freppledb/forecast/static/forecast/forecast.html:164
+#: freppledb/planningboard/static/planningboard/planningboard.html:158
+msgid "attributes"
+msgstr "Atributi"
+
+#: freppledb/planningboard/static/planningboard/planningboard.html:167
+#: freppledb/planningboard/static/planningboard/planningboard.html:190
+msgid "buffer"
+msgstr "međuspremnik"
+
+#: freppledb/quoting/static/quoting/quoting.html:98
+msgid "cancel"
+msgstr "odustani"
+
+#: freppledb/planningboard/static/planningboard/src/grid.js:274
+#: freppledb/planningboard/static/planningboard/src/grid.js:335
+msgid "category"
+msgstr "kategorija"
+
+#: freppledb/input/static/operationplandetail/operationplanpanel.html:125
+#: freppledb/planningboard/static/planningboard/planningboard.html:448
+#: freppledb/planningboard/static/planningboard/planningboard.html:572
+#: freppledb/planningboard/static/planningboard/planningboard.html:697
+msgid "closed"
+msgstr "zatvoreno"
+
+#: freppledb/planningboard/static/planningboard/planningboard.html:244
+msgid "closed: {{aggregatedoperationplans.status.closed }}"
+msgstr ""
+
+#: freppledb/forecast/static/forecast/forecast.html:170
+msgid "comments"
+msgstr "Komentar"
+
+#: freppledb/planningboard/static/planningboard/planningboard.html:241
+msgid "completed: {{aggregatedoperationplans.status.completed }}"
+msgstr ""
+
+#: freppledb/planningboard/static/planningboard/planningboard.html:68
+msgid "configure time buckets"
+msgstr "Konfiguriraj vremenske skupove"
+
+#: freppledb/input/static/operationplandetail/operationplanpanel.html:123
+#: freppledb/planningboard/static/planningboard/planningboard.html:438
+#: freppledb/planningboard/static/planningboard/planningboard.html:563
+#: freppledb/planningboard/static/planningboard/planningboard.html:688
+msgid "confirmed"
+msgstr "potvrđeno"
+
+#: freppledb/planningboard/static/planningboard/planningboard.html:238
+msgid "confirmed: {{aggregatedoperationplans.status.confirmed }}"
+msgstr ""
+
+#: freppledb/input/static/operationplandetail/src/supplyinformationDrv.js:40
+msgid "cost"
+msgstr "cijena"
+
+#: freppledb/input/static/operationplandetail/operationplanpanel.html:97
+#: freppledb/planningboard/static/planningboard/planningboard.html:18
+#: freppledb/planningboard/static/planningboard/planningboard.html:412
+#: freppledb/planningboard/static/planningboard/planningboard.html:538
+#: freppledb/planningboard/static/planningboard/planningboard.html:658
+#: freppledb/planningboard/static/planningboard/planningboard.html:742
+#: freppledb/planningboard/static/planningboard/planningboard.html:795
+msgid "criticality"
+msgstr "kritičnost"
+
+#: freppledb/input/static/operationplandetail/src/supplypositionpanelDrv.js:63
+msgid "current onhand"
+msgstr "Dostupno"
+
+#: freppledb/forecast/static/forecast/forecast.html:202
+#: freppledb/planningboard/static/planningboard/planningboard.html:838
+#: freppledb/planningboard/static/planningboard/src/grid.js:89
+#: freppledb/quoting/static/quoting/quoting.html:40
+msgid "customer"
+msgstr "kupac"
+
+#: freppledb/forecast/static/forecast/forecast.html:120
+msgid "customers"
+msgstr "partner"
+
+#: freppledb/forecast/static/forecast/forecast.html:447
+#: freppledb/input/static/operationplandetail/operationplandetail.html:50
+#: freppledb/planningboard/static/planningboard/planningboard.html:130
+msgid "database transaction failed"
+msgstr ""
+
+#: freppledb/input/static/operationplandetail/src/bufferspanelDrv.js:37
+#: freppledb/planningboard/static/planningboard/planningboard.html:1098
+#: freppledb/planningboard/static/planningboard/planningboard.html:1142
+#: freppledb/planningboard/static/planningboard/planningboard.html:1143
+#: freppledb/planningboard/static/planningboard/planningboard.html:279
+#: freppledb/planningboard/static/planningboard/src/ganttchart.js:1095
+msgid "date"
+msgstr "Datum/vrijeme"
+
+#: freppledb/planningboard/static/planningboard/planningboard.html:1436
+#: freppledb/planningboard/static/planningboard/planningboard.html:1470
+#: freppledb/planningboard/static/planningboard/planningboard.html:1504
+#: freppledb/planningboard/static/planningboard/planningboard.html:1539
+msgid "default"
+msgstr "zadano"
+
+#: freppledb/input/static/operationplandetail/operationplanpanel.html:104
+#: freppledb/planningboard/static/planningboard/planningboard.html:21
+#: freppledb/planningboard/static/planningboard/planningboard.html:418
+#: freppledb/planningboard/static/planningboard/planningboard.html:544
+#: freppledb/planningboard/static/planningboard/planningboard.html:666
+#: freppledb/planningboard/static/planningboard/planningboard.html:801
+#: freppledb/planningboard/static/planningboard/src/grid.js:163
+msgid "delay"
+msgstr "kašnjenje"
+
+#: freppledb/planningboard/static/planningboard/src/grid.js:149
+msgid "delivery date"
+msgstr "datum isporuke"
+
+#: freppledb/input/static/operationplandetail/src/demandpeggingpanelDrv.js:28
+#: freppledb/planningboard/static/planningboard/planningboard.html:161
+#: freppledb/planningboard/static/planningboard/planningboard.html:188
+#: freppledb/planningboard/static/planningboard/planningboard.html:762
+msgid "demand"
+msgstr "potražnja"
+
+#: freppledb/planningboard/static/planningboard/planningboard.html:1206
+msgid "demands"
+msgstr "potražnja"
+
+#: freppledb/planningboard/static/planningboard/planningboard.html:368
+#: freppledb/planningboard/static/planningboard/planningboard.html:492
+#: freppledb/planningboard/static/planningboard/planningboard.html:618
+#: freppledb/planningboard/static/planningboard/planningboard.html:986
+#: freppledb/quoting/static/quoting/quoting.html:171
+#: freppledb/quoting/static/quoting/quoting.html:198
+#: freppledb/quoting/static/quoting/quoting.html:21
+msgid "description"
+msgstr "opis"
+
+#: freppledb/input/static/operationplandetail/operationplanpanel.html:57
+msgid "destination"
+msgstr "odredište"
+
+#: freppledb/planningboard/static/planningboard/planningboard.html:193
+msgid "distribution order"
+msgstr "nalog za distribuciju"
+
+#: freppledb/input/static/operationplandetail/src/networkstatusDrv.js:40
+msgid "distribution orders"
+msgstr "nalozi za distribuciju"
+
+#: freppledb/input/static/operationplandetail/src/demandpeggingpanelDrv.js:35
+#: freppledb/planningboard/static/planningboard/planningboard.html:1218
+#: freppledb/planningboard/static/planningboard/planningboard.html:848
+#: freppledb/planningboard/static/planningboard/src/grid.js:126
+msgid "due"
+msgstr "rok"
+
+#: freppledb/input/static/operationplandetail/src/supplyinformationDrv.js:48
+msgid "effective end"
+msgstr "efektivni kraj"
+
+#: freppledb/input/static/operationplandetail/src/supplyinformationDrv.js:46
+msgid "effective start"
+msgstr "efektivni početak"
+
+#: freppledb/input/static/operationplandetail/operationplanpanel.html:76
+#: freppledb/quoting/static/quoting/quoting.html:133
+#: freppledb/quoting/static/quoting/quoting.html:177
+msgid "end date"
+msgstr "krajnji datum"
+
+#: freppledb/input/static/operationplandetail/operationplanpanel.html:126
+msgid "export"
+msgstr "Izvoz"
+
+#: freppledb/forecast/static/forecast/forecast.html:139
+#: freppledb/forecast/static/forecast/forecast.html:167
+msgid "forecast"
+msgstr "prognoza"
+
+#: freppledb/forecast/static/forecast/src/displayForecastGraph.js:198
+msgid "forecast baseline"
+msgstr "vremenska prognoza"
+
+#: freppledb/forecast/static/forecast/src/displayForecastGraph.js:206
+msgid "forecast consumed"
+msgstr "prognoza, potrošeno"
+
+#: freppledb/forecast/static/forecast/src/displayForecastGraph.js:204
+msgid "forecast net"
+msgstr "netto prognoza"
+
+#: freppledb/forecast/static/forecast/src/displayForecastGraph.js:200
+msgid "forecast override"
+msgstr "override prognoze"
+
+#: freppledb/forecast/static/forecast/src/displayForecastGraph.js:202
+msgid "forecast total"
+msgstr "ukupno prognozirano"
+
+#: freppledb/input/static/operationplandetail/operationplandetail.html:49
+#: freppledb/planningboard/static/planningboard/planningboard.html:129
+msgid "gantt chart rows limit"
+msgstr ""
+
+#: freppledb/quoting/static/quoting/quoting.html:94
+msgid "inquiry"
+msgstr "upit"
+
+#: freppledb/planningboard/static/planningboard/planningboard.html:194
+msgid "inventory"
+msgstr "Zaliha"
+
+#: freppledb/input/static/operationplandetail/src/supplypositionpanelDrv.js:22
+#: freppledb/planningboard/static/planningboard/planningboard.html:27
+msgid "inventory status"
+msgstr "Status zaliha"
+
+#: freppledb/forecast/static/forecast/forecast.html:186
+#: freppledb/input/static/operationplandetail/operationplanpanel.html:40
+#: freppledb/input/static/operationplandetail/src/demandpeggingpanelDrv.js:33
+#: freppledb/input/static/operationplandetail/src/networkstatusDrv.js:32
+#: freppledb/planningboard/static/planningboard/planningboard.html:1215
+#: freppledb/planningboard/static/planningboard/planningboard.html:857
+#: freppledb/planningboard/static/planningboard/planningboard.html:946
+#: freppledb/planningboard/static/planningboard/src/grid.js:324
+#: freppledb/planningboard/static/planningboard/src/grid.js:78
+#: freppledb/quoting/static/quoting/quoting.html:27
+msgid "item"
+msgstr "artikal"
+
+#: freppledb/forecast/static/forecast/forecast.html:107
+msgid "items"
+msgstr "artikli"
+
+#: freppledb/input/static/operationplandetail/src/supplyinformationDrv.js:38
+msgid "lead time"
+msgstr "lead time"
+
+#: freppledb/forecast/static/forecast/forecast.html:218
+#: freppledb/input/static/operationplandetail/operationplanpanel.html:48
+#: freppledb/input/static/operationplandetail/operationplanpanel.html:58
+#: freppledb/input/static/operationplandetail/src/networkstatusDrv.js:34
+#: freppledb/planningboard/static/planningboard/planningboard.html:867
+#: freppledb/planningboard/static/planningboard/planningboard.html:920
+#: freppledb/planningboard/static/planningboard/planningboard.html:956
+#: freppledb/planningboard/static/planningboard/src/grid.js:263
+#: freppledb/planningboard/static/planningboard/src/grid.js:353
+#: freppledb/planningboard/static/planningboard/src/grid.js:67
+#: freppledb/quoting/static/quoting/quoting.html:53
+msgid "location"
+msgstr "lokacija"
+
+#: freppledb/forecast/static/forecast/forecast.html:94
+msgid "locations"
+msgstr "lokacije"
+
+#: freppledb/planningboard/static/planningboard/planningboard.html:191
+msgid "manufacturing order"
+msgstr "radni nalog"
+
+#: freppledb/input/static/operationplandetail/src/networkstatusDrv.js:42
+msgid "manufacturing orders"
+msgstr "proizvodni nalozi"
+
+#: freppledb/input/static/operationplandetail/src/bufferspanelDrv.js:28
+#: freppledb/planningboard/static/planningboard/planningboard.html:1083
+#: freppledb/planningboard/static/planningboard/planningboard.html:187
+msgid "material"
+msgstr "Material"
+
+#: freppledb/quoting/static/quoting/quoting.html:73
+msgid "minimum shipment"
+msgstr "minimalna pošiljka"
+
+#: freppledb/forecast/static/forecast/forecast.html:242
+msgid "new item comment"
+msgstr "Komentar novog artikla"
+
+#: freppledb/forecast/static/forecast/forecast.html:243
+msgid "new item-location comment"
+msgstr "Komentar novog artikla-lokacije"
+
+#: freppledb/forecast/static/forecast/forecast.html:244
+msgid "new location comment"
+msgstr "Komentar nove lokacije"
+
+#: freppledb/input/static/operationplandetail/src/networkstatusDrv.js:36
+#: freppledb/planningboard/static/planningboard/planningboard.html:1095
+#: freppledb/planningboard/static/planningboard/planningboard.html:1137
+#: freppledb/planningboard/static/planningboard/planningboard.html:1138
+#: freppledb/planningboard/static/planningboard/planningboard.html:295
+#: freppledb/planningboard/static/planningboard/planningboard.html:966
+#: freppledb/planningboard/static/planningboard/src/ganttchart.js:1094
+msgid "onhand"
+msgstr "dostupno"
+
+#: freppledb/input/static/operationplandetail/src/supplypositionpanelDrv.js:29
+msgid "onhand at lead time"
+msgstr "Dostupno na lead time"
+
+#: freppledb/forecast/static/forecast/src/displayForecastGraph.js:194
+#: freppledb/forecast/static/forecast/src/displayForecastGraph.js:215
+msgid "open orders"
+msgstr "otvorene narudžbe"
+
+#: freppledb/planningboard/static/planningboard/planningboard.html:1131
+msgid "operation"
+msgstr "operacija"
+
+#: freppledb/planningboard/static/planningboard/planningboard.html:1122
+msgid "operationplans"
+msgstr "operativni planovi"
+
+#: freppledb/quoting/static/quoting/quoting.html:117
+msgid "operations"
+msgstr "operacije"
+
+#: freppledb/forecast/static/forecast/src/displayForecastGraph.js:196
+#: freppledb/forecast/static/forecast/src/displayForecastGraph.js:217
+msgid "orders adjustment"
+msgstr "prilagodba narudžbi"
+
+#: freppledb/input/static/operationplandetail/operationplanpanel.html:52
+#: freppledb/input/static/operationplandetail/src/supplyinformationDrv.js:36
+#: freppledb/planningboard/static/planningboard/planningboard.html:606
+msgid "origin"
+msgstr "porijeklo"
+
+#: freppledb/input/static/operationplandetail/src/networkstatusDrv.js:44
+msgid "overdue sales orders"
+msgstr "überfällige Kundenaufträge Wert"
+
+#: freppledb/forecast/static/forecast/forecast.html:367
+msgid "parameters"
+msgstr "Parametri"
+
+#: freppledb/input/static/operationplandetail/src/supplyinformationDrv.js:32
+#: freppledb/planningboard/static/planningboard/planningboard.html:24
+#: freppledb/planningboard/static/planningboard/planningboard.html:883
+#: freppledb/planningboard/static/planningboard/src/grid.js:100
+msgid "priority"
+msgstr "prioritet"
+
+#: freppledb/input/static/operationplandetail/src/problemspanelDrv.js:29
+#: freppledb/planningboard/static/planningboard/planningboard.html:980
+#: freppledb/quoting/static/quoting/quoting.html:165
+msgid "problems"
+msgstr "Problemi"
+
+#: freppledb/input/static/operationplandetail/operationplanpanel.html:121
+#: freppledb/planningboard/static/planningboard/planningboard.html:428
+#: freppledb/planningboard/static/planningboard/planningboard.html:554
+#: freppledb/planningboard/static/planningboard/planningboard.html:678
+msgid "proposed"
+msgstr "predloženo"
+
+#: freppledb/planningboard/static/planningboard/planningboard.html:232
+msgid "proposed: {{aggregatedoperationplans.status.proposed }}"
+msgstr ""
+
+#: freppledb/planningboard/static/planningboard/planningboard.html:192
+msgid "purchase order"
+msgstr "narudžbenica"
+
+#: freppledb/input/static/operationplandetail/src/networkstatusDrv.js:38
+msgid "purchase orders"
+msgstr "Narudžbenice"
+
+#: freppledb/input/static/operationplandetail/operationplanpanel.html:89
+#: freppledb/input/static/operationplandetail/src/bufferspanelDrv.js:33
+#: freppledb/input/static/operationplandetail/src/demandpeggingpanelDrv.js:37
+#: freppledb/input/static/operationplandetail/src/resourcespanelDrv.js:33
+#: freppledb/planningboard/static/planningboard/planningboard.html:1025
+#: freppledb/planningboard/static/planningboard/planningboard.html:1092
+#: freppledb/planningboard/static/planningboard/planningboard.html:1134
+#: freppledb/planningboard/static/planningboard/planningboard.html:1221
+#: freppledb/planningboard/static/planningboard/planningboard.html:220
+#: freppledb/planningboard/static/planningboard/planningboard.html:287
+#: freppledb/planningboard/static/planningboard/planningboard.html:402
+#: freppledb/planningboard/static/planningboard/planningboard.html:528
+#: freppledb/planningboard/static/planningboard/planningboard.html:648
+#: freppledb/planningboard/static/planningboard/planningboard.html:732
+#: freppledb/planningboard/static/planningboard/planningboard.html:786
+#: freppledb/planningboard/static/planningboard/planningboard.html:893
+#: freppledb/planningboard/static/planningboard/src/ganttchart.js:1093
+#: freppledb/planningboard/static/planningboard/src/grid.js:113
+#: freppledb/quoting/static/quoting/quoting.html:127
+#: freppledb/quoting/static/quoting/quoting.html:67
+msgid "quantity"
+msgstr "količina"
+
+#: freppledb/quoting/static/quoting/quoting.html:96
+msgid "quote"
+msgstr "quote"
+
+#: freppledb/planningboard/static/planningboard/planningboard.html:62
+msgid "remove all rows"
+msgstr ""
+
+#: freppledb/planningboard/static/planningboard/src/planningboard.js:234
+msgid "remove this demand from planning"
+msgstr ""
+
+#: freppledb/input/static/operationplandetail/src/resourcespanelDrv.js:28
+#: freppledb/planningboard/static/planningboard/planningboard.html:164
+#: freppledb/planningboard/static/planningboard/planningboard.html:189
+msgid "resource"
+msgstr "resurs/stroj"
+
+#: freppledb/planningboard/static/planningboard/planningboard.html:1016
+msgid "resources"
+msgstr "resursi/strojevi"
+
+#: freppledb/input/static/operationplandetail/src/networkstatusDrv.js:46
+msgid "sales orders"
+msgstr "potvrde narudžbi"
+
+#: freppledb/planningboard/static/planningboard/planningboard.html:1028
+msgid "setup"
+msgstr "Postavljanje"
+
+#: freppledb/input/static/operationplandetail/src/supplyinformationDrv.js:42
+msgid "size minimum"
+msgstr "min veličina"
+
+#: freppledb/input/static/operationplandetail/src/supplyinformationDrv.js:44
+msgid "size multiple"
+msgstr "Višestruka količina"
+
+#: freppledb/input/static/operationplandetail/operationplanpanel.html:63
+#: freppledb/quoting/static/quoting/quoting.html:130
+#: freppledb/quoting/static/quoting/quoting.html:174
+msgid "start date"
+msgstr "datum početka"
+
+#: freppledb/input/static/operationplandetail/operationplanpanel.html:118
+#: freppledb/planningboard/static/planningboard/planningboard.html:228
+#: freppledb/planningboard/static/planningboard/planningboard.html:424
+#: freppledb/planningboard/static/planningboard/planningboard.html:550
+#: freppledb/planningboard/static/planningboard/planningboard.html:674
+#: freppledb/quoting/static/quoting/quoting.html:91
+msgid "status"
+msgstr "Status"
+
+#: freppledb/planningboard/static/planningboard/src/grid.js:283
+#: freppledb/planningboard/static/planningboard/src/grid.js:344
+msgid "subcategory"
+msgstr "podkategorija"
+
+#: freppledb/input/static/operationplandetail/src/networkstatusDrv.js:61
+msgid "superseded"
+msgstr ""
+
+#: freppledb/input/static/operationplandetail/operationplanpanel.html:44
+#: freppledb/planningboard/static/planningboard/planningboard.html:498
+msgid "supplier"
+msgstr "Artikellieferant"
+
+#: freppledb/forecast/static/forecast/src/displayForecastGraph.js:192
+#: freppledb/forecast/static/forecast/src/displayForecastGraph.js:213
+msgid "total orders"
+msgstr "ukupno narudžbi"
+
+#: freppledb/quoting/static/quoting/quoting.html:193
+msgid "why short or late?"
+msgstr "zašto kasni ili nedostaje?"
+
+#: freppledb/planningboard/static/planningboard/planningboard.html:53
+msgid "zoom in"
+msgstr "povećaj"
+
+#: freppledb/planningboard/static/planningboard/planningboard.html:56
+msgid "zoom out"
+msgstr "smanje"
+
+#: freppledb/planningboard/static/planningboard/planningboard.html:196
+msgid "{{ aggregatedoperationplans.count }} selected"
+msgstr ""

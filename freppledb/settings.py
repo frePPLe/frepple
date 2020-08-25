@@ -116,6 +116,7 @@ LANGUAGES = (
     ("fr", _("French")),
     ("de", _("German")),
     ("he", _("Hebrew")),
+    ("hr", _("Croatian")),
     ("it", _("Italian")),
     ("ja", _("Japanese")),
     ("nl", _("Dutch")),

@@ -552,7 +552,7 @@ class OverviewReport(GridPivot):
                     - float(row[numfields - 1]["consumed"] or 0),
                 }
                 # Add attribute fields
-                idx = 17
+                idx = 18
                 for f in getAttributeFields(Item, related_name_prefix="item"):
                     res[f.field_name] = row[idx]
                     idx += 1

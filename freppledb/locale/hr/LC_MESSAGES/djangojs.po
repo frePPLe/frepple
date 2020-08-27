@@ -23,6 +23,9 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 2.0.1\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Poedit 2.4.1\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 
@@ -47,11 +50,6 @@ msgstr "Zatvori"
 #: common/static/js/frepple.js:279 common/static/js/frepple.min.js:11
 msgid "Save or cancel your changes first"
 msgstr "Spremite ili odustanite od izmjena."
-
-#: common/static/js/frepple.js:285 common/static/js/frepple.js:2307
-#: common/static/js/frepple.min.js:11
-msgid "Save"
-msgstr "Spremanje"
 
 #: common/static/js/frepple.js:286 common/static/js/frepple.js:805
 #: common/static/js/frepple.js:1146 common/static/js/frepple.js:1169
@@ -127,10 +125,6 @@ msgstr "OK"
 #: forecast/static/js/frepple-forecast.min.js:11
 msgid "Reset"
 msgstr "Poništi"
-
-#: common/static/js/frepple.js:870 common/static/js/frepple.min.js:11
-msgid "Error retrieving data"
-msgstr "Pogreška pri učitavanju podataka"
 
 #: common/static/js/frepple.js:1075 common/static/js/frepple.js:2204
 #: common/static/js/frepple.min.js:11
@@ -377,6 +371,3 @@ msgstr "Dostupno na lead time"
 #: input/static/operationplandetail/src/supplypositionpanelDrv.js:63
 msgid "current onhand"
 msgstr "Dostupno"
-
-#~ msgid "Click to select record"
-#~ msgstr "Zum Bearbeiten klicken"

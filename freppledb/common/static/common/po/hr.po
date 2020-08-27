@@ -685,11 +685,11 @@ msgstr ""
 #: freppledb/planningboard/static/planningboard/planningboard.html:164
 #: freppledb/planningboard/static/planningboard/planningboard.html:189
 msgid "resource"
-msgstr "resurs/stroj"
+msgstr "resurs"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1016
 msgid "resources"
-msgstr "resursi/strojevi"
+msgstr "resursi"
 
 #: freppledb/input/static/operationplandetail/src/networkstatusDrv.js:46
 msgid "sales orders"

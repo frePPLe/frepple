@@ -15,7 +15,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-04-25 13:07+0200\n"
-"PO-Revision-Date: 2020-08-25 18:16+0200\n"
+"PO-Revision-Date: 2020-08-27 13:38+0200\n"
 "Last-Translator: Blago Čuljak <blago.culjak@hotmail.com>\n"
 "Language-Team: klaus\n"
 "Language: hr\n"
@@ -3766,11 +3766,11 @@ msgstr ""
 #: output/models.py:59 output/views/pegging.py:56 output/views/resource.py:39
 #: output/widget.py:1395
 msgid "resource"
-msgstr "resurs/stroj"
+msgstr "resurs"
 
 #: input/models.py:721 input/views.py:1729 input/views.py:4009
 msgid "resources"
-msgstr "resursi/strojevi"
+msgstr "resursi"
 
 #: input/models.py:740 input/views.py:1714
 msgid "from setup"
@@ -3882,7 +3882,7 @@ msgstr "Veličina serije kojom se materijal proizvodi ili troši"
 
 #: input/models.py:987
 msgid "operation material"
-msgstr "Izborni naziv ovog operativnog materijala"
+msgstr "radni materijal"
 
 #: input/models.py:988 input/views.py:2717
 msgid "operation materials"
@@ -3917,11 +3917,11 @@ msgstr "Postavljanje je potrebno na resursu za ovu operaciju"
 
 #: input/models.py:1101
 msgid "operation resource"
-msgstr "operativni resurs"
+msgstr "radni resurs"
 
 #: input/models.py:1102 input/views.py:2469
 msgid "operation resources"
-msgstr "operativni resursi"
+msgstr "radni resursi"
 
 #: input/models.py:1130 input/models.py:1158 input/models.py:1644
 #: input/views.py:1996 input/views.py:2123 input/views.py:2129

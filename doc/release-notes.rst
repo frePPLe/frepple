@@ -22,10 +22,14 @@ Release notes
   | You can already achieve this on all links by using the right-click menu of your
     browser. We made that a bit easier now in the search box.
     
+- | Addition of a tooltip with column name when hovering on column headers.
+    
 - | `Custom reports <user-interface/report-manager.html>`_ now support filtering,
     sorting, customization and favorites. Just as all other screens.
 
 - | Added Ukrainian translations. Thanks Michael!
+
+- | Added Croatian translations. Thanks Blago!
 
 .. rubric:: Odoo integration
 

@@ -447,7 +447,6 @@ class ReportManager(GridReport):
                 SQLReport.objects.all().using(request.database).get(pk=args[0])
             )
         if request.report and request.report.sql:
-            print(request.report and request.report.sql, "))))")
             try:
                 conn = create_connection(request.database)
                 with conn.cursor() as cursor:

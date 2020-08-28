@@ -620,10 +620,15 @@ Object* OperationPlan::createOperationPlan(const MetaClass* cat,
   // Special case: if the operation plan is locked, we need to
   // process the start and end date before locking it.
   // Subsequent calls won't affect the operationplan any longer.
-  if (statusfld && statusfld->getString() != "proposed") {
+  if (statusfld && status != "proposed") {
     opplan->setStatus(status, statuspropagation);
-    opplan->freezeStatus(start ? start : opplan->getStart(),
-                         end ? end : opplan->getEnd(), quantity);
+    if (opplan->getApproved())
+      opplan->setOperationPlanParameters(quantity, opplan->getStart(),
+                                         Date::infinitePast, false, true, false,
+                                         true);
+    else
+      opplan->freezeStatus(start ? start : opplan->getStart(),
+                           end ? end : opplan->getEnd(), quantity);
   }
   if (!opplan->activate(create, start))
     throw DataException("Can't create operationplan");
@@ -1846,7 +1851,11 @@ PyObject* OperationPlan::create(PyTypeObject* pytype, PyObject* args,
             !attr.isA(Tags::reference) && !attr.isA(Tags::action) &&
             !attr.isA(Tags::type) && !attr.isA(Tags::start) &&
             !attr.isA(Tags::end) && !attr.isA(Tags::quantity) &&
-            !attr.isA(Tags::create) && !attr.isA(Tags::batch)) {
+            !attr.isA(Tags::create) && !attr.isA(Tags::batch) &&
+            !attr.isA(Tags::status) && !attr.isA(Tags::statusNoPropagation) &&
+            !attr.isA(Tags::location) && !attr.isA(Tags::item) &&
+            !attr.isA(Tags::ordertype) && !attr.isA(Tags::origin) &&
+            !attr.isA(Tags::batch) && !attr.isA(Tags::supplier)) {
           const MetaFieldBase* fmeta = x->getType().findField(attr.getHash());
           if (!fmeta && x->getType().category)
             fmeta = x->getType().category->findField(attr.getHash());

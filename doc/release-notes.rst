@@ -1,8 +1,8 @@
 Release notes
 -------------
 
-6.7.0 (Upcoming release)
-========================
+6.7.0 (2020/08/29)
+==================
 
 .. rubric:: Production planning
 
@@ -39,7 +39,7 @@ Release notes
   
 .. rubric:: Windows installer
 
-- | The windows installer now has option to send us anonymous usage information.
+- | The windows installer now has an option to send us anonymous usage information.
   | The usage data will provide us valuable information to guide our roadmap and continue
     improving the tool. The data is anonymous and will never be shared with third parties.
   | The option is disabled by default.

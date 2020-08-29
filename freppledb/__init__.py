@@ -15,7 +15,7 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-VERSION = "6.7.0"
+VERSION = "6.8.0"
 __version__ = VERSION
 
 

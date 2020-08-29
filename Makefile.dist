@@ -115,10 +115,10 @@ profiling_run:
 #  * The  first 2 arguments need to be integers.
 #  * The third argument can be empty. Or it can be a string starting with a '.'/dot.
 old1 = 6
-old2 = 6
+old2 = 7
 old3 = 0
 new1 = 6
-new2 = 7
+new2 = 8
 new3 = 0
 set_release:
 	sed -i 's/FREPPLE_MAJOR, $(old1)/FREPPLE_MAJOR, $(new1)/g' "configure.ac"

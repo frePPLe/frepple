@@ -21,7 +21,7 @@
 
 # Version definition
 define(FREPPLE_MAJOR, 6)
-define(FREPPLE_MINOR, 7)
+define(FREPPLE_MINOR, 8)
 define(FREPPLE_PATCH, 0)
 
 #

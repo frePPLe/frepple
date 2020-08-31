@@ -14,7 +14,7 @@
       </span>
     </th>
     <th style="padding:5px 10px 5px 10px; text-align: center">
-      <span data-toggle="tooltip" data-placement="top" data-original-title="{% trans "Label shown in the scenario dropdown list" %}>
+      <span data-toggle="tooltip" data-placement="top" data-original-title="{% trans "Label shown in the scenario dropdown list" %}">
       {% trans 'label'|capfirst %}
       <span class="fa fa-question-circle"></span>
       </span></th>
@@ -37,7 +37,7 @@
        <button class="btn btn-block btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
          {% trans 'manage'|capfirst %}&nbsp;<span class="caret"></span>
        </button>
-       <ul class="dropdown-menu" rol="menu">
+       <ul class="dropdown-menu" role="menu">
          <li><a class="scenariocopy" href="#" data-source="{{ current_database }}" data-target="{{ j.name }}">
            Copy from {{ current_database }}
          </a></li>
@@ -49,7 +49,7 @@
        <button class="btn btn-block btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
          {% trans 'manage'|capfirst %}&nbsp;<span class="caret"></span>
        </button>
-       <ul class="dropdown-menu" rol="menu">
+       <ul class="dropdown-menu" role="menu">
          {% if j.name in release_perm %}
          <li><a class="scenariorelease" href="#" data-target="{{ j.name }}">
          {% trans "Release: You will lose ALL data in this scenario!" %}

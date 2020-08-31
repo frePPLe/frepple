@@ -1324,7 +1324,7 @@ var grid = {
               // Ajax request to update the horizon preferences
               $.ajax({
                   type: 'POST',
-                  url: '/horizon/',
+                  url: url_prefix + '/horizon/',
                   data: {
                     horizonbuckets: $('#horizonbuckets').val() ?
                       $('#horizonbuckets').val() :

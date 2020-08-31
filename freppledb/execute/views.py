@@ -368,7 +368,7 @@ def wrapTask(request, action):
     elif action == "scenario_copy":
         worker_database = DEFAULT_DB_ALIAS
         if "copy" in args:
-            if not request.user.has_perm("auth.copy_scenario"):
+            if not request.user.has_perm("common.copy_scenario"):
                 raise Exception("Missing execution privileges")
             source = args.get("source", request.database)
             worker_database = source
@@ -388,7 +388,7 @@ def wrapTask(request, action):
                 task.save(using=source)
         elif "release" in args:
             # Note: release is immediate and synchronous.
-            if not request.user.has_perm("auth.release_scenario"):
+            if not request.user.has_perm("common.release_scenario"):
                 raise Exception("Missing execution privileges")
             sc = Scenario.objects.using(DEFAULT_DB_ALIAS).get(name=request.database)
             if sc.status != "Free" and sc.name != DEFAULT_DB_ALIAS:
@@ -396,7 +396,7 @@ def wrapTask(request, action):
                 sc.lastrefresh = now
                 sc.save(using=DEFAULT_DB_ALIAS)
         elif "promote" in args:
-            if not request.user.has_perm("auth.promote_scenario"):
+            if not request.user.has_perm("common.promote_scenario"):
                 raise Exception("Missing execution privileges")
             source = args.get("source", request.database)
             worker_database = source
@@ -413,7 +413,7 @@ def wrapTask(request, action):
                 task.save(using=source)
         elif "update" in args:
             # Note: update is immediate and synchronous.
-            if not request.user.has_perm("auth.release_scenario"):
+            if not request.user.has_perm("common.release_scenario"):
                 raise Exception("Missing execution privileges")
             sc = Scenario.objects.using(DEFAULT_DB_ALIAS).get(name=request.database)
             sc.description = args.get("description", None)

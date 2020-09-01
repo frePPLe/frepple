@@ -455,6 +455,8 @@ class User(AbstractUser):
                 "language",
                 "theme",
                 "pagesize",
+                "horizonlength",
+                "horizontype",
                 "horizonbuckets",
                 "horizonstart",
                 "horizonend",

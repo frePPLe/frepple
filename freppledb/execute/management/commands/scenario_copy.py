@@ -197,10 +197,13 @@ class Command(BaseCommand):
                 -T auth_group
                 -T auth_group_permission
                 -T auth_permission
+                -T django_content_type
+                -T common_comment
                 -T common_user_groups
                 -T common_user_user_permissions
                 -T common_preferences
                 -T reportmanager_report
+                -T reportmanager_column
                 -T execute_schedule
                 """
                 if destination == DEFAULT_DB_ALIAS
@@ -231,7 +234,7 @@ class Command(BaseCommand):
                     task.processid = p.pid
                     task.save(using=source)
                     p.wait()
-                    if p.returncode:
+                    if p.returncode and destination != DEFAULT_DB_ALIAS:
                         # Consider the destination database free again
                         destinationscenario.status = "Free"
                         destinationscenario.lastrefresh = datetime.today()

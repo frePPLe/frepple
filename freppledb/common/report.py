@@ -547,6 +547,10 @@ class GridReport(View):
     # A list with required user permissions to view the report
     permissions = ()
 
+    # This text is displayed in the grid when there are no data to display.
+    # It is intended to display a short onboarding message.
+    message_when_empty = None
+
     # Defines the difference between height of the grid and its boundaries
     heightmargin = 75
 

@@ -138,7 +138,16 @@ $(function() {
         }
         return true;
     },{% endif %}
-    loadComplete: function() {
+    loadComplete: function(data) {
+    	{% if reportclass.message_when_empty and not filters %}
+    	$("#grid_empty_message").remove();
+    	if (data.records == 0)
+    		$("#grid").parent().append(
+    			`<div id="grid_empty_message" style="text-align:center; margin-top:5em">
+    			{% include reportclass.message_when_empty %}
+    			</div>`
+    			);
+    	{% endif %}
     	$('#curerror').html("");
       $(".invStatus").each( function(value) {
         $(this).parent().css('background',$(this).css('background-color'));

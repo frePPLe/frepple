@@ -34,6 +34,7 @@ from django.http import (
     HttpResponseServerError,
 )
 from django.shortcuts import render
+from django.template import Template
 from django.utils.encoding import smart_str
 
 from django.utils.translation import gettext as _
@@ -104,6 +105,20 @@ class ReportList(GridReport):
     title = _("my reports")
     model = SQLReport
     help_url = "user-interface/report-manager.html"
+    message_when_empty = Template(
+        """
+        <h3>You didn't find the exact report you need? Do not despair!</h3>
+        <br>
+        You can add custom reports by writing a SQL query.<br>
+        <br>
+        Your custom report will show up in the navigation menu.<br>
+        It will have the same filter, sort and export functionalities as all other reports.<br>
+        You can choose to keep the report private or share it with other users.<br>
+        <br><br>
+        <a href="{{request.prefix}}/data/reportmanager/sqlreport/add/" class="btn btn-primary">Add a custom report</a>
+        <br>
+        """
+    )
     frozenColumns = 1
     rows = (
         GridFieldInteger(

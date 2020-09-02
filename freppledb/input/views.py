@@ -3915,7 +3915,6 @@ class ManufacturingOrderList(OperationPlanMixin, GridReport):
             choices=OperationPlan.orderstatus,
             editable=not settings.ERP_CONNECTOR,
         ),
-        GridFieldText("batch", title=_("batch"), field_name="batch"),
         GridFieldNumber(
             "criticality",
             title=_("criticality"),
@@ -4400,9 +4399,6 @@ class DistributionOrderList(OperationPlanMixin, GridReport):
             extra='role:"input/distributionorder"',
             editable=not settings.ERP_CONNECTOR,
         ),
-        GridFieldText(
-            "batch", title=_("batch"), editable="true", initially_hidden=True
-        ),
         GridFieldNumber(
             "computed_color",
             title=_("inventory status"),
@@ -4467,7 +4463,9 @@ class DistributionOrderList(OperationPlanMixin, GridReport):
             search=False,
             extra='"formatoptions":{"defaultValue":""}, "summaryType":"sum"',
         ),
-        GridFieldText("batch", title=_("batch"), field_name="batch"),
+        GridFieldText(
+            "batch", title=_("batch"), editable="true", initially_hidden=True
+        ),
         GridFieldNumber(
             "criticality",
             title=_("criticality"),
@@ -4888,9 +4886,6 @@ class PurchaseOrderList(OperationPlanMixin, GridReport):
             extra='role:"input/purchaseorder"',
             editable=not settings.ERP_CONNECTOR,
         ),
-        GridFieldText(
-            "batch", title=_("batch"), editable="true", initially_hidden=True
-        ),
         GridFieldNumber(
             "computed_color",
             title=_("inventory status"),
@@ -4956,7 +4951,9 @@ class PurchaseOrderList(OperationPlanMixin, GridReport):
             search=True,
             extra='"formatoptions":{"defaultValue":""}, "summaryType":"sum"',
         ),
-        GridFieldText("batch", title=_("batch"), field_name="batch"),
+        GridFieldText(
+            "batch", title=_("batch"), editable="true", initially_hidden=True
+        ),
         GridFieldNumber(
             "criticality",
             title=_("criticality"),

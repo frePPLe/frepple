@@ -954,21 +954,23 @@ OperationPlanState OperationFixedTime::setOperationPlanParameters(
         return OperationPlanState(production_dates, setup_dates.getEnd(), 0);
       else
         opplan->setQuantity(0);
-    } else if (opplan->getProposed()) {
-      // All quantities are valid, as long as they are above the minimum size
-      // and below the maximum size
-      if (q > 0) {
-        if (getSizeMinimumCalendar()) {
-          // Minimum size varies over time
-          double curmin =
-              getSizeMinimumCalendar()->getValue(production_dates.getEnd());
-          if (q < curmin) q = roundDown ? 0.0 : curmin;
+    } else {
+      if (opplan->getProposed()) {
+        // All quantities are valid, as long as they are above the minimum size
+        // and below the maximum size
+        if (q > 0) {
+          if (getSizeMinimumCalendar()) {
+            // Minimum size varies over time
+            double curmin =
+                getSizeMinimumCalendar()->getValue(production_dates.getEnd());
+            if (q < curmin) q = roundDown ? 0.0 : curmin;
+          }
+          if (q < getSizeMinimum())
+            // Minimum size is constant over time
+            q = roundDown ? 0.0 : getSizeMinimum();
         }
-        if (q < getSizeMinimum())
-          // Minimum size is constant over time
-          q = roundDown ? 0.0 : getSizeMinimum();
+        if (q > getSizeMaximum()) q = getSizeMaximum();
       }
-      if (q > getSizeMaximum()) q = getSizeMaximum();
       if (fabs(q - opplan->getQuantity()) > ROUNDING_ERROR)
         q = opplan->setQuantity(q, roundDown, false, execute,
                                 production_dates.getEnd());

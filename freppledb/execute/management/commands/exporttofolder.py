@@ -258,7 +258,7 @@ class Command(BaseCommand):
                             raise
 
                 logger.info(
-                    "%s Started export to folder\n"
+                    "%s Started export to folder"
                     % datetime.now().replace(microsecond=0)
                 )
 
@@ -271,16 +271,29 @@ class Command(BaseCommand):
                 cnt = len(self.statements)
 
                 # Calling all the pre-sql statements
+                idx = 1
                 for stmt in self.pre_sql_statements:
                     try:
-                        logger.info("Executing pre-statement '%s'" % stmt)
+                        logger.info(
+                            "%s Executing pre-statement %s"
+                            % (datetime.now().replace(microsecond=0), idx)
+                        )
                         cursor.execute(stmt)
-                        logger.info("%s record(s) modified" % cursor.rowcount)
+                        if cursor.rowcount > 0:
+                            logger.info(
+                                "%s %s record(s) modified"
+                                % (
+                                    datetime.now().replace(microsecond=0),
+                                    cursor.rowcount,
+                                )
+                            )
                     except Exception:
                         errors += 1
                         logger.error(
-                            "An error occurred when executing statement '%s'" % stmt
+                            "%s An error occurred when executing statement %s"
+                            % (datetime.now().replace(microsecond=0), idx)
                         )
+                    idx += 1
 
                 for cfg in self.statements:
                     # Validate filename
@@ -393,20 +406,33 @@ class Command(BaseCommand):
                     task.save(using=self.database)
 
                 logger.info(
-                    "%s Exported %s file(s)\n"
+                    "%s Exported %s file(s)"
                     % (datetime.now().replace(microsecond=0), cnt - errors)
                 )
 
+                idx = 1
                 for stmt in self.post_sql_statements:
                     try:
-                        logger.info("Executing post-statement '%s'" % stmt)
+                        logger.info(
+                            "%s Executing post-statement %s"
+                            % (datetime.now().replace(microsecond=0), idx)
+                        )
                         cursor.execute(stmt)
-                        logger.info("%s record(s) modified" % cursor.rowcount)
+                        if cursor.rowcount > 0:
+                            logger.info(
+                                "%s %s record(s) modified"
+                                % (
+                                    datetime.now().replace(microsecond=0),
+                                    cursor.rowcount,
+                                )
+                            )
                     except Exception:
                         errors += 1
                         logger.error(
-                            "An error occured when executing statement '%s'" % stmt
+                            "%s An error occured when executing statement %s"
+                            % (datetime.now().replace(microsecond=0), idx)
                         )
+                    idx += 1
 
             else:
                 errors += 1

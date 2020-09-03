@@ -1572,6 +1572,8 @@ bool OperationRouting::extraInstantiate(OperationPlan* o, bool createsubopplans,
             o->getQuantity(), Date::infinitePast, d, o->getBatch(), nullptr, o,
             0, true);
         d = p->getStart();
+        // created sub operationplan inherits from owner status
+        p->setStatus(o->getStatus());
       }
     } else {
       // Using the start date when there is no end date
@@ -1585,6 +1587,8 @@ bool OperationRouting::extraInstantiate(OperationPlan* o, bool createsubopplans,
             nullptr, 0, true);
         d = p->getEnd() + (*e)->getOperation()->getPostTime();
         p->setOwner(o);  // Required to get the correct ordering of the steps
+        // created sub operationplan inherits from owner status
+        p->setStatus(o->getStatus());
       }
     }
   }

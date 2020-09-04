@@ -1105,6 +1105,25 @@ var grid = {
     	}
     }
     
+    
+    // Compute the initial power query url to display
+    var powerquery = (location.href.indexOf("#") != -1 ? location.href.substr(0,location.href.indexOf("#")) : location.href);
+    
+    if (location.search.length > 0)
+      // URL already has arguments
+    	powerquery += "&format=csv";
+    else if (powerquery.charAt(powerquery.length - 1) == '?')
+      // This is the first argument for the URL, but we already have a question mark at the end
+    	powerquery += "format=csv";
+    else
+      // This is the first argument for the URL
+    	powerquery += "?format=csv";
+    
+    // Append current filter and sort settings to the URL
+    var postdata = $("#grid").jqGrid('getGridParam', 'postData');
+    powerquery +=  "&allcolumns=true&powerquery=true&" + jQuery.param(postdata) + "&username=yourusername&password=yourpassword";
+       
+    
     // The only_list argument is true when we show a "list" report.
     // It is false for "table" reports.
     if (only_list && scenario_permissions.length > 1)
@@ -1138,6 +1157,29 @@ var grid = {
               '</tr>' +
             '</tbody>' +
           '</table>' +
+          
+   
+          '<table class="table table-borderless">' +
+          '<thead>' +
+            '<tr>' +
+              '<th scope="col">' + gettext("Power Query URL:") + '</th>' +
+              '<th scope="col"></th>' +
+            '</tr>' +
+          '</thead>' +
+          '<tbody>' +
+            '<tr>' +
+              '<td>' + 
+              '<input type="text" id="powerqueryurl" class="form-control" aria-label="Small" aria-describedby="Power Query URL" value="'+ powerquery +'" readonly>' +
+              '</div>' +
+              '</td>' +
+              '<td>' +
+              '<div>' +
+              '<input type="submit" id="powerquerycopy" role="button" class="btn btn-primary pull-right" value="'+gettext('Copy URL')+'">'+
+             '</div>' +
+              '</td>' +
+            '</tr>' +
+          '</tbody>' +
+        '</table>' +
             '</div>'+
             '<div class="modal-footer">'+
               '<input type="submit" id="exportbutton" role="button" class="btn btn-primary pull-right" value="'+gettext('Export')+'">'+
@@ -1202,6 +1244,27 @@ var grid = {
                       '</div>' +
                     '</label>' +
                   '</div>'+
+                  '<table class="table table-borderless">' +
+                  '<thead>' +
+                    '<tr>' +
+                      '<th scope="col">' + gettext("Power Query URL:") + '</th>' +
+                      '<th scope="col"></th>' +
+                    '</tr>' +
+                  '</thead>' +
+                  '<tbody>' +
+                    '<tr>' +
+                      '<td>' + 
+                      '<input type="text" id="powerqueryurl" class="form-control" aria-label="Small" aria-describedby="Power Query URL" value="'+ powerquery +'" readonly>' +
+                      '</div>' +
+                      '</td>' +
+                      '<td>' +
+                      '<div>' +
+                      '<input type="submit" id="powerquerycopy" role="button" class="btn btn-primary pull-right" value="'+gettext('Copy URL')+'">'+
+                     '</div>' +
+                      '</td>' +
+                    '</tr>' +
+                  '</tbody>' +
+                '</table>' +
                   '<div class="modal-footer">'+
                     '<input type="submit" id="exportbutton" role="button" class="btn btn-primary pull-right" value="'+gettext('Export')+'">'+
                     '<input type="submit" id="cancelbutton" role="button" class="btn btn-primary pull-left" data-dismiss="modal" value="'+gettext('Cancel')+'">'+
@@ -1233,6 +1296,12 @@ var grid = {
     	      '</div>' )
     	      .modal('show');
     
+    
+    $('#powerquerycopy').on('click', function() {
+    	  $('#powerqueryurl').focus();
+    	  $('#powerqueryurl').select();
+    	  document.execCommand('copy');
+    }),
     
     $('#exportbutton').on('click', function() {
       // Fetch the report data

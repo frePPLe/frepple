@@ -26,7 +26,9 @@ def grant_read_access(apps, schema_editor):
         with connections[db].cursor() as cursor:
             cursor.execute("select count(*) from pg_roles where rolname = %s", (role,))
             if not cursor.fetchone()[0]:
-                cursor.execute("create role %s with nologin noinherit" % (role,))
+                cursor.execute(
+                    "create role %s with nologin noinherit role current_user" % (role,)
+                )
             for table in [
                 "calendar",
                 "calendarbucket",

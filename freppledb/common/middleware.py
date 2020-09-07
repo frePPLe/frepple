@@ -21,7 +21,7 @@ import threading
 
 from django.conf import settings
 from django.contrib import auth
-from django.contrib.auth import login
+from django.contrib.auth import login, authenticate
 from django.contrib.auth.models import AnonymousUser
 from django.middleware.locale import LocaleMiddleware as DjangoLocaleMiddleware
 from django.utils import translation
@@ -269,4 +269,48 @@ class AutoLoginAsAdminUser:
                             pass
             except User.DoesNotExist:
                 pass
+        return self.get_response(request)
+
+
+class AuthenticationPowerQueryMiddleware:
+    """
+    Middleware to allow logging in by supplying login credentials in request header
+    """
+
+    def __init__(self, get_response):
+        # One-time initialisation
+        self.get_response = get_response
+
+    def __call__(self, request):
+        if (
+            request.headers
+            and "username" in request.headers
+            and "password" in request.headers
+        ):
+            username = request.headers["username"]
+            password = request.headers["password"]
+            request.user = authenticate(username=username, password=password)
+            if request.user and request.user.is_active:
+                login(request, request.user)
+                request.user.scenarios = []
+                for db in Scenario.objects.using(DEFAULT_DB_ALIAS).filter(
+                    Q(status="In use") | Q(name=DEFAULT_DB_ALIAS)
+                ):
+                    if not db.description:
+                        db.description = db.name
+                    if db.name == DEFAULT_DB_ALIAS:
+                        if request.user.is_active:
+                            db.is_superuser = request.user.is_superuser
+                            request.user.scenarios.append(db)
+                    else:
+                        try:
+                            user2 = User.objects.using(db.name).get(
+                                username=request.user.username
+                            )
+                            if user2.is_active:
+                                db.is_superuser = user2.is_superuser
+                                request.user.scenarios.append(db)
+                        except Exception:
+                            # Silently ignore errors. Eg user doesn't exist in scenario
+                            pass
         return self.get_response(request)

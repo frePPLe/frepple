@@ -220,6 +220,8 @@ MIDDLEWARE = (
     # 'freppledb.common.middleware.AutoLoginAsAdminUser',
     "freppledb.common.middleware.MultiDBMiddleware",
     "freppledb.common.middleware.LocaleMiddleware",
+	# authentication for power query
+    "freppledb.common.middleware.AuthenticationPowerQueryMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
 )

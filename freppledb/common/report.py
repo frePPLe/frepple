@@ -984,7 +984,7 @@ class GridReport(View):
         wb.save(output)
 
     @classmethod
-    def _generate_csv_data(cls, request, scenario_list, allColumns, *args, **kwargs):
+    def _generate_csv_data(cls, request, scenario_list, *args, **kwargs):
 
         sf = StringIO()
         decimal_separator = get_format("DECIMAL_SEPARATOR", request.LANGUAGE_CODE, True)
@@ -1003,6 +1003,9 @@ class GridReport(View):
             request.prefs = request.user.getPreference(
                 cls.getKey(request, *args, **kwargs), database=request.database
             )
+        
+        allColumns = request.GET.get("allcolumns", False)
+        
         if allColumns and cls and cls.rows:
             r = [
                 force_str(
@@ -1549,7 +1552,6 @@ class GridReport(View):
         else:
             bucketnames = None
         fmt = request.GET.get("format", None)
-        allColumns = request.GET.get("allcolumns", False)
         reportkey = cls.getKey(request, *args, **kwargs)
         request.prefs = request.user.getPreference(reportkey, database=request.database)
         if request.prefs:
@@ -1712,7 +1714,7 @@ class GridReport(View):
             response = StreamingHttpResponse(
                 content_type="text/csv; charset=%s" % settings.CSV_CHARSET,
                 streaming_content=cls._generate_csv_data(
-                    request, scenario_list, allColumns, *args, **kwargs
+                    request, scenario_list, *args, **kwargs
                 ),
             )
             # Filename parameter is encoded as specified in rfc5987
@@ -2700,7 +2702,7 @@ class GridPivot(GridReport):
         yield "".join(r)
 
     @classmethod
-    def _generate_csv_data(cls, request, scenario_list, allColumns, *args, **kwargs):
+    def _generate_csv_data(cls, request, scenario_list, *args, **kwargs):
 
         sf = StringIO()
         decimal_separator = get_format("DECIMAL_SEPARATOR", request.LANGUAGE_CODE, True)

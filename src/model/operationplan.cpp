@@ -1310,12 +1310,22 @@ bool OperationPlan::updateSetupTime(bool report) {
     // Setup event required
     if (get<1>(setup)) {
       // Apply setup rule duration
-      DateRange tmp = oper->calculateOperationTime(
-          this, end_of_setup, get<1>(setup)->getDuration(), false);
-      setSetupEvent(get<0>(setup), end_of_setup, get<2>(setup), get<1>(setup));
-      if (tmp.getStart() != getStart()) {
-        setStartAndEnd(tmp.getStart(), getEnd());
-        changed = true;
+      if (getConfirmed()) {
+        setSetupEvent(get<0>(setup), end_of_setup, get<2>(setup),
+                      get<1>(setup));
+        if (getStart() != end_of_setup) {
+          changed = true;
+          setStartAndEnd(end_of_setup, getEnd());
+        }
+      } else {
+        DateRange tmp = oper->calculateOperationTime(
+            this, end_of_setup, get<1>(setup)->getDuration(), false);
+        setSetupEvent(get<0>(setup), end_of_setup, get<2>(setup),
+                      get<1>(setup));
+        if (tmp.getStart() != getStart()) {
+          setStartAndEnd(tmp.getStart(), getEnd());
+          changed = true;
+        }
       }
     } else if (getStart() != end_of_setup) {
       // Zero time event

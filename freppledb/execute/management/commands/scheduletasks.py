@@ -401,7 +401,7 @@ class Command(BaseCommand):
 
     @staticmethod
     def getHTML(request):
-        commands = {}
+        commands = []
         for commandname, appname in get_commands().items():
             if commandname != "scheduletasks":
                 try:
@@ -412,10 +412,10 @@ class Command(BaseCommand):
                         "Command",
                     )
                     if getattr(cmd, "index", -1) >= 0 and getattr(cmd, "getHTML", None):
-                        commands[cmd.index] = commandname
+                        commands.append((cmd.index, commandname))
                 except Exception:
                     pass
-        commands = [commands[i] for i in sorted(commands)]
+        commands = [i[1] for i in sorted(commands)]
         schedules = [
             s.adjustForTimezone(GridReport.getTimezoneOffset(request))
             for s in ScheduledTask.objects.all()

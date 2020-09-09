@@ -218,10 +218,9 @@ MIDDLEWARE = (
     # Uncomment the next line to automatically log on as the admin user,
     # which can be useful for development or for demo models.
     # 'freppledb.common.middleware.AutoLoginAsAdminUser',
+    "freppledb.common.middleware.AuthenticationMiddleware",
     "freppledb.common.middleware.MultiDBMiddleware",
     "freppledb.common.middleware.LocaleMiddleware",
-	# authentication for power query
-    "freppledb.common.middleware.AuthenticationPowerQueryMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
 )

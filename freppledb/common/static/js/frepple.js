@@ -1118,10 +1118,8 @@ var grid = {
     else
       // This is the first argument for the URL
     	powerquery += "?format=csv";
-    
-    // Append current filter and sort settings to the URL
-    var postdata = $("#grid").jqGrid('getGridParam', 'postData');
-    powerquery +=  "&allcolumns=true&powerquery=true&" + jQuery.param(postdata) + "&username=yourusername&password=yourpassword";
+
+    powerquery +=  "&allcolumns=true";
        
     
     // The only_list argument is true when we show a "list" report.
@@ -1153,33 +1151,11 @@ var grid = {
                 '<div class="check" name="scenarios" id="scenarios" value="default">' +
                 cb +                 
                '</div>' +
+               '<p><a href="' + powerquery + '" style="color:blue;font-size:10px" class="pull-right">Power Query link</a>.</p>' +
                 '</td>' +
               '</tr>' +
             '</tbody>' +
           '</table>' +
-          
-   
-          '<table class="table table-borderless">' +
-          '<thead>' +
-            '<tr>' +
-              '<th scope="col">' + gettext("Power Query URL:") + '</th>' +
-              '<th scope="col"></th>' +
-            '</tr>' +
-          '</thead>' +
-          '<tbody>' +
-            '<tr>' +
-              '<td>' + 
-              '<input type="text" id="powerqueryurl" class="form-control" aria-label="Small" aria-describedby="Power Query URL" value="'+ powerquery +'" readonly>' +
-              '</div>' +
-              '</td>' +
-              '<td>' +
-              '<div>' +
-              '<input type="submit" id="powerquerycopy" role="button" class="btn btn-primary pull-right" value="'+gettext('Copy URL')+'">'+
-             '</div>' +
-              '</td>' +
-            '</tr>' +
-          '</tbody>' +
-        '</table>' +
             '</div>'+
             '<div class="modal-footer">'+
               '<input type="submit" id="exportbutton" role="button" class="btn btn-primary pull-right" value="'+gettext('Export')+'">'+
@@ -1218,7 +1194,7 @@ var grid = {
                       cb +                 
                      '</div>' +
                       '</td>' +
-                    '</tr>' +
+                    '</tr>' +                                       
                   '</tbody>' +
                 '</table>' +
                   '</div>'+
@@ -1243,28 +1219,11 @@ var grid = {
                         '&nbsp;&nbsp;&nbsp;&nbsp;<label><input type="radio" name="csvformat" value="csvlist">' + gettext("CSV list") + '</label><br>' +
                       '</div>' +
                     '</label>' +
-                  '</div>'+
-                  '<table class="table table-borderless">' +
-                  '<thead>' +
-                    '<tr>' +
-                      '<th scope="col">' + gettext("Power Query URL:") + '</th>' +
-                      '<th scope="col"></th>' +
-                    '</tr>' +
-                  '</thead>' +
-                  '<tbody>' +
-                    '<tr>' +
-                      '<td>' + 
-                      '<input type="text" id="powerqueryurl" class="form-control" aria-label="Small" aria-describedby="Power Query URL" value="'+ powerquery +'" readonly>' +
-                      '</div>' +
-                      '</td>' +
-                      '<td>' +
-                      '<div>' +
-                      '<input type="submit" id="powerquerycopy" role="button" class="btn btn-primary pull-right" value="'+gettext('Copy URL')+'">'+
-                     '</div>' +
-                      '</td>' +
-                    '</tr>' +
-                  '</tbody>' +
-                '</table>' +
+                    
+                    '<div>'+
+                    '<p><a href="' + powerquery + '" style="color:blue;font-size:10px;" class="pull-right">Power Query link</a>.</p>' +
+                    '</div>'+
+                    
                   '<div class="modal-footer">'+
                     '<input type="submit" id="exportbutton" role="button" class="btn btn-primary pull-right" value="'+gettext('Export')+'">'+
                     '<input type="submit" id="cancelbutton" role="button" class="btn btn-primary pull-left" data-dismiss="modal" value="'+gettext('Cancel')+'">'+
@@ -1296,12 +1255,6 @@ var grid = {
     	      '</div>' )
     	      .modal('show');
     
-    
-    $('#powerquerycopy').on('click', function() {
-    	  $('#powerqueryurl').focus();
-    	  $('#powerqueryurl').select();
-    	  document.execCommand('copy');
-    }),
     
     $('#exportbutton').on('click', function() {
       // Fetch the report data

@@ -594,6 +594,15 @@ class User(AbstractUser):
                     }
                     if val_global and self.is_superuser:
                         # A superuser can save global preferences for this property
+                        # Note: the on conflict clause in the insert sql doesn't prevent
+                        # duplicates to be inserted since the user_id is null.
+                        cursor.execute(
+                            """
+                            delete from common_preference
+                            where user_id is null and property = %s
+                            """,
+                            [prop],
+                        )
                         t = json.dumps(val_global)
                         cursor.execute(sql, [None, prop, t, t])
                     if val_user:

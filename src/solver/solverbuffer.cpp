@@ -161,7 +161,7 @@ void SolverCreate::solve(const Buffer* b, void* v) {
                scanner->getDate() < theDate + autofence;
                ++scanner) {
             if (scanner->getQuantity() <= 0 ||
-                scanner->getDate() < requested_date)
+                scanner->getDate() <= requested_date)
               continue;
             auto tmp = scanner->getOperationPlan();
             if (tmp && (tmp->getConfirmed() || tmp->getApproved())) {

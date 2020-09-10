@@ -67,4 +67,4 @@ The following commands are available.
 
 A number of these commands are inherited from the excellent Django web application
 framework used by frePPLe. More details on the commands can be found on 
-https://docs.djangoproject.com/en/2.0/ref/django-admin/
+https://docs.djangoproject.com/en/2.2/ref/django-admin/

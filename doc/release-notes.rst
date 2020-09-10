@@ -1,6 +1,14 @@
 Release notes
 -------------
 
+6.8.0 (upcoming release)
+========================
+
+.. rubric:: Integration
+
+- `Remote API <integration-guide/remote-commands>`_ to cancel running tasks.
+
+
 6.7.0 (2020/08/29)
 ==================
 

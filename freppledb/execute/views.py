@@ -28,6 +28,7 @@ import operator
 import os
 import re
 import shlex
+from time import sleep
 from zipfile import ZipFile, ZIP_DEFLATED
 
 from django.apps import apps
@@ -266,6 +267,38 @@ def APITask(request, action):
                     "user": t.user.username if t.user else None,
                     "logfile": t.logfile,
                 }
+        elif action == "cancel":
+            response = {}
+            with transaction.atomic(using=request.database):
+                args = request.GET.getlist("id")
+                for t in (
+                    Task.objects.all()
+                    .using(request.database)
+                    .select_for_update()
+                    .filter(id__in=args)
+                ):
+                    if request.user.is_superuser or t.user == request.user:
+                        if t.processid:
+                            # Kill the process with signal 9
+                            os.kill(t.processid, 9)
+                            sleep(1)  # Wait for it to die
+                            t.message = "Canceled process"
+                            t.processid = None
+                        elif t.status != "Waiting":
+                            continue
+                        t.status = "Canceled"
+                        t.save(using=request.database)
+                        response[t.id] = {
+                            "name": t.name,
+                            "submitted": str(t.submitted),
+                            "started": str(t.started),
+                            "finished": str(t.finished),
+                            "arguments": t.arguments,
+                            "status": t.status,
+                            "message": t.message,
+                            "user": t.user.username if t.user else None,
+                            "logfile": t.logfile,
+                        }
         else:
             task = wrapTask(request, action)
             if task:

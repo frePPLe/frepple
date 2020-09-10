@@ -43,6 +43,13 @@ language using the following URLs. The examples are using the excellent
   
    curl -u <user>:<password> http(s)://<server>:<port>/execute/api/status/?id=X
 
+
+* Cancel a waiting or running task:
+
+  ::
+  
+   curl -u <user>:<password> http(s)://<server>:<port>/execute/api/cancel/?id=X
+
 The following commands are available.
 
 * :ref:`runplan`

@@ -238,13 +238,7 @@ DEFAULT_DASHBOARD = [
         "rowname": _("Welcome"),
         "cols": [
             {"width": 6, "widgets": [("welcome", {})]},
-            {
-                "width": 6,
-                "widgets": [
-                    # ("execute",{}),
-                    ("news", {})
-                ],
-            },
+            {"width": 6, "widgets": [("news", {})]},
         ],
     },
     {
@@ -253,8 +247,10 @@ DEFAULT_DASHBOARD = [
             {
                 "width": 9,
                 "widgets": [
-                    ("late_orders", {"limit": 20}),
-                    ("short_orders", {"limit": 20}),
+                    (
+                        "analysis_demand_problems",
+                        {"top": 20, "orderby": "latedemandvalue"},
+                    )
                 ],
             },
             {
@@ -262,6 +258,7 @@ DEFAULT_DASHBOARD = [
                 "widgets": [
                     ("demand_alerts", {}),
                     ("delivery_performance", {"green": 90, "yellow": 80}),
+                    ("archived_demand", {"history": 12}),
                 ],
             },
         ],
@@ -280,6 +277,7 @@ DEFAULT_DASHBOARD = [
             {
                 "width": 3,
                 "widgets": [
+                    ("archived_purchase_order", {"history": 12}),
                     ("inventory_by_location", {"limit": 5}),
                     ("inventory_by_item", {"limit": 10}),
                 ],
@@ -294,6 +292,7 @@ DEFAULT_DASHBOARD = [
                 "widgets": [
                     ("distribution_orders", {"fence1": 7, "fence2": 30}),
                     # ("shipping_queue",{"limit":20}),
+                    ("archived_buffer", {"history": 12}),
                 ],
             }
         ],

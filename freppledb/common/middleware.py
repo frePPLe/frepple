@@ -15,13 +15,14 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+import base64
 import jwt
 import re
 import threading
 
 from django.conf import settings
 from django.contrib import auth
-from django.contrib.auth import login
+from django.contrib.auth import login, authenticate
 from django.contrib.auth.models import AnonymousUser
 from django.middleware.locale import LocaleMiddleware as DjangoLocaleMiddleware
 from django.utils import translation
@@ -30,6 +31,7 @@ from django.db.models import Q
 from django.http import HttpResponseNotFound
 from django.http.response import HttpResponseForbidden
 
+from freppledb.common.auth import MultiDBBackend
 from freppledb.common.models import Scenario, User
 
 import logging
@@ -41,60 +43,71 @@ logger = logging.getLogger(__name__)
 _thread_locals = threading.local()
 
 
+class HTTPAuthenticationMiddleware:
+    def __init__(self, get_response):
+        # One-time initialisation
+        self.get_response = get_response
+
+    def __call__(self, request):
+        auth_header = request.META.get("HTTP_AUTHORIZATION", None)
+        webtoken = request.GET.get("webtoken", None)
+        if auth_header or webtoken:
+            try:
+                if auth_header:
+                    auth = auth_header.split()
+                    authmethod = auth[0].lower()
+                else:
+                    authmethod = None
+                if authmethod == "basic":
+                    # Basic authentication
+                    auth = base64.b64decode(auth[1]).decode("iso-8859-1").partition(":")
+                    user = authenticate(username=auth[0], password=auth[2])
+                    if user and user.is_active:
+                        # Active user
+                        request.api = True  # TODO I think this is no longer used
+                        login(request, user)
+                        request.user = user
+                elif authmethod == "bearer" or webtoken:
+                    # JWT webtoken authentication
+                    try:
+                        decoded = jwt.decode(
+                            webtoken or auth[1],
+                            settings.DATABASES[request.database].get(
+                                "SECRET_WEBTOKEN_KEY", settings.SECRET_KEY
+                            ),
+                            algorithms=["HS256"],
+                        )
+                        user = User.objects.get(username=decoded["user"])
+                        user.backend = settings.AUTHENTICATION_BACKENDS[0]
+                        login(request, user)
+                        MultiDBBackend.getScenarios(user)
+                        request.user = user
+                        request.session["navbar"] = decoded.get("navbar", True)
+                        request.session["xframe_options_exempt"] = True
+                    except jwt.exceptions.InvalidTokenError as e:
+                        logger.error("Missing or incorrect webtoken: %s" % e)
+                        return HttpResponseForbidden("Missing or incorrect webtoken")
+            except Exception as e:
+                logger.warn(
+                    "silently ignoring exception in http authentication: %s" % e
+                )
+        response = self.get_response(request)
+        return response
+
+
 class LocaleMiddleware(DjangoLocaleMiddleware):
     """
-  This middleware extends the Django default locale middleware with the user
-  preferences used in frePPLe:
+    This middleware extends the Django default locale middleware with the user
+    preferences used in frePPLe:
     - language choice to override the browser default
     - user interface theme to be used
-  """
+    """
 
     def process_request(self, request):
         # Make request information available throughout the application
         setattr(_thread_locals, "request", request)
 
-        # Authentication through a web token.specified as an URL parameter
-        # The token can be specified as a a URL argument or as a HTTP header
-        # with this structure:
-        #    Authorization: Bearer <token>  (see https://jwt.io/introduction/
-        # The token must have a "user" and "exp" field in the payload.
-        webtoken = request.GET.get("webtoken", None)
-        if not webtoken:
-            auth_header = request.META.get("HTTP_AUTHORIZATION", None)
-            if auth_header:
-                try:
-                    auth = auth_header.split()
-                    if auth[0].lower() == "bearer":
-                        webtoken = auth[1]
-                except Exception:
-                    pass
-        if webtoken:
-            # Decode the web token
-            try:
-                decoded = jwt.decode(
-                    webtoken,
-                    settings.DATABASES[request.database].get(
-                        "SECRET_WEBTOKEN_KEY", settings.SECRET_KEY
-                    ),
-                    algorithms=["HS256"],
-                )
-                user = User.objects.get(username=decoded["user"])
-                user.backend = settings.AUTHENTICATION_BACKENDS[0]
-                login(request, user)
-                user.scenarios = [
-                    Scenario.objects.using(DEFAULT_DB_ALIAS).get(name=request.database)
-                ]
-                request.user = user
-                request.session["navbar"] = decoded.get("navbar", True)
-                request.session["xframe_options_exempt"] = True
-            except jwt.exceptions.InvalidTokenError as e:
-                logger.error("Missing or incorrect webtoken: %s" % e)
-                return HttpResponseForbidden("Missing or incorrect webtoken")
-
-            language = request.user.language
-            request.theme = request.user.theme or settings.DEFAULT_THEME
-            request.pagesize = request.user.pagesize or settings.DEFAULT_PAGESIZE
-        elif isinstance(request.user, AnonymousUser):
+        if isinstance(request.user, AnonymousUser):
             # Anonymous users don't have preferences
             language = "auto"
             request.theme = settings.DEFAULT_THEME
@@ -142,8 +155,8 @@ class LocaleMiddleware(DjangoLocaleMiddleware):
 
 def resetRequest(**kwargs):
     """
-  Used as a request_finished signal handler.
-  """
+    Used as a request_finished signal handler.
+    """
     setattr(_thread_locals, "request", None)
 
 
@@ -154,19 +167,19 @@ for i in settings.DATABASES:
 
 class MultiDBMiddleware:
     """
-  This middleware examines the URL of the incoming request, and determines the
-  name of database to use.
-  URLs starting with the name of a configured database will be executed on that
-  database. Extra fields are set on the request to set the selected database.
-  This prefix is then stripped from the path while processing the view.
+    This middleware examines the URL of the incoming request, and determines the
+    name of database to use.
+    URLs starting with the name of a configured database will be executed on that
+    database. Extra fields are set on the request to set the selected database.
+    This prefix is then stripped from the path while processing the view.
 
-  If the request has a user, the database of that user is also updated to
-  point to the selected database.
-  We update the fields:
-    - _state.db: a bit of a hack for the django internal stuff
-    - is_active
-    - is_superuser
-  """
+    If the request has a user, the database of that user is also updated to
+    point to the selected database.
+    We update the fields:
+      - _state.db: a bit of a hack for the django internal stuff
+      - is_active
+      - is_superuser
+    """
 
     def __init__(self, get_response):
         # One-time initialisation
@@ -230,9 +243,9 @@ class MultiDBMiddleware:
 
 class AutoLoginAsAdminUser:
     """
-  Automatically log on a user as admin user.
-  This can be handy during development or for demo models.
-  """
+    Automatically log on a user as admin user.
+    This can be handy during development or for demo models.
+    """
 
     def __init__(self, get_response):
         # One-time initialisation

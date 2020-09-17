@@ -219,6 +219,8 @@ MIDDLEWARE = (
     # which can be useful for development or for demo models.
     # 'freppledb.common.middleware.AutoLoginAsAdminUser',
     "freppledb.common.middleware.MultiDBMiddleware",
+    # Optional: The following middleware allows authentication with HTTP headers
+    "freppledb.common.middleware.HTTPAuthenticationMiddleware",
     "freppledb.common.middleware.LocaleMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",

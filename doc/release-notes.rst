@@ -6,6 +6,13 @@ Release notes
 
 .. rubric:: Integration
 
+- | Authentication to all URLs of the application is now possible with
+    `a JSON web token <https://jwt.io/introduction/>` or 
+    `basic authentication with user&password<https://en.wikipedia.org/wiki/Basic_access_authentication>`.
+    This feature makes it easy for other applications to pull data or embed frePPLe.
+  | This feature can be disabled by commenting out the HTTPAuthentication middleware
+    in your djangosettings.py file.
+  
 - `Remote API <integration-guide/remote-commands>`_ to cancel running tasks.
 
 

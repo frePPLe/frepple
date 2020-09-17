@@ -38,15 +38,39 @@ logger = logging.getLogger(__name__)
 
 class MultiDBBackend(ModelBackend):
     """
-  This customized authentication is based on the Django ModelBackend
-  with the following extensions:
-    - We allow a user to log in using either their user name or
-      their email address.
-    - Permissions are scenario-specific.
+    This customized authentication is based on the Django ModelBackend
+    with the following extensions:
+      - We allow a user to log in using either their user name or
+        their email address.
+      - Permissions are scenario-specific.
 
-  This authentication backend relies on the MultiDBMiddleware class
-  to assure that the user object refers to the correct database.
-  """
+    This authentication backend relies on the MultiDBMiddleware class
+    to assure that the user object refers to the correct database.
+    """
+
+    @staticmethod
+    def getScenarios(user):
+        # Populate a dictionary with scenarios in which the user is active, and
+        # whether he's a superuser in them.
+        user.scenarios = []
+        for db in Scenario.objects.using(DEFAULT_DB_ALIAS).filter(
+            Q(status="In use") | Q(name=DEFAULT_DB_ALIAS)
+        ):
+            if not db.description:
+                db.description = db.name
+            if db.name == DEFAULT_DB_ALIAS:
+                if user.is_active:
+                    db.is_superuser = user.is_superuser
+                    user.scenarios.append(db)
+            else:
+                try:
+                    user2 = User.objects.using(db.name).get(username=user.username)
+                    if user2.is_active:
+                        db.is_superuser = user2.is_superuser
+                        user.scenarios.append(db)
+                except Exception:
+                    # Silently ignore errors. Eg user doesn't exist in scenario
+                    pass
 
     def authenticate(self, request, username=None, password=None):
         try:
@@ -54,6 +78,7 @@ class MultiDBBackend(ModelBackend):
             # The user name looks like an email address
             user = User.objects.get(email__iexact=username)
             if user.check_password(password):
+                self.getScenariosScenarios(user)
                 return user
         except User.DoesNotExist:
             # Run the default password hasher once to reduce the timing
@@ -65,6 +90,7 @@ class MultiDBBackend(ModelBackend):
             try:
                 user = User.objects.get(username__iexact=username)
                 if user.check_password(password):
+                    self.getScenarios(user)
                     return user
             except User.DoesNotExist:
                 User().set_password(password)
@@ -72,6 +98,7 @@ class MultiDBBackend(ModelBackend):
                 try:
                     user = User.objects.get(username__exact=username)
                     if user.check_password(password):
+                        self.getScenarios(user)
                         return user
                 except User.DoesNotExist:
                     User().set_password(password)
@@ -88,10 +115,10 @@ class MultiDBBackend(ModelBackend):
 
     def _get_permissions(self, user_obj, obj, from_name):
         """
-    Returns the permissions of `user_obj` from `from_name`. `from_name` can
-    be either "group" or "user" to return permissions from
-    `_get_group_permissions` or `_get_user_permissions` respectively.
-    """
+        Returns the permissions of `user_obj` from `from_name`. `from_name` can
+        be either "group" or "user" to return permissions from
+        `_get_group_permissions` or `_get_user_permissions` respectively.
+        """
         if not user_obj.is_active or user_obj.is_anonymous or obj is not None:
             return set()
 
@@ -120,28 +147,7 @@ class MultiDBBackend(ModelBackend):
     def get_user(self, user_id):
         try:
             user = User.objects.get(pk=user_id)
-
-            # Populate a dictionary with scenarios in which the user is active, and
-            # whether he's a superuser in them.
-            user.scenarios = []
-            for db in Scenario.objects.using(DEFAULT_DB_ALIAS).filter(
-                Q(status="In use") | Q(name=DEFAULT_DB_ALIAS)
-            ):
-                if not db.description:
-                    db.description = db.name
-                if db.name == DEFAULT_DB_ALIAS:
-                    if user.is_active:
-                        db.is_superuser = user.is_superuser
-                        user.scenarios.append(db)
-                else:
-                    try:
-                        user2 = User.objects.using(db.name).get(username=user.username)
-                        if user2.is_active:
-                            db.is_superuser = user2.is_superuser
-                            user.scenarios.append(db)
-                    except Exception:
-                        # Silently ignore errors. Eg user doesn't exist in scenario
-                        pass
+            self.getScenarios(user)
             return user
         except User.DoesNotExist:
             return None

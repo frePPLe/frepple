@@ -607,10 +607,12 @@ bool Resource::hasSkill(Skill* s, Date st, Date nd,
 }
 
 void Resource::setSetupMatrix(SetupMatrix* s) {
+  if (setupmatrix == s) return;
   if (hasType<ResourceBuckets>())
     throw DataException(
-        "No setup calendar can be defined on bucketized resources");
+        "No setup matrix can be defined on bucketized resources");
   setupmatrix = s;
+  updateSetupTime();
 }
 
 SetupEvent* Resource::getSetupAt(Date d, OperationPlan* opplan) {

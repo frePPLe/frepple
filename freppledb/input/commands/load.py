@@ -1137,6 +1137,7 @@ class loadResources(LoadTask):
 
     @classmethod
     def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
+        # NOTE: setup matrices aren't assigned here, but in the loadOperationPlans method
         import frepple
 
         if cls.filter:
@@ -1161,14 +1162,10 @@ class loadResources(LoadTask):
                   cost, maxearly, setup, setupmatrix_id, category, subcategory,
                   owner_id, source, available_id, efficiency, efficiency_calendar_id,
                   coalesce(constrained, true) %s
-                FROM %s %s
+                FROM resource %s
                 ORDER BY lvl ASC, name
                 """
-                % (
-                    attrsql,
-                    connections[cursor.db.alias].ops.quote_name("resource"),
-                    filter_where,
-                )
+                % (attrsql, filter_where)
             )
             for i in cursor:
                 cnt += 1
@@ -1217,8 +1214,6 @@ class loadResources(LoadTask):
                         x.cost = i[6]
                     if i[8]:
                         x.setup = i[8]
-                    if i[9]:
-                        x.setupmatrix = frepple.setupmatrix(name=i[9])
                     if i[12]:
                         x.owner = frepple.resource(name=i[12])
                     if i[14]:
@@ -1753,6 +1748,23 @@ class loadOperationPlans(LoadTask):
             )
             d = cursor.fetchone()
             frepple.settings.id = d[0]
+
+        # We only assign resource setup matrices here.
+        # If we do it before the operationplans are read in, then a) the setup
+        # calculations take extra calculations and b) the results depend on the
+        # order we read in the operationplans.
+        with connections[database].chunked_cursor() as cursor:
+            cursor.execute(
+                """
+                select name, setupmatrix_id
+                from resource
+                where setupmatrix_id is not null %s
+                order by name
+                """
+                % filter_and
+            )
+            for i in cursor:
+                frepple.resource(name=i[0]).setupmatrix = frepple.setupmatrix(name=i[1])
 
 
 @PlanTaskRegistry.register

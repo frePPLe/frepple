@@ -1146,12 +1146,16 @@ var grid = {
                 '<label><input type="radio" name="csvformat" value="spreadsheetlist" checked="">' + gettext("Spreadsheet list") + '</label><br>' +
                 '<label><input type="radio" name="csvformat" value="csvlist">' + gettext("CSV list") + '</label><br>' +
                 '</div>' +
+                '<label><b>' + gettext("External API link:") + '</b></label><br>' +
+                '<div class="input-container">' +                 
+                '<input type="text" readonly id="urladdress" class="input-field" value="' + powerquery + '"/>' +
+                '<button class="btn btn-primary btn-xs" id="copybutton">copy</button>' +
+                '</div>' +
                 '</td>' +
                 '<td>' +
                 '<div class="check" name="scenarios" id="scenarios" value="default">' +
                 cb +                 
-               '</div>' +
-               '<p><a href="' + powerquery + '" style="color:blue;font-size:10px" class="pull-right">Power Query link</a>.</p>' +
+               '</div>' +               
                 '</td>' +
               '</tr>' +
             '</tbody>' +
@@ -1188,6 +1192,11 @@ var grid = {
                       '<label><input type="radio" name="csvformat" value="csvtable">' + gettext("CSV table") + '</label><br>' +
                       '<label><input type="radio" name="csvformat" value="csvlist">' + gettext("CSV list") + '</label><br>' +
                       '</div>' +
+                      '<label><b>' + gettext("External API link:") + '</b></label><br>' +
+                      '<div class="input-container">' +                 
+                      '<input type="text" readonly id="urladdress" class="input-field" value="' + powerquery + '"/>' +
+                      '<button class="btn btn-primary btn-xs" id="copybutton">copy</button>' +
+                      '</div>' +
                       '</td>' +
                       '<td>' +
                       '<div class="check" name="scenarios" id="scenarios" value="default">' +
@@ -1218,12 +1227,13 @@ var grid = {
                         '&nbsp;&nbsp;&nbsp;&nbsp;<label><input type="radio" name="csvformat" value="spreadsheetlist" checked="">' + gettext("Spreadsheet list") + '</label><br>' +
                         '&nbsp;&nbsp;&nbsp;&nbsp;<label><input type="radio" name="csvformat" value="csvlist">' + gettext("CSV list") + '</label><br>' +
                       '</div>' +
-                    '</label>' +
-                    
-                    '<div>'+
-                    '<p><a href="' + powerquery + '" style="color:blue;font-size:10px;" class="pull-right">Power Query link</a>.</p>' +
-                    '</div>'+
-                    
+                    '</label><br>' +
+                    '<label class="control-label">' + gettext("External API link:") +
+                    '&nbsp;&nbsp;&nbsp;&nbsp;<div class="input-container">' +                 
+                    '<input type="text" readonly id="urladdress" class="input-field" value="' + powerquery + '"/>' +
+                    '<button class="btn btn-primary btn-xs" id="copybutton">copy</button>' +
+                    '</div>' +
+                    '</label><br>' +
                   '<div class="modal-footer">'+
                     '<input type="submit" id="exportbutton" role="button" class="btn btn-primary pull-right" value="'+gettext('Export')+'">'+
                     '<input type="submit" id="cancelbutton" role="button" class="btn btn-primary pull-left" data-dismiss="modal" value="'+gettext('Cancel')+'">'+
@@ -1245,7 +1255,13 @@ var grid = {
     	                  '&nbsp;&nbsp;&nbsp;&nbsp;<label><input type="radio" name="csvformat" value="csvtable">' + gettext("CSV table") + '</label><br>' +
     	                  '&nbsp;&nbsp;&nbsp;&nbsp;<label><input type="radio" name="csvformat" value="csvlist">' + gettext("CSV list") + '</label><br>' +
     	                '</div>' +
-    	              '</label>' +
+    	              '</label>' + '<br>' +
+    	              '<label class="control-label">' + gettext("External API link:") +
+                      '&nbsp;&nbsp;&nbsp;&nbsp;<div class="input-container">' +                 
+                      '<input type="text" readonly id="urladdress" class="input-field" value="' + powerquery + '"/>' +
+                      '<button class="btn btn-primary btn-xs" id="copybutton">copy</button>' +
+                      '</div>' +
+                      '</label><br>' +
     	            '</div>'+
     	            '<div class="modal-footer">'+
     	              '<input type="submit" id="exportbutton" role="button" class="btn btn-primary pull-right" value="'+gettext('Export')+'">'+
@@ -1256,6 +1272,31 @@ var grid = {
     	      .modal('show');
     
     
+    
+    $('#copybutton').on('click', function() {
+    	if (scenario_permissions.length > 1) {
+  	      var firstTime = true;
+  	      var scenarios = "";
+  	      for (var i = 0 ; i < scenario_permissions.length; i++) {
+  	    	  if ($('#' + scenario_permissions[i][0]).is(":checked")) {
+  	    	  	if (firstTime)
+  	    	  		firstTime = false;
+  	    	  	else
+  	    	  		scenarios += ",";
+  	    	  			
+  	    	    scenarios += scenario_permissions[i][0];
+  	    	  }
+  	      }
+        }
+    	
+    	appendix = "&scenarios=" + scenarios;
+    	original_url = $('#urladdress').val();
+    	$('#urladdress').val(original_url + appendix);
+    	$('#urladdress').select();
+    	document.execCommand('copy');
+    	$('#urladdress').val(original_url);
+    	
+    });
     $('#exportbutton').on('click', function() {
       // Fetch the report data
       var url = (location.href.indexOf("#") != -1 ? location.href.substr(0,location.href.indexOf("#")) : location.href);

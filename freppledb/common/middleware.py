@@ -104,9 +104,6 @@ class LocaleMiddleware(DjangoLocaleMiddleware):
     """
 
     def process_request(self, request):
-        # Make request information available throughout the application
-        setattr(_thread_locals, "request", request)
-
         if isinstance(request.user, AnonymousUser):
             # Anonymous users don't have preferences
             language = "auto"
@@ -122,10 +119,6 @@ class LocaleMiddleware(DjangoLocaleMiddleware):
             translation.activate(language)
         request.LANGUAGE_CODE = translation.get_language()
         request.charset = settings.DEFAULT_CHARSET
-
-    def process_exception(self, request, exception):
-        setattr(_thread_locals, "request", None)
-        return None
 
     def process_response(self, request, response):
         # Set a clickjacking protection x-frame-option header in the
@@ -145,11 +138,6 @@ class LocaleMiddleware(DjangoLocaleMiddleware):
             ).upper()
         if request.is_secure:
             response["strict-transport-security"] = "max-age=864000"
-
-        if not response.streaming:
-            setattr(_thread_locals, "request", None)
-        # Note: Streaming response get the request field cleared in the
-        # request_finished signal handler
         return response
 
 
@@ -186,6 +174,9 @@ class MultiDBMiddleware:
         self.get_response = get_response
 
     def __call__(self, request):
+        # Make request information available throughout the application
+        setattr(_thread_locals, "request", request)
+
         if not hasattr(request, "user"):
             request.user = auth.get_user(request)
         if not hasattr(request.user, "scenarios"):
@@ -202,7 +193,12 @@ class MultiDBMiddleware:
                         request.database = i
                         if hasattr(request.user, "_state"):
                             request.user._state.db = i.name
-                        return self.get_response(request)
+                        response = self.get_response(request)
+                        if not response.streaming:
+                            # Note: Streaming response get the request field cleared in the
+                            # request_finished signal handler
+                            setattr(_thread_locals, "request", None)
+                        return response
                 except Exception:
                     pass
             request.prefix = ""
@@ -227,7 +223,12 @@ class MultiDBMiddleware:
                         if hasattr(request.user, "_state"):
                             request.user._state.db = i.name
                         request.user.is_superuser = i.is_superuser
-                        return self.get_response(request)
+                        response = self.get_response(request)
+                        if not response.streaming:
+                            # Note: Streaming response get the request field cleared in the
+                            # request_finished signal handler
+                            setattr(_thread_locals, "request", None)
+                        return response
                 except Exception:
                     pass
             request.prefix = ""
@@ -238,7 +239,12 @@ class MultiDBMiddleware:
                 request.scenario = default_scenario
             else:
                 request.scenario = Scenario(name=DEFAULT_DB_ALIAS)
-        return self.get_response(request)
+        response = self.get_response(request)
+        if not response.streaming:
+            # Note: Streaming response get the request field cleared in the
+            # request_finished signal handler
+            setattr(_thread_locals, "request", None)
+        return response
 
 
 class AutoLoginAsAdminUser:

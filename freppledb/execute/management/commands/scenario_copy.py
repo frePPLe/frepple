@@ -244,9 +244,10 @@ class Command(BaseCommand):
                     p.kill()
                     p.wait()
                     # Consider the destination database free again
-                    destinationscenario.status = "Free"
-                    destinationscenario.lastrefresh = datetime.today()
-                    destinationscenario.save(using=DEFAULT_DB_ALIAS)
+                    if destination != DEFAULT_DB_ALIAS:
+                        destinationscenario.status = "Free"
+                        destinationscenario.lastrefresh = datetime.today()
+                        destinationscenario.save(using=DEFAULT_DB_ALIAS)
                     raise Exception("Database copy failed")
 
             # Update the scenario table
@@ -310,7 +311,10 @@ class Command(BaseCommand):
                 task.message = "%s" % e
                 task.finished = datetime.now()
             if destinationscenario and destinationscenario.status == "Busy":
-                destinationscenario.status = "Free"
+                if destination == DEFAULT_DB_ALIAS:
+                    destinationscenario.status = "In use"
+                else:
+                    destinationscenario.status = "Free"
                 destinationscenario.save(using=DEFAULT_DB_ALIAS)
             raise e
 

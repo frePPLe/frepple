@@ -316,18 +316,22 @@ class Scenario(models.Model):
             # Bring the scenario table in sync with settings.databases
             with transaction.atomic(savepoint=False):
                 dbs = [i for i, j in settings.DATABASES.items() if j["NAME"]]
+                scs = []
                 for sc in Scenario.objects.using(DEFAULT_DB_ALIAS):
                     if sc.name not in dbs:
                         sc.delete()
-                scs = [sc.name for sc in Scenario.objects.using(DEFAULT_DB_ALIAS)]
+                    else:
+                        scs.append(sc.name)
                 for db in dbs:
                     if db not in scs:
                         if db == DEFAULT_DB_ALIAS:
                             Scenario(
                                 name=db, status="In use", description="Production"
-                            ).save()
+                            ).save(using=DEFAULT_DB_ALIAS)
                         else:
-                            Scenario(name=db, status="Free").save()
+                            Scenario(name=db, status="Free").save(
+                                using=DEFAULT_DB_ALIAS
+                            )
         except Exception:
             # Failures are acceptable - eg when the default database has not been intialized yet
             pass

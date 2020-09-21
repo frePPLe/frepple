@@ -1259,7 +1259,7 @@ var grid = {
     	              '<label class="control-label">' + gettext("Data source url:") +
                       '&nbsp;&nbsp;&nbsp;&nbsp;<div class="input-container">' +                 
                       '<input type="text" readonly id="urladdress" class="input-field" value="' + powerquery + '"/>' +
-                      '<button class="btn btn-primary btn-xs" id="copybutton">copy</button>' +
+                      '<button class="btn btn-primary btn-xs fa-clipboard" id="copybutton"></button>' +
                       '</div>' +
                       '</label><br>' +
     	            '</div>'+

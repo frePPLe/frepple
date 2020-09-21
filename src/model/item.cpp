@@ -49,10 +49,12 @@ int ItemMTO::initialize() {
 
 Item::~Item() {
   // Remove references from the buffers
+  // TODO deleting would be better than leaving buffers with a null item
   bufferIterator bufiter(this);
   while (Buffer* buf = bufiter.next()) buf->setItem(nullptr);
 
   // Remove references from the demands
+  // TODO rewrite using item-based demand iterator
   for (auto l = Demand::begin(); l != Demand::end(); ++l)
     if (l->getItem() == this) l->setItem(nullptr);
 

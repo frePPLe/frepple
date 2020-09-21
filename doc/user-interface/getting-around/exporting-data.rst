@@ -3,8 +3,8 @@ Exporting data
 ==============
 
 You can export the data either a) as a **native Excel workbook** or b) as
-a **CSV-formatted text file** by clicking on the download arrow on the upper
-right.
+a **CSV-formatted text file** or c) **as a data source url** by clicking 
+on the download arrow on the upper right.
 
 For report with time buckets, two structures are available:
 
@@ -56,3 +56,61 @@ identify to which scenario a data row belongs to.
    
 .. image:: ../_images/exporting-data-scenarios.png
    :alt: Exporting data
+   
+===============
+Data source url
+===============
+
+By clicking on the "Copy to clipboard" button, frePPLe will copy the data source url associated 
+with the page you are visiting in your clipboard.
+
+.. image:: ../_images/excel-data-source-url-0.png
+   :alt: Exporting data
+
+The data source url can be pasted in any kind of reporting software supporting this format (Excel, Google sheets...). 
+This is pretty convenient if you are exporting the page you are visiting on a regular basis as refreshing your data in your software
+will take no longer than a click.
+
+Below are the steps to configure a data source url with Excel:
+
+* Select the scenarios you wish to export (by default, only current scenario is selected).
+
+* Click on the "Copy to clipboard" button so that frePPLe copies the data source url into your clipboard. Note that this functionality
+  is also available for the reports created with the `report manager <../../user-interface/report-manager.html>`_.
+
+* Open a new spreadsheet in Excel, move to the "Data" menu and select "New Query", then "From Other Sources" and finally "From Web".
+  Note that, in some old versions of Excel, this requires the installation of the Power Query module.
+
+.. image:: ../_images/excel-data-source-url.png
+   :alt: Exporting data
+    
+* Paste the url in the clipboard in the field and press ok.
+
+.. image:: ../_images/excel-data-source-url-2.png
+   :alt: Exporting data
+
+* Your credentials need to be populated in Excel so that it can connect to your frePPLe instance. 
+  Choose the "basic" option and enter your frePPLe username and password. Note that, as long as the connection uses the https protocol
+  (which is always the case for the frePPLe cloud users), the crendentials are encrypted.
+  
+.. image:: ../_images/excel-data-source-url-3.png
+   :alt: Exporting data
+
+* If Excel has been able to connect to your frePPLe instance, Excel should display data from your report in a dedicated window:
+
+.. image:: ../_images/excel-data-source-url-4.png
+   :alt: Exporting data
+   
+* At this point, you have the choice to either load your data or most likely transform your data to select which columns to display,
+  in which order and possibly add calculated columns. Note that all the columns of the view are available before transformation so exporting
+  your data using the data source url will differ from the columns selection you have on frePPLe. Once transformed, you can then load your data.
+  
+* The magic happens when the report you have exported using the data source url is modified in frePPLe, you have the possibility in Excel to 
+  refresh your data in a simple click using the "refresh" option. This will automatically create a connection to your frePPLe instance and update 
+  the data in the spreadsheet.
+
+.. image:: ../_images/excel-data-source-url-5.png
+   :alt: Exporting data
+  
+
+  

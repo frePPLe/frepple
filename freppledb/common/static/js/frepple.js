@@ -1149,7 +1149,7 @@ var grid = {
                 '<label><b>' + gettext("Data source url:") + '</b></label><br>' +
                 '<div class="input-container">' +                 
                 '<input type="text" readonly id="urladdress" class="input-field" value="' + powerquery + '"/>' +
-                '<button class="btn btn-primary btn-xs fa-clone" id="copybutton"></button>' +
+                '<button class="btn btn-primary btn-xs fa-clipboard" id="copybutton"></button>' +
                 '</div>' +
                 '</td>' +
                 '<td>' +
@@ -1195,7 +1195,7 @@ var grid = {
                       '<label><b>' + gettext("Data source url:") + '</b></label><br>' +
                       '<div class="input-container">' +                 
                       '<input type="text" readonly id="urladdress" class="input-field" value="' + powerquery + '"/>' +
-                      '<button class="btn btn-primary btn-xs fa-clone" id="copybutton"></button>' +
+                      '<button class="btn btn-primary btn-xs fa-clipboard" id="copybutton"></button>' +
                       '</div>' +
                       '</td>' +
                       '<td>' +
@@ -1231,7 +1231,7 @@ var grid = {
                     '<label class="control-label">' + gettext("Data source url:") +
                     '&nbsp;&nbsp;&nbsp;&nbsp;<div class="input-container">' +                 
                     '<input type="text" readonly id="urladdress" class="input-field" value="' + powerquery + '"/>' +
-                    '<button class="btn btn-primary btn-xs fa-clone" id="copybutton"></button>' +
+                    '<button class="btn btn-primary btn-xs fa-clipboard" id="copybutton"></button>' +
                     '</div>' +
                     '</label><br>' +
                   '<div class="modal-footer">'+
@@ -1259,7 +1259,7 @@ var grid = {
     	              '<label class="control-label">' + gettext("Data source url:") +
                       '&nbsp;&nbsp;&nbsp;&nbsp;<div class="input-container">' +                 
                       '<input type="text" readonly id="urladdress" class="input-field" value="' + powerquery + '"/>' +
-                      '<button class="btn btn-primary btn-xs fa-clone" id="copybutton"></button>' +
+                      '<button class="btn btn-primary btn-xs" id="copybutton">copy</button>' +
                       '</div>' +
                       '</label><br>' +
     	            '</div>'+

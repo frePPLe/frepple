@@ -1107,20 +1107,7 @@ var grid = {
     
     
     // Compute the initial power query url to display
-    var powerquery = (location.href.indexOf("#") != -1 ? location.href.substr(0,location.href.indexOf("#")) : location.href);
-    
-    if (location.search.length > 0)
-      // URL already has arguments
-    	powerquery += "&format=csv";
-    else if (powerquery.charAt(powerquery.length - 1) == '?')
-      // This is the first argument for the URL, but we already have a question mark at the end
-    	powerquery += "format=csv";
-    else
-      // This is the first argument for the URL
-    	powerquery += "?format=csv";
-
-    powerquery +=  "&allcolumns=true";
-       
+    var powerquery = (location.href.indexOf("#") != -1 ? location.href.substr(0,location.href.indexOf("#")) : location.href);           
     
     // The only_list argument is true when we show a "list" report.
     // It is false for "table" reports.
@@ -1274,6 +1261,22 @@ var grid = {
     
     
     $('#copybutton').on('click', function() {
+    	
+    	// Rebuild url when user clicks on copy to clipborad button
+    	var powerquery = (location.href.indexOf("#") != -1 ? location.href.substr(0,location.href.indexOf("#")) : location.href);
+    	
+    	if (location.search.length > 0)
+    	      // URL already has arguments
+    	    	powerquery += "&format=" + (only_list ? "csv": ($('#csvformat input:radio:checked').val()).replace("spreadsheet","csv"));
+	    else if (powerquery.charAt(powerquery.length - 1) == '?')
+	      // This is the first argument for the URL, but we already have a question mark at the end
+	    	powerquery += "format=" + (only_list ? "csv": ($('#csvformat input:radio:checked').val()).replace("spreadsheet","csv"));
+	    else
+	      // This is the first argument for the URL
+	    	powerquery += "?format=" + (only_list ? "csv": ($('#csvformat input:radio:checked').val()).replace("spreadsheet","csv"));
+
+    	powerquery +=  "&allcolumns=true";
+    	
     	if (scenario_permissions.length > 1) {
   	      var firstTime = true;
   	      var scenarios = "";
@@ -1288,13 +1291,12 @@ var grid = {
   	    	  }
   	      }
         }
-    	
-    	appendix = "&scenarios=" + scenarios;
-    	original_url = $('#urladdress').val();
-    	$('#urladdress').val(original_url + appendix);
+    	var appendix = "";
+    	if (scenario_permissions.length > 1)
+    	  appendix = "&scenarios=" + scenarios;
+    	$('#urladdress').val(powerquery + appendix);
     	$('#urladdress').select();
     	document.execCommand('copy');
-    	$('#urladdress').val(original_url);
     	
     });
     $('#exportbutton').on('click', function() {

@@ -71,7 +71,7 @@ The data source url can be pasted in any kind of reporting software supporting t
 This is pretty convenient if you are exporting the page you are visiting on a regular basis as refreshing your data in your software
 will take no longer than a click.
 
-Below are the steps to configure a data source url with Excel, these steps are explained on our youtube channel in a `video <https://youtu.be/7t88FliH1h0>`_.
+Below are the steps to configure a data source url with Excel, these steps are explained on our youtube channel in this `video <https://youtu.be/7t88FliH1h0>`_.
 
 * Select the scenarios you wish to export (by default, only current scenario is selected).
 

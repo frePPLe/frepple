@@ -15,14 +15,13 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-import base64
 import jwt
 import re
 import threading
 
 from django.conf import settings
 from django.contrib import auth
-from django.contrib.auth import login, authenticate
+from django.contrib.auth import login
 from django.contrib.auth.models import AnonymousUser
 from django.middleware.locale import LocaleMiddleware as DjangoLocaleMiddleware
 from django.utils import translation
@@ -51,16 +50,59 @@ class LocaleMiddleware(DjangoLocaleMiddleware):
   """
 
     def process_request(self, request):
-        if hasattr(request, "user") and not isinstance(request.user, AnonymousUser):
-            # logged user
+        # Make request information available throughout the application
+        setattr(_thread_locals, "request", request)
+
+        # Authentication through a web token.specified as an URL parameter
+        # The token can be specified as a a URL argument or as a HTTP header
+        # with this structure:
+        #    Authorization: Bearer <token>  (see https://jwt.io/introduction/
+        # The token must have a "user" and "exp" field in the payload.
+        webtoken = request.GET.get("webtoken", None)
+        if not webtoken:
+            auth_header = request.META.get("HTTP_AUTHORIZATION", None)
+            if auth_header:
+                try:
+                    auth = auth_header.split()
+                    if auth[0].lower() == "bearer":
+                        webtoken = auth[1]
+                except Exception:
+                    pass
+        if webtoken:
+            # Decode the web token
+            try:
+                decoded = jwt.decode(
+                    webtoken,
+                    settings.DATABASES[request.database].get(
+                        "SECRET_WEBTOKEN_KEY", settings.SECRET_KEY
+                    ),
+                    algorithms=["HS256"],
+                )
+                user = User.objects.get(username=decoded["user"])
+                user.backend = settings.AUTHENTICATION_BACKENDS[0]
+                login(request, user)
+                user.scenarios = [
+                    Scenario.objects.using(DEFAULT_DB_ALIAS).get(name=request.database)
+                ]
+                request.user = user
+                request.session["navbar"] = decoded.get("navbar", True)
+                request.session["xframe_options_exempt"] = True
+            except jwt.exceptions.InvalidTokenError as e:
+                logger.error("Missing or incorrect webtoken: %s" % e)
+                return HttpResponseForbidden("Missing or incorrect webtoken")
+
             language = request.user.language
             request.theme = request.user.theme or settings.DEFAULT_THEME
             request.pagesize = request.user.pagesize or settings.DEFAULT_PAGESIZE
-        else:
+        elif isinstance(request.user, AnonymousUser):
             # Anonymous users don't have preferences
             language = "auto"
             request.theme = settings.DEFAULT_THEME
             request.pagesize = settings.DEFAULT_PAGESIZE
+        else:
+            language = request.user.language
+            request.theme = request.user.theme or settings.DEFAULT_THEME
+            request.pagesize = request.user.pagesize or settings.DEFAULT_PAGESIZE
         if language == "auto":
             language = translation.get_language_from_request(request)
         if translation.get_language() != language:
@@ -227,108 +269,4 @@ class AutoLoginAsAdminUser:
                             pass
             except User.DoesNotExist:
                 pass
-        return self.get_response(request)
-
-
-class AuthenticationMiddleware:
-    """
-    Middleware to allow logging either by basic or bearer authentication
-    """
-
-    def __init__(self, get_response):
-        # One-time initialisation
-        self.get_response = get_response
-
-    def __call__(self, request):
-
-        # check if user is already logged
-        if hasattr(request, "user") and not isinstance(request.user, AnonymousUser):
-            return self.get_response(request)
-
-        # Make request information available throughout the application
-        setattr(_thread_locals, "request", request)
-
-        # Authentication through a web token.specified as an URL parameter
-        # The token can be specified as a a URL argument or as a HTTP header
-        # with this structure:
-        #    Authorization: Bearer <token>  (see https://jwt.io/introduction/
-        # The token must have a "user" and "exp" field in the payload.
-        logged = False
-        webtoken = request.GET.get("webtoken", None)
-        if not webtoken:
-            auth_header = request.META.get("HTTP_AUTHORIZATION", None)
-            if auth_header:
-                try:
-                    auth = auth_header.split()
-                    if auth[0].lower() == "bearer":
-                        webtoken = auth[1]
-                except Exception:
-                    pass
-        if webtoken:
-            # Decode the web token
-            try:
-                decoded = jwt.decode(
-                    webtoken,
-                    settings.DATABASES[request.database].get(
-                        "SECRET_WEBTOKEN_KEY", settings.SECRET_KEY
-                    ),
-                    algorithms=["HS256"],
-                )
-                user = User.objects.get(username=decoded["user"])
-                user.backend = settings.AUTHENTICATION_BACKENDS[0]
-                if user and user.is_active:
-                    login(request, user)
-                    logged = True
-                    user.scenarios = [
-                        Scenario.objects.using(DEFAULT_DB_ALIAS).get(
-                            name=request.database
-                        )
-                    ]
-                request.user = user
-                request.session["navbar"] = decoded.get("navbar", True)
-                request.session["xframe_options_exempt"] = True
-            except jwt.exceptions.InvalidTokenError as e:
-                logger.error("Missing or incorrect webtoken: %s" % e)
-                return HttpResponseForbidden("Missing or incorrect webtoken")
-
-        # handle basic authentication
-        if not logged:
-            auth_header = request.META.get("HTTP_AUTHORIZATION", None)
-            if auth_header:
-                # Missing the header
-                auth = auth_header.split()
-                if auth[0].lower() == "basic":
-                    # Only basic authentication
-                    auth = base64.b64decode(auth[1]).decode("iso-8859-1").partition(":")
-                    user = authenticate(username=auth[0], password=auth[2])
-                    if user and user.is_active:
-                        # Active user
-                        request.api = True  # TODO I think this is no longer used
-                        login(request, user)
-                        logged = True
-                        request.user = user
-
-        if logged:
-            request.user.scenarios = []
-            for db in Scenario.objects.using(DEFAULT_DB_ALIAS).filter(
-                Q(status="In use") | Q(name=DEFAULT_DB_ALIAS)
-            ):
-                if not db.description:
-                    db.description = db.name
-                if db.name == DEFAULT_DB_ALIAS:
-                    if request.user.is_active:
-                        db.is_superuser = request.user.is_superuser
-                        request.user.scenarios.append(db)
-                else:
-                    try:
-                        user2 = User.objects.using(db.name).get(
-                            username=request.user.username
-                        )
-                        if user2.is_active:
-                            db.is_superuser = user2.is_superuser
-                            request.user.scenarios.append(db)
-                    except Exception:
-                        # Silently ignore errors. Eg user doesn't exist in scenario
-                        pass
-
         return self.get_response(request)

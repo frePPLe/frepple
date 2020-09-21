@@ -1146,10 +1146,10 @@ var grid = {
                 '<label><input type="radio" name="csvformat" value="spreadsheetlist" checked="">' + gettext("Spreadsheet list") + '</label><br>' +
                 '<label><input type="radio" name="csvformat" value="csvlist">' + gettext("CSV list") + '</label><br>' +
                 '</div>' +
-                '<label><b>' + gettext("External API link:") + '</b></label><br>' +
+                '<label><b>' + gettext("Data source url:") + '</b></label><br>' +
                 '<div class="input-container">' +                 
                 '<input type="text" readonly id="urladdress" class="input-field" value="' + powerquery + '"/>' +
-                '<button class="btn btn-primary btn-xs" id="copybutton">copy</button>' +
+                '<button class="btn btn-primary btn-xs fa-clone" id="copybutton"></button>' +
                 '</div>' +
                 '</td>' +
                 '<td>' +
@@ -1192,10 +1192,10 @@ var grid = {
                       '<label><input type="radio" name="csvformat" value="csvtable">' + gettext("CSV table") + '</label><br>' +
                       '<label><input type="radio" name="csvformat" value="csvlist">' + gettext("CSV list") + '</label><br>' +
                       '</div>' +
-                      '<label><b>' + gettext("External API link:") + '</b></label><br>' +
+                      '<label><b>' + gettext("Data source url:") + '</b></label><br>' +
                       '<div class="input-container">' +                 
                       '<input type="text" readonly id="urladdress" class="input-field" value="' + powerquery + '"/>' +
-                      '<button class="btn btn-primary btn-xs" id="copybutton">copy</button>' +
+                      '<button class="btn btn-primary btn-xs fa-clone" id="copybutton"></button>' +
                       '</div>' +
                       '</td>' +
                       '<td>' +
@@ -1228,10 +1228,10 @@ var grid = {
                         '&nbsp;&nbsp;&nbsp;&nbsp;<label><input type="radio" name="csvformat" value="csvlist">' + gettext("CSV list") + '</label><br>' +
                       '</div>' +
                     '</label><br>' +
-                    '<label class="control-label">' + gettext("External API link:") +
+                    '<label class="control-label">' + gettext("Data source url:") +
                     '&nbsp;&nbsp;&nbsp;&nbsp;<div class="input-container">' +                 
                     '<input type="text" readonly id="urladdress" class="input-field" value="' + powerquery + '"/>' +
-                    '<button class="btn btn-primary btn-xs" id="copybutton">copy</button>' +
+                    '<button class="btn btn-primary btn-xs fa-clone" id="copybutton"></button>' +
                     '</div>' +
                     '</label><br>' +
                   '<div class="modal-footer">'+
@@ -1256,10 +1256,10 @@ var grid = {
     	                  '&nbsp;&nbsp;&nbsp;&nbsp;<label><input type="radio" name="csvformat" value="csvlist">' + gettext("CSV list") + '</label><br>' +
     	                '</div>' +
     	              '</label>' + '<br>' +
-    	              '<label class="control-label">' + gettext("External API link:") +
+    	              '<label class="control-label">' + gettext("Data source url:") +
                       '&nbsp;&nbsp;&nbsp;&nbsp;<div class="input-container">' +                 
                       '<input type="text" readonly id="urladdress" class="input-field" value="' + powerquery + '"/>' +
-                      '<button class="btn btn-primary btn-xs" id="copybutton">copy</button>' +
+                      '<button class="btn btn-primary btn-xs fa-clone" id="copybutton"></button>' +
                       '</div>' +
                       '</label><br>' +
     	            '</div>'+

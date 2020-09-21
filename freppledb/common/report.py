@@ -2722,19 +2722,18 @@ class GridPivot(GridReport):
             request.prefs = request.user.getPreference(
                 cls.getKey(request, *args, **kwargs), database=request.database
             )
-        if request.prefs and "rows" in request.prefs:
+
+        allColumns = request.GET.get("allcolumns", False)
+
+        if request.prefs and "rows" in request.prefs and not allColumns:
             myrows = [
                 request.rows[f[0]]
                 for f in cls._validate_rows(request, request.prefs["rows"])
                 if not f[1]
             ]
         else:
-            myrows = [
-                f
-                for f in request.rows
-                if f.name and not f.hidden and not f.initially_hidden
-            ]
-        if request.prefs and "crosses" in request.prefs:
+            myrows = [f for f in request.rows if f.name and not f.hidden]
+        if request.prefs and "crosses" in request.prefs and not allColumns:
             mycrosses = [
                 request.crosses[f]
                 for f in cls._validate_crosses(request, request.prefs["crosses"])

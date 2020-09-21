@@ -234,7 +234,8 @@ class Command(BaseCommand):
                     task.processid = p.pid
                     task.save(using=source)
                     p.wait()
-                    if p.returncode and destination != DEFAULT_DB_ALIAS:
+                    if False:  # p.returncode and destination != DEFAULT_DB_ALIAS:
+                        # Deactivated because a successful copy can still leave warnings and errors
                         # Consider the destination database free again
                         destinationscenario.status = "Free"
                         destinationscenario.lastrefresh = datetime.today()

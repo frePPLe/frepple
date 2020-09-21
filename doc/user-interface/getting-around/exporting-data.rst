@@ -71,7 +71,7 @@ The data source url can be pasted in any kind of reporting software supporting t
 This is pretty convenient if you are exporting the page you are visiting on a regular basis as refreshing your data in your software
 will take no longer than a click.
 
-Below are the steps to configure a data source url with Excel:
+Below are the steps to configure a data source url with Excel, these steps are explained on our youtube channel in a `video <https://youtu.be/7t88FliH1h0>`_.
 
 * Select the scenarios you wish to export (by default, only current scenario is selected).
 
@@ -102,7 +102,8 @@ Below are the steps to configure a data source url with Excel:
    :alt: Exporting data
    
 * At this point, you have the choice to either load your data or most likely transform your data to select which columns to display,
-  in which order and possibly add calculated columns. Note that all the columns of the view are available before transformation so exporting
+  in which order and possibly add calculated columns. Note that all the columns of the view are available before transformation and all crosses
+  also in case of a pivot report (reports where time bucket is a column such as inventory or capacity reports) so exporting
   your data using the data source url will differ from the columns selection you have on frePPLe. Once transformed, you can then load your data.
   
 * The magic happens when the report you have exported using the data source url is modified in frePPLe, you have the possibility in Excel to 

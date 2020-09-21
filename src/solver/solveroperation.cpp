@@ -299,6 +299,10 @@ bool SolverCreate::checkOperation(OperationPlan* opplan,
                 matnext = DateRange(at.start, at.end);
                 flow_at_start = !g->getFlow()->hasType<FlowEnd>();
               }
+            } else if (data.state->a_qty > ROUNDING_ERROR) {
+              // Quantity replied was less the minimum size of the operation,
+              // but the producing operation didn't give a next-date.
+              matnext.setEnd(orig_q_date + getMinimumDelay());
             }
 
             // Jump out of the loop if the answered quantity is 0.

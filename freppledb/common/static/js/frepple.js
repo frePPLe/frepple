@@ -1105,10 +1105,6 @@ var grid = {
     	}
     }
     
-    
-    // Compute the initial power query url to display
-    var powerquery = (location.href.indexOf("#") != -1 ? location.href.substr(0,location.href.indexOf("#")) : location.href);           
-    
     // The only_list argument is true when we show a "list" report.
     // It is false for "table" reports.
     if (only_list && scenario_permissions.length > 1)
@@ -1139,7 +1135,7 @@ var grid = {
                 '<span class="fa fa-question-circle"></span>' +
                 '</a><br>' +         
                 '<div class="input-group">' +                 
-                '<input type="text" readonly id="urladdress" class="form-control" style="background: white" value="' + powerquery + '"/>' +
+                '<input type="text" readonly id="urladdress" class="form-control" style="background: white"/>' +
                 '<span class="input-group-btn">' +
                 '<button type="button" class="btn btn-default fa fa-clipboard" id="copybutton" data-toggle="tooltip" data-placement="top" data-original-title="' + 
                 gettext("Copy to clipboard") + '"/></span>' +
@@ -1191,7 +1187,7 @@ var grid = {
                       '<span class="fa fa-question-circle"></span>' +
                       '</a><br>' +         
                       '<div class="input-group">' +                 
-                      '<input type="text" readonly id="urladdress" class="form-control" style="background: white" value="' + powerquery + '"/>' +
+                      '<input type="text" readonly id="urladdress" class="form-control" style="background: white"/>' +
                       '<span class="input-group-btn">' +
                       '<button type="button" class="btn btn-default fa fa-clipboard" id="copybutton" data-toggle="tooltip" data-placement="top" data-original-title="' + 
                       gettext("Copy to clipboard") + '"/></span>' +
@@ -1233,7 +1229,7 @@ var grid = {
                     '<span class="fa fa-question-circle"></span>' +
                     '</a><br>' +         
                     '<div class="input-group">' +                 
-                    '<input type="text" readonly id="urladdress" class="form-control" style="background: white" value="' + powerquery + '"/>' +
+                    '<input type="text" readonly id="urladdress" class="form-control" style="background: white"/>' +
                     '<span class="input-group-btn">' +
                     '<button type="button" class="btn btn-default fa fa-clipboard" id="copybutton" data-toggle="tooltip" data-placement="top" data-original-title="' + 
                     gettext("Copy to clipboard") + '"/></span>' +
@@ -1267,7 +1263,7 @@ var grid = {
                     '<span class="fa fa-question-circle"></span>' +
                     '</a><br>' +         
                     '<div class="input-group">' +                 
-                    '<input type="text" readonly id="urladdress" class="form-control" style="background: white" value="' + powerquery + '"/>' +
+                    '<input type="text" readonly id="urladdress" class="form-control" style="background: white"/>' +
                     '<span class="input-group-btn">' +
                     '<button type="button" class="btn btn-default fa fa-clipboard" id="copybutton" data-toggle="tooltip" data-placement="top" data-original-title="' + 
                     gettext("Copy to clipboard") + '"/></span>' +
@@ -1280,47 +1276,67 @@ var grid = {
     	      '</div>' )
     	      .modal('show');
     
+    // initialize the data source url
+    update_datasource_url();
+ 
+ 	// Update url when the scenario selection changes
+    for (var i = 0 ; i < scenario_permissions.length && i < 6; i++) {
+		if (scenario_permissions[i][2] != 1)
+		  $('#' + scenario_permissions[i][0]).on('click', function() {
+			  update_datasource_url();
+		  });
+	}
+    
     $('[data-toggle="tooltip"]').tooltip({delay: { "show": 500, "hide": 100 }});
     
     $('#copybutton').on('click', function() {
-    	
-    	// Rebuild url when user clicks on copy to clipborad button
-    	var powerquery = (location.href.indexOf("#") != -1 ? location.href.substr(0,location.href.indexOf("#")) : location.href);
-    	
-    	if (location.search.length > 0)
-    	      // URL already has arguments
-    	    	powerquery += "&format=" + (only_list ? "csv": ($('#csvformat input:radio:checked').val()).replace("spreadsheet","csv"));
-	    else if (powerquery.charAt(powerquery.length - 1) == '?')
-	      // This is the first argument for the URL, but we already have a question mark at the end
-	    	powerquery += "format=" + (only_list ? "csv": ($('#csvformat input:radio:checked').val()).replace("spreadsheet","csv"));
-	    else
-	      // This is the first argument for the URL
-	    	powerquery += "?format=" + (only_list ? "csv": ($('#csvformat input:radio:checked').val()).replace("spreadsheet","csv"));
-
-    	powerquery +=  "&allcolumns=true";
-    	
-    	if (scenario_permissions.length > 1) {
-  	      var firstTime = true;
-  	      var scenarios = "";
-  	      for (var i = 0 ; i < scenario_permissions.length; i++) {
-  	    	  if ($('#' + scenario_permissions[i][0]).is(":checked")) {
-  	    	  	if (firstTime)
-  	    	  		firstTime = false;
-  	    	  	else
-  	    	  		scenarios += ",";
-  	    	  			
-  	    	    scenarios += scenario_permissions[i][0];
-  	    	  }
-  	      }
-        }
-    	var appendix = "";
-    	if (scenario_permissions.length > 1)
-    	  appendix = "&scenarios=" + scenarios;
-    	$('#urladdress').val(powerquery + appendix);
+    	// should be up to date but let's recompute it.
+    	update_datasource_url();
     	$('#urladdress').select();
     	document.execCommand('copy');
     	
     });
+    
+       //Compute the power query url to display
+     function update_datasource_url() {
+	     
+	     var url = (location.href.indexOf("#") != -1 ? 
+	     		location.href.substr(0,location.href.indexOf("#")) : location.href);
+	     
+	 	
+	 	if (location.search.length > 0)
+	 	      // URL already has arguments
+	 	    	url += "&";
+		    else if (url.charAt(url.length - 1) != '?')
+		      // This is the first argument for the URL
+		    	url += "?";
+
+	 	// csvtable and spreadsheet table are converted into csvlist
+	 	// Maintaining a table view with buckets as columns won't work with Excel after a bucket shift
+	 	url += "format=" + 
+	 	(only_list ? "csv": "csvlist");
+	 	
+	 	// retrieve all columns from the view
+	 	url +=  "&allcolumns=true";
+	 	
+	 	if (scenario_permissions.length > 1) {
+		      var firstTime = true;
+		      var scenarios = "";
+		      for (var i = 0 ; i < scenario_permissions.length; i++) {
+		    	  if ($('#' + scenario_permissions[i][0]).is(":checked")) {
+		    	  	if (firstTime)
+		    	  		firstTime = false;
+		    	  	else
+		    	  		scenarios += ",";
+		    	  			
+		    	    scenarios += scenario_permissions[i][0];
+		    	  }
+		      }
+		      url += "&scenarios=" + scenarios;
+	     }   	
+	 	$('#urladdress').val(url);
+	 }
+    
     $('#exportbutton').on('click', function() {
       // Fetch the report data
       var url = (location.href.indexOf("#") != -1 ? location.href.substr(0,location.href.indexOf("#")) : location.href);

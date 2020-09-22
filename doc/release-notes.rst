@@ -4,6 +4,10 @@ Release notes
 6.8.0 (upcoming release)
 ========================
 
+.. rubric:: User interface
+- | Addition of the `data source URL <user-interface/getting-around/exporting-data.html>`_ in the export dialog
+    for easier export of frePPLe data into Excel.
+
 .. rubric:: Integration
 
 - | Authentication to all URLs of the application is now possible with

@@ -52,7 +52,7 @@ class WelcomeWidget(Widget):
             _(
                 """Welcome to the world's leading open source production planning tool!<br><br>
 How to get started?
-<ol><li>Start the <span class="underline"><a href="javascript:void(0);" onclick="tour.start('0,0,0'); return false;">guided tour</a></span></li>
+<ol>
 <li>Check out the <span class="underline"><a href="%(docurl)s" target="_blank" rel="noopener">documentation</a></span></li>
 <li>Visit and join the <span class="underline"><a href="http://groups.google.com/group/frepple-users" target="_blank" rel="noopener">user community</a></span></li>
 <li><span class="underline"><a href="https://frepple.com/company/#contact" target="_blank" rel="noopener">Contact us</a></span></li>

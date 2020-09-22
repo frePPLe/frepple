@@ -27,6 +27,7 @@
 
   var url_prefix = '{{request.prefix}}';
   var database = '{{request.database}}';
+  var documentation = '{% setting "DOCUMENTATION_URL" %}/docs/{% version_short %}/';
 
 $(function() {
     $('[data-toggle="popover"]').popover();

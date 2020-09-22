@@ -1105,6 +1105,10 @@ var grid = {
     	}
     }
     
+    
+    // Compute the initial power query url to display
+    var powerquery = (location.href.indexOf("#") != -1 ? location.href.substr(0,location.href.indexOf("#")) : location.href);           
+    
     // The only_list argument is true when we show a "list" report.
     // It is false for "table" reports.
     if (only_list && scenario_permissions.length > 1)
@@ -1128,6 +1132,17 @@ var grid = {
                 '<div class="radio" name="csvformat" id="csvformat" value="spreadsheetlist">' +
                 '<label><input type="radio" name="csvformat" value="spreadsheetlist" checked="">' + gettext("Spreadsheet list") + '</label><br>' +
                 '<label><input type="radio" name="csvformat" value="csvlist">' + gettext("CSV list") + '</label><br>' +
+                '</div>' +
+                '<label><b>' + gettext("Data source URL") + '</b></label>&nbsp;&nbsp;' + 
+                '<a href="' + documentation + 'user-interface/getting-around/exporting-data.html" target="_blank" data-toggle="tooltip" data-placement="top" data-original-title="' + 
+                gettext("Using this link external applications can pull data from frePPLe") + '">' +
+                '<span class="fa fa-question-circle"></span>' +
+                '</a><br>' +         
+                '<div class="input-group">' +                 
+                '<input type="text" readonly id="urladdress" class="form-control" style="background: white" value="' + powerquery + '"/>' +
+                '<span class="input-group-btn">' +
+                '<button type="button" class="btn btn-default fa fa-clipboard" id="copybutton" data-toggle="tooltip" data-placement="top" data-original-title="' + 
+                gettext("Copy to clipboard") + '"/></span>' +
                 '</div>' +
                 '</td>' +
                 '<td>' +
@@ -1170,6 +1185,17 @@ var grid = {
                       '<label><input type="radio" name="csvformat" value="csvtable">' + gettext("CSV table") + '</label><br>' +
                       '<label><input type="radio" name="csvformat" value="csvlist">' + gettext("CSV list") + '</label><br>' +
                       '</div>' +
+                      '<label><b>' + gettext("Data source URL") + '</b></label>&nbsp;&nbsp;' + 
+                      '<a href="' + documentation + 'user-interface/getting-around/exporting-data.html" target="_blank" data-toggle="tooltip" data-placement="top" data-original-title="' + 
+                      gettext("Using this link external applications can pull data from frePPLe") + '">' +
+                      '<span class="fa fa-question-circle"></span>' +
+                      '</a><br>' +         
+                      '<div class="input-group">' +                 
+                      '<input type="text" readonly id="urladdress" class="form-control" style="background: white" value="' + powerquery + '"/>' +
+                      '<span class="input-group-btn">' +
+                      '<button type="button" class="btn btn-default fa fa-clipboard" id="copybutton" data-toggle="tooltip" data-placement="top" data-original-title="' + 
+                      gettext("Copy to clipboard") + '"/></span>' +
+                      '</div>' +
                       '</td>' +
                       '<td>' +
                       '<div class="check" name="scenarios" id="scenarios" value="default">' +
@@ -1195,13 +1221,24 @@ var grid = {
                     '<h4 class="modal-title text-capitalize-first">'+gettext("Export CSV or Excel file")+'</h4>'+
                   '</div>'+
                   '<div class="modal-body">'+
-                    '<label class="control-label">' + gettext("Export format") +
-                      '<div class="radio" name="csvformat" id="csvformat" value="spreadsheetlist">' +
+                    '<label class="control-label"><b>' + gettext("Export format") +
+                      '</b><div class="radio" name="csvformat" id="csvformat" value="spreadsheetlist">' +
                         '&nbsp;&nbsp;&nbsp;&nbsp;<label><input type="radio" name="csvformat" value="spreadsheetlist" checked="">' + gettext("Spreadsheet list") + '</label><br>' +
                         '&nbsp;&nbsp;&nbsp;&nbsp;<label><input type="radio" name="csvformat" value="csvlist">' + gettext("CSV list") + '</label><br>' +
                       '</div>' +
-                    '</label>' +
-                  '</div>'+
+                    '</label><br>' +
+                    '<label><b>' + gettext("Data source URL") + '</b></label>&nbsp;&nbsp;' + 
+                    '<a href="' + documentation + 'user-interface/getting-around/exporting-data.html" target="_blank" data-toggle="tooltip" data-placement="top" data-original-title="' + 
+                    gettext("Using this link external applications can pull data from frePPLe") + '">' +
+                    '<span class="fa fa-question-circle"></span>' +
+                    '</a><br>' +         
+                    '<div class="input-group">' +                 
+                    '<input type="text" readonly id="urladdress" class="form-control" style="background: white" value="' + powerquery + '"/>' +
+                    '<span class="input-group-btn">' +
+                    '<button type="button" class="btn btn-default fa fa-clipboard" id="copybutton" data-toggle="tooltip" data-placement="top" data-original-title="' + 
+                    gettext("Copy to clipboard") + '"/></span>' +
+                    '</div>' +
+                    '</label><br>' +
                   '<div class="modal-footer">'+
                     '<input type="submit" id="exportbutton" role="button" class="btn btn-primary pull-right" value="'+gettext('Export')+'">'+
                     '<input type="submit" id="cancelbutton" role="button" class="btn btn-primary pull-left" data-dismiss="modal" value="'+gettext('Cancel')+'">'+
@@ -1216,14 +1253,24 @@ var grid = {
     	              '<h4 class="modal-title">'+gettext("Export CSV or Excel file")+'</h4>'+
     	            '</div>'+
     	            '<div class="modal-body">'+
-    	              '<label class="control-label">' + gettext("Export format") +
-    	                '<div class="radio" name="csvformat" id="csvformat" value="spreadsheettable">' +
+    	              '<label class="control-label"><b>' + gettext("Export format") +
+    	                '</b><div class="radio" name="csvformat" id="csvformat" value="spreadsheettable">' +
     	                  '&nbsp;&nbsp;&nbsp;&nbsp;<label><input type="radio" name="csvformat" value="spreadsheettable" checked="">' + gettext("Spreadsheet table") + '</label><br>' +
     	                  '&nbsp;&nbsp;&nbsp;&nbsp;<label><input type="radio" name="csvformat" value="spreadsheetlist">' + gettext("Spreadsheet list") + '</label><br>' +
     	                  '&nbsp;&nbsp;&nbsp;&nbsp;<label><input type="radio" name="csvformat" value="csvtable">' + gettext("CSV table") + '</label><br>' +
     	                  '&nbsp;&nbsp;&nbsp;&nbsp;<label><input type="radio" name="csvformat" value="csvlist">' + gettext("CSV list") + '</label><br>' +
     	                '</div>' +
-    	              '</label>' +
+    	              '</label>' + '<br>' +
+                    '<label><b>' + gettext("Data source URL") + '</b></label>&nbsp;&nbsp;' + 
+                    '<a href="' + documentation + 'user-interface/getting-around/exporting-data.html" target="_blank" data-toggle="tooltip" data-placement="top" data-original-title="' + 
+                    gettext("Using this link external applications can pull data from frePPLe") + '">' +
+                    '<span class="fa fa-question-circle"></span>' +
+                    '</a><br>' +         
+                    '<div class="input-group">' +                 
+                    '<input type="text" readonly id="urladdress" class="form-control" style="background: white" value="' + powerquery + '"/>' +
+                    '<span class="input-group-btn">' +
+                    '<button type="button" class="btn btn-default fa fa-clipboard" id="copybutton" data-toggle="tooltip" data-placement="top" data-original-title="' + 
+                    gettext("Copy to clipboard") + '"/></span>' +
     	            '</div>'+
     	            '<div class="modal-footer">'+
     	              '<input type="submit" id="exportbutton" role="button" class="btn btn-primary pull-right" value="'+gettext('Export')+'">'+
@@ -1233,7 +1280,47 @@ var grid = {
     	      '</div>' )
     	      .modal('show');
     
+    $('[data-toggle="tooltip"]').tooltip({delay: { "show": 500, "hide": 100 }});
     
+    $('#copybutton').on('click', function() {
+    	
+    	// Rebuild url when user clicks on copy to clipborad button
+    	var powerquery = (location.href.indexOf("#") != -1 ? location.href.substr(0,location.href.indexOf("#")) : location.href);
+    	
+    	if (location.search.length > 0)
+    	      // URL already has arguments
+    	    	powerquery += "&format=" + (only_list ? "csv": ($('#csvformat input:radio:checked').val()).replace("spreadsheet","csv"));
+	    else if (powerquery.charAt(powerquery.length - 1) == '?')
+	      // This is the first argument for the URL, but we already have a question mark at the end
+	    	powerquery += "format=" + (only_list ? "csv": ($('#csvformat input:radio:checked').val()).replace("spreadsheet","csv"));
+	    else
+	      // This is the first argument for the URL
+	    	powerquery += "?format=" + (only_list ? "csv": ($('#csvformat input:radio:checked').val()).replace("spreadsheet","csv"));
+
+    	powerquery +=  "&allcolumns=true";
+    	
+    	if (scenario_permissions.length > 1) {
+  	      var firstTime = true;
+  	      var scenarios = "";
+  	      for (var i = 0 ; i < scenario_permissions.length; i++) {
+  	    	  if ($('#' + scenario_permissions[i][0]).is(":checked")) {
+  	    	  	if (firstTime)
+  	    	  		firstTime = false;
+  	    	  	else
+  	    	  		scenarios += ",";
+  	    	  			
+  	    	    scenarios += scenario_permissions[i][0];
+  	    	  }
+  	      }
+        }
+    	var appendix = "";
+    	if (scenario_permissions.length > 1)
+    	  appendix = "&scenarios=" + scenarios;
+    	$('#urladdress').val(powerquery + appendix);
+    	$('#urladdress').select();
+    	document.execCommand('copy');
+    	
+    });
     $('#exportbutton').on('click', function() {
       // Fetch the report data
       var url = (location.href.indexOf("#") != -1 ? location.href.substr(0,location.href.indexOf("#")) : location.href);

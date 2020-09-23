@@ -19,6 +19,7 @@ import logging
 from psycopg2.extras import execute_batch
 
 from django.db import DEFAULT_DB_ALIAS, connections
+from django.conf import settings
 
 from freppledb.boot import getAttributes
 from freppledb.common.commands import PlanTaskRegistry, PlanTask
@@ -68,7 +69,7 @@ def SQL4attributes(attrs, with_on_conflict=True):
 class cleanStatic(PlanTask):
 
     description = "Clean static data"
-    sequence = 300
+    sequence = 308
 
     @classmethod
     def getWeight(cls, database=DEFAULT_DB_ALIAS, **kwargs):
@@ -155,6 +156,37 @@ class cleanStatic(PlanTask):
                 "delete from operation where source = %s and lastmodified <> %s",
                 (source, cls.timestamp),
             )
+            if "freppledb.forecast" in settings.INSTALLED_APPS:
+                cursor.execute(
+                    """
+                    delete from forecast where item_id in 
+                    (select name from item where source = %s and lastmodified <> %s)
+                    """,
+                    (source, cls.timestamp),
+                )
+                cursor.execute(
+                    """
+                    delete from forecastplan where item_id in 
+                    (select name from item where source = %s and lastmodified <> %s)
+                    """,
+                    (source, cls.timestamp),
+                )
+            if "freppledb.inventoryplanning" in settings.INSTALLED_APPS:
+                cursor.execute(
+                    """
+                    delete from inventoryplanning where item_id in 
+                    (select name from item where source = %s and lastmodified <> %s)
+                    """,
+                    (source, cls.timestamp),
+                )
+                cursor.execute(
+                    """
+                    delete from out_inventoryplanning where item_id in 
+                    (select name from item where source = %s and lastmodified <> %s)
+                    """,
+                    (source, cls.timestamp),
+                )
+
             cursor.execute(
                 "delete from item where source = %s and lastmodified <> %s",
                 (source, cls.timestamp),

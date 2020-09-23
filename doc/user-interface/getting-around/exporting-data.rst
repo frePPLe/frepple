@@ -61,16 +61,19 @@ identify to which scenario a data row belongs to.
 Data source URL
 ===============
 
-With this option we provide a URL where external applications have on line access to the report data.
-
-.. image:: ../_images/excel-data-source-url-0.png
-   :alt: Exporting data
+With this option we provide a URL where external applications have on line access to the report data. 
 
 The data source URL can be pasted in any kind of reporting software supporting this format (Excel, Google sheets...).
 This is pretty convenient if you are exporting the page you are visiting on a regular basis as refreshing your data in your software
 will take no longer than a click.
 
-Below are the steps to configure a data source URL with Excel, these steps are explained on our youtube channel in this `video <https://youtu.be/7t88FliH1h0>`_.
+The video below demonstrates how to pull frePPLe data in an Excel spreadsheet.
+
+.. raw:: html
+
+   <iframe width="640" height="360" src="https://www.youtube.com/embed/7t88FliH1h0" frameborder="0" allowfullscreen=""></iframe>
+
+Below are the steps to configure a data source URL in Excel:
 
 * Select the scenarios you wish to export (by default, only current scenario is selected).
 

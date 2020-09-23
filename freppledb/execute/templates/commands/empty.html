@@ -57,6 +57,7 @@ $(".empty_all").click( function() {
   else if ($(this).prop("name") === "allhistory") {
     $(".empty_entity[data-tables='archive']").prop("checked", $(this).prop("checked"));
   }
+  updateButtonState();
   });
 $(".empty_entity").click( function() {
   if ($(this).attr("data-tables") === "data") {
@@ -65,6 +66,18 @@ $(".empty_entity").click( function() {
     $(".empty_all[name='alladmin']").prop("checked",$(".empty_entity[data-tables='admin']:not(:checked)").length === 0);
   }
   if ($(this).prop("checked")) checkChildren($(this).attr('id'));
+  updateButtonState();
   });
 });
+
+function updateButtonState() {
+	// count how many checkboxes are enabled to enable/disable erase button
+	if (($(".empty_entity[data-tables='data']:is(:checked)").length > 0) 
+			|| ($(".empty_entity[data-tables='admin']:is(:checked)").length > 0)
+			|| ($(".empty_entity[data-tables='archive']:is(:checked)").length > 0))
+	  $("#erase").attr("disabled", false);
+	else
+	  $("#erase").attr("disabled", true);
+		
+}
 </script>

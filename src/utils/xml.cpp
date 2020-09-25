@@ -449,16 +449,16 @@ void XMLInput::endElement(const XMLCh* const uri, const XMLCh* const ename,
                                             getCommandManager());
                   data[idx].field = nullptr;  // Mark as already applied
                 } else if (data[idx].hash == Tags::booleanproperty.getHash())
-                  objects[objectindex].object->setProperty(
+                  objects[objectindex - 1].object->setProperty(
                       data[idx].name, data[idx].value, 1, getCommandManager());
                 else if (data[idx].hash == Tags::dateproperty.getHash())
-                  objects[objectindex].object->setProperty(
+                  objects[objectindex - 1].object->setProperty(
                       data[idx].name, data[idx].value, 2, getCommandManager());
                 else if (data[idx].hash == Tags::doubleproperty.getHash())
-                  objects[objectindex].object->setProperty(
+                  objects[objectindex - 1].object->setProperty(
                       data[idx].name, data[idx].value, 3, getCommandManager());
                 else if (data[idx].hash == Tags::stringproperty.getHash())
-                  objects[objectindex].object->setProperty(
+                  objects[objectindex - 1].object->setProperty(
                       data[idx].name, data[idx].value, 4, getCommandManager());
               }
             }

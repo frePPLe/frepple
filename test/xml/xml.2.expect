@@ -22,6 +22,11 @@
 			<stringproperty name="test" value="customer level 2"/>
 		</customer>
 	</customers>
+	<suppliers>
+		<supplier>
+			<name>supplier level 2</name>
+		</supplier>
+	</suppliers>
 	<calendars>
 		<calendar>
 			<name>weeks</name>
@@ -45,6 +50,23 @@
 			<name>item 1</name>
 			<category>item category</category>
 			<description>А Б В Г Д Е Ё Ж З И Й К Л М Н О П Р С Т У Ф Х Ц Ч Ш Щ Ъ Ы Ь</description>
+		</item>
+		<item>
+			<name>item level 1</name>
+			<category>category1</category>
+			<description>description1</description>
+			<cost>1</cost>
+			<itemsuppliers>
+				<itemsupplier>
+					<supplier>
+						<name>supplier level 2</name>
+					</supplier>
+					<leadtime>P1D</leadtime>
+					<size_minimum>0</size_minimum>
+					<cost>15</cost>
+				</itemsupplier>
+			</itemsuppliers>
+			<stringproperty name="property1" value="inactive"/>
 		</item>
 	</items>
 	<buffers>

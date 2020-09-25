@@ -12,7 +12,17 @@
     </customer>
     </members>
     </customer>
-  </customers>  
+  </customers>
+  <items>
+    <item name="item level 1" cost="1.000000" category="category1" description="description1">
+      <stringproperty name="property1" value="inactive"/>
+      <itemsuppliers>
+        <itemsupplier leadtime="P1D" priority="1" size_minimum="0.000000" cost="15.000000">
+          <supplier name="supplier level 2"/>
+        </itemsupplier>
+      </itemsuppliers>
+    </item>
+  </items>
   <demands>
     <!-- Level 1: Lot -->
     <demand name=" แผ่นดินฮั่นเสื่อมโทรมแสนสังเวช พระปกเกศกองบู๊กู้ขึ้นใหม่">

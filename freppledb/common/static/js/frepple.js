@@ -632,6 +632,8 @@ var grid = {
   // Render the customization popup window
   showCustomize: function (pivot, gridid, cross_arg, cross_idx_arg, cross_only_arg, ok_callback, reset_callback)
   {
+    $('#timebuckets').modal('hide');
+    $.jgrid.hideModal("#searchmodfbox_grid");
   	var thegrid = $((typeof gridid !== 'undefined') ? gridid : "#grid");
     var colModel = thegrid.jqGrid('getGridParam', 'colModel');
     var maxfrozen = 0;
@@ -1552,6 +1554,8 @@ var grid = {
   // Display filter dialog
   showFilter: function(gridid, curfilterid, filterid)
   {
+    $('#popup').modal("hide");
+    $('#timebuckets').modal('hide');
   	var thegridid = (typeof gridid !== 'undefined') ? gridid : "grid";
   	var thegrid = $("#" + thegridid);
   	var curfilter = $((typeof curfilterid !== 'undefined') ? curfilterid : "#curfilter");

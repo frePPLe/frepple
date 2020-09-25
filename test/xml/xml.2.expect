@@ -9,6 +9,19 @@
 			<category>manufacturing</category>
 		</location>
 	</locations>
+	<customers>
+		<customer>
+			<name>customer level 1</name>
+			<stringproperty name="test" value="customer level 1"/>
+		</customer>
+		<customer>
+			<name>customer level 2</name>
+			<owner>
+				<name>customer level 1</name>
+			</owner>
+			<stringproperty name="test" value="customer level 2"/>
+		</customer>
+	</customers>
 	<calendars>
 		<calendar>
 			<name>weeks</name>

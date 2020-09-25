@@ -1008,7 +1008,7 @@ class loadBuffers(LoadTask):
                   min(source),
                   min(batch)
                 from buffer
-                -- %s
+                %s
                 group by case
                   when batch is not null
                     and exists (select 1 from item where item.name = buffer.item_id and item.type = 'make to order')

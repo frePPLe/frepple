@@ -124,7 +124,7 @@ set_release:
 	sed -i 's/FREPPLE_MAJOR, $(old1)/FREPPLE_MAJOR, $(new1)/g' "configure.ac"
 	sed -i 's/FREPPLE_MINOR, $(old2)/FREPPLE_MINOR, $(new2)/g' "configure.ac"
 	sed -i 's/FREPPLE_PATCH, $(old3)/FREPPLE_PATCH, $(new3)/g' "configure.ac"
-	for i in "include/frepple/utils.h" "contrib/linux/centos-8/frepple.spec" "contrib/linux/opensuse-15.1/frepple.spec" "contrib/linux/rhel-8/frepple.spec" "contrib/linux/ubuntu-18.04/debian/changelog" "freppledb/__init__.py" "freppledb/common/static/css/frepple.less" "bin/frepple.xsd" "contrib/debian/changelog" "contrib/odoo/addons_v8/frepple/__openerp__.py" "contrib/odoo/addons_v9/__openerp__.py" "contrib/odoo/addons_v10/frepple/__manifest__.py" "contrib/odoo/addons_v11/frepple/__manifest__.py" "contrib/odoo/addons_v12/frepple/__manifest__.py" "contrib/odoo/addons_v13/frepple/__manifest__.py" "doc/conf.py"; do \
+	for i in "include/frepple/utils.h" "contrib/linux/centos-8/frepple.spec" "contrib/linux/debian-10/debian/changelog" "contrib/linux/opensuse-15.1/frepple.spec" "contrib/linux/rhel-8/frepple.spec" "contrib/linux/ubuntu-18.04/debian/changelog" "contrib/linux/ubuntu-20.04/debian/changelog" "freppledb/__init__.py" "freppledb/common/static/css/frepple.less" "bin/frepple.xsd" "contrib/debian/changelog" "contrib/odoo/addons_v8/frepple/__openerp__.py" "contrib/odoo/addons_v9/__openerp__.py" "contrib/odoo/addons_v10/frepple/__manifest__.py" "contrib/odoo/addons_v11/frepple/__manifest__.py" "contrib/odoo/addons_v12/frepple/__manifest__.py" "contrib/odoo/addons_v13/frepple/__manifest__.py" "doc/conf.py"; do \
 		sed -i 's/$(old1)\.$(old2)\.$(old3)/$(new1).$(new2).$(new3)/g' $$i; \
 	done
 	sed -i 's/version = "$(old1)\.$(old2)"/version = "$(new1).$(new2)"/g' "doc/conf.py"

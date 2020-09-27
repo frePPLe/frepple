@@ -21,10 +21,11 @@
 FROM centos:8 as builder
 
 RUN yum -y update
-RUN yum -y install epel-release && \
+RUN yum -y install dnf-plugins-core epel-release && \
+  yum config-manager --set-enabled PowerTools && \
   yum -y install xerces-c python36 rpm-build git wget \
     python3-psycopg2 python3-pip postgresql-devel openssl openssl-devel \
-    libtool make python3-devel xerces-c-devel automake autoconf gcc-c++ && \
+    libtool make python3-devel xerces-c-devel automake autoconf gcc-c++ python3-sphinx && \
   yum clean all 
 
 RUN useradd builder -u 1000 -m -G users && \
@@ -36,7 +37,7 @@ RUN useradd builder -u 1000 -m -G users && \
 
 # OPTION 1: BUILDING FROM LOCAL DISTRIBUTION:
 ADD requirements.txt .
-RUN pip3 install -r requirements.txt sphinx
+RUN pip3 install -r requirements.txt
 
 # OPTION 2: BUILDING FROM GIT REPOSITORY
 # This is useful when using this dockerfile standalone.

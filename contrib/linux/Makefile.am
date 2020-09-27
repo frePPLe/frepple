@@ -8,3 +8,12 @@ EXTRA_DIST = README.txt
 
 runtime:
 	docker-compose up 
+
+.PHONY: contrib
+
+contrib:
+	for dir in $(SUBDIRS); do \
+	  cd $$dir; \
+	  echo $$dir; \
+	  $(MAKE) contrib; \
+	done

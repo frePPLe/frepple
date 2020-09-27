@@ -124,23 +124,6 @@ class OdooReadData(PlanTask):
         if not ok and not debugFile:
             raise Exception("Odoo connector not configured correctly")
 
-        # Assign to single roots
-        root_item = None
-        for r in frepple.items():
-            if r.owner is None:
-                root_item = r
-                break
-        root_customer = None
-        for r in frepple.customers():
-            if r.owner is None:
-                root_customer = r
-                break
-        root_location = None
-        for r in frepple.locations():
-            if r.owner is None:
-                root_location = r
-                break
-
         # Connect to the odoo URL to GET data
         try:
             loglevel = int(Parameter.getValue("odoo.loglevel", database, "0"))
@@ -179,16 +162,58 @@ class OdooReadData(PlanTask):
             with open(debugFile) as f:
                 frepple.readXMLdata(f.read(), False, False, loglevel)
 
-        # Assure single root hierarchies
+        # Hierarchy correction: Count how many items/locations/customers have no owner
+        # If we find 2+ then we use All items/All customers/All locations as root
+        # otherwise we assume that the hierarchy is correct
+        rootItem = None
         for r in frepple.items():
-            if r.owner is None and r != root_item:
-                r.owner = root_item
-        for r in frepple.customers():
-            if r.owner is None and r != root_customer:
-                r.owner = root_customer
+            if r.owner is None:
+                if not rootItem:
+                    rootItem = r
+                else:
+                    rootItem = None
+                    break
+        rootLocation = None
         for r in frepple.locations():
-            if r.owner is None and r != root_location:
-                r.owner = root_location
+            if r.owner is None:
+                if not rootLocation:
+                    rootLocation = r
+                else:
+                    rootLocation = None
+                    break
+        rootCustomer = None
+        for r in frepple.customers():
+            if r.owner is None:
+                if not rootCustomer:
+                    rootCustomer = r
+                else:
+                    rootCustomer = None
+                    break
+
+        if not rootItem:
+            rootItem = frepple.item_mts(name="All items", source="odoo_%s" % cls.mode)
+            for r in frepple.items():
+                if r.owner is None and r != rootItem:
+                    r.owner = rootItem
+        if not rootLocation:
+            rootLocation = frepple.location(
+                name="All locations", source="odoo_%s" % cls.mode
+            )
+
+            for r in frepple.locations():
+                if r.owner is None and r != rootLocation:
+                    r.owner = rootLocation
+        if not rootCustomer:
+            rootCustomer = frepple.customer(
+                name="All customers", source="odoo_%s" % cls.mode
+            )
+            if rootCustomer:
+                print("%s" % rootCustomer.name)
+            for r in frepple.customers():
+                if r.owner is None and r != rootCustomer:
+                    print("Assigning root customer to %s" % r.name)
+                    r.owner = rootCustomer
+                    print("%s %s" % (r.name, r.owner.name))
 
 
 @PlanTaskRegistry.register

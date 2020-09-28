@@ -96,7 +96,10 @@ class OdooReadData(PlanTask):
         if not settings.ODOO_PASSWORDS.get(database):
             odoo_password = Parameter.getValue("odoo.password", database)
         odoo_db = Parameter.getValue("odoo.db", database)
-        odoo_url = Parameter.getValue("odoo.url", database)
+        odoo_url = Parameter.getValue("odoo.url", database).strip()
+        if not odoo_url.endswith("/"):
+            odoo_url = odoo_url + "/"
+
         odoo_company = Parameter.getValue("odoo.company", database)
         ok = True
 

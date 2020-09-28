@@ -166,7 +166,7 @@ class OverviewReport(GridPivot):
             extra='"role":"input/calendar"',
             initially_hidden=True,
         ),
-        GridFieldText(
+        GridFieldNumber(
             "avgutil",
             title=_("utilization %"),
             formatter="percentage",

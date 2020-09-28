@@ -1,6 +1,21 @@
 {% extends "admin/base_site_nav.html" %}
 {% load i18n %}
 
+{% block filter %}{% if reportclass.filterable %}
+&nbsp;<span id="filterform">
+<span id="curfilter"></span>
+&nbsp;
+<div class="input-group">
+<input id="addsearch" class="form-control" placeholder="{% trans 'Search' %}" role="searchbox"
+  type="text" size="20" oninput="grid.showFilterList(this)">
+<span class="input-group-btn">
+<button class="btn btn-default fa fa-search" onclick="event.stopPropagation(); grid.showFilter()"
+  data-toggle="tooltip" data-placement="top" data-original-title="{% trans "Search editor" %}"/>
+</span>
+</div>
+</span>
+{% endif %}{% endblock %}
+          
 {% block extrahead %}{{block.super}}
 <script>
 
@@ -180,11 +195,9 @@ $(function() {
        resizing = setTimeout(grid.saveColumnConfiguration, 200);
        }
      });
-  {% endif %}{% endif %}{% if filters %}
+  {% endif %}{% endif %}
   var curfilter = $("#curfilter");
   grid.getFilterGroup($("#grid"), initialfilter, true, curfilter);
-  if (!curfilter.is(":empty"))
-    $('#filter').addClass("btn-danger").removeClass("btn-primary");{% endif %}
   $("#grid").on('input', function(event) {
     // to prevent firefox from triggering save/undo on checkbox select
     if (!$(event.target).parent().hasClass('td_cbox')) {
@@ -275,7 +288,6 @@ $(function() {
 
 <div id="toolicons" class="col-xs-4 hor-align-right ver-align-middle pull-right">{% block actions %}
 {% if reportclass.filterable %}
-<button class="btn btn-xs btn-primary" id="filter" onclick="grid.showFilter()" data-toggle="tooltip" data-placement="top" data-original-title="{% trans 'filter data'|capfirst|force_escape %}" ><span class="fa fa-search"></span></button>
 <div class="btn-group" data-toggle="tooltip" data-placement="top" data-original-title="{% trans 'favorites'|capfirst|force_escape %}">
   <button class="btn btn-xs btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
     <span class="fa fa-star"></span>

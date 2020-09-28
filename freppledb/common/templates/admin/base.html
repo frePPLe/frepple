@@ -26,7 +26,7 @@ $(function() {
 
 {% if messages %}<div class="row"><div class="col-md-12" style="margin-top: 5px">{% for message in messages %}<ul class="alert {{message.tags}}"><li >{{message}}</li></ul>{% endfor %}</div></div>{% endif %}
 
-{% block content_title %}<div class="row"><div class="col-md-12">{% if title %}<h1>{{title|capfirst|force_escape}}{% if post_title %}: {{post_title|capfirst}}{% endif %}<small>&nbsp;&nbsp;<span id="curfilter"></span>&nbsp;&nbsp;<span id="curerror"></span></small></h1>{% block tools %}{% endblock %}{% endif %}</div></div>{% endblock %}
+{% block content_title %}<div class="row"><div class="col-md-12">{% if title %}<h1>{{title|capfirst|force_escape}}{% if post_title %}: {{post_title|capfirst}}{% endif %}<small>{% block filter %}{% endblock %}&nbsp;&nbsp;<span id="curerror"></span></small></h1>{% block tools %}{% endblock %}{% endif %}</div></div>{% endblock %}
 
 {% block content %}<div id="content" class="row">
 {% block object-tools %}{% endblock %}

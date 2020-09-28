@@ -739,4 +739,53 @@ background-color: @table-bg-accent;
 span.help-block a {
     text-decoration: underline;
     font-weight: bold;
-} 
+}
+
+// Search filter
+
+#filterform {
+
+  padding-left: 10px;
+  .border-top-radius(@border-radius-small);
+  .border-right-radius(@border-radius-small);
+  .border-bottom-radius(@border-radius-small);
+  .border-left-radius(@border-radius-small);
+  
+  .label {
+    padding-top: 7px;
+    padding-bottom: 5px;
+    font-size: 100%;
+    font-weight: 400;
+  }
+  
+  .list-group {
+    width: auto;
+    position: absolute;
+    top: 4.5em;
+    z-index: 4999;
+    white-space: nowrap;
+  }
+  
+  .input-group {
+    display: inline-table;
+    vertical-align: middle;
+    .input-group-addon,
+    .input-group-btn,
+    .form-control {
+        width: auto !important;
+    }
+  }
+  
+  .label input {
+    color: #777777;
+  }
+  
+  .fa-times {
+    font-size: 66%;
+    cursor: pointer;
+  }
+  
+  button.fa-search {
+    color: #777777;
+  }
+}

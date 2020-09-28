@@ -194,13 +194,11 @@ var upload = {
     $("#grid").closest(".ui-jqgrid-bdiv").scrollTop(0);
     $('#save, #undo').addClass("btn-primary").removeClass("btn-danger").prop('disabled', true);
     $('#actions1').prop('disabled', true);
-    $('#filter').prop('disabled', false);
     $(window).off('beforeunload', upload.warnUnsavedChanges);
   },
 
   select : function ()
   {
-    $('#filter').prop('disabled', true);
     $.jgrid.hideModal("#searchmodfbox_grid");
     $('#save, #undo').removeClass("btn-primary").addClass("btn-danger").prop('disabled', false);
     $(window).off('beforeunload', upload.warnUnsavedChanges);
@@ -1554,13 +1552,14 @@ var grid = {
   // Display filter dialog
   showFilter: function(gridid, curfilterid, filterid)
   {
+	  $("#addsearch").val("");
+	  $("#filterfield").remove();
+	  grid.handlerinstalled = false;
     $('#popup').modal("hide");
     $('#timebuckets').modal('hide');
   	var thegridid = (typeof gridid !== 'undefined') ? gridid : "grid";
   	var thegrid = $("#" + thegridid);
   	var curfilter = $((typeof curfilterid !== 'undefined') ? curfilterid : "#curfilter");
-  	var filter = $((typeof filterid !== 'undefined') ? filterid : "#filter");
-    if (filter.hasClass("disabled")) return;
     $('.modal').modal('hide');
     thegrid.jqGrid('searchGrid', {
       closeOnEscape: true,
@@ -1571,21 +1570,14 @@ var grid = {
       onSearch : function() {
         grid.saveColumnConfiguration();
         grid.getFilterGroup(thegrid, $("#fbox_" + thegridid).jqFilter('filterData'), true, curfilter);
-        if (curfilter.is(':empty'))
-        	filter.removeClass("btn-danger").addClass("btn-primary");
-        else
-        	filter.addClass("btn-danger").removeClass("btn-primary");
         },
       onReset : function() {        
         if (typeof initialfilter !== 'undefined') {
         	thegrid.jqGrid('getGridParam','postData').filters = JSON.stringify(initialfilter);
         	grid.getFilterGroup(thegrid, initialfilter, true, curfilter);
-          filter.addClass("btn-danger").removeClass("btn-primary");
         }
-        else {
+        else
         	curfilter.html("");
-          filter.removeClass("btn-danger").addClass("btn-primary");
-        }
         grid.saveColumnConfiguration();
         return true;
         }
@@ -1593,7 +1585,84 @@ var grid = {
   },
   
   countFilters: 0,
-
+  
+  handlerinstalled: false,
+  
+  addFilter: function(event) {
+  	event.stopPropagation();  	
+  	event.preventDefault();
+  	var field = $(event.target).attr("data-filterfield");
+  	var n = {
+				"field": field,
+				"op":"cn",
+				"data": $("#addsearch").val(),
+				"filtercount":++grid.filtercount
+				};
+		var c = $('#grid').getGridParam("postData").filters;
+		if (c === undefined) {
+			// First filter
+			c = {
+				"groupOp":"AND",
+				"rules":[n],
+				"groups":[]
+			  };
+		}
+		else {
+			c = JSON.parse(c);
+			if (c["groupOp"] == "AND")
+				// Add condition to existing and-filter
+			  c["rules"].push(n);
+			else
+				// Wrap existing filter in a new and-filter
+				c = {
+				  "groupOp":"AND",
+				  "rules":[n],
+				  "groups":[c]
+			    };
+		}
+		$("#grid").setGridParam({
+      postData:{filters: JSON.stringify(c)},
+      search:true
+      }).trigger('reloadGrid');
+		grid.getFilterGroup($("#grid"), c, true,  $("#curfilter"));
+		$(document).off("click", grid.clickFilter);
+		grid.handlerinstalled = false;
+	  $("#addsearch").val("");
+	  $("#filterfield").remove();
+	  $("#tooltip").css("display", "none");
+  },
+  
+  clickFilter: function(event) {
+  	if ($(event.target).attr('id') != "addsearch") {
+  		$(document).off("click", grid.clickFilter);
+  		grid.handlerinstalled = false;
+  	  $("#addsearch").val("");
+  	  $("#filterfield").remove();
+  	}
+  },
+    
+  showFilterList: function(el) {
+  	$.jgrid.hideModal("#searchmodfbox_grid");
+  	event.stopPropagation();
+    if (!grid.handlerinstalled) {
+      $(document).on("click", grid.clickFilter);
+    	var l = $('<span id="filterfield" class="list-group">');
+      var cnt = 15;  // Limits the number fields to choose from
+      for (var col of $("#grid").jqGrid('getGridParam', 'colModel')) {
+      	var searchoptions =  col.searchoptions;
+      	if (searchoptions && searchoptions.sopt && searchoptions.sopt.includes("cn")) {
+      		var n = $('<button type="button" class="list-group-item list-group-item-action" onclick="grid.addFilter(event)" />');
+      		n.attr("data-filterfield", col.name);
+      		n.html(gettext("Search") + ' ' + col.label);
+      		l.append(n);
+      		if (--cnt <= 0) break;
+      	}
+      }
+    	$(el).parent().before(l);
+      grid.handlerinstalled = true;
+    }    
+  },
+  
   updateFilter: function(obj, idx, newvalue) {
     if (obj instanceof Array)
     	for (var i in obj)
@@ -1604,6 +1673,24 @@ var grid = {
       		obj.data = newvalue;
     		else if (obj.hasOwnProperty(i))
     			grid.updateFilter(obj[i], idx, newvalue);
+    	}
+    }
+  },
+  
+  removeFilter: function(obj, idx) {
+    if (obj instanceof Array)
+    	for (var i in obj) {
+    		if (obj[i]["filtercount"] == idx)
+    			obj.splice(i, 1);
+    		else if (obj[i]["filtercount"] > idx)
+    			--obj[i]["filtercount"];
+    		else
+    			grid.removeFilter(obj[i], idx);
+    	}
+    else if (typeof obj == "object") {    	
+    	for (var i in obj) {    		
+    		if (obj.hasOwnProperty(i))
+    			grid.removeFilter(obj[i], idx);
     	}
     }
   },
@@ -1637,11 +1724,11 @@ var grid = {
     	  oper = rule.op;
     }
 
-    // Final result
-  	thefilter.append(col.label + '&nbsp;' + oper + '&nbsp;');
-    var newelement = $('<input size="20">');
-    newelement.val(rule.data);
+    // Final result  	
+  	var newexpression = $('<span class="label label-default">' + col.label + '&nbsp;' + oper + '&nbsp;</span>');
+    var newelement = $('<input size="10">');
     rule["filtercount"] = grid.countFilters++;  // Mark position in the expression
+    newelement.val(rule.data);
     newelement.on('change', function(event) {
       grid.updateFilter(fullfilter, rule["filtercount"], $(event.target).val());
     	thegrid.setGridParam({
@@ -1649,15 +1736,24 @@ var grid = {
         search:true
         }).trigger('reloadGrid');
     	grid.saveColumnConfiguration();
-      if (thefilter.is(":empty"))
-      	$("#filter").removeClass("btn-danger").addClass("btn-primary");
-      else
-      	$("#filter").addClass("btn-danger").removeClass("btn-primary");
     	});
-    thefilter.append(newelement);
+    newexpression.append(newelement);
+    newexpression.append('&nbsp;');    
     if (rule.op == "win")
       // Special case for the "within N days" operator
-    	thefilter.append('&nbsp;' + gettext("days"));
+    	newexpression.append(gettext("days") + '&nbsp;');
+    var deleteelement = $('<span class="fa fa-times"/>');
+    deleteelement.on('click', function(event) {
+    	grid.removeFilter(fullfilter, rule["filtercount"]);
+    	grid.getFilterGroup(thegrid, fullfilter, true, thefilter, fullfilter);
+    	thegrid.setGridParam({
+        postData:{filters: JSON.stringify(fullfilter)},
+        search:true
+        }).trigger('reloadGrid');
+    	grid.saveColumnConfiguration(); 	
+    });
+    newexpression.append(deleteelement);
+    thefilter.append(newexpression);
   },
   
   getFilterGroup: function(thegrid, group, first, thefilter, fullfilter)
@@ -1670,30 +1766,27 @@ var grid = {
     	grid.countFilters = 0;
     }
     
-    if (group.groups !== undefined) {
+    if (group !== undefined && group.groups !== undefined) {    	
       for (var index = 0; index < group.groups.length; index++) {
         if (thefilter.html().length > 1) {
           if (group.groupOp === "OR")
-          	thefilter.append(" || ");
+          	thefilter.append(" " + gettext("or") + " ");
           else
-            thefilter.append(" && ");
+            thefilter.append(" " + gettext("and") + " ");
         }
         grid.getFilterGroup(thegrid, group.groups[index], false, thefilter, fullfilter);
       }
     }
 
-    if (group.rules !== undefined) {
+    if (group !== undefined && group.rules !== undefined) {
       for (var index = 0; index < group.rules.length; index++) {
         if (thefilter.html().length > 1)
-          thefilter.append( (group.groupOp === "OR") ? " || " : " && ");
+          thefilter.append( " " + gettext((group.groupOp === "OR") ? "or" : "and") + " ");
         grid.getFilterRule(thegrid, group.rules[index], thefilter, fullfilter);
       }
     }
 
-    if (!first)
-    	thefilter.append(")");    
-    else if (thefilter.html().length > 1)
-    	thefilter.prepend(gettext("Filtered where") + "&nbsp;");
+    if (!first) thefilter.append(")");
   },
   
   markSelectedRow: function(sel)
@@ -1880,7 +1973,6 @@ var favorite = {
           search: true
           });
         grid.getFilterGroup($('#grid'), JSON.parse(favorites[fav]["filter"]), true, $("#curfilter"));
-        $("#filter").addClass("btn-danger").removeClass("btn-primary");
       }
       else {
       	thegrid.setGridParam({
@@ -1888,7 +1980,6 @@ var favorite = {
           search: true
           });
         $("#curfilter").html("");
-      	$("#filter").removeClass("btn-danger").addClass("btn-primary");
       }
       
       // Restore the sort for the backend

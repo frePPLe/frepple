@@ -72,9 +72,9 @@ $(".empty_entity").click( function() {
 
 function updateButtonState() {
 	// count how many checkboxes are enabled to enable/disable erase button
-	if (($(".empty_entity[data-tables='data']:is(:checked)").length > 0) 
-			|| ($(".empty_entity[data-tables='admin']:is(:checked)").length > 0)
-			|| ($(".empty_entity[data-tables='archive']:is(:checked)").length > 0))
+	if (($(".empty_entity[data-tables='data']:checked").length > 0) 
+			|| ($(".empty_entity[data-tables='admin']:checked").length > 0)
+			|| ($(".empty_entity[data-tables='archive']:checked").length > 0))
 	  $("#erase").attr("disabled", false);
 	else
 	  $("#erase").attr("disabled", true);

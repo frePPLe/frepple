@@ -3213,7 +3213,7 @@ class CalendarBucketList(GridReport):
     title = _("calendar buckets")
     basequeryset = CalendarBucket.objects.all()
     model = CalendarBucket
-    frozenColumns = 3
+    frozenColumns = 1
     help_url = "model-reference/calendar-buckets.html"
 
     rows = (

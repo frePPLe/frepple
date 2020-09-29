@@ -1624,6 +1624,7 @@ var grid = {
       postData:{filters: JSON.stringify(c)},
       search:true
       }).trigger('reloadGrid');
+		grid.saveColumnConfiguration();
 		grid.getFilterGroup($("#grid"), c, true,  $("#curfilter"));
 		$(document).off("click", grid.clickFilter);
 		grid.handlerinstalled = false;

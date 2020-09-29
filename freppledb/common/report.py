@@ -297,7 +297,7 @@ class GridFieldDateTime(GridField):
     formatter = "date"
     extra = '"formatoptions":{"srcformat":"Y-m-d H:i:s","newformat":"Y-m-d H:i:s"}'
     searchoptions = (
-        '{"sopt":["cn","eq","ne","lt","le","gt","ge","win"],"searchhidden": true}'
+        '{"sopt":["eq","ne","lt","le","gt","ge","win"],"searchhidden": true}'
     )
     width = 140
 
@@ -311,9 +311,7 @@ class GridFieldTime(GridField):
 class GridFieldDate(GridField):
     formatter = "date"
     extra = '"formatoptions":{"srcformat":"Y-m-d","newformat":"Y-m-d"}'
-    searchoptions = (
-        '{"sopt":["cn","eq","ne","lt","le","gt","ge","win"],"searchhidden":true}'
-    )
+    searchoptions = '{"sopt":["eq","ne","lt","le","gt","ge","win"],"searchhidden":true}'
     width = 140
 
 
@@ -345,7 +343,7 @@ class GridFieldBool(GridField):
 class GridFieldLastModified(GridField):
     formatter = "date"
     extra = '"formatoptions":{"srcformat":"Y-m-d H:i:s","newformat":"Y-m-d H:i:s"}'
-    searchoptions = '{"sopt":["cn","em","nm","in","ni","eq","bw","ew","bn","nc","en","win"],"searchhidden":true}'
+    searchoptions = '{"sopt":["em","nm","in","ni","eq","bw","ew","bn","nc","en","win"],"searchhidden":true}'
     title = _("last modified")
     editable = False
     width = 140
@@ -1003,9 +1001,9 @@ class GridReport(View):
             request.prefs = request.user.getPreference(
                 cls.getKey(request, *args, **kwargs), database=request.database
             )
-        
+
         allColumns = request.GET.get("allcolumns", False)
-        
+
         if allColumns and cls and cls.rows:
             r = [
                 force_str(

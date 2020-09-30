@@ -78,7 +78,7 @@ class MultiDBBackend(ModelBackend):
             # The user name looks like an email address
             user = User.objects.get(email__iexact=username)
             if user.check_password(password):
-                self.getScenariosScenarios(user)
+                self.getScenarios(user)
                 return user
         except User.DoesNotExist:
             # Run the default password hasher once to reduce the timing

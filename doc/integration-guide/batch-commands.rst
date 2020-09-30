@@ -51,7 +51,6 @@ The following commands are available.
   * :ref:`createsuperuser`
   * :ref:`changepassword`
   * :ref:`flush`
-  * :ref:`loadxml`
 
 * Developer commands
 

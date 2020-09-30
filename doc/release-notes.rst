@@ -5,8 +5,14 @@ Release notes
 ========================
 
 .. rubric:: User interface
+
+- | `Filtering data <user-interface/getting-around/filtering-data.html>`_ has been made more easier. 
+    The search expression editor is still available, but a simple search for a value in a text
+    field can now be performed with less clicks.
+
 - | Addition of the `data source URL <user-interface/getting-around/exporting-data.html>`_ in the export dialog
-    for easier export of frePPLe data into Excel.
+    for easier export of frePPLe data into Excel. External applications can now directly pull frePPLe
+    data online from a URL, which bypasses the export-import steps you do manually now. 
 
 .. rubric:: Integration
 

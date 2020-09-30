@@ -1760,7 +1760,7 @@ var grid = {
   getFilterGroup: function(thegrid, group, first, thefilter, fullfilter)
   {
     if (!first)
-    	thefilter.append("(");
+    	thefilter.append("( ");
     else {
     	thefilter.html("");
     	fullfilter = group;
@@ -1769,7 +1769,7 @@ var grid = {
     
     if (group !== undefined && group.groups !== undefined) {    	
       for (var index = 0; index < group.groups.length; index++) {
-        if (thefilter.html().length > 1) {
+        if (thefilter.html().length > 2) {
           if (group.groupOp === "OR")
           	thefilter.append(" " + gettext("or") + " ");
           else
@@ -1781,13 +1781,13 @@ var grid = {
 
     if (group !== undefined && group.rules !== undefined) {
       for (var index = 0; index < group.rules.length; index++) {
-        if (thefilter.html().length > 1)
+        if (thefilter.html().length > 2)
           thefilter.append( " " + gettext((group.groupOp === "OR") ? "or" : "and") + " ");
         grid.getFilterRule(thegrid, group.rules[index], thefilter, fullfilter);
       }
     }
 
-    if (!first) thefilter.append(")");
+    if (!first) thefilter.append("&nbsp;)");
   },
   
   markSelectedRow: function(sel)

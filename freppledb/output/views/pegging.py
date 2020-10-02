@@ -56,8 +56,21 @@ class ReportByDemand(GridReport):
         GridFieldText(
             "type", title=_("type"), editable=False, sortable=False, width=100
         ),
-        # GridFieldText('buffer', title=_('buffer'), formatter='buffer', editable=False, sortable=False),
-        # GridFieldText('item', title=_('item'), formatter='item', editable=False, sortable=False),
+        GridFieldText(
+            "item",
+            title=_("item"),
+            formatter="item",
+            editable=False,
+            sortable=False,
+            initially_hidden=True,
+        ),
+        GridFieldText(
+            "item__description",
+            title=_("item description"),
+            editable=False,
+            sortable=False,
+            initially_hidden=True,
+        ),
         GridFieldText(
             "resource",
             title=_("resource"),
@@ -219,10 +232,13 @@ class ReportByDemand(GridReport):
             operationplan.demand_id,
             extract(epoch from operationplan.delay),
             pegging.required_quantity,
-            operationplan.batch
+            operationplan.batch,
+            item.description
           from pegging
           inner join operationplan
             on operationplan.reference = pegging.opplan
+          left outer join item
+            on operationplan.item_id = item.name
           inner join (
             select name,
               min(rownum) as rownum,
@@ -242,6 +258,7 @@ class ReportByDemand(GridReport):
             operationplan.type,
             case when operationplan.operation_id is not null then 1 else 0 end,
             operationplan.color, operationplan.reference, operationplan.item_id,
+            item.description,
             coalesce(operationplan.location_id, operationplan.destination_id),
             operationplan.supplier_id, operationplan.origin_id,
             operationplan.criticality, operationplan.demand_id,
@@ -255,6 +272,7 @@ class ReportByDemand(GridReport):
             prevrec = None
             parents = {}
             for rec in cursor_chunked:
+                print(rec)
                 if not prevrec or rec[1] != prevrec["operation"]:
                     # Return prev operation
                     if prevrec:
@@ -268,6 +286,8 @@ class ReportByDemand(GridReport):
                         "showdrilldown": rec[11],
                         "depth": rec[2],
                         "quantity": str(rec[3]),
+                        "item": rec[14],
+                        "item__description": rec[23],
                         "due": round(
                             (rec[0] - request.report_startdate).total_seconds()
                             / horizon,
@@ -313,6 +333,7 @@ class ReportByDemand(GridReport):
                                 "delay": str(rec[20]),
                                 "required_quantity": str(rec[21]),
                                 "batch": rec[22],
+                                "item__description": rec[23],
                             }
                         ],
                     }
@@ -344,6 +365,7 @@ class ReportByDemand(GridReport):
                             "delay": str(rec[20]),
                             "required_quantity": str(rec[21]),
                             "batch": rec[22],
+                            "item__description": rec[23],
                         }
                     )
                 elif rec[9] and not rec[9] in prevrec["resource"]:

@@ -3193,27 +3193,25 @@ var graph = {
 
 var gantt = {
 
-  // Used to follow the mous when dragging the timeline
-  startmousemove: null,
-  resizing: null,
-
   // Height of the blocks
   rowsize: 25,
 
   header : function ()
   {
     // "scaling" stores the number of pixels available to show a day.
-    var scaling = 86400000 / (viewend.getTime() - viewstart.getTime()) * $("#jqgh_grid_operationplans").width();
+  	var d = (viewend.getTime() - viewstart.getTime());
+    var scaling = 86400000 / d * $("#jqgh_grid_operationplans").width();
+    var total = (horizonend.getTime() - horizonstart.getTime()) / d * $("#jqgh_grid_operationplans").width();
     var result = [
-      '<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="100%" height="34px">',
-      '<line class="time" x1="0" y1="17" x2="' + $("#jqgh_grid_operationplans").width() + '" y2="17"/>'
+      '<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="' + total + 'px" height="34px">',
+      '<line class="time" x1="0" y1="17" x2="' + total + '" y2="17"/>'
       ];
     var x = 0;
     if (scaling < 5)
     {
       // Quarterly + monthly buckets
-      var bucketstart = new Date(viewstart.getFullYear(), viewstart.getMonth(), 1);
-      while (bucketstart < viewend)
+      var bucketstart = new Date(horizonstart.getFullYear(), horizonstart.getMonth(), 1);
+      while (bucketstart < horizonend)
       {
         var x1 = (bucketstart.getTime() - viewstart.getTime()) / 86400000 * scaling;
         var bucketend = new Date(bucketstart.getFullYear(), bucketstart.getMonth()+1, 1);
@@ -3235,17 +3233,17 @@ var gantt = {
     else if (scaling < 10)
     {
       // Monthly + weekly buckets, short style
-      x -= viewstart.getDay() * scaling;
-      var bucketstart = new Date(viewstart.getTime() - 86400000 * viewstart.getDay());
-      while (bucketstart < viewend)
+      x -= horizonstart.getDay() * scaling;
+      var bucketstart = new Date(horizonstart.getTime() - 86400000 * viewstart.getDay());
+      while (bucketstart < horizonend)
       {
         result.push('<line class="time" x1="' + Math.floor(x) + '" y1="17" x2="' + Math.floor(x) + '" y2="34"/>');
         result.push('<text class="svgheadertext" x="' + Math.floor(x + scaling*3.5) + '" y="31">' + moment(bucketstart).format("MM-DD") + '</text>');
         x = x + scaling*7;
         bucketstart.setTime(bucketstart.getTime() + 86400000 * 7);
       }
-      bucketstart = new Date(viewstart.getFullYear(), viewstart.getMonth(), 1);
-      while (bucketstart < viewend)
+      bucketstart = new Date(horizonstart.getFullYear(), horizonstart.getMonth(), 1);
+      while (bucketstart < horizonend)
       {
         x1 = (bucketstart.getTime() - viewstart.getTime()) / 86400000 * scaling;
         bucketend = new Date(bucketstart.getFullYear(), bucketstart.getMonth()+1, 1);
@@ -3258,17 +3256,17 @@ var gantt = {
     else if (scaling < 20)
     {
       // Monthly + weekly buckets, long style
-      x -= viewstart.getDay() * scaling;
-      var bucketstart = new Date(viewstart.getTime() - 86400000 * viewstart.getDay());
-      while (bucketstart < viewend)
+      x -= horizonstart.getDay() * scaling;
+      var bucketstart = new Date(horizonstart.getTime() - 86400000 * horizonstart.getDay());
+      while (bucketstart < horizonend)
       {
         result.push('<line class="time" x1="' + Math.floor(x) + '" y1="17" x2="' + Math.floor(x) + '" y2="34"/>');
         result.push('<text class="svgheadertext" x="' + (x + scaling*7.0/2.0) + '" y="31">' + moment(bucketstart).format("YY-MM-DD") + '</text>');
         x = x + scaling*7.0;
         bucketstart.setTime(bucketstart.getTime() + 86400000 * 7);
       }
-      bucketstart = new Date(viewstart.getFullYear(), viewstart.getMonth(), 1);
-      while (bucketstart < viewend)
+      bucketstart = new Date(horizonstart.getFullYear(), horizonstart.getMonth(), 1);
+      while (bucketstart < horizonend)
       {
         x1 = (bucketstart.getTime() - viewstart.getTime()) / 86400000 * scaling;
         bucketend = new Date(bucketstart.getFullYear(), bucketstart.getMonth()+1, 1);
@@ -3281,8 +3279,8 @@ var gantt = {
     else if (scaling <= 40)
     {
       // Weekly + daily buckets, short style
-      var bucketstart = new Date(viewstart.getTime());
-      while (bucketstart < viewend)
+      var bucketstart = new Date(horizonstart.getTime());
+      while (bucketstart < horizonend)
       {
         if (bucketstart.getDay() == 0)
         {
@@ -3301,8 +3299,8 @@ var gantt = {
     else if (scaling <= 75)
     {
       // Weekly + daily buckets, long style
-      var bucketstart = new Date(viewstart.getTime());
-      while (bucketstart < viewend)
+      var bucketstart = new Date(horizonstart.getTime());
+      while (bucketstart < horizonend)
       {
         if (bucketstart.getDay() == 0)
         {
@@ -3321,8 +3319,8 @@ var gantt = {
     else if (scaling < 350)
     {
       // Weekly + daily buckets, very long style
-      var bucketstart = new Date(viewstart.getTime());
-      while (bucketstart < viewend)
+      var bucketstart = new Date(horizonstart.getTime());
+      while (bucketstart < horizonend)
       {
         if (bucketstart.getDay() == 0)
         {
@@ -3339,8 +3337,8 @@ var gantt = {
     else
     {
       // Daily + hourly buckets
-      var bucketstart = new Date(viewstart.getTime());
-      while (bucketstart < viewend)
+      var bucketstart = new Date(horizonstart.getTime());
+      while (bucketstart < horizonend)
       {
         if (bucketstart.getHours() == 0)
         {
@@ -3354,40 +3352,8 @@ var gantt = {
         bucketstart.setTime(bucketstart.getTime() + 3600000);
       }
     }
-    result.push( '</svg>' );
-    $("#jqgh_grid_operationplans")
-       .html(result.join(''))
-       .unbind('mousedown')
-       .bind('mousedown', function(event) {
-          gantt.startmousemove = event.pageX;
-          $(window).bind('mouseup', function(event) {
-            $(window).unbind('mousemove');
-            $(window).unbind('mouseup');
-            event.stopPropagation();
-            })
-          $(window).bind('mousemove', function(event) {
-            var delta = event.pageX - gantt.startmousemove;
-            if (Math.abs(delta) > 3)
-            {
-              gantt.zoom(1, delta > 0 ? -86400000 : 86400000);
-              gantt.startmousemove = event.pageX;
-            }
-            event.stopPropagation();
-          });
-          event.stopPropagation();
-         });
-  },
-
-  reset: function()
-  {
-    var scale = $("#jqgh_grid_operationplans").width() / 10000;
-    viewstart = new Date(horizonstart.getTime());
-    viewend = new Date(horizonend.getTime());
-    $('.transformer').each(function() {
-      var layers = $(this).attr("title");
-      $(this).attr("transform", "scale(" + scale + ",1) translate(0," + ((layers-1)*gantt.rowsize+3) + ")");
-      });
-    gantt.header();
+    result.push('</svg>');
+    $("#jqgh_grid_operationplans").html(result.join(''));
   },
 
   redraw: function()
@@ -3403,15 +3369,41 @@ var gantt = {
     gantt.header();
   },
 
-  zoom: function(zoom_in_or_out, move_in_or_out)
+  scroll: function(event) {
+  	var zone = viewend.getTime() - viewstart.getTime();
+    viewstart.setTime(
+    		horizonstart.getTime() 
+    		+ $(event.target).scrollLeft() / event.target.scrollWidth * (horizonend.getTime() - horizonstart.getTime()) 
+    		);
+    viewend.setTime(viewstart.getTime() + zone);
+    // Determine the conversion between svg units and the screen
+    var scale = (horizonend.getTime() - horizonstart.getTime()) / zone * $("#jqgh_grid_operationplans").width() / 10000;
+    var offset = (horizonstart.getTime() - viewstart.getTime()) / (horizonend.getTime() - horizonstart.getTime()) * 10000;
+    // Transform all svg elements
+    $('.transformer').each(function() {
+      var layers = $(this).attr("title");
+      $(this).attr("transform", "scale(" + scale + ",1) translate(" + offset + "," + ((layers-1)*gantt.rowsize+3) + ")");
+      });
+  },
+  
+  zoom: function(zoom_in_or_out)
   {
     // Determine the window to be shown. Min = 1 day. Max = 3 years.
-    var delta = Math.min(1095,Math.max(1,Math.ceil((viewend.getTime() - viewstart.getTime()) / 86400000.0 * zoom_in_or_out)));
-    // Determine the start and end date global variables.
-    viewstart.setTime(viewstart.getTime() + move_in_or_out);
-    viewend.setTime(viewstart.getTime() + delta * 86400000);
+    var zone = (viewend.getTime() - viewstart.getTime()) * zoom_in_or_out;
+    if (zone >= horizonend.getTime() - horizonstart.getTime()) {
+    	viewstart.setTime(horizonstart.getTime());
+    	viewend.setTime(horizonend.getTime());
+    	zone = viewend.getTime() - viewstart.getTime();
+    }
+    else {
+    	viewend.setTime(viewstart.getTime() + zone);
+      if (viewend.getTime() > horizonend.getTime()) {
+      	viewend.setTime(horizonend.getTime());
+      	viewstart.setTime(viewend.getTime() - zone);
+       }
+    }
     // Determine the conversion between svg units and the screen
-    var scale = (horizonend.getTime() - horizonstart.getTime()) / (delta * 864000000) * $("#jqgh_grid_operationplans").width() / 1000;
+    var scale = (horizonend.getTime() - horizonstart.getTime()) / zone * $("#jqgh_grid_operationplans").width() / 10000;
     var offset = (horizonstart.getTime() - viewstart.getTime()) / (horizonend.getTime() - horizonstart.getTime()) * 10000;
     // Transform all svg elements
     $('.transformer').each(function() {

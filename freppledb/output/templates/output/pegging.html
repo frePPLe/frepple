@@ -92,9 +92,8 @@ function ganttcell(cellvalue, options, rowdata)
   map["DO"] = "distributionorder";
   map["DLVR"] = "deliveryorder";
   
-  for (o in rowdata["operationplans"])
+  for (data of rowdata["operationplans"])
   {
-     var data = rowdata["operationplans"][o];
      var row = 0;
      for (; row < layer.length; ++row)
      {
@@ -205,13 +204,13 @@ function buildtooltip(){
 
 var horizonstart = new Date({{request.report_startdate|date:"Y"}},{{request.report_startdate|date:"n"}}-1,{{request.report_startdate|date:"j"}});
 var horizonend = new Date({{request.report_enddate|date:"Y"}},{{request.report_enddate|date:"n"}}-1,{{request.report_enddate|date:"j"}});
-var viewstart = new Date({{request.report_startdate|date:"Y"}},{{request.report_startdate|date:"n"}}-1,{{request.report_startdate|date:"j"}});
-var viewend = new Date({{request.report_enddate|date:"Y"}},{{request.report_enddate|date:"n"}}-1,{{request.report_enddate|date:"j"}});
-var delta = (viewend.getTime() - viewstart.getTime()) / 86400000.0;
+var viewstart = new Date(horizonstart.getTime());
+var viewend = new Date(horizonend.getTime());
 
 
 $(function() {
   gantt.header();
+  $("#jqgh_grid_operationplans").css("overflow-x", "scroll").scroll(gantt.scroll);
 });
 
 function reslistfmt(cellvalue, options, row)
@@ -249,7 +248,7 @@ resizeStop: gantt.redraw,
 loadComplete: function(data) {
   $('#curerror').html("");
   if(data.rows.length == 0) {
-    var msg = $("<h2>").text(gettext("This demand has not been planned")).css('padding','30px');
+    var msg = $('<h2 style="padding:30px">').text(gettext("This demand has not been planned"));
     $("#content-main").replaceWith(msg);
   }
   $('svg rect').tooltip({
@@ -263,11 +262,24 @@ loadComplete: function(data) {
 {% endblock %}
 
 {% block actions %}
-<button class="btn btn-xs btn-primary" id="zoom_in" onclick="gantt.zoom(0.5,0)" data-toggle="tooltip" data-placement="top" data-original-title="{% trans 'zoom in'|capfirst|force_escape %}" ><span class="fa fa-search-plus"></span></button>
-<button class="btn btn-xs btn-primary" id="zoom_out" onclick="gantt.zoom(1.5,0)" data-toggle="tooltip" data-placement="top" data-original-title="{% trans 'zoom out'|capfirst|force_escape %}" ><span class="fa fa-search-minus"></span></button>
-<button class="btn btn-xs btn-primary" id="move_in" onclick="gantt.zoom(1,-86400000)" data-toggle="tooltip" data-placement="top" data-original-title="{% filter capfirst|force_escape %}{% trans 'earlier' context 'Gantt' %}{% endfilter %}" ><span class="fa fa-backward"></span></button>
-<button class="btn btn-xs btn-primary" id="move_out" onclick="gantt.zoom(1,86400000)" data-toggle="tooltip" data-placement="top" data-original-title="{% filter capfirst|force_escape %}{% trans 'later' context 'Gantt' %}{% endfilter %}" ><span class="fa fa-forward"></span></button>
-<button class="btn btn-xs btn-primary" id="reset" onclick="gantt.reset()" data-toggle="tooltip" data-placement="top" data-original-title="{% filter capfirst|force_escape %}{% trans 'reset' context 'Gantt' %}{% endfilter %}" ><span class="fa fa-undo"></span></button>
+<div class="btn-group" data-toggle="tooltip" data-placement="top" data-original-title="{% trans 'favorites'|capfirst|force_escape %}">
+  <button class="btn btn-xs btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    <span class="fa fa-star"></span>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-right" id="favoritelist">
+    {% if preferences.favorites %}
+    {% for fav in preferences.favorites %}
+    <li><a onclick="favorite.open(event)">{{fav}}<div style="float:right"><span class="fa fa-trash-o" onclick="favorite.remove(event)"></span></div></a></li>
+    {% endfor %}
+    <li role="separator" class="divider"></li>
+    {% endif %}
+    <li><a><button id="favoritesave" onclick="favorite.save()" type="button" class="btn btn-primary btn-xs disabled">{% trans "save"|capfirst %}</button>
+    <input id="favoritename" oninput="favorite.check()" type="text" size="15"></a>
+    </li>
+  </ul>
+</div>
+<button class="btn btn-xs btn-primary" onclick="gantt.zoom(0.5)" data-toggle="tooltip" data-placement="top" data-original-title="{% trans 'zoom in'|capfirst|force_escape %}" ><span class="fa fa-search-plus"></span></button>
+<button class="btn btn-xs btn-primary" onclick="gantt.zoom(2.0)" data-toggle="tooltip" data-placement="top" data-original-title="{% trans 'zoom out'|capfirst|force_escape %}" ><span class="fa fa-search-minus"></span></button>
 <button class="btn btn-xs btn-primary" onclick="grid.showCustomize(false);" data-toggle="tooltip" data-placement="top" data-original-title="{% trans 'customize'|capfirst|force_escape %}"><span class="fa fa-wrench"></span></button>
 {% endblock %}
 

@@ -15,6 +15,16 @@ Field             Description
 Depth             Depth of this operation in the supply path: 0 = delivery, and increases with
                   every level deeper in the bill of distribution and bill of material.
 Operation         Operation being planned.
+Type              Type of operation with possible values.
+
+                  - MO: Manufacturing operation
+                  - DO: Distribution operation
+                  - PO: Purchase operation
+                  - STCK: Inventory
+                  - DLVR: Delivery to the customer
+
+Item              Item being produced by this operation.
+Item description  Description of the produced item.
 Resource          Resource(s) being loaded.
 Quantity          | Quantity allocated to the demand.
                   | In the Gantt chart the operations are shown in detail. Some of the

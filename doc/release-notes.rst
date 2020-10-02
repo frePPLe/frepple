@@ -14,6 +14,9 @@ Release notes
     for easier export of frePPLe data into Excel. External applications can now directly pull frePPLe
     data online from a URL, which bypasses the export-import steps you do manually now. 
 
+- | Updated `demand gantt report <user-interface/plan-analysis/demand-gantt-report.html>`
+    to make zooming in&out easier and to show also item information.
+
 .. rubric:: Integration
 
 - | Authentication to all URLs of the application is now possible with
@@ -24,7 +27,6 @@ Release notes
     in your djangosettings.py file.
   
 - `Remote API <integration-guide/remote-commands>`_ to cancel running tasks.
-
 
 6.7.0 (2020/08/29)
 ==================

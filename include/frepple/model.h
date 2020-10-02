@@ -7884,7 +7884,7 @@ class Problem::iterator {
   }
 
   /* Pre-increment operator. */
-  iterator& operator++();
+  virtual iterator& operator++();
 
   /* Return current problem and advance the iterator. */
   Problem* next() {
@@ -7917,6 +7917,7 @@ inline Problem::iterator Problem::List::end() const {
 class OperationPlan::ProblemIterator : public Problem::iterator {
  private:
   stack<Problem*> relatedproblems;
+  const OperationPlan* opplan;
 
  public:
   /* Constructor. */

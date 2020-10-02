@@ -93,8 +93,8 @@ void OperationPlan::updateProblems() {
   if (needsPrecedence) new ProblemPrecedence(this);
 }
 
-OperationPlan::ProblemIterator::ProblemIterator(const OperationPlan* opplan)
-    : Problem::iterator(opplan->firstProblem) {
+OperationPlan::ProblemIterator::ProblemIterator(const OperationPlan* o)
+    : Problem::iterator(o->firstProblem), opplan(o) {
   // Adding related material problems
   for (FlowPlanIterator flpln = opplan->beginFlowPlans();
        flpln != opplan->endFlowPlans(); ++flpln) {
@@ -114,7 +114,7 @@ OperationPlan::ProblemIterator::ProblemIterator(const OperationPlan* opplan)
   }
 
   // Update the first problem pointer
-  if (!iter && !relatedproblems.empty()) iter = relatedproblems.top();
+  if (!relatedproblems.empty()) iter = relatedproblems.top();
 }
 
 OperationPlan::ProblemIterator& OperationPlan::ProblemIterator::operator++() {
@@ -123,7 +123,10 @@ OperationPlan::ProblemIterator& OperationPlan::ProblemIterator::operator++() {
 
   if (!relatedproblems.empty()) {
     relatedproblems.pop();
-    iter = relatedproblems.top();
+    if (relatedproblems.empty())
+      iter = opplan->firstProblem;
+    else
+      iter = relatedproblems.top();
     return *this;
   }
 

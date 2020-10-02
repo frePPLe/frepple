@@ -272,7 +272,6 @@ class ReportByDemand(GridReport):
             prevrec = None
             parents = {}
             for rec in cursor_chunked:
-                print(rec)
                 if not prevrec or rec[1] != prevrec["operation"]:
                     # Return prev operation
                     if prevrec:

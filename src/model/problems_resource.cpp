@@ -28,7 +28,7 @@ void Resource::updateProblems() {
   Problem::clearProblems(*this, true, false);
 
   // Problem detection disabled on this resource
-  if (!getDetectProblems()) return;
+  if (!getDetectProblems() || !getConstrained()) return;
 
   // Loop through the loadplans
   Date excessProblemStart;
@@ -112,7 +112,7 @@ void ResourceBuckets::updateProblems() {
   Problem::clearProblems(*this, true, false);
 
   // Problem detection disabled on this resource
-  if (!getDetectProblems()) return;
+  if (!getDetectProblems() || !getConstrained()) return;
 
   // Loop over all events
   Date startdate = Date::infinitePast;

@@ -854,15 +854,7 @@ void SolverCreate::solve(const ResourceBuckets* res, void* v) {
                 opplan->setOperationPlanParameters(newQty, opplan->getStart(),
                                                    Date::infinitePast, true,
                                                    true, true);
-                break;  // TODO This statement makes the next few lines
-                        // unreachable. Bug or feature?
-                if (opplan->getEnd() > originalOpplan.end)
-                  break;
-                else {
-                  // New bucket starts
-                  prevStart = cur->getDate();
-                  availableQty = cur->getOnhand();
-                }
+                break;
               } else {
                 // New bucket starts
                 prevStart = cur->getDate();

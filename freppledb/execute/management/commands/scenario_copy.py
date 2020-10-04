@@ -234,13 +234,13 @@ class Command(BaseCommand):
                     task.processid = p.pid
                     task.save(using=source)
                     p.wait()
-                    if False:  # p.returncode and destination != DEFAULT_DB_ALIAS:
-                        # Deactivated because a successful copy can still leave warnings and errors
-                        # Consider the destination database free again
-                        destinationscenario.status = "Free"
-                        destinationscenario.lastrefresh = datetime.today()
-                        destinationscenario.save(using=DEFAULT_DB_ALIAS)
-                        raise Exception("Database copy failed")
+                    # Deactivated because a successful copy can still leave warnings and errors
+                    # if p.returncode and destination != DEFAULT_DB_ALIAS:
+                    #    # Consider the destination database free again
+                    #    destinationscenario.status = "Free"
+                    #    destinationscenario.lastrefresh = datetime.today()
+                    #    destinationscenario.save(using=DEFAULT_DB_ALIAS)
+                    #    raise Exception("Database copy failed")
                 except Exception:
                     p.kill()
                     p.wait()

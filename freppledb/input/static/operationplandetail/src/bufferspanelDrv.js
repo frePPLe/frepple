@@ -100,11 +100,6 @@ function showbufferspanelDrv($window, gettextCatalog) {
         			if (theflow.buffer.item == curitem) {
         				// Update the assigned item
         				theflow.buffer.item = newitem;
-        				// Update the alternate list
-        				angular.forEach(theflow.alternates, function(thealternate) {
-        					if (thealternate === newitem)
-        						thealternate = curitem;
-        				});
         				// Redraw the directive
         				redraw();
         				// Update the grid

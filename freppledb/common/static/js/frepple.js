@@ -1375,7 +1375,7 @@ var grid = {
       // Open the window
       window.open(url,'_blank');
       $('#popup').modal('hide');
-    })
+    });
   },
 
 

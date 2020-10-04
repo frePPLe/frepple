@@ -132,6 +132,9 @@ class SupplyPlanning(PlanTask):
         else:
             cls.solver.loglevel = 0
 
+    # Auxiliary functions for debugging
+    # Rename to activate
+    @classmethod
     def DISABLED_nextDemand(cls, cluster):
         # Build the list of demands to plan when accessed for the first time
         if not hasattr(cls, "demandlist"):
@@ -158,6 +161,8 @@ class SupplyPlanning(PlanTask):
         else:
             return None
 
+    # Auxiliary functions for debugging
+    # Rename to activate
     @classmethod
     def DISABLED_debugOperation(cls, oper, mode):
         return

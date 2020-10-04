@@ -7879,7 +7879,7 @@ class Problem::iterator {
   }
 
   /* Destructor. */
-  ~iterator() {
+  virtual ~iterator() {
     if (eiter) delete eiter;
   }
 

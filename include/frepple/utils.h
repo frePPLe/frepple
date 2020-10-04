@@ -1334,7 +1334,7 @@ class PythonType : public NonCopyable {
   static const unsigned short methodArraySize = 5;
 
   /* The Python type object which this class is wrapping. */
-  PyTypeObject* table;
+  PyTypeObject table;
 
  public:
   /* A static function that evaluates an exception and sets the Python
@@ -1348,7 +1348,9 @@ class PythonType : public NonCopyable {
   PythonType(size_t, const type_info*);
 
   /* Return a pointer to the actual Python PyTypeObject. */
-  inline PyTypeObject* type_object() const { return table; }
+  inline PyTypeObject* type_object() const {
+    return &const_cast<PythonType*>(this)->table;
+  }
 
   /* Add a new method. */
   void addMethod(const char*, PyCFunction, int, const char*);
@@ -1359,41 +1361,41 @@ class PythonType : public NonCopyable {
   /* Updates tp_name. */
   void setName(const string& n) {
     string* name = new string("frepple." + n);
-    table->tp_name = const_cast<char*>(name->c_str());
+    table.tp_name = const_cast<char*>(name->c_str());
   }
 
   /* Updates tp_doc. */
   void setDoc(const string& n) {
     string* doc = new string(n);
-    table->tp_doc = const_cast<char*>(doc->c_str());
+    table.tp_doc = const_cast<char*>(doc->c_str());
   }
 
   /* Updates tp_base. */
-  void setBase(PyTypeObject* b) { table->tp_base = b; }
+  void setBase(PyTypeObject* b) { table.tp_base = b; }
 
   /* Updates the deallocator. */
-  void supportdealloc(void (*f)(PyObject*)) { table->tp_dealloc = f; }
+  void supportdealloc(void (*f)(PyObject*)) { table.tp_dealloc = f; }
 
   /* Updates tp_getattro.
    * The extension class will need to define a member function with this
    * prototype:
    *   PythonData getattro(const XMLData& name)
    */
-  void supportgetattro() { table->tp_getattro = getattro_handler; }
+  void supportgetattro() { table.tp_getattro = getattro_handler; }
 
   /* Updates tp_setattro.
    * The extension class will need to define a member function with this
    * prototype:
    *   int setattro(const Attribute& attr, const PythonData& field)
    */
-  void supportsetattro() { table->tp_setattro = setattro_handler; }
+  void supportsetattro() { table.tp_setattro = setattro_handler; }
 
   /* Updates tp_richcompare.
    * The extension class will need to define a member function with this
    * prototype:
    *   int compare(const PyObject* other) const
    */
-  void supportcompare() { table->tp_richcompare = compare_handler; }
+  void supportcompare() { table.tp_richcompare = compare_handler; }
 
   /* Updates tp_iter and tp_iternext.
    * The extension class will need to define a member function with this
@@ -1401,8 +1403,8 @@ class PythonType : public NonCopyable {
    *   PyObject* iternext()
    */
   void supportiter() {
-    table->tp_iter = PyObject_SelfIter;
-    table->tp_iternext = iternext_handler;
+    table.tp_iter = PyObject_SelfIter;
+    table.tp_iternext = iternext_handler;
   }
 
   /* Updates tp_call.
@@ -1410,20 +1412,20 @@ class PythonType : public NonCopyable {
    * prototype:
    *   PyObject* call(const PythonData& args, const PythonData& kwds)
    */
-  void supportcall() { table->tp_call = call_handler; }
+  void supportcall() { table.tp_call = call_handler; }
 
   /* Updates tp_str.
    * The extension class will need to define a member function with this
    * prototype:
    *   PyObject* str()
    */
-  void supportstr() { table->tp_str = str_handler; }
+  void supportstr() { table.tp_str = str_handler; }
 
   /* Type definition for create functions. */
   typedef PyObject* (*createfunc)(PyTypeObject*, PyObject*, PyObject*);
 
   /* Updates tp_new with the function passed as argument. */
-  void supportcreate(createfunc c) { table->tp_new = c; }
+  void supportcreate(createfunc c) { table.tp_new = c; }
 
   /* This method needs to be called after the type information has all
    * been updated. It adds the type to the frepple module. */
@@ -1720,7 +1722,7 @@ class MetaClass : public NonCopyable {
 
   template <class Cls>
   inline void addStringRefField(const Keyword& k,
-                                const string& (Cls::*getfunc)(void)const,
+                                const string& (Cls::*getfunc)(void) const,
                                 void (Cls::*setfunc)(const string&) = nullptr,
                                 string dflt = "", unsigned int c = BASE) {
     fields.push_back(new MetaFieldStringRef<Cls>(k, getfunc, setfunc, dflt, c));
@@ -1766,7 +1768,8 @@ class MetaClass : public NonCopyable {
   }
 
   template <class Cls, class Ptr>
-  inline void addPointerField(const Keyword& k, Ptr* (Cls::*getfunc)(void)const,
+  inline void addPointerField(const Keyword& k,
+                              Ptr* (Cls::*getfunc)(void) const,
                               void (Cls::*setfunc)(Ptr*) = nullptr,
                               unsigned int c = BASE) {
     fields.push_back(new MetaFieldPointer<Cls, Ptr>(k, getfunc, setfunc, c));
@@ -6019,7 +6022,7 @@ class MetaFieldStringRef : public MetaFieldBase {
  public:
   typedef void (Cls::*setFunction)(const string&);
 
-  typedef const string& (Cls::*getFunction)(void)const;
+  typedef const string& (Cls::*getFunction)(void) const;
 
   MetaFieldStringRef(const Keyword& n, getFunction getfunc,
                      setFunction setfunc = nullptr, string dflt = "",
@@ -6586,7 +6589,7 @@ class MetaFieldPointer : public MetaFieldBase {
  public:
   typedef void (Cls::*setFunction)(Ptr*);
 
-  typedef Ptr* (Cls::*getFunction)(void)const;
+  typedef Ptr* (Cls::*getFunction)(void) const;
 
   MetaFieldPointer(const Keyword& n, getFunction getfunc,
                    setFunction setfunc = nullptr, unsigned int c = BASE)

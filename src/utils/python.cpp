@@ -26,7 +26,6 @@
 
 #define FREPPLE_CORE
 #include "frepple/utils.h"
-
 #include "frepple/xml.h"
 
 namespace frepple {
@@ -469,11 +468,9 @@ inline Object* PythonData::getObject() const {
     return nullptr;
 }
 
-PythonType::PythonType(size_t base_size, const type_info* tp) : cppClass(tp) {
-  // Allocate a new type object if it doesn't exist yet.
-  // We copy from a template type definition.
-  table = new PyTypeObject(PyTypeObjectTemplate);
-  table->tp_basicsize = base_size;
+PythonType::PythonType(size_t base_size, const type_info* tp)
+    : table(PyTypeObjectTemplate), cppClass(tp) {
+  table.tp_basicsize = base_size;
 }
 
 PythonType* Object::registerPythonType(int size, const type_info* t) {
@@ -804,32 +801,32 @@ void PythonType::addMethod(const char* method_name, PyCFunction f, int flags,
   unsigned short i = 0;
 
   // Create a method table array
-  if (!table->tp_methods)
+  if (!table.tp_methods)
     // Allocate a first block
-    table->tp_methods = new PyMethodDef[methodArraySize];
+    table.tp_methods = new PyMethodDef[methodArraySize];
   else {
     // Find the first non-empty method record
-    while (table->tp_methods[i].ml_name) i++;
+    while (table.tp_methods[i].ml_name) i++;
     if (i % methodArraySize == methodArraySize - 1) {
       // Allocation of a bigger buffer is required
       PyMethodDef* tmp = new PyMethodDef[i + 1 + methodArraySize];
-      for (unsigned short j = 0; j < i; j++) tmp[j] = table->tp_methods[j];
-      delete[] table->tp_methods;
-      table->tp_methods = tmp;
+      for (unsigned short j = 0; j < i; j++) tmp[j] = table.tp_methods[j];
+      delete[] table.tp_methods;
+      table.tp_methods = tmp;
     }
   }
 
   // Populate a method definition struct
-  table->tp_methods[i].ml_name = method_name;
-  table->tp_methods[i].ml_meth = f;
-  table->tp_methods[i].ml_flags = flags;
-  table->tp_methods[i].ml_doc = doc;
+  table.tp_methods[i].ml_name = method_name;
+  table.tp_methods[i].ml_meth = f;
+  table.tp_methods[i].ml_flags = flags;
+  table.tp_methods[i].ml_doc = doc;
 
   // Append an empty terminator record
-  table->tp_methods[++i].ml_name = nullptr;
-  table->tp_methods[i].ml_meth = nullptr;
-  table->tp_methods[i].ml_flags = 0;
-  table->tp_methods[i].ml_doc = nullptr;
+  table.tp_methods[++i].ml_name = nullptr;
+  table.tp_methods[i].ml_meth = nullptr;
+  table.tp_methods[i].ml_flags = 0;
+  table.tp_methods[i].ml_doc = nullptr;
 }
 
 void PythonType::addMethod(const char* c, PyCFunctionWithKeywords f, int i,
@@ -840,17 +837,17 @@ void PythonType::addMethod(const char* c, PyCFunctionWithKeywords f, int i,
 int PythonType::typeReady() {
   // Register the new type in the module
   PyGILState_STATE state = PyGILState_Ensure();
-  if (PyType_Ready(table) < 0) {
+  if (PyType_Ready(&table) < 0) {
     PyGILState_Release(state);
     throw RuntimeException(string("Can't register python type ") +
-                           table->tp_name);
+                           table.tp_name);
   }
-  Py_INCREF(table);
+  Py_INCREF(&table);
   int result = PyModule_AddObject(
       PythonInterpreter::getModule(),
-      table->tp_name +
+      table.tp_name +
           8,  // Note: +8 is to skip the "frepple." characters in the name
-      reinterpret_cast<PyObject*>(table));
+      reinterpret_cast<PyObject*>(&table));
   PyGILState_Release(state);
   return result;
 }

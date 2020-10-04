@@ -14,14 +14,14 @@ Release notes
     for easier export of frePPLe data into Excel. External applications can now directly pull frePPLe
     data online from a URL, which bypasses the export-import steps you do manually now. 
 
-- | Updated `demand gantt report <user-interface/plan-analysis/demand-gantt-report.html>`
+- | Updated `demand gantt report <user-interface/plan-analysis/demand-gantt-report.html>`_
     to make zooming in&out easier and to show also item information.
 
 .. rubric:: Integration
 
 - | Authentication to all URLs of the application is now possible with
     `a JSON web token <https://jwt.io/introduction/>`_ or 
-    `basic authentication with user&password<https://en.wikipedia.org/wiki/Basic_access_authentication>`_.
+    `basic authentication with user&password <https://en.wikipedia.org/wiki/Basic_access_authentication>`_.
     This feature makes it easy for other applications to pull data or embed frePPLe.
   | This feature can be disabled by commenting out the HTTPAuthentication middleware
     in your djangosettings.py file.

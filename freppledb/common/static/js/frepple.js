@@ -1086,7 +1086,7 @@ var grid = {
     	for (var i = 0 ; i < scenario_permissions.length; i++) {
     		if (scenario_permissions[i][2] == 1)
     		cb += 
-    			'<div class="form-check">' +
+    			'<div class="form-check" style="white-space: nowrap">' +
     			'<input class="form-check-input" type="checkbox" value="" id="'+ scenario_permissions[i][0] +'" checked disabled>' +
     			'&nbsp;&nbsp;&nbsp;<label class="form-check-label" for="'+ scenario_permissions[i][0] +'">' +
     			gettext(scenario_permissions[i][1]) +
@@ -1096,7 +1096,7 @@ var grid = {
     	for (var i = 0 ; i < scenario_permissions.length && i < 6; i++) {
     		if (scenario_permissions[i][2] != 1)
     		cb += 
-    			'<div class="form-check">' +
+    			'<div class="form-check" style="white-space: nowrap">' +
     			'<input class="form-check-input" type="checkbox" value="" id="'+ scenario_permissions[i][0] +'">' +
     			'&nbsp;&nbsp;&nbsp;<label class="form-check-label" for="'+ scenario_permissions[i][0] +'">' +
     			gettext(scenario_permissions[i][1]) +
@@ -1124,7 +1124,7 @@ var grid = {
             '</thead>' +
             '<tbody>' +
               '<tr>' +
-                '<td>' + 
+                '<td style="white-space: nowrap">' + 
                 '<div class="radio" name="csvformat" id="csvformat" value="spreadsheetlist">' +
                 '<label><input type="radio" name="csvformat" value="spreadsheetlist" checked="">' + gettext("Spreadsheet list") + '</label><br>' +
                 '<label><input type="radio" name="csvformat" value="csvlist">' + gettext("CSV list") + '</label><br>' +

@@ -1412,6 +1412,7 @@ class exportItemSuppliers(PlanTask):
                         i.leadtime,
                         i.size_minimum,
                         i.size_multiple,
+                        i.size_maximum,
                         i.cost,
                         i.priority,
                         i.effective_end if i.effective_end != default_end else None,
@@ -1430,14 +1431,15 @@ class exportItemSuppliers(PlanTask):
                 """
                 insert into itemsupplier
                 (item_id,location_id,supplier_id,effective_start,leadtime,sizeminimum,
-                 sizemultiple,cost,priority,effective_end,resource_id,resource_qty,source,
+                 sizemultiple, sizemaximum,cost,priority,effective_end,resource_id,resource_qty,source,
                  lastmodified%s)
-                values(%%s,%%s,%%s,%%s,%%s * interval '1 second',%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s%s)
+                values(%%s,%%s,%%s,%%s,%%s * interval '1 second',%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s%s)
                 on conflict (item_id, location_id, supplier_id, effective_start)
                 do update set
                   leadtime=excluded.leadtime,
                   sizeminimum=excluded.sizeminimum,
                   sizemultiple=excluded.sizemultiple,
+                  sizemaximum=excluded.sizemaximum,
                   cost=excluded.cost,
                   priority=excluded.priority,
                   effective_end=excluded.effective_end,

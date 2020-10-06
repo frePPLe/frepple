@@ -1412,7 +1412,7 @@ class exportItemSuppliers(PlanTask):
                         i.leadtime,
                         i.size_minimum,
                         i.size_multiple,
-                        i.size_maximum,
+                        i.size_maximum if i.size_maximum < 10 ** 12 else None,
                         i.cost,
                         i.priority,
                         i.effective_end if i.effective_end != default_end else None,

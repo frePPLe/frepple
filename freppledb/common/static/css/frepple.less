@@ -419,6 +419,10 @@ ul.nav.nav-tabs {
   background: @brand-danger !important;
 }
 
+.edit-cell {
+  background: yellow !important;
+}
+
 tr.ui-state-highlight {
   border: 1px solid @brand-danger !important;
   background: lighten(@brand-danger, 15%) !important;
@@ -743,6 +747,11 @@ span.help-block a {
 
 // Search filter
 
+h1 small {
+  display: inline-block;
+  line-height: 3;
+}
+  
 #filterform {
 
   padding-left: 10px;
@@ -752,8 +761,8 @@ span.help-block a {
   .border-left-radius(@border-radius-small);
   
   .label {
-    padding-top: 7px;
-    padding-bottom: 5px;
+    padding-top: 10px;
+    padding-bottom: 10px;
     font-size: 100%;
     font-weight: 400;
   }
@@ -761,7 +770,7 @@ span.help-block a {
   .list-group {
     width: auto;
     position: absolute;
-    top: 4.5em;
+    top: 52px;
     z-index: 4999;
     white-space: nowrap;
   }

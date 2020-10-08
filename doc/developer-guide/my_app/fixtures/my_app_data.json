@@ -1,0 +1,4 @@
+[
+      {"model": "my_app.my_model", "fields": {"name": "sample #1", "charfield": "A", "booleanfield": true, "decimalfield": 999.0}},
+      {"model": "my_app.my_model", "fields": {"name": "sample #2", "charfield": "B", "booleanfield": false, "decimalfield": 666.0}}
+]

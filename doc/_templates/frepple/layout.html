@@ -17,13 +17,15 @@ $(function() {
 </script>
 {% endblock %}
 
-{%- block relbar1 %}<div id="banner">
-<div id="site-title" role="banner"><a href="https://frepple.com/" title="frePPLe" rel="home">
-<img src="{{ pathto('_static/frepple.svg', 1) }}" height="40" alt="frePPLe"></a>
-</div>
-<div style="position:relative; float:right; font-weight:bold">
-Community Edition<br>
-Documentation v{{ release }}</div>
+{%- block relbar1 %}
+<div id="banner">
+  <div id="site-title" role="banner">
+    <a href="http://grain-prof.ru" title="Grain" rel="home"><img src="{{ pathto('_static/Grain.svg', 1) }}" height="40" alt="Grain"></a>
+  </div>
+  <div style="position:relative; float:right; font-weight:bold">
+    Grain Edition<br>
+    Documentation v{{ release }}
+  </div>
 </div>
 <div id="header-end"><hr/></div>
 {% endblock %}
@@ -34,7 +36,7 @@ Documentation v{{ release }}</div>
    <!-- Sidebar with search field and table of contents -->
     <div class="sphinxsidebar">
     Help us improve this page:<br>
-    &nbsp;&nbsp;<a href="https://github.com/frePPLe/frepple/tree/master/doc/{{ pagename }}.rst"" target="_blank">Edit on github</a><br><br>    
+    &nbsp;&nbsp;<a href="http://github.com/frePPLe/frepple/tree/master/doc/{{ pagename }}.rst"" target="_blank">Edit on github</a><br><br>    
     <form action="{{ pathto("search") }}" method="get" role="search">
     <input id="search" type="search" placeholder="Search" name="q" value="" />
     <span id="search-progress" style="padding-left: 10px"></span>

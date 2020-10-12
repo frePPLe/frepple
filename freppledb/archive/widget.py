@@ -140,8 +140,8 @@ class ArchivedBufferWidget(Widget):
             select * from (
             select
               to_char(snapshot_date, 'YYYY-MM-DD') as snapshot,
-              coalesce(sum(onhand), 0)::int,
-              coalesce(sum(onhand * cost), 0)::int
+              coalesce(sum(onhand), 0),
+              coalesce(sum(onhand * cost), 0)
             from ax_manager
             left outer join ax_buffer
               on snapshot_date = snapshot_date_id
@@ -297,10 +297,10 @@ class ArchivedDemandWidget(Widget):
             select * from (
             select
               to_char(snapshot_date, 'YYYY-MM-DD') as snapshot,
-              coalesce(sum(quantity), 0)::int,
-              coalesce(sum(quantity*cost), 0)::int,
-              coalesce(sum(case when due < snapshot_date_id then quantity end), 0)::int,
-              coalesce(sum(case when due < snapshot_date_id then quantity * cost end), 0)::int
+              coalesce(sum(quantity), 0),
+              coalesce(sum(quantity*cost), 0),
+              coalesce(sum(case when due < snapshot_date_id then quantity end), 0),
+              coalesce(sum(case when due < snapshot_date_id then quantity * cost end), 0)
             from ax_manager
             left outer join ax_demand
               on snapshot_date = snapshot_date_id
@@ -456,10 +456,10 @@ class ArchivedPurchaseOrderWidget(Widget):
             select * from (
             select
               to_char(snapshot_date, 'YYYY-MM-DD') as snapshot,
-              coalesce(sum(quantity), 0)::int,
-              coalesce(sum(quantity * item_cost), 0)::int,
-              coalesce(sum(case when enddate < snapshot_date_id then quantity end), 0)::int,
-              coalesce(sum(case when enddate < snapshot_date_id then quantity * item_cost end), 0)::int
+              coalesce(sum(quantity), 0),
+              coalesce(sum(quantity * item_cost), 0),
+              coalesce(sum(case when enddate < snapshot_date_id then quantity end), 0),
+              coalesce(sum(case when enddate < snapshot_date_id then quantity * item_cost end), 0)
             from ax_manager
             left outer join ax_operationplan
               on snapshot_date = snapshot_date_id

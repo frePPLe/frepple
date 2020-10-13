@@ -162,7 +162,15 @@ td a :not[role=button], td a:link :not[role=button], td a:visited :not[role=butt
   color: @text-color;
 }
 
-button:active, button:focus, input:active, input:focus { outline: none; }
+button:active, button:focus, input:active, input:focus {
+  outline: none;
+}
+
+// Fix for buttongroups on google chrome :-(
+.btn:focus, .btn:active:focus, .btn.active:focus {
+  outline: none -webkit-focus-ring-color;
+  outline-offset: 0;
+}
 
 .alert-danger {
   color: #000;

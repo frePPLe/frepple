@@ -1,6 +1,13 @@
 Release notes
 -------------
 
+6.9.0 (Upcoming release)
+========================
+
+.. rubric:: User interface
+
+- The cockpit is renamed to `home <user-interface/cockpit.html>`_.
+
 6.8.0 (2020/10/03)
 ==================
 

@@ -33,7 +33,7 @@ from freppledb.common.registration.views import (
 autodiscover = True
 
 urlpatterns = [
-    # Cockpit screen
+    # Home screen
     url(r"^$", freppledb.common.views.cockpit, name="cockpit"),
     # User preferences
     url(r"^preferences/$", freppledb.common.views.preferences, name="preferences"),

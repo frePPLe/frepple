@@ -80,7 +80,7 @@ def cockpit(request):
         request,
         "index.html",
         context={
-            "title": _("cockpit"),
+            "title": _("home"),
             "bucketnames": Bucket.objects.order_by("-level").values_list(
                 "name", flat=True
             ),
@@ -105,8 +105,8 @@ def handler404(request, exception):
 
 def handler500(request):
     """
-  Custom handler for "HTTP 500 - server error"
-  """
+    Custom handler for "HTTP 500 - server error"
+    """
     try:
         response = render_to_response(
             "500.html",
@@ -439,8 +439,8 @@ class CommentList(GridReport):
 
 class BucketList(GridReport):
     """
-  A list report to show dates.
-  """
+    A list report to show dates.
+    """
 
     title = _("buckets")
     basequeryset = Bucket.objects.all()
@@ -464,8 +464,8 @@ class BucketList(GridReport):
 
 class BucketDetailList(GridReport):
     """
-  A list report to show dates.
-  """
+    A list report to show dates.
+    """
 
     title = _("bucket dates")
     basequeryset = BucketDetail.objects.all()

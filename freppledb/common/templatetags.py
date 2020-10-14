@@ -84,8 +84,8 @@ class CrumbsNode(Node):
             title = variable_title.resolve(context)
         except Exception:
             title = req.get_full_path()
-        if title != _("cockpit"):
-            # Don't handle the cockpit screen in the crumbs
+        if title != _("home"):
+            # Don't handle the home screen in the crumbs
             try:
                 # Check if the same title is already in the crumbs.
                 title = str(title)

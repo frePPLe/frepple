@@ -138,6 +138,7 @@ class cleanStatic(PlanTask):
                   or supplier_id in (
                     select name from supplier where source = %s and lastmodified <> %s
                    )
+                  or type = 'STCK'
                 """,
                 (source, cls.timestamp, source, cls.timestamp, source, cls.timestamp),
             )

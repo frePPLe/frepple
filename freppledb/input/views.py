@@ -4316,7 +4316,7 @@ class DistributionOrderList(OperationPlanMixin, GridReport):
                     "model": Item,
                     "title": force_text(Item._meta.verbose_name) + " " + args[0],
                     "post_title": force_text(
-                        _("shipped to %(loc)s between %(date1)s and %(date2)s")
+                        _("shipped from %(loc)s between %(date1)s and %(date2)s")
                         % {"loc": args[1], "date1": args[2], "date2": args[3]}
                     ),
                 }

@@ -2,24 +2,6 @@
 {% load i18n %}
 
 {% block title %}{% setting 'BRANDING' %}{% endblock %}
-{% block content_title %}
-<div class="row">
-  <div class="col-xs-12">
-    <h1 style="float: left">{% trans "home"|capfirst %}</h1>
-    <h1 style="float: right;">
-      <button class="btn btn-xs btn-primary" onclick="grid.showBucket()" data-toggle="tooltip" 
-        data-placement="top" data-original-title="{% trans 'Configure time buckets'|capfirst|force_escape %}">
-        <span class="fa fa-clock-o"></span>
-      </button>
-      <button class="btn btn-xs btn-primary"
-        onclick="window.open('{% setting "DOCUMENTATION_URL" %}/docs/{% version_short %}/user-interface/cockpit.html');"
-        data-toggle="tooltip" data-placement="top" data-original-title="{% trans 'help'|capfirst|force_escape %}">
-        <span class="fa fa-question"></span>
-      </button>
-    </h1>
-  </div>
-</div>
-{% endblock %}
 
 {% block extrahead %}{{block.super}}
 <script src="/static/js/d3.min.js"></script>
@@ -41,16 +23,34 @@
 </script>
 {% endblock %}
 
+{% block content_title %}{% endblock %}
+
 {% block content %}
 {% getDashboard as dashboard hiddenwidgets %}
 {% for row in dashboard %}
     <div class="row" data-cockpit-row="{{ row.rowname }}">
-      <div class="col-md-11">
+      <div class="col-md-10">
          <h1 style="float: left; cursor: move; text-transform: capitalize">{{ row.rowname }}</h1>
       </div>
-	  <div class="col-md-1">
-	     <h1 class="pull-right">
-	      <button class="btn btn-xs btn-primary" onclick="dashboard.customize('{{ row.rowname }}')" data-toggle="tooltip" data-placement="top" data-original-title="{% trans 'customize'|capfirst|force_escape %}"><span class="fa fa-wrench"></span></button>
+		  <div class="col-md-2">
+		    <h1 class="pull-right">
+	      {% if forloop.first %}
+	      <button class="btn btn-xs btn-primary" onclick="grid.showBucket()" data-toggle="tooltip" 
+	           data-placement="top" data-original-title="{% trans 'Configure time buckets'|capfirst|force_escape %}">
+	         <span class="fa fa-clock-o"></span>
+	      </button>
+        {% endif %}
+	      <button class="btn btn-xs btn-primary" onclick="dashboard.customize('{{ row.rowname }}')" 
+	        data-toggle="tooltip" data-placement="top" data-original-title="{% trans 'customize'|capfirst|force_escape %}">
+	        <span class="fa fa-wrench"></span>
+	      </button>
+        {% if forloop.first %}
+        <button class="btn btn-xs btn-primary"
+          onclick="window.open('{% setting "DOCUMENTATION_URL" %}/docs/{% version_short %}/user-interface/cockpit.html');"
+          data-toggle="tooltip" data-placement="top" data-original-title="{% trans 'help'|capfirst|force_escape %}">
+          <span class="fa fa-question"></span>
+        </button>
+        {% endif %}
 	     </h1>
       </div>
 

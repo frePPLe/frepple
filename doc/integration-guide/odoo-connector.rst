@@ -150,10 +150,8 @@ The section below describes the installation and configuration of these.
 * **Configuring the connector - Odoo side**
 
   * | **Install the Odoo addon**
-    | The addon code is found in the folder contrib/odoo, or you can pick up the
-      latest version from github https://github.com/frePPLe/frePPLe/tree/<version>/contrib/odoo
-      (replace <version> with the frePPLe version you are using).
-    | Use the addon from the subfolder matching your Odoo version.
+    | The addon code is found in the github repository https://github.com/frePPLe/odoo.
+    | Use the branch from the subfolder matching your Odoo version.
   
   * | **Configure the Odoo server**
     | FrePPLe needs to be loaded as a server wide module. This is achieved

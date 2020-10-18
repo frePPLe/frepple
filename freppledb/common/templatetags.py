@@ -20,7 +20,7 @@ from decimal import Decimal
 import json
 
 from django.apps import apps
-from django.contrib.admin.utils import unquote
+from django.contrib.admin.utils import unquote, quote
 from django.template import Library, Node, Variable, TemplateSyntaxError
 from django.conf import settings
 from django.db import models, connections
@@ -400,6 +400,13 @@ def admin_unquote(obj):
 
 
 register.filter(admin_unquote)
+
+
+def admin_quote(obj):
+    return quote(obj)
+
+
+register.filter(admin_quote)
 
 
 #

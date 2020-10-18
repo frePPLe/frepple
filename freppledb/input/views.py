@@ -2896,6 +2896,16 @@ class DemandList(GridReport):
             ):
                 reportclass.rows += (f,)
                 reportclass.attr_sql += "location.%s, " % f.name.split("__")[-1]
+            # Adding custom customer attributes
+            for f in getAttributeFields(
+                Customer, related_name_prefix="customer", initially_hidden=True
+            ):
+                reportclass.rows += (f,)
+                reportclass.attr_sql += "customer.%s, " % f.name.split("__")[-1]
+            # Adding custom demand attributes
+            for f in getAttributeFields(Demand, initially_hidden=True):
+                reportclass.rows += (f,)
+                reportclass.attr_sql += "demand.%s, " % f.name.split("__")[-1]
 
     @classmethod
     def basequeryset(reportclass, request, *args, **kwargs):

@@ -18,15 +18,49 @@
 
 angular.module('frepple.common').factory('WebSvc',  webfactory);
 
-webfactory.$inject = ['$rootScope', '$websocket', '$interval'];
+webfactory.$inject = ['$rootScope', '$websocket', '$interval', '$http', '$window'];
 
 /*
  * This service connects to the frePPLe web service using a web socket.
  * The URL of the web socket is retrieved from the global variable "service_url".
+ * The authentication is retrieved from the global variable "service_token".
  */
-function webfactory($rootScope, $websocket, $interval) {
+function webfactory($rootScope, $websocket, $interval, $http, $window) {
   'use strict';
-  var debug = true;
+  var debug = false;
+  var authenticated = false;
+  var message='';
+  var themodal = angular.element(document);
+
+  function showerrormodal(msg) {
+    angular.element("#controller").scope().databaseerrormodal = false;
+
+    if (typeof msg === 'string') {
+      message = '<p>'+msg+'</p>';
+    } else if (typeof msg === 'object') {
+      message = '<div style="width: 100%; overflow: auto;" class="webservicerror">'+ msg.description + '</div>';
+    } else {
+      message = '<p>Websocket connection is not working.</p><p>Please check that <strong>plan.webservice</strong> parameter is set to <strong>true</strong>,<br>and <strong>execute the plan</strong>.</p>';
+    }
+
+    angular.element("#controller").scope().$applyAsync(function(){
+      if (typeof msg === 'object') {
+        if (msg.hasOwnProperty('category') && msg.hasOwnProperty('description')) {
+          themodal.find('.modal-title span').html('Webservice error');
+          themodal.find('.modal-body').css({'width':500,'height':350,'overflow':'auto'});
+          themodal.find('#savechangesparagraph').hide();
+          themodal.find('#saveAbutton').hide();
+          themodal.find('.modal-body').append(message);
+        }
+      } else {
+        themodal.find('.modal-title span').html('Websocket connection problem');
+        themodal.find('.modal-body').html('<div style="width: 100%; overflow: auto;">'+ message + '</div>');
+      }
+    });
+
+    angular.element(document).find('#popup2').modal('show');
+  }
+
   var webservice = $websocket(service_url, {
     reconnectIfNotNormalClose: true
   });
@@ -37,21 +71,53 @@ function webfactory($rootScope, $websocket, $interval) {
 
   webservice.onMessage(function(message) {
     var jsondoc = angular.fromJson(message.data);
-    if (debug)
-      console.log(jsondoc);
-    $rootScope.$broadcast("websocket-" + jsondoc.category, jsondoc);
+    if (debug) console.log(jsondoc);
+    if (jsondoc.hasOwnProperty('category') && jsondoc.category === 'error') {
+      showerrormodal(jsondoc);
+    } else {
+      $rootScope.$broadcast("websocket-" + jsondoc.category, jsondoc);
+    }
   });
 
+  var alreadyprocessing = false;
   webservice.onError(function(message) {
-    message = '<p>Websocket connection is not working.</p><p>Please check that <strong>plan.webservice</strong> parameter is set to <strong>true</strong>,<br>and <strong>execute the plan</strong>.</p>';
-    angular.element("#controller").scope().databaseerrormodal = true;
-    angular.element("#controller").scope().$apply();
-    angular.element(document)
-      .find('#popup2 .modal-title span').html('Websocket connection problem');
-    angular.element(document)
-      .find('.modal-body').html('<div style="width: 100%; overflow: auto;">'+ message + '</div>');
-    angular.element(document).find('#popup2').modal('show');
-        angular.element("#controller").scope().$apply();
+
+    if (!alreadyprocessing) {
+      alreadyprocessing = true;
+      $http({
+        method: 'POST',
+        url: url_prefix + '/execute/api/frepple_start_web_service/'
+      }).then(function successCallback(response) {
+        if(response.data.message !== "Successfully launched task") {
+          showerrormodal();
+        } else {
+          const taskid = response.data.taskid;
+          var answer = {};
+          const idUrl = url_prefix + '/execute/api/status/?id=' + taskid;
+          var testsuccess = $interval(function(counter) {
+            $http({
+              method: 'POST',
+              url: idUrl
+            }).then(function(response) {
+              showerrormodal('Starting Web Service, please wait a moment.');
+              angular.element(document).find('#saveAbutton').hide();
+              answer = response.data[Object.keys(response.data)];
+              if (answer.message === "Web service active") {
+                $interval.cancel(testsuccess);
+                $window.location.reload();
+              } else if (answer.finished !== "None" && answer.status !== "Web service active") {
+                $interval.cancel(testsuccess);
+                showerrormodal();
+                alreadyprocessing = false;
+              }
+            });
+          }, 1000, 0); //every second
+        }
+      }, function errorCallback(response) {
+        showerrormodal(response.data);
+      });
+    }
+
   });
 
   function subscribe(msg, callback) {
@@ -64,9 +130,14 @@ function webfactory($rootScope, $websocket, $interval) {
   function send(data) {
     if (webservice.readyState > 1) {
       webservice = $websocket(service_url);
+      authenticated = false;
+    }
+    if (!authenticated) {
+    	webservice.send("/authenticate/" + service_token);
+    	authenticated = true;
     }
     if (debug)
-      console.log("send:" + data);
+    	console.log("send:" + data);
     webservice.send(data);
   }
 
@@ -75,4 +146,5 @@ function webfactory($rootScope, $websocket, $interval) {
     subscribe: subscribe
   };
   return methods;
+
 }

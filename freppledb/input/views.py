@@ -30,6 +30,7 @@ from django.db.models.expressions import RawSQL
 from django.db.models.fields import CharField
 from django.http import HttpResponse, Http404
 from django.http.response import StreamingHttpResponse, HttpResponseServerError
+from django.template import Template
 from django.utils.decorators import method_decorator
 from django.utils.translation import gettext_lazy as _
 from django.utils.translation import ungettext
@@ -1811,6 +1812,19 @@ class LocationList(GridReport):
     model = Location
     frozenColumns = 1
     help_url = "modeling-wizard/master-data/locations.html"
+    message_when_empty = Template(
+        """
+        <h3>Define locations</h3>
+        <br>
+        A basic piece of master data is the list of locations where production is happening or inventory is kept.<br>
+        <br><br>
+        <div role="group" class="btn-group.btn-group-justified">
+        <a href="{{request.prefix}}/data/input/location/add/" class="btn btn-primary">Create a single location<br>in a form</a>
+        <a href="{{request.prefix}}/?mode=production&currentstep=1" class="btn btn-primary">Wizard to upload locations<br>from a spreadsheet</a>
+        </div>
+        <br>
+        """
+    )
 
     rows = (
         GridFieldText(
@@ -1848,6 +1862,19 @@ class CustomerList(GridReport):
     model = Customer
     frozenColumns = 1
     help_url = "modeling-wizard/master-data/customers.html"
+    message_when_empty = Template(
+        """
+        <h3>Define customers</h3>
+        <br>
+        A basic piece of master data is the customers buying items from us.<br>
+        <br><br>
+        <div role="group" class="btn-group.btn-group-justified">
+        <a href="{{request.prefix}}/data/input/customer/add/" class="btn btn-primary">Create a single customer<br> in a form</a>
+        <a href="{{request.prefix}}/?mode=production&currentstep=1" class="btn btn-primary">Wizard to upload customers<br>from a spreadsheet</a>
+        </div>
+        <br>
+        """
+    )
 
     rows = (
         GridFieldText(
@@ -2325,6 +2352,20 @@ class ItemList(GridReport):
     frozenColumns = 1
     editable = True
     help_url = "modeling-wizard/master-data/items.html"
+    message_when_empty = Template(
+        """
+        <h3>Define items</h3>
+        <br>
+        A basic piece of master data is the list of items to plan.<br>
+        End products, intermediate products and raw materials all need to be defined.<br>
+        <br><br>
+        <div role="group" class="btn-group.btn-group-justified">
+        <a href="{{request.prefix}}/data/input/item/add/" class="btn btn-primary">Create a single item<br>in a form</a>
+        <a href="{{request.prefix}}/?mode=production&currentstep=1" class="btn btn-primary">Wizard to upload items<br>from a spreadsheet</a>
+        </div>
+        <br>
+        """
+    )
 
     rows = (
         GridFieldText(
@@ -2878,6 +2919,20 @@ class DemandList(GridReport):
     model = Demand
     frozenColumns = 1
     help_url = "modeling-wizard/master-data/sales-orders.html"
+    message_when_empty = Template(
+        """
+        <h3>Define sales orders</h3>
+        <br>
+        The sales orders table contains all the orders placed by your customers.<br><br>
+        Orders in the status "open" are still be delivered and will be planned.<br><br>
+        <br><br>
+        <div role="group" class="btn-group.btn-group-justified">
+        <a href="{{request.prefix}}/data/input/demand/add/" class="btn btn-primary">Create a single sales order<br>in a form</a>
+        <a href="{{request.prefix}}/?mode=production&currentstep=2" class="btn btn-primary">Wizard to upload sale orders<br>from a spreadsheet</a>
+        </div>
+        <br>
+        """
+    )
 
     @classmethod
     def initialize(reportclass, request):
@@ -2931,10 +2986,9 @@ class DemandList(GridReport):
             q = q.filter(customer_lft__gte=customer.lft, customer_lft__lt=customer.rght)
         if "status_in" in request.GET:
             status = unquote(request.GET["status_in"])
-
             q = q.filter(status__in=status.split(","))
 
-        return q
+        return q.annotate(plannedshort=RawSQL("quantity - plannedquantity", []))
 
     rows = (
         GridFieldText(
@@ -2975,6 +3029,12 @@ class DemandList(GridReport):
         GridFieldNumber(
             "plannedquantity",
             title=_("planned quantity"),
+            editable=False,
+            extra='"formatoptions":{"defaultValue":""}, "cellattr":plannedquantitycellattr',
+        ),
+        GridFieldNumber(
+            "plannedshort",
+            title=_("quantity planned short"),
             editable=False,
             extra='"formatoptions":{"defaultValue":""}, "cellattr":plannedquantitycellattr',
         ),

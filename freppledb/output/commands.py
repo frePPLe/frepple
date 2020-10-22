@@ -186,7 +186,7 @@ class TruncatePlan(PlanTask):
                         )
                     )
             cursor.execute(
-                """"
+                """
                 delete from out_problem
                 using cluster_keys
                 where entity = 'operation' and owner = cluster_keys.name

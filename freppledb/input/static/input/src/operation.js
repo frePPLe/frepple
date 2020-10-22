@@ -39,14 +39,6 @@ function OperationFactory($http, getURLprefix, Location) {
   return Operation;
 
   function extend(data) {
-    angular.forEach(data, function(value, key) {
-      switch (key) {
-        case "location":
-          if (value && !(value instanceof Location))
-            data['location'] = new Location(value);
-          break;
-      };
-    });
     angular.extend(this, data);
   }
 

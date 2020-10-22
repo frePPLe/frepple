@@ -27,8 +27,8 @@ from freppledb import VERSION
 class Command(BaseCommand):
 
     help = """
-    Runs a multithreaded web server for frePPLe.
-  """
+      Runs a multithreaded web server for frePPLe.
+      """
 
     requires_system_checks = False
 

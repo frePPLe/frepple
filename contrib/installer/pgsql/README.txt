@@ -5,7 +5,7 @@ obtained from:
 We redistribute this product unmodified.
 
 Initialising a database with the provided binaries is easy.
-The frePPLe installer runs the following steps for you, but you're 
+The frePPLe installer runs the following steps for you, but you're
 always free to redo the initialisation to meet your needs:
   initdb --pgdata YOUR_DATA_FOLDER --encoding UTF8
   pg_ctl --pgdata YOUR_DATA_FOLDER --log YOUR_LOG_FILE -w start

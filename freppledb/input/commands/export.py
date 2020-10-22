@@ -80,6 +80,8 @@ class cleanStatic(PlanTask):
 
     @classmethod
     def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
+        # TODO since this is run BEFORE the export, the lastmodified field will
+        # always be different from the timestamp of the current export.
         source = kwargs.get("source", None)
         with connections[database].cursor() as cursor:
             cursor.execute(

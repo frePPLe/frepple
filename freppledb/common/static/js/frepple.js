@@ -2319,7 +2319,7 @@ var dashboard = {
       });
     });
 
-    $("#workarea").each( function() {
+    $("#dashboard").each( function() {
       Sortable.create($(this)[ 0 ], {
         group: "cockpit",
         handle: "h1",
@@ -2328,7 +2328,6 @@ var dashboard = {
       });
     });
 
-      //stop: dashboard.save
     $(".panel-toggle").click(function() {
       var icon = $(this);
       icon.toggleClass("fa-minus fa-plus");

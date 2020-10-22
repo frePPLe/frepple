@@ -27,6 +27,7 @@
 
 {% block content %}
 {% getDashboard as dashboard hiddenwidgets %}
+<div id="dashboard">
 {% for row in dashboard %}
     <div class="row" data-cockpit-row="{{ row.rowname }}">
       <div class="col-md-10">
@@ -101,6 +102,7 @@
 				{% if forloop.last %}</script>{% endif %}
 		  {% endfor %}
 		{% endfor %}
+		</div>
 		{% include "admin/subtemplate_timebuckets.html" %}
 <script>
 var hiddenwidgets = [

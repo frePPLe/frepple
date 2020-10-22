@@ -5,5 +5,3 @@
 SUBDIRS = frepple
 
 include_HEADERS = frepple.h freppleinterface.h
-
-

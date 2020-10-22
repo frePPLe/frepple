@@ -1,0 +1,450 @@
+{% extends "admin/base_site_nav.html" %}
+{% load i18n %}
+
+{% block extrahead %}{{block.super}}
+{% if not post %}
+<script>
+function getFormData(el) {
+	return el.serializeArray().reduce(function(obj, item) {
+    obj[item.name] = item.value;
+    return obj;
+    }, {});
+}
+
+$(function() {	
+	// Submit sales order to go from step 1 to step 2
+  $("#submitsalesorder").on("submit", function() {
+  	$("#inputstep2, #inputstep1").toggleClass("hidden");
+  	if ($("#supply .supply").length == 0)
+  	  addItemLocation($("#wizarditem").val(), $("#wizardlocation").val());
+  	return false;
+  });
+	
+	// Returning from step 2 to step 1
+  $("#backtosalesorder").on("click", function() {
+    $("#inputstep2, #inputstep1").toggleClass("hidden");
+    return false;
+  });
+	
+	// Creating supply path to go from step 2 to step 3
+  $("#createsupplypath").on("click", function() {
+    var ok = $('#submitsalesorder')[0].checkValidity();
+    if (ok) {
+      var data = getFormData($('#submitsalesorder'));
+      data["supply"] = [];
+      $("#supply .supply").each(function(i, group) {
+      	var ok2 = false;
+	      $(group).find("form").each(function(i, el) {    	
+	      	if (ok && $(el).closest(".collapse").hasClass("in")) {
+	      	  ok = el.checkValidity();
+	      	  ok2 = true;
+	      	  if (ok) data["supply"].push(getFormData($(el)));
+	      	}
+	    	});
+	      if (!ok2) ok = false;
+      });
+    };
+	  if (ok) {
+      $('<i class="fa fa-spinner fa-spin"></i>').prependTo(this);
+      $(this).prop("disabled", true);
+      $.ajax({
+        url: window.location.href,
+        data: JSON.stringify(data),
+        type: "POST",
+        contentType: "application/json",
+        success: function () {window.location.href = window.location.href;},
+        error: function (result, stat, errorThrown) {
+        	$(".fa-spinner").remove();
+        	$("#createsupplypath").removeProp("disabled");
+          $('#popup').html('<div class="modal-dialog" style="width: auto">' +
+              '<div class="modal-content">' +
+              '<div class="modal-header">' +
+                '<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true" class="fa fa-times"></span></button>'+
+                '<h4 class="modal-title">' + gettext("Error") + '</h4>' +
+              '</div>' +
+              '<div class="modal-body">' +
+                '<p>' + result.responseText + "  " + stat + errorThrown+'</p>' +
+              '</div>' +
+              '<div class="modal-footer">' +
+              '</div>' +
+            '</div>' +
+            '</div>').modal('show');
+          }        
+      });
+	  }
+  });
+});
+
+function addItemLocation(item, location) {
+	// TODO ajax lookup to check if supply path is already defined
+  var index = $("#supply .supply").length;
+  newelement = $(`<div class='supply'>
+  		<h2>
+  		How do you replenish item "<span class="item"></span>" in location "<span class="location"></span>"?
+  		</h2>
+			<div class="panel-group" id="accordion${index}" role="tablist" aria-multiselectable="true" data-index="${index}">
+			  <div class="panel panel-default">
+			    <div class="panel-heading">
+			      <h4 class="panel-title">
+			        <a role="button" data-toggle="collapse" data-parent="#accordion${index}" href="#collapse${index}-buy">
+			        Option 1: I buy this item
+			        </a>
+			      </h4>
+			    </div>
+			    <div id="collapse${index}-buy" class="panel-collapse collapse">
+			      <div class="panel-body">
+			        <p>Define the supplier and lead time for purchasing this item.</p>
+			        <form class="form-horizontal">
+			          <div class="form-group">
+			            <input type="hidden" name="type" value="PO">
+			            <input type="hidden" name="item" class="itemvalue">
+			            <input type="hidden" name="location" class="locationvalue">
+			            <label class="col-sm-3 control-label" for="wizardsupplier${index}">
+			            {% trans "supplier"|capfirst %}
+			            </label>
+			            <div class="col-sm-9">
+			              <input type="text" class="form-control" id="wizardsupplier${index}" name="supplier"
+			                maxlength="300" required placeholder="{% trans "supplier name"|capfirst %}">
+			            </div>
+			          </div>
+			          <div class="form-group">
+			            <label class="col-sm-3 control-label" for="wizardleadtime${index}">
+			            {% trans "lead time"|capfirst %}
+			            </label>
+			            <div class="col-sm-9">
+			              <input type="number" class="form-control" id="wizardleadtime${index}" name="leadtime"
+			                required min="0" placeholder="{% trans "lead time (in days)"|capfirst %}">
+			            </div>
+			          </div>
+			        </form>      
+			      </div>
+			    </div>
+			  </div>
+			  <div class="panel panel-default">
+			    <div class="panel-heading">
+			      <h4 class="panel-title">
+			        <a role="button" data-toggle="collapse" data-parent="#accordion${index}"
+			          href="#collapse${index}-produce"> Option 2: I produce this item
+			        </a>
+			      </h4>
+			    </div>
+			    <div id="collapse${index}-produce" class="panel-collapse collapse">
+			      <div class="panel-body">
+			        <p>Define the duration, resource and materials to produce this item.</p>
+			        <form class="form-horizontal">
+			          <input type="hidden" name="type" value="MO">
+                <input type="hidden" name="item" class="itemvalue">
+                <input type="hidden" name="location" class="locationvalue">
+			          <div class="form-group">
+			            <label class="col-sm-3 control-label" for="wizardoperation${index}">
+			            {% trans "operation name"|capfirst %}
+			            </label>
+			            <div class="col-sm-9">
+			              <input type="text" class="form-control itemlocationvalue" id="wizardoperation${index}"
+			                name="operation" required placeholder="operation name">
+			            </div>
+			          </div>
+			          <div class="form-group">
+			            <label class="col-sm-3 control-label" for="wizardduration${index}">
+			            {% trans "fixed duration"|capfirst %}
+			            </label>
+			            <div class="col-sm-9">
+			              <input type="text" class="form-control" id="wizardduration${index}" name="duration"
+			                required placeholder="fixed duration, formatted as dd hh:mm:ss">
+			            </div>
+			          </div>
+			          <div class="form-group">
+			            <label class="col-sm-3 control-label" for="wizarddurationper${index}">
+			            {% trans "duration per piece"|capfirst %}
+			            </label>
+			            <div class="col-sm-9">
+			              <input type="text" class="form-control" id="wizarddurationper${index}" name="durationper"
+			                required placeholder="duration per piece, formatted as dd hh:mm:ss">
+			            </div>
+			          </div>
+			          <div class="form-group">
+			            <label class="col-sm-3 control-label" for="wizardresource${index}">
+			            {% trans "resources"|capfirst %}
+			            </label>
+			            <div class="col-sm-9">
+			              <input type="text" class="form-control" id="wizardresource${index}" name="resource"
+			                placeholder="{% trans "resource name"|capfirst %}">
+			            </div>
+			          </div>
+			          <div class="form-group">
+			            <label class="col-sm-3 control-label" for="wizardconsumeditem${index}0">
+			            {% trans "consumed items"|capfirst %}
+			            </label>
+			            <div class="col-sm-6">
+			              <input type="text" class="form-control" id="wizardconsumeditem${index}0" name="consumeditem-0"
+			                placeholder="{% trans "component or subassembly item name"|capfirst %}" onchange="changeConsumedItem(event)">
+			            </div>
+			            <div class="col-sm-3">
+			              <input type="number" class="form-control" name="consumedquantity-0"
+			                min="0" placeholder="{% trans "consumed quantity"|capfirst %}">
+			            </div>
+			          </div>
+			          <div class="col-sm-offset-11 col-sm-1 text-center" data-index="0">
+			             <button class="btn btn-xs btn-primary" type="button" onclick="addConsumeditem(event)">
+			               <i class="fa fa-plus" data-toggle="tooltip" data-placement="top" data-original-title="Add more consumed items"></i>
+			             </button>
+			          </div>
+			        </form>
+			      </div>
+			    </div>
+			  </div>
+			  <div class="panel panel-default">
+			    <div class="panel-heading">
+			      <h4 class="panel-title">
+			        <a role="button" data-toggle="collapse" data-parent="#accordion${index}" href="#collapse${index}-ship">
+			        Option 3: I ship this item from another location
+			        </a>
+			      </h4>
+			    </div>
+			    <div id="collapse${index}-ship" class="panel-collapse collapse">
+			      <div class="panel-body">
+			        <p>Define the origin location that can ship material to this location.</p>
+			        <form class="form-horizontal">
+			          <input type="hidden" name="type" value="DO">
+                <input type="hidden" name="item" class="itemvalue">
+                <input type="hidden" name="location" class="locationvalue">
+			          <div class="form-group">
+			            <label class="col-sm-3 control-label" for="wizardorigin${index}">
+			            {% trans "source location"|capfirst %}
+			            </label>
+			            <div class="col-sm-9">
+			              <input type="text" class="form-control" id="wizardorigin${index}" name="origin"
+			                required placeholder="{% trans "source location name"|capfirst %}" onchange="changeDOorigin(event)">
+			            </div>
+			          </div>
+                <div class="form-group">
+                <label class="col-sm-3 control-label" for="wizardtransporttime${index}">
+                {% trans "transport time"|capfirst %}
+                </label>
+                <div class="col-sm-9">
+                  <input type="number" class="form-control" id="wizardtransporttime${index}" name="leadtime"
+                    required min="0" placeholder="{% trans "transport time (in days)"|capfirst %}">
+                </div>
+              </div>			          
+			        </form>
+			      </div>
+			    </div>
+			  </div>
+			</div>
+			</div>`);
+  // Need safe escaping of the input strings
+  newelement.find(".item").html(item);
+  newelement.find(".itemvalue").val(item);
+  newelement.find(".location").html(location);
+  newelement.find(".locationvalue").val(location);
+  newelement.find(".itemlocationvalue").val("make " + item + " @ " + location);
+  $("#supply").append(newelement);
+  return index;
+}
+
+function addConsumeditem(ev) {
+	var anchor = $(ev.target).closest(".col-sm-1");
+	var itemindex = parseInt(anchor.attr("data-index")) + 1;
+	anchor.attr("data-index", itemindex);
+	$(`<div class="form-group">
+	  <div class="col-sm-offset-3 col-sm-6">
+	    <input type="text" class="form-control" name="consumeditem-${itemindex}"
+	      placeholder="{% trans "component or subassembly item name"|capfirst %}" onchange="changeConsumedItem(event)">
+	  </div>
+	  <div class="col-sm-3">
+	    <input type="number" class="form-control" name="consumedquantity-${itemindex}"
+	      min="0" placeholder="{% trans "consumed quantity"|capfirst %}">
+	  </div>
+	  </div>`).insertBefore(anchor);
+	return false;
+}
+
+function changeConsumedItem(ev) {
+  var location = $(ev.target).closest("form").find("[name='location']").first().val();
+  var item = $(ev.target).val();
+  if (item && location)
+    addItemLocation(item, location);
+}
+
+function changeDOorigin(ev) {
+	var location = $(ev.target).val();
+	var item = $(ev.target).closest("form").find("[name='item']").first().val();
+	if (item && location)
+		addItemLocation(item, location);
+}
+</script>
+{% endif %}
+{% endblock %}
+
+{% block content %}
+{% if not post %}
+<div class="row" id="inputstep1">
+	<div class="panel-group col-md-12" style="max-width:900px" role="tablist" aria-multiselectable="true">
+		<div class="panel panel-default">
+      <div class="panel-heading wizard-1-of-3" role="tab">
+        <table style="width:100%">
+          <tr>
+            <td style="width:33%">Step 1: Create a sales order</td>
+            <td style="width:33%">Step 2: Define supply path</td>
+            <td style="width:33%">Step 3: Results</td>
+          </tr>
+        </table>     
+      </div>  
+			<div class="panel-collapse" role="tabpanel">
+				<div class="panel-body">
+				  <h2 style="margin-top: 0; margin-bottom:10px">
+				  Create a sales order
+				  </h2>
+          <form class="form-horizontal" id="submitsalesorder">
+            <div class="form-group">
+              <label class="col-sm-3 control-label" for="wizardsalesorder">{% trans "name"|capfirst %}</label>
+              <div class="col-sm-9">              
+                <input type="text" class="form-control" id="wizardsalesorder" name="name" 
+                  maxlength="300" required placeholder="{% trans "unique sales order name"|capfirst %}">
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-3 control-label" for="wizarditem">{% trans "item"|capfirst %}</label>
+              <div class="col-sm-9">              
+                <input type="text" class="form-control" id="wizarditem" name="item" 
+                  maxlength="300" required placeholder="{% trans "item name"|capfirst %}">
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-3 control-label" for="wizardlocation">{% trans "location"|capfirst %}</label>
+              <div class="col-sm-9">
+                <input type="text" class="form-control" id="wizardlocation" name="location"
+                  maxlength="300" required placeholder="{% trans "location name"|capfirst %}">
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-3 control-label" for="wizardcustomer">{% trans "customer"|capfirst %}</label>
+              <div class="col-sm-9">
+                <input type="text" class="form-control" id="wizardcustomer" name="customer"
+                  maxlength="300" required placeholder="{% trans "customer name"|capfirst %}">
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-3 control-label" for="wizardquantity">{% trans "Quantity"|capfirst %}</label>
+              <div class="col-sm-9">
+                <input type="number" class="form-control" id="wizardquantity" name="quantity"
+                  required placeholder="{% trans "quantity"|capfirst %}" value="1">
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-3 control-label" for="wizarddue">{% trans "Due date"|capfirst %}</label>
+              <div class="col-sm-9">
+                <input type="date" class="form-control" id="wizarddue" name="due"
+                  required placeholder="{% trans "Due date"|capfirst %}" value="{% now "Y-m-d" %}">
+              </div>
+            </div>
+            <div class="center-block">
+              <button id="createsalesorder" type="submit" class="btn btn-primary center-block">
+              {% trans "Create sales order"|capfirst %}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row hidden" id="inputstep2">
+	<div class="panel-group col-md-12" style="max-width:900px" role="tablist" aria-multiselectable="true">
+		<div class="panel panel-default">
+      <div class="panel-heading wizard-2-of-3" role="tab">
+        <table style="width:100%">
+          <tr>
+            <td style="width:33%"><a href="#" class="underline" id="backtosalesorder">Step 1: Create a sales order</a></td>
+            <td style="width:33%">Step 2: Define supply path</td>
+            <td style="width:33%">Step 3: Results</td>
+          </tr>
+        </table>
+      </div>		
+			<div class="panel-collapse" role="tabpanel">
+				<div class="panel-body">
+				  <div data-level="0">
+				  <h2>
+          The supply path defines all activities to deliver this sales order.          
+          </h2>
+          <p>It can contain multiple levels in the bill of material and bill of distribution.</p>
+          <div id="supply"></div>
+          <div class="center-block">
+            <button id="createsupplypath" type="submit" class="btn btn-primary center-block">
+            {% trans "Create supply path"|capfirst %}
+            </button>
+          </div>          
+          </div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>	
+{% else %}
+<div class="row">
+  <div class="panel-group col-md-12" style="max-width:900px" role="tablist" aria-multiselectable="true">
+    <div class="panel panel-default" id="wizard-2">
+      <div class="panel-heading wizard-3-of-3" role="tab">
+        <h4 class="panel-title">
+        <table style="width:100%">
+        <tr>
+        <td style="width:33%">
+          <a class="underline" href="{{request.prefix}}/wizard/quickstart/production/">Step 1: Create a sales order</a>
+        </td>
+        <td style="width:33%">Step 2: Define supply path</td>
+        <td style="width:33%">Step 3: Results</td>
+        </tr>
+        </table>
+        </h4>     
+      </div>
+      <div class="panel-collapse" role="tabpanel">
+        <div class="panel-body">
+          <div>
+          Here is the production plan for your sales order {{post.salesorder}}:
+          </div>        
+          <div class="clearfix">
+          <div style="float: left; margin-left:10px; width:30%; max-width:130px; text-align:center"
+            data-toggle="tooltip" data-placement="bottom"
+            data-original-title="Review forecast values across multiple dimensions">
+            <a target="_blank" href="{{request.prefix}}/demandpegging/{{post.salesorder|admin_quote}}/?noautofilter">
+              <img src="/static/img/forecast-editor-thumbnail.png" style="width: 100%" alt="Forecast Editor"><br> 
+              <b>Sales order delivery plan</b> 
+            </a>
+          </div>
+          <div style="float:left; margin-left:10px; width:30%; max-width:130px; text-align:center"
+            data-toggle="tooltip" data-placement="bottom"
+            data-original-title="A visual representation of the supply path you defined in the previous step">
+            <a target="_blank" href="{{request.prefix}}/supplypath/demand/{{post.salesorder|admin_quote}}/?noautofilter">
+              <img src="/static/img/forecast-editor-thumbnail.png" style="width: 100%" alt="Forecast report"><br> 
+              <b>Sales order supply path</b>
+            </a>
+          </div>
+          <div style="float:left; margin-left:10px; width:30%; max-width:130px; text-align:center"
+            data-toggle="tooltip" data-placement="bottom"
+            data-original-title="An interactive Gantt chart displaying the complete plan">
+            <a target="_blank" href="{{request.prefix}}/planningboard/">
+              <img src="/static/img/plan-editor-thumbnail.png" style="width: 100%" alt="Forecast report"><br> 
+              <b>Plan editor</b>
+            </a>
+          </div>          
+          </div>
+          <div class="clearfix">
+          <br>Check out what we did with your input data:
+            <ul>
+              {% for msg in post.messages %}
+              <li style="list-style-type: square">{{ msg | safe }}</li>
+              {% endfor %}
+            </ul>
+          </div>
+          <div class="clearfix">
+          <br><a class="underline" href="{{request.prefix}}/wizard/load/production/" target="_blank">
+          Learn how to load Excel spreadsheets</a> to repeat this calculation for many sales orders.<br>
+          </div>
+        </div>
+        </div>
+      
+       </div>
+    </div>
+  </div>
+{% endif %}
+{% endblock %}

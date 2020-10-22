@@ -154,10 +154,10 @@ $(function() {
         return true;
     },{% endif %}
     loadComplete: function(data) {
-    	{% if reportclass.message_when_empty and not filters %}
+    	{% if reportclass.message_when_empty %}
     	$("#grid_empty_message").remove();
-    	if (data.records == 0)
-    		$("#grid").parent().append(
+    	if (data.records == 0 && $(this).getGridParam("postData").filters === undefined)
+    		$(this).parent().append(
     			`<div id="grid_empty_message" style="text-align:center; margin-top:5em">
     			{% include reportclass.message_when_empty %}
     			</div>`

@@ -169,6 +169,54 @@ class Command(loaddata.Command):
                     2 * (offset,),
                 )
 
+                # Update archive tables
+                if "freppledb.archive" in settings.INSTALLED_APPS:
+                    cursor.execute(
+                        """
+                        insert into ax_manager
+                        (snapshot_date, total_records, buffer_records, demand_records, operationplan_records)
+                        select
+                         snapshot_date + %s * interval '1 day', 0, buffer_records,
+                         demand_records, operationplan_records
+                        from ax_manager
+                        """,
+                        (offset,),
+                    )
+                    cursor.execute(
+                        """
+                        update ax_buffer set
+                          snapshot_date_id = snapshot_date_id + %s * interval '1 day'
+                        """,
+                        (offset,),
+                    )
+                    cursor.execute(
+                        """
+                        update ax_demand set
+                          snapshot_date_id = snapshot_date_id + %s * interval '1 day',
+                          due = due + %s * interval '1 day',
+                          deliverydate = deliverydate + %s * interval '1 day'
+                        """,
+                        3 * (offset,),
+                    )
+                    cursor.execute(
+                        """
+                        update ax_operationplan set
+                          snapshot_date_id = snapshot_date_id + %s * interval '1 day',
+                          startdate = startdate + %s * interval '1 day',
+                          enddate = enddate + %s * interval '1 day',
+                          due = due + %s * interval '1 day'
+                        """,
+                        4 * (offset,),
+                    )
+                    cursor.execute(
+                        """
+                        delete from ax_manager where total_records <> 0;
+
+                        update ax_manager set
+                          total_records = buffer_records + demand_records + operationplan_records;
+                        """
+                    )
+
                 # Task update
                 task.status = "Done"
                 task.finished = datetime.now()

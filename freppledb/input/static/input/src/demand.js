@@ -77,18 +77,6 @@ function DemandFactory ($http, getURLprefix, Location, Item, Customer) {
               i.end = moment(i.end);
             });
           break;
-        case "item":
-          if (value && !(value instanceof Item))
-            data['item'] = new Item(value);
-          break;
-        case "location":
-          if (value && !(value instanceof Location))
-            data['location'] = new Location(value);
-          break;
-        case "customer":
-          if (value && !(value instanceof Customer))
-            data['customer'] = new Customer(value);
-          break;
         case "maxlateness":
           // Convert from seconds to days
           data['maxlateness'] = value / 86400;

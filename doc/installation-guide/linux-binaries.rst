@@ -203,6 +203,7 @@ Here are the steps to get a fully working environment.
           'bootstrap3',
           'freppledb.boot',
           #                                << ADD YOUR CUSTOM EXTENSION APPS HERE
+          'freppledb.wizard',              << COMMENT IF MODEL BUILDING WIZARD ISN'T NEEDED
           'freppledb.input',
           #'freppledb.odoo',             # << UNCOMMENT TO ACTIVATE THE ODOO INTEGRATION
           #'freppledb.erpconnection',    # << UNCOMMENT TO ACTIVATE THE GENERIC ERP INTEGRATION

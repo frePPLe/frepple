@@ -6,6 +6,17 @@ Release notes
 
 .. rubric:: User interface
 
+- A new get-started wizard is added to generate forecast for a single item.
+  Fill in a simple form with the item, location, customer and recent sales 
+  history, and we'll populate the data tables and generate the statistical forecast.
+
+- A new get-started wizard is added to generate a production plan for a single
+  sales order. Fill in the details of the sales order, define the supply path
+  and we'll populate the data tables and generate the production plan.
+
+- A data loading wizard which is already available on the Enterprise and Cloud
+  Editions for a long time. It is now also made available on the Community Edition.
+
 - The cockpit is renamed to `home <user-interface/cockpit.html>`_.
 
 6.8.0 (2020/10/03)

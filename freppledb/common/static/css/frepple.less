@@ -817,3 +817,72 @@ h1 small {
     color: #777777;
   }
 }
+
+// Wizard
+
+.fill-primary {
+  fill: @panel-default-heading-bg;
+}
+
+.fill-primary-light {
+  fill: lighten(@panel-default-heading-bg, 20%);
+}
+
+@light-panel-header: lighten(@panel-default-heading-bg, 20%);
+
+.getBackground2Steps(@color1, @color2, @color3) {
+  @r1: ceil(red(@color1));
+  @g1: ceil(green(@color1));
+  @b1: ceil(blue(@color1));
+  @r2: ceil(red(@color2));
+  @g2: ceil(green(@color2));
+  @b2: ceil(blue(@color2));
+  @r3: ceil(red(@color3));
+  @g3: ceil(green(@color3));
+  @b3: ceil(blue(@color3));  
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' preserveAspectRatio='none' width='500' height='10' viewBox='0 0 500 100'><path fill='rgb(@{r1},@{g1},@{b1})' stroke-width='2' stroke='rgb(@{r3},@{g3},@{b3})' d='m0,0 h225 l25,50 l-25,50 h-225 z'/><path fill='rgb(@{r2},@{g2},@{b2})' stroke-width='2' stroke='rgb(@{r3},@{g3},@{b3})' d='m225,0 h275 v100 h-275 l25,-50 z'/></svg>");
+  background-size: 100% 100%;
+  background-color: transparent;
+}
+
+.getBackground3Steps(@color1, @color2, @color3, @color4) {
+  @r1: ceil(red(@color1));
+  @g1: ceil(green(@color1));
+  @b1: ceil(blue(@color1));
+  @r2: ceil(red(@color2));
+  @g2: ceil(green(@color2));
+  @b2: ceil(blue(@color2));
+  @r3: ceil(red(@color3));
+  @g3: ceil(green(@color3));
+  @b3: ceil(blue(@color3));
+  @r4: ceil(red(@color4));
+  @g4: ceil(green(@color4));
+  @b4: ceil(blue(@color4));
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' preserveAspectRatio='none' width='500' height='10' viewBox='0 0 500 100'><path fill='rgb(@{r1},@{g1},@{b1})' stroke-width='2' stroke='rgb(@{r4},@{g4},@{b4})' d='m0,0 h141 l25,50 l-25,50 h-141 z'/><path fill='rgb(@{r2},@{g2},@{b2})' stroke-width='2' stroke='rgb(@{r4},@{g4},@{b4})' d='m141,0 h166 l25,50 l-25,50 h-166 l25,-50 z'/><path fill='rgb(@{r3},@{g3},@{b3})' stroke-width='2' stroke='rgb(@{r4},@{g4},@{b4})' d='m307,0 h194 v100 h-194 l25,-50 z'/></svg>");
+  background-size: 100% 100%;
+  background-color: transparent;
+}
+
+.wizard-1-of-2 table, .wizard-2-of-2 table, .wizard-1-of-3 table, .wizard-2-of-3 table, .wizard-3-of-3 table {
+  background-color: transparent;
+}
+
+.wizard-1-of-2 {
+  .getBackground2Steps(@panel-default-heading-bg, @light-panel-header, @panel-default-heading-bg);
+}
+
+.wizard-2-of-2 {
+  .getBackground2Steps(@light-panel-header, @panel-default-heading-bg, @panel-default-heading-bg);
+}
+
+.wizard-1-of-3 {
+  .getBackground3Steps(@panel-default-heading-bg, @light-panel-header, @light-panel-header, @panel-default-heading-bg);
+}
+
+.wizard-2-of-3 {
+  .getBackground3Steps(@light-panel-header, @panel-default-heading-bg, @light-panel-header, @panel-default-heading-bg);
+}
+
+.wizard-3-of-3 {
+  .getBackground3Steps(@light-panel-header, @light-panel-header, @panel-default-heading-bg, @panel-default-heading-bg);
+}

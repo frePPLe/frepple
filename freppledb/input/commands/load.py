@@ -68,7 +68,7 @@ class checkBuckets(CheckTask):
     # check for overlaps (more than 1 bucket have the same startdate or the same enddate)
     # make sure partial indexes are created
     description = "Checking Buckets"
-    sequence = 80
+    sequence = 79
 
     @classmethod
     def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):

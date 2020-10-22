@@ -74,7 +74,7 @@ function delayfmt(cellvalue, options, rowdata) {
 }
 
 function plannedquantitycellattr(rowId, value, rowdata) {
-  var tmp = parseFloat(value);
+  var tmp = parseFloat(rowdata.plannedquantity);
   if ((isNaN(tmp) || parseFloat(rowdata.quantity) - tmp > 0) && rowdata.status != 'closed' && rowdata.status != 'canceled')
     return 'style="background-color: #f00"';
   else

@@ -214,6 +214,9 @@ class Command(BaseCommand):
                 #   (settings.MAXTOTALLOGFILESIZE * 1024 * 1024, (settings.MAXTOTALLOGFILESIZE + 1) * 1024 * 1024)
                 #   )
 
+            # Make sure the forecast engine uses the same correct timezone
+            os.environ["PGTZ"] = settings.TIME_ZONE
+
             # Prepare environment
             os.environ["FREPPLE_PLANTYPE"] = str(plantype)
             os.environ["FREPPLE_CONSTRAINT"] = str(constraint)

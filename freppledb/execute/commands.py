@@ -107,9 +107,9 @@ class SupplyPlanning(PlanTask):
     @classmethod
     def DISABLED_debugResource(cls, res, mode):
         # if res.name != 'my favorite resource': return
-        logger.debug("=> Situation on resource %s" % res.name)
+        print("=> Situation on resource %s" % res.name)
         for j in res.loadplans:
-            logger.debug(
+            print(
                 "=>  %s %s %s %s %s %s %s"
                 % (
                     j.quantity,
@@ -127,7 +127,7 @@ class SupplyPlanning(PlanTask):
     @classmethod
     def DISABLED_debugDemand(cls, dem, mode):
         if dem.name == "my favorite demand":
-            logger.debug("=> Starting to plan demand %s" % dem.name)
+            print("=> Starting to plan demand %s" % dem.name)
             cls.solver.loglevel = 2
         else:
             cls.solver.loglevel = 0

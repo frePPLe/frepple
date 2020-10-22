@@ -28,12 +28,12 @@
 
 DECLARE_EXPORT extern PythonType* EventPythonType;
 
-/** @brief This class implements a "sorted list" data structure, sorting
+/* This class implements a "sorted list" data structure, sorting
  * "events" based on a date.
  *
- * The data structure has slow insert scalability: O(n)<br>
- * Moving data around in the structure is efficient though: O(1)<br>
- * The class leverages the STL library and also follows its api.<br>
+ * The data structure has slow insert scalability: O(n)
+ * Moving data around in the structure is efficient though: O(1)
+ * The class leverages the STL library and also follows its api.
  * The class used to instantiate a timeline must support the
  * "bool operator < (TYPE)".
  *
@@ -49,7 +49,7 @@ class TimeLine {
  public:
   class iterator;
   class const_iterator;
-  /** @brief Base class for nodes in the timeline. */
+  /* Base class for nodes in the timeline. */
   class Event : public NonCopyable, public Object {
     friend class TimeLine<type>;
     friend class const_iterator;
@@ -68,10 +68,10 @@ class TimeLine {
    public:
     virtual ~Event(){};
 
-    /** Default constructor. */
+    /* Default constructor. */
     Event() : tp(0), qty(0) {}
 
-    /** Return the event type:
+    /* Return the event type:
      *  - 0: null event, don't use
      *  - 1: change on hand
      *  - 2: set on hand
@@ -81,28 +81,28 @@ class TimeLine {
      */
     inline unsigned short getEventType() const { return tp; }
 
-    /** Return the owning operationplan. */
+    /* Return the owning operationplan. */
     virtual OperationPlan* getOperationPlan() const = 0;
 
-    /** Return the quantity. */
+    /* Return the quantity. */
     inline double getQuantity() const { return qty; }
 
-    /** Return the current onhand value. */
+    /* Return the current onhand value. */
     inline double getOnhand() const { return oh; }
 
-    /** Verify whether the next event is on the same date or not. */
+    /* Verify whether the next event is on the same date or not. */
     inline bool isLastOnDate() const { return next ? (next->dt != dt) : true; }
 
-    /** Verify whether the previous event is on the same date or not. */
+    /* Verify whether the previous event is on the same date or not. */
     inline bool isFirstOnDate() const { return prev ? (prev->dt != dt) : true; }
 
-    /** Return true if there is no other event at the same date. */
+    /* Return true if there is no other event at the same date. */
     inline bool isOnlyEventOnDate() const {
       return (!next || next->getDate() != getDate()) &&
              (!prev || prev->getDate() != getDate());
     }
 
-    /** Return the onhand before this date. */
+    /* Return the onhand before this date. */
     inline double getOnhandBeforeDate() const {
       const Event* tmp = this;
       while (tmp && tmp->dt == dt) {
@@ -114,26 +114,26 @@ class TimeLine {
       return tmp->oh;
     }
 
-    /** Return the onhand after this date. */
+    /* Return the onhand after this date. */
     inline double getOnhandAfterDate() const {
       const Event* tmp = this;
       while (tmp->next && tmp->next->dt == dt) tmp = tmp->next;
       return tmp ? tmp->oh : oh;
     }
 
-    /** Return the total produced quantity till the current date. */
+    /* Return the total produced quantity till the current date. */
     inline double getCumulativeProduced() const { return cum_prod; }
 
-    /** Return the total consumed quantity till the current date. */
+    /* Return the total consumed quantity till the current date. */
     inline double getCumulativeConsumed() const { return cum_prod - oh; }
 
-    /** Return the date of the event. */
+    /* Return the date of the event. */
     inline Date getDate() const { return dt; }
 
-    /** Return a pointer to the owning timeline. */
+    /* Return a pointer to the owning timeline. */
     virtual TimeLine<type>* getTimeLine() const { return nullptr; }
 
-    /** These functions return the minimum boundary valid at the time of
+    /* These functions return the minimum boundary valid at the time of
      * this event. */
     double getMin() const { return getMin(true); }
 
@@ -146,7 +146,7 @@ class TimeLine {
       return m ? m->newMin : 0.0;
     }
 
-    /** This functions return the maximum boundary valid at the time of
+    /* This functions return the maximum boundary valid at the time of
      * this event. */
     double getMax() const { return getMax(true); }
 
@@ -159,10 +159,10 @@ class TimeLine {
       return m ? m->newMax : 0.0;
     }
 
-    /** First criterion is date: earlier dates come first.<br>
-     * Second criterion is the size: big events come first.<br>
-     * As a third tie-breaking criterion, we use a pointer comparison.<br>
-     * This garantuees us a fixed and unambiguous ordering.<br>
+    /* First criterion is date: earlier dates come first.
+     * Second criterion is the size: big events come first.
+     * As a third tie-breaking criterion, we use a pointer comparison.
+     * This garantuees us a fixed and unambiguous ordering.
      * As a side effect, this makes sure that producers come before
      * consumers. This feature is required to avoid zero-time
      * material shortages.
@@ -170,7 +170,7 @@ class TimeLine {
     bool operator<(const Event& fl2) const;
   };
 
-  /** @brief A timeline event representing a change of the current value. */
+  /* A timeline event representing a change of the current value. */
   class EventChangeOnhand : public Event {
     friend class TimeLine<type>;
 
@@ -178,7 +178,7 @@ class TimeLine {
     EventChangeOnhand(double qty = 0.0) : Event(1, qty) {}
   };
 
-  /** @brief A timeline event representing a change of the current value. */
+  /* A timeline event representing a change of the current value. */
   class EventSetOnhand : public Event {
     friend class TimeLine<type>;
 
@@ -197,7 +197,7 @@ class TimeLine {
     virtual OperationPlan* getOperationPlan() const { return nullptr; }
   };
 
-  /** @brief A timeline event representing a change of the minimum target. */
+  /* A timeline event representing a change of the minimum target. */
   class EventMinQuantity : public Event {
     friend class TimeLine<type>;
     friend class Event;
@@ -230,7 +230,7 @@ class TimeLine {
     virtual OperationPlan* getOperationPlan() const { return nullptr; }
   };
 
-  /** @brief A timeline event representing a change of the maximum target. */
+  /* A timeline event representing a change of the maximum target. */
   class EventMaxQuantity : public Event {
     friend class Event;
     friend class TimeLine<type>;
@@ -263,7 +263,7 @@ class TimeLine {
     virtual OperationPlan* getOperationPlan() const { return nullptr; }
   };
 
-  /** @brief This is bi-directional iterator through the timeline. */
+  /* This is bi-directional iterator through the timeline. */
   class const_iterator {
    protected:
     const Event* cur;
@@ -314,7 +314,7 @@ class TimeLine {
     bool operator!=(const const_iterator& x) const { return cur != x.cur; }
   };
 
-  /** @brief This is bi-directional iterator through the timeline. */
+  /* This is bi-directional iterator through the timeline. */
   class iterator : public const_iterator {
    public:
     iterator() {}
@@ -380,25 +380,25 @@ class TimeLine {
 
   void insert(Event*);
 
-  /** Insert an onhandchange event in the timeline. */
+  /* Insert an onhandchange event in the timeline. */
   void insert(EventChangeOnhand* e, double qty, const Date& d) {
     e->qty = qty;
     e->dt = d;
     insert(static_cast<Event*>(e));
   };
 
-  /** Remove an event from the timeline. */
+  /* Remove an event from the timeline. */
   void erase(Event*);
 
-  /** Update the timeline to move an event to a new date and quantity. */
+  /* Update the timeline to move an event to a new date and quantity. */
   void update(EventChangeOnhand*, double, const Date&);
 
-  /** Update the timeline to move an event to a new date and quantity.
+  /* Update the timeline to move an event to a new date and quantity.
    * This method can only be used for events with quantity 0.
    */
   void update(Event*, const Date&);
 
-  /** This functions returns the mimimum valid at a certain date. */
+  /* This functions returns the mimimum valid at a certain date. */
   virtual double getMin(Date d, bool inclusive = true) const {
     EventMinQuantity* m = this->lastMin;
     if (inclusive)
@@ -408,7 +408,7 @@ class TimeLine {
     return m ? m->getMin() : 0.0;
   }
 
-  /** This functions returns the minimum valid at a certain event. */
+  /* This functions returns the minimum valid at a certain event. */
   virtual double getMin(const Event* e, bool inclusive = true) const {
     if (!e) return 0.0;
     EventMinQuantity* m = this->lastMin;
@@ -419,7 +419,7 @@ class TimeLine {
     return m ? m->getMin() : 0.0;
   }
 
-  /** This functions returns the maximum valid at a certain date. */
+  /* This functions returns the maximum valid at a certain date. */
   virtual double getMax(Date d, bool inclusive = true) const {
     EventMaxQuantity* m = this->lastMax;
     if (inclusive)
@@ -429,7 +429,7 @@ class TimeLine {
     return m ? m->getMax() : 0.0;
   }
 
-  /** This functions returns the minimum valid at a certain event. */
+  /* This functions returns the minimum valid at a certain event. */
   virtual double getMax(const Event* e, bool inclusive = true) const {
     if (!e) return 0.0;
     EventMaxQuantity* m = this->lastMax;
@@ -440,7 +440,7 @@ class TimeLine {
     return m ? m->getMax() : 0.0;
   }
 
-  /** This functions returns the minimum event valid at a certain date. */
+  /* This functions returns the minimum event valid at a certain date. */
   virtual EventMinQuantity* getMinEvent(Date d, bool inclusive = true) const {
     EventMinQuantity* m = this->lastMin;
     if (inclusive)
@@ -450,7 +450,7 @@ class TimeLine {
     return m ? m : nullptr;
   }
 
-  /** This functions returns the maximum event valid at a certain date. */
+  /* This functions returns the maximum event valid at a certain date. */
   virtual EventMaxQuantity* getMaxEvent(Date d, bool inclusive = true) const {
     EventMaxQuantity* m = this->lastMax;
     if (inclusive)
@@ -460,10 +460,10 @@ class TimeLine {
     return m ? m : nullptr;
   }
 
-  /** Return the lowest excess inventory level between this event
-   * and the end of the horizon.<br>
+  /* Return the lowest excess inventory level between this event
+   * and the end of the horizon.
    * If the boolean argument is true, excess is defined as the difference
-   * between the onhand level and the minimum stock level.<br>
+   * between the onhand level and the minimum stock level.
    * If the boolean argument is false, excess is defined as the onhand level.
    */
   double getExcess(const Event* curevent,
@@ -483,7 +483,7 @@ class TimeLine {
     return excess;
   }
 
-  /** Return the total production or consumption between 2 events. */
+  /* Return the total production or consumption between 2 events. */
   double getFlow(const Event* strt, const Event* nd, bool consumed) const {
     double total = 0.0;
     for (const_iterator cur(strt); cur != end() && &*cur != nd; ++cur) {
@@ -495,7 +495,7 @@ class TimeLine {
     return total;
   }
 
-  /** Return the total production or consumption between an event. */
+  /* Return the total production or consumption between an event. */
   double getFlow(const Event* strt, Duration prd, bool consumed) const {
     Date nd = strt->getDate() + prd;
     double total = 0.0;
@@ -509,23 +509,23 @@ class TimeLine {
     return total;
   }
 
-  /** This function is used to trace the consistency of the data structure. */
+  /* This function is used to trace the consistency of the data structure. */
   bool check() const;
 
  private:
-  /** A pointer to the first event in the timeline. */
+  /* A pointer to the first event in the timeline. */
   Event* first = nullptr;
 
-  /** A pointer to the last event in the timeline. */
+  /* A pointer to the last event in the timeline. */
   Event* last = nullptr;
 
-  /** A pointer to the last maximum change. */
+  /* A pointer to the last maximum change. */
   EventMaxQuantity* lastMax = nullptr;
 
-  /** A pointer to the last minimum change. */
+  /* A pointer to the last minimum change. */
   EventMinQuantity* lastMin = nullptr;
 
-  /** A pointer to the last fixed onhand. */
+  /* A pointer to the last fixed onhand. */
   EventSetOnhand* lastSet = nullptr;
 };
 

@@ -239,6 +239,7 @@ INSTALLED_APPS = (
     # Add any project specific apps here
     # "freppledb.odoo",
     #'freppledb.erpconnection',
+    "freppledb.wizard",
     "freppledb.input",
     "freppledb.output",
     "freppledb.metrics",
@@ -252,7 +253,7 @@ INSTALLED_APPS = (
     # The next two apps allow users to run their own SQL statements on
     # the database, using the SQL_ROLE configured above.
     "freppledb.reportmanager",
-    # "freppledb.executesql",
+    "freppledb.executesql",
 )
 
 # Custom attribute fields in the database

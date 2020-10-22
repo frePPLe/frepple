@@ -39,14 +39,6 @@ function ResourceFactory($http, getURLprefix, Location) {
   return Resource;
 
   function extend(data) {
-    angular.forEach(data, function(value, key) {
-      switch (key) {
-        case "location":
-          if (value && !(value instanceof Location))
-            data['location'] = new Location(value);
-          break;
-      }
-    });
     angular.extend(this, data);
   }
 
@@ -54,7 +46,7 @@ function ResourceFactory($http, getURLprefix, Location) {
   function get() {
     var res = this;
     return $http
-      .get(getURLprefix() + '/api/input/resource/' + encodeURIComponent(res) + "/")
+      .get(getURLprefix() + '/api/input/resource/' + encodeURIComponent(res.name) + "/")
       .then(
         function (response) {
           if (debug)

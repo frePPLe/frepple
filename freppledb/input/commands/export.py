@@ -191,6 +191,54 @@ class cleanStatic(PlanTask):
                 )
 
             cursor.execute(
+                """
+                delete from operationplanmaterial where item_id in 
+                (select name from item where source = %s and lastmodified <> %s)
+            """,
+                (source, cls.timestamp),
+            )
+
+            cursor.execute(
+                """
+                delete from operationplan where item_id in 
+                (select name from item where source = %s and lastmodified <> %s)
+            """,
+                (source, cls.timestamp),
+            )
+
+            cursor.execute(
+                """
+                delete from itemsupplier where item_id in 
+                (select name from item where source = %s and lastmodified <> %s)
+            """,
+                (source, cls.timestamp),
+            )
+
+            cursor.execute(
+                """
+                delete from itemdistribution where item_id in 
+                (select name from item where source = %s and lastmodified <> %s)
+            """,
+                (source, cls.timestamp),
+            )
+
+            cursor.execute(
+                """
+                delete from buffer where item_id in 
+                (select name from item where source = %s and lastmodified <> %s)
+            """,
+                (source, cls.timestamp),
+            )
+
+            cursor.execute(
+                """
+                delete from demand where item_id in 
+                (select name from item where source = %s and lastmodified <> %s)
+            """,
+                (source, cls.timestamp),
+            )
+
+            cursor.execute(
                 "delete from item where source = %s and lastmodified <> %s",
                 (source, cls.timestamp),
             )

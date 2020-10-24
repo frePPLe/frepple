@@ -2619,9 +2619,9 @@ var dashboard = {
 
     // Insert in page
     if (position_above)
-      $("[data-cockpit-row='" + rowname + "']").first().before($(newelements));
+      $.find("[data-cockpit-row='" + rowname + "']").first().before($(newelements));
     else
-      $("[data-cockpit-row='" + rowname + "']").last().after($(newelements));
+      $.find("[data-cockpit-row='" + rowname + "']").last().after($(newelements));
 
     // Almost done
     if (newwidget != '')

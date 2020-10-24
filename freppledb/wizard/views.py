@@ -7,7 +7,7 @@
 # You are not allowed to distribute the software, either in the form of source code
 # or in the form of compiled binaries.
 #
-from datetime import datetime, timedelta
+from datetime import timedelta
 from dateutil.parser import parse
 import json
 
@@ -16,7 +16,7 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.core import management
 from django.core.mail import EmailMessage
 from django.http import HttpResponse, HttpResponseServerError
-from django.http import HttpResponseNotAllowed, HttpResponseRedirect
+from django.http import HttpResponseNotAllowed
 from django.shortcuts import render
 from django.utils.decorators import method_decorator
 from django.utils.translation import gettext_lazy as _
@@ -25,7 +25,7 @@ from django.views.generic.base import TemplateView
 
 from freppledb import VERSION
 from freppledb.common.report import getCurrency
-from freppledb.common.models import Bucket, BucketDetail, Parameter
+from freppledb.common.models import Bucket, Parameter
 from freppledb.input.models import (
     Location,
     Item,

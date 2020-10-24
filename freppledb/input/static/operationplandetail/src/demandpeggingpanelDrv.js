@@ -46,7 +46,7 @@ function showoperationpeggingpanelDrv($window, gettextCatalog) {
                       '<b style="text-transform: capitalize;">'+gettextCatalog.getString("quantity")+'</b>' +
                     '</td>' +
                     '<tbody></tbody>' +
-                    '</table>'
+                    '</table>' +
                     '</div>';
 
     scope.$watchGroup(['operationplan.id','operationplan.pegging_demand.length'], function (newValue,oldValue) {

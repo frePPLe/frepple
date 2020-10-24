@@ -24,7 +24,7 @@ from django.contrib.auth import get_permission_codename
 from django.contrib.auth.models import Group
 from django.contrib.contenttypes.models import ContentType
 from django.db import DEFAULT_DB_ALIAS
-from django.db import transaction, models
+from django.db import transaction
 from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 from django.utils.text import capfirst

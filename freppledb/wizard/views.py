@@ -653,7 +653,6 @@ def getWizardSteps(request, mode):
                 "index": index,
                 "title": "Step %s: Load inventories, open purchase orders and work-in-progress manufacturing orders"
                 % index,
-                "icon": ICON_AVAILABLE,
                 "icon": ICON_LOCK if locked else ICON_DONE if done else ICON_AVAILABLE,
                 "locked": locked,
                 "content": """

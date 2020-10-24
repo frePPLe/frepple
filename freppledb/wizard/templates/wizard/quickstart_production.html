@@ -78,7 +78,7 @@ $(function() {
 function addItemLocation(item, location) {
 	// TODO ajax lookup to check if supply path is already defined
   var index = $("#supply .supply").length;
-  newelement = $(`<div class='supply'>
+  var newelement = $(`<div class='supply'>
   		<h2>
   		How do you replenish item "<span class="item"></span>" in location "<span class="location"></span>"?
   		</h2>
@@ -233,9 +233,9 @@ function addItemLocation(item, location) {
 			</div>
 			</div>`);
   // Need safe escaping of the input strings
-  newelement.find(".item").html(item);
+  newelement.find(".item").text(item);
   newelement.find(".itemvalue").val(item);
-  newelement.find(".location").html(location);
+  newelement.find(".location").text(location);
   newelement.find(".locationvalue").val(location);
   newelement.find(".itemlocationvalue").val("make " + item + " @ " + location);
   $("#supply").append(newelement);
@@ -406,7 +406,7 @@ function changeDOorigin(ev) {
           <div style="float: left; margin-left:10px; width:30%; max-width:130px; text-align:center"
             data-toggle="tooltip" data-placement="bottom"
             data-original-title="Review forecast values across multiple dimensions">
-            <a target="_blank" href="{{request.prefix}}/demandpegging/{{post.salesorder|admin_quote}}/?noautofilter">
+            <a target="_blank" rel="noopener" href="{{request.prefix}}/demandpegging/{{post.salesorder|admin_quote}}/?noautofilter">
               <img src="/static/img/forecast-editor-thumbnail.png" style="width: 100%" alt="Forecast Editor"><br> 
               <b>Sales order delivery plan</b> 
             </a>
@@ -414,7 +414,7 @@ function changeDOorigin(ev) {
           <div style="float:left; margin-left:10px; width:30%; max-width:130px; text-align:center"
             data-toggle="tooltip" data-placement="bottom"
             data-original-title="A visual representation of the supply path you defined in the previous step">
-            <a target="_blank" href="{{request.prefix}}/supplypath/demand/{{post.salesorder|admin_quote}}/?noautofilter">
+            <a target="_blank" rel="noopener" href="{{request.prefix}}/supplypath/demand/{{post.salesorder|admin_quote}}/?noautofilter">
               <img src="/static/img/forecast-editor-thumbnail.png" style="width: 100%" alt="Forecast report"><br> 
               <b>Sales order supply path</b>
             </a>
@@ -422,7 +422,7 @@ function changeDOorigin(ev) {
           <div style="float:left; margin-left:10px; width:30%; max-width:130px; text-align:center"
             data-toggle="tooltip" data-placement="bottom"
             data-original-title="An interactive Gantt chart displaying the complete plan">
-            <a target="_blank" href="{{request.prefix}}/planningboard/">
+            <a target="_blank" rel="noopener" href="{{request.prefix}}/planningboard/">
               <img src="/static/img/plan-editor-thumbnail.png" style="width: 100%" alt="Forecast report"><br> 
               <b>Plan editor</b>
             </a>
@@ -437,7 +437,7 @@ function changeDOorigin(ev) {
             </ul>
           </div>
           <div class="clearfix">
-          <br><a class="underline" href="{{request.prefix}}/wizard/load/production/" target="_blank">
+          <br><a rel="noopener" class="underline" href="{{request.prefix}}/wizard/load/production/" target="_blank">
           Learn how to load Excel spreadsheets</a> to repeat this calculation for many sales orders.<br>
           </div>
         </div>

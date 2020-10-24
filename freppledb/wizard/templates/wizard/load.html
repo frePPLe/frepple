@@ -1,0 +1,47 @@
+{% extends "admin/base_site_nav.html" %}
+{% load i18n %}
+
+{% block content %}
+{% if wizard %}
+<div class="row">
+  <div id="tasks" class="panel-group col-md-6 col-lg-8" role="tablist" aria-multiselectable="true">
+  {% for step in wizard.steps %}
+    <div class="panel panel-default" id="wizard-{{ step.index }}">
+       <div id="wizardhead-{{ step.index }}" data-target="#wizardcontent-{{ step.index }}" class="panel-heading" role="tab"
+       {% if step.locked %}data-toggle="tooltip" data-placement="top" title="Complete the previous step to earn access!"{% else %}data-toggle="collapse"{% endif %}>
+        {% if step.icon %}<span style="font-size:1.5em" class="fa {{ step.icon }} pull-right"></span>{% endif %}
+        <h4 class="panel-title">{{ step.title }}&nbsp;&nbsp;<small><span class="fa fa-plus fa-xs"></span></small></h4>
+      </div>
+      {% if step.content and not step.locked %}
+      <div id="wizardcontent-{{ step.index }}" aria-labelledby="wizardhead-{{ step.index }}" class="panel-collapse {% if step.index != currentstep %}collapse{% endif %}" role="tabpanel">
+        <div class="panel-body">{{ step.content|safe }}</div>       
+      </div>
+      {% endif %}
+    </div>
+  {% endfor %}
+  </div>
+  {% if mode %}
+   <div id="tasks" class="panel-group col-md-6 col-lg-4">
+     <div class="panel panel-default">
+     <div class="panel-heading">Your progress</div>
+     <div class="panel-body">
+     {% if wizard.mode == "forecast" %}{% include 'wizard/progress_forecasting.svg' %}
+     {% elif wizard.mode == "inventory" %}{% include 'wizard/progress_inventoryplanning.svg' %}
+     {% else %}{% include 'wizard/progress_productionplanning.svg' %}{% endif %}
+     </div>
+   
+   </div>
+  {% endif %}
+  {% if wizard.script %}
+  <script>
+  $(function() {  
+  	{{ wizard.script|safe }}
+  });
+  </script>
+  {% endif %}
+  </div>
+</div>
+{% else %}
+{{ block.super }}
+{% endif %}
+{% endblock %}

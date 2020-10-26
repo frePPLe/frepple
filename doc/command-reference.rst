@@ -78,6 +78,8 @@ see demand OR material, lead time and capacity problems to be shown.
 In both the constrained and unconstrained plans you can select which constraints
 are considered during plan creation.
 
+A separate page provides more details on the :doc:`/developer-guide/planning-algorithm`.
+
 This command is available in the user interface, the command line and the web API:
 
 * Execution screen:  

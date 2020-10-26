@@ -2,13 +2,11 @@
 Planning algorithm
 ==================
 
-Different solvers and algorithms can be used with the frePPle models. It is
-possible to build create extensions to the solver, or to create a completely
-new solver altogether. The solvers can be loaded as plugin modules without
-touching or recompiling the main application.
+Different solver algorithms can be used with frePPle. 
 
 FrePPLe comes with a default solver, which implements a heuristic search
-algorithm.
+algorithm. The Enterprise Edition provides a second solver, tailored for 
+distribution-oriented supply chains.
 
 The algorithm solves demand per demand. All demands are first sorted based on
 a) their priority (lower values first) and b) their due date (earlier due dates

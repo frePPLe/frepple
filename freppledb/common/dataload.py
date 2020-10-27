@@ -276,7 +276,6 @@ def _parseData(model, data, rowmapper, user, database, ping):
     # Initialize
     headers = []
     rownumber = 0
-    pingcounter = 0
     changed = 0
     added = 0
     content_type_id = ContentType.objects.get_for_model(model).pk

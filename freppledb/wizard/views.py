@@ -15,6 +15,7 @@ from django.conf import settings
 from django.contrib.admin.views.decorators import staff_member_required
 from django.core import management
 from django.core.mail import EmailMessage
+from django.db import connections
 from django.http import HttpResponse, HttpResponseServerError
 from django.http import HttpResponseNotAllowed
 from django.shortcuts import render
@@ -1194,19 +1195,6 @@ def WizardLoad(request, mode=None):
                 "noOperationResource": not OperationResource.objects.using(db).exists(),
             }
         )
-        if with_ip_module:
-            context.update(
-                {
-                    "noIPParameter": not InventoryPlanning.objects.using(db).exists(),
-                    "noSegment": not Segment.objects.using(db).exists(),
-                    "noBusinessRule": not BusinessRule.objects.using(db).exists(),
-                    "noIPOut": not InventoryPlanningOutput.objects.using(db).exists(),
-                }
-            )
-        if with_fcst_module:
-            context.update(
-                {"noForecastPlan": not ForecastPlan.objects.using(db).exists()}
-            )
     return render(request, "wizard/load.html", context=context)
 
 
@@ -1234,6 +1222,49 @@ class SendSurveyMail:
             return HttpResponseServerError(
                 "An error occurred when sending your comments"
             )
+
+
+@staff_member_required
+def CheckSupplyPath(request):
+    item = request.GET.get("item", None)
+    location = request.GET.get("location", None)
+    if item and location:
+        with connections[request.database].cursor() as cursor:
+            cursor.execute(
+                """
+                with requesteditem as (
+                  select name, lft, rght
+                  from item where name = %s
+                  )
+                select distinct 'po'
+                from itemsupplier
+                inner join item
+                  on itemsupplier.item_id = item.name
+                inner join requesteditem
+                  on requesteditem.lft between item.lft and item.rght
+                where itemsupplier.location_id = %s or itemsupplier.location_id is null
+                union all
+                select distinct 'do'
+                from itemdistribution
+                inner join item
+                  on itemdistribution.item_id = item.name
+                inner join requesteditem
+                  on requesteditem.lft between item.lft and item.rght
+                where itemdistribution.location_id = %s or itemdistribution.location_id is null
+                union all
+                select distinct 'mo'
+                from operation
+                where operation.location_id = %s and operation.item_id = %s
+                """,
+                (item, location, location, location, item),
+            )
+            response = [rec[0] for rec in cursor.fetchall()]
+    else:
+        response = []
+    return HttpResponse(
+        content=json.dumps(response),
+        content_type="application/json; charset=%s" % settings.DEFAULT_CHARSET,
+    )
 
 
 class QuickStartProduction(View):

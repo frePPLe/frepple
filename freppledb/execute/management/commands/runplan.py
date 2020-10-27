@@ -19,6 +19,7 @@ import os
 from datetime import datetime
 import shlex
 import subprocess
+from time import sleep
 
 from django.core.management.base import BaseCommand, CommandError
 from django.db import DEFAULT_DB_ALIAS
@@ -42,6 +43,35 @@ class Command(BaseCommand):
 
     def get_version(self):
         return VERSION
+
+    @staticmethod
+    def process_exists(pid):
+        # Inspired and shamelessly copied from:
+        # https://stackoverflow.com/questions/568271/how-to-check-if-there-exists-a-process-with-a-given-pid-in-python
+        if not pid:
+            return False
+        elif os.name == "nt":
+            import ctypes
+
+            kernel32 = ctypes.windll.kernel32
+            SYNCHRONIZE = 0x100000
+            process = kernel32.OpenProcess(SYNCHRONIZE, 0, pid)
+            if process != 0:
+                kernel32.CloseHandle(process)
+                return True
+            else:
+                return False
+        else:
+            import errno
+
+            if pid < 0:
+                return False
+            try:
+                os.kill(pid, 0)
+            except OSError as e:
+                return e.errno == errno.EPERM
+            else:
+                return True
 
     def add_arguments(self, parser):
         parser.add_argument("--user", dest="user", help="User running the command")
@@ -274,8 +304,17 @@ class Command(BaseCommand):
                     # Return code is 2 is a run cancelled by a user. That's shown in the status field.
                     raise Exception("Failed with exit code %d" % ret)
 
-            # Reread the task from the database and update it
-            if not options["background"]:
+            if options["background"]:
+                # Wait for the background task to be ready
+                while True:
+                    sleep(5)
+                    t = Task.objects.using(database).get(pk=task.id)
+                    if t.status in ["100%", "Canceled", "Failed", "Done"]:
+                        break
+                    if not self.process_exists(t.processid):
+                        break
+            else:
+                # Reread the task from the database and update it
                 task = Task.objects.all().using(database).get(pk=task.id)
                 task.processid = None
                 task.status = "Done"
@@ -314,6 +353,7 @@ class Command(BaseCommand):
                 Task.objects.all()
                 .using(request.database)
                 .filter(name="runplan")
+                .exclude(arguments__contains="loadplan")
                 .order_by("-id")
                 .only("arguments")
                 .first()

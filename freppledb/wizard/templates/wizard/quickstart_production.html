@@ -16,7 +16,16 @@ $(function() {
   $("#submitsalesorder").on("submit", function() {
   	$("#inputstep2, #inputstep1").toggleClass("hidden");
   	if ($("#supply .supply").length == 0)
-  	  addItemLocation($("#wizarditem").val(), $("#wizardlocation").val());
+  		checkItemLocation(
+  			$("#wizarditem").val(),
+  			$("#wizardlocation").val(),
+  			function(data) {
+  				if (data.length)
+  					$("#supply_path_known, #supply_path_unknown").toggleClass("hidden");
+  				else
+  				  addItemLocation($("#wizarditem").val(), $("#wizardlocation").val());
+  				}
+  			); 	
   	return false;
   });
 	
@@ -27,7 +36,7 @@ $(function() {
   });
 	
 	// Creating supply path to go from step 2 to step 3
-  $("#createsupplypath").on("click", function() {
+  $(".createsupplypath").on("click", function() {
     var ok = $('#submitsalesorder')[0].checkValidity();
     if (ok) {
       var data = getFormData($('#submitsalesorder'));
@@ -55,7 +64,7 @@ $(function() {
         success: function () {window.location.href = window.location.href;},
         error: function (result, stat, errorThrown) {
         	$(".fa-spinner").remove();
-        	$("#createsupplypath").removeProp("disabled");
+        	$(".createsupplypath").removeProp("disabled");
           $('#popup').html('<div class="modal-dialog" style="width: auto">' +
               '<div class="modal-content">' +
               '<div class="modal-header">' +
@@ -75,8 +84,17 @@ $(function() {
   });
 });
 
+function checkItemLocation(item, location, callback) {
+	$.ajax({
+		url: url_prefix + "/wizard/supplypath/?item=" + encodeURIComponent(item) 
+				+ "&location=" + encodeURIComponent(location),
+		type: "GET",
+		contentType: "application/json",
+		success: callback
+	});
+};
+
 function addItemLocation(item, location) {
-	// TODO ajax lookup to check if supply path is already defined
   var index = $("#supply .supply").length;
   var newelement = $(`<div class='supply'>
   		<h2>
@@ -263,7 +281,14 @@ function changeConsumedItem(ev) {
   var location = $(ev.target).closest("form").find("[name='location']").first().val();
   var item = $(ev.target).val();
   if (item && location)
-    addItemLocation(item, location);
+  	checkItemLocation(
+        item,
+        location,
+        function(data) {
+          if (!data.length)
+          	addItemLocation(item, location);
+          }
+        );
 }
 
 function changeDOorigin(ev) {
@@ -363,17 +388,28 @@ function changeDOorigin(ev) {
       </div>		
 			<div class="panel-collapse" role="tabpanel">
 				<div class="panel-body">
-				  <div data-level="0">
+				  <div id="supply_path_unknown">
 				  <h2>
           The supply path defines all activities to deliver this sales order.          
           </h2>
           <p>It can contain multiple levels in the bill of material and bill of distribution.</p>
           <div id="supply"></div>
           <div class="center-block">
-            <button id="createsupplypath" type="submit" class="btn btn-primary center-block">
-            {% trans "Create supply path"|capfirst %}
+            <button type="submit" class="btn btn-primary center-block createsupplypath">
+            Create supply path
             </button>
           </div>          
+          </div>
+          <div id="supply_path_known" class="hidden">
+          <h2>
+          The supply path for this sales order is already defined.          
+          </h2>
+          <p>You can skip this step and move on to the results.</p>     
+          <div class="center-block">
+            <button type="submit" class="btn btn-primary center-block createsupplypath">
+            Go to results
+            </button>
+          </div> 
           </div>
 				</div>
 			</div>
@@ -405,28 +441,36 @@ function changeDOorigin(ev) {
           <div class="clearfix">
           <div style="float: left; margin-left:10px; width:30%; max-width:130px; text-align:center"
             data-toggle="tooltip" data-placement="bottom"
-            data-original-title="Review forecast values across multiple dimensions">
+            data-original-title="Review all activities planned for this sales order">
             <a target="_blank" rel="noopener" href="{{request.prefix}}/demandpegging/{{post.salesorder|admin_quote}}/?noautofilter">
-              <img src="/static/img/forecast-editor-thumbnail.png" style="width: 100%" alt="Forecast Editor"><br> 
+              <img src="/static/wizard/img/delivery_plan_thumbnail.png" style="width: 100%" alt="Sales order delivery plan"><br> 
               <b>Sales order delivery plan</b> 
             </a>
           </div>
           <div style="float:left; margin-left:10px; width:30%; max-width:130px; text-align:center"
             data-toggle="tooltip" data-placement="bottom"
-            data-original-title="A visual representation of the supply path you defined in the previous step">
+            data-original-title="A visual representation of the supply path">
             <a target="_blank" rel="noopener" href="{{request.prefix}}/supplypath/demand/{{post.salesorder|admin_quote}}/?noautofilter">
-              <img src="/static/img/forecast-editor-thumbnail.png" style="width: 100%" alt="Forecast report"><br> 
+              <img src="/static/wizard/img/supply_path_thumbnail.png" style="width: 100%" alt="Sales order supply path"><br> 
               <b>Sales order supply path</b>
             </a>
           </div>
           <div style="float:left; margin-left:10px; width:30%; max-width:130px; text-align:center"
             data-toggle="tooltip" data-placement="bottom"
-            data-original-title="An interactive Gantt chart displaying the complete plan">
-            <a target="_blank" rel="noopener" href="{{request.prefix}}/planningboard/">
-              <img src="/static/img/plan-editor-thumbnail.png" style="width: 100%" alt="Forecast report"><br> 
-              <b>Plan editor</b>
+            data-original-title="Shows the inventory profile of all materials">
+            <a target="_blank" rel="noopener" href="{{request.prefix}}/buffer/?noautofilter">
+              <img src="/static/wizard/img/inventory_report_thumbnail.png" style="width: 100%" alt="Inventory report"><br> 
+              <b>Inventory report</b>
             </a>
-          </div>          
+          </div>
+          <div style="float:left; margin-left:10px; width:30%; max-width:130px; text-align:center"
+            data-toggle="tooltip" data-placement="bottom"
+            data-original-title="Shows the loading of all resources">
+            <a target="_blank" rel="noopener" href="{{request.prefix}}/resource/?noautofilter">
+              <img src="/static/wizard/img/resource_report_thumbnail.png" style="width: 100%" alt="Resource report"><br> 
+              <b>Resource report</b>
+            </a>
+          </div>                           
           </div>
           <div class="clearfix">
           <br>Check out what we did with your input data:

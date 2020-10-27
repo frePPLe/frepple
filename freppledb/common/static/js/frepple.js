@@ -2999,6 +2999,9 @@ function import_show(title, paragraph, multiple, fxhr, initialDropped)
           onprogress: function (e) {
             var el = $('#uploadResponse');
             el.html(e.currentTarget.response);
+            var progress = el.find(".recordcount").last();
+            var records = el.find("[data-cnt]").last().attr("data-cnt");
+            progress.text(interpolate(gettext("%s records processed"), [records]));
             if (el.attr('data-scrolled')!== "true") {
               el.attr('data-scrolled', el[0].scrollHeight - el.height());
               el.scrollTop(el[0].scrollHeight - el.height());

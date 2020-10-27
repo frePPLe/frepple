@@ -2150,7 +2150,7 @@ class GridReport(View):
                     numerrors = 0
                     numwarnings = 0
                     firsterror = True
-                    yield '<tr style="text-align: center"><th colspan="5">%s</th></tr>' % filename
+                    yield '<tr style="text-align: center"><th colspan="5">%s<div class="recordcount pull-right"></div></th></tr>' % filename
 
                     # Loop through the data records
                     wb = load_workbook(filename=file, read_only=True, data_only=True)
@@ -2168,7 +2168,7 @@ class GridReport(View):
                         ):
                             if error[0] == logging.DEBUG:
                                 # Yield some result so we can detect disconnect clients and interrupt the upload
-                                yield " "
+                                yield "<tr class='hidden' data-cnt='%s'>" % error[1]
                                 continue
                             if firsterror and error[0] in (
                                 logging.ERROR,

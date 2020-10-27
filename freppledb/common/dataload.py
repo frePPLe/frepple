@@ -414,9 +414,7 @@ def _parseData(model, data, rowmapper, user, database, ping):
             try:
                 # Step 1: Send a ping-alive message to make the upload interruptable
                 if ping:
-                    pingcounter += 1
-                    if pingcounter >= 100:
-                        pingcounter = 0
+                    if rownumber % 50 == 0:
                         yield (DEBUG, rownumber, None, None, None)
 
                 # Step 2: Fill the form with data, either updating an existing

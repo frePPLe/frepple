@@ -19,6 +19,8 @@ Release notes
 
 - The cockpit is renamed to `home <user-interface/cockpit.html>`_.
 
+- Bug fix: frozen columns were not handled correctly in favorites.
+
 6.8.0 (2020/10/03)
 ==================
 

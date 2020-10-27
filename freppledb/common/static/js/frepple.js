@@ -907,6 +907,7 @@ var grid = {
     var colModel = $("#grid").jqGrid('getGridParam', 'colModel');
     var pivot = false;
     var skipped = 0;
+    var maxfrozen = 0;
     for (var i in colModel)
     {
       if (colModel[i].name != "rn" && colModel[i].name != "cb" && "counter" in colModel[i] && !('alwayshidden' in colModel[i]))
@@ -934,6 +935,8 @@ var grid = {
       for (var i in cross_idx)
       	result['crosses'].push(cross[cross_idx[i]].key);
     }
+    else
+    	result['frozen'] = maxfrozen;
     return result;
   },
   
@@ -1910,7 +1913,7 @@ var favorite = {
 	  	var pivot = false;
 	  	var skipped = 0;
     	var colModel = thegrid.jqGrid('getGridParam', 'colModel');
-    	var numfrozen = 0;
+    	var numfrozen = favorites[fav]["frozen"];
     	for (var i in colModel) {
     		if (colModel[i].name == 'graph') graph = true;
     		else if (colModel[i].name == 'columns') {
@@ -1918,8 +1921,6 @@ var favorite = {
     			numfrozen = parseInt(i);
     		}
     		else if (colModel[i].name == 'cb') skipped += 1;
-    		if ("counter" in colModel[i] && colModel[i].frozen)
-           numfrozen = parseInt(i);
       }
 	  	if (!graph) thegrid.jqGrid('destroyFrozenColumns');
 	  	
@@ -1941,7 +1942,7 @@ var favorite = {
         			cross_idx.push(parseInt(j));
         }
       }
-    	
+
     	// Reorder columns
       var perm = [];
     	for (var f of favorites[fav]["rows"]) {
@@ -1963,7 +1964,6 @@ var favorite = {
       for (var k of colModel) {
       	if (!perm.includes(k["name"]) && k["name"] != "cb")
       		perm.push(k["name"]);
-      	k.frozen = false;
       }
       thegrid.jqGrid("remapColumnsByName", perm, true, false);
       

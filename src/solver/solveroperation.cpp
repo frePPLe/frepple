@@ -1302,7 +1302,7 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v) {
           }
         }
 
-        if (!sub_flow->getQuantityFixed() && !sub_flow->getQuantity()) {
+        if (!sub_flow || (!sub_flow->getQuantityFixed() && !sub_flow->getQuantity())) {
           // The sub operation doesn't have a flow in the buffer, we're in
           // trouble... Restore the planning mode
           data->constrainedPlanning = originalPlanningMode;

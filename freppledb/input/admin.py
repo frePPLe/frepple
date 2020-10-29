@@ -529,7 +529,7 @@ class Buffer_admin(MultiDBModelAdmin):
         {
             "name": "edit",
             "label": _("edit"),
-            "view": "admin:input_buffer_change",
+            "view": "create_or_edit_buffer",
             "permissions": "input.change_buffer",
         },
         {"name": "supplypath", "label": _("supply path"), "view": "supplypath_buffer"},

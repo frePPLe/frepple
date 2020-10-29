@@ -262,6 +262,11 @@ urlpatterns = [
     ),
     # Special reports
     url(
+        r"^data/input/buffer/(.+)/create_or_edit/",
+        freppledb.input.views.CreateOrEditBuffer,
+        name="create_or_edit_buffer",
+    ),
+    url(
         r"^supplypath/item/(.+)/$",
         freppledb.input.views.UpstreamItemPath.as_view(),
         name="supplypath_item",

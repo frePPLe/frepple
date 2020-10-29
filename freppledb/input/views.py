@@ -20,7 +20,7 @@ from dateutil.parser import parse
 import json
 
 from django.conf import settings
-from django.contrib.admin.utils import unquote
+from django.contrib.admin.utils import unquote, quote
 from django.contrib.admin.views.decorators import staff_member_required
 from django.core.exceptions import FieldDoesNotExist
 from django.db import connections
@@ -30,6 +30,7 @@ from django.db.models.expressions import RawSQL
 from django.db.models.fields import CharField
 from django.http import HttpResponse, Http404
 from django.http.response import StreamingHttpResponse, HttpResponseServerError
+from django.shortcuts import redirect
 from django.template import Template
 from django.utils.decorators import method_decorator
 from django.utils.translation import gettext_lazy as _
@@ -1474,6 +1475,35 @@ class DownstreamOperationPath(UpstreamOperationPath):
     downstream = True
     objecttype = Operation
     title = _("where used")
+
+
+@staff_member_required
+def CreateOrEditBuffer(request, buffer_id):
+    try:
+        i = int(buffer_id)
+        if Buffer.objects.all().using(request.database).filter(id=i).exists():
+            return redirect(
+                "%s/data/input/buffer/%s/change/" % (request.prefix, quote(buffer_id))
+            )
+    except:
+        pass
+    i_l_b = unquote(buffer_id).split(" @ ")
+    if len(i_l_b) == 0:
+        return redirect("%s/data/input/buffer/add/" % request.prefix)
+    elif len(i_l_b) == 1:
+        return redirect(
+            "%s/data/input/buffer/add/?item=%s" % (request.prefix, quote(i_l_b[0]))
+        )
+    elif len(i_l_b) == 2:
+        return redirect(
+            "%s/data/input/buffer/add/?item=%s&location=%s"
+            % (request.prefix, quote(i_l_b[0]), quote(i_l_b[1]))
+        )
+    if len(i_l_b) == 1:
+        return redirect(
+            "%s/data/input/buffer/add/?item=%s&location=%s&batch=%s"
+            % (request.prefix, quote(i_l_b[0]), quote(i_l_b[1]), quote(i_l_b[2]))
+        )
 
 
 class BufferList(GridReport):

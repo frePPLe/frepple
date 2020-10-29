@@ -210,13 +210,9 @@ class OdooReadData(PlanTask):
             rootCustomer = frepple.customer(
                 name="All customers", source="odoo_%s" % cls.mode
             )
-            if rootCustomer:
-                print("%s" % rootCustomer.name)
             for r in frepple.customers():
-                if r.owner is None and r != rootCustomer:
-                    print("Assigning root customer to %s" % r.name)
+                if r.owner is None and r != rootCustomer:                    
                     r.owner = rootCustomer
-                    print("%s %s" % (r.name, r.owner.name))
 
 
 @PlanTaskRegistry.register

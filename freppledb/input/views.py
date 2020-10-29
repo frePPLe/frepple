@@ -1485,7 +1485,7 @@ def CreateOrEditBuffer(request, buffer_id):
             return redirect(
                 "%s/data/input/buffer/%s/change/" % (request.prefix, quote(buffer_id))
             )
-    except:
+    except Exception:
         pass
     i_l_b = unquote(buffer_id).split(" @ ")
     if len(i_l_b) == 0:
@@ -1495,15 +1495,35 @@ def CreateOrEditBuffer(request, buffer_id):
             "%s/data/input/buffer/add/?item=%s" % (request.prefix, quote(i_l_b[0]))
         )
     elif len(i_l_b) == 2:
-        return redirect(
-            "%s/data/input/buffer/add/?item=%s&location=%s"
-            % (request.prefix, quote(i_l_b[0]), quote(i_l_b[1]))
-        )
-    if len(i_l_b) == 1:
-        return redirect(
-            "%s/data/input/buffer/add/?item=%s&location=%s&batch=%s"
-            % (request.prefix, quote(i_l_b[0]), quote(i_l_b[1]), quote(i_l_b[2]))
-        )
+        try:
+            buf = (
+                Buffer.objects.all()
+                .using(request.database)
+                .get(item=i_l_b[0], location=i_l_b[1], batch__isnull=True)
+            )
+            return redirect(
+                "%s/data/input/buffer/%s/change/" % (request.prefix, buf.id)
+            )
+        except Exception:
+            return redirect(
+                "%s/data/input/buffer/add/?item=%s&location=%s"
+                % (request.prefix, quote(i_l_b[0]), quote(i_l_b[1]))
+            )
+    else:
+        try:
+            buf = (
+                Buffer.objects.all()
+                .using(request.database)
+                .get(item=i_l_b[0], location=i_l_b[1], batch=i_l_b[2])
+            )
+            return redirect(
+                "%s/data/input/buffer/%s/change/" % (request.prefix, buf.id)
+            )
+        except Exception:
+            return redirect(
+                "%s/data/input/buffer/add/?item=%s&location=%s&batch=%s"
+                % (request.prefix, quote(i_l_b[0]), quote(i_l_b[1]), quote(i_l_b[2]))
+            )
 
 
 class BufferList(GridReport):

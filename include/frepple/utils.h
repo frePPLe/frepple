@@ -1159,6 +1159,9 @@ class DateRange  // TODO REMOVE THIS CLASS, because it is not a native data
    * daterange. */
   bool within(const Date& d) const { return d >= start && d < end; }
 
+  /* Same as "within", but the end date is included in the range. */
+  bool between(const Date& d) const { return d >= start && d <= end; }
+
   bool almostEqual(const DateRange& dr) const {
     return (start == dr.start || start == dr.start - Duration(1L) ||
             start == dr.start + Duration(1L)) &&

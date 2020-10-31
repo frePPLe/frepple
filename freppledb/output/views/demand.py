@@ -19,7 +19,7 @@ import json
 
 from django.conf import settings
 from django.contrib.admin.views.decorators import staff_member_required
-from django.db import connections
+from django.db import connections, transaction
 from django.http import HttpResponseForbidden, HttpResponse, HttpResponseBadRequest
 from django.utils.translation import gettext_lazy as _
 from django.utils.encoding import force_text
@@ -132,17 +132,18 @@ class OverviewReport(GridPivot):
             basesql,
             basesql,
         )
-        with connections[request.database].chunked_cursor() as cursor_chunked:
-            cursor_chunked.execute(
-                query,
-                baseparams
-                + (request.report_startdate,)
-                + baseparams
-                + (request.report_startdate,),
-            )
-            for row in cursor_chunked:
-                if row[0]:
-                    startbacklogdict[row[0]] = float(row[1])
+        with transaction.atomic(using=request.database):
+            with connections[request.database].chunked_cursor() as cursor_chunked:
+                cursor_chunked.execute(
+                    query,
+                    baseparams
+                    + (request.report_startdate,)
+                    + baseparams
+                    + (request.report_startdate,),
+                )
+                for row in cursor_chunked:
+                    if row[0]:
+                        startbacklogdict[row[0]] = float(row[1])
 
         # Execute the query
         query = """
@@ -205,46 +206,47 @@ class OverviewReport(GridPivot):
         )
 
         # Build the python result
-        with connections[request.database].chunked_cursor() as cursor_chunked:
-            cursor_chunked.execute(
-                query,
-                (request.report_startdate,) * 3  # orders + planned + constraints
-                + baseparams  # orders planned
-                + (
-                    request.report_bucket,
-                    request.report_startdate,
-                    request.report_enddate,
-                ),  # buckets
-            )
-            previtem = None
-            for row in cursor_chunked:
-                numfields = len(row)
-                if row[0] != previtem:
-                    backlog = startbacklogdict.get(row[0], 0)
-                    previtem = row[0]
-                backlog += float(row[numfields - 3]) - float(row[numfields - 2])
-                res = {
-                    "item": row[0],
-                    "description": row[1],
-                    "category": row[2],
-                    "subcategory": row[3],
-                    "owner": row[4],
-                    "cost": row[5],
-                    "source": row[6],
-                    "lastmodified": row[7],
-                    "bucket": row[numfields - 6],
-                    "startdate": row[numfields - 5].date(),
-                    "enddate": row[numfields - 4].date(),
-                    "demand": row[numfields - 3],
-                    "supply": row[numfields - 2],
-                    "reasons": json.dumps(row[numfields - 1]),
-                    "backlog": backlog,
-                }
-                idx = 8
-                for f in getAttributeFields(Item):
-                    res[f.field_name] = row[idx]
-                    idx += 1
-                yield res
+        with transaction.atomic(using=request.database):
+            with connections[request.database].chunked_cursor() as cursor_chunked:
+                cursor_chunked.execute(
+                    query,
+                    (request.report_startdate,) * 3  # orders + planned + constraints
+                    + baseparams  # orders planned
+                    + (
+                        request.report_bucket,
+                        request.report_startdate,
+                        request.report_enddate,
+                    ),  # buckets
+                )
+                previtem = None
+                for row in cursor_chunked:
+                    numfields = len(row)
+                    if row[0] != previtem:
+                        backlog = startbacklogdict.get(row[0], 0)
+                        previtem = row[0]
+                    backlog += float(row[numfields - 3]) - float(row[numfields - 2])
+                    res = {
+                        "item": row[0],
+                        "description": row[1],
+                        "category": row[2],
+                        "subcategory": row[3],
+                        "owner": row[4],
+                        "cost": row[5],
+                        "source": row[6],
+                        "lastmodified": row[7],
+                        "bucket": row[numfields - 6],
+                        "startdate": row[numfields - 5].date(),
+                        "enddate": row[numfields - 4].date(),
+                        "demand": row[numfields - 3],
+                        "supply": row[numfields - 2],
+                        "reasons": json.dumps(row[numfields - 1]),
+                        "backlog": backlog,
+                    }
+                    idx = 8
+                    for f in getAttributeFields(Item):
+                        res[f.field_name] = row[idx]
+                        idx += 1
+                    yield res
 
 
 @staff_member_required

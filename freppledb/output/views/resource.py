@@ -15,7 +15,7 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-from django.db import connections
+from django.db import connections, transaction
 from django.db.models.expressions import RawSQL
 from django.utils.encoding import force_text
 from django.utils.text import format_lazy
@@ -333,48 +333,49 @@ class OverviewReport(GridPivot):
         )
 
         # Build the python result
-        with connections[request.database].chunked_cursor() as cursor_chunked:
-            cursor_chunked.execute(query, baseparams)
-            for row in cursor_chunked:
-                numfields = len(row)
-                if row[numfields - 4] != 0:
-                    util = round(row[numfields - 2] * 100 / row[numfields - 4], 2)
-                else:
-                    util = 0
-                result = {
-                    "resource": row[0],
-                    "description": row[1],
-                    "category": row[2],
-                    "subcategory": row[3],
-                    "type": row[4],
-                    "constrained": row[5],
-                    "maximum": row[6],
-                    "maximum_calendar": row[7],
-                    "cost": row[8],
-                    "maxearly": row[9],
-                    "setupmatrix": row[10],
-                    "setup": row[11],
-                    "location__name": row[12],
-                    "location__description": row[13],
-                    "location__category": row[14],
-                    "location__subcategory": row[15],
-                    "location__available": row[16],
-                    "avgutil": round(row[17], 2),
-                    "available_calendar": row[18],
-                    "owner": row[19],
-                    "bucket": row[numfields - 6],
-                    "startdate": row[numfields - 5],
-                    "available": row[numfields - 4],
-                    "unavailable": row[numfields - 3],
-                    "load": row[numfields - 2],
-                    "setuptime": row[numfields - 1],
-                    "utilization": util,
-                }
-                idx = 20
-                for f in getAttributeFields(Resource):
-                    result[f.field_name] = row[idx]
-                    idx += 1
-                for f in getAttributeFields(Location):
-                    result[f.field_name] = row[idx]
-                    idx += 1
-                yield result
+        with transaction.atomic(using=request.database):
+            with connections[request.database].chunked_cursor() as cursor_chunked:
+                cursor_chunked.execute(query, baseparams)
+                for row in cursor_chunked:
+                    numfields = len(row)
+                    if row[numfields - 4] != 0:
+                        util = round(row[numfields - 2] * 100 / row[numfields - 4], 2)
+                    else:
+                        util = 0
+                    result = {
+                        "resource": row[0],
+                        "description": row[1],
+                        "category": row[2],
+                        "subcategory": row[3],
+                        "type": row[4],
+                        "constrained": row[5],
+                        "maximum": row[6],
+                        "maximum_calendar": row[7],
+                        "cost": row[8],
+                        "maxearly": row[9],
+                        "setupmatrix": row[10],
+                        "setup": row[11],
+                        "location__name": row[12],
+                        "location__description": row[13],
+                        "location__category": row[14],
+                        "location__subcategory": row[15],
+                        "location__available": row[16],
+                        "avgutil": round(row[17], 2),
+                        "available_calendar": row[18],
+                        "owner": row[19],
+                        "bucket": row[numfields - 6],
+                        "startdate": row[numfields - 5],
+                        "available": row[numfields - 4],
+                        "unavailable": row[numfields - 3],
+                        "load": row[numfields - 2],
+                        "setuptime": row[numfields - 1],
+                        "utilization": util,
+                    }
+                    idx = 20
+                    for f in getAttributeFields(Resource):
+                        result[f.field_name] = row[idx]
+                        idx += 1
+                    for f in getAttributeFields(Location):
+                        result[f.field_name] = row[idx]
+                        idx += 1
+                    yield result

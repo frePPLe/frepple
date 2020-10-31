@@ -18,7 +18,7 @@
 from datetime import datetime, timedelta
 from dateutil.parser import parse
 
-from django.db import connections
+from django.db import connections, transaction
 from django.utils.encoding import force_text
 from django.utils.translation import gettext_lazy as _
 
@@ -267,43 +267,82 @@ class ReportByDemand(GridReport):
           """
 
         # Build the Python result
-        with connections[request.database].chunked_cursor() as cursor_chunked:
-            cursor_chunked.execute(query, baseparams)
-            prevrec = None
-            parents = {}
-            for rec in cursor_chunked:
-                if not prevrec or rec[1] != prevrec["operation"]:
-                    # Return prev operation
-                    if prevrec:
-                        if prevrec["depth"] < rec[2]:
-                            prevrec["leaf"] = "false"
-                        yield prevrec
-                    # New operation
-                    prevrec = {
-                        "operation": rec[1],
-                        "type": rec[10],
-                        "showdrilldown": rec[11],
-                        "depth": rec[2],
-                        "quantity": str(rec[3]),
-                        "item": rec[14],
-                        "item__description": rec[23],
-                        "due": round(
-                            (rec[0] - request.report_startdate).total_seconds()
-                            / horizon,
-                            3,
-                        ),
-                        "current": round(
-                            (current - request.report_startdate).total_seconds()
-                            / horizon,
-                            3,
-                        ),
-                        "parent": parents.get(rec[2] - 1, None)
-                        if rec[2] and rec[2] >= 1
-                        else None,
-                        "leaf": "true",
-                        "expanded": "true",
-                        "resource": rec[9],
-                        "operationplans": [
+        with transaction.atomic(using=request.database):
+            with connections[request.database].chunked_cursor() as cursor_chunked:
+                cursor_chunked.execute(query, baseparams)
+                prevrec = None
+                parents = {}
+                for rec in cursor_chunked:
+                    if not prevrec or rec[1] != prevrec["operation"]:
+                        # Return prev operation
+                        if prevrec:
+                            if prevrec["depth"] < rec[2]:
+                                prevrec["leaf"] = "false"
+                            yield prevrec
+                        # New operation
+                        prevrec = {
+                            "operation": rec[1],
+                            "type": rec[10],
+                            "showdrilldown": rec[11],
+                            "depth": rec[2],
+                            "quantity": str(rec[3]),
+                            "item": rec[14],
+                            "item__description": rec[23],
+                            "due": round(
+                                (rec[0] - request.report_startdate).total_seconds()
+                                / horizon,
+                                3,
+                            ),
+                            "current": round(
+                                (current - request.report_startdate).total_seconds()
+                                / horizon,
+                                3,
+                            ),
+                            "parent": parents.get(rec[2] - 1, None)
+                            if rec[2] and rec[2] >= 1
+                            else None,
+                            "leaf": "true",
+                            "expanded": "true",
+                            "resource": rec[9],
+                            "operationplans": [
+                                {
+                                    "operation": rec[1],
+                                    "quantity": str(rec[7]),
+                                    "x": round(
+                                        (
+                                            rec[5] - request.report_startdate
+                                        ).total_seconds()
+                                        / horizon,
+                                        3,
+                                    ),
+                                    "w": round(
+                                        (rec[6] - rec[5]).total_seconds() / horizon, 3
+                                    ),
+                                    "startdate": str(rec[5]),
+                                    "enddate": str(rec[6]),
+                                    "status": rec[8],
+                                    "reference": rec[13],
+                                    "color": round(rec[12])
+                                    if rec[12] is not None
+                                    else None,
+                                    "type": rec[10],
+                                    "item": rec[14],
+                                    "location": rec[15],
+                                    "supplier": rec[16],
+                                    "origin": rec[17],
+                                    "criticality": round(rec[18]),
+                                    "demand": rec[19],
+                                    "delay": str(rec[20]),
+                                    "required_quantity": str(rec[21]),
+                                    "batch": rec[22],
+                                    "item__description": rec[23],
+                                }
+                            ],
+                        }
+                        parents[rec[2]] = rec[1]
+                    elif rec[4] != prevrec["operationplans"][-1]["reference"]:
+                        # Extra operationplan for the operation
+                        prevrec["operationplans"].append(
                             {
                                 "operation": rec[1],
                                 "quantity": str(rec[7]),
@@ -334,41 +373,9 @@ class ReportByDemand(GridReport):
                                 "batch": rec[22],
                                 "item__description": rec[23],
                             }
-                        ],
-                    }
-                    parents[rec[2]] = rec[1]
-                elif rec[4] != prevrec["operationplans"][-1]["reference"]:
-                    # Extra operationplan for the operation
-                    prevrec["operationplans"].append(
-                        {
-                            "operation": rec[1],
-                            "quantity": str(rec[7]),
-                            "x": round(
-                                (rec[5] - request.report_startdate).total_seconds()
-                                / horizon,
-                                3,
-                            ),
-                            "w": round((rec[6] - rec[5]).total_seconds() / horizon, 3),
-                            "startdate": str(rec[5]),
-                            "enddate": str(rec[6]),
-                            "status": rec[8],
-                            "reference": rec[13],
-                            "color": round(rec[12]) if rec[12] is not None else None,
-                            "type": rec[10],
-                            "item": rec[14],
-                            "location": rec[15],
-                            "supplier": rec[16],
-                            "origin": rec[17],
-                            "criticality": round(rec[18]),
-                            "demand": rec[19],
-                            "delay": str(rec[20]),
-                            "required_quantity": str(rec[21]),
-                            "batch": rec[22],
-                            "item__description": rec[23],
-                        }
-                    )
-                elif rec[9] and not rec[9] in prevrec["resource"]:
-                    # Extra resource loaded by the operationplan
-                    prevrec["resource"].append(rec[9])
-            if prevrec:
-                yield prevrec
+                        )
+                    elif rec[9] and not rec[9] in prevrec["resource"]:
+                        # Extra resource loaded by the operationplan
+                        prevrec["resource"].append(rec[9])
+                if prevrec:
+                    yield prevrec

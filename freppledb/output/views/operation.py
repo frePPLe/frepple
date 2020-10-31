@@ -15,7 +15,7 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-from django.db import connections
+from django.db import connections, transaction
 from django.db.models.expressions import RawSQL
 from django.utils.translation import gettext_lazy as _
 from django.utils.text import format_lazy
@@ -348,52 +348,53 @@ class OverviewReport(GridPivot):
         )
 
         # Convert the SQl results to Python
-        with connections[request.database].chunked_cursor() as cursor_chunked:
-            cursor_chunked.execute(query, baseparams)
-            for row in cursor_chunked:
-                yield {
-                    "operation": row[0],
-                    "location": row[1],
-                    "item": row[2],
-                    "description": row[3],
-                    "category": row[4],
-                    "subcategory": row[5],
-                    "type": row[6],
-                    "duration": row[7],
-                    "duration_per": row[8],
-                    "fence": row[9],
-                    "posttime": row[10],
-                    "sizeminimum": row[11],
-                    "sizemultiple": row[12],
-                    "sizemaximum": row[13],
-                    "priority": row[14],
-                    "effective_start": row[15],
-                    "effective_end": row[16],
-                    "cost": row[17],
-                    "search": row[18],
-                    "source": row[19],
-                    "lastmodified": row[20],
-                    "location__description": row[21],
-                    "location__category": row[22],
-                    "location__subcategory": row[23],
-                    "location__available": row[24],
-                    "location__lastmodified": row[25],
-                    "item__description": row[26],
-                    "item__category": row[27],
-                    "item__subcategory": row[28],
-                    "item__owner": row[29],
-                    "item__source": row[30],
-                    "item__lastmodified": row[31],
-                    "bucket": row[32],
-                    "startdate": row[33].date(),
-                    "enddate": row[34].date(),
-                    "proposed_start": row[35],
-                    "total_start": row[36],
-                    "proposed_end": row[37],
-                    "total_end": row[38],
-                    "production_proposed": row[39],
-                    "production_total": row[40],
-                }
+        with transaction.atomic(using=request.database):
+            with connections[request.database].chunked_cursor() as cursor_chunked:
+                cursor_chunked.execute(query, baseparams)
+                for row in cursor_chunked:
+                    yield {
+                        "operation": row[0],
+                        "location": row[1],
+                        "item": row[2],
+                        "description": row[3],
+                        "category": row[4],
+                        "subcategory": row[5],
+                        "type": row[6],
+                        "duration": row[7],
+                        "duration_per": row[8],
+                        "fence": row[9],
+                        "posttime": row[10],
+                        "sizeminimum": row[11],
+                        "sizemultiple": row[12],
+                        "sizemaximum": row[13],
+                        "priority": row[14],
+                        "effective_start": row[15],
+                        "effective_end": row[16],
+                        "cost": row[17],
+                        "search": row[18],
+                        "source": row[19],
+                        "lastmodified": row[20],
+                        "location__description": row[21],
+                        "location__category": row[22],
+                        "location__subcategory": row[23],
+                        "location__available": row[24],
+                        "location__lastmodified": row[25],
+                        "item__description": row[26],
+                        "item__category": row[27],
+                        "item__subcategory": row[28],
+                        "item__owner": row[29],
+                        "item__source": row[30],
+                        "item__lastmodified": row[31],
+                        "bucket": row[32],
+                        "startdate": row[33].date(),
+                        "enddate": row[34].date(),
+                        "proposed_start": row[35],
+                        "total_start": row[36],
+                        "proposed_end": row[37],
+                        "total_end": row[38],
+                        "production_proposed": row[39],
+                        "production_total": row[40],
+                    }
 
 
 class PurchaseReport(GridPivot):
@@ -748,10 +749,11 @@ class PurchaseReport(GridPivot):
         )
 
         # Convert the SQL results to Python
-        with connections[request.database].chunked_cursor() as cursor_chunked:
-            cursor_chunked.execute(query, baseparams)
-            for row in cursor_chunked:
-                yield row[0]
+        with transaction.atomic(using=request.database):
+            with connections[request.database].chunked_cursor() as cursor_chunked:
+                cursor_chunked.execute(query, baseparams)
+                for row in cursor_chunked:
+                    yield row[0]
 
 
 class DistributionReport(GridPivot):
@@ -1101,7 +1103,8 @@ class DistributionReport(GridPivot):
         )
 
         # Convert the SQL results to Python
-        with connections[request.database].chunked_cursor() as cursor_chunked:
-            cursor_chunked.execute(query, baseparams)
-            for row in cursor_chunked:
-                yield row[0]
+        with transaction.atomic(using=request.database):
+            with connections[request.database].chunked_cursor() as cursor_chunked:
+                cursor_chunked.execute(query, baseparams)
+                for row in cursor_chunked:
+                    yield row[0]

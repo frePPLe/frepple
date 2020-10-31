@@ -16,7 +16,7 @@
 #
 from datetime import timedelta, datetime
 
-from django.db import connections
+from django.db import connections, transaction
 from django.db.models import Q
 from django.db.models.expressions import RawSQL
 from django.utils.encoding import force_text
@@ -466,97 +466,108 @@ class OverviewReport(GridPivot):
         )
 
         # Build the python result
-        with connections[request.database].chunked_cursor() as cursor_chunked:
-            cursor_chunked.execute(
-                query,
-                (
-                    request.report_startdate,  # startoh
-                    request.report_startdate,
-                    request.report_startdate,
-                    request.report_startdate,
-                    request.report_startdate,  # safetystock
-                )
-                + (request.report_startdate,) * 9
-                + baseparams  # ongoing
-                + (  # opplanmat
-                    request.report_bucket,
-                    request.report_startdate,
-                    request.report_enddate,
-                ),  # bucket d
-            )
-            for row in cursor_chunked:
-                numfields = len(row)
-                res = {
-                    "buffer": row[0],
-                    "item": row[1],
-                    "location": row[2],
-                    "item__description": row[3],
-                    "item__type": row[4],
-                    "item__category": row[5],
-                    "item__subcategory": row[6],
-                    "item__cost": row[7],
-                    "item__owner": row[8],
-                    "item__source": row[9],
-                    "item__lastmodified": row[10],
-                    "location__description": row[11],
-                    "location__category": row[12],
-                    "location__subcategory": row[13],
-                    "location__available": row[14],
-                    "location__owner": row[15],
-                    "location__source": row[16],
-                    "location__lastmodified": row[17],
-                    "batch": row[18],
-                    "startoh": row[numfields - 6]["onhand"]
-                    if row[numfields - 6]
-                    else 0,
-                    "startohdoc": max(
-                        0,
-                        0
-                        if (row[numfields - 6]["onhand"] if row[numfields - 6] else 0)
-                        <= 0
-                        else (
-                            999
-                            if row[numfields - 6]["periodofcover"] == 86313600
-                            else (
-                                datetime.strptime(
-                                    row[numfields - 6]["flowdate"], "%Y-%m-%d %H:%M:%S"
-                                )
-                                + timedelta(seconds=row[numfields - 6]["periodofcover"])
-                                - row[numfields - 4]
-                            ).days
-                            if row[numfields - 6]["periodofcover"]
-                            else 999
-                        ),
-                    ),
-                    "bucket": row[numfields - 5],
-                    "startdate": row[numfields - 4],
-                    "enddate": row[numfields - 3],
-                    "safetystock": row[numfields - 2] or 0,
-                    "consumed": row[numfields - 1]["consumed"] or 0,
-                    "consumedMO": row[numfields - 1]["consumedMO"] or 0,
-                    "consumedDO": row[numfields - 1]["consumedDO"] or 0,
-                    "consumedSO": row[numfields - 1]["consumedSO"] or 0,
-                    "produced": row[numfields - 1]["produced"] or 0,
-                    "producedMO": row[numfields - 1]["producedMO"] or 0,
-                    "producedDO": row[numfields - 1]["producedDO"] or 0,
-                    "producedPO": row[numfields - 1]["producedPO"] or 0,
-                    "total_in_progress": row[numfields - 1]["total_in_progress"] or 0,
-                    "work_in_progress_mo": row[numfields - 1]["work_in_progress_mo"]
-                    or 0,
-                    "on_order_po": row[numfields - 1]["on_order_po"] or 0,
-                    "in_transit_do": row[numfields - 1]["in_transit_do"] or 0,
-                    "endoh": float(
-                        row[numfields - 6]["onhand"] if row[numfields - 6] else 0
+        with transaction.atomic(using=request.database):
+            with connections[request.database].chunked_cursor() as cursor_chunked:
+                cursor_chunked.execute(
+                    query,
+                    (
+                        request.report_startdate,  # startoh
+                        request.report_startdate,
+                        request.report_startdate,
+                        request.report_startdate,
+                        request.report_startdate,  # safetystock
                     )
-                    + float(row[numfields - 1]["produced"] or 0)
-                    - float(row[numfields - 1]["consumed"] or 0),
-                }
-                # Add attribute fields
-                idx = 18
-                for f in getAttributeFields(Item, related_name_prefix="item"):
-                    res[f.field_name] = row[idx]
-                    idx += 1
-                for f in getAttributeFields(Location, related_name_prefix="location"):
-                    res[f.field_name] = row[idx]
-                    idx += 1
-                yield res
+                    + (request.report_startdate,) * 9
+                    + baseparams  # ongoing
+                    + (  # opplanmat
+                        request.report_bucket,
+                        request.report_startdate,
+                        request.report_enddate,
+                    ),  # bucket d
+                )
+                for row in cursor_chunked:
+                    numfields = len(row)
+                    res = {
+                        "buffer": row[0],
+                        "item": row[1],
+                        "location": row[2],
+                        "item__description": row[3],
+                        "item__type": row[4],
+                        "item__category": row[5],
+                        "item__subcategory": row[6],
+                        "item__cost": row[7],
+                        "item__owner": row[8],
+                        "item__source": row[9],
+                        "item__lastmodified": row[10],
+                        "location__description": row[11],
+                        "location__category": row[12],
+                        "location__subcategory": row[13],
+                        "location__available": row[14],
+                        "location__owner": row[15],
+                        "location__source": row[16],
+                        "location__lastmodified": row[17],
+                        "batch": row[18],
+                        "startoh": row[numfields - 6]["onhand"]
+                        if row[numfields - 6]
+                        else 0,
+                        "startohdoc": max(
+                            0,
+                            0
+                            if (
+                                row[numfields - 6]["onhand"]
+                                if row[numfields - 6]
+                                else 0
+                            )
+                            <= 0
+                            else (
+                                999
+                                if row[numfields - 6]["periodofcover"] == 86313600
+                                else (
+                                    datetime.strptime(
+                                        row[numfields - 6]["flowdate"],
+                                        "%Y-%m-%d %H:%M:%S",
+                                    )
+                                    + timedelta(
+                                        seconds=row[numfields - 6]["periodofcover"]
+                                    )
+                                    - row[numfields - 4]
+                                ).days
+                                if row[numfields - 6]["periodofcover"]
+                                else 999
+                            ),
+                        ),
+                        "bucket": row[numfields - 5],
+                        "startdate": row[numfields - 4],
+                        "enddate": row[numfields - 3],
+                        "safetystock": row[numfields - 2] or 0,
+                        "consumed": row[numfields - 1]["consumed"] or 0,
+                        "consumedMO": row[numfields - 1]["consumedMO"] or 0,
+                        "consumedDO": row[numfields - 1]["consumedDO"] or 0,
+                        "consumedSO": row[numfields - 1]["consumedSO"] or 0,
+                        "produced": row[numfields - 1]["produced"] or 0,
+                        "producedMO": row[numfields - 1]["producedMO"] or 0,
+                        "producedDO": row[numfields - 1]["producedDO"] or 0,
+                        "producedPO": row[numfields - 1]["producedPO"] or 0,
+                        "total_in_progress": row[numfields - 1]["total_in_progress"]
+                        or 0,
+                        "work_in_progress_mo": row[numfields - 1]["work_in_progress_mo"]
+                        or 0,
+                        "on_order_po": row[numfields - 1]["on_order_po"] or 0,
+                        "in_transit_do": row[numfields - 1]["in_transit_do"] or 0,
+                        "endoh": float(
+                            row[numfields - 6]["onhand"] if row[numfields - 6] else 0
+                        )
+                        + float(row[numfields - 1]["produced"] or 0)
+                        - float(row[numfields - 1]["consumed"] or 0),
+                    }
+                    # Add attribute fields
+                    idx = 18
+                    for f in getAttributeFields(Item, related_name_prefix="item"):
+                        res[f.field_name] = row[idx]
+                        idx += 1
+                    for f in getAttributeFields(
+                        Location, related_name_prefix="location"
+                    ):
+                        res[f.field_name] = row[idx]
+                        idx += 1
+                    yield res

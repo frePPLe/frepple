@@ -21,7 +21,7 @@ from time import time
 from datetime import datetime
 from dateutil.parser import parse
 
-from django.db import connections, DEFAULT_DB_ALIAS
+from django.db import connections, transaction, DEFAULT_DB_ALIAS
 
 from freppledb.boot import getAttributes
 from freppledb.common.models import Parameter
@@ -169,32 +169,33 @@ class loadParameter(LoadTask):
     def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
         import frepple
 
-        with connections[database].chunked_cursor() as cursor:
-            cursor.execute(
-                """
+        with transaction.atomic(using=database):
+            with connections[database].chunked_cursor() as cursor:
+                cursor.execute(
+                    """
                 SELECT name, value
                 FROM common_parameter
                 where name in ('currentdate', 'plan.calendar', 'COMPLETED.allow_future')
                 """
-            )
-            default_current_date = True
-            for rec in cursor:
-                if rec[0] == "currentdate":
-                    try:
-                        frepple.settings.current = parse(rec[1])
-                        default_current_date = False
-                    except Exception:
-                        pass
-                elif rec[0] == "plan.calendar" and rec[1]:
-                    frepple.settings.calendar = frepple.calendar(name=rec[1])
-                    logger.info("Bucketized planning using calendar %s" % rec[1])
-                elif rec[0] == "COMPLETED.allow_future":
-                    frepple.settings.completed_allow_future = (
-                        str(rec[1]).lower() == "true"
-                    )
-            if default_current_date:
-                frepple.settings.current = datetime.now().replace(microsecond=0)
-            logger.info("Current date: %s" % frepple.settings.current)
+                )
+                default_current_date = True
+                for rec in cursor:
+                    if rec[0] == "currentdate":
+                        try:
+                            frepple.settings.current = parse(rec[1])
+                            default_current_date = False
+                        except Exception:
+                            pass
+                    elif rec[0] == "plan.calendar" and rec[1]:
+                        frepple.settings.calendar = frepple.calendar(name=rec[1])
+                        logger.info("Bucketized planning using calendar %s" % rec[1])
+                    elif rec[0] == "COMPLETED.allow_future":
+                        frepple.settings.completed_allow_future = (
+                            str(rec[1]).lower() == "true"
+                        )
+                if default_current_date:
+                    frepple.settings.current = datetime.now().replace(microsecond=0)
+                logger.info("Current date: %s" % frepple.settings.current)
 
 
 @PlanTaskRegistry.register
@@ -212,48 +213,49 @@ class loadLocations(LoadTask):
         else:
             filter_where = ""
 
-        with connections[database].chunked_cursor() as cursor:
-            cnt = 0
-            starttime = time()
+        with transaction.atomic(using=database):
+            with connections[database].chunked_cursor() as cursor:
+                cnt = 0
+                starttime = time()
 
-            attrs = [f[0] for f in getAttributes(Location)]
-            if attrs:
-                attrsql = ", %s" % ", ".join(attrs)
-            else:
-                attrsql = ""
+                attrs = [f[0] for f in getAttributes(Location)]
+                if attrs:
+                    attrsql = ", %s" % ", ".join(attrs)
+                else:
+                    attrsql = ""
 
-            cursor.execute(
-                """
+                cursor.execute(
+                    """
                 SELECT
                   name, description, owner_id, available_id, category, subcategory, source %s
                 FROM location %s
                 """
-                % (attrsql, filter_where)
-            )
+                    % (attrsql, filter_where)
+                )
 
-            for i in cursor:
-                cnt += 1
-                try:
-                    x = frepple.location(
-                        name=i[0],
-                        description=i[1],
-                        category=i[4],
-                        subcategory=i[5],
-                        source=i[6],
-                    )
-                    if i[2]:
-                        x.owner = frepple.location(name=i[2])
-                    if i[3]:
-                        x.available = frepple.calendar(name=i[3])
-                    idx = 7
-                    for a in attrs:
-                        setattr(x, a, i[idx])
-                        idx += 1
-                except Exception as e:
-                    logger.error("**** %s ****" % e)
-            logger.info(
-                "Loaded %d locations in %.2f seconds" % (cnt, time() - starttime)
-            )
+                for i in cursor:
+                    cnt += 1
+                    try:
+                        x = frepple.location(
+                            name=i[0],
+                            description=i[1],
+                            category=i[4],
+                            subcategory=i[5],
+                            source=i[6],
+                        )
+                        if i[2]:
+                            x.owner = frepple.location(name=i[2])
+                        if i[3]:
+                            x.available = frepple.calendar(name=i[3])
+                        idx = 7
+                        for a in attrs:
+                            setattr(x, a, i[idx])
+                            idx += 1
+                    except Exception as e:
+                        logger.error("**** %s ****" % e)
+                logger.info(
+                    "Loaded %d locations in %.2f seconds" % (cnt, time() - starttime)
+                )
 
 
 @PlanTaskRegistry.register
@@ -270,11 +272,12 @@ class loadCalendars(LoadTask):
         else:
             filter_where = ""
 
-        with connections[database].chunked_cursor() as cursor:
-            cnt = 0
-            starttime = time()
-            cursor.execute(
-                """
+        with transaction.atomic(using=database):
+            with connections[database].chunked_cursor() as cursor:
+                cnt = 0
+                starttime = time()
+                cursor.execute(
+                    """
                 SELECT
                   name, defaultvalue, source, 0 hidden
                 FROM calendar %s
@@ -284,17 +287,19 @@ class loadCalendars(LoadTask):
                 FROM common_bucket
                 order by name asc
                 """
-                % filter_where
-            )
-            for i in cursor:
-                cnt += 1
-                try:
-                    frepple.calendar(name=i[0], default=i[1], source=i[2], hidden=i[3])
-                except Exception as e:
-                    logger.error("**** %s ****" % e)
-            logger.info(
-                "Loaded %d calendars in %.2f seconds" % (cnt, time() - starttime)
-            )
+                    % filter_where
+                )
+                for i in cursor:
+                    cnt += 1
+                    try:
+                        frepple.calendar(
+                            name=i[0], default=i[1], source=i[2], hidden=i[3]
+                        )
+                    except Exception as e:
+                        logger.error("**** %s ****" % e)
+                logger.info(
+                    "Loaded %d calendars in %.2f seconds" % (cnt, time() - starttime)
+                )
 
 
 @PlanTaskRegistry.register
@@ -312,11 +317,12 @@ class loadCalendarBuckets(LoadTask):
         else:
             filter_where = ""
 
-        with connections[database].chunked_cursor() as cursor:
-            cnt = 0
-            starttime = time()
-            cursor.execute(
-                """
+        with transaction.atomic(using=database):
+            with connections[database].chunked_cursor() as cursor:
+                cnt = 0
+                starttime = time()
+                cursor.execute(
+                    """
                 SELECT
                   calendar_id, startdate, enddate, priority, value,
                   sunday, monday, tuesday, wednesday, thursday, friday, saturday,
@@ -330,52 +336,53 @@ class loadCalendarBuckets(LoadTask):
                 FROM common_bucketdetail
                 ORDER BY calendar_id, startdate desc
                 """
-                % filter_where
-            )
-            prevcal = None
-            for i in cursor:
-                cnt += 1
-                try:
-                    days = 0
-                    if i[5]:
-                        days += 1
-                    if i[6]:
-                        days += 2
-                    if i[7]:
-                        days += 4
-                    if i[8]:
-                        days += 8
-                    if i[9]:
-                        days += 16
-                    if i[10]:
-                        days += 32
-                    if i[11]:
-                        days += 64
-                    if i[0] != prevcal:
-                        cal = frepple.calendar(name=i[0])
-                        prevcal = i[0]
-                    b = frepple.bucket(
-                        calendar=cal,
-                        start=i[1],
-                        end=i[2] if i[2] else datetime(2030, 12, 31),
-                        priority=i[3],
-                        source=i[14],
-                        value=i[4],
-                        days=days,
-                    )
-                    if i[12]:
-                        b.starttime = (
-                            i[12].hour * 3600 + i[12].minute * 60 + i[12].second
+                    % filter_where
+                )
+                prevcal = None
+                for i in cursor:
+                    cnt += 1
+                    try:
+                        days = 0
+                        if i[5]:
+                            days += 1
+                        if i[6]:
+                            days += 2
+                        if i[7]:
+                            days += 4
+                        if i[8]:
+                            days += 8
+                        if i[9]:
+                            days += 16
+                        if i[10]:
+                            days += 32
+                        if i[11]:
+                            days += 64
+                        if i[0] != prevcal:
+                            cal = frepple.calendar(name=i[0])
+                            prevcal = i[0]
+                        b = frepple.bucket(
+                            calendar=cal,
+                            start=i[1],
+                            end=i[2] if i[2] else datetime(2030, 12, 31),
+                            priority=i[3],
+                            source=i[14],
+                            value=i[4],
+                            days=days,
                         )
-                    if i[13]:
-                        b.endtime = (
-                            i[13].hour * 3600 + i[13].minute * 60 + i[13].second + 1
-                        )
-                except Exception as e:
-                    logger.error("**** %s ****" % e)
-            logger.info(
-                "Loaded %d calendar buckets in %.2f seconds" % (cnt, time() - starttime)
-            )
+                        if i[12]:
+                            b.starttime = (
+                                i[12].hour * 3600 + i[12].minute * 60 + i[12].second
+                            )
+                        if i[13]:
+                            b.endtime = (
+                                i[13].hour * 3600 + i[13].minute * 60 + i[13].second + 1
+                            )
+                    except Exception as e:
+                        logger.error("**** %s ****" % e)
+                logger.info(
+                    "Loaded %d calendar buckets in %.2f seconds"
+                    % (cnt, time() - starttime)
+                )
 
 
 @PlanTaskRegistry.register
@@ -393,34 +400,35 @@ class loadCustomers(LoadTask):
         else:
             filter_where = ""
 
-        with connections[database].chunked_cursor() as cursor:
-            cnt = 0
-            starttime = time()
-            cursor.execute(
-                """
+        with transaction.atomic(using=database):
+            with connections[database].chunked_cursor() as cursor:
+                cnt = 0
+                starttime = time()
+                cursor.execute(
+                    """
                 SELECT
                   name, description, owner_id, category, subcategory, source
                 FROM customer %s
                 """
-                % filter_where
-            )
-            for i in cursor:
-                cnt += 1
-                try:
-                    x = frepple.customer(
-                        name=i[0],
-                        description=i[1],
-                        category=i[3],
-                        subcategory=i[4],
-                        source=i[5],
-                    )
-                    if i[2]:
-                        x.owner = frepple.customer(name=i[2])
-                except Exception as e:
-                    logger.error("**** %s ****" % e)
-            logger.info(
-                "Loaded %d customers in %.2f seconds" % (cnt, time() - starttime)
-            )
+                    % filter_where
+                )
+                for i in cursor:
+                    cnt += 1
+                    try:
+                        x = frepple.customer(
+                            name=i[0],
+                            description=i[1],
+                            category=i[3],
+                            subcategory=i[4],
+                            source=i[5],
+                        )
+                        if i[2]:
+                            x.owner = frepple.customer(name=i[2])
+                    except Exception as e:
+                        logger.error("**** %s ****" % e)
+                logger.info(
+                    "Loaded %d customers in %.2f seconds" % (cnt, time() - starttime)
+                )
 
 
 @PlanTaskRegistry.register
@@ -438,38 +446,39 @@ class loadSuppliers(LoadTask):
         else:
             filter_where = ""
 
-        with connections[database].chunked_cursor() as cursor:
-            cnt = 0
-            starttime = time()
-            cursor.execute(
-                """
+        with transaction.atomic(using=database):
+            with connections[database].chunked_cursor() as cursor:
+                cnt = 0
+                starttime = time()
+                cursor.execute(
+                    """
                 SELECT
                   name, description, owner_id, category, subcategory, source, available_id
                 FROM supplier %s
                 """
-                % filter_where
-            )
-            for i in cursor:
-                cnt += 1
-                try:
-                    x = frepple.supplier(
-                        name=i[0],
-                        description=i[1],
-                        category=i[3],
-                        subcategory=i[4],
-                        source=i[5],
-                    )
-                    if i[2]:
-                        x.owner = frepple.supplier(name=i[2])
-                    if i[6]:
-                        frepple.location(name=i[0]).available = frepple.calendar(
-                            name=i[6]
+                    % filter_where
+                )
+                for i in cursor:
+                    cnt += 1
+                    try:
+                        x = frepple.supplier(
+                            name=i[0],
+                            description=i[1],
+                            category=i[3],
+                            subcategory=i[4],
+                            source=i[5],
                         )
-                except Exception as e:
-                    logger.error("**** %s ****" % e)
-            logger.info(
-                "Loaded %d suppliers in %.2f seconds" % (cnt, time() - starttime)
-            )
+                        if i[2]:
+                            x.owner = frepple.supplier(name=i[2])
+                        if i[6]:
+                            frepple.location(name=i[0]).available = frepple.calendar(
+                                name=i[6]
+                            )
+                    except Exception as e:
+                        logger.error("**** %s ****" % e)
+                logger.info(
+                    "Loaded %d suppliers in %.2f seconds" % (cnt, time() - starttime)
+                )
 
 
 @PlanTaskRegistry.register
@@ -588,10 +597,10 @@ class loadOperations(LoadTask):
                 """
             )
 
-        with connections[database].chunked_cursor() as cursor:
-
-            cursor.execute(
-                """
+        with transaction.atomic(using=database):
+            with connections[database].chunked_cursor() as cursor:
+                cursor.execute(
+                    """
                 SELECT
                   name, fence, posttime, sizeminimum, sizemultiple, sizemaximum,
                   type, duration, duration_per, location_id, cost, search, description,
@@ -600,93 +609,95 @@ class loadOperations(LoadTask):
                   (select type from item where item.name = operation.item_id)
                 FROM operation %s
                 """
-                % filter_where
-            )
-            for i in cursor:
-                cnt += 1
-                try:
-                    if not i[6] or i[6] == "fixed_time":
-                        x = frepple.operation_fixed_time(
-                            name=i[0],
-                            description=i[12],
-                            category=i[13],
-                            subcategory=i[14],
-                            source=i[15],
-                        )
-                        if i[7]:
-                            x.duration = i[7].total_seconds()
-                    elif i[6] == "time_per":
-                        x = frepple.operation_time_per(
-                            name=i[0],
-                            description=i[12],
-                            category=i[13],
-                            subcategory=i[14],
-                            source=i[15],
-                        )
-                        if i[7]:
-                            x.duration = i[7].total_seconds()
-                        if i[8]:
-                            x.duration_per = i[8].total_seconds()
-                    elif i[6] == "alternate":
-                        x = frepple.operation_alternate(
-                            name=i[0],
-                            description=i[12],
-                            category=i[13],
-                            subcategory=i[14],
-                            source=i[15],
-                        )
-                    elif i[6] == "split":
-                        x = frepple.operation_split(
-                            name=i[0],
-                            description=i[12],
-                            category=i[13],
-                            subcategory=i[14],
-                            source=i[15],
-                        )
-                    elif i[6] == "routing":
-                        x = frepple.operation_routing(
-                            name=i[0],
-                            description=i[12],
-                            category=i[13],
-                            subcategory=i[14],
-                            source=i[15],
-                        )
-                    else:
-                        raise ValueError("Operation type '%s' not recognized" % i[6])
-                    if i[1]:
-                        x.fence = i[1].total_seconds()
-                    if i[2]:
-                        x.posttime = i[2].total_seconds()
-                    if i[3] is not None:
-                        x.size_minimum = i[3]
-                    if i[4]:
-                        x.size_multiple = i[4]
-                    if i[5]:
-                        x.size_maximum = i[5]
-                    if i[9]:
-                        x.location = frepple.location(name=i[9])
-                    if i[10]:
-                        x.cost = i[10]
-                    if i[11]:
-                        x.search = i[11]
-                    if i[16]:
-                        if i[21] == "make to order":
-                            x.item = frepple.item_mto(name=i[16])
+                    % filter_where
+                )
+                for i in cursor:
+                    cnt += 1
+                    try:
+                        if not i[6] or i[6] == "fixed_time":
+                            x = frepple.operation_fixed_time(
+                                name=i[0],
+                                description=i[12],
+                                category=i[13],
+                                subcategory=i[14],
+                                source=i[15],
+                            )
+                            if i[7]:
+                                x.duration = i[7].total_seconds()
+                        elif i[6] == "time_per":
+                            x = frepple.operation_time_per(
+                                name=i[0],
+                                description=i[12],
+                                category=i[13],
+                                subcategory=i[14],
+                                source=i[15],
+                            )
+                            if i[7]:
+                                x.duration = i[7].total_seconds()
+                            if i[8]:
+                                x.duration_per = i[8].total_seconds()
+                        elif i[6] == "alternate":
+                            x = frepple.operation_alternate(
+                                name=i[0],
+                                description=i[12],
+                                category=i[13],
+                                subcategory=i[14],
+                                source=i[15],
+                            )
+                        elif i[6] == "split":
+                            x = frepple.operation_split(
+                                name=i[0],
+                                description=i[12],
+                                category=i[13],
+                                subcategory=i[14],
+                                source=i[15],
+                            )
+                        elif i[6] == "routing":
+                            x = frepple.operation_routing(
+                                name=i[0],
+                                description=i[12],
+                                category=i[13],
+                                subcategory=i[14],
+                                source=i[15],
+                            )
                         else:
-                            x.item = frepple.item_mts(name=i[16])
-                    if i[17] is not None:
-                        x.priority = i[17]
-                    if i[18]:
-                        x.effective_start = i[18]
-                    if i[19]:
-                        x.effective_end = i[19]
-                    if i[20]:
-                        x.available = frepple.calendar(name=i[20])
-                except Exception as e:
-                    logger.error("**** %s ****" % e)
-            logger.info(
-                "Loaded %d operations in %.2f seconds" % (cnt, time() - starttime)
-            )
+                            raise ValueError(
+                                "Operation type '%s' not recognized" % i[6]
+                            )
+                        if i[1]:
+                            x.fence = i[1].total_seconds()
+                        if i[2]:
+                            x.posttime = i[2].total_seconds()
+                        if i[3] is not None:
+                            x.size_minimum = i[3]
+                        if i[4]:
+                            x.size_multiple = i[4]
+                        if i[5]:
+                            x.size_maximum = i[5]
+                        if i[9]:
+                            x.location = frepple.location(name=i[9])
+                        if i[10]:
+                            x.cost = i[10]
+                        if i[11]:
+                            x.search = i[11]
+                        if i[16]:
+                            if i[21] == "make to order":
+                                x.item = frepple.item_mto(name=i[16])
+                            else:
+                                x.item = frepple.item_mts(name=i[16])
+                        if i[17] is not None:
+                            x.priority = i[17]
+                        if i[18]:
+                            x.effective_start = i[18]
+                        if i[19]:
+                            x.effective_end = i[19]
+                        if i[20]:
+                            x.available = frepple.calendar(name=i[20])
+                    except Exception as e:
+                        logger.error("**** %s ****" % e)
+                logger.info(
+                    "Loaded %d operations in %.2f seconds" % (cnt, time() - starttime)
+                )
 
 
 @PlanTaskRegistry.register
@@ -704,11 +715,12 @@ class loadSuboperations(LoadTask):
         else:
             filter_and = ""
 
-        with connections[database].chunked_cursor() as cursor:
-            cnt = 0
-            starttime = time()
-            cursor.execute(
-                """
+        with transaction.atomic(using=database):
+            with connections[database].chunked_cursor() as cursor:
+                cnt = 0
+                starttime = time()
+                cursor.execute(
+                    """
                 select
                   operation_id, suboperation_id, priority, effective_start, effective_end
                 from (
@@ -728,29 +740,30 @@ class loadSuboperations(LoadTask):
                     ) suboperations
                 order by operation_id, priority, suboperation_id
                 """
-                % (filter_and, filter_and)
-            )
-            curopername = None
-            for i in cursor:
-                cnt += 1
-                try:
-                    if i[0] != curopername:
-                        curopername = i[0]
-                        curoper = frepple.operation(name=curopername)
-                    sub = frepple.suboperation(
-                        owner=curoper,
-                        operation=frepple.operation(name=i[1]),
-                        priority=i[2],
-                    )
-                    if i[3]:
-                        sub.effective_start = i[3]
-                    if i[4]:
-                        sub.effective_end = i[4]
-                except Exception as e:
-                    logger.error("**** %s ****" % e)
-            logger.info(
-                "Loaded %d suboperations in %.2f seconds" % (cnt, time() - starttime)
-            )
+                    % (filter_and, filter_and)
+                )
+                curopername = None
+                for i in cursor:
+                    cnt += 1
+                    try:
+                        if i[0] != curopername:
+                            curopername = i[0]
+                            curoper = frepple.operation(name=curopername)
+                        sub = frepple.suboperation(
+                            owner=curoper,
+                            operation=frepple.operation(name=i[1]),
+                            priority=i[2],
+                        )
+                        if i[3]:
+                            sub.effective_start = i[3]
+                        if i[4]:
+                            sub.effective_end = i[4]
+                    except Exception as e:
+                        logger.error("**** %s ****" % e)
+                logger.info(
+                    "Loaded %d suboperations in %.2f seconds"
+                    % (cnt, time() - starttime)
+                )
 
 
 @PlanTaskRegistry.register
@@ -768,57 +781,60 @@ class loadItems(LoadTask):
         else:
             filter_where = ""
 
-        with connections[database].chunked_cursor() as cursor:
-            cnt = 0
-            starttime = time()
-            attrs = [f[0] for f in getAttributes(Item)]
-            if attrs:
-                attrsql = ", %s" % ", ".join(attrs)
-            else:
-                attrsql = ""
-            cursor.execute(
-                """
+        with transaction.atomic(using=database):
+            with connections[database].chunked_cursor() as cursor:
+                cnt = 0
+                starttime = time()
+                attrs = [f[0] for f in getAttributes(Item)]
+                if attrs:
+                    attrsql = ", %s" % ", ".join(attrs)
+                else:
+                    attrsql = ""
+                cursor.execute(
+                    """
                 select
                   name, description, owner_id,
                   cost, category, subcategory, source, type,
                   (select type from item p_item where item.owner_id = p_item.name) %s
                 from item %s
                 """
-                % (attrsql, filter_where)
-            )
-            for i in cursor:
-                cnt += 1
-                try:
-                    if i[7] == "make to order":
-                        x = frepple.item_mto(
-                            name=i[0],
-                            description=i[1],
-                            category=i[4],
-                            subcategory=i[5],
-                            source=i[6],
-                        )
-                    else:
-                        x = frepple.item_mts(
-                            name=i[0],
-                            description=i[1],
-                            category=i[4],
-                            subcategory=i[5],
-                            source=i[6],
-                        )
-                    if i[2]:
-                        if i[8] == "make to order":
-                            x.owner = frepple.item_mto(name=i[2])
+                    % (attrsql, filter_where)
+                )
+                for i in cursor:
+                    cnt += 1
+                    try:
+                        if i[7] == "make to order":
+                            x = frepple.item_mto(
+                                name=i[0],
+                                description=i[1],
+                                category=i[4],
+                                subcategory=i[5],
+                                source=i[6],
+                            )
                         else:
-                            x.owner = frepple.item_mts(name=i[2])
-                    if i[3]:
-                        x.cost = i[3]
-                    idx = 9
-                    for a in attrs:
-                        setattr(x, a, i[idx])
-                        idx += 1
-                except Exception as e:
-                    logger.error("**** %s ****" % e)
-            logger.info("Loaded %d items in %.2f seconds" % (cnt, time() - starttime))
+                            x = frepple.item_mts(
+                                name=i[0],
+                                description=i[1],
+                                category=i[4],
+                                subcategory=i[5],
+                                source=i[6],
+                            )
+                        if i[2]:
+                            if i[8] == "make to order":
+                                x.owner = frepple.item_mto(name=i[2])
+                            else:
+                                x.owner = frepple.item_mts(name=i[2])
+                        if i[3]:
+                            x.cost = i[3]
+                        idx = 9
+                        for a in attrs:
+                            setattr(x, a, i[idx])
+                            idx += 1
+                    except Exception as e:
+                        logger.error("**** %s ****" % e)
+                logger.info(
+                    "Loaded %d items in %.2f seconds" % (cnt, time() - starttime)
+                )
 
 
 @PlanTaskRegistry.register
@@ -836,11 +852,12 @@ class loadItemSuppliers(LoadTask):
         else:
             filter_where = ""
 
-        with connections[database].chunked_cursor() as cursor:
-            cnt = 0
-            starttime = time()
-            cursor.execute(
-                """
+        with transaction.atomic(using=database):
+            with connections[database].chunked_cursor() as cursor:
+                cnt = 0
+                starttime = time()
+                cursor.execute(
+                    """
                 SELECT
                   supplier_id, item_id, location_id, sizeminimum, sizemultiple, sizemaximum,
                   cost, priority, effective_start, effective_end, source, leadtime,
@@ -848,50 +865,51 @@ class loadItemSuppliers(LoadTask):
                 FROM itemsupplier %s
                 ORDER BY supplier_id, item_id, location_id, priority desc
                 """
-                % filter_where
-            )
-            cursuppliername = None
-            curitemname = None
-            for i in cursor:
-                cnt += 1
-                try:
-                    if i[0] != cursuppliername:
-                        cursuppliername = i[0]
-                        cursupplier = frepple.supplier(name=cursuppliername)
-                    if i[1] != curitemname:
-                        curitemname = i[1]
-                        curitem = frepple.item(name=curitemname)
-                    curitemsupplier = frepple.itemsupplier(
-                        supplier=cursupplier,
-                        item=curitem,
-                        source=i[9],
-                        leadtime=i[11].total_seconds() if i[11] else 0,
-                        fence=i[14].total_seconds() if i[14] else 0,
-                        resource_qty=i[13],
-                    )
-                    if i[2]:
-                        curitemsupplier.location = frepple.location(name=i[2])
-                    if i[3] is not None:
-                        curitemsupplier.size_minimum = i[3]
-                    if i[4] is not None:
-                        curitemsupplier.size_multiple = i[4]
-                    if i[5]:
-                        curitemsupplier.size_maximum = i[5]
-                    if i[6]:
-                        curitemsupplier.cost = i[6]
-                    if i[7] is not None:
-                        curitemsupplier.priority = i[7]
-                    if i[8]:
-                        curitemsupplier.effective_start = i[8]
-                    if i[9]:
-                        curitemsupplier.effective_end = i[9]
-                    if i[12]:
-                        curitemsupplier.resource = frepple.resource(name=i[12])
-                except Exception as e:
-                    logger.error("**** %s ****" % e)
-            logger.info(
-                "Loaded %d item suppliers in %.2f seconds" % (cnt, time() - starttime)
-            )
+                    % filter_where
+                )
+                cursuppliername = None
+                curitemname = None
+                for i in cursor:
+                    cnt += 1
+                    try:
+                        if i[0] != cursuppliername:
+                            cursuppliername = i[0]
+                            cursupplier = frepple.supplier(name=cursuppliername)
+                        if i[1] != curitemname:
+                            curitemname = i[1]
+                            curitem = frepple.item(name=curitemname)
+                        curitemsupplier = frepple.itemsupplier(
+                            supplier=cursupplier,
+                            item=curitem,
+                            source=i[9],
+                            leadtime=i[11].total_seconds() if i[11] else 0,
+                            fence=i[14].total_seconds() if i[14] else 0,
+                            resource_qty=i[13],
+                        )
+                        if i[2]:
+                            curitemsupplier.location = frepple.location(name=i[2])
+                        if i[3] is not None:
+                            curitemsupplier.size_minimum = i[3]
+                        if i[4] is not None:
+                            curitemsupplier.size_multiple = i[4]
+                        if i[5]:
+                            curitemsupplier.size_maximum = i[5]
+                        if i[6]:
+                            curitemsupplier.cost = i[6]
+                        if i[7] is not None:
+                            curitemsupplier.priority = i[7]
+                        if i[8]:
+                            curitemsupplier.effective_start = i[8]
+                        if i[9]:
+                            curitemsupplier.effective_end = i[9]
+                        if i[12]:
+                            curitemsupplier.resource = frepple.resource(name=i[12])
+                    except Exception as e:
+                        logger.error("**** %s ****" % e)
+                logger.info(
+                    "Loaded %d item suppliers in %.2f seconds"
+                    % (cnt, time() - starttime)
+                )
 
 
 @PlanTaskRegistry.register
@@ -909,11 +927,12 @@ class loadItemDistributions(LoadTask):
         else:
             filter_where = ""
 
-        with connections[database].chunked_cursor() as cursor:
-            cnt = 0
-            starttime = time()
-            cursor.execute(
-                """
+        with transaction.atomic(using=database):
+            with connections[database].chunked_cursor() as cursor:
+                cnt = 0
+                starttime = time()
+                cursor.execute(
+                    """
                 SELECT
                   origin_id, item_id, location_id, sizeminimum, sizemultiple, sizemaximum,
                   cost, priority, effective_start, effective_end, source,
@@ -921,51 +940,53 @@ class loadItemDistributions(LoadTask):
                 FROM itemdistribution %s
                 ORDER BY origin_id, item_id, location_id, priority desc
                 """
-                % filter_where
-            )
-            curoriginname = None
-            curitemname = None
-            for i in cursor:
-                cnt += 1
-                try:
-                    if i[0] != curoriginname:
-                        curoriginname = i[0]
-                        curorigin = frepple.location(name=curoriginname)
-                    if i[1] != curitemname:
-                        curitemname = i[1]
-                        curitem = frepple.item(name=curitemname)
-                    curitemdistribution = frepple.itemdistribution(
-                        origin=curorigin,
-                        item=curitem,
-                        source=i[10],
-                        leadtime=i[11].total_seconds() if i[11] else 0,
-                        fence=i[14].total_seconds() if i[14] else 0,
-                        resource_qty=i[13],
-                    )
-                    if i[2]:
-                        curitemdistribution.destination = frepple.location(name=i[2])
-                    if i[3] is not None:
-                        curitemdistribution.size_minimum = i[3]
-                    if i[4] is not None:
-                        curitemdistribution.size_multiple = i[4]
-                    if i[5]:
-                        curitemdistribution.size_maximum = i[5]
-                    if i[6]:
-                        curitemdistribution.cost = i[6]
-                    if i[7] is not None:
-                        curitemdistribution.priority = i[7]
-                    if i[8]:
-                        curitemdistribution.effective_start = i[8]
-                    if i[9]:
-                        curitemdistribution.effective_end = i[9]
-                    if i[12]:
-                        curitemdistribution.resource = frepple.resource(name=i[12])
-                except Exception as e:
-                    logger.error("**** %s ****" % e)
-            logger.info(
-                "Loaded %d item distributions in %.2f seconds"
-                % (cnt, time() - starttime)
-            )
+                    % filter_where
+                )
+                curoriginname = None
+                curitemname = None
+                for i in cursor:
+                    cnt += 1
+                    try:
+                        if i[0] != curoriginname:
+                            curoriginname = i[0]
+                            curorigin = frepple.location(name=curoriginname)
+                        if i[1] != curitemname:
+                            curitemname = i[1]
+                            curitem = frepple.item(name=curitemname)
+                        curitemdistribution = frepple.itemdistribution(
+                            origin=curorigin,
+                            item=curitem,
+                            source=i[10],
+                            leadtime=i[11].total_seconds() if i[11] else 0,
+                            fence=i[14].total_seconds() if i[14] else 0,
+                            resource_qty=i[13],
+                        )
+                        if i[2]:
+                            curitemdistribution.destination = frepple.location(
+                                name=i[2]
+                            )
+                        if i[3] is not None:
+                            curitemdistribution.size_minimum = i[3]
+                        if i[4] is not None:
+                            curitemdistribution.size_multiple = i[4]
+                        if i[5]:
+                            curitemdistribution.size_maximum = i[5]
+                        if i[6]:
+                            curitemdistribution.cost = i[6]
+                        if i[7] is not None:
+                            curitemdistribution.priority = i[7]
+                        if i[8]:
+                            curitemdistribution.effective_start = i[8]
+                        if i[9]:
+                            curitemdistribution.effective_end = i[9]
+                        if i[12]:
+                            curitemdistribution.resource = frepple.resource(name=i[12])
+                    except Exception as e:
+                        logger.error("**** %s ****" % e)
+                logger.info(
+                    "Loaded %d item distributions in %.2f seconds"
+                    % (cnt, time() - starttime)
+                )
 
 
 @PlanTaskRegistry.register
@@ -983,11 +1004,12 @@ class loadBuffers(LoadTask):
         else:
             filter_where = ""
 
-        with connections[database].chunked_cursor() as cursor:
-            cnt = 0
-            starttime = time()
-            cursor.execute(
-                """
+        with transaction.atomic(using=database):
+            with connections[database].chunked_cursor() as cursor:
+                cnt = 0
+                starttime = time()
+                cursor.execute(
+                    """
                 select
                   case
                   when batch is not null
@@ -1017,45 +1039,47 @@ class loadBuffers(LoadTask):
                     item_id ||' @ '||location_id
                   end
                 """
-                % filter_where
-            )
-            for i in cursor:
-                cnt += 1
-                if i[7] == "infinite":
-                    b = frepple.buffer_infinite(
-                        name=i[0],
-                        description=i[1],
-                        location=frepple.location(name=i[2]),
-                        item=frepple.item(name=i[3]),
-                        batch=i[12],
-                        onhand=max(i[4] or 0, 0),
-                        category=i[9],
-                        subcategory=i[10],
-                        source=i[11],
-                    )
-                elif not i[7] or i[7] == "default":
-                    b = frepple.buffer(
-                        name=i[0],
-                        description=i[1],
-                        location=frepple.location(name=i[2]),
-                        item=frepple.item(name=i[3]),
-                        batch=i[12],
-                        onhand=max(i[4] or 0, 0),
-                        category=i[9],
-                        subcategory=i[10],
-                        source=i[11],
-                    )
-                    if i[8]:
-                        b.mininterval = i[8].total_seconds()
-                else:
-                    raise ValueError("Buffer type '%s' not recognized" % i[7])
-                if i[10] == "tool":
-                    b.tool = True
-                if i[5]:
-                    b.minimum = i[5]
-                if i[6]:
-                    b.minimum_calendar = frepple.calendar(name=i[6])
-            logger.info("Loaded %d buffers in %.2f seconds" % (cnt, time() - starttime))
+                    % filter_where
+                )
+                for i in cursor:
+                    cnt += 1
+                    if i[7] == "infinite":
+                        b = frepple.buffer_infinite(
+                            name=i[0],
+                            description=i[1],
+                            location=frepple.location(name=i[2]),
+                            item=frepple.item(name=i[3]),
+                            batch=i[12],
+                            onhand=max(i[4] or 0, 0),
+                            category=i[9],
+                            subcategory=i[10],
+                            source=i[11],
+                        )
+                    elif not i[7] or i[7] == "default":
+                        b = frepple.buffer(
+                            name=i[0],
+                            description=i[1],
+                            location=frepple.location(name=i[2]),
+                            item=frepple.item(name=i[3]),
+                            batch=i[12],
+                            onhand=max(i[4] or 0, 0),
+                            category=i[9],
+                            subcategory=i[10],
+                            source=i[11],
+                        )
+                        if i[8]:
+                            b.mininterval = i[8].total_seconds()
+                    else:
+                        raise ValueError("Buffer type '%s' not recognized" % i[7])
+                    if i[10] == "tool":
+                        b.tool = True
+                    if i[5]:
+                        b.minimum = i[5]
+                    if i[6]:
+                        b.minimum_calendar = frepple.calendar(name=i[6])
+                logger.info(
+                    "Loaded %d buffers in %.2f seconds" % (cnt, time() - starttime)
+                )
 
 
 @PlanTaskRegistry.register
@@ -1073,60 +1097,63 @@ class loadSetupMatrices(LoadTask):
         else:
             filter_where = ""
 
-        with connections[database].chunked_cursor() as cursor:
-            cnt = 0
-            starttime = time()
-            cursor.execute(
-                """
+        with transaction.atomic(using=database):
+            with connections[database].chunked_cursor() as cursor:
+                cnt = 0
+                starttime = time()
+                cursor.execute(
+                    """
                 SELECT name, source
                 FROM setupmatrix %s
                 ORDER BY name
                 """
-                % filter_where
-            )
-            for i in cursor:
-                cnt += 1
-                try:
-                    frepple.setupmatrix(name=i[0], source=i[1])
-                except Exception as e:
-                    logger.error("**** %s ****" % e)
-            logger.info(
-                "Loaded %d setup matrices in %.2f seconds" % (cnt, time() - starttime)
-            )
+                    % filter_where
+                )
+                for i in cursor:
+                    cnt += 1
+                    try:
+                        frepple.setupmatrix(name=i[0], source=i[1])
+                    except Exception as e:
+                        logger.error("**** %s ****" % e)
+                logger.info(
+                    "Loaded %d setup matrices in %.2f seconds"
+                    % (cnt, time() - starttime)
+                )
 
-        with connections[database].chunked_cursor() as cursor:
-            cnt = 0
-            starttime = time()
-            cursor.execute(
-                """
+        with transaction.atomic(using=database):
+            with connections[database].chunked_cursor() as cursor:
+                cnt = 0
+                starttime = time()
+                cursor.execute(
+                    """
                 SELECT
                   setupmatrix_id, priority, fromsetup, tosetup, duration,
                   cost, source, resource_id
                 FROM setuprule %s
                 ORDER BY setupmatrix_id, priority DESC
                 """
-                % filter_where
-            )
-            for i in cursor:
-                cnt += 1
-                try:
-                    r = frepple.setupmatrixrule(
-                        setupmatrix=frepple.setupmatrix(name=i[0]),
-                        priority=i[1],
-                        fromsetup=i[2],
-                        tosetup=i[3],
-                        duration=i[4].total_seconds() if i[4] else 0,
-                        cost=i[5],
-                        source=i[6],
-                    )
-                    if i[7]:
-                        r.resource = frepple.resource(name=i[7])
-                except Exception as e:
-                    logger.error("**** %s ****" % e)
-            logger.info(
-                "Loaded %d setup matrix rules in %.2f seconds"
-                % (cnt, time() - starttime)
-            )
+                    % filter_where
+                )
+                for i in cursor:
+                    cnt += 1
+                    try:
+                        r = frepple.setupmatrixrule(
+                            setupmatrix=frepple.setupmatrix(name=i[0]),
+                            priority=i[1],
+                            fromsetup=i[2],
+                            tosetup=i[3],
+                            duration=i[4].total_seconds() if i[4] else 0,
+                            cost=i[5],
+                            source=i[6],
+                        )
+                        if i[7]:
+                            r.resource = frepple.resource(name=i[7])
+                    except Exception as e:
+                        logger.error("**** %s ****" % e)
+                logger.info(
+                    "Loaded %d setup matrix rules in %.2f seconds"
+                    % (cnt, time() - starttime)
+                )
 
 
 @PlanTaskRegistry.register
@@ -1151,12 +1178,13 @@ class loadResources(LoadTask):
         else:
             attrsql = ""
 
-        with connections[database].chunked_cursor() as cursor:
-            cnt = 0
-            starttime = time()
-            Resource.rebuildHierarchy(database=database)
-            cursor.execute(
-                """
+        with transaction.atomic(using=database):
+            with connections[database].chunked_cursor() as cursor:
+                cnt = 0
+                starttime = time()
+                Resource.rebuildHierarchy(database=database)
+                cursor.execute(
+                    """
                 SELECT
                   name, description, maximum, maximum_calendar_id, location_id, type,
                   cost, maxearly, setup, setupmatrix_id, category, subcategory,
@@ -1165,77 +1193,77 @@ class loadResources(LoadTask):
                 FROM resource %s
                 ORDER BY lvl ASC, name
                 """
-                % (attrsql, filter_where)
-            )
-            for i in cursor:
-                cnt += 1
-                try:
-                    if i[5] == "infinite":
-                        x = frepple.resource_infinite(
-                            name=i[0],
-                            description=i[1],
-                            category=i[10],
-                            subcategory=i[11],
-                            source=i[13],
-                            constrained=i[17],
-                        )
-                        convert2cal = None
-                    elif not i[5] or i[5] == "default":
-                        x = frepple.resource_default(
-                            name=i[0],
-                            description=i[1],
-                            category=i[10],
-                            subcategory=i[11],
-                            source=i[13],
-                            constrained=i[17],
-                        )
-                        convert2cal = None
-                    elif i[5].startswith("buckets"):
-                        x = frepple.resource_buckets(
-                            name=i[0],
-                            description=i[1],
-                            category=i[10],
-                            subcategory=i[11],
-                            source=i[13],
-                            constrained=i[17],
-                        )
-                        convert2cal = i[5][8:]
-                    else:
-                        raise ValueError("Resource type '%s' not recognized" % i[5])
-                    if i[7] is not None:
-                        x.maxearly = i[7].total_seconds()
-                    if i[2] is not None:
-                        x.maximum = i[2]
-                    if i[3]:
-                        x.maximum_calendar = frepple.calendar(name=i[3])
-                    if i[4]:
-                        x.location = frepple.location(name=i[4])
-                    if i[6]:
-                        x.cost = i[6]
-                    if i[8]:
-                        x.setup = i[8]
-                    if i[12]:
-                        x.owner = frepple.resource(name=i[12])
-                    if i[14]:
-                        x.available = frepple.calendar(name=i[14])
-                    if i[15] is not None:
-                        x.efficiency = i[15]
-                    if i[16]:
-                        x.efficiency_calendar = frepple.calendar(name=i[16])
-                    if convert2cal:
-                        x.computeAvailability(
-                            frepple.calendar(name=convert2cal, action="C"),
-                            False,  # Debug flag
-                        )
-                    idx = 18
-                    for a in attrs:
-                        setattr(x, a, i[idx])
-                        idx += 1
-                except Exception as e:
-                    logger.error("**** %s ****" % e)
-            logger.info(
-                "Loaded %d resources in %.2f seconds" % (cnt, time() - starttime)
-            )
+                    % (attrsql, filter_where)
+                )
+                for i in cursor:
+                    cnt += 1
+                    try:
+                        if i[5] == "infinite":
+                            x = frepple.resource_infinite(
+                                name=i[0],
+                                description=i[1],
+                                category=i[10],
+                                subcategory=i[11],
+                                source=i[13],
+                                constrained=i[17],
+                            )
+                            convert2cal = None
+                        elif not i[5] or i[5] == "default":
+                            x = frepple.resource_default(
+                                name=i[0],
+                                description=i[1],
+                                category=i[10],
+                                subcategory=i[11],
+                                source=i[13],
+                                constrained=i[17],
+                            )
+                            convert2cal = None
+                        elif i[5].startswith("buckets"):
+                            x = frepple.resource_buckets(
+                                name=i[0],
+                                description=i[1],
+                                category=i[10],
+                                subcategory=i[11],
+                                source=i[13],
+                                constrained=i[17],
+                            )
+                            convert2cal = i[5][8:]
+                        else:
+                            raise ValueError("Resource type '%s' not recognized" % i[5])
+                        if i[7] is not None:
+                            x.maxearly = i[7].total_seconds()
+                        if i[2] is not None:
+                            x.maximum = i[2]
+                        if i[3]:
+                            x.maximum_calendar = frepple.calendar(name=i[3])
+                        if i[4]:
+                            x.location = frepple.location(name=i[4])
+                        if i[6]:
+                            x.cost = i[6]
+                        if i[8]:
+                            x.setup = i[8]
+                        if i[12]:
+                            x.owner = frepple.resource(name=i[12])
+                        if i[14]:
+                            x.available = frepple.calendar(name=i[14])
+                        if i[15] is not None:
+                            x.efficiency = i[15]
+                        if i[16]:
+                            x.efficiency_calendar = frepple.calendar(name=i[16])
+                        if convert2cal:
+                            x.computeAvailability(
+                                frepple.calendar(name=convert2cal, action="C"),
+                                False,  # Debug flag
+                            )
+                        idx = 18
+                        for a in attrs:
+                            setattr(x, a, i[idx])
+                            idx += 1
+                    except Exception as e:
+                        logger.error("**** %s ****" % e)
+                logger.info(
+                    "Loaded %d resources in %.2f seconds" % (cnt, time() - starttime)
+                )
 
 
 @PlanTaskRegistry.register
@@ -1253,36 +1281,38 @@ class loadResourceSkills(LoadTask):
         else:
             filter_where = ""
 
-        with connections[database].chunked_cursor() as cursor:
-            cnt = 0
-            starttime = time()
-            cursor.execute(
-                """
+        with transaction.atomic(using=database):
+            with connections[database].chunked_cursor() as cursor:
+                cnt = 0
+                starttime = time()
+                cursor.execute(
+                    """
                 SELECT
                   resource_id, skill_id, effective_start, effective_end, priority, source
                 FROM resourceskill %s
                 ORDER BY skill_id, priority, resource_id
                 """
-                % filter_where
-            )
-            for i in cursor:
-                cnt += 1
-                try:
-                    cur = frepple.resourceskill(
-                        resource=frepple.resource(name=i[0]),
-                        skill=frepple.skill(name=i[1]),
-                        priority=i[4] or 1,
-                        source=i[5],
-                    )
-                    if i[2]:
-                        cur.effective_start = i[2]
-                    if i[3]:
-                        cur.effective_end = i[3]
-                except Exception as e:
-                    logger.error("**** %s ****" % e)
-            logger.info(
-                "Loaded %d resource skills in %.2f seconds" % (cnt, time() - starttime)
-            )
+                    % filter_where
+                )
+                for i in cursor:
+                    cnt += 1
+                    try:
+                        cur = frepple.resourceskill(
+                            resource=frepple.resource(name=i[0]),
+                            skill=frepple.skill(name=i[1]),
+                            priority=i[4] or 1,
+                            source=i[5],
+                        )
+                        if i[2]:
+                            cur.effective_start = i[2]
+                        if i[3]:
+                            cur.effective_end = i[3]
+                    except Exception as e:
+                        logger.error("**** %s ****" % e)
+                logger.info(
+                    "Loaded %d resource skills in %.2f seconds"
+                    % (cnt, time() - starttime)
+                )
 
 
 @PlanTaskRegistry.register
@@ -1300,81 +1330,82 @@ class loadOperationMaterials(LoadTask):
         else:
             filter_where = ""
 
-        with connections[database].chunked_cursor() as cursor:
-            cnt = 0
-            starttime = time()
-            # Note: The sorting of the flows is not really necessary, but helps to make
-            # the planning progress consistent across runs and database engines.
-            cursor.execute(
-                """
+        with transaction.atomic(using=database):
+            with connections[database].chunked_cursor() as cursor:
+                cnt = 0
+                starttime = time()
+                # Note: The sorting of the flows is not really necessary, but helps to make
+                # the planning progress consistent across runs and database engines.
+                cursor.execute(
+                    """
                 SELECT
                   operation_id, item_id, quantity, type, effective_start, effective_end,
                   name, priority, search, source, transferbatch, quantity_fixed, "offset"
                 FROM operationmaterial %s
                 ORDER BY operation_id, priority, item_id
                 """
-                % filter_where
-            )
-            for i in cursor:
-                cnt += 1
-                try:
-                    curflow = frepple.flow(
-                        operation=frepple.operation(name=i[0]),
-                        item=frepple.item(name=i[1]),
-                        quantity=i[2],
-                        quantity_fixed=i[11],
-                        type="flow_%s" % i[3],
-                        source=i[9],
-                    )
-                    if i[4]:
-                        curflow.effective_start = i[4]
-                    if i[5]:
-                        curflow.effective_end = i[5]
-                    if i[6]:
-                        curflow.name = i[6]
-                    if i[7] is not None:
-                        curflow.priority = i[7]
-                    if i[8]:
-                        curflow.search = i[8]
-                    if i[3] == "transfer_batch":
-                        if i[10]:
-                            curflow.transferbatch = i[10]
-                    else:
-                        if i[12]:
-                            curflow.offset = i[12].total_seconds()
-                except Exception as e:
-                    logger.error("**** %s ****" % e)
-            logger.info(
-                "Loaded %d operation materials in %.2f seconds"
-                % (cnt, time() - starttime)
-            )
-
-            # Check for operations where:
-            #  - operation.item is still blank
-            #  - they have a single operationmaterial item with quantity > 0
-            # If found we update
-            starttime = time()
-            cnt = 0
-            logger.info("Auto-update operation items...")
-            for oper in frepple.operations():
-                if oper.hidden or oper.item or oper.hasSuperOperations:
-                    continue
-                item = None
-                for fl in oper.flows:
-                    if fl.quantity < 0 or fl.hidden:
-                        continue
-                    if item and item != fl.item:
-                        item = None
-                        break
-                    else:
-                        item = fl.item
-                if item:
+                    % filter_where
+                )
+                for i in cursor:
                     cnt += 1
-                    oper.item = item
-            logger.info(
-                "Auto-update of %s operation items in %.2f seconds"
-                % (cnt, time() - starttime)
-            )
+                    try:
+                        curflow = frepple.flow(
+                            operation=frepple.operation(name=i[0]),
+                            item=frepple.item(name=i[1]),
+                            quantity=i[2],
+                            quantity_fixed=i[11],
+                            type="flow_%s" % i[3],
+                            source=i[9],
+                        )
+                        if i[4]:
+                            curflow.effective_start = i[4]
+                        if i[5]:
+                            curflow.effective_end = i[5]
+                        if i[6]:
+                            curflow.name = i[6]
+                        if i[7] is not None:
+                            curflow.priority = i[7]
+                        if i[8]:
+                            curflow.search = i[8]
+                        if i[3] == "transfer_batch":
+                            if i[10]:
+                                curflow.transferbatch = i[10]
+                        else:
+                            if i[12]:
+                                curflow.offset = i[12].total_seconds()
+                    except Exception as e:
+                        logger.error("**** %s ****" % e)
+                logger.info(
+                    "Loaded %d operation materials in %.2f seconds"
+                    % (cnt, time() - starttime)
+                )
+
+                # Check for operations where:
+                #  - operation.item is still blank
+                #  - they have a single operationmaterial item with quantity > 0
+                # If found we update
+                starttime = time()
+                cnt = 0
+                logger.info("Auto-update operation items...")
+                for oper in frepple.operations():
+                    if oper.hidden or oper.item or oper.hasSuperOperations:
+                        continue
+                    item = None
+                    for fl in oper.flows:
+                        if fl.quantity < 0 or fl.hidden:
+                            continue
+                        if item and item != fl.item:
+                            item = None
+                            break
+                        else:
+                            item = fl.item
+                    if item:
+                        cnt += 1
+                        oper.item = item
+                logger.info(
+                    "Auto-update of %s operation items in %.2f seconds"
+                    % (cnt, time() - starttime)
+                )
 
 
 @PlanTaskRegistry.register
@@ -1392,51 +1423,53 @@ class loadOperationResources(LoadTask):
         else:
             filter_where = ""
 
-        with connections[database].chunked_cursor() as cursor:
-            cnt = 0
-            starttime = time()
-            # Note: The sorting of the loads is not really necessary, but helps to make
-            # the planning progress consistent across runs and database engines.
-            cursor.execute(
-                """
+        with transaction.atomic(using=database):
+            with connections[database].chunked_cursor() as cursor:
+                cnt = 0
+                starttime = time()
+                # Note: The sorting of the loads is not really necessary, but helps to make
+                # the planning progress consistent across runs and database engines.
+                cursor.execute(
+                    """
                 SELECT
                   operation_id, resource_id, quantity, effective_start, effective_end, name,
                   priority, setup, search, skill_id, source, quantity_fixed
                 FROM operationresource %s
                 ORDER BY operation_id, priority, resource_id
                 """
-                % filter_where
-            )
-            for i in cursor:
-                cnt += 1
-                try:
-                    curload = frepple.load(
-                        operation=frepple.operation(name=i[0]),
-                        resource=frepple.resource(name=i[1]),
-                        quantity=i[2],
-                        source=i[10],
-                    )
-                    if i[3]:
-                        curload.effective_start = i[3]
-                    if i[4]:
-                        curload.effective_end = i[4]
-                    if i[5]:
-                        curload.name = i[5]
-                    if i[6] is not None:
-                        curload.priority = i[6]
-                    if i[7]:
-                        curload.setup = i[7]
-                    if i[8]:
-                        curload.search = i[8]
-                    if i[9]:
-                        curload.skill = frepple.skill(name=i[9])
-                    if i[11]:
-                        curload.quantity_fixed = i[11]
-                except Exception as e:
-                    logger.error("**** %s ****" % e)
-            logger.info(
-                "Loaded %d resource loads in %.2f seconds" % (cnt, time() - starttime)
-            )
+                    % filter_where
+                )
+                for i in cursor:
+                    cnt += 1
+                    try:
+                        curload = frepple.load(
+                            operation=frepple.operation(name=i[0]),
+                            resource=frepple.resource(name=i[1]),
+                            quantity=i[2],
+                            source=i[10],
+                        )
+                        if i[3]:
+                            curload.effective_start = i[3]
+                        if i[4]:
+                            curload.effective_end = i[4]
+                        if i[5]:
+                            curload.name = i[5]
+                        if i[6] is not None:
+                            curload.priority = i[6]
+                        if i[7]:
+                            curload.setup = i[7]
+                        if i[8]:
+                            curload.search = i[8]
+                        if i[9]:
+                            curload.skill = frepple.skill(name=i[9])
+                        if i[11]:
+                            curload.quantity_fixed = i[11]
+                    except Exception as e:
+                        logger.error("**** %s ****" % e)
+                logger.info(
+                    "Loaded %d resource loads in %.2f seconds"
+                    % (cnt, time() - starttime)
+                )
 
 
 @PlanTaskRegistry.register
@@ -1454,11 +1487,12 @@ class loadDemand(LoadTask):
         else:
             filter_and = ""
 
-        with connections[database].chunked_cursor() as cursor:
-            cnt = 0
-            starttime = time()
-            cursor.execute(
-                """
+        with transaction.atomic(using=database):
+            with connections[database].chunked_cursor() as cursor:
+                cnt = 0
+                starttime = time()
+                cursor.execute(
+                    """
                 SELECT
                   name, due, quantity, priority, item_id,
                   operation_id, customer_id, owner_id, minshipment, maxlateness,
@@ -1467,39 +1501,41 @@ class loadDemand(LoadTask):
                 FROM demand
                 WHERE (status IS NULL OR status in ('open', 'quote')) %s
                 """
-                % filter_and
-            )
-            for i in cursor:
-                cnt += 1
-                try:
-                    x = frepple.demand(
-                        name=i[0],
-                        due=i[1],
-                        quantity=i[2],
-                        priority=i[3],
-                        status=i[14],
-                        item=frepple.item(name=i[4]),
-                        category=i[10],
-                        subcategory=i[11],
-                        source=i[12],
-                        batch=i[15],
-                        description=i[16],
-                    )
-                    if i[5]:
-                        x.operation = frepple.operation(name=i[5])
-                    if i[6]:
-                        x.customer = frepple.customer(name=i[6])
-                    if i[7]:
-                        x.owner = frepple.demand(name=i[7])
-                    if i[8] is not None:
-                        x.minshipment = i[8]
-                    if i[9] is not None:
-                        x.maxlateness = i[9].total_seconds()
-                    if i[13]:
-                        x.location = frepple.location(name=i[13])
-                except Exception as e:
-                    logger.error("**** %s ****" % e)
-            logger.info("Loaded %d demands in %.2f seconds" % (cnt, time() - starttime))
+                    % filter_and
+                )
+                for i in cursor:
+                    cnt += 1
+                    try:
+                        x = frepple.demand(
+                            name=i[0],
+                            due=i[1],
+                            quantity=i[2],
+                            priority=i[3],
+                            status=i[14],
+                            item=frepple.item(name=i[4]),
+                            category=i[10],
+                            subcategory=i[11],
+                            source=i[12],
+                            batch=i[15],
+                            description=i[16],
+                        )
+                        if i[5]:
+                            x.operation = frepple.operation(name=i[5])
+                        if i[6]:
+                            x.customer = frepple.customer(name=i[6])
+                        if i[7]:
+                            x.owner = frepple.demand(name=i[7])
+                        if i[8] is not None:
+                            x.minshipment = i[8]
+                        if i[9] is not None:
+                            x.maxlateness = i[9].total_seconds()
+                        if i[13]:
+                            x.location = frepple.location(name=i[13])
+                    except Exception as e:
+                        logger.error("**** %s ****" % e)
+                logger.info(
+                    "Loaded %d demands in %.2f seconds" % (cnt, time() - starttime)
+                )
 
 
 @PlanTaskRegistry.register
@@ -1517,34 +1553,35 @@ class loadOperationPlans(LoadTask):
         else:
             filter_and = ""
 
-        with connections[database].chunked_cursor() as cursor:
-            consume_material = (
-                Parameter.getValue("WIP.consume_material", database, "true").lower()
-                == "true"
-            )
-            consume_capacity = (
-                Parameter.getValue("WIP.consume_capacity", database, "true").lower()
-                == "true"
-            )
-            consume_material_completed = (
-                Parameter.getValue(
-                    "COMPLETED.consume_material", database, "true"
-                ).lower()
-                == "true"
-            )
-            if "supply" in os.environ:
-                confirmed_filter = " and operationplan.status in ('confirmed', 'approved', 'completed')"
-                create_flag = True
-            else:
-                confirmed_filter = ""
-                create_flag = False
-            cnt_mo = 0
-            cnt_po = 0
-            cnt_do = 0
-            cnt_dlvr = 0
-            starttime = time()
-            cursor.execute(
-                """
+        with transaction.atomic(using=database):
+            with connections[database].chunked_cursor() as cursor:
+                consume_material = (
+                    Parameter.getValue("WIP.consume_material", database, "true").lower()
+                    == "true"
+                )
+                consume_capacity = (
+                    Parameter.getValue("WIP.consume_capacity", database, "true").lower()
+                    == "true"
+                )
+                consume_material_completed = (
+                    Parameter.getValue(
+                        "COMPLETED.consume_material", database, "true"
+                    ).lower()
+                    == "true"
+                )
+                if "supply" in os.environ:
+                    confirmed_filter = " and operationplan.status in ('confirmed', 'approved', 'completed')"
+                    create_flag = True
+                else:
+                    confirmed_filter = ""
+                    create_flag = False
+                cnt_mo = 0
+                cnt_po = 0
+                cnt_do = 0
+                cnt_dlvr = 0
+                starttime = time()
+                cursor.execute(
+                    """
                 SELECT
                   operationplan.operation_id, operationplan.reference, operationplan.quantity,
                   operationplan.startdate, operationplan.enddate, operationplan.status, operationplan.source,
@@ -1563,114 +1600,119 @@ class loadOperationPlans(LoadTask):
                   and (operationplan.enddate is null or operationplan.enddate < '2030-12-31')
                 ORDER BY operationplan.reference ASC
                 """
-                % (filter_and, confirmed_filter)
-            )
-            for i in cursor:
-                try:
-                    if i[14]:
-                        dmd = frepple.demand(name=i[14])
-                    else:
-                        dmd = None
-                    if i[7] == "MO":
-                        cnt_mo += 1
-                        opplan = frepple.operationplan(
-                            operation=frepple.operation(name=i[0]),
-                            reference=i[1],
-                            quantity=i[2],
-                            source=i[6],
-                            start=i[3],
-                            end=i[4],
-                            statusNoPropagation=i[5],
-                            create=create_flag,
-                            batch=i[13],
-                        )
-                        if opplan:
-                            if i[5] == "confirmed":
-                                if not consume_material:
-                                    opplan.consume_material = False
+                    % (filter_and, confirmed_filter)
+                )
+                for i in cursor:
+                    try:
+                        if i[14]:
+                            dmd = frepple.demand(name=i[14])
+                        else:
+                            dmd = None
+                        if i[7] == "MO":
+                            cnt_mo += 1
+                            opplan = frepple.operationplan(
+                                operation=frepple.operation(name=i[0]),
+                                reference=i[1],
+                                quantity=i[2],
+                                source=i[6],
+                                start=i[3],
+                                end=i[4],
+                                statusNoPropagation=i[5],
+                                create=create_flag,
+                                batch=i[13],
+                            )
+                            if opplan:
+                                if i[5] == "confirmed":
+                                    if not consume_material:
+                                        opplan.consume_material = False
+                                    if not consume_capacity:
+                                        opplan.consume_capacity = False
+                                elif i[5] == "completed":
+                                    if not consume_material_completed:
+                                        opplan.consume_material = False
+                        elif i[7] == "PO":
+                            cnt_po += 1
+                            opplan = frepple.operationplan(
+                                location=frepple.location(name=i[12]),
+                                ordertype=i[7],
+                                reference=i[1],
+                                item=frepple.item(name=i[11]) if i[11] else None,
+                                supplier=frepple.supplier(name=i[10])
+                                if i[10]
+                                else None,
+                                quantity=i[2],
+                                start=i[3],
+                                end=i[4],
+                                statusNoPropagation=i[5],
+                                source=i[6],
+                                create=create_flag,
+                                batch=i[13],
+                            )
+                            if opplan and i[5] == "confirmed":
                                 if not consume_capacity:
                                     opplan.consume_capacity = False
-                            elif i[5] == "completed":
-                                if not consume_material_completed:
-                                    opplan.consume_material = False
-                    elif i[7] == "PO":
-                        cnt_po += 1
-                        opplan = frepple.operationplan(
-                            location=frepple.location(name=i[12]),
-                            ordertype=i[7],
-                            reference=i[1],
-                            item=frepple.item(name=i[11]) if i[11] else None,
-                            supplier=frepple.supplier(name=i[10]) if i[10] else None,
-                            quantity=i[2],
-                            start=i[3],
-                            end=i[4],
-                            statusNoPropagation=i[5],
-                            source=i[6],
-                            create=create_flag,
-                            batch=i[13],
-                        )
-                        if opplan and i[5] == "confirmed":
-                            if not consume_capacity:
-                                opplan.consume_capacity = False
-                    elif i[7] == "DO":
-                        cnt_do += 1
-                        opplan = frepple.operationplan(
-                            location=frepple.location(name=i[9]) if i[9] else None,
-                            reference=i[1],
-                            ordertype=i[7],
-                            item=frepple.item(name=i[11]) if i[11] else None,
-                            origin=frepple.location(name=i[8]) if i[8] else None,
-                            quantity=i[2],
-                            start=i[3],
-                            end=i[4],
-                            statusNoPropagation=i[5],
-                            source=i[6],
-                            create=create_flag,
-                            batch=i[13],
-                        )
-                        if opplan:
-                            if i[5] == "confirmed":
+                        elif i[7] == "DO":
+                            cnt_do += 1
+                            opplan = frepple.operationplan(
+                                location=frepple.location(name=i[9]) if i[9] else None,
+                                reference=i[1],
+                                ordertype=i[7],
+                                item=frepple.item(name=i[11]) if i[11] else None,
+                                origin=frepple.location(name=i[8]) if i[8] else None,
+                                quantity=i[2],
+                                start=i[3],
+                                end=i[4],
+                                statusNoPropagation=i[5],
+                                source=i[6],
+                                create=create_flag,
+                                batch=i[13],
+                            )
+                            if opplan:
+                                if i[5] == "confirmed":
+                                    if not consume_capacity:
+                                        opplan.consume_capacity = False
+                                elif i[5] == "completed":
+                                    if not consume_material_completed:
+                                        opplan.consume_material = False
+                        elif i[7] == "DLVR":
+                            cnt_dlvr += 1
+                            opplan = frepple.operationplan(
+                                location=frepple.location(name=i[12])
+                                if i[12]
+                                else None,
+                                reference=i[1],
+                                ordertype=i[7],
+                                item=frepple.item(name=i[11]) if i[11] else None,
+                                origin=frepple.location(name=i[8]) if i[8] else None,
+                                demand=dmd,
+                                quantity=i[2],
+                                start=i[3],
+                                end=i[4],
+                                statusNoPropagation=i[5],
+                                source=i[6],
+                                create=create_flag,
+                                batch=i[13],
+                            )
+                            if opplan and i[5] == "confirmed":
                                 if not consume_capacity:
                                     opplan.consume_capacity = False
-                            elif i[5] == "completed":
-                                if not consume_material_completed:
-                                    opplan.consume_material = False
-                    elif i[7] == "DLVR":
-                        cnt_dlvr += 1
-                        opplan = frepple.operationplan(
-                            location=frepple.location(name=i[12]) if i[12] else None,
-                            reference=i[1],
-                            ordertype=i[7],
-                            item=frepple.item(name=i[11]) if i[11] else None,
-                            origin=frepple.location(name=i[8]) if i[8] else None,
-                            demand=dmd,
-                            quantity=i[2],
-                            start=i[3],
-                            end=i[4],
-                            statusNoPropagation=i[5],
-                            source=i[6],
-                            create=create_flag,
-                            batch=i[13],
-                        )
-                        if opplan and i[5] == "confirmed":
-                            if not consume_capacity:
-                                opplan.consume_capacity = False
-                            elif i[5] == "completed":
-                                if not consume_material_completed:
-                                    opplan.consume_material = False
-                        opplan = None
-                    else:
-                        logger.warning(
-                            "Warning: unhandled operationplan type '%s'" % i[7]
-                        )
-                        continue
-                    if dmd and opplan:
-                        opplan.demand = dmd
-                except Exception as e:
-                    logger.error("**** %s ****" % e)
-        with connections[database].chunked_cursor() as cursor:
-            cursor.execute(
-                """
+                                elif i[5] == "completed":
+                                    if not consume_material_completed:
+                                        opplan.consume_material = False
+                            opplan = None
+                        else:
+                            logger.warning(
+                                "Warning: unhandled operationplan type '%s'" % i[7]
+                            )
+                            continue
+                        if dmd and opplan:
+                            opplan.demand = dmd
+                    except Exception as e:
+                        logger.error("**** %s ****" % e)
+        with transaction.atomic(using=database):
+            with connections[database].chunked_cursor() as cursor:
+                cursor.execute(
+                    """
                 SELECT
                   operationplan.operation_id, operationplan.reference, operationplan.quantity,
                   operationplan.startdate, operationplan.enddate, operationplan.status,
@@ -1691,80 +1733,84 @@ class loadOperationPlans(LoadTask):
                   and (operationplan.enddate is null or operationplan.enddate < '2030-12-31')
                 ORDER BY operationplan.reference ASC
                 """
-                % (filter_and, confirmed_filter)
-            )
-            for i in cursor:
-                try:
-                    cnt_mo += 1
-                    opplan = frepple.operationplan(
-                        operation=frepple.operation(name=i[0]),
-                        reference=i[1],
-                        quantity=i[2],
-                        source=i[7],
-                        start=i[3],
-                        end=i[4],
-                        statusNoPropagation=i[5],
-                        batch=i[8],
-                    )
-                    if opplan:
-                        if i[5] == "confirmed":
-                            if not consume_material:
-                                opplan.consume_material = False
-                            if not consume_capacity:
-                                opplan.consume_capacity = False
-                        elif i[5] == "completed":
-                            if not consume_material_completed:
-                                opplan.consume_material = False
-                        if i[6]:
-                            try:
-                                opplan.owner = frepple.operationplan(reference=i[6])
-                            except Exception:
-                                logger.error(
-                                    "Reference %s: Can't set owner field to %s"
-                                    % (i[1], i[6])
-                                )
-                        if i[9]:
-                            opplan.demand = frepple.demand(name=i[9])
-                except Exception as e:
-                    logger.error("**** %s ****" % e)
-            logger.info(
-                "Loaded %d manufacturing orders, %d purchase orders, %d distribution orders and %s deliveries in %.2f seconds"
-                % (cnt_mo, cnt_po, cnt_do, cnt_dlvr, time() - starttime)
-            )
+                    % (filter_and, confirmed_filter)
+                )
+                for i in cursor:
+                    try:
+                        cnt_mo += 1
+                        opplan = frepple.operationplan(
+                            operation=frepple.operation(name=i[0]),
+                            reference=i[1],
+                            quantity=i[2],
+                            source=i[7],
+                            start=i[3],
+                            end=i[4],
+                            statusNoPropagation=i[5],
+                            batch=i[8],
+                        )
+                        if opplan:
+                            if i[5] == "confirmed":
+                                if not consume_material:
+                                    opplan.consume_material = False
+                                if not consume_capacity:
+                                    opplan.consume_capacity = False
+                            elif i[5] == "completed":
+                                if not consume_material_completed:
+                                    opplan.consume_material = False
+                            if i[6]:
+                                try:
+                                    opplan.owner = frepple.operationplan(reference=i[6])
+                                except Exception:
+                                    logger.error(
+                                        "Reference %s: Can't set owner field to %s"
+                                        % (i[1], i[6])
+                                    )
+                            if i[9]:
+                                opplan.demand = frepple.demand(name=i[9])
+                    except Exception as e:
+                        logger.error("**** %s ****" % e)
+                logger.info(
+                    "Loaded %d manufacturing orders, %d purchase orders, %d distribution orders and %s deliveries in %.2f seconds"
+                    % (cnt_mo, cnt_po, cnt_do, cnt_dlvr, time() - starttime)
+                )
 
-        with connections[database].cursor() as cursor:
-            # Assure the operationplan ids will be unique.
-            # We call this method only at the end, as calling it earlier gives a slower
-            # performance to load operationplans
-            # By limiting the number of digits in the query we enforce reusing numbers at some point.
-            cursor.execute(
-                """
+        with transaction.atomic(using=database):
+            with connections[database].cursor() as cursor:
+                # Assure the operationplan ids will be unique.
+                # We call this method only at the end, as calling it earlier gives a slower
+                # performance to load operationplans
+                # By limiting the number of digits in the query we enforce reusing numbers at some point.
+                cursor.execute(
+                    """
                 select coalesce(max(reference::bigint), 0) as max_reference
                 from operationplan
                 where status <> 'proposed'
                 and reference ~ '^[0-9]*$'
                 and char_length(reference) <= 9
                 """
-            )
-            d = cursor.fetchone()
-            frepple.settings.id = d[0]
+                )
+                d = cursor.fetchone()
+                frepple.settings.id = d[0]
 
         # We only assign resource setup matrices here.
         # If we do it before the operationplans are read in, then a) the setup
         # calculations take extra calculations and b) the results depend on the
         # order we read in the operationplans.
-        with connections[database].chunked_cursor() as cursor:
-            cursor.execute(
-                """
+        with transaction.atomic(using=database):
+            with connections[database].chunked_cursor() as cursor:
+                cursor.execute(
+                    """
                 select name, setupmatrix_id
                 from resource
                 where setupmatrix_id is not null %s
                 order by name
                 """
-                % filter_and
-            )
-            for i in cursor:
-                frepple.resource(name=i[0]).setupmatrix = frepple.setupmatrix(name=i[1])
+                    % filter_and
+                )
+                for i in cursor:
+                    frepple.resource(name=i[0]).setupmatrix = frepple.setupmatrix(
+                        name=i[1]
+                    )
 
 
 @PlanTaskRegistry.register
@@ -1777,11 +1823,12 @@ class loadOperationPlanMaterials(LoadTask):
     def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
         import frepple
 
-        with connections[database].chunked_cursor() as cursor:
-            cnt = 0
-            starttime = time()
-            cursor.execute(
-                """
+        with transaction.atomic(using=database):
+            with connections[database].chunked_cursor() as cursor:
+                cnt = 0
+                starttime = time()
+                cursor.execute(
+                    """
                 select
                   operationplan_id, opplanmat.item_id, opplanmat.location_id,
                   coalesce(opplanmat.status, 'confirmed'), opplanmat.quantity,
@@ -1794,34 +1841,34 @@ class loadOperationPlanMaterials(LoadTask):
                   %s
                 order by operationplan_id
                 """
-                % (
-                    "and operationplan.status in ('approved', 'confirmed', 'completed')"
-                    if "supply" in os.environ
-                    else ""
+                    % (
+                        "and operationplan.status in ('approved', 'confirmed', 'completed')"
+                        if "supply" in os.environ
+                        else ""
+                    )
                 )
-            )
-            for i in cursor:
-                cnt += 1
-                try:
-                    opplan = frepple.operationplan(id=i[0])
-                    # Logic doesn't allow switching to an alternate material
-                    for fl in opplan.flowplans:
-                        if (
-                            fl.buffer.item
-                            and fl.buffer.item.name == i[1]
-                            and fl.buffer.location
-                            and fl.buffer.location.name == i[2]
-                        ):
-                            fl.status = i[3]
-                            if i[3] == "confirmed":
-                                fl.quantity = i[4]
-                            break
-                except Exception as e:
-                    logger.error("**** %s ****" % e)
-            logger.info(
-                "Loaded %d operationplanmaterials in %.2f seconds"
-                % (cnt, time() - starttime)
-            )
+                for i in cursor:
+                    cnt += 1
+                    try:
+                        opplan = frepple.operationplan(id=i[0])
+                        # Logic doesn't allow switching to an alternate material
+                        for fl in opplan.flowplans:
+                            if (
+                                fl.buffer.item
+                                and fl.buffer.item.name == i[1]
+                                and fl.buffer.location
+                                and fl.buffer.location.name == i[2]
+                            ):
+                                fl.status = i[3]
+                                if i[3] == "confirmed":
+                                    fl.quantity = i[4]
+                                break
+                    except Exception as e:
+                        logger.error("**** %s ****" % e)
+                logger.info(
+                    "Loaded %d operationplanmaterials in %.2f seconds"
+                    % (cnt, time() - starttime)
+                )
 
 
 @PlanTaskRegistry.register
@@ -1834,11 +1881,12 @@ class loadOperationPlanResources(LoadTask):
     def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
         import frepple
 
-        with connections[database].chunked_cursor() as cursor:
-            cnt = 0
-            starttime = time()
-            cursor.execute(
-                """
+        with transaction.atomic(using=database):
+            with connections[database].chunked_cursor() as cursor:
+                cnt = 0
+                starttime = time()
+                cursor.execute(
+                    """
                 select
                   operationplan_id, opplanres.resource_id, coalesce(opplanres.status, 'confirmed'), opplanres.source
                 from operationplanresource as opplanres
@@ -1848,29 +1896,29 @@ class loadOperationPlanResources(LoadTask):
                   %s
                 order by resource_id
                 """
-                % (
-                    "and operationplan.status in ('approved', 'confirmed', 'completed')"
-                    if "supply" in os.environ
-                    else ""
-                )
-            )
-            res = None
-            for i in cursor:
-                cnt += 1
-                try:
-                    opplan = frepple.operationplan(reference=i[0])
-                    if not res or res.name != i[1]:
-                        res = frepple.resource(name=i[1])
-                    # Note we don't restore the date or quantity from the operationplanresource table
-                    frepple.loadplan(
-                        operationplan=opplan, resource=res, status=i[2], source=i[3]
+                    % (
+                        "and operationplan.status in ('approved', 'confirmed', 'completed')"
+                        if "supply" in os.environ
+                        else ""
                     )
-                except Exception as e:
-                    logger.error("**** %s ****" % e)
-            logger.info(
-                "Loaded %d operationplanresources in %.2f seconds"
-                % (cnt, time() - starttime)
-            )
+                )
+                res = None
+                for i in cursor:
+                    cnt += 1
+                    try:
+                        opplan = frepple.operationplan(reference=i[0])
+                        if not res or res.name != i[1]:
+                            res = frepple.resource(name=i[1])
+                        # Note we don't restore the date or quantity from the operationplanresource table
+                        frepple.loadplan(
+                            operationplan=opplan, resource=res, status=i[2], source=i[3]
+                        )
+                    except Exception as e:
+                        logger.error("**** %s ****" % e)
+                logger.info(
+                    "Loaded %d operationplanresources in %.2f seconds"
+                    % (cnt, time() - starttime)
+                )
 
 
 @PlanTaskRegistry.register

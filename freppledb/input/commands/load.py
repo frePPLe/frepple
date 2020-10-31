@@ -1774,7 +1774,6 @@ class loadOperationPlans(LoadTask):
                     % (cnt_mo, cnt_po, cnt_do, cnt_dlvr, time() - starttime)
                 )
 
-        with transaction.atomic(using=database):
             with connections[database].cursor() as cursor:
                 # Assure the operationplan ids will be unique.
                 # We call this method only at the end, as calling it earlier gives a slower

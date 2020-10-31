@@ -237,7 +237,7 @@ MIDDLEWARE = (
     "django.contrib.messages.middleware.MessageMiddleware",
     # Uncomment the next line to automatically log on as the admin user,
     # which can be useful for development or for demo models.
-    "freppledb.common.middleware.AutoLoginAsAdminUser",
+    # 'freppledb.common.middleware.AutoLoginAsAdminUser',
     "freppledb.common.middleware.MultiDBMiddleware",
     # Optional: The following middleware allows authentication with HTTP headers
     "freppledb.common.middleware.HTTPAuthenticationMiddleware",

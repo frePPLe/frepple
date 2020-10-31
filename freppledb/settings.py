@@ -165,9 +165,6 @@ DATABASE_ROUTERS = ["freppledb.common.models.MultiDBRouter"]
 
 CSRF_FAILURE_VIEW = "freppledb.common.views.csrf_failure"
 
-# Keep each database connection alive for 10 minutes.
-CONN_MAX_AGE = 600
-
 # Mail settings
 # DEFAULT_FROM_EMAIL #if not pass from_email to send_mail func.
 # EMAIL_HOST #required

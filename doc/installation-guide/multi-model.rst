@@ -49,6 +49,7 @@ The following steps are required to configure a multi-model setup.
        'PASSWORD': '',
        'HOST': '',
        'OPTIONS': {},
+       'CONN_MAX_AGE': 60,
        'PORT': '',
        },
      'scenario1': {
@@ -58,6 +59,7 @@ The following steps are required to configure a multi-model setup.
        'PASSWORD': '',
        'HOST': '',
        'OPTIONS': {},
+       'CONN_MAX_AGE': 60,
        'PORT': '',
        },
      }

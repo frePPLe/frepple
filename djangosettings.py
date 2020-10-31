@@ -43,20 +43,25 @@ SECRET_KEY = "%@mzit!i8b*$zc&6oev96=RANDOMSTRING"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
+        # Database name
         "NAME": "frepple",
-        "USER": "frepple",  # Role name when using md5 authentication.
+        # Role name when using md5 authentication.
         # Leave as an empty string when using peer or
         # ident authencation.
-        "PASSWORD": "frepple",  # Role password when using md5 authentication.
+        "USER": "frepple",
+        # Role password when using md5 authentication.
         # Leave as an empty string when using peer or
         # ident authencation.
-        "HOST": "",  # When using TCP sockets specify the hostname,
+        "PASSWORD": "frepple",
+        # When using TCP sockets specify the hostname,
         # the ip4 address or the ip6 address here.
         # Leave as an empty string to use Unix domain
         # socket ("local" lines in pg_hba.conf).
-        "PORT": "",  # Leave to empty string when using Unix domain sockets.
+        "HOST": "",
         # Specify the port number when using a TCP socket.
-        "OPTIONS": {},  # Backend specific configuration parameters.
+        "PORT": "",
+        "OPTIONS": {},
+        "CONN_MAX_AGE": 60,
         "TEST": {
             "NAME": "test_frepple"  # Database name used when running the test suite.
         },
@@ -72,20 +77,25 @@ DATABASES = {
     },
     "scenario1": {
         "ENGINE": "django.db.backends.postgresql",
+        # Database name
         "NAME": "scenario1",
-        "USER": "frepple",  # Role name when using md5 authentication.
+        # Role name when using md5 authentication.
         # Leave as an empty string when using peer or
         # ident authencation.
-        "PASSWORD": "frepple",  # Role password when using md5 authentication.
+        "USER": "frepple",
+        # Role password when using md5 authentication.
         # Leave as an empty string when using peer or
         # ident authencation.
-        "HOST": "",  # When using TCP sockets specify the hostname,
+        "PASSWORD": "frepple",
+        # When using TCP sockets specify the hostname,
         # the ip4 address or the ip6 address here.
         # Leave as an empty string to use Unix domain
         # socket ("local" lines in pg_hba.conf).
-        "PORT": "",  # Leave to empty string when using Unix domain sockets.
+        "HOST": "",
         # Specify the port number when using a TCP socket.
-        "OPTIONS": {},  # Backend specific configuration parameters.
+        "PORT": "",
+        "OPTIONS": {},
+        "CONN_MAX_AGE": 60,
         "TEST": {
             "NAME": "test_scenario1"  # Database name used when running the test suite.
         },
@@ -101,20 +111,25 @@ DATABASES = {
     },
     "scenario2": {
         "ENGINE": "django.db.backends.postgresql",
+        # Database name
         "NAME": "scenario2",
-        "USER": "frepple",  # Role name when using md5 authentication.
+        # Role name when using md5 authentication.
         # Leave as an empty string when using peer or
         # ident authencation.
-        "PASSWORD": "frepple",  # Role password when using md5 authentication.
+        "USER": "frepple",
+        # Role password when using md5 authentication.
         # Leave as an empty string when using peer or
         # ident authencation.
-        "HOST": "",  # When using TCP sockets specify the hostname,
+        "PASSWORD": "frepple",
+        # When using TCP sockets specify the hostname,
         # the ip4 address or the ip6 address here.
         # Leave as an empty string to use Unix domain
         # socket ("local" lines in pg_hba.conf).
-        "PORT": "",  # Leave to empty string when using Unix domain sockets.
+        "HOST": "",
         # Specify the port number when using a TCP socket.
-        "OPTIONS": {},  # Backend specific configuration parameters.
+        "PORT": "",
+        "OPTIONS": {},
+        "CONN_MAX_AGE": 60,
         "TEST": {
             "NAME": "test_scenario2"  # Database name used when running the test suite.
         },
@@ -130,20 +145,25 @@ DATABASES = {
     },
     "scenario3": {
         "ENGINE": "django.db.backends.postgresql",
+        # Database name
         "NAME": "scenario3",
-        "USER": "frepple",  # Role name when using md5 authentication.
+        # Role name when using md5 authentication.
         # Leave as an empty string when using peer or
         # ident authencation.
-        "PASSWORD": "frepple",  # Role password when using md5 authentication.
+        "USER": "frepple",
+        # Role password when using md5 authentication.
         # Leave as an empty string when using peer or
         # ident authencation.
-        "HOST": "",  # When using TCP sockets specify the hostname,
+        "PASSWORD": "frepple",
+        # When using TCP sockets specify the hostname,
         # the ip4 address or the ip6 address here.
         # Leave as an empty string to use Unix domain
         # socket ("local" lines in pg_hba.conf).
-        "PORT": "",  # Leave to empty string when using Unix domain sockets.
+        "HOST": "",
         # Specify the port number when using a TCP socket.
-        "OPTIONS": {},  # Backend specific configuration parameters.
+        "PORT": "",
+        "OPTIONS": {},
+        "CONN_MAX_AGE": 60,
         "TEST": {
             "NAME": "test_scenario3"  # Database name used when running the test suite.
         },
@@ -217,7 +237,7 @@ MIDDLEWARE = (
     "django.contrib.messages.middleware.MessageMiddleware",
     # Uncomment the next line to automatically log on as the admin user,
     # which can be useful for development or for demo models.
-    # 'freppledb.common.middleware.AutoLoginAsAdminUser',
+    "freppledb.common.middleware.AutoLoginAsAdminUser",
     "freppledb.common.middleware.MultiDBMiddleware",
     # Optional: The following middleware allows authentication with HTTP headers
     "freppledb.common.middleware.HTTPAuthenticationMiddleware",

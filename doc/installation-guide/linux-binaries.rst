@@ -181,6 +181,7 @@ Here are the steps to get a fully working environment.
             'PORT': '',            # Leave to empty string when using Unix domain sockets.
                                    # Specify the port number when using a TCP socket.
             'OPTIONS': {},         # Backend specific configuration parameters.
+            'CONN_MAX_AGE': 60,
             'TEST': {
               'NAME': 'test_frepple' # Database name used when running the test suite.
               }

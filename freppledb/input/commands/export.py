@@ -169,8 +169,36 @@ class cleanStatic(PlanTask):
                 )
                 cursor.execute(
                     """
+                    delete from forecast where location_id in 
+                    (select name from location where source = %s and lastmodified <> %s)
+                    """,
+                    (source, cls.timestamp),
+                )
+                cursor.execute(
+                    """
+                    delete from forecast where customer_id in 
+                    (select name from customer where source = %s and lastmodified <> %s)
+                    """,
+                    (source, cls.timestamp),
+                )
+                cursor.execute(
+                    """
                     delete from forecastplan where item_id in 
                     (select name from item where source = %s and lastmodified <> %s)
+                    """,
+                    (source, cls.timestamp),
+                )
+                cursor.execute(
+                    """
+                    delete from forecastplan where location_id in 
+                    (select name from location where source = %s and lastmodified <> %s)
+                    """,
+                    (source, cls.timestamp),
+                )
+                cursor.execute(
+                    """
+                    delete from forecastplan where customer_id in 
+                    (select name from customer where source = %s and lastmodified <> %s)
                     """,
                     (source, cls.timestamp),
                 )
@@ -184,12 +212,20 @@ class cleanStatic(PlanTask):
                 )
                 cursor.execute(
                     """
-                    delete from out_inventoryplanning where item_id in 
-                    (select name from item where source = %s and lastmodified <> %s)
+                    delete from inventoryplanning where location_id in 
+                    (select name from location where source = %s and lastmodified <> %s)
+                    """,
+                    (source, cls.timestamp),
+                )
+                cursor.execute(
+                    """
+                    delete from out_inventoryplanning where location_id in 
+                    (select name from location where source = %s and lastmodified <> %s)
                     """,
                     (source, cls.timestamp),
                 )
 
+            # item deletion
             cursor.execute(
                 """
                 delete from operationplanmaterial where item_id in 
@@ -254,10 +290,75 @@ class cleanStatic(PlanTask):
                 "delete from resource where source = %s and lastmodified <> %s",
                 (source, cls.timestamp),
             )
+        
+            # location deletion
+            cursor.execute(
+                """
+                delete from operationplanmaterial where location_id in 
+                (select name from location where source = %s and lastmodified <> %s)
+            """,
+                (source, cls.timestamp),
+            )
+            cursor.execute(
+                """
+                delete from operationplan where location_id in 
+                (select name from location where source = %s and lastmodified <> %s)
+                or origin_id in 
+                (select name from location where source = %s and lastmodified <> %s)
+                or destination_id in 
+                (select name from location where source = %s and lastmodified <> %s)
+                
+            """,
+                (source, cls.timestamp) * 3,
+            )
+
+            cursor.execute(
+                """
+                delete from itemsupplier where location_id in 
+                (select name from location where source = %s and lastmodified <> %s)
+            """,
+                (source, cls.timestamp),
+            )
+
+            cursor.execute(
+                """
+                delete from itemdistribution where location_id in 
+                (select name from location where source = %s and lastmodified <> %s)
+                or origin_id in 
+                (select name from location where source = %s and lastmodified <> %s)
+            """,
+                (source, cls.timestamp) * 2,
+            )
+
+            cursor.execute(
+                """
+                delete from buffer where location_id in 
+                (select name from location where source = %s and lastmodified <> %s)
+            """,
+                (source, cls.timestamp),
+            )
+
+            cursor.execute(
+                """
+                delete from demand where location_id in 
+                (select name from location where source = %s and lastmodified <> %s)
+            """,
+                (source, cls.timestamp),
+            )
+            cursor.execute(
+                """
+                delete from resource where location_id in 
+                (select name from location where source = %s and lastmodified <> %s)
+            """,
+                (source, cls.timestamp),
+            )
+
             cursor.execute(
                 "delete from location where source = %s and lastmodified <> %s",
                 (source, cls.timestamp),
             )
+
+            # calendar deletion
             cursor.execute(
                 "delete from calendarbucket where source = %s and lastmodified <> %s",
                 (source, cls.timestamp),
@@ -278,8 +379,33 @@ class cleanStatic(PlanTask):
                 "delete from setupmatrix where source = %s and lastmodified <> %s",
                 (source, cls.timestamp),
             )
+
+            # customer deletion
+            cursor.execute(
+                """
+                delete from demand where customer_id in
+                (select name from customer where source = %s and lastmodified <> %s)
+                """,
+                (source, cls.timestamp),
+            )
             cursor.execute(
                 "delete from customer where source = %s and lastmodified <> %s",
+                (source, cls.timestamp),
+            )
+
+            # supplier deletion
+            cursor.execute(
+                """
+                delete from itemsupplier where supplier_id in
+                (select name from supplier where source = %s and lastmodified <> %s)
+                """,
+                (source, cls.timestamp),
+            )
+            cursor.execute(
+                """
+                delete from operationplan where supplier_id in
+                (select name from supplier where source = %s and lastmodified <> %s)
+                """,
                 (source, cls.timestamp),
             )
             cursor.execute(

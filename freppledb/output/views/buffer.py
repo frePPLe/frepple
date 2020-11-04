@@ -238,21 +238,30 @@ class OverviewReport(GridPivot):
 
     crosses = (
         ("startoh", {"title": _("start inventory")}),
-        ("startohdoc", {"title": _("start inventory days of cover")}),
+        (
+            "startohdoc",
+            {"title": _("start inventory days of cover"), "initially_hidden": True},
+        ),
         ("safetystock", {"title": _("safety stock")}),
         ("consumed", {"title": _("total consumed")}),
-        ("consumedMO", {"title": _("consumed by MO")}),
-        ("consumedDO", {"title": _("consumed by DO")}),
-        ("consumedSO", {"title": _("consumed by SO")}),
+        ("consumedMO", {"title": _("consumed by MO"), "initially_hidden": True}),
+        ("consumedDO", {"title": _("consumed by DO"), "initially_hidden": True}),
+        ("consumedSO", {"title": _("consumed by SO"), "initially_hidden": True}),
         ("produced", {"title": _("total produced")}),
-        ("producedMO", {"title": _("produced by MO")}),
-        ("producedDO", {"title": _("produced by DO")}),
-        ("producedPO", {"title": _("produced by PO")}),
+        ("producedMO", {"title": _("produced by MO"), "initially_hidden": True}),
+        ("producedDO", {"title": _("produced by DO"), "initially_hidden": True}),
+        ("producedPO", {"title": _("produced by PO"), "initially_hidden": True}),
         ("endoh", {"title": _("end inventory")}),
-        ("total_in_progress", {"title": _("total in progress")}),
-        ("work_in_progress_mo", {"title": _("work in progress MO")}),
-        ("on_order_po", {"title": _("on order PO")}),
-        ("in_transit_do", {"title": _("in transit DO")}),
+        (
+            "total_in_progress",
+            {"title": _("total in progress"), "initially_hidden": True},
+        ),
+        (
+            "work_in_progress_mo",
+            {"title": _("work in progress MO"), "initially_hidden": True},
+        ),
+        ("on_order_po", {"title": _("on order PO"), "initially_hidden": True}),
+        ("in_transit_do", {"title": _("in transit DO"), "initially_hidden": True}),
     )
 
     @classmethod

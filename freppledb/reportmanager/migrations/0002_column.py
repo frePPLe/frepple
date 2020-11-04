@@ -18,7 +18,6 @@
 from django.db import migrations, models, connections
 import django.db.models.deletion
 import django.utils.timezone
-from ..models import SQLReport
 
 
 def populateColumns(apps, schema_editor):

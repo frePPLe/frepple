@@ -2503,6 +2503,8 @@ class GridPivot(GridReport):
     #   - editable:
     #     True when the field is editable in the page.
     #     The default value is false.
+    #   - initially_hidden:
+    #     True when this field should be hidden by default.
     crosses = ()
 
     template = "admin/base_site_gridpivot.html"

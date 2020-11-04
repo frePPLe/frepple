@@ -212,6 +212,13 @@ class cleanStatic(PlanTask):
                 )
                 cursor.execute(
                     """
+                    delete from out_inventoryplanning where item_id in 
+                    (select name from item where source = %s and lastmodified <> %s)
+                    """,
+                    (source, cls.timestamp),
+                )
+                cursor.execute(
+                    """
                     delete from inventoryplanning where location_id in 
                     (select name from location where source = %s and lastmodified <> %s)
                     """,

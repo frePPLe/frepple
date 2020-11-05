@@ -468,7 +468,7 @@ class Command(BaseCommand):
             setattr(_thread_locals, "database", None)
 
     # accordion template
-    title = _("Export plan result to folder")
+    title = _("Export plan result")
     index = 1200
     help_url = "command-reference.html#exporttofolder"
 

@@ -542,7 +542,7 @@ class Command(BaseCommand):
         return [errorcount, warningcount]
 
     # accordion template
-    title = _("Import data files from folder")
+    title = _("Import data files")
     index = 1300
     help_url = "command-reference.html#importfromfolder"
 

@@ -182,7 +182,7 @@
          <input data-field="task-arguments" class="form-control" type="text" placeholder="{% trans "Arguments" %}">
          </div>
          <div class="col-xs-1">
-         <input data-field="task-abort-on-failure" type="checkbox" value="1"
+         <input data-field="task-abort-on-failure" type="checkbox" value="1" data-delay="500"
            data-toggle="tooltip" data-placement="top" data-original-title="{% trans "abort on failure"|capfirst %}">
          </div>
          <div class="col-xs-1">
@@ -213,6 +213,7 @@ function addTask(el, event) {
   newrow.removeAttr("id");
 	newrow.insertBefore($(el).closest(".form-group"));
   newrow.toggleClass("hidden");
+  newrow.find('[data-toggle="tooltip"]').tooltip();
   event.preventDefault();
 }
 

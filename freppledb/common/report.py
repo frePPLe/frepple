@@ -1396,15 +1396,18 @@ class GridReport(View):
             cls.getKey(request, *args, **kwargs), database=request.database
         )
         recs = cls.count_query(request, *args, **kwargs)
-        page = "page" in request.GET and int(request.GET["page"]) or 1
         total_pages = math.ceil(float(recs) / request.pagesize)
-        if page > total_pages:
-            page = total_pages
-        if page < 1:
-            page = 1
+        page = request.GET.get("page", 1)
+        if page is not None:
+            page = int(page)
+            if page > total_pages:
+                page = total_pages
+            if page < 1:
+                page = 1
 
         yield '{"total":%d,\n' % total_pages
-        yield '"page":%d,\n' % page
+        if page:
+            yield '"page":%d,\n' % page
         yield '"records":%d,\n' % recs
         if hasattr(cls, "extraJSON"):
             # Hook to insert extra fields to the json
@@ -1600,7 +1603,7 @@ class GridReport(View):
                 # Inherit the filter settings from the preferences
                 filters = request.prefs.get("filter", None)
             if request.prefs and autofilter:
-                page = request.prefs.get("page", 1)
+                page = request.prefs.get("page", 1) or 1
             else:
                 page = 1
             context = {
@@ -1726,8 +1729,19 @@ class GridReport(View):
             )
             response["Cache-Control"] = "no-cache, no-store"
             return response
+        elif fmt == "kanban":
+            response = StreamingHttpResponse(
+                content_type="application/json; charset=%s" % settings.DEFAULT_CHARSET,
+                streaming_content=cls._generate_kanban_data(request, *args, **kwargs),
+            )
+            response["Cache-Control"] = "no-cache, no-store"
+            return response
         else:
             raise Http404("Unknown format type")
+
+    @classmethod
+    def _generate_kanban_data(cls, request, *args, **kwargs):
+        raise Http404("This report doesn't support the Kanban format")
 
     @classmethod
     def parseJSONupload(cls, request):

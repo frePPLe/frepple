@@ -29,6 +29,7 @@ function breadcrumbs_reflow()
 // We escape all special characters in the EXACT same way as the django admin does.
 function admin_escape(n)
 {
+  if (!n) return "";
   return n.replace(/_/g,'_5F').replace(/&amp;/g,'_26').replace(/&lt;/g,'_3C')
   .replace(/&gt;/g,'_3E').replace(/&#39;/g,"'").replace(/&quot;/g,'_22')
   .replace(/:/g,'_3A').replace(/\//g,'_2F').replace(/#/g,'_23').replace(/\?/g,'_3F')
@@ -190,7 +191,12 @@ var upload = {
   undo : function ()
   {
     if ($('#undo').hasClass("btn-primary")) return;
-    $("#grid").trigger("reloadGrid");
+    if (typeof extraSearchUpdate == 'function') {
+  		if (!extraSearchUpdate($('#grid').getGridParam("postData").filters))
+  		  $("#grid").trigger("reloadGrid");
+    }
+    else
+    	$("#grid").trigger("reloadGrid");
     $("#grid").closest(".ui-jqgrid-bdiv").scrollTop(0);
     $('#save, #undo').addClass("btn-primary").removeClass("btn-danger").prop('disabled', true);
     $('#actions1').prop('disabled', true);
@@ -227,7 +233,8 @@ var upload = {
       var rows = $("#grid").getChangedCells('dirty');
     
     // Remember the selected rows, which will be restored in the loadcomplete event
-    upload.selectedRows = $("#grid").jqGrid("getGridParam", "selarrrow").slice();
+    var tmp = $("#grid").jqGrid("getGridParam", "selarrrow");
+    upload.selectedRows = tmp ? tmp.slice() : null;
     
     if (rows != null && rows.length > 0)
       // Send the update to the server
@@ -989,7 +996,8 @@ var grid = {
          "page": page,
          "favorites": favorites
        }};
-    var filter = $('#grid').getGridParam("postData").filters;
+    var tmp = $('#grid').getGridParam("postData");
+    var filter = tmp ? tmp.filters : initialfilter;
     if (typeof filter !== 'undefined' && filter.rules != [])
       result[reportkey]["filter"] = filter;
     var sidx = $('#grid').getGridParam('sortname');    
@@ -1632,6 +1640,8 @@ var grid = {
       search:true
       }).trigger('reloadGrid');
 		grid.saveColumnConfiguration();
+  	if (typeof extraSearchUpdate == 'function')
+  		extraSearchUpdate(c);
 		grid.getFilterGroup($("#grid"), c, true,  $("#curfilter"));
 		$(document).off("click", grid.clickFilter);
 		grid.handlerinstalled = false;
@@ -1749,6 +1759,8 @@ var grid = {
         postData:{filters: JSON.stringify(fullfilter)},
         search:true
         }).trigger('reloadGrid');
+    	if (typeof extraSearchUpdate == 'function')
+    		extraSearchUpdate(fullfilter);
     	grid.saveColumnConfiguration();
     	});
     newexpression.append(newelement);
@@ -1764,7 +1776,9 @@ var grid = {
         postData:{filters: JSON.stringify(fullfilter)},
         search:true
         }).trigger('reloadGrid');
-    	grid.saveColumnConfiguration(); 	
+    	if (typeof extraSearchUpdate == 'function')
+    		extraSearchUpdate(fullfilter);
+    	grid.saveColumnConfiguration(); 
     });
     newexpression.append(deleteelement);
     thefilter.append(newexpression);

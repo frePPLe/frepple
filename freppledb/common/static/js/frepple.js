@@ -1592,9 +1592,13 @@ var grid = {
   handlerinstalled: false,
   
   addFilter: function(event) {
-  	event.stopPropagation();  	
-  	event.preventDefault();
-  	var field = $(event.target).attr("data-filterfield");
+    if (event) {
+    	event.stopPropagation();
+  	  event.preventDefault();
+  	  var field = $(event.target).attr("data-filterfield");
+    }
+    else 
+      var field = $("#filterfield [data-filterfield]").first().attr("data-filterfield");
   	var n = {
 				"field": field,
 				"op":"cn",
@@ -1665,6 +1669,12 @@ var grid = {
     	$(el).parent().before(l);
       grid.handlerinstalled = true;
     }    
+  },
+  
+  keyDownSearch: function() {
+    var keycode = (event.keyCode ? event.keyCode : event.which);
+    if (keycode == 13)
+      grid.addFilter();
   },
   
   updateFilter: function(obj, idx, newvalue) {

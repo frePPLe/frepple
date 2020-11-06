@@ -103,7 +103,7 @@ function addItemLocation(item, location) {
   		</h2>
 			<div class="panel-group" id="accordion${index}" role="tablist" aria-multiselectable="true" data-index="${index}">
 			  <div class="panel panel-default">
-			    <div class="panel-heading" data-toggle="collapse" data-target="#collapse${index}-buy" 
+			    <div class="panel-heading collapsed" data-toggle="collapse" data-target="#collapse${index}-buy" 
             data-parent="#accordion${index}" style="cursor: pointer">
 			      <h4 class="panel-title">
 			        <a class="accordion-toggle">
@@ -120,7 +120,7 @@ function addItemLocation(item, location) {
 			            <input type="hidden" name="item" class="itemvalue">
 			            <input type="hidden" name="location" class="locationvalue">
 			            <label class="col-sm-3 control-label" for="wizardsupplier${index}"
-                    data-toggle="tooltip" data-placement="right" data-html="true"
+                    data-toggle="tooltip" data-placement="right" data-html="true" data-delay="500"
                     data-original-title="Supplier you purchase the item from.">
 			            {% trans "supplier"|capfirst %}
                   <i class="fa fa-question-circle"></i>
@@ -132,7 +132,7 @@ function addItemLocation(item, location) {
 			          </div>
 			          <div class="form-group">
 			            <label class="col-sm-3 control-label" for="wizardleadtime${index}"
-                    data-toggle="tooltip" data-placement="right" data-html="true"
+                    data-toggle="tooltip" data-placement="right" data-html="true" data-delay="500"
                     data-original-title="Purchasing lead time<br>between placing the order and receiving the ordered items.">
 			            {% trans "lead time"|capfirst %}
                   <i class="fa fa-question-circle"></i>
@@ -147,7 +147,7 @@ function addItemLocation(item, location) {
 			    </div>
 			  </div>
 			  <div class="panel panel-default">
-			    <div class="panel-heading" data-toggle="collapse" data-target="#collapse${index}-produce"
+			    <div class="panel-heading collapsed" data-toggle="collapse" data-target="#collapse${index}-produce"
             data-parent="#accordion${index}" style="cursor: pointer">
 			      <h4 class="panel-title">
 			        <a class="accordion-toggle">
@@ -157,14 +157,14 @@ function addItemLocation(item, location) {
 			    </div>
 			    <div id="collapse${index}-produce" class="panel-collapse collapse">
 			      <div class="panel-body">
-			        <p>Define the duration, resource and materials to produce this item.</p>
+			        <p>Define the time, resource and materials to produce this item.</p>
 			        <form class="form-horizontal">
 			          <input type="hidden" name="type" value="MO">
                 <input type="hidden" name="item" class="itemvalue">
                 <input type="hidden" name="location" class="locationvalue">
 			          <div class="form-group">
 			            <label class="col-sm-3 control-label" for="wizardoperation${index}"
-                    data-toggle="tooltip" data-placement="right" data-html="true"
+                    data-toggle="tooltip" data-placement="right" data-html="true" data-delay="500"
                     data-original-title="A unique name for the operation that produces this item.">
 			            {% trans "operation name"|capfirst %}
                   <i class="fa fa-question-circle"></i>
@@ -176,31 +176,31 @@ function addItemLocation(item, location) {
 			          </div>
 			          <div class="form-group">
 			            <label class="col-sm-3 control-label" for="wizardduration${index}"
-                    data-toggle="tooltip" data-placement="right" data-html="true"
-                    data-original-title="The duration of a operation is the sum of:<br>- A fixed duration for setup and overhead time<br>- A production time per produced piece">
-			            {% trans "fixed duration"|capfirst %}
+                    data-toggle="tooltip" data-placement="right" data-html="true" data-delay="500"
+                    data-original-title="The total operation time is the sum of:<br>- A fixed time for setup and overhead time<br>- A time per produced piece">
+			            {% trans "fixed time"|capfirst %}
                   <i class="fa fa-question-circle"></i>
 			            </label>
 			            <div class="col-sm-9">
 			              <input type="text" class="form-control" id="wizardduration${index}" name="duration"
-			                required placeholder="fixed duration, formatted as dd hh:mm:ss">
+			                required placeholder="operation fixed time, formatted as dd hh:mm:ss">
 			            </div>
 			          </div>
 			          <div class="form-group">
 			            <label class="col-sm-3 control-label" for="wizarddurationper${index}"
-                    data-toggle="tooltip" data-placement="right" data-html="true"
-                    data-original-title="The duration of a operation is the sum of:<br>- A fixed duration for setup and overhead time<br>- A production time per produced piece">
-			            {% trans "duration per piece"|capfirst %}
+                    data-toggle="tooltip" data-placement="right" data-html="true" data-delay="500"
+                    data-original-title="The total operation time is the sum of:<br>- A fixed time for setup and overhead time<br>- A time per produced piece">
+			            {% trans "time per piece"|capfirst %}
                   <i class="fa fa-question-circle"></i>
 			            </label>
 			            <div class="col-sm-9">
 			              <input type="text" class="form-control" id="wizarddurationper${index}" name="durationper"
-			                required placeholder="duration per piece, formatted as dd hh:mm:ss">
+			                required placeholder="operation time per piece, formatted as dd hh:mm:ss">
 			            </div>
 			          </div>
 			          <div class="form-group">
 			            <label class="col-sm-3 control-label" for="wizardresource${index}"
-                    data-toggle="tooltip" data-placement="right" data-html="true"
+                    data-toggle="tooltip" data-placement="right" data-html="true" data-delay="500"
                     data-original-title="The machine or operator needed to perform the operation.">
 			            {% trans "resource"|capfirst %}
                   <i class="fa fa-question-circle"></i>
@@ -212,7 +212,7 @@ function addItemLocation(item, location) {
 			          </div>
 			          <div class="form-group">
 			            <label class="col-sm-3 control-label" for="wizardconsumeditem${index}0"
-                    data-toggle="tooltip" data-placement="right" data-html="true"
+                    data-toggle="tooltip" data-placement="right" data-html="true" data-delay="500"
                     data-original-title="The subassemblies or raw materials<br>consumed by this operation per produced item.">
 			              {% trans "consumed items"|capfirst %}
                     <i class="fa fa-question-circle"></i>
@@ -236,7 +236,7 @@ function addItemLocation(item, location) {
 			    </div>
 			  </div>
 			  <div class="panel panel-default">
-			    <div class="panel-heading" data-target="#collapse${index}-ship"
+			    <div class="panel-heading collapsed" data-target="#collapse${index}-ship"
             data-toggle="collapse" data-parent="#accordion${index}" style="cursor:pointer">
 			      <h4 class="panel-title">
               <a class="accordion-toggle">
@@ -253,7 +253,7 @@ function addItemLocation(item, location) {
                 <input type="hidden" name="location" class="locationvalue">
 			          <div class="form-group">
 			            <label class="col-sm-3 control-label" for="wizardorigin${index}"
-                    data-toggle="tooltip" data-placement="right" data-html="true"
+                    data-toggle="tooltip" data-placement="right" data-html="true" data-delay="500"
                     data-original-title="The warehouse or distribution center<br>from which we can source this item.">
 			              {% trans "source location"|capfirst %}
                     <i class="fa fa-question-circle"></i>
@@ -265,7 +265,7 @@ function addItemLocation(item, location) {
 			          </div>
                 <div class="form-group">
                 <label class="col-sm-3 control-label" for="wizardtransporttime${index}"
-                  data-toggle="tooltip" data-placement="right" data-html="true"
+                  data-toggle="tooltip" data-placement="right" data-html="true" data-delay="500"
                   data-original-title="The shipping lead time to transport items<br>from the origin to the destination location.">
                   {% trans "transport time"|capfirst %}
                   <i class="fa fa-question-circle"></i>
@@ -356,7 +356,7 @@ function changeDOorigin(ev) {
           <form class="form-horizontal" id="submitsalesorder">
             <div class="form-group">
               <label class="col-sm-3 control-label" for="wizardsalesorder"
-                data-toggle="tooltip" data-placement="right" data-html="true"
+                data-toggle="tooltip" data-placement="right" data-html="true" data-delay="500"
                 data-original-title="Unique name for the sales order.">
                 {% trans "name"|capfirst %}
                 <i class="fa fa-question-circle"></i>
@@ -368,7 +368,7 @@ function changeDOorigin(ev) {
             </div>
             <div class="form-group">
               <label class="col-sm-3 control-label" for="wizarditem"
-                data-toggle="tooltip" data-placement="right" data-html="true"
+                data-toggle="data-html="true" data-delay="500"" data-placement="right" data-html="true"
                 data-original-title="Item sold to the customer.">
                 {% trans "item"|capfirst %}
                 <i class="fa fa-question-circle"></i>
@@ -380,7 +380,7 @@ function changeDOorigin(ev) {
             </div>
             <div class="form-group">
               <label class="col-sm-3 control-label" for="wizardlocation"
-                data-toggle="tooltip" data-placement="right" data-html="true"
+                data-toggle="tooltip" data-placement="right" data-html="true" data-delay="500"
                 data-original-title="Location from which the sales order is shipped.">
                 {% trans "location"|capfirst %}
                 <i class="fa fa-question-circle"></i>
@@ -392,7 +392,7 @@ function changeDOorigin(ev) {
             </div>
             <div class="form-group">
               <label class="col-sm-3 control-label" for="wizardcustomer"
-                data-toggle="tooltip" data-placement="right" data-html="true"
+                data-toggle="tooltip" data-placement="right" data-html="true" data-delay="500"
                 data-original-title="Customer placing the order.">
                 {% trans "customer"|capfirst %}
                 <i class="fa fa-question-circle"></i>
@@ -404,7 +404,7 @@ function changeDOorigin(ev) {
             </div>
             <div class="form-group">
               <label class="col-sm-3 control-label" for="wizardquantity"
-                data-toggle="tooltip" data-placement="right" data-html="true"
+                data-toggle="tooltip" data-placement="right" data-html="true" data-delay="500"
                 data-original-title="Quantity to be shipped.">
                 {% trans "Quantity"|capfirst %}
                 <i class="fa fa-question-circle"></i>
@@ -416,7 +416,7 @@ function changeDOorigin(ev) {
             </div>
             <div class="form-group">
               <label class="col-sm-3 control-label" for="wizarddue"
-                data-toggle="tooltip" data-placement="right" data-html="true"
+                data-toggle="tooltip" data-placement="right" data-html="true" data-delay="500"
                 data-original-title="Delivery date requested by the customer.">
                 {% trans "Due date"|capfirst %}
                 <i class="fa fa-question-circle"></i>

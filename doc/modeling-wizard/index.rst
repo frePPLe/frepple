@@ -2,11 +2,10 @@
 Wizard to load your data
 ========================
 
-This section guides users during the creation of their first frePPLe model. 
-The wizard guides you through a numberof logical steps, and contains links to this section.
+**This section accompanies the data loading wizard available in the user interface.
+That wizard guides you through a number of logical steps and contains links to this section.**
 
-**This section accompanies the wizard available in the user interface of the Cloud Edition
-and Enterprise Edition**.
+This section guides users during the creation of their first frePPLe model. 
 
 .. image:: _images/wizard.png
    :width: 100%

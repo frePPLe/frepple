@@ -135,7 +135,7 @@ class ReportList(GridReport):
             formatter="detail",
             extra='"role":"common/user"',
         ),
-        GridFieldText("source", title=_("source")),
+        GridFieldText("source", title=_("source"), initially_hidden=True),
         GridFieldLastModified("lastmodified"),
     )
 

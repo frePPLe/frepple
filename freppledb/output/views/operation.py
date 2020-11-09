@@ -33,8 +33,8 @@ from freppledb.common.report import (
 
 class OverviewReport(GridPivot):
     """
-  A report summarizing all manufacturing orders.
-  """
+    A report summarizing all manufacturing orders.
+    """
 
     template = "output/operation.html"
     title = _("Manufacturing order summary")
@@ -213,11 +213,14 @@ class OverviewReport(GridPivot):
     )
 
     crosses = (
-        ("proposed_start", {"title": _("proposed starts")}),
+        ("proposed_start", {"title": _("proposed starts"), "initially_hidden": True}),
         ("total_start", {"title": _("total starts")}),
-        ("proposed_end", {"title": _("proposed ends")}),
+        ("proposed_end", {"title": _("proposed ends"), "initially_hidden": True}),
         ("total_end", {"title": _("total ends")}),
-        ("production_proposed", {"title": _("proposed production")}),
+        (
+            "production_proposed",
+            {"title": _("proposed production"), "initially_hidden": True},
+        ),
         ("production_total", {"title": _("total production")}),
     )
 
@@ -559,11 +562,14 @@ class PurchaseReport(GridPivot):
     )
 
     crosses = (
-        ("proposed_start", {"title": _("proposed ordering")}),
+        ("proposed_start", {"title": _("proposed ordering"), "initially_hidden": True}),
         ("total_start", {"title": _("total ordering")}),
-        ("proposed_end", {"title": _("proposed receiving")}),
+        ("proposed_end", {"title": _("proposed receiving"), "initially_hidden": True}),
         ("total_end", {"title": _("total receiving")}),
-        ("proposed_on_order", {"title": _("proposed on order")}),
+        (
+            "proposed_on_order",
+            {"title": _("proposed on order"), "initially_hidden": True},
+        ),
         ("total_on_order", {"title": _("total on order")}),
     )
 
@@ -758,8 +764,8 @@ class PurchaseReport(GridPivot):
 
 class DistributionReport(GridPivot):
     """
-  A report summarizing all distribution orders.
-  """
+    A report summarizing all distribution orders.
+    """
 
     template = "output/distribution_order_summary.html"
     title = _("Distribution order summary")
@@ -914,11 +920,14 @@ class DistributionReport(GridPivot):
     )
 
     crosses = (
-        ("proposed_start", {"title": _("proposed shipping")}),
+        ("proposed_start", {"title": _("proposed shipping"), "initially_hidden": True}),
         ("total_start", {"title": _("total shipping")}),
-        ("proposed_end", {"title": _("proposed receiving")}),
+        ("proposed_end", {"title": _("proposed receiving"), "initially_hidden": True}),
         ("total_end", {"title": _("total receiving")}),
-        ("proposed_in_transit", {"title": _("proposed in transit")}),
+        (
+            "proposed_in_transit",
+            {"title": _("proposed in transit"), "initially_hidden": True},
+        ),
         ("total_in_transit", {"title": _("total in transit")}),
     )
 

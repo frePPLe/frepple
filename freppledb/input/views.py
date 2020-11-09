@@ -1559,7 +1559,9 @@ class BufferList(GridReport):
             formatter="detail",
             extra='"role":"input/item"',
         ),
-        GridFieldText("batch", title=_("batch"), field_name="batch"),
+        GridFieldText(
+            "batch", title=_("batch"), field_name="batch", initially_hidden=True
+        ),
         GridFieldNumber("onhand", title=_("onhand")),
         GridFieldChoice("type", title=_("type"), choices=Buffer.types),
         GridFieldNumber("minimum", title=_("minimum")),
@@ -1571,7 +1573,7 @@ class BufferList(GridReport):
             extra='"role":"input/calendar"',
             initially_hidden=True,
         ),
-        GridFieldText("source", title=_("source")),
+        GridFieldText("source", title=_("source"), initially_hidden=True),
         GridFieldLastModified("lastmodified"),
         # Optional fields referencing the item
         GridFieldText(
@@ -1684,7 +1686,7 @@ class SetupMatrixList(GridReport):
             formatter="detail",
             extra='"role":"input/setupmatrix"',
         ),
-        GridFieldText("source", title=_("source")),
+        GridFieldText("source", title=_("source"), initially_hidden=True),
         GridFieldLastModified("lastmodified"),
     )
 
@@ -1722,6 +1724,7 @@ class SetupRuleList(GridReport):
             title=_("resource"),
             formatter="detail",
             extra='"role":"input/resource"',
+            initially_hidden=True,
         ),
         GridFieldLastModified("lastmodified"),
     )
@@ -1788,14 +1791,8 @@ class ResourceList(GridReport):
             initially_hidden=True,
         ),
         GridFieldText("setup", title=_("setup"), initially_hidden=True),
-        GridFieldText("source", title=_("source")),
-        GridFieldLastModified("lastmodified"),
-        GridFieldNumber(
-            "efficiency",
-            title=_("efficiency %"),
-            initially_hidden=True,
-            formatter="percentage",
-        ),
+        GridFieldText("source", title=_("source"), initially_hidden=True),
+        GridFieldNumber("efficiency", title=_("efficiency %"), formatter="percentage"),
         GridFieldText(
             "efficiency_calendar",
             title=_("efficiency %% calendar"),
@@ -1804,6 +1801,7 @@ class ResourceList(GridReport):
             formatter="detail",
             extra='"role":"input/calendar"',
         ),
+        GridFieldLastModified("lastmodified"),
         # Optional fields referencing the location
         GridFieldText(
             "location__description",
@@ -1901,7 +1899,7 @@ class LocationList(GridReport):
             formatter="detail",
             extra='"role":"input/location"',
         ),
-        GridFieldText("source", title=_("source")),
+        GridFieldText("source", title=_("source"), initially_hidden=True),
         GridFieldLastModified("lastmodified"),
     )
 
@@ -1944,7 +1942,7 @@ class CustomerList(GridReport):
             formatter="detail",
             extra='"role":"input/customer"',
         ),
-        GridFieldText("source", title=_("source")),
+        GridFieldText("source", title=_("source"), initially_hidden=True),
         GridFieldLastModified("lastmodified"),
     )
 
@@ -1975,7 +1973,7 @@ class SupplierList(GridReport):
             extra='"role":"input/supplier"',
             initially_hidden=True,
         ),
-        GridFieldText("source", title=_("source")),
+        GridFieldText("source", title=_("source"), initially_hidden=True),
         GridFieldLastModified("lastmodified"),
         GridFieldText(
             "available",
@@ -2028,7 +2026,7 @@ class ItemSupplierList(GridReport):
         GridFieldDuration("leadtime", title=_("lead time")),
         GridFieldNumber("sizeminimum", title=_("size minimum")),
         GridFieldNumber("sizemultiple", title=_("size multiple")),
-        GridFieldNumber("sizemaximum", title=_("size maximum")),
+        GridFieldNumber("sizemaximum", title=_("size maximum"), initially_hidden=True),
         GridFieldCurrency("cost", title=_("cost")),
         GridFieldInteger("priority", title=_("priority")),
         GridFieldDuration("fence", title=_("fence"), initially_hidden=True),
@@ -2049,7 +2047,7 @@ class ItemSupplierList(GridReport):
         GridFieldNumber(
             "resource_qty", title=_("resource quantity"), initially_hidden=True
         ),
-        GridFieldText("source", title=_("source")),
+        GridFieldText("source", title=_("source"), initially_hidden=True),
         GridFieldLastModified("lastmodified"),
         # Optional fields referencing the item
         GridFieldText(
@@ -2227,7 +2225,7 @@ class ItemDistributionList(GridReport):
         GridFieldDuration("leadtime", title=_("lead time")),
         GridFieldNumber("sizeminimum", title=_("size minimum")),
         GridFieldNumber("sizemultiple", title=_("size multiple")),
-        GridFieldNumber("sizemaximum", title=_("size maximum")),
+        GridFieldNumber("sizemaximum", title=_("size maximum"), initially_hidden=True),
         GridFieldCurrency("cost", title=_("cost"), initially_hidden=True),
         GridFieldInteger("priority", title=_("priority"), initially_hidden=True),
         GridFieldDuration("fence", title=_("fence"), initially_hidden=True),
@@ -2248,7 +2246,7 @@ class ItemDistributionList(GridReport):
         GridFieldNumber(
             "resource_qty", title=_("resource quantity"), initially_hidden=True
         ),
-        GridFieldText("source", title=_("source")),
+        GridFieldText("source", title=_("source"), initially_hidden=True),
         GridFieldLastModified("lastmodified"),
         # Optional fields referencing the item
         GridFieldText(
@@ -2436,8 +2434,10 @@ class ItemList(GridReport):
             extra='"role":"input/item"',
         ),
         GridFieldCurrency("cost", title=_("cost")),
-        GridFieldChoice("type", title=_("type"), choices=Item.types),
-        GridFieldText("source", title=_("source")),
+        GridFieldChoice(
+            "type", title=_("type"), choices=Item.types, initially_hidden=True
+        ),
+        GridFieldText("source", title=_("source"), initially_hidden=True),
         GridFieldLastModified("lastmodified"),
     )
 
@@ -2457,7 +2457,7 @@ class SkillList(GridReport):
             formatter="detail",
             extra='"role":"input/skill"',
         ),
-        GridFieldText("source", title=_("source")),
+        GridFieldText("source", title=_("source"), initially_hidden=True),
         GridFieldLastModified("lastmodified"),
     )
 
@@ -2498,7 +2498,7 @@ class ResourceSkillList(GridReport):
             "effective_end", title=_("effective end"), initially_hidden=True
         ),
         GridFieldInteger("priority", title=_("priority"), initially_hidden=True),
-        GridFieldText("source", title=_("source")),
+        GridFieldText("source", title=_("source"), initially_hidden=True),
         GridFieldLastModified("lastmodified"),
     )
 
@@ -2557,7 +2557,7 @@ class OperationResourceList(GridReport):
         GridFieldChoice(
             "search", title=_("search mode"), choices=searchmode, initially_hidden=True
         ),
-        GridFieldText("source", title=_("source")),
+        GridFieldText("source", title=_("source"), initially_hidden=True),
         GridFieldLastModified("lastmodified"),
         # Operation fields
         GridFieldText(
@@ -2781,6 +2781,9 @@ class OperationMaterialList(GridReport):
         ),
         GridFieldChoice("type", title=_("type"), choices=OperationMaterial.types),
         GridFieldNumber("quantity", title=_("quantity")),
+        GridFieldNumber(
+            "quantity_fixed", title=_("fixed quantity"), initially_hidden=True
+        ),
         GridFieldDateTime(
             "effective_start", title=_("effective start"), initially_hidden=True
         ),
@@ -2792,13 +2795,12 @@ class OperationMaterialList(GridReport):
         GridFieldChoice(
             "search", title=_("search mode"), choices=searchmode, initially_hidden=True
         ),
-        GridFieldText("source", title=_("source")),
+        GridFieldText("source", title=_("source"), initially_hidden=True),
         GridFieldLastModified("lastmodified"),
         GridFieldNumber(
             "transferbatch", title=_("transfer batch quantity"), initially_hidden=True
         ),
         GridFieldDuration("offset", title=_("offset"), initially_hidden=True),
-        GridFieldNumber("quantity_fixed", title=_("fixed quantity")),
         # Operation fields
         GridFieldText(
             "operation__description",
@@ -3115,8 +3117,10 @@ class DemandList(GridReport):
         GridFieldNumber(
             "minshipment", title=_("minimum shipment"), initially_hidden=True
         ),
-        GridFieldText("batch", title=_("batch"), field_name="batch"),
-        GridFieldText("source", title=_("source")),
+        GridFieldText(
+            "batch", title=_("batch"), field_name="batch", initially_hidden=True
+        ),
+        GridFieldText("source", title=_("source"), initially_hidden=True),
         GridFieldLastModified("lastmodified"),
         # Optional fields referencing the item
         GridFieldText(
@@ -3324,7 +3328,7 @@ class CalendarList(GridReport):
         GridFieldText("category", title=_("category"), initially_hidden=True),
         GridFieldText("subcategory", title=_("subcategory"), initially_hidden=True),
         GridFieldNumber("defaultvalue", title=_("default value")),
-        GridFieldText("source", title=_("source")),
+        GridFieldText("source", title=_("source"), initially_hidden=True),
         GridFieldLastModified("lastmodified"),
     )
 
@@ -3365,7 +3369,7 @@ class CalendarBucketList(GridReport):
         GridFieldTime("starttime", title=_("start time")),
         GridFieldTime("endtime", title=_("end time")),
         GridFieldText(
-            "source", title=_("source")
+            "source", title=_("source"), initially_hidden=True
         ),  # Not really right, since the engine doesn't read or store it
         GridFieldLastModified("lastmodified"),
     )
@@ -3386,7 +3390,7 @@ class OperationList(GridReport):
             formatter="detail",
             extra='"role":"input/operation"',
         ),
-        GridFieldText("description", title=_("description")),
+        GridFieldText("description", title=_("description"), initially_hidden=True),
         GridFieldText("category", title=_("category"), initially_hidden=True),
         GridFieldText("subcategory", title=_("subcategory"), initially_hidden=True),
         GridFieldChoice("type", title=_("type"), choices=Operation.types),
@@ -3419,6 +3423,7 @@ class OperationList(GridReport):
             field_name="available__name",
             formatter="detail",
             extra='"role":"input/calendar"',
+            initially_hidden=True,
         ),
         GridFieldText(
             "owner",
@@ -3438,7 +3443,7 @@ class OperationList(GridReport):
         GridFieldChoice(
             "search", title=_("search mode"), choices=searchmode, initially_hidden=True
         ),
-        GridFieldText("source", title=_("source")),
+        GridFieldText("source", title=_("source"), initially_hidden=True),
         GridFieldLastModified("lastmodified"),
     )
 
@@ -3473,7 +3478,7 @@ class SubOperationList(GridReport):
         GridFieldDateTime(
             "effective_end", title=_("effective end"), initially_hidden=True
         ),
-        GridFieldText("source", title=_("source")),
+        GridFieldText("source", title=_("source"), initially_hidden=True),
         GridFieldLastModified("lastmodified"),
         # Operation fields
         GridFieldText(
@@ -3963,11 +3968,11 @@ class ManufacturingOrderList(OperationPlanMixin, GridReport):
             computed_color=RawSQL(
                 """
                 case when operationplan.color >= 999999 and operationplan.plan ? 'item' then
-                999999 
+                999999
                 - extract(epoch from operationplan.delay)/86400.0
                 + 1000000
                 when operationplan.color >= 999999 and not(operationplan.plan ? 'item') then
-                999999 
+                999999
                 - extract(epoch from operationplan.delay)/86400.0
                 else operationplan.color
                 end
@@ -4114,7 +4119,7 @@ class ManufacturingOrderList(OperationPlanMixin, GridReport):
             extra="role:'input/manufacturingorder'",
             initially_hidden=True,
         ),
-        GridFieldText("source", title=_("source")),
+        GridFieldText("source", title=_("source"), initially_hidden=True),
         GridFieldLastModified("lastmodified"),
         GridFieldText(
             "operation__description",
@@ -4627,7 +4632,7 @@ class DistributionOrderList(OperationPlanMixin, GridReport):
             formatter="demanddetail",
             extra='"role":"input/demand"',
         ),
-        GridFieldText("source", title=_("source")),
+        GridFieldText("source", title=_("source"), initially_hidden=True),
         GridFieldLastModified("lastmodified"),
         GridFieldBool(
             "feasible",
@@ -5115,7 +5120,7 @@ class PurchaseOrderList(OperationPlanMixin, GridReport):
             formatter="demanddetail",
             extra='"role":"input/demand"',
         ),
-        GridFieldText("source", title=_("source")),
+        GridFieldText("source", title=_("source"), initially_hidden=True),
         GridFieldBool(
             "feasible",
             title=_("feasible"),
@@ -5398,7 +5403,6 @@ class DeliveryOrderList(GridReport):
             choices=OperationPlan.orderstatus,
             editable=not settings.ERP_CONNECTOR,
         ),
-        GridFieldText("batch", title=_("batch"), field_name="batch"),
         GridFieldDuration(
             "delay",
             title=_("delay"),
@@ -5904,12 +5908,6 @@ class InventoryDetail(OperationPlanMixin, GridReport):
             editable=False,
             field_name="operationplan__status",
         ),
-        GridFieldText(
-            "operationplan__batch",
-            title=_("batch"),
-            editable=False,
-            field_name="operationplan__batch",
-        ),
         GridFieldNumber(
             "operationplan__criticality",
             title=_("criticality"),
@@ -6178,6 +6176,13 @@ class ResourceDetail(OperationPlanMixin, GridReport):
             extra='"role":"input/operation"',
         ),
         GridFieldText(
+            "operationplan__batch",
+            title=_("batch"),
+            editable=False,
+            field_name="operationplan__batch",
+            initially_hidden=True,
+        ),
+        GridFieldText(
             "operationplan__operation__description",
             title=format_lazy("{} - {}", _("operation"), _("description")),
             editable=False,
@@ -6301,12 +6306,6 @@ class ResourceDetail(OperationPlanMixin, GridReport):
             extra='"formatoptions":{"defaultValue":""}, "summaryType":"sum"',
         ),
         GridFieldText("operationplan__status", title=_("status"), editable=False),
-        GridFieldText(
-            "operationplan__batch",
-            title=_("batch"),
-            editable=False,
-            field_name="operationplan__batch",
-        ),
         GridFieldNumber(
             "operationplan__criticality",
             title=_("criticality"),

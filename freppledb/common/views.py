@@ -383,7 +383,7 @@ class ParameterList(GridReport):
         ),
         GridFieldText("value", title=_("value")),
         GridFieldText("description", title=_("description"), formatter="longstring"),
-        GridFieldText("source", title=_("source")),
+        GridFieldText("source", title=_("source"), initially_hidden=True),
         GridFieldLastModified("lastmodified"),
     )
 
@@ -457,7 +457,7 @@ class BucketList(GridReport):
         ),
         GridFieldText("description", title=_("description")),
         GridFieldInteger("level", title=_("level")),
-        GridFieldText("source", title=_("source")),
+        GridFieldText("source", title=_("source"), initially_hidden=True),
         GridFieldLastModified("lastmodified"),
     )
 
@@ -485,7 +485,7 @@ class BucketDetailList(GridReport):
         GridFieldDateTime("startdate", title=_("start date")),
         GridFieldDateTime("enddate", title=_("end date")),
         GridFieldText("name", title=_("name")),
-        GridFieldText("source", title=_("source")),
+        GridFieldText("source", title=_("source"), initially_hidden=True),
         GridFieldLastModified("lastmodified"),
     )
 

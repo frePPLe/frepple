@@ -1,6 +1,14 @@
 Release notes
 -------------
 
+6.10.0 (Upcoming release)
+=========================
+
+.. rubric:: User interface
+
+- Updated the list of default fields in all reports. By default we keep the
+  reports now as lean as possible. More advanced fields are hidden by default.
+
 6.9.0 (2020/11/07)
 ==================
 

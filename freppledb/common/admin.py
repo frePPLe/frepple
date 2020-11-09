@@ -44,7 +44,10 @@ class MyUserAdmin(UserAdmin, MultiDBModelAdmin):
     change_user_password_template = "auth/change_password.html"
     fieldsets = (
         (None, {"fields": ("username", "password")}),
-        (_("Personal info"), {"fields": ("first_name", "last_name", "email")}),
+        (
+            _("Personal info"),
+            {"fields": ("first_name", "last_name", "email", "avatar")},
+        ),
         (
             _("Permissions in this scenario"),
             {"fields": ("is_active", "is_superuser", "groups", "user_permissions")},

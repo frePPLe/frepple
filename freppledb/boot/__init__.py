@@ -109,6 +109,8 @@ def add_extra_model_fields(sender, **kwargs):
 def registerAttribute(model, attrlist, **kwargs):
     """
     Register a new attribute.
+    The attribute list is passed as a list of tuples in the format
+      label, fieldtype, editable (default=True), initially_hidden (default=False)
     """
     if model not in _register:
         _register[model] = []

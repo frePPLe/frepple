@@ -38,7 +38,7 @@
 {% endblock %} {% block content %}
 
 <div id="content-main">
-  <form action="." method="post" class="form">
+  <form action="." method="post" class="form" enctype="multipart/form-data">
 
     <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
     <input type="hidden" name="language" id="language" value="{{ request.user.language }}">
@@ -92,7 +92,18 @@
         </div>
       </div>
     </div>
-    <br>
+    
+    <div class="row" style="padding-bottom: 20px;">
+      <div class="col-xs-3" style="max-width:150px; text-align: right">
+        <label class="control-label" for="id_avatar">{% trans 'avatar'|capfirst%}:</label>
+      </div>
+      <div class="col-xs-9" style="max-width:260px">
+        {% if request.user.avatar %}
+        <img style="border-radius: 50%; width:100px; height:100px" src="{{request.user.avatar.url}}">
+        {% endif %}
+        <input type="file" name="avatar" accept="image/*" id="id_avatar">
+      </div>
+    </div>
 
     <div class="row" style="padding-bottom: 20px;">
       <div class="col-xs-3" style="max-width:150px; text-align: right">

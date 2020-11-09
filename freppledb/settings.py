@@ -165,6 +165,10 @@ DATABASE_ROUTERS = ["freppledb.common.models.MultiDBRouter"]
 
 CSRF_FAILURE_VIEW = "freppledb.common.views.csrf_failure"
 
+MEDIA_ROOT = os.path.join(FREPPLE_LOGDIR, "uploads")
+
+MEDIA_URL = "/uploads/"
+
 # Mail settings
 # DEFAULT_FROM_EMAIL #if not pass from_email to send_mail func.
 # EMAIL_HOST #required

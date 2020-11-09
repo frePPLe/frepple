@@ -381,6 +381,7 @@ class User(AbstractUser):
         null=True,
         choices=(("day", "day"), ("week", "week"), ("month", "month")),
     )
+    avatar = models.ImageField(null=True, blank=True)
     lastmodified = models.DateTimeField(
         _("last modified"),
         auto_now=True,

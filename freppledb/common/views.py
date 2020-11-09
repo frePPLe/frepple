@@ -156,6 +156,7 @@ class PreferencesForm(forms.Form):
         help_text=_("New password confirmation"),
         widget=forms.PasswordInput(),
     )
+    avatar = forms.ImageField(label="", required=False)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -191,7 +192,7 @@ class PreferencesForm(forms.Form):
 @csrf_protect
 def preferences(request):
     if request.method == "POST":
-        form = PreferencesForm(request.POST)
+        form = PreferencesForm(request.POST, request.FILES)
         form.user = request.user
         if form.is_valid():
             try:
@@ -200,6 +201,8 @@ def preferences(request):
                 if "theme" in newdata:
                     request.user.theme = newdata["theme"]
                 request.user.pagesize = newdata["pagesize"]
+                if newdata["avatar"]:
+                    request.user.avatar = newdata["avatar"]
                 if newdata["cur_password"]:
                     request.user.set_password(newdata["new_password1"])
                     # Updating the password logs out all other sessions for the user
@@ -229,9 +232,13 @@ def preferences(request):
                     force_text(_("Failure updating preferences")),
                 )
     else:
-        pref = request.user
         form = PreferencesForm(
-            {"language": pref.language, "theme": pref.theme, "pagesize": pref.pagesize}
+            {
+                "language": request.user.language,
+                "theme": request.user.theme,
+                "pagesize": request.user.pagesize,
+                "avatar": request.user.avatar,
+            }
         )
     LANGUAGE = User.languageList[0][1]
     for l in User.languageList:
@@ -325,6 +332,14 @@ class UserList(GridReport):
             key=True,
             formatter="admin",
             extra='"role":"common/user"',
+        ),
+        GridFieldText(
+            "avatar",
+            width=50,
+            editable=False,
+            field_name="avatar",
+            title=_("avatar"),
+            formatter="image",
         ),
         GridFieldText("username", title=_("username")),
         GridFieldText("email", title=_("email address"), formatter="email", width=200),

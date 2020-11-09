@@ -15,8 +15,10 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+from django.conf import settings
 from django.conf.urls import url
 from django.views.generic.base import RedirectView
+from django.conf.urls.static import static
 
 import freppledb.common.views
 import freppledb.common.serializers
@@ -127,4 +129,4 @@ urlpatterns = [
     url(
         r"^reset_password/$", ResetPasswordRequestView.as_view(), name="reset_password"
     ),
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

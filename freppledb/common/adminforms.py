@@ -442,7 +442,6 @@ class MultiDBModelAdmin(admin.ModelAdmin):
     @csrf_protect_m
     @transaction.atomic
     def comment_view(self, request, object_id, extra_context=None):
-        "The 'comment' view for this model."
         request.session["lasttab"] = "comments"
         try:
             model = self.model._meta.model_name
@@ -478,9 +477,13 @@ class MultiDBModelAdmin(admin.ModelAdmin):
             if request.user.has_perm("common.add_comment"):
                 comment = request.POST["comment"]
                 if comment:
-                    Comment(
+                    c = Comment(
                         content_object=modelinstance, user=request.user, comment=comment
-                    ).save(using=request.database)
+                    )
+                    att = request.FILES.get("attachment", None)
+                    if att:
+                        c.attachment = att
+                    c.save(using=request.database)
             return HttpResponseRedirect("%s%s" % (request.prefix, request.path))
         else:
             return render(

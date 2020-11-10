@@ -2,6 +2,15 @@
 
 {% block extrahead %}{{block.super}}
 <script>
+
+function attachment(cellvalue, options, row)
+{
+  return cellvalue ?
+      '<a style="text-decoration: underline" href="/uploads/' + 
+      cellvalue + '" target="_blank">.' + cellvalue.split('.').pop().toLowerCase() + '&nbsp;<i class="fa fa-paperclip"></i></a>' :
+      '';
+}
+
 function objectfmt(cellvalue, options, row)
 {
   var role = row['app'] + "/" + row['model']

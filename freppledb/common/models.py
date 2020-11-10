@@ -31,6 +31,7 @@ from django.db.models.signals import pre_delete
 from django.dispatch.dispatcher import receiver
 from django.urls import NoReverseMatch, reverse
 from django.utils import timezone
+from django.utils.html import mark_safe
 from django.utils.translation import gettext_lazy as _
 from django.utils.text import capfirst
 
@@ -242,11 +243,11 @@ class MultiDBRouter:
 
 class AuditModel(models.Model):
     """
-  This is an abstract base model.
-  It implements the capability to maintain:
+    This is an abstract base model.
+    It implements the capability to maintain:
     - the date of the last modification of the record.
     - a string intended to describe the source system that supplied the record
-  """
+    """
 
     # Database fields
     source = models.CharField(
@@ -267,6 +268,13 @@ class AuditModel(models.Model):
 
     class Meta:
         abstract = True
+
+    @classmethod
+    def createNotification(cls, flw, msg):
+        """
+        Return true if a notification is needed for this message to this follower.
+        """
+        return flw.object_pk == msg.object_pk
 
 
 class Parameter(AuditModel):
@@ -667,6 +675,7 @@ class Comment(models.Model):
     object_pk = models.TextField(_("object id"))
     content_object = GenericForeignKey(ct_field="content_type", fk_field="object_pk")
     comment = models.TextField(_("comment"), max_length=3000)
+    attachment = models.FileField(null=True, blank=True)
     user = models.ForeignKey(
         User,
         verbose_name=_("user"),
@@ -678,6 +687,16 @@ class Comment(models.Model):
     lastmodified = models.DateTimeField(
         _("last modified"), default=timezone.now, editable=False
     )
+    processed = models.BooleanField("processed", default=False)
+
+    def attachmentlink(self):
+        if self.attachment:
+            return mark_safe(
+                '<a href="%s" style="text-decoration:underline">.%s&nbsp;<i class="fa fa-2x fa-paperclip"></i></a>'
+                % (self.attachment.url, self.attachment.url.split(".")[-1].lower())
+            )
+        else:
+            return ""
 
     class Meta:
         db_table = "common_comment"
@@ -691,8 +710,8 @@ class Comment(models.Model):
 
     def get_admin_url(self):
         """
-    Returns the admin URL to edit the object represented by this comment.
-    """
+        Returns the admin URL to edit the object represented by this comment.
+        """
         if self.content_type and self.object_pk:
             url_name = "data:%s_%s_change" % (
                 self.content_type.app_label,
@@ -710,6 +729,91 @@ class Comment(models.Model):
                 except NoReverseMatch:
                     pass
         return None
+
+    @classmethod
+    def createNotifications(cls, database=DEFAULT_DB_ALIAS):
+        with transaction.atomic(using=database):
+            followers = None
+            no_followers = False
+            for msg in (
+                Comment.objects.all()
+                .using(database)
+                .filter(processed=False)
+                .order_by("id")
+                .select_for_update(skip_locked=True)
+            ):
+                if not followers:
+                    followers = {}
+                    for i in Follower.objects.all().using(database).order_by("id"):
+                        if i.content_type in followers:
+                            followers[i.content_type].push(i)
+                        else:
+                            followers[i.content_type] = [i]
+                    if not followers:
+                        no_followers = True
+                        break
+                try:
+                    for flw in followers.get(msg.content_type, []):
+                        if msg.content_type.model_class().createNotification(flw, msg):
+                            Notification(
+                                comment=msg, user=flw.user, type=flw.type
+                            ).save(database)
+                    msg.processed = True
+                    msg.save(using=database)
+                except Exception as e:
+                    logger.error(
+                        "Couldn't create nofications for message %s: %s" % (msg.id, e)
+                    )
+            if no_followers:
+                # No followers at all -> All messages can immediately be marked processed
+                Comment.objects.all().using(database).filter(processed=False).update(
+                    processed=True
+                )
+
+
+class Follower(models.Model):
+    type_list = (("M", "email"), ("O", "online"))
+
+    id = models.AutoField(_("identifier"), primary_key=True)
+    content_type = models.ForeignKey(
+        ContentType,
+        verbose_name=_("content type"),
+        related_name="content_type_set_for_%(class)s",
+        on_delete=models.CASCADE,
+    )
+    object_pk = models.TextField(_("object id"), null=True)
+    content_object = GenericForeignKey(ct_field="content_type", fk_field="object_pk")
+    user = models.ForeignKey(User, verbose_name=_("user"), on_delete=models.CASCADE)
+    type = models.CharField(
+        _("type"), max_length=10, null=False, default="O", choices=type_list
+    )
+
+    class Meta:
+        verbose_name = _("follower")
+        verbose_name_plural = _("followers")
+        db_table = "common_follower"
+
+
+class Notification(models.Model):
+    type_list = (("M", "email"), ("O", "online"))
+    status_list = (("U", "unread"), ("R", "read"))
+
+    id = models.AutoField(_("identifier"), primary_key=True)
+    comment = models.ForeignKey(
+        Comment, verbose_name=_("comment"), on_delete=models.CASCADE, null=True
+    )
+    user = models.ForeignKey(User, verbose_name=_("user"), on_delete=models.CASCADE)
+    status = models.CharField(
+        _("status"), max_length=5, null=False, default="U", choices=status_list
+    )
+    type = models.CharField(
+        _("type"), max_length=5, null=False, default="O", choices=type_list
+    )
+
+    class Meta:
+        verbose_name = _("notification")
+        verbose_name_plural = _("notifications")
+        db_table = "common_notification"
 
 
 class Bucket(AuditModel):

@@ -441,11 +441,17 @@ class CommentList(GridReport):
             field_name="object_pk",
             editable=False,
             align="center",
-            extra='"formatter":"objectfmt"',
+            extra='"formatter": objectfmt',
         ),
         GridFieldText(
-            "comment", title=_("comment"), width=400, editable=False, align="center"
+            "attachment",
+            title=_("attachment"),
+            width=50,
+            editable=False,
+            align="center",
+            extra='"formatter": attachment',
         ),
+        GridFieldText("comment", title=_("comment"), width=400, editable=False),
         GridFieldText(
             "app", title="app", hidden=True, field_name="content_type__app_label"
         ),

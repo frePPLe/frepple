@@ -3,18 +3,34 @@
 
 {% block content_title %}{{ block.super }}{% tabs opts %}{% endblock %}
 
+{% block extrahead %}{{block.super}}
+<script>
+function enableSave() {
+  $('#submit').removeClass('disabled').addClass('btn-danger').removeClass('btn-primary');
+}
+</script>
+{% endblock %}
+
 {% block content %}
   <div id="content-main" class="row" style="min-height: 150px">
     <div class="col-md-12">
 {% if perms.common.add_comment %}
-      <form method="post">{% csrf_token %}
-        <textarea id="comment" name="comment" class="form-control" rows="10" style="width:100%" oninput="$('#submit').removeClass('disabled').addClass('btn-danger').removeClass('btn-primary');"></textarea>
+      <form method="post" enctype="multipart/form-data">{% csrf_token %}
+        <textarea id="comment" name="comment" class="form-control" rows="10" style="width:100%" oninput="enableSave()"></textarea>                
+        <label for="attachment">{% trans "Add an attachment" %}
+        <input style="display:inline" type="file" name="attachment" accept="image/*" id="attachment" onchange="enableSave()">
+        </label>
         <div style="margin-top: 0.7em"><button id="submit" type="submit" class="btn btn-primary disabled" role="button" value="{% filter force_escape %}{% trans 'Save' %}{% endfilter %}">{% filter force_escape %}{% trans 'Save' %}{% endfilter %}</button></div>
       </form>{% endif%}
 
 {% for c in comments %}
       <h3>{{c.user}} ({{c.user.get_full_name}})<span class="float_right">{{c.lastmodified}}</span></h3>
+      <div class="clearfix">
+      {% if c.attachment %}
+      <div class="pull-left" style="width: 100px">{{c.attachmentlink}}</div>
+      {% endif %}
       <pre>{{c.comment}}</pre>
+      </div>
 {% endfor %}
 
      </div>

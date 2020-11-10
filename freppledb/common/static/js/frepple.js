@@ -394,7 +394,9 @@ jQuery.extend($.fn.fmatter, {
   duration : formatDuration,
 
   image : function(cellvalue, options, rowdata) {
-    return '<img style="border-radius: 50%; width:40px; height:40px" src="/uploads/' + cellvalue + '">';
+    return cellvalue ?
+      '<img style="border-radius: 50%; width:40px; height:40px" src="/uploads/' + cellvalue + '">' :
+      '';
   },
   
   admin : function(cellvalue, options, rowdata) {

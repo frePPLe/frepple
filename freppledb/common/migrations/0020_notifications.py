@@ -31,7 +31,7 @@ def grant_read_access(apps, schema_editor):
                 cursor.execute(
                     "create role %s with nologin noinherit role current_user" % (role,)
                 )
-            for table in ["common_follower", "common_notifications"]:
+            for table in ["common_follower", "common_notification"]:
                 cursor.execute("grant select on table %s to %s" % (table, role))
 
 

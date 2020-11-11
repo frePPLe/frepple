@@ -25,6 +25,7 @@ from django.contrib.auth.models import AbstractUser, Group
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import PermissionDenied
+from django.core.validators import FileExtensionValidator
 from django.db import models, DEFAULT_DB_ALIAS, connections, transaction
 from django.db.models import Q
 from django.db.models.signals import pre_delete
@@ -274,7 +275,7 @@ class AuditModel(models.Model):
         """
         Return true if a notification is needed for this message to this follower.
         """
-        return flw.object_pk == msg.object_pk
+        return flw.content_type == msg.content_type and flw.object_pk == msg.object_pk
 
 
 class Parameter(AuditModel):
@@ -675,7 +676,17 @@ class Comment(models.Model):
     object_pk = models.TextField(_("object id"))
     content_object = GenericForeignKey(ct_field="content_type", fk_field="object_pk")
     comment = models.TextField(_("comment"), max_length=3000)
-    attachment = models.FileField(null=True, blank=True)
+    attachment = models.FileField(
+        null=True,
+        blank=True,
+        validators=[
+            FileExtensionValidator(
+                allowed_extensions=[
+                    ext[1:] for ext in settings.MEDIA_EXTENSIONS.split(",")
+                ]
+            )
+        ],
+    )
     user = models.ForeignKey(
         User,
         verbose_name=_("user"),
@@ -732,39 +743,36 @@ class Comment(models.Model):
 
     @classmethod
     def createNotifications(cls, database=DEFAULT_DB_ALIAS):
+        """
+        TODO  for large number of messages and followers, this method can be inefficient.
+        Some mechanism based on the contenttype may be needed to reduce the loop of followers.
+        """
         with transaction.atomic(using=database):
-            followers = None
-            no_followers = False
-            for msg in (
-                Comment.objects.all()
-                .using(database)
-                .filter(processed=False)
-                .order_by("id")
-                .select_for_update(skip_locked=True)
-            ):
-                if not followers:
-                    followers = {}
-                    for i in Follower.objects.all().using(database).order_by("id"):
-                        if i.content_type in followers:
-                            followers[i.content_type].push(i)
-                        else:
-                            followers[i.content_type] = [i]
-                    if not followers:
-                        no_followers = True
-                        break
-                try:
-                    for flw in followers.get(msg.content_type, []):
-                        if msg.content_type.model_class().createNotification(flw, msg):
-                            Notification(
-                                comment=msg, user=flw.user, type=flw.type
-                            ).save(database)
-                    msg.processed = True
-                    msg.save(using=database)
-                except Exception as e:
-                    logger.error(
-                        "Couldn't create nofications for message %s: %s" % (msg.id, e)
-                    )
-            if no_followers:
+            followers = list(Follower.objects.all().using(database).order_by("id"))
+            if followers:
+                for msg in (
+                    Comment.objects.all()
+                    .using(database)
+                    .filter(processed=False)
+                    .order_by("id")
+                    .select_for_update(skip_locked=True)
+                ):
+                    try:
+                        for flw in followers:
+                            if msg.content_type.model_class().createNotification(
+                                flw, msg
+                            ):
+                                Notification(
+                                    comment=msg, user=flw.user, type=flw.type
+                                ).save(database)
+                        msg.processed = True
+                        msg.save(using=database)
+                    except Exception as e:
+                        logger.error(
+                            "Couldn't create nofications for message %s: %s"
+                            % (msg.id, e)
+                        )
+            else:
                 # No followers at all -> All messages can immediately be marked processed
                 Comment.objects.all().using(database).filter(processed=False).update(
                     processed=True

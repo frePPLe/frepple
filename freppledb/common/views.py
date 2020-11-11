@@ -16,6 +16,7 @@
 #
 
 import json
+import os.path
 
 from django.shortcuts import render
 from django.contrib import messages
@@ -44,6 +45,7 @@ from django.http import (
     HttpResponseNotFound,
 )
 from django.shortcuts import render_to_response
+from django.views import static
 from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.debug import sensitive_variables
 
@@ -560,3 +562,39 @@ def csrf_failure(request, reason):
     # Redirect to login page
     logger.error("CSRF failure detected")
     return HttpResponseRedirect(request.prefix + "/")
+
+
+def sendStaticFile(request, *args, headers=None):
+    """
+    Serving log and data files can be handled either:
+    - by Django's Python code
+    - by the apache or nginx web server if the module xsendfile is installed
+    """
+    if getattr(settings, "APACHE_XSENDFILE", False):
+        # Forward to Apache
+        # Code inspired on https://github.com/johnsensible/django-sendfile/
+        response = HttpResponse(request)
+        # For apache:
+        response["X-Sendfile"] = os.path.join(*args)
+        # For nginx:
+        # response["X-Accel-Redirect"]= os.path.join(*args)
+    else:
+        # Django's static file server
+        response = static.serve(
+            request, args[-1], document_root=os.path.join(*args[:-1])
+        )
+    if headers:
+        for k, v in headers.items():
+            response[k] = v
+    return response
+
+
+@login_required
+def uploads(request, filename):
+    return sendStaticFile(
+        request,
+        settings.FREPPLE_LOGDIR,
+        "uploads",
+        filename,
+        headers={"Cache-Control": "max-age=%s" % settings.MEDIA_MAX_AGE},
+    )

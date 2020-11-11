@@ -37,7 +37,6 @@ from django.contrib.auth import get_permission_codename
 from django.contrib.contenttypes.models import ContentType
 from django.db import transaction
 from django.db.models.fields.related import ForeignKey
-from django.views import static
 from django.views.decorators.cache import never_cache
 from django.shortcuts import render
 from django.utils.translation import gettext_lazy as _
@@ -73,6 +72,7 @@ from freppledb.common.report import (
     _getCellValue,
     matchesModelName,
 )
+from freppledb.common.views import sendStaticFile
 from .models import Task, ScheduledTask
 from .management.commands.runworker import launchWorker
 
@@ -80,25 +80,6 @@ import logging
 
 
 logger = logging.getLogger(__name__)
-
-
-def sendStaticFile(request, filename, folder):
-    """
-    Serving log and data files can be handled either:
-    - by Django's Python code
-    - by the apache web server if the module xsendfile is installed
-    """
-    if getattr(settings, "APACHE_XSENDFILE", False):
-        # Forward to Apache
-        # Code inspired on https://github.com/johnsensible/django-sendfile/
-        response = HttpResponse(request)
-        response["X-Sendfile"] = os.path.join(folder, filename)
-    else:
-        # Django's static file server
-        response = static.serve(request, filename, document_root=folder)
-    response["Content-Disposition"] = 'inline; filename="%s"' % filename
-    response["Content-Type"] = "application/octet-stream"
-    return response
 
 
 class TaskReport(GridReport):
@@ -594,7 +575,15 @@ def DownloadLogFile(request, taskid):
     filename = Task.objects.using(request.database).get(id=taskid).logfile
     if not filename.lower().endswith(".log"):
         return HttpResponseNotFound(force_text(_("Error")))
-    return sendStaticFile(request, filename, settings.FREPPLE_LOGDIR)
+    return sendStaticFile(
+        request,
+        settings.FREPPLE_LOGDIR,
+        filename,
+        headers={
+            "Content-Type": "application/octet-stream",
+            "Content-Disposition": 'inline; filename="%s"' % filename,
+        },
+    )
 
 
 @staff_member_required
@@ -803,7 +792,15 @@ class FileManager:
             # Download a single file
             try:
                 clean_filename = filename.split("/")[0]
-                return sendStaticFile(request, clean_filename, folder)
+                return sendStaticFile(
+                    request,
+                    folder,
+                    clean_filename,
+                    headers={
+                        "Content-Type": "application/octet-stream",
+                        "Content-Disposition": 'inline; filename="%s"' % filename,
+                    },
+                )
             except Exception as e:
                 logger.error("Failed file download: %s" % e)
                 return HttpResponseNotFound(force_text(_("Error")))

@@ -17,7 +17,6 @@
 
 from django.conf import settings
 from django.contrib.auth.models import AnonymousUser
-from django.contrib.admin.models import LogEntry
 from django.db import DEFAULT_DB_ALIAS
 from django.utils import formats
 from django.utils.html import escape
@@ -83,80 +82,10 @@ class NewsWidget(Widget):
 Dashboard.register(NewsWidget)
 
 
-class RecentActionsWidget(Widget):
-    name = "recent_actions"
-    title = _("My Actions")
-    tooltip = _("Display a list of the entities you recently changed")
-    asynchronous = False
-    limit = 10
-
-    def render(self, request=None):
-        # This code is a slightly modified version of a standard Django tag.
-        # The only change is to look for the logentry records in the right database.
-        # See the file django\contrib\admin\templatetags\log.py
-        from freppledb.common.middleware import _thread_locals
-
-        try:
-            db = _thread_locals.request.database or DEFAULT_DB_ALIAS
-        except Exception:
-            db = DEFAULT_DB_ALIAS
-        if isinstance(_thread_locals.request.user, AnonymousUser):
-            q = LogEntry.objects.using(db).select_related("content_type", "user")[
-                : self.limit
-            ]
-        else:
-            q = (
-                LogEntry.objects.using(db)
-                .filter(user__id__exact=_thread_locals.request.user.pk)
-                .select_related("content_type", "user")[: self.limit]
-            )
-        result = []
-        for entry in q:
-            if entry.is_change():
-                result.append(
-                    '<span style="display: inline-block;" class="fa fa-pencil"></span><a href="%s%s">&nbsp;%s</a>'
-                    % (
-                        _thread_locals.request.prefix,
-                        entry.get_admin_url(),
-                        escape(entry.object_repr),
-                    )
-                )
-            elif entry.is_addition():
-                result.append(
-                    '<span style="display: inline-block;" class="fa fa-plus"></span><a href="%s%s">&nbsp;%s</a>'
-                    % (
-                        _thread_locals.request.prefix,
-                        entry.get_admin_url(),
-                        escape(entry.object_repr),
-                    )
-                )
-            elif entry.is_deletion():
-                result.append(
-                    '<span style="display: inline-block;" class="fa fa-minus"></span>&nbsp;%s'
-                    % escape(entry.object_repr)
-                )
-            else:
-                raise "Unexpected log entry type"
-            if entry.content_type:
-                result.append(
-                    '<span class="small">%s</span><br>'
-                    % capfirst(force_text(_(entry.content_type.name)))
-                )
-            else:
-                result.append(
-                    '<span class="small">%s</span><br>'
-                    % force_text(_("Unknown content"))
-                )
-        return result and "\n".join(result) or force_text(_("None available"))
-
-
-Dashboard.register(RecentActionsWidget)
-
-
 class RecentCommentsWidget(Widget):
     name = "recent_comments"
-    title = _("comments")
-    tooltip = _("Display a list of recent comments")
+    title = _("Messages")
+    tooltip = _("Your inbox of new messages")
     url = "/data/common/comment/?sord=desc&sidx=lastmodified"
     asynchronous = False
     limit = 10

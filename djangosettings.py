@@ -503,10 +503,7 @@ DEFAULT_DASHBOARD = [
     },
     {
         "rowname": _("activity"),
-        "cols": [
-            {"width": 6, "widgets": [("recent_comments", {"limit": 10})]},
-            {"width": 6, "widgets": [("recent_actions", {"limit": 10})]},
-        ],
+        "cols": [{"width": 6, "widgets": [("recent_comments", {"limit": 10})]}],
     },
 ]
 

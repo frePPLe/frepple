@@ -145,7 +145,7 @@ class Command(BaseCommand):
                             inputmodels.Demand, for_concrete_model=False
                         ).pk
                         cursor.execute(
-                            "delete from django_admin_log where content_type_id = %s",
+                            "delete from common_comment where content_type_id = %s and type in ('add', 'change', 'delete')",
                             (key,),
                         )
 
@@ -162,7 +162,7 @@ class Command(BaseCommand):
                             inputmodels.PurchaseOrder, for_concrete_model=False
                         ).pk
                         cursor.execute(
-                            "delete from django_admin_log where content_type_id = %s",
+                            "delete from common_comment where content_type_id = %s and type in ('add', 'change', 'delete')",
                             (key,),
                         )
 
@@ -173,7 +173,7 @@ class Command(BaseCommand):
                             inputmodels.DistributionOrder, for_concrete_model=False
                         ).pk
                         cursor.execute(
-                            "delete from django_admin_log where content_type_id = %s",
+                            "delete from common_comment where content_type_id = %s and type in ('add', 'change', 'delete')",
                             (key,),
                         )
 
@@ -184,7 +184,7 @@ class Command(BaseCommand):
                             inputmodels.ManufacturingOrder, for_concrete_model=False
                         ).pk
                         cursor.execute(
-                            "delete from django_admin_log where content_type_id = %s",
+                            "delete from common_comment where content_type_id = %s and type in ('add', 'change', 'delete')",
                             (key,),
                         )
 
@@ -195,7 +195,7 @@ class Command(BaseCommand):
                             inputmodels.DeliveryOrder, for_concrete_model=False
                         ).pk
                         cursor.execute(
-                            "delete from django_admin_log where content_type_id = %s",
+                            "delete from common_comment where content_type_id = %s and type in ('add', 'change', 'delete')",
                             (key,),
                         )
 

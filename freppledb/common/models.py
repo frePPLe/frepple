@@ -666,16 +666,26 @@ def delete_user(sender, instance, **kwargs):
 
 
 class Comment(models.Model):
+    type_list = (
+        ("add", _("add")),
+        ("change", _("change")),
+        ("delete", _("delete")),
+        ("comment", _("comment")),
+    )
     id = models.AutoField(_("identifier"), primary_key=True)
+    type = models.CharField(
+        _("type"), max_length=10, null=False, default="add", choices=type_list
+    )
     content_type = models.ForeignKey(
         ContentType,
         verbose_name=_("content type"),
         related_name="content_type_set_for_%(class)s",
         on_delete=models.CASCADE,
     )
+    object_repr = models.CharField(_("object repr"), max_length=200)
     object_pk = models.TextField(_("object id"))
     content_object = GenericForeignKey(ct_field="content_type", fk_field="object_pk")
-    comment = models.TextField(_("comment"), max_length=3000)
+    comment = models.TextField(_("message"), max_length=3000)
     attachment = models.FileField(
         null=True,
         blank=True,
@@ -696,9 +706,30 @@ class Comment(models.Model):
         on_delete=models.SET_NULL,
     )
     lastmodified = models.DateTimeField(
-        _("last modified"), default=timezone.now, editable=False
+        _("last modified"), default=timezone.now, editable=False, db_index=True
     )
-    processed = models.BooleanField("processed", default=False)
+    processed = models.BooleanField("processed", default=False, db_index=True)
+
+    def save(
+        self, force_insert=False, force_update=False, using=None, update_fields=None
+    ):
+        if not using:
+            using = getattr(self, "_state", None)
+            if using:
+                using = using.db
+            else:
+                from freppledb.common.middleware import _thread_locals
+
+                using = getattr(_thread_locals, "database", DEFAULT_DB_ALIAS)
+        tmp = super().save(
+            force_insert=force_insert,
+            force_update=force_update,
+            using=using,
+            update_fields=update_fields,
+        )
+        # TODO async generation of the messages
+        Comment.createNotifications(database=using)
+        return tmp
 
     def attachmentlink(self):
         if self.attachment:

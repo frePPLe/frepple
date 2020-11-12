@@ -63,11 +63,10 @@ class MyUserAdmin(UserAdmin, MultiDBModelAdmin):
             "permission": "common.change_user",
         },
         {
-            "name": "comments",
-            "label": _("comments"),
+            "name": "messages",
+            "label": _("messages"),
             "view": "admin:common_user_comment",
         },
-        {"name": "history", "label": _("History"), "view": "admin:common_user_history"},
     ]
 
     def get_readonly_fields(self, request, obj=None):
@@ -100,11 +99,10 @@ class MyGroupAdmin(MultiDBModelAdmin):
             "permission": "auth.change_group",
         },
         {
-            "name": "comments",
-            "label": _("comments"),
+            "name": "messages",
+            "label": _("messages"),
             "view": "admin:auth_group_comment",
         },
-        {"name": "history", "label": _("History"), "view": "admin:auth_group_history"},
     ]
 
 
@@ -145,14 +143,9 @@ class Parameter_admin(MultiDBModelAdmin):
             "permission": "common.change_parameter",
         },
         {
-            "name": "comments",
-            "label": _("comments"),
+            "name": "messages",
+            "label": _("messages"),
             "view": "admin:common_parameter_comment",
-        },
-        {
-            "name": "history",
-            "label": _("History"),
-            "view": "admin:common_parameter_history",
         },
     ]
 
@@ -187,14 +180,9 @@ class BucketDetail_admin(MultiDBModelAdmin):
             "permission": "common.change_bucketdetail",
         },
         {
-            "name": "comments",
-            "label": _("comments"),
+            "name": "messages",
+            "label": _("messages"),
             "view": "admin:common_bucketdetail_comment",
-        },
-        {
-            "name": "history",
-            "label": _("History"),
-            "view": "admin:common_bucketdetail_history",
         },
     ]
 
@@ -215,14 +203,9 @@ class Bucket_admin(MultiDBModelAdmin):
             "permission": "common.change_bucket",
         },
         {
-            "name": "comments",
-            "label": _("comments"),
+            "name": "messages",
+            "label": _("messages"),
             "view": "admin:common_bucket_comment",
-        },
-        {
-            "name": "history",
-            "label": _("History"),
-            "view": "admin:common_bucket_history",
         },
     ]
 

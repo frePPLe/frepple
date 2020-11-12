@@ -18,6 +18,7 @@
 import json
 import os.path
 
+from django.http import JsonResponse
 from django.shortcuts import render
 from django.contrib import messages
 from django.contrib.auth import update_session_auth_hash
@@ -49,10 +50,9 @@ from django.views import static
 from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.debug import sensitive_variables
 
-from freppledb.common.models import User, Parameter, Comment, Bucket, BucketDetail
-from freppledb.common.report import GridReport, GridFieldLastModified, GridFieldText
-from freppledb.common.report import GridFieldBool, GridFieldDateTime, GridFieldInteger
-from freppledb.common.report import getCurrency
+from .models import User, Parameter, Comment, Bucket, BucketDetail, Notification
+from .report import GridReport, GridFieldLastModified, GridFieldText, GridFieldBool
+from .report import GridFieldDateTime, GridFieldInteger, getCurrency
 
 from freppledb.admin import data_site
 from freppledb import VERSION
@@ -597,4 +597,15 @@ def uploads(request, filename):
         "uploads",
         filename,
         headers={"Cache-Control": "max-age=%s" % settings.MEDIA_MAX_AGE},
+    )
+
+
+@login_required
+def messages(request):
+    return JsonResponse(
+        {
+            "unread": Notification.objects.using(request.database)
+            .filter(user_id=request.user.id, status="U")
+            .count()
+        }
     )

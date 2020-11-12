@@ -46,14 +46,9 @@ class SQLReport_admin(MultiDBModelAdmin):
             "permissions": "reportmanager.change_sqlreport",
         },
         {
-            "name": "comments",
-            "label": _("comments"),
+            "name": "messages",
+            "label": _("messages"),
             "view": "admin:reportmanager_sqlreport_comment",
-        },
-        {
-            "name": "history",
-            "label": _("History"),
-            "view": "admin:reportmanager_sqlreport_history",
         },
     ]
 

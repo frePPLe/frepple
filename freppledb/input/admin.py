@@ -72,14 +72,9 @@ class CalendarBucket_admin(MultiDBModelAdmin):
             "permissions": "input.change_calendarbucket",
         },
         {
-            "name": "comments",
-            "label": _("comments"),
+            "name": "messages",
+            "label": _("messages"),
             "view": "admin:input_calendarbucket_comment",
-        },
-        {
-            "name": "history",
-            "label": _("History"),
-            "view": "admin:input_calendarbucket_history",
         },
     ]
 
@@ -100,14 +95,9 @@ class Calendar_admin(MultiDBModelAdmin):
             "permissions": "input.change_calendar",
         },
         {
-            "name": "comments",
-            "label": _("comments"),
+            "name": "messages",
+            "label": _("messages"),
             "view": "admin:input_calendar_comment",
-        },
-        {
-            "name": "history",
-            "label": _("History"),
-            "view": "admin:input_calendar_history",
         },
     ]
 
@@ -148,14 +138,9 @@ class Location_admin(MultiDBModelAdmin):
             "view": "input_purchaseorder_by_location",
         },
         {
-            "name": "comments",
-            "label": _("comments"),
+            "name": "messages",
+            "label": _("messages"),
             "view": "admin:input_location_comment",
-        },
-        {
-            "name": "history",
-            "label": _("History"),
-            "view": "admin:input_location_history",
         },
     ]
 
@@ -176,14 +161,9 @@ class Customer_admin(MultiDBModelAdmin):
             "permissions": "input.change_customer",
         },
         {
-            "name": "comments",
-            "label": _("comments"),
+            "name": "messages",
+            "label": _("messages"),
             "view": "admin:input_customer_comment",
-        },
-        {
-            "name": "history",
-            "label": _("History"),
-            "view": "admin:input_customer_history",
         },
     ]
 
@@ -217,14 +197,9 @@ class Supplier_admin(MultiDBModelAdmin):
             "view": "input_purchaseorder_by_supplier",
         },
         {
-            "name": "comments",
-            "label": _("comments"),
+            "name": "messages",
+            "label": _("messages"),
             "view": "admin:input_supplier_comment",
-        },
-        {
-            "name": "history",
-            "label": _("History"),
-            "view": "admin:input_supplier_history",
         },
     ]
 
@@ -295,11 +270,10 @@ class Item_admin(MultiDBModelAdmin):
             "view": "input_operationplanmaterial_plandetail_by_item",
         },
         {
-            "name": "comments",
-            "label": _("comments"),
+            "name": "messages",
+            "label": _("messages"),
             "view": "admin:input_item_comment",
         },
-        {"name": "history", "label": _("History"), "view": "admin:input_item_history"},
     ]
 
 
@@ -319,14 +293,9 @@ class ItemSupplier_admin(MultiDBModelAdmin):
             "permissions": "input.change_itemsupplier",
         },
         {
-            "name": "comments",
-            "label": _("comments"),
+            "name": "messages",
+            "label": _("messages"),
             "view": "admin:input_itemsupplier_comment",
-        },
-        {
-            "name": "history",
-            "label": _("History"),
-            "view": "admin:input_itemsupplier_history",
         },
     ]
 
@@ -347,14 +316,9 @@ class ItemDistribution_admin(MultiDBModelAdmin):
             "permissions": "input.change_itemdistribution",
         },
         {
-            "name": "comments",
-            "label": _("comments"),
+            "name": "messages",
+            "label": _("messages"),
             "view": "admin:input_itemdistribution_comment",
-        },
-        {
-            "name": "history",
-            "label": _("History"),
-            "view": "admin:input_itemdistribution_history",
         },
     ]
 
@@ -477,14 +441,9 @@ class Operation_admin(MultiDBModelAdmin):
             "view": "output_constraint_operation",
         },
         {
-            "name": "comments",
-            "label": _("comments"),
+            "name": "messages",
+            "label": _("messages"),
             "view": "admin:input_operation_comment",
-        },
-        {
-            "name": "history",
-            "label": _("History"),
-            "view": "admin:input_operation_history",
         },
     ]
 
@@ -546,14 +505,9 @@ class Buffer_admin(MultiDBModelAdmin):
             "view": "output_constraint_buffer",
         },
         {
-            "name": "comments",
-            "label": _("comments"),
+            "name": "messages",
+            "label": _("messages"),
             "view": "admin:input_buffer_comment",
-        },
-        {
-            "name": "history",
-            "label": _("History"),
-            "view": "admin:input_buffer_history",
         },
     ]
 
@@ -580,14 +534,9 @@ class SetupRule_admin(MultiDBModelAdmin):
             "permissions": "input.change_setuprule",
         },
         {
-            "name": "comments",
-            "label": _("comments"),
+            "name": "messages",
+            "label": _("messages"),
             "view": "admin:input_setuprule_comment",
-        },
-        {
-            "name": "history",
-            "label": _("History"),
-            "view": "admin:input_setuprule_history",
         },
     ]
 
@@ -608,14 +557,9 @@ class SetupMatrix_admin(MultiDBModelAdmin):
             "permissions": "input.change_setupmatrix",
         },
         {
-            "name": "comments",
-            "label": _("comments"),
+            "name": "messages",
+            "label": _("messages"),
             "view": "admin:input_setupmatrix_comment",
-        },
-        {
-            "name": "history",
-            "label": _("History"),
-            "view": "admin:input_setupmatrix_history",
         },
     ]
 
@@ -635,11 +579,10 @@ class Skill_admin(MultiDBModelAdmin):
             "permissions": "input.change_skill",
         },
         {
-            "name": "comments",
-            "label": _("comments"),
+            "name": "messages",
+            "label": _("messages"),
             "view": "admin:input_skill_comment",
         },
-        {"name": "history", "label": _("History"), "view": "admin:input_skill_history"},
     ]
 
 
@@ -659,14 +602,9 @@ class ResourceSkill_admin(MultiDBModelAdmin):
             "permissions": "input.change_resoureskill",
         },
         {
-            "name": "comments",
-            "label": _("comments"),
+            "name": "messages",
+            "label": _("messages"),
             "view": "admin:input_resourceskill_comment",
-        },
-        {
-            "name": "history",
-            "label": _("History"),
-            "view": "admin:input_resourceskill_history",
         },
     ]
 
@@ -712,14 +650,9 @@ class Resource_admin(MultiDBModelAdmin):
             "view": "output_constraint_resource",
         },
         {
-            "name": "comments",
-            "label": _("comments"),
+            "name": "messages",
+            "label": _("messages"),
             "view": "admin:input_resource_comment",
-        },
-        {
-            "name": "history",
-            "label": _("History"),
-            "view": "admin:input_resource_history",
         },
     ]
 
@@ -758,14 +691,9 @@ class OperationMaterial_admin(MultiDBModelAdmin):
             "permissions": "input.change_operationmaterial",
         },
         {
-            "name": "comments",
-            "label": _("comments"),
+            "name": "messages",
+            "label": _("messages"),
             "view": "admin:input_operationmaterial_comment",
-        },
-        {
-            "name": "history",
-            "label": _("History"),
-            "view": "admin:input_operationmaterial_history",
         },
     ]
 
@@ -803,14 +731,9 @@ class OperationResource_admin(MultiDBModelAdmin):
             "permissions": "input.change_operationresource",
         },
         {
-            "name": "comments",
-            "label": _("comments"),
+            "name": "messages",
+            "label": _("messages"),
             "view": "admin:input_operationresource_comment",
-        },
-        {
-            "name": "history",
-            "label": _("History"),
-            "view": "admin:input_operationresource_history",
         },
     ]
 
@@ -1059,14 +982,9 @@ class Demand_admin(MultiDBModelAdmin):
         },
         {"name": "plan", "label": _("plan"), "view": "output_demand_pegging"},
         {
-            "name": "comments",
-            "label": _("comments"),
+            "name": "messages",
+            "label": _("messages"),
             "view": "admin:input_demand_comment",
-        },
-        {
-            "name": "history",
-            "label": _("History"),
-            "view": "admin:input_demand_history",
         },
     ]
 

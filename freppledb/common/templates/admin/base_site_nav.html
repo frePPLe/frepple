@@ -63,16 +63,27 @@ $(function() {
 				</div>
 			</form>
 
-          {% if not request.session.navbar and user.is_authenticated and user.is_staff %}<ul class="nav navbar-nav navbar-right">
+      {% if not request.session.navbar and user.is_authenticated and user.is_staff %}
+      <ul class="nav navbar-nav navbar-right">
+        <p class="navbar-text" data-toggle="tooltip" data-html="true" data-placement="auto bottom"
+          data-original-title="{% trans "No unread messages" %}">
+          <span id="messagestooltip" style="font-size:80%;" class="fa-stack fa-lg">
+            <span class="fa fa-stack-2x fa-envelope-o" aria-hidden="true"></span>
+            <strong class="fa-stack-1x text-danger"></strong>
+          <span>
+        </p>
 		    <li class="dropdown">
-		    <a href="#" class="dropdown-toggle" style="
-    padding-right: 20px;" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{% trans 'user'|capfirst %} {% firstof user.first_name user.username %}</a>
+		    <a href="#" class="dropdown-toggle" style="padding-right: 20px" data-toggle="dropdown" 
+          role="button" aria-haspopup="true" aria-expanded="false">
+          {% trans 'user'|capfirst %} {% firstof user.first_name user.username %}
+        </a>
 				<ul class="dropdown-menu">
 				  <li><a href="{{request.prefix}}/preferences/">{% trans 'preferences'|capfirst %}</a></li>
 				  <li><a href="/data/logout/?next=/">{% trans 'Log out'|capfirst %}</a></li>
 				</ul>
-			  </li></ul>
-          {% endif %}
+			  </li>
+      </ul>
+      {% endif %}
 		</div>
 
 	  <div class="row breadcrumbrow">

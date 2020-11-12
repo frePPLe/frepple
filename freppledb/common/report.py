@@ -73,7 +73,6 @@ from django.utils.html import escape
 from django.utils.translation import gettext as _
 from django.utils.formats import get_format
 from django.utils.text import capfirst, get_text_list, format_lazy
-from django.contrib.admin.models import LogEntry, CHANGE, ADDITION, DELETION
 from django.contrib.contenttypes.models import ContentType
 from django.views.generic.base import View
 
@@ -1767,12 +1766,13 @@ class GridReport(View):
                         try:
                             obj = cls.model.objects.using(request.database).get(pk=key)
                             obj.delete()
-                            LogEntry(
+                            Comment(
                                 user_id=request.user.id,
                                 content_type_id=content_type_id,
                                 object_id=force_str(key),
                                 object_repr=force_str(key)[:200],
-                                action_flag=DELETION,
+                                type="delete",
+                                comment="Deleted %s" % force_str(key),
                             ).save(using=request.database)
                             transaction.savepoint_commit(sid)
                         except cls.model.DoesNotExist:
@@ -1802,13 +1802,13 @@ class GridReport(View):
                                     _("Can't copy %s") % cls.model._meta.app_label
                                 )
                             obj.save(using=request.database, force_insert=True)
-                            LogEntry(
+                            Comment(
                                 user_id=request.user.pk,
                                 content_type_id=content_type_id,
-                                object_id=obj.pk,
+                                object_pk=obj.pk,
                                 object_repr=force_str(obj),
-                                action_flag=ADDITION,
-                                change_message=_("Copied from %s.") % key,
+                                type="add",
+                                comment=_("Copied from %s.") % key,
                             ).save(using=request.database)
                             transaction.savepoint_commit(sid)
                         except cls.model.DoesNotExist:
@@ -1853,13 +1853,13 @@ class GridReport(View):
                         if form.has_changed():
                             obj = form.save(commit=False)
                             obj.save(using=request.database)
-                            LogEntry(
+                            Comment(
                                 user_id=request.user.pk,
                                 content_type_id=content_type_id,
-                                object_id=obj.pk,
+                                object_pk=obj.pk,
                                 object_repr=force_str(obj),
-                                action_flag=CHANGE,
-                                change_message=_("Changed %s.")
+                                type="change",
+                                comment=_("Changed %s.")
                                 % get_text_list(form.changed_data, _("and")),
                             ).save(using=request.database)
                         transaction.savepoint_commit(sid)
@@ -1994,7 +1994,6 @@ class GridReport(View):
                 cursor.execute(sql)
             # Erase comments and history
             content_ids = [ContentType.objects.get_for_model(m) for m in deps]
-            LogEntry.objects.filter(content_type__in=content_ids).delete()
             Comment.objects.filter(content_type__in=content_ids).delete()
             # Prepare message
             for m in deps:

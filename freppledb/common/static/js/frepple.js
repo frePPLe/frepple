@@ -2685,6 +2685,29 @@ function savePreference(setting, value, callback) {
   });
 }
 
+function getUnreadMessages() {
+  $.ajax({
+      url: url_prefix + "/messages/",
+      type: "GET",
+      contentType: "application/json",
+      success: function (json) {
+        console.log(json);
+        var msg = $("#messagestooltip");
+        //var json = $.parseJSON(data);
+        if (json.unread) {
+          msg.find("span").removeClass("fa-envelope-o").addClass("fa-envelope-open-o");
+          msg.find("strong").text(json.unread);
+          msg.parent().attr("data-original-title", json.unread);
+        }
+        else {
+          msg.find("span").removeClass("fa-envelope-open-o").addClass("fa-envelope-o");
+          msg.find("strong").text("");
+          msg.parent().attr("data-original-title", gettext("No unread messages"));
+        }
+      }
+   }); 
+}
+
 $(function() {
 
   // Send django's CRSF token with every POST request to the same site
@@ -2696,6 +2719,8 @@ $(function() {
   // Never cache ajax results
   $.ajaxSetup({ cache: false });
 
+  getUnreadMessages();
+  
   // Autocomplete search functionality
   var searchsource = new Bloodhound({
     datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),

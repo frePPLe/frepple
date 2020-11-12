@@ -20,7 +20,6 @@ from decimal import Decimal
 from logging import INFO, ERROR, WARNING, DEBUG
 
 from django import forms
-from django.contrib.admin.models import LogEntry, CHANGE, ADDITION
 from django.contrib.contenttypes.models import ContentType
 from django.core.validators import EMPTY_VALUES
 from django.db import DEFAULT_DB_ALIAS
@@ -44,6 +43,8 @@ from django.utils import translation
 from django.utils.translation import gettext_lazy as _
 from django.utils.encoding import force_text
 from django.utils.text import get_text_list
+
+from .models import Comment
 
 
 def parseExcelWorksheet(model, data, user=None, database=DEFAULT_DB_ALIAS, ping=False):
@@ -279,7 +280,6 @@ def _parseData(model, data, rowmapper, user, database, ping):
     changed = 0
     added = 0
     content_type_id = ContentType.objects.get_for_model(model).pk
-    admin_log = []
 
     # Call the beforeUpload method if it is defined
     if hasattr(model, "beforeUpload"):
@@ -474,22 +474,25 @@ def _parseData(model, data, rowmapper, user, database, ping):
                                 if x.cache is not None and obj.pk not in x.cache:
                                     x.cache[obj.pk] = obj
                         if user:
-                            admin_log.append(
-                                LogEntry(
+                            if it:
+                                Comment(
                                     user_id=user.id,
                                     content_type_id=content_type_id,
-                                    object_id=obj.pk,
+                                    object_pk=obj.pk,
                                     object_repr=force_text(obj)[:200],
-                                    action_flag=it and CHANGE or ADDITION,
-                                    change_message="Changed %s."
+                                    type="change",
+                                    comment="Changed %s."
                                     % get_text_list(form.changed_data, "and"),
-                                )
-                            )
-                            if len(admin_log) > 100:
-                                LogEntry.objects.all().using(database).bulk_create(
-                                    admin_log
-                                )
-                                admin_log = []
+                                ).save(using=database)
+                            else:
+                                Comment(
+                                    user_id=user.id,
+                                    content_type_id=content_type_id,
+                                    object_pk=obj.pk,
+                                    object_repr=force_text(obj)[:200],
+                                    type="add",
+                                    comment="Added",
+                                ).save(using=database)
                     else:
                         # Validation fails
                         for error in form.non_field_errors():
@@ -509,9 +512,6 @@ def _parseData(model, data, rowmapper, user, database, ping):
             except Exception as e:
                 errors += 1
                 yield (ERROR, None, None, None, "Exception during upload: %s" % e)
-
-    # Save remaining admin log entries
-    LogEntry.objects.all().using(database).bulk_create(admin_log)
 
     yield (
         INFO,

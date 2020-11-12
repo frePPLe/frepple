@@ -25,7 +25,6 @@ from django.contrib.admin.options import get_content_type_for_model
 from django.contrib.admin.options import IS_POPUP_VAR, TO_FIELD_VAR
 from django.contrib import messages
 from django.contrib.admin.exceptions import DisallowedModelAdminToField
-from django.contrib.admin.models import LogEntry, CHANGE
 from django.contrib.admin.utils import quote, unquote
 from django.contrib.admin.templatetags.admin_urls import add_preserved_filters
 from django.contrib.auth.forms import UserCreationForm
@@ -143,13 +142,13 @@ class MultiDBModelAdmin(admin.ModelAdmin):
 
         if isinstance(message, list):
             message = json.dumps(message)
-        entry = LogEntry(
+        entry = Comment(
             user_id=request.user.pk,
             content_type_id=ContentType.objects.get_for_model(obj).pk,
-            object_id=str(obj.pk),
+            object_pk=str(obj.pk),
             object_repr=str(obj)[:200],
-            action_flag=ADDITION,
-            change_message=message,
+            type="add",
+            comment=message,
         )
         entry.save(using=request.database)
         return entry
@@ -174,27 +173,24 @@ class MultiDBModelAdmin(admin.ModelAdmin):
                     related.related_model._base_manager.using(request.database).filter(
                         **{related.field.name: old_pk}
                     ).update(**{related.field.name: obj})
-            # c) Move the comments and audit trail to the new key
+            # c) Move the comments to the new key
             model_type = ContentType.objects.get_for_model(obj)
             Comment.objects.using(request.database).filter(
                 content_type__pk=model_type.id, object_pk=old_pk
             ).update(object_pk=obj.pk)
-            LogEntry.objects.using(request.database).filter(
-                content_type__pk=model_type.id, object_id=old_pk
-            ).update(object_id=obj.pk)
             # d) Delete the old record
             obj.pk = old_pk
             obj.delete(using=request.database)
             obj.pk = obj.new_pk
         if isinstance(message, list):
             message = json.dumps(message)
-        entry = LogEntry(
+        entry = Comment(
             user_id=request.user.pk,
             content_type_id=ContentType.objects.get_for_model(obj).pk,
-            object_id=str(obj.pk),
+            object_pk=str(obj.pk),
             object_repr=str(obj)[:200],
-            action_flag=CHANGE,
-            change_message=message,
+            type="change",
+            comment=message,
         )
         entry.save(using=request.database)
         return entry
@@ -204,14 +200,13 @@ class MultiDBModelAdmin(admin.ModelAdmin):
         Log that an object will be deleted. Note that this method is called
         before the deletion.
         """
-        from django.contrib.admin.models import DELETION
-
-        entry = LogEntry(
+        entry = Comment(
             user_id=request.user.id,
             content_type_id=ContentType.objects.get_for_model(self.model).pk,
-            object_id=str(obj.pk),
+            object_pk=str(obj.pk),
             object_repr=object_repr[:200],
-            action_flag=DELETION,
+            type="delete",
+            comment="Deleted %s" % object_repr,
         )
         entry.save(using=request.database)
         return entry
@@ -636,61 +631,6 @@ class MultiDBModelAdmin(admin.ModelAdmin):
         }
 
         return self.render_delete_form(request, context)
-
-    def history_view(self, request, object_id, extra_context=None):
-        "The 'history' admin view for this model."
-        # First check if the user can see this history.
-        model = self.model
-        obj = self.get_object(request, unquote(object_id))
-        if obj is None:
-            return self._get_obj_does_not_exist_redirect(
-                request, model._meta, object_id
-            )
-
-        if not self.has_change_permission(request, obj):
-            raise PermissionDenied
-
-        # Then get the history for this object.
-        opts = model._meta
-        app_label = opts.app_label
-        # FrePPLe specific: filter history in the right database
-        action_list = (
-            LogEntry.objects.using(request.database)
-            .filter(
-                object_id=unquote(object_id),
-                content_type=get_content_type_for_model(model),
-            )
-            .select_related()
-            .order_by("action_time")
-        )
-
-        # FrePPLe specific: tab name, objectid, title and post_title
-        context = {
-            **self.admin_site.each_context(request),
-            "title": force_text(opts.verbose_name) + " " + unquote(object_id),
-            "post_title": _("Change history"),
-            "action_list": action_list,
-            "module_name": str(capfirst(opts.verbose_name_plural)),
-            "object": obj,
-            "object_id": object_id,
-            "opts": opts,
-            "active_tab": "history",
-            "preserved_filters": self.get_preserved_filters(request),
-            **(extra_context or {}),
-        }
-
-        request.current_app = self.admin_site.name
-
-        return TemplateResponse(
-            request,
-            self.object_history_template
-            or [
-                "admin/%s/%s/object_history.html" % (app_label, opts.model_name),
-                "admin/%s/object_history.html" % app_label,
-                "admin/object_history.html",
-            ],
-            context,
-        )
 
 
 class MultiDBTabularInline(admin.TabularInline):

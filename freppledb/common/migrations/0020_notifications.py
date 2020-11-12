@@ -15,8 +15,10 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-from django.conf import settings
 
+from django.conf import settings
+import django.core.validators
+import django.utils.timezone
 from django.db import migrations, connections, models
 import django.db.models.deletion
 
@@ -44,19 +46,81 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.AddField(
-            model_name="user",
-            name="avatar",
-            field=models.ImageField(blank=True, null=True),
+            model_name="comment",
+            name="attachment",
+            field=models.FileField(
+                blank=True,
+                null=True,
+                upload_to="",
+                validators=[
+                    django.core.validators.FileExtensionValidator(
+                        allowed_extensions=[
+                            "gif",
+                            "jpeg",
+                            "jpg",
+                            "png",
+                            "docx",
+                            "gz",
+                            "log",
+                            "pdf",
+                            "pptx",
+                            "txt",
+                            "xlsx",
+                            "zip",
+                        ]
+                    )
+                ],
+            ),
         ),
         migrations.AddField(
             model_name="comment",
-            name="attachment",
-            field=models.FileField(blank=True, null=True),
+            name="object_repr",
+            field=models.CharField(
+                default="tmp", max_length=200, verbose_name="object repr"
+            ),
+            preserve_default=False,
         ),
         migrations.AddField(
             model_name="comment",
             name="processed",
-            field=models.BooleanField(default=False, verbose_name="processed"),
+            field=models.BooleanField(
+                db_index=True, default=False, verbose_name="processed"
+            ),
+        ),
+        migrations.AddField(
+            model_name="comment",
+            name="type",
+            field=models.CharField(
+                choices=[
+                    ("add", "add"),
+                    ("change", "change"),
+                    ("delete", "delete"),
+                    ("comment", "comment"),
+                ],
+                default="add",
+                max_length=10,
+                verbose_name="type",
+            ),
+        ),
+        migrations.AddField(
+            model_name="user",
+            name="avatar",
+            field=models.ImageField(blank=True, null=True, upload_to=""),
+        ),
+        migrations.AlterField(
+            model_name="comment",
+            name="comment",
+            field=models.TextField(max_length=3000, verbose_name="message"),
+        ),
+        migrations.AlterField(
+            model_name="comment",
+            name="lastmodified",
+            field=models.DateTimeField(
+                db_index=True,
+                default=django.utils.timezone.now,
+                editable=False,
+                verbose_name="last modified",
+            ),
         ),
         migrations.CreateModel(
             name="Notification",
@@ -79,8 +143,8 @@ class Migration(migrations.Migration):
                 (
                     "type",
                     models.CharField(
-                        choices=[("M", "email"), ("I", "online")],
-                        default="I",
+                        choices=[("M", "email"), ("O", "online")],
+                        default="O",
                         max_length=5,
                         verbose_name="type",
                     ),
@@ -122,7 +186,8 @@ class Migration(migrations.Migration):
                 (
                     "type",
                     models.CharField(
-                        choices=[("M", "email"), ("I", "online")],
+                        choices=[("M", "email"), ("O", "online")],
+                        default="O",
                         max_length=10,
                         verbose_name="type",
                     ),
@@ -152,4 +217,22 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.RunPython(grant_read_access),
+        migrations.RunSQL(
+            "update common_comment set object_repr = object_pk, type='comment', processed=true"
+        ),
+        migrations.RunSQL(
+            """
+            insert into common_comment
+            (object_pk, comment, lastmodified, content_type_id, user_id, object_repr, processed, type)
+            select
+               object_id, change_message, action_time, content_type_id, user_id, object_repr, true,
+               case when action_flag = 1 then 'add'
+                 when action_flag = 2 then 'change'
+                 else 'deletion'
+                 end
+            from django_admin_log
+            order by id
+            """
+        ),
+        migrations.RunSQL("drop table django_admin_log"),
     ]

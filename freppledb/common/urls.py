@@ -35,6 +35,7 @@ autodiscover = True
 urlpatterns = [
     # Uploaded files and avatars
     url(r"^uploads/(.+)$", freppledb.common.views.uploads, name="uploads"),
+    url(r"^messages/$", freppledb.common.views.messages, name="messages"),
     # Home screen
     url(r"^$", freppledb.common.views.cockpit, name="cockpit"),
     # User preferences

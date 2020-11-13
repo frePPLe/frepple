@@ -18,6 +18,7 @@
 from datetime import time
 from decimal import Decimal
 import json
+from pathlib import Path
 
 from django.apps import apps
 from django.contrib.admin.utils import unquote, quote
@@ -703,3 +704,8 @@ def timeformatfilter(a):
 
 
 timeformatfilter.is_safe = True
+
+
+@register.filter(name="extension")
+def extensionfilter(val):
+    return Path(val).suffix[1:].lower()

@@ -422,8 +422,8 @@ DEFAULT_DASHBOARD = [
     {
         "rowname": _("Welcome"),
         "cols": [
-            {"width": 6, "widgets": [("welcome", {})]},
-            {"width": 6, "widgets": [("news", {})]},
+            {"width": 8, "widgets": [("inbox", {"limit": 10})]},
+            {"width": 4, "widgets": [("news", {})]},
         ],
     },
     {
@@ -500,10 +500,6 @@ DEFAULT_DASHBOARD = [
                 ],
             },
         ],
-    },
-    {
-        "rowname": _("activity"),
-        "cols": [{"width": 6, "widgets": [("recent_comments", {"limit": 10})]}],
     },
 ]
 

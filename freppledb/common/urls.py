@@ -33,18 +33,12 @@ from freppledb.common.registration.views import (
 autodiscover = True
 
 urlpatterns = [
-    # Uploaded files and avatars
     url(r"^uploads/(.+)$", freppledb.common.views.uploads, name="uploads"),
-    url(r"^messages/$", freppledb.common.views.messages, name="messages"),
-    # Home screen
+    url(r"^inbox/$", freppledb.common.views.inbox, name="inbox"),
     url(r"^$", freppledb.common.views.cockpit, name="cockpit"),
-    # User preferences
     url(r"^preferences/$", freppledb.common.views.preferences, name="preferences"),
-    # Horizon updates
     url(r"^horizon/$", freppledb.common.views.horizon, name="horizon"),
-    # Report settings
     url(r"^settings/$", freppledb.common.views.saveSettings),
-    # Dashboard widgets
     url(
         r"^widget/(.+)/",
         freppledb.common.dashboard.Dashboard.dispatch,

@@ -1,0 +1,73 @@
+{% extends "admin/base_site_nav.html" %}
+{% load i18n admin_list %}
+
+{% block extrahead %}
+{{ block.super }}
+{% endblock %}
+
+{% block content %}
+
+<div id="content-main">
+<div class="row">
+<div class="col-md-12">
+<div class="panel panel-default">
+<table class="table table-condensed table-hover">
+<thead style="display: table-header-group;">
+<tr>
+<td><b style="text-transform: capitalize"><input type="checkbox"></td>
+<td><b style="text-transform: capitalize">Link</b></td>
+<td><b style="text-transform: capitalize">Comment</b></td>
+<td><b style="text-transform: capitalize"></b></td>
+<td><b style="text-transform: capitalize"></b></td>
+<td><b style="text-transform: capitalize"></b></td>
+</tr>
+</thead>
+<tbody>
+{% for notif in inbox %}
+<tr data-id="{{ notif.id }}">
+<td><input type="checkbox"></td>
+<td><i class="fa {% if notif.comment.type == "add" %}fa-plus
+{% elif notif.comment.type == "change" %}fa-pencil
+{% elif notif.comment.type == "delete" %}fa-minus
+{% elif notif.comment.type == "comment" %}fa-comment-o
+{% endif %}"></i>&nbsp;
+<span class="small">{{ notif.comment.content_type.name | capfirst}}</span>&nbsp;
+<a class="underline" href="{{ request.prefix }}{{ notif.comment.getURL }}">{{ notif.comment.object_repr }}</a></td>
+<td>{{ notif.comment.comment }}</td>
+<td>{% if notif.comment.attachment %}
+  <a style="text-decoration: underline" href="{{ notif.comment.attachment.url }}" target="_blank">{{ notif.comment.attachment.name | extension }}&nbsp;<i class="fa fa-paperclip"></i></a>
+  {% endif %}</td>
+<td>
+  <span data-toggle="tooltip" data-original-title="{{ notif.comment.user.first_name}} {{ notif.comment.user.last_name}}">
+  {% if notif.comment.user.avatar %}<img style="border-radius: 50%; width:30px; height:30px" src="/uploads/{{ notif.comment.user.avatar }}">{% endif %}
+  {{ notif.comment.user.username }}
+  </span>
+</td>
+<td><span data-toggle="tooltip" data-original-title="{{ notif.comment.lastmodified|date:"DATETIME_FORMAT" }}">{{ notif.comment.lastmodified | timesince }}</span></td>
+</tr>
+{% endfor %}
+</tbody></table>
+</div>
+
+<nav>   
+<ul class="pagination">
+  <li>
+    <a href="?page={% if inbox.has_previous %}{{ inbox.previous_page_number }}{% else %}1{% endif %}" aria-label="Previous">
+    <span aria-hidden="true">&laquo;</span>
+    </a>
+  </li>
+  {% for p in inbox.paginator.page_range %}
+  <li{% if inbox.number == p %} class="active"{% endif %}>
+    <a href="?page={{ p }}">{{ p }}</a>
+  </li>
+  {% endfor %}
+  <li>
+    <a href="?page={% if inbox.has_next %}{{ inbox.next_page_number }}{% else %}{{ inbox.paginator.num_pages}}{% endif %}" aria-label="Next">
+    <span aria-hidden="true">&raquo;</span>
+    </a>
+  </li>
+</ul>
+</nav>
+
+</div>
+{% endblock %}

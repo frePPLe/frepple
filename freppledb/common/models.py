@@ -740,6 +740,13 @@ class Comment(models.Model):
         else:
             return ""
 
+    def getURL(self):
+        return "/detail/%s/%s/%s/" % (
+            self.content_type.app_label,
+            self.content_type.model,
+            quote(self.object_pk),
+        )
+
     class Meta:
         db_table = "common_comment"
         ordering = ("id",)

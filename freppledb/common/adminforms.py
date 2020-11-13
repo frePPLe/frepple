@@ -473,7 +473,10 @@ class MultiDBModelAdmin(admin.ModelAdmin):
                 comment = request.POST["comment"]
                 if comment:
                     c = Comment(
-                        content_object=modelinstance, user=request.user, comment=comment
+                        content_object=modelinstance,
+                        user=request.user,
+                        comment=comment,
+                        type="comment",
                     )
                     att = request.FILES.get("attachment", None)
                     if att:

@@ -18,6 +18,7 @@
 import json
 import os.path
 
+from django.core.paginator import Paginator
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.contrib import messages
@@ -601,11 +602,51 @@ def uploads(request, filename):
 
 
 @login_required
-def messages(request):
-    return JsonResponse(
-        {
-            "unread": Notification.objects.using(request.database)
-            .filter(user_id=request.user.id, status="U")
-            .count()
-        }
-    )
+def inbox(request):
+    if request.is_ajax():
+        if request.method == "GET":
+            # Return summary json to ajax requests
+            return JsonResponse(
+                {
+                    "unread": Notification.objects.using(request.database)
+                    .filter(user_id=request.user.id, status="U")
+                    .count()
+                }
+            )
+        else:
+            # Updating messages posted in the format
+            # [{"id": 123, "action": "read / delete"},...]
+            try:
+                for rec in json.JSONDecoder().decode(
+                    request.read().decode(request.encoding or settings.DEFAULT_CHARSET)
+                ):
+                    pk = rec.get("id", None)
+                    action = rec.get("action", None)
+                    if id and action:
+                        notif = Notification.objects.using(request.database).get(
+                            pk=pk, user=request.user
+                        )
+                        if action == "read":
+                            notif.status = "R"
+                            notif.save(using=request.database)
+                        elif action == "read":
+                            notif.delete(using=request.database)
+            except Exception as e:
+                logger.error("Error processing comment: %s" % e)
+    else:
+        # Return inbox page for normal requests
+        inbox = Paginator(
+            Notification.objects.using(request.database)
+            .filter(user=request.user)
+            .order_by("-id")
+            .select_related("comment", "user"),
+            request.user.pagesize,
+        )
+        return render(
+            request,
+            "common/inbox.html",
+            context={
+                "title": _("inbox"),
+                "inbox": inbox.get_page(request.GET.get("page", 1)),
+            },
+        )

@@ -16,7 +16,6 @@
 #
 
 from django.conf import settings
-from django.contrib.auth.models import AnonymousUser
 from django.db import DEFAULT_DB_ALIAS
 from django.utils import formats
 from django.utils.html import escape
@@ -26,7 +25,7 @@ from django.utils.encoding import force_text
 
 from freppledb import VERSION
 from freppledb.common.dashboard import Dashboard, Widget
-from freppledb.common.models import Comment
+from freppledb.common.models import Notification
 
 
 class WelcomeWidget(Widget):
@@ -82,11 +81,11 @@ class NewsWidget(Widget):
 Dashboard.register(NewsWidget)
 
 
-class RecentCommentsWidget(Widget):
-    name = "recent_comments"
-    title = _("Messages")
-    tooltip = _("Your inbox of new messages")
-    url = "/data/common/comment/?sord=desc&sidx=lastmodified"
+class InboxWidget(Widget):
+    name = "inbox"
+    title = _("inbox")
+    tooltip = _("Unread messages from your inbox")
+    url = "/inbox/"
     asynchronous = False
     limit = 10
 
@@ -97,35 +96,36 @@ class RecentCommentsWidget(Widget):
             db = _thread_locals.request.database or DEFAULT_DB_ALIAS
         except Exception:
             db = DEFAULT_DB_ALIAS
-        cmts = (
-            Comment.objects.using(db)
-            .order_by("-lastmodified")
-            .select_related("content_type", "user")[: self.limit]
+        notifs = (
+            Notification.objects.using(db)
+            .filter(user=_thread_locals.request.user)
+            .order_by("-id")
+            .select_related("comment", "user")[: self.limit]
         )
         result = []
         result.append(
             '<div class="table-responsive"><table class="table table-condensed table-hover"><tbody>'
         )
-        for c in cmts:
+        for notif in notifs:
             result.append(
-                '<tr><td><a href="%s%s">%s</a>&nbsp;<span class="small">%s</span><div class="small" style="float: right;">%s&nbsp;&nbsp;%s</div><br><p style="padding-left: 10px; display: inline-block;">%s</p>'
+                '<tr><td><a class="underline" href="%s%s">%s</a>&nbsp;<span class="small">%s</span><div class="small" style="float: right;">%s&nbsp;&nbsp;%s</div><br><p style="padding-left: 10px; display: inline-block;">%s</p>'
                 % (
                     _thread_locals.request.prefix,
-                    c.get_admin_url(),
-                    escape(c.object_pk),
+                    notif.comment.getURL(),
+                    notif.comment.object_pk,
                     escape(
-                        capfirst(force_text(_(c.content_type.name)))
-                        if c.content_type
-                        else force_text(_("Unknown content"))
+                        capfirst(force_text(_(notif.comment.content_type.name)))
+                        if notif.comment.content_type
+                        else ""
                     ),
-                    escape(c.user.username if c.user else ""),
-                    formats.date_format(c.lastmodified, "SHORT_DATETIME_FORMAT"),
-                    escape(c.comment),
+                    escape(notif.comment.user.username),
+                    formats.date_format(notif.comment.lastmodified, "DATETIME_FORMAT"),
+                    escape(notif.comment.comment),
                 )
                 + "</td></tr>"
             )
         result.append("</tbody></table></div>")
-        return "\n".join(result) if result else force_text(_("None available"))
+        return "\n".join(result) if result else force_text(_("No unread messages!"))
 
     javascript = """
     var hasForecast = %s;
@@ -139,4 +139,4 @@ class RecentCommentsWidget(Widget):
     )
 
 
-Dashboard.register(RecentCommentsWidget)
+Dashboard.register(InboxWidget)

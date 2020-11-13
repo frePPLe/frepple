@@ -2687,22 +2687,20 @@ function savePreference(setting, value, callback) {
 
 function getUnreadMessages() {
   $.ajax({
-      url: url_prefix + "/messages/",
+      url: url_prefix + "/inbox/",
       type: "GET",
       contentType: "application/json",
       success: function (json) {
-        console.log(json);
-        var msg = $("#messagestooltip");
-        //var json = $.parseJSON(data);
+        var msg = $("#messages");
         if (json.unread) {
-          msg.find("span").removeClass("fa-envelope-o").addClass("fa-envelope-open-o");
-          msg.find("strong").text(json.unread);
-          msg.parent().attr("data-original-title", json.unread);
+          msg.removeClass("fa-envelope-open-o").addClass("fa-envelope-o");
+          msg.next().text(json.unread);
+          msg.parent().parent().attr("data-original-title", interpolate(gettext("%s unread messages"), [json.unread]));
         }
         else {
-          msg.find("span").removeClass("fa-envelope-open-o").addClass("fa-envelope-o");
-          msg.find("strong").text("");
-          msg.parent().attr("data-original-title", gettext("No unread messages"));
+          msg.removeClass("fa-envelope-o").addClass("fa-envelope-open-o");
+          msg.next().text("");
+          msg.parent().parent().attr("data-original-title", gettext("No unread messages"));
         }
       }
    }); 

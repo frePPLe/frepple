@@ -234,5 +234,5 @@ class Migration(migrations.Migration):
             order by id
             """
         ),
-        migrations.RunSQL("drop table django_admin_log"),
+        migrations.RunSQL("truncate table django_admin_log"),
     ]

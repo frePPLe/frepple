@@ -1,0 +1,9 @@
+{% load i18n %}
+
+<h1 class="pull-right">
+<button class="btn btn-xs btn-primary" style="text-transform:capitalize" data-pk="{{object_id}}" data-model="{{opts}}"
+  onclick="follow(this)" data-toggle="tooltip" 
+  data-placement="auto bottom" data-original-title="{% trans 'Get a notification in your inbox when there is activity'|capfirst %}">
+  {% trans "follow" %}
+</button>
+</h1>

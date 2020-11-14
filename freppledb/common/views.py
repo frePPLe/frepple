@@ -19,7 +19,7 @@ import json
 import os.path
 
 from django.core.paginator import Paginator
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseNotAllowed
 from django.shortcuts import render
 from django.contrib import messages
 from django.contrib.auth import update_session_auth_hash
@@ -51,7 +51,15 @@ from django.views import static
 from django.views.decorators.csrf import csrf_protect
 from django.views.decorators.debug import sensitive_variables
 
-from .models import User, Parameter, Comment, Bucket, BucketDetail, Notification
+from .models import (
+    User,
+    Parameter,
+    Comment,
+    Bucket,
+    BucketDetail,
+    Notification,
+    Follower,
+)
 from .report import GridReport, GridFieldLastModified, GridFieldText, GridFieldBool
 from .report import GridFieldDateTime, GridFieldInteger, getCurrency
 
@@ -173,6 +181,8 @@ class PreferencesForm(forms.Form):
             raise forms.ValidationError("Maximum page size is 10000.")
         if newdata.get("pagesize", 25) < 25:
             raise forms.ValidationError("Minimum page size is 25.")
+        if newdata.get("avatar", None) and newdata["avatar"].size > 102400:
+            raise forms.ValidationError("Avatars are limited to 100kB")
         if newdata["cur_password"]:
             if not self.user.check_password(newdata["cur_password"]):
                 raise forms.ValidationError(
@@ -616,6 +626,7 @@ def inbox(request):
         else:
             # Updating messages posted in the format
             # [{"id": 123, "action": "read / delete"},...]
+            response = {"errors": 0}
             try:
                 for rec in json.JSONDecoder().decode(
                     request.read().decode(request.encoding or settings.DEFAULT_CHARSET)
@@ -633,6 +644,8 @@ def inbox(request):
                             notif.delete(using=request.database)
             except Exception as e:
                 logger.error("Error processing comment: %s" % e)
+                response["errors"] += 1
+            return JsonResponse(response)
     else:
         # Return inbox page for normal requests
         inbox = Paginator(
@@ -649,4 +662,40 @@ def inbox(request):
                 "title": _("inbox"),
                 "inbox": inbox.get_page(request.GET.get("page", 1)),
             },
+        )
+
+
+@login_required
+def follow(request):
+    if request.is_ajax() and request.method == "POST":
+        # Updating followers posted in the format:
+        # [{"model": "input.item", "object_pk": "pk", "action": "add / delete"},...]
+        response = {"errors": 0}
+        try:
+            for rec in json.JSONDecoder().decode(
+                request.read().decode(request.encoding or settings.DEFAULT_CHARSET)
+            ):
+                action = rec.get("action", None)
+                object_pk = rec.get("object_pk", None)
+                model = rec.get("model", None)
+                if object_pk and model:
+                    app_and_model = model.split(".")
+                    ct = ContentType.objects.get(
+                        app_label=app_and_model[0], model=app_and_model[1]
+                    )
+                    if action == "delete":
+                        Follower.objects.using(request.database).filter(
+                            content_type=ct.pk, object_pk=object_pk, user=request.user
+                        ).delete()
+                    else:
+                        Follower.objects.using(request.database).get_or_create(
+                            content_type=ct, object_pk=object_pk, user=request.user
+                        )
+        except Exception as e:
+            logger.error("Error processing follower: %s" % e)
+            response["errors"] += 1
+        return JsonResponse(response)
+    else:
+        return HttpResponseNotAllowed(
+            ["post"], content="Only ajax POST requests are allowed"
         )

@@ -98,10 +98,11 @@
         <label class="control-label" for="id_avatar">{% trans 'avatar'|capfirst%}:</label>
       </div>
       <div class="col-xs-9" style="max-width:260px">
-        {% if request.user.avatar %}
-        <img style="border-radius: 50%; width:100px; height:100px" src="{{request.user.avatar.url}}">
+        {% if request.user.avatar %}<img style="border-radius: 50%; width:100px; height:100px" src="{{request.user.avatar.url}}">
+        {% else %}<i style="font-size: 8em" class="fa fa-user-circle-o"></i>
         {% endif %}
-        <input type="file" name="avatar" accept="image/*" id="id_avatar">
+        <input data-toggle="tooltip" data-html="true" type="file" name="avatar" accept="image/*" id="id_avatar"
+          data-original-title="{% trans "Upload a square picture of yourself.<br>Accepted formats are jpeg, png and gif.<br>Max file size is 100kB." %}">
       </div>
     </div>
 

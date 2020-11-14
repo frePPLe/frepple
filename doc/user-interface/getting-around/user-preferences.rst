@@ -21,6 +21,11 @@ For each user frePPle stores a number of personal settings and preferences.
     a single theme (by editing the THEMES setting in the djangosettings.py
     file), this option will not be available to the users.
 
+* | **Avatar**:
+  | A small picture of yourself.
+  | The uploaded picture must 1) be square (ie same height and width), 
+    2) be in jpeg, png or gif format and 3) be smaller than 100kB.
+  
 * | **Password**:
   | To change the password enter the current one and twice the new value.
 

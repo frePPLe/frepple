@@ -35,6 +35,7 @@ autodiscover = True
 urlpatterns = [
     url(r"^uploads/(.+)$", freppledb.common.views.uploads, name="uploads"),
     url(r"^inbox/$", freppledb.common.views.inbox, name="inbox"),
+    url(r"^follow/$", freppledb.common.views.follow, name="follow"),
     url(r"^$", freppledb.common.views.cockpit, name="cockpit"),
     url(r"^preferences/$", freppledb.common.views.preferences, name="preferences"),
     url(r"^horizon/$", freppledb.common.views.horizon, name="horizon"),

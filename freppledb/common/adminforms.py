@@ -491,7 +491,7 @@ class MultiDBModelAdmin(admin.ModelAdmin):
                     "title": force_text(modelinstance._meta.verbose_name)
                     + " "
                     + (bufferName if "bufferName" in vars() else object_id),
-                    "post_title": _("comments"),
+                    "post_title": _("messages"),
                     "model": self.model._meta.model_name,
                     "opts": self.model._meta,
                     "object_id": quote(object_id),

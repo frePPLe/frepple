@@ -290,6 +290,7 @@ class PathReport(GridReport):
             "downstream": reportclass.downstream,
             "active_tab": reportclass.downstream and "whereused" or "supplypath",
             "model": reportclass.objecttype._meta,
+            "opts": reportclass.objecttype._meta.label_lower,
         }
 
     @classmethod

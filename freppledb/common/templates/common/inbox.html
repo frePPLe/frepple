@@ -5,8 +5,17 @@
 {{ block.super }}
 {% endblock %}
 
-{% block content %}
+{% block tools %}
+<h1 class="pull-right">
+<button class="btn btn-xs btn-primary" data-toggle="tooltip" data-placement="top"
+  onclick="window.open('{% setting "DOCUMENTATION_URL" %}/docs/{% version_short %}/user-interface/getting-around/inbox/html')"
+  data-original-title="{% trans 'help'|capfirst|force_escape %}">
+  <span class="fa fa-question"></span>
+</button>
+</h1>
+{% endblock %}
 
+{% block content %}
 <div id="content-main">
 <div class="row">
 <div class="col-md-12">
@@ -14,12 +23,12 @@
 <table class="table table-condensed table-hover">
 <thead style="display: table-header-group;">
 <tr>
-<td><b style="text-transform: capitalize"><input type="checkbox"></td>
-<td><b style="text-transform: capitalize">Link</b></td>
-<td><b style="text-transform: capitalize">Comment</b></td>
-<td><b style="text-transform: capitalize"></b></td>
-<td><b style="text-transform: capitalize"></b></td>
-<td><b style="text-transform: capitalize"></b></td>
+<td><input type="checkbox"></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
 </tr>
 </thead>
 <tbody>
@@ -39,7 +48,7 @@
   {% endif %}</td>
 <td>
   <span data-toggle="tooltip" data-original-title="{{ notif.comment.user.first_name}} {{ notif.comment.user.last_name}}">
-  {% if notif.comment.user.avatar %}<img style="border-radius: 50%; width:30px; height:30px" src="/uploads/{{ notif.comment.user.avatar }}">{% endif %}
+  {% if notif.comment.user.avatar %}<img class="avatar-sm" src="/uploads/{{ notif.comment.user.avatar }}">{% endif %}
   {{ notif.comment.user.username }}
   </span>
 </td>

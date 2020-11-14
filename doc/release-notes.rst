@@ -9,7 +9,14 @@ Release notes
 - Updated the list of default fields in all reports. By default we keep the
   reports now as lean as possible. More advanced fields are hidden by default.
 
-- User can now upload an avatar image.
+- | The `comment and audit trail functionality <user-interface/getting-around/messages.html>`_ 
+    has been completely revamped.
+  | You can now upload attachments.
+  | You can also follow objects. When there are changes to it, you will get a notification
+    in your `inbox <user-interface/getting-around/inbox.html>`_.
+  | This feature will be further improved in the next releases. 
+
+- Users can now `upload an avatar image <user-interface/getting-around/user-preferences.html>`_.
 
 6.9.0 (2020/11/07)
 ==================

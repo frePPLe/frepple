@@ -69,13 +69,16 @@ $(function() {
           style="position:relative" data-original-title="{% trans "No unread messages" %}">
           <a href="{{request.prefix}}/inbox/">
             <span id="messages" style="font-size: 1.5em" class="fa fa-envelope-open-o" aria-hidden="true"></span>
-            <span style="font-size: 60%; position: absolute; top: 0; left:7px" class="badge progress-bar-danger" aria-hidden="true"></span>
+            <span style="font-size: 60%; position: absolute; top: -5px; left:7px" class="badge progress-bar-danger" aria-hidden="true"></span>
           </a>
         </div>
 		    <li class="dropdown">
 		    <a href="#" class="dropdown-toggle" style="padding-right: 20px" data-toggle="dropdown" 
           role="button" aria-haspopup="true" aria-expanded="false">
-          {% trans 'user'|capfirst %} {% firstof user.first_name user.username %}
+          {% if user.avatar %}<img src="{{ user.avatar.url }}" class="avatar-sm">
+          {% else %}<i style="font-size: 1.5em" class="fa fa-user-circle-o"></i>
+          {% endif %}
+          {% firstof user.first_name user.username %}
         </a>
 				<ul class="dropdown-menu">
 				  <li><a href="{{request.prefix}}/preferences/">{% trans 'preferences'|capfirst %}</a></li>

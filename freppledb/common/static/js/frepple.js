@@ -395,7 +395,7 @@ jQuery.extend($.fn.fmatter, {
 
   image : function(cellvalue, options, rowdata) {
     return cellvalue ?
-      '<img style="border-radius: 50%; width:40px; height:40px" src="/uploads/' + cellvalue + '">' :
+      '<img class="avatar-sm" src="/uploads/' + cellvalue + '">' :
       '';
   },
   
@@ -3797,4 +3797,23 @@ $.fn.drags = function(opt) {
           $(this).removeClass('active-handle').parent().removeClass('draggable');
       }
   });
+}
+
+//  Follower functions
+
+function follow(el) {
+ var t = $(el);
+ $.ajax({
+   url: url_prefix + "/follow/",
+   data: JSON.stringify([{
+     "object_pk": t.attr("data-pk"),
+     "model": t.attr("data-model"),
+     "action": "add"
+   }]),
+   type: "POST",
+   contentType: "application/json",
+   success: function () {
+     t.text(gettext("unfollow"));
+     }
+   });
 }

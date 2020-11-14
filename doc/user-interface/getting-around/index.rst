@@ -19,5 +19,5 @@ This section has instructions to navigate through the user interface.
    customizing-a-report
    user-preferences
    user-permissions-and-roles
-   comments
-   history-audit-trail
+   messages
+   inbox

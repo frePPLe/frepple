@@ -18,6 +18,8 @@ from datetime import datetime
 import json
 import logging
 from psycopg2.extras import execute_batch
+from threading import Thread
+import time
 
 from django.conf import settings
 from django.contrib.admin.utils import quote
@@ -210,7 +212,7 @@ class HierarchyModel(models.Model):
 
 class MultiDBManager(models.Manager):
     def get_queryset(self):
-        from freppledb.common.middleware import _thread_locals
+        from .middleware import _thread_locals
 
         req = getattr(_thread_locals, "request", None)
         if req:
@@ -233,7 +235,7 @@ class MultiDBRouter:
             return getattr(_thread_locals, "database", None)
 
     def db_for_write(self, model, **hints):
-        from freppledb.common.middleware import _thread_locals
+        from .middleware import _thread_locals
 
         req = getattr(_thread_locals, "request", None)
         if req:
@@ -419,7 +421,7 @@ class User(AbstractUser):
             if using:
                 using = using.db
             else:
-                from freppledb.common.middleware import _thread_locals
+                from .middleware import _thread_locals
 
                 using = getattr(_thread_locals, "database", DEFAULT_DB_ALIAS)
 
@@ -666,6 +668,9 @@ def delete_user(sender, instance, **kwargs):
 
 
 class Comment(models.Model):
+
+    _worker_active = set()
+
     type_list = (
         ("add", _("add")),
         ("change", _("change")),
@@ -718,7 +723,7 @@ class Comment(models.Model):
             if using:
                 using = using.db
             else:
-                from freppledb.common.middleware import _thread_locals
+                from .middleware import _thread_locals
 
                 using = getattr(_thread_locals, "database", DEFAULT_DB_ALIAS)
         tmp = super().save(
@@ -727,8 +732,13 @@ class Comment(models.Model):
             using=using,
             update_fields=update_fields,
         )
-        # TODO async generation of the messages
-        Comment.createNotifications(database=using)
+        if using not in self._worker_active:
+            self._worker_active.add(using)
+            Thread(
+                target=Comment._createNotifications,
+                kwargs={"database": using},
+                daemon=True,
+            ).start()
         return tmp
 
     def attachmentlink(self):
@@ -780,41 +790,70 @@ class Comment(models.Model):
         return None
 
     @classmethod
-    def createNotifications(cls, database=DEFAULT_DB_ALIAS):
+    def _createNotifications(cls, database=DEFAULT_DB_ALIAS):
         """
-        TODO  for large number of messages and followers, this method can be inefficient.
-        Some mechanism based on the contenttype may be needed to reduce the loop of followers.
+        Every server process will have at most 1 worker thread for each database.
+        But multiple processes can be active in parallel.
         """
-        with transaction.atomic(using=database):
+        try:
+            from .middleware import _thread_locals
+
+            setattr(_thread_locals, "database", database)
             followers = list(Follower.objects.all().using(database).order_by("id"))
-            if followers:
-                for msg in (
-                    Comment.objects.all()
-                    .using(database)
-                    .filter(processed=False)
-                    .order_by("id")
-                    .select_for_update(skip_locked=True)
-                ):
-                    try:
-                        for flw in followers:
-                            if msg.content_type.model_class().createNotification(
-                                flw, msg
-                            ):
-                                Notification(
-                                    comment=msg, user=flw.user, type=flw.type
-                                ).save(database)
-                        msg.processed = True
-                        msg.save(using=database)
-                    except Exception as e:
-                        logger.error(
-                            "Couldn't create nofications for message %s: %s"
-                            % (msg.id, e)
+            idle_loop_done = False
+            while True:
+                with transaction.atomic(using=database):
+                    empty = True
+                    if followers:
+                        for msg in (
+                            Comment.objects.all()
+                            .using(database)
+                            .filter(processed=False)
+                            .order_by("id")
+                            .select_for_update(skip_locked=True)[:40]
+                        ):
+                            empty = False
+                            try:
+                                # TODO  for large number of messages and followers, this method can be inefficient.
+                                # Some mechanism based on the contenttype may be needed to reduce the loop of followers.
+                                for flw in followers:
+                                    m = getattr(
+                                        msg.content_type.model_class(),
+                                        "createNotification",
+                                        None,
+                                    )
+                                    if m and callable(m) and m(flw, msg):
+                                        Notification(
+                                            comment=msg, user=flw.user, type=flw.type
+                                        ).save(database)
+                                msg.processed = True
+                                msg.save(using=database)
+                            except Exception as e:
+                                logger.error(
+                                    "Couldn't create nofications for message %s: %s"
+                                    % (msg.id, e)
+                                )
+
+                    else:
+                        # No followers at all -> All messages can immediately be marked processed
+                        recs = (
+                            Comment.objects.all()
+                            .using(database)
+                            .filter(processed=False)
+                            .update(processed=True)
                         )
-            else:
-                # No followers at all -> All messages can immediately be marked processed
-                Comment.objects.all().using(database).filter(processed=False).update(
-                    processed=True
-                )
+                        if recs:
+                            empty = False
+                    if empty:
+                        # When no more messages can be found, we try again 5 seconds later
+                        # before shutting down the worker.
+                        if idle_loop_done:
+                            break
+                        else:
+                            idle_loop_done = True
+                            time.sleep(5)
+        finally:
+            cls._worker_active.remove(database)
 
 
 class Follower(models.Model):

@@ -243,11 +243,18 @@ User interface
 |                                         |                                                                            |                                                                               |
 |                                         | Our user community often contribute translations for other languages.      |                                                                               |                  
 +-----------------------------------------+----------------------------------------------------------------------------+-------------------------------------------------------------------------------+
-| **Excel import and                      | You can easily export the contents of all reports in Excel or CSV.         | - Doc :doc:`user-interface/getting-around/exporting-data`                     |
-| export**                                |                                                                            | - Doc :doc:`user-interface/getting-around/importing-data`                     |
+| **Collaborative workflows**             | Integrates efficient and intuitive collaboration capabilities.             | - Doc :doc:`user-interface/getting-around/inbox`                              |
+|                                         |                                                                            | - Doc :doc:`user-interface/getting-around/messages`                           | 
+|                                         | The user interface allows users to get notifications on changes in the     |                                                                               |
+|                                         | plan. Notifications can be inline in the application, or through emails.   |                                                                               |
+|                                         |                                                                            |                                                                               | 
+|                                         | Users can comment on the plan and attach documents.                        |                                                                               | 
 +-----------------------------------------+----------------------------------------------------------------------------+-------------------------------------------------------------------------------+
-| **Customizable                          | Each user can customize the reports to his/her needs and taste: visibility | - Doc :doc:`user-interface/getting-around/customizing-a-report`               |
-| screens**                               | and order of the columns, column width, sorting and filtering.             |                                                                               |
+| **Excel import and  export**            | You can easily export the contents of all reports in Excel or CSV.         | - Doc :doc:`user-interface/getting-around/exporting-data`                     |
+|                                         |                                                                            | - Doc :doc:`user-interface/getting-around/importing-data`                     |
++-----------------------------------------+----------------------------------------------------------------------------+-------------------------------------------------------------------------------+
+| **Customizable screens**                | Each user can customize the reports to his/her needs and taste: visibility | - Doc :doc:`user-interface/getting-around/customizing-a-report`               |
+|                                         | and order of the columns, column width, sorting and filtering.             |                                                                               |
 +-----------------------------------------+----------------------------------------------------------------------------+-------------------------------------------------------------------------------+
 | **Role-based permissions**              | Specify read, write, and view permissions per user or per user role.       | - Doc                                                                         |
 |                                         |                                                                            |   :doc:`user-interface/getting-around/user-permissions-and-roles`             |
@@ -332,8 +339,8 @@ Technology
 +-----------------------------------------+----------------------------------------------------------------------------+-------------------------------------------------------------------------------+
 | Feature                                 | Description                                                                | Read more                                                                     |
 +=========================================+============================================================================+===============================================================================+
-| **Built on open-source                  | The front-end web application is based on Django and AngularJS.            |                                                                               |
-| stack**                                 | The back-end infrastructure is written in Python, Django, and PostgreSQL.  |                                                                               |
+| **Built on open-source stack**          | The front-end web application is based on HTML, jquery and AngularJS.      |                                                                               |
+|                                         | The back-end infrastructure is written in Python, Django, and PostgreSQL.  |                                                                               |
 |                                         | The planning algorithms are implemented in C++ and can be scripted with    |                                                                               |
 |                                         | Python.                                                                    |                                                                               |
 +-----------------------------------------+----------------------------------------------------------------------------+-------------------------------------------------------------------------------+

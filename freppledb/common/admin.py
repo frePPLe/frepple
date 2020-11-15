@@ -23,7 +23,7 @@ from django.contrib.auth.models import Group
 from django.forms.utils import ErrorList
 from django.utils.translation import gettext_lazy as _
 
-from .models import User, Parameter, Comment, Bucket, BucketDetail
+from .models import User, Parameter, Comment, Follower, Bucket, BucketDetail
 from .adminforms import MultiDBUserCreationForm, MultiDBModelAdmin, MultiDBTabularInline
 from freppledb.admin import data_site
 
@@ -159,6 +159,15 @@ class Comment_admin(MultiDBModelAdmin):
 
 
 data_site.register(Comment, Comment_admin)
+
+
+class Follower_admin(MultiDBModelAdmin):
+    model = Follower
+    exclude = ("user",)
+    save_on_top = True
+
+
+data_site.register(Follower, Follower_admin)
 
 
 class BucketDetail_inline(MultiDBTabularInline):

@@ -16,6 +16,19 @@
 {% endblock %}
 
 {% block content %}
+<div class="row">
+<div id="tabs" class="col-md-12 form-inline hor-align-right">
+<ul class="nav nav-tabs">
+<li class="active" role="presentation">
+  <a class="ui-tabs-anchor" href="{{ request.prefix }}/inbox/" target="_self">{% trans "inbox"|capfirst %}</a>
+</li>
+<li role="presentation">
+  <a class="ui-tabs-anchor" href="{{ request.prefix }}/data/common/follower/" target="_self">{% trans "following"|capfirst %}</a>
+</li>
+</ul>
+</div>
+</div>
+
 <div id="content-main">
 <div class="row">
 <div class="col-md-12">

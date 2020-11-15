@@ -61,7 +61,7 @@ from .models import (
     Follower,
 )
 from .report import GridReport, GridFieldLastModified, GridFieldText, GridFieldBool
-from .report import GridFieldDateTime, GridFieldInteger, getCurrency
+from .report import GridFieldDateTime, GridFieldInteger, getCurrency, GridFieldChoice
 
 from freppledb.admin import data_site
 from freppledb import VERSION
@@ -327,10 +327,6 @@ def login(request, extra_context=None):
 
 
 class UserList(GridReport):
-    """
-    A list report to show users.
-    """
-
     title = _("users")
     basequeryset = User.objects.all()
     model = User
@@ -366,10 +362,6 @@ class UserList(GridReport):
 
 
 class GroupList(GridReport):
-    """
-    A list report to show groups.
-    """
-
     title = _("groups")
     basequeryset = Group.objects.all()
     model = Group
@@ -390,10 +382,6 @@ class GroupList(GridReport):
 
 
 class ParameterList(GridReport):
-    """
-    A list report to show all configurable parameters.
-    """
-
     title = _("parameters")
     basequeryset = Parameter.objects.all()
     model = Parameter
@@ -417,10 +405,6 @@ class ParameterList(GridReport):
 
 
 class CommentList(GridReport):
-    """
-    A list report to display all comments.
-    """
-
     template = "common/commentlist.html"
     title = _("comments")
     basequeryset = Comment.objects.all()
@@ -471,11 +455,37 @@ class CommentList(GridReport):
     )
 
 
-class BucketList(GridReport):
-    """
-    A list report to show dates.
-    """
+class FollowerList(GridReport):
+    title = _("following")
+    model = Follower
+    frozenColumns = 0
+    template = "common/follower.html"
 
+    @classmethod
+    def basequeryset(reportclass, request, *args, **kwargs):
+        return Follower.objects.all().filter(user=request.user)
+
+    rows = (
+        GridFieldInteger(
+            "id",
+            title=_("id"),
+            key=True,
+            formatter="detail",
+            extra='"role":"common/follower"',
+            hidden=True,
+        ),
+        GridFieldText(
+            "content_type",
+            width=50,
+            field_name="content_type__model",
+            title=_("model name"),
+        ),
+        GridFieldText("object_pk", title=_("object name")),
+        GridFieldChoice("type", title=_("type"), choices=Follower.type_list),
+    )
+
+
+class BucketList(GridReport):
     title = _("buckets")
     basequeryset = Bucket.objects.all()
     model = Bucket
@@ -497,10 +507,6 @@ class BucketList(GridReport):
 
 
 class BucketDetailList(GridReport):
-    """
-    A list report to show dates.
-    """
-
     title = _("bucket dates")
     basequeryset = BucketDetail.objects.all()
     model = BucketDetail

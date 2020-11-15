@@ -58,6 +58,11 @@ urlpatterns = [
         name="common_user_changelist",
     ),
     url(
+        r"^data/common/follower/$",
+        freppledb.common.views.FollowerList.as_view(),
+        name="common_follower_changelist",
+    ),
+    url(
         r"^data/common/bucket/$",
         freppledb.common.views.BucketList.as_view(),
         name="common_bucket_changelist",

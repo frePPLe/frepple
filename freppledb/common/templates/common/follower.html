@@ -1,0 +1,28 @@
+{% extends "admin/base_site_grid.html" %}
+{% load i18n %}
+
+{% block tools %}
+<h1 class="pull-right">
+<button class="btn btn-xs btn-primary" data-toggle="tooltip" data-placement="top"
+  onclick="window.open('{% setting "DOCUMENTATION_URL" %}/docs/{% version_short %}/user-interface/getting-around/inbox/html')"
+  data-original-title="{% trans 'help'|capfirst|force_escape %}">
+  <span class="fa fa-question"></span>
+</button>
+</h1>
+{% endblock %}
+
+{% block content %}
+<div class="row">
+<div id="tabs" class="col-md-12 form-inline hor-align-right">
+<ul class="nav nav-tabs">
+<li role="presentation">
+  <a class="ui-tabs-anchor" href="{{ request.prefix }}/inbox/" target="_self">{% trans "inbox"|capfirst %}</a>
+</li>
+<li class="active" role="presentation">
+  <a class="ui-tabs-anchor" href="{{ request.prefix }}/data/common/follower/" target="_self">{% trans "following"|capfirst %}</a>
+</li>
+</ul>
+</div>
+</div>
+{{ block.super }}
+{% endblock %}

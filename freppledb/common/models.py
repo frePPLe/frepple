@@ -27,6 +27,7 @@ from django.contrib.auth.models import AbstractUser, Group
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import PermissionDenied
+from django.core import mail
 from django.core.validators import FileExtensionValidator
 from django.db import models, DEFAULT_DB_ALIAS, connections, transaction
 from django.db.models import Q
@@ -34,7 +35,7 @@ from django.db.models.signals import pre_delete
 from django.dispatch.dispatcher import receiver
 from django.urls import NoReverseMatch, reverse
 from django.utils import timezone
-from django.utils.html import mark_safe
+from django.utils.html import mark_safe, escape
 from django.utils.translation import gettext_lazy as _
 from django.utils.text import capfirst
 
@@ -718,13 +719,16 @@ class Comment(models.Model):
     def save(
         self, force_insert=False, force_update=False, using=None, update_fields=None
     ):
+        if not hasattr(self.content_type.model_class(), "createNotification"):
+            # No messages generated on this model
+            return
+        from .middleware import _thread_locals
+
         if not using:
             using = getattr(self, "_state", None)
             if using:
                 using = using.db
             else:
-                from .middleware import _thread_locals
-
                 using = getattr(_thread_locals, "database", DEFAULT_DB_ALIAS)
         tmp = super().save(
             force_insert=force_insert,
@@ -734,9 +738,13 @@ class Comment(models.Model):
         )
         if using not in self._worker_active:
             self._worker_active.add(using)
+            req = getattr(_thread_locals, "request", None)
             Thread(
                 target=Comment._createNotifications,
-                kwargs={"database": using},
+                kwargs={
+                    "url": "http://%s" % req.get_host() if req else None,
+                    "database": using,
+                },
                 daemon=True,
             ).start()
         return tmp
@@ -789,8 +797,71 @@ class Comment(models.Model):
                     pass
         return None
 
+    def getMail(self, url=None, database=DEFAULT_DB_ALIAS):
+        """
+        Returns a tuple (subject, body_text, body_html) for an email about this message.
+        """
+        body_text = "%s --- %s" % (url, self.comment)
+        if url:
+            body_html = [
+                """
+                <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+                <html>
+                <head>
+                <meta http-equiv="content-type" content="text/html; charset=utf-8">
+                </head>
+                <body>
+                """
+            ]
+            if self.type != "delete":
+                body_html.append(
+                    "<button><a href='%s%s'>View</a></button><br><br>"
+                    % (url, self.getURL())
+                )
+            if self.attachment:
+                body_html.append(
+                    "<a href='%s%s'>View attachment</a><br><br>"
+                    % (url, self.attachment.url)
+                )
+            body_html.append("%s<br></body></html>" % escape(self.comment))
+        else:
+            body_html = None
+        if self.type == "add":
+            return (
+                "frePPLe: Added %s '%s'" % (self.content_type.model, self.object_repr),
+                body_text,
+                "".join(body_html) if body_html else None,
+            )
+        elif self.type == "change":
+            return (
+                "frePPLe: Changed %s '%s'"
+                % (self.content_type.model, self.object_repr),
+                body_text,
+                "".join(body_html) if body_html else None,
+            )
+        elif self.type == "delete":
+            return (
+                "frePPLe: Deleted %s '%s'"
+                % (self.content_type.model, self.object_repr),
+                body_text,
+                "".join(body_html) if body_html else None,
+            )
+        elif self.type == "comment":
+            return (
+                "frePPLe: New comment on %s '%s'"
+                % (self.content_type.model, self.object_repr),
+                body_text,
+                "".join(body_html) if body_html else None,
+            )
+        else:
+            return (
+                "frePPLe: %s %s" % (self.content_type.model, self.object_repr),
+                body_text,
+                body_html,
+            )
+
     @classmethod
-    def _createNotifications(cls, database=DEFAULT_DB_ALIAS):
+    def _createNotifications(cls, url=None, database=DEFAULT_DB_ALIAS):
         """
         Every server process will have at most 1 worker thread for each database.
         But multiple processes can be active in parallel.
@@ -804,6 +875,7 @@ class Comment(models.Model):
             while True:
                 with transaction.atomic(using=database):
                     empty = True
+                    emails = []
                     if followers:
                         for msg in (
                             Comment.objects.all()
@@ -813,6 +885,7 @@ class Comment(models.Model):
                             .select_for_update(skip_locked=True)[:40]
                         ):
                             empty = False
+                            recipients = set()
                             try:
                                 # TODO  for large number of messages and followers, this method can be inefficient.
                                 # Some mechanism based on the contenttype may be needed to reduce the loop of followers.
@@ -826,14 +899,42 @@ class Comment(models.Model):
                                         Notification(
                                             comment=msg, user=flw.user, type=flw.type
                                         ).save(database)
+                                        if (
+                                            flw.type == "M"
+                                            and flw.user.email
+                                            and settings.EMAIL_HOST
+                                        ):
+                                            recipients.add(flw.user.email)
                                 msg.processed = True
                                 msg.save(using=database)
+                                if recipients:
+                                    data = msg.getMail(url, database)
+                                    email = mail.EmailMultiAlternatives(
+                                        data[0],
+                                        data[1],
+                                        settings.DEFAULT_FROM_EMAIL,
+                                        recipients,
+                                    )
+                                    if data[2]:
+                                        email.attach_alternative(data[2], "text/html")
+                                    emails.append(email)
                             except Exception as e:
                                 logger.error(
                                     "Couldn't create nofications for message %s: %s"
                                     % (msg.id, e)
                                 )
-
+                        if emails:
+                            connection = None
+                            try:
+                                connection = mail.get_connection()
+                                connection.open()
+                                print(emails)
+                                connection.send_messages(emails)
+                            except Exception as e:
+                                logger.error("Error mailing messages: %s" % e)
+                            finally:
+                                if connection:
+                                    connection.close()
                     else:
                         # No followers at all -> All messages can immediately be marked processed
                         recs = (

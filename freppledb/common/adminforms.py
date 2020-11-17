@@ -21,7 +21,6 @@ import json
 from django.conf.urls import url
 from django.core.exceptions import PermissionDenied
 from django.contrib import admin
-from django.contrib.admin.options import get_content_type_for_model
 from django.contrib.admin.options import IS_POPUP_VAR, TO_FIELD_VAR
 from django.contrib import messages
 from django.contrib.admin.exceptions import DisallowedModelAdminToField
@@ -43,7 +42,7 @@ from django.utils.html import format_html
 from django.utils.http import urlquote
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
-from django.utils.text import capfirst, format_lazy
+from django.utils.text import format_lazy, get_text_list
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_protect
 
@@ -138,17 +137,14 @@ class MultiDBModelAdmin(admin.ModelAdmin):
         """
         Log that an object has been successfully added.
         """
-        from django.contrib.admin.models import ADDITION
-
-        if isinstance(message, list):
-            message = json.dumps(message)
+        content_type = ContentType.objects.get_for_model(obj)
         entry = Comment(
             user_id=request.user.pk,
-            content_type_id=ContentType.objects.get_for_model(obj).pk,
+            content_type_id=content_type.pk,
             object_pk=str(obj.pk),
             object_repr=str(obj)[:200],
             type="add",
-            comment=message,
+            comment="Added %s." % str(obj),
         )
         entry.save(using=request.database)
         return entry
@@ -157,6 +153,7 @@ class MultiDBModelAdmin(admin.ModelAdmin):
         """
         Log that an object has been successfully changed.
         """
+        content_type = ContentType.objects.get_for_model(obj)
         if hasattr(obj, "new_pk"):
             # We are renaming an existing object.
             # a) Save the new record in the right database
@@ -174,23 +171,21 @@ class MultiDBModelAdmin(admin.ModelAdmin):
                         **{related.field.name: old_pk}
                     ).update(**{related.field.name: obj})
             # c) Move the comments to the new key
-            model_type = ContentType.objects.get_for_model(obj)
             Comment.objects.using(request.database).filter(
-                content_type__pk=model_type.id, object_pk=old_pk
+                content_type__pk=content_type.pk, object_pk=old_pk
             ).update(object_pk=obj.pk)
             # d) Delete the old record
             obj.pk = old_pk
             obj.delete(using=request.database)
             obj.pk = obj.new_pk
-        if isinstance(message, list):
-            message = json.dumps(message)
         entry = Comment(
             user_id=request.user.pk,
-            content_type_id=ContentType.objects.get_for_model(obj).pk,
+            content_type_id=content_type.pk,
             object_pk=str(obj.pk),
             object_repr=str(obj)[:200],
             type="change",
-            comment=message,
+            comment="Changed %s."
+            % get_text_list(message[0]["changed"]["fields"], "and"),
         )
         entry.save(using=request.database)
         return entry
@@ -206,7 +201,7 @@ class MultiDBModelAdmin(admin.ModelAdmin):
             object_pk=str(obj.pk),
             object_repr=object_repr[:200],
             type="delete",
-            comment="Deleted %s" % object_repr,
+            comment="Deleted %s." % object_repr,
         )
         entry.save(using=request.database)
         return entry
@@ -474,6 +469,7 @@ class MultiDBModelAdmin(admin.ModelAdmin):
                 if comment:
                     c = Comment(
                         content_object=modelinstance,
+                        object_repr=str(modelinstance)[:200],
                         user=request.user,
                         comment=comment,
                         type="comment",

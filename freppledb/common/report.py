@@ -1765,15 +1765,15 @@ class GridReport(View):
                         sid = transaction.savepoint(using=request.database)
                         try:
                             obj = cls.model.objects.using(request.database).get(pk=key)
-                            obj.delete()
                             Comment(
                                 user_id=request.user.id,
                                 content_type_id=content_type_id,
-                                object_id=force_str(key),
-                                object_repr=force_str(key)[:200],
+                                object_pk=force_str(key),
+                                object_repr=force_str(obj)[:200],
                                 type="delete",
-                                comment="Deleted %s" % force_str(key),
+                                comment="Deleted %s." % force_str(obj),
                             ).save(using=request.database)
+                            obj.delete()
                             transaction.savepoint_commit(sid)
                         except cls.model.DoesNotExist:
                             transaction.savepoint_rollback(sid)
@@ -1791,6 +1791,7 @@ class GridReport(View):
                         sid = transaction.savepoint(using=request.database)
                         try:
                             obj = cls.model.objects.using(request.database).get(pk=key)
+                            orig_repr = force_str(obj)
                             if isinstance(cls.model._meta.pk, CharField):
                                 # The primary key is a string
                                 obj.pk = "Copy of %s" % key
@@ -1806,9 +1807,9 @@ class GridReport(View):
                                 user_id=request.user.pk,
                                 content_type_id=content_type_id,
                                 object_pk=obj.pk,
-                                object_repr=force_str(obj),
+                                object_repr=force_str(obj)[:200],
                                 type="add",
-                                comment=_("Copied from %s.") % key,
+                                comment="Copied from %s." % orig_repr,
                             ).save(using=request.database)
                             transaction.savepoint_commit(sid)
                         except cls.model.DoesNotExist:
@@ -1859,8 +1860,8 @@ class GridReport(View):
                                 object_pk=obj.pk,
                                 object_repr=force_str(obj),
                                 type="change",
-                                comment=_("Changed %s.")
-                                % get_text_list(form.changed_data, _("and")),
+                                comment="Changed %s."
+                                % get_text_list(form.changed_data, "and"),
                             ).save(using=request.database)
                         transaction.savepoint_commit(sid)
                     except cls.model.DoesNotExist:

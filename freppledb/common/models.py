@@ -928,7 +928,6 @@ class Comment(models.Model):
                             try:
                                 connection = mail.get_connection()
                                 connection.open()
-                                print(emails)
                                 connection.send_messages(emails)
                             except Exception as e:
                                 logger.error("Error mailing messages: %s" % e)

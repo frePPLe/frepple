@@ -53,7 +53,6 @@ from freppledb.common.report import (
     GridFieldCurrency,
     GridFieldDateTime,
     GridFieldDate,
-    GridFieldChoice,
 )
 from .models import SQLReport, SQLColumn
 from .admin import SQLReportForm
@@ -342,13 +341,7 @@ class ReportManager(GridReport):
                     # No filter value specified, which makes the filter invalid
                     continue
                 else:
-                    t = cls._filter_map_jqgrid_sql[op](
-                        reportrow,
-                        field,
-                        reportrow.validateValues(data)
-                        if isinstance(reportrow, GridFieldChoice)
-                        else data,
-                    )
+                    t = cls._filter_map_jqgrid_sql[op](reportrow, field, data)
                     q_filters[0].append(t[0])
                     q_filters[1].extend(t[1])
             except Exception:
@@ -395,11 +388,7 @@ class ReportManager(GridReport):
                         op = i[len(r.field_name + "__") :]
                     else:
                         continue
-                    t = cls._filter_map_jqgrid_sql[op](
-                        r,
-                        r.name,
-                        r.validateValues(j) if isinstance(r, GridFieldChoice) else j,
-                    )
+                    t = cls._filter_map_jqgrid_sql[op](r, r.name, j)
                     q_filters[0].append(t[0])
                     q_filters[1].extend(t[1])
                 except Exception:

@@ -383,14 +383,6 @@ class GridFieldChoice(GridField):
         e.append('"}')
         self.extra = format_lazy("{}" * len(e), *e)
 
-    def validateValues(self, data):
-        result = []
-        for f in data.split(","):
-            for c in self.choices:
-                if f.lower() in (c[0].lower(), force_str(c[1]).lower()):
-                    result.append(c[0])
-        return ",".join(result)
-
 
 class GridFieldBoolNullable(GridFieldChoice):
     width = 60
@@ -2283,15 +2275,35 @@ class GridReport(View):
 
     @staticmethod
     def _filter_ni(query, reportrow, data):
-        return ~models.Q(
-            **{"%s__in" % reportrow.field_name: smart_str(data).strip().split(",")}
-        )
+        if isinstance(reportrow, GridFieldChoice):
+            # Comparison with the translated choices
+            accepted = []
+            for f in smart_str(data).split(","):
+                t = f.strip().lower()
+                for c in reportrow.choices:
+                    if t in (c[0].lower(), force_str(c[1]).lower()):
+                        accepted.append(c[0])
+            return ~models.Q(**{"%s__in" % reportrow.field_name: accepted})
+        else:
+            return ~models.Q(
+                **{"%s__in" % reportrow.field_name: smart_str(data).strip().split(",")}
+            )
 
     @staticmethod
     def _filter_in(query, reportrow, data):
-        return models.Q(
-            **{"%s__in" % reportrow.field_name: smart_str(data).strip().split(",")}
-        )
+        if isinstance(reportrow, GridFieldChoice):
+            # Comparison with the translated choices
+            accepted = []
+            for f in smart_str(data).split(","):
+                t = f.strip().lower()
+                for c in reportrow.choices:
+                    if t in (c[0].lower(), force_str(c[1]).lower()):
+                        accepted.append(c[0])
+            return models.Q(**{"%s__in" % reportrow.field_name: accepted})
+        else:
+            return models.Q(
+                **{"%s__in" % reportrow.field_name: smart_str(data).strip().split(",")}
+            )
 
     @staticmethod
     def _filter_eq(query, reportrow, data):
@@ -2300,6 +2312,15 @@ class GridReport(View):
         ):
             return models.Q(
                 **{"%s__exact" % reportrow.field_name: smart_str(data).strip()}
+            )
+        elif isinstance(reportrow, GridFieldChoice):
+            t = smart_str(data).strip().lower()
+            # Comparison with the translated choices
+            for c in reportrow.choices:
+                if t == force_str(c[1]).lower():
+                    return models.Q(**{"%s__iexact" % reportrow.field_name: c[0]})
+            return models.Q(
+                **{"%s__iexact" % reportrow.field_name: smart_str(data).strip()}
             )
         else:
             return models.Q(
@@ -2432,13 +2453,7 @@ class GridReport(View):
                     continue
                 else:
                     q_filters.append(
-                        cls._filter_map_jqgrid_django[op](
-                            q_filters,
-                            reportrow,
-                            reportrow.validateValues(data)
-                            if isinstance(reportrow, GridFieldChoice)
-                            else data,
-                        )
+                        cls._filter_map_jqgrid_django[op](q_filters, reportrow, data)
                     )
             except Exception:
                 pass  # Silently ignore invalid filters
@@ -2495,13 +2510,7 @@ class GridReport(View):
                         i == r.field_name or i.startswith(r.field_name + "__")
                     ):
                         try:
-                            items = items.filter(
-                                **{
-                                    i: r.validateValues(unquote(j))
-                                    if isinstance(r, GridFieldChoice)
-                                    else unquote(j)
-                                }
-                            )
+                            items = items.filter(**{i: unquote(j)})
                         except Exception:
                             pass  # silently ignore invalid filters
         return items

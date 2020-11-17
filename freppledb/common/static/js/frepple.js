@@ -30,12 +30,12 @@ function breadcrumbs_reflow()
 function admin_escape(n)
 {
   if (!n) return "";
-  return n.replace(/_/g,'_5F').replace(/&amp;/g,'_26').replace(/&lt;/g,'_3C')
-  .replace(/&gt;/g,'_3E').replace(/&#39;/g,"'").replace(/&quot;/g,'_22')
+  return n.replace(/_/g,'_5F')
   .replace(/:/g,'_3A').replace(/\//g,'_2F').replace(/#/g,'_23').replace(/\?/g,'_3F')
   .replace(/;/g,'_3B').replace(/@/g,'_40').replace(/&/g,'_26').replace(/=/g,'_3D')
   .replace(/\+/g,'_2B').replace(/\$/g,'_24').replace(/,/g,'_2C').replace(/"/g,'_22')
-  .replace(/</g,'_3C').replace(/>/g,'_3E').replace(/%/g,'_25').replace(/\\/g,'_5C');
+  .replace(/</g,'_3C').replace(/>/g,'_3E').replace(/%/g,'_25').replace(/\\/g,'_5C')
+  .replace(/\t/g,'%09');
 }
 
 
@@ -43,10 +43,10 @@ function admin_escape(n)
 // We unescape all special characters in the EXACT same way as the django admin does.
 function admin_unescape(n)
 {
-  return n.replace(/_5F/g,'_').replace(/_22/g,'"')
+  return n.replace(/_5F/g,'_')
   .replace(/_3A/g,':').replace(/_2F/g,'/').replace(/_23/g,'#').replace(/_3F/g,'?')
   .replace(/_3B/g,';').replace(/_40/g,'@').replace(/_26/g,'&').replace(/_3D/g,'=')
-  .replace(/_2B/g,'+').replace(/_24/g,'$').replace(/_2C/g,',')
+  .replace(/_2B/g,'+').replace(/_24/g,'$').replace(/_2C/g,',').replace(/_22/g,'"')
   .replace(/_3C/g,'<').replace(/_3E/g,'>').replace(/_25/g,'%').replace(/_5C/g,'\\');
 }
 

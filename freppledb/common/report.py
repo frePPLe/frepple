@@ -367,6 +367,7 @@ class GridFieldText(GridField):
 class GridFieldChoice(GridField):
     width = 100
     align = "center"
+    searchoptions = '{"sopt":["cn","nc","eq","ne","bw","bn","in","ni","ew","en"],"searchhidden":true}'
 
     def __init__(self, name, **kwargs):
         super().__init__(name, **kwargs)
@@ -2245,6 +2246,15 @@ class GridReport(View):
             return ~models.Q(
                 **{"%s__exact" % reportrow.field_name: smart_str(data).strip()}
             )
+        elif isinstance(reportrow, GridFieldChoice):
+            t = smart_str(data).strip().lower()
+            # Comparison also with the translated choices
+            for c in reportrow.choices:
+                if t == force_str(c[1]).lower():
+                    return ~models.Q(**{"%s__iexact" % reportrow.field_name: c[0]})
+            return ~models.Q(
+                **{"%s__iexact" % reportrow.field_name: smart_str(data).strip()}
+            )
         else:
             return ~models.Q(
                 **{"%s__iexact" % reportrow.field_name: smart_str(data).strip()}
@@ -2252,15 +2262,37 @@ class GridReport(View):
 
     @staticmethod
     def _filter_bn(query, reportrow, data):
-        return ~models.Q(
-            **{"%s__istartswith" % reportrow.field_name: smart_str(data).strip()}
-        )
+        if isinstance(reportrow, GridFieldChoice):
+            # Comparison with the translated choices only
+            accepted = []
+            t = smart_str(data).strip().lower()
+            for c in reportrow.choices:
+                if force_str(c[1]).lower().startswith(t):
+                    accepted.append(c[0])
+            return ~models.Q(
+                **{"%s__in" % reportrow.field_name: accepted or ["--dummy--"]}
+            )
+        else:
+            return ~models.Q(
+                **{"%s__istartswith" % reportrow.field_name: smart_str(data).strip()}
+            )
 
     @staticmethod
     def _filter_en(query, reportrow, data):
-        return ~models.Q(
-            **{"%s__iendswith" % reportrow.field_name: smart_str(data).strip()}
-        )
+        if isinstance(reportrow, GridFieldChoice):
+            # Comparison with the translated choices only
+            accepted = []
+            t = smart_str(data).strip().lower()
+            for c in reportrow.choices:
+                if force_str(c[1]).lower().endswith(t):
+                    accepted.append(c[0])
+            return ~models.Q(
+                **{"%s__in" % reportrow.field_name: accepted or ["--dummy--"]}
+            )
+        else:
+            return ~models.Q(
+                **{"%s__iendswith" % reportrow.field_name: smart_str(data).strip()}
+            )
 
     @staticmethod
     def _filter_nc(query, reportrow, data):
@@ -2270,6 +2302,16 @@ class GridReport(View):
             return ~models.Q(
                 **{"%s__contains" % reportrow.field_name: smart_str(data).strip()}
             )
+        elif isinstance(reportrow, GridFieldChoice):
+            # Comparison with the translated choices
+            accepted = []
+            t = data.strip().lower()
+            for c in reportrow.choices:
+                if t in force_str(c[1]).lower():
+                    accepted.append(c[0])
+            return ~models.Q(
+                **{"%s__in" % reportrow.field_name: accepted or ["--dummy--"]}
+            )
         else:
             return ~models.Q(
                 **{"%s__icontains" % reportrow.field_name: smart_str(data).strip()}
@@ -2278,7 +2320,7 @@ class GridReport(View):
     @staticmethod
     def _filter_ni(query, reportrow, data):
         if isinstance(reportrow, GridFieldChoice):
-            # Comparison with the translated choices
+            # Comparison also with the translated choices
             accepted = []
             for f in smart_str(data).split(","):
                 t = f.strip().lower()
@@ -2294,7 +2336,7 @@ class GridReport(View):
     @staticmethod
     def _filter_in(query, reportrow, data):
         if isinstance(reportrow, GridFieldChoice):
-            # Comparison with the translated choices
+            # Comparison also with the translated choices
             accepted = []
             for f in smart_str(data).split(","):
                 t = f.strip().lower()
@@ -2317,7 +2359,7 @@ class GridReport(View):
             )
         elif isinstance(reportrow, GridFieldChoice):
             t = smart_str(data).strip().lower()
-            # Comparison with the translated choices
+            # Comparison with the translated choices only
             for c in reportrow.choices:
                 if t == force_str(c[1]).lower():
                     return models.Q(**{"%s__iexact" % reportrow.field_name: c[0]})
@@ -2331,9 +2373,20 @@ class GridReport(View):
 
     @staticmethod
     def _filter_bw(query, reportrow, data):
-        return models.Q(
-            **{"%s__istartswith" % reportrow.field_name: smart_str(data).strip()}
-        )
+        if isinstance(reportrow, GridFieldChoice):
+            # Comparison with the translated choices only
+            accepted = []
+            t = data.strip().lower()
+            for c in reportrow.choices:
+                if force_str(c[1]).lower().startswith(t):
+                    accepted.append(c[0])
+            return models.Q(
+                **{"%s__in" % reportrow.field_name: accepted or ["--dummy--"]}
+            )
+        else:
+            return models.Q(
+                **{"%s__istartswith" % reportrow.field_name: smart_str(data).strip()}
+            )
 
     @staticmethod
     def _filter_gt(query, reportrow, data):
@@ -2353,15 +2406,37 @@ class GridReport(View):
 
     @staticmethod
     def _filter_ew(query, reportrow, data):
-        return models.Q(
-            **{"%s__iendswith" % reportrow.field_name: smart_str(data).strip()}
-        )
+        if isinstance(reportrow, GridFieldChoice):
+            # Comparison with the translated choices
+            accepted = []
+            t = data.strip().lower()
+            for c in reportrow.choices:
+                if force_str(c[1]).lower().endswith(t):
+                    accepted.append(c[0])
+            return models.Q(
+                **{"%s__in" % reportrow.field_name: accepted or ["--dummy--"]}
+            )
+        else:
+            return models.Q(
+                **{"%s__iendswith" % reportrow.field_name: smart_str(data).strip()}
+            )
 
     @staticmethod
     def _filter_cn(query, reportrow, data):
-        return models.Q(
-            **{"%s__icontains" % reportrow.field_name: smart_str(data).strip()}
-        )
+        if isinstance(reportrow, GridFieldChoice):
+            # Comparison with the translated choices
+            accepted = []
+            t = data.strip().lower()
+            for c in reportrow.choices:
+                if t in force_str(c[1]).lower():
+                    accepted.append(c[0])
+            return models.Q(
+                **{"%s__in" % reportrow.field_name: accepted or ["--dummy--"]}
+            )
+        else:
+            return models.Q(
+                **{"%s__icontains" % reportrow.field_name: smart_str(data).strip()}
+            )
 
     @staticmethod
     def _filter_win(query, reportrow, data):

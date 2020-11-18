@@ -18,6 +18,8 @@ Release notes
 
 - Users can now `upload an avatar image <user-interface/getting-around/user-preferences.html>`_.
 
+- Bug fix: filtering on choice fields was broken when a language different from English is used.
+
 6.9.0 (2020/11/07)
 ==================
 

@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-08-09 10:03+0200\n"
-"PO-Revision-Date: 2020-08-09 10:02+0200\n"
+"PO-Revision-Date: 2020-11-18 08:45+0100\n"
 "Last-Translator: Joao Ranita <jranita@frepple.com>\n"
 "Language-Team: frepple\n"
 "Language: nl\n"
@@ -22,7 +22,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 2.0.6\n"
+"X-Generator: Poedit 2.0.1\n"
 
 #: common/static/js/frepple.js:187 common/static/js/frepple.js:282
 #: common/static/js/frepple.min.js:11
@@ -3575,7 +3575,7 @@ msgstr "make to order"
 
 #: input/models.py:206
 msgid "Cost of the item"
-msgstr "Cost van de item"
+msgstr "Item kost"
 
 #: input/models.py:218 input/views.py:2432
 msgid "items"
@@ -3888,7 +3888,7 @@ msgstr ""
 
 #: input/models.py:691
 msgid "Setup matrix defining the conversion time and cost"
-msgstr "Setup matrix die the conversie tijd en cost definieert"
+msgstr "Setup matrix die the conversie tijd en kost definieert"
 
 #: input/models.py:694 input/models.py:1071 input/models.py:1920
 #: input/views.py:1846 input/views.py:2575 input/views.py:2757
@@ -3966,7 +3966,7 @@ msgstr "Duur van de conversie"
 
 #: input/models.py:768
 msgid "Cost of the conversion"
-msgstr "Cost van de conversie"
+msgstr "Conversie kost"
 
 #: input/models.py:778
 msgid "Extra resource used during this changeover"
@@ -4170,7 +4170,7 @@ msgstr "Maximale leverhoeveelheid"
 
 #: input/models.py:1342
 msgid "Shipping cost per unit"
-msgstr "Leveringscost per eenheid"
+msgstr "Leveringskost per eenheid"
 
 #: input/models.py:1352 input/views.py:2264
 msgid "push priority"
@@ -4490,7 +4490,7 @@ msgstr "geproduceerd in %(loc)s tussen %(date1)s en %(date2)s"
 
 #: input/views.py:4640 input/views.py:5171
 msgid "total cost"
-msgstr "totale costen"
+msgstr "totale kost"
 
 #: input/views.py:4962
 #, python-format

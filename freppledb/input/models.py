@@ -1876,6 +1876,7 @@ class OperationPlanResource(AuditModel):
     # Possible status
     OPRstatus = (
         ("proposed", _("proposed")),
+        ("approved", _("approved")),
         ("confirmed", _("confirmed")),
         ("closed", _("closed")),
     )
@@ -1947,6 +1948,7 @@ class OperationPlanMaterial(AuditModel):
     # Possible status
     OPMstatus = (
         ("proposed", _("proposed")),
+        ("approved", _("approved")),
         ("confirmed", _("confirmed")),
         ("closed", _("closed")),
     )

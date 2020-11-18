@@ -18,6 +18,7 @@ from datetime import datetime
 import json
 import logging
 from psycopg2.extras import execute_batch
+import sys
 from threading import Thread
 import time
 
@@ -945,14 +946,18 @@ class Comment(models.Model):
                         if recs:
                             empty = False
                     if empty:
-                        # When no more messages can be found, we try again 5 seconds later
-                        # before shutting down the worker.
                         if idle_loop_done:
                             break
                         else:
                             idle_loop_done = True
-                            time.sleep(5)
+                            if sys.argv[1:2] != ["test"]:
+                                # When no more messages can be found and we are not running
+                                # the test suite, we try again 5 seconds later before shutting
+                                # down the worker.
+                                time.sleep(5)
         finally:
+            for db in settings.DATABASES:
+                connections[db].close()
             cls._worker_active.remove(database)
 
 

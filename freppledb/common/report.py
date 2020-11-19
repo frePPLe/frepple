@@ -3355,7 +3355,7 @@ class GridPivot(GridReport):
                     # Write the last row
                     if row_of_buckets:
                         for cross in mycrosses:
-                            if cross[1].get("visible", False):
+                            if not cross[1].get("visible", True):
                                 continue
                             fields = [
                                 _getCellValue(

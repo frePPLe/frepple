@@ -41,7 +41,6 @@ class CommonConfig(AppConfig):
             "django.contrib.contenttypes",
             "django.contrib.messages",
             "django.contrib.staticfiles",
-            "bootstrap3",
             "freppledb.boot",
             "freppledb.input",
             "freppledb.output",

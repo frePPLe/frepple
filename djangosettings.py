@@ -254,7 +254,6 @@ INSTALLED_APPS = (
     "django.contrib.contenttypes",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "bootstrap3",
     "freppledb.boot",
     # Add any project specific apps here
     # "freppledb.odoo",

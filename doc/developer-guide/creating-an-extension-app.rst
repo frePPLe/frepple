@@ -93,7 +93,6 @@ at the location indicated in the file.
        "django.contrib.contenttypes",
        "django.contrib.messages",
        "django.contrib.staticfiles",
-       "bootstrap3",
        "freppledb.boot",
        # Add any project specific apps here
        "freppledb.myapp",  # <<<< HERE'S OUR APP

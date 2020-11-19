@@ -110,7 +110,7 @@ def registerAttribute(model, attrlist, **kwargs):
     """
     Register a new attribute.
     The attribute list is passed as a list of tuples in the format
-      label, fieldtype, editable (default=True), initially_hidden (default=False)
+      fieldname, label, fieldtype, editable (default=True), initially_hidden (default=False)
     """
     if model not in _register:
         _register[model] = []
@@ -130,7 +130,8 @@ def registerAttribute(model, attrlist, **kwargs):
 
 def getAttributes(model):
     """
-    Return all attributes for a given model.
+    Return all attributes for a given model in the format:
+      fieldname, label, fieldtype, editable (default=True), initially_hidden (default=False)
     """
     for attr in _register.get("%s.%s" % (model.__module__, model.__name__), []):
         yield attr
@@ -142,8 +143,8 @@ def getAttributes(model):
 
 def getAttributeFields(model, related_name_prefix=None, initially_hidden=False):
     """
-  Return report fields for all attributes of a given model.
-  """
+    Return report fields for all attributes of a given model.
+    """
     from freppledb.common.report import GridFieldText, GridFieldBool, GridFieldNumber
     from freppledb.common.report import (
         GridFieldInteger,

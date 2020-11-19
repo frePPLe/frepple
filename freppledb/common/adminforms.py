@@ -77,6 +77,13 @@ class MultiDBModelAdmin(admin.ModelAdmin):
     }
 
     def get_urls(self):
+        """
+        Customized to:
+        - remove list and history views
+        - add comment view
+        """
+        from django.urls import path
+
         def wrap(view):
             def wrapper(*args, **kwargs):
                 return self.admin_site.admin_view(view)(*args, **kwargs)
@@ -84,16 +91,33 @@ class MultiDBModelAdmin(admin.ModelAdmin):
             wrapper.model_admin = self
             return update_wrapper(wrapper, view)
 
-        urls = super().get_urls()
-        my_urls = [
-            url(
-                r"^(.+)/comment/$",
+        info = self.model._meta.app_label, self.model._meta.model_name
+
+        urlpatterns = [
+            path("", wrap(self.changelist_view), name="%s_%s_changelist" % info),
+            path("add/", wrap(self.add_view), name="%s_%s_add" % info),
+            path(
+                "autocomplete/",
+                wrap(self.autocomplete_view),
+                name="%s_%s_autocomplete" % info,
+            ),
+            path(
+                "<path:object_id>/comment/",
                 wrap(self.comment_view),
-                name="%s_%s_comment"
-                % (self.model._meta.app_label, self.model._meta.model_name),
-            )
+                name="%s_%s_comment" % info,
+            ),
+            path(
+                "<path:object_id>/delete/",
+                wrap(self.delete_view),
+                name="%s_%s_delete" % info,
+            ),
+            path(
+                "<path:object_id>/change/",
+                wrap(self.change_view),
+                name="%s_%s_change" % info,
+            ),
         ]
-        return my_urls + urls
+        return urlpatterns
 
     def save_form(self, request, form, change):
         # Execute the standard behavior
@@ -427,6 +451,7 @@ class MultiDBModelAdmin(admin.ModelAdmin):
             force_text(self.model._meta.verbose_name) + " " + unquote(object_id)
         )
         new_extra_context["post_title"] = _("edit")
+        new_extra_context["admin"] = self
         return super().change_view(request, object_id, form_url, new_extra_context)
 
     @csrf_protect_m

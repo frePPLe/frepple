@@ -81,7 +81,6 @@ excludes = [
 ]
 
 # Add all modules that need to be added in uncompiled format
-import bootstrap3
 import certifi
 import dateutil
 import django
@@ -107,7 +106,6 @@ data_files = [
     (os.path.join(get_python_lib(), "pythoncom.py"), "pythoncom.py"),
 ]
 for mod in [
-    bootstrap3,
     certifi,
     dateutil,
     django,

@@ -6,8 +6,8 @@ Release notes
 
 .. rubric:: User interface
 
-- Updated the list of default fields in all reports. By default we keep the
-  reports now as lean as possible. More advanced fields are hidden by default.
+- | Restructured the edit forms for all entities. The main fields are now clearly
+    separated from advanced fields and related objects. 
 
 - | The `comment and audit trail functionality <user-interface/getting-around/messages.html>`_ 
     has been completely revamped.
@@ -16,9 +16,23 @@ Release notes
     in your `inbox <user-interface/getting-around/inbox.html>`_.
   | This feature will be further improved in the next releases. 
 
-- Users can now `upload an avatar image <user-interface/getting-around/user-preferences.html>`_.
+- | Users can now `upload an avatar image <user-interface/getting-around/user-preferences.html>`_.
+
+- | Updated the list of default fields in all reports. By default we keep the
+    reports now as lean as possible. More advanced fields are hidden by default.
 
 - Bug fix: filtering on choice fields was broken when a language different from English is used.
+
+.. rubric:: Third party components
+
+- | Added Python package: pillow
+  | Install it by running "pip3 install pillow"
+
+.. rubric:: System administration
+
+- | Users can now upload attachments and their avatars. These files are stored in the folder
+    /var/log/frepple/uploads.
+  | Your backup procedures (don't tell me you don't have any...) should now include this folder.
 
 6.9.0 (2020/11/07)
 ==================

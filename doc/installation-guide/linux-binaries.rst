@@ -201,7 +201,6 @@ Here are the steps to get a fully working environment.
           'django.contrib.contenttypes',
           'django.contrib.messages',
           'django.contrib.staticfiles',
-          'bootstrap3',
           'freppledb.boot',
           #                                << ADD YOUR CUSTOM EXTENSION APPS HERE
           'freppledb.wizard',              << COMMENT IF MODEL BUILDING WIZARD ISN'T NEEDED

@@ -32,6 +32,7 @@ from freppledb.input.models import OperationPlanMaterial
 from freppledb.common.adminforms import MultiDBModelAdmin, MultiDBTabularInline
 
 from freppledb.admin import data_site
+from freppledb.boot import getAttributes
 
 
 class CalendarBucket_inline(MultiDBTabularInline):
@@ -109,7 +110,17 @@ class Location_admin(MultiDBModelAdmin):
     model = Location
     raw_id_fields = ("available", "owner")
     save_on_top = True
-    exclude = ("source",)
+    fieldsets = (
+        (None, {"fields": ("name", "owner")}),
+        (
+            _("Advanced"),
+            {
+                "fields": ["description", "category", "subcategory", "available"]
+                + [a[0] for a in getAttributes(Location) if a[3]],
+                "classes": ("collapse",),
+            },
+        ),
+    )
     tabs = [
         {
             "name": "edit",
@@ -152,7 +163,17 @@ class Customer_admin(MultiDBModelAdmin):
     model = Customer
     raw_id_fields = ("owner",)
     save_on_top = True
-    exclude = ("source",)
+    fieldsets = (
+        (None, {"fields": ("name", "owner")}),
+        (
+            _("Advanced"),
+            {
+                "fields": ["description", "category", "subcategory"]
+                + [a[0] for a in getAttributes(Location) if a[3]],
+                "classes": ("collapse",),
+            },
+        ),
+    )
     tabs = [
         {
             "name": "edit",
@@ -169,14 +190,6 @@ class Customer_admin(MultiDBModelAdmin):
 
 
 data_site.register(Customer, Customer_admin)
-
-
-class ItemSupplier_inline(MultiDBTabularInline):
-    model = ItemSupplier
-    fk_name = "item"
-    raw_id_fields = ("supplier", "location", "resource")
-    extra = 0
-    exclude = ("source",)
 
 
 class Supplier_admin(MultiDBModelAdmin):
@@ -247,8 +260,18 @@ class Item_admin(MultiDBModelAdmin):
     model = Item
     save_on_top = True
     raw_id_fields = ("owner",)
-    inlines = [ItemSupplier_inline, OperationMaterial_inline]
-    exclude = ("source",)
+    search_fields = ("name", "description")
+    fieldsets = (
+        (None, {"fields": ("name", "cost", "owner")}),
+        (
+            _("Advanced"),
+            {
+                "fields": ["description", "category", "subcategory", "type"]
+                + [a[0] for a in getAttributes(Item) if a[3]],
+                "classes": ("collapse",),
+            },
+        ),
+    )
     tabs = [
         {
             "name": "edit",

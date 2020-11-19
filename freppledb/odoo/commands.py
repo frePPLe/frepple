@@ -334,13 +334,15 @@ class OdooWritePlan(PlanTask):
                     if (
                         not i.item
                         or not i.item.source
+                        or not i.item.subcategory
+                        or not i.location.subcategory
                         or not i.item.source.startswith("odoo")
                         or i.status not in ("proposed", "approved")
                     ):
                         continue
                     cls.exported.append(i)
-                    yield '<operationplan id="%s" ordertype="PO" item=%s location=%s supplier=%s start="%s" end="%s" quantity="%s" location_id=%s item_id=%s criticality="%d"/>' % (
-                        i.id,
+                    yield '<operationplan reference="%s" ordertype="PO" item=%s location=%s supplier=%s start="%s" end="%s" quantity="%s" location_id=%s item_id=%s criticality="%d"/>' % (
+                        i.reference,
                         quoteattr(i.item.name),
                         quoteattr(i.location.name),
                         quoteattr(i.supplier.name),
@@ -351,12 +353,40 @@ class OdooWritePlan(PlanTask):
                         quoteattr(i.item.subcategory),
                         int(i.criticality),
                     )
+                elif i.ordertype == "DO":
+                    if (
+                        not i.item
+                        or not i.item.source
+                        or not i.item.subcategory
+                        or not i.operation.origin.location.subcategory
+                        or not i.operation.destination.location.subcategory
+                        or not i.item.source.startswith("odoo")
+                        or i.status not in ("proposed", "approved")
+                    ):
+                        continue
+                    cls.exported.append(i)
+                    yield '<operationplan status="%s" reference="%s" ordertype="DO" item=%s origin=%s destination=%s start="%s" end="%s" quantity="%s" origin_id=%s destination_id=%s item_id=%s criticality="%d"/>' % (
+                        i.status,
+                        i.reference,
+                        quoteattr(i.operation.destination.item.name),
+                        quoteattr(i.operation.origin.location.name),
+                        quoteattr(i.operation.destination.location.name),
+                        i.start,
+                        i.end,
+                        i.quantity,
+                        quoteattr(i.operation.origin.location.subcategory),
+                        quoteattr(i.operation.destination.location.subcategory),
+                        quoteattr(i.operation.destination.item.subcategory),
+                        int(i.criticality),
+                    )
                 elif i.ordertype == "MO":
                     if (
                         not i.operation
                         or not i.operation.source
                         or not i.operation.item
                         or not i.operation.source.startswith("odoo")
+                        or not i.item.subcategory
+                        or not i.location.subcategory
                         or i.status not in ("proposed", "approved")
                     ):
                         continue
@@ -374,8 +404,8 @@ class OdooWritePlan(PlanTask):
                         demand_str += "%s:%s, " % (d.demand, d.quantity)
                     if demand_str:
                         demand_str = demand_str[:-2]
-                    yield '<operationplan id="%s" ordertype="MO" item=%s location=%s operation=%s start="%s" end="%s" quantity="%s" location_id=%s item_id=%s criticality="%d" resource=%s demand=%s/>' % (
-                        i.id,
+                    yield '<operationplan reference="%s" ordertype="MO" item=%s location=%s operation=%s start="%s" end="%s" quantity="%s" location_id=%s item_id=%s criticality="%d" resource=%s demand=%s/>' % (
+                        i.reference,
                         quoteattr(i.operation.item.name),
                         quoteattr(i.operation.location.name),
                         quoteattr(i.operation.name),

@@ -211,7 +211,7 @@ class OdooReadData(PlanTask):
                 name="All customers", source="odoo_%s" % cls.mode
             )
             for r in frepple.customers():
-                if r.owner is None and r != rootCustomer:                    
+                if r.owner is None and r != rootCustomer:
                     r.owner = rootCustomer
 
 

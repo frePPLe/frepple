@@ -126,6 +126,7 @@ def Upload(request):
                     )
                     if (
                         not do.origin.source
+                        or not do.location.source
                         or do.status != "proposed"
                         or not do.item.source
                     ):
@@ -133,8 +134,9 @@ def Upload(request):
                     data_ok = True
                     obj.append(do)
                     data_odoo.append(
-                        '<operationplan ordertype="DO" id="%s" item=%s origin=%s location=%s start="%s" end="%s" quantity="%s" location_id=%s item_id=%s criticality="%d"/>'
+                        '<operationplan status="%s" reference="%s" ordertype="DO" item=%s origin=%s destination=%s start="%s" end="%s" quantity="%s" origin_id=%s destination_id=%s item_id=%s criticality="%d"/>'
                         % (
+                            do.status,
                             do.reference,
                             quoteattr(do.item.name),
                             quoteattr(do.origin.name),
@@ -142,6 +144,7 @@ def Upload(request):
                             do.startdate,
                             do.enddate,
                             do.quantity,
+                            quoteattr(do.origin.subcategory or ""),
                             quoteattr(do.location.subcategory or ""),
                             quoteattr(do.item.subcategory or ""),
                             int(do.criticality),

@@ -48,4 +48,30 @@ class Migration(migrations.Migration):
 
     dependencies = [("common", "0020_notifications")]
 
-    operations = [migrations.RunPython(recreateConstraintsCascade)]
+    operations = [
+        migrations.SeparateDatabaseAndState(
+            state_operations=[
+                migrations.RunSQL(
+                    """
+                    insert into common_comment
+                    (object_pk, comment, lastmodified, content_type_id, user_id, object_repr, processed, type)
+                    select
+                       object_id, change_message, action_time, content_type_id, user_id, object_repr, true,
+                       case when action_flag = 1 then 'add'
+                         when action_flag = 2 then 'change'
+                         else 'deletion'
+                         end
+                    from django_admin_log
+                    order by id
+                    """
+                ),
+                migrations.RunSQL("truncate table django_admin_log"),
+            ],
+            database_operations=[
+                migrations.RunSQL(
+                    "update common_comment set object_repr = object_pk, type='comment', processed=true"
+                ),
+                migrations.RunPython(recreateConstraintsCascade),
+            ],
+        )
+    ]

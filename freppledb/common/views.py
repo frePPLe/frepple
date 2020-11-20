@@ -514,7 +514,14 @@ class BucketDetailList(GridReport):
     help_url = "model-reference/bucket-dates.html"
     default_sort = (2, "asc", 1, "asc")
     rows = (
-        GridFieldInteger("id", title=_("identifier"), key=True, hidden=True),
+        GridFieldInteger(
+            "id",
+            title=_("identifier"),
+            key=True,
+            formatter="detail",
+            extra='"role":"common/bucketdetail"',
+            initially_hidden=True,
+        ),
         GridFieldText(
             "bucket",
             title=_("bucket"),

@@ -170,13 +170,6 @@ class Follower_admin(MultiDBModelAdmin):
 data_site.register(Follower, Follower_admin)
 
 
-class BucketDetail_inline(MultiDBTabularInline):
-    model = BucketDetail
-    max_num = 10
-    extra = 3
-    exclude = ("source",)
-
-
 class BucketDetail_admin(MultiDBModelAdmin):
     model = BucketDetail
     save_on_top = True
@@ -202,7 +195,6 @@ data_site.register(BucketDetail, BucketDetail_admin)
 class Bucket_admin(MultiDBModelAdmin):
     model = Bucket
     save_on_top = True
-    inlines = [BucketDetail_inline]
     exclude = ("source",)
     tabs = [
         {

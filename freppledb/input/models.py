@@ -260,6 +260,7 @@ class Operation(AuditModel):
         db_index=True,
         related_name="operations",
         on_delete=models.CASCADE,
+        help_text=_("Item produced by this operation"),
     )
     location = models.ForeignKey(
         Location, verbose_name=_("location"), db_index=True, on_delete=models.CASCADE
@@ -271,6 +272,9 @@ class Operation(AuditModel):
         blank=True,
         related_name="childoperations",
         on_delete=models.SET_NULL,
+        help_text=_(
+            "Parent operation (which must be of type routing, alternate or split)"
+        ),
     )
     priority = models.IntegerField(
         _("priority"),
@@ -308,7 +312,7 @@ class Operation(AuditModel):
         null=True,
         blank=True,
         default="1.0",
-        help_text=_("A minimum quantity for operationplans"),
+        help_text=_("Minimum production quantity"),
     )
     sizemultiple = models.DecimalField(
         _("size multiple"),
@@ -316,7 +320,7 @@ class Operation(AuditModel):
         blank=True,
         max_digits=20,
         decimal_places=8,
-        help_text=_("A multiple quantity for operationplans"),
+        help_text=_("Multiple production quantity"),
     )
     sizemaximum = models.DecimalField(
         _("size maximum"),
@@ -324,7 +328,7 @@ class Operation(AuditModel):
         blank=True,
         max_digits=20,
         decimal_places=8,
-        help_text=_("A maximum quantity for operationplans"),
+        help_text=_("Maximum production quantity"),
     )
     cost = models.DecimalField(
         _("cost"),
@@ -332,19 +336,19 @@ class Operation(AuditModel):
         blank=True,
         max_digits=20,
         decimal_places=8,
-        help_text=_("Cost per operationplan unit"),
+        help_text=_("Cost per produced unit"),
     )
     duration = models.DurationField(
         _("duration"),
         null=True,
         blank=True,
-        help_text=_("A fixed duration for the operation"),
+        help_text=_("Fixed production time for setup and overhead"),
     )
     duration_per = models.DurationField(
         _("duration per unit"),
         null=True,
         blank=True,
-        help_text=_("A variable duration for the operation"),
+        help_text=_("Production time per produced piece"),
     )
     search = models.CharField(
         _("search mode"),
@@ -703,7 +707,7 @@ class Resource(AuditModel, HierarchyModel):
     )
     efficiency_calendar = models.ForeignKey(
         Calendar,
-        verbose_name=_("efficiency %% calendar"),
+        verbose_name=_("efficiency % calendar"),
         related_name="+",
         null=True,
         blank=True,
@@ -901,7 +905,7 @@ class OperationMaterial(AuditModel):
         null=True,
         max_digits=20,
         decimal_places=8,
-        help_text=_("Quantity to consume or produce per operationplan unit"),
+        help_text=_("Quantity to consume or produce per piece"),
     )
     quantity_fixed = models.DecimalField(
         _("fixed quantity"),
@@ -933,7 +937,7 @@ class OperationMaterial(AuditModel):
         max_length=300,
         null=True,
         blank=True,
-        help_text=_("Optional name of this operation material"),
+        help_text=_("Name of this operation material to identify alternates"),
     )
     priority = models.IntegerField(
         _("priority"),
@@ -1025,6 +1029,7 @@ class OperationResource(AuditModel):
         blank=True,
         db_index=True,
         on_delete=models.SET_NULL,
+        help_text=_("Required skill to perform the operation"),
     )
     quantity = models.DecimalField(
         _("quantity"),
@@ -1040,7 +1045,7 @@ class OperationResource(AuditModel):
         max_digits=20,
         decimal_places=8,
         help_text=_(
-            "constant part of the capacity consumption (bucketized resources only)"
+            "Constant part of the capacity consumption (bucketized resources only)"
         ),
     )
     effective_start = models.DateTimeField(
@@ -1054,14 +1059,14 @@ class OperationResource(AuditModel):
         max_length=300,
         null=True,
         blank=True,
-        help_text=_("Optional name of this load"),
+        help_text=_("Name of this operation resource to identify alternates"),
     )
     priority = models.IntegerField(
         _("priority"),
         default=1,
         null=True,
         blank=True,
-        help_text=_("Priority of this load in a group of alternates"),
+        help_text=_("Priority of this operation resource in a group of alternates"),
     )
     setup = models.CharField(
         _("setup"),
@@ -1293,6 +1298,7 @@ class ItemDistribution(AuditModel):
         db_index=True,
         related_name="itemdistributions_destination",
         on_delete=models.CASCADE,
+        help_text=_("Destination location to be replenished"),
     )
     origin = models.ForeignKey(
         Location,
@@ -1300,9 +1306,10 @@ class ItemDistribution(AuditModel):
         on_delete=models.CASCADE,
         db_index=True,
         related_name="itemdistributions_origin",
+        help_text=_("Source location shipping the item"),
     )
     leadtime = models.DurationField(
-        _("lead time"), null=True, blank=True, help_text=_("lead time")
+        _("lead time"), null=True, blank=True, help_text=_("Transport lead time")
     )
     sizeminimum = models.DecimalField(
         _("size minimum"),
@@ -1434,7 +1441,7 @@ class Demand(AuditModel, HierarchyModel):
         Location, verbose_name=_("location"), db_index=True, on_delete=models.CASCADE
     )
     due = models.DateTimeField(
-        _("due"), help_text=_("Due date of the demand"), db_index=True
+        _("due"), help_text=_("Due date of the sales order"), db_index=True
     )
     status = models.CharField(
         _("status"),

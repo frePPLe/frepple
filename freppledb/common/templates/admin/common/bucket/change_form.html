@@ -1,0 +1,18 @@
+{% extends "admin/change_form.html" %}
+{% load i18n %}
+
+{% block inline_field_sets %}
+{{ block.super }}
+{% if object_id %}
+<fieldset class="_module _aligned" id="fieldset-3" style="background:transparent">
+<legend>{% trans "related"|capfirst %}
+</legend>
+<div class="row">
+  <div class="control-label col-md-3"><p>
+     <a href="{{ request.prefix }}/data/common/bucketdetail/?bucket={{ object_id | urlencode }}&noautofilter">
+     {% trans "bucket dates"|capfirst %}&nbsp;<i class="fa fa-caret-right"></i></a>
+  </p></div>
+</div>
+</fieldset>
+{% endif %}
+{% endblock %}

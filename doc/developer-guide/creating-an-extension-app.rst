@@ -298,6 +298,7 @@ The file **admin.py** defines a form to edit objects of your models.
    
 .. code-block:: Python
 
+   @admin.register(My_Model, site=data_site)
    class My_Model_Admin(MultiDBModelAdmin):
        model = My_Model
        fields = ("name", "charfield", "booleanfield", "decimalfield")
@@ -321,9 +322,6 @@ The file **admin.py** defines a form to edit objects of your models.
                "view": "admin:my_app_my_model_history",
            },
        ]
-
-
-   data_site.register(My_Model, My_Model_Admin)
 
 You can find all details on admin forms on https://docs.djangoproject.com/en/2.2/ref/contrib/admin/
 

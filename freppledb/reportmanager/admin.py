@@ -15,6 +15,7 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+from django.contrib import admin
 from django.utils.translation import gettext_lazy as _
 
 from freppledb.admin import data_site
@@ -30,6 +31,7 @@ class SQLReportForm(ModelForm):
         fields = "__all__"
 
 
+@admin.register(SQLReport, site=data_site)
 class SQLReport_admin(MultiDBModelAdmin):
     model = SQLReport
     exclude = ("id",)
@@ -51,6 +53,3 @@ class SQLReport_admin(MultiDBModelAdmin):
             "view": "admin:reportmanager_sqlreport_comment",
         },
     ]
-
-
-data_site.register(SQLReport, SQLReport_admin)

@@ -466,24 +466,26 @@ class FollowerList(GridReport):
     def basequeryset(reportclass, request, *args, **kwargs):
         return Follower.objects.all().filter(user=request.user)
 
-    rows = (
-        GridFieldInteger(
-            "id",
-            title=_("identifier"),
-            key=True,
-            formatter="detail",
-            extra='"role":"common/follower"',
-            initially_hidden=True,
-        ),
-        GridFieldChoice(
-            "content_type",
-            field_name="content_type__model",
-            title=_("model name"),
-            choices=[(str(x.id), x.name) for x in ContentType.objects.all()],
-        ),
-        GridFieldText("object_pk", field_name="object_pk", title=_("object name")),
-        GridFieldChoice("type", title=_("type"), choices=Follower.type_list),
-    )
+    @classmethod
+    def rows(request, *args, **kwargs):
+        return (
+            GridFieldInteger(
+                "id",
+                title=_("identifier"),
+                key=True,
+                formatter="detail",
+                extra='"role":"common/follower"',
+                initially_hidden=True,
+            ),
+            GridFieldChoice(
+                "content_type",
+                field_name="content_type__model",
+                title=_("model name"),
+                choices=[(str(x.id), x.name) for x in ContentType.objects.all()],
+            ),
+            GridFieldText("object_pk", field_name="object_pk", title=_("object name")),
+            GridFieldChoice("type", title=_("type"), choices=Follower.type_list),
+        )
 
 
 class BucketList(GridReport):

@@ -18,16 +18,18 @@
 from dateutil.parser import parse
 
 from django import forms
+from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import Group
 from django.forms.utils import ErrorList
 from django.utils.translation import gettext_lazy as _
 
 from .models import User, Parameter, Comment, Follower, Bucket, BucketDetail
-from .adminforms import MultiDBUserCreationForm, MultiDBModelAdmin, MultiDBTabularInline
+from .adminforms import MultiDBUserCreationForm, MultiDBModelAdmin
 from freppledb.admin import data_site
 
 
+@admin.register(User, site=data_site)
 class MyUserAdmin(UserAdmin, MultiDBModelAdmin):
     save_on_top = True
 
@@ -79,9 +81,7 @@ class MyUserAdmin(UserAdmin, MultiDBModelAdmin):
         return False
 
 
-data_site.register(User, MyUserAdmin)
-
-
+@admin.register(Group, site=data_site)
 class MyGroupAdmin(MultiDBModelAdmin):
     # This class re-implements the GroupAdmin class from
     # django.contrib.auth.admin, but without the performance optimization
@@ -106,9 +106,6 @@ class MyGroupAdmin(MultiDBModelAdmin):
     ]
 
 
-data_site.register(Group, MyGroupAdmin)
-
-
 class ParameterForm(forms.ModelForm):
     class Meta:
         model = Parameter
@@ -130,6 +127,7 @@ class ParameterForm(forms.ModelForm):
         return cleaned_data
 
 
+@admin.register(Parameter, site=data_site)
 class Parameter_admin(MultiDBModelAdmin):
     model = Parameter
     save_on_top = True
@@ -150,26 +148,20 @@ class Parameter_admin(MultiDBModelAdmin):
     ]
 
 
-data_site.register(Parameter, Parameter_admin)
-
-
+@admin.register(Comment, site=data_site)
 class Comment_admin(MultiDBModelAdmin):
     model = Comment
     save_on_top = True
 
 
-data_site.register(Comment, Comment_admin)
-
-
+@admin.register(Follower, site=data_site)
 class Follower_admin(MultiDBModelAdmin):
     model = Follower
     exclude = ("user",)
     save_on_top = True
 
 
-data_site.register(Follower, Follower_admin)
-
-
+@admin.register(BucketDetail, site=data_site)
 class BucketDetail_admin(MultiDBModelAdmin):
     model = BucketDetail
     save_on_top = True
@@ -189,9 +181,7 @@ class BucketDetail_admin(MultiDBModelAdmin):
     ]
 
 
-data_site.register(BucketDetail, BucketDetail_admin)
-
-
+@admin.register(Bucket, site=data_site)
 class Bucket_admin(MultiDBModelAdmin):
     model = Bucket
     save_on_top = True
@@ -209,6 +199,3 @@ class Bucket_admin(MultiDBModelAdmin):
             "view": "admin:common_bucket_comment",
         },
     ]
-
-
-data_site.register(Bucket, Bucket_admin)

@@ -967,16 +967,25 @@ class Follower(models.Model):
     id = models.AutoField(_("identifier"), primary_key=True)
     content_type = models.ForeignKey(
         ContentType,
-        verbose_name=_("content type"),
+        verbose_name=_("model name"),
         related_name="content_type_set_for_%(class)s",
         on_delete=models.CASCADE,
     )
-    object_pk = models.TextField(_("object id"), null=True)
+    object_pk = models.TextField(_("object name"), null=True)
     content_object = GenericForeignKey(ct_field="content_type", fk_field="object_pk")
-    user = models.ForeignKey(User, verbose_name=_("user"), on_delete=models.CASCADE)
+    user = models.ForeignKey(
+        User, verbose_name=_("user"), blank=True, on_delete=models.CASCADE
+    )
     type = models.CharField(
         _("type"), max_length=10, null=False, default="O", choices=type_list
     )
+
+    def clean(self):
+        from .middleware import _thread_locals
+
+        request = getattr(_thread_locals, "request", None)
+        if request and request.user:
+            self.user = request.user
 
     class Meta:
         verbose_name = _("follower")
@@ -999,6 +1008,13 @@ class Notification(models.Model):
     type = models.CharField(
         _("type"), max_length=5, null=False, default="O", choices=type_list
     )
+
+    def clean(self):
+        from .middleware import _thread_locals
+
+        request = getattr(_thread_locals, "request", None)
+        if request and request.user:
+            self.user = request.user
 
     class Meta:
         verbose_name = _("notification")

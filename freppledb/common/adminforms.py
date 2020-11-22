@@ -18,7 +18,6 @@
 from functools import update_wrapper
 import json
 
-from django.conf.urls import url
 from django.core.exceptions import PermissionDenied
 from django.contrib import admin
 from django.contrib.admin.options import IS_POPUP_VAR, TO_FIELD_VAR
@@ -177,6 +176,8 @@ class MultiDBModelAdmin(admin.ModelAdmin):
         """
         Log that an object has been successfully changed.
         """
+        if not message:
+            return
         content_type = ContentType.objects.get_for_model(obj)
         if hasattr(obj, "new_pk"):
             # We are renaming an existing object.

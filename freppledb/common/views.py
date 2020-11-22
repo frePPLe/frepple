@@ -406,7 +406,7 @@ class ParameterList(GridReport):
 
 class CommentList(GridReport):
     template = "common/commentlist.html"
-    title = _("comments")
+    title = _("messages")
     basequeryset = Comment.objects.all()
     model = Comment
     editable = False
@@ -425,6 +425,7 @@ class CommentList(GridReport):
             align="center",
             width=80,
         ),
+        GridFieldChoice("type", title=_("type"), choices=Comment.type_list),
         GridFieldText(
             "model",
             title=_("model"),
@@ -468,19 +469,19 @@ class FollowerList(GridReport):
     rows = (
         GridFieldInteger(
             "id",
-            title=_("id"),
+            title=_("identifier"),
             key=True,
             formatter="detail",
             extra='"role":"common/follower"',
-            hidden=True,
+            initially_hidden=True,
         ),
-        GridFieldText(
+        GridFieldChoice(
             "content_type",
-            width=50,
             field_name="content_type__model",
             title=_("model name"),
+            choices=[(str(x.id), x.name) for x in ContentType.objects.all()],
         ),
-        GridFieldText("object_pk", title=_("object name")),
+        GridFieldText("object_pk", field_name="object_pk", title=_("object name")),
         GridFieldChoice("type", title=_("type"), choices=Follower.type_list),
     )
 
@@ -543,7 +544,8 @@ def detail(request, app, model, object_id):
     ct = ContentType.objects.get(app_label=app, model=model)
     admn = data_site._registry[ct.model_class()]
     if not hasattr(admn, "tabs"):
-        return HttpResponseNotFound("Object type not found")
+        url = reverse("admin:%s_%s_change" % (ct.app_label, ct.model), args=("dummy",))
+        return resolve(url).func(request, object_id)
 
     # Find the tab we need to open
     lasttab = request.session.get("lasttab")
@@ -644,19 +646,23 @@ def inbox(request):
                 for rec in json.JSONDecoder().decode(
                     request.read().decode(request.encoding or settings.DEFAULT_CHARSET)
                 ):
-                    pk = rec.get("id", None)
-                    action = rec.get("action", None)
-                    if id and action:
-                        notif = Notification.objects.using(request.database).get(
-                            pk=pk, user=request.user
-                        )
-                        if action == "read":
-                            notif.status = "R"
-                            notif.save(using=request.database)
-                        elif action == "read":
-                            notif.delete(using=request.database)
+                    try:
+                        pk = rec.get("id", None)
+                        status = rec.get("status", None)
+                        if id and status:
+                            notif = Notification.objects.using(request.database).get(
+                                pk=pk, user=request.user
+                            )
+                            if status == "delete":
+                                notif.delete(using=request.database)
+                            else:
+                                notif.status = status
+                                notif.save(using=request.database)
+                    except Exception as e:
+                        logger.error("Error processing notification %s: %s" % (pk, e))
+                        response["errors"] += 1
             except Exception as e:
-                logger.error("Error processing comment: %s" % e)
+                logger.error("Error parsing notifcation update: %s" % e)
                 response["errors"] += 1
             return JsonResponse(response)
     else:

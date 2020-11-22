@@ -16,6 +16,7 @@
 #
 
 from django.utils.translation import gettext_lazy as _
+from django.contrib import admin
 
 from freppledb.input.models import Resource, Operation, Location, SetupMatrix, SetupRule
 from freppledb.input.models import Buffer, Customer, Demand, Item, OperationResource
@@ -41,6 +42,7 @@ class CalendarBucket_inline(MultiDBTabularInline):
     exclude = ("source",)
 
 
+@admin.register(CalendarBucket, site=data_site)
 class CalendarBucket_admin(MultiDBModelAdmin):
     model = CalendarBucket
     raw_id_fields = ("calendar",)
@@ -80,9 +82,7 @@ class CalendarBucket_admin(MultiDBModelAdmin):
     ]
 
 
-data_site.register(CalendarBucket, CalendarBucket_admin)
-
-
+@admin.register(Calendar, site=data_site)
 class Calendar_admin(MultiDBModelAdmin):
     model = Calendar
     save_on_top = True
@@ -113,9 +113,7 @@ class Calendar_admin(MultiDBModelAdmin):
     ]
 
 
-data_site.register(Calendar, Calendar_admin)
-
-
+@admin.register(Location, site=data_site)
 class Location_admin(MultiDBModelAdmin):
     model = Location
     raw_id_fields = ("available", "owner")
@@ -166,9 +164,7 @@ class Location_admin(MultiDBModelAdmin):
     ]
 
 
-data_site.register(Location, Location_admin)
-
-
+@admin.register(Customer, site=data_site)
 class Customer_admin(MultiDBModelAdmin):
     model = Customer
     raw_id_fields = ("owner",)
@@ -199,9 +195,7 @@ class Customer_admin(MultiDBModelAdmin):
     ]
 
 
-data_site.register(Customer, Customer_admin)
-
-
+@admin.register(Supplier, site=data_site)
 class Supplier_admin(MultiDBModelAdmin):
     model = Supplier
     raw_id_fields = ("available", "owner")
@@ -237,9 +231,7 @@ class Supplier_admin(MultiDBModelAdmin):
     ]
 
 
-data_site.register(Supplier, Supplier_admin)
-
-
+@admin.register(Item, site=data_site)
 class Item_admin(MultiDBModelAdmin):
     model = Item
     save_on_top = True
@@ -284,9 +276,7 @@ class Item_admin(MultiDBModelAdmin):
     ]
 
 
-data_site.register(Item, Item_admin)
-
-
+@admin.register(ItemSupplier, site=data_site)
 class ItemSupplier_admin(MultiDBModelAdmin):
     model = ItemSupplier
     save_on_top = True
@@ -327,9 +317,7 @@ class ItemSupplier_admin(MultiDBModelAdmin):
     ]
 
 
-data_site.register(ItemSupplier, ItemSupplier_admin)
-
-
+@admin.register(ItemDistribution, site=data_site)
 class ItemDistribution_admin(MultiDBModelAdmin):
     model = ItemDistribution
     save_on_top = True
@@ -371,9 +359,7 @@ class ItemDistribution_admin(MultiDBModelAdmin):
     ]
 
 
-data_site.register(ItemDistribution, ItemDistribution_admin)
-
-
+@admin.register(Operation, site=data_site)
 class Operation_admin(MultiDBModelAdmin):
     model = Operation
     raw_id_fields = ("item", "available", "owner")
@@ -449,9 +435,7 @@ class Operation_admin(MultiDBModelAdmin):
     ]
 
 
-data_site.register(Operation, Operation_admin)
-
-
+@admin.register(SubOperation, site=data_site)
 class SubOperation_admin(MultiDBModelAdmin):
     model = SubOperation
     raw_id_fields = ("operation", "suboperation")
@@ -459,9 +443,7 @@ class SubOperation_admin(MultiDBModelAdmin):
     exclude = ("source", "id")
 
 
-data_site.register(SubOperation, SubOperation_admin)
-
-
+@admin.register(Buffer, site=data_site)
 class Buffer_admin(MultiDBModelAdmin):
     model = Buffer
     raw_id_fields = ("location", "item", "minimum_calendar")
@@ -513,9 +495,7 @@ class Buffer_admin(MultiDBModelAdmin):
     ]
 
 
-data_site.register(Buffer, Buffer_admin)
-
-
+@admin.register(SetupRule, site=data_site)
 class SetupRule_admin(MultiDBModelAdmin):
     model = SetupRule
     raw_id_fields = ("setupmatrix",)
@@ -536,9 +516,7 @@ class SetupRule_admin(MultiDBModelAdmin):
     ]
 
 
-data_site.register(SetupRule, SetupRule_admin)
-
-
+@admin.register(SetupMatrix, site=data_site)
 class SetupMatrix_admin(MultiDBModelAdmin):
     model = SetupMatrix
     save_on_top = True
@@ -558,9 +536,7 @@ class SetupMatrix_admin(MultiDBModelAdmin):
     ]
 
 
-data_site.register(SetupMatrix, SetupMatrix_admin)
-
-
+@admin.register(Skill, site=data_site)
 class Skill_admin(MultiDBModelAdmin):
     model = Skill
     save_on_top = True
@@ -580,9 +556,7 @@ class Skill_admin(MultiDBModelAdmin):
     ]
 
 
-data_site.register(Skill, Skill_admin)
-
-
+@admin.register(ResourceSkill, site=data_site)
 class ResourceSkill_admin(MultiDBModelAdmin):
     model = ResourceSkill
     raw_id_fields = ("resource", "skill")
@@ -613,9 +587,7 @@ class ResourceSkill_admin(MultiDBModelAdmin):
     ]
 
 
-data_site.register(ResourceSkill, ResourceSkill_admin)
-
-
+@admin.register(Resource, site=data_site)
 class Resource_admin(MultiDBModelAdmin):
     model = Resource
     raw_id_fields = (
@@ -683,9 +655,7 @@ class Resource_admin(MultiDBModelAdmin):
     ]
 
 
-data_site.register(Resource, Resource_admin)
-
-
+@admin.register(OperationMaterial, site=data_site)
 class OperationMaterial_admin(MultiDBModelAdmin):
     model = OperationMaterial
     raw_id_fields = ("operation", "item")
@@ -726,9 +696,7 @@ class OperationMaterial_admin(MultiDBModelAdmin):
     ]
 
 
-data_site.register(OperationMaterial, OperationMaterial_admin)
-
-
+@admin.register(OperationResource, site=data_site)
 class OperationResource_admin(MultiDBModelAdmin):
     model = OperationResource
     raw_id_fields = ("operation", "resource", "skill")
@@ -769,9 +737,7 @@ class OperationResource_admin(MultiDBModelAdmin):
     ]
 
 
-data_site.register(OperationResource, OperationResource_admin)
-
-
+@admin.register(ManufacturingOrder, site=data_site)
 class ManufacturingOrder_admin(MultiDBModelAdmin):
     model = ManufacturingOrder
     raw_id_fields = ("operation", "owner")
@@ -818,9 +784,7 @@ class ManufacturingOrder_admin(MultiDBModelAdmin):
     ]
 
 
-data_site.register(ManufacturingOrder, ManufacturingOrder_admin)
-
-
+@admin.register(DistributionOrder, site=data_site)
 class DistributionOrder_admin(MultiDBModelAdmin):
     model = DistributionOrder
     raw_id_fields = ("item",)
@@ -870,9 +834,7 @@ class DistributionOrder_admin(MultiDBModelAdmin):
     ]
 
 
-data_site.register(DistributionOrder, DistributionOrder_admin)
-
-
+@admin.register(PurchaseOrder, site=data_site)
 class PurchaseOrder_admin(MultiDBModelAdmin):
     model = PurchaseOrder
     raw_id_fields = ("item", "supplier")
@@ -922,9 +884,7 @@ class PurchaseOrder_admin(MultiDBModelAdmin):
     ]
 
 
-data_site.register(PurchaseOrder, PurchaseOrder_admin)
-
-
+@admin.register(DeliveryOrder, site=data_site)
 class DeliveryOrder_admin(MultiDBModelAdmin):
     model = DeliveryOrder
     raw_id_fields = ("item", "demand")
@@ -968,9 +928,7 @@ class DeliveryOrder_admin(MultiDBModelAdmin):
     ]
 
 
-data_site.register(DeliveryOrder, DeliveryOrder_admin)
-
-
+@admin.register(Demand, site=data_site)
 class Demand_admin(MultiDBModelAdmin):
     model = Demand
     raw_id_fields = ("customer", "item", "operation", "owner")
@@ -1030,9 +988,7 @@ class Demand_admin(MultiDBModelAdmin):
     ]
 
 
-data_site.register(Demand, Demand_admin)
-
-
+@admin.register(OperationPlanResource, site=data_site)
 class OperationPlanResource_admin(MultiDBModelAdmin):
     model = OperationPlanResource
     raw_id_fields = (
@@ -1053,9 +1009,7 @@ class OperationPlanResource_admin(MultiDBModelAdmin):
     ]
 
 
-data_site.register(OperationPlanResource, OperationPlanResource_admin)
-
-
+@admin.register(OperationPlanMaterial, site=data_site)
 class OperationPlanMaterial_admin(MultiDBModelAdmin):
     model = OperationPlanMaterial
     raw_id_fields = (
@@ -1086,6 +1040,3 @@ class OperationPlanMaterial_admin(MultiDBModelAdmin):
             "permissions": "input.change_operationplanmaterial",
         }
     ]
-
-
-data_site.register(OperationPlanMaterial, OperationPlanMaterial_admin)

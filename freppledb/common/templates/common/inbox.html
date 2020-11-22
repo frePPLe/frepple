@@ -3,6 +3,60 @@
 
 {% block extrahead %}
 {{ block.super }}
+<script>
+
+function selectAll(el)
+{
+  var chck = $(el).prop("checked");
+  $("#messagelist").find(":checkbox").prop("checked", chck);
+}
+
+function markSelectedRead(check) {
+  
+}
+
+function markMessageRead(el, status) {
+  var data = [];
+  if (el) {
+    // Single message update
+    var msg = $(el).closest("tr");
+    status = msg.attr("data-status") == "U" ? "R" : "U";    
+  }
+  else
+    // Update all selected
+    var msg = $("#messagelist input:checked").closest("tr");
+  msg.each(function() {
+    data.push({
+       "id": $(this).attr("data-message"),
+       "status": status 
+       });
+    });
+  $.ajax({
+     url: url_prefix + "/inbox/",
+     data: JSON.stringify(data),
+     type: "POST",
+     contentType: "application/json",
+     success: function () {
+       if (status == "R") {
+         msg.attr("data-status", "R");
+         msg.find(".msg-status .btn.fa")
+           .removeClass("fa-envelope-o")
+           .addClass("fa-envelope-open-o")
+           .attr("data-original-title", gettext("Mark message unread"));
+       }
+       else {
+         msg.attr("data-status", "U");
+         msg.find(".msg-status .btn.fa")
+           .removeClass("fa-envelope-open-o")
+           .addClass("fa-envelope-o")
+           .attr("data-original-title", gettext("Mark message read"));
+       }
+       getUnreadMessages();
+     }
+   });
+}
+
+</script>
 {% endblock %}
 
 {% block tools %}
@@ -36,7 +90,20 @@
 <table class="table table-condensed table-hover">
 <thead style="display: table-header-group;">
 <tr>
-<td><input type="checkbox"></td>
+<td>
+  <input id="markMessages" type="checkbox" onclick="selectAll(this)" data-toggle="tooltip"
+    data-original="{% trans "Select/unselect all messages" %}" data-placement="bottom">
+</td>
+<td class="aligncenter">
+  <button class="btn btn-xs btn-primary" data-toggle="tooltip" onclick="markMessageRead(null, 'R')"
+    data-original-title="Mark selected messages read" data-placement="bottom">
+    <i class="fa fa-envelope-open-o"></i>
+  </button>&nbsp;
+  <button class="btn btn-xs btn-primary" data-toggle="tooltip" onclick="markMessageRead(null, 'U')"
+    data-original-title="Mark selected messages unread" data-placement="bottom">
+    <i class="msg-status fa fa-envelope-o"></i>
+  </button>
+</td>
 <td></td>
 <td></td>
 <td></td>
@@ -44,10 +111,19 @@
 <td></td>
 </tr>
 </thead>
-<tbody>
+<tbody id="messagelist">
 {% for notif in inbox %}
-<tr data-id="{{ notif.id }}">
+<tr data-message="{{ notif.id }}" data-status="{{ notif.status }}">
 <td><input type="checkbox"></td>
+<td class="aligncenter msg-status">
+  {% if notif.status == "R" %}
+  <span class="btn btn-xs fa fa-envelope-open-o" onclick="markMessageRead(this)" data-toggle="tooltip"
+    data-original-title="{% trans "Mark message unread" %}" data-placement="bottom"></span>
+  {% else %}
+  <span class="btn btn-xs fa fa-envelope-o" onclick="markMessageRead(this)" data-toggle="tooltip"
+    data-original-title="{% trans "Mark message read" %}" data-placement="bottom"></span>
+  {% endif %}
+</td>
 <td><i class="fa {% if notif.comment.type == "add" %}fa-plus
 {% elif notif.comment.type == "change" %}fa-pencil
 {% elif notif.comment.type == "delete" %}fa-minus

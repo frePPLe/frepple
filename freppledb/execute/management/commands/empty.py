@@ -225,7 +225,6 @@ class Command(BaseCommand):
                 tables = models2tables
             else:
                 admin_log_positive = False
-                tables.discard("django_admin_log")
                 for i in EXCLUDE_FROM_BULK_OPERATIONS:
                     tables.discard(i._meta.db_table)
                     ContentTypekeys.add(ContentType.objects.get_for_model(i).pk)
@@ -266,12 +265,12 @@ class Command(BaseCommand):
                 if ContentTypekeys:
                     if admin_log_positive:
                         cursor.execute(
-                            "delete from django_admin_log where content_type_id = any(%s)",
+                            "delete from common_comment where content_type_id = any(%s) and type in ('add', 'change', 'delete')",
                             (list(ContentTypekeys),),
                         )
                     else:
                         cursor.execute(
-                            "delete from django_admin_log where content_type_id != any(%s)",
+                            "delete from common_comment where content_type_id != any(%s) and type in ('add', 'change', 'delete')",
                             (list(ContentTypekeys),),
                         )
                 if "common_bucket" in tables:

@@ -3803,17 +3803,25 @@ $.fn.drags = function(opt) {
 
 function follow(el) {
  var t = $(el);
+ var following = t.attr("data-following") == "true";
  $.ajax({
    url: url_prefix + "/follow/",
    data: JSON.stringify([{
      "object_pk": t.attr("data-pk"),
      "model": t.attr("data-model"),
-     "action": "add"
+     "action": following ? "delete" : "add"
    }]),
    type: "POST",
    contentType: "application/json",
    success: function () {
-     t.text(gettext("unfollow"));
-     }
+     if (following)
+       t.text(gettext("Follow"))
+        .attr("data-following", "false")
+        .attr("data-original-title", gettext("Get a notification in your inbox when there is activity"));
+     else
+       t.text(gettext("Unfollow"))
+        .attr("data-following", "true")
+        .attr("data-original-title", gettext("Stop getting notifications in your inbox when there is activity"));
+    }
    });
 }

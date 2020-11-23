@@ -1,9 +1,17 @@
 {% load i18n %}
-
 <h1 class="pull-right">
-<button class="btn btn-xs btn-primary" style="text-transform:capitalize" data-pk="{{object_id}}" data-model="{{opts}}"
-  onclick="follow(this)" data-toggle="tooltip" 
-  data-placement="auto bottom" data-original-title="{% trans 'Get a notification in your inbox when there is activity'|capfirst %}">
-  {% trans "follow" %}
+{% following model object_id as follower %}
+{% if follower %}
+<button class="btn btn-xs btn-primary" style="text-transform:capitalize" data-pk="{{object_id}}" data-model="{{ model|label_lower }}"
+  onclick="follow(this)" data-toggle="tooltip" data-following="true"
+  data-placement="auto bottom" data-original-title="{% trans 'Stop getting notifications in your inbox when there is activity'|capfirst %}">
+  {% trans "Unfollow" %}
 </button>
+{% else %}
+<button class="btn btn-xs btn-primary" style="text-transform:capitalize" data-pk="{{object_id}}" data-model="{{ model|label_lower }}"
+  onclick="follow(this)" data-toggle="tooltip" data-following="false"
+  data-placement="auto bottom" data-original-title="{% trans 'Get a notification in your inbox when there is activity'|capfirst %}">
+  {% trans "Follow" %}
+</button>
+{% endif %}
 </h1>

@@ -11,7 +11,13 @@
 </style>
 {% endblock %}
 
-{% block tools %}{% if args.0 %}{% tabs "input.resource" %}{% endif %}{{block.super}}{% endblock %}
+{% block tools %}
+{% if args.0 %}
+  {% include "common/snippet_follow.html" %}
+  {% tabs model %}
+{% endif %}
+{{block.super}}
+{% endblock %}
 
 {% block before_table %}{% if args.0 %}
 <div id="graph" style="clear: both; height: 400px; padding: 10px"></div>

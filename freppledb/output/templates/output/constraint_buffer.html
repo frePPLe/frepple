@@ -1,6 +1,6 @@
 {% extends "admin/base_site_grid.html" %}
 
-{% block before_table %}{% tabs "input.buffer" %}{{block.super}}{% endblock %}
+{% block tools %}{% include "common/snippet_follow.html" %}{% tabs model %}{{block.super}}{% endblock %}
 
 {% block extrahead %}{{block.super}}
 <script>

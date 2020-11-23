@@ -283,4 +283,4 @@ loadComplete: function(data) {
 <button class="btn btn-xs btn-primary" onclick="grid.showCustomize(false);" data-toggle="tooltip" data-placement="top" data-original-title="{% trans 'customize'|capfirst|force_escape %}"><span class="fa fa-wrench"></span></button>
 {% endblock %}
 
-{% block tools %}{% tabs "input.demand" %}{% endblock %}
+{% block tools %}{% include "common/snippet_follow.html" %}{% tabs model %}{% endblock %}

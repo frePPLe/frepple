@@ -32,8 +32,11 @@ from django.core import mail
 from django.core.validators import FileExtensionValidator
 from django.db import models, DEFAULT_DB_ALIAS, connections, transaction
 from django.db.models import Q
+from django.db.models.fields.related import RelatedField
 from django.db.models.signals import pre_delete
 from django.dispatch.dispatcher import receiver
+from django import forms
+from django.forms.models import modelform_factory
 from django.urls import NoReverseMatch, reverse
 from django.utils import timezone
 from django.utils.html import mark_safe, escape
@@ -979,6 +982,37 @@ class Follower(models.Model):
     type = models.CharField(
         _("type"), max_length=10, null=False, default="O", choices=type_list
     )
+
+    @classmethod
+    def xxxgetModelForm(cls, fields, database=DEFAULT_DB_ALIAS):
+        template = modelform_factory(
+            cls,
+            fields=fields,
+            # formfield_callback=lambda f: (
+            #    isinstance(f, RelatedField) and f.formfield(using=database)
+            # )
+            # or f.formfield(),
+        )
+        print(fields)
+
+        class FollowerForm(template):
+            content_type = forms.CharField() if "resource" in fields else None
+
+            def clean(self):
+                print("----", self.cleaned_data, self.data["content_type"])
+                try:
+                    ###print([x for x in self.data])
+                    self.data = self.data.items()
+                    self.data["content_type"] = ContentType.objects.get(
+                        model=self.data["content_type"]
+                    ).pk
+                    print("yes", self.data)
+                except Exception as e:
+                    print(e)
+                    raise forms.ValidationError("Invalid content type")
+                return super().clean()
+
+        return FollowerForm
 
     def clean(self):
         from .middleware import _thread_locals

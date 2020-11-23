@@ -392,7 +392,7 @@ treeReader: {
 ExpandColClick: true,
 {% endblock %}
 
-{% block tools %}{% tabs model %}{% endblock %}
+{% block tools %}{% include "common/snippet_follow.html" %}{% tabs model %}{% endblock %}
 
 {% block before_table %}
 <div class="row" id="graphrow" style="min-height: 100px; text-align: center;">

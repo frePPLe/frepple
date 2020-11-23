@@ -227,6 +227,7 @@ class OverviewReport(GridPivot):
                 "units": reportclass.getUnits(request),
                 "title": force_text(Resource._meta.verbose_name) + " " + args[0],
                 "post_title": _("plan"),
+                "model": Resource,
             }
         else:
             return {"units": reportclass.getUnits(request)}

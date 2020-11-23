@@ -112,6 +112,7 @@ class ReportByDemand(GridReport):
                 "active_tab": "plan",
                 "title": force_text(Demand._meta.verbose_name) + " " + args[0],
                 "post_title": _("plan"),
+                "model": Demand,
             }
         else:
             return {}

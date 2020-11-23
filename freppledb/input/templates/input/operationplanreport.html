@@ -85,7 +85,7 @@
 
 {% block extracontainer %}data-ng-app="operationplandetailapp"{% endblock %}
 
-{% block tools %}{% if args %}{% tabs model %}{% endif %}{% endblock %}
+{% block tools %}{% if args %}{% include "common/snippet_follow.html" %}{% tabs model %}{% endif %}{% endblock %}
 
 {% block extra_grid %}
 

@@ -318,6 +318,7 @@ class OverviewReport(GridPivot):
                     "post_title": _("plan"),
                     "active_tab": "plan",
                     "mode": "table",
+                    "model": Buffer,
                 }
         else:
             return {}

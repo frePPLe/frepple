@@ -133,6 +133,7 @@ class BaseReport(GridReport):
                 + " "
                 + (bufferName if "bufferName" in vars() else args[0]),
                 "post_title": reportclass.detail_post_title,
+                "model": reportclass.detailmodel,
             }
         else:
             return {"active_tab": "constraint"}

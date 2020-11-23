@@ -93,6 +93,7 @@ class OverviewReport(GridPivot):
             return {
                 "title": force_text(Item._meta.verbose_name) + " " + args[0],
                 "post_title": _("plan"),
+                "model": Item,
             }
         else:
             return {}

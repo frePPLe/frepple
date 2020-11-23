@@ -32,7 +32,7 @@ from django.utils.html import escape
 from django.utils.safestring import mark_safe
 from django.utils.text import capfirst
 
-from freppledb.common.models import User
+from freppledb.common.models import User, Follower
 from freppledb import VERSION
 
 MAX_CRUMBS = 10
@@ -49,7 +49,7 @@ variable_popup = Variable("is_popup")
 
 
 class CrumbsNode(Node):
-    r"""
+    """
     A generic breadcrumbs framework.
 
     Usage in your templates:
@@ -170,12 +170,12 @@ class SetVariable(Node):
 
 
 def set_var(parser, token):
-    r"""
-  Example:
-  {% set category_list category.categories.all %}
-  {% set dir_url "../" %}
-  {% set type_list "table" %}
-  """
+    """
+    Example:
+    {% set category_list category.categories.all %}
+    {% set dir_url "../" %}
+    {% set type_list "table" %}
+    """
     from re import split
 
     bits = split(r"\s+", token.contents, 2)
@@ -261,10 +261,10 @@ class ModelTabs(Node):
 
 
 def get_modeltabs(parser, token):
-    r"""
-  {% tabs "customer" %}
-  {% tabs myvariable %}
-  """
+    """
+    {% tabs "customer" %}
+    {% tabs myvariable %}
+    """
     from re import split
 
     bits = split(r"\s+", token.contents, 1)
@@ -275,6 +275,67 @@ def get_modeltabs(parser, token):
 
 register.tag("tabs", get_modeltabs)
 
+#
+# A tag to get information on the follower status of an object
+#
+
+
+class Following(Node):
+    def __init__(self, model, pk, var):
+        self.model = model
+        self.pk = pk
+        self.var = var
+
+    def render(self, context):
+        from django.db.models.options import Options
+        from django.contrib.contenttypes.models import ContentType
+
+        try:
+            # Look up the admin class to use
+            model = Variable(self.model).resolve(context)
+            pk = Variable(self.pk).resolve(context)
+            request = Variable("request").resolve(context)
+            if not model or not pk:
+                context[self.var] = None
+                return mark_safe("")
+            if isinstance(model, Options):
+                ct = ContentType.objects.get(
+                    app_label=model.app_label, model=model.object_name.lower()
+                )
+            elif isinstance(model, models.Model):
+                ct = ContentType.objects.get_for_model(model)
+            else:
+                model = model.split(".")
+                ct = ContentType.objects.get(app_label=model[0], model=model[1])
+            context[self.var] = (
+                Follower.objects.all()
+                .using(request.database)
+                .filter(content_type=ct, user=request.user, object_pk=pk)[0]
+            )
+        except Exception:
+            context[self.var] = None
+        return mark_safe("")
+
+    def __repr__(self):
+        return "<Following Node>"
+
+
+def get_following(parser, token):
+    """
+    {% following "customer" "custname" as f %}
+    """
+    try:
+        a, b, c, d, e = token.split_contents()
+    except ValueError:
+        raise TemplateSyntaxError(
+            "%s tag requires a single argument" % token.contents.split()[0]
+        )
+    if d != "as":
+        raise TemplateSyntaxError("Third argument to '%s' tag must be 'as'" % a)
+    return Following(b, c, e)
+
+
+register.tag("following", get_following)
 
 #
 # A simple tag returning the frePPLe version
@@ -284,16 +345,16 @@ register.tag("tabs", get_modeltabs)
 @register.simple_tag
 def version():
     """
-  A simple tag returning the version of the frePPLe application.
-  """
+    A simple tag returning the version of the frePPLe application.
+    """
     return VERSION
 
 
 @register.simple_tag
 def version_short():
     """
-  A simple tag returning the version of the frePPLe application.
-  """
+    A simple tag returning the version of the frePPLe application.
+    """
     versionnumber = VERSION.split(".", 2)
     return "%s.%s" % (versionnumber[0], versionnumber[1])
 
@@ -394,6 +455,13 @@ def short_model_name(obj):
 
 
 register.filter(short_model_name)
+
+
+def label_lower(obj):
+    return obj._meta.label_lower
+
+
+register.filter(label_lower)
 
 
 def admin_unquote(obj):

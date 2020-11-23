@@ -453,6 +453,7 @@ class MultiDBModelAdmin(admin.ModelAdmin):
         )
         new_extra_context["post_title"] = _("edit")
         new_extra_context["admin"] = self
+        new_extra_context["model"] = self.model
         return super().change_view(request, object_id, form_url, new_extra_context)
 
     @csrf_protect_m
@@ -506,6 +507,7 @@ class MultiDBModelAdmin(admin.ModelAdmin):
                     c.save(using=request.database)
             return HttpResponseRedirect("%s%s" % (request.prefix, request.path))
         else:
+            request.session["lasttab"] = "messages"
             return render(
                 request,
                 "common/comments.html",
@@ -514,7 +516,7 @@ class MultiDBModelAdmin(admin.ModelAdmin):
                     + " "
                     + (bufferName if "bufferName" in vars() else object_id),
                     "post_title": _("messages"),
-                    "model": self.model._meta.model_name,
+                    "model": self.model,
                     "opts": self.model._meta,
                     "object_id": quote(object_id),
                     "active_tab": "comments",
@@ -635,13 +637,20 @@ class MultiDBModelAdmin(admin.ModelAdmin):
         if perms_needed or protected:
             title = _("Cannot delete %(name)s") % {"name": object_name}
         else:
-            title = _("Are you sure?")
+            title = format_lazy(
+                "{} {}: {}  {}",
+                self.model._meta.verbose_name,
+                unquote(object_id),
+                _("About to delete!"),
+                _("Are you sure?"),
+            )
 
         context = {
             **self.admin_site.each_context(request),
             "title": title,
             "object_name": object_name,
             "object": obj,
+            "model": self.model,
             "object_id": obj,
             "deleted_objects": deleted_objects,
             "model_count": dict(model_count).items(),

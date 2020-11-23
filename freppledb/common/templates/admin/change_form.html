@@ -77,6 +77,10 @@ fieldset th {
 
 {% block content_title %}{{ block.super }}{% if object_id %}{% tabs opts %}{% endif %}{% endblock %}
 
+{% block tools %}
+{% include "common/snippet_follow.html" %}
+{% endblock %}
+
 {% block content %}<div id="content-main" class="row"><div class="col-md-12">
 <form {% if has_file_field %}enctype="multipart/form-data" {% endif %}action="{{ form_url }}" method="post" id="{{ opts.model_name }}_form" novalidate>{% csrf_token %}{% block form_top %}{% endblock %}
 {% if is_popup %}<input type="hidden" name="{{ is_popup_var }}" value="1" />{% endif %}

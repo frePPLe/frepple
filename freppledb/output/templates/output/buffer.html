@@ -1,7 +1,14 @@
 {% extends "admin/base_site_gridpivot.html" %}
 {% load i18n %}
 
-{% block tools %}{% if active_tab == "inventory" %}{% tabs "input.item" %}{% elif args.0 %}{% tabs "input.buffer" %}{% endif %}{{block.super}}{% endblock %}
+{% block tools %}
+{% if active_tab == "inventory" %}
+  {% include "common/snippet_follow.html" %}{% tabs "input.item" %}
+{% elif args.0 %}
+  {% include "common/snippet_follow.html" %}{% tabs "input.buffer" %}
+{% endif %}
+{{block.super}}
+{% endblock %}
 
 {% block before_table %}{% if args.0 %}
 <div id="graph" style="clear: both; height: 400px; padding: 10px; "></div>

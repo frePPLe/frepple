@@ -295,6 +295,7 @@ class OverviewReport(GridPivot):
                     "title": force_text(Item._meta.verbose_name) + " " + args[0],
                     "post_title": _("inventory"),
                     "active_tab": "inventory",
+                    "model": Item,
                 }
                 if request.basequeryset.using(request.database).count() <= 1:
                     r["args"] = args

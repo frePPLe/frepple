@@ -1,7 +1,13 @@
 {% extends "admin/base_site_gridpivot.html" %}
 {% load i18n %}
 
-{% block tools %}{% if args.0 %}{% tabs "input.operation" %}{% endif %}{{block.super}}{% endblock %}
+{% block tools %}
+{% if args.0 %}
+  {% include "common/snippet_follow.html" %}
+  {% tabs model %}
+{% endif %}
+{{block.super}}
+{% endblock %}
 
 {% block before_table %}{% if args.0 %}
 <div id="graph" style="clear: both; height: 400px; padding: 10px; "></div>

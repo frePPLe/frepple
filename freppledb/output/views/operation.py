@@ -245,6 +245,7 @@ class OverviewReport(GridPivot):
             return {
                 "title": force_text(Operation._meta.verbose_name) + " " + args[0],
                 "post_title": _("plan"),
+                "model": Operation,
             }
         else:
             return {}

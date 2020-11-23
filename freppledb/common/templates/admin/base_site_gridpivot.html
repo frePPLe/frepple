@@ -1,7 +1,7 @@
 {% extends "admin/base_site_nav.html" %}
 {% load i18n %}
 
-{% block filter %}{% if reportclass.filterable %}
+{% block filter %}{% if reportclass.filterable and not args.0 %}
 &nbsp;<span id="filterform">
 <span id="curfilter"></span>
 &nbsp;

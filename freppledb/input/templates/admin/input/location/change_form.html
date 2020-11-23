@@ -9,6 +9,18 @@
 </legend>
 <div class="row">
   <div class="control-label col-md-3"><p>
+     <a href="{{ request.prefix }}/data/input/demand/?location={{ object_id | urlencode }}&noautofilter">
+     {% trans "sales orders"|capfirst %}&nbsp;<i class="fa fa-caret-right"></i></a>
+  </p></div>
+</div>
+<div class="row">
+  <div class="control-label col-md-3"><p>
+     <a href="{{ request.prefix }}/data/input/buffer/?location={{ object_id | urlencode }}&noautofilter">
+     {% trans "buffers"|capfirst %}&nbsp;<i class="fa fa-caret-right"></i></a>
+  </p></div>
+</div>
+<div class="row">
+  <div class="control-label col-md-3"><p>
      <a href="{{ request.prefix }}/data/input/itemsupplier/?location={{ object_id | urlencode }}&noautofilter">
      {% trans "item suppliers"|capfirst %}&nbsp;<i class="fa fa-caret-right"></i></a>
   </p></div>
@@ -27,8 +39,8 @@
 </div>
 <div class="row">
   <div class="control-label col-md-3"><p>
-     <a href="{{ request.prefix }}/data/input/demand/?location={{ object_id | urlencode }}&noautofilter">
-     {% trans "sales orders"|capfirst %}&nbsp;<i class="fa fa-caret-right"></i></a>
+     <a href="{{ request.prefix }}/data/input/resource/?location={{ object_id | urlencode }}&noautofilter">
+     {% trans "resources"|capfirst %}&nbsp;<i class="fa fa-caret-right"></i></a>
   </p></div>
 </div>
 </fieldset>

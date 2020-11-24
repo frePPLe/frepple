@@ -443,7 +443,12 @@ class MultiDBModelAdmin(admin.ModelAdmin):
             self.message_user(request, msg, messages.SUCCESS)
             return self.response_post_save_change(request, obj)
 
-    @csrf_protect_m
+    @transaction.atomic
+    def add_view(self, request, form_url="", extra_context=None):
+        new_extra_context = extra_context or {}
+        new_extra_context["model"] = self.model
+        return super().add_view(request, form_url, new_extra_context)
+
     @transaction.atomic
     def change_view(self, request, object_id, form_url="", extra_context=None):
         request.session["lasttab"] = "edit"

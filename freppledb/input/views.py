@@ -2226,12 +2226,13 @@ class ItemDistributionList(GridReport):
             extra='"role":"input/location"',
             model=Location,
         ),
-        GridFieldText(
+        GridFieldHierarchicalText(
             "origin",
             title=_("origin"),
             field_name="origin__name",
             formatter="detail",
             extra='"role":"input/location"',
+            model=Location,
         ),
         GridFieldDuration("leadtime", title=_("lead time")),
         GridFieldNumber("sizeminimum", title=_("size minimum")),
@@ -2488,12 +2489,13 @@ class ResourceSkillList(GridReport):
             formatter="detail",
             extra='"role":"input/resourceskill"',
         ),
-        GridFieldText(
+        GridFieldHierarchicalText(
             "resource",
             title=_("resource"),
             field_name="resource__name",
             formatter="detail",
             extra='"role":"input/resource"',
+            model=Resource,
         ),
         GridFieldText(
             "skill",
@@ -2537,12 +2539,13 @@ class OperationResourceList(GridReport):
             formatter="detail",
             extra='"role":"input/operation"',
         ),
-        GridFieldText(
+        GridFieldHierarchicalText(
             "resource",
             title=_("resource"),
             field_name="resource__name",
             formatter="detail",
             extra='"role":"input/resource"',
+            model=Resource,
         ),
         GridFieldText(
             "skill",

@@ -9,13 +9,13 @@
 </legend>
 <div class="row">
   <div class="control-label col-md-3"><p>
-     <a href="{{ request.prefix }}/data/input/operationresource/?resource={{ object_id | urlencode }}&noautofilter">
+     <a href="{{ request.prefix }}/data/input/operationresource/?resource__name__ico={{ object_id | urlencode }}&noautofilter">
      {% trans "operation resources"|capfirst %}&nbsp;<i class="fa fa-caret-right"></i></a>
   </p></div>
 </div>
 <div class="row">
   <div class="control-label col-md-3"><p>
-     <a href="{{ request.prefix }}/data/input/resourceskill/?resource={{ object_id | urlencode }}&noautofilter">
+     <a href="{{ request.prefix }}/data/input/resourceskill/?resource__name__ico={{ object_id | urlencode }}&noautofilter">
      {% trans "resource skills"|capfirst %}&nbsp;<i class="fa fa-caret-right"></i></a>
   </p></div>
 </div>

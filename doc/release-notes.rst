@@ -21,6 +21,9 @@ Release notes
 - | Updated the list of default fields in all reports. By default we keep the
     reports now as lean as possible. More advanced fields are hidden by default.
 
+- | New "is child of" filter operator that makes it easy to filter data for a part
+    of the item, location or customer hierarchy.
+
 - Bug fix: filtering on choice fields was broken when a language different from English is used.
 
 .. rubric:: Third party components

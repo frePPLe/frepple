@@ -59,7 +59,12 @@ from freppledb.input.models import (
     OperationPlanResource,
 )
 from freppledb.common.report import GridReport, GridFieldBool, GridFieldLastModified
-from freppledb.common.report import GridFieldDateTime, GridFieldTime, GridFieldText
+from freppledb.common.report import (
+    GridFieldDateTime,
+    GridFieldTime,
+    GridFieldText,
+    GridFieldHierarchicalText,
+)
 from freppledb.common.report import GridFieldNumber, GridFieldInteger, GridFieldCurrency
 from freppledb.common.report import GridFieldChoice, GridFieldDuration, GridFieldJSON
 from freppledb.admin import data_site
@@ -1545,12 +1550,13 @@ class BufferList(GridReport):
         GridFieldText("description", title=_("description")),
         GridFieldText("category", title=_("category"), initially_hidden=True),
         GridFieldText("subcategory", title=_("subcategory"), initially_hidden=True),
-        GridFieldText(
+        GridFieldHierarchicalText(
             "location",
             title=_("location"),
             field_name="location__name",
             formatter="detail",
             extra='"role":"input/location"',
+            model=Location,
         ),
         GridFieldText(
             "item",
@@ -1748,12 +1754,13 @@ class ResourceList(GridReport):
         GridFieldText("description", title=_("description")),
         GridFieldText("category", title=_("category"), initially_hidden=True),
         GridFieldText("subcategory", title=_("subcategory"), initially_hidden=True),
-        GridFieldText(
+        GridFieldHierarchicalText(
             "location",
             title=_("location"),
             field_name="location__name",
             formatter="detail",
             extra='"role":"input/location"',
+            model=Location,
         ),
         GridFieldText(
             "owner",
@@ -2002,19 +2009,21 @@ class ItemSupplierList(GridReport):
             extra='"role":"input/itemsupplier"',
             initially_hidden=True,
         ),
-        GridFieldText(
+        GridFieldHierarchicalText(
             "item",
             title=_("item"),
             field_name="item__name",
             formatter="detail",
             extra='"role":"input/item"',
+            model=Item,
         ),
-        GridFieldText(
+        GridFieldHierarchicalText(
             "location",
             title=_("location"),
             field_name="location__name",
             formatter="detail",
             extra='"role":"input/location"',
+            model=Location,
         ),
         GridFieldText(
             "supplier",
@@ -2201,19 +2210,21 @@ class ItemDistributionList(GridReport):
             extra='"role":"input/itemdistribution"',
             initially_hidden=True,
         ),
-        GridFieldText(
+        GridFieldHierarchicalText(
             "item",
             title=_("item"),
             field_name="item__name",
             formatter="detail",
             extra='"role":"input/item"',
+            model=Item,
         ),
-        GridFieldText(
+        GridFieldHierarchicalText(
             "location",
             title=_("location"),
             field_name="location__name",
             formatter="detail",
             extra='"role":"input/location"',
+            model=Location,
         ),
         GridFieldText(
             "origin",
@@ -2772,12 +2783,13 @@ class OperationMaterialList(GridReport):
             formatter="detail",
             extra='"role":"input/operation"',
         ),
-        GridFieldText(
+        GridFieldHierarchicalText(
             "item",
             title=_("item"),
             field_name="item__name",
             formatter="detail",
             extra='"role":"input/item"',
+            model=Item,
         ),
         GridFieldChoice("type", title=_("type"), choices=OperationMaterial.types),
         GridFieldNumber("quantity", title=_("quantity")),
@@ -3050,27 +3062,30 @@ class DemandList(GridReport):
             formatter="detail",
             extra='"role":"input/demand"',
         ),
-        GridFieldText(
+        GridFieldHierarchicalText(
             "item",
             title=_("item"),
             field_name="item__name",
             formatter="detail",
             extra='"role":"input/item"',
+            model=Item,
         ),
         GridFieldText("batch", title=_("batch"), initially_hidden=True),
-        GridFieldText(
+        GridFieldHierarchicalText(
             "location",
             title=_("location"),
             field_name="location__name",
             formatter="detail",
             extra='"role":"input/location"',
+            model=Location,
         ),
-        GridFieldText(
+        GridFieldHierarchicalText(
             "customer",
             title=_("customer"),
             field_name="customer__name",
             formatter="detail",
             extra='"role":"input/customer"',
+            model=Customer,
         ),
         GridFieldChoice("status", title=_("status"), choices=Demand.demandstatus),
         GridFieldNumber("quantity", title=_("quantity")),
@@ -3394,19 +3409,21 @@ class OperationList(GridReport):
         GridFieldText("category", title=_("category"), initially_hidden=True),
         GridFieldText("subcategory", title=_("subcategory"), initially_hidden=True),
         GridFieldChoice("type", title=_("type"), choices=Operation.types),
-        GridFieldText(
+        GridFieldHierarchicalText(
             "item",
             title=_("item"),
             field_name="item__name",
             formatter="detail",
             extra='"role":"input/item"',
+            model=Item,
         ),
-        GridFieldText(
+        GridFieldHierarchicalText(
             "location",
             title=_("location"),
             field_name="location__name",
             formatter="detail",
             extra='"role":"input/location"',
+            model=Location,
         ),
         GridFieldDuration("duration", title=_("duration")),
         GridFieldDuration("duration_per", title=_("duration per unit")),
@@ -4002,19 +4019,21 @@ class ManufacturingOrderList(OperationPlanMixin, GridReport):
             extra='"formatoptions":{"defaultValue":""}, "summaryType":"min"',
         ),
         GridFieldNumber("color", hidden=True),
-        GridFieldText(
+        GridFieldHierarchicalText(
             "item__name",
             title=_("item"),
             formatter="detail",
             extra='"role":"input/item"',
             editable=False,
+            model=Item,
         ),
-        GridFieldText(
+        GridFieldHierarchicalText(
             "operation__location__name",
             title=_("location"),
             formatter="detail",
             extra='"role":"input/location"',
             editable=False,
+            model=Location,
         ),
         GridFieldText(
             "operation",
@@ -4551,12 +4570,13 @@ class DistributionOrderList(OperationPlanMixin, GridReport):
             extra='"formatoptions":{"defaultValue":""}, "summaryType":"min"',
         ),
         GridFieldNumber("color", hidden=True),
-        GridFieldText(
+        GridFieldHierarchicalText(
             "item",
             title=_("item"),
             field_name="item__name",
             formatter="detail",
             extra='"role":"input/item"',
+            model=Item,
         ),
         GridFieldText(
             "origin",
@@ -5038,26 +5058,29 @@ class PurchaseOrderList(OperationPlanMixin, GridReport):
             extra='"formatoptions":{"defaultValue":""}, "summaryType":"min"',
         ),
         GridFieldNumber("color", hidden=True),
-        GridFieldText(
+        GridFieldHierarchicalText(
             "item",
             title=_("item"),
             field_name="item__name",
             formatter="detail",
             extra='"role":"input/item"',
+            model=Item,
         ),
-        GridFieldText(
+        GridFieldHierarchicalText(
             "location",
             title=_("location"),
             field_name="location__name",
             formatter="detail",
             extra='"role":"input/location"',
+            model=Location,
         ),
-        GridFieldText(
+        GridFieldHierarchicalText(
             "supplier",
             title=_("supplier"),
             field_name="supplier__name",
             formatter="detail",
             extra='"role":"input/supplier"',
+            model=Supplier,
         ),
         GridFieldDateTime(
             "startdate",

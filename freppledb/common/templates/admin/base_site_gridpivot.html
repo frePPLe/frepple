@@ -123,7 +123,17 @@ $(function() {
             return true;
           }
         }
-      }
+      },
+      ico: {
+          operand: "is child of",
+          text: "is child of",
+          filter: function (options) {
+            var v = options.item[options.cmName];
+            if (v === undefined || v === null || v === "") {
+              return true;
+            }
+          }
+        },
     },
 	height: {% if reportclass.height %}{{reportclass.height}}{% else %}Math.max(150, $(window).height() - $("#grid").offset().top - {{reportclass.heightmargin}}){% endif %}
     });

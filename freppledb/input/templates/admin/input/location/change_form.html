@@ -9,38 +9,56 @@
 </legend>
 <div class="row">
   <div class="control-label col-md-3"><p>
-     <a href="{{ request.prefix }}/data/input/demand/?location={{ object_id | urlencode }}&noautofilter">
+     <a href="{{ request.prefix }}/data/input/demand/?location__name__ico={{ object_id | urlencode }}&noautofilter">
      {% trans "sales orders"|capfirst %}&nbsp;<i class="fa fa-caret-right"></i></a>
   </p></div>
 </div>
 <div class="row">
   <div class="control-label col-md-3"><p>
-     <a href="{{ request.prefix }}/data/input/buffer/?location={{ object_id | urlencode }}&noautofilter">
+     <a href="{{ request.prefix }}/data/input/buffer/?location__name__ico={{ object_id | urlencode }}&noautofilter">
      {% trans "buffers"|capfirst %}&nbsp;<i class="fa fa-caret-right"></i></a>
   </p></div>
 </div>
 <div class="row">
   <div class="control-label col-md-3"><p>
-     <a href="{{ request.prefix }}/data/input/itemsupplier/?location={{ object_id | urlencode }}&noautofilter">
+     <a href="{{ request.prefix }}/data/input/itemsupplier/?location__name__ico={{ object_id | urlencode }}&noautofilter">
      {% trans "item suppliers"|capfirst %}&nbsp;<i class="fa fa-caret-right"></i></a>
   </p></div>
 </div>
 <div class="row">
   <div class="control-label col-md-3"><p>
-     <a href="{{ request.prefix }}/data/input/itemdistribution/?location={{ object_id | urlencode }}&noautofilter">
+     <a href="{{ request.prefix }}/data/input/itemdistribution/?location__name__ico={{ object_id | urlencode }}&noautofilter">
      {% trans "item distribution"|capfirst %}&nbsp;<i class="fa fa-caret-right"></i></a>
   </p></div>
 </div>
 <div class="row">
   <div class="control-label col-md-3"><p>
-     <a href="{{ request.prefix }}/data/input/operation/?location={{ object_id | urlencode }}&noautofilter">
+     <a href="{{ request.prefix }}/data/input/operation/?location__name__ico={{ object_id | urlencode }}&noautofilter">
      {% trans "operations"|capfirst %}&nbsp;<i class="fa fa-caret-right"></i></a>
   </p></div>
 </div>
 <div class="row">
   <div class="control-label col-md-3"><p>
-     <a href="{{ request.prefix }}/data/input/resource/?location={{ object_id | urlencode }}&noautofilter">
+     <a href="{{ request.prefix }}/data/input/resource/?location__name__ico={{ object_id | urlencode }}&noautofilter">
      {% trans "resources"|capfirst %}&nbsp;<i class="fa fa-caret-right"></i></a>
+  </p></div>
+</div>
+<div class="row">
+  <div class="control-label col-md-3"><p>
+     <a href="{{ request.prefix }}/data/input/manufacturingorder/?operation__location__name__ico={{ object_id | urlencode }}&noautofilter">
+     {% trans "manufacturing orders"|capfirst %}&nbsp;<i class="fa fa-caret-right"></i></a>
+  </p></div>
+</div>
+<div class="row">
+  <div class="control-label col-md-3"><p>
+     <a href="{{ request.prefix }}/data/input/purchaseorder/?location__name__ico={{ object_id | urlencode }}&noautofilter">
+     {% trans "purchase orders"|capfirst %}&nbsp;<i class="fa fa-caret-right"></i></a>
+  </p></div>
+</div>
+<div class="row">
+  <div class="control-label col-md-3"><p>
+     <a href="{{ request.prefix }}/data/input/distributionorder/?destination={{ object_id | urlencode }}&noautofilter">
+     {% trans "distribution orders"|capfirst %}&nbsp;<i class="fa fa-caret-right"></i></a>
   </p></div>
 </div>
 </fieldset>

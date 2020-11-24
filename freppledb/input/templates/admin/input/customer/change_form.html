@@ -9,7 +9,7 @@
 </legend>
 <div class="row">
   <div class="control-label col-md-3"><p>
-     <a href="{{ request.prefix }}/data/input/demand/?customer={{ object_id | urlencode }}&noautofilter">
+     <a href="{{ request.prefix }}/data/input/demand/?customer__name__ico={{ object_id | urlencode }}&noautofilter">
      {% trans "sales orders"|capfirst %}&nbsp;<i class="fa fa-caret-right"></i></a>
   </p></div>
 </div>

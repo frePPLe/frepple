@@ -260,6 +260,11 @@ class ReportManager(GridReport):
             [date.today() + timedelta(int(float(smart_str(data))))],
         )
 
+    @staticmethod
+    def _filter_ico(reportrow, field, data):
+        # not implmented
+        return ""
+
     _filter_map_jqgrid_sql = {
         # jqgrid op: (django_lookup, use_exclude, use_extra_where)
         "ne": _filter_ne.__func__,
@@ -277,6 +282,7 @@ class ReportManager(GridReport):
         "ew": _filter_ew.__func__,
         "cn": _filter_cn.__func__,
         "win": _filter_win.__func__,
+        "ico": _filter_ico.__func__,
     }
 
     @classmethod

@@ -1742,6 +1742,8 @@ var grid = {
     // Find operator
     if (rule.op == "win")
       oper = gettext("within");
+    else if (rule.op == "ico")
+        oper = gettext("is child of"); 
     else {
       for (var firstKey in $.jgrid.locales)
         var operands = $.jgrid.locales[firstKey].search.odata;

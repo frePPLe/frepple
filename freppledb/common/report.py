@@ -48,7 +48,7 @@ from openpyxl.styles import NamedStyle, PatternFill
 from dateutil.parser import parse
 from openpyxl.comments import Comment as CellComment
 
-from django.db.models import Model
+from django.db.models import Model, Lookup
 from django.db.utils import DEFAULT_DB_ALIAS, load_backend
 from django.contrib.auth.models import Group
 from django.contrib.auth import get_permission_codename
@@ -97,6 +97,43 @@ EXCLUDE_FROM_BULK_OPERATIONS = (Group, User, Comment)
 
 
 separatorpattern = re.compile(r"[\s\-_]+")
+
+
+@CharField.register_lookup
+class IsChildOfLookup(Lookup):
+    lookup_name = "ico"
+
+    def as_sql(self, compiler, connection):
+        lhs, lhs_params = self.process_lhs(compiler, connection)
+        rhs, rhs_params = self.process_rhs(compiler, connection)
+        params = lhs_params + rhs_params
+
+        # getting the class name from the lhs argument
+        objectModel = (
+            lhs.split(".")[1][1:-4]
+            .replace("origin", "location")
+            .replace("destination", "location")
+        )
+
+        # rebuilding hierarchy
+        import importlib
+
+        c = getattr(
+            importlib.import_module("freppledb.input.models"), objectModel.capitalize()
+        )
+        if issubclass(c, HierarchyModel):
+            c.rebuildHierarchy(connection.alias)
+
+        return (
+            """
+        %s in
+        (select child.name from %s owner
+        inner join %s child on child.lft between owner.lft and owner.rght
+        where owner.name = %s)
+        """
+            % (lhs, objectModel, objectModel, rhs),
+            params,
+        )
 
 
 def create_connection(alias=DEFAULT_DB_ALIAS):
@@ -362,6 +399,10 @@ class GridFieldText(GridField):
     width = 200
     align = "left"
     searchoptions = '{"sopt":["cn","nc","eq","ne","lt","le","gt","ge","bw","bn","in","ni","ew","en"],"searchhidden":true}'
+
+
+class GridFieldHierarchicalText(GridFieldText):
+    searchoptions = '{"sopt":["cn","nc","eq","ne","lt","le","gt","ge","bw","bn","in","ni","ew","en","ico"],"searchhidden":true}'
 
 
 class GridFieldChoice(GridField):
@@ -2239,7 +2280,7 @@ class GridReport(View):
         return cls._rowsByName[name]
 
     @staticmethod
-    def _filter_ne(query, reportrow, data):
+    def _filter_ne(query, reportrow, data, database=DEFAULT_DB_ALIAS):
         if isinstance(
             reportrow, (GridFieldCurrency, GridFieldInteger, GridFieldNumber)
         ):
@@ -2261,7 +2302,7 @@ class GridReport(View):
             )
 
     @staticmethod
-    def _filter_bn(query, reportrow, data):
+    def _filter_bn(query, reportrow, data, database=DEFAULT_DB_ALIAS):
         if isinstance(reportrow, GridFieldChoice):
             # Comparison with the translated choices only
             accepted = []
@@ -2278,7 +2319,7 @@ class GridReport(View):
             )
 
     @staticmethod
-    def _filter_en(query, reportrow, data):
+    def _filter_en(query, reportrow, data, database=DEFAULT_DB_ALIAS):
         if isinstance(reportrow, GridFieldChoice):
             # Comparison with the translated choices only
             accepted = []
@@ -2295,7 +2336,7 @@ class GridReport(View):
             )
 
     @staticmethod
-    def _filter_nc(query, reportrow, data):
+    def _filter_nc(query, reportrow, data, database=DEFAULT_DB_ALIAS):
         if isinstance(
             reportrow, (GridFieldCurrency, GridFieldInteger, GridFieldNumber)
         ):
@@ -2318,7 +2359,7 @@ class GridReport(View):
             )
 
     @staticmethod
-    def _filter_ni(query, reportrow, data):
+    def _filter_ni(query, reportrow, data, database=DEFAULT_DB_ALIAS):
         if isinstance(reportrow, GridFieldChoice):
             # Comparison also with the translated choices
             accepted = []
@@ -2334,7 +2375,7 @@ class GridReport(View):
             )
 
     @staticmethod
-    def _filter_in(query, reportrow, data):
+    def _filter_in(query, reportrow, data, database=DEFAULT_DB_ALIAS):
         if isinstance(reportrow, GridFieldChoice):
             # Comparison also with the translated choices
             accepted = []
@@ -2350,7 +2391,7 @@ class GridReport(View):
             )
 
     @staticmethod
-    def _filter_eq(query, reportrow, data):
+    def _filter_eq(query, reportrow, data, database=DEFAULT_DB_ALIAS):
         if isinstance(
             reportrow, (GridFieldCurrency, GridFieldInteger, GridFieldNumber)
         ):
@@ -2372,7 +2413,7 @@ class GridReport(View):
             )
 
     @staticmethod
-    def _filter_bw(query, reportrow, data):
+    def _filter_bw(query, reportrow, data, database=DEFAULT_DB_ALIAS):
         if isinstance(reportrow, GridFieldChoice):
             # Comparison with the translated choices only
             accepted = []
@@ -2389,23 +2430,23 @@ class GridReport(View):
             )
 
     @staticmethod
-    def _filter_gt(query, reportrow, data):
+    def _filter_gt(query, reportrow, data, database=DEFAULT_DB_ALIAS):
         return models.Q(**{"%s__gt" % reportrow.field_name: smart_str(data).strip()})
 
     @staticmethod
-    def _filter_gte(query, reportrow, data):
+    def _filter_gte(query, reportrow, data, database=DEFAULT_DB_ALIAS):
         return models.Q(**{"%s__gte" % reportrow.field_name: smart_str(data).strip()})
 
     @staticmethod
-    def _filter_lt(query, reportrow, data):
+    def _filter_lt(query, reportrow, data, database=DEFAULT_DB_ALIAS):
         return models.Q(**{"%s__lt" % reportrow.field_name: smart_str(data).strip()})
 
     @staticmethod
-    def _filter_lte(query, reportrow, data):
+    def _filter_lte(query, reportrow, data, database=DEFAULT_DB_ALIAS):
         return models.Q(**{"%s__lte" % reportrow.field_name: smart_str(data).strip()})
 
     @staticmethod
-    def _filter_ew(query, reportrow, data):
+    def _filter_ew(query, reportrow, data, database=DEFAULT_DB_ALIAS):
         if isinstance(reportrow, GridFieldChoice):
             # Comparison with the translated choices
             accepted = []
@@ -2422,7 +2463,7 @@ class GridReport(View):
             )
 
     @staticmethod
-    def _filter_cn(query, reportrow, data):
+    def _filter_cn(query, reportrow, data, database=DEFAULT_DB_ALIAS):
         if isinstance(reportrow, GridFieldChoice):
             # Comparison with the translated choices
             accepted = []
@@ -2439,9 +2480,34 @@ class GridReport(View):
             )
 
     @staticmethod
-    def _filter_win(query, reportrow, data):
+    def _filter_win(query, reportrow, data, database=DEFAULT_DB_ALIAS):
         limit = date.today() + timedelta(int(float(smart_str(data))))
         return models.Q(**{"%s__lte" % reportrow.field_name: limit})
+
+    @staticmethod
+    def _filter_ico(query, reportrow, data, database=DEFAULT_DB_ALIAS):
+        import freppledb.input.models
+
+        parentExists = True
+        try:
+            import importlib
+
+            if issubclass(reportrow.model, HierarchyModel):
+                reportrow.model.rebuildHierarchy(database)
+            o = reportrow.model.objects.using(database).get(name__iexact=data)
+
+        except:
+            parentExists = False
+        return models.Q(
+            **{
+                "%s__lft__gte" % reportrow.model.__name__.lower(): o.lft
+                if parentExists
+                else -1,
+                "%s__lft__lte" % reportrow.model.__name__.lower(): o.rght
+                if parentExists
+                else -1,
+            }
+        )
 
     _filter_map_jqgrid_django = {
         # jqgrid op: (django_lookup, use_exclude, use_extra_where)
@@ -2460,6 +2526,7 @@ class GridReport(View):
         "ew": _filter_ew.__func__,
         "cn": _filter_cn.__func__,
         "win": _filter_win.__func__,
+        "ico": _filter_ico.__func__,
     }
 
     _filter_map_django_jqgrid = {
@@ -2476,7 +2543,8 @@ class GridReport(View):
         "endswith": "ew",
         "contains": "cn",
         "iendswith": "ew",
-        "icontains": "cn"
+        "icontains": "cn",
+        "ico": "ico",
         # 'win' exist in jqgrid, but not in django
     }
 
@@ -2530,9 +2598,11 @@ class GridReport(View):
                     continue
                 else:
                     q_filters.append(
-                        cls._filter_map_jqgrid_django[op](q_filters, reportrow, data)
+                        cls._filter_map_jqgrid_django[op](
+                            q_filters, reportrow, data, request.database
+                        )
                     )
-            except Exception:
+            except Exception as e:
                 pass  # Silently ignore invalid filters
         if "groups" in filterdata:
             for group in filterdata["groups"]:
@@ -2707,9 +2777,7 @@ class GridPivot(GridReport):
             if args and args[0] and not cls.new_arg_logic:
                 request.basequery = request.basequery.filter(pk__exact=args[0])
         return (
-            cls.filter_items(request, request.basequery, False)
-            .using(request.database)
-            .count()
+            cls.filter_items(request, request.basequery).using(request.database).count()
         )
 
     @classmethod
@@ -2728,7 +2796,7 @@ class GridPivot(GridReport):
             return cls.query(
                 request,
                 cls._apply_sort(
-                    request, cls.filter_items(request, request.basequery, False)
+                    request, cls.filter_items(request, request.basequery)
                 ).using(request.database)[cnt - 1 : cnt + request.pagesize],
                 sortsql=cls._apply_sort_index(request),
             )
@@ -2736,7 +2804,7 @@ class GridPivot(GridReport):
             return cls.query(
                 request,
                 cls._apply_sort(
-                    request, cls.filter_items(request, request.basequery, False)
+                    request, cls.filter_items(request, request.basequery)
                 ).using(request.database),
                 sortsql=cls._apply_sort_index(request),
             )

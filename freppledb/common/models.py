@@ -475,6 +475,7 @@ class User(AbstractUser):
                 "date_joined",
                 "language",
                 "theme",
+                "avatar",
                 "pagesize",
                 "horizonlength",
                 "horizontype",
@@ -746,7 +747,10 @@ class Comment(models.Model):
             Thread(
                 target=Comment._createNotifications,
                 kwargs={
-                    "url": "http://%s" % req.get_host() if req else None,
+                    "url": "%s://%s"
+                    % ("https" if req.is_secure() else "http", req.get_host())
+                    if req
+                    else None,
                     "database": using,
                 },
                 daemon=True,
@@ -819,8 +823,12 @@ class Comment(models.Model):
             ]
             if self.type != "delete":
                 body_html.append(
-                    "<button><a href='%s%s'>View</a></button><br><br>"
-                    % (url, self.getURL())
+                    "<button><a href='%s%s%s'>View</a></button><br><br>"
+                    % (
+                        url,
+                        "/%s" % database if database != DEFAULT_DB_ALIAS else "",
+                        self.getURL(),
+                    )
                 )
             if self.attachment:
                 body_html.append(

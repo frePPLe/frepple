@@ -5016,7 +5016,7 @@ class PurchaseOrderList(OperationPlanMixin, GridReport):
                 RawSQL(
                     """
                     coalesce((
-                      select priority
+                      select cost
                       from itemsupplier
                       where itemsupplier.item_id = operationplan.item_id
                         and (itemsupplier.location_id is null or itemsupplier.location_id = operationplan.location_id)

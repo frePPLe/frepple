@@ -166,7 +166,7 @@ You will get messages in your inbox when there is any activity on objects you fo
 <ul class="pagination">
   <li>
     <a href="?page={% if inbox.has_previous %}{{ inbox.previous_page_number }}{% else %}1{% endif %}" aria-label="Previous">
-    <span aria-hidden="true">&laquo;</span>
+    <i class="fa fa-chevron-left" aria-hidden="true"></i>
     </a>
   </li>
   {% for p in inbox.paginator.page_range %}
@@ -176,7 +176,7 @@ You will get messages in your inbox when there is any activity on objects you fo
   {% endfor %}
   <li>
     <a href="?page={% if inbox.has_next %}{{ inbox.next_page_number }}{% else %}{{ inbox.paginator.num_pages}}{% endif %}" aria-label="Next">
-    <span aria-hidden="true">&raquo;</span>
+    <i class="fa fa-chevron-right" aria-hidden="true"></i>
     </a>
   </li>
 </ul>

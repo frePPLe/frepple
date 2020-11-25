@@ -5012,11 +5012,17 @@ class PurchaseOrderList(OperationPlanMixin, GridReport):
             unit_cost=Cast(
                 RawSQL(
                     """
-            coalesce((select max(cost) from itemsupplier 
+                    coalesce((
+                      select priority
+                      from itemsupplier
                       where itemsupplier.item_id = operationplan.item_id
-                      and cost > 0
-                      and (itemsupplier.location_id is null or itemsupplier.location_id = operationplan.location_id) 
-                      and itemsupplier.supplier_id = operationplan.supplier_id), 
+                        and (itemsupplier.location_id is null or itemsupplier.location_id = operationplan.location_id)
+                        and itemsupplier.supplier_id = operationplan.supplier_id
+                      order by operationplan.enddate < itemsupplier.effective_end desc nulls first,
+                         operationplan.enddate >= itemsupplier.effective_start desc nulls first,
+                         priority <> 0,
+                         priority
+                      limit 1),
                      (select cost from item where item.name = operationplan.item_id), 0)
                     """,
                     [],
@@ -5030,16 +5036,124 @@ class PurchaseOrderList(OperationPlanMixin, GridReport):
             computed_color=RawSQL(
                 """
                 case when operationplan.color >= 999999 and operationplan.plan ? 'item' then
-                999999 
+                999999
                 - extract(epoch from operationplan.delay)/86400.0
                 + 1000000
                 when operationplan.color >= 999999 and not(operationplan.plan ? 'item') then
-                999999 
+                999999
                 - extract(epoch from operationplan.delay)/86400.0
                 else operationplan.color
                 end
                 """,
                 [],
+            ),
+            itemsupplier_sizeminimum=Cast(
+                RawSQL(
+                    """
+                    select sizeminimum
+                    from itemsupplier
+                    where itemsupplier.item_id = operationplan.item_id
+                      and (itemsupplier.location_id is null or itemsupplier.location_id = operationplan.location_id)
+                      and itemsupplier.supplier_id = operationplan.supplier_id
+                    order by operationplan.enddate < itemsupplier.effective_end desc nulls first,
+                       operationplan.enddate >= itemsupplier.effective_start desc nulls first,
+                       priority <> 0,
+                       priority
+                    limit 1
+                    """,
+                    [],
+                ),
+                output_field=FloatField(),
+            ),
+            itemsupplier_sizemultiple=Cast(
+                RawSQL(
+                    """
+                    select sizemultiple
+                    from itemsupplier
+                    where itemsupplier.item_id = operationplan.item_id
+                      and (itemsupplier.location_id is null or itemsupplier.location_id = operationplan.location_id)
+                      and itemsupplier.supplier_id = operationplan.supplier_id
+                    order by operationplan.enddate < itemsupplier.effective_end desc nulls first,
+                       operationplan.enddate >= itemsupplier.effective_start desc nulls first,
+                       priority <> 0,
+                       priority
+                    limit 1
+                    """,
+                    [],
+                ),
+                output_field=FloatField(),
+            ),
+            itemsupplier_sizemaximum=Cast(
+                RawSQL(
+                    """
+                    select sizemaximum
+                    from itemsupplier
+                    where itemsupplier.item_id = operationplan.item_id
+                      and (itemsupplier.location_id is null or itemsupplier.location_id = operationplan.location_id)
+                      and itemsupplier.supplier_id = operationplan.supplier_id
+                    order by operationplan.enddate < itemsupplier.effective_end desc nulls first,
+                       operationplan.enddate >= itemsupplier.effective_start desc nulls first,
+                       priority <> 0,
+                       priority
+                    limit 1
+                    """,
+                    [],
+                ),
+                output_field=FloatField(),
+            ),
+            itemsupplier_priority=Cast(
+                RawSQL(
+                    """
+                    select priority
+                    from itemsupplier
+                    where itemsupplier.item_id = operationplan.item_id
+                      and (itemsupplier.location_id is null or itemsupplier.location_id = operationplan.location_id)
+                      and itemsupplier.supplier_id = operationplan.supplier_id
+                    order by operationplan.enddate < itemsupplier.effective_end desc nulls first,
+                       operationplan.enddate >= itemsupplier.effective_start desc nulls first,
+                       priority <> 0,
+                       priority
+                    limit 1
+                    """,
+                    [],
+                ),
+                output_field=FloatField(),
+            ),
+            itemsupplier_effective_start=Cast(
+                RawSQL(
+                    """
+                    select effective_start
+                    from itemsupplier
+                    where itemsupplier.item_id = operationplan.item_id
+                      and (itemsupplier.location_id is null or itemsupplier.location_id = operationplan.location_id)
+                      and itemsupplier.supplier_id = operationplan.supplier_id
+                    order by operationplan.enddate < itemsupplier.effective_end desc nulls first,
+                       operationplan.enddate >= itemsupplier.effective_start desc nulls first,
+                       priority <> 0,
+                       priority
+                    limit 1
+                    """,
+                    [],
+                ),
+                output_field=DateTimeField(),
+            ),
+            itemsupplier_effective_end=Cast(
+                RawSQL(
+                    """
+                    select effective_end
+                    from itemsupplier
+                    where itemsupplier.item_id = operationplan.item_id
+                      and (itemsupplier.location_id is null or itemsupplier.location_id = operationplan.location_id)
+                      and itemsupplier.supplier_id = operationplan.supplier_id
+                    order by operationplan.enddate < itemsupplier.effective_end desc nulls first,
+                       operationplan.enddate >= itemsupplier.effective_start desc nulls first,
+                       priority <> 0,
+                       priority
+                    limit 1
+                    """,
+                    [],
+                ),
+                output_field=DateTimeField(),
             ),
         )
 
@@ -5155,6 +5269,49 @@ class PurchaseOrderList(OperationPlanMixin, GridReport):
             search=True,
         ),
         GridFieldLastModified("lastmodified"),
+        # Annoted fields referencing the itemsupplier
+        GridFieldNumber(
+            "itemsupplier_sizeminimum",
+            title=format_lazy("{} - {}", _("item supplier"), _("size minimum")),
+            editable=False,
+            initially_hidden=True,
+            extra='"formatoptions":{"defaultValue":""}, "summaryType":"min"',
+        ),
+        GridFieldNumber(
+            "itemsupplier_sizemultiple",
+            title=format_lazy("{} - {}", _("item supplier"), _("size multiple")),
+            editable=False,
+            initially_hidden=True,
+            extra='"formatoptions":{"defaultValue":""}, "summaryType":"min"',
+        ),
+        GridFieldNumber(
+            "itemsupplier_sizemaximum",
+            title=format_lazy("{} - {}", _("item supplier"), _("size maximum")),
+            editable=False,
+            initially_hidden=True,
+            extra='"formatoptions":{"defaultValue":""}, "summaryType":"min"',
+        ),
+        GridFieldDateTime(
+            "itemsupplier_effective_end",
+            title=format_lazy("{} - {}", _("item supplier"), _("effective end")),
+            editable=False,
+            initially_hidden=True,
+            extra='"formatoptions":{"defaultValue":""}, "summaryType":"min"',
+        ),
+        GridFieldDateTime(
+            "itemsupplier_effective_start",
+            title=format_lazy("{} - {}", _("item supplier"), _("effective start")),
+            editable=False,
+            initially_hidden=True,
+            extra='"formatoptions":{"defaultValue":""}, "summaryType":"min"',
+        ),
+        GridFieldNumber(
+            "itemsupplier_priority",
+            title=format_lazy("{} - {}", _("item supplier"), _("priority")),
+            editable=False,
+            initially_hidden=True,
+            extra='"formatoptions":{"defaultValue":""}, "summaryType":"min"',
+        ),
         # Optional fields referencing the item
         GridFieldText(
             "item__type",

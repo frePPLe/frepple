@@ -1882,12 +1882,13 @@ class LocationList(GridReport):
     )
 
     rows = (
-        GridFieldText(
+        GridFieldHierarchicalText(
             "name",
             title=_("name"),
             key=True,
             formatter="detail",
             extra='"role":"input/location"',
+            model=Location,
         ),
         GridFieldText("description", title=_("description")),
         GridFieldText("category", title=_("category"), initially_hidden=True),
@@ -1932,12 +1933,13 @@ class CustomerList(GridReport):
     )
 
     rows = (
-        GridFieldText(
+        GridFieldHierarchicalText(
             "name",
             title=_("name"),
             key=True,
             formatter="detail",
             extra='"role":"input/customer"',
+            model=Customer,
         ),
         GridFieldText("description", title=_("description")),
         GridFieldText("category", title=_("category"), initially_hidden=True),
@@ -2428,12 +2430,13 @@ class ItemList(GridReport):
     )
 
     rows = (
-        GridFieldText(
+        GridFieldHierarchicalText(
             "name",
             title=_("name"),
             key=True,
             formatter="detail",
             extra='"role":"input/item"',
+            model=Item,
         ),
         GridFieldText("description", title=_("description")),
         GridFieldText("category", title=_("category"), initially_hidden=True),

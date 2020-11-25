@@ -2488,22 +2488,30 @@ class GridReport(View):
     def _filter_ico(query, reportrow, data, database=DEFAULT_DB_ALIAS):
         import freppledb.input.models
 
+        # rebuild hierarchy
+        if issubclass(reportrow.model, HierarchyModel):
+            reportrow.model.rebuildHierarchy(database)
+
+        # get parent object
         parentExists = True
         try:
             import importlib
 
-            if issubclass(reportrow.model, HierarchyModel):
-                reportrow.model.rebuildHierarchy(database)
             o = reportrow.model.objects.using(database).get(name__iexact=data)
 
         except:
             parentExists = False
+
+        prefix = not (reportrow.name == "name")
+
         return models.Q(
             **{
-                "%s__lft__gte" % reportrow.model.__name__.lower(): o.lft
+                "%slft__gte"
+                % ("%s__" % reportrow.model.__name__.lower() if prefix else ""): o.lft
                 if parentExists
                 else -1,
-                "%s__lft__lte" % reportrow.model.__name__.lower(): o.rght
+                "%slft__lte"
+                % ("%s__" % reportrow.model.__name__.lower() if prefix else ""): o.rght
                 if parentExists
                 else -1,
             }

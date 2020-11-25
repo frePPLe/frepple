@@ -33,6 +33,7 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.contenttypes.models import ContentType
 from django.urls import reverse, resolve
 from django import forms
+from django.template import Template
 from django.utils.encoding import force_text
 from django.utils.translation import gettext_lazy as _
 from django.utils.text import capfirst
@@ -461,6 +462,16 @@ class FollowerList(GridReport):
     model = Follower
     frozenColumns = 0
     template = "common/follower.html"
+    message_when_empty = Template(
+        """
+        <h3>You are not following any objects yet</h3>
+        <br>
+        All reports where you edit or review an object have a follow button in the upper right corner.<br>
+        <br>
+        You will get messages in your inbox when there is any activity on objects you follow.<br>
+        <br>
+        """
+    )
 
     @classmethod
     def basequeryset(reportclass, request, *args, **kwargs):

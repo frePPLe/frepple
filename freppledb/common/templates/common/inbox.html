@@ -87,6 +87,7 @@ function markMessageRead(el, status) {
 <div class="row">
 <div class="col-md-12">
 <div class="panel panel-default">
+{% if inbox %}
 <table class="table table-condensed table-hover">
 <thead style="display: table-header-group;">
 <tr>
@@ -144,9 +145,23 @@ function markMessageRead(el, status) {
 <td><span data-toggle="tooltip" data-original-title="{{ notif.comment.lastmodified|date:"DATETIME_FORMAT" }}">{{ notif.comment.lastmodified | timesince }}</span></td>
 </tr>
 {% endfor %}
-</tbody></table>
+</tbody>
+</table>
+{% else %}
+<div class="panel-heading">
+<h4 class="panel-title">Your inbox is empty</h4>
+</div>
+<div class="panel-body">
+<br>
+All reports where you edit or review an object have a follow button in the upper right corner.<br>
+<br>
+You will get messages in your inbox when there is any activity on objects you follow.<br>
+<br>
+</div>
+{% endif %}
 </div>
 
+{% if inbox %}
 <nav>   
 <ul class="pagination">
   <li>
@@ -166,6 +181,7 @@ function markMessageRead(el, status) {
   </li>
 </ul>
 </nav>
+{% endif %}
 
 </div>
 {% endblock %}

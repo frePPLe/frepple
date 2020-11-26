@@ -470,6 +470,8 @@ class FollowerList(GridReport):
         <br>
         You will get messages in your inbox when there is any activity on objects you follow.<br>
         <br>
+        <img style="border-radius: 10px; max-width: 180px" src="/static/img/inbox_and_following.png">
+        <br>
         """
     )
 
@@ -666,7 +668,7 @@ def inbox(request):
                             notif = Notification.objects.using(request.database).get(
                                 pk=pk, user=request.user
                             )
-                            if status == "delete":
+                            if status == "D":
                                 notif.delete(using=request.database)
                             else:
                                 notif.status = status
@@ -680,19 +682,32 @@ def inbox(request):
             return JsonResponse(response)
     else:
         # Return inbox page for normal requests
-        inbox = Paginator(
+        msgs = (
             Notification.objects.using(request.database)
             .filter(user=request.user)
             .order_by("-id")
-            .select_related("comment", "user"),
-            request.user.pagesize,
+            .select_related("comment", "user")
         )
+        empty = not msgs.exists()
+        if empty:
+            if (
+                Follower.objects.using(request.database)
+                .filter(user=request.user)
+                .exists()
+            ):
+                empty = False
+        unread = request.GET.get("unread", "false")
+        if unread != "false":
+            msgs = msgs.filter(status="U")
+        inbox = Paginator(msgs, request.user.pagesize)
         return render(
             request,
             "common/inbox.html",
             context={
                 "title": _("inbox"),
                 "inbox": inbox.get_page(request.GET.get("page", 1)),
+                "unread": unread != "false",
+                "empty": empty,
             },
         )
 

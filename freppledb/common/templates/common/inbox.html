@@ -11,10 +11,6 @@ function selectAll(el)
   $("#messagelist").find(":checkbox").prop("checked", chck);
 }
 
-function markSelectedRead(check) {
-  
-}
-
 function markMessageRead(el, status) {
   var data = [];
   if (el) {
@@ -44,6 +40,9 @@ function markMessageRead(el, status) {
            .addClass("fa-envelope-open-o")
            .attr("data-original-title", gettext("Mark message unread"));
        }
+       else if (status == "D") {
+         msg.remove();
+       }
        else {
          msg.attr("data-status", "U");
          msg.find(".msg-status .btn.fa")
@@ -71,7 +70,17 @@ function markMessageRead(el, status) {
 
 {% block content %}
 <div class="row">
-<div id="tabs" class="col-md-12 form-inline hor-align-right">
+<div class="col-md-4">
+  <div class="btn-group" role="group" aria-label="Basic example">
+    <button type="button" class="btn btn-primary{% if not unread %} active{% else %}" onclick="window.location = '?unread=false'{% endif %}">
+      {% trans "All" %}
+    </button>
+    <button type="button" class="btn btn-primary{% if unread %} active{% else %}" onclick="window.location = '?unread=true'{% endif %}">
+      {% trans "Unread" %}
+    </button>
+  </div>
+</div>
+<div id="tabs" class="col-md-8 form-inline hor-align-right">
 <ul class="nav nav-tabs">
 <li class="active" role="presentation">
   <a class="ui-tabs-anchor" href="{{ request.prefix }}/inbox/" target="_self">{% trans "inbox"|capfirst %}</a>
@@ -103,6 +112,10 @@ function markMessageRead(el, status) {
   <button class="btn btn-xs btn-primary" data-toggle="tooltip" onclick="markMessageRead(null, 'U')"
     data-original-title="Mark selected messages unread" data-placement="bottom">
     <i class="msg-status fa fa-envelope-o"></i>
+  </button>&nbsp;
+  <button class="btn btn-xs btn-primary" data-toggle="tooltip" onclick="markMessageRead(null, 'D')"
+    data-original-title="Delete selected messages" data-placement="bottom">
+    <i class="msg-status fa fa-trash"></i>
   </button>
 </td>
 <td></td>
@@ -147,22 +160,29 @@ function markMessageRead(el, status) {
 {% endfor %}
 </tbody>
 </table>
-{% else %}
-<div class="panel-heading">
-<h4 class="panel-title">Your inbox is empty</h4>
-</div>
+{% elif empty %}
 <div class="panel-body">
+<h2>Your inbox is empty</h2>
 <br>
 All reports where you edit or review an object have a follow button in the upper right corner.<br>
 <br>
 You will get messages in your inbox when there is any activity on objects you follow.<br>
 <br>
+<img style="border-radius: 10px; max-width: 180px" src="/static/img/inbox_and_following.png">
+<br>
+</div>
+{% else %}
+<div class="panel-body">
+<div class="pull-left"><i class="fa fa-5x fa-trophy" style="color: gold"></i>&nbsp;&nbsp;</div>
+<h2>Congrats!</h2>
+You read all messages.
 </div>
 {% endif %}
 </div>
 
 {% if inbox %}
-<nav>   
+<nav>
+<div class="text-center">
 <ul class="pagination">
   <li>
     <a href="?page={% if inbox.has_previous %}{{ inbox.previous_page_number }}{% else %}1{% endif %}" aria-label="Previous">
@@ -180,8 +200,8 @@ You will get messages in your inbox when there is any activity on objects you fo
     </a>
   </li>
 </ul>
+</div>
 </nav>
 {% endif %}
-
 </div>
 {% endblock %}

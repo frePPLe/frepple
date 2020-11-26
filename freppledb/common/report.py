@@ -1303,13 +1303,13 @@ class GridReport(View):
             # on related models.
             sortargs = []
             for s in sortname.split(","):
-                sortfield, dir = s.strip().split(" ", 1)
+                sortfield, direction = s.strip().split(" ", 1)
                 idx = 1
                 has_one = False
                 for i in request.rows:
                     if i.name == sortfield:
                         sortargs.append(
-                            "%s %s" % (idx, "desc" if dir == "desc" else "asc")
+                            "%s %s" % (idx, "desc" if direction == "desc" else "asc")
                         )
                         if idx == 1:
                             has_one = True
@@ -2486,20 +2486,17 @@ class GridReport(View):
 
     @staticmethod
     def _filter_ico(query, reportrow, data, database=DEFAULT_DB_ALIAS):
-        import freppledb.input.models
-
         # rebuild hierarchy
         if issubclass(reportrow.model, HierarchyModel):
             reportrow.model.rebuildHierarchy(database)
+        else:
+            raise Exception("ico filter can only be used on hierarchical models")
 
         # get parent object
-        parentExists = True
         try:
-            import importlib
-
             o = reportrow.model.objects.using(database).get(name__iexact=data)
-
-        except:
+            parentExists = True
+        except Exception:
             parentExists = False
 
         prefix = not (reportrow.name == "name")

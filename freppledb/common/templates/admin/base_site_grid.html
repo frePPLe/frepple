@@ -235,7 +235,7 @@ $(function() {
 	});
 
   $("#actionsul li a").click(function(){
-    $("#actions1").html($(this).text() + ' <span class="caret"><\/span>');
+    $("#actions1 span").text($(this).text());
     $("#actions").val($(this).prop('name'));
     grid.runAction($(this).prop('name'));
   });
@@ -282,7 +282,7 @@ $(function() {
   <input type="hidden" name="actions" id="actions" value="">
   <div class="dropdown dropdown-submit-input" style="display: inline;">
       <button disabled class="btn btn-default dropdown-toggle form-control" type="button" name="actions1" id="actions1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-      {% trans "select action"|capfirst %}&nbsp;&nbsp;<span class="caret"></span>
+      <span>{% trans "select action"|capfirst %}</span>&nbsp;&nbsp;<i class="caret"></i>
       </button>
       <ul class="dropdown-menu" id="actionsul" aria-labelledby="actions1" style="top: auto;">
       {% for i in  actions %}

@@ -7,62 +7,65 @@
       <button class="btn btn-primary" type="submit" value="{% trans "launch"|capfirst %}">{% trans "launch"|capfirst %}</button>
     </td>
     <td style="padding: 15px; width:99%">
-         <p>Create time buckets for reporting.</p>
+         <p>{% trans "create time buckets for reporting."|capfirst %}</p>
          <div class="form-group">
-         <label class="col-sm-3 control-label">Start date</label>
+         <label class="col-sm-3 control-label">{% trans "start date"|capfirst %}</label>
          <div class="col-sm-9">
          <input class="vDateField form-control" id="start" name="start" type="text" size="12" value="2014-01-01"/>
          </div>
          </div>
          <div class="form-group">
-         <label class="col-sm-3 control-label">End date</label>
+         <label class="col-sm-3 control-label">{% trans "end date"|capfirst %}</label>
          <div class="col-sm-9">
          <input class="vDateField form-control" id="end" name="end" type="text" size="12" value="2022-01-01"/>
          </div>
          </div>
          <div class="form-group">
-         <label class="col-sm-3 control-label" for="weekstart1">Week starts on</label>
+         <label class="col-sm-3 control-label" for="weekstart1">{% trans "week starts on"|capfirst %}</label>
          <div class="col-sm-9">
          <div class="dropdown dropdown-submit-input">
-           <button class="btn btn-default dropdown-toggle form-control"  id="weekstart1" value="1" type="button" data-toggle="dropdown">Monday&nbsp;&nbsp;<span class="caret"></span></button>
+           <button class="btn btn-default dropdown-toggle form-control"  id="weekstart1" value="1" type="button" data-toggle="dropdown">
+             <span>{% trans "Monday" %}</span>&nbsp;&nbsp;
+             <i class="caret"></i>
+           </button>
            <ul class="dropdown-menu col-xs-12" aria-labelledby="weekstart1" id="weekstartul">
-             <li><a>Sunday</a></li>
-             <li><a>Monday</a></li>
-             <li><a>Tuesday</a></li>
-             <li><a>Wednesday</a></li>
-             <li><a>Thursday</a></li>
-             <li><a>Friday</a></li>
-             <li><a>Saturday</a></li>
+             <li><a>{% trans "Sunday" %}</a></li>
+             <li><a>{% trans "Monday" %}</a></li>
+             <li><a>{% trans "Tuesday" %}</a></li>
+             <li><a>{% trans "Wednesday" %}</a></li>
+             <li><a>{% trans "Thursday" %}</a></li>
+             <li><a>{% trans "Friday" %}</a></li>
+             <li><a>{% trans "Saturday" %}</a></li>
            </ul>
          </div>
          </div>
          </div>
          <div class="form-group">
-         <label class="col-sm-3 control-label">Day name</label>
+         <label class="col-sm-3 control-label">{% trans "day name"|capfirst %}</label>
          <div class="col-sm-9">
          <input class="form-control" name="format-day" type="text" size="12" value="%Y-%m-%d"/>
          </div>
          </div>
          <div class="form-group">
-         <label class="col-sm-3 control-label">Week name</label>
+         <label class="col-sm-3 control-label">{% trans "week name"|capfirst %}</label>
          <div class="col-sm-9">
          <input class="form-control" name="format-week" type="text" size="12" value="%y W%W"/>
          </div>
          </div>
          <div class="form-group">
-         <label class="col-sm-3 control-label">Month name</label>
+         <label class="col-sm-3 control-label">{% trans "month name"|capfirst %}</label>
          <div class="col-sm-9">
          <input class="form-control" name="format-month" type="text" size="12" value="%b %y"/>
          </div>
          </div>
          <div class="form-group">
-         <label class="col-sm-3 control-label">Quarter name</label>
+         <label class="col-sm-3 control-label">{% trans "quarter name"|capfirst %}</label>
          <div class="col-sm-9">
          <input class="form-control" name="format-quarter" type="text" size="12" value="%y Q%q"/>
          </div>
          </div>
          <div class="form-group">
-         <label class="col-sm-3 control-label">Year name</label>
+         <label class="col-sm-3 control-label">{% trans "year name"|capfirst %}</label>
          <div class="col-sm-9">
          <input class="form-control" name="format-year" type="text" size="12" value="%Y"/>
          </div>
@@ -92,7 +95,7 @@ $(function() {
   });
 
   $("#weekstartul li a").click(function(){
-    $("#weekstart1").html($(this).text() + ' <span class="caret"></span>');
+    $("#weekstart1 span").text($(this).text());
     $("#weekstart").val($(this).parent().index());
   });
 });

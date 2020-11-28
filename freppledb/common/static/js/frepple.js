@@ -2148,7 +2148,7 @@ var ERPconnection = {
           }
         });
       });
-      $("#actions1").html($("#actionsul").children().first().text() + '  <span class="caret"></span>');
+      $("#actions1 span").text($("#actionsul").children().first().text());
     },
 
 
@@ -2320,7 +2320,7 @@ var ERPconnection = {
               $('#button_export').removeClass("active").prop('disabled', true );
             };
           });
-          $("#actions1").html($("#actionsul").children().first().text() + '  <span class="caret"></span>');
+          $("#actions1 span").text($("#actionsul").children().first().text());
         },
         error: function (result, stat, errorThrown) {
           $('#popup .modal-title').html(gettext("Error"));
@@ -2604,9 +2604,8 @@ var dashboard = {
 
     // Adding new widget
     var newwidget = $("#newwidgetname").text();
-    if (newwidget != '')
-    {
-      $('<div class="panel panel-default" data-cockpit-widget="' + newwidget + '"></div>').appendTo(lastcol);
+    if (newwidget != '') {
+      $('<div class="panel panel-default"></div>').attr("data-cockpit-widget", newwidget).appendTo(lastcol);
       dashboard.save("true"); // Force reload of the page
     }
     else

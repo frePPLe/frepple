@@ -45,7 +45,6 @@ from django.http import (
     HttpResponseRedirect,
     HttpResponse,
     HttpResponseServerError,
-    HttpResponseNotFound,
 )
 from django.shortcuts import render_to_response
 from django.views import static

@@ -17,11 +17,11 @@
 <script>
   $(function() {
     $("#id_languageul li a").click(function() {
-      $("#id_language").html($(this).text() + ' <span class="caret"><\/span>');
+      $("#id_language span").text($(this).text());
       $("#language").val($(this).prop('name'));
     });
     $("#id_themeul li a").click(function() {
-      $("#id_theme").html($(this).text() + ' <span class="caret"><\/span>');
+      $("#id_theme span").text($(this).text());
       $("#theme").val($(this).prop('name'));
     });
   });
@@ -53,8 +53,9 @@
       </div>
       <div class="col-xs-9" style="max-width:260px">
         <div class="dropdown dropdown-submit-input">
-          <button class="btn btn-default dropdown-toggle form-control" id="id_language" name="language" value="" type="button" data-toggle="dropdown">{{ LANGUAGE }}&nbsp;&nbsp;
-            <span class="caret"></span>
+          <button class="btn btn-default dropdown-toggle form-control" id="id_language" name="language" value="" type="button" data-toggle="dropdown">
+            <span>{{ LANGUAGE }}</span>&nbsp;&nbsp;
+            <i class="caret"></i>
           </button>
           <ul class="dropdown-menu col-xs-12" aria-labelledby="id_language" id="id_languageul">
             {% for i,j in request.user.languageList %}
@@ -81,8 +82,9 @@
       </div>
       <div class="col-xs-9" style="max-width:260px">
         <div class="dropdown dropdown-submit-input">
-          <button class="btn btn-default dropdown-toggle form-control" id="id_theme" name="theme" value="" type="button" data-toggle="dropdown">{% filter capfirst %}{{ request.user.theme }}{%endfilter%}&nbsp;&nbsp;
-            <span class="caret"></span>
+          <button class="btn btn-default dropdown-toggle form-control" id="id_theme" name="theme" value="" type="button" data-toggle="dropdown">
+            <span>{% filter capfirst %}{{ request.user.theme }}{%endfilter%}</span>&nbsp;&nbsp;
+            <i class="caret"></i>
           </button>
           <ul class="dropdown-menu col-xs-12" aria-labelledby="id_theme" id="id_themeul">
             {% for j in THEMES %}

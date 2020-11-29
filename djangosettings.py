@@ -19,7 +19,8 @@
 r"""
 Main Django configuration file.
 """
-import os, sys
+import os
+import sys
 
 from django.utils.translation import gettext_lazy as _
 
@@ -199,11 +200,6 @@ ODOO_PASSWORDS = {"default": "", "scenario1": "", "scenario2": "", "scenario3": 
 # system time zone.
 TIME_ZONE = "Europe/Brussels"
 
-# A boolean that specifies if datetimes will be timezone-aware by default or not.
-# If this is set to True, we will use timezone-aware datetimes internally.
-# Otherwise, we use naive datetimes in local time.
-USE_TZ = False  # TODO Test with this parameter set to True
-
 # Supported language codes, sorted by language code.
 # Language names and codes should match the ones in Django.
 # You can see the list supported by Django at:
@@ -307,42 +303,6 @@ INSTALLED_APPS = (
 #      ])
 #    ]
 ATTRIBUTES = []
-
-import django.contrib.admindocs
-
-LOCALE_PATHS = (
-    os.path.normpath(os.path.join(FREPPLE_HOME, "locale", "django")),
-    os.path.normpath(os.path.join(FREPPLE_HOME, "locale", "auth")),
-    os.path.normpath(os.path.join(FREPPLE_HOME, "locale", "contenttypes")),
-    os.path.normpath(os.path.join(FREPPLE_HOME, "locale", "sessions")),
-    os.path.normpath(os.path.join(FREPPLE_HOME, "locale", "admin")),
-    os.path.normpath(os.path.join(FREPPLE_HOME, "locale", "messages")),
-    os.path.normpath(os.path.join(FREPPLE_APP, "freppledb", "locale")),
-    os.path.normpath(
-        os.path.join(os.path.dirname(django.contrib.admindocs.__file__), "locale")
-    ),
-)
-
-TEMPLATES = [
-    {
-        "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [
-            # os.path.normpath(os.path.join(FREPPLE_HOME,'templates')),
-        ],
-        "APP_DIRS": True,
-        "OPTIONS": {
-            "builtins": ["freppledb.common.templatetags"],
-            "context_processors": [
-                "freppledb.common.contextprocessors.debug",
-                "django.template.context_processors.request",
-                "django.contrib.auth.context_processors.auth",
-                "django.contrib.messages.context_processors.messages",
-                "django.template.context_processors.i18n",
-                "django.template.context_processors.static",
-            ],
-        },
-    }
-]
 
 LOGGING = {
     "version": 1,

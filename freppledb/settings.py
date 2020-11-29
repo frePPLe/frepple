@@ -29,6 +29,7 @@ import importlib
 import freppledb
 
 from django.contrib import messages
+import django.contrib.admindocs
 from django.utils.translation import gettext_lazy as _
 
 
@@ -145,6 +146,11 @@ else:
 STATIC_URL = "/static/"
 USE_L10N = True  # Represent data in the local format
 USE_I18N = True  # Use translated strings
+
+# A boolean that specifies if datetimes will be timezone-aware by default or not.
+# If this is set to True, we will use timezone-aware datetimes internally.
+# Otherwise, we use naive datetimes in local time.
+USE_TZ = False  # TODO Test with this parameter set to True
 
 # Sessions
 SESSION_ENGINE = "django.contrib.sessions.backends.signed_cookies"
@@ -375,6 +381,40 @@ MESSAGE_TAGS = {
     messages.DEBUG: "alert-danger",
 }
 
+TEMPLATES = [
+    {
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
+        "DIRS": [
+            # os.path.normpath(os.path.join(FREPPLE_HOME,'templates')),
+        ],
+        "APP_DIRS": True,
+        "OPTIONS": {
+            "builtins": ["freppledb.common.templatetags"],
+            "context_processors": [
+                "freppledb.common.contextprocessors.debug",
+                "django.template.context_processors.request",
+                "django.contrib.auth.context_processors.auth",
+                "django.contrib.messages.context_processors.messages",
+                "django.template.context_processors.i18n",
+                "django.template.context_processors.static",
+            ],
+        },
+    }
+]
+
+LOCALE_PATHS = (
+    os.path.normpath(os.path.join(FREPPLE_HOME, "locale", "django")),
+    os.path.normpath(os.path.join(FREPPLE_HOME, "locale", "auth")),
+    os.path.normpath(os.path.join(FREPPLE_HOME, "locale", "contenttypes")),
+    os.path.normpath(os.path.join(FREPPLE_HOME, "locale", "sessions")),
+    os.path.normpath(os.path.join(FREPPLE_HOME, "locale", "admin")),
+    os.path.normpath(os.path.join(FREPPLE_HOME, "locale", "messages")),
+    os.path.normpath(os.path.join(FREPPLE_APP, "freppledb", "locale")),
+    os.path.normpath(
+        os.path.join(os.path.dirname(django.contrib.admindocs.__file__), "locale")
+    ),
+)
+
 SILENCED_SYSTEM_CHECKS = ["admin.E408"]
 
 # Override any of the above settings from a separate file
@@ -383,6 +423,11 @@ if not os.access(os.path.join(FREPPLE_CONFIGDIR, "djangosettings.py"), os.R_OK):
     sys.exit(1)
 with open(os.path.join(FREPPLE_CONFIGDIR, "djangosettings.py")) as mysettingfile:
     exec(mysettingfile.read(), globals())
+
+# Another level of overrides for development settings
+if os.access(os.path.join(FREPPLE_CONFIGDIR, "localsettings.py"), os.R_OK):
+    with open(os.path.join(FREPPLE_CONFIGDIR, "localsettings.py")) as mysettingfile:
+        exec(mysettingfile.read(), globals())
 
 # Some Django settings we don't like to be overriden
 MANAGERS = ADMINS

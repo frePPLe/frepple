@@ -79,3 +79,7 @@ build
 *.rpm
 *.tar.gz
 *.tgz
+
+# Local configuration
+/localsettings.py
+

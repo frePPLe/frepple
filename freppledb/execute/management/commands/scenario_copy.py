@@ -208,7 +208,7 @@ class Command(BaseCommand):
                 settings.DATABASES[source]["PORT"]
                 and ("-p %s " % settings.DATABASES[source]["PORT"])
                 or "",
-                "%s " % (" -T ".join(["", *excludedTables]))
+                ("%s " % (" -T ".join(["", *excludedTables])))
                 if destination == DEFAULT_DB_ALIAS
                 else "",
                 test

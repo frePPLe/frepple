@@ -172,6 +172,23 @@ class Command(BaseCommand):
             destinationscenario.status = "Busy"
             destinationscenario.save(using=DEFAULT_DB_ALIAS)
 
+            # tables excluded from promotion task
+            excludedTables = [
+                "common_user",
+                "common_scenario",
+                "auth_group",
+                "auth_group_permission",
+                "auth_permission",
+                "django_content_type",
+                "common_comment",
+                "common_user_groups",
+                "common_user_user_permissions",
+                "common_preferences",
+                "reportmanager_report",
+                "reportmanager_column",
+                "execute_schedule",
+            ]
+
             # Copying the data
             # Commenting the next line is a little more secure, but requires you to create a .pgpass file.
             if settings.DATABASES[source]["PASSWORD"]:
@@ -191,21 +208,7 @@ class Command(BaseCommand):
                 settings.DATABASES[source]["PORT"]
                 and ("-p %s " % settings.DATABASES[source]["PORT"])
                 or "",
-                """
-                -T common_user
-                -T common_scenario
-                -T auth_group
-                -T auth_group_permission
-                -T auth_permission
-                -T django_content_type
-                -T common_comment
-                -T common_user_groups
-                -T common_user_user_permissions
-                -T common_preferences
-                -T reportmanager_report
-                -T reportmanager_column
-                -T execute_schedule
-                """
+                "%s " % (" -T ".join(["", *excludedTables]))
                 if destination == DEFAULT_DB_ALIAS
                 else "",
                 test

@@ -312,6 +312,9 @@ class Command(BaseCommand):
                     if t.status in ["100%", "Canceled", "Failed", "Done"]:
                         break
                     if not self.process_exists(t.processid):
+                        t.status = "Failed"
+                        t.processid = None
+                        t.save(update_fields=["processid", "status"], using=database)
                         break
             else:
                 # Reread the task from the database and update it

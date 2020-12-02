@@ -534,6 +534,8 @@ def CancelTask(request, taskid):
             return HttpResponseServerError("Task isn't running or waiting to run")
         task.status = "Canceled"
         task.save(using=request.database)
+        # Just in case, to cover corner cases
+        launchWorker(database=request.database)
         return HttpResponse(content="OK")
     except ProcessLookupError:
         # Already dead, just clean up from task table

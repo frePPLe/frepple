@@ -25,6 +25,7 @@ from django.utils.autoreload import autoreload_started
 
 def watchDjangoSettings(sender, **kwargs):
     sender.watch_file(os.path.join(settings.FREPPLE_CONFIGDIR, "djangosettings.py"))
+    sender.watch_file(os.path.join(settings.FREPPLE_CONFIGDIR, "localsettings.py"))
 
 
 class CommonConfig(AppConfig):

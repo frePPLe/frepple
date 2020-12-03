@@ -28,8 +28,6 @@ urlpatterns = [
     url(r"^$", Home),
     url(r"^wizard/quickstart/production/$", QuickStartProduction.as_view()),
     url(r"^wizard/supplypath/", CheckSupplyPath),
-    url(r"^wizard/send-us-dataset/$", SendUsDataset.as_view()),
-    url(r"^wizard/odoo/$", Odoo.as_view()),
     path(r"wizard/load/<str:mode>/", WizardLoad),
     url(r"^wizard/sendsurveymail/$", SendSurveyMail.action),
 ]

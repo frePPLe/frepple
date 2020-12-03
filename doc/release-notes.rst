@@ -28,8 +28,8 @@ Release notes
 
 .. rubric:: Third party components
 
-- | Added Python package: pillow
-  | Install it by running "pip3 install pillow"
+- | Added required Python packages: pillow and psutil
+  | Install these by running "pip3 install pillow psutil"
 
 .. rubric:: System administration
 

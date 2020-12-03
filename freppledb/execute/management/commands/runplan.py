@@ -17,6 +17,7 @@
 
 import os
 from datetime import datetime
+import psutil
 import shlex
 import subprocess
 from time import sleep
@@ -46,32 +47,10 @@ class Command(BaseCommand):
 
     @staticmethod
     def process_exists(pid):
-        # Inspired and shamelessly copied from:
-        # https://stackoverflow.com/questions/568271/how-to-check-if-there-exists-a-process-with-a-given-pid-in-python
-        if not pid:
+        try:
+            return psutil.Process(pid).status() != psutil.STATUS_ZOMBIE
+        except:
             return False
-        elif os.name == "nt":
-            import ctypes
-
-            kernel32 = ctypes.windll.kernel32
-            SYNCHRONIZE = 0x100000
-            process = kernel32.OpenProcess(SYNCHRONIZE, 0, pid)
-            if process != 0:
-                kernel32.CloseHandle(process)
-                return True
-            else:
-                return False
-        else:
-            import errno
-
-            if pid < 0:
-                return False
-            try:
-                os.kill(pid, 0)
-            except OSError as e:
-                return e.errno == errno.EPERM
-            else:
-                return True
 
     def add_arguments(self, parser):
         parser.add_argument("--user", dest="user", help="User running the command")

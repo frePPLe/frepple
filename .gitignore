@@ -81,5 +81,5 @@ build
 *.tgz
 
 # Local configuration
-/localsettings.py
+/localsettings*.py
 

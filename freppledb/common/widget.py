@@ -18,10 +18,11 @@
 from django.conf import settings
 from django.db import DEFAULT_DB_ALIAS
 from django.utils import formats
-from django.utils.html import escape
-from django.utils.translation import gettext_lazy as _
-from django.utils.text import capfirst
 from django.utils.encoding import force_text
+from django.utils.html import escape
+from django.utils.text import capfirst
+from django.utils.timesince import timesince
+from django.utils.translation import gettext_lazy as _
 
 from freppledb import VERSION
 from freppledb.common.dashboard import Dashboard, Widget
@@ -108,18 +109,27 @@ class InboxWidget(Widget):
         )
         for notif in notifs:
             result.append(
-                '<tr><td><a class="underline" href="%s%s">%s</a>&nbsp;<span class="small">%s</span><div class="small" style="float: right;">%s&nbsp;&nbsp;%s</div><br><p style="padding-left: 10px; display: inline-block;">%s</p>'
+                """<tr><td>
+                <a class="underline" href="%s%s">%s</a>&nbsp;<span class="small">%s</span>
+                <div class="small pull-right" data-toggle="tooltip" data-original-title="%s %s">%s%s&nbsp;&nbsp;%s</div>
+                <br><p style="padding-left: 10px; display: inline-block;">%s</p>"""
                 % (
                     _thread_locals.request.prefix,
                     notif.comment.getURL(),
-                    notif.comment.object_pk,
+                    notif.comment.object_repr,
                     escape(
                         capfirst(force_text(_(notif.comment.content_type.name)))
                         if notif.comment.content_type
                         else ""
                     ),
-                    escape(notif.comment.user.username),
+                    escape(notif.comment.user.get_full_name()),
                     formats.date_format(notif.comment.lastmodified, "DATETIME_FORMAT"),
+                    '<img class="avatar-sm" src="/uploads/%s">&nbsp;'
+                    % notif.comment.user.avatar
+                    if notif.comment.user.avatar
+                    else "",
+                    escape(notif.comment.user.username),
+                    timesince(notif.comment.lastmodified),
                     escape(notif.comment.comment),
                 )
                 + "</td></tr>"

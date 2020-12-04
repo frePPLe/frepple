@@ -35,7 +35,13 @@ function enableSave() {
       </form>{% endif%}
 
 {% for c in comments %}
-      <h3>{{c.user}} ({{c.user.get_full_name}})<span class="float_right">{{c.lastmodified}}</span></h3>
+      <h3>
+      <span data-toggle="tooltip" data-original-title="{{ c.user.get_full_name }}">
+        {% if c.user.avatar %}<img class="avatar-sm" src="/uploads/{{ c.user.avatar }}">{% endif %}
+        {{ c.user.username }}
+      </span>
+      &nbsp;&nbsp;<small data-toggle="tooltip" data-original-title="{{ c.lastmodified|date:"DATETIME_FORMAT" }}">{{ c.lastmodified | timesince }}</small>
+      </h3>
       <div class="clearfix">
       {% if c.attachment %}
       <div class="pull-left" style="width: 100px">{{c.attachmentlink}}</div>

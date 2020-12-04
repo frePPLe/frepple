@@ -150,7 +150,7 @@ function markMessageRead(el, status) {
   <a style="text-decoration: underline" href="{{ notif.comment.attachment.url }}" target="_blank">{{ notif.comment.attachment.name | extension }}&nbsp;<i class="fa fa-paperclip"></i></a>
   {% endif %}</td>
 <td>
-  <span data-toggle="tooltip" data-original-title="{{ notif.comment.user.first_name}} {{ notif.comment.user.last_name}}">
+  <span data-toggle="tooltip" data-original-title="{{ notif.comment.user.get_full_name }}">
   {% if notif.comment.user.avatar %}<img class="avatar-sm" src="/uploads/{{ notif.comment.user.avatar }}">{% endif %}
   {{ notif.comment.user.username }}
   </span>

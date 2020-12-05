@@ -47,6 +47,8 @@ class Command(BaseCommand):
 
     @staticmethod
     def process_exists(pid):
+        if not pid:
+            return False
         try:
             return psutil.Process(pid).status() != psutil.STATUS_ZOMBIE
         except:

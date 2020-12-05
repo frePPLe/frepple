@@ -1,8 +1,8 @@
 Release notes
 -------------
 
-6.10.0 (Upcoming release)
-=========================
+6.10.0 (2020/12/06)
+===================
 
 .. rubric:: User interface
 

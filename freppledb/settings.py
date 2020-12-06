@@ -172,7 +172,6 @@ DATABASE_ROUTERS = ["freppledb.common.models.MultiDBRouter"]
 CSRF_FAILURE_VIEW = "freppledb.common.views.csrf_failure"
 
 # Settings for user uploaded files
-MEDIA_ROOT = os.path.join(FREPPLE_LOGDIR, "uploads")
 MEDIA_URL = "/uploads/"  # Do not change this
 # This list of allowed extensions is what github.com allows.
 # Be VERY careful about security when enlarging this list!
@@ -431,6 +430,7 @@ if os.access(os.path.join(FREPPLE_CONFIGDIR, "localsettings.py"), os.R_OK):
 
 # Some Django settings we don't like to be overriden
 MANAGERS = ADMINS
+MEDIA_ROOT = os.path.join(FREPPLE_LOGDIR, "uploads")
 
 # Find the ERP connector module
 ERP_CONNECTOR = None

@@ -452,6 +452,7 @@ Section -Post
   FileWrite $R4 "SECRET_KEY = '%@mzit!i8b*$zc&6oev96=$year$month$day$hours$minutes$seconds'$\r$\n"
   FileWrite $R4 "$\r$\n"
   FileWrite $R4 "FREPPLE_LOGDIR = r'$APPDATA\${PRODUCT_NAME}\${PRODUCT_VERSION}'$\r$\n$\r$\n"
+  FileWrite $R4 "MEDIA_ROOT = os.path.join(FREPPLE_LOGDIR, 'uploads')$\r$\n$\r$\n"
   FileWrite $R4 "LANGUAGE_CODE = '$6' # Language for the user interface$\r$\n$\r$\n"
   FileWrite $R4 "# FrePPLe only supports the 'postgresql' database.$\r$\n"
   FileWrite $R4 "# Create additional entries in this dictionary to define scenario schemas.$\r$\n"

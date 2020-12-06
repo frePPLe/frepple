@@ -36,6 +36,8 @@ packages = [
     "portend",
     "sqlparse",
     "pathlib",
+    "psutil",
+    "PIL",
     # Added for PostgreSQL
     "psycopg2",
     # Dependencies for openpyxl

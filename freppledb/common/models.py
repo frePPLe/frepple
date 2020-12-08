@@ -15,6 +15,8 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 from datetime import datetime
+from importlib import import_module
+import inspect
 import json
 import logging
 from psycopg2.extras import execute_batch
@@ -32,7 +34,6 @@ from django.core import mail
 from django.core.validators import FileExtensionValidator
 from django.db import models, DEFAULT_DB_ALIAS, connections, transaction
 from django.db.models import Q
-from django.db.models.fields.related import RelatedField
 from django.db.models.signals import pre_delete
 from django.dispatch.dispatcher import receiver
 from django import forms
@@ -276,13 +277,6 @@ class AuditModel(models.Model):
 
     class Meta:
         abstract = True
-
-    @classmethod
-    def createNotification(cls, flw, msg):
-        """
-        Return true if a notification is needed for this message to this follower.
-        """
-        return flw.content_type == msg.content_type and flw.object_pk == msg.object_pk
 
 
 class Parameter(AuditModel):
@@ -674,9 +668,6 @@ def delete_user(sender, instance, **kwargs):
 
 
 class Comment(models.Model):
-
-    _worker_active = set()
-
     type_list = (
         ("add", _("add")),
         ("change", _("change")),
@@ -724,9 +715,6 @@ class Comment(models.Model):
     def save(
         self, force_insert=False, force_update=False, using=None, update_fields=None
     ):
-        if not hasattr(self.content_type.model_class(), "createNotification"):
-            # No messages generated on this model
-            return
         from .middleware import _thread_locals
 
         if not using:
@@ -741,11 +729,11 @@ class Comment(models.Model):
             using=using,
             update_fields=update_fields,
         )
-        if using not in self._worker_active:
-            self._worker_active.add(using)
+        if using not in NotificationFactory._worker_active:
+            NotificationFactory._worker_active.add(using)
             req = getattr(_thread_locals, "request", None)
             Thread(
-                target=Comment._createNotifications,
+                target=NotificationFactory.generate,
                 kwargs={
                     "url": "%s://%s"
                     % ("https" if req.is_secure() else "http", req.get_host())
@@ -872,105 +860,6 @@ class Comment(models.Model):
                 body_html,
             )
 
-    @classmethod
-    def _createNotifications(cls, url=None, database=DEFAULT_DB_ALIAS):
-        """
-        Every server process will have at most 1 worker thread for each database.
-        But multiple processes can be active in parallel.
-        """
-        try:
-            from .middleware import _thread_locals
-
-            setattr(_thread_locals, "database", database)
-            followers = list(Follower.objects.all().using(database).order_by("id"))
-            idle_loop_done = False
-            while True:
-                with transaction.atomic(using=database):
-                    empty = True
-                    emails = []
-                    if followers:
-                        for msg in (
-                            Comment.objects.all()
-                            .using(database)
-                            .filter(processed=False)
-                            .order_by("id")
-                            .select_for_update(skip_locked=True)[:40]
-                        ):
-                            empty = False
-                            recipients = set()
-                            try:
-                                # TODO  for large number of messages and followers, this method can be inefficient.
-                                # Some mechanism based on the contenttype may be needed to reduce the loop of followers.
-                                for flw in followers:
-                                    m = getattr(
-                                        msg.content_type.model_class(),
-                                        "createNotification",
-                                        None,
-                                    )
-                                    if m and callable(m) and m(flw, msg):
-                                        Notification(
-                                            comment=msg, user=flw.user, type=flw.type
-                                        ).save(database)
-                                        if (
-                                            flw.type == "M"
-                                            and flw.user.email
-                                            and settings.EMAIL_HOST
-                                        ):
-                                            recipients.add(flw.user.email)
-                                msg.processed = True
-                                msg.save(using=database)
-                                if recipients:
-                                    data = msg.getMail(url, database)
-                                    email = mail.EmailMultiAlternatives(
-                                        data[0],
-                                        data[1],
-                                        settings.DEFAULT_FROM_EMAIL,
-                                        recipients,
-                                    )
-                                    if data[2]:
-                                        email.attach_alternative(data[2], "text/html")
-                                    emails.append(email)
-                            except Exception as e:
-                                logger.error(
-                                    "Couldn't create nofications for message %s: %s"
-                                    % (msg.id, e)
-                                )
-                        if emails:
-                            connection = None
-                            try:
-                                connection = mail.get_connection()
-                                connection.open()
-                                connection.send_messages(emails)
-                            except Exception as e:
-                                logger.error("Error mailing messages: %s" % e)
-                            finally:
-                                if connection:
-                                    connection.close()
-                    else:
-                        # No followers at all -> All messages can immediately be marked processed
-                        recs = (
-                            Comment.objects.all()
-                            .using(database)
-                            .filter(processed=False)
-                            .update(processed=True)
-                        )
-                        if recs:
-                            empty = False
-                    if empty:
-                        if idle_loop_done:
-                            break
-                        else:
-                            idle_loop_done = True
-                            if sys.argv[1:2] != ["test"]:
-                                # When no more messages can be found and we are not running
-                                # the test suite, we try again 5 seconds later before shutting
-                                # down the worker.
-                                time.sleep(5)
-        finally:
-            for db in settings.DATABASES:
-                connections[db].close()
-            cls._worker_active.remove(database)
-
 
 class Follower(models.Model):
     type_list = (("M", "email"), ("O", "online"))
@@ -1050,6 +939,9 @@ class Notification(models.Model):
     type = models.CharField(
         _("type"), max_length=5, null=False, default="O", choices=type_list
     )
+    follower = models.ForeignKey(
+        Follower, verbose_name=_("follower"), null=True, on_delete=models.SET_NULL
+    )
 
     def clean(self):
         from .middleware import _thread_locals
@@ -1062,6 +954,165 @@ class Notification(models.Model):
         verbose_name = _("notification")
         verbose_name_plural = _("notifications")
         db_table = "common_notification"
+
+
+class NotificationFactory:
+    _reg = {}
+    _discovery_has_run = False
+    _worker_active = set()
+
+    @classmethod
+    def register(cls, followerclass, messageclasses):
+        def decorator(func):
+            if not inspect.isclass(followerclass):
+                raise Exception("NotificationFactory needs a class as first argument")
+            for m in messageclasses:
+                if not inspect.isclass(m):
+                    raise Exception(
+                        "NotificationFactory needs a class list as second argument"
+                    )
+                if m in cls._reg:
+                    cls._reg[m]["functions"].append(func)
+                else:
+                    cls._reg[m] = {"functions": [func], "followers": set()}
+                cls._reg[m]["followers"].add(followerclass)
+            return func
+
+        return decorator
+
+    @classmethod
+    def autodiscover(cls):
+        for app in reversed(settings.INSTALLED_APPS):
+            try:
+                import_module("%s.notifications" % app)
+            except ImportError as e:
+                # Silently ignore if it's the commands module which isn't found
+                if str(e) not in (
+                    "No module named %s.notifications" % app,
+                    "No module named '%s.notifications'" % app,
+                ):
+                    raise e
+
+    @classmethod
+    def generate(cls, url=None, database=DEFAULT_DB_ALIAS):
+        """
+        Every server process will have at most 1 worker thread for each database.
+        But multiple processes can be active in parallel.
+        """
+        if not cls._discovery_has_run:
+            cls.autodiscover()
+            cls._discovery_has_run = True
+
+        try:
+            from .middleware import _thread_locals
+
+            setattr(_thread_locals, "database", database)
+            followers = list(Follower.objects.all().using(database).order_by("id"))
+            idle_loop_done = False
+            while True:
+                with transaction.atomic(using=database):
+                    empty = True
+                    emails = []
+                    if followers:
+                        for msg in (
+                            Comment.objects.all()
+                            .using(database)
+                            .filter(processed=False)
+                            .order_by("id")
+                            .select_for_update(skip_locked=True)[:40]
+                        ):
+                            empty = False
+                            recipients = set()
+                            try:
+                                created = set()
+                                meta = cls._reg.get(
+                                    msg.content_type.model_class(), None
+                                )
+                                if not meta:
+                                    continue
+                                for flw in followers:
+                                    if (
+                                        flw.content_type.model_class()
+                                        not in meta["followers"]
+                                    ):
+                                        continue
+                                    for c in meta["functions"]:
+                                        try:
+                                            if flw.user not in created and (
+                                                flw.object_pk == "all" or c(flw, msg)
+                                            ):
+                                                Notification(
+                                                    comment=msg,
+                                                    user=flw.user,
+                                                    type=flw.type,
+                                                    follower=flw,
+                                                ).save(database)
+                                                if (
+                                                    flw.type == "M"
+                                                    and flw.user.email
+                                                    and settings.EMAIL_HOST
+                                                ):
+                                                    recipients.add(flw.user.email)
+                                                created.add(flw.user)
+                                                break
+                                        except Exception as e:
+                                            logger.error(
+                                                "Exception in notification function %s: %s"
+                                                % (c, e)
+                                            )
+                                msg.processed = True
+                                msg.save(using=database)
+                                if recipients:
+                                    data = msg.getMail(url, database)
+                                    email = mail.EmailMultiAlternatives(
+                                        data[0],
+                                        data[1],
+                                        settings.DEFAULT_FROM_EMAIL,
+                                        recipients,
+                                    )
+                                    if data[2]:
+                                        email.attach_alternative(data[2], "text/html")
+                                    emails.append(email)
+                            except Exception as e:
+                                logger.error(
+                                    "Couldn't create nofications for message %s: %s"
+                                    % (msg.id, e)
+                                )
+                        if emails:
+                            connection = None
+                            try:
+                                connection = mail.get_connection()
+                                connection.open()
+                                connection.send_messages(emails)
+                            except Exception as e:
+                                logger.error("Error mailing messages: %s" % e)
+                            finally:
+                                if connection:
+                                    connection.close()
+                    else:
+                        # No followers at all -> All messages can immediately be marked processed
+                        recs = (
+                            Comment.objects.all()
+                            .using(database)
+                            .filter(processed=False)
+                            .update(processed=True)
+                        )
+                        if recs:
+                            empty = False
+                    if empty:
+                        if idle_loop_done:
+                            break
+                        else:
+                            idle_loop_done = True
+                            if sys.argv[1:2] != ["test"]:
+                                # When no more messages can be found and we are not running
+                                # the test suite, we try again 5 seconds later before shutting
+                                # down the worker.
+                                time.sleep(5)
+        finally:
+            for db in settings.DATABASES:
+                connections[db].close()
+            cls._worker_active.remove(database)
 
 
 class Bucket(AuditModel):

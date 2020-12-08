@@ -58,9 +58,12 @@ def CalendarNotification(flw, msg):
         return flw.object_pk == msg.content_object.calendar.name
 
 
-@NotificationFactory.register(Location, [Location])
+@NotificationFactory.register(Location, [Location, Demand])
 def LocationNotification(flw, msg):
-    return flw.content_type == msg.content_type and flw.object_pk == msg.object_pk
+    if flw.content_type == msg.content_type:
+        return flw.object_pk == msg.object_pk
+    elif msg.content_type.model_class() == Demand:
+        return flw.object_pk == msg.content_object.location.name
     # TODO
     #     return flw.content_type == msg.content_type and (
     #         flw.object_pk == msg.object_pk
@@ -68,19 +71,28 @@ def LocationNotification(flw, msg):
     #     )
 
 
-@NotificationFactory.register(Customer, [Customer])
+@NotificationFactory.register(Customer, [Customer, Demand])
 def CustomerNotification(flw, msg):
-    return flw.content_type == msg.content_type and flw.object_pk == msg.object_pk
+    if flw.content_type == msg.content_type:
+        return flw.object_pk == msg.object_pk
+    elif msg.content_type.model_class() == Demand:
+        return flw.object_pk == msg.content_object.customer.name
 
 
-@NotificationFactory.register(Supplier, [Supplier])
+@NotificationFactory.register(Supplier, [Supplier, PurchaseOrder])
 def SupplierNotification(flw, msg):
-    return flw.content_type == msg.content_type and flw.object_pk == msg.object_pk
+    if flw.content_type == msg.content_type:
+        return flw.object_pk == msg.object_pk
+    elif msg.content_type.model_class() == PurchaseOrder:
+        return flw.object_pk == msg.content_object.supplier.name
 
 
-@NotificationFactory.register(Item, [Item])
+@NotificationFactory.register(Item, [Item, Demand])
 def ItemNotification(flw, msg):
-    return flw.content_type == msg.content_type and flw.object_pk == msg.object_pk
+    if flw.content_type == msg.content_type:
+        return flw.object_pk == msg.object_pk
+    elif msg.content_type.model_class() == Demand:
+        return flw.object_pk == msg.content_object.item.name
 
 
 @NotificationFactory.register(ItemSupplier, [ItemSupplier])

@@ -827,14 +827,14 @@ var grid = {
        data: JSON.stringify(result),
        success: function() {window.location.href = window.location.href;},
        error: function (result, stat, errorThrown) {
-         $('#popup').html('<div class="modal-dialog" style="width: auto">'+
+         $('#popup').html('<div class="modal-dialog">'+
              '<div class="modal-content">'+
              '<div class="modal-header">'+
                '<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true" class="fa fa-times"></span></button>'+
                '<h4 class="modal-title">' + gettext("Error") + '</h4>'+
              '</div>'+
              '<div class="modal-body">'+
-               '<p>'+result.responseText + "  " + stat + errorThrown+'</p>'+
+               '<p>' + result.responseText + "<br>" + errorThrown + '</p>'+
              '</div>'+
              '<div class="modal-footer">'+
              '</div>'+

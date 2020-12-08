@@ -1281,12 +1281,13 @@ class QuickStartProduction(View):
 
     @method_decorator(staff_member_required())
     def post(self, request, *args, **kwargs):
+        post = {"messages": []}
         try:
             db = request.database
             data = json.loads(
                 request.body.decode(request.encoding or settings.DEFAULT_CHARSET)
             )
-            post = {"salesorder": data["name"], "messages": []}
+            post["salesorder"] = data["name"]
 
             items = 0
             locations = 0

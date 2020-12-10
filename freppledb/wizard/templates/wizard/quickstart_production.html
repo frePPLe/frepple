@@ -335,6 +335,24 @@ function changeDOorigin(ev) {
 {% endblock %}
 
 {% block content %}
+<div class="row">
+  <div class="panel-group col-md-12" style="max-width: 900px" role="tablist">
+    <div class="panel panel-default">
+      <div class="panel-body">
+        <div class="pull-right">
+          <img src="/static/wizard/img/plan_editor_thumbnail.png" style="width: 150px" alt="Plan editor">
+        </div>
+        <p>The production planning module plans sales orders and forecast. It generates manufacturing
+        orders, distribution orders and purchase orders for all steps in the bill of material. 
+        </p>
+        <p>You can review the resource loading, identify bottlenecks causing late deliveries and
+        manually adjust the plan. You can monitor the progress of the manufacturing orders, distribution orders
+        and purchase orders, or export them to your ERP for execution.</p>
+        <p>Let's start simple by inputting a single sales order and its bill of material.</p>  
+      </div>
+    </div>
+  </div>
+</div>
 {% if not post %}
 <div class="row" id="inputstep1">
 	<div class="panel-group col-md-12" style="max-width:900px" role="tablist" aria-multiselectable="true">
@@ -499,24 +517,24 @@ function changeDOorigin(ev) {
       <div class="panel-collapse" role="tabpanel">
         <div class="panel-body">
           <div>
-          Here is the production plan for your sales order {{post.salesorder}}:
+          <p>Here is the production plan for your sales order {{post.salesorder}}:</p>
           </div>        
           <div class="clearfix">
           <div style="float: left; margin-left:10px; width:30%; max-width:130px; text-align:center"
             data-toggle="tooltip" data-placement="bottom"
             data-original-title="Review all activities planned for this sales order">
-            <a target="_blank" rel="noopener" href="{{request.prefix}}/demandpegging/{{post.salesorder|admin_quote}}/?noautofilter">
+            <p><a target="_blank" rel="noopener" href="{{request.prefix}}/demandpegging/{{post.salesorder|admin_quote}}/?noautofilter">
               <img src="/static/wizard/img/delivery_plan_thumbnail.png" style="width: 100%" alt="Sales order delivery plan"><br> 
               <b>Sales order delivery plan</b> 
-            </a>
+            </a></p>
           </div>
           <div style="float:left; margin-left:10px; width:30%; max-width:130px; text-align:center"
             data-toggle="tooltip" data-placement="bottom"
             data-original-title="A visual representation of the supply path">
-            <a target="_blank" rel="noopener" href="{{request.prefix}}/supplypath/demand/{{post.salesorder|admin_quote}}/?noautofilter">
+            <p><a target="_blank" rel="noopener" href="{{request.prefix}}/supplypath/demand/{{post.salesorder|admin_quote}}/?noautofilter">
               <img src="/static/wizard/img/supply_path_thumbnail.png" style="width: 100%" alt="Sales order supply path"><br> 
               <b>Sales order supply path</b>
-            </a>
+            </a></p>
           </div>
           <div style="float:left; margin-left:10px; width:30%; max-width:130px; text-align:center"
             data-toggle="tooltip" data-placement="bottom"
@@ -529,23 +547,27 @@ function changeDOorigin(ev) {
           <div style="float:left; margin-left:10px; width:30%; max-width:130px; text-align:center"
             data-toggle="tooltip" data-placement="bottom"
             data-original-title="Shows the loading of all resources">
-            <a target="_blank" rel="noopener" href="{{request.prefix}}/resource/?noautofilter">
+            <p><a target="_blank" rel="noopener" href="{{request.prefix}}/resource/?noautofilter">
               <img src="/static/wizard/img/resource_report_thumbnail.png" style="width: 100%" alt="Resource report"><br> 
               <b>Resource report</b>
-            </a>
+            </a></p>
           </div>                           
           </div>
           <div class="clearfix">
-          <br>Check out what we did with your input data:
+          <p>Check out what we did with your input data:</p>
             <ul>
               {% for msg in post.messages %}
-              <li style="list-style-type: square">{{ msg | safe }}</li>
+              <li style="list-style-type: square"><p>{{ msg | safe }}</p></li>
               {% endfor %}
             </ul>
           </div>
           <div class="clearfix">
-          <br><a rel="noopener" class="underline" href="{{request.prefix}}/wizard/load/production/" target="_blank">
-          Learn how to load Excel spreadsheets</a> to repeat this calculation for many sales orders.<br>
+          <p>Next actions:</p>
+            <ul>
+            <li class="disc"><p><a class="underline" href="{{request.prefix}}/wizard/quickstart/production/">Repeat these steps</a> for another sales order.</p></li>
+            <li class="disc"><p><a rel="noopener" class="underline" href="{{request.prefix}}/wizard/load/production/" target="_blank">
+          Learn how to load Excel spreadsheets</a> to repeat this calculation for many sales orders.</p></li>
+            </ul>
           </div>
         </div>
         </div>

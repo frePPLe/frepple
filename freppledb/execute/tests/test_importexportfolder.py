@@ -41,6 +41,7 @@ class execute_with_commands(TransactionTestCase):
 
     def tearDown(self):
         rmtree(self.datafolder)
+        del os.environ["FREPPLE_TEST"]
 
     def test_exportimportfromfolder(self):
         self.assertEqual(ManufacturingOrder.objects.count(), 0)

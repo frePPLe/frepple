@@ -97,12 +97,18 @@ class InboxWidget(Widget):
             db = _thread_locals.request.database or DEFAULT_DB_ALIAS
         except Exception:
             db = DEFAULT_DB_ALIAS
-        notifs = (
+        notifs = list(
             Notification.objects.using(db)
             .filter(user=_thread_locals.request.user)
             .order_by("-id")
             .select_related("comment", "user")[: self.limit]
         )
+        if not notifs:
+            return """
+              <div class="pull-left"><i class="fa fa-5x fa-trophy" style="color: gold"></i>&nbsp;&nbsp;</div>
+              <h2>Congrats!</h2>
+              Your inbox is empty.
+              """
         result = []
         result.append(
             '<div class="table-responsive"><table class="table table-condensed table-hover"><tbody>'
@@ -135,7 +141,7 @@ class InboxWidget(Widget):
                 + "</td></tr>"
             )
         result.append("</tbody></table></div>")
-        return "\n".join(result) if result else force_text(_("No unread messages!"))
+        return "\n".join(result)
 
     javascript = """
     var hasForecast = %s;

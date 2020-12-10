@@ -15,15 +15,28 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+from datetime import datetime
+from itertools import chain
 import os
+import random
 from rest_framework.test import APIClient, APITestCase, APIRequestFactory
 import tempfile
 
 from django.core import management
 from django.http.response import StreamingHttpResponse
 from django.test import TestCase, TransactionTestCase
+from django.contrib.contenttypes.models import ContentType
 
-from freppledb.common.models import User, Bucket, BucketDetail, Parameter
+from freppledb.common.dataload import parseCSVdata
+from freppledb.common.models import (
+    User,
+    Bucket,
+    BucketDetail,
+    Parameter,
+    Comment,
+    Follower,
+    Notification,
+)
 from freppledb.common.tests import checkResponse
 from freppledb.input.models import (
     Buffer,
@@ -57,8 +70,11 @@ class DataLoadTest(TestCase):
     fixtures = ["demo"]
 
     def setUp(self):
-        # Login
+        os.environ["FREPPLE_TEST"] = "YES"
         self.client.login(username="admin", password="admin")
+
+    def tearDown(self):
+        del os.environ["FREPPLE_TEST"]
 
     def test_demo_data(self):
         response = self.client.get("/data/input/customer/?format=json")
@@ -204,8 +220,10 @@ class ExcelTest(TransactionTestCase):
         if not User.objects.filter(username="admin").count():
             User.objects.create_superuser("admin", "your@company.com", "admin")
         self.client.login(username="admin", password="admin")
+        os.environ["FREPPLE_TEST"] = "YES"
 
     def tearDown(self):
+        del os.environ["FREPPLE_TEST"]
         if os.path.exists("workbook.xlsx"):
             os.remove("workbook.xlsx")
 
@@ -396,6 +414,10 @@ class freppleREST(APITestCase):
         # Login
         self.client = APIClient()
         self.client.login(username="admin", password="admin")
+        os.environ["FREPPLE_TEST"] = "YES"
+
+    def tearDown(self):
+        del os.environ["FREPPLE_TEST"]
 
     def test_api_listpages_getapi(self):
         response = self.client.get("/api/")
@@ -761,3 +783,105 @@ class freppleREST(APITestCase):
         )
         self.assertEqual(response.status_code, 204)
         self.assertEqual(Customer.objects.filter(source="TEST DELETE").count(), 0)
+
+
+class NotificationTest(TransactionTestCase):
+    def setUp(self):
+        os.environ["FREPPLE_TEST"] = "YES"
+
+    def tearDown(self):
+        del os.environ["FREPPLE_TEST"]
+
+    def test_performance(self):
+        # Admin user follows all items
+        if not User.objects.filter(username="admin").count():
+            User.objects.create_superuser("admin", "your@company.com", "admin")
+        user = User.objects.get(username="admin")
+        Follower(
+            user=user,
+            content_type=ContentType.objects.get(model="item"),
+            object_pk="all",
+        ).save()
+
+        # Create 2 users. Each user follows all 1000 items.
+        for cnt in range(2):
+            u = User.objects.create_user(
+                username="user%s" % cnt,
+                email="user%s" % cnt,
+                password="big_secret12345",
+                pk=cnt + 10,
+            )
+            for cnt in range(1000):
+                Follower(
+                    user=u,
+                    content_type=ContentType.objects.get(model="item"),
+                    object_pk="item %s" % cnt,
+                ).save()
+        self.assertEqual(User.objects.count(), 3)
+        self.assertEqual(Follower.objects.count(), 2001)
+
+        # Upload CSV data with 1000 items
+        # print("start items", datetime.now())
+        errors = 0
+        items = [["item %s" % cnt, "test"] for cnt in range(1000)]
+        for error in parseCSVdata(
+            Item, chain([["name", "category"]], items), user=user
+        ):
+            errors += 1
+        self.assertEqual(Item.objects.count(), 1000)
+
+        # Upload CSV data with 1000 customers
+        # print("start customers", datetime.now())
+        customers = [["customer %s" % cnt, "test"] for cnt in range(1000)]
+        for error in parseCSVdata(
+            Customer, chain([["name", "category"]], customers), user=user
+        ):
+            errors += 1
+        self.assertEqual(Customer.objects.count(), 1000)
+
+        # Upload CSV data with 1000 locations
+        # print("start locations", datetime.now())
+        locations = [["location %s" % cnt, "test"] for cnt in range(1000)]
+        for error in parseCSVdata(
+            Location, chain([["name", "category"]], locations), user=user
+        ):
+            errors += 1
+        self.assertEqual(Location.objects.count(), 1000)
+
+        # Upload CSV data with 1000 demands
+        # print("start demands", datetime.now())
+        demands = [
+            [
+                "demand %s" % cnt,
+                random.choice(items)[0],
+                random.choice(customers)[0],
+                random.choice(locations)[0],
+                1,
+                "2020-01-01",
+            ]
+            for cnt in range(1000)
+        ]
+        for error in parseCSVdata(
+            Demand,
+            chain(
+                [["name", "item", "customer", "location", "quantity", "due"]], demands
+            ),
+            user=user,
+        ):
+            errors += 1
+        self.assertEqual(Demand.objects.count(), 1000)
+        self.assertEqual(errors, 4)
+
+        # The Loading is finished now, but the notifications aren't ready yet. It takes
+        # longer to process all notifications and send emails by the worker.
+        #
+        # The real performance test is to run with and without the followers.
+        # The load process should take the same time with or without the followers.
+        # The time required for the notification worker instead grows with the number of
+        # followers that need to be checked.
+        # print("END DATA LOAD", datetime.now())
+        Notification.wait()
+        # print("END NOTIFICATON WORKERS", datetime.now())
+
+        self.assertEqual(Comment.objects.count(), 4000)
+        self.assertEqual(Notification.objects.count(), 6000)

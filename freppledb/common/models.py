@@ -19,9 +19,9 @@ from importlib import import_module
 import inspect
 import json
 import logging
+from multiprocessing import Process
 from psycopg2.extras import execute_batch
 import sys
-from threading import Thread
 import time
 
 from django.conf import settings
@@ -45,7 +45,7 @@ from django.utils.translation import gettext_lazy as _
 from django.utils.text import capfirst
 
 from .fields import JSONBField
-
+from freppledb import runFunction
 
 logger = logging.getLogger(__name__)
 
@@ -729,20 +729,14 @@ class Comment(models.Model):
             using=using,
             update_fields=update_fields,
         )
-        if using not in NotificationFactory._worker_active:
-            NotificationFactory._worker_active.add(using)
+        if update_fields != ["processed"]:
             req = getattr(_thread_locals, "request", None)
-            Thread(
-                target=NotificationFactory.generate,
-                kwargs={
-                    "url": "%s://%s"
-                    % ("https" if req.is_secure() else "http", req.get_host())
-                    if req
-                    else None,
-                    "database": using,
-                },
-                daemon=True,
-            ).start()
+            NotificationFactory.launchWorker(
+                database=using,
+                url="%s://%s" % ("https" if req.is_secure() else "http", req.get_host())
+                if req
+                else None,
+            )
         return tmp
 
     def attachmentlink(self):
@@ -950,6 +944,10 @@ class Notification(models.Model):
         if request and request.user:
             self.user = request.user
 
+    @classmethod
+    def wait(cls):
+        NotificationFactory.join()
+
     class Meta:
         verbose_name = _("notification")
         verbose_name_plural = _("notifications")
@@ -957,9 +955,23 @@ class Notification(models.Model):
 
 
 class NotificationFactory:
-    _reg = {}
-    _discovery_has_run = False
-    _worker_active = set()
+    _workers = {}
+
+    @classmethod
+    def launchWorker(cls, database=DEFAULT_DB_ALIAS, url=None):
+        worker = cls._workers.get(database, None)
+        if worker and not worker.is_alive():
+            worker = None
+            del NotificationFactory._workers[database]
+        if not worker:
+            p = Process(
+                target=runFunction,
+                args=["freppledb.common.models.NotificationFactory"],
+                kwargs={"url": url, "database": database},
+                daemon=True,
+            )
+            cls._workers[database] = p
+            p.start()
 
     @classmethod
     def register(cls, followerclass, messageclasses):
@@ -981,7 +993,13 @@ class NotificationFactory:
         return decorator
 
     @classmethod
-    def autodiscover(cls):
+    def start(cls, url=None, database=DEFAULT_DB_ALIAS):
+        """
+        Every server process will have at most 1 worker processes for each database.
+        The worker process is spawned by the multiprocessing module and runs this method.
+        """
+        # Find all notification registrations
+        cls._reg = {}
         for app in reversed(settings.INSTALLED_APPS):
             try:
                 import_module("%s.notifications" % app)
@@ -992,16 +1010,6 @@ class NotificationFactory:
                     "No module named '%s.notifications'" % app,
                 ):
                     raise e
-
-    @classmethod
-    def generate(cls, url=None, database=DEFAULT_DB_ALIAS):
-        """
-        Every server process will have at most 1 worker thread for each database.
-        But multiple processes can be active in parallel.
-        """
-        if not cls._discovery_has_run:
-            cls.autodiscover()
-            cls._discovery_has_run = True
 
         try:
             from .middleware import _thread_locals
@@ -1019,7 +1027,8 @@ class NotificationFactory:
                             .using(database)
                             .filter(processed=False)
                             .order_by("id")
-                            .select_for_update(skip_locked=True)[:40]
+                            .select_related("content_type")
+                            .select_for_update(skip_locked=True, of=("self",))[:50]
                         ):
                             empty = False
                             recipients = set()
@@ -1028,40 +1037,40 @@ class NotificationFactory:
                                 meta = cls._reg.get(
                                     msg.content_type.model_class(), None
                                 )
-                                if not meta:
-                                    continue
-                                for flw in followers:
-                                    if (
-                                        flw.content_type.model_class()
-                                        not in meta["followers"]
-                                    ):
-                                        continue
-                                    for c in meta["functions"]:
-                                        try:
-                                            if flw.user not in created and (
-                                                flw.object_pk == "all" or c(flw, msg)
-                                            ):
-                                                Notification(
-                                                    comment=msg,
-                                                    user=flw.user,
-                                                    type=flw.type,
-                                                    follower=flw,
-                                                ).save(database)
-                                                if (
-                                                    flw.type == "M"
-                                                    and flw.user.email
-                                                    and settings.EMAIL_HOST
+                                if meta:
+                                    for flw in followers:
+                                        if (
+                                            flw.content_type.model_class()
+                                            not in meta["followers"]
+                                        ):
+                                            continue
+                                        for c in meta["functions"]:
+                                            try:
+                                                if flw.user not in created and (
+                                                    flw.object_pk == "all"
+                                                    or c(flw, msg)
                                                 ):
-                                                    recipients.add(flw.user.email)
-                                                created.add(flw.user)
-                                                break
-                                        except Exception as e:
-                                            logger.error(
-                                                "Exception in notification function %s: %s"
-                                                % (c, e)
-                                            )
+                                                    Notification(
+                                                        comment=msg,
+                                                        user=flw.user,
+                                                        type=flw.type,
+                                                        follower=flw,
+                                                    ).save(database)
+                                                    if (
+                                                        flw.type == "M"
+                                                        and flw.user.email
+                                                        and settings.EMAIL_HOST
+                                                    ):
+                                                        recipients.add(flw.user.email)
+                                                    created.add(flw.user)
+                                                    break
+                                            except Exception as e:
+                                                logger.error(
+                                                    "Exception in notification function %s: %s"
+                                                    % (c, e)
+                                                )
                                 msg.processed = True
-                                msg.save(using=database)
+                                msg.save(update_fields=["processed"], using=database)
                                 if recipients:
                                     data = msg.getMail(url, database)
                                     email = mail.EmailMultiAlternatives(
@@ -1112,7 +1121,12 @@ class NotificationFactory:
         finally:
             for db in settings.DATABASES:
                 connections[db].close()
-            cls._worker_active.remove(database)
+
+    @classmethod
+    def join(cls):
+        while cls._workers:
+            w = next(iter(cls._workers.keys()))
+            cls._workers.pop(w).join()
 
 
 class Bucket(AuditModel):

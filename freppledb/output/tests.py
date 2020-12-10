@@ -15,7 +15,6 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-from django.http import StreamingHttpResponse
 from django.test import TestCase
 
 from freppledb.common.tests import checkResponse

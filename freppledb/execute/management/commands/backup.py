@@ -29,7 +29,7 @@ from django.template.loader import render_to_string
 from freppledb.execute.models import Task
 from freppledb.common.middleware import _thread_locals
 from freppledb.common.models import User
-from freppledb import VERSION
+from freppledb import __version__
 
 
 class Command(BaseCommand):
@@ -47,7 +47,7 @@ class Command(BaseCommand):
     requires_system_checks = False
 
     def get_version(self):
-        return VERSION
+        return __version__
 
     def add_arguments(self, parser):
         parser.add_argument("--user", help="User running the command")

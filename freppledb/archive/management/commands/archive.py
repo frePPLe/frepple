@@ -21,7 +21,7 @@ from dateutil.parser import parse
 from django.db import DEFAULT_DB_ALIAS, connections
 from django.core.management.base import BaseCommand
 
-from freppledb import VERSION
+from freppledb import __version__
 from freppledb.archive.models import ArchiveManager
 from freppledb.common.models import Parameter
 
@@ -34,7 +34,7 @@ class Command(BaseCommand):
     requires_system_checks = False
 
     def get_version(self):
-        return VERSION
+        return __version__
 
     def add_arguments(self, parser):
         parser.add_argument(

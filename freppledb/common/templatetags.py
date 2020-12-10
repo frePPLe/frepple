@@ -33,7 +33,7 @@ from django.utils.safestring import mark_safe
 from django.utils.text import capfirst
 
 from freppledb.common.models import User, Follower
-from freppledb import VERSION
+from freppledb import __version__
 
 MAX_CRUMBS = 10
 
@@ -347,7 +347,7 @@ def version():
     """
     A simple tag returning the version of the frePPLe application.
     """
-    return VERSION
+    return __version__
 
 
 @register.simple_tag
@@ -355,7 +355,7 @@ def version_short():
     """
     A simple tag returning the version of the frePPLe application.
     """
-    versionnumber = VERSION.split(".", 2)
+    versionnumber = __version__.split(".", 2)
     return "%s.%s" % (versionnumber[0], versionnumber[1])
 
 

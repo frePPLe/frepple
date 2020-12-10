@@ -64,7 +64,7 @@ from .report import GridReport, GridFieldLastModified, GridFieldText, GridFieldB
 from .report import GridFieldDateTime, GridFieldInteger, getCurrency, GridFieldChoice
 
 from freppledb.admin import data_site
-from freppledb import VERSION
+from freppledb import __version__
 
 import logging
 
@@ -76,7 +76,7 @@ def AboutView(request):
     return HttpResponse(
         content=json.dumps(
             {
-                "version": VERSION,
+                "version": __version__,
                 "apps": settings.INSTALLED_APPS,
                 "website": settings.DOCUMENTATION_URL,
             }

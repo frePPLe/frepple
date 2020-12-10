@@ -33,7 +33,7 @@ import freppledb.common.commands
 from freppledb.common.middleware import _thread_locals
 from freppledb.common.models import User
 from freppledb.execute.models import Task
-from freppledb import VERSION
+from freppledb import __version__
 
 
 class Command(BaseCommand):
@@ -43,7 +43,7 @@ class Command(BaseCommand):
     requires_system_checks = False
 
     def get_version(self):
-        return VERSION
+        return __version__
 
     @staticmethod
     def process_exists(pid):

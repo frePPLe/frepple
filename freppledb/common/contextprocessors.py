@@ -30,6 +30,6 @@ def debug(request):
     return {
         "debug": settings.DEBUG,
         "debug_js": settings.DEBUG_JS,
-        "VERSION": freppledb.VERSION,
+        "VERSION": freppledb.__version__,
         "tzoffset": request.COOKIES.get("tzoffset", None),
     }

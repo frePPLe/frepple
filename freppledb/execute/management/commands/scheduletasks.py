@@ -32,7 +32,7 @@ from django.template.loader import render_to_string
 from django.utils.translation import gettext_lazy as _
 
 from ...models import ScheduledTask, Task
-from freppledb import VERSION
+from freppledb import __version__
 from freppledb.common.middleware import _thread_locals
 from freppledb.common.models import User
 from freppledb.common.report import GridReport
@@ -51,7 +51,7 @@ class Command(BaseCommand):
     requires_system_checks = False
 
     def get_version(self):
-        return VERSION
+        return __version__
 
     def add_arguments(self, parser):
         super().add_arguments(parser)

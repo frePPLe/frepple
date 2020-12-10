@@ -31,7 +31,7 @@ from django.utils.text import capfirst
 from django.utils.encoding import force_text
 from django.template.loader import render_to_string
 
-from freppledb import VERSION
+from freppledb import __version__
 from freppledb.common.middleware import _thread_locals
 from freppledb.common.models import User, Comment
 from freppledb.common.report import GridReport, matchesModelName
@@ -68,7 +68,7 @@ class Command(BaseCommand):
         parser.add_argument("file", nargs="+", help="workbook file name")
 
     def get_version(self):
-        return VERSION
+        return __version__
 
     def handle(self, **options):
         # Pick up the options

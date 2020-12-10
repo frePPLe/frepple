@@ -15,8 +15,8 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-VERSION = "6.11.0"
-__version__ = VERSION
+__version__ = "6.11.0"  # Standard way, see pep-0396
+VERSION = __version__  # Old custom way, deprecated
 
 
 def runCommand(taskname, *args, **kwargs):

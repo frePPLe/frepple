@@ -32,7 +32,7 @@ from django.utils.translation import gettext_lazy as _
 from freppledb.common.middleware import _thread_locals
 from freppledb.common.models import User
 from freppledb.common.report import GridReport
-from freppledb import VERSION
+from freppledb import __version__
 from freppledb.execute.models import Task
 from freppledb.output.views import resource
 from freppledb.output.views import buffer
@@ -151,7 +151,7 @@ class Command(BaseCommand):
     ]
 
     def get_version(self):
-        return VERSION
+        return __version__
 
     def add_arguments(self, parser):
         parser.add_argument("--user", help="User running the command")

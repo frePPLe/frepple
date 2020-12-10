@@ -20,7 +20,7 @@ from django.utils.translation import gettext_lazy as _
 import freppledb.common.views
 from freppledb.common.models import User, Bucket, BucketDetail, Parameter, Comment
 from freppledb.menu import menu
-from freppledb import VERSION
+from freppledb import __version__
 
 
 # Settings menu
@@ -83,7 +83,7 @@ menu.addItem(
 )
 
 # Help menu
-versionnumber = VERSION.split(".", 2)
+versionnumber = __version__.split(".", 2)
 docurl = "%s/docs/%s.%s/index.html" % (
     settings.DOCUMENTATION_URL,
     versionnumber[0],

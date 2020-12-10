@@ -37,7 +37,7 @@ from django.utils.translation import gettext_lazy as _
 from freppledb.execute.models import Task
 from freppledb.common.middleware import _thread_locals
 from freppledb.common.report import GridReport, matchesModelName
-from freppledb import VERSION
+from freppledb import __version__
 from freppledb.common.dataload import parseCSVdata, parseExcelWorksheet
 from freppledb.common.models import User
 from freppledb.common.report import EXCLUDE_FROM_BULK_OPERATIONS, create_connection
@@ -69,7 +69,7 @@ class Command(BaseCommand):
         )
 
     def get_version(self):
-        return VERSION
+        return __version__
 
     def handle(self, **options):
         # Pick up the options

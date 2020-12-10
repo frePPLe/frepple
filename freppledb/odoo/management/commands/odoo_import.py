@@ -21,7 +21,7 @@ from django.db import DEFAULT_DB_ALIAS
 from django.utils.translation import gettext_lazy as _
 from django.template import Template, RequestContext
 
-from freppledb import VERSION
+from freppledb import __version__
 
 
 class Command(BaseCommand):
@@ -31,7 +31,7 @@ class Command(BaseCommand):
     requires_system_checks = False
 
     def get_version(self):
-        return VERSION
+        return __version__
 
     def add_arguments(self, parser):
         parser.add_argument("--user", help="User running the command")

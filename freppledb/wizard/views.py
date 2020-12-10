@@ -24,7 +24,7 @@ from django.utils.translation import gettext_lazy as _
 from django.views import View
 from django.views.generic.base import TemplateView
 
-from freppledb import VERSION
+from freppledb import __version__
 from freppledb.common.report import getCurrency
 from freppledb.common.models import Bucket, Parameter
 from freppledb.input.models import (
@@ -86,7 +86,7 @@ def Home(request):
 
 
 def getWizardSteps(request, mode):
-    versionnumber = VERSION.split(".", 2)
+    versionnumber = __version__.split(".", 2)
     context = {
         "docroot": "%s/docs/%s.%s"
         % (settings.DOCUMENTATION_URL, versionnumber[0], versionnumber[1]),

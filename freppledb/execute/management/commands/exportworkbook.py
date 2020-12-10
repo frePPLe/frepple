@@ -19,7 +19,7 @@ from django.core.management.base import BaseCommand
 from django.utils.translation import gettext_lazy as _
 from django.template.loader import render_to_string
 
-from freppledb import VERSION
+from freppledb import __version__
 
 
 class Command(BaseCommand):
@@ -34,7 +34,7 @@ class Command(BaseCommand):
        """
 
     def get_version(self):
-        return VERSION
+        return __version__
 
     requires_system_checks = False
     title = _("Export a spreadsheet")

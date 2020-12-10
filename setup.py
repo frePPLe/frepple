@@ -68,7 +68,7 @@ if len(sys.argv) > 1 and sys.argv[1] == "bdist_wininst":
 
 setup(
     name="freppledb",
-    version=__import__("freppledb").VERSION,
+    version=__import__("freppledb").__version__,
     author="frepple.com",
     author_email="info@frepple.com",
     url="http://frepple.com",

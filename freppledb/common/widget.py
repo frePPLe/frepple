@@ -24,7 +24,7 @@ from django.utils.text import capfirst
 from django.utils.timesince import timesince
 from django.utils.translation import gettext_lazy as _
 
-from freppledb import VERSION
+from freppledb import __version__
 from freppledb.common.dashboard import Dashboard, Widget
 from freppledb.common.models import Notification
 
@@ -38,7 +38,7 @@ class WelcomeWidget(Widget):
     def render(self, request=None):
         from freppledb.common.middleware import _thread_locals
 
-        versionnumber = VERSION.split(".", 2)
+        versionnumber = __version__.split(".", 2)
         try:
             db = _thread_locals.request.database
             if not db or db == DEFAULT_DB_ALIAS:
@@ -150,8 +150,8 @@ class InboxWidget(Widget):
     """ % (
         "true" if "freppledb.forecast" in settings.INSTALLED_APPS else "false",
         "true" if "freppledb.inventoryplanning" in settings.INSTALLED_APPS else "false",
-        VERSION.split(".", 2)[0],
-        VERSION.split(".", 2)[1],
+        __version__.split(".", 2)[0],
+        __version__.split(".", 2)[1],
     )
 
 

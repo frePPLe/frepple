@@ -56,7 +56,7 @@ class ExecuteSQL(View):
         return render(
             request,
             reportclass.template,
-            {"title": _("Execute SQL statements"), "reportkey": reportclass.reportkey},
+            {"title": _("Execute SQL"), "reportkey": reportclass.reportkey},
         )
 
     @method_decorator(staff_member_required)

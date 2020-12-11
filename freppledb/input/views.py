@@ -1804,7 +1804,7 @@ class ResourceList(GridReport):
         GridFieldText(
             "efficiency_calendar",
             # Translator: xgettext:no-python-format
-            title=_("efficiency %% calendar"),
+            title=_("efficiency % calendar"),
             initially_hidden=True,
             field_name="efficiency_calendar__name",
             formatter="detail",

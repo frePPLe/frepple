@@ -13,5 +13,4 @@ Field        Type              Description
 ============ ================= ===========================================================
 name         non-empty string  | Unique name of the skill.
                                | This is the key field and a required attribute.
-resources    list of resources A read-only list of all resources having this skill.
 ============ ================= ===========================================================

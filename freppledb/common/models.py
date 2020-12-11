@@ -669,9 +669,9 @@ def delete_user(sender, instance, **kwargs):
 
 class Comment(models.Model):
     type_list = (
-        ("add", _("add")),
-        ("change", _("change")),
-        ("delete", _("delete")),
+        ("add", _("Add")),
+        ("change", _("Change")),
+        ("delete", _("Delete")),
         ("comment", _("comment")),
     )
     id = models.AutoField(_("identifier"), primary_key=True)

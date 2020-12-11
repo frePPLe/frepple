@@ -77,7 +77,7 @@
             </div>
          </div>
          <div class="col-xs-6">
-         <input data-field="task-arguments" class="form-control" type="text" placeholder="{% trans "Arguments" %}" value="{{ t.arguments }}">
+         <input data-field="task-arguments" class="form-control" type="text" placeholder="{% trans "arguments"|capfirst %}" value="{{ t.arguments }}">
          </div>
          <div class="col-xs-1">
          <input data-field="task-abort-on-failure" type="checkbox" value="1" {% if t.abort_on_failure %}checked{% endif %}
@@ -179,7 +179,7 @@
             </div>
          </div>
          <div class="col-xs-6">
-         <input data-field="task-arguments" class="form-control" type="text" placeholder="{% trans "Arguments" %}">
+         <input data-field="task-arguments" class="form-control" type="text" placeholder="{% trans "arguments"|capfirst %}">
          </div>
          <div class="col-xs-1">
          <input data-field="task-abort-on-failure" type="checkbox" value="1" data-delay="500"

@@ -698,6 +698,7 @@ class Resource(AuditModel, HierarchyModel):
         help_text=_("Setup of the resource at the start of the plan"),
     )
     efficiency = models.DecimalField(
+        # Translator: xgettext:no-python-format
         _("efficiency %"),
         null=True,
         blank=True,
@@ -707,6 +708,7 @@ class Resource(AuditModel, HierarchyModel):
     )
     efficiency_calendar = models.ForeignKey(
         Calendar,
+        # Translator: xgettext:no-python-format
         verbose_name=_("efficiency % calendar"),
         related_name="+",
         null=True,

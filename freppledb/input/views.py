@@ -1799,9 +1799,11 @@ class ResourceList(GridReport):
         ),
         GridFieldText("setup", title=_("setup"), initially_hidden=True),
         GridFieldText("source", title=_("source"), initially_hidden=True),
+        # Translator: xgettext:no-python-format
         GridFieldNumber("efficiency", title=_("efficiency %"), formatter="percentage"),
         GridFieldText(
             "efficiency_calendar",
+            # Translator: xgettext:no-python-format
             title=_("efficiency %% calendar"),
             initially_hidden=True,
             field_name="efficiency_calendar__name",

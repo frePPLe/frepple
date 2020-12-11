@@ -19,6 +19,12 @@
      {% trans "operation materials"|capfirst %}&nbsp;<i class="fa fa-caret-right"></i></a>
   </p></div>
 </div>
+<div class="row">
+  <div class="control-label col-md-3"><p>
+     <a href="{{ request.prefix }}/data/input/operation/?owner={{ object_id | urlencode }}&noautofilter">
+     {% trans "suboperations"|capfirst %}&nbsp;<i class="fa fa-caret-right"></i></a>
+  </p></div>
+</div>
 </fieldset>
 {% endif %}
 {% endblock %}

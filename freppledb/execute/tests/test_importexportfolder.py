@@ -25,6 +25,7 @@ from django.db import DEFAULT_DB_ALIAS
 from django.test import TransactionTestCase
 
 from freppledb.input.models import ManufacturingOrder, PurchaseOrder, DistributionOrder
+from freppledb.common.models import Notification
 
 
 class execute_with_commands(TransactionTestCase):
@@ -41,6 +42,7 @@ class execute_with_commands(TransactionTestCase):
 
     def tearDown(self):
         rmtree(self.datafolder)
+        Notification.wait()
         del os.environ["FREPPLE_TEST"]
 
     def test_exportimportfromfolder(self):

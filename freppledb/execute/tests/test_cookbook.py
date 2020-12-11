@@ -22,22 +22,22 @@ from django.core import management
 from django.http.response import StreamingHttpResponse
 from django.test import TransactionTestCase
 
-from freppledb.common.models import User
+from freppledb.common.models import User, Notification
 import freppledb.input
 
 
 class cookbooktest(TransactionTestCase):
     def setUp(self):
-        # Make sure the test database is used
         os.environ["FREPPLE_TEST"] = "YES"
+        if not User.objects.filter(username="admin").count():
+            User.objects.create_superuser("admin", "your@company.com", "admin")
 
     def tearDown(self):
+        Notification.wait()
         del os.environ["FREPPLE_TEST"]
 
     def loadExcel(self, *filepath):
         # Login
-        if not User.objects.filter(username="admin").count():
-            User.objects.create_superuser("admin", "your@company.com", "admin")
         self.client.login(username="admin", password="admin")
         try:
             with open(os.path.join(*filepath), "rb") as myfile:

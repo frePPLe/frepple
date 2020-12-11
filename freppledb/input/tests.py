@@ -74,6 +74,7 @@ class DataLoadTest(TestCase):
         self.client.login(username="admin", password="admin")
 
     def tearDown(self):
+        Notification.wait()
         del os.environ["FREPPLE_TEST"]
 
     def test_demo_data(self):
@@ -223,6 +224,7 @@ class ExcelTest(TransactionTestCase):
         os.environ["FREPPLE_TEST"] = "YES"
 
     def tearDown(self):
+        Notification.wait()
         del os.environ["FREPPLE_TEST"]
         if os.path.exists("workbook.xlsx"):
             os.remove("workbook.xlsx")
@@ -417,6 +419,7 @@ class freppleREST(APITestCase):
         os.environ["FREPPLE_TEST"] = "YES"
 
     def tearDown(self):
+        Notification.wait()
         del os.environ["FREPPLE_TEST"]
 
     def test_api_listpages_getapi(self):
@@ -790,6 +793,7 @@ class NotificationTest(TransactionTestCase):
         os.environ["FREPPLE_TEST"] = "YES"
 
     def tearDown(self):
+        Notification.wait()
         del os.environ["FREPPLE_TEST"]
 
     def test_performance(self):

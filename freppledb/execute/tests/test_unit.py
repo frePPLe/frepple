@@ -30,7 +30,7 @@ from django.test import TransactionTestCase
 import freppledb.output as output
 import freppledb.input as input
 import freppledb.common as common
-from freppledb.common.models import Parameter, User
+from freppledb.common.models import Parameter, User, Notification
 
 
 class execute_with_commands(TransactionTestCase):
@@ -46,6 +46,7 @@ class execute_with_commands(TransactionTestCase):
             User.objects.create_superuser("admin", "your@company.com", "admin")
 
     def tearDown(self):
+        Notification.wait()
         del os.environ["FREPPLE_TEST"]
 
     def test_run_cmd(self):
@@ -108,6 +109,7 @@ class execute_multidb(TransactionTestCase):
         param.save()
 
     def tearDown(self):
+        Notification.wait()
         del os.environ["FREPPLE_TEST"]
 
     def test_multidb_cmd(self):
@@ -220,6 +222,7 @@ class execute_simulation(TransactionTestCase):
         param.save()
 
     def tearDown(self):
+        Notification.wait()
         del os.environ["FREPPLE_TEST"]
 
     @unittest.skip("Needs validation")
@@ -262,6 +265,7 @@ class remote_commands(TransactionTestCase):
             User.objects.create_superuser("admin", "your@company.com", "admin")
 
     def tearDown(self):
+        Notification.wait()
         del os.environ["FREPPLE_TEST"]
 
     def test_remote_command(self):

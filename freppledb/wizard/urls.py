@@ -14,12 +14,12 @@ from django.urls import path
 from .views import (
     Home,
     CheckSupplyPath,
-    Odoo,
-    SendUsDataset,
+    FeatureDashboard,
     WizardLoad,
     SendSurveyMail,
     QuickStartProduction,
 )
+
 
 # Automatically add these URLs when the application is installed
 autodiscover = True
@@ -30,4 +30,5 @@ urlpatterns = [
     url(r"^wizard/supplypath/", CheckSupplyPath),
     path(r"wizard/load/<str:mode>/", WizardLoad),
     url(r"^wizard/sendsurveymail/$", SendSurveyMail.action),
+    path(r"wizard/features/", FeatureDashboard.as_view()),
 ]

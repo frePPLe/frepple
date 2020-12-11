@@ -93,6 +93,11 @@
 
   $(function() {
 
+    if(location.hash != null && location.hash != "") {
+        $("#tasks .collapse").removeClass('in');
+        $("#tasks").find('.collapse[data-task="' + location.hash + '"]').addClass("in");
+    }
+        
     {% if not "refresh" in preferences or preferences.refresh %}
     // Refresh the grid every 5 seconds
     refresh = setInterval(function() {
@@ -210,7 +215,7 @@ loadComplete : function(data) {
             </a>
           </h4>
         </div>
-        <div id="{{ forloop.counter }}Accord" class="panel-collapse collapse {% if forloop.counter == 1 %}in{% endif %}" role="tabpanel" aria-labelledby="{{ forloop.counter }}Heading">
+        <div id="{{ forloop.counter }}Accord" data-task="#{{ command.name }}" class="panel-collapse collapse {% if forloop.counter == 1 %}in{% endif %}" role="tabpanel" aria-labelledby="{{ forloop.counter }}Heading">
           <div class="panel-body">
             {{ HTMLcode }}
           </div>

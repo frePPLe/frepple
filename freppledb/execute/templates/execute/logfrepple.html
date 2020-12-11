@@ -1,9 +1,11 @@
 {% extends "admin/base_site_nav.html" %}
 {% load i18n %}
 {% block tools %}
+<h1 class="pull-right">
 <button class="btn btn-xs btn-primary pull-right" style="margin-bottom: 10px" onclick="location.href='{{request.prefix}}/execute/logdownload/{{taskid}}/'" data-toggle="tooltip" data-placement="top" data-original-title="{% trans 'download complete log file'|capfirst %}">
   <span class="fa fa-arrow-down"></span>
 </button>
+</h1>
 {% endblock %}
 {% block content %}
 <div class="row">

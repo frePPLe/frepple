@@ -1510,19 +1510,11 @@ class QuickStartProduction(View):
             return HttpResponseServerError("Error creating supply path")
 
 
-class SendUsDataset(TemplateView):
-    template_name = "wizard/send_us_dataset.html"
+class FeatureDashboard(TemplateView):
+    template_name = "wizard/features.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["title"] = "Get started - Send us a dataset"
+        context["title"] = "Explore features"
         return context
 
-
-class Odoo(TemplateView):
-    template_name = "wizard/odoo.html"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["title"] = "Get started - Connect to your Odoo"
-        return context

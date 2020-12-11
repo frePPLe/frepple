@@ -10,7 +10,7 @@
   type="text" size="15" oninput="grid.showFilterList(this)" onkeydown="grid.keyDownSearch(event)">
 <span class="input-group-btn">
 <button class="btn btn-default fa fa-search" onclick="event.stopPropagation(); grid.showFilter()"
-  data-toggle="tooltip" data-placement="top" data-original-title="{% trans "Search editor" %}"/>
+  data-toggle="tooltip" data-placement="top" data-original-title="{% trans "Filter editor" %}"/>
 </span>
 </div>
 </span>
@@ -223,7 +223,7 @@ $(function() {
   {% endif %}
   {% if reportclass.editable and haschangeperm %}
 	    <button class="btn btn-xs btn-primary" onclick="import_show('', undefined, true)" >
-        <span id="csvimport" data-toggle="tooltip" data-placement="top" title="{% trans 'import CSV or Excel file'|capfirst|force_escape %}" class="fa fa-arrow-up"></span>
+        <span id="csvimport" data-toggle="tooltip" data-placement="top" title="{% trans 'Import CSV or Excel file'|force_escape %}" class="fa fa-arrow-up"></span>
 	    </button>
   {% endif %}
 		  <button class="btn btn-xs btn-primary" onclick="grid.showExport(false,{{ scenario_permissions }})" >

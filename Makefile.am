@@ -31,7 +31,7 @@ uninstall-local:
 	-rm -rf $(DESTDIR)$(bindir)/frepplectl
 
 clean-local:
-	-rm -rf install-test *.exe
+	-rm -rf install-test *.exe frepple-*.tar.gz
 	-rm -rf `find . -name '__pycache__'`
 	-rm -rf build dist static node_modules
 

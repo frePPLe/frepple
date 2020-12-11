@@ -121,7 +121,7 @@ class Location_admin(MultiDBModelAdmin):
     fieldsets = (
         (None, {"fields": ("name", "owner")}),
         (
-            _("Advanced"),
+            _("advanced"),
             {
                 "fields": ["description", "category", "subcategory", "available"]
                 + [a[0] for a in getAttributes(Location) if a[3]],
@@ -172,7 +172,7 @@ class Customer_admin(MultiDBModelAdmin):
     fieldsets = (
         (None, {"fields": ("name", "description", "owner")}),
         (
-            _("Advanced"),
+            _("advanced"),
             {
                 "fields": ["category", "subcategory"]
                 + [a[0] for a in getAttributes(Location) if a[3]],
@@ -203,7 +203,7 @@ class Supplier_admin(MultiDBModelAdmin):
     fieldsets = (
         (None, {"fields": ("name", "description")}),
         (
-            _("Advanced"),
+            _("advanced"),
             {
                 "fields": ["category", "subcategory"]
                 + [a[0] for a in getAttributes(Supplier) if a[3]],
@@ -240,7 +240,7 @@ class Item_admin(MultiDBModelAdmin):
     fieldsets = (
         (None, {"fields": ("name", "description", "cost", "owner")}),
         (
-            _("Advanced"),
+            _("advanced"),
             {
                 "fields": ["category", "subcategory", "type"]
                 + [a[0] for a in getAttributes(Item) if a[3]],
@@ -284,7 +284,7 @@ class ItemSupplier_admin(MultiDBModelAdmin):
     fieldsets = (
         (None, {"fields": ("item", "supplier", "location", "leadtime", "cost")}),
         (
-            _("Advanced"),
+            _("advanced"),
             {
                 "fields": [
                     "sizeminimum",
@@ -325,7 +325,7 @@ class ItemDistribution_admin(MultiDBModelAdmin):
     fieldsets = (
         (None, {"fields": ("item", "location", "origin", "leadtime")}),
         (
-            _("Advanced"),
+            _("advanced"),
             {
                 "fields": [
                     "sizeminimum",
@@ -380,7 +380,7 @@ class Operation_admin(MultiDBModelAdmin):
             },
         ),
         (
-            _("Advanced"),
+            _("advanced"),
             {
                 "fields": [
                     "description",
@@ -664,7 +664,7 @@ class OperationMaterial_admin(MultiDBModelAdmin):
     fieldsets = (
         (None, {"fields": ("operation", "item", "type", "quantity")}),
         (
-            _("Advanced"),
+            _("advanced"),
             {
                 "fields": [
                     "quantity_fixed",
@@ -705,7 +705,7 @@ class OperationResource_admin(MultiDBModelAdmin):
     fieldsets = (
         (None, {"fields": ("operation", "resource", "quantity")}),
         (
-            _("Advanced"),
+            _("advanced"),
             {
                 "fields": [
                     "skill",
@@ -949,7 +949,7 @@ class Demand_admin(MultiDBModelAdmin):
             },
         ),
         (
-            _("Advanced"),
+            _("advanced"),
             {
                 "fields": [
                     "description",

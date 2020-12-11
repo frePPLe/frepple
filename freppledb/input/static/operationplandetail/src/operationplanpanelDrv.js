@@ -35,11 +35,11 @@ function showoperationplanDrv($window, gettextCatalog) {
   function linkfunc(scope, elem, attrs) {
     scope.actions = actions;  	
     scope.opptype={ //just a translation
-      'MO': gettextCatalog.getString('Manufacturing Order'),
-      'PO': gettextCatalog.getString('Purchase Order'),
-      'DO': gettextCatalog.getString('Distribution Order'),
-      'STCK': gettextCatalog.getString('Stock'),
-      'DLVR': gettextCatalog.getString('Delivery'),
+      'MO': gettextCatalog.getString('manufacturing Order'),
+      'PO': gettextCatalog.getString('purchase Order'),
+      'DO': gettextCatalog.getString('distribution Order'),
+      'STCK': gettextCatalog.getString('stock'),
+      'DLVR': gettextCatalog.getString('delivery'),
     }
     //need to watch all of these because a webservice may change them on the fly
     scope.$watchGroup(['operationplan.id','operationplan.start','operationplan.end','operationplan.quantity','operationplan.criticality','operationplan.delay','operationplan.status'], function (newValue,oldValue) {

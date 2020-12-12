@@ -20,7 +20,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2020-04-04 12:52+0200\n"
+"PO-Revision-Date: 2020-12-12 16:22+0100\n"
 "Last-Translator: Joao Ranita <jranita@frepple.com>\n"
 "Language-Team: frepple\n"
 "Language: zh_CN\n"
@@ -28,7 +28,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Poedit 2.0.6\n"
+"X-Generator: Poedit 2.4.2\n"
 
 #: freppledb/planningboard/static/planningboard/src/ganttchart.js:518
 #: freppledb/planningboard/static/planningboard/src/ganttchart.js:551
@@ -85,17 +85,9 @@ msgstr ""
 "                        项目子类别应填写在项目表中。\n"
 "                        <br><br>"
 
-#: freppledb/forecast/static/forecast/forecast.html:304
-msgid "Apply"
-msgstr ""
-
 #: freppledb/forecast/static/forecast/forecast.html:383
 msgid "Automatic"
 msgstr "自动"
-
-#: freppledb/planningboard/static/planningboard/planningboard.html:47
-msgid "Automatically resolve infeasiblities in the plan"
-msgstr ""
 
 #: freppledb/forecast/static/forecast/src/forecast.js:892
 msgid "Available Cross"
@@ -166,12 +158,6 @@ msgstr "先要保存更改吗?"
 #: freppledb/planningboard/static/planningboard/planningboard.html:717
 msgid "Duplicate"
 msgstr "重複"
-
-#: freppledb/quoting/static/quoting/quoting.html:30
-#: freppledb/quoting/static/quoting/quoting.html:43
-#: freppledb/quoting/static/quoting/quoting.html:56
-msgid "Enter your search terms"
-msgstr ""
 
 #: freppledb/forecast/static/forecast/forecast.html:426
 msgid "Estimated forecast error"
@@ -305,7 +291,7 @@ msgstr "保存"
 
 #: freppledb/forecast/static/forecast/forecast.html:153
 msgid "Save changes to the database"
-msgstr "先保存或取消你的变动。"
+msgstr "先保存或取消你的变动"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:153
 msgid "Save plan from memory to the database"
@@ -319,10 +305,6 @@ msgstr "周期性的"
 msgid ""
 "Select forecast method, only possible at single item/location/customer level"
 msgstr "选择预报方法，只可能在单个产品/地点/客户级别"
-
-#: freppledb/forecast/static/forecast/forecast.html:49
-msgid "Select panel measure"
-msgstr ""
 
 #: freppledb/forecast/static/forecast/forecast.html:5
 msgid "Select panel sequence"
@@ -396,7 +378,7 @@ msgstr "撤销"
 
 #: freppledb/forecast/static/forecast/forecast.html:154
 msgid "Undo changes"
-msgstr "取消更改 "
+msgstr "取消更改"
 
 #: freppledb/planningboard/static/planningboard/src/grid.js:45
 msgid "action"
@@ -412,10 +394,6 @@ msgstr "总计"
 #: freppledb/planningboard/static/planningboard/planningboard.html:683
 msgid "approved"
 msgstr "经核准的"
-
-#: freppledb/planningboard/static/planningboard/planningboard.html:235
-msgid "approved: {{aggregatedoperationplans.status.approved }}"
-msgstr ""
 
 #: freppledb/forecast/static/forecast/forecast.html:164
 #: freppledb/planningboard/static/planningboard/planningboard.html:158
@@ -443,10 +421,6 @@ msgstr "类别"
 msgid "closed"
 msgstr "已结束"
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:244
-msgid "closed: {{aggregatedoperationplans.status.closed }}"
-msgstr ""
-
 #: freppledb/planningboard/static/planningboard/planningboard.html:11
 msgid "color by"
 msgstr "颜色的"
@@ -458,17 +432,6 @@ msgstr "颜色"
 #: freppledb/forecast/static/forecast/forecast.html:170
 msgid "comments"
 msgstr "评论"
-
-#: freppledb/input/static/operationplandetail/operationplanpanel.html:124
-#: freppledb/planningboard/static/planningboard/planningboard.html:443
-#: freppledb/planningboard/static/planningboard/planningboard.html:567
-#: freppledb/planningboard/static/planningboard/planningboard.html:692
-msgid "completed"
-msgstr ""
-
-#: freppledb/planningboard/static/planningboard/planningboard.html:241
-msgid "completed: {{aggregatedoperationplans.status.completed }}"
-msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:68
 msgid "configure time buckets"
@@ -484,10 +447,6 @@ msgstr "确认"
 #: freppledb/planningboard/static/planningboard/planningboard.html:688
 msgid "confirmed"
 msgstr "已确定"
-
-#: freppledb/planningboard/static/planningboard/planningboard.html:238
-msgid "confirmed: {{aggregatedoperationplans.status.confirmed }}"
-msgstr ""
 
 #: freppledb/input/static/operationplandetail/src/supplyinformationDrv.js:40
 msgid "cost"
@@ -606,10 +565,6 @@ msgstr "交期"
 msgid "due date"
 msgstr "交期日"
 
-#: freppledb/forecast/static/forecast/forecast.html:298
-msgid "edit"
-msgstr ""
-
 #: freppledb/input/static/operationplandetail/src/supplyinformationDrv.js:48
 msgid "effective end"
 msgstr "生效结束"
@@ -643,14 +598,6 @@ msgstr "预计数量"
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:126
 msgid "export"
 msgstr "导出"
-
-#: freppledb/planningboard/static/planningboard/planningboard.html:65
-msgid "export as Excel file"
-msgstr ""
-
-#: freppledb/forecast/static/forecast/forecast.html:65
-msgid "favorites"
-msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:15
 msgid "feasibility"
@@ -780,10 +727,6 @@ msgstr "消息"
 msgid "minimum shipment"
 msgstr "最低出货量"
 
-#: freppledb/input/static/operationplandetail/operationplanpanel.html:19
-msgid "multiple selected"
-msgstr ""
-
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:26
 #: freppledb/input/static/operationplandetail/src/bufferspanelDrv.js:31
 #: freppledb/input/static/operationplandetail/src/demandpeggingpanelDrv.js:31
@@ -807,10 +750,6 @@ msgstr ""
 #: freppledb/quoting/static/quoting/quoting.html:15
 msgid "name"
 msgstr "名称"
-
-#: freppledb/input/static/operationplandetail/src/networkstatusDrv.js:29
-msgid "network status"
-msgstr ""
 
 #: freppledb/forecast/static/forecast/forecast.html:245
 msgid "new customer comment"
@@ -836,10 +775,6 @@ msgstr "没有需求"
 msgid "no movements"
 msgstr "没有移动"
 
-#: freppledb/input/static/operationplandetail/src/networkstatusDrv.js:53
-msgid "no network information"
-msgstr ""
-
 #: freppledb/input/static/operationplandetail/src/problemspanelDrv.js:43
 #: freppledb/planningboard/static/planningboard/planningboard.html:998
 msgid "no problems"
@@ -848,14 +783,6 @@ msgstr "没有任何问题"
 #: freppledb/input/static/operationplandetail/src/resourcespanelDrv.js:40
 msgid "no resources"
 msgstr "没有资源"
-
-#: freppledb/input/static/operationplandetail/operationplanpanel.html:18
-msgid "no selection"
-msgstr ""
-
-#: freppledb/input/static/operationplandetail/src/supplyinformationDrv.js:55
-msgid "no supply information"
-msgstr ""
 
 #: freppledb/input/static/operationplandetail/src/networkstatusDrv.js:36
 #: freppledb/planningboard/static/planningboard/planningboard.html:1095
@@ -896,10 +823,6 @@ msgstr "操作计划"
 msgid "operations"
 msgstr "操作"
 
-#: freppledb/input/static/operationplandetail/operationplanpanel.html:64
-msgid "ordering date"
-msgstr ""
-
 #: freppledb/forecast/static/forecast/src/displayForecastGraph.js:196
 #: freppledb/forecast/static/forecast/src/displayForecastGraph.js:217
 msgid "orders adjustment"
@@ -920,10 +843,6 @@ msgstr "过期的销售订单"
 msgid "parameters"
 msgstr "参数"
 
-#: freppledb/forecast/static/forecast/src/displayForecastGraph.js:219
-msgid "past forecast"
-msgstr ""
-
 #: freppledb/input/static/operationplandetail/src/supplyinformationDrv.js:32
 #: freppledb/planningboard/static/planningboard/planningboard.html:24
 #: freppledb/planningboard/static/planningboard/planningboard.html:883
@@ -943,10 +862,6 @@ msgstr "问题"
 #: freppledb/planningboard/static/planningboard/planningboard.html:678
 msgid "proposed"
 msgstr "提议"
-
-#: freppledb/planningboard/static/planningboard/planningboard.html:232
-msgid "proposed: {{aggregatedoperationplans.status.proposed }}"
-msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:192
 msgid "purchase order"
@@ -983,15 +898,6 @@ msgstr "数量"
 msgid "quote"
 msgstr "报价"
 
-#: freppledb/quoting/static/quoting/quoting.html:8
-msgid "quote form"
-msgstr ""
-
-#: freppledb/input/static/operationplandetail/operationplanpanel.html:77
-#: freppledb/input/static/operationplandetail/operationplanpanel.html:78
-msgid "receipt date"
-msgstr ""
-
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:36
 #: freppledb/planningboard/static/planningboard/planningboard.html:1128
 #: freppledb/planningboard/static/planningboard/planningboard.html:358
@@ -999,10 +905,6 @@ msgstr ""
 #: freppledb/planningboard/static/planningboard/src/ganttchart.js:1090
 msgid "reference"
 msgstr "参考"
-
-#: freppledb/planningboard/static/planningboard/planningboard.html:62
-msgid "remove all rows"
-msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:59
 msgid "remove row"
@@ -1026,23 +928,9 @@ msgstr "资源"
 msgid "sales orders"
 msgstr "销售订单"
 
-#: freppledb/forecast/static/forecast/forecast.html:74
-msgid "save"
-msgstr ""
-
 #: freppledb/planningboard/static/planningboard/planningboard.html:1028
 msgid "setup"
 msgstr "换线准备"
-
-#: freppledb/planningboard/static/planningboard/planningboard.html:385
-#: freppledb/planningboard/static/planningboard/planningboard.html:513
-#: freppledb/planningboard/static/planningboard/planningboard.html:633
-msgid "setup end"
-msgstr ""
-
-#: freppledb/input/static/operationplandetail/operationplanpanel.html:65
-msgid "shipping date"
-msgstr ""
 
 #: freppledb/input/static/operationplandetail/src/supplyinformationDrv.js:42
 msgid "size minimum"
@@ -1084,27 +972,15 @@ msgstr "状态"
 msgid "subcategory"
 msgstr "子类别"
 
-#: freppledb/input/static/operationplandetail/src/networkstatusDrv.js:61
-msgid "superseded"
-msgstr ""
-
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:44
 #: freppledb/planningboard/static/planningboard/planningboard.html:498
 msgid "supplier"
 msgstr "供应商"
 
-#: freppledb/input/static/operationplandetail/src/supplyinformationDrv.js:29
-msgid "supply information"
-msgstr ""
-
 #: freppledb/forecast/static/forecast/src/displayForecastGraph.js:192
 #: freppledb/forecast/static/forecast/src/displayForecastGraph.js:213
 msgid "total orders"
 msgstr "订单总数"
-
-#: freppledb/input/static/operationplandetail/src/supplyinformationDrv.js:34
-msgid "types"
-msgstr ""
 
 #: freppledb/forecast/static/forecast/forecast.html:446
 #: freppledb/input/static/operationplandetail/operationplandetail.html:48
@@ -1123,11 +999,3 @@ msgstr "放大"
 #: freppledb/planningboard/static/planningboard/planningboard.html:56
 msgid "zoom out"
 msgstr "缩小"
-
-#: freppledb/planningboard/static/planningboard/planningboard.html:196
-msgid "{{ aggregatedoperationplans.count }} selected"
-msgstr ""
-
-#: freppledb/forecast/static/forecast/forecast.html:316
-msgid "{{m.label}}"
-msgstr ""

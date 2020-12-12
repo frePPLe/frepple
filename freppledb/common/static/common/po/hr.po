@@ -15,7 +15,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2020-08-21 13:56+0200\n"
+"PO-Revision-Date: 2020-12-12 16:09+0100\n"
 "Last-Translator: Blago Čuljak <blago.culjak@hotmail.com>\n"
 "Language-Team: klaus\n"
 "Language: hr\n"
@@ -23,62 +23,15 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 2.0.1\n"
+"X-Generator: Poedit 2.4.2\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Poedit 2.4.1\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 
-#: freppledb/planningboard/static/planningboard/src/ganttchart.js:518
-#: freppledb/planningboard/static/planningboard/src/ganttchart.js:551
-msgid "%s allocated out of %s"
-msgstr ""
-
-#: freppledb/planningboard/static/planningboard/planningboard.html:1262
-#: freppledb/planningboard/static/planningboard/planningboard.html:1283
-#: freppledb/planningboard/static/planningboard/planningboard.html:1301
-msgid "Add to the graph"
-msgstr ""
-
-#: freppledb/planningboard/static/planningboard/planningboard.html:1488
-msgid ""
-"An operation gets the color of its category.<br>\n"
-"                        The operation categories should be filled in the "
-"operation table.\n"
-"                        <br><br>"
-msgstr ""
-
-#: freppledb/planningboard/static/planningboard/planningboard.html:1523
-msgid ""
-"An operation gets the color of its subcategory.<br>\n"
-"                        The operation subcategories should be filled in the "
-"operation table.\n"
-"                        <br><br>"
-msgstr ""
-
-#: freppledb/planningboard/static/planningboard/planningboard.html:1420
-msgid ""
-"An operation gets the color the category of the item it produces.<br>\n"
-"                        The item categories should be filled in the item "
-"table.\n"
-"                        <br><br>"
-msgstr ""
-
-#: freppledb/planningboard/static/planningboard/planningboard.html:1454
-msgid ""
-"An operation gets the color the subcategory of the item it produces.<br>\n"
-"                        The item subcategories should be filled in the item "
-"table.\n"
-"                        <br><br>"
-msgstr ""
-
 #: freppledb/forecast/static/forecast/forecast.html:383
 msgid "Automatic"
 msgstr "Automatski"
-
-#: freppledb/planningboard/static/planningboard/planningboard.html:47
-msgid "Automatically resolve infeasiblities in the plan"
-msgstr ""
 
 #: freppledb/forecast/static/forecast/src/forecast.js:892
 msgid "Available Cross"
@@ -96,25 +49,10 @@ msgstr "Zatvori"
 msgid "Configure time buckets"
 msgstr "Konfiguriranje vremenskih skupova"
 
-#: freppledb/forecast/static/forecast/forecast.html:455
-#: freppledb/input/static/operationplandetail/operationplandetail.html:62
-#: freppledb/planningboard/static/planningboard/planningboard.html:142
-#: freppledb/quoting/static/quoting/quoting.html:227
-msgid "Continue"
-msgstr ""
-
-#: freppledb/planningboard/static/planningboard/planningboard.html:1332
-msgid "Criticality color setup"
-msgstr ""
-
 #: freppledb/forecast/static/forecast/forecast.html:79
 #: freppledb/forecast/static/forecast/src/forecast.js:878
 msgid "Customize"
 msgstr "Prilagodi"
-
-#: freppledb/planningboard/static/planningboard/planningboard.html:1360
-msgid "Delay color setup"
-msgstr ""
 
 #: freppledb/forecast/static/forecast/src/forecastgridDrv.js:36
 msgid "Demand outlier"
@@ -126,20 +64,6 @@ msgstr "Demand outlier"
 msgid "Do you want to save your changes first?"
 msgstr "Želite li najprije spremiti promjene?"
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:264
-#: freppledb/planningboard/static/planningboard/planningboard.html:343
-#: freppledb/planningboard/static/planningboard/planningboard.html:467
-#: freppledb/planningboard/static/planningboard/planningboard.html:591
-#: freppledb/planningboard/static/planningboard/planningboard.html:717
-msgid "Duplicate"
-msgstr ""
-
-#: freppledb/quoting/static/quoting/quoting.html:30
-#: freppledb/quoting/static/quoting/quoting.html:43
-#: freppledb/quoting/static/quoting/quoting.html:56
-msgid "Enter your search terms"
-msgstr ""
-
 #: freppledb/forecast/static/forecast/forecast.html:372
 msgid "Forecast method"
 msgstr "Metod prognoze"
@@ -149,14 +73,6 @@ msgstr "Metod prognoze"
 msgid "Help"
 msgstr "Pomoć"
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:1414
-msgid "Item category color setup"
-msgstr ""
-
-#: freppledb/planningboard/static/planningboard/planningboard.html:1448
-msgid "Item subcategory color setup"
-msgstr ""
-
 #: freppledb/forecast/static/forecast/forecast.html:408
 msgid "Manual"
 msgstr "Ručno"
@@ -165,101 +81,17 @@ msgstr "Ručno"
 msgid "OK"
 msgstr "OK"
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:1517
-msgid "Operation subcategory color setup"
-msgstr ""
-
-#: freppledb/planningboard/static/planningboard/planningboard.html:1256
-#: freppledb/planningboard/static/planningboard/planningboard.html:818
-#: freppledb/planningboard/static/planningboard/src/planningboard.js:235
-msgid "Plan selected demands backward from their due date"
-msgstr ""
-
-#: freppledb/planningboard/static/planningboard/planningboard.html:1259
-#: freppledb/planningboard/static/planningboard/planningboard.html:821
-#: freppledb/planningboard/static/planningboard/src/planningboard.js:236
-msgid "Plan selected demands forward from the current date"
-msgstr ""
-
-#: freppledb/input/static/operationplandetail/operationplandetail.html:57
-#: freppledb/planningboard/static/planningboard/planningboard.html:137
-msgid "Please be patient, the chart may take some time to complete."
-msgstr ""
-
-#: freppledb/planningboard/static/planningboard/planningboard.html:1392
-msgid ""
-"Priority is a demand property, available in the demands table. The priority "
-"value will have effect in the plan results.<br>\n"
-"                        The highest priority value is 0, and the greater the "
-"value the lower the priority.\n"
-"                        <br><br>"
-msgstr ""
-
 #: freppledb/forecast/static/forecast/forecast.html:156
 msgid "Recalculate"
 msgstr "Preračunaj"
-
-#: freppledb/planningboard/static/planningboard/planningboard.html:815
-msgid "Remove this demand from planning"
-msgstr ""
 
 #: freppledb/forecast/static/forecast/src/forecast.js:903
 msgid "Reset"
 msgstr "Poništi"
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:153
-msgid "Save plan from memory to the database"
-msgstr ""
-
-#: freppledb/forecast/static/forecast/forecast.html:376
-msgid ""
-"Select forecast method, only possible at single item/location/customer level"
-msgstr ""
-
-#: freppledb/forecast/static/forecast/forecast.html:5
-msgid "Select panel sequence"
-msgstr ""
-
 #: freppledb/forecast/static/forecast/src/forecast.js:884
 msgid "Selected Cross"
 msgstr "Izabrani križ"
-
-#: freppledb/planningboard/static/planningboard/planningboard.html:270
-#: freppledb/planningboard/static/planningboard/planningboard.html:349
-#: freppledb/planningboard/static/planningboard/planningboard.html:473
-#: freppledb/planningboard/static/planningboard/planningboard.html:597
-#: freppledb/planningboard/static/planningboard/planningboard.html:723
-msgid "Split in half"
-msgstr ""
-
-#: freppledb/input/static/operationplandetail/src/operationplanpanelDrv.js:33
-msgid "Stock"
-msgstr ""
-
-#: freppledb/input/static/operationplandetail/operationplandetail.html:56
-#: freppledb/planningboard/static/planningboard/planningboard.html:136
-msgid "The Gantt chart is limited to {{rowlimit}} rows."
-msgstr ""
-
-#: freppledb/planningboard/static/planningboard/planningboard.html:1337
-msgid ""
-"The criticality of an operationplan measures the slack time available till "
-"the delivery of the customer demand.<br>\n"
-"                        A criticality of 0 indicates that the order is on "
-"the critical path of one or more demands.<br>\n"
-"                        Higher criticality values indicate that a delay will "
-"not immediately impact the delivery of any demand.\n"
-"                        <br><br>"
-msgstr ""
-
-#: freppledb/planningboard/static/planningboard/planningboard.html:1365
-msgid ""
-"The delay of an operationplan compares its end date with the delivery due "
-"date of the customer demand(s) it feeds.<br>\n"
-"                        This also consider the duration of the follow-up "
-"operations still required to produce the finished end item.\n"
-"                        <br><br>"
-msgstr ""
 
 #: freppledb/forecast/static/forecast/forecast.html:154
 msgid "Undo"
@@ -271,10 +103,6 @@ msgstr "Poništi"
 #: freppledb/planningboard/static/planningboard/planningboard.html:683
 msgid "approved"
 msgstr "odobreno"
-
-#: freppledb/planningboard/static/planningboard/planningboard.html:235
-msgid "approved: {{aggregatedoperationplans.status.approved }}"
-msgstr ""
 
 #: freppledb/forecast/static/forecast/forecast.html:164
 #: freppledb/planningboard/static/planningboard/planningboard.html:158
@@ -302,17 +130,9 @@ msgstr "kategorija"
 msgid "closed"
 msgstr "zatvoreno"
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:244
-msgid "closed: {{aggregatedoperationplans.status.closed }}"
-msgstr ""
-
 #: freppledb/forecast/static/forecast/forecast.html:170
 msgid "comments"
 msgstr "Komentar"
-
-#: freppledb/planningboard/static/planningboard/planningboard.html:241
-msgid "completed: {{aggregatedoperationplans.status.completed }}"
-msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:68
 msgid "configure time buckets"
@@ -324,10 +144,6 @@ msgstr "Konfiguriraj vremenske skupove"
 #: freppledb/planningboard/static/planningboard/planningboard.html:688
 msgid "confirmed"
 msgstr "potvrđeno"
-
-#: freppledb/planningboard/static/planningboard/planningboard.html:238
-msgid "confirmed: {{aggregatedoperationplans.status.confirmed }}"
-msgstr ""
 
 #: freppledb/input/static/operationplandetail/src/supplyinformationDrv.js:40
 msgid "cost"
@@ -357,12 +173,6 @@ msgstr "kupac"
 #: freppledb/forecast/static/forecast/forecast.html:120
 msgid "customers"
 msgstr "partner"
-
-#: freppledb/forecast/static/forecast/forecast.html:447
-#: freppledb/input/static/operationplandetail/operationplandetail.html:50
-#: freppledb/planningboard/static/planningboard/planningboard.html:130
-msgid "database transaction failed"
-msgstr ""
 
 #: freppledb/input/static/operationplandetail/src/bufferspanelDrv.js:37
 #: freppledb/planningboard/static/planningboard/planningboard.html:1098
@@ -476,11 +286,6 @@ msgstr "override prognoze"
 #: freppledb/forecast/static/forecast/src/displayForecastGraph.js:202
 msgid "forecast total"
 msgstr "ukupno prognozirano"
-
-#: freppledb/input/static/operationplandetail/operationplandetail.html:49
-#: freppledb/planningboard/static/planningboard/planningboard.html:129
-msgid "gantt chart rows limit"
-msgstr ""
 
 #: freppledb/quoting/static/quoting/quoting.html:94
 msgid "inquiry"
@@ -634,10 +439,6 @@ msgstr "Problemi"
 msgid "proposed"
 msgstr "predloženo"
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:232
-msgid "proposed: {{aggregatedoperationplans.status.proposed }}"
-msgstr ""
-
 #: freppledb/planningboard/static/planningboard/planningboard.html:192
 msgid "purchase order"
 msgstr "narudžbenica"
@@ -672,14 +473,6 @@ msgstr "količina"
 #: freppledb/quoting/static/quoting/quoting.html:96
 msgid "quote"
 msgstr "quote"
-
-#: freppledb/planningboard/static/planningboard/planningboard.html:62
-msgid "remove all rows"
-msgstr ""
-
-#: freppledb/planningboard/static/planningboard/src/planningboard.js:234
-msgid "remove this demand from planning"
-msgstr ""
 
 #: freppledb/input/static/operationplandetail/src/resourcespanelDrv.js:28
 #: freppledb/planningboard/static/planningboard/planningboard.html:164
@@ -727,10 +520,6 @@ msgstr "Status"
 msgid "subcategory"
 msgstr "podkategorija"
 
-#: freppledb/input/static/operationplandetail/src/networkstatusDrv.js:61
-msgid "superseded"
-msgstr ""
-
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:44
 #: freppledb/planningboard/static/planningboard/planningboard.html:498
 msgid "supplier"
@@ -752,7 +541,3 @@ msgstr "povećaj"
 #: freppledb/planningboard/static/planningboard/planningboard.html:56
 msgid "zoom out"
 msgstr "smanje"
-
-#: freppledb/planningboard/static/planningboard/planningboard.html:196
-msgid "{{ aggregatedoperationplans.count }} selected"
-msgstr ""

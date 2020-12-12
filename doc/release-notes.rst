@@ -1,6 +1,17 @@
 Release notes
 -------------
 
+6.11.0 (Upcoming release)
+=========================
+
+.. rubric:: User interface
+
+- | FrePPLe now uses machine-assisted translations.
+  | As a user, you will no longer see a partially translated user interface. Instead
+    you'll see a completely translated user interface, with a few translations that are a bit off.
+  | As a translator, your task is now simpler. You no longer need to type everything from scratch.
+    Instead you'll just need to review the pre-translated strings and correct them where needed.
+
 6.10.0 (2020/12/06)
 ===================
 

@@ -36,8 +36,11 @@ For translators
    - Simplified Chinese: https://raw.githubusercontent.com/frePPLe/frepple/master/freppledb/locale/zh-hans/zh-hans.po
    - Traditional Chinese: https://raw.githubusercontent.com/frePPLe/frepple/master/freppledb/locale/zh-hant/zh-hant.po
 
-  Open the file with the editor you installed in step 1, and start translating.
-
+  Open the file with the editor you installed in step 1, and start translating. The terms will
+  already "pre-translated" with an automated translation engine. Your job as a translator is to
+  review the pre-translated strings (marked as "needs work"), change them where needed and remove
+  the "needs work" flag. 
+  
   Some strings may include HTML tags or Python code, e.g.:
 
        %(title)s for %(entity)s
@@ -73,6 +76,9 @@ For developers
 
   The possible language codes can be found on the `World Wide Web Consortium <http://www.w3.org/TR/REC-html40/struct/dirlang.html#langcodes>`_.
 
+  You can contact the frepple team and ask them to help you with a pre-translated file. It will makes the
+  translation job much easier and faster.
+  
   If you want to create installation packages including the new language then the installer also needs
   updating. The files *contrib/installer/parameters.ini* and *contrib/installer/frepple.nsi* need straightforward
   editing.

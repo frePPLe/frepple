@@ -36,16 +36,16 @@ def runCommand(taskname, *args, **kwargs):
     django.setup()
 
     # Be sure to use the correct database
+    from django.conf import settings
     from django.db import DEFAULT_DB_ALIAS, connections
     from freppledb.common.middleware import _thread_locals
+    from threading import local
 
     database = kwargs.get("database", DEFAULT_DB_ALIAS)
     setattr(_thread_locals, "database", database)
+    connections._connections = local()
     if "FREPPLE_TEST" in os.environ:
-        from django.conf import settings
-
         for db in settings.DATABASES:
-            connections[db].close()
             settings.DATABASES[db]["NAME"] = settings.DATABASES[db]["TEST"]["NAME"]
 
     # Run the command
@@ -86,17 +86,18 @@ def runFunction(func, *args, **kwargs):
     import django
 
     django.setup()
+
     # Be sure to use the correct database
+    from django.conf import settings
     from django.db import DEFAULT_DB_ALIAS, connections
     from freppledb.common.middleware import _thread_locals
+    from threading import local
 
     database = kwargs.get("database", DEFAULT_DB_ALIAS)
     setattr(_thread_locals, "database", database)
+    connections._connections = local()
     if "FREPPLE_TEST" in os.environ:
-        from django.conf import settings
-
         for db in settings.DATABASES:
-            connections[db].close()
             settings.DATABASES[db]["NAME"] = settings.DATABASES[db]["TEST"]["NAME"]
 
     # Run the function

@@ -248,6 +248,15 @@
       <location name="factory"/>
       <minshipment>30</minshipment>
     </demand>
+    <demand name="ignore me">
+      <status>closed</status>
+      <quantity>20</quantity>
+      <due>2009-01-05T00:00:00</due>
+      <priority>1</priority>
+      <item name="item G" />
+      <location name="factory"/>
+      <minshipment>30</minshipment>
+    </demand>
   </demands>
 
 <?python

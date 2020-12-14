@@ -877,6 +877,7 @@
       <xsd:element name="minshipment" type="positiveDouble" />
       <xsd:element name="maxlateness" type="xsd:duration" />
       <xsd:element name="detectproblems" type="xsd:boolean" />
+      <xsd:element name="status" type="xsd:string" />
       <xsd:element name="owner" type="demand" />
       <xsd:element name="members">
         <xsd:complexType>
@@ -897,6 +898,7 @@
     <xsd:attribute name="detectproblems" type="xsd:boolean" />
     <xsd:attribute name="maxlateness" type="xsd:duration" />
     <xsd:attribute name="minshipment" type="positiveDouble" />
+    <xsd:attribute name="status" type="xsd:string" />
   </xsd:complexType>
 
   <xsd:complexType name="demandlist">

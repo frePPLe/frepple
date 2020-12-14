@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-12-12 15:51+0100\n"
-"PO-Revision-Date: 2020-12-12 16:27+0100\n"
+"PO-Revision-Date: 2020-12-14 15:58+0100\n"
 "Last-Translator: Joao Ranita <jranita@frepple.com>\n"
 "Language-Team: frepple\n"
 "Language: fr\n"
@@ -1944,37 +1944,37 @@ msgstr "Exporter la base de données dans un fichier."
 #: execute/templates/commands/createbuckets.html:33 input/models.py:93
 #: input/views.py:3497
 msgid "Monday"
-msgstr "lundi"
+msgstr "Lundi"
 
 #: execute/templates/commands/createbuckets.html:32 input/models.py:99
 #: input/views.py:3503
 msgid "Sunday"
-msgstr "dimanche"
+msgstr "Dimanche"
 
 #: execute/templates/commands/createbuckets.html:34 input/models.py:94
 #: input/views.py:3498
 msgid "Tuesday"
-msgstr "mardi"
+msgstr "Mardi"
 
 #: execute/templates/commands/createbuckets.html:35 input/models.py:95
 #: input/views.py:3499
 msgid "Wednesday"
-msgstr "mercredi"
+msgstr "Mercredi"
 
 #: execute/templates/commands/createbuckets.html:36 input/models.py:96
 #: input/views.py:3500
 msgid "Thursday"
-msgstr "jeudi"
+msgstr "Jeudi"
 
 #: execute/templates/commands/createbuckets.html:37 input/models.py:97
 #: input/views.py:3501
 msgid "Friday"
-msgstr "vendredi"
+msgstr "Vendredi"
 
 #: execute/templates/commands/createbuckets.html:38 input/models.py:98
 #: input/views.py:3502
 msgid "Saturday"
-msgstr "samedi"
+msgstr "Samedi"
 
 #: execute/templates/commands/createbuckets.html:50
 msgid "week name"
@@ -2137,31 +2137,31 @@ msgstr "heure de début"
 
 #: execute/templates/commands/scheduletasks.html:116
 msgid "Mon"
-msgstr "lun"
+msgstr "Lun"
 
 #: execute/templates/commands/scheduletasks.html:119
 msgid "Tue"
-msgstr "mar"
+msgstr "Mar"
 
 #: execute/templates/commands/scheduletasks.html:122
 msgid "Wed"
-msgstr "mer"
+msgstr "Mer"
 
 #: execute/templates/commands/scheduletasks.html:125
 msgid "Thu"
-msgstr "jeu"
+msgstr "Jeu"
 
 #: execute/templates/commands/scheduletasks.html:128
 msgid "Fri"
-msgstr "ven"
+msgstr "Ven"
 
 #: execute/templates/commands/scheduletasks.html:131
 msgid "Sat"
-msgstr "sam"
+msgstr "Sam"
 
 #: execute/templates/commands/scheduletasks.html:134
 msgid "Sun"
-msgstr "dim"
+msgstr "Dim"
 
 #: execute/templates/execute/execute.html:42
 msgid "done"
@@ -2245,7 +2245,7 @@ msgstr ""
 
 #: execute/views.py:1198
 msgid "Unsupported file format."
-msgstr "Format de fichier non supporté"
+msgstr "Format de fichier non supporté."
 
 #: execute/widget.py:22
 msgid "Generate a constrained plan"
@@ -2516,27 +2516,27 @@ msgstr "Pas de champ éditable trouvé"
 
 #: forecast/models.py:714
 msgid "total orders 3 years ago"
-msgstr "Total des ordres il y a 3 ans"
+msgstr "total des commandes il y a 3 ans"
 
 #: forecast/models.py:723
 msgid "orders adjustment 3 years ago"
-msgstr "Ajustement des ordres il y a 3 ans"
+msgstr "ajustement des commandes il y a 3 ans"
 
 #: forecast/models.py:753
 msgid "total orders 2 years ago"
-msgstr "Total des ordres il y a 2 ans"
+msgstr "total des commandes il y a 2 ans"
 
 #: forecast/models.py:762
 msgid "orders adjustment 2 years ago"
-msgstr "Ajustement des ordres il y a 2 ans"
+msgstr "ajustement des commandes il y a 2 ans"
 
 #: forecast/models.py:792
 msgid "total orders 1 years ago"
-msgstr "Total des ordres il y a 1 an"
+msgstr "total des commandes il y a 1 an"
 
 #: forecast/models.py:801
 msgid "orders adjustment 1 years ago"
-msgstr "Ajustement des ordres il y a 1 an"
+msgstr "ajustement des commandes il y a 1 an"
 
 #: forecast/models.py:831 forecast/templates/forecast/forecast.html:260
 #: inventoryplanning/templates/inventoryplanning/drp.html:1564
@@ -2545,7 +2545,7 @@ msgstr "Ajustement des ordres il y a 1 an"
 #: inventoryplanning/templates/inventoryplanning/drp.html:1621
 #: inventoryplanning/templates/inventoryplanning/drp.html:1702
 msgid "total orders"
-msgstr "Total des ordres"
+msgstr "total des commandes"
 
 #: forecast/models.py:839 forecast/templates/forecast/forecast.html:259
 #: inventoryplanning/templates/inventoryplanning/drp.html:1566
@@ -2554,7 +2554,7 @@ msgstr "Total des ordres"
 #: inventoryplanning/templates/inventoryplanning/drp.html:1623
 #: inventoryplanning/templates/inventoryplanning/drp.html:1701
 msgid "open orders"
-msgstr "Ordres ouverts"
+msgstr "commandes ouvertes"
 
 #: forecast/models.py:848
 #: inventoryplanning/templates/inventoryplanning/drp.html:1568
@@ -3560,7 +3560,7 @@ msgstr "opérations planifiées"
 
 #: input/models.py:1931
 msgid "load status"
-msgstr "Statut du chargement"
+msgstr "statut du chargement"
 
 #: input/models.py:1936
 msgid "Status of the resource assignment"
@@ -3825,24 +3825,22 @@ msgstr "calculé"
 #: inventoryplanning/models.py:55 inventoryplanning/models.py:114
 #: inventoryplanning/views.py:208 inventoryplanning/views.py:250
 msgid "ROQ minimum quantity"
-msgstr "quantité minimale de point de réapprovisionnement"
+msgstr "quantité minimale de réapprovisionnement"
 
 #: inventoryplanning/models.py:62 inventoryplanning/models.py:121
 #: inventoryplanning/views.py:213 inventoryplanning/views.py:256
 msgid "ROQ maximum quantity"
-msgstr "quantité maximale de point de réapprovisionnement"
+msgstr "quantité maximale de réapprovisionnement"
 
 #: inventoryplanning/models.py:69 inventoryplanning/models.py:128
 #: inventoryplanning/views.py:216 inventoryplanning/views.py:263
 msgid "ROQ minimum period of cover"
-msgstr ""
-"quantité minimale de périodes de couvertures de point de réapprovisionnement"
+msgstr "réapprovisionnement minimum période de couverture"
 
 #: inventoryplanning/models.py:72 inventoryplanning/models.py:133
 #: inventoryplanning/views.py:217 inventoryplanning/views.py:270
 msgid "ROQ maximum period of cover"
-msgstr ""
-"quantité maximale de périodes de couvertures de point de réapprovisionnement"
+msgstr "réapprovisionnement maximum période de couverture"
 
 #: inventoryplanning/models.py:75 inventoryplanning/views.py:239
 msgid "lead time deviation"

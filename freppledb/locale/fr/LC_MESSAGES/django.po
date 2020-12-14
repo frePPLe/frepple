@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-12-12 15:51+0100\n"
-"PO-Revision-Date: 2020-12-14 15:58+0100\n"
+"PO-Revision-Date: 2020-12-14 15:55+0100\n"
 "Last-Translator: Joao Ranita <jranita@frepple.com>\n"
 "Language-Team: frepple\n"
 "Language: fr\n"
@@ -202,7 +202,7 @@ msgstr "emplacement"
 #: input/views.py:4878 input/views.py:5550 input/views.py:5870
 #: input/views.py:6389 input/views.py:6861 output/views/buffer.py:226
 msgid "batch"
-msgstr ""
+msgstr "batch"
 
 #: archive/models.py:65 archive/models.py:89 forecast/views.py:410
 #: forecast/views.py:1827 input/models.py:201 input/models.py:330
@@ -2516,27 +2516,27 @@ msgstr "Pas de champ éditable trouvé"
 
 #: forecast/models.py:714
 msgid "total orders 3 years ago"
-msgstr "total des commandes il y a 3 ans"
+msgstr "total des ordres il y a 3 ans"
 
 #: forecast/models.py:723
 msgid "orders adjustment 3 years ago"
-msgstr "ajustement des commandes il y a 3 ans"
+msgstr "ajustement des ordres il y a 3 ans"
 
 #: forecast/models.py:753
 msgid "total orders 2 years ago"
-msgstr "total des commandes il y a 2 ans"
+msgstr "total des ordres il y a 2 ans"
 
 #: forecast/models.py:762
 msgid "orders adjustment 2 years ago"
-msgstr "ajustement des commandes il y a 2 ans"
+msgstr "ajustement des ordres il y a 2 ans"
 
 #: forecast/models.py:792
 msgid "total orders 1 years ago"
-msgstr "total des commandes il y a 1 an"
+msgstr "total des ordres il y a 1 an"
 
 #: forecast/models.py:801
 msgid "orders adjustment 1 years ago"
-msgstr "ajustement des commandes il y a 1 an"
+msgstr "ajustement des ordres il y a 1 an"
 
 #: forecast/models.py:831 forecast/templates/forecast/forecast.html:260
 #: inventoryplanning/templates/inventoryplanning/drp.html:1564
@@ -2545,7 +2545,7 @@ msgstr "ajustement des commandes il y a 1 an"
 #: inventoryplanning/templates/inventoryplanning/drp.html:1621
 #: inventoryplanning/templates/inventoryplanning/drp.html:1702
 msgid "total orders"
-msgstr "total des commandes"
+msgstr "total des ordres"
 
 #: forecast/models.py:839 forecast/templates/forecast/forecast.html:259
 #: inventoryplanning/templates/inventoryplanning/drp.html:1566
@@ -2554,7 +2554,7 @@ msgstr "total des commandes"
 #: inventoryplanning/templates/inventoryplanning/drp.html:1623
 #: inventoryplanning/templates/inventoryplanning/drp.html:1701
 msgid "open orders"
-msgstr "commandes ouvertes"
+msgstr "ordres ouverts"
 
 #: forecast/models.py:848
 #: inventoryplanning/templates/inventoryplanning/drp.html:1568
@@ -3830,17 +3830,17 @@ msgstr "quantité minimale de réapprovisionnement"
 #: inventoryplanning/models.py:62 inventoryplanning/models.py:121
 #: inventoryplanning/views.py:213 inventoryplanning/views.py:256
 msgid "ROQ maximum quantity"
-msgstr "quantité maximale de réapprovisionnement"
+msgstr "quantité maximale réapprovisionnement"
 
 #: inventoryplanning/models.py:69 inventoryplanning/models.py:128
 #: inventoryplanning/views.py:216 inventoryplanning/views.py:263
 msgid "ROQ minimum period of cover"
-msgstr "réapprovisionnement minimum période de couverture"
+msgstr "réapprovisionnement minimal période de couverture"
 
 #: inventoryplanning/models.py:72 inventoryplanning/models.py:133
 #: inventoryplanning/views.py:217 inventoryplanning/views.py:270
 msgid "ROQ maximum period of cover"
-msgstr "réapprovisionnement maximum période de couverture"
+msgstr "réapprovisionnement maximal période de couverture"
 
 #: inventoryplanning/models.py:75 inventoryplanning/views.py:239
 msgid "lead time deviation"
@@ -4339,7 +4339,7 @@ msgstr "Nombre invalide"
 #: inventoryplanning/views.py:2156
 #, python-format
 msgid "Changed %s."
-msgstr ""
+msgstr "%s changé(s)."
 
 #: inventoryplanning/views.py:2183
 msgid "No forecast found"

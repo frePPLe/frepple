@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2020-12-12 16:27+0100\n"
+"PO-Revision-Date: 2020-12-14 15:55+0100\n"
 "Last-Translator: Joao Ranita <jranita@frepple.com>\n"
 "Language-Team: frepple\n"
 "Language: fr\n"
@@ -501,7 +501,7 @@ msgstr "client"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:195
 msgid "customer delivery"
-msgstr "Livraison de client"
+msgstr "livraison client"
 
 #: freppledb/forecast/static/forecast/forecast.html:120
 msgid "customers"
@@ -783,7 +783,7 @@ msgstr "statut de stock"
 
 #: freppledb/forecast/static/forecast/forecast.html:245
 msgid "new customer comment"
-msgstr "Nouveau commentaire client"
+msgstr "nouveau commentaire client"
 
 #: freppledb/forecast/static/forecast/forecast.html:242
 msgid "new item comment"
@@ -839,7 +839,7 @@ msgstr "stock au temps d'approvisionnement"
 #: freppledb/forecast/static/forecast/src/displayForecastGraph.js:194
 #: freppledb/forecast/static/forecast/src/displayForecastGraph.js:215
 msgid "open orders"
-msgstr "Ordres ouverts"
+msgstr "ordres ouverts"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1131
 msgid "operation"
@@ -966,7 +966,7 @@ msgstr "supprimer la ligne"
 
 #: freppledb/planningboard/static/planningboard/src/planningboard.js:234
 msgid "remove this demand from planning"
-msgstr "Supprimer cette commande du planning"
+msgstr "supprimer cette commande du planning"
 
 #: freppledb/input/static/operationplandetail/src/resourcespanelDrv.js:28
 #: freppledb/planningboard/static/planningboard/planningboard.html:164
@@ -1052,7 +1052,7 @@ msgstr "information de réapprovisionnement"
 #: freppledb/forecast/static/forecast/src/displayForecastGraph.js:192
 #: freppledb/forecast/static/forecast/src/displayForecastGraph.js:213
 msgid "total orders"
-msgstr "Total des ordres"
+msgstr "total des ordres"
 
 #: freppledb/input/static/operationplandetail/src/supplyinformationDrv.js:34
 msgid "types"

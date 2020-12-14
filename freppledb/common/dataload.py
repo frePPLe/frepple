@@ -279,7 +279,9 @@ def _parseData(model, data, rowmapper, user, database, ping):
     rownumber = 0
     changed = 0
     added = 0
-    content_type_id = ContentType.objects.get_for_model(model).pk
+    content_type_id = ContentType.objects.get_for_model(
+        model, for_concrete_model=False
+    ).pk
 
     # Call the beforeUpload method if it is defined
     if hasattr(model, "beforeUpload"):

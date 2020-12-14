@@ -160,7 +160,7 @@ class MultiDBModelAdmin(admin.ModelAdmin):
         """
         Log that an object has been successfully added.
         """
-        content_type = ContentType.objects.get_for_model(obj)
+        content_type = ContentType.objects.get_for_model(obj, for_concrete_model=False)
         entry = Comment(
             user_id=request.user.pk,
             content_type_id=content_type.pk,
@@ -178,7 +178,7 @@ class MultiDBModelAdmin(admin.ModelAdmin):
         """
         if not message:
             return
-        content_type = ContentType.objects.get_for_model(obj)
+        content_type = ContentType.objects.get_for_model(obj, for_concrete_model=False)
         if hasattr(obj, "new_pk"):
             # We are renaming an existing object.
             # a) Save the new record in the right database
@@ -222,7 +222,9 @@ class MultiDBModelAdmin(admin.ModelAdmin):
         """
         entry = Comment(
             user_id=request.user.id,
-            content_type_id=ContentType.objects.get_for_model(self.model).pk,
+            content_type_id=ContentType.objects.get_for_model(
+                self.model, for_concrete_model=False
+            ).pk,
             object_pk=str(obj.pk),
             object_repr=object_repr[:200],
             type="delete",

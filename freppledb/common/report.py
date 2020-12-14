@@ -1791,7 +1791,9 @@ class GridReport(View):
         resp = HttpResponse()
         ok = True
         with transaction.atomic(using=request.database, savepoint=False):
-            content_type_id = ContentType.objects.get_for_model(cls.model).pk
+            content_type_id = ContentType.objects.get_for_model(
+                cls.model, for_concrete_model=False
+            ).pk
             for rec in json.JSONDecoder().decode(
                 request.read().decode(request.encoding or settings.DEFAULT_CHARSET)
             ):
@@ -2030,7 +2032,10 @@ class GridReport(View):
             for sql in sql_list:
                 cursor.execute(sql)
             # Erase comments and history
-            content_ids = [ContentType.objects.get_for_model(m) for m in deps]
+            content_ids = [
+                ContentType.objects.get_for_model(m, for_concrete_model=False)
+                for m in deps
+            ]
             Comment.objects.filter(content_type__in=content_ids).delete()
             # Prepare message
             for m in deps:

@@ -656,9 +656,12 @@ void SolverCreate::solveSafetyStock(const Buffer* b, void* v) {
                  data->state->a_date < cur->getDate()) ||
                 (cur == b->getFlowPlans().end() &&
                  data->state->a_date < Date::infiniteFuture)) {
-              if (data->state->a_date > cur_q_date)
-                nextAskDate = data->state->a_date;
-              else
+              if (data->state->a_date > cur_q_date) {
+                auto earliestNext = cur_q_date + getMinimumDelay();
+                nextAskDate = (data->state->a_date > earliestNext)
+                                  ? data->state->a_date
+                                  : earliestNext;
+              } else
                 loop = false;
             } else
               loop = false;

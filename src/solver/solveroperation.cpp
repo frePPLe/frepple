@@ -627,11 +627,19 @@ void SolverCreate::solve(const Operation* oper, void* v) {
     data->push(asked_qty, asked_date, true);
     // Subtract the post-operation time.
     data->state->q_date -= ask_early;
-    createOperation(oper, data, true, true);
+      auto tmpopplan = createOperation(oper, data, true, true);
     data->pop(true);
     repeat = false;
     if (!data->state->a_qty) {
       bm->rollback();
+        if (data->state->curOwnerOpplan &&
+            data->state->curOwnerOpplan->getOperation()
+                ->hasType<OperationRouting>() &&
+            tmpopplan) {
+          // This routing sub-operation opplan is about to be recreated
+          tmpopplan->setOwner(nullptr);
+          delete tmpopplan;
+        }
       if (data->state->a_date <= asked_date && ask_early > Duration(0L)) {
         repeat = true;
         if (ask_early > delta)
@@ -1302,7 +1310,8 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v) {
           }
         }
 
-        if (!sub_flow || (!sub_flow->getQuantityFixed() && !sub_flow->getQuantity())) {
+        if (!sub_flow ||
+            (!sub_flow->getQuantityFixed() && !sub_flow->getQuantity())) {
           // The sub operation doesn't have a flow in the buffer, we're in
           // trouble... Restore the planning mode
           data->constrainedPlanning = originalPlanningMode;

@@ -55,19 +55,20 @@ def CalendarNotification(flw, msg):
     if flw.content_type == msg.content_type:
         return flw.object_pk == msg.object_pk
     elif msg.content_type.model_class() == CalendarBucket:
-        return flw.object_pk == msg.content_object.calendar.name
+        return flw.object_pk == msg.content_object.calendar_id
 
 
 @NotificationFactory.register(
     Location, [Location, Demand, PurchaseOrder, ManufacturingOrder, DistributionOrder]
 )
 def LocationNotification(flw, msg):
+    print("location notif")
     if flw.content_type == msg.content_type:
         return flw.object_pk == msg.object_pk
     elif msg.content_type.model_class() == DistributionOrder:
         return (
-            flw.object_pk == msg.content_object.origin.name
-            or flw.object_pk == msg.content_object.destination.name
+            flw.object_pk == msg.content_object.origin_id
+            or flw.object_pk == msg.content_object.destination_id
         )
     elif msg.content_type.model_class() in (
         Demand,
@@ -75,7 +76,7 @@ def LocationNotification(flw, msg):
         ManufacturingOrder,
         DistributionOrder,
     ):
-        return flw.object_pk == msg.content_object.location.name
+        return flw.object_pk == msg.content_object.location_id
 
 
 @NotificationFactory.register(Customer, [Customer, Demand])
@@ -83,7 +84,7 @@ def CustomerNotification(flw, msg):
     if flw.content_type == msg.content_type:
         return flw.object_pk == msg.object_pk
     elif msg.content_type.model_class() == Demand:
-        return flw.object_pk == msg.content_object.customer.name
+        return flw.object_pk == msg.content_object.customer_id
 
 
 @NotificationFactory.register(Supplier, [Supplier, PurchaseOrder])
@@ -91,22 +92,27 @@ def SupplierNotification(flw, msg):
     if flw.content_type == msg.content_type:
         return flw.object_pk == msg.object_pk
     elif msg.content_type.model_class() == PurchaseOrder:
-        return flw.object_pk == msg.content_object.supplier.name
+        return flw.object_pk == msg.content_object.supplier_id
 
 
 @NotificationFactory.register(
-    Item, [Item, Demand, PurchaseOrder, ManufacturingOrder, DistributionOrder]
-)
-def ItemNotification(flw, msg):
-    if flw.content_type == msg.content_type:
-        return flw.object_pk == msg.object_pk
-    elif msg.content_type.model_class() in (
+    Item,
+    [
+        Item,
         Demand,
         PurchaseOrder,
         ManufacturingOrder,
         DistributionOrder,
-    ):
-        return flw.object_pk == msg.content_object.item.name
+        ItemSupplier,
+        ItemDistribution,
+        Operation,
+    ],
+)
+def ItemNotification(flw, msg):
+    if flw.content_type == msg.content_type:
+        return flw.object_pk == msg.object_pk
+    else:
+        return flw.object_pk == msg.content_object.item_id
 
 
 @NotificationFactory.register(ItemSupplier, [ItemSupplier])
@@ -127,7 +133,7 @@ def OperationNotification(flw, msg):
             or flw.object_pk == msg.content_object.owner.name
         )
     elif msg.content_type.model_class() == ManufacturingOrder:
-        return flw.object_pk == msg.content_object.operation.name
+        return flw.object_pk == msg.content_object.operation_id
 
 
 @NotificationFactory.register(SubOperation, [SubOperation])
@@ -150,7 +156,7 @@ def SetupMatrixNotification(flw, msg):
     if flw.content_type == msg.content_type:
         return flw.object_pk == msg.object_pk
     elif msg.content_type.model_class() == SetupRule:
-        return flw.object_pk == msg.content_object.setupmatrix.name
+        return flw.object_pk == msg.content_object.setupmatrix_id
 
 
 @NotificationFactory.register(Skill, [Skill, ResourceSkill, OperationResource])
@@ -158,7 +164,7 @@ def SkillNotification(flw, msg):
     if flw.content_type == msg.content_type:
         return flw.object_pk == msg.object_pk
     elif msg.content_type.model_class() in (ResourceSkill, OperationResource):
-        return flw.object_pk == msg.content_object.skill.name
+        return flw.object_pk == msg.content_object.skill_id
 
 
 @NotificationFactory.register(ResourceSkill, [ResourceSkill])
@@ -173,7 +179,7 @@ def ResourceNotification(flw, msg):
     if flw.content_type == msg.content_type:
         return flw.object_pk == msg.object_pk
     elif msg.content_type.model_class() in (ResourceSkill, OperationResource):
-        return flw.object_pk == msg.content_object.resource.name
+        return flw.object_pk == msg.content_object.resource_id
     elif msg.content_type.model_class() == ManufacturingOrder:
         for x in msg.content_object.resources.all():
             if flw.object_pk == x.resource_id:

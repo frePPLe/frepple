@@ -791,21 +791,75 @@ class freppleREST(APITestCase):
 class NotificationTest(TransactionTestCase):
     def setUp(self):
         os.environ["FREPPLE_TEST"] = "YES"
+        if not User.objects.filter(username="admin").count():
+            User.objects.create_superuser("admin", "your@company.com", "admin")
 
     def tearDown(self):
         Notification.wait()
         del os.environ["FREPPLE_TEST"]
 
+    def test_follow_item(self):
+        user = User.objects.create_user(
+            username="test user",
+            email="tester@yourcompany.com",
+            password="big_secret12345",
+        )
+        Follower(
+            user=user,
+            content_type=ContentType.objects.get(model="item"),
+            object_pk="test item",
+        ).save()
+        for _ in parseCSVdata(
+            Item, [["name", "category"], ["test item", "test category"]], user=user
+        ):
+            pass
+        for _ in parseCSVdata(
+            Item, [["name", "category"], ["test item", "new test category"]], user=user
+        ):
+            pass
+        for _ in parseCSVdata(Supplier, [["name"], ["test supplier"]], user=user):
+            pass
+        for _ in parseCSVdata(
+            ItemSupplier,
+            [["supplier", "item"], ["test supplier", "test item"]],
+            user=user,
+        ):
+            pass
+        for _ in parseCSVdata(
+            PurchaseOrder,
+            [
+                ["reference", "supplier", "item", "quantity", "enddate"],
+                ["PO 1", "test supplier", "test item", "10", "2020-12-31"],
+            ],
+            user=user,
+        ):
+            pass
+        item = Item.objects.get(name="test item")
+        Comment(
+            content_object=item,
+            object_repr=str(item)[:200],
+            user=user,
+            comment="test comment",
+            type="comment",
+        ).save()
+
+        # Check what notifications we got
+        Notification.wait()
+        # for x in Notification.objects.all():
+        #    print(x)
+        self.assertEqual(Notification.objects.count(), 5)
+
     def test_performance(self):
         # Admin user follows all items
-        if not User.objects.filter(username="admin").count():
-            User.objects.create_superuser("admin", "your@company.com", "admin")
         user = User.objects.get(username="admin")
         Follower(
             user=user,
             content_type=ContentType.objects.get(model="item"),
             object_pk="all",
+            type="M",  # The test email backend doesn't send email, so we can't check it
         ).save()
+
+        items = [["item %s" % cnt] for cnt in range(1000)]
 
         # Create 2 users. Each user follows all 1000 items.
         for cnt in range(2):
@@ -815,11 +869,11 @@ class NotificationTest(TransactionTestCase):
                 password="big_secret12345",
                 pk=cnt + 10,
             )
-            for cnt in range(1000):
+            for i in items:
                 Follower(
                     user=u,
                     content_type=ContentType.objects.get(model="item"),
-                    object_pk="item %s" % cnt,
+                    object_pk=i[0],
                 ).save()
         self.assertEqual(User.objects.count(), 3)
         self.assertEqual(Follower.objects.count(), 2001)
@@ -827,17 +881,14 @@ class NotificationTest(TransactionTestCase):
         # Upload CSV data with 1000 items
         # print("start items", datetime.now())
         errors = 0
-        items = [["item %s" % cnt, "test"] for cnt in range(1000)]
-        for error in parseCSVdata(
-            Item, chain([["name", "category"]], items), user=user
-        ):
+        for _ in parseCSVdata(Item, chain([["name"]], items), user=user):
             errors += 1
         self.assertEqual(Item.objects.count(), 1000)
 
         # Upload CSV data with 1000 customers
         # print("start customers", datetime.now())
         customers = [["customer %s" % cnt, "test"] for cnt in range(1000)]
-        for error in parseCSVdata(
+        for _ in parseCSVdata(
             Customer, chain([["name", "category"]], customers), user=user
         ):
             errors += 1
@@ -846,7 +897,7 @@ class NotificationTest(TransactionTestCase):
         # Upload CSV data with 1000 locations
         # print("start locations", datetime.now())
         locations = [["location %s" % cnt, "test"] for cnt in range(1000)]
-        for error in parseCSVdata(
+        for _ in parseCSVdata(
             Location, chain([["name", "category"]], locations), user=user
         ):
             errors += 1
@@ -865,7 +916,7 @@ class NotificationTest(TransactionTestCase):
             ]
             for cnt in range(1000)
         ]
-        for error in parseCSVdata(
+        for _ in parseCSVdata(
             Demand,
             chain(
                 [["name", "item", "customer", "location", "quantity", "due"]], demands

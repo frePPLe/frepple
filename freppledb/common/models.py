@@ -944,6 +944,9 @@ class Notification(models.Model):
         if request and request.user:
             self.user = request.user
 
+    def __str__(self):
+        return "%s: %s" % (self.user.username, self.comment)
+
     @classmethod
     def wait(cls):
         NotificationFactory.join()
@@ -984,10 +987,10 @@ class NotificationFactory:
                         "NotificationFactory needs a class list as second argument"
                     )
                 if m in cls._reg:
-                    cls._reg[m]["functions"].append(func)
+                    cls._reg[m].append(func)
                 else:
-                    cls._reg[m] = {"functions": [func], "followers": set()}
-                cls._reg[m]["followers"].add(followerclass)
+                    cls._reg[m] = [func]
+            func.followers = messageclasses
             return func
 
         return decorator
@@ -1039,16 +1042,16 @@ class NotificationFactory:
                                 )
                                 if meta:
                                     for flw in followers:
-                                        if (
-                                            flw.content_type.model_class()
-                                            not in meta["followers"]
-                                        ):
-                                            continue
-                                        for c in meta["functions"]:
+                                        for c in meta:
                                             try:
-                                                if flw.user not in created and (
-                                                    flw.object_pk == "all"
-                                                    or c(flw, msg)
+                                                if (
+                                                    flw.user not in created
+                                                    and flw.content_type.model_class()
+                                                    in c.followers
+                                                    and (
+                                                        flw.object_pk == "all"
+                                                        or c(flw, msg)
+                                                    )
                                                 ):
                                                     Notification(
                                                         comment=msg,

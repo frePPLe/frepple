@@ -45,6 +45,7 @@ def runCommand(taskname, *args, **kwargs):
     setattr(_thread_locals, "database", database)
     connections._connections = local()
     if "FREPPLE_TEST" in os.environ:
+        settings.EMAIL_BACKEND = "django.core.mail.backends.dummy.EmailBackend"
         for db in settings.DATABASES:
             settings.DATABASES[db]["NAME"] = settings.DATABASES[db]["TEST"]["NAME"]
 
@@ -97,6 +98,7 @@ def runFunction(func, *args, **kwargs):
     setattr(_thread_locals, "database", database)
     connections._connections = local()
     if "FREPPLE_TEST" in os.environ:
+        settings.EMAIL_BACKEND = "django.core.mail.backends.dummy.EmailBackend"
         for db in settings.DATABASES:
             settings.DATABASES[db]["NAME"] = settings.DATABASES[db]["TEST"]["NAME"]
 

@@ -181,6 +181,8 @@ class Command(BaseCommand):
                 "auth_permission",
                 "django_content_type",
                 "common_comment",
+                "common_notification",
+                "common_follower",
                 "common_user_groups",
                 "common_user_user_permissions",
                 "common_preferences",

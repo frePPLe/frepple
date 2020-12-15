@@ -855,6 +855,42 @@ class Comment(models.Model):
             )
 
 
+class SystemMessage(models.Model):
+    """
+    A dummy model without database table.
+    It is used to publish system notifications to users.
+    """
+
+    class Meta:
+        managed = False
+        default_permissions = ()
+
+    @classmethod
+    def add(cls, msg):
+        admin = User.objects.get(username="admin")
+        ct = ContentType.objects.get_for_model(cls)
+        scenarios = [
+            i["name"]
+            for i in Scenario.objects.using(DEFAULT_DB_ALIAS)
+            .filter(status="In use")
+            .values("name")
+            if i["name"] in settings.DATABASES
+        ]
+        for db in scenarios:
+            c = Comment(
+                type="comment",
+                content_type=ct,
+                object_pk="",
+                object_repr="",
+                comment=msg,
+                user=admin,
+                processed=True,
+            )
+            c.save(using=db)
+            for u in User.objects.all():
+                Notification(comment=c, user=u).save(using=db)
+
+
 class Follower(models.Model):
     type_list = (("M", "email"), ("O", "online"))
 
@@ -873,6 +909,7 @@ class Follower(models.Model):
     type = models.CharField(
         _("type"), max_length=10, null=False, default="O", choices=type_list
     )
+    args = JSONBField(blank=True, null=True)
 
     @classmethod
     def xxxgetModelForm(cls, fields, database=DEFAULT_DB_ALIAS):

@@ -106,6 +106,7 @@ class ReportList(GridReport):
     help_url = "user-interface/report-manager.html"
     message_when_empty = Template(
         """
+        {% load i18n %}
         <h3>You didn't find the exact report you need? Do not despair!</h3>
         <br>
         You can add custom reports by writing a SQL query.<br>
@@ -114,7 +115,7 @@ class ReportList(GridReport):
         It will have the same filter, sort and export functionalities as all other reports.<br>
         You can choose to keep the report private or share it with other users.<br>
         <br><br>
-        <a href="{{request.prefix}}/data/reportmanager/sqlreport/add/" class="btn btn-primary">Add a custom report</a>
+        <a href="{{request.prefix}}/data/reportmanager/sqlreport/add/" class="btn btn-primary">{% trans "Add custom report" %}</a>
         <br>
         """
     )
@@ -295,6 +296,7 @@ class ReportManager(GridReport):
             return request.report.name
         else:
             return _("report editor")
+            return _("Add custom report")
 
     @classmethod
     def has_permission(cls, user):
@@ -537,7 +539,9 @@ class ReportManager(GridReport):
     @classmethod
     def extra_context(cls, request, *args, **kwargs):
         return {
-            "title": request.report.name if request.report else cls.title,
+            "title": request.report.name
+            if request.report
+            else cls.title(request, *args, **kwargs),
             "report": getattr(request, "report", None),
         }
 

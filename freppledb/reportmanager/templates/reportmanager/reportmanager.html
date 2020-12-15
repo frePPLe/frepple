@@ -153,6 +153,8 @@ $(function() {
 <button class="btn btn-xs btn-primary" onclick="startEdit()" data-toggle="tooltip" data-placement="top" data-original-title="{% trans 'edit'|capfirst|force_escape %}" ><span class="fa fa-pencil"></span></button>
 {% endblock %}
 
+{% block filter %}{% endblock %}
+
 {% block before_table %}
 
 <div class="row form-group" style="margin-bottom:0">

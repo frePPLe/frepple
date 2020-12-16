@@ -332,12 +332,12 @@ class OdooWritePlan(PlanTask):
             for i in frepple.operationplans():
                 if i.ordertype == "PO":
                     if (
-                        not i.item
+                        i.status not in ("proposed", "approved")
+                        or not i.item
                         or not i.item.source
                         or not i.item.subcategory
                         or not i.location.subcategory
                         or not i.item.source.startswith("odoo")
-                        or i.status not in ("proposed", "approved")
                     ):
                         continue
                     cls.exported.append(i)
@@ -355,13 +355,13 @@ class OdooWritePlan(PlanTask):
                     )
                 elif i.ordertype == "DO":
                     if (
-                        not i.item
+                        i.status not in ("proposed", "approved")
+                        or not i.item
                         or not i.item.source
                         or not i.item.subcategory
                         or not i.operation.origin.location.subcategory
                         or not i.operation.destination.location.subcategory
                         or not i.item.source.startswith("odoo")
-                        or i.status not in ("proposed", "approved")
                     ):
                         continue
                     cls.exported.append(i)
@@ -381,13 +381,13 @@ class OdooWritePlan(PlanTask):
                     )
                 elif i.ordertype == "MO":
                     if (
-                        not i.operation
+                        i.status not in ("proposed", "approved")
+                        or not i.operation
                         or not i.operation.source
                         or not i.operation.item
                         or not i.operation.source.startswith("odoo")
-                        or not i.item.subcategory
-                        or not i.location.subcategory
-                        or i.status not in ("proposed", "approved")
+                        or not i.operation.item.subcategory
+                        or not i.operation.location.subcategory
                     ):
                         continue
                     cls.exported.append(i)

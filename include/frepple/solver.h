@@ -331,6 +331,7 @@ class SolverCreate : public Solver {
     administrativeleadtime = other.administrativeleadtime;
     minimumdelay = other.minimumdelay;
     autofence = other.autofence;
+    allowSplits = other.allowSplits;
     iteration_threshold = other.iteration_threshold;
     iteration_accuracy = other.iteration_accuracy;
     iteration_max = other.iteration_max;

@@ -677,10 +677,10 @@ class PurchaseReport(GridPivot):
         combinations.supplier_id as supplier,
         supplier.description as supplier__description,
         supplier.category as supplier__category,
-        supplier.subcategory as supplier_subcategory,
+        supplier.subcategory as supplier__subcategory,
         supplier.owner_id as supplier__owner,
         supplier.source as supplier__source,
-        supplier.lastmodified as supplier_lastmodified,
+        supplier.lastmodified as supplier__lastmodified,
         -- Buckets
         res.bucket as bucket,
         to_char(res.startdate, 'YYYY-MM-DD') as startdate,

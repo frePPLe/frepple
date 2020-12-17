@@ -1421,7 +1421,15 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v) {
           logger << indentlevel << "Alternate operation '" << oper->getName()
                  << "' tries alternate '" << (*altIter)->getOperation() << "' "
                  << endl;
+        auto tmp_askQ = data->state->q_qty;
+        auto tmp_askD = data->state->q_date;
         (*altIter)->getOperation()->solve(*this, v);
+        if (!getAllowSplits() && data->state->a_qty > ROUNDING_ERROR &&
+            data->state->a_qty <= tmp_askQ - ROUNDING_ERROR) {
+          // Reject a partial reply
+          data->state->a_qty = 0.0;
+          data->state->a_date = tmp_askD;
+        }
       } else {
         setLogLevel(0);
         data->incostevaluation = true;

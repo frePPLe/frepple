@@ -59,10 +59,11 @@ class ReportByDemand(GridReport):
         GridFieldText(
             "item",
             title=_("item"),
-            formatter="item",
             editable=False,
             sortable=False,
             initially_hidden=True,
+            formatter="detail",
+            extra='"role":"input/item"',
         ),
         GridFieldText(
             "item__description",

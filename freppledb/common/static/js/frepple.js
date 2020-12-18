@@ -412,7 +412,7 @@ jQuery.extend($.fn.fmatter, {
   detail : function(cellvalue, options, rowdata) {
     if (cellvalue === undefined || cellvalue === '' || cellvalue === null)
       return '';
-    if (options['colModel']['popup'] || rowdata.showdrilldown === '0')
+    if (options['colModel']['popup'])
       return $.jgrid.htmlEncode(cellvalue);
     if (options.colModel.name == "operation") {
     	if (rowdata.hasOwnProperty('type') 

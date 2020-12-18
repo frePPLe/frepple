@@ -51,7 +51,7 @@ class Command(BaseCommand):
             return False
         try:
             return psutil.Process(pid).status() != psutil.STATUS_ZOMBIE
-        except:
+        except Exception:
             return False
 
     def add_arguments(self, parser):

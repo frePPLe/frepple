@@ -295,7 +295,6 @@ class ReportManager(GridReport):
                 )
             return request.report.name
         else:
-            return _("report editor")
             return _("Add custom report")
 
     @classmethod

@@ -276,6 +276,7 @@ class HorizonForm(forms.Form):
     horizonstart = forms.DateField(required=False)
     horizonend = forms.DateField(required=False)
     horizontype = forms.ChoiceField(choices=(("1", "1"), ("0", "0")))
+    horizonbefore = forms.IntegerField(required=False, min_value=0)
     horizonlength = forms.IntegerField(required=False, min_value=1)
     horizonunit = forms.ChoiceField(
         choices=(("day", "day"), ("week", "week"), ("month", "month"))
@@ -295,6 +296,7 @@ def horizon(request):
         request.user.horizonstart = form.cleaned_data["horizonstart"]
         request.user.horizonend = form.cleaned_data["horizonend"]
         request.user.horizontype = form.cleaned_data["horizontype"] == "1"
+        request.user.horizonbefore = form.cleaned_data["horizonbefore"]
         request.user.horizonlength = form.cleaned_data["horizonlength"]
         request.user.horizonunit = form.cleaned_data["horizonunit"]
         request.user.save()

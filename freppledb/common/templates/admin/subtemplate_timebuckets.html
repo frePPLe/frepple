@@ -1,6 +1,6 @@
 {% load i18n %}
 
-<div  id="timebuckets" class="modal fade" role="dialog">
+<div id="timebuckets" class="modal fade" role="dialog">
   <div class="modal-dialog">
     <div class="modal-content" style="width: 500px;">
       <div class="modal-header">
@@ -12,7 +12,7 @@
       <form method="get" action="#">
       <input type="hidden" name="horizonbuckets" id="horizonbuckets"{% if request.user.horizonbuckets %} value="{{request.user.horizonbuckets}}"{% endif %}>
       <input type="hidden" name="horizonunit" id="horizonunit" value="{{request.user.horizonunit}}">
-      <input id="horizonoriginal" type="hidden" value="{{request.user.horizonbuckets}}|{{request.user.horizonstart|date:"Y-m-d"}}|{{request.user.horizonend|date:"Y-m-d"}}|{{request.user.horizontype}}|{{request.user.horizonlength}}|{{request.user.horizonunit}}"/>
+      <input id="horizonoriginal" type="hidden" value="{{request.user.horizonbuckets}}|{{request.user.horizonstart|date:"Y-m-d"}}|{{request.user.horizonend|date:"Y-m-d"}}|{{request.user.horizontype}}|{{request.user.horizonbefore}}|{{request.user.horizonlength}}|{{request.user.horizonunit}}"/>
           <div class="row" style="padding-bottom: 15px">
             <div class="col-xs-12">
               {% trans 'bucket size'|capfirst %}&nbsp;&nbsp;
@@ -39,7 +39,7 @@
                 <span class="fa fa-calendar"></span>
               </span>
               </div>
-              &nbsp;{% trans 'to' %}&nbsp;
+              &nbsp;{% trans 'till' %}&nbsp;
               <div class="input-group date">
               <input id="horizonend" style="display:inline; width:8em" type="text" class="vDateField form-control" value="{{request.user.horizonend|date:"Y-m-d"}}"/>
               <span class="input-group-addon">
@@ -53,9 +53,12 @@
           <div class="row">
             <div class="col-xs-12 form-inline">
               <input type="radio" id="horizontype" name="horizontype" value="1"{% if request.user.horizontype %} checked{% endif %}/>&nbsp;&nbsp;
-              <input id="horizonlength" style="width: 5em" name="horizonlength" type="number" class="form-control" min="1" max="99" value="{{request.user.horizonlength}}"/>&nbsp;
+              {% trans 'from'|capfirst %}
+              <input id="horizonbefore" style="width:4em; padding-left: 6px; padding-right:6px" name="horizonbefore" type="number" class="form-control" min="0" max="99" value="{{request.user.horizonbefore}}"/>&nbsp;
+              {% trans 'before till' %}
+              <input id="horizonlength" style="width:4em; padding-left: 6px; padding-right:6px" name="horizonlength" type="number" class="form-control" min="1" max="99" value="{{request.user.horizonlength}}"/>&nbsp;
               <div class="dropdown dropdown-submit-input" style="display:inline">
-                <button class="btn btn-default dropdown-toggle form-control" type="button" name="horizonunit1" id="horizonunit1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                <button style="padding-left: 6px; padding-right:6px" class="btn btn-default dropdown-toggle form-control" type="button" name="horizonunit1" id="horizonunit1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                   {% if request.user.horizonunit == "day" %}{% trans 'days' %}{% endif %}
                   {% if request.user.horizonunit == "week" %}{% trans 'weeks' %}{% endif %}
                   {% if request.user.horizonunit == "month" %}{% trans 'months' %}{% endif %}
@@ -67,7 +70,7 @@
                   <li><a name="month">{% trans 'months' %}</a></li>
                 </ul>
               </div>
-              &nbsp;{% trans 'after plan current date' %}
+              &nbsp;{% trans 'after current date' %}
             </div>
           </div>
 

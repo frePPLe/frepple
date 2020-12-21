@@ -1434,6 +1434,7 @@ var grid = {
               $('#horizonstart').val() + '|' +
               $('#horizonend').val() + '|' +
               ($('#horizontype').is(':checked') ? "True" : "False") + '|' +
+              $('#horizonbefore').val() + '|' +
               $('#horizonlength').val() + '|' +
               $('#horizonunit').val();
 
@@ -1453,6 +1454,7 @@ var grid = {
                     horizonend: $('#horizonend').val(),
                     horizontype: ($('#horizontype').is(':checked') ? '1' : '0'),
                     horizonlength: $('#horizonlength').val(),
+                    horizonbefore: $('#horizonbefore').val(),
                     horizonunit: $('#horizonunit').val()
                     },
                   dataType: 'text/html',

@@ -199,16 +199,22 @@ def getHorizon(request, future_only=False):
         horizonlength = int(request.GET.get("horizonlength"))
     except Exception:
         horizonlength = request.user.horizonlength
+    try:
+        horizonbefore = int(request.GET.get("horizonbefore"))
+    except Exception:
+        horizonbefore = request.user.horizonbefore
     if horizontype:
         # First type: Horizon relative to the current date
         start = current.replace(hour=0, minute=0, second=0, microsecond=0)
         if horizonunit == "day":
             end = start + timedelta(days=horizonlength or 60)
             end = end.replace(hour=0, minute=0, second=0)
+            if not future_only and horizonbefore:
+                start -= timedelta(days=horizonbefore)
         elif horizonunit == "week":
-            end = start.replace(hour=0, minute=0, second=0) + timedelta(
-                weeks=horizonlength or 8, days=7 - start.weekday()
-            )
+            end = start + timedelta(weeks=horizonlength or 8, days=7 - start.weekday())
+            if not future_only and horizonbefore:
+                start -= timedelta(weeks=horizonbefore, days=start.weekday())
         else:
             y = start.year
             m = start.month + (horizonlength or 2) + (start.day > 1 and 1 or 0)
@@ -216,6 +222,13 @@ def getHorizon(request, future_only=False):
                 y += 1
                 m -= 12
             end = datetime(y, m, 1)
+            y = start.year
+            if not future_only and horizonbefore:
+                m = start.month - horizonbefore + 1
+                while m < 0:
+                    y -= 1
+                    m += 12
+                start = datetime(y, m, 1)
     else:
         # Second type: Absolute start and end dates given
         try:

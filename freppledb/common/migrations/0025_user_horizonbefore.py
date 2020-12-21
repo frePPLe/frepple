@@ -20,7 +20,7 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [("common", "0023_notifications")]
+    dependencies = [("common", "0024_follower")]
 
     operations = [
         migrations.AddField(

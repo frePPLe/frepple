@@ -1,4 +1,5 @@
 {% load i18n %}
+{% if object_id %}
 <h1 class="pull-right">
 {% following model object_id as follower %}
 {% if follower %}
@@ -13,5 +14,6 @@
   data-placement="auto bottom" data-original-title="{% trans 'Get a notification in your inbox when there is activity'|capfirst %}">
   {% trans "Follow" %}
 </button>
+{% endif %}
 {% endif %}
 </h1>

@@ -92,14 +92,18 @@ Here are the steps to get a fully working environment.
    A database needs to be created for the default database, and one for each of
    the what-if scenarios you want to configure.
 
-   The same user is normally used as the owner of these databases.
+   The same user can be used as the owner of these databases. Make sure to grant the 
+   createrole permissions to the database user.
 
    The typical SQL statements are shown below. Replace USR, PWD, DB with the suitable
    values.
    ::
 
-       create user USR with password 'PWD';
-       create database DB encoding 'utf-8' owner USR;
+       create user USR with password 'PWD' createrole;
+       create database DB0 encoding 'utf-8' owner USR;
+       create database DB1 encoding 'utf-8' owner USR;
+       create database DB2 encoding 'utf-8' owner USR;
+       create database DB3 encoding 'utf-8' owner USR;
 
 #. **Install Python3 and pip3**
 

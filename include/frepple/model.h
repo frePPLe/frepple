@@ -2535,7 +2535,7 @@ bool TimeLine<type>::Event::operator<(const Event& fl2) const {
 }
 
 /* This type defines what mode used to search the alternates. */
-enum SearchMode {
+enum class SearchMode {
   /* Select the alternate with the lowest priority number.
    * This is the default.
    */
@@ -2552,16 +2552,16 @@ enum SearchMode {
 /* Writes a search mode to an output stream. */
 inline ostream& operator<<(ostream& os, const SearchMode& d) {
   switch (d) {
-    case PRIORITY:
+    case SearchMode::PRIORITY:
       os << "PRIORITY";
       return os;
-    case MINCOST:
+    case SearchMode::MINCOST:
       os << "MINCOST";
       return os;
-    case MINPENALTY:
+    case SearchMode::MINPENALTY:
       os << "MINPENALTY";
       return os;
-    case MINCOSTPENALTY:
+    case SearchMode::MINCOSTPENALTY:
       os << "MINCOSTPENALTY";
       return os;
     default:
@@ -3028,7 +3028,7 @@ class Operation : public HasName<Operation>,
     m->addBoolField<Cls>(Tags::hasSuperOperations, &Cls::hasSuperOperations,
                          nullptr, BOOL_FALSE, DONT_SERIALIZE);
     m->addEnumField<Cls, SearchMode>(Tags::search, &Cls::getSearch,
-                                     &Cls::setSearch, PRIORITY);
+                                     &Cls::setSearch, SearchMode::PRIORITY);
     m->addPointerField<Cls, Operation>(Tags::owner, &Cls::getOwner, nullptr,
                                        DONT_SERIALIZE);
     HasLevel::registerFields<Cls>(m);
@@ -3140,7 +3140,7 @@ class Operation : public HasName<Operation>,
   unsigned short flags = 0;
 
   /* Mode to select the preferred alternates. */
-  SearchMode search = PRIORITY;
+  SearchMode search = SearchMode::PRIORITY;
 };
 
 /* Writes an operationplan to an output stream. */
@@ -5255,7 +5255,7 @@ class Flow : public Object,
                         1);
     m->addStringRefField<Cls>(Tags::name, &Cls::getName, &Cls::setName);
     m->addEnumField<Cls, SearchMode>(Tags::search, &Cls::getSearch,
-                                     &Cls::setSearch, PRIORITY);
+                                     &Cls::setSearch, SearchMode::PRIORITY);
     m->addDateField<Cls>(Tags::effective_start, &Cls::getEffectiveStart,
                          &Cls::setEffectiveStart);
     m->addDateField<Cls>(Tags::effective_end, &Cls::getEffectiveEnd,
@@ -5289,7 +5289,7 @@ class Flow : public Object,
   double quantity_fixed = 0.0;
 
   /* Mode to select the preferred alternates. */
-  SearchMode search = PRIORITY;
+  SearchMode search = SearchMode::PRIORITY;
 
   /* Offset from the start or end of the operation. */
   Duration offset;
@@ -6664,7 +6664,7 @@ class Load : public Object,
                         1);
     m->addStringRefField<Cls>(Tags::name, &Cls::getName, &Cls::setName);
     m->addEnumField<Cls, SearchMode>(Tags::search, &Cls::getSearch,
-                                     &Cls::setSearch, PRIORITY);
+                                     &Cls::setSearch, SearchMode::PRIORITY);
     m->addDateField<Cls>(Tags::effective_start, &Cls::getEffectiveStart,
                          &Cls::setEffectiveStart);
     m->addDateField<Cls>(Tags::effective_end, &Cls::getEffectiveEnd,
@@ -6692,7 +6692,7 @@ class Load : public Object,
   Skill* skill = nullptr;
 
   /* Mode to select the preferred alternates. */
-  SearchMode search = PRIORITY;
+  SearchMode search = SearchMode::PRIORITY;
 
  protected:
   /* Factory method. */
@@ -6921,7 +6921,7 @@ class Demand : public HasHierarchy<Demand>,
   friend class Item;
 
  public:
-  enum status { QUOTE, INQUIRY, OPEN, CLOSED, CANCELED };
+  enum class status { QUOTE, INQUIRY, OPEN, CLOSED, CANCELED };
 
   typedef forward_list<OperationPlan*> OperationPlanList;
 
@@ -7071,15 +7071,15 @@ class Demand : public HasHierarchy<Demand>,
   /* Return the status as a string. */
   string getStatusString() const {
     switch (state) {
-      case QUOTE:
+      case status::QUOTE:
         return "quote";
-      case INQUIRY:
+      case status::INQUIRY:
         return "inquiry";
-      case OPEN:
+      case status::OPEN:
         return "open";
-      case CLOSED:
+      case status::CLOSED:
         return "closed";
-      case CANCELED:
+      case status::CANCELED:
         return "canceled";
       default:
         throw LogicException("Demand status not recognized");
@@ -7089,15 +7089,15 @@ class Demand : public HasHierarchy<Demand>,
   /* Update the demand status from a string. */
   void setStatusString(const string& s) {
     if (s == "open" || s.empty())
-      state = OPEN;
+      state = status::OPEN;
     else if (s == "closed")
-      state = CLOSED;
+      state = status::CLOSED;
     else if (s == "quote")
-      state = QUOTE;
+      state = status::QUOTE;
     else if (s == "inquiry")
-      state = INQUIRY;
+      state = status::INQUIRY;
     else if (s == "canceled")
-      state = CANCELED;
+      state = status::CANCELED;
     else
       throw DataException("Demand status not recognized");
   }
@@ -7343,7 +7343,7 @@ class Demand : public HasHierarchy<Demand>,
   Demand* nextItemDemand = nullptr;
 
   /* Status of the demand. */
-  status state = OPEN;
+  status state = status::OPEN;
 
   /* Priority. Lower numbers indicate a higher priority level.*/
   int prio = 0;

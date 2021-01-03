@@ -292,6 +292,9 @@ void Resource::setOwner(Resource* o) {
       bool parent_bucketized = firstchild->hasType<ResourceBuckets>();
       bool me_bucketized = hasType<ResourceBuckets>();
       if (parent_bucketized != me_bucketized)
+        // Loadplans are completely different for both resource types.
+        // Alternating among resource pool members of different types gets very
+        // messy and can't be allowed.
         throw DataException(
             "Aggregate resources can't mix bucketized resources with other "
             "types");
@@ -640,14 +643,15 @@ SetupEvent* Resource::getSetupAt(Date d, OperationPlan* opplan) {
 void Resource::updateSetupTime() const {
   bool tmp = OperationPlan::setPropagateSetups(false);
   if (setupmatrix) {
-    bool changed;
-    do {
-      changed = false;
+    while (true) {
+      bool changed = false;
       for (auto qq = getLoadPlans().rbegin();
-           qq != getLoadPlans().end() && !changed; --qq)
+           qq != getLoadPlans().end() && !changed; --qq) {
         if (qq->getEventType() == 1 && qq->getQuantity() < 0.0)
           changed = qq->getOperationPlan()->updateSetupTime();
-    } while (changed);
+      }
+      if (!changed) break;
+    };
   }
   OperationPlan::setPropagateSetups(tmp);
 }

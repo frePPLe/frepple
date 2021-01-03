@@ -99,7 +99,7 @@ void Plan::erase(const string& e) {
   // Not supported on itemsupplier, itemdistribution, resourceskill, flow, load,
   // setupmatrixrule...
   else
-    DataException("erase operation not supported");
+    throw DataException("erase operation not supported");
 }
 
 }  // namespace frepple

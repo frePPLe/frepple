@@ -843,7 +843,7 @@ void TimeLine<type>::update(Event* e, const Date& d) {
   // Update the position in the timeline.
   // Remember that the quantity is also used by the '<' operator! Changing the
   // quantity thus can affect the order of elements.
-  while (e->next && !(*e < *e->next)) {
+  while (e && e->next && !(*e < *e->next)) {
     // Move to a later date
     Event* theNext = e->next;
     Event* theNextNext = theNext->next;
@@ -858,7 +858,7 @@ void TimeLine<type>::update(Event* e, const Date& d) {
       last = e;
     if (first == e) first = theNext;
   }
-  while (e->prev && !(*(e->prev) < *e)) {
+  while (e && e->prev && !(*(e->prev) < *e)) {
     // Move to an earlier date
     Event* thePrev = e->prev;
     Event* thePrevPrev = thePrev->prev;

@@ -876,12 +876,11 @@ OperationPlanState OperationFixedTime::setOperationPlanParameters(
     forward = false;
   Date d = s;
 
-  bool repeat;
   Duration production_wanted_duration =
       efficiency > 0.0 ? Duration(double(duration) / efficiency)
                        : Duration::MAX;
   Duration setup_wanted_duration;
-  do {
+  while (true) {
     if (forward) {
       // Compute forward from the start date
       setuptime_required = calculateSetup(opplan, d, opplan->getSetupEvent());
@@ -1001,14 +1000,12 @@ OperationPlanState OperationFixedTime::setOperationPlanParameters(
     if (forward && preferEnd && opplan->getStart() < s &&
         s != Date::infiniteFuture && d != Date::infiniteFuture) {
       d += Duration(3600L);
-      repeat = true;
     } else if (!forward && !preferEnd && opplan->getStart() > s &&
                s != Date::infinitePast && d != Date::infinitePast) {
       d -= Duration(3600L);
-      repeat = true;
     } else
-      repeat = false;
-  } while (repeat);
+      break;
+  };
   return OperationPlanState(opplan);
 }
 
@@ -1384,8 +1381,7 @@ OperationPlanState OperationTimePer::setOperationPlanParameters(
           (double(duration) + duration_per * q) / efficiency;
     else
       production_wanted_duration = Duration::MAX;
-    bool repeat;
-    do {
+    while (true) {
       // Compute the setup time
       setuptime_required = calculateSetup(opplan, d, nullptr);
       if (efficiency > 0 && get<0>(setuptime_required) &&
@@ -1487,14 +1483,12 @@ OperationPlanState OperationTimePer::setOperationPlanParameters(
       if (preferEnd && opplan->getStart() < s && s != Date::infiniteFuture &&
           d != Date::infiniteFuture) {
         d += Duration(3600L);
-        repeat = true;
       } else if (!preferEnd && opplan->getStart() > s &&
                  s != Date::infinitePast && d != Date::infinitePast) {
         d -= Duration(3600L);
-        repeat = true;
       } else
-        repeat = false;
-    } while (repeat);
+        break;
+    };
   }
   return OperationPlanState(opplan);
 }
@@ -1598,10 +1592,10 @@ bool OperationRouting::extraInstantiate(OperationPlan* o, bool createsubopplans,
 }
 
 SearchMode decodeSearchMode(const string& c) {
-  if (c == "PRIORITY") return PRIORITY;
-  if (c == "MINCOST") return MINCOST;
-  if (c == "MINPENALTY") return MINPENALTY;
-  if (c == "MINCOSTPENALTY") return MINCOSTPENALTY;
+  if (c == "PRIORITY") return SearchMode::PRIORITY;
+  if (c == "MINCOST") return SearchMode::MINCOST;
+  if (c == "MINPENALTY") return SearchMode::MINPENALTY;
+  if (c == "MINCOSTPENALTY") return SearchMode::MINCOSTPENALTY;
   throw DataException("Invalid search mode " + c);
 }
 

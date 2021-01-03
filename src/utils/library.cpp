@@ -21,10 +21,6 @@
 #define FREPPLE_CORE
 
 #include <sys/stat.h>
-#ifndef S_IREAD
-// For Cygwin...
-#define S_IREAD S_IRUSR
-#endif
 
 #include "frepple/utils.h"
 #include "frepple/xml.h"
@@ -428,13 +424,13 @@ Action MetaClass::decodeAction(const char* x) {
   if (!x)
     throw LogicException("Invalid action nullptr");
   else if (!strcmp(x, "AC"))
-    return ADD_CHANGE;
+    return Action::ADD_CHANGE;
   else if (!strcmp(x, "A"))
-    return ADD;
+    return Action::ADD;
   else if (!strcmp(x, "C"))
-    return CHANGE;
+    return Action::CHANGE;
   else if (!strcmp(x, "R"))
-    return REMOVE;
+    return Action::REMOVE;
   else
     throw DataException("Invalid action '" + string(x) + "'");
 }
@@ -442,7 +438,7 @@ Action MetaClass::decodeAction(const char* x) {
 Action MetaClass::decodeAction(const DataValueDict& atts) {
   // Decode the string and return the default in the absence of the attribute
   const DataValue* c = atts.get(Tags::action);
-  return c ? decodeAction(c->getString().c_str()) : ADD_CHANGE;
+  return c ? decodeAction(c->getString().c_str()) : Action::ADD_CHANGE;
 }
 
 bool MetaClass::raiseEvent(Object* v, Signal a) const {
@@ -463,10 +459,10 @@ Object* MetaCategory::ControllerDefault(const MetaClass* cat,
                                         CommandManager* mgr) {
   Action act = MetaClass::decodeAction(in);
   switch (act) {
-    case REMOVE:
+    case Action::REMOVE:
       throw DataException("Entity " + cat->type +
                           " doesn't support REMOVE action");
-    case CHANGE:
+    case Action::CHANGE:
       throw DataException("Entity " + cat->type +
                           " doesn't support CHANGE action");
     default:

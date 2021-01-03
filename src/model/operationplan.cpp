@@ -139,7 +139,8 @@ Object* OperationPlan::createOperationPlan(const MetaClass* cat,
   Object* itemdistributionval = nullptr;
   if (ordtype == "MO" || ordtype.empty()) {
     const DataValue* val = in.get(Tags::operation);
-    if (!val && action == ADD) throw DataException("Missing operation field");
+    if (!val && action == Action::ADD)
+      throw DataException("Missing operation field");
     if (val) {
       oper = val->getObject();
       if (oper && oper->getType().category != Operation::metadata)
@@ -148,7 +149,8 @@ Object* OperationPlan::createOperationPlan(const MetaClass* cat,
     }
   } else if (ordtype == "PO") {
     const DataValue* val = in.get(Tags::supplier);
-    if (!val && action == ADD) throw DataException("Missing supplier field");
+    if (!val && action == Action::ADD)
+      throw DataException("Missing supplier field");
     if (val) {
       supval = val->getObject();
       if (supval && supval->getType().category != Supplier::metadata)
@@ -156,14 +158,16 @@ Object* OperationPlan::createOperationPlan(const MetaClass* cat,
             "Supplier field on operationplan must be of type supplier");
     }
     val = in.get(Tags::item);
-    if (!val && action == ADD) throw DataException("Missing item field");
+    if (!val && action == Action::ADD)
+      throw DataException("Missing item field");
     if (val) {
       itemval = val->getObject();
       if (itemval && itemval->getType().category != Item::metadata)
         throw DataException("Item field on operationplan must be of type item");
     }
     val = in.get(Tags::location);
-    if (!val && action == ADD) throw DataException("Missing location field");
+    if (!val && action == Action::ADD)
+      throw DataException("Missing location field");
     if (val) {
       locval = val->getObject();
       if (locval && locval->getType().category != Location::metadata)
@@ -188,7 +192,8 @@ Object* OperationPlan::createOperationPlan(const MetaClass* cat,
               "Origin field on a distribution order must be of type location");
       }
       val = in.get(Tags::item);
-      if (!val && action == ADD) throw DataException("Missing item field");
+      if (!val && action == Action::ADD)
+        throw DataException("Missing item field");
       if (val) {
         itemval = val->getObject();
         if (itemval && itemval->getType().category != Item::metadata)
@@ -196,7 +201,8 @@ Object* OperationPlan::createOperationPlan(const MetaClass* cat,
               "Item field on distribution order must be of type item");
       }
       val = in.get(Tags::location);
-      if (!val && action == ADD) throw DataException("Missing location field");
+      if (!val && action == Action::ADD)
+        throw DataException("Missing location field");
       if (val) {
         locval = val->getObject();
         if (locval && locval->getType().category != Location::metadata)
@@ -206,7 +212,8 @@ Object* OperationPlan::createOperationPlan(const MetaClass* cat,
     }
   } else if (ordtype == "DLVR") {
     const DataValue* val = in.get(Tags::demand);
-    if (!val && action == ADD) throw DataException("Missing demand field");
+    if (!val && action == Action::ADD)
+      throw DataException("Missing demand field");
     if (val) {
       dmdval = val->getObject();
       if (!dmdval)
@@ -219,14 +226,16 @@ Object* OperationPlan::createOperationPlan(const MetaClass* cat,
       }
     }
     val = in.get(Tags::item);
-    if (!val && action == ADD) throw DataException("Missing item field");
+    if (!val && action == Action::ADD)
+      throw DataException("Missing item field");
     if (val) {
       itemval = val->getObject();
       if (itemval && itemval->getType().category != Item::metadata)
         throw DataException("Item field on operationplan must be of type item");
     }
     val = in.get(Tags::location);
-    if (!val && action == ADD) throw DataException("Missing location field");
+    if (!val && action == Action::ADD)
+      throw DataException("Missing location field");
     if (val) {
       locval = val->getObject();
       if (locval && locval->getType().category != Location::metadata)
@@ -245,7 +254,7 @@ Object* OperationPlan::createOperationPlan(const MetaClass* cat,
     const DataValue* idfier = in.get(Tags::id);
     if (idfier) id = idfier->getString();
   }
-  if (id.empty() && (action == CHANGE || action == REMOVE))
+  if (id.empty() && (action == Action::CHANGE || action == Action::REMOVE))
     // Identifier is required
     throw DataException("Missing reference or identifier field");
 
@@ -268,7 +277,7 @@ Object* OperationPlan::createOperationPlan(const MetaClass* cat,
 
   // Execute the proper action
   switch (action) {
-    case REMOVE:
+    case Action::REMOVE:
       if (opplan) {
         // Send out the notification to subscribers
         if (opplan->getType().raiseEvent(opplan, SIG_REMOVE))
@@ -286,7 +295,7 @@ Object* OperationPlan::createOperationPlan(const MetaClass* cat,
         throw DataException(ch.str());
       }
       return nullptr;
-    case ADD:
+    case Action::ADD:
       if (opplan) {
         ostringstream ch;
         ch << "Operationplan with reference " << id
@@ -294,14 +303,14 @@ Object* OperationPlan::createOperationPlan(const MetaClass* cat,
         throw DataException(ch.str());
       }
       break;
-    case CHANGE:
+    case Action::CHANGE:
       if (!opplan) {
         ostringstream ch;
         ch << "Operationplan with reference " << id << " doesn't exist";
         throw DataException(ch.str());
       }
       break;
-    case ADD_CHANGE:;
+    case Action::ADD_CHANGE:;
   }
 
   // Flag whether or not to create sub operationplans
@@ -797,7 +806,7 @@ bool OperationPlan::activate(bool createsubopplans, bool use_start) {
 void OperationPlan::deactivate() {
   // Mark as not activated
   st.erase(this);
-  setName(0);
+  setName("0");
 
   // Delete from the list of deliveries
   if (dmd) dmd->removeDelivery(this);
@@ -1655,7 +1664,7 @@ void OperationPlan::propagateStatus(bool log) {
 
     // Get current status
     double closed_balance = 0.0;
-    auto tmline = myflpln->getBuffer()->getFlowPlans();
+    flowplanlist& tmline = myflpln->getBuffer()->getFlowPlans();
     for (auto flpln = tmline.begin(); flpln != tmline.end(); ++flpln)
       if (flpln->getOperationPlan() &&
           (flpln->getOperationPlan()->getClosed() ||
@@ -1927,7 +1936,7 @@ double OperationPlan::getCriticality() const {
   Duration minslack = 86313600L;  // 999 days in seconds
   vector<Duration> gaps(HasLevel::getNumberOfLevels() + 5);
   for (PeggingIterator p(const_cast<OperationPlan*>(this)); p; ++p) {
-    unsigned int lvl = p.getLevel();
+    vector<Duration>::size_type lvl = p.getLevel();
     if (lvl >= gaps.size()) gaps.resize(lvl + 5);
     gaps[lvl] = p.getGap();
     const OperationPlan* m = p.getOperationPlan();
@@ -1959,7 +1968,7 @@ Duration OperationPlan::getDelay() const {
   Duration maxdelay = Duration::MIN;
   vector<Duration> gaps(HasLevel::getNumberOfLevels() + 5);
   for (PeggingIterator p(const_cast<OperationPlan*>(this)); p; ++p) {
-    unsigned int lvl = p.getLevel();
+    vector<Duration>::size_type lvl = p.getLevel();
     if (lvl >= gaps.size()) gaps.resize(lvl + 5);
     gaps[lvl] = p.getGap();
     const OperationPlan* m = p.getOperationPlan();

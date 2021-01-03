@@ -22,11 +22,6 @@
 #ifndef FREPPLE_UTILS_H
 #define FREPPLE_UTILS_H
 
-#ifdef __CYGWIN__
-// This define blocks some functions such as strptime() that are required
-#undef __STRICT_ANSI__
-#endif
-
 /* Python.h has to be included first.
    For a debugging build on windows we avoid using the debug version of Python
    since that also requires Python and all its modules to be compiled in debug
@@ -76,43 +71,28 @@ typedef int Py_ssize_t;
 #include <assert.h>
 #include <float.h>
 
+#include <algorithm>
 #include <condition_variable>
 #include <ctime>
+#include <forward_list>
 #include <fstream>
 #include <iomanip>
 #include <iostream>
-#include <mutex>
-#include <sstream>
-#include <stdexcept>
-#include <typeinfo>
-#ifdef __CYGWIN__
-#include <strings.h>
-#endif
-
-#include <algorithm>
-#include <forward_list>
 #include <list>
 #include <map>
+#include <mutex>
 #include <set>
+#include <sstream>
 #include <stack>
+#include <stdexcept>
 #include <string>
 #include <thread>
+#include <typeinfo>
 #include <unordered_map>
 #include <vector>
 using namespace std;
 
-// Defines the version of frePPLe.
-#ifdef HAVE_CONFIG_H
-#undef PACKAGE_BUGREPORT
-#undef PACKAGE_NAME
-#undef PACKAGE_STRING
-#undef PACKAGE_TARNAME
-#undef PACKAGE_VERSION
 #include <config.h>
-#else
-// Define the version for (windows) compilers that don't use autoconf
-#define PACKAGE_VERSION "6.11.0"
-#endif
 
 // For the disabled and ansi-challenged people...
 #ifndef HAVE_STRNCASECMP
@@ -220,7 +200,7 @@ class MetaFieldCommand;
 #include "frepple/tags.h"
 
 /* This type defines what operation we want to do with the entity. */
-enum Action {
+enum class Action {
   /* or A.
    * Add an new entity, and report an error if the entity already exists. */
   ADD = 0,
@@ -243,16 +223,16 @@ enum tribool { BOOL_UNSET, BOOL_TRUE, BOOL_FALSE };
 /* Writes an action description to an output stream. */
 inline ostream& operator<<(ostream& os, const Action& d) {
   switch (d) {
-    case ADD:
+    case Action::ADD:
       os << "ADD";
       return os;
-    case CHANGE:
+    case Action::CHANGE:
       os << "CHANGE";
       return os;
-    case REMOVE:
+    case Action::REMOVE:
       os << "REMOVE";
       return os;
-    case ADD_CHANGE:
+    case Action::ADD_CHANGE:
       os << "ADD_CHANGE";
       return os;
     default:
@@ -1587,7 +1567,7 @@ class MetaClass : public NonCopyable {
   string type;
 
   /* The size of an instance of this class. */
-  size_t size;
+  size_t size = 0;
 
   /* A reference to a keyword of the base string. */
   const Keyword* typetag;
@@ -1944,10 +1924,10 @@ class MetaCategory : public MetaClass {
   }
 
   /* Type definition for the map of all registered classes. */
-  typedef map<size_t, const MetaClass*, less<size_t> > ClassMap;
+  typedef map<size_t, const MetaClass*, less<size_t>> ClassMap;
 
   /* Type definition for the map of all categories. */
-  typedef map<size_t, const MetaCategory*, less<size_t> > CategoryMap;
+  typedef map<size_t, const MetaCategory*, less<size_t>> CategoryMap;
 
   /* Looks up a category name in the registry. If the category can't be
    * located the return value is nullptr. */
@@ -3149,7 +3129,7 @@ class Object : public PyObject {
   virtual ~Object() {
     if (PyObject::ob_refcnt > 1)
       logger << "Warning: Deleting " << (PyObject*)(this)
-             << (PyObject::ob_type->tp_name && PyObject::ob_type
+             << (PyObject::ob_type && PyObject::ob_type->tp_name
                      ? PyObject::ob_type->tp_name
                      : "nullptr")
              << " object that is still referenced " << (PyObject::ob_refcnt - 1)
@@ -3623,7 +3603,7 @@ class Tree : public NonCopyable {
    * A node with color 'none' is a node that hasn't been inserted yet in
    * the tree.
    */
-  enum NodeColor { red, black, none, head };
+  enum class Color { red, black, none, head };
 
   /* This class represents a node in the tree.
    *
@@ -3646,7 +3626,7 @@ class Tree : public NonCopyable {
     /* Return the color of this node: "red" or "black" for actual nodes,
      * and "none" for the root node and nodes not yet inserted.
      */
-    NodeColor getColor() const { return color; }
+    Color getColor() const { return color; }
 
     /* Comparison operator. */
     bool operator<(const TreeNode& o) { return nm < o.nm; }
@@ -3674,7 +3654,7 @@ class Tree : public NonCopyable {
     /* Return a pointer to the node preceding this one. */
     TreeNode* decrement() const {
       TreeNode* node = const_cast<TreeNode*>(this);
-      if (node->color == red && node->parent->parent == node)
+      if (node->color == Color::red && node->parent->parent == node)
         node = node->right;
       else if (node->left != nullptr) {
         TreeNode* y = node->left;
@@ -3705,12 +3685,12 @@ class Tree : public NonCopyable {
     TreeNode* right = nullptr;
 
     /* Color of the node. This is used to keep the tree balanced. */
-    NodeColor color = none;
+    Color color = Color::none;
   };
 
   /* Default constructor. */
   Tree(bool b = false) : count(0), clearOnDestruct(b) {
-    header.color = head;  // Mark as special head
+    header.color = Color::head;  // Mark as special head
     header.parent = nullptr;
     header.left = &header;
     header.right = &header;
@@ -3788,12 +3768,12 @@ class Tree : public NonCopyable {
       TreeNode* R = x->right;
       ++counter;
 
-      if (x->color == none)
+      if (x->color == Color::none)
         // Nodes must have a color
         throw LogicException("Colorless node included in a tree");
 
-      if (x->color == red)
-        if ((L && L->color == red) || (R && R->color == red))
+      if (x->color == Color::red)
+        if ((L && L->color == Color::red) || (R && R->color == Color::red))
           // A red node can have only nullptr and black children
           throw LogicException("Wrong color on node");
 
@@ -3844,7 +3824,7 @@ class Tree : public NonCopyable {
   void erase(TreeNode* z) {
     // A colorless node was never inserted in the tree, and shouldn't be
     // removed from it either...
-    if (!z || z->color == none) return;
+    if (!z || z->color == Color::none) return;
 
     TreeNode* y = z;
     TreeNode* x = nullptr;
@@ -3907,63 +3887,63 @@ class Tree : public NonCopyable {
           header.right = maximum(x);
       }
     }
-    if (y->color != red) {
-      while (x != header.parent && (x == nullptr || x->color == black))
+    if (y->color != Color::red) {
+      while (x != header.parent && (x == nullptr || x->color == Color::black))
         if (x == x_parent->left) {
           TreeNode* w = x_parent->right;
-          if (w->color == red) {
-            w->color = black;
-            x_parent->color = red;
+          if (w->color == Color::red) {
+            w->color = Color::black;
+            x_parent->color = Color::red;
             rotateLeft(x_parent);
             w = x_parent->right;
           }
-          if ((w->left == nullptr || w->left->color == black) &&
-              (w->right == nullptr || w->right->color == black)) {
-            w->color = red;
+          if ((w->left == nullptr || w->left->color == Color::black) &&
+              (w->right == nullptr || w->right->color == Color::black)) {
+            w->color = Color::red;
             x = x_parent;
             x_parent = x_parent->parent;
           } else {
-            if (w->right == nullptr || w->right->color == black) {
-              w->left->color = black;
-              w->color = red;
+            if (w->right == nullptr || w->right->color == Color::black) {
+              w->left->color = Color::black;
+              w->color = Color::red;
               rotateRight(w);
               w = x_parent->right;
             }
             w->color = x_parent->color;
-            x_parent->color = black;
-            if (w->right) w->right->color = black;
+            x_parent->color = Color::black;
+            if (w->right) w->right->color = Color::black;
             rotateLeft(x_parent);
             break;
           }
         } else {
           // same as above, with right <-> left.
           TreeNode* w = x_parent->left;
-          if (w->color == red) {
-            w->color = black;
-            x_parent->color = red;
+          if (w && w->color == Color::red) {
+            w->color = Color::black;
+            x_parent->color = Color::red;
             rotateRight(x_parent);
             w = x_parent->left;
           }
-          if ((w->right == nullptr || w->right->color == black) &&
-              (w->left == nullptr || w->left->color == black)) {
-            w->color = red;
+          if (w && (w->right == nullptr || w->right->color == Color::black) &&
+              (w->left == nullptr || w->left->color == Color::black)) {
+            w->color = Color::red;
             x = x_parent;
             x_parent = x_parent->parent;
-          } else {
-            if (w->left == nullptr || w->left->color == black) {
-              w->right->color = black;
-              w->color = red;
+          } else if (w) {
+            if (w->left == nullptr || w->left->color == Color::black) {
+              w->right->color = Color::black;
+              w->color = Color::red;
               rotateLeft(w);
               w = x_parent->left;
             }
             w->color = x_parent->color;
-            x_parent->color = black;
-            if (w->left) w->left->color = black;
+            x_parent->color = Color::black;
+            if (w->left) w->left->color = Color::black;
             rotateRight(x_parent);
             break;
           }
         }
-      if (x) x->color = black;
+      if (x) x->color = Color::black;
     }
   }
 
@@ -3973,10 +3953,11 @@ class Tree : public NonCopyable {
    * optimized as much as possible.
    */
   TreeNode* find(const string& k) const {
-    int comp;
-    for (auto x = header.parent; x; x = comp < 0 ? x->left : x->right) {
-      comp = compare(k, x->nm);
+    auto x = header.parent;
+    while (x) {
+      auto comp = compare(k, x->nm);
       if (!comp) return x;
+      x = comp < 0 ? x->left : x->right;
     }
     TreeNode* result = end();
     return result;
@@ -4085,44 +4066,44 @@ class Tree : public NonCopyable {
   /* Restructure the tree such that the depth of the branches remains
    * properly balanced. This method is called during insertion. */
   inline void rebalance(TreeNode* x) {
-    x->color = red;
+    x->color = Color::red;
 
-    while (x != header.parent && x->parent->color == red) {
+    while (x != header.parent && x->parent->color == Color::red) {
       if (x->parent == x->parent->parent->left) {
         TreeNode* y = x->parent->parent->right;
-        if (y && y->color == red) {
-          x->parent->color = black;
-          y->color = black;
-          x->parent->parent->color = red;
+        if (y && y->color == Color::red) {
+          x->parent->color = Color::black;
+          y->color = Color::black;
+          x->parent->parent->color = Color::red;
           x = x->parent->parent;
         } else {
           if (x == x->parent->right) {
             x = x->parent;
             rotateLeft(x);
           }
-          x->parent->color = black;
-          x->parent->parent->color = red;
+          x->parent->color = Color::black;
+          x->parent->parent->color = Color::red;
           rotateRight(x->parent->parent);
         }
       } else {
         TreeNode* y = x->parent->parent->left;
-        if (y && y->color == red) {
-          x->parent->color = black;
-          y->color = black;
-          x->parent->parent->color = red;
+        if (y && y->color == Color::red) {
+          x->parent->color = Color::black;
+          y->color = Color::black;
+          x->parent->parent->color = Color::red;
           x = x->parent->parent;
         } else {
           if (x == x->parent->left) {
             x = x->parent;
             rotateRight(x);
           }
-          x->parent->color = black;
-          x->parent->parent->color = red;
+          x->parent->color = Color::black;
+          x->parent->parent->color = Color::red;
           rotateLeft(x->parent->parent);
         }
       }
     }
-    header.parent->color = black;
+    header.parent->color = Color::black;
   }
 
   /* Rebalancing operation used during the rebalancing. */
@@ -4169,7 +4150,7 @@ class Tree : public NonCopyable {
   unsigned int countBlackNodes(TreeNode* node) const {
     unsigned int sum = 0;
     for (; node != header.parent; node = node->parent)
-      if (node->color == black) ++sum;
+      if (node->color == Color::black) ++sum;
     return sum;
   }
 
@@ -4803,7 +4784,7 @@ class HasName : public NonCopyable, public Tree::TreeNode, public Object {
 
     /* Return current value and advance the iterator. */
     T* next() {
-      if (node->getColor() == Tree::head) return nullptr;
+      if (node->getColor() == Tree::Color::head) return nullptr;
       T* tmp = static_cast<T*>(node);
       node = node->increment();
       return tmp;
@@ -4948,17 +4929,17 @@ class HasName : public NonCopyable, public Tree::TreeNode, public Object {
 
     // Validate the action
     switch (act) {
-      case ADD:
+      case Action::ADD:
         // Only additions are allowed
         if (found) throw DataException("Object '" + name + "' already exists");
         break;
 
-      case CHANGE:
+      case Action::CHANGE:
         // Only changes are allowed
         if (!found) throw DataException("Object '" + name + "' doesn't exist");
         return i;
 
-      case REMOVE:
+      case Action::REMOVE:
         // Delete the entity
         if (found) {
           // Send out the notification to subscribers
@@ -5619,7 +5600,7 @@ class Association {
 
     /* Destructor. */
     ~ListA() {
-      C* next;
+      C* next = nullptr;
       for (C* p = this->first; p; p = next) {
         next = p->nextA;
         delete p;
@@ -5743,7 +5724,7 @@ class Association {
 
     /* Destructor. */
     ~ListB() {
-      C* next;
+      C* next = nullptr;
       for (C* p = this->first; p; p = next) {
         next = p->nextB;
         delete p;
@@ -5908,14 +5889,14 @@ class Association {
     Object* obj = C::finder(in);
 
     switch (act) {
-      case REMOVE:
+      case Action::REMOVE:
         if (!obj) throw DataException("Can't find object for removal");
         delete obj;
         return nullptr;
-      case CHANGE:
+      case Action::CHANGE:
         if (!obj) throw DataException("Object doesn't exist");
         return obj;
-      case ADD:
+      case Action::ADD:
         if (obj) throw DataException("Object already exists");
       default:
         /* Lookup the class in the map of registered classes. */
@@ -6298,7 +6279,8 @@ class MetaFieldEnum : public MetaFieldBase {
   }
 
   virtual void getField(Object* me, DataValue& el) const {
-    el.setInt((static_cast<Cls*>(me)->*getf)());
+    el.setInt(static_cast<std::underlying_type_t<Enum>>(
+        (static_cast<Cls*>(me)->*getf)()));
   }
 
   virtual void writeField(Serializer& output) const {
@@ -6308,7 +6290,9 @@ class MetaFieldEnum : public MetaFieldBase {
       if (getFlag(DONT_SERIALIZE_DFT)) return;
     }
     Enum tmp = (static_cast<Cls*>(output.getCurrentObject())->*getf)();
-    if (tmp != def) output.writeElement(getName(), tmp);
+    if (tmp != def)
+      output.writeElement(getName(),
+                          static_cast<std::underlying_type_t<Enum>>(tmp));
   }
 
  protected:
@@ -6837,12 +6821,12 @@ PyObject* loadModule(PyObject*, PyObject*, PyObject*);
 /* A template class to expose category classes which use a string
  * as the key to Python. */
 template <class T>
-class FreppleCategory : public PythonExtension<FreppleCategory<T> > {
+class FreppleCategory : public PythonExtension<FreppleCategory<T>> {
  public:
   /* Initialization method. */
   static int initialize() {
     // Initialize the type
-    PythonType& x = PythonExtension<FreppleCategory<T> >::getPythonType();
+    PythonType& x = PythonExtension<FreppleCategory<T>>::getPythonType();
     x.setName(T::metadata->type);
     x.setDoc("frePPLe " + T::metadata->type);
     x.supportgetattro();
@@ -6857,11 +6841,11 @@ class FreppleCategory : public PythonExtension<FreppleCategory<T> > {
 
 /* A template class to expose classes to Python. */
 template <class ME, class BASE>
-class FreppleClass : public PythonExtension<FreppleClass<ME, BASE> > {
+class FreppleClass : public PythonExtension<FreppleClass<ME, BASE>> {
  public:
   static int initialize() {
     // Initialize the type
-    PythonType& x = PythonExtension<FreppleClass<ME, BASE> >::getPythonType();
+    PythonType& x = PythonExtension<FreppleClass<ME, BASE>>::getPythonType();
     x.setName(ME::metadata->type);
     x.setDoc("frePPLe " + ME::metadata->type);
     x.supportgetattro();

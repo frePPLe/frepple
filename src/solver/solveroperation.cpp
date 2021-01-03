@@ -627,19 +627,19 @@ void SolverCreate::solve(const Operation* oper, void* v) {
     data->push(asked_qty, asked_date, true);
     // Subtract the post-operation time.
     data->state->q_date -= ask_early;
-      auto tmpopplan = createOperation(oper, data, true, true);
+    auto tmpopplan = createOperation(oper, data, true, true);
     data->pop(true);
     repeat = false;
     if (!data->state->a_qty) {
       bm->rollback();
-        if (data->state->curOwnerOpplan &&
-            data->state->curOwnerOpplan->getOperation()
-                ->hasType<OperationRouting>() &&
-            tmpopplan) {
-          // This routing sub-operation opplan is about to be recreated
-          tmpopplan->setOwner(nullptr);
-          delete tmpopplan;
-        }
+      if (data->state->curOwnerOpplan &&
+          data->state->curOwnerOpplan->getOperation()
+              ->hasType<OperationRouting>() &&
+          tmpopplan) {
+        // This routing sub-operation opplan is about to be recreated
+        tmpopplan->setOwner(nullptr);
+        delete tmpopplan;
+      }
       if (data->state->a_date <= asked_date && ask_early > Duration(0L)) {
         repeat = true;
         if (ask_early > delta)
@@ -766,9 +766,8 @@ OperationPlan* SolverCreate::createOperation(const Operation* oper,
     }
 
     // Move the newly created operationplan early if shortages are left
-    bool repeat;
-    do {
-      repeat = false;
+    while (true) {
+      bool repeat = false;
       Date shortage_d;
       double shortage_q = 0.0;
       double z_produced = 0.0;
@@ -798,7 +797,8 @@ OperationPlan* SolverCreate::createOperation(const Operation* oper,
           break;
         }
       }
-    } while (repeat);
+      if (!repeat) break;
+    };
   }
 
   // Find the current list of constraints
@@ -809,7 +809,7 @@ OperationPlan* SolverCreate::createOperation(const Operation* oper,
   // Subtract offset between operationplan end and flowplan date
   if (use_offset && producing_flow && producing_flow->getOffset()) {
     if (getLogLevel() > 1)
-      logger << indentlevel << "Adjusting requirement date from "
+      logger << indentlevel << "  Adjusting requirement date from "
              << data->state->q_date;
     data->state->q_date = data->state->q_date_max =
         producing_flow->computeFlowToOperationDate(z, data->state->q_date);
@@ -1078,7 +1078,7 @@ void SolverCreate::solve(const OperationRouting* oper, void* v) {
   // Subtract offset between operationplan end and flowplan date
   if (offset_flow) {
     if (getLogLevel() > 1)
-      logger << indentlevel << "Adjusting requirement date from "
+      logger << indentlevel << "  Adjusting requirement date from "
              << data->state->q_date;
     data->state->q_date = offset_flow->computeFlowToOperationDate(
         a->getOperationPlan(), data->state->q_date);
@@ -1395,7 +1395,7 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v) {
       // Subtract offset between operationplan end and flowplan date
       if (sub_flow && sub_flow->getOffset()) {
         if (getLogLevel() > 1)
-          logger << indentlevel << "Adjusting requirement date from "
+          logger << indentlevel << "  Adjusting requirement date from "
                  << data->state->q_date;
         data->state->q_date = data->state->q_date_max =
             sub_flow->computeFlowToOperationDate(nullptr, data->state->q_date);
@@ -1416,7 +1416,7 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v) {
           data->planningDemand->getConstraints().push(
               ProblemBeforeFence::metadata, (*altIter)->getOperation(),
               origQDate, (*altIter)->getEffectiveStart(), data->state->q_qty);
-      } else if (search == PRIORITY) {
+      } else if (search == SearchMode::PRIORITY) {
         if (loglevel > 1)
           logger << indentlevel << "Alternate operation '" << oper->getName()
                  << "' tries alternate '" << (*altIter)->getOperation() << "' "
@@ -1453,7 +1453,7 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v) {
           data->state->a_date = Date::infiniteFuture;
       }
       double deltaPenalty = data->state->a_penalty - beforePenalty;
-      if (search != PRIORITY) {
+      if (search != SearchMode::PRIORITY) {
         data->state->a_cost = beforeCost;
         data->state->a_penalty = beforePenalty;
       }
@@ -1489,7 +1489,7 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v) {
         a_date = data->state->a_date;
 
       // Message
-      if (loglevel && search != PRIORITY) {
+      if (loglevel && search != SearchMode::PRIORITY) {
         data->incostevaluation = false;
         logger << indentlevel << "Alternate operation '" << oper->getName()
                << "' evaluates alternate '" << (*altIter)->getOperation()
@@ -1498,7 +1498,7 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v) {
       }
 
       // Process the result
-      if (search == PRIORITY) {
+      if (search == SearchMode::PRIORITY) {
         // Undo the operationplans of this alternate
         if (data->state->a_qty < ROUNDING_ERROR)
           data->getCommandManager()->rollback(topcommand);
@@ -1517,13 +1517,13 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v) {
       } else {
         double val = 0.0;
         switch (search) {
-          case MINCOST:
+          case SearchMode::MINCOST:
             val = deltaCost / data->state->a_qty;
             break;
-          case MINPENALTY:
+          case SearchMode::MINPENALTY:
             val = deltaPenalty / data->state->a_qty;
             break;
-          case MINCOSTPENALTY:
+          case SearchMode::MINCOSTPENALTY:
             val = (deltaCost + deltaPenalty) / data->state->a_qty;
             break;
           default:
@@ -1557,7 +1557,8 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v) {
     }  // End loop over all alternates
 
     // Replan on the best alternate
-    if (bestAlternateQuantity > ROUNDING_ERROR && search != PRIORITY) {
+    if (bestAlternateQuantity > ROUNDING_ERROR &&
+        search != SearchMode::PRIORITY) {
       // Message
       if (loglevel > 1)
         logger << indentlevel << "Alternate operation '" << oper->getName()
@@ -1610,8 +1611,6 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v) {
 
       // Combine the reply date of the top-opplan with the alternate check: we
       // need to return the minimum next-date.
-      logger << "----dddd " << data->state->a_date << "    " << a_date << "   "
-             << ask_date << endl;
       if (data->state->a_date < a_date && data->state->a_date > ask_date)
         a_date = data->state->a_date;
 

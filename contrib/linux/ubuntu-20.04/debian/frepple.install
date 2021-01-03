@@ -1,7 +1,0 @@
-usr/bin/*
-usr/lib/*.so*
-usr/lib/python*/dist-packages/frepple*
-etc/apache2/sites-available/frepple.conf
-etc/frepple
-usr/share/frepple
-usr/share/man/man1/*

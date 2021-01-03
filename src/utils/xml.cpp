@@ -438,7 +438,7 @@ void XMLInput::endElement(const XMLCh* const uri, const XMLCh* const ename,
                                        dict_parent, getCommandManager());
               }
               // Set fields already available now on the parent object
-              for (int idx = objects[objectindex - 1].start;
+              for (auto idx = objects[objectindex - 1].start;
                    idx < objects[objectindex].start; ++idx) {
                 if (data[idx].hash == Tags::type.getHash() ||
                     data[idx].hash == Tags::action.getHash())
@@ -509,7 +509,7 @@ void XMLInput::endElement(const XMLCh* const uri, const XMLCh* const ename,
                                        dict_parent, getCommandManager());
               }
               // Set fields already available now on the parent object
-              for (int idx = objects[objectindex - 1].start;
+              for (auto idx = objects[objectindex - 1].start;
                    idx < objects[objectindex].start; ++idx) {
                 if (data[idx].hash == Tags::type.getHash() ||
                     data[idx].hash == Tags::action.getHash())
@@ -574,7 +574,7 @@ void XMLInput::endElement(const XMLCh* const uri, const XMLCh* const ename,
 
     // Update all fields on the new object
     if (objects[objectindex].object) {
-      for (int idx = objects[objectindex].start; idx <= dataindex; ++idx) {
+      for (auto idx = objects[objectindex].start; idx <= dataindex; ++idx) {
         if (data[idx].hash == Tags::type.getHash() ||
             data[idx].hash == Tags::action.getHash())
           continue;
@@ -836,13 +836,13 @@ void XMLSerializer::writeElementWithHeader(const Keyword& tag,
 }
 
 const XMLData* XMLDataValueDict::get(const Keyword& key) const {
-  for (int i = strt; i <= nd; ++i)
+  for (auto i = strt; i <= nd; ++i)
     if (fields[i].hash == key.getHash()) return &fields[i].value;
   return nullptr;
 }
 
 void XMLDataValueDict::print() {
-  for (int i = strt; i <= nd; ++i) {
+  for (auto i = strt; i <= nd; ++i) {
     if (fields[i].field)
       logger << "   " << fields[i].field->getName().getName() << ": ";
     else

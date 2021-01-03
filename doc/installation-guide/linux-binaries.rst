@@ -20,11 +20,8 @@ Binary installation packages are available for:
 * Suse 15 (Enterprise Edition only)
 * OpenSuse 15 (Enterprise Edition only)
 
-Installing on other Linux distributions is also possible, but you'll first
-need to build the frePPLe package from the source package as described
-in a following page. The build and installation process are completely standardized
-for `debian-based distributions <https://en.wikipedia.org/wiki/Category:Debian-based_distributions>`_
-and `RPM-based based distributions <https://en.wikipedia.org/wiki/Category:RPM-based_Linux_distributions>`_.
+Installing on other Linux distributions is also possible. You will need to 
+build from the source code with a standard CMake build sequence.
 
 ******************************
 Installation and configuration
@@ -38,14 +35,14 @@ Here are the steps to get a fully working environment.
 
 #. **Download the installation package**
 
-   For installation on Linux you need a .deb (debian-based distributions) or 
-   .rpm (Red Hat based distributions) package file.
+   For installation on Linux you need a .deb (for 
+   `debian-based distributions <https://en.wikipedia.org/wiki/Category:Debian-based_distributions>`_ )
+   or .rpm (`RPM-based based distributions <https://en.wikipedia.org/wiki/Category:RPM-based_Linux_distributions>`_ )
+   package file.
+
+   The Community Edition is a free downloaded from github at https://github.com/frePPLe/frepple/releases.
    
-   For the Community Edition these can be freely downloaded from 
-   https://github.com/frePPLe/frepple/releases.
-   
-   For the Enterprise Edition you need to download these from the customer 
-   portal on the frePPLe website https://frepple.com/customer-portal/downloads/
+   The Enterprise Edition is available to customers from the frePPLe website at https://frepple.com/customer-portal/downloads/
    
 #. **Install and tune the PostgreSQL database**
 
@@ -83,9 +80,8 @@ Here are the steps to get a fully working environment.
 #. **Tune the database**
 
    The default installation of PostgreSQL is not configured right for
-   intensive use. We highly recommend using the pgtune utility (or its online
-   version at http://pgtune.leopard.in.ua/) to optimize the configuration for your
-   hardware.
+   intensive use. We strongly recommend using pgtune http://pgtune.leopard.in.ua/
+   to optimize the configuration for your hardware.
 
 #. **Create the database and database user**
 
@@ -226,14 +222,14 @@ Here are the steps to get a fully working environment.
           )    
 
    #. | **/etc/frepple/license.xml**
-      | No license file is required for the Community Edition.
-      | If you are using the Enterprise Edition, replace this file with the
-      | license file you received from us.
+      | The Community Edition requires no license file and you can skip this step.
+      | For the Enterprise Edition, replace this file with the
+        license file you received from us.
 
    #. | **/etc/httpd/conf.d/z_frepple.conf**
       | For a standard deployment this file doesn't need modification.
       | It only needs review if you have specific requirements for the setup of
-      | the Apache web server.
+        the Apache web server.
 
 #. **Create the database schema**
 
@@ -324,8 +320,6 @@ inspiration for your own deployments.
   sudo -H pip3 install -r https://raw.githubusercontent.com/frepple/frepple/6.0.0/requirements.txt
 
   # Install the frePPLe binary .deb package and the necessary dependencies.
-  # There are frepple, frepple-doc and frepple-dev debian package files.
-  # Normally you only need to install the frepple debian package.
   sudo dpkg -i frepple_*.deb
   sudo apt-get -f -y -q install
 
@@ -333,6 +327,7 @@ inspiration for your own deployments.
   sudo a2enmod expires
   sudo a2enmod wsgi
   sudo a2enmod ssl
+  sudo a2enmod xsendfile
   sudo a2ensite default-ssl
   sudo a2ensite frepple
   sudo service apache2 restart
@@ -351,7 +346,7 @@ Uninstallation is as simple as:
 
   # Drop all postgresql database. Repeat this command for all databases
   # configured in the /etc/frepple/djangosettings.py file
-  sudo dropdb -U <db-user>  <db-name>
+  sudo dropdb -U <db-user> <db-name>
 
   # Uninstall the package, including log files and configuration files
   sudo apt-get purge frepple     
@@ -395,8 +390,6 @@ inspiration for your own deployments.
   sudo -H pip3 install -r https://raw.githubusercontent.com/frepple/frepple/6.0.0/requirements.txt
 
   # Install the frePPLe binary RPM package and the necessary dependencies.
-  # There are frepple, frepple-doc and frepple-dev package files.
-  # Normally you only need to install the frepple package.
   sudo dnf --nogpgcheck localinstall  frepple*.rpm
 
   # Create frepple database schema  

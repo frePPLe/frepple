@@ -38,21 +38,12 @@
 
 // For a windows shared library we use the C calling convention: __stdcall.
 // Only such functions can be called from VBA...
-// For cygwin we don't use the __stdcall, but still need the export/import.
 #undef DECLARE_EXPORT
 #if defined(WIN32)
-#ifdef __CYGWIN__
-#ifdef FREPPLE_CORE
-#define DECLARE_EXPORT(type) __declspec(dllexport) type
-#else
-#define DECLARE_EXPORT(type) __declspec(dllimport) type
-#endif
-#else
 #ifdef FREPPLE_CORE
 #define DECLARE_EXPORT(type) __declspec(dllexport) type __stdcall
 #else
 #define DECLARE_EXPORT(type) __declspec(dllimport) type __stdcall
-#endif
 #endif
 #else
 #define DECLARE_EXPORT(type) type

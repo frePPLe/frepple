@@ -490,20 +490,21 @@ void SolverCreate::solve(void* v) {
   if (!getConstraints()) {
     // Dumb unconstrained plan is running in a single thread
     for (auto i = Demand::begin(); i != Demand::end(); ++i)
-      if (i->getQuantity() > 0 &&
-          (i->getStatus() == Demand::OPEN || i->getStatus() == Demand::QUOTE))
+      if (i->getQuantity() > 0 && (i->getStatus() == Demand::status::OPEN ||
+                                   i->getStatus() == Demand::status::QUOTE))
         demands_per_cluster[0].push_back(&*i);
   } else if (cluster == -1 && !userexit_nextdemand) {
     // Many clusters to solve
     for (auto i = Demand::begin(); i != Demand::end(); ++i)
-      if (i->getQuantity() > 0 &&
-          (i->getStatus() == Demand::OPEN || i->getStatus() == Demand::QUOTE))
+      if (i->getQuantity() > 0 && (i->getStatus() == Demand::status::OPEN ||
+                                   i->getStatus() == Demand::status::QUOTE))
         demands_per_cluster[i->getCluster()].push_back(&*i);
   } else if (!userexit_nextdemand) {
     // Only a single cluster to plan
     for (auto i = Demand::begin(); i != Demand::end(); ++i)
       if (i->getCluster() == cluster && i->getQuantity() > 0 &&
-          (i->getStatus() == Demand::OPEN || i->getStatus() == Demand::QUOTE))
+          (i->getStatus() == Demand::status::OPEN ||
+           i->getStatus() == Demand::status::QUOTE))
         demands_per_cluster[0].push_back(&*i);
   }
 
@@ -685,10 +686,9 @@ PyObject* SolverPropagateStatus::solve(PyObject* self, PyObject* args) {
 
 void SolverPropagateStatus::solve(void* v) {
   short lvl = 0;
-  bool operationsfound;
   bool log = getLogLevel() > 0;
-  do {
-    operationsfound = false;
+  while (true) {
+    bool operationsfound = false;
     for (auto oper = Operation::begin(); oper != Operation::end(); ++oper) {
       if (oper->getLevel() != lvl) continue;
       operationsfound = true;
@@ -700,7 +700,8 @@ void SolverPropagateStatus::solve(void* v) {
       }
     }
     lvl += 1;
-  } while (operationsfound);
+    if (!operationsfound) break;
+  }
 }
 
 }  // namespace frepple

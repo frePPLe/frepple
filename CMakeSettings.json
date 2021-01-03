@@ -1,0 +1,46 @@
+﻿{
+  "configurations": [
+    {
+      "name": "x64-Debug",
+      "generator": "Visual Studio 16 2019 Win64",
+      "configurationType": "Debug",
+      "inheritEnvironments": [
+        "msvc_x64_x64"
+      ],
+      "buildRoot": "${projectDir}\\build\\${name}",
+      "installRoot": "${projectDir}\\bin",
+      "cmakeCommandArgs": "",
+      "buildCommandArgs": "",
+      "ctestCommandArgs": "",
+      "variables": [],
+      "environments": [
+        {
+          "FREPPLE_PLANTYPE": 1,
+          "FREPPLE_CONSTRAINT": 15,
+          "FREPPLE_DATABASE": "default",
+          "PYTHONPATH=": "${projectDir}",
+          "DJANGO_SETTINGS_MODULE": "freppledb.settings",
+          "SUPPLY": 1,
+          "FCST": 1,
+          "INVPLAN": 1,
+          "FREPPLE_LOGFILE": "frepple.log",
+          "xVIRTUAL_ENV": "${projectDir}\\venv"
+        }
+      ]
+    },
+    {
+      "name": "x64-Release",
+      "generator": "Visual Studio 16 2019 Win64",
+      "configurationType": "Release",
+      "buildRoot": "${projectDir}\\build\\${name}",
+      "installRoot": "${projectDir}\\bin",
+      "cmakeCommandArgs": "",
+      "buildCommandArgs": "",
+      "ctestCommandArgs": "",
+      "inheritEnvironments": [
+        "msvc_x64_x64"
+      ],
+      "variables": []
+    }
+  ]
+}

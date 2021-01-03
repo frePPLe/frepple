@@ -137,7 +137,9 @@ APPEND_SLASH = False
 
 WSGI_APPLICATION = "freppledb.wsgi.application"
 ROOT_URLCONF = "freppledb.urls"
-if os.sep == "/" and os.path.isdir("/usr/share/frepple/static"):
+if "FREPPLE_STATIC" in os.environ:
+    STATIC_ROOT = os.environ["FREPPLE_STATIC"]
+elif os.sep == "/" and os.path.isdir("/usr/share/frepple/static"):
     # Standard Linux installation
     STATIC_ROOT = "/usr/share/frepple/static"
 else:

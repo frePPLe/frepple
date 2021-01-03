@@ -12,6 +12,17 @@ Release notes
   | As a translator, your task is now simpler. You no longer need to type everything from scratch.
     Instead you'll just need to review the pre-translated strings and correct them where needed.
 
+.. rubric:: Development
+
+- | FrePPLe is now using the cmake build system rather than the archaic autotools.
+  | End users won't see any change (i.e. the same source code is still compiled into the same 
+    executables), but the source code meta data is now much cleaner and better. 
+
+- | On Windows we no longer support deployments using the apache web server or the cygwin compiler.
+    We have no customers using these, and we prefer to 
+  | The Windows installer with the embedded web server and PostgreSQL database remains fully supported. 
+    It provides an easy start for small deployments and/or trials. 
+
 6.10.0 (2020/12/06)
 ===================
 

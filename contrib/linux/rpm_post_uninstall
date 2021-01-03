@@ -1,0 +1,9 @@
+
+# Remove log directory
+rm -rf /var/log/frepple
+
+# Note that we don't remove the frepple group when uninstalling.
+# There's no sane way to check if files owned by it are left behind.
+# And even if there would, what would we do with them?
+
+/sbin/ldconfig

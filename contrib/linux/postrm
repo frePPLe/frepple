@@ -1,0 +1,18 @@
+#!/bin/sh
+
+set -e
+
+if [ "$1" = "purge" ]; then
+  # Remove log directory
+  rm -rf /var/log/frepple
+fi
+
+# Note that we don't remove the frepple group.
+# There's no sane way to check if files owned by it are left behind.
+# And even if there would, what would we do with them?
+
+if [ "$1" = "remove" ]; then
+  ldconfig
+fi
+
+exit 0

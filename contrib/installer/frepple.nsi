@@ -23,21 +23,12 @@
 ; To run this script successfully, you'll therefore need to have the cygwin
 ; system up and running on your machine.
 
-; Read the version number from the configure.ac file
-!searchparse /file "..\..\configure.ac"  'define(FREPPLE_MAJOR, ' FREPPLE_MAJOR ')'
-!searchparse /file "..\..\configure.ac"  'define(FREPPLE_MINOR, ' FREPPLE_MINOR ')'
-!searchparse /file "..\..\configure.ac"  'define(FREPPLE_PATCH, ' FREPPLE_PATCH ')'
-
 ; Main definitions
 !define PRODUCT_NAME "frePPLe"
-!define PRODUCT_VERSION "${FREPPLE_MAJOR}.${FREPPLE_MINOR}.${FREPPLE_PATCH}"
 !define PRODUCT_PUBLISHER "frePPLe"
 !define PRODUCT_WEB_SITE "https://frepple.com"
 !define PRODUCT_DIR_REGKEY "Software\Microsoft\Windows\CurrentVersion\App Paths\frepple.exe"
 !define PRODUCT_UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_NAME} ${PRODUCT_VERSION}"
-
-; Folder where the PostgreSQL release is avaiable, which we will embed in the installer
-!define POSTGRESFOLDER "c:\develop\pgsql"
 
 ; Select compressor
 SetCompressor /SOLID lzma
@@ -68,7 +59,7 @@ SetCompressor /SOLID lzma
 
 ; Installer pages
 !insertmacro MUI_PAGE_WELCOME
-!insertmacro MUI_PAGE_LICENSE "../../COPYING"
+!insertmacro MUI_PAGE_LICENSE "..\..\COPYING"
 !insertmacro MULTIUSER_PAGE_INSTALLMODE
 !insertmacro MUI_PAGE_DIRECTORY
 !insertmacro MUI_PAGE_COMPONENTS
@@ -83,34 +74,20 @@ Page custom FinishOpen FinishLeave
 !insertmacro MUI_UNPAGE_INSTFILES
 !insertmacro MUI_UNPAGE_FINISH
 
-; Language files, sorted alphabetically to avoid a new world war
-!insertmacro MUI_LANGUAGE "English"   ; First option is the default language
-!insertmacro MUI_LANGUAGE "Croatian"
-!insertmacro MUI_LANGUAGE "Dutch"
-!insertmacro MUI_LANGUAGE "French"
-!insertmacro MUI_LANGUAGE "German"
-!insertmacro MUI_LANGUAGE "Hebrew"
-!insertmacro MUI_LANGUAGE "Italian"
-!insertmacro MUI_LANGUAGE "Japanese"
-!insertmacro MUI_LANGUAGE "Portuguese"
-!insertmacro MUI_LANGUAGE "PortugueseBR"
-!insertmacro MUI_LANGUAGE "Russian"
-!insertmacro MUI_LANGUAGE "SimpChinese"
-!insertmacro MUI_LANGUAGE "Spanish"
-!insertmacro MUI_LANGUAGE "TradChinese"
-!insertmacro MUI_LANGUAGE "Ukrainian"
+; Language files
+!insertmacro MUI_LANGUAGE "English"
 
 ;Version Information
 VIProductVersion "${PRODUCT_VERSION}.0"
 VIAddVersionKey /LANG=${LANG_ENGLISH} FileVersion "${PRODUCT_VERSION}.0"
-VIAddVersionKey /LANG=${LANG_ENGLISH} ProductName "frePPLe community edition installer"
-VIAddVersionKey /LANG=${LANG_ENGLISH} Comments "frePPLe community edition installer"
+VIAddVersionKey /LANG=${LANG_ENGLISH} ProductName "frePPLe ${PROJECT_EDITION} installer"
+VIAddVersionKey /LANG=${LANG_ENGLISH} Comments "frePPLe ${PROJECT_EDITION} installer"
 VIAddVersionKey /LANG=${LANG_ENGLISH} CompanyName "frePPLe"
 VIAddVersionKey /LANG=${LANG_ENGLISH} LegalCopyright "Dual licensed under the AGPL and commercial license"
-VIAddVersionKey /LANG=${LANG_ENGLISH} FileDescription "frePPLe community edition installer"
+VIAddVersionKey /LANG=${LANG_ENGLISH} FileDescription "frePPLe ${PROJECT_EDITION} installer"
 
 Name "${PRODUCT_NAME} ${PRODUCT_VERSION}"
-OutFile "${PRODUCT_NAME}_${PRODUCT_VERSION}_setup.exe"
+OutFile "${CMAKE_BINARY_DIR}\${PRODUCT_NAME}_${PRODUCT_VERSION}_setup.exe"
 BrandingText "${PRODUCT_NAME} ${PRODUCT_VERSION}"
 CRCcheck on
 ShowInstDetails show
@@ -124,13 +101,11 @@ Var minutes
 Var seconds
 
 ; Declare everything that needs to be extracted on startup.
-; Only useful for BZIP2 compression
 ReserveFile "parameters.ini"
 ReserveFile "sendusage.ini"
 ReserveFile "finish.ini"
-ReserveFile '${NSISDIR}\Plugins\InstallOptions.dll'
 ReserveFile "finish.bmp"
-
+ReserveFile '${NSISDIR}\Plugins\InstallOptions.dll'
 
 Function .onInit
   ; Extract some files used by the installer
@@ -146,45 +121,32 @@ Function .onInit
 FunctionEnd
 
 
-Section -Start
-  ; Create the python distribution and django server
-  !system 'rmdir /s /q build'
-  !system 'python setup.py build'
-
-  ; Rebuild the documentation
-  !cd '../../doc'
-  !system 'rmdir /s /q _build'
-  !system 'sphinx-build -a -E -b html -d _build/doctrees . _build/html'
-  !cd '..'
-SectionEnd
-
-
 Section "Application" SecAppl
   SectionIn RO     ; The app section can't be deselected
 
   SetOutPath "$INSTDIR"
   SetOverwrite ifnewer
-  File "COPYING"
-  File "README.md"
+  File "..\..\COPYING"
+  File "..\..\README.md"
 
   ; Copy application, dll and libraries
   SetOutPath "$INSTDIR\bin"
-  File "bin\frepple.exe"
-  File "bin\frepple.pyd"
-  !insertmacro InstallLib DLL NOTSHARED NOREBOOT_NOTPROTECTED "bin\frepple.dll" "$INSTDIR\bin\frepple.dll" "$SYSDIR"
+  File "..\..\bin\frepple.exe"
+  File "..\..\bin\frepple.pyd"
+  !insertmacro InstallLib DLL NOTSHARED NOREBOOT_NOTPROTECTED "..\..\bin\frepple.dll" "$INSTDIR\bin\frepple.dll" "$SYSDIR"
 
    ; Copy configuration files
-  File "bin\*.xsd"
+  File "..\..\bin\frepple.xsd"
 
   ; Copy the license file the user specified
-  File "bin\license.xml"
+  File "..\..\bin\license.xml"
 
   ; Copy the django and python redistributables created by cx_freeze
-  File /r "contrib\installer\build\exe.win-amd64-3.6\*.*"
+  File /r "${CMAKE_BINARY_DIR}\contrib\installer\exe.win-amd64-${PYTHON_VERSION}\*.*"
 
   ; Copy djangosettings
   SetOutPath "$INSTDIR\bin\custom"
-  File "djangosettings.py"
+  File "..\..\djangosettings.py"
 
   ; Create menu
   CreateDirectory "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}"
@@ -197,17 +159,18 @@ Section "Application" SecAppl
   CreateShortCut "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}\Open command window.lnk" "$SYSDIR\cmd.exe"
 SectionEnd
 
+
 Section "PostgreSQL" SecPostgres
   SetOutPath "$INSTDIR"
   SetOverwrite ifnewer
-  File /r /x .gitignore "contrib\installer\pgsql"
+  File /r /x .gitignore "pgsql"
   SetOutPath "$INSTDIR\pgsql"
-  File /r "${POSTGRESFOLDER}\bin"
-  File /r "${POSTGRESFOLDER}\doc"
-  File /r "${POSTGRESFOLDER}\include"
-  File /r "${POSTGRESFOLDER}\lib"
-  File /r "${POSTGRESFOLDER}\share"
-  File /r "${POSTGRESFOLDER}\StackBuilder"
+  File /r "${POSTGRES_FOLDER}\bin"
+  File /r "${POSTGRES_FOLDER}\doc"
+  File /r "${POSTGRES_FOLDER}\include"
+  File /r "${POSTGRES_FOLDER}\lib"
+  File /r "${POSTGRES_FOLDER}\share"
+  File /r "${POSTGRES_FOLDER}\StackBuilder"
 SectionEnd
 
 
@@ -223,7 +186,7 @@ Section "Documentation" SecDoc
   SetOverwrite ifnewer
   CreateDirectory "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}"
   CreateShortCut "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}\Documentation.lnk" "$INSTDIR\html\index.html"
-  File /r "doc\_build\html"
+  File /r "${CMAKE_BINARY_DIR}\doc\_build\html"
 SectionEnd
 
 
@@ -449,7 +412,7 @@ Section -Post
   Goto read2_loop
   ${GetTime} "" "L" $day $month $year $day_name $hours $minutes $seconds
   FileWrite $R4 "# Make this unique, and don't share it with anybody.$\r$\n"
-  FileWrite $R4 "SECRET_KEY = '%@mzit!i8b*$zc&6oev96=$year$month$day$hours$minutes$seconds'$\r$\n"
+  FileWrite $R4 "SECRET_KEY = '%@mzit!i8b*zc&6oev96=$year$month$day$hours$minutes$seconds'$\r$\n"
   FileWrite $R4 "$\r$\n"
   FileWrite $R4 "FREPPLE_LOGDIR = r'$APPDATA\${PRODUCT_NAME}\${PRODUCT_VERSION}'$\r$\n$\r$\n"
   FileWrite $R4 "MEDIA_ROOT = os.path.join(FREPPLE_LOGDIR, 'uploads')$\r$\n$\r$\n"

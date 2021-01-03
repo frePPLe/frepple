@@ -308,7 +308,7 @@ PyObject* loadModule(PyObject* self, PyObject* args, PyObject* kwds) {
   // Create the command
   char* data = nullptr;
   int ok = PyArg_ParseTuple(args, "s:loadmodule", &data);
-  if (!ok) return nullptr;
+  if (!ok || !data) return nullptr;
 
   // Free Python interpreter for other threads.
   // This is important since the module may also need access to Python

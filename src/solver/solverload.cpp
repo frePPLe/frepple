@@ -141,21 +141,21 @@ void SolverCreate::chooseResource(
       data->state->a_penalty = beforePenalty;
       double val = 0.0;
       switch (l->getSearch()) {
-        case PRIORITY:
+        case SearchMode::PRIORITY:
           val = rscSkill ? rscSkill->getPriority() : 0;
           break;
-        case MINCOST:
+        case SearchMode::MINCOST:
           val = deltaCost / lplan->getOperationPlan()->getQuantity();
           break;
-        case MINPENALTY:
+        case SearchMode::MINPENALTY:
           val = deltaPenalty / lplan->getOperationPlan()->getQuantity();
           break;
-        case MINCOSTPENALTY:
+        case SearchMode::MINCOSTPENALTY:
           val = (deltaCost + deltaPenalty) /
                 lplan->getOperationPlan()->getQuantity();
           break;
         default:
-          LogicException("Unsupported search mode for alternate load");
+          throw LogicException("Unsupported search mode for alternate load");
       }
       if (val + ROUNDING_ERROR < bestAlternateValue ||
           (fabs(val - bestAlternateValue) < ROUNDING_ERROR &&
@@ -326,7 +326,7 @@ void SolverCreate::solve(const Load* l, void* v) {
     // decent tie breaker, eg number of skills or number of loads. The first
     // resource with the qualified skill that is available will be used.
     auto topcommand = data->getCommandManager()->setBookmark();
-    if (search == PRIORITY)
+    if (search == SearchMode::PRIORITY)
       curload->getResource()->solve(*this, data);
     else {
       setLogLevel(0);
@@ -345,7 +345,7 @@ void SolverCreate::solve(const Load* l, void* v) {
     // 4c) Evaluate the result
     if (data->state->a_qty > ROUNDING_ERROR &&
         lplan->getOperationPlan()->getQuantity() > 0) {
-      if (search == PRIORITY) {
+      if (search == SearchMode::PRIORITY) {
         // Priority search: accept any non-zero reply
         // Restore the planning mode
         data->constrainedPlanning = originalPlanningMode;
@@ -356,7 +356,7 @@ void SolverCreate::solve(const Load* l, void* v) {
         double deltaCost = data->state->a_cost - beforeCost;
         double deltaPenalty = data->state->a_penalty - beforePenalty;
         // Message
-        if (loglevel > 1 && search != PRIORITY)
+        if (loglevel > 1 && search != SearchMode::PRIORITY)
           logger << indentlevel << "Operation '" << l->getOperation()->getName()
                  << "' evaluates alternate '" << curload->getResource()
                  << "': cost " << deltaCost << ", penalty " << deltaPenalty
@@ -377,18 +377,18 @@ void SolverCreate::solve(const Load* l, void* v) {
         data->state->a_penalty = beforePenalty;
         double val = 0.0;
         switch (search) {
-          case MINCOST:
+          case SearchMode::MINCOST:
             val = deltaCost / lplan->getOperationPlan()->getQuantity();
             break;
-          case MINPENALTY:
+          case SearchMode::MINPENALTY:
             val = deltaPenalty / lplan->getOperationPlan()->getQuantity();
             break;
-          case MINCOSTPENALTY:
+          case SearchMode::MINCOSTPENALTY:
             val = (deltaCost + deltaPenalty) /
                   lplan->getOperationPlan()->getQuantity();
             break;
           default:
-            LogicException("Unsupported search mode for alternate load");
+            throw LogicException("Unsupported search mode for alternate load");
         }
         if (val + ROUNDING_ERROR < bestAlternateValue ||
             (fabs(val - bestAlternateValue) < ROUNDING_ERROR &&
@@ -400,7 +400,7 @@ void SolverCreate::solve(const Load* l, void* v) {
           bestAlternateQuantity = lplan->getOperationPlan()->getQuantity();
         }
       }
-    } else if (loglevel > 1 && search != PRIORITY)
+    } else if (loglevel > 1 && search != SearchMode::PRIORITY)
       logger << indentlevel << "Operation '" << l->getOperation()->getName()
              << "' evaluates alternate '" << curload->getResource()
              << "': not available before " << data->state->a_date << endl;
@@ -411,7 +411,8 @@ void SolverCreate::solve(const Load* l, void* v) {
     // 4e) Prepare for the next alternate
     if (data->state->a_date < min_next_date)
       min_next_date = data->state->a_date;
-    if (++i != thealternates.end() && loglevel > 1 && search == PRIORITY)
+    if (++i != thealternates.end() && loglevel > 1 &&
+        search == SearchMode::PRIORITY)
       logger << indentlevel << "  Alternate load switches from '"
              << curload->getResource()->getName() << "' to '"
              << (*i)->getResource()->getName() << "'" << endl;
@@ -419,14 +420,15 @@ void SolverCreate::solve(const Load* l, void* v) {
 
   // 5) Unconstrained plan: plan on the first alternate
   if (!originalPlanningMode &&
-      !(search != PRIORITY && bestAlternateSelection)) {
+      !(search != SearchMode::PRIORITY && bestAlternateSelection)) {
     // Switch to unconstrained planning
     data->constrainedPlanning = false;
     bestAlternateSelection = *(thealternates.begin());
   }
 
   // 6) Finally replan on the best alternate
-  if (!originalPlanningMode || (search != PRIORITY && bestAlternateSelection)) {
+  if (!originalPlanningMode ||
+      (search != SearchMode::PRIORITY && bestAlternateSelection)) {
     // Message
     if (loglevel > 1)
       logger << indentlevel << "  Operation '" << l->getOperation()->getName()

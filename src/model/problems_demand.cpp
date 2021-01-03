@@ -39,7 +39,7 @@ void Demand::updateProblems() {
   if (!getDetectProblems()) return;
 
   // Closed demands don't have any problems
-  if (getStatus() != CLOSED) {
+  if (getStatus() != status::CLOSED) {
     // Check which problems need to be created
     if (deli.empty()) {
       // Check if a new ProblemDemandNotPlanned needs to be created

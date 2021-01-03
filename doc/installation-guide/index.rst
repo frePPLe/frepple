@@ -8,7 +8,6 @@ This part of the manual covers all topics related to installation and deployment
    :maxdepth: 2
 
    windows-installer
-   windows-apache
    linux-binaries
    upgrading
    windows-compiling

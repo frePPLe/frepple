@@ -140,7 +140,7 @@ for mod in [
 
 # Run the cx_Freeze program
 cx_Freeze.setup(
-    version=freppledb.__version__.replace(".beta", ".0"),
+    version=freppledb.__version__,
     description="frePPLe web application",
     name="frePPLe",
     author="frepple.com",

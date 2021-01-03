@@ -1,48 +1,10 @@
-# Autotools
-/autom4te.cache
-/aclocal.m4
-/compile
-/configure
-/depcomp
-/install-sh
-/missing
-/install-test
-/ltmain.sh
-/libtool
-/config.guess
-/config.h
-/config.h.in
-/config.status
-/config.sub
-/stamp-h1
+# Generated folders
 /static
-/build
+/build*
 /logs
 /node_modules
-Makefile
-Makefile.in
-
-# GNU C++ & libtool
-*.o
-*.lo
-*.a
-*.la
-*.so
-.deps
-.libs
-
-# Visual studio C++
-/bin/*.pdb
-*.exp
-*.ilk
-*.lib
-*.idb
-*.ncb
-*.pdb
-*.obj
-*.suo
-*.dep
-*.manifest
+/localsettings*
+/test/*/output.*.xml
 .vs
 
 # Executables
@@ -61,25 +23,15 @@ build
 *.out
 *.stackdump
 
-# Extra
-/doc/html
-/test/*/output.*.xml
-
 # Eclipse
 .settings
 .cproject
 .project
 .pydevproject
 .tern-project
-*.md.html
-.autotools
 
 # Packaging
 *.deb
 *.rpm
 *.tar.gz
 *.tgz
-
-# Local configuration
-/localsettings*.py
-

@@ -346,7 +346,7 @@ Object* CalendarBucket::reader(const MetaClass* cat, const DataValueDict& atts,
 
   // Pick up the action attribute and update the bucket accordingly
   switch (MetaClass::decodeAction(atts)) {
-    case ADD:
+    case Action::ADD:
       // Only additions are allowed
       if (result) {
         ostringstream o;
@@ -360,11 +360,11 @@ Object* CalendarBucket::reader(const MetaClass* cat, const DataValueDict& atts,
       if (cal) result->setCalendar(cal);
       if (mgr) mgr->add(new CommandCreateObject(result));
       return result;
-    case CHANGE:
+    case Action::CHANGE:
       // Only changes are allowed
       if (!result) throw DataException("Bucket doesn't exist");
       return result;
-    case REMOVE:
+    case Action::REMOVE:
       // Delete the entity
       if (!result)
         throw DataException("Bucket doesn't exist");
@@ -373,7 +373,7 @@ Object* CalendarBucket::reader(const MetaClass* cat, const DataValueDict& atts,
         cal->removeBucket(result);
         return nullptr;
       }
-    case ADD_CHANGE:
+    case Action::ADD_CHANGE:
       if (!result) {
         // Adding a new bucket
         result = new CalendarBucket();

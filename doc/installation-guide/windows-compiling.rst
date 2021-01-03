@@ -2,62 +2,72 @@
 Compiling on Windows
 ====================
 
-Two options exist to compile frePPle under windows:
+Here are the steps to compile frePPLe under Windows with Microsoft Visual Studio.
 
-* `Compiling using Microsoft Visual C++ compiler`_
+* First, install the following third party tools:
 
-* `Compiling using the Cygwin compiler`_
+  - | **Python 3.6 or higher**
+    | Install the 64-bit version of Python 3.
+    | https://www.python.org/downloads/
 
-The binaries created by these compilers are not compatible with each other.
+  - | **Microsoft Visual Studio C++ 2019**.
+    | The community edition is sufficient.
+    | https://visualstudio.microsoft.com/vs/
+    
+  - | **CMake tools foor Visual Studio**
+    | This plugin integrates cmake into the Visual Studio IDE.
+    | https://marketplace.visualstudio.com/items?itemName=ms-vscode.cmake-tools
 
-*********************************************
-Compiling using Microsoft Visual C++ compiler
-*********************************************
+  - | **Xerces-C 3.1.3**
+    | You will have to compile this package from source. The xerces-c team
+      provides a Visual Studio file that can be used to create a 64-bit static
+      library.
+    | https://xerces.apache.org/xerces-c/download.cgi
 
-FrePPLe comes with Microsoft Visual Studio projects and workspaces to
-compile the source code.
+  - | **PostgreSQL 10 or higher**
+    | You'll need the PostgreSQL relational database. 
 
-You will also need to install:
+- | **Download the source code** from https://github.com/frePPLe/frepple
 
-* **Visual Studio C++ 2015**.
+- | **Install the required Python packages** 
+  | The source code contains a requirements.txt with a list of all packages. You install them with pip:
+  
+  ::
+   
+      python -m pip install -r requirements.txt
+  
+- | **Option 1: Open the Visual studio project**
+  | In Windows Explorer, right click on any source code folder and select "Open with Visual Studio".
+  | Visual Studio will start and configure the project. Visual Studio will report if python or xerces-c
+    aren't be found. When these are available you're all set to compile the project. 
 
-  The express edition is sufficient.
+- | **Option 2: Use Cmake from the command line**
+  | This is an alternative to the previous step.
+  | Open a Visual Studio Developer command shell and run the standard CMake build steps:
+  
+  ::
+  
+     # Make a build folder
+     cd <your-source-folder>
+     mkdir build 
+     cd build 
+     
+     # Configure the environment.
+     # If python or xercesc are not found, you'll get errors here.
+     cmake ..
+     
+     # Compile the source code
+     cmake --build . --config Release
+     
+- | **Test the result**:
+  | Finally, let's check if it all worked.
 
-  Using a different version of Visual Studio will NOT work: Python and its
-  extension modules are all compiled with Visual C++ 2015, and frePPle
-  needs to use the same compiler and C runtime libraries.
-
-* **Python 3.5 or higher**
-
-  Install the 64-bit version of Python 3.
-
-* **Xerces-C 3.1.3**
-
-  You will have to compile this package from source. The xerces-c team
-  provides a Visual Studio file that can be used to create a 64-bit static
-  library.
-
-The solution file is *contrib/vc/frepple.sln*. The include and library
-directories of Python and Xerces-C will need to configured in Visual Studio.
-
-A convenience script *contrib/vc/build.bat* is also provided to compile from
-the command line. The script needs to be edited to point to the installation
-folders of Python and Xerces-C.
-
-If you also want to create the installer, you will need to install a number of
-additional software components. Detailed instructions are found in the file
-contrib/installer/README.txt.
-
-***********************************
-Compiling using the Cygwin compiler
-***********************************
-
-Cygwin is a large collection of GNU and Open Source tools which provide
-functionality similar to a Linux distribution on Windows. The Cygwin environment
-is available free of charge from http://www.cygwin.com.
-
-The build instructions on Cygwin are identical to the Linux platforms.
-
-The Cygwin executables are considerably slower than the native Windows binaries.
-The Cygwin build is not intended for production environments, but should be
-seen as a test and development setup for a Linux environment.
+  - After successful compilation you will find your binaries in the folder <your-source-folder>/bin.
+  
+  - Run the unit test suite:
+  
+    ::
+    
+       cd <your-source-folder>\test
+       python runtest.py --regression
+    

@@ -78,8 +78,10 @@ Demand::~Demand() {
     else {
       Demand* dmd = it->firstItemDemand;
       while (dmd && dmd->nextItemDemand != this) dmd = dmd->nextItemDemand;
-      if (!dmd) logger << "corrupted demand list for an item" << endl;
-      dmd->nextItemDemand = nextItemDemand;
+      if (!dmd)
+        logger << "corrupted demand list for an item" << endl;
+      else
+        dmd->nextItemDemand = nextItemDemand;
     }
   }
 

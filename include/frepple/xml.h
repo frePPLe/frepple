@@ -77,10 +77,10 @@ class XMLInput : public DataInput,
 
  public:
   struct fld {
-    const MetaFieldBase* field;
+    const MetaFieldBase* field = nullptr;
     XMLData value;
     string name;
-    size_t hash;
+    size_t hash = 0;
   };
 
  private:
@@ -94,7 +94,7 @@ class XMLInput : public DataInput,
   struct obj {
     const MetaClass* cls;
     Object* object;
-    int start;
+    vector<fld>::size_type start;
     size_t hash;
   };
   vector<obj> objects;
@@ -103,10 +103,10 @@ class XMLInput : public DataInput,
   vector<fld> data;
 
   /* Index into the objects stack. */
-  int objectindex = -1;
+  vector<obj>::size_type objectindex = -1;
 
   /* Index into the data field stack. */
-  int dataindex = -1;
+  vector<fld>::size_type dataindex = -1;
 
   /* A variable to keep track of the size of the element stack. It is used
    * together with the variable m_EStack.
@@ -304,7 +304,9 @@ class XMLDataValueDict : public DataValueDict {
   typedef vector<pair<DataKeyword, XMLData> > dict;
 
   /* Constructor. */
-  XMLDataValueDict(vector<XMLInput::fld>& f, int st, int nd)
+  XMLDataValueDict(vector<XMLInput::fld>& f,
+                   vector<XMLInput::fld>::size_type st,
+                   vector<XMLInput::fld>::size_type nd)
       : fields(f), strt(st), nd(nd) {}
 
   /* Look up a certain keyword. */
@@ -318,8 +320,8 @@ class XMLDataValueDict : public DataValueDict {
 
  private:
   vector<XMLInput::fld>& fields;
-  int strt;
-  int nd;
+  vector<XMLInput::fld>::size_type strt;
+  vector<XMLInput::fld>::size_type nd;
 };
 
 /* Base class for writing XML formatted data to an output stream.

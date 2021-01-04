@@ -20,23 +20,13 @@
 #
 # Each test has its own subdirectory. In the description below it is referred
 # to as {testdir}.
-# Three categories of tests are supported.
+# Two categories of tests are supported.
 #
-#  - Type 1: Compiled executable
-#    If an executable file {testdir} or {testdir}.exe is found in the test
-#    directory, the executable is run. The compilation/generation of the
-#    executable is not handled by the script, but it's typically done by
-#    running the command "make check" in the test subdirectory.
-#    The test is successful if both:
-#      1) the exit code of the program is 0
-#      2) the output of the program is identical to the content of the
-#         file {testdir}.expect
-#
-#  - Type 2: Run a Python test script
+#  - Type 1: Run a Python test script
 #    If a file runtest.py is found in the test directory, it is being run
 #    and its exit code is used as the criterium for a successful test.
 #
-#  - Type 3: Process an XML or PY file
+#  - Type 2: Process an XML or PY file
 #    If a file {testdir}.xml or {testdir}.py is found in the test directory, the frepple
 #    commandline executable is called to process the file.
 #    The test is successful if both:
@@ -53,10 +43,6 @@
 #    Execute the tests listed on the command line.
 #  - ./runtest.py
 #    Execute all tests.
-#  - ./runtest.py --vcc
-#    Execute all tests using the executables compiled with Microsofts'
-#    Visual Studio C++ compiler.
-#    Tests of type 1 are skipped in this case.
 #
 import unittest
 import os
@@ -84,8 +70,6 @@ def usage():
           ./runtest.py [options] {test1} {test2} ...
 
         With the following options:
-          -v  --vcc:
-             Test executables created by Microsoft Visual Studio C++ compiler.
           -d  --debug:
              Verbose output of the test.
           -r  --regression:
@@ -125,7 +109,7 @@ def runTestSuite():
 
     try:
         opts, args = getopt.getopt(
-            sys.argv[1:], "dvhre:", ["debug", "vcc", "help", "regression", "exclude="]
+            sys.argv[1:], "dvhre:", ["debug", "help", "regression", "exclude="]
         )
     except getopt.GetoptError:
         usage()
@@ -158,17 +142,10 @@ def runTestSuite():
 
     # Executable to run
     os.environ["FREPPLE_HOME"] = os.path.join(testdir, "..", "bin")
-    if platform == "VCC":
-        os.environ["EXECUTABLE"] = (
-            '"' + os.path.join(testdir, "..", "bin", "frepple.exe") + '"'
-        )
-    else:
-        # Executable to be used for the tests. Exported as an environment variable.
-        # This default executable is the one valid  for GCC *nux builds.
-        os.environ["EXECUTABLE"] = '"%s" --mode=execute %s' % (
-            os.path.join(testdir, "..", "libtool"),
-            os.path.join(testdir, "..", "src", "frepple"),
-        )
+    os.environ["EXECUTABLE"] = '"%s%s"' % (
+        os.path.join(testdir, "..", "bin", "frepple"),
+        ".exe" if platform == "VCC" else "",
+    )
 
     # Update the search path for shared libraries, such that the modules
     # can be picked up.
@@ -211,19 +188,12 @@ def runTestSuite():
         i = os.path.normpath(i)
         tmp = os.path.join(testdir, i, i)
 
-        # Only GCC runs compiled tests
-        if len(glob.glob(os.path.join(testdir, i, "*.cpp"))) > 0 and platform != "GCC":
-            continue
-
         # Check the test type
-        if os.path.isfile(tmp) or os.path.isfile(tmp + ".exe"):
-            # Type 1: (compiled) executable
-            AllTests.addTest(freppleTest(i, "runExecutable"))
-        elif os.path.isfile(os.path.join(testdir, i, "runtest.py")):
-            # Type 2: Python script runtest.py available
+        if os.path.isfile(os.path.join(testdir, i, "runtest.py")):
+            # Type 1: Python script runtest.py available
             AllTests.addTest(freppleTest(i, "runScript"))
         elif os.path.isfile(tmp + ".xml") or os.path.isfile(tmp + ".py"):
-            # Type 3: input XML or Python file specified
+            # Type 2: input XML or Python file specified
             AllTests.addTest(freppleTest(i, "runXML"))
         else:
             # Undetermined - not a test directory
@@ -278,18 +248,6 @@ class freppleTest(unittest.TestCase):
         except KeyboardInterrupt:
             # The test has been interupted, which counts as a failure
             self.assertFalse("Interrupted test")
-
-    def runExecutable(self):
-        """Running a compiled executable"""
-        # Run the command and verify exit code
-        self.runProcess("./" + self.subdirectory + " >test.out")
-
-        # Verify the output
-        if os.path.isfile(self.subdirectory + ".expect"):
-            if not os.path.isfile("test.out"):
-                self.fail("Missing output file")
-            elif diff("test.out", self.subdirectory + ".expect"):
-                self.assertFalse("Difference in output")
 
     def runScript(self):
         """Running a test script"""

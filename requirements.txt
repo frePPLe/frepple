@@ -20,16 +20,17 @@ https://github.com/frePPLe/django/tarball/frepple_6.0
 
 # Postgres database connection
 # On linux: install psycopg2 using your distribution's package manager
-# On windows: uncomment the next line 
-# psycopg2-binary == 2.8.3
+# On windows: uncomment the next lines
+# psycopg2
+# psycopg2-binary
 
 # Additional packages for development environments
 # black >= 19.3b0
-# Sphinx == 2.1.2
-# selenium == 3.141.0
+# Sphinx
+# selenium
 
 # Additional packages for windows development environments
-# pywin32 == 224
-# adodbapi == 2.6.0.7
-# cx_Freeze == 5.1.1
-# cx_Logging == 2.1
+# pywin32
+# adodbapi
+# cx_Freeze
+# cx_Logging

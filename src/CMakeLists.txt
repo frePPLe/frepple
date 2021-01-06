@@ -99,23 +99,6 @@ install(
   DESTINATION "${CMAKE_INSTALL_BINDIR}"
   )
 
-# Python extension
-add_library(frepple-python SHARED
-  pythonextension.cpp
-  ${CMAKE_SOURCE_DIR}/include/freppleinterface.h
-)
-target_link_libraries(frepple-python LINK_PUBLIC frepple)
-set_target_properties(frepple-python PROPERTIES
-  PREFIX ""
-  LINKER_LANGUAGE C
-  OUTPUT_NAME "frepple.pyd"
-  SUFFIX ""
-)
-install(
-  FILES $<TARGET_FILE:frepple-python>
-  DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-  )
-
 # Put the compiled binaries in the source folder.
 # This violates the out-of-source build principle, and mixes up multi-configuration builds.
 # Only excuse is that it's convenient.
@@ -125,7 +108,3 @@ set_target_properties(frepple PROPERTIES RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMA
 set_target_properties(frepple PROPERTIES RUNTIME_OUTPUT_DIRECTORY_DEBUG "${CMAKE_SOURCE_DIR}/bin" )
 set_target_properties(frepple PROPERTIES LIBRARY_OUTPUT_DIRECTORY_RELEASE "${CMAKE_SOURCE_DIR}/bin" )
 set_target_properties(frepple PROPERTIES LIBRARY_OUTPUT_DIRECTORY_DEBUG "${CMAKE_SOURCE_DIR}/bin" )
-set_target_properties(frepple-python PROPERTIES RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_SOURCE_DIR}/bin" )
-set_target_properties(frepple-python PROPERTIES RUNTIME_OUTPUT_DIRECTORY_DEBUG "${CMAKE_SOURCE_DIR}/bin" )
-set_target_properties(frepple-python PROPERTIES LIBRARY_OUTPUT_DIRECTORY_RELEASE "${CMAKE_SOURCE_DIR}/bin" )
-set_target_properties(frepple-python PROPERTIES LIBRARY_OUTPUT_DIRECTORY_DEBUG "${CMAKE_SOURCE_DIR}/bin" )

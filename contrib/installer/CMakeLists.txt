@@ -17,7 +17,7 @@ if (NSIS_EXECUTABLE)
     COMMAND "${NSIS_EXECUTABLE}" "${CMAKE_CURRENT_BINARY_DIR}/settings.nsi" "${CMAKE_CURRENT_SOURCE_DIR}/frepple.nsi"
     WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
     )  
-  add_dependencies(installer frepple frepple-main frepple-python doc)
+  add_dependencies(installer frepple frepple-main doc)
 
 else()
   message(WARNING "No windows installer can be created - missing NSIS")

@@ -19,9 +19,9 @@ Release notes
     executables), but the source code meta data is now much cleaner and better. 
 
 - | On Windows we no longer support deployments using the apache web server or the cygwin compiler.
-    We have no customers using these, and we prefer to 
   | The Windows installer with the embedded web server and PostgreSQL database remains fully supported. 
-    It provides an easy start for small deployments and/or trials. 
+    It provides an easy start for small deployments and/or trials. Bigger and more scalable deployments
+    are only possible with a linux server.
 
 6.10.0 (2020/12/06)
 ===================

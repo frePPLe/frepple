@@ -13,4 +13,3 @@ This part of the manual covers all topics related to installation and deployment
    windows-compiling
    linux-compiling
    multi-model
-   python-module

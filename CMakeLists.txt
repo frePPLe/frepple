@@ -53,6 +53,7 @@ if (WIN32)
   set(XERCESC_FOLDER "/develop/xerces-c-3.1.3-x86_64-windows-vc14.0")
   if(EXISTS "${XERCESC_FOLDER}")
     include_directories("${XERCESC_FOLDER}/include")
+    list(APPEND CMAKE_REQUIRED_INCLUDES "${XERCESC_FOLDER}/include")
     link_directories("${XERCESC_FOLDER}/lib")
     add_library(xerces-c STATIC IMPORTED)
     if (CMAKE_BUILD_TYPE STREQUAL "Release")
@@ -213,9 +214,7 @@ add_test(NAME engine
 
 # TODO version number in 
 #     freppledb/__init__.py
-#     freppledb/common/static/css/frepple.less
-#     bin/frepple.xsd
-  
+
 # TODO: 
 #  # Translations process:
 #  # 1) Run "make extra-translations" to get all translatable strings from thr source code.

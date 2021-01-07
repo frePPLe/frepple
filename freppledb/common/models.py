@@ -713,6 +713,9 @@ class Comment(models.Model):
     )
     processed = models.BooleanField("processed", default=False, db_index=True)
 
+    def safe(self):
+        return self.content_type.model_class() == SystemMessage
+
     def save(
         self, force_insert=False, force_update=False, using=None, update_fields=None
     ):
@@ -867,16 +870,19 @@ class SystemMessage(models.Model):
         default_permissions = ()
 
     @classmethod
-    def add(cls, msg):
+    def add(cls, msg, database=None):
         admin = User.objects.get(username="admin")
         ct = ContentType.objects.get_for_model(cls)
-        scenarios = [
-            i["name"]
-            for i in Scenario.objects.using(DEFAULT_DB_ALIAS)
-            .filter(status="In use")
-            .values("name")
-            if i["name"] in settings.DATABASES
-        ]
+        if database:
+            scenarios = [database]
+        else:
+            scenarios = [
+                i["name"]
+                for i in Scenario.objects.using(DEFAULT_DB_ALIAS)
+                .filter(status="In use")
+                .values("name")
+                if i["name"] in settings.DATABASES
+            ]
         for db in scenarios:
             c = Comment(
                 type="comment",
@@ -888,7 +894,7 @@ class SystemMessage(models.Model):
                 processed=True,
             )
             c.save(using=db)
-            for u in User.objects.all():
+            for u in User.objects.all().using(db):
                 Notification(comment=c, user=u).save(using=db)
 
 

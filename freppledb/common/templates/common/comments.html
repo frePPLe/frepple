@@ -46,7 +46,7 @@ function enableSave() {
       {% if c.attachment %}
       <div class="pull-left" style="width: 100px">{{c.attachmentlink}}</div>
       {% endif %}
-      <pre>{{c.comment}}</pre>
+      <pre>{% if c.safe %}{{c.comment|safe}}{% else %}{{c.comment}}{% endif %}</pre>
       </div>
 {% endfor %}
 

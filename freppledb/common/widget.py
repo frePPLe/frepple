@@ -136,7 +136,9 @@ class InboxWidget(Widget):
                     else "",
                     escape(notif.comment.user.username),
                     timesince(notif.comment.lastmodified),
-                    escape(notif.comment.comment),
+                    notif.comment.comment
+                    if notif.comment.safe()
+                    else escape(notif.comment.comment),
                 )
                 + "</td></tr>"
             )

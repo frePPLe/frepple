@@ -145,7 +145,7 @@ function markMessageRead(el, status) {
 {% endif %}"></i>&nbsp;
 <span class="small">{{ notif.comment.content_type.name | capfirst}}</span>&nbsp;
 <a class="underline" href="{{ request.prefix }}{{ notif.comment.getURL }}">{{ notif.comment.object_repr }}</a></td>
-<td>{{ notif.comment.comment }}</td>
+<td>{% if notif.comment.safe %}aa{{notif.comment.comment|safe}}{% else %}bb{{notif.comment.comment}}{% endif %}</td>
 <td>{% if notif.comment.attachment %}
   <a style="text-decoration: underline" href="{{ notif.comment.attachment.url }}" target="_blank">{{ notif.comment.attachment.name | extension }}&nbsp;<i class="fa fa-paperclip"></i></a>
   {% endif %}</td>

@@ -44,10 +44,10 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument(
-            "--start", default="2014-1-1", help="Start date in YYYY-MM-DD format"
+            "--start", default="2017-1-1", help="Start date in YYYY-MM-DD format"
         )
         parser.add_argument(
-            "--end", default="2022-1-1", help="End date in YYYY-MM-DD format"
+            "--end", default="2025-1-1", help="End date in YYYY-MM-DD format"
         )
         parser.add_argument(
             "--weekstart",

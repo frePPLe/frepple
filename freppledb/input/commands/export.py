@@ -341,11 +341,20 @@ class cleanStatic(PlanTask):
                 "delete from operation where source = %s and lastmodified <> %s",
                 (source, cls.timestamp),
             )
+
+            cursor.execute(
+                """
+            delete from operationplanresource where resource_id in
+            (select name from resource where source = %s and lastmodified <> %s)
+            """,
+                (source, cls.timestamp),
+            )
+
             cursor.execute(
                 "delete from resource where source = %s and lastmodified <> %s",
                 (source, cls.timestamp),
             )
-        
+
             # location deletion
             cursor.execute(
                 """
@@ -403,6 +412,14 @@ class cleanStatic(PlanTask):
             cursor.execute(
                 """
                 delete from resource where location_id in 
+                (select name from location where source = %s and lastmodified <> %s)
+            """,
+                (source, cls.timestamp),
+            )
+
+            cursor.execute(
+                """
+                delete from operation where location_id in 
                 (select name from location where source = %s and lastmodified <> %s)
             """,
                 (source, cls.timestamp),

@@ -48,6 +48,7 @@ class MenuItem:
         dependencies=None,
         admin=False,
         callback=None,
+        excludeFromBulkOperations=None,
     ):
         self.name = name
         self.url = url
@@ -67,7 +68,10 @@ class MenuItem:
         self.window = window
         self.separator = separator
         self.identifier = identifier
-        self.excludeFromBulkOperations = model in EXCLUDE_FROM_BULK_OPERATIONS
+        if excludeFromBulkOperations is not None:
+            self.excludeFromBulkOperations = excludeFromBulkOperations
+        else:
+            self.excludeFromBulkOperations = model in EXCLUDE_FROM_BULK_OPERATIONS
         self.permission = permission
         self.dependencies = dependencies
         self.admin = admin
@@ -164,6 +168,7 @@ class Menu:
         dependencies=None,
         admin=False,
         callback=None,
+        excludeFromBulkOperations=None,
     ):
         for i in range(len(self._groups)):
             if self._groups[i][0] == group:
@@ -188,6 +193,8 @@ class Menu:
                         it["model"] = model
                         it["admin"] = admin
                         it["callback"] = callback
+                        if excludeFromBulkOperations is not None:
+                            it["excludeFromBulkOperations"] = excludeFromBulkOperations
                         return
                 # Create a new item
                 self._groups[i][3].append(
@@ -207,6 +214,7 @@ class Menu:
                         dependencies=dependencies,
                         admin=admin,
                         callback=callback,
+                        excludeFromBulkOperations=excludeFromBulkOperations,
                     )
                 )
                 return

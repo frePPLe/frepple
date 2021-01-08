@@ -16,7 +16,6 @@
 #
 
 import time
-import unittest
 
 from django.conf import settings
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
@@ -53,15 +52,17 @@ class SeleniumTest(StaticLiveServerTestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        if False:
+        if settings.SELENIUM_TESTS == "firefox":
             firefox_options = webdriver.FirefoxOptions()
             # firefox_options.add_argument("--headless")
             cls.driver = webdriver.Firefox(firefox_options=firefox_options)
-        else:
+        elif settings.SELENIUM_TESTS == "chrome":
             options = webdriver.ChromeOptions()
             options.add_argument("--silent")
             # options.add_argument("--headless")
             cls.driver = webdriver.Chrome(chrome_options=options)
+        else:
+            raise Exception("Invalid setting SELENIUM_TESTS")
         cls.driver.set_window_size(1080, 800)
         cls.driver.implicitly_wait(10)
 
@@ -91,6 +92,8 @@ class SeleniumTest(StaticLiveServerTestCase):
 
     def ActionChains(self):
         return ActionChains(self.driver)
+
+
 class DataLoadTest(TestCase):
     def setUp(self):
         # Login

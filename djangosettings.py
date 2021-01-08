@@ -486,3 +486,6 @@ EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 
 # Port number when not using Apache
 PORT = 8000
+
+# Browser to test with selenium
+SELENIUM_TESTS = "chrome"

@@ -132,7 +132,6 @@ Section "Application" SecAppl
   ; Copy application, dll and libraries
   SetOutPath "$INSTDIR\bin"
   File "..\..\bin\frepple.exe"
-  File "..\..\bin\frepple.pyd"
   !insertmacro InstallLib DLL NOTSHARED NOREBOOT_NOTPROTECTED "..\..\bin\frepple.dll" "$INSTDIR\bin\frepple.dll" "$SYSDIR"
 
    ; Copy configuration files

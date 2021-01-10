@@ -18,53 +18,66 @@
 # STAGE 1: Compile and build the application
 #
 
-FROM centos:8 as builder
+FROM roboxes/rhel8 as builder
 
-RUN yum -y update
-RUN yum -y install dnf-plugins-core epel-release && \
-  yum config-manager --set-enabled PowerTools && \
-  yum -y install xerces-c python36 rpm-build git wget \
+# REQUIRED BUILD ARGUMENTS!
+# Credentials for access to the rhel repositories
+ARG RHEL_USER
+ARG RHEL_PASSWORD
+
+RUN subscription-manager register --username $RHEL_USER --password $RHEL_PASSWORD --auto-attach && \
+  yum -y update && \
+  yum -y install epel-release && \
+  yum -y install xerces-c python36 rpm-build rpm-sign git wget \
     python3-psycopg2 python3-pip postgresql-devel openssl openssl-devel \
-    libtool make python3-devel xerces-c-devel automake autoconf gcc-c++ python3-sphinx && \
+    libtool make python3-devel xerces-c-devel automake autoconf gcc-c++ && \
   yum clean all 
+RUN subscription-manager unregister
 
-RUN useradd builder -u 1000 -m -G users && \
+RUN useradd builder -u 6666 -m -G users && \
   echo "builder ALL=(ALL:ALL) NOPASSWD:ALL" >> /etc/sudoers && \
-  echo "%_topdir    /home/builder/rpm" >> /home/builder/.rpmmacros && \
+  echo "%_topdir    /home/builder/rpm" > /home/builder/.rpmmacros && \
+  echo "%_gpg_name  devops@frepple.com" >> /home/builder/.rpmmacros && \
   mkdir /home/builder/rpm && \
   mkdir -p /home/builder/rpm/{BUILD,RPMS,SOURCES,SPECS,SRPMS} && \
   chown -R builder /home/builder
 
 # OPTION 1: BUILDING FROM LOCAL DISTRIBUTION:
-ADD requirements.txt .
-RUN pip3 install -r requirements.txt
-
-# OPTION 2: BUILDING FROM GIT REPOSITORY
-# This is useful when using this dockerfile standalone.
-# A trick to force rebuilding from here if there are new commits
-#ADD https://api.github.com/repos/jdetaeye/frepple-enterprise/compare/master...HEAD /dev/null
-#RUN git clone https://github.com/jdetaeye/frepple-enterprise.git frepple && \
-#  pip3 install -r frepple/requirements.txt
-# TODO create src rpm
-
+ADD requirements.txt gpg_key* ./
 USER builder
-COPY --chown=1000 frepple.spec /home/builder/rpm/SPECS/
-COPY --chown=1000 *.tar.gz /home/builder/rpm/SOURCES/
+RUN pip3 install --user -r requirements.txt sphinx
+
+# An alternative to the copy is to clone from git:
+# RUN git clone https://github.com/frepple/frepple.git frepple
+COPY --chown=6666 frepple.spec /home/builder/rpm/SPECS/
+COPY --chown=6666 *.tar.gz /home/builder/rpm/SOURCES/
 RUN rpmbuild -ba /home/builder/rpm/SPECS/frepple.spec
+
+# Optional: sign the rpm file
+RUN if test -f gpg_key; \
+  then \
+  gpg --import gpg_key; \
+  rpm --addsign /home/builder/rpm/RPMS/x86_64/*.rpm; \
+  fi
+
+FROM scratch as package
+COPY --from=builder frepple-*/build/*.rpm .
 
 #
 # STAGE 2: Build the deployment container
 #
 
-FROM centos:8
+FROM roboxes/rhel8
 
 COPY --from=builder /frepple/requirements.txt .
 COPY --from=builder /frepple/contrib/centos/frepple_*.rpm .
 
-RUN yum -y update && \
+RUN subscription-manager register --username $RHEL_USER --password $RHEL_PASSWORD --auto-attach && \
+  yum -y update && \
   yum -y install xerces-c python36 httpd python3-mod_wsgi \
      python3-psycopg2 python3-pip openssl postgresql-client && \
-  yum clean all
+  yum clean all && \
+  subscription-manager unregister
 
 RUN yum -y --no-install-recommends install \
   libxerces-c3.2 apache2 libapache2-mod-wsgi-py3 \

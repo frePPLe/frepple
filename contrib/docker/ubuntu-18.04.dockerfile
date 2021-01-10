@@ -12,54 +12,40 @@
 # STAGE 1: Compile and build the application
 #
 
-FROM ubuntu:20.04 as builder
+FROM ubuntu:18.04 as builder
 
 RUN apt-get -y -q update && DEBIAN_FRONTEND=noninteractive apt-get -y install \
-  libxerces-c3.2 apache2 libapache2-mod-wsgi-py3 \
-  python3-psycopg2 python3-pip postgresql \
-  git wget libtool make python3-dev libxerces-c-dev automake autoconf \
-  g++ cdbs debhelper pbuilder python3-sphinx \
-  openssl libssl-dev libpq-dev python3-lxml
+  cmake g++ git python3 python3-pip python3-dev python3-psycopg2 python3-sphinx \
+  libxerces-c3.2 libxerces-c-dev openssl libssl-dev libpq5 libpq-dev python3-lxml
 
-# OPTION 1: BUILDING FROM LOCAL DISTRIBUTION:
-COPY requirements.txt .
-RUN pip3 install -r requirements.txt 
+# An alternative to the copy is to clone from git:
+# RUN git clone https://github.com/frepple/frepple.git frepple
+COPY frepple-*.tar.gz ./
 
-COPY *.tar.gz ./
-COPY debian/  debian/
-
-# subtle - and _ things going on here...
-RUN sed -i 's/local\(\s*\)all\(\s*\)all\(\s*\)peer/local\1all\2all\3\md5/g' /etc/postgresql/12/main/pg_hba.conf && \
-  /etc/init.d/postgresql start && \
-  sudo -u postgres psql template1 -c "create role frepple login superuser password 'frepple'" && \
-  tar -xzf *.orig.tar.gz && \
-  src=`basename --suffix=.orig.tar.gz frepple-*` && \
-  mv debian $src && \
+RUN src=`basename --suffix=.tar.gz frepple-*` && \
+  tar -xzf *.tar.gz && \
+  rm *.tar.gz && \
   cd $src && \
-  mkdir logs && \
-  dpkg-buildpackage -us -uc -D
+  python3 -m pip install -r requirements.txt && \
+  mkdir build && \
+  cd build && \
+  cmake .. && \
+  cmake --build . --target package
 
-# OPTION 2: BUILDING FROM GIT REPOSITORY
-# This is useful when using this dockerfile standalone.
-# A trick to force rebuilding from here if there are new commits
-#ADD https://api.github.com/repos/jdetaeye/frepple-enterprise/compare/master...HEAD /dev/null
-#RUN git clone https://github.com/jdetaeye/frepple-enterprise.git frepple && \
-#  pip3 install -r frepple/requirements.txt
-# TODO build from git repo
+FROM scratch as package
+COPY --from=builder frepple-*/build/*.deb .
 
 #
 # STAGE 2: Build the deployment container
 #
 
-FROM ubuntu:20.04
+FROM ubuntu:18.04
 
 RUN apt-get -y -q update && DEBIAN_FRONTEND=noninteractive apt-get -y install \
   libxerces-c3.2 apache2 libapache2-mod-wsgi-py3 \
   python3-psycopg2 python3-pip postgresql-client \
   libpq5 openssl python3-lxml
 
-# The following copy commands don't work on LCOW:
-# See https://github.com/moby/moby/issues/33850
 COPY --from=builder /requirements.txt /
 COPY --from=builder /frepple_*_amd64.deb /
 

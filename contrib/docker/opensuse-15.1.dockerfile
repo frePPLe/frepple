@@ -42,18 +42,15 @@ RUN useradd builder -u 1000 -m -G users && \
 ADD requirements.txt .
 RUN pip3 install -r requirements.txt
 
-# OPTION 2: BUILDING FROM GIT REPOSITORY
-# This is useful when using this dockerfile standalone.
-# A trick to force rebuilding from here if there are new commits
-#ADD https://api.github.com/repos/jdetaeye/frepple-enterprise/compare/master...HEAD /dev/null
-#RUN git clone https://github.com/jdetaeye/frepple-enterprise.git frepple && \
-#  pip3 install -r frepple/requirements.txt
-# TODO create src rpm
-
+# An alternative to the copy is to clone from git:
+# RUN git clone https://github.com/frepple/frepple.git frepple
 USER builder
 COPY --chown=1000 frepple.spec /home/builder/rpm/SPECS/
 COPY --chown=1000 *.tar.gz /home/builder/rpm/SOURCES/
 RUN rpmbuild -ba /home/builder/rpm/SPECS/frepple.spec
+
+FROM scratch as package
+COPY --from=builder frepple-*/build/*.rpm .
 
 #
 # STAGE 2: Build the deployment container

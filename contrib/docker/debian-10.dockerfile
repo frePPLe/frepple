@@ -18,36 +18,33 @@
 # STAGE 1: Compile and build the application
 #
 
-FROM alpine:3.12 as builder
+FROM debian:10-slim as builder
 
-RUN apk add --update --no-cache --virtual .build-deps \
-  xerces-c xerces-c-dev apache2 apache2-mod-wsgi \
-  python3-dev py3-pip py3-psycopg2 py3-lxml postgresql postgresql-dev \
-  libpq openssl openssl-dev libxml2 py3-sphinx \
-  g++ git wget libtool make automake autoconf
+RUN apt-get -y -q update && DEBIAN_FRONTEND=noninteractive apt-get -y install \
+  libxerces-c3.2 apache2 libapache2-mod-wsgi-py3 \
+  python3-psycopg2 python3-pip postgresql \
+  git cmake g++ python3-dev libxerces-c-dev \
+  python3-sphinx \
+  openssl libssl-dev libpq-dev python3-lxml
 
 # OPTION 1: BUILDING FROM LOCAL DISTRIBUTION:
 COPY requirements.txt .
-RUN pip3 install -r requirements.txt
+RUN pip3 install -r requirements.txt 
 
 COPY *.tar.gz ./
+COPY debian/  debian/
 
-#RUN sed -i 's/local\(\s*\)all\(\s*\)all\(\s*\)peer/local\1all\2all\3\md5/g' /etc/postgresql/12/main/pg_hba.conf && \
-#  /etc/init.d/postgresql start && \
-#  sudo -u postgres psql template1 -c "create role frepple login superuser password 'frepple'" && \
-
-RUN tar -xzf *.tar.gz && \
-  cd $(basename frepple-*) && \
+# subtle - and _ things going on here...
+RUN sed -i 's/local\(\s*\)all\(\s*\)all\(\s*\)peer/local\1all\2all\3\md5/g' /etc/postgresql/11/main/pg_hba.conf && \
+  /etc/init.d/postgresql start && \
+  sudo -u postgres psql template1 -c "create role frepple login superuser password 'frepple'" && \
+  tar -xzf *.orig.tar.gz && \
+  src=`basename --suffix=.orig.tar.gz frepple-*` && \
+  mv debian $src && \
+  cd $src && \
   mkdir logs && \
-  make -f Makefile.dist prep config clean build && \
-  make install-strip && \
-  cd /usr/local && \
-  tar cfz /frepple_install_files.tgz \
-    lib/python*/site-packages/frepple* \
-    lib/*frepple* \
-    bin/frepple* \
-    etc/frepple
-    
+  dpkg-buildpackage -us -uc -D
+
 # OPTION 2: BUILDING FROM GIT REPOSITORY
 # This is useful when using this dockerfile standalone.
 # A trick to force rebuilding from here if there are new commits
@@ -56,32 +53,37 @@ RUN tar -xzf *.tar.gz && \
 #  pip3 install -r frepple/requirements.txt
 # TODO build from git repo
 
+FROM scratch as package
+COPY --from=builder frepple-*/build/*.deb .
+
 #
 # STAGE 2: Build the deployment container
 #
 
-FROM alpine:3.12
+FROM debian:10-slim
 
-RUN apk add --update --no-cache --virtual .build-deps \
-  xerces-c apache2 apache2-mod-wsgi \
-  py3-pip py3-psycopg2 py3-lxml postgresql-client \
-  openssl libxml2 && \
-  rm -rf .build-deps
+RUN apt-get -y -q update && DEBIAN_FRONTEND=noninteractive apt-get -y install \
+  libxerces-c3.2 apache2 libapache2-mod-wsgi-py3 \
+  python3-psycopg2 python3-pip postgresql-client \
+  libpq5 openssl python3-lxml
 
+# The following copy commands don't work on LCOW:
+# See https://github.com/moby/moby/issues/33850
 COPY --from=builder /requirements.txt /
-COPY --from=builder /frepple_install_files.tgz /
+COPY --from=builder /frepple_*_amd64.deb /
 
-RUN tar xvfz frepple_install_files.tgz && \
+RUN dpkg -i frepple_*.deb && \
+  apt-get -f -y -q install && \
   pip3 install -r requirements.txt && \
-  rm /requirements.txt /frepple_install_files.tgz
-#  a2enmod expires && \
-#  a2enmod wsgi && \
-#  a2enmod ssl && \
-#  a2ensite default-ssl && \
-#  a2ensite frepple && \
-#  a2enmod proxy && \
-#  a2enmod proxy_wstunnel && \
-#  service apache2 restart && \
+  a2enmod expires && \
+  a2enmod wsgi && \
+  a2enmod ssl && \
+  a2ensite default-ssl && \
+  a2ensite frepple && \
+  a2enmod proxy && \
+  a2enmod proxy_wstunnel && \
+  service apache2 restart && \
+  rm requirements.txt *.deb
 
 EXPOSE 80
 EXPOSE 443

@@ -31,6 +31,9 @@ if (CMAKE_SYSTEM_NAME MATCHES "Linux")
       if (REDHAT_RELEASE MATCHES "Red Hat Enterprise Linux release 8")
         set(CPACK_GENERATOR "RPM")
         set(DISTRO "rhel8")
+      elseif (REDHAT_RELEASE MATCHES "CentOS Linux release 8")
+        set(CPACK_GENERATOR "RPM")
+        set(DISTRO "centos8")
       endif()
     elseif (EXISTS "/etc/os-release")
       file(READ "/etc/os-release" OS_RELEASE)
@@ -152,6 +155,10 @@ install(
   FILES djangosettings.py
   DESTINATION "${CMAKE_INSTALL_SYSCONFDIR}/frepple"
   )
+install(
+  FILES requirements.txt
+  DESTINATION "${CMAKE_INSTALL_DATADIR}/frepple"
+  )
 
 # Packaging of the django app: Python module + static files
 # Note that we use \$ to delay the evaluation till install time
@@ -185,7 +192,9 @@ set(CPACK_PACKAGE_FILE_NAME "${DISTRO}-${PROJECT_NAME}-${CPACK_PACKAGE_VERSION}"
 set(CPACK_SOURCE_GENERATOR "TGZ")
 set(CPACK_SOURCE_IGNORE_FILES
   "__pycache__"
-  "^${PROJECT_SOURCE_DIR}.git$"
+  "^${PROJECT_SOURCE_DIR}/\\\\.git"
+  "^${PROJECT_SOURCE_DIR}/\\\\.vs"
+  "^${PROJECT_SOURCE_DIR}/\\\\.settings"
   "^${PROJECT_SOURCE_DIR}/logs/"
   "^${PROJECT_SOURCE_DIR}/build.*"
   "^${PROJECT_SOURCE_DIR}/static$"
@@ -195,7 +204,7 @@ set(CPACK_SOURCE_IGNORE_FILES
   "^${PROJECT_SOURCE_DIR}/bin/frepple$"
   "^${PROJECT_SOURCE_DIR}/bin/frepple.dll$"
   "^${PROJECT_SOURCE_DIR}/bin/libfrepple.*"
-  "^${PROJECT_SOURCE_DIR}/bin/.*\\\\.pyd$"
+  "^${PROJECT_SOURCE_DIR}/bin/.*\\\\.pdb$"
   )
 
 # Add folders

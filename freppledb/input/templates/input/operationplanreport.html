@@ -150,7 +150,7 @@ onSelectRow: function(rowid, status, e) {
   var editedval = "";
   jQuery.each(selection , function(index,item) {
     rowdata = jQuery("#grid").getRowData(item);
-    var elem = $("#" + item +" input");
+    var elem = $("#" + $.escapeSelector(item) +" input");
     editedval = elem.attr('cm','[Object Object]').not('.cbox').val();
     if ( typeof elem.attr('cm','[Object Object]').not('.cbox').val() !== 'undefined' ) {
       if (typeof elem.attr('cm','[Object Object]').not('.cbox').attr("id") !== 'undefined') {

@@ -95,12 +95,12 @@ class OdooReadData(PlanTask):
         odoo_password = settings.ODOO_PASSWORDS.get(database, None)
         if not settings.ODOO_PASSWORDS.get(database):
             odoo_password = Parameter.getValue("odoo.password", database)
-        odoo_db = Parameter.getValue("odoo.db", database)
-        odoo_url = Parameter.getValue("odoo.url", database).strip()
+        odoo_db = Parameter.getValue("odoo.db", database, None)
+        odoo_url = Parameter.getValue("odoo.url", database, "").strip()
         if not odoo_url.endswith("/"):
             odoo_url = odoo_url + "/"
 
-        odoo_company = Parameter.getValue("odoo.company", database)
+        odoo_company = Parameter.getValue("odoo.company", database, None)
         ok = True
 
         # Set debugFile=PathToXmlFile if you want frePPLe to read that file
@@ -162,7 +162,7 @@ class OdooReadData(PlanTask):
                 frepple.readXMLdata(f.read().decode("utf-8"), False, False, loglevel)
         else:
             # Download and parse XML data
-            with open(debugFile) as f:
+            with open(debugFile, encoding="utf-8") as f:
                 frepple.readXMLdata(f.read(), False, False, loglevel)
 
         # Hierarchy correction: Count how many items/locations/customers have no owner

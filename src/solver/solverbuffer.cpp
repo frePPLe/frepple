@@ -271,8 +271,11 @@ void SolverCreate::solve(const Buffer* b, void* v) {
         bool loop = true;
         auto prev_hitMaxEarly = data->hitMaxEarly;
         if (!b->getProducingOperation()) {
-          data->broken_path = true;
-          logger << indentlevel << "  Supply path is broken here" << endl;
+          if (b->getOnHand(Date::infiniteFuture) < -ROUNDING_ERROR) {
+            data->broken_path = true;
+            logger << indentlevel << "  Supply path is broken here"
+                   << b->getOnHand(Date::infiniteFuture) << endl;
+          }
         } else
           while (theDate >= requested_date && loop &&
                  (theDate >= noSupplyBefore || hasTransferbatching)) {

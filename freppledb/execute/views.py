@@ -140,7 +140,9 @@ class TaskReport(GridReport):
             width=500,
             formatter="longstring",
         ),
-        GridFieldText("arguments", title=_("arguments"), editable=False),
+        GridFieldText(
+            "arguments", title=_("arguments"), formatter="longstring", editable=False
+        ),
         GridFieldText(
             "user",
             title=_("user"),

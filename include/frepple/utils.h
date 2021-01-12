@@ -2089,50 +2089,6 @@ class FunctorInstance : public Functor {
 };
 
 //
-// UTILITY CLASS "TIMER".
-//
-
-/* This class is used to measure the processor time used by the
- * program.
- *
- * The accuracy of the timer is dependent on the implementation of the
- * ANSI C-function clock() by your compiler and your platform.
- * You may count on milli-second accuracy. Different platforms provide
- * more accurate timer functions, which can be used if the accuracy is a
- * prime objective.
- * When compiled with Visual C++, the timer is returning the elapsed
- * time - which is not the expected ANSI behavior!
- * Other compilers and platforms return the consumed cpu time, as expected.
- * When the load on a machine is low, the consumed cpu-time and the elapsed
- * time are close to each other. On a system with a higher load, the
- * elapsed time deviates a lot from the consumed cpu-time.
- */
-class Timer {
- public:
-  /* Default constructor. Creating the timer object sets the start point
-   * for the time measurement. */
-  explicit Timer() : start_time(clock()) {}
-
-  /* Reset the time counter to 0. */
-  void restart() { start_time = clock(); }
-
-  /* Return the cpu-time in seconds consumed since the creation or the last
-   * reset of the timer. */
-  double elapsed() const {
-    return double(clock() - start_time) / CLOCKS_PER_SEC;
-  }
-
- private:
-  /* Stores the time when the timer is started. */
-  clock_t start_time;
-};
-
-/* Prints a timer to the outputstream. The output is formatted as a double. */
-inline ostream& operator<<(ostream& os, const Timer& t) {
-  return os << t.elapsed();
-}
-
-//
 // UTILITY CLASSES FOR INPUT AND OUTPUT
 //
 

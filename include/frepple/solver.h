@@ -966,6 +966,9 @@ class SolverCreate : public Solver {
                             // LOGGING OF THE COSTS
     bool incostevaluation = false;
 
+    /* Detection of broken supply chains. */
+    bool broken_path;
+
     /* Internal flag that is set to true when solving for safety stock. */
     bool safety_stock_planning;
 

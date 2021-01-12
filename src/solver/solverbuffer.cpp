@@ -270,98 +270,103 @@ void SolverCreate::solve(const Buffer* b, void* v) {
         // if it can...
         bool loop = true;
         auto prev_hitMaxEarly = data->hitMaxEarly;
-        while (b->getProducingOperation() && theDate >= requested_date &&
-               loop && (theDate >= noSupplyBefore || hasTransferbatching)) {
-          Duration repeat_early;
-          Date prev_date = Date::infiniteFuture;
-          short prev_stuck = 0;
-          do {
-            // Create supply
-            data->state->curBuffer = const_cast<Buffer*>(b);
-            data->state->q_qty = -theDelta;
-            data->state->q_date = theDate - repeat_early;
+        if (!b->getProducingOperation()) {
+          data->broken_path = true;
+          logger << indentlevel << "  Supply path is broken here" << endl;
+        } else
+          while (theDate >= requested_date && loop &&
+                 (theDate >= noSupplyBefore || hasTransferbatching)) {
+            Duration repeat_early;
+            Date prev_date = Date::infiniteFuture;
+            short prev_stuck = 0;
+            do {
+              // Create supply
+              data->state->curBuffer = const_cast<Buffer*>(b);
+              data->state->q_qty = -theDelta;
+              data->state->q_date = theDate - repeat_early;
 
-            // Detect whether any resource did hit its max-early limit
-            data->hitMaxEarly = -1L;
+              // Detect whether any resource did hit its max-early limit
+              data->hitMaxEarly = -1L;
 
-            // Check whether this date doesn't match with the requested date.
-            // See a bit further why this is required.
-            if (data->state->q_date == requested_date)
-              tried_requested_date = true;
+              // Check whether this date doesn't match with the requested date.
+              // See a bit further why this is required.
+              if (data->state->q_date == requested_date)
+                tried_requested_date = true;
 
-            // Make sure the new operationplans don't inherit an owner.
-            // When an operation calls the solve method of suboperations, this
-            // field is used to pass the information about the owner
-            // operationplan down. When solving for buffers we must make sure
-            // NOT to pass owner information. At the end of solving for a buffer
-            // we need to restore the original settings...
-            data->state->curOwnerOpplan = nullptr;
+              // Make sure the new operationplans don't inherit an owner.
+              // When an operation calls the solve method of suboperations, this
+              // field is used to pass the information about the owner
+              // operationplan down. When solving for buffers we must make sure
+              // NOT to pass owner information. At the end of solving for a
+              // buffer we need to restore the original settings...
+              data->state->curOwnerOpplan = nullptr;
 
-            // Producer needs to propagate the batch of this buffer
-            data->state->curBatch = b->getBatch();
+              // Producer needs to propagate the batch of this buffer
+              data->state->curBatch = b->getBatch();
 
-            // Note that the supply created with the next line changes the
-            // onhand value at all later dates!
-            auto cycle = data->getCommandManager()->setBookmark();
-            b->getProducingOperation()->solve(*this, v);
-            data->recent_buffers = tmp_recent_buffers;
+              // Note that the supply created with the next line changes the
+              // onhand value at all later dates!
+              auto cycle = data->getCommandManager()->setBookmark();
+              b->getProducingOperation()->solve(*this, v);
+              data->recent_buffers = tmp_recent_buffers;
 
-            // Evaluate the reply date. The variable extraSupplyDate will store
-            // the date when the producing operation tells us it can get extra
-            // supply.
-            if (data->state->a_date < extraSupplyDate &&
-                data->state->a_date > requested_date) {
-              extraSupplyDate = data->state->a_date;
+              // Evaluate the reply date. The variable extraSupplyDate will
+              // store the date when the producing operation tells us it can get
+              // extra supply.
+              if (data->state->a_date < extraSupplyDate &&
+                  data->state->a_date > requested_date) {
+                extraSupplyDate = data->state->a_date;
+              }
+
+              if (b->getIPFlag() && data->hitMaxEarly >= 0L &&
+                  !data->state->a_qty) {
+                if (data->hitMaxEarly == Duration::MAX)
+                  break;
+                else if (data->hitMaxEarly > getMinimumDelay())
+                  repeat_early += data->hitMaxEarly;
+                else if (getMinimumDelay())
+                  repeat_early += getMinimumDelay();
+                else
+                  repeat_early += Duration(86400L);
+                data->getCommandManager()->rollback(cycle);
+                // This ain't very clean
+                if (data->state->a_date == prev_date && ++prev_stuck > 30)
+                  break;
+                prev_date = data->state->a_date;
+              } else
+                break;
+            } while (true);
+            if (b->getIPFlag())
+              data->hitMaxEarly = prev_hitMaxEarly;
+            else if (!data->state->a_qty) {
+              if (data->hitMaxEarly == Duration(-1L))
+                // O reply isn't caused by max-early
+                data->hitMaxEarly = Duration::MAX;
+              else if (data->hitMaxEarly < prev_hitMaxEarly)
+                // more constrained by max_early than found so far
+                data->hitMaxEarly = prev_hitMaxEarly;
             }
 
-            if (b->getIPFlag() && data->hitMaxEarly >= 0L &&
-                !data->state->a_qty) {
-              if (data->hitMaxEarly == Duration::MAX)
-                break;
-              else if (data->hitMaxEarly > getMinimumDelay())
-                repeat_early += data->hitMaxEarly;
-              else if (getMinimumDelay())
-                repeat_early += getMinimumDelay();
-              else
-                repeat_early += Duration(86400L);
-              data->getCommandManager()->rollback(cycle);
-              // This ain't very clean
-              if (data->state->a_date == prev_date && ++prev_stuck > 30) break;
-              prev_date = data->state->a_date;
-            } else
-              break;
-          } while (true);
-          if (b->getIPFlag())
-            data->hitMaxEarly = prev_hitMaxEarly;
-          else if (!data->state->a_qty) {
-            if (data->hitMaxEarly == Duration(-1L))
-              // O reply isn't caused by max-early
-              data->hitMaxEarly = Duration::MAX;
-            else if (data->hitMaxEarly < prev_hitMaxEarly)
-              // more constrained by max_early than found so far
-              data->hitMaxEarly = prev_hitMaxEarly;
+            // Prevent asking again at a time which we already know to be
+            // infeasible
+            noSupplyBefore = data->state->a_qty > ROUNDING_ERROR
+                                 ? Date::infinitePast
+                                 : data->state->a_date;
+
+            //&& theDate >= noSupplyBefore
+            // If we got some extra supply, we retry to get some more supply.
+            // Only when no extra material is obtained, we give up.
+            // When solving for safety stock or when the parameter allowsplit is
+            // set to false we need to get a single replenishing operationplan.
+            if (data->state->a_qty > ROUNDING_ERROR &&
+                data->state->a_qty < -theDelta - ROUNDING_ERROR &&
+                ((getAllowSplits() && !data->safety_stock_planning) ||
+                 data->state->a_qty ==
+                     b->getProducingOperation()->getSizeMaximum()))
+              theDelta += data->state->a_qty;
+            else
+              loop = false;
           }
-
-          // Prevent asking again at a time which we already know to be
-          // infeasible
-          noSupplyBefore = data->state->a_qty > ROUNDING_ERROR
-                               ? Date::infinitePast
-                               : data->state->a_date;
-
-          //&& theDate >= noSupplyBefore
-          // If we got some extra supply, we retry to get some more supply.
-          // Only when no extra material is obtained, we give up.
-          // When solving for safety stock or when the parameter allowsplit is
-          // set to false we need to get a single replenishing operationplan.
-          if (data->state->a_qty > ROUNDING_ERROR &&
-              data->state->a_qty < -theDelta - ROUNDING_ERROR &&
-              ((getAllowSplits() && !data->safety_stock_planning) ||
-               data->state->a_qty ==
-                   b->getProducingOperation()->getSizeMaximum()))
-            theDelta += data->state->a_qty;
-          else
-            loop = false;
-        }
 
         // Not enough supply was received to repair the complete problem
         if (prev && prev->getOnhand() + shortage < -ROUNDING_ERROR) {

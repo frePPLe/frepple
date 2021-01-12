@@ -1739,6 +1739,12 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v) {
   // We restore the previous owner, which could be nullptr.
   data->state->curOwnerOpplan = prev_owner_opplan;
 
+  // Optimization for detection of broken supply paths is disabled when we have
+  // alternate operations. Only when all alternates report a broken path could
+  // we use it.
+  // TODO Not implemented.
+  data->broken_path = false;
+
   // Message
   if (loglevel > 1) {
     logger << indentlevel-- << "Alternate operation '" << oper->getName()

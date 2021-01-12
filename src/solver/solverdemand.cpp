@@ -172,6 +172,7 @@ void SolverCreate::solve(const Demand* l, void* v) {
 
         // Plan the demand by asking the delivery operation to plan
         double q_qty = plan_qty;
+        data->broken_path = false;
         data->state->curBuffer = nullptr;
         data->state->q_qty = plan_qty;
         data->state->q_qty_min = l->getMinShipment();
@@ -183,6 +184,7 @@ void SolverCreate::solve(const Demand* l, void* v) {
         data->recent_buffers.clear();
         deliveryoper->solve(*this, v);
         Date next_date = data->state->a_date;
+        bool broken_path = data->broken_path;
 
         if (data->state->a_qty < ROUNDING_ERROR &&
             plan_qty > l->getMinShipment() && l->getMinShipment() > 0 &&
@@ -306,8 +308,11 @@ void SolverCreate::solve(const Demand* l, void* v) {
               plan_qty - data->state->a_qty < l->getMinShipment() &&
               plan_qty - data->state->a_qty > ROUNDING_ERROR) {
             // Check whether the reply is based purely on onhand or not
-            if (hasOperationPlans(data->getCommandManager()) ||
-                next_date <= copy_plan_date + getLazyDelay()) {
+            if (broken_path) {
+              // Not more supply will ever be found here!
+              plan_date = Date::infiniteFuture;
+            } else if (hasOperationPlans(data->getCommandManager()) ||
+                       next_date <= copy_plan_date + getLazyDelay()) {
               // Oops, we didn't get a proper answer we can use for the next
               // loop. Print a warning and simply a bit later.
               plan_date = copy_plan_date + getLazyDelay();
@@ -315,9 +320,8 @@ void SolverCreate::solve(const Demand* l, void* v) {
                 logger << indentlevel << "Demand '" << l << "': Easy retry on "
                        << plan_date << " rather than " << next_date << endl;
             } else
-              // The shipment quantity was purely based on onhand in some
-              // buffers. In this case we can still trust the next date returned
-              // by the search.
+              // We can trust the next date returned by the search if the
+              // shipment quantity was purely based on some onhand.
               plan_date = next_date;
           } else if (next_date <= copy_plan_date ||
                      (!getAllowSplits() &&

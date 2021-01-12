@@ -180,6 +180,12 @@ void SolverCreate::solve(const Flow* fl,
                << "Alternate flow doesn't find supply on any alternate : "
                << data->state->a_qty << "  " << data->state->a_date << endl;
     }
+
+    // Optimization for detection of broken supply paths is disabled when we
+    // have alternate flows. Only when all alternates report a broken path could
+    // we use it.
+    // TODO Not implemented.
+    data->broken_path = false;
   } else {
     // CASE II: Not an alternate flow.
     // In this case, this method is passing control on to the buffer.

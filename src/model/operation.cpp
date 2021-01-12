@@ -1996,7 +1996,6 @@ double Operation::setOperationPlanQuantity(OperationPlan* oplan, double f,
     if (!execute) return oplan->quantity;
   } else {
     // All others respect constraints
-    bool applied_minimum = false;
     double curmin = 0.0;
     if (getSizeMinimumCalendar())
       // Minimum varies over time
@@ -2020,12 +2019,8 @@ double Operation::setOperationPlanQuantity(OperationPlan* oplan, double f,
         return 0.0;
       }
       f = curmin;
-      applied_minimum = true;
     }
     if (f != 0.0 && f >= getSizeMaximum()) {
-      if (applied_minimum && f > getSizeMaximum() + ROUNDING_ERROR)
-        throw DataException("Invalid sizing parameters for operation " +
-                            getName());
       // If min and max are conflicting, we respect the maximum
       roundDown = true;  // force rounddown to stay below the limit
       f = getSizeMaximum();
@@ -2048,17 +2043,11 @@ double Operation::setOperationPlanQuantity(OperationPlan* oplan, double f,
             if (upd) oplan->owner->resizeFlowLoadPlans();
           }
           return 0.0;
-        } else {
+        } else
           q += getSizeMultiple();
-          if (q > getSizeMaximum())
-            throw DataException("Invalid sizing parameters for operation " +
-                                getName());
-        }
       } else if (q > getSizeMaximum()) {
         q -= getSizeMultiple();
-        if (q < curmin)
-          throw DataException("Invalid sizing parameters for operation " +
-                              getName());
+        if (q < ROUNDING_ERROR) q = getSizeMultiple();
       }
       if (!execute) return q;
       oplan->quantity = q;

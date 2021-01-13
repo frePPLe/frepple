@@ -92,6 +92,9 @@ class SeleniumTest(StaticLiveServerTestCase):
 
     def ActionChains(self):
         return ActionChains(self.driver)
+    
+    def implicitlyWait(cls, wait):
+        cls.driver.implicitly_wait(wait)
 
 
 class DataLoadTest(TestCase):

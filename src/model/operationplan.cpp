@@ -631,11 +631,12 @@ Object* OperationPlan::createOperationPlan(const MetaClass* cat,
   // Subsequent calls won't affect the operationplan any longer.
   if (statusfld && status != "proposed") {
     opplan->setStatus(status, statuspropagation);
-    if (opplan->getApproved())
+    if (opplan->getApproved()) {
+      opplan->createFlowLoads();
       opplan->setOperationPlanParameters(quantity, opplan->getStart(),
                                          Date::infinitePast, false, true, false,
                                          true);
-    else
+    } else
       opplan->freezeStatus(start ? start : opplan->getStart(),
                            end ? end : opplan->getEnd(), quantity);
   }

@@ -4,6 +4,15 @@ Release notes
 6.11.0 (Upcoming release)
 =========================
 
+.. rubric:: Production planning
+
+- | Bug fix: when importing approved manufacturing orders assigned to a resource from a
+    resource group an incorrect calendar was assigned.
+    
+- | Bug fix: Corrected corner cases where size constraints on an operation are contradicting
+    each other. Rather than throwing exception we now automatically resolve the conflict
+    by relaxing the constraint.
+
 .. rubric:: User interface
 
 - | FrePPLe now uses machine-assisted translations.
@@ -12,6 +21,8 @@ Release notes
   | As a translator, your task is now simpler. You no longer need to type everything from scratch.
     Instead you'll just need to review the pre-translated strings and correct them where needed.
 
+- | The create_buckets command now correctly supports ISO 8601 week numbers.
+ 
 .. rubric:: Development
 
 - | FrePPLe is now using the cmake build system rather than the archaic autotools.

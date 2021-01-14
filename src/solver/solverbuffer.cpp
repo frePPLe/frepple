@@ -273,8 +273,8 @@ void SolverCreate::solve(const Buffer* b, void* v) {
         if (!b->getProducingOperation()) {
           if (b->getOnHand(Date::infiniteFuture) < -ROUNDING_ERROR) {
             data->broken_path = true;
-            logger << indentlevel << "  Supply path is broken here"
-                   << b->getOnHand(Date::infiniteFuture) << endl;
+            if (getLogLevel() > 1)
+                logger << indentlevel << "  Supply path is broken here" << endl;
           }
         } else
           while (theDate >= requested_date && loop &&

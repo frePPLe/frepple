@@ -121,6 +121,7 @@ class Command(BaseCommand):
                 raise CommandError("User '%s' not found" % options["user"])
         else:
             user = None
+        self.isoweeknumber = "%V" in options["format_week"]
 
         now = datetime.now()
         task = None
@@ -250,7 +251,13 @@ class Command(BaseCommand):
                             bucket=w,
                             name=self.formatDate(
                                 week_start
-                                + timedelta(days=(7 - week_start.weekday()) % 7),
+                                + timedelta(
+                                    days=(
+                                        (10 if self.isoweeknumber else 7)
+                                        - week_start.weekday()
+                                    )
+                                    % 7
+                                ),
                                 options["format_week"],
                             ),
                             startdate=week_start,

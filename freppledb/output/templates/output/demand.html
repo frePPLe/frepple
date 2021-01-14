@@ -109,7 +109,7 @@ function drawGraphs(jsondata)
             .attr("height", y_zero - my_y)
             .attr("x", x_width/2)
             .attr("y", my_y)
-            .style("fill","#2B95EC");
+            .style("fill","#F6BD0F");
         }
         if (d['supply'] > 0 && 1 in fields)
         {
@@ -118,7 +118,7 @@ function drawGraphs(jsondata)
             .attr("width", x_width/2)
             .attr("height", y_zero - my_y)
             .attr("y", my_y)
-            .style("fill","#F6BD0F");
+            .style("fill","#2B95EC");
         }
         // Invisible rectangle for the tooltip
       	bucket.append("rect")
@@ -206,8 +206,8 @@ function drawGraphs(jsondata)
     // Display legend
     var legend = svg.append("g");
     var codes = [
-      [1, "{{_('sales orders')|capfirst}}", "#2B95EC"],
-      [2, "{{_('supply')|capfirst}}", "#F6BD0F"],
+      [1, "{{_('sales orders')|capfirst}}", "#F6BD0F"],
+      [2, "{{_('supply')|capfirst}}", "#2B95EC"],
       [3, "{{_('backlog')|capfirst}}", "#8BBA00"]
       ];
     var visible = 0;

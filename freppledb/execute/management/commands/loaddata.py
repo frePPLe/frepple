@@ -171,17 +171,20 @@ class Command(loaddata.Command):
 
                 # Update archive tables
                 if "freppledb.archive" in settings.INSTALLED_APPS:
+                    # ax_manager table needs to be updated starting with the most recent snapshot.
+                    # Otherwise we can get duplicates.
                     cursor.execute(
-                        """
-                        insert into ax_manager
-                        (snapshot_date, total_records, buffer_records, demand_records, operationplan_records)
-                        select
-                         snapshot_date + %s * interval '1 day', 0, buffer_records,
-                         demand_records, operationplan_records
-                        from ax_manager
-                        """,
-                        (offset,),
+                        "select snapshot_date from ax_manager order by snapshot_date desc"
                     )
+                    for ax in cursor.fetchall():
+                        cursor.execute(
+                            """
+                            update ax_manager
+                            set snapshot_date = snapshot_date + %s * interval '1 day'
+                            where snapshot_date = %s
+                            """,
+                            (offset, ax[0]),
+                        )
                     cursor.execute(
                         """
                         update ax_buffer set
@@ -207,14 +210,6 @@ class Command(loaddata.Command):
                           due = due + %s * interval '1 day'
                         """,
                         4 * (offset,),
-                    )
-                    cursor.execute(
-                        """
-                        delete from ax_manager where total_records <> 0;
-
-                        update ax_manager set
-                          total_records = buffer_records + demand_records + operationplan_records;
-                        """
                     )
 
                 # Task update

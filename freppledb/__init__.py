@@ -15,7 +15,13 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-__version__ = "6.11.0"  # Standard way, see pep-0396
+import pkg_resources
+
+try:
+    __version__ = pkg_resources.get_distribution("freppledb").version
+except pkg_resources.DistributionNotFound:
+    __version__ = "development"
+
 VERSION = __version__  # Old custom way, deprecated
 
 

@@ -38,7 +38,16 @@ class WelcomeWidget(Widget):
     def render(self, request=None):
         from freppledb.common.middleware import _thread_locals
 
-        versionnumber = __version__.split(".", 2)
+        try:
+            versionnumber = __version__.split(".", 2)
+            docurl = "%s/docs/%s.%s/index.html" % (
+                settings.DOCUMENTATION_URL,
+                versionnumber[0],
+                versionnumber[1],
+            )
+        except:
+            docurl = "%s/docs/current/index.html" % (settings.DOCUMENTATION_URL,)
+
         try:
             db = _thread_locals.request.database
             if not db or db == DEFAULT_DB_ALIAS:
@@ -58,11 +67,7 @@ How to get started?
 </ol>
 """
             )
-            % {
-                "docurl": "%s/docs/%s.%s/"
-                % (settings.DOCUMENTATION_URL, versionnumber[0], versionnumber[1]),
-                "prefix": prefix,
-            }
+            % {"docurl": docurl, "prefix": prefix}
         )
 
 
@@ -118,7 +123,7 @@ class InboxWidget(Widget):
                 """<tr><td>
                 <a class="underline" href="%s%s">%s</a>&nbsp;<span class="small">%s</span>
                 <div class="small pull-right" data-toggle="tooltip" data-original-title="%s %s">%s%s&nbsp;&nbsp;%s</div>
-                <br><p style="padding-left: 10px; display: inline-block;">%s</p>"""
+                <br><p style="padding-left: 10px; display: inline-block">%s</p>"""
                 % (
                     _thread_locals.request.prefix,
                     notif.comment.getURL(),
@@ -148,12 +153,9 @@ class InboxWidget(Widget):
     javascript = """
     var hasForecast = %s;
     var hasIP = %s;
-    var version = '%s.%s';
     """ % (
         "true" if "freppledb.forecast" in settings.INSTALLED_APPS else "false",
         "true" if "freppledb.inventoryplanning" in settings.INSTALLED_APPS else "false",
-        __version__.split(".", 2)[0],
-        __version__.split(".", 2)[1],
     )
 
 

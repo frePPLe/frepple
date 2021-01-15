@@ -355,8 +355,11 @@ def version_short():
     """
     A simple tag returning the version of the frePPLe application.
     """
-    versionnumber = __version__.split(".", 2)
-    return "%s.%s" % (versionnumber[0], versionnumber[1])
+    try:
+        versionnumber = __version__.split(".", 2)
+        return "%s.%s" % (versionnumber[0], versionnumber[1])
+    except:
+        return "current"
 
 
 #

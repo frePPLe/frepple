@@ -32,7 +32,7 @@ VS_VERSION_INFO VERSIONINFO
   PRODUCTVERSION @CMAKE_PROJECT_VERSION_MAJOR@,@CMAKE_PROJECT_VERSION_MINOR@,@CMAKE_PROJECT_VERSION_PATCH@,0
   FILEFLAGSMASK 0x17L
 #ifdef _DEBUG
-  FILEFLAGS 0x1L
+  FILEFLAGS VS_FF_DEBUG
 #else
   FILEFLAGS 0x0L
 #endif
@@ -47,12 +47,11 @@ BEGIN
       VALUE "CompanyName", "frePPLe"
       VALUE "FileDescription",
             "frePPLe @PROJECT_EDITION@"
-      VALUE "FileVersion", "@CMAKE_PROJECT_VERSION_MAJOR@, @CMAKE_PROJECT_VERSION_MINOR@, @CMAKE_PROJECT_VERSION_PATCH@, 0"
       VALUE "InternalName", "frepple.exe"
       VALUE "LegalCopyright",
             "Licensed under AGPL - Affero General Public License"
       VALUE "ProductName", "frePPLe"
-      VALUE "ProductVersion", "@CMAKE_PROJECT_VERSION_MAJOR@, @CMAKE_PROJECT_VERSION_MINOR@, @CMAKE_PROJECT_VERSION_PATCH@, 0"
+      VALUE "ProductVersion", "@CMAKE_PROJECT_VERSION@"
     END
   END
   BLOCK "VarFileInfo"

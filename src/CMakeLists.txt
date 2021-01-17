@@ -1,4 +1,6 @@
 
+# Uncomment the next line to see the compiler commands
+# set(CMAKE_VERBOSE_MAKEFILE ON)
 configure_file(
   "${CMAKE_CURRENT_SOURCE_DIR}/frepple.rc.in"
   "${CMAKE_CURRENT_BINARY_DIR}/frepple.rc"
@@ -76,11 +78,11 @@ add_library(frepple SHARED
   tags.cpp
   "${CMAKE_CURRENT_BINARY_DIR}/frepple.rc"
   )
-target_link_libraries(frepple LINK_PUBLIC utils)
-target_link_libraries(frepple LINK_PUBLIC model)
-target_link_libraries(frepple LINK_PUBLIC solver)
-target_link_libraries(frepple LINK_PUBLIC xerces-c)
-target_link_libraries(frepple LINK_PUBLIC ${PYTHON_LIBRARIES})
+target_link_libraries(frepple PUBLIC utils)
+target_link_libraries(frepple PUBLIC model)
+target_link_libraries(frepple PUBLIC solver)
+target_link_libraries(frepple PUBLIC xerces-c)
+target_link_libraries(frepple PRIVATE ${PYTHON_LIBRARIES})
 install(
   TARGETS frepple
   DESTINATION "${CMAKE_INSTALL_LIBDIR}"

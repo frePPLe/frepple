@@ -30,6 +30,7 @@
    and without _DEBUG defined, so we have to #include all the system headers
    used by pyconfig.h right here.
 */
+#define PY_SSIZE_T_CLEAN
 #ifdef _MSC_VER
 #define HAVE_SNPRINTF
 #endif

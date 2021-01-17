@@ -1,11 +1,6 @@
 
 set(CMAKE_VERBOSE_MAKEFILE ON)
 cmake_minimum_required (VERSION 3.0)
-if(NOT CMAKE_BUILD_TYPE OR CMAKE_BUILD_TYPE STREQUAL "")
-  message("Setting build type to 'Release'.")
-  set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Choose the type of build." FORCE)
-  #set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release" "Profiling")
-endif()
 
 project(frepple VERSION 6.11.0)
 set(PROJECT_EDITION "Community Edition")
@@ -51,20 +46,16 @@ endif()
 # Check third party libraries
 if (WIN32)
   # Some hard-coded paths for third party libraries on Windows.
-  # If you store them in a different location you need to update the Visual Studio directories.
-  # See https://docs.microsoft.com/en-us/cpp/build/reference/vcpp-directories-property-page?view=msvc-160
-  set(XERCESC_FOLDER "/develop/xerces-c-3.1.3-x86_64-windows-vc14.0")
+  set(XERCESC_FOLDER "/develop/xerces-c-3.2.3")
   if(EXISTS "${XERCESC_FOLDER}")
     include_directories("${XERCESC_FOLDER}/include")
     list(APPEND CMAKE_REQUIRED_INCLUDES "${XERCESC_FOLDER}/include")
-    link_directories("${XERCESC_FOLDER}/lib")
     add_library(xerces-c STATIC IMPORTED)
-    if (CMAKE_BUILD_TYPE STREQUAL "Release")
-      set_target_properties(xerces-c PROPERTIES IMPORTED_LOCATION "xerces-c_static_3.lib")
-    else()
-      set_target_properties(xerces-c PROPERTIES IMPORTED_LOCATION "xerces-c_static_3D.lib")
+    set_target_properties(xerces-c PROPERTIES 
+       IMPORTED_LOCATION_DEBUG "${XERCESC_FOLDER}/lib/xerces-c_3D.lib"
+       IMPORTED_LOCATION_RELEASE "${XERCESC_FOLDER}/lib/xerces-c_3.lib"
+       )
     endif()
-  endif()
   # PostgreSQL ZIP-installer from https://www.enterprisedb.com/download-postgresql-binaries
   # Used to embed PostgreSQL in frepple's windows installer
   set(POSTGRES_FOLDER "c:/develop/pgsql")
@@ -106,7 +97,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 if (WIN32)
   set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT /EHsc /MP")
-  set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MTd /EHsc /MP")
+  set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -D_DEBUG /MTd /EHsc /MP")
   add_definitions("-D_CRT_SECURE_NO_DEPRECATE")
 else()
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-error=date-time")
@@ -119,6 +110,9 @@ include(CheckIncludeFile)
 include(CheckIncludeFileCXX)
 include(CheckFunctionExists)
 check_include_file(sys/prctl.h HAVE_SYS_PRCTL_H)
+check_include_file(errno.h HAVE_ERRNO_H)
+check_include_file(unistd.h HAVE_UNISTD_H)
+check_include_file(crypt.h HAVE_CRYPT_H)
 check_function_exists(localtime_r HAVE_LOCALTIME_R)
 check_function_exists(dup2 HAVE_DUP2)
 check_function_exists(memset HAVE_MEMSET)

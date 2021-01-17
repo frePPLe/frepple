@@ -82,6 +82,9 @@ target_link_libraries(frepple PUBLIC utils)
 target_link_libraries(frepple PUBLIC model)
 target_link_libraries(frepple PUBLIC solver)
 target_link_libraries(frepple PUBLIC xerces-c)
+if (WIN32)
+  set_target_properties(frepple PROPERTIES LINK_FLAGS "/ignore:4099")
+endif()
 target_link_libraries(frepple PRIVATE ${PYTHON_LIBRARIES})
 install(
   TARGETS frepple
@@ -95,7 +98,10 @@ add_executable (frepple-main
   "${CMAKE_CURRENT_BINARY_DIR}/frepple.rc"
   )
 target_link_libraries (frepple-main LINK_PUBLIC frepple)
-set_target_properties(frepple-main PROPERTIES OUTPUT_NAME "frepple")
+set_target_properties(frepple-main PROPERTIES
+  OUTPUT_NAME "frepple"
+  PDB_NAME_DEBUG "frepple-main"
+  )
 install(
   TARGETS frepple-main
   DESTINATION "${CMAKE_INSTALL_BINDIR}"
@@ -104,9 +110,11 @@ install(
 # Put the compiled binaries in the source folder.
 # This violates the out-of-source build principle, and mixes up multi-configuration builds.
 # Only excuse is that it's convenient.
-set_target_properties(frepple-main PROPERTIES RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_SOURCE_DIR}/bin" )
-set_target_properties(frepple-main PROPERTIES RUNTIME_OUTPUT_DIRECTORY_DEBUG "${CMAKE_SOURCE_DIR}/bin" )
-set_target_properties(frepple PROPERTIES RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_SOURCE_DIR}/bin" )
-set_target_properties(frepple PROPERTIES RUNTIME_OUTPUT_DIRECTORY_DEBUG "${CMAKE_SOURCE_DIR}/bin" )
-set_target_properties(frepple PROPERTIES LIBRARY_OUTPUT_DIRECTORY_RELEASE "${CMAKE_SOURCE_DIR}/bin" )
-set_target_properties(frepple PROPERTIES LIBRARY_OUTPUT_DIRECTORY_DEBUG "${CMAKE_SOURCE_DIR}/bin" )
+add_custom_command(
+  TARGET frepple POST_BUILD VERBATIM
+  COMMAND ${CMAKE_COMMAND} -E copy "$<TARGET_FILE:frepple>" "${CMAKE_SOURCE_DIR}/bin"
+)
+add_custom_command(
+  TARGET frepple-main POST_BUILD VERBATIM
+  COMMAND ${CMAKE_COMMAND} -E copy "$<TARGET_FILE:frepple-main>" "${CMAKE_SOURCE_DIR}/bin"
+)

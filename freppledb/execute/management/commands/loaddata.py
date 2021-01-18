@@ -171,10 +171,11 @@ class Command(loaddata.Command):
 
                 # Update archive tables
                 if "freppledb.archive" in settings.INSTALLED_APPS:
-                    # ax_manager table needs to be updated starting with the most recent snapshot.
+                    # ax_manager table needs to be updated in the right order.
                     # Otherwise we can get duplicates.
                     cursor.execute(
-                        "select snapshot_date from ax_manager order by snapshot_date desc"
+                        "select snapshot_date from ax_manager order by snapshot_date %s"
+                        % ("asc" if offset < 0 else "desc")
                     )
                     for ax in cursor.fetchall():
                         cursor.execute(

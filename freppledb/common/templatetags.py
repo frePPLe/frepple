@@ -32,7 +32,7 @@ from django.utils.html import escape
 from django.utils.safestring import mark_safe
 from django.utils.text import capfirst
 
-from freppledb.common.models import User, Follower
+from freppledb.common.models import User, Follower, Comment, NotificationFactory
 from freppledb import __version__
 
 MAX_CRUMBS = 10
@@ -307,10 +307,11 @@ class Following(Node):
             else:
                 model = model.split(".")
                 ct = ContentType.objects.get(app_label=model[0], model=model[1])
-            context[self.var] = (
-                Follower.objects.all()
-                .using(request.database)
-                .filter(content_type=ct, user=request.user, object_pk=pk)[0]
+            context[self.var] = NotificationFactory.getFollower(
+                object_pk=pk,
+                content_type=ct,
+                user=request.user,
+                database=request.database,
             )
         except Exception:
             context[self.var] = None

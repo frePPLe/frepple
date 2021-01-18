@@ -903,10 +903,7 @@ class Follower(models.Model):
 
     id = models.AutoField(_("identifier"), primary_key=True)
     content_type = models.ForeignKey(
-        ContentType,
-        verbose_name=_("model name"),
-        related_name="content_type_set_for_%(class)s",
-        on_delete=models.CASCADE,
+        ContentType, verbose_name=_("model name"), on_delete=models.CASCADE
     )
     object_pk = models.TextField(_("object name"), null=True)
     content_object = GenericForeignKey(ct_field="content_type", fk_field="object_pk")
@@ -917,6 +914,12 @@ class Follower(models.Model):
         _("type"), max_length=10, null=False, default="O", choices=type_list
     )
     args = JSONBField(blank=True, null=True)
+
+    def shortString(self):
+        return "%s %s" % (
+            self.content_type.model_class()._meta.verbose_name,
+            self.object_pk,
+        )
 
     @classmethod
     def xxxgetModelForm(cls, fields, database=DEFAULT_DB_ALIAS):
@@ -1003,6 +1006,7 @@ class Notification(models.Model):
 
 class NotificationFactory:
     _workers = {}
+    _reg = {}
 
     @classmethod
     def launchWorker(cls, database=DEFAULT_DB_ALIAS, url=None):
@@ -1040,13 +1044,10 @@ class NotificationFactory:
         return decorator
 
     @classmethod
-    def start(cls, url=None, database=DEFAULT_DB_ALIAS):
-        """
-        Every server process will have at most 1 worker processes for each database.
-        The worker process is spawned by the multiprocessing module and runs this method.
-        """
+    def _buildRegistry(cls):
         # Find all notification registrations
-        cls._reg = {}
+        if cls._reg:
+            return
         for app in reversed(settings.INSTALLED_APPS):
             try:
                 import_module("%s.notifications" % app)
@@ -1058,6 +1059,13 @@ class NotificationFactory:
                 ):
                     raise e
 
+    @classmethod
+    def start(cls, url=None, database=DEFAULT_DB_ALIAS):
+        """
+        Every server process will have at most 1 worker processes for each database.
+        The worker process is spawned by the multiprocessing module and runs this method.
+        """
+        cls._buildRegistry()
         try:
             from .middleware import _thread_locals
 
@@ -1174,6 +1182,23 @@ class NotificationFactory:
         while cls._workers:
             w = next(iter(cls._workers.keys()))
             cls._workers.pop(w).join()
+
+    @classmethod
+    def getFollower(cls, object_pk, content_type, user, database=DEFAULT_DB_ALIAS):
+        cls._buildRegistry()
+        dummy = Comment(type="comment", content_type=content_type, object_pk=object_pk)
+        meta = cls._reg.get(content_type.model_class(), None)
+        if meta:
+            for flw in (
+                Follower.objects.all().using(database).filter(user=user).order_by("id")
+            ):
+                for c in meta:
+                    if (
+                        flw.content_type == dummy.content_type
+                        and flw.object_pk == "all"
+                    ) or c(flw, dummy):
+                        return flw
+        return None
 
 
 class Bucket(AuditModel):

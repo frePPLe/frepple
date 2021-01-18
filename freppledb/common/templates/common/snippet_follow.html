@@ -6,7 +6,7 @@
 <button class="btn btn-xs btn-primary" style="text-transform:capitalize" data-pk="{{object_id}}" data-model="{{ model|label_lower }}"
   onclick="follow(this)" data-toggle="tooltip" data-following="true"
   data-placement="auto bottom" data-original-title="{% trans 'Stop getting notifications in your inbox when there is activity'|capfirst %}">
-  {% trans "Unfollow" %}
+  {% trans "Following " %} {{ follower.shortString }}
 </button>
 {% else %}
 <button class="btn btn-xs btn-primary" style="text-transform:capitalize" data-pk="{{object_id}}" data-model="{{ model|label_lower }}"

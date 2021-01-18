@@ -21,7 +21,15 @@ from django.utils.translation import gettext_lazy as _
 from django.utils.text import format_lazy
 from django.utils.encoding import force_text
 
-from freppledb.input.models import Operation, DistributionOrder, PurchaseOrder
+from freppledb.boot import getAttributeFields
+from freppledb.input.models import (
+    Operation,
+    DistributionOrder,
+    PurchaseOrder,
+    Item,
+    Location,
+    Supplier,
+)
 from freppledb.common.report import getHorizon, GridFieldNumber, GridFieldInteger
 from freppledb.common.report import GridPivot, GridFieldText, GridFieldDuration
 from freppledb.common.report import (
@@ -224,6 +232,33 @@ class OverviewReport(GridPivot):
         ("production_total", {"title": _("total production")}),
     )
 
+    @classmethod
+    def initialize(reportclass, request):
+        if reportclass._attributes_added != 2:
+            reportclass._attributes_added = 2
+            reportclass.attr_sql = ""
+            # Adding custom operation attributes
+            for f in getAttributeFields(
+                Operation, related_name_prefix="operation", initially_hidden=True
+            ):
+                f.editable = False
+                reportclass.rows += (f,)
+                reportclass.attr_sql += "operation.%s, " % f.name.split("__")[-1]
+            # Adding custom item attributes
+            for f in getAttributeFields(
+                Item, related_name_prefix="item", initially_hidden=True
+            ):
+                f.editable = False
+                reportclass.rows += (f,)
+                reportclass.attr_sql += "item.%s, " % f.name.split("__")[-1]
+            # Adding custom location attributes
+            for f in getAttributeFields(
+                Location, related_name_prefix="location", initially_hidden=True
+            ):
+                f.editable = False
+                reportclass.rows += (f,)
+                reportclass.attr_sql += "location.%s, " % f.name.split("__")[-1]
+
     @staticmethod
     def basequeryset(request, *args, **kwargs):
         if args and args[0]:
@@ -250,8 +285,8 @@ class OverviewReport(GridPivot):
         else:
             return {}
 
-    @staticmethod
-    def query(request, basequery, sortsql="1 asc"):
+    @classmethod
+    def query(reportclass, request, basequery, sortsql="1 asc"):
         basesql, baseparams = basequery.query.get_compiler(basequery.db).as_sql(
             with_col_aliases=False
         )
@@ -266,6 +301,7 @@ class OverviewReport(GridPivot):
         location.description, location.category, location.subcategory, location.available_id,
         location.lastmodified, item.description, item.category, item.subcategory, item.owner_id,
         item.source, item.lastmodified,
+        %s
         res.bucket, res.startdate, res.enddate,
         res.proposed_start, res.total_start, res.proposed_end, res.total_end, res.proposed_production, res.total_production
       from operation
@@ -344,6 +380,7 @@ class OverviewReport(GridPivot):
       on res.operation_id = operation.name
       order by %s, res.startdate
       """ % (
+            reportclass.attr_sql,
             basesql,
             request.report_bucket,
             request.report_startdate,
@@ -356,7 +393,8 @@ class OverviewReport(GridPivot):
             with connections[request.database].chunked_cursor() as cursor_chunked:
                 cursor_chunked.execute(query, baseparams)
                 for row in cursor_chunked:
-                    yield {
+                    numfields = len(row)
+                    result = {
                         "operation": row[0],
                         "location": row[1],
                         "item": row[2],
@@ -389,22 +427,33 @@ class OverviewReport(GridPivot):
                         "item__owner": row[29],
                         "item__source": row[30],
                         "item__lastmodified": row[31],
-                        "bucket": row[32],
-                        "startdate": row[33].date(),
-                        "enddate": row[34].date(),
-                        "proposed_start": row[35],
-                        "total_start": row[36],
-                        "proposed_end": row[37],
-                        "total_end": row[38],
-                        "production_proposed": row[39],
-                        "production_total": row[40],
+                        "bucket": row[numfields - 9],
+                        "startdate": row[numfields - 8].date(),
+                        "enddate": row[numfields - 7].date(),
+                        "proposed_start": row[numfields - 6],
+                        "total_start": row[numfields - 5],
+                        "proposed_end": row[numfields - 4],
+                        "total_end": row[numfields - 3],
+                        "production_proposed": row[numfields - 2],
+                        "production_total": row[numfields - 1],
                     }
+                    idx = 32
+                    for f in getAttributeFields(Operation):
+                        result["operation__%s" % f.field_name] = row[idx]
+                        idx += 1
+                    for f in getAttributeFields(Item):
+                        result["item__%s" % f.field_name] = row[idx]
+                        idx += 1
+                    for f in getAttributeFields(Location):
+                        result["location__%s" % f.field_name] = row[idx]
+                        idx += 1
+                    yield result
 
 
 class PurchaseReport(GridPivot):
     """
-  A report summarizing all purchase orders.
-  """
+    A report summarizing all purchase orders.
+    """
 
     template = "output/purchase_order_summary.html"
     title = _("Purchase order summary")
@@ -574,6 +623,36 @@ class PurchaseReport(GridPivot):
         ("total_on_order", {"title": _("total on order")}),
     )
 
+    @classmethod
+    def initialize(reportclass, request):
+        if reportclass._attributes_added != 2:
+            reportclass._attributes_added = 2
+            reportclass.attr_sql = ""
+            # Adding custom item attributes
+            for f in getAttributeFields(
+                Item, related_name_prefix="item", initially_hidden=True
+            ):
+                f.editable = False
+                reportclass.rows += (f,)
+                t = f.name.split("__")[-1]
+                reportclass.attr_sql += "item.%s as item__%s, " % (t, t)
+            # Adding custom location attributes
+            for f in getAttributeFields(
+                Location, related_name_prefix="location", initially_hidden=True
+            ):
+                f.editable = False
+                reportclass.rows += (f,)
+                t = f.name.split("__")[-1]
+                reportclass.attr_sql += "location.%s as location__%s, " % (t, t)
+            # Adding custom supplier attributes
+            for f in getAttributeFields(
+                Supplier, related_name_prefix="supplier", initially_hidden=True
+            ):
+                f.editable = False
+                reportclass.rows += (f,)
+                t = f.name.split("__")[-1]
+                reportclass.attr_sql += "supplier.%s as supplier__%s, " % (t, t)
+
     @staticmethod
     def basequeryset(request, *args, **kwargs):
         current, start, end = getHorizon(request)
@@ -646,8 +725,8 @@ class PurchaseReport(GridPivot):
                     "key"
                 )  # The extra ordering by the 'key' is only change with the default method
 
-    @staticmethod
-    def query(request, basequery, sortsql="1 asc"):
+    @classmethod
+    def query(reportclass, request, basequery, sortsql="1 asc"):
         basesql, baseparams = basequery.query.get_compiler(basequery.db).as_sql(
             with_col_aliases=False
         )
@@ -681,6 +760,7 @@ class PurchaseReport(GridPivot):
         supplier.owner_id as supplier__owner,
         supplier.source as supplier__source,
         supplier.lastmodified as supplier__lastmodified,
+        %s
         -- Buckets
         res.bucket as bucket,
         to_char(res.startdate, 'YYYY-MM-DD') as startdate,
@@ -749,6 +829,7 @@ class PurchaseReport(GridPivot):
       ) data
       """ % (
             basesql,
+            reportclass.attr_sql,
             request.report_bucket,
             request.report_startdate,
             request.report_enddate,
@@ -932,6 +1013,36 @@ class DistributionReport(GridPivot):
         ("total_in_transit", {"title": _("total in transit")}),
     )
 
+    @classmethod
+    def initialize(reportclass, request):
+        if reportclass._attributes_added != 2:
+            reportclass._attributes_added = 2
+            reportclass.attr_sql = ""
+            # Adding custom item attributes
+            for f in getAttributeFields(
+                Item, related_name_prefix="item", initially_hidden=True
+            ):
+                f.editable = False
+                reportclass.rows += (f,)
+                t = f.name.split("__")[-1]
+                reportclass.attr_sql += "item.%s as item__%s, " % (t, t)
+            # Adding custom origin attributes
+            for f in getAttributeFields(
+                Location, related_name_prefix="origin", initially_hidden=True
+            ):
+                f.editable = False
+                reportclass.rows += (f,)
+                t = f.name.split("__")[-1]
+                reportclass.attr_sql += "origin.%s as origin__%s, " % (t, t)
+            # Adding custom destination attributes
+            for f in getAttributeFields(
+                Location, related_name_prefix="destination", initially_hidden=True
+            ):
+                f.editable = False
+                reportclass.rows += (f,)
+                t = f.name.split("__")[-1]
+                reportclass.attr_sql += "destination.%s as destination__%s, " % (t, t)
+
     @staticmethod
     def basequeryset(request, *args, **kwargs):
         current, start, end = getHorizon(request)
@@ -951,8 +1062,8 @@ class DistributionReport(GridPivot):
     @classmethod
     def _apply_sort(reportclass, request, query):
         """
-    Applies a sort to the query.
-    """
+        Applies a sort to the query.
+        """
         sortname = None
         if request.GET.get("sidx", ""):
             # 1) Sorting order specified on the request
@@ -1004,8 +1115,8 @@ class DistributionReport(GridPivot):
                     "key"
                 )  # The extra ordering by the 'key' is only change with the default method
 
-    @staticmethod
-    def query(request, basequery, sortsql="1 asc"):
+    @classmethod
+    def query(reportclass, request, basequery, sortsql="1 asc"):
         basesql, baseparams = basequery.query.get_compiler(basequery.db).as_sql(
             with_col_aliases=False
         )
@@ -1038,6 +1149,7 @@ class DistributionReport(GridPivot):
         destination.subcategory as destination__subcategory,
         destination.available_id as destination__available,
         destination.lastmodified as destination__lastmodified,
+        %s
         -- Buckets
         res.bucket as bucket,
         to_char(res.startdate, 'YYYY-MM-DD') as startdate,
@@ -1106,6 +1218,7 @@ class DistributionReport(GridPivot):
       ) data
       """ % (
             basesql,
+            reportclass.attr_sql,
             request.report_bucket,
             request.report_startdate,
             request.report_enddate,

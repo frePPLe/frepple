@@ -225,7 +225,7 @@ def getHorizon(request, future_only=False):
             y = start.year
             if not future_only and horizonbefore:
                 m = start.month - horizonbefore + 1
-                while m < 0:
+                while m <= 0:
                     y -= 1
                     m += 12
                 start = datetime(y, m, 1)

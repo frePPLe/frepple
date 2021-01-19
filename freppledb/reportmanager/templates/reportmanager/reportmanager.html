@@ -5,7 +5,7 @@
 
 <script>
  
-{% if perms.reportmanager.change_sqlreport or perms.reportmanager.add_sqlreport%}
+{% if perms.reportmanager.change_sqlreport or perms.reportmanager.add_sqlreport %}
 function getSchema() {
    $.ajax({
       url: url_prefix + "/reportmanager/schema/",
@@ -150,7 +150,9 @@ $(function() {
 {% endblock %}
 
 {% block actions %}{{block.super}}
+{% if perms.reportmanager.change_sqlreport or perms.reportmanager.add_sqlreport %}
 <button class="btn btn-xs btn-primary" onclick="startEdit()" data-toggle="tooltip" data-placement="top" data-original-title="{% trans 'edit'|capfirst|force_escape %}" ><span class="fa fa-pencil"></span></button>
+{% endif %}
 {% endblock %}
 
 {% block filter %}{% endblock %}

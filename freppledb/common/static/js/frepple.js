@@ -178,6 +178,28 @@ Licensed under MIT License
     }
 // end of jquery-resizable copy
 
+
+function ajaxerror(result, stat, errorThrown) {
+  $('#timebuckets').modal('hide');
+  $.jgrid.hideModal("#searchmodfbox_grid");
+  $('#popup').html(
+    '<div class="modal-dialog">'+
+    '<div class="modal-content">'+
+      '<div class="modal-header bg-danger">'+
+        '<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true" class="fa fa-times"></span></button>'+
+        '<h4 class="modal-title">'+ gettext("Error")+'</h4>'+
+      '</div>'+
+      '<div class="modal-body">'+
+        '<p>' + result.responseText + "<br>" + errorThrown + '</p>'+
+      '</div>'+
+      '<div class="modal-footer">'+
+        '<input type="submit" role="button" class="btn btn-primary pull-right" data-dismiss="modal" value="'+gettext('Close')+'">'+
+      '</div>'+
+    '</div>'+
+    '</div>'
+    ).modal('show');
+}
+         
 //----------------------------------------------------------------------------
 // A class to handle changes to a grid.
 //----------------------------------------------------------------------------
@@ -246,25 +268,7 @@ var upload = {
           success: function () {
             upload.undo();
             },
-          error: function (result, stat, errorThrown) {
-              $('#timebuckets').modal('hide');
-            $.jgrid.hideModal("#searchmodfbox_grid");
-              $('#popup').html('<div class="modal-dialog">'+
-                      '<div class="modal-content">'+
-                        '<div class="modal-header bg-danger">'+
-                          '<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true" class="fa fa-times"></span></button>'+
-                          '<h4 class="modal-title">'+ gettext("Error")+'</h4>'+
-                        '</div>'+
-                        '<div class="modal-body">'+
-                          '<p>'+result.responseText+'</p>'+
-                        '</div>'+
-                        '<div class="modal-footer">'+
-                          '<input type="submit" id="cancelbutton" role="button" class="btn btn-primary pull-right" data-dismiss="modal" value="'+gettext('Close')+'">'+
-                        '</div>'+
-                      '</div>'+
-                  '</div>' )
-                  .modal('show');
-            }
+          error: ajaxerror
         });
   },
 
@@ -826,21 +830,7 @@ var grid = {
        contentType: 'application/json; charset=utf-8',
        data: JSON.stringify(result),
        success: function() {window.location.href = window.location.href;},
-       error: function (result, stat, errorThrown) {
-         $('#popup').html('<div class="modal-dialog">'+
-             '<div class="modal-content">'+
-             '<div class="modal-header">'+
-               '<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true" class="fa fa-times"></span></button>'+
-               '<h4 class="modal-title">' + gettext("Error") + '</h4>'+
-             '</div>'+
-             '<div class="modal-body">'+
-               '<p>' + result.responseText + "<br>" + errorThrown + '</p>'+
-             '</div>'+
-             '<div class="modal-footer">'+
-             '</div>'+
-           '</div>'+
-           '</div>' ).modal('show');
-         }
+       error: ajaxerror
        });
      });
 
@@ -1038,21 +1028,7 @@ var grid = {
         if (typeof pgButton === 'function')
           pgButton();
       },
-      error: function (result, stat, errorThrown) {
-        $('#popup').html('<div class="modal-dialog" style="width: auto">'+
-            '<div class="modal-content">'+
-            '<div class="modal-header">'+
-              '<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true" class="fa fa-times"></span></button>'+
-              '<h4 class="modal-title">' + gettext("Error") + '</h4>'+
-            '</div>'+
-            '<div class="modal-body">'+
-              '<p>'+result.responseText + "  " + stat + errorThrown+'</p>'+
-            '</div>'+
-            '<div class="modal-footer">'+
-            '</div>'+
-          '</div>'+
-          '</div>' ).modal('show');
-      }
+      error: ajaxerror
     });
   },
 
@@ -2430,21 +2406,7 @@ var dashboard = {
         if ($.type(reload) === "string")
           window.location.href = window.location.href;
       },
-      error: function (result, stat, errorThrown) {
-        $('#popup').html('<div class="modal-dialog" style="width: auto">'+
-            '<div class="modal-content">'+
-            '<div class="modal-header">'+
-              '<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true" class="fa fa-times"></span></button>'+
-              '<h4 class="modal-title">' + gettext("Error") + '</h4>'+
-            '</div>'+
-            '<div class="modal-body">'+
-              '<p>'+result.responseText + "  " + stat + errorThrown+'</p>'+
-            '</div>'+
-            '<div class="modal-footer">'+
-            '</div>'+
-          '</div>'+
-          '</div>' ).modal('show');
-      }
+      error: ajaxerror
       });
   },
 
@@ -2842,22 +2804,7 @@ function about_show()
        '</div>';
        $('#popup').html(content).modal('show');
       },
-    error: function (result, stat, errorThrown) {
-        $('#timebuckets').modal('hide');
-        $.jgrid.hideModal("#searchmodfbox_grid");
-        $('#popup').html('<div class="modal-dialog style="width: 400px;">'+
-                '<div class="modal-content">'+
-                  '<div class="modal-header bg-danger">'+
-                    '<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true" class="fa fa-times"></span></button>'+
-                    '<h4 class="modal-title">About frePPLe</h4>'+
-                  '</div>'+
-                  '<div class="modal-body">'+
-                    '<p>' + gettext("Error") + '</p>'+
-                  '</div>'+
-                '</div>'+
-            '</div>' )
-            .modal('show');
-      }
+    error: ajaxerror
   });
 }
 //----------------------------------------------------------------------------

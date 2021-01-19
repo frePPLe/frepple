@@ -39,6 +39,7 @@ class ArchiveManager(models.Model):
         verbose_name = "archive manager"
         verbose_name_plural = "archive managers"
         ordering = ["snapshot_date"]
+        default_permissions = ()
 
 
 class ArchivedModel(models.Model):
@@ -86,6 +87,7 @@ class ArchivedBuffer(ArchivedModel):
         verbose_name = "archived buffer"
         verbose_name_plural = "archived buffers"
         ordering = ["item", "location", "batch"]
+        default_permissions = ()
 
 
 class ArchivedDemand(ArchivedModel):
@@ -114,6 +116,7 @@ class ArchivedDemand(ArchivedModel):
         verbose_name = "archived sales order"
         verbose_name_plural = "archived sales orders"
         ordering = ["priority", "due"]
+        default_permissions = ()
 
 
 class ArchivedOperationPlan(ArchivedModel):
@@ -163,3 +166,4 @@ class ArchivedOperationPlan(ArchivedModel):
         verbose_name = "operationplan"
         verbose_name_plural = "operationplans"
         ordering = ["reference"]
+        default_permissions = ()

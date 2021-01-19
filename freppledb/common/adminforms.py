@@ -349,6 +349,30 @@ class MultiDBModelAdmin(admin.ModelAdmin):
         """
         return self._response_post_save(request, obj)
 
+    def has_add_permission(self, request):
+        return (
+            super().has_add_permission(request)
+            or "add" not in self.opts.model._meta.default_permissions
+        )
+
+    def has_change_permission(self, request, obj=None):
+        return (
+            super().has_change_permission(request, obj)
+            or "change" not in self.opts.model._meta.default_permissions
+        )
+
+    def has_delete_permission(self, request, obj=None):
+        return (
+            super().has_change_permission(request, obj)
+            or "delete" not in self.opts.model._meta.default_permissions
+        )
+
+    def has_view_permission(self, request, obj=None):
+        return (
+            super().has_view_permission(request, obj)
+            or "view" not in self.opts.model._meta.default_permissions
+        )
+
     def response_change(self, request, obj):
         """
         Determines the HttpResponse for the change_view stage.

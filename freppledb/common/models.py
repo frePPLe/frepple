@@ -24,6 +24,7 @@ from psycopg2.extras import execute_batch
 import sys
 import time
 
+from django.contrib.auth import get_permission_codename
 from django.conf import settings
 from django.contrib.admin.utils import quote
 from django.contrib.auth.models import AbstractUser, Group
@@ -963,6 +964,7 @@ class Follower(models.Model):
         verbose_name = _("follower")
         verbose_name_plural = _("followers")
         db_table = "common_follower"
+        default_permissions = ()
 
 
 class Notification(models.Model):
@@ -1070,7 +1072,12 @@ class NotificationFactory:
             from .middleware import _thread_locals
 
             setattr(_thread_locals, "database", database)
-            followers = list(Follower.objects.all().using(database).order_by("id"))
+            followers = list(
+                Follower.objects.all()
+                .using(database)
+                .filter(user__is_active=True)
+                .order_by("id")
+            )
             idle_loop_done = False
             while True:
                 with transaction.atomic(using=database):
@@ -1103,6 +1110,15 @@ class NotificationFactory:
                                                     and (
                                                         flw.object_pk == "all"
                                                         or c(flw, msg)
+                                                    )
+                                                    and (
+                                                        flw.user.has_perm(
+                                                            get_permission_codename(
+                                                                "view", cls.model._meta
+                                                            )
+                                                        )
+                                                        or "view"
+                                                        not in cls.model._meta.default_permissions
                                                     )
                                                 ):
                                                     Notification(
@@ -1185,8 +1201,17 @@ class NotificationFactory:
 
     @classmethod
     def getFollower(cls, object_pk, content_type, user, database=DEFAULT_DB_ALIAS):
-        cls._buildRegistry()
+        """
+        Return the follower object when the user is following this object.
+        Return None when the user isn't following this object.
+        """
+        if "view" in content_type.model_class()._meta.default_permissions and not user.has_perm(
+            get_permission_codename("view", content_type.model_class()._meta)
+        ):
+            # The user isn't allowed to see this object or it's notifications
+            return None
         dummy = Comment(type="comment", content_type=content_type, object_pk=object_pk)
+        cls._buildRegistry()
         meta = cls._reg.get(content_type.model_class(), None)
         if meta:
             for flw in (
@@ -1199,6 +1224,19 @@ class NotificationFactory:
                     ) or c(flw, dummy):
                         return flw
         return None
+
+    @classmethod
+    def getAllFollowers(cls, object_pk, content_type, user, database=DEFAULT_DB_ALIAS):
+        """
+        Returns a json object with:
+        - list of possible related objects to follow
+        - list of notifications we already get
+        - list of active users and whether they follow this object
+        """
+        cls._buildRegistry()
+        dummy = Comment(type="comment", content_type=content_type, object_pk=object_pk)
+        status = {"sample": "loco"}
+        return status
 
 
 class Bucket(AuditModel):

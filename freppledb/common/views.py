@@ -67,21 +67,19 @@ from freppledb.admin import data_site
 from freppledb import __version__
 
 import logging
+from freppledb.common.models import NotificationFactory
 
 logger = logging.getLogger(__name__)
 
 
 @staff_member_required
 def AboutView(request):
-    return HttpResponse(
-        content=json.dumps(
-            {
-                "version": __version__,
-                "apps": settings.INSTALLED_APPS,
-                "website": settings.DOCUMENTATION_URL,
-            }
-        ),
-        content_type="application/json; charset=%s" % settings.DEFAULT_CHARSET,
+    return JsonResponse(
+        {
+            "version": __version__,
+            "apps": settings.INSTALLED_APPS,
+            "website": settings.DOCUMENTATION_URL,
+        }
     )
 
 
@@ -718,10 +716,10 @@ def follow(request):
     if request.is_ajax() and request.method == "POST":
         # Updating followers posted in the format:
         # [{"model": "input.item", "object_pk": "pk", "action": "add / delete"},...]
-        response = {"errors": 0}
+        errors = False
         try:
             for rec in json.JSONDecoder().decode(
-                request.read().decode(request.encoding or settings.DEFAULT_CHARSET)
+                request.body.decode(request.encoding or settings.DEFAULT_CHARSET)
             ):
                 action = rec.get("action", None)
                 object_pk = rec.get("object_pk", None)
@@ -740,10 +738,30 @@ def follow(request):
                             content_type=ct, object_pk=object_pk, user=request.user
                         )
         except Exception as e:
-            logger.error("Error processing follower: %s" % e)
-            response["errors"] += 1
-        return JsonResponse(response)
+            logger.error("Error processing follower info %s: %s" % (rec, e))
+            errors = True
+        if errors:
+            return HttpResponse(content="NOT OK", status=400)
+        else:
+            return HttpResponse(content="OK")
+    elif request.is_ajax() and request.method == "GET":
+        # Return follower information for an object
+        object_pk = request.GET.get("object_pk", None)
+        model = request.GET.get("model", None)
+        if object_pk and model:
+            app_and_model = model.split(".")
+            ct = ContentType.objects.get(
+                app_label=app_and_model[0], model=app_and_model[1]
+            )
+            return JsonResponse(
+                NotificationFactory.getAllFollowers(
+                    content_type=ct,
+                    object_pk=object_pk,
+                    user=request.user,
+                    database=request.database,
+                )
+            )
     else:
         return HttpResponseNotAllowed(
-            ["post"], content="Only ajax POST requests are allowed"
+            ["post", "get"], content="Only ajax GET and POST requests are allowed"
         )

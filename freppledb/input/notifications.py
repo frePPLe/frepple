@@ -62,7 +62,6 @@ def CalendarNotification(flw, msg):
     Location, [Location, Demand, PurchaseOrder, ManufacturingOrder, DistributionOrder]
 )
 def LocationNotification(flw, msg):
-    print("location notif")
     if flw.content_type == msg.content_type:
         return flw.object_pk == msg.object_pk
     elif msg.content_type.model_class() == DistributionOrder:

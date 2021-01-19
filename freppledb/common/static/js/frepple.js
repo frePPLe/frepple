@@ -3751,27 +3751,70 @@ $.fn.drags = function(opt) {
 
 //  Follower functions
 
-function follow(el) {
- var t = $(el);
- var following = t.attr("data-following") == "true";
- $.ajax({
-   url: url_prefix + "/follow/",
-   data: JSON.stringify([{
-     "object_pk": t.attr("data-pk"),
-     "model": t.attr("data-model"),
-     "action": following ? "delete" : "add"
-   }]),
-   type: "POST",
-   contentType: "application/json",
-   success: function () {
-     if (following)
-       t.text(gettext("Follow"))
-        .attr("data-following", "false")
-        .attr("data-original-title", gettext("Get a notification in your inbox when there is activity"));
-     else
-       t.text(gettext("Unfollow"))
-        .attr("data-following", "true")
-        .attr("data-original-title", gettext("Stop getting notifications in your inbox when there is activity"));
-    }
-   });
+var follow = {
+  get: function(event, el) {
+     var t = $(el);
+     event.preventDefault();
+     $.ajax({
+       url: url_prefix + "/follow/",
+       data: {
+         "object_pk": t.attr("data-pk"),
+         "model": t.attr("data-model"),
+         },
+       type: "GET",
+       contentType: "application/json; charset=utf-8",
+       success: function (data) {
+         console.log("result", data);
+         // Show dialog with detailed follower info
+         $('#timebuckets').modal('hide');
+         $.jgrid.hideModal("#searchmodfbox_grid");
+         $('#popup').html(
+           '<div class="modal-dialog"><div class="modal-content">'+
+           '<div class="modal-header">'+
+              '<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true" class="fa fa-times"></span></button>'+
+              '<h4 class="modal-title">'+ gettext("Manage notifications")+'</h4>'+
+           '</div>'+
+           '<div class="modal-body">'+
+             '<div class="row">'+
+               '<div class="col-md-6" id"followOjbects">'+data+'</div>'+
+               '<div class="col-md-6" id"followUsers">ddd</div>'+
+             '</div>'+
+           '</div>'+
+           '<div class="modal-footer">'+
+              '<input type="submit" role="button" class="btn btn-primary pull-right" onclick="follow.post(event, this)" value="'+gettext('Update')+'">'+
+              '<input type="submit" role="button" class="btn btn-primary pull-left" data-dismiss="modal" value="'+gettext('Close')+'">'+
+           '</div>'+
+           '</div></div>'
+           ).modal('show');
+         },
+       error: ajaxerror
+       });
+     },
+   
+   post: function(event, el) {  
+     var t = $(el);
+     var following = t.attr("data-following") == "true";
+     $.ajax({
+       url: url_prefix + "/follow/",
+       data: JSON.stringify([{
+          "object_pk": t.attr("data-pk"),
+          "model": t.attr("data-model"),
+          "action": following ? "delete" : "add"
+          }]),
+       type: "POST",
+       contentType: "application/json",
+       success: function () {
+          if (following)
+            t.text(gettext("Follow"))
+             .attr("data-following", "false")
+             .attr("data-original-title", gettext("Get a notification in your inbox when there is activity"));
+          else
+            t.text(gettext("Unfollow"))
+             .attr("data-following", "true")
+             .attr("data-original-title", gettext("Stop getting notifications in your inbox when there is activity"));
+          $('#popup').modal("hide");
+          },
+       error: ajaxerror
+       });
+     }
 }

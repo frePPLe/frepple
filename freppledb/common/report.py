@@ -794,7 +794,7 @@ class GridReport(View):
         for perm in cls.permissions:
             if not user.has_perm("auth.%s" % perm[0]):
                 return False
-        if cls.model:
+        if cls.model and "view" in cls.model._meta.default_permissions:
             return user.has_perm(
                 "%s.view_%s" % (cls.model._meta.app_label, cls.model._meta.model_name)
             )
@@ -1681,30 +1681,39 @@ class GridReport(View):
                 "scenario_permissions": scenario_permissions,
                 "hasaddperm": cls.editable
                 and cls.model
-                and request.user.has_perm(
-                    "%s.%s"
-                    % (
-                        cls.model._meta.app_label,
-                        get_permission_codename("add", cls.model._meta),
+                and (
+                    request.user.has_perm(
+                        "%s.%s"
+                        % (
+                            cls.model._meta.app_label,
+                            get_permission_codename("add", cls.model._meta),
+                        )
                     )
+                    or "add" not in cls.model._meta.default_permissions
                 ),
                 "hasdeleteperm": cls.editable
                 and cls.model
-                and request.user.has_perm(
-                    "%s.%s"
-                    % (
-                        cls.model._meta.app_label,
-                        get_permission_codename("delete", cls.model._meta),
+                and (
+                    request.user.has_perm(
+                        "%s.%s"
+                        % (
+                            cls.model._meta.app_label,
+                            get_permission_codename("delete", cls.model._meta),
+                        )
                     )
+                    or "delete" not in cls.model._meta.default_permissions
                 ),
                 "haschangeperm": cls.editable
                 and cls.model
-                and request.user.has_perm(
-                    "%s.%s"
-                    % (
-                        cls.model._meta.app_label,
-                        get_permission_codename("change", cls.model._meta),
+                and (
+                    request.user.has_perm(
+                        "%s.%s"
+                        % (
+                            cls.model._meta.app_label,
+                            get_permission_codename("change", cls.model._meta),
+                        )
                     )
+                    or "change" not in cls.model._meta.default_permissions
                 ),
                 "active_tab": "plan",
                 "mode": mode,

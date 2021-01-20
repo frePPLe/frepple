@@ -1096,9 +1096,12 @@ class NotificationFactory:
                             recipients = set()
                             try:
                                 created = set()
-                                meta = cls._reg.get(
-                                    msg.content_type.model_class(), None
+                                model = msg.content_type.model_class()
+                                view_permission = "%s.%s" % (
+                                    model._meta.app_label,
+                                    get_permission_codename("view", model._meta),
                                 )
+                                meta = cls._reg.get(model, None)
                                 if meta:
                                     for flw in followers:
                                         for c in meta:
@@ -1113,12 +1116,10 @@ class NotificationFactory:
                                                     )
                                                     and (
                                                         flw.user.has_perm(
-                                                            get_permission_codename(
-                                                                "view", cls.model._meta
-                                                            )
+                                                            view_permission
                                                         )
                                                         or "view"
-                                                        not in cls.model._meta.default_permissions
+                                                        not in model._meta.default_permissions
                                                     )
                                                 ):
                                                     Notification(

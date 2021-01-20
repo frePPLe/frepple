@@ -15,17 +15,19 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-from datetime import datetime
 from itertools import chain
 import os
 import random
 from rest_framework.test import APIClient, APITestCase, APIRequestFactory
 import tempfile
 
+from django.conf import settings
+from django.contrib.auth.models import Permission
+from django.contrib.contenttypes.models import ContentType
 from django.core import management
 from django.http.response import StreamingHttpResponse
 from django.test import TestCase, TransactionTestCase
-from django.contrib.contenttypes.models import ContentType
+from django.utils import translation
 
 from freppledb.common.dataload import parseCSVdata
 from freppledb.common.models import (
@@ -228,6 +230,7 @@ class ExcelTest(TransactionTestCase):
         del os.environ["FREPPLE_TEST"]
         if os.path.exists("workbook.xlsx"):
             os.remove("workbook.xlsx")
+        translation.activate(settings.LANGUAGE_CODE)
 
     def run_workbook(self, language):
         # Change the language preference
@@ -804,6 +807,11 @@ class NotificationTest(TransactionTestCase):
             email="tester@yourcompany.com",
             password="big_secret12345",
         )
+        user.user_permissions.add(
+            *Permission.objects.filter(
+                codename__in=("view_item", "view_supplier", "view_purchaseorder")
+            )
+        )
         Follower(
             user=user,
             content_type=ContentType.objects.get(model="item"),
@@ -847,7 +855,7 @@ class NotificationTest(TransactionTestCase):
         Notification.wait()
         # for x in Notification.objects.all():
         #    print(x)
-        self.assertEqual(Notification.objects.count(), 5)
+        self.assertEqual(Notification.objects.count(), 4)
 
     def test_performance(self):
         # Admin user follows all items
@@ -868,6 +876,9 @@ class NotificationTest(TransactionTestCase):
                 email="user%s" % cnt,
                 password="big_secret12345",
                 pk=cnt + 10,
+            )
+            u.user_permissions.add(
+                *Permission.objects.filter(codename__in=("view_item", "view_demand"))
             )
             for i in items:
                 Follower(

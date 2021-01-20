@@ -199,11 +199,6 @@ class FixtureTest(TransactionTestCase):
         management.call_command("loaddata", "parameters.json", verbosity=0)
         self.assertGreater(common.models.Parameter.objects.count(), 0)
 
-    def test_fixture_dates_test(self):
-        self.assertEqual(common.models.Bucket.objects.count(), 0)
-        management.call_command("loaddata", "dates.json", verbosity=0)
-        self.assertGreater(common.models.Bucket.objects.count(), 0)
-
     def test_fixture_flow_line_test(self):
         self.assertEqual(input.models.Item.objects.count(), 0)
         management.call_command("loaddata", "flow_line.json", verbosity=0)

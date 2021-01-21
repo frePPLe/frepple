@@ -126,7 +126,7 @@ def Upload(request):
                     )
                     if (
                         not do.origin.source
-                        or not do.location.source
+                        or not do.destination.source
                         or do.status != "proposed"
                         or not do.item.source
                     ):
@@ -140,12 +140,12 @@ def Upload(request):
                             do.reference,
                             quoteattr(do.item.name),
                             quoteattr(do.origin.name),
-                            quoteattr(do.location.name),
+                            quoteattr(do.destination.name),
                             do.startdate,
                             do.enddate,
                             do.quantity,
                             quoteattr(do.origin.subcategory or ""),
-                            quoteattr(do.location.subcategory or ""),
+                            quoteattr(do.destination.subcategory or ""),
                             quoteattr(do.item.subcategory or ""),
                             int(do.criticality),
                         )

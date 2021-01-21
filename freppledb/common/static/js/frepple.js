@@ -180,6 +180,13 @@ Licensed under MIT License
 
 
 function ajaxerror(result, stat, errorThrown) {
+  if (result.readyState == 0)
+    // Network errors: network down, server down, access denied...
+    msg = gettext("Connection failed");
+  else if (errorThrown)
+    msg = "<strong>" + errorThrown + "</strong><br>" + result.responseText;
+  else
+    msg = result.responseText;
   $('#timebuckets').modal('hide');
   $.jgrid.hideModal("#searchmodfbox_grid");
   $('#popup').html(
@@ -190,7 +197,7 @@ function ajaxerror(result, stat, errorThrown) {
         '<h4 class="modal-title">'+ gettext("Error")+'</h4>'+
       '</div>'+
       '<div class="modal-body">'+
-        '<p>' + result.responseText + "<br>" + errorThrown + '</p>'+
+        '<p>' + msg + '</p>'+
       '</div>'+
       '<div class="modal-footer">'+
         '<input type="submit" role="button" class="btn btn-primary pull-right" data-dismiss="modal" value="'+gettext('Close')+'">'+
@@ -3768,7 +3775,7 @@ var follow = {
          // Show dialog with detailed follower info
          $('#timebuckets').modal('hide');
          $.jgrid.hideModal("#searchmodfbox_grid");
-         $('#popup').html(
+         var dlg = $(
            '<div class="modal-dialog"><div class="modal-content">'+
            '<div class="modal-header">'+
               '<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true" class="fa fa-times"></span></button>'+
@@ -3776,8 +3783,8 @@ var follow = {
            '</div>'+
            '<div class="modal-body">'+
              '<div class="row">'+
-               '<div class="col-md-6" id"followOjbects">'+data+'</div>'+
-               '<div class="col-md-6" id"followUsers">ddd</div>'+
+               '<div class="col-md-6" id="followOjbects">'+data+'</div>'+
+               '<div class="col-md-6" id="followUsers"></div>'+
              '</div>'+
            '</div>'+
            '<div class="modal-footer">'+
@@ -3785,7 +3792,18 @@ var follow = {
               '<input type="submit" role="button" class="btn btn-primary pull-left" data-dismiss="modal" value="'+gettext('Close')+'">'+
            '</div>'+
            '</div></div>'
-           ).modal('show');
+           );
+         for (var u in data.users) {
+           var e1 = $("<input id='user" + u + "' type='checkbox'" + (data.users[u].following ? " checked" : "") + "/>");
+           var e2 = $("<label for='user" + u + "'></label>");
+           e2.text(data.users[u].username);
+           dlg.find("#followUsers").append(e1);
+           dlg.find("#followUsers").append(e2);
+           dlg.find("#followUsers").append($("<br>"));
+         }
+         console.log(dlg.html());
+         $('#popup').html(dlg).modal('show');
+           // username: "pol", avatar: null, first_name: "pol", last_name: "pol", following: true
          },
        error: ajaxerror
        });

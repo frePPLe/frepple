@@ -738,7 +738,7 @@ def follow(request):
                             content_type=ct, object_pk=object_pk, user=request.user
                         )
         except Exception as e:
-            logger.error("Error processing follower info %s: %s" % (rec, e))
+            logger.error("Error processing follower POST %s: %s" % (rec, e))
             errors = True
         if errors:
             return HttpResponse(content="NOT OK", status=400)

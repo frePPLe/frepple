@@ -24,7 +24,7 @@ from psycopg2.extras import execute_batch
 import sys
 import time
 
-from django.contrib.auth import get_permission_codename
+from django.apps import apps
 from django.conf import settings
 from django.contrib.admin.utils import quote
 from django.contrib.auth.models import AbstractUser, Group
@@ -41,6 +41,7 @@ from django import forms
 from django.forms.models import modelform_factory
 from django.urls import NoReverseMatch, reverse
 from django.utils import timezone
+from django.utils.encoding import force_text
 from django.utils.html import mark_safe, escape
 from django.utils.translation import gettext_lazy as _
 from django.utils.text import capfirst
@@ -714,6 +715,10 @@ class Comment(models.Model):
     )
     processed = models.BooleanField("processed", default=False, db_index=True)
 
+    def model_name(self):
+        m = self.content_type.model_class()
+        return "%s.%s" % (m._meta.app_label, m._meta.model_name)
+
     def safe(self):
         return self.content_type.model_class() == SystemMessage
 
@@ -753,12 +758,20 @@ class Comment(models.Model):
         else:
             return ""
 
-    def getURL(self):
-        return "/detail/%s/%s/%s/" % (
-            self.content_type.app_label,
-            self.content_type.model,
-            quote(self.object_pk),
-        )
+    def getURL(self, database=DEFAULT_DB_ALIAS):
+        if database == DEFAULT_DB_ALIAS:
+            return "/detail/%s/%s/%s/" % (
+                self.content_type.app_label,
+                self.content_type.model,
+                quote(self.object_pk),
+            )
+        else:
+            return "%s/detail/%s/%s/%s/" % (
+                database,
+                self.content_type.app_label,
+                self.content_type.model,
+                quote(self.object_pk),
+            )
 
     class Meta:
         db_table = "common_comment"
@@ -916,11 +929,20 @@ class Follower(models.Model):
     )
     args = JSONBField(blank=True, null=True)
 
-    def shortString(self):
-        return "%s %s" % (
-            self.content_type.model_class()._meta.verbose_name,
-            self.object_pk,
-        )
+    def getURL(self, database=DEFAULT_DB_ALIAS):
+        if database == DEFAULT_DB_ALIAS:
+            return "/detail/%s/%s/%s/" % (
+                self.content_type.app_label,
+                self.content_type.model,
+                quote(self.object_pk),
+            )
+        else:
+            return "%s/detail/%s/%s/%s/" % (
+                database,
+                self.content_type.app_label,
+                self.content_type.model,
+                quote(self.object_pk),
+            )
 
     @classmethod
     def xxxgetModelForm(cls, fields, database=DEFAULT_DB_ALIAS):
@@ -932,20 +954,16 @@ class Follower(models.Model):
             # )
             # or f.formfield(),
         )
-        print(fields)
 
         class FollowerForm(template):
             content_type = forms.CharField() if "resource" in fields else None
 
             def clean(self):
-                print("----", self.cleaned_data, self.data["content_type"])
                 try:
-                    ###print([x for x in self.data])
                     self.data = self.data.items()
                     self.data["content_type"] = ContentType.objects.get(
                         model=self.data["content_type"]
                     ).pk
-                    print("yes", self.data)
                 except Exception as e:
                     print(e)
                     raise forms.ValidationError("Invalid content type")
@@ -1040,7 +1058,8 @@ class NotificationFactory:
                     cls._reg[m].append(func)
                 else:
                     cls._reg[m] = [func]
-            func.followers = messageclasses
+            func.messages = messageclasses
+            func.follower = followerclass
             return func
 
         return decorator
@@ -1097,9 +1116,11 @@ class NotificationFactory:
                             try:
                                 created = set()
                                 model = msg.content_type.model_class()
-                                view_permission = "%s.%s" % (
-                                    model._meta.app_label,
-                                    get_permission_codename("view", model._meta),
+                                view_permission = (
+                                    "%s.view_%s"
+                                    % (model._meta.app_label, model._meta.model_name)
+                                    if "view" in model._meta.default_permissions
+                                    else None
                                 )
                                 meta = cls._reg.get(model, None)
                                 if meta:
@@ -1109,17 +1130,16 @@ class NotificationFactory:
                                                 if (
                                                     flw.user not in created
                                                     and flw.content_type.model_class()
-                                                    in c.followers
+                                                    in c.messages
                                                     and (
                                                         flw.object_pk == "all"
                                                         or c(flw, msg)
                                                     )
                                                     and (
-                                                        flw.user.has_perm(
+                                                        not view_permission
+                                                        or flw.user.has_perm(
                                                             view_permission
                                                         )
-                                                        or "view"
-                                                        not in model._meta.default_permissions
                                                     )
                                                 ):
                                                     Notification(
@@ -1203,14 +1223,18 @@ class NotificationFactory:
     @classmethod
     def getFollower(cls, object_pk, content_type, user, database=DEFAULT_DB_ALIAS):
         """
-        Return the follower object when the user is following this object.
-        Return None when the user isn't following this object.
+        Return True the follower object when the user is following this object.
+        Return False when the user isn't following this object.
         """
-        if "view" in content_type.model_class()._meta.default_permissions and not user.has_perm(
-            get_permission_codename("view", content_type.model_class()._meta)
-        ):
-            # The user isn't allowed to see this object or it's notifications
-            return None
+        model = content_type.model_class()
+        if "view" in model._meta.default_permissions:
+            view_permission = "%s.view_%s" % (
+                model._meta.app_label,
+                model._meta.model_name,
+            )
+            if not user.has_perm(view_permission):
+                # The user isn't allowed to see this object or it's notifications
+                return False
         dummy = Comment(type="comment", content_type=content_type, object_pk=object_pk)
         cls._buildRegistry()
         meta = cls._reg.get(content_type.model_class(), None)
@@ -1223,8 +1247,8 @@ class NotificationFactory:
                         flw.content_type == dummy.content_type
                         and flw.object_pk == "all"
                     ) or c(flw, dummy):
-                        return flw
-        return None
+                        return True
+        return False
 
     @classmethod
     def getAllFollowers(cls, object_pk, content_type, user, database=DEFAULT_DB_ALIAS):
@@ -1234,9 +1258,119 @@ class NotificationFactory:
         - list of notifications we already get
         - list of active users and whether they follow this object
         """
-        cls._buildRegistry()
         dummy = Comment(type="comment", content_type=content_type, object_pk=object_pk)
-        status = {"sample": "loco"}
+        status = {"direct": False, "users": []}
+
+        # Loop over all followers (current user and others)
+        # - build a list of all users following this object (directly or indirectly)
+        # - collect info on how we follow this object and keep highest one
+        followers = set()
+        parents = []
+        children = {}
+        model = content_type.model_class()
+        view_permission = (
+            "%s.view_%s" % (model._meta.app_label, model._meta.model_name)
+            if "view" in model._meta.default_permissions
+            else None
+        )
+        cls._buildRegistry()
+        meta = cls._reg.get(model, None)
+        if meta:
+            for flw in (
+                Follower.objects.all()
+                .using(database)
+                .filter(user__is_active=True)
+                .order_by("id")
+            ):
+                for c in meta:
+                    try:
+                        if c.follower == model:
+                            for m in c.messages:
+                                if m not in children and m != model:
+                                    key = "%s.%s" % (
+                                        m._meta.app_label,
+                                        m._meta.model_name,
+                                    )
+                                    children[key] = {
+                                        "model": key,
+                                        "label": force_text(
+                                            m._meta.verbose_name_plural
+                                        ),
+                                        "checked": False,
+                                    }
+                        if (
+                            (flw.user not in followers or flw.user == user)
+                            and flw.content_type.model_class() in c.messages
+                            and (flw.object_pk == "all" or c(flw, dummy))
+                            and (
+                                not view_permission
+                                or flw.user.has_perm(view_permission)
+                            )
+                        ):
+                            if flw.user == user:
+                                if (
+                                    flw.content_type == content_type
+                                    and flw.object_pk == object_pk
+                                ):
+                                    # You are directly following this object.
+                                    status["direct"] = True
+                                    for m in flw.args.get("sub", []):
+                                        if m in children:
+                                            children[m]["checked"] = True
+                                        else:
+                                            children[m] = {
+                                                "model": m,
+                                                "label": force_text(
+                                                    apps.get_model(
+                                                        *m.split(".", 1)
+                                                    )._meta.verbose_name_plural
+                                                ),
+                                                "checked": True,
+                                            }
+                                else:
+                                    # You are following a parent object
+                                    parents.append(
+                                        {
+                                            "url": flw.getURL(database),
+                                            "object_pk": flw.object_pk,
+                                            "model": force_text(
+                                                flw.content_type.model_class()._meta.verbose_name
+                                            ),
+                                        }
+                                    )
+
+                            # Maintain a list of all users following this object
+                            followers.add(flw.user.username)
+                    except Exception as e:
+                        logger.error(
+                            "Exception in notification function %s: %s" % (c, e)
+                        )
+
+        for usr in (
+            User.objects.all()
+            .using(database)
+            .filter(is_active=True)
+            .exclude(username=user.username)
+            .order_by("username")
+            .only("username", "avatar", "first_name", "last_name")
+        ):
+            status["users"].append(
+                {
+                    "username": usr.username,
+                    "avatar": usr.avatar.filename if usr.avatar else None,
+                    "first_name": usr.first_name,
+                    "last_name": usr.last_name,
+                    "following": usr.username in followers,
+                }
+            )
+        status["users"].sort(key=lambda x: (not x["following"], x["username"]))
+
+        if status["direct"] and children:
+            status["children"] = sorted(
+                [c for c in children.values()], key=lambda x: (x["checked"], x["label"])
+            )
+        elif parents:
+            status["parents"] = parents
         return status
 
 

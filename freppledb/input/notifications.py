@@ -54,8 +54,11 @@ def CalendarBucketNotification(flw, msg):
 def CalendarNotification(flw, msg):
     if flw.content_type == msg.content_type:
         return flw.object_pk == msg.object_pk
-    elif msg.content_type.model_class() == CalendarBucket:
-        return flw.object_pk == msg.content_object.calendar_id
+    elif flw.object_pk != msg.content_object.calendar_id:
+        return False
+    else:
+        args = flw.args.get("sub", {})
+        return msg.model_name() in args if args else True
 
 
 @NotificationFactory.register(
@@ -65,33 +68,47 @@ def LocationNotification(flw, msg):
     if flw.content_type == msg.content_type:
         return flw.object_pk == msg.object_pk
     elif msg.content_type.model_class() == DistributionOrder:
-        return (
-            flw.object_pk == msg.content_object.origin_id
-            or flw.object_pk == msg.content_object.destination_id
-        )
+        if (
+            flw.object_pk != msg.content_object.origin_id
+            and flw.object_pk != msg.content_object.destination_id
+        ):
+            return False
+        else:
+            args = flw.args.get("sub", {})
+            return msg.model_name() in args if args else True
     elif msg.content_type.model_class() in (
         Demand,
         PurchaseOrder,
         ManufacturingOrder,
         DistributionOrder,
     ):
-        return flw.object_pk == msg.content_object.location_id
+        if flw.object_pk != msg.content_object.location_id:
+            return False
+        else:
+            args = flw.args.get("sub", {})
+            return msg.model_name() in args if args else True
 
 
 @NotificationFactory.register(Customer, [Customer, Demand])
 def CustomerNotification(flw, msg):
     if flw.content_type == msg.content_type:
         return flw.object_pk == msg.object_pk
-    elif msg.content_type.model_class() == Demand:
-        return flw.object_pk == msg.content_object.customer_id
+    elif flw.object_pk != msg.content_object.customer_id:
+        return False
+    else:
+        args = flw.args.get("sub", {})
+        return msg.model_name() in args if args else True
 
 
 @NotificationFactory.register(Supplier, [Supplier, PurchaseOrder])
 def SupplierNotification(flw, msg):
     if flw.content_type == msg.content_type:
         return flw.object_pk == msg.object_pk
-    elif msg.content_type.model_class() == PurchaseOrder:
-        return flw.object_pk == msg.content_object.supplier_id
+    elif flw.object_pk != msg.content_object.supplier_id:
+        return False
+    else:
+        args = flw.args.get("sub", {})
+        return msg.model_name() in args if args else True
 
 
 @NotificationFactory.register(
@@ -110,8 +127,11 @@ def SupplierNotification(flw, msg):
 def ItemNotification(flw, msg):
     if flw.content_type == msg.content_type:
         return flw.object_pk == msg.object_pk
+    elif flw.object_pk != msg.content_object.item_id:
+        return False
     else:
-        return flw.object_pk == msg.content_object.item_id
+        args = flw.args.get("sub", {})
+        return msg.model_name() in args if args else True
 
 
 @NotificationFactory.register(ItemSupplier, [ItemSupplier])
@@ -131,8 +151,11 @@ def OperationNotification(flw, msg):
             flw.object_pk == msg.object_pk
             or flw.object_pk == msg.content_object.owner.name
         )
-    elif msg.content_type.model_class() == ManufacturingOrder:
-        return flw.object_pk == msg.content_object.operation_id
+    elif flw.object_pk != msg.content_object.operation_id:
+        return False
+    else:
+        args = flw.args.get("sub", {})
+        return msg.model_name() in args if args else True
 
 
 @NotificationFactory.register(SubOperation, [SubOperation])
@@ -154,16 +177,22 @@ def SetupRuleNotification(flw, msg):
 def SetupMatrixNotification(flw, msg):
     if flw.content_type == msg.content_type:
         return flw.object_pk == msg.object_pk
-    elif msg.content_type.model_class() == SetupRule:
-        return flw.object_pk == msg.content_object.setupmatrix_id
+    elif flw.object_pk != msg.content_object.setupmatrix_id:
+        return False
+    else:
+        args = flw.args.get("sub", {})
+        return msg.model_name() in args if args else True
 
 
 @NotificationFactory.register(Skill, [Skill, ResourceSkill, OperationResource])
 def SkillNotification(flw, msg):
     if flw.content_type == msg.content_type:
         return flw.object_pk == msg.object_pk
-    elif msg.content_type.model_class() in (ResourceSkill, OperationResource):
-        return flw.object_pk == msg.content_object.skill_id
+    elif flw.object_pk != msg.content_object.skill_id:
+        return False
+    else:
+        args = flw.args.get("sub", {})
+        return msg.model_name() in args if args else True
 
 
 @NotificationFactory.register(ResourceSkill, [ResourceSkill])
@@ -178,8 +207,15 @@ def ResourceNotification(flw, msg):
     if flw.content_type == msg.content_type:
         return flw.object_pk == msg.object_pk
     elif msg.content_type.model_class() in (ResourceSkill, OperationResource):
-        return flw.object_pk == msg.content_object.resource_id
+        if flw.object_pk != msg.content_object.resource_id:
+            return False
+        else:
+            args = flw.args.get("sub", {})
+            return msg.model_name() in args if args else True
     elif msg.content_type.model_class() == ManufacturingOrder:
+        args = flw.args.get("sub", {})
+        if not args or msg.model_name() not in args:
+            return False
         for x in msg.content_object.resources.all():
             if flw.object_pk == x.resource_id:
                 return True

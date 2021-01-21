@@ -57,7 +57,7 @@ def CalendarNotification(flw, msg):
     elif flw.object_pk != msg.content_object.calendar_id:
         return False
     else:
-        args = flw.args.get("sub", {})
+        args = flw.args.get("sub", None) if flw.args else None
         return msg.model_name() in args if args else True
 
 
@@ -74,7 +74,7 @@ def LocationNotification(flw, msg):
         ):
             return False
         else:
-            args = flw.args.get("sub", {})
+            args = flw.args.get("sub", None) if flw.args else None
             return msg.model_name() in args if args else True
     elif msg.content_type.model_class() in (
         Demand,
@@ -85,7 +85,7 @@ def LocationNotification(flw, msg):
         if flw.object_pk != msg.content_object.location_id:
             return False
         else:
-            args = flw.args.get("sub", {})
+            args = flw.args.get("sub", None) if flw.args else None
             return msg.model_name() in args if args else True
 
 
@@ -96,7 +96,7 @@ def CustomerNotification(flw, msg):
     elif flw.object_pk != msg.content_object.customer_id:
         return False
     else:
-        args = flw.args.get("sub", {})
+        args = flw.args.get("sub", None) if flw.args else None
         return msg.model_name() in args if args else True
 
 
@@ -107,7 +107,7 @@ def SupplierNotification(flw, msg):
     elif flw.object_pk != msg.content_object.supplier_id:
         return False
     else:
-        args = flw.args.get("sub", {})
+        args = flw.args.get("sub", None) if flw.args else None
         return msg.model_name() in args if args else True
 
 
@@ -130,7 +130,7 @@ def ItemNotification(flw, msg):
     elif flw.object_pk != msg.content_object.item_id:
         return False
     else:
-        args = flw.args.get("sub", {})
+        args = flw.args.get("sub", None) if flw.args else None
         return msg.model_name() in args if args else True
 
 
@@ -154,7 +154,7 @@ def OperationNotification(flw, msg):
     elif flw.object_pk != msg.content_object.operation_id:
         return False
     else:
-        args = flw.args.get("sub", {})
+        args = flw.args.get("sub", None) if flw.args else None
         return msg.model_name() in args if args else True
 
 
@@ -180,7 +180,7 @@ def SetupMatrixNotification(flw, msg):
     elif flw.object_pk != msg.content_object.setupmatrix_id:
         return False
     else:
-        args = flw.args.get("sub", {})
+        args = flw.args.get("sub", None) if flw.args else None
         return msg.model_name() in args if args else True
 
 
@@ -191,7 +191,7 @@ def SkillNotification(flw, msg):
     elif flw.object_pk != msg.content_object.skill_id:
         return False
     else:
-        args = flw.args.get("sub", {})
+        args = flw.args.get("sub", None) if flw.args else None
         return msg.model_name() in args if args else True
 
 
@@ -210,10 +210,10 @@ def ResourceNotification(flw, msg):
         if flw.object_pk != msg.content_object.resource_id:
             return False
         else:
-            args = flw.args.get("sub", {})
+            args = flw.args.get("sub", None) if flw.args else None
             return msg.model_name() in args if args else True
     elif msg.content_type.model_class() == ManufacturingOrder:
-        args = flw.args.get("sub", {})
+        args = flw.args.get("sub", None) if flw.args else None
         if not args or msg.model_name() not in args:
             return False
         for x in msg.content_object.resources.all():

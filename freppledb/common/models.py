@@ -1258,9 +1258,6 @@ class NotificationFactory:
         - list of notifications we already get
         - list of active users and whether they follow this object
         """
-        dummy = Comment(type="comment", content_type=content_type, object_pk=object_pk)
-        status = {"direct": False, "users": []}
-
         # Loop over all followers (current user and others)
         # - build a list of all users following this object (directly or indirectly)
         # - collect info on how we follow this object and keep highest one
@@ -1273,6 +1270,13 @@ class NotificationFactory:
             if "view" in model._meta.default_permissions
             else None
         )
+        dummy = Comment(type="comment", content_type=content_type, object_pk=object_pk)
+        status = {
+            "direct": False,
+            "users": [],
+            "object_pk": object_pk,
+            "label": model._meta.verbose_name,
+        }
         cls._buildRegistry()
         meta = cls._reg.get(model, None)
         if meta:
@@ -1286,11 +1290,8 @@ class NotificationFactory:
                     try:
                         if c.follower == model:
                             for m in c.messages:
-                                if m not in children and m != model:
-                                    key = "%s.%s" % (
-                                        m._meta.app_label,
-                                        m._meta.model_name,
-                                    )
+                                key = "%s.%s" % (m._meta.app_label, m._meta.model_name)
+                                if key not in children and m != model:
                                     children[key] = {
                                         "model": key,
                                         "label": force_text(
@@ -1314,19 +1315,24 @@ class NotificationFactory:
                                 ):
                                     # You are directly following this object.
                                     status["direct"] = True
-                                    for m in flw.args.get("sub", []):
-                                        if m in children:
-                                            children[m]["checked"] = True
-                                        else:
-                                            children[m] = {
-                                                "model": m,
-                                                "label": force_text(
-                                                    apps.get_model(
-                                                        *m.split(".", 1)
-                                                    )._meta.verbose_name_plural
-                                                ),
-                                                "checked": True,
-                                            }
+                                    args = flw.args.get("sub", None)
+                                    if args:
+                                        for m in args:
+                                            if m in children:
+                                                children[m]["checked"] = True
+                                            else:
+                                                children[m] = {
+                                                    "model": m,
+                                                    "label": force_text(
+                                                        apps.get_model(
+                                                            *m.split(".", 1)
+                                                        )._meta.verbose_name_plural
+                                                    ),
+                                                    "checked": True,
+                                                }
+                                    else:
+                                        for c in children.values():
+                                            c["checked"] = True
                                 else:
                                     # You are following a parent object
                                     parents.append(
@@ -1363,7 +1369,10 @@ class NotificationFactory:
                     "following": usr.username in followers,
                 }
             )
-        status["users"].sort(key=lambda x: (not x["following"], x["username"]))
+        if not status["users"]:
+            del status["users"]
+        else:
+            status["users"].sort(key=lambda x: (not x["following"], x["username"]))
 
         if status["direct"] and children:
             status["children"] = sorted(

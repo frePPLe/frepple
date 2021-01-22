@@ -3782,10 +3782,10 @@ var follow = {
               '<h4 class="modal-title">'+ gettext("Manage notifications")+'</h4>'+
            '</div>'+
            '<div class="modal-body">'+
-             '<div class="row">'+
-               '<div class="col-md-6" id="followOjbects">'+data+'</div>'+
-               '<div class="col-md-6" id="followUsers"></div>'+
-             '</div>'+
+             '<table style="width:100%">'+
+               '<tr><th>'+gettext("Follow")+'</th></tr>'+
+               '<tr><td style="vertical-align:top"></td></tr>'+
+             '</table>'+
            '</div>'+
            '<div class="modal-footer">'+
               '<input type="submit" role="button" class="btn btn-primary pull-right" onclick="follow.post(event, this)" value="'+gettext('Update')+'">'+
@@ -3793,17 +3793,54 @@ var follow = {
            '</div>'+
            '</div></div>'
            );
-         for (var u in data.users) {
-           var e1 = $("<input id='user" + u + "' type='checkbox'" + (data.users[u].following ? " checked" : "") + "/>");
-           var e2 = $("<label for='user" + u + "'></label>");
-           e2.text(data.users[u].username);
-           dlg.find("#followUsers").append(e1);
-           dlg.find("#followUsers").append(e2);
-           dlg.find("#followUsers").append($("<br>"));
+         if (data.parents) {
+           // You're already following it through another object
+           for (var p of data.parents) {
+              var e = $("<div style='margin-top:10px; margin-bottom:10px'>" + gettext("Following") + " " + p.model + " <a class='underline' target='_blank'></a></div>");
+              e.find("a").attr("href", p.url).text(p.object_pk);
+              e.find("a").append($("<i style='text-indent:0.5em' class='fa fa-external-link'></i>"));
+              dlg.find("td").first().append(e);
+           }
          }
-         console.log(dlg.html());
+         else {
+           // You're directly following this object or not following it yet.
+           var e = $("<div class='checkbox'><label>"
+               + "<input type='checkbox'/><span class='text-capitalize'></span>"
+               + "</label></div>"
+               );
+           e.find("span").text(data.label);
+           if (data.direct) e.find("input").attr("checked", "true");
+           dlg.find("td").first().append(e);
+           if (data.children) {
+             for (var p of data.children) {
+               var e = $("<div style='margin-left:2em' class='checkbox'><label>"
+                 + "<input type='checkbox'/><span class='text-capitalize'></span>"
+                 + "</label></div>"
+                 );               
+                e.find("span").text(p.label);
+                e.find("input").attr("data-model", p.model);
+                if (p.checked) e.find("input").attr("checked", "true");
+                dlg.find("td").first().append(e);
+             }
+           }
+         }
+         if (data.users) {
+           var e = $("<th></th>");
+           e.text(gettext("Add followers"));
+           dlg.find("th").after(e);
+           e = $("<td style='vertical-align:top'></td>");
+           for (var u of data.users) {
+             var e2 = $("<div class='checkbox'><label>"
+               + "<input type='checkbox'/><span></span>"
+               + "</label></div>"
+               );
+             if (u.following) e2.find("input").attr("checked", "true");
+             e2.find("span").text(u.username);
+             e.append(e2);
+           }
+           dlg.find("td").after(e);
+         }
          $('#popup').html(dlg).modal('show');
-           // username: "pol", avatar: null, first_name: "pol", last_name: "pol", following: true
          },
        error: ajaxerror
        });

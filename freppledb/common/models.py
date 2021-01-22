@@ -1276,6 +1276,7 @@ class NotificationFactory:
             "users": [],
             "object_pk": object_pk,
             "label": model._meta.verbose_name,
+            "model": "%s.%s" % (model._meta.app_label, model._meta.model_name),
         }
         cls._buildRegistry()
         meta = cls._reg.get(model, None)

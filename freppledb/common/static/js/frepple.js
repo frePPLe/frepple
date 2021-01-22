@@ -3771,7 +3771,6 @@ var follow = {
        type: "GET",
        contentType: "application/json; charset=utf-8",
        success: function (data) {
-         console.log("result", data);
          // Show dialog with detailed follower info
          $('#timebuckets').modal('hide');
          $.jgrid.hideModal("#searchmodfbox_grid");
@@ -3782,9 +3781,9 @@ var follow = {
               '<h4 class="modal-title">'+ gettext("Manage notifications")+'</h4>'+
            '</div>'+
            '<div class="modal-body">'+
-             '<table style="width:100%">'+
+             '<table id="follower_key" style="width:100%">'+
                '<tr><th>'+gettext("Follow")+'</th></tr>'+
-               '<tr><td style="vertical-align:top"></td></tr>'+
+               '<tr><td id="follower_models" style="vertical-align:top"></td></tr>'+
              '</table>'+
            '</div>'+
            '<div class="modal-footer">'+
@@ -3793,6 +3792,9 @@ var follow = {
            '</div>'+
            '</div></div>'
            );
+         dlg.find("#follower_key")
+           .attr("data-model", data.model)
+           .attr("data-object_pk", data["object_pk"]);
          if (data.parents) {
            // You're already following it through another object
            for (var p of data.parents) {
@@ -3809,6 +3811,7 @@ var follow = {
                + "</label></div>"
                );
            e.find("span").text(data.label);
+           e.find("input").attr("data-model", data.model);
            if (data.direct) e.find("input").attr("checked", "true");
            dlg.find("td").first().append(e);
            if (data.children) {
@@ -3828,12 +3831,13 @@ var follow = {
            var e = $("<th></th>");
            e.text(gettext("Add followers"));
            dlg.find("th").after(e);
-           e = $("<td style='vertical-align:top'></td>");
+           e = $("<td id='follower_users' style='vertical-align:top'></td>");
            for (var u of data.users) {
              var e2 = $("<div class='checkbox'><label>"
                + "<input type='checkbox'/><span></span>"
                + "</label></div>"
                );
+             e2.find("input").attr("data-username", u.username);
              if (u.following) e2.find("input").attr("checked", "true");
              e2.find("span").text(u.username);
              e.append(e2);
@@ -3846,27 +3850,27 @@ var follow = {
        });
      },
    
-   post: function(event, el) {  
-     var t = $(el);
-     var following = t.attr("data-following") == "true";
+   post: function() {  
+     var dlg = $("#popup");
+     var key = dlg.find("#follower_key");
+     var data = {
+          "object_pk": key.attr("data-object_pk"),
+          "model": key.attr("data-model"),
+          "users": [],
+          "models": []
+          };
+     dlg.find("#follower_users input:checked").each(function(){
+       data["users"].push($(this).attr("data-username"));
+     });
+     dlg.find("#follower_models input:checked").each(function(){
+       data["models"].push($(this).attr("data-model"));
+     });
      $.ajax({
        url: url_prefix + "/follow/",
-       data: JSON.stringify([{
-          "object_pk": t.attr("data-pk"),
-          "model": t.attr("data-model"),
-          "action": following ? "delete" : "add"
-          }]),
+       data: JSON.stringify([data]),
        type: "POST",
        contentType: "application/json",
        success: function () {
-          if (following)
-            t.text(gettext("Follow"))
-             .attr("data-following", "false")
-             .attr("data-original-title", gettext("Get a notification in your inbox when there is activity"));
-          else
-            t.text(gettext("Unfollow"))
-             .attr("data-following", "true")
-             .attr("data-original-title", gettext("Stop getting notifications in your inbox when there is activity"));
           $('#popup').modal("hide");
           },
        error: ajaxerror

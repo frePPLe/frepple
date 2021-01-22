@@ -4440,6 +4440,9 @@ class ManufacturingOrderList(OperationPlanMixin, GridReport):
             for f in getAttributeFields(Operation, related_name_prefix="operation"):
                 f.editable = False
                 reportclass.rows += (f,)
+            for f in getAttributeFields(Item, related_name_prefix="item"):
+                f.editable = False
+                reportclass.rows += (f,)
             for f in getAttributeFields(Location, related_name_prefix="location"):
                 f.editable = False
                 reportclass.rows += (f,)

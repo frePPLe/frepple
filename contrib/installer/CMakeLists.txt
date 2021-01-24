@@ -13,7 +13,7 @@ if (NSIS_EXECUTABLE)
     )
   add_custom_target(
     installer
-    COMMAND "${PYTHON_EXECUTABLE}" setup.py build --quiet --build-base "${CMAKE_CURRENT_BINARY_DIR}"
+    COMMAND "${PYTHON_EXECUTABLE}" setup.py build --quiet --build-base "${CMAKE_CURRENT_BINARY_DIR}" "--version=@PACKAGE_VERSION@"
     COMMAND "${NSIS_EXECUTABLE}" "${CMAKE_CURRENT_BINARY_DIR}/settings.nsi" "${CMAKE_CURRENT_SOURCE_DIR}/frepple.nsi"
     WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
     )  

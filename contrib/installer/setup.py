@@ -138,9 +138,17 @@ for mod in [
                     )
                 )
 
+# Find version number
+version = freppledb.__version__
+for v in sys.argv:
+    if v.startswith("--version="):
+        version = v.split("=")[1]
+        sys.argv.remove(v)
+        break
+
 # Run the cx_Freeze program
 cx_Freeze.setup(
-    version=freppledb.__version__,
+    version=version,
     description="frePPLe web application",
     name="frePPLe",
     author="frepple.com",

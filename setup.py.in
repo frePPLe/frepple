@@ -68,7 +68,7 @@ if len(sys.argv) > 1 and sys.argv[1] == "bdist_wininst":
 
 setup(
     name="freppledb",
-    version="@PACKAGE_VERSION@",
+    version="@PROJECT_VERSION@",
     package_dir={ "": "@CMAKE_CURRENT_SOURCE_DIR@" },
     author="frepple.com",
     author_email="info@frepple.com",

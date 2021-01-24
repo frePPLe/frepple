@@ -3778,7 +3778,7 @@ var follow = {
            '<div class="modal-dialog"><div class="modal-content">'+
            '<div class="modal-header">'+
               '<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true" class="fa fa-times"></span></button>'+
-              '<h4 class="modal-title">'+ gettext("Manage notifications")+'</h4>'+
+              '<h4 class="modal-title"></h4>'+
            '</div>'+
            '<div class="modal-body">'+
              '<table id="follower_key" style="width:100%">'+
@@ -3792,6 +3792,8 @@ var follow = {
            '</div>'+
            '</div></div>'
            );
+         dlg.find(".modal-title")
+           .text(interpolate(gettext("Manage notifications of %s"), [data.label + " " + data.object_pk], false));
          dlg.find("#follower_key")
            .attr("data-model", data.model)
            .attr("data-object_pk", data["object_pk"]);
@@ -3804,27 +3806,17 @@ var follow = {
               dlg.find("td").first().append(e);
            }
          }
-         else {
+         else if (data.models) {
            // You're directly following this object or not following it yet.
-           var e = $("<div class='checkbox'><label>"
+           for (var p of data.models) {
+             var e = $("<div class='checkbox'><label>"
                + "<input type='checkbox'/><span class='text-capitalize'></span>"
                + "</label></div>"
                );
-           e.find("span").text(data.label);
-           e.find("input").attr("data-model", data.model);
-           if (data.direct) e.find("input").attr("checked", "true");
-           dlg.find("td").first().append(e);
-           if (data.children) {
-             for (var p of data.children) {
-               var e = $("<div style='margin-left:2em' class='checkbox'><label>"
-                 + "<input type='checkbox'/><span class='text-capitalize'></span>"
-                 + "</label></div>"
-                 );               
-                e.find("span").text(p.label);
-                e.find("input").attr("data-model", p.model);
-                if (p.checked) e.find("input").attr("checked", "true");
-                dlg.find("td").first().append(e);
-             }
+              e.find("span").text(p.label);
+              e.find("input").attr("data-model", p.model);
+              if (p.checked) e.find("input").attr("checked", "true");
+              dlg.find("td").first().append(e);
            }
          }
          if (data.users) {
@@ -3838,7 +3830,8 @@ var follow = {
                + "</label></div>"
                );
              e2.find("input").attr("data-username", u.username);
-             if (u.following) e2.find("input").attr("checked", "true");
+             if (u.following != "no") e2.find("input").attr("checked", "true");
+             if (u.following == "indirect") e2.find("input").attr("disabled", "disabled");
              e2.find("span").text(u.username);
              e.append(e2);
            }
@@ -3860,7 +3853,8 @@ var follow = {
           "models": []
           };
      dlg.find("#follower_users input:checked").each(function(){
-       data["users"].push($(this).attr("data-username"));
+       if ($(this).attr("disabled") != "disabled") 
+         data["users"].push($(this).attr("data-username"));
      });
      dlg.find("#follower_models input:checked").each(function(){
        data["models"].push($(this).attr("data-model"));

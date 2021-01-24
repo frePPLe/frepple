@@ -127,6 +127,8 @@ def SupplierNotification(flw, msg):
 def ItemNotification(flw, msg):
     if flw.content_type == msg.content_type:
         return flw.object_pk == msg.object_pk
+    elif msg.content_type.model_class() == Item:
+        return False
     elif flw.object_pk != msg.content_object.item_id:
         return False
     else:

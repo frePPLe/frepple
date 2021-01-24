@@ -715,52 +715,106 @@ def inbox(request):
 def follow(request):
     if request.is_ajax() and request.method == "POST":
         # Updating followers posted in the format:
-        # [{"model": "input.item", "object_pk": "pk", "action": "add / delete"},...]
+        # [{
+        #  'object_pk': "my product", 'model': 'input.item',
+        #  'users': ['me', 'you'],
+        #  'models': ['input.item', 'input.distributionorder', 'input.itemdistribution']
+        # }]
         errors = False
-        try:
-            for rec in json.JSONDecoder().decode(
-                request.body.decode(request.encoding or settings.DEFAULT_CHARSET)
-            ):
-                action = rec.get("action", None)
+        for rec in json.JSONDecoder().decode(
+            request.body.decode(request.encoding or settings.DEFAULT_CHARSET)
+        ):
+            try:
                 object_pk = rec.get("object_pk", None)
                 model = rec.get("model", None)
-                if object_pk and model:
-                    app_and_model = model.split(".")
-                    ct = ContentType.objects.get(
-                        app_label=app_and_model[0], model=app_and_model[1]
+                if not object_pk or not model:
+                    continue
+                app_and_model = model.split(".")
+                ct = ContentType.objects.get(
+                    app_label=app_and_model[0], model=app_and_model[1]
+                )
+                followers = {
+                    f.user.username: f
+                    for f in Follower.objects.using(request.database).filter(
+                        content_type=ct.pk, object_pk=object_pk
                     )
-                    if action == "delete":
-                        Follower.objects.using(request.database).filter(
-                            content_type=ct.pk, object_pk=object_pk, user=request.user
-                        ).delete()
+                }
+                for u in rec.get("users", []):
+                    user = User.objects.using(request.database).get(username=u)
+                    if u not in followers:
+                        # New follower
+                        Follower(
+                            content_type_id=ct.pk, object_pk=object_pk, user=user
+                        ).save(using=request.database)
+                        Comment(
+                            user_id=request.user.id,
+                            content_type_id=ct.pk,
+                            object_pk=object_pk,
+                            object_repr=object_pk,
+                            type="follower",
+                            comment="Added follower %s" % u,
+                        ).save(using=request.database)
+                for username, flw in followers.items():
+                    if (
+                        username not in rec.get("users", [])
+                        and username != request.user.username
+                    ):
+                        # Delete a follower
+                        flw.delete(using=request.database)
+                        Comment(
+                            user_id=request.user.id,
+                            content_type_id=ct.pk,
+                            object_pk=object_pk,
+                            object_repr=object_pk,
+                            type="follower",
+                            comment="Deleted follower %s" % username,
+                        ).save(using=request.database)
+                myfollow = followers.get(request.user.username)
+                models = rec.get("models", None)
+                if myfollow:
+                    if models:
+                        # Update existing follower
+                        myfollow.args["sub"] = models
+                        myfollow.save(using=request.database)
                     else:
-                        Follower.objects.using(request.database).get_or_create(
-                            content_type=ct, object_pk=object_pk, user=request.user
-                        )
-        except Exception as e:
-            logger.error("Error processing follower POST %s: %s" % (rec, e))
-            errors = True
+                        # Delete follower
+                        myfollow.delete(using=request.database)
+                elif models:
+                    # New follower
+                    Follower(
+                        content_type_id=ct.pk,
+                        object_pk=object_pk,
+                        user=request.user,
+                        args={"sub": models},
+                    ).save(using=request.database)
+            except Exception as e:
+                logger.error("Error processing follower POST %s: %s" % (rec, e))
+                errors = True
         if errors:
             return HttpResponse(content="NOT OK", status=400)
         else:
             return HttpResponse(content="OK")
     elif request.is_ajax() and request.method == "GET":
         # Return follower information for an object
-        object_pk = request.GET.get("object_pk", None)
-        model = request.GET.get("model", None)
-        if object_pk and model:
-            app_and_model = model.split(".")
-            ct = ContentType.objects.get(
-                app_label=app_and_model[0], model=app_and_model[1]
-            )
-            return JsonResponse(
-                NotificationFactory.getAllFollowers(
-                    content_type=ct,
-                    object_pk=object_pk,
-                    user=request.user,
-                    database=request.database,
+        try:
+            object_pk = request.GET.get("object_pk", None)
+            model = request.GET.get("model", None)
+            if object_pk and model:
+                app_and_model = model.split(".")
+                ct = ContentType.objects.get(
+                    app_label=app_and_model[0], model=app_and_model[1]
                 )
-            )
+                return JsonResponse(
+                    NotificationFactory.getAllFollowers(
+                        content_type=ct,
+                        object_pk=object_pk,
+                        user=request.user,
+                        database=request.database,
+                    )
+                )
+        except Exception as e:
+            logger.error("Error processing follower GET: %s" % e)
+            return HttpResponse(content="NOT OK", status=400)
     else:
         return HttpResponseNotAllowed(
             ["post", "get"], content="Only ajax GET and POST requests are allowed"

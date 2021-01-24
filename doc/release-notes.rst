@@ -15,6 +15,13 @@ Release notes
 
 .. rubric:: User interface
 
+- | Improvements to the messaging and follower features.
+  | When you follow an object you can choose to follow also activity on related objects. 
+    Eg When you follow an item, you can choose to also follow the purchase orders, manufacturing orders
+    distribution orders for the item. Eg when you follow a resource, you can choose to follow also the
+    manufacturing orders planned on that resource.
+  | You can also add other people as followers.
+
 - | FrePPLe now uses machine-assisted translations.
   | As a user, you will no longer see a partially translated user interface. Instead
     you'll see a completely translated user interface, with a few translations that are a bit off.

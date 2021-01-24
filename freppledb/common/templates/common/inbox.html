@@ -142,6 +142,7 @@ function markMessageRead(el, status) {
 {% elif notif.comment.type == "change" %}fa-pencil
 {% elif notif.comment.type == "delete" %}fa-minus
 {% elif notif.comment.type == "comment" %}fa-comment-o
+{% elif notif.comment.type == "follower" %}fa-users
 {% endif %}"></i>&nbsp;
 <span class="small">{{ notif.comment.content_type.name | capfirst}}</span>&nbsp;
 <a class="underline" href="{{ request.prefix }}{{ notif.comment.getURL }}">{{ notif.comment.object_repr }}</a></td>

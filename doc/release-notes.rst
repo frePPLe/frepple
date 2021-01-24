@@ -1,8 +1,8 @@
 Release notes
 -------------
 
-6.11.0 (Upcoming release)
-=========================
+6.11.0 (2021/01/24)
+===================
 
 .. rubric:: Production planning
 
@@ -10,7 +10,7 @@ Release notes
     resource group an incorrect calendar was assigned.
     
 - | Bug fix: Corrected corner cases where size constraints on an operation are contradicting
-    each other. Rather than throwing exception we now automatically resolve the conflict
+    each other. Rather than keeping the order unplanned we now automatically resolve the conflict
     by relaxing the constraint.
 
 .. rubric:: User interface

@@ -38,6 +38,9 @@ packages = [
     "pathlib",
     "psutil",
     "PIL",
+    "appdirs",
+    "packaging",
+    "pkg_resources",
     # Added for PostgreSQL
     "psycopg2",
     # Dependencies for openpyxl

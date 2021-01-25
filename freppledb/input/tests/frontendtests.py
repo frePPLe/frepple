@@ -31,7 +31,8 @@ try:
 except ImportError:
     noSelenium = True
 
-
+## page only for non-recurring actions within the app
+## each unit test represent a screen
 class SeleniumTestScreen1(SeleniumTest):
     fixtures = ["manufacturing_demo"]
     
@@ -74,7 +75,7 @@ class SeleniumTestScreen1(SeleniumTest):
         
         #interacting with purchase order table by
         purchase_table = self.findElement(By.CSS_SELECTOR, "table[id='grid']")
-        purchase_table_body = purchase_table.find_element_by_tag_name("tbody")
+        purchase_table_body = purchase_table.find_element_by_css_selector("tbody")
         purchase_table_rows = purchase_table_body.find_elements_by_css_selector("tr")
         
         #changing supplier field on the chosen [0 to n-1] line

@@ -1,36 +1,40 @@
 {% extends "index.html" %}
 {% load i18n %}
-
+{% load static %}
+{% block extrahead %}{{block.super}}
+{% endblock %}
 {% block content %}
-<div class="row bg-warning" style="padding-top: 15px">
-	<div class="col-md-12">
-	  <div class="text-center">
-		<h1>3 ways to get started</h1>
-		</div>
-	</div>
-</div>
-<div class="row bg-warning" style="padding-top: 15px; padding-bottom: 15px">
-  <div class="col-md-4">    
-    <div class="text-center">
-      <h2><span class="fa fa-eye fa-2x"></span><br>Explore features</h2>
-      <p>Learn what frePPLe can do for you</p>
-      <p><a href="{{request.prefix}}/wizard/features/" class="btn btn-primary">Start</a></p>
-    </div>
-  </div>
-	<div class="col-md-4">
+<div class="row" id="wizard" style="padding-top: 15px; padding-bottom: 15px">
+	<div class="col-md-3"></div>
+	<div class="col-md-3">
 		<div class="text-center">
-			<h2><span class="fa fa-tasks fa-2x"></span><br>Quickstart for production planning</h2>
-			<p>Generate production plan for a single sales order</p>
-			<p><a href="{{request.prefix}}/wizard/quickstart/production/" class="btn btn-primary">Start</a></p>
+			<h2 class="heading wizard-heading">
+				<span class="fa-stack">
+					<i class="fa fa-circle-o fa-stack-2x"></i>
+					<strong class="fa-stack-1x">1</strong>
+				</span>
+			</h2>
+			<h1 class="heading wizard-heading">Start with one item</h1>
+			<div class="wrapper">
+				<a href="{{request.prefix}}/wizard/quickstart/production/" id="quickstart" class="btn btn-primary">QUICKSTART</a>
+			</div>
 		</div>
 	</div>
-	<div class="col-md-4">
+	<div class="col-md-3">
 		<div class="text-center">
-			<h2><span class="fa fa-cloud-upload fa-2x"></span><br>Data loading wizard</h2>
-			<p>Load Excel data files to build a complete model</p>
-			<p><a href="{{request.prefix}}/wizard/load/production/" class="btn btn-primary">Start</a></p>
+		<h1 class="heading wizard-heading">
+			<span class="fa-stack">
+				<i class="fa fa-circle-o fa-stack-2x"></i>
+				<strong class="fa-stack-1x">2</strong>
+			</span>
+		</h1>
+			<h1 class="heading wizard-heading">Upload more data</h1>
+			<div class="wrapper">
+				<a class="btn btn-primary" href="{{request.prefix}}/wizard/load/production/" id="upload">UPLOAD</a>
+			</div>
 		</div>
 	</div>
+	<div class="col-md-3"></div>
 </div>
-{{ block.super }}
+{% include "wizard/features.html" %}
 {% endblock %}

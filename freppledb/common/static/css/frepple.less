@@ -822,7 +822,375 @@ h1 small {
   }
 }
 
-// Wizard
+// Kanban styles
+
+#kanban {
+
+  .longline {
+    overflow-x: auto;
+    display:table-row;
+  }
+  
+  .longcol {
+    display: table-cell; 
+    float: none;
+  }
+   
+  white-space: nowrap;
+  user-select: none;
+    
+  .badge {
+    color: @badge-color;
+    background-color: @brand-primary;
+  }
+  
+  .panel-body {
+    overflow-y: auto;
+  }
+  
+  .column {
+    cursor: pointer;
+    padding-left: 5px;
+    padding-right: 5px;
+  }
+  
+}
+
+// Calendar
+
+#calendar {
+
+.scrollable {
+    width: 100%;
+    overflow-x: hidden;
+    overflow-y: scroll;
+}
+
+.table-fixed {
+    table-layout: fixed;
+}
+
+.no-event-label {
+    font-weight: bold;
+    color: darkgrey;
+    text-align: center;
+}
+
+.event-detail-container {
+    border-top: 2px darkgrey solid;
+}
+
+.event-detail {
+    cursor: pointer;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.calendar-header {
+    text-align: center;
+    padding-top: 5px;
+    font-weight: bold;
+}
+
+.calendar-hour-column, .calendar-week-column {
+    width: 50px;
+}
+
+.calendar-navbar {
+    margin-bottom: 5px;
+}
+
+.calendar-event-wrap {
+    position: relative;
+    height: 100%;
+}
+
+.calendar-event {
+    position: absolute;
+    padding: 2px;
+    cursor: pointer;
+    z-index: 900;
+}
+
+.calendar-event-inner {
+    overflow: hidden;
+    height: 100%;
+    width: 100%;
+    padding: 5px;
+    line-height: 15px;
+    border-radius: 4px;
+    margin-bottom: 8px;   
+}
+
+.calendar-event-inner p {
+    margin: 0 0 2px !important;
+}
+
+.calendar-cell {
+    padding: 0 !important;
+    height: 37px;    
+}
+
+.weekview-allday-label, .dayview-allday-label {
+    float: left;
+    height: 100%;
+    line-height: 50px;
+    text-align: center;
+    width: 50px;
+    border: 1px solid #ddd;
+    border-right-width: 0;
+}
+
+.weekview-allday-content-wrapper, .dayview-allday-content-wrapper {
+    margin-left: 50px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    height: 100%;
+}
+
+.weekview-header, .monthview-datetable {
+    margin-bottom: 0;
+}
+
+.weekview-header th {
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.weekview-allday-table, .dayview-allday-table {
+    height: 52px;
+}
+
+.weekview-allday-content-table, .dayview-allday-content-table {
+    min-height: 100%;
+    margin-bottom: 0;
+}
+
+.gutter-column {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+
+@media (max-width: 750px) {
+    .weekview-allday-label, .dayview-allday-label, .calendar-hour-column, .calendar-week-column {
+        width: 32px;
+    }
+
+    .weekview-allday-label, .dayview-allday-label {
+        padding-top: 4px;
+    }
+
+    .table > tbody > tr > td.calendar-hour-column, .table > thead > tr > th.weekview-header-label {
+        padding-left: 0;
+        padding-right: 0;
+        font-size: 12px;
+        line-height: 12px;
+        vertical-align: middle;
+    }
+
+    .weekview-allday-label, .dayview-allday-label {
+        line-height: inherit;
+    }
+
+    .weekview-allday-content-wrapper, .dayview-allday-content-wrapper {
+        margin-left: 32px;
+    }
+
+    .calendar-event-inner {
+        font-size: 12px;
+    }
+}
+}
+
+// Cards in calendar and kanban views
+
+#kanban, #calendar {
+
+  .card {
+    user-select: text;
+    cursor: pointer;
+    text-align: left;
+    padding: 5px;
+    margin-bottom: 0;
+  }
+
+  .card-kanban {
+    margin-bottom: 8px;
+  }
+
+  .card-month {
+    padding: 2px;
+    margin-bottom: 8px;
+  }
+
+  .card-week {
+    overflow-y: hidden;
+  }
+
+  .card-day {
+    overflow-y: hidden;
+  }
+    
+  .card p {
+      margin: 0 0 2px !important;
+  }
+  
+  .card .form-control {
+    padding: 1px 6px;
+    line-height: normal;
+    height: auto;
+  }
+  
+  .card table {
+    background-color: transparent;
+  }
+  
+  .card table td.dirty {
+    background: @brand-danger;
+  }
+  
+  .card.active {
+    background-color: @table-bg-hover;
+  }
+  
+  .card-label {
+    text-transform: capitalize;
+    text-align: right;
+    padding-right: 5px;
+  }
+}
+
+// Wizard styles
+
+#wizard{
+	background-color: #fafafc !important;
+	
+	.wrapper{
+		margin: 20px 0;
+	}
+	
+	.heading{
+		margin-top: 10px;
+	}
+	
+	#quickstart-wrapper {
+	  overflow: hidden;
+	  text-align: center;
+	  display: -webkit-flex;
+	  display: -ms-flexbox;
+	  display: flex;
+	  -webkit-justify-content: center;
+	      -ms-flex-pack: center;
+	          justify-content: center;
+		position: relative;
+		font-size: 16px;
+		font-weight: bold;
+		background-color: #0066cc;
+	}
+	
+	#quickstart{
+	  overflow: hidden;
+	  text-align: center;
+	  -webkit-justify-content: center;
+	      -ms-flex-pack: center;
+	          justify-content: center;
+		position: relative;
+		font-size: 16px;
+		font-weight: bold;
+		background-color: #0066cc;
+	}
+	
+	#quickstart:hover{
+		background-color: #cc6600;
+	}
+	
+	#quickstart-wrapper:hover, #quickstart-wrapper.hovered{
+		background-color: #cc6600;
+	}
+	
+	#quickstart-wrapper + div>.quickstart-option-reveal{
+		display: block;
+		background-color: #0066cc;
+	}
+	
+	#quickstart-wrapper + div>.quickstart-option-reveal:hover{
+		display: block;
+		background-color: #cc6600;
+	}
+	
+	#quickstart-group{
+		margin-top: 0px;
+	}
+	
+	#quickstart-wrapper + #quickstart-group>.quickstart-option-reveal {
+	  opacity: 0;
+	}
+	
+	
+	/** section for uploading data in welcome page */
+	
+	#upload-wrapper {
+	  overflow: hidden;
+	  text-align: center;
+	  display: -webkit-flex;
+	  display: -ms-flexbox;
+	  display: flex;
+	  -webkit-justify-content: center;
+	      -ms-flex-pack: center;
+	          justify-content: center;
+		position:relative;
+		font-size: 16px;
+		font-weight: bold;
+		background-color: #0066cc;
+	}
+	
+	#upload {
+	  overflow: hidden;
+	  text-align: center;
+	  -webkit-justify-content: center;
+	      -ms-flex-pack: center;
+	          justify-content: center;
+		position:relative;
+		font-size: 16px;
+		font-weight: bold;
+		background-color: #0066cc;
+	}
+	
+	#upload:hover{
+		background-color: #cc6600;
+	}
+	
+	#upload-wrapper:hover, #upload-wrapper.hovered{
+		background-color: #cc6600;
+	}
+	
+	#upload-wrapper + div>.upload-option-reveal{
+		display: block;
+		font-size: 16px;
+		font-weight: bold;
+		background-color: #0066cc;
+	}
+	
+	#upload-wrapper + div>.upload-option-reveal:hover{
+		background-color: #cc6600;
+		
+	}
+	
+	#upload-group{
+		margin-top: 0px;
+	}
+	
+	#upload-wrapper + #upload-group>.upload-option-reveal {
+		opacity: 0;
+	}
+	
+	/** wizard title styling */
+	
+	.wizard-heading {
+		font-size: 30px;
+		color: #353740;
+	}
+}/*end of wizard style*/
 
 .fill-primary {
   fill: @panel-default-heading-bg;

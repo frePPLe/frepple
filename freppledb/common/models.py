@@ -886,8 +886,6 @@ class SystemMessage(models.Model):
 
     @classmethod
     def add(cls, msg, database=None):
-        admin = User.objects.get(username="admin")
-        ct = ContentType.objects.get_for_model(cls)
         if database:
             scenarios = [database]
         else:
@@ -901,11 +899,13 @@ class SystemMessage(models.Model):
         for db in scenarios:
             c = Comment(
                 type="comment",
-                content_type=ct,
+                content_type=ContentType.objects.using(db).get(
+                    app_label="common", model="systemmessage"
+                ),
                 object_pk="",
                 object_repr="",
                 comment=msg,
-                user=admin,
+                user=User.objects.using(db).get(username="admin"),
                 processed=True,
             )
             c.save(using=db)

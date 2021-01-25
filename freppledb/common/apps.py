@@ -19,6 +19,7 @@ import os
 
 from django.apps import AppConfig
 from django.conf import settings
+from django.core import checks
 from django.core.exceptions import ImproperlyConfigured
 from django.utils.autoreload import autoreload_started
 
@@ -26,6 +27,46 @@ from django.utils.autoreload import autoreload_started
 def watchDjangoSettings(sender, **kwargs):
     sender.watch_file(os.path.join(settings.FREPPLE_CONFIGDIR, "djangosettings.py"))
     sender.watch_file(os.path.join(settings.FREPPLE_CONFIGDIR, "localsettings.py"))
+
+
+@checks.register()
+def check_python_packages(app_configs, **kwargs):
+    """
+    Check whether all required python packages are available.
+    """
+    errors = []
+    for p in [
+        ("cheroot", "cheroot"),
+        ("portend", "portend"),
+        ("rest_framework", "djangorestframework"),
+        ("rest_framework_bulk", "djangorestframework-bulk"),
+        ("filters", "djangorestframework-filters"),
+        ("django_admin_bootstrapped", "django-admin-bootstrapped"),
+        ("bootstrap3", "django-bootstrap3"),
+        ("django_filters", "django-filter"),
+        ("html5lib", "html5lib"),
+        ("jdcal", "jdcal"),
+        ("markdown", "markdown"),
+        ("openpyxl", "openpyxl"),
+        ("lxml", "lxml"),
+        ("jwt", "PyJWT"),
+        ("requests", "requests"),
+        ("dateutil", "python-dateutil"),
+        ("PIL", "pillow"),
+        ("psutil", "psutil"),
+    ]:
+        try:
+            __import__(p[0])
+        except ModuleNotFoundError:
+            errors.append(
+                checks.Error(
+                    "Missing python package '%s'" % p[1],
+                    hint="Install with 'pip3 install %s'" % p[1],
+                    obj=None,
+                    id="frepple.dependency",
+                )
+            )
+    return errors
 
 
 class CommonConfig(AppConfig):

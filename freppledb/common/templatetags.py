@@ -359,7 +359,7 @@ def version_short():
     try:
         versionnumber = __version__.split(".", 2)
         return "%s.%s" % (versionnumber[0], versionnumber[1])
-    except:
+    except Exception:
         return "current"
 
 

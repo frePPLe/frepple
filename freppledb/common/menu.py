@@ -90,7 +90,7 @@ try:
         versionnumber[0],
         versionnumber[1],
     )
-except:
+except Exception:
     docurl = "%s/docs/current/index.html" % (settings.DOCUMENTATION_URL,)
 menu.addItem(
     "help",

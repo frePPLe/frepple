@@ -24,30 +24,25 @@ FROM opensuse/leap:15.1 as builder
 RUN zypper refresh && \
   zypper --non-interactive update && \
   zypper --non-interactive install --force-resolution --replacefiles \
-    libxerces-c-3_1 httpd python3 python3-pip python3-psycopg2 \
-    libxerces-c-devel openssl make automake autoconf python3-devel \
-    gcc-c++ rpm-build libpq5 postgresql-devel postgresql \
-    libtool git openssl-devel && \
+    libxerces-c-3_1 httpd python3 python3-pip python3-psycopg2 gcc rpmbuild \
+    libxerces-c-devel openssl cmake python3-devel gcc-c++ gcc tar gzip \
+    libpq5 postgresql-devel postgresql openssl-devel && \
   pip3 install sphinx && \
   zypper clean
 
-RUN useradd builder -u 1000 -m -G users && \
-  echo "builder ALL=(ALL:ALL) NOPASSWD:ALL" >> /etc/sudoers && \
-  echo "%_topdir    /home/builder/rpm" >> /home/builder/.rpmmacros && \
-  mkdir /home/builder/rpm && \
-  mkdir -p /home/builder/rpm/{BUILD,RPMS,SOURCES,SPECS,SRPMS} && \
-  chown -R builder /home/builder
-
-# OPTION 1: BUILDING FROM LOCAL DISTRIBUTION:
-ADD requirements.txt .
-RUN pip3 install -r requirements.txt
-
 # An alternative to the copy is to clone from git:
 # RUN git clone https://github.com/frepple/frepple.git frepple
-USER builder
-COPY --chown=1000 frepple.spec /home/builder/rpm/SPECS/
-COPY --chown=1000 *.tar.gz /home/builder/rpm/SOURCES/
-RUN rpmbuild -ba /home/builder/rpm/SPECS/frepple.spec
+COPY frepple-*.tar.gz ./
+
+RUN src=`basename --suffix=.tar.gz frepple-*` && \
+  tar -xzf *.tar.gz && \
+  rm *.tar.gz && \
+  cd $src && \
+  python3 -m pip install -r requirements.txt && \
+  mkdir build && \
+  cd build && \
+  cmake .. && \
+  cmake --build . --target package
 
 FROM scratch as package
 COPY --from=builder frepple-*/build/*.rpm .
@@ -61,12 +56,12 @@ FROM opensuse/leap:15.1
 RUN zypper refresh && \
   zypper --non-interactive update && \
   zypper --non-interactive install --force-resolution --replacefiles \
-    libxerces-c-3_1 openssl httpd apache2-mod_wsgi-python3 python3 \
-    python3-pip libpq5 python3-psycopg2 postgresql && \
+    libxerces-c-3_1 openssl httpd apache2-mod_wsgi-python3 python3 gcc \
+    python3-devel python3-pip libpq5 python3-psycopg2 postgresql && \
   zypper clean
 
-COPY --from=builder /requirements.txt .
-COPY --from=builder /home/builder/rpm/RPMS/x86_64/frepple-*-1.x86_64.rpm ./
+COPY --from=builder frepple-*/build/requirements.txt ./
+COPY --from=builder frepple-*/build/*.rpm ./
 
 RUN rpm -i frepple*.rpm && \
   pip3 install -r requirements.txt && \

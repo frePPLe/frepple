@@ -4,4 +4,8 @@ mkdir -p $RPM_BUILD_ROOT%{_localstatedir}/log/frepple
 # Update secret key in the configuration file
 sed -i "s/RANDOMSTRING/`date`/" $RPM_BUILD_ROOT%{_sysconfdir}/frepple/djangosettings.py
 
+# Remove execute permissions for non-members
+chgrp frepple /usr/bin/frepple /usr/bin/frepplectl
+chmod o= /usr/bin/frepple /usr/bin/frepplectl
+
 /sbin/ldconfig

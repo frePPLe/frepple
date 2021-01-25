@@ -171,7 +171,7 @@ if ("${CPACK_GENERATOR}" STREQUAL "DEB")
   install(CODE "execute_process(COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/setup.py install --prefix=\$ENV{DESTDIR}${PYTHON_PREFIX}  --quiet --install-layout=deb)")
 else()
   # Standard install goes into site-packages
-  install(CODE "execute_process(COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/setup.py install --prefix=\$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX} --quiet)")
+  install(CODE "execute_process(COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/setup.py install --prefix=\$ENV{DESTDIR}${PYTHON_PREFIX} --quiet)")
 endif()
 install(CODE "execute_process(COMMAND ${CMAKE_COMMAND} -E env FREPPLE_STATIC=\$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATADIR}/frepple/static ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/frepplectl.py collectstatic --noinput --clear --ignore '*.less' --verbosity=0)")
 

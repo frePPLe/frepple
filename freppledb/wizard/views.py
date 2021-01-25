@@ -86,10 +86,17 @@ def Home(request):
 
 
 def getWizardSteps(request, mode):
-    versionnumber = __version__.split(".", 2)
+    try:
+        versionnumber = VERSION.split(".", 2)
+        docurl = "%s/docs/%s.%s" % (
+            settings.DOCUMENTATION_URL,
+            versionnumber[0],
+            versionnumber[1],
+        )
+    except Exception:
+        docurl = "%s/docs/current" % settings.DOCUMENTATION_URL
     context = {
-        "docroot": "%s/docs/%s.%s"
-        % (settings.DOCUMENTATION_URL, versionnumber[0], versionnumber[1]),
+        "docroot": docurl,
         "prefix": request.prefix,
         "label_data": '<span class="label label-primary">Data entry</span>',
         "label_config": '<span class="label label-warning">Configuration</span>',

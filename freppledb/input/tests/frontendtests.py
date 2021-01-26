@@ -119,16 +119,13 @@ class PurchaseOrderScreen(SeleniumTest):
         #time.sleep(5)
         enddate_inputField.send_keys(Keys.RETURN)
         self.assertEqual(purchase_table_enddate_column.text, newEndDate.strftime("%Y-%m-%d 00:00:00"), "the input field of Receipt Date hasn't been modified")
-        
+        newdatetext= newEndDate.strftime("%Y-%m-%d 00:00:00")
         #checking if data has been saved into database after saving data
         self.ActionChains().move_to_element(saveButton).click().perform()
         time.sleep(2)
-        print(PurchaseOrder.objects.all()
-            .filter(reference=reference)
-            .count())
+        print(PurchaseOrder.objects.get(reference=reference, enddate=newdatetext))
         self.assertEqual(
-            PurchaseOrder.objects.all()
-            .filter(reference=reference, enddate=newEndDate, supplier=newSupplier , quantity=newQuantity)
+            PurchaseOrder.objects.get(reference=reference, enddate=newdatetext, supplier=newSupplier , quantity=newQuantity)
             .count(),
             1,
         )

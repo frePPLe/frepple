@@ -16,6 +16,7 @@
 #
 import unittest
 import time
+import datetime as mainDate
 from datetime import datetime
 
 from freppledb.input.tests.seleniumsetup import SeleniumTest
@@ -105,23 +106,26 @@ class PurchaseOrderScreen(SeleniumTest):
         purchase_table_enddate_column = purchase_table_rows[1].find_element_by_css_selector("td[aria-describedby='grid_enddate']")
         purchase_table_startdate_column = purchase_table_rows[1].find_element_by_css_selector("td[aria-describedby='grid_startdate']")
         self.ActionChains().move_to_element(purchase_table_enddate_column).perform()
-        print("end date column: %s" % purchase_table_enddate_column.text)
-        print("begin date column: %s" % purchase_table_startdate_column.text)
-        oldEndDate = datetime.strptime(purchase_table_enddate_column, "%Y-%m-%d 00:00:00")
-        newEndDate = datetime.now() + datetime.timedelta(days=4)
-        print (oldEndDate)
-        if purchase_table_enddate_column.text == "2021-01-14 00:00:00":
-            print("we got in end date")
-            self.ActionChains().move_to_element(purchase_table_enddate_column).click().perform()
-            enddate_inputField = purchase_table_enddate_column.find_element_by_css_selector("input[id='1_enddate']")
-            enddate_inputField.clear()
-            enddate_inputField.send_keys(newEndDate)
-            enddate_inputField.send_keys(Keys.RETURN)
-            self.assertEqual(purchase_table_enddate_column.text, newEndDate, "the input field of Receipt Date hasn't been modified")
+        #print("end date column: %s" % purchase_table_enddate_column.text)
+        #print("begin date column: %s" % purchase_table_startdate_column.text)
+        oldEndDate = datetime.strptime(purchase_table_enddate_column.text, "%Y-%m-%d 00:00:00")
+        newEndDate = oldEndDate + mainDate.timedelta(days=9)
+        #print ("%s" % newEndDate)
+        #print("we got in end date")
+        self.ActionChains().move_to_element(purchase_table_enddate_column).click().perform()
+        enddate_inputField = purchase_table_enddate_column.find_element_by_css_selector("input[id='1_enddate']")
+        enddate_inputField.clear()
+        enddate_inputField.send_keys(newEndDate.strftime("%Y-%m-%d 00:00:00"))
+        #time.sleep(5)
+        enddate_inputField.send_keys(Keys.RETURN)
+        self.assertEqual(purchase_table_enddate_column.text, newEndDate.strftime("%Y-%m-%d 00:00:00"), "the input field of Receipt Date hasn't been modified")
         
         #checking if data has been saved into database after saving data
         self.ActionChains().move_to_element(saveButton).click().perform()
-        time.sleep(10)
+        time.sleep(2)
+        print(PurchaseOrder.objects.all()
+            .filter(reference=reference)
+            .count())
         self.assertEqual(
             PurchaseOrder.objects.all()
             .filter(reference=reference, enddate=newEndDate, supplier=newSupplier , quantity=newQuantity)

@@ -40,7 +40,7 @@ def check_python_packages(app_configs, **kwargs):
         ("portend", "portend"),
         ("rest_framework", "djangorestframework"),
         ("rest_framework_bulk", "djangorestframework-bulk"),
-        ("filters", "djangorestframework-filters"),
+        ("rest_framework_filters", "djangorestframework-filters"),
         ("django_admin_bootstrapped", "django-admin-bootstrapped"),
         ("bootstrap3", "django-bootstrap3"),
         ("django_filters", "django-filter"),

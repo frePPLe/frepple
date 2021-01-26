@@ -16,6 +16,7 @@
 #
 import unittest
 import time
+from datetime import datetime
 
 from freppledb.input.tests.seleniumsetup import SeleniumTest
 from freppledb.input.models import PurchaseOrder
@@ -44,7 +45,7 @@ class PurchaseOrderScreen(SeleniumTest):
         self.implicitlyWait(20)
         
         
-        newEndDate = "2021-01-22 00:00:00"
+        
         newQuantity = 800
         targetNavigation = "Purchasing"
         newSupplier = "Brazilian wood supplier"
@@ -102,8 +103,13 @@ class PurchaseOrderScreen(SeleniumTest):
         
         #changing date field
         purchase_table_enddate_column = purchase_table_rows[1].find_element_by_css_selector("td[aria-describedby='grid_enddate']")
+        purchase_table_startdate_column = purchase_table_rows[1].find_element_by_css_selector("td[aria-describedby='grid_startdate']")
         self.ActionChains().move_to_element(purchase_table_enddate_column).perform()
         print("end date column: %s" % purchase_table_enddate_column.text)
+        print("begin date column: %s" % purchase_table_startdate_column.text)
+        oldEndDate = datetime.strptime(purchase_table_enddate_column, "%Y-%m-%d 00:00:00")
+        newEndDate = datetime.now() + datetime.timedelta(days=4)
+        print (oldEndDate)
         if purchase_table_enddate_column.text == "2021-01-14 00:00:00":
             print("we got in end date")
             self.ActionChains().move_to_element(purchase_table_enddate_column).click().perform()

@@ -4,7 +4,28 @@
 {% block content %}
 <div class="row">	
     <div class="col-md-12">
-        <h1>Features</h1>
+        <h1>{% trans "Explore features"|capfirst %}
+        <div id="toolicons" style="float: right; line-height: 1em">
+          <div class="btn-group" role="group">
+            <button data-toggle="tooltip" data-placement="top"
+              class="btn btn-xs btn-primary{% if features %} active{% endif %}" type="radio"
+              data-original-title="{% trans "explore features"|capfirst %}"
+              {% if not features %}
+              onclick="savePreference('freppledb.wizard', {'mode':'features'}, function() {window.location.href = window.location.href;})"
+              {% endif %}>
+              <span class="fa fa-eye"/>
+            </button>
+            <button data-toggle="tooltip" data-placement="top" title=""
+              class="btn btn-xs btn-primary{% if not features %} active{% endif %}" type="radio"
+              id="dashboardmode" value="dashboard" data-original-title="{% trans "dashboard"|capfirst %}"
+              {% if features %}
+              onclick="savePreference('freppledb.wizard', {'mode':'dashboard'}, function() {window.location.href = window.location.href;})"
+              {% endif %}>          
+              <span class="fa fa-tachometer"/>
+            </button>
+          </div>
+        </div>
+        </h1> 
     </div>
 </div>
 <div class="row">

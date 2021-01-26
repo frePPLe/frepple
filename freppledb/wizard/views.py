@@ -72,6 +72,7 @@ def parseDuration(v):
 
 @staff_member_required
 def Home(request):
+    prefs = request.user.getPreference("freppledb.wizard", database=request.database)
     return render(
         request,
         "wizard/index.html",
@@ -81,6 +82,7 @@ def Home(request):
                 "name", flat=True
             ),
             "currency": getCurrency(),
+            "features": prefs.get("mode", "features") == "features" if prefs else True,
         },
     )
 

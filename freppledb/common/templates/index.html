@@ -36,6 +36,7 @@
 		  <div class="col-md-2">
 		    <h1 class="pull-right">
 	      {% if forloop.first %}
+        {% block actions %}{% endblock %}
 	      <button class="btn btn-xs btn-primary" onclick="grid.showBucket()" data-toggle="tooltip" 
 	           data-placement="top" data-original-title="{% trans 'Configure time buckets'|capfirst|force_escape %}">
 	         <span class="fa fa-clock-o"></span>

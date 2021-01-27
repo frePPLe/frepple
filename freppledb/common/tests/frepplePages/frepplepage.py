@@ -1,3 +1,19 @@
+#
+# Copyright (C) 2013 by frePPLe bv
+#
+# This library is free software; you can redistribute it and/or modify it
+# under the terms of the GNU Affero General Public License as published
+# by the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero
+# General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public
+# License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
 from freppleelement import BasePageElement #in here, import the class containing all the elements from your target page 
 from frepplelocators import PurchaseOrderPageLocators #here, we should find all the locators for your target page
 
@@ -33,7 +49,7 @@ class BasePage(object):
 #for all interactions with table
 #ability to choose a specific table to interact with
 #selecting a cell, updating a cell, reading value of a cell
-class PurchaseOrderPage(BasePage):
+class TablePage(BasePage):
     #purchase order page action method come here
     
     #declaring variable that will contain the retrieved table
@@ -63,29 +79,6 @@ class PurchaseOrderPage(BasePage):
             
     
     def click_target_row_colum(self, target_row, target_column): # method that clicks of the table cell at the targeted row and column
-        pass
-    
-class SupplierEditPage(BasePage):
-    
-    def is_title_matches(self): # change into current url instead of title
-        return "Supplier" in self.driver.title
-    
-    def click_save_button(self):
-        pass
-    
-    def click_save_add_button(self):
-        pass
-    
-    def click_save_continue_editing(self):
-        pass
-    
-    def click_delete_supplier(self):
-        pass
-    
-    def input_supplier_name(self, supplier_new_name):
-        pass
-    
-    def input_supplier_description(self, supplier_new_description):
         pass
     
 

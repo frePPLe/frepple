@@ -20,6 +20,7 @@ import datetime as mainDate
 from datetime import datetime
 
 from freppledb.common.tests.seleniumsetup import SeleniumTest
+from freppledb.common.tests.frepplePages.frepplepage import TablePage
 from freppledb.input.models import PurchaseOrder
 
 try:
@@ -38,7 +39,15 @@ except ImportError:
 class PurchaseOrderScreen(SeleniumTest):
     fixtures = ["manufacturing_demo"]
     
-    
+    @unittest.skipIf(noSelenium, "selenium not installed")
+    def test_table(self):
+        table_page = TablePage(self.driver, SeleniumTest)
+        table_page.login(self)
+        table_page.go_to_target_page_by_menu("Purchasing","purchaseorder")
+        purchase_order_table = table_page.get_table()
+        
+        print("inside table page table : %s" % purchase_order_table)
+        
     
     @unittest.skipIf(noSelenium, "selenium not installed")
     def test_purchase_order_screen(self):

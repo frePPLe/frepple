@@ -43,10 +43,12 @@ class PurchaseOrderScreen(SeleniumTest):
     def test_table(self):
         table_page = TablePage(self.driver, SeleniumTest)
         table_page.login(self)
+        # Open purchase order screen
         table_page.go_to_target_page_by_menu("Purchasing","purchaseorder")
         purchase_order_table = table_page.get_table()
-        
-        print("inside table page table : %s" % purchase_order_table)
+        firstrow = table_page.get_table_row(1)
+        supplier_content = table_page.get_content_of_row_column(firstrow,"supplier")
+        print("inside table page table : %s" % supplier_content)
         
     
     @unittest.skipIf(noSelenium, "selenium not installed")
@@ -62,12 +64,12 @@ class PurchaseOrderScreen(SeleniumTest):
         targetNavigation = "Purchasing"
 
         # Open purchase order screen
-        purchase_menu = self.findElement(By.LINK_TEXT, targetNavigation)
+        """purchase_menu = self.findElement(By.LINK_TEXT, targetNavigation)
         self.ActionChains().move_to_element(purchase_menu).perform()
         purchaseordermenuItem = self.findElement(
             By.CSS_SELECTOR, "#nav-menu .dropdown-menu a[href='/data/input/purchaseorder/'"
         )
-        self.ActionChains().move_to_element(purchaseordermenuItem).click().perform()
+        self.ActionChains().move_to_element(purchaseordermenuItem).click().perform()"""
         
         #interacting with purchase order table by
         purchase_table = self.findElement(By.CSS_SELECTOR, "table[id='grid']")

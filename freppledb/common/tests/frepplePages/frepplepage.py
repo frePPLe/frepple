@@ -18,6 +18,7 @@ from freppledb.common.tests.frepplePages.freppleelement import BasePageElement #
 from freppledb.common.tests.frepplePages.frepplelocators import TableLocators, BasePageLocators #here, we should find all the locators for your target page
 #from freppledb.common.tests.seleniumsetup import SeleniumTest
 import selenium
+from django.db.models.functions.window import RowNumber
 
 
 ### Special page for common actions only
@@ -71,6 +72,23 @@ class TablePage(BasePage):
     
     def get_table(self):
         self.table = self.driver.find_element(*TableLocators.TABLE_DEFAULT)
+        return self.table
+    
+    def get_table_row(self, rowNumber):
+        table = self.get_table()
+        #body = self.driver.find_element(*TableLocators.TABLE_BODY)
+        rows = table.find_elements(*TableLocators.TABLE_ROWS)
+        return rows[rowNumber]
+        #print("in table body : %s " % rows[rowNumber].get_attribute("innerHTML"))
+    
+    def get_content_of_row_column(self, rowNumber, columnName):
+        row = self.get_table_row(rowNumber)
+        content = row.find_element(*TableLocators.tablecomumns[columnName])
+        return content
+    
+    def get_content_of_row_column(self, rowElement , columnName):
+        content = rowElement.find_element(*TableLocators.tablecomumns[columnName])
+        return content
     
     #def is_title_matches(self): # change to current url
     #    return "Purchase orders" in self.driver.title

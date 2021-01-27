@@ -36,5 +36,10 @@ class TableLocators(object):
     TABLE_SELECT_ACTION = (By.CSS_SELECTOR, 'button[id="actions1"]')
     TABLE_SELECT_ACTION_MENU = (By.CSS_SELECTOR, 'ul[id="actionsul"]')
     
+    tablecolumns = {
+        "supplier" : (By.CSS_SELECTOR, 'td[aria-describedby="grid_supplier"]'),
+        
+    }
+    
     def actionLocator(actionTofind):
         return (By.CSS_SELECTOR, "li>a[name='"+actionTofind+"'")

@@ -489,3 +489,4 @@ PORT = 8000
 
 # Browser to test with selenium
 SELENIUM_TESTS = "chrome"
+SELENIUM_HEADLESS = True

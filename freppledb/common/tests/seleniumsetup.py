@@ -40,12 +40,14 @@ class SeleniumTest(StaticLiveServerTestCase):
         super().setUpClass()
         if settings.SELENIUM_TESTS == "firefox":
             firefox_options = webdriver.FirefoxOptions()
-            # firefox_options.add_argument("--headless")
+            if settings.SELENIUM_HEADLESS :
+                firefox_options.add_argument("--headless")
             cls.driver = webdriver.Firefox(firefox_options=firefox_options)
         elif settings.SELENIUM_TESTS == "chrome":
             options = webdriver.ChromeOptions()
             options.add_argument("--silent")
-            # options.add_argument("--headless")
+            if settings.SELENIUM_HEADLESS :
+                options.add_argument("--headless")
             cls.driver = webdriver.Chrome(chrome_options=options)
         else:
             raise Exception("Invalid setting SELENIUM_TESTS")

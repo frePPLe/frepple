@@ -83,11 +83,11 @@ class TablePage(BasePage):
     
     def get_content_of_row_column(self, rowNumber, columnName):
         row = self.get_table_row(rowNumber)
-        content = row.find_element(*TableLocators.tablecomumns[columnName])
+        content = row.find_element(*TableLocators.tablecolumns[columnName])
         return content
     
     def get_content_of_row_column(self, rowElement , columnName):
-        content = rowElement.find_element(*TableLocators.tablecomumns[columnName])
+        content = rowElement.find_element(*TableLocators.tablecolumns[columnName])
         return content
     
     #def is_title_matches(self): # change to current url

@@ -16,9 +16,19 @@
 #
 from freppledb.common.tests.frepplePages.freppleelement import BasePageElement #in here, import the class containing all the elements from your target page 
 from freppledb.common.tests.frepplePages.frepplelocators import TableLocators, BasePageLocators #here, we should find all the locators for your target page
-#from freppledb.common.tests.seleniumsetup import SeleniumTest
+
 import selenium
 from django.db.models.functions.window import RowNumber
+try:
+    from selenium.common.exceptions import NoSuchElementException
+    from selenium.webdriver.common.action_chains import ActionChains
+    from selenium.webdriver.common.by import By
+    from selenium.webdriver.common.keys import Keys
+    from selenium.webdriver.support import expected_conditions
+
+    noSelenium = False
+except ImportError:
+    noSelenium = True
 
 
 ### Special page for common actions only
@@ -43,6 +53,9 @@ class BasePage(object):
 
         selenium.implicitlyWait(20)
         
+    def ActionChains(self):
+        return self.selenium.ActionChains(self)
+     
     def go_to_target_page_by_menu(self,menu_item, submenu_item):
         (menuby, menulocator) = BasePageLocators.mainMenuLinkLocator(menu_item)
         self.menuitem = self.selenium.findElement(self,menuby, menulocator)
@@ -76,10 +89,13 @@ class TablePage(BasePage):
     
     def get_table_row(self, rowNumber):
         table = self.get_table()
-        #body = self.driver.find_element(*TableLocators.TABLE_BODY)
         rows = table.find_elements(*TableLocators.TABLE_ROWS)
         return rows[rowNumber]
-        #print("in table body : %s " % rows[rowNumber].get_attribute("innerHTML"))
+        
+    
+    def get_item_reference_in_target_row(self, targetrow):
+        reference = targetrow.get_attribute('id')
+        return reference
     
     def get_content_of_row_column(self, rowNumber, columnName):
         row = self.get_table_row(rowNumber)
@@ -90,16 +106,38 @@ class TablePage(BasePage):
         content = rowElement.find_element(*TableLocators.tablecolumns[columnName])
         return content
     
+    def click_target_row_colum(self, rowElement, columnName): # method that clicks of the table cell at the targeted row and column
+        targetTableCell = self.get_content_of_row_column(rowElement, columnNameLocator)
+        self.ActionChains().move_to_element_with_offset(targetTableCell,1,0).click().perform()
+        inputfield = targetTableCell.find_element(*TableLocators.tablecolumnsinput[columnNameLocator])
+        return inputfield
+    
+    def click_target_cell(self, targetcellElement, columnNameLocator): # method that clicks of the table cell at the targeted row and column
+        self.ActionChains().move_to_element_with_offset(targetcellElement,1,0).click().perform()
+        inputfield = targetcellElement.find_element(*TableLocators.tablecolumnsinput[columnNameLocator])
+        return inputfield
+        
+    def enter_text_in_inputfield(self, targetinputfield, text):
+        targetinputfield.clear()
+        targetinputfield.send_keys(text)
+        targetinputfield.send_keys(Keys.RETURN)
+    
+    def enter_text_in_inputdatefield(self, targetinputdatefield, newdate):
+        targetinputdatefield.clear()
+        targetinputdatefield.send_keys(newdate.strftime("%Y-%m-%d 00:00:00"))
+        targetinputdatefield.send_keys(Keys.RETURN)
+        return newdate.strftime("%Y-%m-%d 00:00:00")
+    
     #def is_title_matches(self): # change to current url
     #    return "Purchase orders" in self.driver.title
     
     def click_save_button(self):
         save_button = self.driver.find_element(*TableLocators.TABLE_SAVE_BUTTON)
-        save_button.click()
+        self.ActionChains().move_to_element(save_button).click().perform()
     
     def click_undo_button(self):
         undo_button = self.driver.find_element(*TableLocators.TABLE_UNDO_BUTTON)
-        undo_button.click()
+        self.ActionChains().move_to_element(undo_button).click().perform()
     
     def select_action(self,actionToPerform): # method that will select an action from the select action dropdown
         select = self.driver.find_element(*TableLocators.TABLE_SELECT_ACTION);
@@ -112,9 +150,6 @@ class TablePage(BasePage):
         
         if(number_of_line <= 8):
             pass
-    
-    def click_target_row_colum(self, target_row, target_column): # method that clicks of the table cell at the targeted row and column
-        pass
     
 
 

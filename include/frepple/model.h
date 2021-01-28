@@ -4699,10 +4699,10 @@ class Buffer : public HasHierarchy<Buffer>,
   /* Destructor. */
   virtual ~Buffer();
 
-  /* Returns the available material on hand immediately after the
-   * given date.
+  /* Returns the available material on hand immediately after (which is the
+   * default) or immediately before a given date.
    */
-  double getOnHand(Date d) const;
+  double getOnHand(Date d, bool after = true) const;
 
   /* Return the current on hand value, using the instance of the inventory
    * operation.

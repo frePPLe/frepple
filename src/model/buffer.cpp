@@ -281,14 +281,14 @@ double Buffer::getOnHand() const {
   return 0.0;
 }
 
-double Buffer::getOnHand(Date d) const {
+double Buffer::getOnHand(Date d, bool after) const {
   if (d == Date::infiniteFuture) {
     auto tmp = flowplans.rbegin();
     return tmp == flowplans.end() ? 0.0 : tmp->getOnhand();
   }
   double tmp(0.0);
   for (auto oo = flowplans.begin(); oo != flowplans.end(); ++oo) {
-    if (oo->getDate() > d)
+    if ((after && oo->getDate() > d) || (!after && oo->getDate() >= d))
       // Found a flowplan with a later date.
       // Return the onhand after the previous flowplan.
       return tmp;

@@ -24,7 +24,6 @@ from psycopg2.extras import execute_batch
 import sys
 import time
 
-from django.apps import apps
 from django.conf import settings
 from django.contrib.admin.utils import quote
 from django.contrib.auth.models import AbstractUser, Group
@@ -1335,8 +1334,8 @@ class NotificationFactory:
                                             elif m == modelname:
                                                 status["models"][0]["checked"] = True
                                     else:
-                                        for c in children.values():
-                                            c["checked"] = True
+                                        for ch in children.values():
+                                            ch["checked"] = True
                                         status["models"][0]["checked"] = True
                                 else:
                                     # You are following a parent object

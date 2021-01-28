@@ -32,7 +32,7 @@ from django.utils.html import escape
 from django.utils.safestring import mark_safe
 from django.utils.text import capfirst
 
-from freppledb.common.models import User, Follower, Comment, NotificationFactory
+from freppledb.common.models import User, NotificationFactory
 from freppledb import __version__
 
 MAX_CRUMBS = 10

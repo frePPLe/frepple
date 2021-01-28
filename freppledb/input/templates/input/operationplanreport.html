@@ -57,12 +57,6 @@
 
   $(function() {
     $("#workarea").css('overflow-x','visible');
-    var resizeoptions={
-      handleSelector: "#resize-handle",
-      resizeWidth: false,
-      resizeHeight: true,
-      onDrag: function (e, $el, opt) {$("#grid").setGridHeight($('#content-main').height()-52);}
-    }
     $("#resize-handle").css({'display':'inline-block'});
     $("#content-main").resizable({
       handleSelector: "#resize-handle",

@@ -180,6 +180,7 @@ Licensed under MIT License
 
 
 function ajaxerror(result, stat, errorThrown) {
+  var msg;
   if (result.readyState == 0)
     // Network errors: network down, server down, access denied...
     msg = gettext("Connection failed");

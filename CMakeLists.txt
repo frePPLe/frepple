@@ -215,6 +215,26 @@ add_test(NAME engine
   COMMAND ${PYTHON} ${CMAKE_CURRENT_SOURCE_DIR}/test/runtest.py ${TESTARGS}
   )
 
+# Debugging targets
+find_program(valgrind NAMES valgrind)
+if (valgrind)
+  add_custom_target(memcheck ${CMAKE_COMMAND} -E
+    env
+      FREPPLE_HOME=${CMAKE_SOURCE_DIR}/bin
+      PYTHONPATH=${CMAKE_SOURCE_DIR}
+      DJANGO_SETTINGS_MODULE=freppledb.settings
+      FREPPLE_LOGFILE=frepple.log
+      fcst=1
+      invplan=1
+      supply=1
+      nowebservice=1
+      constraint=13
+      plantype=1
+    valgrind --tool=memcheck 
+       ${CMAKE_SOURCE_DIR}/bin/frepple 
+       ${CMAKE_SOURCE_DIR}/freppledb/common/commands.py
+endif()
+
 # TODO version number in 
 #     freppledb/__init__.py
 

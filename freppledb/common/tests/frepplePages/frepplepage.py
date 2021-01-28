@@ -18,13 +18,14 @@ from freppledb.common.tests.frepplePages.freppleelement import BasePageElement #
 from freppledb.common.tests.frepplePages.frepplelocators import TableLocators, BasePageLocators #here, we should find all the locators for your target page
 
 import selenium
+import time
 from django.db.models.functions.window import RowNumber
 try:
     from selenium.common.exceptions import NoSuchElementException
     from selenium.webdriver.common.action_chains import ActionChains
     from selenium.webdriver.common.by import By
     from selenium.webdriver.common.keys import Keys
-    from selenium.webdriver.support import expected_conditions
+    from selenium.webdriver.support import expected_conditions as EC
 
     noSelenium = False
 except ImportError:
@@ -55,6 +56,9 @@ class BasePage(object):
         
     def ActionChains(self):
         return self.selenium.ActionChains(self)
+    
+    def wait(self, timing):
+        return self.selenium.wait(self, timing)
      
     def go_to_target_page_by_menu(self,menu_item, submenu_item):
         (menuby, menulocator) = BasePageLocators.mainMenuLinkLocator(menu_item)
@@ -93,6 +97,12 @@ class TablePage(BasePage):
         return rows[rowNumber]
         
     
+    def get_table_multiple_rows(self, rowNumber):
+        table = self.get_table()
+        rows = table.find_elements(*TableLocators.TABLE_ROWS)
+        return rows[1:rowNumber+1]
+        
+    
     def get_item_reference_in_target_row(self, targetrow):
         reference = targetrow.get_attribute('id')
         return reference
@@ -106,7 +116,7 @@ class TablePage(BasePage):
         content = rowElement.find_element(*TableLocators.tablecolumns[columnName])
         return content
     
-    def click_target_row_colum(self, rowElement, columnName): # method that clicks of the table cell at the targeted row and column
+    def click_target_row_colum(self, rowElement, columnNameLocator): # method that clicks of the table cell at the targeted row and column
         targetTableCell = self.get_content_of_row_column(rowElement, columnNameLocator)
         self.ActionChains().move_to_element_with_offset(targetTableCell,1,0).click().perform()
         inputfield = targetTableCell.find_element(*TableLocators.tablecolumnsinput[columnNameLocator])
@@ -141,15 +151,17 @@ class TablePage(BasePage):
     
     def select_action(self,actionToPerform): # method that will select an action from the select action dropdown
         select = self.driver.find_element(*TableLocators.TABLE_SELECT_ACTION);
-        select.click()
+        self.ActionChains().move_to_element(select).click().perform()
         select_menu = self.driver.find_element(*TableLocators.TABLE_SELECT_ACTION_MENU)
-        select_action = self.driver.find_element(*TableLocators.actionLocator(actionToPerform))
+        select_action = select_menu.find_element(*TableLocators.actionLocator(actionToPerform))
         select_action.click()
     
-    def multiline_checkboxes_check(self, number_of_line, checkbox_column): # method that will check a certain number of checkboxes in the checkbox column
+    def multiline_checkboxes_check(self, targetrows): # method that will check a certain number of checkboxes in the checkbox column
         
-        if(number_of_line <= 8):
-            pass
+        for row in targetrows:
+            checkbox = row.find_element(*TableLocators.tablecolumnsinput["checkbox"])
+            self.ActionChains().move_to_element(checkbox).click().perform()
+        
     
 
 

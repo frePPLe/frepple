@@ -44,6 +44,7 @@ class TableLocators(object):
         "quantity" : (By.CSS_SELECTOR, 'td[aria-describedby="grid_quantity"]'),
         "startdate" : (By.CSS_SELECTOR, 'td[aria-describedby="grid_startdate"]'),
         "enddate" : (By.CSS_SELECTOR, 'td[aria-describedby="grid_enddate"]'),
+        "status" : (By.CSS_SELECTOR, 'td[aria-describedby="grid_status"]'),
     }
     
     tablecolumnsinput = {
@@ -51,8 +52,9 @@ class TableLocators(object):
         "quantity" : (By.CSS_SELECTOR, 'input[id="1_quantity"]'),
         "startdate" : (By.CSS_SELECTOR, 'input[id="1_startdate"]'),
         "enddate" : (By.CSS_SELECTOR, 'input[id="1_enddate"]'),
+        "checkbox" : (By.CSS_SELECTOR, 'input[type="checkbox"]'),
         
     }
     
     def actionLocator(actionTofind):
-        return (By.CSS_SELECTOR, "li>a[name='"+actionTofind+"'")
+        return (By.CSS_SELECTOR, "li>a[name='"+actionTofind+"']")

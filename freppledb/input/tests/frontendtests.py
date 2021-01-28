@@ -22,7 +22,7 @@ from datetime import datetime
 from freppledb.common.tests.seleniumsetup import SeleniumTest
 from freppledb.common.tests.frepplePages.frepplepage import TablePage
 from freppledb.input.models import PurchaseOrder
-from django.db.models.functions.window import RowNumber
+from django.db.models import Q
 
 try:
     from selenium.common.exceptions import NoSuchElementException
@@ -88,6 +88,47 @@ class PurchaseOrderScreen(SeleniumTest):
             .count(),
             1,
         )
+    
+    @unittest.skipIf(noSelenium, "selenium not installed")
+    def test_table_multiple_rows_modification(self):
+        
+        table_page = TablePage(self.driver, SeleniumTest)
+        table_page.login(self)
+        
+        # Open purchase order screen
+        table_page.go_to_target_page_by_menu("Purchasing","purchaseorder")
+        
+        purchase_order_table = table_page.get_table()
+        
+        rows = table_page.get_table_multiple_rows(rowNumber = 2)
+        
+        table_page.multiline_checkboxes_check(targetrows=rows)
+        
+        references = []
+        newStatus = "completed"
+        q_objects = Q()
+        
+        table_page.select_action(newStatus)
+        
+        for row in rows:
+            references.append(row.get_attribute("id"))
+            
+        table_page.click_save_button()
+        
+        time.sleep(2)
+        for reference in references:
+            
+            q_objects |= Q(reference=reference)
+            
+        
+        
+        self.assertEqual(
+            PurchaseOrder.objects.all().filter(q_objects,status=newStatus)
+            .count(),
+            2,
+        )
+        
+        
     
     
     

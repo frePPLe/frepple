@@ -83,3 +83,6 @@ class SeleniumTest(StaticLiveServerTestCase):
     
     def implicitlyWait(cls, wait):
         cls.driver.implicitly_wait(wait)
+        
+    def wait(self, timing):
+        return WebDriverWait(self.driver, timing)

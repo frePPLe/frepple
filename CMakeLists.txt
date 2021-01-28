@@ -233,6 +233,7 @@ if (valgrind)
     valgrind --tool=memcheck 
        ${CMAKE_SOURCE_DIR}/bin/frepple 
        ${CMAKE_SOURCE_DIR}/freppledb/common/commands.py
+    )
 endif()
 
 # TODO version number in 

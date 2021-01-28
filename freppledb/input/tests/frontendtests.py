@@ -21,7 +21,7 @@ from datetime import datetime
 
 from freppledb.common.tests.seleniumsetup import SeleniumTest
 from freppledb.common.tests.frepplePages.frepplepage import TablePage
-from freppledb.input.models import PurchaseOrder
+from freppledb.input.models import PurchaseOrder, DistributionOrder
 from django.db.models import Q
 
 try:
@@ -129,7 +129,58 @@ class PurchaseOrderScreen(SeleniumTest):
         )
         
         
+class DistributionOrderScreen(SeleniumTest):
     
+    fixtures = ["manufacturing_demo"]
+    
+    @unittest.skipIf(noSelenium, "selenium not installed")
+    def test_table_single_row_modification(self):
+        
+        newQuantity = 70
+        newDestination = "shop 2"
+        
+        table_page = TablePage(self.driver, SeleniumTest)
+        table_page.login(self)
+        
+        # Open purchase order screen
+        table_page.go_to_target_page_by_menu("Inventory","distributionorder")
+        
+        purchase_order_table = table_page.get_table()
+        
+        firstrow = table_page.get_table_row(rowNumber = 1)
+        reference = firstrow.get_attribute("id")
+        
+        destination_content = table_page.get_content_of_row_column(firstrow,"destination")
+        destination_inputfield = table_page.click_target_cell(destination_content, "destination")
+        #only put existing supplier otherwise saving modification fails
+        table_page.enter_text_in_inputfield(destination_inputfield, newDestination)
+        
+        quantity_content = table_page.get_content_of_row_column(firstrow,"quantity")
+        quantity_inputfield = table_page.click_target_cell(quantity_content, "quantity")
+        table_page.enter_text_in_inputfield(quantity_inputfield, newQuantity)
+        self.assertEqual(quantity_content.text, "70", "the input field of quantity hasn't been modified")
+        
+        enddate_content = table_page.get_content_of_row_column(firstrow,"enddate")
+        enddate_inputdatefield = table_page.click_target_cell(enddate_content, "enddate")
+        
+        oldEndDate = datetime.strptime(enddate_inputdatefield.get_attribute("value"), "%Y-%m-%d 00:00:00")
+        newEndDate = oldEndDate + mainDate.timedelta(days=9)
+        newdatetext = table_page.enter_text_in_inputdatefield(enddate_inputdatefield, newEndDate)
+        
+        enddate_content = table_page.get_content_of_row_column(firstrow,"enddate")
+        enddate_inputdatefield = table_page.click_target_cell(enddate_content, "enddate")
+        self.assertEqual(enddate_inputdatefield.get_attribute("value"), newEndDate.strftime("%Y-%m-%d 00:00:00"), "the input field of Receipt Date hasn't been modified")
+        
+        
+        #checking if data has been saved into database after saving data
+        table_page.click_save_button()
+        time.sleep(1)
+        
+        self.assertEqual(
+            DistributionOrder.objects.all().filter(reference=reference, enddate=newdatetext, destination_id=newDestination , quantity=newQuantity)
+            .count(),
+            1,
+        )
     
     
 

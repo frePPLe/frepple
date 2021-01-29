@@ -1877,7 +1877,7 @@ class LocationList(GridReport):
         <br><br>
         <div role="group" class="btn-group.btn-group-justified">
         <a href="{{request.prefix}}/data/input/location/add/" class="btn btn-primary">Create a single location<br>in a form</a>
-        <a href="{{request.prefix}}/?mode=production&currentstep=1" class="btn btn-primary">Wizard to upload locations<br>from a spreadsheet</a>
+        <a href="{{request.prefix}}/wizard/load/production/?currentstep=1" class="btn btn-primary">Wizard to upload locations<br>from a spreadsheet</a>
         </div>
         <br>
         """
@@ -1928,7 +1928,7 @@ class CustomerList(GridReport):
         <br><br>
         <div role="group" class="btn-group.btn-group-justified">
         <a href="{{request.prefix}}/data/input/customer/add/" class="btn btn-primary">Create a single customer<br> in a form</a>
-        <a href="{{request.prefix}}/?mode=production&currentstep=1" class="btn btn-primary">Wizard to upload customers<br>from a spreadsheet</a>
+        <a href="{{request.prefix}}/wizard/load/production/?currentstep=1" class="btn btn-primary">Wizard to upload customers<br>from a spreadsheet</a>
         </div>
         <br>
         """
@@ -2443,7 +2443,7 @@ class ItemList(GridReport):
         <br><br>
         <div role="group" class="btn-group.btn-group-justified">
         <a href="{{request.prefix}}/data/input/item/add/" class="btn btn-primary">Create a single item<br>in a form</a>
-        <a href="{{request.prefix}}/?mode=production&currentstep=1" class="btn btn-primary">Wizard to upload items<br>from a spreadsheet</a>
+        <a href="{{request.prefix}}/wizard/load/production/?currentstep=1" class="btn btn-primary">Wizard to upload items<br>from a spreadsheet</a>
         </div>
         <br>
         """
@@ -3018,7 +3018,7 @@ class DemandList(GridReport):
         <br><br>
         <div role="group" class="btn-group.btn-group-justified">
         <a href="{{request.prefix}}/data/input/demand/add/" class="btn btn-primary">Create a single sales order<br>in a form</a>
-        <a href="{{request.prefix}}/?mode=production&currentstep=2" class="btn btn-primary">Wizard to upload sale orders<br>from a spreadsheet</a>
+        <a href="{{request.prefix}}/wizard/load/production/?currentstep=2" class="btn btn-primary">Wizard to upload sale orders<br>from a spreadsheet</a>
         </div>
         <br>
         """

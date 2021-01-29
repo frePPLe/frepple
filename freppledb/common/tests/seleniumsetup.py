@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2007-2019 by frePPLe bv
+# Copyright (C) 2013 by frePPLe bv
 #
 # This library is free software; you can redistribute it and/or modify it
 # under the terms of the GNU Affero General Public License as published
@@ -14,17 +14,11 @@
 # You should have received a copy of the GNU Affero General Public
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-
+import os
 import time
-import unittest
 
 from django.conf import settings
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
-from django.db import DEFAULT_DB_ALIAS
-from django.http.response import StreamingHttpResponse
-from django.test import TestCase
-
-from freppledb.common.models import User
 
 try:
     from selenium import webdriver
@@ -38,30 +32,27 @@ try:
 except ImportError:
     noSelenium = True
 
-
-def checkResponse(testcase, response):
-    if isinstance(response, StreamingHttpResponse):
-        for rec in response.streaming_content:
-            rec
-    testcase.assertEqual(response.status_code, 200)
-
-
 class SeleniumTest(StaticLiveServerTestCase):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
     @classmethod
     def setUpClass(cls):
+        os.environ["FREPPLE_TEST"] = "YES"
         super().setUpClass()
-        if False:
+        if settings.SELENIUM_TESTS == "firefox":
             firefox_options = webdriver.FirefoxOptions()
-            # firefox_options.add_argument("--headless")
+            if settings.SELENIUM_HEADLESS :
+                firefox_options.add_argument("--headless")
             cls.driver = webdriver.Firefox(firefox_options=firefox_options)
-        else:
+        elif settings.SELENIUM_TESTS == "chrome":
             options = webdriver.ChromeOptions()
             options.add_argument("--silent")
-            # options.add_argument("--headless")
+            #if settings.SELENIUM_HEADLESS :
+            #    options.add_argument("--headless")
             cls.driver = webdriver.Chrome(chrome_options=options)
+        else:
+            raise Exception("Invalid setting SELENIUM_TESTS")
         cls.driver.set_window_size(1080, 800)
         cls.driver.implicitly_wait(10)
 
@@ -91,26 +82,9 @@ class SeleniumTest(StaticLiveServerTestCase):
 
     def ActionChains(self):
         return ActionChains(self.driver)
-class DataLoadTest(TestCase):
-    def setUp(self):
-        # Login
-        self.client.login(username="admin", password="admin")
-
-    def test_common_parameter(self):
-        response = self.client.get("/data/common/parameter/?format=json")
-        if not isinstance(response, StreamingHttpResponse):
-            raise Exception("expected a streaming response")
-        for i in response.streaming_content:
-            if b'"records":' in i:
-                return
-        self.fail("Didn't find expected number of parameters")
-
-
-class UserPreferenceTest(TestCase):
-    def test_get_set_preferences(self):
-        user = User.objects.all().get(username="admin")
-        before = user.getPreference("test")
-        self.assertIsNone(before)
-        user.setPreference("test", {"a": 1, "b": "c"})
-        after = user.getPreference("test")
-        self.assertEqual(after, {"a": 1, "b": "c"})
+    
+    def implicitlyWait(cls, wait):
+        cls.driver.implicitly_wait(wait)
+        
+    def wait(self, timing):
+        return WebDriverWait(self.driver, timing)

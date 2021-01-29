@@ -19,10 +19,12 @@ import time
 import datetime as mainDate
 from datetime import datetime
 
+from django.db.models import Q
+from django.core import management
+
 from freppledb.common.tests.seleniumsetup import SeleniumTest
 from freppledb.common.tests.frepplePages.frepplepage import TablePage
-from freppledb.input.models import PurchaseOrder, DistributionOrder
-from django.db.models import Q
+from freppledb.input.models import PurchaseOrder, DistributionOrder, ManufacturingOrder, Operation, OperationPlan
 
 try:
     from selenium.common.exceptions import NoSuchElementException
@@ -152,7 +154,7 @@ class DistributionOrderScreen(SeleniumTest):
         
         destination_content = table_page.get_content_of_row_column(firstrow,"destination")
         destination_inputfield = table_page.click_target_cell(destination_content, "destination")
-        #only put existing supplier otherwise saving modification fails
+        #only put existing destination otherwise saving modification fails ?
         table_page.enter_text_in_inputfield(destination_inputfield, newDestination)
         
         quantity_content = table_page.get_content_of_row_column(firstrow,"quantity")
@@ -221,4 +223,102 @@ class DistributionOrderScreen(SeleniumTest):
             2,
         )
     
+    
+class ManufacturingOrderScreen(SeleniumTest):
+    
+    fixtures = ["manufacturing_demo"]
+    
+    
+    def setUp(self):
+        super().setUp()
+        
+        management.call_command("runplan", plantype=1, constraint=15, env="supply")
+        
+    @unittest.skipIf(noSelenium, "selenium not installed")
+    def test_table_single_row_modification(self):
+        
+        newQuantity = 20
+        newOperation = "Saw chair leg"
+        
+        table_page = TablePage(self.driver, SeleniumTest)
+        table_page.login(self)
+        
+        # Open purchase order screen
+        table_page.go_to_target_page_by_menu("Manufacturing","manufacturingorder")
+        
+        manufacturing_order_table = table_page.get_table()
+        
+        firstrow = table_page.get_table_row(rowNumber = 1)
+        reference = firstrow.get_attribute("id")
+        
+        operation_content = table_page.get_content_of_row_column(firstrow,"operation")
+        operation_inputfield = table_page.click_target_cell(operation_content, "operation")
+        #only put existing operation otherwise saving modification fails
+        table_page.enter_text_in_inputfield(operation_inputfield, newOperation)
+        
+        quantity_content = table_page.get_content_of_row_column(firstrow,"quantity")
+        quantity_inputfield = table_page.click_target_cell(quantity_content, "quantity")
+        table_page.enter_text_in_inputfield(quantity_inputfield, newQuantity)
+        self.assertEqual(quantity_content.text, "20", "the input field of quantity hasn't been modified")
+        
+        enddate_content = table_page.get_content_of_row_column(firstrow,"enddate")
+        enddate_inputdatefield = table_page.click_target_cell(enddate_content, "enddate")
+        
+        oldEndDate = datetime.strptime(enddate_inputdatefield.get_attribute("value"), "%Y-%m-%d %H:%M:%S")
+        newEndDate = oldEndDate + mainDate.timedelta(days=9)
+        newdatetext = table_page.enter_text_in_inputdatefield(enddate_inputdatefield, newEndDate)
+        
+        enddate_content = table_page.get_content_of_row_column(firstrow,"enddate")
+        enddate_inputdatefield = table_page.click_target_cell(enddate_content, "enddate")
+        self.assertEqual(enddate_inputdatefield.get_attribute("value"), newEndDate.strftime("%Y-%m-%d 00:00:00"), "the input field of Receipt Date hasn't been modified")
+        
+        
+        #checking if data has been saved into database after saving data
+        table_page.click_save_button()
+        time.sleep(1)
+        
+        self.assertEqual(
+            ManufacturingOrder.objects.all().filter(reference=reference, enddate=newdatetext, operation_id=newOperation , quantity=newQuantity)
+            .count(),
+            1,
+        )
+    
+    @unittest.skipIf(noSelenium, "selenium not installed")
+    def test_table_multiple_rows_modification(self):
+        
+        table_page = TablePage(self.driver, SeleniumTest)
+        table_page.login(self)
+        
+        # Open purchase order screen
+        table_page.go_to_target_page_by_menu("Manufacturing","manufacturingorder")
+        
+        manufacturing_order_table = table_page.get_table()
+        
+        rows = table_page.get_table_multiple_rows(rowNumber = 2)
+        
+        table_page.multiline_checkboxes_check(targetrows=rows)
+        
+        references = []
+        newStatus = "completed"
+        q_objects = Q()
+        
+        table_page.select_action(newStatus)
+        
+        for row in rows:
+            references.append(row.get_attribute("id"))
+            
+        table_page.click_save_button()
+        
+        time.sleep(2)
+        for reference in references:
+            
+            q_objects |= Q(reference=reference)
+            
+        
+        
+        self.assertEqual(
+            ManufacturingOrder.objects.all().filter(q_objects,status=newStatus)
+            .count(),
+            2,
+        )
 

@@ -46,6 +46,7 @@ class TableLocators(object):
         "enddate" : (By.CSS_SELECTOR, 'td[aria-describedby="grid_enddate"]'),
         "status" : (By.CSS_SELECTOR, 'td[aria-describedby="grid_status"]'),
         "destination" : (By.CSS_SELECTOR, 'td[aria-describedby="grid_destination"]'),
+        "operation" : (By.CSS_SELECTOR, 'td[aria-describedby="grid_operation"]'),
     }
     
     tablecolumnsinput = {
@@ -54,6 +55,7 @@ class TableLocators(object):
         "startdate" : (By.CSS_SELECTOR, 'input[id="1_startdate"]'),
         "enddate" : (By.CSS_SELECTOR, 'input[id="1_enddate"]'),
         "destination" : (By.CSS_SELECTOR, 'input[id="1_destination"]'),
+        "operation" : (By.CSS_SELECTOR, 'input[id="1_operation"]'),
         "checkbox" : (By.CSS_SELECTOR, 'input[type="checkbox"]'),
         
     }

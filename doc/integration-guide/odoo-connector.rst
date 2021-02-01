@@ -6,7 +6,7 @@ Odoo connector
 
    <iframe width="640" height="360" src="https://www.youtube.com/embed/dXOcVccLkPE" frameborder="0" allowfullscreen=""></iframe>
 
-FrePPLe provides an integration with the `Odoo <https://www.odoo.com/Odoo>`_, a 
+FrePPLe provides an integration with the `Odoo <https://www.odoo.com>`_, a 
 leading open source business management suite.
 
 Overview

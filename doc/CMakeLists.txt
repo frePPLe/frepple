@@ -4,7 +4,7 @@ find_program(sphinxbuild NAMES sphinx-build sphinx-build-3)
 if (sphinxbuild)
   add_custom_target(
     doc
-    COMMAND ${CMAKE_COMMAND} -E rm -rRf ${CMAKE_CURRENT_BINARY_DIR}/_build
+    COMMAND ${CMAKE_COMMAND} -E remove_directory ${CMAKE_CURRENT_BINARY_DIR}/_build
     COMMAND ${sphinxbuild} -a -E -b html
       -d ${CMAKE_CURRENT_BINARY_DIR}/_build/doctrees 
       ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}/_build/html

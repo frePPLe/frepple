@@ -32,6 +32,7 @@ try:
 except ImportError:
     noSelenium = True
 
+
 class SeleniumTest(StaticLiveServerTestCase):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -42,14 +43,14 @@ class SeleniumTest(StaticLiveServerTestCase):
         super().setUpClass()
         if settings.SELENIUM_TESTS == "firefox":
             firefox_options = webdriver.FirefoxOptions()
-            if settings.SELENIUM_HEADLESS :
+            if settings.SELENIUM_HEADLESS:
                 firefox_options.add_argument("--headless")
             cls.driver = webdriver.Firefox(firefox_options=firefox_options)
         elif settings.SELENIUM_TESTS == "chrome":
             options = webdriver.ChromeOptions()
             options.add_argument("--silent")
-            #if settings.SELENIUM_HEADLESS :
-            #    options.add_argument("--headless")
+            if settings.SELENIUM_HEADLESS:
+                options.add_argument("--headless")
             cls.driver = webdriver.Chrome(chrome_options=options)
         else:
             raise Exception("Invalid setting SELENIUM_TESTS")
@@ -78,13 +79,13 @@ class SeleniumTest(StaticLiveServerTestCase):
         try:
             return self.driver.find_element(by, locator)
         except NoSuchElementException:
-            self.fail("Element %s not found by %s" % (locator, by))
+            raise Exception("Element %s not found by %s" % (locator, by))
 
     def ActionChains(self):
         return ActionChains(self.driver)
-    
+
     def implicitlyWait(cls, wait):
         cls.driver.implicitly_wait(wait)
-        
+
     def wait(self, timing):
         return WebDriverWait(self.driver, timing)

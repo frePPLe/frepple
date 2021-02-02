@@ -54,13 +54,11 @@ class PurchaseOrderScreen(SeleniumTest):
         newQuantity = 800
         newSupplier = "screw supplier"
 
-        table_page = TablePage(self.driver, SeleniumTest)
-        table_page.login(self)
+        table_page = TablePage(self.driver, PurchaseOrderScreen)
+        table_page.login()
 
         # Open purchase order screen
         table_page.go_to_target_page_by_menu("Purchasing", "purchaseorder")
-
-        purchase_order_table = table_page.get_table()
 
         firstrow = table_page.get_table_row(rowNumber=1)
         reference = firstrow.get_attribute("id")
@@ -121,13 +119,11 @@ class PurchaseOrderScreen(SeleniumTest):
     @unittest.skipIf(noSelenium, "selenium not installed")
     def test_table_multiple_rows_modification(self):
 
-        table_page = TablePage(self.driver, SeleniumTest)
-        table_page.login(self)
+        table_page = TablePage(self.driver, PurchaseOrderScreen)
+        table_page.login()
 
         # Open purchase order screen
         table_page.go_to_target_page_by_menu("Purchasing", "purchaseorder")
-
-        purchase_order_table = table_page.get_table()
 
         rows = table_page.get_table_multiple_rows(rowNumber=2)
 
@@ -164,13 +160,11 @@ class DistributionOrderScreen(SeleniumTest):
         newQuantity = 70
         newDestination = "shop 2"
 
-        table_page = TablePage(self.driver, SeleniumTest)
-        table_page.login(self)
+        table_page = TablePage(self.driver, DistributionOrderScreen)
+        table_page.login()
 
         # Open purchase order screen
         table_page.go_to_target_page_by_menu("Inventory", "distributionorder")
-
-        purchase_order_table = table_page.get_table()
 
         firstrow = table_page.get_table_row(rowNumber=1)
         reference = firstrow.get_attribute("id")
@@ -235,13 +229,11 @@ class DistributionOrderScreen(SeleniumTest):
     @unittest.skipIf(noSelenium, "selenium not installed")
     def test_table_multiple_rows_modification(self):
 
-        table_page = TablePage(self.driver, SeleniumTest)
-        table_page.login(self)
+        table_page = TablePage(self.driver, DistributionOrderScreen)
+        table_page.login()
 
         # Open purchase order screen
         table_page.go_to_target_page_by_menu("Inventory", "distributionorder")
-
-        distribution_order_table = table_page.get_table()
 
         rows = table_page.get_table_multiple_rows(rowNumber=2)
 
@@ -284,13 +276,11 @@ class ManufacturingOrderScreen(SeleniumTest):
         newQuantity = 20
         newOperation = "Saw chair leg"
 
-        table_page = TablePage(self.driver, SeleniumTest)
-        table_page.login(self)
+        table_page = TablePage(self.driver, ManufacturingOrderScreen)
+        table_page.login()
 
         # Open purchase order screen
         table_page.go_to_target_page_by_menu("Manufacturing", "manufacturingorder")
-
-        manufacturing_order_table = table_page.get_table()
 
         firstrow = table_page.get_table_row(rowNumber=1)
         reference = firstrow.get_attribute("id")
@@ -353,13 +343,11 @@ class ManufacturingOrderScreen(SeleniumTest):
     @unittest.skipIf(noSelenium, "selenium not installed")
     def test_table_multiple_rows_modification(self):
 
-        table_page = TablePage(self.driver, SeleniumTest)
-        table_page.login(self)
+        table_page = TablePage(self.driver, ManufacturingOrderScreen)
+        table_page.login()
 
-        # Open purchase order screen
+        # Open manufacturing order screen
         table_page.go_to_target_page_by_menu("Manufacturing", "manufacturingorder")
-
-        manufacturing_order_table = table_page.get_table()
 
         rows = table_page.get_table_multiple_rows(rowNumber=2)
 

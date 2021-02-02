@@ -22,21 +22,16 @@ from freppledb.common.tests.frepplePages.frepplelocators import (
     BasePageLocators,
 )  # here, we should find all the locators for your target page
 
-import selenium
+
 import time
-from django.db.models.functions.window import RowNumber
 
-try:
-    from selenium.common.exceptions import NoSuchElementException
-    from selenium.webdriver.common.action_chains import ActionChains
-    from selenium.webdriver.common.by import By
-    from selenium.webdriver.common.keys import Keys
-    from selenium.webdriver.support import expected_conditions as EC
+import selenium
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.common.action_chains import ActionChains
 
-    noSelenium = False
-except ImportError:
-    noSelenium = True
-
+from django.conf import settings
 
 ### Special page for common actions only
 
@@ -61,30 +56,31 @@ class BasePage(object):
         "Help",
     )
 
-    def __init__(self, driver, selenium):
+    def __init__(self, driver, testclass):
         self.driver = driver
-        self.selenium = selenium
+        self.testclass = testclass
 
-    def login(self, testclass):
-        testclass.open("/")
-        testclass.login("admin", "admin")
-
-    def ActionChains(self):
-        return self.selenium.ActionChains(self)
+    def login(self, user="admin", password="admin"):
+        self.open("/")
+        if (
+            "freppledb.common.middleware.AutoLoginAsAdminUser"
+            not in settings.MIDDLEWARE
+        ):
+            self.driver.find_element(By.NAME, "username").send_keys(user)
+            self.driver.find_element(By.NAME, "password").send_keys(password)
+            self.driver.find_element(By.CSS_SELECTOR, "[type='submit']").click()
 
     def wait(self, timing):
-        return self.selenium.wait(self, timing)
+        return WebDriverWait(self.driver, timing)
 
     def go_to_target_page_by_menu(self, menu_item, submenu_item):
         (menuby, menulocator) = BasePageLocators.mainMenuLinkLocator(menu_item)
-        self.menuitem = self.selenium.findElement(self, menuby, menulocator)
-        self.selenium.ActionChains(self).move_to_element(self.menuitem).perform()
+        self.menuitem = self.driver.find_element(menuby, menulocator)
+        ActionChains(self.driver).move_to_element(self.menuitem).perform()
 
         (submenuby, submenulocator) = BasePageLocators.subMenuItemLocator(submenu_item)
-        self.submenuitem = self.selenium.findElement(self, submenuby, submenulocator)
-        self.selenium.ActionChains(self).move_to_element(
-            self.submenuitem
-        ).click().perform()
+        self.submenuitem = self.driver.find_element(submenuby, submenulocator)
+        ActionChains(self.driver).move_to_element(self.submenuitem).click().perform()
 
     def go_home_with_breadcrumbs(self):
         pass
@@ -92,7 +88,8 @@ class BasePage(object):
     def go_back_to_page_with_breadcrumbs(self, targetPageName):
         pass
 
-    # most common actions go here like opening a menu, clicking a save button, clicking undo
+    def open(self, url):
+        return self.driver.get("%s%s" % (self.testclass.live_server_url, url))
 
 
 # create a table page class
@@ -131,8 +128,8 @@ class TablePage(BasePage):
         self, rowElement, columnNameLocator
     ):  # method that clicks of the table cell at the targeted row and column
         targetTableCell = self.get_content_of_row_column(rowElement, columnNameLocator)
-        self.ActionChains().move_to_element_with_offset(
-            targetTableCell, 1, 0
+        ActionChains(self.driver).move_to_element_with_offset(
+            targetTableCell, 1, 1
         ).click().perform()
         inputfield = targetTableCell.find_element(
             *TableLocators.tablecolumnsinput[columnNameLocator]
@@ -142,8 +139,8 @@ class TablePage(BasePage):
     def click_target_cell(
         self, targetcellElement, columnNameLocator
     ):  # method that clicks of the table cell at the targeted row and column
-        self.ActionChains().move_to_element_with_offset(
-            targetcellElement, 1, 0
+        ActionChains(self.driver).move_to_element_with_offset(
+            targetcellElement, 1, 1
         ).click().perform()
         inputfield = targetcellElement.find_element(
             *TableLocators.tablecolumnsinput[columnNameLocator]
@@ -172,17 +169,18 @@ class TablePage(BasePage):
 
     def click_save_button(self):
         save_button = self.driver.find_element(*TableLocators.TABLE_SAVE_BUTTON)
-        self.ActionChains().move_to_element(save_button).click().perform()
+        ActionChains(self.driver).move_to_element(save_button).click().perform()
 
     def click_undo_button(self):
         undo_button = self.driver.find_element(*TableLocators.TABLE_UNDO_BUTTON)
-        self.ActionChains().move_to_element(undo_button).click().perform()
+        ActionChains(self.driver).move_to_element(undo_button).click().perform()
 
     def select_action(
         self, actionToPerform
     ):  # method that will select an action from the select action dropdown
         select = self.driver.find_element(*TableLocators.TABLE_SELECT_ACTION)
-        self.ActionChains().move_to_element(select).click().perform()
+        ActionChains(self.driver).move_to_element(select).click().perform()
+        time.sleep(1)
         select_menu = self.driver.find_element(*TableLocators.TABLE_SELECT_ACTION_MENU)
         select_action = select_menu.find_element(
             *TableLocators.actionLocator(actionToPerform)
@@ -195,4 +193,4 @@ class TablePage(BasePage):
 
         for row in targetrows:
             checkbox = row.find_element(*TableLocators.tablecolumnsinput["checkbox"])
-            self.ActionChains().move_to_element(checkbox).click().perform()
+            ActionChains(self.driver).move_to_element(checkbox).click().perform()

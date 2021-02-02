@@ -69,30 +69,3 @@ class SeleniumTest(StaticLiveServerTestCase):
         super().tearDownClass()
         cls.driver.quit()
         time.sleep(2)
-
-    def open(self, url):
-        return self.driver.get("%s%s" % (self.live_server_url, url))
-
-    def login(self, user, password):
-        if (
-            "freppledb.common.middleware.AutoLoginAsAdminUser"
-            not in settings.MIDDLEWARE
-        ):
-            self.findElement(By.NAME, "username").send_keys(user)
-            self.findElement(By.NAME, "password").send_keys(password)
-            self.findElement(By.CSS_SELECTOR, "[type='submit']").click()
-
-    def findElement(self, by, locator):
-        try:
-            return self.driver.find_element(by, locator)
-        except NoSuchElementException:
-            raise Exception("Element %s not found by %s" % (locator, by))
-
-    def ActionChains(self):
-        return ActionChains(self.driver)
-
-    def implicitlyWait(self, wait):
-        self.driver.implicitly_wait(wait)
-
-    def wait(self, timing):
-        return WebDriverWait(self.driver, timing)

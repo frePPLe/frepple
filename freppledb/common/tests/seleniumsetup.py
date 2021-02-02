@@ -20,6 +20,8 @@ import time
 from django.conf import settings
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 
+from freppledb.common.models import User
+
 try:
     from selenium import webdriver
     from selenium.common.exceptions import NoSuchElementException
@@ -36,6 +38,11 @@ except ImportError:
 class SeleniumTest(StaticLiveServerTestCase):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+    def setUp(self):
+        # Login
+        if not User.objects.filter(username="admin").count():
+            User.objects.create_superuser("admin", "your@company.com", "admin")
 
     @classmethod
     def setUpClass(cls):
@@ -84,8 +91,8 @@ class SeleniumTest(StaticLiveServerTestCase):
     def ActionChains(self):
         return ActionChains(self.driver)
 
-    def implicitlyWait(cls, wait):
-        cls.driver.implicitly_wait(wait)
+    def implicitlyWait(self, wait):
+        self.driver.implicitly_wait(wait)
 
     def wait(self, timing):
         return WebDriverWait(self.driver, timing)

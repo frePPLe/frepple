@@ -65,11 +65,9 @@ class BasePage(object):
         self.driver = driver
         self.selenium = selenium
 
-    def login(self, selenium):
-        selenium.open("/")
-        selenium.login("admin", "admin")
-
-        selenium.implicitlyWait(20)
+    def login(self, testclass):
+        testclass.open("/")
+        testclass.login("admin", "admin")
 
     def ActionChains(self):
         return self.selenium.ActionChains(self)

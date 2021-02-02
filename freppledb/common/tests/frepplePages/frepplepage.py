@@ -103,7 +103,8 @@ class TablePage(BasePage):
     table = None
 
     def get_table(self):
-        self.table = self.driver.find_element(*TableLocators.TABLE_DEFAULT)
+        if not self.table:
+            self.table = self.driver.find_element(*TableLocators.TABLE_DEFAULT)
         return self.table
 
     def get_table_row(self, rowNumber):

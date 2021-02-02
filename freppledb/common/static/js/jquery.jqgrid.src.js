@@ -3842,7 +3842,7 @@
 							}
 						}
 					}
-					return "<tr role='row' id='" + id /* .replace("'","&#39;")*/ + "' tabindex='" + tabindex + "' class='" + classes + "'" +
+					return "<tr role='row' id='" + id.replace("'","&#39;") + "' tabindex='" + tabindex + "' class='" + classes + "'" +
 						(style === "" ? "" : " style='" + style + "'") + restAttr + ">";
 				},
 				finalizationFormatters = function () {

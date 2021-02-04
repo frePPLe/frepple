@@ -23,6 +23,7 @@ var reportkey = '{{reportkey|safe}}';
 var initialfilter{% if filters %} = {{filters|json}}{% endif %};
 var favorites = {% if preferences.favorites %}{{preferences.favorites|json}}{% else %}{}{% endif %};
 var default_sort = "{{default_sort|safe}}";
+var preferences = {{preferences|json}};
 var resizing;
 var editrow;
 var editcol;
@@ -320,20 +321,21 @@ $(function() {
 {% endif %}{% if reportclass.hasTimeBuckets %}<button class="btn btn-xs btn-primary" onclick="grid.showBucket()" data-toggle="tooltip" data-placement="top" data-original-title="{% trans 'Configure time buckets'|escape %}" id="bucketconfig"><span class="fa fa-clock-o"></span></button>
 {% endif %}{% if hasaddperm %}<button class="btn btn-xs btn-primary" id="csvimport" data-toggle="tooltip" data-placement="top" data-original-title="{% trans 'Import CSV or Excel file'|force_escape %}" onclick="import_show('', undefined, true)"><span class="fa fa-arrow-up"></span></button>
 {% endif %}<button class="btn btn-xs btn-primary" onclick="grid.showExport(true,{{ scenario_permissions }})" data-toggle="tooltip" data-placement="top" data-original-title="{% trans 'export as CSV or Excel file'|capfirst|force_escape %}"><span class="fa fa-arrow-down"></span></button>
-<button class="btn btn-xs btn-primary" onclick="grid.showCustomize(false);" data-toggle="tooltip" data-placement="top" data-original-title="{% trans 'customize'|capfirst|force_escape %}"><span class="fa fa-wrench"></span></button>{% endblock %}
+<button id="customize" class="btn btn-xs btn-primary" onclick="grid.showCustomize(false);" data-toggle="tooltip" data-placement="top" data-original-title="{% trans 'customize'|capfirst|force_escape %}"><span class="fa fa-wrench"></span></button>{% endblock %}
 {% if reportclass.help_url %}<button class="btn btn-xs btn-primary" onclick="window.open('{% setting "DOCUMENTATION_URL" %}/docs/{% version_short %}/{{reportclass.help_url}}');" data-toggle="tooltip" data-placement="top" data-original-title="{% trans 'help'|capfirst|force_escape %}"><span class="fa fa-question"></span></button>{% endif %}
 </div>
 
 </div>
 
+{% block table %}
 <div class="row" id="main-row" style="text-align: center;">
 <div id="content-main" class="col-md-12" style="min-height: 150px; margin-top: 0.7em">
 <table id="grid" class="table table-striped" style="background-color: white"></table>
 <div id="gridpager"></div>
-
 </div>
 <span id="resize-handle" class="fa fa-bars handle" style="display: none;"></span>
 </div>
+{% endblock %}
 
 {% block after_table %}{% endblock %}
 

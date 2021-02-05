@@ -22,21 +22,18 @@ PreferenceSvc.$inject = ["$http"];
 
 /*
  * This service updates and retrieves user preferences for a certain report.
- * TODO Current implementation assumes the reportname is fixed and hardcoded.
- * TODO Current implementation depends on the "preferences" variable passed from django.
+ * TODO Current implementation completely relies on the "preferences" and "reportkey" global variables passed from django.
  */
 function PreferenceSvc($http) {
   'use strict';
 
-  // Set initial preferences
-  var reportname = 'freppledb.planningboard';
-  var data = preferences;
-  if (typeof(data) !== 'undefined' && data !== 'None')
-    data = angular.fromJson(preferences);
-  else
-    data = {};
-
   function save(key, value, callback) {
+    var data = preferences;
+    if (typeof(data) !== 'undefined' && data !== 'None' && data !== null)
+      data = angular.fromJson(preferences);
+    else
+      data = {};
+      
     // Key and value can both be an array to save lists of keys
     // and values with just one call
     if (typeof key === 'object' && key.length === value.length) {
@@ -51,7 +48,7 @@ function PreferenceSvc($http) {
     if (urlprefix === '/default' || urlprefix === '/undefined')
       urlprefix = '';
     var tmp = {};
-    tmp[reportname] = data;
+    tmp[reportkey] = data;
     $http.post(urlprefix + '/settings/', angular.toJson(tmp))
       .then(
         function(response) {
@@ -66,6 +63,11 @@ function PreferenceSvc($http) {
   };
 
   function get(key, defaultvalue) {
+    var data = preferences;
+    if (typeof(data) !== 'undefined' && data !== 'None' && data !== null)
+      data = angular.fromJson(preferences);
+    else
+      data = {};
     if (key in data)
       return data[key];
     else

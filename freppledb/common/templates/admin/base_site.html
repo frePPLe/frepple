@@ -24,7 +24,6 @@
 <script src="{{STATIC_URL}}js/frepple{% if not debug_js %}.min{% endif %}.js"></script>
 <script src="{{STATIC_URL}}js/Sortable.min.js"></script>
 <script>
-
   var url_prefix = '{{request.prefix}}';
   var database = '{{request.database}}';
   var documentation = '{% setting "DOCUMENTATION_URL" %}/docs/{% version_short %}/';
@@ -32,6 +31,9 @@
 $(function() {
     $('[data-toggle="popover"]').popover();
     $('[data-toggle="tooltip"],#database').tooltip({delay: { "show": 500, "hide": 100 }});
+    {% if tzoffset is None %}
+    setCookie('tzoffset', new Date().getTimezoneOffset() * 60);
+    {% endif %}
   });
 </script>
 {% endblock %}

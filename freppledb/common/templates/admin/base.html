@@ -7,13 +7,6 @@
 <title>{% block title %}{% endblock %}</title>
 {% block extrastyle %}{% endblock %}
 {% block extrahead %}{% endblock %}{% google_analytics %}
-{% if tzoffset is None %}
-<script>
-$(function() {
-  setCookie('tzoffset', new Date().getTimezoneOffset() * 60);
-});
-</script>
-{% endif %}
 </head>
 
 <body class="{% if is_popup %}popup {% endif %}{% block bodyclass %}{% endblock %}">

@@ -1033,6 +1033,7 @@ var grid = {
       contentType: 'application/json; charset=utf-8',
       data: JSON.stringify(result),
       success: function() {
+        preferences = result;
         if (typeof pgButton === 'function')
           pgButton();
       },

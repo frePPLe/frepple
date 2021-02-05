@@ -45,6 +45,9 @@ void Object::writeElement(Serializer* o, const Keyword& tag,
 
   const MetaClass& meta = getType();
 
+  bool cur_skiptail = o->getSkipTail();
+  if (cur_skiptail) o->skipTail(false);
+
   // Write the head
   if (o->getSkipHead())
     o->skipHead(false);
@@ -100,10 +103,7 @@ void Object::writeElement(Serializer* o, const Keyword& tag,
   }
 
   // Write the tail
-  if (o->getSkipTail())
-    o->skipTail(false);
-  else
-    o->EndObject(tag);
+  if (!cur_skiptail) o->EndObject(tag);
 }
 
 size_t Object::getSize() const {

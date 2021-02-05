@@ -83,7 +83,7 @@ class PurchaseOrderScreen(SeleniumTest):
         )
 
         oldEndDate = datetime.strptime(
-            enddate_inputdatefield.get_attribute("value"), "%Y-%m-%d 00:00:00"
+            enddate_inputdatefield.get_attribute("value"), "%Y-%m-%d %H:%M:%S"
         )
         newEndDate = oldEndDate + mainDate.timedelta(days=9)
         newdatetext = table_page.enter_text_in_inputdatefield(
@@ -96,7 +96,7 @@ class PurchaseOrderScreen(SeleniumTest):
         )
         self.assertEqual(
             enddate_inputdatefield.get_attribute("value"),
-            newEndDate.strftime("%Y-%m-%d 00:00:00"),
+            newEndDate.strftime("%Y-%m-%d %H:%M:%S"),
             "the input field of Receipt Date hasn't been modified",
         )
 
@@ -193,7 +193,7 @@ class DistributionOrderScreen(SeleniumTest):
         )
 
         oldEndDate = datetime.strptime(
-            enddate_inputdatefield.get_attribute("value"), "%Y-%m-%d 00:00:00"
+            enddate_inputdatefield.get_attribute("value"), "%Y-%m-%d %H:%M:%S"
         )
         newEndDate = oldEndDate + mainDate.timedelta(days=9)
         newdatetext = table_page.enter_text_in_inputdatefield(
@@ -206,7 +206,7 @@ class DistributionOrderScreen(SeleniumTest):
         )
         self.assertEqual(
             enddate_inputdatefield.get_attribute("value"),
-            newEndDate.strftime("%Y-%m-%d 00:00:00"),
+            newEndDate.strftime("%Y-%m-%d %H:%M:%S"),
             "the input field of Receipt Date hasn't been modified",
         )
 
@@ -320,7 +320,7 @@ class ManufacturingOrderScreen(SeleniumTest):
         )
         self.assertEqual(
             enddate_inputdatefield.get_attribute("value"),
-            newEndDate.strftime("%Y-%m-%d 00:00:00"),
+            newEndDate.strftime("%Y-%m-%d %H:%M:%S"),
             "the input field of Receipt Date hasn't been modified",
         )
 

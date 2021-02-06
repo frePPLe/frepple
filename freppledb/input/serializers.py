@@ -35,9 +35,9 @@ class CalendarFilter(filters.FilterSet):
         model = freppledb.input.models.Calendar
         fields = {
             "name": ["exact", "in", "contains"],
-            "description": ["exact", "contains"],
-            "category": ["exact", "contains"],
-            "subcategory": ["exact", "contains"],
+            "description": ["exact", "in", "contains"],
+            "category": ["exact", "in", "contains"],
+            "subcategory": ["exact", "in", "contains"],
             "defaultvalue": ["exact", "in", "gt", "gte", "lt", "lte"],
             "source": ["exact", "in"],
             "lastmodified": ["exact", "in", "gt", "gte", "lt", "lte"],
@@ -178,9 +178,9 @@ class LocationFilter(filters.FilterSet):
         fields = {
             "name": ["exact", "in", "contains"],
             "owner": ["exact", "in"],
-            "description": ["exact", "contains"],
-            "category": ["exact", "contains"],
-            "subcategory": ["exact", "contains"],
+            "description": ["exact", "in", "contains"],
+            "category": ["exact", "in", "contains"],
+            "subcategory": ["exact", "in", "contains"],
             "available": ["exact", "in", "gt", "gte", "lt", "lte"],
             "source": ["exact", "in"],
             "lastmodified": ["exact", "in", "gt", "gte", "lt", "lte"],
@@ -232,9 +232,9 @@ class CustomerFilter(filters.FilterSet):
         fields = {
             "name": ["exact", "in", "contains"],
             "owner": ["exact", "in"],
-            "description": ["exact", "contains"],
-            "category": ["exact", "contains"],
-            "subcategory": ["exact", "contains"],
+            "description": ["exact", "in", "contains"],
+            "category": ["exact", "in", "contains"],
+            "subcategory": ["exact", "in", "contains"],
             "source": ["exact", "in"],
             "lastmodified": ["exact", "in", "gt", "gte", "lt", "lte"],
         }
@@ -284,9 +284,9 @@ class ItemFilter(filters.FilterSet):
         fields = {
             "name": ["exact", "in", "contains"],
             "owner": ["exact", "in"],
-            "description": ["exact", "contains"],
-            "category": ["exact", "contains"],
-            "subcategory": ["exact", "contains"],
+            "description": ["exact", "in", "contains"],
+            "category": ["exact", "in", "contains"],
+            "subcategory": ["exact", "in", "contains"],
             "cost": ["exact", "in", "gt", "gte", "lt", "lte"],
             "type": ["exact", "in"],
             "source": ["exact", "in"],
@@ -341,9 +341,9 @@ class SupplierFilter(filters.FilterSet):
         fields = {
             "name": ["exact", "in", "contains"],
             "owner": ["exact", "in"],
-            "description": ["exact", "contains"],
-            "category": ["exact", "contains"],
-            "subcategory": ["exact", "contains"],
+            "description": ["exact", "in", "contains"],
+            "category": ["exact", "in", "contains"],
+            "subcategory": ["exact", "in", "contains"],
             "available": ["exact", "in", "gt", "gte", "lt", "lte"],
             "source": ["exact", "in"],
             "lastmodified": ["exact", "in", "gt", "gte", "lt", "lte"],
@@ -548,10 +548,10 @@ class OperationFilter(filters.FilterSet):
     class Meta:
         model = freppledb.input.models.Operation
         fields = {
-            "name": ["exact", "contains"],
+            "name": ["exact", "in", "contains"],
             "type": ["exact", "in"],
-            "category": ["exact", "contains"],
-            "subcategory": ["exact", "contains"],
+            "category": ["exact", "in", "contains"],
+            "subcategory": ["exact", "in", "contains"],
             "location": ["exact", "in"],
             "item": ["exact", "in"],
             "posttime": ["exact", "in", "gt", "gte", "lt", "lte"],
@@ -875,9 +875,9 @@ class ResourceFilter(filters.FilterSet):
         model = freppledb.input.models.Resource
         fields = {
             "name": ["exact", "in", "contains"],
-            "description": ["exact", "contains"],
-            "category": ["exact", "contains"],
-            "subcategory": ["exact", "contains"],
+            "description": ["exact", "in", "contains"],
+            "category": ["exact", "in", "contains"],
+            "subcategory": ["exact", "in", "contains"],
             "type": ["exact", "in"],
             "maximum": ["exact", "in", "gt", "gte", "lt", "lte"],
             "maximum_calendar": ["exact", "in", "gt", "gte", "lt", "lte"],

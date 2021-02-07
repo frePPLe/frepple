@@ -31,10 +31,12 @@ class cookbooktest(TransactionTestCase):
         os.environ["FREPPLE_TEST"] = "YES"
         if not User.objects.filter(username="admin").count():
             User.objects.create_superuser("admin", "your@company.com", "admin")
+        super().setUp()
 
     def tearDown(self):
         Notification.wait()
         del os.environ["FREPPLE_TEST"]
+        super().tearDown()
 
     def loadExcel(self, *filepath):
         # Login

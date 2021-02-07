@@ -39,11 +39,13 @@ class execute_with_commands(TransactionTestCase):
         # existing data files
         self.datafolder = tempfile.mkdtemp()
         settings.DATABASES[DEFAULT_DB_ALIAS]["FILEUPLOADFOLDER"] = self.datafolder
+        super().setUp()
 
     def tearDown(self):
         rmtree(self.datafolder)
         Notification.wait()
         del os.environ["FREPPLE_TEST"]
+        super().tearDown()
 
     def test_exportimportfromfolder(self):
         self.assertEqual(ManufacturingOrder.objects.count(), 0)

@@ -43,6 +43,7 @@ class SeleniumTest(StaticLiveServerTestCase):
         # Login
         if not User.objects.filter(username="admin").count():
             User.objects.create_superuser("admin", "your@company.com", "admin")
+        super().setUp()
 
     @classmethod
     def setUpClass(cls):

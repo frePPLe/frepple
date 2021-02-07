@@ -1205,7 +1205,7 @@ class NotificationFactory:
                             break
                         else:
                             idle_loop_done = True
-                            if sys.argv[1:2] != ["test"]:
+                            if "test" not in sys.argv:
                                 # When no more messages can be found and we are not running
                                 # the test suite, we try again 5 seconds later before shutting
                                 # down the worker.

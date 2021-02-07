@@ -74,10 +74,12 @@ class DataLoadTest(TestCase):
     def setUp(self):
         os.environ["FREPPLE_TEST"] = "YES"
         self.client.login(username="admin", password="admin")
+        super().setUp()
 
     def tearDown(self):
         Notification.wait()
         del os.environ["FREPPLE_TEST"]
+        super().tearDown()
 
     def test_demo_data(self):
         response = self.client.get("/data/input/customer/?format=json")
@@ -224,6 +226,7 @@ class ExcelTest(TransactionTestCase):
             User.objects.create_superuser("admin", "your@company.com", "admin")
         self.client.login(username="admin", password="admin")
         os.environ["FREPPLE_TEST"] = "YES"
+        super().setUp()
 
     def tearDown(self):
         Notification.wait()
@@ -231,6 +234,7 @@ class ExcelTest(TransactionTestCase):
         if os.path.exists("workbook.xlsx"):
             os.remove("workbook.xlsx")
         translation.activate(settings.LANGUAGE_CODE)
+        super().tearDown()
 
     def run_workbook(self, language):
         # Change the language preference
@@ -420,10 +424,12 @@ class freppleREST(APITestCase):
         self.client = APIClient()
         self.client.login(username="admin", password="admin")
         os.environ["FREPPLE_TEST"] = "YES"
+        super().setUp()
 
     def tearDown(self):
         Notification.wait()
         del os.environ["FREPPLE_TEST"]
+        super().tearDown()
 
     def test_api_listpages_getapi(self):
         response = self.client.get("/api/")
@@ -796,10 +802,12 @@ class NotificationTest(TransactionTestCase):
         os.environ["FREPPLE_TEST"] = "YES"
         if not User.objects.filter(username="admin").count():
             User.objects.create_superuser("admin", "your@company.com", "admin")
+        super().setUp()
 
     def tearDown(self):
         Notification.wait()
         del os.environ["FREPPLE_TEST"]
+        super().tearDown()
 
     def test_follow_item(self):
         user = User.objects.create_user(

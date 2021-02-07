@@ -43,8 +43,7 @@ try:
 except ImportError:
     noSelenium = True
 
-## page only for non-recurring actions within the app
-## each unit test represent a screen
+
 class PurchaseOrderScreen(SeleniumTest):
     fixtures = ["manufacturing_demo"]
 
@@ -129,21 +128,17 @@ class PurchaseOrderScreen(SeleniumTest):
 
         table_page.multiline_checkboxes_check(targetrows=rows)
 
-        references = []
         newStatus = "completed"
-        q_objects = Q()
 
         table_page.select_action(newStatus)
 
+        q_objects = Q()
         for row in rows:
-            references.append(row.get_attribute("id"))
+            q_objects |= Q(reference=row.get_attribute("id"))
 
         table_page.click_save_button()
 
         time.sleep(2)
-        for reference in references:
-
-            q_objects |= Q(reference=reference)
 
         self.assertEqual(
             PurchaseOrder.objects.all().filter(q_objects, status=newStatus).count(), 2
@@ -239,21 +234,16 @@ class DistributionOrderScreen(SeleniumTest):
 
         table_page.multiline_checkboxes_check(targetrows=rows)
 
-        references = []
         newStatus = "completed"
-        q_objects = Q()
 
         table_page.select_action(newStatus)
 
+        q_objects = Q()
         for row in rows:
-            references.append(row.get_attribute("id"))
+            q_objects |= Q(reference=row.get_attribute("id"))
 
         table_page.click_save_button()
-
         time.sleep(2)
-        for reference in references:
-
-            q_objects |= Q(reference=reference)
 
         self.assertEqual(
             DistributionOrder.objects.all().filter(q_objects, status=newStatus).count(),
@@ -353,21 +343,17 @@ class ManufacturingOrderScreen(SeleniumTest):
 
         table_page.multiline_checkboxes_check(targetrows=rows)
 
-        references = []
         newStatus = "completed"
-        q_objects = Q()
 
         table_page.select_action(newStatus)
 
+        q_objects = Q()
         for row in rows:
-            references.append(row.get_attribute("id"))
+            q_objects |= Q(reference=row.get_attribute("id"))
 
         table_page.click_save_button()
 
         time.sleep(2)
-        for reference in references:
-
-            q_objects |= Q(reference=reference)
 
         self.assertEqual(
             ManufacturingOrder.objects.all()

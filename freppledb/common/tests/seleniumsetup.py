@@ -36,9 +36,6 @@ except ImportError:
 
 
 class SeleniumTest(StaticLiveServerTestCase):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
     def setUp(self):
         # Login
         if not User.objects.filter(username="admin").count():
@@ -47,6 +44,9 @@ class SeleniumTest(StaticLiveServerTestCase):
 
     @classmethod
     def setUpClass(cls):
+        for db in settings.DATABASES:
+            # Avoid leaking persistent connections
+            settings.DATABASES[db]["CONN_MAX_AGE"] = 0
         os.environ["FREPPLE_TEST"] = "YES"
         super().setUpClass()
         if settings.SELENIUM_TESTS == "firefox":
@@ -67,6 +67,6 @@ class SeleniumTest(StaticLiveServerTestCase):
 
     @classmethod
     def tearDownClass(cls):
-        super().tearDownClass()
         cls.driver.quit()
         time.sleep(2)
+        super().tearDownClass()

@@ -44,10 +44,12 @@ class execute_with_commands(TransactionTestCase):
         param.save()
         if not User.objects.filter(username="admin").count():
             User.objects.create_superuser("admin", "your@company.com", "admin")
+        super().setUp()
 
     def tearDown(self):
         Notification.wait()
         del os.environ["FREPPLE_TEST"]
+        super().tearDown()
 
     def test_run_cmd(self):
         # Empty the database tables
@@ -107,10 +109,12 @@ class execute_multidb(TransactionTestCase):
         param = Parameter.objects.all().get_or_create(pk="plan.webservice")[0]
         param.value = "false"
         param.save()
+        super().setUp()
 
     def tearDown(self):
         Notification.wait()
         del os.environ["FREPPLE_TEST"]
+        super().tearDown()
 
     def test_multidb_cmd(self):
         # Find out which databases to use
@@ -258,10 +262,12 @@ class remote_commands(TransactionTestCase):
         param.save()
         if not User.objects.filter(username="admin").count():
             User.objects.create_superuser("admin", "your@company.com", "admin")
+        super().setUp()
 
     def tearDown(self):
         Notification.wait()
         del os.environ["FREPPLE_TEST"]
+        super().tearDown()
 
     def test_remote_command(self):
         # Create a header for basic authentication

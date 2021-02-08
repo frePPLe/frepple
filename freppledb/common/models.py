@@ -199,19 +199,17 @@ class HierarchyModel(models.Model):
         if roots != 1:
             # create a 'All dimensions' item (that might already be there)
             rootname = "All %ss" % cls._meta.db_table
-            o = cls.objects.using(database).get_or_create(name=rootname)
-            if o[1]:
-                o[0].description = "Automatically created root object"
+            obj, created = cls.objects.using(database).get_or_create(name=rootname)
+            if created:
+                obj.description = "Automatically created root object"
+                obj.save()
             else:
-                o[
-                    0
-                ].lft = (
-                    None
-                )  # This is to force hierarchy rebuild that may not occur as all lft values are populated.
-            o[0].save()
+                # This is to force hierarchy rebuild that may not occur as all lft values are populated.
+                obj.lft = None
+                obj.save(update_fields=["lft"])
             cls.objects.using(database).filter(owner__isnull=True).exclude(
                 name=rootname
-            ).update(owner=o[0])
+            ).update(owner=obj)
 
             # Rebuild the hierarchy again with the new root
             cls.rebuildHierarchy(database=database)

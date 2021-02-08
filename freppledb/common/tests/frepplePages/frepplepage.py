@@ -159,11 +159,11 @@ class TablePage(BasePage):
     def enter_text_in_inputdatefield(self, targetinputdatefield, newdate):
         targetinputdatefield.clear()
         time.sleep(0.3)
-        targetinputdatefield.send_keys(newdate.strftime("%Y-%m-%d 00:00:00"))
+        targetinputdatefield.send_keys(newdate.strftime("%Y-%m-%d %H:%M:%S"))
         time.sleep(0.3)
         targetinputdatefield.send_keys(Keys.RETURN)
         time.sleep(0.3)
-        return newdate.strftime("%Y-%m-%d 00:00:00")
+        return newdate.strftime("%Y-%m-%d %H:%M:%S")
 
     # def is_title_matches(self): # change to current url
     #    return "Purchase orders" in self.driver.title

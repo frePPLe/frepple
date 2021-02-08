@@ -24,10 +24,12 @@ class BasePageLocators(object):
         "#breadcrumbs > li > a[href='/data/input/purchaseorder/']",
     )
 
-    def mainMenuLinkLocator(self, targetLink):
+    @staticmethod
+    def mainMenuLinkLocator(targetLink):
         return (By.LINK_TEXT, targetLink)
 
-    def subMenuItemLocator(self, targetItem):
+    @staticmethod
+    def subMenuItemLocator(targetItem):
         return (By.CSS_SELECTOR, "#nav-menu  .dropdown-menu a[href*='%s']" % targetItem)
 
 
@@ -60,5 +62,6 @@ class TableLocators(object):
         "checkbox": (By.CSS_SELECTOR, 'input[type="checkbox"]'),
     }
 
-    def actionLocator(self, actionTofind):
+    @staticmethod
+    def actionLocator(actionTofind):
         return (By.CSS_SELECTOR, "li>a[name='" + actionTofind + "']")

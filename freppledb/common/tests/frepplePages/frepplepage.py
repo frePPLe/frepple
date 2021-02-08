@@ -80,6 +80,7 @@ class BasePage(object):
 
         (submenuby, submenulocator) = BasePageLocators.subMenuItemLocator(submenu_item)
         self.submenuitem = self.driver.find_element(submenuby, submenulocator)
+        time.sleep(1)
         ActionChains(self.driver).move_to_element(self.submenuitem).click().perform()
         time.sleep(1)
 
@@ -196,3 +197,4 @@ class TablePage(BasePage):
         for row in targetrows:
             checkbox = row.find_element(*TableLocators.tablecolumnsinput["checkbox"])
             ActionChains(self.driver).move_to_element(checkbox).click().perform()
+            time.sleep(0.3)

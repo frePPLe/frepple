@@ -28,7 +28,6 @@ try:
     from selenium.webdriver.common.action_chains import ActionChains
     from selenium.webdriver.common.by import By
     from selenium.webdriver.support.ui import WebDriverWait
-    from selenium.webdriver.support import expected_conditions
 
     noSelenium = False
 except ImportError:
@@ -69,4 +68,5 @@ class SeleniumTest(StaticLiveServerTestCase):
     def tearDownClass(cls):
         cls.driver.quit()
         time.sleep(2)
+        del os.environ["FREPPLE_TEST"]
         super().tearDownClass()

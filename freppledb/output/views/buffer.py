@@ -353,22 +353,32 @@ class OverviewReport(GridPivot):
            location.lastmodified,
            opplanmat.opplan_batch,
            %s
-           (select jsonb_build_object(
+           case
+             when d.history then jsonb_build_object(
+               'onhand', min(ax_buffer.onhand)
+               )
+           else (
+             select jsonb_build_object(
                'onhand', onhand,
                'flowdate', to_char(flowdate,'YYYY-MM-DD HH24:MI:SS'),
                'periodofcover', periodofcover
                )
-           from operationplanmaterial
-           inner join operationplan
-             on operationplanmaterial.operationplan_id = operationplan.reference
-           where operationplanmaterial.item_id = item.name
-             and operationplanmaterial.location_id = location.name
-             and (item.type is distinct from 'make to order' or operationplan.batch is not distinct from opplanmat.opplan_batch)
-             and flowdate < greatest(d.startdate,%%s)
-           order by flowdate desc, id desc limit 1) startoh,
+             from operationplanmaterial
+             inner join operationplan
+               on operationplanmaterial.operationplan_id = operationplan.reference
+             where operationplanmaterial.item_id = item.name
+               and operationplanmaterial.location_id = location.name
+               and (item.type is distinct from 'make to order' or operationplan.batch is not distinct from opplanmat.opplan_batch)
+               and flowdate < greatest(d.startdate,%%s)
+             order by flowdate desc, id desc limit 1
+             )
+           end as startoh,
            d.bucket,
            d.startdate,
            d.enddate,
+           d.history,
+           case when d.history then min(ax_buffer.safetystock)
+           else
            (select safetystock from
             (
             select 1 as priority, coalesce(
@@ -412,8 +422,11 @@ class OverviewReport(GridPivot):
             ) t
             where t.safetystock is not null
             order by priority
-            limit 1) safetystock,
-            (select jsonb_build_object(
+            limit 1)
+            end as safetystock,
+            case when d.history then jsonb_build_object()
+            else (
+             select jsonb_build_object(
                'work_in_progress_mo', sum(case when (startdate < d.enddate and enddate >= d.enddate) and opm.quantity > 0 and operationplan.type = 'MO' then opm.quantity else 0 end),
                'on_order_po', sum(case when (startdate < d.enddate and enddate >= d.enddate) and opm.quantity > 0 and operationplan.type = 'PO' then opm.quantity else 0 end),
                'in_transit_do', sum(case when (startdate < d.enddate and enddate >= d.enddate) and opm.quantity > 0 and operationplan.type = 'DO' then opm.quantity else 0 end),
@@ -435,17 +448,32 @@ class OverviewReport(GridPivot):
              where opm.item_id = item.name
                and opm.location_id = location.name
                and (item.type is distinct from 'make to order' or operationplan.batch is not distinct from opplanmat.opplan_batch)
-           ) ongoing
+             )
+           end as ongoing
            from
            (%s) opplanmat
            inner join item on item.name = opplanmat.item_id
            inner join location on location.name = opplanmat.location_id
            -- Multiply with buckets
-          cross join (
-             select name as bucket, startdate, enddate
+           cross join (
+             select name as bucket, startdate, enddate,
+               min(snapshot_date) as snapshot_date,
+               enddate < %%s as history
              from common_bucketdetail
-             where bucket_id = %%s and enddate > %%s and startdate < %%s
+             left outer join ax_manager
+               on snapshot_date >= common_bucketdetail.startdate
+               and snapshot_date < common_bucketdetail.enddate
+             where common_bucketdetail.bucket_id = %%s
+               and common_bucketdetail.enddate > %%s
+               and common_bucketdetail.startdate < %%s
+             group by common_bucketdetail.name, common_bucketdetail.startdate, common_bucketdetail.enddate
              ) d
+           -- join with the archive data
+           left outer join ax_buffer
+             on ax_buffer.snapshot_date_id = d.snapshot_date
+             and ax_buffer.item =  opplanmat.item_id
+             and ax_buffer.location =  opplanmat.location_id
+             and (ax_buffer.batch = opplanmat.opplan_batch or ax_buffer.batch is null)
           group by
            opplanmat.buffer,
            item.name,
@@ -468,7 +496,8 @@ class OverviewReport(GridPivot):
            opplanmat.opplan_batch,
            d.bucket,
            d.startdate,
-           d.enddate
+           d.enddate,
+           d.history
            order by %s, d.startdate
         """ % (
             reportclass.attr_sql,
@@ -491,6 +520,7 @@ class OverviewReport(GridPivot):
                     + (request.report_startdate,) * 9
                     + baseparams  # ongoing
                     + (  # opplanmat
+                        request.current_date,
                         request.report_bucket,
                         request.report_startdate,
                         request.report_enddate,
@@ -498,6 +528,7 @@ class OverviewReport(GridPivot):
                 )
                 for row in cursor_chunked:
                     numfields = len(row)
+                    history = row[numfields - 3]
                     res = {
                         "buffer": row[0],
                         "item": row[1],
@@ -518,58 +549,91 @@ class OverviewReport(GridPivot):
                         "location__source": row[16],
                         "location__lastmodified": row[17],
                         "batch": row[18],
-                        "startoh": row[numfields - 6]["onhand"]
-                        if row[numfields - 6]
+                        "startoh": row[numfields - 7]["onhand"]
+                        if row[numfields - 7]
                         else 0,
-                        "startohdoc": max(
+                        "startohdoc": None
+                        if history
+                        else max(
                             0,
                             0
                             if (
-                                row[numfields - 6]["onhand"]
-                                if row[numfields - 6]
+                                row[numfields - 7]["onhand"]
+                                if row[numfields - 7]
                                 else 0
                             )
                             <= 0
                             else (
                                 999
-                                if row[numfields - 6]["periodofcover"] == 86313600
+                                if row[numfields - 7]["periodofcover"] == 86313600
                                 else (
                                     datetime.strptime(
-                                        row[numfields - 6]["flowdate"],
+                                        row[numfields - 7]["flowdate"],
                                         "%Y-%m-%d %H:%M:%S",
                                     )
                                     + timedelta(
-                                        seconds=row[numfields - 6]["periodofcover"]
+                                        seconds=row[numfields - 7]["periodofcover"]
                                     )
                                     - row[numfields - 4]
                                 ).days
-                                if row[numfields - 6]["periodofcover"]
+                                if row[numfields - 7]["periodofcover"]
                                 else 999
                             ),
                         ),
-                        "bucket": row[numfields - 5],
-                        "startdate": row[numfields - 4],
-                        "enddate": row[numfields - 3],
-                        "safetystock": row[numfields - 2] or 0,
-                        "consumed": row[numfields - 1]["consumed"] or 0,
-                        "consumedMO": row[numfields - 1]["consumedMO"] or 0,
-                        "consumedDO": row[numfields - 1]["consumedDO"] or 0,
-                        "consumedSO": row[numfields - 1]["consumedSO"] or 0,
-                        "produced": row[numfields - 1]["produced"] or 0,
-                        "producedMO": row[numfields - 1]["producedMO"] or 0,
-                        "producedDO": row[numfields - 1]["producedDO"] or 0,
-                        "producedPO": row[numfields - 1]["producedPO"] or 0,
-                        "total_in_progress": row[numfields - 1]["total_in_progress"]
-                        or 0,
-                        "work_in_progress_mo": row[numfields - 1]["work_in_progress_mo"]
-                        or 0,
-                        "on_order_po": row[numfields - 1]["on_order_po"] or 0,
-                        "in_transit_do": row[numfields - 1]["in_transit_do"] or 0,
-                        "endoh": float(
-                            row[numfields - 6]["onhand"] if row[numfields - 6] else 0
-                        )
-                        + float(row[numfields - 1]["produced"] or 0)
-                        - float(row[numfields - 1]["consumed"] or 0),
+                        "bucket": row[numfields - 6],
+                        "startdate": row[numfields - 5],
+                        "enddate": row[numfields - 4],
+                        "history": history,
+                        "safetystock": row[numfields - 2]
+                        if history
+                        else row[numfields - 2] or 0,
+                        "consumed": None
+                        if history
+                        else row[numfields - 1]["consumed"] or 0,
+                        "consumedMO": None
+                        if history
+                        else row[numfields - 1]["consumedMO"] or 0,
+                        "consumedDO": None
+                        if history
+                        else row[numfields - 1]["consumedDO"] or 0,
+                        "consumedSO": None
+                        if history
+                        else row[numfields - 1]["consumedSO"] or 0,
+                        "produced": None
+                        if history
+                        else row[numfields - 1]["produced"] or 0,
+                        "producedMO": None
+                        if history
+                        else row[numfields - 1]["producedMO"] or 0,
+                        "producedDO": None
+                        if history
+                        else row[numfields - 1]["producedDO"] or 0,
+                        "producedPO": None
+                        if history
+                        else row[numfields - 1]["producedPO"] or 0,
+                        "total_in_progress": None
+                        if history
+                        else row[numfields - 1]["total_in_progress"] or 0,
+                        "work_in_progress_mo": None
+                        if history
+                        else row[numfields - 1]["work_in_progress_mo"] or 0,
+                        "on_order_po": None
+                        if history
+                        else row[numfields - 1]["on_order_po"] or 0,
+                        "in_transit_do": None
+                        if history
+                        else row[numfields - 1]["in_transit_do"] or 0,
+                        "endoh": None
+                        if history
+                        else (
+                            float(
+                                row[numfields - 7]["onhand"]
+                                if row[numfields - 7]
+                                else 0
+                            )
+                            + float(row[numfields - 1]["produced"] or 0)
+                            - float(row[numfields - 1]["consumed"] or 0)
+                        ),
                     }
                     # Add attribute fields
                     idx = 18

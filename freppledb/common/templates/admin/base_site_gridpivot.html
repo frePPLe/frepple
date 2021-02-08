@@ -39,7 +39,7 @@ var resizing;
 var editrow;
 var editcol;
 {% if reportclass.hasTimeBuckets %}var numbuckets = {{request.report_bucketlist|length}};
-var timebuckets = [ {% for f in request.report_bucketlist %}{% if not forloop.first %},{% endif %}{'name':'{{f.name}}','startdate':'{{f.startdate|date:"Y-m-d H:i:s"}}','enddate':'{{f.enddate|date:"Y-m-d H:i:s"}}'}{% endfor %} ];
+var timebuckets = [ {% for f in request.report_bucketlist %}{% if not forloop.first %},{% endif %}{'name':'{{f.name}}','startdate':'{{f.startdate|date:"Y-m-d H:i:s"}}','enddate':'{{f.enddate|date:"Y-m-d H:i:s"}}','history':{{f.history}}}{% endfor %} ];
 {% endif %}var cross_idx = {{cross_idx|safe}};
 var cross = [
 {{cross_list|safe}}
@@ -58,7 +58,7 @@ $(function() {
       {{colmodel|safe}},{% if mode == "table" %}
       {"name":"columns","label":" ","sortable":false,"width":150,"align":"left","formatter":grid.pivotcolumns,"search":false,"frozen":true,"title":false },
       {% for f in request.report_bucketlist %}{% if not forloop.first %},
-      {% endif %}{ name:'{{f.name|safe}}',startdate:'{{f.startdate|date:"Y-m-d H:i:s"}}',enddate:'{{f.enddate|date:"Y-m-d H:i:s"}}',sortable:false,width:90,align:'center',formatter:crosses,search:false,title:false }{% endfor %}
+      {% endif %}{name:'{{f.name|safe}}'{% if f.history %},label:'<i style="font-weight:normal">{{f.name|safe}}</i>'{% endif %},startdate:'{{f.startdate|date:"Y-m-d H:i:s"}}',enddate:'{{f.enddate|date:"Y-m-d H:i:s"}}',sortable:false,width:90,align:'center',formatter:crosses,search:false,title:false }{% endfor %}
       {% else %}
       {"name":"graph","index":"graph","editable":false,"label":" ","title":false,"sortable":false,"formatter":"graph","searchoptions":{"searchhidden": true},"fixed":false}
       {% endif %}],{% if reportclass.editable and haschangeperm %}

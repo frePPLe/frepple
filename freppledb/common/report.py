@@ -49,6 +49,7 @@ from dateutil.parser import parse
 from openpyxl.comments import Comment as CellComment
 
 from django.db.models import Model, Lookup
+from django.db.models.expressions import RawSQL
 from django.db.utils import DEFAULT_DB_ALIAS, load_backend
 from django.contrib.auth.models import Group
 from django.contrib.auth import get_permission_codename
@@ -774,7 +775,9 @@ class GridReport(View):
                 res = res.filter(enddate__gt=start)
             if end:
                 res = res.filter(startdate__lt=end)
-            request.report_bucketlist = res.values("name", "startdate", "enddate")
+            request.report_bucketlist = res.annotate(
+                history=RawSQL("case when enddate < %s then 1 else 0 end", [current])
+            ).values("name", "startdate", "enddate", "history")
         else:
             request.report_bucketlist = []
 

@@ -3122,7 +3122,7 @@ var graph = {
       if (wt <= w)
       {
         var t = svg.append('text')
-          .attr('class','svgheadertext')
+          .attr('class',timebuckets[i]['history'] ? 'svgheaderhistory' : 'svgheadertext')
           .attr('x', w)
           .attr('y', '12')
           .text(timebuckets[i]['name']);

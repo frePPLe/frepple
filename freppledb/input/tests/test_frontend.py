@@ -310,7 +310,7 @@ class ManufacturingOrderScreen(SeleniumTest):
         )
         self.assertEqual(
             enddate_inputdatefield.get_attribute("value"),
-            newEndDate.strftime("%Y-%m-%d 00:00:00"),
+            newEndDate.strftime("%Y-%m-%d %H:%M:%S"),
             "the input field of Receipt Date hasn't been modified",
         )
 

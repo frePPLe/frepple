@@ -81,6 +81,7 @@ class BasePage(object):
         (submenuby, submenulocator) = BasePageLocators.subMenuItemLocator(submenu_item)
         self.submenuitem = self.driver.find_element(submenuby, submenulocator)
         ActionChains(self.driver).move_to_element(self.submenuitem).click().perform()
+        time.sleep(1)
 
     def go_home_with_breadcrumbs(self):
         pass

@@ -174,7 +174,7 @@ class Command(BaseCommand):
                   and buffer.location_id = operationplanmaterial.location_id
                   and buffer.batch is not distinct from operationplan.batch
                   inner join item on item.name = operationplanmaterial.item_id
-                  where flowdate <= '%s'
+                  where flowdate < '%s'
                 ) recs
                 where rownumber = 1
                 """

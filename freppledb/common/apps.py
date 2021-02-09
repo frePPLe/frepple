@@ -88,6 +88,7 @@ class CommonConfig(AppConfig):
             "freppledb.output",
             "freppledb.execute",
             "freppledb.common",
+            "freppledb.archive",
             "django_filters",
             "rest_framework",
             "django_admin_bootstrapped",

@@ -9,7 +9,17 @@ Release notes
 - | Inventory report now displays also archived inventory information.
   | We archive the inventory and safety stock values every day/week/month (configurable
     with the parameter archive.frequency).
-  | Planners can review how the onhand and safety stock have evolved over time. 
+  | Planners can review how the onhand and safety stock have evolved over time.
+
+.. rubric:: System administration
+
+- | Self-diagnoses check for required python third party packages.
+  | Missing python package will now be reported as an error whenever you run frepplectl.
+
+.. rubric:: Integration
+
+- | REST API didn't support the operator "in" for all fields. 
+   
 
 6.11.0 (2021/01/24)
 ===================

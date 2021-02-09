@@ -127,13 +127,15 @@ class Command(BaseCommand):
             # Archiving buffer table
             cursor.execute(
                 """
-                insert into ax_buffer (item, location, onhand, batch, cost, safetystock, snapshot_date_id)
-                select operationplanmaterial.item_id,
-                operationplanmaterial.location_id,
-                operationplanmaterial.onhand,
-                operationplan.batch,
-                item.cost,
-                (select safetystock from
+                insert into ax_buffer (item, location, batch, onhand, cost, safetystock, snapshot_date_id)
+                select item_id, location_id, batch, cost, onhand, safetystock, '%s'
+                from (
+                  select operationplanmaterial.item_id,
+                  operationplanmaterial.location_id,
+                  operationplan.batch,
+                  item.cost,
+                  operationplanmaterial.onhand,
+                  (select safetystock from
                     (
                     select 1 as priority, coalesce(
                       (select value from calendarbucket
@@ -160,26 +162,23 @@ class Command(BaseCommand):
                     ) t
                     where t.safetystock is not null
                     order by priority
-                    limit 1) safetystock,
-                    '%s'
-                from operationplanmaterial
-                inner join operationplan on operationplan.reference = operationplanmaterial.operationplan_id
-                left outer join buffer on buffer.item_id = operationplanmaterial.item_id
-                and buffer.location_id = operationplanmaterial.location_id
-                and buffer.batch is not distinct from operationplan.batch
-                inner join item on item.name = buffer.item_id
-                where flowdate <= '%s'
-                and not exists (select 1 from operationplanmaterial opm
-                inner join operationplan op on op.reference = opm.operationplan_id
-                where operationplanmaterial.item_id = opm.item_id
-                and operationplanmaterial.location_id = opm.location_id
-                and op.batch is not distinct from operationplan.batch
-                and operationplanmaterial.id != opm.id
-                and opm.flowdate <= '%s'
-                and opm.flowdate > operationplanmaterial.flowdate
-                and opm.onhand < operationplanmaterial.onhand)
+                    limit 1
+                  ) safetystock,
+                  row_number() over (
+                    partition by operationplanmaterial.item_id, operationplanmaterial.location_id, operationplan.batch
+                    order by operationplanmaterial.flowdate desc, operationplanmaterial.onhand asc
+                    ) as rownumber
+                  from operationplanmaterial
+                  inner join operationplan on operationplan.reference = operationplanmaterial.operationplan_id
+                  left outer join buffer on buffer.item_id = operationplanmaterial.item_id
+                  and buffer.location_id = operationplanmaterial.location_id
+                  and buffer.batch is not distinct from operationplan.batch
+                  inner join item on item.name = operationplanmaterial.item_id
+                  where flowdate <= '%s'
+                ) recs
+                where rownumber = 1
                 """
-                % ((now,) * 7)
+                % ((now,) * 6)
             )
             buffer_records = cursor.rowcount
 

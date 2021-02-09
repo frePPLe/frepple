@@ -165,51 +165,61 @@ function drawGraphs(jsondata)
 	          d3.event.stopPropagation();
 	        })
 	      .on("mouseenter", function(d) {
-	        tiptext = '<div class="panel-heading" style="text-align:center; font-weight:bold">'
-	          + timebuckets[d['bucket']]['name'] + '</div>'
-	          + '<table><tr><td>{{_('start inventory days of cover')|capfirst}}</td><td style="text-align:right">'
-	          + d['startohdoc'] + " {{_('days')}}"
-	          + '</td></tr><tr><td>{{_('start inventory')|capfirst}}</td><td style="text-align:right">'
-	          + grid.formatNumber(d['startinv']);
-	        if (d['producedPO'])
-	          tiptext += '</td></tr><tr><td>{{_('produced by PO')|capfirst}}</td><td style="text-align:right">+ '
-	            + grid.formatNumber(d['producedPO']);
-	        if (d['producedMO'])
-	          tiptext += '</td></tr><tr><td>{{_('produced by MO')|capfirst}}</td><td style="text-align:right">+ '
-	            + grid.formatNumber(d['producedMO']);
-	        if (d['producedDO'])
-	          tiptext += '</td></tr><tr><td>{{_('produced by DO')|capfirst}}</td><td style="text-align:right">+ '
-	            + grid.formatNumber(d['producedDO']);
-	        if (d['consumedMO'])
-	          tiptext += '</td></tr><tr><td>{{_('consumed by MO')|capfirst}}</td><td style="text-align:right">- '
-	            + grid.formatNumber(d['consumedMO']);
-	        if (d['consumedSO'])
-	          tiptext += '</td></tr><tr><td>{{_('consumed by SO')|capfirst}}</td><td style="text-align:right">- '
-	            + grid.formatNumber(d['consumedSO']);
-	        if (d['consumedFcst'])
-	          tiptext += '</td></tr><tr><td>{{_('consumed by Fcst')|capfirst}}</td><td style="text-align:right">- '
-	            + grid.formatNumber(d['consumedFcst']);
-	        if (d['consumedDO'])
-	          tiptext += '</td></tr><tr><td>{{_('consumed by DO')|capfirst}}</td><td style="text-align:right">- '
-	            + grid.formatNumber(d['consumedDO']);
-	        tiptext += '</td></tr><tr><td>{{_('end inventory')|capfirst}}</td><td style="text-align:right">= '
-	          + grid.formatNumber(d['startinv']+d['produced']-d['consumed']);
-	        if (d['safetystock'])
-	          tiptext += '</td></tr><tr><td>{{_('safety stock')|capfirst}}</td><td style="text-align:right">'
-	            + grid.formatNumber(d['safetystock']);
-	        if (d['total_in_progress'])
-	          tiptext += '</td></tr><tr><td>{{_('total in progress')|capfirst}}</td><td style="text-align:right">'
-	            + grid.formatNumber(d['total_in_progress']);
-	        if (d['work_in_progress_mo'])
-	          tiptext += '</td></tr><tr><td>{{_('work in progress MO')|capfirst}}</td><td style="text-align:right">'
-	            + grid.formatNumber(d['work_in_progress_mo']);
-	        if (d['on_order_po'])
-	          tiptext += '</td></tr><tr><td>{{_('on order PO')|capfirst}}</td><td style="text-align:right">'
-	            + grid.formatNumber(d['on_order_po']);
-	        if (d['in_transit_do'])
-	          tiptext += '</td></tr><tr><td>{{_('in transit DO')|capfirst}}</td><td style="text-align:right">'
-	            + grid.formatNumber(d['in_transit_do']);
-	        tiptext += '</td></tr></table>'          
+          if (timebuckets[d['bucket']]['history']) {
+	          var tiptext = '<div class="panel-heading" style="text-align:center; font-style:italic">{{_('Archived')}} '
+	            + timebuckets[d['bucket']]['name'] + '</div>'
+              + '<table><tr><td>{{_('start inventory')|capfirst}}</td><td style="text-align:right">'
+              + grid.formatNumber(d['startinv'])
+              + '</td></tr><tr><td>{{_('safety stock')|capfirst}}</td><td style="text-align:right">'
+              + grid.formatNumber(d['safetystock']);              
+          }
+          else {
+            var tiptext = '<div class="panel-heading" style="text-align:center; font-weight:bold">'
+              + timebuckets[d['bucket']]['name'] + '</div>'
+	            + '<table><tr><td>{{_('start inventory days of cover')|capfirst}}</td><td style="text-align:right">'
+	            + d['startohdoc'] + " {{_('days')}}"
+	            + '</td></tr><tr><td>{{_('start inventory')|capfirst}}</td><td style="text-align:right">'
+	            + grid.formatNumber(d['startinv']);
+  	        if (d['producedPO'])
+  	          tiptext += '</td></tr><tr><td>{{_('produced by PO')|capfirst}}</td><td style="text-align:right">+ '
+  	            + grid.formatNumber(d['producedPO']);
+  	        if (d['producedMO'])
+  	          tiptext += '</td></tr><tr><td>{{_('produced by MO')|capfirst}}</td><td style="text-align:right">+ '
+  	            + grid.formatNumber(d['producedMO']);
+  	        if (d['producedDO'])
+  	          tiptext += '</td></tr><tr><td>{{_('produced by DO')|capfirst}}</td><td style="text-align:right">+ '
+  	            + grid.formatNumber(d['producedDO']);
+  	        if (d['consumedMO'])
+  	          tiptext += '</td></tr><tr><td>{{_('consumed by MO')|capfirst}}</td><td style="text-align:right">- '
+  	            + grid.formatNumber(d['consumedMO']);
+  	        if (d['consumedSO'])
+  	          tiptext += '</td></tr><tr><td>{{_('consumed by SO')|capfirst}}</td><td style="text-align:right">- '
+  	            + grid.formatNumber(d['consumedSO']);
+  	        if (d['consumedFcst'])
+  	          tiptext += '</td></tr><tr><td>{{_('consumed by Fcst')|capfirst}}</td><td style="text-align:right">- '
+  	            + grid.formatNumber(d['consumedFcst']);
+  	        if (d['consumedDO'])
+  	          tiptext += '</td></tr><tr><td>{{_('consumed by DO')|capfirst}}</td><td style="text-align:right">- '
+  	            + grid.formatNumber(d['consumedDO']);
+  	        tiptext += '</td></tr><tr><td>{{_('end inventory')|capfirst}}</td><td style="text-align:right">= '
+  	          + grid.formatNumber(d['startinv']+d['produced']-d['consumed']);
+  	        if (d['safetystock'])
+  	          tiptext += '</td></tr><tr><td>{{_('safety stock')|capfirst}}</td><td style="text-align:right">'
+  	            + grid.formatNumber(d['safetystock']);
+  	        if (d['total_in_progress'])
+  	          tiptext += '</td></tr><tr><td>{{_('total in progress')|capfirst}}</td><td style="text-align:right">'
+  	            + grid.formatNumber(d['total_in_progress']);
+  	        if (d['work_in_progress_mo'])
+  	          tiptext += '</td></tr><tr><td>{{_('work in progress MO')|capfirst}}</td><td style="text-align:right">'
+  	            + grid.formatNumber(d['work_in_progress_mo']);
+  	        if (d['on_order_po'])
+  	          tiptext += '</td></tr><tr><td>{{_('on order PO')|capfirst}}</td><td style="text-align:right">'
+  	            + grid.formatNumber(d['on_order_po']);
+  	        if (d['in_transit_do'])
+  	          tiptext += '</td></tr><tr><td>{{_('in transit DO')|capfirst}}</td><td style="text-align:right">'
+  	            + grid.formatNumber(d['in_transit_do']);
+          }          
+          tiptext += '</td></tr></table>';
 	        graph.showTooltip(tiptext);
 	        })
 	      .on("mouseleave", graph.hideTooltip)
@@ -336,6 +346,7 @@ function crosses (cellvalue, options, rowdata)
   var result = '';
   
   // dict that gives from an id the name of the cross
+  // TODO optimization: build this dictionary once, rather than for each cell
   var field_by_id = {};
   // dict that gives from the name of a cross the id
   var id_by_field = {};
@@ -348,10 +359,13 @@ function crosses (cellvalue, options, rowdata)
     switch(field_by_id[cross_idx[i]])
     {
       case 'startohdoc':
-        result += cellvalue[cross_idx[i]] + '<br>';
+        if (!options.colModel.history) result += cellvalue[cross_idx[i]];
+        result += '<br>';
         break;
       case 'consumed':
-        if (cellvalue[id_by_field['consumed']] != 0.0)
+        if (options.colModel.history)
+          result += '<br>';
+        else if (cellvalue[id_by_field['consumed']] != 0.0)
            result += grid.formatNumber(cellvalue[id_by_field['consumed']]) + "<a href='{{request.prefix}}/data/input/operationplanmaterial/buffer/" +
               admin_escape(rowdata['buffer']) +
               "/?flowdate__gte=" + options['colModel']['startdate'] +
@@ -361,7 +375,9 @@ function crosses (cellvalue, options, rowdata)
           result += '0<br>';
         break;
       case 'consumedMO':
-        if (cellvalue[id_by_field['consumedMO']] != 0.0)
+        if (options.colModel.history)
+          result += '<br>';
+        else if (cellvalue[id_by_field['consumedMO']] != 0.0)
            result += grid.formatNumber(cellvalue[id_by_field['consumedMO']]) + "<a href='{{request.prefix}}/data/input/manufacturingorder/consumed/" +
               admin_escape(rowdata['item']) + "/" +
               admin_escape(rowdata['location']) + "/" +
@@ -374,7 +390,9 @@ function crosses (cellvalue, options, rowdata)
           result += '0<br>';
         break;
       case 'consumedDO':
-        if (cellvalue[id_by_field['consumedDO']] != 0.0)
+        if (options.colModel.history)
+          result += '<br>';
+        else if (cellvalue[id_by_field['consumedDO']] != 0.0)
            result += grid.formatNumber(cellvalue[id_by_field['consumedDO']]) + "<a href='{{request.prefix}}/data/input/distributionorder/consumed/" +
               admin_escape(rowdata['item']) + "/" +
               admin_escape(rowdata['location']) + "/" +
@@ -387,7 +405,9 @@ function crosses (cellvalue, options, rowdata)
           result += '0<br>';
         break;
       case 'consumedSO':
-        if (cellvalue[id_by_field['consumedSO']] != 0.0)
+        if (options.colModel.history)
+          result += '<br>';
+        else if (cellvalue[id_by_field['consumedSO']] != 0.0)
            result += grid.formatNumber(cellvalue[id_by_field['consumedSO']]) + "<a href='{{request.prefix}}/data/input/deliveryorder/consumed/" +
               admin_escape(rowdata['item']) + "/" +
               admin_escape(rowdata['location']) + "/" +
@@ -400,7 +420,9 @@ function crosses (cellvalue, options, rowdata)
           result += '0<br>';
         break;
       case 'consumedFcst':
-        if (cellvalue[id_by_field['consumedFcst']] != 0.0)
+        if (options.colModel.history)
+          result += '<br>';
+        else if (cellvalue[id_by_field['consumedFcst']] != 0.0)
            result += grid.formatNumber(cellvalue[id_by_field['consumedFcst']]) + "<a href='{{request.prefix}}/data/input/deliveryorder/consumed/" +
               admin_escape(rowdata['item']) + "/" +
               admin_escape(rowdata['location']) + "/" +
@@ -413,7 +435,9 @@ function crosses (cellvalue, options, rowdata)
           result += '0<br>';
         break;
       case 'produced':
-        if (cellvalue[id_by_field['produced']] != 0.0)
+        if (options.colModel.history)
+          result += '<br>';
+        else if (cellvalue[id_by_field['produced']] != 0.0)
            result += grid.formatNumber(cellvalue[id_by_field['produced']]) + "<a href='{{request.prefix}}/data/input/operationplanmaterial/buffer/" +
               admin_escape(rowdata['buffer']) +
               "/?flowdate__gte=" + options['colModel']['startdate'] +
@@ -423,7 +447,9 @@ function crosses (cellvalue, options, rowdata)
           result += '0<br>';
         break;
       case 'producedMO':
-        if (cellvalue[id_by_field['producedMO']] != 0.0)
+        if (options.colModel.history)
+          result += '<br>';
+        else if (cellvalue[id_by_field['producedMO']] != 0.0)
            result += grid.formatNumber(cellvalue[id_by_field['producedMO']]) + "<a href='{{request.prefix}}/data/input/manufacturingorder/produced/" +
               admin_escape(rowdata['item']) + "/" +
               admin_escape(rowdata['location']) + "/" +
@@ -436,7 +462,9 @@ function crosses (cellvalue, options, rowdata)
           result += '0<br>';
         break;
       case 'producedDO':
-        if (cellvalue[id_by_field['producedDO']] != 0.0)
+        if (options.colModel.history)
+          result += '<br>';
+        else if (cellvalue[id_by_field['producedDO']] != 0.0)
            result += grid.formatNumber(cellvalue[id_by_field['producedDO']]) + "<a href='{{request.prefix}}/data/input/distributionorder/produced/" +
               admin_escape(rowdata['item']) + "/" +
               admin_escape(rowdata['location']) + "/" +
@@ -449,7 +477,9 @@ function crosses (cellvalue, options, rowdata)
           result += '0<br>';
         break;
       case 'producedPO':
-        if (cellvalue[id_by_field['producedPO']] != 0.0)
+        if (options.colModel.history)
+          result += '<br>';
+        else if (cellvalue[id_by_field['producedPO']] != 0.0)
            result += grid.formatNumber(cellvalue[id_by_field['producedPO']]) + "<a href='{{request.prefix}}/data/input/purchaseorder/produced/" +
               admin_escape(rowdata['item']) + "/" +
               admin_escape(rowdata['location']) + "/" +
@@ -462,7 +492,9 @@ function crosses (cellvalue, options, rowdata)
           result += '0<br>';
         break;
       case 'work_in_progress_mo':
-        if (cellvalue[id_by_field['work_in_progress_mo']] != 0.0)
+        if (options.colModel.history)
+          result += '<br>';
+        else if (cellvalue[id_by_field['work_in_progress_mo']] != 0.0)
            result += grid.formatNumber(cellvalue[id_by_field['work_in_progress_mo']]) + "<a href='{{request.prefix}}/data/input/manufacturingorder/operationplanmaterial/" +
               admin_escape(rowdata['item']) + "/" + admin_escape(rowdata['location']) +
               "/" + options['colModel']['enddate'] +
@@ -473,7 +505,9 @@ function crosses (cellvalue, options, rowdata)
           result += '0<br>';
         break;
       case 'on_order_po':
-        if (cellvalue[id_by_field['on_order_po']] != 0.0)
+        if (options.colModel.history)
+          result += '<br>';
+        else if (cellvalue[id_by_field['on_order_po']] != 0.0)
            result += grid.formatNumber(cellvalue[id_by_field['on_order_po']]) + "<a href='{{request.prefix}}/data/input/purchaseorder/operationplanmaterial/" +
               admin_escape(rowdata['item']) + "/" + admin_escape(rowdata['location']) +
               "/" + options['colModel']['enddate'] +
@@ -484,7 +518,9 @@ function crosses (cellvalue, options, rowdata)
           result += '0<br>';
         break;
       case 'in_transit_do':
-        if (cellvalue[id_by_field['in_transit_do']] != 0.0)
+        if (options.colModel.history)
+          result += '<br>';
+        else if (cellvalue[id_by_field['in_transit_do']] != 0.0)
            result += grid.formatNumber(cellvalue[id_by_field['in_transit_do']]) + "<a href='{{request.prefix}}/data/input/distributionorder/operationplanmaterial/" +
               admin_escape(rowdata['item']) + "/" + admin_escape(rowdata['location']) +
               "/" + options['colModel']['enddate'] +
@@ -494,8 +530,16 @@ function crosses (cellvalue, options, rowdata)
         else
           result += '0<br>';
         break;
+      case 'startoh':
+      case 'safetystock':
+        if (cellvalue[cross_idx[i]] !== null)
+          result += grid.formatNumber(cellvalue[cross_idx[i]]);
+        result += '<br>';
+        break;
       default:
-        result += grid.formatNumber(cellvalue[cross_idx[i]]) + '<br>';
+        if (!options.colModel.history)
+          result += grid.formatNumber(cellvalue[cross_idx[i]]);
+        result += '<br>';
     }
   return result;
 };

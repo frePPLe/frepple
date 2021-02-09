@@ -1,6 +1,16 @@
 Release notes
 -------------
 
+6.12.0 (Upcoming release)
+=========================
+
+.. rubric:: User interface
+
+- | Inventory report now displays also archived inventory information.
+  | We archive the inventory and safety stock values every day/week/month (configurable
+    with the parameter archive.frequency).
+  | Planners can review how the onhand and safety stock have evolved over time. 
+
 6.11.0 (2021/01/24)
 ===================
 

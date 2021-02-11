@@ -185,7 +185,6 @@ def getAttributeFields(model, related_name_prefix=None, initially_hidden=False):
                     title=label,
                     initially_hidden=hidden or initially_hidden,
                     editable=editable,
-                    extra='"summaryType":"sum"',
                 )
             )
         elif fieldtype == "integer":

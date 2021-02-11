@@ -1214,9 +1214,13 @@ class NotificationFactory:
 
     @classmethod
     def join(cls):
-        while cls._workers:
-            w = next(iter(cls._workers.keys()))
-            cls._workers.pop(w).join()
+        Scenario.syncWithSettings()
+        for sc in Scenario.objects.using(DEFAULT_DB_ALIAS).filter(status="In use"):
+            while Comment.objects.all().using(sc.name).filter(processed=False).count():
+                time.sleep(2)
+                worker = cls._workers.get(sc.name, None)
+                if worker:
+                    worker.join()
 
     @classmethod
     def getFollower(cls, object_pk, content_type, user, database=DEFAULT_DB_ALIAS):

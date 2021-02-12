@@ -41,7 +41,7 @@ if __name__ == "__main__":
     django.setup()
 
 from django.conf import settings
-from django.db import DEFAULT_DB_ALIAS
+from django.db import DEFAULT_DB_ALIAS, connections
 from django.utils.encoding import force_text
 
 from freppledb.execute.models import Task
@@ -298,6 +298,7 @@ class PlanTaskParallel(PlanTask):
                 self.seq.run(**self.kwargs)
             except Exception as e:
                 self.exception = e
+            connections.close_all()
 
     def __init__(self):
         self.groups = {}

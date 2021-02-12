@@ -85,6 +85,7 @@ from freppledb.common.models import (
     BucketDetail,
     Bucket,
     HierarchyModel,
+    NotificationFactory,
 )
 from freppledb.common.dataload import parseExcelWorksheet, parseCSVdata
 
@@ -2178,6 +2179,15 @@ class GridReport(View):
                                 error[4],
                             )
                 yield "</tbody></table></div>"
+
+            # Records are committed. Launch notification generator now.
+            NotificationFactory.launchWorker(
+                database=request.database,
+                url="%s://%s"
+                % ("https" if request.is_secure() else "http", request.get_host())
+                if request
+                else None,
+            )
         except GeneratorExit:
             logging.warning("Connection Aborted")
         except NameError:
@@ -2294,6 +2304,15 @@ class GridReport(View):
                                     error[4],
                                 )
                 yield "</tbody></table></div>"
+
+            # Records are committed. Launch notification generator now.
+            NotificationFactory.launchWorker(
+                database=request.database,
+                url="%s://%s"
+                % ("https" if request.is_secure() else "http", request.get_host())
+                if request
+                else None,
+            )
         except GeneratorExit:
             logger.warning("Connection Aborted")
         except NameError:

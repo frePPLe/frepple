@@ -39,7 +39,7 @@ from freppledb.common.middleware import _thread_locals
 from freppledb.common.report import GridReport, matchesModelName
 from freppledb import __version__
 from freppledb.common.dataload import parseCSVdata, parseExcelWorksheet
-from freppledb.common.models import User
+from freppledb.common.models import User, NotificationFactory
 from freppledb.common.report import EXCLUDE_FROM_BULK_OPERATIONS, create_connection
 
 logger = logging.getLogger(__name__)
@@ -479,6 +479,10 @@ class Command(BaseCommand):
                                 error[4],
                             )
                         )
+
+            # Records are committed. Launch notification generator now.
+            NotificationFactory.launchWorker(database=self.database, url=None)
+
         except Exception:
             errorcount += 1
             logger.error(
@@ -533,6 +537,8 @@ class Command(BaseCommand):
                                     error[4],
                                 )
                             )
+            # Records are committed. Launch notification generator now.
+            NotificationFactory.launchWorker(database=self.database, url=None)
         except Exception:
             errorcount += 1
             logger.error(

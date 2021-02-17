@@ -516,6 +516,8 @@ class FollowerList(GridReport):
                 "object_pk": row.object_pk,
                 "type": row.type,
                 "following": ", ".join(sub),
+                "model": row.content_type.model,
+                "app": row.content_type.app_label,
             }
 
     @classmethod
@@ -535,9 +537,16 @@ class FollowerList(GridReport):
                 title=_("model name"),
                 choices=[(str(x.id), x.name) for x in ContentType.objects.all()],
             ),
-            GridFieldText("object_pk", field_name="object_pk", title=_("object name")),
+            GridFieldText(
+                "object_pk",
+                field_name="object_pk",
+                title=_("object name"),
+                extra='"formatter": objectfmt',
+            ),
             GridFieldChoice("type", title=_("type"), choices=Follower.type_list),
             GridFieldChoice("following", title=_("following"), editable=False),
+            GridFieldText("model", title="model", hidden=True, field_name="model"),
+            GridFieldText("app", title="app", hidden=True, field_name="app"),
         )
 
 

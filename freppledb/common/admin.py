@@ -157,7 +157,7 @@ class Comment_admin(MultiDBModelAdmin):
 @admin.register(Follower, site=data_site)
 class Follower_admin(MultiDBModelAdmin):
     model = Follower
-    exclude = ("user",)
+    exclude = ("user", "args")
     save_on_top = True
 
 

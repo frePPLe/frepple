@@ -5,10 +5,16 @@
 {{ block.super }}
 <script>
 
-function selectAll(el)
+function selectAll(event, el)
 {
   var chck = $(el).prop("checked");
   $("#messagelist").find(":checkbox").prop("checked", chck);
+}
+
+function selectMessage(ev, el) {
+  var chck = $(el).find(":checkbox");
+  chck.prop("checked", !chck.prop("checked"));
+  event.stopPropagation();
 }
 
 function markMessageRead(el, status) {
@@ -127,8 +133,8 @@ function markMessageRead(el, status) {
 </thead>
 <tbody id="messagelist">
 {% for notif in inbox %}
-<tr data-message="{{ notif.id }}" data-status="{{ notif.status }}">
-<td><input type="checkbox"></td>
+<tr data-message="{{ notif.id }}" onclick="selectMessage(event, this)">
+<td><input type="checkbox" onclick="selectMessage(event, this)"></label></td>
 <td class="aligncenter msg-status">
   {% if notif.status == "R" %}
   <span class="btn btn-xs fa fa-envelope-open-o" onclick="markMessageRead(this)" data-toggle="tooltip"

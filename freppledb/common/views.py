@@ -31,6 +31,8 @@ from django.contrib.auth.password_validation import (
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.contenttypes.models import ContentType
+from django.db import connections, transaction
+from django.db.models.expressions import RawSQL
 from django.urls import reverse, resolve
 from django import forms
 from django.template import Template
@@ -476,7 +478,45 @@ class FollowerList(GridReport):
 
     @classmethod
     def basequeryset(reportclass, request, *args, **kwargs):
-        return Follower.objects.all().filter(user=request.user)
+        return (
+            Follower.objects.all()
+            .filter(user=request.user)
+            .annotate(
+                following=RawSQL(
+                    "select string_agg(value#>>'{}', ', ') from jsonb_array_elements(common_follower.args->'sub')",
+                    [],
+                )
+            )
+        )
+
+    @classmethod
+    def query(reportclass, request, basequery, sortsql="1 asc"):
+        for row in basequery:
+            sub = []
+            if row.following:
+                for x in row.following.split(","):
+                    app_label, model = x.split(".", 2)
+                    try:
+                        sub.append(
+                            force_text(
+                                ContentType.objects.get_by_natural_key(
+                                    app_label.strip(), model.strip()
+                                )
+                                .model_class()
+                                ._meta.verbose_name
+                            )
+                        )
+                    except Exception:
+                        pass
+            yield {
+                "id": row.id,
+                "content_type__model": force_text(
+                    row.content_type.model_class()._meta.verbose_name
+                ),
+                "object_pk": row.object_pk,
+                "type": row.type,
+                "following": ", ".join(sub),
+            }
 
     @classmethod
     def rows(request, *args, **kwargs):
@@ -497,6 +537,7 @@ class FollowerList(GridReport):
             ),
             GridFieldText("object_pk", field_name="object_pk", title=_("object name")),
             GridFieldChoice("type", title=_("type"), choices=Follower.type_list),
+            GridFieldChoice("following", title=_("following"), editable=False),
         )
 
 

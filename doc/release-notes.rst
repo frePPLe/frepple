@@ -4,6 +4,12 @@ Release notes
 6.12.0 (Upcoming release)
 =========================
 
+.. rubric:: Data model
+
+- | Item model now has extra fields "volume" and "weight".
+  | The purchase order, distribution order and manufacturing order screens now can display
+    the total cost, total volume and total weight of the selected records.
+ 
 .. rubric:: User interface
 
 - | Inventory report now displays also archived inventory information.

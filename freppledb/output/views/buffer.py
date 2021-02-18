@@ -30,6 +30,7 @@ from freppledb.common.report import (
     GridFieldText,
     GridFieldNumber,
     GridFieldLastModified,
+    GridFieldCurrency,
 )
 
 
@@ -153,9 +154,21 @@ class OverviewReport(GridPivot):
             initially_hidden=True,
             editable=False,
         ),
-        GridFieldNumber(
+        GridFieldCurrency(
             "item__cost",
             title=format_lazy("{} - {}", _("item"), _("cost")),
+            initially_hidden=True,
+            editable=False,
+        ),
+        GridFieldNumber(
+            "item__volume",
+            title=format_lazy("{} - {}", _("item"), _("volume")),
+            initially_hidden=True,
+            editable=False,
+        ),
+        GridFieldNumber(
+            "item__weight",
+            title=format_lazy("{} - {}", _("item"), _("weight")),
             initially_hidden=True,
             editable=False,
         ),
@@ -341,6 +354,8 @@ class OverviewReport(GridPivot):
            item.category,
            item.subcategory,
            item.cost,
+           item.volume,
+           item.weight,
            item.owner_id,
            item.source,
            item.lastmodified,
@@ -483,6 +498,8 @@ class OverviewReport(GridPivot):
            item.category,
            item.subcategory,
            item.cost,
+           item.volume,
+           item.weight,
            item.owner_id,
            item.source,
            item.lastmodified,
@@ -538,17 +555,19 @@ class OverviewReport(GridPivot):
                         "item__category": row[5],
                         "item__subcategory": row[6],
                         "item__cost": row[7],
-                        "item__owner": row[8],
-                        "item__source": row[9],
-                        "item__lastmodified": row[10],
-                        "location__description": row[11],
-                        "location__category": row[12],
-                        "location__subcategory": row[13],
-                        "location__available": row[14],
-                        "location__owner": row[15],
-                        "location__source": row[16],
-                        "location__lastmodified": row[17],
-                        "batch": row[18],
+                        "item__volume": row[8],
+                        "item__weight": row[9],
+                        "item__owner": row[10],
+                        "item__source": row[11],
+                        "item__lastmodified": row[11],
+                        "location__description": row[12],
+                        "location__category": row[13],
+                        "location__subcategory": row[14],
+                        "location__available": row[15],
+                        "location__owner": row[16],
+                        "location__source": row[17],
+                        "location__lastmodified": row[18],
+                        "batch": row[19],
                         "startoh": row[numfields - 7]["onhand"]
                         if row[numfields - 7]
                         else 0,
@@ -636,7 +655,7 @@ class OverviewReport(GridPivot):
                         ),
                     }
                     # Add attribute fields
-                    idx = 18
+                    idx = 20
                     for f in getAttributeFields(Item, related_name_prefix="item"):
                         res[f.field_name] = row[idx]
                         idx += 1

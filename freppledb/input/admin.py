@@ -242,7 +242,7 @@ class Item_admin(MultiDBModelAdmin):
         (
             _("advanced"),
             {
-                "fields": ["category", "subcategory", "type"]
+                "fields": ["category", "subcategory", "type", "volume", "weight"]
                 + [a[0] for a in getAttributes(Item) if a[3]],
                 "classes": ("collapse",),
             },

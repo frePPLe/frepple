@@ -46,7 +46,11 @@ cost            double            | Cost or price of the item.
                                     be evaluated which cost to load into this field: purchase
                                     cost, booking value, selling price...
                                   | For most applications the booking value is the appropriate
-                                    one.
+                                    one.                                  
+                                  | The default value is 0.
+volume          double            | Volume of the item.                                  
+                                  | The default value is 0.
+weight          double            | Weight of the item.                                  
                                   | The default value is 0.
 global_purchase boolean           | When this item flag is set, it will a) prevent any new
                                     purchase orders for the item to be generated until the total

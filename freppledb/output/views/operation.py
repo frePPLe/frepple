@@ -199,6 +199,24 @@ class OverviewReport(GridPivot):
             editable=False,
             title=format_lazy("{} - {}", _("item"), _("subcategory")),
         ),
+        GridFieldCurrency(
+            "item__cost",
+            title=format_lazy("{} - {}", _("item"), _("cost")),
+            initially_hidden=True,
+            editable=False,
+        ),
+        GridFieldNumber(
+            "item__volume",
+            title=format_lazy("{} - {}", _("item"), _("volume")),
+            initially_hidden=True,
+            editable=False,
+        ),
+        GridFieldNumber(
+            "item__weight",
+            title=format_lazy("{} - {}", _("item"), _("weight")),
+            initially_hidden=True,
+            editable=False,
+        ),
         GridFieldText(
             "item__owner",
             initially_hidden=True,
@@ -299,8 +317,8 @@ class OverviewReport(GridPivot):
         operation.sizemultiple, operation.sizemaximum, operation.priority, operation.effective_start,
         operation.effective_end, operation.cost, operation.search, operation.source, operation.lastmodified,
         location.description, location.category, location.subcategory, location.available_id,
-        location.lastmodified, item.description, item.category, item.subcategory, item.owner_id,
-        item.source, item.lastmodified,
+        location.lastmodified, item.description, item.category, item.subcategory, item.cost,
+        item.volume, item.weight, item.owner_id, item.source, item.lastmodified,
         %s
         res.bucket, res.startdate, res.enddate,
         res.proposed_start, res.total_start, res.proposed_end, res.total_end, res.proposed_production, res.total_production
@@ -424,9 +442,12 @@ class OverviewReport(GridPivot):
                         "item__description": row[26],
                         "item__category": row[27],
                         "item__subcategory": row[28],
-                        "item__owner": row[29],
-                        "item__source": row[30],
-                        "item__lastmodified": row[31],
+                        "item__cost": row[29],
+                        "item__volume": row[30],
+                        "item__weight": row[31],
+                        "item__owner": row[32],
+                        "item__source": row[33],
+                        "item__lastmodified": row[34],
                         "bucket": row[numfields - 9],
                         "startdate": row[numfields - 8].date(),
                         "enddate": row[numfields - 7].date(),
@@ -437,7 +458,7 @@ class OverviewReport(GridPivot):
                         "production_proposed": row[numfields - 2],
                         "production_total": row[numfields - 1],
                     }
-                    idx = 32
+                    idx = 35
                     for f in getAttributeFields(Operation):
                         result["operation__%s" % f.field_name] = row[idx]
                         idx += 1
@@ -503,6 +524,18 @@ class PurchaseReport(GridPivot):
             editable=False,
             title=format_lazy("{} - {}", _("item"), _("cost")),
             field_name="item__cost",
+        ),
+        GridFieldNumber(
+            "item__volume",
+            title=format_lazy("{} - {}", _("item"), _("volume")),
+            initially_hidden=True,
+            editable=False,
+        ),
+        GridFieldNumber(
+            "item__weight",
+            title=format_lazy("{} - {}", _("item"), _("weight")),
+            initially_hidden=True,
+            editable=False,
         ),
         GridFieldText(
             "item__owner",
@@ -672,8 +705,8 @@ class PurchaseReport(GridPivot):
     @classmethod
     def _apply_sort(reportclass, request, query):
         """
-    Applies a sort to the query.
-    """
+        Applies a sort to the query.
+        """
         sortname = None
         if request.GET.get("sidx", ""):
             # 1) Sorting order specified on the request
@@ -744,6 +777,8 @@ class PurchaseReport(GridPivot):
         item.category as item__category,
         item.subcategory as item__subcategory,
         item.cost as item__cost,
+        item.volume as item__volume,
+        item.weight as item__weight,
         item.owner_id as item__owner,
         item.source as item__source,
         item.lastmodified as item__lastmodified,
@@ -897,6 +932,18 @@ class DistributionReport(GridPivot):
             editable=False,
             title=format_lazy("{} - {}", _("item"), _("cost")),
             field_name="item__cost",
+        ),
+        GridFieldNumber(
+            "item__volume",
+            title=format_lazy("{} - {}", _("item"), _("volume")),
+            initially_hidden=True,
+            editable=False,
+        ),
+        GridFieldNumber(
+            "item__weight",
+            title=format_lazy("{} - {}", _("item"), _("weight")),
+            initially_hidden=True,
+            editable=False,
         ),
         GridFieldText(
             "item__owner",
@@ -1134,6 +1181,8 @@ class DistributionReport(GridPivot):
         item.category as item__category,
         item.subcategory as item__subcategory,
         item.cost as item__cost,
+        item.volume as item__volume,
+        item.weight as item__weight,
         item.owner_id as item__owner,
         item.source as item__source,
         item.lastmodified as item__lastmodified,

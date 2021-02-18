@@ -212,6 +212,22 @@ class Item(AuditModel, HierarchyModel):
     type = models.CharField(
         _("type"), max_length=20, null=True, blank=True, choices=types
     )
+    weight = models.DecimalField(
+        _("weight"),
+        null=True,
+        blank=True,
+        max_digits=20,
+        decimal_places=8,
+        help_text=_("Weight of the item"),
+    )
+    volume = models.DecimalField(
+        _("volume"),
+        null=True,
+        blank=True,
+        max_digits=20,
+        decimal_places=8,
+        help_text=_("Volume of the item"),
+    )
 
     def __str__(self):
         return self.name

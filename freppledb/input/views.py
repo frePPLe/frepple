@@ -42,31 +42,50 @@ from django.views.decorators.csrf import csrf_exempt
 
 from freppledb.boot import getAttributeFields
 from freppledb.common.models import Parameter
-from freppledb.input.models import Resource, Operation, Location, SetupMatrix, SetupRule
-from freppledb.input.models import Skill, Buffer, Customer, Demand, DeliveryOrder
-from freppledb.input.models import Item, OperationResource, OperationMaterial
 from freppledb.input.models import (
+    Resource,
+    Operation,
+    Location,
+    SetupMatrix,
+    SetupRule,
+    Skill,
+    Buffer,
+    Customer,
+    Demand,
+    DeliveryOrder,
+    Item,
+    OperationResource,
+    OperationMaterial,
     Calendar,
     CalendarBucket,
     ManufacturingOrder,
     SubOperation,
-)
-from freppledb.input.models import ResourceSkill, Supplier, ItemSupplier, searchmode
-from freppledb.input.models import ItemDistribution, DistributionOrder, PurchaseOrder
-from freppledb.input.models import (
+    ResourceSkill,
+    Supplier,
+    ItemSupplier,
+    searchmode,
     OperationPlan,
+    ItemDistribution,
+    DistributionOrder,
+    PurchaseOrder,
     OperationPlanMaterial,
     OperationPlanResource,
 )
-from freppledb.common.report import GridReport, GridFieldBool, GridFieldLastModified
 from freppledb.common.report import (
+    GridReport,
+    GridFieldBool,
+    GridFieldLastModified,
     GridFieldDateTime,
     GridFieldTime,
     GridFieldText,
     GridFieldHierarchicalText,
+    GridFieldNumber,
+    GridFieldInteger,
+    GridFieldCurrency,
+    GridFieldChoice,
+    GridFieldDuration,
+    GridFieldJSON,
 )
-from freppledb.common.report import GridFieldNumber, GridFieldInteger, GridFieldCurrency
-from freppledb.common.report import GridFieldChoice, GridFieldDuration, GridFieldJSON
 from freppledb.admin import data_site
 
 import logging
@@ -153,13 +172,13 @@ def search(request):
 
 class PathReport(GridReport):
     """
-  A report showing the upstream supply path or following downstream a
-  where-used path.
-  The supply path report shows all the materials, operations and resources
-  used to make a certain item.
-  The where-used report shows all the materials and operations that use
-  a specific item.
-  """
+    A report showing the upstream supply path or following downstream a
+    where-used path.
+    The supply path report shows all the materials, operations and resources
+    used to make a certain item.
+    The where-used report shows all the materials and operations that use
+    a specific item.
+    """
 
     template = "input/path.html"
     title = _("supply path")
@@ -1606,6 +1625,24 @@ class BufferList(GridReport):
             initially_hidden=True,
             editable=False,
         ),
+        GridFieldCurrency(
+            "item__cost",
+            title=format_lazy("{} - {}", _("item"), _("cost")),
+            initially_hidden=True,
+            editable=False,
+        ),
+        GridFieldNumber(
+            "item__volume",
+            title=format_lazy("{} - {}", _("item"), _("volume")),
+            initially_hidden=True,
+            editable=False,
+        ),
+        GridFieldNumber(
+            "item__weight",
+            title=format_lazy("{} - {}", _("item"), _("weight")),
+            initially_hidden=True,
+            editable=False,
+        ),
         GridFieldText(
             "item__owner",
             title=format_lazy("{} - {}", _("item"), _("owner")),
@@ -2087,6 +2124,24 @@ class ItemSupplierList(GridReport):
             initially_hidden=True,
             editable=False,
         ),
+        GridFieldCurrency(
+            "item__cost",
+            title=format_lazy("{} - {}", _("item"), _("cost")),
+            initially_hidden=True,
+            editable=False,
+        ),
+        GridFieldNumber(
+            "item__volume",
+            title=format_lazy("{} - {}", _("item"), _("volume")),
+            initially_hidden=True,
+            editable=False,
+        ),
+        GridFieldNumber(
+            "item__weight",
+            title=format_lazy("{} - {}", _("item"), _("weight")),
+            initially_hidden=True,
+            editable=False,
+        ),
         GridFieldText(
             "item__owner",
             title=format_lazy("{} - {}", _("item"), _("owner")),
@@ -2307,6 +2362,24 @@ class ItemDistributionList(GridReport):
             initially_hidden=True,
             editable=False,
         ),
+        GridFieldCurrency(
+            "item__cost",
+            title=format_lazy("{} - {}", _("item"), _("cost")),
+            initially_hidden=True,
+            editable=False,
+        ),
+        GridFieldNumber(
+            "item__volume",
+            title=format_lazy("{} - {}", _("item"), _("volume")),
+            initially_hidden=True,
+            editable=False,
+        ),
+        GridFieldNumber(
+            "item__weight",
+            title=format_lazy("{} - {}", _("item"), _("weight")),
+            initially_hidden=True,
+            editable=False,
+        ),
         GridFieldText(
             "item__owner",
             title=format_lazy("{} - {}", _("item"), _("owner")),
@@ -2469,6 +2542,8 @@ class ItemList(GridReport):
             extra='"role":"input/item"',
         ),
         GridFieldCurrency("cost", title=_("cost")),
+        GridFieldNumber("weight", title=_("weight"), initially_hidden=True),
+        GridFieldNumber("volume", title=_("volume"), initially_hidden=True),
         GridFieldChoice(
             "type", title=_("type"), choices=Item.types, initially_hidden=True
         ),
@@ -2988,6 +3063,18 @@ class OperationMaterialList(GridReport):
             initially_hidden=True,
             editable=False,
         ),
+        GridFieldNumber(
+            "item__volume",
+            title=format_lazy("{} - {}", _("item"), _("volume")),
+            initially_hidden=True,
+            editable=False,
+        ),
+        GridFieldNumber(
+            "item__weight",
+            title=format_lazy("{} - {}", _("item"), _("weight")),
+            initially_hidden=True,
+            editable=False,
+        ),
         GridFieldText(
             "item__source",
             title=format_lazy("{} - {}", _("item"), _("source")),
@@ -3200,6 +3287,18 @@ class DemandList(GridReport):
         GridFieldCurrency(
             "item__cost",
             title=format_lazy("{} - {}", _("item"), _("cost")),
+            initially_hidden=True,
+            editable=False,
+        ),
+        GridFieldNumber(
+            "item__volume",
+            title=format_lazy("{} - {}", _("item"), _("volume")),
+            initially_hidden=True,
+            editable=False,
+        ),
+        GridFieldNumber(
+            "item__weight",
+            title=format_lazy("{} - {}", _("item"), _("weight")),
             initially_hidden=True,
             editable=False,
         ),
@@ -4304,6 +4403,24 @@ class ManufacturingOrderList(OperationPlanMixin, GridReport):
             initially_hidden=True,
             editable=False,
         ),
+        GridFieldCurrency(
+            "item__cost",
+            title=format_lazy("{} - {}", _("item"), _("cost")),
+            initially_hidden=True,
+            editable=False,
+        ),
+        GridFieldNumber(
+            "item__volume",
+            title=format_lazy("{} - {}", _("item"), _("volume")),
+            initially_hidden=True,
+            editable=False,
+        ),
+        GridFieldNumber(
+            "item__weight",
+            title=format_lazy("{} - {}", _("item"), _("weight")),
+            initially_hidden=True,
+            editable=False,
+        ),
         GridFieldText(
             "operation__item__owner",
             title=format_lazy("{} - {}", _("item"), _("owner")),
@@ -4645,6 +4762,20 @@ class DistributionOrderList(OperationPlanMixin, GridReport):
         GridFieldCurrency(
             "item__cost",
             title=format_lazy("{} - {}", _("item"), _("cost")),
+            editable=False,
+            extra='"formatoptions":{"defaultValue":""}, "summaryType":"max"',
+        ),
+        GridFieldNumber(
+            "item__volume",
+            title=format_lazy("{} - {}", _("item"), _("volume")),
+            initially_hidden=True,
+            editable=False,
+            extra='"formatoptions":{"defaultValue":""}, "summaryType":"max"',
+        ),
+        GridFieldNumber(
+            "item__weight",
+            title=format_lazy("{} - {}", _("item"), _("weight")),
+            initially_hidden=True,
             editable=False,
             extra='"formatoptions":{"defaultValue":""}, "summaryType":"max"',
         ),
@@ -5363,6 +5494,18 @@ class PurchaseOrderList(OperationPlanMixin, GridReport):
             initially_hidden=True,
             editable=False,
         ),
+        GridFieldNumber(
+            "item__volume",
+            title=format_lazy("{} - {}", _("item"), _("volume")),
+            initially_hidden=True,
+            editable=False,
+        ),
+        GridFieldNumber(
+            "item__weight",
+            title=format_lazy("{} - {}", _("item"), _("weight")),
+            initially_hidden=True,
+            editable=False,
+        ),
         GridFieldText(
             "item__owner",
             title=format_lazy("{} - {}", _("item"), _("owner")),
@@ -5641,6 +5784,24 @@ class DeliveryOrderList(GridReport):
         GridFieldText(
             "item__subcategory",
             title=format_lazy("{} - {}", _("item"), _("subcategory")),
+            initially_hidden=True,
+            editable=False,
+        ),
+        GridFieldCurrency(
+            "item__cost",
+            title=format_lazy("{} - {}", _("item"), _("cost")),
+            initially_hidden=True,
+            editable=False,
+        ),
+        GridFieldNumber(
+            "item__volume",
+            title=format_lazy("{} - {}", _("item"), _("volume")),
+            initially_hidden=True,
+            editable=False,
+        ),
+        GridFieldNumber(
+            "item__weight",
+            title=format_lazy("{} - {}", _("item"), _("weight")),
             initially_hidden=True,
             editable=False,
         ),
@@ -6178,9 +6339,21 @@ class InventoryDetail(OperationPlanMixin, GridReport):
             initially_hidden=True,
             editable=False,
         ),
-        GridFieldNumber(
+        GridFieldCurrency(
             "item__cost",
             title=format_lazy("{} - {}", _("item"), _("cost")),
+            initially_hidden=True,
+            editable=False,
+        ),
+        GridFieldNumber(
+            "item__volume",
+            title=format_lazy("{} - {}", _("item"), _("volume")),
+            initially_hidden=True,
+            editable=False,
+        ),
+        GridFieldNumber(
+            "item__weight",
+            title=format_lazy("{} - {}", _("item"), _("weight")),
             initially_hidden=True,
             editable=False,
         ),
@@ -6593,6 +6766,24 @@ class ResourceDetail(OperationPlanMixin, GridReport):
             initially_hidden=True,
             editable=False,
             title=format_lazy("{} - {}", _("item"), _("subcategory")),
+        ),
+        GridFieldCurrency(
+            "operationplan__item__cost",
+            title=format_lazy("{} - {}", _("item"), _("cost")),
+            initially_hidden=True,
+            editable=False,
+        ),
+        GridFieldNumber(
+            "operationplan__item__volume",
+            title=format_lazy("{} - {}", _("item"), _("volume")),
+            initially_hidden=True,
+            editable=False,
+        ),
+        GridFieldNumber(
+            "operationplan__item__weight",
+            title=format_lazy("{} - {}", _("item"), _("weight")),
+            initially_hidden=True,
+            editable=False,
         ),
         GridFieldText(
             "operationplan__item__owner",

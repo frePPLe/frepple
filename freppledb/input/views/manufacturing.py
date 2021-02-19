@@ -16,7 +16,7 @@
 #
 
 from django.conf import settings
-from django.db.models import DateTimeField, DurationField
+from django.db.models import F, DateTimeField, DurationField, FloatField
 from django.db.models.functions import Cast
 from django.db.models.expressions import RawSQL
 from django.utils.translation import gettext_lazy as _
@@ -1131,6 +1131,15 @@ class ManufacturingOrderList(OperationPlanMixin, GridReport):
                 """,
                 [],
             ),
+            total_cost=Cast(
+                F("operation__cost") * F("quantity"), output_field=FloatField()
+            ),
+            total_volume=Cast(
+                F("item__volume") * F("quantity"), output_field=FloatField()
+            ),
+            total_weight=Cast(
+                F("item__weight") * F("quantity"), output_field=FloatField()
+            ),
         )
 
     rows = (
@@ -1204,6 +1213,30 @@ class ManufacturingOrderList(OperationPlanMixin, GridReport):
         GridFieldNumber(
             "quantity",
             title=_("quantity"),
+            extra='"formatoptions":{"defaultValue":""}, "summaryType":"sum"',
+        ),
+        GridFieldCurrency(
+            "total_cost",
+            title=_("total cost"),
+            editable=False,
+            search=False,
+            initially_hidden=True,
+            extra='"formatoptions":{"defaultValue":""}, "summaryType":"sum"',
+        ),
+        GridFieldNumber(
+            "total_volume",
+            title=_("total volume"),
+            editable=False,
+            search=False,
+            initially_hidden=True,
+            extra='"formatoptions":{"defaultValue":""}, "summaryType":"sum"',
+        ),
+        GridFieldNumber(
+            "total_weight",
+            title=_("total weight"),
+            editable=False,
+            search=False,
+            initially_hidden=True,
             extra='"formatoptions":{"defaultValue":""}, "summaryType":"sum"',
         ),
         GridFieldChoice(

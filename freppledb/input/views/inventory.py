@@ -17,7 +17,8 @@
 from django.conf import settings
 from django.contrib.admin.utils import unquote, quote
 from django.contrib.admin.views.decorators import staff_member_required
-from django.db.models import Q
+from django.db.models.functions import Cast
+from django.db.models import F, Q, FloatField
 from django.db.models.expressions import RawSQL
 from django.shortcuts import redirect
 from django.utils.translation import gettext_lazy as _
@@ -606,9 +607,12 @@ class DistributionOrderList(OperationPlanMixin, GridReport):
                     q = q.filter(destination_id=args[0])
         q = reportclass.operationplanExtraBasequery(q, request)
         return q.annotate(
-            total_cost=RawSQL(
-                "select item.cost*operationplan.quantity from item where name = operationplan.item_id",
-                [],
+            total_cost=Cast(F("item__cost") * F("quantity"), output_field=FloatField()),
+            total_volume=Cast(
+                F("item__volume") * F("quantity"), output_field=FloatField()
+            ),
+            total_weight=Cast(
+                F("item__weight") * F("quantity"), output_field=FloatField()
             ),
             feasible=RawSQL(
                 "coalesce((operationplan.plan->>'feasible')::boolean, true)", []
@@ -713,6 +717,20 @@ class DistributionOrderList(OperationPlanMixin, GridReport):
         GridFieldCurrency(
             "total_cost",
             title=_("total cost"),
+            editable=False,
+            search=False,
+            extra='"formatoptions":{"defaultValue":""}, "summaryType":"sum"',
+        ),
+        GridFieldNumber(
+            "total_volume",
+            title=_("total volume"),
+            editable=False,
+            search=False,
+            extra='"formatoptions":{"defaultValue":""}, "summaryType":"sum"',
+        ),
+        GridFieldNumber(
+            "total_weight",
+            title=_("total weight"),
             editable=False,
             search=False,
             extra='"formatoptions":{"defaultValue":""}, "summaryType":"sum"',

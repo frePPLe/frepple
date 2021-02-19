@@ -476,6 +476,12 @@ class PurchaseOrderList(OperationPlanMixin, GridReport):
                 output_field=FloatField(),
             ),
             total_cost=Cast(F("unit_cost") * F("quantity"), output_field=FloatField()),
+            total_volume=Cast(
+                F("item__volume") * F("quantity"), output_field=FloatField()
+            ),
+            total_weight=Cast(
+                F("item__weight") * F("quantity"), output_field=FloatField()
+            ),
             feasible=RawSQL(
                 "coalesce((operationplan.plan->>'feasible')::boolean, true)", []
             ),
@@ -676,6 +682,20 @@ class PurchaseOrderList(OperationPlanMixin, GridReport):
         GridFieldCurrency(
             "total_cost",
             title=_("total cost"),
+            editable=False,
+            search=True,
+            extra='"formatoptions":{"defaultValue":""}, "summaryType":"sum"',
+        ),
+        GridFieldNumber(
+            "total_volume",
+            title=_("total volume"),
+            editable=False,
+            search=True,
+            extra='"formatoptions":{"defaultValue":""}, "summaryType":"sum"',
+        ),
+        GridFieldNumber(
+            "total_weight",
+            title=_("total weight"),
             editable=False,
             search=True,
             extra='"formatoptions":{"defaultValue":""}, "summaryType":"sum"',

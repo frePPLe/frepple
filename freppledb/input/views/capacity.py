@@ -15,33 +15,12 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-from datetime import datetime
-from dateutil.parser import parse
-import json
-
-from django.conf import settings
-from django.contrib.admin.utils import unquote, quote
-from django.contrib.admin.views.decorators import staff_member_required
-from django.core.exceptions import FieldDoesNotExist
-from django.db import connections
-from django.db.models.functions import Cast
-from django.db.models import Q, F, FloatField, DateTimeField, DurationField
 from django.db.models.expressions import RawSQL
-from django.db.models.fields import CharField
-from django.http import HttpResponse, Http404
-from django.http.response import StreamingHttpResponse, HttpResponseServerError
-from django.shortcuts import redirect
-from django.template import Template
-from django.utils.decorators import method_decorator
 from django.utils.translation import gettext_lazy as _
-from django.utils.translation import ungettext
 from django.utils.encoding import force_text
 from django.utils.text import format_lazy
-from django.views.generic import View
-from django.views.decorators.csrf import csrf_exempt
 
 from freppledb.boot import getAttributeFields
-from freppledb.common.models import Parameter
 from freppledb.input.models import (
     Resource,
     Operation,
@@ -49,26 +28,7 @@ from freppledb.input.models import (
     SetupMatrix,
     SetupRule,
     Skill,
-    Buffer,
-    Customer,
-    Demand,
-    DeliveryOrder,
-    Item,
-    OperationResource,
-    OperationMaterial,
-    Calendar,
-    CalendarBucket,
-    ManufacturingOrder,
-    SubOperation,
     ResourceSkill,
-    Supplier,
-    ItemSupplier,
-    searchmode,
-    OperationPlan,
-    ItemDistribution,
-    DistributionOrder,
-    PurchaseOrder,
-    OperationPlanMaterial,
     OperationPlanResource,
 )
 from freppledb.common.report import (
@@ -76,7 +36,6 @@ from freppledb.common.report import (
     GridFieldBool,
     GridFieldLastModified,
     GridFieldDateTime,
-    GridFieldTime,
     GridFieldText,
     GridFieldHierarchicalText,
     GridFieldNumber,
@@ -84,10 +43,8 @@ from freppledb.common.report import (
     GridFieldCurrency,
     GridFieldChoice,
     GridFieldDuration,
-    GridFieldJSON,
 )
 from .utils import OperationPlanMixin
-from freppledb.admin import data_site
 
 import logging
 

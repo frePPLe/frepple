@@ -51,8 +51,8 @@ from freppledb.input.models import (
     Demand,
     Item,
     OperationPlan,
-    OperationPlanResource,
     OperationPlanMaterial,
+    OperationPlanResource,
 )
 from freppledb.admin import data_site
 
@@ -1023,7 +1023,7 @@ class PathReport(GridReport):
                 (operationmaterial.item_id = %s and operationmaterial.quantity > 0)
                 or parentoperation.item_id = %s
                 or grandparentoperation.item_id = %s)
-            """,
+                """,
                 "location_id",
             )
             if not downstream
@@ -1031,7 +1031,7 @@ class PathReport(GridReport):
                 """
                 and exists (select 1 from operationmaterial om where om.operation_id = operation.name
                 and om.item_id = %s and om.quantity < 0)
-            """,
+                """,
                 "origin_id",
             )
         )

@@ -70,10 +70,16 @@ def add_extra_model_fields(sender, **kwargs):
         elif fieldtype == "number":
             # Note: Other numeric fields have precision 20, 8.
             # Changing the value below would require migrating existing attributes of all projects.
+            if register_args:
+                max_digits = register_args.get("max_digits", 15)
+                decimal_places = register_args.get("decimal_places", 6)
+            else:
+                max_digits = 15
+                decimal_places = 6
             field = models.DecimalField(
                 label,
-                max_digits=15,
-                decimal_places=6,
+                max_digits=max_digits,
+                decimal_places=decimal_places,
                 null=True,
                 blank=True,
                 db_index=True,

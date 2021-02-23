@@ -3761,6 +3761,11 @@ $.fn.drags = function(opt) {
 //  Follower functions
 
 var follow = {
+  setMethod: function(el) {
+     var me = $(el);
+     me.closest(".dropdown").find(".followerspan").text(me.text());
+     },
+     
   get: function(event, el) {
      var t = $(el);
      event.preventDefault();
@@ -3784,8 +3789,16 @@ var follow = {
            '</div>'+
            '<div class="modal-body">'+
              '<table id="follower_key" style="width:100%">'+
-               '<tr><th>'+gettext("Follow")+'</th></tr>'+
-               '<tr><td id="follower_models" style="vertical-align:top"></td></tr>'+
+               '<tr><th>'+gettext("Follow")+' '+
+               '<span class="dropdown">'+
+               '<button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">'+
+               '<span class="followerspan"></span>&nbsp;<span class="caret">'+
+               '</button>'+
+               '<ul class="dropdown-menu">'+
+                  '<li><a href="#" onclick="follow.setMethod(this)">online</a></li>'+
+                  '<li><a href="#" onclick="follow.setMethod(this)">email</a></li>'+
+                  '</ul></span>'+
+               '</th></tr><tr><td id="follower_models" style="vertical-align:top"></td></tr>'+
              '</table>'+
            '</div>'+
            '<div class="modal-footer">'+
@@ -3796,6 +3809,7 @@ var follow = {
            );
          dlg.find(".modal-title")
            .text(interpolate(gettext("Manage notifications of %s"), [data.label + " " + data.object_pk], false));
+         dlg.find(".followerspan").text(data.type);
          dlg.find("#follower_key")
            .attr("data-model", data.model)
            .attr("data-object_pk", data["object_pk"]);
@@ -3828,13 +3842,26 @@ var follow = {
            e = $("<td id='follower_users' style='vertical-align:top'></td>");
            for (var u of data.users) {
              var e2 = $("<div class='checkbox'><label>"
-               + "<input type='checkbox'/><span></span>"
-               + "</label></div>"
+               + "<input type='checkbox'/><span class='followername'></span>"
+               + "</label>&nbsp;&nbsp;"
+               + '<span class="dropdown">'
+               + '<button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">'
+               + '<span class="followerspan"></span>&nbsp;<span class="caret">'
+               + '</button>'
+               + '<ul class="dropdown-menu">'
+               + '<li><a href="#" onclick="follow.setMethod(this)">online</a></li>'
+               + '<li><a href="#" onclick="follow.setMethod(this)">email</a></li>'
+               + '</ul></span>'
+               + "</div>"
                );
              e2.find("input").attr("data-username", u.username);
              if (u.following != "no") e2.find("input").attr("checked", "true");
-             if (u.following == "indirect") e2.find("input").attr("disabled", "disabled");
-             e2.find("span").text(u.username);
+             e2.find(".followerspan").text(u.following == "email" ? "email" : "online");
+             if (u.following == "indirect") {
+               e2.find("input").attr("disabled", "disabled");
+               e2.find(".dropdown").addClass("disabled");
+             }
+             e2.find("span.followername").text(u.username);
              e.append(e2);
            }
            dlg.find("td").after(e);
@@ -3851,12 +3878,13 @@ var follow = {
      var data = {
           "object_pk": key.attr("data-object_pk"),
           "model": key.attr("data-model"),
-          "users": [],
+          "type": dlg.find("#follower_key .followerspan").text(),
+          "users": {},
           "models": []
           };
      dlg.find("#follower_users input:checked").each(function(){
        if ($(this).attr("disabled") != "disabled") 
-         data["users"].push($(this).attr("data-username"));
+         data["users"][$(this).attr("data-username")] = $(this).closest(".checkbox").find(".followerspan").text();
      });
      dlg.find("#follower_models input:checked").each(function(){
        data["models"].push($(this).attr("data-model"));

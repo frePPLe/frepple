@@ -1285,6 +1285,7 @@ class NotificationFactory:
             "object_pk": object_pk,
             "label": force_text(model._meta.verbose_name),
             "model": modelname,
+            "type": "online",
             "models": [
                 {
                     "model": modelname,
@@ -1342,6 +1343,9 @@ class NotificationFactory:
                                         for ch in children.values():
                                             ch["checked"] = True
                                         status["models"][0]["checked"] = True
+                                    status["type"] = (
+                                        "email" if flw.type == "M" else "online"
+                                    )
                                 else:
                                     # You are following a parent object
                                     parents.append(
@@ -1359,7 +1363,9 @@ class NotificationFactory:
                                     flw.content_type == content_type
                                     and flw.object_pk == object_pk
                                 ):
-                                    followers[flw.user.username] = "direct"
+                                    followers[flw.user.username] = (
+                                        "email" if flw.type == "M" else "online"
+                                    )
                                 elif flw.user.username not in followers:
                                     followers[flw.user.username] = "indirect"
                     except Exception as e:

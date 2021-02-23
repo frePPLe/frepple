@@ -789,12 +789,15 @@ def follow(request):
                         content_type=ct.pk, object_pk=object_pk
                     )
                 }
-                for u in rec.get("users", []):
-                    user = User.objects.using(request.database).get(username=u)
-                    if u not in followers:
+                for username, type in rec.get("users", {}).items():
+                    user = User.objects.using(request.database).get(username=username)
+                    if username not in followers:
                         # New follower
                         Follower(
-                            content_type_id=ct.pk, object_pk=object_pk, user=user
+                            content_type_id=ct.pk,
+                            object_pk=object_pk,
+                            user=user,
+                            type="M" if type == "email" else "O",
                         ).save(using=request.database)
                         Comment(
                             user_id=request.user.id,
@@ -802,11 +805,15 @@ def follow(request):
                             object_pk=object_pk,
                             object_repr=object_pk,
                             type="follower",
-                            comment="Added follower %s" % u,
+                            comment="Added follower %s" % username,
                         ).save(using=request.database)
+                    else:
+                        # Update follower
+                        followers[username].type = "M" if type == "email" else "O"
+                        followers[username].save(using=request.database)
                 for username, flw in followers.items():
                     if (
-                        username not in rec.get("users", [])
+                        username not in rec.get("users", {})
                         and username != request.user.username
                     ):
                         # Delete a follower
@@ -825,6 +832,8 @@ def follow(request):
                     if models:
                         # Update existing follower
                         myfollow.args["sub"] = models
+                        if "type" in rec:
+                            myfollow.type = "M" if rec.get("type") == "email" else "O"
                         myfollow.save(using=request.database)
                     else:
                         # Delete follower
@@ -835,6 +844,7 @@ def follow(request):
                         content_type_id=ct.pk,
                         object_pk=object_pk,
                         user=request.user,
+                        type="M" if rec.get("type") == "email" else "O",
                         args={"sub": models},
                     ).save(using=request.database)
             except Exception as e:

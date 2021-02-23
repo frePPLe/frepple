@@ -16,6 +16,9 @@ Release notes
   | We archive the inventory and safety stock values every day/week/month (configurable
     with the parameter archive.frequency).
   | Planners can review how the onhand and safety stock have evolved over time.
+  
+- | In the PO/MO/DO screens, the selection of a line happens now by clicking anywhere
+    on that line (previoulsy, the user had to click on the checkbox of the line).
 
 .. rubric:: System administration
 

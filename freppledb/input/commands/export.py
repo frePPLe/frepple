@@ -103,6 +103,15 @@ class cleanStatic(PlanTask):
                 "delete from operationplan where demand_id in (select name from demand where source = %s and lastmodified <> %s)",
                 (source, cls.timestamp),
             )
+
+            cursor.execute(
+                """
+                update operationplan set demand_id = null where demand_id in
+                (select name from demand where source = %s and lastmodified <> %s)
+            """,
+                (source, cls.timestamp),
+            )
+
             cursor.execute(
                 "delete from demand where source = %s and lastmodified <> %s",
                 (source, cls.timestamp),
@@ -275,6 +284,15 @@ class cleanStatic(PlanTask):
 
             cursor.execute(
                 """
+                update operationplan set demand_id = null where demand_id in
+                (select name from demand where item_id in
+                (select name from item where source = %s and lastmodified <> %s))
+            """,
+                (source, cls.timestamp),
+            )
+
+            cursor.execute(
+                """
                 delete from demand where item_id in 
                 (select name from item where source = %s and lastmodified <> %s)
             """,
@@ -404,6 +422,15 @@ class cleanStatic(PlanTask):
 
             cursor.execute(
                 """
+                update operationplan set demand_id = null where demand_id in
+                (select name from demand where location_id in
+                (select name from location where source = %s and lastmodified <> %s))
+            """,
+                (source, cls.timestamp),
+            )
+
+            cursor.execute(
+                """
                 delete from demand where location_id in 
                 (select name from location where source = %s and lastmodified <> %s)
             """,
@@ -449,6 +476,15 @@ class cleanStatic(PlanTask):
             )
             cursor.execute(
                 "delete from setupmatrix where source = %s and lastmodified <> %s",
+                (source, cls.timestamp),
+            )
+
+            cursor.execute(
+                """
+                update operationplan set demand_id = null where demand_id in
+                (select name from demand where customer_id in
+                (select name from customer where source = %s and lastmodified <> %s))
+            """,
                 (source, cls.timestamp),
             )
 

@@ -160,8 +160,10 @@ void PythonInterpreter::initialize() {
     // The arg 0 indicates that the interpreter doesn't
     // implement its own signal handler
     Py_InitializeEx(0);
-    // Initializes threads
+#if PY_MAJOR_VERSION <= 3 && PY_MINOR_VERSION <= 6
+    // Initializes threads in Python <= 3.6
     PyEval_InitThreads();
+#endif
     mainThreadState = PyEval_SaveThread();
   }
 
@@ -927,7 +929,7 @@ PythonFunction::PythonFunction(PyObject* p) {
 PythonData PythonFunction::call() const {
   if (!func) return PythonData();
   PyGILState_STATE pythonstate = PyGILState_Ensure();
-  PyObject* result = PyEval_CallFunction(func, "()");
+  PyObject* result = PyObject_CallFunction(func, "()");
   if (!result) {
     logger << "Error: Exception caught when calling Python function '"
            << (func ? PyEval_GetFuncName(func) : "nullptr") << "'" << endl;
@@ -940,7 +942,7 @@ PythonData PythonFunction::call() const {
 PythonData PythonFunction::call(const PyObject* p) const {
   if (!func) return PythonData();
   PyGILState_STATE pythonstate = PyGILState_Ensure();
-  PyObject* result = PyEval_CallFunction(func, "(O)", p);
+  PyObject* result = PyObject_CallFunction(func, "(O)", p);
   if (!result) {
     logger << "Error: Exception caught when calling Python function '"
            << (func ? PyEval_GetFuncName(func) : "nullptr") << "'" << endl;
@@ -953,7 +955,7 @@ PythonData PythonFunction::call(const PyObject* p) const {
 PythonData PythonFunction::call(const PyObject* p, const PyObject* q) const {
   if (!func) return PythonData();
   PyGILState_STATE pythonstate = PyGILState_Ensure();
-  PyObject* result = PyEval_CallFunction(func, "(OO)", p, q);
+  PyObject* result = PyObject_CallFunction(func, "(OO)", p, q);
   if (!result) {
     logger << "Error: Exception caught when calling Python function '"
            << (func ? PyEval_GetFuncName(func) : "nullptr") << "'" << endl;

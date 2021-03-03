@@ -23,7 +23,7 @@ FROM centos:8 as builder
 RUN yum -y update
 RUN yum -y install dnf-plugins-core epel-release && \
   dnf config-manager --set-enabled powertools && \
-  yum -y install xerces-c python36 git wget \
+  yum -y install xerces-c python36 git wget rpm-build \
     python3-psycopg2 python3-pip postgresql-devel openssl openssl-devel \
     cmake make python3-devel xerces-c-devel gcc-c++ python3-sphinx && \
   yum clean all 

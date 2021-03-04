@@ -21,7 +21,7 @@ import re
 import threading
 
 from django.conf import settings
-from django.contrib import auth
+from django.contrib import auth, messages
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.models import AnonymousUser
 from django.middleware.locale import LocaleMiddleware as DjangoLocaleMiddleware
@@ -29,7 +29,7 @@ from django.utils import translation
 from django.db import DEFAULT_DB_ALIAS
 from django.db.models import Q
 from django.http import HttpResponseNotFound
-from django.http.response import HttpResponseForbidden
+from django.http.response import HttpResponseForbidden, HttpResponseRedirect
 
 from freppledb.common.auth import MultiDBBackend
 from freppledb.common.models import Scenario, User
@@ -69,36 +69,45 @@ class HTTPAuthenticationMiddleware:
                         request.user = user
                 elif authmethod == "bearer" or webtoken:
                     # JWT webtoken authentication
-                    decode_ok = False
+                    decoded = None
                     for secret in (
-                        settings.AUTH_SECRET_KEY,
+                        getattr(settings, "AUTH_SECRET_KEY", None),
                         settings.DATABASES[request.database].get(
                             "SECRET_WEBTOKEN_KEY", settings.SECRET_KEY
                         ),
                     ):
-                        try:
-                            decoded = jwt.decode(
-                                webtoken or auth[1],
-                                secret,
-                                algorithms=["HS256"],
-                            )
-                            if "user" in decoded:
-                                user = User.objects.get(username=decoded["user"])
-                            else:
-                                user = User.objects.get(email=decoded["email"])
-                            user.backend = settings.AUTHENTICATION_BACKENDS[0]
-                            login(request, user)
-                            MultiDBBackend.getScenarios(user)
-                            request.user = user
-                            decode_ok = True
-                            request.session["navbar"] = decoded.get("navbar", True)
-                            request.session["xframe_options_exempt"] = True
-                            break
-                        except jwt.exceptions.InvalidTokenError as e:
-                            pass
-                    if not decode_ok:
-                        logger.error("Missing or incorrect webtoken")
-                        return HttpResponseForbidden("Missing or incorrect webtoken")
+                        if secret:
+                            try:
+                                decoded = jwt.decode(
+                                    webtoken or auth[1],
+                                    secret,
+                                    algorithms=["HS256"],
+                                )
+                            except jwt.exceptions.InvalidTokenError:
+                                pass
+                    if not decoded:
+                        logger.error("Missing or invalid webtoken")
+                        return HttpResponseForbidden("Missing or invalid webtoken")
+                    try:
+                        if "user" in decoded:
+                            user = User.objects.get(username=decoded["user"])
+                        elif "email" in decoded:
+                            user = User.objects.get(email=decoded["email"])
+                        else:
+                            logger.error("No user or email in webtoken")
+                            return HttpResponseForbidden("No user or email in webtoken")
+                    except User.DoesNotExist:
+                        logger.error("Invalid user in webtoken")
+                        messages.add_message(request, messages.INFO, "Unknown user")
+                        return HttpResponseRedirect("/data/login/")
+                    user.backend = settings.AUTHENTICATION_BACKENDS[0]
+                    login(request, user)
+                    MultiDBBackend.getScenarios(user)
+                    request.user = user
+                    if not decoded.get("navbar", True):
+                        request.session["navbar"] = False
+                    if decoded.get("xframe_options_exempt", True):
+                        request.session["xframe_options_exempt"] = True
             except Exception as e:
                 logger.warn(
                     "silently ignoring exception in http authentication: %s" % e

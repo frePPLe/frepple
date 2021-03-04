@@ -69,23 +69,35 @@ class HTTPAuthenticationMiddleware:
                         request.user = user
                 elif authmethod == "bearer" or webtoken:
                     # JWT webtoken authentication
-                    try:
-                        decoded = jwt.decode(
-                            webtoken or auth[1],
-                            settings.DATABASES[request.database].get(
-                                "SECRET_WEBTOKEN_KEY", settings.SECRET_KEY
-                            ),
-                            algorithms=["HS256"],
-                        )
-                        user = User.objects.get(username=decoded["user"])
-                        user.backend = settings.AUTHENTICATION_BACKENDS[0]
-                        login(request, user)
-                        MultiDBBackend.getScenarios(user)
-                        request.user = user
-                        request.session["navbar"] = decoded.get("navbar", True)
-                        request.session["xframe_options_exempt"] = True
-                    except jwt.exceptions.InvalidTokenError as e:
-                        logger.error("Missing or incorrect webtoken: %s" % e)
+                    decode_ok = False
+                    for secret in (
+                        settings.AUTH_SECRET_KEY,
+                        settings.DATABASES[request.database].get(
+                            "SECRET_WEBTOKEN_KEY", settings.SECRET_KEY
+                        ),
+                    ):
+                        try:
+                            decoded = jwt.decode(
+                                webtoken or auth[1],
+                                secret,
+                                algorithms=["HS256"],
+                            )
+                            if "user" in decoded:
+                                user = User.objects.get(username=decoded["user"])
+                            else:
+                                user = User.objects.get(email=decoded["email"])
+                            user.backend = settings.AUTHENTICATION_BACKENDS[0]
+                            login(request, user)
+                            MultiDBBackend.getScenarios(user)
+                            request.user = user
+                            decode_ok = True
+                            request.session["navbar"] = decoded.get("navbar", True)
+                            request.session["xframe_options_exempt"] = True
+                            break
+                        except jwt.exceptions.InvalidTokenError as e:
+                            pass
+                    if not decode_ok:
+                        logger.error("Missing or incorrect webtoken")
                         return HttpResponseForbidden("Missing or incorrect webtoken")
             except Exception as e:
                 logger.warn(

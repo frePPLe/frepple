@@ -2,7 +2,7 @@
 set(CMAKE_VERBOSE_MAKEFILE ON)
 cmake_minimum_required (VERSION 3.0)
 
-project(frepple VERSION 6.12.0)
+project(frepple VERSION 6.13.0)
 set(PROJECT_EDITION "Community Edition")
 
 if (CMAKE_SYSTEM_NAME MATCHES "Linux")

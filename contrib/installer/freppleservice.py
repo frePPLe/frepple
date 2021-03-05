@@ -31,13 +31,17 @@ AUTO_START = True
 SESSION_CHANGES = False
 
 
-class ServiceHandler(object):
+class ServiceHandler:
     def __init__(self):
         # Event flag to communicate between the Run and Stop methods
         self.stopEvent = threading.Event()
         self.server = None
 
     # Called when the service is starting
+    def initialize(self, configFileName):
+        # cx_freeze mess with Initialize vs initialize
+        return self.Initialize(configFileName)
+
     def Initialize(self, configFileName):
         # Support multiprocessing module
         freeze_support()
@@ -60,6 +64,10 @@ class ServiceHandler(object):
     # use this to perform the work of the service; don't forget to set or check
     # for the stop event or the service GUI will not respond to requests to
     # stop the service
+    def run(self):
+        # cx_freeze mess with Run vs run
+        return self.Run()
+
     def Run(self):
         # Import modules
         from cheroot import wsgi
@@ -243,6 +251,10 @@ class ServiceHandler(object):
                 )
 
     # Called when the service is being stopped by the service manager GUI
+    def stop(self):
+        # cx_freeze mess with Stop vs stop
+        return self.Stop()
+
     def Stop(self):
         if not self.server:
             return

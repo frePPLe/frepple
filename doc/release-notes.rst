@@ -1,8 +1,8 @@
 Release notes
 -------------
 
-6.12.0 (Upcoming release)
-=========================
+6.12.0 (2021/03/01)
+===================
 
 .. rubric:: Data model
 
@@ -18,7 +18,7 @@ Release notes
   | Planners can review how the onhand and safety stock have evolved over time.
   
 - | In the PO/MO/DO screens, the selection of a line happens now by clicking anywhere
-    on that line (previoulsy, the user had to click on the checkbox of the line).
+    on that line. Previously, the user had to click on the checkbox at the start of the line.
 
 .. rubric:: System administration
 

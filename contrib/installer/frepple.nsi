@@ -30,12 +30,16 @@
 !define PRODUCT_DIR_REGKEY "Software\Microsoft\Windows\CurrentVersion\App Paths\frepple.exe"
 !define PRODUCT_UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_NAME} ${PRODUCT_VERSION}"
 
+; ANSI installer is deprecated, but a unicode installer doesn't display finish.bmp - nsis bug 
+Unicode False
+
 ; Select compressor
 SetCompressor /SOLID lzma
 
 ;Include for Modern UI and library installation
 !define MULTIUSER_EXECUTIONLEVEL highest
 !define MULTIUSER_MUI
+!define MULTIUSER_USE_PROGRAMFILES64
 !define MULTIUSER_INSTALLMODE_COMMANDLINE
 !define MULTIUSER_INSTALLMODE_DEFAULT_ALLUSERS
 !define MULTIUSER_INSTALLMODE_INSTDIR "${PRODUCT_NAME} ${PRODUCT_VERSION}"
@@ -105,7 +109,7 @@ ReserveFile "parameters.ini"
 ReserveFile "sendusage.ini"
 ReserveFile "finish.ini"
 ReserveFile "finish.bmp"
-ReserveFile '${NSISDIR}\Plugins\InstallOptions.dll'
+ReserveFile '${NSISDIR}\Plugins\x86-unicode\InstallOptions.dll'
 
 Function .onInit
   ; Extract some files used by the installer
@@ -114,8 +118,8 @@ Function .onInit
   !insertmacro INSTALLOPTIONS_EXTRACT "finish.ini"
   !insertmacro INSTALLOPTIONS_EXTRACT "finish.bmp"
 
-  ; Write image paths to the INI file
-  WriteINIStr "$PLUGINSDIR\finish.ini" "Field 7" "Text" "$PLUGINSDIR\finish.bmp"
+  ; Write image path to the INI file
+  !insertmacro INSTALLOPTIONS_WRITE "finish.ini" "Field 7" "Text" "$PLUGINSDIR\finish.bmp"
 
   !insertmacro MULTIUSER_INIT
 FunctionEnd
@@ -155,7 +159,7 @@ Section "Application" SecAppl
   CreateShortCut "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}\Open configuration folder.lnk" "$INSTDIR\bin\custom"
   CreateShortCut "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}\Open log folder.lnk" "$APPDATA\${PRODUCT_NAME}\${PRODUCT_VERSION}"
   SetOutPath "$INSTDIR\bin"
-  CreateShortCut "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}\Open command window.lnk" "$SYSDIR\cmd.exe"
+  CreateShortCut "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}\Open command window.lnk" "$SYSDIR\cmd.exe" "dummyargument"
 SectionEnd
 
 
@@ -272,7 +276,7 @@ Function FinishOpen
   pop $7
 
   ${If} $7 != "Admin"
-    WriteIniStr "$PLUGINSDIR\finish.ini" "Field 6" "Flags" "DISABLED"
+    !insertmacro INSTALLOPTIONS_WRITE "finish.ini" "Field 6" "Flags" "DISABLED"
   ${EndIf}
   !insertmacro MUI_HEADER_TEXT "Completing the installation" "frePPLe has been installed on your computer"
   !insertmacro INSTALLOPTIONS_DISPLAY "finish.ini"
@@ -315,7 +319,12 @@ Function FinishLeave
   ; Install the service
   ReadINIStr $0 "$PLUGINSDIR\finish.ini" "Field 6" "State"
   ${If} $0 == 1
-    nsExec::Exec '"$INSTDIR\bin\freppleservice.exe" --install default'
+    FileOpen $R4 "$INSTDIR\bin\custom\service.ini" "w"
+    FileWrite $R4 "[Logging]$\r$\n"
+    FileWrite $R4 "FileName=$APPDATA\${PRODUCT_NAME}\${PRODUCT_VERSION}\service.log$\r$\n"
+    FileWrite $R4 "Level=Error$\r$\n"
+    FileClose $R4
+    nsExec::Exec '"$INSTDIR\bin\freppleservice.exe" --install default "$INSTDIR\bin\custom\service.ini"'
     sleep 2
     nsExec::Exec 'net start frePPLe_default'
     CreateShortCut "$SMPROGRAMS\${PRODUCT_NAME} ${PRODUCT_VERSION}\Start service.lnk" "net" '"start" "frePPLe_default"'

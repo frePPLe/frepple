@@ -155,18 +155,18 @@ class MultiDBBackend(ModelBackend):
 
 def basicauthentication(allow_logged_in=True, realm="frepple"):
     """
-  A decorator that requires a user to be logged in. If they are not
-  logged in the request is examined for a 'authorization' header.
+    A decorator that requires a user to be logged in. If they are not
+    logged in the request is examined for a 'authorization' header.
 
-  If the header is present it is tested for basic authentication and
-  the user is logged in with the provided credentials.
+    If the header is present it is tested for basic authentication and
+    the user is logged in with the provided credentials.
 
-  If the header is not present a http 401 is sent back to the
-  requestor to provide credentials.
+    If the header is not present a http 401 is sent back to the
+    requestor to provide credentials.
 
-  This code is inspired on and copied from this snippet:
-    https://djangosnippets.org/snippets/243/
-  """
+    This code is inspired on and copied from this snippet:
+      https://djangosnippets.org/snippets/243/
+    """
 
     def view_decorator(view):
         def wrapper(request, *args, **kwargs):
@@ -192,8 +192,8 @@ def basicauthentication(allow_logged_in=True, realm="frepple"):
                             if user and user.is_active:
                                 # Active user
                                 request.api = (
-                                    True
-                                )  # TODO I think this is no longer used
+                                    True  # TODO I think this is no longer used
+                                )
                                 login(request, user)
                                 request.user = user
                                 ok = True
@@ -219,9 +219,13 @@ def basicauthentication(allow_logged_in=True, realm="frepple"):
     return view_decorator
 
 
-def getWebserviceAuthorization(database=DEFAULT_DB_ALIAS, **kwargs):
+def getWebserviceAuthorization(database=DEFAULT_DB_ALIAS, secret=None, **kwargs):
     # Create authorization header for the web service
     payload = {}
+    if not secret:
+        secret = settings.DATABASES[database].get(
+            "SECRET_WEBTOKEN_KEY", settings.SECRET_KEY
+        )
     for key, value in kwargs.items():
         if key == "exp":
             payload["exp"] = round(time.time()) + value
@@ -229,6 +233,6 @@ def getWebserviceAuthorization(database=DEFAULT_DB_ALIAS, **kwargs):
             payload[key] = value
     return jwt.encode(
         payload,
-        settings.DATABASES[database].get("SECRET_WEBTOKEN_KEY", settings.SECRET_KEY),
+        secret,
         algorithm="HS256",
     ).decode("ascii")

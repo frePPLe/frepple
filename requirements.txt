@@ -1,4 +1,4 @@
-cheroot == 6.5.5
+cheroot == 8.4.5
 portend == 2.5
 djangorestframework == 3.9.4
 djangorestframework-bulk == 0.2.1
@@ -32,5 +32,5 @@ https://github.com/frePPLe/django/tarball/frepple_6.0
 # Additional packages for windows development environments
 # pywin32
 # adodbapi
-# cx_Freeze
-# cx_Logging
+# cx_Freeze == 6.5.3
+# cx_Logging == 2.2

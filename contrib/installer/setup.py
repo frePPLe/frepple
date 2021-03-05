@@ -41,6 +41,8 @@ packages = [
     "appdirs",
     "packaging",
     "pkg_resources",
+    "wsgiref",
+    "html5lib",
     # Added for PostgreSQL
     "psycopg2",
     # Dependencies for openpyxl

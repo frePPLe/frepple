@@ -98,7 +98,7 @@ class HTTPAuthenticationMiddleware:
                             return HttpResponseForbidden("No user or email in webtoken")
                     except User.DoesNotExist:
                         logger.error("Invalid user in webtoken")
-                        messages.add_message(request, messages.INFO, "Unknown user")
+                        messages.add_message(request, messages.ERROR, "Unknown user")
                         return HttpResponseRedirect("/data/login/")
                     user.backend = settings.AUTHENTICATION_BACKENDS[0]
                     login(request, user)

@@ -160,7 +160,9 @@ class OperationPlanMixin:
               case when demand.name is not null then 'D' when forecast.name is not null then 'F' end as tp
             from jsonb_each_text(operationplan.plan->'pegging')
             left outer join demand on key = demand.name
-            left outer join forecast on substring(key from 0 for position(' - ' in key)) = forecast.name
+            left outer join forecast on substring(key from 0 for length(key)
+                                                                 - position(' - ' in reverse(key))
+                                                                 -1) = forecast.name
             where demand.name is not null or forecast.name is not null
             order by value desc, key desc
             limit 10

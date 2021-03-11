@@ -24,10 +24,6 @@ from freppledb.common.models import User
 
 try:
     from selenium import webdriver
-    from selenium.common.exceptions import NoSuchElementException
-    from selenium.webdriver.common.action_chains import ActionChains
-    from selenium.webdriver.common.by import By
-    from selenium.webdriver.support.ui import WebDriverWait
 
     noSelenium = False
 except ImportError:
@@ -59,6 +55,15 @@ class SeleniumTest(StaticLiveServerTestCase):
             if settings.SELENIUM_HEADLESS:
                 options.add_argument("--headless")
             cls.driver = webdriver.Chrome(chrome_options=options)
+        elif settings.SELENIUM_TESTS == "edge":
+            from msedge.selenium_tools import Edge, EdgeOptions
+
+            options = EdgeOptions()
+            options.use_chromium = True
+            options.add_argument("--silent")
+            if settings.SELENIUM_HEADLESS:
+                options.add_argument("--headless")
+            cls.driver = Edge(options=options)
         else:
             raise Exception("Invalid setting SELENIUM_TESTS")
         cls.driver.set_window_size(1080, 800)

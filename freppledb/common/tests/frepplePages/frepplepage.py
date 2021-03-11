@@ -14,6 +14,7 @@
 # You should have received a copy of the GNU Affero General Public
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
+
 from freppledb.common.tests.frepplePages.freppleelement import (
     BasePageElement,
 )  # in here, import the class containing all the elements from your target page

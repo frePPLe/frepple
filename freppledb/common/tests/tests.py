@@ -31,8 +31,6 @@ def checkResponse(testcase, response):
     testcase.assertEqual(response.status_code, 200)
 
 
-
-
 class DataLoadTest(TestCase):
     def setUp(self):
         # Login

@@ -97,10 +97,11 @@ $(".scenariorelease").on("click", function(event) {
   $.ajax({
    url: target + "/execute/launch/scenario_copy/",
    type: 'POST',
-   data: {release: 1},
+   data: {destination: $(this).attr("data-target"),
+	      release: 1},
    complete: function() {
      $("#scenariotoast").addClass("show");
-     $("#scenariotoast span").text("Scenario released");
+     $("#scenariotoast span").text("Launched releasing task");
      setTimeout(function(){$("#scenariotoast").removeClass("show") }, 3000);
      if (target == url_prefix) window.location.href = "/"; }
    });

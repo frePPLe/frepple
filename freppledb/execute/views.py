@@ -402,15 +402,20 @@ def wrapTask(request, action):
                     arguments=arguments,
                 )
                 task.save(using=source)
-        elif "release" in args:
-            # Note: release is immediate and synchronous.
+        elif "release" in args:            
             if not request.user.has_perm("common.release_scenario"):
                 raise Exception("Missing execution privileges")
-            sc = Scenario.objects.using(DEFAULT_DB_ALIAS).get(name=request.database)
-            if sc.status != "Free" and sc.name != DEFAULT_DB_ALIAS:
-                sc.status = "Free"
-                sc.lastrefresh = now
-                sc.save(using=DEFAULT_DB_ALIAS)
+            destination = args.get("destination", False)
+            if destination and destination != DEFAULT_DB_ALIAS:
+                arguments = "%s" % (destination,)
+                task = Task(
+                    name="scenario_release",
+                    submitted=now,
+                    status="Waiting",
+                    user=request.user,
+                    arguments=arguments,
+                )
+                task.save(using=DEFAULT_DB_ALIAS)
         elif "promote" in args:
             if not request.user.has_perm("common.promote_scenario"):
                 raise Exception("Missing execution privileges")

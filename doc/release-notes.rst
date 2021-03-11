@@ -1,6 +1,14 @@
 Release notes
 -------------
 
+6.13.0 (Upcoming release)
+=========================
+
+.. rubric:: User interface
+
+- | Scenario management: Addition of a command to release a scenario.
+
+
 6.12.0 (2021/03/01)
 ===================
 

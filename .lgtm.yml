@@ -1,10 +1,8 @@
 extraction:
   cpp:
-    configure:
+    after_prepare:
       command:
       - pip3 install -r requirements.txt
-      - make -f Makefile.dist prep configure
-      - ./configure --disable-doc
   python:
     python_setup:
       requirements_files: requirements.txt

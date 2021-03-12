@@ -235,6 +235,20 @@ if (valgrind)
        ${CMAKE_SOURCE_DIR}/freppledb/common/commands.py
     )
 endif()
+find_program(gdb NAMES gdb)
+if (gdb)
+  add_custom_target(gdb ${CMAKE_COMMAND} -E
+    env
+      FREPPLE_HOME=${CMAKE_SOURCE_DIR}/bin
+      PYTHONPATH=${CMAKE_SOURCE_DIR}
+      DJANGO_SETTINGS_MODULE=freppledb.settings
+      FREPPLE_LOGFILE=frepple.log
+      supply=1
+      constraint=13
+      plantype=1
+    gdb -ex=r --args ${CMAKE_SOURCE_DIR}/bin/frepple ${CMAKE_SOURCE_DIR}/freppledb/common/commands.py
+    )
+endif()
 
 # TODO version number in 
 #     freppledb/__init__.py

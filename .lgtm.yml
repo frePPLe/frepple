@@ -1,7 +1,7 @@
 extraction:
   cpp:
-    after_prepare:
-      command:
+    prepare:
+      script:
         - pip3 install -r requirements.txt
   python:
     python_setup:

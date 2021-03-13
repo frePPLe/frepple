@@ -2,7 +2,7 @@ extraction:
   cpp:
     after_prepare:
       command:
-      - pip3 install -r requirements.txt
+        - pip3 install -r requirements.txt
   python:
     python_setup:
       requirements_files: requirements.txt

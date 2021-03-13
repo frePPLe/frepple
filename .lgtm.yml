@@ -1,8 +1,18 @@
 extraction:
   cpp:
     prepare:
-      script:
-        - pip3 install -r requirements.txt
+      packages:
+        - cmake
+    configure:
+      command:
+        - pip3 install -r requirements.txt      
+        - mkdir build
+        - cd build
+        - cmake ..
+    index:
+      build_command:
+        - cd build
+        - cmake --build .
   python:
     python_setup:
       requirements_files: requirements.txt

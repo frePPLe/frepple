@@ -89,7 +89,7 @@ def Home(request):
 
 def getWizardSteps(request, mode):
     try:
-        versionnumber = VERSION.split(".", 2)
+        versionnumber = __version__.split(".", 2)
         docurl = "%s/docs/%s.%s" % (
             settings.DOCUMENTATION_URL,
             versionnumber[0],
@@ -1169,7 +1169,7 @@ def WizardLoad(request, mode=None):
     elif not mode:
         title = _("Get started - Data loading wizard")
     else:
-        return HttpResponseServerError("Invalid wizard mode: %s" % mode)
+        return HttpResponseServerError("Invalid wizard mode")
     context = {
         "prefix": "/" + request.prefix,
         "mode": mode,
@@ -1526,4 +1526,3 @@ class FeatureDashboard(TemplateView):
         context = super().get_context_data(**kwargs)
         context["title"] = "Explore features"
         return context
-

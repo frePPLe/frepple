@@ -663,7 +663,7 @@ def sendStaticFile(request, *args, headers=None):
     if getattr(settings, "APACHE_XSENDFILE", False):
         # Forward to Apache
         # Code inspired on https://github.com/johnsensible/django-sendfile/
-        response = HttpResponse(request)
+        response = HttpResponse()
         # For apache:
         response["X-Sendfile"] = os.path.join(*args)
         # For nginx:

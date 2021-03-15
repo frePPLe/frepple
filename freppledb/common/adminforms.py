@@ -524,7 +524,8 @@ class MultiDBModelAdmin(admin.ModelAdmin):
         if request.method == "POST":
             if request.user.has_perm("common.add_comment"):
                 comment = request.POST["comment"]
-                if comment:
+                att = request.FILES.get("attachment", None)
+                if comment or att:
                     c = Comment(
                         content_object=modelinstance,
                         object_repr=str(modelinstance)[:200],
@@ -532,7 +533,6 @@ class MultiDBModelAdmin(admin.ModelAdmin):
                         comment=comment,
                         type="comment",
                     )
-                    att = request.FILES.get("attachment", None)
                     if att:
                         c.attachment = att
                     c.save(using=request.database)

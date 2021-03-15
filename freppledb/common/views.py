@@ -17,6 +17,7 @@
 
 import json
 import os.path
+from mimetypes import guess_type
 
 from django.core.paginator import Paginator
 from django.http import JsonResponse, HttpResponseNotAllowed
@@ -664,6 +665,11 @@ def sendStaticFile(request, *args, headers=None):
         # Forward to Apache
         # Code inspired on https://github.com/johnsensible/django-sendfile/
         response = HttpResponse()
+        guessed_mimetype = guess_type(args[-1], strict=False)[0]
+        if guessed_mimetype:
+            response["Content-Type"] = guessed_mimetype
+        else:
+            response["Content-Type"] = "application/octet-stream"
         # For apache:
         response["X-Sendfile"] = os.path.join(*args)
         # For nginx:

@@ -19,6 +19,7 @@ from django.conf import settings
 from django.db.models import F, DateTimeField, DurationField, FloatField
 from django.db.models.functions import Cast
 from django.db.models.expressions import RawSQL
+from django.template import Template
 from django.utils.translation import gettext_lazy as _
 from django.utils.encoding import force_text
 from django.utils.text import format_lazy
@@ -66,6 +67,19 @@ class OperationResourceList(GridReport):
     model = OperationResource
     frozenColumns = 1
     help_url = "modeling-wizard/manufacturing-capacity/operation-resources.html"
+    message_when_empty = Template(
+        """
+        <h3>Define operation resources</h3>
+        <br>
+        This table defines which resources are required to perfrom an operation.<br>
+        <br><br>
+        <div role="group" class="btn-group.btn-group-justified">
+        <a href="{{request.prefix}}/data/input/operationresource/add/" class="btn btn-primary">Create a single operation resource<br>in a form</a>
+        <a href="{{request.prefix}}/wizard/load/production/?currentstep=8" class="btn btn-primary">Wizard to upload operation resources<br>from a spreadsheet</a>
+        </div>
+        <br>
+        """
+    )
 
     rows = (
         GridFieldInteger(
@@ -313,6 +327,20 @@ class OperationMaterialList(GridReport):
     model = OperationMaterial
     frozenColumns = 1
     help_url = "modeling-wizard/manufacturing-bom/operation-materials.html"
+    message_when_empty = Template(
+        """
+        <h3>Define operation materials</h3>
+        <br>
+        This table defines what item(s) an operation is consuming and producing.<br>
+        Here you define the bill of material.<br>
+        <br><br>
+        <div role="group" class="btn-group.btn-group-justified">
+        <a href="{{request.prefix}}/data/input/operationmaterial/add/" class="btn btn-primary">Create a single operation material<br>in a form</a>
+        <a href="{{request.prefix}}/wizard/load/production/?currentstep=3" class="btn btn-primary">Wizard to upload operation materials<br>from a spreadsheet</a>
+        </div>
+        <br>
+        """
+    )
 
     rows = (
         GridFieldInteger(
@@ -542,6 +570,28 @@ class CalendarList(GridReport):
     model = Calendar
     frozenColumns = 1
     help_url = "model-reference/calendars.html"
+    message_when_empty = Template(
+        """
+        <h3>Define calendars</h3>
+        <br>
+        A calendar represents a numeric value that is varying over time.<br><br>
+        Different other models refer to calendars:
+        <ul>
+        <li>- A location refers to a calendar to define the working hours and holidays.</li>
+        <li>- A resource refers to a calendar to define the working hours and holidays.</li>
+        <li>- A supplier refers to a calendar to define the working hours and holidays.</li>
+        <li>- An operation refers to a calendar to define the working hours and holidays.</li>
+        <li>- A resource refers to a calendar to define the efficiency varying over time.</li>
+        <li>- A resource refers to a calendar to define the resource size varying over time.</li>
+        <li>- A buffer refers to a calendar to define the safety stock varying over time.</li>
+        </ul>
+        <br><br>
+        <div role="group" class="btn-group.btn-group-justified">
+        <a href="{{request.prefix}}/data/input/calendar/add/" class="btn btn-primary">Create a single calendar<br>in a form</a>
+        </div>
+        <br>
+        """
+    )
 
     rows = (
         GridFieldText(
@@ -566,6 +616,19 @@ class CalendarBucketList(GridReport):
     model = CalendarBucket
     frozenColumns = 1
     help_url = "model-reference/calendar-buckets.html"
+    message_when_empty = Template(
+        """
+        <h3>Define calendar buckets</h3>
+        <br>
+        A calendar represents a numeric value that is varying over time.<br><br>
+        A calendar bucket represents a time period on a calendar during which a certain numeric value is effective.<br><br>
+        <br><br>
+        <div role="group" class="btn-group.btn-group-justified">
+        <a href="{{request.prefix}}/data/input/calendarbucket/add/" class="btn btn-primary">Create a single calendar bucket</a>
+        </div>
+        <br>
+        """
+    )
 
     rows = (
         GridFieldInteger(
@@ -608,6 +671,20 @@ class OperationList(GridReport):
     model = Operation
     frozenColumns = 1
     help_url = "modeling-wizard/manufacturing-bom/operations.html"
+    message_when_empty = Template(
+        """
+        <h3>Define operations</h3>
+        <br>
+        An operation is a manufacturing operation consuming some items (a bill of material) to produce a
+        new item. It also loads a number of resources during this process.<br>
+        <br><br>
+        <div role="group" class="btn-group.btn-group-justified">
+        <a href="{{request.prefix}}/data/input/operation/add/" class="btn btn-primary">Create a single operation<br>in a form</a>
+        <a href="{{request.prefix}}/wizard/load/production/?currentstep=3" class="btn btn-primary">Wizard to upload operations<br>from a spreadsheet</a>
+        </div>
+        <br>
+        """
+    )
 
     rows = (
         GridFieldText(
@@ -683,7 +760,15 @@ class SubOperationList(GridReport):
     model = SubOperation
     frozenColumns = 1
     help_url = "model-reference/suboperations.html"
-
+    message_when_empty = Template(
+        """
+        <h3>Define suboperations</h3>
+        <br>
+        This table is DEPRECATED.<br><br>
+        Instead, use the field "owner" in the operation table to define steps in a routing operation.<br>
+        <br>
+        """
+    )
     rows = (
         GridFieldInteger("id", title=_("identifier"), key=True, initially_hidden=True),
         GridFieldText(
@@ -944,6 +1029,20 @@ class ManufacturingOrderList(OperationPlanMixin, GridReport):
     editable = True
     height = 250
     help_url = "modeling-wizard/manufacturing-bom/manufacturing-orders.html"
+    message_when_empty = Template(
+        """
+        <h3>Define manufacturing orders</h3>
+        <br>
+        This table contains the "confirmed" manufacturing orders.<br><br>
+        When generating a plan frepple will add new "proposed" manufacturing orders to this table.<br>
+        <br><br>
+        <div role="group" class="btn-group.btn-group-justified">
+        <a href="{{request.prefix}}/data/input/manufacturingorder/add/" onclick="window.location = $(event.target).attr('href'); event.preventDefault();" class="btn btn-primary">Create a single manufacturing order<br>in a form</a>
+        <a href="{{request.prefix}}/wizard/load/production/?currentstep=7" onclick="window.location = $(event.target).attr('href'); event.preventDefault();" class="btn btn-primary">Wizard to upload manufacturing orders<br>from a spreadsheet</a>
+        </div>
+        <br>
+        """
+    )
 
     @classmethod
     def extra_context(reportclass, request, *args, **kwargs):

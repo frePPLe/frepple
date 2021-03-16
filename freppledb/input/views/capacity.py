@@ -62,7 +62,7 @@ class SetupMatrixList(GridReport):
         """
         <h3>Define setup matrices</h3>
         <br>
-        A setup matrix defines the time and cost of setup conversions on a resource.<br>
+        A setup matrix defines the time and cost of setup conversions on a resource.<br><br>
         A setup matrix contains a list of rules that define the changeover cost and duration.<br>
         <br><br>
         <div role="group" class="btn-group.btn-group-justified">
@@ -380,7 +380,7 @@ class ResourceDetail(OperationPlanMixin, GridReport):
         """
         <h3>Resource detail</h3>
         <br>
-        The table has a list of all manufacturing orders assigned to a certain certain resource.<br><br>
+        This table has a list of all manufacturing orders assigned to a certain certain resource.<br><br>
         The planning algorithm will populate this table, and as a user you normally don't need to create records in this table.<br>
         <br>
         """

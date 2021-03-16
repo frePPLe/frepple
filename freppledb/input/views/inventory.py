@@ -21,6 +21,7 @@ from django.db.models.functions import Cast
 from django.db.models import F, Q, FloatField
 from django.db.models.expressions import RawSQL
 from django.shortcuts import redirect
+from django.template import Template
 from django.utils.translation import gettext_lazy as _
 from django.utils.encoding import force_text
 from django.utils.text import format_lazy
@@ -110,6 +111,20 @@ class BufferList(GridReport):
     model = Buffer
     frozenColumns = 1
     help_url = "modeling-wizard/master-data/buffers.html"
+    message_when_empty = Template(
+        """
+        <h3>Define buffers</h3>
+        <br>
+        A buffer is a (logical of physical) inventory point for an item at a certain location.<br><br>
+        Use this table to define the on hand inventory or safety stocks.<br>
+        <br><br>
+        <div role="group" class="btn-group.btn-group-justified">
+        <a href="{{request.prefix}}/data/input/buffer/add/" class="btn btn-primary">Create a single buffer<br>in a form</a>
+        <a href="{{request.prefix}}/wizard/load/production/?currentstep=7" class="btn btn-primary">Wizard to upload buffers<br>from a spreadsheet</a>
+        </div>
+        <br>
+        """
+    )
 
     rows = (
         GridFieldInteger(
@@ -274,6 +289,18 @@ class ItemDistributionList(GridReport):
     model = ItemDistribution
     frozenColumns = 1
     help_url = "modeling-wizard/distribution/item-distributions.html"
+    message_when_empty = Template(
+        """
+        <h3>Define item distributions</h3>
+        <br>
+        This table defines the possibility to transfer an item from one location to another.<br>
+        <br><br>
+        <div role="group" class="btn-group.btn-group-justified">
+        <a href="{{request.prefix}}/data/input/itemdistribution/add/" class="btn btn-primary">Create a single item distribution<br>in a form</a>
+        </div>
+        <br>
+        """
+    )
 
     rows = (
         GridFieldInteger(
@@ -507,6 +534,20 @@ class DistributionOrderList(OperationPlanMixin, GridReport):
     editable = True
     height = 250
     help_url = "modeling-wizard/distribution/distribution-orders.html"
+    message_when_empty = Template(
+        """
+        <h3>Define distribution orders</h3>
+        <br>
+        This table defines ongoing and proposed stock transfers between locations.<br><br>
+        Use this table to load ongoing or frozen transfers in the status "confirmed".<br><br>
+        The planning algorithm will further populate this table with additional "proposed" transfers for the future.<br>
+        <br><br>
+        <div role="group" class="btn-group.btn-group-justified">
+        <a href="{{request.prefix}}/data/input/distributionorder/add/" onclick="window.location = $(event.target).attr('href'); event.preventDefault();" class="btn btn-primary">Create a single distribution order<br>in a form</a>
+        </div>
+        <br>
+        """
+    )
 
     @classmethod
     def extra_context(reportclass, request, *args, **kwargs):
@@ -1003,6 +1044,15 @@ class InventoryDetail(OperationPlanMixin, GridReport):
     multiselect = True
     height = 250
     help_url = "user-interface/plan-analysis/inventory-detail-report.html"
+    message_when_empty = Template(
+        """
+        <h3>Inventory detail</h3>
+        <br>
+        This table has a list of all stock changes.<br><br>
+        The planning algorithm will populate this table, and as a user you normally don't need to create records in this table.<br>
+        <br>
+        """
+    )
 
     @classmethod
     def basequeryset(reportclass, request, *args, **kwargs):

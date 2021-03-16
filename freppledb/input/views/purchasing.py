@@ -20,6 +20,7 @@ from django.conf import settings
 from django.db.models.functions import Cast
 from django.db.models import F, FloatField, DateTimeField
 from django.db.models.expressions import RawSQL
+from django.template import Template
 from django.utils.translation import gettext_lazy as _
 from django.utils.encoding import force_text
 from django.utils.text import format_lazy
@@ -59,6 +60,19 @@ class SupplierList(GridReport):
     model = Supplier
     frozenColumns = 1
     help_url = "modeling-wizard/purchasing/suppliers.html"
+    message_when_empty = Template(
+        """
+        <h3>Define suppliers</h3>
+        <br>
+        This table contains all suppliers you are purchasing items from.<br>
+        <br><br>
+        <div role="group" class="btn-group.btn-group-justified">
+        <a href="{{request.prefix}}/data/input/supplier/add/" class="btn btn-primary">Create a single supplier<br>in a form</a>
+        <a href="{{request.prefix}}/wizard/load/production/?currentstep=4" class="btn btn-primary">Wizard to upload suppliers<br>from a spreadsheet</a>
+        </div>
+        <br>
+        """
+    )
 
     rows = (
         GridFieldText(
@@ -98,6 +112,19 @@ class ItemSupplierList(GridReport):
     model = ItemSupplier
     frozenColumns = 1
     help_url = "modeling-wizard/purchasing/item-suppliers.html"
+    message_when_empty = Template(
+        """
+        <h3>Define item suppliers</h3>
+        <br>
+        This table defines which items can be procured from which supplier.<br>
+        <br><br>
+        <div role="group" class="btn-group.btn-group-justified">
+        <a href="{{request.prefix}}/data/input/itemsupplier/add/" class="btn btn-primary">Create a single item supplier<br>in a form</a>
+        <a href="{{request.prefix}}/wizard/load/production/?currentstep=4" class="btn btn-primary">Wizard to upload item suppliers<br>from a spreadsheet</a>
+        </div>
+        <br>
+        """
+    )
 
     rows = (
         GridFieldInteger(
@@ -339,6 +366,21 @@ class PurchaseOrderList(OperationPlanMixin, GridReport):
     editable = True
     height = 250
     help_url = "modeling-wizard/purchasing/purchase-orders.html"
+    message_when_empty = Template(
+        """
+        <h3>Define purchase orders</h3>
+        <br>
+        This table defines ongoing and proposed purchase orders.<br><br>
+        Use this table to load ongoing purchase orders in the status "confirmed".<br><br>
+        The planning algorithm will further populate this table with additional "proposed" purchase orders for the future.<br>
+        <br><br>
+        <div role="group" class="btn-group.btn-group-justified">
+        <a href="{{request.prefix}}/data/input/purchaseorder/add/" onclick="window.location = $(event.target).attr('href')" class="btn btn-primary">Create a single purchase order<br>in a form</a>
+        <a href="{{request.prefix}}/wizard/load/production/?currentstep=7" onclick="window.location = $(event.target).attr('href')" class="btn btn-primary">Wizard to upload purchase orders<br>from a spreadsheet</a>
+        </div>
+        <br>
+        """
+    )
 
     @classmethod
     def extra_context(reportclass, request, *args, **kwargs):

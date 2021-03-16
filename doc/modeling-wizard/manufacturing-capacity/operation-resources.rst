@@ -2,7 +2,7 @@
 Operation resources
 ===================
 
-The operation resources table is associating a resource to an operation.
+This table defines which resources are required to perfrom an operation.
 
 .. rubric:: Key Fields
 

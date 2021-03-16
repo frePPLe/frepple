@@ -4,9 +4,15 @@ Calendars
 
 A calendar represents a numeric value that is varying over time.
 
-Calendars can be linked to multiple entities: a maximum capacity limit of a
-resource, a minimum capacity usage of a resource, a minimum or maximum
-inventory limit of a buffer, etc...
+Different other models refer to calendars for any property that changes over time:
+
+* A location refers to a calendar to define the working hours and holidays.
+* A resource refers to a calendar to define the working hours and holidays.
+* A supplier refers to a calendar to define the working hours and holidays.
+* An operation refers to a calendar to define the working hours and holidays.
+* A resource refers to a calendar to define the efficiency varying over time.
+* A resource refers to a calendar to define the resource size varying over time.
+* A buffer refers to a calendar to define the safety stock varying over time.
 
 A calendar has multiple buckets to define the values over time. See 
 :doc:`calendar buckets <calendar-buckets>` for more details. To determine the 

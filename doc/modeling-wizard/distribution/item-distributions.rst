@@ -2,7 +2,7 @@
 Item Distributions
 ==================
 
-This table allows you to authorize the transfer of an item from one location to another location in your model.
+This table defines the possibility to transfer an item from one location to another.
 
 .. rubric:: Key Fields
 

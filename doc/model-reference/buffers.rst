@@ -2,7 +2,7 @@
 Buffers
 =======
 
-A buffer is in (logical of physical) inventory point for a item at a certain location.
+A buffer is a (logical of physical) inventory point for an item at a certain location.
 
 Different types of buffers exist:
 

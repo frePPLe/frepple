@@ -45,6 +45,8 @@ Different types of resources exist:
   | This can be modeled by setting the "constrained" field to false
     or (deprecated) by setting the resource type to "infinite".
 
+You can see each resource type in action in `this example <../examples/resource/resource-type.html>`_.
+
 ==================== ================= ===========================================================
 Field                Type              Description
 ==================== ================= ===========================================================

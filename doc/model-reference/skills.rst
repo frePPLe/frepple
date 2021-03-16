@@ -3,10 +3,11 @@ Skills
 ======
 
 A skill defines a certain property that can be assigned to resources.
-A resource can have any number of skills.
 
-The operationresource table associates an operation with a resource. In that table we
-can define a skill required on the resource.
+The `resource-skill table <resource-skill.html>`_ associates a resource with all its skills. A resource can have
+any number of skills.
+
+The `operation-resource table <operation-resource.html>`_ defines the resources and skill required to perform the operation.
 
 ============ ================= ===========================================================
 Field        Type              Description

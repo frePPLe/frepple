@@ -15,8 +15,7 @@ Setup matrices
    requiring the same setup.
    
 A setup matrix defines the time and cost of setup conversions on a resource.
-Within a setup matrix rules are used to define the changeover cost and
-duration.
+A setup matrix contains a list of rules that define the changeover cost and duration.
 
 To compute the time of a changeover the algorithm will evaluate all rules in
 sequence (in order of priority). As soon as a matching rule is found, it is

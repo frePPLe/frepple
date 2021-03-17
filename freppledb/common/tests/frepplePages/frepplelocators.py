@@ -17,7 +17,7 @@
 from selenium.webdriver.common.by import By
 
 
-class BasePageLocators(object):
+class BasePageLocators:
     NAVIGATOR_BREADCUMBS_HOME = (By.CSS_SELECTOR, "#breadcrumbs > li > a[href='/']")
     NAVIGATOR_BREADCUMBS_PURCHASE_ORDERS = (
         By.CSS_SELECTOR,
@@ -33,7 +33,7 @@ class BasePageLocators(object):
         return (By.CSS_SELECTOR, "#nav-menu  .dropdown-menu a[href*='%s']" % targetItem)
 
 
-class TableLocators(object):
+class TableLocators:
     TABLE_DEFAULT = (By.CSS_SELECTOR, "table[id='grid']")
     TABLE_BODY = (By.CSS_SELECTOR, "tbody")
     TABLE_ROWS = (By.CSS_SELECTOR, "tr")

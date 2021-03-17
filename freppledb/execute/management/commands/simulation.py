@@ -356,7 +356,7 @@ class Command(BaseCommand):
             setattr(_thread_locals, "database", None)
 
 
-class Simulator(object):
+class Simulator:
     def __init__(self, database=DEFAULT_DB_ALIAS, verbosity=0):
         self.database = database
         self.verbosity = verbosity
@@ -372,8 +372,8 @@ class Simulator(object):
         else:
             self.mo_number = int(self.mo_number)
         self.mo_number += (
-            10000
-        )  # A bit of a trick to avoid duplicate references with POs and DOs
+            10000  # A bit of a trick to avoid duplicate references with POs and DOs
+        )
 
         # Metrics for on-time delivery
         self.demand_shipped = 0

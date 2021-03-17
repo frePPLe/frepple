@@ -22,26 +22,13 @@ from datetime import datetime
 from django.db.models import Q
 from django.core import management
 
-from freppledb.common.tests.seleniumsetup import SeleniumTest
+from freppledb.common.tests.seleniumsetup import SeleniumTest, noSelenium
 from freppledb.common.tests.frepplePages.frepplepage import TablePage
 from freppledb.input.models import (
     PurchaseOrder,
     DistributionOrder,
     ManufacturingOrder,
-    Operation,
-    OperationPlan,
 )
-
-try:
-    from selenium.common.exceptions import NoSuchElementException
-    from selenium.webdriver.common.action_chains import ActionChains
-    from selenium.webdriver.common.by import By
-    from selenium.webdriver.common.keys import Keys
-    from selenium.webdriver.support import expected_conditions
-
-    noSelenium = False
-except ImportError:
-    noSelenium = True
 
 
 class PurchaseOrderScreen(SeleniumTest):

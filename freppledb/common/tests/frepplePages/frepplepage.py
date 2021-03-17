@@ -41,11 +41,7 @@ class SupplierEditInputElement(BasePageElement):
     locator = "input[id=id_name]"
 
 
-"""class PurchaseOrderTableSelectActionMenuElement(BasePageElement):
-    select_action_statuses = ("proposed","approved","confirmed","completed","closed")"""
-
-
-class BasePage(object):
+class BasePage:
     NAV_MENU_LEFT = (
         "Sales",
         "Inventory",

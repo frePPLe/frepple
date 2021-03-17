@@ -148,14 +148,14 @@ def create_connection(alias=DEFAULT_DB_ALIAS):
 
 def matchesModelName(name, model):
     """
-  Returns true if the first argument is a valid name for the model passed as second argument.
-  The string must match either:
-    - the model name
-    - the verbose name
-    - the pural verbose name
-  The comparison is case insensitive and also ignores whitespace, dashes and underscores.
-  The comparison tries to find a match using the current active language, as well as in English.
-  """
+    Returns true if the first argument is a valid name for the model passed as second argument.
+    The string must match either:
+      - the model name
+      - the verbose name
+      - the pural verbose name
+    The comparison is case insensitive and also ignores whitespace, dashes and underscores.
+    The comparison tries to find a match using the current active language, as well as in English.
+    """
     checkstring = re.sub(separatorpattern, "", name.lower())
     # Try with the localized model names
     if checkstring == re.sub(separatorpattern, "", model._meta.model_name.lower()):
@@ -272,10 +272,10 @@ def getHorizon(request, future_only=False):
     return (current, start, end)
 
 
-class GridField(object):
+class GridField:
     """
-  Base field for columns in grid views.
-  """
+    Base field for columns in grid views.
+    """
 
     def __init__(self, name, **kwargs):
         self.name = name
@@ -1757,9 +1757,10 @@ class GridReport(View):
                 title = cls.title(request, *args, **kwargs)
             else:
                 title = cls.model._meta.verbose_name_plural if cls.model else cls.title
-            response["Content-Disposition"] = (
-                "attachment; filename*=utf-8''%s.xlsx"
-                % urllib.parse.quote(force_str(title))
+            response[
+                "Content-Disposition"
+            ] = "attachment; filename*=utf-8''%s.xlsx" % urllib.parse.quote(
+                force_str(title)
             )
             response["Cache-Control"] = "no-cache, no-store"
             return response
@@ -1784,9 +1785,10 @@ class GridReport(View):
                 title = cls.title(request, *args, **kwargs)
             else:
                 title = cls.model._meta.verbose_name_plural if cls.model else cls.title
-            response["Content-Disposition"] = (
-                "attachment; filename*=utf-8''%s.csv"
-                % urllib.parse.quote(force_str(title))
+            response[
+                "Content-Disposition"
+            ] = "attachment; filename*=utf-8''%s.csv" % urllib.parse.quote(
+                force_str(title)
             )
             response["Cache-Control"] = "no-cache, no-store"
             return response

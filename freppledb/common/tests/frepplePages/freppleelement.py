@@ -17,7 +17,7 @@
 from selenium.webdriver.support.ui import WebDriverWait
 
 
-class BasePageElement(object):
+class BasePageElement:
     # Base page that is initialized on every page object class.
 
     def __set__(self, obj, value):

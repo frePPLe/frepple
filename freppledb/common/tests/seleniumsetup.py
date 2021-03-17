@@ -16,18 +16,14 @@
 #
 import os
 import time
+from selenium import webdriver
 
 from django.conf import settings
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 
 from freppledb.common.models import User
 
-try:
-    from selenium import webdriver
-
-    noSelenium = False
-except ImportError:
-    noSelenium = True
+noSelenium = settings.SELENIUM_TESTS is None
 
 
 class SeleniumTest(StaticLiveServerTestCase):

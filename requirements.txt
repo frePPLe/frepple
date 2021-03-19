@@ -14,7 +14,7 @@ lxml == 4.6.2
 PyJWT == 1.7.1
 requests == 2.23.0
 python-dateutil == 2.8.1
-pillow == 8.0.1
+pillow == 8.1.1
 psutil == 5.7.3
 https://github.com/frePPLe/django/tarball/frepple_6.0
 

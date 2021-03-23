@@ -16,16 +16,14 @@ The connector provides the following functionality:
 
 * | Two-way integration.
   | The connector retrieves all master data required for planning from Odoo.
-  | The connector publishes the resulting plan back to Odoo, either a)
-    automatically at the end of the planning run or b) after manual review
-    and approval by the planner.
+  | The connector publishes the resulting plan back to Odoo. The planner can 
+    trigger the export of the plan to Odoo either after the plan is finished 
+    or after a manual review and approval.
 
 * | Live data integration.
-  | The connector reads the data directly from Odoo and writes the results
-    back. Compared to replicating data to its own database, this provides
-    a more native and tighter integration. It is still possible to save a
-    copy of the odoo in the frePPLe database to use the frePPLe user
-    interface.
+  | The connector reads the data directly from Odoo and writes master and
+    transactional data in frePPLe database. The planner can then run a plan in frePPLe
+    and either export all the plan in Odoo or selects which data to export.
 
 * | User interface integration.
   | Users can access frePPLe screens from the Odoo interface, without
@@ -123,15 +121,20 @@ Using the connector in frePPLe
 
 The odoo integration brings new functionality to the user interface.
 
-* | **Generate the plan with live odoo data and write results to odoo**
-  | The execute screen has checkboxes that allow enabling reading from and
-    writing to Odoo.
+* | **Import data from Odoo into frePPLe**
+  | The execute screen has an *import data from odoo* accordion menu that
+    allows to import the Odoo data in frePPLe database and then generate a plan.
+    
+  .. image:: _images/odoo_import.png
+   :alt: Import from odoo
+   
+   
   | The plan exported to odoo is a subset of the plan which passes
     certain filter conditions. The remaining part of the plan can
     only be exported manually from frePPLe to Odoo: see below.
 
-  .. image:: _images/odoo-import-export.png
-   :alt: Import from and export to odoo
+  .. image:: _images/odoo_export.png
+   :alt: Export to odoo
 
   | The connector distinguishes different modes to retrieve data from Odoo. This
     allows us to schedule the interfacing of larger and/or slowly changing data

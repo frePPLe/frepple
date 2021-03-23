@@ -205,6 +205,10 @@ class loadLocations(LoadTask):
     sequence = 91
 
     @classmethod
+    def getWeight(cls, **kwargs):
+        return -1 if kwargs.get("skipLoad", False) else 1
+
+    @classmethod
     def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
         import frepple
 
@@ -264,6 +268,10 @@ class loadCalendars(LoadTask):
     sequence = 92
 
     @classmethod
+    def getWeight(cls, **kwargs):
+        return -1 if kwargs.get("skipLoad", False) else 1
+
+    @classmethod
     def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
         import frepple
 
@@ -307,6 +315,10 @@ class loadCalendarBuckets(LoadTask):
 
     description = "Importing calendar buckets"
     sequence = 93
+
+    @classmethod
+    def getWeight(cls, **kwargs):
+        return -1 if kwargs.get("skipLoad", False) else 1
 
     @classmethod
     def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
@@ -392,6 +404,10 @@ class loadCustomers(LoadTask):
     sequence = 94
 
     @classmethod
+    def getWeight(cls, **kwargs):
+        return -1 if kwargs.get("skipLoad", False) else 1
+
+    @classmethod
     def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
         import frepple
 
@@ -436,6 +452,10 @@ class loadSuppliers(LoadTask):
 
     description = "Importing suppliers"
     sequence = 95
+
+    @classmethod
+    def getWeight(cls, **kwargs):
+        return -1 if kwargs.get("skipLoad", False) else 1
 
     @classmethod
     def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
@@ -486,6 +506,10 @@ class loadOperations(LoadTask):
 
     description = "Importing operations"
     sequence = 96
+
+    @classmethod
+    def getWeight(cls, **kwargs):
+        return -1 if kwargs.get("skipLoad", False) else 1
 
     @classmethod
     def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
@@ -707,6 +731,10 @@ class loadSuboperations(LoadTask):
     sequence = 97
 
     @classmethod
+    def getWeight(cls, **kwargs):
+        return -1 if kwargs.get("skipLoad", False) else 1
+
+    @classmethod
     def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
         import frepple
 
@@ -771,6 +799,10 @@ class loadItems(LoadTask):
 
     description = "Importing items"
     sequence = 98
+
+    @classmethod
+    def getWeight(cls, **kwargs):
+        return -1 if kwargs.get("skipLoad", False) else 1
 
     @classmethod
     def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
@@ -842,6 +874,10 @@ class loadItemSuppliers(LoadTask):
 
     description = "Importing item suppliers"
     sequence = 99
+
+    @classmethod
+    def getWeight(cls, **kwargs):
+        return -1 if kwargs.get("skipLoad", False) else 1
 
     @classmethod
     def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
@@ -919,6 +955,10 @@ class loadItemDistributions(LoadTask):
     sequence = 100
 
     @classmethod
+    def getWeight(cls, **kwargs):
+        return -1 if kwargs.get("skipLoad", False) else 1
+
+    @classmethod
     def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
         import frepple
 
@@ -994,6 +1034,10 @@ class loadBuffers(LoadTask):
 
     description = "Importing buffers"
     sequence = 101
+
+    @classmethod
+    def getWeight(cls, **kwargs):
+        return -1 if kwargs.get("skipLoad", False) else 1
 
     @classmethod
     def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
@@ -1089,6 +1133,10 @@ class loadSetupMatrices(LoadTask):
     sequence = 102
 
     @classmethod
+    def getWeight(cls, **kwargs):
+        return -1 if kwargs.get("skipLoad", False) else 1
+
+    @classmethod
     def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
         import frepple
 
@@ -1161,6 +1209,10 @@ class loadResources(LoadTask):
 
     description = "Importing resources"
     sequence = 94.5
+
+    @classmethod
+    def getWeight(cls, **kwargs):
+        return -1 if kwargs.get("skipLoad", False) else 1
 
     @classmethod
     def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
@@ -1273,6 +1325,10 @@ class loadResourceSkills(LoadTask):
     sequence = 104
 
     @classmethod
+    def getWeight(cls, **kwargs):
+        return -1 if kwargs.get("skipLoad", False) else 1
+
+    @classmethod
     def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
         import frepple
 
@@ -1320,6 +1376,10 @@ class loadOperationMaterials(LoadTask):
 
     description = "Importing operation materials"
     sequence = 105
+
+    @classmethod
+    def getWeight(cls, **kwargs):
+        return -1 if kwargs.get("skipLoad", False) else 1
 
     @classmethod
     def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
@@ -1415,6 +1475,10 @@ class loadOperationResources(LoadTask):
     sequence = 106
 
     @classmethod
+    def getWeight(cls, **kwargs):
+        return -1 if kwargs.get("skipLoad", False) else 1
+
+    @classmethod
     def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
         import frepple
 
@@ -1477,6 +1541,10 @@ class loadDemand(LoadTask):
 
     description = "Importing demands"
     sequence = 107
+
+    @classmethod
+    def getWeight(cls, **kwargs):
+        return -1 if kwargs.get("skipLoad", False) else 1
 
     @classmethod
     def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
@@ -1543,6 +1611,10 @@ class loadOperationPlans(LoadTask):
 
     description = "Importing operationplans"
     sequence = 108
+
+    @classmethod
+    def getWeight(cls, **kwargs):
+        return -1 if kwargs.get("skipLoad", False) else 1
 
     @classmethod
     def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
@@ -1819,6 +1891,10 @@ class loadOperationPlanMaterials(LoadTask):
     sequence = 109
 
     @classmethod
+    def getWeight(cls, **kwargs):
+        return -1 if kwargs.get("skipLoad", False) else 1
+
+    @classmethod
     def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
         import frepple
 
@@ -1877,6 +1953,10 @@ class loadOperationPlanResources(LoadTask):
     sequence = 110
 
     @classmethod
+    def getWeight(cls, **kwargs):
+        return -1 if kwargs.get("skipLoad", False) else 1
+
+    @classmethod
     def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
         import frepple
 
@@ -1925,6 +2005,10 @@ class PlanSize(CheckTask):
 
     description = "Plan Size"
     sequence = 120
+
+    @classmethod
+    def getWeight(cls, **kwargs):
+        return -1 if kwargs.get("skipLoad", False) else 1
 
     @staticmethod
     def run(database=DEFAULT_DB_ALIAS, **kwargs):

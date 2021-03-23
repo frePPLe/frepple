@@ -138,6 +138,29 @@ class cleanStatic(PlanTask):
                 """,
                 (source, cls.timestamp, source, cls.timestamp, source, cls.timestamp),
             )
+
+            # before deleting an operationplan, we must ensure that operationplan
+            # is not the owner of another one
+            cursor.execute(
+                """
+            
+            delete from operationplan where owner_id in 
+            (
+            select reference from operationplan
+                where (source = %s and lastmodified <> %s)
+                  or operation_id in (
+                    select name from operation
+                    where operation.source = %s and operation.lastmodified <> %s
+                    )
+                  or supplier_id in (
+                    select name from supplier where source = %s and lastmodified <> %s
+                   )
+                  or type = 'STCK'
+            )
+            """,
+                (source, cls.timestamp, source, cls.timestamp, source, cls.timestamp),
+            )
+
             cursor.execute(
                 """
                 delete from operationplan

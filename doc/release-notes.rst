@@ -12,6 +12,12 @@ Release notes
 
 - | Scenario management: Addition of a command to release a scenario.
 
+.. rubric:: Integration
+
+- | Odoo connectors: Addition of two menus in the execute screen: import data from odoo and
+    export data from odoo. Read odoo data and Write odoo data options are removed from the plan
+    execution options.
+
 6.12.0 (2021/03/01)
 ===================
 

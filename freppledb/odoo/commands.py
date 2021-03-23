@@ -60,23 +60,16 @@ class OdooReadData(PlanTask):
     """
 
     description = "Load Odoo data"
-    sequence = 119
-    label = ("odoo_read_1", _("Read Odoo data"))
+    sequence = 70
 
     @classmethod
     def getWeight(cls, database=DEFAULT_DB_ALIAS, **kwargs):
         for i in range(5):
             if ("odoo_read_%s" % i) in os.environ:
                 cls.mode = i
-                for stdLoad in PlanTaskRegistry.reg.steps:
-                    if isinstance(stdLoad, (PlanTaskParallel, PlanTaskSequence)):
-                        continue
-                    if issubclass(stdLoad, LoadTask):
-                        stdLoad.filter = (
-                            "(source is null or source<>'odoo_%s')" % cls.mode
-                        )
-                        stdLoad.description += " - non-odoo source"
-                PlanTaskRegistry.addArguments(exportstatic=True, source="odoo_%s" % i)
+                PlanTaskRegistry.addArguments(
+                    exportstatic=True, source="odoo_%s" % i, skipLoad=True
+                )
                 return 1
         return -1
 
@@ -251,7 +244,6 @@ class OdooWritePlan(PlanTask):
 
     description = "Write results to Odoo"
     sequence = 390
-    label = ("odoo_write", _("Write results to Odoo"))
 
     @classmethod
     def getWeight(cls, database=DEFAULT_DB_ALIAS, **kwargs):
@@ -431,6 +423,8 @@ class OdooWritePlan(PlanTask):
             encoded = base64.encodestring(
                 ("%s:%s" % (odoo_user, odoo_password)).encode("utf-8")
             )
+            if not odoo_url.endswith("/"):
+                odoo_url += "/"
             req = Request(
                 "%sfrepple/xml/" % odoo_url,
                 data=body,

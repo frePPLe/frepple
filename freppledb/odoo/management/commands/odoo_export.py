@@ -45,37 +45,25 @@ class Command(BaseCommand):
             type=int,
             help="Task identifier (generated automatically if not provided)",
         )
-        parser.add_argument(
-            "--environment", default="odoo_read_1", help="data source environment"
-        )
 
     def handle(self, **options):
 
         # Pick up the options
         self.verbosity = int(options["verbosity"])
         database = options["database"]
-        environment = options["environment"]
-        if (
-            not environment.startswith("odoo_read_")
-            or not len(environment) == 11
-            or not environment[10].isdigit()
-        ):
-            raise CommandError(
-                "Invalid environment: %s. It must be odoo_read_X with X being a number between 1 to 5"
-                % environment
-            )
+
         if database not in settings.DATABASES.keys():
             raise CommandError("No database settings known for '%s'" % self.database)
         if options["user"]:
             management.call_command(
-                "runplan", env=environment, database=database, user=options["user"]
+                "runplan", env="odoo_write", database=database, user=options["user"]
             )
         else:
-            management.call_command("runplan", env=environment, database=database)
+            management.call_command("runplan", env="odoo_write", database=database)
 
     # accordion template
-    title = _("Import data from %(erp)s") % {"erp": "odoo"}
-    index = 1400
+    title = _("Export data to %(erp)s") % {"erp": "odoo"}
+    index = 1450
     help_url = "integration-guide/odoo-connector.html"
 
     @staticmethod
@@ -86,13 +74,13 @@ class Command(BaseCommand):
             template = Template(
                 """
         {% load i18n %}
-        <form role="form" method="post" action="{{request.prefix}}/execute/launch/odoo_import/">{% csrf_token %}
+        <form role="form" method="post" action="{{request.prefix}}/execute/launch/odoo_export/">{% csrf_token %}
         <table>
           <tr>
             <td style="vertical-align:top; padding: 15px">
                <button  class="btn btn-primary"  type="submit" value="{% trans "launch"|capfirst %}">{% trans "launch"|capfirst %}</button>
             </td>
-            <td  style="padding: 0px 15px;">{% trans "Import Odoo data into frePPLe." %}
+            <td  style="padding: 0px 15px;">{% trans "Export frePPLe data to odoo." %}
             </td>
           </tr>
         </table>

@@ -41,9 +41,21 @@ function showoperationplanDrv($window, gettextCatalog) {
       'STCK': gettextCatalog.getString('stock'),
       'DLVR': gettextCatalog.getString('delivery'),
     }
+    
+    scope.$on("cardChanged", function (event, field, oldvalue, newvalue) {      
+      if (field === "startdate")
+         scope.operationplan["start"] = newvalue;
+      else if (field === "enddate")
+         scope.operationplan["end"] = newvalue;
+      else
+         scope.operationplan[field] = newvalue;
+    });
+    
     //need to watch all of these because a webservice may change them on the fly
     scope.$watchGroup(['operationplan.id','operationplan.start','operationplan.end','operationplan.quantity','operationplan.criticality','operationplan.delay','operationplan.status'], function (newValue,oldValue) {
-      if (scope.operationplan.id == -1 || scope.operationplan.type === 'STCK') {
+    	if (scope.operationplan === undefined)
+    		return;
+    	else if (scope.operationplan.id == -1 || scope.operationplan.type === 'STCK') {
       	// Multiple operationplans selected 
         angular.element(elem).find('input').attr('disabled','disabled');
         angular.element(elem).find('#statusrow .btn').removeClass('active').attr('disabled','disabled');

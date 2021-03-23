@@ -15,6 +15,7 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+from django.db.models import Q
 from django.db.models.expressions import RawSQL
 from django.template import Template
 from django.utils.translation import gettext_lazy as _
@@ -399,6 +400,22 @@ class ResourceDetail(OperationPlanMixin, GridReport):
         else:
             base = OperationPlanResource.objects
         base = reportclass.operationplanExtraBasequery(base, request)
+        if "calendarstart" in request.GET:
+            base = base.filter(
+                Q(operationplan__enddate__gte=request.GET["calendarstart"])
+                | (
+                    Q(operationplan__enddate__isnull=True)
+                    & Q(operationplan__startdate__gte=request.GET["calendarstart"])
+                )
+            )
+        if "calendarend" in request.GET:
+            base = base.filter(
+                Q(operationplan__startdate__lte=request.GET["calendarend"])
+                | (
+                    Q(operationplan__startdate__isnull=True)
+                    & Q(operationplan__enddate__lte=request.GET["calendarend"])
+                )
+            )
         return base.select_related().annotate(
             opplan_duration=RawSQL(
                 "(operationplan.enddate - operationplan.startdate)", []
@@ -434,13 +451,20 @@ class ResourceDetail(OperationPlanMixin, GridReport):
         if args and args[0]:
             request.session["lasttab"] = "plandetail"
             return {
+                "default_operationplan_type": "MO",
+                "groupBy": "operationplan__status",
                 "active_tab": "plandetail",
                 "model": Resource,
                 "title": force_text(Resource._meta.verbose_name) + " " + args[0],
                 "post_title": _("plan detail"),
             }
         else:
-            return {"active_tab": "plandetail", "model": OperationPlanResource}
+            return {
+                "default_operationplan_type": "MO",
+                "groupBy": "operationplan__status",
+                "active_tab": "plandetail",
+                "model": OperationPlanResource,
+            }
 
     rows = (
         GridFieldInteger(

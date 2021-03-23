@@ -18,7 +18,12 @@
 
 from django.conf import settings
 from django.db.models.functions import Cast
-from django.db.models import F, FloatField, DateTimeField
+from django.db.models import (
+    Q,
+    F,
+    FloatField,
+    DateTimeField,
+)
 from django.db.models.expressions import RawSQL
 from django.template import Template
 from django.utils.translation import gettext_lazy as _
@@ -390,6 +395,8 @@ class PurchaseOrderList(OperationPlanMixin, GridReport):
             path = paths[4]
             if path == "supplier" or request.path.startswith("/detail/input/supplier/"):
                 return {
+                    "default_operationplan_type": "PO",
+                    "groupBy": "status",
                     "active_tab": "purchaseorders",
                     "model": Supplier,
                     "title": force_text(Supplier._meta.verbose_name) + " " + args[0],
@@ -399,6 +406,8 @@ class PurchaseOrderList(OperationPlanMixin, GridReport):
                 "/detail/input/location/"
             ):
                 return {
+                    "default_operationplan_type": "PO",
+                    "groupBy": "status",
                     "active_tab": "purchaseorders",
                     "model": Location,
                     "title": force_text(Location._meta.verbose_name) + " " + args[0],
@@ -406,6 +415,8 @@ class PurchaseOrderList(OperationPlanMixin, GridReport):
                 }
             elif path == "item" or request.path.startswith("/detail/input/item/"):
                 return {
+                    "default_operationplan_type": "PO",
+                    "groupBy": "status",
                     "active_tab": "purchaseorders",
                     "model": Item,
                     "title": force_text(Item._meta.verbose_name) + " " + args[0],
@@ -413,6 +424,8 @@ class PurchaseOrderList(OperationPlanMixin, GridReport):
                 }
             elif path == "operationplanmaterial":
                 return {
+                    "default_operationplan_type": "PO",
+                    "groupBy": "status",
                     "active_tab": "purchaseorders",
                     "model": Item,
                     "title": force_text(Item._meta.verbose_name) + " " + args[0],
@@ -423,6 +436,8 @@ class PurchaseOrderList(OperationPlanMixin, GridReport):
                 }
             elif path == "produced":
                 return {
+                    "default_operationplan_type": "PO",
+                    "groupBy": "status",
                     "active_tab": "purchaseorders",
                     "model": Item,
                     "title": force_text(Item._meta.verbose_name) + " " + args[0],
@@ -432,13 +447,47 @@ class PurchaseOrderList(OperationPlanMixin, GridReport):
                     ),
                 }
             else:
-                return {"active_tab": "edit", "model": Item}
+                return {
+                    "default_operationplan_type": "PO",
+                    "groupBy": "status",
+                    "active_tab": "edit",
+                    "model": Item,
+                }
+        elif "parentreference" in request.GET:
+            return {
+                "default_operationplan_type": "PO",
+                "groupBy": "status",
+                "active_tab": "edit",
+                "title": force_text(PurchaseOrder._meta.verbose_name)
+                + " "
+                + request.GET["parentreference"],
+            }
         else:
-            return {"active_tab": "purchaseorders"}
+            return {
+                "default_operationplan_type": "PO",
+                "groupBy": "status",
+                "active_tab": "purchaseorders",
+            }
 
     @classmethod
     def basequeryset(reportclass, request, *args, **kwargs):
         q = PurchaseOrder.objects.all()
+        if "calendarstart" in request.GET:
+            q = q.filter(
+                Q(enddate__gte=request.GET["calendarstart"])
+                | (
+                    Q(enddate__isnull=True)
+                    & Q(startdate__gte=request.GET["calendarstart"])
+                )
+            )
+        if "calendarend" in request.GET:
+            q = q.filter(
+                Q(startdate__lte=request.GET["calendarend"])
+                | (
+                    Q(startdate__isnull=True)
+                    & Q(enddate__lte=request.GET["calendarend"])
+                )
+            )
         if args and args[0]:
             paths = request.path.split("/")
             path = paths[4]

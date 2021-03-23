@@ -212,6 +212,23 @@ class OperationPlanMixin:
                 ),
             )
 
+    @classmethod
+    def _generate_kanban_data(cls, request, *args, **kwargs):
+        # Preparation of the correct filter for a column is currently done on the client side.
+        # The kanban query also doesn't know about pages.
+        request.GET = request.GET.copy()
+        request.GET["page"] = None
+        request.limit = request.pagesize
+        return cls._generate_json_data(request, *args, **kwargs)
+
+    @classmethod
+    def _generate_calendar_data(cls, request, *args, **kwargs):
+        request.GET = request.GET.copy()
+        request.GET["page"] = None
+        return cls._generate_json_data(request, *args, **kwargs)
+
+    calendarmode = "duration"
+
 
 class PathReport(GridReport):
     """

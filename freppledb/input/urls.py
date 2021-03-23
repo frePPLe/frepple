@@ -16,6 +16,7 @@
 #
 
 from django.conf.urls import url
+from django.views.generic.base import TemplateView
 
 import freppledb.input.views
 import freppledb.input.serializers
@@ -24,6 +25,8 @@ import freppledb.input.serializers
 autodiscover = True
 
 urlpatterns = [
+    # Overridable card for kanban and calendar views
+    url(r"^input/card.html$", TemplateView.as_view(template_name="input/card.html")),
     # Model list reports, which override standard admin screens
     url(
         r"^data/input/buffer/$",

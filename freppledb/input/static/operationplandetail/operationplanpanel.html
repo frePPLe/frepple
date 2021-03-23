@@ -1,5 +1,5 @@
 <style>
-#setQuantity.ng-dirty {
+#setQuantity.ng-dirty, #setStart.ng-dirty, #setEnd.ng-dirty {
   background: none !important;
 }
 #opplan-attributes-drvtable tbody tr td {
@@ -105,7 +105,7 @@
         <small data-ng-if="operationplan.colmodel.operationplan__startdate">({{ operationplan.colmodel.operationplan__startdate.type|translate }})</small>
       </td>
       <td id="startrow">
-        <input id="setStart" type="text" size="9" class="vDateField form-control" value="{{operationplan.start|formatdate}}" disabled>
+        <input id="setStart" type="text" size="9" class="vDateField form-control" ng-model="operationplan.start" value="{{operationplan.start|formatdate}}" disabled>
       </td>
     </tr>
     <tr data-ng-if="operationplan.setupend">
@@ -124,7 +124,7 @@
         <small data-ng-if="operationplan.colmodel.operationplan__enddate">({{ operationplan.colmodel.operationplan__enddate.type|translate }})</small>
       </td>
       <td id="endrow">
-        <input id="setEnd" type="text" size="9" class="vDateField form-control" value="{{operationplan.end|formatdate}}" disabled>
+        <input id="setEnd" type="text" size="9" class="vDateField form-control" ng-model="operationplan.end" value="{{operationplan.end|formatdate}}" disabled>
       </td>
     </tr>
     <tr>

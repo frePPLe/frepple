@@ -1,0 +1,38 @@
+<div>
+    <table class="table table-bordered table-fixed weekview-header">
+        <thead>
+        <tr>
+            <th data-ng-if="calendarmode == 'duration'" class="calendar-hour-column"></th>
+            <th ng-repeat="dt in dates" class="text-center weekview-header-label">{{dt.date| date:formatWeekViewDayHeader}}</th>
+            <th class="gutter-column" ng-style="{width: scrollBarWidth+'px'}"></th>
+        </tr>
+        </thead>
+    </table>
+    <div id="scrollweekview" class="scrollable" data-ng-style="{'height': getHeight(60)}">
+        <table class="table table-bordered table-fixed">
+            <tbody data-ng-switch="calendarmode">
+            <tr data-ng-switch-when="duration" data-ng-repeat="row in rows track by $index">
+                <td class="calendar-hour-column text-center">
+                    {{row[0].date | date: formatHourColumn}}
+                </td>
+                <td data-ng-repeat="dt in row track by dt.date" class="calendar-cell">
+                    <div data-ng-class="{'calendar-event-wrap': dt.events}" ng-if="dt.events">
+                        <div data-ng-repeat="opplan in dt.events" class="calendar-event weekcard" data-ng-click="selectCard(opplan.event)"        
+                             data-ng-style="{top: (37*opplan.startOffset/hourParts)+'px',left: 100/opplan.overlapNumber*opplan.position+'%', width: 100/opplan.overlapNumber+'%', height: 37*(opplan.endIndex -opplan.startIndex - (opplan.endOffset + opplan.startOffset)/hourParts)+'px'}">
+                           <ng-include src="'/input/card.html'"/>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr data-ng-switch-default>
+              <td data-ng-repeat="dt in dates track by dt.date">
+                  <div data-ng-repeat="opplan in dt.events" class="card-month" data-ng-click="selectCard(opplan)"        
+                     data-ng-if="displayEvent(opplan,dt)">
+                     <ng-include src="'/input/card.html'"/>
+                  </div>
+              </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

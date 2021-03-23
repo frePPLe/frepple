@@ -16,7 +16,13 @@
 #
 
 from django.conf import settings
-from django.db.models import F, DateTimeField, DurationField, FloatField
+from django.db.models import (
+    F,
+    Q,
+    DateTimeField,
+    DurationField,
+    FloatField,
+)
 from django.db.models.functions import Cast
 from django.db.models.expressions import RawSQL
 from django.template import Template
@@ -1052,6 +1058,8 @@ class ManufacturingOrderList(OperationPlanMixin, GridReport):
             path = paths[4]
             if path == "location" or request.path.startswith("/detail/input/location/"):
                 return {
+                    "default_operationplan_type": "MO",
+                    "groupBy": "status",
                     "active_tab": "plandetail",
                     "model": Location,
                     "title": force_text(Location._meta.verbose_name) + " " + args[0],
@@ -1061,6 +1069,8 @@ class ManufacturingOrderList(OperationPlanMixin, GridReport):
                 "/detail/input/operation/"
             ):
                 return {
+                    "default_operationplan_type": "MO",
+                    "groupBy": "status",
                     "active_tab": "plandetail",
                     "model": Operation,
                     "title": force_text(Operation._meta.verbose_name) + " " + args[0],
@@ -1068,6 +1078,8 @@ class ManufacturingOrderList(OperationPlanMixin, GridReport):
                 }
             elif path == "item" or request.path.startswith("/detail/input/item/"):
                 return {
+                    "default_operationplan_type": "MO",
+                    "groupBy": "status",
                     "active_tab": "plandetail",
                     "model": Item,
                     "title": force_text(Item._meta.verbose_name) + " " + args[0],
@@ -1075,6 +1087,8 @@ class ManufacturingOrderList(OperationPlanMixin, GridReport):
                 }
             elif path == "operationplanmaterial":
                 return {
+                    "default_operationplan_type": "MO",
+                    "groupBy": "status",
                     "active_tab": "plandetail",
                     "model": Item,
                     "title": force_text(Item._meta.verbose_name) + " " + args[0],
@@ -1085,6 +1099,8 @@ class ManufacturingOrderList(OperationPlanMixin, GridReport):
                 }
             elif path == "produced":
                 return {
+                    "default_operationplan_type": "MO",
+                    "groupBy": "status",
                     "active_tab": "plandetail",
                     "model": Item,
                     "title": force_text(Item._meta.verbose_name) + " " + args[0],
@@ -1095,6 +1111,8 @@ class ManufacturingOrderList(OperationPlanMixin, GridReport):
                 }
             elif path == "consumed":
                 return {
+                    "default_operationplan_type": "MO",
+                    "groupBy": "status",
                     "active_tab": "plandetail",
                     "model": Item,
                     "title": force_text(Item._meta.verbose_name) + " " + args[0],
@@ -1104,20 +1122,47 @@ class ManufacturingOrderList(OperationPlanMixin, GridReport):
                     ),
                 }
             else:
-                return {"active_tab": "edit", "model": Item}
+                return {
+                    "default_operationplan_type": "MO",
+                    "groupBy": "status",
+                    "active_tab": "edit",
+                    "model": Item,
+                }
         elif "parentreference" in request.GET:
             return {
+                "default_operationplan_type": "MO",
+                "groupBy": "status",
                 "active_tab": "plandetail",
                 "title": force_text(ManufacturingOrder._meta.verbose_name)
                 + " "
                 + request.GET["parentreference"],
             }
         else:
-            return {"active_tab": "plandetail"}
+            return {
+                "default_operationplan_type": "MO",
+                "groupBy": "status",
+                "active_tab": "plandetail",
+            }
 
     @classmethod
     def basequeryset(reportclass, request, *args, **kwargs):
         q = ManufacturingOrder.objects.all()
+        if "calendarstart" in request.GET:
+            q = q.filter(
+                Q(enddate__gte=request.GET["calendarstart"])
+                | (
+                    Q(enddate__isnull=True)
+                    & Q(startdate__gte=request.GET["calendarstart"])
+                )
+            )
+        if "calendarend" in request.GET:
+            q = q.filter(
+                Q(startdate__lte=request.GET["calendarend"])
+                | (
+                    Q(startdate__isnull=True)
+                    & Q(enddate__lte=request.GET["calendarend"])
+                )
+            )
         if args and args[0]:
             path = request.path.split("/")[4]
             if path == "location" or request.path.startswith("/detail/input/location/"):

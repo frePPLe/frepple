@@ -564,6 +564,8 @@ class DeliveryOrderList(GridReport):
     editable = True
     multiselect = True
     help_url = "model-reference/delivery-orders.html"
+    calendarmode = "start"
+
     rows = (
         GridFieldText(
             "reference",
@@ -785,6 +787,22 @@ class DeliveryOrderList(GridReport):
     def basequeryset(reportclass, request, *args, **kwargs):
 
         q = DeliveryOrder.objects.all()
+        if "calendarstart" in request.GET:
+            q = q.filter(
+                Q(enddate__gte=request.GET["calendarstart"])
+                | (
+                    Q(enddate__isnull=True)
+                    & Q(startdate__gte=request.GET["calendarstart"])
+                )
+            )
+        if "calendarend" in request.GET:
+            q = q.filter(
+                Q(startdate__lte=request.GET["calendarend"])
+                | (
+                    Q(startdate__isnull=True)
+                    & Q(enddate__lte=request.GET["calendarend"])
+                )
+            )
 
         # special keyword superop used for search field of operationplan
         if "parentreference" in request.GET:

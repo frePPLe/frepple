@@ -2,6 +2,23 @@
 {% load i18n %}
 {% load static %}
 
+{% block extrastyle %}{{block.super}}
+<style>
+#attributes-supplyinformation thead tr td,
+#attributes-networkstatus thead tr td,
+#attributes-downstreamoperationplans thead tr td,
+#attributes-upstreamoperationplans thead tr td,
+#attributes-operationproblems thead tr td,
+#attributes-operationresources thead tr td,
+#attributes-operationflowplans thead tr td,
+#attributes-operationdemandpegging thead tr td {
+  border-bottom-width: 1px;
+  border-bottom-style: solid;
+  border-bottom-color: #bbb;
+}
+</style>
+{% endblock %}
+
 {% block extrahead %}{{block.super}}
 <script src="{{STATIC_URL}}js/angular.min.js"></script>
 <script src="{{STATIC_URL}}js/angular-cookies.min.js"></script>
@@ -25,6 +42,7 @@
 <script src="{{STATIC_URL}}input/src/operationplan.js"></script>
 <script src="{{STATIC_URL}}input/src/model.js"></script>
 
+<script src="{{STATIC_URL}}operationplandetail/src/calendar.js"></script>
 <script src="{{STATIC_URL}}operationplandetail/src/module.js"></script>
 <script src="{{STATIC_URL}}operationplandetail/src/operationplandetailCtrl.js"></script>
 <script src="{{STATIC_URL}}operationplandetail/src/problemspanelDrv.js"></script>
@@ -36,6 +54,7 @@
 <script src="{{STATIC_URL}}operationplandetail/src/downstreamoperationplansDrv.js"></script>
 <script src="{{STATIC_URL}}operationplandetail/src/upstreamoperationplansDrv.js"></script>
 <script src="{{STATIC_URL}}operationplandetail/src/supplyinformationDrv.js"></script>
+<script src="{{STATIC_URL}}operationplandetail/src/kanbanDrv.js"></script>
 {% else %}
 <script src="{{STATIC_URL}}js/frepple-common.min.js"></script>
 <script src="{{STATIC_URL}}js/frepple-input.min.js"></script>
@@ -44,42 +63,164 @@
 
 <script>
 
+  var mode = preferences && preferences.mode || "table";
+  var calendarmode = preferences && preferences.calendarmode || "{{reportclass.calendarmode}}";
+
   function extraPreference() {
     return {
-      "height": Math.floor($("#gbox_grid").height() - 48),
-      "width": Math.floor($("#fields").width())
+      "height": Math.floor($("#content-main").height()),
+      "width": Math.floor($("#fields").width()),
+      "mode": mode,
+      "calendarmode": calendarmode,
+      "columns": angular.element('#controller').scope().kanbancolumns
     };
   }
 
-  var language="{{LANGUAGE_CODE}}";
-  var version='{% version_short %}';
+  function extraSearchUpdate(filter) {
+    thefilter = filter;
+  	if (preferences && preferences.mode == "kanban") {
+      initialfilter = filter;
+  	  angular.element('#controller').scope().loadKanbanData(filter);
+  	  return true;
+  	}
+    else if (preferences && preferences.mode && preferences.mode.startsWith("calendar")) {
+      initialfilter = filter;
+      angular.element('#controller').scope().loadCalendarData(filter);
+      return true;
+    }
+    return false;
+  }
+  
+  function setHeights() {
+      $('#grid').setGridWidth($('#content-main').width());
+      $("#grid").setGridHeight($('#content-main').height()-52);
+      $(".column-body").css("height", $('#content-main').height() - 25);
+      $("#scrolldayview").css("height", $('#content-main').height() - 25);
+      $("#scrollweekview").css("height", $('#content-main').height() - 60);
+      $("#scrollmonthview").css("height", $('#content-main').height() - 45);
+  }
+  
+  function getDirtyData() {
+  	if (preferences && preferences.mode && (preferences.mode == "kanban" || preferences.mode.startsWith("calendar"))) {
+      initialfilter = thefilter;
+      return angular.element('#controller').scope().getDirtyCards();
+    }
+  	else
+  	  return $("#grid").getChangedCells('dirty');
+  }
+  
+  var language = "{{LANGUAGE_CODE}}";
+  var version = '{% version_short %}';
   var lastid = '';
+  var preferences = {{ preferences | json }};
+  var default_operationplan_type = "{{ default_operationplan_type }}";
+  var groupBy = "{{ groupBy }}";
+  var thefilter = initialfilter;
 
   $(function() {
     $("#workarea").css('overflow-x','visible');
-    $("#resize-handle").css({'display':'inline-block'});
     $("#content-main").resizable({
       handleSelector: "#resize-handle",
       resizeWidth: false,
       resizeHeight: true,
-      onDrag: function (e, $el, opt) {
-        $('#grid').setGridWidth($('#content-main').width());
-        $("#grid").setGridHeight($('#content-main').height()-52);
-      },
+      onDrag: setHeights,
       onDragEnd: function (e, $el, opt) {
         grid.saveColumnConfiguration();
       }
     });
-    $("#save").on('click', function() {angular.element('#controller').scope().displayInfo(undefined);});
-    $("#undo").on('click', function() {angular.element('#controller').scope().displayInfo(undefined);});
-    $("#actionsul li").on('click', function() {angular.element('#controller').scope().refreshstatus($("#actions").val());});
+    $("#save").on('click', function() {
+      $(window).off('beforeunload', upload.warnUnsavedChanges);
+      });
+    $("#undo").on('click', function() {
+      $(window).off('beforeunload', upload.warnUnsavedChanges);
+      });
+    $("#actionsul li").on('click', function() {
+      angular.element('#controller').scope().refreshstatus($("#actions").val());
+    });
+    $("#gridmode").on('click', function() {
+      angular.element('#controller').scope().setMode("table");
+    });
+    $("#kanbanmode").on('click', function() {
+      angular.element('#controller').scope().setMode("kanban");
+    });
+    $("#calendarmonth").on('click', function() {
+      angular.element('#controller').scope().setMode("calendarmonth");
+    });  
+    $("#calendarweek").on('click', function() {
+      angular.element('#controller').scope().setMode("calendarweek");
+    });
+    $("#calendarday").on('click', function() {
+      angular.element('#controller').scope().setMode("calendarday");
+    });  
   });
+  // frepple.js will call this function to alert angular that the grid has changed
+  function checkrows(grid, selection) {
+    var selectiondata = [];
+    jQuery.each(selection , function(index,item){
+      selectiondata.push(grid.getRowData(item));
+    });
+    if (selectiondata.length > 1) {
+      angular.element('#controller').scope().processAggregatedInfo(selectiondata, jQuery("#grid").jqGrid ('getGridParam', 'colModel'));
+    } else if (selectiondata.length === 1) {
+      angular.element('#controller').scope().displayInfo(selectiondata[0]);
+    } else {
+      angular.element('#controller').scope().displayInfo(undefined);
+    }
+  }
+
+  // Controller will call this function to pass values to the grid
+  function displayongrid(id, columnid, value) {
+    angular.element(document).find("#" + id).removeClass("edited").addClass("edited");
+    if (
+    	columnid === "startdate" ||
+    	columnid === "enddate" ||
+    	columnid === "quantity" ||
+    	(columnid === "status" && ['proposed', 'approved', 'confirmed', 'completed', 'closed'].indexOf(value) > -1)
+    ) {
+      angular.element(document).find("#grid").jqGrid("setCell", id, columnid, value, "dirty-cell");
+      $("#save, #undo").removeClass("btn-primary btn-danger").addClass("btn-danger").prop("disabled", false);
+      $(window).off('beforeunload', upload.warnUnsavedChanges);
+      $(window).on('beforeunload', upload.warnUnsavedChanges);
+    }
+  }
 </script>
 {% endblock %}
 
 {% block extracontainer %}data-ng-app="operationplandetailapp"{% endblock %}
 
 {% block tools %}{% if args %}{% include "common/snippet_follow.html" %}{% tabs model %}{% endif %}{% endblock %}
+
+{% block actions %}
+  <div class="btn-group" role="group">
+    <button data-toggle="tooltip" data-placement="top" title="{% trans "display table"|capfirst|force_escape %}"
+      class="btn btn-xs btn-primary{% if preferences.mode != 'kanban' and preferences.mode != 'calendarday' and preferences.mode != 'calendarweek' and preferences.mode != 'calendarmonth' or not preferences.mode %} active{% endif %}"
+      type="button" id="gridmode" name="mode">
+      <span class="fa fa-table fa-lg" style="margin: 2px 0 3px 0;"></span>
+    </button>
+    <button data-toggle="tooltip" data-placement="top" title="{% trans "display kanban cards"|capfirst|force_escape %}" class="btn btn-xs btn-primary{% if preferences.mode == 'kanban' %} active{% endif %}" type="button" id="kanbanmode" name="mode">
+      <span class="fa fa-columns fa-lg fa-lg" style="margin: 2px 0 3px 0;"></span>
+    </button>
+    <div class="btn-group" data-toggle="tooltip" data-toggle="tooltip"
+      data-placement="top" title="{% trans "display calendar"|capfirst|force_escape %}">
+      <button type="button" id="calendarmode" name="mode"
+        class="btn btn-xs btn-primary dropdown-toggle{% if preferences.mode == 'calendarday' or preferences.mode == 'calendarweek' or preferences.mode == 'calendarmonth' %} active{% endif %}"
+        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <span class="fa fa-calendar-o"></span>
+        <span class="caret"></span>
+      </button>
+      <ul class="dropdown-menu">
+        <li id="calendarmonth"><a href="#">{% trans "month"|capfirst %}</a></li>
+        <li id="calendarweek"><a href="#">{% trans "week"|capfirst %}</a></li>
+        <li id="calendarday"><a href="#">{% trans "day"|capfirst %}</a></li>
+      </ul>
+    </div>
+  </div>
+{{ block.super }}
+{% endblock %}
+
+{% block afterPageLoad %}
+displayGrid({% if preferences.mode != "kanban" and preferences.mode != "calendarday" and preferences.mode != "calendarweek" and preferences.mode != "calendarmonth" %}true{% else %}false{% endif %});
+{% endblock %}
 
 {% block extra_grid %}
 
@@ -165,57 +306,42 @@ onSelectRow: function(rowid, status, e) {
     angular.element('#controller').scope().displayInfo(undefined);
   }
 },
-multiboxonly: false,	
+multiboxonly: false,
+loadComplete: function(data) {      
+      $('#curerror').html("");
+      upload.restoreSelection();
+    },
 {% endblock %}
 
-{% block after_table %}
-<div class="row">
-  <div class="col-md-12">
-    <table id="gridANG" class="table table-striped" style="background-color: white"></table>
-    <div id="gridpagerANG"></div>
+{% block table %}
+<div data-ng-controller="operationplandetailCtrl" id="controller">
+
+<div class="row" style="text-align: center">
+<div id="content-main" class="col-md-12" style="min-height: 150px; margin-top: 0.7em">
+  <div data-ng-hide="mode == 'kanban' || mode.startsWith('calendar')">
+    <table id="grid" class="table table-striped" style="background-color: white"></table>
+    <div id="gridpager"></div>
+  </div>
+  <div id="calendar" data-ng-hide="!mode.startsWith('calendar')" class="col-md-12">
+    <calendar
+      data-range-changed="calendarRangeChanged(startdate, enddate)"
+      data-event-selected="displayInfo(event)"
+      data-event-source="calendarevents"
+      data-editable="{% if reportclass.editable and haschangeperm %}true{% else %}false{% endif %}"
+      data-mode="mode"></calendar>
+  </div>
+  <div id="kanban" data-ng-hide="mode != 'kanban'"
+    show-kanban-drv data-ng-class="{'row': colsum <= 12, 'longline': colsum > 12}"
+    data-editable="{% if reportclass.editable and haschangeperm %}true{% else %}false{% endif %}"
+    data-kanbanoperationplans="kanbanoperationplans"
+    data-operationplan="operationplan"
+    data-kanbancolumns="kanbancolumns">
   </div>
 </div>
+<span id="resize-handle" class="fa fa-bars handle" style="display: inline-block"></span>
+</div>
+
 <div data-ng-include="'/static/operationplandetail/operationplandetail.html'"></div>
-<script>
-//frepple.js will call this function to alert angular that the grid has changed
-function checkrows(grid, selection) {
-  var selectiondata = [];
-  jQuery.each(selection , function(index,item){
-    selectiondata.push(grid.getRowData(item));
-  });
-  if (selectiondata.length > 1) {
-    angular.element('#controller').scope().processAggregatedInfo(selectiondata, jQuery("#grid").jqGrid ('getGridParam', 'colModel'));
-  } else if (selectiondata.length === 1) {
-    angular.element('#controller').scope().displayInfo(selectiondata[0]);
-  } else {
-    angular.element('#controller').scope().displayInfo(undefined);
-  }
-}
-//controller will call this function to pass values to the grid
-function displayongrid(id, columnid, value) {
-  angular.element(document).find("#" + id).removeClass("edited").addClass("edited");
-  if (columnid === "startdate") {
-    angular.element(document).find("#grid").jqGrid("setCell", id, "startdate", value, "dirty-cell");
-    $("#save").removeClass("btn-primary btn-danger").addClass("btn-danger").prop("disabled", false);
-    $("#undo").removeClass("btn-primary btn-danger").addClass("btn-danger").prop("disabled", false);
-  }
-  if (columnid === "enddate") {
-    jQuery("#grid").jqGrid("setCell", id, "enddate", value, "dirty-cell");
-    $("#save").removeClass("btn-primary btn-danger").addClass("btn-danger").prop("disabled", false);
-    $("#undo").removeClass("btn-primary btn-danger").addClass("btn-danger").prop("disabled", false);
-  }
-  if (columnid === "quantity") {
-    jQuery("#grid").jqGrid("setCell", id, "quantity", value, "dirty-cell");
-    $("#save").removeClass("btn-primary btn-danger").addClass("btn-danger").prop("disabled", false);
-    $("#undo").removeClass("btn-primary btn-danger").addClass("btn-danger").prop("disabled", false);
-  }
-  if (columnid === "status") {
-    if (['proposed', 'approved', 'confirmed', 'completed', 'closed'].indexOf(value) > -1) {
-      jQuery("#grid").jqGrid("setCell", id, "status", value, "dirty-cell");
-      $("#save").removeClass("btn-primary btn-danger").addClass("btn-danger").prop("disabled", false);
-      $("#undo").removeClass("btn-primary btn-danger").addClass("btn-danger").prop("disabled", false);
-    }
-  }
-}
-</script>
+
+</div>
 {% endblock %}

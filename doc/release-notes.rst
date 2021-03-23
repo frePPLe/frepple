@@ -6,8 +6,11 @@ Release notes
 
 .. rubric:: User interface
 
-- | Scenario management: Addition of a command to release a scenario.
+- | The kanban and calendar views on the purchase orders, manufacturing orders and
+    distribution orders are now also available on the Community Edition.
+  | They have been available on the Enterprise and Cloud Editions for a longer time already.
 
+- | Scenario management: Addition of a command to release a scenario.
 
 6.12.0 (2021/03/01)
 ===================

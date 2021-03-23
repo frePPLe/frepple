@@ -1412,17 +1412,27 @@ class GridReport(View):
                 )
         query = cls._apply_sort(request, request.query)
         if page:
+            # Display a single page
             cnt = (page - 1) * request.pagesize + 1
             if hasattr(cls, "query"):
                 return cls.query(request, query[cnt - 1 : cnt + request.pagesize])
             else:
                 return query[cnt - 1 : cnt + request.pagesize].values(*fields)
         else:
-            if hasattr(cls, "query"):
-                return cls.query(request, query)
+            limit = getattr(request, "limit", 0)
+            if limit:
+                # Kanban views have no pages, but still limit the number of cards
+                if hasattr(cls, "query"):
+                    return cls.query(request, query[:limit])
+                else:
+                    return query[:limit].values(*fields)
             else:
-                fields = [i.field_name for i in request.rows if i.field_name]
-                return query.values(*fields)
+                # No size limit on the query results
+                if hasattr(cls, "query"):
+                    return cls.query(request, query)
+                else:
+                    fields = [i.field_name for i in request.rows if i.field_name]
+                    return query.values(*fields)
 
     @classmethod
     def count_query(cls, request, *args, **kwargs):
@@ -1799,12 +1809,23 @@ class GridReport(View):
             )
             response["Cache-Control"] = "no-cache, no-store"
             return response
+        elif fmt == "calendar":
+            response = StreamingHttpResponse(
+                content_type="application/json; charset=%s" % settings.DEFAULT_CHARSET,
+                streaming_content=cls._generate_calendar_data(request, *args, **kwargs),
+            )
+            response["Cache-Control"] = "no-cache, no-store"
+            return response
         else:
             raise Http404("Unknown format type")
 
     @classmethod
     def _generate_kanban_data(cls, request, *args, **kwargs):
-        raise Http404("This report doesn't support the Kanban format")
+        raise Http404("This report doesn't support the kanban format")
+
+    @classmethod
+    def _generate_calendar_data(cls, request, *args, **kwargs):
+        raise Http404("This report doesn't support the calendar format")
 
     @classmethod
     def parseJSONupload(cls, request):
@@ -2645,7 +2666,7 @@ class GridReport(View):
     @classmethod
     def _get_q_filter(cls, request, filterdata):
         q_filters = []
-        for rule in filterdata["rules"]:
+        for rule in filterdata.get("rules", []):
             try:
                 op, field, data = rule["op"], rule["field"], rule["data"]
                 reportrow = cls._getRowByName(request, field)
@@ -2660,14 +2681,13 @@ class GridReport(View):
                     )
             except Exception as e:
                 pass  # Silently ignore invalid filters
-        if "groups" in filterdata:
-            for group in filterdata["groups"]:
-                try:
-                    z = cls._get_q_filter(request, group)
-                    if z:
-                        q_filters.append(z)
-                except Exception:
-                    pass  # Silently ignore invalid groups
+        for group in filterdata.get("groups", []):
+            try:
+                z = cls._get_q_filter(request, group)
+                if z:
+                    q_filters.append(z)
+            except Exception:
+                pass  # Silently ignore invalid groups
         if len(q_filters) == 0:
             return None
         elif filterdata["groupOp"].upper() == "OR":

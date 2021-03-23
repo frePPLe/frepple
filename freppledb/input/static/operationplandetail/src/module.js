@@ -19,7 +19,7 @@
 'use strict';
 
 var operationplandetailapp = angular.module('operationplandetailapp',
-  ['ngCookies', 'gettext', 'ngWebSocket', 'frepple.input', 'frepple.common'],
+  ['ngCookies', 'gettext', 'ngWebSocket', 'frepple.input', 'frepple.common', 'calendar'],
   ['$locationProvider', function ($locationProvider) {
     $locationProvider.html5Mode({enabled: true, requireBase: false});
 }]);

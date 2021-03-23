@@ -20,12 +20,28 @@
 
 angular.module('operationplandetailapp').controller('operationplandetailCtrl', operationplanCtrl);
 
-operationplanCtrl.$inject = ['$scope', 'OperationPlan'];
+operationplanCtrl.$inject = ['$scope', '$http', 'OperationPlan', 'PreferenceSvc'];
 
-function operationplanCtrl($scope, OperationPlan) {
-  $scope.test = "angular controller";
+function operationplanCtrl($scope, $http, OperationPlan, PreferenceSvc) {
   $scope.operationplan = new OperationPlan();
   $scope.aggregatedopplan = null;
+  $scope.mode = preferences ? preferences.mode : "table";
+  $scope.operationplans = [];
+  $scope.kanbanoperationplans = {};
+  $scope.colsum = 12;
+  $scope.kanbancolumns = preferences ? preferences.columns : undefined;
+  if (!$scope.kanbancolumns)
+  	$scope.kanbancolumns = ["proposed", "approved", "confirmed", "completed", "closed"];
+  $scope.groupBy = preferences ? preferences.groupBy : undefined;
+  if (!$scope.groupBy) {
+    if (typeof groupBy !== 'undefined')
+      $scope.groupBy = groupBy;
+    else
+      $scope.groupBy = "status";
+  }
+  $scope.groupOperator = preferences ? preferences.groupOperator : undefined;
+  if (!$scope.groupOperator)
+  	$scope.groupOperator = "eq";
 
   // This template function will pass the values to the grid, function(id,column,value)
   // will set the row as "edited", and trigger "save undo" buttons.
@@ -34,22 +50,36 @@ function operationplanCtrl($scope, OperationPlan) {
 
   if (typeof $scope.displayongrid === 'function') {
     //watch is only needed if we can update the grid
-    $scope.$watchGroup(['operationplan.id','operationplan.start','operationplan.end','operationplan.quantity','operationplan.status'], function(newValue, oldValue) {
-      if (oldValue[0] === newValue[0] && newValue[0] !== -1 && typeof oldValue[0] !== 'undefined') { //is a change to the current operationplan
-
+    $scope.$watchGroup(
+      ['operationplan.id','operationplan.start','operationplan.end','operationplan.quantity','operationplan.status'], 
+      function(newValue, oldValue) {
+      if (oldValue[0] === newValue[0] && newValue[0] !== -1 && typeof oldValue[0] !== 'undefined') {
+        //is a change to the current operationplan
         if (typeof oldValue[1] !== 'undefined' && typeof newValue[1] !== 'undefined' && oldValue[1] !== newValue[1]) {
-          $scope.displayongrid($scope.operationplan.id,"startdate",$scope.operationplan.start);
+          if ($scope.mode == "kanban" || $scope.mode.startsWith("calendar"))
+            $scope.$broadcast("selectedEdited", "startdate", oldValue[1], new Date($scope.operationplan.start));
+          else
+            $scope.displayongrid($scope.operationplan.id, "startdate", $scope.operationplan.start);
         }
         if (typeof oldValue[2] !== 'undefined' && typeof newValue[2] !== 'undefined' && oldValue[2] !== newValue[2]) {
-          $scope.displayongrid($scope.operationplan.id,"enddate",$scope.operationplan.end);
+          if ($scope.mode == "kanban" || $scope.mode.startsWith("calendar"))
+            $scope.$broadcast("selectedEdited", "enddate", oldValue[2], new Date($scope.operationplan.end));
+          else
+            $scope.displayongrid($scope.operationplan.id, "enddate", $scope.operationplan.end);
         }
         if (typeof oldValue[3] !== 'undefined' && typeof newValue[3] !== 'undefined' && oldValue[3] !== newValue[3]) {
-          $scope.displayongrid($scope.operationplan.id,"quantity",$scope.operationplan.quantity);
+          if ($scope.mode == "kanban" || $scope.mode.startsWith("calendar"))
+            $scope.$broadcast("selectedEdited", "quantity", oldValue[3], $scope.operationplan.quantity);
+          else
+            $scope.displayongrid($scope.operationplan.id, "quantity", $scope.operationplan.quantity);
         }
         if (typeof oldValue[4] !== 'undefined' && typeof newValue[4] !== 'undefined' && oldValue[4] !== newValue[4]) {
-
-          if (actions.hasOwnProperty($scope.operationplan.status))
-            $scope.displayongrid($scope.operationplan.id,"status",$scope.operationplan.status);
+          if (actions.hasOwnProperty($scope.operationplan.status)) {
+            if ($scope.mode == "kanban" || $scope.mode.startsWith("calendar"))
+              $scope.$broadcast("selectedEdited", "status", oldValue[4], $scope.operationplan.status);
+            else
+              $scope.displayongrid($scope.operationplan.id, "status", $scope.operationplan.status);
+          }
           else
             actions[Object.keys(actions)[0]]();
         }
@@ -155,6 +185,14 @@ function operationplanCtrl($scope, OperationPlan) {
   $scope.processAggregatedInfo = processAggregatedInfo;
 
   function displayInfo(row) {
+  	if ($scope.mode == "kanban" && row === undefined) {
+  		$scope.loadKanbanData();
+  		return;
+  	}
+    if ($scope.mode.startsWith("calendar") && row === undefined) {
+      $scope.loadCalendarData();
+      return;
+    }
     var rowid = undefined;
     if (typeof row !== 'undefined') {
     	if (row.hasOwnProperty('operationplan__reference'))
@@ -162,9 +200,9 @@ function operationplanCtrl($scope, OperationPlan) {
     	else
     		rowid = row.reference;
     }
-    $scope.operationplan = new OperationPlan();    
+    $scope.operationplan = new OperationPlan();
     $scope.operationplan.id = rowid;
-    
+
     function callback(opplan) {
       if (row === undefined)
         return opplan;
@@ -187,7 +225,7 @@ function operationplanCtrl($scope, OperationPlan) {
       else if (row.status !== undefined && row.status !== '')
         opplan.status = row.status;
     }
-    
+
     if (typeof $scope.operationplan.id === 'undefined')
       $scope.$apply(function(){ $scope.operationplan = new OperationPlan(); });
     else
@@ -201,6 +239,75 @@ function operationplanCtrl($scope, OperationPlan) {
     }
   }
   $scope.refreshstatus = refreshstatus;
+
+  function setMode(m) {
+    function innerFunction() {
+      PreferenceSvc.save("mode", m);
+      $scope.$apply(function(){ $scope.mode = m; });
+      angular.element('#controller').scope().$broadcast('changeMode', m);
+      if (m == 'kanban') {
+        $("#gridmode, #calendarmode").removeClass("active");
+        $("#kanbanmode").addClass("active");
+        angular.element(document).find("#customize").hide();
+        mode = "kanban";
+        $scope.loadKanbanData();
+      }
+      else if (m.startsWith('calendar')) {
+        $("#kanbanmode, #gridmode").removeClass("active");
+        $("#calendarmode").addClass("active");
+        angular.element(document).find("#customize").hide();
+        mode = m;
+        // No need to call loadCalendarData since it's triggered automatically with the above $apply
+      }     
+      else {
+        $("#kanbanmode, #calendarmode").removeClass("active");
+        $("#gridmode").addClass("active");
+        mode = "grid";
+        angular.element(document).find("#grid").jqGrid("GridUnload");
+        // $("#jqgrid").jqGrid('setGridParam', {datatype:'json'}).trigger('reloadGrid');
+        
+        // We could deallocate the kanban cards, but that can be slow.
+        // $scope.kanbanoperationplans = {};
+        initialfilter = thefilter;
+        angular.element(document).find("#customize").show();
+        displayGrid(true);
+      }
+      setHeights();
+    }
+
+    var save_button = angular.element(document).find("#save");
+    if ($scope.mode != m && save_button.hasClass("btn-danger")) {
+       $('#popup').html('<div class="modal-dialog">'+
+           '<div class="modal-content">'+
+           '<div class="modal-header alert-warning" style="border-top-left-radius: inherit; border-top-right-radius: inherit">'+
+            '<h4 class="modal-title">'+ gettext("Save or cancel your changes first") +'</h4>'+
+           '</div>'+
+           '<div class="modal-body">'+
+            gettext("There are unsaved changes on this page.") +
+           '</div>'+
+           '<div class="modal-footer">'+
+            '<input type="submit" id="savebutton" role="button" class="btn btn-danger pull-left" value="'+gettext('Save')+'">'+
+            '<input type="submit" id="cancelbutton" role="button" class="btn btn-primary pull-right" value="'+gettext('Cancel')+'">'+
+           '</div>'+
+           '</div>'+
+         '</div>'
+         ).modal('show');
+       $('#savebutton').on('click', function() {
+          save_button.click();          
+          innerFunction();
+          $('#popup').modal('hide');
+          });
+       $('#cancelbutton').on('click', function() {
+          $('#popup').modal('hide');
+          });
+       return false;
+    }
+    else {
+      innerFunction();
+      return true;
+    }
+  }
+  $scope.setMode = setMode;
 
   function displayonpanel(rowid,columnid,value) {
     angular.element(document).find("#" + $scope.operationplan.id).removeClass("edited").addClass("edited");
@@ -221,4 +328,193 @@ function operationplanCtrl($scope, OperationPlan) {
   }
   $scope.displayonpanel = displayonpanel;
 
+	function formatInventoryStatus(opplan) {
+
+    if (opplan.color === undefined || opplan.color === '')
+    	return [ undefined, "" ];
+    var thenumber = parseInt(opplan.color);
+
+      var thedelay = Math.round(parseInt(opplan.delay)/8640)/10;
+      if (isNaN(thedelay))
+        thedelay = Math.round(parseInt(opplan.operationplan__delay)/8640)/10;
+      if (parseInt(opplan.criticality) === 999 || parseInt(opplan.operationplan__criticality) === 999)
+        return [ undefined, "" ];
+      else if (thedelay < 0)
+        return [ "rgba(0,128,0,0.5)", (-thedelay) + ' ' + gettext("days early") ];
+      else if (thedelay === 0)
+        return [ "rgba(0,128,0,0.5)", gettext("on time") ];
+      else if (thedelay > 0) {
+        if (thenumber > 100 || thenumber < 0)
+          return [ "rgba(255,0,0,0.5)", thedelay + ' ' + gettext("days late") ];
+        else
+          return [ "rgba(255," + Math.round(thenumber/100*255) + ",0,0.5)", thedelay + ' ' + gettext("days late") ];
+      }
+    return [ undefined, "" ];
+	};
+
+  $scope.calendarevents = [];
+  $scope.calendarStart = null;
+  $scope.calendarEnd = null;  
+  $scope.mode = preferences && preferences.mode || "table";
+
+  function calendarRangeChanged(startdate, enddate) {
+    $scope.calendarStart = startdate;
+    $scope.calendarEnd = enddate;
+    if ($scope.mode && $scope.mode.startsWith("calendar"))
+      loadCalendarData();
+  };
+  $scope.calendarRangeChanged = calendarRangeChanged;
+  
+	function loadCalendarData(thefilter) {
+    if (!thefilter) {
+      var tmp = $('#grid').getGridParam("postData");
+      if (tmp)
+        thefilter = tmp.filters ? JSON.parse(tmp.filters) : initialfilter;
+      else
+        thefilter = initialfilter;
+    }
+    var sidx = $('#grid').getGridParam('sortname');    
+    var sortname = "";
+    if (sidx !== '') {
+      sortname = "&sidx=" + encodeURIComponent(sidx)
+        + "&sord=" + encodeURIComponent($('#grid').getGridParam('sortorder'));
+    }    
+    var baseurl = (location.href.indexOf("#") != -1 ? location.href.substr(0,location.href.indexOf("#")) : location.href)
+      + (location.search.length > 0 ? "&format=calendar" : "?format=calendar")
+      + "&calendarstart=" + moment($scope.calendarStart).format("YYYY-MM-DD%20HH:MM:SS")
+      + "&calendarend=" + moment($scope.calendarEnd).format("YYYY-MM-DD%20HH:MM:SS")
+      + sortname;
+    $http.get(baseurl + "&filters=" + encodeURIComponent(JSON.stringify(thefilter)))
+        .then(
+          function success(response) {
+            var tmp = angular.copy(response.data);
+            for (var x of tmp.rows) {
+              x.type = x.operationplan__type || x.type || default_operationplan_type;
+              x.enddate = (x.operationplan__enddate || x.enddate) ? new Date(x.operationplan__enddate || x.enddate) : null;
+              x.startdate = (x.operationplan__startdate ||  x.startdate) ? new Date(x.operationplan__startdate ||  x.startdate) : null;
+              x.quantity = parseFloat(x.operationplan__quantity || x.quantity);
+              if (x.hasOwnProperty("operationplan__status"))
+                x.status = x.operationplan__status;
+              if (x.hasOwnProperty("operationplan__origin"))
+                x.origin = x.operationplan__origin;
+              if (x.hasOwnProperty("operationplan__reference"))
+                x.reference = x.operationplan__reference;
+              [x.color, x.inventory_status] = formatInventoryStatus(x);
+            }
+            $scope.calendarevents= tmp.rows;
+          },
+          function failure(response) {
+            console.log("Error getting calendar data");
+          }
+          );
+  }
+  $scope.loadCalendarData = loadCalendarData;
+
+  function loadKanbanData(thefilter) {
+    if (!thefilter) {
+      var tmp = $('#grid').getGridParam("postData");
+      if (tmp)
+        thefilter = tmp.filters ? JSON.parse(tmp.filters) : initialfilter;
+      else
+        thefilter = initialfilter;
+    }
+    var sidx = $('#grid').getGridParam('sortname');    
+    var sortname = "";
+    if (sidx !== '') {
+      sortname = "&sidx=" + encodeURIComponent(sidx)
+        + "&sord=" + encodeURIComponent($('#grid').getGridParam('sortorder'));
+    }
+  	var baseurl = (location.href.indexOf("#") != -1 ? location.href.substr(0,location.href.indexOf("#")) : location.href)
+ 	    + (location.search.length > 0 ? "&format=kanban" : "?format=kanban");
+  	// TODO handle this filtering on the backend instead?
+  	angular.forEach($scope.kanbancolumns, function(key) {
+  		var colfilter = angular.copy(thefilter);
+  		var extrafilter = {field: $scope.groupBy, op: $scope.groupOperator, data: key};
+    	if (colfilter === undefined || colfilter === null) {
+  			// First filter
+    		colfilter = {
+  				"groupOp":"AND",
+  				"rules":[extrafilter],
+  				"groups":[]
+  			  };
+  		}
+  		else {
+  			if (colfilter["groupOp"] == "AND")
+  				// Add condition to existing and-filter
+  			  colfilter["rules"].push(extrafilter);
+  			else
+  				// Wrap existing filter in a new and-filter
+  				colfilter = {
+  				  "groupOp":"AND",
+  				  "rules":[extrafilter],
+  				  "groups":[colfilter]
+  			    };
+  		}
+  		$http.get(baseurl + "&filters=" + encodeURIComponent(JSON.stringify(colfilter)) + sortname)
+  		  .then(function(response) {
+  	  	  $scope.kanbanoperationplans[key] = angular.copy(response.data);
+  	  	  for (var x of $scope.kanbanoperationplans[key].rows) {
+  	  	  	x.type = x.operationplan__type || x.type || default_operationplan_type;
+  	  	  	x.enddate = new Date(x.operationplan__enddate || x.enddate);
+  	  	  	x.startdate = new Date(x.operationplan__startdate ||  x.startdate);
+  	  	  	x.quantity = parseFloat(x.operationplan__quantity || x.quantity);
+  	  	  	if (x.hasOwnProperty("operationplan__status"))
+  	  	  		x.status = x.operationplan__status;
+  	  	  	if (x.hasOwnProperty("operationplan__origin"))
+  	  	  		x.origin = x.operationplan__origin;
+  	  	  	if (x.hasOwnProperty("operationplan__reference"))
+  	  	  		x.reference = x.operationplan__reference;
+  	  	  	[x.color, x.inventory_status] = formatInventoryStatus(x);
+  	  	  }
+  	      });
+  	});
+  }
+  $scope.loadKanbanData = loadKanbanData;
+
+  function getDirtyCards() {
+  	var dirty = [];
+    if ($scope.mode && $scope.mode.startsWith("calendar")) {
+      angular.forEach($scope.calendarevents, function(card) {
+          var dirtycard = {id: card.reference};
+          var dirtyfields = false;
+          for (var field in card) {
+            if (card.hasOwnProperty(field + "Original")) {
+              dirtyfields = true;
+              if (card[field] instanceof Date)
+                dirtycard[field] = new moment(card[field]).format('YYYY-MM-DD hh:mm:ss');
+              else 
+                dirtycard[field] = card[field];
+            }
+          }
+          if (dirtyfields)
+            dirty.push(dirtycard);        
+      });
+    }
+    else if ($scope.mode == "kanban") {
+    	angular.forEach($scope.kanbanoperationplans, function(value, key) {
+        angular.forEach(value.rows, function(card) {
+          var dirtycard = {id: card.reference};
+          var dirtyfields = false;
+        	for (var field in card) {
+            if (card.hasOwnProperty(field + "Original")) {
+              dirtyfields = true;
+              if (card[field] instanceof Date)
+              	dirtycard[field] = new moment(card[field]).format('YYYY-MM-DD hh:mm:ss');
+              else 
+                dirtycard[field] = card[field];
+            }
+          }
+          if (dirtyfields)
+          	dirty.push(dirtycard);
+        });
+    	});
+    }
+  	return dirty;
+  }
+  $scope.getDirtyCards = getDirtyCards;
+
+  // Initial display
+  if (preferences && preferences.mode == "kanban") {
+    $scope.loadKanbanData();
+  }
 }

@@ -22,7 +22,7 @@ DemandFactory.$inject = ['$http', 'getURLprefix', 'Location', 'Item', 'Customer'
 
 function DemandFactory ($http, getURLprefix, Location, Item, Customer) {
 
-  var debug = true;
+  var debug = false;
 
   function Demand(data) {
     if (data) this.extend(data);

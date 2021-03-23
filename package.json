@@ -20,7 +20,7 @@
     "grunt-contrib-watch": ">=1.1.0",
     "grunt-exec": "^3.0.0",
     "less": ">=2.5.3",
-    "less-plugin-autoprefix": ">=1.5.1"  
+    "less-plugin-autoprefix": ">=1.5.1"
   },
   "repository": {
     "type": "git",

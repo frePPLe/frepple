@@ -116,6 +116,7 @@ module.exports = function (grunt) {
       },
       operationplandetail: {
         src: [
+              'freppledb/input/static/operationplandetail/src/calendar.js',          
               'freppledb/input/static/operationplandetail/src/module.js',
               'freppledb/input/static/operationplandetail/src/operationplandetailCtrl.js',
               'freppledb/input/static/operationplandetail/src/problemspanelDrv.js',
@@ -126,7 +127,7 @@ module.exports = function (grunt) {
               'freppledb/input/static/operationplandetail/src/supplyinformationDrv.js',
               'freppledb/input/static/operationplandetail/src/downstreamoperationplansDrv.js',
               'freppledb/input/static/operationplandetail/src/upstreamoperationplansDrv.js',
-              'freppledb/input/static/operationplandetail/src/networkstatusDrv.js'
+              'freppledb/input/static/operationplandetail/src/kanbanDrv.js'
               ],
         dest: 'freppledb/input/static/js/frepple-operationplandetail.js'
       }

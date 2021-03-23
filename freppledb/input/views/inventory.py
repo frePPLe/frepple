@@ -548,6 +548,7 @@ class DistributionOrderList(OperationPlanMixin, GridReport):
         <br>
         """
     )
+    calendarmode = "duration"
 
     @classmethod
     def extra_context(reportclass, request, *args, **kwargs):
@@ -555,6 +556,8 @@ class DistributionOrderList(OperationPlanMixin, GridReport):
             paths = request.path.split("/")
             if paths[4] == "operationplanmaterial":
                 return {
+                    "default_operationplan_type": "DO",
+                    "groupBy": "status",
                     "active_tab": "distributionorders",
                     "model": Item,
                     "title": force_text(Item._meta.verbose_name) + " " + args[0],
@@ -565,6 +568,8 @@ class DistributionOrderList(OperationPlanMixin, GridReport):
                 }
             elif paths[4] == "produced":
                 return {
+                    "default_operationplan_type": "DO",
+                    "groupBy": "status",
                     "active_tab": "distributionorders",
                     "model": Item,
                     "title": force_text(Item._meta.verbose_name) + " " + args[0],
@@ -575,6 +580,8 @@ class DistributionOrderList(OperationPlanMixin, GridReport):
                 }
             elif paths[4] == "consumed":
                 return {
+                    "default_operationplan_type": "DO",
+                    "groupBy": "status",
                     "active_tab": "distributionorders",
                     "model": Item,
                     "title": force_text(Item._meta.verbose_name) + " " + args[0],
@@ -585,6 +592,8 @@ class DistributionOrderList(OperationPlanMixin, GridReport):
                 }
             elif paths[4] == "item":
                 return {
+                    "default_operationplan_type": "DO",
+                    "groupBy": "status",
                     "active_tab": "distributionorders",
                     "model": Item,
                     "title": force_text(Item._meta.verbose_name) + " " + args[0],
@@ -594,6 +603,8 @@ class DistributionOrderList(OperationPlanMixin, GridReport):
                 path = paths[-2]
                 if path == "in":
                     return {
+                        "default_operationplan_type": "DO",
+                        "groupBy": "status",
                         "active_tab": "inboundorders",
                         "model": Location,
                         "title": force_text(Location._meta.verbose_name)
@@ -603,6 +614,8 @@ class DistributionOrderList(OperationPlanMixin, GridReport):
                     }
                 elif path == "out":
                     return {
+                        "default_operationplan_type": "DO",
+                        "groupBy": "status",
                         "active_tab": "outboundorders",
                         "model": Location,
                         "title": force_text(Location._meta.verbose_name)
@@ -611,13 +624,47 @@ class DistributionOrderList(OperationPlanMixin, GridReport):
                         "post_title": _("outbound distribution"),
                     }
             else:
-                return {"active_tab": "edit", "model": Item}
+                return {
+                    "default_operationplan_type": "DO",
+                    "groupBy": "status",
+                    "active_tab": "edit",
+                    "model": Item,
+                }
+        elif "parentreference" in request.GET:
+            return {
+                "default_operationplan_type": "DO",
+                "groupBy": "status",
+                "active_tab": "edit",
+                "title": force_text(DistributionOrder._meta.verbose_name)
+                + " "
+                + request.GET["parentreference"],
+            }
         else:
-            return {"active_tab": "edit"}
+            return {
+                "default_operationplan_type": "DO",
+                "groupBy": "status",
+                "active_tab": "edit",
+            }
 
     @classmethod
     def basequeryset(reportclass, request, *args, **kwargs):
         q = DistributionOrder.objects.all()
+        if "calendarstart" in request.GET:
+            q = q.filter(
+                Q(enddate__gte=request.GET["calendarstart"])
+                | (
+                    Q(enddate__isnull=True)
+                    & Q(startdate__gte=request.GET["calendarstart"])
+                )
+            )
+        if "calendarend" in request.GET:
+            q = q.filter(
+                Q(startdate__lte=request.GET["calendarend"])
+                | (
+                    Q(startdate__isnull=True)
+                    & Q(enddate__lte=request.GET["calendarend"])
+                )
+            )
         if args and args[0]:
             paths = request.path.split("/")
             if paths[4] == "operationplanmaterial":
@@ -1082,6 +1129,22 @@ class InventoryDetail(OperationPlanMixin, GridReport):
         else:
             base = OperationPlanMaterial.objects
         base = reportclass.operationplanExtraBasequery(base, request)
+        if "calendarstart" in request.GET:
+            base = base.filter(
+                Q(operationplan__enddate__gte=request.GET["calendarstart"])
+                | (
+                    Q(operationplan__enddate__isnull=True)
+                    & Q(operationplan__startdate__gte=request.GET["calendarstart"])
+                )
+            )
+        if "calendarend" in request.GET:
+            base = base.filter(
+                Q(operationplan__startdate__lte=request.GET["calendarend"])
+                | (
+                    Q(operationplan__startdate__isnull=True)
+                    & Q(operationplan__enddate__lte=request.GET["calendarend"])
+                )
+            )
         return base.select_related().annotate(
             feasible=RawSQL(
                 "coalesce((operationplan.plan->>'feasible')::boolean, true)", []
@@ -1096,6 +1159,8 @@ class InventoryDetail(OperationPlanMixin, GridReport):
             ) or request.path_info.startswith("/detail/input/item/"):
                 request.session["lasttab"] = "inventorydetail"
                 return {
+                    "default_operationplan_type": "MO",
+                    "groupBy": "operationplan__status",
                     "active_tab": "inventorydetail",
                     "model": Item,
                     "title": force_text(Item._meta.verbose_name) + " " + args[0],
@@ -1114,6 +1179,8 @@ class InventoryDetail(OperationPlanMixin, GridReport):
                     item = buffer.item.name
                     location = buffer.location.name
                 return {
+                    "default_operationplan_type": "MO",
+                    "groupBy": "operationplan__status",
                     "active_tab": "plandetail",
                     "model": Buffer,
                     "title": force_text(Buffer._meta.verbose_name)
@@ -1124,7 +1191,12 @@ class InventoryDetail(OperationPlanMixin, GridReport):
                     "post_title": _("plan detail"),
                 }
         else:
-            return {"active_tab": "plandetail", "model": OperationPlanMaterial}
+            return {
+                "default_operationplan_type": "MO",
+                "groupBy": "operationplan__status",
+                "active_tab": "plandetail",
+                "model": OperationPlanMaterial,
+            }
 
     rows = (
         GridFieldInteger(

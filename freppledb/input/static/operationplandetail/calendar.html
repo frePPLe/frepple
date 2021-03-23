@@ -1,0 +1,31 @@
+<div data-ng-switch="mode">
+  <div class="row calendar-navbar">
+    <div class="col-xs-5 hor-align-right ver-align-middle">
+      <button type="button" class="btn btn-primary btn-sm" ng-click="move(-1)">
+        <i class="fa fa-chevron-left"></i>
+      </button>
+    </div>
+    <div class="calendar-header col-xs-2">{{title}}</div>
+    <div class="col-xs-1 alignleft ver-align-middle">
+      <button type="button" class="btn btn-primary btn-sm" ng-click="move(1)">
+        <i class="fa fa-chevron-right"></i>
+      </button>
+    </div>
+    <div class="col-xs-4 ver-align-middle ">
+      <div class="pull-right">
+      <button class="btn btn-default dropdown-toggle form-control" style="width: auto" type="button" name="calmode" data-toggle="dropdown">
+        {{ calendarmodes[calendarmode] }}&nbsp;&nbsp;<i class="caret"></i>
+      </button>
+      <ul class="dropdown-menu" aria-labelledby="calmode">
+        <li><a data-ng-click="setCalendarMode('start')">{{ calendarmodes['start'] }}</a></li>
+        <li><a data-ng-click="setCalendarMode('end')">{{ calendarmodes['end'] }}</a></li>
+        <li><a data-ng-click="setCalendarMode('start_end')">{{ calendarmodes['start_end'] }}</a></li>
+        <li><a data-ng-click="setCalendarMode('duration')">{{ calendarmodes['duration'] }}</a></li>
+      </ul>
+      </div>
+    </div>
+  </div>
+  <dayview data-ng-switch-when="calendarday"></dayview>
+  <monthview data-ng-switch-when="calendarmonth"></monthview>
+  <weekview data-ng-switch-when="calendarweek"></weekview>
+</div>

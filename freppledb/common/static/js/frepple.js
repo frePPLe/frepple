@@ -7,6 +7,17 @@ function isDragnDropUploadCapable() {
   return (('draggable' in adiv) || ('ondragstart' in adiv && 'ondrop' in adiv)) && 'FormData' in window && 'FileReader' in window;
 }
 
+var _scrollBarWidth;
+function getScrollBarWidth() {
+  if (!_scrollBarWidth) {
+    var div = $("<div style='overflow:scroll;position:absolute;top:-99999px'></div>").appendTo("body"),
+    _scrollBarWidth = div.prop("offsetWidth") - div.prop("clientWidth");
+    div.remove();
+  }
+  return _scrollBarWidth;
+}
+
+
 // Adjust the breadcrumbs such that it fits on a single line.
 // This function is called when the window is resized.
 function breadcrumbs_reflow()
@@ -222,7 +233,8 @@ var upload = {
   {
     if ($('#undo').hasClass("btn-primary")) return;
     if (typeof extraSearchUpdate == 'function') {
-  		if (!extraSearchUpdate($('#grid').getGridParam("postData").filters))
+      var f = $('#grid').getGridParam("postData").filters;
+  	  if (!extraSearchUpdate(f ? JSON.parse(f) : null))
   		  $("#grid").trigger("reloadGrid");
     }
     else
@@ -1572,8 +1584,11 @@ var grid = {
       overlay: 0,
       sopt: ['eq','ne','lt','le','gt','ge','bw','bn','in','ni','ew','en','cn','nc'],
       onSearch : function() {
+        var c = $("#fbox_" + thegridid).jqFilter('filterData');
         grid.saveColumnConfiguration();
-        grid.getFilterGroup(thegrid, $("#fbox_" + thegridid).jqFilter('filterData'), true, curfilter);
+        grid.getFilterGroup(thegrid, c, true, curfilter);
+        if (typeof extraSearchUpdate == 'function')
+          extraSearchUpdate(c);
         },
       onReset : function() {        
         if (typeof initialfilter !== 'undefined') {
@@ -1586,6 +1601,7 @@ var grid = {
         return true;
         }
       });
+    $("#searchmodfbox_grid").detach().appendTo("#content-main");
   },
   
   countFilters: 0,
@@ -1606,27 +1622,28 @@ var grid = {
 				"data": $("#addsearch").val(),
 				"filtercount":++grid.filtercount
 				};
-		var c = $('#grid').getGridParam("postData").filters;
-		if (c === undefined) {
-			// First filter
-			c = {
-				"groupOp":"AND",
-				"rules":[n],
-				"groups":[]
-			  };
+    var c = $('#grid').getGridParam("postData");
+    c = (c !== undefined) ? c.filters : initialfilter;
+    if (c && c !== "") {
+      c = JSON.parse(c);
+      if (c["groupOp"] == "AND")
+        // Add condition to existing and-filter
+        c["rules"].push(n);
+      else
+        // Wrap existing filter in a new and-filter
+        c = {
+          "groupOp":"AND",
+          "rules":[n],
+          "groups":[c]
+          };
 		}
 		else {
-			c = JSON.parse(c);
-			if (c["groupOp"] == "AND")
-				// Add condition to existing and-filter
-			  c["rules"].push(n);
-			else
-				// Wrap existing filter in a new and-filter
-				c = {
-				  "groupOp":"AND",
-				  "rules":[n],
-				  "groups":[c]
-			    };
+      // First filter
+      c = {
+        "groupOp":"AND",
+        "rules":[n],
+        "groups":[]
+        };
 		}
 		$("#grid").setGridParam({
       postData:{filters: JSON.stringify(c)},
@@ -1789,7 +1806,7 @@ var grid = {
     	grid.countFilters = 0;
     }
     
-    if (group !== undefined && group.groups !== undefined) {    	
+    if (group !== null && group !== undefined && group.groups !== undefined) {    	
       for (var index = 0; index < group.groups.length; index++) {
         if (thefilter.html().length > 2) {
           if (group.groupOp === "OR")
@@ -1801,7 +1818,7 @@ var grid = {
       }
     }
 
-    if (group !== undefined && group.rules !== undefined) {
+    if (group !== null && group !== undefined && group.rules !== undefined) {
       for (var index = 0; index < group.rules.length; index++) {
         if (thefilter.html().length > 2)
           thefilter.append( " " + gettext((group.groupOp === "OR") ? "or" : "and") + " ");
@@ -1822,13 +1839,13 @@ var grid = {
     {
       $("#copy_selected").prop('disabled', false).addClass("bold");
       $("#delete_selected").prop('disabled', false).addClass("bold");
-      $("#actions1").prop('disabled', false);
+      if ($("#actions").length) $("#actions1").prop('disabled', false);
     }
     else
     {
       $("#copy_selected").prop('disabled', true).removeClass("bold");
       $("#delete_selected").prop('disabled', true).removeClass("bold");
-      $("#actions1").prop('disabled', true);
+      if ($("#actions").length) $("#actions1").prop('disabled', true);
     }
   },
 
@@ -1838,14 +1855,14 @@ var grid = {
     {
       $("#copy_selected").prop('disabled', false).addClass("bold");
       $("#delete_selected").prop('disabled', false).addClass("bold");
-      $("#actions1").prop('disabled', false);
+      if ($("#actions").length) $("#actions1").prop('disabled', false);
       $('.cbox').prop("checked", true);
     }
     else
     {
       $("#copy_selected").prop('disabled', true).removeClass("bold");
       $("#delete_selected").prop('disabled', true).removeClass("bold");
-      $("#actions1").prop('disabled', true);
+      if ($("#actions").length) $("#actions1").prop('disabled', true);
       $('.cbox').prop("checked", false);
     }
   },
@@ -2135,7 +2152,8 @@ var ERPconnection = {
           }
         });
       });
-      $("#actions1 span").text($("#actionsul").children().first().text());
+      if ($("#actions").length)
+        $("#actions1 span").text($("#actionsul").children().first().text());
     },
 
 
@@ -2307,7 +2325,8 @@ var ERPconnection = {
               $('#button_export').removeClass("active").prop('disabled', true );
             };
           });
-          $("#actions1 span").text($("#actionsul").children().first().text());
+          if ($("#actions").length)
+            $("#actions1 span").text($("#actionsul").children().first().text());
         },
         error: function (result, stat, errorThrown) {
           $('#popup .modal-title').html(gettext("Error"));

@@ -1100,6 +1100,7 @@ class InventoryDetail(OperationPlanMixin, GridReport):
         <br>
         """
     )
+    calendarmode = "duration"
 
     @classmethod
     def basequeryset(reportclass, request, *args, **kwargs):

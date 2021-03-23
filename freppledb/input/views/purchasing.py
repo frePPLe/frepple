@@ -386,6 +386,7 @@ class PurchaseOrderList(OperationPlanMixin, GridReport):
         <br>
         """
     )
+    calendarmode = "start_end"
 
     @classmethod
     def extra_context(reportclass, request, *args, **kwargs):

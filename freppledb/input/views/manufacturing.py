@@ -1049,6 +1049,7 @@ class ManufacturingOrderList(OperationPlanMixin, GridReport):
         <br>
         """
     )
+    calendarmode = "duration"
 
     @classmethod
     def extra_context(reportclass, request, *args, **kwargs):

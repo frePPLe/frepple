@@ -188,7 +188,7 @@ def Upload(request):
         data_odoo.append("")
         body = "\n".join(data_odoo).encode("utf-8")
         size = len(body)
-        encoded = base64.encodestring(
+        encoded = base64.encodebytes(
             ("%s:%s" % (odoo_user, odoo_password)).encode("utf-8")
         )
         logger.debug("Uploading %d bytes of planning results to Odoo" % size)

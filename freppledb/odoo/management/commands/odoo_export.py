@@ -68,25 +68,19 @@ class Command(BaseCommand):
 
     @staticmethod
     def getHTML(request):
-        if "freppledb.odoo" in settings.INSTALLED_APPS:
-            context = RequestContext(request)
-
-            template = Template(
-                """
-        {% load i18n %}
-        <form role="form" method="post" action="{{request.prefix}}/execute/launch/odoo_export/">{% csrf_token %}
-        <table>
-          <tr>
-            <td style="vertical-align:top; padding: 15px">
-               <button  class="btn btn-primary"  type="submit" value="{% trans "launch"|capfirst %}">{% trans "launch"|capfirst %}</button>
-            </td>
-            <td  style="padding: 0px 15px;">{% trans "Export frePPLe data to odoo." %}
-            </td>
-          </tr>
-        </table>
-        </form>
-      """
-            )
-            return template.render(context)
-        else:
-            return None
+        return Template(
+            """
+            {% load i18n %}
+            <form role="form" method="post" action="{{request.prefix}}/execute/launch/odoo_export/">{% csrf_token %}
+            <table>
+              <tr>
+                <td style="vertical-align:top; padding: 15px">
+                   <button  class="btn btn-primary"  type="submit" value="{% trans "launch"|capfirst %}">{% trans "launch"|capfirst %}</button>
+                </td>
+                <td  style="padding: 0px 15px;">{% trans "Export frePPLe data to odoo." %}
+                </td>
+              </tr>
+            </table>
+            </form>
+          """
+        ).render(RequestContext(request))

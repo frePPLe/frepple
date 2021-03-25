@@ -27,16 +27,12 @@ from django.utils.http import urlencode
 
 from django.db import DEFAULT_DB_ALIAS
 from django.conf import settings
-from django.utils.translation import gettext_lazy as _
 
 from freppledb.common.models import Parameter
 from freppledb.common.commands import (
     PlanTaskRegistry,
     PlanTask,
-    PlanTaskParallel,
-    PlanTaskSequence,
 )
-from freppledb.input.commands import LoadTask
 
 logger = logging.getLogger(__name__)
 
@@ -140,7 +136,7 @@ class OdooReadData(PlanTask):
             )
             try:
                 request = Request(url)
-                encoded = base64.encodestring(
+                encoded = base64.encodebytes(
                     ("%s:%s" % (odoo_user, odoo_password)).encode("utf-8")
                 )[:-1]
                 request.add_header(
@@ -211,36 +207,36 @@ class OdooReadData(PlanTask):
 @PlanTaskRegistry.register
 class OdooWritePlan(PlanTask):
     """
-  Uploads operationplans to odoo.
-    - Sends all operationplans, meeting the criteria:
-      a) status = 'proposed' or 'approved'
-         Other operationplans are input to the plan, and not output.
-      b) operationplan produces into a buffer whose source field is 'odoo'.
-         Only those results are of interest to odoo.
-    - We upload the following info in XML form:
-       - id: frePPLe generated unique identifier
-       - operation
-       - start
-       - end
-       - quantity
-       - location: This is the odoo id of the location, as stored in
-         buffer.location.subcategory.
-       - item: This is the odoo id of the produced item and its uom_id, as
-         stored in buffer.item.subcategory.
-       - criticality: 0 indicates a critical operationplan, 999 indicates a
-         redundant operationplan.
-    - The XML file uploaded is not exactly the standard XML of frePPLe, but a
-      slight variation that fits odoo better.
-    - Filter expressions are evaluated to limit the plan data that is
-      automatically exported.
-        - odoo.filter_export_purchase_order
-        - odoo.filter_export_manufacturing_order
-        - odoo.filter_export_distribution_order
-    - This code doesn't interpret any of the results. An odoo addon module
-      will need to read the content, and take appropriate actions in odoo:
-      such as creating purchase orders, manufacturing orders, work orders,
-      project tasks, etc...
-  """
+    Uploads operationplans to odoo.
+      - Sends all operationplans, meeting the criteria:
+        a) status = 'proposed' or 'approved'
+           Other operationplans are input to the plan, and not output.
+        b) operationplan produces into a buffer whose source field is 'odoo'.
+           Only those results are of interest to odoo.
+      - We upload the following info in XML form:
+         - id: frePPLe generated unique identifier
+         - operation
+         - start
+         - end
+         - quantity
+         - location: This is the odoo id of the location, as stored in
+           buffer.location.subcategory.
+         - item: This is the odoo id of the produced item and its uom_id, as
+           stored in buffer.item.subcategory.
+         - criticality: 0 indicates a critical operationplan, 999 indicates a
+           redundant operationplan.
+      - The XML file uploaded is not exactly the standard XML of frePPLe, but a
+        slight variation that fits odoo better.
+      - Filter expressions are evaluated to limit the plan data that is
+        automatically exported.
+          - odoo.filter_export_purchase_order
+          - odoo.filter_export_manufacturing_order
+          - odoo.filter_export_distribution_order
+      - This code doesn't interpret any of the results. An odoo addon module
+        will need to read the content, and take appropriate actions in odoo:
+        such as creating purchase orders, manufacturing orders, work orders,
+        project tasks, etc...
+    """
 
     description = "Write results to Odoo"
     sequence = 390
@@ -420,7 +416,7 @@ class OdooWritePlan(PlanTask):
             cls.exported = []
             body = "\n".join(publishPlan(cls)).encode("utf-8")
             size = len(body)
-            encoded = base64.encodestring(
+            encoded = base64.encodebytes(
                 ("%s:%s" % (odoo_user, odoo_password)).encode("utf-8")
             )
             if not odoo_url.endswith("/"):

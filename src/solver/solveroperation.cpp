@@ -1408,7 +1408,7 @@ void SolverCreate::solve(const OperationAlternate* oper, void* v) {
       if (origQDate < (*altIter)->getEffectiveStart()) {
         // Force a reply at the start of the effective period
         if (loglevel > 1)
-          logger << indentlevel-- << "Operation '" << (*altIter)->getOperation()
+          logger << indentlevel << "Operation '" << (*altIter)->getOperation()
                  << "' answers: 0 " << (*altIter)->getEffectiveStart() << endl;
         data->state->a_qty = 0.0;
         data->state->a_date = (*altIter)->getEffectiveStart();

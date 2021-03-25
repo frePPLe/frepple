@@ -54,6 +54,7 @@ void SolverCreate::solve(const Demand* l, void* v) {
       if (!data->constrainedPlanning || !isConstrained())
         logger << " in unconstrained mode";
       logger << endl;
+      indentlevel.level = 0;
     }
 
     // Unattach previous delivery operationplans, if required.

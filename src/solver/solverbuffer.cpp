@@ -104,6 +104,7 @@ void SolverCreate::solve(const Buffer* b, void* v) {
   double shortage(0.0);
   Date extraSupplyDate(Date::infiniteFuture);
   Date extraInventoryDate(Date::infiniteFuture);
+  Date extraConfirmedDate(Date::infiniteFuture);
   Date noSupplyBefore(Date::infinitePast);
   double cumproduced =
       (b->getFlowPlans().rbegin() == b->getFlowPlans().end())
@@ -179,6 +180,9 @@ void SolverCreate::solve(const Buffer* b, void* v) {
               supply_exists_already = true;
               if (shortage < -prev->getOnhand()) shortage = -prev->getOnhand();
               tried_requested_date = true;  // Disables an extra supply check
+              if (scanner->getDate() > requested_date &&
+                  scanner->getDate() < extraConfirmedDate)
+                extraConfirmedDate = scanner->getDate();
               break;
             }
           }
@@ -274,7 +278,7 @@ void SolverCreate::solve(const Buffer* b, void* v) {
           if (b->getOnHand(Date::infiniteFuture) < -ROUNDING_ERROR) {
             data->broken_path = true;
             if (getLogLevel() > 1)
-                logger << indentlevel << "  Supply path is broken here" << endl;
+              logger << indentlevel << "  Supply path is broken here" << endl;
           }
         } else
           while (theDate >= requested_date && loop &&
@@ -480,6 +484,8 @@ void SolverCreate::solve(const Buffer* b, void* v) {
     data->state->a_date = (extraInventoryDate < extraSupplyDate)
                               ? extraInventoryDate
                               : extraSupplyDate;
+    if (extraConfirmedDate < data->state->a_date)
+      data->state->a_date = extraConfirmedDate;
     // Monitor as a constraint if there is no producing operation.
     // Note that if there is a producing operation the constraint is flagged
     // on the operation instead of on this buffer.
@@ -538,9 +544,11 @@ void SolverCreate::solveSafetyStock(const Buffer* b, void* v) {
   auto shortagesonly = getShortagesOnly();
 
   // Message
-  if (getLogLevel() > 1)
+  if (getLogLevel() > 1) {
+    indentlevel.level = 0;
     logger << ++indentlevel << "Buffer '" << b->getName() << "' solves for "
            << (shortagesonly ? "shortages" : "safety stock") << endl;
+  }
 
   // Scan the complete horizon
   Date currentDate;

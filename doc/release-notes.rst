@@ -4,6 +4,11 @@ Release notes
 6.13.0 (Upcoming release)
 =========================
 
+.. rubric:: Production planning
+
+- | Bug fix: Using the plan.autoFenceOperations parameter lead to sub-optimal plans
+    resulting in demands being planned at a later date. 
+  
 .. rubric:: User interface
 
 - | The kanban and calendar views on the purchase orders, manufacturing orders and

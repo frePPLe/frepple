@@ -253,6 +253,7 @@ function showKanbanDrv($window, gettextCatalog, OperationPlan, PreferenceSvc) {
     $scope.disableDragDrop = disableDragDrop;
         
     $scope.$on('changeMode', function (event, mode) {
+      $scope.mode = mode;
       if (mode == "kanban")
         enableDragDrop();
       else

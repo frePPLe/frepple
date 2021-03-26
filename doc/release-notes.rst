@@ -17,11 +17,11 @@ Release notes
 
 - | Scenario management: Addition of a command to release a scenario.
 
-.. rubric:: Integration
+.. rubric:: Odoo integration
 
-- | Odoo connectors: Addition of two menus in the execute screen: import data from odoo and
-    export data from odoo. Read odoo data and Write odoo data options are removed from the plan
-    execution options.
+- | The `data import and export from Odoo <integration-guide/odoo-connector.html>`_ 
+    are no longer integrated in the plan generation task. They are now tasks that can
+    be launched indepently.
 
 6.12.0 (2021/03/01)
 ===================

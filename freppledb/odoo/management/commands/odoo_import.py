@@ -50,9 +50,8 @@ class Command(BaseCommand):
         )
 
     def handle(self, **options):
-
-        # Pick up the options
         self.verbosity = int(options["verbosity"])
+        task = options.get("task", None)
         database = options["database"]
         environment = options["environment"]
         if (
@@ -68,10 +67,16 @@ class Command(BaseCommand):
             raise CommandError("No database settings known for '%s'" % self.database)
         if options["user"]:
             management.call_command(
-                "runplan", env=environment, database=database, user=options["user"]
+                "runplan",
+                env=environment,
+                database=database,
+                user=options["user"],
+                task=task,
             )
         else:
-            management.call_command("runplan", env=environment, database=database)
+            management.call_command(
+                "runplan", env=environment, database=database, task=task
+            )
 
     # accordion template
     title = _("Import data from %(erp)s") % {"erp": "odoo"}

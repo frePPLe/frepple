@@ -14,6 +14,7 @@
 # You should have received a copy of the GNU Affero General Public
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
+import os
 
 from django.db import DEFAULT_DB_ALIAS
 
@@ -27,7 +28,10 @@ class archiveData(PlanTask):
 
     @classmethod
     def getWeight(cls, database=DEFAULT_DB_ALIAS, **kwargs):
-        return 1
+        if "supply" in os.environ:
+            return 1
+        else:
+            return -1
 
     @classmethod
     def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):

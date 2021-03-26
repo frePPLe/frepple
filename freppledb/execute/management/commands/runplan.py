@@ -134,7 +134,7 @@ class Command(BaseCommand):
                     task.started
                     or task.finished
                     or task.status != "Waiting"
-                    or task.name not in ("runplan", "odoo_import")
+                    or task.name not in ("runplan", "odoo_import", "odoo_export")
                 ):
                     raise CommandError("Invalid task identifier")
                 task.status = "0%"

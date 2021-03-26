@@ -47,19 +47,23 @@ class Command(BaseCommand):
         )
 
     def handle(self, **options):
-
-        # Pick up the options
         self.verbosity = int(options["verbosity"])
         database = options["database"]
-
+        task = options.get("task", None)
         if database not in settings.DATABASES.keys():
             raise CommandError("No database settings known for '%s'" % self.database)
         if options["user"]:
             management.call_command(
-                "runplan", env="odoo_write", database=database, user=options["user"]
+                "runplan",
+                env="odoo_write",
+                database=database,
+                user=options["user"],
+                task=task,
             )
         else:
-            management.call_command("runplan", env="odoo_write", database=database)
+            management.call_command(
+                "runplan", env="odoo_write", database=database, task=task
+            )
 
     # accordion template
     title = _("Export data to %(erp)s") % {"erp": "odoo"}

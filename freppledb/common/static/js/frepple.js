@@ -1464,13 +1464,13 @@ var grid = {
          },
 
   //Display dialog for copying or deleting records
-  showDelete : function()
+  showDelete : function(url)
   {
     if ($('#delete_selected').hasClass("disabled")) return;
     var sel = jQuery("#grid").jqGrid('getGridParam','selarrrow');
     if (sel.length == 1)
       // Redirect to a page for deleting a single entity
-      location.href = location.pathname + admin_escape(sel[0]) + '/delete/';
+      location.href = url + admin_escape(sel[0]) + '/delete/';
     else if (sel.length > 0)
     {
      $('#timebuckets').modal('hide');
@@ -1493,7 +1493,7 @@ var grid = {
          .modal('show');
      $('#delbutton').on('click', function() {
                $.ajax({
-                 url: location.pathname,
+                 url: url,
                  data: JSON.stringify([{'delete': sel}]),
                  type: "POST",
                  contentType: "application/json",

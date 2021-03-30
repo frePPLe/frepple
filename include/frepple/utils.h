@@ -22,8 +22,40 @@
 #ifndef FREPPLE_UTILS_H
 #define FREPPLE_UTILS_H
 
+/* Python.h has to be included first.
+   For a debugging build on windows we avoid using the debug version of Python
+   since that also requires Python and all its modules to be compiled in debug
+   mode.
+   Visual Studio will complain if system headers are #included both with
+   and without _DEBUG defined, so we have to #include all the system headers
+   used by pyconfig.h right here.
+*/
 #define PY_SSIZE_T_CLEAN
+#ifdef _MSC_VER
+#define HAVE_SNPRINTF
+#endif
+#if defined(_DEBUG) && defined(_MSC_VER)
+#include <assert.h>
+#include <basetsd.h>
+#include <ctype.h>
+#include <errno.h>
+#include <float.h>
+#include <io.h>
+#include <limits.h>
+#include <math.h>
+#include <stdarg.h>
+#include <stddef.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
+#include <wchar.h>
+#undef _DEBUG
 #include "Python.h"
+#define _DEBUG
+#else
+#include "Python.h"
+#endif
 #include "datetime.h"
 
 // A dummy function to suppress warnings about the unused variable

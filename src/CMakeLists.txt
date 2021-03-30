@@ -83,9 +83,11 @@ target_link_libraries(frepple PUBLIC model)
 target_link_libraries(frepple PUBLIC solver)
 target_link_libraries(frepple PUBLIC xerces-c)
 if (WIN32)
+  target_link_libraries(frepple PRIVATE ${PYTHON_LIBRARY_RELEASE})
   set_target_properties(frepple PROPERTIES LINK_FLAGS "/ignore:4099")
+else()
+  target_link_libraries(frepple PRIVATE ${PYTHON_LIBRARIES})
 endif()
-target_link_libraries(frepple PRIVATE ${PYTHON_LIBRARIES})
 install(
   TARGETS frepple
   DESTINATION "${CMAKE_INSTALL_LIBDIR}"

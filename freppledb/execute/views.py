@@ -176,7 +176,7 @@ class TaskReport(GridReport):
                 ):
                     accordions.add(accord)
             except Exception as e:
-                logger.warn(
+                logger.warning(
                     "Couldn't import getHTML method from %s.management.commands.%s: %s"
                     % (appname, commandname, e)
                 )

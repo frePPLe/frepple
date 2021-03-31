@@ -870,7 +870,7 @@ class ExportOperationPlanResources(PlanTask):
                 if j.quantity >= 0:
                     continue
                 elif not j.operationplan.reference:
-                    logger.warn(
+                    logger.warning(
                         "Warning: skip exporting uninitialized operationplan: %s %s %s %s"
                         % (
                             j.operationplan.operation.name,

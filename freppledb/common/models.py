@@ -518,7 +518,7 @@ class User(AbstractUser):
                                 )
                                 self.groups.add(grp.id)
                     except Exception as e:
-                        logger.warn(
+                        logger.warning(
                             "Can't save user '%s' in scenario '%s': %s"
                             % (self.username, db, e)
                         )

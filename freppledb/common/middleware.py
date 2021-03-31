@@ -109,7 +109,7 @@ class HTTPAuthenticationMiddleware:
                     if decoded.get("xframe_options_exempt", True):
                         request.session["xframe_options_exempt"] = True
             except Exception as e:
-                logger.warn(
+                logger.warning(
                     "silently ignoring exception in http authentication: %s" % e
                 )
         response = self.get_response(request)

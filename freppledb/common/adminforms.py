@@ -209,8 +209,9 @@ class MultiDBModelAdmin(admin.ModelAdmin):
             object_pk=str(obj.pk),
             object_repr=str(obj)[:200],
             type="change",
-            comment="Changed %s."
-            % get_text_list(message[0]["changed"]["fields"], "and"),
+            comment=message
+            if isinstance(message, str)
+            else "Changed %s." % get_text_list(message[0]["changed"]["fields"], "and"),
         )
         entry.save(using=request.database)
         return entry

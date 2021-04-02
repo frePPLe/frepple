@@ -52,14 +52,14 @@ for app in settings.INSTALLED_APPS:
 # It needs to be added as the last item since the applications can
 # hide/override some admin urls.
 urlpatterns += [
-    url(r"^data/", data_site.urls),
     url(
         r"^data/jsi18n/$",
-        JavaScriptCatalog.as_view(packages=["django.conf", "freppledb"]),
+        JavaScriptCatalog.as_view(),
     ),
     url(
         r"^admin/jsi18n/$",
-        JavaScriptCatalog.as_view(packages=["django.conf", "freppledb"]),
+        JavaScriptCatalog.as_view(),
     ),
+    url(r"^data/", data_site.urls),
     url(r"^api-auth/", include("rest_framework.urls", namespace="rest_framework")),
 ]

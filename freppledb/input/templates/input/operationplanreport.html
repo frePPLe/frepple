@@ -309,6 +309,9 @@ onSelectRow: function(rowid, status, e) {
 multiboxonly: false,
 loadComplete: function(data) {      
       $('#curerror').html("");
+      $(".invStatus").each( function(value) {
+        $(this).parent().css('background',$(this).css('background-color'));
+      });
       upload.restoreSelection();
     },
 {% endblock %}

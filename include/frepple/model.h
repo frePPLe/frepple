@@ -6955,7 +6955,7 @@ class Demand : public HasHierarchy<Demand>,
 
   /* Return the memory size. */
   virtual size_t getSize() const {
-    size_t tmp = Object::getSize();
+    auto tmp = Object::getSize() + sizeof(list<OperationPlan*>);
     // Add the memory for the list of deliveries: 2 pointers per delivery
     for (auto iter = deli.begin(); iter != deli.end(); ++iter)
       tmp += 2 * sizeof(OperationPlan*);

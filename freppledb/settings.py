@@ -230,6 +230,11 @@ THEMES = [
     "water",
 ]
 
+# A list of user names thatcan generate database dumps and download them.
+# Since a database dump exposes all data, enabling this functionality should only be done
+# for system administrators that know what they are doing.
+SUPPORT_USERS = []
+
 # Website where all documentation is available.
 # - The DOCUMENTATION_URL is used as the main URL for the about box
 # - The documentation is expected to be found in 'DOCUMENTATION_URL/docs/MAJOR_VERSION.MINOR_VERSION"

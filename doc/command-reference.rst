@@ -377,14 +377,14 @@ Back up database
 
 This task dumps the contents of the current database schema to a backup file.
 The file is created in the log folder configured in the configuration files
-djangosettings.py.
+djangosettings.py. It can be downloaded from the browser. 
 
-It also removes dumps older than a month to limit the disk space usage. If you
-want to keep dumps for a longer period of time, you'll need to copy the backup files
+For security reasons the command is only available to users listed in the 
+setting SUPPORT_ACCOUNTS. By default this is an empty list.
+
+The command also removes dumps older than a month to limit the disk space usage.
+If you want to keep dumps for a longer period of time, you'll need to copy the backup files
 to a different location.
-
-This option is not active for cloud users. We automatically manage the
-data backups for cloud users.
 
 This command is available in the user interface, the command line and the web API:
 
@@ -399,7 +399,11 @@ This command is available in the user interface, the command line and the web AP
 
 * Web API::
   
+    Create a backup:
     POST /execute/api/backup/
+    
+    Download the backup file:
+    GET /execute/logdownload/<task identifier>/
    
 .. _empty:
 

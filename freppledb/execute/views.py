@@ -189,7 +189,15 @@ class TaskReport(GridReport):
     @classmethod
     def query(reportclass, request, basequery, sortsql="1 asc"):
         logfileslist = set(
-            [x for x in os.listdir(settings.FREPPLE_LOGDIR) if x.endswith(".log")]
+            [
+                x
+                for x in os.listdir(settings.FREPPLE_LOGDIR)
+                if x.endswith(".log")
+                or (
+                    x.lower().endswith(".dump")
+                    and request.user.username in settings.SUPPORT_USERS
+                )
+            ]
         )
         for rec in basequery:
             yield {
@@ -402,7 +410,7 @@ def wrapTask(request, action):
                     arguments=arguments,
                 )
                 task.save(using=source)
-        elif "release" in args:            
+        elif "release" in args:
             if not request.user.has_perm("common.release_scenario"):
                 raise Exception("Missing execution privileges")
             destination = args.get("destination", False)
@@ -577,12 +585,11 @@ def CancelTask(request, taskid):
 @staff_member_required
 @never_cache
 def DownloadLogFile(request, taskid):
-    # if request.database == DEFAULT_DB_ALIAS:
-    #   filename = 'frepple.log'
-    # else:
-    #   filename = 'frepple_%s.log' % request.database
     filename = Task.objects.using(request.database).get(id=taskid).logfile
-    if not filename.lower().endswith(".log"):
+    if (
+        filename.lower().endswith(".dump")
+        and request.user.username not in settings.SUPPORT_USERS
+    ) or not filename.lower().endswith((".log", ".dump")):
         return HttpResponseNotFound(force_text(_("Error")))
     return sendStaticFile(
         request,

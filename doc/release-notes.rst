@@ -17,6 +17,12 @@ Release notes
 
 - | Scenario management: Addition of a command to release a scenario.
 
+.. rubric:: System administration
+
+- | The command to `back up the database <command-reference.html#backup>`_ is now restricted
+    to users listed in the setting SUPPORT_USERS.
+  | It is now possible to download the database dump from the user interface.
+
 .. rubric:: Odoo integration
 
 - | The `data import and export from Odoo <integration-guide/odoo-connector.html>`_ 

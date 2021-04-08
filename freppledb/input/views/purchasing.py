@@ -18,12 +18,7 @@
 
 from django.conf import settings
 from django.db.models.functions import Cast
-from django.db.models import (
-    Q,
-    F,
-    FloatField,
-    DateTimeField,
-)
+from django.db.models import Q, F, FloatField, DateTimeField, DurationField
 from django.db.models.expressions import RawSQL
 from django.template import Template
 from django.utils.translation import gettext_lazy as _
@@ -591,6 +586,24 @@ class PurchaseOrderList(OperationPlanMixin, GridReport):
                 """,
                 [],
             ),
+            itemsupplier_leadtime=Cast(
+                RawSQL(
+                    """
+                    select leadtime
+                    from itemsupplier
+                    where itemsupplier.item_id = operationplan.item_id
+                      and (itemsupplier.location_id is null or itemsupplier.location_id = operationplan.location_id)
+                      and itemsupplier.supplier_id = operationplan.supplier_id
+                    order by operationplan.enddate < itemsupplier.effective_end desc nulls first,
+                       operationplan.enddate >= itemsupplier.effective_start desc nulls first,
+                       priority <> 0,
+                       priority
+                    limit 1
+                    """,
+                    [],
+                ),
+                output_field=DurationField(),
+            ),
             itemsupplier_sizeminimum=Cast(
                 RawSQL(
                     """
@@ -828,6 +841,13 @@ class PurchaseOrderList(OperationPlanMixin, GridReport):
         ),
         GridFieldLastModified("lastmodified"),
         # Annoted fields referencing the itemsupplier
+        GridFieldDuration(
+            "itemsupplier_leadtime",
+            title=format_lazy("{} - {}", _("item supplier"), _("lead time")),
+            editable=False,
+            initially_hidden=True,
+            extra='"formatoptions":{"defaultValue":""}, "summaryType":"max"',
+        ),
         GridFieldNumber(
             "itemsupplier_sizeminimum",
             title=format_lazy("{} - {}", _("item supplier"), _("size minimum")),

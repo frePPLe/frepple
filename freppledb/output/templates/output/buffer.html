@@ -38,10 +38,12 @@ function drawGraphs(jsondata)
   var id_by_field = {};
   for (var i in cross_idx) {
     fields.add(cross[cross_idx[i]]["key"]);
-    field_by_id[cross_idx[i]] = cross[cross_idx[i]]["key"];
-    id_by_field[cross[cross_idx[i]]["key"]] = cross_idx[i];
   }
- 
+  for (var i in cross) {
+    field_by_id[i] = cross[i]["key"];
+    id_by_field[cross[i]["key"]] = parseInt(i);
+  }
+
   // Define X-axis
   var domain_x = [];
   var bucketnamelength = 0;

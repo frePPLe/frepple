@@ -34,11 +34,7 @@ from freppledb import __version__
 
 class Command(BaseCommand):
     help = """
-  This command copies the contents of a database into another.
-  The original data in the destination database are lost.
-
-  The pg_dump and psql commands need to be in the path, otherwise
-  this command will fail.
+  This command releases a scenario. It changes its status from "In use" to "Free".
   """
 
     requires_system_checks = False
@@ -55,12 +51,8 @@ class Command(BaseCommand):
             help="Task identifier (generated automatically if not provided)",
         )
         parser.add_argument(
-            "--database",
-            default=DEFAULT_DB_ALIAS,
-            help="unused parameter for this command",
+            "--database", default=DEFAULT_DB_ALIAS, help="The scenario to be released."
         )
-
-        parser.add_argument("destination", help="database to release")
 
     def handle(self, **options):
 
@@ -105,35 +97,29 @@ class Command(BaseCommand):
         task.save(using=DEFAULT_DB_ALIAS)
 
         # Validate the arguments
-        destination = options["destination"]
-        destinationscenario = None
+        database = options["database"]
         try:
-            task.arguments = "%s" % (destination,)
-            task.save(using=DEFAULT_DB_ALIAS)
             try:
-                destinationscenario = Scenario.objects.using(DEFAULT_DB_ALIAS).get(
-                    pk=destination
+                releasedScenario = Scenario.objects.using(DEFAULT_DB_ALIAS).get(
+                    pk=database
                 )
             except Exception:
                 raise CommandError(
-                    "No destination database defined with name '%s'" % destination
+                    "No destination database defined with name '%s'" % database
                 )
-            if destinationscenario.status != "In use":
+            if database == DEFAULT_DB_ALIAS:
+                raise CommandError("Production scenario cannot be released.")
+            if releasedScenario.status != "In use":
                 raise CommandError("Scenario to release is not in use")
 
-            if destination == DEFAULT_DB_ALIAS:
-                raise CommandError("Production scenario cannot be released")
-
             # Update the scenario table, set it free in the production database
-            destinationscenario.status = "Free"
-            destinationscenario.lastrefresh = datetime.today()
-            destinationscenario.save(using=DEFAULT_DB_ALIAS)
+            releasedScenario.status = "Free"
+            releasedScenario.lastrefresh = datetime.today()
+            releasedScenario.save(using=DEFAULT_DB_ALIAS)
 
             # Killing webservice
             if "freppledb.webservice" in settings.INSTALLED_APPS:
-                management.call_command(
-                    "stopwebservice", force=True, database=destination
-                )
+                management.call_command("stopwebservice", force=True, database=database)
 
             # Logging message
             task.processid = None
@@ -141,7 +127,7 @@ class Command(BaseCommand):
             task.finished = datetime.now()
 
             # Update the task in the destination database
-            task.message = "Scenario %s released" % (destination,)
+            task.message = "Scenario %s released" % (database,)
             task.save(using=DEFAULT_DB_ALIAS)
 
         except Exception as e:
@@ -149,12 +135,9 @@ class Command(BaseCommand):
                 task.status = "Failed"
                 task.message = "%s" % e
                 task.finished = datetime.now()
-            if destinationscenario and destinationscenario.status == "Busy":
-                if destination == DEFAULT_DB_ALIAS:
-                    destinationscenario.status = "In use"
-                else:
-                    destinationscenario.status = "Free"
-                destinationscenario.save(using=DEFAULT_DB_ALIAS)
+            if releasedScenario and releasedScenario.status == "Busy":
+                releasedScenario.status = "Free"
+                releasedScenario.save(using=DEFAULT_DB_ALIAS)
             raise e
 
         finally:

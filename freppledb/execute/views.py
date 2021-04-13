@@ -411,13 +411,10 @@ def wrapTask(request, action):
                 )
                 task.save(using=source)
         elif "release" in args:
-            # We need to switch the request to scenario to be released
-            # to check that user has correct permission.
-            if "releasedScenario" in args:
-                request.database = args["releasedScenario"]
-
             if not request.user.has_perm("common.release_scenario"):
                 raise Exception("Missing execution privileges")
+
+            worker_database = request.database
 
             if request.database != DEFAULT_DB_ALIAS:
                 task = Task(
@@ -426,13 +423,9 @@ def wrapTask(request, action):
                     status="Waiting",
                     user=request.user,
                     arguments="--database=%s"
-                    % (
-                        args["releasedScenario"]
-                        if "releasedScenario" in args
-                        else request.database,
-                    ),
+                    % (args["database"] if "database" in args else request.database,),
                 )
-                task.save(using=DEFAULT_DB_ALIAS)
+                task.save(using=request.database)
         elif "promote" in args:
             if not request.user.has_perm("common.promote_scenario"):
                 raise Exception("Missing execution privileges")

@@ -92,13 +92,13 @@
 $(".scenariorelease").on("click", function(event) {
   event.preventDefault();
   var releasedScenario = $(this).attr("data-target");
-  var target = "/" + $(this).attr("data-target");
+  var target = "/" + releasedScenario;
   if (target == "/default")
     target = "";
   $.ajax({
    url: target + "/execute/launch/scenario_copy/",
    type: 'POST',
-   data: {release: 1, releasedScenario:releasedScenario},
+   data: {release: 1, database:releasedScenario},
    complete: function() {
      $("#scenariotoast").addClass("show");
      $("#scenariotoast span").text("Launched releasing task");

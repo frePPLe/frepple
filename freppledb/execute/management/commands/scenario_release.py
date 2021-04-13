@@ -69,11 +69,10 @@ class Command(BaseCommand):
 
         now = datetime.now()
         task = None
+        database = options["database"]
         if "task" in options and options["task"]:
             try:
-                task = (
-                    Task.objects.all().using(DEFAULT_DB_ALIAS).get(pk=options["task"])
-                )
+                task = Task.objects.all().using(database).get(pk=options["task"])
             except Exception:
                 raise CommandError("Task identifier not found")
             if (
@@ -94,10 +93,10 @@ class Command(BaseCommand):
                 user=user,
             )
         task.processid = os.getpid()
-        task.save(using=DEFAULT_DB_ALIAS)
+        task.save(using=database)
 
         # Validate the arguments
-        database = options["database"]
+
         try:
             releasedScenario = None
             try:
@@ -129,7 +128,7 @@ class Command(BaseCommand):
 
             # Update the task in the destination database
             task.message = "Scenario %s released" % (database,)
-            task.save(using=DEFAULT_DB_ALIAS)
+            task.save(using=database)
 
         except Exception as e:
             if task:
@@ -144,4 +143,4 @@ class Command(BaseCommand):
         finally:
             if task:
                 task.processid = None
-                task.save(using=DEFAULT_DB_ALIAS)
+                task.save(using=database)

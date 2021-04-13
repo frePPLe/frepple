@@ -360,15 +360,22 @@ This command is available in the user interface, the command line and the web AP
 
 * Command line::
 
-    frepplectl scenario_copy [--force --promote] db1 db2
+    To copy scenario scenario1 into scenario scenario2:
+    frepplectl scenario_copy [--force --promote] scenario1 scenario2
+    
+    To release scenario scenario1:
+    frepplectl scenario_release --database=scenario1
 
 * Web API::
 
     To copy a scenario (including Production) into another scenario:
-    * POST /execute/api/scenario_copy/?copy=1&source=db1&destination=db2&force=1
+    * POST /execute/api/scenario_copy/?copy=1&source=scenario1&destination=scenario2&force=1
     
-    To promote a scenario into Production (where db2 must be Production):
-    * POST /execute/api/scenario_copy/?promote=1&source=db1&destination=db2
+    To release a scenario named scenario1:
+    * POST /scenario1/execute/api/scenario_copy/?release=1
+    
+    To promote a scenario named scenario1 into Production (where "default" is the Production name):
+    * POST /execute/api/scenario_copy/?promote=1&source=scenario1&destination=default
 
 .. _backup:
 

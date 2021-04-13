@@ -99,6 +99,7 @@ class Command(BaseCommand):
         # Validate the arguments
         database = options["database"]
         try:
+            releasedScenario = None
             try:
                 releasedScenario = Scenario.objects.using(DEFAULT_DB_ALIAS).get(
                     pk=database

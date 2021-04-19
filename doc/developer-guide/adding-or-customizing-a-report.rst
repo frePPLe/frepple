@@ -3,7 +3,7 @@ Adding or customizing a report
 ==============================
 
 This section describes the different steps to add a new report (or update an
-existing one) in the user interface. We’ll describe both the general case
+existing one) in the user interface. We'll describe both the general case
 as well as the generic view provided by frePPLe.
 
 The steps outline here are a short and very brief summary of how screens
@@ -16,7 +16,7 @@ reports in :doc:`a custom extension app <creating-an-extension-app>`.
 General case
 ------------
 
-As an example we’ll create a report to display some statistics on the size
+As an example we'll create a report to display some statistics on the size
 of your model. It will simply display the total number of buffers and operations
 in your model.
 
@@ -24,7 +24,7 @@ in your model.
    | A view function retrieves the report data from the database (or computes
      it from another source) and passes a data dictionary with the data to
      the report template.
-   | A view is a Python function. Here’s the view required for our example,
+   | A view is a Python function. Here's the view required for our example,
      which you can put in a file statistics.py:
 
    ::
@@ -81,7 +81,7 @@ in your model.
    should be translated into the different languages for the user interface.
 
 #. | **Map the view as a URL**.
-   | To expose the view as a URL to the users you’ll need to map it to a
+   | To expose the view as a URL to the users you'll need to map it to a
      URL pattern.
 
    Edit the definition of the urlpatterns variable in the file urls.py to
@@ -95,7 +95,7 @@ in your model.
        )
 
 #. | **Update the menu structure**.
-   | You’ll want to add the report also to a menu.
+   | You'll want to add the report also to a menu.
 
    The following lines in this file menu.py will do this:
 

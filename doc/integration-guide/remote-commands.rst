@@ -2,7 +2,7 @@
 Remote commands
 ===============
 
-All operations from the execution screen can also be launched and
+:doc:`/command-reference` from the execution screen can also be launched and
 monitored remotely through a web service API.
 
 * `Reference`_
@@ -49,20 +49,6 @@ language using the following URLs. The examples are using the excellent
   ::
   
    curl -u <user>:<password> http(s)://<server>:<port>/execute/api/cancel/?id=X
-
-The following commands are available.
-
-* :ref:`runplan`
-* :ref:`exporttofolder`
-* :ref:`importfromfolder`
-* :ref:`runwebservice`
-* :ref:`scenario_copy`
-* :ref:`backup`
-* :ref:`empty`
-* :ref:`loaddata`
-* :ref:`createbuckets`
-* :ref:`openbravo_import`
-* :ref:`openbravo_export`
 
 All these APIs return a JSON object and they are asynchronous, i.e. they
 don't wait for the actual command to finish. In case you need to wait

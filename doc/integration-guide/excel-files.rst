@@ -11,6 +11,6 @@ of integrating the data will be to work with excel workbooks.
     and :doc:`/user-interface/getting-around/exporting-data`.
   
 * | Multiple data tables can be exported and imported in single workbook.
-    The workbook contains a seperate sheet for each table.
+    The workbook contains a separate sheet for each table.
   | See :doc:`/user-interface/execute`.
  

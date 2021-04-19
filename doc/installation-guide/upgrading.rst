@@ -2,10 +2,7 @@
 Upgrade an existing installation
 ================================
 
-FrePPLe allows migrating an existing installation (any release >= 3.0)
-to a new release without any loss of data.
-A set of migration scripts is available to migrate the database schema to the
-new release. 
+FrePPLe allows migrating an existing installation to a new release without any loss of data.
 
 This page documents the steps for this process.
 

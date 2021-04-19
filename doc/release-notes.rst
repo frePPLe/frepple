@@ -4,6 +4,14 @@ Release notes
 6.13.0 (Upcoming release)
 =========================
 
+.. rubric:: Announcements
+
+- | FrePPLe's user interface has quite some nice capabilities that are generic and reusable 
+    in other domains.
+  | We have copied these out into a separate project https://github.com/frePPLe/frepple-data-admin.
+  | We believe that a larger community to build on the data-admin product will also be
+    benefecial for our planning product.
+	
 .. rubric:: Production planning
 
 - | Bug fix: Using the plan.autoFenceOperations parameter lead to sub-optimal plans

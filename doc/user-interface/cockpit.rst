@@ -10,10 +10,20 @@ The home screen is configurable by every user to meet his/her requirements and t
 .. image:: _images/cockpit.png
    :alt: Home screen
 
+The following widgets are available:
 
-.. rubric:: Available widgets
+* | **Inbox**
+  | An overview of notifications and messages.
 
-The following widgets are currently available:
+* | **Welcome widget**
+  | A welcome text to give first-time users some guidance to get started
+    with the application.
+
+* | **News**
+  | This widget picks up the latest news topics from frepple.com.
+
+* | **Recent actions**
+  | Shows your most recent editing actions.
 
 * | **Purchase orders**
   | Provides a high level overview of the open purchase orders, and new
@@ -40,16 +50,6 @@ The following widgets are currently available:
 
 * | **Shipping queue**
   | Displays a list of customer orders that are about to be shipped.
-
-* | **Welcome widget**
-  | A welcome text to give first-time users some guidance to get started
-    with the application.
-
-* | **News**
-  | This widget picks up the latest news topics from frepple.com.
-
-* | **Recent actions**
-  | Shows your most recent editing actions.
 
 * | **Generate plan**
   | Regenerates a constrained plan.
@@ -101,14 +101,3 @@ The following widgets are currently available:
     aggregated across all forecast per bucket, weighted by the forecast quantity.
   | The widget is only available in the Enterprise Edition and when the
     forecasting module is enabled.
-
-.. rubric:: Configuring the cockpit
-
-| The configuration is different in the Community Edition and the Enterprise
-  Edition.
-  
-In the Community Edition the same dashboard is configured for all users.
-Administrators can configure it in the file djangosettings.py.
-
-In the Enterprise Edition every user can easily customize the dashboard
-with the widgets that are most relevant for his/her daily work.

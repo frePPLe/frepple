@@ -225,6 +225,7 @@ class OperationPlanMixin:
     def _generate_calendar_data(cls, request, *args, **kwargs):
         request.GET = request.GET.copy()
         request.GET["page"] = None
+        request.limit = request.pagesize
         return cls._generate_json_data(request, *args, **kwargs)
 
     calendarmode = "duration"

@@ -402,6 +402,7 @@ function operationplanCtrl($scope, $http, OperationPlan, PreferenceSvc) {
               [x.color, x.inventory_status] = formatInventoryStatus(x);
             }
             $scope.calendarevents= tmp.rows;
+            $scope.totalevents = tmp.records;
           },
           function failure(response) {
             console.log("Error getting calendar data");

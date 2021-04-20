@@ -1,8 +1,8 @@
 Release notes
 -------------
 
-6.13.0 (Upcoming release)
-=========================
+6.13.0 (2021/04/20)
+===================
 
 .. rubric:: Announcements
 
@@ -10,12 +10,12 @@ Release notes
     in other domains.
   | We have copied these out into a separate project https://github.com/frePPLe/frepple-data-admin.
   | We believe that a larger community to build on the data-admin product will also be
-    benefecial for our planning product.
+    beneficial for our planning product.
 	
 .. rubric:: Production planning
 
-- | Bug fix: Using the plan.autoFenceOperations parameter lead to sub-optimal plans
-    resulting in demands being planned at a later date. 
+- | Bug fix: Using the plan.autoFenceOperations parameter can lead to sub-optimal plans
+    resulting in demands being planned at a later date.
   
 .. rubric:: User interface
 

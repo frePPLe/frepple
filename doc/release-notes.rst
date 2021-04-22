@@ -1,6 +1,17 @@
 Release notes
 -------------
 
+6.14.0 (upcoming release)
+=========================
+
+.. rubric:: User interface
+
+- | The calendar views on the purchase orders, manufacturing orders and
+    distribution orders now support grouping the results.
+  | You get a row with cards for every resource, supplier, item, item category...
+    The calendar view then looks pretty much like a spreadsheet grid with
+    cards in each cell.
+
 6.13.0 (2021/04/20)
 ===================
 

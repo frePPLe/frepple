@@ -4,7 +4,7 @@
  * This file is a heavily modified version of the code published under
  * MIT license on https://github.com/twinssbc/AngularJS-ResponsiveCalendar.
  * The changes are redistributed under the GNU Affero General Public License.
- * 
+ *
  * The MIT License (MIT)
  *
  * Copyright (c) 2014 twinssbc
@@ -18,7 +18,7 @@
  *
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -47,12 +47,12 @@ angular.module('calendar', [])
             ngModelCtrl = {$setViewValue: angular.noop}; // nullModelCtrl;
 
         // Configuration attributes
-        angular.forEach(['formatDay', 'formatDayHeader', 'formatDayTitle', 'formatWeekTitle', 'formatMonthTitle', 
+        angular.forEach(['formatDay', 'formatDayHeader', 'formatDayTitle', 'formatWeekTitle', 'formatMonthTitle',
           'formatWeekViewDayHeader', 'formatHourColumn'], function (key, index) {
             self[key] = angular.isDefined($attrs[key]) ? $interpolate($attrs[key])($scope.$parent) : calendarConfig[key];
         });
 
-        angular.forEach(['showWeeks'], function (key, index) {          
+        angular.forEach(['showWeeks'], function (key, index) {
             self[key] = angular.isDefined($attrs[key]) ? ($scope.$parent.$eval($attrs[key])) : calendarConfig[key];
         });
 
@@ -63,13 +63,16 @@ angular.module('calendar', [])
         });
 
         $scope.$on('$destroy', unregisterFn);
-        
+
         $scope.admin_escape = admin_escape;
         $scope.url_prefix = url_prefix;
         $scope.scrollBarWidth = getScrollBarWidth();
         $scope.calendarmode = calendarmode;
+        $scope.grouping = grouping;
+        $scope.groupingdir = groupingdir;
         $scope.grid = grid;
-        
+        $scope.groupingcfg = groupingcfg;
+
         $scope.calendarmodes = {
           'start': gettextCatalog.getString("View start events"),
           'end': gettextCatalog.getString("View end events"),
@@ -80,9 +83,23 @@ angular.module('calendar', [])
         function setCalendarMode(m) {
           $scope.calendarmode = m;
           PreferenceSvc.save("calendarmode", m);
-        }        
+        }
         $scope.setCalendarMode = setCalendarMode;
-        
+
+        function setGrouping(g) {
+          $scope.grouping = g;
+          PreferenceSvc.save("grouping", g);
+          self._onDataLoaded();
+        }
+        $scope.setGrouping = setGrouping;
+
+        function setGroupingDir(g) {
+          $scope.groupingdir = g;
+          PreferenceSvc.save("groupingdir", g);
+          self._onDataLoaded();
+        }
+        $scope.setGroupingDir = setGroupingDir;
+
         if (angular.isDefined($attrs.initDate)) {
             self.currentCalendarDate = $scope.$parent.$eval($attrs.initDate);
         }
@@ -92,7 +109,7 @@ angular.module('calendar', [])
                 $parse($attrs.ngModel).assign($scope.$parent, self.currentCalendarDate);
             }
         }
-                 
+
         $scope.getHeight = function(headerheight) {
           if (preferences && preferences['height'])
             return preferences['height'] - headerheight;
@@ -118,7 +135,7 @@ angular.module('calendar', [])
           var d = opplan.startdate || (opplan.event && opplan.event.startdate);
           return d ? moment(d).isSame(dt.date, "day") : false;
         }
-        
+
         $scope.isEnd = function(opplan, dt) {
           // Subtract 1 microsecond to assure that an end date of 00:00:00 is seen
           // as ending on the previous day.
@@ -136,8 +153,8 @@ angular.module('calendar', [])
               return ((opplan.startdate || (opplan.event && opplan.event.startdate)) ?
                 moment(opplan.startdate || (opplan.event && opplan.event.startdate)).isSame(dt.date, "day") :
                 false)
-                || 
-                ((opplan.enddate || (opplan.event && opplan.event.enddate)) ? 
+                ||
+                ((opplan.enddate || (opplan.event && opplan.event.enddate)) ?
                 moment((opplan.enddate || (opplan.event && opplan.event.enddate)) - 1).isSame(dt.date, "day") :
                 false);
             case "start":
@@ -147,12 +164,12 @@ angular.module('calendar', [])
             case "end":
               // Subtract 1 microsecond to assure that an end date of 00:00:00 is seen
               // as ending on the previous day.
-              return (opplan.enddate || (opplan.event && opplan.event.enddate)) ? 
+              return (opplan.enddate || (opplan.event && opplan.event.enddate)) ?
                 moment((opplan.enddate || (opplan.event && opplan.event.enddate)) - 1).isSame(dt.date, "day") :
                 false;
           }
         }
-              
+
         self.init = function (ngModelCtrl_) {
             ngModelCtrl = ngModelCtrl_;
 
@@ -223,11 +240,11 @@ angular.module('calendar', [])
             $scope.move(direction);
         };
 
-        self.changeMode = function (m) { 
-          $scope.mode = m;         
+        self.changeMode = function (m) {
+          $scope.mode = m;
         };
 
-        self.rangeChanged = function () {          
+        self.rangeChanged = function () {
             if ($scope.rangeChanged) {
                   $scope.rangeChanged({
                       startdate: this.range.startdate,
@@ -237,7 +254,7 @@ angular.module('calendar', [])
             else
                console.error("No rangeChanged callback is registered");
         };
-        
+
         function overlap(event1, event2) {
             var earlyEvent = event1,
                 lateEvent = event2;
@@ -371,13 +388,13 @@ angular.module('calendar', [])
 
                 if (ngModelCtrl)
                     calendarCtrl.init(ngModelCtrl);
-                                
+
                 scope.$on('selectedEdited', function(event, field, oldvalue, newvalue) {
                   if (scope.curselected === null) return;
                   scope.changeCard(scope.curselected, field, oldvalue);
-                  scope.curselected[field] = newvalue;                  
+                  scope.curselected[field] = newvalue;
                 });
-                
+
                 scope.$on('changeDate', function (event, direction) {
                     calendarCtrl.move(direction);
                 });
@@ -385,7 +402,7 @@ angular.module('calendar', [])
                 scope.$on('eventSourceChanged', function (event, value) {
                     calendarCtrl.onEventSourceChanged(value);
                 });
-                
+
                 scope.$on('changeMode', function (event, mode) {
                     calendarCtrl.changeMode(mode);
                 });
@@ -400,7 +417,7 @@ angular.module('calendar', [])
                   scope.curselected = opplan;
                   scope.eventSelected({event:opplan});
                 };
-                
+
                 scope.changeCard = function(opplan, field, oldvalue, newvalue) {
                   if (!opplan.hasOwnProperty(field + "Original"))
                     opplan[field + "Original"] = oldvalue;
@@ -412,7 +429,7 @@ angular.module('calendar', [])
                   $(window).off('beforeunload', upload.warnUnsavedChanges);
                   $(window).on('beforeunload', upload.warnUnsavedChanges);
                   if (newvalue !== undefined)
-                    scope.$parent.$broadcast("cardChanged", field, oldvalue, newvalue);             
+                    scope.$parent.$broadcast("cardChanged", field, oldvalue, newvalue);
                 };
             }
         };
@@ -532,7 +549,7 @@ angular.module('calendar', [])
                 }
 
                 function compareEvent(event1, event2) {
-                    return (event1.startdate ? event1.startdate : event1.enddate).getTime() - 
+                    return (event1.startdate ? event1.startdate : event1.enddate).getTime() -
                       (event2.startdate ? event2.startdate : event2.enddate);
                 }
 
@@ -546,7 +563,8 @@ angular.module('calendar', [])
                         eps = 0.001,
                         row,
                         date,
-                        hasEvent = false;
+                        hasEvent = false,
+                        keys = [];
 
                     if (rows.hasEvent) {
                         for (row = 0; row < 6; row += 1) {
@@ -566,13 +584,16 @@ angular.module('calendar', [])
                         var st;
                         var et;
 
-                        if ((eventEndTime ? eventEndTime : eventStartTime) <= startdate || 
+                        if ((eventEndTime ? eventEndTime : eventStartTime) <= startdate ||
                           (eventStartTime ? eventStartTime : eventEndTime) >= enddate)
-                            continue;                            
+                            continue;
                         st = startdate;
                         et = enddate;
                         if (!eventEndTime) eventEndTime = eventStartTime;
                         if (!eventStartTime) eventStartTime = eventEndTime;
+
+                        if (scope.grouping && event[scope.grouping] && !keys.includes(event[scope.grouping]))
+                              keys.push(event[scope.grouping]);
 
                         var timeDiff;
                         var timeDifferenceStart;
@@ -631,6 +652,15 @@ angular.module('calendar', [])
                         }
                         if (findSelected) break;
                     }
+
+                    if (scope.grouping) {
+                      if (scope.groupingdir && scope.groupingdir == "desc")
+                          scope.categories = keys.sort().reverse();
+                      else
+                          scope.categories = keys.sort();
+                    }
+                    else
+                      scope.categories = ["dummy"];
                 };
 
                 ctrl.compare = function (date1, date2) {
@@ -687,7 +717,7 @@ angular.module('calendar', [])
                 };
 
                 scope.hourParts = ctrl.hourParts;
-                
+
                 function getDates(startdate, n) {
                     var dates = new Array(n),
                         current = new Date(startdate),
@@ -746,7 +776,8 @@ angular.module('calendar', [])
                         eps = 0.016,
                         normalEventInRange = false,
                         day,
-                        hour;
+                        hour,
+                        keys = [];
 
                     if (rows.hasEvent) {
                         for (day = 0; day < 7; day += 1) {
@@ -768,9 +799,9 @@ angular.module('calendar', [])
                         var eventStartTime = event.startdate ? new Date(event.startdate) : null;
                         var eventEndTime = event.enddate ? new Date(event.enddate) : null;
 
-                        if ((eventEndTime ? eventEndTime : eventStartTime) <= startdate || 
+                        if ((eventEndTime ? eventEndTime : eventStartTime) <= startdate ||
                           (eventStartTime ? eventStartTime : eventEndTime) >= enddate)
-                            continue;                      
+                            continue;
                         normalEventInRange = true;
                         if (!eventEndTime) eventEndTime = eventStartTime;
                         if (!eventStartTime) eventStartTime = eventEndTime;
@@ -823,23 +854,34 @@ angular.module('calendar', [])
                                 startOffset: startOffset,
                                 endOffset: endOffset
                             };
-                            
+                            if (scope.grouping && event[scope.grouping] && !keys.includes(event[scope.grouping]))
+                              keys.push(event[scope.grouping]);
+
                             if (rows[startRowIndex][dayIndex].events)
                                 rows[startRowIndex][dayIndex].events.push(displayEvent);
                             else
                                 rows[startRowIndex][dayIndex].events = [displayEvent];
-                            
+
                             if (dates[dayIndex].events)
                               dates[dayIndex].events.push(event);
                             else
                               dates[dayIndex].events = [event];
-                            
+
                             startRowIndex = 0;
                             startOffset = 0;
                             dayIndex += 1;
                         } while (endOfDay < endIndex);
-                     
+
                     }
+
+                    if (scope.grouping) {
+                      if (scope.groupingdir && scope.groupingdir == "desc")
+                          scope.categories = keys.sort().reverse();
+                      else
+                          scope.categories = keys.sort();
+                    }
+                    else
+                      scope.categories = ["dummy"];
 
                     if (normalEventInRange) {
                         for (day = 0; day < 7; day += 1) {
@@ -921,7 +963,7 @@ angular.module('calendar', [])
                 };
 
                 scope.hourParts = ctrl.hourParts;
-                scope.events = [];                
+                scope.events = [];
 
                 function createDateObjects(startdate) {
                     var rows = [],
@@ -964,7 +1006,8 @@ angular.module('calendar', [])
                         eps = 0.016,
                         eventSet,
                         normalEventInRange = false,
-                        hour;
+                        hour,
+                        keys = [];
 
                     if (rows.hasEvent) {
                         for (hour = 0; hour < 24; hour += 1) {
@@ -981,7 +1024,7 @@ angular.module('calendar', [])
                         var eventStartTime = event.startdate ? new Date(event.startdate) : null;
                         var eventEndTime = event.enddate ? new Date(event.enddate) : null;
 
-                        if ((eventEndTime ? eventEndTime : eventStartTime) <= startdate || 
+                        if ((eventEndTime ? eventEndTime : eventStartTime) <= startdate ||
                           (eventStartTime ? eventStartTime : eventEndTime) >= enddate)
                             continue;
                         normalEventInRange = true;
@@ -1032,7 +1075,10 @@ angular.module('calendar', [])
                             eventSet.push(displayEvent);
                             rows[startIndex].events = eventSet;
                         }
-                        
+
+                        if (scope.grouping && event[scope.grouping] && !keys.includes(event[scope.grouping]))
+                              keys.push(event[scope.grouping]);
+
                         if (scope.events)
                           scope.events.push(event);
                         else
@@ -1052,6 +1098,14 @@ angular.module('calendar', [])
                             ctrl.placeEvents(orderedEvents);
                         }
                     }
+                    if (scope.grouping) {
+                      if (scope.groupingdir && scope.groupingdir == "desc")
+                          scope.categories = keys.sort().reverse();
+                      else
+                          scope.categories = keys.sort();
+                    }
+                    else
+                      scope.categories = ["dummy"];
                 };
 
                 ctrl._refreshView = function () {

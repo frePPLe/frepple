@@ -1,8 +1,9 @@
 <div>
     <div id="scrolldayview" class="scrollable" data-ng-style="{'height': getHeight(25)}">
-        <table class="table table-bordered table-fixed">
-            <tbody data-ng-switch="calendarmode">
-            <tr data-ng-switch-when="duration" ng-repeat="dt in rows track by $index">
+        <table class="table table-bordered table-fixed" data-ng-switch="calendarmode" >
+            <tbody data-ng-switch-when="duration" data-ng-repeat="cat in categories track by cat">
+              <tr ng-repeat="dt in rows track by $index">
+                <td data-ng-if="grouping && $index == 0" rowspan="{{ rows.length }}">{{cat}}</td>            
                 <td class="calendar-hour-column text-center">
                     {{dt.date | date: formatHourColumn}}
                 </td>
@@ -17,19 +18,21 @@
                         </div>
                     </div>
                 </td>
-            </tr>
-            <tr data-ng-switch-default>
+              </tr>
+            </tbody>
+            <tbody data-ng-switch-default>
+              <tr data-ng-repeat="cat in categories track by cat">
+                <td data-ng-if="grouping">{{cat}}</td>
                 <td>
                     <div>                   
                         <div data-ng-repeat="opplan in events" class="card-month" 
                              data-ng-click="selectCard(opplan)"
-                             data-ng-if="displayEvent(opplan, dt)">
+                             data-ng-if="(!grouping || opplan[grouping] == cat) && displayEvent(opplan, dt)">
                                <ng-include src="'/input/card.html'"/>
                         </div>
                     </div>
                 </td>
-            </tr>
-            
+              </tr>
             </tbody>
         </table>
     </div>

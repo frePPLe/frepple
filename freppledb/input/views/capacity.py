@@ -14,6 +14,7 @@
 # You should have received a copy of the GNU Affero General Public
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
+from collections import OrderedDict
 
 from django.db.models import Q
 from django.db.models.expressions import RawSQL
@@ -448,6 +449,21 @@ class ResourceDetail(OperationPlanMixin, GridReport):
 
     @classmethod
     def extra_context(reportclass, request, *args, **kwargs):
+        groupingcfg = OrderedDict()
+        groupingcfg["resource"] = force_text(_("resource"))
+        groupingcfg["operationplan__location"] = force_text(_("location"))
+        groupingcfg["operationplan__operation__category"] = force_text(
+            format_lazy("{} - {}", _("operation"), _("category"))
+        )
+        groupingcfg["operationplan__operation__subcategory"] = force_text(
+            format_lazy("{} - {}", _("operation"), _("subcategory"))
+        )
+        groupingcfg["resource__category"] = force_text(
+            format_lazy("{} - {}", _("resource"), _("category"))
+        )
+        groupingcfg["resource__subcategory"] = force_text(
+            format_lazy("{} - {}", _("resource"), _("subcategory"))
+        )
         if args and args[0]:
             request.session["lasttab"] = "plandetail"
             return {
@@ -457,6 +473,7 @@ class ResourceDetail(OperationPlanMixin, GridReport):
                 "model": Resource,
                 "title": force_text(Resource._meta.verbose_name) + " " + args[0],
                 "post_title": _("plan detail"),
+                "groupingcfg": groupingcfg,
             }
         else:
             return {
@@ -464,6 +481,7 @@ class ResourceDetail(OperationPlanMixin, GridReport):
                 "groupBy": "operationplan__status",
                 "active_tab": "plandetail",
                 "model": OperationPlanResource,
+                "groupingcfg": groupingcfg,
             }
 
     rows = (

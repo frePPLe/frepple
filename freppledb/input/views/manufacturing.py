@@ -14,6 +14,7 @@
 # You should have received a copy of the GNU Affero General Public
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
+from collections import OrderedDict
 
 from django.conf import settings
 from django.db.models import (
@@ -1053,6 +1054,20 @@ class ManufacturingOrderList(OperationPlanMixin, GridReport):
 
     @classmethod
     def extra_context(reportclass, request, *args, **kwargs):
+        groupingcfg = OrderedDict()
+        groupingcfg["operation__location__name"] = force_text(_("location"))
+        groupingcfg["operation__category"] = force_text(
+            format_lazy("{} - {}", _("operation"), _("category"))
+        )
+        groupingcfg["operation__subcategory"] = force_text(
+            format_lazy("{} - {}", _("operation"), _("subcategory"))
+        )
+        groupingcfg["operation__item__category"] = force_text(
+            format_lazy("{} - {}", _("item"), _("category"))
+        )
+        groupingcfg["operation__item__subcategory"] = force_text(
+            format_lazy("{} - {}", _("item"), _("subcategory"))
+        )
         if args and args[0]:
             request.session["lasttab"] = "plandetail"
             paths = request.path.split("/")
@@ -1065,6 +1080,7 @@ class ManufacturingOrderList(OperationPlanMixin, GridReport):
                     "model": Location,
                     "title": force_text(Location._meta.verbose_name) + " " + args[0],
                     "post_title": _("manufacturing orders"),
+                    "groupingcfg": groupingcfg,
                 }
             elif path == "operation" or request.path.startswith(
                 "/detail/input/operation/"
@@ -1076,6 +1092,7 @@ class ManufacturingOrderList(OperationPlanMixin, GridReport):
                     "model": Operation,
                     "title": force_text(Operation._meta.verbose_name) + " " + args[0],
                     "post_title": _("manufacturing orders"),
+                    "groupingcfg": groupingcfg,
                 }
             elif path == "item" or request.path.startswith("/detail/input/item/"):
                 return {
@@ -1085,6 +1102,7 @@ class ManufacturingOrderList(OperationPlanMixin, GridReport):
                     "model": Item,
                     "title": force_text(Item._meta.verbose_name) + " " + args[0],
                     "post_title": _("manufacturing orders"),
+                    "groupingcfg": groupingcfg,
                 }
             elif path == "operationplanmaterial":
                 return {
@@ -1097,6 +1115,7 @@ class ManufacturingOrderList(OperationPlanMixin, GridReport):
                         _("work in progress in %(loc)s at %(date)s")
                         % {"loc": args[1], "date": args[2]}
                     ),
+                    "groupingcfg": groupingcfg,
                 }
             elif path == "produced":
                 return {
@@ -1109,6 +1128,7 @@ class ManufacturingOrderList(OperationPlanMixin, GridReport):
                         _("produced in %(loc)s between %(date1)s and %(date2)s")
                         % {"loc": args[1], "date1": args[2], "date2": args[3]}
                     ),
+                    "groupingcfg": groupingcfg,
                 }
             elif path == "consumed":
                 return {
@@ -1121,6 +1141,7 @@ class ManufacturingOrderList(OperationPlanMixin, GridReport):
                         _("consumed in %(loc)s between %(date1)s and %(date2)s")
                         % {"loc": args[1], "date1": args[2], "date2": args[3]}
                     ),
+                    "groupingcfg": groupingcfg,
                 }
             else:
                 return {
@@ -1128,6 +1149,7 @@ class ManufacturingOrderList(OperationPlanMixin, GridReport):
                     "groupBy": "status",
                     "active_tab": "edit",
                     "model": Item,
+                    "groupingcfg": groupingcfg,
                 }
         elif "parentreference" in request.GET:
             return {
@@ -1137,12 +1159,14 @@ class ManufacturingOrderList(OperationPlanMixin, GridReport):
                 "title": force_text(ManufacturingOrder._meta.verbose_name)
                 + " "
                 + request.GET["parentreference"],
+                "groupingcfg": groupingcfg,
             }
         else:
             return {
                 "default_operationplan_type": "MO",
                 "groupBy": "status",
                 "active_tab": "plandetail",
+                "groupingcfg": groupingcfg,
             }
 
     @classmethod

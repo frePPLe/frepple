@@ -14,6 +14,8 @@
 # You should have received a copy of the GNU Affero General Public
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
+from collections import OrderedDict
+
 from django.conf import settings
 from django.contrib.admin.utils import unquote, quote
 from django.contrib.admin.views.decorators import staff_member_required
@@ -552,6 +554,15 @@ class DistributionOrderList(OperationPlanMixin, GridReport):
 
     @classmethod
     def extra_context(reportclass, request, *args, **kwargs):
+        groupingcfg = OrderedDict()
+        groupingcfg["destination"] = force_text(_("destination"))
+        groupingcfg["origin"] = force_text(_("origin"))
+        groupingcfg["item__category"] = force_text(
+            format_lazy("{} - {}", _("item"), _("category"))
+        )
+        groupingcfg["item__subcategory"] = force_text(
+            format_lazy("{} - {}", _("item"), _("subcategory"))
+        )
         if args and args[0]:
             paths = request.path.split("/")
             if paths[4] == "operationplanmaterial":
@@ -565,6 +576,7 @@ class DistributionOrderList(OperationPlanMixin, GridReport):
                         _("in transit in %(loc)s at %(date)s")
                         % {"loc": args[1], "date": args[2]}
                     ),
+                    "groupingcfg": groupingcfg,
                 }
             elif paths[4] == "produced":
                 return {
@@ -577,6 +589,7 @@ class DistributionOrderList(OperationPlanMixin, GridReport):
                         _("received in %(loc)s between %(date1)s and %(date2)s")
                         % {"loc": args[1], "date1": args[2], "date2": args[3]}
                     ),
+                    "groupingcfg": groupingcfg,
                 }
             elif paths[4] == "consumed":
                 return {
@@ -589,6 +602,7 @@ class DistributionOrderList(OperationPlanMixin, GridReport):
                         _("shipped from %(loc)s between %(date1)s and %(date2)s")
                         % {"loc": args[1], "date1": args[2], "date2": args[3]}
                     ),
+                    "groupingcfg": groupingcfg,
                 }
             elif paths[4] == "item":
                 return {
@@ -598,6 +612,7 @@ class DistributionOrderList(OperationPlanMixin, GridReport):
                     "model": Item,
                     "title": force_text(Item._meta.verbose_name) + " " + args[0],
                     "post_title": _("distribution orders"),
+                    "groupingcfg": groupingcfg,
                 }
             elif paths[4] == "location":
                 path = paths[-2]
@@ -611,6 +626,7 @@ class DistributionOrderList(OperationPlanMixin, GridReport):
                         + " "
                         + args[0],
                         "post_title": _("inbound distribution"),
+                        "groupingcfg": groupingcfg,
                     }
                 elif path == "out":
                     return {
@@ -622,6 +638,7 @@ class DistributionOrderList(OperationPlanMixin, GridReport):
                         + " "
                         + args[0],
                         "post_title": _("outbound distribution"),
+                        "groupingcfg": groupingcfg,
                     }
             else:
                 return {
@@ -629,6 +646,7 @@ class DistributionOrderList(OperationPlanMixin, GridReport):
                     "groupBy": "status",
                     "active_tab": "edit",
                     "model": Item,
+                    "groupingcfg": groupingcfg,
                 }
         elif "parentreference" in request.GET:
             return {
@@ -638,12 +656,14 @@ class DistributionOrderList(OperationPlanMixin, GridReport):
                 "title": force_text(DistributionOrder._meta.verbose_name)
                 + " "
                 + request.GET["parentreference"],
+                "groupingcfg": groupingcfg,
             }
         else:
             return {
                 "default_operationplan_type": "DO",
                 "groupBy": "status",
                 "active_tab": "edit",
+                "groupingcfg": groupingcfg,
             }
 
     @classmethod
@@ -1154,6 +1174,14 @@ class InventoryDetail(OperationPlanMixin, GridReport):
 
     @classmethod
     def extra_context(reportclass, request, *args, **kwargs):
+        groupingcfg = OrderedDict()
+        groupingcfg["location"] = force_text(_("location"))
+        groupingcfg["item__category"] = force_text(
+            format_lazy("{} - {}", _("item"), _("category"))
+        )
+        groupingcfg["item__subcategory"] = force_text(
+            format_lazy("{} - {}", _("item"), _("subcategory"))
+        )
         if args and args[0]:
             if request.path_info.startswith(
                 "/data/input/operationplanmaterial/item/"
@@ -1166,6 +1194,7 @@ class InventoryDetail(OperationPlanMixin, GridReport):
                     "model": Item,
                     "title": force_text(Item._meta.verbose_name) + " " + args[0],
                     "post_title": _("inventory detail"),
+                    "groupingcfg": groupingcfg,
                 }
             elif request.path_info.startswith(
                 "/data/input/operationplanmaterial/buffer/"
@@ -1190,6 +1219,7 @@ class InventoryDetail(OperationPlanMixin, GridReport):
                     + " @ "
                     + location,
                     "post_title": _("plan detail"),
+                    "groupingcfg": groupingcfg,
                 }
         else:
             return {
@@ -1197,6 +1227,7 @@ class InventoryDetail(OperationPlanMixin, GridReport):
                 "groupBy": "operationplan__status",
                 "active_tab": "plandetail",
                 "model": OperationPlanMaterial,
+                "groupingcfg": groupingcfg,
             }
 
     rows = (

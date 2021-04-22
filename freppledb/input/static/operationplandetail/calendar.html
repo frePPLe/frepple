@@ -1,6 +1,19 @@
 <div data-ng-switch="mode">
   <div class="row calendar-navbar">
-    <div class="col-xs-5 hor-align-right ver-align-middle">
+    <div class="col-xs-4 ver-align-middle alignleft">
+      <span data-ng-if="groupingcfg">
+      <button class="btn btn-default dropdown-toggle form-control" style="width:auto" type="button" name="grouping" data-toggle="dropdown">
+        {{ grouping ? "Group by " + groupingcfg[grouping] : "No grouping" }}&nbsp;&nbsp;<i class="caret"></i>
+      </button>
+      <ul class="dropdown-menu" aria-labelledby="grouping">
+        <li><a data-ng-click="setGrouping(null)">No grouping</a></li>
+        <li data-ng-repeat="(name, label) in groupingcfg">
+          <a data-ng-click="setGrouping(name)">Group by {{label}}</a>
+        </li>
+      </ul>
+      </span>
+    </div>  
+    <div class="col-xs-1 hor-align-right ver-align-middle">
       <button type="button" class="btn btn-primary btn-sm" ng-click="move(-1)">
         <i class="fa fa-chevron-left"></i>
       </button>

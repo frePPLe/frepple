@@ -65,6 +65,8 @@
 
   var mode = preferences && preferences.mode || "table";
   var calendarmode = preferences && preferences.calendarmode || "{{reportclass.calendarmode}}";
+  var grouping = preferences && preferences.grouping || null;
+  var groupingdir = preferences && preferences.groupingdir || "asc";
 
   function extraPreference() {
     return {
@@ -72,7 +74,9 @@
       "width": Math.floor($("#fields").width()),
       "mode": mode,
       "calendarmode": calendarmode,
-      "columns": angular.element('#controller').scope().kanbancolumns
+      "columns": angular.element('#controller').scope().kanbancolumns,
+      "grouping": grouping,
+      "groupingdir": groupingdir
     };
   }
 
@@ -116,6 +120,7 @@
   var default_operationplan_type = "{{ default_operationplan_type }}";
   var groupBy = "{{ groupBy }}";
   var thefilter = initialfilter;
+  var groupingcfg = {{ groupingcfg | json }};
 
   $(function() {
     $("#workarea").css('overflow-x','visible');

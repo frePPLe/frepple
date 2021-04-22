@@ -4,7 +4,7 @@ Release notes
 6.13.0 (2021/04/20)
 ===================
 
-.. rubric:: Announcements
+.. rubric:: Birth of a new product
 
 - | FrePPLe's user interface has quite some nice capabilities that are generic and reusable 
     in other domains.
@@ -35,7 +35,7 @@ Release notes
 
 - | The `data import and export from Odoo <integration-guide/odoo-connector.html>`_ 
     are no longer integrated in the plan generation task. They are now tasks that can
-    be launched indepently.
+    be launched independently.
 
 6.12.0 (2021/03/01)
 ===================

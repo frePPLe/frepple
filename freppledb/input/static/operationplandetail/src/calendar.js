@@ -592,7 +592,7 @@ angular.module('calendar', [])
                         if (!eventEndTime) eventEndTime = eventStartTime;
                         if (!eventStartTime) eventStartTime = eventEndTime;
 
-                        if (scope.grouping && event[scope.grouping] && !keys.includes(event[scope.grouping]))
+                        if (scope.grouping && !keys.includes(event[scope.grouping]))
                               keys.push(event[scope.grouping]);
 
                         var timeDiff;
@@ -854,7 +854,7 @@ angular.module('calendar', [])
                                 startOffset: startOffset,
                                 endOffset: endOffset
                             };
-                            if (scope.grouping && event[scope.grouping] && !keys.includes(event[scope.grouping]))
+                            if (scope.grouping && !keys.includes(event[scope.grouping]))
                               keys.push(event[scope.grouping]);
 
                             if (rows[startRowIndex][dayIndex].events)
@@ -1076,7 +1076,7 @@ angular.module('calendar', [])
                             rows[startIndex].events = eventSet;
                         }
 
-                        if (scope.grouping && event[scope.grouping] && !keys.includes(event[scope.grouping]))
+                        if (scope.grouping && !keys.includes(event[scope.grouping]))
                               keys.push(event[scope.grouping]);
 
                         if (scope.events)

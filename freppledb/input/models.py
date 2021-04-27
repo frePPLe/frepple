@@ -1940,22 +1940,27 @@ class OperationPlanRelatedMixin:
 
             def save(self, commit=True):
                 instance = super().save(commit=False)
-                data = self.cleaned_data
-                dirty = False
-                if "operationplan__startdate" in fields:
-                    instance.operationplan.startdate = data["operationplan__startdate"]
-                    dirty = True
-                if "operationplan__enddate" in fields:
-                    instance.operationplan.enddate = data["operationplan__enddate"]
-                    dirty = True
-                if "operationplan__quantity" in fields:
-                    instance.operationplan.quantity = data["operationplan__quantity"]
-                    dirty = True
-                if "operationplan__status" in fields:
-                    instance.operationplan.status = data["operationplan__status"]
-                    dirty = True
-                if dirty:
-                    instance.operationplan.save(using=database)
+                if instance and instance.operationplan.type != "STCK":
+                    data = self.cleaned_data
+                    dirty = False
+                    if "operationplan__startdate" in fields:
+                        instance.operationplan.startdate = data[
+                            "operationplan__startdate"
+                        ]
+                        dirty = True
+                    if "operationplan__enddate" in fields:
+                        instance.operationplan.enddate = data["operationplan__enddate"]
+                        dirty = True
+                    if "operationplan__quantity" in fields:
+                        instance.operationplan.quantity = data[
+                            "operationplan__quantity"
+                        ]
+                        dirty = True
+                    if "operationplan__status" in fields:
+                        instance.operationplan.status = data["operationplan__status"]
+                        dirty = True
+                    if dirty:
+                        instance.operationplan.save(using=database)
                 if commit:
                     instance.save(using=database)
                 return instance

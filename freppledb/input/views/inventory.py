@@ -1388,6 +1388,22 @@ class InventoryDetail(OperationPlanMixin, GridReport):
             title=format_lazy("{} - {}", _("operation"), _("last modified")),
             initially_hidden=True,
         ),
+        GridFieldText(
+            "operationplan__supplier",
+            title=_("supplier"),
+            field_name="operationplan__supplier",
+            formatter="detail",
+            extra="role:'input/supplier'",
+            initially_hidden=True,
+        ),
+        GridFieldText(
+            "operationplan__origin",
+            title=_("origin"),
+            field_name="operationplan__origin",
+            formatter="detail",
+            extra="role:'input/location'",
+            initially_hidden=True,
+        ),
         GridFieldDateTime(
             "flowdate",
             title=_("date"),

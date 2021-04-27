@@ -390,15 +390,26 @@ function operationplanCtrl($scope, $http, OperationPlan, PreferenceSvc) {
             var tmp = angular.copy(response.data);
             for (var x of tmp.rows) {
               x.type = x.operationplan__type || x.type || default_operationplan_type;
-              x.enddate = (x.operationplan__enddate || x.enddate) ? new Date(x.operationplan__enddate || x.enddate) : null;
-              x.startdate = (x.operationplan__startdate ||  x.startdate) ? new Date(x.operationplan__startdate ||  x.startdate) : null;
-              x.quantity = parseFloat(x.operationplan__quantity || x.quantity);
+              if (x.hasOwnProperty("enddate"))
+                x.enddate = new Date(x.enddate);
+              if (x.hasOwnProperty("operationplan__enddate")) {                
+                x.operationplan__enddate = new Date(x.operationplan__enddate);
+                x.enddate = x.operationplan__enddate;
+              }
+              if (x.hasOwnProperty("startdate"))
+                x.startdate = new Date(x.startdate);
+              if (x.hasOwnProperty("operationplan__startdate")) {
+                x.operationplan__startdate = new Date(x.operationplan__startdate);
+                x.startdate = x.operationplan__startdate;
+              }
+              if (x.hasOwnProperty("quantity"))
+                x.quantity = parseFloat(x.quantity);
+              if (x.hasOwnProperty("operationplan__quantity"))
+                x.operationplan__quantity = parseFloat(x.operationplan__quantity);
               if (x.hasOwnProperty("operationplan__status"))
                 x.status = x.operationplan__status;
               if (x.hasOwnProperty("operationplan__origin"))
                 x.origin = x.operationplan__origin;
-              if (x.hasOwnProperty("operationplan__reference"))
-                x.reference = x.operationplan__reference;
               [x.color, x.inventory_status] = formatInventoryStatus(x);
             }
             $scope.calendarevents= tmp.rows;
@@ -453,20 +464,28 @@ function operationplanCtrl($scope, $http, OperationPlan, PreferenceSvc) {
   		}
   		$http.get(baseurl + "&filters=" + encodeURIComponent(JSON.stringify(colfilter)) + sortname)
   		  .then(function(response) {
-  	  	  $scope.kanbanoperationplans[key] = angular.copy(response.data);
-  	  	  for (var x of $scope.kanbanoperationplans[key].rows) {
+  	  	  var tmp = angular.copy(response.data);
+  	  	  for (var x of tmp.rows) {
   	  	  	x.type = x.operationplan__type || x.type || default_operationplan_type;
-  	  	  	x.enddate = new Date(x.operationplan__enddate || x.enddate);
-  	  	  	x.startdate = new Date(x.operationplan__startdate ||  x.startdate);
-  	  	  	x.quantity = parseFloat(x.operationplan__quantity || x.quantity);
+            if (x.hasOwnProperty("enddate"))
+              x.enddate = new Date(x.enddate);
+            if (x.hasOwnProperty("operationplan__enddate"))
+              x.operationplan__enddate = new Date(x.operationplan__enddate);
+            if (x.hasOwnProperty("startdate"))
+              x.startdate = new Date(x.startdate);
+            if (x.hasOwnProperty("operationplan__startdate"))
+              x.operationplan__startdate = new Date(x.operationplan__startdate);
+  	  	  	if (x.hasOwnProperty("quantity"))
+  	  	  	  x.quantity = parseFloat(x.quantity);
+  	  	  	if (x.hasOwnProperty("operationplan__quantity"))
+  	  	  	  x.operationplan__quantity = parseFloat(x.operationplan__quantity);
   	  	  	if (x.hasOwnProperty("operationplan__status"))
   	  	  		x.status = x.operationplan__status;
   	  	  	if (x.hasOwnProperty("operationplan__origin"))
   	  	  		x.origin = x.operationplan__origin;
-  	  	  	if (x.hasOwnProperty("operationplan__reference"))
-  	  	  		x.reference = x.operationplan__reference;
   	  	  	[x.color, x.inventory_status] = formatInventoryStatus(x);
   	  	  }
+  	  	  $scope.kanbanoperationplans[key] = tmp;
   	      });
   	});
   }
@@ -476,7 +495,7 @@ function operationplanCtrl($scope, $http, OperationPlan, PreferenceSvc) {
   	var dirty = [];
     if ($scope.mode && $scope.mode.startsWith("calendar")) {
       angular.forEach($scope.calendarevents, function(card) {
-          var dirtycard = {id: card.reference};
+          var dirtycard = {id: card.id || card.reference};
           var dirtyfields = false;
           for (var field in card) {
             if (card.hasOwnProperty(field + "Original")) {
@@ -494,7 +513,7 @@ function operationplanCtrl($scope, $http, OperationPlan, PreferenceSvc) {
     else if ($scope.mode == "kanban") {
     	angular.forEach($scope.kanbanoperationplans, function(value, key) {
         angular.forEach(value.rows, function(card) {
-          var dirtycard = {id: card.reference};
+          var dirtycard = {id: card.id || card.reference};
           var dirtyfields = false;
         	for (var field in card) {
             if (card.hasOwnProperty(field + "Original")) {

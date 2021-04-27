@@ -193,21 +193,43 @@ function showKanbanDrv($window, gettextCatalog, OperationPlan, PreferenceSvc) {
             $(window).on('beforeunload', upload.warnUnsavedChanges);
       
             // Detect card changes (including reverting to the original situation)
-            if (!o.hasOwnProperty("statusOriginal")) {
-               if (o.status != endvalue) {
-                 o.statusOriginal = o.status;
-                 o.status = endvalue;
-                 o.dirty = true;
-               }
+            if (o.hasOwnProperty("operationplan__status")) {
+              if (!o.hasOwnProperty("operationplan__statusOriginal")) {
+                 if (o.operationplan__status != endvalue) {
+                   o.operationplan__statusOriginal = o.operationplan__status;
+                   o.operationplan__status = endvalue;
+                   o.status = endvalue;
+                   o.dirty = true;
+                 }
+              }
+              else {
+                if (o.operationplan__statusOriginal == endvalue){
+                  o.dirty = false;
+                  delete o.operationplan__statusOriginal;
+                } else {
+                  o.dirty = true;
+                }
+                o.operationplan__status = endvalue;
+                o.status = envalue;
+              }
             }
             else {
-              if (o.statusOriginal == endvalue){
-                o.dirty = false;
-                delete o.statusOriginal;
-              } else {
-                o.dirty = true;
+              if (!o.hasOwnProperty("statusOriginal")) {
+                 if (o.status != endvalue) {
+                   o.statusOriginal = o.status;
+                   o.status = endvalue;
+                   o.dirty = true;
+                 }
               }
-              o.status = endvalue;
+              else {
+                if (o.statusOriginal == endvalue){
+                  o.dirty = false;
+                  delete o.statusOriginal;
+                } else {
+                  o.dirty = true;
+                }
+                o.status = endvalue;
+              }
             }
             $scope.$parent.$broadcast("cardChanged", "status", o.statusOriginal, o.status);
           });

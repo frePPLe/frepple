@@ -12,6 +12,8 @@ Release notes
     The calendar view then looks pretty much like a spreadsheet grid with
     cards in each cell.
 
+- | Bug fix: formatting of negative numbers was showing too many digits after the decimal.
+
 6.13.0 (2021/04/20)
 ===================
 

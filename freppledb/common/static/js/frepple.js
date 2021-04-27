@@ -571,19 +571,20 @@ var grid = {
 			if (!isNumber(nData))
 				nData *= 1;
 			if (isNumber(nData)) {
-				var bNegative = (nData < 0);				
+				var bNegative = (nData < 0);
+				var absData = Math.abs(nData);
 				var sOutput;
-				if (nData > 100000 || maxdecimals <= 0)
+				if (absData > 100000 || maxdecimals <= 0)
 					sOutput = String(parseFloat(nData.toFixed()));
-				else if (nData > 10000 || maxdecimals <= 1)
+				else if (absData > 10000 || maxdecimals <= 1)
 					sOutput = String(parseFloat(nData.toFixed(1)));
-				else if (nData > 1000 || maxdecimals <= 2)
+				else if (absData > 1000 || maxdecimals <= 2)
 					sOutput = String(parseFloat(nData.toFixed(2)));
-				else if (nData > 100 || maxdecimals <= 3)
+				else if (absData > 100 || maxdecimals <= 3)
 					sOutput = String(parseFloat(nData.toFixed(3)));
-				else if (nData > 10 || maxdecimals <= 4)
+				else if (absData > 10 || maxdecimals <= 4)
 					sOutput = String(parseFloat(nData.toFixed(4)));
-				else if (nData > 1 || maxdecimals <= 5)
+				else if (absData > 1 || maxdecimals <= 5)
 					sOutput = String(parseFloat(nData.toFixed(5)));
 				else
 					sOutput = String(parseFloat(nData.toFixed(maxdecimals)));

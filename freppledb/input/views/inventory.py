@@ -35,6 +35,7 @@ from freppledb.input.models import (
     Item,
     ItemDistribution,
     DistributionOrder,
+    OperationPlan,
     OperationPlanMaterial,
 )
 from freppledb.common.report import (
@@ -1414,20 +1415,21 @@ class InventoryDetail(OperationPlanMixin, GridReport):
         GridFieldDateTime(
             "operationplan__startdate",
             title=_("start date"),
-            editable=False,
+            editable=True,
             extra='"formatoptions":{"srcformat":"Y-m-d H:i:s","newformat":"Y-m-d H:i:s", "defaultValue":""}, "summaryType":"min"',
         ),
         GridFieldDateTime(
             "operationplan__enddate",
             title=_("end date"),
-            editable=False,
+            editable=True,
             extra='"formatoptions":{"srcformat":"Y-m-d H:i:s","newformat":"Y-m-d H:i:s", "defaultValue":""}, "summaryType":"max"',
         ),
-        GridFieldText(
+        GridFieldChoice(
             "operationplan__status",
             title=_("status"),
-            editable=False,
+            editable=True,
             field_name="operationplan__status",
+            choices=OperationPlan.orderstatus,
         ),
         GridFieldNumber(
             "operationplan__criticality",
@@ -1446,7 +1448,7 @@ class InventoryDetail(OperationPlanMixin, GridReport):
         GridFieldNumber(
             "operationplan__quantity",
             title=_("operationplan quantity"),
-            editable=False,
+            editable=True,
             extra='"formatoptions":{"defaultValue":""}, "summaryType":"sum"',
         ),
         GridFieldText(

@@ -32,6 +32,7 @@ from freppledb.input.models import (
     SetupRule,
     Skill,
     ResourceSkill,
+    OperationPlan,
     OperationPlanResource,
 )
 from freppledb.common.report import (
@@ -509,6 +510,7 @@ class ResourceDetail(OperationPlanMixin, GridReport):
             formatter="detail",
             extra="role:'input/manufacturingorder'",
             initially_hidden=True,
+            editable=False,
         ),
         GridFieldText(
             "color",
@@ -643,13 +645,11 @@ class ResourceDetail(OperationPlanMixin, GridReport):
         GridFieldDateTime(
             "operationplan__startdate",
             title=_("start date"),
-            editable=False,
             extra='"formatoptions":{"srcformat":"Y-m-d H:i:s","newformat":"Y-m-d H:i:s", "defaultValue":""}, "summaryType":"min"',
         ),
         GridFieldDateTime(
             "operationplan__enddate",
             title=_("end date"),
-            editable=False,
             extra='"formatoptions":{"srcformat":"Y-m-d H:i:s","newformat":"Y-m-d H:i:s", "defaultValue":""}, "summaryType":"max"',
         ),
         GridFieldDuration(
@@ -667,10 +667,13 @@ class ResourceDetail(OperationPlanMixin, GridReport):
         GridFieldNumber(
             "operationplan__quantity",
             title=_("quantity"),
-            editable=False,
             extra='"formatoptions":{"defaultValue":""}, "summaryType":"sum"',
         ),
-        GridFieldText("operationplan__status", title=_("status"), editable=False),
+        GridFieldChoice(
+            "operationplan__status",
+            title=_("status"),
+            choices=OperationPlan.orderstatus,
+        ),
         GridFieldNumber(
             "operationplan__criticality",
             title=_("criticality"),

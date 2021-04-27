@@ -11,6 +11,9 @@ Release notes
   | You get a row with cards for every resource, supplier, item, item category...
     The calendar view then looks pretty much like a spreadsheet grid with
     cards in each cell.
+    
+- | Manufacturing orders, purchase orders and distribution orders can now be edited
+    from the resource detail and inventory detail screens. 
 
 - | Bug fix: formatting of negative numbers was showing too many digits after the decimal.
 

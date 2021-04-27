@@ -1897,7 +1897,73 @@ class OperationPlan(AuditModel):
         ordering = ["reference"]
 
 
-class OperationPlanResource(AuditModel):
+class OperationPlanRelatedMixin:
+    @classmethod
+    def getModelForm(cls, fields, database=DEFAULT_DB_ALIAS):
+        template = modelform_factory(
+            cls,
+            fields=[
+                i
+                for i in fields
+                if i
+                not in (
+                    "operationplan__startdate",
+                    "operationplan__enddate",
+                    "operationplan__quantity",
+                    "operationplan__status",
+                )
+            ],
+            formfield_callback=lambda f: (
+                isinstance(f, RelatedField) and f.formfield(using=database)
+            )
+            or f.formfield(),
+        )
+
+        # Return a form class with some extra fields
+        class OpplanRelated_form(template):
+            operationplan__startdate = (
+                forms.CharField() if "operationplan__startdate" in fields else None
+            )
+            operationplan__enddate = (
+                forms.CharField() if "operationplan__enddate" in fields else None
+            )
+            operationplan__quantity = (
+                forms.DecimalField(min_value=0)
+                if "operationplan__quantity" in fields
+                else None
+            )
+            operationplan__status = (
+                forms.ChoiceField(choices=OperationPlan.orderstatus)
+                if "operationplan__status" in fields
+                else None
+            )
+
+            def save(self, commit=True):
+                instance = super().save(commit=False)
+                data = self.cleaned_data
+                dirty = False
+                if "operationplan__startdate" in fields:
+                    instance.operationplan.startdate = data["operationplan__startdate"]
+                    dirty = True
+                if "operationplan__enddate" in fields:
+                    instance.operationplan.enddate = data["operationplan__enddate"]
+                    dirty = True
+                if "operationplan__quantity" in fields:
+                    instance.operationplan.quantity = data["operationplan__quantity"]
+                    dirty = True
+                if "operationplan__status" in fields:
+                    instance.operationplan.status = data["operationplan__status"]
+                    dirty = True
+                if dirty:
+                    instance.operationplan.save(using=database)
+                if commit:
+                    instance.save(using=database)
+                return instance
+
+        return OpplanRelated_form
+
+
+class OperationPlanResource(AuditModel, OperationPlanRelatedMixin):
     # Possible status
     OPRstatus = (
         ("proposed", _("proposed")),
@@ -1968,7 +2034,7 @@ class OperationPlanResource(AuditModel):
         verbose_name_plural = _("resource detail")
 
 
-class OperationPlanMaterial(AuditModel):
+class OperationPlanMaterial(AuditModel, OperationPlanRelatedMixin):
     # Possible status
     OPMstatus = (
         ("proposed", _("proposed")),

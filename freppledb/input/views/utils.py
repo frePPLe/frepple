@@ -505,7 +505,7 @@ class PathReport(GridReport):
             (
                 """
                 and (operation.item_id = %s or
-                (operationmaterial.item_id = %s and operationmaterial.quantity > 0)
+                (exists (select 1 from operationmaterial op1 where op1.operation_id = operation.name and op1.item_id = %s and op1.quantity > 0))
                 or parentoperation.item_id = %s
                 or grandparentoperation.item_id = %s)
             """,
@@ -1040,7 +1040,7 @@ class PathReport(GridReport):
             (
                 """
                 and (operation.item_id = %s or
-                (operationmaterial.item_id = %s and operationmaterial.quantity > 0)
+                (exists (select 1 from operationmaterial op1 where op1.operation_id = operation.name and op1.item_id = %s and op1.quantity > 0))
                 or parentoperation.item_id = %s
                 or grandparentoperation.item_id = %s)
                 """,

@@ -27,7 +27,7 @@
           <td ng-show="showWeeks" class="calendar-week-column text-center">
             <small>{{ weekNumbers[$index] }}</small>
           </td>
-          <td ng-repeat="dt in row track by dt.date" class="text-center">
+          <td ng-repeat="dt in row track by dt.date" class="text-center datecell" data-date="{{dt.date| date: 'yyyy-MM-dd'}}">
             <div>
               <p><strong>{{dt.label}}</strong></p>
               <div ng-repeat="opplan in dt.events" data-ng-if="(!grouping || (opplan[grouping] || '') == (cat || '')) && displayEvent(opplan,dt)" class="card-month" ng-click="selectCard(opplan)">

@@ -405,6 +405,10 @@ angular.module('calendar', [])
 
                 scope.$on('changeMode', function (event, mode) {
                     calendarCtrl.changeMode(mode);
+                    if (scope.editable && mode.startsWith("calendar"))
+                       enableDragDrop();
+                    else
+                       disableDragDrop();
                 });
 
                 scope.selectCard = function(opplan) {
@@ -431,6 +435,47 @@ angular.module('calendar', [])
                   if (newvalue !== undefined)
                     scope.$parent.$broadcast("cardChanged", field, oldvalue, newvalue);
                 };
+
+                function HandlerDrop(event) {
+                  var dragstart = event.originalEvent.dataTransfer.getData("dragstart");
+                  var dragend = $(event.target).closest(".datecell").attr("data-date");
+                  var dragreference = event.originalEvent.dataTransfer.getData("dragreference");
+                  event.preventDefault();
+                }
+
+                function HandlerDragStart(event) {
+                  console.log("start dragging", $(event.target).closest(".datecell").attr("data-date"));
+                  event.originalEvent.dataTransfer.setData(
+                      "dragstart",
+                      $(event.target).closest(".datecell").attr("data-date")
+                      );
+                  event.originalEvent.dataTransfer.setData(
+                      "dragreference",
+                      $(event.target).closest(".card").attr("data-reference")
+                      );
+                  event.stopPropagation();
+                };
+
+                function HandlerDragOver(event) {
+                  event.preventDefault();
+                };
+
+                function enableDragDrop() {
+                  element.on('dragover', 'td.datecell', HandlerDragOver);
+                  element.on('drop', 'td.datecell', HandlerDrop);
+                  element.on('dragstart', '.card', HandlerDragStart);
+                };
+                scope.enableDragDrop = enableDragDrop;
+
+                function disableDragDrop() {
+                  element.off('dragover', '.datecell', HandlerDragOver);
+                  element.off('drop', '.datecell', HandlerDrop);
+                  element.off('dragstart', '.card', HandlerDragStart);
+                }
+                scope.disableDragDrop = disableDragDrop;
+
+                if (scope.editable && scope.mode.startsWith("calendar"))
+                   enableDragDrop();
             }
         };
     })

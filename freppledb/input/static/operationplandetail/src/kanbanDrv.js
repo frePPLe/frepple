@@ -258,6 +258,7 @@ function showKanbanDrv($window, gettextCatalog, OperationPlan, PreferenceSvc) {
           "startcolumn",
           $(event.target).closest(".column").attr("data-column")
           );
+      event.stopPropagation();
     };
     
     function enableDragDrop() {      
@@ -276,13 +277,13 @@ function showKanbanDrv($window, gettextCatalog, OperationPlan, PreferenceSvc) {
         
     $scope.$on('changeMode', function (event, mode) {
       $scope.mode = mode;
-      if (mode == "kanban")
+      if ($scope.editable && mode == "kanban")
         enableDragDrop();
       else
         disableDragDrop();
     });
     
-    if (mode == "kanban")
+    if ($scope.editable && mode == "kanban")
       enableDragDrop();
   }
 }

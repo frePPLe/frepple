@@ -22,7 +22,7 @@
                 <td class="calendar-hour-column text-center">
                     {{row[0].date | date: formatHourColumn}}
                 </td>
-                <td data-ng-repeat="dt in row track by dt.date" class="calendar-cell">
+                <td data-ng-repeat="dt in row track by dt.date" class="calendar-cell datecell" data-date="{{dt.date| date: 'yyyy-MM-dd'}}">
                     <div data-ng-class="{'calendar-event-wrap': dt.events}" ng-if="dt.events">
                         <div data-ng-repeat="opplan in dt.events" class="calendar-event weekcard" data-ng-click="selectCard(opplan.event)"        
                              data-ng-style="{top: (37*opplan.startOffset/hourParts)+'px',left: 100/opplan.overlapNumber*opplan.position+'%', width: 100/opplan.overlapNumber+'%', height: 37*(opplan.endIndex -opplan.startIndex - (opplan.endOffset + opplan.startOffset)/hourParts)+'px'}"
@@ -36,7 +36,7 @@
             <tbody data-ng-switch-default>
               <tr data-ng-repeat="cat in categories track by cat">
               <td data-ng-if="grouping">{{cat}}</td>
-              <td data-ng-repeat="dt in dates track by dt.date">
+              <td data-ng-repeat="dt in dates track by dt.date" class="datecell" data-date="{{dt.date| date: 'yyyy-MM-dd'}}">
                   <div data-ng-repeat="opplan in dt.events" class="card-month" data-ng-click="selectCard(opplan)"        
                      data-ng-if="(!grouping || (opplan[grouping] || '') == (cat || '')) && displayEvent(opplan, dt)">
                      <ng-include src="'/input/card.html'"/>

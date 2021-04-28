@@ -2,10 +2,10 @@
 The code in this file is using ANGULARJS template syntax and not the DJANGO template syntax.
 {% endcomment %}
 {% verbatim %}
-<div data-ng-attr-draggable="{{ (editable && mode == 'kanban') ? 'true' : 'false' }}"
+<div data-ng-attr-draggable="{{ editable ? 'true' : 'false' }}"
       data-ng-class="['card', 'panel', 'panel-default', {'calendar-event-inner': (mode == 'calendarweek' || mode == 'calendarday') && calendarmode == 'duration', 'active': opplan.hasOwnProperty('selected'), 'dirty': opplan.dirty}]"
       data-ng-style="{'overflow-y': 'hidden', 'background-color': opplan.color || opplan.event.color}"
-      data-index="{{$index}}">
+      data-index="{{$index}}" data-reference="{{ opplan.id || opplan.reference }}">
     <div>
       <span data-ng-if="opplan.dirty || opplan.event.dirty" class="label label-danger pull-right">{{ "unsaved"|translate }}</span>
     </div>

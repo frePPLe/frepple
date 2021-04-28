@@ -1,0 +1,79 @@
+{% load i18n %}
+<form role="form" method="post" action="{{request.prefix}}/execute/launch/uploadreport/">{% csrf_token %}
+  <table>
+    <tr>
+      <td style="vertical-align:top; padding-left:15px">
+        <button type="submit" class="btn btn-primary" id="uploadreport" value="upload" {{initially_disabled}}>{% trans "upload"|capfirst %}</button>
+      </td>
+      <td colspan='5' style="padding-left:15px">
+        <p>{% trans "Select all reports that will be uloaded to the pre-configured FTP/FTPS/SFTP folder." %}</p>
+      </td>
+    </tr>
+    <tr>
+      <td></td>
+      <td style="padding-left:15px">
+           <input type="checkbox" id="upload_allcheckboxes" checked>
+           <strong>{% trans 'file name'|capfirst %}</strong>
+      </td>
+      <td><strong>{% trans 'size'|capfirst %}</strong></td>
+      <td><strong>{% trans 'last modified'|capfirst %}</strong></td>
+      <td></td>
+    </tr>
+    {% for j in filesexported %}
+    <tr data-file="{{j.0}}">
+      <td></td>
+      <td style="padding-left:15px">
+          <input type="checkbox" id="upload_{{j.0}}" checked>
+          {{j.0}}
+      </td>
+      <td>{{j.2}}</td>
+      <td>{{j.1}}</td>
+    </tr>
+    {% endfor %}
+  </table>
+  <input type="hidden" name="report" id="upload_report" value="{{all_reports}}">
+</form>
+<script>
+function validateUploadButton() {
+    var reports = "";
+    var first = true;
+    {% for j in filesexported %}
+      if ($('#upload_{{j.3}}').is(':checked')) {
+          if (first) {
+            reports = reports + "{{j.0}}";
+            first = false
+          }
+          else {
+            reports = reports + ",{{j.0}}";
+          }
+      }
+    {% endfor %}
+    $("#upload_report").val(reports);
+    var oneChecked = false;
+    {% for j in filesexported %}
+      oneChecked = oneChecked || $('#upload_{{j.3}}').is(':checked');
+    {% endfor %}
+    $('#uploadreport').prop('disabled', !(oneChecked));
+
+}
+
+$(function() {
+$("#upload_allcheckboxes").on("click", function(event) {
+    var isChecked = $('#upload_allcheckboxes').is(':checked');
+    {% for j in filesexported %}
+    $("#upload_{{j.3}}").prop("checked", isChecked);
+    {% endfor %}
+    validateUploadButton();
+});
+{% for j in filesexported %}
+$("#upload_{{j.3}}").on("click", function(event) {
+    var allChecked = true;
+    {% for j in filesexported %}
+      allChecked = allChecked && $('#upload_{{j.3}}').is(':checked');
+    {% endfor %}
+    $("#upload_allcheckboxes").prop("checked", allChecked);
+    validateUploadButton();
+});
+{% endfor %}
+});
+</script>

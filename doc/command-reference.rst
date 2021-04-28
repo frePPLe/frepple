@@ -21,6 +21,7 @@ This section provides an overview of the available actions:
   * :ref:`importworkbook`
   * :ref:`exporttofolder`
   * :ref:`emailreport`
+  * :ref:`uploadreport`
   * :ref:`importfromfolder`
   * :ref:`runwebservice`
   * :ref:`scenario_copy`
@@ -236,6 +237,37 @@ This command is available in the user interface, the command line and the web AP
     
     Email exported reports:
     POST /execute/api/emailreport/?recipient=recipient1,recipient2...&report=report1,report2,report3...
+    
+.. _uploadreport:
+
+Upload exported reports
+----------------------
+
+Reports that have been exported using *Export plan result to folder* command can be 
+uploaded to a server using a ftp, ftps or sftp connection.
+
+
+In order to have this command working, the FTP parameters in the djangosettings.py 
+file must be properly configured.
+Note that, if you are using the SFTP protocol, the destination server needs to be added
+to the known_hosts file.
+
+This command is available in the user interface, the command line and the web API:
+
+* Execution screen:
+
+  .. image:: /user-interface/_images/execution-uploadreport.png
+     :alt: Execution screen - Upload exported reports
+
+* Command line::
+
+    frepplectl uploadreport --report
+    where report option is a comma-separated list of files to export.
+
+* Web API::
+    
+    Email exported reports:
+    POST /execute/api/uploadreport/?report=report1,report2,report3...
 
 
 .. _importfromfolder:

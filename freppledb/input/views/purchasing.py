@@ -26,13 +26,7 @@ from django.utils.encoding import force_text
 from django.utils.text import format_lazy
 
 from freppledb.boot import getAttributeFields
-from freppledb.input.models import (
-    Location,
-    Item,
-    Supplier,
-    ItemSupplier,
-    PurchaseOrder,
-)
+from freppledb.input.models import Location, Item, Supplier, ItemSupplier, PurchaseOrder
 from freppledb.common.report import (
     GridReport,
     GridFieldBool,
@@ -354,6 +348,10 @@ class ItemSupplierList(GridReport):
             ):
                 reportclass.rows += (f,)
                 reportclass.attr_sql += "location.%s, " % f.name.split("__")[-1]
+            # Adding custom item supplier attributes
+            for f in getAttributeFields(ItemSupplier, initially_hidden=True):
+                reportclass.rows += (f,)
+                reportclass.attr_sql += "itemsupplier.%s, " % f.name.split("__")[-1]
 
 
 class PurchaseOrderList(OperationPlanMixin, GridReport):

@@ -132,15 +132,28 @@ angular.module('calendar', [])
         }
 
         $scope.isStart = function(opplan, dt) {
-          var d = opplan.startdate || (opplan.event && opplan.event.startdate);
-          return d ? moment(d).isSame(dt.date, "day") : false;
+          var d = opplan.startdate || opplan.operationplan__startdate 
+            || (opplan.event && (opplan.event.startdate || opplan.event.operationplan__startdate));
+          if (!d)
+            return false;
+          else if (dt instanceof Date)
+            return d.getFullYear() === dt.getFullYear() && d.getMonth() === dt.getMonth() && d.getDate() === dt.getDate();
+          else
+            return moment(d).isSame(dt.date, "day");
         }
 
         $scope.isEnd = function(opplan, dt) {
+          var d = opplan.enddate || opplan.operationplan__enddate 
+            || (opplan.event && (opplan.event.enddate || opplan.operationplan__enddate));
+          if (!d)
+            return false;
           // Subtract 1 microsecond to assure that an end date of 00:00:00 is seen
           // as ending on the previous day.
-          var d = opplan.enddate || (opplan.event && opplan.event.enddate);
-          return d ? moment(d - 1).isSame(dt.date, "day") : false;
+          d = new Date(d - 1);
+          if (dt instanceof Date)
+            return d.getFullYear() === dt.getFullYear() && d.getMonth() === dt.getMonth() && d.getDate() === dt.getDate();
+          else
+            return moment(d).isSame(dt.date, "day");
         }
 
         $scope.displayEvent = function(opplan, dt) {
@@ -437,14 +450,59 @@ angular.module('calendar', [])
                 };
 
                 function HandlerDrop(event) {
-                  var dragstart = event.originalEvent.dataTransfer.getData("dragstart");
-                  var dragend = $(event.target).closest(".datecell").attr("data-date");
+                  var dragstart = new Date(event.originalEvent.dataTransfer.getData("dragstart"));
+                  var dragend = new Date($(event.target).closest(".datecell").attr("data-date"));
                   var dragreference = event.originalEvent.dataTransfer.getData("dragreference");
+                  scope.$apply(function() {
+                     for (var dragcard of scope.$parent.calendarevents) {
+                       if (dragcard["id"] || dragcard["reference"] == dragreference) {
+                         // Identified the card that is being dropped
+                         if (scope.isStart(dragcard, dragstart)) {
+                           // Dragging the start date card
+                           if (dragcard.hasOwnProperty("operationplan__startdate")) {
+                             scope.changeCard(dragcard, "operationplan__startdate", dragcard.operationplan__startdate, dragend);
+                             dragcard.operationplan__startdate = dragend;
+                           }
+                           else if (dragcard.hasOwnProperty("startdate")) {
+                             scope.changeCard(dragcard, "startdate", dragcard.startdate, dragend);
+                             dragcard.startdate = dragend;
+                           }
+                         }
+                         else if (scope.isEnd(dragcard, dragstart)) {
+                           // Dragging the end date card
+                           if (dragcard.hasOwnProperty("operationplan__enddate")) {
+                             scope.changeCard(dragcard, "operationplan__enddate", dragcard.operationplan__enddate, dragend);
+                             dragcard.operationplan__enddate = dragend;
+                           }
+                           else if (dragcard.hasOwnProperty("enddate")) {
+                             scope.changeCard(dragcard, "enddate", dragcard.enddate, dragend);
+                             dragcard.enddate = dragend;
+                           }                           
+                         }
+                         else {
+                           // Dragging a card on an intermediate day
+                           var delta = (dragend - dragstart) / 86400000.0; 
+                           if (dragcard.hasOwnProperty("operationplan__startdate")) {
+                             var newstart = new Date(dragcard["operationplan__startdate"]);
+                             newstart.setDate(dragcard["operationplan__startdate"].getDate() + delta);
+                             scope.changeCard(dragcard, "operationplan__startdate", dragcard.operationplan__startdate, newstart);
+                             dragcard.operationplan__startdate = newstart;
+                           }
+                           else if (dragcard.hasOwnProperty("startdate")) {
+                             var newstart = new Date(dragcard["startdate"]);
+                             newstart.setDate(dragcard["startdate"].getDate() + delta);
+                             scope.changeCard(dragcard, "startdate", dragcard.startdate, newstart);
+                             dragcard.startdate = newstart;
+                           }
+                         }
+                         break; 
+                       } 
+                     }
+                  });
                   event.preventDefault();
                 }
 
                 function HandlerDragStart(event) {
-                  console.log("start dragging", $(event.target).closest(".datecell").attr("data-date"));
                   event.originalEvent.dataTransfer.setData(
                       "dragstart",
                       $(event.target).closest(".datecell").attr("data-date")
@@ -468,8 +526,8 @@ angular.module('calendar', [])
                 scope.enableDragDrop = enableDragDrop;
 
                 function disableDragDrop() {
-                  element.off('dragover', '.datecell', HandlerDragOver);
-                  element.off('drop', '.datecell', HandlerDrop);
+                  element.off('dragover', 'td.datecell', HandlerDragOver);
+                  element.off('drop', 'td.datecell', HandlerDrop);
                   element.off('dragstart', '.card', HandlerDragStart);
                 }
                 scope.disableDragDrop = disableDragDrop;
@@ -487,8 +545,7 @@ angular.module('calendar', [])
             templateUrl: '/static/operationplandetail/month.html',
             require: ['^calendar', '?^ngModel'],
             link: function (scope, element, attrs, ctrls) {
-                var ctrl = ctrls[0],
-                    ngModelCtrl = ctrls[1];
+                var ctrl = ctrls[0], ngModelCtrl = ctrls[1];
                 scope.showWeeks = ctrl.showWeeks;
 
                 ctrl.mode = {

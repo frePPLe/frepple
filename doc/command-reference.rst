@@ -208,8 +208,8 @@ This command is available in the user interface, the command line and the web AP
     
 .. _emailreport:
 
-Email exported reports
-----------------------
+Publish reports by email
+------------------------
 
 Reports that have been exported using *Export plan result to folder* command can be 
 emailed to one or more recipients.
@@ -226,7 +226,7 @@ This command is available in the user interface, the command line and the web AP
 * Execution screen:
 
   .. image:: /user-interface/_images/execution-emailreport.png
-     :alt: Execution screen - Email exported reports
+     :alt: Execution screen - Publish reports by email
 
 * Command line::
 
@@ -235,16 +235,16 @@ This command is available in the user interface, the command line and the web AP
 
 * Web API::
     
-    Email exported reports:
+    Publish reports by email:
     POST /execute/api/emailreport/?recipient=recipient1,recipient2...&report=report1,report2,report3...
     
 .. _uploadreport:
 
-Upload exported reports
+Publish reports by FTP
 ----------------------
 
 Reports that have been exported using *Export plan result to folder* command can be 
-uploaded to a server using a ftp, ftps or sftp connection.
+pushed to a server using a ftp, ftps or sftp connection.
 
 
 In order to have this command working, the FTP parameters in the djangosettings.py 
@@ -257,7 +257,7 @@ This command is available in the user interface, the command line and the web AP
 * Execution screen:
 
   .. image:: /user-interface/_images/execution-uploadreport.png
-     :alt: Execution screen - Upload exported reports
+     :alt: Execution screen - Publish reports by FTP
 
 * Command line::
 
@@ -266,7 +266,7 @@ This command is available in the user interface, the command line and the web AP
 
 * Web API::
     
-    Email exported reports:
+    Publish reports by ftp:
     POST /execute/api/uploadreport/?report=report1,report2,report3...
 
 

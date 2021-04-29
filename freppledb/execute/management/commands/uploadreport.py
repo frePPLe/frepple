@@ -214,7 +214,7 @@ class Command(BaseCommand):
                 task.save(using=database)
 
     # accordion template
-    title = _("Upload exported reports")
+    title = _("Publish reports by FTP")
     index = 1275
     help_url = "command-reference.html#uploadreport"
 

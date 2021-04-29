@@ -228,7 +228,7 @@ class Command(BaseCommand):
                 task.save(using=database)
 
     # accordion template
-    title = _("Email exported reports")
+    title = _("Publish reports by email")
     index = 1250
     help_url = "command-reference.html#emailreport"
 
@@ -237,6 +237,7 @@ class Command(BaseCommand):
 
         if (
             "FILEUPLOADFOLDER" not in settings.DATABASES[request.database]
+            or not not settings.EMAIL_HOST
             or not request.user.is_superuser
         ):
             return None

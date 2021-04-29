@@ -9,17 +9,12 @@
 #
 
 import os
-import re
 from ftplib import FTP, FTP_TLS
-from io import BytesIO
-from os.path import basename
 from datetime import datetime
 import pysftp
 from time import localtime, strftime
-from zipfile import ZipFile, ZIP_DEFLATED
 
 from django.core.management.base import BaseCommand, CommandError
-from django.core.mail import EmailMessage
 from django.conf import settings
 from django.db import DEFAULT_DB_ALIAS
 from django.utils.translation import gettext_lazy as _

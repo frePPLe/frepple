@@ -122,17 +122,37 @@ angular.module('calendar', [])
             case "duration":
               return true;
             case "start_end":
-              return moment(opplan.startdate || opplan.event.startdate || opplan.enddate || opplan.event.enddate).isSame(dt.date, "day")
-                || moment(opplan.enddate || opplan.event.enddate || opplan.startdate || opplan.event.startdate).isSame(dt.date, "day");
+              return moment(
+                  opplan.operationplan__startdate || opplan.startdate
+                  || opplan.event.operationplan__startdate || opplan.event.startdate
+                  || opplan.operationplan__enddate || opplan.enddate
+                  || opplan.event.operationplan__enddate|| opplan.event.enddate
+                ).isSame(dt.date, "day")
+                || moment(
+                  opplan.operationplan__enddate || opplan.enddate
+                  || opplan.event.operationplan__enddate || opplan.event.enddate
+                  || opplan.operationplan__startdate || opplan.startdate
+                  || opplan.event.operationplan__startdate|| opplan.event.startdate
+                ).isSame(dt.date, "day");
             case "start":
-              return moment(opplan.startdate || opplan.event.startdate || opplan.enddate || opplan.event.enddate).isSame(dt.date, "day");
+              return moment(
+                opplan.operationplan__startdate || opplan.startdate
+                || opplan.event.operationplan__startdate || opplan.event.startdate
+                || opplan.operationplan__enddate || opplan.enddate
+                || opplan.event.operationplan__enddate|| opplan.event.enddate
+                ).isSame(dt.date, "day");
             case "end":
-              return moment(opplan.enddate || opplan.event.enddate || opplan.startdate || opplan.event.startdate).isSame(dt.date, "day");
+              return moment(
+                opplan.operationplan__enddate || opplan.enddate
+                || opplan.event.operationplan__enddate || opplan.event.enddate
+                || opplan.operationplan__startdate || opplan.startdate
+                || opplan.event.operationplan__startdate|| opplan.event.startdate
+              ).isSame(dt.date, "day");
           }
         }
 
         $scope.isStart = function(opplan, dt) {
-          var d = opplan.startdate || opplan.operationplan__startdate 
+          var d = opplan.startdate || opplan.operationplan__startdate
             || (opplan.event && (opplan.event.startdate || opplan.event.operationplan__startdate));
           if (!d)
             return false;
@@ -143,7 +163,7 @@ angular.module('calendar', [])
         }
 
         $scope.isEnd = function(opplan, dt) {
-          var d = opplan.enddate || opplan.operationplan__enddate 
+          var d = opplan.enddate || opplan.operationplan__enddate
             || (opplan.event && (opplan.event.enddate || opplan.operationplan__enddate));
           if (!d)
             return false;
@@ -397,6 +417,7 @@ angular.module('calendar', [])
             controller: 'calendarController',
             link: function (scope, element, attrs, ctrls) {
                 var calendarCtrl = ctrls[0], ngModelCtrl = ctrls[1];
+                var dropcallback;
                 scope.curselected = null;
 
                 if (ngModelCtrl)
@@ -414,14 +435,6 @@ angular.module('calendar', [])
 
                 scope.$on('eventSourceChanged', function (event, value) {
                     calendarCtrl.onEventSourceChanged(value);
-                });
-
-                scope.$on('changeMode', function (event, mode) {
-                    calendarCtrl.changeMode(mode);
-                    if (scope.editable && mode.startsWith("calendar"))
-                       enableDragDrop();
-                    else
-                       disableDragDrop();
                 });
 
                 scope.selectCard = function(opplan) {
@@ -462,10 +475,16 @@ angular.module('calendar', [])
                            if (dragcard.hasOwnProperty("operationplan__startdate")) {
                              scope.changeCard(dragcard, "operationplan__startdate", dragcard.operationplan__startdate, dragend);
                              dragcard.operationplan__startdate = dragend;
+                             if (dragcard.operationplan__enddate < dragend)
+                                dragcard.operationplan__enddate = dragend;
+                             if (dropcallback) dropcallback(dragcard, true);
                            }
                            else if (dragcard.hasOwnProperty("startdate")) {
                              scope.changeCard(dragcard, "startdate", dragcard.startdate, dragend);
                              dragcard.startdate = dragend;
+                             if (dragcard.enddate < dragend)
+                                dragcard.enddate = dragend;
+                             if (dropcallback) dropcallback(dragcard, true);
                            }
                          }
                          else if (scope.isEnd(dragcard, dragstart)) {
@@ -473,30 +492,42 @@ angular.module('calendar', [])
                            if (dragcard.hasOwnProperty("operationplan__enddate")) {
                              scope.changeCard(dragcard, "operationplan__enddate", dragcard.operationplan__enddate, dragend);
                              dragcard.operationplan__enddate = dragend;
+                             if (dragcard.operationplan__startdate > dragend)
+                                dragcard.operationplan__startdate = dragend;
+                             if (dropcallback) dropcallback(dragcard, true);
                            }
                            else if (dragcard.hasOwnProperty("enddate")) {
                              scope.changeCard(dragcard, "enddate", dragcard.enddate, dragend);
                              dragcard.enddate = dragend;
-                           }                           
+                             if (dragcard.startdate > dragend)
+                                dragcard.startdate = dragend;
+                             if (dropcallback) dropcallback(dragcard, true);
+                           }
                          }
                          else {
                            // Dragging a card on an intermediate day
-                           var delta = (dragend - dragstart) / 86400000.0; 
+                           var delta = (dragend - dragstart) / 86400000.0;
                            if (dragcard.hasOwnProperty("operationplan__startdate")) {
                              var newstart = new Date(dragcard["operationplan__startdate"]);
                              newstart.setDate(dragcard["operationplan__startdate"].getDate() + delta);
                              scope.changeCard(dragcard, "operationplan__startdate", dragcard.operationplan__startdate, newstart);
                              dragcard.operationplan__startdate = newstart;
+                             if (dragcard.operationplan__enddate < newstart)
+                                dragcard.operationplan__enddate = dragend;
+                             if (dropcallback) dropcallback(dragcard, true);
                            }
                            else if (dragcard.hasOwnProperty("startdate")) {
                              var newstart = new Date(dragcard["startdate"]);
                              newstart.setDate(dragcard["startdate"].getDate() + delta);
                              scope.changeCard(dragcard, "startdate", dragcard.startdate, newstart);
                              dragcard.startdate = newstart;
+                             if (dragcard.enddate < newstart)
+                                dragcard.enddate = newstart;
+                             if (dropcallback) dropcallback(dragcard, true);
                            }
                          }
-                         break; 
-                       } 
+                         break;
+                       }
                      }
                   });
                   event.preventDefault();
@@ -518,10 +549,11 @@ angular.module('calendar', [])
                   event.preventDefault();
                 };
 
-                function enableDragDrop() {
+                function enableDragDrop(callback) {
                   element.on('dragover', 'td.datecell', HandlerDragOver);
                   element.on('drop', 'td.datecell', HandlerDrop);
                   element.on('dragstart', '.card', HandlerDragStart);
+                  dropcallback = callback;
                 };
                 scope.enableDragDrop = enableDragDrop;
 
@@ -529,11 +561,9 @@ angular.module('calendar', [])
                   element.off('dragover', 'td.datecell', HandlerDragOver);
                   element.off('drop', 'td.datecell', HandlerDrop);
                   element.off('dragstart', '.card', HandlerDragStart);
+                  dropcallback = null;
                 }
                 scope.disableDragDrop = disableDragDrop;
-
-                if (scope.editable && scope.mode.startsWith("calendar"))
-                   enableDragDrop();
             }
         };
     })
@@ -658,90 +688,25 @@ angular.module('calendar', [])
                 ctrl._onDataLoaded = function () {
                     var eventSource = ctrl.eventSource,
                         len = eventSource ? eventSource.length : 0,
-                        startdate = ctrl.range.startdate,
-                        enddate = ctrl.range.enddate,
                         rows = scope.rows,
-                        oneDay = 86400000,
-                        eps = 0.001,
                         row,
                         date,
-                        hasEvent = false,
                         keys = [];
 
-                    if (rows.hasEvent) {
-                        for (row = 0; row < 6; row += 1) {
-                            for (date = 0; date < 7; date += 1) {
-                                if (rows[row][date].hasEvent) {
-                                    rows[row][date].events = null;
-                                    rows[row][date].hasEvent = false;
-                                }
-                            }
-                        }
-                    }
+                    for (row = 0; row < 6; row += 1)
+                      for (date = 0; date < 7; date += 1)
+                        rows[row][date].events = null;
 
                     for (var i = 0; i < len; i += 1) {
                         var event = eventSource[i];
-                        var eventStartTime = event.startdate ? new Date(event.startdate) : null;
-                        var eventEndTime = event.enddate ? new Date(event.enddate) : null;
-                        var st;
-                        var et;
-
-                        if ((eventEndTime ? eventEndTime : eventStartTime) <= startdate ||
-                          (eventStartTime ? eventStartTime : eventEndTime) >= enddate)
-                            continue;
-                        st = startdate;
-                        et = enddate;
-                        if (!eventEndTime) eventEndTime = eventStartTime;
-                        if (!eventStartTime) eventStartTime = eventEndTime;
-
-                        if (scope.grouping && !keys.includes(event[scope.grouping]))
-                              keys.push(event[scope.grouping]);
-
-                        var timeDiff;
-                        var timeDifferenceStart;
-                        if (eventStartTime <= st)
-                            timeDifferenceStart = 0;
-                        else {
-                            timeDiff = eventStartTime - st - (eventStartTime.getTimezoneOffset() - st.getTimezoneOffset()) * 60000;
-                            timeDifferenceStart = timeDiff / oneDay;
-                        }
-
-                        var timeDifferenceEnd;
-                        if (eventEndTime >= et) {
-                            timeDiff = et - st - (et.getTimezoneOffset() - st.getTimezoneOffset()) * 60000;
-                            timeDifferenceEnd = timeDiff / oneDay;
-                        } else {
-                            timeDiff = eventEndTime - st - (eventEndTime.getTimezoneOffset() - st.getTimezoneOffset()) * 60000;
-                            timeDifferenceEnd = timeDiff / oneDay;
-                        }
-
-                        var index = Math.floor(timeDifferenceStart);
-                        var eventSet;
-                        while (index < timeDifferenceEnd - eps) {
-                            var rowIndex = Math.floor(index / 7);
-                            var dayIndex = Math.floor(index % 7);
-                            rows[rowIndex][dayIndex].hasEvent = true;
-                            eventSet = rows[rowIndex][dayIndex].events;
-                            if (eventSet) {
-                                eventSet.push(event);
-                            } else {
-                                eventSet = [];
-                                eventSet.push(event);
-                                rows[rowIndex][dayIndex].events = eventSet;
-                            }
-                            index += 1;
-                        }
+                        if (dropCallback(event, false) && scope.grouping && !keys.includes(event[scope.grouping]))
+                           keys.push(event[scope.grouping]);
                     }
 
-                    for (row = 0; row < 6; row += 1) {
-                        for (date = 0; date < 7; date += 1) {
-                            if (rows[row][date].hasEvent) {
-                                hasEvent = true;
-                                rows[row][date].events.sort(compareEvent);
-                            }
-                        }
-                    }
-                    rows.hasEvent = hasEvent;
+                    for (row = 0; row < 6; row += 1)
+                      for (date = 0; date < 7; date += 1)
+                        if (rows[row][date].events)
+                           rows[row][date].events.sort(compareEvent);
 
                     var findSelected = false;
                     for (row = 0; row < 6; row += 1) {
@@ -764,6 +729,116 @@ angular.module('calendar', [])
                     else
                       scope.categories = ["dummy"];
                 };
+
+                function dropCallback(event, incremental) {
+                  var oneDay = 86400000,
+                      eps = 0.001;
+                  var eventStartTime = event.startdate ? new Date(event.startdate) : null;
+                  var eventEndTime = event.enddate ? new Date(event.enddate) : null;
+                  var st;
+                  var et;
+
+                  if ((eventEndTime ? eventEndTime : eventStartTime) <= ctrl.range.startdate ||
+                    (eventStartTime ? eventStartTime : eventEndTime) >= ctrl.range.enddate)
+                      return false;
+                  st = ctrl.range.startdate;
+                  et = ctrl.range.enddate;
+                  if (!eventEndTime) eventEndTime = eventStartTime;
+                  if (!eventStartTime) eventStartTime = eventEndTime;
+
+                  var timeDiff;
+                  var timeDifferenceStart;
+                  if (eventStartTime <= st)
+                      timeDifferenceStart = 0;
+                  else {
+                      timeDiff = eventStartTime - st - (eventStartTime.getTimezoneOffset() - st.getTimezoneOffset()) * 60000;
+                      timeDifferenceStart = timeDiff / oneDay;
+                  }
+
+                  var timeDifferenceEnd;
+                  if (eventEndTime >= et) {
+                      timeDiff = et - st - (et.getTimezoneOffset() - st.getTimezoneOffset()) * 60000;
+                      timeDifferenceEnd = timeDiff / oneDay;
+                  } else {
+                      timeDiff = eventEndTime - st - (eventEndTime.getTimezoneOffset() - st.getTimezoneOffset()) * 60000;
+                      timeDifferenceEnd = timeDiff / oneDay;
+                  }
+
+                  var index = Math.floor(timeDifferenceStart);
+                  var index2 = index - 1;
+                  var eventSet;
+
+                  // Delete before the start
+                  while (incremental && index2 >= 0) {
+                    var rowIndex = Math.floor(index2 / 7);
+                    var dayIndex = Math.floor(index2 % 7);
+                    var exists = false;
+                    eventSet = scope.rows[rowIndex][dayIndex].events;
+                    if (eventSet) {
+                      for (var r = eventSet.length - 1; r >= 0; r--) {
+                        if ((event.id || event.reference) == (eventSet[r].id || eventSet[r].reference)) {
+                           eventSet.splice(r, 1);
+                           exists = true;
+                           break;
+                        }
+                      }
+                    }
+                    if (!exists) break;
+                    index2 -= 1;
+                  }
+
+                  // Insert during duration
+                  while (index < timeDifferenceEnd - eps) {
+                      var rowIndex = Math.floor(index / 7);
+                      var dayIndex = Math.floor(index % 7);
+                      eventSet = scope.rows[rowIndex][dayIndex].events;
+                      if (eventSet) {
+                         var exists = false;
+                         for (var r of eventSet) {
+                            if ((event.id || event.reference) == (r.id || r.reference)) {
+                              exists = true;
+                              break;
+                            }
+                         }
+                         if (!exists) eventSet.push(event);
+                      } else {
+                          eventSet = [];
+                          eventSet.push(event);
+                          scope.rows[rowIndex][dayIndex].events = eventSet;
+                      }
+                      index += 1;
+                  }
+
+                  // Delete after end
+                  while (incremental) {
+                    var rowIndex = Math.floor(index / 7);
+                    var dayIndex = Math.floor(index % 7);
+                    if (rowIndex >= scope.rows.length || dayIndex >= scope.rows[rowIndex].length)
+                      break;
+                    var exists = false;
+                    eventSet = scope.rows[rowIndex][dayIndex].events;
+                    if (eventSet) {
+                      for (var r = eventSet.length - 1; r >= 0; r--) {
+                        if ((event.id || event.reference) == (eventSet[r].id || eventSet[r].reference)) {
+                           eventSet.splice(r, 1);
+                           exists = true;
+                           break;
+                        }
+                      }
+                    }
+                    if (!exists) break;
+                    index += 1;
+                  };
+                  return true;
+                };
+
+                scope.$on('changeMode', function (event, mode) {
+                    ctrl.changeMode(mode);
+                    if (scope.editable && mode == "calendarmonth")
+                       scope.enableDragDrop(dropCallback);
+                    else
+                       scope.disableDragDrop();
+                });
 
                 ctrl.compare = function (date1, date2) {
                     return (new Date(date1.getFullYear(), date1.getMonth(), date1.getDate()) - new Date(date2.getFullYear(), date2.getMonth(), date2.getDate()) );
@@ -800,6 +875,8 @@ angular.module('calendar', [])
                 }
 
                 ctrl.refreshView();
+                if (scope.editable && scope.mode == "calendarmonth")
+                   scope.enableDragDrop(dropCallback);
             }
         };
     }])
@@ -1002,6 +1079,17 @@ angular.module('calendar', [])
                     }
                 };
 
+                function dropCallback(card, incremental) {
+                };
+
+                scope.$on('changeMode', function (event, mode) {
+                    ctrl.changeMode(mode);
+                    if (scope.editable && mode == "calendarweek")
+                       scope.enableDragDrop(dropCallback);
+                    else
+                       scope.disableDragDrop();
+                });
+
                 ctrl._refreshView = function () {
                     var firstDayOfWeek = ctrl.range.startdate,
                         dates = getDates(firstDayOfWeek, 7),
@@ -1047,6 +1135,8 @@ angular.module('calendar', [])
                 }
 
                 ctrl.refreshView();
+                if (scope.editable && scope.mode == "calendarweek")
+                   scope.enableDragDrop(dropCallback);
             }
         };
     }])
@@ -1097,6 +1187,17 @@ angular.module('calendar', [])
                         });
                     }
                 };
+
+                function dropCallback(card, incremental) {
+                };
+
+                scope.$on('changeMode', function (event, mode) {
+                    ctrl.changeMode(mode);
+                    if (scope.editable && mode == "calendarday")
+                       scope.enableDragDrop(dropCallback);
+                    else
+                       scope.disableDragDrop();
+                });
 
                 ctrl._onDataLoaded = function () {
                     var eventSource = ctrl.eventSource,
@@ -1232,6 +1333,8 @@ angular.module('calendar', [])
                 };
 
                 ctrl.refreshView();
+                if (scope.editable && scope.mode == "calendarday")
+                   scope.enableDragDrop(dropCallback);
             }
         };
     }]);

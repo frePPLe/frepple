@@ -493,12 +493,11 @@ EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 # Note that for SFTP protocol, the host needs to be defined
 # in the known_hosts file
 FTP_PROTOCOL = "SFTP"  # supported protocols are SFTP, FTPS and FTP (unsecure)
-FTP_HOST = "ftp.server.com"
+FTP_HOST = None
 FTP_PORT = 22
-FTP_USER = "user"
-FTP_PASSWORD = "password"
-FTP_FOLDER = "/tmp"  # folder where the files should be uploaded
-
+FTP_USER = None
+FTP_PASSWORD = None
+FTP_FOLDER = None  # folder where the files should be uploaded
 
 # Port number when not using Apache
 PORT = 8000

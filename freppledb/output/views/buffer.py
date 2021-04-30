@@ -559,15 +559,15 @@ class OverviewReport(GridPivot):
                         "item__weight": row[9],
                         "item__owner": row[10],
                         "item__source": row[11],
-                        "item__lastmodified": row[11],
-                        "location__description": row[12],
-                        "location__category": row[13],
-                        "location__subcategory": row[14],
-                        "location__available": row[15],
-                        "location__owner": row[16],
-                        "location__source": row[17],
-                        "location__lastmodified": row[18],
-                        "batch": row[19],
+                        "item__lastmodified": row[12],
+                        "location__description": row[13],
+                        "location__category": row[14],
+                        "location__subcategory": row[15],
+                        "location__available": row[16],
+                        "location__owner": row[17],
+                        "location__source": row[18],
+                        "location__lastmodified": row[19],
+                        "batch": row[20],
                         "startoh": row[numfields - 7]["onhand"]
                         if row[numfields - 7]
                         else 0,
@@ -655,7 +655,7 @@ class OverviewReport(GridPivot):
                         ),
                     }
                     # Add attribute fields
-                    idx = 20
+                    idx = 21
                     for f in getAttributeFields(Item, related_name_prefix="item"):
                         res[f.field_name] = row[idx]
                         idx += 1

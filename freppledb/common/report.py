@@ -186,14 +186,19 @@ def matchesModelName(name, model):
 
 
 def getHorizon(request, future_only=False):
-    # Pick up the current date
+    # Pick up the last current date or current date if last current date doesn't exist
     try:
         current = parse(
-            Parameter.objects.using(request.database).get(name="currentdate").value
+            Parameter.objects.using(request.database).get(name="last_currentdate").value
         )
-    except Exception:
-        current = datetime.now()
-        current = current.replace(microsecond=0)
+    except:
+        try:
+            current = parse(
+                Parameter.objects.using(request.database).get(name="currentdate").value
+            )
+        except Exception:
+            current = datetime.now()
+            current = current.replace(microsecond=0)
 
     horizontype = request.GET.get("horizontype", request.user.horizontype)
     horizonunit = request.GET.get("horizonunit", request.user.horizonunit)
@@ -1767,10 +1772,9 @@ class GridReport(View):
                 title = cls.title(request, *args, **kwargs)
             else:
                 title = cls.model._meta.verbose_name_plural if cls.model else cls.title
-            response[
-                "Content-Disposition"
-            ] = "attachment; filename*=utf-8''%s.xlsx" % urllib.parse.quote(
-                force_str(title)
+            response["Content-Disposition"] = (
+                "attachment; filename*=utf-8''%s.xlsx"
+                % urllib.parse.quote(force_str(title))
             )
             response["Cache-Control"] = "no-cache, no-store"
             return response
@@ -1795,10 +1799,9 @@ class GridReport(View):
                 title = cls.title(request, *args, **kwargs)
             else:
                 title = cls.model._meta.verbose_name_plural if cls.model else cls.title
-            response[
-                "Content-Disposition"
-            ] = "attachment; filename*=utf-8''%s.csv" % urllib.parse.quote(
-                force_str(title)
+            response["Content-Disposition"] = (
+                "attachment; filename*=utf-8''%s.csv"
+                % urllib.parse.quote(force_str(title))
             )
             response["Cache-Control"] = "no-cache, no-store"
             return response

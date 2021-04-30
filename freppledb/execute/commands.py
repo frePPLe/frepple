@@ -48,6 +48,27 @@ class CheckBuckets(PlanTask):
 
 
 @PlanTaskRegistry.register
+class UpdateLastCurrentDate(PlanTask):
+    description = "Updates last_currentdate parameter"
+    sequence = 450
+
+    @classmethod
+    def getWeight(cls, database=DEFAULT_DB_ALIAS, **kwargs):
+        return 1 if "supply" in os.environ else -1
+
+    @classmethod
+    def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
+        import frepple
+
+        try:
+            p = Parameter.objects.using(database).get(pk="last_currentdate")
+            p.value = frepple.settings.current.strftime("%Y-%m-%d %H:%M:%S")
+            p.save(using=database)
+        except:
+            logger.warning("failed to set last_currentdate parameter")
+
+
+@PlanTaskRegistry.register
 class MakePlanFeasible(PlanTask):
 
     description = "Initial plan problems"

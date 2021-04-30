@@ -35,10 +35,7 @@ class CheckBuckets(PlanTask):
 
     @classmethod
     def getWeight(cls, database=DEFAULT_DB_ALIAS, **kwargs):
-        if Bucket.objects.all().using(database).exists():
-            return -1
-        else:
-            return 1
+        return 0.1 if Bucket.objects.all().using(database).exists() else -1
 
     @classmethod
     def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):
@@ -54,7 +51,7 @@ class UpdateLastCurrentDate(PlanTask):
 
     @classmethod
     def getWeight(cls, database=DEFAULT_DB_ALIAS, **kwargs):
-        return 1 if "supply" in os.environ else -1
+        return 0.1 if "supply" in os.environ else -1
 
     @classmethod
     def run(cls, database=DEFAULT_DB_ALIAS, **kwargs):

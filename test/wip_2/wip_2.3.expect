@@ -138,8 +138,8 @@
 			<operation xsi:type="operation_itemsupplier">
 				<name>Purchase consumed item @ store from my supplier</name>
 			</operation>
-			<start>2017-09-29T00:00:00</start>
-			<end>2017-11-28T00:00:00</end>
+			<start>2018-10-30T00:00:01</start>
+			<end>2018-12-29T00:00:01</end>
 			<quantity>777</quantity>
 			<feasible>false</feasible>
 			<ordertype>PO</ordertype>
@@ -164,8 +164,8 @@
 					<name>consumed item @ prod</name>
 				</destination>
 			</operation>
-			<start>2017-11-28T00:00:00</start>
-			<end>2017-12-01T00:00:00</end>
+			<start>2018-12-29T00:00:01</start>
+			<end>2019-01-01T00:00:01</end>
 			<quantity>777</quantity>
 			<feasible>false</feasible>
 			<ordertype>DO</ordertype>

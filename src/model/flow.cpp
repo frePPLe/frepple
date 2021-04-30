@@ -231,6 +231,12 @@ pair<Date, double> FlowStart::getFlowplanDateQuantity(
         fl->getOperationPlan(), dt, offset, true, nullptr, offset > 0L);
     dt = offset > 0L ? d.getEnd() : d.getStart();
   }
+  if (fl->getOperationPlan()->getConfirmed() &&
+      !fl->getOperationPlan()->getCompleted() &&
+      dt < Plan::instance().getCurrent() &&
+      !fl->getOperation()->hasType<OperationInventory>())
+    // Confirmed material production and consumption is always in the future
+    dt = Plan::instance().getCurrent() + Duration(1L);
   if (isConsumer() && !fl->getOperationPlan()->getConsumeMaterial())
     return make_pair(dt, 0.0);
   else if (isProducer() && !fl->getOperationPlan()->getProduceMaterial())
@@ -254,6 +260,12 @@ pair<Date, double> FlowEnd::getFlowplanDateQuantity(const FlowPlan* fl) const {
         fl->getOperationPlan(), dt, offset, true, nullptr, offset < 0L);
     dt = offset > 0L ? d.getEnd() : d.getStart();
   }
+  if (fl->getOperationPlan()->getConfirmed() &&
+      !fl->getOperationPlan()->getCompleted() &&
+      dt < Plan::instance().getCurrent() &&
+      !fl->getOperation()->hasType<OperationInventory>())
+    // Confirmed material production and consumption is always in the future
+    dt = Plan::instance().getCurrent() + Duration(1L);
   if (isConsumer() && !fl->getOperationPlan()->getConsumeMaterial())
     return make_pair(dt, 0.0);
   else if (isProducer() && !fl->getOperationPlan()->getProduceMaterial())
@@ -275,16 +287,22 @@ pair<Date, double> FlowTransferBatch::getFlowplanDateQuantity(
   if (!batch_quantity || fl->getOperationPlan()->getSetupEnd() ==
                              fl->getOperationPlan()->getEnd()) {
     // Default to a simple flowplan at the start or end
+    auto dt = isConsumer() ? fl->getOperationPlan()->getSetupEnd()
+                           : fl->getOperationPlan()->getEnd();
+    if (fl->getOperationPlan()->getConfirmed() &&
+        !fl->getOperationPlan()->getCompleted() &&
+        dt < Plan::instance().getCurrent() &&
+        !fl->getOperation()->hasType<OperationInventory>())
+      // Confirmed material production and consumption is always in the future
+      dt = Plan::instance().getCurrent() + Duration(1L);
     if (isConsumer() && !fl->getOperationPlan()->getConsumeMaterial())
-      return make_pair(fl->getOperationPlan()->getSetupEnd(), 0.0);
+      return make_pair(dt, 0.0);
     else if (isProducer() && !fl->getOperationPlan()->getProduceMaterial())
-      return make_pair(fl->getOperationPlan()->getEnd(), 0.0);
+      return make_pair(dt, 0.0);
     else
       return make_pair(
-          isConsumer() ? fl->getOperationPlan()->getSetupEnd()
-                       : fl->getOperationPlan()->getEnd(),
-          getQuantityFixed() +
-              getQuantity() * fl->getOperationPlan()->getQuantity());
+          dt, getQuantityFixed() +
+                  getQuantity() * fl->getOperationPlan()->getQuantity());
   }
 
   // Compute the number of batches

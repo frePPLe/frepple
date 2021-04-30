@@ -4,6 +4,13 @@ Release notes
 6.14.0 (upcoming release)
 =========================
 
+.. rubric:: Production planning
+
+- | Confirmed manufacturing orders, distribution orders and purchase no longer consume
+    or produce material in the past. We now position these right after the current date.
+  | This improves the visibility in the plan between what-has-already-happened and 
+    what-is-about-to-happen.
+
 .. rubric:: User interface
 
 - | The calendar views on the purchase orders, manufacturing orders and

@@ -41,7 +41,7 @@ angular.module('calendar', [])
     })
     .controller('calendarController',
       ['$scope', '$attrs', '$parse', '$interpolate', '$log', 'dateFilter', 'gettextCatalog', 'calendarConfig', 'PreferenceSvc',
-      function ($scope, $attrs, $parse, $interpolate, $log, dateFilter, gettextCatalog, calendarConfig, PreferenceSvc) {
+      function calendarController($scope, $attrs, $parse, $interpolate, $log, dateFilter, gettextCatalog, calendarConfig, PreferenceSvc) {
         'use strict';
         var self = this,
             ngModelCtrl = {$setViewValue: angular.noop}; // nullModelCtrl;
@@ -302,105 +302,8 @@ angular.module('calendar', [])
                 return !(earlyEvent.endIndex - lateEvent.startIndex === 1 && earlyEvent.endOffset + lateEvent.startOffset >= self.hourParts);
             }
         }
-
-        function calculatePosition(events) {
-            var i,
-                j,
-                len = events.length,
-                maxColumn = 0,
-                col,
-                isForbidden = new Array(len);
-
-            for (i = 0; i < len; i += 1) {
-                for (col = 0; col < maxColumn; col += 1) {
-                    isForbidden[col] = false;
-                }
-                for (j = 0; j < i; j += 1) {
-                    if (overlap(events[i], events[j])) {
-                        isForbidden[events[j].position] = true;
-                    }
-                }
-                for (col = 0; col < maxColumn; col += 1) {
-                    if (!isForbidden[col]) {
-                        break;
-                    }
-                }
-                if (col < maxColumn) {
-                    events[i].position = col;
-                } else {
-                    events[i].position = maxColumn++;
-                }
-            }
-        }
-
-        function calculateWidth(orderedEvents, hourParts) {
-            var totalSize = 24 * hourParts,
-                cells = new Array(totalSize),
-                event,
-                index,
-                i,
-                j,
-                len,
-                eventCountInCell,
-                currentEventInCell;
-
-            //sort by position in descending order, the right most columns should be calculated first
-            orderedEvents.sort(function (eventA, eventB) {
-                return eventB.position - eventA.position;
-            });
-            for (i = 0; i < totalSize; i += 1) {
-                cells[i] = {
-                    calculated: false,
-                    events: []
-                };
-            }
-            len = orderedEvents.length;
-            for (i = 0; i < len; i += 1) {
-                event = orderedEvents[i];
-                index = event.startIndex * hourParts + event.startOffset;
-                while (index < event.endIndex * hourParts - event.endOffset) {
-                    cells[index].events.push(event);
-                    index += 1;
-                }
-            }
-
-            i = 0;
-            while (i < len) {
-                event = orderedEvents[i];
-                if (!event.overlapNumber) {
-                    var overlapNumber = event.position + 1;
-                    event.overlapNumber = overlapNumber;
-                    var eventQueue = [event];
-                    while ((event = eventQueue.shift())) {
-                        index = event.startIndex * hourParts + event.startOffset;
-                        while (index < event.endIndex * hourParts - event.endOffset) {
-                            if (!cells[index].calculated) {
-                                cells[index].calculated = true;
-                                if (cells[index].events) {
-                                    eventCountInCell = cells[index].events.length;
-                                    for (j = 0; j < eventCountInCell; j += 1) {
-                                        currentEventInCell = cells[index].events[j];
-                                        if (!currentEventInCell.overlapNumber) {
-                                            currentEventInCell.overlapNumber = overlapNumber;
-                                            eventQueue.push(currentEventInCell);
-                                        }
-                                    }
-                                }
-                            }
-                            index += 1;
-                        }
-                    }
-                }
-                i += 1;
-            }
-        }
-
-        self.placeEvents = function (orderedEvents) {
-            calculatePosition(orderedEvents);
-            calculateWidth(orderedEvents, self.hourParts);
-        };
     }])
-    .directive('calendar', function () {
+    .directive('calendar', function calendarDirective() {
         'use strict';
         return {
             restrict: 'EA',
@@ -442,7 +345,7 @@ angular.module('calendar', [])
                      if (scope.curselected.reference == opplan.reference && opplan.selected)
                         return;
                      delete scope.curselected.selected;
-                     }
+                  }
                   opplan.selected = true;
                   scope.curselected = opplan;
                   scope.eventSelected({event:opplan});
@@ -475,6 +378,7 @@ angular.module('calendar', [])
                            if (dragcard.hasOwnProperty("operationplan__startdate")) {
                              scope.changeCard(dragcard, "operationplan__startdate", dragcard.operationplan__startdate, dragend);
                              dragcard.operationplan__startdate = dragend;
+                             dragcard.startdate = dragend;
                              if (dragcard.operationplan__enddate < dragend)
                                 dragcard.operationplan__enddate = dragend;
                              if (dropcallback) dropcallback(dragcard, true);
@@ -492,6 +396,7 @@ angular.module('calendar', [])
                            if (dragcard.hasOwnProperty("operationplan__enddate")) {
                              scope.changeCard(dragcard, "operationplan__enddate", dragcard.operationplan__enddate, dragend);
                              dragcard.operationplan__enddate = dragend;
+                             dragcard.enddate = dragend;
                              if (dragcard.operationplan__startdate > dragend)
                                 dragcard.operationplan__startdate = dragend;
                              if (dropcallback) dropcallback(dragcard, true);
@@ -512,6 +417,7 @@ angular.module('calendar', [])
                              newstart.setDate(dragcard["operationplan__startdate"].getDate() + delta);
                              scope.changeCard(dragcard, "operationplan__startdate", dragcard.operationplan__startdate, newstart);
                              dragcard.operationplan__startdate = newstart;
+                             dragcard.startdate = newstart;
                              if (dragcard.operationplan__enddate < newstart)
                                 dragcard.operationplan__enddate = dragend;
                              if (dropcallback) dropcallback(dragcard, true);
@@ -567,7 +473,7 @@ angular.module('calendar', [])
             }
         };
     })
-    .directive('monthview', ['dateFilter', function (dateFilter) {
+    .directive('monthview', ['dateFilter', function monthDirective(dateFilter) {
         'use strict';
         return {
             restrict: 'EA',
@@ -699,7 +605,7 @@ angular.module('calendar', [])
 
                     for (var i = 0; i < len; i += 1) {
                         var event = eventSource[i];
-                        if (dropCallback(event, false) && scope.grouping && !keys.includes(event[scope.grouping]))
+                        if (processCard(event, false) && scope.grouping && !keys.includes(event[scope.grouping]))
                            keys.push(event[scope.grouping]);
                     }
 
@@ -730,7 +636,7 @@ angular.module('calendar', [])
                       scope.categories = ["dummy"];
                 };
 
-                function dropCallback(event, incremental) {
+                function processCard(event, incremental) {
                   var oneDay = 86400000,
                       eps = 0.001;
                   var eventStartTime = event.startdate ? new Date(event.startdate) : null;
@@ -794,11 +700,13 @@ angular.module('calendar', [])
                       eventSet = scope.rows[rowIndex][dayIndex].events;
                       if (eventSet) {
                          var exists = false;
-                         for (var r of eventSet) {
-                            if ((event.id || event.reference) == (r.id || r.reference)) {
-                              exists = true;
-                              break;
-                            }
+                         if (incremental) {
+                           for (var r of eventSet) {
+                             if ((event.id || event.reference) == (r.id || r.reference)) {
+                               exists = true;
+                               break;
+                             }
+                           }
                          }
                          if (!exists) eventSet.push(event);
                       } else {
@@ -835,7 +743,7 @@ angular.module('calendar', [])
                 scope.$on('changeMode', function (event, mode) {
                     ctrl.changeMode(mode);
                     if (scope.editable && mode == "calendarmonth")
-                       scope.enableDragDrop(dropCallback);
+                       scope.enableDragDrop(processCard);
                     else
                        scope.disableDragDrop();
                 });
@@ -876,11 +784,11 @@ angular.module('calendar', [])
 
                 ctrl.refreshView();
                 if (scope.editable && scope.mode == "calendarmonth")
-                   scope.enableDragDrop(dropCallback);
+                   scope.enableDragDrop(processCard);
             }
         };
     }])
-    .directive('weekview', ['dateFilter', function (dateFilter) {
+    .directive('weekview', ['dateFilter', function weekDirective(dateFilter) {
         'use strict';
         return {
             restrict: 'EA',
@@ -911,29 +819,6 @@ angular.module('calendar', [])
                     return dates;
                 }
 
-                function createDateObjects(startdate) {
-                    var times = [],
-                        row,
-                        time,
-                        currentHour = startdate.getHours(),
-                        currentDate = startdate.getDate();
-
-                    for (var hour = 0; hour < 24; hour += 1) {
-                        row = [];
-                        for (var day = 0; day < 7; day += 1) {
-                            time = new Date(startdate.getTime());
-                            time.setHours(currentHour + hour);
-                            time.setDate(currentDate + day);
-                            row.push({
-                                date: time,
-                                events: []
-                            });
-                        }
-                        times.push(row);
-                    }
-                    return times;
-                }
-
                 scope.select = function (selectedTime, events) {
                     if (scope.timeSelected) {
                         scope.timeSelected({
@@ -946,28 +831,9 @@ angular.module('calendar', [])
                 ctrl._onDataLoaded = function () {
                     var eventSource = ctrl.eventSource,
                         len = eventSource ? eventSource.length : 0,
-                        startdate = ctrl.range.startdate,
-                        enddate = ctrl.range.enddate,
-                        rows = scope.rows,
                         dates = scope.dates,
-                        oneHour = 3600000,
-                        //add allday eps
-                        eps = 0.016,
-                        normalEventInRange = false,
                         day,
-                        hour,
                         keys = [];
-
-                    if (rows.hasEvent) {
-                        for (day = 0; day < 7; day += 1) {
-                            for (hour = 0; hour < 24; hour += 1) {
-                                if (rows[hour][day].events) {
-                                    rows[hour][day].events = null;
-                                }
-                            }
-                        }
-                        rows.hasEvent = false;
-                    }
 
                     for (day = 0; day < 7; day += 1) {
                         if (dates[day].events) dates[day].events = null;
@@ -975,82 +841,8 @@ angular.module('calendar', [])
 
                     for (var i = 0; i < len; i += 1) {
                         var event = eventSource[i];
-                        var eventStartTime = event.startdate ? new Date(event.startdate) : null;
-                        var eventEndTime = event.enddate ? new Date(event.enddate) : null;
-
-                        if ((eventEndTime ? eventEndTime : eventStartTime) <= startdate ||
-                          (eventStartTime ? eventStartTime : eventEndTime) >= enddate)
-                            continue;
-                        normalEventInRange = true;
-                        if (!eventEndTime) eventEndTime = eventStartTime;
-                        if (!eventStartTime) eventStartTime = eventEndTime;
-
-                        var timeDiff;
-                        var timeDifferenceStart;
-                        if (eventStartTime <= startdate) {
-                            timeDifferenceStart = 0;
-                        } else {
-                            timeDiff = eventStartTime - startdate - (eventStartTime.getTimezoneOffset() - startdate.getTimezoneOffset()) * 60000;
-                            timeDifferenceStart = timeDiff / oneHour;
-                        }
-
-                        var timeDifferenceEnd;
-                        if (eventEndTime >= enddate) {
-                            timeDiff = enddate - startdate - (enddate.getTimezoneOffset() - startdate.getTimezoneOffset()) * 60000;
-                            timeDifferenceEnd = timeDiff / oneHour;
-                        } else {
-                            timeDiff = eventEndTime - startdate - (eventEndTime.getTimezoneOffset() - startdate.getTimezoneOffset()) * 60000;
-                            timeDifferenceEnd = timeDiff / oneHour;
-                        }
-
-                        var startIndex = Math.floor(timeDifferenceStart);
-                        var endIndex = Math.ceil(timeDifferenceEnd - eps);
-                        var startRowIndex = startIndex % 24;
-                        var dayIndex = Math.floor(startIndex / 24);
-                        var endOfDay = dayIndex * 24;
-                        var endRowIndex;
-
-                        var startOffset = 0;
-                        var endOffset = 0;
-                        if (ctrl.hourParts !== 1) {
-                            startOffset = Math.ceil((timeDifferenceStart - startIndex) * ctrl.hourParts);
-                        }
-
-                        do {
-                            endOfDay += 24;
-                            if (endOfDay <= endIndex) {
-                                endRowIndex = 24;
-                            } else {
-                                endRowIndex = endIndex % 24;
-                                if (ctrl.hourParts !== 1) {
-                                    endOffset = Math.floor((endIndex - timeDifferenceEnd) * ctrl.hourParts);
-                                }
-                            }
-                            var displayEvent = {
-                                event: event,
-                                startIndex: startRowIndex,
-                                endIndex: endRowIndex,
-                                startOffset: startOffset,
-                                endOffset: endOffset
-                            };
-                            if (scope.grouping && !keys.includes(event[scope.grouping]))
-                              keys.push(event[scope.grouping]);
-
-                            if (rows[startRowIndex][dayIndex].events)
-                                rows[startRowIndex][dayIndex].events.push(displayEvent);
-                            else
-                                rows[startRowIndex][dayIndex].events = [displayEvent];
-
-                            if (dates[dayIndex].events)
-                              dates[dayIndex].events.push(event);
-                            else
-                              dates[dayIndex].events = [event];
-
-                            startRowIndex = 0;
-                            startOffset = 0;
-                            dayIndex += 1;
-                        } while (endOfDay < endIndex);
-
+                        if (processCard(event, false) && scope.grouping && !keys.includes(event[scope.grouping]))
+                           keys.push(event[scope.grouping]);
                     }
 
                     if (scope.grouping) {
@@ -1061,48 +853,117 @@ angular.module('calendar', [])
                     }
                     else
                       scope.categories = ["dummy"];
-
-                    if (normalEventInRange) {
-                        for (day = 0; day < 7; day += 1) {
-                            var orderedEvents = [];
-                            for (hour = 0; hour < 24; hour += 1) {
-                                if (rows[hour][day].events) {
-                                    rows[hour][day].events.sort(compareEventByStartOffset);
-                                    orderedEvents = orderedEvents.concat(rows[hour][day].events);
-                                }
-                            }
-                            if (orderedEvents.length > 0) {
-                                rows.hasEvent = true;
-                                ctrl.placeEvents(orderedEvents);
-                            }
-                        }
-                    }
                 };
 
-                function dropCallback(card, incremental) {
+                function processCard(event, incremental) {
+                  var oneHour = 3600000,
+                      eps = 0.016;
+                  var eventStartTime = event.startdate ? new Date(event.startdate) : null;
+                  var eventEndTime = event.enddate ? new Date(event.enddate) : null;
+
+                  if ((eventEndTime ? eventEndTime : eventStartTime) <= ctrl.range.startdate ||
+                    (eventStartTime ? eventStartTime : eventEndTime) >= ctrl.range.enddate)
+                      return false;
+                  
+                  if (!eventEndTime) eventEndTime = eventStartTime;
+                  if (!eventStartTime) eventStartTime = eventEndTime;
+
+                  var timeDiff;
+                  var timeDifferenceStart;
+                  if (eventStartTime <= ctrl.range.startdate) {
+                      timeDifferenceStart = 0;
+                  } else {
+                      timeDiff = eventStartTime - ctrl.range.startdate - (eventStartTime.getTimezoneOffset() - ctrl.range.startdate.getTimezoneOffset()) * 60000;
+                      timeDifferenceStart = timeDiff / oneHour;
+                  }
+
+                  var timeDifferenceEnd;
+                  if (eventEndTime >= ctrl.range.enddate) {
+                      timeDiff = ctrl.range.enddate - ctrl.range.startdate - (ctrl.range.enddate.getTimezoneOffset() - ctrl.range.startdate.getTimezoneOffset()) * 60000;
+                      timeDifferenceEnd = timeDiff / oneHour;
+                  } else {
+                      timeDiff = eventEndTime - ctrl.range.startdate - (eventEndTime.getTimezoneOffset() - ctrl.range.startdate.getTimezoneOffset()) * 60000;
+                      timeDifferenceEnd = timeDiff / oneHour;
+                  }
+
+                  var startIndex = Math.floor(timeDifferenceStart);
+                  var endIndex = Math.ceil((timeDifferenceEnd - eps) / 24);
+                  var dayIndex = Math.floor(startIndex / 24);
+
+                  // Delete before the start
+                  var index2 = dayIndex - 1;
+                  while (incremental && index2 >= 0) {
+                    var exists = false;
+                    var eventSet = scope.dates[index2].events;
+                    if (eventSet) {
+                      for (var r = eventSet.length - 1; r >= 0; r--) {
+                        if ((event.id || event.reference) == (eventSet[r].id || eventSet[r].reference)) {
+                           eventSet.splice(r, 1);
+                           exists = true;
+                           break;
+                        }
+                      }
+                    }
+                    if (!exists) break;
+                    index2 -= 1;
+                  }
+
+                  // Insert during duration                  
+                  do {                    
+                      if (scope.dates[dayIndex].events) {
+                         var exists = false;
+                         if (incremental) {
+                           for (var r of scope.dates[dayIndex].events) {
+                             if ((event.id || event.reference) == (r.id || r.reference)) {
+                               exists = true;
+                               break;
+                             }
+                           }
+                         }
+                         if (!exists) scope.dates[dayIndex].events.push(event);                        
+                      }
+                      else
+                        scope.dates[dayIndex].events = [event];
+                      dayIndex += 1;
+                  } 
+                  while (dayIndex < endIndex);
+                  
+                  // Delete after the end
+                  while (incremental && dayIndex < 7) {
+                    var exists = false;
+                    eventSet = scope.dates[dayIndex].events;
+                    if (eventSet) {
+                      for (var r = eventSet.length - 1; r >= 0; r--) {
+                        if ((event.id || event.reference) == (eventSet[r].id || eventSet[r].reference)) {
+                           eventSet.splice(r, 1);
+                           exists = true;
+                           break;
+                        }
+                      }
+                    }
+                    if (!exists) break;
+                    dayIndex += 1;
+                  };                  
+                  return true;
                 };
 
                 scope.$on('changeMode', function (event, mode) {
                     ctrl.changeMode(mode);
                     if (scope.editable && mode == "calendarweek")
-                       scope.enableDragDrop(dropCallback);
+                       scope.enableDragDrop(processCard);
                     else
                        scope.disableDragDrop();
                 });
 
                 ctrl._refreshView = function () {
-                    var firstDayOfWeek = ctrl.range.startdate,
-                        dates = getDates(firstDayOfWeek, 7),
-                        weekNumberIndex,
+                    var weekNumberIndex,
                         weekFormatPattern = 'w',
                         title;
-
-                    scope.rows = createDateObjects(firstDayOfWeek);
-                    scope.dates = dates;
+                    scope.dates = getDates(ctrl.range.startdate, 7);
                     weekNumberIndex = ctrl.formatWeekTitle.indexOf(weekFormatPattern);
-                    title = dateFilter(firstDayOfWeek, ctrl.formatWeekTitle);
+                    title = dateFilter(ctrl.range.startdate, ctrl.formatWeekTitle);
                     if (weekNumberIndex !== -1)
-                        title = title.replace(weekFormatPattern, getISO8601WeekNumber(firstDayOfWeek));
+                        title = title.replace(weekFormatPattern, getISO8601WeekNumber(ctrl.range.startdate));
                     scope.$parent.title = title;
                 };
 
@@ -1120,10 +981,6 @@ angular.module('calendar', [])
                     };
                 };
 
-                function compareEventByStartOffset(eventA, eventB) {
-                    return eventA.startOffset - eventB.startOffset;
-                }
-
                 //This can be decomissioned when upgrade to Angular 1.3
                 function getISO8601WeekNumber(date) {
                     var checkDate = new Date(date);
@@ -1136,11 +993,11 @@ angular.module('calendar', [])
 
                 ctrl.refreshView();
                 if (scope.editable && scope.mode == "calendarweek")
-                   scope.enableDragDrop(dropCallback);
+                   scope.enableDragDrop(processCard);
             }
         };
     }])
-    .directive('dayview', ['dateFilter', function (dateFilter) {
+    .directive('dayview', ['dateFilter', function dayDirective(dateFilter) {
         'use strict';
         return {
             restrict: 'EA',
@@ -1175,10 +1032,6 @@ angular.module('calendar', [])
                     return rows;
                 }
 
-                function compareEventByStartOffset(eventA, eventB) {
-                    return eventA.startOffset - eventB.startOffset;
-                }
-
                 scope.select = function (selectedTime, events) {
                     if (scope.timeSelected) {
                         scope.timeSelected({
@@ -1188,13 +1041,14 @@ angular.module('calendar', [])
                     }
                 };
 
-                function dropCallback(card, incremental) {
+                function processCard(card, incremental) {
+                  console.log("dropped card day", card);
                 };
 
                 scope.$on('changeMode', function (event, mode) {
                     ctrl.changeMode(mode);
                     if (scope.editable && mode == "calendarday")
-                       scope.enableDragDrop(dropCallback);
+                       scope.enableDragDrop(processCard);
                     else
                        scope.disableDragDrop();
                 });
@@ -1208,7 +1062,6 @@ angular.module('calendar', [])
                         oneHour = 3600000,
                         eps = 0.016,
                         eventSet,
-                        normalEventInRange = false,
                         hour,
                         keys = [];
 
@@ -1229,8 +1082,7 @@ angular.module('calendar', [])
 
                         if ((eventEndTime ? eventEndTime : eventStartTime) <= startdate ||
                           (eventStartTime ? eventStartTime : eventEndTime) >= enddate)
-                            continue;
-                        normalEventInRange = true;
+                            continue;                        
                         if (!eventEndTime) eventEndTime = eventStartTime;
                         if (!eventStartTime) eventStartTime = eventEndTime;
 
@@ -1287,20 +1139,7 @@ angular.module('calendar', [])
                         else
                           scope.events = [event];
                     }
-
-                    if (normalEventInRange) {
-                        var orderedEvents = [];
-                        for (hour = 0; hour < 24; hour += 1) {
-                            if (rows[hour].events) {
-                                rows[hour].events.sort(compareEventByStartOffset);
-                                orderedEvents = orderedEvents.concat(rows[hour].events);
-                            }
-                        }
-                        if (orderedEvents.length > 0) {
-                            rows.hasEvent = true;
-                            ctrl.placeEvents(orderedEvents);
-                        }
-                    }
+                   
                     if (scope.grouping) {
                       if (scope.groupingdir && scope.groupingdir == "desc")
                           scope.categories = keys.sort().reverse();
@@ -1334,7 +1173,7 @@ angular.module('calendar', [])
 
                 ctrl.refreshView();
                 if (scope.editable && scope.mode == "calendarday")
-                   scope.enableDragDrop(dropCallback);
+                   scope.enableDragDrop(processCard);
             }
         };
     }]);

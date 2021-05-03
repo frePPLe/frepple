@@ -1,27 +1,7 @@
 <div>
     <div id="scrolldayview" class="scrollable" data-ng-style="{'height': getHeight(25)}">
-        <table class="table table-bordered table-fixed" data-ng-switch="calendarmode" >
-            <tbody data-ng-switch-when="duration" data-ng-repeat="cat in categories track by cat">
-              <tr ng-repeat="dt in rows track by $index">
-                <td data-ng-if="grouping && $index == 0" rowspan="{{ rows.length }}">{{cat}}</td>            
-                <td class="calendar-hour-column text-center">
-                    {{dt.date | date: formatHourColumn}}
-                </td>
-                <td class="calendar-cell">
-                    <div data-ng-class="{'calendar-event-wrap': dt.events}" ng-if="dt.events">                   
-                        <div data-ng-repeat="opplan in dt.events" class="calendar-event"
-                             data-ng-click="selectCard(opplan.event)"
-                             data-ng-if="!grouping || (opplan.event[grouping] || '') == (cat || '')"
-                             data-ng-style="{top: (37*opplan.startOffset/hourParts)+'px', left: 100/opplan.overlapNumber*opplan.position+'%', width: 100/opplan.overlapNumber+'%', height: 37*(opplan.endIndex -opplan.startIndex - (opplan.endOffset + opplan.startOffset)/hourParts)+'px'}">
-                               <div class="calendar-event-inner card-day">
-                               <ng-include src="'/input/card.html'"/>
-                               </div>
-                        </div>
-                    </div>
-                </td>
-              </tr>
-            </tbody>
-            <tbody data-ng-switch-default>
+        <table class="table table-bordered table-fixed" >
+            <tbody>
               <tr data-ng-repeat="cat in categories track by cat">
                 <td data-ng-if="grouping">{{cat}}</td>
                 <td>

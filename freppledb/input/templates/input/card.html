@@ -4,220 +4,178 @@ The code in this file is using ANGULARJS template syntax and not the DJANGO temp
 {% verbatim %}
 <div data-ng-attr-draggable="{{ editable ? 'true' : 'false' }}"
       data-ng-class="['card', 'panel', 'panel-default', {'calendar-event-inner': (mode == 'calendarweek' || mode == 'calendarday') && calendarmode == 'duration', 'active': opplan.hasOwnProperty('selected'), 'dirty': opplan.dirty}]"
-      data-ng-style="{'overflow-y': 'hidden', 'background-color': opplan.color || opplan.event.color}"
+      data-ng-style="{'overflow-y': 'hidden', 'background-color': opplan.color}"
       data-index="{{$index}}" data-reference="{{ opplan.id || opplan.reference }}">
     <div>
-      <span data-ng-if="opplan.dirty || opplan.event.dirty" class="label label-danger pull-right">{{ "unsaved"|translate }}</span>
+      <span data-ng-if="opplan.dirty" class="label label-danger pull-right">{{ "unsaved"|translate }}</span>
     </div>
-    <div data-ng-if="(opplan.type || opplan.event.type) === 'PO'">
+    <div data-ng-if="opplan.type === 'PO'">
       <p><i data-ng-if="isStart(opplan, dt)" class="fa fa-step-backward"></i>&nbsp;{{ 'Purchase Order' | translate }}&nbsp;<i data-ng-if="isEnd(opplan, dt)" class="fa fa-step-forward"></i></p>
-      <p><strong>{{opplan.operationplan__reference || opplan.reference || opplan.event.operationplan__reference || opplan.event.reference}}</strong></p>
-      <p>{{opplan.item__name || opplan.item || opplan.event.item__name || opplan.event.item}}&nbsp;
+      <p><strong>{{opplan.operationplan__reference || opplan.reference}}</strong></p>
+      <p>{{opplan.item__name || opplan.item}}&nbsp;
         <a data-ng-click="$event.stopPropagation()"
-          href="{{url_prefix}}/detail/input/item/{{ admin_escape(opplan.item__name || opplan.item || opplan.event.item__name || opplan.event.item) }}/">
+          href="{{url_prefix}}/detail/input/item/{{ admin_escape(opplan.item__name || opplan.item) }}/">
           <i class='fa fa-caret-right'></i>
         </a>
       </p>
-      <p>{{opplan.location || opplan.event.location}}&nbsp;
+      <p>{{opplan.location}}&nbsp;
         <a data-ng-click="$event.stopPropagation()"
-          href="{{url_prefix}}/detail/input/location/{{ admin_escape(opplan.location || opplan.event.location) }}/">
+          href="{{url_prefix}}/detail/input/location/{{ admin_escape(opplan.location) }}/">
           <i class='fa fa-caret-right'></i>
         </a>
       </p>
-      <p>{{opplan.operationplan__supplier || opplan.supplier || opplan.event.operationplan__supplier || opplan.event.supplier}}&nbsp;
+      <p>{{opplan.operationplan__supplier || opplan.supplier}}&nbsp;
         <a data-ng-click="$event.stopPropagation()"
-          href="{{url_prefix}}/detail/input/supplier/{{ admin_escape(opplan.supplier || opplan.event.supplier) }}/">
+          href="{{url_prefix}}/detail/input/supplier/{{ admin_escape(opplan.supplier) }}/">
           <i class='fa fa-caret-right'></i>
         </a>
       </p>
-      <p data-ng-class="{'dirty': opplan.hasOwnProperty('quantityOriginal') || opplan.event.hasOwnProperty('quantityOriginal') || opplan.hasOwnProperty('operationplan__quantityOriginal') || opplan.event.hasOwnProperty('operationplan__quantityOriginal')}">
-        <span data-ng-if="!editable || (!opplan.hasOwnProperty('selected') && !opplan.event.hasOwnProperty('selected'))">{{ grid.formatNumber(opplan.operationplan__quantity || opplan.quantity || opplan.event.operationplan__quantity || opplan.event.quantity) }}</span>
+      <p data-ng-class="{'dirty': opplan.hasOwnProperty('quantityOriginal') || opplan.hasOwnProperty('operationplan__quantityOriginal')}">
+        <span data-ng-if="!editable || !opplan.hasOwnProperty('selected')">{{ grid.formatNumber(opplan.operationplan__quantity || opplan.quantity) }}</span>
         <input class="form-control" data-ng-if="editable && opplan.hasOwnProperty('selected') && !opplan.hasOwnProperty('operationplan__quantity')" type="number" data-ng-focus="oldValue=opplan.quantity"
           data-ng-model="opplan.quantity" data-ng-change="changeCard(opplan, 'quantity', oldValue, opplan.quantity)">
-        <input class="form-control" data-ng-if="editable && opplan.event.hasOwnProperty('selected') && !opplan.hasOwnProperty('operationplan__quantity')" type="number" data-ng-focus="oldValue=opplan.event.quantity"
-          data-ng-model="opplan.event.quantity" data-ng-change="changeCard(opplan.event, 'quantity', oldValue, opplan.event.quantity)">
         <input class="form-control" data-ng-if="editable && opplan.hasOwnProperty('selected') && opplan.hasOwnProperty('operationplan__quantity')" type="number" data-ng-focus="oldValue=opplan.operationplan__quantity"
           data-ng-model="opplan.operationplan__quantity" data-ng-change="changeCard(opplan, 'operationplan__quantity', oldValue, opplan.operationplan__quantity)">
-        <input class="form-control" data-ng-if="editable && opplan.event.hasOwnProperty('selected') && opplan.hasOwnProperty('operationplan__quantity')" type="number" data-ng-focus="oldValue=opplan.event.operationplan__quantity"
-          data-ng-model="opplan.event.operationplan__quantity" data-ng-change="changeCard(opplan.event, 'operationplan__quantity', oldValue, opplan.event.operationplan__quantity)">
       </p>
-      <p data-ng-class="{'dirty': opplan.hasOwnProperty('startdateOriginal') || opplan.event.hasOwnProperty('startdateOriginal') || opplan.hasOwnProperty('operationplan__startdateOriginal') || opplan.event.hasOwnProperty('operationplan__startdateOriginal')}">
-        <span data-ng-if="!editable || (!opplan.hasOwnProperty('selected') && !opplan.event.hasOwnProperty('selected'))">{{ (opplan.operationplan__startdate || opplan.startdate || opplan.event.operationplan__startdate ||opplan.event.startdate) | date: "yyyy-MM-dd" }}</span>
+      <p data-ng-class="{'dirty': opplan.hasOwnProperty('startdateOriginal') || opplan.hasOwnProperty('operationplan__startdateOriginal')}">
+        <span data-ng-if="!editable || !opplan.hasOwnProperty('selected')">{{ (opplan.operationplan__startdate || opplan.startdate) | date: "yyyy-MM-dd" }}</span>
         <input class="form-control" data-ng-if="editable && opplan.hasOwnProperty('selected') && !opplan.hasOwnProperty('operationplan__startdate')" type="date"
           data-ng-focus="oldValue=opplan.startdate" data-ng-model="opplan.startdate"
           data-ng-change="changeCard(opplan, 'startdate', oldValue, opplan.startdate)">
-        <input class="form-control" data-ng-if="editable && opplan.event.hasOwnProperty('selected') && !opplan.event.hasOwnProperty('operationplan__startdate')" type="date"
-          data-ng-focus="oldValue=opplan.event.startdate" data-ng-model="opplan.event.startdate"
-          data-ng-change="changeCard(opplan.event, 'startdate', oldValue, opplan.event.startdate)">
         <input class="form-control" data-ng-if="editable && opplan.hasOwnProperty('selected') && opplan.hasOwnProperty('operationplan__startdate')" type="date"
           data-ng-focus="oldValue=opplan.operationplan__startdate" data-ng-model="opplan.operationplan__startdate"
           data-ng-change="changeCard(opplan, 'operationplan__startdate', oldValue, opplan.operationplan__startdate)">
-        <input class="form-control" data-ng-if="editable && opplan.event.hasOwnProperty('selected') && opplan.hasOwnProperty('operationplan__startdate')" type="date"
-          data-ng-focus="oldValue=opplan.event.operationplan__startdate" data-ng-model="opplan.event.operationplan__startdate"
-          data-ng-change="changeCard(opplan.event, 'operationplan__startdate', oldValue, opplan.event.operationplan__startdate)">         
       </p>
-      <p data-ng-class="{'dirty': opplan.hasOwnProperty('enddateOriginal') || opplan.event.hasOwnProperty('enddateOriginal') || opplan.hasOwnProperty('operationplan__enddateOriginal') || opplan.event.hasOwnProperty('operationplan__enddateOriginal')}">
-        <span data-ng-if="!editable || (!opplan.hasOwnProperty('selected') && !opplan.event.hasOwnProperty('selected'))">{{ (opplan.operationplan__enddate || opplan.enddate || opplan.event.operationplan__enddate || opplan.event.enddate) | date: "yyyy-MM-dd" }}</span>
+      <p data-ng-class="{'dirty': opplan.hasOwnProperty('enddateOriginal') || opplan.hasOwnProperty('operationplan__enddateOriginal')}">
+        <span data-ng-if="!editable || !opplan.hasOwnProperty('selected')">{{ (opplan.operationplan__enddate || opplan.enddate) | date: "yyyy-MM-dd" }}</span>
         <input class="form-control" data-ng-if="editable && opplan.hasOwnProperty('selected') && !opplan.hasOwnProperty('operationplan__enddate')" type="date" data-ng-focus="oldValue=opplan.enddate"
           data-ng-model="opplan.enddate" data-ng-change="changeCard(opplan, 'enddate', oldValue, opplan.enddate)">
-        <input class="form-control" data-ng-if="editable && opplan.event.hasOwnProperty('selected') && !opplan.hasOwnProperty('operationplan__enddate')" type="date" data-ng-focus="oldValue=opplan.event.enddate"
-          data-ng-model="opplan.event.enddate" data-ng-change="changeCard(opplan.event, 'enddate', oldValue, opplan.event.enddate)">
         <input class="form-control" data-ng-if="editable && opplan.hasOwnProperty('selected') && opplan.hasOwnProperty('operationplan__enddate')" type="date" data-ng-focus="oldValue=opplan.operationplan__enddate"
           data-ng-model="opplan.operationplan__enddate" data-ng-change="changeCard(opplan, 'operationplan__enddate', oldValue, opplan.operationplan__enddate)">
-        <input class="form-control" data-ng-if="editable && opplan.event.hasOwnProperty('selected') && opplan.hasOwnProperty('operationplan__enddate')" type="date" data-ng-focus="oldValue=opplan.event.operationplan__enddate"
-          data-ng-model="opplan.event.operationplan__enddate" data-ng-change="changeCard(opplan.event, 'operationplan__enddate', oldValue, opplan.event.operationplan__enddate)">
       </p>
-      <p data-ng-if="(opplan.inventory_status || opplan.event.inventory_status) !== ''">
-        {{ "inventory status"|translate }}&nbsp;{{opplan.inventory_status || opplan.event.inventory_status}}
+      <p data-ng-if="(opplan.inventory_status) !== ''">
+        {{ "inventory status"|translate }}&nbsp;{{opplan.inventory_status}}
       </p>
     </div>
-    <div data-ng-if="(opplan.type || opplan.operationplan__type || opplan.event.type || opplan.event.operationplan__type || type) === 'DO'">
+    <div data-ng-if="(opplan.type || opplan.operationplan__type || type) === 'DO'">
       <p><i data-ng-if="isStart(opplan, dt)" class="fa fa-step-backward"></i>&nbsp;{{ 'Distribution Order' | translate }}&nbsp;<i data-ng-if="isEnd(opplan, dt)" class="fa fa-step-forward"></i></p>
-      <p><strong>{{opplan.operationplan__reference || opplan.reference || opplan.event.operationplan__reference || opplan.event.reference}}</strong></p>
-      <p>{{ opplan.item__name || opplan.item || opplan.event.item__name || opplan.event.item }}&nbsp;
+      <p><strong>{{opplan.operationplan__reference || opplan.reference}}</strong></p>
+      <p>{{ opplan.item__name || opplan.item }}&nbsp;
         <a data-ng-click="$event.stopPropagation()"
-          href="{{url_prefix}}/detail/input/item/{{ admin_escape(opplan.item__name || opplan.item || opplan.event.item__name || opplan.event.item) }}/">
+          href="{{url_prefix}}/detail/input/item/{{ admin_escape(opplan.item__name || opplan.item) }}/">
           <i class='fa fa-caret-right'></i>
         </a>
       </p>
-      <p>{{opplan.operationplan__origin || opplan.origin || opplan.event.operationplan__origin || opplan.event.origin}}&nbsp;
+      <p>{{opplan.operationplan__origin || opplan.origin}}&nbsp;
         <a data-ng-click="$event.stopPropagation()"
-          href="{{url_prefix}}/detail/input/location/{{ admin_escape(opplan.origin || opplan.event.origin) }}/">
+          href="{{url_prefix}}/detail/input/location/{{ admin_escape(opplan.origin) }}/">
           <i class='fa fa-caret-right'></i>
         </a>
       </p>
-      <p>{{opplan.location || opplan.destination || oplan.operationplan__location || opplan.event.location || opplan.event.destination || oplan.event.operationplan__location}}&nbsp;
+      <p>{{opplan.location || opplan.destination || oplan.operationplan__location}}&nbsp;
         <a data-ng-click="$event.stopPropagation()"
-          href="{{url_prefix}}/detail/input/location/{{ admin_escape(opplan.location || opplan.destination || oplan.operationplan__location || opplan.event.location || opplan.event.destination || oplan.event.operationplan__location) }}/">
+          href="{{url_prefix}}/detail/input/location/{{ admin_escape(opplan.location || opplan.destination || oplan.operationplan__location) }}/">
           <i class='fa fa-caret-right'></i>
         </a>
       </p>
-      <p data-ng-class="{'dirty': opplan.hasOwnProperty('quantityOriginal') || opplan.event.hasOwnProperty('quantityOriginal') || opplan.hasOwnProperty('operationplan__quantityOriginal') || opplan.event.hasOwnProperty('operationplan__quantityOriginal')}">
-        <span data-ng-if="!editable || (!opplan.hasOwnProperty('selected') && !opplan.event.hasOwnProperty('selected'))">{{ grid.formatNumber(opplan.operationplan__quantity || opplan.quantity || opplan.event.operationplan__quantity || opplan.event.quantity) }}</span>
+      <p data-ng-class="{'dirty': opplan.hasOwnProperty('quantityOriginal') || opplan.hasOwnProperty('operationplan__quantityOriginal')}">
+        <span data-ng-if="!editable || !opplan.hasOwnProperty('selected')">{{ grid.formatNumber(opplan.operationplan__quantity || opplan.quantity) }}</span>
         <input class="form-control" data-ng-if="editable && opplan.hasOwnProperty('selected') && !opplan.hasOwnProperty('operationplan__quantity')" type="number" data-ng-focus="oldValue=opplan.quantity"
           data-ng-model="opplan.quantity" data-ng-change="changeCard(opplan, 'quantity', oldValue, opplan.quantity)">
-        <input class="form-control" data-ng-if="editable && opplan.event.hasOwnProperty('selected') && !opplan.event.hasOwnProperty('operationplan__quantity')" type="number" data-ng-focus="oldValue=opplan.event.quantity"
-          data-ng-model="opplan.event.quantity" data-ng-change="changeCard(opplan.event, 'quantity', oldValue, opplan.event.quantity)">
         <input class="form-control" data-ng-if="editable && opplan.hasOwnProperty('selected') && opplan.hasOwnProperty('operationplan__quantity')" type="number" data-ng-focus="oldValue=opplan.operationplan__quantity"
           data-ng-model="opplan.operationplan__quantity" data-ng-change="changeCard(opplan, 'operationplan__quantity', oldValue, opplan.operationplan__quantity)">
-        <input class="form-control" data-ng-if="editable && opplan.event.hasOwnProperty('selected') && opplan.event.hasOwnProperty('operationplan__quantity')" type="number" data-ng-focus="oldValue=opplan.event.operationplan__quantity"
-          data-ng-model="opplan.event.operationplan__quantity" data-ng-change="changeCard(opplan.event, 'operationplan__quantity', oldValue, opplan.event.operationplan__quantity)">
       </p>
-      <p data-ng-class="{'dirty': opplan.hasOwnProperty('startdateOriginal') || opplan.event.hasOwnProperty('startdateOriginal') || opplan.hasOwnProperty('operationplan__startdateOriginal') || opplan.event.hasOwnProperty('operationplan__startdateOriginal')}">
-        <span data-ng-if="!editable || (!opplan.hasOwnProperty('selected') && !opplan.event.hasOwnProperty('selected'))">{{ (opplan.operationplan__startdate || opplan.startdate || opplan.event.operationplan__startdate ||opplan.event.startdate) | date: "yyyy-MM-dd" }}</span>
+      <p data-ng-class="{'dirty': opplan.hasOwnProperty('startdateOriginal') || opplan.hasOwnProperty('operationplan__startdateOriginal')}">
+        <span data-ng-if="!editable || !opplan.hasOwnProperty('selected')">{{ (opplan.operationplan__startdate || opplan.startdate) | date: "yyyy-MM-dd" }}</span>
         <input class="form-control" data-ng-if="editable && opplan.hasOwnProperty('selected') && !opplan.hasOwnProperty('operationplan__startdate')" type="date"
           data-ng-focus="oldValue=opplan.startdate" data-ng-model="opplan.startdate"
           data-ng-change="changeCard(opplan, 'startdate', oldValue, opplan.startdate)">
-        <input class="form-control" data-ng-if="editable && opplan.event.hasOwnProperty('selected') && !opplan.event.hasOwnProperty('operationplan__startdate')" type="date"
-          data-ng-focus="oldValue=opplan.event.startdate" data-ng-model="opplan.event.startdate"
-          data-ng-change="changeCard(opplan.event, 'startdate', oldValue, opplan.event.startdate)">
         <input class="form-control" data-ng-if="editable && opplan.hasOwnProperty('selected') && opplan.hasOwnProperty('operationplan__startdate')" type="date"
           data-ng-focus="oldValue=opplan.operationplan__startdate" data-ng-model="opplan.operationplan__startdate"
           data-ng-change="changeCard(opplan, 'operationplan__startdate', oldValue, opplan.operationplan__startdate)">
-        <input class="form-control" data-ng-if="editable && opplan.event.hasOwnProperty('selected') && opplan.event.hasOwnProperty('operationplan__startdate')" type="date"
-          data-ng-focus="oldValue=opplan.event.operationplan__startdate" data-ng-model="opplan.event.operationplan__startdate"
-          data-ng-change="changeCard(opplan.event, 'operationplan__startdate', oldValue, opplan.event.operationplan__startdate)">          
       </p>
-      <p data-ng-class="{'dirty': opplan.hasOwnProperty('enddateOriginal') || opplan.event.hasOwnProperty('enddateOriginal') || opplan.hasOwnProperty('operationplan__enddateOriginal') || opplan.event.hasOwnProperty('operationplan__enddateOriginal')}">
-        <span data-ng-if="!editable || (!opplan.hasOwnProperty('selected') && !opplan.event.hasOwnProperty('selected'))">{{ (opplan.operationplan__enddate || opplan.enddate || opplan.event.operationplan__enddate || opplan.event.enddate) | date: "yyyy-MM-dd" }}</span>
+      <p data-ng-class="{'dirty': opplan.hasOwnProperty('enddateOriginal') || opplan.hasOwnProperty('operationplan__enddateOriginal')}">
+        <span data-ng-if="!editable || !opplan.hasOwnProperty('selected')">{{ (opplan.operationplan__enddate || opplan.enddate) | date: "yyyy-MM-dd" }}</span>
         <input class="form-control" data-ng-if="editable && opplan.hasOwnProperty('selected') && !opplan.hasOwnProperty('operationplan__enddate')" type="date" data-ng-focus="oldValue=opplan.enddate"
           data-ng-model="opplan.enddate" data-ng-change="changeCard(opplan, 'enddate', oldValue, opplan.enddate)">
-        <input class="form-control" data-ng-if="editable && opplan.event.hasOwnProperty('selected') && !opplan.event.hasOwnProperty('operationplan__enddate')" type="date" data-ng-focus="oldValue=opplan.event.enddate"
-          data-ng-model="opplan.event.enddate" data-ng-change="changeCard(opplan.event, 'enddate', oldValue, opplan.event.enddate)">
         <input class="form-control" data-ng-if="editable && opplan.hasOwnProperty('selected') && opplan.hasOwnProperty('operationplan__enddate')" type="date" data-ng-focus="oldValue=opplan.operationplan__enddate"
           data-ng-model="opplan.operationplan__enddate" data-ng-change="changeCard(opplan, 'operationplan__enddate', oldValue, opplan.operationplan__enddate)">
-        <input class="form-control" data-ng-if="editable && opplan.event.hasOwnProperty('selected') && opplan.event.hasOwnProperty('operationplan__enddate')" type="date" data-ng-focus="oldValue=opplan.event.operationplan__enddate"
-          data-ng-model="opplan.event.operationplan__enddate" data-ng-change="changeCard(opplan.event, 'operationplan__enddate', oldValue, opplan.event.operationplan__enddate)">
       </p>
-      <p data-ng-if="(opplan.inventory_status || opplan.event.inventory_status) !== ''">
-        {{ "inventory status"|translate }}&nbsp;{{opplan.inventory_status || opplan.event.inventory_status}}
+      <p data-ng-if="(opplan.inventory_status) !== ''">
+        {{ "inventory status"|translate }}&nbsp;{{opplan.inventory_status}}
       </p>
     </div>
-    <div data-ng-if="(opplan.type || opplan.event.type) === 'MO'">
+    <div data-ng-if="opplan.type === 'MO'">
       <p><i data-ng-if="isStart(opplan, dt)" class="fa fa-step-backward"></i>&nbsp;{{ 'Manufacturing Order' | translate }}&nbsp;<i data-ng-if="isEnd(opplan, dt)" class="fa fa-step-forward"></i></p>
-      <p><strong>{{opplan.operationplan__reference || opplan.reference || opplan.event.operationplan__reference || opplan.event.reference}}</strong></p>
-      <p data-ng-if="opplan.item__name || opplan.operationplan__item__name || opplan.event.item || opplan.event.item__name || opplan.event.operationplan__item__name || opplan.event.item">
-        {{opplan.item__name || opplan.operationplan__item__name || opplan.event.item || opplan.event.item__name || opplan.event.operationplan__item__name || opplan.event.item}}&nbsp;
+      <p><strong>{{opplan.operationplan__reference || opplan.reference}}</strong></p>
+      <p data-ng-if="opplan.item__name || opplan.operationplan__item__name">
+        {{opplan.item__name || opplan.operationplan__item__name}}&nbsp;
         <a data-ng-click="$event.stopPropagation()"
-          href="{{url_prefix}}/detail/input/item/{{ admin_escape(opplan.item__name || opplan.operationplan__item__name || opplan.event.item || opplan.event.item__name || opplan.event.operationplan__item__name || opplan.event.item) }}/">
+          href="{{url_prefix}}/detail/input/item/{{ admin_escape(opplan.item__name || opplan.operationplan__item__name) }}/">
           <i class='fa fa-caret-right'></i>
         </a>
       </p>
-      <p>{{ opplan.operationplan__name || opplan.operationplan__operation__name || opplan.operation || opplan.event.operationplan__name || opplan.event.operationplan__operation__name || opplan.event.operation }}&nbsp;
+      <p>{{ opplan.operationplan__name || opplan.operationplan__operation__name || opplan.operation }}&nbsp;
         <a data-ng-click="$event.stopPropagation()"
-          href="{{url_prefix}}/detail/input/operation/{{ admin_escape(opplan.operationplan__name || opplan.operationplan__operation__name || opplan.operation || opplan.event.operationplan__name || opplan.event.operationplan__operation__name || opplan.event.operation) }}/">
+          href="{{url_prefix}}/detail/input/operation/{{ admin_escape(opplan.operationplan__name || opplan.operationplan__operation__name || opplan.operation) }}/">
           <i class='fa fa-caret-right'></i>
         </a>
       </p>
-      <p data-ng-class="{'dirty': opplan.hasOwnProperty('quantityOriginal') || opplan.event.hasOwnProperty('quantityOriginal') || opplan.hasOwnProperty('operationplan__quantityOriginal') || opplan.event.hasOwnProperty('operationplan__quantityOriginal')}">
-        <span data-ng-if="!editable || (!opplan.hasOwnProperty('selected') && !opplan.event.hasOwnProperty('selected'))">{{ grid.formatNumber(opplan.operationplan__quantity || opplan.quantity || opplan.event.operationplan__quantity || opplan.event.quantity) }}</span>
+      <p data-ng-class="{'dirty': opplan.hasOwnProperty('quantityOriginal') || opplan.hasOwnProperty('operationplan__quantityOriginal')}">
+        <span data-ng-if="!editable || !opplan.hasOwnProperty('selected')">{{ grid.formatNumber(opplan.operationplan__quantity || opplan.quantity) }}</span>
         <input class="form-control" data-ng-if="editable && opplan.hasOwnProperty('selected') && opplan.hasOwnProperty('operationplan__quantity')" type="number" data-ng-focus="oldValue=opplan.operationplan__quantity"
           data-ng-model="opplan.operationplan__quantity" data-ng-change="changeCard(opplan, 'operationplan__quantity', oldValue, opplan.operationplan__quantity)">
         <input class="form-control" data-ng-if="editable && opplan.hasOwnProperty('selected') && !opplan.hasOwnProperty('operationplan__quantity')" type="number" data-ng-focus="oldValue=opplan.quantity"
           data-ng-model="opplan.quantity" data-ng-change="changeCard(opplan, 'quantity', oldValue, opplan.quantity)">
-        <input class="form-control" data-ng-if="editable && opplan.event.hasOwnProperty('selected') && !opplan.event.hasOwnProperty('operationplan__quantity')" type="number" data-ng-focus="oldValue=opplan.event.quantity"
-          data-ng-model="opplan.event.quantity" data-ng-change="changeCard(opplan.event, 'quantity', oldValue, opplan.event.quantity)">
-        <input class="form-control" data-ng-if="editable && opplan.event.hasOwnProperty('selected') && opplan.event.hasOwnProperty('operationplan__quantity')" type="number" data-ng-focus="oldValue=opplan.event.operationplan__quantity"
-          data-ng-model="opplan.event.operationplan__quantity" data-ng-change="changeCard(opplan.event, 'operationplan__quantity', oldValue, opplan.event.operationplan__quantity)">
       </p>
-      <p data-ng-class="{'dirty': opplan.hasOwnProperty('startdateOriginal') || opplan.event.hasOwnProperty('startdateOriginal') || opplan.hasOwnProperty('operationplan__startdateOriginal') || opplan.event.hasOwnProperty('operationplan__startdateOriginal')}">
-        <span data-ng-if="!editable || (!opplan.hasOwnProperty('selected') && !opplan.event.hasOwnProperty('selected'))">{{ (opplan.operationplan__startdate || opplan.startdate || opplan.event.operationplan__startdate ||opplan.event.startdate) | date: "yyyy-MM-dd HH:mm:ss" }}</span>
+      <p data-ng-class="{'dirty': opplan.hasOwnProperty('startdateOriginal') || opplan.hasOwnProperty('operationplan__startdateOriginal')}">
+        <span data-ng-if="!editable || !opplan.hasOwnProperty('selected')">{{ (opplan.operationplan__startdate || opplan.startdate) | date: "yyyy-MM-dd HH:mm:ss" }}</span>
         <input class="form-control" data-ng-if="editable && opplan.hasOwnProperty('selected') && !opplan.hasOwnProperty('operationplan__startdate')" type="datetime-local"
           data-ng-focus="oldValue=opplan.startdate" data-ng-model="opplan.startdate"
           data-ng-change="changeCard(opplan, 'startdate', oldValue, opplan.startdate)">
-        <input class="form-control" data-ng-if="editable && opplan.event.hasOwnProperty('selected') && !opplan.event.hasOwnProperty('operationplan__startdate')" type="datetime-local"
-          data-ng-focus="oldValue=opplan.event.startdate" data-ng-model="opplan.event.startdate"
-          data-ng-change="changeCard(opplan.event, 'startdate', oldValue, opplan.event.startdate)">
         <input class="form-control" data-ng-if="editable && opplan.hasOwnProperty('selected') && opplan.hasOwnProperty('operationplan__startdate')" type="datetime-local"
           data-ng-focus="oldValue=opplan.operationplan__startdate" data-ng-model="opplan.operationplan__startdate"
           data-ng-change="changeCard(opplan, 'operationplan__startdate', oldValue, opplan.operationplan__startdate)">
-        <input class="form-control" data-ng-if="editable && opplan.event.hasOwnProperty('selected') && opplan.event.hasOwnProperty('operationplan__startdate')" type="datetime-local"
-          data-ng-focus="oldValue=opplan.event.operationplan__startdate" data-ng-model="opplan.event.operationplan__startdate"
-          data-ng-change="changeCard(opplan.event, 'operationplan__startdate', oldValue, opplan.event.operationplan__startdate)">
       </p>
-      <p data-ng-class="{'dirty': opplan.hasOwnProperty('enddateOriginal') || opplan.event.hasOwnProperty('enddateOriginal') || opplan.hasOwnProperty('operationplan__enddateOriginal') || opplan.event.hasOwnProperty('operationplan__enddateOriginal')}">
-        <span data-ng-if="!editable || (!opplan.hasOwnProperty('selected') && !opplan.event.hasOwnProperty('selected'))">{{ (opplan.operationplan__enddate || opplan.enddate || opplan.event.operationplan__enddate || opplan.event.enddate) | date: "yyyy-MM-dd HH:mm:ss" }}</span>
+      <p data-ng-class="{'dirty': opplan.hasOwnProperty('enddateOriginal') || opplan.hasOwnProperty('operationplan__enddateOriginal')}">
+        <span data-ng-if="!editable || !opplan.hasOwnProperty('selected')">{{ (opplan.operationplan__enddate || opplan.enddate) | date: "yyyy-MM-dd HH:mm:ss" }}</span>
         <input class="form-control" data-ng-if="editable && opplan.hasOwnProperty('selected') && !opplan.hasOwnProperty('operationplan__enddate')" type="datetime-local" data-ng-focus="oldValue=opplan.enddate"
           data-ng-model="opplan.enddate" data-ng-change="changeCard(opplan, 'enddate', oldValue, opplan.enddate)">
-        <input class="form-control" data-ng-if="editable && opplan.event.hasOwnProperty('selected') && !opplan.event.hasOwnProperty('operationplan__enddate')" type="datetime-local" data-ng-focus="oldValue=opplan.event.enddate"
-          data-ng-model="opplan.event.enddate" data-ng-change="changeCard(opplan.event, 'enddate', oldValue, opplan.event.enddate)">
         <input class="form-control" data-ng-if="editable && opplan.hasOwnProperty('selected') && opplan.hasOwnProperty('operationplan__enddate')" type="datetime-local" data-ng-focus="oldValue=opplan.operationplan__enddate"
           data-ng-model="opplan.operationplan__enddate" data-ng-change="changeCard(opplan, 'operationplan__enddate', oldValue, opplan.operationplan__enddate)">
-        <input class="form-control" data-ng-if="editable && opplan.event.hasOwnProperty('selected') && opplan.event.hasOwnProperty('operationplan__enddate')" type="datetime-local" data-ng-focus="oldValue=opplan.event.operationplan__enddate"
-          data-ng-model="opplan.event.operationplan__enddate" data-ng-change="changeCard(opplan.event, 'operationplan__enddate', oldValue, opplan.event.operationplan__enddate)">
       </p>
-      <p data-ng-if="(opplan.inventory_status || opplan.event.inventory_status) !== ''">
-        {{ "inventory status"|translate }}&nbsp;{{opplan.inventory_status || opplan.event.inventory_status}}
+      <p data-ng-if="opplan.inventory_status !== ''">
+        {{ "inventory status"|translate }}&nbsp;{{opplan.inventory_status}}
       </p>
     </div>
-    <div data-no-drag data-ng-if="(opplan.type || opplan.event.type) === 'STCK'">
+    <div data-no-drag data-ng-if="opplan.type === 'STCK'">
       <p>{{ 'Stock' | translate }}
-        <strong>{{opplan.item__name || opplan.event.item__name}} @ {{opplan.location || opplan.event.location}}</strong>&nbsp;
+        <strong>{{opplan.item__name}} @ {{opplan.location}}</strong>&nbsp;
         <a data-ng-click="$event.stopPropagation()"
-          href="{{url_prefix}}/detail/input/buffer/{{ admin_escape((opplan.item__name || opplan.event.item__name) + ' @ ' + (opplan.location || opplan.event.location)) }}/">
+          href="{{url_prefix}}/detail/input/buffer/{{ admin_escape(opplan.item__name + ' @ ' + opplan.location ) }}/">
           <i class='fa fa-caret-right'></i>
         </a>
       </p>
-      <p>{{ grid.formatNumber(opplan.operationplan__quantity || opplan.quantity || opplan.event.operationplan__quantity || opplan.event.quantity) }}</p>
+      <p>{{ grid.formatNumber(opplan.operationplan__quantity || opplan.quantity) }}</p>
     </div>
     <div data-no-drag data-ng-if="opplan.type === 'DLVR'">
       <p>{{ 'Delivery' | translate }}</p>
-      <p><strong>{{opplan.demands[0][1] || opplan.event.demands[0][1]}}</strong></p>
-      <p data-ng-if="opplan.item__name || opplan.event.item__name">
-        {{opplan.item || opplan.event.item__name}}&nbsp;
+      <p><strong>{{opplan.demands[0][1]}}</strong></p>
+      <p data-ng-if="opplan.item__name">
+        {{opplan.item}}&nbsp;
         <a data-ng-click="$event.stopPropagation()"
-          href="{{url_prefix}}/detail/input/item/{{ admin_escape(opplan.item__name || opplan.event.item__name) }}/">
+          href="{{url_prefix}}/detail/input/item/{{ admin_escape(opplan.item__name) }}/">
           <i class='fa fa-caret-right'></i>
         </a>
       </p>
-      <p>{{opplan.location || opplan.event.location}}&nbsp;
+      <p>{{opplan.location}}&nbsp;
         <a data-ng-click="$event.stopPropagation()"
-          href="{{url_prefix}}/detail/input/location/{{ admin_escape(opplan.location || opplan.event.location) }}/">
+          href="{{url_prefix}}/detail/input/location/{{ admin_escape(opplan.location) }}/">
           <i class='fa fa-caret-right'></i>
         </a>
       </p>
-      <p>{{ (opplan.operationplan__enddate || opplan.enddate || opplan.event.operationplan__enddate || opplan.event.enddate) | date: "yyyy-MM-dd" }}</p>
-      <p>{{ grid.formatNumber(opplan.operationplan__quantity || opplan.quantity || opplan.event.operationplan__quantity || opplan.event.quantity) }}</p>
+      <p>{{ (opplan.operationplan__enddate || opplan.enddate) | date: "yyyy-MM-dd" }}</p>
+      <p>{{ grid.formatNumber(opplan.operationplan__quantity || opplan.quantity) }}</p>
     </div>
 </div>
 {% endverbatim %}    

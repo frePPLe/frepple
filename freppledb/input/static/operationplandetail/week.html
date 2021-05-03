@@ -16,7 +16,7 @@
     <div id="scrollweekview" class="scrollable" data-ng-style="{'height': getHeight(60)}">
         <table class="table table-bordered table-fixed">
             <tbody>
-              <tr data-ng-repeat="cat in categories track by cat">
+              <tr data-ng-repeat="cat in categories track by cat" data-row="{{cat}}">
               <td data-ng-if="grouping">{{cat}}</td>
               <td data-ng-repeat="dt in dates track by dt.date" class="datecell" data-date="{{dt.date| date: 'yyyy-MM-dd'}}">
                   <div data-ng-repeat="opplan in dt.events" class="card-month" data-ng-click="selectCard(opplan)"        

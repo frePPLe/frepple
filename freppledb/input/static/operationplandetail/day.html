@@ -2,9 +2,9 @@
     <div id="scrolldayview" class="scrollable" data-ng-style="{'height': getHeight(25)}">
         <table class="table table-bordered table-fixed" >
             <tbody>
-              <tr data-ng-repeat="cat in categories track by cat">
+              <tr data-ng-repeat="cat in categories track by cat" data-row="{{cat}}">
                 <td data-ng-if="grouping">{{cat}}</td>
-                <td>
+                <td class="datecell" data-date="{{dt.date| date: 'yyyy-MM-dd'}}">
                     <div>                   
                         <div data-ng-repeat="opplan in events" class="card-month" 
                              data-ng-click="selectCard(opplan)"

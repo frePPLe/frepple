@@ -366,12 +366,26 @@ angular.module('calendar', [])
                 };
 
                 function HandlerDrop(event) {
+                  // Check the start and end date
                   var dragstart = new Date(event.originalEvent.dataTransfer.getData("dragstart"));
                   var dragend = new Date($(event.target).closest(".datecell").attr("data-date"));
                   var dragreference = event.originalEvent.dataTransfer.getData("dragreference");
+                  if (dragstart.getTime() === dragend.getTime()) {
+                    event.preventDefault();
+                    return;
+                  }
+                  
+                  // Only dragging inside the same row is allowed (for now...)
+                  var row_dragstart = event.originalEvent.dataTransfer.getData("dragrow");
+                  var row_dragend = $(event.target).closest("[data-row]").attr("data-row");
+                  if (row_dragstart != row_dragend){
+                    event.preventDefault();
+                    return;
+                  }
+                  
                   scope.$apply(function() {
                      for (var dragcard of scope.$parent.calendarevents) {
-                       if (dragcard["id"] || dragcard["reference"] == dragreference) {
+                       if ((dragcard["id"] || dragcard["reference"]) == dragreference) {
                          // Identified the card that is being dropped
                          if (scope.isStart(dragcard, dragstart)) {
                            // Dragging the start date card
@@ -447,6 +461,10 @@ angular.module('calendar', [])
                   event.originalEvent.dataTransfer.setData(
                       "dragreference",
                       $(event.target).closest(".card").attr("data-reference")
+                      );
+                  event.originalEvent.dataTransfer.setData(
+                      "dragrow",
+                      $(event.target).closest("[data-row]").attr("data-row")
                       );
                   event.stopPropagation();
                 };
@@ -1042,7 +1060,7 @@ angular.module('calendar', [])
                 };
 
                 function processCard(card, incremental) {
-                  console.log("dropped card day", card);
+                  // No drag and drop in the daily calendar view
                 };
 
                 scope.$on('changeMode', function (event, mode) {
@@ -1058,21 +1076,8 @@ angular.module('calendar', [])
                         len = eventSource ? eventSource.length : 0,
                         startdate = ctrl.range.startdate,
                         enddate = ctrl.range.enddate,
-                        rows = scope.rows,
-                        oneHour = 3600000,
-                        eps = 0.016,
-                        eventSet,
-                        hour,
                         keys = [];
 
-                    if (rows.hasEvent) {
-                        for (hour = 0; hour < 24; hour += 1) {
-                            if (rows[hour].events) {
-                                rows[hour].events = null;
-                            }
-                        }
-                        rows.hasEvent = false;
-                    }
                     scope.events = null;
 
                     for (var i = 0; i < len; i += 1) {
@@ -1086,58 +1091,13 @@ angular.module('calendar', [])
                         if (!eventEndTime) eventEndTime = eventStartTime;
                         if (!eventStartTime) eventStartTime = eventEndTime;
 
-
-                        var timeDiff;
-                        var timeDifferenceStart;
-                        if (eventStartTime <= startdate) {
-                            timeDifferenceStart = 0;
-                        } else {
-                            timeDiff = eventStartTime - startdate - (eventStartTime.getTimezoneOffset() - startdate.getTimezoneOffset()) * 60000;
-                            timeDifferenceStart = timeDiff / oneHour;
-                        }
-
-                        var timeDifferenceEnd;
-                        if (eventEndTime >= enddate) {
-                            timeDiff = enddate - startdate - (enddate.getTimezoneOffset() - startdate.getTimezoneOffset()) * 60000;
-                            timeDifferenceEnd = timeDiff / oneHour;
-                        } else {
-                            timeDiff = eventEndTime - startdate - (eventEndTime.getTimezoneOffset() - startdate.getTimezoneOffset()) * 60000;
-                            timeDifferenceEnd = timeDiff / oneHour;
-                        }
-
-                        var startIndex = Math.floor(timeDifferenceStart);
-                        var endIndex = Math.ceil(timeDifferenceEnd - eps);
-                        var startOffset = 0;
-                        var endOffset = 0;
-                        if (ctrl.hourParts !== 1) {
-                            startOffset = Math.floor((timeDifferenceStart - startIndex) * ctrl.hourParts);
-                            endOffset = Math.floor((endIndex - timeDifferenceEnd) * ctrl.hourParts);
-                        }
-
-                        var displayEvent = {
-                            event: event,
-                            startIndex: startIndex,
-                            endIndex: endIndex,
-                            startOffset: startOffset,
-                            endOffset: endOffset
-                        };
-
-                        eventSet = rows[startIndex].events;
-                        if (eventSet) {
-                            eventSet.push(displayEvent);
-                        } else {
-                            eventSet = [];
-                            eventSet.push(displayEvent);
-                            rows[startIndex].events = eventSet;
-                        }
-
-                        if (scope.grouping && !keys.includes(event[scope.grouping]))
-                              keys.push(event[scope.grouping]);
-
                         if (scope.events)
                           scope.events.push(event);
                         else
                           scope.events = [event];
+
+                        if (scope.grouping && !keys.includes(event[scope.grouping]))
+                              keys.push(event[scope.grouping]);
                     }
                    
                     if (scope.grouping) {

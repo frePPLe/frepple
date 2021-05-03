@@ -22,7 +22,7 @@
   <div id="scrollmonthview" class="scrollable" data-ng-style="{'height': getHeight(45)}">
     <table class="table table-bordered table-fixed monthview-datetable monthview-datetable">
       <tbody data-ng-repeat="cat in categories track by cat">
-        <tr ng-repeat="row in rows track by $index">
+        <tr ng-repeat="row in rows track by $index" data-row="{{cat}}">
           <td data-ng-if="grouping && $index == 0" rowspan="{{ rows.length }}">{{cat}}</td>
           <td ng-show="showWeeks" class="calendar-week-column text-center">
             <small>{{ weekNumbers[$index] }}</small>

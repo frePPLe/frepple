@@ -1911,6 +1911,7 @@ class OperationPlanRelatedMixin:
                     "operationplan__enddate",
                     "operationplan__quantity",
                     "operationplan__status",
+                    "operationplan__reference",
                 )
             ],
             formfield_callback=lambda f: (

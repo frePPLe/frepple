@@ -497,6 +497,8 @@ function operationplanCtrl($scope, $http, OperationPlan, PreferenceSvc) {
       angular.forEach($scope.calendarevents, function(card) {
           var dirtycard = {id: card.id || card.reference};
           var dirtyfields = false;
+          if (card.hasOwnProperty("operationplan__reference"))
+             dirtycard["operationplan__reference"] = card.operationplan__reference;
           for (var field in card) {
             if (card.hasOwnProperty(field + "Original")) {
               dirtyfields = true;
@@ -515,6 +517,8 @@ function operationplanCtrl($scope, $http, OperationPlan, PreferenceSvc) {
         angular.forEach(value.rows, function(card) {
           var dirtycard = {id: card.id || card.reference};
           var dirtyfields = false;
+          if (card.hasOwnProperty("operationplan__reference"))
+             dirtycard["operationplan__reference"] = card.operationplan__reference;
         	for (var field in card) {
             if (card.hasOwnProperty(field + "Original")) {
               dirtyfields = true;

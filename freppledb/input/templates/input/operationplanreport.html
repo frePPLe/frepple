@@ -109,8 +109,14 @@
       initialfilter = thefilter;
       return angular.element('#controller').scope().getDirtyCards();
     }
-  	else
-  	  return $("#grid").getChangedCells('dirty');
+  	else {
+      var dirty = $("#grid").getChangedCells('dirty');
+      for (var c of dirty) {
+        var ref = $("#grid").jqGrid('getCell', c.id, "operationplan__reference");
+        if (ref) c.operationplan__reference = ref;
+      }
+      return dirty;
+    }
   }
   
   var language = "{{LANGUAGE_CODE}}";

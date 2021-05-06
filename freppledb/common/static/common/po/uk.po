@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2020-12-12 16:36+0100\n"
+"PO-Revision-Date: 2021-05-06 17:04+0200\n"
 "Last-Translator: \n"
 "Language-Team: Michael Nasonov <info@ivc-inform.ru>\n"
 "Language: uk\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
 "%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
-"X-Generator: Poedit 2.4.2\n"
+"X-Generator: Poedit 2.4.3\n"
 
 #: freppledb/forecast/static/forecast/forecast.html:383
 msgid "Automatic"
@@ -635,10 +635,6 @@ msgstr "збільшувати"
 #: freppledb/planningboard/static/planningboard/planningboard.html:56
 msgid "zoom out"
 msgstr "зменшення"
-
-#: freppledb/planningboard/static/planningboard/planningboard.html:196
-msgid "{{ aggregatedoperationplans.count }} selected"
-msgstr ""
 
 #: freppledb/forecast/static/forecast/forecast.html:316
 msgid "{{m.label}}"

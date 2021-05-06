@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2020-12-12 16:31+0100\n"
+"PO-Revision-Date: 2021-05-06 16:35+0200\n"
 "Last-Translator: Joao Ranita <jranita@frepple.com>\n"
 "Language-Team: frepple\n"
 "Language: ja\n"
@@ -22,7 +22,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Poedit 2.4.2\n"
+"X-Generator: Poedit 2.4.3\n"
 
 #: freppledb/planningboard/static/planningboard/src/ganttchart.js:518
 #: freppledb/planningboard/static/planningboard/src/ganttchart.js:551
@@ -711,10 +711,6 @@ msgstr "注文の合計"
 #: freppledb/planningboard/static/planningboard/planningboard.html:128
 msgid "unsaved changes"
 msgstr "ページに未保存の変更があります"
-
-#: freppledb/quoting/static/quoting/quoting.html:193
-msgid "why short or late?"
-msgstr "不足または遅延の理由"
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:53
 msgid "zoom in"

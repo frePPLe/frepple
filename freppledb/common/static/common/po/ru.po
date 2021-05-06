@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2020-12-12 16:12+0100\n"
+"PO-Revision-Date: 2021-05-06 17:04+0200\n"
 "Last-Translator: \n"
 "Language-Team: Michael Nasonov <info@ivc-inform.ru>\n"
 "Language: ru\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
 "%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
-"X-Generator: Poedit 2.4.2\n"
+"X-Generator: Poedit 2.4.3\n"
 
 #: freppledb/planningboard/static/planningboard/src/ganttchart.js:518
 #: freppledb/planningboard/static/planningboard/src/ganttchart.js:551

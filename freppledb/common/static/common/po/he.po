@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: 6.0.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2020-12-12 15:35+0100\n"
+"PO-Revision-Date: 2021-05-06 16:53+0200\n"
 "Last-Translator: Joao Ranita <jranita@frepple.com>\n"
 "Language-Team: frepple\n"
 "Language: he\n"
@@ -22,7 +22,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 2.4.2\n"
+"X-Generator: Poedit 2.4.3\n"
 
 #: freppledb/planningboard/static/planningboard/src/ganttchart.js:518
 #: freppledb/planningboard/static/planningboard/src/ganttchart.js:551
@@ -79,17 +79,9 @@ msgstr ""
 "יש למלא את קטגוריות המשנה של הפריט בטבלת הפריטים.\n"
 "<br><br>"
 
-#: freppledb/forecast/static/forecast/forecast.html:304
-msgid "Apply"
-msgstr ""
-
 #: freppledb/forecast/static/forecast/forecast.html:383
 msgid "Automatic"
 msgstr "אוטומטי"
-
-#: freppledb/planningboard/static/planningboard/planningboard.html:47
-msgid "Automatically resolve infeasiblities in the plan"
-msgstr ""
 
 #: freppledb/forecast/static/forecast/src/forecast.js:892
 msgid "Available Cross"
@@ -317,10 +309,6 @@ msgid ""
 "Select forecast method, only possible at single item/location/customer level"
 msgstr "בחר שיטת תחזית, אפשרי רק ברמת פריט/מיקום/לקוח"
 
-#: freppledb/forecast/static/forecast/forecast.html:49
-msgid "Select panel measure"
-msgstr ""
-
 #: freppledb/forecast/static/forecast/forecast.html:5
 msgid "Select panel sequence"
 msgstr "בחר רצף לוח"
@@ -412,10 +400,6 @@ msgstr "מצטבר"
 msgid "approved"
 msgstr "אושר"
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:235
-msgid "approved: {{aggregatedoperationplans.status.approved }}"
-msgstr ""
-
 #: freppledb/forecast/static/forecast/forecast.html:164
 #: freppledb/planningboard/static/planningboard/planningboard.html:158
 msgid "attributes"
@@ -442,10 +426,6 @@ msgstr "קטגורייה"
 msgid "closed"
 msgstr "סגור"
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:244
-msgid "closed: {{aggregatedoperationplans.status.closed }}"
-msgstr ""
-
 #: freppledb/planningboard/static/planningboard/planningboard.html:11
 msgid "color by"
 msgstr "צבע לפי"
@@ -457,17 +437,6 @@ msgstr "צבעים"
 #: freppledb/forecast/static/forecast/forecast.html:170
 msgid "comments"
 msgstr "תגובות"
-
-#: freppledb/input/static/operationplandetail/operationplanpanel.html:124
-#: freppledb/planningboard/static/planningboard/planningboard.html:443
-#: freppledb/planningboard/static/planningboard/planningboard.html:567
-#: freppledb/planningboard/static/planningboard/planningboard.html:692
-msgid "completed"
-msgstr ""
-
-#: freppledb/planningboard/static/planningboard/planningboard.html:241
-msgid "completed: {{aggregatedoperationplans.status.completed }}"
-msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:68
 msgid "configure time buckets"
@@ -483,10 +452,6 @@ msgstr "bevestig"
 #: freppledb/planningboard/static/planningboard/planningboard.html:688
 msgid "confirmed"
 msgstr "אושר"
-
-#: freppledb/planningboard/static/planningboard/planningboard.html:238
-msgid "confirmed: {{aggregatedoperationplans.status.confirmed }}"
-msgstr ""
 
 #: freppledb/input/static/operationplandetail/src/supplyinformationDrv.js:40
 msgid "cost"
@@ -605,10 +570,6 @@ msgstr "זמן התחלה"
 msgid "due date"
 msgstr "תאריך יעד"
 
-#: freppledb/forecast/static/forecast/forecast.html:298
-msgid "edit"
-msgstr ""
-
 #: freppledb/input/static/operationplandetail/src/supplyinformationDrv.js:48
 msgid "effective end"
 msgstr "סיום יעיל"
@@ -642,14 +603,6 @@ msgstr "בהישג יד צפוי"
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:126
 msgid "export"
 msgstr "ייצא"
-
-#: freppledb/planningboard/static/planningboard/planningboard.html:65
-msgid "export as Excel file"
-msgstr ""
-
-#: freppledb/forecast/static/forecast/forecast.html:65
-msgid "favorites"
-msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:15
 msgid "feasibility"
@@ -779,10 +732,6 @@ msgstr "הודעות"
 msgid "minimum shipment"
 msgstr "משלוח מינימלי"
 
-#: freppledb/input/static/operationplandetail/operationplanpanel.html:19
-msgid "multiple selected"
-msgstr ""
-
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:26
 #: freppledb/input/static/operationplandetail/src/bufferspanelDrv.js:31
 #: freppledb/input/static/operationplandetail/src/demandpeggingpanelDrv.js:31
@@ -847,10 +796,6 @@ msgstr "geen problemen"
 #: freppledb/input/static/operationplandetail/src/resourcespanelDrv.js:40
 msgid "no resources"
 msgstr "geen resource"
-
-#: freppledb/input/static/operationplandetail/operationplanpanel.html:18
-msgid "no selection"
-msgstr ""
 
 #: freppledb/input/static/operationplandetail/src/supplyinformationDrv.js:55
 msgid "no supply information"
@@ -918,10 +863,6 @@ msgstr "איחור בהזמנות מכירה"
 msgid "parameters"
 msgstr "פרמטרים"
 
-#: freppledb/forecast/static/forecast/src/displayForecastGraph.js:219
-msgid "past forecast"
-msgstr ""
-
 #: freppledb/input/static/operationplandetail/src/supplyinformationDrv.js:32
 #: freppledb/planningboard/static/planningboard/planningboard.html:24
 #: freppledb/planningboard/static/planningboard/planningboard.html:883
@@ -941,10 +882,6 @@ msgstr "problemen"
 #: freppledb/planningboard/static/planningboard/planningboard.html:678
 msgid "proposed"
 msgstr "מוצע"
-
-#: freppledb/planningboard/static/planningboard/planningboard.html:232
-msgid "proposed: {{aggregatedoperationplans.status.proposed }}"
-msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:192
 msgid "purchase order"
@@ -998,10 +935,6 @@ msgstr "תאריך קבלה"
 msgid "reference"
 msgstr "הפנייה"
 
-#: freppledb/planningboard/static/planningboard/planningboard.html:62
-msgid "remove all rows"
-msgstr ""
-
 #: freppledb/planningboard/static/planningboard/planningboard.html:59
 msgid "remove row"
 msgstr "הסר שורה"
@@ -1023,10 +956,6 @@ msgstr "משאבים"
 #: freppledb/input/static/operationplandetail/src/networkstatusDrv.js:46
 msgid "sales orders"
 msgstr "הזמנות מכירה"
-
-#: freppledb/forecast/static/forecast/forecast.html:74
-msgid "save"
-msgstr ""
 
 #: freppledb/planningboard/static/planningboard/planningboard.html:1028
 msgid "setup"
@@ -1121,10 +1050,6 @@ msgstr "הגדל"
 #: freppledb/planningboard/static/planningboard/planningboard.html:56
 msgid "zoom out"
 msgstr "הקטן"
-
-#: freppledb/planningboard/static/planningboard/planningboard.html:196
-msgid "{{ aggregatedoperationplans.count }} selected"
-msgstr ""
 
 #: freppledb/forecast/static/forecast/forecast.html:316
 msgid "{{m.label}}"

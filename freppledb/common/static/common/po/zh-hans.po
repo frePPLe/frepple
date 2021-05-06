@@ -20,7 +20,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2020-12-12 16:22+0100\n"
+"PO-Revision-Date: 2021-05-06 17:05+0200\n"
 "Last-Translator: Joao Ranita <jranita@frepple.com>\n"
 "Language-Team: frepple\n"
 "Language: zh_CN\n"
@@ -28,7 +28,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Poedit 2.4.2\n"
+"X-Generator: Poedit 2.4.3\n"
 
 #: freppledb/planningboard/static/planningboard/src/ganttchart.js:518
 #: freppledb/planningboard/static/planningboard/src/ganttchart.js:551

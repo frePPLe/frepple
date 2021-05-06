@@ -13,8 +13,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 6.0.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-12-12 15:51+0100\n"
-"PO-Revision-Date: 2020-12-12 15:35+0100\n"
+"POT-Creation-Date: 2021-05-06 16:45+0200\n"
+"PO-Revision-Date: 2021-05-06 16:53+0200\n"
 "Last-Translator: Joao Ranita <jranita@frepple.com>\n"
 "Language-Team: frepple\n"
 "Language: he\n"
@@ -22,402 +22,341 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 2.4.2\n"
+"X-Generator: Poedit 2.4.3\n"
 
-#: common/static/js/frepple.js:199 common/static/js/frepple.js:298
-#: common/static/js/frepple.min.js:11
-msgid "There are unsaved changes on this page."
-msgstr "יש שינויים שאינם נשמרו."
-
-#: common/static/js/frepple.js:267 common/static/js/frepple.js:891
-#: common/static/js/frepple.js:1103 common/static/js/frepple.js:1568
-#: common/static/js/frepple.js:1617 common/static/js/frepple.js:2210
-#: common/static/js/frepple.js:2398 common/static/js/frepple.js:2508
-#: common/static/js/frepple.js:2925 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:209 common/static/js/frepple.js:1557
+#: common/static/js/frepple.js:1606 common/static/js/frepple.js:2199
+#: common/static/js/frepple.js:2387 common/static/js/frepple.min.js:11
 msgid "Error"
 msgstr "שגיאה"
 
-#: common/static/js/frepple.js:273 common/static/js/frepple.js:814
-#: common/static/js/frepple.js:2189 common/static/js/frepple.js:2354
-#: common/static/js/frepple.js:2991 common/static/js/frepple.js:3115
-#: common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:215 common/static/js/frepple.js:828
+#: common/static/js/frepple.js:2178 common/static/js/frepple.js:2343
+#: common/static/js/frepple.js:2951 common/static/js/frepple.js:3075
+#: common/static/js/frepple.js:3880 common/static/js/frepple.min.js:11
 #: forecast/static/forecast/src/forecast.js:928
 #: forecast/static/js/frepple-forecast.min.js:11
 msgid "Close"
 msgstr "סגור"
 
-#: common/static/js/frepple.js:295 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:229 common/static/js/frepple.js:311
+#: common/static/js/frepple.min.js:11
+#: input/static/js/frepple-operationplandetail.min.js:11
+#: input/static/operationplandetail/src/operationplandetailCtrl.js:282
+msgid "There are unsaved changes on this page."
+msgstr "יש שינויים שאינם נשמרו."
+
+#: common/static/js/frepple.js:308 common/static/js/frepple.min.js:11
+#: input/static/js/frepple-operationplandetail.min.js:11
+#: input/static/operationplandetail/src/operationplandetailCtrl.js:279
 msgid "Save or cancel your changes first"
 msgstr "תחילה שמור או בטל את השינויים"
 
-#: common/static/js/frepple.js:301 common/static/js/frepple.js:2612
+#: common/static/js/frepple.js:314 common/static/js/frepple.js:2587
 #: common/static/js/frepple.min.js:11
+#: input/static/js/frepple-operationplandetail.min.js:11
+#: input/static/operationplandetail/src/operationplandetailCtrl.js:285
 msgid "Save"
 msgstr "שמור"
 
-#: common/static/js/frepple.js:302 common/static/js/frepple.js:826
-#: common/static/js/frepple.js:1229 common/static/js/frepple.js:1281
-#: common/static/js/frepple.js:1314 common/static/js/frepple.js:1347
-#: common/static/js/frepple.js:1547 common/static/js/frepple.js:1596
-#: common/static/js/frepple.js:2173 common/static/js/frepple.js:2259
-#: common/static/js/frepple.js:2611 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:315 common/static/js/frepple.js:840
+#: common/static/js/frepple.js:1216 common/static/js/frepple.js:1268
+#: common/static/js/frepple.js:1301 common/static/js/frepple.js:1334
+#: common/static/js/frepple.js:1536 common/static/js/frepple.js:1585
+#: common/static/js/frepple.js:2162 common/static/js/frepple.js:2248
+#: common/static/js/frepple.js:2586 common/static/js/frepple.min.js:11
 #: forecast/static/forecast/src/forecast.js:955
 #: forecast/static/js/frepple-forecast.min.js:11
+#: input/static/js/frepple-operationplandetail.min.js:11
+#: input/static/operationplandetail/src/operationplandetailCtrl.js:286
 msgid "Cancel"
 msgstr "בטל"
 
-#: common/static/js/frepple.js:515 common/static/js/frepple.min.js:11
-msgid "select"
-msgstr ""
-
-#: common/static/js/frepple.js:550 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:563 common/static/js/frepple.min.js:11
 #: input/static/js/frepple-operationplandetail.min.js:11
-#: input/static/operationplandetail/src/operationplandetailCtrl.js:288
+#: input/static/operationplandetail/src/operationplandetailCtrl.js:351
 msgid "days early"
 msgstr "הקדמה בימים"
 
-#: common/static/js/frepple.js:552 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:565 common/static/js/frepple.min.js:11
 #: input/static/js/frepple-operationplandetail.min.js:11
-#: input/static/operationplandetail/src/operationplandetailCtrl.js:290
+#: input/static/operationplandetail/src/operationplandetailCtrl.js:353
 msgid "on time"
 msgstr "בזמן"
 
-#: common/static/js/frepple.js:555 common/static/js/frepple.js:557
+#: common/static/js/frepple.js:568 common/static/js/frepple.js:570
 #: common/static/js/frepple.min.js:11
 #: input/static/js/frepple-operationplandetail.min.js:11
-#: input/static/operationplandetail/src/operationplandetailCtrl.js:293
-#: input/static/operationplandetail/src/operationplandetailCtrl.js:295
+#: input/static/operationplandetail/src/operationplandetailCtrl.js:356
+#: input/static/operationplandetail/src/operationplandetailCtrl.js:358
 msgid "days late"
 msgstr "איחור בימים"
 
-#: common/static/js/frepple.js:681 common/static/js/frepple.min.js:11
-msgid "Select action"
-msgstr ""
-
-#: common/static/js/frepple.js:716 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:730 common/static/js/frepple.min.js:11
 msgid "Selected options"
 msgstr "אפשרויות שנבחרו"
 
-#: common/static/js/frepple.js:723 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:737 common/static/js/frepple.min.js:11
 msgid "Available options"
 msgstr "אפשרויות זמינות"
 
-#: common/static/js/frepple.js:766 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:780 common/static/js/frepple.min.js:11
 #: forecast/static/forecast/src/forecast.js:937
 #: forecast/static/js/frepple-forecast.min.js:11
 msgid "Selected Cross"
 msgstr "הצטלבות נבחרת"
 
-#: common/static/js/frepple.js:776 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:790 common/static/js/frepple.min.js:11
 #: forecast/static/forecast/src/forecast.js:945
 #: forecast/static/js/frepple-forecast.min.js:11
 msgid "Available Cross"
 msgstr "הצטלבות זמינה"
 
-#: common/static/js/frepple.js:798 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:812 common/static/js/frepple.min.js:11
 msgid "Frozen columns"
 msgstr "עמודות מקובעות"
 
-#: common/static/js/frepple.js:817 common/static/js/frepple.js:2708
+#: common/static/js/frepple.js:831 common/static/js/frepple.js:2683
 #: common/static/js/frepple.min.js:11
 #: forecast/static/forecast/src/forecast.js:931
 #: forecast/static/js/frepple-forecast.min.js:11
 msgid "Customize"
 msgstr "התאמה אישית"
 
-#: common/static/js/frepple.js:825 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:839 common/static/js/frepple.min.js:11
 #: forecast/static/forecast/src/forecast.js:954
 #: forecast/static/js/frepple-forecast.min.js:11
 msgid "OK"
 msgstr "OK"
 
-#: common/static/js/frepple.js:827 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:841 common/static/js/frepple.min.js:11
 #: forecast/static/forecast/src/forecast.js:956
 #: forecast/static/js/frepple-forecast.min.js:11
 msgid "Reset"
 msgstr "אפס"
 
-#: common/static/js/frepple.js:1189 common/static/js/frepple.js:1239
-#: common/static/js/frepple.js:1291 common/static/js/frepple.js:1323
+#: common/static/js/frepple.js:1176 common/static/js/frepple.js:1226
+#: common/static/js/frepple.js:1278 common/static/js/frepple.js:1310
 #: common/static/js/frepple.min.js:11
 msgid "Export CSV or Excel file"
 msgstr "CSV או Excel ייצא קובץ"
 
-#: common/static/js/frepple.js:1195 common/static/js/frepple.js:1245
-#: common/static/js/frepple.js:1294 common/static/js/frepple.js:1326
+#: common/static/js/frepple.js:1182 common/static/js/frepple.js:1232
+#: common/static/js/frepple.js:1281 common/static/js/frepple.js:1313
 #: common/static/js/frepple.min.js:11
 msgid "Export format"
 msgstr "ייצוא פורמט"
 
-#: common/static/js/frepple.js:1196 common/static/js/frepple.js:1246
-#: common/static/js/frepple.min.js:11
-msgid "Scenarios to export"
-msgstr ""
-
-#: common/static/js/frepple.js:1203 common/static/js/frepple.js:1254
-#: common/static/js/frepple.js:1296 common/static/js/frepple.js:1329
+#: common/static/js/frepple.js:1190 common/static/js/frepple.js:1241
+#: common/static/js/frepple.js:1283 common/static/js/frepple.js:1316
 #: common/static/js/frepple.min.js:11
 msgid "Spreadsheet list"
 msgstr "רשימת גיליונות אלקטרוניים"
 
-#: common/static/js/frepple.js:1204 common/static/js/frepple.js:1256
-#: common/static/js/frepple.js:1297 common/static/js/frepple.js:1331
+#: common/static/js/frepple.js:1191 common/static/js/frepple.js:1243
+#: common/static/js/frepple.js:1284 common/static/js/frepple.js:1318
 #: common/static/js/frepple.min.js:11
 msgid "CSV list"
 msgstr "CSV רשימת"
 
-#: common/static/js/frepple.js:1206 common/static/js/frepple.js:1258
-#: common/static/js/frepple.js:1300 common/static/js/frepple.js:1334
-#: common/static/js/frepple.min.js:11
-msgid "Data source URL"
-msgstr ""
-
-#: common/static/js/frepple.js:1208 common/static/js/frepple.js:1260
-#: common/static/js/frepple.js:1302 common/static/js/frepple.js:1336
-#: common/static/js/frepple.min.js:11
-msgid "Using this link external applications can pull data from frePPLe"
-msgstr ""
-
 #: common/static/js/frepple.js:1215 common/static/js/frepple.js:1267
-#: common/static/js/frepple.js:1309 common/static/js/frepple.js:1343
-#: common/static/js/frepple.min.js:11
-msgid "Copy to clipboard"
-msgstr ""
-
-#: common/static/js/frepple.js:1228 common/static/js/frepple.js:1280
-#: common/static/js/frepple.js:1313 common/static/js/frepple.js:1346
+#: common/static/js/frepple.js:1300 common/static/js/frepple.js:1333
 #: common/static/js/frepple.min.js:11
 msgid "Export"
 msgstr "ייצא"
 
-#: common/static/js/frepple.js:1253 common/static/js/frepple.js:1328
+#: common/static/js/frepple.js:1240 common/static/js/frepple.js:1315
 #: common/static/js/frepple.min.js:11
 msgid "Spreadsheet table"
 msgstr "טבלת גיליונות אלקטרוניים"
 
-#: common/static/js/frepple.js:1255 common/static/js/frepple.js:1330
+#: common/static/js/frepple.js:1242 common/static/js/frepple.js:1317
 #: common/static/js/frepple.min.js:11
 msgid "CSV table"
 msgstr "CSV טבלת"
 
-#: common/static/js/frepple.js:1540 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:1529 common/static/js/frepple.min.js:11
 msgid "Delete data"
 msgstr "מחק נתונים"
 
-#: common/static/js/frepple.js:1543 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:1532 common/static/js/frepple.min.js:11
 #, javascript-format
 msgid "You are about to delete %s objects AND ALL RELATED RECORDS!"
 msgstr "אובייקטים ואת כל ההקלטות הקשורות % s אתה עומד למחוק!"
 
-#: common/static/js/frepple.js:1546 common/static/js/frepple.js:1595
-#: common/static/js/frepple.js:2172 common/static/js/frepple.js:2258
+#: common/static/js/frepple.js:1535 common/static/js/frepple.js:1584
+#: common/static/js/frepple.js:2161 common/static/js/frepple.js:2247
 #: common/static/js/frepple.min.js:11
 msgid "Confirm"
 msgstr "אשר"
 
-#: common/static/js/frepple.js:1589 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:1578 common/static/js/frepple.min.js:11
 msgid "Copy data"
 msgstr "העתק נתונים"
 
-#: common/static/js/frepple.js:1592 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:1581 common/static/js/frepple.min.js:11
 #, javascript-format
 msgid "You are about to duplicate %s objects"
 msgstr "אובייקטים %s אתה עומד לשכפל"
 
-#: common/static/js/frepple.js:1742 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:1731 common/static/js/frepple.min.js:11
 msgid "Search"
 msgstr "חיפוש"
 
-#: common/static/js/frepple.js:1806 common/static/js/frepple.min.js:11
-msgid "within"
-msgstr ""
-
-#: common/static/js/frepple.js:1808 common/static/js/frepple.min.js:11
-msgid "is child of"
-msgstr ""
-
-#: common/static/js/frepple.js:1840 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:1829 common/static/js/frepple.min.js:11
 msgid "days"
 msgstr "ימים"
 
-#: common/static/js/frepple.js:1871 common/static/js/frepple.js:1882
+#: common/static/js/frepple.js:1860 common/static/js/frepple.js:1871
 #: common/static/js/frepple.min.js:11
 msgid "or"
 msgstr "או"
 
-#: common/static/js/frepple.js:1873 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:1862 common/static/js/frepple.min.js:11
 msgid "and"
 msgstr "ו"
 
-#: common/static/js/frepple.js:1994 common/static/js/frepple.min.js:11
-msgid "Click ok to confirm deleting the favorite"
-msgstr ""
-
-#: common/static/js/frepple.js:2166 common/static/js/frepple.js:2252
+#: common/static/js/frepple.js:2155 common/static/js/frepple.js:2241
 #: common/static/js/frepple.min.js:11
 msgid "export"
 msgstr "ייצא"
 
-#: common/static/js/frepple.js:2169 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2158 common/static/js/frepple.min.js:11
 msgid "export selected records"
 msgstr "ייצוא רשומות שנבחרו"
 
-#: common/static/js/frepple.js:2179 common/static/js/frepple.js:2346
+#: common/static/js/frepple.js:2168 common/static/js/frepple.js:2335
 #: common/static/js/frepple.min.js:11
 msgid "connecting"
 msgstr "מתחבר"
 
-#: common/static/js/frepple.js:2188 common/static/js/frepple.js:2353
+#: common/static/js/frepple.js:2177 common/static/js/frepple.js:2342
 #: common/static/js/frepple.min.js:11
 msgid "Export successful"
 msgstr "ייוצא בהצלחה"
 
-#: common/static/js/frepple.js:2213 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2202 common/static/js/frepple.min.js:11
 msgid "retry"
 msgstr "נסה שוב"
 
-#: common/static/js/frepple.js:2364 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2353 common/static/js/frepple.min.js:11
 msgid "Error during export"
 msgstr "שגיאה בייצוא"
 
-#: common/static/js/frepple.js:2367 common/static/js/frepple.js:2401
+#: common/static/js/frepple.js:2356 common/static/js/frepple.js:2390
 #: common/static/js/frepple.min.js:11
 msgid "Retry"
 msgstr "נסה שוב"
 
-#: common/static/js/frepple.js:2556 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2531 common/static/js/frepple.min.js:11
 msgid "Customize a dashboard row"
 msgstr "התאם אישית שורת לוח מחוונים"
 
-#: common/static/js/frepple.js:2562 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2537 common/static/js/frepple.min.js:11
 msgid "Name"
 msgstr "שם"
 
-#: common/static/js/frepple.js:2568 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2543 common/static/js/frepple.min.js:11
 msgid "Layout"
 msgstr "מערך"
 
-#: common/static/js/frepple.js:2574 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2549 common/static/js/frepple.min.js:11
 msgid "Single column"
 msgstr "עמודה בודדת"
 
-#: common/static/js/frepple.js:2577 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2552 common/static/js/frepple.min.js:11
 msgid "Two columns"
 msgstr "שני עמודות"
 
-#: common/static/js/frepple.js:2584 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2559 common/static/js/frepple.min.js:11
 msgid "Three columns"
 msgstr "שלושה עמודות"
 
-#: common/static/js/frepple.js:2588 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2563 common/static/js/frepple.min.js:11
 msgid "Four columns"
 msgstr "ארבעה עמודות"
 
-#: common/static/js/frepple.js:2594 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2569 common/static/js/frepple.min.js:11
 msgid "Add widget"
 msgstr "הוסף יישומון"
 
-#: common/static/js/frepple.js:2613 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2588 common/static/js/frepple.min.js:11
 msgid "Add new below"
 msgstr "הוסף חדש מתחת"
 
-#: common/static/js/frepple.js:2614 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2589 common/static/js/frepple.min.js:11
 msgid "Add new above"
 msgstr "הוסף חדש מעלה"
 
-#: common/static/js/frepple.js:2615 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2590 common/static/js/frepple.min.js:11
 msgid "Delete"
 msgstr "מחק"
 
-#: common/static/js/frepple.js:2771 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2746 common/static/js/frepple.min.js:11
 #, javascript-format
 msgid "%s unread messages"
 msgstr "%s הודעות שלא נקראו"
 
-#: common/static/js/frepple.js:2776 common/static/js/frepple.min.js:11
-msgid "No unread messages"
-msgstr ""
-
-#: common/static/js/frepple.js:2905 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2880 common/static/js/frepple.min.js:11
 msgid "Installed apps"
 msgstr "אפליקציות מותקנות"
 
-#: common/static/js/frepple.js:2949 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2909 common/static/js/frepple.min.js:11
 msgid "Import CSV or Excel file"
 msgstr "ייבא קובץ CSV או Excel"
 
-#: common/static/js/frepple.js:2955 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2915 common/static/js/frepple.min.js:11
 msgid "Load an Excel file or a CSV-formatted text file."
 msgstr "קובץ טקסט מעוצב- Excel או CSV טען קובץ."
 
-#: common/static/js/frepple.js:2956 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2916 common/static/js/frepple.min.js:11
 msgid "The first row should contain the field names."
 msgstr "השורה הראשונה צריכה להכיל את שמות השדות."
 
-#: common/static/js/frepple.js:2958 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2918 common/static/js/frepple.min.js:11
 msgid "First delete all existing records AND ALL RELATED TABLES"
 msgstr "ראשית מחק את כל הרשומות הקיימות ואת כל הטבלאות הקשורות"
 
-#: common/static/js/frepple.js:2965 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2925 common/static/js/frepple.min.js:11
 msgid "files selected"
 msgstr "קבצים שנבחרו"
 
-#: common/static/js/frepple.js:2968 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2928 common/static/js/frepple.min.js:11
 msgid "Select files"
 msgstr "בחר קבצים"
 
-#: common/static/js/frepple.js:2971 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2931 common/static/js/frepple.min.js:11
 msgid "or drop them here"
 msgstr "או שמור אותם כאן"
 
-#: common/static/js/frepple.js:2980 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2940 common/static/js/frepple.min.js:11
 msgid "Data file"
 msgstr "קובץ מידע"
 
-#: common/static/js/frepple.js:2989 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2949 common/static/js/frepple.min.js:11
 msgid "Import"
 msgstr "יבוא"
 
-#: common/static/js/frepple.js:2990 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2950 common/static/js/frepple.min.js:11
 msgid "Cancel Import"
 msgstr "בטל ייבוא"
 
-#: common/static/js/frepple.js:2992 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:2952 common/static/js/frepple.min.js:11
 msgid "Copy to Clipboard"
 msgstr "העתק ללוח"
 
-#: common/static/js/frepple.js:3056 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:3016 common/static/js/frepple.min.js:11
 msgid "Importing..."
 msgstr "מייבא ..."
 
-#: common/static/js/frepple.js:3075 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:3035 common/static/js/frepple.min.js:11
 msgid "Canceled"
 msgstr "מבוטל"
 
-#: common/static/js/frepple.js:3130 common/static/js/frepple.min.js:11
+#: common/static/js/frepple.js:3090 common/static/js/frepple.min.js:11
 #, javascript-format
 msgid "%s records processed"
 msgstr "%s רשומות מעובדות"
-
-#: common/static/js/frepple.js:3891 common/static/js/frepple.min.js:11
-msgid "Follow"
-msgstr ""
-
-#: common/static/js/frepple.js:3893 common/static/js/frepple.min.js:11
-msgid "Get a notification in your inbox when there is activity"
-msgstr ""
-
-#: common/static/js/frepple.js:3895 common/static/js/frepple.min.js:11
-msgid "Unfollow"
-msgstr "ביטול מעקב"
-
-#: common/static/js/frepple.js:3897 common/static/js/frepple.min.js:11
-msgid "Stop getting notifications in your inbox when there is activity"
-msgstr ""
-
-#: common/static/js/frepple.min.js:11
-msgid "OR"
-msgstr ""
 
 #: input/static/js/frepple-operationplandetail.min.js:11
 #: input/static/operationplandetail/src/supplypositionpanelDrv.js:22
@@ -430,9 +369,6 @@ msgid "onhand at lead time"
 msgstr "במלאי בזמן האספקה"
 
 #: input/static/js/frepple-operationplandetail.min.js:11
-msgid "current onhand"
-msgstr "מלאי נוכחי"
-
 #: input/static/operationplandetail/src/supplypositionpanelDrv.js:63
 msgid "current inventory"
 msgstr "מלאי נוכחי"

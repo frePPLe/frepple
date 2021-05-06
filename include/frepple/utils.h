@@ -5279,14 +5279,13 @@ class HasHierarchy : public HasName<T> {
 
   /* This class models an iterator that allows us to
    * iterate over the members across all levels.
-   *
-   * TODO this iterator is not following the STL-style.
    */
   class memberRecursiveIterator : public NonCopyable {
    public:
     /* Constructor. */
-    memberRecursiveIterator(const T* x = nullptr)
-        : root(x), current(const_cast<T*>(x)) {}
+    memberRecursiveIterator(const HasHierarchy<T>* x = nullptr)
+        : root(const_cast<HasHierarchy<T>*>(x)),
+          current(const_cast<HasHierarchy<T>*>(x)) {}
 
     memberRecursiveIterator(const memberRecursiveIterator& other)
         : root(other.root), current(other.current) {}
@@ -5298,10 +5297,10 @@ class HasHierarchy : public HasName<T> {
     }
 
     /* Return the content of the current node. */
-    T& operator*() const { return *current; }
+    T& operator*() const { return static_cast<T&>(*current); }
 
     /* Return the content of the current node. */
-    T* operator->() const { return current; }
+    T* operator->() const { return static_cast<T*>(current); }
 
     /* Pre-increment operator which moves the pointer to the next member. */
     memberRecursiveIterator& operator++() {
@@ -5326,11 +5325,16 @@ class HasHierarchy : public HasName<T> {
       return *this;
     }
 
+    T* next() {
+      ++(*this);
+      return static_cast<T*>(current);
+    }
+
     bool empty() const { return current == nullptr; }
 
    private:
-    const T* root;
-    T* current = nullptr;
+    HasHierarchy<T>* root;
+    HasHierarchy<T>* current = nullptr;
   };
 
   /* Default constructor. */
@@ -5365,8 +5369,8 @@ class HasHierarchy : public HasName<T> {
     return false;
   }
 
-  T* getTop() {
-    auto tmp = static_cast<T*>(this);
+  T* getTop() const {
+    auto tmp = const_cast<T*>(static_cast<const T*>(this));
     while (tmp->parent) tmp = tmp->parent;
     return tmp;
   }
@@ -5408,6 +5412,11 @@ class HasHierarchy : public HasName<T> {
                                  BASE + PARENT);
     m->addIteratorField<Cls, typename Cls::memberIterator, Cls>(
         Tags::members, *(Cls::metadata->typetag), &Cls::getMembers, DETAIL);
+    m->addPointerField<Cls, Cls>(Tags::root, &Cls::getTop, nullptr,
+                                 DONT_SERIALIZE);
+    m->addIteratorField<Cls, typename Cls::memberRecursiveIterator, Cls>(
+        Tags::allmembers, *(Cls::metadata->typetag), &Cls::getAllMembers,
+        DONT_SERIALIZE);
   }
 
  private:

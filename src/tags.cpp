@@ -26,6 +26,7 @@ namespace frepple {
 namespace utils {
 
 const Keyword Tags::action("action");
+const Keyword Tags::allmembers("allmembers");
 const Keyword Tags::alternate("alternate");
 const Keyword Tags::alternates("alternates");
 const Keyword Tags::alternate_name("alternate_name");
@@ -168,6 +169,7 @@ const Keyword Tags::resources("resources");
 const Keyword Tags::resourceskill("resourceskill");
 const Keyword Tags::resourceskills("resourceskills");
 const Keyword Tags::resource_qty("resource_qty");
+const Keyword Tags::root("root");
 const Keyword Tags::rule("rule");
 const Keyword Tags::rules("rules");
 const Keyword Tags::search("search");

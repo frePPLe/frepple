@@ -27,6 +27,7 @@
 class Tags {
  public:
   static const Keyword action;
+  static const Keyword allmembers;
   static const Keyword alternate;
   static const Keyword alternates;
   static const Keyword alternate_name;
@@ -170,6 +171,7 @@ class Tags {
   static const Keyword resourceskill;
   static const Keyword resourceskills;
   static const Keyword resource_qty;
+  static const Keyword root;
   static const Keyword rule;
   static const Keyword rules;
   static const Keyword search;

@@ -27,7 +27,12 @@ from django.utils.encoding import force_text
 from freppledb.boot import getAttributeFields
 from freppledb.input.models import Demand, Item
 from freppledb.input.models import ManufacturingOrder, PurchaseOrder, DistributionOrder
-from freppledb.common.report import GridPivot, GridFieldText, GridFieldNumber
+from freppledb.common.report import (
+    GridPivot,
+    GridFieldText,
+    GridFieldNumber,
+    GridFieldInteger,
+)
 from freppledb.common.report import GridFieldCurrency, GridFieldLastModified
 
 
@@ -66,6 +71,9 @@ class OverviewReport(GridPivot):
         GridFieldCurrency("cost", title=_("cost"), initially_hidden=True),
         GridFieldNumber("volume", title=_("volume"), initially_hidden=True),
         GridFieldNumber("weight", title=_("weight"), initially_hidden=True),
+        GridFieldInteger(
+            "periodofcover", title=_("period of cover"), initially_hidden=True
+        ),
         GridFieldText("source", title=_("source"), initially_hidden=True),
         GridFieldLastModified("lastmodified", initially_hidden=True),
     )
@@ -152,7 +160,7 @@ class OverviewReport(GridPivot):
         query = """
           select
           parent.name, parent.description, parent.category, parent.subcategory,
-          parent.owner_id, parent.cost, parent.volume, parent.weight, parent.source, parent.lastmodified,
+          parent.owner_id, parent.cost, parent.volume, parent.weight, parent.periodofcover, parent.source, parent.lastmodified,
           %s
           d.bucket,
           d.startdate,
@@ -197,8 +205,8 @@ class OverviewReport(GridPivot):
                        ) d
           group by
             parent.name, parent.description, parent.category, parent.subcategory,
-            parent.owner_id, parent.cost, parent.volume, parent.weight, parent.source,
-            parent.lastmodified, parent.lft, parent.rght,
+            parent.owner_id, parent.cost, parent.volume, parent.weight, parent.periodofcover,
+            parent.source, parent.lastmodified, parent.lft, parent.rght,
             %s
             d.bucket, d.startdate, d.enddate
           order by %s, d.startdate
@@ -238,8 +246,9 @@ class OverviewReport(GridPivot):
                         "cost": row[5],
                         "volume": row[6],
                         "weight": row[7],
-                        "source": row[8],
-                        "lastmodified": row[9],
+                        "periodofcover": row[8],
+                        "source": row[9],
+                        "lastmodified": row[10],
                         "bucket": row[numfields - 6],
                         "startdate": row[numfields - 5].date(),
                         "enddate": row[numfields - 4].date(),
@@ -248,7 +257,7 @@ class OverviewReport(GridPivot):
                         "reasons": json.dumps(row[numfields - 1]),
                         "backlog": backlog,
                     }
-                    idx = 10
+                    idx = 11
                     for f in getAttributeFields(Item):
                         res[f.field_name] = row[idx]
                         idx += 1

@@ -215,6 +215,12 @@ class BufferList(GridReport):
             initially_hidden=True,
             editable=False,
         ),
+        GridFieldInteger(
+            "item__periodofcover",
+            title=format_lazy("{} - {}", _("item"), _("period of cover")),
+            initially_hidden=True,
+            editable=False,
+        ),
         GridFieldText(
             "item__owner",
             title=format_lazy("{} - {}", _("item"), _("owner")),
@@ -398,6 +404,12 @@ class ItemDistributionList(GridReport):
         GridFieldNumber(
             "item__volume",
             title=format_lazy("{} - {}", _("item"), _("volume")),
+            initially_hidden=True,
+            editable=False,
+        ),
+        GridFieldInteger(
+            "item__periodofcover",
+            title=format_lazy("{} - {}", _("item"), _("period of cover")),
             initially_hidden=True,
             editable=False,
         ),
@@ -822,6 +834,12 @@ class DistributionOrderList(OperationPlanMixin, GridReport):
             initially_hidden=True,
             editable=False,
             extra='"formatoptions":{"defaultValue":""}, "summaryType":"max"',
+        ),
+        GridFieldInteger(
+            "item__periodofcover",
+            title=format_lazy("{} - {}", _("item"), _("period of cover")),
+            initially_hidden=True,
+            editable=False,
         ),
         GridFieldCurrency(
             "total_cost",
@@ -1523,6 +1541,12 @@ class InventoryDetail(OperationPlanMixin, GridReport):
         GridFieldNumber(
             "item__weight",
             title=format_lazy("{} - {}", _("item"), _("weight")),
+            initially_hidden=True,
+            editable=False,
+        ),
+        GridFieldInteger(
+            "item__periodofcover",
+            title=format_lazy("{} - {}", _("item"), _("period of cover")),
             initially_hidden=True,
             editable=False,
         ),

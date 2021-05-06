@@ -17,13 +17,7 @@
 from collections import OrderedDict
 
 from django.conf import settings
-from django.db.models import (
-    F,
-    Q,
-    DateTimeField,
-    DurationField,
-    FloatField,
-)
+from django.db.models import F, Q, DateTimeField, DurationField, FloatField
 from django.db.models.functions import Cast
 from django.db.models.expressions import RawSQL
 from django.template import Template
@@ -553,6 +547,12 @@ class OperationMaterialList(GridReport):
         GridFieldNumber(
             "item__weight",
             title=format_lazy("{} - {}", _("item"), _("weight")),
+            initially_hidden=True,
+            editable=False,
+        ),
+        GridFieldInteger(
+            "item__periodofcover",
+            title=format_lazy("{} - {}", _("item"), _("period of cover")),
             initially_hidden=True,
             editable=False,
         ),
@@ -1630,6 +1630,12 @@ class ManufacturingOrderList(OperationPlanMixin, GridReport):
         GridFieldNumber(
             "item__weight",
             title=format_lazy("{} - {}", _("item"), _("weight")),
+            initially_hidden=True,
+            editable=False,
+        ),
+        GridFieldInteger(
+            "item__periodofcover",
+            title=format_lazy("{} - {}", _("item"), _("period of cover")),
             initially_hidden=True,
             editable=False,
         ),

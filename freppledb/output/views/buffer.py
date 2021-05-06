@@ -15,6 +15,7 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 from datetime import timedelta, datetime
+from dateutil.parser import parse
 
 from django.db import connections, transaction
 from django.db.models import Q
@@ -29,6 +30,7 @@ from freppledb.common.report import (
     GridPivot,
     GridFieldText,
     GridFieldNumber,
+    GridFieldInteger,
     GridFieldLastModified,
     GridFieldCurrency,
 )
@@ -169,6 +171,12 @@ class OverviewReport(GridPivot):
         GridFieldNumber(
             "item__weight",
             title=format_lazy("{} - {}", _("item"), _("weight")),
+            initially_hidden=True,
+            editable=False,
+        ),
+        GridFieldInteger(
+            "item__periodofcover",
+            title=format_lazy("{} - {}", _("item"), _("period of cover")),
             initially_hidden=True,
             editable=False,
         ),
@@ -356,6 +364,7 @@ class OverviewReport(GridPivot):
            item.cost,
            item.volume,
            item.weight,
+           item.periodofcover,
            item.owner_id,
            item.source,
            item.lastmodified,
@@ -500,6 +509,7 @@ class OverviewReport(GridPivot):
            item.cost,
            item.volume,
            item.weight,
+           item.periodofcover,
            item.owner_id,
            item.source,
            item.lastmodified,
@@ -557,17 +567,18 @@ class OverviewReport(GridPivot):
                         "item__cost": row[7],
                         "item__volume": row[8],
                         "item__weight": row[9],
-                        "item__owner": row[10],
-                        "item__source": row[11],
-                        "item__lastmodified": row[12],
-                        "location__description": row[13],
-                        "location__category": row[14],
-                        "location__subcategory": row[15],
-                        "location__available": row[16],
-                        "location__owner": row[17],
-                        "location__source": row[18],
-                        "location__lastmodified": row[19],
-                        "batch": row[20],
+                        "item__periodofcover": row[10],
+                        "item__owner": row[11],
+                        "item__source": row[12],
+                        "item__lastmodified": row[13],
+                        "location__description": row[14],
+                        "location__category": row[15],
+                        "location__subcategory": row[16],
+                        "location__available": row[17],
+                        "location__owner": row[18],
+                        "location__source": row[19],
+                        "location__lastmodified": row[20],
+                        "batch": row[21],
                         "startoh": row[numfields - 7]["onhand"]
                         if row[numfields - 7]
                         else 0,
@@ -593,7 +604,7 @@ class OverviewReport(GridPivot):
                                     + timedelta(
                                         seconds=row[numfields - 7]["periodofcover"]
                                     )
-                                    - row[numfields - 4]
+                                    - row[numfields - 5]
                                 ).days
                                 if row[numfields - 7]["periodofcover"]
                                 else 999
@@ -654,8 +665,9 @@ class OverviewReport(GridPivot):
                             - float(row[numfields - 1]["consumed"] or 0)
                         ),
                     }
+
                     # Add attribute fields
-                    idx = 21
+                    idx = 22
                     for f in getAttributeFields(Item, related_name_prefix="item"):
                         res[f.field_name] = row[idx]
                         idx += 1

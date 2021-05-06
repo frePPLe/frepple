@@ -228,6 +228,12 @@ class Item(AuditModel, HierarchyModel):
         decimal_places=8,
         help_text=_("Volume of the item"),
     )
+    periodofcover = models.IntegerField(
+        _("period of cover"),
+        null=True,
+        blank=True,
+        help_text=_("Period of cover in days"),
+    )
 
     def __str__(self):
         return self.name

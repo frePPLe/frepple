@@ -846,6 +846,80 @@ class ExportOperationPlanMaterials(PlanTask):
 
 
 @PlanTaskRegistry.register
+class ComputePeriodOfCover(PlanTask):
+
+    description = ("Export plan", "Compute period of cover")
+    sequence = (401, "export1", 5)
+    export = True
+
+    @classmethod
+    def getWeight(cls, **kwargs):
+        if "supply" in os.environ:
+            return 1
+        else:
+            return -1
+
+    @classmethod
+    def run(cls, cluster=-1, database=DEFAULT_DB_ALIAS, **kwargs):
+
+        import frepple
+
+        currentdate = frepple.settings.current
+
+        cursor = connections[database].cursor()
+        cursor.execute(
+            """
+            update item set periodofcover=null where periodofcover is not null;
+        -- Query assumes there is only 1 location
+        -- all quantities are then aggregated
+                update item
+                set periodofcover = floor(extract(epoch from coalesce(
+                  -- backlogged demand exceeds the inventory: 0 days of inventory
+                  (
+                  select '0 days'::interval
+                  from operationplanmaterial
+                  inner join operationplan on operationplanmaterial.operationplan_id = operationplan.reference
+                  where operationplanmaterial.item_id = item.name and
+                    (
+                      (operationplanmaterial.quantity < 0 and operationplan.type = 'DLVR' and operationplan.due < %s)
+                      or ( operationplanmaterial.quantity > 0 and operationplan.status = 'closed' and operationplan.type = 'STCK')
+                      or ( operationplanmaterial.quantity > 0 and operationplan.status in ('approved','confirmed') and flowdate <= %s + interval '1 second')
+                    )
+                  having sum(operationplanmaterial.quantity) <0
+                  limit 1
+                  ),
+                  -- Normal case
+                  (
+                  select case
+                    when periodofcover = 999 * 24 * 3600
+                      then '999 days'::interval
+                    when onhand > 0.00001
+                      then date_trunc('day', least( periodofcover * '1 sec'::interval + flowdate - %s, '999 days'::interval))
+                    else null
+                    end
+                  from operationplanmaterial
+                  where flowdate < %s
+                    and operationplanmaterial.item_id = item.name
+                  order by flowdate desc, id desc
+                  limit 1
+                 ),
+                 -- No inventory and no backlog: use the date of next consumer
+                 (
+                 select greatest('0 days'::interval, date_trunc('day', least(flowdate - %s, '999 days'::interval)))
+                  from operationplanmaterial
+                  where quantity < 0
+                    and operationplanmaterial.item_id = item.name
+                  order by flowdate asc, id asc
+                  limit 1
+                 ),
+                 '999 days'::interval
+                 ))/86400)
+        """,
+            ((currentdate,) * 5),
+        )
+
+
+@PlanTaskRegistry.register
 class ExportOperationPlanResources(PlanTask):
 
     description = ("Export plan", "Exporting operationplan resources")

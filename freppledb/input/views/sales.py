@@ -189,6 +189,9 @@ class ItemList(GridReport):
         GridFieldCurrency("cost", title=_("cost")),
         GridFieldNumber("weight", title=_("weight"), initially_hidden=True),
         GridFieldNumber("volume", title=_("volume"), initially_hidden=True),
+        GridFieldInteger(
+            "periodofcover", title=_("period of cover"), initially_hidden=True
+        ),
         GridFieldChoice(
             "type", title=_("type"), choices=Item.types, initially_hidden=True
         ),
@@ -406,6 +409,12 @@ class DemandList(GridReport):
         GridFieldNumber(
             "item__weight",
             title=format_lazy("{} - {}", _("item"), _("weight")),
+            initially_hidden=True,
+            editable=False,
+        ),
+        GridFieldInteger(
+            "item__periodofcover",
+            title=format_lazy("{} - {}", _("item"), _("period of cover")),
             initially_hidden=True,
             editable=False,
         ),
@@ -670,6 +679,12 @@ class DeliveryOrderList(GridReport):
         GridFieldNumber(
             "item__weight",
             title=format_lazy("{} - {}", _("item"), _("weight")),
+            initially_hidden=True,
+            editable=False,
+        ),
+        GridFieldInteger(
+            "item__periodofcover",
+            title=format_lazy("{} - {}", _("item"), _("period of cover")),
             initially_hidden=True,
             editable=False,
         ),

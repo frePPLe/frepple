@@ -52,6 +52,7 @@ volume          double            | Volume of the item.
                                   | The default value is 0.
 weight          double            | Weight of the item.                                  
                                   | The default value is 0.
+period of cover integer           | Calculated value corresponding to the on hand days of cover.                                                          
 global_purchase boolean           | When this item flag is set, it will a) prevent any new
                                     purchase orders for the item to be generated until the total
                                     inventory across all locations drops below the total safety

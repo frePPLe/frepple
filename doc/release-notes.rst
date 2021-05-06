@@ -21,6 +21,9 @@ Release notes
     
 - | Manufacturing orders, purchase orders and distribution orders can now be edited
     from the resource detail and inventory detail screens. 
+    
+- | Addition of the period of cover as an item attribute, allowing to display, sort and
+    filter that value in most of the views and reports.
 
 - | Bug fix: formatting of negative numbers was showing too many digits after the decimal.
 

@@ -18,6 +18,8 @@
 from datetime import timedelta, datetime
 from decimal import Decimal
 from logging import INFO, ERROR, WARNING, DEBUG
+from openpyxl.worksheet.cell_range import CellRange
+from openpyxl.worksheet.worksheet import Worksheet
 
 from django import forms
 from django.contrib.contenttypes.models import ContentType
@@ -165,27 +167,27 @@ def parseExcelWorksheet(model, data, user=None, database=DEFAULT_DB_ALIAS, ping=
 
 def parseCSVdata(model, data, user=None, database=DEFAULT_DB_ALIAS, ping=False):
     """
-  This method:
-    - reads CSV data from an input iterator
-    - creates or updates the database records
-    - yields a list of data validation errors
+    This method:
+      - reads CSV data from an input iterator
+      - creates or updates the database records
+      - yields a list of data validation errors
 
-  The data must follow the following format:
-    - the first row contains a header, listing all field names
-    - a first character # marks a comment line
-    - empty rows are skipped
-  """
+    The data must follow the following format:
+      - the first row contains a header, listing all field names
+      - a first character # marks a comment line
+      - empty rows are skipped
+    """
 
     class MappedRow:
         """
-    A row of data is made to behave as a dictionary.
-    For instance the following data:
-       headers: ['field1', 'field2', 'field3']
-       data: [val1, val2, val3]
-    behaves like:
-      {'field1': val1, 'field2': val2, 'field3': val3}
-    but it's faster because we don't actually build the dictionary.
-    """
+        A row of data is made to behave as a dictionary.
+        For instance the following data:
+           headers: ['field1', 'field2', 'field3']
+           data: [val1, val2, val3]
+        behaves like:
+          {'field1': val1, 'field2': val2, 'field3': val3}
+        but it's faster because we don't actually build the dictionary.
+        """
 
         def __init__(self, headers=[]):
             self.headers = {}
@@ -292,10 +294,26 @@ def _parseData(model, data, rowmapper, user, database, ping):
     has_pk_field = False
     processed_header = False
     rowWrapper = rowmapper()
+
+    # Detect excel autofilter data tables
+    if isinstance(data, Worksheet) and data.auto_filter.ref:
+        bounds = CellRange(data.auto_filter.ref).bounds
+    else:
+        bounds = None
+
     for row in data:
 
         rownumber += 1
-        rowWrapper.setData(row)
+        if bounds:
+            # Only process data in the excel auto-filter range
+            if rownumber < bounds[1]:
+                continue
+            elif rownumber > bounds[3]:
+                break
+            else:
+                rowWrapper.setData(row[bounds[0] - 1 : bounds[2]])
+        else:
+            rowWrapper.setData(row)
 
         # Case 1: Skip empty rows
         if rowWrapper.empty():
@@ -556,8 +574,8 @@ class BulkForeignKeyFormField(forms.fields.Field):
         # Build a cache with the list of values - as long as it reasonable fits in memory
         self.model = field.remote_field.model
         field.remote_field.parent_link = (
-            True
-        )  # A trick to disable the model validation on foreign keys!
+            True  # A trick to disable the model validation on foreign keys!
+        )
         if field.remote_field.model._default_manager.all().using(using).count() > 20000:
             self.queryset = field.remote_field.model._default_manager.all().using(using)
             self.cache = None

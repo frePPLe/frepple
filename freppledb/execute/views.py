@@ -1147,7 +1147,7 @@ def importWorkbook(request):
             ):
                 yield _("Unsupported file format.")
                 continue
-            wb = load_workbook(filename=file, read_only=True, data_only=True)
+            wb = load_workbook(filename=file, data_only=True)
             models = []
             for ws_name in wb.sheetnames:
                 # Find the model

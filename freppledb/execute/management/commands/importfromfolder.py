@@ -496,7 +496,7 @@ class Command(BaseCommand):
         warningcount = 0
         try:
             with transaction.atomic(using=self.database):
-                wb = load_workbook(filename=file, read_only=True, data_only=True)
+                wb = load_workbook(filename=file, data_only=True)
                 for ws_name in wb.sheetnames:
                     ws = wb[ws_name]
                     for error in parseExcelWorksheet(

@@ -9,12 +9,19 @@ Note that you can also drag and drop a file into the dialog box.
 FrePPLe automatically detects which of the two data formats you're using.
 
 The upload icon will only be available when you have add-permission on
-the data object you're uploading. A message is shown when you don’t have
+the data object you're uploading. A message is shown when you don't have
 this permission.
 
-The first line in the data file should contain the field names (not case
-sensitive). To get a sample of the input format you can first create a export:
+To get a sample of the input format you can first create a export:
 the format of the export file is such that it can be reread into frePPLe.
+
+The first line of a CSV data file should contain the field names (not case
+sensitive).
+
+The first line of an Excel data file should contain the field names (not case
+sensitive). Alternatively, you can define an autofilter data table on the worksheet.
+If it's present frePPLe reads only the data from that data table and ignores all other 
+cells.
 
 The dialog screen shows a checkbox *First delete all existing records AND ALL RELATED TABLES*
 meaning that you can choose to delete the existing contents of the table before uploading

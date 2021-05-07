@@ -135,9 +135,7 @@ class Command(BaseCommand):
                     if "filename" not in locals():
                         filename = options["file"]
                     for file in filename:
-                        wb = load_workbook(
-                            filename=file, read_only=True, data_only=True
-                        )
+                        wb = load_workbook(filename=file, data_only=True)
                         models = []
                         for ws_name in wb.sheetnames:
                             # Find the model
@@ -184,9 +182,6 @@ class Command(BaseCommand):
                                     _("Processing data in worksheet: %s") % ws_name
                                 )
                             )
-                            # yield '<strong>' + force_text(_("Processing data in worksheet: %s") % ws_name) + '</strong><br>'
-                            # yield ('<div class="table-responsive">'
-                            # '<table class="table table-condensed" style="white-space: nowrap;"><tbody>')
                             numerrors = 0
                             numwarnings = 0
                             firsterror = True
@@ -199,8 +194,6 @@ class Command(BaseCommand):
                                 ping=True,
                             ):
                                 if error[0] == logging.DEBUG:
-                                    # Yield some result so we can detect disconnect clients and interrupt the upload
-                                    # yield ' '
                                     continue
                                 if firsterror and error[0] in (
                                     logging.ERROR,

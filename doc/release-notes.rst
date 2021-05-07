@@ -25,6 +25,11 @@ Release notes
 - | Addition of the period of cover as an item attribute, allowing to display, sort and
     filter that value in most of the views and reports.
 
+- | When uploading excel files, we now check for the presence for an autofilter data table
+    on a worksheet. When present, we only read the data from that table.
+  | By ignoring all other cells, you now have more flexibility to create a custom layout of
+    your data file. Eg a header section with comments or instructions.
+
 - | Bug fix: formatting of negative numbers was showing too many digits after the decimal.
 
 .. rubric:: Integration

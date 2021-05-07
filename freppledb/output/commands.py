@@ -784,10 +784,10 @@ class ExportOperationPlanMaterials(PlanTask):
             return -1
 
     @staticmethod
-    def getData(timestamp, cluster=-1):
+    def getData(timestamp, cluster=-1, buffers=None, **kwargs):
         import frepple
 
-        for i in frepple.buffers():
+        for i in buffers or frepple.buffers():
             if cluster != -1 and cluster != i.cluster:
                 continue
             for j in i.flowplans:
@@ -818,12 +818,16 @@ class ExportOperationPlanMaterials(PlanTask):
                     )
 
     @classmethod
-    def run(cls, cluster=-1, database=DEFAULT_DB_ALIAS, **kwargs):
+    def run(cls, cluster=-1, database=DEFAULT_DB_ALIAS, timestamp=None, **kwargs):
         cursor = connections[database].cursor()
         updates = []
         cursor.copy_from(
             CopyFromGenerator(
-                cls.getData(timestamp=cls.parent.timestamp, cluster=cluster)
+                cls.getData(
+                    timestamp=timestamp or cls.parent.timestamp,
+                    cluster=cluster,
+                    **kwargs
+                )
             ),
             "operationplanmaterial",
             columns=(
@@ -934,10 +938,10 @@ class ExportOperationPlanResources(PlanTask):
             return -1
 
     @staticmethod
-    def getData(timestamp, cluster=-1):
+    def getData(timestamp, resources=None, cluster=-1, **kwargs):
         import frepple
 
-        for i in frepple.resources():
+        for i in resources or frepple.resources():
             if cluster != -1 and cluster != i.cluster:
                 continue
             for j in i.loadplans:
@@ -966,11 +970,23 @@ class ExportOperationPlanResources(PlanTask):
                     )
 
     @classmethod
-    def run(cls, cluster=-1, database=DEFAULT_DB_ALIAS, **kwargs):
+    def run(
+        cls,
+        cluster=-1,
+        database=DEFAULT_DB_ALIAS,
+        timestamp=None,
+        resources=None,
+        **kwargs
+    ):
         cursor = connections[database].cursor()
         cursor.copy_from(
             CopyFromGenerator(
-                cls.getData(timestamp=cls.parent.timestamp, cluster=cluster)
+                cls.getData(
+                    timestamp=timestamp or cls.parent.timestamp,
+                    cluster=cluster,
+                    resources=resources,
+                    **kwargs
+                )
             ),
             "operationplanresource",
             columns=(
@@ -1003,7 +1019,7 @@ class ExportResourcePlans(PlanTask):
             return -1
 
     @classmethod
-    def run(cls, cluster=-1, database=DEFAULT_DB_ALIAS, **kwargs):
+    def run(cls, cluster=-1, database=DEFAULT_DB_ALIAS, resources=None, **kwargs):
         import frepple
 
         # Set the timestamp for the export tasks in this thread
@@ -1048,7 +1064,7 @@ class ExportResourcePlans(PlanTask):
 
         def getData():
             # Loop over all reporting buckets of all resources
-            for i in frepple.resources():
+            for i in resources or frepple.resources():
                 for j in i.plan(buckets):
                     yield "%s\v%s\v%s\v%s\v%s\v%s\v%s\n" % (
                         clean_value(i.name),

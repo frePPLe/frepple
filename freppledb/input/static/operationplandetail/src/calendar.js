@@ -474,6 +474,7 @@ angular.module('calendar', [])
                 };
 
                 function enableDragDrop(callback) {
+                  disableDragDrop();
                   element.on('dragover', 'td.datecell', HandlerDragOver);
                   element.on('drop', 'td.datecell', HandlerDrop);
                   element.on('dragstart', '.card', HandlerDragStart);

@@ -873,11 +873,10 @@ class ComputePeriodOfCover(PlanTask):
         cursor = connections[database].cursor()
         cursor.execute(
             """
-            update item set periodofcover=null where periodofcover is not null;
-        -- Query assumes there is only 1 location
-        -- all quantities are then aggregated
-                update item
-                set periodofcover = floor(extract(epoch from coalesce(
+            -- Query assumes there is only 1 location
+            -- all quantities are then aggregated
+            update item
+            set periodofcover = floor(extract(epoch from coalesce(
                   -- backlogged demand exceeds the inventory: 0 days of inventory
                   (
                   select '0 days'::interval
@@ -887,7 +886,7 @@ class ComputePeriodOfCover(PlanTask):
                     (
                       (operationplanmaterial.quantity < 0 and operationplan.type = 'DLVR' and operationplan.due < %s)
                       or ( operationplanmaterial.quantity > 0 and operationplan.status = 'closed' and operationplan.type = 'STCK')
-                      or ( operationplanmaterial.quantity > 0 and operationplan.status in ('approved','confirmed') and flowdate <= %s + interval '1 second')
+                      or ( operationplanmaterial.quantity > 0 and operationplan.status in ('approved','confirmed','completed') and flowdate <= %s + interval '1 second')
                     )
                   having sum(operationplanmaterial.quantity) <0
                   limit 1

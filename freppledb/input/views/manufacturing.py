@@ -1026,7 +1026,7 @@ class SubOperationList(GridReport):
     )
 
 
-class ManufacturingOrderList(OperationPlanMixin, GridReport):
+class ManufacturingOrderList(OperationPlanMixin):
     template = "input/operationplanreport.html"
     title = _("manufacturing orders")
     default_sort = (1, "desc")

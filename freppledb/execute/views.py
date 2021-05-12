@@ -317,10 +317,9 @@ def LaunchTask(request, action):
             wrapTask(request, action)
             return HttpResponseRedirect("%s/execute/" % request.prefix)
     except Exception as e:
+        logger.error("Error launching task: %s" % e)
         messages.add_message(
-            request,
-            messages.ERROR,
-            force_text(_("Failure launching action: %(msg)s") % {"msg": e}),
+            request, messages.ERROR, force_text(_("Failure launching task"))
         )
         return HttpResponseRedirect("%s/execute/" % request.prefix)
 

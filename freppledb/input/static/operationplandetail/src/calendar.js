@@ -287,21 +287,6 @@ angular.module('calendar', [])
             else
                console.error("No rangeChanged callback is registered");
         };
-
-        function overlap(event1, event2) {
-            var earlyEvent = event1,
-                lateEvent = event2;
-            if (event1.startIndex > event2.startIndex || (event1.startIndex === event2.startIndex && event1.startOffset > event2.startOffset)) {
-                earlyEvent = event2;
-                lateEvent = event1;
-            }
-
-            if (earlyEvent.endIndex <= lateEvent.startIndex) {
-                return false;
-            } else {
-                return !(earlyEvent.endIndex - lateEvent.startIndex === 1 && earlyEvent.endOffset + lateEvent.startOffset >= self.hourParts);
-            }
-        }
     }])
     .directive('calendar', function calendarDirective() {
         'use strict';

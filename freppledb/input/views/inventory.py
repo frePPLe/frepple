@@ -539,7 +539,7 @@ class ItemDistributionList(GridReport):
     )
 
 
-class DistributionOrderList(OperationPlanMixin, GridReport):
+class DistributionOrderList(OperationPlanMixin):
     template = "input/operationplanreport.html"
     title = _("distribution orders")
     default_sort = (1, "desc")
@@ -1116,7 +1116,7 @@ class DistributionOrderList(OperationPlanMixin, GridReport):
                 reportclass.rows += (f,)
 
 
-class InventoryDetail(OperationPlanMixin, GridReport):
+class InventoryDetail(OperationPlanMixin):
     """
     A list report to show OperationPlanMaterial.
     """

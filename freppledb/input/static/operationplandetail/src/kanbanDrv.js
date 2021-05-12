@@ -50,7 +50,7 @@ function showKanbanDrv($window, gettextCatalog, OperationPlan, PreferenceSvc) {
         'DO': gettextCatalog.getString('Distribution Order'),
         'STCK': gettextCatalog.getString('Stock'),
         'DLVR': gettextCatalog.getString('Delivery'),
-    }
+    };
     
     getColStyle();
     

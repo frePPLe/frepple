@@ -369,7 +369,7 @@ class ResourceSkillList(GridReport):
     )
 
 
-class ResourceDetail(OperationPlanMixin, GridReport):
+class ResourceDetail(OperationPlanMixin):
     template = "input/operationplanreport.html"
     title = _("resource detail")
     model = OperationPlanResource

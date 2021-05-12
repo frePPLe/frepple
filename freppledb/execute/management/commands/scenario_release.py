@@ -17,25 +17,21 @@
 
 from datetime import datetime
 import os
-import subprocess
-
 
 from django.core import management
 from django.core.management.base import BaseCommand, CommandError
 from django.conf import settings
 from django.db import DEFAULT_DB_ALIAS
-from django.utils.translation import gettext_lazy as _
-from django.template.loader import render_to_string
 
-from freppledb.execute.models import Task, ScheduledTask
+from freppledb.execute.models import Task
 from freppledb.common.models import User, Scenario
 from freppledb import __version__
 
 
 class Command(BaseCommand):
     help = """
-  This command releases a scenario. It changes its status from "In use" to "Free".
-  """
+      This command releases a scenario. It changes its status from "In use" to "Free".
+      """
 
     requires_system_checks = False
 

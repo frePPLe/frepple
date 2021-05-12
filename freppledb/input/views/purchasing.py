@@ -360,7 +360,7 @@ class ItemSupplierList(GridReport):
                 reportclass.attr_sql += "itemsupplier.%s, " % f.name.split("__")[-1]
 
 
-class PurchaseOrderList(OperationPlanMixin, GridReport):
+class PurchaseOrderList(OperationPlanMixin):
     template = "input/operationplanreport.html"
     title = _("purchase orders")
     model = PurchaseOrder

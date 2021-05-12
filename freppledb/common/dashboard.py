@@ -94,10 +94,7 @@ class Dashboard:
             return w.render(request)
         except Exception as e:
             logger.error("Exception rendering widget %s: %s" % (w.name, e))
-            if settings.DEBUG:
-                return HttpResponseServerError("Server error: %s" % e)
-            else:
-                return HttpResponseServerError("Server error")
+            return HttpResponseServerError("Server error")
 
     @classmethod
     def createWidgetPermissions(cls, app):

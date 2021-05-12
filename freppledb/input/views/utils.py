@@ -138,7 +138,7 @@ def search(request):
     )
 
 
-class OperationPlanMixin:
+class OperationPlanMixin(GridReport):
     @classmethod
     def operationplanExtraBasequery(cls, query, request):
 

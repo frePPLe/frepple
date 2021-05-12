@@ -191,7 +191,7 @@ def getHorizon(request, future_only=False):
         current = parse(
             Parameter.objects.using(request.database).get(name="last_currentdate").value
         )
-    except:
+    except Exception:
         try:
             current = parse(
                 Parameter.objects.using(request.database).get(name="currentdate").value

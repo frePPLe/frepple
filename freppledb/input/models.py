@@ -1593,6 +1593,9 @@ class OperationPlan(AuditModel):
     quantity = models.DecimalField(
         _("quantity"), max_digits=20, decimal_places=8, default="1.00"
     )
+    quantity_completed = models.DecimalField(
+        _("completed quantity"), max_digits=20, decimal_places=8, null=True, blank=True
+    )
     color = models.DecimalField(
         _("color"),
         max_digits=20,

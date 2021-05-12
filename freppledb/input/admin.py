@@ -750,6 +750,7 @@ class ManufacturingOrder_admin(MultiDBModelAdmin):
                     "reference",
                     "operation",
                     "quantity",
+                    "quantity_completed",
                     "startdate",
                     "enddate",
                     "owner",

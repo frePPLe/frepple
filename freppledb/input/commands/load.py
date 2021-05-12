@@ -1654,24 +1654,24 @@ class loadOperationPlans(LoadTask):
                 starttime = time()
                 cursor.execute(
                     """
-                SELECT
-                  operationplan.operation_id, operationplan.reference, operationplan.quantity,
-                  operationplan.startdate, operationplan.enddate, operationplan.status, operationplan.source,
-                  operationplan.type, operationplan.origin_id, operationplan.destination_id, operationplan.supplier_id,
-                  operationplan.item_id, operationplan.location_id, operationplan.batch,
-                  coalesce(dmd.name, null)
-                FROM operationplan
-                LEFT OUTER JOIN (select name from demand
-                  where demand.status is null or demand.status in ('open', 'quote')
-                  ) dmd
-                on dmd.name = operationplan.demand_id
-                WHERE operationplan.owner_id IS NULL
-                  and operationplan.quantity >= 0 and operationplan.status <> 'closed'
-                  %s%s and operationplan.type in ('PO', 'MO', 'DO', 'DLVR')
-                  and (operationplan.startdate is null or operationplan.startdate < '2030-12-31')
-                  and (operationplan.enddate is null or operationplan.enddate < '2030-12-31')
-                ORDER BY operationplan.reference ASC
-                """
+                    SELECT
+                      operationplan.operation_id, operationplan.reference, operationplan.quantity,
+                      operationplan.startdate, operationplan.enddate, operationplan.status, operationplan.source,
+                      operationplan.type, operationplan.origin_id, operationplan.destination_id, operationplan.supplier_id,
+                      operationplan.item_id, operationplan.location_id, operationplan.batch,
+                      coalesce(dmd.name, null), operationplan.quantity_completed
+                    FROM operationplan
+                    LEFT OUTER JOIN (select name from demand
+                      where demand.status is null or demand.status in ('open', 'quote')
+                      ) dmd
+                    on dmd.name = operationplan.demand_id
+                    WHERE operationplan.owner_id IS NULL
+                      and operationplan.quantity >= 0 and operationplan.status <> 'closed'
+                      %s%s and operationplan.type in ('PO', 'MO', 'DO', 'DLVR')
+                      and (operationplan.startdate is null or operationplan.startdate < '2030-12-31')
+                      and (operationplan.enddate is null or operationplan.enddate < '2030-12-31')
+                    ORDER BY operationplan.reference ASC
+                    """
                     % (filter_and, confirmed_filter)
                 )
                 for i in cursor:
@@ -1692,6 +1692,7 @@ class loadOperationPlans(LoadTask):
                                 statusNoPropagation=i[5],
                                 create=create_flag,
                                 batch=i[13],
+                                quantity_completed=i[15],
                             )
                             if opplan:
                                 if i[5] == "confirmed":

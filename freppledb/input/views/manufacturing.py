@@ -1200,12 +1200,14 @@ class ManufacturingOrderList(OperationPlanMixin):
                 q = q.filter(
                     reference__in=RawSQL(
                         """
-          select operationplan_id from operationplan
-          inner join operationplanmaterial on operationplanmaterial.operationplan_id = operationplan.reference
-          and operationplanmaterial.item_id = %s
-          and operationplanmaterial.quantity > 0
-          where operationplan.type = 'MO'
-          """,
+                        select operationplan_id
+                        from operationplan
+                        inner join operationplanmaterial
+                          on operationplanmaterial.operationplan_id = operationplan.reference
+                          and operationplanmaterial.item_id = %s
+                          and operationplanmaterial.quantity > 0
+                        where operationplan.type = 'MO'
+                        """,
                         (args[0],),
                     )
                 )
@@ -1213,12 +1215,14 @@ class ManufacturingOrderList(OperationPlanMixin):
                 q = q.filter(
                     reference__in=RawSQL(
                         """
-          select operationplan_id from operationplan
-          inner join operationplanmaterial on operationplanmaterial.operationplan_id = operationplan.reference
-          and operationplanmaterial.item_id = %s and operationplanmaterial.location_id = %s
-          and operationplan.startdate < %s and operationplan.enddate >= %s
-          where operationplan.type = 'MO'
-          """,
+                        select operationplan_id
+                        from operationplan
+                        inner join operationplanmaterial
+                          on operationplanmaterial.operationplan_id = operationplan.reference
+                          and operationplanmaterial.item_id = %s and operationplanmaterial.location_id = %s
+                          and operationplan.startdate < %s and operationplan.enddate >= %s
+                        where operationplan.type = 'MO'
+                        """,
                         (args[0], args[1], args[2], args[2]),
                     )
                 )
@@ -1226,13 +1230,15 @@ class ManufacturingOrderList(OperationPlanMixin):
                 q = q.filter(
                     reference__in=RawSQL(
                         """
-          select operationplan_id from operationplan
-          inner join operationplanmaterial on operationplanmaterial.operationplan_id = operationplan.reference
-          and operationplanmaterial.item_id = %s and operationplanmaterial.location_id = %s
-          and operationplanmaterial.flowdate >= %s and operationplanmaterial.flowdate < %s
-          and operationplanmaterial.quantity > 0
-          where operationplan.type = 'MO'
-          """,
+                        select operationplan_id
+                        from operationplan
+                        inner join operationplanmaterial
+                          on operationplanmaterial.operationplan_id = operationplan.reference
+                          and operationplanmaterial.item_id = %s and operationplanmaterial.location_id = %s
+                          and operationplanmaterial.flowdate >= %s and operationplanmaterial.flowdate < %s
+                          and operationplanmaterial.quantity > 0
+                        where operationplan.type = 'MO'
+                        """,
                         (args[0], args[1], args[2], args[3]),
                     )
                 )
@@ -1240,13 +1246,15 @@ class ManufacturingOrderList(OperationPlanMixin):
                 q = q.filter(
                     reference__in=RawSQL(
                         """
-          select operationplan_id from operationplan
-          inner join operationplanmaterial on operationplanmaterial.operationplan_id = operationplan.reference
-          and operationplanmaterial.item_id = %s and operationplanmaterial.location_id = %s
-          and operationplanmaterial.flowdate >= %s and operationplanmaterial.flowdate < %s
-          and operationplanmaterial.quantity < 0
-          where operationplan.type = 'MO'
-          """,
+                        select operationplan_id
+                        from operationplan
+                        inner join operationplanmaterial 
+                          on operationplanmaterial.operationplan_id = operationplan.reference
+                          and operationplanmaterial.item_id = %s and operationplanmaterial.location_id = %s
+                          and operationplanmaterial.flowdate >= %s and operationplanmaterial.flowdate < %s
+                          and operationplanmaterial.quantity < 0
+                        where operationplan.type = 'MO'
+                        """,
                         (args[0], args[1], args[2], args[3]),
                     )
                 )
@@ -1382,6 +1390,12 @@ class ManufacturingOrderList(OperationPlanMixin):
         GridFieldNumber(
             "quantity",
             title=_("quantity"),
+            extra='"formatoptions":{"defaultValue":""}, "summaryType":"sum"',
+        ),
+        GridFieldNumber(
+            "quantity_completed",
+            title=_("completed quantity"),
+            initially_hidden=True,
             extra='"formatoptions":{"defaultValue":""}, "summaryType":"sum"',
         ),
         GridFieldCurrency(

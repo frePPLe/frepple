@@ -581,8 +581,7 @@ class ReportManager(GridReport):
                     m.user = request.user
                     m.save()
                     return JsonResponse({"id": m.id, "status": "ok"})
-                except Exception as e:
-                    logger.error("Could not save report: %s" % e)
+                except Exception:
                     return JsonResponse({"id": m.id, "status": "could not save report"})
             else:
                 return HttpResponseServerError("Error saving report")

@@ -11,6 +11,13 @@ Release notes
   | This improves the visibility in the plan between what-has-already-happened and 
     what-is-about-to-happen.
 
+- | With a new field "quantity_completed" on manufacturing orders, frepple now can
+    correctly model partially completed manufacturing orders. The planned end date, 
+    material consumption and capacity consumption are now computed on the remaining
+    quantity to produce.
+  | In earlier releases we relied on appropriately preprocessed input data to account
+    for such partial completed work-in-progress.
+
 .. rubric:: User interface
 
 - | The calendar views on the purchase orders, manufacturing orders and

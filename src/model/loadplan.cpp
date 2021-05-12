@@ -469,12 +469,15 @@ double Load::getLoadplanQuantity(const LoadPlan* lp) const {
                    lp->getDate())
              : lp->getResource()->getEfficiency()) /
         100.0;
-    if (efficiency > 0.0)
-      return -(getQuantityFixed() +
+    if (efficiency <= 0.0) return DBL_MIN;
+    auto q = -(getQuantityFixed() +
                getQuantity() * lp->getOperationPlan()->getQuantity()) /
              efficiency;
-    else
-      return DBL_MIN;
+    if (lp->getOperationPlan()->getQuantity() &&
+        lp->getOperationPlan()->getQuantityCompleted())
+      q *= lp->getOperationPlan()->getQuantityRemaining() /
+           lp->getOperationPlan()->getQuantity();
+    return q;
   } else
     // Continuous resource
     return lp->isStart() ? getQuantity() : -getQuantity();

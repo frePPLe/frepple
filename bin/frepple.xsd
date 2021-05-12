@@ -1027,6 +1027,7 @@
       <xsd:element name="start" type="xsd:dateTime" />
       <xsd:element name="end" type="xsd:dateTime" />
       <xsd:element name="quantity" type="positiveDouble" />
+      <xsd:element name="quantity_completed" type="positiveDouble" />
       <xsd:element name="status" type="xsd:normalizedString" />
       <xsd:element name="owner" type="operationplan" />
       <xsd:element name="feasible" type="xsd:boolean" />
@@ -1053,6 +1054,7 @@
     <xsd:attribute name="start" type="xsd:dateTime" />
     <xsd:attribute name="end" type="xsd:dateTime" />
     <xsd:attribute name="quantity" type="positiveDouble" />
+    <xsd:attribute name="quantity_completed" type="positiveDouble" />
     <xsd:attribute name="feasible" type="xsd:boolean" />
     <xsd:attribute name="criticality" type="xsd:double" />
     <xsd:attribute name="status" type="xsd:normalizedString" />

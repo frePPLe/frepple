@@ -1691,6 +1691,23 @@ class OperationPlan : public Object,
   /* Update the quantity. */
   void setQuantity(double f) { setQuantity(f, false, true, true); }
 
+  double getQuantityCompleted() const {
+    if (getCompleted() || getProposed())
+      return 0.0;
+    else
+      return quantity_completed < quantity ? quantity_completed : quantity;
+  }
+
+  void setQuantityCompleted(double q) { quantity_completed = q; }
+
+  double getQuantityRemaining() const {
+    if (getCompleted() || getProposed())
+      return quantity;
+    else
+      return quantity_completed < quantity ? quantity - quantity_completed
+                                           : 0.0;
+  }
+
   /* Updates the quantity.
    * The operationplan quantity is subject to the following rules:
    *  - The quantity must be greater than or equal to the minimum size.
@@ -2269,6 +2286,8 @@ class OperationPlan : public Object,
                          &Cls::setConsumeCapacity, BOOL_TRUE);
     m->addBoolField<Cls>(Tags::feasible, &Cls::getFeasible, &Cls::setFeasible,
                          BOOL_TRUE);
+    m->addDoubleField<Cls>(Tags::quantity_completed, &Cls::getQuantityCompleted,
+                           &Cls::setQuantityCompleted);
     HasSource::registerFields<Cls>(m);
     m->addPointerField<Cls, OperationPlan>(Tags::owner, &Cls::getOwner,
                                            &Cls::setOwner);
@@ -2469,6 +2488,9 @@ class OperationPlan : public Object,
 
   /* Quantity. */
   double quantity = 0.0;
+
+  /* Completed quantity. */
+  double quantity_completed = 0.0;
 
   /* Flags on the operationplan: status, consumematerial, consumecapacity,
    * infeasible. */
@@ -6620,7 +6642,7 @@ class Load : public Object,
   virtual Date getLoadplanDate(const LoadPlan*) const;
 
   /* This method holds the logic the compute the quantity of a loadplan. */
-  virtual double getLoadplanQuantity(const LoadPlan*) const;
+  double getLoadplanQuantity(const LoadPlan*) const;
 
   /* This method allows computing the operationplan start or end date
    * when given the date of the loadplan.

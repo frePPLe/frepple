@@ -163,6 +163,7 @@ const Keyword Tags::property("property");
 const Keyword Tags::proposed("proposed");
 const Keyword Tags::quantity("quantity");
 const Keyword Tags::quantity_fixed("quantity_fixed");
+const Keyword Tags::quantity_completed("quantity_completed");
 const Keyword Tags::reference("reference");
 const Keyword Tags::resource("resource");
 const Keyword Tags::resources("resources");

@@ -243,13 +243,17 @@ pair<Date, double> FlowStart::getFlowplanDateQuantity(
     return make_pair(dt, 0.0);
   else if (fl->getConfirmed())
     return make_pair(dt, fl->getQuantity());
-  else
-    return make_pair(
-        dt, getEffective().within(fl->getDate()) &&
-                    fl->getOperationPlan()->getQuantity()
-                ? getQuantityFixed() +
-                      fl->getOperationPlan()->getQuantity() * getQuantity()
-                : 0.0);
+  else if (!getEffective().within(fl->getDate()) ||
+           !fl->getOperationPlan()->getQuantity())
+    return make_pair(dt, 0.0);
+  else {
+    auto q = getQuantityFixed() +
+             fl->getOperationPlan()->getQuantity() * getQuantity();
+    if (fl->getOperationPlan()->getQuantityCompleted())
+      return make_pair(dt, q * fl->getOperationPlan()->getQuantityRemaining() /
+                               fl->getOperationPlan()->getQuantity());
+    return make_pair(dt, q);
+  }
 }
 
 pair<Date, double> FlowEnd::getFlowplanDateQuantity(const FlowPlan* fl) const {
@@ -272,13 +276,18 @@ pair<Date, double> FlowEnd::getFlowplanDateQuantity(const FlowPlan* fl) const {
     return make_pair(dt, 0.0);
   else if (fl->getConfirmed())
     return make_pair(dt, fl->getQuantity());
-  else
-    return make_pair(
-        dt, getEffective().within(fl->getDate()) &&
-                    fl->getOperationPlan()->getQuantity()
-                ? getQuantityFixed() +
-                      fl->getOperationPlan()->getQuantity() * getQuantity()
-                : 0.0);
+  else if (!fl->getOperationPlan()->getQuantity() ||
+           !getEffective().within(fl->getDate()))
+    return make_pair(dt, 0.0);
+  else {
+    auto q = getQuantityFixed() +
+             fl->getOperationPlan()->getQuantity() * getQuantity();
+    if (fl->getOperationPlan()->getQuantityCompleted())
+      return make_pair(dt, q * fl->getOperationPlan()->getQuantityRemaining() /
+                               fl->getOperationPlan()->getQuantity());
+    else
+      return make_pair(dt, q);
+  }
 }
 
 pair<Date, double> FlowTransferBatch::getFlowplanDateQuantity(
@@ -299,10 +308,18 @@ pair<Date, double> FlowTransferBatch::getFlowplanDateQuantity(
       return make_pair(dt, 0.0);
     else if (isProducer() && !fl->getOperationPlan()->getProduceMaterial())
       return make_pair(dt, 0.0);
-    else
-      return make_pair(
-          dt, getQuantityFixed() +
-                  getQuantity() * fl->getOperationPlan()->getQuantity());
+    else if (!getEffective().within(fl->getDate()) ||
+             !fl->getOperationPlan()->getQuantity())
+      return make_pair(dt, 0.0);
+    else {
+      auto q = getQuantityFixed() +
+               fl->getOperationPlan()->getQuantity() * getQuantity();
+      if (fl->getOperationPlan()->getQuantityCompleted())
+        return make_pair(dt,
+                         q * fl->getOperationPlan()->getQuantityRemaining() /
+                             fl->getOperationPlan()->getQuantity());
+      return make_pair(dt, q);
+    }
   }
 
   // Compute the number of batches
@@ -312,6 +329,10 @@ pair<Date, double> FlowTransferBatch::getFlowplanDateQuantity(
     total_quantity = 0.0;
   else if (isProducer() && !fl->getOperationPlan()->getProduceMaterial())
     total_quantity = 0.0;
+  else if (fl->getOperationPlan()->getQuantity() &&
+           fl->getOperationPlan()->getQuantityCompleted())
+    total_quantity *= fl->getOperationPlan()->getQuantityRemaining() /
+                      fl->getOperationPlan()->getQuantity();
   double batches = ceil((getQuantity() > 0 ? total_quantity : -total_quantity) /
                         getTransferBatch());
   if (!batches)

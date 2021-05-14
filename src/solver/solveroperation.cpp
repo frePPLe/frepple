@@ -623,13 +623,13 @@ void SolverCreate::solve(const Operation* oper, void* v) {
   auto delta = data->getSolver()->getMinimumDelay();
   if (!delta) delta = Duration(3600L);
   do {
+    repeat = false;
     auto bm = data->getCommandManager()->setBookmark();
     data->push(asked_qty, asked_date, true);
     // Subtract the post-operation time.
     data->state->q_date -= ask_early;
     auto tmpopplan = createOperation(oper, data, true, true);
     data->pop(true);
-    repeat = false;
     if (!data->state->a_qty) {
       bm->rollback();
       if (data->state->curOwnerOpplan &&

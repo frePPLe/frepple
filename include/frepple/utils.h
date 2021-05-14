@@ -483,46 +483,36 @@ class Duration {
    */
   Duration(const char* s) { parse(s); }
 
-  /* Comparison between periods of time. */
   bool operator<(const long& b) const { return lval < b; }
 
-  /* Comparison between periods of time. */
   bool operator>(const long& b) const { return lval > b; }
 
-  /* Comparison between periods of time. */
   bool operator<=(const long& b) const { return lval <= b; }
 
-  /* Comparison between periods of time. */
   bool operator>=(const long& b) const { return lval >= b; }
 
-  /* Comparison between periods of time. */
   bool operator<(const Duration& b) const { return lval < b.lval; }
 
-  /* Comparison between periods of time. */
   bool operator>(const Duration& b) const { return lval > b.lval; }
 
-  /* Comparison between periods of time. */
   bool operator<=(const Duration& b) const { return lval <= b.lval; }
 
-  /* Comparison between periods of time. */
   bool operator>=(const Duration& b) const { return lval >= b.lval; }
 
-  /* Equality operator. */
   bool operator==(const Duration& b) const { return lval == b.lval; }
 
-  /* Inequality operator. */
   bool operator!=(const Duration& b) const { return lval != b.lval; }
 
-  /* Increase the Duration. */
   void operator+=(const Duration& l) { lval += l.lval; }
 
-  /* Decrease the Duration. */
   void operator-=(const Duration& l) { lval -= l.lval; }
 
-  /* Returns true of the duration is equal to 0. */
   bool operator!() const { return lval == 0L; }
 
-  /* This conversion operator creates a long value from a Duration. */
+  void operator*=(double f) { lval = static_cast<long>(lval * f); }
+
+  void operator*=(int i) { lval *= i; }
+
   operator long() const { return lval; }
 
   double getSeconds() const { return lval; }
@@ -3147,7 +3137,7 @@ class Object : public PyObject {
     if (!dict)
       // Not a single property has been defined
       return def;
-    PyGILState_STATE pythonstate = PyGILState_Ensure();
+    auto pythonstate = PyGILState_Ensure();
     PyObject* lkp = PyDict_GetItemString(dict, name.c_str());
     if (!lkp) {
       // Value not found in the dictionary

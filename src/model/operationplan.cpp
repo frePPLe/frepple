@@ -622,8 +622,12 @@ Object* OperationPlan::createOperationPlan(const MetaClass* cat,
                                static_cast<Operation*>(oper)->getLocation());
       buf->correctProducingFlow(static_cast<Operation*>(oper));
     }
+    const DataValue* quantityCompletedfld = in.get(Tags::quantity_completed);
+    double quantity_completed =
+        quantityCompletedfld ? quantityCompletedfld->getDouble() : 0.0;
     opplan = static_cast<Operation*>(oper)->createOperationPlan(
-        quantity, start, end, batch, nullptr, nullptr, 0, false, id);
+        quantity, start, end, batch, nullptr, nullptr, 0, false, id,
+        quantity_completed, status);
     if (!opplan->getType().raiseEvent(opplan, SIG_ADD)) {
       delete opplan;
       throw DataException("Can't create operationplan");
@@ -634,7 +638,7 @@ Object* OperationPlan::createOperationPlan(const MetaClass* cat,
   // process the start and end date before locking it.
   // Subsequent calls won't affect the operationplan any longer.
   if (statusfld && status != "proposed") {
-    opplan->setStatus(status, statuspropagation);
+    opplan->setStatus(status, statuspropagation, true);
     if (opplan->getApproved()) {
       opplan->createFlowLoads();
       opplan->setOperationPlanParameters(quantity, opplan->getStart(),
@@ -1806,7 +1810,7 @@ bool OperationPlan::isConstrained() const {
   return false;
 }
 
-void OperationPlan::setStatus(const string& s, bool propagate) {
+void OperationPlan::setStatus(const string& s, bool propagate, bool u) {
   if (s == "approved") {
     flags |= STATUS_APPROVED;
     flags &= ~(STATUS_CONFIRMED + STATUS_COMPLETED + STATUS_CLOSED);
@@ -1826,9 +1830,9 @@ void OperationPlan::setStatus(const string& s, bool propagate) {
     throw DataException("invalid operationplan status:" + s);
   if (!getProposed() && owner && owner->getProposed())
     owner->flags |= STATUS_APPROVED;
-  update();
+  if (u) update();
   for (auto x = firstsubopplan; x; x = x->nextsubopplan)
-    x->setStatus(s, propagate);
+    x->setStatus(s, propagate, u);
   if (propagate) propagateStatus();
 }
 

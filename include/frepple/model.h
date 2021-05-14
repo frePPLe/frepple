@@ -1662,7 +1662,7 @@ class OperationPlan : public Object,
   friend class iterator;
 
   /* This is a factory method that creates an operationplan pointer based
-   * on the operation and id. */
+   * on the operation and reference. */
   static Object* createOperationPlan(const MetaClass*, const DataValueDict&,
                                      CommandManager* = nullptr);
 
@@ -1698,7 +1698,12 @@ class OperationPlan : public Object,
       return quantity_completed < quantity ? quantity_completed : quantity;
   }
 
-  void setQuantityCompleted(double q) { quantity_completed = q; }
+  double getQuantityCompletedRaw() const { return quantity_completed; }
+
+  void setQuantityCompleted(double q) {
+    quantity_completed = q;
+    update();
+  }
 
   double getQuantityRemaining() const {
     if (getCompleted() || getProposed())
@@ -1753,11 +1758,13 @@ class OperationPlan : public Object,
   string getStatus() const;
 
   /* Update the status of the operationplan. */
-  void setStatus(const string&, bool propagate);
+  void setStatus(const string&, bool propagate, bool update);
 
-  void setStatusNoPropagation(const string& s) { setStatus(s, false); }
+  void setStatusRaw(const string& s) { setStatus(s, false, false); }
 
-  void setStatus(const string& s) { setStatus(s, true); }
+  void setStatusNoPropagation(const string& s) { setStatus(s, false, true); }
+
+  void setStatus(const string& s) { setStatus(s, true, true); }
 
   /* Enforce a specific start date, end date and quantity. There is
    * no validation whether the values are consistent with the operation
@@ -2064,7 +2071,7 @@ class OperationPlan : public Object,
 
   void setEndForce(Date d) { setEnd(d, true); }
 
-  /* Return the end date. */
+  /* Return the start date. */
   Date getStart() const { return dates.getStart(); }
 
   /* Updates the start date of the operationplan and compute the end
@@ -2404,6 +2411,8 @@ class OperationPlan : public Object,
    */
   OperationPlan() { initType(metadata); }
 
+  OperationPlan(Operation* o) : oper(o) { initType(metadata); }
+
   static const unsigned short STATUS_APPROVED = 1;
   static const unsigned short STATUS_CONFIRMED = 2;
   static const unsigned short STATUS_COMPLETED = 4;
@@ -2676,8 +2685,8 @@ class Operation : public HasName<Operation>,
   OperationPlan* createOperationPlan(
       double, Date, Date, const PooledString&, Demand* = nullptr,
       OperationPlan* = nullptr, bool makeflowsloads = true,
-      bool roundDown = true,
-      const string& ref = PooledString::nullstring) const;
+      bool roundDown = true, const string& ref = PooledString::nullstring,
+      double = 0.0, const string& = PooledString::nullstring) const;
 
   /* Returns true for operation types that own suboperations. */
   virtual bool hasSubOperations() const { return false; }
@@ -3071,10 +3080,6 @@ class Operation : public HasName<Operation>,
   static Operationlist nosubOperations;
 
  protected:
-  void initOperationPlan(OperationPlan*, double, const Date&, const Date&,
-                         Demand*, OperationPlan*, bool = true,
-                         bool = true) const;
-
   typedef tuple<Resource*, SetupMatrixRule*, PooledString> SetupInfo;
 
   /* Calculate the setup time of an operationplan.

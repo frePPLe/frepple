@@ -227,16 +227,35 @@ Duration OperationRouting::getMaxEarly() const {
   return tmp;
 }
 
-OperationPlan* Operation::createOperationPlan(double q, Date s, Date e,
-                                              const PooledString& batch,
-                                              Demand* l, OperationPlan* ow,
-                                              bool makeflowsloads,
-                                              bool roundDown,
-                                              const string& ref) const {
-  OperationPlan* opplan = new OperationPlan();
-  opplan->setBatch(batch);
+OperationPlan* Operation::createOperationPlan(
+    double q, Date s, Date e, const PooledString& batch, Demand* l,
+    OperationPlan* ow, bool makeflowsloads, bool roundDown, const string& ref,
+    double q_completed, const string& status) const {
+  OperationPlan* opplan = new OperationPlan(const_cast<Operation*>(this));
+  if (!batch.empty()) opplan->setBatch(batch);
   if (!ref.empty()) opplan->setName(ref);
-  initOperationPlan(opplan, q, s, e, l, ow, makeflowsloads, roundDown);
+  // if (!status.empty()) opplan->setStatusRaw(status);
+  if (q_completed) opplan->setQuantityCompleted(q_completed);
+  if (l) opplan->setDemand(l);
+
+  // Setting the owner first. Note that the order is important here!
+  // For alternates & routings the quantity needs to be set through the owner.
+  if (ow) opplan->setOwner(ow, true);
+
+  // Setting the dates and quantity
+  setOperationPlanParameters(opplan, q, s, e, true, true, roundDown);
+
+  // Create the loadplans and flowplans, if allowed
+  if (makeflowsloads) {
+    opplan->createFlowLoads();
+    // Now that we know the assigned resource the duration can change
+    // eg different availability or efficienicy)
+    setOperationPlanParameters(opplan, q, s, e, true, true, roundDown);
+  }
+
+  // Update flow and loadplans, and mark for problem detection
+  opplan->update();
+
   return opplan;
 }
 
@@ -796,32 +815,6 @@ Operation::SetupInfo Operation::calculateSetup(OperationPlan* opplan,
     }
   }
   return SetupInfo(nullptr, nullptr, PooledString());
-}
-
-void Operation::initOperationPlan(OperationPlan* opplan, double q,
-                                  const Date& s, const Date& e, Demand* l,
-                                  OperationPlan* ow, bool makeflowsloads,
-                                  bool roundDown) const {
-  opplan->oper = const_cast<Operation*>(this);
-  if (l) opplan->setDemand(l);
-
-  // Setting the owner first. Note that the order is important here!
-  // For alternates & routings the quantity needs to be set through the owner.
-  if (ow) opplan->setOwner(ow, true);
-
-  // Setting the dates and quantity
-  setOperationPlanParameters(opplan, q, s, e, true, true, roundDown);
-
-  // Create the loadplans and flowplans, if allowed
-  if (makeflowsloads) {
-    opplan->createFlowLoads();
-    // Now that we know the assigned resource the duration can change
-    // eg different availability or efficienicy)
-    setOperationPlanParameters(opplan, q, s, e, true, true, roundDown);
-  }
-
-  // Update flow and loadplans, and mark for problem detection
-  opplan->update();
 }
 
 Flow* Operation::findFlow(const Buffer* b, Date d) const {

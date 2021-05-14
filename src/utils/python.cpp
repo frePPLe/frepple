@@ -120,7 +120,7 @@ size_t Object::getSize() const {
 
   // ... plus the size of a custom Python attributes
   if (dict) {
-    PyGILState_STATE pythonstate = PyGILState_Ensure();
+    auto pythonstate = PyGILState_Ensure();
     PyObject *key, *value;
     Py_ssize_t pos = 0;
     tmp += _PySys_GetSizeOf(dict);
@@ -168,7 +168,7 @@ void PythonInterpreter::initialize() {
   }
 
   // Capture global lock
-  PyGILState_STATE state = PyGILState_Ensure();
+  auto pythonstate = PyGILState_Ensure();
 
   if (!init) {
     // Create the logging function.
@@ -186,7 +186,7 @@ void PythonInterpreter::initialize() {
   }
 
   if (!module) {
-    PyGILState_Release(state);
+    PyGILState_Release(pythonstate);
     throw RuntimeException("Can't initialize Python interpreter");
   }
 
@@ -216,7 +216,7 @@ void PythonInterpreter::initialize() {
                        "Prints a string to the frePPLe log file.", false);
 
   // Release the lock
-  if (init) PyGILState_Release(state);
+  if (init) PyGILState_Release(pythonstate);
 
   // A final check...
   if (nok) throw RuntimeException("Can't initialize Python interpreter");
@@ -224,19 +224,19 @@ void PythonInterpreter::initialize() {
 
 void PythonInterpreter::execute(const char* cmd) {
   // Capture global lock
-  PyGILState_STATE state = PyGILState_Ensure();
+  auto pythonstate = PyGILState_Ensure();
 
   // Execute the command
   PyObject* m = PyImport_AddModule("__main__");
   if (!m) {
     // Release the global Python lock
-    PyGILState_Release(state);
+    PyGILState_Release(pythonstate);
     throw RuntimeException("Can't initialize Python interpreter");
   }
   PyObject* d = PyModule_GetDict(m);
   if (!d) {
     // Release the global Python lock
-    PyGILState_Release(state);
+    PyGILState_Release(pythonstate);
     throw RuntimeException("Can't initialize Python interpreter");
   }
 
@@ -249,12 +249,12 @@ void PythonInterpreter::execute(const char* cmd) {
     // Print the error message
     PyErr_Print();
     // Release the global Python lock
-    PyGILState_Release(state);
+    PyGILState_Release(pythonstate);
     throw RuntimeException("Error executing Python command");
   }
   PyErr_Clear();
   // Release the global Python lock
-  PyGILState_Release(state);
+  PyGILState_Release(pythonstate);
 }
 
 void PythonInterpreter::executeFile(string filename) {
@@ -287,20 +287,19 @@ void PythonInterpreter::registerGlobalMethod(const char* name,
   newMethod->ml_doc = leakingDoc->c_str();
 
   // Lock the interpreter
-  PyGILState_STATE state = PyGILState_LOCKED;
-  if (lock) state = PyGILState_Ensure();
+  PyGILState_STATE pythonstate = PyGILState_LOCKED;
+  if (lock) pythonstate = PyGILState_Ensure();
 
   // Register a new C function in Python
   PyObject* mod = PyUnicode_FromString("frepple");
   if (!mod) {
-    if (lock) PyGILState_Release(state);
-    ;
+    if (lock) PyGILState_Release(pythonstate);
     throw RuntimeException("Error registering a new Python method");
   }
   PyObject* func = PyCFunction_NewEx(newMethod, nullptr, mod);
   Py_DECREF(mod);
   if (!func) {
-    if (lock) PyGILState_Release(state);
+    if (lock) PyGILState_Release(pythonstate);
     throw RuntimeException("Error registering a new Python method");
   }
 
@@ -308,18 +307,18 @@ void PythonInterpreter::registerGlobalMethod(const char* name,
   PyObject* moduledict = PyModule_GetDict(module);
   if (!moduledict) {
     Py_DECREF(func);
-    if (lock) PyGILState_Release(state);
+    if (lock) PyGILState_Release(pythonstate);
     throw RuntimeException("Error registering a new Python method");
   }
   if (PyDict_SetItemString(moduledict, leakingName->c_str(), func) < 0) {
     Py_DECREF(func);
-    if (lock) PyGILState_Release(state);
+    if (lock) PyGILState_Release(pythonstate);
     throw RuntimeException("Error registering a new Python method");
   }
   Py_DECREF(func);
 
   // Release the interpeter
-  if (lock) PyGILState_Release(state);
+  if (lock) PyGILState_Release(pythonstate);
 }
 
 void PythonInterpreter::registerGlobalMethod(const char* c,
@@ -331,10 +330,10 @@ void PythonInterpreter::registerGlobalMethod(const char* c,
 
 void PythonInterpreter::registerGlobalObject(const char* name, PyObject* obj,
                                              bool lock) {
-  PyGILState_STATE state;
-  if (lock) state = PyGILState_Ensure();
+  PyGILState_STATE pythonstate;
+  if (lock) pythonstate = PyGILState_Ensure();
   PyModule_AddObject(module, name, obj);
-  if (lock) PyGILState_Release(state);
+  if (lock) PyGILState_Release(pythonstate);
 }
 
 PyObject* PythonInterpreter::python_log(PyObject* self, PyObject* args) {
@@ -490,7 +489,7 @@ void Object::writeProperties(Serializer& o) const {
   if (!dict) return;  // No custom fields here
 
   // Create a sorted list of all keys
-  PyGILState_STATE pythonstate = PyGILState_Ensure();
+  auto pythonstate = PyGILState_Ensure();
   PyObject* key_iterator =
       PyObject_CallMethod(dict, "keys", nullptr);         // new ref
   PyObject* keylist = PySequence_Fast(key_iterator, "");  // new ref
@@ -530,7 +529,7 @@ void Object::setProperty(const string& name, const DataValue& value, short type,
   if (mgr) mgr->add(new CommandSetProperty(this, name, value, type));
 
   // Adding the new key-value pair to the dictionary.
-  PyGILState_STATE pythonstate = PyGILState_Ensure();
+  auto pythonstate = PyGILState_Ensure();
   try {
     if (!dict) {
       dict = PyDict_New();
@@ -570,7 +569,7 @@ void Object::setProperty(const string& name, const DataValue& value, short type,
 
 void Object::setBoolProperty(const string& name, bool value) {
   // Adding the new key-value pair to the dictionary.
-  PyGILState_STATE pythonstate = PyGILState_Ensure();
+  auto pythonstate = PyGILState_Ensure();
   try {
     if (!dict) {
       dict = PyDict_New();
@@ -587,7 +586,7 @@ void Object::setBoolProperty(const string& name, bool value) {
 
 void Object::setDateProperty(const string& name, Date value) {
   // Adding the new key-value pair to the dictionary.
-  PyGILState_STATE pythonstate = PyGILState_Ensure();
+  auto pythonstate = PyGILState_Ensure();
   try {
     if (!dict) {
       dict = PyDict_New();
@@ -604,7 +603,7 @@ void Object::setDateProperty(const string& name, Date value) {
 
 void Object::setDoubleProperty(const string& name, double value) {
   // Adding the new key-value pair to the dictionary.
-  PyGILState_STATE pythonstate = PyGILState_Ensure();
+  auto pythonstate = PyGILState_Ensure();
   try {
     if (!dict) {
       dict = PyDict_New();
@@ -621,7 +620,7 @@ void Object::setDoubleProperty(const string& name, double value) {
 
 void Object::setStringProperty(const string& name, string value) {
   // Adding the new key-value pair to the dictionary.
-  PyGILState_STATE pythonstate = PyGILState_Ensure();
+  auto pythonstate = PyGILState_Ensure();
   if (!dict) {
     dict = PyDict_New();
     Py_INCREF(dict);
@@ -632,7 +631,7 @@ void Object::setStringProperty(const string& name, string value) {
 }
 
 void Object::setProperty(const string& name, PyObject* value) {
-  PyGILState_STATE pythonstate = PyGILState_Ensure();
+  auto pythonstate = PyGILState_Ensure();
   try {
     if (!dict) {
       dict = PyDict_New();
@@ -650,7 +649,7 @@ void Object::setProperty(const string& name, PyObject* value) {
 
 bool Object::hasProperty(const string& name) const {
   if (!dict) return false;
-  PyGILState_STATE pythonstate = PyGILState_Ensure();
+  auto pythonstate = PyGILState_Ensure();
   PyObject* lkp = PyDict_GetItemString(dict, name.c_str());
   bool result = lkp ? true : false;
   PyGILState_Release(pythonstate);
@@ -659,7 +658,7 @@ bool Object::hasProperty(const string& name) const {
 
 void Object::deleteProperty(const string& name) {
   if (!dict) return;
-  PyGILState_STATE pythonstate = PyGILState_Ensure();
+  auto pythonstate = PyGILState_Ensure();
   PyDict_DelItemString(dict, name.c_str());
   PyGILState_Release(pythonstate);
 }
@@ -668,7 +667,7 @@ bool Object::getBoolProperty(const string& name, bool def) const {
   if (!dict)
     // Not a single property has been defined
     return def;
-  PyGILState_STATE pythonstate = PyGILState_Ensure();
+  auto pythonstate = PyGILState_Ensure();
   PyObject* lkp = PyDict_GetItemString(dict, name.c_str());
   if (!lkp) {
     // Value not found in the dictionary
@@ -690,7 +689,7 @@ Date Object::getDateProperty(const string& name, Date def) const {
   if (!dict)
     // Not a single property has been defined
     return def;
-  PyGILState_STATE pythonstate = PyGILState_Ensure();
+  auto pythonstate = PyGILState_Ensure();
   PyObject* lkp = PyDict_GetItemString(dict, name.c_str());
   if (!lkp) {
     // Value not found in the dictionary
@@ -712,7 +711,7 @@ double Object::getDoubleProperty(const string& name, double def) const {
   if (!dict)
     // Not a single property has been defined
     return def;
-  PyGILState_STATE pythonstate = PyGILState_Ensure();
+  auto pythonstate = PyGILState_Ensure();
   PyObject* lkp = PyDict_GetItemString(dict, name.c_str());
   if (!lkp) {
     // Value not found in the dictionary
@@ -734,7 +733,7 @@ PyObject* Object::getPyObjectProperty(const string& name) const {
   if (!dict)
     // Not a single property has been defined
     return nullptr;
-  PyGILState_STATE pythonstate = PyGILState_Ensure();
+  auto pythonstate = PyGILState_Ensure();
   PyObject* lkp = PyDict_GetItemString(dict, name.c_str());
   if (!lkp) {
     // Value not found in the dictionary
@@ -838,9 +837,9 @@ void PythonType::addMethod(const char* c, PyCFunctionWithKeywords f, int i,
 
 int PythonType::typeReady() {
   // Register the new type in the module
-  PyGILState_STATE state = PyGILState_Ensure();
+  auto pythonstate = PyGILState_Ensure();
   if (PyType_Ready(&table) < 0) {
-    PyGILState_Release(state);
+    PyGILState_Release(pythonstate);
     throw RuntimeException(string("Can't register python type ") +
                            table.tp_name);
   }
@@ -850,7 +849,7 @@ int PythonType::typeReady() {
       table.tp_name +
           8,  // Note: +8 is to skip the "frepple." characters in the name
       reinterpret_cast<PyObject*>(&table));
-  PyGILState_Release(state);
+  PyGILState_Release(pythonstate);
   return result;
 }
 
@@ -879,7 +878,7 @@ PythonFunction::PythonFunction(const string& n) {
   }
 
   // Find the Python function
-  PyGILState_STATE pythonstate = PyGILState_Ensure();
+  auto pythonstate = PyGILState_Ensure();
   func = PyRun_String(n.c_str(), Py_eval_input, PyEval_GetGlobals(),
                       PyEval_GetLocals());
   if (!func) {
@@ -906,7 +905,7 @@ PythonFunction::PythonFunction(PyObject* p) {
   if (!PyCallable_Check(p)) {
     // It's not a callable object. Interprete it as a function name and
     // look it up.
-    PyGILState_STATE pythonstate = PyGILState_Ensure();
+    auto pythonstate = PyGILState_Ensure();
     string n = PythonData(p).getString();
     p = PyRun_String(n.c_str(), Py_eval_input, PyEval_GetGlobals(),
                      PyEval_GetLocals());
@@ -928,7 +927,7 @@ PythonFunction::PythonFunction(PyObject* p) {
 
 PythonData PythonFunction::call() const {
   if (!func) return PythonData();
-  PyGILState_STATE pythonstate = PyGILState_Ensure();
+  auto pythonstate = PyGILState_Ensure();
   PyObject* result = PyObject_CallFunction(func, "()");
   if (!result) {
     logger << "Error: Exception caught when calling Python function '"
@@ -941,7 +940,7 @@ PythonData PythonFunction::call() const {
 
 PythonData PythonFunction::call(const PyObject* p) const {
   if (!func) return PythonData();
-  PyGILState_STATE pythonstate = PyGILState_Ensure();
+  auto pythonstate = PyGILState_Ensure();
   PyObject* result = PyObject_CallFunction(func, "(O)", p);
   if (!result) {
     logger << "Error: Exception caught when calling Python function '"
@@ -954,7 +953,7 @@ PythonData PythonFunction::call(const PyObject* p) const {
 
 PythonData PythonFunction::call(const PyObject* p, const PyObject* q) const {
   if (!func) return PythonData();
-  PyGILState_STATE pythonstate = PyGILState_Ensure();
+  auto pythonstate = PyGILState_Ensure();
   PyObject* result = PyObject_CallFunction(func, "(OO)", p, q);
   if (!result) {
     logger << "Error: Exception caught when calling Python function '"

@@ -639,7 +639,8 @@ Object* OperationPlan::createOperationPlan(const MetaClass* cat,
   // Subsequent calls won't affect the operationplan any longer.
   if (statusfld && status != "proposed") {
     opplan->setStatus(status, statuspropagation, true);
-    if (opplan->getApproved()) {
+    if (opplan->getApproved() ||
+        (opplan->getConfirmed() && opplan->getQuantityCompleted())) {
       opplan->createFlowLoads();
       opplan->setOperationPlanParameters(quantity, opplan->getStart(),
                                          Date::infinitePast, false, true, false,
@@ -1830,10 +1831,12 @@ void OperationPlan::setStatus(const string& s, bool propagate, bool u) {
     throw DataException("invalid operationplan status:" + s);
   if (!getProposed() && owner && owner->getProposed())
     owner->flags |= STATUS_APPROVED;
-  if (u) update();
-  for (auto x = firstsubopplan; x; x = x->nextsubopplan)
-    x->setStatus(s, propagate, u);
-  if (propagate) propagateStatus();
+  if (u) {
+    update();
+    for (auto x = firstsubopplan; x; x = x->nextsubopplan)
+      x->setStatus(s, propagate, u);
+    if (propagate) propagateStatus();
+  }
 }
 
 void OperationPlan::freezeStatus(Date st, Date nd, double q) {

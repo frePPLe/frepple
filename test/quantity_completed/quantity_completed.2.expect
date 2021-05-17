@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<current>2021-01-01T00:00:00</current>
+	<locations>
+		<location>
+			<name>factory</name>
+		</location>
+	</locations>
+	<resources>
+		<resource>
+			<name>resource 1</name>
+		</resource>
+		<resource>
+			<name>resource 2</name>
+		</resource>
+	</resources>
+	<items>
+		<item>
+			<name>component 1A</name>
+		</item>
+		<item>
+			<name>component 1B</name>
+		</item>
+		<item>
+			<name>component 2A</name>
+		</item>
+		<item>
+			<name>component 2B</name>
+		</item>
+		<item>
+			<name>item 1</name>
+		</item>
+		<item>
+			<name>item 2</name>
+		</item>
+	</items>
+	<buffers>
+		<buffer xsi:type="buffer_infinite">
+			<name>component 1A @ factory</name>
+			<item>
+				<name>component 1A</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+			<detectproblems>false</detectproblems>
+		</buffer>
+		<buffer xsi:type="buffer_infinite">
+			<name>component 1B @ factory</name>
+			<item>
+				<name>component 1B</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+			<detectproblems>false</detectproblems>
+		</buffer>
+		<buffer xsi:type="buffer_infinite">
+			<name>component 2A @ factory</name>
+			<item>
+				<name>component 2A</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+			<detectproblems>false</detectproblems>
+		</buffer>
+		<buffer xsi:type="buffer_infinite">
+			<name>component 2B @ factory</name>
+			<item>
+				<name>component 2B</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+			<detectproblems>false</detectproblems>
+		</buffer>
+		<buffer>
+			<name>item 1 @ factory</name>
+			<producing>
+				<name>production 1</name>
+			</producing>
+			<item>
+				<name>item 1</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+		</buffer>
+		<buffer>
+			<name>item 2 @ factory</name>
+			<producing xsi:type="operation_time_per">
+				<name>production 2</name>
+			</producing>
+			<item>
+				<name>item 2</name>
+			</item>
+			<location>
+				<name>factory</name>
+			</location>
+		</buffer>
+	</buffers>
+	<operations>
+		<operation>
+			<name>production 1</name>
+			<location>
+				<name>factory</name>
+			</location>
+			<loads>
+				<load>
+					<resource>
+						<name>resource 1</name>
+					</resource>
+				</load>
+			</loads>
+			<flows>
+				<flow xsi:type="flow_end">
+					<item>
+						<name>item 1</name>
+					</item>
+					<quantity>2</quantity>
+					<quantity_fixed>1</quantity_fixed>
+				</flow>
+				<flow>
+					<item>
+						<name>component 1A</name>
+					</item>
+					<quantity>-2</quantity>
+					<quantity_fixed>-1</quantity_fixed>
+				</flow>
+				<flow>
+					<item>
+						<name>component 1B</name>
+					</item>
+					<quantity>-1</quantity>
+				</flow>
+			</flows>
+			<duration>P4D</duration>
+		</operation>
+		<operation xsi:type="operation_time_per">
+			<name>production 2</name>
+			<location>
+				<name>factory</name>
+			</location>
+			<loads>
+				<load>
+					<resource>
+						<name>resource 2</name>
+					</resource>
+				</load>
+			</loads>
+			<flows>
+				<flow xsi:type="flow_end">
+					<item>
+						<name>item 2</name>
+					</item>
+					<quantity>2</quantity>
+					<quantity_fixed>1</quantity_fixed>
+				</flow>
+				<flow>
+					<item>
+						<name>component 2A</name>
+					</item>
+					<quantity>-2</quantity>
+					<quantity_fixed>-1</quantity_fixed>
+				</flow>
+				<flow>
+					<item>
+						<name>component 2B</name>
+					</item>
+					<quantity>-1</quantity>
+				</flow>
+			</flows>
+			<duration>P1D</duration>
+			<duration_per>PT1H</duration_per>
+		</operation>
+	</operations>
+	<operationplans>
+		<operationplan>
+			<reference>WIP 1A</reference>
+			<operation>
+				<name>production 1</name>
+			</operation>
+			<start>2021-01-01T00:00:00</start>
+			<end>2021-01-05T00:00:00</end>
+			<quantity>100</quantity>
+			<status>confirmed</status>
+		</operationplan>
+		<operationplan>
+			<reference>WIP 1B</reference>
+			<operation>
+				<name>production 1</name>
+			</operation>
+			<start>2021-02-01T00:00:00</start>
+			<end>2021-02-05T00:00:00</end>
+			<quantity>100</quantity>
+			<status>confirmed</status>
+			<quantity_completed>60</quantity_completed>
+		</operationplan>
+		<operationplan>
+			<reference>WIP 1C</reference>
+			<operation>
+				<name>production 1</name>
+			</operation>
+			<start>2021-03-01T00:00:00</start>
+			<end>2021-03-05T00:00:00</end>
+			<quantity>100</quantity>
+			<status>approved</status>
+			<quantity_completed>60</quantity_completed>
+		</operationplan>
+		<operationplan>
+			<reference>WIP 1D</reference>
+			<operation>
+				<name>production 1</name>
+			</operation>
+			<start>2021-03-28T00:00:00</start>
+			<end>2021-04-01T00:00:00</end>
+			<quantity>100</quantity>
+			<status>approved</status>
+			<quantity_completed>60</quantity_completed>
+		</operationplan>
+		<operationplan>
+			<reference>WIP 1E</reference>
+			<operation>
+				<name>production 1</name>
+			</operation>
+			<start>2021-04-27T00:00:00</start>
+			<end>2021-05-01T00:00:00</end>
+			<quantity>100</quantity>
+		</operationplan>
+		<operationplan>
+			<reference>WIP 1F</reference>
+			<operation>
+				<name>production 1</name>
+			</operation>
+			<start>2021-05-28T00:00:00</start>
+			<end>2021-06-01T00:00:00</end>
+			<quantity>100</quantity>
+			<status>approved</status>
+			<quantity_completed>100</quantity_completed>
+		</operationplan>
+		<operationplan>
+			<reference>WIP 2A</reference>
+			<operation xsi:type="operation_time_per">
+				<name>production 2</name>
+			</operation>
+			<start>2021-01-01T00:00:00</start>
+			<end>2021-01-06T04:00:00</end>
+			<quantity>100</quantity>
+			<status>confirmed</status>
+		</operationplan>
+		<operationplan>
+			<reference>WIP 2B</reference>
+			<operation xsi:type="operation_time_per">
+				<name>production 2</name>
+			</operation>
+			<start>2021-02-01T00:00:00</start>
+			<end>2021-02-06T04:00:00</end>
+			<quantity>100</quantity>
+			<status>confirmed</status>
+			<quantity_completed>60</quantity_completed>
+		</operationplan>
+		<operationplan>
+			<reference>WIP 2C</reference>
+			<operation xsi:type="operation_time_per">
+				<name>production 2</name>
+			</operation>
+			<start>2021-03-01T00:00:00</start>
+			<end>2021-03-06T04:00:00</end>
+			<quantity>100</quantity>
+			<status>approved</status>
+			<quantity_completed>60</quantity_completed>
+		</operationplan>
+		<operationplan>
+			<reference>WIP 2D</reference>
+			<operation xsi:type="operation_time_per">
+				<name>production 2</name>
+			</operation>
+			<start>2021-03-26T20:00:00</start>
+			<end>2021-04-01T00:00:00</end>
+			<quantity>100</quantity>
+			<status>approved</status>
+			<quantity_completed>60</quantity_completed>
+		</operationplan>
+		<operationplan>
+			<reference>WIP 2E</reference>
+			<operation xsi:type="operation_time_per">
+				<name>production 2</name>
+			</operation>
+			<start>2021-04-25T20:00:00</start>
+			<end>2021-05-01T00:00:00</end>
+			<quantity>100</quantity>
+		</operationplan>
+		<operationplan>
+			<reference>WIP 2F</reference>
+			<operation xsi:type="operation_time_per">
+				<name>production 2</name>
+			</operation>
+			<start>2021-05-26T20:00:00</start>
+			<end>2021-06-01T00:00:00</end>
+			<quantity>100</quantity>
+			<status>approved</status>
+			<quantity_completed>100</quantity_completed>
+		</operationplan>
+	</operationplans>
+</plan>

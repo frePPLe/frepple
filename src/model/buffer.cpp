@@ -242,8 +242,8 @@ void Buffer::setOnHand(double f) {
   OperationPlan::iterator i(o);
   if (i == OperationPlan::end()) {
     // No operationplan exists yet
-    OperationPlan* opplan = o->createOperationPlan(
-        fabs(f), Date::infinitePast, Date::infinitePast, getBatch());
+    auto opplan = o->createOperationPlan(fabs(f), Date::infinitePast,
+                                         Date::infinitePast, getBatch());
     opplan->setClosed(true);
     opplan->activate();
   } else {

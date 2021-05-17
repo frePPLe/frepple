@@ -11,7 +11,12 @@ The code in this file is using ANGULARJS template syntax and not the DJANGO temp
     </div>
     <div data-ng-if="opplan.type === 'PO'">
       <p><i data-ng-if="isStart(opplan, dt)" class="fa fa-step-backward"></i>&nbsp;{{ 'Purchase Order' | translate }}&nbsp;<i data-ng-if="isEnd(opplan, dt)" class="fa fa-step-forward"></i></p>
-      <p><strong>{{opplan.operationplan__reference || opplan.reference}}</strong></p>
+      <p>
+        <strong>{{opplan.operationplan__reference || opplan.reference}}</strong>
+        &nbsp;&nbsp;
+        <i data-ng-if="!editable || !opplan.hasOwnProperty('selected')"
+           data-ng-class="['fa', {'fa-lock': opplan.status == 'confirmed' || opplan.operationplan__status == 'confirmed', 'fa-unlock-alt': opplan.status == 'approved' || opplan.operationplan__status == 'approved', 'fa-unlock': opplan.status == 'proposed' || opplan.operationplan__status == 'proposed'}]" aria-hidden="true"></i>
+      </p>
       <p>{{opplan.item__name || opplan.item}}&nbsp;
         <a data-ng-click="$event.stopPropagation()"
           href="{{url_prefix}}/detail/input/item/{{ admin_escape(opplan.item__name || opplan.item) }}/">
@@ -59,7 +64,12 @@ The code in this file is using ANGULARJS template syntax and not the DJANGO temp
     </div>
     <div data-ng-if="(opplan.type || opplan.operationplan__type || type) === 'DO'">
       <p><i data-ng-if="isStart(opplan, dt)" class="fa fa-step-backward"></i>&nbsp;{{ 'Distribution Order' | translate }}&nbsp;<i data-ng-if="isEnd(opplan, dt)" class="fa fa-step-forward"></i></p>
-      <p><strong>{{opplan.operationplan__reference || opplan.reference}}</strong></p>
+      <p>
+        <strong>{{opplan.operationplan__reference || opplan.reference}}</strong>
+        &nbsp;&nbsp;
+        <i data-ng-if="!editable || !opplan.hasOwnProperty('selected')"
+           data-ng-class="['fa', {'fa-lock': opplan.status == 'confirmed' || opplan.operationplan__status == 'confirmed', 'fa-unlock-alt': opplan.status == 'approved' || opplan.operationplan__status == 'approved', 'fa-unlock': opplan.status == 'proposed' || opplan.operationplan__status == 'proposed'}]" aria-hidden="true"></i>
+      </p>
       <p>{{ opplan.item__name || opplan.item }}&nbsp;
         <a data-ng-click="$event.stopPropagation()"
           href="{{url_prefix}}/detail/input/item/{{ admin_escape(opplan.item__name || opplan.item) }}/">
@@ -107,7 +117,12 @@ The code in this file is using ANGULARJS template syntax and not the DJANGO temp
     </div>
     <div data-ng-if="opplan.type === 'MO'">
       <p><i data-ng-if="isStart(opplan, dt)" class="fa fa-step-backward"></i>&nbsp;{{ 'Manufacturing Order' | translate }}&nbsp;<i data-ng-if="isEnd(opplan, dt)" class="fa fa-step-forward"></i></p>
-      <p><strong>{{opplan.operationplan__reference || opplan.reference}}</strong></p>
+      <p>
+        <strong>{{opplan.operationplan__reference || opplan.reference}}</strong>
+        &nbsp;&nbsp;
+        <i data-ng-if="!editable || !opplan.hasOwnProperty('selected')"
+           data-ng-class="['fa', {'fa-lock': opplan.status == 'confirmed' || opplan.operationplan__status == 'confirmed', 'fa-unlock-alt': opplan.status == 'approved' || opplan.operationplan__status == 'approved', 'fa-unlock': opplan.status == 'proposed' || opplan.operationplan__status == 'proposed'}]" aria-hidden="true"></i>
+      </p>
       <p data-ng-if="opplan.item__name || opplan.operationplan__item__name">
         {{opplan.item__name || opplan.operationplan__item__name}}&nbsp;
         <a data-ng-click="$event.stopPropagation()"
@@ -127,6 +142,13 @@ The code in this file is using ANGULARJS template syntax and not the DJANGO temp
           data-ng-model="opplan.operationplan__quantity" data-ng-change="changeCard(opplan, 'operationplan__quantity', oldValue, opplan.operationplan__quantity)">
         <input class="form-control" data-ng-if="editable && opplan.hasOwnProperty('selected') && !opplan.hasOwnProperty('operationplan__quantity')" type="number" data-ng-focus="oldValue=opplan.quantity"
           data-ng-model="opplan.quantity" data-ng-change="changeCard(opplan, 'quantity', oldValue, opplan.quantity)">
+      </p>
+      <p data-ng-class="{'dirty': opplan.hasOwnProperty('quantity_completedOriginal') || opplan.hasOwnProperty('operationplan__quantity_completedOriginal')}">
+        <span data-ng-if="!editable || !opplan.hasOwnProperty('selected')">{{ grid.formatNumber(opplan.operationplan__quantity_completed || opplan.quantity_completed || 0) }}</span>
+        <input class="form-control" data-ng-if="editable && opplan.hasOwnProperty('selected') && opplan.hasOwnProperty('operationplan__quantity')" type="number" data-ng-focus="oldValue=opplan.operationplan__quantity_completed || 0"
+          data-ng-model="opplan.operationplan__quantity_completed" data-ng-change="changeCard(opplan, 'operationplan__quantity_completed', oldValue, opplan.operationplan__quantity_completed)">
+        <input class="form-control" data-ng-if="editable && opplan.hasOwnProperty('selected') && !opplan.hasOwnProperty('operationplan__quantity')" type="number" data-ng-focus="oldValue=opplan.quantity_completed || 0"
+          data-ng-model="opplan.quantity_completed" data-ng-change="changeCard(opplan, 'quantity_completed', oldValue, opplan.quantity_completed)">
       </p>
       <p data-ng-class="{'dirty': opplan.hasOwnProperty('startdateOriginal') || opplan.hasOwnProperty('operationplan__startdateOriginal')}">
         <span data-ng-if="!editable || !opplan.hasOwnProperty('selected')">{{ (opplan.operationplan__startdate || opplan.startdate) | date: "yyyy-MM-dd HH:mm:ss" }}</span>

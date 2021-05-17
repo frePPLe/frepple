@@ -669,6 +669,12 @@ class ResourceDetail(OperationPlanMixin):
             title=_("quantity"),
             extra='"formatoptions":{"defaultValue":""}, "summaryType":"sum"',
         ),
+        GridFieldNumber(
+            "operationplan__quantity_completed",
+            title=_("quantity completed"),
+            initially_hidden=True,
+            extra='"formatoptions":{"defaultValue":""}, "summaryType":"sum"',
+        ),
         GridFieldChoice(
             "operationplan__status",
             title=_("status"),

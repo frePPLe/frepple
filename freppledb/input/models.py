@@ -1919,6 +1919,7 @@ class OperationPlanRelatedMixin:
                     "operationplan__startdate",
                     "operationplan__enddate",
                     "operationplan__quantity",
+                    "operationplan__quantity_completed",
                     "operationplan__status",
                     "operationplan__reference",
                 )
@@ -1940,6 +1941,11 @@ class OperationPlanRelatedMixin:
             operationplan__quantity = (
                 forms.DecimalField(min_value=0)
                 if "operationplan__quantity" in fields
+                else None
+            )
+            operationplan__quantity_completed = (
+                forms.DecimalField(min_value=0)
+                if "operationplan__quantity_completed" in fields
                 else None
             )
             operationplan__status = (
@@ -1964,6 +1970,11 @@ class OperationPlanRelatedMixin:
                     if "operationplan__quantity" in fields:
                         instance.operationplan.quantity = data[
                             "operationplan__quantity"
+                        ]
+                        dirty = True
+                    if "operationplan__quantity_completed" in fields:
+                        instance.operationplan.quantity_completed = data[
+                            "operationplan__quantity_completed"
                         ]
                         dirty = True
                     if "operationplan__status" in fields:

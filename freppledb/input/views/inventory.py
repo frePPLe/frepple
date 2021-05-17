@@ -1485,6 +1485,13 @@ class InventoryDetail(OperationPlanMixin):
             editable=True,
             extra='"formatoptions":{"defaultValue":""}, "summaryType":"sum"',
         ),
+        GridFieldNumber(
+            "operationplan__quantity_completed",
+            title=_("operationplan quantity completed"),
+            editable=True,
+            initially_hidden=True,
+            extra='"formatoptions":{"defaultValue":""}, "summaryType":"sum"',
+        ),
         GridFieldText(
             "demands",
             title=_("demands"),

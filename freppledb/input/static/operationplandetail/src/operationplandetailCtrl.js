@@ -51,7 +51,7 @@ function operationplanCtrl($scope, $http, OperationPlan, PreferenceSvc) {
   if (typeof $scope.displayongrid === 'function') {
     //watch is only needed if we can update the grid
     $scope.$watchGroup(
-      ['operationplan.id','operationplan.start','operationplan.end','operationplan.quantity','operationplan.status'], 
+      ['operationplan.id','operationplan.start','operationplan.end','operationplan.quantity','operationplan.status','operationplan.quantity_completed'], 
       function(newValue, oldValue) {
       if (oldValue[0] === newValue[0] && newValue[0] !== -1 && typeof oldValue[0] !== 'undefined') {
         //is a change to the current operationplan
@@ -83,6 +83,12 @@ function operationplanCtrl($scope, $http, OperationPlan, PreferenceSvc) {
           else
             actions[Object.keys(actions)[0]]();
         }
+        if (typeof oldValue[5] !== 'undefined' && typeof newValue[5] !== 'undefined' && oldValue[5] !== newValue[5]) {
+          if ($scope.mode == "kanban" || $scope.mode.startsWith("calendar"))
+            $scope.$broadcast("selectedEdited", "quantity_completed", oldValue[5], $scope.operationplan.quantity_completed);
+          else
+            $scope.displayongrid($scope.operationplan.id, "quantity_completed", $scope.operationplan.quantity_completed);
+        }        
       }
       oldValue[0] = newValue[0];
     }); //end watchGroup
@@ -224,6 +230,10 @@ function operationplanCtrl($scope, $http, OperationPlan, PreferenceSvc) {
         opplan.status = row.operationplan__status;
       else if (row.status !== undefined && row.status !== '')
         opplan.status = row.status;
+      if (row.operationplan__quantity_completed !== undefined && row.operationplan__quantity_completed !== '')
+        opplan.quantity_completed = parseFloat(row.operationplan__quantity_completed);
+      else if (row.quantity_completed !== undefined && row.quantity_completed !== '')
+        opplan.quantity_completed = parseFloat(row.quantity_completed);
     }
 
     if (typeof $scope.operationplan.id === 'undefined')
@@ -324,6 +334,9 @@ function operationplanCtrl($scope, $http, OperationPlan, PreferenceSvc) {
       if (columnid === "status") {
         $scope.refreshstatus(value);
       }
+      if (columnid === "quantity_completed") {
+        $scope.$apply(function() {$scope.operationplan.quantity_completed = parseFloat(value);});
+      }
     }
   }
   $scope.displayonpanel = displayonpanel;
@@ -406,6 +419,10 @@ function operationplanCtrl($scope, $http, OperationPlan, PreferenceSvc) {
                 x.quantity = parseFloat(x.quantity);
               if (x.hasOwnProperty("operationplan__quantity"))
                 x.operationplan__quantity = parseFloat(x.operationplan__quantity);
+              if (x.hasOwnProperty("quantity_completed"))
+                x.quantity_completed = parseFloat(x.quantity_completed);
+              if (x.hasOwnProperty("operationplan__quantity_completed"))
+                x.operationplan__quantity_completed = parseFloat(x.operationplan__quantity_completed);                
               if (x.hasOwnProperty("operationplan__status"))
                 x.status = x.operationplan__status;
               if (x.hasOwnProperty("operationplan__origin"))
@@ -479,6 +496,10 @@ function operationplanCtrl($scope, $http, OperationPlan, PreferenceSvc) {
   	  	  	  x.quantity = parseFloat(x.quantity);
   	  	  	if (x.hasOwnProperty("operationplan__quantity"))
   	  	  	  x.operationplan__quantity = parseFloat(x.operationplan__quantity);
+            if (x.hasOwnProperty("quantity_completed"))
+              x.quantity_completed = parseFloat(x.quantity_completed);
+            if (x.hasOwnProperty("operationplan__quantity_completed"))
+              x.operationplan__quantity_completed = parseFloat(x.operationplan__quantity_completed);              
   	  	  	if (x.hasOwnProperty("operationplan__status"))
   	  	  		x.status = x.operationplan__status;
   	  	  	if (x.hasOwnProperty("operationplan__origin"))

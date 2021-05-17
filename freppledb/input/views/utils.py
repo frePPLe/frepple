@@ -1635,6 +1635,7 @@ class OperationPlanDetail(View):
                     if "setupend" in opplan.plan
                     else None,
                     "quantity": float(opplan.quantity),
+                    "quantity_completed": float(opplan.quantity_completed or 0),
                     "criticality": float(opplan.criticality)
                     if opplan.criticality
                     else "",
@@ -1877,35 +1878,34 @@ class OperationPlanDetail(View):
                         )
 
                 # Downstream operationplans
-
                 cursor.execute(
                     """
-                with cte as
-                (
-                select (value->>0)::int as level,
-                value->>1 as reference,
-                (value->>2)::numeric as quantity,
-                row_number() over() as rownum
-                from jsonb_array_elements((select plan->'downstream_opplans' from operationplan where reference = %%s))
-                )
-                select cte.level,
-                cte.reference,
-                operationplan.type,
-                case when operationplan.type = 'PO' then 'Purchase '||operationplan.item_id||' @ '||operationplan.location_id||' from '||operationplan.supplier_id
-                     when operationplan.type = 'DO' then 'Ship '||operationplan.item_id||' from '||operationplan.origin_id||' to '||operationplan.destination_id
-                     %s
-                else operationplan.operation_id end,
-                operationplan.status,
-                operationplan.item_id,
-                coalesce(operationplan.location_id, operationplan.destination_id),
-                to_char(operationplan.startdate,'YYYY-MM-DD hh24:mi:ss'),
-                to_char(operationplan.enddate,'YYYY-MM-DD hh24:mi:ss'),
-                trim(trailing '.' from (trim(trailing '0' from round(cte.quantity,8)::text)))||'/'||
-                trim(trailing '.' from (trim(trailing '0' from round(operationplan.quantity,8)::text)))
-                from cte
-                inner join operationplan on operationplan.reference = cte.reference
-                order by cte.rownum
-                """
+                    with cte as
+                    (
+                    select (value->>0)::int as level,
+                    value->>1 as reference,
+                    (value->>2)::numeric as quantity,
+                    row_number() over() as rownum
+                    from jsonb_array_elements((select plan->'downstream_opplans' from operationplan where reference = %%s))
+                    )
+                    select cte.level,
+                    cte.reference,
+                    operationplan.type,
+                    case when operationplan.type = 'PO' then 'Purchase '||operationplan.item_id||' @ '||operationplan.location_id||' from '||operationplan.supplier_id
+                         when operationplan.type = 'DO' then 'Ship '||operationplan.item_id||' from '||operationplan.origin_id||' to '||operationplan.destination_id
+                         %s
+                    else operationplan.operation_id end,
+                    operationplan.status,
+                    operationplan.item_id,
+                    coalesce(operationplan.location_id, operationplan.destination_id),
+                    to_char(operationplan.startdate,'YYYY-MM-DD hh24:mi:ss'),
+                    to_char(operationplan.enddate,'YYYY-MM-DD hh24:mi:ss'),
+                    trim(trailing '.' from (trim(trailing '0' from round(cte.quantity,8)::text)))||'/'||
+                    trim(trailing '.' from (trim(trailing '0' from round(operationplan.quantity,8)::text)))
+                    from cte
+                    inner join operationplan on operationplan.reference = cte.reference
+                    order by cte.rownum
+                    """
                     % (
                         "when operationplan.demand_id is not null then 'Deliver '||operationplan.demand_id"
                         if "freppledb.forecast" not in settings.INSTALLED_APPS
@@ -1936,34 +1936,33 @@ class OperationPlanDetail(View):
                         )
 
                 # Upstream operationplans
-
                 cursor.execute(
                     """
-                with cte as
-                (
-                select (value->>0)::int as level,
-                value->>1 as reference,
-                (value->>2)::numeric as quantity,
-                row_number() over() as rownum
-                from jsonb_array_elements((select plan->'upstream_opplans' from operationplan where reference = %s))
-                )
-                select cte.level,
-                cte.reference,
-                operationplan.type,
-                case when operationplan.type = 'PO' then 'Purchase '||operationplan.item_id||' @ '||operationplan.location_id||' from '||operationplan.supplier_id
-                     when operationplan.type = 'DO' then 'Ship '||operationplan.item_id||' from '||operationplan.origin_id||' to '||operationplan.destination_id
-                else operationplan.operation_id end,
-                operationplan.status,
-                operationplan.item_id,
-                coalesce(operationplan.location_id, operationplan.destination_id),
-                case when operationplan.type = 'STCK' then '' else to_char(operationplan.startdate,'YYYY-MM-DD hh24:mi:ss') end,
-                case when operationplan.type = 'STCK' then '' else to_char(operationplan.enddate,'YYYY-MM-DD hh24:mi:ss') end,
-                trim(trailing '.' from (trim(trailing '0' from round(cte.quantity,8)::text)))||'/'||
-                trim(trailing '.' from (trim(trailing '0' from round(operationplan.quantity,8)::text)))
-                from cte
-                inner join operationplan on operationplan.reference = cte.reference
-                order by cte.rownum
-                """,
+                    with cte as
+                    (
+                    select (value->>0)::int as level,
+                    value->>1 as reference,
+                    (value->>2)::numeric as quantity,
+                    row_number() over() as rownum
+                    from jsonb_array_elements((select plan->'upstream_opplans' from operationplan where reference = %s))
+                    )
+                    select cte.level,
+                    cte.reference,
+                    operationplan.type,
+                    case when operationplan.type = 'PO' then 'Purchase '||operationplan.item_id||' @ '||operationplan.location_id||' from '||operationplan.supplier_id
+                         when operationplan.type = 'DO' then 'Ship '||operationplan.item_id||' from '||operationplan.origin_id||' to '||operationplan.destination_id
+                    else operationplan.operation_id end,
+                    operationplan.status,
+                    operationplan.item_id,
+                    coalesce(operationplan.location_id, operationplan.destination_id),
+                    case when operationplan.type = 'STCK' then '' else to_char(operationplan.startdate,'YYYY-MM-DD hh24:mi:ss') end,
+                    case when operationplan.type = 'STCK' then '' else to_char(operationplan.enddate,'YYYY-MM-DD hh24:mi:ss') end,
+                    trim(trailing '.' from (trim(trailing '0' from round(cte.quantity,8)::text)))||'/'||
+                    trim(trailing '.' from (trim(trailing '0' from round(operationplan.quantity,8)::text)))
+                    from cte
+                    inner join operationplan on operationplan.reference = cte.reference
+                    order by cte.rownum
+                    """,
                     (opplan.reference,),
                 )
 
@@ -2071,11 +2070,14 @@ class OperationPlanDetail(View):
                     # Update quantity
                     opplan.quantity = opplan_data["quantity"]
                     save = True
+                if "quantity_completed" in opplan_data:
+                    # Update quantity
+                    opplan.quantity_completed = opplan_data["quantity_completed"]
+                    save = True
                 if "status" in opplan_data:
                     # Status quantity
                     opplan.status = opplan_data["status"]
                     save = True
-
                 if "reference" in opplan_data:
                     # Update reference
                     opplan.reference = opplan_data["reference"]
@@ -2089,6 +2091,7 @@ class OperationPlanDetail(View):
                             "startdate",
                             "enddate",
                             "quantity",
+                            "quantity_completed",
                             "reference",
                             "lastmodified",
                         ],

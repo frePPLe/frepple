@@ -1632,3 +1632,50 @@ class InventoryDetail(OperationPlanMixin):
         ),
         GridFieldLastModified("lastmodified", initially_hidden=True),
     )
+
+    if settings.ERP_CONNECTOR:
+        actions = [
+            {
+                "name": "erp_incr_export",
+                "label": format_lazy("export to {erp}", erp=settings.ERP_CONNECTOR),
+                "function": "ERPconnection.IncrementalExport(jQuery('#grid'),'MO')",
+            }
+        ]
+    else:
+        actions = [
+            {
+                "name": "proposed",
+                "label": format_lazy(
+                    _("change status to {status}"), status=_("proposed")
+                ),
+                "function": "grid.setStatus('proposed', 'operationplan__')",
+            },
+            {
+                "name": "approved",
+                "label": format_lazy(
+                    _("change status to {status}"), status=_("approved")
+                ),
+                "function": "grid.setStatus('approved', 'operationplan__')",
+            },
+            {
+                "name": "confirmed",
+                "label": format_lazy(
+                    _("change status to {status}"), status=_("confirmed")
+                ),
+                "function": "grid.setStatus('confirmed', 'operationplan__')",
+            },
+            {
+                "name": "completed",
+                "label": format_lazy(
+                    _("change status to {status}"), status=_("completed")
+                ),
+                "function": "grid.setStatus('completed', 'operationplan__')",
+            },
+            {
+                "name": "closed",
+                "label": format_lazy(
+                    _("change status to {status}"), status=_("closed")
+                ),
+                "function": "grid.setStatus('closed', 'operationplan__')",
+            },
+        ]

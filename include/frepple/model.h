@@ -9360,10 +9360,9 @@ class CalendarEventIterator : public PythonExtension<CalendarEventIterator> {
   static int initialize();
 
   CalendarEventIterator(Calendar* c, Date d = Date::infinitePast, bool f = true)
-      : cal(c), eventiter(c, d, f), forward(f) {}
+      : eventiter(c, d, f), forward(f) {}
 
  private:
-  Calendar* cal;
   Calendar::EventIterator eventiter;
   bool forward;
   PyObject* iternext();

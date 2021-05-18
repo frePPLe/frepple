@@ -108,11 +108,6 @@ class XMLInput : public DataInput,
   /* Index into the data field stack. */
   int dataindex = -1;
 
-  /* A variable to keep track of the size of the element stack. It is used
-   * together with the variable m_EStack.
-   */
-  short numElements = -1;
-
   /* Controls wether or not we need to process character data. */
   bool reading = false;
 

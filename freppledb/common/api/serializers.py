@@ -25,17 +25,17 @@ DefaultModelSerializer.serializer_field_mapping[JSONBField] = JSONField
 
 class ModelSerializer(DefaultModelSerializer):
     """
-  The django model serializer extends the default implementation with the
-  following capabilities:
-    - Ability to work with natural keys.
-    - Support for create-or-update on the POST method.
-      The default POST method only supports create.
-      The PUT method remains update-only.
-    - Enable partial updates by default
-  """
+    The django model serializer extends the default implementation with the
+    following capabilities:
+      - Ability to work with natural keys.
+      - Support for create-or-update on the POST method.
+        The default POST method only supports create.
+        The PUT method remains update-only.
+      - Enable partial updates by default
+    """
 
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        DefaultModelSerializer.__init__(*args, **kwargs)
 
         # Cache the name of the primary key
         self.pk = self.Meta.model._meta.pk.name.lower()

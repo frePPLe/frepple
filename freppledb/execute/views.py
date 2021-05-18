@@ -296,8 +296,8 @@ def APITask(request, action):
                 response = {"taskid": task.id, "message": "Successfully launched task"}
             else:
                 response = {"message": "No task was launched"}
-    except Exception as e:
-        response = {"message": "Exception launching task: %s" % e}
+    except Exception:
+        response = {"message": "Exception launching task"}
     return HttpResponse(json.dumps(response), content_type="application/json")
 
 

@@ -364,22 +364,22 @@ void Date::parse(const char *s, const char *fmt) {
 
 char *Date::strptime(const char *buf, const char *fmt, struct tm *tm) {
   struct dtconv {
-    char *abbrev_month_names[12];
+    const char *abbrev_month_names[12];
     size_t len_abbrev_month_names[12];
-    char *month_names[12];
+    const char *month_names[12];
     size_t len_month_names[12];
-    char *abbrev_weekday_names[7];
+    const char *abbrev_weekday_names[7];
     size_t len_abbrev_weekday_names[7];
-    char *weekday_names[7];
+    const char *weekday_names[7];
     size_t len_weekday_names[7];
-    char *time_format;
-    char *sDate_format;
-    char *dtime_format;
-    char *am_string;
+    const char *time_format;
+    const char *sDate_format;
+    const char *dtime_format;
+    const char *am_string;
     size_t len_am_string;
-    char *pm_string;
+    const char *pm_string;
     size_t len_pm_string;
-    char *lDate_format;
+    const char *lDate_format;
     unsigned short numWeekdays;
     unsigned short numMonths;
   };

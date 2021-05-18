@@ -35,7 +35,7 @@ class ModelSerializer(DefaultModelSerializer):
     """
 
     def __init__(self, *args, **kwargs):
-        DefaultModelSerializer.__init__(*args, **kwargs)
+        DefaultModelSerializer.__init__(self, *args, **kwargs)
 
         # Cache the name of the primary key
         self.pk = self.Meta.model._meta.pk.name.lower()

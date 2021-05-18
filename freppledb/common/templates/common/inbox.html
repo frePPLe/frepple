@@ -5,7 +5,7 @@
 {{ block.super }}
 <script>
 
-function selectAll(event, el)
+function selectAll(el)
 {
   var chck = $(el).prop("checked");
   $("#messagelist").find(":checkbox").prop("checked", chck);

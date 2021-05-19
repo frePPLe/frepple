@@ -1749,14 +1749,16 @@ class OperationPlan(AuditModel):
 
         # Assure the start and end are in the past
         if not completed_allow_future:
-            if isinstance(self.enddate, str):
-                self.enddate = parse(self.enddate)
-            if self.enddate > now:
-                self.enddate = now
-            if isinstance(self.startdate, str):
-                self.startdate = parse(self.startdate)
-            if self.startdate > now:
-                self.startdate = now
+            if self.enddate:
+                if isinstance(self.enddate, str):
+                    self.enddate = parse(self.enddate)
+                if self.enddate > now:
+                    self.enddate = now
+            if self.startdate:
+                if isinstance(self.startdate, str):
+                    self.startdate = parse(self.startdate)
+                if self.startdate > now:
+                    self.startdate = now
 
         if self.type == "MO" and self.owner and self.owner.operation.type == "routing":
             # Assure that previous routing steps are also marked closed or completed

@@ -639,11 +639,11 @@ var grid = {
        actions[$("#actions").val()]();
    },
 
-   setStatus : function(newstatus)
+   setStatus : function(newstatus, field_prefix)
    {
     var sel = jQuery("#grid").jqGrid('getGridParam','selarrrow');
     for (var i in sel) {
-      jQuery("#grid").jqGrid("setCell", sel[i], "status", newstatus, "dirty-cell");
+      jQuery("#grid").jqGrid("setCell", sel[i], field_prefix ? field_prefix + 'status' : 'status', newstatus, "dirty-cell");
       jQuery("#grid").jqGrid("setRowData", sel[i], false, "edited");
     };
     $("#actions1").html(gettext("Select action") + '&nbsp;&nbsp;<span class="caret"></span>');

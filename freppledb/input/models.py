@@ -18,6 +18,7 @@
 import ast
 from datetime import datetime, time
 from decimal import Decimal
+from dateutil.parser import parse
 
 from django.core.cache import cache
 from django.db import models, DEFAULT_DB_ALIAS
@@ -1748,8 +1749,12 @@ class OperationPlan(AuditModel):
 
         # Assure the start and end are in the past
         if not completed_allow_future:
+            if isinstance(self.enddate, str):
+                self.enddate = parse(self.enddate)
             if self.enddate > now:
                 self.enddate = now
+            if isinstance(self.startdate, str):
+                self.startdate = parse(self.startdate)
             if self.startdate > now:
                 self.startdate = now
 

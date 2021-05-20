@@ -610,6 +610,7 @@ class PurchaseReport(GridPivot):
             editable=False,
             title=format_lazy("{} - {}", _("location"), _("last modified")),
         ),
+        GridFieldDuration("leadtime", title=_("lead time"), editable=False),
         GridFieldText(
             "supplier",
             title=_("supplier"),
@@ -802,6 +803,18 @@ class PurchaseReport(GridPivot):
         location.subcategory as location__subcategory,
         location.available_id as location__available,
         location.lastmodified as location__lastmodified,
+        (
+          select extract(epoch from leadtime)
+          from itemsupplier
+          where itemsupplier.item_id = combinations.item_id
+            and (itemsupplier.location_id is null or itemsupplier.location_id = combinations.location_id)
+            and itemsupplier.supplier_id = combinations.supplier_id
+          order by '%s' < itemsupplier.effective_end desc nulls first,
+             '%s' >= itemsupplier.effective_start desc nulls first,
+             itemsupplier.priority <> 0,
+             itemsupplier.priority
+          limit 1
+        ) as leadtime,
         combinations.supplier_id as supplier,
         supplier.description as supplier__description,
         supplier.category as supplier__category,
@@ -878,6 +891,8 @@ class PurchaseReport(GridPivot):
       ) data
       """ % (
             basesql,
+            request.report_startdate,
+            request.report_startdate,
             reportclass.attr_sql,
             request.report_bucket,
             request.report_startdate,

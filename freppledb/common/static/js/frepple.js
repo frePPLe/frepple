@@ -10,7 +10,7 @@ function isDragnDropUploadCapable() {
 var _scrollBarWidth;
 function getScrollBarWidth() {
   if (!_scrollBarWidth) {
-    var div = $("<div style='overflow:scroll;position:absolute;top:-99999px'></div>").appendTo("body"),
+    var div = $("<div style='overflow:scroll;position:absolute;top:-99999px'></div>").appendTo("body");
     _scrollBarWidth = div.prop("offsetWidth") - div.prop("clientWidth");
     div.remove();
   }

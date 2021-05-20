@@ -129,6 +129,42 @@ class TruncatePlan(PlanTask):
 
             cursor.execute(
                 """
+                delete from operationplanmaterial
+                using cluster_keys
+                where status is distinct from 'closed'
+                  and status is distinct from 'confirmed' 
+                  and operationplan_id in (
+                    select oplan_parent.reference
+                    from operationplan as oplan_parent
+                    where (oplan_parent.status='proposed' or oplan_parent.status is null or oplan_parent.type='STCK')
+                    and oplan_parent.item_id = cluster_keys.name
+                    union
+                    select oplan.reference
+                    from operationplan as oplan
+                    where oplan.item_id = cluster_keys.name
+                  )
+                """
+            )
+            cursor.execute(
+                """
+                delete from operationplanresource
+                using cluster_keys
+                where status is distinct from 'closed'
+                  and status is distinct from 'confirmed' 
+                  and operationplan_id in (
+                    select oplan_parent.reference
+                    from operationplan as oplan_parent
+                    where (oplan_parent.status='proposed' or oplan_parent.status is null or oplan_parent.type='STCK')
+                    and oplan_parent.item_id = cluster_keys.name
+                    union
+                    select oplan.reference
+                    from operationplan as oplan
+                    where oplan.item_id = cluster_keys.name
+                  )
+                """
+            )
+            cursor.execute(
+                """
                 delete from operationplan
                 using cluster_keys
                 where owner_id in (

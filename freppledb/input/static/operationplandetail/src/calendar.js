@@ -1070,18 +1070,13 @@ angular.module('calendar', [])
                         var event = eventSource[i];
                         var eventStartTime = event.startdate ? new Date(event.startdate) : null;
                         var eventEndTime = event.enddate ? new Date(event.enddate) : null;
-
                         if ((eventEndTime ? eventEndTime : eventStartTime) <= startdate ||
                           (eventStartTime ? eventStartTime : eventEndTime) >= enddate)
-                            continue;                        
-                        if (!eventEndTime) eventEndTime = eventStartTime;
-                        if (!eventStartTime) eventStartTime = eventEndTime;
-
+                            continue;
                         if (scope.events)
                           scope.events.push(event);
                         else
                           scope.events = [event];
-
                         if (scope.grouping && !keys.includes(event[scope.grouping]))
                               keys.push(event[scope.grouping]);
                     }

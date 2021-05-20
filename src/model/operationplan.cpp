@@ -1994,6 +1994,14 @@ Duration OperationPlan::getDelay() const {
   return maxdelay;
 }
 
+void OperationPlan::setQuantityCompleted(double q) {
+  if (fabs(q - quantity_completed) < ROUNDING_ERROR) return;
+  quantity_completed = q;
+  if (oper && !getProposed())
+    oper->setOperationPlanParameters(this, getQuantity(), getStart(),
+                                     Date::infinitePast, true, true, true);
+}
+
 void OperationPlan::clear() {
   for (auto gop = Operation::begin(); gop != Operation::end(); ++gop)
     gop->deleteOperationPlans();

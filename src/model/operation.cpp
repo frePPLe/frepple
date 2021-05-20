@@ -881,7 +881,10 @@ OperationPlanState OperationFixedTime::setOperationPlanParameters(
         if (get<1>(setuptime_required) && efficiency > 0.0) {
           // Apply a setup matrix rule
           setup_wanted_duration =
-              double(get<1>(setuptime_required)->getDuration()) / efficiency;
+              opplan->getQuantityCompleted()
+                  ? 0.0
+                  : double(get<1>(setuptime_required)->getDuration()) /
+                        efficiency;
           setup_dates = calculateOperationTime(opplan, d, setup_wanted_duration,
                                                true, &setup_duration);
           if (setup_duration != setup_wanted_duration)
@@ -927,7 +930,10 @@ OperationPlanState OperationFixedTime::setOperationPlanParameters(
         if (get<1>(setuptime_required)) {
           // Apply setup matrix rule
           setup_wanted_duration =
-              double(get<1>(setuptime_required)->getDuration()) / efficiency;
+              opplan->getQuantityCompleted()
+                  ? 0.0
+                  : double(get<1>(setuptime_required)->getDuration()) /
+                        efficiency;
           setup_dates = calculateOperationTime(
               opplan, production_dates.getStart(), setup_wanted_duration, false,
               &setup_duration);
@@ -1112,7 +1118,8 @@ OperationPlanState OperationTimePer::setOperationPlanParameters(
     throw LogicException("Incorrect parameters for timeper operationplan");
 
   // Confirmed operationplans are untouchable
-  if (opplan->getConfirmed()) return OperationPlanState(opplan);
+  if (opplan->getConfirmed() && !opplan->getQuantityCompleted())
+    return OperationPlanState(opplan);
 
   if (opplan->getProposed()) {
     // Proposed operationplans need to respect minimum and maximum size
@@ -1149,7 +1156,9 @@ OperationPlanState OperationTimePer::setOperationPlanParameters(
     setuptime_required = calculateSetup(opplan, s);
     if (get<1>(setuptime_required) && efficiency > 0.0) {
       setup_wanted_duration =
-          double(get<1>(setuptime_required)->getDuration()) / efficiency;
+          opplan->getQuantityCompleted()
+              ? 0.0
+              : double(get<1>(setuptime_required)->getDuration()) / efficiency;
       setup_dates = calculateOperationTime(opplan, s, setup_wanted_duration,
                                            true, &setup_duration);
       if (setup_dates.getEnd() > e || setup_duration != setup_wanted_duration) {
@@ -1243,10 +1252,13 @@ OperationPlanState OperationTimePer::setOperationPlanParameters(
     // existing end date of the operationplan.
     q = opplan->setQuantity(q, roundDown, false, execute);
     // Round and size the quantity
-    if (efficiency > 0)
+    if (efficiency > 0) {
       production_wanted_duration =
           (double(duration) + duration_per * q) / efficiency;
-    else
+      if (opplan->getQuantityCompleted() && opplan->getQuantity())
+        production_wanted_duration *=
+            opplan->getQuantityRemaining() / opplan->getQuantity();
+    } else
       production_wanted_duration = Duration::MAX;
     production_dates = calculateOperationTime(
         opplan, e, production_wanted_duration, false, &production_duration);
@@ -1261,7 +1273,10 @@ OperationPlanState OperationTimePer::setOperationPlanParameters(
       setuptime_required = calculateSetup(opplan, production_dates.getStart());
       if (get<1>(setuptime_required)) {
         setup_wanted_duration =
-            double(get<1>(setuptime_required)->getDuration()) / efficiency;
+            opplan->getQuantityCompleted()
+                ? 0.0
+                : double(get<1>(setuptime_required)->getDuration()) /
+                      efficiency;
         setup_dates = calculateOperationTime(
             opplan, production_dates.getStart(), setup_wanted_duration, false,
             &setup_duration);
@@ -1294,7 +1309,8 @@ OperationPlanState OperationTimePer::setOperationPlanParameters(
         opplan->clearSetupEvent();
       opplan->setStartAndEnd(setup_dates.getStart(), production_dates.getEnd());
     } else if (efficiency <= 0.0 ||
-               production_duration < Duration(double(duration) / efficiency)) {
+               (production_duration < Duration(double(duration) / efficiency) &&
+                !opplan->getQuantityCompleted())) {
       // Not feasible
       if (!execute) return OperationPlanState(production_dates, 0);
       opplan->setQuantity(0, true, false);
@@ -1307,7 +1323,10 @@ OperationPlanState OperationTimePer::setOperationPlanParameters(
       setuptime_required = calculateSetup(opplan, production_dates.getStart());
       if (get<1>(setuptime_required)) {
         setup_wanted_duration =
-            double(get<1>(setuptime_required)->getDuration()) / efficiency;
+            opplan->getQuantityCompleted()
+                ? 0.0
+                : double(get<1>(setuptime_required)->getDuration()) /
+                      efficiency;
         setup_dates = calculateOperationTime(
             opplan, production_dates.getStart(), setup_wanted_duration, false,
             &setup_duration);
@@ -1325,11 +1344,17 @@ OperationPlanState OperationTimePer::setOperationPlanParameters(
             DateRange(production_dates.getStart(), production_dates.getStart());
       }
 
-      double max_q = duration_per
-                         ? static_cast<double>(production_duration -
-                                               setup_duration - duration) /
-                               duration_per
-                         : q;
+      double max_q;
+      if (opplan->getQuantityCompleted() && production_wanted_duration)
+        max_q = opplan->getQuantityRemaining() *
+                (production_duration - setup_duration) /
+                production_wanted_duration;
+      else if (!duration_per || !production_wanted_duration)
+        max_q = q;
+      else
+        max_q = static_cast<double>(production_duration - setup_duration -
+                                    duration) /
+                duration_per;
       q = opplan->setQuantity(q < max_q ? q : max_q, true, false, execute);
       production_wanted_duration =
           (double(duration) + duration_per * q) / efficiency;
@@ -1369,10 +1394,13 @@ OperationPlanState OperationTimePer::setOperationPlanParameters(
     // compute the end date
     q = opplan->setQuantity(q, roundDown, false, execute);
     // Round and size the quantity
-    if (efficiency > 0)
+    if (efficiency > 0) {
       production_wanted_duration =
           (double(duration) + duration_per * q) / efficiency;
-    else
+      if (opplan->getQuantityCompleted() && opplan->getQuantity())
+        production_wanted_duration *=
+            opplan->getQuantityRemaining() / opplan->getQuantity();
+    } else
       production_wanted_duration = Duration::MAX;
     while (true) {
       // Compute the setup time
@@ -1380,7 +1408,10 @@ OperationPlanState OperationTimePer::setOperationPlanParameters(
       if (efficiency > 0 && get<0>(setuptime_required) &&
           get<1>(setuptime_required)) {
         setup_wanted_duration =
-            double(get<1>(setuptime_required)->getDuration()) / efficiency;
+            opplan->getQuantityCompleted()
+                ? 0.0
+                : double(get<1>(setuptime_required)->getDuration()) /
+                      efficiency;
         setup_dates = calculateOperationTime(opplan, d, setup_wanted_duration,
                                              true, &setup_duration);
         if (setup_duration != setup_wanted_duration) {
@@ -1426,8 +1457,9 @@ OperationPlanState OperationTimePer::setOperationPlanParameters(
         opplan->setStartAndEnd(setup_dates.getStart(),
                                production_dates.getEnd());
       } else if (efficiency <= 0.0 ||
-                 production_duration <
-                     Duration(double(duration) / efficiency)) {
+                 (production_duration <
+                      Duration(double(duration) / efficiency) &&
+                  !opplan->getQuantityCompleted())) {
         // Not feasible
         if (!execute) return OperationPlanState(production_dates, 0.0);
         opplan->setQuantity(0, true, false);
@@ -1435,10 +1467,15 @@ OperationPlanState OperationTimePer::setOperationPlanParameters(
         opplan->setStartAndEnd(d, Date::infiniteFuture);
       } else {
         // Resize the quantity to be feasible
-        double max_q =
-            duration_per ? static_cast<double>(production_duration - duration) /
-                               duration_per * efficiency
-                         : q;
+        double max_q;
+        if (opplan->getQuantityCompleted() && production_wanted_duration)
+          max_q = opplan->getQuantityRemaining() * production_duration /
+                  production_wanted_duration;
+        else if (!duration_per || !production_wanted_duration)
+          max_q = q;
+        else
+          max_q = static_cast<double>(production_duration - duration) /
+                  duration_per * efficiency;
         q = opplan->setQuantity(q < max_q ? q : max_q, roundDown, false,
                                 execute);
         if (!q) {

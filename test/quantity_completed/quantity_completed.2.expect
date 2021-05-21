@@ -177,6 +177,30 @@
 	</operations>
 	<operationplans>
 		<operationplan>
+			<reference>WIP 1G</reference>
+			<operation>
+				<name>production 1</name>
+			</operation>
+			<start>2020-12-01T00:00:00</start>
+			<end>2020-12-05T00:00:00</end>
+			<quantity>100</quantity>
+			<status>confirmed</status>
+			<feasible>false</feasible>
+			<quantity_completed>50</quantity_completed>
+		</operationplan>
+		<operationplan>
+			<reference>WIP 1H</reference>
+			<operation>
+				<name>production 1</name>
+			</operation>
+			<start>2020-12-06T00:00:00</start>
+			<end>2020-12-10T00:00:00</end>
+			<quantity>100</quantity>
+			<status>approved</status>
+			<feasible>false</feasible>
+			<quantity_completed>50</quantity_completed>
+		</operationplan>
+		<operationplan>
 			<reference>WIP 1A</reference>
 			<operation>
 				<name>production 1</name>
@@ -238,6 +262,30 @@
 			<quantity>100</quantity>
 			<status>approved</status>
 			<quantity_completed>100</quantity_completed>
+		</operationplan>
+		<operationplan>
+			<reference>WIP 2G</reference>
+			<operation xsi:type="operation_time_per">
+				<name>production 2</name>
+			</operation>
+			<start>2020-12-01T00:00:00</start>
+			<end>2020-12-03T14:00:00</end>
+			<quantity>100</quantity>
+			<status>confirmed</status>
+			<feasible>false</feasible>
+			<quantity_completed>50</quantity_completed>
+		</operationplan>
+		<operationplan>
+			<reference>WIP 2H</reference>
+			<operation xsi:type="operation_time_per">
+				<name>production 2</name>
+			</operation>
+			<start>2020-12-01T00:00:00</start>
+			<end>2020-12-03T14:00:00</end>
+			<quantity>100</quantity>
+			<status>approved</status>
+			<feasible>false</feasible>
+			<quantity_completed>50</quantity_completed>
 		</operationplan>
 		<operationplan>
 			<reference>WIP 2A</reference>

@@ -955,12 +955,16 @@ bool OperationPlan::operator<(const OperationPlan& a) const {
     return quantity >= a.quantity;
 
   if (getActivated() != a.getActivated())
-    // Keep unactivated operationplans seperate
+    // Keep unactivated operationplans separate
     return getActivated() > a.getActivated();
 
   if (getEnd() != a.getEnd())
     // Use the end date
     return getEnd() < a.getEnd();
+
+  if (getName() != a.getName())
+    // Use the reference (without auto-generating new ones)
+    return getName() < a.getName();
 
   // Using a pointer comparison as tie breaker. This can give
   // results that are not reproducible across platforms and runs.

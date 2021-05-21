@@ -1,33 +1,49 @@
-BUFFER	component 1A @ factory	2021-01-01T00:00:00	-201	-201
-BUFFER	component 1A @ factory	2021-02-01T00:00:00	-80.4	-281.4
-BUFFER	component 1A @ factory	2021-03-01T00:00:00	-80.4	-361.8
-BUFFER	component 1A @ factory	2021-03-28T00:00:00	-80.4	-442.2
-BUFFER	component 1A @ factory	2021-04-27T00:00:00	-201	-643.2
-BUFFER	component 1B @ factory	2021-01-01T00:00:00	-100	-100
-BUFFER	component 1B @ factory	2021-02-01T00:00:00	-40	-140
-BUFFER	component 1B @ factory	2021-03-01T00:00:00	-40	-180
-BUFFER	component 1B @ factory	2021-03-28T00:00:00	-40	-220
-BUFFER	component 1B @ factory	2021-04-27T00:00:00	-100	-320
-BUFFER	component 2A @ factory	2021-01-01T00:00:00	-201	-201
-BUFFER	component 2A @ factory	2021-02-01T00:00:00	-80.4	-281.4
-BUFFER	component 2A @ factory	2021-03-01T00:00:00	-80.4	-361.8
-BUFFER	component 2A @ factory	2021-03-29T22:24:00	-80.4	-442.2
-BUFFER	component 2A @ factory	2021-04-25T20:00:00	-201	-643.2
-BUFFER	component 2B @ factory	2021-01-01T00:00:00	-100	-100
-BUFFER	component 2B @ factory	2021-02-01T00:00:00	-40	-140
-BUFFER	component 2B @ factory	2021-03-01T00:00:00	-40	-180
-BUFFER	component 2B @ factory	2021-03-29T22:24:00	-40	-220
-BUFFER	component 2B @ factory	2021-04-25T20:00:00	-100	-320
-BUFFER	item 1 @ factory	2021-01-05T00:00:00	201	201
-BUFFER	item 1 @ factory	2021-02-05T00:00:00	80.4	281.4
-BUFFER	item 1 @ factory	2021-03-05T00:00:00	80.4	361.8
-BUFFER	item 1 @ factory	2021-04-01T00:00:00	80.4	442.2
-BUFFER	item 1 @ factory	2021-05-01T00:00:00	201	643.2
-BUFFER	item 2 @ factory	2021-01-06T04:00:00	201	201
-BUFFER	item 2 @ factory	2021-02-03T01:36:00	80.4	281.4
-BUFFER	item 2 @ factory	2021-03-03T01:36:00	80.4	361.8
-BUFFER	item 2 @ factory	2021-04-01T00:00:00	80.4	442.2
-BUFFER	item 2 @ factory	2021-05-01T00:00:00	201	643.2
+BUFFER	component 1A @ factory	2020-12-06T00:00:00	-100.5	-100.5
+BUFFER	component 1A @ factory	2021-01-01T00:00:00	-201	-301.5
+BUFFER	component 1A @ factory	2021-01-01T00:00:01	-100.5	-402
+BUFFER	component 1A @ factory	2021-02-01T00:00:00	-80.4	-482.4
+BUFFER	component 1A @ factory	2021-03-01T00:00:00	-80.4	-562.8
+BUFFER	component 1A @ factory	2021-03-28T00:00:00	-80.4	-643.2
+BUFFER	component 1A @ factory	2021-04-27T00:00:00	-201	-844.2
+BUFFER	component 1B @ factory	2020-12-06T00:00:00	-50	-50
+BUFFER	component 1B @ factory	2021-01-01T00:00:00	-100	-150
+BUFFER	component 1B @ factory	2021-01-01T00:00:01	-50	-200
+BUFFER	component 1B @ factory	2021-02-01T00:00:00	-40	-240
+BUFFER	component 1B @ factory	2021-03-01T00:00:00	-40	-280
+BUFFER	component 1B @ factory	2021-03-28T00:00:00	-40	-320
+BUFFER	component 1B @ factory	2021-04-27T00:00:00	-100	-420
+BUFFER	component 2A @ factory	2020-12-01T00:00:00	-100.5	-100.5
+BUFFER	component 2A @ factory	2021-01-01T00:00:00	-201	-301.5
+BUFFER	component 2A @ factory	2021-01-01T00:00:01	-100.5	-402
+BUFFER	component 2A @ factory	2021-02-01T00:00:00	-80.4	-482.4
+BUFFER	component 2A @ factory	2021-03-01T00:00:00	-80.4	-562.8
+BUFFER	component 2A @ factory	2021-03-29T22:24:00	-80.4	-643.2
+BUFFER	component 2A @ factory	2021-04-25T20:00:00	-201	-844.2
+BUFFER	component 2B @ factory	2020-12-01T00:00:00	-50	-50
+BUFFER	component 2B @ factory	2021-01-01T00:00:00	-100	-150
+BUFFER	component 2B @ factory	2021-01-01T00:00:01	-50	-200
+BUFFER	component 2B @ factory	2021-02-01T00:00:00	-40	-240
+BUFFER	component 2B @ factory	2021-03-01T00:00:00	-40	-280
+BUFFER	component 2B @ factory	2021-03-29T22:24:00	-40	-320
+BUFFER	component 2B @ factory	2021-04-25T20:00:00	-100	-420
+BUFFER	item 1 @ factory	2020-12-10T00:00:00	100.5	100.5
+BUFFER	item 1 @ factory	2021-01-01T00:00:01	100.5	201
+BUFFER	item 1 @ factory	2021-01-05T00:00:00	201	402
+BUFFER	item 1 @ factory	2021-02-05T00:00:00	80.4	482.4
+BUFFER	item 1 @ factory	2021-03-05T00:00:00	80.4	562.8
+BUFFER	item 1 @ factory	2021-04-01T00:00:00	80.4	643.2
+BUFFER	item 1 @ factory	2021-05-01T00:00:00	201	844.2
+BUFFER	item 2 @ factory	2020-12-03T14:00:00	100.5	100.5
+BUFFER	item 2 @ factory	2021-01-01T00:00:01	100.5	201
+BUFFER	item 2 @ factory	2021-01-06T04:00:00	201	402
+BUFFER	item 2 @ factory	2021-02-03T01:36:00	80.4	482.4
+BUFFER	item 2 @ factory	2021-03-03T01:36:00	80.4	562.8
+BUFFER	item 2 @ factory	2021-04-01T00:00:00	80.4	643.2
+BUFFER	item 2 @ factory	2021-05-01T00:00:00	201	844.2
+RESOURCE	resource 1	2020-12-01T00:00:00	1	1
+RESOURCE	resource 1	2020-12-05T00:00:00	-1	0
+RESOURCE	resource 1	2020-12-06T00:00:00	1	1
+RESOURCE	resource 1	2020-12-10T00:00:00	-1	0
 RESOURCE	resource 1	2021-01-01T00:00:00	1	1
 RESOURCE	resource 1	2021-01-05T00:00:00	-1	0
 RESOURCE	resource 1	2021-02-01T00:00:00	1	1
@@ -40,6 +56,10 @@ RESOURCE	resource 1	2021-04-27T00:00:00	1	1
 RESOURCE	resource 1	2021-05-01T00:00:00	-1	0
 RESOURCE	resource 1	2021-05-28T00:00:00	1	1
 RESOURCE	resource 1	2021-06-01T00:00:00	-1	0
+RESOURCE	resource 2	2020-12-01T00:00:00	1	1
+RESOURCE	resource 2	2020-12-01T00:00:00	1	2
+RESOURCE	resource 2	2020-12-03T14:00:00	-1	1
+RESOURCE	resource 2	2020-12-03T14:00:00	-1	0
 RESOURCE	resource 2	2021-01-01T00:00:00	1	1
 RESOURCE	resource 2	2021-01-06T04:00:00	-1	0
 RESOURCE	resource 2	2021-02-01T00:00:00	1	1
@@ -52,17 +72,26 @@ RESOURCE	resource 2	2021-04-25T20:00:00	1	1
 RESOURCE	resource 2	2021-05-01T00:00:00	-1	0
 RESOURCE	resource 2	2021-06-01T00:00:00	1	1
 RESOURCE	resource 2	2021-06-01T00:00:00	-1	0
+OPERATION	production 1	2020-12-01T00:00:00	2020-12-05T00:00:00	100	confirmed
+OPERATION	production 1	2020-12-06T00:00:00	2020-12-10T00:00:00	100	approved
 OPERATION	production 1	2021-01-01T00:00:00	2021-01-05T00:00:00	100	confirmed
 OPERATION	production 1	2021-02-01T00:00:00	2021-02-05T00:00:00	100	confirmed
 OPERATION	production 1	2021-03-01T00:00:00	2021-03-05T00:00:00	100	approved
 OPERATION	production 1	2021-03-28T00:00:00	2021-04-01T00:00:00	100	approved
 OPERATION	production 1	2021-04-27T00:00:00	2021-05-01T00:00:00	100
 OPERATION	production 1	2021-05-28T00:00:00	2021-06-01T00:00:00	100	approved
+OPERATION	production 2	2020-12-01T00:00:00	2020-12-03T14:00:00	100	confirmed
+OPERATION	production 2	2020-12-01T00:00:00	2020-12-03T14:00:00	100	approved
 OPERATION	production 2	2021-01-01T00:00:00	2021-01-06T04:00:00	100	confirmed
 OPERATION	production 2	2021-02-01T00:00:00	2021-02-03T01:36:00	100	confirmed
 OPERATION	production 2	2021-03-01T00:00:00	2021-03-03T01:36:00	100	approved
 OPERATION	production 2	2021-03-29T22:24:00	2021-04-01T00:00:00	100	approved
 OPERATION	production 2	2021-04-25T20:00:00	2021-05-01T00:00:00	100
 OPERATION	production 2	2021-06-01T00:00:00	2021-06-01T00:00:00	100	approved
-PROBLEM	material excess	Buffer 'item 1 @ factory' has material excess of 643.2	2021-01-05T00:00:00 / 2030-12-31T00:00:00
-PROBLEM	material excess	Buffer 'item 2 @ factory' has material excess of 643.2	2021-01-06T04:00:00 / 2030-12-31T00:00:00
+PROBLEM	material excess	Buffer 'item 1 @ factory' has material excess of 844.2	2020-12-10T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	material excess	Buffer 'item 2 @ factory' has material excess of 844.2	2020-12-03T14:00:00 / 2030-12-31T00:00:00
+PROBLEM	overload	Resource 'resource 2' has capacity shortage of 1	2020-12-01T00:00:00 / 2020-12-03T14:00:00
+PROBLEM	before current	Operation 'production 1' planned in the past	2020-12-05T00:00:00 / 2021-01-01T00:00:00
+PROBLEM	before current	Operation 'production 1' planned in the past	2020-12-06T00:00:00 / 2020-12-10T00:00:00
+PROBLEM	before current	Operation 'production 2' planned in the past	2020-12-03T14:00:00 / 2021-01-01T00:00:00
+PROBLEM	before current	Operation 'production 2' planned in the past	2020-12-01T00:00:00 / 2020-12-03T14:00:00

@@ -1700,6 +1700,8 @@ class OperationPlan : public Object,
 
   double getQuantityCompletedRaw() const { return quantity_completed; }
 
+  void setQuantityCompletedRaw(double q) { quantity_completed = q; }
+
   void setQuantityCompleted(double);
 
   double getQuantityRemaining() const {

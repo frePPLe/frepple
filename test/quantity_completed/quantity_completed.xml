@@ -80,6 +80,21 @@
       <quantity_completed>200</quantity_completed>
       <status>approved</status>
     </operationplan>
+    <operationplan id="WIP 1G">
+      <operation name="production 1"/>
+      <start>2020-12-01T00:00:00</start>
+      <quantity>100</quantity>
+      <quantity_completed>50</quantity_completed>
+      <status>confirmed</status>
+    </operationplan>
+    <operationplan id="WIP 1H">
+      <operation name="production 1"/>
+      <start>2020-12-01T00:00:00</start>
+      <end>2020-12-10T00:00:00</end>
+      <quantity>100</quantity>
+      <quantity_completed>50</quantity_completed>
+      <status>approved</status>
+    </operationplan>
   </operationplans>
 
   <operations>
@@ -159,6 +174,21 @@
       <end>2021-06-01T00:00:00</end>
       <quantity>100</quantity>
       <quantity_completed>200</quantity_completed>
+      <status>approved</status>
+    </operationplan>
+    <operationplan id="WIP 2G">
+      <operation name="production 2"/>
+      <start>2020-12-01T00:00:00</start>
+      <quantity>100</quantity>
+      <quantity_completed>50</quantity_completed>
+      <status>confirmed</status>
+    </operationplan>
+    <operationplan id="WIP 2H">
+      <operation name="production 2"/>
+      <end>2020-12-10T00:00:00</end>
+      <start>2020-12-01T00:00:00</start>
+      <quantity>100</quantity>
+      <quantity_completed>50</quantity_completed>
       <status>approved</status>
     </operationplan>
   </operationplans>

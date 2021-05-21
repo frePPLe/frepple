@@ -234,8 +234,7 @@ OperationPlan* Operation::createOperationPlan(
   OperationPlan* opplan = new OperationPlan(const_cast<Operation*>(this));
   if (!batch.empty()) opplan->setBatch(batch);
   if (!ref.empty()) opplan->setName(ref);
-  // if (!status.empty()) opplan->setStatusRaw(status);
-  if (q_completed) opplan->setQuantityCompleted(q_completed);
+  if (q_completed) opplan->setQuantityCompletedRaw(q_completed);
   if (l) opplan->setDemand(l);
 
   // Setting the owner first. Note that the order is important here!

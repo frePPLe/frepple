@@ -10,10 +10,11 @@ The code in this file is using ANGULARJS template syntax and not the DJANGO temp
       <span data-ng-if="opplan.dirty" class="label label-danger pull-right">{{ "unsaved"|translate }}</span>
     </div>
     <div data-ng-if="opplan.type === 'PO'">
-      <p><i data-ng-if="isStart(opplan, dt)" class="fa fa-step-backward"></i>&nbsp;{{ 'Purchase Order' | translate }}&nbsp;<i data-ng-if="isEnd(opplan, dt)" class="fa fa-step-forward"></i></p>
       <p>
-        <strong>{{opplan.operationplan__reference || opplan.reference}}</strong>
-        &nbsp;&nbsp;
+        <i data-ng-if="isStart(opplan, dt)" class="fa fa-step-backward"></i>&nbsp;
+        <i class="fa fa-shopping-cart" data-toggle="tooltip" data-html="true" title="{{ 'Purchase Order' | translate }}"></i>&nbsp;
+        <strong>{{opplan.operationplan__reference || opplan.reference}}</strong>&nbsp;
+        <i data-ng-if="isEnd(opplan, dt)" class="fa fa-step-forward"></i>&nbsp;
         <i data-ng-if="!editable || !opplan.hasOwnProperty('selected')"
            data-ng-class="['fa', {'fa-lock': opplan.status == 'confirmed' || opplan.operationplan__status == 'confirmed', 'fa-unlock-alt': opplan.status == 'approved' || opplan.operationplan__status == 'approved', 'fa-unlock': opplan.status == 'proposed' || opplan.operationplan__status == 'proposed', 'fa-check': opplan.status == 'completed' || opplan.operationplan__status == 'completed', 'fa-times': opplan.status == 'closed' || opplan.operationplan__status == 'closed'}]" aria-hidden="true"></i>
         <span class="btn-group" role="group" data-ng-if="editable && opplan.hasOwnProperty('selected')">
@@ -27,6 +28,7 @@ The code in this file is using ANGULARJS template syntax and not the DJANGO temp
            <button data-ng-if="opplan.hasOwnProperty('operationplan__status')" type="button" data-ng-class="['btn', 'btn-xs', 'btn-default', {'active': opplan.operationplan__status == 'confirmed'}]" data-toggle="tooltip" data-html="true" title="{{ 'confirmed'|translate }}" data-ng-click="changeCard(opplan, 'operationplan__status', opplan.operationplan__status, 'confirmed'); opplan.operationplan__status = 'confirmed'"><i class="fa fa-lock"></i></button>
            <button data-ng-if="opplan.hasOwnProperty('operationplan__status')" type="button" data-ng-class="['btn', 'btn-xs', 'btn-default', {'active': opplan.operationplan__status == 'completed'}]" data-toggle="tooltip" data-html="true" title="{{ 'completed'|translate }}" data-ng-click="changeCard(opplan, 'operationplan__status', opplan.operationplan__status, 'completed'); opplan.operationplan__status = 'completed'"><i class="fa fa-check"></i></button>
            <button data-ng-if="opplan.hasOwnProperty('operationplan__status')" type="button" data-ng-class="['btn', 'btn-xs', 'btn-default', {'active': opplan.operationplan__status == 'closed'}]" data-toggle="tooltip" data-html="true" title="{{ 'closed'|translate }}" data-ng-click="changeCard(opplan, 'operationplan__status', opplan.operationplan__status, 'closed'); opplan.operationplan__status = 'closed'"><i class="fa fa-times"></i></button>
+        </span>
       </p>
       <p>{{opplan.item__name || opplan.item}}&nbsp;
         <a data-ng-click="$event.stopPropagation()"
@@ -74,10 +76,11 @@ The code in this file is using ANGULARJS template syntax and not the DJANGO temp
       </p>
     </div>
     <div data-ng-if="(opplan.type || opplan.operationplan__type || type) === 'DO'">
-      <p><i data-ng-if="isStart(opplan, dt)" class="fa fa-step-backward"></i>&nbsp;{{ 'Distribution Order' | translate }}&nbsp;<i data-ng-if="isEnd(opplan, dt)" class="fa fa-step-forward"></i></p>
       <p>
-        <strong>{{opplan.operationplan__reference || opplan.reference}}</strong>
-        &nbsp;&nbsp;
+        <i data-ng-if="isStart(opplan, dt)" class="fa fa-step-backward"></i>&nbsp;
+        <i class="fa fa-truck" data-toggle="tooltip" data-html="true" title="{{ 'Distribution Order' | translate }}"></i>&nbsp;
+        <strong>{{opplan.operationplan__reference || opplan.reference}}</strong>&nbsp;
+        <i data-ng-if="isEnd(opplan, dt)" class="fa fa-step-forward"></i>&nbsp;
         <i data-ng-if="!editable || !opplan.hasOwnProperty('selected')"
            data-ng-class="['fa', {'fa-lock': opplan.status == 'confirmed' || opplan.operationplan__status == 'confirmed', 'fa-unlock-alt': opplan.status == 'approved' || opplan.operationplan__status == 'approved', 'fa-unlock': opplan.status == 'proposed' || opplan.operationplan__status == 'proposed', 'fa-check': opplan.status == 'completed' || opplan.operationplan__status == 'completed', 'fa-times': opplan.status == 'closed' || opplan.operationplan__status == 'closed'}]" aria-hidden="true"></i>
         <span class="btn-group" role="group" data-ng-if="editable && opplan.hasOwnProperty('selected')">
@@ -139,10 +142,11 @@ The code in this file is using ANGULARJS template syntax and not the DJANGO temp
       </p>
     </div>
     <div data-ng-if="opplan.type === 'MO'">
-      <p><i data-ng-if="isStart(opplan, dt)" class="fa fa-step-backward"></i>&nbsp;{{ 'Manufacturing Order' | translate }}&nbsp;<i data-ng-if="isEnd(opplan, dt)" class="fa fa-step-forward"></i></p>
       <p>
-        <strong>{{opplan.operationplan__reference || opplan.reference}}</strong>
-        &nbsp;&nbsp;
+        <i data-ng-if="isStart(opplan, dt)" class="fa fa-step-backward"></i>&nbsp;
+        <i class="fa fa-wrench" data-toggle="tooltip" data-html="true" title="{{ 'Manufacturing Order' | translate }}"></i>&nbsp;
+        <strong>{{opplan.operationplan__reference || opplan.reference}}</strong>&nbsp;
+        <i data-ng-if="isEnd(opplan, dt)" class="fa fa-step-forward"></i>&nbsp;
         <i data-ng-if="!editable || !opplan.hasOwnProperty('selected')"
            data-ng-class="['fa', {'fa-lock': opplan.status == 'confirmed' || opplan.operationplan__status == 'confirmed', 'fa-unlock-alt': opplan.status == 'approved' || opplan.operationplan__status == 'approved', 'fa-unlock': opplan.status == 'proposed' || opplan.operationplan__status == 'proposed', 'fa-check': opplan.status == 'completed' || opplan.operationplan__status == 'completed', 'fa-times': opplan.status == 'closed' || opplan.operationplan__status == 'closed'}]" aria-hidden="true"></i>
         <span class="btn-group" role="group" data-ng-if="editable && opplan.hasOwnProperty('selected')">
@@ -206,7 +210,8 @@ The code in this file is using ANGULARJS template syntax and not the DJANGO temp
       </p>
     </div>
     <div data-no-drag data-ng-if="opplan.type === 'STCK'">
-      <p>{{ 'Stock' | translate }}
+      <p>
+        <i class="fa fa-box" data-toggle="tooltip" data-html="true" title="{{ 'Stock' | translate }}"></i>&nbsp;
         <strong>{{opplan.item__name}} @ {{opplan.location}}</strong>&nbsp;
         <a data-ng-click="$event.stopPropagation()"
           href="{{url_prefix}}/detail/input/buffer/{{ admin_escape(opplan.item__name + ' @ ' + opplan.location ) }}/">
@@ -216,8 +221,10 @@ The code in this file is using ANGULARJS template syntax and not the DJANGO temp
       <p>{{ grid.formatNumber(opplan.operationplan__quantity || opplan.quantity) }}</p>
     </div>
     <div data-no-drag data-ng-if="opplan.type === 'DLVR'">
-      <p>{{ 'Delivery' | translate }}</p>
-      <p><strong>{{opplan.demands[0][1]}}</strong></p>
+      <p>
+        <i class="fa fa-truck" data-toggle="tooltip" data-html="true" title="{{ 'Delivery' | translate }}"></i>&nbsp;
+        <strong>{{opplan.demands[0][1]}}</strong>
+      </p>
       <p data-ng-if="opplan.item__name">
         {{opplan.item}}&nbsp;
         <a data-ng-click="$event.stopPropagation()"

@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2021-05-06 16:45+0200\n"
-"PO-Revision-Date: 2021-05-06 17:10+0200\n"
+"PO-Revision-Date: 2021-05-24 17:22+0200\n"
 "Last-Translator: Joao Ranita <jranita@frepple.com>\n"
 "Language-Team: frepple\n"
 "Language: es\n"
@@ -350,7 +350,7 @@ msgstr "fecha límite"
 #: inventoryplanning/templates/inventoryplanning/drp.html:167
 #: quoting/views.py:100
 msgid "status"
-msgstr "estado"
+msgstr "estatus"
 
 #: archive/models.py:97 forecast/models.py:78 forecast/views.py:101
 #: input/models.py:36 input/models.py:92 input/models.py:292
@@ -573,7 +573,7 @@ msgstr "dueño"
 #: output/views/operation.py:990 output/views/operation.py:999
 #: output/widget.py:1276 output/widget.py:1334
 msgid "origin"
-msgstr "ubicación de origen"
+msgstr "origen"
 
 #: archive/models.py:142 input/models.py:1671 input/views/inventory.py:561
 #: input/views/inventory.py:800 input/views/inventory.py:1014
@@ -647,7 +647,7 @@ msgstr "mensajes"
 
 #: common/admin.py:117
 msgid "Invalid date: expecting YYYY-MM-DD HH:MM:SS"
-msgstr "Fecha no válida: esperando AAAA-MM-DD HH:MM:SS"
+msgstr "Fecha no válida:  AAAA-MM-DD HH:MM:SS"
 
 #: common/adminforms.py:277 common/adminforms.py:306
 #, python-brace-format
@@ -713,11 +713,11 @@ msgstr "¿Está seguro?"
 
 #: common/adminforms.py:715
 msgid "Required."
-msgstr "Obligatorio."
+msgstr "Requerido."
 
 #: common/adminforms.py:717 common/adminforms.py:720
 msgid "Required. Max 30 characters."
-msgstr "Obligatorio. Máximo 30 caracteres."
+msgstr "Requerido. Máximo 30 caracteres."
 
 #: common/api/views.py:40
 msgid "REST API Help"
@@ -1660,11 +1660,11 @@ msgstr "activo"
 
 #: common/views.py:354
 msgid "superuser status"
-msgstr "es superusuario"
+msgstr "estatus de superusuario"
 
 #: common/views.py:355
 msgid "date joined"
-msgstr "fecha de alta"
+msgstr "fecha de registro"
 
 #: common/views.py:356
 msgid "last login"
@@ -2081,7 +2081,7 @@ msgstr "Nada para exportar"
 
 #: execute/widget.py:22
 msgid "Generate a constrained plan"
-msgstr "Genrear un plan con restriciones"
+msgstr "Generar un plan con restriciones"
 
 #: forecast/admin.py:40 input/admin.py:86 input/admin.py:117 input/admin.py:168
 #: input/admin.py:199 input/admin.py:236 input/admin.py:280 input/admin.py:321
@@ -2475,7 +2475,7 @@ msgstr "valor por defecto"
 #: inventoryplanning/templates/inventoryplanning/drp.html:1660
 #: inventoryplanning/templates/inventoryplanning/drp.html:1753
 msgid "forecast total"
-msgstr "pronóstico total"
+msgstr "forecast total"
 
 #: forecast/templates/forecast/forecast.html:380
 #: inventoryplanning/templates/inventoryplanning/drp.html:1082
@@ -2532,7 +2532,7 @@ msgstr "disponible"
 #: output/templates/output/demand_forecast.html:145 output/views/demand.py:67
 #: output/views/demand.py:289
 msgid "sales orders"
-msgstr "órdenes retrasadas"
+msgstr "órdenes de venta"
 
 #: forecast/widget.py:34
 msgid "Show the value of all sales order and forecast"
@@ -2938,7 +2938,7 @@ msgstr "inventario"
 #: input/models.py:593 input/templates/admin/input/location/change_form.html:19
 #: input/views/inventory.py:108
 msgid "buffers"
-msgstr "reservas"
+msgstr "inventario"
 
 #: input/models.py:608 input/models.py:706 input/models.py:762
 #: input/views/capacity.py:88 input/views/capacity.py:164
@@ -3391,7 +3391,7 @@ msgstr "max temprano"
 #: inventoryplanning/views.py:473 inventoryplanning/widget.py:24
 #: output/widget.py:1455
 msgid "inventory status"
-msgstr "estado del inventario"
+msgstr "estatus del inventario"
 
 #: input/views/capacity.py:596 input/views/manufacturing.py:1394
 msgid "net duration"

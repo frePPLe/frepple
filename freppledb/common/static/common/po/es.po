@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2021-05-06 17:10+0200\n"
+"PO-Revision-Date: 2021-05-24 17:22+0200\n"
 "Last-Translator: Joao Ranita <jranita@frepple.com>\n"
 "Language-Team: frepple\n"
 "Language: es\n"
@@ -651,7 +651,7 @@ msgstr "pronóstico anulado"
 
 #: freppledb/forecast/static/forecast/src/displayForecastGraph.js:202
 msgid "forecast total"
-msgstr "pronóstico total"
+msgstr "forecast total"
 
 #: freppledb/input/static/operationplandetail/operationplandetail.html:49
 #: freppledb/planningboard/static/planningboard/planningboard.html:129
@@ -677,7 +677,7 @@ msgstr "inventario"
 #: freppledb/input/static/operationplandetail/src/supplypositionpanelDrv.js:22
 #: freppledb/planningboard/static/planningboard/planningboard.html:27
 msgid "inventory status"
-msgstr "estado del inventario"
+msgstr "estatus del inventario"
 
 #: freppledb/forecast/static/forecast/forecast.html:186
 #: freppledb/input/static/operationplandetail/operationplanpanel.html:40
@@ -861,7 +861,7 @@ msgstr "ajuste órdenes"
 #: freppledb/input/static/operationplandetail/src/supplyinformationDrv.js:36
 #: freppledb/planningboard/static/planningboard/planningboard.html:606
 msgid "origin"
-msgstr "ubicación de origen"
+msgstr "origen"
 
 #: freppledb/input/static/operationplandetail/src/networkstatusDrv.js:44
 msgid "overdue sales orders"
@@ -967,7 +967,7 @@ msgstr "recursos"
 
 #: freppledb/input/static/operationplandetail/src/networkstatusDrv.js:46
 msgid "sales orders"
-msgstr "órdenes retrasadas"
+msgstr "órdenes de venta"
 
 #: freppledb/forecast/static/forecast/forecast.html:74
 msgid "save"
@@ -1010,7 +1010,7 @@ msgstr "fecha de inicio"
 #: freppledb/planningboard/static/planningboard/planningboard.html:674
 #: freppledb/quoting/static/quoting/quoting.html:91
 msgid "status"
-msgstr "estado"
+msgstr "estatus"
 
 #: freppledb/planningboard/static/planningboard/src/grid.js:283
 #: freppledb/planningboard/static/planningboard/src/grid.js:344

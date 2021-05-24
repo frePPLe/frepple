@@ -1775,6 +1775,8 @@ class OperationPlan : public Object,
   /* Return the list of problems of this operationplan. */
   inline OperationPlan::ProblemIterator getProblems() const;
 
+  bool getForcedUpdate() const { return (flags & FORCED_UPDATE) != 0; }
+
   bool getActivated() const { return (flags & ACTIVATED) != 0; }
 
   bool getCompleted() const { return (flags & STATUS_COMPLETED) != 0; }
@@ -1832,6 +1834,13 @@ class OperationPlan : public Object,
       flags |= ACTIVATED;
     else
       flags &= ~ACTIVATED;
+  }
+
+  void setForcedUpdate(bool b) {
+    if (b)
+      flags |= FORCED_UPDATE;
+    else
+      flags &= ~FORCED_UPDATE;
   }
 
   /* Update flag which allow/disallows material consumption. */
@@ -2426,6 +2435,7 @@ class OperationPlan : public Object,
   static const unsigned short CONSUME_CAPACITY = 64;
   static const unsigned short FEASIBLE = 128;
   static const unsigned short ACTIVATED = 256;
+  static const unsigned short FORCED_UPDATE = 512;
 
   /* Counter of OperationPlans, which is used to automatically assign a
    * unique identifier for each operationplan.

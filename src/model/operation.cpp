@@ -1116,8 +1116,9 @@ OperationPlanState OperationTimePer::setOperationPlanParameters(
   if (!opplan || q < 0)
     throw LogicException("Incorrect parameters for timeper operationplan");
 
-  // Confirmed operationplans are untouchable
-  if (opplan->getConfirmed() && !opplan->getQuantityCompleted())
+  // Confirmed operationplans are untouchable... in most cases
+  if (opplan->getConfirmed() && !opplan->getQuantityCompleted() &&
+      !opplan->getForcedUpdate())
     return OperationPlanState(opplan);
 
   if (opplan->getProposed()) {

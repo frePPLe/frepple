@@ -347,6 +347,7 @@ Object* OperationPlan::createOperationPlan(const MetaClass* cat,
         opplan->getOperation() != static_cast<Operation*>(oper))
       // Change the operation
       opplan->setOperation(static_cast<Operation*>(oper));
+    opplan->setForcedUpdate(true);
     if (quantityfld && !startfld && !endfld)
       opplan->setOperationPlanParameters(
           quantityfld ? quantity : opplan->getQuantity(), opplan->getStart(),
@@ -354,6 +355,7 @@ Object* OperationPlan::createOperationPlan(const MetaClass* cat,
     else if (quantityfld || startfld || endfld)
       opplan->setOperationPlanParameters(
           quantityfld ? quantity : opplan->getQuantity(), start, end);
+    opplan->setForcedUpdate(false);
     if (batchfld) opplan->setBatch(batch);
     return opplan;
   }

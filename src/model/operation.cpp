@@ -847,7 +847,8 @@ OperationPlanState OperationFixedTime::setOperationPlanParameters(
     throw LogicException("Incorrect parameters for fixedtime operationplan");
 
   // Confirmed operationplans are untouchable
-  if (opplan->getConfirmed()) return OperationPlanState(opplan);
+  if (opplan->getConfirmed() && !opplan->getForcedUpdate())
+    return OperationPlanState(opplan);
 
   // Compute the start and end date
   Duration production_duration;

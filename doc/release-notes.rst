@@ -37,12 +37,15 @@ Release notes
   | By ignoring all other cells, you now have more flexibility to create a custom layout of
     your data file. Eg a header section with comments or instructions.
 
+- | Refreshed Spanish translations. Many thanks to Marilenne Minaya!
+
 - | Bug fix: formatting of negative numbers was showing too many digits after the decimal.
 
 .. rubric:: Integration
 
-- | Addition of the **upload exported reports** menu in the execute screen, allowing users to export selected
-    reports to a third-party server (using a ftp, sftp or ftps connection).
+- | Addition of the `upload exported reports <command-reference.html#uploadreport>`_ 
+    task in the execute screen, allowing users to export selected reports to a remote
+    server (using a ftp, sftp or ftps connection).
 
 6.13.0 (2021/04/20)
 ===================

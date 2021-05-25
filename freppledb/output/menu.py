@@ -17,7 +17,10 @@
 from freppledb.menu import menu
 from freppledb.input.models import OperationPlanMaterial, OperationPlanResource
 from freppledb.input.models import (
-    Demand,
+    Item,
+    Location,
+    Customer,
+    OperationPlan,
     Operation,
     Resource,
     DistributionOrder,
@@ -40,7 +43,7 @@ menu.addItem(
     url="/demand/",
     report=freppledb.output.views.demand.OverviewReport,
     index=200,
-    dependencies=[Demand],
+    dependencies=[Item, Location, Customer, OperationPlan],
 )
 menu.addItem(
     "sales",
@@ -48,7 +51,7 @@ menu.addItem(
     url="/problem/?entity=demand",
     report=freppledb.output.views.problem.Report,
     index=400,
-    dependencies=[Demand],
+    dependencies=[Item, Location, Customer, OperationPlan],
 )
 menu.addItem(
     "sales",
@@ -56,7 +59,7 @@ menu.addItem(
     url="/constraint/",
     report=freppledb.output.views.constraint.BaseReport,
     index=500,
-    dependencies=[Demand],
+    dependencies=[Item, Location, Customer, OperationPlan],
 )
 menu.addItem(
     "admin",

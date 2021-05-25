@@ -231,6 +231,7 @@ class OverviewReport(GridPivot):
                     ),  # buckets
                 )
                 previtem = None
+                attributefields = getAttributeFields(Item)
                 for row in cursor_chunked:
                     numfields = len(row)
                     if row[0] != previtem:
@@ -258,7 +259,7 @@ class OverviewReport(GridPivot):
                         "backlog": backlog,
                     }
                     idx = 11
-                    for f in getAttributeFields(Item):
+                    for f in attributefields:
                         res[f.field_name] = row[idx]
                         idx += 1
                     yield res

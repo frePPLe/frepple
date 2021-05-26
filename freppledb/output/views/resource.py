@@ -337,6 +337,8 @@ class OverviewReport(GridPivot):
         with transaction.atomic(using=request.database):
             with connections[request.database].chunked_cursor() as cursor_chunked:
                 cursor_chunked.execute(query, baseparams)
+                resourceattributefields = getAttributeFields(Resource)
+                locationattributefields = getAttributeFields(Location)
                 for row in cursor_chunked:
                     numfields = len(row)
                     if row[numfields - 4] != 0:
@@ -373,10 +375,10 @@ class OverviewReport(GridPivot):
                         "utilization": util,
                     }
                     idx = 20
-                    for f in getAttributeFields(Resource):
+                    for f in resourceattributefields:
                         result[f.field_name] = row[idx]
                         idx += 1
-                    for f in getAttributeFields(Location):
+                    for f in locationattributefields:
                         result[f.field_name] = row[idx]
                         idx += 1
                     yield result

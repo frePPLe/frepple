@@ -553,6 +553,12 @@ class OverviewReport(GridPivot):
                         request.report_enddate,
                     ),  # bucket d
                 )
+                itemattributefields = getAttributeFields(
+                    Item, related_name_prefix="item"
+                )
+                locationattributefields = getAttributeFields(
+                    Location, related_name_prefix="location"
+                )
                 for row in cursor_chunked:
                     numfields = len(row)
                     history = row[numfields - 3]
@@ -668,12 +674,10 @@ class OverviewReport(GridPivot):
 
                     # Add attribute fields
                     idx = 22
-                    for f in getAttributeFields(Item, related_name_prefix="item"):
+                    for f in itemattributefields:
                         res[f.field_name] = row[idx]
                         idx += 1
-                    for f in getAttributeFields(
-                        Location, related_name_prefix="location"
-                    ):
+                    for f in locationattributefields:
                         res[f.field_name] = row[idx]
                         idx += 1
                     yield res

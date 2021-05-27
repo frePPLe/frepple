@@ -50,9 +50,9 @@ The code in this file is using ANGULARJS template syntax and not the DJANGO temp
       </p>
       <p data-ng-class="{'dirty': opplan.hasOwnProperty('quantityOriginal') || opplan.hasOwnProperty('operationplan__quantityOriginal')}">
         <span data-ng-if="!editable || !opplan.hasOwnProperty('selected')">{{ grid.formatNumber(opplan.operationplan__quantity || opplan.quantity) }}</span>
-        <input class="form-control" data-ng-if="editable && opplan.hasOwnProperty('selected') && !opplan.hasOwnProperty('operationplan__quantity')" type="number" min="0" data-ng-focus="oldValue=opplan.quantity"
+        <input class="form-control" data-ng-if="editable && opplan.hasOwnProperty('selected') && !opplan.hasOwnProperty('operationplan__quantity')" type="number" step="0" min="0" data-ng-focus="oldValue=opplan.quantity"
           data-ng-model="opplan.quantity" data-ng-change="changeCard(opplan, 'quantity', oldValue, opplan.quantity)">
-        <input class="form-control" data-ng-if="editable && opplan.hasOwnProperty('selected') && opplan.hasOwnProperty('operationplan__quantity')" type="number" min="0" data-ng-focus="oldValue=opplan.operationplan__quantity"
+        <input class="form-control" data-ng-if="editable && opplan.hasOwnProperty('selected') && opplan.hasOwnProperty('operationplan__quantity')" type="number" step="0" min="0" data-ng-focus="oldValue=opplan.operationplan__quantity"
           data-ng-model="opplan.operationplan__quantity" data-ng-change="changeCard(opplan, 'operationplan__quantity', oldValue, opplan.operationplan__quantity)">
       </p>
       <p data-ng-class="{'dirty': opplan.hasOwnProperty('startdateOriginal') || opplan.hasOwnProperty('operationplan__startdateOriginal')}">
@@ -116,9 +116,9 @@ The code in this file is using ANGULARJS template syntax and not the DJANGO temp
       </p>
       <p data-ng-class="{'dirty': opplan.hasOwnProperty('quantityOriginal') || opplan.hasOwnProperty('operationplan__quantityOriginal')}">
         <span data-ng-if="!editable || !opplan.hasOwnProperty('selected')">{{ grid.formatNumber(opplan.operationplan__quantity || opplan.quantity) }}</span>
-        <input class="form-control" data-ng-if="editable && opplan.hasOwnProperty('selected') && !opplan.hasOwnProperty('operationplan__quantity')" type="number" min="0" data-ng-focus="oldValue=opplan.quantity"
+        <input class="form-control" data-ng-if="editable && opplan.hasOwnProperty('selected') && !opplan.hasOwnProperty('operationplan__quantity')" type="number" step="0" min="0" data-ng-focus="oldValue=opplan.quantity"
           data-ng-model="opplan.quantity" data-ng-change="changeCard(opplan, 'quantity', oldValue, opplan.quantity)">
-        <input class="form-control" data-ng-if="editable && opplan.hasOwnProperty('selected') && opplan.hasOwnProperty('operationplan__quantity')" type="number" min="0" data-ng-focus="oldValue=opplan.operationplan__quantity"
+        <input class="form-control" data-ng-if="editable && opplan.hasOwnProperty('selected') && opplan.hasOwnProperty('operationplan__quantity')" type="number" step="0" min="0" data-ng-focus="oldValue=opplan.operationplan__quantity"
           data-ng-model="opplan.operationplan__quantity" data-ng-change="changeCard(opplan, 'operationplan__quantity', oldValue, opplan.operationplan__quantity)">
       </p>
       <p data-ng-class="{'dirty': opplan.hasOwnProperty('startdateOriginal') || opplan.hasOwnProperty('operationplan__startdateOriginal')}">
@@ -177,16 +177,16 @@ The code in this file is using ANGULARJS template syntax and not the DJANGO temp
       </p>
       <p data-ng-class="{'dirty': opplan.hasOwnProperty('quantityOriginal') || opplan.hasOwnProperty('operationplan__quantityOriginal')}">
         <span data-ng-if="!editable || !opplan.hasOwnProperty('selected')">{{ grid.formatNumber(opplan.operationplan__quantity || opplan.quantity) }}</span>
-        <input class="form-control" data-ng-if="editable && opplan.hasOwnProperty('selected') && opplan.hasOwnProperty('operationplan__quantity')" type="number" min="0" data-ng-focus="oldValue=opplan.operationplan__quantity"
+        <input class="form-control" data-ng-if="editable && opplan.hasOwnProperty('selected') && opplan.hasOwnProperty('operationplan__quantity')" type="number" step="0" min="0" data-ng-focus="oldValue=opplan.operationplan__quantity"
           data-ng-model="opplan.operationplan__quantity" data-ng-change="changeCard(opplan, 'operationplan__quantity', oldValue, opplan.operationplan__quantity)">
-        <input class="form-control" data-ng-if="editable && opplan.hasOwnProperty('selected') && !opplan.hasOwnProperty('operationplan__quantity')" type="number" min="0" data-ng-focus="oldValue=opplan.quantity"
+        <input class="form-control" data-ng-if="editable && opplan.hasOwnProperty('selected') && !opplan.hasOwnProperty('operationplan__quantity')" type="number" step="0" min="0" data-ng-focus="oldValue=opplan.quantity"
           data-ng-model="opplan.quantity" data-ng-change="changeCard(opplan, 'quantity', oldValue, opplan.quantity)">
       </p>
       <p data-ng-class="{'dirty': opplan.hasOwnProperty('quantity_completedOriginal') || opplan.hasOwnProperty('operationplan__quantity_completedOriginal')}">
         <span data-ng-if="!editable || !opplan.hasOwnProperty('selected')">{{ grid.formatNumber(opplan.operationplan__quantity_completed || opplan.quantity_completed || 0) }}</span>
-        <input class="form-control" data-ng-if="editable && opplan.hasOwnProperty('selected') && opplan.hasOwnProperty('operationplan__quantity')" type="number" min="0" data-ng-focus="oldValue=opplan.operationplan__quantity_completed || 0"
+        <input class="form-control" data-ng-if="editable && opplan.hasOwnProperty('selected') && opplan.hasOwnProperty('operationplan__quantity')" type="number" step="0" min="0" data-ng-focus="oldValue=opplan.operationplan__quantity_completed || 0"
           data-ng-model="opplan.operationplan__quantity_completed" data-ng-change="changeCard(opplan, 'operationplan__quantity_completed', oldValue, opplan.operationplan__quantity_completed)">
-        <input class="form-control" data-ng-if="editable && opplan.hasOwnProperty('selected') && !opplan.hasOwnProperty('operationplan__quantity')" type="number" min="0" data-ng-focus="oldValue=opplan.quantity_completed || 0"
+        <input class="form-control" data-ng-if="editable && opplan.hasOwnProperty('selected') && !opplan.hasOwnProperty('operationplan__quantity')" type="number" step="0" min="0" data-ng-focus="oldValue=opplan.quantity_completed || 0"
           data-ng-model="opplan.quantity_completed" data-ng-change="changeCard(opplan, 'quantity_completed', oldValue, opplan.quantity_completed)">
       </p>
       <p data-ng-class="{'dirty': opplan.hasOwnProperty('startdateOriginal') || opplan.hasOwnProperty('operationplan__startdateOriginal')}">

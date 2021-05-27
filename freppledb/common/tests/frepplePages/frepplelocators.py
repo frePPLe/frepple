@@ -37,8 +37,8 @@ class TableLocators:
     TABLE_DEFAULT = (By.CSS_SELECTOR, "table[id='grid']")
     TABLE_BODY = (By.CSS_SELECTOR, "tbody")
     TABLE_ROWS = (By.CSS_SELECTOR, "tr")
-    TABLE_SAVE_BUTTON = (By.CSS_SELECTOR, 'input[id="save"]')
-    TABLE_UNDO_BUTTON = (By.CSS_SELECTOR, 'input[id="undo"]')
+    TABLE_SAVE_BUTTON = (By.CSS_SELECTOR, 'button[id="save"]')
+    TABLE_UNDO_BUTTON = (By.CSS_SELECTOR, 'button[id="undo"]')
     TABLE_SELECT_ACTION = (By.CSS_SELECTOR, 'button[id="actions1"]')
     TABLE_SELECT_ACTION_MENU = (By.CSS_SELECTOR, 'ul[id="actionsul"]')
 

@@ -575,6 +575,7 @@ class OperationFilter(filters.FilterSet):
             "priority": ["exact", "in", "gt", "gte", "lt", "lte"],
             "effective_start": ["exact", "in", "gt", "gte", "lt", "lte"],
             "effective_end": ["exact", "in", "gt", "gte", "lt", "lte"],
+            "available": ["exact", "in"],
             "source": ["exact", "in"],
             "lastmodified": ["exact", "in", "gt", "gte", "lt", "lte"],
         }
@@ -596,6 +597,7 @@ class OperationFilter(filters.FilterSet):
             "priority",
             "effective_start",
             "effective_end",
+            "available",
             "cost",
             "duration",
             "duration_per",
@@ -625,6 +627,7 @@ class OperationSerializer(BulkSerializerMixin, ModelSerializer):
             "priority",
             "effective_start",
             "effective_end",
+            "available",
             "cost",
             "duration",
             "duration_per",

@@ -47,6 +47,8 @@ Release notes
     task in the execute screen, allowing users to export selected reports to a remote
     server (using a ftp, sftp or ftps connection).
 
+- | Bug fix: the REST API didn't include the field available of the operation model.
+
 6.13.0 (2021/04/20)
 ===================
 

@@ -197,6 +197,7 @@ function ajaxerror(result, stat, errorThrown) {
   else
     msg = result.responseText;
   $('#timebuckets').modal('hide');
+  $("#save i").addClass('hidden');
   $.jgrid.hideModal("#searchmodfbox_grid");
   $('#popup').html(
     '<div class="modal-dialog">' +
@@ -271,8 +272,9 @@ var upload = {
     var tmp = $("#grid").jqGrid("getGridParam", "selarrrow");
     upload.selectedRows = tmp ? tmp.slice() : null;
 
-    if (rows != null && rows.length > 0)
+    if (rows != null && rows.length > 0) {
       // Send the update to the server
+      $("#save i").removeClass('hidden');
       $.ajax({
         url: location.pathname,
         data: JSON.stringify(rows),
@@ -280,9 +282,11 @@ var upload = {
         contentType: "application/json",
         success: function () {
           upload.undo();
+          $("#save i").addClass('hidden');
         },
         error: ajaxerror
       });
+    }
   },
 
   validateSort: function (event) {

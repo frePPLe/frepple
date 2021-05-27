@@ -281,8 +281,8 @@ function displayGrid(load) {
 <div id="save_undo" class="col-xs-5 form-inline">
 {% block save_undo_buttons %}
 {% if not is_popup and reportclass.editable and haschangeperm %}
-<input type="submit" value="{% filter force_escape|upper %}{% trans "Save" %}{% endfilter %}" class="btn btn-primary"  disabled role="button" id="save" onclick="upload.save()" title="{% trans 'save changes'|capfirst|force_escape %}">
-<input type="submit" value="{% filter force_escape|upper %}{% trans "Undo" %}{% endfilter %}" class="btn btn-primary"  disabled role="button" id="undo" onclick="upload.undo()" title="{% trans 'undo changes'|capfirst|force_escape %}">
+<button class="btn btn-primary" disabled id="save" onclick="upload.save()" title="{% trans 'save changes'|capfirst|force_escape %}"><i class="fa fa-spinner fa-spin hidden"></i>{% filter force_escape|upper %}{% trans "Save" %}{% endfilter %}</button>
+<button class="btn btn-primary" disabled id="undo" onclick="upload.undo()" title="{% trans 'undo changes'|capfirst|force_escape %}">{% filter force_escape|upper %}{% trans "Undo" %}{% endfilter %}</button>
 {% if actions %}
 <form class="form-addon" method="get" action="#" style="display: inline;" >
   <input type="hidden" name="actions" id="actions" value="">

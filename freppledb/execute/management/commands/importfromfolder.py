@@ -574,7 +574,7 @@ class Command(BaseCommand):
             uploadfolder = settings.DATABASES[request.database]["FILEUPLOADFOLDER"]
             if os.path.isdir(uploadfolder):
                 tzoffset = GridReport.getTimezoneOffset(request)
-                for file in os.listdir(uploadfolder):
+                for file in sorted(os.listdir(uploadfolder)):
                     if file.endswith(
                         (
                             ".csv",

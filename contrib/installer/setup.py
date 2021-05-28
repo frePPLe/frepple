@@ -82,6 +82,9 @@ packages = [
     "cffi",
     "nacl",
     "pycparser",
+    "setuptools_rust",
+    "semantic_version",
+    "toml",
 ]
 excludes = [
     "django",

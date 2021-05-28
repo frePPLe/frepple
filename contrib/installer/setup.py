@@ -75,6 +75,13 @@ packages = [
     "idna",
     "urllib3",
     "chardet",
+    # Required for pysftp
+    "pysftp",
+    "paramiko",
+    "bcrypt",
+    "cffi",
+    "pynacl",
+    "pycparser",
 ]
 excludes = [
     "django",

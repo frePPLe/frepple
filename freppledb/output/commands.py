@@ -132,24 +132,37 @@ class TruncatePlan(PlanTask):
 
             cursor.execute(
                 """
+                with opplans as (
+                    select oplan_parent.reference
+                    from operationplan as oplan_parent
+                    inner join cluster_keys on oplan_parent.item_id = cluster_keys.name
+                    where (oplan_parent.status='proposed' or oplan_parent.status is null or oplan_parent.type='STCK')
+                    and oplan_parent.item_id = cluster_keys.name
+                    union all
+                    select oplan.reference
+                    from operationplan as oplan
+                    inner join cluster_keys on oplan.item_id = cluster_keys.name
+                ),
+                opplanmat as (
+                delete from operationplanmaterial
+                using opplans
+                where status is distinct from 'closed'
+                  and status is distinct from 'confirmed' 
+                  and opplans.reference = operationplan_id
+                ),
+                opplanres as (
+                delete from operationplanresource
+                using opplans
+                where status is distinct from 'closed'
+                  and status is distinct from 'confirmed' 
+                  and opplans.reference = operationplan_id
+                )
                 delete from operationplan
-                using cluster_keys
-                where owner_id is not null and owner_id in (
-                  select oplan_parent.reference
-                  from operationplan as oplan_parent
-                  where (oplan_parent.status='proposed' or oplan_parent.status is null or oplan_parent.type='STCK')
-                  and oplan_parent.item_id = cluster_keys.name
-                  )
+                using opplans
+                where opplans.reference = operationplan.reference
                 """
             )
-            cursor.execute(
-                """
-                delete from operationplan
-                using cluster_keys
-                where (status='proposed' or status is null or type='STCK')
-                and item_id = cluster_keys.name
-                """
-            )
+
             cursor.execute("truncate table cluster_keys")
             for i in frepple.resources():
                 if i.cluster == cluster:

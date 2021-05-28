@@ -80,7 +80,7 @@ packages = [
     "paramiko",
     "bcrypt",
     "cffi",
-    "pynacl",
+    "nacl",
     "pycparser",
 ]
 excludes = [

@@ -29,7 +29,7 @@ RUN apt-get -y -q update && DEBIAN_FRONTEND=noninteractive apt-get -y install \
 
 # OPTION 1: BUILDING FROM LOCAL DISTRIBUTION:
 COPY requirements.txt .
-RUN pip3 install -r requirements.txt 
+RUN python3 -m pip upgrade pip && pip3 install -r requirements.txt 
 
 COPY *.tar.gz ./
 COPY debian/  debian/

@@ -36,6 +36,7 @@ RUN src=`basename --suffix=.tar.gz frepple-*` && \
   tar -xzf *.tar.gz && \
   rm *.tar.gz && \
   cd $src && \
+  python3 -m pip upgrade pip && \
   python3 -m pip install -r requirements.txt && \
   mkdir build && \
   cd build && \

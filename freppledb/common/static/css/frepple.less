@@ -1285,10 +1285,10 @@ img.avatar-sm {
 }
 
 // Hide arrows from number input
-input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
+input:not(.arrows)::-webkit-outer-spin-button, input:not(.arrows)::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
-input[type=number] {
+input[type=number]:not(.arrows) {
   -moz-appearance: textfield;
 }

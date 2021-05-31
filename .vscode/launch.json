@@ -1,0 +1,73 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Development server",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/frepplectl.py",
+            "console": "integratedTerminal",
+            "args": [
+                "runserver"
+            ]
+        },
+        {
+            "name": "Engine Debug Windows",
+            "type": "cppvsdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/bin/frepple.exe",
+            "args": [
+                "${workspaceFolder}/freppledb/common/commands.py"
+            ],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/bin",
+            "environment": [
+                {
+                    "name": "FREPPLE_PLANTYPE",
+                    "value": "1"
+                },
+                {
+                    "name": "FREPPLE_CONSTRAINT",
+                    "value": "15"
+                },
+                {
+                    "name": "FREPPLE_DATABASE",
+                    "value": "default"
+                },
+                {
+                    "name": "PYTHONPATH",
+                    "value": "${workspaceFolder}"
+                },
+                {
+                    "name": "DJANGO_SETTINGS_MODULE",
+                    "value": "freppledb.settings"
+                },
+                {
+                    "name": "SUPPLY",
+                    "value": "1"
+                },
+                {
+                    "name": "FCST",
+                    "value": "1"
+                },
+                {
+                    "name": "INVPLAN",
+                    "value": "1"
+                },
+                {
+                    "name": "FREPPLE_LOGFILE",
+                    "value": "frepple.log"
+                },
+                {
+                    "name": "xVIRTUAL_ENV",
+                    "value": "${workspaceFolder}/venv"
+                }
+            }
+        ],
+        "console": "externalTerminal"
+    }
+]
+}

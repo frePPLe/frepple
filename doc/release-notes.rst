@@ -10,6 +10,13 @@ Release notes
     an manufacturing operation produces more than 1 piece per unit (i.e. you have an
     operationmaterial record with a quantity > 1) 
 
+.. rubric:: User interface
+
+- | Improved data table detection. This feature was introduced in the previous release.
+    User feedback showed that it's not uncommon to have data columns outside of the table.
+    These were silently being ignored with 6.14. 
+  | Columns next to the data table will now still be read, similar to the behavior before 6.14.
+
 6.14.0 (2021/05/28)
 ===================
 

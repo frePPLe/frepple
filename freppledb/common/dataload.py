@@ -311,7 +311,7 @@ def _parseData(model, data, rowmapper, user, database, ping):
             elif rownumber > bounds[3]:
                 break
             else:
-                rowWrapper.setData(row[bounds[0] - 1 : bounds[2]])
+                rowWrapper.setData(row)
         else:
             rowWrapper.setData(row)
 

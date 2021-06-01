@@ -312,6 +312,7 @@ PyObject* Demand::addConstraint(PyObject* self, PyObject* args,
                                            cnstrnt_weight);
     } else
       throw DataException("Invalid constraint type");
+    Py_IncRef(cnstrnt);
     return cnstrnt;
   } catch (...) {
     PythonType::evalException();

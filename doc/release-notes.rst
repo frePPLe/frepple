@@ -1,6 +1,15 @@
 Release notes
 -------------
 
+6.5.0 (Upcoming release)
+========================
+
+.. rubric:: Production planning
+
+- | Bug fix: A bug in the planning algorithm created more lateness than needed when
+    an manufacturing operation produces more than 1 piece per unit (i.e. you have an
+    operationmaterial record with a quantity > 1) 
+
 6.14.0 (2021/05/28)
 ===================
 

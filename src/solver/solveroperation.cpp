@@ -198,7 +198,7 @@ bool SolverCreate::checkOperation(OperationPlan* opplan,
   double a_qty;
   Date orig_q_date = data.state->q_date;
   Date orig_q_date_max = data.state->q_date_max;
-  double orig_opplan_qty = data.state->q_qty;
+  double orig_opplan_qty = opplan->getQuantity();
   double q_qty_Flow;
   Date q_date_Flow;
   bool incomplete;

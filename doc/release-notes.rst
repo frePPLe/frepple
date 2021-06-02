@@ -12,9 +12,13 @@ Release notes
 
 .. rubric:: User interface
 
-- | Improved data table detection. This feature was introduced in the previous release.
-    User feedback showed that it's not uncommon to have data columns outside of the table.
-    These were silently being ignored with 6.14. 
+- | Ability to change the number of records on a page.
+  | A simple dropdown next to the paging buttons allows to easily see more records
+    on the screen.
+
+- | Improved data table detection when importing Excel files.
+  | This feature was introduced in the previous release. User feedback showed that it's
+    not uncommon to have data columns outside of the table. These were silently being ignored with 6.14. 
   | Columns next to the data table will now still be read, similar to the behavior before 6.14.
 
 6.14.0 (2021/05/28)

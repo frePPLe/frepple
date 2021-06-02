@@ -44,6 +44,12 @@ function displayGrid(load) {
 	  jsonReader : {repeatitems:false},
     colModel:[{{colmodel|safe}}],
    	rowNum: {{request.pagesize}},
+    rowList: [
+      {{request.pagesize}}+":"+{{request.pagesize}},
+      (5*{{request.pagesize}})+":"+(5*{{request.pagesize}}),
+      (10*{{request.pagesize}})+":"+(10*{{request.pagesize}}),
+      "9999999:{% trans "All" %}"
+      ],
    	autoencode: true,{% if is_popup %}
     onSelectRow: grid.setSelectedRow,{% elif reportclass.editable and haschangeperm %}
     cellEdit: true,

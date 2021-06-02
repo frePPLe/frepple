@@ -72,6 +72,12 @@ $(function() {
       return value;
     },
     {% endif %}rowNum: {{request.pagesize}},
+    rowList: [
+      {{request.pagesize}}+":"+{{request.pagesize}},
+      (5*{{request.pagesize}})+":"+(5*{{request.pagesize}}),
+      (10*{{request.pagesize}})+":"+(10*{{request.pagesize}}),
+      "9999999:{% trans "All" %}"
+      ],
    	pager: '#gridpager',
     viewrecords: true,
     sortorder: "asc",

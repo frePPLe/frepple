@@ -1463,6 +1463,8 @@ class GridReport(View):
             cls.getKey(request, *args, **kwargs), database=request.database
         )
         recs = cls.count_query(request, *args, **kwargs)
+        if "rows" in request.GET:
+            request.pagesize = int(request.GET["rows"])
         total_pages = math.ceil(float(recs) / request.pagesize)
         page = request.GET.get("page", 1)
         if page is not None:
@@ -1772,9 +1774,10 @@ class GridReport(View):
                 title = cls.title(request, *args, **kwargs)
             else:
                 title = cls.model._meta.verbose_name_plural if cls.model else cls.title
-            response["Content-Disposition"] = (
-                "attachment; filename*=utf-8''%s.xlsx"
-                % urllib.parse.quote(force_str(title))
+            response[
+                "Content-Disposition"
+            ] = "attachment; filename*=utf-8''%s.xlsx" % urllib.parse.quote(
+                force_str(title)
             )
             response["Cache-Control"] = "no-cache, no-store"
             return response
@@ -1799,9 +1802,10 @@ class GridReport(View):
                 title = cls.title(request, *args, **kwargs)
             else:
                 title = cls.model._meta.verbose_name_plural if cls.model else cls.title
-            response["Content-Disposition"] = (
-                "attachment; filename*=utf-8''%s.csv"
-                % urllib.parse.quote(force_str(title))
+            response[
+                "Content-Disposition"
+            ] = "attachment; filename*=utf-8''%s.csv" % urllib.parse.quote(
+                force_str(title)
             )
             response["Cache-Control"] = "no-cache, no-store"
             return response
@@ -1986,7 +1990,7 @@ class GridReport(View):
 
     @staticmethod
     def dependent_models(m, found):
-        """ An auxilary method that constructs a set of all dependent models"""
+        """An auxilary method that constructs a set of all dependent models"""
         for f in m._meta.get_fields():
             if (
                 f.is_relation
@@ -2896,6 +2900,8 @@ class GridPivot(GridReport):
         )
         recs = cls.count_query(request, *args, **kwargs)
         page = "page" in request.GET and int(request.GET["page"]) or 1
+        if "rows" in request.GET:
+            request.pagesize = int(request.GET["rows"])
         total_pages = math.ceil(float(recs) / request.pagesize)
         if page > total_pages:
             page = total_pages

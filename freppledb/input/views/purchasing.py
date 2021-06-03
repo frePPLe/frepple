@@ -40,6 +40,7 @@ from freppledb.common.report import (
     GridFieldChoice,
     GridFieldDuration,
     GridFieldJSON,
+    getCurrentDate,
 )
 from .utils import OperationPlanMixin
 
@@ -411,6 +412,7 @@ class PurchaseOrderList(OperationPlanMixin):
                     "title": force_text(Supplier._meta.verbose_name) + " " + args[0],
                     "post_title": _("purchase orders"),
                     "groupingcfg": groupingcfg,
+                    "currentdate": getCurrentDate(request.database),
                 }
             elif path == "location" or request.path.startswith(
                 "/detail/input/location/"
@@ -423,6 +425,7 @@ class PurchaseOrderList(OperationPlanMixin):
                     "title": force_text(Location._meta.verbose_name) + " " + args[0],
                     "post_title": _("purchase orders"),
                     "groupingcfg": groupingcfg,
+                    "currentdate": getCurrentDate(request.database),
                 }
             elif path == "item" or request.path.startswith("/detail/input/item/"):
                 return {
@@ -433,6 +436,7 @@ class PurchaseOrderList(OperationPlanMixin):
                     "title": force_text(Item._meta.verbose_name) + " " + args[0],
                     "post_title": _("purchase orders"),
                     "groupingcfg": groupingcfg,
+                    "currentdate": getCurrentDate(request.database),
                 }
             elif path == "operationplanmaterial":
                 return {
@@ -446,6 +450,7 @@ class PurchaseOrderList(OperationPlanMixin):
                         % {"loc": args[1], "date": args[2]}
                     ),
                     "groupingcfg": groupingcfg,
+                    "currentdate": getCurrentDate(request.database),
                 }
             elif path == "produced":
                 return {
@@ -459,6 +464,7 @@ class PurchaseOrderList(OperationPlanMixin):
                         % {"loc": args[1], "date1": args[2], "date2": args[3]}
                     ),
                     "groupingcfg": groupingcfg,
+                    "currentdate": getCurrentDate(request.database),
                 }
             else:
                 return {
@@ -467,6 +473,7 @@ class PurchaseOrderList(OperationPlanMixin):
                     "active_tab": "edit",
                     "model": Item,
                     "groupingcfg": groupingcfg,
+                    "currentdate": getCurrentDate(request.database),
                 }
         elif "parentreference" in request.GET:
             return {
@@ -477,6 +484,7 @@ class PurchaseOrderList(OperationPlanMixin):
                 + " "
                 + request.GET["parentreference"],
                 "groupingcfg": groupingcfg,
+                "currentdate": getCurrentDate(request.database),
             }
         else:
             return {
@@ -484,6 +492,7 @@ class PurchaseOrderList(OperationPlanMixin):
                 "groupBy": "status",
                 "active_tab": "purchaseorders",
                 "groupingcfg": groupingcfg,
+                "currentdate": getCurrentDate(request.database),
             }
 
     @classmethod

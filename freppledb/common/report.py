@@ -465,6 +465,17 @@ def getCurrency():
         return ("", " $")
 
 
+def getCurrentDate(database=DEFAULT_DB_ALIAS):
+    val = Parameter.getValue("currentdate", database=database)
+    try:
+        return parse(val)
+    except Exception:
+        val = datetime.now()
+        if val.lower() == "today":
+            val = datetime(val.year, val.month, val.day)
+        return val
+
+
 class GridFieldCurrency(GridField):
     formatter = "currency"
     searchoptions = (

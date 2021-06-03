@@ -51,6 +51,7 @@ from freppledb.common.report import (
     GridFieldChoice,
     GridFieldDuration,
     GridFieldJSON,
+    getCurrentDate,
 )
 from .utils import OperationPlanMixin
 
@@ -590,6 +591,7 @@ class DistributionOrderList(OperationPlanMixin):
                         % {"loc": args[1], "date": args[2]}
                     ),
                     "groupingcfg": groupingcfg,
+                    "currentdate": getCurrentDate(database=request.database),
                 }
             elif paths[4] == "produced":
                 return {
@@ -603,6 +605,7 @@ class DistributionOrderList(OperationPlanMixin):
                         % {"loc": args[1], "date1": args[2], "date2": args[3]}
                     ),
                     "groupingcfg": groupingcfg,
+                    "currentdate": getCurrentDate(database=request.database),
                 }
             elif paths[4] == "consumed":
                 return {
@@ -616,6 +619,7 @@ class DistributionOrderList(OperationPlanMixin):
                         % {"loc": args[1], "date1": args[2], "date2": args[3]}
                     ),
                     "groupingcfg": groupingcfg,
+                    "currentdate": getCurrentDate(database=request.database),
                 }
             elif paths[4] == "item":
                 return {
@@ -626,6 +630,7 @@ class DistributionOrderList(OperationPlanMixin):
                     "title": force_text(Item._meta.verbose_name) + " " + args[0],
                     "post_title": _("distribution orders"),
                     "groupingcfg": groupingcfg,
+                    "currentdate": getCurrentDate(database=request.database),
                 }
             elif paths[4] == "location":
                 path = paths[-2]
@@ -640,6 +645,7 @@ class DistributionOrderList(OperationPlanMixin):
                         + args[0],
                         "post_title": _("inbound distribution"),
                         "groupingcfg": groupingcfg,
+                        "currentdate": getCurrentDate(database=request.database),
                     }
                 elif path == "out":
                     return {
@@ -652,6 +658,7 @@ class DistributionOrderList(OperationPlanMixin):
                         + args[0],
                         "post_title": _("outbound distribution"),
                         "groupingcfg": groupingcfg,
+                        "currentdate": getCurrentDate(database=request.database),
                     }
             else:
                 return {
@@ -660,6 +667,7 @@ class DistributionOrderList(OperationPlanMixin):
                     "active_tab": "edit",
                     "model": Item,
                     "groupingcfg": groupingcfg,
+                    "currentdate": getCurrentDate(database=request.database),
                 }
         elif "parentreference" in request.GET:
             return {
@@ -670,6 +678,7 @@ class DistributionOrderList(OperationPlanMixin):
                 + " "
                 + request.GET["parentreference"],
                 "groupingcfg": groupingcfg,
+                "currentdate": getCurrentDate(database=request.database),
             }
         else:
             return {
@@ -677,6 +686,7 @@ class DistributionOrderList(OperationPlanMixin):
                 "groupBy": "status",
                 "active_tab": "edit",
                 "groupingcfg": groupingcfg,
+                "currentdate": getCurrentDate(database=request.database),
             }
 
     @classmethod
@@ -1214,6 +1224,7 @@ class InventoryDetail(OperationPlanMixin):
                     "title": force_text(Item._meta.verbose_name) + " " + args[0],
                     "post_title": _("inventory detail"),
                     "groupingcfg": groupingcfg,
+                    "currentdate": getCurrentDate(database=request.database),
                 }
             elif request.path_info.startswith(
                 "/data/input/operationplanmaterial/buffer/"
@@ -1239,6 +1250,7 @@ class InventoryDetail(OperationPlanMixin):
                     + location,
                     "post_title": _("plan detail"),
                     "groupingcfg": groupingcfg,
+                    "currentdate": getCurrentDate(database=request.database),
                 }
         else:
             return {
@@ -1247,6 +1259,7 @@ class InventoryDetail(OperationPlanMixin):
                 "active_tab": "plandetail",
                 "model": OperationPlanMaterial,
                 "groupingcfg": groupingcfg,
+                "currentdate": getCurrentDate(database=request.database),
             }
 
     rows = (

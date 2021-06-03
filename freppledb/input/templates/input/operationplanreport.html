@@ -127,6 +127,7 @@
   var groupBy = "{{ groupBy }}";
   var thefilter = initialfilter;
   var groupingcfg = {{ groupingcfg | json }};
+  var currentdate = new Date("{{ currentdate|date:'Y-m-d' }}");
 
   $(function() {
     $("#workarea").css('overflow-x','visible');

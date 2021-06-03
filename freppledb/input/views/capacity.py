@@ -48,6 +48,7 @@ from freppledb.common.report import (
     GridFieldCurrency,
     GridFieldChoice,
     GridFieldDuration,
+    getCurrentDate,
 )
 from .utils import OperationPlanMixin
 
@@ -476,6 +477,7 @@ class ResourceDetail(OperationPlanMixin):
                 "title": force_text(Resource._meta.verbose_name) + " " + args[0],
                 "post_title": _("plan detail"),
                 "groupingcfg": groupingcfg,
+                "currentdate": getCurrentDate(database=request.database),
             }
         else:
             return {
@@ -484,6 +486,7 @@ class ResourceDetail(OperationPlanMixin):
                 "active_tab": "plandetail",
                 "model": OperationPlanResource,
                 "groupingcfg": groupingcfg,
+                "currentdate": getCurrentDate(database=request.database),
             }
 
     rows = (

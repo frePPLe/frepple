@@ -470,10 +470,8 @@ def getCurrentDate(database=DEFAULT_DB_ALIAS):
     try:
         return parse(val)
     except Exception:
-        val = datetime.now()
-        if val.lower() == "today":
-            val = datetime(val.year, val.month, val.day)
-        return val
+        n = datetime.now()
+        return datetime(n.year, n.month, n.day) if val.lower() == "today" else n
 
 
 class GridFieldCurrency(GridField):

@@ -16,7 +16,6 @@
 #
 
 from datetime import datetime
-from dateutil.parser import parse
 import json
 
 from django.conf import settings
@@ -42,6 +41,7 @@ from freppledb.common.report import (
     GridFieldText,
     GridFieldNumber,
     GridFieldDuration,
+    getCurrentDate,
 )
 from freppledb.input.models import (
     Resource,
@@ -1562,13 +1562,7 @@ class DownstreamOperationPath(UpstreamOperationPath):
 
 class OperationPlanDetail(View):
     def getData(self, request):
-        # Current date
-        try:
-            current_date = parse(
-                Parameter.objects.using(request.database).get(name="currentdate").value
-            )
-        except Exception:
-            current_date = datetime.now()
+        current_date = getCurrentDate(request.database)
         cursor = connections[request.database].cursor()
 
         # Read the results from the database

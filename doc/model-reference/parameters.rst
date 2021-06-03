@@ -25,7 +25,11 @@ allowsplits                 | When set to true (default value), a sales order or
                               delivery delays of the customer orders and forecasts.
 currentdate                 | Current date of the plan, preferred format is YYYY-MM-DD HH:MM:SS
                               but most known formats to represent a date and/or time are accepted.
-                              If the parameter is missing or empty the system time is used as current date.
+                            | When the parameter is set to "today", we use today 00:00 / midnight 
+                              as the currrent date.
+                            | When the parameter is set to "now", we use the system time as current date.
+                            | If the parameter is missing, empty or has an uncognized format, the system 
+                              time is also used as current date.
 currency                    | Currency symbol.
                             | This parameter may be only set on the default database and will be
                               globally applied, including in all the scenarios.

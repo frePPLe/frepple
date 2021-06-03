@@ -10,6 +10,13 @@ Release notes
     an manufacturing operation produces more than 1 piece per unit (i.e. you have an
     operationmaterial record with a quantity > 1) 
 
+- | The "currentdate" parameter now also accepts the keyword "today". It sets the current
+    date for planning to today at 00:00 / midnight.
+  | In previous releases you could already use the keyword "now" to use the system time
+    as current date. A drawback of using "now" is that different planning runs on the same
+    day will show slightly different results. For the majority of users, this is confusing and
+    not needed. With the new "today" keyword the plan will be stable during the day. 
+  
 .. rubric:: User interface
 
 - | Ability to change the number of records on a page.

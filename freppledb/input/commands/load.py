@@ -185,7 +185,12 @@ class loadParameter(LoadTask):
                             frepple.settings.current = parse(rec[1])
                             default_current_date = False
                         except Exception:
-                            pass
+                            if rec[1] and rec[1].lower() == "today":
+                                n = datetime.now()
+                                frepple.settings.current = datetime(
+                                    n.year, n.month, n.day
+                                )
+                                default_current_date = False
                     elif rec[0] == "plan.calendar" and rec[1]:
                         frepple.settings.calendar = frepple.calendar(name=rec[1])
                         logger.info("Bucketized planning using calendar %s" % rec[1])

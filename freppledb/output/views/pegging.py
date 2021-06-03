@@ -16,15 +16,18 @@
 #
 
 from datetime import datetime, timedelta
-from dateutil.parser import parse
 
 from django.db import connections, transaction
 from django.utils.encoding import force_text
 from django.utils.translation import gettext_lazy as _
 
 from freppledb.input.models import Demand
-from freppledb.common.report import GridReport, GridFieldText, GridFieldNumber
-from freppledb.common.models import Parameter
+from freppledb.common.report import (
+    GridReport,
+    GridFieldText,
+    GridFieldNumber,
+    getCurrentDate,
+)
 
 
 class ReportByDemand(GridReport):
@@ -180,13 +183,7 @@ class ReportByDemand(GridReport):
         horizon = (
             request.report_enddate - request.report_startdate
         ).total_seconds() / 10000
-        try:
-            current = parse(
-                Parameter.objects.using(request.database).get(name="currentdate").value
-            )
-        except Exception:
-            current = datetime.now()
-            current = current.replace(microsecond=0)
+        current = getCurrentDate(request.database)
 
         # Collect demand due date, all operationplans and loaded resources
         query = """

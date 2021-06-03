@@ -16,7 +16,7 @@
 #
 
 from datetime import datetime, timedelta
-from dateutil.parser import parse
+from freppledb.common.report import getCurrentDate
 import importlib
 import random
 
@@ -38,6 +38,7 @@ from freppledb.input.models import (
     Item,
 )
 from freppledb.input.models import ManufacturingOrder, Location
+from freppledb.common.report import getCurrentDate
 
 
 def load_class(full_class_string):
@@ -203,16 +204,7 @@ class Command(BaseCommand):
                 )
 
             # Get current date
-            param = (
-                Parameter.objects.all()
-                .using(database)
-                .get_or_create(name="currentdate")[0]
-            )
-            try:
-                curdate = parse(param.value)
-            except Exception:
-                curdate = datetime.now()
-            curdate = curdate.date()
+            curdate = getCurrentDate(database).date()
 
             # Compute how many simulation steps we need
             bckt_list = []

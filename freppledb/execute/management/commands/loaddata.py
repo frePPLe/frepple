@@ -16,7 +16,6 @@
 #
 
 from datetime import datetime
-from dateutil.parser import parse
 import os
 
 from django.apps import apps
@@ -29,6 +28,7 @@ from django.utils.translation import gettext_lazy as _
 
 from freppledb.common.models import User, Parameter
 from freppledb.common.middleware import _thread_locals
+from freppledb.common.report import getCurrentDate
 from freppledb.execute.models import Task
 
 
@@ -136,18 +136,13 @@ class Command(loaddata.Command):
                 if self.verbosity > 2:
                     print("updating fixture to current date")
 
-                cursor = connections[database].cursor()
-                currentDate = parse(
-                    Parameter.objects.using(database).get(name="currentdate").value
-                )
-
-                now = datetime.now()
-                offset = (now - currentDate).days
+                offset = (datetime.now() - getCurrentDate(database)).days
 
                 # update currentdate to now
+                cursor = connections[database].cursor()
                 cursor.execute(
                     """
-                    update common_parameter set value = 'now' where name = 'currentdate'
+                    update common_parameter set value = 'today' where name = 'currentdate'
                     """
                 )
 

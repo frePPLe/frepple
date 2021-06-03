@@ -16,7 +16,6 @@
 #
 
 from datetime import datetime
-from dateutil.parser import parse
 
 from django.db import DEFAULT_DB_ALIAS, connections
 from django.core.management.base import BaseCommand
@@ -24,6 +23,7 @@ from django.core.management.base import BaseCommand
 from freppledb import __version__
 from freppledb.archive.models import ArchiveManager
 from freppledb.common.models import Parameter
+from freppledb.common.report import getCurrentDate
 
 
 class Command(BaseCommand):
@@ -53,12 +53,7 @@ class Command(BaseCommand):
         database = options["database"]
         verbosity = int(options["verbosity"])
         with connections[database].cursor() as cursor:
-            try:
-                now = parse(
-                    Parameter.objects.using(database).get(name="currentdate").value
-                )
-            except Exception:
-                now = datetime.now()
+            now = getCurrentDate(database)
 
             # Check the archiving frequency
             cursor.execute(

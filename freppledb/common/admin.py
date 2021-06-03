@@ -15,8 +15,6 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-from dateutil.parser import parse
-
 from django import forms
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
@@ -106,32 +104,10 @@ class MyGroupAdmin(MultiDBModelAdmin):
     ]
 
 
-class ParameterForm(forms.ModelForm):
-    class Meta:
-        model = Parameter
-        fields = ("name", "value", "description")
-
-    def clean(self):
-        cleaned_data = self.cleaned_data
-        name = cleaned_data.get("name")
-        value = cleaned_data.get("value")
-        # Currentdate parameter must be a date+time value
-        if name == "currentdate":
-            try:
-                parse(value)
-            except Exception:
-                self._errors["value"] = ErrorList(
-                    [_("Invalid date: expecting YYYY-MM-DD HH:MM:SS")]
-                )
-                del cleaned_data["value"]
-        return cleaned_data
-
-
 @admin.register(Parameter, site=data_site)
 class Parameter_admin(MultiDBModelAdmin):
     model = Parameter
     save_on_top = True
-    form = ParameterForm
     exclude = ("source",)
     tabs = [
         {

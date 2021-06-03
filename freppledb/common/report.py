@@ -192,14 +192,7 @@ def getHorizon(request, future_only=False):
             Parameter.objects.using(request.database).get(name="last_currentdate").value
         )
     except Exception:
-        try:
-            current = parse(
-                Parameter.objects.using(request.database).get(name="currentdate").value
-            )
-        except Exception:
-            current = datetime.now()
-            current = current.replace(microsecond=0)
-
+        current = getCurrentDate(request.database)
     horizontype = request.GET.get("horizontype", request.user.horizontype)
     horizonunit = request.GET.get("horizonunit", request.user.horizonunit)
     try:
@@ -471,7 +464,11 @@ def getCurrentDate(database=DEFAULT_DB_ALIAS):
         return parse(val)
     except Exception:
         n = datetime.now()
-        return datetime(n.year, n.month, n.day) if val.lower() == "today" else n
+        return (
+            datetime(n.year, n.month, n.day)
+            if val.lower() == "today"
+            else n.replace(microsecond=0)
+        )
 
 
 class GridFieldCurrency(GridField):

@@ -16,7 +16,6 @@
 #
 
 from datetime import timedelta, date
-from dateutil.parser import parse
 from urllib.parse import urlencode
 
 from django.contrib.admin.utils import quote
@@ -30,7 +29,7 @@ from django.utils.translation import gettext_lazy as _
 from freppledb.common.middleware import _thread_locals
 from freppledb.common.models import Parameter
 from freppledb.common.dashboard import Dashboard, Widget
-from freppledb.common.report import GridReport, getCurrency
+from freppledb.common.report import GridReport, getCurrency, getCurrentDate
 from freppledb.input.models import (
     PurchaseOrder,
     DistributionOrder,
@@ -322,10 +321,7 @@ class ManufacturingOrderWidget(Widget):
             db = _thread_locals.request.database or DEFAULT_DB_ALIAS
         except Exception:
             db = DEFAULT_DB_ALIAS
-        try:
-            current = parse(Parameter.objects.using(db).get(name="currentdate").value)
-        except Exception:
-            current = date.today()
+        current = getCurrentDate(db)
         request.database = db
         GridReport.getBuckets(request)
         cursor = connections[db].cursor()
@@ -594,10 +590,7 @@ class DistributionOrderWidget(Widget):
             db = _thread_locals.request.database or DEFAULT_DB_ALIAS
         except Exception:
             db = DEFAULT_DB_ALIAS
-        try:
-            current = parse(Parameter.objects.using(db).get(name="currentdate").value)
-        except Exception:
-            current = date.today()
+        current = getCurrentDate(db)
         request.database = db
         GridReport.getBuckets(request)
         cursor = connections[db].cursor()
@@ -877,10 +870,7 @@ class PurchaseOrderWidget(Widget):
             db = _thread_locals.request.database or DEFAULT_DB_ALIAS
         except Exception:
             db = DEFAULT_DB_ALIAS
-        try:
-            current = parse(Parameter.objects.using(db).get(name="currentdate").value)
-        except Exception:
-            current = date.today()
+        current = getCurrentDate(db)
         request.database = db
         GridReport.getBuckets(request)
         supplierfilter = "and supplier_id = %s" if supplier else ""

@@ -15,7 +15,6 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 from datetime import timedelta, datetime
-from dateutil.parser import parse
 
 from django.db import connections, transaction
 from django.db.models import Q

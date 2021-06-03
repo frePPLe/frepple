@@ -44,7 +44,7 @@ angular.module('calendar', [])
       function calendarController($scope, $attrs, $parse, $interpolate, $log, dateFilter, gettextCatalog, calendarConfig, PreferenceSvc) {
         'use strict';
         var self = this,
-          ngModelCtrl = { $setViewValue: angular.noop }; // nullModelCtrl;
+          ngModelCtrl = { $setViewValue: angular.noop };
 
         // Configuration attributes
         angular.forEach(['formatDay', 'formatDayHeader', 'formatDayTitle', 'formatWeekTitle', 'formatMonthTitle',
@@ -124,36 +124,27 @@ angular.module('calendar', [])
             case "start_end":
               return moment(
                 opplan.operationplan__startdate || opplan.startdate
-                || opplan.event.operationplan__startdate || opplan.event.startdate
                 || opplan.operationplan__enddate || opplan.enddate
-                || opplan.event.operationplan__enddate || opplan.event.enddate
               ).isSame(dt.date, "day")
                 || moment(
                   opplan.operationplan__enddate || opplan.enddate
-                  || opplan.event.operationplan__enddate || opplan.event.enddate
                   || opplan.operationplan__startdate || opplan.startdate
-                  || opplan.event.operationplan__startdate || opplan.event.startdate
                 ).isSame(dt.date, "day");
             case "start":
               return moment(
                 opplan.operationplan__startdate || opplan.startdate
-                || opplan.event.operationplan__startdate || opplan.event.startdate
                 || opplan.operationplan__enddate || opplan.enddate
-                || opplan.event.operationplan__enddate || opplan.event.enddate
               ).isSame(dt.date, "day");
             case "end":
               return moment(
                 opplan.operationplan__enddate || opplan.enddate
-                || opplan.event.operationplan__enddate || opplan.event.enddate
                 || opplan.operationplan__startdate || opplan.startdate
-                || opplan.event.operationplan__startdate || opplan.event.startdate
               ).isSame(dt.date, "day");
           }
         }
 
         $scope.isStart = function (opplan, dt) {
-          var d = opplan.startdate || opplan.operationplan__startdate
-            || (opplan.event && (opplan.event.startdate || opplan.event.operationplan__startdate));
+          var d = opplan.startdate || opplan.operationplan__startdate;
           if (!d)
             return false;
           else if (dt instanceof Date)
@@ -163,13 +154,13 @@ angular.module('calendar', [])
         }
 
         $scope.isEnd = function (opplan, dt) {
-          var d = opplan.enddate || opplan.operationplan__enddate
-            || (opplan.event && (opplan.event.enddate || opplan.operationplan__enddate));
+          var d = opplan.enddate || opplan.operationplan__enddate;
           if (!d)
             return false;
           // Subtract 1 microsecond to assure that an end date of 00:00:00 is seen
           // as ending on the previous day.
-          d = new Date(d - 1);
+          if (d > (opplan.startdate || opplan.operationplan__startdate))
+            d = new Date(d - 1);
           if (dt instanceof Date)
             return d.getFullYear() === dt.getFullYear() && d.getMonth() === dt.getMonth() && d.getDate() === dt.getDate();
           else
@@ -183,23 +174,14 @@ angular.module('calendar', [])
             case "start_end":
               // Subtract 1 microsecond to assure that an end date of 00:00:00 is seen
               // as ending on the previous day.
-              return ((opplan.startdate || (opplan.event && opplan.event.startdate)) ?
-                moment(opplan.startdate || (opplan.event && opplan.event.startdate)).isSame(dt.date, "day") :
-                false)
-                ||
-                ((opplan.enddate || (opplan.event && opplan.event.enddate)) ?
-                  moment((opplan.enddate || (opplan.event && opplan.event.enddate)) - 1).isSame(dt.date, "day") :
-                  false);
+              return (opplan.startdate ? moment(opplan.startdate).isSame(dt.date, "day") : false)
+                || (opplan.enddate ? moment(opplan.enddate > opplan.startdate ? opplan.enddate - 1 : opplan.enddate).isSame(dt.date, "day") : false);
             case "start":
-              return (opplan.startdate || (opplan.event && opplan.event.startdate)) ?
-                moment(opplan.startdate || (opplan.event && opplan.event.startdate)).isSame(dt.date, "day") :
-                false;
+              return opplan.startdate ? moment(opplan.startdate).isSame(dt.date, "day") : false;
             case "end":
               // Subtract 1 microsecond to assure that an end date of 00:00:00 is seen
               // as ending on the previous day.
-              return (opplan.enddate || (opplan.event && opplan.event.enddate)) ?
-                moment((opplan.enddate || (opplan.event && opplan.event.enddate)) - 1).isSame(dt.date, "day") :
-                false;
+              return opplan.enddate ? moment(opplan.enddate > opplan.startdate ? opplan.enddate - 1 : opplan.enddate).isSame(dt.date, "day") : false;
           }
         }
 
@@ -698,7 +680,9 @@ angular.module('calendar', [])
           }
 
           // Insert during duration
-          while (index < timeDifferenceEnd - eps) {
+          var first = true;
+          while (first || index < timeDifferenceEnd) {
+            first = false;
             var rowIndex = Math.floor(index / 7);
             var dayIndex = Math.floor(index % 7);
             eventSet = scope.rows[rowIndex][dayIndex].events;
@@ -912,7 +896,7 @@ angular.module('calendar', [])
             index2 -= 1;
           }
 
-          // Insert during duration                  
+          // Insert during duration
           do {
             if (scope.dates[dayIndex].events) {
               var exists = false;

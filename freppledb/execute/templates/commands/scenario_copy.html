@@ -49,6 +49,16 @@
          <li><a class="scenariocopy" href="#" data-source="{{ current_database }}" data-target="{{ j.name }}">
            Copy from {{ current_database }}
          </a></li>
+         {% if dumps %}
+         <li class="menu-item dropdown dropdown-submenu">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Copy from dump file</a>
+            <ul class="dropdown-menu">
+                {% for dump in dumps %}
+                <li><a class="scenariocopy" href="#" dumpfile="{{ dump }}" data-source="{{ current_database }}" data-target="{{ j.name }}">{{ dump }}</a></li>
+                {% endfor%}
+            </ul>
+        </li>
+        {% endif %}
        </ul>
        </div>
        {% elif j.name != DEFAULT_DB_ALIAS and j.status == 'In use'%}
@@ -134,7 +144,8 @@ $(".scenariocopy").on("click", function(event) {
    data: {
      copy: 1,
      source: $(this).attr("data-source"),
-     destination: $(this).attr("data-target")
+     destination: $(this).attr("data-target"),
+     dumpfile: $(this).attr("dumpfile")
      },
    success: function() {
      $("#scenariotoast").addClass("show");

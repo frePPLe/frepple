@@ -22,6 +22,10 @@ Release notes
 - | Ability to change the number of records on a page.
   | A simple dropdown next to the paging buttons allows to easily see more records
     on the screen.
+    
+- | Ability to create a scenario from a backup file.
+  | The planner can now select a backup file when creating a scenario. Previously scenarios
+    could only be created from other scenarios.  
 
 - | Improved data table detection when importing Excel files.
   | This feature was introduced in the previous release. User feedback showed that it's

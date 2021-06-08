@@ -396,9 +396,12 @@ def wrapTask(request, action):
             source = args.get("source", request.database)
             worker_database = source
             destination = args.get("destination", False)
+            dumpfile = args.get("dumpfile")
             if destination and destination != DEFAULT_DB_ALIAS:
                 force = args.get("force", False)
                 arguments = "%s %s" % (source, destination)
+                if dumpfile:
+                    arguments = "--dumpfile=%s %s" % (dumpfile, arguments)
                 if force:
                     arguments += " --force"
                 task = Task(

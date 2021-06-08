@@ -395,6 +395,9 @@ This command is available in the user interface, the command line and the web AP
     To copy scenario scenario1 into scenario scenario2:
     frepplectl scenario_copy [--force --promote] scenario1 scenario2
     
+    To create scenario1 from a backup file:
+    frepplectl scenario_copy --dumpfile=\path_to_my_file\scenario_backup.dump default scenario1
+    
     To release scenario scenario1:
     frepplectl scenario_release --database=scenario1
 
@@ -402,6 +405,9 @@ This command is available in the user interface, the command line and the web AP
 
     To copy a scenario (including Production) into another scenario:
     * POST /execute/api/scenario_copy/?copy=1&source=scenario1&destination=scenario2&force=1
+    
+    To create scenario1 from a backup file:
+    * POST /execute/api/scenario_copy/?copy=1&source=default&destination=scenario2&dumpfile=\path_to_my_file\scenario_backup.dump
     
     To release a scenario named scenario1:
     * POST /scenario1/execute/api/scenario_copy/?release=1

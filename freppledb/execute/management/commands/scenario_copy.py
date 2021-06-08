@@ -16,9 +16,11 @@
 #
 
 import os
+import re
 import subprocess
 from datetime import datetime
 
+from django.core.management import call_command
 from django.core.management.base import BaseCommand, CommandError
 from django.conf import settings
 from django.db import DEFAULT_DB_ALIAS
@@ -70,6 +72,9 @@ class Command(BaseCommand):
             action="store_true",
             default=False,
             help="promotes a scenario to production",
+        )
+        parser.add_argument(
+            "--dumpfile", default=None, help="specifies source dump file"
         )
         parser.add_argument("source", help="source database to copy")
         parser.add_argument("destination", help="destination database to copy")
@@ -130,7 +135,11 @@ class Command(BaseCommand):
         destination = options["destination"]
         destinationscenario = None
         try:
-            task.arguments = "%s %s" % (source, destination)
+            task.arguments = "%s%s %s" % (
+                ("--dumpfile=%s " % options["dumpfile"]) if options["dumpfile"] else "",
+                source,
+                destination,
+            )
             if options["description"]:
                 task.arguments += '--description="%s"' % options["description"].replace(
                     '"', '\\"'
@@ -168,6 +177,14 @@ class Command(BaseCommand):
                     "Incorrect source or destination database with promote flag"
                 )
 
+            # check that dump file exists
+            if options["dumpfile"] and not os.path.isfile(
+                os.path.join(settings.FREPPLE_LOGDIR, options["dumpfile"])
+            ):
+                raise CommandError(
+                    "Cannot find dump file in %s folder" % (settings.FREPPLE_LOGDIR,)
+                )
+
             # Logging message - always logging in the default database
             destinationscenario.status = "Busy"
             destinationscenario.save(using=DEFAULT_DB_ALIAS)
@@ -193,42 +210,61 @@ class Command(BaseCommand):
 
             # Copying the data
             # Commenting the next line is a little more secure, but requires you to create a .pgpass file.
-            if settings.DATABASES[source]["PASSWORD"]:
-                os.environ["PGPASSWORD"] = settings.DATABASES[source]["PASSWORD"]
-            if os.name == "nt":
-                # On windows restoring with pg_restore over a pipe is broken :-(
-                cmd = "pg_dump -c -Fp %s%s%s%s%s | psql %s%s%s%s"
+            if not options["dumpfile"]:
+                if settings.DATABASES[source]["PASSWORD"]:
+                    os.environ["PGPASSWORD"] = settings.DATABASES[source]["PASSWORD"]
+                if os.name == "nt":
+                    # On windows restoring with pg_restore over a pipe is broken :-(
+                    cmd = "pg_dump -c -Fp %s%s%s%s%s | psql %s%s%s%s"
+                else:
+                    cmd = "pg_dump -Fc %s%s%s%s%s | pg_restore -n public -Fc -c --if-exists %s%s%s -d %s"
+                commandline = cmd % (
+                    settings.DATABASES[source]["USER"]
+                    and ("-U %s " % settings.DATABASES[source]["USER"])
+                    or "",
+                    settings.DATABASES[source]["HOST"]
+                    and ("-h %s " % settings.DATABASES[source]["HOST"])
+                    or "",
+                    settings.DATABASES[source]["PORT"]
+                    and ("-p %s " % settings.DATABASES[source]["PORT"])
+                    or "",
+                    ("%s " % (" -T ".join(["", *excludedTables])))
+                    if destination == DEFAULT_DB_ALIAS
+                    else "",
+                    test
+                    and settings.DATABASES[source]["TEST"]["NAME"]
+                    or settings.DATABASES[source]["NAME"],
+                    settings.DATABASES[destination]["USER"]
+                    and ("-U %s " % settings.DATABASES[destination]["USER"])
+                    or "",
+                    settings.DATABASES[destination]["HOST"]
+                    and ("-h %s " % settings.DATABASES[destination]["HOST"])
+                    or "",
+                    settings.DATABASES[destination]["PORT"]
+                    and ("-p %s " % settings.DATABASES[destination]["PORT"])
+                    or "",
+                    test
+                    and settings.DATABASES[destination]["TEST"]["NAME"]
+                    or settings.DATABASES[destination]["NAME"],
+                )
             else:
-                cmd = "pg_dump -Fc %s%s%s%s%s | pg_restore -n public -Fc -c --if-exists %s%s%s -d %s"
-            commandline = cmd % (
-                settings.DATABASES[source]["USER"]
-                and ("-U %s " % settings.DATABASES[source]["USER"])
-                or "",
-                settings.DATABASES[source]["HOST"]
-                and ("-h %s " % settings.DATABASES[source]["HOST"])
-                or "",
-                settings.DATABASES[source]["PORT"]
-                and ("-p %s " % settings.DATABASES[source]["PORT"])
-                or "",
-                ("%s " % (" -T ".join(["", *excludedTables])))
-                if destination == DEFAULT_DB_ALIAS
-                else "",
-                test
-                and settings.DATABASES[source]["TEST"]["NAME"]
-                or settings.DATABASES[source]["NAME"],
-                settings.DATABASES[destination]["USER"]
-                and ("-U %s " % settings.DATABASES[destination]["USER"])
-                or "",
-                settings.DATABASES[destination]["HOST"]
-                and ("-h %s " % settings.DATABASES[destination]["HOST"])
-                or "",
-                settings.DATABASES[destination]["PORT"]
-                and ("-p %s " % settings.DATABASES[destination]["PORT"])
-                or "",
-                test
-                and settings.DATABASES[destination]["TEST"]["NAME"]
-                or settings.DATABASES[destination]["NAME"],
-            )
+                cmd = "pg_restore -n public -Fc -c --if-exists --no-password %s%s%s -d %s %s"
+                commandline = cmd % (
+                    settings.DATABASES[destination]["USER"]
+                    and ("-U %s " % settings.DATABASES[destination]["USER"])
+                    or "",
+                    settings.DATABASES[destination]["HOST"]
+                    and ("-h %s " % settings.DATABASES[destination]["HOST"])
+                    or "",
+                    settings.DATABASES[destination]["PORT"]
+                    and ("-p %s " % settings.DATABASES[destination]["PORT"])
+                    or "",
+                    test
+                    and settings.DATABASES[destination]["TEST"]["NAME"]
+                    or settings.DATABASES[destination]["NAME"],
+                    os.path.join(settings.FREPPLE_LOGDIR, options["dumpfile"]),
+                )
+
             with subprocess.Popen(
                 commandline,
                 shell=True,
@@ -311,6 +347,13 @@ class Command(BaseCommand):
                     i.data.pop("sunday", None)
                     i.save(using=destination)
 
+            if options["dumpfile"]:
+                # Migrate the database if source is dump file
+                # surround with try/catch as migration fails.
+                try:
+                    call_command("migrate", database=destination)
+                except:
+                    pass
         except Exception as e:
             if task:
                 task.status = "Failed"
@@ -351,6 +394,15 @@ class Command(BaseCommand):
         active_scenarios = []
         free_scenarios = []
         in_use_scenarios = []
+        dumps = []
+
+        # look for dump files in the log folder of production
+        pattern = re.compile("database.*.*.*.dump")
+        for f in sorted(os.listdir(settings.FREPPLE_LOGDIR)):
+            if os.path.isfile(
+                os.path.join(settings.FREPPLE_LOGDIR, f)
+            ) and pattern.match(f):
+                dumps.append(f)
 
         for scenario in scenarios:
             try:
@@ -392,6 +444,7 @@ class Command(BaseCommand):
                 "promote_perm": promote_perm,
                 "active_scenarios": active_scenarios,
                 "free_scenarios": free_scenarios,
+                "dumps": dumps,
             },
             request=request,
         )

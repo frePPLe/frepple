@@ -47,11 +47,11 @@
        </button>
        <ul class="dropdown-menu" role="menu">
          <li><a class="scenariocopy" href="#" data-source="{{ current_database }}" data-target="{{ j.name }}">
-           Copy from {{ current_database }}
+           {% trans "Copy from" %} {{ current_database }}
          </a></li>
          {% if dumps %}
          <li class="menu-item dropdown dropdown-submenu">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Copy from dump file</a>
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">{% trans "Restore from backup" %}</a>
             <ul class="dropdown-menu">
                 {% for dump in dumps %}
                 <li><a class="scenariocopy" href="#" dumpfile="{{ dump }}" data-source="{{ current_database }}" data-target="{{ j.name }}">{{ dump }}</a></li>

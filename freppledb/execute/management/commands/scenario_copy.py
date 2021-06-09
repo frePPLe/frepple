@@ -28,18 +28,19 @@ from django.utils.translation import gettext_lazy as _
 from django.template.loader import render_to_string
 
 from freppledb.execute.models import Task, ScheduledTask
+from freppledb.common.middleware import _thread_locals
 from freppledb.common.models import User, Scenario
 from freppledb import __version__
 
 
 class Command(BaseCommand):
     help = """
-  This command copies the contents of a database into another.
-  The original data in the destination database are lost.
+        This command copies the contents of a database into another.
+        The original data in the destination database are lost.
 
-  The pg_dump and psql commands need to be in the path, otherwise
-  this command will fail.
-  """
+        The pg_dump and psql commands need to be in the path, otherwise
+        this command will fail.
+        """
 
     requires_system_checks = False
 
@@ -321,12 +322,20 @@ class Command(BaseCommand):
             task.finished = datetime.now()
 
             # Update the task in the destination database
-            task.message = "Scenario %s from %s" % (
-                "promoted" if promote else "copied",
-                source,
-            )
+            if options["dumpfile"]:
+                task.message = "Scenario restored from %s" % options["dumpfile"]
+            elif promote:
+                task.message = "Scenario promoted from %s" % source
+            else:
+                task.message = "Scenario copied from %s" % source
             task.save(using=destination)
-            task.message = "Scenario copied to %s" % destination
+            if options["dumpfile"]:
+                task.message = "Scenario %s restored from %s" % (
+                    destination,
+                    options["dumpfile"],
+                )
+            else:
+                task.message = "Scenario copied to %s" % destination
 
             # Delete any waiting tasks in the new copy.
             # This is needed for situations where the same source is copied to
@@ -348,12 +357,9 @@ class Command(BaseCommand):
                     i.save(using=destination)
 
             if options["dumpfile"]:
-                # Migrate the database if source is dump file
-                # surround with try/catch as migration fails.
-                try:
-                    call_command("migrate", database=destination)
-                except:
-                    pass
+                setattr(_thread_locals, "database", destination)
+                call_command("migrate", database=destination)
+                delattr(_thread_locals, "database")
         except Exception as e:
             if task:
                 task.status = "Failed"

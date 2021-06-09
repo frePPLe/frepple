@@ -141,6 +141,14 @@ class OperationResourceList(GridReport):
             editable=False,
         ),
         GridFieldText(
+            "operation__location__name",
+            title=format_lazy("{} - {}", _("operation"), _("location")),
+            initially_hidden=True,
+            editable=False,
+            extra='"role":"input/location"',
+            formatter="detail",
+        ),
+        GridFieldText(
             "operation__category",
             title=format_lazy("{} - {}", _("operation"), _("category")),
             initially_hidden=True,
@@ -396,6 +404,14 @@ class OperationMaterialList(GridReport):
             title=format_lazy("{} - {}", _("operation"), _("description")),
             initially_hidden=True,
             editable=False,
+        ),
+        GridFieldText(
+            "operation__location__name",
+            title=format_lazy("{} - {}", _("operation"), _("location")),
+            initially_hidden=True,
+            editable=False,
+            extra='"role":"input/location"',
+            formatter="detail",
         ),
         GridFieldText(
             "operation__category",

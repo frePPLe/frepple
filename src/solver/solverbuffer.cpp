@@ -159,7 +159,8 @@ void SolverCreate::solve(const Buffer* b, void* v) {
         if (b->getOnHand(Date::infiniteFuture) > -ROUNDING_ERROR) {
           for (Buffer::flowplanlist::const_iterator scanner = cur;
                scanner != b->getFlowPlans().end() &&
-               scanner->getDate() < theDate + autofence;
+               scanner->getDate() <
+                   max(theDate, Plan::instance().getCurrent()) + autofence;
                ++scanner) {
             if (scanner->getQuantity() <= 0 ||
                 scanner->getDate() <= requested_date)
@@ -233,7 +234,8 @@ void SolverCreate::solve(const Buffer* b, void* v) {
             for (Buffer::flowplanlist::const_iterator scanner =
                      h->getBuffer()->getFlowPlans().begin();
                  scanner != h->getBuffer()->getFlowPlans().end() &&
-                 scanner->getDate() < theDate + autofence;
+                 scanner->getDate() <
+                     max(theDate, Plan::instance().getCurrent()) + autofence;
                  ++scanner) {
               if (scanner->getQuantity() <= 0 ||
                   scanner->getDate() < requested_date)
@@ -622,7 +624,10 @@ void SolverCreate::solveSafetyStock(const Buffer* b, void* v) {
                  f != b->getFlowPlans().end(); ++f) {
               if (f->getQuantity() <= 0 || f->getDate() < data->state->q_date)
                 continue;
-              if (f->getDate() > data->state->q_date + getAutoFence()) break;
+              if (f->getDate() >
+                  max(data->state->q_date, Plan::instance().getCurrent()) +
+                      getAutoFence())
+                break;
               auto tmp = f->getOperationPlan();
               if (tmp && (tmp->getConfirmed() || tmp->getApproved()) &&
                   f->getDate() > data->state->q_date) {

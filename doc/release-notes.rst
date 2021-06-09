@@ -6,6 +6,12 @@ Release notes
 
 .. rubric:: Production planning
 
+- | The plan.autoFenceOperations parameter instructs the solver to wait for existing
+    supply rather than generating a new replenishment. In this release the logic has been
+    refined for requirements that are in the past.
+  | The new behavior will delay some replenishments that were proposed too early in
+    previous releases.
+
 - | Bug fix: A bug in the planning algorithm created more lateness than needed when
     an manufacturing operation produces more than 1 piece per unit (i.e. you have an
     operationmaterial record with a quantity > 1) 
@@ -25,7 +31,9 @@ Release notes
     
 - | Ability to create a scenario from a backup file.
   | The planner can now select a backup file when creating a scenario. Previously scenarios
-    could only be created from other scenarios.  
+    could only be created from other scenarios.
+  | Looking back into an older plan allows the planner to go back in time and understand why
+    certain decisions where taken then.
 
 - | Improved data table detection when importing Excel files.
   | This feature was introduced in the previous release. User feedback showed that it's

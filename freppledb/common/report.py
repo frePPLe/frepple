@@ -2276,7 +2276,10 @@ class GridReport(View):
                     numerrors = 0
                     numwarnings = 0
                     firsterror = True
-                    yield '<tr style="text-align: center"><th colspan="5">%s<div class="recordcount pull-right"></div></th></tr>' % filename
+                    yield '<tr style="text-align: center"><th colspan="5">%s %s<div class="recordcount pull-right"></div></th></tr>' % (
+                        capfirst(_("file")),
+                        filename,
+                    )
 
                     # Loop through the data records
                     wb = load_workbook(filename=file, data_only=True)

@@ -1184,14 +1184,15 @@ def importWorkbook(request):
             models = GridReport.sort_models(models)
 
             # Process all rows in each worksheet
+            yield (
+                '<div class="table-responsive">'
+                '<table class="table table-condensed" style="white-space: nowrap;"><tbody>'
+            )
             for ws_name, model, contenttype_id, dependencies in models:
                 with transaction.atomic(using=request.database):
-                    yield "<strong>" + force_text(
-                        _("Processing data in worksheet: %s") % ws_name
-                    ) + "</strong><br>"
-                    yield (
-                        '<div class="table-responsive">'
-                        '<table class="table table-condensed" style="white-space: nowrap;"><tbody>'
+                    yield '<tr style="text-align: center"><th colspan="5">%s %s<div class="recordcount pull-right"></div></th></tr>' % (
+                        capfirst(_("worksheet")),
+                        ws_name,
                     )
                     numerrors = 0
                     numwarnings = 0
@@ -1206,7 +1207,7 @@ def importWorkbook(request):
                     ):
                         if error[0] == logging.DEBUG:
                             # Yield some result so we can detect disconnect clients and interrupt the upload
-                            yield " "
+                            yield "<tr class='hidden' data-cnt='%s'>" % error[1]
                             continue
                         if firsterror and error[0] in (logging.ERROR, logging.WARNING):
                             yield '<tr><th class="sr-only">%s</th><th>%s</th><th>%s</th><th>%s</th><th>%s%s%s</th></tr>' % (
@@ -1248,7 +1249,7 @@ def importWorkbook(request):
                                 error[3] if error[3] else "",
                                 error[4],
                             )
-                    yield "</tbody></table></div>"
+            yield "</tbody></table></div>"
             yield "<div><strong>%s</strong><br><br></div>" % _("Done")
     except GeneratorExit:
         logger.warning("Connection Aborted")

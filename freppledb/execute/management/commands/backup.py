@@ -16,7 +16,6 @@
 #
 
 import os
-import re
 import subprocess
 from datetime import datetime
 
@@ -139,14 +138,13 @@ class Command(BaseCommand):
             task.save(using=database)
 
             # Delete backups older than a month
-            pattern = re.compile("database.*.*.*.dump")
             for f in os.listdir(settings.FREPPLE_LOGDIR):
                 if os.path.isfile(os.path.join(settings.FREPPLE_LOGDIR, f)):
-                    # Note this is NOT 100% correct on UNIX. st_ctime is not alawys the creation date...
+                    # Note this is NOT 100% correct on UNIX. st_ctime is not always the creation date...
                     created = datetime.fromtimestamp(
                         os.stat(os.path.join(settings.FREPPLE_LOGDIR, f)).st_ctime
                     )
-                    if pattern.match(f) and (now - created).days > 31:
+                    if f.lower().endswith(".dump") and (now - created).days > 31:
                         try:
                             os.remove(os.path.join(settings.FREPPLE_LOGDIR, f))
                         except Exception:

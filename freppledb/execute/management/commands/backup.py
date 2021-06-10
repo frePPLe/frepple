@@ -102,6 +102,7 @@ class Command(BaseCommand):
 
             # Choose the backup file name
             backupfile = now.strftime("database.%s.%%Y%%m%%d.%%H%%M%%S.dump" % database)
+            task.message = "Backup to file %s" % backupfile
 
             # Run the backup command
             # Commenting the next line is a little more secure, but requires you to
@@ -132,7 +133,6 @@ class Command(BaseCommand):
 
             # Task update
             task.logfile = backupfile
-            task.message = None
             task.processid = None
             task.status = "99%"
             task.save(using=database)

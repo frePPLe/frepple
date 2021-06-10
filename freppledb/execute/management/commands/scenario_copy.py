@@ -181,9 +181,7 @@ class Command(BaseCommand):
             if options["dumpfile"] and not os.path.isfile(
                 os.path.join(settings.FREPPLE_LOGDIR, options["dumpfile"])
             ):
-                raise CommandError(
-                    "Cannot find dump file in %s folder" % (settings.FREPPLE_LOGDIR,)
-                )
+                raise CommandError("Cannot find dump file %s" % options["dumpfile"])
 
             # Logging message - always logging in the default database
             destinationscenario.status = "Busy"
@@ -292,6 +290,19 @@ class Command(BaseCommand):
                         destinationscenario.save(using=DEFAULT_DB_ALIAS)
                     raise Exception("Database copy failed")
 
+            # Check the permissions after restoring a backup.
+            if (
+                options["dumpfile"]
+                and task.user
+                and not User.objects.using(destination)
+                .filter(username=task.user.username, is_active=True)
+                .count()
+            ):
+                # Restoring a backup shouldn't give a user access to data he didn't have access to before...
+                raise Exception(
+                    "Permission denied - you did't have access rights to the scenario that was backed up"
+                )
+
             # Update the scenario table
             destinationscenario.status = "In use"
             destinationscenario.lastrefresh = datetime.today()
@@ -321,13 +332,23 @@ class Command(BaseCommand):
             task.finished = datetime.now()
 
             # Update the task in the destination database
+            dest_task = Task(
+                name=task.name,
+                submitted=task.submitted,
+                started=task.started,
+                finished=task.finished,
+                arguments=task.arguments,
+                status=task.status,
+                message=task.message,
+                user=user,
+            )
             if options["dumpfile"]:
-                task.message = "Scenario restored from %s" % options["dumpfile"]
+                dest_task.message = ("Scenario restored from %s" % options["dumpfile"],)
             elif promote:
-                task.message = "Scenario promoted from %s" % source
+                dest_task.message = "Scenario promoted from %s" % source
             else:
-                task.message = "Scenario copied from %s" % source
-            task.save(using=destination)
+                dest_task.message = "Scenario copied from %s" % source
+            dest_task.save(using=destination)
             if options["dumpfile"]:
                 task.message = "Scenario %s restored from %s" % (
                     destination,

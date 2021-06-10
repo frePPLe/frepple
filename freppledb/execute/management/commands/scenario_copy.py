@@ -338,12 +338,12 @@ class Command(BaseCommand):
                 started=task.started,
                 finished=task.finished,
                 arguments=task.arguments,
-                status=task.status,
+                status="Done",
                 message=task.message,
                 user=user,
             )
             if options["dumpfile"]:
-                dest_task.message = ("Scenario restored from %s" % options["dumpfile"],)
+                dest_task.message = "Scenario restored from %s" % options["dumpfile"]
             elif promote:
                 dest_task.message = "Scenario promoted from %s" % source
             else:
@@ -360,7 +360,8 @@ class Command(BaseCommand):
             # Delete any waiting tasks in the new copy.
             # This is needed for situations where the same source is copied to
             # multiple destinations at the same moment.
-            Task.objects.all().using(destination).filter(id__gt=task.id).delete()
+            if not options["dumpfile"]:
+                Task.objects.all().using(destination).filter(id__gt=task.id).delete()
 
             # Don't automate any task in the new copy
             if not promote:

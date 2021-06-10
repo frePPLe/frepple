@@ -16,7 +16,6 @@
 #
 
 import os
-import re
 import subprocess
 from datetime import datetime
 
@@ -403,11 +402,10 @@ class Command(BaseCommand):
         dumps = []
 
         # look for dump files in the log folder of production
-        pattern = re.compile("database.*.*.*.dump")
         for f in sorted(os.listdir(settings.FREPPLE_LOGDIR)):
             if os.path.isfile(
                 os.path.join(settings.FREPPLE_LOGDIR, f)
-            ) and pattern.match(f):
+            ) and f.lower().endswith(".dump"):
                 dumps.append(f)
 
         for scenario in scenarios:

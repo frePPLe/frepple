@@ -616,9 +616,9 @@ void SolverCreate::solveSafetyStock(const Buffer* b, void* v) {
           data->state->q_date -= repeat_early;
 
           // Validate whether confirmed/approved supply exists within the
-          // autofence window
-          if (getAutoFence() &&
-              b->getOnHand(Date::infiniteFuture) > -ROUNDING_ERROR) {
+          // autofence window.
+          // Note: no check for overall shortage here.
+          if (getAutoFence()) {
             bool exists = false;
             for (auto f = b->getFlowPlans().begin();
                  f != b->getFlowPlans().end(); ++f) {

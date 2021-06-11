@@ -8,7 +8,7 @@ Release notes
 
 - | The plan.autoFenceOperations parameter instructs the solver to wait for existing
     supply rather than generating a new replenishment. In this release the logic has been
-    refined for requirements that are in the past.
+    refined for corner cases around overdue requirements and safety stock.
   | The new behavior will delay some replenishments that were proposed too early in
     previous releases.
 

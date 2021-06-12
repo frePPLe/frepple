@@ -49,8 +49,25 @@ class JSONField(models.TextField):
 
     def to_python(self, value):
         """Convert a json string to a Python value."""
+        if value is None:
+            return value
         if isinstance(value, str) and value:
-            return json.loads(value)
+            try:
+                return json.loads(value)
+            except json.JSONDecodeError:
+                return value
+        else:
+            return value
+
+    def from_db_value(self, value, expression, connection):
+        """Convert a json string to a Python value."""
+        if value is None:
+            return value
+        if isinstance(value, str) and value:
+            try:
+                return json.loads(value)
+            except json.JSONDecodeError:
+                return value
         else:
             return value
 

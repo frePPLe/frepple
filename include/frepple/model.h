@@ -4340,6 +4340,13 @@ class ItemSupplier : public Object,
       throw DataException("ItemSupplier cost must be positive");
   }
 
+  Duration getBatchWindow() const { return batchwindow; }
+
+  void setBatchWindow(Duration d) {
+    // todo: also update the batchwindow of the existing operationitemsuppliers
+    batchwindow = d;
+  }
+
   /* Return the applicable location. */
   Location* getLocation() const { return loc; }
 
@@ -4405,6 +4412,8 @@ class ItemSupplier : public Object,
                            &Cls::setSizeMinimum, 1.0);
     m->addDoubleField<Cls>(Tags::size_multiple, &Cls::getSizeMultiple,
                            &Cls::setSizeMultiple, 1.0);
+    m->addDurationField<Cls>(Tags::batchwindow, &Cls::getBatchWindow,
+                             &Cls::setBatchWindow);
     m->addDoubleField<Cls>(Tags::size_maximum, &Cls::getSizeMaximum,
                            &Cls::setSizeMaximum, DBL_MAX);
     m->addDoubleField<Cls>(Tags::cost, &Cls::getCost, &Cls::setCost);
@@ -4445,6 +4454,8 @@ class ItemSupplier : public Object,
 
   /* Procurement cost. */
   double cost = 0.0;
+
+  Duration batchwindow;
 
   /* Pointer to the head of the auto-generated purchase operation list.*/
   OperationItemSupplier* firstOperation = nullptr;

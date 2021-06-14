@@ -257,6 +257,8 @@ class SolverCreate : public Solver {
 
   void solveUnconstrained(const Resource*, void* = nullptr);
 
+  void createsBatches(Operation*, void* = nullptr);
+
   /* Behavior of this solver method:
    *  - Always return OK.
    */

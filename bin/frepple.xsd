@@ -15,8 +15,7 @@
  You should have received a copy of the GNU Affero General Public
  License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
-<xsd:schema xmlns:xsd='http://www.w3.org/2001/XMLSchema'
-  elementFormDefault="unqualified" attributeFormDefault="unqualified">
+<xsd:schema xmlns:xsd='http://www.w3.org/2001/XMLSchema' elementFormDefault="unqualified" attributeFormDefault="unqualified">
 
   <!-- ACTION -->
   <xsd:simpleType name="action">
@@ -321,17 +320,17 @@
       </xsd:documentation>
     </xsd:annotation>
     <xsd:sequence minOccurs="1">
-    <xsd:choice minOccurs="0" maxOccurs="unbounded">     
-      <xsd:element name="priority" type="xsd:integer" />
-      <xsd:element name="effective_start" type="xsd:dateTime" />
-      <xsd:element name="effective_end" type="xsd:dateTime" />
-    </xsd:choice>
-    <xsd:element name="operation" type="operation" />
-    <xsd:choice minOccurs="0" maxOccurs="unbounded">     
-      <xsd:element name="priority" type="xsd:integer" />
-      <xsd:element name="effective_start" type="xsd:dateTime" />
-      <xsd:element name="effective_end" type="xsd:dateTime" />
-    </xsd:choice>
+      <xsd:choice minOccurs="0" maxOccurs="unbounded">
+        <xsd:element name="priority" type="xsd:integer" />
+        <xsd:element name="effective_start" type="xsd:dateTime" />
+        <xsd:element name="effective_end" type="xsd:dateTime" />
+      </xsd:choice>
+      <xsd:element name="operation" type="operation" />
+      <xsd:choice minOccurs="0" maxOccurs="unbounded">
+        <xsd:element name="priority" type="xsd:integer" />
+        <xsd:element name="effective_start" type="xsd:dateTime" />
+        <xsd:element name="effective_end" type="xsd:dateTime" />
+      </xsd:choice>
     </xsd:sequence>
   </xsd:complexType>
 
@@ -366,13 +365,13 @@
       <xsd:extension base="item" />
     </xsd:complexContent>
   </xsd:complexType>
- 
+
   <xsd:complexType name="item_mts">
     <xsd:complexContent>
       <xsd:extension base="item" />
     </xsd:complexContent>
   </xsd:complexType>
-  
+
   <xsd:complexType name="itemlist">
     <xsd:sequence minOccurs="0" maxOccurs="unbounded">
       <xsd:element name="item" type="item" />
@@ -393,6 +392,8 @@
       <xsd:element name="leadtime" type="xsd:duration" />
       <xsd:element name="size_multiple" type="positiveDouble" />
       <xsd:element name="size_minimum" type="positiveDouble" />
+      <xsd:element name="size_maximum" type="positiveDouble" />
+      <xsd:element name="batchwindow" type="xsd:duration" />
       <xsd:element name="cost" type="positiveDouble" />
       <xsd:element name="priority" type="xsd:integer" />
       <xsd:element name="effective_start" type="xsd:dateTime" />
@@ -408,6 +409,8 @@
     <xsd:attribute name="leadtime" type="xsd:duration" />
     <xsd:attribute name="size_multiple" type="positiveDouble" />
     <xsd:attribute name="size_minimum" type="positiveDouble" />
+    <xsd:attribute name="size_maximum" type="positiveDouble" />
+    <xsd:attribute name="batchwindow" type="xsd:duration" />
     <xsd:attribute name="cost" type="positiveDouble" />
     <xsd:attribute name="priority" type="xsd:integer" />
     <xsd:attribute name="effective_start" type="xsd:dateTime" />
@@ -709,7 +712,7 @@
       <xsd:element name="stringproperty" type="stringproperty" />
       <xsd:element name="doubleproperty" type="doubleproperty" />
       <xsd:element name="dateproperty" type="dateproperty" />
-      <xsd:element name="source" type="xsd:normalizedString" />  
+      <xsd:element name="source" type="xsd:normalizedString" />
     </xsd:choice>
     <xsd:attribute name="quantity" type="xsd:double" />
     <xsd:attribute name="quantity_fixed" type="xsd:double" />
@@ -747,8 +750,8 @@
         <xsd:choice minOccurs="0" maxOccurs="unbounded">
           <xsd:element name="transferbatch" type="xsd:double" />
         </xsd:choice>
-        <xsd:attribute name="transferbatch" type="xsd:double" /> 
-      </xsd:extension>     
+        <xsd:attribute name="transferbatch" type="xsd:double" />
+      </xsd:extension>
     </xsd:complexContent>
   </xsd:complexType>
 
@@ -795,7 +798,7 @@
         <xsd:choice minOccurs="0" maxOccurs="unbounded">
           <xsd:element name="offset" type="xsd:double" />
         </xsd:choice>
-        <xsd:attribute name="offset" type="xsd:double" />      
+        <xsd:attribute name="offset" type="xsd:double" />
       </xsd:extension>
     </xsd:complexContent>
   </xsd:complexType>
@@ -806,7 +809,7 @@
         <xsd:choice minOccurs="0" maxOccurs="unbounded">
           <xsd:element name="offset" type="xsd:duration" />
         </xsd:choice>
-        <xsd:attribute name="offset" type="xsd:duration" />      
+        <xsd:attribute name="offset" type="xsd:duration" />
       </xsd:extension>
     </xsd:complexContent>
   </xsd:complexType>
@@ -817,7 +820,7 @@
         <xsd:choice minOccurs="0" maxOccurs="unbounded">
           <xsd:element name="offset" type="xsd:duration" />
         </xsd:choice>
-        <xsd:attribute name="offset" type="xsd:duration" />      
+        <xsd:attribute name="offset" type="xsd:duration" />
       </xsd:extension>
     </xsd:complexContent>
   </xsd:complexType>
@@ -839,7 +842,7 @@
       <xsd:element name="resource" type="resource" />
       <xsd:element name="status" type="xsd:string" />
       <xsd:element name="setuponly" type="xsd:boolean" />
-    </xsd:choice>    
+    </xsd:choice>
     <xsd:attribute name="date" type="xsd:dateTime" />
     <xsd:attribute name="quantity" type="xsd:double" />
     <xsd:attribute name="onhand" type="xsd:double" />
@@ -1019,7 +1022,8 @@
     </xsd:annotation>
     <xsd:choice minOccurs="0" maxOccurs="unbounded">
       <xsd:element name="ordertype" type="ordertype" />
-      <xsd:element name="id" type="xsd:normalizedString" /> <!-- Deprecated. Id is now an alias for reference -->
+      <xsd:element name="id" type="xsd:normalizedString" />
+      <!-- Deprecated. Id is now an alias for reference -->
       <xsd:element name="reference" type="xsd:normalizedString" />
       <xsd:element name="batch" type="xsd:normalizedString" />
       <xsd:element name="operation" type="operation" />
@@ -1048,7 +1052,8 @@
       <xsd:element name="loadplans" type="loadplanlist" />
     </xsd:choice>
     <xsd:attribute name="ordertype" type="ordertype" />
-    <xsd:attribute name="id" type="xsd:normalizedString" /> <!-- Deprecated. Id is now an alias for reference -->
+    <xsd:attribute name="id" type="xsd:normalizedString" />
+    <!-- Deprecated. Id is now an alias for reference -->
     <xsd:attribute name="reference" type="xsd:normalizedString" />
     <xsd:attribute name="batch" type="xsd:normalizedString" />
     <xsd:attribute name="start" type="xsd:dateTime" />

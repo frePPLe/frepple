@@ -1,0 +1,449 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<plan xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <name>Test model for effective operations</name>
+  <description>
+    This test verifies how operationplans are grouped within the batchwindow.
+  </description>
+  <current>2021-01-01T00:00:00</current>
+
+  <!-- Case 0: no batching -->
+  <suppliers>
+    <supplier name="0. supplier">
+      <itemsuppliers>
+        <itemsupplier>
+          <item name="0. item"/>
+          <leadtime>P7D</leadtime>
+          <priority>2</priority>
+        </itemsupplier>
+      </itemsuppliers>
+    </supplier>
+  </suppliers>
+  <demands>
+    <demand name="0. order 1">
+      <quantity>6</quantity>
+      <due>2021-01-01T00:00:00</due>
+      <item name="0. item" />
+      <location name="factory"/>
+    </demand>
+    <demand name="0. order 2">
+      <quantity>6</quantity>
+      <due>2021-01-08T00:00:00</due>
+      <item name="0. item" />
+      <location name="factory"/>
+    </demand>
+    <demand name="0. order 3">
+      <quantity>6</quantity>
+      <due>2021-01-15T00:00:00</due>
+      <item name="0. item" />
+      <location name="factory"/>
+    </demand>
+    <demand name="0. order 4">
+      <quantity>6</quantity>
+      <due>2021-01-22T00:00:00</due>
+      <item name="0. item" />
+      <location name="factory"/>
+    </demand>
+    <demand name="0. order 5">
+      <quantity>6</quantity>
+      <due>2021-01-29T00:00:00</due>
+      <item name="0. item" />
+      <location name="factory"/>
+    </demand>
+    <demand name="0. order 6">
+      <quantity>6</quantity>
+      <due>2021-02-05T00:00:00</due>
+      <item name="0. item" />
+      <location name="factory"/>
+    </demand>
+    <demand name="0. order 7">
+      <quantity>6</quantity>
+      <due>2021-02-12T00:00:00</due>
+      <item name="0. item" />
+      <location name="factory"/>
+    </demand>
+    <demand name="0. order 8">
+      <quantity>6</quantity>
+      <due>2021-02-19T00:00:00</due>
+      <item name="0. item" />
+      <location name="factory"/>
+    </demand>
+    <demand name="0. order 9">
+      <quantity>6</quantity>
+      <due>2021-02-26T00:00:00</due>
+      <item name="0. item" />
+      <location name="factory"/>
+    </demand>
+    <demand name="0. order 10">
+      <quantity>6</quantity>
+      <due>2021-03-05T00:00:00</due>
+      <item name="0. item" />
+      <location name="factory"/>
+    </demand>
+    <demand name="0. order 11">
+      <quantity>6</quantity>
+      <due>2021-03-12T00:00:00</due>
+      <item name="0. item" />
+      <location name="factory"/>
+    </demand>
+    <demand name="0. order 12">
+      <quantity>6</quantity>
+      <due>2021-03-19T00:00:00</due>
+      <item name="0. item" />
+      <location name="factory"/>
+    </demand>
+    <demand name="0. order 13">
+      <quantity>6</quantity>
+      <due>2021-03-26T00:00:00</due>
+      <item name="0. item" />
+      <location name="factory"/>
+    </demand>
+    <demand name="0. order 14">
+      <quantity>6</quantity>
+      <due>2021-04-07T00:00:00</due>
+      <item name="0. item" />
+      <location name="factory"/>
+    </demand>
+  </demands>
+  <operationplans>
+    <operationplan reference="0. PO 1" ordertype="PO" end="2021-01-20T00:00:00" quantity="1" status="confirmed">
+      <item name="0. item"/>
+      <location name="factory"/>
+      <supplier name="0. supplier"/>
+    </operationplan>
+  </operationplans>
+
+  <!-- Case 1: basic grouping -->
+  <suppliers>
+    <supplier name="1. supplier">
+      <itemsuppliers>
+        <itemsupplier>
+          <item name="1. item"/>
+          <leadtime>P7D</leadtime>
+          <priority>2</priority>
+          <batchwindow>P30D</batchwindow>
+        </itemsupplier>
+      </itemsuppliers>
+    </supplier>
+  </suppliers>
+  <demands>
+    <demand name="1. order 1">
+      <quantity>6</quantity>
+      <due>2021-01-01T00:00:00</due>
+      <item name="1. item" />
+      <location name="factory"/>
+    </demand>
+    <demand name="1. order 2">
+      <quantity>6</quantity>
+      <due>2021-01-08T00:00:00</due>
+      <item name="1. item" />
+      <location name="factory"/>
+    </demand>
+    <demand name="1. order 3">
+      <quantity>6</quantity>
+      <due>2021-01-15T00:00:00</due>
+      <item name="1. item" />
+      <location name="factory"/>
+    </demand>
+    <demand name="1. order 4">
+      <quantity>6</quantity>
+      <due>2021-01-22T00:00:00</due>
+      <item name="1. item" />
+      <location name="factory"/>
+    </demand>
+    <demand name="1. order 5">
+      <quantity>6</quantity>
+      <due>2021-01-29T00:00:00</due>
+      <item name="1. item" />
+      <location name="factory"/>
+    </demand>
+    <demand name="1. order 6">
+      <quantity>6</quantity>
+      <due>2021-02-05T00:00:00</due>
+      <item name="1. item" />
+      <location name="factory"/>
+    </demand>
+    <demand name="1. order 7">
+      <quantity>6</quantity>
+      <due>2021-02-12T00:00:00</due>
+      <item name="1. item" />
+      <location name="factory"/>
+    </demand>
+    <demand name="1. order 8">
+      <quantity>6</quantity>
+      <due>2021-02-19T00:00:00</due>
+      <item name="1. item" />
+      <location name="factory"/>
+    </demand>
+    <demand name="1. order 9">
+      <quantity>6</quantity>
+      <due>2021-02-26T00:00:00</due>
+      <item name="1. item" />
+      <location name="factory"/>
+    </demand>
+    <demand name="1. order 10">
+      <quantity>6</quantity>
+      <due>2021-03-05T00:00:00</due>
+      <item name="1. item" />
+      <location name="factory"/>
+    </demand>
+    <demand name="1. order 11">
+      <quantity>6</quantity>
+      <due>2021-03-12T00:00:00</due>
+      <item name="1. item" />
+      <location name="factory"/>
+    </demand>
+    <demand name="1. order 12">
+      <quantity>6</quantity>
+      <due>2021-03-19T00:00:00</due>
+      <item name="1. item" />
+      <location name="factory"/>
+    </demand>
+    <demand name="1. order 13">
+      <quantity>6</quantity>
+      <due>2021-03-26T00:00:00</due>
+      <item name="1. item" />
+      <location name="factory"/>
+    </demand>
+    <demand name="1. order 14">
+      <quantity>6</quantity>
+      <due>2021-04-07T00:00:00</due>
+      <item name="1. item" />
+      <location name="factory"/>
+    </demand>
+  </demands>
+  <operationplans>
+    <operationplan reference="1. PO 1" ordertype="PO" end="2021-01-20T00:00:00" quantity="1" status="confirmed">
+      <item name="1. item"/>
+      <location name="factory"/>
+      <supplier name="1. supplier"/>
+    </operationplan>
+  </operationplans>
+
+  <!-- Case 2: grouping with size multiple -->
+  <suppliers>
+    <supplier name="2. supplier">
+      <itemsuppliers>
+        <itemsupplier>
+          <item name="2. item"/>
+          <leadtime>P7D</leadtime>
+          <priority>2</priority>
+          <batchwindow>P30D</batchwindow>
+          <size_multiple>10</size_multiple>
+        </itemsupplier>
+      </itemsuppliers>
+    </supplier>
+  </suppliers>
+  <demands>
+    <demand name="2. order 1">
+      <quantity>6</quantity>
+      <due>2021-01-01T00:00:00</due>
+      <item name="2. item" />
+      <location name="factory"/>
+    </demand>
+    <demand name="2. order 2">
+      <quantity>6</quantity>
+      <due>2021-01-08T00:00:00</due>
+      <item name="2. item" />
+      <location name="factory"/>
+    </demand>
+    <demand name="2. order 3">
+      <quantity>6</quantity>
+      <due>2021-01-15T00:00:00</due>
+      <item name="2. item" />
+      <location name="factory"/>
+    </demand>
+    <demand name="2. order 4">
+      <quantity>6</quantity>
+      <due>2021-01-22T00:00:00</due>
+      <item name="2. item" />
+      <location name="factory"/>
+    </demand>
+    <demand name="2. order 5">
+      <quantity>6</quantity>
+      <due>2021-01-29T00:00:00</due>
+      <item name="2. item" />
+      <location name="factory"/>
+    </demand>
+    <demand name="2. order 6">
+      <quantity>6</quantity>
+      <due>2021-02-05T00:00:00</due>
+      <item name="2. item" />
+      <location name="factory"/>
+    </demand>
+    <demand name="2. order 7">
+      <quantity>6</quantity>
+      <due>2021-02-12T00:00:00</due>
+      <item name="2. item" />
+      <location name="factory"/>
+    </demand>
+    <demand name="2. order 8">
+      <quantity>6</quantity>
+      <due>2021-02-19T00:00:00</due>
+      <item name="2. item" />
+      <location name="factory"/>
+    </demand>
+    <demand name="2. order 9">
+      <quantity>6</quantity>
+      <due>2021-02-26T00:00:00</due>
+      <item name="2. item" />
+      <location name="factory"/>
+    </demand>
+    <demand name="2. order 10">
+      <quantity>6</quantity>
+      <due>2021-03-05T00:00:00</due>
+      <item name="2. item" />
+      <location name="factory"/>
+    </demand>
+    <demand name="2. order 11">
+      <quantity>6</quantity>
+      <due>2021-03-12T00:00:00</due>
+      <item name="2. item" />
+      <location name="factory"/>
+    </demand>
+    <demand name="2. order 12">
+      <quantity>6</quantity>
+      <due>2021-03-19T00:00:00</due>
+      <item name="2. item" />
+      <location name="factory"/>
+    </demand>
+    <demand name="2. order 13">
+      <quantity>6</quantity>
+      <due>2021-03-26T00:00:00</due>
+      <item name="2. item" />
+      <location name="factory"/>
+    </demand>
+    <demand name="2. order 14">
+      <quantity>6</quantity>
+      <due>2021-04-07T00:00:00</due>
+      <item name="2. item" />
+      <location name="factory"/>
+    </demand>
+  </demands>
+  <operationplans>
+    <operationplan reference="2. PO 1" ordertype="PO" end="2021-01-20T00:00:00" quantity="1" status="confirmed">
+      <item name="2. item"/>
+      <location name="factory"/>
+      <supplier name="2. supplier"/>
+    </operationplan>
+  </operationplans>
+
+  <!-- Case 3: grouping with size maximum -->
+  <suppliers>
+    <supplier name="3. supplier">
+      <itemsuppliers>
+        <itemsupplier>
+          <item name="3. item"/>
+          <leadtime>P7D</leadtime>
+          <priority>2</priority>
+          <batchwindow>P30D</batchwindow>
+          <size_maximum>20</size_maximum>
+        </itemsupplier>
+      </itemsuppliers>
+    </supplier>
+  </suppliers>
+  <demands>
+    <demand name="3. order 1">
+      <quantity>6</quantity>
+      <due>2021-01-01T00:00:00</due>
+      <item name="3. item" />
+      <location name="factory"/>
+    </demand>
+    <demand name="3. order 2">
+      <quantity>6</quantity>
+      <due>2021-01-08T00:00:00</due>
+      <item name="3. item" />
+      <location name="factory"/>
+    </demand>
+    <demand name="3. order 3">
+      <quantity>6</quantity>
+      <due>2021-01-15T00:00:00</due>
+      <item name="3. item" />
+      <location name="factory"/>
+    </demand>
+    <demand name="3. order 4">
+      <quantity>6</quantity>
+      <due>2021-01-22T00:00:00</due>
+      <item name="3. item" />
+      <location name="factory"/>
+    </demand>
+    <demand name="3. order 5">
+      <quantity>6</quantity>
+      <due>2021-01-29T00:00:00</due>
+      <item name="3. item" />
+      <location name="factory"/>
+    </demand>
+    <demand name="3. order 6">
+      <quantity>6</quantity>
+      <due>2021-02-05T00:00:00</due>
+      <item name="3. item" />
+      <location name="factory"/>
+    </demand>
+    <demand name="3. order 7">
+      <quantity>6</quantity>
+      <due>2021-02-12T00:00:00</due>
+      <item name="3. item" />
+      <location name="factory"/>
+    </demand>
+    <demand name="3. order 8">
+      <quantity>6</quantity>
+      <due>2021-02-19T00:00:00</due>
+      <item name="3. item" />
+      <location name="factory"/>
+    </demand>
+    <demand name="3. order 9">
+      <quantity>6</quantity>
+      <due>2021-02-26T00:00:00</due>
+      <item name="3. item" />
+      <location name="factory"/>
+    </demand>
+    <demand name="3. order 10">
+      <quantity>6</quantity>
+      <due>2021-03-05T00:00:00</due>
+      <item name="3. item" />
+      <location name="factory"/>
+    </demand>
+    <demand name="3. order 11">
+      <quantity>6</quantity>
+      <due>2021-03-12T00:00:00</due>
+      <item name="3. item" />
+      <location name="factory"/>
+    </demand>
+    <demand name="3. order 12">
+      <quantity>6</quantity>
+      <due>2021-03-19T00:00:00</due>
+      <item name="3. item" />
+      <location name="factory"/>
+    </demand>
+    <demand name="3. order 13">
+      <quantity>6</quantity>
+      <due>2021-03-26T00:00:00</due>
+      <item name="3. item" />
+      <location name="factory"/>
+    </demand>
+    <demand name="3. order 14">
+      <quantity>6</quantity>
+      <due>2021-04-07T00:00:00</due>
+      <item name="3. item" />
+      <location name="factory"/>
+    </demand>
+  </demands>
+  <operationplans>
+    <operationplan reference="3. PO 1" ordertype="PO" end="2021-01-20T00:00:00" quantity="1" status="confirmed">
+      <item name="3. item"/>
+      <location name="factory"/>
+      <supplier name="3. supplier"/>
+    </operationplan>
+  </operationplans>
+
+  <?python
+print("CREATING CONSTRAINED PLAN")
+sol = frepple.solver_mrp(plantype=1, constraints=15, loglevel=2, lazydelay=12*3600)
+sol.solve()
+frepple.saveplan("output.1.xml")
+print("CREATING UNCONSTRAINED PLAN")
+sol.plantype = 2
+sol.solve()
+frepple.saveplan("output.2.xml")
+?>
+
+</plan>

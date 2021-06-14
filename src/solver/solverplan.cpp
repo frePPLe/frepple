@@ -375,6 +375,12 @@ void SolverCreate::SolverData::commit() {
       if (!solver->getPlanSafetyStockFirst()) solveSafetyStock(solver);
     }
 
+    // Operation batching postprocessing
+    for (auto o = Operation::begin(); o != Operation::end(); ++o) {
+      if (cluster == -1 || o->getCluster() == cluster)
+        solver->createsBatches(&*o, this);
+    }
+
     // Clean the list of demands of this cluster
     demands->clear();
   } catch (...) {

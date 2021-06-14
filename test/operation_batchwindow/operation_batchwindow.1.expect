@@ -1,0 +1,186 @@
+BUFFER	0. item @ factory	2021-01-08T00:00:00	12	12
+BUFFER	0. item @ factory	2021-01-08T00:00:00	-6	6
+BUFFER	0. item @ factory	2021-01-08T00:00:00	-6	0
+BUFFER	0. item @ factory	2021-01-15T00:00:00	6	6
+BUFFER	0. item @ factory	2021-01-15T00:00:00	-6	0
+BUFFER	0. item @ factory	2021-01-20T00:00:00	1	1
+BUFFER	0. item @ factory	2021-01-22T00:00:00	5	6
+BUFFER	0. item @ factory	2021-01-22T00:00:00	-6	0
+BUFFER	0. item @ factory	2021-01-29T00:00:00	6	6
+BUFFER	0. item @ factory	2021-01-29T00:00:00	-6	0
+BUFFER	0. item @ factory	2021-02-05T00:00:00	6	6
+BUFFER	0. item @ factory	2021-02-05T00:00:00	-6	0
+BUFFER	0. item @ factory	2021-02-12T00:00:00	6	6
+BUFFER	0. item @ factory	2021-02-12T00:00:00	-6	0
+BUFFER	0. item @ factory	2021-02-19T00:00:00	6	6
+BUFFER	0. item @ factory	2021-02-19T00:00:00	-6	0
+BUFFER	0. item @ factory	2021-02-26T00:00:00	6	6
+BUFFER	0. item @ factory	2021-02-26T00:00:00	-6	0
+BUFFER	0. item @ factory	2021-03-05T00:00:00	6	6
+BUFFER	0. item @ factory	2021-03-05T00:00:00	-6	0
+BUFFER	0. item @ factory	2021-03-12T00:00:00	6	6
+BUFFER	0. item @ factory	2021-03-12T00:00:00	-6	0
+BUFFER	0. item @ factory	2021-03-19T00:00:00	6	6
+BUFFER	0. item @ factory	2021-03-19T00:00:00	-6	0
+BUFFER	0. item @ factory	2021-03-26T00:00:00	6	6
+BUFFER	0. item @ factory	2021-03-26T00:00:00	-6	0
+BUFFER	0. item @ factory	2021-04-07T00:00:00	6	6
+BUFFER	0. item @ factory	2021-04-07T00:00:00	-6	0
+BUFFER	1. item @ factory	2021-01-08T00:00:00	35	35
+BUFFER	1. item @ factory	2021-01-08T00:00:00	-6	29
+BUFFER	1. item @ factory	2021-01-08T00:00:00	-6	23
+BUFFER	1. item @ factory	2021-01-15T00:00:00	-6	17
+BUFFER	1. item @ factory	2021-01-20T00:00:00	1	18
+BUFFER	1. item @ factory	2021-01-22T00:00:00	-6	12
+BUFFER	1. item @ factory	2021-01-29T00:00:00	-6	6
+BUFFER	1. item @ factory	2021-02-05T00:00:00	-6	0
+BUFFER	1. item @ factory	2021-02-12T00:00:00	30	30
+BUFFER	1. item @ factory	2021-02-12T00:00:00	-6	24
+BUFFER	1. item @ factory	2021-02-19T00:00:00	-6	18
+BUFFER	1. item @ factory	2021-02-26T00:00:00	-6	12
+BUFFER	1. item @ factory	2021-03-05T00:00:00	-6	6
+BUFFER	1. item @ factory	2021-03-12T00:00:00	-6	0
+BUFFER	1. item @ factory	2021-03-19T00:00:00	18	18
+BUFFER	1. item @ factory	2021-03-19T00:00:00	-6	12
+BUFFER	1. item @ factory	2021-03-26T00:00:00	-6	6
+BUFFER	1. item @ factory	2021-04-07T00:00:00	-6	0
+BUFFER	2. item @ factory	2021-01-08T00:00:00	40	40
+BUFFER	2. item @ factory	2021-01-08T00:00:00	-6	34
+BUFFER	2. item @ factory	2021-01-08T00:00:00	-6	28
+BUFFER	2. item @ factory	2021-01-15T00:00:00	-6	22
+BUFFER	2. item @ factory	2021-01-20T00:00:00	1	23
+BUFFER	2. item @ factory	2021-01-22T00:00:00	-6	17
+BUFFER	2. item @ factory	2021-01-29T00:00:00	-6	11
+BUFFER	2. item @ factory	2021-02-05T00:00:00	-6	5
+BUFFER	2. item @ factory	2021-02-12T00:00:00	30	35
+BUFFER	2. item @ factory	2021-02-12T00:00:00	-6	29
+BUFFER	2. item @ factory	2021-02-19T00:00:00	-6	23
+BUFFER	2. item @ factory	2021-02-26T00:00:00	-6	17
+BUFFER	2. item @ factory	2021-03-05T00:00:00	-6	11
+BUFFER	2. item @ factory	2021-03-12T00:00:00	-6	5
+BUFFER	2. item @ factory	2021-03-19T00:00:00	20	25
+BUFFER	2. item @ factory	2021-03-19T00:00:00	-6	19
+BUFFER	2. item @ factory	2021-03-26T00:00:00	-6	13
+BUFFER	2. item @ factory	2021-04-07T00:00:00	-6	7
+BUFFER	3. item @ factory	2021-01-08T00:00:00	18	18
+BUFFER	3. item @ factory	2021-01-08T00:00:00	-6	12
+BUFFER	3. item @ factory	2021-01-08T00:00:00	-6	6
+BUFFER	3. item @ factory	2021-01-15T00:00:00	-6	0
+BUFFER	3. item @ factory	2021-01-20T00:00:00	1	1
+BUFFER	3. item @ factory	2021-01-22T00:00:00	17	18
+BUFFER	3. item @ factory	2021-01-22T00:00:00	-6	12
+BUFFER	3. item @ factory	2021-01-29T00:00:00	-6	6
+BUFFER	3. item @ factory	2021-02-05T00:00:00	-6	0
+BUFFER	3. item @ factory	2021-02-12T00:00:00	18	18
+BUFFER	3. item @ factory	2021-02-12T00:00:00	-6	12
+BUFFER	3. item @ factory	2021-02-19T00:00:00	-6	6
+BUFFER	3. item @ factory	2021-02-26T00:00:00	-6	0
+BUFFER	3. item @ factory	2021-03-05T00:00:00	18	18
+BUFFER	3. item @ factory	2021-03-05T00:00:00	-6	12
+BUFFER	3. item @ factory	2021-03-12T00:00:00	-6	6
+BUFFER	3. item @ factory	2021-03-19T00:00:00	-6	0
+BUFFER	3. item @ factory	2021-03-26T00:00:00	12	12
+BUFFER	3. item @ factory	2021-03-26T00:00:00	-6	6
+BUFFER	3. item @ factory	2021-04-07T00:00:00	-6	0
+DEMAND	0. order 1	2021-01-08T00:00:00	6
+DEMAND	0. order 10	2021-03-05T00:00:00	6
+DEMAND	0. order 11	2021-03-12T00:00:00	6
+DEMAND	0. order 12	2021-03-19T00:00:00	6
+DEMAND	0. order 13	2021-03-26T00:00:00	6
+DEMAND	0. order 14	2021-04-07T00:00:00	6
+DEMAND	0. order 2	2021-01-08T00:00:00	6
+DEMAND	0. order 3	2021-01-15T00:00:00	6
+DEMAND	0. order 4	2021-01-22T00:00:00	6
+DEMAND	0. order 5	2021-01-29T00:00:00	6
+DEMAND	0. order 6	2021-02-05T00:00:00	6
+DEMAND	0. order 7	2021-02-12T00:00:00	6
+DEMAND	0. order 8	2021-02-19T00:00:00	6
+DEMAND	0. order 9	2021-02-26T00:00:00	6
+DEMAND	1. order 1	2021-01-08T00:00:00	6
+DEMAND	1. order 10	2021-03-05T00:00:00	6
+DEMAND	1. order 11	2021-03-12T00:00:00	6
+DEMAND	1. order 12	2021-03-19T00:00:00	6
+DEMAND	1. order 13	2021-03-26T00:00:00	6
+DEMAND	1. order 14	2021-04-07T00:00:00	6
+DEMAND	1. order 2	2021-01-08T00:00:00	6
+DEMAND	1. order 3	2021-01-15T00:00:00	6
+DEMAND	1. order 4	2021-01-22T00:00:00	6
+DEMAND	1. order 5	2021-01-29T00:00:00	6
+DEMAND	1. order 6	2021-02-05T00:00:00	6
+DEMAND	1. order 7	2021-02-12T00:00:00	6
+DEMAND	1. order 8	2021-02-19T00:00:00	6
+DEMAND	1. order 9	2021-02-26T00:00:00	6
+DEMAND	2. order 1	2021-01-08T00:00:00	6
+DEMAND	2. order 10	2021-03-05T00:00:00	6
+DEMAND	2. order 11	2021-03-12T00:00:00	6
+DEMAND	2. order 12	2021-03-19T00:00:00	6
+DEMAND	2. order 13	2021-03-26T00:00:00	6
+DEMAND	2. order 14	2021-04-07T00:00:00	6
+DEMAND	2. order 2	2021-01-08T00:00:00	6
+DEMAND	2. order 3	2021-01-15T00:00:00	6
+DEMAND	2. order 4	2021-01-22T00:00:00	6
+DEMAND	2. order 5	2021-01-29T00:00:00	6
+DEMAND	2. order 6	2021-02-05T00:00:00	6
+DEMAND	2. order 7	2021-02-12T00:00:00	6
+DEMAND	2. order 8	2021-02-19T00:00:00	6
+DEMAND	2. order 9	2021-02-26T00:00:00	6
+DEMAND	3. order 1	2021-01-08T00:00:00	6
+DEMAND	3. order 10	2021-03-05T00:00:00	6
+DEMAND	3. order 11	2021-03-12T00:00:00	6
+DEMAND	3. order 12	2021-03-19T00:00:00	6
+DEMAND	3. order 13	2021-03-26T00:00:00	6
+DEMAND	3. order 14	2021-04-07T00:00:00	6
+DEMAND	3. order 2	2021-01-08T00:00:00	6
+DEMAND	3. order 3	2021-01-15T00:00:00	6
+DEMAND	3. order 4	2021-01-22T00:00:00	6
+DEMAND	3. order 5	2021-01-29T00:00:00	6
+DEMAND	3. order 6	2021-02-05T00:00:00	6
+DEMAND	3. order 7	2021-02-12T00:00:00	6
+DEMAND	3. order 8	2021-02-19T00:00:00	6
+DEMAND	3. order 9	2021-02-26T00:00:00	6
+OPERATION	Purchase 0. item @ factory from 0. supplier	2021-01-01T00:00:00	2021-01-08T00:00:00	12
+OPERATION	Purchase 0. item @ factory from 0. supplier	2021-01-08T00:00:00	2021-01-15T00:00:00	6
+OPERATION	Purchase 0. item @ factory from 0. supplier	2021-01-13T00:00:00	2021-01-20T00:00:00	1	confirmed
+OPERATION	Purchase 0. item @ factory from 0. supplier	2021-01-15T00:00:00	2021-01-22T00:00:00	5
+OPERATION	Purchase 0. item @ factory from 0. supplier	2021-01-22T00:00:00	2021-01-29T00:00:00	6
+OPERATION	Purchase 0. item @ factory from 0. supplier	2021-01-29T00:00:00	2021-02-05T00:00:00	6
+OPERATION	Purchase 0. item @ factory from 0. supplier	2021-02-05T00:00:00	2021-02-12T00:00:00	6
+OPERATION	Purchase 0. item @ factory from 0. supplier	2021-02-12T00:00:00	2021-02-19T00:00:00	6
+OPERATION	Purchase 0. item @ factory from 0. supplier	2021-02-19T00:00:00	2021-02-26T00:00:00	6
+OPERATION	Purchase 0. item @ factory from 0. supplier	2021-02-26T00:00:00	2021-03-05T00:00:00	6
+OPERATION	Purchase 0. item @ factory from 0. supplier	2021-03-05T00:00:00	2021-03-12T00:00:00	6
+OPERATION	Purchase 0. item @ factory from 0. supplier	2021-03-12T00:00:00	2021-03-19T00:00:00	6
+OPERATION	Purchase 0. item @ factory from 0. supplier	2021-03-19T00:00:00	2021-03-26T00:00:00	6
+OPERATION	Purchase 0. item @ factory from 0. supplier	2021-03-31T00:00:00	2021-04-07T00:00:00	6
+OPERATION	Purchase 1. item @ factory from 1. supplier	2021-01-01T00:00:00	2021-01-08T00:00:00	35
+OPERATION	Purchase 1. item @ factory from 1. supplier	2021-01-13T00:00:00	2021-01-20T00:00:00	1	confirmed
+OPERATION	Purchase 1. item @ factory from 1. supplier	2021-02-05T00:00:00	2021-02-12T00:00:00	30
+OPERATION	Purchase 1. item @ factory from 1. supplier	2021-03-12T00:00:00	2021-03-19T00:00:00	18
+OPERATION	Purchase 2. item @ factory from 2. supplier	2021-01-01T00:00:00	2021-01-08T00:00:00	40
+OPERATION	Purchase 2. item @ factory from 2. supplier	2021-01-13T00:00:00	2021-01-20T00:00:00	1	confirmed
+OPERATION	Purchase 2. item @ factory from 2. supplier	2021-02-05T00:00:00	2021-02-12T00:00:00	30
+OPERATION	Purchase 2. item @ factory from 2. supplier	2021-03-12T00:00:00	2021-03-19T00:00:00	20
+OPERATION	Purchase 3. item @ factory from 3. supplier	2021-01-01T00:00:00	2021-01-08T00:00:00	18
+OPERATION	Purchase 3. item @ factory from 3. supplier	2021-01-13T00:00:00	2021-01-20T00:00:00	1	confirmed
+OPERATION	Purchase 3. item @ factory from 3. supplier	2021-01-15T00:00:00	2021-01-22T00:00:00	17
+OPERATION	Purchase 3. item @ factory from 3. supplier	2021-02-05T00:00:00	2021-02-12T00:00:00	18
+OPERATION	Purchase 3. item @ factory from 3. supplier	2021-02-26T00:00:00	2021-03-05T00:00:00	18
+OPERATION	Purchase 3. item @ factory from 3. supplier	2021-03-19T00:00:00	2021-03-26T00:00:00	12
+PROBLEM	material excess	Buffer '0. item @ factory' has material excess of 1	2021-01-20T00:00:00 / 2021-01-22T00:00:00
+PROBLEM	material excess	Buffer '1. item @ factory' has material excess of 23	2021-01-08T00:00:00 / 2021-02-05T00:00:00
+PROBLEM	material excess	Buffer '1. item @ factory' has material excess of 24	2021-02-12T00:00:00 / 2021-03-12T00:00:00
+PROBLEM	material excess	Buffer '1. item @ factory' has material excess of 12	2021-03-19T00:00:00 / 2021-04-07T00:00:00
+PROBLEM	material excess	Buffer '2. item @ factory' has material excess of 29	2021-01-08T00:00:00 / 2030-12-31T00:00:00
+PROBLEM	material excess	Buffer '3. item @ factory' has material excess of 6	2021-01-08T00:00:00 / 2021-01-15T00:00:00
+PROBLEM	material excess	Buffer '3. item @ factory' has material excess of 12	2021-01-20T00:00:00 / 2021-02-05T00:00:00
+PROBLEM	material excess	Buffer '3. item @ factory' has material excess of 12	2021-02-12T00:00:00 / 2021-02-26T00:00:00
+PROBLEM	material excess	Buffer '3. item @ factory' has material excess of 12	2021-03-05T00:00:00 / 2021-03-19T00:00:00
+PROBLEM	material excess	Buffer '3. item @ factory' has material excess of 6	2021-03-26T00:00:00 / 2021-04-07T00:00:00
+PROBLEM	late	6 units of demand '0. order 1' planned up to 7.0 days after its due date	2021-01-01T00:00:00 / 2021-01-08T00:00:00
+PROBLEM	late	6 units of demand '1. order 1' planned up to 7.0 days after its due date	2021-01-01T00:00:00 / 2021-01-08T00:00:00
+PROBLEM	late	6 units of demand '2. order 1' planned up to 7.0 days after its due date	2021-01-01T00:00:00 / 2021-01-08T00:00:00
+PROBLEM	late	6 units of demand '3. order 1' planned up to 7.0 days after its due date	2021-01-01T00:00:00 / 2021-01-08T00:00:00
+DEMAND CONSTRAINT	0. order 1	Operation 'Purchase 0. item @ factory from 0. supplier' planned in the past	2020-12-25T00:00:00 / 2021-01-01T00:00:00	
+DEMAND CONSTRAINT	1. order 1	Operation 'Purchase 1. item @ factory from 1. supplier' planned in the past	2020-12-25T00:00:00 / 2021-01-01T00:00:00	
+DEMAND CONSTRAINT	2. order 1	Operation 'Purchase 2. item @ factory from 2. supplier' planned in the past	2020-12-25T00:00:00 / 2021-01-01T00:00:00	
+DEMAND CONSTRAINT	3. order 1	Operation 'Purchase 3. item @ factory from 3. supplier' planned in the past	2020-12-25T00:00:00 / 2021-01-01T00:00:00	

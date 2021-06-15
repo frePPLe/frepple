@@ -16,7 +16,7 @@
 #
 
 import ast
-from datetime import datetime, time
+from datetime import datetime, time, timedelta
 from decimal import Decimal
 from dateutil.parser import parse
 
@@ -1227,6 +1227,15 @@ class ItemSupplier(AuditModel):
         max_digits=20,
         decimal_places=8,
         help_text=_("A maximum purchasing quantity"),
+    )
+    batchwindow = models.DurationField(
+        _("batching window"),
+        null=True,
+        blank=True,
+        help_text=_(
+            "Proposed purchase orders within this window will be grouped together"
+        ),
+        default=timedelta(days=7)
     )
     cost = models.DecimalField(
         _("cost"),

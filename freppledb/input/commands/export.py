@@ -54,7 +54,7 @@ map_search = {0: "PRIORITY", 1: "MINCOST", 2: "MINPENALTY", 3: "MINCOSTPENALTY"}
 
 
 def SQL4attributes(attrs, with_on_conflict=True):
-    """ Snippet is used many times in this file"""
+    """Snippet is used many times in this file"""
     if with_on_conflict:
         return (
             "".join([",%s" % i for i in attrs]),
@@ -1721,6 +1721,8 @@ class exportItemSuppliers(PlanTask):
                         i.size_minimum,
                         i.size_multiple,
                         i.size_maximum if i.size_maximum < 10 ** 12 else None,
+                        i.batchwindow,
+                        i.fence,
                         i.cost,
                         i.priority,
                         i.effective_end if i.effective_end != default_end else None,
@@ -1739,15 +1741,18 @@ class exportItemSuppliers(PlanTask):
                 """
                 insert into itemsupplier
                 (item_id,location_id,supplier_id,effective_start,leadtime,sizeminimum,
-                 sizemultiple, sizemaximum,cost,priority,effective_end,resource_id,resource_qty,source,
-                 lastmodified%s)
-                values(%%s,%%s,%%s,%%s,%%s * interval '1 second',%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s,%%s%s)
+                 sizemultiple,sizemaximum,batchwindow,fence,cost,priority,effective_end,
+                 resource_id,resource_qty,source,lastmodified%s)
+                values(%%s,%%s,%%s,%%s,%%s * interval '1 second',%%s,%%s,%%s,
+                %%s * interval '1 second',%%s * interval '1 second',%%s,%%s,%%s,%%s,%%s,%%s,%%s%s)
                 on conflict (item_id, location_id, supplier_id, effective_start)
                 do update set
                   leadtime=excluded.leadtime,
                   sizeminimum=excluded.sizeminimum,
                   sizemultiple=excluded.sizemultiple,
                   sizemaximum=excluded.sizemaximum,
+                  batchwindow=excluded.batchwindow,
+                  fence=excluded.fence,
                   cost=excluded.cost,
                   priority=excluded.priority,
                   effective_end=excluded.effective_end,

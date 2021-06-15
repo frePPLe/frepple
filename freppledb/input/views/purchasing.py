@@ -157,6 +157,7 @@ class ItemSupplierList(GridReport):
         GridFieldNumber("sizeminimum", title=_("size minimum")),
         GridFieldNumber("sizemultiple", title=_("size multiple")),
         GridFieldNumber("sizemaximum", title=_("size maximum"), initially_hidden=True),
+        GridFieldDuration("batchwindow", title=_("batching window")),
         GridFieldCurrency("cost", title=_("cost")),
         GridFieldInteger("priority", title=_("priority")),
         GridFieldDuration("fence", title=_("fence"), initially_hidden=True),
@@ -688,6 +689,24 @@ class PurchaseOrderList(OperationPlanMixin):
                 ),
                 output_field=FloatField(),
             ),
+            itemsupplier_batchwindow=Cast(
+                RawSQL(
+                    """
+                    select batchwindow
+                    from itemsupplier
+                    where itemsupplier.item_id = operationplan.item_id
+                      and (itemsupplier.location_id is null or itemsupplier.location_id = operationplan.location_id)
+                      and itemsupplier.supplier_id = operationplan.supplier_id
+                    order by operationplan.enddate < itemsupplier.effective_end desc nulls first,
+                       operationplan.enddate >= itemsupplier.effective_start desc nulls first,
+                       priority <> 0,
+                       priority
+                    limit 1
+                    """,
+                    [],
+                ),
+                output_field=DurationField(),
+            ),
             itemsupplier_priority=Cast(
                 RawSQL(
                     """
@@ -895,6 +914,13 @@ class PurchaseOrderList(OperationPlanMixin):
         GridFieldNumber(
             "itemsupplier_sizemaximum",
             title=format_lazy("{} - {}", _("item supplier"), _("size maximum")),
+            editable=False,
+            initially_hidden=True,
+            extra='"formatoptions":{"defaultValue":""}, "summaryType":"min"',
+        ),
+        GridFieldDuration(
+            "itemsupplier_batchwindow",
+            title=format_lazy("{} - {}", _("item supplier"), _("batching window")),
             editable=False,
             initially_hidden=True,
             extra='"formatoptions":{"defaultValue":""}, "summaryType":"min"',

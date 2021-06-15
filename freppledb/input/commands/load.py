@@ -899,13 +899,13 @@ class loadItemSuppliers(LoadTask):
                 starttime = time()
                 cursor.execute(
                     """
-                SELECT
-                  supplier_id, item_id, location_id, sizeminimum, sizemultiple, sizemaximum,
-                  cost, priority, effective_start, effective_end, source, leadtime,
-                  resource_id, resource_qty, fence
-                FROM itemsupplier %s
-                ORDER BY supplier_id, item_id, location_id, priority desc
-                """
+                    SELECT
+                    supplier_id, item_id, location_id, sizeminimum, sizemultiple, sizemaximum,
+                    cost, priority, effective_start, effective_end, source, leadtime,
+                    resource_id, resource_qty, fence, batchwindow
+                    FROM itemsupplier %s
+                    ORDER BY supplier_id, item_id, location_id, priority desc
+                    """
                     % filter_where
                 )
                 cursuppliername = None
@@ -926,6 +926,9 @@ class loadItemSuppliers(LoadTask):
                             leadtime=i[11].total_seconds() if i[11] else 0,
                             fence=i[14].total_seconds() if i[14] else 0,
                             resource_qty=i[13],
+                            batchwindow=i[15].total_seconds()
+                            if i[15] is not None
+                            else 7 * 86400,
                         )
                         if i[2]:
                             curitemsupplier.location = frepple.location(name=i[2])

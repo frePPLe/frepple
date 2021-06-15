@@ -417,8 +417,8 @@ class OverviewReport(GridPivot):
             with connections[request.database].chunked_cursor() as cursor_chunked:
                 cursor_chunked.execute(query, baseparams)
                 operationattributefields = getAttributeFields(Operation)
-                itemattributefields= getAttributeFields(Item)
-                locationattributefields= getAttributeFields(Location)
+                itemattributefields = getAttributeFields(Item)
+                locationattributefields = getAttributeFields(Location)
                 for row in cursor_chunked:
                     numfields = len(row)
                     result = {
@@ -613,7 +613,12 @@ class PurchaseReport(GridPivot):
             editable=False,
             title=format_lazy("{} - {}", _("location"), _("last modified")),
         ),
-        GridFieldDuration("leadtime", title=_("lead time"), editable=False),
+        GridFieldDuration(
+            "leadtime", title=_("lead time"), editable=False, search=False
+        ),
+        GridFieldDuration(
+            "batchwindow", title=_("batching window"), editable=False, search=False
+        ),
         GridFieldText(
             "supplier",
             title=_("supplier"),
@@ -818,6 +823,18 @@ class PurchaseReport(GridPivot):
              itemsupplier.priority
           limit 1
         ) as leadtime,
+        (
+          select extract(epoch from batchwindow)
+          from itemsupplier
+          where itemsupplier.item_id = combinations.item_id
+            and (itemsupplier.location_id is null or itemsupplier.location_id = combinations.location_id)
+            and itemsupplier.supplier_id = combinations.supplier_id
+          order by '%s' < itemsupplier.effective_end desc nulls first,
+             '%s' >= itemsupplier.effective_start desc nulls first,
+             itemsupplier.priority <> 0,
+             itemsupplier.priority
+          limit 1
+        ) as batchwindow,
         combinations.supplier_id as supplier,
         supplier.description as supplier__description,
         supplier.category as supplier__category,
@@ -894,6 +911,8 @@ class PurchaseReport(GridPivot):
       ) data
       """ % (
             basesql,
+            request.report_startdate,
+            request.report_startdate,
             request.report_startdate,
             request.report_startdate,
             reportclass.attr_sql,

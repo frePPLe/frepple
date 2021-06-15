@@ -290,6 +290,7 @@ class ItemSupplier_admin(MultiDBModelAdmin):
                     "sizeminimum",
                     "sizemultiple",
                     "sizemaximum",
+                    "batchwindow",
                     "priority",
                     "fence",
                     "effective_start",

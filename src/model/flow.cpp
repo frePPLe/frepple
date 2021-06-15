@@ -249,9 +249,6 @@ pair<Date, double> FlowStart::getFlowplanDateQuantity(
   else {
     auto q = getQuantityFixed() +
              fl->getOperationPlan()->getQuantity() * getQuantity();
-    if (fl->getOperationPlan()->getQuantityCompleted())
-      return make_pair(dt, q * fl->getOperationPlan()->getQuantityRemaining() /
-                               fl->getOperationPlan()->getQuantity());
     return make_pair(dt, q);
   }
 }
@@ -282,11 +279,7 @@ pair<Date, double> FlowEnd::getFlowplanDateQuantity(const FlowPlan* fl) const {
   else {
     auto q = getQuantityFixed() +
              fl->getOperationPlan()->getQuantity() * getQuantity();
-    if (fl->getOperationPlan()->getQuantityCompleted())
-      return make_pair(dt, q * fl->getOperationPlan()->getQuantityRemaining() /
-                               fl->getOperationPlan()->getQuantity());
-    else
-      return make_pair(dt, q);
+    return make_pair(dt, q);
   }
 }
 
@@ -314,10 +307,6 @@ pair<Date, double> FlowTransferBatch::getFlowplanDateQuantity(
     else {
       auto q = getQuantityFixed() +
                fl->getOperationPlan()->getQuantity() * getQuantity();
-      if (fl->getOperationPlan()->getQuantityCompleted())
-        return make_pair(dt,
-                         q * fl->getOperationPlan()->getQuantityRemaining() /
-                             fl->getOperationPlan()->getQuantity());
       return make_pair(dt, q);
     }
   }

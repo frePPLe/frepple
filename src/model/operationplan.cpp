@@ -1296,9 +1296,6 @@ void OperationPlan::scanSetupTimes() {
       --resldplan;
     }
 
-
-
-
     // Scan forward until the first operationplan with a setup.
     resldplan = ldplan->getResource()->getLoadPlans().begin(&*ldplan);
     ++resldplan;

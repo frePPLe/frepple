@@ -2818,6 +2818,10 @@ class Operation : public HasName<Operation>,
    */
   DateRange getEffective() const { return effectivity; }
 
+  Duration getBatchWindow() const { return batchwindow; }
+
+  void setBatchWindow(Duration d) { batchwindow = d; }
+
   /* Update the start date of the effectivity range. */
   void setEffectiveStart(Date d) { effectivity.setStart(d); }
 
@@ -3035,6 +3039,8 @@ class Operation : public HasName<Operation>,
                              &Cls::setPostTime);
     m->addDoubleField<Cls>(Tags::cost, &Cls::getCost, &Cls::setCost);
     m->addDurationField<Cls>(Tags::fence, &Cls::getFence, &Cls::setFence);
+    m->addDurationField<Cls>(Tags::batchwindow, &Cls::getBatchWindow,
+                             &Cls::setBatchWindow);
     m->addDoubleField<Cls>(Tags::size_minimum, &Cls::getSizeMinimum,
                            &Cls::setSizeMinimum, 1);
     m->addPointerField<Cls>(Tags::size_minimum_calendar,
@@ -3166,6 +3172,9 @@ class Operation : public HasName<Operation>,
 
   /* Effectivity of the operation. */
   DateRange effectivity;
+
+  /* Time window to scan for setup optimization and batching opportunities. */
+  Duration batchwindow;
 
   /* Priority of the operation among alternates. */
   int priority = 1;
@@ -8175,6 +8184,8 @@ class Plan : public Plannable, public Object {
     m->addIteratorField<Cls, OperationPlan::iterator, OperationPlan>(
         Tags::operationplans, Tags::operationplan, &Plan::getOperationPlans,
         BASE + WRITE_OBJECT);
+    m->addIteratorField<Cls, Problem::iterator, Problem>(
+        Tags::problems, Tags::problem, &Plan::getProblems, DONT_SERIALIZE);
     m->addCommandField<Cls>(Tags::erase, &Plan::erase);
   }
 };

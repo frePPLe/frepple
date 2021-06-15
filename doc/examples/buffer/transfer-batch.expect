@@ -2,25 +2,10 @@
 1. make subassembly,2018-02-10 03:10:00,2018-02-17 00:10:00,990.0
 2. make end item,2018-02-22 13:10:00,2018-03-13 09:10:00,990.0
 2. make subassembly,2018-02-12 18:10:00,2018-03-09 18:40:00,990.0
-Purchase 1. component @ plant 1 from 1. my personal supplier,2018-01-01 03:10:00,2018-02-10 03:10:00,100.0
-Purchase 1. component @ plant 1 from 1. my personal supplier,2018-01-01 19:40:00,2018-02-10 19:40:00,100.0
-Purchase 1. component @ plant 1 from 1. my personal supplier,2018-01-02 12:10:00,2018-02-11 12:10:00,100.0
-Purchase 1. component @ plant 1 from 1. my personal supplier,2018-01-03 04:40:00,2018-02-12 04:40:00,100.0
-Purchase 1. component @ plant 1 from 1. my personal supplier,2018-01-03 21:10:00,2018-02-12 21:10:00,100.0
-Purchase 1. component @ plant 1 from 1. my personal supplier,2018-01-04 13:40:00,2018-02-13 13:40:00,100.0
-Purchase 1. component @ plant 1 from 1. my personal supplier,2018-01-05 06:10:00,2018-02-14 06:10:00,100.0
-Purchase 1. component @ plant 1 from 1. my personal supplier,2018-01-05 22:40:00,2018-02-14 22:40:00,100.0
-Purchase 1. component @ plant 1 from 1. my personal supplier,2018-01-06 15:10:00,2018-02-15 15:10:00,100.0
-Purchase 1. component @ plant 1 from 1. my personal supplier,2018-01-07 07:40:00,2018-02-16 07:40:00,90.0
-Purchase 2. component @ plant 2 from 2. my personal supplier,2018-01-03 18:10:00,2018-02-12 18:10:00,100.0
-Purchase 2. component @ plant 2 from 2. my personal supplier,2018-01-05 16:55:00,2018-02-14 16:55:00,100.0
-Purchase 2. component @ plant 2 from 2. my personal supplier,2018-01-07 15:40:00,2018-02-16 15:40:00,100.0
-Purchase 2. component @ plant 2 from 2. my personal supplier,2018-01-11 14:25:00,2018-02-20 14:25:00,100.0
-Purchase 2. component @ plant 2 from 2. my personal supplier,2018-01-13 13:10:00,2018-02-22 13:10:00,100.0
-Purchase 2. component @ plant 2 from 2. my personal supplier,2018-01-17 11:55:00,2018-02-26 11:55:00,100.0
-Purchase 2. component @ plant 2 from 2. my personal supplier,2018-01-19 10:40:00,2018-02-28 10:40:00,100.0
-Purchase 2. component @ plant 2 from 2. my personal supplier,2018-01-21 09:25:00,2018-03-02 09:25:00,100.0
-Purchase 2. component @ plant 2 from 2. my personal supplier,2018-01-24 21:10:00,2018-03-05 21:10:00,100.0
+Purchase 1. component @ plant 1 from 1. my personal supplier,2018-01-01 03:10:00,2018-02-10 03:10:00,990.0
+Purchase 2. component @ plant 2 from 2. my personal supplier,2018-01-03 18:10:00,2018-02-12 18:10:00,300.0
+Purchase 2. component @ plant 2 from 2. my personal supplier,2018-01-11 14:25:00,2018-02-20 14:25:00,300.0
+Purchase 2. component @ plant 2 from 2. my personal supplier,2018-01-19 10:40:00,2018-02-28 10:40:00,300.0
 Purchase 2. component @ plant 2 from 2. my personal supplier,2018-01-26 19:55:00,2018-03-07 19:55:00,90.0
 Ship 1. end item @ plant 1,2018-02-17 16:40:00,2018-02-17 16:40:00,990.0
 Ship 2. end item @ plant 2,2018-03-13 09:10:00,2018-03-13 09:10:00,990.0

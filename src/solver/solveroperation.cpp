@@ -1990,8 +1990,10 @@ void SolverCreate::createsBatches(Operation* oper, void* v) {
       while (next != OperationPlan::end() && next->getStart() <= limit_date) {
         auto tmp = &*next;
         ++next;
-        if (!tmp->getProposed() || tmp->getQuantity() + newsize >
-                                       oper->getSizeMaximum() - ROUNDING_ERROR)
+        if (!tmp->getProposed() ||
+            tmp->getQuantity() + newsize >
+                oper->getSizeMaximum() - ROUNDING_ERROR ||
+            tmp->getBatch() != opplan->getBatch())
           continue;
         if (loglevel > 1)
           logger << indentlevel << "  Grouping " << tmp << " with " << &*opplan

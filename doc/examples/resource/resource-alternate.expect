@@ -1,12 +1,10 @@
 Assemble round table,2019-08-02 06:00:00,2019-08-06 12:00:00,100.0
 Assemble round table,2019-08-06 12:00:00,2019-08-10 18:00:00,100.0
 Assemble round table,2019-08-10 18:00:00,2019-08-15 00:00:00,100.0
-Purchase grinded wooden panel @ factory from grinded wooden panel supplier,2019-08-02 06:00:00,2019-08-02 06:00:00,100.0
-Purchase grinded wooden panel @ factory from grinded wooden panel supplier,2019-08-06 12:00:00,2019-08-06 12:00:00,100.0
+Purchase grinded wooden panel @ factory from grinded wooden panel supplier,2019-08-02 06:00:00,2019-08-02 06:00:00,200.0
 Purchase grinded wooden panel @ factory from grinded wooden panel supplier,2019-08-10 18:00:00,2019-08-10 18:00:00,100.0
 Purchase screws @ factory from screw supplier,2019-08-02 06:00:00,2019-08-02 06:00:00,3000.0
-Purchase table leg @ factory from table leg supplier,2019-08-02 06:00:00,2019-08-02 06:00:00,400.0
-Purchase table leg @ factory from table leg supplier,2019-08-06 12:00:00,2019-08-06 12:00:00,400.0
+Purchase table leg @ factory from table leg supplier,2019-08-02 06:00:00,2019-08-02 06:00:00,800.0
 Purchase table leg @ factory from table leg supplier,2019-08-10 18:00:00,2019-08-10 18:00:00,400.0
 Ship round table @ factory,2019-08-15 00:00:00,2019-08-15 00:00:00,100.0
 Ship round table @ factory,2019-08-15 00:00:00,2019-08-15 00:00:00,100.0

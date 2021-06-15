@@ -471,12 +471,6 @@ class User(AbstractUser):
                 "theme",
                 "avatar",
                 "pagesize",
-                "horizonlength",
-                "horizontype",
-                "horizonbuckets",
-                "horizonstart",
-                "horizonend",
-                "horizonunit",
                 "lastmodified",
                 "is_staff",
             ]

@@ -45,6 +45,8 @@ Release notes
     not uncommon to have data columns outside of the table. These were silently being ignored with 6.14. 
   | Columns next to the data table will now still be read, similar to the behavior before 6.14.
 
+- | Report time settings are now scenario specific.
+
 6.14.0 (2021/05/28)
 ===================
 

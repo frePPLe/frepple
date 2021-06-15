@@ -244,6 +244,13 @@ class MultiDBMiddleware:
                         if hasattr(request.user, "_state"):
                             request.user._state.db = i.name
                         request.user.is_superuser = i.is_superuser
+                        request.user.horizonlength = i.horizonlength
+                        request.user.horizontype = i.horizontype
+                        request.user.horizonbefore = i.horizonbefore
+                        request.user.horizonbuckets = i.horizonbuckets
+                        request.user.horizonstart = i.horizonstart
+                        request.user.horizonend = i.horizonend
+                        request.user.horizonunit = i.horizonunit
                         response = self.get_response(request)
                         if not response.streaming:
                             # Note: Streaming response get the request field cleared in the

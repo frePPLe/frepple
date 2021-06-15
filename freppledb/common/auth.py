@@ -67,6 +67,13 @@ class MultiDBBackend(ModelBackend):
                     user2 = User.objects.using(db.name).get(username=user.username)
                     if user2.is_active:
                         db.is_superuser = user2.is_superuser
+                        db.horizonlength = user2.horizonlength
+                        db.horizonbefore = user2.horizonbefore
+                        db.horizontype = user2.horizontype
+                        db.horizonbuckets = user2.horizonbuckets
+                        db.horizonstart = user2.horizonstart
+                        db.horizonend = user2.horizonend
+                        db.horizonunit = user2.horizonunit
                         user.scenarios.append(db)
                 except Exception:
                     # Silently ignore errors. Eg user doesn't exist in scenario

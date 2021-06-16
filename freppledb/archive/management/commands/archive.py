@@ -22,7 +22,6 @@ from django.core.management.base import BaseCommand
 
 from freppledb import __version__
 from freppledb.archive.models import ArchiveManager
-from freppledb.common.models import Parameter
 from freppledb.common.report import getCurrentDate
 
 

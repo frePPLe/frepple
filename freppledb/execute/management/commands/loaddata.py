@@ -26,7 +26,7 @@ from django.db import connections, transaction
 from django.template.loader import render_to_string
 from django.utils.translation import gettext_lazy as _
 
-from freppledb.common.models import User, Parameter
+from freppledb.common.models import User
 from freppledb.common.middleware import _thread_locals
 from freppledb.common.report import getCurrentDate
 from freppledb.execute.models import Task

@@ -623,8 +623,7 @@ angular.module('calendar', [])
         };
 
         function processCard(event, incremental) {
-          var oneDay = 86400000,
-            eps = 0.001;
+          var oneDay = 86400000;
           var eventStartTime = event.startdate ? new Date(event.startdate) : null;
           var eventEndTime = event.enddate ? new Date(event.enddate) : null;
           var st;

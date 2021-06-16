@@ -35,7 +35,6 @@ from django.utils.text import format_lazy
 from django.views.generic import View
 from django.views.decorators.csrf import csrf_exempt
 
-from freppledb.common.models import Parameter
 from freppledb.common.report import (
     GridReport,
     GridFieldText,

@@ -15,7 +15,7 @@
 # License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-from datetime import timedelta, date
+from datetime import timedelta
 from urllib.parse import urlencode
 
 from django.contrib.admin.utils import quote
@@ -27,7 +27,6 @@ from django.utils.text import capfirst
 from django.utils.translation import gettext_lazy as _
 
 from freppledb.common.middleware import _thread_locals
-from freppledb.common.models import Parameter
 from freppledb.common.dashboard import Dashboard, Widget
 from freppledb.common.report import GridReport, getCurrency, getCurrentDate
 from freppledb.input.models import (

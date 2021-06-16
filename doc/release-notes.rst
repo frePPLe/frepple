@@ -6,10 +6,12 @@ Release notes
 
 .. rubric:: Production planning
 
-- | The `itemsupplier <model-reference/item-suppliers.html>`_  table gets a extra 
-    field "batchwindow". It specifies a time window for grouping proposed purchase orders 
-    together.
-  | This makes is easier to model a purchasing frequency: "I buy this item once a month"
+- | The `itemsupplier <model-reference/item-suppliers.html>`_  and 
+    `itemdistribution <model-reference/item-distributions.html>`_ tables get an extra 
+    field "batchwindow". It specifies a time window for grouping proposed purchase 
+    or distribution orders together.
+  | This makes is easier to model a purchasing or shipping frequency: "I buy this item
+    once a month" / "I ship at least the requirements for the next month". 
 
 - | The plan.autoFenceOperations parameter instructs the solver to wait for existing
     supply rather than generating a new replenishment. In this release the logic has been

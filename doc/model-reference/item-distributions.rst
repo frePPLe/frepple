@@ -26,6 +26,10 @@ size_multiple   positive double   | All shipments must be a multiple of this qua
                                   | The default is 0, i.e. no multiple to be considered.
 size_maximum    positive double   | Maximum size for shipments.
                                   | The default is infinite, i.e. no maximum to be considered.     
+batchwindow     duration          | Allows to group proposed distribution orders within this window
+                                    together into a single one.
+                                  | The default is 7 days, i.e. the algorithm will not propose
+                                    to transfer the same item twice during the same week.
 effective_start dateTime          Date when the record becomes valid.
 effective_end   dateTime          Date when the record becomes valid.
 priority        integer           | Priority of this shipment among all other methods to

@@ -3933,6 +3933,14 @@ class ItemDistribution
     HasLevel::triggerLazyRecomputation();
   }
 
+  Duration getBatchWindow() const { return batchwindow; }
+
+  void setBatchWindow(Duration d) {
+    // todo: also update the batchwindow of the existing
+    // operationitemdistributions
+    batchwindow = d;
+  }
+
   /* Update the resource representing the supplier capacity. */
   void setResource(Resource* r) {
     res = r;
@@ -4049,6 +4057,8 @@ class ItemDistribution
     m->addDoubleField<Cls>(Tags::resource_qty, &Cls::getResourceQuantity,
                            &Cls::setResourceQuantity, 1.0);
     m->addDurationField<Cls>(Tags::fence, &Cls::getFence, &Cls::setFence);
+    m->addDurationField<Cls>(Tags::batchwindow, &Cls::getBatchWindow,
+                             &Cls::setBatchWindow);
     m->addIteratorField<Cls, OperationIterator, OperationItemDistribution>(
         Tags::operations, Tags::operation, &Cls::getOperations, DONT_SERIALIZE);
     m->addBoolField<Cls>(Tags::hidden, &Cls::getHidden, &Cls::setHidden,
@@ -4086,6 +4096,8 @@ class ItemDistribution
 
   /* Release fence for the distribution operation. */
   Duration fence;
+
+  Duration batchwindow;
 };
 
 /* An item defines the products being planned, sold, stored and/or

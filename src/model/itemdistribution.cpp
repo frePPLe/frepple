@@ -210,8 +210,10 @@ OperationItemDistribution::OperationItemDistribution(ItemDistribution* i,
   stringstream o;
   auto item = dest ? dest->getItem() : src->getItem();
   o << "Ship " << item->getName();
-  if (src && src->getBatch()) o << " @ " << src->getBatch();
-  else if (dest && dest->getBatch()) o << " @ " << dest->getBatch();
+  if (src && src->getBatch())
+    o << " @ " << src->getBatch();
+  else if (dest && dest->getBatch())
+    o << " @ " << dest->getBatch();
   if (src && src->getLocation()) o << " from " << src->getLocation()->getName();
   if (dest && dest->getLocation())
     o << " to " << dest->getLocation()->getName();
@@ -224,6 +226,7 @@ OperationItemDistribution::OperationItemDistribution(ItemDistribution* i,
   setSource(i->getSource());
   setCost(i->getCost());
   setFence(i->getFence());
+  setBatchWindow(i->getBatchWindow());
   setHidden(true);
   if (dest) new FlowEnd(this, dest, 1);
   if (src) new FlowStart(this, src, -1);

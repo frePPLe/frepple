@@ -30,6 +30,8 @@ size_maximum    positive double   | Maximum size for procurements.
                                   | The default is infinite, i.e. no maximum to be considered.
 batchwindow     duration          | Allows to group proposed purchase orders within this window
                                     together into a single one.
+                                  | The default is 7 days, i.e. the algorithm will not propose
+                                    to buy the same item twice during the same week.
 effective_start dateTime          Date when the record becomes valid.
 effective_end   dateTime          Date when the record becomes valid.
 resource        resource          | Optionally, it refers to a resource that represents the

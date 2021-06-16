@@ -435,6 +435,136 @@
     </operationplan>
   </operationplans>
 
+  <!-- Case 4: distribution order batching -->
+  <suppliers>
+    <supplier name="4. supplier">
+      <itemsuppliers>
+        <itemsupplier>
+          <item name="4. item"/>
+          <location name="warehouse"/>
+          <leadtime>P7D</leadtime>
+          <priority>2</priority>
+        </itemsupplier>
+      </itemsuppliers>
+    </supplier>
+  </suppliers>
+  <itemdistributions>
+    <itemdistribution>
+      <item name="4. item"/>
+      <origin name="warehouse" />
+      <destination name="factory"/>
+      <leadtime>P3D</leadtime>
+      <batchwindow>P20D</batchwindow>
+    </itemdistribution>
+  </itemdistributions>
+  <demands>
+    <demand name="4. order 1">
+      <quantity>6</quantity>
+      <due>2021-01-01T00:00:00</due>
+      <item name="4. item" />
+      <location name="factory"/>
+    </demand>
+    <demand name="4. order 2">
+      <quantity>6</quantity>
+      <due>2021-01-08T00:00:00</due>
+      <item name="4. item" />
+      <location name="factory"/>
+    </demand>
+    <demand name="4. order 3">
+      <quantity>6</quantity>
+      <due>2021-01-15T00:00:00</due>
+      <item name="4. item" />
+      <location name="factory"/>
+    </demand>
+    <demand name="4. order 4">
+      <quantity>6</quantity>
+      <due>2021-01-22T00:00:00</due>
+      <item name="4. item" />
+      <location name="factory"/>
+    </demand>
+    <demand name="4. order 5">
+      <quantity>6</quantity>
+      <due>2021-01-29T00:00:00</due>
+      <item name="4. item" />
+      <location name="factory"/>
+    </demand>
+    <demand name="4. order 6">
+      <quantity>6</quantity>
+      <due>2021-02-05T00:00:00</due>
+      <item name="4. item" />
+      <location name="factory"/>
+    </demand>
+    <demand name="4. order 7">
+      <quantity>6</quantity>
+      <due>2021-02-12T00:00:00</due>
+      <item name="4. item" />
+      <location name="factory"/>
+    </demand>
+    <demand name="4. order 8">
+      <quantity>6</quantity>
+      <due>2021-02-19T00:00:00</due>
+      <item name="4. item" />
+      <location name="factory"/>
+    </demand>
+    <demand name="4. order 9">
+      <quantity>6</quantity>
+      <due>2021-02-26T00:00:00</due>
+      <item name="4. item" />
+      <location name="factory"/>
+    </demand>
+    <demand name="4. order 10">
+      <quantity>6</quantity>
+      <due>2021-03-05T00:00:00</due>
+      <item name="4. item" />
+      <location name="factory"/>
+    </demand>
+    <demand name="4. order 11">
+      <quantity>6</quantity>
+      <due>2021-03-12T00:00:00</due>
+      <item name="4. item" />
+      <location name="factory"/>
+    </demand>
+    <demand name="4. order 12">
+      <quantity>6</quantity>
+      <due>2021-03-19T00:00:00</due>
+      <item name="4. item" />
+      <location name="factory"/>
+    </demand>
+    <demand name="4. order 13">
+      <quantity>6</quantity>
+      <due>2021-03-26T00:00:00</due>
+      <item name="4. item" />
+      <location name="factory"/>
+    </demand>
+    <demand name="4. order 14">
+      <quantity>6</quantity>
+      <due>2021-04-07T00:00:00</due>
+      <item name="4. item" />
+      <location name="factory"/>
+    </demand>
+  </demands>
+  <buffers>
+    <buffer name="4. item @ factory" onhand="2">
+      <item name="4. item"/>
+      <location name="factory"/>
+    </buffer>
+    <buffer name="4. item @ warehouse" onhand="30">
+      <item name="4. item"/>
+      <location name="warehouse"/>
+    </buffer>
+  </buffers>
+  <operationplans>
+    <operationplan reference="4. DO 1" ordertype="DO" end="2021-01-20T00:00:00" quantity="2" status="confirmed">
+      <item name="4. item"/>
+      <location name="factory"/>
+      <origin name="warehouse"/>
+    </operationplan>
+    <operationplan reference="4. PO 1" ordertype="PO" end="2021-02-20T00:00:00" quantity="30" status="confirmed">
+      <item name="4. item"/>
+      <location name="warehouse"/>
+      <supplier name="4. supplier"/>
+    </operationplan>
+  </operationplans>
   <?python
 print("CREATING CONSTRAINED PLAN")
 sol = frepple.solver_mrp(plantype=1, constraints=15, loglevel=2, lazydelay=12*3600)

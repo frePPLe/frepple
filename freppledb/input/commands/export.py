@@ -1801,6 +1801,7 @@ class exportItemDistributions(PlanTask):
                         i.leadtime,
                         i.size_minimum,
                         i.size_multiple,
+                        i.batchwindow,
                         i.cost,
                         i.priority,
                         i.effective_end if i.effective_end != default_end else None,
@@ -1817,13 +1818,14 @@ class exportItemDistributions(PlanTask):
                 """
                 insert into itemdistribution
                 (item_id,location_id,origin_id,effective_start,leadtime,sizeminimum,
-                 sizemultiple,cost,priority,effective_end,source,lastmodified%s)
-                values(%%s,%%s,%%s,%%s,%%s * interval '1 second',%%s,%%s,%%s,%%s,%%s,%%s,%%s%s)
+                 sizemultiple,batchwindow,cost,priority,effective_end,source,lastmodified%s)
+                values(%%s,%%s,%%s,%%s,%%s * interval '1 second',%%s,%%s,%%s * interval '1 second',%%s,%%s,%%s,%%s,%%s%s)
                 on conflict (item_id, location_id, origin_id, effective_start)
                 do update set
                   leadtime=excluded.leadtime,
                   sizeminimum=excluded.sizeminimum,
                   sizemultiple=excluded.sizemultiple,
+                  batchwindow=excluded.batchwindow,
                   cost=excluded.cost,
                   priority=excluded.priority,
                   effective_end=excluded.effective_end,

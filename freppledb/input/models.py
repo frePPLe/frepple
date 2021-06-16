@@ -1235,7 +1235,7 @@ class ItemSupplier(AuditModel):
         help_text=_(
             "Proposed purchase orders within this window will be grouped together"
         ),
-        default=timedelta(days=7)
+        default=timedelta(days=7),
     )
     cost = models.DecimalField(
         _("cost"),
@@ -1369,6 +1369,15 @@ class ItemDistribution(AuditModel):
         max_digits=20,
         decimal_places=8,
         help_text=_("A maximum shipping quantity"),
+    )
+    batchwindow = models.DurationField(
+        _("batching window"),
+        null=True,
+        blank=True,
+        help_text=_(
+            "Proposed distribution orders within this window will be grouped together"
+        ),
+        default=timedelta(days=7),
     )
     cost = models.DecimalField(
         _("cost"),

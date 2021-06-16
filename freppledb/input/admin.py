@@ -332,6 +332,7 @@ class ItemDistribution_admin(MultiDBModelAdmin):
                     "sizeminimum",
                     "sizemultiple",
                     "sizemaximum",
+                    "batchwindow",
                     "cost",
                     "priority",
                     "fence",

@@ -349,6 +349,7 @@ class ItemDistributionList(GridReport):
         GridFieldNumber("sizeminimum", title=_("size minimum")),
         GridFieldNumber("sizemultiple", title=_("size multiple")),
         GridFieldNumber("sizemaximum", title=_("size maximum"), initially_hidden=True),
+        GridFieldDuration("batchwindow", title=_("batching window")),
         GridFieldCurrency("cost", title=_("cost"), initially_hidden=True),
         GridFieldInteger("priority", title=_("priority"), initially_hidden=True),
         GridFieldDuration("fence", title=_("fence"), initially_hidden=True),

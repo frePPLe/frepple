@@ -49,6 +49,8 @@ Release notes
 
 - | Report time settings are now scenario specific.
 
+- | Bug fix: Editing calendar buckets from the calendar form was broken.
+
 - | Bug fix: Filter widget wasn't shown in custom reports.
 
 .. rubric:: Integration

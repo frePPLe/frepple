@@ -18,6 +18,7 @@
 from functools import update_wrapper
 import json
 
+from django.apps import apps
 from django.core.exceptions import PermissionDenied
 from django.contrib import admin
 from django.contrib.admin.options import IS_POPUP_VAR, TO_FIELD_VAR
@@ -170,7 +171,6 @@ class MultiDBModelAdmin(admin.ModelAdmin):
             comment="Added %s." % str(obj),
         )
         entry.save(using=request.database)
-        return entry
 
     def log_change(self, request, obj, message):
         """
@@ -203,18 +203,58 @@ class MultiDBModelAdmin(admin.ModelAdmin):
             obj.pk = old_pk
             obj.delete(using=request.database)
             obj.pk = obj.new_pk
-        entry = Comment(
-            user_id=request.user.pk,
-            content_type_id=content_type.pk,
-            object_pk=str(obj.pk),
-            object_repr=str(obj)[:200],
-            type="change",
-            comment=message
-            if isinstance(message, str)
-            else "Changed %s." % get_text_list(message[0]["changed"]["fields"], "and"),
-        )
-        entry.save(using=request.database)
-        return entry
+        for m in message:
+            if "changed" in m:
+                if "object" in m["changed"] and "name" in m["changed"]:
+                    # Changed one or more fields on related objects
+                    # {'changed': {'name': 'calendar bucket', 'object': '40', 'fields': ['starttime']}}
+                    for model in apps.get_models():
+                        if str(model._meta.verbose_name) == m["changed"]["name"]:
+                            Comment(
+                                user_id=request.user.pk,
+                                content_type_id=ContentType.objects.get_for_model(
+                                    model
+                                ).pk,
+                                object_pk=m["changed"]["object"],
+                                object_repr=m["changed"]["object"],
+                                type="change",
+                                comment=message
+                                if isinstance(message, str)
+                                else "Changed %s."
+                                % get_text_list(m["changed"]["fields"], "and"),
+                            ).save(using=request.database)
+                            break
+                else:
+                    # Changed one or more fields
+                    # {'changed': {'fields': ['defaultvalue']}}
+                    Comment(
+                        user_id=request.user.pk,
+                        content_type_id=content_type.pk,
+                        object_pk=str(obj.pk),
+                        object_repr=str(obj)[:200],
+                        type="change",
+                        comment=message
+                        if isinstance(message, str)
+                        else "Changed %s."
+                        % get_text_list(m["changed"]["fields"], "and"),
+                    ).save(using=request.database)
+            elif "added" in m:
+                if "object" in m["added"] and "name" in m["added"]:
+                    # Adding related object
+                    # {"added": {"name": "calendar bucket", "object": "48"}}
+                    for model in apps.get_models():
+                        if str(model._meta.verbose_name) == m["added"]["name"]:
+                            Comment(
+                                user_id=request.user.pk,
+                                content_type_id=ContentType.objects.get_for_model(
+                                    model
+                                ).pk,
+                                object_pk=m["added"]["object"],
+                                object_repr=m["added"]["object"],
+                                type="add",
+                                comment="Added %s." % m["added"]["object"],
+                            ).save(using=request.database)
+                            break
 
     def log_deletion(self, request, obj, object_repr):
         """
